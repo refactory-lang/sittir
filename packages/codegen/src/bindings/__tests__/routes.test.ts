@@ -18,7 +18,6 @@ const node = (kind: string, slots: readonly ModelSlot[] = [], extra: Partial<Mod
 	slots,
 	subtypes: [],
 	elementKinds: [],
-	enumValues: [],
 	enumMembers: [],
 	text: null,
 	pattern: null,
@@ -56,7 +55,6 @@ const MODEL = [
 	node('choice_holder', [slot('part', ['modifiers', 'identifier'])]),
 	node('bool', [], {
 		modelType: 'enum',
-		enumValues: ['true', 'false'],
 		enumMembers: [
 			{ kind: 'true_keyword', text: 'true' },
 			{ kind: 'false_keyword', text: 'false' }
@@ -155,7 +153,7 @@ describe('resolveRoutes', () => {
 		expect(members[2]).toEqual({
 			route: 'presence',
 			name: 'isAsync',
-			via: ['modifiers'],
+			via: [{ field: null, kind: 'modifiers', after: null, anchor: null }],
 			token: 'async',
 			path: [
 				{ owner: 'function_definition', slot: 'modifiers' },
@@ -187,20 +185,22 @@ describe('resolveRoutes', () => {
 		});
 	});
 
-	it('routes a member the claimed node supplies by being the node', async () => {
-		const routes = resolveRoutes(await grammar('(identifier) @element.pair @key'));
-		expect(routes.members.get('identifier')).toEqual([{ route: 'self', name: 'key', path: [] }]);
-	});
 
-	it('gives a node a self route takes no members from its own slots: they describe the member\'s value', async () => {
-		const routes = resolveRoutes(await grammar('(middle) @element.pair @key'));
-		expect(routes.members.get('middle')).toEqual([{ route: 'self', name: 'key', path: [] }]);
+	it('gives an alias envelope of a leaf no members: its text is its own value', async () => {
+		const model = new Map(MODEL.map((n) => [n.kind, n]));
+		model.set('word', node('word', [], { modelType: 'pattern', pattern: '[a-z]+' }));
+		model.set('field_name', node('field_name', [slot('content', ['word'])], { modelType: 'alias' }));
+		model.set('wrapped', node('wrapped', [slot('content', ['binary'])], { modelType: 'alias' }));
+		const input = { ...(await grammar('(field_name) @identifier.field\n(wrapped) @expression.wrapped')), model };
+		const routes = resolveRoutes(input);
+		expect(routes.members.get('field_name')).toEqual([]);
+		expect(routes.members.get('wrapped')?.map((m) => m.name)).toEqual(['content']);
 	});
 
 	it('builds a nested member back from the owner outward, though the facts name its route nearest first', async () => {
 		const routes = resolveRoutes(await grammar('(outer (middle (binary left: (_) @lhs))) @expression.outer'));
 		const member = routes.members.get('outer')?.find((m) => m.name === 'lhs');
-		expect(member?.route === 'nested' ? member.via : undefined).toEqual(['binary', 'middle']);
+		expect(member?.route === 'nested' ? member.via.map((step) => step.kind) : undefined).toEqual(['binary', 'middle']);
 		expect(member?.path).toEqual([
 			{ owner: 'outer', slot: 'mid' },
 			{ owner: 'middle', slot: 'inner' },
@@ -213,6 +213,19 @@ describe('resolveRoutes', () => {
 		expect(routes.members.get('holder')?.find((m) => m.name === 'lhs')?.path).toEqual([
 			{ owner: 'holder', slot: 'item' },
 			{ owner: 'binary', slot: 'left' }
+		]);
+	});
+
+	it('routes no member through a list\'s item slot: a claimed list\'s items are its container content', async () => {
+		const routes = resolveRoutes(await grammar('(values) @expression.tuple'));
+		expect(routes.members.get('values')).toEqual([]);
+	});
+
+	it('builds a deep member back through the anchored first node of a slot that holds many, a list\'s included', async () => {
+		const routes = resolveRoutes(await grammar('(block . (function_definition name: (identifier) @first)) @statement.block'));
+		expect(routes.members.get('block')?.find((m) => m.name === 'first')?.path).toEqual([
+			{ owner: 'block', slot: 'statements', anchor: 'first' },
+			{ owner: 'function_definition', slot: 'name' }
 		]);
 	});
 
@@ -266,15 +279,6 @@ describe('derive', () => {
 		const flag = d.members.get('declaration.function')?.get('private');
 		expect([...(flag?.kinds ?? [])]).toEqual(['boolean']);
 		expect(flag?.optional).toBe(true);
-	});
-
-	it('types a self route by the node\'s own text, required wherever the node is claimed', async () => {
-		const model = new Map(MODEL.map((n) => [n.kind, n]));
-		model.set('shorthand', node('shorthand', [], { modelType: 'pattern', pattern: '[a-z]+' }));
-		const input = { ...(await grammar('(shorthand) @element.pair @key')), model, textTokens: new Set(['shorthand']) };
-		const key = derive([input]).members.get('element.pair')?.get('key');
-		expect([...(key?.kinds ?? [])]).toEqual(['text:[a-z]+']);
-		expect(key?.optional).toBe(false);
 	});
 });
 

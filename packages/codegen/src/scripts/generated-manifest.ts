@@ -2,6 +2,8 @@ import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, statSync, writeFileSync } from 'node:fs';
 import { basename, join, relative, dirname } from 'node:path';
+import { BINDINGS_FILE } from '../bindings/facts.ts';
+import { PIN_FILE } from '../bootstrap/bootstrap.ts';
 import { hostBinaryFreshnessFor } from './native-binary-freshness.ts';
 import {
 	GRAMMAR_ENTRY,
@@ -128,8 +130,6 @@ interface Manifest {
 const samePair = (a: GenerationPair, b: GenerationPair): boolean => a.source === b.source && a.outputs === b.outputs;
 
 const CODEGEN_SOURCE_DIR = 'packages/codegen/src';
-const BINDINGS_FILE = 'bindings.scm';
-const PIN_FILE = 'bootstrap.json';
 
 function grammarSourceInputs(grammar: GrammarName, src: ManifestSource): string[] {
 	const dir = relative(REPO_ROOT, grammarPackageDir(grammar));

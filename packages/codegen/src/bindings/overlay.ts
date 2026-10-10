@@ -1,6 +1,6 @@
-import { childFields, fieldRenameGrammar, fieldRenameIssue, fieldWrapGrammar, fieldWrapIssue, type FieldRename, type FieldWrap, type Split } from '../dsl/bind.ts';
+import { childFields, fieldRenameGrammar, fieldRenameIssue, fieldWrapGrammar, fieldWrapIssue, isRecord, symbolNames, type FieldRename, type FieldWrap, type GrammarRecord, type Split } from '../dsl/bind.ts';
+import { isPrecWrapper } from '../types/runtime-shapes.ts';
 import type { RawGrammar } from '../compiler/types.ts';
-import type { GrammarName } from '../grammars.ts';
 import { type BindingFacts, type MemberFact, type RefinedClaim, WILDCARD, refineClaims } from './facts.ts';
 import type { MemberRoute } from './routes.ts';
 
@@ -36,49 +36,28 @@ export interface OverlayReport {
 }
 
 export interface OverlayInput {
-	readonly grammar: GrammarName;
 	readonly facts: BindingFacts;
 	readonly base: RawGrammar;
 	readonly vocabMembers: ReadonlyMap<string, ReadonlySet<string>>;
 	readonly routedMembers: ReadonlyMap<string, readonly MemberRoute[]>;
 }
 
-const NAME_OVERRIDES: Readonly<Record<string, Readonly<Record<string, string>>>> = {};
-
-const CONTAINER_MEMBER_OVERRIDES: Readonly<Record<string, Readonly<Record<string, string>>>> = {
-	rust: { impl_item_body: 'body' }
-};
-
-export const boundKindName = (grammar: GrammarName, vocab: string, hidden: boolean): string =>
-	NAME_OVERRIDES[grammar]?.[vocab] ?? `${hidden ? '_' : ''}${vocab.split('.').reverse().join('_')}`;
+export const boundKindName = (vocab: string, hidden: boolean): string => `${hidden ? '_' : ''}${vocab.split('.').reverse().join('_')}`;
 
 export const memberFieldName = (member: string): string => member.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`);
 
-type Rule = Record<string, unknown>;
-type GrammarRecord = Record<string, unknown>;
 type FieldRequest = FieldRename | FieldWrap;
 
-const isRule = (v: unknown): v is Rule => typeof v === 'object' && v !== null && !Array.isArray(v);
-const PRECS = new Set(['PREC', 'PREC_LEFT', 'PREC_RIGHT', 'PREC_DYNAMIC']);
 const SINGLE = new Set(['OPTIONAL', 'REPEAT', 'REPEAT1', 'FIELD', 'TOKEN', 'IMMEDIATE_TOKEN', 'ALIAS']);
-const metaOf = (r: Rule): Rule => (isRule(r.metadata) ? r.metadata : {});
-const isLift = (r: Rule): boolean => r.type === 'SYMBOL' && metaOf(r).symbolSource === 'group-lift' && !(isRule(r.annotations) && 'variant' in r.annotations);
-const isGroupAlias = (r: Rule): boolean => r.type === 'ALIAS' && metaOf(r).aliasSource === 'visible-group';
-
-function symbolsOf(rule: unknown, out: Set<string> = new Set()): Set<string> {
-	if (Array.isArray(rule)) for (const r of rule) symbolsOf(r, out);
-	else if (isRule(rule)) {
-		if (rule.type === 'SYMBOL' && typeof rule.name === 'string') out.add(rule.name);
-		for (const v of Object.values(rule)) symbolsOf(v, out);
-	}
-	return out;
-}
+const metaOf = (r: GrammarRecord): GrammarRecord => (isRecord(r.metadata) ? r.metadata : {});
+const isLift = (r: GrammarRecord): boolean => r.type === 'SYMBOL' && metaOf(r).symbolSource === 'group-lift' && !(isRecord(r.annotations) && 'variant' in r.annotations);
+const isGroupAlias = (r: GrammarRecord): boolean => r.type === 'ALIAS' && metaOf(r).aliasSource === 'visible-group';
 
 function fieldOfReference(rules: Readonly<Record<string, unknown>>, owner: string, child: string): string | undefined {
 	let found: string | undefined;
 	const walk = (r: unknown, field: string | undefined): void => {
 		if (Array.isArray(r)) return r.forEach((x) => walk(x, field));
-		if (!isRule(r)) return;
+		if (!isRecord(r)) return;
 		if (r.type === 'SYMBOL' && r.name === child && field !== undefined) found = field;
 		const inner = r.type === 'FIELD' ? (r.name as string) : field;
 		for (const v of Object.values(r)) walk(v, inner);
@@ -92,7 +71,7 @@ const targetKey = (r: FieldRequest): string =>
 const fieldKey = (r: FieldRequest): string => `${r.owner}\u0000${'from' in r ? r.to : r.field}`;
 
 function sameShapeAs(kinds: readonly string[], members: readonly MemberFact[], routed: ReadonlyMap<string, readonly MemberRoute[]>): readonly string[] {
-	const readAsKind = new Set(members.flatMap((m) => (m.route === 'kind' ? [m.kind] : m.route === 'self' ? [m.owner] : [])));
+	const readAsKind = new Set(members.flatMap((m) => (m.route === 'kind' ? [m.kind] : [])));
 	const supplied = (kind: string): string =>
 		(routed.get(kind) ?? [])
 			.map((m) => m.name)
@@ -105,7 +84,7 @@ function sameShapeAs(kinds: readonly string[], members: readonly MemberFact[], r
 }
 
 export function deriveOverlay(input: OverlayInput): { overlay: BindingsOverlay; report: OverlayReport } {
-	const { grammar, facts, base, vocabMembers, routedMembers } = input;
+	const { facts, base, vocabMembers, routedMembers } = input;
 	const rules = base.rules as Record<string, unknown>;
 	const ruleNames = new Set(Object.keys(rules));
 	const residue: OverlayResidue[] = [];
@@ -141,7 +120,7 @@ export function deriveOverlay(input: OverlayInput): { overlay: BindingsOverlay; 
 			left('not a base rule', row);
 			continue;
 		}
-		const to = boundKindName(grammar, c.vocab, c.kind.startsWith('_'));
+		const to = boundKindName(c.vocab, c.kind.startsWith('_'));
 		if (placed(c)) {
 			if (!c.within.every((w) => ruleNames.has(w))) {
 				left('placed claim', row);
@@ -149,7 +128,7 @@ export function deriveOverlay(input: OverlayInput): { overlay: BindingsOverlay; 
 			}
 			const outer = c.within[c.within.length - 1]!;
 			const reference = c.within[c.within.length - 2] ?? c.kind;
-			const member = CONTAINER_MEMBER_OVERRIDES[grammar]?.[outer] ?? fieldOfReference(rules, outer, reference);
+			const member = fieldOfReference(rules, outer, reference);
 			if (member === undefined) {
 				left('placement container has no member name', row);
 				continue;
@@ -196,7 +175,7 @@ export function deriveOverlay(input: OverlayInput): { overlay: BindingsOverlay; 
 			if (!ruleNames.has(a.to)) continue;
 			wantedAliases.splice(wantedAliases.indexOf(a), 1);
 			if (!taken(a.to)) left('alias target names a base rule renamed away (a merge)', `${a.row} (${a.to})`);
-			else if (a.kind === a.to || symbolsOf(rules[a.to]).has(a.kind)) realizedByParent.push(`${a.row} (${a.to})`);
+			else if (a.kind === a.to || symbolNames(rules[a.to]).has(a.kind)) realizedByParent.push(`${a.row} (${a.to})`);
 			else left('alias target taken', `${a.row} (${a.to})`);
 			changed = true;
 		}
@@ -233,7 +212,7 @@ export function deriveOverlay(input: OverlayInput): { overlay: BindingsOverlay; 
 			continue;
 		}
 		const to = memberFieldName(m.name);
-		if (m.route === 'kind' || m.route === 'self') {
+		if (m.route === 'kind') {
 			realizedMembers.push(row);
 			continue;
 		}
@@ -243,6 +222,10 @@ export function deriveOverlay(input: OverlayInput): { overlay: BindingsOverlay; 
 		}
 		if (m.route === 'presence' && m.via.length > 0) {
 			left('token reached through a child', row);
+			continue;
+		}
+		if (m.route === 'rename' && m.anchor !== null) {
+			left('positional child', row);
 			continue;
 		}
 		if (m.route === 'rename' && m.field !== null) {
@@ -384,7 +367,7 @@ function overlayPatches(
 	const liftNames = new Set<string>();
 	const collectLifts = (r: unknown): void => {
 		if (Array.isArray(r)) r.forEach(collectLifts);
-		else if (isRule(r)) {
+		else if (isRecord(r)) {
 			if (isLift(r) && typeof r.name === 'string') liftNames.add(r.name);
 			Object.values(r).forEach(collectLifts);
 		}
@@ -394,19 +377,19 @@ function overlayPatches(
 
 	const pathMode = (root: unknown, patches: readonly OverlayPatch[]): OverlayPatch[] => {
 		let node = root;
-		while (isRule(node) && PRECS.has(node.type as string)) node = node.content;
-		if (!isRule(node) || node.type === 'SEQ' || patches.some((p) => p.path.includes('/') || p.path === '.')) return [...patches];
+		while (isRecord(node) && isPrecWrapper(node as { type: string })) node = node.content;
+		if (!isRecord(node) || node.type === 'SEQ' || patches.some((p) => p.path.includes('/') || p.path === '.')) return [...patches];
 		const length = Array.isArray(node.members) ? node.members.length : 1;
 		return patches.map((p) => ({ ...p, path: String(Number(p.path) - length) }));
 	};
-	const patchesBetween = (b0: Record<string, unknown>, a0: Record<string, unknown>, site: (b: Rule, a: Rule) => OverlayEdit | undefined): Map<string, OverlayPatch[]> => {
+	const patchesBetween = (b0: Record<string, unknown>, a0: Record<string, unknown>, site: (b: GrammarRecord, a: GrammarRecord) => OverlayEdit | undefined): Map<string, OverlayPatch[]> => {
 		const out = new Map<string, OverlayPatch[]>();
 		const reached = new Set<string>();
 		for (const root of roots) {
 			const patches: OverlayPatch[] = [];
 			const walk = (b: unknown, a: unknown, path: readonly number[]): void => {
-				if (!isRule(b) || !isRule(a)) return;
-				if (PRECS.has(b.type as string)) return walk(b.content, a.content, path);
+				if (!isRecord(b) || !isRecord(a)) return;
+				if (isPrecWrapper(b as { type: string })) return walk(b.content, a.content, path);
 				const edit = site(b, a);
 				if (edit !== undefined) patches.push({ path: path.length === 0 ? '.' : path.join('/'), edit });
 				if (isLift(b)) {
@@ -417,8 +400,8 @@ function overlayPatches(
 				}
 				if (isGroupAlias(b)) return walk(b.content, a.content, path);
 				const inner = a.type === 'FIELD' && b.type !== 'FIELD' ? a.content : a;
-				if (Array.isArray(b.members) && isRule(inner) && Array.isArray(inner.members)) b.members.forEach((m, i) => walk(m, (inner.members as unknown[])[i], [...path, i]));
-				else if (SINGLE.has(b.type as string) && isRule(inner)) walk(b.content, inner.content, [...path, 0]);
+				if (Array.isArray(b.members) && isRecord(inner) && Array.isArray(inner.members)) b.members.forEach((m, i) => walk(m, (inner.members as unknown[])[i], [...path, i]));
+				else if (SINGLE.has(b.type as string) && isRecord(inner)) walk(b.content, inner.content, [...path, 0]);
 			};
 			walk(b0[root], a0[root], []);
 			if (patches.length > 0) out.set(root, pathMode(b0[root], patches));
@@ -434,8 +417,8 @@ function overlayPatches(
 	const aliasPatches = patchesBetween(fielded, fielded, (b) =>
 		b.type === 'SYMBOL' && typeof b.name === 'string' && Object.hasOwn(aliases, b.name) ? { alias: { from: b.name, to: aliases[b.name]! } } : undefined
 	);
-	const at = (r: unknown): Rule =>
-		isRule(r) && (PRECS.has(r.type as string) || isGroupAlias(r)) ? at(r.content) : isRule(r) && isLift(r) ? at(fielded[r.name as string]) : (r as Rule);
+	const at = (r: unknown): GrammarRecord =>
+		isRecord(r) && (isPrecWrapper(r as { type: string }) || isGroupAlias(r)) ? at(r.content) : isRecord(r) && isLift(r) ? at(fielded[r.name as string]) : (r as GrammarRecord);
 	for (const [root, patches] of aliasPatches) {
 		const kept = patches.filter((p) => {
 			if (p.path === '.') return true;

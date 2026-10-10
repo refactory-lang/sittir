@@ -71,7 +71,6 @@ export interface PortableIds {
 		| TSKindId.TypedDefaultParameter
 		| TSKindId.TypedParameter;
 	'declaration.parameter.default': TSKindId.DefaultParameter;
-	'declaration.parameter.self': TSKindId.Identifier;
 	'declaration.parameter.typed': TSKindId.TypedParameter;
 	'declaration.parameter.typed_default': TSKindId.TypedDefaultParameter;
 	'declaration.type_alias': TSKindId.TypeAliasStatement;
@@ -204,6 +203,7 @@ export interface PortableIds {
 	literal:
 		| TSKindId.ConcatenatedString
 		| TSKindId.Ellipsis
+		| TSKindId.EscapeInterpolation
 		| TSKindId.EscapeSequence
 		| TSKindId.False
 		| TSKindId.FloatLeadingPoint
@@ -248,11 +248,14 @@ export interface PortableIds {
 	'literal.number.integer.hex': TSKindId.IntegerHex;
 	'literal.number.integer.imaginary': TSKindId.IntegerDecimalImaginary;
 	'literal.number.integer.octal': TSKindId.IntegerOctal;
-	'literal.string': TSKindId.ConcatenatedString | TSKindId.EscapeSequence | TSKindId.String;
+	'literal.string':
+		| TSKindId.ConcatenatedString
+		| TSKindId.EscapeInterpolation
+		| TSKindId.EscapeSequence
+		| TSKindId.String;
 	'literal.string.bytes': TSKindId.String;
 	'literal.string.concatenated': TSKindId.ConcatenatedString;
-	'literal.string.docstring': TSKindId.String;
-	'literal.string.escape': TSKindId.EscapeSequence;
+	'literal.string.escape': TSKindId.EscapeInterpolation | TSKindId.EscapeSequence;
 	'literal.string.f': TSKindId.String;
 	'literal.string.raw': TSKindId.String;
 	'literal.string.triple': TSKindId.String;
@@ -445,7 +448,6 @@ export interface PortableKindsAt {
 		readonly variable: PortableKindsAt['declaration.variable'];
 		readonly default: PortableKindsAt['declaration.parameter.default'];
 		readonly dunder: PortableKindsAt['declaration.method.dunder'];
-		readonly self: PortableKindsAt['declaration.parameter.self'];
 		readonly static: PortableKindsAt['declaration.method.static'];
 		readonly typed: PortableKindsAt['declaration.parameter.typed'];
 		readonly typed_default: PortableKindsAt['declaration.parameter.typed_default'];
@@ -466,12 +468,10 @@ export interface PortableKindsAt {
 	'declaration.parameter': {
 		readonly $ids: readonly PortableIds['declaration.parameter'][];
 		readonly default: PortableKindsAt['declaration.parameter.default'];
-		readonly self: PortableKindsAt['declaration.parameter.self'];
 		readonly typed: PortableKindsAt['declaration.parameter.typed'];
 		readonly typed_default: PortableKindsAt['declaration.parameter.typed_default'];
 	};
 	'declaration.parameter.default': { readonly $ids: readonly PortableIds['declaration.parameter.default'][] };
-	'declaration.parameter.self': { readonly $ids: readonly PortableIds['declaration.parameter.self'][] };
 	'declaration.parameter.typed': { readonly $ids: readonly PortableIds['declaration.parameter.typed'][] };
 	'declaration.parameter.typed_default': {
 		readonly $ids: readonly PortableIds['declaration.parameter.typed_default'][];
@@ -820,7 +820,6 @@ export interface PortableKindsAt {
 		readonly binary: PortableKindsAt['literal.number.integer.binary'];
 		readonly bytes: PortableKindsAt['literal.string.bytes'];
 		readonly concatenated: PortableKindsAt['literal.string.concatenated'];
-		readonly docstring: PortableKindsAt['literal.string.docstring'];
 		readonly escape: PortableKindsAt['literal.string.escape'];
 		readonly f: PortableKindsAt['literal.string.f'];
 		readonly false: PortableKindsAt['literal.boolean.false'];
@@ -880,7 +879,6 @@ export interface PortableKindsAt {
 		readonly $ids: readonly PortableIds['literal.string'][];
 		readonly bytes: PortableKindsAt['literal.string.bytes'];
 		readonly concatenated: PortableKindsAt['literal.string.concatenated'];
-		readonly docstring: PortableKindsAt['literal.string.docstring'];
 		readonly escape: PortableKindsAt['literal.string.escape'];
 		readonly f: PortableKindsAt['literal.string.f'];
 		readonly raw: PortableKindsAt['literal.string.raw'];
@@ -888,7 +886,6 @@ export interface PortableKindsAt {
 	};
 	'literal.string.bytes': { readonly $ids: readonly PortableIds['literal.string.bytes'][] };
 	'literal.string.concatenated': { readonly $ids: readonly PortableIds['literal.string.concatenated'][] };
-	'literal.string.docstring': { readonly $ids: readonly PortableIds['literal.string.docstring'][] };
 	'literal.string.escape': { readonly $ids: readonly PortableIds['literal.string.escape'][] };
 	'literal.string.f': { readonly $ids: readonly PortableIds['literal.string.f'][] };
 	'literal.string.raw': { readonly $ids: readonly PortableIds['literal.string.raw'][] };
@@ -1084,7 +1081,6 @@ export interface PortableIsAt {
 		readonly variable: PortableIsAt['declaration.variable'];
 		readonly default: PortableIsAt['declaration.parameter.default'];
 		readonly dunder: PortableIsAt['declaration.method.dunder'];
-		readonly self: PortableIsAt['declaration.parameter.self'];
 		readonly static: PortableIsAt['declaration.method.static'];
 		readonly typed: PortableIsAt['declaration.parameter.typed'];
 		readonly typed_default: PortableIsAt['declaration.parameter.typed_default'];
@@ -1103,12 +1099,10 @@ export interface PortableIsAt {
 	'declaration.method.static': PortableGuard<PortableIds['declaration.method.static']> & {};
 	'declaration.parameter': PortableGuard<PortableIds['declaration.parameter']> & {
 		readonly default: PortableIsAt['declaration.parameter.default'];
-		readonly self: PortableIsAt['declaration.parameter.self'];
 		readonly typed: PortableIsAt['declaration.parameter.typed'];
 		readonly typed_default: PortableIsAt['declaration.parameter.typed_default'];
 	};
 	'declaration.parameter.default': PortableGuard<PortableIds['declaration.parameter.default']> & {};
-	'declaration.parameter.self': PortableGuard<PortableIds['declaration.parameter.self']> & {};
 	'declaration.parameter.typed': PortableGuard<PortableIds['declaration.parameter.typed']> & {};
 	'declaration.parameter.typed_default': PortableGuard<PortableIds['declaration.parameter.typed_default']> & {};
 	'declaration.type_alias': PortableGuard<PortableIds['declaration.type_alias']> & {};
@@ -1400,7 +1394,6 @@ export interface PortableIsAt {
 		readonly binary: PortableIsAt['literal.number.integer.binary'];
 		readonly bytes: PortableIsAt['literal.string.bytes'];
 		readonly concatenated: PortableIsAt['literal.string.concatenated'];
-		readonly docstring: PortableIsAt['literal.string.docstring'];
 		readonly escape: PortableIsAt['literal.string.escape'];
 		readonly f: PortableIsAt['literal.string.f'];
 		readonly false: PortableIsAt['literal.boolean.false'];
@@ -1455,7 +1448,6 @@ export interface PortableIsAt {
 	'literal.string': PortableGuard<PortableIds['literal.string']> & {
 		readonly bytes: PortableIsAt['literal.string.bytes'];
 		readonly concatenated: PortableIsAt['literal.string.concatenated'];
-		readonly docstring: PortableIsAt['literal.string.docstring'];
 		readonly escape: PortableIsAt['literal.string.escape'];
 		readonly f: PortableIsAt['literal.string.f'];
 		readonly raw: PortableIsAt['literal.string.raw'];
@@ -1463,7 +1455,6 @@ export interface PortableIsAt {
 	};
 	'literal.string.bytes': PortableGuard<PortableIds['literal.string.bytes']> & {};
 	'literal.string.concatenated': PortableGuard<PortableIds['literal.string.concatenated']> & {};
-	'literal.string.docstring': PortableGuard<PortableIds['literal.string.docstring']> & {};
 	'literal.string.escape': PortableGuard<PortableIds['literal.string.escape']> & {};
 	'literal.string.f': PortableGuard<PortableIds['literal.string.f']> & {};
 	'literal.string.raw': PortableGuard<PortableIds['literal.string.raw']> & {};
@@ -1625,7 +1616,6 @@ export interface PortableKinds {
 	readonly decorator: PortableKindsAt['attribute.decorator'];
 	readonly default: PortableKindsAt['declaration.parameter.default'];
 	readonly delete: PortableKindsAt['statement.delete'];
-	readonly docstring: PortableKindsAt['literal.string.docstring'];
 	readonly dotted: PortableKindsAt['identifier.dotted'];
 	readonly dunder: PortableKindsAt['declaration.method.dunder'];
 	readonly elif: PortableKindsAt['clause.elif'];
@@ -1687,7 +1677,6 @@ export interface PortableKinds {
 	readonly return: PortableKindsAt['statement.return'];
 	readonly right: PortableKindsAt['expression.binary.shift.right'];
 	readonly scientific: PortableKindsAt['literal.number.float.scientific'];
-	readonly self: PortableKindsAt['declaration.parameter.self'];
 	readonly shift: PortableKindsAt['expression.binary.shift'];
 	readonly shift_left: PortableKindsAt['expression.assignment.compound.shift_left'];
 	readonly shift_right: PortableKindsAt['expression.assignment.compound.shift_right'];
@@ -1756,7 +1745,6 @@ export interface PortableIs {
 	readonly decorator: PortableIsAt['attribute.decorator'];
 	readonly default: PortableIsAt['declaration.parameter.default'];
 	readonly delete: PortableIsAt['statement.delete'];
-	readonly docstring: PortableIsAt['literal.string.docstring'];
 	readonly dotted: PortableIsAt['identifier.dotted'];
 	readonly dunder: PortableIsAt['declaration.method.dunder'];
 	readonly elif: PortableIsAt['clause.elif'];
@@ -1818,7 +1806,6 @@ export interface PortableIs {
 	readonly return: PortableIsAt['statement.return'];
 	readonly right: PortableIsAt['expression.binary.shift.right'];
 	readonly scientific: PortableIsAt['literal.number.float.scientific'];
-	readonly self: PortableIsAt['declaration.parameter.self'];
 	readonly shift: PortableIsAt['expression.binary.shift'];
 	readonly shift_left: PortableIsAt['expression.assignment.compound.shift_left'];
 	readonly shift_right: PortableIsAt['expression.assignment.compound.shift_right'];
@@ -1926,7 +1913,6 @@ const table: PortableTable = {
 			exact: false
 		},
 		'declaration.parameter.default': { ids: [TSKindId.DefaultParameter], exact: true },
-		'declaration.parameter.self': { ids: [TSKindId.Identifier], exact: false },
 		'declaration.parameter.typed': { ids: [TSKindId.TypedParameter], exact: true },
 		'declaration.parameter.typed_default': { ids: [TSKindId.TypedDefaultParameter], exact: true },
 		'declaration.type_alias': { ids: [TSKindId.TypeAliasStatement], exact: true },
@@ -2081,6 +2067,7 @@ const table: PortableTable = {
 			ids: [
 				TSKindId.ConcatenatedString,
 				TSKindId.Ellipsis,
+				TSKindId.EscapeInterpolation,
 				TSKindId.EscapeSequence,
 				TSKindId.False,
 				TSKindId.FloatLeadingPoint,
@@ -2139,11 +2126,13 @@ const table: PortableTable = {
 		'literal.number.integer.hex': { ids: [TSKindId.IntegerHex], exact: true },
 		'literal.number.integer.imaginary': { ids: [TSKindId.IntegerDecimalImaginary], exact: true },
 		'literal.number.integer.octal': { ids: [TSKindId.IntegerOctal], exact: true },
-		'literal.string': { ids: [TSKindId.ConcatenatedString, TSKindId.EscapeSequence, TSKindId.String], exact: true },
+		'literal.string': {
+			ids: [TSKindId.ConcatenatedString, TSKindId.EscapeInterpolation, TSKindId.EscapeSequence, TSKindId.String],
+			exact: true
+		},
 		'literal.string.bytes': { ids: [TSKindId.String], exact: false },
 		'literal.string.concatenated': { ids: [TSKindId.ConcatenatedString], exact: true },
-		'literal.string.docstring': { ids: [TSKindId.String], exact: false },
-		'literal.string.escape': { ids: [TSKindId.EscapeSequence], exact: true },
+		'literal.string.escape': { ids: [TSKindId.EscapeInterpolation, TSKindId.EscapeSequence], exact: true },
 		'literal.string.f': { ids: [TSKindId.String], exact: false },
 		'literal.string.raw': { ids: [TSKindId.String], exact: false },
 		'literal.string.triple': { ids: [TSKindId.String], exact: false },
@@ -2306,7 +2295,6 @@ const table: PortableTable = {
 		['', 'decorator', 'attribute.decorator'],
 		['', 'default', 'declaration.parameter.default'],
 		['', 'delete', 'statement.delete'],
-		['', 'docstring', 'literal.string.docstring'],
 		['', 'dotted', 'identifier.dotted'],
 		['', 'dunder', 'declaration.method.dunder'],
 		['', 'elif', 'clause.elif'],
@@ -2368,7 +2356,6 @@ const table: PortableTable = {
 		['', 'return', 'statement.return'],
 		['', 'right', 'expression.binary.shift.right'],
 		['', 'scientific', 'literal.number.float.scientific'],
-		['', 'self', 'declaration.parameter.self'],
 		['', 'shift', 'expression.binary.shift'],
 		['', 'shift_left', 'expression.assignment.compound.shift_left'],
 		['', 'shift_right', 'expression.assignment.compound.shift_right'],
@@ -2402,7 +2389,6 @@ const table: PortableTable = {
 		['clause.import', 'prefix', 'clause.import.relative.prefix'],
 		['declaration', 'default', 'declaration.parameter.default'],
 		['declaration', 'dunder', 'declaration.method.dunder'],
-		['declaration', 'self', 'declaration.parameter.self'],
 		['declaration', 'static', 'declaration.method.static'],
 		['declaration', 'typed', 'declaration.parameter.typed'],
 		['declaration', 'typed_default', 'declaration.parameter.typed_default'],
@@ -2481,7 +2467,6 @@ const table: PortableTable = {
 		['literal', 'binary', 'literal.number.integer.binary'],
 		['literal', 'bytes', 'literal.string.bytes'],
 		['literal', 'concatenated', 'literal.string.concatenated'],
-		['literal', 'docstring', 'literal.string.docstring'],
 		['literal', 'escape', 'literal.string.escape'],
 		['literal', 'f', 'literal.string.f'],
 		['literal', 'false', 'literal.boolean.false'],
@@ -2738,6 +2723,7 @@ const table: PortableTable = {
 		[TSKindId.ElifClause]: [{ path: 'clause.elif', within: [], test: [] }],
 		[TSKindId.Ellipsis]: [{ path: 'literal.ellipsis', within: [], test: [] }],
 		[TSKindId.ElseClause]: [{ path: 'clause.else', within: [], test: [] }],
+		[TSKindId.EscapeInterpolation]: [{ path: 'literal.string.escape', within: [], test: [] }],
 		[TSKindId.EscapeSequence]: [{ path: 'literal.string.escape', within: [], test: [] }],
 		[TSKindId.ExceptClause]: [{ path: 'clause.except', within: [], test: [] }],
 		[TSKindId.ExecStatement]: [{ path: 'statement.exec', within: [], test: [] }],
@@ -2793,7 +2779,6 @@ const table: PortableTable = {
 		[TSKindId.GlobalStatement]: [{ path: 'statement.global', within: [], test: [] }],
 		[TSKindId.Identifier]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ParametersElements, TSKindId.Parameters], test: [] },
-			{ path: 'declaration.parameter.self', within: [TSKindId.ParametersElements, TSKindId.Parameters], test: [] },
 			{ path: 'declaration.parameter', within: [TSKindId.ParametersElements, TSKindId.LambdaParameters], test: [] },
 			{ path: 'identifier.type', within: [TSKindId.Type], test: [] },
 			{ path: 'identifier', within: [], test: [] }
@@ -2862,30 +2847,6 @@ const table: PortableTable = {
 				path: 'literal.string.triple',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '"""|\'\'\'', fields: ['string_start'], kinds: [] } }]
-			},
-			{
-				path: 'literal.string.docstring',
-				within: [
-					TSKindId.ExpressionStatement,
-					TSKindId.SimpleStatementsElements,
-					TSKindId.SimpleStatements,
-					TSKindId.Block,
-					TSKindId.SuiteBlock,
-					TSKindId.FunctionDefinition
-				],
-				test: []
-			},
-			{
-				path: 'literal.string.docstring',
-				within: [
-					TSKindId.ExpressionStatement,
-					TSKindId.SimpleStatementsElements,
-					TSKindId.SimpleStatements,
-					TSKindId.Block,
-					TSKindId.SuiteBlock,
-					TSKindId.ClassDefinition
-				],
-				test: []
 			},
 			{ path: 'literal.string', within: [], test: [] }
 		],

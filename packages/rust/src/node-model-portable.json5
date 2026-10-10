@@ -2706,19 +2706,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "field_identifier",
-              "slot": "content"
-            }
-          ]
-        }
-      ],
+      "members": [],
       "container": {
         "kinds": [
           "identifier"
@@ -2943,7 +2931,63 @@
             "impl_item_body"
           ],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [
+                    "parameters"
+                  ],
+                  "kinds": []
+                },
+                {
+                  "fields": [
+                    "elements"
+                  ],
+                  "kinds": []
+                },
+                {
+                  "fields": [
+                    "item"
+                  ],
+                  "kinds": [],
+                  "anchor": "first"
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  231
+                ],
+                "fields": [],
+                "kinds": [
+                  "parameter",
+                  "self_parameter",
+                  "variadic_parameter",
+                  "underscore",
+                  "type_identifier",
+                  "abstract_type",
+                  "reference_type",
+                  "metavariable",
+                  "pointer_type_const",
+                  "pointer_type_mut",
+                  "generic_type",
+                  "scoped_type_identifier",
+                  "tuple_type",
+                  "unit_type",
+                  "array_type",
+                  "function_type",
+                  "macro_invocation",
+                  "never_type",
+                  "dynamic_type",
+                  "bounded_type",
+                  "removed_trait_bound",
+                  "primitive_type"
+                ]
+              }
+            }
+          ]
         },
         {
           "vocab": "declaration.method.static",
@@ -2953,7 +2997,65 @@
             "impl_item_body"
           ],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [
+                    "parameters"
+                  ],
+                  "kinds": []
+                },
+                {
+                  "fields": [
+                    "elements"
+                  ],
+                  "kinds": []
+                },
+                {
+                  "fields": [
+                    "item"
+                  ],
+                  "kinds": []
+                }
+              ],
+              "plan": {
+                "op": "not",
+                "of": {
+                  "op": "is",
+                  "types": [
+                    231
+                  ],
+                  "fields": [],
+                  "kinds": [
+                    "parameter",
+                    "self_parameter",
+                    "variadic_parameter",
+                    "underscore",
+                    "type_identifier",
+                    "abstract_type",
+                    "reference_type",
+                    "metavariable",
+                    "pointer_type_const",
+                    "pointer_type_mut",
+                    "generic_type",
+                    "scoped_type_identifier",
+                    "tuple_type",
+                    "unit_type",
+                    "array_type",
+                    "function_type",
+                    "macro_invocation",
+                    "never_type",
+                    "dynamic_type",
+                    "bounded_type",
+                    "removed_trait_bound",
+                    "primitive_type"
+                  ]
+                }
+              }
+            }
+          ]
         },
         {
           "vocab": "declaration.method",
@@ -3055,7 +3157,12 @@
           "name": "async",
           "route": "presence",
           "via": [
-            "function_modifiers"
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
           ],
           "token": "async",
           "path": [
@@ -3073,7 +3180,12 @@
           "name": "const",
           "route": "presence",
           "via": [
-            "function_modifiers"
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
           ],
           "token": "const",
           "path": [
@@ -3091,7 +3203,12 @@
           "name": "unsafe",
           "route": "presence",
           "via": [
-            "function_modifiers"
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
           ],
           "token": "unsafe",
           "path": [
@@ -3109,7 +3226,12 @@
           "name": "default",
           "route": "presence",
           "via": [
-            "function_modifiers"
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
           ],
           "token": "default",
           "path": [
@@ -3127,7 +3249,12 @@
           "name": "extern",
           "route": "nested",
           "via": [
-            "function_modifiers"
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
           ],
           "parent": "function_modifiers",
           "slot": "modifier",
@@ -3836,11 +3963,36 @@
           "name": "receiver",
           "route": "nested",
           "via": [
-            "attributed_parameter",
-            "parameters_elements",
-            "parameters",
-            "function_item",
-            "declaration_list"
+            {
+              "field": null,
+              "kind": "attributed_parameter",
+              "after": null,
+              "anchor": "first"
+            },
+            {
+              "field": null,
+              "kind": "parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "function_item",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "declaration_list",
+              "after": null,
+              "anchor": null
+            }
           ],
           "parent": "attributed_parameter",
           "slot": "content",
@@ -3851,7 +4003,12 @@
           "name": "implements",
           "route": "nested",
           "via": [
-            "_"
+            {
+              "field": "trait_clause",
+              "kind": null,
+              "after": null,
+              "anchor": null
+            }
           ],
           "parent": "_",
           "slot": null,
@@ -5958,6 +6115,17 @@
       ]
     },
     "shorthand_field_identifier": {
+      "vocab": "identifier.property.shorthand",
+      "read": [
+        {
+          "vocab": "identifier.property.shorthand",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [],
       "container": {
         "kinds": [
           "identifier"
@@ -7133,19 +7301,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "type_identifier",
-              "slot": "content"
-            }
-          ]
-        }
-      ],
+      "members": [],
       "container": {
         "kinds": [
           "identifier"
@@ -8236,19 +8392,19 @@
         "paths": 13,
         "kinds": 3,
         "refinements": 0,
-        "aliases": 123
+        "aliases": 125
       },
       {
         "depth": 2,
-        "paths": 101,
+        "paths": 102,
         "kinds": 132,
-        "refinements": 11,
-        "aliases": 85
+        "refinements": 12,
+        "aliases": 86
       },
       {
         "depth": 3,
-        "paths": 73,
-        "kinds": 77,
+        "paths": 74,
+        "kinds": 78,
         "refinements": 46,
         "aliases": 34
       },

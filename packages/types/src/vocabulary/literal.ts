@@ -230,11 +230,6 @@ export namespace Literal {
 			readonly $kind: 'literal.string.concatenated';
 			readonly strings: V.Literal.String<G>[];
 		}
-		export interface Docstring<G extends GrammarContext<G>> extends SubKindOf<V.Literal.String<G>> {
-			// claimed by p
-			readonly $kind: 'literal.string.docstring';
-			readonly contents?: G['slots']['literal.string.docstring']['contents'][];
-		}
 		export interface Escape<G extends GrammarContext<G>> extends SubKindOf<V.Literal.String<G>> {
 			// claimed by prt
 			readonly $kind: 'literal.string.escape';
@@ -259,7 +254,6 @@ export namespace Literal {
 			| V.Literal.String<G>
 			| V.Literal.String.Bytes<G>
 			| V.Literal.String.Concatenated<G>
-			| V.Literal.String.Docstring<G>
 			| V.Literal.String.Escape<G>
 			| V.Literal.String.F<G>
 			| V.Literal.String.Raw<G>
@@ -298,7 +292,6 @@ export namespace Literal {
 		| V.Literal.String<G>
 		| V.Literal.String.Bytes<G>
 		| V.Literal.String.Concatenated<G>
-		| V.Literal.String.Docstring<G>
 		| V.Literal.String.Escape<G>
 		| V.Literal.String.F<G>
 		| V.Literal.String.Raw<G>

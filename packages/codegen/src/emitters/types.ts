@@ -726,10 +726,10 @@ function emitOptionsHints(
 		const root = kindRoots.get(displayNameOf(kind, nodeMap));
 		if (root === undefined || typeName === undefined || !generatedTypes.has(typeName)) continue;
 		const prior = homes.get(root.name);
-		const owns = ownsItsDisplay(kind, nodeMap);
-		const wins =
-			prior === undefined || (owns !== ownsItsDisplay(prior.kind, nodeMap) ? owns : kind < prior.kind);
-		if (wins) homes.set(root.name, { kind, typeName, root, internal: internal === true });
+		if (prior !== undefined && ownsItsDisplay(prior.kind, nodeMap) === ownsItsDisplay(kind, nodeMap)) {
+			throw new Error(`types emitter: options root '${root.name}' names both '${prior.kind}' and '${kind}'`);
+		}
+		if (prior === undefined || ownsItsDisplay(kind, nodeMap)) homes.set(root.name, { kind, typeName, root, internal: internal === true });
 	}
 	const homeless = [...kindRoots.keys()].filter((name) => !homes.has(name));
 	if (homeless.length > 0) throw new Error(`types emitter: options roots with no declared type to carry their hint: ${homeless.join(', ')}`);

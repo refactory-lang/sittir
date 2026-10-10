@@ -1,10 +1,15 @@
-import type { QueryPlan, SlotRoutes } from './query.ts';
+import type { QueryPlan, QuerySubject, SlotRoutes } from './query.ts';
 
-/** One condition of a read entry's test: `plan` holds on some node the `via` slots reach from the tested node (`up` 0) or its `up`-th enclosing context node. */
+/** One step of a condition: a slot by its parser routes, narrowed to its first or last node when `anchor` is set. */
+export interface PortableStep extends SlotRoutes {
+	readonly anchor?: 'first' | 'last';
+}
+
+/** One condition of a read entry's test: `plan` holds over the nodes the `via` steps reach, together, from the tested node (`up` 0) or its `up`-th enclosing context node. */
 export interface PortableCondition {
 	readonly up: number;
-	readonly via: readonly SlotRoutes[];
-	readonly plan: QueryPlan;
+	readonly via: readonly PortableStep[];
+	readonly plan: QueryPlan<QuerySubject>;
 }
 
 /** A way a kind reads as a vocabulary path: its placement, nearest enclosing kind first (`null` admits any kind), and the conditions that must all hold. */

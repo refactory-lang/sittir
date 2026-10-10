@@ -3274,6 +3274,56 @@
         "parenthesized_list_splat",
         "keyword_argument"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "expression",
+            "list_splat",
+            "dictionary_splat",
+            "parenthesized_list_splat",
+            "keyword_argument"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "expression",
+              "parseKind": "expression"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "list_splat",
+              "parseKind": "list_splat"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "dictionary_splat",
+              "parseKind": "dictionary_splat"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "parenthesized_list_splat",
+              "parseKind": "parenthesized_list_splat"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "keyword_argument",
+              "parseKind": "keyword_argument"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -5016,6 +5066,28 @@
       "elementKinds": [
         "case_pattern"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "case_pattern"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "case_pattern",
+              "parseKind": "case_pattern"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -5403,6 +5475,49 @@
         "yield",
         "list_splat",
         "parenthesized_list_splat"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "expression",
+            "yield",
+            "list_splat",
+            "parenthesized_list_splat"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "expression",
+              "parseKind": "expression"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "yield",
+              "parseKind": "yield"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "list_splat",
+              "parseKind": "list_splat"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "parenthesized_list_splat",
+              "parseKind": "parenthesized_list_splat"
+            }
+          ]
+        }
       ],
       "factoryShape": "elements",
       "factoryFields": [
@@ -6580,6 +6695,35 @@
         "key_value_pattern",
         "splat_pattern"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "key_value_pattern",
+            "splat_pattern"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "key_value_pattern",
+              "parseKind": "key_value_pattern"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "splat_pattern",
+              "parseKind": "splat_pattern"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -6776,6 +6920,35 @@
       "elementKinds": [
         "pair",
         "dictionary_splat"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "pair",
+            "dictionary_splat"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "pair",
+              "parseKind": "pair"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "dictionary_splat",
+              "parseKind": "dictionary_splat"
+            }
+          ]
+        }
       ],
       "factoryShape": "elements",
       "factoryFields": [
@@ -8263,6 +8436,28 @@
       "elementKinds": [
         "expression"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "expression"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "expression",
+              "parseKind": "expression"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -8495,6 +8690,28 @@
       "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "expression"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "expression"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "expression",
+              "parseKind": "expression"
+            }
+          ]
+        }
       ],
       "factoryShape": "elements",
       "factoryFields": [
@@ -10372,6 +10589,35 @@
         "dotted_name",
         "aliased_import"
       ],
+      "slots": [
+        {
+          "name": "name",
+          "propertyName": "names",
+          "paramName": "names",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "dotted_name",
+            "aliased_import"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "dotted_name",
+              "parseKind": "dotted_name"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "aliased_import",
+              "parseKind": "aliased_import"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "name"
@@ -12047,6 +12293,28 @@
       "elementKinds": [
         "case_pattern"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "case_pattern"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "case_pattern",
+              "parseKind": "case_pattern"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -13177,6 +13445,28 @@
       "elementKinds": [
         "parameter"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "parameter"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "parameter",
+              "parseKind": "parameter"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -13551,6 +13841,28 @@
       "elementKinds": [
         "pattern"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "pattern"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "pattern",
+              "parseKind": "pattern"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -13589,6 +13901,28 @@
       "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "pattern"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "pattern"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "pattern",
+              "parseKind": "pattern"
+            }
+          ]
+        }
       ],
       "factoryShape": "elements",
       "factoryFields": [
@@ -13749,6 +14083,28 @@
       "elementKinds": [
         "expression"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "expression"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "expression",
+              "parseKind": "expression"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -13828,6 +14184,28 @@
       "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "expression"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "expression"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "expression",
+              "parseKind": "expression"
+            }
+          ]
+        }
       ],
       "factoryShape": "elements",
       "factoryFields": [
@@ -14709,6 +15087,28 @@
       "elementKinds": [
         "_simple_statement"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "_simple_statement"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "_simple_statement",
+              "parseKind": "_simple_statement"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -15397,6 +15797,28 @@
       "elementKinds": [
         "expression"
       ],
+      "slots": [
+        {
+          "name": "subject",
+          "propertyName": "subjects",
+          "paramName": "subjects",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "expression"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "expression",
+              "parseKind": "expression"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "subject"
@@ -15553,6 +15975,35 @@
       "elementKinds": [
         "expression",
         "slice"
+      ],
+      "slots": [
+        {
+          "name": "subscript",
+          "propertyName": "subscripts",
+          "paramName": "subscripts",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "expression",
+            "slice"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "expression",
+              "parseKind": "expression"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "slice",
+              "parseKind": "slice"
+            }
+          ]
+        }
       ],
       "factoryShape": "elements",
       "factoryFields": [
@@ -16131,6 +16582,49 @@
         "list_splat",
         "parenthesized_list_splat"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "expression",
+            "yield",
+            "list_splat",
+            "parenthesized_list_splat"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "expression",
+              "parseKind": "expression"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "yield",
+              "parseKind": "yield"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "list_splat",
+              "parseKind": "list_splat"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "parenthesized_list_splat",
+              "parseKind": "parenthesized_list_splat"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -16274,6 +16768,28 @@
       "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "pattern"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "pattern"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "pattern",
+              "parseKind": "pattern"
+            }
+          ]
+        }
       ],
       "factoryShape": "elements",
       "factoryFields": [
@@ -16806,6 +17322,28 @@
       "elementKinds": [
         "type"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "type"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "type",
+              "parseKind": "type"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -17329,6 +17867,28 @@
       "elementKinds": [
         "with_item"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "with_item"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "with_item",
+              "parseKind": "with_item"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -17521,6 +18081,28 @@
       "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "with_item"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "with_item"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "with_item",
+              "parseKind": "with_item"
+            }
+          ]
+        }
       ],
       "factoryShape": "elements",
       "factoryFields": [

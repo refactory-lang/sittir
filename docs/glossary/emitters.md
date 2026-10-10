@@ -7135,6 +7135,10 @@ enrich-stamped (`VariantChild.definedBy`); one hand-declared arm (a
 built without one with, so a tool can tell a read delimiter that merely
 restates the default from one that must be spelled.
 
+`slots` is the list's item slot, serialized as a compound node's slots are,
+so a reader of the model steps into a list's items through a slot like any
+other; `elementKinds` stays the kinds the items admit.
+
 ### `packages/codegen/src/emitters/node-model.ts::polymorphVariants`
 
 ```text
@@ -13890,6 +13894,10 @@ mark meeting it at the same gap. `seamStrength` maps the site's origin —
 declared (`preference`, `literal-default`, `word-default`) is 2, `cascade` is 1, the fallback
 is 0; separator sites are declared.
 
+`display` is the owning kind's visible name, the spelling of the emitted
+rows; `source` is the kind itself and `kindId` its stamped id. `kindEdge` and
+`edgeArm` carry the render rules' stamps through unchanged.
+
 ### `packages/codegen/src/emitters/render-options-rs.ts::armIdOf`
 
 The kind id one preference arm stands for: `BLANK_KIND_ID` for the blank arm,
@@ -13920,10 +13928,10 @@ origins spell the same value core's `spacing::SEAM_DECLARED` holds.
 ### `packages/codegen/src/emitters/render-options-rs.ts::edgeSitesOf`
 
 The per-kind edge rows: for each spacing site that is its kind's own edge
-(`isKindEdge`), the kind's id (`edgeKindId`) and the site index of its before
+(`isKindEdge`), the kind's stamped id and the site index of its before
 and after edge, plus, for a kind whose edge is a choice of tokens, the arm sites
 of each side: one `{ arm, site }` per arm site (`edgeArm`), keyed by the arm
-token's kind id. An arm token with no kind id is an error. Kinds whose name
+token's stamped kind id. An arm token with no kind id is an error. Kinds whose name
 resolves to more than one id are dropped, and rows come out in id order.
 `renderOptionsRs` writes them as `EDGE_SITES` (`before_arms`/`after_arms`) and
 indexes them by kind id in the dense `EDGE_ROWS` table (`denseTable`), so the
@@ -13934,17 +13942,9 @@ a kind with edge sites against this table (`edgeIdOf`).
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::isKindEdge`
 
-Whether a spacing site is its kind's own edge: its address parses as a seam
-whose token is the kind itself (`<kind>_before`/`<kind>_after`). One
-predicate for the edge table, the transport emitter's edge writes and its
+Whether a spacing site is its kind's own edge: the `kindEdge` stamp the
+render rules put on it. One predicate for the edge table, the transport emitter's edge writes and its
 field filter, so they cannot disagree on which sites live in the base.
-
-### `packages/codegen/src/emitters/render-options-rs.ts::edgeKindId`
-
-The id a kind's edges are keyed by: the kind's catalog entry by public name.
-`EDGE_SITES` rows, a transport's `Edged::kind_id` and every `w.edge` call
-take it from here, so a kind's edges are found under the id they were
-written with.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::carriesPerNodeValue`
 
@@ -14006,6 +14006,10 @@ grouping whether a slot has seats.
 `newlineArms` is the grammar's line-ending arms (`newlineArms`), written as `OptionTables.newline_arms`: the runtime refuses a `layout.newline` outside them, naming them, and treats `layout.newline` as an unknown key when there are none. `newline` is the preferred arm (`PREFERRED_NEWLINE`), written into the generated `defaults()` as `newline: "<arm>".to_string()`, so the default ending comes from the model's preference; core's own `Default` holds the writer's internal spelling only, for tables built outside a generated grammar.
 
 `indent` is the grammar's declared indent unit (`indentUnitOf`), empty for a grammar whose whitespace admits no indent characters. `renderOptionsRs` writes it into the generated `defaults()` as `indent: "<unit>".to_string()`, so the unit is the grammar's and core has no default of its own; an empty unit emits no line and `defaults()` keeps core's empty unit.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::stampOf`
+
+The kind id a planned row carries for a kind, read from the node the model stamped, or nothing for a kind with no id. A spacing site stamps its source kind with it and a seated site stamps its seat, so neither re-resolves an id by name.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::DepthSites`
 
@@ -15273,3 +15277,7 @@ Builds an isolated assembled list whose repeated element choice includes the lis
 ### `packages/codegen/src/emitters/node-model.ts::printNodeModel`
 
 The text of `node-model.json5`. `generate` builds the record once (`buildNodeModel`), prints it, and hands the same record to the bindings' routes input.
+### `packages/codegen/src/emitters/node-model.ts::enumMembersOf`
+
+An enum's members as the model records them, each its kind and text. Every value the enum admits must be some member's text; a value no member resolves is an error, so the serialized model carries members only.
+

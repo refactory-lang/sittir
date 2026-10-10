@@ -1,4 +1,3 @@
-import { join } from 'node:path';
 import { computeTransportSCC } from './scc.ts';
 import { tracePhaseRules, traceAssembleNodes } from './trace.ts';
 import { compileGrammar, assertCompilation, type Compilation } from './compile.ts';
@@ -9,6 +8,7 @@ import { emitConfig } from '../emitters/config.ts';
 import { grammarPackage, isStableGrammar, type GrammarPackage } from '../grammars.ts';
 import { emitIndex } from '../emitters/index-file.ts';
 import { buildNodeModel, printNodeModel } from '../emitters/node-model.ts';
+import { bindingsPathIn } from '../bindings/facts.ts';
 import { grammarInput } from '../bindings/input.ts';
 import { emitPortable } from '../emitters/overlays/portable/index.ts';
 import { emitApi, emitRenderEngine, spelledTriviaBuilders } from '../emitters/engine.ts';
@@ -140,7 +140,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 
 		const nodeModelData = buildNodeModel(nodeMap, generatedIdTables);
 		const nodeModel = printNodeModel(nodeModelData);
-		const routesInput = await grammarInput(cfg.grammar, raw, nodeModelData, join(pkg.dir, 'bindings.scm'));
+		const routesInput = await grammarInput(cfg.grammar, raw, nodeModelData, bindingsPathIn(pkg.dir));
 		const portable = routesInput === undefined ? undefined : emitPortable(routesInput, nodeMap, emitted.kindEntries);
 
 		const rootTypeName = nodeMap.nodes.get(grammarRoles.get('root')[0]!)?.typeName;

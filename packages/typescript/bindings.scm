@@ -19,7 +19,7 @@
 (interface_declaration (extends_type_clause)? @extends) @declaration.interface
 (enum_declaration) @declaration.enum
 (enum_assignment) @declaration.enum_member
-(enum_body (enum_body_elements (_) @declaration.enum_member))
+(enum_body_element_name name: (_) @name) @declaration.enum_member
 (type_alias_declaration) @declaration.type_alias
 (method_definition) @declaration.method
 (method_definition (accessibility_modifier) @visibility)
@@ -130,7 +130,6 @@
 (spread_element) @element.splat
 (pair) @element.pair
 (pair key: (computed_property_name) @key @computed)
-(shorthand_property_identifier) @element.pair @key
 (tuple_parameter) @element.tuple.member
 (optional_tuple_parameter) @element.tuple.member.optional
 (template_type) @element.template.substitution
@@ -235,7 +234,6 @@
 (object_assignment_pattern) @pattern.object.assignment
 (pair_pattern) @pattern.object.pair
 (pair_pattern key: (computed_property_name) @key @computed)
-(shorthand_property_identifier_pattern) @pattern.object.pair @key
 (array_pattern) @pattern.array
 (rest_pattern) @pattern.rest
 (assignment_pattern) @pattern.assignment
@@ -295,6 +293,8 @@
 (identifier) @identifier
 (type_identifier) @identifier.type
 (property_identifier) @identifier.property
+(shorthand_property_identifier) @identifier.property.shorthand
+(shorthand_property_identifier_pattern) @identifier.property.shorthand
 (nested_identifier) @identifier.nested
 (nested_type_identifier) @type.path
 (statement_identifier) @identifier.label

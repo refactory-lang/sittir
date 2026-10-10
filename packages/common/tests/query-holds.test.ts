@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { QueryPlan } from '@sittir/types';
+import type { QueryPlan, QuerySubject } from '@sittir/types';
 import { holds } from '../src/query.ts';
 
 const NAME = { fields: ['name'], kinds: [] };
@@ -14,9 +14,21 @@ describe('holds', () => {
 	});
 
 	it('compares the node\'s own text when the plan names itself', () => {
-		const plan: QueryPlan = { op: 'match', pattern: '^def __', self: true };
+		const plan: QueryPlan<QuerySubject> = { op: 'match', pattern: '^def __', self: true };
 		expect(holds(plan, texts)).toBe(true);
 		expect(holds({ op: 'eq', text: 'pass', self: true }, texts)).toBe(false);
+	});
+
+	it('tests the node types in a slot, or the node\'s own type, when the plan is an `is`', () => {
+		const types = (subject: QuerySubject): readonly number[] => ('self' in subject ? [7] : subject.fields.includes('name') ? [1, 2] : []);
+		expect(holds({ op: 'is', types: [2, 3], ...NAME }, texts, types)).toBe(true);
+		expect(holds({ op: 'is', types: [3], ...NAME }, texts, types)).toBe(false);
+		expect(holds({ op: 'is', types: [7], self: true }, texts, types)).toBe(true);
+		expect(holds({ op: 'not', of: { op: 'is', types: [3], ...NAME } }, texts, types)).toBe(true);
+	});
+
+	it('refuses an `is` plan when the caller reads no node types', () => {
+		expect(() => holds({ op: 'is', types: [1], ...NAME }, texts)).toThrow(/is/);
 	});
 
 	it('combines self and slot conditions', () => {

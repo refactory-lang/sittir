@@ -5549,11 +5549,6 @@
       "typeName": "AccessibilityModifier",
       "factoryName": "accessibilityModifier",
       "hidden": false,
-      "values": [
-        "public",
-        "private",
-        "protected"
-      ],
       "members": [
         {
           "kind": "public_keyword",
@@ -11431,6 +11426,28 @@
       "elementKinds": [
         "_enum_body_element"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "_enum_body_element"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "_enum_body_element",
+              "parseKind": "_enum_body_element"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -11913,6 +11930,28 @@
       "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "export_specifier"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "export_specifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "export_specifier",
+              "parseKind": "export_specifier"
+            }
+          ]
+        }
       ],
       "factoryShape": "elements",
       "factoryFields": [
@@ -14356,6 +14395,35 @@
         "required_parameter",
         "optional_parameter"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "required_parameter",
+            "optional_parameter"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "required_parameter",
+              "parseKind": "required_parameter"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "optional_parameter",
+              "parseKind": "optional_parameter"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -16411,6 +16479,28 @@
       "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "import_specifier"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "import_specifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "import_specifier",
+              "parseKind": "import_specifier"
+            }
+          ]
+        }
       ],
       "factoryShape": "elements",
       "factoryFields": [
@@ -22077,6 +22167,63 @@
         "index_signature",
         "method_signature"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "export_statement",
+            "property_signature",
+            "call_signature",
+            "construct_signature",
+            "index_signature",
+            "method_signature"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "export_statement",
+              "parseKind": "export_statement"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "property_signature",
+              "parseKind": "property_signature"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "call_signature",
+              "parseKind": "call_signature"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "construct_signature",
+              "parseKind": "construct_signature"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "index_signature",
+              "parseKind": "index_signature"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "method_signature",
+              "parseKind": "method_signature"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -23601,18 +23748,6 @@
       "typeName": "PredefinedType",
       "factoryName": "predefinedType",
       "hidden": false,
-      "values": [
-        "any",
-        "number",
-        "boolean",
-        "string",
-        "symbol",
-        "unique symbol",
-        "void",
-        "unknown",
-        "never",
-        "object"
-      ],
       "members": [
         {
           "kind": "any_keyword",
@@ -28204,6 +28339,56 @@
         "rest_type",
         "type"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "tuple_parameter",
+            "optional_tuple_parameter",
+            "optional_type",
+            "rest_type",
+            "type"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "tuple_parameter",
+              "parseKind": "tuple_parameter"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "optional_tuple_parameter",
+              "parseKind": "optional_tuple_parameter"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "optional_type",
+              "parseKind": "optional_type"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "rest_type",
+              "parseKind": "rest_type"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "type",
+              "parseKind": "type"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -28889,6 +29074,28 @@
       "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "type_parameter"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "type_parameter"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "type_parameter",
+              "parseKind": "type_parameter"
+            }
+          ]
+        }
       ],
       "factoryShape": "elements",
       "factoryFields": [
@@ -29683,6 +29890,28 @@
       "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "type"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "type"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "type",
+              "parseKind": "type"
+            }
+          ]
+        }
       ],
       "factoryShape": "elements",
       "factoryFields": [

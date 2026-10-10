@@ -13,7 +13,8 @@
 		"tests/narrow-to.test-d.ts",
 		"tests/keyword-slot-config.test-d.ts",
 		"tests/row-is-the-call.test-d.ts",
-		"tests/numeric-literal.test-d.ts"
+		"tests/numeric-literal.test-d.ts",
+		"tests/query-plan.test-d.ts"
 	],
 	"exclude": ["node_modules", "dist"]
 }

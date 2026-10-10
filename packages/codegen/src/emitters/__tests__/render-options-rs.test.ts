@@ -183,7 +183,7 @@ describe('renderOptionsRs', () => {
 	it("gives a list flank its origin's strength: declared only when a preference declares it", () => {
 		const flank = (origin?: SitePreference['origin']): SitePreference => ({ kind: 'arguments', slot: 'elements', address: 'elements_start', label: 'start', arms: SPACING, defaultArm: 'tight', source: 'spacing', side: 'start', ...(origin === undefined ? {} : { origin }) });
 		const strengthOf = (site: SitePreference) =>
-			planRenderOptions([...sites, site], kindEntries, makeSiteKindsNodeMap([...sites, site]), whitespaceText, undefined, 'rust').spacingSites.find((s) => s.kind === 'arguments' && s.side === 'start')?.strength;
+			planRenderOptions([...sites, site], kindEntries, makeSiteKindsNodeMap([...sites, site]), whitespaceText, undefined, 'rust').spacingSites.find((s) => s.display === 'arguments' && s.side === 'start')?.strength;
 		expect(strengthOf(flank('preference'))).toBe(SEAM_DECLARED);
 		expect(strengthOf(flank())).toBe(0);
 	});
@@ -254,6 +254,23 @@ describe('renderOptionsRs', () => {
 	});
 });
 
+describe('an address that names one canonical path', () => {
+	it('refuses a path two sites share', () => {
+		const twins: SitePreference[] = ['block', '_block'].map((kind) => ({
+			kind,
+			slot: 'statements',
+			address: 'statements_separator_space',
+			label: 'empty_separator_space',
+			arms: SPACING,
+			defaultArm: 'newline',
+			source: 'spacing'
+		}));
+		const plan = planRenderOptions(twins, kindEntries, makeSiteKindsNodeMap(twins), whitespaceText, undefined, 'rust');
+		const addresses = deriveAddressTables(twins, kindEntries, makeSiteKindsNodeMap(twins), kindIdArmType(kindEntries as never), (() => []) as never);
+		expect(() => renderOptionsRs(plan, addresses, kindEntries)).toThrow(/which is 2 sites/);
+	});
+});
+
 describe('a kind edge over a choice of tokens', () => {
 	const entries = [...kindEntries, { kind: 'bracket', member: 'Bracket', id: 40 }];
 	const seam = (address: string, extra: Partial<SitePreference> = {}): SitePreference => ({
@@ -268,14 +285,14 @@ describe('a kind edge over a choice of tokens', () => {
 		...extra
 	});
 	const armSites = [
-		seam('bracket_before', { edgeLiterals: ['lparen', 'semi'] }),
-		seam('lparen_before', { slot: 'lparen', edgeArm: { parent: 'bracket_before', token: 'lparen' } }),
-		seam('semi_before', { slot: 'semi', edgeArm: { parent: 'bracket_before', token: 'semi' } })
+		seam('bracket_before', { edgeLiterals: ['lparen', 'semi'], kindEdge: true }),
+		seam('lparen_before', { slot: 'lparen', edgeArm: { parent: 'bracket_before', token: 'lparen', kindId: 21 } }),
+		seam('semi_before', { slot: 'semi', edgeArm: { parent: 'bracket_before', token: 'semi', kindId: 20 } })
 	];
 	const plan = planRenderOptions(armSites, entries, makeSiteKindsNodeMap(armSites, entries), whitespaceText, undefined, 'rust');
 
 	it('keys its arm sites by the arm token\'s kind id under the kind\'s edge row', () => {
-		const row = edgeSitesOf(plan, entries)[0]!;
+		const row = edgeSitesOf(plan)[0]!;
 		const siteOf = (address: string) => plan.spacingSites.findIndex((site) => site.address === address);
 		expect(row.kind).toBe(40);
 		expect(row.before).toBe(siteOf('bracket_before'));
@@ -294,6 +311,6 @@ describe('a kind edge over a choice of tokens', () => {
 	it('refuses an arm token with no kind id', () => {
 		const lost = [armSites[0]!, { ...armSites[1]!, edgeArm: { parent: 'bracket_before', token: 'unknown_token' } }];
 		const lostPlan = planRenderOptions(lost, entries, makeSiteKindsNodeMap(lost, entries), whitespaceText, undefined, 'rust');
-		expect(() => edgeSitesOf(lostPlan, entries)).toThrow(/unknown_token/);
+		expect(() => edgeSitesOf(lostPlan)).toThrow(/unknown_token/);
 	});
 });

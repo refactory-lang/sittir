@@ -19,13 +19,10 @@ export namespace Identifier {
 	export interface Field<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
 		// claimed by r
 		readonly $kind: 'identifier.field';
-		readonly content: G['identifier'];
 	}
 	export interface Label<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
 		// claimed by rt
 		readonly $kind: 'identifier.label';
-		readonly content?: G['identifier'];
-		// t only
 		readonly name?: G['identifier'];
 		// r only
 	}
@@ -49,7 +46,12 @@ export namespace Identifier {
 	export interface Property<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
 		// claimed by t
 		readonly $kind: 'identifier.property';
-		readonly content?: G['identifier'];
+	}
+	export namespace Property {
+		export interface Shorthand<G extends GrammarContext<G>> extends SubKindOf<V.Identifier.Property<G>> {
+			// claimed by t
+			readonly $kind: 'identifier.property.shorthand';
+		}
 	}
 	export interface Scoped<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
 		// claimed by r
@@ -68,8 +70,6 @@ export namespace Identifier {
 	export interface Type<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
 		// claimed by prt
 		readonly $kind: 'identifier.type';
-		readonly content?: G['identifier'];
-		// rt only
 	}
 	export type Any<G extends GrammarContext<G>> =
 		| V.Identifier<G>
@@ -81,6 +81,7 @@ export namespace Identifier {
 		| V.Identifier.Metavariable<G>
 		| V.Identifier.Nested<G>
 		| V.Identifier.Property<G>
+		| V.Identifier.Property.Shorthand<G>
 		| V.Identifier.Scoped<G>
 		| V.Identifier.Self<G>
 		| V.Identifier.Super<G>

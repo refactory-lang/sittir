@@ -1654,11 +1654,36 @@
           "name": "doc",
           "route": "nested",
           "via": [
-            "expression_statement",
-            "simple_statements_elements",
-            "simple_statements",
-            "block",
-            "suite_block"
+            {
+              "field": "item",
+              "kind": "expression_statement",
+              "after": null,
+              "anchor": "first"
+            },
+            {
+              "field": null,
+              "kind": "simple_statements_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "simple_statements",
+              "after": null,
+              "anchor": "first"
+            },
+            {
+              "field": null,
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": "body",
+              "kind": "suite_block",
+              "after": null,
+              "anchor": null
+            }
           ],
           "parent": "expression_statement",
           "slot": "content",
@@ -1837,7 +1862,12 @@
           "name": "operator",
           "route": "nested",
           "via": [
-            "comparison_operator_comparator"
+            {
+              "field": null,
+              "kind": "comparison_operator_comparator",
+              "after": null,
+              "anchor": null
+            }
           ],
           "parent": "comparison_operator_comparator",
           "slot": "operators",
@@ -2465,6 +2495,19 @@
         "terminals": [],
         "list": false
       }
+    },
+    "escape_interpolation": {
+      "vocab": "literal.string.escape",
+      "read": [
+        {
+          "vocab": "literal.string.escape",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
     },
     "escape_sequence": {
       "vocab": "literal.string.escape",
@@ -3254,11 +3297,36 @@
           "name": "doc",
           "route": "nested",
           "via": [
-            "expression_statement",
-            "simple_statements_elements",
-            "simple_statements",
-            "block",
-            "suite_block"
+            {
+              "field": "item",
+              "kind": "expression_statement",
+              "after": null,
+              "anchor": "first"
+            },
+            {
+              "field": null,
+              "kind": "simple_statements_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "simple_statements",
+              "after": null,
+              "anchor": "first"
+            },
+            {
+              "field": null,
+              "kind": "block",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": "body",
+              "kind": "suite_block",
+              "after": null,
+              "anchor": null
+            }
           ],
           "parent": "expression_statement",
           "slot": "content",
@@ -3409,16 +3477,6 @@
       "read": [
         {
           "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "parameters_elements",
-            "parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
-          "vocab": "declaration.parameter.self",
           "toplevel": false,
           "within": [
             "parameters_elements",
@@ -4205,12 +4263,26 @@
           "name": "subject",
           "route": "nested",
           "via": [
-            "subjects"
+            {
+              "field": null,
+              "kind": "subjects",
+              "after": null,
+              "anchor": null
+            }
           ],
           "parent": "subjects",
-          "slot": null,
+          "slot": "subject",
           "multiple": true,
-          "path": null
+          "path": [
+            {
+              "owner": "match_statement",
+              "slot": "subjects"
+            },
+            {
+              "owner": "subjects",
+              "slot": "subject"
+            }
+          ]
         }
       ]
     },
@@ -5072,34 +5144,6 @@
           ]
         },
         {
-          "vocab": "literal.string.docstring",
-          "toplevel": false,
-          "within": [
-            "expression_statement",
-            "simple_statements_elements",
-            "simple_statements",
-            "block",
-            "suite_block",
-            "function_definition"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
-          "vocab": "literal.string.docstring",
-          "toplevel": false,
-          "within": [
-            "expression_statement",
-            "simple_statements_elements",
-            "simple_statements",
-            "block",
-            "suite_block",
-            "class_definition"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "literal.string",
           "toplevel": true,
           "within": [],
@@ -5169,12 +5213,26 @@
           "name": "index",
           "route": "nested",
           "via": [
-            "subscripts"
+            {
+              "field": null,
+              "kind": "subscripts",
+              "after": null,
+              "anchor": null
+            }
           ],
           "parent": "subscripts",
-          "slot": null,
+          "slot": "subscript",
           "multiple": true,
-          "path": null
+          "path": [
+            {
+              "owner": "subscript",
+              "slot": "subscripts"
+            },
+            {
+              "owner": "subscripts",
+              "slot": "subscript"
+            }
+          ]
         }
       ]
     },
@@ -6007,20 +6065,20 @@
         "paths": 13,
         "kinds": 3,
         "refinements": 0,
-        "aliases": 115
+        "aliases": 113
       },
       {
         "depth": 2,
         "paths": 74,
         "kinds": 68,
         "refinements": 7,
-        "aliases": 79
+        "aliases": 77
       },
       {
         "depth": 3,
-        "paths": 67,
+        "paths": 65,
         "kinds": 53,
-        "refinements": 49,
+        "refinements": 47,
         "aliases": 42
       },
       {

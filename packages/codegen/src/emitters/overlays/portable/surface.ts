@@ -1,7 +1,7 @@
 import type { PortableCondition } from '@sittir/types';
 import { WILDCARD } from '../../../bindings/facts.ts';
 import type { GrammarRoutes, ReadEntry } from '../../../bindings/routes.ts';
-import { aliasesOf, namespaceTree, type NamespaceNode } from './namespaces.ts';
+import { aliasesOf, descendants, namespaceTree, type NamespaceNode } from './namespaces.ts';
 
 export interface PortableSurfaceConfig {
 	readonly routes: GrammarRoutes;
@@ -12,14 +12,10 @@ export interface PortableSurfaceConfig {
 
 const q = (text: string): string => JSON.stringify(text);
 
-function descendantsOf(node: NamespaceNode): NamespaceNode[] {
-	return [...node.children.values()].flatMap((child) => [child, ...descendantsOf(child)]);
-}
-
 export function emitPortableSurface({ routes, readTest, kindIdOf, fixedText }: PortableSurfaceConfig): string {
 	const root = namespaceTree(routes.readEntries);
 	const { aliases } = aliasesOf(root);
-	const nodes = descendantsOf(root);
+	const nodes = descendants(root);
 	const byPath = new Map([root, ...nodes].map((n) => [n.path, n]));
 	const braces = (parts: readonly string[]): string => (parts.length === 0 ? '{}' : `{ ${parts.join('; ')} }`);
 	const members = (under: string, at: string): string[] =>

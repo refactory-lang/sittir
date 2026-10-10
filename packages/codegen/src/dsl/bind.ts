@@ -1,4 +1,5 @@
 import { isPreference } from './primitives/preference.ts';
+import { isPrecWrapper } from '../types/runtime-shapes.ts';
 import { LABELS_KEY } from './wire/options-block.ts';
 import { REPARSE_HOST_PRIORITY } from './wire/reparse-hosts.ts';
 import type { PatchesConfig } from './wire/wire.ts';
@@ -61,13 +62,21 @@ export function split(kind: string, as: string, placement: Pick<Split, 'within' 
 	return { kind, as, within: placement.within, containers: placement.containers };
 }
 
-type GrammarRecord = Record<string, unknown>;
+export type GrammarRecord = Record<string, unknown>;
 
 const LIST_FIELDS = ['supertypes', 'inline', 'factoryInline', 'textTokens', 'protectedRuleNames', 'undeclaredRules'];
 const RULE_FIELDS = ['extras', 'externals', 'precedences', 'reserved', 'conflicts'];
 const KEYED_FIELDS = ['rules', 'renderAs', 'visibleExternals', 'groups'];
 
-const isRecord = (value: unknown): value is GrammarRecord => typeof value === 'object' && value !== null && !Array.isArray(value);
+export const isRecord = (value: unknown): value is GrammarRecord => typeof value === 'object' && value !== null && !Array.isArray(value);
+
+const KIND_KEYS: ReadonlySet<string> = new Set(['variantOf']);
+
+function namesKind(record: GrammarRecord, key: string): boolean {
+	if (key === 'name') return record.type === 'SYMBOL' || record.type === 'FIELD_ALIAS';
+	if (key === 'value') return record.type === 'ALIAS' && record.named === true;
+	return KIND_KEYS.has(key);
+}
 
 function renameValue(value: unknown, rename: (name: string) => string): unknown {
 	if (typeof value === 'string') return rename(value);
@@ -75,11 +84,9 @@ function renameValue(value: unknown, rename: (name: string) => string): unknown 
 	if (!isRecord(value)) return value;
 	const out: GrammarRecord = {};
 	for (const [key, v] of Object.entries(value)) {
-		if (key === 'type' || key === 'value' || key === 'id') out[key] = v;
-		else if (key === 'name' && value.type !== 'SYMBOL' && value.type !== 'FIELD_ALIAS') out[key] = v;
+		if (typeof v === 'string') out[key] = namesKind(value, key) ? rename(v) : v;
 		else out[key] = renameValue(v, rename);
 	}
-	if (value.type === 'ALIAS' && value.named === true && typeof value.value === 'string') out.value = rename(value.value);
 	return out;
 }
 
@@ -171,7 +178,7 @@ export function renameGrammar(grammar: GrammarRecord, renames: Readonly<Record<s
 	return out;
 }
 
-function symbolNames(rule: unknown, out: Set<string> = new Set()): Set<string> {
+export function symbolNames(rule: unknown, out: Set<string> = new Set()): Set<string> {
 	if (Array.isArray(rule)) for (const r of rule) symbolNames(r, out);
 	else if (isRecord(rule)) {
 		if (rule.type === 'SYMBOL' && typeof rule.name === 'string') out.add(rule.name);
@@ -338,10 +345,8 @@ export interface ChildFields {
 	readonly arm: boolean;
 }
 
-const PRECEDENCE_RULES: ReadonlySet<unknown> = new Set(['PREC', 'PREC_LEFT', 'PREC_RIGHT', 'PREC_DYNAMIC']);
-
 function unprecedenced(rule: unknown): unknown {
-	return isRecord(rule) && PRECEDENCE_RULES.has(rule.type) ? unprecedenced(rule.content) : rule;
+	return isRecord(rule) && isPrecWrapper(rule as { type: string }) ? unprecedenced(rule.content) : rule;
 }
 
 export function childFields(grammar: GrammarRecord, owner: string, target: FieldWrapTarget | null): ChildFields {

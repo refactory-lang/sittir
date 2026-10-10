@@ -8,9 +8,7 @@ const CEILING: Readonly<Record<string, readonly string[]>> = {
 	python: [
 		'class_definition.doc',
 		'comparison_operator.operator',
-		'function_definition.doc',
-		'match_statement.subject',
-		'subscript.index'
+		'function_definition.doc'
 	],
 	rust: ['impl_item_body.implements', 'impl_item_body.receiver'],
 	typescript: [

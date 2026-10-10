@@ -1961,6 +1961,14 @@ to, the declaration under its kind says what its arm is. Welded together, as
 `preference(label, arm)` repeated at every site does today, neither can be
 stated once.
 
+### `packages/codegen/src/dsl/wire/options-block.ts::AddressLabel`
+
+One entry of the options block's labels: an address and the label it names.
+
+### `packages/codegen/src/dsl/wire/options-block.ts::LABELS_KEY`
+
+The options key under which addresses are labelled. Its keys are addresses whose heads are kinds, which a kind rename has to follow.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::declaredGroupMintName`
 
 The rule name a `groups:` or `injects:` declaration is registered under: the

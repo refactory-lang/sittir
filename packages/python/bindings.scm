@@ -7,9 +7,9 @@
 
 ; ── declaration ────────────────────────────────────────────────────────────────
 (function_definition) @declaration.function
-(function_definition body: (suite_block (block . (simple_statements (simple_statements_elements . item: (expression_statement (string) @doc @literal.string.docstring))))))
+(function_definition body: (suite_block (block . (simple_statements (simple_statements_elements . item: (expression_statement (string) @doc))))))
 (class_definition superclasses: (_)? @bases) @declaration.class
-(class_definition body: (suite_block (block . (simple_statements (simple_statements_elements . item: (expression_statement (string) @doc @literal.string.docstring))))))
+(class_definition body: (suite_block (block . (simple_statements (simple_statements_elements . item: (expression_statement (string) @doc))))))
 (class_definition body: (suite_block (block (function_definition) @declaration.method)))
 ((function_definition name: (identifier) @name) @declaration.constructor (#eq? @name "__init__"))
 ((function_definition name: (identifier) @name) @declaration.method.dunder (#match? @name "^__(?<stem>.*)__$"))
@@ -17,7 +17,6 @@
 ((decorated_definition (decorator (identifier) @_d) (function_definition) @declaration.method.class) (#eq? @_d "classmethod"))
 (decorated_definition (decorator)* @decorators definition: (_) @element)
 (parameters (parameters_elements (identifier) @declaration.parameter))
-(parameters (parameters_elements . (identifier) @declaration.parameter.self))
 (lambda_parameters (parameters_elements (identifier) @declaration.parameter))
 (typed_parameter) @declaration.parameter.typed
 (default_parameter value: (_)? @default) @declaration.parameter.default
@@ -186,6 +185,7 @@
 ; ── literal ────────────────────────────────────────────────────────────────────
 (string) @literal.string
 (escape_sequence) @literal.string.escape
+(escape_interpolation) @literal.string.escape
 (concatenated_string) @literal.string.concatenated
 ((string (string_start) @_p) @literal.string.f (#match? @_p "^[fF]"))
 ((string (string_start) @_p) @literal.string.bytes (#match? @_p "^[bB]"))

@@ -13,9 +13,11 @@ export const BOOTSTRAP_DIR_ENV = 'SITTIR_BOOTSTRAP_DIR';
 
 const COMPLETE = '.complete';
 
+export const PIN_FILE = 'bootstrap.json';
+
 export function readPin(root: string = REPO_ROOT): string {
-	const { sha } = JSON.parse(readFileSync(join(root, 'bootstrap.json'), 'utf8')) as { sha?: unknown };
-	if (typeof sha !== 'string' || !/^[0-9a-f]{40}$/.test(sha)) throw new Error(`bootstrap.json: "sha" must be a full commit hash`);
+	const { sha } = JSON.parse(readFileSync(join(root, PIN_FILE), 'utf8')) as { sha?: unknown };
+	if (typeof sha !== 'string' || !/^[0-9a-f]{40}$/.test(sha)) throw new Error(`${PIN_FILE}: "sha" must be a full commit hash`);
 	return sha;
 }
 

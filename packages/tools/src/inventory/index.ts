@@ -15,7 +15,6 @@ import {
 	grammarBindingsHash,
 	grammarInput,
 	printBindingsModule,
-	readBindings,
 	resolveRoutes,
 	VOCABULARY_DIR
 } from '@sittir/codegen/bindings';
@@ -82,14 +81,12 @@ export function vocabularyMembers(vocabulary: Vocabulary): ReadonlyMap<string, R
 }
 
 export async function bindingsModule(grammar: GrammarName): Promise<BindingsModule> {
-	const facts = await readBindings(readFileSync(bindingsPath(grammar), 'utf8'));
 	const base = await evaluateGrammar(grammar, { unbound: true });
 	const model = await invoke('nodeModel', 'buildNodeModel', await compileNodeMap(grammar, { unbound: true }));
 	const input = await grammarInput(grammar, base, model);
 	if (input === undefined) throw new Error(`bindings-inventory: ${grammar} has no bindings.scm`);
 	const { overlay, report } = deriveOverlay({
-		grammar,
-		facts,
+		facts: input.bindings,
 		base,
 		vocabMembers: vocabularyMembers(readVocabulary(VOCABULARY_DIR)),
 		routedMembers: resolveRoutes(input).members

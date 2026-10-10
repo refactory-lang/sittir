@@ -15,7 +15,7 @@ import {
 	storageKindOfRef,
 	type NodeOrTerminal
 } from './node-map.ts';
-import { spacingSitesOf, type RenderRules, type SeatedChild, type SpacingSide } from './render-rules.ts';
+import { spacingSitesOf, type EdgeArm, type RenderRules, type SeatedChild, type SpacingSide } from './render-rules.ts';
 import { readOptionsBlock, type OptionsConfig } from '../../dsl/wire/options-block.ts';
 import { addressSegments, addressSites, matchAddress, resolveLabels } from './site-addresses.ts';
 import { supertypeMembersByDisplayName } from './supertype-members.ts';
@@ -56,7 +56,8 @@ export interface SitePreference {
 	readonly seat?: SeatedChild;
 	readonly path?: readonly PreferenceSegment[];
 	readonly edgeLiterals?: readonly string[];
-	readonly edgeArm?: { readonly parent: string; readonly token: string };
+	readonly edgeArm?: EdgeArm;
+	readonly kindEdge?: true;
 }
 
 export interface SiteCandidate {
@@ -122,7 +123,8 @@ function resolveSitePreferences(config: SitePreferencesConfig, requireHit: boole
 				...(site.seat === undefined ? {} : { seat: site.seat }),
 				...(site.path === undefined ? {} : { path: site.path }),
 				...(site.edgeLiterals === undefined ? {} : { edgeLiterals: site.edgeLiterals }),
-				...(site.edgeArm === undefined ? {} : { edgeArm: site.edgeArm })
+				...(site.edgeArm === undefined ? {} : { edgeArm: site.edgeArm }),
+				...(site.kindEdge === undefined ? {} : { kindEdge: site.kindEdge })
 			});
 		}
 	}

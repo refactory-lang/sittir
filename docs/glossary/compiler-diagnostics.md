@@ -788,3 +788,7 @@ A kind and the literal tokens its template neither writes nor seats in a slot.
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::fromDroppedTokens`
 
 The blocking `dropped-token` error for one kind: the tokens lost by its render, and the remedy, a named wrapper for the token in patches so it becomes a slot. Generation stops on it unless `dropped-token` is allowed. It is raised once the templates are emitted, because the template is the only place the loss is visible.
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::expectationsInEitherSpelling`
+
+The grammar's `expectDiagnostics` with each kind listed under both its base name and its bound name. A grammar declares its expectations in base names, and a diagnostic may name the kind either way, depending on whether it is raised before or after the bindings overlay renames it. A grammar with no renames keeps its expectations as written.
+

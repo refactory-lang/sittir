@@ -1213,13 +1213,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Literal.String.Escape<G>
 				| string;
 		};
-		readonly 'literal.string.docstring': {
-			readonly contents:
-				| unknown
-				| V.Expression.Interpolation<G>
-				| V.Literal.String.Escape<G>
-				| string;
-		};
 		readonly 'literal.string.escape': {
 			readonly content: unknown;
 		};

@@ -144,11 +144,10 @@ export interface PortableIds {
 	element:
 		| TSKindId.OptionalTupleParameter
 		| TSKindId.Pair
-		| TSKindId.ShorthandPropertyIdentifier
 		| TSKindId.SpreadElement
 		| TSKindId.TemplateType
 		| TSKindId.TupleParameter;
-	'element.pair': TSKindId.Pair | TSKindId.ShorthandPropertyIdentifier;
+	'element.pair': TSKindId.Pair;
 	'element.splat': TSKindId.SpreadElement;
 	'element.template': TSKindId.TemplateType;
 	'element.template.substitution': TSKindId.TemplateType;
@@ -289,13 +288,19 @@ export interface PortableIds {
 		| TSKindId.Identifier
 		| TSKindId.NestedIdentifier
 		| TSKindId.PropertyIdentifier
+		| TSKindId.ShorthandPropertyIdentifier
+		| TSKindId.ShorthandPropertyIdentifierPattern
 		| TSKindId.StatementIdentifier
 		| TSKindId.Super
 		| TSKindId.This
 		| TSKindId.TypeIdentifier;
 	'identifier.label': TSKindId.StatementIdentifier;
 	'identifier.nested': TSKindId.NestedIdentifier;
-	'identifier.property': TSKindId.PropertyIdentifier;
+	'identifier.property':
+		| TSKindId.PropertyIdentifier
+		| TSKindId.ShorthandPropertyIdentifier
+		| TSKindId.ShorthandPropertyIdentifierPattern;
+	'identifier.property.shorthand': TSKindId.ShorthandPropertyIdentifier | TSKindId.ShorthandPropertyIdentifierPattern;
 	'identifier.self': TSKindId.This;
 	'identifier.super': TSKindId.Super;
 	'identifier.type': TSKindId.TypeIdentifier;
@@ -381,17 +386,12 @@ export interface PortableIds {
 		| TSKindId.ObjectAssignmentPattern
 		| TSKindId.ObjectPattern
 		| TSKindId.PairPattern
-		| TSKindId.RestPattern
-		| TSKindId.ShorthandPropertyIdentifierPattern;
+		| TSKindId.RestPattern;
 	'pattern.array': TSKindId.ArrayPattern;
 	'pattern.assignment': TSKindId.AssignmentPattern;
-	'pattern.object':
-		| TSKindId.ObjectAssignmentPattern
-		| TSKindId.ObjectPattern
-		| TSKindId.PairPattern
-		| TSKindId.ShorthandPropertyIdentifierPattern;
+	'pattern.object': TSKindId.ObjectAssignmentPattern | TSKindId.ObjectPattern | TSKindId.PairPattern;
 	'pattern.object.assignment': TSKindId.ObjectAssignmentPattern;
-	'pattern.object.pair': TSKindId.PairPattern | TSKindId.ShorthandPropertyIdentifierPattern;
+	'pattern.object.pair': TSKindId.PairPattern;
 	'pattern.rest': TSKindId.RestPattern;
 	statement:
 		| TSKindId.BreakStatement
@@ -1082,10 +1082,15 @@ export interface PortableKindsAt {
 		readonly self: PortableKindsAt['identifier.self'];
 		readonly super: PortableKindsAt['identifier.super'];
 		readonly type: PortableKindsAt['identifier.type'];
+		readonly shorthand: PortableKindsAt['identifier.property.shorthand'];
 	};
 	'identifier.label': { readonly $ids: readonly PortableIds['identifier.label'][] };
 	'identifier.nested': { readonly $ids: readonly PortableIds['identifier.nested'][] };
-	'identifier.property': { readonly $ids: readonly PortableIds['identifier.property'][] };
+	'identifier.property': {
+		readonly $ids: readonly PortableIds['identifier.property'][];
+		readonly shorthand: PortableKindsAt['identifier.property.shorthand'];
+	};
+	'identifier.property.shorthand': { readonly $ids: readonly PortableIds['identifier.property.shorthand'][] };
 	'identifier.self': { readonly $ids: readonly PortableIds['identifier.self'][] };
 	'identifier.super': { readonly $ids: readonly PortableIds['identifier.super'][] };
 	'identifier.type': { readonly $ids: readonly PortableIds['identifier.type'][] };
@@ -1817,10 +1822,14 @@ export interface PortableIsAt {
 		readonly self: PortableIsAt['identifier.self'];
 		readonly super: PortableIsAt['identifier.super'];
 		readonly type: PortableIsAt['identifier.type'];
+		readonly shorthand: PortableIsAt['identifier.property.shorthand'];
 	};
 	'identifier.label': PortableGuard<PortableIds['identifier.label']> & {};
 	'identifier.nested': PortableGuard<PortableIds['identifier.nested']> & {};
-	'identifier.property': PortableGuard<PortableIds['identifier.property']> & {};
+	'identifier.property': PortableGuard<PortableIds['identifier.property']> & {
+		readonly shorthand: PortableIsAt['identifier.property.shorthand'];
+	};
+	'identifier.property.shorthand': PortableGuard<PortableIds['identifier.property.shorthand']> & {};
 	'identifier.self': PortableGuard<PortableIds['identifier.self']> & {};
 	'identifier.super': PortableGuard<PortableIds['identifier.super']> & {};
 	'identifier.type': PortableGuard<PortableIds['identifier.type']> & {};
@@ -2174,6 +2183,7 @@ export interface PortableKinds {
 	readonly shift_left: PortableKindsAt['expression.assignment.compound.shift_left'];
 	readonly shift_right: PortableKindsAt['expression.assignment.compound.shift_right'];
 	readonly shift_right_unsigned: PortableKindsAt['expression.assignment.compound.shift_right_unsigned'];
+	readonly shorthand: PortableKindsAt['identifier.property.shorthand'];
 	readonly splat: PortableKindsAt['element.splat'];
 	readonly static: PortableKindsAt['statement.block.static'];
 	readonly strict_equal: PortableKindsAt['expression.binary.comparison.strict_equal'];
@@ -2337,6 +2347,7 @@ export interface PortableIs {
 	readonly shift_left: PortableIsAt['expression.assignment.compound.shift_left'];
 	readonly shift_right: PortableIsAt['expression.assignment.compound.shift_right'];
 	readonly shift_right_unsigned: PortableIsAt['expression.assignment.compound.shift_right_unsigned'];
+	readonly shorthand: PortableIsAt['identifier.property.shorthand'];
 	readonly splat: PortableIsAt['element.splat'];
 	readonly static: PortableIsAt['statement.block.static'];
 	readonly strict_equal: PortableIsAt['expression.binary.comparison.strict_equal'];
@@ -2479,14 +2490,14 @@ const table: PortableTable = {
 				TSKindId.VariableDeclaratorDefinite,
 				TSKindId.VariableDeclaratorPlain
 			],
-			exact: false
+			exact: true
 		},
 		'declaration.ambient': { ids: [TSKindId.AmbientDeclaration], exact: true },
 		'declaration.class': { ids: [TSKindId.AbstractClassDeclaration, TSKindId.ClassDeclaration], exact: true },
 		'declaration.class.abstract': { ids: [TSKindId.AbstractClassDeclaration], exact: true },
 		'declaration.constructor': { ids: [TSKindId.MethodDefinition], exact: false },
 		'declaration.enum': { ids: [TSKindId.EnumDeclaration], exact: true },
-		'declaration.enum_member': { ids: [TSKindId.EnumAssignment, TSKindId.EnumBodyElementName], exact: false },
+		'declaration.enum_member': { ids: [TSKindId.EnumAssignment, TSKindId.EnumBodyElementName], exact: true },
 		'declaration.field': { ids: [TSKindId.PropertySignature, TSKindId.PublicFieldDefinition], exact: true },
 		'declaration.field.signature': { ids: [TSKindId.PropertySignature], exact: true },
 		'declaration.function': {
@@ -2538,14 +2549,13 @@ const table: PortableTable = {
 			ids: [
 				TSKindId.OptionalTupleParameter,
 				TSKindId.Pair,
-				TSKindId.ShorthandPropertyIdentifier,
 				TSKindId.SpreadElement,
 				TSKindId.TemplateType,
 				TSKindId.TupleParameter
 			],
 			exact: true
 		},
-		'element.pair': { ids: [TSKindId.Pair, TSKindId.ShorthandPropertyIdentifier], exact: true },
+		'element.pair': { ids: [TSKindId.Pair], exact: true },
 		'element.splat': { ids: [TSKindId.SpreadElement], exact: true },
 		'element.template': { ids: [TSKindId.TemplateType], exact: true },
 		'element.template.substitution': { ids: [TSKindId.TemplateType], exact: true },
@@ -2706,6 +2716,8 @@ const table: PortableTable = {
 				TSKindId.Identifier,
 				TSKindId.NestedIdentifier,
 				TSKindId.PropertyIdentifier,
+				TSKindId.ShorthandPropertyIdentifier,
+				TSKindId.ShorthandPropertyIdentifierPattern,
 				TSKindId.StatementIdentifier,
 				TSKindId.Super,
 				TSKindId.This,
@@ -2715,7 +2727,18 @@ const table: PortableTable = {
 		},
 		'identifier.label': { ids: [TSKindId.StatementIdentifier], exact: true },
 		'identifier.nested': { ids: [TSKindId.NestedIdentifier], exact: true },
-		'identifier.property': { ids: [TSKindId.PropertyIdentifier], exact: true },
+		'identifier.property': {
+			ids: [
+				TSKindId.PropertyIdentifier,
+				TSKindId.ShorthandPropertyIdentifier,
+				TSKindId.ShorthandPropertyIdentifierPattern
+			],
+			exact: true
+		},
+		'identifier.property.shorthand': {
+			ids: [TSKindId.ShorthandPropertyIdentifier, TSKindId.ShorthandPropertyIdentifierPattern],
+			exact: true
+		},
 		'identifier.self': { ids: [TSKindId.This], exact: true },
 		'identifier.super': { ids: [TSKindId.Super], exact: true },
 		'identifier.type': { ids: [TSKindId.TypeIdentifier], exact: true },
@@ -2824,24 +2847,18 @@ const table: PortableTable = {
 				TSKindId.ObjectAssignmentPattern,
 				TSKindId.ObjectPattern,
 				TSKindId.PairPattern,
-				TSKindId.RestPattern,
-				TSKindId.ShorthandPropertyIdentifierPattern
+				TSKindId.RestPattern
 			],
 			exact: true
 		},
 		'pattern.array': { ids: [TSKindId.ArrayPattern], exact: true },
 		'pattern.assignment': { ids: [TSKindId.AssignmentPattern], exact: true },
 		'pattern.object': {
-			ids: [
-				TSKindId.ObjectAssignmentPattern,
-				TSKindId.ObjectPattern,
-				TSKindId.PairPattern,
-				TSKindId.ShorthandPropertyIdentifierPattern
-			],
+			ids: [TSKindId.ObjectAssignmentPattern, TSKindId.ObjectPattern, TSKindId.PairPattern],
 			exact: true
 		},
 		'pattern.object.assignment': { ids: [TSKindId.ObjectAssignmentPattern], exact: true },
-		'pattern.object.pair': { ids: [TSKindId.PairPattern, TSKindId.ShorthandPropertyIdentifierPattern], exact: true },
+		'pattern.object.pair': { ids: [TSKindId.PairPattern], exact: true },
 		'pattern.rest': { ids: [TSKindId.RestPattern], exact: true },
 		statement: {
 			ids: [
@@ -3095,6 +3112,7 @@ const table: PortableTable = {
 		['', 'shift_left', 'expression.assignment.compound.shift_left'],
 		['', 'shift_right', 'expression.assignment.compound.shift_right'],
 		['', 'shift_right_unsigned', 'expression.assignment.compound.shift_right_unsigned'],
+		['', 'shorthand', 'identifier.property.shorthand'],
 		['', 'splat', 'element.splat'],
 		['', 'static', 'statement.block.static'],
 		['', 'strict_equal', 'expression.binary.comparison.strict_equal'],
@@ -3229,6 +3247,7 @@ const table: PortableTable = {
 		['expression.binary', 'strict_not_equal', 'expression.binary.comparison.strict_not_equal'],
 		['expression.binary', 'subtract', 'expression.binary.arithmetic.subtract'],
 		['expression.binary', 'xor', 'expression.binary.bitwise.xor'],
+		['identifier', 'shorthand', 'identifier.property.shorthand'],
 		['literal', 'big', 'literal.number.integer.big'],
 		['literal', 'escape', 'literal.string.escape'],
 		['literal', 'false', 'literal.boolean.false'],
@@ -3526,9 +3545,7 @@ const table: PortableTable = {
 		[TSKindId.ElseClause]: [{ path: 'clause.else', within: [], test: [] }],
 		[TSKindId.EmptyStatement]: [{ path: 'statement.empty', within: [], test: [] }],
 		[TSKindId.EnumAssignment]: [{ path: 'declaration.enum_member', within: [], test: [] }],
-		[TSKindId.EnumBodyElementName]: [
-			{ path: 'declaration.enum_member', within: [TSKindId.EnumBodyElements, TSKindId.EnumBody], test: [] }
-		],
+		[TSKindId.EnumBodyElementName]: [{ path: 'declaration.enum_member', within: [], test: [] }],
 		[TSKindId.EnumDeclaration]: [{ path: 'declaration.enum', within: [], test: [] }],
 		[TSKindId.EscapeSequence]: [{ path: 'literal.string.escape', within: [], test: [] }],
 		[TSKindId.ExistentialType]: [{ path: 'type.existential', within: [], test: [] }],
@@ -3682,8 +3699,8 @@ const table: PortableTable = {
 		[TSKindId.ReturnStatement]: [{ path: 'statement.return', within: [], test: [] }],
 		[TSKindId.SatisfiesExpression]: [{ path: 'expression.cast.satisfies', within: [], test: [] }],
 		[TSKindId.SequenceExpression]: [{ path: 'expression.sequence', within: [], test: [] }],
-		[TSKindId.ShorthandPropertyIdentifier]: [{ path: 'element.pair', within: [], test: [] }],
-		[TSKindId.ShorthandPropertyIdentifierPattern]: [{ path: 'pattern.object.pair', within: [], test: [] }],
+		[TSKindId.ShorthandPropertyIdentifier]: [{ path: 'identifier.property.shorthand', within: [], test: [] }],
+		[TSKindId.ShorthandPropertyIdentifierPattern]: [{ path: 'identifier.property.shorthand', within: [], test: [] }],
 		[TSKindId.SpreadElement]: [{ path: 'element.splat', within: [], test: [] }],
 		[TSKindId.StatementBlock]: [{ path: 'statement.block', within: [], test: [] }],
 		[TSKindId.StatementIdentifier]: [{ path: 'identifier.label', within: [], test: [] }],

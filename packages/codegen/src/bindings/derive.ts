@@ -278,7 +278,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 		if (unclaimedOf.get(g)?.has(k)) return scalarOf([]);
 		const node = modelNode(input.model, k);
 		if (input.textTokens.has(k) && node?.pattern != null) return scalarOf([`text:${node.pattern}`]);
-		if (node?.modelType === 'enum') return scalarOf(node.enumValues.map((v) => `text:${v}`));
+		if (node?.modelType === 'enum') return scalarOf(node.enumMembers.map((m) => `text:${m.text}`));
 		if (node?.modelType === 'keyword' || node?.modelType === 'punctuation') return scalarOf([`literal:${k}`]);
 		const container = node !== undefined && !context.includes(node.kind) ? (routesOf(g)?.containers.get(node.kind) ?? null) : null;
 		if (node !== undefined && container !== null) {
@@ -296,10 +296,6 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 			if (parts) return scalarOf(parts);
 		}
 		return scalarOf([unmappedToken(g, k)]);
-	};
-	const leafText = (input: GrammarInput, k: string): string => {
-		const node = modelNode(input.model, k);
-		return input.textTokens.has(k) && node?.pattern != null ? `text:${node.pattern}` : unmappedToken(input.grammar, k);
 	};
 	const slotResolution = (input: GrammarInput, owner: string, slot: ModelSlot): Resolution => {
 		if (slot.storage === 'boolean') return scalarOf(['boolean']);
@@ -358,12 +354,6 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 					if (route.route === 'kind') {
 						f.kinds.add('boolean');
 						f.optional = true;
-						f.scalar = true;
-						f.grammars.add(input.grammar);
-						continue;
-					}
-					if (route.route === 'self') {
-						f.kinds.add(leafText(input, gk));
 						f.scalar = true;
 						f.grammars.add(input.grammar);
 						continue;
