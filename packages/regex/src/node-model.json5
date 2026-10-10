@@ -256,6 +256,33 @@
         "nonEmpty": false
       }
     },
+    "zero_or_more": {
+      "lazy": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "one_or_more": {
+      "lazy": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "optional": {
+      "lazy": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
     "count_quantifier": {
       "content": {
         "unnamed": false,
@@ -2360,7 +2387,7 @@
     },
     {
       "kind": "one_or_more",
-      "modelType": "pattern",
+      "modelType": "branch",
       "typeName": "OneOrMore",
       "factoryName": "oneOrMore",
       "irKey": "oneOrMore",
@@ -2368,13 +2395,34 @@
         "oneOrMore"
       ],
       "hidden": false,
-      "leafPattern": "/^(?:\\+(?:\\?)?)$/u",
-      "oneSurface": true,
-      "factoryShape": "text"
+      "slots": [
+        {
+          "name": "lazy",
+          "propertyName": "lazy",
+          "paramName": "lazy",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "?",
+              "parseKind": "lazy"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "lazy"
+      ]
     },
     {
       "kind": "optional",
-      "modelType": "pattern",
+      "modelType": "branch",
       "typeName": "Optional",
       "factoryName": "optional",
       "irKey": "optional",
@@ -2382,9 +2430,30 @@
         "optional"
       ],
       "hidden": false,
-      "leafPattern": "/^(?:\\?(?:\\?)?)$/u",
-      "oneSurface": true,
-      "factoryShape": "text"
+      "slots": [
+        {
+          "name": "lazy",
+          "propertyName": "lazy",
+          "paramName": "lazy",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "?",
+              "parseKind": "lazy"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "lazy"
+      ]
     },
     {
       "kind": "pattern",
@@ -3034,7 +3103,7 @@
     },
     {
       "kind": "zero_or_more",
-      "modelType": "pattern",
+      "modelType": "branch",
       "typeName": "ZeroOrMore",
       "factoryName": "zeroOrMore",
       "irKey": "zeroOrMore",
@@ -3042,9 +3111,30 @@
         "zeroOrMore"
       ],
       "hidden": false,
-      "leafPattern": "/^(?:\\*(?:\\?)?)$/u",
-      "oneSurface": true,
-      "factoryShape": "text"
+      "slots": [
+        {
+          "name": "lazy",
+          "propertyName": "lazy",
+          "paramName": "lazy",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "?",
+              "parseKind": "lazy"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "lazy"
+      ]
     }
   ]
 }

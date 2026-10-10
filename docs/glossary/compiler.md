@@ -9721,6 +9721,12 @@ A literal ref whose storage name is its literal text (`name === literal`, a dist
 // in docs/compiler-phase-glossary.md.
 ```
 
+### `packages/codegen/src/compiler/assemble.ts::isStampedTerminal`
+
+```text
+A literal that is itself the slot: a STRING or PATTERN carrying both `nonterminal: true` and `aliasedTo`. The alias is the node the parser produces for the literal, so the literal is a child with its own kind and not text of the enclosing kind. `hasSlotBearingContent` counts it as slot-bearing and `isAllTextShape` does not count it as text, so a kind whose only varying content is such a literal (a quantifier whose lazy marker is an alias) is a branch with an optional slot instead of a text leaf. A literal that is merely an arm of a choice carries `nonterminal` without `aliasedTo` and stays text.
+```
+
 ### `packages/codegen/src/compiler/assemble.ts::computeSignatures`
 
 ```text

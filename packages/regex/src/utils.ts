@@ -49,6 +49,9 @@ export const querySlots: QuerySlots = Object.freeze({
 		['pattern', { fields: ['pattern'], kinds: [] }]
 	],
 	64: [['pattern', { fields: ['pattern'], kinds: [] }]],
+	67: [['lazy', { fields: [], kinds: ['lazy'] }]],
+	68: [['lazy', { fields: [], kinds: ['lazy'] }]],
+	69: [['lazy', { fields: [], kinds: ['lazy'] }]],
 	70: [
 		['content', { fields: [], kinds: ['count_quantifier_arm', 'decimal_digits'] }],
 		['lazy', { fields: [], kinds: ['lazy'] }]

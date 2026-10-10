@@ -806,6 +806,42 @@ export interface NonCapturingGroup {
 	pattern(): Pattern;
 }
 
+export interface ZeroOrMore {
+	readonly $type: TSKindId.ZeroOrMore;
+	readonly _lazy?: boolean;
+	readonly __inputHints__?: {
+		readonly lazy?: BaseBooleanKeyword<'?'>;
+	};
+	readonly __slotHints__?: {
+		readonly lazy: SlotHint<NonNullable<'?'>, true>;
+	};
+	lazy(): boolean | undefined;
+}
+
+export interface OneOrMore {
+	readonly $type: TSKindId.OneOrMore;
+	readonly _lazy?: boolean;
+	readonly __inputHints__?: {
+		readonly lazy?: BaseBooleanKeyword<'?'>;
+	};
+	readonly __slotHints__?: {
+		readonly lazy: SlotHint<NonNullable<'?'>, true>;
+	};
+	lazy(): boolean | undefined;
+}
+
+export interface Optional {
+	readonly $type: TSKindId.Optional;
+	readonly _lazy?: boolean;
+	readonly __inputHints__?: {
+		readonly lazy?: BaseBooleanKeyword<'?'>;
+	};
+	readonly __slotHints__?: {
+		readonly lazy: SlotHint<NonNullable<'?'>, true>;
+	};
+	lazy(): boolean | undefined;
+}
+
 export interface CountQuantifier {
 	readonly $type: TSKindId.CountQuantifier;
 	readonly _content: CountQuantifierArm | DecimalDigits;
@@ -1077,9 +1113,6 @@ export type PatternCharacter = Terminal<TSKindId.PatternCharacter, string>;
 export type PosixClassName = Terminal<TSKindId.PosixClassName, string>;
 export type ClassCharacter = Terminal<TSKindId.ClassCharacter, string>;
 export type Flags = Terminal<TSKindId.Flags, string>;
-export type ZeroOrMore = Terminal<TSKindId.ZeroOrMore, string>;
-export type OneOrMore = Terminal<TSKindId.OneOrMore, string>;
-export type Optional = Terminal<TSKindId.Optional, string>;
 export type DecimalEscape = Terminal<TSKindId.DecimalEscape, string>;
 export type UnicodeCharacterEscape = Terminal<TSKindId.UnicodeCharacterEscape, string>;
 export type UnicodePropertyValue = Terminal<TSKindId.UnicodePropertyValue, string>;
@@ -1129,6 +1162,9 @@ export interface OptionsHintMap {
 	anonymousCapturingGroup: AnonymousCapturingGroup.Hints;
 	namedCapturingGroup: NamedCapturingGroup.Hints;
 	nonCapturingGroup: NonCapturingGroup.Hints;
+	zeroOrMore: ZeroOrMore.Hints;
+	oneOrMore: OneOrMore.Hints;
+	optional: Optional.Hints;
 	countQuantifier: CountQuantifier.Hints;
 	backreferenceEscape: BackreferenceEscape.Hints;
 	namedGroupBackreference: NamedGroupBackreference.Hints;
@@ -1141,9 +1177,6 @@ export interface OptionsHintMap {
 	inlineFlagsGroupEnable: InlineFlagsGroupEnable.Hints;
 	inlineFlagsGroupToggle: InlineFlagsGroupToggle.Hints;
 	inlineFlagsGroupDisable: InlineFlagsGroupDisable.Hints;
-	zeroOrMore: ZeroOrMore.Hints;
-	oneOrMore: OneOrMore.Hints;
-	optional: Optional.Hints;
 }
 
 export namespace Pattern {
@@ -1267,6 +1300,36 @@ export namespace NonCapturingGroup {
 			readonly before?: WhitespaceKindId;
 			readonly lparenQmarkColon?: { readonly after?: WhitespaceKindId };
 			readonly rparen?: { readonly before?: WhitespaceKindId };
+		};
+	}
+}
+
+export namespace ZeroOrMore {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly star?: { readonly after?: WhitespaceKindId };
+		};
+	}
+}
+
+export namespace OneOrMore {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly plus?: { readonly after?: WhitespaceKindId };
+		};
+	}
+}
+
+export namespace Optional {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly qmark?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -1397,24 +1460,6 @@ export namespace InlineFlagsGroupDisable {
 			readonly lparenQmark?: { readonly after?: WhitespaceKindId };
 			readonly rparen?: { readonly before?: WhitespaceKindId };
 		};
-	}
-}
-
-export namespace ZeroOrMore {
-	export interface Hints {
-		readonly __optionsHint__?: { readonly star?: { readonly after?: WhitespaceKindId } };
-	}
-}
-
-export namespace OneOrMore {
-	export interface Hints {
-		readonly __optionsHint__?: { readonly plus?: { readonly after?: WhitespaceKindId } };
-	}
-}
-
-export namespace Optional {
-	export interface Hints {
-		readonly __optionsHint__?: { readonly qmark?: { readonly after?: WhitespaceKindId } };
 	}
 }
 
@@ -1586,6 +1631,48 @@ export interface NonCapturingGroupNs extends NodeNs<
 > {
 	readonly BuildArgs: NonCapturingGroup.BuildArgs;
 	readonly LooseArgs: NonCapturingGroup.LooseArgs;
+}
+export interface ZeroOrMoreNs extends NodeNs<
+	ZeroOrMore,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	ZeroOrMore.Bound,
+	'lazy',
+	TSKindId.ZeroOrMore,
+	ZeroOrMore.Parsed,
+	never
+> {
+	readonly BuildArgs: ZeroOrMore.BuildArgs;
+	readonly LooseArgs: ZeroOrMore.LooseArgs;
+}
+export interface OneOrMoreNs extends NodeNs<
+	OneOrMore,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	OneOrMore.Bound,
+	'lazy',
+	TSKindId.OneOrMore,
+	OneOrMore.Parsed,
+	never
+> {
+	readonly BuildArgs: OneOrMore.BuildArgs;
+	readonly LooseArgs: OneOrMore.LooseArgs;
+}
+export interface OptionalNs extends NodeNs<
+	Optional,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	Optional.Bound,
+	'lazy',
+	TSKindId.Optional,
+	Optional.Parsed,
+	never
+> {
+	readonly BuildArgs: Optional.BuildArgs;
+	readonly LooseArgs: Optional.LooseArgs;
 }
 export interface CountQuantifierNs extends NodeNs<
 	CountQuantifier,
@@ -1844,9 +1931,6 @@ export interface ClassCharacterNs extends LeafNs<
 	TSKindId.ClassCharacter
 > {}
 export interface FlagsNs extends LeafNs<Flags, string, Flags.Bound, TSKindId.Flags> {}
-export interface ZeroOrMoreNs extends LeafNs<ZeroOrMore, string, ZeroOrMore.Bound, TSKindId.ZeroOrMore> {}
-export interface OneOrMoreNs extends LeafNs<OneOrMore, string, OneOrMore.Bound, TSKindId.OneOrMore> {}
-export interface OptionalNs extends LeafNs<Optional, string, Optional.Bound, TSKindId.Optional> {}
 export interface DecimalEscapeNs extends LeafNs<DecimalEscape, string, DecimalEscape.Bound, TSKindId.DecimalEscape> {}
 export interface UnicodeCharacterEscapeNs extends LeafNs<
 	UnicodeCharacterEscape,
@@ -1900,6 +1984,9 @@ export interface NamespaceMap {
 	[TSKindId.AnonymousCapturingGroup]: AnonymousCapturingGroupNs;
 	[TSKindId.NamedCapturingGroup]: NamedCapturingGroupNs;
 	[TSKindId.NonCapturingGroup]: NonCapturingGroupNs;
+	[TSKindId.ZeroOrMore]: ZeroOrMoreNs;
+	[TSKindId.OneOrMore]: OneOrMoreNs;
+	[TSKindId.Optional]: OptionalNs;
 	[TSKindId.CountQuantifier]: CountQuantifierNs;
 	[TSKindId.BackreferenceEscape]: BackreferenceEscapeNs;
 	[TSKindId.NamedGroupBackreference]: NamedGroupBackreferenceNs;
@@ -1930,9 +2017,6 @@ export interface NamespaceMap {
 	[TSKindId.PosixClassName]: PosixClassNameNs;
 	[TSKindId.ClassCharacter]: ClassCharacterNs;
 	[TSKindId.Flags]: FlagsNs;
-	[TSKindId.ZeroOrMore]: ZeroOrMoreNs;
-	[TSKindId.OneOrMore]: OneOrMoreNs;
-	[TSKindId.Optional]: OptionalNs;
 	[TSKindId.DecimalEscape]: DecimalEscapeNs;
 	[TSKindId.UnicodeCharacterEscape]: UnicodeCharacterEscapeNs;
 	[TSKindId.UnicodePropertyValue]: UnicodePropertyValueNs;
@@ -1957,6 +2041,9 @@ export interface BoundByKindId {
 	[TSKindId.AnonymousCapturingGroup]: AnonymousCapturingGroup.Bound;
 	[TSKindId.NamedCapturingGroup]: NamedCapturingGroup.Bound;
 	[TSKindId.NonCapturingGroup]: NonCapturingGroup.Bound;
+	[TSKindId.ZeroOrMore]: ZeroOrMore.Bound;
+	[TSKindId.OneOrMore]: OneOrMore.Bound;
+	[TSKindId.Optional]: Optional.Bound;
 	[TSKindId.CountQuantifier]: CountQuantifier.Bound;
 	[TSKindId.BackreferenceEscape]: BackreferenceEscape.Bound;
 	[TSKindId.NamedGroupBackreference]: NamedGroupBackreference.Bound;
@@ -1977,9 +2064,6 @@ export interface BoundByKindId {
 	[TSKindId.PosixClassName]: PosixClassName.Bound;
 	[TSKindId.ClassCharacter]: ClassCharacter.Bound;
 	[TSKindId.Flags]: Flags.Bound;
-	[TSKindId.ZeroOrMore]: ZeroOrMore.Bound;
-	[TSKindId.OneOrMore]: OneOrMore.Bound;
-	[TSKindId.Optional]: Optional.Bound;
 	[TSKindId.DecimalEscape]: DecimalEscape.Bound;
 	[TSKindId.UnicodeCharacterEscape]: UnicodeCharacterEscape.Bound;
 	[TSKindId.UnicodePropertyValue]: UnicodePropertyValue.Bound;
@@ -2004,6 +2088,9 @@ export interface ParsedByKindId {
 	[TSKindId.AnonymousCapturingGroup]: AnonymousCapturingGroup.Parsed;
 	[TSKindId.NamedCapturingGroup]: NamedCapturingGroup.Parsed;
 	[TSKindId.NonCapturingGroup]: NonCapturingGroup.Parsed;
+	[TSKindId.ZeroOrMore]: ZeroOrMore.Parsed;
+	[TSKindId.OneOrMore]: OneOrMore.Parsed;
+	[TSKindId.Optional]: Optional.Parsed;
 	[TSKindId.CountQuantifier]: CountQuantifier.Parsed;
 	[TSKindId.BackreferenceEscape]: BackreferenceEscape.Parsed;
 	[TSKindId.NamedGroupBackreference]: NamedGroupBackreference.Parsed;
@@ -2024,9 +2111,6 @@ export interface ParsedByKindId {
 	[TSKindId.PosixClassName]: PosixClassName.Parsed;
 	[TSKindId.ClassCharacter]: ClassCharacter.Parsed;
 	[TSKindId.Flags]: Flags.Parsed;
-	[TSKindId.ZeroOrMore]: ZeroOrMore.Parsed;
-	[TSKindId.OneOrMore]: OneOrMore.Parsed;
-	[TSKindId.Optional]: Optional.Parsed;
 	[TSKindId.DecimalEscape]: DecimalEscape.Parsed;
 	[TSKindId.UnicodeCharacterEscape]: UnicodeCharacterEscape.Parsed;
 	[TSKindId.UnicodePropertyValue]: UnicodePropertyValue.Parsed;
@@ -2088,6 +2172,9 @@ export interface TypeKeyOf {
 	[TSKindId.AnonymousCapturingGroup]: 'anonymousCapturingGroup';
 	[TSKindId.NamedCapturingGroup]: 'namedCapturingGroup';
 	[TSKindId.NonCapturingGroup]: 'nonCapturingGroup';
+	[TSKindId.ZeroOrMore]: 'zeroOrMore';
+	[TSKindId.OneOrMore]: 'oneOrMore';
+	[TSKindId.Optional]: 'optional';
 	[TSKindId.CountQuantifier]: 'countQuantifier';
 	[TSKindId.BackreferenceEscape]: 'backreferenceEscape';
 	[TSKindId.NamedGroupBackreference]: 'namedGroupBackreference';
@@ -2118,9 +2205,6 @@ export interface TypeKeyOf {
 	[TSKindId.PosixClassName]: 'posixClassName';
 	[TSKindId.ClassCharacter]: 'classCharacter';
 	[TSKindId.Flags]: 'flags';
-	[TSKindId.ZeroOrMore]: 'zeroOrMore';
-	[TSKindId.OneOrMore]: 'oneOrMore';
-	[TSKindId.Optional]: 'optional';
 	[TSKindId.DecimalEscape]: 'decimalEscape';
 	[TSKindId.UnicodeCharacterEscape]: 'unicodeCharacterEscape';
 	[TSKindId.UnicodePropertyValue]: 'unicodePropertyValue';
@@ -2356,6 +2440,57 @@ export namespace NonCapturingGroup {
 	export type BuildArgs = [value: Admit<T.Pattern>] | [value: Admit<T.Alternation | T.Term>];
 	export type LooseArgs = [value: T.NonCapturingGroup.Loose];
 	export type Kind = TSKindId.NonCapturingGroup;
+}
+export namespace ZeroOrMore {
+	export type Config = ConfigFor<TSKindId.ZeroOrMore>;
+	export interface Bound extends BoundOf<T.ZeroOrMore, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ZeroOrMore['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ZeroOrMore, ParsedByKindId>, NodeMethodsOf, HoldsTree {
+		readonly $type: T.ZeroOrMore['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+	}
+	export type Loose = LooseFor<TSKindId.ZeroOrMore>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ZeroOrMore>;
+	export type BuildArgs = [value?: Admit<'?'>];
+	export type LooseArgs = [value?: T.ZeroOrMore.Loose];
+	export type Kind = TSKindId.ZeroOrMore;
+}
+export namespace OneOrMore {
+	export type Config = ConfigFor<TSKindId.OneOrMore>;
+	export interface Bound extends BoundOf<T.OneOrMore, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.OneOrMore['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.OneOrMore, ParsedByKindId>, NodeMethodsOf, HoldsTree {
+		readonly $type: T.OneOrMore['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+	}
+	export type Loose = LooseFor<TSKindId.OneOrMore>;
+	export type LooseConfig = LooseConfigFor<TSKindId.OneOrMore>;
+	export type BuildArgs = [value?: Admit<'?'>];
+	export type LooseArgs = [value?: T.OneOrMore.Loose];
+	export type Kind = TSKindId.OneOrMore;
+}
+export namespace Optional {
+	export type Config = ConfigFor<TSKindId.Optional>;
+	export interface Bound extends BoundOf<T.Optional, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.Optional['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.Optional, ParsedByKindId>, NodeMethodsOf, HoldsTree {
+		readonly $type: T.Optional['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+	}
+	export type Loose = LooseFor<TSKindId.Optional>;
+	export type LooseConfig = LooseConfigFor<TSKindId.Optional>;
+	export type BuildArgs = [value?: Admit<'?'>];
+	export type LooseArgs = [value?: T.Optional.Loose];
+	export type Kind = TSKindId.Optional;
 }
 export namespace CountQuantifier {
 	export type Config = ConfigFor<TSKindId.CountQuantifier>;
@@ -2815,66 +2950,6 @@ export namespace Flags {
 	export type BuildArgs = FlagsNs['BuildArgs'];
 	export type LooseArgs = FlagsNs['LooseArgs'];
 	export type Kind = TSKindId.Flags;
-}
-export namespace ZeroOrMore {
-	export type Config = ZeroOrMoreNs['Config'];
-	export interface Bound extends NodeMethodsOf {
-		readonly $type: TSKindId.ZeroOrMore;
-		readonly $source?: 0 | 1 | 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export interface Parsed extends HoldsTree {
-		readonly $type: TSKindId.ZeroOrMore;
-		readonly $source?: 0 | 1 | 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = ZeroOrMoreNs['Loose'];
-	export type LooseConfig = ZeroOrMoreNs['LooseConfig'];
-	export type BuildArgs = ZeroOrMoreNs['BuildArgs'];
-	export type LooseArgs = ZeroOrMoreNs['LooseArgs'];
-	export type Kind = TSKindId.ZeroOrMore;
-}
-export namespace OneOrMore {
-	export type Config = OneOrMoreNs['Config'];
-	export interface Bound extends NodeMethodsOf {
-		readonly $type: TSKindId.OneOrMore;
-		readonly $source?: 0 | 1 | 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export interface Parsed extends HoldsTree {
-		readonly $type: TSKindId.OneOrMore;
-		readonly $source?: 0 | 1 | 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = OneOrMoreNs['Loose'];
-	export type LooseConfig = OneOrMoreNs['LooseConfig'];
-	export type BuildArgs = OneOrMoreNs['BuildArgs'];
-	export type LooseArgs = OneOrMoreNs['LooseArgs'];
-	export type Kind = TSKindId.OneOrMore;
-}
-export namespace Optional {
-	export type Config = OptionalNs['Config'];
-	export interface Bound extends NodeMethodsOf {
-		readonly $type: TSKindId.Optional;
-		readonly $source?: 0 | 1 | 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export interface Parsed extends HoldsTree {
-		readonly $type: TSKindId.Optional;
-		readonly $source?: 0 | 1 | 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = OptionalNs['Loose'];
-	export type LooseConfig = OptionalNs['LooseConfig'];
-	export type BuildArgs = OptionalNs['BuildArgs'];
-	export type LooseArgs = OptionalNs['LooseArgs'];
-	export type Kind = TSKindId.Optional;
 }
 export namespace DecimalEscape {
 	export type Config = DecimalEscapeNs['Config'];

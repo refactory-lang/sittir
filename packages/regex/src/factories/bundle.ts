@@ -41,6 +41,9 @@ export const nonCapturingGroup = bundle(F.buildNonCapturingGroup, C.coerceToNonC
 	key: 'nonCapturingGroup',
 	max: 1
 });
+export const zeroOrMore = bundle(F.buildZeroOrMore, C.coerceToZeroOrMore, { key: 'zeroOrMore', max: 1 });
+export const oneOrMore = bundle(F.buildOneOrMore, C.coerceToOneOrMore, { key: 'oneOrMore', max: 1 });
+export const optional = bundle(F.buildOptional, C.coerceToOptional, { key: 'optional', max: 1 });
 export const countQuantifier = bundle(F.buildCountQuantifier, C.coerceToCountQuantifier, {
 	key: 'countQuantifier',
 	max: 1
