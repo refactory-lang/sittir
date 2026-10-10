@@ -6889,7 +6889,7 @@ Brainstorm's, 2026-10-09, unless marked otherwise.
     ```
 
     The leading write stops the block folding (`hasOutsideTrivia`), so it renders from storage; its children are bare coordinates, each folding to its own span, and `# four` (`c`'s leading as the reader places it) lies between those spans with nothing to print it. The native render cannot frame a coordinate with trivia today (`SlotValue::Coord` renders `write_between_edges` alone, and `coordinate_from_napi` reads only `$_layout.gap`), so Task 25 adds it.
-13. **The render sees what a write landed on** (brainstorm, 2026-10-09, on a gap found building Task 25). A query hydrates a node straight from the registry and writes it back into no parent slot, so a parent holds a bare coordinate (a shallow read) or its own nested record (a deep read) where the written wrapper should be. One function resolves a parsed value at a slot position for the render: inside an edited range (an edit inside its range, or its own index written) it takes the wrapper registered at its index and role (the role from `contentRole`); with no wrapper registered, a bare coordinate is read (`tree.read(index, 1)`) and resolved in turn, so every ancestor between the root and the written node unfolds. Untouched ranges still fold. The edited set holds each written node strongly (index to node, keyed weakly by the `TreeHandle`): a written node is the only copy of its edit, so it is never collected while its tree lives, and a later route returns the same written object. The registry itself stays weak.
+13. **Withdrawn: the render does not consult the registry** (maintainer, 2026-10-09). The identity registry is a cache: nothing correct depends on it, and the render never consults it, or it would cross the native/client boundary. A write through a node a query reached therefore stays refused (the `heldBySlot` guard, Task 25 Step 6) until a replacement lands: the write itself as data keyed by tree and index, which the render reads, so no object identity is involved. Where that data lives (native per-tree storage or client) awaits a maintainer ruling.
 
 ### Brainstorm's rulings on the plan questions (2026-10-09)
 
@@ -6945,7 +6945,7 @@ Modify:
 - No rendered byte and no validation row moves, in any task, except the bytes Ruling 12 restores to an edited tree (master drops a comment there). A moved row stops the work for review (no revert). Python's shallow AST match row is the hosts branch's to report (115 once Task 25 lands); on this branch it does not move either.
 - The stack pins (`typed_read_nesting.rs`, per level, linux and macos) do not rise. If `end: u32` pushes a choice payload past the 512-byte ceiling, the build asks for it to be pinned: pin it (the list moves, the ceiling never does).
 - `index` names the descendant index; `end` names `index + descendant_count()`; the half-open range `[index, end)` is a node's subtree. No other names for either in new code, docs or glossary.
-- The registry holds wrappers weakly: nothing it holds keeps a wrapper, a token or a tree alive. A written node is the one exception, held by the edited set (not the registry) for its tree's life, since it is the only copy of its edit (Ruling 13).
+- The registry holds wrappers weakly: nothing it holds keeps a wrapper, a token or a tree alive.
 - No `!`, no cast as a fix, no runtime guard standing in for a type fact.
 
 ### Review Focus (1c-ii)
@@ -7252,7 +7252,7 @@ plus the regenerated `wrap.ts` files `git status` names. Message: `feat(identity
 
 ## Task 25: The edited set and the fold by range
 
-A write marks its node's index edited, on the side it edits (Ruling 12): an outside trivia write (leading, trailing) marks `outside`, an inner trivia write marks `inside`. A node folds to its coordinate when no `inside` index lies in `[index, end)` and no `outside` index lies in `(index, end)`; a folded node with outside trivia crosses as its coordinate carrying that trivia, and the native render frames the coordinate's bytes with it. The node keeps its coordinate and its tree: no ancestor is detached, so `adoptChild`, the parent links, `detachAncestors` and the projection walk (`isUntouchedBelow`) go, and the refusal of a write on a node a query reached is lifted.
+A write marks its node's index edited, on the side it edits (Ruling 12): an outside trivia write (leading, trailing) marks `outside`, an inner trivia write marks `inside`. A node folds to its coordinate when no `inside` index lies in `[index, end)` and no `outside` index lies in `(index, end)`; a folded node with outside trivia crosses as its coordinate carrying that trivia, and the native render frames the coordinate's bytes with it. The node keeps its coordinate and its tree: no ancestor is detached, so `adoptChild`, the parent links, `detachAncestors` and the projection walk (`isUntouchedBelow`) go, and the refusal of a write on a node a query reached stays, decided by a guard (`heldBySlot`) until the write-as-data replacement lands (Ruling 13).
 
 **Files:**
 - Modify: `rust/crates/sittir-core/src/slot.rs` (`NodeCoordinate::end`, `new`, `coordinate_to_napi`, `coordinate_from_napi`, their tests; `SlotValue::Coord` carries outside trivia), `rust/crates/sittir-core/src/layout.rs` (the trivia framing `TransportLayout::render` and a framed coordinate share), `rust/crates/sittir-core/src/{prepare,trivia,view,read}.rs` (the `SlotValue::Coord` match sites), `rust/crates/sittir-core/src/read.rs` (`ReadCtx::coordinate`, `coordinate_of`, `Child`), `rust/crates/sittir-core/src/query.rs` (`QueryCoordinate`), `rust/crates/sittir-core/tests/prepare.rs` (the `new` calls)
@@ -7273,7 +7273,7 @@ A write marks its node's index edited, on the side it edits (Ruling 12): an outs
 
 - [ ] **Step 1: Write the failing tests**
 
-In `packages/rust/tests/fold-in-place-trivia.test.ts`, the third case becomes:
+In `packages/rust/tests/fold-in-place-trivia.test.ts`, the third case keeps its refusal until Ruling 13's replacement lands; when it does, it becomes:
 
 ```ts
 	it('renders a comment written on a node a query reached, as written through the accessors', () => {
@@ -7409,18 +7409,7 @@ describe('an outside write keeps the span\'s bytes', () => {
 
 The trailing case pins the comment's survival and its side, not the join (the trailing entry's line placement is the trivia writer's, unchanged here); Step 8 pins the exact string the run prints.
 
-Add to `packages/rust/tests/identity.test.ts` (Ruling 13), run in a child process under `--expose-gc` like the collected-wrapper fixture:
-
-```ts
-describe('a written node', () => {
-	it('survives every reference dropped and a collection, and a re-query returns it', () => {
-		// fixture: parse at depth 1; reach `let x` by a query; write a leading
-		// comment; keep only a WeakRef to it; gc between yields; then
-		// ref.deref() is defined, the re-queried node === ref.deref(), and the
-		// root's render holds the comment.
-	});
-});
-```
+The write-retention test (write through a query, drop every reference, collect, re-query) and the query-reached write case wait for Ruling 13's replacement.
 
 In `slot.rs`'s tests, add a framed coordinate:
 
@@ -7569,7 +7558,7 @@ export function editedWithin(tree: TreeHandle, index: number, end: number): bool
 
 - [ ] **Step 6: The trivia writer marks the edit**
 
-In `utils.ts`'s `triviaWriter`: delete `refuseUnheld` and both calls; `store` becomes
+In `utils.ts`'s `triviaWriter`: `refuseUnheld` stays, its test reading a `heldBySlot` WeakSet that `hydrateSlotWith` and `hydrateSlotsWith` fill in place of the parent links (a guard only: it decides refusal, never output); `store` becomes
 
 ```ts
 	const store = (trivia: NodeTrivia, side: TriviaSideName): AnyUntypedNode => {
@@ -7592,7 +7581,7 @@ function markEditedNode(node: object, side: EditSide): void {
 
 `sharesEnvelopeIndex(node)` is the registry's role fact for the node (Ruling 9: a content that shares its envelope's index registered as `aliasContent`); take it from where `contentRole` stamped it, never from a kind test.
 
-A built node has no tree and no index: it renders from data already, so nothing is marked. `markEditedNode` is the only hook for an in-place write (Ruling 10): any future in-place verb, such as the node-query `$edit` verbs, marks through it, and its glossary entry says so; `$with` mints a draft and marks nothing. Delete `parents`, `adoptChild` and `detachAncestors`, and the `adoptChild` calls in `hydrateSlotWith` and `hydrateSlotsWith`.
+A built node has no tree and no index: it renders from data already, so nothing is marked. `markEditedNode` is the only hook for an in-place write (Ruling 10): any future in-place verb, such as the node-query `$edit` verbs, marks through it, and its glossary entry says so; `$with` mints a draft and marks nothing. Delete `parents`, `adoptChild` and `detachAncestors`; `hydrateSlotWith` and `hydrateSlotsWith` add each child to `heldBySlot` instead.
 
 - [ ] **Step 7: The fold by range**
 
@@ -7619,12 +7608,6 @@ function foldedCoordinate(record: Record<string, unknown>): TransportCoordinate 
 `prepare.rs`: the `Coord` arm prepares its trivia (`TransportTrivia::prepare`), so a coordinate entry inside it takes its kind's edges.
 
 `SlotValue<T>` grows by one pointer only where the `Coord` arm is its widest; if a payload assertion asks for a pin, pin it (Global Constraints).
-
-- [ ] **Step 7c: The render resolves a written range through the registry** (Ruling 13)
-
-`identity.ts`: the edited set keeps, beside its two index lists, the written node per index (`markIndexEdited(tree, index, side, node)`), held strongly; `writtenAt(tree, index)` returns it. `utils.ts`'s `markEditedNode` passes the node.
-
-`transport-data.ts`: one function, `resolvedForRender(value, owner)`, resolves a parsed value at a slot position before the fold: a record or bare coordinate at index `i` of a live tree, whose range holds an edit or whose own index is written, becomes `writtenAt(tree, i) ?? registered(tree, i, contentRole(owner, value))`, else, for a bare coordinate, `tree.read(i, 1)`; any other value is returned as it is. `toTransportValue` resolves every slot value through it.
 
 - [ ] **Step 8: Run the tests to verify they pass**
 
