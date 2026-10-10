@@ -81,7 +81,7 @@ describe('engine middleware', () => {
 		const output = vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
 		try {
 			const engine = await engineOf({
-				render: { indent: '  ' },
+				render: { layout: { indent: '  ' } },
 				intercept: [
 					{
 						render(call, next) {
@@ -91,7 +91,7 @@ describe('engine middleware', () => {
 					}
 				]
 			});
-			using rendered = engine.render(engine.build.identifier('x'), { indent: '\t' });
+			using rendered = engine.render(engine.build.identifier('x'), { layout: { indent: '\t' } });
 			expect(calls).toEqual([]);
 			expect(rendered.toString()).toBe('[x]');
 			expect(rendered.toString()).toBe('[x]');
@@ -101,11 +101,28 @@ describe('engine middleware', () => {
 			rendered.save(path);
 			expect(readFileSync(path, 'utf8')).toBe('[x]');
 			expect(calls).toHaveLength(1);
-			expect(calls[0]).toMatchObject({ options: { indent: '\t' } });
+			expect(calls[0]).toMatchObject({ options: { layout: { indent: '\t' } } });
 		} finally {
 			output.mockRestore();
 			rmSync(directory, { recursive: true, force: true });
 		}
+	});
+
+	it('shows middleware the engine and call layout settings merged key by key', async () => {
+		const calls: { options: unknown }[] = [];
+		const engine = await engineOf({
+			render: { layout: { indent: '  ' } },
+			intercept: [
+				{
+					render(call, next) {
+						calls.push(call);
+						return next();
+					}
+				}
+			]
+		});
+		engine.render(engine.build.identifier('x'), { layout: { newline: '\r\n' } }).toString();
+		expect(calls[0]!.options).toEqual({ layout: { indent: '  ', newline: '\r\n' } });
 	});
 
 	it('runs build callbacks and node render methods through the same hooks', async () => {

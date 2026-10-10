@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { enrichWhitespace } from '../whitespace.ts';
+import { NEWLINE_ARMS, canonicalText, enrichWhitespace, whitespaceMemberRule } from '../whitespace.ts';
 import { nodelessExtrasRun } from '../rule-patterns.ts';
 import { enrich, getEnrichWhitespace } from '../enrich.ts';
 import { DEDENT_TEXT, INDENT_TEXT } from '../primitives/spacing.ts';
@@ -102,5 +102,35 @@ describe('enrich mints the layout supertype', () => {
 
 	it('is idempotent: its own supertype passes through a second enrich without a collision', () => {
 		expect(getEnrichWhitespace(enrich(enrich(grammar({ source: S('x') })))).collisions).toEqual([]);
+	});
+});
+
+describe('the newline member owns the line-ending arms', () => {
+	it('spells each member in its canonical form', () => {
+		expect(canonicalText('_newline')).toBe('\n');
+		expect(canonicalText('_blankline')).toBe('\n\n');
+		expect(canonicalText('_double_blankline')).toBe('\n\n\n');
+	});
+
+	it('makes blank lines references to newline and nothing else', () => {
+		for (const name of ['_blankline', '_double_blankline']) {
+			const rule = whitespaceMemberRule(name);
+			expect(rule.type).toBe('SEQ');
+			if (rule.type !== 'SEQ') continue;
+			expect(rule.members.every((ref) => ref.name === '_newline')).toBe(true);
+		}
+	});
+
+	it('declares the arms once, in order, on newline', () => {
+		expect(NEWLINE_ARMS).toEqual(['\n', '\r\n', '\r']);
+		const rule = whitespaceMemberRule('_newline');
+		expect(rule.type).toBe('CHOICE');
+		if (rule.type !== 'CHOICE') return;
+		expect(rule.members.map((arm) => arm.value)).toEqual([...NEWLINE_ARMS]);
+		expect(rule.preferred).toBe('\n');
+	});
+
+	it('refuses a name outside the vocabulary', () => {
+		expect(() => canonicalText('_nothing')).toThrow(/_nothing/);
 	});
 });

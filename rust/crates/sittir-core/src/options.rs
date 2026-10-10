@@ -26,7 +26,7 @@ pub struct ArmSite {
 /// The cell of a kind-indexed site table for a kind that owns no site there.
 pub const NO_SITE: u16 = u16::MAX;
 
-#[derive(Debug, Clone, Default, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ResolvedOptions {
     /// Per spacing site, in generated site order: the resolved arm and the strength it writes at.
     pub spacing: Vec<crate::slot::SeamArm>,
@@ -34,6 +34,8 @@ pub struct ResolvedOptions {
     pub delimiter: Vec<u8>,
     /// The indentation unit the writer repeats once per depth after a newline.
     pub indent: String,
+    /// The spelling every line break of a render takes.
+    pub newline: String,
     /// The edge rows of the kinds that own edge seams.
     pub edges: &'static [EdgeSite],
     /// Per kind id, the index of its row in `edges`, or `NO_SITE`.
@@ -126,6 +128,21 @@ pub trait Edged {
 pub enum Side {
     Before,
     After,
+}
+
+impl Default for ResolvedOptions {
+    fn default() -> Self {
+        Self {
+            spacing: Vec::new(),
+            delimiter: Vec::new(),
+            indent: String::new(),
+            newline: "\n".to_string(),
+            edges: &[],
+            edge_rows: &[],
+            sites: &[],
+            kind_flags: &[],
+        }
+    }
 }
 
 impl ResolvedOptions {
@@ -249,6 +266,10 @@ pub struct OptionTables {
     /// admitted `_space` and `_tab` whitespace members. Empty when the
     /// grammar admits neither, and then `indent` is not an option.
     pub indent_chars: &'static str,
+    /// The spellings of one line break a render may take: the arms of the
+    /// `_newline` whitespace member. Empty when the grammar admits no
+    /// `_newline`, and then `newline` is not an option.
+    pub newline_arms: &'static [&'static str],
 }
 
 /// A grammar's option tables, named by a marker type.
@@ -266,6 +287,9 @@ pub trait OptionObject: Sized {
     fn is_null(&self, key: &str) -> Result<bool, String>;
 }
 
+/// The key of the group holding the whole-render settings.
+pub const LAYOUT_KEY: &str = "layout";
+
 /// The arm id of an optional choice site's blank: the slot holds no token.
 pub const BLANK_ARM: u16 = 0;
 
@@ -274,6 +298,7 @@ pub const BLANK_ARM: u16 = 0;
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct Options<S> {
     pub indent: Option<String>,
+    pub newline: Option<String>,
     pub spacing: Vec<(SiteRef, u32)>,
     pub delimiter: Vec<(SiteRef, u32)>,
     sites: ::std::marker::PhantomData<S>,
@@ -282,18 +307,42 @@ pub struct Options<S> {
 impl<S: OptionSites> Options<S> {
     pub fn read<O: OptionObject>(obj: &O) -> Result<Self, String> {
         let mut options = Self {
-            indent: if S::TABLES.indent_chars.is_empty() { None } else { obj.string("indent")? },
+            indent: None,
+            newline: None,
             spacing: Vec::new(),
             delimiter: Vec::new(),
             sites: ::std::marker::PhantomData,
         };
+        options.read_layout(obj)?;
         options.read_level(obj, S::TABLES.addresses, "")?;
         Ok(options)
     }
 
+    /// The `layout` group: the settings of the whole render, `indent` and
+    /// `newline`, each only where the grammar admits it.
+    fn read_layout<O: OptionObject>(&mut self, obj: &O) -> Result<(), String> {
+        let tables = S::TABLES;
+        if !self.has_layout() {
+            return Ok(());
+        }
+        let Some(layout) = obj.object(LAYOUT_KEY)? else { return Ok(()) };
+        for key in layout.keys()? {
+            match key.as_str() {
+                "indent" if !tables.indent_chars.is_empty() => self.indent = layout.string(&key)?,
+                "newline" if !tables.newline_arms.is_empty() => self.newline = layout.string(&key)?,
+                _ => return Err(format!("options: unknown key {LAYOUT_KEY}/{key}")),
+            }
+        }
+        Ok(())
+    }
+
+    fn has_layout(&self) -> bool {
+        !S::TABLES.indent_chars.is_empty() || !S::TABLES.newline_arms.is_empty()
+    }
+
     fn read_level<O: OptionObject>(&mut self, obj: &O, nodes: &'static [AddressNode], at: &str) -> Result<(), String> {
         for key in obj.keys()? {
-            if at.is_empty() && key == "indent" && !S::TABLES.indent_chars.is_empty() {
+            if at.is_empty() && key == LAYOUT_KEY && self.has_layout() {
                 continue;
             }
             let Some(node) = nodes.iter().find(|n| n.key() == key) else {
@@ -338,6 +387,13 @@ impl<S: OptionSites> Options<S> {
                 ));
             }
             table.indent = indent.clone();
+        }
+        if let Some(newline) = &self.newline {
+            if !tables.newline_arms.contains(&newline.as_str()) {
+                let arms = tables.newline_arms.iter().map(|arm| format!("'{}'", arm.escape_default())).collect::<Vec<_>>().join(", ");
+                return Err(format!("options: newline {newline:?} is not one of [{arms}]"));
+            }
+            table.newline = newline.clone();
         }
         for (site, value) in &self.spacing {
             let allowed = (tables.allowed)(site.site);

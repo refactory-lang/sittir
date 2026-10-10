@@ -16,7 +16,7 @@ import { toScreamingSnakeCase } from '../compiler/model/casing.ts';
 import { rustStringLiteral } from './render-body.ts';
 import { childIndexOf, optionKey, type AddressLeafEntry, type AddressTables, type ChildIndex } from './options.ts';
 import { lineBreakTerminatedKinds, lineTerminatedKinds } from '../compiler/model/trivia.ts';
-import { indentChars, indentUnitOf } from '../compiler/model/layout-kinds.ts';
+import { PREFERRED_NEWLINE, indentChars, indentUnitOf, newlineArms } from '../compiler/model/layout-kinds.ts';
 
 export type SeamStrength = 0 | 1 | 2;
 
@@ -92,6 +92,8 @@ export interface RenderOptionsPlan {
 	readonly gaps: readonly { readonly bit: number; readonly id: number }[];
 	readonly indentChars: readonly string[];
 	readonly indent: string;
+	readonly newlineArms: readonly string[];
+	readonly newline: string;
 }
 
 const KIND_ANON = 1;
@@ -253,7 +255,9 @@ export function planRenderOptions(
 			})
 			.sort((a, b) => a.bit - b.bit),
 		indentChars: indentChars(nodeMap),
-		indent: indentUnitOf(nodeMap, declaredIndent, grammar)
+		indent: indentUnitOf(nodeMap, declaredIndent, grammar),
+		newlineArms: newlineArms(nodeMap),
+		newline: PREFERRED_NEWLINE
 	};
 }
 
@@ -634,6 +638,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push('        edge_rows: EDGE_ROWS,');
 	L.push('        kind_flags: KIND_FLAGS,');
 	L.push('        sites: SITE_SPECS,');
+	L.push(`        newline: ${rustStringLiteral(plan.newline)}.to_string(),`);
 	if (plan.indent !== '') L.push(`        indent: ${rustStringLiteral(plan.indent)}.to_string(),`);
 	else L.push('        ..ResolvedOptions::default()');
 	L.push('    }');
@@ -651,6 +656,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push('        indent: INDENT_KIND,');
 	L.push('        dedent: DEDENT_KIND,');
 	L.push(`        indent_chars: ${rustStringLiteral(plan.indentChars.join(''))},`);
+	L.push(`        newline_arms: &[${plan.newlineArms.map(rustStringLiteral).join(', ')}],`);
 	L.push('    };');
 	L.push('}', '');
 	L.push('pub type Options = ::sittir_core::options::Options<Sites>;', '');

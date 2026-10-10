@@ -9868,9 +9868,7 @@ export function resolveImplItemBody_whereClause(
 	return _resolveOneBranch<T.WhereClause>(value, 'where_clause', undefined, true);
 }
 
-export function resolveImplItemBody_declarationList(
-	value: T.ImplItemBody.LooseConfig['declarationList']
-): Admit<T.ImplItemBody['_declaration_list']> {
+export function resolveImplItemBody_body(value: T.ImplItemBody.LooseConfig['body']): Admit<T.ImplItemBody['_body']> {
 	return _resolveOneBranch<T.DeclarationList>(value, 'declaration_list');
 }
 
@@ -9883,7 +9881,7 @@ export function coerceToImplItemBody(input: T.ImplItemBody.Loose): ReturnType<ty
 		traitClause: resolveImplItemBody_traitClause(input.traitClause),
 		type: _requireField('impl_item_body', 'type', resolveImplItemBody_type(input.type)),
 		whereClause: resolveImplItemBody_whereClause(input.whereClause),
-		declarationList: resolveImplItemBody_declarationList(input.declarationList) ?? F.buildDeclarationList()
+		body: resolveImplItemBody_body(input.body) ?? F.buildDeclarationList()
 	});
 }
 
