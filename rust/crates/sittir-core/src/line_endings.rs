@@ -88,9 +88,9 @@ impl<W: fmt::Write + ?Sized> fmt::Write for LineEndings<'_, W> {
         while let Some(at) = rest.find(['\r', '\n']) {
             self.out.write_str(&rest[..at])?;
             let tail = &rest[at..];
-            if tail.starts_with("\r\n") {
+            if let Some(after) = tail.strip_prefix("\r\n") {
                 self.out.write_str(self.newline)?;
-                rest = &tail[2..];
+                rest = after;
             } else if tail == "\r" {
                 self.held_cr = true;
                 return Ok(());
