@@ -1,5 +1,5 @@
-import { join } from 'node:path';
 import { evaluatePackage } from './evaluate-package.ts';
+import { bindingsPathIn } from '../bindings/facts.ts';
 import { assertBindingsFresh } from '../bindings/hash.ts';
 import { loadBindingsModule } from '../bindings/module.ts';
 import type { GrammarPackage } from '../grammars.ts';
@@ -51,7 +51,7 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 		allowDiagnostics: cfg.allowDiagnostics
 	});
 	if (!diagnosis.passed) throw new GrammarDiagnosticError(diagnosis.blocked, diagnosis.grammarDiagnostics);
-	if (cfg.unbound !== true) assertBindingsFresh(grammar, (await loadBindingsModule(cfg.package.dir))?.hash, join(cfg.package.dir, 'bindings.scm'));
+	if (cfg.unbound !== true) assertBindingsFresh(grammar, (await loadBindingsModule(cfg.package.dir))?.hash, bindingsPathIn(cfg.package.dir));
 	const { stages, grammarDiagnostics, diagnosticRecords } = diagnosis;
 	const { raw, linked, normalized, nodeMap, compilerDiagnostics, slotGroupingDiagnostics } = diagnosis.collected;
 

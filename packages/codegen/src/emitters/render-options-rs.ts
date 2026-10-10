@@ -210,6 +210,7 @@ export function planRenderOptions(
 		if (defaultArm === undefined) throw new Error(`options.rs: ${at} default '${site.defaultArm}' is not one of its arms`);
 		const isFlank = site.side === 'start' || site.side === 'end';
 		const seatEdge = site.seat === undefined ? undefined : parseSeamLabel(site.seat.field);
+		const seatKindId = site.seat === undefined ? undefined : nodeMap.nodes.get(site.seat.kind)?.kindId;
 		const field = isFlank
 			? `${site.slot}_${site.side}`
 			: site.seat !== undefined && seatEdge !== undefined
@@ -229,7 +230,7 @@ export function planRenderOptions(
 			allowedIds,
 			strength: seamStrength(site.origin),
 			...(site.side === undefined ? {} : { side: site.side }),
-			...(site.seat === undefined ? {} : { seat: { ...site.seat, ...stampOf(nodeMap, site.seat.kind) } }),
+			...(site.seat === undefined ? {} : { seat: { ...site.seat, ...(seatKindId === undefined ? {} : { kindId: seatKindId }) } }),
 			...(site.path === undefined ? {} : { path: site.path }),
 			...(site.edgeArm === undefined ? {} : { edgeArm: site.edgeArm })
 		}, site);
@@ -499,11 +500,6 @@ export function carriesPerNodeValue(site: SpacingSite): boolean {
 
 export function isKindEdge(site: SpacingSite): boolean {
 	return parseSeamLabel(site.address)?.token === site.kind;
-}
-
-function stampOf(nodeMap: NodeMap, kind: string): { readonly kindId?: number } {
-	const kindId = nodeMap.nodes.get(kind)?.kindId;
-	return kindId === undefined ? {} : { kindId };
 }
 
 export function edgeKindId(kindEntries: readonly IdEntry[], kind: string): number | undefined {

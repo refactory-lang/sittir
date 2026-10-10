@@ -47,7 +47,7 @@ export function namespaceTree(readEntries: ReadonlyMap<string, readonly { readon
 	return freeze(root);
 }
 
-function descendants(node: NamespaceNode): NamespaceNode[] {
+export function descendants(node: NamespaceNode): NamespaceNode[] {
 	return [...node.children.values()].flatMap((child) => [child, ...descendants(child)]);
 }
 

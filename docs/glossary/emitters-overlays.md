@@ -124,6 +124,10 @@ A read entry's test, as the `PortableCondition`s that must all hold. A condition
 
 The tree of every vocabulary path a grammar reads (`NamespaceNode`), segment by segment and sorted. Each node holds the kinds read at or under it, so a path's kinds are a superset of every refinement's under it.
 
+### `packages/codegen/src/emitters/overlays/portable/namespaces.ts::descendants`
+
+Every node below a namespace node, each before its own descendants. The alias pass and the portable surface walk the tree with it.
+
 ### `packages/codegen/src/emitters/overlays/portable/namespaces.ts::aliasesOf`
 
 The shortcut names under each namespace node. A last segment unique among a node's descendants that are not its direct children becomes an alias for that path (`NamespaceAlias`). A segment two or more descendants share is dropped (`DroppedAlias`, naming every path), and a real child of the same name always wins.

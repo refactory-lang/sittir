@@ -149,7 +149,9 @@ export const KNOWN_PREDICATE_OPERATORS: ReadonlySet<string> = new Set([
 	'not-any-of'
 ]);
 
-export const bindingsPath = (grammar: GrammarName): string => join(grammarPackageDir(grammar), 'bindings.scm');
+export const bindingsPathIn = (packageDir: string): string => join(packageDir, 'bindings.scm');
+
+export const bindingsPath = (grammar: GrammarName): string => bindingsPathIn(grammarPackageDir(grammar));
 
 export interface BindingsRoundTrip {
 	readonly errors: readonly ErrorRegion[];

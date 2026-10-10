@@ -1,4 +1,5 @@
 import { isPreference } from './primitives/preference.ts';
+import { isPrecWrapper } from '../types/runtime-shapes.ts';
 import { LABELS_KEY } from './wire/options-block.ts';
 import { REPARSE_HOST_PRIORITY } from './wire/reparse-hosts.ts';
 import type { PatchesConfig } from './wire/wire.ts';
@@ -67,7 +68,7 @@ const LIST_FIELDS = ['supertypes', 'inline', 'factoryInline', 'textTokens', 'pro
 const RULE_FIELDS = ['extras', 'externals', 'precedences', 'reserved', 'conflicts'];
 const KEYED_FIELDS = ['rules', 'renderAs', 'visibleExternals', 'groups'];
 
-const isRecord = (value: unknown): value is GrammarRecord => typeof value === 'object' && value !== null && !Array.isArray(value);
+export const isRecord = (value: unknown): value is GrammarRecord => typeof value === 'object' && value !== null && !Array.isArray(value);
 
 function renameValue(value: unknown, rename: (name: string) => string): unknown {
 	if (typeof value === 'string') return rename(value);
@@ -171,7 +172,7 @@ export function renameGrammar(grammar: GrammarRecord, renames: Readonly<Record<s
 	return out;
 }
 
-function symbolNames(rule: unknown, out: Set<string> = new Set()): Set<string> {
+export function symbolNames(rule: unknown, out: Set<string> = new Set()): Set<string> {
 	if (Array.isArray(rule)) for (const r of rule) symbolNames(r, out);
 	else if (isRecord(rule)) {
 		if (rule.type === 'SYMBOL' && typeof rule.name === 'string') out.add(rule.name);
@@ -338,10 +339,8 @@ export interface ChildFields {
 	readonly arm: boolean;
 }
 
-const PRECEDENCE_RULES: ReadonlySet<unknown> = new Set(['PREC', 'PREC_LEFT', 'PREC_RIGHT', 'PREC_DYNAMIC']);
-
 function unprecedenced(rule: unknown): unknown {
-	return isRecord(rule) && PRECEDENCE_RULES.has(rule.type) ? unprecedenced(rule.content) : rule;
+	return isRecord(rule) && isPrecWrapper(rule as { type: string }) ? unprecedenced(rule.content) : rule;
 }
 
 export function childFields(grammar: GrammarRecord, owner: string, target: FieldWrapTarget | null): ChildFields {

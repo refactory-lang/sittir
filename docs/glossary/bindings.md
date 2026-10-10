@@ -230,10 +230,6 @@ A group lift at the patch stage: the symbol enrich's group lift leaves in a rule
 
 The alias enrich wraps a visible group in.
 
-### `packages/codegen/src/bindings/overlay.ts::symbolsOf`
-
-Every symbol name a rule references, at any depth.
-
 ### `packages/codegen/src/bindings/overlay.ts::fieldOfReference`
 
 The field a rule holds a reference to a child kind in, if any.
@@ -447,6 +443,14 @@ A `bindings.scm`'s top-level patterns as `BindingPattern`s, read by the pinned r
 ### `packages/codegen/src/bindings/read.ts::roundTripBindings`
 
 A `bindings.scm` parsed and rendered back by the pinned engine (`BindingsRoundTrip`).
+
+### `packages/codegen/src/bindings/facts.ts::bindingsPathIn`
+
+The `bindings.scm` of the grammar package in a directory. The one spelling of the file's name; compile and generate reach it through the package they were given.
+
+### `packages/codegen/src/bindings/facts.ts::bindingsPath`
+
+The `bindings.scm` of a grammar by name, in its package directory.
 
 ### `packages/codegen/src/bindings/facts.ts::bindingGrammars`
 

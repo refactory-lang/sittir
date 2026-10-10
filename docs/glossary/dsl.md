@@ -7196,6 +7196,14 @@ The precedence wrapper types, which carry no slot topology.
 
 The parser's field table as `{ name, id }` rows in id order, skipping entries without an id. It is the field-side counterpart of `collectGeneratedKindEntries` and the single source `field_ids.rs` is emitted from.
 
+### `packages/codegen/src/dsl/bind.ts::isRecord`
+
+A grammar value that is a record (a rule, or a map of rules or names), not an array or a scalar. The bindings overlay walks rules with it too.
+
+### `packages/codegen/src/dsl/bind.ts::symbolNames`
+
+Every symbol name a rule references, at any depth. The bindings overlay uses it to tell whether an alias's target holds the aliased kind.
+
 ### `packages/codegen/src/dsl/bind.ts::Rename`
 
 A kind-level rename in a bindings overlay: the base rule or external `from` takes the name `to`.
