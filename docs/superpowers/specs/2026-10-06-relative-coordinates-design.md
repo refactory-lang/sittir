@@ -304,9 +304,12 @@ the table gives each of its nodes its own sides.
 
 Superseded on 2026-10-09 with the trivia step: the arena-tables plan's 3a verifies the trivia table.
 
-7. `f(a /* x */, b)`, `f(a, /* x */ b)`, `f(a, // x⏎ b)`, `a + /* x */ b` and `[a, b, // c⏎]` keep each
-   comment on its side of the token, built with the matching sides and, after the snapshot step, as
-   snapshots.
+7. `f(a /* x */, b)`, `f(a, /* x */ b)`, `f(a, // x⏎ b)` and `a + /* x */ b` keep each comment on its
+   side of the token, built with the matching sides and, after the snapshot step, as snapshots.
+   `[a, b, // c⏎]` is the one case with no guarantee: the comment is kept while the list is copied
+   and may go when the list renders from its template. Trailing `b`, it would print straight after
+   `b`, before the template's `,`, as `b // c⏎, ]`, and keeping it after the separator would take
+   special handling in rendering (trivia table § 7.4).
 8. A built trailing comment after a `space` entry stays on its line; without one, the defaults apply.
 9. For every corpus node, the line table's row and column equal tree-sitter's start point.
 10. `$sameLine` and `$tokensBetween` are gone from the wire, the types and the fixtures.
