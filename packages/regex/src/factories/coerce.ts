@@ -9,10 +9,9 @@ import {
 	coerceKindEnumStorage,
 	coerceMixedEnumStorage,
 	configFieldOr,
-	isCoordinate,
-	isNodeOfKind
+	isNodeOfKind,
+	isNodeValue
 } from '@sittir/common/utils';
-import { isNode } from '../utils.js';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
 type _LooseFieldInput = unknown;
@@ -192,15 +191,14 @@ function _fromOfTag(tag: unknown, candidates: readonly string[]): keyof _FromMap
 }
 
 function _splitTag(v: unknown): { readonly tag: unknown; readonly rest: _LooseFieldInput } | undefined {
-	if (typeof v !== 'object' || v === null || Array.isArray(v) || isNode(v) || isCoordinate(v) || !('$type' in v))
-		return undefined;
+	if (typeof v !== 'object' || v === null || Array.isArray(v) || isNodeValue(v) || !('$type' in v)) return undefined;
 	const { $type, ...rest } = v as Record<string, unknown>;
 	return { tag: $type, rest };
 }
 
 function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInput): ReturnType<_FromMap[K]> {
 	const fn = _fromMap[kind] as (rest: _LooseFieldInput) => ReturnType<_FromMap[K]>;
-	if (!(kind in _leafRegistry) || typeof rest !== 'object' || rest === null || Array.isArray(rest) || isNode(rest))
+	if (!(kind in _leafRegistry) || typeof rest !== 'object' || rest === null || Array.isArray(rest) || isNodeValue(rest))
 		return fn(rest);
 	const text = (rest as { text?: unknown }).text;
 	if (typeof text !== 'string') throw new Error(`the ${kind} tag takes its text: { $type: <kind id>, text: "…" }`);
@@ -277,8 +275,7 @@ function _resolveOne<T>(
 	defaultArm?: string
 ): Admit<T> {
 	if (v === undefined || v === null) return v as Admit<T>;
-	const kindId =
-		isNode(v) || isCoordinate(v) ? v.$type : typeof v === 'number' && _KIND_ID_STORED.has(v) ? v : undefined;
+	const kindId = isNodeValue(v) ? v.$type : typeof v === 'number' && _KIND_ID_STORED.has(v) ? v : undefined;
 	if (typeof kindId === 'number') {
 		const kindName = KIND_NAMES.get(kindId);
 		if (
@@ -291,7 +288,7 @@ function _resolveOne<T>(
 		const arms = branchKinds.filter((b) => _BARE_ACCEPTS[b]?.has(kindId) === true);
 		const arm = arms.length <= 1 ? arms[0] : undefined;
 		if (arm !== undefined && _isFromKind(arm)) return _resolveByKind(arm, v) as Admit<T>;
-		if (isNode(v) || isCoordinate(v)) return v as Admit<T>;
+		if (isNodeValue(v)) return v as Admit<T>;
 		if (arms.length > 1) {
 			throw new Error(
 				`_resolveOne: a bare ${kindName ?? kindId} fits more than one arm: [${arms.join(', ')}]; name the arm explicitly`
@@ -326,7 +323,7 @@ function _resolveOne<T>(
 			_fromOfTag(tagged.tag, [...leafKinds, ...branchKinds]),
 			tagged.rest
 		) as _LooseFieldInput;
-		return (isNode(built) ? _resolveOne<T>(built, leafKinds, branchKinds, defaultArm) : built) as Admit<T>;
+		return (isNodeValue(built) ? _resolveOne<T>(built, leafKinds, branchKinds, defaultArm) : built) as Admit<T>;
 	}
 	if (branchKinds.length === 1 && typeof v === 'object' && !Array.isArray(v)) {
 		const bk = branchKinds[0]!;
@@ -387,10 +384,10 @@ function _listElements(
 		typeof head === 'object' &&
 		head !== null &&
 		!Array.isArray(head) &&
-		!isNode(head) &&
+		!isNodeValue(head) &&
 		Object.keys(head).every((k) => optionKeys.includes(k));
 	const elements = (optionsFirst ? input.slice(1) : input).map((e) => {
-		if (typeof e !== 'object' || e === null || Array.isArray(e) || isNode(e)) return e;
+		if (typeof e !== 'object' || e === null || Array.isArray(e) || isNodeValue(e)) return e;
 		const tagged = _splitTag(e);
 		if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, tagKinds), tagged.rest);
 		if (bagKinds === undefined || bagKinds.length === 0) return e;
@@ -401,7 +398,10 @@ function _listElements(
 		return _isFromKind(bagKinds[0]!) ? _resolveByKind(bagKinds[0]!, e) : e;
 	});
 	const resolved = elements.map((e) =>
-		wrapperKind !== undefined && isNode(e) && typeof e.$type === 'number' && KIND_NAMES.get(e.$type) === wrapperKind
+		wrapperKind !== undefined &&
+		isNodeValue(e) &&
+		typeof e.$type === 'number' &&
+		KIND_NAMES.get(e.$type) === wrapperKind
 			? e
 			: resolve([e])[0]
 	);
@@ -410,7 +410,7 @@ function _listElements(
 
 function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): Admit<T> {
 	if (v === undefined || v === null) return v as Admit<T>;
-	if (isNode(v)) return v as Admit<T>;
+	if (isNodeValue(v)) return v as Admit<T>;
 	if (typeof v === 'boolean' || typeof v === 'number' || typeof v === 'bigint') {
 		const scalar = _resolveScalar(v);
 		if (scalar !== undefined) return scalar as Admit<T>;
@@ -527,7 +527,7 @@ function _resolveOneBranch<T>(
 		if (kn !== kind && kind in _wrapKindIds)
 			return _resolveOneBranch<T>(_resolveByKind(kn, tagged.rest), kind, altKinds);
 	}
-	if (isNode(v)) {
+	if (isNodeValue(v)) {
 		const wrapId = _wrapKindIds[kind];
 		if (wrapId !== undefined && v.$type !== wrapId) {
 			if (altKinds !== undefined && altKinds.some((k) => k === v.$type)) return v as Admit<T>;
@@ -572,7 +572,7 @@ function _resolveBooleanKeyword<T>(v: _LooseFieldInput): T {
 	if (v === undefined || v === null) return v as T;
 	if (v === true || v === false) return v as T;
 	if (typeof v === 'string') return true as T;
-	if (isNode(v)) return v as T;
+	if (isNodeValue(v)) return v as T;
 	if (Array.isArray(v)) return v as T;
 	return v as T;
 }
@@ -582,7 +582,7 @@ function _resolveBitflag<T>(v: _LooseFieldInput): T {
 	if (typeof v === 'number') return v as T;
 	if (typeof v === 'string') return v as T;
 	if (Array.isArray(v)) return v as T;
-	if (isNode(v)) return v as T;
+	if (isNodeValue(v)) return v as T;
 	return v as T;
 }
 
@@ -592,11 +592,11 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 	}
 }
 
-/** Narrows a coercer input to its config arm. A bare `isNode` check
+/** Narrows a coercer input to its config arm. A bare `isNodeValue` check
  *  cannot: the UntypedNode arm is not a strict subtype of the config arm, so
  *  negative narrowing leaves it in place. */
 function _isLooseConfig<C>(v: C | AnyUntypedNode): v is C {
-	return !isNode(v);
+	return !isNodeValue(v);
 }
 function _requireField<T>(kind: string, slot: string, v: T | undefined | null): T {
 	if (v === undefined || v === null) {
@@ -678,7 +678,7 @@ export function coerceToAlternation(...input: T.Alternation.LooseArgs): ReturnTy
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNode(head) || !('terms' in head)) return input;
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('terms' in head)) return input;
 		const v = (head as Record<string, unknown>)['terms'];
 		return Array.isArray(v) ? v : [v];
 	})();
@@ -700,7 +700,7 @@ export function coerceToTerm(...input: T.Term.LooseArgs): ReturnType<typeof F.bu
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNode(head) || !('termGroup' in head)) return input;
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('termGroup' in head)) return input;
 		const v = (head as Record<string, unknown>)['termGroup'];
 		return Array.isArray(v) ? v : [v];
 	})();
@@ -1198,7 +1198,7 @@ export function resolveIdentityEscape_content(
 }
 
 export function coerceToIdentityEscape(input: T.IdentityEscape.Loose): ReturnType<typeof F.buildIdentityEscape> {
-	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildIdentityEscape>;
+	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildIdentityEscape>;
 	return F.buildIdentityEscape(
 		_requireField(
 			'identity_escape',

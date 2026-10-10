@@ -489,15 +489,12 @@ function toTransportValue(
 		});
 	}
 	if (!isRecord(value)) return value;
-	if (isCoordinate(value)) {
-		if (fold) assertHoldsTree(value);
-		return plainCoordinate(value);
-	}
+	if (isCoordinate(value) && !fold) return plainCoordinate(value);
 	const bears = bearer === undefined || bearer === value;
 	const trivia = owner !== undefined && namesSameNode(owner, value) ? triviaOf(value) : crossingTrivia(value, view, bears ? changed : NO_EDGES);
 	// Trivia entries cross as they are, coordinates included.
 	if (fold && trivia != null) forEachTriviaList(trivia as TriviaSides<unknown>, assertTriviaHoldsTree);
-	const folded = fold ? foldedCoordinate(value) : undefined;
+	const folded = !fold ? undefined : isCoordinate(value) ? value : foldedCoordinate(value);
 	if (folded !== undefined) {
 		assertHoldsTree(value);
 		return foldToCoordinate(value, folded, trivia);

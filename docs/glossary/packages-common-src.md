@@ -82,9 +82,9 @@ The engine a value belongs to: what its `$engine()` returns, or for a value with
 
 Records the engine handle that read a tree, so the wrap layer can find it from the tree alone.
 
-### `packages/common/src/engine-scope.ts::hydrateListStorage`
+### `packages/common/src/engine-scope.ts::hydrateStored`
 
-Resolves a list owner's shallow read stub before a factory stores and sizes its list. The stub's tree token selects its reading engine and that engine's grammar-owned `hydrateChild` hook; this retains the existing depth and envelope normalization in one implementation. Non-stubs pass through unchanged. A missing tree binding, disposed reading engine or different calling language leaves the stub unresolved, so the factory's existing read-stub refusal remains effective.
+A coordinate a built node stores, as the node every route returns: the coordinate's tree token selects the engine that read it, and that engine's generated `hydrate` reads and wraps it through the registry, so a built holder, a parsed holder and a query reach one object. Any other value passes through unchanged. A coordinate is refused rather than returned raw: one that holds no token (a copy, `assertHoldsTree`), one whose engine was disposed or whose tree was released (the message names the tree), and one read through an engine of another language. A factory resolves a list owner's read stub through it before sizing the list, the builder accessors through `hydrateStoredSlot` and `hydrateStoredSlots`, and a trivia reader through `hydrateTriviaEntry`.
 
 ### `packages/common/src/tree-token.ts::registerTree`
 
@@ -237,7 +237,7 @@ The one hook every in-place write on a parsed node marks through: the trivia wri
 
 ### `packages/common/src/utils.ts::heldBySlot`
 
-The parsed nodes a parent's slot holds, added by the accessors (`hydrateSlotWith`, `hydrateSlotsWith`, through `holdBySlot`) as they write a hydrated child back into its slot. A guard only: the trivia writer refuses a write on a parsed node that still sits at its source position, is not its tree's root (the root alone carries `$errors`) and no slot holds, since a node a query reached sits in no slot the render walks and its comment would not render. It decides that refusal, never what renders.
+The parsed nodes a parent's slot holds, added by the accessors (`hydrateSlotWith`, `hydrateSlotsWith`, and a built node's `hydrateStoredSlot`, `hydrateStoredSlots`, through `holdBySlot`) as they write a hydrated child back into its slot. A guard only: the trivia writer refuses a write on a parsed node that still sits at its source position, is not its tree's root (the root alone carries `$errors`) and no slot holds, since a node a query reached sits in no slot the render walks and its comment would not render. It decides that refusal, never what renders.
 
 ### `packages/common/src/utils.ts::holdBySlot`
 
@@ -319,11 +319,11 @@ The route object it returns is frozen.
 
 ### `packages/common/src/utils.ts::isNodeOfKind`
 
-Whether a value is a node of one kind id. It answers a boolean and never narrows. Narrowing an argument typed as a union that holds a node's `.Bound` beside its storage type filters the members against each other, and that comparison exceeds the checker's depth on deeply nested grammars; a caller that already knows what it will do with a hit casts once instead.
+Whether a value is a node of one kind id, a coordinate of that kind included (`isNodeValue`). It answers a boolean and never narrows. Narrowing an argument typed as a union that holds a node's `.Bound` beside its storage type filters the members against each other, and that comparison exceeds the checker's depth on deeply nested grammars; a caller that already knows what it will do with a hit casts once instead.
 
 ### `packages/common/src/utils.ts::configFieldOr`
 
-The value of the key `key` when the input is a config object (not a node) that carries it, else `orElse()`. The fallback is a thunk so it runs only when no config was given, which keeps a bare-input refusal from firing for a config. It takes and returns `unknown` for the reason `isNodeOfKind` never narrows: the `in` and `!isNode` narrowing it replaces relates the members of a `.Bound`-bearing union.
+The value of the key `key` when the input is a config object (not a node) that carries it, else `orElse()`. The fallback is a thunk so it runs only when no config was given, which keeps a bare-input refusal from firing for a config. It takes and returns `unknown` for the reason `isNodeOfKind` never narrows: the `in` and `!isNode` narrowing it replaces relates the members of a `.Bound`-bearing union. A coordinate is a node value, never a config (`isNodeValue`).
 
 ### `packages/common/src/utils.ts::orDefault`
 
@@ -441,7 +441,7 @@ The transport for data leaving the tree it was read from, such as a render fixtu
 
 ### `packages/common/src/transport-data.ts::toTransportValue`
 
-The walk behind `toTransportData` and `toDetachedTransportData`. A node naming the same parser node as its owner (`namesSameNode`) crosses with its stored trivia only. A node that already holds a `gap` or a `flank` in its `$_layout` crosses with them: data a tool detached from its tree keeps the layout evidence the tree would have given, and without its tree nothing else could recompute it. Evidence the walk derives replaces a carried value: the flank the source gives (`sourceFlankOf`), and the gap an owner sets on each element after converting it (`sourceGapOf`).
+The walk behind `toTransportData` and `toDetachedTransportData`. A node naming the same parser node as its owner (`namesSameNode`) crosses with its stored trivia only. A node that already holds a `gap` or a `flank` in its `$_layout` crosses with them: data a tool detached from its tree keeps the layout evidence the tree would have given, and without its tree nothing else could recompute it. Evidence the walk derives replaces a carried value: the flank the source gives (`sourceFlankOf`), and the gap an owner sets on each element after converting it (`sourceGapOf`). A coordinate a slot stores raw (a built node over parsed storage) crosses as its node folds, with the same derived trivia, so a built holder renders the same before and after an accessor hydrates it; detached, it crosses as its plain coordinate.
 
 
 ### `packages/common/src/transport-data.ts::crossingTrivia`
@@ -616,7 +616,7 @@ The one frozen empty list `hydrateSlotsWith` answers for an absent list slot, so
 
 ### `packages/common/src/utils.ts::hydrateTriviaEntry`
 
-A trivia entry as a reader of trivia gets it: a coordinate entry read and wrapped through the tree it holds (`hydrateListStorage`, which finds the tree by the coordinate's tree token), with the entry's placement facts carried onto the node (`carryPlacement`); any other entry as it is.
+A trivia entry as a reader of trivia gets it: a coordinate entry read and wrapped through the tree it holds (`hydrateStored`, which finds the tree by the coordinate's tree token and refuses a coordinate that lost it), with the entry's placement facts carried onto the node (`carryPlacement`); any other entry as it is.
 
 ### `packages/common/src/utils.ts::hydratedEntries`
 

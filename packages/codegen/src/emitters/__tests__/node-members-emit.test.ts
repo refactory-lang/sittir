@@ -26,7 +26,7 @@ describe('a node writes its members in its literal', () => {
 		const body = functionBody(source, 'buildCallExpression');
 		expect(body).toContain('$with: {');
 		expect(body).toMatch(/callee: \(value[^)]*\) =>\s+rebuilt\(node, handle, \(\) => buildCallExpression\(\{ \.\.\.config, callee: value \}/);
-		expect(body).toContain('callee: () => _callee,');
+		expect(body).toContain('callee: () => hydrateStoredSlot(node, "_callee"),');
 		expect(body).not.toMatch(/withMethods|withAccessors|defineProperty/);
 	});
 });

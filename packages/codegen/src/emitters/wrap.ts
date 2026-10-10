@@ -1,7 +1,7 @@
 import { hasBlankArm } from '../compiler/model/site-preferences.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { AbstractAssembledCompound, AssembledAlias, AssembledList, AssembledNonterminal } from '../compiler/model/node-map.ts';
+import { AbstractAssembledCompound, AssembledAlias, AssembledList, AssembledNonterminal, storesNodes } from '../compiler/model/node-map.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import { groupSeatParts, innerPositionsOf, listSelfViewParts, nodeMemberLines, ownerViewParts, seatedSetters, spelledGroupSlots, type SetterEntry } from './node-members.ts';
@@ -112,8 +112,7 @@ interface SlotAccessorConfig {
 }
 
 function slotAccessorBody(slot: SlotModel, config: SlotAccessorConfig): string {
-	const kind = config.storageInfo.kind;
-	if (kind === 'boolean' || kind === 'bitflag' || kind === 'kindEnum') return `return this.${slot.storageKey}`;
+	if (!storesNodes(config.storageInfo)) return `return this.${slot.storageKey}`;
 	const key = JSON.stringify(slot.storageKey);
 	if (slot.arity === 'many') return `return hydrateSlots<${config.elemType}>(this, ${key}, tree)`;
 	const role = config.aliasContent === true ? `, contentRole(this, ${dataAccessExpr('this', slot.storageKey)})` : '';

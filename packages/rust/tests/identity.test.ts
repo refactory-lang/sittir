@@ -2,6 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
+import { isCoordinate } from '../../common/src/read.ts';
 import { treeOf } from '../../common/src/tree-token.ts';
 import rust from '../src/index.ts';
 
@@ -170,5 +171,54 @@ describe('the fold by range', () => {
 		if (c === undefined || !engine.is.functionItem(c)) throw new Error('expected a function');
 		letAt(a, 0).$trivia.leading(engine.build.lineComment(' p'));
 		expect(c.$render()).toBe('fn c() { let s = 4; }');
+	});
+});
+
+interface Storage {
+	readonly _statements: never[];
+	readonly _parameters: never;
+	readonly _body: never;
+}
+
+function storageOf(node: object): Storage {
+	return node as unknown as Storage;
+}
+
+describe('a built node over parsed storage', () => {
+	it("hydrates a list item it stores into the parsed holder's object", () => {
+		const parsed = engine.parse(SOURCE, { depth: 1 });
+		const built = engine.build.sourceFile({ statements: storageOf(parsed)._statements });
+		expect(built.$render()).toBe(SOURCE);
+		expect(built.statements()[0]).toBe(parsed.statements()[0]);
+		expect(built.statements()).toBe(built.statements());
+		expect(built.$render()).toBe(SOURCE);
+	});
+
+	it("hydrates a single slot it stores into the parsed holder's object", () => {
+		const parsed = engine.parse(SOURCE, { depth: 1 });
+		const fn = parsed.statements()[1];
+		if (fn === undefined || !engine.is.functionItem(fn)) throw new Error('expected a function');
+		const stored = storageOf(fn);
+		expect(isCoordinate(stored._body)).toBe(true);
+		const built = engine.build.functionItem({ name: engine.build.identifier('c'), parameters: stored._parameters, body: stored._body });
+		expect(built.body()).toBe(fn.body());
+		expect(built.$render()).toBe('fn c() { let x = 1; }');
+	});
+
+	it('refuses a coordinate that lost its tree, and never returns it raw', () => {
+		const parsed = engine.parse(SOURCE, { depth: 1 });
+		const held = storageOf(parsed)._statements[0];
+		expect(isCoordinate(held)).toBe(true);
+		const copied = storageOf({ _statements: [JSON.parse(JSON.stringify(held))] })._statements;
+		const built = engine.build.sourceFile({ statements: copied });
+		expect(() => built.statements()[0]).toThrow(/does not hold that tree/);
+	});
+
+	it('refuses after its engine is disposed, naming the tree', async () => {
+		const scoped = await createEngine(rust);
+		const parsed = scoped.parse(SOURCE, { depth: 1 });
+		const built = scoped.build.sourceFile({ statements: storageOf(parsed)._statements });
+		scoped.dispose();
+		expect(() => built.statements()[0]).toThrow(/tree \d+/);
 	});
 });

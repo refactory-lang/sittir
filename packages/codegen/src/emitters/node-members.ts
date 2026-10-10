@@ -13,9 +13,15 @@ export interface InnerPositions {
 	readonly keyed: boolean;
 }
 
+export interface StoredAccessor {
+	readonly name: string;
+	readonly read: string;
+	readonly hydrates?: 'one' | 'many';
+}
+
 export interface NodeMemberSpec {
 	readonly setters?: readonly SetterEntry[];
-	readonly accessors: readonly { readonly name: string; readonly read: string }[];
+	readonly accessors: readonly StoredAccessor[];
 	readonly inner: InnerPositions;
 	readonly extra?: readonly string[];
 	readonly parsed?: true;
@@ -31,6 +37,11 @@ export function triviaInnerImports(nodeMap: NodeMap): readonly string[] {
 	return innerGapsKeyed(nodeMap) ? ['triviaInner', 'triviaInnerAt'] : ['triviaInner'];
 }
 
+function accessorRead(accessor: StoredAccessor): string {
+	if (accessor.hydrates === undefined) return accessor.read;
+	return `${accessor.hydrates === 'many' ? 'hydrateStoredSlots' : 'hydrateStoredSlot'}(node, ${JSON.stringify(accessor.read)})`;
+}
+
 export function withEntry(entry: SetterEntry): string {
 	return `      ${entry.name}: (${entry.params}) => rebuilt(node, handle, () => ${entry.body}),`;
 }
@@ -40,7 +51,7 @@ export function nodeMemberLines(spec: NodeMemberSpec): string[] {
 	if (spec.setters !== undefined) {
 		lines.push('    $with: {', ...spec.setters.map(withEntry), '    },');
 	}
-	for (const accessor of spec.accessors) lines.push(`    ${accessor.name}: () => ${accessor.read},`);
+	for (const accessor of spec.accessors) lines.push(`    ${accessor.name}: () => ${accessorRead(accessor)},`);
 	lines.push(...(spec.extra ?? []));
 	lines.push(
 		'    $render: () => renderText(handle, node),',

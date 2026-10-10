@@ -1,9 +1,9 @@
-import type { AnyUntypedNode, ByteSpan, ErrorNode, LineGap, LineGapAddress, LineGaps, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
+import type { AnyUntypedNode, ByteSpan, ErrorNode, LineGap, LineGapAddress, LineGaps, NodeTrivia, TransportCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
 import { carryPlacement, carryRead, carrySource, coordinateOf, holdsSlots, indexOf, isRead, isStorageKey, sourceOf, triviaOf, type DerivedSides } from './transport-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
-import { hydrateListStorage, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
+import { hydrateStored, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
 import { Delimiter } from './delimiter.ts';
 import { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle } from './read.ts';
 import { markIndexEdited, register, registered, type EditSide, type Role } from './identity.ts';
@@ -153,7 +153,7 @@ function hydratedEntries(entries: readonly TriviaEntry[]): readonly TriviaEntry[
 
 export function hydrateTriviaEntry(entry: unknown): TriviaEntry {
 	if (!isCoordinate(entry)) return entry as TriviaEntry;
-	const node = hydrateListStorage(entry);
+	const node = hydrateStored(entry);
 	return (node !== null && typeof node === 'object' ? carryPlacement(entry, node) : node) as TriviaEntry;
 }
 
@@ -647,8 +647,13 @@ export function describeValue(v: unknown): string {
 	}
 }
 
+/** Whether `v` is a node value a builder takes as one: a node, or a coordinate naming one past a read's depth. */
+export function isNodeValue(v: unknown): v is AnyUntypedNode | TransportCoordinate {
+	return isNode(v) || isCoordinate(v);
+}
+
 export function isNodeOfKind(v: unknown, kind: number): boolean {
-	return isNode(v) && v.$type === kind;
+	return isNodeValue(v) && v.$type === kind;
 }
 
 export function orDefault<V>(value: V | undefined, make: () => NoInfer<V>): V {
@@ -656,7 +661,7 @@ export function orDefault<V>(value: V | undefined, make: () => NoInfer<V>): V {
 }
 
 export function configFieldOr(input: unknown, key: string, orElse: () => unknown): unknown {
-	return input !== null && typeof input === 'object' && !isNode(input) && key in input
+	return input !== null && typeof input === 'object' && !isNodeValue(input) && key in input
 		? (input as Record<string, unknown>)[key]
 		: orElse();
 }
@@ -753,10 +758,33 @@ export function hydrateSlotsWith(node: object, key: string, tree: TreeHandle, wr
 	return children;
 }
 
+/** The value of slot `key` of a built node, hydrated by `hydrateStored`: a coordinate it stores becomes the node every route returns, written back into the slot and held by it (`heldBySlot`). */
+export function hydrateStoredSlot(node: object, key: string): unknown {
+	const slots = node as Record<string, unknown>;
+	const child = hydrateStored(slots[key]);
+	if (child !== slots[key]) {
+		slots[key] = child;
+		holdBySlot(child);
+	}
+	return child;
+}
+
+/** `hydrateStoredSlot` for a list slot: once any item is a coordinate, every item hydrated once, the slot then holding the frozen items. */
+export function hydrateStoredSlots(node: object, key: string): readonly unknown[] {
+	const slots = node as Record<string, unknown>;
+	const stored = slots[key];
+	if (!Array.isArray(stored)) return stored == null ? NO_CHILDREN : [hydrateStoredSlot(node, key)];
+	if (!stored.some(isCoordinate)) return stored;
+	const children = Object.freeze(stored.map(hydrateStored));
+	for (const child of children) holdBySlot(child);
+	slots[key] = children;
+	return children;
+}
+
 export { numberText, type NumberBase } from './number.ts';
 export { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle } from './read.ts';
 export type { Role } from './identity.ts';
-export { currentHandle, inEngine, hydrateListStorage, type EngineHandle } from './engine-scope.ts';
+export { currentHandle, inEngine, hydrateStored, type EngineHandle } from './engine-scope.ts';
 export { checkDelimited, type DelimitedSpec } from './delimited-check.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';

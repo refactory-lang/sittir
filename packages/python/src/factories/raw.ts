@@ -18,7 +18,7 @@ import {
 	ownerElements,
 	listOption,
 	refuseReadStub,
-	hydrateListStorage,
+	hydrateStored,
 	storedElements,
 	defineListIndices,
 	elementsWith,
@@ -27,6 +27,8 @@ import {
 	STORED_SLOT_READERS,
 	rebuilt,
 	renderText,
+	hydrateStoredSlot,
+	hydrateStoredSlots,
 	triviaSide,
 	triviaInner,
 	describeValue,
@@ -148,7 +150,7 @@ export function buildModule(...children: Admit<T.Statement[]>): T.Module.Bound {
 			statements: (...vs: Admit<T.Statement>[]) =>
 				rebuilt(node, handle, () => buildModule(...restItems('statements', vs)))
 		},
-		statements: () => _statements,
+		statements: () => hydrateStoredSlots(node, '_statements'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -188,7 +190,7 @@ export function buildSimpleStatements(...args: unknown[]) {
 			);
 }
 function _buildSimpleStatements(value: Admit<T.SimpleStatementsElements>): T.SimpleStatements.Bound {
-	const _elements = hydrateListStorage(
+	const _elements = hydrateStored(
 		rejectBareText(value, 'SimpleStatements.elements', 'a built SimpleStatementsElements')
 	);
 	const listView = ownerView(_elements, '_item');
@@ -210,7 +212,7 @@ function _buildSimpleStatements(value: Admit<T.SimpleStatementsElements>): T.Sim
 					)
 				)
 		},
-		elements: () => _elements,
+		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listedItems.length,
 		[LIST_ITEMS]: listedItems,
 		...LIST_METHODS,
@@ -261,7 +263,7 @@ function _buildImportStatement(value: Admit<T.Names | T.Names.Types>): T.ImportS
 		$with: {
 			names: (value: Admit<T.Names | T.Names.Types>) => rebuilt(node, handle, () => _buildImportStatement(value))
 		},
-		names: () => _names,
+		names: () => hydrateStoredSlot(node, '_names'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -308,8 +310,8 @@ export function buildRelativeImport(config: T.RelativeImport.Config): T.Relative
 			name: (value?: Admit<T.DottedName>) =>
 				rebuilt(node, handle, () => buildRelativeImport({ ...config, name: value }))
 		},
-		prefix: () => _prefix,
-		name: () => _name,
+		prefix: () => hydrateStoredSlot(node, '_prefix'),
+		name: () => hydrateStoredSlot(node, '_name'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -338,7 +340,7 @@ export function buildFutureImportStatement(
 			content: (value: Admit<T.ImportList | T.ParenthesizedImportList>) =>
 				rebuilt(node, handle, () => buildFutureImportStatement(value))
 		},
-		content: () => _content,
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -373,8 +375,8 @@ export function buildImportFromStatement(config: T.ImportFromStatement.Config): 
 			content: (value: Admit<NonNullable<T.ImportFromStatement.Config>['content']>) =>
 				rebuilt(node, handle, () => buildImportFromStatement({ ...config, content: value }))
 		},
-		moduleName: () => _module_name,
-		content: () => _content,
+		moduleName: () => hydrateStoredSlot(node, '_module_name'),
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -428,7 +430,7 @@ function _buildImportList(
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildImportList({ ...options, delimiter: v }, ...elements))
 		},
-		names: () => _name,
+		names: () => hydrateStoredSlots(node, '_name'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -463,8 +465,8 @@ export function buildAliasedImport(config: T.AliasedImport.Config): T.AliasedImp
 			alias: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildAliasedImport({ ...config, alias: value }))
 		},
-		name: () => _name,
-		alias: () => _alias,
+		name: () => hydrateStoredSlot(node, '_name'),
+		alias: () => hydrateStoredSlot(node, '_alias'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -495,7 +497,7 @@ export function buildPrintStatement(
 			content: (value: Admit<T.PrintStatementChevron | T.PrintStatementPlain>) =>
 				rebuilt(node, handle, () => buildPrintStatement(value))
 		},
-		content: () => _content,
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -521,7 +523,7 @@ export function buildChevron(value: Admit<T.Expression>): T.Chevron.Bound {
 		$with: {
 			expression: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildChevron(value))
 		},
-		expression: () => _expression,
+		expression: () => hydrateStoredSlot(node, '_expression'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -545,7 +547,7 @@ export function buildAssertStatement(...children: NonEmptyArray<Admit<T.Expressi
 			expressions: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
 				rebuilt(node, handle, () => buildAssertStatement(...restItems('expressions', vs)))
 		},
-		expressions: () => _expression,
+		expressions: () => hydrateStoredSlots(node, '_expression'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -577,7 +579,7 @@ export function buildExpressionStatement(
 				>
 			) => rebuilt(node, handle, () => buildExpressionStatement(value))
 		},
-		content: () => _content,
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -617,8 +619,8 @@ export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedE
 			value: (value: Admit<NonNullable<T.NamedExpression.Config>['value']>) =>
 				rebuilt(node, handle, () => buildNamedExpression({ ...config, value: value }))
 		},
-		name: () => _name,
-		value: () => _value,
+		name: () => hydrateStoredSlot(node, '_name'),
+		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -645,7 +647,7 @@ export function buildReturnStatement(value?: Admit<T.Expression | T.ExpressionLi
 			expressions: (value?: Admit<NonNullable<T.Expression | T.ExpressionList>>) =>
 				rebuilt(node, handle, () => buildReturnStatement(value))
 		},
-		expressions: () => _expressions,
+		expressions: () => hydrateStoredSlot(node, '_expressions'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -672,7 +674,7 @@ export function buildDeleteStatement(value: Admit<T.Expression | T.ExpressionLis
 			expressions: (value: Admit<NonNullable<T.Expression | T.ExpressionList>>) =>
 				rebuilt(node, handle, () => buildDeleteStatement(value))
 		},
-		expressions: () => _expressions,
+		expressions: () => hydrateStoredSlot(node, '_expressions'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -707,8 +709,8 @@ export function buildRaiseStatement(config: Partial<T.RaiseStatement.Config> = {
 			cause: (value?: Admit<NonNullable<T.RaiseStatement.Config>['cause']>) =>
 				rebuilt(node, handle, () => buildRaiseStatement({ ...config, cause: value }))
 		},
-		expressions: () => _expressions,
-		cause: () => _cause,
+		expressions: () => hydrateStoredSlot(node, '_expressions'),
+		cause: () => hydrateStoredSlot(node, '_cause'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -753,9 +755,9 @@ export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bo
 			alternatives: (...values: Admit<(T.ElifClause | T.ElseClause)[]>) =>
 				rebuilt(node, handle, () => buildIfStatement({ ...config, alternative: restItems('alternatives', values) }))
 		},
-		condition: () => _condition,
-		consequence: () => _consequence,
-		alternatives: () => _alternative,
+		condition: () => hydrateStoredSlot(node, '_condition'),
+		consequence: () => hydrateStoredSlot(node, '_consequence'),
+		alternatives: () => hydrateStoredSlots(node, '_alternative'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -786,8 +788,8 @@ export function buildElifClause(config: T.ElifClause.Config): T.ElifClause.Bound
 			consequence: (value: Admit<T.Suite>) =>
 				rebuilt(node, handle, () => buildElifClause({ ...config, consequence: value }))
 		},
-		condition: () => _condition,
-		consequence: () => _consequence,
+		condition: () => hydrateStoredSlot(node, '_condition'),
+		consequence: () => hydrateStoredSlot(node, '_consequence'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -809,7 +811,7 @@ export function buildElseClause(value: Admit<T.Suite>): T.ElseClause.Bound {
 		$with: {
 			body: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildElseClause(value))
 		},
-		body: () => _body,
+		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -841,8 +843,8 @@ export function buildMatchStatement(config: T.MatchStatement.Config): T.MatchSta
 				),
 			body: (value: Admit<T.MatchBlock>) => rebuilt(node, handle, () => buildMatchStatement({ ...config, body: value }))
 		},
-		subjects: () => _subjects,
-		body: () => _body,
+		subjects: () => hydrateStoredSlot(node, '_subjects'),
+		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -865,7 +867,7 @@ export function buildMatchBlock(value: Admit<T.MatchBlockBlock | T.MatchBlockEmp
 			content: (value: Admit<T.MatchBlockBlock | T.MatchBlockEmpty>) =>
 				rebuilt(node, handle, () => buildMatchBlock(value))
 		},
-		content: () => _content,
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -901,9 +903,9 @@ export function buildCaseClause(config: T.CaseClause.Config): T.CaseClause.Bound
 			consequence: (value: Admit<T.Suite>) =>
 				rebuilt(node, handle, () => buildCaseClause({ ...config, consequence: value }))
 		},
-		casePatterns: () => _case_patterns,
-		guard: () => _guard,
-		consequence: () => _consequence,
+		casePatterns: () => hydrateStoredSlot(node, '_case_patterns'),
+		guard: () => hydrateStoredSlot(node, '_guard'),
+		consequence: () => hydrateStoredSlot(node, '_consequence'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -946,10 +948,10 @@ export function buildForStatement(config: T.ForStatement.Config): T.ForStatement
 				rebuilt(node, handle, () => buildForStatement({ ...config, alternative: value }))
 		},
 		async: () => _async,
-		left: () => _left,
-		right: () => _right,
-		body: () => _body,
-		alternative: () => _alternative,
+		left: () => hydrateStoredSlot(node, '_left'),
+		right: () => hydrateStoredSlot(node, '_right'),
+		body: () => hydrateStoredSlot(node, '_body'),
+		alternative: () => hydrateStoredSlot(node, '_alternative'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -983,9 +985,9 @@ export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileSta
 			alternative: (value?: Admit<T.ElseClause>) =>
 				rebuilt(node, handle, () => buildWhileStatement({ ...config, alternative: value }))
 		},
-		condition: () => _condition,
-		body: () => _body,
-		alternative: () => _alternative,
+		condition: () => hydrateStoredSlot(node, '_condition'),
+		body: () => hydrateStoredSlot(node, '_body'),
+		alternative: () => hydrateStoredSlot(node, '_alternative'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1025,10 +1027,10 @@ export function buildTryStatement(config: T.TryStatement.Config): T.TryStatement
 			finallyClause: (value?: Admit<T.FinallyClause>) =>
 				rebuilt(node, handle, () => buildTryStatement({ ...config, finallyClause: value }))
 		},
-		body: () => _body,
-		exceptClauses: () => _except_clauses,
-		elseClause: () => _else_clause,
-		finallyClause: () => _finally_clause,
+		body: () => hydrateStoredSlot(node, '_body'),
+		exceptClauses: () => hydrateStoredSlots(node, '_except_clauses'),
+		elseClause: () => hydrateStoredSlot(node, '_else_clause'),
+		finallyClause: () => hydrateStoredSlot(node, '_finally_clause'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1059,8 +1061,8 @@ export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause
 			suite: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildExceptClause({ ...config, suite: value }))
 		},
 		group: () => _group,
-		exception: () => _exception,
-		suite: () => _suite,
+		exception: () => hydrateStoredSlot(node, '_exception'),
+		suite: () => hydrateStoredSlot(node, '_suite'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1082,7 +1084,7 @@ export function buildFinallyClause(value: Admit<T.Suite>): T.FinallyClause.Bound
 		$with: {
 			block: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildFinallyClause(value))
 		},
-		block: () => _block,
+		block: () => hydrateStoredSlot(node, '_block'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1113,8 +1115,8 @@ export function buildWithStatement(config: T.WithStatement.Config): T.WithStatem
 			body: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildWithStatement({ ...config, body: value }))
 		},
 		async: () => _async,
-		withClause: () => _with_clause,
-		body: () => _body,
+		withClause: () => hydrateStoredSlot(node, '_with_clause'),
+		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1140,7 +1142,7 @@ export function buildWithItem(value: Admit<T.Expression>): T.WithItem.Bound {
 		$with: {
 			value: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildWithItem(value))
 		},
-		value: () => _value,
+		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1203,11 +1205,11 @@ export function buildFunctionDefinition(config: T.FunctionDefinition.Config): T.
 			body: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildFunctionDefinition({ ...config, body: value }))
 		},
 		async: () => _async,
-		name: () => _name,
-		typeParameters: () => _type_parameters,
-		parameters: () => _parameters,
-		returnType: () => _return_type,
-		body: () => _body,
+		name: () => hydrateStoredSlot(node, '_name'),
+		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
+		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		returnType: () => hydrateStoredSlot(node, '_return_type'),
+		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1241,7 +1243,7 @@ export function buildParameters(...args: unknown[]) {
 			);
 }
 function _buildParameters(value?: Admit<T.ParametersElements>): T.Parameters.Bound {
-	const _elements = hydrateListStorage(rejectBareText(value, 'Parameters.elements', 'a built ParametersElements'));
+	const _elements = hydrateStored(rejectBareText(value, 'Parameters.elements', 'a built ParametersElements'));
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
@@ -1261,7 +1263,7 @@ function _buildParameters(value?: Admit<T.ParametersElements>): T.Parameters.Bou
 					)
 				)
 		},
-		elements: () => _elements,
+		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listedItems.length,
 		[LIST_ITEMS]: listedItems,
 		...LIST_METHODS,
@@ -1308,7 +1310,7 @@ export function buildLambdaParameters(...args: unknown[]) {
 			);
 }
 function _buildLambdaParameters(value: Admit<T.ParametersElements>): T.LambdaParameters.Bound {
-	const _parameters_elements = hydrateListStorage(
+	const _parameters_elements = hydrateStored(
 		rejectBareText(value, 'LambdaParameters.parametersElements', 'a built ParametersElements')
 	);
 	const listView = ownerView(_parameters_elements, '_item');
@@ -1330,7 +1332,7 @@ function _buildLambdaParameters(value: Admit<T.ParametersElements>): T.LambdaPar
 					)
 				)
 		},
-		parametersElements: () => _parameters_elements,
+		parametersElements: () => hydrateStoredSlot(node, '_parameters_elements'),
 		length: listedItems.length,
 		[LIST_ITEMS]: listedItems,
 		...LIST_METHODS,
@@ -1365,7 +1367,7 @@ export function buildListSplat(value: Admit<T.Expression>): T.ListSplat.Bound {
 		$with: {
 			expression: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildListSplat(value))
 		},
-		expression: () => _expression,
+		expression: () => hydrateStoredSlot(node, '_expression'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1391,7 +1393,7 @@ export function buildDictionarySplat(value: Admit<T.Expression>): T.DictionarySp
 		$with: {
 			expression: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildDictionarySplat(value))
 		},
-		expression: () => _expression,
+		expression: () => hydrateStoredSlot(node, '_expression'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1415,7 +1417,7 @@ export function buildGlobalStatement(...children: NonEmptyArray<Admit<T.Identifi
 			names: (...vs: NonEmptyArray<Admit<T.Identifier>>) =>
 				rebuilt(node, handle, () => buildGlobalStatement(...restItems('names', vs)))
 		},
-		names: () => _names,
+		names: () => hydrateStoredSlots(node, '_names'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1439,7 +1441,7 @@ export function buildNonlocalStatement(...children: NonEmptyArray<Admit<T.Identi
 			names: (...vs: NonEmptyArray<Admit<T.Identifier>>) =>
 				rebuilt(node, handle, () => buildNonlocalStatement(...restItems('names', vs)))
 		},
-		names: () => _names,
+		names: () => hydrateStoredSlots(node, '_names'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1470,8 +1472,8 @@ export function buildExecStatement(config: T.ExecStatement.Config): T.ExecStatem
 			inClauses: (...values: Admit<NonNullable<NonNullable<T.ExecStatement.Config>['inClause']>[number][]>) =>
 				rebuilt(node, handle, () => buildExecStatement({ ...config, inClause: restItems('inClauses', values) }))
 		},
-		code: () => _code,
-		inClauses: () => _in_clause,
+		code: () => hydrateStoredSlot(node, '_code'),
+		inClauses: () => hydrateStoredSlots(node, '_in_clause'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1496,8 +1498,8 @@ export function buildTypeAliasStatement(config: T.TypeAliasStatement.Config): T.
 			left: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildTypeAliasStatement({ ...config, left: value })),
 			right: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildTypeAliasStatement({ ...config, right: value }))
 		},
-		left: () => _left,
-		right: () => _right,
+		left: () => hydrateStoredSlot(node, '_left'),
+		right: () => hydrateStoredSlot(node, '_right'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1547,10 +1549,10 @@ export function buildClassDefinition(config: T.ClassDefinition.Config): T.ClassD
 				),
 			body: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildClassDefinition({ ...config, body: value }))
 		},
-		name: () => _name,
-		typeParameters: () => _type_parameters,
-		superclasses: () => _superclasses,
-		body: () => _body,
+		name: () => hydrateStoredSlot(node, '_name'),
+		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
+		superclasses: () => hydrateStoredSlot(node, '_superclasses'),
+		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1583,7 +1585,7 @@ export function buildTypeParameter(...args: unknown[]) {
 			);
 }
 function _buildTypeParameter(value: Admit<T.Types>): T.TypeParameter.Bound {
-	const _types = hydrateListStorage(rejectBareText(value, 'TypeParameter.types', 'a built Types'));
+	const _types = hydrateStored(rejectBareText(value, 'TypeParameter.types', 'a built Types'));
 	const listView = ownerView(_types, '_item');
 	if (listView.stored === undefined) refuseReadStub('_types');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
@@ -1603,7 +1605,7 @@ function _buildTypeParameter(value: Admit<T.Types>): T.TypeParameter.Bound {
 					)
 				)
 		},
-		types: () => _types,
+		types: () => hydrateStoredSlot(node, '_types'),
 		length: listedItems.length,
 		[LIST_ITEMS]: listedItems,
 		...LIST_METHODS,
@@ -1641,7 +1643,7 @@ export function buildParenthesizedListSplat(
 			content: (value: Admit<T.ParenthesizedListSplat | T.ListSplat>) =>
 				rebuilt(node, handle, () => buildParenthesizedListSplat(value))
 		},
-		content: () => _content,
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1681,9 +1683,7 @@ export function buildArgumentList(...args: unknown[]) {
 			);
 }
 function _buildArgumentList(value?: Admit<T.ArgumentListElements>): T.ArgumentList.Bound {
-	const _arguments = hydrateListStorage(
-		rejectBareText(value, 'ArgumentList.arguments', 'a built ArgumentListElements')
-	);
+	const _arguments = hydrateStored(rejectBareText(value, 'ArgumentList.arguments', 'a built ArgumentListElements'));
 	const listView = ownerView(_arguments, '_item');
 	if (listView.stored === undefined) refuseReadStub('_arguments');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
@@ -1703,7 +1703,7 @@ function _buildArgumentList(value?: Admit<T.ArgumentListElements>): T.ArgumentLi
 					)
 				)
 		},
-		arguments: () => _arguments,
+		arguments: () => hydrateStoredSlot(node, '_arguments'),
 		length: listedItems.length,
 		[LIST_ITEMS]: listedItems,
 		...LIST_METHODS,
@@ -1746,8 +1746,8 @@ export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config): 
 			definition: (value: Admit<T.ClassDefinition | T.FunctionDefinition>) =>
 				rebuilt(node, handle, () => buildDecoratedDefinition({ ...config, definition: value }))
 		},
-		decorators: () => _decorator,
-		definition: () => _definition,
+		decorators: () => hydrateStoredSlots(node, '_decorator'),
+		definition: () => hydrateStoredSlot(node, '_definition'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1773,7 +1773,7 @@ export function buildDecorator(value: Admit<T.Expression>): T.Decorator.Bound {
 		$with: {
 			expression: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildDecorator(value))
 		},
-		expression: () => _expression,
+		expression: () => hydrateStoredSlot(node, '_expression'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1796,7 +1796,7 @@ export function buildBlock(...children: Admit<T.Statement[]>): T.Block.Bound {
 			statements: (...vs: Admit<T.Statement>[]) =>
 				rebuilt(node, handle, () => buildBlock(...restItems('statements', vs)))
 		},
-		statements: () => _statements,
+		statements: () => hydrateStoredSlots(node, '_statements'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1848,7 +1848,7 @@ function _buildExpressionList(
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildExpressionList({ ...options, delimiter: v }, ...elements))
 		},
-		items: () => _item,
+		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -1881,7 +1881,7 @@ export function buildDottedName(...children: NonEmptyArray<Admit<T.Identifier>>)
 			names: (...vs: NonEmptyArray<Admit<T.Identifier>>) =>
 				rebuilt(node, handle, () => buildDottedName(...restItems('names', vs)))
 		},
-		names: () => _names,
+		names: () => hydrateStoredSlots(node, '_names'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1910,7 +1910,7 @@ export function buildCasePattern(
 			content: (value: Admit<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>) =>
 				rebuilt(node, handle, () => buildCasePattern(value))
 		},
-		content: () => _content,
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1974,7 +1974,7 @@ export function buildSimplePattern(
 				>
 			) => rebuilt(node, handle, () => buildSimplePattern(value))
 		},
-		content: () => _content,
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2001,8 +2001,8 @@ export function buildCaseAsPattern(config: T.CaseAsPattern.Config): T.CaseAsPatt
 			identifier: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildCaseAsPattern({ ...config, identifier: value }))
 		},
-		casePattern: () => _case_pattern,
-		identifier: () => _identifier,
+		casePattern: () => hydrateStoredSlot(node, '_case_pattern'),
+		identifier: () => hydrateStoredSlot(node, '_identifier'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2076,7 +2076,7 @@ export function buildUnionPattern(
 					)
 				)
 		},
-		patterns: () => _patterns,
+		patterns: () => hydrateStoredSlots(node, '_patterns'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2112,7 +2112,7 @@ export function buildDictPattern(...args: unknown[]) {
 			);
 }
 function _buildDictPattern(value?: Admit<T.DictPatternElements>): T.DictPattern.Bound {
-	const _elements = hydrateListStorage(rejectBareText(value, 'DictPattern.elements', 'a built DictPatternElements'));
+	const _elements = hydrateStored(rejectBareText(value, 'DictPattern.elements', 'a built DictPatternElements'));
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
@@ -2132,7 +2132,7 @@ function _buildDictPattern(value?: Admit<T.DictPatternElements>): T.DictPattern.
 					)
 				)
 		},
-		elements: () => _elements,
+		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listedItems.length,
 		[LIST_ITEMS]: listedItems,
 		...LIST_METHODS,
@@ -2173,8 +2173,8 @@ export function buildKeyValuePattern(config: T.KeyValuePattern.Config): T.KeyVal
 			value: (value: Admit<T.CasePattern>) =>
 				rebuilt(node, handle, () => buildKeyValuePattern({ ...config, value: value }))
 		},
-		key: () => _key,
-		value: () => _value,
+		key: () => hydrateStoredSlot(node, '_key'),
+		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2205,8 +2205,8 @@ export function buildKeywordPattern(config: T.KeywordPattern.Config): T.KeywordP
 			value: (value: Admit<NonNullable<T.KeywordPattern.Config>['value']>) =>
 				rebuilt(node, handle, () => buildKeywordPattern({ ...config, value: value }))
 		},
-		name: () => _name,
-		value: () => _value,
+		name: () => hydrateStoredSlot(node, '_name'),
+		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2247,7 +2247,7 @@ export function buildSplatPattern(config: T.SplatPattern.Config): T.SplatPattern
 				rebuilt(node, handle, () => buildSplatPattern({ ...config, name: value }))
 		},
 		operator: () => _operator,
-		name: () => _name,
+		name: () => hydrateStoredSlot(node, '_name'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2279,8 +2279,8 @@ export function buildClassPattern(config: T.ClassPattern.Config): T.ClassPattern
 					)
 				)
 		},
-		name: () => _name,
-		arguments: () => _arguments,
+		name: () => hydrateStoredSlot(node, '_name'),
+		arguments: () => hydrateStoredSlot(node, '_arguments'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2320,9 +2320,9 @@ export function buildComplexPattern(config: T.ComplexPattern.Config): T.ComplexP
 				rebuilt(node, handle, () => buildComplexPattern({ ...config, imaginary: value }))
 		},
 		sign: () => _sign,
-		real: () => _real,
+		real: () => hydrateStoredSlot(node, '_real'),
 		operator: () => _operator,
-		imaginary: () => _imaginary,
+		imaginary: () => hydrateStoredSlot(node, '_imaginary'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2374,7 +2374,7 @@ function _buildParametersElements(
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildParametersElements({ ...options, delimiter: v }, ...elements))
 		},
-		items: () => _item,
+		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -2430,7 +2430,7 @@ function _buildPatterns(
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildPatterns({ ...options, delimiter: v }, ...elements))
 		},
-		items: () => _item,
+		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -2473,7 +2473,7 @@ export function buildTuplePattern(...args: unknown[]) {
 			);
 }
 function _buildTuplePattern(value?: Admit<T.TuplePatternElements>): T.TuplePattern.Bound {
-	const _elements = hydrateListStorage(rejectBareText(value, 'TuplePattern.elements', 'a built TuplePatternElements'));
+	const _elements = hydrateStored(rejectBareText(value, 'TuplePattern.elements', 'a built TuplePatternElements'));
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
@@ -2493,7 +2493,7 @@ function _buildTuplePattern(value?: Admit<T.TuplePatternElements>): T.TuplePatte
 					)
 				)
 		},
-		elements: () => _elements,
+		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listedItems.length,
 		[LIST_ITEMS]: listedItems,
 		...LIST_METHODS,
@@ -2537,7 +2537,7 @@ export function buildListPattern(...args: unknown[]) {
 			);
 }
 function _buildListPattern(value?: Admit<T.Patterns>): T.ListPattern.Bound {
-	const _patterns = hydrateListStorage(rejectBareText(value, 'ListPattern.patterns', 'a built Patterns'));
+	const _patterns = hydrateStored(rejectBareText(value, 'ListPattern.patterns', 'a built Patterns'));
 	const listView = ownerView(_patterns, '_item');
 	if (listView.stored === undefined) refuseReadStub('_patterns');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
@@ -2557,7 +2557,7 @@ function _buildListPattern(value?: Admit<T.Patterns>): T.ListPattern.Bound {
 					)
 				)
 		},
-		patterns: () => _patterns,
+		patterns: () => hydrateStoredSlot(node, '_patterns'),
 		length: listedItems.length,
 		[LIST_ITEMS]: listedItems,
 		...LIST_METHODS,
@@ -2598,8 +2598,8 @@ export function buildDefaultParameter(config: T.DefaultParameter.Config): T.Defa
 			value: (value: Admit<NonNullable<T.DefaultParameter.Config>['value']>) =>
 				rebuilt(node, handle, () => buildDefaultParameter({ ...config, value: value }))
 		},
-		name: () => _name,
-		value: () => _value,
+		name: () => hydrateStoredSlot(node, '_name'),
+		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2634,9 +2634,9 @@ export function buildTypedDefaultParameter(config: T.TypedDefaultParameter.Confi
 			value: (value: Admit<NonNullable<T.TypedDefaultParameter.Config>['value']>) =>
 				rebuilt(node, handle, () => buildTypedDefaultParameter({ ...config, value: value }))
 		},
-		name: () => _name,
-		type: () => _type,
-		value: () => _value,
+		name: () => hydrateStoredSlot(node, '_name'),
+		type: () => hydrateStoredSlot(node, '_type'),
+		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2693,7 +2693,7 @@ export function buildListSplatPattern(
 				>
 			) => rebuilt(node, handle, () => buildListSplatPattern(value))
 		},
-		target: () => _target,
+		target: () => hydrateStoredSlot(node, '_target'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2750,7 +2750,7 @@ export function buildDictionarySplatPattern(
 				>
 			) => rebuilt(node, handle, () => buildDictionarySplatPattern(value))
 		},
-		target: () => _target,
+		target: () => hydrateStoredSlot(node, '_target'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2792,8 +2792,8 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Bound {
 			alias: (value: Admit<T.AsPatternTarget | T.AsPatternTarget.Types>) =>
 				rebuilt(node, handle, () => buildAsPattern({ ...config, alias: value }))
 		},
-		expression: () => _expression,
-		alias: () => _alias,
+		expression: () => hydrateStoredSlot(node, '_expression'),
+		alias: () => hydrateStoredSlot(node, '_alias'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2819,7 +2819,7 @@ export function buildNotOperator(value: Admit<T.Expression>): T.NotOperator.Boun
 		$with: {
 			argument: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildNotOperator(value))
 		},
-		argument: () => _argument,
+		argument: () => hydrateStoredSlot(node, '_argument'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2862,9 +2862,9 @@ export function buildBooleanOperator(config: T.BooleanOperator.Config): T.Boolea
 			right: (value: Admit<NonNullable<T.BooleanOperator.Config>['right']>) =>
 				rebuilt(node, handle, () => buildBooleanOperator({ ...config, right: value }))
 		},
-		left: () => _left,
+		left: () => hydrateStoredSlot(node, '_left'),
 		operator: () => _operator,
-		right: () => _right,
+		right: () => hydrateStoredSlot(node, '_right'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2907,9 +2907,9 @@ export function buildBinaryOperator(config: T.BinaryOperator.Config): T.BinaryOp
 			right: (value: Admit<NonNullable<T.BinaryOperator.Config>['right']>) =>
 				rebuilt(node, handle, () => buildBinaryOperator({ ...config, right: value }))
 		},
-		left: () => _left,
+		left: () => hydrateStoredSlot(node, '_left'),
 		operator: () => _operator,
-		right: () => _right,
+		right: () => hydrateStoredSlot(node, '_right'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2945,7 +2945,7 @@ export function buildUnaryOperator(config: T.UnaryOperator.Config): T.UnaryOpera
 				rebuilt(node, handle, () => buildUnaryOperator({ ...config, argument: value }))
 		},
 		operator: () => _operator,
-		argument: () => _argument,
+		argument: () => hydrateStoredSlot(node, '_argument'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2987,8 +2987,8 @@ export function buildComparisonOperator(config: T.ComparisonOperator.Config): T.
 					)
 				)
 		},
-		left: () => _left,
-		comparators: () => _comparators,
+		left: () => hydrateStoredSlot(node, '_left'),
+		comparators: () => hydrateStoredSlots(node, '_comparators'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3025,8 +3025,8 @@ export function buildLambda(config: T.Lambda.Config): T.Lambda.Bound {
 			body: (value: Admit<NonNullable<T.Lambda.Config>['body']>) =>
 				rebuilt(node, handle, () => buildLambda({ ...config, body: value }))
 		},
-		parameters: () => _parameters,
-		body: () => _body,
+		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3069,8 +3069,8 @@ export function buildLambdaWithinForInClause(
 			body: (value: Admit<NonNullable<T.LambdaWithinForInClause.Config>['body']>) =>
 				rebuilt(node, handle, () => buildLambdaWithinForInClause({ ...config, body: value }))
 		},
-		parameters: () => _parameters,
-		body: () => _body,
+		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3109,9 +3109,9 @@ export function buildAugmentedAssignment(config: T.AugmentedAssignment.Config): 
 			right: (value: Admit<NonNullable<T.AugmentedAssignment.Config>['right']>) =>
 				rebuilt(node, handle, () => buildAugmentedAssignment({ ...config, right: value }))
 		},
-		left: () => _left,
+		left: () => hydrateStoredSlot(node, '_left'),
 		operator: () => _operator,
-		right: () => _right,
+		right: () => hydrateStoredSlot(node, '_right'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3158,7 +3158,7 @@ function _buildPatternList(
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildPatternList({ ...options, delimiter: v }, ...elements))
 		},
-		items: () => _item,
+		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -3194,7 +3194,7 @@ export function buildYield(value?: Admit<T.YieldFromClause | T.Expression | T.Ex
 			content: (value?: Admit<NonNullable<T.YieldFromClause | T.Expression | T.ExpressionList>>) =>
 				rebuilt(node, handle, () => buildYield(value))
 		},
-		content: () => _content,
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3225,8 +3225,8 @@ export function buildAttribute(config: T.Attribute.Config): T.Attribute.Bound {
 			attribute: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildAttribute({ ...config, attribute: value }))
 		},
-		object: () => _object,
-		attribute: () => _attribute,
+		object: () => hydrateStoredSlot(node, '_object'),
+		attribute: () => hydrateStoredSlot(node, '_attribute'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3263,8 +3263,8 @@ export function buildSubscript(config: T.Subscript.Config): T.Subscript.Bound {
 					)
 				)
 		},
-		value: () => _value,
-		subscripts: () => _subscripts,
+		value: () => hydrateStoredSlot(node, '_value'),
+		subscripts: () => hydrateStoredSlot(node, '_subscripts'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3319,9 +3319,9 @@ export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Bound 
 					)
 				)
 		},
-		start: () => _start,
-		stop: () => _stop,
-		step: () => _step,
+		start: () => hydrateStoredSlot(node, '_start'),
+		stop: () => hydrateStoredSlot(node, '_stop'),
+		step: () => hydrateStoredSlot(node, '_step'),
 		expression: _step === undefined ? undefined : () => groupField(readGroup_step.call(node), 'expression'),
 		[STORED_SLOT_READERS]: { step: readGroup_step },
 		$render: () => renderText(handle, node),
@@ -3356,8 +3356,8 @@ export function buildCall(config: T.Call.Config): T.Call.Bound {
 			arguments: (value: Admit<T.GeneratorExpression | T.ArgumentList>) =>
 				rebuilt(node, handle, () => buildCall({ ...config, arguments: value }))
 		},
-		function: () => _function,
-		arguments: () => _arguments,
+		function: () => hydrateStoredSlot(node, '_function'),
+		arguments: () => hydrateStoredSlot(node, '_arguments'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3383,8 +3383,8 @@ export function buildTypedParameter(config: T.TypedParameter.Config): T.TypedPar
 				rebuilt(node, handle, () => buildTypedParameter({ ...config, name: value })),
 			type: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildTypedParameter({ ...config, type: value }))
 		},
-		name: () => _name,
-		type: () => _type,
+		name: () => hydrateStoredSlot(node, '_name'),
+		type: () => hydrateStoredSlot(node, '_type'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3416,7 +3416,7 @@ export function buildType(
 				>
 			) => rebuilt(node, handle, () => buildType(value))
 		},
-		content: () => _content,
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3447,7 +3447,7 @@ export function buildSplatType(config: T.SplatType.Config): T.SplatType.Bound {
 			name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildSplatType({ ...config, name: value }))
 		},
 		operator: () => _operator,
-		name: () => _name,
+		name: () => hydrateStoredSlot(node, '_name'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3489,8 +3489,8 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 					)
 				)
 		},
-		name: () => _name,
-		typeParameter: () => _type_parameter,
+		name: () => hydrateStoredSlot(node, '_name'),
+		typeParameter: () => hydrateStoredSlot(node, '_type_parameter'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3515,8 +3515,8 @@ export function buildUnionType(config: T.UnionType.Config): T.UnionType.Bound {
 			left: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildUnionType({ ...config, left: value })),
 			right: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildUnionType({ ...config, right: value }))
 		},
-		left: () => _left,
-		right: () => _right,
+		left: () => hydrateStoredSlot(node, '_left'),
+		right: () => hydrateStoredSlot(node, '_right'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3543,8 +3543,8 @@ export function buildConstrainedType(config: T.ConstrainedType.Config): T.Constr
 			constraint: (value: Admit<T.Type>) =>
 				rebuilt(node, handle, () => buildConstrainedType({ ...config, constraint: value }))
 		},
-		baseType: () => _base_type,
-		constraint: () => _constraint,
+		baseType: () => hydrateStoredSlot(node, '_base_type'),
+		constraint: () => hydrateStoredSlot(node, '_constraint'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3569,8 +3569,8 @@ export function buildMemberType(config: T.MemberType.Config): T.MemberType.Bound
 			baseType: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildMemberType({ ...config, baseType: value })),
 			name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildMemberType({ ...config, name: value }))
 		},
-		baseType: () => _base_type,
-		name: () => _name,
+		baseType: () => hydrateStoredSlot(node, '_base_type'),
+		name: () => hydrateStoredSlot(node, '_name'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3610,8 +3610,8 @@ export function buildKeywordArgument(config: T.KeywordArgument.Config): T.Keywor
 			value: (value: Admit<NonNullable<T.KeywordArgument.Config>['value']>) =>
 				rebuilt(node, handle, () => buildKeywordArgument({ ...config, value: value }))
 		},
-		name: () => _name,
-		value: () => _value,
+		name: () => hydrateStoredSlot(node, '_name'),
+		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3647,7 +3647,7 @@ export function buildList(...args: unknown[]) {
 			);
 }
 function _buildList(value?: Admit<T.CollectionElements>): T.List.Bound {
-	const _collection_elements = hydrateListStorage(
+	const _collection_elements = hydrateStored(
 		rejectBareText(value, 'List.collectionElements', 'a built CollectionElements')
 	);
 	const listView = ownerView(_collection_elements, '_item');
@@ -3669,7 +3669,7 @@ function _buildList(value?: Admit<T.CollectionElements>): T.List.Bound {
 					)
 				)
 		},
-		collectionElements: () => _collection_elements,
+		collectionElements: () => hydrateStoredSlot(node, '_collection_elements'),
 		length: listedItems.length,
 		[LIST_ITEMS]: listedItems,
 		...LIST_METHODS,
@@ -3712,7 +3712,7 @@ export function buildSet(...args: unknown[]) {
 		: _buildSet((buildCollectionElements as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildSet>[0]);
 }
 function _buildSet(value: Admit<T.CollectionElements>): T.Set.Bound {
-	const _collection_elements = hydrateListStorage(
+	const _collection_elements = hydrateStored(
 		rejectBareText(value, 'Set.collectionElements', 'a built CollectionElements')
 	);
 	const listView = ownerView(_collection_elements, '_item');
@@ -3734,7 +3734,7 @@ function _buildSet(value: Admit<T.CollectionElements>): T.Set.Bound {
 					)
 				)
 		},
-		collectionElements: () => _collection_elements,
+		collectionElements: () => hydrateStoredSlot(node, '_collection_elements'),
 		length: listedItems.length,
 		[LIST_ITEMS]: listedItems,
 		...LIST_METHODS,
@@ -3777,7 +3777,7 @@ export function buildTuple(...args: unknown[]) {
 		: _buildTuple((buildTupleElements as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildTuple>[0]);
 }
 function _buildTuple(value?: Admit<T.TupleElements>): T.Tuple.Bound {
-	const _elements = hydrateListStorage(rejectBareText(value, 'Tuple.elements', 'a built TupleElements'));
+	const _elements = hydrateStored(rejectBareText(value, 'Tuple.elements', 'a built TupleElements'));
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
@@ -3797,7 +3797,7 @@ function _buildTuple(value?: Admit<T.TupleElements>): T.Tuple.Bound {
 					)
 				)
 		},
-		elements: () => _elements,
+		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listedItems.length,
 		[LIST_ITEMS]: listedItems,
 		...LIST_METHODS,
@@ -3843,7 +3843,7 @@ export function buildDictionary(...args: unknown[]) {
 			);
 }
 function _buildDictionary(value?: Admit<T.DictionaryElements>): T.Dictionary.Bound {
-	const _elements = hydrateListStorage(rejectBareText(value, 'Dictionary.elements', 'a built DictionaryElements'));
+	const _elements = hydrateStored(rejectBareText(value, 'Dictionary.elements', 'a built DictionaryElements'));
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
@@ -3863,7 +3863,7 @@ function _buildDictionary(value?: Admit<T.DictionaryElements>): T.Dictionary.Bou
 					)
 				)
 		},
-		elements: () => _elements,
+		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listedItems.length,
 		[LIST_ITEMS]: listedItems,
 		...LIST_METHODS,
@@ -3904,8 +3904,8 @@ export function buildPair(config: T.Pair.Config): T.Pair.Bound {
 			value: (value: Admit<NonNullable<T.Pair.Config>['value']>) =>
 				rebuilt(node, handle, () => buildPair({ ...config, value: value }))
 		},
-		key: () => _key,
-		value: () => _value,
+		key: () => hydrateStoredSlot(node, '_key'),
+		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3940,8 +3940,8 @@ export function buildListComprehension(config: T.ListComprehension.Config): T.Li
 			comprehensionClauses: (value: Admit<T.ComprehensionClauses>) =>
 				rebuilt(node, handle, () => buildListComprehension({ ...config, comprehensionClauses: value }))
 		},
-		body: () => _body,
-		comprehensionClauses: () => _comprehension_clauses,
+		body: () => hydrateStoredSlot(node, '_body'),
+		comprehensionClauses: () => hydrateStoredSlot(node, '_comprehension_clauses'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3974,8 +3974,8 @@ export function buildDictionaryComprehension(
 			comprehensionClauses: (value: Admit<T.ComprehensionClauses>) =>
 				rebuilt(node, handle, () => buildDictionaryComprehension({ ...config, comprehensionClauses: value }))
 		},
-		body: () => _body,
-		comprehensionClauses: () => _comprehension_clauses,
+		body: () => hydrateStoredSlot(node, '_body'),
+		comprehensionClauses: () => hydrateStoredSlot(node, '_comprehension_clauses'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -4010,8 +4010,8 @@ export function buildSetComprehension(config: T.SetComprehension.Config): T.SetC
 			comprehensionClauses: (value: Admit<T.ComprehensionClauses>) =>
 				rebuilt(node, handle, () => buildSetComprehension({ ...config, comprehensionClauses: value }))
 		},
-		body: () => _body,
-		comprehensionClauses: () => _comprehension_clauses,
+		body: () => hydrateStoredSlot(node, '_body'),
+		comprehensionClauses: () => hydrateStoredSlot(node, '_comprehension_clauses'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -4046,8 +4046,8 @@ export function buildGeneratorExpression(config: T.GeneratorExpression.Config): 
 			comprehensionClauses: (value: Admit<T.ComprehensionClauses>) =>
 				rebuilt(node, handle, () => buildGeneratorExpression({ ...config, comprehensionClauses: value }))
 		},
-		body: () => _body,
-		comprehensionClauses: () => _comprehension_clauses,
+		body: () => hydrateStoredSlot(node, '_body'),
+		comprehensionClauses: () => hydrateStoredSlot(node, '_comprehension_clauses'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -4074,7 +4074,7 @@ export function buildParenthesizedExpression(value: Admit<T.Expression | T.Yield
 			expression: (value: Admit<NonNullable<T.Expression | T.Yield>>) =>
 				rebuilt(node, handle, () => buildParenthesizedExpression(value))
 		},
-		expression: () => _expression,
+		expression: () => hydrateStoredSlot(node, '_expression'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -4131,7 +4131,7 @@ function _buildCollectionElements(
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildCollectionElements({ ...options, delimiter: v }, ...elements))
 		},
-		items: () => _item,
+		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -4180,8 +4180,8 @@ export function buildForInClause(config: T.ForInClause.Config): T.ForInClause.Bo
 				rebuilt(node, handle, () => buildForInClause({ ...config, comma: value }))
 		},
 		async: () => _async,
-		left: () => _left,
-		rights: () => _right,
+		left: () => hydrateStoredSlot(node, '_left'),
+		rights: () => hydrateStoredSlots(node, '_right'),
 		comma: () => _comma,
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -4208,7 +4208,7 @@ export function buildIfClause(value: Admit<T.Expression>): T.IfClause.Bound {
 		$with: {
 			condition: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildIfClause(value))
 		},
-		condition: () => _condition,
+		condition: () => hydrateStoredSlot(node, '_condition'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -4251,9 +4251,9 @@ export function buildConditionalExpression(config: T.ConditionalExpression.Confi
 			alternative: (value: Admit<NonNullable<T.ConditionalExpression.Config>['alternative']>) =>
 				rebuilt(node, handle, () => buildConditionalExpression({ ...config, alternative: value }))
 		},
-		body: () => _body,
-		condition: () => _condition,
-		alternative: () => _alternative,
+		body: () => hydrateStoredSlot(node, '_body'),
+		condition: () => hydrateStoredSlot(node, '_condition'),
+		alternative: () => hydrateStoredSlot(node, '_alternative'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -4277,7 +4277,7 @@ export function buildConcatenatedString(...children: NonEmptyArray<Admit<T.Strin
 			strings: (...vs: NonEmptyArray<Admit<T.String>>) =>
 				rebuilt(node, handle, () => buildConcatenatedString(...restItems('strings', vs)))
 		},
-		strings: () => _string,
+		strings: () => hydrateStoredSlots(node, '_string'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -4308,9 +4308,9 @@ export function buildString(config: T.String.Config): T.String.Bound {
 			stringEnd: (value: Admit<T.StringEnd>) =>
 				rebuilt(node, handle, () => buildString({ ...config, stringEnd: value }))
 		},
-		stringStart: () => _string_start,
-		contents: () => _content,
-		stringEnd: () => _string_end,
+		stringStart: () => hydrateStoredSlot(node, '_string_start'),
+		contents: () => hydrateStoredSlots(node, '_content'),
+		stringEnd: () => hydrateStoredSlot(node, '_string_end'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -4346,7 +4346,7 @@ export function buildStringContent(
 				>
 			) => rebuilt(node, handle, () => buildStringContent(...restItems('contents', vs)))
 		},
-		contents: () => _content,
+		contents: () => hydrateStoredSlots(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -4393,10 +4393,10 @@ export function buildInterpolation(config: T.Interpolation.Config): T.Interpolat
 			formatSpecifier: (value?: Admit<T.FormatSpecifier>) =>
 				rebuilt(node, handle, () => buildInterpolation({ ...config, formatSpecifier: value }))
 		},
-		expression: () => _expression,
+		expression: () => hydrateStoredSlot(node, '_expression'),
 		debug: () => _debug,
-		typeConversion: () => _type_conversion,
-		formatSpecifier: () => _format_specifier,
+		typeConversion: () => hydrateStoredSlot(node, '_type_conversion'),
+		formatSpecifier: () => hydrateStoredSlot(node, '_format_specifier'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -4426,7 +4426,7 @@ export function buildFormatSpecifier(
 			elements: (...vs: Admit<(T.FormatSpecifierText | T.FormatExpression) | T.FormatExpression.Types>[]) =>
 				rebuilt(node, handle, () => buildFormatSpecifier(...restItems('elements', vs)))
 		},
-		elements: () => _elements,
+		elements: () => hydrateStoredSlots(node, '_elements'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -4501,7 +4501,7 @@ export function buildAwait(value: Admit<T.PrimaryExpression>): T.Await.Bound {
 		$with: {
 			expression: (value: Admit<NonNullable<T.PrimaryExpression>>) => rebuilt(node, handle, () => buildAwait(value))
 		},
-		expression: () => _expression,
+		expression: () => hydrateStoredSlot(node, '_expression'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -4528,7 +4528,7 @@ export function buildComment(input: string, affix: boolean = true): T.Comment.Bo
 		$with: {
 			content: (value: Admit<string>) => rebuilt(node, handle, () => buildComment(value))
 		},
-		content: () => _content,
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -4584,7 +4584,7 @@ function _buildSimpleStatementsElements(
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildSimpleStatementsElements({ ...options, delimiter: v }, ...elements))
 		},
-		items: () => _item,
+		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -4641,7 +4641,7 @@ function _buildSubjects(
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildSubjects({ ...options, delimiter: v }, ...elements))
 		},
-		subjects: () => _subject,
+		subjects: () => hydrateStoredSlots(node, '_subject'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -4702,7 +4702,7 @@ function _buildCasePatterns(
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildCasePatterns({ ...options, delimiter: v }, ...elements))
 		},
-		items: () => _item,
+		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -4763,7 +4763,7 @@ function _buildWithClauseWithItems(
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildWithClauseWithItems({ ...options, delimiter: v }, ...elements))
 		},
-		items: () => _item,
+		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -4819,7 +4819,7 @@ function _buildTypes(
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildTypes({ ...options, delimiter: v }, ...elements))
 		},
-		items: () => _item,
+		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -4894,7 +4894,7 @@ function _buildArgumentListElements(
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildArgumentListElements({ ...options, delimiter: v }, ...elements))
 		},
-		items: () => _item,
+		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -4955,7 +4955,7 @@ function _buildListPatternCasePatterns(
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildListPatternCasePatterns({ ...options, delimiter: v }, ...elements))
 		},
-		items: () => _item,
+		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -5018,7 +5018,7 @@ function _buildDictPatternElements(
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildDictPatternElements({ ...options, delimiter: v }, ...elements))
 		},
-		items: () => _item,
+		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -5079,7 +5079,7 @@ function _buildSubscripts(
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildSubscripts({ ...options, delimiter: v }, ...elements))
 		},
-		subscripts: () => _subscript,
+		subscripts: () => hydrateStoredSlots(node, '_subscript'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -5140,7 +5140,7 @@ function _buildDictionaryElements(
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildDictionaryElements({ ...options, delimiter: v }, ...elements))
 		},
-		items: () => _item,
+		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -5175,7 +5175,7 @@ export function buildSliceGroup(value?: Admit<T.Expression>): T.SliceGroup.Bound
 		$with: {
 			expression: (value?: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildSliceGroup(value))
 		},
-		expression: () => _expression,
+		expression: () => hydrateStoredSlot(node, '_expression'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -5247,7 +5247,7 @@ function _buildTuplePatternElements(
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildTuplePatternElements({ ...options, delimiter: v }, ...elements))
 		},
-		items: () => _item,
+		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -5313,7 +5313,7 @@ function _buildTupleElements(
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildTupleElements({ ...options, delimiter: v }, ...elements))
 		},
-		items: () => _item,
+		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -5359,8 +5359,8 @@ export function buildExceptClauseExceptionAs(
 			alias: (value?: Admit<NonNullable<T.ExceptClauseExceptionAs.Config>['alias']>) =>
 				rebuilt(node, handle, () => buildExceptClauseExceptionAs({ ...config, alias: value }))
 		},
-		value: () => _value,
-		alias: () => _alias,
+		value: () => hydrateStoredSlot(node, '_value'),
+		alias: () => hydrateStoredSlot(node, '_alias'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -5400,7 +5400,7 @@ export function buildCaseTuplePattern(...args: unknown[]) {
 			);
 }
 function _buildCaseTuplePattern(value?: Admit<T.ListPatternCasePatterns>): T.CaseTuplePattern.Bound {
-	const _list_pattern_case_patterns = hydrateListStorage(
+	const _list_pattern_case_patterns = hydrateStored(
 		rejectBareText(value, 'CaseTuplePattern.listPatternCasePatterns', 'a built ListPatternCasePatterns')
 	);
 	const listView = ownerView(_list_pattern_case_patterns, '_item');
@@ -5422,7 +5422,7 @@ function _buildCaseTuplePattern(value?: Admit<T.ListPatternCasePatterns>): T.Cas
 					)
 				)
 		},
-		listPatternCasePatterns: () => _list_pattern_case_patterns,
+		listPatternCasePatterns: () => hydrateStoredSlot(node, '_list_pattern_case_patterns'),
 		length: listedItems.length,
 		[LIST_ITEMS]: listedItems,
 		...LIST_METHODS,
@@ -5472,7 +5472,7 @@ export function buildCaseListPattern(...args: unknown[]) {
 			);
 }
 function _buildCaseListPattern(value?: Admit<T.ListPatternCasePatterns>): T.CaseListPattern.Bound {
-	const _list_pattern_case_patterns = hydrateListStorage(
+	const _list_pattern_case_patterns = hydrateStored(
 		rejectBareText(value, 'CaseListPattern.listPatternCasePatterns', 'a built ListPatternCasePatterns')
 	);
 	const listView = ownerView(_list_pattern_case_patterns, '_item');
@@ -5494,7 +5494,7 @@ function _buildCaseListPattern(value?: Admit<T.ListPatternCasePatterns>): T.Case
 					)
 				)
 		},
-		listPatternCasePatterns: () => _list_pattern_case_patterns,
+		listPatternCasePatterns: () => hydrateStoredSlot(node, '_list_pattern_case_patterns'),
 		length: listedItems.length,
 		[LIST_ITEMS]: listedItems,
 		...LIST_METHODS,
@@ -5556,7 +5556,7 @@ function _buildPrintArguments(
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildPrintArguments({ ...options, delimiter: v }, ...elements))
 		},
-		arguments: () => _argument,
+		arguments: () => hydrateStoredSlots(node, '_argument'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -5617,7 +5617,7 @@ function _buildPrintChevronArguments(
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildPrintChevronArguments({ ...options, delimiter: v }, ...elements))
 		},
-		arguments: () => _argument,
+		arguments: () => hydrateStoredSlots(node, '_argument'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -5664,8 +5664,8 @@ export function buildPrintStatementChevron(config: T.PrintStatementChevron.Confi
 					)
 				)
 		},
-		chevron: () => _chevron,
-		printChevronArguments: () => _print_chevron_arguments,
+		chevron: () => hydrateStoredSlot(node, '_chevron'),
+		printChevronArguments: () => hydrateStoredSlot(node, '_print_chevron_arguments'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -5702,7 +5702,7 @@ export function buildPrintStatementPlain(...args: unknown[]) {
 			);
 }
 function _buildPrintStatementPlain(value: Admit<T.PrintArguments>): T.PrintStatementPlain.Bound {
-	const _print_arguments = hydrateListStorage(
+	const _print_arguments = hydrateStored(
 		rejectBareText(value, 'PrintStatementPlain.printArguments', 'a built PrintArguments')
 	);
 	const listView = ownerView(_print_arguments, '_argument');
@@ -5724,7 +5724,7 @@ function _buildPrintStatementPlain(value: Admit<T.PrintArguments>): T.PrintState
 					)
 				)
 		},
-		printArguments: () => _print_arguments,
+		printArguments: () => hydrateStoredSlot(node, '_print_arguments'),
 		length: listedItems.length,
 		[LIST_ITEMS]: listedItems,
 		...LIST_METHODS,
@@ -5774,9 +5774,7 @@ export function buildParenthesizedImportList(...args: unknown[]) {
 			);
 }
 function _buildParenthesizedImportList(value: Admit<T.ImportList>): T.ParenthesizedImportList.Bound {
-	const _import_list = hydrateListStorage(
-		rejectBareText(value, 'ParenthesizedImportList.importList', 'a built ImportList')
-	);
+	const _import_list = hydrateStored(rejectBareText(value, 'ParenthesizedImportList.importList', 'a built ImportList'));
 	const listView = ownerView(_import_list, '_name');
 	if (listView.stored === undefined) refuseReadStub('_import_list');
 	const listedItems = listItems(ownerElements(listView.list, 'names'), undefined);
@@ -5796,7 +5794,7 @@ function _buildParenthesizedImportList(value: Admit<T.ImportList>): T.Parenthesi
 					)
 				)
 		},
-		importList: () => _import_list,
+		importList: () => hydrateStoredSlot(node, '_import_list'),
 		length: listedItems.length,
 		[LIST_ITEMS]: listedItems,
 		...LIST_METHODS,
@@ -5831,7 +5829,7 @@ export function buildComprehensionClauses(
 			contents: (...vs: NonEmptyArray<Admit<T.ForInClause | T.IfClause>>) =>
 				rebuilt(node, handle, () => buildComprehensionClauses(...restItems('contents', vs)))
 		},
-		contents: () => _content,
+		contents: () => hydrateStoredSlots(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -5868,8 +5866,8 @@ export function buildIntegerHex(
 			prefix: (spelling: '0x' | '0X') =>
 				rebuilt(node, handle, () => buildIntegerHex(value, { ...options, prefix: spelling }))
 		},
-		prefix: () => _prefix,
-		content: () => _content,
+		prefix: () => hydrateStoredSlot(node, '_prefix'),
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -5907,8 +5905,8 @@ export function buildIntegerOctal(
 			prefix: (spelling: '0o' | '0O') =>
 				rebuilt(node, handle, () => buildIntegerOctal(value, { ...options, prefix: spelling }))
 		},
-		prefix: () => _prefix,
-		content: () => _content,
+		prefix: () => hydrateStoredSlot(node, '_prefix'),
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -5946,8 +5944,8 @@ export function buildIntegerBinary(
 			prefix: (spelling: '0b' | '0B') =>
 				rebuilt(node, handle, () => buildIntegerBinary(value, { ...options, prefix: spelling }))
 		},
-		prefix: () => _prefix,
-		content: () => _content,
+		prefix: () => hydrateStoredSlot(node, '_prefix'),
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -6080,11 +6078,11 @@ export function buildFloatPoint(
 			imaginary: (value?: Admit<string>) =>
 				rebuilt(node, handle, () => buildFloatPoint({ ...config, imaginary: value }))
 		},
-		integer: () => _integer,
-		fraction: () => _fraction,
-		marker: () => _marker,
-		exponent: () => _exponent,
-		imaginary: () => _imaginary,
+		integer: () => hydrateStoredSlot(node, '_integer'),
+		fraction: () => hydrateStoredSlot(node, '_fraction'),
+		marker: () => hydrateStoredSlot(node, '_marker'),
+		exponent: () => hydrateStoredSlot(node, '_exponent'),
+		imaginary: () => hydrateStoredSlot(node, '_imaginary'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -6154,11 +6152,11 @@ export function buildFloatLeadingPoint(
 			imaginary: (value?: Admit<string>) =>
 				rebuilt(node, handle, () => buildFloatLeadingPoint({ ...config, imaginary: value }))
 		},
-		integer: () => _integer,
-		fraction: () => _fraction,
-		marker: () => _marker,
-		exponent: () => _exponent,
-		imaginary: () => _imaginary,
+		integer: () => hydrateStoredSlot(node, '_integer'),
+		fraction: () => hydrateStoredSlot(node, '_fraction'),
+		marker: () => hydrateStoredSlot(node, '_marker'),
+		exponent: () => hydrateStoredSlot(node, '_exponent'),
+		imaginary: () => hydrateStoredSlot(node, '_imaginary'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -6212,10 +6210,10 @@ export function buildFloatScientific(
 			imaginary: (value?: Admit<string>) =>
 				rebuilt(node, handle, () => buildFloatScientific({ ...config, imaginary: value }))
 		},
-		integer: () => _integer,
-		marker: () => _marker,
-		exponent: () => _exponent,
-		imaginary: () => _imaginary,
+		integer: () => hydrateStoredSlot(node, '_integer'),
+		marker: () => hydrateStoredSlot(node, '_marker'),
+		exponent: () => hydrateStoredSlot(node, '_exponent'),
+		imaginary: () => hydrateStoredSlot(node, '_imaginary'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -6245,7 +6243,7 @@ export function buildEscapeSequenceUnicodeFixed(
 		$with: {
 			content: (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequenceUnicodeFixed(value))
 		},
-		content: () => _content,
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -6275,7 +6273,7 @@ export function buildEscapeSequenceUnicodeWide(
 		$with: {
 			content: (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequenceUnicodeWide(value))
 		},
-		content: () => _content,
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -6302,7 +6300,7 @@ export function buildEscapeSequenceHex(input: string, affix: boolean = true): T.
 		$with: {
 			content: (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequenceHex(value))
 		},
-		content: () => _content,
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -6335,7 +6333,7 @@ export function buildEscapeSequenceOctal(
 		$with: {
 			content: (value: Admit<string | number | bigint>) => rebuilt(node, handle, () => buildEscapeSequenceOctal(value))
 		},
-		content: () => _content,
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -6362,7 +6360,7 @@ export function buildEscapeSequenceLineBreak(input: string, affix: boolean = tru
 		$with: {
 			content: (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequenceLineBreak(value))
 		},
-		content: () => _content,
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -6389,7 +6387,7 @@ export function buildEscapeSequenceSimple(input: string, affix: boolean = true):
 		$with: {
 			content: (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequenceSimple(value))
 		},
-		content: () => _content,
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -6416,7 +6414,7 @@ export function buildEscapeSequenceNamed(input: string, affix: boolean = true): 
 		$with: {
 			content: (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequenceNamed(value))
 		},
-		content: () => _content,
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -6466,7 +6464,7 @@ export function buildSimplePatternNegative(config: T.SimplePatternNegative.Confi
 				rebuilt(node, handle, () => buildSimplePatternNegative({ ...config, value: value }))
 		},
 		sign: () => _sign,
-		value: () => _value,
+		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -6492,7 +6490,7 @@ export function buildExceptClauseExceptionList(
 			values: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
 				rebuilt(node, handle, () => buildExceptClauseExceptionList(...restItems('values', vs)))
 		},
-		values: () => _value,
+		values: () => hydrateStoredSlots(node, '_value'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -6521,7 +6519,7 @@ export function buildExceptClauseException(
 			content: (value: Admit<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>) =>
 				rebuilt(node, handle, () => buildExceptClauseException(value))
 		},
-		content: () => _content,
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -6552,8 +6550,8 @@ export function buildAssignmentEq(config: T.AssignmentEq.Config): T.AssignmentEq
 			right: (value: Admit<NonNullable<T.AssignmentEq.Config>['right']>) =>
 				rebuilt(node, handle, () => buildAssignmentEq({ ...config, right: value }))
 		},
-		left: () => _left,
-		right: () => _right,
+		left: () => hydrateStoredSlot(node, '_left'),
+		right: () => hydrateStoredSlot(node, '_right'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -6579,8 +6577,8 @@ export function buildAssignmentType(config: T.AssignmentType.Config): T.Assignme
 				rebuilt(node, handle, () => buildAssignmentType({ ...config, left: value })),
 			type: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildAssignmentType({ ...config, type: value }))
 		},
-		left: () => _left,
-		type: () => _type,
+		left: () => hydrateStoredSlot(node, '_left'),
+		type: () => hydrateStoredSlot(node, '_type'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -6614,9 +6612,9 @@ export function buildAssignmentTyped(config: T.AssignmentTyped.Config): T.Assign
 			right: (value: Admit<NonNullable<T.AssignmentTyped.Config>['right']>) =>
 				rebuilt(node, handle, () => buildAssignmentTyped({ ...config, right: value }))
 		},
-		left: () => _left,
-		type: () => _type,
-		right: () => _right,
+		left: () => hydrateStoredSlot(node, '_left'),
+		type: () => hydrateStoredSlot(node, '_type'),
+		right: () => hydrateStoredSlot(node, '_right'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -6668,7 +6666,7 @@ function _buildExpressionStatementTuple(
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildExpressionStatementTuple({ ...options, delimiter: v }, ...elements))
 		},
-		items: () => _item,
+		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -6729,7 +6727,7 @@ function _buildWithClauseBare(
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildWithClauseBare({ ...options, delimiter: v }, ...elements))
 		},
-		items: () => _item,
+		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () => listItems(listedStored, undefined),
@@ -6775,9 +6773,7 @@ export function buildWithClauseParen(...args: unknown[]) {
 			);
 }
 function _buildWithClauseParen(value: Admit<T.WithClauseWithItems>): T.WithClauseParen.Bound {
-	const _with_items = hydrateListStorage(
-		rejectBareText(value, 'WithClauseParen.withItems', 'a built WithClauseWithItems')
-	);
+	const _with_items = hydrateStored(rejectBareText(value, 'WithClauseParen.withItems', 'a built WithClauseWithItems'));
 	const listView = ownerView(_with_items, '_item');
 	if (listView.stored === undefined) refuseReadStub('_with_items');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
@@ -6797,7 +6793,7 @@ function _buildWithClauseParen(value: Admit<T.WithClauseWithItems>): T.WithClaus
 					)
 				)
 		},
-		withItems: () => _with_items,
+		withItems: () => hydrateStoredSlot(node, '_with_items'),
 		length: listedItems.length,
 		[LIST_ITEMS]: listedItems,
 		...LIST_METHODS,
@@ -6831,7 +6827,7 @@ export function buildMatchBlockBlock(...children: Admit<T.CaseClause[]>): T.Matc
 			alternatives: (...vs: Admit<T.CaseClause>[]) =>
 				rebuilt(node, handle, () => buildMatchBlockBlock(...restItems('alternatives', vs)))
 		},
-		alternatives: () => _alternative,
+		alternatives: () => hydrateStoredSlots(node, '_alternative'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -6911,9 +6907,7 @@ export function buildSuiteInline(...args: unknown[]) {
 			);
 }
 function _buildSuiteInline(value: Admit<T.SimpleStatementsElements>): T.SuiteInline.Bound {
-	const _elements = hydrateListStorage(
-		rejectBareText(value, 'SuiteInline.elements', 'a built SimpleStatementsElements')
-	);
+	const _elements = hydrateStored(rejectBareText(value, 'SuiteInline.elements', 'a built SimpleStatementsElements'));
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
@@ -6933,7 +6927,7 @@ function _buildSuiteInline(value: Admit<T.SimpleStatementsElements>): T.SuiteInl
 					)
 				)
 		},
-		elements: () => _elements,
+		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listedItems.length,
 		[LIST_ITEMS]: listedItems,
 		...LIST_METHODS,
@@ -6982,7 +6976,7 @@ function _buildSuiteBlock(value: Admit<T.Block>): T.SuiteBlock.Bound {
 		$with: {
 			block: (value: Admit<T.Block>) => rebuilt(node, handle, () => _buildSuiteBlock(value))
 		},
-		block: () => _block,
+		block: () => hydrateStoredSlot(node, '_block'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -7061,7 +7055,7 @@ export function buildComparisonOperatorComparator(
 				rebuilt(node, handle, () => buildComparisonOperatorComparator({ ...config, primaryExpression: value }))
 		},
 		operators: () => _operators,
-		primaryExpression: () => _primary_expression,
+		primaryExpression: () => hydrateStoredSlot(node, '_primary_expression'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -7087,7 +7081,7 @@ export function buildYieldFromClause(value: Admit<T.Expression>): T.YieldFromCla
 		$with: {
 			expression: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildYieldFromClause(value))
 		},
-		expression: () => _expression,
+		expression: () => hydrateStoredSlot(node, '_expression'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -7244,7 +7238,7 @@ export function buildNames(value: Admit<T.ImportList>): T.Names.Bound {
 					)
 				)
 		},
-		content: () => _content,
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -7270,7 +7264,7 @@ export function buildAsPatternTarget(value: Admit<T.Expression>): T.AsPatternTar
 		$with: {
 			content: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildAsPatternTarget(value))
 		},
-		content: () => _content,
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -7292,7 +7286,7 @@ export function buildFormatExpression(value: Admit<T.Interpolation>): T.FormatEx
 		$with: {
 			content: (value: Admit<T.Interpolation>) => rebuilt(node, handle, () => buildFormatExpression(value))
 		},
-		content: () => _content,
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
