@@ -39,44 +39,19 @@ One wasm binding per web-tree-sitter instance, shared by every loader. `Parser.i
  */
 ```
 
+### `packages/codegen/src/run-codegen.ts::formatSource`
+
+`content` as the project formats it. `.ts` output goes through oxfmt with the project's own config (`OXFMT_EFFECTIVE_CONFIG`, from `./oxfmt-config.ts`; the repo-root `oxfmt.config.ts` derives from that module rather than the other way around, since a package's `src/` can't reach outside its own `tsconfig.build.json` rootDir once only `dist` is packaged). Generated `.ts` therefore already matches `pnpm run format`'s output, and no formatter ever runs over generated code (oxfmt must never run over `packages/*/src/*` directly; only codegen writes there). If oxfmt reports errors, it warns and returns the content unformatted.
+
+Anything that is not `.ts` comes back unchanged. That includes `node-model.json5`, although it falls in `pnpm run format`'s scope. `loadNodeModel` in `packages/tools/src/validate/common.ts` parses it with strict `JSON.parse`, and oxfmt rewrites JSON5 idiomatically (unquoted keys, single-quoted strings), which is valid JSON5 but not valid JSON. The fix belongs in `loadNodeModel` (a real JSON5 parser) before the file can be formatted too.
+
+A generator outside codegen that compares its output with a committed file, such as the vocabulary feature tool, formats through it as well, so both sides of the comparison are formatted the same way.
+
 ### `packages/codegen/src/run-codegen.ts::writeFile`
 
-```text
-/**
- * Write `content` to `path`, creating parent directories as needed.
- *
- * `.ts` output is run through oxfmt (the project's own formatter, config
- * from `./oxfmt-config.ts` — the repo-root `oxfmt.config.ts` derives from
- * that same module rather than the other way around, since a package's
- * `src/` can't reach outside its own `tsconfig.build.json` rootDir once
- * only `dist` is packaged) before the content-aware comparison below, so
- * generated `.ts` files land on disk already matching `pnpm run format`'s
- * output —
- * no separate formatting pass needed, and no risk of a formatter
- * reformatting generated code out from under the emitters (oxfmt must
- * never run over `packages/*\/src/*` directly; only codegen writes there).
- *
- * `node-model.json5` is deliberately NOT run through oxfmt here even
- * though it matches `pnpm run format`'s scope: `packages/tools/src/
- * validate/common.ts`'s `loadNodeModel` parses it with strict `JSON.parse`,
- * and oxfmt reformats JSON5 idiomatically (unquoted keys, single-quoted
- * strings) — valid JSON5, but not valid JSON, breaking that parser. Fix
- * belongs in `loadNodeModel` (use a real JSON5 parser) before this file
- * can be formatted too.
- *
- * Content-aware: skips the write when the file already holds identical
- * bytes. Generated outputs are rewritten wholesale on every regen even
- * when nothing changed, and the mtime bump alone forced cargo (release
- * profile, `incremental = false`) to recompile entire napi crates and
- * made every mtime-based freshness signal noisy. Skipping no-op writes
- * keeps mtimes meaningful: unchanged crates fingerprint-match in cargo,
- * so rebuilds and the workspace check finish in seconds on a no-change
- * regen. Formatting BEFORE this comparison (not after) is what makes the
- * skip meaningful — comparing against on-disk (already-formatted) content
- * with pre-format content would never match, causing a spurious rewrite
- * on every single regen.
- */
-```
+Writes `content` to `path`, formatted by `formatSource`, creating parent directories as needed.
+
+The write is content-aware: it is skipped when the file already holds identical bytes. Generated outputs are rewritten wholesale on every regen even when nothing changed. The mtime bump alone made cargo (release profile, `incremental = false`) recompile entire napi crates, and made every mtime-based freshness signal noisy. Skipping no-op writes keeps mtimes meaningful: unchanged crates fingerprint-match in cargo, so rebuilds and the workspace check finish in seconds on a no-change regen. The skip only works because formatting happens before the comparison. The file on disk is already formatted, so comparing it with unformatted content would never match, and every regen would rewrite every file.
 
 ```text
 // ---------------------------------------------------------------------------

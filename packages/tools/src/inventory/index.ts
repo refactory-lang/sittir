@@ -1,15 +1,13 @@
 import { existsSync, readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 import { bindingIssues, compileQuery, readBindings } from './bindings.ts';
 import { loadSlotModel } from './model.ts';
 import { type Derivation, type GrammarInput, type LayoutSlot, camel, derive } from './derive.ts';
 import { type Vocabulary, readVocabulary } from './vocabulary.ts';
+import { VOCABULARY_DIR } from '../vocabulary/read.ts';
 import { allGrammars, grammarPackageDir, type GrammarName } from '@sittir/codegen/grammars';
 import { evaluateGrammar, load, type RawGrammar } from '../codegen-surface.ts';
 
-const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
-export const VOCABULARY_DIR = join(ROOT, 'packages', 'types', 'src', 'vocabulary');
 export function inventoryGrammars(): readonly GrammarName[] {
 	return allGrammars().filter((g) => existsSync(join(grammarPackageDir(g), 'bindings.scm')));
 }

@@ -13,3 +13,6 @@ export * from './pattern.ts';
 export * from './statement.ts';
 export * from './type.ts';
 export type { GrammarContext, Unmapped } from './context.ts';
+export type * from './augment.ts';
+export type * from './compositions.ts';
+export type * from './features/index.ts';
