@@ -118,14 +118,14 @@ The causes the probe reports, each on the side that owns it:
 ## Stage 7: build
 
 - Build entries per vocabulary kind under `build.<path>`, with the same short aliases as stage 3. Where one path maps to several grammar kinds, the build picks the kind from the input's shape (which members are present, and the kinds of their values), then builds through the low-level API and its mount routing. There is no default arm and no inference from text. Kinds whose shapes cannot be told apart are stage-4 conformance items, cleared by giving each its own vocabulary path (`expression.update.prefix` / `.postfix`, `comment.block` / `comment.line`), so the input's `$kind` picks the call.
-- Refinement builders and flag steps, the only form a refinement or a flag takes in a build. A step per flag on each builder of its kind, in any order, sets its bit and builds its token or kind. One refinement builder per refinement path:
+- Refinement builders and flag steps, the only form a refinement or a flag takes in a build. A step per flag on each builder of its kind, in any order, sets its bit and builds its token or kind. A step's type leaves out the steps its flag excludes, and a refinement's builder those its value excludes, from exclusions derived once per kind from the grammar's rule (bindings spec §3.3); a structure's `$kind` and `$flags` are checked against the same exclusions. One refinement builder per refinement path:
   - a literal or token refinement presets the literal (`build.expression.binary.add` fills `operator: '+'`);
   - a child-kind refinement narrows the slot's type to that child kind;
   - a text refinement (`#match?`, `#eq?`) narrows the type and runs the predicate as a guard when the node is built, always on like a leaf guard, refusing text it rejects.
   - a template predicate (a pattern with holes, such as a dunder name) builds from its holes; any other `#match?` checks the given text against the pattern and refuses a mismatch.
 - The portable `build` is typed per kind from the vocabulary; the low-level generic build is keyed by `$type`.
 - A portable round-trip lane joins `validate:native`: parse with the portable engine, build every node again from its members, render, and parse-equal over the corpus.
-- Gate: the existing rows are equal; the new lane's row is recorded as its baseline.
+- Gate: the existing rows are equal; the new lane's row is recorded as its baseline. Type tests: a typescript field's `.optional` step offers no `.definite`, and a getter's builder no `.generator`; a structure stating an excluded pair is refused, naming both.
 
 ## Stage 8: crossing
 
