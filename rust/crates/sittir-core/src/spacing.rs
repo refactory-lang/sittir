@@ -169,6 +169,7 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     sources: Option<&'a dyn crate::render::SourceTable>,
     options: Option<&'a crate::options::ResolvedOptions>,
     deferring: Option<String>,
+    swallow_cr: bool,
     deferred: Vec<DeferredRun>,
     line_end_held: Option<crate::render::LineHold>,
     leaf_trailing: Option<u8>,
@@ -239,6 +240,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             sources: None,
             options: None,
             deferring: None,
+            swallow_cr: false,
             deferred: Vec::new(),
             line_end_held: None,
             leaf_trailing: None,
@@ -694,13 +696,17 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
 
 impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_, W> {
     fn text(&mut self, s: &str) -> crate::render::RenderResult {
-        let s = crate::line_endings::to_internal(crate::line_endings::without_swallowed_cr(s));
+        let s = crate::line_endings::to_internal(if self.swallow_cr { crate::line_endings::without_swallowed_cr(s) } else { s });
         let s = s.as_ref();
         self.write_chunk(s)?;
         if !s.is_empty() {
             self.end_leaf();
         }
         Ok(())
+    }
+
+    fn swallow_cr(&mut self, on: bool) -> bool {
+        std::mem::replace(&mut self.swallow_cr, on)
     }
 
     fn leaf_kind(&mut self, kind: crate::types::KindId) {
@@ -788,7 +794,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     }
 
     fn trivia_seam(&mut self, gap: LayoutKinds, text: Option<&str>) {
-        let text = text.map(|text| crate::line_endings::to_internal(crate::line_endings::without_swallowed_cr(text)));
+        let text = text.map(crate::line_endings::to_internal);
         let text = text.as_deref();
         let continues = self.seam.is_some() && self.seam_strength == SEAM_TRIVIA && gap == LayoutKinds::LINE_CONTINUATION;
         if continues {
@@ -1567,6 +1573,19 @@ mod sink_tests {
         };
         assert_eq!(indented("x\r\ny"), indented("x\ny"));
         assert_eq!(indented("x\ry"), indented("x\ny"));
+    }
+
+    #[test]
+    fn only_a_line_terminated_kinds_text_drops_a_carriage_return_that_ends_it() {
+        assert_eq!(run(|w| w.text("x\r").unwrap()), "x\n");
+        assert_eq!(
+            run(|w| {
+                let outer = w.swallow_cr(true);
+                w.text("# note\r").unwrap();
+                w.swallow_cr(outer);
+            }),
+            "# note"
+        );
     }
 
     #[test]

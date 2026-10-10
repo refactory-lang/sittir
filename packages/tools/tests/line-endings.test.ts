@@ -122,6 +122,20 @@ describe.each([
 	});
 });
 
+describe('a leaf whose text ends in a bare carriage return', () => {
+	it('keeps that break: a template literal is not a line-terminated kind', async () => {
+		const language = await languageByName('typescript');
+		const plain = await createEngine(language);
+		const crlf = await createEngine(language, { render: { layout: { newline: '\r\n' } } });
+		const parsed = plain.parse('const s = `one\r`;\r\n');
+		const built = plain.build.program({
+			statements: [...parsed.statements(), plain.build.expressionStatement(plain.build.identifier('z'))]
+		});
+		expect(plain.render(built).toString()).toContain('`one\n`');
+		expect(crlf.render(built).toString()).toContain('`one\r\n`');
+	});
+});
+
 describe('a comment that swallows the carriage return of its CRLF break', () => {
 	it('renders unchanged under \\r\\n and as LF by default', async () => {
 		const plain = await createEngine(await languageByName('python'));

@@ -108,6 +108,23 @@ describe('engine middleware', () => {
 		}
 	});
 
+	it('shows middleware the engine and call layout settings merged key by key', async () => {
+		const calls: { options: unknown }[] = [];
+		const engine = await engineOf({
+			render: { layout: { indent: '  ' } },
+			intercept: [
+				{
+					render(call, next) {
+						calls.push(call);
+						return next();
+					}
+				}
+			]
+		});
+		engine.render(engine.build.identifier('x'), { layout: { newline: '\r\n' } }).toString();
+		expect(calls[0]!.options).toEqual({ layout: { indent: '  ', newline: '\r\n' } });
+	});
+
 	it('runs build callbacks and node render methods through the same hooks', async () => {
 		const events: string[] = [];
 		const engine = await engineOf({
