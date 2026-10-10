@@ -39,10 +39,11 @@ describe('printFlagsModule', () => {
 		);
 	});
 
-	it('refuses more flags than one word holds', () => {
+	it('refuses more flags than one word holds, naming the flags past it', () => {
 		const names = Array.from({ length: FLAG_BITS + 1 }, (_, i) => `flag${String(i).padStart(2, '0')}`);
 		expect(() => printFlagsModule(names.slice(1))).not.toThrow();
 		expect(() => printFlagsModule(names)).toThrow(`the vocabulary declares ${FLAG_BITS + 1} flags`);
+		expect(() => printFlagsModule(names)).toThrow(`no bit for flag${FLAG_BITS}`);
 	});
 });
 

@@ -10,7 +10,9 @@ export const FLAG_BITS = 31;
 export function printFlagsModule(names: Iterable<string>): string {
 	const ordered = [...new Set(names)].sort();
 	if (ordered.length > FLAG_BITS)
-		throw new Error(`bindings-inventory: the vocabulary declares ${ordered.length} flags, and one bitflag word holds ${FLAG_BITS}`);
+		throw new Error(
+			`bindings-inventory: the vocabulary declares ${ordered.length} flags, and one bitflag word holds ${FLAG_BITS}: no bit for ${ordered.slice(FLAG_BITS).join(', ')}`
+		);
 	return `// Generated from the vocabulary's Flag declarations by \`${REGENERATE_BINDINGS_COMMAND}\`. Do not edit.
 export enum Flags {
 ${ordered.map((name, bit) => `\t${tsname(name)} = 1 << ${bit}`).join(',\n')}
