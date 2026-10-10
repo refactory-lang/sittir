@@ -185,6 +185,7 @@
 ; ── literal ────────────────────────────────────────────────────────────────────
 (string) @literal.string
 (escape_sequence) @literal.string.escape
+(escape_interpolation) @literal.string.escape
 (concatenated_string) @literal.string.concatenated
 ((string (string_start) @_p) @literal.string.f (#match? @_p "^[fF]"))
 ((string (string_start) @_p) @literal.string.bytes (#match? @_p "^[bB]"))

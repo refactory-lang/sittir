@@ -2496,6 +2496,19 @@
         "list": false
       }
     },
+    "escape_interpolation": {
+      "vocab": "literal.string.escape",
+      "read": [
+        {
+          "vocab": "literal.string.escape",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
     "escape_sequence": {
       "vocab": "literal.string.escape",
       "read": [
@@ -6064,7 +6077,7 @@
       {
         "depth": 3,
         "paths": 65,
-        "kinds": 52,
+        "kinds": 53,
         "refinements": 47,
         "aliases": 42
       },
