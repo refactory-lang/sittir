@@ -526,8 +526,8 @@ export function buildFlags(text: string): T.Flags.Bound {
 	return node as unknown as T.Flags.Bound;
 }
 
-export function buildZeroOrMore(value?: Admit<'?'>): T.ZeroOrMore.Bound {
-	const _lazy = coerceBooleanKeywordStorage(rejectBareText(value, 'ZeroOrMore.lazy', 'a boolean'));
+export function buildZeroOrMore(config: Partial<T.ZeroOrMore.Config> = {}): T.ZeroOrMore.Bound {
+	const _lazy = coerceBooleanKeywordStorage(rejectBareText(config.lazy, 'ZeroOrMore.lazy', 'a boolean'));
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ZeroOrMore as const,
@@ -535,7 +535,8 @@ export function buildZeroOrMore(value?: Admit<'?'>): T.ZeroOrMore.Bound {
 		$named: true as const,
 		_lazy,
 		$with: {
-			lazy: (value?: Admit<NonNullable<'?'>>) => rebuilt(node, handle, () => buildZeroOrMore(value))
+			lazy: (value?: Admit<NonNullable<T.ZeroOrMore.Config>['lazy']>) =>
+				rebuilt(node, handle, () => buildZeroOrMore({ ...config, lazy: value }))
 		},
 		lazy: () => _lazy,
 		$render: () => renderText(handle, node),
@@ -548,8 +549,8 @@ export function buildZeroOrMore(value?: Admit<'?'>): T.ZeroOrMore.Bound {
 	return node as unknown as T.ZeroOrMore.Bound;
 }
 
-export function buildOneOrMore(value?: Admit<'?'>): T.OneOrMore.Bound {
-	const _lazy = coerceBooleanKeywordStorage(rejectBareText(value, 'OneOrMore.lazy', 'a boolean'));
+export function buildOneOrMore(config: Partial<T.OneOrMore.Config> = {}): T.OneOrMore.Bound {
+	const _lazy = coerceBooleanKeywordStorage(rejectBareText(config.lazy, 'OneOrMore.lazy', 'a boolean'));
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.OneOrMore as const,
@@ -557,7 +558,8 @@ export function buildOneOrMore(value?: Admit<'?'>): T.OneOrMore.Bound {
 		$named: true as const,
 		_lazy,
 		$with: {
-			lazy: (value?: Admit<NonNullable<'?'>>) => rebuilt(node, handle, () => buildOneOrMore(value))
+			lazy: (value?: Admit<NonNullable<T.OneOrMore.Config>['lazy']>) =>
+				rebuilt(node, handle, () => buildOneOrMore({ ...config, lazy: value }))
 		},
 		lazy: () => _lazy,
 		$render: () => renderText(handle, node),
@@ -570,8 +572,8 @@ export function buildOneOrMore(value?: Admit<'?'>): T.OneOrMore.Bound {
 	return node as unknown as T.OneOrMore.Bound;
 }
 
-export function buildOptional(value?: Admit<'?'>): T.Optional.Bound {
-	const _lazy = coerceBooleanKeywordStorage(rejectBareText(value, 'Optional.lazy', 'a boolean'));
+export function buildOptional(config: Partial<T.Optional.Config> = {}): T.Optional.Bound {
+	const _lazy = coerceBooleanKeywordStorage(rejectBareText(config.lazy, 'Optional.lazy', 'a boolean'));
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Optional as const,
@@ -579,7 +581,8 @@ export function buildOptional(value?: Admit<'?'>): T.Optional.Bound {
 		$named: true as const,
 		_lazy,
 		$with: {
-			lazy: (value?: Admit<NonNullable<'?'>>) => rebuilt(node, handle, () => buildOptional(value))
+			lazy: (value?: Admit<NonNullable<T.Optional.Config>['lazy']>) =>
+				rebuilt(node, handle, () => buildOptional({ ...config, lazy: value }))
 		},
 		lazy: () => _lazy,
 		$render: () => renderText(handle, node),

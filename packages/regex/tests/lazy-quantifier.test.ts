@@ -39,15 +39,15 @@ describe('a quantifier kind with an optional lazy marker', () => {
 	});
 
 	it.each([
-		['zeroOrMore', true, '*?'],
-		['zeroOrMore', false, '*'],
+		['zeroOrMore', { lazy: true }, '*?'],
+		['zeroOrMore', { lazy: false }, '*'],
 		['zeroOrMore', undefined, '*'],
-		['oneOrMore', true, '+?'],
+		['oneOrMore', { lazy: true }, '+?'],
 		['oneOrMore', undefined, '+'],
-		['optional', true, '??'],
+		['optional', { lazy: true }, '??'],
 		['optional', undefined, '?']
-	] as const)('builds %s(%s) as %s', (kind, lazy, text) => {
-		const build = rx.build as unknown as Record<string, (lazy?: boolean) => { $render(): { toString(): string } }>;
-		expect(build[kind]!(lazy).$render().toString()).toBe(text);
+	] as const)('builds %s(%j) as %s', (kind, config, text) => {
+		const build = rx.build as unknown as Record<string, (config?: { lazy?: boolean }) => { $render(): { toString(): string } }>;
+		expect(build[kind]!(config as { lazy?: boolean } | undefined).$render().toString()).toBe(text);
 	});
 });

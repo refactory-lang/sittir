@@ -813,7 +813,7 @@ export interface ZeroOrMore {
 		readonly lazy?: BaseBooleanKeyword<'?'>;
 	};
 	readonly __slotHints__?: {
-		readonly lazy: SlotHint<NonNullable<'?'>, true>;
+		readonly lazy: SlotHint<NonNullable<T.ZeroOrMore.Config>['lazy'], true>;
 	};
 	lazy(): boolean | undefined;
 }
@@ -825,7 +825,7 @@ export interface OneOrMore {
 		readonly lazy?: BaseBooleanKeyword<'?'>;
 	};
 	readonly __slotHints__?: {
-		readonly lazy: SlotHint<NonNullable<'?'>, true>;
+		readonly lazy: SlotHint<NonNullable<T.OneOrMore.Config>['lazy'], true>;
 	};
 	lazy(): boolean | undefined;
 }
@@ -837,7 +837,7 @@ export interface Optional {
 		readonly lazy?: BaseBooleanKeyword<'?'>;
 	};
 	readonly __slotHints__?: {
-		readonly lazy: SlotHint<NonNullable<'?'>, true>;
+		readonly lazy: SlotHint<NonNullable<T.Optional.Config>['lazy'], true>;
 	};
 	lazy(): boolean | undefined;
 }
@@ -1638,7 +1638,7 @@ export interface ZeroOrMoreNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	ZeroOrMore.Bound,
-	'lazy',
+	never,
 	TSKindId.ZeroOrMore,
 	ZeroOrMore.Parsed,
 	never
@@ -1652,7 +1652,7 @@ export interface OneOrMoreNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	OneOrMore.Bound,
-	'lazy',
+	never,
 	TSKindId.OneOrMore,
 	OneOrMore.Parsed,
 	never
@@ -1666,7 +1666,7 @@ export interface OptionalNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	Optional.Bound,
-	'lazy',
+	never,
 	TSKindId.Optional,
 	Optional.Parsed,
 	never
@@ -2454,8 +2454,8 @@ export namespace ZeroOrMore {
 	}
 	export type Loose = LooseFor<TSKindId.ZeroOrMore>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ZeroOrMore>;
-	export type BuildArgs = [value?: Admit<'?'>];
-	export type LooseArgs = [value?: T.ZeroOrMore.Loose];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.ZeroOrMore>>];
+	export type LooseArgs = [config?: T.ZeroOrMore.Loose];
 	export type Kind = TSKindId.ZeroOrMore;
 }
 export namespace OneOrMore {
@@ -2471,8 +2471,8 @@ export namespace OneOrMore {
 	}
 	export type Loose = LooseFor<TSKindId.OneOrMore>;
 	export type LooseConfig = LooseConfigFor<TSKindId.OneOrMore>;
-	export type BuildArgs = [value?: Admit<'?'>];
-	export type LooseArgs = [value?: T.OneOrMore.Loose];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.OneOrMore>>];
+	export type LooseArgs = [config?: T.OneOrMore.Loose];
 	export type Kind = TSKindId.OneOrMore;
 }
 export namespace Optional {
@@ -2488,8 +2488,8 @@ export namespace Optional {
 	}
 	export type Loose = LooseFor<TSKindId.Optional>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Optional>;
-	export type BuildArgs = [value?: Admit<'?'>];
-	export type LooseArgs = [value?: T.Optional.Loose];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.Optional>>];
+	export type LooseArgs = [config?: T.Optional.Loose];
 	export type Kind = TSKindId.Optional;
 }
 export namespace CountQuantifier {

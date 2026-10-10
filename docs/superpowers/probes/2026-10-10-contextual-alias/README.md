@@ -86,7 +86,8 @@ Every row passes in every mode (`Pass` equals `Total`); `read-render-parse` is 1
 ## Recommendation
 
 Use the alias for rust's three splits, and give each alias kind its low-level builder beside its
-target's (`build.methodDeclaration` beside `build.functionItem`), as the maintainer ruled on
+target's (`build.methodDeclaration` beside `build.functionDeclaration`, `function_item`'s bound
+name), as the maintainer ruled on
 2026-10-09. Today's codegen gives a `fieldAliasMap` kind no builder, so that is work for the
 overlay's wiring. With it, a built method and a parsed one agree on `$type`, and a role test reads
 `$type` alone.

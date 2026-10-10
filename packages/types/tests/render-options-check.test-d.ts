@@ -16,7 +16,7 @@ interface SpacedAPI extends LanguageAPI {
 	readonly name: 'spaced';
 	readonly root: FakeNode & ParsedRoot;
 	readonly node: FakeNode;
-	readonly options: { readonly indent?: string; readonly block?: { readonly after?: 'newline' | 'space' } };
+	readonly options: { readonly layout?: { readonly indent?: string }; readonly block?: { readonly after?: 'newline' | 'space' } };
 	readonly indentChar: ' ' | '\t';
 }
 interface PlainAPI extends LanguageAPI {
@@ -54,23 +54,23 @@ declare const engine: Engine<SpacedAPI>;
 declare const node: FakeNode;
 declare const declared: SpacedAPI['options'];
 const undeclared = { nope: 1 } as const;
-const badIndent = { indent: 'x' } as const;
-const mixed = { indent: '  ', nope: 1 } as const;
+const badIndent = { layout: { indent: 'x' } } as const;
+const mixed = { layout: { indent: '  ' }, nope: 1 } as const;
 
-withRender(spaced, { render: { indent: '\t', block: { after: 'space' } } });
+withRender(spaced, { render: { layout: { indent: '\t' }, block: { after: 'space' } } });
 withRender(spaced, { render: declared });
 // @ts-expect-error an undeclared key
 withRender(spaced, { render: { nope: 1 } });
 // @ts-expect-error an undeclared key, not a literal
 withRender(spaced, { render: undeclared });
 // @ts-expect-error an indent unit outside the indent characters
-withRender(spaced, { render: { indent: 'x' } });
+withRender(spaced, { render: { layout: { indent: 'x' } } });
 // @ts-expect-error an indent unit outside the indent characters, not a literal
 withRender(spaced, { render: badIndent });
 // @ts-expect-error a declared key beside an undeclared one
 withRender(spaced, { render: mixed });
 
-engine.render(node, { indent: '  ' });
+engine.render(node, { layout: { indent: '  ' } });
 engine.render(node, declared);
 // @ts-expect-error an undeclared key
 engine.render(node, undeclared);
@@ -82,4 +82,7 @@ engine.render(node, mixed);
 declare const plain: PlainAPI;
 withRender(plain, { render: { list: { separator: ';' } } });
 // @ts-expect-error a language with no indent character has no indent key
-withRender(plain, { render: { indent: ' ' } });
+withRender(plain, { render: { layout: { indent: ' ' } } });
+
+// @ts-expect-error a key inside layout the language's render options do not declare
+withRender(spaced, { render: { layout: { indent: ' ', width: 80 } } });

@@ -18,40 +18,40 @@ import rust, { type RustNode } from '@sittir/rust';
 declare const node: RustNode;
 const wide: string = 'x';
 
-void createEngine(rust, { render: { indent: '\t' } });
-void createEngine(rust, { render: { indent: '    ' } });
-void createEngine(rust, { render: { indent: wide } });
+void createEngine(rust, { render: { layout: { indent: '\t' } } });
+void createEngine(rust, { render: { layout: { indent: '    ' } } });
+void createEngine(rust, { render: { layout: { indent: wide } } });
 // @ts-expect-error 'x' is not an indent character
-void createEngine(rust, { render: { indent: 'x' } });
+void createEngine(rust, { render: { layout: { indent: 'x' } } });
 // @ts-expect-error a line break is not an indent character
-void createEngine(rust, { render: { indent: ' \n' } });
+void createEngine(rust, { render: { layout: { indent: ' \n' } } });
 // @ts-expect-error an empty unit indents nothing
-void createEngine(rust, { render: { indent: '' } });
+void createEngine(rust, { render: { layout: { indent: '' } } });
 
-rs.render(node, { indent: '\t' });
-rs.render(node, { indent: wide });
+rs.render(node, { layout: { indent: '\t' } });
+rs.render(node, { layout: { indent: wide } });
 // @ts-expect-error per-call units are checked the same way
-rs.render(node, { indent: 'x' });
+rs.render(node, { layout: { indent: 'x' } });
 // @ts-expect-error a key the grammar's render options do not have
-void createEngine(rust, { render: { indent: '\t', indnet: '\t' } });
+void createEngine(rust, { render: { layout: { indent: '\t' }, indnet: '\t' } });
 // @ts-expect-error per-call options take no unknown key either
-rs.render(node, { indent: '\t', indnet: '\t' });
-rs.render(node, { indent: '\t', ignoreFormat: false });
+rs.render(node, { layout: { indent: '\t' }, indnet: '\t' });
+rs.render(node, { layout: { indent: '\t' }, ignoreFormat: false });
 
 // The descriptor's createEngine takes exactly what createEngine(rust, …) takes.
-const viaDescriptor: Promise<Engine<RustAPI>> = rust.createEngine({ render: { indent: '\t' } });
-const viaFunction: Promise<Engine<RustAPI>> = createEngine(rust, { render: { indent: '\t' } });
+const viaDescriptor: Promise<Engine<RustAPI>> = rust.createEngine({ render: { layout: { indent: '\t' } } });
+const viaFunction: Promise<Engine<RustAPI>> = createEngine(rust, { render: { layout: { indent: '\t' } } });
 void [viaDescriptor, viaFunction];
 void rust.createEngine();
-void rust.createEngine({ render: { indent: '    ' } });
-void rust.createEngine({ render: { indent: wide } });
+void rust.createEngine({ render: { layout: { indent: '    ' } } });
+void rust.createEngine({ render: { layout: { indent: wide } } });
 // @ts-expect-error 'x' is not an indent character
-void rust.createEngine({ render: { indent: 'x' } });
+void rust.createEngine({ render: { layout: { indent: 'x' } } });
 // @ts-expect-error a line break is not an indent character
-void rust.createEngine({ render: { indent: ' \n' } });
+void rust.createEngine({ render: { layout: { indent: ' \n' } } });
 // @ts-expect-error an empty unit indents nothing
-void rust.createEngine({ render: { indent: '' } });
+void rust.createEngine({ render: { layout: { indent: '' } } });
 // @ts-expect-error a key the grammar's render options do not have
-void rust.createEngine({ render: { indent: '\t', indnet: '\t' } });
+void rust.createEngine({ render: { layout: { indent: '\t' }, indnet: '\t' } });
 // @ts-expect-error a mistyped value
-void rust.createEngine({ render: { indent: 4 } });
+void rust.createEngine({ render: { layout: { indent: 4 } } });

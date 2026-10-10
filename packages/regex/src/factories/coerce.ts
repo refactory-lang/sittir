@@ -1010,9 +1010,11 @@ export function resolveZeroOrMore_lazy(value: T.ZeroOrMore.LooseConfig['lazy']):
 }
 
 export function coerceToZeroOrMore(input?: T.ZeroOrMore.Loose): ReturnType<typeof F.buildZeroOrMore> {
-	if (input !== undefined && isNodeOfKind(input, TSKindId.ZeroOrMore))
+	if (!_isLooseConfig<T.ZeroOrMore.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildZeroOrMore>;
-	return F.buildZeroOrMore(_resolveBooleanKeyword(configFieldOr(input, 'lazy', () => input)));
+	return F.buildZeroOrMore({
+		lazy: resolveZeroOrMore_lazy(input?.lazy)
+	});
 }
 
 export function resolveOneOrMore_lazy(value: T.OneOrMore.LooseConfig['lazy']): Admit<T.OneOrMore['_lazy']> {
@@ -1020,9 +1022,11 @@ export function resolveOneOrMore_lazy(value: T.OneOrMore.LooseConfig['lazy']): A
 }
 
 export function coerceToOneOrMore(input?: T.OneOrMore.Loose): ReturnType<typeof F.buildOneOrMore> {
-	if (input !== undefined && isNodeOfKind(input, TSKindId.OneOrMore))
+	if (!_isLooseConfig<T.OneOrMore.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildOneOrMore>;
-	return F.buildOneOrMore(_resolveBooleanKeyword(configFieldOr(input, 'lazy', () => input)));
+	return F.buildOneOrMore({
+		lazy: resolveOneOrMore_lazy(input?.lazy)
+	});
 }
 
 export function resolveOptional_lazy(value: T.Optional.LooseConfig['lazy']): Admit<T.Optional['_lazy']> {
@@ -1030,9 +1034,11 @@ export function resolveOptional_lazy(value: T.Optional.LooseConfig['lazy']): Adm
 }
 
 export function coerceToOptional(input?: T.Optional.Loose): ReturnType<typeof F.buildOptional> {
-	if (input !== undefined && isNodeOfKind(input, TSKindId.Optional))
+	if (!_isLooseConfig<T.Optional.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildOptional>;
-	return F.buildOptional(_resolveBooleanKeyword(configFieldOr(input, 'lazy', () => input)));
+	return F.buildOptional({
+		lazy: resolveOptional_lazy(input?.lazy)
+	});
 }
 
 export function resolveCountQuantifier_content(

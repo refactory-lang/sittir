@@ -2415,7 +2415,7 @@
           ]
         }
       ],
-      "factoryShape": "direct",
+      "factoryShape": "config",
       "factoryFields": [
         "lazy"
       ]
@@ -2450,7 +2450,7 @@
           ]
         }
       ],
-      "factoryShape": "direct",
+      "factoryShape": "config",
       "factoryFields": [
         "lazy"
       ]
@@ -3131,7 +3131,7 @@
           ]
         }
       ],
-      "factoryShape": "direct",
+      "factoryShape": "config",
       "factoryFields": [
         "lazy"
       ]

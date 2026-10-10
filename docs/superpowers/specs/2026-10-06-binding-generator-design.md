@@ -48,7 +48,7 @@ These go into the grammar package's types module, beside `ParsedByKindId` and `B
 
   Each entry is one alias per kind (`type VK_FunctionItem = …`), so a container that contains itself, such as a token tree, resolves through its array rather than through a circular indexed access.
 - **`ViewOf<N>`** maps a reader's result type through `ViewByKind`, distributing over the reader's union and keeping `undefined` where the slot is optional. **`EnumViewByKind`** and **`ViewEnumOf<N>`** do the same for a token that is a value of a claimed enum (§2.3).
-- **`Backward`,** the grammar kinds a node crosses low→high on its own: those whose every claim the node itself decides, by its kind, its field literals and its own text, with nothing from its ancestors. In rust it leaves out 2 of the 152 claimed kinds, `function_item` and `function_signature_item`, which hold the 5 contextual claims (methods, static methods and signatures inside impls and traits).
+- **`Backward`,** the grammar kinds a node crosses low→high on its own: those whose every claim the node itself decides, by its kind, its field literals and its own text, with nothing from its ancestors. A claim a grammar site decides is a kind of its own (bindings spec §9): rust's methods, static methods and signatures inside impls and traits are claims on the alias kinds `method_declaration` and `signature_method_declaration`, which `$type` decides, so `function_item` and `function_signature_item` cross on their own. The claims still placed, by grammar, are counted in `docs/superpowers/probes/2026-10-10-placed-claims/`.
 - **`attach` and `is` overloads** are typed from these maps: a portable engine's `attach` from `Backward` and `ViewByKind`, a grammar engine's from the vocabulary kinds the map builds; `is.<role path>` narrows a grammar node to the row's grammar types and a portable node to the vocabulary interface.
 
 ### 2.2 Portable node literals
@@ -94,6 +94,7 @@ The portable engine's `build` is typed per kind from the vocabulary. A structure
 - Where a kind and its shorthand share a vocabulary kind, the build picks the shorthand when the member it omits is absent.
 - An enum claim builds as its token's kind id, through the enum's text table where the structure spells the value.
 - A leaf whose text varies builds from its text.
+- **An alias kind** builds through its own low-level builder (`build.methodDeclaration` beside `build.functionDeclaration`, `function_item`'s bound name), which takes the aliased rule's input and gives the node the alias's kind id, so a built method's `$type` is a parsed one's.
 - **A kind with no bare factory:** polymorphs (`struct_item`, `closure_expression`, `range_expression`) build through a named form, and claimed supertypes (`integer_literal`, `escape_sequence`) through a subtype. The build entry picks the form or subtype by the routing the `ir` and loose builders already use (`buildFactoryNodeFromReference` over the `ir` surface). The generator reuses that rule and writes no second one.
 
 The input is runtime data (a structure can arrive as JSON), so the build side calls the loose builders through one checked boundary, `call(factory, input)`. The per-kind types check what is written in code; the round-trip lane checks the rest. On the low-level surface the same generic build is keyed by `$type`.
