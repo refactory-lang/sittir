@@ -130,7 +130,6 @@
 (spread_element) @element.splat
 (pair) @element.pair
 (pair key: (computed_property_name) @key @computed)
-(shorthand_property_identifier) @element.pair @key
 (tuple_parameter) @element.tuple.member
 (optional_tuple_parameter) @element.tuple.member.optional
 (template_type) @element.template.substitution
@@ -235,7 +234,6 @@
 (object_assignment_pattern) @pattern.object.assignment
 (pair_pattern) @pattern.object.pair
 (pair_pattern key: (computed_property_name) @key @computed)
-(shorthand_property_identifier_pattern) @pattern.object.pair @key
 (array_pattern) @pattern.array
 (rest_pattern) @pattern.rest
 (assignment_pattern) @pattern.assignment

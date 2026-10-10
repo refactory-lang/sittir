@@ -144,11 +144,10 @@ export interface PortableIds {
 	element:
 		| TSKindId.OptionalTupleParameter
 		| TSKindId.Pair
-		| TSKindId.ShorthandPropertyIdentifier
 		| TSKindId.SpreadElement
 		| TSKindId.TemplateType
 		| TSKindId.TupleParameter;
-	'element.pair': TSKindId.Pair | TSKindId.ShorthandPropertyIdentifier;
+	'element.pair': TSKindId.Pair;
 	'element.splat': TSKindId.SpreadElement;
 	'element.template': TSKindId.TemplateType;
 	'element.template.substitution': TSKindId.TemplateType;
@@ -381,17 +380,12 @@ export interface PortableIds {
 		| TSKindId.ObjectAssignmentPattern
 		| TSKindId.ObjectPattern
 		| TSKindId.PairPattern
-		| TSKindId.RestPattern
-		| TSKindId.ShorthandPropertyIdentifierPattern;
+		| TSKindId.RestPattern;
 	'pattern.array': TSKindId.ArrayPattern;
 	'pattern.assignment': TSKindId.AssignmentPattern;
-	'pattern.object':
-		| TSKindId.ObjectAssignmentPattern
-		| TSKindId.ObjectPattern
-		| TSKindId.PairPattern
-		| TSKindId.ShorthandPropertyIdentifierPattern;
+	'pattern.object': TSKindId.ObjectAssignmentPattern | TSKindId.ObjectPattern | TSKindId.PairPattern;
 	'pattern.object.assignment': TSKindId.ObjectAssignmentPattern;
-	'pattern.object.pair': TSKindId.PairPattern | TSKindId.ShorthandPropertyIdentifierPattern;
+	'pattern.object.pair': TSKindId.PairPattern;
 	'pattern.rest': TSKindId.RestPattern;
 	statement:
 		| TSKindId.BreakStatement
@@ -2538,14 +2532,13 @@ const table: PortableTable = {
 			ids: [
 				TSKindId.OptionalTupleParameter,
 				TSKindId.Pair,
-				TSKindId.ShorthandPropertyIdentifier,
 				TSKindId.SpreadElement,
 				TSKindId.TemplateType,
 				TSKindId.TupleParameter
 			],
 			exact: true
 		},
-		'element.pair': { ids: [TSKindId.Pair, TSKindId.ShorthandPropertyIdentifier], exact: true },
+		'element.pair': { ids: [TSKindId.Pair], exact: true },
 		'element.splat': { ids: [TSKindId.SpreadElement], exact: true },
 		'element.template': { ids: [TSKindId.TemplateType], exact: true },
 		'element.template.substitution': { ids: [TSKindId.TemplateType], exact: true },
@@ -2824,24 +2817,18 @@ const table: PortableTable = {
 				TSKindId.ObjectAssignmentPattern,
 				TSKindId.ObjectPattern,
 				TSKindId.PairPattern,
-				TSKindId.RestPattern,
-				TSKindId.ShorthandPropertyIdentifierPattern
+				TSKindId.RestPattern
 			],
 			exact: true
 		},
 		'pattern.array': { ids: [TSKindId.ArrayPattern], exact: true },
 		'pattern.assignment': { ids: [TSKindId.AssignmentPattern], exact: true },
 		'pattern.object': {
-			ids: [
-				TSKindId.ObjectAssignmentPattern,
-				TSKindId.ObjectPattern,
-				TSKindId.PairPattern,
-				TSKindId.ShorthandPropertyIdentifierPattern
-			],
+			ids: [TSKindId.ObjectAssignmentPattern, TSKindId.ObjectPattern, TSKindId.PairPattern],
 			exact: true
 		},
 		'pattern.object.assignment': { ids: [TSKindId.ObjectAssignmentPattern], exact: true },
-		'pattern.object.pair': { ids: [TSKindId.PairPattern, TSKindId.ShorthandPropertyIdentifierPattern], exact: true },
+		'pattern.object.pair': { ids: [TSKindId.PairPattern], exact: true },
 		'pattern.rest': { ids: [TSKindId.RestPattern], exact: true },
 		statement: {
 			ids: [
@@ -3682,8 +3669,6 @@ const table: PortableTable = {
 		[TSKindId.ReturnStatement]: [{ path: 'statement.return', within: [], test: [] }],
 		[TSKindId.SatisfiesExpression]: [{ path: 'expression.cast.satisfies', within: [], test: [] }],
 		[TSKindId.SequenceExpression]: [{ path: 'expression.sequence', within: [], test: [] }],
-		[TSKindId.ShorthandPropertyIdentifier]: [{ path: 'element.pair', within: [], test: [] }],
-		[TSKindId.ShorthandPropertyIdentifierPattern]: [{ path: 'pattern.object.pair', within: [], test: [] }],
 		[TSKindId.SpreadElement]: [{ path: 'element.splat', within: [], test: [] }],
 		[TSKindId.StatementBlock]: [{ path: 'statement.block', within: [], test: [] }],
 		[TSKindId.StatementIdentifier]: [{ path: 'identifier.label', within: [], test: [] }],

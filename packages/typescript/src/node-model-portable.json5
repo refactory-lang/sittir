@@ -7558,23 +7558,6 @@
       }
     },
     "shorthand_property_identifier": {
-      "vocab": "element.pair",
-      "read": [
-        {
-          "vocab": "element.pair",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": [
-        {
-          "name": "key",
-          "route": "self",
-          "path": []
-        }
-      ],
       "container": {
         "kinds": [
           "identifier"
@@ -7607,23 +7590,6 @@
       }
     },
     "shorthand_property_identifier_pattern": {
-      "vocab": "pattern.object.pair",
-      "read": [
-        {
-          "vocab": "pattern.object.pair",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": [
-        {
-          "name": "key",
-          "route": "self",
-          "path": []
-        }
-      ],
       "container": {
         "kinds": [
           "identifier"
@@ -9385,14 +9351,14 @@
       {
         "depth": 2,
         "paths": 111,
-        "kinds": 117,
+        "kinds": 116,
         "refinements": 8,
         "aliases": 94
       },
       {
         "depth": 3,
         "paths": 81,
-        "kinds": 68,
+        "kinds": 67,
         "refinements": 55,
         "aliases": 41
       },
