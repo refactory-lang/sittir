@@ -204,6 +204,7 @@
 
 ; ── literal ────────────────────────────────────────────────────────────────────
 (string_literal (string_content)* @content) @literal.string
+((string_literal (string_content)* @content) @literal.string.bytes (#match? @literal.string.bytes "^b\""))
 (raw_string_literal string_content: (string_content) @content) @literal.string.raw
 (char_literal) @literal.char
 (escape_sequence) @literal.string.escape
