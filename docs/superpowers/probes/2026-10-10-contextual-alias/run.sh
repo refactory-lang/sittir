@@ -1,5 +1,5 @@
 #!/bin/bash
-# Usage: WT=<worktree> [GRAMMAR=python] run.sh <unbound|nosplit|split|alias> [out-dir]
+# Usage: WT=<worktree> [GRAMMAR=python] run.sh <unbound|nosplit|split|alias|alias-decorated> [out-dir]
 # Regenerates the grammar (rust unless named) in the worktree under that mode, then records the
 # parser's facts, the generated sizes and the validation rows in out-dir (default: results/ beside
 # this script). A grammar other than rust prefixes its result files with its name, and its
@@ -16,6 +16,7 @@ LENIENT=()
 if [ "$GRAMMAR" != rust ]; then
 	PREFIX=$GRAMMAR-
 	PINS_FILE=$HERE/pins-bound-$GRAMMAR.json
+	[ -f "$HERE/pins-bound-$GRAMMAR-$MODE.json" ] && PINS_FILE=$HERE/pins-bound-$GRAMMAR-$MODE.json
 	LENIENT=(SITTIR_SCRATCH_LENIENT_READ_TESTS=1)
 fi
 mkdir -p "$OUT"
