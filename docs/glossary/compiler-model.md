@@ -5902,17 +5902,6 @@ The single derivation of which sub-factories and alias forms route under a paren
 
 A parent's children are visited first (DFS post-order). A value arm and a direct node arm always route. A nested arm (path through its child) routes when the child has a key and the child's own settled arms carry the referenced step: the child's context-sensitive derivation under this parent can name entries the child's own top-level set resolved away. A child with no arms of its own falls back to its variants (`variantArmsOf`) when it is a variant-bearing supertype; any other child is a context mismatch. Alias wires (`variantAliasWires`) are settled against the routed subs.
 
-### `packages/codegen/src/compiler/model/ir-surface.ts::groupNameFor`
-
-```text
-/**
- * Supertype kind → group namespace name.
- *   `_expression`            → `expression`
- *   `_declaration_statement` → `declarationStatement`
- *   `_literal_pattern`       → `literalPattern`
- */
-```
-
 ### `packages/codegen/src/compiler/model/ir-surface.ts::memberKeyFor`
 
 `memberKind`'s short key within `supertypeKind`'s group namespace:

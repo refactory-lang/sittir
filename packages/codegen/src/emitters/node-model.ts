@@ -70,6 +70,7 @@ interface SerializedNodeBase {
 	factoryName?: string;
 	irKey?: string;
 	builderPath?: readonly string[];
+	builderPathAlternates?: readonly (readonly string[])[];
 	hidden: boolean;
 	annotations?: RuleAnnotations;
 	seated?: true;
