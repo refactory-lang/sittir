@@ -3005,7 +3005,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "declaration_list": {
+      "body": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -14384,9 +14384,9 @@
           ]
         },
         {
-          "name": "declaration_list",
-          "propertyName": "declarationList",
-          "paramName": "declarationList",
+          "name": "body",
+          "propertyName": "body",
+          "paramName": "body",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -14412,7 +14412,7 @@
         "trait_clause",
         "type",
         "where_clause",
-        "declaration_list"
+        "body"
       ]
     },
     {

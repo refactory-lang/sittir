@@ -36,7 +36,7 @@ export const DOGFOOD_TARGETS: readonly DogfoodTarget[] = [
 		name: 'Format',
 		surfaces: ['strict', 'loose'],
 		rendered: 'dogfood-typescript.rendered',
-		renderOptions: { indent: '\t' }
+		renderOptions: { layout: { indent: '\t' } }
 	},
 	{
 		grammar: 'python',

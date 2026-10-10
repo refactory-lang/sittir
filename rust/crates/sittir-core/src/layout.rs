@@ -122,7 +122,12 @@ impl<T: Render + TriviaSeam> TransportLayout<T> {
         if let Some(trivia) = trivia {
             trivia.render_leading(w)?;
         }
+        let line_terminated = kind.is_some_and(|kind| w.kind_has(kind, crate::options::KIND_LINE_TERMINATED));
+        let outer = line_terminated.then(|| w.swallow_cr(true));
         body(w)?;
+        if let Some(outer) = outer {
+            w.swallow_cr(outer);
+        }
         if let Some(kind) = kind {
             w.unsited_edge(kind, Side::After, edges.after);
             w.end_line_after(kind);

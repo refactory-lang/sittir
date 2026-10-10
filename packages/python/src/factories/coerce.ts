@@ -484,9 +484,9 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 130, 133, 134, 135, 136, 138, 140,
 		141, 142, 144, 145, 146, 147, 148, 149, 167, 168, 169, 170, 171, 172, 175, 180, 181, 200, 202, 206, 207, 208, 209,
 		212, 213, 216, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246, 247, 256, 259,
-		268, 271, 275, 277, 278, 280, 286, 287, 288, 289, 298, 337
+		268, 271, 275, 277, 278, 280, 286, 287, 288, 289, 298, 336
 	]),
-	import_statement: new Set([135, 136, 181, 337]),
+	import_statement: new Set([135, 136, 181, 336]),
 	future_import_statement: new Set([135, 136, 181, 280]),
 	import_list: new Set([136, 181]),
 	print_statement: new Set([
@@ -518,14 +518,14 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 115, 130, 133, 134, 135, 136, 138,
 		140, 141, 142, 144, 145, 146, 147, 148, 149, 167, 168, 169, 170, 171, 172, 175, 179, 180, 181, 200, 202, 206, 207,
 		208, 209, 212, 213, 216, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246, 247,
-		256, 259, 268, 271, 275, 277, 278, 280, 286, 287, 288, 289, 294, 295, 296, 298, 337
+		256, 259, 268, 271, 275, 277, 278, 280, 286, 287, 288, 289, 294, 295, 296, 298, 336
 	]),
 	match_block: new Set([115, 292, 293]),
 	finally_clause: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 115, 130, 133, 134, 135, 136, 138,
 		140, 141, 142, 144, 145, 146, 147, 148, 149, 167, 168, 169, 170, 171, 172, 175, 179, 180, 181, 200, 202, 206, 207,
 		208, 209, 212, 213, 216, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246, 247,
-		256, 259, 268, 271, 275, 277, 278, 280, 286, 287, 288, 289, 294, 295, 296, 298, 337
+		256, 259, 268, 271, 275, 277, 278, 280, 286, 287, 288, 289, 294, 295, 296, 298, 336
 	]),
 	with_item: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
@@ -648,7 +648,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 130, 133, 134, 135, 136, 138, 140,
 		141, 142, 144, 145, 146, 147, 148, 149, 167, 168, 169, 170, 171, 172, 175, 180, 181, 200, 202, 206, 207, 208, 209,
 		212, 213, 216, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246, 247, 256, 268,
-		271, 275, 277, 278, 280, 286, 287, 288, 289, 298, 337
+		271, 275, 277, 278, 280, 286, 287, 288, 289, 298, 336
 	]),
 	subjects: new Set([
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 142, 167, 168, 175, 180, 200, 202,
@@ -741,7 +741,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 22, 38, 39, 64, 67, 68, 69, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 130, 133, 134, 135, 136, 138, 140,
 		141, 142, 144, 145, 146, 147, 148, 149, 167, 168, 169, 170, 171, 172, 175, 180, 181, 200, 202, 206, 207, 208, 209,
 		212, 213, 216, 219, 220, 221, 223, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 245, 246, 247, 256, 259,
-		268, 271, 275, 277, 278, 280, 286, 287, 288, 289, 298, 337
+		268, 271, 275, 277, 278, 280, 286, 287, 288, 289, 298, 336
 	]),
 	suite_block: new Set([179]),
 	suite_empty: new Set([115]),
@@ -6253,7 +6253,7 @@ export function coerceToCaseListPattern(...args: unknown[]): ReturnType<typeof F
 export function coerceToPrintArguments(...input: T.PrintArguments.LooseArgs): ReturnType<typeof F.buildPrintArguments> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.PrintArguments)) {
 		const data = input[0];
-		const stored = (data as unknown as { _argument?: unknown })._argument;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildPrintArguments(
 			{
@@ -6331,7 +6331,7 @@ export function coerceToPrintChevronArguments(
 ): ReturnType<typeof F.buildPrintChevronArguments> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.PrintChevronArguments)) {
 		const data = input[0];
-		const stored = (data as unknown as { _argument?: unknown })._argument;
+		const stored = (data as unknown as { _item?: unknown })._item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildPrintChevronArguments(
 			{

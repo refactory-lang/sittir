@@ -13,7 +13,7 @@ import {
 } from '../compiler/model/site-preferences.ts';
 import type { KindEnumEntry } from './kind-discriminant.ts';
 import { DELIMITER_IMPORT } from './shared.ts';
-import { indentChars, whitespaceKindsOf, layoutKindsOf } from '../compiler/model/layout-kinds.ts';
+import { indentChars, newlineArms, whitespaceKindsOf, layoutKindsOf } from '../compiler/model/layout-kinds.ts';
 import { addressSegments, addressSites, matchAddress, type AddressedSite } from '../compiler/model/site-addresses.ts';
 import { formatPreferencePath, parsePreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
 import { readOptionsBlock, type OptionsConfig, type OptionsDeclarations } from '../dsl/wire/options-block.ts';
@@ -231,6 +231,7 @@ export interface OptionsModuleInputs {
 	readonly layoutKindAliases?: LayoutKindAliases;
 	readonly hints?: HintEmitter;
 	readonly indentChars?: readonly string[];
+	readonly newlineArms?: readonly string[];
 }
 
 export function renderOptionsModule(inputs: OptionsModuleInputs = {}): string {
@@ -251,11 +252,13 @@ export function renderOptionsModule(inputs: OptionsModuleInputs = {}): string {
 	}
 	const indentChars = inputs.indentChars ?? [];
 	L.push(`export type IndentChar = ${indentChars.length === 0 ? 'never' : indentChars.map((c) => JSON.stringify(c)).join(' | ')};`, '');
+	const arms = inputs.newlineArms ?? [];
+	L.push(`export type LineEnding = ${arms.length === 0 ? 'never' : arms.map((arm) => JSON.stringify(arm)).join(' | ')};`, '');
 	L.push('/// The virtual kinds the grammar declares beside its node kinds, by the sites bound to them.');
 	L.push('export interface LabelOptions {');
 	for (const l of labels) L.push(`\treadonly ${l.key}?: ${l.hint};`);
 	L.push('}', '');
-	L.push('export type Options = DerivedOptions<T.OptionsHintMap, IndentChar> & LabelOptions;', '');
+	L.push('export type Options = DerivedOptions<T.OptionsHintMap, IndentChar, LineEnding> & LabelOptions;', '');
 	return L.join('\n');
 }
 
@@ -293,6 +296,7 @@ export function emitOptions(config: EmitOptionsConfig): string {
 	return renderOptionsModule({
 		layoutKindAliases: aliases,
 		hints: hintEmitterOf(addresses, config.kindEntries, aliases, displayedKinds(config.nodeMap)),
-		indentChars: indentChars(config.nodeMap)
+		indentChars: indentChars(config.nodeMap),
+		newlineArms: newlineArms(config.nodeMap)
 	});
 }

@@ -1927,7 +1927,7 @@
       }
     },
     "print_arguments": {
-      "argument": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1936,7 +1936,7 @@
       }
     },
     "print_chevron_arguments": {
-      "argument": {
+      "item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -14085,9 +14085,9 @@
       ],
       "slots": [
         {
-          "name": "argument",
-          "propertyName": "arguments",
-          "paramName": "arguments_",
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -14107,7 +14107,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "argument"
+        "item"
       ],
       "bareAccepts": [
         "as_pattern",
@@ -14187,9 +14187,9 @@
       ],
       "slots": [
         {
-          "name": "argument",
-          "propertyName": "arguments",
-          "paramName": "arguments_",
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -14209,7 +14209,7 @@
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "argument"
+        "item"
       ],
       "bareAccepts": [
         "as_pattern",

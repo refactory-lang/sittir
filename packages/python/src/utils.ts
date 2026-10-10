@@ -21,7 +21,7 @@ export const triviaFacts = Object.freeze({
 	innerGaps: INNER_GAPS,
 	rebuildWrappers: new Set<number>([
 		90, 91, 92, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269,
-		280, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 335, 336, 337
+		280, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 334, 335, 336
 	]),
 	listKinds: new Set<number>([
 		135, 180, 192, 193, 217, 242, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 270, 271, 275, 276, 289, 290
@@ -829,8 +829,8 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	273: [['listPatternCasePatterns', { fields: [], kinds: ['list_pattern_case_patterns'] }]],
 	274: [['listPatternCasePatterns', { fields: [], kinds: ['list_pattern_case_patterns'] }]],
-	275: [['arguments', { fields: ['argument'], kinds: [] }]],
-	276: [['arguments', { fields: ['argument'], kinds: [] }]],
+	275: [['items', { fields: ['item'], kinds: [] }]],
+	276: [['items', { fields: ['item'], kinds: [] }]],
 	277: [
 		['chevron', { fields: [], kinds: ['chevron'] }],
 		['printChevronArguments', { fields: [], kinds: ['print_chevron_arguments', 'comma'] }]
@@ -969,9 +969,9 @@ export const querySlots: QuerySlots = Object.freeze({
 			}
 		]
 	],
+	334: [['content', { fields: ['content'], kinds: [] }]],
 	335: [['content', { fields: ['content'], kinds: [] }]],
-	336: [['content', { fields: ['content'], kinds: [] }]],
-	337: [['content', { fields: ['content'], kinds: [] }]]
+	336: [['content', { fields: ['content'], kinds: [] }]]
 });
 
 export const { isNode } = bindRuntime<PythonTypeMap>();
