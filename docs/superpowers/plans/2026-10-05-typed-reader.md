@@ -7942,7 +7942,7 @@ Task 19's `a descendants query over …` cases (a let declaration and a variant 
 - `pnpm run validate:native`; `sittir validate history` against `12644d5df`, rows compared by number;
 - the full unit suite, with any new failure isolated by stash-and-rerun;
 - the workspace type-check (`tsc --noEmit`);
-- `packages/common/src` holds no `adoptChild`, `detachAncestors`, `isUntouchedBelow`, `sameOccurrence`, `hydrateListStorage` or "reached outside its parent's accessors"; `rust/crates/sittir-*/src/render/transport.rs` holds no `Option<Vec<`.
+- `packages/common/src` holds no `adoptChild`, `detachAncestors`, `isUntouchedBelow`, `sameOccurrence` or `hydrateListStorage`; `rust/crates/sittir-*/src/render/transport.rs` holds no `Option<Vec<`. The refusal of a write through a query stays: 1c-ii lands with it, and Task 30's gate removes it.
 
 Commit the probes and README (`docs(probes): relative-coordinates verifications 1–6 for 1c-ii`). Open the PR with `Owner: sittir-engine-api` first in its body and the Q1/Q2 rulings quoted, and ask brainstorm for the whole-branch review.
 
