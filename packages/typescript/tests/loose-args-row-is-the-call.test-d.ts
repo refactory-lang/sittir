@@ -10,4 +10,4 @@ import type { Expect, IsNever, RowDiffersFromCall } from '../../types/tests/supp
 import type { ir } from '../src/ir.ts';
 import type * as T from '../src/types.ts';
 
-export type EveryEntryTakesItsRow = Expect<IsNever<RowDiffersFromCall<typeof ir, T.IrKeyOf, T.NamespaceMap>>>;
+export type EveryEntryTakesItsRow = Expect<IsNever<RowDiffersFromCall<typeof ir, T.TypeKeyOf, T.NamespaceMap>>>;

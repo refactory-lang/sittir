@@ -20,8 +20,8 @@ describe('trivia given as text', () => {
 	});
 
 	it('leaves the choice inside the kind to that kind, which refuses text that reads as another arm', () => {
-		expect(() => statement().$trivia.trailing('/// x')).toThrow(/build it with ir\.lineCommentDocOuter/);
-		expect(() => statement().$trivia.trailing('/** x */')).toThrow(/build it with ir\.blockCommentDocOuter/);
+		expect(() => statement().$trivia.trailing('/// x')).toThrow(/build it with ir\.lineComment\.docOuter/);
+		expect(() => statement().$trivia.trailing('/** x */')).toThrow(/build it with ir\.blockComment\.docOuter/);
 	});
 
 	it('resolves each item of a call on its own', () => {

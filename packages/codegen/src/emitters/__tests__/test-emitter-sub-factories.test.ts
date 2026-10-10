@@ -1,5 +1,6 @@
 import { CHOICE, FIELD, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
+import { stampIrSurface } from '../../compiler/model/ir-surface.ts';
 import type { Rule } from '../../types/rule.ts';
 import type { RawGrammar } from '../../compiler/types.ts';
 import { link } from '../../compiler/link.ts';
@@ -48,7 +49,9 @@ function buildNodeMap(rules: Record<string, Rule<'evaluate'>>): NodeMap {
 	};
 	const linked = link(raw);
 	const normalized = normalizeGrammar(linked);
-	return assemble(AssembleCtx.from(normalized));
+	const nodeMap = assemble(AssembleCtx.from(normalized));
+	stampIrSurface(nodeMap);
+	return nodeMap;
 }
 
 function commentNodeMap(): NodeMap {

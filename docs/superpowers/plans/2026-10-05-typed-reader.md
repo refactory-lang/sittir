@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Read a parsed node natively into its kind's generated transport, with routing, storage and trivia placement done by a cursor reader that a derive macro expands from codegen-stamped attributes. Prove the read equal to today's read, wrap and detach for every corpus node of the five grammars (PR 1a). The derive then replaces the napi object codec (PR 1b), and every consumer switches to the typed read (PR 1c).
+**Goal:** Read a parsed node natively into its kind's generated transport, with routing and storage done by a cursor reader that a derive macro expands from codegen-stamped attributes. Prove the read equal to today's read, wrap and detach for every corpus node of the five grammars (PR 1a). The derive then replaces the napi object codec (PR 1b), and every consumer switches to the typed read (PR 1c). Relative coordinates follow as step 2 on the same feature branch, `feat/typed-reader`, in their own plan.
 
 **Architecture:** Codegen keeps emitting today's transport structs and choice enums. It adds `#[derive(::sittir_core::Transport)]` and helper attributes for every read fact a type cannot state:
 
@@ -15,7 +15,7 @@ A new proc-macro crate expands each declaration into a `ReadTransport` impl that
 
 - depth;
 - coordinates as tree and row;
-- the trivia placement rule;
+- the trivia placement rule, until the parsed tree's gap table replaces it (`docs/superpowers/plans/2026-10-10-arena-tables.md`, 3a);
 - refusal of a child no route takes.
 
 In 1a the typed read runs beside today's read. Two transitional napi methods back the corpus harness: one reports the typed reader's refusal, and the other decodes today's detached data into the same transport types and compares the two.
@@ -34,7 +34,7 @@ In 1a the typed read runs beside today's read. Two transitional napi methods bac
 
 ## Scope and sequencing
 
-Step 1 of the spec lands as four PRs. This plan writes 1a, 1b and 1c-i in full and outlines 1c-ii. Each step's tasks are detailed against the code the step before it left; 1c-ii's after 1c-i lands.
+`feat/typed-reader` carries the spec's steps 1 and 2. Step 1 lands as four PRs, which this plan writes in full, each detailed against the code the step before it left. Step 2, relative coordinates, is `docs/superpowers/plans/2026-10-06-relative-coordinates.md`. Step 3, the record wire, and both trivia tables (`docs/superpowers/specs/2026-10-09-trivia-table-design.md`) are a feature of their own, `feat/arena`: `docs/superpowers/plans/2026-10-10-arena-tables.md`.
 
 1a is cut from master at or after `efbf817b9`, where enum members cross the transport as their kind ids and decode by id alone. Tasks 5, 8 and 9 build on what that brought: `enumMemberId` and the decoder `arms` in `renderEnumType`, `AssembledEnum`'s refusal of two members with one id, and the wrap's `_spelledMemberId` fold. Task 10's harness compares against today's read with those folds.
 
@@ -6889,6 +6889,7 @@ Brainstorm's, 2026-10-09, unless marked otherwise.
     ```
 
     The leading write stops the block folding (`hasOutsideTrivia`), so it renders from storage; its children are bare coordinates, each folding to its own span, and `# four` (`c`'s leading as the reader places it) lies between those spans with nothing to print it. The native render cannot frame a coordinate with trivia today (`SlotValue::Coord` renders `write_between_edges` alone, and `coordinate_from_napi` reads only `$_layout.gap`), so Task 25 adds it.
+13. **Withdrawn: the render does not consult the registry** (maintainer, 2026-10-09). The identity registry is a cache: nothing correct depends on it, and the render never consults it, or it would cross the native/client boundary. A write through a node a query reached therefore stays refused (the `heldBySlot` guard, Task 25 Step 6) until a replacement lands: the write itself as data keyed by tree and index, which the render reads, so no object identity is involved. Where that data lives (native per-tree storage or client) awaits a maintainer ruling.
 
 ### Brainstorm's rulings on the plan questions (2026-10-09)
 
@@ -7251,7 +7252,7 @@ plus the regenerated `wrap.ts` files `git status` names. Message: `feat(identity
 
 ## Task 25: The edited set and the fold by range
 
-A write marks its node's index edited, on the side it edits (Ruling 12): an outside trivia write (leading, trailing) marks `outside`, an inner trivia write marks `inside`. A node folds to its coordinate when no `inside` index lies in `[index, end)` and no `outside` index lies in `(index, end)`; a folded node with outside trivia crosses as its coordinate carrying that trivia, and the native render frames the coordinate's bytes with it. The node keeps its coordinate and its tree: no ancestor is detached, so `adoptChild`, the parent links, `detachAncestors` and the projection walk (`isUntouchedBelow`) go, and the refusal of a write on a node a query reached is lifted.
+A write marks its node's index edited, on the side it edits (Ruling 12): an outside trivia write (leading, trailing) marks `outside`, an inner trivia write marks `inside`. A node folds to its coordinate when no `inside` index lies in `[index, end)` and no `outside` index lies in `(index, end)`; a folded node with outside trivia crosses as its coordinate carrying that trivia, and the native render frames the coordinate's bytes with it. The node keeps its coordinate and its tree: no ancestor is detached, so `adoptChild`, the parent links, `detachAncestors` and the projection walk (`isUntouchedBelow`) go, and the refusal of a write on a node a query reached stays, decided by a guard (`heldBySlot`) until the write-as-data replacement lands (Ruling 13).
 
 **Files:**
 - Modify: `rust/crates/sittir-core/src/slot.rs` (`NodeCoordinate::end`, `new`, `coordinate_to_napi`, `coordinate_from_napi`, their tests; `SlotValue::Coord` carries outside trivia), `rust/crates/sittir-core/src/layout.rs` (the trivia framing `TransportLayout::render` and a framed coordinate share), `rust/crates/sittir-core/src/{prepare,trivia,view,read}.rs` (the `SlotValue::Coord` match sites), `rust/crates/sittir-core/src/read.rs` (`ReadCtx::coordinate`, `coordinate_of`, `Child`), `rust/crates/sittir-core/src/query.rs` (`QueryCoordinate`), `rust/crates/sittir-core/tests/prepare.rs` (the `new` calls)
@@ -7272,7 +7273,7 @@ A write marks its node's index edited, on the side it edits (Ruling 12): an outs
 
 - [ ] **Step 1: Write the failing tests**
 
-In `packages/rust/tests/fold-in-place-trivia.test.ts`, the third case becomes:
+In `packages/rust/tests/fold-in-place-trivia.test.ts`, the third case keeps its refusal until Ruling 13's replacement lands; when it does, it becomes:
 
 ```ts
 	it('renders a comment written on a node a query reached, as written through the accessors', () => {
@@ -7297,7 +7298,7 @@ describe('the fold by range', () => {
 		const q = b.body().statements()[0];
 		if (q === undefined) throw new Error('expected a statement');
 		q.$trivia.leading(engine.build.lineComment(' q'));
-		expect(root.$render()).toBe('fn a() { let p = 1; }\nfn b() {\n    // q\n    let q = 2;\n    let r = 3;\n}\nfn c() { let s = 4; }\n');
+		expect(root.$render()).toBe('fn a() { let p = 1; }\nfn b() {\n    // q\n    let q = 2; let r = 3;\n}\nfn c() { let s = 4; }\n');
 	});
 
 	it('nested writes fold only untouched ranges', () => {
@@ -7311,7 +7312,7 @@ describe('the fold by range', () => {
 		r.$trivia.trailing(engine.build.lineComment(' r'));
 		const out = root.$render();
 		expect(out).toContain('// p\n');
-		expect(out).toContain('let r = 3; // r');
+		expect(out).toContain('let r = 3;\n    // r\n');
 		expect(out.endsWith('fn c() { let s = 4; }\n')).toBe(true);
 	});
 
@@ -7322,8 +7323,8 @@ describe('the fold by range', () => {
 		const q = b.body().statements()[0];
 		if (q === undefined) throw new Error('expected a statement');
 		q.$trivia.leading(engine.build.lineComment(' q'));
-		const built = engine.build.sourceFile(b);
-		expect(built.$render()).toBe('fn b() {\n    // q\n    let q = 2;\n    let r = 3;\n}\n');
+		const built = engine.build.sourceFile({ statements: [b] });
+		expect(built.$render()).toBe('fn b() {\n    // q\n    let q = 2; let r = 3;\n}\n');
 	});
 
 	it('an untouched node folds after a write elsewhere', () => {
@@ -7336,7 +7337,7 @@ describe('the fold by range', () => {
 });
 ```
 
-If `engine.build.sourceFile`'s factory spelling differs at the base, take it from `packages/rust/src/factories/raw.ts`'s `buildSourceFile` (`sourceFile(...statements)`).
+The two-statement expectations keep the source gap between untouched neighbours (`let q = 2; let r = 3;`), and a written trailing entry goes where the trivia writer places it (its own line). If `engine.build.sourceFile`'s factory spelling differs at the base, take it from `packages/rust/src/factories/raw.ts`'s `buildSourceFile` (`sourceFile(...statements)`).
 
 Append to `packages/common/tests/identity.test.ts`:
 
@@ -7407,6 +7408,8 @@ describe('an outside write keeps the span\'s bytes', () => {
 ```
 
 The trailing case pins the comment's survival and its side, not the join (the trailing entry's line placement is the trivia writer's, unchanged here); Step 8 pins the exact string the run prints.
+
+The write-retention test (write through a query, drop every reference, collect, re-query) and the query-reached write case wait for Ruling 13's replacement.
 
 In `slot.rs`'s tests, add a framed coordinate:
 
@@ -7555,7 +7558,7 @@ export function editedWithin(tree: TreeHandle, index: number, end: number): bool
 
 - [ ] **Step 6: The trivia writer marks the edit**
 
-In `utils.ts`'s `triviaWriter`: delete `refuseUnheld` and both calls; `store` becomes
+In `utils.ts`'s `triviaWriter`: `refuseUnheld` stays, its test reading a `heldBySlot` WeakSet that `hydrateSlotWith` and `hydrateSlotsWith` fill in place of the parent links (a guard only: it decides refusal, never output); `store` becomes
 
 ```ts
 	const store = (trivia: NodeTrivia, side: TriviaSideName): AnyUntypedNode => {
@@ -7578,7 +7581,7 @@ function markEditedNode(node: object, side: EditSide): void {
 
 `sharesEnvelopeIndex(node)` is the registry's role fact for the node (Ruling 9: a content that shares its envelope's index registered as `aliasContent`); take it from where `contentRole` stamped it, never from a kind test.
 
-A built node has no tree and no index: it renders from data already, so nothing is marked. `markEditedNode` is the only hook for an in-place write (Ruling 10): any future in-place verb, such as the node-query `$edit` verbs, marks through it, and its glossary entry says so; `$with` mints a draft and marks nothing. Delete `parents`, `adoptChild` and `detachAncestors`, and the `adoptChild` calls in `hydrateSlotWith` and `hydrateSlotsWith`.
+A built node has no tree and no index: it renders from data already, so nothing is marked. `markEditedNode` is the only hook for an in-place write (Ruling 10): any future in-place verb, such as the node-query `$edit` verbs, marks through it, and its glossary entry says so; `$with` mints a draft and marks nothing. Delete `parents`, `adoptChild` and `detachAncestors`; `hydrateSlotWith` and `hydrateSlotsWith` add each child to `heldBySlot` instead.
 
 - [ ] **Step 7: The fold by range**
 
@@ -7938,7 +7941,7 @@ Task 19's `a descendants query over …` cases (a let declaration and a variant 
 - `pnpm run validate:native`; `sittir validate history` against `12644d5df`, rows compared by number;
 - the full unit suite, with any new failure isolated by stash-and-rerun;
 - the workspace type-check (`tsc --noEmit`);
-- `packages/common/src` holds no `adoptChild`, `detachAncestors`, `isUntouchedBelow`, `sameOccurrence`, `hydrateListStorage` or "reached outside its parent's accessors"; `rust/crates/sittir-*/src/render/transport.rs` holds no `Option<Vec<`.
+- `packages/common/src` holds no `adoptChild`, `detachAncestors`, `isUntouchedBelow`, `sameOccurrence` or `hydrateListStorage`; `rust/crates/sittir-*/src/render/transport.rs` holds no `Option<Vec<`. The refusal of a write through a query stays: 1c-ii lands with it, and the arena-tables plan's 3a removes it.
 
 Commit the probes and README (`docs(probes): relative-coordinates verifications 1–6 for 1c-ii`). Open the PR with `Owner: sittir-engine-api` first in its body and the Q1/Q2 rulings quoted, and ask brainstorm for the whole-branch review.
 
@@ -7952,9 +7955,5 @@ Commit the probes and README (`docs(probes): relative-coordinates verifications 
 
   At that step the render side stamps `delimiter` from its site with the spacing fields at prepare, and the reader's `delimiter` and the `#[flank]` attribute go. The gate is rendered bytes unchanged on the corpus. Until that step, the reader and today's read compute it the same way, so it cannot drift from the read it replaces.
 - **Stamped layout ids.** Link stamps the public-symbol id on every STRING site, duplicates and wrapped strings included, with the compile phase byte-identical. `layoutTokenIds` then reads stamps only, and 1a's listed text-resolved sites and the text lookup go.
-- **Relative coordinates** (ruling 6.2), re-planned against rows: relative points for detached data, coordinate facts derived instead of stamped, `$detach()`, and `$cst()` fetched by row.
-- **The record wire** (ruling 6.3). Its plan lands only past the gate on the record step: records must match or beat napi objects on read time, both one node per call and every match in one call, and on retained heap per node, as well as beating them on render decode. The object wire's numbers are re-taken in the engine beside the records'. The first thing the step attacks is the view's construction. In the like-for-like re-take a node over a record holds about 1.9 KB more than an object. Every form carries the same member closures, so the gap follows how V8 builds the view's literal, not the closures as such (§ The wire). At that step the derive's object codec gives way to records, and a parsed node's literal holds a reference to its record (ruling 4).
-  - **String storage.** An outline item for the record-step design to settle; it is not a ruling on the mechanics.
-    - Parsed leaf text has no pool. A record stores the span, and reading the text slices it from the source the engine already holds, as an untouched node renders today.
-    - Built or edited leaf text goes in a per-arena string table, append-only and deduplicated, that records reference by index. A record stays fixed-size, and a repeated name (`self`, `x`) is stored once.
-    - JS-side interning of `$text` strings only if the record step's gate measurements (read time, retained heap) show that napi string creation is the cost.
+- **Relative coordinates** (ruling 6.2), step 2 on this feature branch, re-planned against rows in `docs/superpowers/plans/2026-10-06-relative-coordinates.md`: relative points for detached data, coordinate facts derived instead of stamped, `$detach()`, and `$cst()` fetched by row. The trivia table supersedes that design's trivia step (ownership by token side, the closing gap, joins resolved at prepare, the `$sameLine` and `$tokensBetween` stamps), and it lands after step 2, in step 3. So the snapshot step keeps the trivia step 1 leaves: a snapshot carries the reader's placed trivia with its stamps, as a parity fixture does today, and the arena-tables plan's 3a later gives snapshots their range's gaps.
+- **Step 3, the record wire, and both trivia tables** are a feature of their own: `docs/superpowers/plans/2026-10-10-arena-tables.md`.

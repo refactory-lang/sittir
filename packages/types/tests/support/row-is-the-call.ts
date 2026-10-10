@@ -67,13 +67,13 @@ type SideOf<Entry, Which extends Row> = Which extends 'BuildArgs'
 			: Entry
 	: Entry;
 
-export type RowDiffersFromCall<Ir, IrKeyOf, NamespaceMap, Which extends Row = 'LooseArgs'> = {
-	[Id in keyof IrKeyOf & keyof NamespaceMap]: IrKeyOf[Id] extends keyof Ir
-		? SameArguments<CallOf<SideOf<EntryOf<Ir, IrKeyOf[Id]>, Which>>, RowOf<NamespaceMap[Id], Which>> extends true
+export type RowDiffersFromCall<Ir, TypeKeyOf, NamespaceMap, Which extends Row = 'LooseArgs'> = {
+	[Id in keyof TypeKeyOf & keyof NamespaceMap]: TypeKeyOf[Id] extends keyof Ir
+		? SameArguments<CallOf<SideOf<EntryOf<Ir, TypeKeyOf[Id]>, Which>>, RowOf<NamespaceMap[Id], Which>> extends true
 			? never
-			: IrKeyOf[Id]
+			: TypeKeyOf[Id]
 		: never;
-}[keyof IrKeyOf & keyof NamespaceMap];
+}[keyof TypeKeyOf & keyof NamespaceMap];
 
 type At<Holder, Path extends string> = Path extends `${infer Head}.${infer Rest}`
 	? Head extends keyof Holder
@@ -104,12 +104,12 @@ type BoundOf<Namespace> = Namespace extends { readonly Bound: infer Bound } ? Bo
  * The kinds whose row accepts a single argument that is the kind's own built
  * node.
  */
-export type TakesOwnNode<IrKeyOf, NamespaceMap, Which extends Row> = {
-	[Id in keyof IrKeyOf & keyof NamespaceMap]: [BoundOf<NamespaceMap[Id]>] extends [never]
+export type TakesOwnNode<TypeKeyOf, NamespaceMap, Which extends Row> = {
+	[Id in keyof TypeKeyOf & keyof NamespaceMap]: [BoundOf<NamespaceMap[Id]>] extends [never]
 		? never
 		: [BoundOf<NamespaceMap[Id]>] extends RowOf<NamespaceMap[Id], Which>
-			? IrKeyOf[Id]
+			? TypeKeyOf[Id]
 			: never;
-}[keyof IrKeyOf & keyof NamespaceMap];
+}[keyof TypeKeyOf & keyof NamespaceMap];
 
 export type SameKinds<A, B> = [A] extends [B] ? ([B] extends [A] ? true : false) : false;

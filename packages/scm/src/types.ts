@@ -1680,7 +1680,7 @@ export type FixedTextKindId =
 	| TSKindId.Dot
 	| TSKindId.Slash;
 
-export interface IrKeyOf {
+export interface TypeKeyOf {
 	[TSKindId.Program]: 'program';
 	[TSKindId.EscapeSequence]: 'escapeSequence';
 	[TSKindId.Capture]: 'capture';

@@ -12,6 +12,7 @@
  */
 
 import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { stampIrSurface } from '../../compiler/model/ir-surface.ts';
 import { ERROR_KIND_NAME } from '@sittir/common/error-kind';
 import { ERROR_KIND_ROW } from '../../dsl/symbol-table.ts';
 import { describe, it, expect } from 'vitest';
@@ -342,6 +343,7 @@ function runPipelineRaw(raw: RawGrammar) {
 	const normalized = normalizeGrammar(linked);
 	const nodeMap = assemble(AssembleCtx.from(normalized));
 	const generatedIdTables = makeGeneratedIdTables();
+	stampIrSurface(nodeMap, generatedIdTables);
 	return {
 		nodeMap,
 		typesSrc: emitTypes({ grammar: 'synth', nodeMap, generatedIdTables }),
@@ -435,10 +437,12 @@ describe('types emitter — per-form namespace sugar', () => {
 		const linked = link(noRefine);
 		const normalized = normalizeGrammar(linked);
 		const nodeMap = assemble(AssembleCtx.from(normalized));
+		const generatedIdTables = makeGeneratedIdTables();
+		stampIrSurface(nodeMap, generatedIdTables);
 		const src = emitTypes({
 			grammar: 'synth',
 			nodeMap,
-			generatedIdTables: makeGeneratedIdTables()
+			generatedIdTables
 		});
 		// No sub-namespaces.
 		expect(src).not.toMatch(/namespace Curly/);
@@ -498,6 +502,7 @@ describe('factories emitter — per-form factory emission', () => {
 		const linked = link(raw);
 		const normalized = normalizeGrammar(linked);
 		const nodeMap = assemble(AssembleCtx.from(normalized));
+		stampIrSurface(nodeMap);
 		const { factories } = emitAll({ grammar: 'synth', nodeMap });
 		expect(factories).toMatch(/export function buildIfaceBodyCurly\(/);
 		expect(factories).toMatch(/export function buildIfaceBodyFlow\(/);

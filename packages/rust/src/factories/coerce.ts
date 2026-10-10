@@ -7618,8 +7618,8 @@ export function coerceToLineComment(input: T.LineComment.Loose): ReturnType<type
 					typeof input === 'string'
 						? refuseSiblingLead(spelledInterior(input, '//', ''), [
 								[/^(?:(?:\/\/))/u, 'ir.lineCommentExtraSlashes'],
-								[/^(?:\/)/u, 'ir.lineCommentDocOuter'],
-								[/^(?:!)/u, 'ir.lineCommentDocInner']
+								[/^(?:\/)/u, 'ir.lineComment.docOuter'],
+								[/^(?:!)/u, 'ir.lineComment.docInner']
 							])
 						: input
 				),
@@ -7655,7 +7655,7 @@ export function resolveBlockComment_content(
 }
 
 export function coerceToBlockComment<const I extends T.BlockComment.Loose>(
-	input?: I & SiblingLeadRefusal<I, '/*', '*/', [['*', 'ir.blockCommentDocOuter'], ['!', 'ir.blockCommentDocInner']]>
+	input?: I & SiblingLeadRefusal<I, '/*', '*/', [['*', 'ir.blockComment.docOuter'], ['!', 'ir.blockComment.docInner']]>
 ): ReturnType<typeof F.buildBlockComment> {
 	if (input !== undefined && isNodeOfKind(input, TSKindId.BlockComment))
 		return input as unknown as ReturnType<typeof F.buildBlockComment>;
@@ -7664,8 +7664,8 @@ export function coerceToBlockComment<const I extends T.BlockComment.Loose>(
 			configFieldOr(input, 'content', () =>
 				typeof input === 'string'
 					? refuseSiblingLead(spelledInterior(input, '/*', '*/'), [
-							[/^(?:\*)/u, 'ir.blockCommentDocOuter'],
-							[/^(?:!)/u, 'ir.blockCommentDocInner']
+							[/^(?:\*)/u, 'ir.blockComment.docOuter'],
+							[/^(?:!)/u, 'ir.blockComment.docInner']
 						])
 					: input
 			),

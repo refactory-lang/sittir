@@ -10,18 +10,21 @@ import {
 } from '../../compiler/model/node-map.ts';
 import { emitAll } from '../emit.ts';
 import { TemplateEmitter } from '../templates.ts';
+import { stampIrSurface } from '../../compiler/model/ir-surface.ts';
 import { flatten } from '../../compiler/flatten.ts';
 
-function makeNodeMap(): NodeMap {
-	return {
+function makeNodeMap(nodes: Map<string, AssembledNode> = new Map()): NodeMap {
+	const nodeMap = {
 		name: 'test',
-		nodes: new Map(),
+		nodes,
 		signatures: { signatures: new Map() },
 		derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
 		rules: {},
 		externals: [],
 		word: undefined,
 	} as unknown as NodeMap;
+	stampIrSurface(nodeMap);
+	return nodeMap;
 }
 
 function makeBranch(kind: string, label: string): AssembledBranch {
@@ -42,10 +45,7 @@ function makeHiddenHelperNodeMap(): NodeMap {
 	const helperRender = flatten(helperRule);
 	nodes.set('_assignment_eq', new AssembledBranch('_assignment_eq', { ...helperRender, annotations: { hoisted: true } }, { ...helperRender, annotations: { hoisted: true } }));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
-	return {
-		...makeNodeMap(),
-		nodes
-	} as NodeMap;
+	return makeNodeMap(nodes);
 }
 
 function makeHiddenSupertypeNodeMap(): NodeMap {
@@ -72,10 +72,7 @@ function makeHiddenSupertypeNodeMap(): NodeMap {
 		'_export_statement_default_decl_arm',
 		new AssembledPattern('_export_statement_default_decl_arm', { type: PATTERN, value: 'decl' })
 	);
-	return {
-		...makeNodeMap(),
-		nodes
-	} as NodeMap;
+	return makeNodeMap(nodes);
 }
 
 describe('loop-driven emitters', () => {
@@ -94,15 +91,7 @@ describe('loop-driven emitters', () => {
 	});
 
 	it('emitAll creates fresh loop-driven emitter instances per run', () => {
-		const nodeMap = {
-			name: 'test',
-			nodes: new Map(),
-			signatures: { signatures: new Map() },
-			derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
-			rules: {},
-			externals: [],
-			word: undefined,
-		} as any;
+		const nodeMap = makeNodeMap();
 
 		const first = emitAll({ grammar: 'rust', nodeMap });
 		const second = emitAll({ grammar: 'rust', nodeMap });

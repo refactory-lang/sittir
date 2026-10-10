@@ -22,15 +22,15 @@ describe('builders and their kind spelled in full', () => {
 	it('strips a polymorph default arm and refuses text that reads as a sibling arm', () => {
 		expect(rs.build.blockComment('/* x */').$render()).toBe('/* x */');
 		expect(rs.build.blockComment(' x ').$render()).toBe('/* x */');
-		// @ts-expect-error the interior starts the way ir.blockCommentDocInner does
-		expect(() => rs.build.blockComment('/*! x */')).toThrow(/build it with ir\.blockCommentDocInner/);
+		// @ts-expect-error the interior starts the way ir.blockComment.docInner does
+		expect(() => rs.build.blockComment('/*! x */')).toThrow(/build it with ir\.blockComment\.docInner/);
 		const text: string = '/*! x */';
-		expect(() => rs.build.blockComment(text)).toThrow(/build it with ir\.blockCommentDocInner/);
+		expect(() => rs.build.blockComment(text)).toThrow(/build it with ir\.blockComment\.docInner/);
 	});
 
 	it('leaves a polymorph to the runtime refusal from its first pattern lead on', () => {
 		expect(rs.build.lineComment('// x').$render()).toBe('// x\n');
 		expect(() => rs.build.lineComment('//// x')).toThrow(/build it with ir\.lineCommentExtraSlashes/);
-		expect(() => rs.build.lineComment('/// x')).toThrow(/build it with ir\.lineCommentDocOuter/);
+		expect(() => rs.build.lineComment('/// x')).toThrow(/build it with ir\.lineComment\.docOuter/);
 	});
 });

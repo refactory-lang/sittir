@@ -190,7 +190,8 @@ pub enum FunctionModifiersModifierTransportSlot {
 - **A kind's layout tokens** are listed on its `#[transport]` (`layout = […]`): the anonymous tokens
   its rule writes and no slot stores. The reader skips them; a render from data writes them from
   the template, and an untouched node slices them from the source.
-- The edge, gap, flank and trivia fields the render side stamps today stay as they are.
+- The edge, gap and flank fields the render side stamps today stay as they are. Trivia is not a
+  field of a transport or a record: it is in the trivia tables (§ Trivia).
 
 ### What the macro expands
 
@@ -201,8 +202,8 @@ From one declaration, three things:
   the slot its field names, or, with no field, the one slot whose type admits its kind, and is
   stored as that type's variant for its kind: a fixed literal as its kind id, a node as its
   transport, and the keyword a presence slot names as `true`. Extras, and `ERROR` nodes as today,
-  are trivia, assigned by the placement rule; a `MISSING` node routes as its kind. Layout tokens
-  are skipped.
+  are trivia: the reader skips them, as it skips layout tokens, and the tree's trivia table holds
+  them by gap (§ Trivia). A `MISSING` node routes as its kind.
 - **Refusal of a child no route takes** (ruling 7). A model gap is a diagnostic, not data: the read
   fails with the node's kind, the child's kind and its row, and nothing is stored for the node.
   Parse errors are not model gaps: the parse reports `ERROR` and `MISSING` regions in `$errors`
@@ -267,7 +268,7 @@ Each is derived once, in codegen; a fact a type states is not repeated in an att
 | **List owners** | `_LIST_OWNER_KINDS`, `listItems`, `ownerView`, `storedElements` | `#[transport(list, item = …)]` |
 | **Read depth per kind** | the wrap's `hydrateSelf` reads a `_LIST_OWNER_KINDS` member two levels deep | `min_depth` on the kind |
 | **Group seats** | `seatWith`, `groupField` | `group` on the slot |
-| **Trivia ownership** | the reader's `node_trivia` with the placement rule; `ReadModel::inner_gap_key` (`kind_ids.rs`); the wrap's `_wrapTrivia` and `mapTriviaEntries` | the reader applies the placement rule in its child pass; `gap(n) = slot` on the kind for inner gaps. The second trait method goes |
+| **Trivia ownership** | the reader's `node_trivia` with the placement rule; `ReadModel::inner_gap_key` (`kind_ids.rs`); the wrap's `_wrapTrivia` and `mapTriviaEntries` | no attribute: the tree's trivia table, keyed by gap, with owners derived by tree-sitter's convention for extras (§ Trivia). No gap is named on a kind: `$trivia.inner` is the one interior gap of a node with no children. The second trait method goes |
 | **The render projection** | `toTransportData` (fold, trivia view, detach) and the generated `FromNapiValue` decode | the wire codec; folding by coordinate (§ Render) |
 | **Query routes** | `{ fields, kinds }` plans compiled in JavaScript from the `querySlots` table `wireRoutesOf` derives | unchanged, from the same derivation (ruling 8) |
 
@@ -354,11 +355,34 @@ an accessor first reaches the node (ruling 11).
   has no storage to write; rebuilding produces a draft, a different node, so an untouched parsed
   node never has a rebuilt descendant. The walk that is 95 % of today's untouched whole-read
   render goes with the record step. Until then a parsed node holds fields, and the walk stays
-  unless parsed storage is frozen.
+  until no write touches a parsed node's storage, which the trivia table brings (§ Trivia).
 - **A built node or a draft** crosses as its content: its fields encoded into records at each render
   (ruling 5); until the record step, as today's object graph.
 - The native side reads, prepares and renders as today. The prepare walk stamps a private copy, never
   memory JavaScript can see.
+
+### Trivia
+
+Trivia is in native tables keyed by gap, never in a transport or a record. The model is
+`2026-10-09-trivia-table-design.md`'s: a gap is the seam between two adjacent tokens; its owner is
+the smallest node containing tokens on both sides, tree-sitter's convention for extras, derived
+and never stored; it holds one value, its comments and the layout that differs from the seam's
+default; and `$trivia` is a view over the table, reached through the nodes a gap touches.
+
+- **A parsed tree's table** is on the native `ParsedTree`. One token walk builds it from the
+  source and the tree, and it holds every write to the tree's trivia, each marking its gap edited.
+  It lands in step 3, ahead of the record wire, which it does not need; the arena-tables plan
+  (`docs/superpowers/plans/2026-10-10-arena-tables.md`) holds the order.
+- **A built node's table** sits beside its record in arena storage and holds the gaps between its
+  children; its edges belong to its holder. It lands with the record step (ruling 6.3), when
+  built nodes get arena storage. Until then a built node keeps its trivia on the node, and
+  `$trivia` reads the same on parsed and built nodes.
+- **Records hold no trivia.** The record layout has no trivia words, and prepare resolves no trivia
+  joins beside the records.
+- **The render reads trivia from the tables only.** A node with no edited gap between its first
+  and last token renders as its source bytes, and its owner prints the gaps around them. A node
+  with an edited gap renders from its children, and each gap between them is printed from the
+  table by its owner. Nothing about trivia crosses with a transport.
 
 ### Build cost
 
@@ -390,12 +414,15 @@ members in the builder's literal — changed all three, and the maintainer ruled
 **`sittir-core`**
 
 - `read_untyped_node.rs`: `UntypedNode` reading, `ReadDepth`, `HandleMint`, `ReadModel`, the stub and
-  leaf readers and the per-node trivia read. Its placement rule moves into the reader runtime the
-  expansion calls.
+  leaf readers and the per-node trivia read. Its placement rule goes too: the reader skips extras,
+  and the trivia table holds them (§ Trivia).
 - `UntypedNode`, `FieldValue`, `NodeHandle` and their serde; the node table and handle resolution
   in `engine.rs`; the JSON returns of `parse_and_read`, `read_root` and `read_untyped_node`.
-- At the record step: the napi decode of `SlotValue` and of the trivia transports (`TransportTrivia`,
-  `TriviaEntry`).
+- With the parsed trivia table: `TriviaEntry`'s `same_line` and `tokens_between`, the line-gap
+  query (`line_gaps`, `line_gaps_of`), and the outside trivia a folded coordinate carries in
+  `SlotValue::Coord`.
+- At the record step: the napi decode of `SlotValue`, and the trivia transports (`TransportTrivia`,
+  `TriviaEntry`) with built nodes' trivia on the node, which the built nodes' tables replace.
 
 **Generated, per grammar**
 
@@ -411,10 +438,14 @@ members in the builder's literal — changed all three, and the maintainer ruled
   and `readUntypedNode.ts`.
 - `transport-data.ts`, at the record step: the fold walk (`canFold`, `isUntouchedBelow`,
   `foldToCoordinate`) and `toTransportData`, replaced by the encoder for built nodes.
+- With the parsed trivia table: trivia on parsed wrappers (`$_layout.trivia`, the written-sides map,
+  the composed-trivia cache), the line-gap composition (`lineGapsOf`), the edited-index set and the
+  refusal of a write through a query.
 
 **Engine API types**
 
 - `ParseOptions.deep` in `packages/types/src/engine-api.ts`, replaced by `depth: number` (ruling 2).
+- `lineGapsOf` and its address and result types, with the parsed trivia table.
 
 **Codegen**
 
@@ -435,9 +466,13 @@ members in the builder's literal — changed all three, and the maintainer ruled
   coordinate.
 - **Relative coordinates.** Placed between the typed reader and the record wire (ruling 6), and
   designed against the tree and index in `2026-10-06-relative-coordinates-design.md`: relative points
-  exist only in snapshot data, identity is the tree and the index through one registry per tree, an
-  edited-index set replaces the fold walk, and a comment's owner records which side of a token it
-  sits on. That design states what the record layout must allow.
+  exist only in snapshot data, identity is the tree and the index through one registry per tree,
+  and an edited-index set replaces the fold walk. That design states what the record layout must
+  allow. The trivia table supersedes its trivia ownership (a comment's owner recording which side
+  of a token it sits on, and prepare's trivia joins), and the table's edited gaps replace the
+  edited-index set.
+- **Trivia table.** `2026-10-09-trivia-table-design.md`: trivia in native tables keyed by gap.
+  § Trivia says how the tables sit in this design and when each lands.
 - **Source provenance.** Unchanged in substance: provenance is a coordinate, an edit detaches it.
   The coordinate's handle becomes a row.
 - **Spacing writer and render options.** Unchanged: a source slice writes through the same writer,
@@ -466,8 +501,8 @@ members in the builder's literal — changed all three, and the maintainer ruled
    model with one route removed is refused, naming the kind, the child and its row. A model in
    which two unfielded slots of one kind admit the same kind fails codegen with the diagnostic,
    and no grammar's model does.
-8. **Trivia ownership.** The trivia-placement report gives every corpus extra the owner and position
-   it gives today.
+8. **Trivia ownership.** Every corpus extra is in its tree's trivia table at its gap, and the gap's
+   owner is the node tree-sitter makes the extra's parent, in all five grammars.
 9. **No grammar in `sittir-core`.** No grammar fact appears in `sittir-core`; every one reaches
    native code through a generated attribute, and the macro's expansion is a pure function of the
    declaration.
@@ -567,6 +602,11 @@ raised (11).
       nodes over their records with no fold walk, built nodes encoded at render, and the napi impls
       gone. It lands with the object wire's numbers re-taken beside its own, and only past the
       gate on the record step (§ The wire).
+      Extended on 2026-10-09 (the maintainer): built nodes' trivia tables land in this step,
+      beside their records (§ Trivia).
+      Extended on 2026-10-10 (the maintainer): the parsed tree's table lands in this step too, ahead
+      of the record wire. The typed reader's feature carries steps 1 and 2, and step 3 with both
+      tables is a feature of its own.
 
    Relative coordinates come after the typed reader so that they are designed against rows, not
    the handles the reader removes, and before the record wire so that the record layout, which
@@ -643,8 +683,8 @@ pub enum PrimitiveTypeEnum {
   `[341]` as the kinds read by their spelled text, plus `stores_scalar`'s arm `(208, "return_type")`.
 - **Layout:** `fn` and `->` are the template's own tokens (`render-bodies.json`). The reader skips
   them and refuses any other anonymous child.
-- **Depth and trivia:** no minimum depth. `layout` holds the extras the placement rule gives the
-  node, such as the doc comments that lead it; the kind has no inner gaps.
+- **Depth and trivia:** no minimum depth, and no inner gaps. The doc comments that lead the node lie
+  in the gap before its first token, which its parent owns (§ Trivia); `layout` holds no trivia.
 - `FunctionItemNameTransportSlot` (identifier or metavariable) and `TypeTransport` (the `_type`
   supertype) are the choices each slot admits, as codegen types them today. A supertype's members
   are its choice's variants, listed once.
@@ -653,7 +693,7 @@ pub enum PrimitiveTypeEnum {
 
 ```rust
 #[transport(kind = kind::PARAMETERS, words = 6, min_depth = 2,
-            layout = [kind::LPAREN, kind::RPAREN], gap(1) = elements)]
+            layout = [kind::LPAREN, kind::RPAREN])]
 pub struct ParametersTransport {
     pub layout: Option<TransportLayout>,
     #[slot(field = field::ELEMENTS, word = 1)]
@@ -672,8 +712,9 @@ pub struct ParametersElementsTransport {
 
 - **`min_depth = 2`:** today `_LIST_OWNER_KINDS` holds `Parameters`, and `hydrateSelf` reads it two
   levels deep, so the list and its items arrive with the owner.
-- **`gap(1) = elements`:** an extra after the first token, `(`, that no named child owns (a comment
-  inside `()`) sits in `elements`' gap. Today that is `inner_gap_key`'s arm `(230, 1)` natively and
+- **No gap attribute:** a comment inside `()` lies in the one interior gap of a `parameters` with
+  no children, which is `$trivia.inner`'s. With children, each gap is reached through the child it
+  touches (§ Trivia). Today `inner_gap_key`'s arm `(230, 1)` names it natively, and
   `INNER_GAPS.parameters` in JavaScript.
 - **`list, item = item`:** `parameters_elements` is the list kind enrich mints (kind 349, so the
   parser issues it). Its items route by the field `item` (the `querySlots` row for kind 349), and
@@ -745,7 +786,7 @@ counts.
 | `transport.rs` render functions, lines | 4 158 | 4 094 | 2 658 | 530 | 532 | **still needed**: they stay codegen-emitted (ruling 9) |
 | `kind_ids.rs` kind constants | 468 | 467 | 336 | 69 | 91 | **still needed**: the attributes name them (ruling 10) |
 | `kind_ids.rs` `kind_name_from_id`, arms | 469 | 685 | 338 | 69 | 100 | **still needed**: refusals and diagnostics name kinds (ruling 7) |
-| `kind_ids.rs` `inner_gap_key`, arms | 25 | 14 | 12 | 2 | 1 | **folded** into `gap(n) = slot` |
+| `kind_ids.rs` `inner_gap_key`, arms | 25 | 14 | 12 | 2 | 1 | **retired**: no gap is named on a kind (§ Trivia) |
 | `kind_ids.rs` `stores_scalar`, arms | 143 | 203 | 94 | 5 | 8 | **retired**: a slot's type says it, a unit variant or a presence flag being scalar |
 | `lib.rs` `ReadModel` impl, lines | 14 | 14 | 14 | 14 | 14 | **retired** |
 | `wrap.ts` projection, lines before each wrap's members | 10 936 | 11 018 | 5 824 | 928 | 812 | **folded**: the reader projects |
@@ -755,7 +796,7 @@ counts.
 | `_LIST_OWNER_KINDS`, lines | 17 | 9 | 20 | 0 | 0 | **folded** into `min_depth` |
 | `_ALIAS_ENVELOPES`, `_HIDDEN_KINDS`, `_RECLAIMS_ANONYMOUS`, lines | 1, 6, 3 | 1, 5, 3 | 1, 5, 3 | 1, 0, 1 | 1, 1, 1 | **folded** into `envelope`, with `display`, and the slot types |
 | `consts.ts` `TOKEN_INTERIORS`, kinds | 40 | 15 | 4 | 2 | 1 | **folded** into `interior` for the read; **still needed** by the builders' coercion (`factories/coerce.ts`) |
-| `consts.ts` `INNER_GAPS`, kinds | 25 | 14 | 12 | 2 | 1 | **still needed**: `$trivia.inner` and `innerAt` check gap keys in JavaScript; it and `gap(n)` come from the node map's same rows |
+| `consts.ts` `INNER_GAPS`, kinds | 25 | 14 | 12 | 2 | 1 | **retired** with `innerAt`: `$trivia.inner` names no gap (§ Trivia) |
 | `utils.ts` `querySlots`, kinds | 226 | 222 | 162 | 23 | 28 | **still needed**: query plans compile in JavaScript (ruling 8) |
 | `utils.ts` `triviaFacts`, lines | 28 | 25 | 26 | 11 | 11 | **JS by nature**: the `$trivia` API's facts |
 | `options.rs` `SITE_*` constants | 1 510 | 1 361 | 973 | 153 | 118 | **still needed**: render-option sites, which the read does not touch |

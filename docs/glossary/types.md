@@ -470,6 +470,12 @@ itself ever produces).
 literal tokens the kind opens or closes with (a single token or every arm of
 a choice of tokens), so the edge can answer to their grammar-wide face.
 
+`definedBy` is a variant label's provenance (`LabelProvenance`): `'enrich'` for a label enrich stamped automatically, `'override'` for an authored one. Link stamps it (`variant-structural.ts::stampLabelProvenance`); it is annotation data for overlays.
+
+### `packages/codegen/src/types/rule.ts::LabelProvenance`
+
+Where a variant label came from: `'enrich'` (automatic) or `'override'` (authored by `variant()`, `alias()` or a group).
+
 ### `packages/codegen/src/types/rule.ts::RuleBase`
 
 ```text

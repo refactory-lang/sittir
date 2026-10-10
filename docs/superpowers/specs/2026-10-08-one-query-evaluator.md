@@ -205,3 +205,7 @@ One branch, five tasks.
    - Remove `Plan`, `PlanSpec`, `Plan::holds`, `compile_plan` and the napi `plan_holds` with its typing.
    - Update the glossary entries for the query module.
    - Amend the node query design §7.2/§7.3 to point here.
+
+## 6. Open points
+
+- **A self test on a structured kind.** §1 has codegen refuse an `is` test whose subject can hold a built structured value, since a built structured value has no text. Applied as written, it refuses typescript's `comment.block.doc` and `comment.line`. Their read tests compare the comment's own text (`SelfText` on the claimed node: `^/\*\*`, `^//`), and the typed reader reads `comment_block` as a structured kind with a `content` slot. A parsed comment has its span's slice. A built one has no text, though its `content` and its kind fix it. Open: whether the refusal exempts a structured kind whose text its stored members determine, or the claims test `content` instead of the whole text.

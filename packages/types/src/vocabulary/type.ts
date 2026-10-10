@@ -1,7 +1,7 @@
 import type { GrammarContext } from './context.ts';
 import type { SubKindOf } from './utils.ts';
 import type * as V from './index.ts';
-export interface Type<G extends GrammarContext> {
+export interface Type<G extends GrammarContext<G>> {
 	// claimed by p
 	readonly $kind: 'type';
 	readonly content?: G['slots']['type']['content'] | G['slots']['type']['content'][];
@@ -9,13 +9,13 @@ export interface Type<G extends GrammarContext> {
 }
 
 export namespace Type {
-	export interface Abstract<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Abstract<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by r
 		readonly $kind: 'type.abstract';
 		readonly trait: G['slots']['type.abstract']['trait'];
 		readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
 	}
-	export interface Array<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Array<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by rt
 		readonly $kind: 'type.array';
 		readonly element?: G['slots']['type.array']['element'];
@@ -25,18 +25,18 @@ export namespace Type {
 		readonly type?: G['slots']['type.array']['type'];
 		// t only
 	}
-	export interface Bounded<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Bounded<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by r
 		readonly $kind: 'type.bounded';
 		readonly left: G['slots']['type.bounded']['left'];
 		readonly right: G['slots']['type.bounded']['right'];
 	}
-	export interface Bracketed<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Bracketed<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by r
 		readonly $kind: 'type.bracketed';
 		readonly type: G['slots']['type.bracketed']['type'];
 	}
-	export interface Conditional<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Conditional<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.conditional';
 		readonly alternative: G['slots']['type.conditional']['alternative'];
@@ -44,22 +44,22 @@ export namespace Type {
 		readonly left: G['slots']['type.conditional']['left'];
 		readonly right: G['slots']['type.conditional']['right'];
 	}
-	export interface Constrained<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Constrained<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by p
 		readonly $kind: 'type.constrained';
 		readonly baseType: G['type'];
 		readonly constraint: G['type'];
 	}
-	export interface Dynamic<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Dynamic<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by r
 		readonly $kind: 'type.dynamic';
 		readonly trait: G['slots']['type.dynamic']['trait'];
 	}
-	export interface Existential<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Existential<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.existential';
 	}
-	export interface Function<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Function<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by rt
 		readonly $kind: 'type.function';
 		readonly content?: G['slots']['type.function']['content'] | G['slots']['type.function']['content'][];
@@ -72,7 +72,7 @@ export namespace Type {
 		// t only
 	}
 	export namespace Function {
-		export interface Constructor<G extends GrammarContext> extends SubKindOf<V.Type.Function<G>> {
+		export interface Constructor<G extends GrammarContext<G>> extends SubKindOf<V.Type.Function<G>> {
 			// claimed by t
 			readonly $kind: 'type.function.constructor';
 			readonly abstract?: boolean;
@@ -80,9 +80,9 @@ export namespace Type {
 			readonly type: G['slots']['type.function.constructor']['type'];
 			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 		}
-		export type Any<G extends GrammarContext> = V.Type.Function<G> | V.Type.Function.Constructor<G>;
+		export type Any<G extends GrammarContext<G>> = V.Type.Function<G> | V.Type.Function.Constructor<G>;
 	}
-	export interface Generic<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Generic<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by prt
 		readonly $kind: 'type.generic';
 		readonly name?: G['slots']['type.generic']['name'];
@@ -95,75 +95,75 @@ export namespace Type {
 		// p only
 	}
 	export namespace Generic {
-		export interface Turbofish<G extends GrammarContext> extends SubKindOf<V.Type.Generic<G>> {
+		export interface Turbofish<G extends GrammarContext<G>> extends SubKindOf<V.Type.Generic<G>> {
 			// claimed by r
 			readonly $kind: 'type.generic.turbofish';
 			readonly type: G['identifier'];
 			readonly typeArguments: V.Element.TypeArgument<G>[];
 		}
-		export type Any<G extends GrammarContext> = V.Type.Generic<G> | V.Type.Generic.Turbofish<G>;
+		export type Any<G extends GrammarContext<G>> = V.Type.Generic<G> | V.Type.Generic.Turbofish<G>;
 	}
-	export interface IndexQuery<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface IndexQuery<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.index_query';
 		readonly type: G['slots']['type.index_query']['type'];
 	}
-	export interface Infer<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Infer<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.infer';
 		readonly name: V.Identifier.Type<G>;
 		readonly type?: G['slots']['type.infer']['type'];
 	}
-	export interface Intersection<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Intersection<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.intersection';
 		readonly left?: G['slots']['type.intersection']['left'];
 		readonly right: G['slots']['type.intersection']['right'];
 	}
-	export interface Literal<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Literal<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.literal';
 		readonly content: G['slots']['type.literal']['content'];
 	}
-	export interface Lookup<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Lookup<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.lookup';
 		readonly indexType: G['slots']['type.lookup']['indexType'];
 		readonly type: G['slots']['type.lookup']['type'];
 	}
-	export interface Maybe<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Maybe<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.maybe';
 		readonly type: G['slots']['type.maybe']['type'];
 	}
-	export interface Named<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Named<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		readonly $kind: 'type.named';
 	}
 	export namespace Named {
-		export interface Prelude<G extends GrammarContext> extends SubKindOf<V.Type.Named<G>> {
+		export interface Prelude<G extends GrammarContext<G>> extends SubKindOf<V.Type.Named<G>> {
 			// claimed by r
 			readonly $kind: 'type.named.prelude';
 		}
-		export type Any<G extends GrammarContext> = V.Type.Named.Prelude<G>;
+		export type Any<G extends GrammarContext<G>> = V.Type.Named.Prelude<G>;
 	}
-	export interface Object<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Object<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.object';
 		readonly closing: G['slots']['type.object']['closing'];
 		readonly members?: G['slots']['type.object']['members'][];
 		readonly opening: G['slots']['type.object']['opening'];
 	}
-	export interface Optional<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Optional<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.optional';
 		readonly type: G['slots']['type.optional']['type'];
 	}
-	export interface Parenthesized<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Parenthesized<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.parenthesized';
 		readonly type: G['slots']['type.parenthesized']['type'];
 	}
-	export interface Path<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Path<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by prt
 		readonly $kind: 'type.path';
 		readonly baseType?: G['type'];
@@ -175,83 +175,83 @@ export namespace Type {
 		// r only
 	}
 	export namespace Path {
-		export interface Expression<G extends GrammarContext> extends SubKindOf<V.Type.Path<G>> {
+		export interface Expression<G extends GrammarContext<G>> extends SubKindOf<V.Type.Path<G>> {
 			// claimed by r
 			readonly $kind: 'type.path.expression';
 			readonly name: V.Identifier.Type<G>;
 			readonly path?: G['slots']['type.path.expression']['path'];
 		}
-		export type Any<G extends GrammarContext> = V.Type.Path<G> | V.Type.Path.Expression<G>;
+		export type Any<G extends GrammarContext<G>> = V.Type.Path<G> | V.Type.Path.Expression<G>;
 	}
-	export interface Pointer<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Pointer<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by r
 		readonly $kind: 'type.pointer';
 	}
-	export interface Predicate<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Predicate<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.predicate';
 		readonly name?: G['slots']['type.predicate']['name'];
 		readonly type?: G['slots']['type.predicate']['type'];
 	}
 	export namespace Predicate {
-		export interface Asserts<G extends GrammarContext> extends SubKindOf<V.Type.Predicate<G>> {
+		export interface Asserts<G extends GrammarContext<G>> extends SubKindOf<V.Type.Predicate<G>> {
 			// claimed by t
 			readonly $kind: 'type.predicate.asserts';
 			readonly value: G['slots']['type.predicate.asserts']['value'];
 		}
-		export type Any<G extends GrammarContext> = V.Type.Predicate<G> | V.Type.Predicate.Asserts<G>;
+		export type Any<G extends GrammarContext<G>> = V.Type.Predicate<G> | V.Type.Predicate.Asserts<G>;
 	}
-	export interface Primitive<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Primitive<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by rt
 		readonly $kind: 'type.primitive';
 	}
 	export namespace Primitive {
-		export interface Never<G extends GrammarContext> extends SubKindOf<V.Type.Primitive<G>> {
+		export interface Never<G extends GrammarContext<G>> extends SubKindOf<V.Type.Primitive<G>> {
 			// claimed by rt
 			readonly $kind: 'type.primitive.never';
 		}
-		export type Any<G extends GrammarContext> = V.Type.Primitive<G> | V.Type.Primitive.Never<G>;
+		export type Any<G extends GrammarContext<G>> = V.Type.Primitive<G> | V.Type.Primitive.Never<G>;
 	}
-	export interface Qualified<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Qualified<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by r
 		readonly $kind: 'type.qualified';
 		readonly alias: G['slots']['type.qualified']['alias'];
 		readonly type: G['slots']['type.qualified']['type'];
 	}
-	export interface Query<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Query<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.query';
 		readonly expression: G['slots']['type.query']['expression'];
 	}
-	export interface Readonly<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Readonly<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.readonly';
 		readonly type: G['slots']['type.readonly']['type'];
 	}
-	export interface Reference<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Reference<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by r
 		readonly $kind: 'type.reference';
 		readonly lifetime?: V.Identifier.Lifetime<G>;
 		readonly mutable?: boolean;
 		readonly type: G['slots']['type.reference']['type'];
 	}
-	export interface Rest<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Rest<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.rest';
 		readonly type: G['slots']['type.rest']['type'];
 	}
-	export interface Splat<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Splat<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by p
 		readonly $kind: 'type.splat';
 		readonly name: G['identifier'];
 		readonly operator: G['slots']['type.splat']['operator'];
 	}
-	export interface Template<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Template<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.template';
 		readonly elements?: G['slots']['type.template']['elements'][];
 	}
-	export interface Tuple<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Tuple<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by rt
 		readonly $kind: 'type.tuple';
 		readonly tupleTypeMembers?: G['slots']['type.tuple']['tupleTypeMembers'][];
@@ -259,17 +259,17 @@ export namespace Type {
 		readonly types?: G['slots']['type.tuple']['types'][];
 		// r only
 	}
-	export interface Union<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Union<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by pt
 		readonly $kind: 'type.union';
 		readonly left?: G['slots']['type.union']['left'];
 		readonly right: G['slots']['type.union']['right'];
 	}
-	export interface Unit<G extends GrammarContext> extends SubKindOf<V.Type<G>> {
+	export interface Unit<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by r
 		readonly $kind: 'type.unit';
 	}
-	export type Any<G extends GrammarContext> =
+	export type Any<G extends GrammarContext<G>> =
 		| V.Type<G>
 		| V.Type.Abstract<G>
 		| V.Type.Array<G>

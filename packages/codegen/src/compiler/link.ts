@@ -66,8 +66,7 @@ import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 import { rootRuleName } from '../util/reachable-rules.ts';
 import { polymorphVisibleName } from '../dsl/arm-names.ts';
-import { deriveVariantChildren, isAliasMintedRef } from './variant-structural.ts';
-import type { AutomaticVariants } from '../dsl/automatic-variants.ts';
+import { deriveVariantChildren, isAliasMintedRef, stampLabelProvenance } from './variant-structural.ts';
 import {
 	composeTokenText,
 	deriveComplexAliasTargetHidden,
@@ -243,7 +242,8 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 
 	classifyAndLogHiddenRules(rules, linkCtx);
 
-	applyOverridePolymorphs(rules, derivations, raw.automaticVariants);
+	stampLabelProvenance(rules, raw.automaticVariants);
+	applyOverridePolymorphs(rules, derivations);
 
 	collectRepeatedShapes(rules, derivations.repeatedShapes);
 	const complexAliasTargetHidden = deriveComplexAliasTargetHidden(rawRules);
@@ -275,7 +275,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	reportAuxTokens(evaluated.rules, linkCtx);
 
 	stampLinkMintedVisibility(rules, linkCtx);
-	const variantChildren = deriveVariantChildren(rules, raw.automaticVariants);
+	const variantChildren = deriveVariantChildren(rules);
 	const refineForms = new Map<string, readonly LinkedRefineForm[]>();
 	for (const [kind, forms] of raw.refineForms ?? []) {
 		const rule = rules[kind];
@@ -326,6 +326,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		parentAliasedKinds,
 		visibleAliasTargets: visibleAliasTargets.size > 0 ? visibleAliasTargets : undefined,
 		variantChildren: variantChildren.size > 0 ? variantChildren : undefined,
+		splicedNames: splicedRuleNames(rules),
 		generatedIdTables
 	};
 }
@@ -808,7 +809,12 @@ function renameRules(raw: RawGrammar, renames: ReadonlyMap<string, string>): Raw
 	}
 	const rename = (name: string): string => renames.get(name) ?? name;
 	const renameKey = (key: string): string => key.split('\u0000').map(rename).join('\u0000');
-	const renameRef = (rule: Rule<'evaluate'>): Rule<'evaluate'> => {
+	const renameOwner = (rule: Rule<'evaluate'>): Rule<'evaluate'> => {
+		const owner = rule.annotations?.variantOf;
+		return owner !== undefined && renames.has(owner) ? { ...rule, annotations: { ...rule.annotations, variantOf: rename(owner) } } : rule;
+	};
+	const renameRef = (ref: Rule<'evaluate'>): Rule<'evaluate'> => {
+		const rule = renameOwner(ref);
 		if (rule.type === SYMBOL) return renames.has(rule.name) ? { ...rule, name: rename(rule.name) } : rule;
 		if (rule.type === ALIAS && rule.named && rule.content.type === SYMBOL) {
 			const content = rule.content.name;
@@ -927,6 +933,7 @@ function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar
 }
 
 const aliasedRefWalker = new RuleWalker<Rule<'link'>>();
+const splicedNameWalker = new RuleWalker<Rule<'link'>>();
 
 function stampLinkMintedVisibility(rules: Record<string, Rule<'link'>>, ctx: LinkCtx): void {
 	for (const [name, rule] of Object.entries(rules)) {
@@ -962,6 +969,17 @@ function pruneUnreachableRules(rules: Record<string, Rule<'link'>>, ctx: LinkCtx
 	for (const name of Object.keys(rules)) {
 		if (!reachable.has(name)) delete rules[name];
 	}
+}
+
+function splicedRuleNames(rules: Readonly<Record<string, Rule<'link'>>>): ReadonlySet<string> {
+	const out = new Set<string>();
+	for (const rule of Object.values(rules)) {
+		splicedNameWalker.fold(rule, undefined, (_, r) => {
+			if (r.inlinedFrom !== undefined) out.add(r.inlinedFrom);
+			return undefined;
+		});
+	}
+	return out;
 }
 
 function inlineReferences(rules: Record<string, Rule<'link'>>, ctx: LinkCtx): void {
@@ -1285,10 +1303,9 @@ export interface VariantChoiceLocation {
 
 export function applyOverridePolymorphs(
 	rules: Record<string, Rule<'link'>>,
-	derivations: DerivationLog,
-	automatic: AutomaticVariants | undefined
+	derivations: DerivationLog
 ): void {
-	const structural = deriveVariantChildren(rules, automatic);
+	const structural = deriveVariantChildren(rules);
 	const parentToChildren = new Map<string, string[]>();
 	for (const [parentKind, variantChildren] of structural) {
 		const names = variantChildren.map((c) => c.name);

@@ -1,61 +1,61 @@
 import type { GrammarContext } from './context.ts';
 import type { SubKindOf } from './utils.ts';
 import type * as V from './index.ts';
-export interface Element<G extends GrammarContext> {
+export interface Element<G extends GrammarContext<G>> {
 	readonly $kind: 'element';
 }
 
 export namespace Element {
-	export interface Macro<G extends GrammarContext> extends SubKindOf<V.Element<G>> {
+	export interface Macro<G extends GrammarContext<G>> extends SubKindOf<V.Element<G>> {
 		readonly $kind: 'element.macro';
 	}
 	export namespace Macro {
-		export interface Fragment<G extends GrammarContext> extends SubKindOf<V.Element.Macro<G>> {
+		export interface Fragment<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro<G>> {
 			// claimed by r
 			readonly $kind: 'element.macro.fragment';
 		}
-		export interface TokenBinding<G extends GrammarContext> extends SubKindOf<V.Element.Macro<G>> {
+		export interface TokenBinding<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro<G>> {
 			// claimed by r
 			readonly $kind: 'element.macro.token_binding';
 			readonly name: V.Identifier.Metavariable<G>;
 			readonly type: V.Element.Macro.Fragment<G>;
 		}
-		export interface TokenRepetition<G extends GrammarContext> extends SubKindOf<V.Element.Macro<G>> {
+		export interface TokenRepetition<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro<G>> {
 			// claimed by r
 			readonly $kind: 'element.macro.token_repetition';
 			readonly operator: G['slots']['element.macro.token_repetition']['operator'];
 			readonly tokens?: G['slots']['element.macro.token_repetition']['tokens'][];
 		}
 		export namespace TokenRepetition {
-			export interface Pattern<G extends GrammarContext> extends SubKindOf<V.Element.Macro.TokenRepetition<G>> {
+			export interface Pattern<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro.TokenRepetition<G>> {
 				// claimed by r
 				readonly $kind: 'element.macro.token_repetition.pattern';
 				readonly operator: G['slots']['element.macro.token_repetition.pattern']['operator'];
 				readonly tokenPatterns?: G['slots']['element.macro.token_repetition.pattern']['tokenPatterns'][];
 			}
-			export type Any<G extends GrammarContext> =
+			export type Any<G extends GrammarContext<G>> =
 				| V.Element.Macro.TokenRepetition<G>
 				| V.Element.Macro.TokenRepetition.Pattern<G>;
 		}
-		export interface TokenTree<G extends GrammarContext> extends SubKindOf<V.Element.Macro<G>> {
+		export interface TokenTree<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro<G>> {
 			// claimed by r
 			readonly $kind: 'element.macro.token_tree';
 		}
 		export namespace TokenTree {
-			export interface Delimited<G extends GrammarContext> extends SubKindOf<V.Element.Macro.TokenTree<G>> {
+			export interface Delimited<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro.TokenTree<G>> {
 				// claimed by r
 				readonly $kind: 'element.macro.token_tree.delimited';
 			}
-			export interface Pattern<G extends GrammarContext> extends SubKindOf<V.Element.Macro.TokenTree<G>> {
+			export interface Pattern<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro.TokenTree<G>> {
 				// claimed by r
 				readonly $kind: 'element.macro.token_tree.pattern';
 			}
-			export type Any<G extends GrammarContext> =
+			export type Any<G extends GrammarContext<G>> =
 				| V.Element.Macro.TokenTree<G>
 				| V.Element.Macro.TokenTree.Delimited<G>
 				| V.Element.Macro.TokenTree.Pattern<G>;
 		}
-		export type Any<G extends GrammarContext> =
+		export type Any<G extends GrammarContext<G>> =
 			| V.Element.Macro.Fragment<G>
 			| V.Element.Macro.TokenBinding<G>
 			| V.Element.Macro.TokenRepetition<G>
@@ -64,65 +64,65 @@ export namespace Element {
 			| V.Element.Macro.TokenTree.Delimited<G>
 			| V.Element.Macro.TokenTree.Pattern<G>;
 	}
-	export interface Pair<G extends GrammarContext> extends SubKindOf<V.Element<G>> {
+	export interface Pair<G extends GrammarContext<G>> extends SubKindOf<V.Element<G>> {
 		// claimed by pt
 		readonly $kind: 'element.pair';
 		readonly key: G['slots']['element.pair']['key'];
 		readonly value: G['slots']['element.pair']['value'];
 	}
-	export interface Splat<G extends GrammarContext> extends SubKindOf<V.Element<G>> {
+	export interface Splat<G extends GrammarContext<G>> extends SubKindOf<V.Element<G>> {
 		// claimed by pt
 		readonly $kind: 'element.splat';
 		readonly expression?: G['slots']['element.splat']['expression'];
 	}
 	export namespace Splat {
-		export interface Dictionary<G extends GrammarContext> extends SubKindOf<V.Element.Splat<G>> {
+		export interface Dictionary<G extends GrammarContext<G>> extends SubKindOf<V.Element.Splat<G>> {
 			// claimed by p
 			readonly $kind: 'element.splat.dictionary';
 			readonly expression: G['slots']['element.splat.dictionary']['expression'];
 		}
-		export interface Parenthesized<G extends GrammarContext> extends SubKindOf<V.Element.Splat<G>> {
+		export interface Parenthesized<G extends GrammarContext<G>> extends SubKindOf<V.Element.Splat<G>> {
 			// claimed by p
 			readonly $kind: 'element.splat.parenthesized';
 			readonly content: V.Element.Splat.Any<G>;
 		}
-		export type Any<G extends GrammarContext> =
+		export type Any<G extends GrammarContext<G>> =
 			| V.Element.Splat<G>
 			| V.Element.Splat.Dictionary<G>
 			| V.Element.Splat.Parenthesized<G>;
 	}
-	export interface Struct<G extends GrammarContext> extends SubKindOf<V.Element<G>> {
+	export interface Struct<G extends GrammarContext<G>> extends SubKindOf<V.Element<G>> {
 		readonly $kind: 'element.struct';
 	}
 	export namespace Struct {
-		export interface Base<G extends GrammarContext> extends SubKindOf<V.Element.Struct<G>> {
+		export interface Base<G extends GrammarContext<G>> extends SubKindOf<V.Element.Struct<G>> {
 			// claimed by r
 			readonly $kind: 'element.struct.base';
 			readonly value: G['slots']['element.struct.base']['value'];
 		}
-		export interface Field<G extends GrammarContext> extends SubKindOf<V.Element.Struct<G>> {
+		export interface Field<G extends GrammarContext<G>> extends SubKindOf<V.Element.Struct<G>> {
 			// claimed by r
 			readonly $kind: 'element.struct.field';
 			readonly attributes?: G['attribute'][];
 			readonly field: G['identifier'] | V.Literal.Number.Integer<G>;
 			readonly value?: G['slots']['element.struct.field']['value'];
 		}
-		export type Any<G extends GrammarContext> = V.Element.Struct.Base<G> | V.Element.Struct.Field<G>;
+		export type Any<G extends GrammarContext<G>> = V.Element.Struct.Base<G> | V.Element.Struct.Field<G>;
 	}
-	export interface Template<G extends GrammarContext> extends SubKindOf<V.Element<G>> {
+	export interface Template<G extends GrammarContext<G>> extends SubKindOf<V.Element<G>> {
 		readonly $kind: 'element.template';
 		readonly type: G['slots']['element.template']['type'];
 		// t only
 	}
 	export namespace Template {
-		export interface Substitution<G extends GrammarContext> extends SubKindOf<V.Element.Template<G>> {
+		export interface Substitution<G extends GrammarContext<G>> extends SubKindOf<V.Element.Template<G>> {
 			// claimed by t
 			readonly $kind: 'element.template.substitution';
 			readonly type: G['slots']['element.template.substitution']['type'];
 		}
-		export type Any<G extends GrammarContext> = V.Element.Template.Substitution<G>;
+		export type Any<G extends GrammarContext<G>> = V.Element.Template.Substitution<G>;
 	}
-	export interface Tuple<G extends GrammarContext> extends SubKindOf<V.Element<G>> {
+	export interface Tuple<G extends GrammarContext<G>> extends SubKindOf<V.Element<G>> {
 		readonly $kind: 'element.tuple';
 		readonly name: G['slots']['element.tuple']['name'];
 		// t only
@@ -130,37 +130,37 @@ export namespace Element {
 		// t only
 	}
 	export namespace Tuple {
-		export interface Member<G extends GrammarContext> extends SubKindOf<V.Element.Tuple<G>> {
+		export interface Member<G extends GrammarContext<G>> extends SubKindOf<V.Element.Tuple<G>> {
 			// claimed by t
 			readonly $kind: 'element.tuple.member';
 			readonly name: G['slots']['element.tuple.member']['name'];
 			readonly type: G['slots']['element.tuple.member']['type'];
 		}
 		export namespace Member {
-			export interface Optional<G extends GrammarContext> extends SubKindOf<V.Element.Tuple.Member<G>> {
+			export interface Optional<G extends GrammarContext<G>> extends SubKindOf<V.Element.Tuple.Member<G>> {
 				// claimed by t
 				readonly $kind: 'element.tuple.member.optional';
 				readonly name: G['identifier'];
 				readonly type: G['slots']['element.tuple.member.optional']['type'];
 			}
-			export type Any<G extends GrammarContext> = V.Element.Tuple.Member<G> | V.Element.Tuple.Member.Optional<G>;
+			export type Any<G extends GrammarContext<G>> = V.Element.Tuple.Member<G> | V.Element.Tuple.Member.Optional<G>;
 		}
-		export type Any<G extends GrammarContext> = V.Element.Tuple.Member<G> | V.Element.Tuple.Member.Optional<G>;
+		export type Any<G extends GrammarContext<G>> = V.Element.Tuple.Member<G> | V.Element.Tuple.Member.Optional<G>;
 	}
-	export interface TypeArgument<G extends GrammarContext> extends SubKindOf<V.Element<G>> {
+	export interface TypeArgument<G extends GrammarContext<G>> extends SubKindOf<V.Element<G>> {
 		// claimed by r
 		readonly $kind: 'element.type_argument';
 		readonly constraint?: V.Clause.Bounds<G>;
 		readonly content: G['slots']['element.type_argument']['content'];
 	}
-	export interface TypeBinding<G extends GrammarContext> extends SubKindOf<V.Element<G>> {
+	export interface TypeBinding<G extends GrammarContext<G>> extends SubKindOf<V.Element<G>> {
 		// claimed by r
 		readonly $kind: 'element.type_binding';
 		readonly name: V.Identifier.Type<G>;
 		readonly type: G['slots']['element.type_binding']['type'];
 		readonly typeArguments?: V.Element.TypeArgument<G>[];
 	}
-	export type Any<G extends GrammarContext> =
+	export type Any<G extends GrammarContext<G>> =
 		| V.Element.Macro.Fragment<G>
 		| V.Element.Macro.TokenBinding<G>
 		| V.Element.Macro.TokenRepetition<G>
