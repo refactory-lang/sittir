@@ -147,11 +147,7 @@ fn indent_width(line: &str) -> usize {
 
 /// How far the last line of a whitespace run is indented: what follows its last break.
 fn line_depth(run: &str) -> usize {
-    if crate::line_endings::logical_breaks(run) == 0 {
-        0
-    } else {
-        crate::line_endings::bytes_after_last_break(run)
-    }
+    crate::line_endings::bytes_after_last_break(run)
 }
 
 /// A child position of a root transport, read for the item at either end of

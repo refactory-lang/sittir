@@ -105,6 +105,23 @@ describe.each(GRAMMARS)('line endings on the $name corpus', ({ name, root, multi
 	});
 });
 
+describe.each([
+	['rust', 'fn f() {}\r'],
+	['typescript', 'a;\r'],
+	['python', 'x = 1\r']
+] as const)('a bare-CR %s source', (name, source) => {
+	it('keeps its final break under every ending', async () => {
+		const language = await languageByName(name);
+		const plain = await createEngine(language);
+		const twin = plain.render(plain.parse(source.replace(/\r/g, '\n')) as never).toString();
+		expect(twin.endsWith('\n')).toBe(true);
+		for (const ending of ['\n', '\r\n', '\r'] as const) {
+			const engine = await createEngine(language, { render: { layout: { newline: ending } } });
+			expect(engine.render(plain.parse(source) as never).toString()).toBe(twin.replace(/\n/g, ending));
+		}
+	});
+});
+
 describe('a comment that swallows the carriage return of its CRLF break', () => {
 	it('renders unchanged under \\r\\n and as LF by default', async () => {
 		const plain = await createEngine(await languageByName('python'));

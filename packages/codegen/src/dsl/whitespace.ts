@@ -65,7 +65,6 @@ function bodyOf(name: string): WhitespaceBody {
 	return { type: STRING, value: canonicalText(name) };
 }
 
-
 function admittedTextOf(text: string): string {
 	return isDepthText(text) ? HORIZONTAL_SPACE : text;
 }
@@ -95,11 +94,10 @@ export function enrichWhitespace(
 ): EnrichedWhitespace {
 	const run = nodelessExtrasRun(extras, rules);
 	const upstream = new Set(ruleListParts(externals).names);
-	const members = WHITESPACE_MEMBERS.filter(
-		(member) =>
-			admitsWhitespaceMember(run, member.name, canonicalText(member.name)) &&
-			!(isDepthText(canonicalText(member.name)) && upstream.has(member.name))
-	);
+	const members = WHITESPACE_MEMBERS.filter((member) => {
+		const text = canonicalText(member.name);
+		return admitsWhitespaceMember(run, member.name, text) && !(isDepthText(text) && upstream.has(member.name));
+	});
 	const rule: Rule = { type: CHOICE, members: members.map((member) => ({ type: SYMBOL, name: member.name })) };
 	const minted: readonly (readonly [string, Rule])[] = [
 		[LAYOUT_SUPERTYPE, rule],

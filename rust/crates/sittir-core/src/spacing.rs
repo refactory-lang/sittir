@@ -694,7 +694,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
 
 impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_, W> {
     fn text(&mut self, s: &str) -> crate::render::RenderResult {
-        let s = crate::line_endings::to_internal(s);
+        let s = crate::line_endings::to_internal(crate::line_endings::without_swallowed_cr(s));
         let s = s.as_ref();
         self.write_chunk(s)?;
         if !s.is_empty() {
@@ -788,7 +788,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     }
 
     fn trivia_seam(&mut self, gap: LayoutKinds, text: Option<&str>) {
-        let text = text.map(crate::line_endings::to_internal);
+        let text = text.map(|text| crate::line_endings::to_internal(crate::line_endings::without_swallowed_cr(text)));
         let text = text.as_deref();
         let continues = self.seam.is_some() && self.seam_strength == SEAM_TRIVIA && gap == LayoutKinds::LINE_CONTINUATION;
         if continues {
@@ -833,7 +833,11 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
                 handle: coord.handle(),
                 tree_id: coord.tree,
             })?;
-        let text = crate::line_endings::to_internal(coord.resolve(sources)?);
+        let raw = coord.resolve(sources)?;
+        let swallowed = sources
+            .source_of(coord.tree)
+            .is_some_and(|source| source.as_bytes().get(coord.span.end as usize) == Some(&b'\n'));
+        let text = crate::line_endings::to_internal(if swallowed { crate::line_endings::without_swallowed_cr(raw) } else { raw });
         let text = text.as_ref();
         let token = crate::render::RenderSink::kind_of(self, coord)
             .is_some_and(|kind| crate::render::RenderSink::kind_has(self, kind, crate::options::KIND_ANON));

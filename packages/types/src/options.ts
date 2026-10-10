@@ -16,16 +16,16 @@ export type IndentOption<I extends string, IndentChar extends string> = [IndentC
 
 /**
  * The line ending a render spells every break with, under the `layout` group:
- * one of the arms of the grammar's `_newline` member (`Newline`). A grammar
+ * one of the arms of the grammar's `_newline` member (`LineEnding`). A grammar
  * that admits no `_newline` has no `layout.newline` key.
  */
-export type NewlineOption<Newline extends string> = [Newline] extends [never]
+export type NewlineOption<LineEnding extends string> = [LineEnding] extends [never]
 	? unknown
-	: { readonly layout?: { readonly newline?: Newline } };
+	: { readonly layout?: { readonly newline?: LineEnding } };
 
 /** The `layout` group: the settings of the whole render, `indent` and `newline`. */
-export type LayoutOption<I extends string, IndentChar extends string, Newline extends string> = IndentOption<I, IndentChar> &
-	NewlineOption<Newline>;
+export type LayoutOption<I extends string, IndentChar extends string, LineEnding extends string> = IndentOption<I, IndentChar> &
+	NewlineOption<LineEnding>;
 
 /**
  * A grammar's render options, derived from its `OptionsHintMap`: one optional
@@ -34,6 +34,6 @@ export type LayoutOption<I extends string, IndentChar extends string, Newline ex
  * character, the line ending when it admits `_newline`. A plain
  * mapped type, so a kind's hint is resolved only when its key is read.
  */
-export type DerivedOptions<HintMap, IndentChar extends string = never, Newline extends string = never> = {
+export type DerivedOptions<HintMap, IndentChar extends string = never, LineEnding extends string = never> = {
 	readonly [K in keyof HintMap]?: OptionsHintOf<HintMap[K]>;
-} & LayoutOption<string, IndentChar, Newline>;
+} & LayoutOption<string, IndentChar, LineEnding>;

@@ -5,5 +5,5 @@ import regex from '../src/index.ts';
 
 it('has no indent option', async () => {
 	// @ts-expect-error no indent character is admitted
-	await expect(createEngine(regex, { render: { layout: { indent: '\t' } } })).rejects.toThrow(/unknown key layout/);
+	await expect(createEngine(regex, { render: { layout: { indent: '\t' } } })).rejects.toThrow(/unknown key layout\/indent/);
 });

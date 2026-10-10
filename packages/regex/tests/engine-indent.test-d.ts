@@ -10,3 +10,8 @@ void createEngine(regex);
 void createEngine(regex, { render: { layout: { indent: '\t' } } });
 // @ts-expect-error per-call options have no indent either
 rx.render(node, { layout: { indent: '\t' } });
+// @ts-expect-error indent stays refused beside an admitted newline
+void createEngine(regex, { render: { layout: { indent: '\t', newline: '\n' } } });
+// @ts-expect-error per call too
+rx.render(node, { layout: { indent: '\t', newline: '\n' } });
+void createEngine(regex, { render: { layout: { newline: '\r\n' } } });

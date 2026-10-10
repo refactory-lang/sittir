@@ -4385,7 +4385,7 @@ The characters a render's `indent` unit may be made of: the literal texts of the
 
 ### `packages/codegen/src/compiler/model/layout-kinds.ts::newlineArms`
 
-The spellings of one line break a render may take: `NEWLINE_ARMS` when the grammar's `_layout` supertype lists `_newline`, none otherwise (a node map with no `_layout` supertype admits no member, so none either; regex gives none and has no `layout.newline` option). The one fact behind the `LineEnding` type in `options.ts` and the runtime's `OptionTables.newline_arms`, so the type and the runtime check cannot disagree.
+The spellings of one line break a render may take: `NEWLINE_ARMS` when the grammar's `_layout` supertype lists `_newline`, none otherwise (a node map with no `_layout` supertype admits no member, so none either; regex lists `_newline` and so has the option, though it has no `layout.indent`). The one fact behind the `LineEnding` type in `options.ts` and the runtime's `OptionTables.newline_arms`, so the type and the runtime check cannot disagree.
 
 ### `packages/codegen/src/compiler/model/layout-kinds.ts::PREFERRED_NEWLINE`
 

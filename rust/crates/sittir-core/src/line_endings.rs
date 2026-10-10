@@ -18,17 +18,21 @@ pub fn logical_breaks(text: &str) -> usize {
 /// and the generated tables share. Borrows when the text holds no `\r`. Source
 /// text passes through it where it enters the writer, so line-start and
 /// indentation decisions only ever see `\n`.
-///
-/// A `\r` that ends the text is dropped: it is the first half of a `\r\n` whose
-/// `\n` lies outside the token (a line comment's pattern takes the `\r`), and
-/// the break is written by whatever follows the token, as it is for a source
-/// that spells its breaks `\n`.
 pub fn to_internal(text: &str) -> Cow<'_, str> {
     if !text.contains('\r') {
         return Cow::Borrowed(text);
     }
-    let body = text.strip_suffix('\r').unwrap_or(text);
-    Cow::Owned(body.replace("\r\n", "\n").replace('\r', "\n"))
+    Cow::Owned(text.replace("\r\n", "\n").replace('\r', "\n"))
+}
+
+/// `text` without a `\r` that ends it. Such a `\r` is the first half of a
+/// `\r\n` whose `\n` lies outside the token (a line comment's pattern takes
+/// the `\r`), and the break is written by whatever follows the token, as it is
+/// for a source that spells its breaks `\n`. Where the text is a slice of a
+/// source, the caller applies it only when a `\n` follows in that source;
+/// a text with no source (a trivia entry's content) cannot tell, and applies it.
+pub fn without_swallowed_cr(text: &str) -> &str {
+    text.strip_suffix('\r').unwrap_or(text)
 }
 
 const BREAK_CHARS: [char; 2] = ['\r', '\n'];
@@ -42,9 +46,9 @@ pub fn line_bounds(text: &str, at: usize) -> (usize, usize) {
     (start, end)
 }
 
-/// How many bytes follow the last break of `text`; all of it when it holds none.
+/// How many bytes follow the last break of `text`; none when it holds no break.
 pub fn bytes_after_last_break(text: &str) -> usize {
-    text.rfind(BREAK_CHARS).map_or(text.len(), |i| text.len() - i - 1)
+    text.rfind(BREAK_CHARS).map_or(0, |i| text.len() - i - 1)
 }
 
 /// A `fmt::Write` adapter that writes each logical break of its input as
@@ -99,7 +103,9 @@ impl<W: fmt::Write + ?Sized> fmt::Write for LineEndings<'_, W> {
     }
 }
 
-/// `text` with every break spelled `newline`. Returns `text` itself, without
+/// `text` with every break spelled `newline`, whatever spelling it arrives in:
+/// the text of a format record's prefix or suffix is not source and has not been
+/// through `to_internal`. Returns `text` itself, without
 /// copying, when `newline` is `\n` and the text holds no `\r`.
 pub fn spell(text: String, newline: &str) -> String {
     if newline == "\n" && !text.contains('\r') {
@@ -129,7 +135,7 @@ mod tests {
     #[test]
     fn every_break_enters_as_one_spelling_and_lf_text_is_borrowed() {
         assert_eq!(to_internal("a\r\nb\rc\nd"), "a\nb\nc\nd");
-        assert_eq!(to_internal("# note\r"), "# note");
+        assert_eq!(to_internal("# note\r"), "# note\n");
         assert_eq!(to_internal("a\r\n"), "a\n");
         assert!(matches!(to_internal("a\nb"), Cow::Borrowed(_)));
         assert!(matches!(to_internal(""), Cow::Borrowed(_)));
@@ -185,6 +191,14 @@ mod tests {
     }
 
     #[test]
+    fn only_a_carriage_return_that_ends_the_text_is_swallowed() {
+        assert_eq!(without_swallowed_cr("# note\r"), "# note");
+        assert_eq!(without_swallowed_cr("a\rb"), "a\rb");
+        assert_eq!(without_swallowed_cr("a\r\n"), "a\r\n");
+        assert_eq!(without_swallowed_cr(""), "");
+    }
+
+    #[test]
     fn a_line_is_bounded_by_whichever_break_spells_it() {
         for ending in ["\n", "\r\n", "\r"] {
             let text = format!("ab{ending}cd{ending}ef");
@@ -193,7 +207,7 @@ mod tests {
             assert_eq!(&text[start..end], "cd", "{ending:?}");
             assert_eq!(bytes_after_last_break(&format!("{ending}    ")), 4, "{ending:?}");
         }
-        assert_eq!(bytes_after_last_break("  "), 2);
+        assert_eq!(bytes_after_last_break("  "), 0);
         assert_eq!(line_bounds("", 5), (0, 0));
     }
 }

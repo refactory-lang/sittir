@@ -1,5 +1,5 @@
 // The line ending is one of the arms of the grammar's `_newline` member
-// (`Newline`: '\n', '\r\n', '\r'), set under `render.layout`, per engine or
+// (`LineEnding`: '\n', '\r\n', '\r'), set under `render.layout`, per engine or
 // per call. Every break of a render takes it.
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
