@@ -128,7 +128,7 @@ export function displayImplStrict() {
 	return engine.build.statement.impl.body.positiveClause.strict({
 		traitClause: scopedTy(ns('std', 'fmt'), 'Display'),
 		type: id('SpliceError'),
-		declarationList: engine.build.declarationList.strict(
+		body: engine.build.declarationList.strict(
 				engine.build.statement.function.strict({
 					name: id('fmt'),
 					parameters: engine.build.parameters.strict(
@@ -178,7 +178,7 @@ export function errorImplStrict() {
 	return engine.build.statement.impl.body.positiveClause.strict({
 		traitClause: scopedTy(ns('std', 'error'), 'Error'),
 		type: id('SpliceError'),
-		declarationList: engine.build.declarationList.strict(),
+		body: engine.build.declarationList.strict(),
 	});
 }
 

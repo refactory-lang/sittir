@@ -705,7 +705,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['traitClause', { fields: ['trait_clause'], kinds: [] }],
 		['type', { fields: ['type'], kinds: [] }],
 		['whereClause', { fields: ['where_clause'], kinds: [] }],
-		['declarationList', { fields: [], kinds: ['declaration_list'] }]
+		['body', { fields: ['body'], kinds: [] }]
 	],
 	378: [
 		['unsafe', { fields: ['unsafe'], kinds: [] }],

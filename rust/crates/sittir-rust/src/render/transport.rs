@@ -24214,9 +24214,9 @@ pub struct ImplItemBodyTransport {
     #[wire(key = "_where_clause")]
     #[slot(field = field::WHERE_CLAUSE)]
     pub where_clause: Option<::sittir_core::SlotValue<WhereClauseTransport>>,
-    #[wire(key = "_declaration_list")]
-    #[slot]
-    pub declaration_list: ::sittir_core::SlotValue<DeclarationListTransport>,
+    #[wire(key = "_body")]
+    #[slot(field = field::BODY)]
+    pub body: ::sittir_core::SlotValue<DeclarationListTransport>,
 }
 
 impl ::sittir_core::view::KindOf for ImplItemBodyTransport {
@@ -24248,7 +24248,7 @@ impl ::sittir_core::prepare::Prepare for ImplItemBodyTransport {
         self.trait_clause.prepare(ctx)?;
         self.type_.prepare(ctx)?;
         self.where_clause.prepare(ctx)?;
-        self.declaration_list.prepare(ctx)?;
+        self.body.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -36245,7 +36245,7 @@ fn render_impl_item_negative_clause(node: &ImplItemNegativeClauseTransport, w: &
 }
 
 fn render_impl_item_body(node: &ImplItemBodyTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let declaration_list = &node.declaration_list;
+    let body = &node.body;
     let trait_clause = View::new(&node.trait_clause, "{}");
     let type_ = &node.type_;
     let type_parameters = View::new(&node.type_parameters, "{}");
@@ -36263,7 +36263,7 @@ fn render_impl_item_body(node: &ImplItemBodyTransport, w: &mut dyn ::sittir_core
     trait_clause.render(w)?;
     type_.render(w)?;
     where_clause.render(w)?;
-    declaration_list.render(w)?;
+    body.render(w)?;
     w.edge(::sittir_core::types::KindId(377), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
