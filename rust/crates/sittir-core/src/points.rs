@@ -57,6 +57,46 @@ impl PointSpan {
     }
 }
 
+/// `{ row, column }`, both required.
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Point {
+    unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
+        use crate::boundary::{object, required};
+        unsafe {
+            let obj = object(env, napi_val)?;
+            Ok(Point { row: required(env, obj, c"row", "a span point")?, column: required(env, obj, c"column", "a span point")? })
+        }
+    }
+}
+
+/// `{ row, column }`.
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Point {
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        unsafe { crate::boundary::object_with(env, &[(c"row", u32::to_napi_value(env, val.row)?), (c"column", u32::to_napi_value(env, val.column)?)]) }
+    }
+}
+
+/// `{ start, end }`, both required points.
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for PointSpan {
+    unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
+        use crate::boundary::{object, required};
+        unsafe {
+            let obj = object(env, napi_val)?;
+            Ok(PointSpan { start: required(env, obj, c"start", "a span")?, end: required(env, obj, c"end", "a span")? })
+        }
+    }
+}
+
+/// `{ start, end }`.
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for PointSpan {
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        unsafe { crate::boundary::object_with(env, &[(c"start", Point::to_napi_value(env, val.start)?), (c"end", Point::to_napi_value(env, val.end)?)]) }
+    }
+}
+
 /// The byte offset at which each row of one source starts, built once and
 /// shared by every render of that source.
 #[derive(Debug, Clone)]

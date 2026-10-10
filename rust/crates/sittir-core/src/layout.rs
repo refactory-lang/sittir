@@ -28,6 +28,10 @@ pub struct TransportLayout<T> {
     /// from it: JavaScript crosses an untouched node as this coordinate, and an
     /// edited one without it.
     pub at: Option<NodeCoordinate>,
+    /// Where a snapshot node lies: its span measured from the start of the
+    /// transport that holds it. A snapshot node has no `at`; a read or built
+    /// node has no span.
+    pub span: Option<crate::points::PointSpan>,
 }
 
 impl<T> Default for TransportLayout<T> {
@@ -38,6 +42,7 @@ impl<T> Default for TransportLayout<T> {
             gap: None,
             flank: None,
             at: None,
+            span: None,
         }
     }
 }
@@ -200,6 +205,7 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
                     ),
                     None => None,
                 },
+                span: property(env, napi_val, c"span")?,
             })
         }
     }
@@ -207,14 +213,15 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
 
 #[cfg(feature = "napi-bindings")]
 impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for TransportLayout<T> {
-    /// `{ trivia?, at? }`, each only when present: what a read writes. The
-    /// edges, the gap and the flanks never cross back.
+    /// `{ trivia?, at?, span? }`, each only when present: what a read writes.
+    /// The edges, the gap and the flanks never cross back.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         use crate::boundary::{object_with_present, present, present_with};
         unsafe {
             object_with_present(env, &[
                 present(env, c"trivia", val.trivia)?,
                 present_with(c"at", val.at, |at| crate::slot::coordinate_to_napi(env, at))?,
+                present(env, c"span", val.span)?,
             ])
         }
     }

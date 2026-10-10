@@ -69,6 +69,9 @@ impl<T: crate::prepare::Prepare> crate::prepare::Prepare for TransportTrivia<T> 
 pub struct TriviaText {
     pub kind: KindId,
     pub text: String,
+    /// In a snapshot, where the entry lies: its span measured from the start
+    /// of its owner's holder.
+    pub span: Option<crate::points::PointSpan>,
 }
 
 impl Render for TriviaText {
@@ -464,24 +467,30 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
     }
 }
 
-/// `{ $type, $text }`, both required.
+/// `{ $type, $text, span? }`, the type and the text required.
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for TriviaText {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { crate::boundary::object(env, napi_val)? };
         let kind: u16 = unsafe { crate::boundary::required(env, obj, c"$type", "TriviaText")? };
-        Ok(Self { kind: KindId(kind), text: unsafe { crate::boundary::required(env, obj, c"$text", "TriviaText")? } })
+        Ok(Self {
+            kind: KindId(kind),
+            text: unsafe { crate::boundary::required(env, obj, c"$text", "TriviaText")? },
+            span: unsafe { crate::boundary::property(env, obj, c"span")? },
+        })
     }
 }
 
-/// `{ $type, $text }`.
+/// `{ $type, $text, span? }`.
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for TriviaText {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        use crate::boundary::{object_with_present, present};
         unsafe {
-            crate::boundary::object_with(env, &[
-                (c"$type", u16::to_napi_value(env, val.kind.0)?),
-                (c"$text", String::to_napi_value(env, val.text)?),
+            object_with_present(env, &[
+                present(env, c"$type", Some(val.kind.0))?,
+                present(env, c"$text", Some(val.text))?,
+                present(env, c"span", val.span)?,
             ])
         }
     }

@@ -863,6 +863,7 @@ impl Placement {
             gap: None,
             flank: None,
             at: Some(at),
+            span: None,
         })
     }
 }
