@@ -1,0 +1,28 @@
+// Generated from the vocabulary's Flag declarations by `pnpm exec tsx packages/cli/src/cli.ts tool bindings-inventory --write`. Do not edit.
+export enum Flags {
+	Abstract = 1 << 0,
+	Accessor = 1 << 1,
+	Async = 1 << 2,
+	ByReference = 1 << 3,
+	Computed = 1 << 4,
+	Const = 1 << 5,
+	Debug = 1 << 6,
+	Declare = 1 << 7,
+	Default = 1 << 8,
+	Definite = 1 << 9,
+	Disposable = 1 << 10,
+	Exclusive = 1 << 11,
+	Generator = 1 << 12,
+	Group = 1 << 13,
+	Move = 1 << 14,
+	Mutable = 1 << 15,
+	Optional = 1 << 16,
+	OptionalChain = 1 << 17,
+	Override = 1 << 18,
+	PrivateName = 1 << 19,
+	Raw = 1 << 20,
+	Readonly = 1 << 21,
+	Static = 1 << 22,
+	Unsafe = 1 << 23,
+	Writable = 1 << 24
+}

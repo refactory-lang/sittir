@@ -4,6 +4,7 @@ import ts from 'typescript6';
 
 export interface VocabularyMember {
 	readonly optional: boolean;
+	readonly flag: boolean;
 }
 
 export interface VocabularyKind {
@@ -14,6 +15,7 @@ export interface VocabularyKind {
 
 export interface Vocabulary {
 	readonly kinds: ReadonlyMap<string, VocabularyKind>;
+	readonly flags: ReadonlySet<string>;
 	members(path: string): ReadonlyMap<string, VocabularyMember>;
 }
 
@@ -41,8 +43,12 @@ export function readVocabulary(dir: string): Vocabulary {
 		}
 		return all;
 	};
-	return { kinds, members };
+	const flags = new Set(declared.flatMap((d) => [...d.own].flatMap(([name, member]) => (member.flag ? [name] : []))));
+	return { kinds, flags, members };
 }
+
+const isFlag = (type: ts.TypeNode | undefined): boolean =>
+	type !== undefined && ts.isTypeReferenceNode(type) && ts.isIdentifier(type.typeName) && type.typeName.text === 'Flag';
 
 function collect(statements: ts.NodeArray<ts.Statement>, scope: readonly string[], out: Declared[]): void {
 	for (const statement of statements) {
@@ -61,7 +67,7 @@ function collect(statements: ts.NodeArray<ts.Statement>, scope: readonly string[
 				if (type !== undefined && ts.isLiteralTypeNode(type) && ts.isStringLiteral(type.literal)) path = type.literal.text;
 				continue;
 			}
-			own.set(member.name.text, { optional: member.questionToken !== undefined });
+			own.set(member.name.text, { optional: member.questionToken !== undefined, flag: isFlag(member.type) });
 		}
 		if (path === undefined) continue;
 		out.push({ name, path, own, parentName: parentNameOf(statement) });
