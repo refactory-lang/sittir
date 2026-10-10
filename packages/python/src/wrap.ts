@@ -4010,17 +4010,17 @@ export function wrapCaseListPattern(data: T.CaseListPattern, tree: TreeHandle): 
 
 export function wrapPrintArguments(data: T.PrintArguments, tree: TreeHandle): T.PrintArguments.Parsed {
 	const handle = currentHandle();
-	const listedStored = storedElements(data._argument);
+	const listedStored = storedElements(data._item);
 	const node = {
 		...data,
 		$type: TSKindId.PrintArguments as const,
-		arguments() {
-			return hydrateSlots<T.Expression>(this, '_argument', tree);
+		items() {
+			return hydrateSlots<T.Expression>(this, '_item', tree);
 		},
 		$with: {},
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'arguments'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -4043,17 +4043,17 @@ export function wrapPrintChevronArguments(
 	tree: TreeHandle
 ): T.PrintChevronArguments.Parsed {
 	const handle = currentHandle();
-	const listedStored = storedElements(data._argument);
+	const listedStored = storedElements(data._item);
 	const node = {
 		...data,
 		$type: TSKindId.PrintChevronArguments as const,
-		arguments() {
-			return hydrateSlots<T.Expression>(this, '_argument', tree);
+		items() {
+			return hydrateSlots<T.Expression>(this, '_item', tree);
 		},
 		$with: {},
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'arguments'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -4111,7 +4111,7 @@ export function wrapPrintStatementChevron(
 
 export function wrapPrintStatementPlain(data: T.PrintStatementPlain, tree: TreeHandle): T.PrintStatementPlain.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._print_arguments, '_argument', (list) => hydrate(list, tree));
+	const listView = ownerView(data._print_arguments, '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.PrintStatementPlain as const,
@@ -4131,7 +4131,7 @@ export function wrapPrintStatementPlain(data: T.PrintStatementPlain, tree: TreeH
 		},
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.printArguments(), 'arguments'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.printArguments(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,

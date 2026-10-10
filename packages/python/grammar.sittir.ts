@@ -428,10 +428,10 @@ export default sittirGrammar(base, {
 		case_list_pattern: vocabulary(($) => seq('[', optional($.list_pattern_case_patterns), ']')),
 
 		_print_arguments: vocabulary(($) =>
-			seq(field('argument', $.expression), repeat(seq(',', field('argument', $.expression))), optional(','))
+			seq(field('item', $.expression), repeat(seq(',', field('item', $.expression))), optional(','))
 		),
 		_print_chevron_arguments: vocabulary(($) =>
-			seq(repeat1(seq(',', field('argument', $.expression))), optional(','))
+			seq(repeat1(seq(',', field('item', $.expression))), optional(','))
 		),
 		print_statement_chevron: vocabulary(($) =>
 			seq('print', $.chevron, optional(choice(alias($._print_chevron_arguments, $.print_chevron_arguments), ',')))

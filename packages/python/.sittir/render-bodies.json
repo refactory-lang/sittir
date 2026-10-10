@@ -3277,13 +3277,13 @@
 	"print_arguments": [
 		{
 			"kind": "slot",
-			"name": "argument"
+			"name": "item"
 		}
 	],
 	"print_chevron_arguments": [
 		{
 			"kind": "slot",
-			"name": "argument"
+			"name": "item"
 		}
 	],
 	"print_statement": [
