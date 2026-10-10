@@ -1,7 +1,7 @@
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { parseSeamLabel, isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
 import { isFixedTextLeaf, isTerminalNode } from '../compiler/model/node-map.ts';
-import { CONTINUATION_KINDS, NEWLINE_KINDS, breakingKindsOfText, TIGHT_KINDS, layoutKindsOfText, leafEdgesOf } from '../compiler/model/layout-kinds.ts';
+import { CONTINUATION_KINDS, NEWLINE_KINDS, PREFERRED_NEWLINE, breakingKindsOfText, TIGHT_KINDS, layoutKindsOfText, leafEdgesOf } from '../compiler/model/layout-kinds.ts';
 import { STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import { wordCharAsciiTable } from '../util/word-matcher.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -1084,7 +1084,9 @@ const EMPTY_PLAN: RenderPlan = {
 			leafEdges: [],
 			gaps: [],
 	indentChars: [],
-	indent: ''
+	indent: '',
+	newlineArms: [],
+	newline: PREFERRED_NEWLINE
 };
 const EMPTY_PLANNED_OPTIONS: PlannedRenderOptions = { plan: EMPTY_PLAN, addresses: EMPTY_ADDRESSES, kindEntries: [] };
 

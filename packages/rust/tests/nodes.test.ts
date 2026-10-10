@@ -4106,13 +4106,7 @@ describe('impl_item_body', () => {
 	it('factory produces correct type', () => {
 		const node = ir.implItemBody({
 			type: { $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any,
-			declarationList: {
-				$type: TSKindId.DeclarationList,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_declarations: []
-			} as any
+			body: { $type: TSKindId.DeclarationList, $text: 'test', $source: 2, $named: true, _declarations: [] } as any
 		});
 		expect(node.$type).toBe(TSKindId.ImplItemBody);
 		expect(node.$source).toBe(2);
@@ -4120,13 +4114,7 @@ describe('impl_item_body', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.implItemBody({
 			type: { $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any,
-			declarationList: {
-				$type: TSKindId.DeclarationList,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_declarations: []
-			} as any
+			body: { $type: TSKindId.DeclarationList, $text: 'test', $source: 2, $named: true, _declarations: [] } as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -4137,13 +4125,7 @@ describe('impl_item_body sub-factories', () => {
 	it('positiveClause builds the parent', () => {
 		const node = ir.implItemBody.positiveClause({
 			type: { $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any,
-			declarationList: {
-				$type: TSKindId.DeclarationList,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_declarations: []
-			} as any,
+			body: { $type: TSKindId.DeclarationList, $text: 'test', $source: 2, $named: true, _declarations: [] } as any,
 			traitClause: {
 				$type: TSKindId.TypeIdentifier,
 				$text: 'test',
@@ -4159,13 +4141,7 @@ describe('impl_item_body sub-factories', () => {
 	it('negativeClause builds the parent', () => {
 		const node = ir.implItemBody.negativeClause({
 			type: { $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any,
-			declarationList: {
-				$type: TSKindId.DeclarationList,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_declarations: []
-			} as any,
+			body: { $type: TSKindId.DeclarationList, $text: 'test', $source: 2, $named: true, _declarations: [] } as any,
 			traitClause: {
 				$type: TSKindId.TypeIdentifier,
 				$text: 'test',

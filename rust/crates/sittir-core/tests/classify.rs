@@ -52,3 +52,12 @@ fn text_that_is_not_whitespace_has_no_class() {
     assert_eq!(classify_whitespace("b", ALL, &TABLE), None);
     assert_eq!(classify_whitespace(" x ", ALL, &TABLE), None);
 }
+
+#[test]
+fn a_carriage_return_is_a_line_break_whatever_its_spelling() {
+    assert_eq!(classify_whitespace("\r\n", ALL, &TABLE), Some(NEWLINE));
+    assert_eq!(classify_whitespace("\r\n\r\n", ALL, &TABLE), Some(BLANKLINE));
+    assert_eq!(classify_whitespace("\r", ALL, &TABLE), Some(NEWLINE));
+    assert_eq!(classify_whitespace("\r\r", ALL, &TABLE), Some(BLANKLINE));
+    assert_eq!(classify_whitespace("\r\n    ", ALL, &TABLE), Some(NEWLINE));
+}

@@ -5526,26 +5526,26 @@ function _buildPrintArguments(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.PrintArguments.Bound {
 	_assertNonEmpty(elements, 'print_arguments.elements');
-	const _argument = elements;
+	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_argument);
+	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.PrintArguments as const,
 		$source: 2 as const,
 		$named: true as const,
-		_argument,
+		_item,
 		_delimiter,
 		$with: {
-			arguments: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
+			items: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
 				rebuilt(node, handle, () => buildPrintArguments(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildPrintArguments({ ...options, delimiter: v }, ...elements))
 		},
-		arguments: () => hydrateStoredSlots(node, '_argument'),
+		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'arguments'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -5587,26 +5587,26 @@ function _buildPrintChevronArguments(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.PrintChevronArguments.Bound {
 	_assertNonEmpty(elements, 'print_chevron_arguments.elements');
-	const _argument = elements;
+	const _item = elements;
 	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_argument);
+	const listedStored = storedElements(_item);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.PrintChevronArguments as const,
 		$source: 2 as const,
 		$named: true as const,
-		_argument,
+		_item,
 		_delimiter,
 		$with: {
-			arguments: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
+			items: (...vs: NonEmptyArray<Admit<T.Expression>>) =>
 				rebuilt(node, handle, () => buildPrintChevronArguments(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildPrintChevronArguments({ ...options, delimiter: v }, ...elements))
 		},
-		arguments: () => hydrateStoredSlots(node, '_argument'),
+		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'arguments'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -5691,7 +5691,7 @@ function _buildPrintStatementPlain(value: Admit<T.PrintArguments>): T.PrintState
 	const _print_arguments = hydrateStored(
 		rejectBareText(value, 'PrintStatementPlain.printArguments', 'a built PrintArguments')
 	);
-	const listView = ownerView(_print_arguments, '_argument');
+	const listView = ownerView(_print_arguments, '_item');
 	if (listView.stored === undefined) refuseReadStub('_print_arguments');
 	const handle = currentHandle();
 	const node = {
@@ -5712,7 +5712,7 @@ function _buildPrintStatementPlain(value: Admit<T.PrintArguments>): T.PrintState
 		printArguments: () => hydrateStoredSlot(node, '_print_arguments'),
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.printArguments(), 'arguments'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.printArguments(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,

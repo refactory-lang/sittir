@@ -127,8 +127,10 @@ pub const SEAM_CASCADE: u8 = 1;
 pub const SEAM_DECLARED: u8 = 2;
 pub const SEAM_TRIVIA: u8 = 3;
 
+/// The rank of a seam's text: empty 2, no break 1, otherwise 2 plus the number
+/// of logical breaks (`\r\n` counts once).
 pub fn seam_rank(text: &str) -> SeamRank {
-    match text.matches('\n').count() {
+    match crate::line_endings::logical_breaks(text) {
         0 if text.is_empty() => 2,
         0 => 1,
         breaks => 2 + breaks,
@@ -170,6 +172,7 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     sources: Option<&'a dyn crate::render::SourceTable>,
     options: Option<&'a crate::options::ResolvedOptions>,
     deferring: Option<String>,
+    swallow_cr: bool,
     deferred: Vec<DeferredRun>,
     line_end_held: Option<crate::render::LineHold>,
     leaf_trailing: Option<u8>,
@@ -241,6 +244,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             sources: None,
             options: None,
             deferring: None,
+            swallow_cr: false,
             deferred: Vec::new(),
             line_end_held: None,
             leaf_trailing: None,
@@ -741,11 +745,17 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
 
 impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_, W> {
     fn text(&mut self, s: &str) -> crate::render::RenderResult {
+        let s = crate::line_endings::to_internal(if self.swallow_cr { crate::line_endings::without_swallowed_cr(s) } else { s });
+        let s = s.as_ref();
         self.write_chunk(s)?;
         if !s.is_empty() {
             self.end_leaf();
         }
         Ok(())
+    }
+
+    fn swallow_cr(&mut self, on: bool) -> bool {
+        std::mem::replace(&mut self.swallow_cr, on)
     }
 
     fn leaf_kind(&mut self, kind: crate::types::KindId) {
@@ -833,6 +843,8 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     }
 
     fn trivia_seam(&mut self, gap: LayoutKinds, text: Option<&str>) {
+        let text = text.map(crate::line_endings::to_internal);
+        let text = text.as_deref();
         let continues = self.seam.is_some() && self.seam_strength == SEAM_TRIVIA && gap == LayoutKinds::LINE_CONTINUATION;
         if continues {
             let held = self.payload_text(&self.held_payload()).into_owned();
@@ -876,7 +888,13 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
                 handle: coord.handle(),
                 tree_id: coord.tree,
             })?;
-        let text = self.reindented(coord, coord.resolve(sources)?, sources);
+        let raw = coord.resolve(sources)?;
+        let swallowed = sources
+            .source_of(coord.tree)
+            .is_some_and(|source| source.as_bytes().get(coord.span.end as usize) == Some(&b'\n'));
+        let raw = if swallowed { crate::line_endings::without_swallowed_cr(raw) } else { raw };
+        let reindented = self.reindented(coord, raw, sources);
+        let text = crate::line_endings::to_internal(&reindented);
         let text = text.as_ref();
         let token = crate::render::RenderSink::kind_of(self, coord)
             .is_some_and(|kind| crate::render::RenderSink::kind_has(self, kind, crate::options::KIND_ANON));
@@ -1589,6 +1607,47 @@ mod sink_tests {
                 w.text("if").unwrap();
             }),
             "(d if"
+        );
+    }
+
+    #[test]
+    fn source_text_enters_the_writer_with_one_break_spelling() {
+        assert_eq!(run(|w| w.text("a\r\nb\rc").unwrap()), "a\nb\nc");
+        let indented = |body: &'static str| {
+            run(move |w| {
+                w.text("if a:").unwrap();
+                w.indent();
+                w.seam(crate::layout_kinds::LayoutKinds::NEWLINE);
+                w.text(body).unwrap();
+                w.dedent(crate::layout_kinds::LayoutKinds::NEWLINE);
+            })
+        };
+        assert_eq!(indented("x\r\ny"), indented("x\ny"));
+        assert_eq!(indented("x\ry"), indented("x\ny"));
+    }
+
+    #[test]
+    fn only_a_line_terminated_kinds_text_drops_a_carriage_return_that_ends_it() {
+        assert_eq!(run(|w| w.text("x\r").unwrap()), "x\n");
+        assert_eq!(
+            run(|w| {
+                let outer = w.swallow_cr(true);
+                w.text("# note\r").unwrap();
+                w.swallow_cr(outer);
+            }),
+            "# note"
+        );
+    }
+
+    #[test]
+    fn a_line_continuation_keeps_one_break_spelling() {
+        assert_eq!(
+            run(|w| {
+                w.text("a").unwrap();
+                w.trivia_seam(crate::layout_kinds::LayoutKinds::LINE_CONTINUATION, Some("\\\r\n"));
+                w.text("b").unwrap();
+            }),
+            "a\\\nb"
         );
     }
 

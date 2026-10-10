@@ -16,6 +16,7 @@ pub mod error_read;
 pub mod format;
 pub mod layout;
 pub mod layout_kinds;
+pub mod line_endings;
 #[cfg(feature = "napi-bindings")]
 pub mod napi_engine;
 pub mod options;

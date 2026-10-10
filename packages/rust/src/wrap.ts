@@ -6423,8 +6423,8 @@ export function wrapImplItemBody(data: T.ImplItemBody, tree: TreeHandle): T.Impl
 		whereClause() {
 			return hydrateSlot<T.WhereClause | undefined>(this, '_where_clause', tree);
 		},
-		declarationList() {
-			return hydrateSlot<T.DeclarationList>(this, '_declaration_list', tree);
+		body() {
+			return hydrateSlot<T.DeclarationList>(this, '_body', tree);
 		},
 		$with: {
 			unsafe: (v: NonNullable<T.ImplItemBody['_unsafe']>) =>
@@ -6456,8 +6456,8 @@ export function wrapImplItemBody(data: T.ImplItemBody, tree: TreeHandle): T.Impl
 							wrapImplItemBody({ ...$edited(data), _where_clause: v }, tree)
 					)
 				),
-			declarationList: (v: NonNullable<T.ImplItemBody['_declaration_list']>) =>
-				rebuilt(node, handle, () => wrapImplItemBody({ ...$edited(data), _declaration_list: v }, tree))
+			body: (v: NonNullable<T.ImplItemBody['_body']>) =>
+				rebuilt(node, handle, () => wrapImplItemBody({ ...$edited(data), _body: v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		$trivia: {

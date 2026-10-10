@@ -1,7 +1,6 @@
 import { withHoistedAnnotation } from '../annotations.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import type { AnyRule } from '../../types/rule.ts';
-import { typeEq } from '../../types/runtime-shapes.ts';
 import { RuleWalker } from '../rule-walker.ts';
 import { transform as transformFn } from '../transform/transform.ts';
 import { isPreference, type PreferencePlaceholder } from '../primitives/preference.ts';
@@ -26,7 +25,7 @@ import {
 import { parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
 import { assertNoRenamedExternal, liftRenames, resolveLiftNames, type LiftName } from './lift-names.ts';
-import { rulesEqual, type SymbolSource } from '../rule-patterns.ts';
+import { isComplexBody, onlyAliasedSymbols, rulesEqual, type SymbolSource } from '../rule-patterns.ts';
 import { predictedSymbolSourceOf } from '../symbol-table.ts';
 import { getEnrichElementSupertypes, getEnrichFieldBackings, getEnrichHiddenSubsequences, getEnrichMints, getEnrichTextTokens, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, type AuthoredFieldSite, type GrammarResult } from '../enrich.ts';
 import type { WhitespaceCollision } from '../whitespace.ts';
@@ -1153,7 +1152,7 @@ function declaredPatterns(groups: GroupsConfig | undefined, injects: GroupsConfi
 		} catch (e) {
 			throw new Error(`${section}['${key}']: failed to evaluate body fn: ${(e as Error).message}`);
 		}
-		if (!isComplexBodyRt(body)) {
+		if (!isComplexBody(body)) {
 			throw new Error(
 				`${section}['${key}']: body is not a complex structural pattern (need SEQ ≥2, CHOICE ≥2, or REPEAT with non-trivial content)`
 			);
@@ -1173,20 +1172,6 @@ export function makeSimpleDollarProxy(): Record<string, RuntimeRule> {
 			return symbol;
 		}
 	});
-}
-
-function isComplexBodyRt(rule: RuntimeRule): boolean {
-	const r = rule as { type: string; members?: unknown[]; content?: unknown };
-	const t = r.type;
-	if (typeEq(t, 'SEQ') || typeEq(t, 'CHOICE')) {
-		return Array.isArray(r.members) && r.members.length >= 2;
-	}
-	if (typeEq(t, 'REPEAT') || typeEq(t, 'REPEAT1')) {
-		const c = r.content as { type?: string } | undefined;
-		if (!c || typeof c.type !== 'string') return false;
-		return !typeEq(c.type, 'STRING') && !typeEq(c.type, 'SYMBOL') && !typeEq(c.type, 'PATTERN');
-	}
-	return false;
 }
 
 function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidate[], automatic: () => AutomaticVariants): unknown {
@@ -1228,13 +1213,6 @@ function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidat
 		return newContent !== r.content ? { ...r, content: newContent } : rule;
 	}
 	return rule;
-}
-
-function buildPatternReplacingFn(fn: RuleFn, candidates: readonly WirePatternCandidate[], automatic: () => AutomaticVariants): RuleFn {
-	return function patternReplacingRuleFn($, previous) {
-		const result = fn($, previous);
-		return replaceInBodyRt(result, candidates, automatic);
-	};
 }
 
 function withStringGlobalShim<T>(fn: () => T): T {
@@ -1347,38 +1325,44 @@ export function applyWirePatternReplacement(
 	context: WireContext,
 	injects?: GroupsConfig
 ): void {
-	const candidates: WirePatternCandidate[] = [];
-	const $ = makeSimpleDollarProxy();
-
-	for (const name of authoredRuleNames) {
-		if (!name.startsWith('_')) continue;
-		const fn = rules[name];
-		if (!fn) continue;
-		let body: RuntimeRule;
-		try {
-			const result = fn.call(undefined, $, undefined);
-			if (!result || typeof result !== 'object' || typeof (result as { type?: unknown }).type !== 'string') continue;
-			body = result as RuntimeRule;
-		} catch {
-			continue;
-		}
-		if (!isComplexBodyRt(body)) continue;
-		candidates.push({ name, body });
-	}
-
+	const declared: WirePatternCandidate[] = [];
 	for (const { section, key, value, body } of declaredPatterns(groups, injects)) {
 		const hiddenName = declaredGroupMintName(key);
 		const hidden = hiddenName === key;
-		candidates.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key });
+		declared.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key });
 		const registered = wrapOneRuleFn(hiddenName, value, context);
 		rules[hiddenName] = section === 'groups' ? stampHoistedFn(registered) : registered;
 	}
 
-	if (candidates.length === 0) return;
-
-	const candidateNames = new Set(candidates.map((c) => c.name));
-	for (const [name, fn] of Object.entries(rules)) {
-		if (candidateNames.has(name)) continue;
-		rules[name] = buildPatternReplacingFn(fn, candidates, () => context.automaticVariants);
+	const originals = new Map(Object.entries(rules));
+	const authored = [...authoredRuleNames].filter((name) => originals.has(name));
+	const evaluationOrder = [...authored.filter((name) => name.startsWith('_')), ...authored.filter((name) => !name.startsWith('_'))];
+	const declaredNames = new Set(declared.map((c) => c.name));
+	const bodies = new Map<string, unknown>();
+	let folding: { readonly names: ReadonlySet<string>; readonly candidates: readonly WirePatternCandidate[] } | undefined;
+	const fold = (runtime$: Parameters<RuleFn>[0]): NonNullable<typeof folding> => {
+		if (folding === undefined) {
+			const detected: WirePatternCandidate[] = [];
+			for (const name of evaluationOrder) {
+				const body = originals.get(name)!(runtime$, context.baseRuleBodies[name]);
+				bodies.set(name, body);
+				if (name.startsWith('_') && !declaredNames.has(name) && isComplexBody(body as RuntimeRule)) detected.push({ name, body: body as RuntimeRule });
+			}
+			const all = [...detected, ...declared];
+			const aliasOnly = onlyAliasedSymbols([...bodies.values(), ...declared.map((c) => c.body)]);
+			folding = {
+				names: new Set(all.map((c) => c.name)),
+				candidates: all.filter((c) => c.aliasAs !== undefined || !aliasOnly.has(c.name))
+			};
+		}
+		return folding;
+	};
+	for (const [name, fn] of originals) {
+		if (declaredNames.has(name)) continue;
+		rules[name] = function patternReplacingRuleFn($, previous) {
+			const { names, candidates } = fold($);
+			const body = bodies.has(name) ? bodies.get(name) : fn($, previous);
+			return names.has(name) ? body : replaceInBodyRt(body, candidates, () => context.automaticVariants);
+		};
 	}
 }

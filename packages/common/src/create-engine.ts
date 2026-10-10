@@ -263,7 +263,7 @@ function assembleEngine<API extends LanguageAPI>(
 			}
 			const call: Parameters<NonNullable<Interceptor<API>['render']>>[0] = {
 				node: target,
-				options: { ...options?.render, ...renderOptions }
+				options: mergeRenderOptions(options?.render, renderOptions)
 			};
 			return interceptedRender(call, renderChain, rendered, () => materializeNative(target, rendered));
 		},
@@ -284,6 +284,16 @@ function assembleEngine<API extends LanguageAPI>(
 	};
 	handle.current = engine;
 	return Object.freeze(engine);
+}
+
+function mergeRenderOptions<O extends object>(engine: O | undefined, call: O | undefined): O {
+	const merged: Record<string, unknown> = { ...engine, ...call };
+	const layouts = [engine, call].flatMap((options) => {
+		const layout = (options as { readonly layout?: unknown } | undefined)?.layout;
+		return typeof layout === 'object' && layout !== null ? [layout] : [];
+	});
+	if (layouts.length > 0) merged['layout'] = Object.assign({}, ...layouts);
+	return merged as O;
 }
 
 export async function createEngine<API extends LanguageAPI, const R extends API['options'] = API['options']>(

@@ -1,0 +1,1 @@
+{"label": "unbound", "STATE_COUNT": 2319, "LARGE_STATE_COUNT": 328, "SYMBOL_COUNT": 335, "ALIAS_COUNT": 5, "TOKEN_COUNT": 127, "FIELD_COUNT": 65, "PRODUCTION_ID_COUNT": 177, "MAX_ALIAS_SEQUENCE_LENGTH": 9, "parser_c_bytes": 3220417, "node_types_named": 202, "present": ["suite_block"], "rules": 215, "rule_names_watch": ["suite_block"]}

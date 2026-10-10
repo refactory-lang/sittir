@@ -7269,7 +7269,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "argument",
+          "name": "item",
           "content": {
             "type": "SYMBOL",
             "name": "expression"
@@ -7289,7 +7289,7 @@
               },
               {
                 "type": "FIELD",
-                "name": "argument",
+                "name": "item",
                 "content": {
                   "type": "SYMBOL",
                   "name": "expression"
@@ -7329,7 +7329,7 @@
               },
               {
                 "type": "FIELD",
-                "name": "argument",
+                "name": "item",
                 "content": {
                   "type": "SYMBOL",
                   "name": "expression"
@@ -8941,12 +8941,12 @@
     "_left_hand_side",
     "keyword_identifier",
     "_except_clause_exception_as_optional1",
-    "_kw_sign",
     "_raise_statement_optional1",
     "_function_definition_optional1",
     "_exec_statement_optional1",
     "_kw_async",
     "_augmented_assignment_operator",
+    "_kw_sign",
     "_kw_comma",
     "_kw_debug"
   ],

@@ -4399,6 +4399,14 @@ A leaf's `LeafEdges`, or nothing when both edges take every gap kind the grammar
 
 The characters a render's `indent` unit may be made of: the literal texts of the `INDENT_MEMBERS` (`_space`, `_tab`) the grammar's `_layout` supertype lists, in that order. rust, typescript, python and scm give `' '` and `'\t'`; regex, which admits neither, gives none and has no `indent` option. A node map with no `_layout` supertype (`declaresWhitespace`) admits no member, so none either. The one fact behind the `IndentChar` type in `options.ts` (`renderOptionsModule`) and the runtime's `OptionTables.indent_chars` (`planRenderOptions`), so the type and the runtime check cannot disagree.
 
+### `packages/codegen/src/compiler/model/layout-kinds.ts::newlineArms`
+
+The spellings of one line break a render may take: `NEWLINE_ARMS` when the grammar's `_layout` supertype lists `_newline`, none otherwise (a node map with no `_layout` supertype admits no member, so none either; regex lists `_newline` and so has the option, though it has no `layout.indent`). The one fact behind the `LineEnding` type in `options.ts` and the runtime's `OptionTables.newline_arms`, so the type and the runtime check cannot disagree.
+
+### `packages/codegen/src/compiler/model/layout-kinds.ts::PREFERRED_NEWLINE`
+
+The line ending a render spells breaks with when none is set: `_newline`'s canonical text, the preferred arm of its choice. The generated `defaults()` takes it from here.
+
 ### `packages/codegen/src/compiler/model/layout-kinds.ts::indentUnitOf`
 
 The grammar's declared render indent unit, checked against `indentChars`. A grammar with indent characters must declare `indent` in its `options:` block, and a missing declaration throws naming the grammar; the unit must be non-empty and made only of those characters. A grammar with none (regex) must not declare one, and gets the empty unit. The unit is the one source of the render default: `renderOptionsRs` emits it into `defaults()`, and the runtime's format extractor compares parsed sources against it.

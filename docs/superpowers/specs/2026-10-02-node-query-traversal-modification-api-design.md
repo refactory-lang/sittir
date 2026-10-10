@@ -186,7 +186,7 @@ The recorder is a mapped type over the node type's slot accessors. After `ofType
 
 ### 7.2 Compile target: parser terms
 
-`where` compiles on the client into a plan of parser terms. Each leaf is `{ op, fields, kinds, text | pattern }`, from `wireRoutesOf`: a slot with a parser field routes by that field, and otherwise by the kinds it holds. The native evaluator matches a child when its field is in `fields`, or when it has no field and its kind is in `kinds`. Native code has no slot knowledge: `child_slot` and `wire_slot` are not part of the evaluator, and the reader's own routing is unchanged. There is one native evaluator, and the JavaScript evaluator is kept only as the test oracle.
+`where` compiles on the client into a plan of parser terms. Each leaf is `{ op, fields, kinds, text | pattern }`, from `wireRoutesOf`: a slot with a parser field routes by that field, and otherwise by the kinds it holds. The native evaluator matches a child when its field is in `fields`, or when it has no field and its kind is in `kinds`. A leaf of the `is` op tests the matched child's kind in place of its text (one-query-evaluator spec §1). Native code has no slot knowledge: `child_slot` and `wire_slot` are not part of the evaluator, and the reader's own routing is unchanged. There is one native evaluator, and the JavaScript evaluator is kept only as the test oracle.
 
 This replaces a plan that named model slots (`{ op: 'eq', slot: 'return_type', text: 'int' }`) and found a slot's values through the reader's `child_slot`. A tree-sitter query string is not used: sittir has no native query runner (`find_and_read` is a stub).
 

@@ -9857,7 +9857,7 @@ export interface ImplItemBody {
 	readonly _trait_clause?: ImplItemPositiveClause | ImplItemNegativeClause;
 	readonly _type: Type;
 	readonly _where_clause?: WhereClause;
-	readonly _declaration_list: DeclarationList;
+	readonly _body: DeclarationList;
 	readonly __inputHints__?: {
 		readonly unsafe?: BaseBooleanKeyword<'unsafe'>;
 		readonly type:
@@ -9905,7 +9905,7 @@ export interface ImplItemBody {
 		readonly unsafe?: 'unsafe' | 'unsafe';
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
-		readonly declaration_list: readonly DeclarationStatement[];
+		readonly body: readonly DeclarationStatement[];
 	};
 	readonly __slotHints__?: {
 		readonly unsafe: SlotHint<NonNullable<T.ImplItemBody.Config>['unsafe'], true>;
@@ -9913,7 +9913,7 @@ export interface ImplItemBody {
 		readonly traitClause: SlotHint<T.ImplItemPositiveClause | T.ImplItemNegativeClause, true>;
 		readonly type: SlotHint<NonNullable<T.ImplItemBody.Config>['type']>;
 		readonly whereClause: SlotHint<T.WhereClause, true>;
-		readonly declarationList: SlotHint<T.DeclarationList>;
+		readonly body: SlotHint<T.DeclarationList>;
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<
 				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
@@ -9928,7 +9928,7 @@ export interface ImplItemBody {
 	traitClause(): ImplItemPositiveClause | ImplItemNegativeClause | undefined;
 	type(): Type;
 	whereClause(): WhereClause | undefined;
-	declarationList(): DeclarationList;
+	body(): DeclarationList;
 }
 
 export interface ImplItemSemi {
