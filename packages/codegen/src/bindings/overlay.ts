@@ -2,6 +2,7 @@ import { childFields, fieldRenameGrammar, fieldRenameIssue, fieldWrapGrammar, fi
 import type { RawGrammar } from '../compiler/types.ts';
 import type { GrammarName } from '../grammars.ts';
 import { type BindingFacts, type MemberFact, type RefinedClaim, WILDCARD, refineClaims } from './facts.ts';
+import type { MemberRoute } from './routes.ts';
 
 export type OverlayEdit = { readonly field: string } | { readonly alias: { readonly from: string; readonly to: string } };
 
@@ -39,6 +40,7 @@ export interface OverlayInput {
 	readonly facts: BindingFacts;
 	readonly base: RawGrammar;
 	readonly vocabMembers: ReadonlyMap<string, ReadonlySet<string>>;
+	readonly routedMembers: ReadonlyMap<string, readonly MemberRoute[]>;
 }
 
 const NAME_OVERRIDES: Readonly<Record<string, Readonly<Record<string, string>>>> = {};
@@ -89,22 +91,21 @@ const targetKey = (r: FieldRequest): string =>
 	'from' in r ? `${r.owner}\u0000field:${r.from}` : `${r.owner}\u0000${'token' in r.target ? `token:${r.target.token}` : `symbol:${r.target.symbol}`}`;
 const fieldKey = (r: FieldRequest): string => `${r.owner}\u0000${'from' in r ? r.to : r.field}`;
 
-function sameShapeAs(kinds: readonly string[], members: readonly MemberFact[]): readonly string[] {
+function sameShapeAs(kinds: readonly string[], members: readonly MemberFact[], routed: ReadonlyMap<string, readonly MemberRoute[]>): readonly string[] {
 	const readAsKind = new Set(members.flatMap((m) => (m.route === 'kind' ? [m.kind] : m.route === 'self' ? [m.owner] : [])));
-	const captured = (kind: string): string =>
-		members
-			.filter((m) => m.owner === kind)
+	const supplied = (kind: string): string =>
+		(routed.get(kind) ?? [])
 			.map((m) => m.name)
 			.sort()
 			.join('\0');
 	const [first, ...rest] = kinds;
 	if (first === undefined) return [];
-	const same = (kind: string): boolean => !readAsKind.has(first) && !readAsKind.has(kind) && captured(kind) === captured(first);
+	const same = (kind: string): boolean => !readAsKind.has(first) && !readAsKind.has(kind) && supplied(kind) === supplied(first);
 	return [first, ...rest.filter(same)];
 }
 
 export function deriveOverlay(input: OverlayInput): { overlay: BindingsOverlay; report: OverlayReport } {
-	const { grammar, facts, base, vocabMembers } = input;
+	const { grammar, facts, base, vocabMembers, routedMembers } = input;
 	const rules = base.rules as Record<string, unknown>;
 	const ruleNames = new Set(Object.keys(rules));
 	const residue: OverlayResidue[] = [];
@@ -117,7 +118,7 @@ export function deriveOverlay(input: OverlayInput): { overlay: BindingsOverlay; 
 	for (const c of claims) if (c.refinement === null && c.kind !== null && c.kind !== WILDCARD && c.toplevel && !placed(c) && !naming.has(c.kind)) naming.set(c.kind, c);
 	const kindsOfPath = new Map<string, Set<string>>();
 	for (const [kind, c] of naming) (kindsOfPath.get(c.vocab) ?? kindsOfPath.set(c.vocab, new Set()).get(c.vocab)!).add(kind);
-	const mergedOfPath = new Map([...kindsOfPath].map(([path, kinds]) => [path, sameShapeAs([...kinds], facts.members)]));
+	const mergedOfPath = new Map([...kindsOfPath].map(([path, kinds]) => [path, sameShapeAs([...kinds], facts.members, routedMembers)]));
 
 	const renames: Record<string, string> = {};
 	const aliases: Record<string, string> = {};

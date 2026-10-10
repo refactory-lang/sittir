@@ -37,11 +37,12 @@ export interface CompileGrammarConfig {
 	readonly include?: IncludeFilter;
 	readonly generatedIdTables?: GeneratedIdTables;
 	readonly allowDiagnostics?: ReadonlySet<string>;
+	readonly unbound?: boolean;
 }
 
 export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compilation> {
 	const grammar = cfg.package.name;
-	const evaluated = await evaluatePackage(cfg.package);
+	const evaluated = await evaluatePackage(cfg.package, { unbound: cfg.unbound });
 	const diagnosis = diagnoseGrammar({
 		grammar,
 		evaluated,
@@ -50,7 +51,7 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 		allowDiagnostics: cfg.allowDiagnostics
 	});
 	if (!diagnosis.passed) throw new GrammarDiagnosticError(diagnosis.blocked, diagnosis.grammarDiagnostics);
-	assertBindingsFresh(grammar, (await loadBindingsModule(cfg.package.dir))?.hash, join(cfg.package.dir, 'bindings.scm'));
+	if (cfg.unbound !== true) assertBindingsFresh(grammar, (await loadBindingsModule(cfg.package.dir))?.hash, join(cfg.package.dir, 'bindings.scm'));
 	const { stages, grammarDiagnostics, diagnosticRecords } = diagnosis;
 	const { raw, linked, normalized, nodeMap, compilerDiagnostics, slotGroupingDiagnostics } = diagnosis.collected;
 

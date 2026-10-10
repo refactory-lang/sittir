@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { evaluateSittirGrammar } from '../../compiler/__tests__/_sittir-grammar.ts';
 import type { RawGrammar } from '../../compiler/types.ts';
-import { type BindingFacts, type ClaimFact, deriveOverlay, loadBindingsModule, printBindingsModule } from '../index.ts';
+import { type BindingFacts, type ClaimFact, type MemberRoute, deriveOverlay, loadBindingsModule, printBindingsModule } from '../index.ts';
 
 const claim = (vocab: string, kind: string, extra: Partial<ClaimFact> = {}): ClaimFact => ({
 	vocab,
@@ -30,6 +30,8 @@ const FACTS: BindingFacts = {
 	templates: [],
 	unclaimed: []
 };
+const named = (...names: string[]): MemberRoute[] => names.map((name) => ({ route: 'self', name, path: [] }));
+const NO_MEMBERS: ReadonlyMap<string, readonly MemberRoute[]> = new Map();
 const VOCABULARY = new Map([
 	['declaration.variable', new Set(['name'])],
 	['expression.call', new Set<string>()]
@@ -62,17 +64,17 @@ afterAll(() => rmSync(dir, { recursive: true, force: true }));
 
 describe('deriveOverlay', () => {
 	it('renames each plain claimed kind to its path\'s bound name, subkind first', () => {
-		const { overlay } = deriveOverlay({ grammar: 'bindtest', facts: FACTS, base, vocabMembers: VOCABULARY });
+		const { overlay } = deriveOverlay({ grammar: 'bindtest', facts: FACTS, base, vocabMembers: VOCABULARY, routedMembers: NO_MEMBERS });
 		expect(overlay.renames).toEqual({ let_item: 'variable_declaration', call: 'call_expression' });
 	});
 
 	it('patches a member routed to a field of another name into a field of the member\'s name', () => {
-		const { overlay } = deriveOverlay({ grammar: 'bindtest', facts: FACTS, base, vocabMembers: VOCABULARY });
+		const { overlay } = deriveOverlay({ grammar: 'bindtest', facts: FACTS, base, vocabMembers: VOCABULARY, routedMembers: NO_MEMBERS });
 		expect(overlay.patches).toEqual(new Map([['let_item', [[{ path: '1', edit: { field: 'name' } }]]]]));
 	});
 
 	it('leaves each claim it does not turn into a grammar change in the residue, with the reason', () => {
-		const { report } = deriveOverlay({ grammar: 'bindtest', facts: FACTS, base, vocabMembers: VOCABULARY });
+		const { report } = deriveOverlay({ grammar: 'bindtest', facts: FACTS, base, vocabMembers: VOCABULARY, routedMembers: NO_MEMBERS });
 		expect(report.residue).toEqual([
 			{ cause: 'token refinement', row: 'call → expression.call.method' },
 			{ cause: 'not a base rule', row: 'nope → type.named' }
@@ -85,7 +87,7 @@ describe('deriveOverlay', () => {
 			claims: [claim('expression.call', 'call'), claim('expression.invocation', 'call')],
 			members: [{ route: 'rename', owner: 'call', name: 'callee', field: null, kind: 'identifier', after: null }]
 		};
-		const { overlay, report } = deriveOverlay({ grammar: 'bindtest', facts, base, vocabMembers: VOCABULARY });
+		const { overlay, report } = deriveOverlay({ grammar: 'bindtest', facts, base, vocabMembers: VOCABULARY, routedMembers: NO_MEMBERS });
 		expect(overlay.renames).toEqual({ call: 'call_expression' });
 		expect(report.residue).toEqual([
 			{ cause: 'kind named by an earlier claim', row: 'call → expression.invocation' },
@@ -100,29 +102,36 @@ describe('deriveOverlay', () => {
 			members
 		});
 		const vocab = new Map([['expression.call', new Set(['name', 'callee', 'private', 'key'])]]);
+		const routed = (call: readonly string[], letItem: readonly string[]): ReadonlyMap<string, readonly MemberRoute[]> =>
+			new Map([
+				['call', named(...call)],
+				['let_item', named(...letItem)]
+			]);
+		const derive = (facts: BindingFacts, routedMembers: ReadonlyMap<string, readonly MemberRoute[]>) =>
+			deriveOverlay({ grammar: 'bindtest', facts, base, vocabMembers: vocab, routedMembers });
 
-		it('aliases both to the path\'s name when nothing about their shape tells them apart', () => {
-			const { report } = deriveOverlay({ grammar: 'bindtest', facts: sharing([]), base, vocabMembers: vocab });
+		it('aliases both to the path\'s name when they supply the same members, as a form restricted to a context does', () => {
+			const { report } = derive(sharing([]), routed(['parameters', 'body'], ['body', 'parameters']));
 			expect(report.aliases).toEqual({ call: 'call_expression', let_item: 'call_expression' });
+		});
+
+		it('keeps the further kind apart when it supplies a member the first does not, captured or not', () => {
+			const { overlay, report } = derive(sharing([]), routed(['name', 'value'], ['name', 'type', 'value']));
+			expect(report.aliases).toEqual({});
+			expect(overlay.renames).toEqual({ call: 'call_expression' });
+			expect(report.residue).toContainEqual({ cause: 'kind kept apart by its shape', row: 'let_item → expression.call' });
 		});
 
 		it('keeps the further kind apart when a flag reads it', () => {
 			const facts = sharing([{ route: 'kind', owner: 'call', name: 'private', member: 'callee', kind: 'let_item' }]);
-			const { overlay, report } = deriveOverlay({ grammar: 'bindtest', facts, base, vocabMembers: vocab });
+			const { overlay, report } = derive(facts, routed([], []));
 			expect(report.aliases).toEqual({});
 			expect(overlay.renames).toEqual({ call: 'call_expression' });
 			expect(report.residue).toContainEqual({ cause: 'kind kept apart by its shape', row: 'let_item → expression.call' });
 		});
 
 		it('keeps the further kind apart when it is a self route', () => {
-			const { overlay, report } = deriveOverlay({ grammar: 'bindtest', facts: sharing([{ route: 'self', owner: 'let_item', name: 'key' }]), base, vocabMembers: vocab });
-			expect(report.aliases).toEqual({});
-			expect(overlay.renames).toEqual({ call: 'call_expression' });
-		});
-
-		it('keeps the further kind apart when their captured members differ', () => {
-			const facts = sharing([{ route: 'rename', owner: 'let_item', name: 'name', field: 'left', kind: null, after: null }]);
-			const { overlay, report } = deriveOverlay({ grammar: 'bindtest', facts, base, vocabMembers: vocab });
+			const { overlay, report } = derive(sharing([{ route: 'self', owner: 'let_item', name: 'key' }]), routed([], []));
 			expect(report.aliases).toEqual({});
 			expect(overlay.renames).toEqual({ call: 'call_expression' });
 		});
@@ -132,14 +141,15 @@ describe('deriveOverlay', () => {
 				{ route: 'kind', owner: 'call', name: 'private', member: 'callee', kind: 'let_item' },
 				{ route: 'self', owner: 'let_item', name: 'key' }
 			]);
-			const { overlay, report } = deriveOverlay({ grammar: 'bindtest', facts, base, vocabMembers: vocab });
+			const { overlay, report } = derive(facts, routed([], []));
 			expect(overlay.patches.size).toBe(0);
 			expect(report.residue.filter((r) => r.row === 'call.private' || r.row === 'let_item.key')).toEqual([]);
 		});
 	});
 
+
 	it('leaves a member its vocabulary kind does not declare in the residue', () => {
-		const { overlay, report } = deriveOverlay({ grammar: 'bindtest', facts: FACTS, base, vocabMembers: new Map([['declaration.variable', new Set<string>()]]) });
+		const { overlay, report } = deriveOverlay({ grammar: 'bindtest', facts: FACTS, base, vocabMembers: new Map([['declaration.variable', new Set<string>()]]), routedMembers: NO_MEMBERS });
 		expect(overlay.patches.size).toBe(0);
 		expect(report.residue).toContainEqual({ cause: 'member not in the vocabulary', row: 'let_item.name' });
 	});
@@ -147,7 +157,7 @@ describe('deriveOverlay', () => {
 
 describe('printBindingsModule', () => {
 	it('prints the overlay with the hash of the sources it was derived from, and nothing else', () => {
-		const { overlay } = deriveOverlay({ grammar: 'bindtest', facts: FACTS, base, vocabMembers: VOCABULARY });
+		const { overlay } = deriveOverlay({ grammar: 'bindtest', facts: FACTS, base, vocabMembers: VOCABULARY, routedMembers: NO_MEMBERS });
 		const text = printBindingsModule(overlay, 'h');
 		expect(text).toContain('export default bindings({\n\thash: "h",');
 		expect(text).toContain('rename("let_item", "variable_declaration")');

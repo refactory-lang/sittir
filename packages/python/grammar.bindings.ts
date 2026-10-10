@@ -6,7 +6,6 @@ export default bindings({
 	hash: "cef50792a54baa4a9ee2782935182f157011ed993398ec594fcd209fadad85e4",
 	patches: {
 		_expression_within_for_in_clause: { "-1": alias(sym("lambda_within_for_in_clause"), sym("lambda_expression")) },
-		assignment: { "-3": alias(sym("assignment_eq"), sym("variable_declaration")), "-1": alias(sym("assignment_typed"), sym("variable_declaration")) },
 		assignment_eq: { "0": field("name"), "1/1": field("value") },
 		assignment_type: { "0": field("name") },
 		assignment_typed: { "0": field("name"), "1/3": field("value") },
@@ -36,6 +35,7 @@ export default bindings({
 		rename("default_parameter", "default_parameter_declaration"),
 		rename("typed_default_parameter", "typed_default_parameter_declaration"),
 		rename("type_parameter", "type_parameter_declaration"),
+		rename("assignment_eq", "variable_declaration"),
 		rename("type_alias_statement", "type_alias_declaration"),
 		rename("block", "block_statement"),
 		rename("for_statement", "for_loop_statement"),

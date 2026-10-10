@@ -1633,6 +1633,8 @@ caller resolves it once. Hydrate then runs on the collected grammar with
 After the gate it refuses a stale bindings overlay (`bindings/hash.ts::assertBindingsFresh`
 over the package's committed `grammar.bindings.ts` and its `bindings.scm`), so
 codegen never runs with an overlay derived from other sources than the ones on disk.
+With `unbound` it evaluates the package without its overlay and skips that check: the
+base grammar's compilation, whose model the overlay is derived against.
 
 ### `packages/codegen/src/compiler/compile.ts::diagnoseGrammar`
 

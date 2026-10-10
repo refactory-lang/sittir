@@ -66,7 +66,8 @@ const MODULES = {
 	templates: '../../codegen/src/emitters/templates.ts',
 	from: '../../codegen/src/emitters/from.ts',
 	sitePreferences: '../../codegen/src/compiler/model/site-preferences.ts',
-	bind: '../../codegen/src/dsl/bind.ts'
+	bind: '../../codegen/src/dsl/bind.ts',
+	nodeModel: '../../codegen/src/emitters/node-model.ts'
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -109,6 +110,7 @@ export interface CodegenSurface {
 	from: typeof import('../../codegen/src/emitters/from.ts');
 	sitePreferences: typeof import('../../codegen/src/compiler/model/site-preferences.ts');
 	bind: typeof import('../../codegen/src/dsl/bind.ts');
+	nodeModel: typeof import('../../codegen/src/emitters/node-model.ts');
 }
 
 type AnyFn = (...args: never[]) => unknown;
@@ -203,11 +205,12 @@ export async function buildNodeMap(grammar: string): Promise<AssembledNodeMap> {
 	return compileNodeMap(grammar);
 }
 
-export async function compileNodeMap(grammar: string): Promise<AssembledNodeMap> {
+export async function compileNodeMap(grammar: string, options: { readonly unbound?: boolean } = {}): Promise<AssembledNodeMap> {
 	const { compileGrammar } = await load('compile');
 	const { nodeMap } = await compileGrammar({
 		package: await invoke('grammars', 'grammarPackage', grammar),
-		generatedIdTables: await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar)
+		generatedIdTables: options.unbound === true ? undefined : await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar),
+		unbound: options.unbound
 	});
 	return nodeMap;
 }

@@ -213,7 +213,7 @@ What the derivation realized and left: the claim and member totals, the aliases,
 
 ### `packages/codegen/src/bindings/overlay.ts::OverlayInput`
 
-The derivation's inputs: the grammar's name, its binding facts in base names, its grammar evaluated without the overlay, and each vocabulary path's members, the ones its interface declares and the ones it inherits (a member an interface inherits is its member).
+The derivation's inputs: the grammar's name, its binding facts in base names, its grammar evaluated without the overlay, each vocabulary path's members, the ones its interface declares and the ones it inherits (a member an interface inherits is its member), and each claimed kind's member routes as `resolveRoutes` gives them over the model of the grammar compiled without the overlay (`routedMembers`).
 
 ### `packages/codegen/src/bindings/overlay.ts::NAME_OVERRIDES`
 
@@ -290,7 +290,7 @@ Everything not turned into a grammar change is residue, with its cause.
 
 ### `packages/codegen/src/bindings/overlay.ts::sameShapeAs`
 
-The kinds one path names that the overlay may merge under the path's name: the path's first kind and every further kind with the same captured member names, where neither is read as a kind (a flag's kind or a self route's owner). It is the other face of injectivity: two kinds share a vocabulary leaf only where a holder's flag or a member's absence tells them apart, and a kind told apart that way keeps its own grammar kind so the reader and the builder can tell it. Containment is no distinction: a container member admitting both kinds does not keep them apart.
+The kinds one path names that the overlay may merge under the path's name: the path's first kind and every further kind that supplies the same member names, where neither is read as a kind (a flag's kind or a self route's owner). A kind's members are its routed members (`OverlayInput.routedMembers`): its captures, renamed, and every other non-layout slot by its property name, so a slot no claim captures still tells two kinds apart (python's `assignment_typed` carries a `type` that `assignment_eq` lacks). A form restricted to a context is a legitimate merge: python's `lambda_within_for_in_clause` supplies `lambda`'s `parameters` and `body`, and differs only in what its body admits. It is the other face of injectivity: two kinds share a vocabulary leaf only where a holder's flag or a member's absence tells them apart, and a kind told apart that way keeps its own grammar kind so the reader and the builder can tell it. Containment is no distinction: a container member admitting both kinds does not keep them apart.
 
 ### `packages/codegen/src/bindings/overlay.ts::overlayPatches`
 

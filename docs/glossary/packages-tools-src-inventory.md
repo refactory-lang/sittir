@@ -60,7 +60,7 @@ Each vocabulary path's members as the overlay derivation reads them: every membe
 
 ### `packages/tools/src/inventory/index.ts::bindingsModule`
 
-The one writer of a grammar's `grammar.bindings.ts`: its binding facts read from `bindings.scm` by the pinned reader (`@sittir/codegen/bindings::readBindings`), the overlay derived from them against the grammar evaluated without the overlay and each vocabulary path's members (`vocabularyMembers`, `deriveOverlay`), printed with the hash of the sources it was derived from (`printBindingsModule`, `grammarBindingsHash`). A test holds every committed module equal to what this writes.
+The one writer of a grammar's `grammar.bindings.ts`: its binding facts read from `bindings.scm` by the pinned reader (`@sittir/codegen/bindings::readBindings`), the overlay derived from them against the grammar evaluated without the overlay, each vocabulary path's members (`vocabularyMembers`) and each claimed kind's member routes over the model of the grammar compiled without the overlay (`compileNodeMap` with `unbound`, `buildNodeModel`, `resolveRoutes`; `deriveOverlay`), printed with the hash of the sources it was derived from (`printBindingsModule`, `grammarBindingsHash`). A test holds every committed module equal to what this writes.
 
 ### `packages/tools/src/inventory/index.ts::overlaySummary`
 

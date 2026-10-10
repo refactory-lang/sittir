@@ -16,11 +16,12 @@ import {
 	grammarInput,
 	printBindingsModule,
 	readBindings,
+	resolveRoutes,
 	VOCABULARY_DIR
 } from '@sittir/codegen/bindings';
 import { type Vocabulary, readVocabulary } from './vocabulary.ts';
 import type { GrammarName } from '@sittir/codegen/grammars';
-import { evaluateGrammar } from '../codegen-surface.ts';
+import { compileNodeMap, evaluateGrammar, invoke } from '../codegen-surface.ts';
 import { readNodeModelFile } from '../validate/common.ts';
 
 export { VOCABULARY_DIR };
@@ -83,7 +84,16 @@ export function vocabularyMembers(vocabulary: Vocabulary): ReadonlyMap<string, R
 export async function bindingsModule(grammar: GrammarName): Promise<BindingsModule> {
 	const facts = await readBindings(readFileSync(bindingsPath(grammar), 'utf8'));
 	const base = await evaluateGrammar(grammar, { unbound: true });
-	const { overlay, report } = deriveOverlay({ grammar, facts, base, vocabMembers: vocabularyMembers(readVocabulary(VOCABULARY_DIR)) });
+	const model = await invoke('nodeModel', 'buildNodeModel', await compileNodeMap(grammar, { unbound: true }));
+	const input = await grammarInput(grammar, base, model);
+	if (input === undefined) throw new Error(`bindings-inventory: ${grammar} has no bindings.scm`);
+	const { overlay, report } = deriveOverlay({
+		grammar,
+		facts,
+		base,
+		vocabMembers: vocabularyMembers(readVocabulary(VOCABULARY_DIR)),
+		routedMembers: resolveRoutes(input).members
+	});
 	return { text: printBindingsModule(overlay, grammarBindingsHash(grammar)), overlay, report };
 }
 
