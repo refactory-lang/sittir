@@ -33,7 +33,7 @@ import {
 	SYMBOL,
 	TOKEN,
 } from '../types/rule-types.ts'; // @rule-type-consts
-import type { AnyRule, ChoiceRule, PhaseName, RenderRule, RepeatRule, Rule, SeqRule } from '../types/rule.ts';
+import type { AnyRule, ChoiceRule, PhaseName, RenderRule, Rule, SeqRule } from '../types/rule.ts';
 import type {
 	PatternRule as GrammarPatternRule,
 	StringRule as GrammarStringRule,
