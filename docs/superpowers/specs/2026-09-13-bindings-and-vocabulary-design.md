@@ -99,8 +99,9 @@ A node carries one claim. Rust's `if` is claimed as `statement.if`; that it sits
   - In the base, a value kind declares nothing but its `$kind`: a value is a name.
   - Visibility is the first enumeration of kinds; a variable's binding (`let`, `const`, `var`) is the next (§11).
 - **A value is its kind's full path:** `visibility: 'modifier.visibility.public.internal'`. The member's type is derived from the kinds by type: `V.AccessLevel` is the `$kind` of every kind beneath `modifier.visibility`, so adding a value kind adds the value.
-  - One generic transform, `EnumLeaf`, gives the short form by stripping the enumeration's root, the parent of each value whose own parent is not a value: `EnumLeaf<'modifier.visibility.public.internal'>` is `'public.internal'`.
+  - One generic transform, `EnumLeaf`, gives the short form by stripping the enumeration's root, the parent of each value whose own parent is not a value: `EnumLeaf<V.AccessLevel, 'modifier.visibility.public.internal'>` is `'public.internal'`, and `EnumLeaf<V.AccessLevel>` is every level's short form.
   - Sugar builders are named by the short form, one namespace per segment and never flattened: `build.declaration.function.public.internal(…)`.
+  - The bindings take a sugar builder's inputs, each owner's enumerated members with their values and its flags, from the vocabulary reader the generator plans with. No file lists them.
   - Stored data and comparisons use the full path.
 - **A language's text is a const string.** A token the language spells, an operator or a keyword, is held as the language spells it: `'const'`, `'&&'`, `'of'`, never a sittir kind name or a grammar's kind id, typed per language as a string-literal union. The const string is the literal's identity on the portable surface, as the kind id is on a grammar's (§9).
   - A choice that is a refined leaf is carried by the kind, and its string is derived from it per language, so `logical.and` builds as `&&` in typescript and `and` in python.
