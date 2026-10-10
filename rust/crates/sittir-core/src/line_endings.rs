@@ -25,6 +25,22 @@ pub fn to_internal(text: &str) -> Cow<'_, str> {
     Cow::Owned(text.replace("\r\n", "\n").replace('\r', "\n"))
 }
 
+const BREAK_CHARS: [char; 2] = ['\r', '\n'];
+
+/// The byte range of the line of `text` that byte `at` sits on: from after the
+/// break before it to the break that ends it, whichever way breaks are spelled.
+pub fn line_bounds(text: &str, at: usize) -> (usize, usize) {
+    let at = at.min(text.len());
+    let start = text[..at].rfind(BREAK_CHARS).map_or(0, |i| i + 1);
+    let end = text[start..].find(BREAK_CHARS).map_or(text.len(), |i| start + i);
+    (start, end)
+}
+
+/// How many bytes follow the last break of `text`; all of it when it holds none.
+pub fn bytes_after_last_break(text: &str) -> usize {
+    text.rfind(BREAK_CHARS).map_or(text.len(), |i| text.len() - i - 1)
+}
+
 /// A `fmt::Write` adapter that writes each logical break of its input as
 /// `newline`. A `\r` at the end of one piece is held: when the next piece
 /// starts with `\n` the two are one break. Everything that is not a break
@@ -158,5 +174,18 @@ mod tests {
         assert_eq!(spelled.as_ptr(), before);
         assert_eq!(spell(String::from("a\nb"), "\r\n"), "a\r\nb");
         assert_eq!(spell(String::from("a\r\nb"), "\n"), "a\nb");
+    }
+
+    #[test]
+    fn a_line_is_bounded_by_whichever_break_spells_it() {
+        for ending in ["\n", "\r\n", "\r"] {
+            let text = format!("ab{ending}cd{ending}ef");
+            let at = text.find("cd").unwrap() + 1;
+            let (start, end) = line_bounds(&text, at);
+            assert_eq!(&text[start..end], "cd", "{ending:?}");
+            assert_eq!(bytes_after_last_break(&format!("{ending}    ")), 4, "{ending:?}");
+        }
+        assert_eq!(bytes_after_last_break("  "), 2);
+        assert_eq!(line_bounds("", 5), (0, 0));
     }
 }
