@@ -42,6 +42,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # `pnpm run build` builds the napi crates in parallel, so the pinned
+      # toolchain must be installed before it: otherwise each crate's cargo
+      # asks rustup to install it at once and the downloads collide.
+      - name: Install the pinned Rust toolchain
+        uses: ./.github/actions/rust-toolchain
+
       # `pnpm run build` compiles the napi crates from a cold cargo registry.
       # Cache the registry + target dir so cached crates skip the download path
       # entirely (the `.cargo/config.toml` net hardening covers the cold-cache run).
@@ -217,6 +223,8 @@ jobs:
         run: |
           cp -R /tmp/published-bindings/. packages/
           find packages -path "*/native/*.node" -print
+      - name: Install the pinned Rust toolchain
+        uses: ./.github/actions/rust-toolchain
       - name: Build the packages
         run: pnpm run build
       - name: Pack, install outside the workspace, createEngine + parse + render
