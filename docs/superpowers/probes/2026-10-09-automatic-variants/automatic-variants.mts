@@ -88,7 +88,7 @@ for (const g of ['rust', 'typescript', 'python', 'scm', 'regex']) {
 	let flatRoutes = 0, provenanceDiffs = 0;
 	for (const [kind, node] of nodeMap.nodes) {
 		if (!(node instanceof N.AssembledSupertype) || node.variantSubtypes === undefined) continue;
-		const definedBy = new Map(variantChildrenOf(kind, linked.rules[kind] ?? { type: 'BLANK' }, collapsed.automaticVariants).map((c: { kind: string; definedBy: string }) => [c.kind, c.definedBy]));
+		const definedBy = new Map(variantChildrenOf(kind, linked.rules[kind] ?? { type: 'BLANK' }).map((c: { kind: string; definedBy: string }) => [c.kind, c.definedBy]));
 		let minted = 0, authored = 0;
 		for (const ref of node.variantSubtypes) {
 			const child = N.storageKindOfRef(ref.node);
