@@ -59,7 +59,7 @@ There is one factory per read entry, meaning a grammar kind and one vocabulary k
 ```ts
 const FunctionItemAsDeclarationFunction = (n: T.FunctionItem.Parsed, set = 0): VocabViews['declaration.function'] => ({
 	$type: n.$type,
-	[flags]: () => set | (n.functionModifiers()?.modifiers().includes(TSKindId.AsyncKeyword) ? Flag.async : 0) | …,
+	[flags]: () => set | (n.functionModifiers()?.modifiers().includes(TSKindId.AsyncKeyword) ? Flags.Async : 0) | …,
 	name: () => read(n.name()),
 	parameters: () => read(n.parameters()),
 	…
@@ -90,7 +90,7 @@ Nothing queries the tree at read time. A portable node costs one small object, a
 
 The portable engine's `build` is typed per kind from the vocabulary. A structure's kind, named by `$kind` where the slot it fills admits more than one kind, selects the build entry, and each member is handed to its slot's loose-builder parameter:
 
-- **Refinement builders and flag steps are the only form** a refinement or a flag takes in a build (bindings spec §3.3): a builder per refinement path, `build.<path>`, and on each builder of a kind a step per flag the kind has, the steps in any order, each setting its bit. No member and no parameter states a refinement or a flag.
+- **Refinement builders and flag steps are the only form** a refinement or a flag takes in a build (bindings spec §3.3): a builder per refinement path, `build.<path>`, and on each builder of a kind a step per flag the kind has, the steps in any order, each setting its bit. A step's type leaves out the steps its flag excludes, and a refinement's builder those its value excludes, from the exclusions the generator derives per kind from the grammar's rule; a build from a structure checks its `$kind` and `$flags` against the same exclusions (bindings spec §3.3, §8). No member and no parameter states a refinement or a flag.
 - A flag or a nested member routed through an intermediate kind builds that kind's input; through a forwarded envelope that is its spread form (`functionModifiers(TSKindId.AsyncKeyword, …)`). Loose builders never guess a keyword from text.
 - A refinement's builder fills in the literals that spell it.
 - A flag that is the presence of a kind builds its slot's value as that kind, and refuses a value of another kind.
