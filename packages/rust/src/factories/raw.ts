@@ -19,11 +19,11 @@ import {
 	listOption,
 	refuseReadStub,
 	hydrateStored,
+	defineListIndices,
 	seatWith,
 	groupField,
 	STORED_SLOT_READERS,
 	storedElements,
-	defineListIndices,
 	elementsWith,
 	rebuilt,
 	renderText,
@@ -996,11 +996,6 @@ function _buildEnumVariantList(value?: Admit<T.EnumVariantListElements>): T.Enum
 	const _elements = hydrateStored(rejectBareText(value, 'EnumVariantList.elements', 'a built EnumVariantListElements'));
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
-	const listedItems = listItems(ownerElements(listView.list, 'items'), {
-		kind: TSKindId.AttributedEnumVariant,
-		content: 'enumVariant',
-		decorations: ['_attribute_item']
-	});
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.EnumVariantList as const,
@@ -1023,8 +1018,14 @@ function _buildEnumVariantList(value?: Admit<T.EnumVariantListElements>): T.Enum
 				)
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
-		length: listedItems.length,
-		[LIST_ITEMS]: listedItems,
+		length: listView.stored?.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () =>
+			listItems(ownerElements(node.elements(), 'items'), {
+				kind: TSKindId.AttributedEnumVariant,
+				content: 'enumVariant',
+				decorations: ['_attribute_item']
+			}),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -1038,8 +1039,7 @@ function _buildEnumVariantList(value?: Admit<T.EnumVariantListElements>): T.Enum
 		},
 		$engine: handle && (() => handle.current)
 	};
-	for (let index = 0; index < listedItems.length; index++)
-		(node as Record<number, unknown>)[index] = listedItems[index];
+	defineListIndices(node, listView.stored?.length ?? 0);
 	return node as unknown as T.EnumVariantList.Bound;
 }
 
@@ -1126,11 +1126,6 @@ function _buildFieldDeclarationList(value?: Admit<T.FieldDeclarationListElements
 	);
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
-	const listedItems = listItems(ownerElements(listView.list, 'items'), {
-		kind: TSKindId.AttributedFieldDeclaration,
-		content: 'fieldDeclaration',
-		decorations: ['_attribute_item']
-	});
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.FieldDeclarationList as const,
@@ -1153,8 +1148,14 @@ function _buildFieldDeclarationList(value?: Admit<T.FieldDeclarationListElements
 				)
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
-		length: listedItems.length,
-		[LIST_ITEMS]: listedItems,
+		length: listView.stored?.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () =>
+			listItems(ownerElements(node.elements(), 'items'), {
+				kind: TSKindId.AttributedFieldDeclaration,
+				content: 'fieldDeclaration',
+				decorations: ['_attribute_item']
+			}),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -1168,8 +1169,7 @@ function _buildFieldDeclarationList(value?: Admit<T.FieldDeclarationListElements
 		},
 		$engine: handle && (() => handle.current)
 	};
-	for (let index = 0; index < listedItems.length; index++)
-		(node as Record<number, unknown>)[index] = listedItems[index];
+	defineListIndices(node, listView.stored?.length ?? 0);
 	return node as unknown as T.FieldDeclarationList.Bound;
 }
 
@@ -1256,11 +1256,6 @@ function _buildOrderedFieldDeclarationList(
 	);
 	const listView = ownerView(_attributes, '_item');
 	if (listView.stored === undefined) refuseReadStub('_attributes');
-	const listedItems = listItems(ownerElements(listView.list, 'items'), {
-		kind: TSKindId.AttributedOrderedField,
-		content: 'type',
-		decorations: ['_attribute_item', '_visibility_modifier']
-	});
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.OrderedFieldDeclarationList as const,
@@ -1283,8 +1278,14 @@ function _buildOrderedFieldDeclarationList(
 				)
 		},
 		attributes: () => hydrateStoredSlot(node, '_attributes'),
-		length: listedItems.length,
-		[LIST_ITEMS]: listedItems,
+		length: listView.stored?.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () =>
+			listItems(ownerElements(node.attributes(), 'items'), {
+				kind: TSKindId.AttributedOrderedField,
+				content: 'type',
+				decorations: ['_attribute_item', '_visibility_modifier']
+			}),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -1298,8 +1299,7 @@ function _buildOrderedFieldDeclarationList(
 		},
 		$engine: handle && (() => handle.current)
 	};
-	for (let index = 0; index < listedItems.length; index++)
-		(node as Record<number, unknown>)[index] = listedItems[index];
+	defineListIndices(node, listView.stored?.length ?? 0);
 	return node as unknown as T.OrderedFieldDeclarationList.Bound;
 }
 
@@ -1819,7 +1819,6 @@ function _buildWhereClause(value?: Admit<T.WherePredicates>): T.WhereClause.Boun
 	);
 	const listView = ownerView(_where_predicates, '_item');
 	if (listView.stored === undefined) refuseReadStub('_where_predicates');
-	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.WhereClause as const,
@@ -1837,8 +1836,9 @@ function _buildWhereClause(value?: Admit<T.WherePredicates>): T.WhereClause.Boun
 				)
 		},
 		wherePredicates: () => hydrateStoredSlot(node, '_where_predicates'),
-		length: listedItems.length,
-		[LIST_ITEMS]: listedItems,
+		length: listView.stored?.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node.wherePredicates(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -1851,8 +1851,7 @@ function _buildWhereClause(value?: Admit<T.WherePredicates>): T.WhereClause.Boun
 		},
 		$engine: handle && (() => handle.current)
 	};
-	for (let index = 0; index < listedItems.length; index++)
-		(node as Record<number, unknown>)[index] = listedItems[index];
+	defineListIndices(node, listView.stored?.length ?? 0);
 	return node as unknown as T.WhereClause.Bound;
 }
 
@@ -2176,11 +2175,6 @@ function _buildTypeParameters(value: Admit<T.TypeParametersElements>): T.TypePar
 	const _elements = hydrateStored(rejectBareText(value, 'TypeParameters.elements', 'a built TypeParametersElements'));
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
-	const listedItems = listItems(ownerElements(listView.list, 'items'), {
-		kind: TSKindId.AttributedTypeParameter,
-		content: 'content',
-		decorations: ['_attribute_item']
-	});
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TypeParameters as const,
@@ -2203,8 +2197,14 @@ function _buildTypeParameters(value: Admit<T.TypeParametersElements>): T.TypePar
 				)
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
-		length: listedItems.length,
-		[LIST_ITEMS]: listedItems,
+		length: listView.stored?.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () =>
+			listItems(ownerElements(node.elements(), 'items'), {
+				kind: TSKindId.AttributedTypeParameter,
+				content: 'content',
+				decorations: ['_attribute_item']
+			}),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -2217,8 +2217,7 @@ function _buildTypeParameters(value: Admit<T.TypeParametersElements>): T.TypePar
 		},
 		$engine: handle && (() => handle.current)
 	};
-	for (let index = 0; index < listedItems.length; index++)
-		(node as Record<number, unknown>)[index] = listedItems[index];
+	defineListIndices(node, listView.stored?.length ?? 0);
 	return node as unknown as T.TypeParameters.Bound;
 }
 
@@ -2623,7 +2622,6 @@ function _buildUseList(value?: Admit<T.UseClauses>): T.UseList.Bound {
 	const _use_clauses = hydrateStored(rejectBareText(value, 'UseList.useClauses', 'a built UseClauses'));
 	const listView = ownerView(_use_clauses, '_item');
 	if (listView.stored === undefined) refuseReadStub('_use_clauses');
-	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.UseList as const,
@@ -2641,8 +2639,9 @@ function _buildUseList(value?: Admit<T.UseClauses>): T.UseList.Bound {
 				)
 		},
 		useClauses: () => hydrateStoredSlot(node, '_use_clauses'),
-		length: listedItems.length,
-		[LIST_ITEMS]: listedItems,
+		length: listView.stored?.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node.useClauses(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -2656,8 +2655,7 @@ function _buildUseList(value?: Admit<T.UseClauses>): T.UseList.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	for (let index = 0; index < listedItems.length; index++)
-		(node as Record<number, unknown>)[index] = listedItems[index];
+	defineListIndices(node, listView.stored?.length ?? 0);
 	return node as unknown as T.UseList.Bound;
 }
 
@@ -2857,11 +2855,6 @@ function _buildParameters(value?: Admit<T.ParametersElements>): T.Parameters.Bou
 	const _elements = hydrateStored(rejectBareText(value, 'Parameters.elements', 'a built ParametersElements'));
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
-	const listedItems = listItems(ownerElements(listView.list, 'items'), {
-		kind: TSKindId.AttributedParameter,
-		content: 'content',
-		decorations: ['_attribute_item']
-	});
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Parameters as const,
@@ -2884,8 +2877,14 @@ function _buildParameters(value?: Admit<T.ParametersElements>): T.Parameters.Bou
 				)
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
-		length: listedItems.length,
-		[LIST_ITEMS]: listedItems,
+		length: listView.stored?.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () =>
+			listItems(ownerElements(node.elements(), 'items'), {
+				kind: TSKindId.AttributedParameter,
+				content: 'content',
+				decorations: ['_attribute_item']
+			}),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -2899,8 +2898,7 @@ function _buildParameters(value?: Admit<T.ParametersElements>): T.Parameters.Bou
 		},
 		$engine: handle && (() => handle.current)
 	};
-	for (let index = 0; index < listedItems.length; index++)
-		(node as Record<number, unknown>)[index] = listedItems[index];
+	defineListIndices(node, listView.stored?.length ?? 0);
 	return node as unknown as T.Parameters.Bound;
 }
 
@@ -3241,7 +3239,6 @@ function _buildForLifetimes(value: Admit<T.Lifetimes>): T.ForLifetimes.Bound {
 	const _lifetimes = hydrateStored(rejectBareText(value, 'ForLifetimes.lifetimes', 'a built Lifetimes'));
 	const listView = ownerView(_lifetimes, '_item');
 	if (listView.stored === undefined) refuseReadStub('_lifetimes');
-	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ForLifetimes as const,
@@ -3259,8 +3256,9 @@ function _buildForLifetimes(value: Admit<T.Lifetimes>): T.ForLifetimes.Bound {
 				)
 		},
 		lifetimes: () => hydrateStoredSlot(node, '_lifetimes'),
-		length: listedItems.length,
-		[LIST_ITEMS]: listedItems,
+		length: listView.stored?.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node.lifetimes(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -3273,8 +3271,7 @@ function _buildForLifetimes(value: Admit<T.Lifetimes>): T.ForLifetimes.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	for (let index = 0; index < listedItems.length; index++)
-		(node as Record<number, unknown>)[index] = listedItems[index];
+	defineListIndices(node, listView.stored?.length ?? 0);
 	return node as unknown as T.ForLifetimes.Bound;
 }
 
@@ -3373,7 +3370,6 @@ function _buildTupleType(value: Admit<T.Types>): T.TupleType.Bound {
 	const _types = hydrateStored(rejectBareText(value, 'TupleType.types', 'a built Types'));
 	const listView = ownerView(_types, '_item');
 	if (listView.stored === undefined) refuseReadStub('_types');
-	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TupleType as const,
@@ -3391,8 +3387,9 @@ function _buildTupleType(value: Admit<T.Types>): T.TupleType.Bound {
 				)
 		},
 		types: () => hydrateStoredSlot(node, '_types'),
-		length: listedItems.length,
-		[LIST_ITEMS]: listedItems,
+		length: listView.stored?.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node.types(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -3405,8 +3402,7 @@ function _buildTupleType(value: Admit<T.Types>): T.TupleType.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	for (let index = 0; index < listedItems.length; index++)
-		(node as Record<number, unknown>)[index] = listedItems[index];
+	defineListIndices(node, listView.stored?.length ?? 0);
 	return node as unknown as T.TupleType.Bound;
 }
 
@@ -3619,7 +3615,6 @@ function _buildUseBounds(value?: Admit<T.UseBoundsElements>): T.UseBounds.Bound 
 	const _bounds = hydrateStored(rejectBareText(value, 'UseBounds.bounds', 'a built UseBoundsElements'));
 	const listView = ownerView(_bounds, '_item');
 	if (listView.stored === undefined) refuseReadStub('_bounds');
-	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.UseBounds as const,
@@ -3637,8 +3632,9 @@ function _buildUseBounds(value?: Admit<T.UseBoundsElements>): T.UseBounds.Bound 
 				)
 		},
 		bounds: () => hydrateStoredSlot(node, '_bounds'),
-		length: listedItems.length,
-		[LIST_ITEMS]: listedItems,
+		length: listView.stored?.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node.bounds(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -3652,8 +3648,7 @@ function _buildUseBounds(value?: Admit<T.UseBoundsElements>): T.UseBounds.Bound 
 		},
 		$engine: handle && (() => handle.current)
 	};
-	for (let index = 0; index < listedItems.length; index++)
-		(node as Record<number, unknown>)[index] = listedItems[index];
+	defineListIndices(node, listView.stored?.length ?? 0);
 	return node as unknown as T.UseBounds.Bound;
 }
 
@@ -3690,11 +3685,6 @@ function _buildTypeArguments(value: Admit<T.TypeArgumentsElements>): T.TypeArgum
 	const _elements = hydrateStored(rejectBareText(value, 'TypeArguments.elements', 'a built TypeArgumentsElements'));
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
-	const listedItems = listItems(ownerElements(listView.list, 'items'), {
-		kind: TSKindId.TypeArgument,
-		content: 'content',
-		decorations: ['_trait_bounds']
-	});
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TypeArguments as const,
@@ -3717,8 +3707,14 @@ function _buildTypeArguments(value: Admit<T.TypeArgumentsElements>): T.TypeArgum
 				)
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
-		length: listedItems.length,
-		[LIST_ITEMS]: listedItems,
+		length: listView.stored?.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () =>
+			listItems(ownerElements(node.elements(), 'items'), {
+				kind: TSKindId.TypeArgument,
+				content: 'content',
+				decorations: ['_trait_bounds']
+			}),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -3731,8 +3727,7 @@ function _buildTypeArguments(value: Admit<T.TypeArgumentsElements>): T.TypeArgum
 		},
 		$engine: handle && (() => handle.current)
 	};
-	for (let index = 0; index < listedItems.length; index++)
-		(node as Record<number, unknown>)[index] = listedItems[index];
+	defineListIndices(node, listView.stored?.length ?? 0);
 	return node as unknown as T.TypeArguments.Bound;
 }
 
@@ -4562,11 +4557,6 @@ function _buildArguments(value?: Admit<T.ArgumentsElements>): T.Arguments.Bound 
 	const _elements = hydrateStored(rejectBareText(value, 'Arguments.elements', 'a built ArgumentsElements'));
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
-	const listedItems = listItems(ownerElements(listView.list, 'items'), {
-		kind: TSKindId.AttributedArgument,
-		content: 'expression',
-		decorations: ['_attribute_item']
-	});
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Arguments as const,
@@ -4589,8 +4579,14 @@ function _buildArguments(value?: Admit<T.ArgumentsElements>): T.Arguments.Bound 
 				)
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
-		length: listedItems.length,
-		[LIST_ITEMS]: listedItems,
+		length: listView.stored?.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () =>
+			listItems(ownerElements(node.elements(), 'items'), {
+				kind: TSKindId.AttributedArgument,
+				content: 'expression',
+				decorations: ['_attribute_item']
+			}),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -4604,8 +4600,7 @@ function _buildArguments(value?: Admit<T.ArgumentsElements>): T.Arguments.Bound 
 		},
 		$engine: handle && (() => handle.current)
 	};
-	for (let index = 0; index < listedItems.length; index++)
-		(node as Record<number, unknown>)[index] = listedItems[index];
+	defineListIndices(node, listView.stored?.length ?? 0);
 	return node as unknown as T.Arguments.Bound;
 }
 
@@ -4757,7 +4752,6 @@ function _buildFieldInitializerList(value?: Admit<T.FieldInitializerListElements
 	);
 	const listView = ownerView(_initializers, '_item');
 	if (listView.stored === undefined) refuseReadStub('_initializers');
-	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.FieldInitializerList as const,
@@ -4779,8 +4773,9 @@ function _buildFieldInitializerList(value?: Admit<T.FieldInitializerListElements
 				)
 		},
 		initializers: () => hydrateStoredSlot(node, '_initializers'),
-		length: listedItems.length,
-		[LIST_ITEMS]: listedItems,
+		length: listView.stored?.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node.initializers(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -4794,8 +4789,7 @@ function _buildFieldInitializerList(value?: Admit<T.FieldInitializerListElements
 		},
 		$engine: handle && (() => handle.current)
 	};
-	for (let index = 0; index < listedItems.length; index++)
-		(node as Record<number, unknown>)[index] = listedItems[index];
+	defineListIndices(node, listView.stored?.length ?? 0);
 	return node as unknown as T.FieldInitializerList.Bound;
 }
 
@@ -5877,7 +5871,6 @@ function _buildTuplePattern(value?: Admit<T.TuplePatternElements>): T.TuplePatte
 	const _elements = hydrateStored(rejectBareText(value, 'TuplePattern.elements', 'a built TuplePatternElements'));
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
-	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TuplePattern as const,
@@ -5895,8 +5888,9 @@ function _buildTuplePattern(value?: Admit<T.TuplePatternElements>): T.TuplePatte
 				)
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
-		length: listedItems.length,
-		[LIST_ITEMS]: listedItems,
+		length: listView.stored?.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -5910,8 +5904,7 @@ function _buildTuplePattern(value?: Admit<T.TuplePatternElements>): T.TuplePatte
 		},
 		$engine: handle && (() => handle.current)
 	};
-	for (let index = 0; index < listedItems.length; index++)
-		(node as Record<number, unknown>)[index] = listedItems[index];
+	defineListIndices(node, listView.stored?.length ?? 0);
 	return node as unknown as T.TuplePattern.Bound;
 }
 
@@ -5941,7 +5934,6 @@ function _buildSlicePattern(value?: Admit<T.Patterns>): T.SlicePattern.Bound {
 	const _patterns = hydrateStored(rejectBareText(value, 'SlicePattern.patterns', 'a built Patterns'));
 	const listView = ownerView(_patterns, '_item');
 	if (listView.stored === undefined) refuseReadStub('_patterns');
-	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SlicePattern as const,
@@ -5959,8 +5951,9 @@ function _buildSlicePattern(value?: Admit<T.Patterns>): T.SlicePattern.Bound {
 				)
 		},
 		patterns: () => hydrateStoredSlot(node, '_patterns'),
-		length: listedItems.length,
-		[LIST_ITEMS]: listedItems,
+		length: listView.stored?.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node.patterns(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -5974,8 +5967,7 @@ function _buildSlicePattern(value?: Admit<T.Patterns>): T.SlicePattern.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	for (let index = 0; index < listedItems.length; index++)
-		(node as Record<number, unknown>)[index] = listedItems[index];
+	defineListIndices(node, listView.stored?.length ?? 0);
 	return node as unknown as T.SlicePattern.Bound;
 }
 
@@ -6451,7 +6443,7 @@ function _buildMacroRules(
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(listedStored, undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -6531,7 +6523,7 @@ function _buildEnumVariantListElements(
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
-			listItems(listedStored, {
+			listItems(ownerElements(node, 'items'), {
 				kind: TSKindId.AttributedEnumVariant,
 				content: 'enumVariant',
 				decorations: ['_attribute_item']
@@ -6618,7 +6610,7 @@ function _buildFieldDeclarationListElements(
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
-			listItems(listedStored, {
+			listItems(ownerElements(node, 'items'), {
 				kind: TSKindId.AttributedFieldDeclaration,
 				content: 'fieldDeclaration',
 				decorations: ['_attribute_item']
@@ -6705,7 +6697,7 @@ function _buildOrderedFieldDeclarationListElements(
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
-			listItems(listedStored, {
+			listItems(ownerElements(node, 'items'), {
 				kind: TSKindId.AttributedOrderedField,
 				content: 'type',
 				decorations: ['_attribute_item', '_visibility_modifier']
@@ -6770,7 +6762,7 @@ function _buildWherePredicates(
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(listedStored, undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -6864,7 +6856,7 @@ function _buildTypeParametersElements(
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
-			listItems(listedStored, {
+			listItems(ownerElements(node, 'items'), {
 				kind: TSKindId.AttributedTypeParameter,
 				content: 'content',
 				decorations: ['_attribute_item']
@@ -7129,7 +7121,7 @@ function _buildUseClauses(
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(listedStored, undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -7269,7 +7261,7 @@ function _buildParametersElements(
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
-			listItems(listedStored, {
+			listItems(ownerElements(node, 'items'), {
 				kind: TSKindId.AttributedParameter,
 				content: 'content',
 				decorations: ['_attribute_item']
@@ -7329,7 +7321,7 @@ function _buildLifetimes(
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(listedStored, undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -7394,7 +7386,7 @@ function _buildTypes(
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(listedStored, undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -7462,7 +7454,7 @@ function _buildUseBoundsElements(
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(listedStored, undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -7554,7 +7546,11 @@ function _buildTypeArgumentsElements(
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
-			listItems(listedStored, { kind: TSKindId.TypeArgument, content: 'content', decorations: ['_trait_bounds'] }),
+			listItems(ownerElements(node, 'items'), {
+				kind: TSKindId.TypeArgument,
+				content: 'content',
+				decorations: ['_trait_bounds']
+			}),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -7633,7 +7629,7 @@ function _buildArgumentsElements(
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
-			listItems(listedStored, {
+			listItems(ownerElements(node, 'items'), {
 				kind: TSKindId.AttributedArgument,
 				content: 'expression',
 				decorations: ['_attribute_item']
@@ -7696,7 +7692,7 @@ function _buildExpressions(
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(listedStored, undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -7762,7 +7758,7 @@ function _buildFieldInitializerListElements(
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(listedStored, undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -7825,7 +7821,7 @@ function _buildTuplePatternElements(
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(listedStored, undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -7881,7 +7877,7 @@ function _buildPatterns(
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(listedStored, undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -7947,7 +7943,7 @@ function _buildStructPatternElements(
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(listedStored, undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,

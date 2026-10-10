@@ -141,19 +141,14 @@ export function ownerViewParts(plan: ListViewPlan, storage: string, accessor: st
 		'    [Symbol.unscopables]: Array.prototype[Symbol.unscopables],',
 		...options
 	];
-	if (environment === 'factory') {
-		return {
-			prelude: [
-				`  const listView = ownerView(${storage}, ${JSON.stringify(plan.count)});`,
-				`  if (listView.stored === undefined) refuseReadStub(${JSON.stringify(storage)});`,
-				`  const listedItems = listItems(ownerElements(listView.list, ${JSON.stringify(plan.elements)}), ${wrapper});`
-			],
-			members: ['    length: listedItems.length,', '    [LIST_ITEMS]: listedItems,', ...shared],
-			postlude: ['  for (let index = 0; index < listedItems.length; index++) (node as Record<number, unknown>)[index] = listedItems[index];']
-		};
-	}
 	return {
-		prelude: [`  const listView = ownerView(${storage}, ${JSON.stringify(plan.count)}, (list) => hydrate(list, tree));`],
+		prelude:
+			environment === 'factory'
+				? [
+						`  const listView = ownerView(${storage}, ${JSON.stringify(plan.count)});`,
+						`  if (listView.stored === undefined) refuseReadStub(${JSON.stringify(storage)});`
+					]
+				: [`  const listView = ownerView(${storage}, ${JSON.stringify(plan.count)}, (list) => hydrate(list, tree));`],
 		members: [
 			'    length: listView.stored?.length,',
 			'    [LIST_ITEMS]: undefined,',
@@ -187,7 +182,7 @@ export function listSelfViewParts(
 		members: [
 			'    length: listedStored.length,',
 			'    [LIST_ITEMS]: undefined,',
-			`    [LIST_READ]: () => listItems(${environment === 'factory' ? 'listedStored' : `ownerElements(node, ${JSON.stringify(elementsReader)})`}, ${wrapper}),`,
+			`    [LIST_READ]: () => listItems(ownerElements(node, ${JSON.stringify(elementsReader)}), ${wrapper}),`,
 			...shared
 		],
 		postlude: ['  defineListIndices(node, listedStored.length);']

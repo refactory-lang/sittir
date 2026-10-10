@@ -1,5 +1,5 @@
 import type { AnyUntypedNode, NodeLayout, TransportCoordinate } from '@sittir/types';
-import { decodeIndex, isCoordinate } from './read.ts';
+import { decodeIndex, decodeTree, isCoordinate } from './read.ts';
 import { assertHoldsTree, holdTreeOn, releaseTreeOn, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import { editedWithin } from './identity.ts';
 import { forEachTriviaList, type TriviaSides } from './trivia.ts';
@@ -115,6 +115,21 @@ function foldedCoordinate(record: Record<string, unknown>): TransportCoordinate 
 	const tree = treeOf(record);
 	if (tree === undefined) return undefined;
 	return editedWithin(tree, decodeIndex(coordinate.$treeHandle), coordinate.$end) ? undefined : coordinate;
+}
+
+/**
+ * A coordinate a holder stores without having read it, as it crosses: its
+ * bytes, unless a write landed inside its range. That write lives on the node
+ * another route read, which this holder does not hold, so its bytes would
+ * silently drop the write; the crossing refuses instead, naming the range.
+ */
+function unreadCoordinate(coordinate: TransportCoordinate): TransportCoordinate {
+	const tree = treeOf(coordinate);
+	const index = decodeIndex(coordinate.$treeHandle);
+	if (tree === undefined || !editedWithin(tree, index, coordinate.$end)) return coordinate;
+	throw new Error(
+		`render: nodes ${index}..${coordinate.$end} of tree ${decodeTree(coordinate.$treeHandle)} are held here as a coordinate this holder never read, and a write landed inside that range on a node read through another route. The write lives on that node, not on this holder, so it cannot render here. Read the slot through this holder's accessor before rendering, or render the node the write was made on`
+	);
 }
 
 /**
@@ -494,7 +509,7 @@ function toTransportValue(
 	const trivia = owner !== undefined && namesSameNode(owner, value) ? triviaOf(value) : crossingTrivia(value, view, bears ? changed : NO_EDGES);
 	// Trivia entries cross as they are, coordinates included.
 	if (fold && trivia != null) forEachTriviaList(trivia as TriviaSides<unknown>, assertTriviaHoldsTree);
-	const folded = !fold ? undefined : isCoordinate(value) ? value : foldedCoordinate(value);
+	const folded = !fold ? undefined : isCoordinate(value) ? unreadCoordinate(value) : foldedCoordinate(value);
 	if (folded !== undefined) {
 		assertHoldsTree(value);
 		return foldToCoordinate(value, folded, trivia);

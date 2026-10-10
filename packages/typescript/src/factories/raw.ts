@@ -27,11 +27,11 @@ import {
 	listOption,
 	refuseReadStub,
 	hydrateStored,
+	defineListIndices,
 	seatWith,
 	groupField,
 	STORED_SLOT_READERS,
 	storedElements,
-	defineListIndices,
 	rebuilt,
 	renderText,
 	hydrateStoredSlot,
@@ -223,11 +223,6 @@ function _buildExportClause(value?: Admit<T.ExportSpecifiers>): T.ExportClause.B
 	);
 	const listView = ownerView(_export_specifiers, '_item');
 	if (listView.stored === undefined) refuseReadStub('_export_specifiers');
-	const listedItems = listItems(ownerElements(listView.list, 'items'), {
-		kind: TSKindId.ExportSpecifier,
-		content: 'name',
-		decorations: ['_export_kind', '_alias']
-	});
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExportClause as const,
@@ -245,8 +240,14 @@ function _buildExportClause(value?: Admit<T.ExportSpecifiers>): T.ExportClause.B
 				)
 		},
 		exportSpecifiers: () => hydrateStoredSlot(node, '_export_specifiers'),
-		length: listedItems.length,
-		[LIST_ITEMS]: listedItems,
+		length: listView.stored?.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () =>
+			listItems(ownerElements(node.exportSpecifiers(), 'items'), {
+				kind: TSKindId.ExportSpecifier,
+				content: 'name',
+				decorations: ['_export_kind', '_alias']
+			}),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -260,8 +261,7 @@ function _buildExportClause(value?: Admit<T.ExportSpecifiers>): T.ExportClause.B
 		},
 		$engine: handle && (() => handle.current)
 	};
-	for (let index = 0; index < listedItems.length; index++)
-		(node as Record<number, unknown>)[index] = listedItems[index];
+	defineListIndices(node, listView.stored?.length ?? 0);
 	return node as unknown as T.ExportClause.Bound;
 }
 
@@ -441,7 +441,6 @@ function _buildNamedImports(value?: Admit<T.ImportSpecifiers>): T.NamedImports.B
 	);
 	const listView = ownerView(_import_specifiers, '_item');
 	if (listView.stored === undefined) refuseReadStub('_import_specifiers');
-	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.NamedImports as const,
@@ -459,8 +458,9 @@ function _buildNamedImports(value?: Admit<T.ImportSpecifiers>): T.NamedImports.B
 				)
 		},
 		importSpecifiers: () => hydrateStoredSlot(node, '_import_specifiers'),
-		length: listedItems.length,
-		[LIST_ITEMS]: listedItems,
+		length: listView.stored?.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node.importSpecifiers(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -474,8 +474,7 @@ function _buildNamedImports(value?: Admit<T.ImportSpecifiers>): T.NamedImports.B
 		},
 		$engine: handle && (() => handle.current)
 	};
-	for (let index = 0; index < listedItems.length; index++)
-		(node as Record<number, unknown>)[index] = listedItems[index];
+	defineListIndices(node, listView.stored?.length ?? 0);
 	return node as unknown as T.NamedImports.Bound;
 }
 
@@ -3585,7 +3584,6 @@ function _buildFormalParameters(value?: Admit<T.FormalParametersElements>): T.Fo
 	);
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
-	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.FormalParameters as const,
@@ -3603,8 +3601,9 @@ function _buildFormalParameters(value?: Admit<T.FormalParametersElements>): T.Fo
 				)
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
-		length: listedItems.length,
-		[LIST_ITEMS]: listedItems,
+		length: listView.stored?.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -3618,8 +3617,7 @@ function _buildFormalParameters(value?: Admit<T.FormalParametersElements>): T.Fo
 		},
 		$engine: handle && (() => handle.current)
 	};
-	for (let index = 0; index < listedItems.length; index++)
-		(node as Record<number, unknown>)[index] = listedItems[index];
+	defineListIndices(node, listView.stored?.length ?? 0);
 	return node as unknown as T.FormalParameters.Bound;
 }
 
@@ -5157,7 +5155,6 @@ function _buildEnumBody(value?: Admit<T.EnumBodyElements>): T.EnumBody.Bound {
 	const _elements = hydrateStored(rejectBareText(value, 'EnumBody.elements', 'a built EnumBodyElements'));
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
-	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.EnumBody as const,
@@ -5175,8 +5172,9 @@ function _buildEnumBody(value?: Admit<T.EnumBodyElements>): T.EnumBody.Bound {
 				)
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
-		length: listedItems.length,
-		[LIST_ITEMS]: listedItems,
+		length: listView.stored?.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -5190,8 +5188,7 @@ function _buildEnumBody(value?: Admit<T.EnumBodyElements>): T.EnumBody.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	for (let index = 0; index < listedItems.length; index++)
-		(node as Record<number, unknown>)[index] = listedItems[index];
+	defineListIndices(node, listView.stored?.length ?? 0);
 	return node as unknown as T.EnumBody.Bound;
 }
 
@@ -6682,7 +6679,6 @@ function _buildTypeArguments(value: Admit<T.Types>): T.TypeArguments.Bound {
 	const _types = hydrateStored(rejectBareText(value, 'TypeArguments.types', 'a built Types'));
 	const listView = ownerView(_types, '_item');
 	if (listView.stored === undefined) refuseReadStub('_types');
-	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TypeArguments as const,
@@ -6700,8 +6696,9 @@ function _buildTypeArguments(value: Admit<T.Types>): T.TypeArguments.Bound {
 				)
 		},
 		types: () => hydrateStoredSlot(node, '_types'),
-		length: listedItems.length,
-		[LIST_ITEMS]: listedItems,
+		length: listView.stored?.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node.types(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -6714,8 +6711,7 @@ function _buildTypeArguments(value: Admit<T.Types>): T.TypeArguments.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	for (let index = 0; index < listedItems.length; index++)
-		(node as Record<number, unknown>)[index] = listedItems[index];
+	defineListIndices(node, listView.stored?.length ?? 0);
 	return node as unknown as T.TypeArguments.Bound;
 }
 
@@ -6980,11 +6976,6 @@ function _buildTypeParameters(value: Admit<T.TypeParametersElements>): T.TypePar
 	const _elements = hydrateStored(rejectBareText(value, 'TypeParameters.elements', 'a built TypeParametersElements'));
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
-	const listedItems = listItems(ownerElements(listView.list, 'items'), {
-		kind: TSKindId.TypeParameter,
-		content: 'name',
-		decorations: ['_const', '_constraint', '_value']
-	});
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TypeParameters as const,
@@ -7002,8 +6993,14 @@ function _buildTypeParameters(value: Admit<T.TypeParametersElements>): T.TypePar
 				)
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
-		length: listedItems.length,
-		[LIST_ITEMS]: listedItems,
+		length: listView.stored?.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () =>
+			listItems(ownerElements(node.elements(), 'items'), {
+				kind: TSKindId.TypeParameter,
+				content: 'name',
+				decorations: ['_const', '_constraint', '_value']
+			}),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -7016,8 +7013,7 @@ function _buildTypeParameters(value: Admit<T.TypeParametersElements>): T.TypePar
 		},
 		$engine: handle && (() => handle.current)
 	};
-	for (let index = 0; index < listedItems.length; index++)
-		(node as Record<number, unknown>)[index] = listedItems[index];
+	defineListIndices(node, listView.stored?.length ?? 0);
 	return node as unknown as T.TypeParameters.Bound;
 }
 
@@ -7243,7 +7239,6 @@ function _buildTupleType(value?: Admit<T.TupleTypeMembers>): T.TupleType.Bound {
 	);
 	const listView = ownerView(_tuple_type_members, '_item');
 	if (listView.stored === undefined) refuseReadStub('_tuple_type_members');
-	const listedItems = listItems(ownerElements(listView.list, 'items'), undefined);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TupleType as const,
@@ -7261,8 +7256,9 @@ function _buildTupleType(value?: Admit<T.TupleTypeMembers>): T.TupleType.Bound {
 				)
 		},
 		tupleTypeMembers: () => hydrateStoredSlot(node, '_tuple_type_members'),
-		length: listedItems.length,
-		[LIST_ITEMS]: listedItems,
+		length: listView.stored?.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node.tupleTypeMembers(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -7276,8 +7272,7 @@ function _buildTupleType(value?: Admit<T.TupleTypeMembers>): T.TupleType.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	for (let index = 0; index < listedItems.length; index++)
-		(node as Record<number, unknown>)[index] = listedItems[index];
+	defineListIndices(node, listView.stored?.length ?? 0);
 	return node as unknown as T.TupleType.Bound;
 }
 
@@ -7497,7 +7492,7 @@ function _buildExportSpecifiers(
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
-			listItems(listedStored, {
+			listItems(ownerElements(node, 'items'), {
 				kind: TSKindId.ExportSpecifier,
 				content: 'name',
 				decorations: ['_export_kind', '_alias']
@@ -7562,7 +7557,7 @@ function _buildImportSpecifiers(
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(listedStored, undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -7625,7 +7620,7 @@ function _buildFormalParametersElements(
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(listedStored, undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -7783,7 +7778,7 @@ function _buildEnumBodyElements(
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(listedStored, undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -7848,7 +7843,7 @@ function _buildTypes(
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(listedStored, undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -7922,7 +7917,7 @@ function _buildTypeParametersElements(
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
 		[LIST_READ]: () =>
-			listItems(listedStored, {
+			listItems(ownerElements(node, 'items'), {
 				kind: TSKindId.TypeParameter,
 				content: 'name',
 				decorations: ['_const', '_constraint', '_value']
@@ -8005,7 +8000,7 @@ function _buildTupleTypeMembers(
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(listedStored, undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -8297,7 +8292,7 @@ function _buildObjectTypeContent(
 		items: () => hydrateStoredSlots(node, '_item'),
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(listedStored, undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,

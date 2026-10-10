@@ -176,6 +176,7 @@ describe('the fold by range', () => {
 
 interface Storage {
 	readonly _statements: never[];
+	readonly _item: never[];
 	readonly _parameters: never;
 	readonly _body: never;
 }
@@ -212,6 +213,34 @@ describe('a built node over parsed storage', () => {
 		const copied = storageOf({ _statements: [JSON.parse(JSON.stringify(held))] })._statements;
 		const built = engine.build.sourceFile({ statements: copied });
 		expect(() => built.statements()[0]).toThrow(/does not hold that tree/);
+	});
+
+	it('reads a list through its accessor on every route: at, an index and iteration', () => {
+		const root = engine.parse('type T = (Vec<A>, Vec<B>);\n', { depth: 1 });
+		const item = root.statements()[0];
+		if (item === undefined || !engine.is.typeItem(item)) throw new Error('expected a type item');
+		const tuple = item.type();
+		if (!engine.is.tupleType(tuple)) throw new Error('expected a tuple type');
+		const parsed = tuple.types();
+		const stored = storageOf(parsed)._item;
+		expect(stored.every(isCoordinate)).toBe(true);
+		const [first, ...rest] = stored;
+		if (first === undefined) throw new Error('expected items');
+		const built = engine.build.types(first, ...rest);
+		const items = built.items();
+		expect(built.at(0)).toBe(items[0]);
+		expect(built[1]).toBe(items[1]);
+		expect([...built]).toEqual(items);
+		expect(built.at(0)).toBe(parsed.items()[0]);
+	});
+
+	it('refuses to render a write inside a coordinate it never read, until it reads it', () => {
+		const parsed = engine.parse(SOURCE, { depth: 1 });
+		const built = engine.build.sourceFile({ statements: storageOf(parsed)._statements });
+		letAt(parsed.statements()[1], 0).$trivia.leading(engine.build.lineComment(' x'));
+		expect(() => built.$render()).toThrow(/nodes \d+\.\.\d+ of tree \d+ are held here as a coordinate this holder never read/);
+		built.statements();
+		expect(built.$render()).toContain('// x');
 	});
 
 	it('refuses after its engine is disposed, naming the tree', async () => {
