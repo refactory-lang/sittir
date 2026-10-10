@@ -268,7 +268,7 @@ Each is derived once, in codegen; a fact a type states is not repeated in an att
 | **List owners** | `_LIST_OWNER_KINDS`, `listItems`, `ownerView`, `storedElements` | `#[transport(list, item = …)]` |
 | **Read depth per kind** | the wrap's `hydrateSelf` reads a `_LIST_OWNER_KINDS` member two levels deep | `min_depth` on the kind |
 | **Group seats** | `seatWith`, `groupField` | `group` on the slot |
-| **Trivia ownership** | the reader's `node_trivia` with the placement rule; `ReadModel::inner_gap_key` (`kind_ids.rs`); the wrap's `_wrapTrivia` and `mapTriviaEntries` | no attribute: the tree's trivia table, keyed by gap, with owners derived by tree-sitter's convention for extras (§ Trivia); `gap(n) = slot` on the kind names an inner gap for `$trivia.inner`. The second trait method goes |
+| **Trivia ownership** | the reader's `node_trivia` with the placement rule; `ReadModel::inner_gap_key` (`kind_ids.rs`); the wrap's `_wrapTrivia` and `mapTriviaEntries` | no attribute: the tree's trivia table, keyed by gap, with owners derived by tree-sitter's convention for extras (§ Trivia). No gap is named on a kind: `$trivia.inner` is the one interior gap of a node with no children. The second trait method goes |
 | **The render projection** | `toTransportData` (fold, trivia view, detach) and the generated `FromNapiValue` decode | the wire codec; folding by coordinate (§ Render) |
 | **Query routes** | `{ fields, kinds }` plans compiled in JavaScript from the `querySlots` table `wireRoutesOf` derives | unchanged, from the same derivation (ruling 8) |
 
@@ -364,9 +364,10 @@ an accessor first reaches the node (ruling 11).
 ### Trivia
 
 Trivia is in native tables keyed by gap, never in a transport or a record. The model is
-`2026-10-09-trivia-table-design.md`'s: an entry's address is the gap it sits in, between two
-tokens; its owner is the smallest node containing tokens on both sides, tree-sitter's convention
-for extras, derived and never stored; an entry is a value; and `$trivia` is a view over the table.
+`2026-10-09-trivia-table-design.md`'s: a gap is the seam between two adjacent tokens; its owner is
+the smallest node containing tokens on both sides, tree-sitter's convention for extras, derived
+and never stored; it holds one value, its comments and the layout that differs from the seam's
+default; and `$trivia` is a view over the table, reached through the nodes a gap touches.
 
 - **A parsed tree's table** is on the native `ParsedTree`. One token walk builds it from the
   source and the tree, and it holds every write to the tree's trivia, each marking its gap edited.
@@ -692,7 +693,7 @@ pub enum PrimitiveTypeEnum {
 
 ```rust
 #[transport(kind = kind::PARAMETERS, words = 6, min_depth = 2,
-            layout = [kind::LPAREN, kind::RPAREN], gap(1) = elements)]
+            layout = [kind::LPAREN, kind::RPAREN])]
 pub struct ParametersTransport {
     pub layout: Option<TransportLayout>,
     #[slot(field = field::ELEMENTS, word = 1)]
@@ -711,9 +712,10 @@ pub struct ParametersElementsTransport {
 
 - **`min_depth = 2`:** today `_LIST_OWNER_KINDS` holds `Parameters`, and `hydrateSelf` reads it two
   levels deep, so the list and its items arrive with the owner.
-- **`gap(1) = elements`:** the gap after the first token, `(`, which `parameters` owns, is the one
-  `$trivia.inner` names `elements` (a comment inside `()`). Today that is `inner_gap_key`'s arm
-  `(230, 1)` natively and `INNER_GAPS.parameters` in JavaScript.
+- **No gap attribute:** a comment inside `()` lies in the one interior gap of a `parameters` with
+  no children, which is `$trivia.inner`'s. With children, each gap is reached through the child it
+  touches (§ Trivia). Today `inner_gap_key`'s arm `(230, 1)` names it natively, and
+  `INNER_GAPS.parameters` in JavaScript.
 - **`list, item = item`:** `parameters_elements` is the list kind enrich mints (kind 349, so the
   parser issues it). Its items route by the field `item` (the `querySlots` row for kind 349), and
   `separator` names the `,` between them, which the reader skips and the render writes.
@@ -784,7 +786,7 @@ counts.
 | `transport.rs` render functions, lines | 4 158 | 4 094 | 2 658 | 530 | 532 | **still needed**: they stay codegen-emitted (ruling 9) |
 | `kind_ids.rs` kind constants | 468 | 467 | 336 | 69 | 91 | **still needed**: the attributes name them (ruling 10) |
 | `kind_ids.rs` `kind_name_from_id`, arms | 469 | 685 | 338 | 69 | 100 | **still needed**: refusals and diagnostics name kinds (ruling 7) |
-| `kind_ids.rs` `inner_gap_key`, arms | 25 | 14 | 12 | 2 | 1 | **folded** into `gap(n) = slot` |
+| `kind_ids.rs` `inner_gap_key`, arms | 25 | 14 | 12 | 2 | 1 | **retired**: no gap is named on a kind (§ Trivia) |
 | `kind_ids.rs` `stores_scalar`, arms | 143 | 203 | 94 | 5 | 8 | **retired**: a slot's type says it, a unit variant or a presence flag being scalar |
 | `lib.rs` `ReadModel` impl, lines | 14 | 14 | 14 | 14 | 14 | **retired** |
 | `wrap.ts` projection, lines before each wrap's members | 10 936 | 11 018 | 5 824 | 928 | 812 | **folded**: the reader projects |
@@ -794,7 +796,7 @@ counts.
 | `_LIST_OWNER_KINDS`, lines | 17 | 9 | 20 | 0 | 0 | **folded** into `min_depth` |
 | `_ALIAS_ENVELOPES`, `_HIDDEN_KINDS`, `_RECLAIMS_ANONYMOUS`, lines | 1, 6, 3 | 1, 5, 3 | 1, 5, 3 | 1, 0, 1 | 1, 1, 1 | **folded** into `envelope`, with `display`, and the slot types |
 | `consts.ts` `TOKEN_INTERIORS`, kinds | 40 | 15 | 4 | 2 | 1 | **folded** into `interior` for the read; **still needed** by the builders' coercion (`factories/coerce.ts`) |
-| `consts.ts` `INNER_GAPS`, kinds | 25 | 14 | 12 | 2 | 1 | **still needed**: `$trivia.inner` and `innerAt` check gap keys in JavaScript; it and `gap(n)` come from the node map's same rows |
+| `consts.ts` `INNER_GAPS`, kinds | 25 | 14 | 12 | 2 | 1 | **retired** with `innerAt`: `$trivia.inner` names no gap (§ Trivia) |
 | `utils.ts` `querySlots`, kinds | 226 | 222 | 162 | 23 | 28 | **still needed**: query plans compile in JavaScript (ruling 8) |
 | `utils.ts` `triviaFacts`, lines | 28 | 25 | 26 | 11 | 11 | **JS by nature**: the `$trivia` API's facts |
 | `options.rs` `SITE_*` constants | 1 510 | 1 361 | 973 | 153 | 118 | **still needed**: render-option sites, which the read does not touch |
