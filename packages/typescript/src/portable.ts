@@ -3469,16 +3469,12 @@ const table: PortableTable = {
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '??', fields: ['operator'], kinds: [] } }]
 			},
 			{
-				path: 'expression.binary.membership.in',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'in', fields: ['operator'], kinds: [] } }]
-			},
-			{
 				path: 'expression.binary.membership.instanceof',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'instanceof', fields: ['operator'], kinds: [] } }]
 			},
-			{ path: 'expression.binary', within: [], test: [] }
+			{ path: 'expression.binary', within: [], test: [] },
+			{ path: 'expression.binary.membership.in', within: [], test: [] }
 		],
 		[TSKindId.BooleanKeyword]: [{ path: 'type.primitive', within: [], test: [] }],
 		[TSKindId.BreakStatement]: [{ path: 'statement.break', within: [], test: [] }],

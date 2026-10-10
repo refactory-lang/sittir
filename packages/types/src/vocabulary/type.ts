@@ -62,14 +62,18 @@ export namespace Type {
 	export interface Function<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by rt
 		readonly $kind: 'type.function';
-		readonly content?: G['slots']['type.function']['content'] | G['slots']['type.function']['content'][];
+		readonly extern?: V.Modifier.Extern<G>;
 		// r only
 		readonly forLifetimes?: V.Clause.Lifetimes<G>;
 		// r only
 		readonly parameters: G['slots']['type.function']['parameters'][];
 		readonly returnType?: G['slots']['type.function']['returnType'];
+		readonly trait?: G['slots']['type.function']['trait'];
+		// r only
 		readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 		// t only
+		readonly unsafe?: Flag;
+		// r only
 	}
 	export namespace Function {
 		export interface Constructor<G extends GrammarContext<G>> extends SubKindOf<V.Type.Function<G>> {

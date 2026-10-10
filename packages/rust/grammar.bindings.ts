@@ -1,17 +1,19 @@
 // Generated from bindings.scm and the vocabulary by `pnpm exec tsx packages/cli/src/cli.ts tool bindings-inventory --write`. Do not edit.
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
-import { bindings, field, rename, split } from '../codegen/src/dsl/dsl-authoring.ts';
+import { alias, bindings, field, rename, split } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "7697676fd12b9bb573d8035dfbd5978e4bfc3a121350412214192ea5d79e1fd1",
+	hash: "e67a24d62d73700a5ecde299f0be8789703f7cf2161e8db83a21e1ae95501338",
 	patches: {
 		attribute_item: { "2": field("content") },
+		block_comment: { "1/0/2": alias(sym("block_comment_regular"), sym("text_comment")) },
 		field_expression: { "0": field("object"), "2": field("property") },
 		field_initializer: { "0/0": field("attributes") },
 		for_expression: { "2": field("left"), "4": field("right") },
 		for_lifetimes: { "2": field("lifetimes") },
 		inner_attribute_item: { "3": field("content") },
 		let_declaration: { "2": field("name") },
+		line_comment: { "1/0": alias(sym("line_comment_extra_slashes"), sym("text_comment")), "1/3": alias(sym("line_comment_regular"), sym("text_comment")) },
 		macro_invocation: { "0": field("function") },
 		match_expression: { "1": field("subject") },
 		pointer_type_mut: { "1": field("writable") },

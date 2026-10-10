@@ -43,7 +43,13 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Attribute.Content.Any<G>;
 		};
 		readonly 'attribute.content': {
-			readonly input: unknown;
+			readonly input:
+				| V.Element.Macro.TokenTree.Delimited<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement']
+				| V.Type.Primitive<G>;
 		};
 		readonly 'attribute.content.call': {
 			readonly arguments:
@@ -139,6 +145,11 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
 		};
 		readonly 'clause.except': {
+			readonly alias:
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 			readonly exception:
 				| unknown
 				| G['expression']
@@ -265,13 +276,13 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly content: unknown;
 		};
 		readonly 'comment.line': {
-			readonly content: unknown | V.Comment.Text<G>;
+			readonly content: V.Comment.Text<G>;
 		};
 		readonly 'comment.line.doc': {
-			readonly content: unknown | V.Comment.Text<G>;
+			readonly content: V.Comment.Text<G>;
 		};
 		readonly 'comment.line.doc.inner': {
-			readonly content: unknown | V.Comment.Text<G>;
+			readonly content: V.Comment.Text<G>;
 		};
 		readonly 'declaration.ambient': {
 			readonly content:
@@ -746,7 +757,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['statement'];
 		};
 		readonly 'expression.binary': {
-			readonly binaryExpressionIn: unknown;
 			readonly left:
 				| V.Declaration.Module<G>
 				| G['expression']
@@ -1703,7 +1713,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly trait: V.Clause.Bounds.HigherRanked<G> | V.Identifier.Type<G> | G['type'];
 		};
 		readonly 'type.function': {
-			readonly content: unknown | V.Modifier.Extern<G> | string;
 			readonly parameters:
 				| V.Clause.Bounds.Removed<G>
 				| V.Expression.Call.Macro<G>
@@ -1716,6 +1725,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Expression.Call.Macro<G>
 				| G['identifier']
 				| G['type'];
+			readonly trait: V.Identifier.Type<G> | V.Type.Path<G>;
 		};
 		readonly 'type.function.constructor': {
 			readonly type: G['identifier'] | G['type'];

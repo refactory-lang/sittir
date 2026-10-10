@@ -111,6 +111,7 @@ export namespace Clause {
 	export interface Except<G extends GrammarContext<G>> extends SubKindOf<V.Clause<G>> {
 		// claimed by p
 		readonly $kind: 'clause.except';
+		readonly alias?: G['slots']['clause.except']['alias'];
 		readonly exception?: G['slots']['clause.except']['exception'] | G['slots']['clause.except']['exception'][];
 		readonly group?: Flag;
 		readonly suite: G['slots']['clause.except']['suite'];

@@ -1824,32 +1824,6 @@
           ]
         },
         {
-          "vocab": "expression.binary.membership.in",
-          "toplevel": true,
-          "within": [],
-          "pins": [
-            {
-              "member": "operator",
-              "slot": "operator",
-              "text": "in"
-            }
-          ],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "in",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
-              }
-            }
-          ]
-        },
-        {
           "vocab": "expression.binary.membership.instanceof",
           "toplevel": true,
           "within": [],
@@ -1877,6 +1851,13 @@
         },
         {
           "vocab": "expression.binary",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "expression.binary.membership.in",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -1918,13 +1899,52 @@
           ]
         },
         {
-          "name": "binaryExpressionIn",
-          "route": "slot",
-          "slot": "binary_expression_in",
+          "name": "left",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "binary_expression_in",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "binary_expression_in",
+          "slot": "left",
+          "multiple": false,
           "path": [
             {
               "owner": "binary_expression",
               "slot": "binary_expression_in"
+            },
+            {
+              "owner": "binary_expression_in",
+              "slot": "left"
+            }
+          ]
+        },
+        {
+          "name": "right",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "binary_expression_in",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "binary_expression_in",
+          "slot": "right",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "binary_expression",
+              "slot": "binary_expression_in"
+            },
+            {
+              "owner": "binary_expression_in",
+              "slot": "right"
             }
           ]
         }

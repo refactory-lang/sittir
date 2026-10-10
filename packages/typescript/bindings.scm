@@ -163,7 +163,7 @@
 (binary_expression operator: "&&") @expression.binary.logical.and
 (binary_expression operator: "||") @expression.binary.logical.or
 (binary_expression operator: "??") @expression.binary.nullish
-(binary_expression operator: "in") @expression.binary.membership.in
+(binary_expression (binary_expression_in left: (_) @left right: (_) @right)) @expression.binary.membership.in
 (binary_expression operator: "instanceof") @expression.binary.membership.instanceof
 (unary_expression) @expression.unary
 (unary_expression operator: "-") @expression.unary.negation

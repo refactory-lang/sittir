@@ -202,6 +202,9 @@
 (unit_type) @type.unit
 (never_type) @type.primitive.never
 (function_type) @type.function
+(function_type (function_type_trait_form trait: (_) @trait))
+(function_type (function_type_fn_form (function_modifiers "unsafe" @unsafe)))
+(function_type (function_type_fn_form (function_modifiers (extern_modifier) @extern)))
 (abstract_type) @type.abstract
 (dynamic_type) @type.dynamic
 (bounded_type) @type.bounded
@@ -255,6 +258,8 @@
 (attribute_item (attribute)? @content) @attribute
 (inner_attribute_item (attribute)? @content) @attribute.inner
 (attribute) @attribute.content
+(attribute input: (attribute_input value: (_) @input))
+(attribute input: (attribute_input arguments: (_) @input))
 
 ; ── comment ────────────────────────────────────────────────────────────────────
 (line_comment) @comment.line
@@ -264,6 +269,9 @@
 (block_comment (block_comment_doc_outer)) @comment.block.doc
 (block_comment (block_comment_doc_inner)) @comment.block.doc.inner
 (doc_comment) @comment.text
+(line_comment_regular) @comment.text
+(line_comment_extra_slashes) @comment.text
+(block_comment_regular) @comment.text
 
 ; ── keyword / punctuation ──────────────────────────────────────────────────────
 ["fn" "let" "impl" "trait" "struct" "enum" "mod" "type"] @keyword.declaration

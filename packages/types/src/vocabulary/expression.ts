@@ -141,7 +141,6 @@ export namespace Expression {
 	export interface Binary<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		// claimed by prt
 		readonly $kind: 'expression.binary';
-		readonly binaryExpressionIn?: G['slots']['expression.binary']['binaryExpressionIn'];
 		readonly left?: G['slots']['expression.binary']['left'];
 		readonly operator?: G['slots']['expression.binary']['operator'];
 		readonly right?: G['slots']['expression.binary']['right'];

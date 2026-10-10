@@ -60,6 +60,9 @@
 (elif_clause) @clause.elif
 (else_clause) @clause.else
 (except_clause) @clause.except
+(except_clause (except_clause_exception (except_clause_exception_as value: (_) @exception)))
+(except_clause (except_clause_exception (except_clause_exception_as alias: (_) @alias)))
+(except_clause (except_clause_exception (except_clause_exception_list) @exception))
 (finally_clause) @clause.finally
 (case_clause) @clause.case
 (with_clause with_items: (_)? @items) @clause.with

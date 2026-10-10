@@ -51,14 +51,24 @@ export interface PortableIds {
 	'clause.match.arm.last': TSKindId.LastMatchArm;
 	'clause.where': TSKindId.WhereClause | TSKindId.WherePredicate;
 	'clause.where.predicate': TSKindId.WherePredicate;
-	comment: TSKindId.BlockComment | TSKindId.DocComment | TSKindId.LineComment;
+	comment:
+		| TSKindId.BlockComment
+		| TSKindId.BlockCommentRegular
+		| TSKindId.DocComment
+		| TSKindId.LineComment
+		| TSKindId.LineCommentExtraSlashes
+		| TSKindId.LineCommentRegular;
 	'comment.block': TSKindId.BlockComment;
 	'comment.block.doc': TSKindId.BlockComment;
 	'comment.block.doc.inner': TSKindId.BlockComment;
 	'comment.line': TSKindId.LineComment;
 	'comment.line.doc': TSKindId.LineComment;
 	'comment.line.doc.inner': TSKindId.LineComment;
-	'comment.text': TSKindId.DocComment;
+	'comment.text':
+		| TSKindId.BlockCommentRegular
+		| TSKindId.DocComment
+		| TSKindId.LineCommentExtraSlashes
+		| TSKindId.LineCommentRegular;
 	declaration:
 		| TSKindId.AssociatedType
 		| TSKindId.BoolKeyword
@@ -2336,14 +2346,32 @@ const table: PortableTable = {
 		'clause.match.arm.last': { ids: [TSKindId.LastMatchArm], exact: true },
 		'clause.where': { ids: [TSKindId.WhereClause, TSKindId.WherePredicate], exact: true },
 		'clause.where.predicate': { ids: [TSKindId.WherePredicate], exact: true },
-		comment: { ids: [TSKindId.BlockComment, TSKindId.DocComment, TSKindId.LineComment], exact: true },
+		comment: {
+			ids: [
+				TSKindId.BlockComment,
+				TSKindId.BlockCommentRegular,
+				TSKindId.DocComment,
+				TSKindId.LineComment,
+				TSKindId.LineCommentExtraSlashes,
+				TSKindId.LineCommentRegular
+			],
+			exact: true
+		},
 		'comment.block': { ids: [TSKindId.BlockComment], exact: true },
 		'comment.block.doc': { ids: [TSKindId.BlockComment], exact: false },
 		'comment.block.doc.inner': { ids: [TSKindId.BlockComment], exact: false },
 		'comment.line': { ids: [TSKindId.LineComment], exact: true },
 		'comment.line.doc': { ids: [TSKindId.LineComment], exact: false },
 		'comment.line.doc.inner': { ids: [TSKindId.LineComment], exact: false },
-		'comment.text': { ids: [TSKindId.DocComment], exact: true },
+		'comment.text': {
+			ids: [
+				TSKindId.BlockCommentRegular,
+				TSKindId.DocComment,
+				TSKindId.LineCommentExtraSlashes,
+				TSKindId.LineCommentRegular
+			],
+			exact: true
+		},
 		declaration: {
 			ids: [
 				TSKindId.AssociatedType,
@@ -3321,6 +3349,7 @@ const table: PortableTable = {
 			{ path: 'comment.block.doc', within: [], test: [] },
 			{ path: 'comment.block.doc.inner', within: [], test: [] }
 		],
+		[TSKindId.BlockCommentRegular]: [{ path: 'comment.text', within: [], test: [] }],
 		[TSKindId.BlockKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.BoolKeyword]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
@@ -3644,6 +3673,8 @@ const table: PortableTable = {
 			{ path: 'comment.line.doc', within: [], test: [] },
 			{ path: 'comment.line.doc.inner', within: [], test: [] }
 		],
+		[TSKindId.LineCommentExtraSlashes]: [{ path: 'comment.text', within: [], test: [] }],
+		[TSKindId.LineCommentRegular]: [{ path: 'comment.text', within: [], test: [] }],
 		[TSKindId.LiteralKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.LoopExpression]: [{ path: 'statement.loop', within: [], test: [] }],
 		[TSKindId.MacroDefinition]: [{ path: 'declaration.macro', within: [], test: [] }],
