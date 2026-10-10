@@ -567,7 +567,7 @@ function sameOccurrence(a: unknown, b: unknown): boolean {
 	return handle !== undefined && handle === treeHandleOf(b);
 }
 
-export function holds(plan: QueryPlan, texts: (subject: QuerySubject) => readonly string[]): boolean {
+export function holds(plan: QueryPlan<QuerySubject>, texts: (subject: QuerySubject) => readonly string[]): boolean {
 	switch (plan.op) {
 		case 'eq':
 			return texts(plan).includes(plan.text);

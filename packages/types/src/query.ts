@@ -18,14 +18,15 @@ export interface SelfText {
 export type QuerySubject = SlotRoutes | SelfText;
 
 /**
- * A compiled condition, each slot it compares compiled to its parser routes. A `where` condition compares slots only and is
- * evaluated by the native walk; a comparison of the node's own text (`SelfText`) is evaluated by `holds` alone.
+ * A compiled condition, each comparison reading the subject `S`. A `where` condition compares slots only (the default) and is
+ * evaluated by the native walk; a portable read test may also compare the node's own text (`QueryPlan<QuerySubject>`), which
+ * only `holds` evaluates.
  */
-export type QueryPlan =
-	| ({ readonly op: 'eq'; readonly text: string } & QuerySubject)
-	| ({ readonly op: 'match'; readonly pattern: string } & QuerySubject)
-	| { readonly op: 'not'; readonly of: QueryPlan }
-	| { readonly op: 'and' | 'or'; readonly of: readonly QueryPlan[] };
+export type QueryPlan<S extends QuerySubject = SlotRoutes> =
+	| ({ readonly op: 'eq'; readonly text: string } & S)
+	| ({ readonly op: 'match'; readonly pattern: string } & S)
+	| { readonly op: 'not'; readonly of: QueryPlan<S> }
+	| { readonly op: 'and' | 'or'; readonly of: readonly QueryPlan<S>[] };
 
 declare const CONDITION: unique symbol;
 

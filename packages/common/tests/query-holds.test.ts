@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { QueryPlan } from '@sittir/types';
+import type { QueryPlan, QuerySubject } from '@sittir/types';
 import { holds } from '../src/query.ts';
 
 const NAME = { fields: ['name'], kinds: [] };
@@ -14,7 +14,7 @@ describe('holds', () => {
 	});
 
 	it('compares the node\'s own text when the plan names itself', () => {
-		const plan: QueryPlan = { op: 'match', pattern: '^def __', self: true };
+		const plan: QueryPlan<QuerySubject> = { op: 'match', pattern: '^def __', self: true };
 		expect(holds(plan, texts)).toBe(true);
 		expect(holds({ op: 'eq', text: 'pass', self: true }, texts)).toBe(false);
 	});

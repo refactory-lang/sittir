@@ -1,4 +1,4 @@
-import type { PortableCondition, QueryPlan, SlotRoutes } from '@sittir/types';
+import type { PortableCondition, QueryPlan, QuerySubject, SlotRoutes } from '@sittir/types';
 import { WILDCARD, type CaptureSite, type PredicateFact, type SlotModel } from '../../../bindings/facts.ts';
 import { slotFor, type ReadEntry } from '../../../bindings/routes.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
@@ -56,7 +56,7 @@ function conditionOf(entry: ReadEntry, predicate: PredicateFact, model: SlotMode
 		wrapped = true;
 	}
 	const subject = (wrapped ? undefined : steps.pop()) ?? { self: true as const };
-	const plan: QueryPlan =
+	const plan: QueryPlan<QuerySubject> =
 		predicate.operator === 'eq' ? { op: 'eq', text: argument.text, ...subject } : { op: 'match', pattern: argument.text, ...subject };
 	return { up: predicate.subject.up, via: steps, plan };
 }
