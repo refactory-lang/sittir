@@ -1,0 +1,1 @@
+{"label": "nosplit", "STATE_COUNT": 3531, "LARGE_STATE_COUNT": 1040, "SYMBOL_COUNT": 465, "ALIAS_COUNT": 4, "TOKEN_COUNT": 176, "FIELD_COUNT": 90, "PRODUCTION_ID_COUNT": 410, "MAX_ALIAS_SEQUENCE_LENGTH": 10, "parser_c_bytes": 7202693, "node_types_named": 287, "present": ["function_declaration"], "rules": 318, "rule_names_watch": ["_declaration_statement", "function_declaration"]}

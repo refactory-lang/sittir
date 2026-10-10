@@ -289,6 +289,14 @@ pub trait RenderSink {
         let _ = (kind, flag);
         false
     }
+    /// Whether the text now being written belongs to a line-terminated kind,
+    /// whose pattern can take the `\r` of a `\r\n` as its last character: a
+    /// text ending in `\r` then drops it, and the break is written by whatever
+    /// follows. Returns the setting it replaces, so a caller can restore it.
+    fn swallow_cr(&mut self, on: bool) -> bool {
+        let _ = on;
+        false
+    }
     /// A node of `kind` has just been written: hold the line end when the
     /// kind is line-terminated (`options::KIND_LINE_TERMINATED`) or ends in
     /// the declared newline token (`options::KIND_LINE_BREAK_TERMINATED`).

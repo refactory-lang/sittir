@@ -18,7 +18,7 @@ import { WrapEmitter } from './wrap.ts';
 import { emitTypesModules } from './types.ts';
 import { emitConsts } from './consts.ts';
 import { addressTablesFor, emitOptions, renderOptionsModule } from './options.ts';
-import { indentChars } from '../compiler/model/layout-kinds.ts';
+import { indentChars, newlineArms } from '../compiler/model/layout-kinds.ts';
 import { collectSitePreferences } from '../compiler/model/site-preferences.ts';
 import { emitIr } from './ir.ts';
 import { emitIs } from './is.ts';
@@ -211,7 +211,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		entryRows: polymorphsOverlay.entryRows
 	});
 	const consts = emitConsts({ grammar, nodeMap });
-	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules, options: optionsBlock, sites: sitePreferences, addresses: addressTables }) : renderOptionsModule({ indentChars: indentChars(nodeMap) });
+	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules, options: optionsBlock, sites: sitePreferences, addresses: addressTables }) : renderOptionsModule({ indentChars: indentChars(nodeMap), newlineArms: newlineArms(nodeMap) });
 	const irNamespace = emitIr({ grammar, nodeMap, grammarRoles });
 	const is = emitIs({ grammar, nodeMap, generatedIdTables });
 	const tests = emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures, renderBodies: templates.bodies });

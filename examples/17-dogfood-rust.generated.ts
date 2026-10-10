@@ -57,7 +57,7 @@ export function rebuildSpliceGenerated() {
 				name: rs.build.identifier("Display"),
 			}),
 			type: rs.build.identifier("SpliceError"),
-			declarationList: rs.build.declarationList.strict(rs.build.functionItem.strict({
+			body: rs.build.declarationList.strict(rs.build.functionItem.strict({
 				name: rs.build.identifier("fmt"),
 				parameters: rs.build.parameters.strict(rs.build.selfParameter.strict({
 					reference: true,
@@ -163,7 +163,7 @@ export function rebuildSpliceGenerated() {
 				name: rs.build.identifier("Error"),
 			}),
 			type: rs.build.identifier("SpliceError"),
-			declarationList: rs.build.declarationList.strict(),
+			body: rs.build.declarationList.strict(),
 		}).$trivia.leading(rs.kinds.Blankline), rs.build.functionItem.strict({
 			visibilityModifier: rs.build.visibilityModifier.pub.strict(),
 			name: rs.build.identifier("apply_edits"),

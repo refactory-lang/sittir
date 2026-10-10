@@ -438,13 +438,12 @@ export enum TSKindId {
 	DictionaryElementsRepeat1 = 328,
 	_TuplePatternElementsRepeat1 = 329,
 	_TupleElementsRepeat1 = 330,
-	_PrintArgumentsRepeat1 = 331,
-	ComprehensionClausesRepeat1 = 332,
-	ExceptClauseExceptionListRepeat1 = 333,
-	MatchBlockBlockRepeat1 = 334,
-	AsPatternTarget = 335,
-	FormatExpression = 336,
-	Names = 337,
+	ComprehensionClausesRepeat1 = 331,
+	ExceptClauseExceptionListRepeat1 = 332,
+	MatchBlockBlockRepeat1 = 333,
+	AsPatternTarget = 334,
+	FormatExpression = 335,
+	Names = 336,
 	Error = 65535
 }
 Object.freeze(TSKindId);
@@ -581,7 +580,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[127, 'module'],
 	[128, '_statement'],
 	[129, '_simple_statements'],
-	[339, '_simple_statements'],
+	[338, '_simple_statements'],
 	[130, 'import_statement'],
 	[131, 'import_prefix'],
 	[132, 'relative_import'],
@@ -636,7 +635,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[181, 'dotted_name'],
 	[182, 'case_pattern'],
 	[183, '_simple_pattern'],
-	[338, '_simple_pattern'],
+	[337, '_simple_pattern'],
 	[184, 'case_as_pattern'],
 	[185, 'union_pattern'],
 	[186, 'dict_pattern'],
@@ -784,13 +783,12 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[328, 'dictionary_elements_repeat1'],
 	[329, '_tuple_pattern_elements_repeat1'],
 	[330, '_tuple_elements_repeat1'],
-	[331, '_print_arguments_repeat1'],
-	[332, 'comprehension_clauses_repeat1'],
-	[333, 'except_clause_exception_list_repeat1'],
-	[334, 'match_block_block_repeat1'],
-	[335, 'as_pattern_target'],
-	[336, 'format_expression'],
-	[337, 'names'],
+	[331, 'comprehension_clauses_repeat1'],
+	[332, 'except_clause_exception_list_repeat1'],
+	[333, 'match_block_block_repeat1'],
+	[334, 'as_pattern_target'],
+	[335, 'format_expression'],
+	[336, 'names'],
 	[65535, 'ERROR']
 ]);
 
@@ -925,7 +923,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[127, 'module'],
 	[128, '_statement'],
 	[129, '_simple_statements'],
-	[339, 'simple_statements'],
+	[338, 'simple_statements'],
 	[130, 'import_statement'],
 	[131, 'import_prefix'],
 	[132, 'relative_import'],
@@ -980,7 +978,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[181, 'dotted_name'],
 	[182, 'case_pattern'],
 	[183, '_simple_pattern'],
-	[338, 'simple_pattern'],
+	[337, 'simple_pattern'],
 	[184, 'case_as_pattern'],
 	[185, 'union_pattern'],
 	[186, 'dict_pattern'],
@@ -1128,13 +1126,12 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[328, 'dictionary_elements_repeat1'],
 	[329, '_tuple_pattern_elements_repeat1'],
 	[330, '_tuple_elements_repeat1'],
-	[331, '_print_arguments_repeat1'],
-	[332, 'comprehension_clauses_repeat1'],
-	[333, 'except_clause_exception_list_repeat1'],
-	[334, 'match_block_block_repeat1'],
-	[335, 'as_pattern_target'],
-	[336, 'format_expression'],
-	[337, 'names'],
+	[331, 'comprehension_clauses_repeat1'],
+	[332, 'except_clause_exception_list_repeat1'],
+	[333, 'match_block_block_repeat1'],
+	[334, 'as_pattern_target'],
+	[335, 'format_expression'],
+	[336, 'names'],
 	[65535, 'ERROR']
 ]);
 
@@ -1803,8 +1800,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId._TuplePatternElementsRepeat1;
 		case '_tuple_elements_repeat1':
 			return TSKindId._TupleElementsRepeat1;
-		case '_print_arguments_repeat1':
-			return TSKindId._PrintArgumentsRepeat1;
 		case 'comprehension_clauses_repeat1':
 			return TSKindId.ComprehensionClausesRepeat1;
 		case 'except_clause_exception_list_repeat1':
@@ -4721,24 +4716,24 @@ export interface CaseListPattern {
 
 export interface PrintArguments {
 	readonly $type: TSKindId.PrintArguments;
-	readonly _argument: NonEmptyArray<Expression>;
+	readonly _item: NonEmptyArray<Expression>;
 	readonly __slotHints__?: {
-		readonly arguments: SlotHint<NonEmptyArray<T.Expression>, false, true>;
+		readonly items: SlotHint<NonEmptyArray<T.Expression>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
-	arguments(): NonEmptyArray<Expression>;
+	items(): NonEmptyArray<Expression>;
 }
 
 export interface PrintChevronArguments {
 	readonly $type: TSKindId.PrintChevronArguments;
-	readonly _argument: NonEmptyArray<Expression>;
+	readonly _item: NonEmptyArray<Expression>;
 	readonly __slotHints__?: {
-		readonly arguments: SlotHint<NonEmptyArray<T.Expression>, false, true>;
+		readonly items: SlotHint<NonEmptyArray<T.Expression>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
-	arguments(): NonEmptyArray<Expression>;
+	items(): NonEmptyArray<Expression>;
 }
 
 export interface PrintStatementChevron {
@@ -7349,7 +7344,7 @@ export namespace CaseListPattern {
 export namespace PrintArguments {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly argument?: {
+			readonly item?: {
 				readonly asPattern?: { readonly after?: WhitespaceKindId };
 				readonly attribute?: { readonly after?: WhitespaceKindId };
 				readonly await?: { readonly after?: WhitespaceKindId };
@@ -7387,7 +7382,7 @@ export namespace PrintArguments {
 export namespace PrintChevronArguments {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly argument?: {
+			readonly item?: {
 				readonly asPattern?: { readonly after?: WhitespaceKindId };
 				readonly attribute?: { readonly after?: WhitespaceKindId };
 				readonly await?: { readonly after?: WhitespaceKindId };
@@ -9419,7 +9414,7 @@ export interface PrintArgumentsNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	PrintArguments.Bound,
-	'argument',
+	'item',
 	TSKindId.PrintArguments,
 	PrintArguments.Parsed,
 	never
@@ -9433,7 +9428,7 @@ export interface PrintChevronArgumentsNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	PrintChevronArguments.Bound,
-	'argument',
+	'item',
 	TSKindId.PrintChevronArguments,
 	PrintChevronArguments.Parsed,
 	never

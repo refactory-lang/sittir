@@ -13722,12 +13722,15 @@ The blank arm is typed `null`.
 Source text for `options.ts`: a re-export of `WhitespaceKindId` and `LayoutKindId`
 (declared in `types.ts`, where the hints that use them live), `LabelOptions`
 from the label roots, `IndentChar` (the `indentChars` texts as a union,
-`never` when there are none), and `Options = DerivedOptions<T.OptionsHintMap,
-IndentChar> & LabelOptions`. There is no address table and no mapped type over one: every
+`never` when there are none), `LineEnding` (the `newlineArms` as a union, `never`
+when the grammar admits no `_newline`; named `LineEnding` because `Newline` is
+the whitespace kind's own type), and `Options = DerivedOptions<T.OptionsHintMap,
+IndentChar, LineEnding> & LabelOptions`. There is no address table and no mapped type over one: every
 kind's sites are on its namespace as `X.Hints` (`emitOptionsHints`),
 `OptionsHintMap` points at them by key, and `DerivedOptions` in
 `@sittir/types` is a plain mapped type over that map, so each property
-resolves lazily. `indent` comes with `DerivedOptions`, only where `IndentChar`
+resolves lazily. The `layout` group comes with `DerivedOptions`: `layout.indent`
+only where `IndentChar` is not `never`, `layout.newline` only where `LineEnding`
 is not `never`. Without the kind aliases (a
 grammar with no sites) the two aliases are declared `never` here instead of
 re-exported.
@@ -13737,7 +13740,7 @@ re-exported.
 What the module is written from: the kind aliases (`layoutKindAliasesOf`), the
 hint emitter over the address tables (`hintEmitterOf`), whose label roots
 become `LabelOptions`, and the grammar's indent characters (`indentChars`),
-which become `IndentChar`.
+which become `IndentChar`, and its line-ending arms (`newlineArms`), which become `LineEnding`.
 
 ### `packages/codegen/src/emitters/options.ts::addressTablesFor`
 
@@ -13998,7 +14001,9 @@ grouping whether a slot has seats.
  *  the layout kinds' render text. */
 ```
 
-`indentChars` is the grammar's indent characters (`indentChars`), written as `OptionTables.indent_chars`: the runtime refuses an `indent` unit that is empty or holds any other character, and treats `indent` as an unknown key when there are none.
+`indentChars` is the grammar's indent characters (`indentChars`), written as `OptionTables.indent_chars`: the runtime refuses a `layout.indent` unit that is empty or holds any other character, and treats `layout.indent` as an unknown key when there are none.
+
+`newlineArms` is the grammar's line-ending arms (`newlineArms`), written as `OptionTables.newline_arms`: the runtime refuses a `layout.newline` outside them, naming them, and treats `layout.newline` as an unknown key when there are none. `newline` is the preferred arm (`PREFERRED_NEWLINE`), written into the generated `defaults()` as `newline: "<arm>".to_string()`, so the default ending comes from the model's preference; core's own `Default` holds the writer's internal spelling only, for tables built outside a generated grammar.
 
 `indent` is the grammar's declared indent unit (`indentUnitOf`), empty for a grammar whose whitespace admits no indent characters. `renderOptionsRs` writes it into the generated `defaults()` as `indent: "<unit>".to_string()`, so the unit is the grammar's and core has no default of its own; an empty unit emits no line and `defaults()` keeps core's empty unit.
 

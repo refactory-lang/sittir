@@ -30,7 +30,7 @@ import type {
 import { structuralBuilder } from '../dsl/builders.ts';
 import type { RawGrammar, DesugarDivergenceEvent, EvaluatedGrammar, EvaluationStages, StageEvaluation } from './types.ts';
 import { canonicalGrammar } from './canonical-rules.ts';
-import { isComplexBody, optionalContentOf, ruleListEntryOf, type RuleListEntry } from '../dsl/rule-patterns.ts';
+import { isComplexBody, onlyAliasedSymbols, optionalContentOf, ruleListEntryOf, type RuleListEntry } from '../dsl/rule-patterns.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
 import { baseRulesOf } from '../dsl/shared.ts';
 import { protectedWireRuleNames, wireWithoutConfig, type PatchSite, type WireContext, type RefineForm, type WiredOpts } from '../dsl/wire/wire.ts';
@@ -495,9 +495,11 @@ function applyPatternReplacement(
 	if (candidates.length === 0) return;
 
 	const candidateNames = new Set(candidates.map((c) => c.name));
+	const aliasOnly = onlyAliasedSymbols(Object.values(rules));
+	const folding = candidates.filter((c) => c.aliasAs !== undefined || !aliasOnly.has(c.name));
 	for (const [name, body] of Object.entries(rules)) {
 		if (candidateNames.has(name)) continue;
-		const rewritten = replacePatterns(body, candidates);
+		const rewritten = replacePatterns(body, folding);
 		if (rewritten !== body) {
 			rules[name] = rewritten;
 		}

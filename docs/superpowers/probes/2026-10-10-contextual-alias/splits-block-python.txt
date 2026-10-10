@@ -1,0 +1,3 @@
+	splits: [
+		split("function_definition", "method_declaration", { within: ["block", "suite_block", "class_definition"], containers: [] })
+	]

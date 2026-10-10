@@ -3630,11 +3630,31 @@ The members an indentation unit is made of: `_space` and `_tab`. The characters 
 
 ### `packages/codegen/src/dsl/whitespace.ts::NEWLINE_MEMBER`
 
-`_newline`, the whitespace member that renders one line break. It is the stated default of a seam that admits only line breaks: the after edge of a line-terminated trivia kind (`lineBreakingKinds`).
+`_newline`, the whitespace member that renders one line break. It is the stated default of a seam that admits only line breaks: the after edge of a line-terminated trivia kind (`lineBreakingKinds`), and the one member that owns the line-ending arms (`NEWLINE_ARMS`).
+
+### `packages/codegen/src/dsl/whitespace.ts::NEWLINE_ARMS`
+
+The spellings of one line break: `'\n'`, `'\r\n'`, `'\r'`, in that order. They are declared once, as the arms of `_newline`'s choice; the line-ending option's type and its validation read this constant, so no other place lists them.
+
+### `packages/codegen/src/dsl/whitespace.ts::MemberRule`
+
+How a whitespace member is defined: a string (its text), a choice over strings with the preferred arm named (`_newline`), or a sequence of references to other members (`_blankline` and `_double_blankline` reference `_newline`, so they declare no arms of their own and take its preference).
 
 ### `packages/codegen/src/dsl/whitespace.ts::WHITESPACE_MEMBERS`
 
-Every whitespace member sittir can mint, in the order `_layout` lists them: `_tight`, `_space`, `_tab`, `_newline`, `_blankline`, `_double_blankline`, `_indent`, `_dedent`, each with its render body.
+Every whitespace member sittir can mint, in the order `_layout` lists them: `_tight`, `_space`, `_tab`, `_newline`, `_blankline`, `_double_blankline`, `_indent`, `_dedent`, each with its `rule` (`MemberRule`). The text everything downstream sees is the rule's canonical text (`canonicalText`).
+
+### `packages/codegen/src/dsl/whitespace.ts::whitespaceMemberRule`
+
+A member's `MemberRule` by name; throws, naming it, for a name outside the vocabulary.
+
+### `packages/codegen/src/dsl/whitespace.ts::canonicalText`
+
+A member's text in the one internal spelling: a string rule is its value, a choice is its preferred arm, a sequence is its references' canonical texts joined, so a line break is always `'\n'`. The emitted body, the admission test and the node map all read it; a member outside the vocabulary throws.
+
+### `packages/codegen/src/dsl/whitespace.ts::bodyOf`
+
+A member's `WhitespaceBody`: the canonical text as a fixed string, which is what `visibleExternals:` receives.
 
 ### `packages/codegen/src/dsl/whitespace.ts::admittedTextOf`
 
@@ -3654,7 +3674,7 @@ A name enrich mints for the whitespace vocabulary that the grammar also defines,
 
 ### `packages/codegen/src/dsl/whitespace.ts::enrichWhitespace`
 
-Derives a grammar's whitespace vocabulary from its facts: a member is admitted when the grammar's extras run (`nodelessExtrasRun`) matches its admitted text (`admittedTextOf`), and `_tight` always is. A text member whose name the upstream grammar already declares as an external is reused rather than added, keeping its minted body (python's scanned `_newline`). A depth member (`_indent`, `_dedent`) whose name is an upstream external is left out entirely, neither minted nor a member: a scanned depth token renders through its role, not a fixed body, so python's depth tokens come from its upstream roles, not `_layout`. The enriched stage, evaluated without the config's roles, then agrees with the final evaluation. Enrich calls it once per grammar, so no grammar authors its whitespace externals, supertype or vocabulary rule. Given the upstream rules, it reports as `collisions` each minted name (`_layout` and every added member) that an upstream rule defines differently; enrich then drops that rule so the minted definition stands. An upstream rule equal to the minted one is enrich's own output and passes through, which keeps enrich idempotent.
+Derives a grammar's whitespace vocabulary from its facts: a member is admitted when the grammar's extras run (`nodelessExtrasRun`) matches its admitted text (`admittedTextOf`), and `_tight` always is. A member's body is its canonical text (`canonicalText`), derived from its rule. A text member whose name the upstream grammar already declares as an external is reused rather than added, keeping its minted body (python's scanned `_newline`). A depth member (`_indent`, `_dedent`) whose name is an upstream external is left out entirely, neither minted nor a member: a scanned depth token renders through its role, not a fixed body, so python's depth tokens come from its upstream roles, not `_layout`. The enriched stage, evaluated without the config's roles, then agrees with the final evaluation. Enrich calls it once per grammar, so no grammar authors its whitespace externals, supertype or vocabulary rule. Given the upstream rules, it reports as `collisions` each minted name (`_layout` and every added member) that an upstream rule defines differently; enrich then drops that rule so the minted definition stands. An upstream rule equal to the minted one is enrich's own output and passes through, which keeps enrich idempotent.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::symbolFactsOf`
 
@@ -7267,3 +7287,7 @@ A patches entry as its list of sets: one map, an array of maps, or none.
 ### `packages/codegen/src/dsl/sittir-grammar.ts::withBindingPatches`
 
 The authored patches with each overlay kind's sets appended after the kind's authored sets, each marked by `markBindingSet`. A binding patch therefore sees the rule the authored patches produced, and its paths address that shape.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::onlyAliasedSymbols`
+
+The symbols a set of rule bodies references under a named alias and never by name. An authored hidden rule in that set is not a pattern candidate: its owner gave it a visible name at every reference, and the parser makes that alias the rule's own name only while every reference carries it. Folding an unrelated inline body of the same shape into a plain reference would add an unaliased reference, and the kind would stop being the aliased one. Evaluate's `applyPatternReplacement` and wire's `applyWirePatternReplacement` both ask it; a candidate that folds into an alias site (a declared group) is not subject to it.

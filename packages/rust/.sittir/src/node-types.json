@@ -3585,6 +3585,16 @@
     "type": "impl_item_body",
     "named": true,
     "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "declaration_list",
+            "named": true
+          }
+        ]
+      },
       "trait_clause": {
         "multiple": false,
         "required": false,
@@ -3639,16 +3649,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "declaration_list",
-          "named": true
-        }
-      ]
     }
   },
   {

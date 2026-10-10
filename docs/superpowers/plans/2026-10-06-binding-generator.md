@@ -54,12 +54,12 @@ Stage 4 drives the count to zero for each cause on the side that owns it. Rust i
 - The facts schema and the derivation move into `packages/codegen/src/bindings/`, as pure functions of the facts and the slot model. The scm reader (`readBindings`) runs on the pinned `@sittir/scm`, called by codegen for the claims and by the inventory for the overlay module it writes. Codegen refuses an overlay module whose hash does not match `bindings.scm` and the vocabulary sources, naming the command that regenerates it.
 - The facts keep two things they drop today:
   - a predicate claim's predicate (operator, capture, argument), so a read entry can test it and a build entry can pin it;
-  - a presence member's token text, so a capture named otherwise than its token (`"async" @isAsync`) still has a route.
+  - a flag's token text, so a capture named otherwise than its token (`"async" @isAsync`) still has a route.
 - Gate: the inventory's report is byte-identical; `grammar.bindings.ts` (the overlay) is committed for rust, typescript and python; codegen reads the claims through the pinned reader; unit tests pin the two new facts (`#eq? @name "__init__"`, `"async" @isAsync`) and the stale-overlay refusal.
 
 ## Stage 2: one route resolution
 
-- `resolveRoutes(input)` in `packages/codegen/src/bindings/routes.ts` produces, per kind, as data: read entries (most specific first: placed-and-predicate claims, then predicate claims, then placed claims, then literals, ties in file order), member routes (slot, presence through a token, nested through a selector), container unwraps and build inverses (member to parameter path, with pins). `derive`'s member loop folds member types from these routes instead of re-walking slots, and slot matching uses `derive`'s field matching only.
+- `resolveRoutes(input)` in `packages/codegen/src/bindings/routes.ts` produces, per kind, as data: read entries (most specific first: predicate claims, then literals, ties in file order; no claim is placed, bindings spec §9), member routes (slot, nested through a selector), fact routes (each flag's token or kind, each axis value's node, and the facts an envelope sets on the element it unwraps), container unwraps and build inverses (member to parameter path, flag to the token or kind it builds, with pins). Each claimed name resolves against the vocabulary's declarations, and a claim that maps onto none is reported (generator spec §3.1). `derive`'s member loop folds member types from these routes instead of re-walking slots, and slot matching uses `derive`'s field matching only.
 - The routes are written per bound grammar as `packages/<grammar>/src/node-model-portable.json5`, beside and apart from `node-model.json5`, which stays low-level.
 - The low-level build's routing (the seat table and its mounts, already codegen output) is unchanged: the validation lanes build through the low-level API, whose references carry the concrete kind.
 - Gate: the inventory's report is byte-identical, and the `ir-render-parse` rows are equal.
@@ -70,7 +70,7 @@ Everything portable is emitted by one overlay, `packages/codegen/src/emitters/ov
 
 - Per bound grammar, a namespace tree by vocabulary path, built from the stage-2 routes: `kinds.<path>` and `is.<path>`.
 - Short aliases: a path also appears under each ancestor where its last segment is unique among all that ancestor's descendants (`is.expression.add` beside `is.expression.binary.add`). It is the same object, a real child of the same name wins, and it is derived from the path tree, not listed. A segment that is not unique gets no alias, and is reported in the overlay's dropped list with the paths that have no realized kind.
-- `is.<path>` is compiled from the read entries under the path into a kind set plus a `QueryPlan`, evaluated with `holds`. It takes a node from either engine. Its overloads narrow a grammar node to the row's grammar types and, once stage 6 gives portable nodes, a portable node to the vocabulary interface.
+- `is.<path>` is compiled from the read entries under the path into a kind set plus a `QueryPlan`, evaluated with `holds`, and a mask of the path's flags, tested against the node's bitflag. A flag's guard sits under every path of its kind. It takes a node from either engine. Its overloads narrow a grammar node to the row's grammar types and, once stage 6 gives portable nodes, a portable node to the vocabulary interface.
 - `createEngine(lang, { api: 'portable' })` is accepted and exposes `kinds` and `is`; `parse`, `render` and `build` refuse until their stages land.
 - Emitted for every bound grammar, whatever its rejection count.
 - Gate:
@@ -105,8 +105,9 @@ The causes the probe reports, each on the side that owns it:
 ## Stage 6: read (the portable `parse` and `render`)
 
 - A generated `portable.ts` per zero-conformance grammar:
-  - node literal factories, with `$type` as the only data member and every member a closure;
-  - the dispatch: placed claims through the enclosing kinds a parent passes down, predicate claims on the captured node's text, an enum value read by stage 4's enum-read rule;
+  - node literal factories, with `$type` as the only public data member and every member a closure;
+  - the dispatch: predicate claims on the captured node's text, the facts an envelope sets on the element it unwraps, one level down, into its bitflag, and an enum value read by stage 4's enum-read rule;
+  - each node's flags, one bitflag behind a module-private symbol that only `is` reads, read along the flags' routes;
   - a varying leaf's `$value`, and a fixed literal as its const string.
 - `createEngine(lang, { api: 'portable' })` is accepted. `parse` reads portable nodes, and `render` renders one by dispatching on `$type`. The engine reaches a portable node's low-level node through a module-private symbol, never a public member.
 - Gate:
@@ -117,7 +118,7 @@ The causes the probe reports, each on the side that owns it:
 ## Stage 7: build
 
 - Build entries per vocabulary kind under `build.<path>`, with the same short aliases as stage 3. Where one path maps to several grammar kinds, the build picks the kind from the input's shape (which members are present, and the kinds of their values), then builds through the low-level API and its mount routing. There is no default arm and no inference from text. Kinds whose shapes cannot be told apart are stage-4 conformance items, cleared by giving each its own vocabulary path (`expression.update.prefix` / `.postfix`, `comment.block` / `comment.line`), so the input's `$kind` picks the call.
-- Refinement builders, one per refinement path:
+- Refinement builders and flag steps, the only form a refinement or a flag takes in a build. A step per flag on each builder of its kind, in any order, sets its bit and builds its token or kind. One refinement builder per refinement path:
   - a literal or token refinement presets the literal (`build.expression.binary.add` fills `operator: '+'`);
   - a child-kind refinement narrows the slot's type to that child kind;
   - a text refinement (`#match?`, `#eq?`) narrows the type and runs the predicate as a guard when the node is built, always on like a leaf guard, refusing text it rejects.

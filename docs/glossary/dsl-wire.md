@@ -612,7 +612,7 @@ rule) rather than left bare: a candidate's own site may be an automatically
 or author-labelled arm, and the SYMBOL (or, for an `aliasAs` candidate, the
 ALIAS) it collapses to needs the same label to keep standing in for it.
 Takes the record as a lookup (`automatic`, passed down from
-`buildPatternReplacingFn`) rather than reading the current wire context:
+the pattern-replacing wrapper) rather than reading the current wire context:
 the pattern-replacing wrapper runs outside the context-setting rule
 wrapper, so no context is current when it executes. The lookup is called
 only when a replacement happens.
@@ -638,14 +638,6 @@ only when a replacement happens.
 ```text
 // Recurse into children.
 ```
-
-### `packages/codegen/src/dsl/wire/wire.ts::buildPatternReplacingFn`
-
-Wraps a rule fn so its result has every structural match of a candidate
-replaced (`replaceInBodyRt`). The record reaches `replaceInBodyRt` as a
-lookup bound to the wire context (`() => context.automaticVariants`),
-because the wrapped fn runs after the context-setting wrapper has restored
-the previous context.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::withStringGlobalShim`
 
@@ -729,11 +721,11 @@ The `visibleExternals:` config `wire()` runs with, and the whitespace collisions
  * pass over already-computed Rule<'evaluate'> objects, wire.ts must wrap rule fns because
  * tree-sitter evaluates them lazily one by one.
  *
- * A candidate is an authored `_`-prefixed rule in `outRules` whose eagerly-
- * evaluated body is complex (SEQ ≥2, CHOICE ≥2, or REPEAT with non-trivial
- * content). We try-evaluate each fn with a synthetic `$` proxy and `previous`
- * = undefined; rules that depend on `original` (transform-based fns) will
- * return undefined or throw, and are safely skipped.
+ * A candidate is an authored `_`-prefixed rule whose evaluated body is
+ * complex (SEQ ≥2, CHOICE ≥2, or REPEAT with non-trivial content). Nothing
+ * is evaluated when the wrappers are installed: the first call of any wrapper
+ * evaluates every authored rule once with the runtime's own builder, hidden
+ * rules first, and detection reads those bodies.
  *
  * Note: evaluate.ts's post-evaluation `applyPatternReplacement` pass already
  * handles the sittir-pipeline path (after all rule fns have run). This wire.ts
@@ -889,7 +881,7 @@ Every reader gets it through the context:
 `resolveFieldPlaceholder` reads it (via `wireAutomaticVariants`) to strip a
 label from content a patch pulls under a `field()`; `resolveAliasPlaceholder`
 (also via `wireAutomaticVariants`) and `replaceInBodyRt` (passed down
-explicitly through `buildPatternReplacingFn`, since it runs outside the
+explicitly through the pattern-replacing wrapper, since it runs outside the
 context-setting rule wrapper) read it to restamp a label at a rewritten
 site — so an arm's label stays consistent across a patch or a group
 body-pattern substitution.
@@ -2024,3 +2016,7 @@ Records one effect while a binding patch set applies; outside one it does nothin
 ### `packages/codegen/src/dsl/wire/wire.ts::wireBindingEffects`
 
 The effects recorded on the wire context that `wire()` attached to `opts`.
+
+### `packages/codegen/src/dsl/wire/wire.ts::applyWirePatternReplacement` (alias-only guard)
+
+Which candidates fold is decided once, on the first call of any wrapper, over the bodies the runtime's own builder produced: every authored rule's callback runs then (hidden rules first, the order the inline list is stamped in), its body is kept and handed back when that rule is asked for, and the hidden rules with complex bodies are the detected candidates. `onlyAliasedSymbols` over those bodies and the declared candidate bodies removes the candidates referenced only under an alias. A candidate's own rule returns its body unfolded. The grammar's `inline` list is in first-evaluation order, which this pass sets; tree-sitter reads it as a set.

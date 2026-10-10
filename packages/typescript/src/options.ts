@@ -8,6 +8,8 @@ export type { WhitespaceKindId, LayoutKindId };
 
 export type IndentChar = ' ' | '\t';
 
+export type LineEnding = '\n' | '\r\n' | '\r';
+
 /// The virtual kinds the grammar declares beside its node kinds, by the sites bound to them.
 export interface LabelOptions {
 	readonly body?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
@@ -24,4 +26,4 @@ export interface LabelOptions {
 	};
 }
 
-export type Options = DerivedOptions<T.OptionsHintMap, IndentChar> & LabelOptions;
+export type Options = DerivedOptions<T.OptionsHintMap, IndentChar, LineEnding> & LabelOptions;

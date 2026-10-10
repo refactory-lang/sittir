@@ -276,7 +276,7 @@ function assembleEngine<API extends LanguageAPI>(
 			}
 			const call: Parameters<NonNullable<Interceptor<API>['render']>>[0] = {
 				node: target,
-				options: { ...options?.render, ...renderOptions }
+				options: mergeRenderOptions(options?.render, renderOptions)
 			};
 			return interceptedRender(call, renderChain, rendered, () => materializeNative(target, rendered));
 		},
@@ -304,6 +304,16 @@ function assemblePortableEngine<API extends PortableLanguageAPI>(language: Langu
 	if (portable === undefined) throw new Error(`language "${language.name}" has no portable surface: its grammar has no bindings`);
 	const identity: EngineIdentity<API> = { language, renderModuleHash: hooks.renderModuleHash, options: undefined, trivia: hooks.trivia };
 	return Object.freeze({ ...identity, kinds: portable.kinds, is: languageGuards(portable.is, inLanguageOf(identity)) });
+}
+
+function mergeRenderOptions<O extends object>(engine: O | undefined, call: O | undefined): O {
+	const merged: Record<string, unknown> = { ...engine, ...call };
+	const layouts = [engine, call].flatMap((options) => {
+		const layout = (options as { readonly layout?: unknown } | undefined)?.layout;
+		return typeof layout === 'object' && layout !== null ? [layout] : [];
+	});
+	if (layouts.length > 0) merged['layout'] = Object.assign({}, ...layouts);
+	return merged as O;
 }
 
 /**
