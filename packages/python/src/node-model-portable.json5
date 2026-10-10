@@ -5072,34 +5072,6 @@
           ]
         },
         {
-          "vocab": "literal.string.docstring",
-          "toplevel": false,
-          "within": [
-            "expression_statement",
-            "simple_statements_elements",
-            "simple_statements",
-            "block",
-            "suite_block",
-            "function_definition"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
-          "vocab": "literal.string.docstring",
-          "toplevel": false,
-          "within": [
-            "expression_statement",
-            "simple_statements_elements",
-            "simple_statements",
-            "block",
-            "suite_block",
-            "class_definition"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "literal.string",
           "toplevel": true,
           "within": [],
@@ -6007,20 +5979,20 @@
         "paths": 13,
         "kinds": 3,
         "refinements": 0,
-        "aliases": 115
+        "aliases": 114
       },
       {
         "depth": 2,
         "paths": 74,
         "kinds": 68,
         "refinements": 7,
-        "aliases": 79
+        "aliases": 78
       },
       {
         "depth": 3,
-        "paths": 67,
+        "paths": 66,
         "kinds": 53,
-        "refinements": 49,
+        "refinements": 48,
         "aliases": 42
       },
       {

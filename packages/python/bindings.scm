@@ -7,9 +7,9 @@
 
 ; ── declaration ────────────────────────────────────────────────────────────────
 (function_definition) @declaration.function
-(function_definition body: (suite_block (block . (simple_statements (simple_statements_elements . item: (expression_statement (string) @doc @literal.string.docstring))))))
+(function_definition body: (suite_block (block . (simple_statements (simple_statements_elements . item: (expression_statement (string) @doc))))))
 (class_definition superclasses: (_)? @bases) @declaration.class
-(class_definition body: (suite_block (block . (simple_statements (simple_statements_elements . item: (expression_statement (string) @doc @literal.string.docstring))))))
+(class_definition body: (suite_block (block . (simple_statements (simple_statements_elements . item: (expression_statement (string) @doc))))))
 (class_definition body: (suite_block (block (function_definition) @declaration.method)))
 ((function_definition name: (identifier) @name) @declaration.constructor (#eq? @name "__init__"))
 ((function_definition name: (identifier) @name) @declaration.method.dunder (#match? @name "^__(?<stem>.*)__$"))

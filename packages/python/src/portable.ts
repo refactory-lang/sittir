@@ -251,7 +251,6 @@ export interface PortableIds {
 	'literal.string': TSKindId.ConcatenatedString | TSKindId.EscapeSequence | TSKindId.String;
 	'literal.string.bytes': TSKindId.String;
 	'literal.string.concatenated': TSKindId.ConcatenatedString;
-	'literal.string.docstring': TSKindId.String;
 	'literal.string.escape': TSKindId.EscapeSequence;
 	'literal.string.f': TSKindId.String;
 	'literal.string.raw': TSKindId.String;
@@ -820,7 +819,6 @@ export interface PortableKindsAt {
 		readonly binary: PortableKindsAt['literal.number.integer.binary'];
 		readonly bytes: PortableKindsAt['literal.string.bytes'];
 		readonly concatenated: PortableKindsAt['literal.string.concatenated'];
-		readonly docstring: PortableKindsAt['literal.string.docstring'];
 		readonly escape: PortableKindsAt['literal.string.escape'];
 		readonly f: PortableKindsAt['literal.string.f'];
 		readonly false: PortableKindsAt['literal.boolean.false'];
@@ -880,7 +878,6 @@ export interface PortableKindsAt {
 		readonly $ids: readonly PortableIds['literal.string'][];
 		readonly bytes: PortableKindsAt['literal.string.bytes'];
 		readonly concatenated: PortableKindsAt['literal.string.concatenated'];
-		readonly docstring: PortableKindsAt['literal.string.docstring'];
 		readonly escape: PortableKindsAt['literal.string.escape'];
 		readonly f: PortableKindsAt['literal.string.f'];
 		readonly raw: PortableKindsAt['literal.string.raw'];
@@ -888,7 +885,6 @@ export interface PortableKindsAt {
 	};
 	'literal.string.bytes': { readonly $ids: readonly PortableIds['literal.string.bytes'][] };
 	'literal.string.concatenated': { readonly $ids: readonly PortableIds['literal.string.concatenated'][] };
-	'literal.string.docstring': { readonly $ids: readonly PortableIds['literal.string.docstring'][] };
 	'literal.string.escape': { readonly $ids: readonly PortableIds['literal.string.escape'][] };
 	'literal.string.f': { readonly $ids: readonly PortableIds['literal.string.f'][] };
 	'literal.string.raw': { readonly $ids: readonly PortableIds['literal.string.raw'][] };
@@ -1400,7 +1396,6 @@ export interface PortableIsAt {
 		readonly binary: PortableIsAt['literal.number.integer.binary'];
 		readonly bytes: PortableIsAt['literal.string.bytes'];
 		readonly concatenated: PortableIsAt['literal.string.concatenated'];
-		readonly docstring: PortableIsAt['literal.string.docstring'];
 		readonly escape: PortableIsAt['literal.string.escape'];
 		readonly f: PortableIsAt['literal.string.f'];
 		readonly false: PortableIsAt['literal.boolean.false'];
@@ -1455,7 +1450,6 @@ export interface PortableIsAt {
 	'literal.string': PortableGuard<PortableIds['literal.string']> & {
 		readonly bytes: PortableIsAt['literal.string.bytes'];
 		readonly concatenated: PortableIsAt['literal.string.concatenated'];
-		readonly docstring: PortableIsAt['literal.string.docstring'];
 		readonly escape: PortableIsAt['literal.string.escape'];
 		readonly f: PortableIsAt['literal.string.f'];
 		readonly raw: PortableIsAt['literal.string.raw'];
@@ -1463,7 +1457,6 @@ export interface PortableIsAt {
 	};
 	'literal.string.bytes': PortableGuard<PortableIds['literal.string.bytes']> & {};
 	'literal.string.concatenated': PortableGuard<PortableIds['literal.string.concatenated']> & {};
-	'literal.string.docstring': PortableGuard<PortableIds['literal.string.docstring']> & {};
 	'literal.string.escape': PortableGuard<PortableIds['literal.string.escape']> & {};
 	'literal.string.f': PortableGuard<PortableIds['literal.string.f']> & {};
 	'literal.string.raw': PortableGuard<PortableIds['literal.string.raw']> & {};
@@ -1625,7 +1618,6 @@ export interface PortableKinds {
 	readonly decorator: PortableKindsAt['attribute.decorator'];
 	readonly default: PortableKindsAt['declaration.parameter.default'];
 	readonly delete: PortableKindsAt['statement.delete'];
-	readonly docstring: PortableKindsAt['literal.string.docstring'];
 	readonly dotted: PortableKindsAt['identifier.dotted'];
 	readonly dunder: PortableKindsAt['declaration.method.dunder'];
 	readonly elif: PortableKindsAt['clause.elif'];
@@ -1756,7 +1748,6 @@ export interface PortableIs {
 	readonly decorator: PortableIsAt['attribute.decorator'];
 	readonly default: PortableIsAt['declaration.parameter.default'];
 	readonly delete: PortableIsAt['statement.delete'];
-	readonly docstring: PortableIsAt['literal.string.docstring'];
 	readonly dotted: PortableIsAt['identifier.dotted'];
 	readonly dunder: PortableIsAt['declaration.method.dunder'];
 	readonly elif: PortableIsAt['clause.elif'];
@@ -2142,7 +2133,6 @@ const table: PortableTable = {
 		'literal.string': { ids: [TSKindId.ConcatenatedString, TSKindId.EscapeSequence, TSKindId.String], exact: true },
 		'literal.string.bytes': { ids: [TSKindId.String], exact: false },
 		'literal.string.concatenated': { ids: [TSKindId.ConcatenatedString], exact: true },
-		'literal.string.docstring': { ids: [TSKindId.String], exact: false },
 		'literal.string.escape': { ids: [TSKindId.EscapeSequence], exact: true },
 		'literal.string.f': { ids: [TSKindId.String], exact: false },
 		'literal.string.raw': { ids: [TSKindId.String], exact: false },
@@ -2306,7 +2296,6 @@ const table: PortableTable = {
 		['', 'decorator', 'attribute.decorator'],
 		['', 'default', 'declaration.parameter.default'],
 		['', 'delete', 'statement.delete'],
-		['', 'docstring', 'literal.string.docstring'],
 		['', 'dotted', 'identifier.dotted'],
 		['', 'dunder', 'declaration.method.dunder'],
 		['', 'elif', 'clause.elif'],
@@ -2481,7 +2470,6 @@ const table: PortableTable = {
 		['literal', 'binary', 'literal.number.integer.binary'],
 		['literal', 'bytes', 'literal.string.bytes'],
 		['literal', 'concatenated', 'literal.string.concatenated'],
-		['literal', 'docstring', 'literal.string.docstring'],
 		['literal', 'escape', 'literal.string.escape'],
 		['literal', 'f', 'literal.string.f'],
 		['literal', 'false', 'literal.boolean.false'],
@@ -2862,30 +2850,6 @@ const table: PortableTable = {
 				path: 'literal.string.triple',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '"""|\'\'\'', fields: ['string_start'], kinds: [] } }]
-			},
-			{
-				path: 'literal.string.docstring',
-				within: [
-					TSKindId.ExpressionStatement,
-					TSKindId.SimpleStatementsElements,
-					TSKindId.SimpleStatements,
-					TSKindId.Block,
-					TSKindId.SuiteBlock,
-					TSKindId.FunctionDefinition
-				],
-				test: []
-			},
-			{
-				path: 'literal.string.docstring',
-				within: [
-					TSKindId.ExpressionStatement,
-					TSKindId.SimpleStatementsElements,
-					TSKindId.SimpleStatements,
-					TSKindId.Block,
-					TSKindId.SuiteBlock,
-					TSKindId.ClassDefinition
-				],
-				test: []
 			},
 			{ path: 'literal.string', within: [], test: [] }
 		],
