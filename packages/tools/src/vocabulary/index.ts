@@ -2,7 +2,8 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { formatSource } from '@sittir/codegen/run-codegen';
 import { type Plan, type ValueSet, plan } from './plan.ts';
-import { AUGMENTATION, readVocabularySource, VOCABULARY_DIR } from './read.ts';
+import { VOCABULARY_DIR } from '@sittir/codegen/bindings';
+import { AUGMENTATION, readVocabularySource } from './read.ts';
 import { augmentation, FEATURES_INDEX, featuresIndex } from './write.ts';
 
 export interface VocabularyFeaturesOptions {

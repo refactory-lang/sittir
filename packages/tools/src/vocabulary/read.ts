@@ -1,10 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, posix } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import ts from 'typescript6';
 
-const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
-export const VOCABULARY_DIR = join(ROOT, 'packages', 'types', 'src', 'vocabulary');
 export const AUGMENTATION = 'augment.ts';
 export const FEATURES = 'features';
 

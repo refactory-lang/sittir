@@ -14,10 +14,6 @@ The tool reads both and plans which feature owns which kind and member. It then 
 
 ---
 
-### `packages/tools/src/vocabulary/read.ts::VOCABULARY_DIR`
-
-The vocabulary, `packages/types/src/vocabulary/`, located from the repository root. The bindings inventory's `--check` reads it from here too.
-
 ### `packages/tools/src/vocabulary/read.ts::readVocabularySource`
 
 Reads the vocabulary's declarations with the TypeScript parser, never by matching lines.
