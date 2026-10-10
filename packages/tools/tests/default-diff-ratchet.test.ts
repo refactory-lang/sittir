@@ -17,6 +17,16 @@ async function differingGaps(grammar: string): Promise<number> {
 	return differing;
 }
 
+describe('the committed ceilings', () => {
+	it('name exactly the corpora under tests/idiomatic', () => {
+		const corpora = readdirSync(join(PACKAGE, 'tests', 'idiomatic'), { withFileTypes: true })
+			.filter((entry) => entry.isDirectory())
+			.map((entry) => entry.name)
+			.sort();
+		expect(Object.keys(CEILINGS).sort()).toEqual(corpora);
+	});
+});
+
 describe.each(Object.entries(CEILINGS))('the %s defaults rebuild its idiomatic corpus with at most %i differing gaps', (grammar, ceiling) => {
 	it('stays at or below the committed ceiling, which only shrinks', async () => {
 		const differing = await differingGaps(grammar);
