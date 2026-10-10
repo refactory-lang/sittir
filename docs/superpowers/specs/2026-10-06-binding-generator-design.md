@@ -59,7 +59,7 @@ There is one factory per read entry, meaning a grammar kind and one vocabulary k
 ```ts
 const FunctionItemAsDeclarationFunction = (n: T.FunctionItem.Parsed, set = 0): VocabViews['declaration.function'] => ({
 	$type: n.$type,
-	[flags]: () => set | (n.functionModifiers()?.modifiers().includes(TSKindId.AsyncKeyword) ? Flag.async : 0) | …,
+	[flags]: () => set | (n.functionModifiers()?.modifiers().includes(TSKindId.AsyncKeyword) ? Flags.Async : 0) | …,
 	name: () => read(n.name()),
 	parameters: () => read(n.parameters()),
 	…
