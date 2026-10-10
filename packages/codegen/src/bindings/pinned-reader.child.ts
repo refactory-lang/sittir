@@ -1,9 +1,9 @@
 import { createInterface } from 'node:readline';
 import { BindingsSyntaxError } from './facts.ts';
-import { bindingPatterns, readBindings, roundTripBindings } from './pinned-reader.ts';
+import { bindingPatternsInProcess, readBindingsInProcess, roundTripBindingsInProcess } from './pinned-reader.ts';
 import { PINNED_READER_MARKER, type PinnedReaderReply, type PinnedReaderRequest } from './read.ts';
 
-const READS = { facts: readBindings, patterns: bindingPatterns, roundTrip: roundTripBindings };
+const READS = { facts: readBindingsInProcess, patterns: bindingPatternsInProcess, roundTrip: roundTripBindingsInProcess };
 
 async function answer({ id, mode, text }: PinnedReaderRequest): Promise<PinnedReaderReply> {
 	try {

@@ -461,7 +461,7 @@ function patternsOf(
 	}
 }
 
-export async function readBindings(text: string): Promise<BindingFacts> {
+export async function readBindingsInProcess(text: string): Promise<BindingFacts> {
 	const facts: Facts = { claims: [], members: [], containers: [], templates: [], unclaimed: [] };
 	const errors: number[] = [];
 	const patterns = await parsedPatterns(text);
@@ -543,11 +543,11 @@ function* groupReferences(node: NamedNode.Parsed): Generator<PatternReference> {
 	for (const expression of expressions) yield* referencesIn(expression);
 }
 
-export async function bindingPatterns(text: string): Promise<BindingPattern[]> {
+export async function bindingPatternsInProcess(text: string): Promise<BindingPattern[]> {
 	return (await parsedPatterns(text)).map(({ line, source, definition }) => ({ line, source, references: [...referencesIn(definition)] }));
 }
 
-export async function roundTripBindings(text: string): Promise<BindingsRoundTrip> {
+export async function roundTripBindingsInProcess(text: string): Promise<BindingsRoundTrip> {
 	await ready();
 	const root = engine.parse(text);
 	return { errors: [...root.$errors], rendered: engine.render(root).toString() };

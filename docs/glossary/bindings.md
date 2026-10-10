@@ -423,7 +423,7 @@ The `bindings.scm` reader, over the pinned `@sittir/scm` build (`loadPinnedScm`)
 
 Loads the pinned build once and keeps its kinds, its engine and the span helpers for every later read; a failed load is forgotten so the next read tries again.
 
-### `packages/codegen/src/bindings/pinned-reader.ts::readBindings`
+### `packages/codegen/src/bindings/pinned-reader.ts::readBindingsInProcess`
 
 ```text
 Reads a bindings file into binding facts. The file is parsed with the scm
@@ -460,6 +460,8 @@ The parse reports no errors of its own. A file is refused with `BindingsSyntaxEr
 
 The scm engine behind it is the pinned build's (`ready`), created by the first read and shared by the rest. The module runs only in the reader's own process (`pinned-reader.child.ts`); codegen and the inventory read through `read.ts`.
 
+
+It runs only in the reader's child process; everything else reads through `read.ts::readBindings`, which sends the request there. The `InProcess` names keep the two apart at an import.
 ### `packages/codegen/src/bindings/pinned-reader.ts::kindPresence`
 
 The flag a further single-segment capture on a node makes: the presence of the node's kind in the slot the node's first member capture names, owned by that member's owner. A node whose first capture is a token's presence has no slot to name, so its further captures are read as ordinary members.
@@ -470,9 +472,9 @@ A node's member captures with the first naming its whole slot when a flag follow
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::parsedPatterns`
 
-Each top-level definition with the line it starts on and its source text, sliced by the node's byte span. Spans count UTF-8 bytes and the bindings files carry multibyte comment rules, so slicing and line numbers go through `sourceSpans`. `readBindings` reads the file through it, so a container's facts record the line and text given here, and `bindingPatterns` summarizes each one for the inventory's issue check.
+Each top-level definition with the line it starts on and its source text, sliced by the node's byte span. Spans count UTF-8 bytes and the bindings files carry multibyte comment rules, so slicing and line numbers go through `sourceSpans`. `readBindingsInProcess` reads the file through it, so a container's facts record the line and text given here, and `bindingPatternsInProcess` summarizes each one for the inventory's issue check.
 
-### `packages/codegen/src/bindings/pinned-reader.ts::bindingPatterns`
+### `packages/codegen/src/bindings/pinned-reader.ts::bindingPatternsInProcess`
 
 Each top-level pattern as a `BindingPattern`: its line, its source text and every field, node kind and token it references (`referencesIn`).
 
@@ -484,7 +486,7 @@ A pattern's `#…?` predicate as a fact: its operator (the name between `#` and 
 
 A predicate capture's `CaptureSite` for one claim. It walks from the claimed node outward, through the pattern's named nodes only, to the first node that holds the capture, counting each step up, and records the selectors from there down to the capture. It is `null` when the capture names no node in the pattern, or when only a group holds both.
 
-### `packages/codegen/src/bindings/pinned-reader.ts::roundTripBindings`
+### `packages/codegen/src/bindings/pinned-reader.ts::roundTripBindingsInProcess`
 
 Parses a `bindings.scm` with the pinned engine and renders the parsed root back (`BindingsRoundTrip`). The test over every grammar's `bindings.scm` is the gate a change of pin runs.
 
@@ -542,7 +544,7 @@ A pattern as read: its top visit, every visit in order, and the predicates it ca
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::Facts`
 
-The mutable fact lists `readBindings` fills, one per fact kind, returned as `BindingFacts`.
+The mutable fact lists `readBindingsInProcess` fills, one per fact kind, returned as `BindingFacts`.
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::stringValue`
 
