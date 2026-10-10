@@ -1137,9 +1137,11 @@ Run the same command. Expected: all pass.
 
 - [ ] **Step 5: The census**
 
-`packages/tools/src/validate/__tests__/snapshot-census.test.ts` renders each grammar's corpus roots twice: once untouched, and once as `engine.render(root.$snapshot())`. It records the files whose two renders differ, and the first differing line of each, in `docs/superpowers/probes/2026-10-06-relative-coordinates/snapshot-census.json`. That file is the probe output this step's gates read.
+`packages/tools/src/validate/__tests__/snapshot-census.test.ts` renders each grammar's corpus roots twice: once untouched, and once as `engine.render(root.$snapshot())`. It records the files whose two renders differ, and the first differing line of each, in `docs/superpowers/probes/2026-10-09-relative-coordinates/snapshot-census.json`. That file is the probe output this step's gates read. `census-classes/` beside it classes every differing region: (i) in-line spacing, (ii) layout inside a template, (iii) layout beside a comment, (iv) anything else.
 
-The test asserts that every difference is in a file the census names, and that the count per grammar is no higher than the committed census. That is verification 13. The first run writes the census, which goes to brainstorm with the PR. Each file's first difference is classed as a list gap, a root edge, a flank or a line break between owners. 11a must leave no list-gap or root-edge difference except those Q1's rule explains, and each of those is named. 11b and 11c, after 3a, bring the rest to zero.
+The test asserts that every difference is in a file the census names, and that the count per grammar is no higher than the committed census. That is verification 13. The first run writes the census, which goes to brainstorm with the PR. Each file's first difference is classed as a list gap, a root edge, a flank or a line break between owners. 11a must leave no list-gap or root-edge difference except those Q1's rule explains, and each of those is named. 11b and 11c, after 3a, bring classes (ii) and (iii) to zero.
+
+**Class (i) is normalized** (the maintainer, 2026-10-10). A snapshot, like a built node, spells in-line spacing with the seam defaults, and snapshots and fixtures accept it. The wrong seam defaults the census found (rust `* const`, `'static : 'static`; typescript `void ;`; python `print ()`; scm `( MISSING x )`) are fixed first, since they render wrong on built nodes too. From then on the census still names every remaining class (i) entry, and the gates of 11b, 11c and 12 count class (i) as normalized, not as a difference.
 
 - [ ] **Step 6: Gates and commit**
 
@@ -1156,7 +1158,7 @@ After the arena-tables plan's 3a, each node's sides live in the native trivia ta
 
 Tests:
 - the parked `a_detached_window_from_the_openers_line_to_the_closer_classifies_as_its_tree_does` case, redone over a snapshot;
-- the census's flank lines reach zero.
+- the census's flank lines reach zero, class (i) counted as normalized.
 
 This task is detailed against 3a's code once 3a lands.
 
@@ -1164,7 +1166,7 @@ This task is detailed against 3a's code once 3a lands.
 
 A snapshot node carries the line-break sides the table assigned it at read. They render with the seam defaults, as a live render's do after 3a, and the `$sameLine` and `$tokensBetween` stamps go with 3a's Task 4.
 - No derivation from neighbours' spans is added (Q3).
-- The census's line-break lines reach zero.
+- The census's line-break lines reach zero, class (i) counted as normalized.
 
 This task is detailed against 3a's code once 3a lands.
 
@@ -1196,7 +1198,8 @@ In `parity-fixtures.ts`, after extraction, compare each kind's left-out count wi
 
 - validation rows identical;
 - `sittir-parity-tests` green: every fixture renders its `expectedOutput`;
-- no kind newly left out on any grammar (D6). Rust's `source_file` stays at 3 or below.
+- no kind newly left out on any grammar (D6). Rust's `source_file` stays at 3 or below;
+- a fixture's expected output differs from its source only in class (i) in-line spacing, and the census names each such fixture.
 
 A fixture that moves is reported with the census line that explains it; nothing is pinned by hand.
 
