@@ -67,6 +67,9 @@ pub trait Layout {
     /// two are still adjacent in their source.
     fn gap(&self) -> Option<&SourceGap>;
     fn take_flank(&mut self) -> Option<SourceFlank>;
+    /// Where a snapshot node lies, and whether it has leading or trailing
+    /// trivia (`TransportLayout::span`).
+    fn snapshot_edge(&self) -> Option<crate::prepare::SnapshotEdge>;
 }
 
 impl<T> Layout for Option<Box<TransportLayout<T>>> {
@@ -94,6 +97,17 @@ impl<T> Layout for Option<Box<TransportLayout<T>>> {
 
     fn take_flank(&mut self) -> Option<SourceFlank> {
         self.as_mut()?.flank.take()
+    }
+
+    fn snapshot_edge(&self) -> Option<crate::prepare::SnapshotEdge> {
+        let layout = self.as_ref()?;
+        let held = |entries: Option<&Vec<crate::trivia::TriviaEntry<T>>>| entries.is_some_and(|entries| !entries.is_empty());
+        let trivia = layout.trivia.as_ref();
+        Some(crate::prepare::SnapshotEdge {
+            span: layout.span?,
+            leading: held(trivia.and_then(|trivia| trivia.leading.as_ref())),
+            trailing: held(trivia.and_then(|trivia| trivia.trailing.as_ref())),
+        })
     }
 }
 

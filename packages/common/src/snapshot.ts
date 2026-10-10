@@ -1,3 +1,4 @@
+import type { Snapshot } from '@sittir/types';
 import { editedWithin } from './identity.ts';
 import { decodeIndex, isCoordinate, type TreeHandle } from './read.ts';
 import { spanSlicer } from './span.ts';
@@ -37,8 +38,8 @@ function snapshotTreeOf(value: object, fallback: SnapshotTree | undefined): Snap
  * - A built node keeps its data with no span. A tree-backed node under it is measured from its own
  *   start, since a built node has no points.
  */
-export function snapshotOf(value: unknown): unknown {
-	return snapshotIn(value, undefined, undefined);
+export function snapshotOf(value: object): Snapshot {
+	return snapshotIn(value, undefined, undefined) as Snapshot;
 }
 
 function snapshotIn(value: unknown, holderByte: number | undefined, holderTree: SnapshotTree | undefined): unknown {

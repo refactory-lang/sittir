@@ -440,6 +440,91 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            AnyTransport::Pattern(t) => t.snapshot_edge(),
+            AnyTransport::Alternation(t) => t.snapshot_edge(),
+            AnyTransport::Term(t) => t.snapshot_edge(),
+            AnyTransport::LookaroundAssertion(t) => t.snapshot_edge(),
+            AnyTransport::LookaheadAssertion(t) => t.snapshot_edge(),
+            AnyTransport::LookbehindAssertion(t) => t.snapshot_edge(),
+            AnyTransport::PatternCharacter(t) => t.snapshot_edge(),
+            AnyTransport::CharacterClass(t) => t.snapshot_edge(),
+            AnyTransport::PosixCharacterClass(t) => t.snapshot_edge(),
+            AnyTransport::PosixClassName(t) => t.snapshot_edge(),
+            AnyTransport::ClassRange(t) => t.snapshot_edge(),
+            AnyTransport::ClassCharacter(t) => t.snapshot_edge(),
+            AnyTransport::AnonymousCapturingGroup(t) => t.snapshot_edge(),
+            AnyTransport::NamedCapturingGroup(t) => t.snapshot_edge(),
+            AnyTransport::NonCapturingGroup(t) => t.snapshot_edge(),
+            AnyTransport::Flags(t) => t.snapshot_edge(),
+            AnyTransport::ZeroOrMore(t) => t.snapshot_edge(),
+            AnyTransport::OneOrMore(t) => t.snapshot_edge(),
+            AnyTransport::Optional(t) => t.snapshot_edge(),
+            AnyTransport::CountQuantifier(t) => t.snapshot_edge(),
+            AnyTransport::BackreferenceEscape(t) => t.snapshot_edge(),
+            AnyTransport::NamedGroupBackreference(t) => t.snapshot_edge(),
+            AnyTransport::DecimalEscape(t) => t.snapshot_edge(),
+            AnyTransport::CharacterClassEscape(t) => t.snapshot_edge(),
+            AnyTransport::UnicodeCharacterEscape(t) => t.snapshot_edge(),
+            AnyTransport::UnicodePropertyValueExpression(t) => t.snapshot_edge(),
+            AnyTransport::UnicodePropertyValue(t) => t.snapshot_edge(),
+            AnyTransport::ControlEscape(t) => t.snapshot_edge(),
+            AnyTransport::ControlLetterEscape(t) => t.snapshot_edge(),
+            AnyTransport::IdentityEscape(t) => t.snapshot_edge(),
+            AnyTransport::GroupName(t) => t.snapshot_edge(),
+            AnyTransport::DecimalDigits(t) => t.snapshot_edge(),
+            AnyTransport::TermGroup(t) => t.snapshot_edge(),
+            AnyTransport::CountQuantifierGroup(t) => t.snapshot_edge(),
+            AnyTransport::CountQuantifierArm(t) => t.snapshot_edge(),
+            AnyTransport::CharacterClassEscapeArm(t) => t.snapshot_edge(),
+            AnyTransport::UnicodePropertyValueExpressionGroup(t) => t.snapshot_edge(),
+            AnyTransport::CharacterClassEscapeText1(t) => t.snapshot_edge(),
+            AnyTransport::CharacterClassEscapeText2(t) => t.snapshot_edge(),
+            AnyTransport::InlineFlagsGroupEnable(t) => t.snapshot_edge(),
+            AnyTransport::InlineFlagsGroupToggle(t) => t.snapshot_edge(),
+            AnyTransport::InlineFlagsGroupDisable(t) => t.snapshot_edge(),
+            AnyTransport::Lazy(t) => t.snapshot_edge(),
+            AnyTransport::UnicodePropertyName(t) => t.snapshot_edge(),
+            AnyTransport::AnyCharacter => None,
+            AnyTransport::StartAssertion => None,
+            AnyTransport::EndAssertion => None,
+            AnyTransport::BoundaryAssertion => None,
+            AnyTransport::NonBoundaryAssertion => None,
+            AnyTransport::Negation => None,
+            AnyTransport::Tight => None,
+            AnyTransport::Newline => None,
+            AnyTransport::Blankline => None,
+            AnyTransport::DoubleBlankline => None,
+            AnyTransport::Caret => None,
+            AnyTransport::LparenQmark => None,
+            AnyTransport::Eq => None,
+            AnyTransport::Bang => None,
+            AnyTransport::Rparen => None,
+            AnyTransport::LparenQmarkLt => None,
+            AnyTransport::Lbrack => None,
+            AnyTransport::Dash => None,
+            AnyTransport::BslashDash => None,
+            AnyTransport::Rbrack => None,
+            AnyTransport::LbrackColon => None,
+            AnyTransport::ColonRbrack => None,
+            AnyTransport::Lparen => None,
+            AnyTransport::LparenQmarkPLt => None,
+            AnyTransport::Gt => None,
+            AnyTransport::LparenQmarkColon => None,
+            AnyTransport::Star => None,
+            AnyTransport::Qmark => None,
+            AnyTransport::Plus => None,
+            AnyTransport::Lbrace => None,
+            AnyTransport::Rbrace => None,
+            AnyTransport::Bslashk => None,
+            AnyTransport::Lt => None,
+            AnyTransport::LparenQmarkPEq => None,
+            AnyTransport::Comma => None,
+            AnyTransport::Colon => None,
+            AnyTransport::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 
@@ -483,6 +568,15 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
             TriviaTransport::DoubleBlankline => None,
             TriviaTransport::Verbatim(t) => t.gap_edges(),
             TriviaTransport::Text(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            TriviaTransport::Newline => None,
+            TriviaTransport::Blankline => None,
+            TriviaTransport::DoubleBlankline => None,
+            TriviaTransport::Verbatim(t) => t.snapshot_edge(),
+            TriviaTransport::Text(t) => t.snapshot_edge(),
         }
     }
 }
@@ -547,6 +641,12 @@ impl ::sittir_core::prepare::Prepare for PatternContentTransportSlot {
             PatternContentTransportSlot::Term(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            PatternContentTransportSlot::Alternation(t) => t.snapshot_edge(),
+            PatternContentTransportSlot::Term(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for PatternContentTransportSlot {
@@ -593,6 +693,12 @@ impl ::sittir_core::prepare::Prepare for LookaroundAssertionContentTransportSlot
         match self {
             LookaroundAssertionContentTransportSlot::LookaheadAssertion(t) => t.gap_edges(),
             LookaroundAssertionContentTransportSlot::LookbehindAssertion(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            LookaroundAssertionContentTransportSlot::LookaheadAssertion(t) => t.snapshot_edge(),
+            LookaroundAssertionContentTransportSlot::LookbehindAssertion(t) => t.snapshot_edge(),
         }
     }
 }
@@ -774,6 +880,19 @@ impl ::sittir_core::prepare::Prepare for CharacterClassClassAtomsTransportSlot {
             CharacterClassClassAtomsTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            CharacterClassClassAtomsTransportSlot::ClassCharacter(t) => t.snapshot_edge(),
+            CharacterClassClassAtomsTransportSlot::CharacterClassEscape(t) => t.snapshot_edge(),
+            CharacterClassClassAtomsTransportSlot::ControlEscape(t) => t.snapshot_edge(),
+            CharacterClassClassAtomsTransportSlot::ControlLetterEscape(t) => t.snapshot_edge(),
+            CharacterClassClassAtomsTransportSlot::IdentityEscape(t) => t.snapshot_edge(),
+            CharacterClassClassAtomsTransportSlot::PosixCharacterClass(t) => t.snapshot_edge(),
+            CharacterClassClassAtomsTransportSlot::ClassRange(t) => t.snapshot_edge(),
+            CharacterClassClassAtomsTransportSlot::BslashDash => None,
+            CharacterClassClassAtomsTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for CharacterClassClassAtomsTransportSlot {
@@ -849,6 +968,15 @@ impl ::sittir_core::prepare::Prepare for ClassRangeStartTransportSlot {
             ClassRangeStartTransportSlot::ControlEscape(t) => t.gap_edges(),
             ClassRangeStartTransportSlot::Dash => None,
             ClassRangeStartTransportSlot::Verbatim(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            ClassRangeStartTransportSlot::ClassCharacter(t) => t.snapshot_edge(),
+            ClassRangeStartTransportSlot::CharacterClassEscape(t) => t.snapshot_edge(),
+            ClassRangeStartTransportSlot::ControlEscape(t) => t.snapshot_edge(),
+            ClassRangeStartTransportSlot::Dash => None,
+            ClassRangeStartTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
 }
@@ -964,6 +1092,13 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierContentTransportSlot {
             CountQuantifierContentTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            CountQuantifierContentTransportSlot::CountQuantifierArm(t) => t.snapshot_edge(),
+            CountQuantifierContentTransportSlot::DecimalDigits(t) => t.snapshot_edge(),
+            CountQuantifierContentTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for CountQuantifierContentTransportSlot {
@@ -1022,6 +1157,14 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeContentTransportSlo
             CharacterClassEscapeContentTransportSlot::CharacterClassEscapeArm(t) => t.gap_edges(),
             CharacterClassEscapeContentTransportSlot::UnicodeCharacterEscape(t) => t.gap_edges(),
             CharacterClassEscapeContentTransportSlot::Verbatim(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            CharacterClassEscapeContentTransportSlot::CharacterClassEscapeText1(t) => t.snapshot_edge(),
+            CharacterClassEscapeContentTransportSlot::CharacterClassEscapeArm(t) => t.snapshot_edge(),
+            CharacterClassEscapeContentTransportSlot::UnicodeCharacterEscape(t) => t.snapshot_edge(),
+            CharacterClassEscapeContentTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
 }
@@ -1089,6 +1232,15 @@ impl ::sittir_core::prepare::Prepare for TermGroupQuantifierTransportSlot {
             TermGroupQuantifierTransportSlot::Optional(t) => t.gap_edges(),
             TermGroupQuantifierTransportSlot::CountQuantifier(t) => t.gap_edges(),
             TermGroupQuantifierTransportSlot::Verbatim(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            TermGroupQuantifierTransportSlot::ZeroOrMore(t) => t.snapshot_edge(),
+            TermGroupQuantifierTransportSlot::OneOrMore(t) => t.snapshot_edge(),
+            TermGroupQuantifierTransportSlot::Optional(t) => t.snapshot_edge(),
+            TermGroupQuantifierTransportSlot::CountQuantifier(t) => t.snapshot_edge(),
+            TermGroupQuantifierTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
 }
@@ -1250,6 +1402,33 @@ impl ::sittir_core::prepare::Prepare for TermGroupContentTransportSlot {
             TermGroupContentTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            TermGroupContentTransportSlot::LookaroundAssertion(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::PatternCharacter(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::CharacterClass(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::PosixCharacterClass(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::DecimalEscape(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::CharacterClassEscape(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::ControlEscape(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::ControlLetterEscape(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::IdentityEscape(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::BackreferenceEscape(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::NamedGroupBackreference(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::AnonymousCapturingGroup(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::NamedCapturingGroup(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::NonCapturingGroup(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::InlineFlagsGroupEnable(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::InlineFlagsGroupToggle(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::InlineFlagsGroupDisable(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::StartAssertion => None,
+            TermGroupContentTransportSlot::EndAssertion => None,
+            TermGroupContentTransportSlot::BoundaryAssertion => None,
+            TermGroupContentTransportSlot::NonBoundaryAssertion => None,
+            TermGroupContentTransportSlot::AnyCharacter => None,
+            TermGroupContentTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for TermGroupContentTransportSlot {
@@ -1402,7 +1581,8 @@ impl ::sittir_core::prepare::Prepare for PatternTransport {
         self.layout.prepare(ctx)?;
         let first = [::sittir_core::prepare::EdgeItems::first_item(&self.content)].into_iter().flatten().next();
         let last = [::sittir_core::prepare::EdgeItems::last_item(&self.content)].into_iter().flatten().next();
-        let flanks = ::sittir_core::prepare::root_flanks(first, last, options::allowed(options::SITE_PATTERN_PATTERN_BEFORE), options::allowed(options::SITE_PATTERN_PATTERN_AFTER), &options::WHITESPACE, ctx);
+        let root = ::sittir_core::layout::Layout::snapshot_edge(&self.layout).map(|edge| edge.span);
+        let flanks = ::sittir_core::prepare::root_flanks(first, last, root, options::allowed(options::SITE_PATTERN_PATTERN_BEFORE), options::allowed(options::SITE_PATTERN_PATTERN_AFTER), &options::WHITESPACE, ctx);
         ::sittir_core::prepare::fill_edges(self, flanks);
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
@@ -1415,6 +1595,9 @@ impl ::sittir_core::prepare::Prepare for PatternTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -1465,6 +1648,9 @@ impl ::sittir_core::prepare::Prepare for AlternationTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -1511,6 +1697,9 @@ impl ::sittir_core::prepare::Prepare for TermTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -1679,6 +1868,9 @@ impl ::sittir_core::prepare::Prepare for LookaroundAssertionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -1727,6 +1919,9 @@ impl ::sittir_core::prepare::Prepare for LookaheadAssertionTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -1777,6 +1972,9 @@ impl ::sittir_core::prepare::Prepare for LookbehindAssertionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -1816,6 +2014,9 @@ impl ::sittir_core::prepare::Prepare for PatternCharacterTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -1874,6 +2075,9 @@ impl ::sittir_core::prepare::Prepare for CharacterClassTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -1919,6 +2123,9 @@ impl ::sittir_core::prepare::Prepare for PosixCharacterClassTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -1958,6 +2165,9 @@ impl ::sittir_core::prepare::Prepare for PosixClassNameTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -2008,6 +2218,9 @@ impl ::sittir_core::prepare::Prepare for ClassRangeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -2047,6 +2260,9 @@ impl ::sittir_core::prepare::Prepare for ClassCharacterTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -2092,6 +2308,9 @@ impl ::sittir_core::prepare::Prepare for AnonymousCapturingGroupTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -2150,6 +2369,9 @@ impl ::sittir_core::prepare::Prepare for NamedCapturingGroupTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -2195,6 +2417,9 @@ impl ::sittir_core::prepare::Prepare for NonCapturingGroupTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -2234,6 +2459,9 @@ impl ::sittir_core::prepare::Prepare for FlagsTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -2275,6 +2503,9 @@ impl ::sittir_core::prepare::Prepare for ZeroOrMoreTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -2315,6 +2546,9 @@ impl ::sittir_core::prepare::Prepare for OneOrMoreTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -2354,6 +2588,9 @@ impl ::sittir_core::prepare::Prepare for OptionalTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -2404,6 +2641,9 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -2448,6 +2688,9 @@ impl ::sittir_core::prepare::Prepare for BackreferenceEscapeTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -2494,6 +2737,9 @@ impl ::sittir_core::prepare::Prepare for NamedGroupBackreferenceTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -2533,6 +2779,9 @@ impl ::sittir_core::prepare::Prepare for DecimalEscapeTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -2576,6 +2825,9 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -2615,6 +2867,9 @@ impl ::sittir_core::prepare::Prepare for UnicodeCharacterEscapeTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -2665,6 +2920,9 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyValueExpressionTransport
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -2704,6 +2962,9 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyValueTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -2745,6 +3006,9 @@ impl ::sittir_core::prepare::Prepare for ControlEscapeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -2784,6 +3048,9 @@ impl ::sittir_core::prepare::Prepare for ControlLetterEscapeTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -2827,6 +3094,9 @@ impl ::sittir_core::prepare::Prepare for IdentityEscapeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -2867,6 +3137,9 @@ impl ::sittir_core::prepare::Prepare for GroupNameTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -2906,6 +3179,9 @@ impl ::sittir_core::prepare::Prepare for DecimalDigitsTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -2956,6 +3232,9 @@ impl ::sittir_core::prepare::Prepare for TermGroupTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -3000,6 +3279,9 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierGroupTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -3050,6 +3332,9 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierArmTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -3099,6 +3384,9 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeArmTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -3144,6 +3432,9 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyValueExpressionGroupTran
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -3184,6 +3475,9 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeText1Transport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -3223,6 +3517,9 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeText2Transport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -3298,6 +3595,9 @@ impl ::sittir_core::prepare::Prepare for InlineFlagsGroupEnableTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -3351,6 +3651,9 @@ impl ::sittir_core::prepare::Prepare for InlineFlagsGroupToggleTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -3399,6 +3702,9 @@ impl ::sittir_core::prepare::Prepare for InlineFlagsGroupDisableTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -3541,6 +3847,9 @@ impl ::sittir_core::prepare::Prepare for LazyTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -3581,6 +3890,9 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyNameTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 

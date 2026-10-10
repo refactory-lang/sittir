@@ -509,7 +509,7 @@ fn a_root_reads_its_flanks_from_the_bytes_around_its_first_and_last_coordinate()
     let opts = ResolvedOptions::default();
     let sources = source_tree();
     let items = vec![parsed(1, 0, 6).unwrap(), parsed(2, 8, 17).unwrap()];
-    let flanks = root_flanks(items.first_item(), items.last_item(), &[1, 3, 4], &[1, 3, 4], &FLANKS, &ctx(&opts, &sources));
+    let flanks = root_flanks(items.first_item(), items.last_item(), None, &[1, 3, 4], &[1, 3, 4], &FLANKS, &ctx(&opts, &sources));
     assert_eq!(flanks, Edges { before: Some(wire(1)), after: Some(wire(3)) });
 }
 
@@ -518,7 +518,7 @@ fn a_rebuilt_edge_item_or_a_flank_that_is_not_whitespace_leaves_the_edge_unset()
     let opts = ResolvedOptions::default();
     let sources = source_tree();
     let rebuilt_first = vec![SlotValue::Transport(Seatable { kind: 2, edges: Edges::default() }), parsed(1, 0, 6).unwrap()];
-    let flanks = root_flanks(rebuilt_first.first_item(), rebuilt_first.last_item(), &[1, 3, 4], &[1, 3, 4], &FLANKS, &ctx(&opts, &sources));
+    let flanks = root_flanks(rebuilt_first.first_item(), rebuilt_first.last_item(), None, &[1, 3, 4], &[1, 3, 4], &FLANKS, &ctx(&opts, &sources));
     assert_eq!(flanks.before, None);
     assert_eq!(flanks.after, None, "the bytes after `use x;` hold `fn f() {{}}`, which is not a flank");
 }
@@ -576,4 +576,84 @@ fn a_root_edge_decides_its_gap_and_only_a_terminated_break_floors_it() {
         w.edge(KindId(3), Side::After, Some(wire(1)));
     });
     assert_eq!(floored, "// c\n");
+}
+
+use sittir_core::points::{Point, PointSpan};
+use sittir_core::prepare::{fill_list_gaps, SnapshotEdge};
+
+/// A snapshot item: where it lies, whether trivia leads or trails it, and the
+/// edges a list gap beside it is written on.
+struct Spanned {
+    edge: SnapshotEdge,
+    edges: Edges,
+}
+impl Prepare for Spanned {
+    fn prepare(&mut self, _: &RenderContext<'_>) -> Result<(), CoordinateError> {
+        Ok(())
+    }
+    fn gap_edges(&mut self) -> Option<&mut Edges> {
+        Some(&mut self.edges)
+    }
+    fn snapshot_edge(&self) -> Option<SnapshotEdge> {
+        Some(self.edge)
+    }
+}
+
+const fn at(r0: u32, c0: u32, r1: u32, c1: u32) -> PointSpan {
+    PointSpan { start: Point { row: r0, column: c0 }, end: Point { row: r1, column: c1 } }
+}
+
+fn spanned(span: PointSpan, leading: bool, trailing: bool) -> SlotValue<Spanned> {
+    SlotValue::Transport(Spanned { edge: SnapshotEdge { span, leading, trailing }, edges: Edges::default() })
+}
+
+#[test]
+fn a_snapshot_root_reads_its_edges_from_the_geometry_of_its_first_and_last_item() {
+    let opts = ResolvedOptions::default();
+    let sources = Sources(HashMap::new());
+    // "\n\nuse a;\n\nuse b;\n": items on rows 2 and 4, the root ending on row 5.
+    let items = Vec::from([spanned(at(2, 0, 2, 6), false, false), spanned(at(4, 0, 4, 6), false, false)]);
+    let flanks = root_flanks(items.first_item(), items.last_item(), Some(at(0, 0, 5, 0)), &[1, 3, 4], &[1, 3, 4], &FLANKS, &ctx(&opts, &sources));
+    assert_eq!(flanks, Edges { before: Some(wire(4)), after: Some(wire(3)) });
+}
+
+#[test]
+fn a_snapshot_edge_item_with_trivia_on_that_side_leaves_the_edge_unset() {
+    let opts = ResolvedOptions::default();
+    let sources = Sources(HashMap::new());
+    let items = Vec::from([spanned(at(2, 0, 2, 6), true, false), spanned(at(4, 0, 4, 6), false, true)]);
+    let flanks = root_flanks(items.first_item(), items.last_item(), Some(at(0, 0, 5, 0)), &[1, 3, 4], &[1, 3, 4], &FLANKS, &ctx(&opts, &sources));
+    assert_eq!(flanks, Edges { before: None, after: None });
+}
+
+fn gap_text(kind: u16) -> &'static str {
+    match kind {
+        1 => "",
+        2 => " ",
+        3 => "\n",
+        _ => "",
+    }
+}
+
+const GAPS: WhitespaceTable = WhitespaceTable { text_of: gap_text, indent: 0, dedent: 0, leaf_edges: &[], gaps: &[] };
+
+#[test]
+fn a_list_gap_between_spanned_items_classifies_from_geometry_with_the_separator_against_the_earlier_item() {
+    let opts = ResolvedOptions::default();
+    let sources = Sources(HashMap::new());
+    // "a, b": the separator's column is the gap's first.
+    let mut items = [spanned(at(0, 0, 0, 1), false, false), spanned(at(0, 3, 0, 4), false, false)];
+    fill_list_gaps(items.iter_mut().map(Some), ",", &[1, 2, 3], &[1, 2, 3], &GAPS, &ctx(&opts, &sources));
+    let [SlotValue::Transport(a), SlotValue::Transport(b)] = &items[..] else { panic!("two spanned items") };
+    assert_eq!((a.edges.after.map(|e| e.arm), b.edges.before.map(|e| e.arm)), (Some(1), Some(2)));
+}
+
+#[test]
+fn a_list_gap_with_trivia_between_is_left_to_the_seat() {
+    let opts = ResolvedOptions::default();
+    let sources = Sources(HashMap::new());
+    let mut items = [spanned(at(0, 0, 0, 1), false, true), spanned(at(0, 9, 0, 10), false, false)];
+    fill_list_gaps(items.iter_mut().map(Some), ",", &[1, 2, 3], &[1, 2, 3], &GAPS, &ctx(&opts, &sources));
+    let [SlotValue::Transport(a), SlotValue::Transport(b)] = &items[..] else { panic!("two spanned items") };
+    assert_eq!((a.edges.after, b.edges.before), (None, None));
 }

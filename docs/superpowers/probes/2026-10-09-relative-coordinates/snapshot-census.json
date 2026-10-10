@@ -1,0 +1,1433 @@
+{
+	"rust": [
+		{
+			"entry": "Async Block",
+			"line": 2,
+			"class": "whitespace",
+			"live": "async { let x = 10; }",
+			"snapshot": "async {"
+		},
+		{
+			"entry": "Gen Block",
+			"line": 2,
+			"class": "whitespace",
+			"live": "gen { let x = 10; }",
+			"snapshot": "gen {"
+		},
+		{
+			"entry": "Function declarations",
+			"line": 27,
+			"class": "whitespace",
+			"live": "fn accumulate(self) -> Machine<{State::Accumulate}> {}",
+			"snapshot": "fn accumulate(self) -> Machine<{"
+		},
+		{
+			"entry": "Functions with abstract return types",
+			"line": 1,
+			"class": "whitespace",
+			"live": "fn triples(a: impl B) -> impl Iterator<Item=(usize)> {",
+			"snapshot": "fn triples(a: impl B) -> impl Iterator<Item = (usize)> {}"
+		},
+		{
+			"entry": "Functions with precise capture syntax",
+			"line": 1,
+			"class": "whitespace",
+			"live": "fn capture<T>(&self) -> impl Iterator<Item = usize> + use<'_, T> {",
+			"snapshot": "fn capture<T>(&self) -> impl Iterator<Item = usize> + use<'_, T> {}"
+		},
+		{
+			"entry": "Functions with empty precise capture syntax",
+			"line": 1,
+			"class": "whitespace",
+			"live": "fn capture(&self) -> impl Iterator<Item = usize> + use<> {",
+			"snapshot": "fn capture(&self) -> impl Iterator<Item = usize> + use<> {}"
+		},
+		{
+			"entry": "Extern function declarations",
+			"line": 2,
+			"class": "whitespace",
+			"live": "extern \"C\" fn printf(",
+			"snapshot": "extern \"C\" fn printf(* const c_char,"
+		},
+		{
+			"entry": "Use declarations",
+			"line": 4,
+			"class": "whitespace",
+			"live": "use sayings::english::greetings as en_greetings ;",
+			"snapshot": "use sayings::english::greetings as en_greetings;"
+		},
+		{
+			"entry": "Let-else Statements",
+			"line": 1,
+			"class": "whitespace",
+			"live": "let Foo::Bar {",
+			"snapshot": "let Foo::Bar { texts,"
+		},
+		{
+			"entry": "Structs",
+			"line": 3,
+			"class": "whitespace",
+			"live": "struct Person {pub name: String, pub age: u32}",
+			"snapshot": "struct Person {"
+		},
+		{
+			"entry": "Enums",
+			"line": 12,
+			"class": "whitespace",
+			"live": "    #[attribute2]",
+			"snapshot": "    #[attribute2] Leaf {"
+		},
+		{
+			"entry": "Generic functions",
+			"line": 1,
+			"class": "whitespace",
+			"live": "pub fn splice<T: Into<Text>>(&mut self, old_range: Range<usize>, new_text: T) {",
+			"snapshot": "pub fn splice<T: Into<Text>>(&mut self, old_range: Range<usize>, new_text: T) {}"
+		},
+		{
+			"entry": "Functions with mutable parameters",
+			"line": 1,
+			"class": "whitespace",
+			"live": "fn foo(mut x : u32) {",
+			"snapshot": "fn foo(mut x: u32) {}"
+		},
+		{
+			"entry": "Static items",
+			"line": 2,
+			"class": "whitespace",
+			"live": "static mut __progname: *mut ::c_char;",
+			"snapshot": "static mut __progname: * mut::c_char;"
+		},
+		{
+			"entry": "Inner attributes",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  #![cfg(target_os = \"macos\")]",
+			"snapshot": "    #![cfg(target_os = \"macos\")]"
+		},
+		{
+			"entry": "Key-Value Attribute Expressions",
+			"line": 1,
+			"class": "whitespace",
+			"live": "#[doc = include_str!(\"foo-doc.md\")]",
+			"snapshot": "#[doc= include_str!(\"foo-doc.md\")]"
+		},
+		{
+			"entry": "Attribute macros",
+			"line": 3,
+			"class": "whitespace",
+			"live": "foo(#[bar(some tokens are special in other contexts: $/';()*()+.)] x);",
+			"snapshot": "foo(#[bar(some tokens are special in other contexts: $ /';()*()+.)] x);"
+		},
+		{
+			"entry": "Derive macro helper attributes",
+			"line": 0,
+			"class": "whitespace",
+			"live": "",
+			"snapshot": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md"
+		},
+		{
+			"entry": "Attributes and Expressions",
+			"line": 2,
+			"class": "whitespace",
+			"live": "   bar(x,",
+			"snapshot": "    bar(x,"
+		},
+		{
+			"entry": "Inherent Impls",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  const leg_count : u32 = 2;",
+			"snapshot": "    const leg_count: u32 = 2;"
+		},
+		{
+			"entry": "Trait impls",
+			"line": 1,
+			"class": "whitespace",
+			"live": "impl<'a> iter::Iterator for Self::Iter<'a> {",
+			"snapshot": "impl<'a> iter::Iterator for Self::Iter<'a> {}"
+		},
+		{
+			"entry": "Unsafe impls",
+			"line": 1,
+			"class": "whitespace",
+			"live": "unsafe impl Foo {",
+			"snapshot": "unsafe impl Foo {}"
+		},
+		{
+			"entry": "Impl dyn with parentheses",
+			"line": 3,
+			"class": "whitespace",
+			"live": "unsafe impl Trait for dyn (::std::any::Any) + Send { }",
+			"snapshot": "unsafe impl Trait for dyn (::std::any::Any) + Send {}"
+		},
+		{
+			"entry": "Trait impl signature",
+			"line": 1,
+			"class": "whitespace",
+			"live": "impl<K: Debug + Ord> Debug for OccupiedError<K>;",
+			"snapshot": "impl<K: Debug+ Ord> Debug for OccupiedError<K>;"
+		},
+		{
+			"entry": "Impls with default functions",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  const default fn bar() -> i32 {",
+			"snapshot": "    const default fn bar() -> i32 {"
+		},
+		{
+			"entry": "Trait declarations",
+			"line": 1,
+			"class": "whitespace",
+			"live": "pub trait Item: Clone + Eq + fmt::Debug {",
+			"snapshot": "pub trait Item: Clone+ Eq+ fmt::Debug {"
+		},
+		{
+			"entry": "Trait declarations with optional type parameters",
+			"line": 1,
+			"class": "whitespace",
+			"live": "trait Add<RHS=Self> {",
+			"snapshot": "trait Add<RHS = Self> {"
+		},
+		{
+			"entry": "Unsized types in trait bounds",
+			"line": 1,
+			"class": "whitespace",
+			"live": "trait Foo<T: ?Sized> {",
+			"snapshot": "trait Foo<T: ?Sized> {}"
+		},
+		{
+			"entry": "Macro invocations inside trait declarations",
+			"line": 2,
+			"class": "whitespace",
+			"live": "pub trait A: B + C + D {",
+			"snapshot": "pub trait A: B+ C+ D {"
+		},
+		{
+			"entry": "Associated Type Definitions",
+			"line": 2,
+			"class": "whitespace",
+			"live": "    type Associated = T where 'static: 'static;",
+			"snapshot": "    type Associated = T where 'static : 'static;"
+		},
+		{
+			"entry": "Generic Associated Types",
+			"line": 2,
+			"class": "whitespace",
+			"live": "    type F<'a, D>: Future<Output = D> + 'a;",
+			"snapshot": "    type F<'a, D>: Future<Output = D>+ 'a;"
+		},
+		{
+			"entry": "Higher-ranked types",
+			"line": 1,
+			"class": "whitespace",
+			"live": "trait T: for<'a> AddAssign<&'a usize> {",
+			"snapshot": "trait T: for<'a> AddAssign<&'a usize> {}"
+		},
+		{
+			"entry": "Function parameter names that match built-in type names",
+			"line": 1,
+			"class": "whitespace",
+			"live": "fn foo(str: *const c_char) {}",
+			"snapshot": "fn foo(str: * const c_char) {}"
+		},
+		{
+			"entry": "Where clauses",
+			"line": 1,
+			"class": "whitespace",
+			"live": "fn walk<F>(&self, it: &mut F) -> bool",
+			"snapshot": "fn walk<F>(&self, it: &mut F) -> bool where F: FnMut(&Pat) -> bool {"
+		},
+		{
+			"entry": "External Modules",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  pub fn napi_module_register(mod_: *mut napi_module);",
+			"snapshot": "    pub fn napi_module_register(mod_: * mut napi_module);"
+		},
+		{
+			"entry": "Crate visibility",
+			"line": 3,
+			"class": "whitespace",
+			"live": "crate fn foo() { }",
+			"snapshot": "crate fn foo() {}"
+		},
+		{
+			"entry": "Reserved keywords in path",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  a: default::B,",
+			"snapshot": "    a: default::B,"
+		},
+		{
+			"entry": "Array Constraint in Where Clause",
+			"line": 1,
+			"class": "whitespace",
+			"live": "fn foo<D>(val: D)",
+			"snapshot": "fn foo<D>(val: D) where [u8; 32]: From<D>, {}"
+		},
+		{
+			"entry": "Identifiers",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  abc;",
+			"snapshot": "    abc;"
+		},
+		{
+			"entry": "Raw identifiers",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  (r#abc as r#Def).r#ghi;",
+			"snapshot": "    (r#abc as r#Def).r#ghi;"
+		},
+		{
+			"entry": "Range expressions",
+			"line": 10,
+			"class": "whitespace",
+			"live": "1..{1};",
+			"snapshot": "1..{"
+		},
+		{
+			"entry": "Call expressions",
+			"line": 3,
+			"class": "whitespace",
+			"live": "add(",
+			"snapshot": "add(1i32,"
+		},
+		{
+			"entry": "Array expressions",
+			"line": 5,
+			"class": "whitespace",
+			"live": "[",
+			"snapshot": "[#[cfg(foo)] \"foo\","
+		},
+		{
+			"entry": "Struct expressions",
+			"line": 1,
+			"class": "whitespace",
+			"live": "NothingInMe {};",
+			"snapshot": "NothingInMe { };"
+		},
+		{
+			"entry": "Struct expressions with update initializers",
+			"line": 1,
+			"class": "whitespace",
+			"live": "let u = User{name, ..current_user()};",
+			"snapshot": "let u = User { name, ..current_user() };"
+		},
+		{
+			"entry": "If expressions",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  if n == 1 {",
+			"snapshot": "    if n == 1 {} else if n == 2 {} else {}"
+		},
+		{
+			"entry": "Basic if let expressions",
+			"line": 1,
+			"class": "whitespace",
+			"live": "if let Some(a) = b",
+			"snapshot": "if let Some(a) = b && c&&"
+		},
+		{
+			"entry": "If let expressions",
+			"line": 1,
+			"class": "whitespace",
+			"live": "if let (\"Bacon\", b) = dish {",
+			"snapshot": "if let (\"Bacon\", b) = dish {}"
+		},
+		{
+			"entry": "While let expressions",
+			"line": 1,
+			"class": "whitespace",
+			"live": "while let (\"Bacon\", b) = dish {",
+			"snapshot": "while let (\"Bacon\", b) = dish {}"
+		},
+		{
+			"entry": "Match expressions",
+			"line": 2,
+			"class": "whitespace",
+			"live": "    1 => { \"one\" }",
+			"snapshot": "    1 => {"
+		},
+		{
+			"entry": "While expressions",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  done = true;",
+			"snapshot": "    done = true;"
+		},
+		{
+			"entry": "Loop expressions",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  'inner: loop {",
+			"snapshot": "    'inner: loop {"
+		},
+		{
+			"entry": "For expressions",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  bar(e);",
+			"snapshot": "    bar(e);"
+		},
+		{
+			"entry": "Closures",
+			"line": 6,
+			"class": "whitespace",
+			"live": "h(|| -> i { j });",
+			"snapshot": "h(|| -> i {"
+		},
+		{
+			"entry": "Unsafe blocks",
+			"line": 1,
+			"class": "whitespace",
+			"live": "const a : A = unsafe { foo() };",
+			"snapshot": "const a: A = unsafe {"
+		},
+		{
+			"entry": "Inline const or Const blocks as expression",
+			"line": 1,
+			"class": "whitespace",
+			"live": "const { 1 + 3 };",
+			"snapshot": "const {"
+		},
+		{
+			"entry": "Macro invocation - arbitrary tokens",
+			"line": 13,
+			"class": "whitespace",
+			"live": "a!(${$([ a ])});",
+			"snapshot": "a!($ {$([a])});"
+		},
+		{
+			"entry": "Macro invocation with comments",
+			"line": 1,
+			"class": "whitespace",
+			"live": "ok! {",
+			"snapshot": "ok!{// one"
+		},
+		{
+			"entry": "Macro definition",
+			"line": 1,
+			"class": "whitespace",
+			"live": "macro_rules! say_hello {",
+			"snapshot": "macro_rules! say_hello {() =>(println!(\"Hello!\");)}"
+		},
+		{
+			"entry": "Tuple struct patterns",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  Some(x) => \"some\",",
+			"snapshot": "    Some(x) => \"some\","
+		},
+		{
+			"entry": "Reference patterns",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  A(ref x) => x.0,",
+			"snapshot": "    A(ref x) => x.0,"
+		},
+		{
+			"entry": "Struct patterns",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  Person{name, age} if age < 5 => (\"toddler\", name),",
+			"snapshot": "    Person { name, age } if age < 5 => (\"toddler\", name),"
+		},
+		{
+			"entry": "Ignored patterns",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  (a, ..) => a,",
+			"snapshot": "    (a, ..) => a,"
+		},
+		{
+			"entry": "Captured patterns",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  a @ A(_) | b @ B(..) => a,",
+			"snapshot": "    a @ A(_) | b @ B(..) => a,"
+		},
+		{
+			"entry": "Or patterns",
+			"line": 19,
+			"class": "whitespace",
+			"live": "let ref mut x @ (A | B | C);",
+			"snapshot": "let ref mut x @(A | B | C);"
+		},
+		{
+			"entry": "Inline const or Const blocks as pattern",
+			"line": 11,
+			"class": "whitespace",
+			"live": "        const { 3.pow(3) } => println!(\"three cubed\"),",
+			"snapshot": "        const {"
+		},
+		{
+			"entry": "Block comments",
+			"line": 0,
+			"class": "whitespace",
+			"live": "",
+			"snapshot": "/*"
+		},
+		{
+			"entry": "Nested block comments",
+			"line": 0,
+			"class": "whitespace",
+			"live": "",
+			"snapshot": "/* /* double nested */ */"
+		},
+		{
+			"entry": "Line comments",
+			"line": 0,
+			"class": "whitespace",
+			"live": "",
+			"snapshot": "// Comment"
+		},
+		{
+			"entry": "Line doc comments",
+			"line": 2,
+			"class": "whitespace",
+			"live": "",
+			"snapshot": "//   - Only a comment"
+		},
+		{
+			"entry": "Block doc comments",
+			"line": 0,
+			"class": "whitespace",
+			"live": "",
+			"snapshot": "/*!  - Inner block doc */"
+		},
+		{
+			"entry": "Nested doc block comments",
+			"line": 0,
+			"class": "edge",
+			"live": "",
+			"snapshot": "/*   /* */  /** */  /*! */  */"
+		},
+		{
+			"entry": "Comments degenerate cases",
+			"line": 0,
+			"class": "whitespace",
+			"live": "",
+			"snapshot": "//!"
+		},
+		{
+			"entry": "Line doc comment with no EOL",
+			"line": 0,
+			"class": "edge",
+			"live": "",
+			"snapshot": "//! Doc comment"
+		},
+		{
+			"entry": "Greek letters in identifiers",
+			"line": 1,
+			"class": "whitespace",
+			"live": "const σ1 : Σ = 0;",
+			"snapshot": "const σ1: Σ = 0;"
+		},
+		{
+			"entry": "Raw pointer types",
+			"line": 1,
+			"class": "whitespace",
+			"live": "type A = *mut B;",
+			"snapshot": "type A = * mut B;"
+		},
+		{
+			"entry": "Generic types",
+			"line": 4,
+			"class": "whitespace",
+			"live": "type J = H<K=L>;",
+			"snapshot": "type J = H<K = L>;"
+		},
+		{
+			"entry": "Unsafe and extern function types",
+			"line": 1,
+			"class": "whitespace",
+			"live": "type a = extern \"C\" fn(*mut c_void);",
+			"snapshot": "type a = extern \"C\" fn(* mut c_void);"
+		},
+		{
+			"entry": "Trait objects",
+			"line": 1,
+			"class": "whitespace",
+			"live": "type a = Box<Something + 'a>;",
+			"snapshot": "type a = Box<Something +'a>;"
+		},
+		{
+			"entry": "Type cast expressions with generics",
+			"line": 2,
+			"class": "whitespace",
+			"live": "d as *mut E<<F as E>::G>;",
+			"snapshot": "d as * mut E<<F as E>::G>;"
+		},
+		{
+			"entry": "Block comments (single line)",
+			"line": 0,
+			"class": "edge",
+			"live": "",
+			"snapshot": "/* plain block comment */"
+		}
+	],
+	"typescript": [
+		{
+			"entry": "Ambient declarations",
+			"line": 9,
+			"class": "whitespace",
+			"live": "declare function greet(greeting: string): void;",
+			"snapshot": "declare function greet(greeting: string): void ;"
+		},
+		{
+			"entry": "Ambient exports",
+			"line": 2,
+			"class": "whitespace",
+			"live": "    return { x, y };",
+			"snapshot": "  return { x, y };"
+		},
+		{
+			"entry": "Typeof types",
+			"line": 2,
+			"class": "whitespace",
+			"live": "    static findConfiguration: typeof findConfiguration;",
+			"snapshot": "  static findConfiguration: typeof findConfiguration ;"
+		},
+		{
+			"entry": "Export import aliases",
+			"line": 2,
+			"class": "whitespace",
+			"live": "    export module N {",
+			"snapshot": "  export module N {}"
+		},
+		{
+			"entry": "Ambient module declarations",
+			"line": 2,
+			"class": "whitespace",
+			"live": "    var on: {}",
+			"snapshot": "  var on: {}"
+		},
+		{
+			"entry": "Ambient export function declarations",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;",
+			"snapshot": "  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V> ;"
+		},
+		{
+			"entry": "Ambient type alias declarations in namespaces",
+			"line": 5,
+			"class": "whitespace",
+			"live": "  export class foo {",
+			"snapshot": "  export class foo {}"
+		},
+		{
+			"entry": "Export interfaces in namespaces",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  export interface Bar {",
+			"snapshot": "  export interface Bar {}"
+		},
+		{
+			"entry": "Namespaces as internal modules",
+			"line": 1,
+			"class": "whitespace",
+			"live": "namespace Foo {",
+			"snapshot": "namespace Foo {}"
+		},
+		{
+			"entry": "Classes with method signatures",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>, timeoutMessage?: string, retryCount?: number): Promise<T>;",
+			"snapshot": "  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>, timeoutMessage?: string, retryCount?: number): Promise<T> ;"
+		},
+		{
+			"entry": "Classes with property names as strings or numbers",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  static 2: string;",
+			"snapshot": "  static 2: string ;"
+		},
+		{
+			"entry": "Classes with decorator calls that have type arguments",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  @bar<T>()",
+			"snapshot": "  @ bar<T>()"
+		},
+		{
+			"entry": "Classes with decorators",
+			"line": 1,
+			"class": "whitespace",
+			"live": "@baz @bam class Foo {",
+			"snapshot": "@ baz @ bam"
+		},
+		{
+			"entry": "Classes with methods with and without trailing semicolons on one line",
+			"line": 1,
+			"class": "whitespace",
+			"live": "class Foo<Bar> extends Baz { bar = 5; static one(a) { return a; }; two(b) { return b; } three(c) { return c; } }",
+			"snapshot": "class Foo<Bar> extends Baz {"
+		},
+		{
+			"entry": "Global namespace declarations",
+			"line": 1,
+			"class": "whitespace",
+			"live": "declare global {",
+			"snapshot": "declare global {}"
+		},
+		{
+			"entry": "Abstract classes",
+			"line": 1,
+			"class": "whitespace",
+			"live": "abstract class Foo {",
+			"snapshot": "abstract class Foo {}"
+		},
+		{
+			"entry": "Decorator with parenthesized expression",
+			"line": 2,
+			"class": "whitespace",
+			"live": "    @(super.decorate)",
+			"snapshot": "  @(super.decorate)"
+		},
+		{
+			"entry": "Definite assignment assertions",
+			"line": 1,
+			"class": "whitespace",
+			"live": "var a!: b;",
+			"snapshot": "var a !: b;"
+		},
+		{
+			"entry": "Top-level exports",
+			"line": 1,
+			"class": "whitespace",
+			"live": "export default abstract class C { }",
+			"snapshot": "export default abstract class C {}"
+		},
+		{
+			"entry": "Classes with generic parameters",
+			"line": 1,
+			"class": "whitespace",
+			"live": "class A<",
+			"snapshot": "class A<B,"
+		},
+		{
+			"entry": "Semicolon is not automatically inserted for method definitions with a body",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  public bar()",
+			"snapshot": "  public bar() {}"
+		},
+		{
+			"entry": "Override modifier",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  abstract baz(): void;",
+			"snapshot": "  abstract baz(): void ;"
+		},
+		{
+			"entry": "As expressions",
+			"line": 2,
+			"class": "whitespace",
+			"live": "T as {} & { [t: T]: T }",
+			"snapshot": "T as {} & {"
+		},
+		{
+			"entry": "Satisfies expressions",
+			"line": 2,
+			"class": "whitespace",
+			"live": "T satisfies {} & { [t: T]: T }",
+			"snapshot": "T satisfies {} & {"
+		},
+		{
+			"entry": "Array with empty elements",
+			"line": 1,
+			"class": "whitespace",
+			"live": "[, a, , b, , , , s, , , ]",
+			"snapshot": "[, a,, b,,,, s,,,]"
+		},
+		{
+			"entry": "Multi-line variable declarations",
+			"line": 1,
+			"class": "whitespace",
+			"live": "var a = b",
+			"snapshot": "var a = b,"
+		},
+		{
+			"entry": "Subscript expressions in if statements",
+			"line": 1,
+			"class": "whitespace",
+			"live": "if ( foo ) {",
+			"snapshot": "if (foo) {"
+		},
+		{
+			"entry": "Objects with reserved words as keys",
+			"line": 1,
+			"class": "whitespace",
+			"live": "{",
+			"snapshot": "{ public: true,"
+		},
+		{
+			"entry": "Assignment to non-null LHS",
+			"line": 1,
+			"class": "whitespace",
+			"live": "foo! = bar;",
+			"snapshot": "foo ! = bar;"
+		},
+		{
+			"entry": "Type assertions",
+			"line": 1,
+			"class": "whitespace",
+			"live": "<A>b;",
+			"snapshot": "<A> b;"
+		},
+		{
+			"entry": "Ternary expression",
+			"line": 1,
+			"class": "whitespace",
+			"live": "a ? function(){ return true } : b;",
+			"snapshot": "a ? function () {"
+		},
+		{
+			"entry": "Functions with typed parameters",
+			"line": 5,
+			"class": "whitespace",
+			"live": "function foo<T>(x: T): T {",
+			"snapshot": "function foo<T>(x: T): T {}"
+		},
+		{
+			"entry": "Arrow functions and generators with call signatures",
+			"line": 3,
+			"class": "whitespace",
+			"live": "function* foo<A>(amount, interestRate, duration): number {",
+			"snapshot": "function * foo<A>(amount, interestRate, duration): number {"
+		},
+		{
+			"entry": "Super",
+			"line": 2,
+			"class": "whitespace",
+			"live": "    constructor(x: number, y: number) {",
+			"snapshot": "  constructor(x: number, y: number) {"
+		},
+		{
+			"entry": "Ambiguity between function signature and function declaration",
+			"line": 1,
+			"class": "whitespace",
+			"live": "function foo()",
+			"snapshot": "function foo() {}"
+		},
+		{
+			"entry": "Ambiguity between function signature and function declaration: comments and newlines",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  // above is a signature",
+			"snapshot": "// above is a signature"
+		},
+		{
+			"entry": "Parenthesized types",
+			"line": 2,
+			"class": "whitespace",
+			"live": "var x: ({a: any});",
+			"snapshot": "var x: ({"
+		},
+		{
+			"entry": "Object types",
+			"line": 1,
+			"class": "whitespace",
+			"live": "let person: {name: string, age: number};",
+			"snapshot": "let person: {"
+		},
+		{
+			"entry": "Index signatures",
+			"line": 3,
+			"class": "whitespace",
+			"live": "  readonly [c: number]: string;",
+			"snapshot": "  readonly[c: number]: string;"
+		},
+		{
+			"entry": "Object types with automatic semicolon insertion",
+			"line": 3,
+			"class": "text",
+			"live": "  (string): string",
+			"snapshot": "}"
+		},
+		{
+			"entry": "Automatic semicolon disabled before return type",
+			"line": 6,
+			"class": "whitespace",
+			"live": "function",
+			"snapshot": "function f(): any {"
+		},
+		{
+			"entry": "Functions with destructured parameters",
+			"line": 1,
+			"class": "whitespace",
+			"live": "let foo: ({a}: Foo) => number",
+			"snapshot": "let foo: ({ a }: Foo) => number"
+		},
+		{
+			"entry": "Constructor types",
+			"line": 1,
+			"class": "whitespace",
+			"live": "let x: new < T1, T2 > ( p1, p2 ) => R;",
+			"snapshot": "let x: new <T1, T2>(p1, p2) => R;"
+		},
+		{
+			"entry": "Flow Maybe Types",
+			"line": 1,
+			"class": "whitespace",
+			"live": "const editor: ?CodeEditor",
+			"snapshot": "const editor: ? CodeEditor"
+		},
+		{
+			"entry": "Flow Import Types",
+			"line": 1,
+			"class": "whitespace",
+			"live": "import type {UserID, User} from \"./User.js\";",
+			"snapshot": "import type { UserID, User } from \"./User.js\";"
+		},
+		{
+			"entry": "Enum declarations",
+			"line": 2,
+			"class": "whitespace",
+			"live": "    A,",
+			"snapshot": "  A,"
+		},
+		{
+			"entry": "Interface declarations",
+			"line": 1,
+			"class": "whitespace",
+			"live": "interface A { a: string; }",
+			"snapshot": "interface A {"
+		},
+		{
+			"entry": "Generic types",
+			"line": 1,
+			"class": "whitespace",
+			"live": "class A<",
+			"snapshot": "class A<B,"
+		},
+		{
+			"entry": "Mapped types",
+			"line": 1,
+			"class": "whitespace",
+			"live": "export type NoInfer<T> = T & { [K in keyof T]: T[K] };",
+			"snapshot": "export type NoInfer<T> = T & {"
+		},
+		{
+			"entry": "Assertion functions checking a value",
+			"line": 1,
+			"class": "whitespace",
+			"live": "function f(x: any): asserts x {",
+			"snapshot": "function f(x: any): asserts x {}"
+		},
+		{
+			"entry": "Assertion functions checking a type",
+			"line": 1,
+			"class": "whitespace",
+			"live": "function f(x: any): asserts x is number {",
+			"snapshot": "function f(x: any): asserts x is number {}"
+		},
+		{
+			"entry": "Type predicate and predefined types",
+			"line": 1,
+			"class": "whitespace",
+			"live": "function isFish(pet: Fish): pet is Fish {",
+			"snapshot": "function isFish(pet: Fish): pet is Fish {}"
+		},
+		{
+			"entry": "Read-only arrays",
+			"line": 5,
+			"class": "whitespace",
+			"live": "type t = readonly (readonly a[]) []",
+			"snapshot": "type t = readonly (readonly a[])[]"
+		},
+		{
+			"entry": "Tuple types",
+			"line": 3,
+			"class": "whitespace",
+			"live": "type t = [A|B, C]",
+			"snapshot": "type t = [A | B, C]"
+		},
+		{
+			"entry": "Conditional types",
+			"line": 1,
+			"class": "whitespace",
+			"live": "type T = X extends Y ? Z : Y",
+			"snapshot": "type T = X extends Y ? Z: Y"
+		},
+		{
+			"entry": "Template literal types",
+			"line": 4,
+			"class": "whitespace",
+			"live": "type A<B, C> = B extends C",
+			"snapshot": "type A<B, C> = B extends C ? C extends string ? `${C}${\"\" extends C ? \"\": \".\"}${B}`: never: never"
+		},
+		{
+			"entry": "Mapped type 'as' clauses",
+			"line": 1,
+			"class": "whitespace",
+			"live": "type A<B> = { [B in keyof C & string as `get${Capitalize<P>}`]: () => A[B] };",
+			"snapshot": "type A<B> = {"
+		},
+		{
+			"entry": "Indexed Access Precedence",
+			"line": 0,
+			"class": "edge",
+			"live": "",
+			"snapshot": "// These should generate the same AST aside from the parenthesized_type node"
+		},
+		{
+			"entry": "Typeof instantiation expressions",
+			"line": 0,
+			"class": "edge",
+			"live": "",
+			"snapshot": "// This is a special construct, different from both \"typeof (f<T>)\" and"
+		},
+		{
+			"entry": "Typeof this",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  colors: [ { color: \"green\", code: \"#E5F8F2\" } ]",
+			"snapshot": "  colors: [{"
+		},
+		{
+			"entry": "Enum with trailing comma",
+			"line": 1,
+			"class": "whitespace",
+			"live": "enum T { A, B, }",
+			"snapshot": "enum T {"
+		},
+		{
+			"entry": "Ambient declarations with for-let",
+			"line": 9,
+			"class": "whitespace",
+			"live": "declare function greet(greeting: string): void;",
+			"snapshot": "declare function greet(greeting: string): void ;"
+		}
+	],
+	"python": [
+		{
+			"entry": "Print used as an identifier",
+			"line": 1,
+			"class": "whitespace",
+			"live": "print()",
+			"snapshot": "print ()"
+		},
+		{
+			"entry": "Print used as a parameter",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  b",
+			"snapshot": "    b"
+		},
+		{
+			"entry": "Exec used as an identifier",
+			"line": 1,
+			"class": "whitespace",
+			"live": "exec(\"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\", {\"__builtins__\" : None}, safe_dict)",
+			"snapshot": "exec(\"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\", {\"__builtins__\": None}, safe_dict)"
+		},
+		{
+			"entry": "Binary Addition / Subtraction With Floats",
+			"line": 1,
+			"class": "whitespace",
+			"live": ".1-.0",
+			"snapshot": ".1 - .0"
+		},
+		{
+			"entry": "Power Operator Precedence",
+			"line": 1,
+			"class": "whitespace",
+			"live": "2**2**3",
+			"snapshot": "2 ** 2 ** 3"
+		},
+		{
+			"entry": "Named expressions",
+			"line": 6,
+			"class": "whitespace",
+			"live": "  return answer;",
+			"snapshot": "    return answer;"
+		},
+		{
+			"entry": "Yield expressions",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  yield",
+			"snapshot": "    yield"
+		},
+		{
+			"entry": "lambdas",
+			"line": 3,
+			"class": "whitespace",
+			"live": "lambda a, b = c, *d, **e: a",
+			"snapshot": "lambda a, b=c, *d, **e: a"
+		},
+		{
+			"entry": "Async context managers and iterators",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  async for c in d:",
+			"snapshot": "    async for c in d:"
+		},
+		{
+			"entry": "Arbitrary indentation between brackets",
+			"line": 2,
+			"class": "whitespace",
+			"live": "    b(",
+			"snapshot": "    b(1,"
+		},
+		{
+			"entry": "Raw strings",
+			"line": 3,
+			"class": "whitespace",
+			"live": "",
+			"snapshot": "# no escape sequences in these"
+		},
+		{
+			"entry": "Raw strings with escaped quotes",
+			"line": 2,
+			"class": "whitespace",
+			"live": "           r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\")",
+			"snapshot": "r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\")"
+		},
+		{
+			"entry": "Format strings",
+			"line": 0,
+			"class": "whitespace",
+			"live": "",
+			"snapshot": "# nested!"
+		},
+		{
+			"entry": "Format strings with format specifiers",
+			"line": 4,
+			"class": "whitespace",
+			"live": "f\"{a=}\"",
+			"snapshot": "f\"{a =}\""
+		},
+		{
+			"entry": "Matching specific values",
+			"line": 3,
+			"class": "whitespace",
+			"live": "        print(\"Goodbye!\")",
+			"snapshot": "        print (\"Goodbye!\")"
+		},
+		{
+			"entry": "Adding a wild card",
+			"line": 2,
+			"class": "whitespace",
+			"live": "# ^ conditional",
+			"snapshot": "    # ^ conditional"
+		},
+		{
+			"entry": "Or patterns",
+			"line": 2,
+			"class": "whitespace",
+			"live": "    case [\"north\"] | [\"go\", \"north\"]:",
+			"snapshot": "    case [\"north\"]| [\"go\", \"north\"]:"
+		},
+		{
+			"entry": "As patterns",
+			"line": 2,
+			"class": "whitespace",
+			"live": "    case [\"go\", (\"north\" | \"south\" | \"east\" | \"west\") as direction]:",
+			"snapshot": "    case [\"go\", (\"north\"| \"south\"| \"east\"| \"west\") as direction]:"
+		},
+		{
+			"entry": "Literals",
+			"line": 2,
+			"class": "whitespace",
+			"live": "    case 3 | -3:",
+			"snapshot": "    case 3| - 3:"
+		},
+		{
+			"entry": "Matching objects",
+			"line": 2,
+			"class": "whitespace",
+			"live": "    case Click(position=(x, y)):",
+			"snapshot": "    case Click(position = (x, y)):"
+		},
+		{
+			"entry": "Constants and enums",
+			"line": 2,
+			"class": "whitespace",
+			"live": "    case Click((x, y), button=Button.LEFT):  # This is a left click",
+			"snapshot": "    case Click((x, y), button = Button.LEFT): # This is a left click"
+		},
+		{
+			"entry": "Complex case patterns on classes",
+			"line": 8,
+			"class": "whitespace",
+			"live": "    case Point3D(x=0, y=0, z=0): # kw args",
+			"snapshot": "    case Point3D(x = 0, y = 0, z = 0): # kw args"
+		},
+		{
+			"entry": "Complex case patterns on complex numbers",
+			"line": 2,
+			"class": "whitespace",
+			"live": "    case  -3 + 5j:",
+			"snapshot": "    case - 3 + 5j:"
+		},
+		{
+			"entry": "Future import statements",
+			"line": 4,
+			"class": "whitespace",
+			"live": "                        unicode_literals)",
+			"snapshot": "unicode_literals)"
+		},
+		{
+			"entry": "Print statements with redirection",
+			"line": 2,
+			"class": "whitespace",
+			"live": "print >> a, \"b\", \"c\"",
+			"snapshot": "print >> a , \"b\", \"c\""
+		},
+		{
+			"entry": "Control-flow statements",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  pass",
+			"snapshot": "    pass"
+		},
+		{
+			"entry": "If statements",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  b",
+			"snapshot": "    b"
+		},
+		{
+			"entry": "If else statements",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  b",
+			"snapshot": "    b"
+		},
+		{
+			"entry": "Nested if statements",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  if b:",
+			"snapshot": "    if b:"
+		},
+		{
+			"entry": "While statements",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  b",
+			"snapshot": "    b"
+		},
+		{
+			"entry": "For statements",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  print line",
+			"snapshot": "    print line"
+		},
+		{
+			"entry": "Try statements",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  a",
+			"snapshot": "    a"
+		},
+		{
+			"entry": "With statements",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  c",
+			"snapshot": "    c"
+		},
+		{
+			"entry": "Async Function definitions",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  b",
+			"snapshot": "    b"
+		},
+		{
+			"entry": "Function definitions",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  return (a,b)",
+			"snapshot": "    return (a,b)"
+		},
+		{
+			"entry": "Empty blocks",
+			"line": 0,
+			"class": "whitespace",
+			"live": "",
+			"snapshot": "# These are not actually valid python; blocks"
+		},
+		{
+			"entry": "Class definitions",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  def b(self):",
+			"snapshot": "    def b(self):"
+		},
+		{
+			"entry": "Class definitions with superclasses",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  def d():",
+			"snapshot": "    def d():"
+		},
+		{
+			"entry": "Decorated definitions",
+			"line": 3,
+			"class": "whitespace",
+			"live": "  @d(1)",
+			"snapshot": "    @d(1)"
+		},
+		{
+			"entry": "Comments at different indentation levels",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  # one",
+			"snapshot": "    # one"
+		},
+		{
+			"entry": "Comments after dedents",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  b",
+			"snapshot": "    b"
+		},
+		{
+			"entry": "Comments at the ends of indented blocks",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  b",
+			"snapshot": "    b"
+		},
+		{
+			"entry": "Newline tokens followed by comments",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  # We need to recognize the newline *preceding* this comment, because there's no newline after it",
+			"snapshot": "# We need to recognize the newline *preceding* this comment, because there's no newline after it"
+		},
+		{
+			"entry": "Extra newlines",
+			"line": 2,
+			"class": "whitespace",
+			"live": "",
+			"snapshot": "    b()"
+		},
+		{
+			"entry": "Type Alias Statements",
+			"line": 3,
+			"class": "whitespace",
+			"live": "type IntFunc[**P] = Callable[P, int]  # ParamSpec",
+			"snapshot": "type IntFunc[**P] = Callable[P, int] # ParamSpec"
+		}
+	],
+	"scm": [
+		{
+			"entry": "Wildcard nodes",
+			"line": 7,
+			"class": "whitespace",
+			"live": "(program",
+			"snapshot": "(program name: (_))"
+		},
+		{
+			"entry": "Field names",
+			"line": 1,
+			"class": "whitespace",
+			"live": "(program",
+			"snapshot": "(program name: (identifier))"
+		},
+		{
+			"entry": "Negated fields",
+			"line": 1,
+			"class": "whitespace",
+			"live": "(program",
+			"snapshot": "(program field: (identifier) @capture"
+		},
+		{
+			"entry": "Quantifiers (+)",
+			"line": 1,
+			"class": "whitespace",
+			"live": "(program",
+			"snapshot": "(program (identifier) +)"
+		},
+		{
+			"entry": "Quantifiers (?)",
+			"line": 1,
+			"class": "whitespace",
+			"live": "(program",
+			"snapshot": "(program (identifier) ?)"
+		},
+		{
+			"entry": "Quantifiers (*)",
+			"line": 1,
+			"class": "whitespace",
+			"live": "(program",
+			"snapshot": "(program (identifier) *)"
+		},
+		{
+			"entry": "Quantifiers (complex)",
+			"line": 1,
+			"class": "whitespace",
+			"live": "(program",
+			"snapshot": "(program (identifier) ? @variable* @spell)"
+		},
+		{
+			"entry": "Captures",
+			"line": 1,
+			"class": "whitespace",
+			"live": "(class_declaration",
+			"snapshot": "(class_declaration body: (class_body) @class.body @test) @blorg"
+		},
+		{
+			"entry": "Lists",
+			"line": 1,
+			"class": "whitespace",
+			"live": "[",
+			"snapshot": "[\"?\""
+		},
+		{
+			"entry": "Predicates",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  (#eq? @v \"test\" local _))",
+			"snapshot": "(#eq? @v \"test\" local _))"
+		},
+		{
+			"entry": "Strings",
+			"line": 2,
+			"class": "whitespace",
+			"live": "  (#eq? @v \"I'm a string; not a comment\")",
+			"snapshot": "(#eq? @v \"I'm a string; not a comment\")"
+		},
+		{
+			"entry": "Comments",
+			"line": 1,
+			"class": "whitespace",
+			"live": "(#match?",
+			"snapshot": "(#match? @foo ; bar"
+		},
+		{
+			"entry": "Supertypes",
+			"line": 1,
+			"class": "whitespace",
+			"live": "(program",
+			"snapshot": "(program (named_node name: (identifier)"
+		},
+		{
+			"entry": "Missing keyword",
+			"line": 1,
+			"class": "whitespace",
+			"live": "(MISSING program) @prog",
+			"snapshot": "( MISSING program ) @prog"
+		}
+	],
+	"regex": [
+		{
+			"entry": "a multiline url regex",
+			"line": 1,
+			"class": "whitespace",
+			"live": "\\.[a-z]{2,6}\\b(",
+			"snapshot": "\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*"
+		}
+	]
+}

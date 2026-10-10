@@ -14287,8 +14287,9 @@ The render inputs a grammar's real emission passes: the caller's facts plus the 
 A `Prepare` impl for a generated enum: payload variants delegate to the
 payload's `prepare(ctx)`, unit variants (literals) are `Ok(())`. The match
 is the tail expression, so the impl's result is whichever arm ran. An enum
-with payloads also delegates `source_gap` and `gap_edges`, so a list's gap
-fill reaches the gap and the edges of whichever kind the item is.
+with payloads also delegates `source_gap`, `gap_edges` and `snapshot_edge`,
+so a list's gap fill reaches the gap, the edges and the geometry of
+whichever kind the item is.
 
 ### `packages/codegen/src/emitters/render-module.ts::PREPARE_MOD`
 
@@ -14316,13 +14317,14 @@ enums, `VerbatimTransport`): `Ok(())`.
 
 ### `packages/codegen/src/emitters/render-module.ts::rootEdgeStamp`
 
-The grammar root's prepare lines that give an edited root its source flanks, ahead of `prepare_edges`: the first and last present item across its child fields (`EdgeItems`, fields in declaration order), whose coordinates `root_flanks` reads the tree bytes around, classified into the root's before and after sites exactly as a list gap is; `fill_edges` sets only the sides the wire left unset. A field order that put a non-edge item first only costs evidence: the bytes before it are not whitespace and classify to nothing. Empty for every other kind.
+The grammar root's prepare lines that give an edited root its source flanks, ahead of `prepare_edges`: the first and last present item across its child fields (`EdgeItems`, fields in declaration order), whose coordinates `root_flanks` reads the tree bytes around, classified into the root's before and after sites exactly as a list gap is (for a snapshot root, the gaps its first and last items' geometry imply against the root's own span, `Layout::snapshot_edge`); `fill_edges` sets only the sides the wire left unset. A field order that put a non-edge item first only costs evidence: the bytes before it are not whitespace and classify to nothing. Empty for every other kind.
 
 ### `packages/codegen/src/emitters/render-module.ts::prepareStructImpl`
 
 A transport struct's `Prepare` impl. Every struct answers `source_gap` from
-its layout's gap (`$_layout.gap`) and `gap_edges` with its own base edges,
-made when the layout holds none. A compound kind first fills its own
+its layout's gap (`$_layout.gap`), `gap_edges` with its own base edges,
+made when the layout holds none, and `snapshot_edge` from its layout's
+span and trivia, so a snapshot list's gaps and root's edges read geometry. A compound kind first fills its own
 base edges (for the grammar root, from its source flanks, `rootEdgeStamp`;
 then, for a kind that owns kind-edge sites, from the source flanks the
 wire carries for a list node, `fill_source_flanks`, and from its edge row,

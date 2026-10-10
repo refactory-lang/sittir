@@ -2466,6 +2466,13 @@ function prepareEnumImpl(
 						a.payload ? `            ${enumName}::${a.variant}(t) => t.gap_edges(),` : `            ${enumName}::${a.variant} => None,`
 					),
 					`        }`,
+					`    }`,
+					`    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {`,
+					`        match self {`,
+					...arms.map((a) =>
+						a.payload ? `            ${enumName}::${a.variant}(t) => t.snapshot_edge(),` : `            ${enumName}::${a.variant} => None,`
+					),
+					`        }`,
 					`    }`
 				]
 			: []),
@@ -2876,7 +2883,8 @@ function rootEdgeStamp(plan: RenderPlan, node: AssembledNode, fillFields: readon
 	return [
 		`        let first = ${items('first')};`,
 		`        let last = ${items('last')};`,
-		`        let flanks = ::sittir_core::prepare::root_flanks(first, last, ${allowedOf('before')}, ${allowedOf('after')}, &options::WHITESPACE, ctx);`,
+		`        let root = ::sittir_core::layout::Layout::snapshot_edge(&self.layout).map(|edge| edge.span);`,
+		`        let flanks = ::sittir_core::prepare::root_flanks(first, last, root, ${allowedOf('before')}, ${allowedOf('after')}, &options::WHITESPACE, ctx);`,
 		`        ::sittir_core::prepare::fill_edges(self, flanks);`
 	];
 }
@@ -2937,6 +2945,9 @@ function prepareStructImpl(
 		`    }`,
 		`    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {`,
 		`        Some(self.layout.edges_mut())`,
+		`    }`,
+		`    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {`,
+		`        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)`,
 		`    }`,
 		`}`,
 		''
