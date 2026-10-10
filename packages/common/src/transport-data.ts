@@ -128,7 +128,7 @@ function unreadCoordinate(coordinate: TransportCoordinate): TransportCoordinate 
 	const index = decodeIndex(coordinate.$treeHandle);
 	if (tree === undefined || !editedWithin(tree, index, coordinate.$end)) return coordinate;
 	throw new Error(
-		`render: nodes ${index}..${coordinate.$end} of tree ${decodeTree(coordinate.$treeHandle)} are held here as a coordinate this holder never read, and a write landed inside that range on a node read through another route. The write lives on that node, not on this holder, so it cannot render here. Read the slot through this holder's accessor before rendering, or render the node the write was made on`
+		`render: nodes ${index}..${coordinate.$end} of tree ${decodeTree(coordinate.$treeHandle)} are held here as a coordinate this holder never read, and a write landed inside that range on a node read through another route. The write lives on that node, not on this holder, so it cannot render here. Build this holder from the written node itself (the node the accessor that reached it returns), or render the holder the write went through`
 	);
 }
 

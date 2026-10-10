@@ -234,13 +234,13 @@ describe('a built node over parsed storage', () => {
 		expect(built.at(0)).toBe(parsed.items()[0]);
 	});
 
-	it('refuses to render a write inside a coordinate it never read, until it reads it', () => {
+	it('refuses to render a write inside a coordinate it never read; a holder built from the written node renders it', () => {
 		const parsed = engine.parse(SOURCE, { depth: 1 });
 		const built = engine.build.sourceFile({ statements: storageOf(parsed)._statements });
 		letAt(parsed.statements()[1], 0).$trivia.leading(engine.build.lineComment(' x'));
 		expect(() => built.$render()).toThrow(/nodes \d+\.\.\d+ of tree \d+ are held here as a coordinate this holder never read/);
-		built.statements();
-		expect(built.$render()).toContain('// x');
+		expect(parsed.$render()).toContain('// x');
+		expect(engine.build.sourceFile({ statements: [...parsed.statements()] }).$render()).toContain('// x');
 	});
 
 	it('refuses after its engine is disposed, naming the tree', async () => {

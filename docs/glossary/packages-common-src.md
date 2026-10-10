@@ -445,7 +445,7 @@ The walk behind `toTransportData` and `toDetachedTransportData`. A node naming t
 
 ### `packages/common/src/transport-data.ts::unreadCoordinate`
 
-The coordinate a holder stores without having read it, as it crosses: as it is, unless the edited set holds a write inside its range (`editedWithin`). Then its bytes would silently drop the write, which lives on the node another route read; the crossing throws instead, naming the tree and the index range, and says to read the slot through the holder's accessor first (which hydrates the coordinate to that very node, through the registry) or to render the written node. Edits kept as data the render reads, keyed by where they sit in the tree, lift this refusal.
+The coordinate a holder stores without having read it, as it crosses: as it is, unless the edited set holds a write inside its range (`editedWithin`). Then its bytes would silently drop the write, which lives on the node another route read; the crossing throws instead, naming the tree and the index range, and says to build the holder from the written node itself or to render the holder the write went through. Neither remedy relies on the identity registry, which is a cache and never decides what renders. Edits kept as data the render reads, keyed by where they sit in the tree, lift this refusal.
 
 
 ### `packages/common/src/transport-data.ts::crossingTrivia`
