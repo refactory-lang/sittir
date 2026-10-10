@@ -5,7 +5,7 @@ import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { buildNodeModel } from '../node-model.ts';
 
-describe('a hoisted group whose builder forwards to another kind\'s', () => {
+describe('a hoisted group whose builder forwards to another kind\'s builder', () => {
 	it('is seated on its parent as forwarded, wherever the parent takes it', async () => {
 		const { nodeMap } = await compileGrammar({ package: grammarPackage('regex'), generatedIdTables: await loadGeneratedIdTables('regex') });
 		const model = buildNodeModel(nodeMap);

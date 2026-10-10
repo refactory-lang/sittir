@@ -693,9 +693,8 @@ One export of a grammar's generated wrap module, loaded through the typed intern
  */
 ```
 
-A `forwarded` seat names a group whose builder forwards to another kind's:
-the parent takes the group's value whole under the slot key.
-```
+A `forwarded` seat names a group whose builder forwards to another kind's
+builder: the parent takes the group's value whole under the slot key.
 
 ### `packages/tools/src/validate/common.ts::Seat.seated`
 
