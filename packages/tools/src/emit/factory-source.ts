@@ -540,6 +540,7 @@ function wrapSeatedConfig(kind: string, config: unknown, ctx: PrintContext): unk
 				};
 				continue;
 			}
+			if (seat.shape === 'forwarded') continue;
 			if (seat.shape === 'tuple' && Array.isArray(value)) {
 				const [first, ...rest] = value;
 				if (isListOptions(first) && listOptionsAreDefault(seat.kind, first, ctx)) {

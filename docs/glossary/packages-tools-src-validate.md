@@ -693,6 +693,9 @@ One export of a grammar's generated wrap module, loaded through the typed intern
  */
 ```
 
+A `forwarded` seat names a group whose builder forwards to another kind's
+builder: the parent takes the group's value whole under the slot key.
+
 ### `packages/tools/src/validate/common.ts::Seat.seated`
 
 ```text
@@ -1733,5 +1736,6 @@ Projects a seated slot's value into its parent's config by the seat's shape.
 A `flatten` seat splices the group's own config keys into the parent's and
 marks the config (`flattenedOf`): `true` for a config-shaped group, else the
 group's call arguments, so a direct parent can pass the group's positional
-value. An `elements` seat projects each element, and a `tuple` seat takes the
-group's call arguments as the slot's value.
+value. An `elements` seat projects each element, a `tuple` seat takes the
+group's call arguments as the slot's value, and a `forwarded` seat assigns the
+value under the slot key as an unseated slot's value is.

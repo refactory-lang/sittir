@@ -5698,19 +5698,24 @@ A compound's config keys, the one list both the config-shaped arm merge
 ### `packages/codegen/src/compiler/model/sub-factories.ts::seatOf`
 
 The one derivation of how a hoisted slot value is seated on its parent,
-serialized into `node-model.json5` for the tools. It reads the parent's
-emitted wire set (`SeatSource`: the `PolymorphWireSet` the overlay actually
-prints, after its own emission and collision filters), never a fresh
-`subFactoriesOf`, so a stamped seat is by construction a route the overlay
-exports: `arm` with the mount name when the wire set carries a sub-factory
+serialized into `node-model.json5` for the tools. Two kinds of seat come out
+of it. A wire-backed seat is read from the parent's emitted wire set
+(`SeatSource`: the `PolymorphWireSet` the overlay actually prints, after its
+own emission and collision filters), never a fresh `subFactoriesOf`, so it is
+by construction a route the overlay exports: `arm` with the mount name when the wire set carries a sub-factory
 for that value (a node arm on the child, or a value arm on the leaf's
 text — marked `seated` when the arm's child is config-shaped but the
 wrapper takes its config whole under the slot key rather than merging its
 keys (`seatsConfigChild`), which is how the validator knows to spell the
 call), `flatten` when the slot
 is one of the wire set's flatten seats, `elements` when the slot is one of its
-elements seats; `undefined` for a value that is not a hoisted kind, or
-whose parent has no wire set, or that no seating reaches. The validators' `ir-storage` and the example emitter consume
+elements seats. A `forwarded` seat is not wire-backed and names no overlay
+route: when no wire-backed seat reaches a group whose own builder forwards to
+another kind's builder (`classifyFactoryShape` is `forwarded`), the parent's
+own builder takes that group whole under the slot key, so the stamp is read
+from the group's factory shape and holds whether or not the parent has a wire
+set. `undefined` for a value that is not a hoisted kind, or that no
+seating reaches. The validators' `ir-storage` and the example emitter consume
 the stamp rather than re-deriving it; the census reports every hoisted kind
 no seat names.
 

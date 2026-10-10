@@ -429,6 +429,9 @@ The pattern kinds counted are the slot's text candidates (`textCandidateKinds`),
 // that restates the child's default says nothing the loose call needs.
 ```
 
+A `forwarded` seat leaves the config as it is: the parent holds the group's
+value under the slot key, so no key of the parent's belongs to the group.
+
 #### body
 
 ```text

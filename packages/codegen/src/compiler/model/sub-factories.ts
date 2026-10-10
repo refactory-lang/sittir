@@ -391,7 +391,7 @@ export function tupleSeatOf(node: AssembledNode, nodeMap: NodeMap): readonly Fla
 
 export interface Seat {
 	readonly kind: string;
-	readonly shape: 'arm' | 'flatten' | 'elements' | 'tuple';
+	readonly shape: 'arm' | 'flatten' | 'elements' | 'tuple' | 'forwarded';
 	readonly mount?: string;
 	readonly seated?: true;
 }
@@ -410,9 +410,11 @@ export function seatOf(
 	nodeMap: NodeMap,
 	source: SeatSource | undefined
 ): Seat | undefined {
-	if (source === undefined || !isNodeRef(value)) return undefined;
+	if (!isNodeRef(value)) return undefined;
 	const child = nodeMap.nodes.get(storageKindOfRef(value.node));
 	if (child === undefined || !isHoistedAt(value, child)) return undefined;
+	const forwarded: Seat | undefined = classifyFactoryShape(child, nodeMap) === 'forwarded' ? { kind: child.kind, shape: 'forwarded' } : undefined;
+	if (source === undefined) return forwarded;
 	const text = textStorageOf(value, nodeMap)?.text;
 	const arm = source.subs.find(
 		(e) =>
@@ -435,7 +437,7 @@ export function seatOf(
 	if ((source.tuples ?? []).some((e) => e.slot === slot && e.group === child)) {
 		return { kind: child.kind, shape: 'tuple' };
 	}
-	return undefined;
+	return forwarded;
 }
 
 function forwardsToSpreadTarget(node: AssembledNode, nodeMap: NodeMap): boolean {

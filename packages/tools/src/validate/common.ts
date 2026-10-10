@@ -410,7 +410,7 @@ export function hydrateOf(grammar: string): Promise<Hydrate | null> {
 
 export interface Seat {
 	readonly kind: string;
-	readonly shape: 'arm' | 'flatten' | 'elements' | 'tuple';
+	readonly shape: 'arm' | 'flatten' | 'elements' | 'tuple' | 'forwarded';
 	readonly mount?: string;
 	readonly seated?: true;
 }
@@ -1235,6 +1235,9 @@ function projectSeatedSlot(
 		}
 		case 'arm':
 			projectArmSlot(seat, parentKind, slot, value, opts, out);
+			return;
+		case 'forwarded':
+			assignSlotToConfig(slot, value, memberValueOpts(opts, parentKind, slot.name), out);
 			return;
 	}
 }
