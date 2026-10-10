@@ -20,6 +20,7 @@ pub mod line_endings;
 #[cfg(feature = "napi-bindings")]
 pub mod napi_engine;
 pub mod options;
+pub mod points;
 pub mod prepare;
 pub mod query;
 pub mod non_empty;
