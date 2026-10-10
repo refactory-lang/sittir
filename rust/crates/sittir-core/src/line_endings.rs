@@ -18,11 +18,17 @@ pub fn logical_breaks(text: &str) -> usize {
 /// and the generated tables share. Borrows when the text holds no `\r`. Source
 /// text passes through it where it enters the writer, so line-start and
 /// indentation decisions only ever see `\n`.
+///
+/// A `\r` that ends the text is dropped: it is the first half of a `\r\n` whose
+/// `\n` lies outside the token (a line comment's pattern takes the `\r`), and
+/// the break is written by whatever follows the token, as it is for a source
+/// that spells its breaks `\n`.
 pub fn to_internal(text: &str) -> Cow<'_, str> {
     if !text.contains('\r') {
         return Cow::Borrowed(text);
     }
-    Cow::Owned(text.replace("\r\n", "\n").replace('\r', "\n"))
+    let body = text.strip_suffix('\r').unwrap_or(text);
+    Cow::Owned(body.replace("\r\n", "\n").replace('\r', "\n"))
 }
 
 const BREAK_CHARS: [char; 2] = ['\r', '\n'];
@@ -123,6 +129,8 @@ mod tests {
     #[test]
     fn every_break_enters_as_one_spelling_and_lf_text_is_borrowed() {
         assert_eq!(to_internal("a\r\nb\rc\nd"), "a\nb\nc\nd");
+        assert_eq!(to_internal("# note\r"), "# note");
+        assert_eq!(to_internal("a\r\n"), "a\n");
         assert!(matches!(to_internal("a\nb"), Cow::Borrowed(_)));
         assert!(matches!(to_internal(""), Cow::Borrowed(_)));
     }
