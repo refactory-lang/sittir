@@ -2020,15 +2020,15 @@ The public-symbol kind id link stamped on a list's separator string, or `undefin
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.typeKey`
 
-The kind's key in the engine's kind-type map (`IrKeyOf`, `engine.types`), stamped by `resolveIrKeys` for every node. It is the key `irKey` resolved to before the plan narrowed `irKey` to exported builders, so a kind with a parser id keeps its type key whether or not `ir` builds it.
+The kind's key in the engine's kind-type map (`TypeKeyOf`, `engine.types`), stamped by `resolveIrKeys` for every node. It is the key `irKey` resolved to before the plan narrowed `irKey` to exported builders, so a kind with a parser id keeps its type key whether or not `ir` builds it.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.builderPath`
 
-The path from `ir` to the builder for this kind (`ir.lineComment.docOuter` is `['lineComment', 'docOuter']`), undefined when no builder exists. `stampIrSurface` stamps it once the plan is known (`stampBuilderPaths`); consumers read it rather than resolving a path from names.
+The path from `ir` to the builder for this kind (`ir.lineComment.docOuter` is `['lineComment', 'docOuter']`), undefined when no builder exists. `stampIrSurface` stamps it once the plan is known (`resolveBuilderPaths`); consumers read it rather than resolving a path from names.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.builderPathAlternates`
 
-The other paths that build this kind, present only when there is more than one: a kind two owners declare (python `parenthesized_import_list`, under `futureImportStatement` and `importFromStatement`) builds through either.
+Every other `ir` path that builds this kind, present only when there is one: each owner route composed through each of the owner's own paths, and every supertype group the kind is a member of. A kind two owners declare (python `parenthesized_import_list`, under `futureImportStatement` and `importFromStatement`) lists both, and through each of them the `simpleStatement` group path to that owner. Paths under `strict`, `coerce` and the `synonym` role map are not routes.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.rule`
 
@@ -5965,7 +5965,7 @@ What the model decided about `ir`: the keyed kinds (bundled and own-text), the f
 
 ### `packages/codegen/src/compiler/model/ir-surface.ts::stampIrSurface`
 
-Derives the `ir` surface once and stores it on the node map (`NodeMap.irSurface`). The derivations read hydrated slot values (the sub-factory walk's merge and seat shapes do), so the stamp follows `hydrateSlotRefs`. Each derivation takes the previous ones' results rather than reading the stamp, which does not exist yet. Once the plan is known, a node the plan does not export (`exportedNodesOf`) loses its `irKey`, so the key names exactly the `ir` member that exists, and every node gets its builder paths (`stampBuilderPaths`).
+Derives the `ir` surface once and stores it on the node map (`NodeMap.irSurface`). The derivations read hydrated slot values (the sub-factory walk's merge and seat shapes do), so the stamp follows `hydrateSlotRefs`. Each derivation takes the previous ones' results rather than reading the stamp, which does not exist yet. Once the plan is known, a node the plan does not export (`exportedNodesOf`) loses its `irKey`, so the key names exactly the `ir` member that exists, and every node gets its builder paths (`resolveBuilderPaths`).
 
 ### `packages/codegen/src/compiler/model/ir-surface.ts::exportedNodesOf`
 
@@ -5977,23 +5977,19 @@ One step of a builder path: the node that builds a child and the name the child 
 
 ### `packages/codegen/src/compiler/model/ir-surface.ts::OwnerRoutes`
 
-A node's routes to its builders. `declared` holds every route through an owner that declares the child as its own form, in grammar declaration order (node-map order, never the order a walk visits them). `contained` holds the one route through the child's sole containing referrer, for a child no owner declares.
+A node's routes to its builders, each list in grammar declaration order (node-map order, never the order a walk visits them). `all` holds every route an `ir` path takes to the child's own builder: the declared routes, the contained route, every alias wire and every supertype-group membership; the alternates are composed from it. `declared` holds the routes through an owner that declares the child as its own form. `contained` holds the one route through the child's sole containing referrer, and `grouped` the one supertype group the child is a member of, when there is only one.
 
 ### `packages/codegen/src/compiler/model/ir-surface.ts::ownerRoutesOf`
 
-Collects `OwnerRoutes`. A flattened parent declares each of its variant routes. A direct node arm (no path, not a namespace arm) declares its child when the arm's stamped `variantOf` names the arm's own host. An alias wire is a whole-rule alternative of its host, so it always declares. Only seated children are routed through arms. An arm whose host is the child's sole containing referrer (`isSoleContainer`) is also the child's contained route; a child with more than one such route has none.
+Collects `OwnerRoutes`. A flattened parent declares each of its variant routes. A direct node arm (no path, not a namespace arm) declares its child when the arm's stamped `variantOf` names the arm's own host. An alias wire is a whole-rule alternative of its host, so it always declares. Only seated children are declared or contained through arms. An arm whose host is the child's sole containing referrer (`isSoleContainer`) is also the child's contained route; a child with more than one such route has none. An alias wire's value is the child's own builder whether or not the child is seated, so every alias wire is in `all`; an arm that is neither declared nor contained builds its host around the child and is not a route. Each member of a supertype group is routed through the group under its member key.
 
 ### `packages/codegen/src/compiler/model/ir-surface.ts::soleRoutes`
 
 The kinds with exactly one candidate route, each with that route.
 
-### `packages/codegen/src/compiler/model/ir-surface.ts::stampBuilderPaths`
+### `packages/codegen/src/compiler/model/ir-surface.ts::resolveBuilderPaths`
 
-Stamps every node's `builderPath` and `builderPathAlternates`. A node's paths are its own `irKey`, then its declared routes composed through each owner's own first path (every hop must resolve, and a route back into a node being resolved does not). A node with neither takes its contained route, else, when it is seated, the one supertype group it is a member of (`groupPathsOf`). The first path is the builder path and the rest are its alternates.
-
-### `packages/codegen/src/compiler/model/ir-surface.ts::groupPathsOf`
-
-The `[group, member]` path of each kind that is a member of exactly one supertype group.
+Stamps every node's `builderPath` and `builderPathAlternates` from its `OwnerRoutes`. The builder path is the node's own `irKey`, else its first declared route that resolves, else its contained route, else, when it is seated, its one supertype group; each route is composed through its owner's builder path. Every path is the node's own `irKey` followed by each route in `all` composed through each of its owner's paths, and the alternates are those paths other than the builder path, each spelled once. Paths are computed once per kind, so a route back into a kind being resolved has no answer: it throws, naming the cycle, rather than cutting the route and caching a result that depends on which kind was resolved first.
 
 ### `packages/codegen/src/compiler/model/ir-surface.ts::isNamespaceArm`
 

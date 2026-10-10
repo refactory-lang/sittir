@@ -7,7 +7,7 @@ import { is } from './is.js';
 import {
 	TSKindId,
 	type FixedTextKindId,
-	type IrKeyOf,
+	type TypeKeyOf,
 	type NamespaceMap,
 	type RustNode,
 	type RustTypeMap
@@ -24,7 +24,7 @@ export interface RustAPI extends LanguageAPI {
 	readonly build: typeof ir;
 	readonly is: typeof is;
 	readonly kinds: typeof TSKindId;
-	readonly types: KindTypes<IrKeyOf, NamespaceMap>;
+	readonly types: KindTypes<TypeKeyOf, NamespaceMap>;
 	readonly root: SourceFileTree;
 	readonly node: RustNode;
 	readonly fixedTextKindId: FixedTextKindId;

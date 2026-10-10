@@ -13,7 +13,7 @@ import type { ir } from '../src/ir.ts';
 import type * as T from '../src/types.ts';
 import type { SubBuilderRowKind } from '../src/types-internal.ts';
 
-export type EveryStrictEntryTakesItsRow = Expect<IsNever<RowDiffersFromCall<typeof ir, T.IrKeyOf, T.NamespaceMap, 'BuildArgs'>>>;
+export type EveryStrictEntryTakesItsRow = Expect<IsNever<RowDiffersFromCall<typeof ir, T.TypeKeyOf, T.NamespaceMap, 'BuildArgs'>>>;
 export type EveryStrictSubBuilderTakesItsRow = Expect<
 	IsNever<SubBuilderDiffersFromRow<typeof ir, SubBuilderRowKind, T.NamespaceMap, 'BuildArgs'>>
 >;

@@ -454,7 +454,7 @@ export function stampIrSurface(nodeMap: NodeMap, generatedIdTables?: GeneratedId
 	nodeMap.irSurface = { bundles, ownText, flattened, armRoutes, plan };
 	const exported = exportedNodesOf(plan);
 	for (const node of nodeMap.nodes.values()) if (!exported.has(node)) node.irKey = undefined;
-	stampBuilderPaths(nodeMap, flattened, armRoutes, plan);
+	resolveBuilderPaths(nodeMap.name, nodeMap.nodes.values(), ownerRoutesOf(nodeMap, flattened, armRoutes, plan));
 }
 
 function exportedNodesOf(plan: IrPlan): ReadonlySet<AssembledNode> {
@@ -465,18 +465,23 @@ function exportedNodesOf(plan: IrPlan): ReadonlySet<AssembledNode> {
 	]);
 }
 
-interface OwnerRoute {
+export interface OwnerRoute {
 	readonly parent: AssembledNode;
 	readonly name: string;
 }
-interface OwnerRoutes {
+export interface OwnerRoutes {
+	readonly all: ReadonlyMap<string, readonly OwnerRoute[]>;
 	readonly declared: ReadonlyMap<string, readonly OwnerRoute[]>;
 	readonly contained: ReadonlyMap<string, OwnerRoute>;
+	readonly grouped: ReadonlyMap<string, OwnerRoute>;
 }
-function ownerRoutesOf(nodeMap: NodeMap, flattened: readonly FlattenedVariantParent[], armRoutes: ArmRoutes): OwnerRoutes {
+function ownerRoutesOf(nodeMap: NodeMap, flattened: readonly FlattenedVariantParent[], armRoutes: ArmRoutes, plan: IrPlan): OwnerRoutes {
 	const containers = containersOf(nodeMap);
+	const all = new Map<string, OwnerRoute[]>();
 	const declared = new Map<string, OwnerRoute[]>();
 	const contained = new Map<string, OwnerRoute[]>();
+	const grouped = new Map<string, OwnerRoute[]>();
+	const aliased = new Map<string, OwnerRoute[]>();
 	const offer = (into: Map<string, OwnerRoute[]>, child: AssembledNode, route: OwnerRoute): void => {
 		into.set(child.kind, [...(into.get(child.kind) ?? []), route]);
 	};
@@ -493,11 +498,24 @@ function ownerRoutesOf(nodeMap: NodeMap, flattened: readonly FlattenedVariantPar
 			if (sub.arm.via !== 'node' || sub.arm.path.length > 0 || isNamespaceArm(sub)) continue;
 			offerArm(sub.arm.child, { parent: set.node, name: sub.name }, sub.arm.variantOf === set.node.kind);
 		}
-		for (const alias of set.aliases) offerArm(alias.child, { parent: set.node, name: alias.name }, true);
+		for (const alias of set.aliases) {
+			offer(aliased, alias.child, { parent: set.node, name: alias.name });
+			offerArm(alias.child, { parent: set.node, name: alias.name }, true);
+		}
+	}
+	for (const group of plan.groups) {
+		for (const member of group.members) offer(grouped, member.node, { parent: group.node, name: member.key });
 	}
 	const order = new Map([...nodeMap.nodes.keys()].map((kind, index) => [kind, index]));
 	const byDeclaration = (a: OwnerRoute, b: OwnerRoute): number => order.get(a.parent.kind)! - order.get(b.parent.kind)!;
-	return { declared: new Map([...declared].map(([kind, routes]) => [kind, [...routes].sort(byDeclaration)])), contained: soleRoutes(contained) };
+	const sorted = (routes: ReadonlyMap<string, readonly OwnerRoute[]>): ReadonlyMap<string, readonly OwnerRoute[]> =>
+		new Map([...routes].map(([kind, list]) => [kind, [...list].sort(byDeclaration)]));
+	const sole = soleRoutes(contained);
+	for (const [kind, routes] of declared) all.set(kind, [...routes]);
+	for (const [kind, route] of sole) all.set(kind, [...(all.get(kind) ?? []), route]);
+	for (const [kind, routes] of aliased) all.set(kind, [...(all.get(kind) ?? []), ...routes]);
+	for (const [kind, routes] of grouped) all.set(kind, [...(all.get(kind) ?? []), ...routes]);
+	return { all: sorted(all), declared: sorted(declared), contained: sole, grouped: soleRoutes(grouped) };
 }
 function soleRoutes(candidates: ReadonlyMap<string, readonly OwnerRoute[]>): ReadonlyMap<string, OwnerRoute> {
 	return new Map([...candidates].flatMap(([kind, routes]) => (routes.length === 1 ? [[kind, routes[0]!] as const] : [])));
@@ -507,35 +525,50 @@ function isSoleContainer(containers: ReadonlyMap<string, ReadonlySet<string>>, p
 	return set?.size === 1 && set.has(parent);
 }
 
-function stampBuilderPaths(nodeMap: NodeMap, flattened: readonly FlattenedVariantParent[], armRoutes: ArmRoutes, plan: IrPlan): void {
-	const owners = ownerRoutesOf(nodeMap, flattened, armRoutes);
-	const grouped = groupPathsOf(plan);
-	const paths = new Map<string, readonly (readonly string[])[]>();
-	const pathsOf = (node: AssembledNode, visiting: ReadonlySet<string>): readonly (readonly string[])[] => {
-		const known = paths.get(node.kind);
+export function resolveBuilderPaths(grammar: string, nodes: Iterable<AssembledNode>, owners: OwnerRoutes): void {
+	const resolved = new Map<string, readonly (readonly string[])[]>();
+	const pathsOf = (node: AssembledNode, visiting: readonly string[]): readonly (readonly string[])[] => {
+		const known = resolved.get(node.kind);
 		if (known !== undefined) return known;
-		const through = (route: OwnerRoute | undefined): readonly string[] | undefined => {
-			if (route === undefined || visiting.has(route.parent.kind)) return undefined;
-			const base = pathsOf(route.parent, new Set([...visiting, node.kind]))[0];
-			return base === undefined ? undefined : [...base, route.name];
-		};
-		const declared = (owners.declared.get(node.kind) ?? []).map(through).filter((path) => path !== undefined);
+		if (visiting.includes(node.kind)) {
+			throw new Error(`ir surface: '${grammar}' has a cycle of owner routes (${[...visiting.slice(visiting.indexOf(node.kind)), node.kind].join(' → ')})`);
+		}
 		const own = node.irKey === undefined ? [] : [[node.irKey]];
-		const fallback = declared.length > 0 || own.length > 0 ? undefined : (through(owners.contained.get(node.kind)) ?? (node.seated ? grouped.get(node.kind) : undefined));
-		const found = [...own, ...declared, ...(fallback === undefined ? [] : [fallback])];
-		paths.set(node.kind, found);
-		return found;
+		const routed = (owners.all.get(node.kind) ?? []).flatMap((route) => pathsOf(route.parent, [...visiting, node.kind]).map((path) => [...path, route.name]));
+		const paths = [...own, ...routed];
+		resolved.set(node.kind, paths);
+		return paths;
 	};
-	for (const node of nodeMap.nodes.values()) {
-		const [path, ...alternates] = pathsOf(node, new Set());
+	const through = (route: OwnerRoute | undefined): readonly string[] | undefined => {
+		if (route === undefined) return undefined;
+		const base = primaryOf(route.parent);
+		return base === undefined ? undefined : [...base, route.name];
+	};
+	const primaries = new Map<string, readonly string[] | undefined>();
+	const primaryOf = (node: AssembledNode): readonly string[] | undefined => {
+		if (primaries.has(node.kind)) return primaries.get(node.kind);
+		const declared = (owners.declared.get(node.kind) ?? []).map(through).find((path) => path !== undefined);
+		const primary =
+			(node.irKey === undefined ? undefined : [node.irKey]) ??
+			declared ??
+			through(owners.contained.get(node.kind)) ??
+			(node.seated ? through(owners.grouped.get(node.kind)) : undefined);
+		primaries.set(node.kind, primary);
+		return primary;
+	};
+	for (const node of nodes) {
+		const all = pathsOf(node, []);
+		const path = primaryOf(node);
+		const spelled = new Set(path === undefined ? [] : [path.join('.')]);
+		const alternates = all.filter((candidate) => {
+			const key = candidate.join('.');
+			if (spelled.has(key)) return false;
+			spelled.add(key);
+			return true;
+		});
 		node.builderPath = path;
 		node.builderPathAlternates = alternates.length > 0 ? alternates : undefined;
 	}
-}
-function groupPathsOf(plan: IrPlan): ReadonlyMap<string, readonly string[]> {
-	const paths = new Map<string, (readonly string[])[]>();
-	for (const group of plan.groups) for (const member of group.members) paths.set(member.node.kind, [...(paths.get(member.node.kind) ?? []), [group.key, member.key]]);
-	return new Map([...paths].flatMap(([kind, list]) => (list.length === 1 ? [[kind, list[0]!] as const] : [])));
 }
 
 export function irSurfaceOf(nodeMap: NodeMap): IrSurface {

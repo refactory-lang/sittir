@@ -277,22 +277,16 @@ function emitSynonymString(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: st
 }
 
 function emitSynonymComment(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
-	const refs = new Map<string, string>();
-	const ref = (node: AssembledNode): string => refs.get(node.kind) ?? factoryRef(node);
+	const ref = (node: AssembledNode): string => {
+		if (node.builderPath === undefined) throw new Error(`ir: the trivia kind '${node.kind}' has no builder path`);
+		return `ir.${node.builderPath.join('.')}`;
+	};
 	const returnType = (node: AssembledNode): string => `ReturnType<typeof ${ref(node)}>`;
 	const nodes = grammarRoles
 		.get('trivia')
 		.flatMap((kind) => {
 			const node = nodeMap.nodes.get(kind) ?? nodeMap.nodes.get(`_${kind}`);
-			if (node instanceof AssembledSupertype) {
-				return [...node.subtypeNames].flatMap((name) => {
-					const sub = nodeMap.nodes.get(name);
-					if (sub === undefined) return [];
-					const variant = name.startsWith(`${node.kind}_`) ? name.slice(node.kind.length + 1) : undefined;
-					if (variant !== undefined) refs.set(name, `F.${node.irKey}.${variant}`);
-					return [sub];
-				});
-			}
+			if (node instanceof AssembledSupertype) return [...node.subtypeNames].flatMap((name) => nodeMap.nodes.get(name) ?? []);
 			return node === undefined ? [] : [node];
 		})
 		.filter(

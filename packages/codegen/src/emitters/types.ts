@@ -341,7 +341,7 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 	lines.push(`export type FixedTextKindId = ${fixedTextKindIds.size > 0 ? [...fixedTextKindIds].join(' | ') : 'never'};`);
 	lines.push('');
 
-	lines.push('export interface IrKeyOf {');
+	lines.push('export interface TypeKeyOf {');
 	for (const kind of namespaceMapKinds) {
 		const node = nodeMap.nodes.get(kind)!;
 		if (node.typeKey === undefined || !hasKindId(kind, kindEntries)) continue;

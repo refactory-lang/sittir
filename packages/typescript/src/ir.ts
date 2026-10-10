@@ -19,15 +19,15 @@ export const synonym = Object.freeze({
 		return F.number(String(value));
 	},
 	comment: Object.assign(
-		function comment(content: string): ReturnType<typeof F.comment.line> {
-			return F.comment.line(content);
+		function comment(content: string): ReturnType<typeof ir.commentLine> {
+			return ir.commentLine(content);
 		},
 		{
-			line(text: string): ReturnType<typeof F.comment.line> {
-				return F.comment.line(text);
+			line(text: string): ReturnType<typeof ir.commentLine> {
+				return ir.commentLine(text);
 			},
-			block(text: string): ReturnType<typeof F.comment.block> {
-				return F.comment.block(text);
+			block(text: string): ReturnType<typeof ir.commentBlock> {
+				return ir.commentBlock(text);
 			}
 		}
 	),

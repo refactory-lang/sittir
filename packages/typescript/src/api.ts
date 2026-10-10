@@ -7,7 +7,7 @@ import { is } from './is.js';
 import {
 	TSKindId,
 	type FixedTextKindId,
-	type IrKeyOf,
+	type TypeKeyOf,
 	type NamespaceMap,
 	type TypescriptNode,
 	type TypescriptTypeMap
@@ -25,7 +25,7 @@ export interface TypescriptAPI extends LanguageAPI {
 	readonly build: typeof ir;
 	readonly is: typeof is;
 	readonly kinds: typeof TSKindId;
-	readonly types: KindTypes<IrKeyOf, NamespaceMap>;
+	readonly types: KindTypes<TypeKeyOf, NamespaceMap>;
 	readonly root: ProgramTree;
 	readonly node: TypescriptNode;
 	readonly fixedTextKindId: FixedTextKindId;

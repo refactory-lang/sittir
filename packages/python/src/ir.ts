@@ -28,8 +28,8 @@ export const synonym = Object.freeze({
 			}
 		}
 	),
-	comment(text: string): ReturnType<typeof F.buildComment> {
-		return F.buildComment(text);
+	comment(text: string): ReturnType<typeof ir.comment> {
+		return ir.comment(text);
 	},
 	type(name: string): ReturnType<typeof F.buildIdentifier> {
 		return F.buildIdentifier(name);

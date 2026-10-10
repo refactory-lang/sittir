@@ -4391,6 +4391,12 @@
       "modelType": "punctuation",
       "typeName": "Blankline",
       "factoryName": "blankline",
+      "builderPathAlternates": [
+        [
+          "layout",
+          "blankline"
+        ]
+      ],
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\" as const",
@@ -4421,6 +4427,12 @@
       "modelType": "punctuation",
       "typeName": "Dedent",
       "factoryName": "dedent",
+      "builderPathAlternates": [
+        [
+          "layout",
+          "dedent"
+        ]
+      ],
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"﷑\\n\" as const",
@@ -4444,6 +4456,12 @@
       "modelType": "punctuation",
       "typeName": "DoubleBlankline",
       "factoryName": "doubleBlankline",
+      "builderPathAlternates": [
+        [
+          "layout",
+          "doubleBlankline"
+        ]
+      ],
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\\n\" as const",
@@ -4547,6 +4565,12 @@
       "modelType": "punctuation",
       "typeName": "Indent",
       "factoryName": "indent",
+      "builderPathAlternates": [
+        [
+          "layout",
+          "indent"
+        ]
+      ],
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"﷐\\n\" as const",
@@ -4893,6 +4917,12 @@
       "modelType": "punctuation",
       "typeName": "Newline",
       "factoryName": "newline",
+      "builderPathAlternates": [
+        [
+          "layout",
+          "newline"
+        ]
+      ],
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
@@ -4919,6 +4949,12 @@
       "modelType": "punctuation",
       "typeName": "Space",
       "factoryName": "space",
+      "builderPathAlternates": [
+        [
+          "layout",
+          "space"
+        ]
+      ],
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\" \" as const",
@@ -4931,6 +4967,12 @@
       "modelType": "punctuation",
       "typeName": "Tab",
       "factoryName": "tab",
+      "builderPathAlternates": [
+        [
+          "layout",
+          "tab"
+        ]
+      ],
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\t\" as const",
@@ -4966,6 +5008,12 @@
       "modelType": "punctuation",
       "typeName": "Tight",
       "factoryName": "tight",
+      "builderPathAlternates": [
+        [
+          "layout",
+          "tight"
+        ]
+      ],
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\" as const",
@@ -4998,6 +5046,11 @@
       ],
       "builderPathAlternates": [
         [
+          "declaration",
+          "abstractClass"
+        ],
+        [
+          "statement",
           "declaration",
           "abstractClass"
         ]
@@ -5628,6 +5681,11 @@
         [
           "declaration",
           "ambient"
+        ],
+        [
+          "statement",
+          "declaration",
+          "ambient"
         ]
       ],
       "hidden": false,
@@ -5740,6 +5798,23 @@
       "irKey": "ambientDeclarationModule",
       "builderPath": [
         "ambientDeclarationModule"
+      ],
+      "builderPathAlternates": [
+        [
+          "ambientDeclaration",
+          "module"
+        ],
+        [
+          "declaration",
+          "ambient",
+          "module"
+        ],
+        [
+          "statement",
+          "declaration",
+          "ambient",
+          "module"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -5915,6 +5990,12 @@
       "builderPath": [
         "array"
       ],
+      "builderPathAlternates": [
+        [
+          "primaryExpression",
+          "array"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -6002,6 +6083,12 @@
       "irKey": "arrayType",
       "builderPath": [
         "arrayType"
+      ],
+      "builderPathAlternates": [
+        [
+          "primaryType",
+          "array"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -6105,6 +6192,12 @@
       "builderPath": [
         "arrowFunction"
       ],
+      "builderPathAlternates": [
+        [
+          "primaryExpression",
+          "arrowFunction"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -6201,6 +6294,13 @@
       "builderPath": [
         "arrowFunction",
         "parameter"
+      ],
+      "builderPathAlternates": [
+        [
+          "primaryExpression",
+          "arrowFunction",
+          "parameter"
+        ]
       ],
       "hidden": false,
       "annotations": {
@@ -6378,6 +6478,12 @@
       "irKey": "asExpression",
       "builderPath": [
         "asExpression"
+      ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "as"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -6573,6 +6679,12 @@
       "builderPath": [
         "assignmentExpression"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "assignment"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -6733,6 +6845,12 @@
       "irKey": "augmentedAssignmentExpression",
       "builderPath": [
         "augmentedAssignmentExpression"
+      ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "augmentedAssignment"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -7055,6 +7173,12 @@
       "builderPath": [
         "awaitExpression"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "await"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -7207,6 +7331,12 @@
       "irKey": "binaryExpression",
       "builderPath": [
         "binaryExpression"
+      ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "binary"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -7450,6 +7580,13 @@
         "binaryExpression",
         "in"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "binary",
+          "in"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -7622,6 +7759,12 @@
       "builderPath": [
         "callExpression"
       ],
+      "builderPathAlternates": [
+        [
+          "primaryExpression",
+          "call"
+        ]
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -7642,6 +7785,11 @@
       "builderPathAlternates": [
         [
           "callExpression",
+          "call"
+        ],
+        [
+          "primaryExpression",
+          "call",
           "call"
         ]
       ],
@@ -7740,6 +7888,11 @@
         [
           "callExpression",
           "member"
+        ],
+        [
+          "primaryExpression",
+          "call",
+          "member"
         ]
       ],
       "hidden": false,
@@ -7829,6 +7982,11 @@
       "builderPathAlternates": [
         [
           "callExpression",
+          "templateCall"
+        ],
+        [
+          "primaryExpression",
+          "call",
           "templateCall"
         ]
       ],
@@ -8167,6 +8325,12 @@
       "irKey": "class",
       "builderPath": [
         "class"
+      ],
+      "builderPathAlternates": [
+        [
+          "primaryExpression",
+          "class"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -8606,6 +8770,11 @@
       ],
       "builderPathAlternates": [
         [
+          "declaration",
+          "class"
+        ],
+        [
+          "statement",
           "declaration",
           "class"
         ]
@@ -9248,6 +9417,12 @@
       "builderPath": [
         "conditionalType"
       ],
+      "builderPathAlternates": [
+        [
+          "primaryType",
+          "conditional"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -9517,6 +9692,12 @@
       "irKey": "constructorType",
       "builderPath": [
         "constructorType"
+      ],
+      "builderPathAlternates": [
+        [
+          "type",
+          "constructor"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -11338,6 +11519,11 @@
         [
           "declaration",
           "enum"
+        ],
+        [
+          "statement",
+          "declaration",
+          "enum"
         ]
       ],
       "hidden": false,
@@ -11526,6 +11712,12 @@
       "irKey": "existentialType",
       "builderPath": [
         "existentialType"
+      ],
+      "builderPathAlternates": [
+        [
+          "primaryType",
+          "existential"
+        ]
       ],
       "hidden": false,
       "isParameterless": true,
@@ -11754,6 +11946,11 @@
         [
           "exportStatement",
           "default"
+        ],
+        [
+          "statement",
+          "export",
+          "default"
         ]
       ],
       "hidden": true,
@@ -11778,6 +11975,17 @@
       "builderPathAlternates": [
         [
           "exportStatementDefault",
+          "declaration"
+        ],
+        [
+          "exportStatement",
+          "default",
+          "declaration"
+        ],
+        [
+          "statement",
+          "export",
+          "default",
           "declaration"
         ]
       ],
@@ -11856,6 +12064,26 @@
       "builderPath": [
         "exportStatementDefaultDeclaration",
         "defaultKw"
+      ],
+      "builderPathAlternates": [
+        [
+          "exportStatementDefault",
+          "declaration",
+          "defaultKw"
+        ],
+        [
+          "exportStatement",
+          "default",
+          "declaration",
+          "defaultKw"
+        ],
+        [
+          "statement",
+          "export",
+          "default",
+          "declaration",
+          "defaultKw"
+        ]
       ],
       "hidden": false,
       "annotations": {
@@ -12009,6 +12237,29 @@
         "defaultKw",
         "value"
       ],
+      "builderPathAlternates": [
+        [
+          "exportStatementDefault",
+          "declaration",
+          "defaultKw",
+          "value"
+        ],
+        [
+          "exportStatement",
+          "default",
+          "declaration",
+          "defaultKw",
+          "value"
+        ],
+        [
+          "statement",
+          "export",
+          "default",
+          "declaration",
+          "defaultKw",
+          "value"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -12160,6 +12411,17 @@
         [
           "exportStatementDefault",
           "from"
+        ],
+        [
+          "exportStatement",
+          "default",
+          "from"
+        ],
+        [
+          "statement",
+          "export",
+          "default",
+          "from"
         ]
       ],
       "hidden": false,
@@ -12278,6 +12540,26 @@
         "exportStatementDefaultFrom",
         "clauseFrom"
       ],
+      "builderPathAlternates": [
+        [
+          "exportStatementDefault",
+          "from",
+          "clauseFrom"
+        ],
+        [
+          "exportStatement",
+          "default",
+          "from",
+          "clauseFrom"
+        ],
+        [
+          "statement",
+          "export",
+          "default",
+          "from",
+          "clauseFrom"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -12340,6 +12622,26 @@
       "builderPath": [
         "exportStatementDefaultFrom",
         "nsFrom"
+      ],
+      "builderPathAlternates": [
+        [
+          "exportStatementDefault",
+          "from",
+          "nsFrom"
+        ],
+        [
+          "exportStatement",
+          "default",
+          "from",
+          "nsFrom"
+        ],
+        [
+          "statement",
+          "export",
+          "default",
+          "from",
+          "nsFrom"
+        ]
       ],
       "hidden": false,
       "annotations": {
@@ -12404,6 +12706,26 @@
         "exportStatementDefaultFrom",
         "starFrom"
       ],
+      "builderPathAlternates": [
+        [
+          "exportStatementDefault",
+          "from",
+          "starFrom"
+        ],
+        [
+          "exportStatement",
+          "default",
+          "from",
+          "starFrom"
+        ],
+        [
+          "statement",
+          "export",
+          "default",
+          "from",
+          "starFrom"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -12453,6 +12775,11 @@
       "builderPathAlternates": [
         [
           "exportStatement",
+          "equalsExport"
+        ],
+        [
+          "statement",
+          "export",
           "equalsExport"
         ]
       ],
@@ -12607,6 +12934,11 @@
         [
           "exportStatement",
           "namespaceExport"
+        ],
+        [
+          "statement",
+          "export",
+          "namespaceExport"
         ]
       ],
       "hidden": false,
@@ -12684,6 +13016,11 @@
       "builderPathAlternates": [
         [
           "exportStatement",
+          "typeExport"
+        ],
+        [
+          "statement",
+          "export",
           "typeExport"
         ]
       ],
@@ -13115,6 +13452,12 @@
       "builderPath": [
         "false"
       ],
+      "builderPathAlternates": [
+        [
+          "primaryExpression",
+          "false"
+        ]
+      ],
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"false\" as const",
@@ -13181,6 +13524,12 @@
       "irKey": "flowMaybeType",
       "builderPath": [
         "flowMaybeType"
+      ],
+      "builderPathAlternates": [
+        [
+          "primaryType",
+          "flowMaybe"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -14025,6 +14374,11 @@
         [
           "declaration",
           "function"
+        ],
+        [
+          "statement",
+          "declaration",
+          "function"
         ]
       ],
       "hidden": false,
@@ -14201,6 +14555,12 @@
       "builderPath": [
         "functionExpression"
       ],
+      "builderPathAlternates": [
+        [
+          "primaryExpression",
+          "function"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -14367,6 +14727,11 @@
       ],
       "builderPathAlternates": [
         [
+          "declaration",
+          "functionSignature"
+        ],
+        [
+          "statement",
           "declaration",
           "functionSignature"
         ]
@@ -14537,6 +14902,12 @@
       "builderPath": [
         "functionType"
       ],
+      "builderPathAlternates": [
+        [
+          "type",
+          "function"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -14629,6 +15000,12 @@
       "irKey": "generatorFunction",
       "builderPath": [
         "generatorFunction"
+      ],
+      "builderPathAlternates": [
+        [
+          "primaryExpression",
+          "generatorFunction"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -14786,6 +15163,11 @@
       ],
       "builderPathAlternates": [
         [
+          "declaration",
+          "generatorFunction"
+        ],
+        [
+          "statement",
           "declaration",
           "generatorFunction"
         ]
@@ -14963,6 +15345,12 @@
       "irKey": "genericType",
       "builderPath": [
         "genericType"
+      ],
+      "builderPathAlternates": [
+        [
+          "primaryType",
+          "generic"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -15182,6 +15570,12 @@
       "builderPath": [
         "identifier"
       ],
+      "builderPathAlternates": [
+        [
+          "primaryExpression",
+          "identifier"
+        ]
+      ],
       "hidden": false,
       "leafPattern": "/^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`\"'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`\"'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$/u",
       "oneSurface": true,
@@ -15356,6 +15750,11 @@
       ],
       "builderPathAlternates": [
         [
+          "declaration",
+          "importAlias"
+        ],
+        [
+          "statement",
           "declaration",
           "importAlias"
         ]
@@ -16152,6 +16551,13 @@
         "importStatement",
         "clauseFrom"
       ],
+      "builderPathAlternates": [
+        [
+          "statement",
+          "import",
+          "clauseFrom"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -16661,6 +17067,12 @@
       "builderPath": [
         "indexTypeQuery"
       ],
+      "builderPathAlternates": [
+        [
+          "primaryType",
+          "indexQuery"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -16773,6 +17185,12 @@
       "builderPath": [
         "inferType"
       ],
+      "builderPathAlternates": [
+        [
+          "type",
+          "infer"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -16840,6 +17258,12 @@
       "irKey": "instantiationExpression",
       "builderPath": [
         "instantiationExpression"
+      ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "instantiation"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -16937,6 +17361,11 @@
       ],
       "builderPathAlternates": [
         [
+          "declaration",
+          "interface"
+        ],
+        [
+          "statement",
           "declaration",
           "interface"
         ]
@@ -17055,6 +17484,15 @@
         [
           "declaration",
           "internalModule"
+        ],
+        [
+          "statement",
+          "declaration",
+          "internalModule"
+        ],
+        [
+          "expression",
+          "internalModule"
         ]
       ],
       "hidden": false,
@@ -17128,6 +17566,12 @@
       "irKey": "intersectionType",
       "builderPath": [
         "intersectionType"
+      ],
+      "builderPathAlternates": [
+        [
+          "primaryType",
+          "intersection"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -17459,6 +17903,11 @@
         [
           "declaration",
           "lexical"
+        ],
+        [
+          "statement",
+          "declaration",
+          "lexical"
         ]
       ],
       "hidden": false,
@@ -17548,6 +17997,12 @@
       "irKey": "literalType",
       "builderPath": [
         "literalType"
+      ],
+      "builderPathAlternates": [
+        [
+          "primaryType",
+          "literal"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -17653,6 +18108,13 @@
         "literalType",
         "negativeNumber"
       ],
+      "builderPathAlternates": [
+        [
+          "primaryType",
+          "literal",
+          "negativeNumber"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -17719,6 +18181,12 @@
       "irKey": "lookupType",
       "builderPath": [
         "lookupType"
+      ],
+      "builderPathAlternates": [
+        [
+          "primaryType",
+          "lookup"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -17902,6 +18370,12 @@
       "builderPath": [
         "memberExpression"
       ],
+      "builderPathAlternates": [
+        [
+          "primaryExpression",
+          "member"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -18017,6 +18491,12 @@
       "builderPath": [
         "metaProperty"
       ],
+      "builderPathAlternates": [
+        [
+          "primaryExpression",
+          "metaProperty"
+        ]
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -18035,6 +18515,11 @@
       ],
       "builderPathAlternates": [
         [
+          "metaProperty",
+          "importMeta"
+        ],
+        [
+          "primaryExpression",
           "metaProperty",
           "importMeta"
         ]
@@ -18061,6 +18546,11 @@
       ],
       "builderPathAlternates": [
         [
+          "metaProperty",
+          "newTarget"
+        ],
+        [
+          "primaryExpression",
           "metaProperty",
           "newTarget"
         ]
@@ -18956,6 +19446,11 @@
         [
           "declaration",
           "module"
+        ],
+        [
+          "statement",
+          "declaration",
+          "module"
         ]
       ],
       "hidden": false,
@@ -19248,6 +19743,12 @@
       "builderPath": [
         "nestedTypeIdentifier"
       ],
+      "builderPathAlternates": [
+        [
+          "primaryType",
+          "nestedIdentifier"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -19322,6 +19823,12 @@
       "irKey": "newExpression",
       "builderPath": [
         "newExpression"
+      ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "new"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -19411,6 +19918,12 @@
       "irKey": "nonNullExpression",
       "builderPath": [
         "nonNullExpression"
+      ],
+      "builderPathAlternates": [
+        [
+          "primaryExpression",
+          "nonNull"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -19528,6 +20041,12 @@
       "builderPath": [
         "null"
       ],
+      "builderPathAlternates": [
+        [
+          "primaryExpression",
+          "null"
+        ]
+      ],
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"null\" as const",
@@ -19542,6 +20061,12 @@
       "irKey": "number",
       "builderPath": [
         "number"
+      ],
+      "builderPathAlternates": [
+        [
+          "primaryExpression",
+          "number"
+        ]
       ],
       "hidden": true,
       "transparent": true,
@@ -19566,6 +20091,11 @@
       ],
       "builderPathAlternates": [
         [
+          "number",
+          "bigint"
+        ],
+        [
+          "primaryExpression",
           "number",
           "bigint"
         ]
@@ -19594,6 +20124,17 @@
       "builderPathAlternates": [
         [
           "numberBigint",
+          "binary"
+        ],
+        [
+          "number",
+          "bigint",
+          "binary"
+        ],
+        [
+          "primaryExpression",
+          "number",
+          "bigint",
           "binary"
         ]
       ],
@@ -19671,6 +20212,17 @@
         [
           "numberBigint",
           "decimal"
+        ],
+        [
+          "number",
+          "bigint",
+          "decimal"
+        ],
+        [
+          "primaryExpression",
+          "number",
+          "bigint",
+          "decimal"
         ]
       ],
       "hidden": false,
@@ -19746,6 +20298,17 @@
       "builderPathAlternates": [
         [
           "numberBigint",
+          "hex"
+        ],
+        [
+          "number",
+          "bigint",
+          "hex"
+        ],
+        [
+          "primaryExpression",
+          "number",
+          "bigint",
           "hex"
         ]
       ],
@@ -19823,6 +20386,17 @@
         [
           "numberBigint",
           "octal"
+        ],
+        [
+          "number",
+          "bigint",
+          "octal"
+        ],
+        [
+          "primaryExpression",
+          "number",
+          "bigint",
+          "octal"
         ]
       ],
       "hidden": false,
@@ -19897,6 +20471,11 @@
       ],
       "builderPathAlternates": [
         [
+          "number",
+          "binary"
+        ],
+        [
+          "primaryExpression",
           "number",
           "binary"
         ]
@@ -20003,6 +20582,13 @@
         "number",
         "decimal"
       ],
+      "builderPathAlternates": [
+        [
+          "primaryExpression",
+          "number",
+          "decimal"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "tokenForm": true,
@@ -20025,6 +20611,11 @@
       ],
       "builderPathAlternates": [
         [
+          "number",
+          "floatLeadingPoint"
+        ],
+        [
+          "primaryExpression",
           "number",
           "floatLeadingPoint"
         ]
@@ -20183,6 +20774,11 @@
       ],
       "builderPathAlternates": [
         [
+          "number",
+          "floatPoint"
+        ],
+        [
+          "primaryExpression",
           "number",
           "floatPoint"
         ]
@@ -20369,6 +20965,11 @@
         [
           "number",
           "floatScientific"
+        ],
+        [
+          "primaryExpression",
+          "number",
+          "floatScientific"
         ]
       ],
       "hidden": false,
@@ -20523,6 +21124,11 @@
         [
           "number",
           "hex"
+        ],
+        [
+          "primaryExpression",
+          "number",
+          "hex"
         ]
       ],
       "hidden": false,
@@ -20641,6 +21247,11 @@
         [
           "number",
           "octal"
+        ],
+        [
+          "primaryExpression",
+          "number",
+          "octal"
         ]
       ],
       "hidden": false,
@@ -20744,6 +21355,12 @@
       "irKey": "object",
       "builderPath": [
         "object"
+      ],
+      "builderPathAlternates": [
+        [
+          "primaryExpression",
+          "object"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -21338,6 +21955,12 @@
       "irKey": "objectType",
       "builderPath": [
         "objectType"
+      ],
+      "builderPathAlternates": [
+        [
+          "primaryType",
+          "object"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -22592,6 +23215,12 @@
       "builderPath": [
         "parenthesizedExpression"
       ],
+      "builderPathAlternates": [
+        [
+          "primaryExpression",
+          "parenthesized"
+        ]
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -22611,6 +23240,11 @@
       "builderPathAlternates": [
         [
           "parenthesizedExpression",
+          "sequence"
+        ],
+        [
+          "primaryExpression",
+          "parenthesized",
           "sequence"
         ]
       ],
@@ -22663,6 +23297,11 @@
       "builderPathAlternates": [
         [
           "parenthesizedExpression",
+          "typed"
+        ],
+        [
+          "primaryExpression",
+          "parenthesized",
           "typed"
         ]
       ],
@@ -22728,6 +23367,12 @@
       "irKey": "parenthesizedType",
       "builderPath": [
         "parenthesizedType"
+      ],
+      "builderPathAlternates": [
+        [
+          "primaryType",
+          "parenthesized"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -24187,6 +24832,12 @@
       "builderPath": [
         "readonlyType"
       ],
+      "builderPathAlternates": [
+        [
+          "type",
+          "readonly"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -24288,6 +24939,12 @@
       "irKey": "regex",
       "builderPath": [
         "regex"
+      ],
+      "builderPathAlternates": [
+        [
+          "primaryExpression",
+          "regex"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -25127,6 +25784,12 @@
       "irKey": "satisfiesExpression",
       "builderPath": [
         "satisfiesExpression"
+      ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "satisfies"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -26040,6 +26703,12 @@
       "builderPath": [
         "string"
       ],
+      "builderPathAlternates": [
+        [
+          "primaryExpression",
+          "string"
+        ]
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -26058,6 +26727,11 @@
       ],
       "builderPathAlternates": [
         [
+          "string",
+          "double"
+        ],
+        [
+          "primaryExpression",
           "string",
           "double"
         ]
@@ -26125,6 +26799,11 @@
         [
           "string",
           "single"
+        ],
+        [
+          "primaryExpression",
+          "string",
+          "single"
         ]
       ],
       "hidden": false,
@@ -26175,6 +26854,12 @@
       "irKey": "subscriptExpression",
       "builderPath": [
         "subscriptExpression"
+      ],
+      "builderPathAlternates": [
+        [
+          "primaryExpression",
+          "subscript"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -26268,6 +26953,12 @@
       "irKey": "super",
       "builderPath": [
         "super"
+      ],
+      "builderPathAlternates": [
+        [
+          "primaryExpression",
+          "super"
+        ]
       ],
       "hidden": false,
       "isParameterless": true,
@@ -26525,6 +27216,12 @@
       "builderPath": [
         "templateLiteralType"
       ],
+      "builderPathAlternates": [
+        [
+          "primaryType",
+          "templateLiteral"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -26568,6 +27265,12 @@
       "irKey": "templateString",
       "builderPath": [
         "templateString"
+      ],
+      "builderPathAlternates": [
+        [
+          "primaryExpression",
+          "templateString"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -26852,6 +27555,12 @@
       "builderPath": [
         "ternaryExpression"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "ternary"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -26930,6 +27639,16 @@
       "irKey": "this",
       "builderPath": [
         "this"
+      ],
+      "builderPathAlternates": [
+        [
+          "primaryExpression",
+          "this"
+        ],
+        [
+          "primaryType",
+          "this"
+        ]
       ],
       "hidden": false,
       "isParameterless": true,
@@ -27121,6 +27840,12 @@
       "builderPath": [
         "true"
       ],
+      "builderPathAlternates": [
+        [
+          "primaryExpression",
+          "true"
+        ]
+      ],
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"true\" as const",
@@ -27296,6 +28021,12 @@
       "irKey": "tupleType",
       "builderPath": [
         "tupleType"
+      ],
+      "builderPathAlternates": [
+        [
+          "primaryType",
+          "tuple"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -27518,6 +28249,11 @@
       ],
       "builderPathAlternates": [
         [
+          "declaration",
+          "typeAlias"
+        ],
+        [
+          "statement",
           "declaration",
           "typeAlias"
         ]
@@ -27832,6 +28568,12 @@
       "irKey": "typeAssertion",
       "builderPath": [
         "typeAssertion"
+      ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "typeAssertion"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -28224,6 +28966,12 @@
       "builderPath": [
         "typeQuery"
       ],
+      "builderPathAlternates": [
+        [
+          "primaryType",
+          "query"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -28382,6 +29130,12 @@
       "irKey": "typeQueryCallExpressionInTypeAnnotation",
       "builderPath": [
         "typeQueryCallExpressionInTypeAnnotation"
+      ],
+      "builderPathAlternates": [
+        [
+          "type",
+          "queryCallExpressionInAnnotation"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -28644,6 +29398,12 @@
       "irKey": "typeQueryMemberExpressionInTypeAnnotation",
       "builderPath": [
         "typeQueryMemberExpressionInTypeAnnotation"
+      ],
+      "builderPathAlternates": [
+        [
+          "type",
+          "queryMemberExpressionInAnnotation"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -28947,6 +29707,12 @@
       "builderPath": [
         "unaryExpression"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "unary"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -29039,6 +29805,12 @@
       "builderPath": [
         "undefined"
       ],
+      "builderPathAlternates": [
+        [
+          "primaryExpression",
+          "undefined"
+        ]
+      ],
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"undefined\" as const",
@@ -29084,6 +29856,12 @@
       "irKey": "unionType",
       "builderPath": [
         "unionType"
+      ],
+      "builderPathAlternates": [
+        [
+          "primaryType",
+          "union"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -29161,6 +29939,12 @@
       "builderPath": [
         "updateExpression"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "update"
+        ]
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -29180,6 +29964,11 @@
       "builderPathAlternates": [
         [
           "updateExpression",
+          "postfix"
+        ],
+        [
+          "expression",
+          "update",
           "postfix"
         ]
       ],
@@ -29253,6 +30042,11 @@
       "builderPathAlternates": [
         [
           "updateExpression",
+          "prefix"
+        ],
+        [
+          "expression",
+          "update",
           "prefix"
         ]
       ],
@@ -29345,6 +30139,11 @@
       ],
       "builderPathAlternates": [
         [
+          "declaration",
+          "variable"
+        ],
+        [
+          "statement",
           "declaration",
           "variable"
         ]
@@ -29758,6 +30557,12 @@
       "builderPath": [
         "yieldExpression"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "yield"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -29886,6 +30691,13 @@
       "builderPath": [
         "yieldExpression",
         "delegate"
+      ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "yield",
+          "delegate"
+        ]
       ],
       "hidden": false,
       "annotations": {

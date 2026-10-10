@@ -3876,6 +3876,12 @@
       "modelType": "punctuation",
       "typeName": "Blankline",
       "factoryName": "blankline",
+      "builderPathAlternates": [
+        [
+          "layout",
+          "blankline"
+        ]
+      ],
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\" as const",
@@ -3949,6 +3955,12 @@
       "modelType": "punctuation",
       "typeName": "Dedent",
       "factoryName": "dedent",
+      "builderPathAlternates": [
+        [
+          "layout",
+          "dedent"
+        ]
+      ],
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"﷑\\n\" as const",
@@ -3973,6 +3985,12 @@
       "modelType": "punctuation",
       "typeName": "DoubleBlankline",
       "factoryName": "doubleBlankline",
+      "builderPathAlternates": [
+        [
+          "layout",
+          "doubleBlankline"
+        ]
+      ],
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\\n\" as const",
@@ -4166,6 +4184,12 @@
       "modelType": "punctuation",
       "typeName": "Indent",
       "factoryName": "indent",
+      "builderPathAlternates": [
+        [
+          "layout",
+          "indent"
+        ]
+      ],
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"﷐\\n\" as const",
@@ -4317,6 +4341,12 @@
       "modelType": "punctuation",
       "typeName": "Newline",
       "factoryName": "newline",
+      "builderPathAlternates": [
+        [
+          "layout",
+          "newline"
+        ]
+      ],
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
@@ -4435,6 +4465,12 @@
       "modelType": "punctuation",
       "typeName": "Space",
       "factoryName": "space",
+      "builderPathAlternates": [
+        [
+          "layout",
+          "space"
+        ]
+      ],
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\" \" as const",
@@ -4483,6 +4519,12 @@
       "modelType": "punctuation",
       "typeName": "Tab",
       "factoryName": "tab",
+      "builderPathAlternates": [
+        [
+          "layout",
+          "tab"
+        ]
+      ],
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\t\" as const",
@@ -4495,6 +4537,12 @@
       "modelType": "punctuation",
       "typeName": "Tight",
       "factoryName": "tight",
+      "builderPathAlternates": [
+        [
+          "layout",
+          "tight"
+        ]
+      ],
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\" as const",
@@ -4645,6 +4693,12 @@
       "irKey": "abstractType",
       "builderPath": [
         "abstractType"
+      ],
+      "builderPathAlternates": [
+        [
+          "type",
+          "abstract"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -5020,6 +5074,12 @@
       "builderPath": [
         "arrayExpression"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "array"
+        ]
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -5039,6 +5099,11 @@
       "builderPathAlternates": [
         [
           "arrayExpression",
+          "list"
+        ],
+        [
+          "expression",
+          "array",
           "list"
         ]
       ],
@@ -5112,6 +5177,11 @@
       "builderPathAlternates": [
         [
           "arrayExpression",
+          "semi"
+        ],
+        [
+          "expression",
+          "array",
           "semi"
         ]
       ],
@@ -5199,6 +5269,12 @@
       "builderPath": [
         "arrayType"
       ],
+      "builderPathAlternates": [
+        [
+          "type",
+          "array"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -5267,6 +5343,12 @@
       "builderPath": [
         "assignmentExpression"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "assignment"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -5326,6 +5408,10 @@
         "associatedType"
       ],
       "builderPathAlternates": [
+        [
+          "statement",
+          "associated"
+        ],
         [
           "declarationStatement",
           "associated"
@@ -5430,6 +5516,12 @@
       "irKey": "asyncBlock",
       "builderPath": [
         "asyncBlock"
+      ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "asyncBlock"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -5788,6 +5880,10 @@
         "attributeItem"
       ],
       "builderPathAlternates": [
+        [
+          "statement",
+          "attribute"
+        ],
         [
           "declarationStatement",
           "attribute"
@@ -6257,6 +6353,12 @@
       "builderPath": [
         "awaitExpression"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "await"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -6533,6 +6635,12 @@
       "builderPath": [
         "binaryExpression"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "binary"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -6712,6 +6820,12 @@
       "builderPath": [
         "block"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "block"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -6879,6 +6993,13 @@
         "blockComment",
         "docInner"
       ],
+      "builderPathAlternates": [
+        [
+          "comment",
+          "blockComment",
+          "docInner"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -6936,6 +7057,13 @@
       "builderPath": [
         "blockComment",
         "docOuter"
+      ],
+      "builderPathAlternates": [
+        [
+          "comment",
+          "blockComment",
+          "docOuter"
+        ]
       ],
       "hidden": false,
       "annotations": {
@@ -7041,6 +7169,12 @@
       "irKey": "boundedType",
       "builderPath": [
         "boundedType"
+      ],
+      "builderPathAlternates": [
+        [
+          "type",
+          "bounded"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -7213,6 +7347,12 @@
       "builderPath": [
         "breakExpression"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "break"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -7280,6 +7420,12 @@
       "irKey": "callExpression",
       "builderPath": [
         "callExpression"
+      ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "call"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -7725,6 +7871,12 @@
       "builderPath": [
         "capturedPattern"
       ],
+      "builderPathAlternates": [
+        [
+          "pattern",
+          "captured"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -7810,6 +7962,16 @@
       "builderPath": [
         "charLiteral"
       ],
+      "builderPathAlternates": [
+        [
+          "literal",
+          "char"
+        ],
+        [
+          "literalPattern",
+          "char"
+        ]
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -7826,6 +7988,18 @@
       "builderPath": [
         "charLiteral",
         "empty"
+      ],
+      "builderPathAlternates": [
+        [
+          "literal",
+          "char",
+          "empty"
+        ],
+        [
+          "literalPattern",
+          "char",
+          "empty"
+        ]
       ],
       "hidden": false,
       "annotations": {
@@ -7848,6 +8022,16 @@
       "builderPathAlternates": [
         [
           "charLiteral",
+          "escaped"
+        ],
+        [
+          "literal",
+          "char",
+          "escaped"
+        ],
+        [
+          "literalPattern",
+          "char",
           "escaped"
         ]
       ],
@@ -7875,6 +8059,23 @@
       "builderPathAlternates": [
         [
           "charLiteralEscaped",
+          "hex"
+        ],
+        [
+          "charLiteral",
+          "escaped",
+          "hex"
+        ],
+        [
+          "literal",
+          "char",
+          "escaped",
+          "hex"
+        ],
+        [
+          "literalPattern",
+          "char",
+          "escaped",
           "hex"
         ]
       ],
@@ -7969,6 +8170,23 @@
         [
           "charLiteralEscaped",
           "simple"
+        ],
+        [
+          "charLiteral",
+          "escaped",
+          "simple"
+        ],
+        [
+          "literal",
+          "char",
+          "escaped",
+          "simple"
+        ],
+        [
+          "literalPattern",
+          "char",
+          "escaped",
+          "simple"
         ]
       ],
       "hidden": false,
@@ -8061,6 +8279,23 @@
       "builderPathAlternates": [
         [
           "charLiteralEscaped",
+          "unicodeBraced"
+        ],
+        [
+          "charLiteral",
+          "escaped",
+          "unicodeBraced"
+        ],
+        [
+          "literal",
+          "char",
+          "escaped",
+          "unicodeBraced"
+        ],
+        [
+          "literalPattern",
+          "char",
+          "escaped",
           "unicodeBraced"
         ]
       ],
@@ -8155,6 +8390,23 @@
         [
           "charLiteralEscaped",
           "unicodeFixed"
+        ],
+        [
+          "charLiteral",
+          "escaped",
+          "unicodeFixed"
+        ],
+        [
+          "literal",
+          "char",
+          "escaped",
+          "unicodeFixed"
+        ],
+        [
+          "literalPattern",
+          "char",
+          "escaped",
+          "unicodeFixed"
         ]
       ],
       "hidden": false,
@@ -8248,6 +8500,16 @@
         [
           "charLiteral",
           "plain"
+        ],
+        [
+          "literal",
+          "char",
+          "plain"
+        ],
+        [
+          "literalPattern",
+          "char",
+          "plain"
         ]
       ],
       "hidden": false,
@@ -8336,6 +8598,12 @@
       "builderPath": [
         "closureExpression"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "closure"
+        ]
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -8355,6 +8623,11 @@
       "builderPathAlternates": [
         [
           "closureExpression",
+          "block"
+        ],
+        [
+          "expression",
+          "closure",
           "block"
         ]
       ],
@@ -8502,6 +8775,11 @@
       "builderPathAlternates": [
         [
           "closureExpression",
+          "expr"
+        ],
+        [
+          "expression",
+          "closure",
           "expr"
         ]
       ],
@@ -8717,6 +8995,12 @@
       "builderPath": [
         "compoundAssignmentExpr"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "compoundAssignment"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -8848,6 +9132,16 @@
       "builderPath": [
         "constBlock"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "constBlock"
+        ],
+        [
+          "pattern",
+          "constBlock"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -8890,6 +9184,10 @@
         "constItem"
       ],
       "builderPathAlternates": [
+        [
+          "statement",
+          "const"
+        ],
         [
           "declarationStatement",
           "const"
@@ -9104,6 +9402,12 @@
       "irKey": "continueExpression",
       "builderPath": [
         "continueExpression"
+      ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "continue"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -9525,6 +9829,12 @@
       "builderPath": [
         "dynamicType"
       ],
+      "builderPathAlternates": [
+        [
+          "type",
+          "dynamic"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -9697,6 +10007,10 @@
       ],
       "builderPathAlternates": [
         [
+          "statement",
+          "empty"
+        ],
+        [
           "declarationStatement",
           "empty"
         ]
@@ -9718,6 +10032,10 @@
         "enumItem"
       ],
       "builderPathAlternates": [
+        [
+          "statement",
+          "enum"
+        ],
         [
           "declarationStatement",
           "enum"
@@ -10410,6 +10728,12 @@
       "builderPath": [
         "expressionStatement"
       ],
+      "builderPathAlternates": [
+        [
+          "statement",
+          "expression"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -10617,6 +10941,13 @@
       "builderPath": [
         "expressionStatement",
         "withSemi"
+      ],
+      "builderPathAlternates": [
+        [
+          "statement",
+          "expression",
+          "withSemi"
+        ]
       ],
       "hidden": false,
       "annotations": {
@@ -10862,6 +11193,10 @@
         "externCrateDeclaration"
       ],
       "builderPathAlternates": [
+        [
+          "statement",
+          "externCrate"
+        ],
         [
           "declarationStatement",
           "externCrate"
@@ -11185,6 +11520,12 @@
       "irKey": "fieldExpression",
       "builderPath": [
         "fieldExpression"
+      ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "field"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -11833,6 +12174,16 @@
       "builderPath": [
         "floatLiteral"
       ],
+      "builderPathAlternates": [
+        [
+          "literal",
+          "float"
+        ],
+        [
+          "literalPattern",
+          "float"
+        ]
+      ],
       "hidden": false,
       "pattern": "[0-9][0-9_]*(?:\\.[0-9_]*(?:[eE][+-]?[0-9_]+)?|[eE][+-]?[0-9_]+)(?:[uif][0-9]+)?",
       "leafPattern": "/^(?:(?:[0-9][0-9_]*(?:\\.[0-9_]*(?:[eE][+-]?[0-9_]+)?|[eE][+-]?[0-9_]+)(?:[uif][0-9]+)?))$/u",
@@ -11857,6 +12208,12 @@
       "irKey": "forExpression",
       "builderPath": [
         "forExpression"
+      ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "for"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -12012,6 +12369,10 @@
       ],
       "builderPathAlternates": [
         [
+          "statement",
+          "foreignMod"
+        ],
+        [
           "declarationStatement",
           "foreignMod"
         ]
@@ -12035,6 +12396,16 @@
       "builderPathAlternates": [
         [
           "foreignModItem",
+          "body"
+        ],
+        [
+          "statement",
+          "foreignMod",
+          "body"
+        ],
+        [
+          "declarationStatement",
+          "foreignMod",
           "body"
         ]
       ],
@@ -12125,6 +12496,16 @@
       "builderPathAlternates": [
         [
           "foreignModItem",
+          "semi"
+        ],
+        [
+          "statement",
+          "foreignMod",
+          "semi"
+        ],
+        [
+          "declarationStatement",
+          "foreignMod",
           "semi"
         ]
       ],
@@ -12217,6 +12598,10 @@
         "functionItem"
       ],
       "builderPathAlternates": [
+        [
+          "statement",
+          "function"
+        ],
         [
           "declarationStatement",
           "function"
@@ -12476,6 +12861,10 @@
       ],
       "builderPathAlternates": [
         [
+          "statement",
+          "functionSignature"
+        ],
+        [
           "declarationStatement",
           "functionSignature"
         ]
@@ -12650,6 +13039,12 @@
       "builderPath": [
         "functionType"
       ],
+      "builderPathAlternates": [
+        [
+          "type",
+          "function"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -12768,6 +13163,13 @@
         "functionType",
         "fnForm"
       ],
+      "builderPathAlternates": [
+        [
+          "type",
+          "function",
+          "fnForm"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -12813,6 +13215,13 @@
       "builderPath": [
         "functionType",
         "traitForm"
+      ],
+      "builderPathAlternates": [
+        [
+          "type",
+          "function",
+          "traitForm"
+        ]
       ],
       "hidden": false,
       "annotations": {
@@ -12869,6 +13278,12 @@
       "irKey": "genBlock",
       "builderPath": [
         "genBlock"
+      ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "genBlock"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -12935,6 +13350,12 @@
       "irKey": "genericFunction",
       "builderPath": [
         "genericFunction"
+      ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "genericFunction"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -13008,6 +13429,12 @@
       "builderPath": [
         "genericPattern"
       ],
+      "builderPathAlternates": [
+        [
+          "pattern",
+          "generic"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -13072,6 +13499,12 @@
       "irKey": "genericType",
       "builderPath": [
         "genericType"
+      ],
+      "builderPathAlternates": [
+        [
+          "type",
+          "generic"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -13375,6 +13808,16 @@
       "builderPath": [
         "identifier"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "identifier"
+        ],
+        [
+          "pattern",
+          "identifier"
+        ]
+      ],
       "hidden": false,
       "pattern": "(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*",
       "leafPattern": "/^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$/u",
@@ -13389,6 +13832,12 @@
       "irKey": "ifExpression",
       "builderPath": [
         "ifExpression"
+      ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "if"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -13494,6 +13943,10 @@
       ],
       "builderPathAlternates": [
         [
+          "statement",
+          "impl"
+        ],
+        [
           "declarationStatement",
           "impl"
         ]
@@ -13517,6 +13970,16 @@
       "builderPathAlternates": [
         [
           "implItem",
+          "body"
+        ],
+        [
+          "statement",
+          "impl",
+          "body"
+        ],
+        [
+          "declarationStatement",
+          "impl",
           "body"
         ]
       ],
@@ -13807,6 +14270,16 @@
         [
           "implItem",
           "semi"
+        ],
+        [
+          "statement",
+          "impl",
+          "semi"
+        ],
+        [
+          "declarationStatement",
+          "impl",
+          "semi"
         ]
       ],
       "hidden": false,
@@ -13975,6 +14448,12 @@
       "builderPath": [
         "indexExpression"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "index"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -14034,6 +14513,10 @@
         "innerAttributeItem"
       ],
       "builderPathAlternates": [
+        [
+          "statement",
+          "innerAttribute"
+        ],
         [
           "declarationStatement",
           "innerAttribute"
@@ -14111,6 +14594,16 @@
       "builderPath": [
         "integerLiteral"
       ],
+      "builderPathAlternates": [
+        [
+          "literal",
+          "integer"
+        ],
+        [
+          "literalPattern",
+          "integer"
+        ]
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -14132,6 +14625,16 @@
       "builderPathAlternates": [
         [
           "integerLiteral",
+          "binary"
+        ],
+        [
+          "literal",
+          "integer",
+          "binary"
+        ],
+        [
+          "literalPattern",
+          "integer",
           "binary"
         ]
       ],
@@ -14300,6 +14803,16 @@
         [
           "integerLiteral",
           "decimal"
+        ],
+        [
+          "literal",
+          "integer",
+          "decimal"
+        ],
+        [
+          "literalPattern",
+          "integer",
+          "decimal"
         ]
       ],
       "hidden": false,
@@ -14467,6 +14980,16 @@
         [
           "integerLiteral",
           "hex"
+        ],
+        [
+          "literal",
+          "integer",
+          "hex"
+        ],
+        [
+          "literalPattern",
+          "integer",
+          "hex"
         ]
       ],
       "hidden": false,
@@ -14633,6 +15156,16 @@
       "builderPathAlternates": [
         [
           "integerLiteral",
+          "octal"
+        ],
+        [
+          "literal",
+          "integer",
+          "octal"
+        ],
+        [
+          "literalPattern",
+          "integer",
           "octal"
         ]
       ],
@@ -15057,6 +15590,10 @@
       ],
       "builderPathAlternates": [
         [
+          "statement",
+          "let"
+        ],
+        [
           "declarationStatement",
           "let"
         ]
@@ -15445,6 +15982,13 @@
         "lineComment",
         "docInner"
       ],
+      "builderPathAlternates": [
+        [
+          "comment",
+          "lineComment",
+          "docInner"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -15502,6 +16046,13 @@
       "builderPath": [
         "lineComment",
         "docOuter"
+      ],
+      "builderPathAlternates": [
+        [
+          "comment",
+          "lineComment",
+          "docOuter"
+        ]
       ],
       "hidden": false,
       "annotations": {
@@ -15565,6 +16116,11 @@
         [
           "lineComment",
           "extraSlashes"
+        ],
+        [
+          "comment",
+          "lineComment",
+          "extraSlashes"
         ]
       ],
       "hidden": false,
@@ -15609,6 +16165,12 @@
       "irKey": "loopExpression",
       "builderPath": [
         "loopExpression"
+      ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "loop"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -15724,6 +16286,10 @@
       ],
       "builderPathAlternates": [
         [
+          "statement",
+          "macro"
+        ],
+        [
           "declarationStatement",
           "macro"
         ]
@@ -15748,6 +16314,16 @@
       "builderPathAlternates": [
         [
           "macroDefinition",
+          "brace"
+        ],
+        [
+          "statement",
+          "macro",
+          "brace"
+        ],
+        [
+          "declarationStatement",
+          "macro",
           "brace"
         ]
       ],
@@ -15840,6 +16416,16 @@
         [
           "macroDefinition",
           "bracket"
+        ],
+        [
+          "statement",
+          "macro",
+          "bracket"
+        ],
+        [
+          "declarationStatement",
+          "macro",
+          "bracket"
         ]
       ],
       "hidden": false,
@@ -15931,6 +16517,16 @@
         [
           "macroDefinition",
           "paren"
+        ],
+        [
+          "statement",
+          "macro",
+          "paren"
+        ],
+        [
+          "declarationStatement",
+          "macro",
+          "paren"
         ]
       ],
       "hidden": false,
@@ -16020,7 +16616,23 @@
       ],
       "builderPathAlternates": [
         [
+          "statement",
+          "macroInvocation"
+        ],
+        [
           "declarationStatement",
+          "macroInvocation"
+        ],
+        [
+          "type",
+          "macroInvocation"
+        ],
+        [
+          "expression",
+          "macroInvocation"
+        ],
+        [
+          "pattern",
           "macroInvocation"
         ]
       ],
@@ -16595,6 +17207,12 @@
       "builderPath": [
         "matchExpression"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "match"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -16745,6 +17363,16 @@
       "builderPath": [
         "metavariable"
       ],
+      "builderPathAlternates": [
+        [
+          "type",
+          "metavariable"
+        ],
+        [
+          "expression",
+          "metavariable"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -16810,6 +17438,10 @@
       ],
       "builderPathAlternates": [
         [
+          "statement",
+          "mod"
+        ],
+        [
           "declarationStatement",
           "mod"
         ]
@@ -16833,6 +17465,16 @@
       "builderPathAlternates": [
         [
           "modItem",
+          "external"
+        ],
+        [
+          "statement",
+          "mod",
+          "external"
+        ],
+        [
+          "declarationStatement",
+          "mod",
           "external"
         ]
       ],
@@ -16902,6 +17544,16 @@
       "builderPathAlternates": [
         [
           "modItem",
+          "inline"
+        ],
+        [
+          "statement",
+          "mod",
+          "inline"
+        ],
+        [
+          "declarationStatement",
+          "mod",
           "inline"
         ]
       ],
@@ -17008,6 +17660,12 @@
       "irKey": "mutPattern",
       "builderPath": [
         "mutPattern"
+      ],
+      "builderPathAlternates": [
+        [
+          "pattern",
+          "mut"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -17125,6 +17783,12 @@
       "builderPath": [
         "negativeLiteral"
       ],
+      "builderPathAlternates": [
+        [
+          "literalPattern",
+          "negative"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -17175,6 +17839,12 @@
       "irKey": "neverType",
       "builderPath": [
         "neverType"
+      ],
+      "builderPathAlternates": [
+        [
+          "type",
+          "never"
+        ]
       ],
       "hidden": false,
       "isParameterless": true,
@@ -17400,6 +18070,12 @@
       "builderPath": [
         "orPattern"
       ],
+      "builderPathAlternates": [
+        [
+          "pattern",
+          "or"
+        ]
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -17419,6 +18095,11 @@
       "builderPathAlternates": [
         [
           "orPattern",
+          "binary"
+        ],
+        [
+          "pattern",
+          "or",
           "binary"
         ]
       ],
@@ -17488,6 +18169,11 @@
       "builderPathAlternates": [
         [
           "orPattern",
+          "prefix"
+        ],
+        [
+          "pattern",
+          "or",
           "prefix"
         ]
       ],
@@ -18030,6 +18716,12 @@
       "builderPath": [
         "parenthesizedExpression"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "parenthesized"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -18336,6 +19028,12 @@
       "builderPath": [
         "pointerType"
       ],
+      "builderPathAlternates": [
+        [
+          "type",
+          "pointer"
+        ]
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -18355,6 +19053,11 @@
       "builderPathAlternates": [
         [
           "pointerType",
+          "const"
+        ],
+        [
+          "type",
+          "pointer",
           "const"
         ]
       ],
@@ -18443,6 +19146,11 @@
       "builderPathAlternates": [
         [
           "pointerType",
+          "mut"
+        ],
+        [
+          "type",
+          "pointer",
           "mut"
         ]
       ],
@@ -18640,6 +19348,12 @@
       "builderPath": [
         "rangeExpression"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "range"
+        ]
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -18661,6 +19375,11 @@
       "builderPathAlternates": [
         [
           "rangeExpression",
+          "bare"
+        ],
+        [
+          "expression",
+          "range",
           "bare"
         ]
       ],
@@ -18713,6 +19432,11 @@
       "builderPathAlternates": [
         [
           "rangeExpression",
+          "binary"
+        ],
+        [
+          "expression",
+          "range",
           "binary"
         ]
       ],
@@ -18815,6 +19539,11 @@
       "builderPathAlternates": [
         [
           "rangeExpression",
+          "postfix"
+        ],
+        [
+          "expression",
+          "range",
           "postfix"
         ]
       ],
@@ -18953,6 +19682,11 @@
         [
           "rangeExpression",
           "prefix"
+        ],
+        [
+          "expression",
+          "range",
+          "prefix"
         ]
       ],
       "hidden": false,
@@ -19085,6 +19819,12 @@
       "builderPath": [
         "rangePattern"
       ],
+      "builderPathAlternates": [
+        [
+          "pattern",
+          "range"
+        ]
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -19104,6 +19844,11 @@
       "builderPathAlternates": [
         [
           "rangePattern",
+          "prefix"
+        ],
+        [
+          "pattern",
+          "range",
           "prefix"
         ]
       ],
@@ -19339,6 +20084,11 @@
       "builderPathAlternates": [
         [
           "rangePattern",
+          "withLeft"
+        ],
+        [
+          "pattern",
+          "range",
           "withLeft"
         ]
       ],
@@ -19595,6 +20345,19 @@
         "rangePatternWithLeft",
         "withRight"
       ],
+      "builderPathAlternates": [
+        [
+          "rangePattern",
+          "withLeft",
+          "withRight"
+        ],
+        [
+          "pattern",
+          "range",
+          "withLeft",
+          "withRight"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -19840,6 +20603,16 @@
       "builderPath": [
         "rawStringLiteral"
       ],
+      "builderPathAlternates": [
+        [
+          "literal",
+          "rawString"
+        ],
+        [
+          "literalPattern",
+          "rawString"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -19992,6 +20765,12 @@
       "builderPath": [
         "refPattern"
       ],
+      "builderPathAlternates": [
+        [
+          "pattern",
+          "ref"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -20091,6 +20870,12 @@
       "builderPath": [
         "referenceExpression"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "reference"
+        ]
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
@@ -20112,6 +20897,11 @@
       "builderPathAlternates": [
         [
           "referenceExpression",
+          "bare"
+        ],
+        [
+          "expression",
+          "reference",
           "bare"
         ]
       ],
@@ -20248,6 +21038,11 @@
         [
           "referenceExpression",
           "mut"
+        ],
+        [
+          "expression",
+          "reference",
+          "mut"
         ]
       ],
       "hidden": false,
@@ -20382,6 +21177,11 @@
       "builderPathAlternates": [
         [
           "referenceExpression",
+          "rawConst"
+        ],
+        [
+          "expression",
+          "reference",
           "rawConst"
         ]
       ],
@@ -20518,6 +21318,11 @@
         [
           "referenceExpression",
           "rawMut"
+        ],
+        [
+          "expression",
+          "reference",
+          "rawMut"
         ]
       ],
       "hidden": false,
@@ -20649,6 +21454,12 @@
       "builderPath": [
         "referencePattern"
       ],
+      "builderPathAlternates": [
+        [
+          "pattern",
+          "reference"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -20706,6 +21517,12 @@
       "irKey": "referenceType",
       "builderPath": [
         "referenceType"
+      ],
+      "builderPathAlternates": [
+        [
+          "type",
+          "reference"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -20786,6 +21603,12 @@
       "builderPath": [
         "remainingFieldPattern"
       ],
+      "builderPathAlternates": [
+        [
+          "pattern",
+          "remainingField"
+        ]
+      ],
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"..\" as const",
@@ -20801,6 +21624,12 @@
       "irKey": "removedTraitBound",
       "builderPath": [
         "removedTraitBound"
+      ],
+      "builderPathAlternates": [
+        [
+          "type",
+          "removedTraitBound"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -20878,6 +21707,12 @@
       "irKey": "returnExpression",
       "builderPath": [
         "returnExpression"
+      ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "return"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -21021,6 +21856,16 @@
       "irKey": "scopedIdentifier",
       "builderPath": [
         "scopedIdentifier"
+      ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "scopedIdentifier"
+        ],
+        [
+          "pattern",
+          "scopedIdentifier"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -21255,6 +22100,12 @@
       "irKey": "scopedTypeIdentifier",
       "builderPath": [
         "scopedTypeIdentifier"
+      ],
+      "builderPathAlternates": [
+        [
+          "type",
+          "scopedIdentifier"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -21923,6 +22774,12 @@
       "builderPath": [
         "self"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "self"
+        ]
+      ],
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"self\" as const",
@@ -22222,6 +23079,12 @@
       "builderPath": [
         "slicePattern"
       ],
+      "builderPathAlternates": [
+        [
+          "pattern",
+          "slice"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -22419,6 +23282,10 @@
       ],
       "builderPathAlternates": [
         [
+          "statement",
+          "static"
+        ],
+        [
           "declarationStatement",
           "static"
         ]
@@ -22608,6 +23475,16 @@
       "builderPath": [
         "stringLiteral"
       ],
+      "builderPathAlternates": [
+        [
+          "literal",
+          "string"
+        ],
+        [
+          "literalPattern",
+          "string"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -22688,6 +23565,12 @@
       "builderPath": [
         "structExpression"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "struct"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -22761,6 +23644,10 @@
       ],
       "builderPathAlternates": [
         [
+          "statement",
+          "struct"
+        ],
+        [
           "declarationStatement",
           "struct"
         ]
@@ -22785,6 +23672,16 @@
       "builderPathAlternates": [
         [
           "structItem",
+          "brace"
+        ],
+        [
+          "statement",
+          "struct",
+          "brace"
+        ],
+        [
+          "declarationStatement",
+          "struct",
           "brace"
         ]
       ],
@@ -22918,6 +23815,16 @@
         [
           "structItem",
           "tuple"
+        ],
+        [
+          "statement",
+          "struct",
+          "tuple"
+        ],
+        [
+          "declarationStatement",
+          "struct",
+          "tuple"
         ]
       ],
       "hidden": false,
@@ -23050,6 +23957,16 @@
         [
           "structItem",
           "unit"
+        ],
+        [
+          "statement",
+          "struct",
+          "unit"
+        ],
+        [
+          "declarationStatement",
+          "struct",
+          "unit"
         ]
       ],
       "hidden": false,
@@ -23145,6 +24062,12 @@
       "irKey": "structPattern",
       "builderPath": [
         "structPattern"
+      ],
+      "builderPathAlternates": [
+        [
+          "pattern",
+          "struct"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -24138,6 +25061,10 @@
       ],
       "builderPathAlternates": [
         [
+          "statement",
+          "trait"
+        ],
+        [
           "declarationStatement",
           "trait"
         ]
@@ -24323,6 +25250,12 @@
       "builderPath": [
         "tryBlock"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "tryBlock"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -24363,6 +25296,12 @@
       "irKey": "tryExpression",
       "builderPath": [
         "tryExpression"
+      ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "try"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -24508,6 +25447,12 @@
       "builderPath": [
         "tupleExpression"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "tuple"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -24569,6 +25514,12 @@
       "irKey": "tuplePattern",
       "builderPath": [
         "tuplePattern"
+      ],
+      "builderPathAlternates": [
+        [
+          "pattern",
+          "tuple"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -24762,6 +25713,12 @@
       "builderPath": [
         "tupleStructPattern"
       ],
+      "builderPathAlternates": [
+        [
+          "pattern",
+          "tupleStruct"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -24837,6 +25794,12 @@
       "irKey": "tupleType",
       "builderPath": [
         "tupleType"
+      ],
+      "builderPathAlternates": [
+        [
+          "type",
+          "tuple"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -25284,6 +26247,12 @@
       "builderPath": [
         "typeCastExpression"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "typeCast"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -25379,6 +26348,10 @@
         "typeItem"
       ],
       "builderPathAlternates": [
+        [
+          "statement",
+          "type"
+        ],
         [
           "declarationStatement",
           "type"
@@ -25818,6 +26791,12 @@
       "builderPath": [
         "unaryExpression"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "unary"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -25897,6 +26876,10 @@
         "unionItem"
       ],
       "builderPathAlternates": [
+        [
+          "statement",
+          "union"
+        ],
         [
           "declarationStatement",
           "union"
@@ -26033,6 +27016,12 @@
       "builderPath": [
         "unitExpression"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "unit"
+        ]
+      ],
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"()\" as const",
@@ -26049,6 +27038,12 @@
       "builderPath": [
         "unitType"
       ],
+      "builderPathAlternates": [
+        [
+          "type",
+          "unit"
+        ]
+      ],
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"()\" as const",
@@ -26064,6 +27059,12 @@
       "irKey": "unsafeBlock",
       "builderPath": [
         "unsafeBlock"
+      ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "unsafeBlock"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -26457,6 +27458,10 @@
         "useDeclaration"
       ],
       "builderPathAlternates": [
+        [
+          "statement",
+          "use"
+        ],
         [
           "declarationStatement",
           "use"
@@ -27704,6 +28709,12 @@
       "builderPath": [
         "whileExpression"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "while"
+        ]
+      ],
       "hidden": false,
       "slots": [
         {
@@ -27807,6 +28818,12 @@
       "builderPath": [
         "wildcardPattern"
       ],
+      "builderPathAlternates": [
+        [
+          "pattern",
+          "wildcard"
+        ]
+      ],
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"_\" as const",
@@ -27822,6 +28839,12 @@
       "irKey": "yieldExpression",
       "builderPath": [
         "yieldExpression"
+      ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "yield"
+        ]
       ],
       "hidden": false,
       "slots": [

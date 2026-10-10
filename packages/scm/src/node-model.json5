@@ -438,6 +438,12 @@
       "modelType": "punctuation",
       "typeName": "Blankline",
       "factoryName": "blankline",
+      "builderPathAlternates": [
+        [
+          "layout",
+          "blankline"
+        ]
+      ],
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\" as const",
@@ -450,6 +456,12 @@
       "modelType": "punctuation",
       "typeName": "Dedent",
       "factoryName": "dedent",
+      "builderPathAlternates": [
+        [
+          "layout",
+          "dedent"
+        ]
+      ],
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"﷑\\n\" as const",
@@ -462,6 +474,12 @@
       "modelType": "punctuation",
       "typeName": "DoubleBlankline",
       "factoryName": "doubleBlankline",
+      "builderPathAlternates": [
+        [
+          "layout",
+          "doubleBlankline"
+        ]
+      ],
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\\n\" as const",
@@ -500,6 +518,12 @@
       "modelType": "punctuation",
       "typeName": "Indent",
       "factoryName": "indent",
+      "builderPathAlternates": [
+        [
+          "layout",
+          "indent"
+        ]
+      ],
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"﷐\\n\" as const",
@@ -560,6 +584,12 @@
       "modelType": "punctuation",
       "typeName": "Newline",
       "factoryName": "newline",
+      "builderPathAlternates": [
+        [
+          "layout",
+          "newline"
+        ]
+      ],
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
@@ -582,6 +612,12 @@
       "modelType": "punctuation",
       "typeName": "Space",
       "factoryName": "space",
+      "builderPathAlternates": [
+        [
+          "layout",
+          "space"
+        ]
+      ],
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\" \" as const",
@@ -594,6 +630,12 @@
       "modelType": "punctuation",
       "typeName": "Tab",
       "factoryName": "tab",
+      "builderPathAlternates": [
+        [
+          "layout",
+          "tab"
+        ]
+      ],
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\t\" as const",
@@ -606,6 +648,12 @@
       "modelType": "punctuation",
       "typeName": "Tight",
       "factoryName": "tight",
+      "builderPathAlternates": [
+        [
+          "layout",
+          "tight"
+        ]
+      ],
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\" as const",
@@ -895,6 +943,12 @@
       "irKey": "escapeSequence",
       "builderPath": [
         "escapeSequence"
+      ],
+      "builderPathAlternates": [
+        [
+          "stringContent",
+          "escapeSequence"
+        ]
       ],
       "hidden": false,
       "slots": [
@@ -1820,6 +1874,11 @@
         [
           "namedNode",
           "plain"
+        ],
+        [
+          "definition",
+          "namedNode",
+          "plain"
         ]
       ],
       "hidden": false,
@@ -1914,6 +1973,11 @@
       ],
       "builderPathAlternates": [
         [
+          "namedNode",
+          "supertyped"
+        ],
+        [
+          "definition",
           "namedNode",
           "supertyped"
         ]

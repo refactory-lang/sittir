@@ -472,6 +472,12 @@
       "modelType": "punctuation",
       "typeName": "Blankline",
       "factoryName": "blankline",
+      "builderPathAlternates": [
+        [
+          "layout",
+          "blankline"
+        ]
+      ],
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\" as const",
@@ -513,6 +519,12 @@
       "modelType": "punctuation",
       "typeName": "DoubleBlankline",
       "factoryName": "doubleBlankline",
+      "builderPathAlternates": [
+        [
+          "layout",
+          "doubleBlankline"
+        ]
+      ],
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\\n\" as const",
@@ -542,6 +554,12 @@
       "modelType": "punctuation",
       "typeName": "Newline",
       "factoryName": "newline",
+      "builderPathAlternates": [
+        [
+          "layout",
+          "newline"
+        ]
+      ],
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
@@ -554,6 +572,12 @@
       "modelType": "punctuation",
       "typeName": "Tight",
       "factoryName": "tight",
+      "builderPathAlternates": [
+        [
+          "layout",
+          "tight"
+        ]
+      ],
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\" as const",

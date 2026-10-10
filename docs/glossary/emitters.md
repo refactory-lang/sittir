@@ -8763,7 +8763,7 @@ The types module of `emitTypesModules`, for callers that need only the public su
 
 `FixedTextKindId` is the union of the kind ids `kindIdText` gives a text, so it holds exactly the kinds whose leaf transport renders a bare kind id. `engine.render` accepts it beside the language's nodes.
 
-`IrKeyOf` is emitted from exactly the kinds `NamespaceMap` is emitted from that have a kind id, mapping each id to the kind's stamped `typeKey`, so the engine's kind-to-type map keys every kind with an id, whether or not `ir` exports a builder for it, never by re-casing a kind-id name.
+`TypeKeyOf` is emitted from exactly the kinds `NamespaceMap` is emitted from that have a kind id, mapping each id to the kind's stamped `typeKey`, so the engine's kind-to-type map keys every kind with an id, whether or not `ir` exports a builder for it, never by re-casing a kind-id name.
 
 #### body
 
@@ -11709,6 +11709,8 @@ No emitted code attaches properties to a factory: a factory is shared under ever
 ```
 
 ### `packages/codegen/src/emitters/ir.ts::emitSynonymComment`
+
+Emits `synonym.comment` from the grammar's trivia kinds (a trivia supertype contributes its subtypes). Each kind is reached through its stamped `builderPath` on `ir` (`ir.commentLine`), never by splicing a name; a trivia kind with no builder path is refused.
 
 #### body
 
