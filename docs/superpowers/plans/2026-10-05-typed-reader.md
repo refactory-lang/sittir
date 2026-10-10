@@ -8042,7 +8042,8 @@ The tasks:
     - Review Focus 1, 2, 4 and 5;
     - a rust doc comment left in the old tree when its item moves to a new holder, and a comment in the item's body carried with it;
     - ruling 4: a comment written through one node, which the convention gives to another, is that other node's after a reparse;
-    - two reads of a gap are equal and are not the same object.
+    - two reads of a gap are equal and are not the same object;
+    - a write through a parsed holder renders through a built holder that stores the same range as a coordinate it never read.
   - **Retires:**
     - the reader's placement: `place()` and `Placement`, `TriviaEntry`'s `same_line` and `tokens_between`, and the `$sameLine` and `$tokensBetween` stamps with their copies (`carryPlacement` and `ENTRY_PLACEMENT_KEYS` in `transport-data.ts`, and the copy in `read-render-parse.ts`);
     - trivia on parsed wrappers: `$_layout.trivia` on a parsed node, `writtenSides`, `composedTrivia`, `readLineGaps`, `readTrivia`'s derivation, `readDerivedSides` and `lineGapsRead`;
@@ -8050,6 +8051,7 @@ The tasks:
     - the client edited set: `markIndexEdited`, `editedWithin`, and `markEditedNode`, Ruling 10's hook (an in-place verb that lands later writes native data the render reads, as a trivia write does);
     - the client fold check (`foldedCoordinate`'s edited test, `hasOutsideTrivia`);
     - the refusal of a write through a query (`refuseUnheld`, and its use of `heldBySlot`);
+    - the refusal of a coordinate a holder never read whose range holds a write (`unreadCoordinate` in `transport-data.ts`): the write is the table's, so the coordinate renders it;
     - the outside trivia a folded coordinate carries: `FramedTrivia` in `SlotValue::Coord`, `outside_trivia_from_napi`, and the framing `write_coordinate` gives a coordinate;
     - `triviaViewOf` in the validators, which read the table.
 - **Task 30: Measurements and the 1d gates.**
@@ -8058,7 +8060,7 @@ The tasks:
     - the fold's timing after one leading write on the deepest statement (1c-ii's `fold-timing.mts`);
     - the heap of an untouched whole-tree read (`measure-heap.mts`).
   - The whole-branch gates are 1c-ii's, and:
-    - `packages/common/src` holds no `lineGapsOf`, `markIndexEdited`, `editedWithin`, `refuseUnheld`, `carryPlacement` or `hasOutsideTrivia`;
+    - `packages/common/src` holds no `lineGapsOf`, `markIndexEdited`, `editedWithin`, `refuseUnheld`, `unreadCoordinate`, `carryPlacement` or `hasOutsideTrivia`;
     - `rust/crates/sittir-core/src` holds no `place(`, `same_line`, `tokens_between`, `line_gaps` or `FramedTrivia`;
     - `packages/tools/src` holds no `carryTrivia` or `carryElementTrivia`.
   - Commit the probes and README. Open the PR with its owner's `Owner:` line first in its body, and ask brainstorm for the whole-branch review.
