@@ -410,6 +410,7 @@ export interface PortableIds {
 		| TSKindId.Metavariable
 		| TSKindId.ScopedIdentifier
 		| TSKindId.Self
+		| TSKindId.ShorthandFieldIdentifier
 		| TSKindId.Super
 		| TSKindId.TypeIdentifier;
 	'identifier.crate': TSKindId.Crate;
@@ -417,6 +418,8 @@ export interface PortableIds {
 	'identifier.label': TSKindId.Label;
 	'identifier.lifetime': TSKindId.Lifetime;
 	'identifier.metavariable': TSKindId.Metavariable;
+	'identifier.property': TSKindId.ShorthandFieldIdentifier;
+	'identifier.property.shorthand': TSKindId.ShorthandFieldIdentifier;
 	'identifier.scoped': TSKindId.ScopedIdentifier;
 	'identifier.self': TSKindId.Self;
 	'identifier.super': TSKindId.Super;
@@ -1106,16 +1109,23 @@ export interface PortableKindsAt {
 		readonly label: PortableKindsAt['identifier.label'];
 		readonly lifetime: PortableKindsAt['identifier.lifetime'];
 		readonly metavariable: PortableKindsAt['identifier.metavariable'];
+		readonly property: PortableKindsAt['identifier.property'];
 		readonly scoped: PortableKindsAt['identifier.scoped'];
 		readonly self: PortableKindsAt['identifier.self'];
 		readonly super: PortableKindsAt['identifier.super'];
 		readonly type: PortableKindsAt['identifier.type'];
+		readonly shorthand: PortableKindsAt['identifier.property.shorthand'];
 	};
 	'identifier.crate': { readonly $ids: readonly PortableIds['identifier.crate'][] };
 	'identifier.field': { readonly $ids: readonly PortableIds['identifier.field'][] };
 	'identifier.label': { readonly $ids: readonly PortableIds['identifier.label'][] };
 	'identifier.lifetime': { readonly $ids: readonly PortableIds['identifier.lifetime'][] };
 	'identifier.metavariable': { readonly $ids: readonly PortableIds['identifier.metavariable'][] };
+	'identifier.property': {
+		readonly $ids: readonly PortableIds['identifier.property'][];
+		readonly shorthand: PortableKindsAt['identifier.property.shorthand'];
+	};
+	'identifier.property.shorthand': { readonly $ids: readonly PortableIds['identifier.property.shorthand'][] };
 	'identifier.scoped': { readonly $ids: readonly PortableIds['identifier.scoped'][] };
 	'identifier.self': { readonly $ids: readonly PortableIds['identifier.self'][] };
 	'identifier.super': { readonly $ids: readonly PortableIds['identifier.super'][] };
@@ -1767,16 +1777,22 @@ export interface PortableIsAt {
 		readonly label: PortableIsAt['identifier.label'];
 		readonly lifetime: PortableIsAt['identifier.lifetime'];
 		readonly metavariable: PortableIsAt['identifier.metavariable'];
+		readonly property: PortableIsAt['identifier.property'];
 		readonly scoped: PortableIsAt['identifier.scoped'];
 		readonly self: PortableIsAt['identifier.self'];
 		readonly super: PortableIsAt['identifier.super'];
 		readonly type: PortableIsAt['identifier.type'];
+		readonly shorthand: PortableIsAt['identifier.property.shorthand'];
 	};
 	'identifier.crate': PortableGuard<PortableIds['identifier.crate']> & {};
 	'identifier.field': PortableGuard<PortableIds['identifier.field']> & {};
 	'identifier.label': PortableGuard<PortableIds['identifier.label']> & {};
 	'identifier.lifetime': PortableGuard<PortableIds['identifier.lifetime']> & {};
 	'identifier.metavariable': PortableGuard<PortableIds['identifier.metavariable']> & {};
+	'identifier.property': PortableGuard<PortableIds['identifier.property']> & {
+		readonly shorthand: PortableIsAt['identifier.property.shorthand'];
+	};
+	'identifier.property.shorthand': PortableGuard<PortableIds['identifier.property.shorthand']> & {};
 	'identifier.scoped': PortableGuard<PortableIds['identifier.scoped']> & {};
 	'identifier.self': PortableGuard<PortableIds['identifier.self']> & {};
 	'identifier.super': PortableGuard<PortableIds['identifier.super']> & {};
@@ -2067,6 +2083,7 @@ export interface PortableKinds {
 	readonly prelude: PortableKindsAt['type.named.prelude'];
 	readonly primitive: PortableKindsAt['type.primitive'];
 	readonly private: PortableKindsAt['modifier.visibility.private'];
+	readonly property: PortableKindsAt['identifier.property'];
 	readonly public: PortableKindsAt['modifier.visibility.public'];
 	readonly qualified: PortableKindsAt['type.qualified'];
 	readonly raw: PortableKindsAt['literal.string.raw'];
@@ -2079,6 +2096,7 @@ export interface PortableKinds {
 	readonly shift: PortableKindsAt['expression.binary.shift'];
 	readonly shift_left: PortableKindsAt['expression.assignment.compound.shift_left'];
 	readonly shift_right: PortableKindsAt['expression.assignment.compound.shift_right'];
+	readonly shorthand: PortableKindsAt['identifier.property.shorthand'];
 	readonly slice: PortableKindsAt['pattern.slice'];
 	readonly string: PortableKindsAt['literal.string'];
 	readonly subscript: PortableKindsAt['expression.subscript'];
@@ -2206,6 +2224,7 @@ export interface PortableIs {
 	readonly prelude: PortableIsAt['type.named.prelude'];
 	readonly primitive: PortableIsAt['type.primitive'];
 	readonly private: PortableIsAt['modifier.visibility.private'];
+	readonly property: PortableIsAt['identifier.property'];
 	readonly public: PortableIsAt['modifier.visibility.public'];
 	readonly qualified: PortableIsAt['type.qualified'];
 	readonly raw: PortableIsAt['literal.string.raw'];
@@ -2218,6 +2237,7 @@ export interface PortableIs {
 	readonly shift: PortableIsAt['expression.binary.shift'];
 	readonly shift_left: PortableIsAt['expression.assignment.compound.shift_left'];
 	readonly shift_right: PortableIsAt['expression.assignment.compound.shift_right'];
+	readonly shorthand: PortableIsAt['identifier.property.shorthand'];
 	readonly slice: PortableIsAt['pattern.slice'];
 	readonly string: PortableIsAt['literal.string'];
 	readonly subscript: PortableIsAt['expression.subscript'];
@@ -2693,6 +2713,7 @@ const table: PortableTable = {
 				TSKindId.Metavariable,
 				TSKindId.ScopedIdentifier,
 				TSKindId.Self,
+				TSKindId.ShorthandFieldIdentifier,
 				TSKindId.Super,
 				TSKindId.TypeIdentifier
 			],
@@ -2703,6 +2724,8 @@ const table: PortableTable = {
 		'identifier.label': { ids: [TSKindId.Label], exact: true },
 		'identifier.lifetime': { ids: [TSKindId.Lifetime], exact: true },
 		'identifier.metavariable': { ids: [TSKindId.Metavariable], exact: true },
+		'identifier.property': { ids: [TSKindId.ShorthandFieldIdentifier], exact: true },
+		'identifier.property.shorthand': { ids: [TSKindId.ShorthandFieldIdentifier], exact: true },
 		'identifier.scoped': { ids: [TSKindId.ScopedIdentifier], exact: false },
 		'identifier.self': { ids: [TSKindId.Self], exact: true },
 		'identifier.super': { ids: [TSKindId.Super], exact: true },
@@ -3006,6 +3029,7 @@ const table: PortableTable = {
 		['', 'prelude', 'type.named.prelude'],
 		['', 'primitive', 'type.primitive'],
 		['', 'private', 'modifier.visibility.private'],
+		['', 'property', 'identifier.property'],
 		['', 'public', 'modifier.visibility.public'],
 		['', 'qualified', 'type.qualified'],
 		['', 'raw', 'literal.string.raw'],
@@ -3018,6 +3042,7 @@ const table: PortableTable = {
 		['', 'shift', 'expression.binary.shift'],
 		['', 'shift_left', 'expression.assignment.compound.shift_left'],
 		['', 'shift_right', 'expression.assignment.compound.shift_right'],
+		['', 'shorthand', 'identifier.property.shorthand'],
 		['', 'slice', 'pattern.slice'],
 		['', 'string', 'literal.string'],
 		['', 'subscript', 'expression.subscript'],
@@ -3134,6 +3159,7 @@ const table: PortableTable = {
 		['expression.binary', 'right', 'expression.binary.shift.right'],
 		['expression.binary', 'subtract', 'expression.binary.arithmetic.subtract'],
 		['expression.binary', 'xor', 'expression.binary.bitwise.xor'],
+		['identifier', 'shorthand', 'identifier.property.shorthand'],
 		['literal', 'binary', 'literal.number.integer.binary'],
 		['literal', 'escape', 'literal.string.escape'],
 		['literal', 'false', 'literal.boolean.false'],
@@ -3577,6 +3603,7 @@ const table: PortableTable = {
 		[TSKindId.ScopedUseList]: [{ path: 'clause.import.list.scoped', within: [], test: [] }],
 		[TSKindId.Self]: [{ path: 'identifier.self', within: [], test: [] }],
 		[TSKindId.SelfParameter]: [{ path: 'declaration.parameter.self', within: [], test: [] }],
+		[TSKindId.ShorthandFieldIdentifier]: [{ path: 'identifier.property.shorthand', within: [], test: [] }],
 		[TSKindId.ShorthandFieldInitializer]: [{ path: 'element.struct.field', within: [], test: [] }],
 		[TSKindId.SlicePattern]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },

@@ -221,6 +221,7 @@
 (identifier) @identifier
 (type_identifier) @identifier.type
 (field_identifier) @identifier.field
+(shorthand_field_identifier) @identifier.property.shorthand
 (metavariable) @identifier.metavariable
 (lifetime) @identifier.lifetime
 (label) @identifier.label

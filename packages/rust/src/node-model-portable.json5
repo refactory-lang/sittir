@@ -5946,6 +5946,17 @@
       ]
     },
     "shorthand_field_identifier": {
+      "vocab": "identifier.property.shorthand",
+      "read": [
+        {
+          "vocab": "identifier.property.shorthand",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [],
       "container": {
         "kinds": [
           "identifier"
@@ -8212,19 +8223,19 @@
         "paths": 13,
         "kinds": 3,
         "refinements": 0,
-        "aliases": 123
+        "aliases": 125
       },
       {
         "depth": 2,
-        "paths": 101,
+        "paths": 102,
         "kinds": 132,
-        "refinements": 11,
-        "aliases": 85
+        "refinements": 12,
+        "aliases": 86
       },
       {
         "depth": 3,
-        "paths": 73,
-        "kinds": 77,
+        "paths": 74,
+        "kinds": 78,
         "refinements": 46,
         "aliases": 34
       },
