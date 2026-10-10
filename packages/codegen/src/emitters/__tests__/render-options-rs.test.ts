@@ -254,6 +254,23 @@ describe('renderOptionsRs', () => {
 	});
 });
 
+describe('an address that names one canonical path', () => {
+	it('refuses a path two sites share', () => {
+		const twins: SitePreference[] = ['block', '_block'].map((kind) => ({
+			kind,
+			slot: 'statements',
+			address: 'statements_separator_space',
+			label: 'empty_separator_space',
+			arms: SPACING,
+			defaultArm: 'newline',
+			source: 'spacing'
+		}));
+		const plan = planRenderOptions(twins, kindEntries, makeSiteKindsNodeMap(twins), whitespaceText, undefined, 'rust');
+		const addresses = deriveAddressTables(twins, kindEntries, makeSiteKindsNodeMap(twins), kindIdArmType(kindEntries as never), (() => []) as never);
+		expect(() => renderOptionsRs(plan, addresses, kindEntries)).toThrow(/which is 2 sites/);
+	});
+});
+
 describe('a kind edge over a choice of tokens', () => {
 	const entries = [...kindEntries, { kind: 'bracket', member: 'Bracket', id: 40 }];
 	const seam = (address: string, extra: Partial<SitePreference> = {}): SitePreference => ({

@@ -287,10 +287,12 @@ function siteIndexOf(plan: RenderOptionsPlan): SiteIndex {
 }
 
 function siteRefsOf(leaf: AddressLeafEntry, siteIndex: SiteIndex): SitePath[] {
-	const refs = leaf.canonical.flatMap((segments) => {
+	const refs = leaf.canonical.map((segments) => {
 		const bucket = siteIndex.get(formatPreferencePath(segments)) ?? [];
-		if (bucket.length === 0) throw new Error(`options.rs: address '${leaf.path}' names '${formatPreferencePath(segments)}', which is no site`);
-		return bucket;
+		if (bucket.length !== 1) {
+			throw new Error(`options.rs: address '${leaf.path}' names '${formatPreferencePath(segments)}', which is ${bucket.length === 0 ? 'no site' : `${bucket.length} sites`}`);
+		}
+		return bucket[0]!;
 	});
 	if (new Set(refs.map((r) => r.site)).size > 1) throw new Error(`options.rs: address '${leaf.path}' mixes spacing and delimiter sites`);
 	return refs;
