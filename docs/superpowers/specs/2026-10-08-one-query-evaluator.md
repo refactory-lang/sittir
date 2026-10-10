@@ -61,6 +61,12 @@ The two sides already give different answers on the same plan:
   - for the generated `is` tables, built when `portableSurface` builds the guards.
 
   Today every evaluation constructs a `RegExp`, and every native `planHolds` call parses its plan and compiles its regexes again.
+- **A leaf may test a value's kind.** Beside `eq` and `match`, which test a value's text, a plan has an `is` leaf, which holds where its subject holds a node of one of the leaf's kinds.
+  - The `is` guards use it where a child's kind decides a claim: a rust method is static where no parameter is a receiver.
+  - It is part of the public `QueryPlan`, so a `where` may carry it too.
+  - A value's kind is its `$type`, wherever the node lives. The walk returns each value's kind beside its span when the plan has an `is` leaf.
+  - The leaf's kinds are named apart from its subject's `kinds`, which route unfielded children.
+- **A step may be anchored.** A `via` step toward a captured child may carry an anchor, `first` or `last`, and then reaches only that value of its slot. A python docstring is the string that opens a body, so both steps toward it carry `first`.
 
 The dialect becomes ECMAScript with the `u` flag everywhere. Rust `regex` remains in `sittir-core` for token interiors (`read.rs`) and leaves the query path.
 
@@ -205,3 +211,7 @@ One branch, five tasks.
    - Remove `Plan`, `PlanSpec`, `Plan::holds`, `compile_plan` and the napi `plan_holds` with its typing.
    - Update the glossary entries for the query module.
    - Amend the node query design §7.2/§7.3 to point here.
+
+## 6. Open points
+
+- **A self test on a structured kind.** §1 has codegen refuse an `is` test whose subject can hold a built structured value, since a built structured value has no text. Applied as written, it refuses typescript's `comment.block.doc` and `comment.line`. Their read tests compare the comment's own text (`SelfText` on the claimed node: `^/\*\*`, `^//`), and the typed reader reads `comment_block` as a structured kind with a `content` slot. A parsed comment has its span's slice. A built one has no text, though its `content` and its kind fix it. Open: whether the refusal exempts a structured kind whose text its stored members determine, or the claims test `content` instead of the whole text.

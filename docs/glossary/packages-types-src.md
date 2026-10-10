@@ -34,7 +34,15 @@ Whether every character of `S` is one of `C`, walking `S` one leading character 
 
 ### `packages/types/src/options.ts::IndentOption`
 
-The `indent` key a render's options carry: `I & OnlyOf<I, IndentChar>`, the unit as the caller spelled it and checked whole, for a grammar that admits an indent character. `unknown` (no key) when `IndentChar` is `never`. `DerivedOptions` includes it at `I = string`, so a standalone `Options` value types `indent` as `string`; `createEngine`, `createRenderEngine` and `render` include it at their inferred `I`.
+The `indent` key a render's options carry, under the `layout` group: `layout.indent` is `I & OnlyOf<I, IndentChar>`, the unit as the caller spelled it and checked whole, for a grammar that admits an indent character. `unknown` (no key) when `IndentChar` is `never`. There is no top-level `indent`. `DerivedOptions` includes it at `I = string`, so a standalone `Options` value types `layout.indent` as `string`; `createEngine`, `createRenderEngine` and `render` include it at their inferred `I`.
+
+### `packages/types/src/options.ts::NewlineOption`
+
+The `layout.newline` key a render's options carry: one of the grammar's `LineEnding` arms (`'\n'`, `'\r\n'`, `'\r'`, the arms of its `_newline` whitespace member), for a grammar that admits `_newline`. `unknown` (no key) when `LineEnding` is `never`. `DerivedOptions` includes it, so the engine's and a call's options both carry it without a further generic.
+
+### `packages/types/src/options.ts::LayoutOption`
+
+The `layout` group of a render's options: `IndentOption` and `NewlineOption` intersected, so one `layout` key holds every whole-render layout setting the grammar admits.
 
 ### `packages/types/src/engine-api.ts::TriviaFacts`
 
@@ -102,7 +110,7 @@ The options a language's native engine is created with: the format record and th
 
 ### `packages/types/src/engine-api.ts::LanguageHooks`
 
-What a language's `load()` resolves to: the builder table, guards, kind ids, trivia facts and the render module hash as data, plus `createNative` to create a native engine and `wrap` to turn a read root and its tree into the language's root node.
+What a language's `load()` resolves to: the builder table, guards, kind ids, trivia facts and the render module hash as data, plus `createNative` to create a native engine and `wrap` to turn a read root and its tree into the language's root node. `membership` is the language's one membership test, shared by its `is.*` guards and a query's `ofType`.
 
 The optional `hydrate` hook reuses the grammar's `hydrateChild` for a shallow child read from its own tree. Generated languages supply it so factories can consume parsed list stubs without duplicating the grammar's depth or envelope normalization.
 
@@ -154,9 +162,13 @@ Anything keyed by one of the language's kind ids that carries `$render` or holds
 
 The one call signature `render` has for a given input type: the options generic `R`, its literal inference and its `RenderOptionsCheck`. `render` is two of them intersected, so a draft is matched by the `Renderable` signature before the language's node union is tried. Comparing a draft against that union relates each of its several hundred members and exhausts the checker's relation depth, which is why the draft signature comes first and is a separate signature rather than one more member of a shared input union.
 
+### `packages/types/src/engine-api.ts::LayoutKeysCheck`
+
+The `layout` half of `RenderOptionsCheck`: every key inside a caller's `layout` must be one the language's own declared `layout` carries (`DeclaredLayout`), so a language with `newline` but no `indent` (regex) rejects `layout.indent` even beside a valid `newline`, and a language with no `layout` rejects any.
+
 ### `packages/types/src/engine-api.ts::RenderOptionsCheck`
 
-The compile-time check on a render options literal `R`, inferred `const` so its values keep their literal types: the `indent` unit must be made only of the language's indent characters, and every key must be one the language's render options declare, or one of `Extra` (the per-call keys, for a single render). A generic parameter is exempt from the excess-property check an object literal gets against a fixed type, so the second half restores it: a misspelled key, or `indent` for a language with no indent unit, is a type error where it is written.
+The compile-time check on a render options literal `R`, inferred `const` so its values keep their literal types: the `layout.indent` unit must be made only of the language's indent characters, every top-level key must be one the language's render options declare, or one of `Extra` (the per-call keys, for a single render), and every key inside `layout` must be `indent` or `newline`. A generic parameter is exempt from the excess-property check an object literal gets against a fixed type, so the rest restores it: a misspelled key, `layout` for a language with no layout setting, or `indent` at the top level, is a type error where it is written.
 
 When `R` is exactly the language's declared options type, the check is `unknown`: such a value has no undeclared key and its indent unit is the declared one, so there is nothing to add. That identity is what lets a caller generic over the language forward options typed as `API['options']`, where the full check would stay deferred and reject the very type its parameter declares. It also leaves a value with only undeclared keys to the options type's own weak-type check, which the full check's intersection would defeat. An explicit `API` type argument disables inference, so `R` takes its default, the declared options type, and the check is skipped.
 

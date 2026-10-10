@@ -28,10 +28,10 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 				terminator: ts.kinds.AutomaticSemicolon,
 			}, ts.build.lexicalDeclaration.strict({
 				kind: ts.kinds.ConstKeyword,
-				declarators: [ts.build.variableDeclarator.plain.strict({
+				declarators: [ts.build.variableDeclaratorPlain.strict({
 					name: ts.build.identifier("x"),
 					value: ts.build.binaryExpression.strict({
-						left: ts.build.parenthesizedExpression.typed.strict({
+						left: ts.build.parenthesizedExpressionTyped.strict({
 							expression: ts.build.binaryExpression.strict({
 								left: ts.build.number.decimal("1"),
 								operator: ts.kinds.Plus,
@@ -43,23 +43,23 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 					}),
 				})],
 			}), ts.build.ifStatement.strict({
-				condition: ts.build.parenthesizedExpression.typed.strict({
+				condition: ts.build.parenthesizedExpressionTyped.strict({
 					expression: ts.build.identifier("x"),
 				}),
 				consequence: ts.build.statementBlock.strict({
 					terminator: ts.kinds.AutomaticSemicolon,
-				}, ts.build.returnStatement.strict(ts.build.parenthesizedExpression.typed.strict({
+				}, ts.build.returnStatement.strict(ts.build.parenthesizedExpressionTyped.strict({
 					expression: ts.build.identifier("x"),
 				}))),
 			}), ts.build.whileStatement.strict({
-				condition: ts.build.parenthesizedExpression.typed.strict({
+				condition: ts.build.parenthesizedExpressionTyped.strict({
 					expression: ts.build.identifier("x"),
 				}),
 				body: ts.build.statementBlock.strict({
 					terminator: ts.kinds.AutomaticSemicolon,
 				}, ts.build.expressionStatement.strict(ts.build.assignmentExpression.strict({
 					left: ts.build.lhsExpression.strict(ts.build.identifier("x")),
-					right: ts.build.parenthesizedExpression.typed.strict({
+					right: ts.build.parenthesizedExpressionTyped.strict({
 						expression: ts.build.binaryExpression.strict({
 							left: ts.build.identifier("x"),
 							operator: ts.kinds.Dash,
@@ -70,7 +70,7 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 			}), ts.build.forStatement.strict({
 				initializer: ts.build.lexicalDeclaration.strict({
 					kind: ts.kinds.LetKeyword,
-					declarators: [ts.build.variableDeclarator.plain.strict({
+					declarators: [ts.build.variableDeclaratorPlain.strict({
 						name: ts.build.identifier("i"),
 						value: ts.build.number.decimal("0"),
 					})],
@@ -80,7 +80,7 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 					operator: ts.kinds.Lt,
 					right: ts.build.number.decimal("3"),
 				}),
-				increment: ts.build.updateExpression.postfix.strict({
+				increment: ts.build.updateExpressionPostfix.strict({
 					argument: ts.build.identifier("i"),
 					operator: ts.kinds.PlusPlus,
 				}),
@@ -88,11 +88,11 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 					terminator: ts.kinds.AutomaticSemicolon,
 				}, ts.build.continueStatement.strict()),
 			}), ts.build.forInStatement.strict({
-				forHeader: ts.build.forHeader.letConstKind.strict({
+				forHeader: ts.build.forHeaderLetConstKind.strict({
 					kind: ts.kinds.ConstKeyword,
 					left: ts.build.identifier("i"),
 					operator: ts.kinds.OfKeyword,
-					right: ts.build.parenthesizedExpression.typed.strict({
+					right: ts.build.parenthesizedExpressionTyped.strict({
 						expression: ts.build.identifier("a"),
 					}),
 				}),
@@ -100,53 +100,53 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 					terminator: ts.kinds.AutomaticSemicolon,
 				}, ts.build.continueStatement.strict()),
 			}), ts.build.switchStatement.strict({
-				value: ts.build.parenthesizedExpression.typed.strict({
+				value: ts.build.parenthesizedExpressionTyped.strict({
 					expression: ts.build.identifier("x"),
 				}),
 				body: ts.build.switchBody.strict(ts.build.switchCase.strict({
-					value: ts.build.parenthesizedExpression.typed.strict({
+					value: ts.build.parenthesizedExpressionTyped.strict({
 						expression: ts.build.number.decimal("1"),
 					}),
 					body: [ts.build.breakStatement.strict()],
 				})),
-			}), ts.build.throwStatement.strict(ts.build.parenthesizedExpression.typed.strict({
+			}), ts.build.throwStatement.strict(ts.build.parenthesizedExpressionTyped.strict({
 				expression: ts.build.newExpression.strict({
 					constructor_: ts.build.identifier("Error"),
-					arguments: ts.build.arguments.strict(ts.build.string.double.strict(ts.build.unescapedDoubleStringFragment("x"))),
+					arguments: ts.build.arguments.strict(ts.build.stringDouble.strict(ts.build.unescapedDoubleStringFragment("x"))),
 				}),
-			})), ts.build.expressionStatement.strict(ts.build.awaitExpression.strict(ts.build.parenthesizedExpression.typed.strict({
-				expression: ts.build.callExpression.call.strict({
+			})), ts.build.expressionStatement.strict(ts.build.awaitExpression.strict(ts.build.parenthesizedExpressionTyped.strict({
+				expression: ts.build.callExpressionCall.strict({
 					function: ts.build.identifier("foo"),
 					arguments: ts.build.arguments.strict(),
 				}),
 			}))), ts.build.expressionStatement.strict(ts.build.unaryExpression.strict({
 				operator: ts.kinds.TypeofKeyword,
-				argument: ts.build.parenthesizedExpression.typed.strict({
+				argument: ts.build.parenthesizedExpressionTyped.strict({
 					expression: ts.build.identifier("x"),
 				}),
 			})), ts.build.expressionStatement.strict(ts.build.newExpression.strict({
-				constructor_: ts.build.parenthesizedExpression.typed.strict({
+				constructor_: ts.build.parenthesizedExpressionTyped.strict({
 					expression: ts.build.identifier("Foo"),
 				}),
 				arguments: ts.build.arguments.strict(),
 			})), ts.build.lexicalDeclaration.strict({
 				kind: ts.kinds.ConstKeyword,
-				declarators: [ts.build.variableDeclarator.plain.strict({
+				declarators: [ts.build.variableDeclaratorPlain.strict({
 					name: ts.build.identifier("t"),
 					type: ts.build.typeAnnotation.strict(ts.build.parenthesizedType.strict(ts.kinds.StringKeyword)),
-					value: ts.build.string.double.strict(ts.build.unescapedDoubleStringFragment("a")),
+					value: ts.build.stringDouble.strict(ts.build.unescapedDoubleStringFragment("a")),
 				})],
 			}), ts.build.lexicalDeclaration.strict({
 				kind: ts.kinds.ConstKeyword,
-				declarators: [ts.build.variableDeclarator.plain.strict({
+				declarators: [ts.build.variableDeclaratorPlain.strict({
 					name: ts.build.identifier("arr"),
-					value: ts.build.array.strict(ts.build.parenthesizedExpression.typed.strict({
+					value: ts.build.array.strict(ts.build.parenthesizedExpressionTyped.strict({
 						expression: ts.build.number.decimal("1"),
 					}), ts.build.array.strict(ts.build.number.decimal("2"))),
 				})],
 			}), ts.build.lexicalDeclaration.strict({
 				kind: ts.kinds.ConstKeyword,
-				declarators: [ts.build.variableDeclarator.plain.strict({
+				declarators: [ts.build.variableDeclaratorPlain.strict({
 					name: ts.build.identifier("y"),
 					value: ts.build.asExpression.strict({
 						expression: ts.build.identifier("x"),
@@ -155,7 +155,7 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 				})],
 			}), ts.build.lexicalDeclaration.strict({
 				kind: ts.kinds.ConstKeyword,
-				declarators: [ts.build.variableDeclarator.plain.strict({
+				declarators: [ts.build.variableDeclaratorPlain.strict({
 					name: ts.build.identifier("g"),
 					value: ts.build.arrowFunction.strict({
 						async: true,
@@ -164,19 +164,19 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 								pattern: ts.build.lhsExpression.strict(ts.build.identifier("z")),
 							})),
 						}),
-						body: ts.build.parenthesizedExpression.typed.strict({
+						body: ts.build.parenthesizedExpressionTyped.strict({
 							expression: ts.build.identifier("z"),
 						}),
 					}),
 				})],
 			}), ts.build.expressionStatement.strict(ts.build.unaryExpression.strict({
 				operator: ts.kinds.VoidKeyword,
-				argument: ts.build.parenthesizedExpression.typed.strict({
+				argument: ts.build.parenthesizedExpressionTyped.strict({
 					expression: ts.build.number.decimal("0"),
 				}),
 			})), ts.build.expressionStatement.strict(ts.build.unaryExpression.strict({
 				operator: ts.kinds.DeleteKeyword,
-				argument: ts.build.parenthesizedExpression.typed.strict({
+				argument: ts.build.parenthesizedExpressionTyped.strict({
 					expression: ts.build.memberExpression.strict({
 						object: ts.build.identifier("a"),
 						separator: ts.kinds.Dot,
@@ -185,24 +185,24 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 				}),
 			})), ts.build.lexicalDeclaration.strict({
 				kind: ts.kinds.ConstKeyword,
-				declarators: [ts.build.variableDeclarator.plain.strict({
+				declarators: [ts.build.variableDeclaratorPlain.strict({
 					name: ts.build.identifier("k"),
 					value: ts.build.binaryExpression.strict({
 						left: ts.build.identifier("x"),
 						operator: ts.kinds.InstanceofKeyword,
-						right: ts.build.parenthesizedExpression.typed.strict({
+						right: ts.build.parenthesizedExpressionTyped.strict({
 							expression: ts.build.identifier("Foo"),
 						}),
 					}),
 				})],
 			}), ts.build.lexicalDeclaration.strict({
 				kind: ts.kinds.ConstKeyword,
-				declarators: [ts.build.variableDeclarator.plain.strict({
+				declarators: [ts.build.variableDeclaratorPlain.strict({
 					name: ts.build.identifier("inn"),
 					value: ts.build.binaryExpression.in.strict({
 						binaryExpressionIn: {
-							left: ts.build.string.double.strict(ts.build.unescapedDoubleStringFragment("a")),
-							right: ts.build.parenthesizedExpression.typed.strict({
+							left: ts.build.stringDouble.strict(ts.build.unescapedDoubleStringFragment("a")),
+							right: ts.build.parenthesizedExpressionTyped.strict({
 								expression: ts.build.identifier("obj"),
 							}),
 						},
@@ -210,19 +210,19 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 				})],
 			}), ts.build.lexicalDeclaration.strict({
 				kind: ts.kinds.ConstKeyword,
-				declarators: [ts.build.variableDeclarator.plain.strict({
+				declarators: [ts.build.variableDeclaratorPlain.strict({
 					name: ts.build.identifier("tpl"),
-					value: ts.build.templateString.strict(ts.build.templateChars("a"), ts.build.templateSubstitution.strict(ts.build.parenthesizedExpression.typed.strict({
+					value: ts.build.templateString.strict(ts.build.templateChars("a"), ts.build.templateSubstitution.strict(ts.build.parenthesizedExpressionTyped.strict({
 						expression: ts.build.identifier("x"),
 					})), ts.build.templateChars("b")),
 				})],
 			}), ts.build.lexicalDeclaration.strict({
 				kind: ts.kinds.ConstKeyword,
-				declarators: [ts.build.variableDeclarator.plain.strict({
+				declarators: [ts.build.variableDeclaratorPlain.strict({
 					name: ts.build.identifier("o"),
 					value: ts.build.object.strict(ts.build.pair.strict({
 						key: ts.build.identifier("a"),
-						value: ts.build.parenthesizedExpression.typed.strict({
+						value: ts.build.parenthesizedExpressionTyped.strict({
 							expression: ts.build.number.decimal("1"),
 						}),
 					}), ts.build.pair.strict({
@@ -232,7 +232,7 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 				})],
 			}), ts.build.lexicalDeclaration.strict({
 				kind: ts.kinds.ConstKeyword,
-				declarators: [ts.build.variableDeclarator.plain.strict({
+				declarators: [ts.build.variableDeclaratorPlain.strict({
 					name: ts.build.identifier("m"),
 					value: ts.build.memberExpression.strict({
 						object: ts.build.subscriptExpression.strict({
@@ -243,10 +243,10 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 						property: ts.build.identifier("b"),
 					}),
 				})],
-			}), ts.build.expressionStatement.strict(ts.build.callExpression.call.strict({
+			}), ts.build.expressionStatement.strict(ts.build.callExpressionCall.strict({
 				function: ts.build.subscriptExpression.strict({
 					object: ts.build.memberExpression.strict({
-						object: ts.build.callExpression.call.strict({
+						object: ts.build.callExpressionCall.strict({
 							function: ts.build.identifier("foo"),
 							arguments: ts.build.arguments.strict(ts.build.identifier("x")),
 						}),
@@ -256,7 +256,7 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 					index: ts.build.number.decimal("1"),
 				}),
 				arguments: ts.build.arguments.strict(ts.build.identifier("y")),
-			})), ts.build.returnStatement.strict(ts.build.array.strict(ts.build.identifier("x"), ts.build.parenthesizedExpression.typed.strict({
+			})), ts.build.returnStatement.strict(ts.build.array.strict(ts.build.identifier("x"), ts.build.parenthesizedExpressionTyped.strict({
 				expression: ts.build.identifier("y"),
 			})))),
 		}, {

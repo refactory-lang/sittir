@@ -1,6 +1,6 @@
 import { NATIVE_TARGETS, grammarDisplayName, nativeBinaryName, type GrammarName } from '../grammars.ts';
 
-export const NATIVE_RENDER_TRANSPORT_ABI = 21;
+export const NATIVE_RENDER_TRANSPORT_ABI = 22;
 
 export interface NativeCrateFile {
 	readonly path: string;
@@ -206,6 +206,10 @@ impl EngineGrammar for ${v.Name}Grammar {
         index: u32,
     ) -> std::result::Result<sittir_core::read::Sides, sittir_core::read::ReadError> {
         <AnyTransport as sittir_core::read::ReadTransport>::sides_of(cursor, ctx, index)
+    }
+
+    fn shows(self) -> fn(sittir_core::types::KindId) -> bool {
+        <AnyTransport as sittir_core::read::ReadTransport>::shows
     }
 }
 

@@ -86,6 +86,15 @@ pub trait SourceTable {
         None
     }
 
+    /// The byte offsets of the lines under the node a coordinate names that
+    /// begin inside a token (`engine::line_starts_inside_tokens`): a slice
+    /// re-indented to its new column leaves these lines as they are. A table
+    /// of bare sources knows no tokens and answers none.
+    fn line_starts_inside_tokens(&self, coord: &crate::slot::NodeCoordinate) -> Vec<usize> {
+        let _ = coord;
+        Vec::new()
+    }
+
     /// The kind of the last child that is not an extra of the list spanning
     /// `span` in `tree`, the list's own kind being `kind`
     /// (`engine::last_list_child`). A table of bare sources cannot
@@ -287,6 +296,14 @@ pub trait RenderSink {
     /// flag table of the options this sink holds; a sink with none answers no.
     fn kind_has(&self, kind: KindId, flag: u8) -> bool {
         let _ = (kind, flag);
+        false
+    }
+    /// Whether the text now being written belongs to a line-terminated kind,
+    /// whose pattern can take the `\r` of a `\r\n` as its last character: a
+    /// text ending in `\r` then drops it, and the break is written by whatever
+    /// follows. Returns the setting it replaces, so a caller can restore it.
+    fn swallow_cr(&mut self, on: bool) -> bool {
+        let _ = on;
         false
     }
     /// A node of `kind` has just been written: hold the line end when the

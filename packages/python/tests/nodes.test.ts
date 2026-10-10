@@ -363,7 +363,7 @@ describe('print_statement', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_argument: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+				_item: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 			} as any
 		} as any);
 		expect(node.$type).toBe(TSKindId.PrintStatement);
@@ -387,7 +387,7 @@ describe('print_statement', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_argument: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+				_item: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 			} as any
 		} as any);
 		const rendered = node.$render!();
@@ -900,7 +900,7 @@ describe('match_statement', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_content: { $type: TSKindId.MatchBlockBlock, $text: 'test', $source: 2, $named: true } as any
+				_content: { $type: TSKindId.MatchBlockBlock, $text: 'test', $source: 2, $named: true, _alternative: [] } as any
 			} as any
 		});
 		expect(node.$type).toBe(TSKindId.MatchStatement);
@@ -920,7 +920,7 @@ describe('match_statement', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_content: { $type: TSKindId.MatchBlockBlock, $text: 'test', $source: 2, $named: true } as any
+				_content: { $type: TSKindId.MatchBlockBlock, $text: 'test', $source: 2, $named: true, _alternative: [] } as any
 			} as any
 		});
 		const rendered = node.$render!();
@@ -930,12 +930,24 @@ describe('match_statement', () => {
 
 describe('match_block', () => {
 	it('factory produces correct type', () => {
-		const node = ir.matchBlock({ $type: TSKindId.MatchBlockBlock, $text: 'test', $source: 2, $named: true } as any);
+		const node = ir.matchBlock({
+			$type: TSKindId.MatchBlockBlock,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_alternative: []
+		} as any);
 		expect(node.$type).toBe(TSKindId.MatchBlock);
 		expect(node.$source).toBe(2);
 	});
 	it('render does not throw on minimal config', () => {
-		const node = ir.matchBlock({ $type: TSKindId.MatchBlockBlock, $text: 'test', $source: 2, $named: true } as any);
+		const node = ir.matchBlock({
+			$type: TSKindId.MatchBlockBlock,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_alternative: []
+		} as any);
 		expect(() => node.$render!()).not.toThrow();
 	});
 });
@@ -1292,7 +1304,7 @@ describe('except_clause sub-factories', () => {
 	});
 	it('block builds the parent', () => {
 		const node = ir.exceptClause.block({
-			suite: [{ $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any]
+			suite: [{ $type: TSKindId.Block, $text: 'test', $source: 2, $named: true, _statements: [] } as any]
 		});
 		expect(node.$type).toBe(TSKindId.ExceptClause);
 		expect((node as any).suite()?.$type).toBe(TSKindId.SuiteBlock);
@@ -3642,6 +3654,7 @@ describe('concatenated_string', () => {
 			$source: 2,
 			$named: true,
 			_string_start: { $type: TSKindId.StringStart, $text: '"', $source: 2, $named: true } as any,
+			_content: [],
 			_string_end: { $type: TSKindId.StringEnd, $text: '"', $source: 2, $named: true } as any
 		} as any);
 		expect(node.$type).toBe(TSKindId.ConcatenatedString);
@@ -3654,6 +3667,7 @@ describe('concatenated_string', () => {
 			$source: 2,
 			$named: true,
 			_string_start: { $type: TSKindId.StringStart, $text: '"', $source: 2, $named: true } as any,
+			_content: [],
 			_string_end: { $type: TSKindId.StringEnd, $text: '"', $source: 2, $named: true } as any
 		} as any);
 		const rendered = node.$render!();
@@ -4263,7 +4277,7 @@ describe('print_statement_plain', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_argument: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+			_item: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 		} as any);
 		expect(node.$type).toBe(TSKindId.PrintStatementPlain);
 		expect(node.$source).toBe(2);
@@ -4274,7 +4288,7 @@ describe('print_statement_plain', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_argument: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+			_item: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 		} as any);
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -4714,12 +4728,24 @@ describe('suite_inline', () => {
 
 describe('suite_block', () => {
 	it('factory produces correct type', () => {
-		const node = ir.suiteBlock({ $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any);
+		const node = ir.suiteBlock({
+			$type: TSKindId.Block,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_statements: []
+		} as any);
 		expect(node.$type).toBe(TSKindId.SuiteBlock);
 		expect(node.$source).toBe(2);
 	});
 	it('render does not throw on minimal config', () => {
-		const node = ir.suiteBlock({ $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any);
+		const node = ir.suiteBlock({
+			$type: TSKindId.Block,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_statements: []
+		} as any);
 		expect(() => node.$render!()).not.toThrow();
 	});
 });

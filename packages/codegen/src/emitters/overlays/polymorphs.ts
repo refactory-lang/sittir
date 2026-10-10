@@ -2,12 +2,10 @@ import type { NodeMap } from '../../compiler/types.ts';
 import type { GeneratedIdTables } from '../../dsl/symbol-table.ts';
 import { AbstractAssembledCompound, AssembledList, AssembledSupertype, isKindIdStored, isRequired, separatorRequired, type AssembledNode } from '../../compiler/model/node-map.ts';
 import {
-	classifyFactoryEmission,
 	classifyFactoryShape,
 	classifyFromEmission,
 	compareOrdinal,
 	isSlotBearingCompound,
-	isValidIdent,
 	ownTextLeaf,
 	resolveDirectFactorySlot,
 	resolveFieldStorageInfo,
@@ -25,7 +23,7 @@ import {
 	valueStorageExpr,
 	type BuiltTypeSurface
 } from '../factories.ts';
-import { collectCatalogKinds, collectKindEntries, kindDiscriminantExpr, type KindEnumEntry } from '../kind-discriminant.ts';
+import { kindDiscriminantExpr, type KindEnumEntry } from '../kind-discriminant.ts';
 import {
 	armConfigKeys,
 	seatsConfigChild,
@@ -33,15 +31,13 @@ import {
 	emittedElementsSeats,
 	flattenSeatsOf,
 	tupleSeatOf,
-	subFactoriesOf,
-	variantArmsOf,
 	type FlattenKey,
 	type FlattenSeat,
 	type FlattenedSeat,
 	type SubFactory
-} from './sub-factories.ts';
-import { bundleEntries, bundleExpr, flattenedVariantParents, hasOneSurface, overlayFrame, overlayImportPath, type FlattenedVariantParent } from './module.ts';
-import { lowerCamelCase } from '../../compiler/model/casing.ts';
+} from '../../compiler/model/sub-factories.ts';
+import { bundleEntries, bundleExpr, overlayFrame, overlayImportPath } from './module.ts';
+import { armRoutesOf, flattenedVariantParents, hasOneSurface, isHoistedCompound, isNamespaceArm, type AliasWire, type FlattenedVariantParent } from '../../compiler/model/ir-surface.ts';
 
 interface FlavorRefs {
 	readonly strict: string;
@@ -51,12 +47,6 @@ interface FlavorRefs {
 }
 
 type CoerceEmitted = (node: AssembledNode) => boolean;
-
-function isHoistedCompound(node: AssembledNode): boolean {
-	return (
-		node instanceof AbstractAssembledCompound && !(node instanceof AssembledList) && !node.ownSurface
-	);
-}
 
 function parentRefs(node: AssembledNode, coerceEmitted: CoerceEmitted): FlavorRefs {
 	return {
@@ -164,33 +154,6 @@ interface VariantRoute {
 	readonly max?: number;
 }
 
-export interface AliasWire {
-	readonly name: string;
-	readonly child: AssembledNode;
-}
-
-function variantAliasWires(
-	node: AssembledNode,
-	nodeMap: NodeMap,
-	isEmitted: (kind: string) => boolean,
-	subs: readonly SubFactory[]
-): readonly AliasWire[] {
-	if (!(node instanceof AbstractAssembledCompound)) return [];
-	const claimedNames = new Set(subs.map((s) => s.name));
-	const claimedKinds = new Set(subs.flatMap((s) => (s.arm.via === 'node' ? [s.arm.child.kind] : [])));
-	const aliases: AliasWire[] = [];
-	for (const variantChild of node.variantChildKinds) {
-		const visible = variantChild.kind;
-		const child = nodeMap.nodes.get(visible) ?? nodeMap.nodes.get(`_${visible}`);
-		if (child === undefined || child.rawFactoryName === undefined) continue;
-		if (!isEmitted(child.kind) || claimedKinds.has(child.kind)) continue;
-		const name = lowerCamelCase(variantChild.name);
-		if (claimedNames.has(name)) continue;
-		aliases.push({ name, child });
-	}
-	return aliases;
-}
-
 export interface PolymorphWireSet {
 	readonly parentKey: string;
 	readonly node: AssembledNode;
@@ -224,29 +187,11 @@ export interface PolymorphWires {
 	readonly routes: Map<string, number | undefined>;
 }
 
-export function collectPolymorphWires(
-	nodeMap: NodeMap,
-	generatedIdTables?: GeneratedIdTables,
-	options: { silent?: boolean } = {}
-): PolymorphWires {
-	const kindEntries = generatedIdTables
-		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
-		: undefined;
-	const isEmitted = (kind: string): boolean => {
-		const node = nodeMap.nodes.get(kind);
-		return node !== undefined && classifyFactoryEmission(kind, node, { nodeMap, kindEntries }) === 'emit';
-	};
+export function collectPolymorphWires(nodeMap: NodeMap, options: { silent?: boolean } = {}): PolymorphWires {
+	const routes = armRoutesOf(nodeMap);
+	const { kindEntries, isEmitted, keyByKind, bundledKinds, flattened } = routes;
 	const coerceEmitted: CoerceEmitted = (node) =>
 		node.fromFunctionName !== undefined && classifyFromEmission(node.kind, node, { nodeMap, kindEntries }) === 'emit';
-	const keyByKind = new Map(bundleEntries(nodeMap, generatedIdTables).map((e) => [e.node.kind, e.exportName]));
-	const bundledKinds = new Set(keyByKind.keys());
-	for (const [kind, node] of nodeMap.nodes) {
-		if (!isHoistedCompound(node) || node.factoryName === undefined || !isValidIdent(node.factoryName)) continue;
-		if (node.rawFactoryName === undefined || !isEmitted(kind) || keyByKind.has(kind)) continue;
-		keyByKind.set(kind, node.factoryName);
-	}
-	const flattened = new Map(flattenedVariantParents(nodeMap, generatedIdTables).map((parent) => [parent.node.kind, parent]));
-	for (const { key, node } of flattened.values()) if (!keyByKind.has(node.kind)) keyByKind.set(node.kind, key);
 	const warn = options.silent ? () => {} : (message: string) => console.warn(message);
 
 	const order: string[] = [];
@@ -266,44 +211,30 @@ export function collectPolymorphWires(
 
 	function visit(node: AssembledNode): void {
 		if (seen.has(node.kind) || visiting.has(node.kind)) return;
-		const parentKey = keyByKind.get(node.kind);
-		if (parentKey === undefined) {
+		const route = routes.byKind.get(node.kind);
+		if (route === undefined) {
 			seen.add(node.kind);
 			return;
 		}
-		const set = subFactoriesOf(node, nodeMap, { isEmitted });
+		const parentKey = route.parentKey;
 		visiting.add(node.kind);
-		for (const sub of set.entries) {
+		for (const sub of route.candidates) {
 			if (sub.arm.via === 'node') visit(sub.arm.child);
 		}
 		visiting.delete(node.kind);
-		for (const d of set.diagnostics) {
+		for (const d of route.diagnostics) {
 			warn(
 				d.reason === 'shared-key'
 					? `[codegen] ${node.kind}: sub-factory ${d.name} seated, not merged (${d.reason}: ${(d.keys ?? []).join(', ')}): ${d.claimants.join(', ')}`
 					: `[codegen] ${node.kind}: sub-factory ${d.name} skipped (${d.reason}): ${d.claimants.join(', ')}`
 			);
 		}
-		const subs = set.entries.filter((sub) => {
-			if (sub.arm.via === 'value') return true;
-			if (sub.arm.path.length > 0) {
-				const emitted = byKind.get(sub.arm.child.kind);
-				const step = sub.arm.path[0]!;
-				const child = sub.arm.child;
-				const present =
-					emitted !== undefined
-						? emitted.subs.some((e) => e.name === step) || emitted.aliases.some((a) => a.name === step)
-						: child instanceof AssembledSupertype && variantArmsOf(child).some((arm) => arm.name === step);
-				if (!present) {
-					warn(
-						`[codegen] ${node.kind}: sub-factory ${sub.name} skipped (context-mismatch): ${sub.arm.child.kind}.${sub.arm.path.join('.')}`
-					);
-					return false;
-				}
-			}
-			return childRefs(sub, keyByKind, coerceEmitted) !== undefined;
-		});
-		const aliases = variantAliasWires(node, nodeMap, isEmitted, subs);
+		for (const sub of route.mismatched) {
+			if (sub.arm.via !== 'node') continue;
+			warn(`[codegen] ${node.kind}: sub-factory ${sub.name} skipped (context-mismatch): ${sub.arm.child.kind}.${sub.arm.path.join('.')}`);
+		}
+		const subs = route.subs;
+		const aliases = route.aliases;
 		const flattens = flattenSeatsOf(node, nodeMap).filter((seat) => isEmitted(seat.group.kind));
 		const elements = emittedElementsSeats(node, nodeMap, kindEntries);
 		const forwarded = forwardedSeatsOf(node);
@@ -387,9 +318,6 @@ interface ArmEntry {
 	readonly children: Map<string, ArmEntry>;
 }
 
-function isNamespaceArm(sub: SubFactory): boolean {
-	return sub.arm.via === 'node' && sub.arm.path.length === 0 && sub.arm.child instanceof AssembledSupertype && sub.arm.child.defaultVariantSubtype === undefined;
-}
 
 function pairExpr(pair: ArmPair, path: string, routes: Map<string, number | undefined>): string {
 	routes.set(path, pair.max);
@@ -1095,7 +1023,7 @@ function entryRowsByIrPath(
 
 export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTables?: GeneratedIdTables; wires?: PolymorphWires }): PolymorphsOverlay {
 	const { nodeMap, generatedIdTables } = config;
-	const wires = config.wires ?? collectPolymorphWires(nodeMap, generatedIdTables);
+	const wires = config.wires ?? collectPolymorphWires(nodeMap);
 	const rowKindByPath = new Map<string, string>();
 	const sharedSetByPath = new Map<string, string>();
 
@@ -1238,7 +1166,7 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 	}
 
 	const defaultRoutes = new Map<string, Pick<VariantRoute, 'kind' | 'strict' | 'coerce' | 'set' | 'max'>>();
-	for (const parent of flattenedVariantParents(nodeMap, generatedIdTables)) {
+	for (const parent of flattenedVariantParents(nodeMap)) {
 		const lines: string[] = [];
 		const types: string[] = [];
 		const uses = new Set<string>();

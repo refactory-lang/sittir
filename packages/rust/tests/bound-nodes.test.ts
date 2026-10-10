@@ -18,8 +18,8 @@ describe('a node built over parsed children', () => {
 	});
 
 	it('is rendered by the calling engine, with its options, whichever engine parsed its children', async () => {
-		const tabs = await createEngine(rust, { render: { indent: '\t' } });
-		const spaces = await createEngine(rust, { render: { indent: '  ' } });
+		const tabs = await createEngine(rust, { render: { layout: { indent: '\t' } } });
+		const spaces = await createEngine(rust, { render: { layout: { indent: '  ' } } });
 		const fn = spaces.parse(SOURCE).statements()[1] as any;
 		const block = tabs.build.block({
 			statements: [tabs.build.expressionStatement(tabs.build.identifier('a')), ...fn.body().statements()]
@@ -44,8 +44,8 @@ describe('a node built over parsed children', () => {
 
 describe('the engine a node belongs to', () => {
 	it('applies its render options to $render()', async () => {
-		const tabs = await createEngine(rust, { render: { indent: '\t' } });
-		const spaces = await createEngine(rust, { render: { indent: '  ' } });
+		const tabs = await createEngine(rust, { render: { layout: { indent: '\t' } } });
+		const spaces = await createEngine(rust, { render: { layout: { indent: '  ' } } });
 		const shape = (rs: typeof tabs) =>
 			rs.build.block({ statements: [rs.build.expressionStatement(rs.build.identifier('a'))] });
 		expect(shape(tabs).$render()).toBe('{\n\ta;\n}');

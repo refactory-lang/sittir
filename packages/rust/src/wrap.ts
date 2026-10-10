@@ -8,6 +8,7 @@ import {
 	hydrateWith,
 	hydrateSlotWith,
 	hydrateSlotsWith,
+	contentRole,
 	inTreeEngine,
 	currentHandle,
 	listSlotWith,
@@ -30,7 +31,7 @@ import {
 	triviaSide,
 	triviaInner
 } from '@sittir/common/utils';
-import type { TreeHandle } from '@sittir/common/utils';
+import type { Role, TreeHandle } from '@sittir/common/utils';
 import type { ParsedRoot } from '@sittir/common/engine';
 import type { AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';
 import { TSKindId } from './types.js';
@@ -47,8 +48,8 @@ const _wrap = (data: object, tree: TreeHandle): unknown => wrapNode(data as _Unt
 export function hydrate<T>(value: T, tree: TreeHandle, depth?: number): ParsedOfData<T> {
 	return hydrateWith(value, tree, _wrap, depth) as ParsedOfData<T>;
 }
-function hydrateSlot<T>(node: object, key: string, tree: TreeHandle): ParsedOfData<T> {
-	return hydrateSlotWith(node, key, tree, _wrap) as ParsedOfData<T>;
+function hydrateSlot<T>(node: object, key: string, tree: TreeHandle, role?: Role): ParsedOfData<T> {
+	return hydrateSlotWith(node, key, tree, _wrap, role) as ParsedOfData<T>;
 }
 function hydrateSlots<T>(node: object, key: string, tree: TreeHandle): readonly ParsedOfData<T>[] {
 	return hydrateSlotsWith(node, key, tree, _wrap) as readonly ParsedOfData<T>[];
@@ -6422,8 +6423,8 @@ export function wrapImplItemBody(data: T.ImplItemBody, tree: TreeHandle): T.Impl
 		whereClause() {
 			return hydrateSlot<T.WhereClause | undefined>(this, '_where_clause', tree);
 		},
-		declarationList() {
-			return hydrateSlot<T.DeclarationList>(this, '_declaration_list', tree);
+		body() {
+			return hydrateSlot<T.DeclarationList>(this, '_body', tree);
 		},
 		$with: {
 			unsafe: (v: NonNullable<T.ImplItemBody['_unsafe']>) =>
@@ -6455,8 +6456,8 @@ export function wrapImplItemBody(data: T.ImplItemBody, tree: TreeHandle): T.Impl
 							wrapImplItemBody({ ...$edited(data), _where_clause: v }, tree)
 					)
 				),
-			declarationList: (v: NonNullable<T.ImplItemBody['_declaration_list']>) =>
-				rebuilt(node, handle, () => wrapImplItemBody({ ...$edited(data), _declaration_list: v }, tree))
+			body: (v: NonNullable<T.ImplItemBody['_body']>) =>
+				rebuilt(node, handle, () => wrapImplItemBody({ ...$edited(data), _body: v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -8383,7 +8384,7 @@ export function wrapTypeIdentifier(data: T.TypeIdentifier, tree: TreeHandle): T.
 		...data,
 		$type: TSKindId.TypeIdentifier as const,
 		content() {
-			return hydrateSlot<T.Identifier>(this, '_content', tree);
+			return hydrateSlot<T.Identifier>(this, '_content', tree, contentRole(this, this._content));
 		},
 		$with: {
 			content: (v: NonNullable<T.TypeIdentifier['_content']>) =>
@@ -8406,7 +8407,7 @@ export function wrapFieldIdentifier(data: T.FieldIdentifier, tree: TreeHandle): 
 		...data,
 		$type: TSKindId.FieldIdentifier as const,
 		content() {
-			return hydrateSlot<T.Identifier>(this, '_content', tree);
+			return hydrateSlot<T.Identifier>(this, '_content', tree, contentRole(this, this._content));
 		},
 		$with: {
 			content: (v: NonNullable<T.FieldIdentifier['_content']>) =>
@@ -8432,7 +8433,7 @@ export function wrapShorthandFieldIdentifier(
 		...data,
 		$type: TSKindId.ShorthandFieldIdentifier as const,
 		content() {
-			return hydrateSlot<T.Identifier>(this, '_content', tree);
+			return hydrateSlot<T.Identifier>(this, '_content', tree, contentRole(this, this._content));
 		},
 		$with: {
 			content: (v: NonNullable<T.ShorthandFieldIdentifier['_content']>) =>

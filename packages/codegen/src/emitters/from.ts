@@ -154,8 +154,7 @@ function emitNamespaceImports(lines: string[], kindEntries: readonly KindEnumEnt
 	}
 	lines.push(DELIMITER_IMPORT);
 	lines.push(`import type { ${[TYPES_IMPORT_ALWAYS, ...TYPES_IMPORT_OPTIONAL].join(', ')} } from '@sittir/types';`);
-	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, isCoordinate, isNodeOfKind } from '@sittir/common/utils';");
-	lines.push("import { isNode } from '../utils.js';");
+	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, isNodeOfKind, isNodeValue } from '@sittir/common/utils';");
 	lines.push('');
 }
 
@@ -455,7 +454,7 @@ function emitBranchFrom(
 	if (slots.length > 0) {
 		if (canDirectFactoryCall) {
 			const interiorSole = interiorSlotGuards(node.kind, node).some((guard) => guard.slot === soleField.name);
-			const isNodeTest = interiorSole ? 'isNode(input)' : `isNodeOfKind(input, ${kindDiscriminantCheck(node.kind, kindEntries, nodeMap)})`;
+			const isNodeTest = interiorSole ? 'isNodeValue(input)' : `isNodeOfKind(input, ${kindDiscriminantCheck(node.kind, kindEntries, nodeMap)})`;
 			if (!holdsOwnKind(node, nodeMap)) {
 				lines.push(
 					`  if (${inputOptional ? 'input !== undefined && ' : ''}${isNodeTest}) return input as unknown as ${spelledType ?? returnType};`
@@ -607,7 +606,7 @@ function emitRestParamFromResolver(
 					`    if (${source}.length !== 1) return ${source};`,
 					`    const head: unknown = ${source}[0];`,
 					`    if (Array.isArray(head)) return head;`,
-					`    if (typeof head !== 'object' || head === null || isNode(head) || !(${JSON.stringify(unwrapConfigKey)} in head)) return ${source};`,
+					`    if (typeof head !== 'object' || head === null || isNodeValue(head) || !(${JSON.stringify(unwrapConfigKey)} in head)) return ${source};`,
 					`    const v = (head as Record<string, unknown>)[${JSON.stringify(unwrapConfigKey)}];`,
 					`    return Array.isArray(v) ? v : [v];`,
 					`  })();`
@@ -1199,7 +1198,7 @@ function emitResolveByKindHelper(lines: string[]): void {
 	lines.push('}');
 	lines.push('');
 	lines.push('function _splitTag(v: unknown): { readonly tag: unknown; readonly rest: _LooseFieldInput } | undefined {');
-	lines.push('  if (typeof v !== "object" || v === null || Array.isArray(v) || isNode(v) || isCoordinate(v) || !("$type" in v)) return undefined;');
+	lines.push('  if (typeof v !== "object" || v === null || Array.isArray(v) || isNodeValue(v) || !("$type" in v)) return undefined;');
 	lines.push('  const { $type, ...rest } = v as Record<string, unknown>;');
 	lines.push('  return { tag: $type, rest };');
 	lines.push('}');
@@ -1209,7 +1208,7 @@ function emitResolveByKindHelper(lines: string[]): void {
 	lines.push('  rest: _LooseFieldInput,');
 	lines.push('): ReturnType<_FromMap[K]> {');
 	lines.push('  const fn = _fromMap[kind] as (rest: _LooseFieldInput) => ReturnType<_FromMap[K]>;');
-	lines.push('  if (!(kind in _leafRegistry) || typeof rest !== "object" || rest === null || Array.isArray(rest) || isNode(rest)) return fn(rest);');
+	lines.push('  if (!(kind in _leafRegistry) || typeof rest !== "object" || rest === null || Array.isArray(rest) || isNodeValue(rest)) return fn(rest);');
 	lines.push('  const text = (rest as { text?: unknown }).text;');
 	lines.push('  if (typeof text !== "string") throw new Error(`the ${kind} tag takes its text: { $type: <kind id>, text: "…" }`);');
 	lines.push('  return fn(text);');
@@ -1352,7 +1351,7 @@ function emitResolveOneHelper(lines: string[], resolvesScalars: boolean): void {
 	lines.push('): Admit<T> {');
 	lines.push('  if (v === undefined || v === null) return v as Admit<T>;');
 	lines.push(
-		'  const kindId = isNode(v) || isCoordinate(v) ? v.$type : typeof v === "number" && _KIND_ID_STORED.has(v) ? v : undefined;'
+		'  const kindId = isNodeValue(v) ? v.$type : typeof v === "number" && _KIND_ID_STORED.has(v) ? v : undefined;'
 	);
 	// A value that already names its own kind (UntypedNode, or a stored kind-id)
 	// is never re-targeted by a declared default — there is nothing ambiguous
@@ -1367,7 +1366,7 @@ function emitResolveOneHelper(lines: string[], resolvesScalars: boolean): void {
 	lines.push('    const arms = branchKinds.filter((b) => _BARE_ACCEPTS[b]?.has(kindId) === true);');
 	lines.push('    const arm = arms.length <= 1 ? arms[0] : undefined;');
 	lines.push('    if (arm !== undefined && _isFromKind(arm)) return _resolveByKind(arm, v) as Admit<T>;');
-	lines.push('    if (isNode(v) || isCoordinate(v)) return v as Admit<T>;');
+	lines.push('    if (isNodeValue(v)) return v as Admit<T>;');
 	lines.push('    if (arms.length > 1) {');
 	lines.push(
 		'      throw new Error(`_resolveOne: a bare ${kindName ?? kindId} fits more than one arm: [${arms.join(", ")}]; name the arm explicitly`);'
@@ -1401,7 +1400,7 @@ function emitResolveOneHelper(lines: string[], resolvesScalars: boolean): void {
 	lines.push('  if (tagged !== undefined) {');
 	lines.push('    const built = _resolveByKind(_fromOfTag(tagged.tag, [...leafKinds, ...branchKinds]), tagged.rest) as _LooseFieldInput;');
 	lines.push(
-		'    return (isNode(built) ? _resolveOne<T>(built, leafKinds, branchKinds, defaultArm) : built) as Admit<T>;'
+		'    return (isNodeValue(built) ? _resolveOne<T>(built, leafKinds, branchKinds, defaultArm) : built) as Admit<T>;'
 	);
 	lines.push('  }');
 	lines.push('  if (branchKinds.length === 1 && typeof v === "object" && !Array.isArray(v)) {');
@@ -1451,11 +1450,11 @@ function emitAssertNonEmptyHelper(lines: string[]): void {
 }
 
 function emitLooseConfigGuard(lines: string[]): void {
-	lines.push('/** Narrows a coercer input to its config arm. A bare `isNode` check');
+	lines.push('/** Narrows a coercer input to its config arm. A bare `isNodeValue` check');
 	lines.push(' *  cannot: the UntypedNode arm is not a strict subtype of the config arm, so');
 	lines.push(' *  negative narrowing leaves it in place. */');
 	lines.push('function _isLooseConfig<C>(v: C | AnyUntypedNode): v is C {');
-	lines.push('  return !isNode(v);');
+	lines.push('  return !isNodeValue(v);');
 	lines.push('}');
 }
 
@@ -1761,10 +1760,10 @@ function emitResolverHelpers(
 	lines.push('): readonly unknown[] {');
 	lines.push('  const head = input[0];');
 	lines.push(
-		'  const optionsFirst = optionKeys.length > 0 && typeof head === "object" && head !== null && !Array.isArray(head) && !isNode(head) && Object.keys(head).every((k) => optionKeys.includes(k));'
+		'  const optionsFirst = optionKeys.length > 0 && typeof head === "object" && head !== null && !Array.isArray(head) && !isNodeValue(head) && Object.keys(head).every((k) => optionKeys.includes(k));'
 	);
 	lines.push('  const elements = (optionsFirst ? input.slice(1) : input).map((e) => {');
-	lines.push('    if (typeof e !== "object" || e === null || Array.isArray(e) || isNode(e)) return e;');
+	lines.push('    if (typeof e !== "object" || e === null || Array.isArray(e) || isNodeValue(e)) return e;');
 	lines.push('    const tagged = _splitTag(e);');
 	lines.push('    if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, tagKinds), tagged.rest);');
 	lines.push('    if (bagKinds === undefined || bagKinds.length === 0) return e;');
@@ -1772,7 +1771,7 @@ function emitResolverHelpers(
 	lines.push('    return _isFromKind(bagKinds[0]!) ? _resolveByKind(bagKinds[0]!, e) : e;');
 	lines.push('  });');
 	lines.push(
-		'  const resolved = elements.map((e) => (wrapperKind !== undefined && isNode(e) && typeof e.$type === "number" && KIND_NAMES.get(e.$type) === wrapperKind ? e : resolve([e])[0]));'
+		'  const resolved = elements.map((e) => (wrapperKind !== undefined && isNodeValue(e) && typeof e.$type === "number" && KIND_NAMES.get(e.$type) === wrapperKind ? e : resolve([e])[0]));'
 	);
 	lines.push('  return optionsFirst ? [head, ...resolved] : resolved;');
 	lines.push('}');
@@ -1780,7 +1779,7 @@ function emitResolverHelpers(
 
 	lines.push('function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): Admit<T> {');
 	lines.push('  if (v === undefined || v === null) return v as Admit<T>;');
-	lines.push('  if (isNode(v)) return v as Admit<T>;');
+	lines.push('  if (isNodeValue(v)) return v as Admit<T>;');
 	if (scalar.resolves) emitScalarFallthrough(lines);
 	lines.push('  if (typeof v === "string" && _leafRegistry[kind] !== undefined) return _buildGuardedText(v, kind) as Admit<T>;');
 	lines.push('  const tagged = _splitTag(v);');
@@ -1812,7 +1811,7 @@ function emitResolverHelpers(
 	lines.push('    const kn = _fromOfTag(tagged.tag, [kind]);');
 	lines.push('    if (kn !== kind && kind in _wrapKindIds) return _resolveOneBranch<T>(_resolveByKind(kn, tagged.rest), kind, altKinds);');
 	lines.push('  }');
-	lines.push('  if (isNode(v)) {');
+	lines.push('  if (isNodeValue(v)) {');
 	lines.push('    const wrapId = _wrapKindIds[kind];');
 	lines.push('    if (wrapId !== undefined && v.$type !== wrapId) {');
 	lines.push('      if (altKinds !== undefined && altKinds.some(k => k === v.$type)) return v as Admit<T>;');
@@ -1862,7 +1861,7 @@ function emitResolverHelpers(
 	lines.push('  if (v === undefined || v === null) return v as T;');
 	lines.push('  if (v === true || v === false) return v as T;');
 	lines.push('  if (typeof v === "string") return true as T;');
-	lines.push('  if (isNode(v)) return v as T;');
+	lines.push('  if (isNodeValue(v)) return v as T;');
 	lines.push('  if (Array.isArray(v)) return v as T;');
 	lines.push('  return v as T;');
 	lines.push('}');
@@ -1872,7 +1871,7 @@ function emitResolverHelpers(
 	lines.push('  if (typeof v === "number") return v as T;');
 	lines.push('  if (typeof v === "string") return v as T;');
 	lines.push('  if (Array.isArray(v)) return v as T;');
-	lines.push('  if (isNode(v)) return v as T;');
+	lines.push('  if (isNodeValue(v)) return v as T;');
 	lines.push('  return v as T;');
 	lines.push('}');
 	lines.push('');

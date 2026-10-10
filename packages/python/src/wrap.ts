@@ -8,6 +8,7 @@ import {
 	hydrateWith,
 	hydrateSlotWith,
 	hydrateSlotsWith,
+	contentRole,
 	inTreeEngine,
 	currentHandle,
 	listSlotWith,
@@ -31,7 +32,7 @@ import {
 	triviaSide,
 	triviaInner
 } from '@sittir/common/utils';
-import type { TreeHandle } from '@sittir/common/utils';
+import type { Role, TreeHandle } from '@sittir/common/utils';
 import type { ParsedRoot } from '@sittir/common/engine';
 import type { AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';
 import { TSKindId } from './types.js';
@@ -48,8 +49,8 @@ const _wrap = (data: object, tree: TreeHandle): unknown => wrapNode(data as _Unt
 export function hydrate<T>(value: T, tree: TreeHandle, depth?: number): ParsedOfData<T> {
 	return hydrateWith(value, tree, _wrap, depth) as ParsedOfData<T>;
 }
-function hydrateSlot<T>(node: object, key: string, tree: TreeHandle): ParsedOfData<T> {
-	return hydrateSlotWith(node, key, tree, _wrap) as ParsedOfData<T>;
+function hydrateSlot<T>(node: object, key: string, tree: TreeHandle, role?: Role): ParsedOfData<T> {
+	return hydrateSlotWith(node, key, tree, _wrap, role) as ParsedOfData<T>;
 }
 function hydrateSlots<T>(node: object, key: string, tree: TreeHandle): readonly ParsedOfData<T>[] {
 	return hydrateSlotsWith(node, key, tree, _wrap) as readonly ParsedOfData<T>[];
@@ -4010,17 +4011,17 @@ export function wrapCaseListPattern(data: T.CaseListPattern, tree: TreeHandle): 
 
 export function wrapPrintArguments(data: T.PrintArguments, tree: TreeHandle): T.PrintArguments.Parsed {
 	const handle = currentHandle();
-	const listedStored = storedElements(data._argument);
+	const listedStored = storedElements(data._item);
 	const node = {
 		...data,
 		$type: TSKindId.PrintArguments as const,
-		arguments() {
-			return hydrateSlots<T.Expression>(this, '_argument', tree);
+		items() {
+			return hydrateSlots<T.Expression>(this, '_item', tree);
 		},
 		$with: {},
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'arguments'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -4043,17 +4044,17 @@ export function wrapPrintChevronArguments(
 	tree: TreeHandle
 ): T.PrintChevronArguments.Parsed {
 	const handle = currentHandle();
-	const listedStored = storedElements(data._argument);
+	const listedStored = storedElements(data._item);
 	const node = {
 		...data,
 		$type: TSKindId.PrintChevronArguments as const,
-		arguments() {
-			return hydrateSlots<T.Expression>(this, '_argument', tree);
+		items() {
+			return hydrateSlots<T.Expression>(this, '_item', tree);
 		},
 		$with: {},
 		length: listedStored.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'arguments'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -4111,7 +4112,7 @@ export function wrapPrintStatementChevron(
 
 export function wrapPrintStatementPlain(data: T.PrintStatementPlain, tree: TreeHandle): T.PrintStatementPlain.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._print_arguments, '_argument', (list) => hydrate(list, tree));
+	const listView = ownerView(data._print_arguments, '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.PrintStatementPlain as const,
@@ -4131,7 +4132,7 @@ export function wrapPrintStatementPlain(data: T.PrintStatementPlain, tree: TreeH
 		},
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.printArguments(), 'arguments'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.printArguments(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -5082,7 +5083,7 @@ export function wrapNames(data: T.Names, tree: TreeHandle): T.Names.Parsed {
 		...data,
 		$type: TSKindId.Names as const,
 		content() {
-			return hydrateSlot<T.ImportList>(this, '_content', tree);
+			return hydrateSlot<T.ImportList>(this, '_content', tree, contentRole(this, this._content));
 		},
 		$with: {
 			content: (...args: unknown[]) =>
@@ -5111,7 +5112,7 @@ export function wrapAsPatternTarget(data: T.AsPatternTarget, tree: TreeHandle): 
 		...data,
 		$type: TSKindId.AsPatternTarget as const,
 		content() {
-			return hydrateSlot<T.Expression>(this, '_content', tree);
+			return hydrateSlot<T.Expression>(this, '_content', tree, contentRole(this, this._content));
 		},
 		$with: {
 			content: (v: NonNullable<T.AsPatternTarget['_content']>) =>
@@ -5134,7 +5135,7 @@ export function wrapFormatExpression(data: T.FormatExpression, tree: TreeHandle)
 		...data,
 		$type: TSKindId.FormatExpression as const,
 		content() {
-			return hydrateSlot<T.Interpolation>(this, '_content', tree);
+			return hydrateSlot<T.Interpolation>(this, '_content', tree, contentRole(this, this._content));
 		},
 		$with: {
 			content: (v: NonNullable<T.FormatExpression['_content']>) =>

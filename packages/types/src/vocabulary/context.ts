@@ -1,1068 +1,180 @@
 import type * as V from './index.ts';
-/** The typemap: one key per top-level namespace, projecting to that namespace's kind-set for a grammar, and the slots whose type the grammar states. */
-export interface GrammarContext {
-	readonly argument: unknown;
-	readonly attribute: unknown;
-	readonly clause: unknown;
-	readonly comment: unknown;
-	readonly declaration: unknown;
-	readonly element: unknown;
-	readonly expression: unknown;
-	readonly identifier: unknown;
-	readonly literal: unknown;
-	readonly modifier: unknown;
-	readonly module: unknown;
-	readonly pattern: unknown;
-	readonly statement: unknown;
-	readonly type: unknown;
-	readonly slots: SlotTable;
-}
-
-/** The slots the vocabulary names and the language states: by kind path, then member. A grammar fills each from its bindings. */
-export interface SlotTable {
-	readonly argument: {
-		readonly value: unknown;
-	};
-	readonly 'argument.keyword': {
-		readonly value: unknown;
-	};
-	readonly attribute: {
-		readonly content: unknown;
-	};
-	readonly 'attribute.content': {
-		readonly input: unknown;
-	};
-	readonly 'attribute.content.call': {
-		readonly arguments: unknown;
-		readonly function: unknown;
-		readonly typeArguments: unknown;
-	};
-	readonly 'attribute.content.member': {
-		readonly object: unknown;
-	};
-	readonly 'attribute.content.parenthesized': {
-		readonly expression: unknown;
-	};
-	readonly 'attribute.decorator': {
-		readonly content: unknown;
-	};
-	readonly 'clause.bounds': {
-		readonly bounds: unknown;
-	};
-	readonly 'clause.bounds.higher_ranked': {
-		readonly type: unknown;
-	};
-	readonly 'clause.bounds.removed': {
-		readonly type: unknown;
-	};
-	readonly 'clause.case': {
-		readonly bodies: unknown;
-		readonly consequence: unknown;
-		readonly value: unknown;
-	};
-	readonly 'clause.case.default': {
-		readonly bodies: unknown;
-	};
-	readonly 'clause.catch': {
-		readonly catchClauseGroup: unknown;
-	};
-	readonly 'clause.comprehension.for': {
-		readonly left: unknown;
-		readonly rights: unknown;
-	};
-	readonly 'clause.comprehension.if': {
-		readonly condition: unknown;
-	};
-	readonly 'clause.constraint': {
-		readonly content: unknown;
-		readonly type: unknown;
-	};
-	readonly 'clause.default': {
-		readonly type: unknown;
-	};
-	readonly 'clause.elif': {
-		readonly condition: unknown;
-		readonly consequence: unknown;
-	};
-	readonly 'clause.else': {
-		readonly body: unknown;
-	};
-	readonly 'clause.except': {
-		readonly exception: unknown;
-		readonly suite: unknown;
-	};
-	readonly 'clause.export.namespace': {
-		readonly moduleExportName: unknown;
-	};
-	readonly 'clause.export.specifier': {
-		readonly alias: unknown;
-		readonly exportKind: unknown;
-		readonly name: unknown;
-	};
-	readonly 'clause.extends': {
-		readonly extendsClauseSingles: unknown;
-	};
-	readonly 'clause.extends.type': {
-		readonly types: unknown;
-	};
-	readonly 'clause.finally': {
-		readonly block: unknown;
-	};
-	readonly 'clause.implements': {
-		readonly types: unknown;
-	};
-	readonly 'clause.import.attribute': {
-		readonly attributeKind: unknown;
-	};
-	readonly 'clause.import.list': {
-		readonly useClauses: unknown;
-	};
-	readonly 'clause.import.names': {
-		readonly content: unknown;
-	};
-	readonly 'clause.import.wildcard': {
-		readonly useWildcardGroup: unknown;
-	};
-	readonly 'clause.let': {
-		readonly pattern: unknown;
-		readonly value: unknown;
-	};
-	readonly 'clause.let.chain': {
-		readonly left: unknown;
-		readonly rights: unknown;
-	};
-	readonly 'clause.mapped_type': {
-		readonly alias: unknown;
-		readonly type: unknown;
-	};
-	readonly 'clause.match.arm.last': {
-		readonly value: unknown;
-	};
-	readonly 'clause.print': {
-		readonly expression: unknown;
-	};
-	readonly 'clause.print.chevron': {
-		readonly expression: unknown;
-	};
-	readonly 'clause.where.predicate': {
-		readonly left: unknown;
-	};
-	readonly 'clause.with.item': {
-		readonly value: unknown;
-	};
-	readonly comment: {
-		readonly content: unknown;
-	};
-	readonly 'comment.block': {
-		readonly content: unknown;
-	};
-	readonly 'comment.block.doc': {
-		readonly content: unknown;
-	};
-	readonly 'comment.block.doc.inner': {
-		readonly content: unknown;
-	};
-	readonly 'comment.line': {
-		readonly content: unknown;
-	};
-	readonly 'comment.line.doc': {
-		readonly content: unknown;
-	};
-	readonly 'comment.line.doc.inner': {
-		readonly content: unknown;
-	};
-	readonly 'declaration.ambient': {
-		readonly content: unknown;
-	};
-	readonly 'declaration.class': {
-		readonly bases: unknown;
-		readonly body: unknown;
-		readonly implements: unknown;
-	};
-	readonly 'declaration.class.abstract': {
-		readonly body: unknown;
-		readonly implements: unknown;
-	};
-	readonly 'declaration.constant': {
-		readonly type: unknown;
-		readonly value: unknown;
-	};
-	readonly 'declaration.enum_member': {
-		readonly body: unknown;
-		readonly name: unknown;
-		readonly value: unknown;
-	};
-	readonly 'declaration.enum_member.struct': {
-		readonly body: unknown;
-		readonly value: unknown;
-	};
-	readonly 'declaration.enum_member.tuple': {
-		readonly body: unknown;
-		readonly value: unknown;
-	};
-	readonly 'declaration.extension': {
-		readonly implements: unknown;
-		readonly traitClause: unknown;
-		readonly type: unknown;
-	};
-	readonly 'declaration.extension.conformance': {
-		readonly implements: unknown;
-		readonly traitClause: unknown;
-		readonly type: unknown;
-	};
-	readonly 'declaration.field': {
-		readonly name: unknown;
-		readonly optionality: unknown;
-		readonly type: unknown;
-		readonly value: unknown;
-		readonly visibility: unknown;
-	};
-	readonly 'declaration.field.signature': {
-		readonly name: unknown;
-		readonly type: unknown;
-		readonly visibility: unknown;
-	};
-	readonly 'declaration.function': {
-		readonly body: unknown;
-		readonly parameters: unknown;
-		readonly returnType: unknown;
-	};
-	readonly 'declaration.function.generator': {
-		readonly returnType: unknown;
-	};
-	readonly 'declaration.function.signature': {
-		readonly functionModifiers: unknown;
-		readonly parameters: unknown;
-		readonly returnType: unknown;
-	};
-	readonly 'declaration.interface': {
-		readonly body: unknown;
-	};
-	readonly 'declaration.interface.trait': {
-		readonly body: unknown;
-	};
-	readonly 'declaration.method': {
-		readonly accessor: unknown;
-		readonly body: unknown;
-		readonly name: unknown;
-		readonly parameters: unknown;
-		readonly returnType: unknown;
-		readonly visibility: unknown;
-	};
-	readonly 'declaration.method.signature': {
-		readonly accessor: unknown;
-		readonly functionModifiers: unknown;
-		readonly name: unknown;
-		readonly parameters: unknown;
-		readonly returnType: unknown;
-		readonly visibility: unknown;
-	};
-	readonly 'declaration.method.signature.abstract': {
-		readonly accessorKind: unknown;
-		readonly name: unknown;
-		readonly returnType: unknown;
-		readonly visibility: unknown;
-	};
-	readonly 'declaration.method.static': {
-		readonly parameters: unknown;
-		readonly returnType: unknown;
-	};
-	readonly 'declaration.module': {
-		readonly name: unknown;
-	};
-	readonly 'declaration.module.external': {
-		readonly name: unknown;
-	};
-	readonly 'declaration.module_property': {
-		readonly type: unknown;
-	};
-	readonly 'declaration.parameter': {
-		readonly default: unknown;
-		readonly name: unknown;
-		readonly type: unknown;
-		readonly visibility: unknown;
-	};
-	readonly 'declaration.parameter.default': {
-		readonly default: unknown;
-		readonly name: unknown;
-	};
-	readonly 'declaration.parameter.optional': {
-		readonly default: unknown;
-		readonly name: unknown;
-		readonly type: unknown;
-		readonly visibility: unknown;
-	};
-	readonly 'declaration.parameter.typed': {
-		readonly name: unknown;
-	};
-	readonly 'declaration.parameter.typed_default': {
-		readonly default: unknown;
-	};
-	readonly 'declaration.parameter.variadic': {
-		readonly pattern: unknown;
-	};
-	readonly 'declaration.signature.call': {
-		readonly returnType: unknown;
-	};
-	readonly 'declaration.signature.construct': {
-		readonly type: unknown;
-	};
-	readonly 'declaration.type_alias': {
-		readonly value: unknown;
-	};
-	readonly 'declaration.type_parameter': {
-		readonly default: unknown;
-	};
-	readonly 'declaration.type_parameter.const': {
-		readonly type: unknown;
-		readonly value: unknown;
-	};
-	readonly 'declaration.variable': {
-		readonly name: unknown;
-		readonly type: unknown;
-		readonly value: unknown;
-	};
-	readonly 'declaration.variable.lexical': {
-		readonly keyword: unknown;
-	};
-	readonly 'declaration.variable.pattern': {
-		readonly name: unknown;
-		readonly type: unknown;
-		readonly value: unknown;
-	};
-	readonly 'declaration.variable.static': {
-		readonly type: unknown;
-		readonly value: unknown;
-	};
-	readonly 'element.macro.token_repetition': {
-		readonly operator: unknown;
-		readonly tokens: unknown;
-	};
-	readonly 'element.macro.token_repetition.pattern': {
-		readonly operator: unknown;
-		readonly tokenPatterns: unknown;
-	};
-	readonly 'element.pair': {
-		readonly key: unknown;
-		readonly value: unknown;
-	};
-	readonly 'element.splat': {
-		readonly expression: unknown;
-	};
-	readonly 'element.splat.dictionary': {
-		readonly expression: unknown;
-	};
-	readonly 'element.struct.base': {
-		readonly value: unknown;
-	};
-	readonly 'element.struct.field': {
-		readonly value: unknown;
-	};
-	readonly 'element.template': {
-		readonly type: unknown;
-	};
-	readonly 'element.template.substitution': {
-		readonly type: unknown;
-	};
-	readonly 'element.tuple': {
-		readonly name: unknown;
-		readonly type: unknown;
-	};
-	readonly 'element.tuple.member': {
-		readonly name: unknown;
-		readonly type: unknown;
-	};
-	readonly 'element.tuple.member.optional': {
-		readonly type: unknown;
-	};
-	readonly 'element.type_argument': {
-		readonly content: unknown;
-	};
-	readonly 'element.type_binding': {
-		readonly type: unknown;
-	};
-	readonly 'expression.assignment': {
-		readonly left: unknown;
-		readonly right: unknown;
-	};
-	readonly 'expression.assignment.compound': {
-		readonly left: unknown;
-		readonly operator: unknown;
-		readonly right: unknown;
-	};
-	readonly 'expression.await': {
-		readonly expression: unknown;
-	};
-	readonly 'expression.binary': {
-		readonly binaryExpressionIn: unknown;
-		readonly left: unknown;
-		readonly operator: unknown;
-		readonly right: unknown;
-	};
-	readonly 'expression.binary.identity': {
-		readonly left: unknown;
-		readonly operator: unknown;
-	};
-	readonly 'expression.binary.identity.is': {
-		readonly left: unknown;
-		readonly operator: unknown;
-	};
-	readonly 'expression.binary.identity.is_not': {
-		readonly left: unknown;
-		readonly operator: unknown;
-	};
-	readonly 'expression.binary.logical': {
-		readonly left: unknown;
-		readonly operator: unknown;
-		readonly right: unknown;
-	};
-	readonly 'expression.binary.membership': {
-		readonly left: unknown;
-		readonly operator: unknown;
-	};
-	readonly 'expression.binary.membership.not_in': {
-		readonly left: unknown;
-		readonly operator: unknown;
-	};
-	readonly 'expression.call': {
-		readonly arguments: unknown;
-		readonly function: unknown;
-		readonly typeArguments: unknown;
-	};
-	readonly 'expression.call.member': {
-		readonly arguments: unknown;
-		readonly function: unknown;
-		readonly typeArguments: unknown;
-	};
-	readonly 'expression.call.new': {
-		readonly arguments: unknown;
-		readonly function: unknown;
-		readonly typeArguments: unknown;
-	};
-	readonly 'expression.call.path': {
-		readonly arguments: unknown;
-		readonly function: unknown;
-	};
-	readonly 'expression.call.template': {
-		readonly function: unknown;
-	};
-	readonly 'expression.cast': {
-		readonly expression: unknown;
-	};
-	readonly 'expression.cast.as': {
-		readonly expression: unknown;
-		readonly type: unknown;
-		readonly typeAnnotation: unknown;
-		readonly value: unknown;
-	};
-	readonly 'expression.cast.assertion': {
-		readonly expression: unknown;
-		readonly typeArguments: unknown;
-	};
-	readonly 'expression.cast.non_null': {
-		readonly expression: unknown;
-	};
-	readonly 'expression.cast.satisfies': {
-		readonly expression: unknown;
-		readonly typeAnnotation: unknown;
-	};
-	readonly 'expression.class': {
-		readonly body: unknown;
-		readonly implements: unknown;
-	};
-	readonly 'expression.collection.list': {
-		readonly collectionElements: unknown;
-		readonly elements: unknown;
-	};
-	readonly 'expression.collection.object': {
-		readonly properties: unknown;
-	};
-	readonly 'expression.collection.set': {
-		readonly collectionElements: unknown;
-	};
-	readonly 'expression.collection.struct': {
-		readonly name: unknown;
-	};
-	readonly 'expression.collection.tuple': {
-		readonly elements: unknown;
-		readonly expressions: unknown;
-	};
-	readonly 'expression.comprehension': {
-		readonly body: unknown;
-	};
-	readonly 'expression.comprehension.generator': {
-		readonly body: unknown;
-	};
-	readonly 'expression.comprehension.list': {
-		readonly body: unknown;
-	};
-	readonly 'expression.comprehension.set': {
-		readonly body: unknown;
-	};
-	readonly 'expression.conditional': {
-		readonly alternative: unknown;
-		readonly condition: unknown;
-		readonly consequence: unknown;
-	};
-	readonly 'expression.function': {
-		readonly returnType: unknown;
-	};
-	readonly 'expression.function.generator': {
-		readonly returnType: unknown;
-	};
-	readonly 'expression.instantiation': {
-		readonly expression: unknown;
-		readonly function: unknown;
-		readonly typeArguments: unknown;
-	};
-	readonly 'expression.interpolation': {
-		readonly expression: unknown;
-	};
-	readonly 'expression.interpolation.format': {
-		readonly elements: unknown;
-	};
-	readonly 'expression.lambda': {
-		readonly body: unknown;
-		readonly parameters: unknown;
-	};
-	readonly 'expression.member': {
-		readonly object: unknown;
-		readonly property: unknown;
-	};
-	readonly 'expression.parenthesized': {
-		readonly expression: unknown;
-	};
-	readonly 'expression.sequence': {
-		readonly expressions: unknown;
-	};
-	readonly 'expression.slice': {
-		readonly start: unknown;
-		readonly step: unknown;
-		readonly stop: unknown;
-	};
-	readonly 'expression.subscript': {
-		readonly index: unknown;
-		readonly object: unknown;
-	};
-	readonly 'expression.try': {
-		readonly argument: unknown;
-	};
-	readonly 'expression.unary': {
-		readonly argument: unknown;
-		readonly operator: unknown;
-	};
-	readonly 'expression.update': {
-		readonly argument: unknown;
-		readonly operator: unknown;
-	};
-	readonly 'expression.yield': {
-		readonly content: unknown;
-		readonly expression: unknown;
-	};
-	readonly 'expression.yield.delegate': {
-		readonly expression: unknown;
-	};
-	readonly 'identifier.metavariable': {
-		readonly name: unknown;
-	};
-	readonly 'identifier.property.computed': {
-		readonly expression: unknown;
-	};
-	readonly 'identifier.property.private': {
-		readonly content: unknown;
-	};
-	readonly 'identifier.scoped': {
-		readonly path: unknown;
-	};
-	readonly 'literal.number.float': {
-		readonly exponent: unknown;
-		readonly fraction: unknown;
-		readonly integer: unknown;
-		readonly marker: unknown;
-		readonly sign: unknown;
-	};
-	readonly 'literal.number.integer': {
-		readonly content: unknown;
-		readonly prefix: unknown;
-	};
-	readonly 'literal.number.integer.hex': {
-		readonly content: unknown;
-		readonly prefix: unknown;
-		readonly suffix: unknown;
-	};
-	readonly 'literal.string': {
-		readonly content: unknown;
-		readonly contents: unknown;
-	};
-	readonly 'literal.string.docstring': {
-		readonly contents: unknown;
-	};
-	readonly 'literal.string.escape': {
-		readonly content: unknown;
-	};
-	readonly 'literal.string.raw': {
-		readonly content: unknown;
-	};
-	readonly 'literal.template': {
-		readonly elements: unknown;
-	};
-	readonly module: {
-		readonly statements: unknown;
-	};
-	readonly 'pattern.array': {
-		readonly elements: unknown;
-	};
-	readonly 'pattern.as': {
-		readonly alias: unknown;
-		readonly expression: unknown;
-	};
-	readonly 'pattern.assignment': {
-		readonly left: unknown;
-		readonly right: unknown;
-	};
-	readonly 'pattern.captured': {
-		readonly pattern: unknown;
-	};
-	readonly 'pattern.case': {
-		readonly content: unknown;
-	};
-	readonly 'pattern.case.complex': {
-		readonly operator: unknown;
-	};
-	readonly 'pattern.case.dictionary': {
-		readonly elements: unknown;
-	};
-	readonly 'pattern.case.keyword': {
-		readonly value: unknown;
-	};
-	readonly 'pattern.case.or': {
-		readonly patterns: unknown;
-	};
-	readonly 'pattern.case.splat': {
-		readonly operator: unknown;
-	};
-	readonly 'pattern.list': {
-		readonly patterns: unknown;
-	};
-	readonly 'pattern.match': {
-		readonly condition: unknown;
-		readonly pattern: unknown;
-	};
-	readonly 'pattern.mutable': {
-		readonly pattern: unknown;
-	};
-	readonly 'pattern.object': {
-		readonly properties: unknown;
-	};
-	readonly 'pattern.object.assignment': {
-		readonly left: unknown;
-		readonly right: unknown;
-	};
-	readonly 'pattern.object.pair': {
-		readonly key: unknown;
-		readonly value: unknown;
-	};
-	readonly 'pattern.reference': {
-		readonly pattern: unknown;
-	};
-	readonly 'pattern.reference.value': {
-		readonly pattern: unknown;
-	};
-	readonly 'pattern.rest': {
-		readonly lhsExpression: unknown;
-	};
-	readonly 'pattern.slice': {
-		readonly patterns: unknown;
-	};
-	readonly 'pattern.splat': {
-		readonly target: unknown;
-	};
-	readonly 'pattern.splat.dictionary': {
-		readonly target: unknown;
-	};
-	readonly 'pattern.tuple': {
-		readonly elements: unknown;
-		readonly patterns: unknown;
-	};
-	readonly 'pattern.tuple.struct': {
-		readonly patterns: unknown;
-		readonly type: unknown;
-	};
-	readonly 'statement.assert': {
-		readonly expressions: unknown;
-	};
-	readonly 'statement.block': {
-		readonly statements: unknown;
-		readonly trailingExpression: unknown;
-	};
-	readonly 'statement.break': {
-		readonly expression: unknown;
-	};
-	readonly 'statement.delete': {
-		readonly expressions: unknown;
-	};
-	readonly 'statement.exec': {
-		readonly code: unknown;
-		readonly inClauses: unknown;
-	};
-	readonly 'statement.expression': {
-		readonly content: unknown;
-		readonly expression: unknown;
-	};
-	readonly 'statement.if': {
-		readonly condition: unknown;
-		readonly consequence: unknown;
-	};
-	readonly 'statement.import': {
-		readonly argument: unknown;
-		readonly fromClause: unknown;
-		readonly importClause: unknown;
-	};
-	readonly 'statement.labeled': {
-		readonly body: unknown;
-		readonly label: unknown;
-	};
-	readonly 'statement.loop': {
-		readonly body: unknown;
-	};
-	readonly 'statement.loop.counted': {
-		readonly body: unknown;
-		readonly condition: unknown;
-		readonly increment: unknown;
-		readonly initializer: unknown;
-	};
-	readonly 'statement.loop.do_while': {
-		readonly body: unknown;
-	};
-	readonly 'statement.loop.for': {
-		readonly body: unknown;
-		readonly forHeader: unknown;
-		readonly left: unknown;
-		readonly right: unknown;
-	};
-	readonly 'statement.loop.while': {
-		readonly body: unknown;
-		readonly condition: unknown;
-	};
-	readonly 'statement.match': {
-		readonly body: unknown;
-		readonly subject: unknown;
-	};
-	readonly 'statement.print': {
-		readonly printArguments: unknown;
-	};
-	readonly 'statement.print.chevron': {
-		readonly printChevronArguments: unknown;
-	};
-	readonly 'statement.return': {
-		readonly expression: unknown;
-	};
-	readonly 'statement.scope': {
-		readonly body: unknown;
-	};
-	readonly 'statement.throw': {
-		readonly cause: unknown;
-		readonly expression: unknown;
-	};
-	readonly 'statement.try': {
-		readonly body: unknown;
-	};
-	readonly 'statement.with': {
-		readonly body: unknown;
-	};
-	readonly type: {
-		readonly content: unknown;
-	};
-	readonly 'type.abstract': {
-		readonly trait: unknown;
-	};
-	readonly 'type.array': {
-		readonly element: unknown;
-		readonly length: unknown;
-		readonly type: unknown;
-	};
-	readonly 'type.bounded': {
-		readonly left: unknown;
-		readonly right: unknown;
-	};
-	readonly 'type.bracketed': {
-		readonly type: unknown;
-	};
-	readonly 'type.conditional': {
-		readonly alternative: unknown;
-		readonly consequence: unknown;
-		readonly left: unknown;
-		readonly right: unknown;
-	};
-	readonly 'type.dynamic': {
-		readonly trait: unknown;
-	};
-	readonly 'type.function': {
-		readonly content: unknown;
-		readonly parameters: unknown;
-		readonly returnType: unknown;
-	};
-	readonly 'type.function.constructor': {
-		readonly type: unknown;
-	};
-	readonly 'type.generic': {
-		readonly name: unknown;
-		readonly type: unknown;
-		readonly typeArguments: unknown;
-	};
-	readonly 'type.index_query': {
-		readonly type: unknown;
-	};
-	readonly 'type.infer': {
-		readonly type: unknown;
-	};
-	readonly 'type.intersection': {
-		readonly left: unknown;
-		readonly right: unknown;
-	};
-	readonly 'type.literal': {
-		readonly content: unknown;
-	};
-	readonly 'type.lookup': {
-		readonly indexType: unknown;
-		readonly type: unknown;
-	};
-	readonly 'type.maybe': {
-		readonly type: unknown;
-	};
-	readonly 'type.object': {
-		readonly closing: unknown;
-		readonly members: unknown;
-		readonly opening: unknown;
-	};
-	readonly 'type.optional': {
-		readonly type: unknown;
-	};
-	readonly 'type.parenthesized': {
-		readonly type: unknown;
-	};
-	readonly 'type.path': {
-		readonly path: unknown;
-	};
-	readonly 'type.path.expression': {
-		readonly path: unknown;
-	};
-	readonly 'type.predicate': {
-		readonly name: unknown;
-		readonly type: unknown;
-	};
-	readonly 'type.predicate.asserts': {
-		readonly value: unknown;
-	};
-	readonly 'type.qualified': {
-		readonly alias: unknown;
-		readonly type: unknown;
-	};
-	readonly 'type.query': {
-		readonly expression: unknown;
-	};
-	readonly 'type.readonly': {
-		readonly type: unknown;
-	};
-	readonly 'type.reference': {
-		readonly type: unknown;
-	};
-	readonly 'type.rest': {
-		readonly type: unknown;
-	};
-	readonly 'type.splat': {
-		readonly operator: unknown;
-	};
-	readonly 'type.template': {
-		readonly elements: unknown;
-	};
-	readonly 'type.tuple': {
-		readonly tupleTypeMembers: unknown;
-		readonly types: unknown;
-	};
-	readonly 'type.union': {
-		readonly left: unknown;
-		readonly right: unknown;
-	};
-}
-
-/** A grammar kind a member admits that no binding claims yet; the name says which. */
-export interface Unmapped<K extends string> {
-	readonly $unmapped: K;
-}
-
-/** The permissive closure: every namespace's full kind-set, and each slot's roles and refs, or `string` where it is text. */
-export interface BaseContext extends GrammarContext {
-	readonly argument: V.Argument.Any<BaseContext>;
-	readonly attribute: V.Attribute.Any<BaseContext>;
-	readonly clause: V.Clause.Any<BaseContext>;
-	readonly comment: V.Comment.Any<BaseContext>;
-	readonly declaration: V.Declaration.Any<BaseContext>;
-	readonly element: V.Element.Any<BaseContext>;
-	readonly expression: V.Expression.Any<BaseContext>;
-	readonly identifier: V.Identifier.Any<BaseContext>;
-	readonly literal: V.Literal.Any<BaseContext>;
-	readonly modifier: V.Modifier.Any<BaseContext>;
-	readonly module: V.Module.Any<BaseContext>;
-	readonly pattern: V.Pattern.Any<BaseContext>;
-	readonly statement: V.Statement.Any<BaseContext>;
-	readonly type: V.Type.Any<BaseContext>;
+/**
+ * The namespace map: one key per top-level namespace, holding that namespace's kinds over the context `G`, and the
+ * slot table, each slot holding its permissive fill over `G`: roles and refs where its arms are kinds, `string` where
+ * they are text. A grammar's context extends the map over itself and narrows each key to what the grammar realizes.
+ */
+export interface GrammarContext<G extends GrammarContext<G>> {
+	readonly argument: V.Argument.Any<G>;
+	readonly attribute: V.Attribute.Any<G>;
+	readonly clause: V.Clause.Any<G>;
+	readonly comment: V.Comment.Any<G>;
+	readonly declaration: V.Declaration.Any<G>;
+	readonly element: V.Element.Any<G>;
+	readonly expression: V.Expression.Any<G>;
+	readonly identifier: V.Identifier.Any<G>;
+	readonly literal: V.Literal.Any<G>;
+	readonly modifier: V.Modifier.Any<G>;
+	readonly module: V.Module.Any<G>;
+	readonly pattern: V.Pattern.Any<G>;
+	readonly statement: V.Statement.Any<G>;
+	readonly type: V.Type.Any<G>;
 	readonly slots: {
 		readonly argument: {
 			readonly value:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 		};
 		readonly 'argument.keyword': {
 			readonly value:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 		};
 		readonly attribute: {
 			readonly content:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern']
-				| V.Attribute.Content.Any<BaseContext>;
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| V.Attribute.Content.Any<G>;
 		};
 		readonly 'attribute.content': {
 			readonly input: unknown;
 		};
 		readonly 'attribute.content.call': {
 			readonly arguments:
-				| V.Declaration.Module<BaseContext>
-				| V.Element.Splat<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal'];
-			readonly function: V.Attribute.Content.Member<BaseContext> | BaseContext['identifier'];
-			readonly typeArguments: BaseContext['identifier'] | BaseContext['type'];
+				| V.Declaration.Module<G>
+				| V.Element.Splat<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal'];
+			readonly function: V.Attribute.Content.Member<G> | G['identifier'];
+			readonly typeArguments: G['identifier'] | G['type'];
 		};
 		readonly 'attribute.content.member': {
-			readonly object: V.Attribute.Content.Member<BaseContext> | BaseContext['identifier'];
+			readonly object: V.Attribute.Content.Member<G> | G['identifier'];
 		};
 		readonly 'attribute.content.parenthesized': {
-			readonly expression: BaseContext['identifier'] | V.Attribute.Content.Any<BaseContext>;
+			readonly expression: G['identifier'] | V.Attribute.Content.Any<G>;
 		};
 		readonly 'attribute.decorator': {
 			readonly content:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern']
-				| V.Attribute.Content.Any<BaseContext>;
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| V.Attribute.Content.Any<G>;
 		};
 		readonly 'clause.bounds': {
 			readonly bounds:
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| V.Clause.Bounds.Any<BaseContext>
-				| BaseContext['type'];
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| V.Clause.Bounds.Any<G>
+				| G['type'];
 		};
 		readonly 'clause.bounds.higher_ranked': {
 			readonly type:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| BaseContext['type'];
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['type'];
 		};
 		readonly 'clause.bounds.removed': {
 			readonly type:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| BaseContext['type'];
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['type'];
 		};
 		readonly 'clause.case': {
-			readonly bodies: V.Clause.Import.Alias<BaseContext> | BaseContext['declaration'] | BaseContext['statement'];
-			readonly consequence: V.Declaration.TypeAlias<BaseContext> | BaseContext['statement'];
+			readonly bodies: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+			readonly consequence: V.Declaration.TypeAlias<G> | G['statement'];
 			readonly value:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal'];
 		};
 		readonly 'clause.case.default': {
-			readonly bodies: V.Clause.Import.Alias<BaseContext> | BaseContext['declaration'] | BaseContext['statement'];
+			readonly bodies: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
 		};
 		readonly 'clause.catch': {
 			readonly catchClauseGroup: unknown;
 		};
 		readonly 'clause.comprehension.for': {
-			readonly left: BaseContext['expression'] | BaseContext['identifier'] | BaseContext['pattern'];
+			readonly left: G['expression'] | G['identifier'] | G['pattern'];
 			readonly rights:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 		};
 		readonly 'clause.comprehension.if': {
 			readonly condition:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 		};
 		readonly 'clause.constraint': {
 			readonly content: string;
-			readonly type: BaseContext['identifier'] | BaseContext['type'];
+			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'clause.default': {
-			readonly type: BaseContext['identifier'] | BaseContext['type'];
+			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'clause.elif': {
 			readonly condition:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
-			readonly consequence: V.Declaration.TypeAlias<BaseContext> | BaseContext['statement'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
+			readonly consequence: V.Declaration.TypeAlias<G> | G['statement'];
 		};
 		readonly 'clause.else': {
-			readonly body: V.Clause.Import.Alias<BaseContext> | BaseContext['declaration'] | BaseContext['statement'];
+			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
 		};
 		readonly 'clause.except': {
 			readonly exception:
 				| unknown
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
-			readonly suite: V.Declaration.TypeAlias<BaseContext> | BaseContext['statement'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
+			readonly suite: V.Declaration.TypeAlias<G> | G['statement'];
 		};
 		readonly 'clause.export.namespace': {
-			readonly moduleExportName: BaseContext['identifier'] | V.Literal.String<BaseContext>;
+			readonly moduleExportName: G['identifier'] | V.Literal.String<G>;
 		};
 		readonly 'clause.export.specifier': {
-			readonly alias: BaseContext['identifier'] | V.Literal.String<BaseContext>;
+			readonly alias: G['identifier'] | V.Literal.String<G>;
 			readonly exportKind: string;
-			readonly name: BaseContext['identifier'] | V.Literal.String<BaseContext>;
+			readonly name: G['identifier'] | V.Literal.String<G>;
 		};
 		readonly 'clause.extends': {
 			readonly extendsClauseSingles: unknown;
 		};
 		readonly 'clause.extends.type': {
-			readonly types: V.Identifier.Type<BaseContext> | BaseContext['type'];
+			readonly types: V.Identifier.Type<G> | G['type'];
 		};
 		readonly 'clause.finally': {
-			readonly block: V.Declaration.TypeAlias<BaseContext> | BaseContext['statement'];
+			readonly block: V.Declaration.TypeAlias<G> | G['statement'];
 		};
 		readonly 'clause.implements': {
-			readonly types: BaseContext['identifier'] | BaseContext['type'];
+			readonly types: G['identifier'] | G['type'];
 		};
 		readonly 'clause.import.attribute': {
 			readonly attributeKind: string;
 		};
 		readonly 'clause.import.list': {
-			readonly useClauses: BaseContext['identifier'] | V.Clause.Import.Any<BaseContext>;
+			readonly useClauses: G['identifier'] | V.Clause.Import.Any<G>;
 		};
 		readonly 'clause.import.names': {
-			readonly content: unknown | V.Clause.Import.Any<BaseContext>;
+			readonly content: unknown | V.Clause.Import.Any<G>;
 		};
 		readonly 'clause.import.wildcard': {
 			readonly useWildcardGroup: unknown;
@@ -1070,59 +182,59 @@ export interface BaseContext extends GrammarContext {
 		readonly 'clause.let': {
 			readonly pattern: unknown;
 			readonly value:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['statement'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement'];
 		};
 		readonly 'clause.let.chain': {
 			readonly left:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| V.Clause.Let.Any<BaseContext>
-				| BaseContext['statement'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| V.Clause.Let.Any<G>
+				| G['statement'];
 			readonly rights:
-				| V.Clause.Let<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['statement'];
+				| V.Clause.Let<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement'];
 		};
 		readonly 'clause.mapped_type': {
-			readonly alias: BaseContext['identifier'] | BaseContext['type'];
-			readonly type: BaseContext['identifier'] | BaseContext['type'];
+			readonly alias: G['identifier'] | G['type'];
+			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'clause.match.arm.last': {
 			readonly value:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['statement'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement'];
 		};
 		readonly 'clause.print': {
 			readonly expression:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 		};
 		readonly 'clause.print.chevron': {
 			readonly expression:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 		};
 		readonly 'clause.where.predicate': {
-			readonly left: V.Clause.Bounds.HigherRanked<BaseContext> | BaseContext['identifier'] | BaseContext['type'];
+			readonly left: V.Clause.Bounds.HigherRanked<G> | G['identifier'] | G['type'];
 		};
 		readonly 'clause.with.item': {
 			readonly value:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 		};
 		readonly comment: {
 			readonly content: unknown;
@@ -1147,943 +259,976 @@ export interface BaseContext extends GrammarContext {
 		};
 		readonly 'declaration.ambient': {
 			readonly content:
-				| V.Clause.Import.Alias<BaseContext>
-				| BaseContext['declaration']
-				| V.Statement.Block<BaseContext>;
+				| V.Clause.Import.Alias<G>
+				| G['declaration']
+				| V.Statement.Block<G>;
 		};
 		readonly 'declaration.class': {
 			readonly bases:
-				| V.Argument.Keyword<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern']
-				| V.Element.Splat.Any<BaseContext>;
-			readonly body: BaseContext['declaration'] | BaseContext['statement'];
-			readonly implements: BaseContext['identifier'] | BaseContext['type'];
+				| V.Argument.Keyword<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| V.Element.Splat.Any<G>;
+			readonly body: G['declaration'] | G['statement'];
+			readonly implements: G['identifier'] | G['type'];
 		};
 		readonly 'declaration.class.abstract': {
-			readonly body: BaseContext['declaration'] | V.Statement.Block.Static<BaseContext>;
-			readonly implements: BaseContext['identifier'] | BaseContext['type'];
+			readonly body: G['declaration'] | V.Statement.Block.Static<G>;
+			readonly implements: G['identifier'] | G['type'];
 		};
 		readonly 'declaration.constant': {
 			readonly type:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| BaseContext['type'];
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['type'];
 			readonly value:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['statement'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement'];
 		};
 		readonly 'declaration.enum_member': {
-			readonly body: unknown | V.Declaration.Field<BaseContext>;
-			readonly name: BaseContext['identifier'] | BaseContext['literal'] | string;
+			readonly body: unknown | V.Declaration.Field<G>;
+			readonly name: G['identifier'] | G['literal'] | string;
 			readonly value:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['statement'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement'];
 		};
 		readonly 'declaration.enum_member.struct': {
-			readonly body: unknown | V.Declaration.Field<BaseContext>;
+			readonly body: unknown | V.Declaration.Field<G>;
 			readonly value:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['statement'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement'];
 		};
 		readonly 'declaration.enum_member.tuple': {
-			readonly body: unknown | V.Declaration.Field<BaseContext>;
+			readonly body: unknown | V.Declaration.Field<G>;
 			readonly value:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['statement'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement'];
 		};
 		readonly 'declaration.extension': {
 			readonly implements: unknown;
 			readonly traitClause: unknown;
 			readonly type:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| BaseContext['type'];
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['type'];
 		};
 		readonly 'declaration.extension.conformance': {
 			readonly implements: unknown;
 			readonly traitClause: unknown;
 			readonly type:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| BaseContext['type'];
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['type'];
 		};
 		readonly 'declaration.field': {
-			readonly name: BaseContext['identifier'] | BaseContext['literal'] | string;
+			readonly name: G['identifier'] | G['literal'] | string;
 			readonly optionality: string;
 			readonly type:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| BaseContext['type'];
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['type'];
 			readonly value:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal'];
-			readonly visibility: V.Modifier.Visibility<BaseContext> | string;
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal'];
+			readonly visibility: V.Modifier.Visibility<G>;
 		};
 		readonly 'declaration.field.signature': {
-			readonly name: BaseContext['literal'] | V.Identifier.Property.Any<BaseContext> | string;
-			readonly type: BaseContext['identifier'] | BaseContext['type'];
-			readonly visibility: string;
+			readonly name: G['literal'] | V.Identifier.Property.Any<G> | string;
+			readonly type: G['identifier'] | G['type'];
+			readonly visibility: V.Modifier.Visibility<G>;
 		};
 		readonly 'declaration.function': {
-			readonly body: V.Declaration.TypeAlias<BaseContext> | BaseContext['statement'];
+			readonly body: V.Declaration.TypeAlias<G> | G['statement'];
 			readonly parameters:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| BaseContext['pattern']
-				| V.Declaration.Parameter.Any<BaseContext>
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['pattern']
+				| V.Declaration.Parameter.Any<G>
 				| string
-				| BaseContext['type'];
+				| G['type'];
 			readonly returnType:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| BaseContext['type'];
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['type'];
 		};
 		readonly 'declaration.function.generator': {
-			readonly returnType: BaseContext['identifier'] | BaseContext['type'];
+			readonly returnType: G['identifier'] | G['type'];
 		};
 		readonly 'declaration.function.signature': {
-			readonly functionModifiers: V.Modifier.Extern<BaseContext> | string;
+			readonly functionModifiers: V.Modifier.Extern<G> | string;
 			readonly parameters:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| V.Declaration.Parameter.Any<BaseContext>
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| V.Declaration.Parameter.Any<G>
 				| string
-				| BaseContext['type'];
+				| G['type'];
 			readonly returnType:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| BaseContext['type'];
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['type'];
 		};
 		readonly 'declaration.interface': {
 			readonly body:
-				| BaseContext['attribute']
-				| BaseContext['declaration']
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['statement']
-				| V.Type.Object<BaseContext>;
+				| G['attribute']
+				| G['declaration']
+				| V.Expression.Call.Macro<G>
+				| G['statement']
+				| V.Type.Object<G>;
 		};
 		readonly 'declaration.interface.trait': {
 			readonly body:
-				| BaseContext['attribute']
-				| BaseContext['declaration']
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['statement'];
+				| G['attribute']
+				| G['declaration']
+				| V.Expression.Call.Macro<G>
+				| G['statement'];
 		};
 		readonly 'declaration.method': {
 			readonly accessor: string;
-			readonly body: V.Declaration.TypeAlias<BaseContext> | BaseContext['statement'];
-			readonly name: BaseContext['identifier'] | BaseContext['literal'] | string;
+			readonly body: V.Declaration.TypeAlias<G> | G['statement'];
+			readonly name: G['identifier'] | G['literal'] | string;
 			readonly parameters:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| BaseContext['pattern']
-				| V.Declaration.Parameter.Any<BaseContext>
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['pattern']
+				| V.Declaration.Parameter.Any<G>
 				| string
-				| BaseContext['type'];
+				| G['type'];
 			readonly returnType:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| BaseContext['type'];
-			readonly visibility: V.Modifier.Visibility<BaseContext> | string;
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['type'];
+			readonly visibility: V.Modifier.Visibility<G>;
 		};
 		readonly 'declaration.method.signature': {
 			readonly accessor: string;
-			readonly functionModifiers: V.Modifier.Extern<BaseContext> | string;
-			readonly name: BaseContext['identifier'] | BaseContext['literal'] | string;
+			readonly functionModifiers: V.Modifier.Extern<G> | string;
+			readonly name: G['identifier'] | G['literal'] | string;
 			readonly parameters:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| V.Declaration.Parameter.Any<BaseContext>
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| V.Declaration.Parameter.Any<G>
 				| string
-				| BaseContext['type'];
+				| G['type'];
 			readonly returnType:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| BaseContext['type'];
-			readonly visibility: V.Modifier.Visibility<BaseContext> | string;
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['type'];
+			readonly visibility: V.Modifier.Visibility<G>;
 		};
 		readonly 'declaration.method.signature.abstract': {
 			readonly accessorKind: string;
-			readonly name: BaseContext['literal'] | V.Identifier.Property.Any<BaseContext> | string;
-			readonly returnType: BaseContext['identifier'] | BaseContext['type'];
-			readonly visibility: string;
+			readonly name: G['literal'] | V.Identifier.Property.Any<G> | string;
+			readonly returnType: G['identifier'] | G['type'];
+			readonly visibility: V.Modifier.Visibility<G>;
 		};
 		readonly 'declaration.method.static': {
 			readonly parameters:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| V.Declaration.Parameter.Any<BaseContext>
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| V.Declaration.Parameter.Any<G>
 				| string
-				| BaseContext['type'];
+				| G['type'];
 			readonly returnType:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| BaseContext['type'];
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['type'];
 		};
 		readonly 'declaration.module': {
-			readonly name: BaseContext['identifier'] | V.Literal.String<BaseContext>;
+			readonly name: G['identifier'] | V.Literal.String<G>;
 		};
 		readonly 'declaration.module.external': {
-			readonly name: BaseContext['identifier'] | V.Literal.String<BaseContext>;
+			readonly name: G['identifier'] | V.Literal.String<G>;
 		};
 		readonly 'declaration.module_property': {
-			readonly type: BaseContext['identifier'] | BaseContext['type'];
+			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'declaration.parameter': {
 			readonly default:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 			readonly name:
 				| unknown
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| V.Literal.Null.Undefined<BaseContext>
-				| BaseContext['pattern'];
+				| G['expression']
+				| G['identifier']
+				| V.Literal.Null.Undefined<G>
+				| G['pattern'];
 			readonly type:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| BaseContext['type'];
-			readonly visibility: string;
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['type'];
+			readonly visibility: V.Modifier.Visibility<G>;
 		};
 		readonly 'declaration.parameter.default': {
 			readonly default:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
-			readonly name: BaseContext['identifier'] | V.Pattern.Tuple<BaseContext>;
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
+			readonly name: G['identifier'] | V.Pattern.Tuple<G>;
 		};
 		readonly 'declaration.parameter.optional': {
 			readonly default:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal'];
 			readonly name:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| V.Literal.Null.Undefined<BaseContext>
-				| BaseContext['pattern'];
-			readonly type: BaseContext['identifier'] | BaseContext['type'];
-			readonly visibility: string;
+				| G['expression']
+				| G['identifier']
+				| V.Literal.Null.Undefined<G>
+				| G['pattern'];
+			readonly type: G['identifier'] | G['type'];
+			readonly visibility: V.Modifier.Visibility<G>;
 		};
 		readonly 'declaration.parameter.typed': {
-			readonly name: BaseContext['identifier'] | V.Pattern.Splat.Any<BaseContext>;
+			readonly name: G['identifier'] | V.Pattern.Splat.Any<G>;
 		};
 		readonly 'declaration.parameter.typed_default': {
 			readonly default:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 		};
 		readonly 'declaration.parameter.variadic': {
 			readonly pattern: unknown;
 		};
 		readonly 'declaration.signature.call': {
-			readonly returnType: BaseContext['identifier'] | BaseContext['type'];
+			readonly returnType: G['identifier'] | G['type'];
 		};
 		readonly 'declaration.signature.construct': {
-			readonly type: BaseContext['identifier'] | BaseContext['type'];
+			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'declaration.type_alias': {
 			readonly value:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| BaseContext['type'];
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['type'];
 		};
 		readonly 'declaration.type_parameter': {
 			readonly default:
-				| BaseContext['clause']
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| BaseContext['type'];
+				| G['clause']
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['type'];
 		};
 		readonly 'declaration.type_parameter.const': {
 			readonly type:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| BaseContext['type'];
-			readonly value: BaseContext['identifier'] | BaseContext['literal'] | V.Statement.Block<BaseContext>;
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['type'];
+			readonly value: G['identifier'] | G['literal'] | V.Statement.Block<G>;
 		};
 		readonly 'declaration.variable': {
-			readonly name: unknown | BaseContext['expression'] | BaseContext['identifier'] | BaseContext['pattern'];
+			readonly binding: string;
+			readonly name: unknown | G['expression'] | G['identifier'] | G['pattern'];
 			readonly type:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| BaseContext['type'];
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['type'];
 			readonly value:
-				| BaseContext['declaration']
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern']
-				| BaseContext['statement'];
-		};
-		readonly 'declaration.variable.lexical': {
-			readonly keyword: string;
+				| G['declaration']
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| G['statement'];
 		};
 		readonly 'declaration.variable.pattern': {
-			readonly name: BaseContext['identifier'] | BaseContext['pattern'];
-			readonly type: BaseContext['identifier'] | BaseContext['type'];
+			readonly name: G['identifier'] | G['pattern'];
+			readonly type: G['identifier'] | G['type'];
 			readonly value:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal'];
 		};
 		readonly 'declaration.variable.static': {
 			readonly type:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| BaseContext['type'];
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['type'];
 			readonly value:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['statement'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement'];
 		};
 		readonly 'element.macro.token_repetition': {
 			readonly operator: string;
 			readonly tokens:
-				| BaseContext['identifier']
-				| BaseContext['literal']
+				| G['identifier']
+				| G['literal']
 				| string
-				| V.Element.Macro.Any<BaseContext>
-				| V.Type.Primitive<BaseContext>;
+				| V.Element.Macro.Any<G>
+				| V.Type.Primitive<G>;
 		};
 		readonly 'element.macro.token_repetition.pattern': {
 			readonly operator: string;
 			readonly tokenPatterns:
-				| BaseContext['identifier']
-				| BaseContext['literal']
+				| G['identifier']
+				| G['literal']
 				| string
-				| V.Element.Macro.Any<BaseContext>
-				| V.Type.Primitive<BaseContext>;
+				| V.Element.Macro.Any<G>
+				| V.Type.Primitive<G>;
 		};
 		readonly 'element.pair': {
 			readonly key:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern']
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
 				| string;
 			readonly value:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 		};
 		readonly 'element.splat': {
 			readonly expression:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 		};
 		readonly 'element.splat.dictionary': {
 			readonly expression:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 		};
 		readonly 'element.struct.base': {
 			readonly value:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['statement'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement'];
 		};
 		readonly 'element.struct.field': {
 			readonly value:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['statement'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement'];
 		};
 		readonly 'element.template': {
-			readonly type: BaseContext['identifier'] | BaseContext['type'];
+			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'element.template.substitution': {
-			readonly type: BaseContext['identifier'] | BaseContext['type'];
+			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'element.tuple': {
-			readonly name: BaseContext['identifier'] | V.Pattern.Rest<BaseContext>;
-			readonly type: BaseContext['identifier'] | BaseContext['type'];
+			readonly name: G['identifier'] | V.Pattern.Rest<G>;
+			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'element.tuple.member': {
-			readonly name: BaseContext['identifier'] | V.Pattern.Rest<BaseContext>;
-			readonly type: BaseContext['identifier'] | BaseContext['type'];
+			readonly name: G['identifier'] | V.Pattern.Rest<G>;
+			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'element.tuple.member.optional': {
-			readonly type: BaseContext['identifier'] | BaseContext['type'];
+			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'element.type_argument': {
 			readonly content:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Element.TypeBinding<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| V.Statement.Block<BaseContext>
-				| BaseContext['type'];
+				| V.Clause.Bounds.Removed<G>
+				| V.Element.TypeBinding<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['literal']
+				| V.Statement.Block<G>
+				| G['type'];
 		};
 		readonly 'element.type_binding': {
 			readonly type:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| BaseContext['type'];
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['type'];
 		};
 		readonly 'expression.assignment': {
 			readonly left:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern']
-				| BaseContext['statement']
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| G['statement']
 				| string;
 			readonly right:
-				| BaseContext['declaration']
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern']
-				| BaseContext['statement'];
+				| G['declaration']
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| G['statement'];
 		};
 		readonly 'expression.assignment.compound': {
 			readonly left:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern']
-				| BaseContext['statement']
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| G['statement']
 				| string;
 			readonly operator: string;
 			readonly right:
-				| BaseContext['declaration']
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern']
-				| BaseContext['statement'];
+				| G['declaration']
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| G['statement'];
 		};
 		readonly 'expression.await': {
 			readonly expression:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| V.Pattern.Splat<BaseContext>
-				| BaseContext['statement'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| V.Pattern.Splat<G>
+				| G['statement'];
 		};
 		readonly 'expression.binary': {
 			readonly binaryExpressionIn: unknown;
 			readonly left:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern']
-				| BaseContext['statement'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| G['statement'];
 			readonly operator: string;
 			readonly right:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern']
-				| BaseContext['statement'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| G['statement'];
 		};
 		readonly 'expression.binary.identity': {
 			readonly left:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| V.Pattern.Splat<BaseContext>;
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| V.Pattern.Splat<G>;
 			readonly operator: unknown;
 		};
 		readonly 'expression.binary.identity.is': {
 			readonly left:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| V.Pattern.Splat<BaseContext>;
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| V.Pattern.Splat<G>;
 			readonly operator: unknown;
 		};
 		readonly 'expression.binary.identity.is_not': {
 			readonly left:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| V.Pattern.Splat<BaseContext>;
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| V.Pattern.Splat<G>;
 			readonly operator: unknown;
 		};
 		readonly 'expression.binary.logical': {
 			readonly left:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 			readonly operator: string;
 			readonly right:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 		};
 		readonly 'expression.binary.membership': {
 			readonly left:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| V.Pattern.Splat<BaseContext>;
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| V.Pattern.Splat<G>;
 			readonly operator: unknown;
 		};
 		readonly 'expression.binary.membership.not_in': {
 			readonly left:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| V.Pattern.Splat<BaseContext>;
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| V.Pattern.Splat<G>;
 			readonly operator: unknown;
 		};
 		readonly 'expression.call': {
 			readonly arguments:
-				| V.Argument.Keyword<BaseContext>
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['element']
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern']
-				| BaseContext['statement'];
+				| V.Argument.Keyword<G>
+				| V.Declaration.Module<G>
+				| G['element']
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| G['statement'];
 			readonly function:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| V.Pattern.Splat<BaseContext>
-				| BaseContext['statement']
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| V.Pattern.Splat<G>
+				| G['statement']
 				| string;
-			readonly typeArguments: BaseContext['identifier'] | BaseContext['type'];
+			readonly typeArguments: G['identifier'] | G['type'];
 		};
 		readonly 'expression.call.member': {
 			readonly arguments:
-				| V.Argument.Keyword<BaseContext>
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern']
-				| V.Element.Splat.Any<BaseContext>
-				| BaseContext['statement'];
+				| V.Argument.Keyword<G>
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| V.Element.Splat.Any<G>
+				| G['statement'];
 			readonly function:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| V.Pattern.Splat<BaseContext>
-				| BaseContext['statement']
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| V.Pattern.Splat<G>
+				| G['statement']
 				| string;
-			readonly typeArguments: BaseContext['identifier'] | BaseContext['type'];
+			readonly typeArguments: G['identifier'] | G['type'];
 		};
 		readonly 'expression.call.new': {
 			readonly arguments:
-				| V.Declaration.Module<BaseContext>
-				| V.Element.Splat<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal'];
-			readonly function: BaseContext['expression'] | BaseContext['identifier'] | BaseContext['literal'];
-			readonly typeArguments: BaseContext['identifier'] | BaseContext['type'];
+				| V.Declaration.Module<G>
+				| V.Element.Splat<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal'];
+			readonly function: G['expression'] | G['identifier'] | G['literal'];
+			readonly typeArguments: G['identifier'] | G['type'];
 		};
 		readonly 'expression.call.path': {
 			readonly arguments:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['statement'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement'];
 			readonly function:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['statement']
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement']
 				| string;
 		};
 		readonly 'expression.call.template': {
-			readonly function: BaseContext['expression'] | BaseContext['identifier'] | BaseContext['literal'];
+			readonly function: G['expression'] | G['identifier'] | G['literal'];
 		};
 		readonly 'expression.cast': {
 			readonly expression:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal'];
 		};
 		readonly 'expression.cast.as': {
 			readonly expression:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal'];
 			readonly type:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| BaseContext['type'];
-			readonly typeAnnotation: BaseContext['identifier'] | string | BaseContext['type'];
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['type'];
+			readonly typeAnnotation: G['identifier'] | string | G['type'];
 			readonly value:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['statement'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement'];
 		};
 		readonly 'expression.cast.assertion': {
 			readonly expression:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal'];
-			readonly typeArguments: BaseContext['identifier'] | BaseContext['type'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal'];
+			readonly typeArguments: G['identifier'] | G['type'];
 		};
 		readonly 'expression.cast.non_null': {
 			readonly expression:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal'];
 		};
 		readonly 'expression.cast.satisfies': {
 			readonly expression:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal'];
-			readonly typeAnnotation: BaseContext['identifier'] | BaseContext['type'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal'];
+			readonly typeAnnotation: G['identifier'] | G['type'];
 		};
 		readonly 'expression.class': {
-			readonly body: BaseContext['declaration'] | V.Statement.Block.Static<BaseContext>;
-			readonly implements: BaseContext['identifier'] | BaseContext['type'];
+			readonly body: G['declaration'] | V.Statement.Block.Static<G>;
+			readonly implements: G['identifier'] | G['type'];
 		};
 		readonly 'expression.collection.list': {
 			readonly collectionElements:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern']
-				| V.Element.Splat.Any<BaseContext>;
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| V.Element.Splat.Any<G>;
 			readonly elements:
-				| V.Declaration.Module<BaseContext>
-				| V.Element.Splat<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal'];
+				| V.Declaration.Module<G>
+				| V.Element.Splat<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal'];
 		};
 		readonly 'expression.collection.object': {
 			readonly properties:
-				| V.Declaration.Method<BaseContext>
-				| BaseContext['element']
-				| V.Identifier.Property.Shorthand<BaseContext>
+				| V.Declaration.Method<G>
+				| G['element']
+				| V.Identifier.Property.Shorthand<G>
 				| string;
 		};
 		readonly 'expression.collection.set': {
 			readonly collectionElements:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern']
-				| V.Element.Splat.Any<BaseContext>;
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| V.Element.Splat.Any<G>;
 		};
 		readonly 'expression.collection.struct': {
-			readonly name: V.Identifier.Type<BaseContext> | BaseContext['type'];
+			readonly name: V.Identifier.Type<G> | G['type'];
 		};
 		readonly 'expression.collection.tuple': {
 			readonly elements:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern']
-				| V.Element.Splat.Any<BaseContext>;
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| V.Element.Splat.Any<G>;
 			readonly expressions:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['statement'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement'];
 		};
 		readonly 'expression.comprehension': {
 			readonly body:
-				| V.Element.Pair<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| V.Element.Pair<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 		};
 		readonly 'expression.comprehension.generator': {
 			readonly body:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 		};
 		readonly 'expression.comprehension.list': {
 			readonly body:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 		};
 		readonly 'expression.comprehension.set': {
 			readonly body:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 		};
 		readonly 'expression.conditional': {
 			readonly alternative:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 			readonly condition:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 			readonly consequence:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 		};
 		readonly 'expression.function': {
-			readonly returnType: BaseContext['identifier'] | BaseContext['type'];
+			readonly returnType: G['identifier'] | G['type'];
 		};
 		readonly 'expression.function.generator': {
-			readonly returnType: BaseContext['identifier'] | BaseContext['type'];
+			readonly returnType: G['identifier'] | G['type'];
 		};
 		readonly 'expression.instantiation': {
 			readonly expression:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal'];
-			readonly function: V.Expression.Member<BaseContext> | BaseContext['identifier'];
-			readonly typeArguments: V.Element.TypeArgument<BaseContext> | BaseContext['identifier'] | BaseContext['type'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal'];
+			readonly function: V.Expression.Member<G> | G['identifier'];
+			readonly typeArguments: V.Element.TypeArgument<G> | G['identifier'] | G['type'];
 		};
 		readonly 'expression.interpolation': {
 			readonly expression:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 		};
 		readonly 'expression.interpolation.format': {
-			readonly elements: V.Expression.Interpolation<BaseContext> | string;
+			readonly elements: V.Expression.Interpolation<G> | string;
 		};
 		readonly 'expression.lambda': {
 			readonly body:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern']
-				| V.Statement.Block<BaseContext>;
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| V.Statement.Block<G>;
 			readonly parameters:
-				| BaseContext['identifier']
-				| BaseContext['pattern']
-				| V.Declaration.Parameter.Any<BaseContext>;
+				| G['identifier']
+				| G['pattern']
+				| V.Declaration.Parameter.Any<G>;
 		};
 		readonly 'expression.member': {
 			readonly object:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| V.Pattern.Splat<BaseContext>
-				| BaseContext['statement'];
-			readonly property: BaseContext['identifier'] | V.Literal.Number.Integer<BaseContext>;
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| V.Pattern.Splat<G>
+				| G['statement'];
+			readonly property: G['identifier'] | V.Literal.Number.Integer<G>;
 		};
 		readonly 'expression.parenthesized': {
 			readonly expression:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern']
-				| BaseContext['statement'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| G['statement'];
 		};
 		readonly 'expression.sequence': {
 			readonly expressions:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal'];
 		};
 		readonly 'expression.slice': {
 			readonly start:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 			readonly step:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 			readonly stop:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 		};
 		readonly 'expression.subscript': {
 			readonly index:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['statement'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement'];
 			readonly object:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| V.Pattern.Splat<BaseContext>
-				| BaseContext['statement'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| V.Pattern.Splat<G>
+				| G['statement'];
 		};
 		readonly 'expression.try': {
 			readonly argument:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['statement'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement'];
 		};
 		readonly 'expression.unary': {
 			readonly argument:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| V.Pattern.Splat<BaseContext>
-				| BaseContext['statement'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| V.Pattern.Splat<G>
+				| G['statement'];
 			readonly operator: string;
 		};
 		readonly 'expression.update': {
 			readonly argument:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal'];
 			readonly operator: string;
 		};
 		readonly 'expression.yield': {
 			readonly content:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 			readonly expression:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['statement'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement'];
 		};
 		readonly 'expression.yield.delegate': {
 			readonly expression:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal'];
 		};
 		readonly 'identifier.metavariable': {
 			readonly name: unknown;
 		};
 		readonly 'identifier.property.computed': {
 			readonly expression:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal'];
 		};
 		readonly 'identifier.property.private': {
 			readonly content: unknown;
 		};
 		readonly 'identifier.scoped': {
-			readonly path: BaseContext['identifier'] | string | BaseContext['type'];
+			readonly path: G['identifier'] | string | G['type'];
 		};
 		readonly 'literal.number.float': {
 			readonly exponent: unknown;
 			readonly fraction: unknown;
+			readonly imaginary: unknown;
+			readonly integer: unknown;
+			readonly marker: string;
+			readonly sign: string;
+		};
+		readonly 'literal.number.float.leading_point': {
+			readonly exponent: unknown;
+			readonly fraction: unknown;
+			readonly imaginary: unknown;
+			readonly integer: unknown;
+			readonly marker: string;
+			readonly sign: string;
+		};
+		readonly 'literal.number.float.scientific': {
+			readonly exponent: unknown;
+			readonly imaginary: unknown;
 			readonly integer: unknown;
 			readonly marker: string;
 			readonly sign: string;
 		};
 		readonly 'literal.number.integer': {
 			readonly content: unknown;
+			readonly suffix: string;
+		};
+		readonly 'literal.number.integer.big.binary': {
+			readonly content: unknown;
+		};
+		readonly 'literal.number.integer.big.hex': {
+			readonly content: unknown;
+		};
+		readonly 'literal.number.integer.big.octal': {
+			readonly content: unknown;
+		};
+		readonly 'literal.number.integer.binary': {
+			readonly content: unknown;
 			readonly prefix: string;
+			readonly suffix: string;
 		};
 		readonly 'literal.number.integer.hex': {
 			readonly content: unknown;
 			readonly prefix: string;
 			readonly suffix: string;
 		};
+		readonly 'literal.number.integer.octal': {
+			readonly content: unknown;
+			readonly prefix: string;
+			readonly suffix: string;
+		};
 		readonly 'literal.string': {
-			readonly content: unknown | V.Literal.String.Escape<BaseContext>;
+			readonly content: unknown | V.Literal.String.Escape<G>;
 			readonly contents:
 				| unknown
-				| V.Expression.Interpolation<BaseContext>
-				| V.Literal.String.Escape<BaseContext>
+				| V.Expression.Interpolation<G>
+				| V.Literal.String.Escape<G>
 				| string;
 		};
 		readonly 'literal.string.docstring': {
 			readonly contents:
 				| unknown
-				| V.Expression.Interpolation<BaseContext>
-				| V.Literal.String.Escape<BaseContext>
+				| V.Expression.Interpolation<G>
+				| V.Literal.String.Escape<G>
 				| string;
 		};
 		readonly 'literal.string.escape': {
@@ -2093,46 +1238,46 @@ export interface BaseContext extends GrammarContext {
 			readonly content: unknown;
 		};
 		readonly 'literal.template': {
-			readonly elements: unknown | V.Expression.Interpolation<BaseContext> | V.Literal.String.Escape<BaseContext>;
+			readonly elements: unknown | V.Expression.Interpolation<G> | V.Literal.String.Escape<G>;
 		};
 		readonly module: {
 			readonly statements:
-				| BaseContext['attribute']
-				| V.Clause.Import.Alias<BaseContext>
-				| BaseContext['declaration']
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['statement'];
+				| G['attribute']
+				| V.Clause.Import.Alias<G>
+				| G['declaration']
+				| V.Expression.Call.Macro<G>
+				| G['statement'];
 		};
 		readonly 'pattern.array': {
 			readonly elements:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| V.Literal.Null.Undefined<BaseContext>
-				| BaseContext['pattern'];
+				| G['expression']
+				| G['identifier']
+				| V.Literal.Null.Undefined<G>
+				| G['pattern'];
 		};
 		readonly 'pattern.as': {
 			readonly alias:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 			readonly expression:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 		};
 		readonly 'pattern.assignment': {
 			readonly left:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| V.Literal.Null.Undefined<BaseContext>
-				| BaseContext['pattern'];
+				| G['expression']
+				| G['identifier']
+				| V.Literal.Null.Undefined<G>
+				| G['pattern'];
 			readonly right:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal'];
 		};
 		readonly 'pattern.captured': {
 			readonly pattern: unknown;
@@ -2140,69 +1285,69 @@ export interface BaseContext extends GrammarContext {
 		readonly 'pattern.case': {
 			readonly content:
 				| unknown
-				| V.Identifier.Dotted<BaseContext>
-				| BaseContext['literal']
+				| V.Identifier.Dotted<G>
+				| G['literal']
 				| string
-				| V.Pattern.Case.Any<BaseContext>;
+				| V.Pattern.Case.Any<G>;
 		};
 		readonly 'pattern.case.complex': {
 			readonly operator: string;
 		};
 		readonly 'pattern.case.dictionary': {
-			readonly elements: unknown | V.Pattern.Case.Splat<BaseContext>;
+			readonly elements: unknown | V.Pattern.Case.Splat<G>;
 		};
 		readonly 'pattern.case.keyword': {
 			readonly value:
 				| unknown
-				| V.Identifier.Dotted<BaseContext>
-				| BaseContext['literal']
+				| V.Identifier.Dotted<G>
+				| G['literal']
 				| string
-				| V.Pattern.Case.Any<BaseContext>;
+				| V.Pattern.Case.Any<G>;
 		};
 		readonly 'pattern.case.or': {
 			readonly patterns:
 				| unknown
-				| V.Identifier.Dotted<BaseContext>
-				| BaseContext['literal']
+				| V.Identifier.Dotted<G>
+				| G['literal']
 				| string
-				| V.Pattern.Case.Any<BaseContext>;
+				| V.Pattern.Case.Any<G>;
 		};
 		readonly 'pattern.case.splat': {
 			readonly operator: string;
 		};
 		readonly 'pattern.list': {
-			readonly patterns: BaseContext['expression'] | BaseContext['identifier'] | BaseContext['pattern'];
+			readonly patterns: G['expression'] | G['identifier'] | G['pattern'];
 		};
 		readonly 'pattern.match': {
 			readonly condition:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| V.Clause.Let.Any<BaseContext>
-				| BaseContext['statement'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| V.Clause.Let.Any<G>
+				| G['statement'];
 			readonly pattern: unknown;
 		};
 		readonly 'pattern.mutable': {
 			readonly pattern: unknown;
 		};
 		readonly 'pattern.object': {
-			readonly properties: BaseContext['identifier'] | BaseContext['pattern'] | string;
+			readonly properties: G['identifier'] | G['pattern'] | string;
 		};
 		readonly 'pattern.object.assignment': {
-			readonly left: BaseContext['identifier'] | BaseContext['pattern'] | string;
+			readonly left: G['identifier'] | G['pattern'] | string;
 			readonly right:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal'];
 		};
 		readonly 'pattern.object.pair': {
-			readonly key: BaseContext['literal'] | V.Identifier.Property.Any<BaseContext> | string;
+			readonly key: G['literal'] | V.Identifier.Property.Any<G> | string;
 			readonly value:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| V.Literal.Null.Undefined<BaseContext>
-				| BaseContext['pattern'];
+				| G['expression']
+				| G['identifier']
+				| V.Literal.Null.Undefined<G>
+				| G['pattern'];
 		};
 		readonly 'pattern.reference': {
 			readonly pattern: unknown;
@@ -2212,375 +1357,381 @@ export interface BaseContext extends GrammarContext {
 		};
 		readonly 'pattern.rest': {
 			readonly lhsExpression:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| V.Literal.Null.Undefined<BaseContext>
-				| BaseContext['pattern']
+				| G['expression']
+				| G['identifier']
+				| V.Literal.Null.Undefined<G>
+				| G['pattern']
 				| string;
 		};
 		readonly 'pattern.slice': {
 			readonly patterns: unknown;
 		};
 		readonly 'pattern.splat': {
-			readonly target: BaseContext['expression'] | BaseContext['identifier'] | string;
+			readonly target: G['expression'] | G['identifier'] | string;
 		};
 		readonly 'pattern.splat.dictionary': {
-			readonly target: BaseContext['expression'] | BaseContext['identifier'] | string;
+			readonly target: G['expression'] | G['identifier'] | string;
 		};
 		readonly 'pattern.tuple': {
-			readonly elements: unknown | V.Expression.Lambda<BaseContext>;
-			readonly patterns: unknown | BaseContext['expression'] | BaseContext['identifier'] | BaseContext['pattern'];
+			readonly elements: unknown | V.Expression.Lambda<G>;
+			readonly patterns: unknown | G['expression'] | G['identifier'] | G['pattern'];
 		};
 		readonly 'pattern.tuple.struct': {
 			readonly patterns: unknown;
-			readonly type: BaseContext['identifier'] | V.Type.Generic.Turbofish<BaseContext>;
+			readonly type: G['identifier'] | V.Type.Generic.Turbofish<G>;
 		};
 		readonly 'statement.assert': {
 			readonly expressions:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 		};
 		readonly 'statement.block': {
 			readonly statements:
-				| BaseContext['attribute']
-				| V.Clause.Import.Alias<BaseContext>
-				| BaseContext['declaration']
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['statement'];
+				| G['attribute']
+				| V.Clause.Import.Alias<G>
+				| G['declaration']
+				| V.Expression.Call.Macro<G>
+				| G['statement'];
 			readonly trailingExpression:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['statement'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement'];
 		};
 		readonly 'statement.break': {
 			readonly expression:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['statement'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement'];
 		};
 		readonly 'statement.delete': {
 			readonly expressions:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 		};
 		readonly 'statement.exec': {
-			readonly code: BaseContext['identifier'] | V.Literal.String<BaseContext>;
+			readonly code: G['identifier'] | V.Literal.String<G>;
 			readonly inClauses:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 		};
 		readonly 'statement.expression': {
 			readonly content:
-				| V.Declaration.Variable<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern']
-				| BaseContext['statement'];
+				| V.Declaration.Variable<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| G['statement'];
 			readonly expression:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal'];
 		};
 		readonly 'statement.if': {
 			readonly condition:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern']
-				| V.Clause.Let.Any<BaseContext>
-				| BaseContext['statement'];
-			readonly consequence: V.Clause.Import.Alias<BaseContext> | BaseContext['declaration'] | BaseContext['statement'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| V.Clause.Let.Any<G>
+				| G['statement'];
+			readonly consequence: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
 		};
 		readonly 'statement.import': {
-			readonly argument: BaseContext['identifier'] | V.Clause.Import.Any<BaseContext> | string;
-			readonly fromClause: unknown | V.Clause.Import.Require<BaseContext> | V.Literal.String<BaseContext>;
+			readonly argument: G['identifier'] | V.Clause.Import.Any<G> | string;
+			readonly fromClause: unknown | V.Clause.Import.Require<G> | V.Literal.String<G>;
 			readonly importClause: string;
 		};
 		readonly 'statement.labeled': {
-			readonly body: V.Clause.Import.Alias<BaseContext> | BaseContext['declaration'] | BaseContext['statement'];
-			readonly label: V.Identifier.Label<BaseContext> | string;
+			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+			readonly label: V.Identifier.Label<G> | string;
 		};
 		readonly 'statement.loop': {
-			readonly body: V.Clause.Import.Alias<BaseContext> | BaseContext['declaration'] | BaseContext['statement'];
+			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
 		};
 		readonly 'statement.loop.counted': {
-			readonly body: V.Clause.Import.Alias<BaseContext> | BaseContext['declaration'] | BaseContext['statement'];
+			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
 			readonly condition:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| V.Statement.Empty<BaseContext>;
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| V.Statement.Empty<G>;
 			readonly increment:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal'];
 			readonly initializer:
-				| BaseContext['declaration']
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| V.Statement.Empty<BaseContext>;
+				| G['declaration']
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| V.Statement.Empty<G>;
 		};
 		readonly 'statement.loop.do_while': {
-			readonly body: V.Clause.Import.Alias<BaseContext> | BaseContext['declaration'] | BaseContext['statement'];
+			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
 		};
 		readonly 'statement.loop.for': {
-			readonly body: V.Clause.Import.Alias<BaseContext> | BaseContext['declaration'] | BaseContext['statement'];
+			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
 			readonly forHeader: unknown;
-			readonly left: unknown | BaseContext['expression'] | BaseContext['identifier'] | BaseContext['pattern'];
+			readonly left: unknown | G['expression'] | G['identifier'] | G['pattern'];
 			readonly right:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern']
-				| BaseContext['statement'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| G['statement'];
 		};
 		readonly 'statement.loop.while': {
-			readonly body: V.Clause.Import.Alias<BaseContext> | BaseContext['declaration'] | BaseContext['statement'];
+			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
 			readonly condition:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern']
-				| V.Clause.Let.Any<BaseContext>
-				| BaseContext['statement'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| V.Clause.Let.Any<G>
+				| G['statement'];
 		};
 		readonly 'statement.match': {
-			readonly body: unknown | V.Clause.Case<BaseContext> | string;
+			readonly body: unknown | V.Clause.Case<G> | string;
 			readonly subject:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['statement'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement'];
 		};
 		readonly 'statement.print': {
 			readonly printArguments:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 		};
 		readonly 'statement.print.chevron': {
 			readonly printChevronArguments:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern']
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
 				| string;
 		};
 		readonly 'statement.return': {
 			readonly expression:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern']
-				| BaseContext['statement'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| G['statement'];
 		};
 		readonly 'statement.scope': {
-			readonly body: V.Clause.Import.Alias<BaseContext> | BaseContext['declaration'] | BaseContext['statement'];
+			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
 		};
 		readonly 'statement.throw': {
 			readonly cause:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 			readonly expression:
-				| V.Declaration.Module<BaseContext>
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['pattern'];
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
 		};
 		readonly 'statement.try': {
-			readonly body: V.Declaration.TypeAlias<BaseContext> | BaseContext['statement'];
+			readonly body: V.Declaration.TypeAlias<G> | G['statement'];
 		};
 		readonly 'statement.with': {
-			readonly body: V.Declaration.TypeAlias<BaseContext> | BaseContext['statement'];
+			readonly body: V.Declaration.TypeAlias<G> | G['statement'];
 		};
 		readonly type: {
 			readonly content:
 				| unknown
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| V.Modifier.Extern<BaseContext>
-				| BaseContext['pattern']
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| V.Modifier.Extern<G>
+				| G['pattern']
 				| string
-				| BaseContext['type'];
+				| G['type'];
 		};
 		readonly 'type.abstract': {
-			readonly trait: V.Clause.Bounds.Removed<BaseContext> | V.Identifier.Type<BaseContext> | BaseContext['type'];
+			readonly trait: V.Clause.Bounds.Removed<G> | V.Identifier.Type<G> | G['type'];
 		};
 		readonly 'type.array': {
 			readonly element:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| BaseContext['type'];
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['type'];
 			readonly length:
-				| BaseContext['expression']
-				| BaseContext['identifier']
-				| BaseContext['literal']
-				| BaseContext['statement'];
-			readonly type: BaseContext['identifier'] | BaseContext['type'];
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement'];
+			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'type.bounded': {
 			readonly left:
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| V.Clause.Bounds.Any<BaseContext>
-				| BaseContext['type'];
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| V.Clause.Bounds.Any<G>
+				| G['type'];
 			readonly right:
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| V.Clause.Bounds.Any<BaseContext>
-				| BaseContext['type'];
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| V.Clause.Bounds.Any<G>
+				| G['type'];
 		};
 		readonly 'type.bracketed': {
 			readonly type:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| BaseContext['type'];
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['type'];
 		};
 		readonly 'type.conditional': {
-			readonly alternative: BaseContext['identifier'] | BaseContext['type'];
-			readonly consequence: BaseContext['identifier'] | BaseContext['type'];
-			readonly left: BaseContext['identifier'] | BaseContext['type'];
-			readonly right: BaseContext['identifier'] | BaseContext['type'];
+			readonly alternative: G['identifier'] | G['type'];
+			readonly consequence: G['identifier'] | G['type'];
+			readonly left: G['identifier'] | G['type'];
+			readonly right: G['identifier'] | G['type'];
 		};
 		readonly 'type.dynamic': {
-			readonly trait: V.Clause.Bounds.HigherRanked<BaseContext> | V.Identifier.Type<BaseContext> | BaseContext['type'];
+			readonly trait: V.Clause.Bounds.HigherRanked<G> | V.Identifier.Type<G> | G['type'];
 		};
 		readonly 'type.function': {
-			readonly content: unknown | V.Modifier.Extern<BaseContext> | string;
+			readonly content: unknown | V.Modifier.Extern<G> | string;
 			readonly parameters:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| V.Declaration.Parameter.Any<BaseContext>
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| V.Declaration.Parameter.Any<G>
 				| string
-				| BaseContext['type'];
+				| G['type'];
 			readonly returnType:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| BaseContext['type'];
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['type'];
 		};
 		readonly 'type.function.constructor': {
-			readonly type: BaseContext['identifier'] | BaseContext['type'];
+			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'type.generic': {
-			readonly name: BaseContext['identifier'] | string | V.Type.Path<BaseContext>;
-			readonly type: BaseContext['identifier'] | string | V.Type.Path<BaseContext>;
-			readonly typeArguments: V.Element.TypeArgument<BaseContext> | BaseContext['identifier'] | BaseContext['type'];
+			readonly name: G['identifier'] | string | V.Type.Path<G>;
+			readonly type: G['identifier'] | string | V.Type.Path<G>;
+			readonly typeArguments: V.Element.TypeArgument<G> | G['identifier'] | G['type'];
 		};
 		readonly 'type.index_query': {
-			readonly type: BaseContext['identifier'] | BaseContext['type'];
+			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'type.infer': {
-			readonly type: BaseContext['identifier'] | BaseContext['type'];
+			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'type.intersection': {
-			readonly left: BaseContext['identifier'] | BaseContext['type'];
-			readonly right: BaseContext['identifier'] | BaseContext['type'];
+			readonly left: G['identifier'] | G['type'];
+			readonly right: G['identifier'] | G['type'];
 		};
 		readonly 'type.literal': {
-			readonly content: unknown | BaseContext['literal'];
+			readonly content: unknown | G['literal'];
 		};
 		readonly 'type.lookup': {
-			readonly indexType: BaseContext['identifier'] | BaseContext['type'];
-			readonly type: BaseContext['identifier'] | BaseContext['type'];
+			readonly indexType: G['identifier'] | G['type'];
+			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'type.maybe': {
-			readonly type: BaseContext['identifier'] | BaseContext['type'];
+			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'type.object': {
 			readonly closing: string;
-			readonly members: BaseContext['declaration'] | V.Statement.Export<BaseContext>;
+			readonly members: G['declaration'] | V.Statement.Export<G>;
 			readonly opening: string;
 		};
 		readonly 'type.optional': {
-			readonly type: BaseContext['identifier'] | BaseContext['type'];
+			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'type.parenthesized': {
-			readonly type: BaseContext['identifier'] | BaseContext['type'];
+			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'type.path': {
-			readonly path: BaseContext['identifier'] | string | BaseContext['type'];
+			readonly path: G['identifier'] | string | G['type'];
 		};
 		readonly 'type.path.expression': {
-			readonly path: BaseContext['identifier'] | string | V.Type.Generic.Turbofish<BaseContext>;
+			readonly path: G['identifier'] | string | V.Type.Generic.Turbofish<G>;
 		};
 		readonly 'type.predicate': {
-			readonly name: BaseContext['identifier'] | V.Type.Primitive<BaseContext>;
-			readonly type: BaseContext['identifier'] | BaseContext['type'];
+			readonly name: G['identifier'] | V.Type.Primitive<G>;
+			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'type.predicate.asserts': {
-			readonly value: BaseContext['identifier'] | V.Type.Predicate<BaseContext>;
+			readonly value: G['identifier'] | V.Type.Predicate<G>;
 		};
 		readonly 'type.qualified': {
 			readonly alias:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| BaseContext['type'];
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['type'];
 			readonly type:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| BaseContext['type'];
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['type'];
 		};
 		readonly 'type.query': {
-			readonly expression: unknown | BaseContext['identifier'];
+			readonly expression: unknown | G['identifier'];
 		};
 		readonly 'type.readonly': {
-			readonly type: BaseContext['identifier'] | BaseContext['type'];
+			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'type.reference': {
 			readonly type:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| BaseContext['type'];
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['type'];
 		};
 		readonly 'type.rest': {
-			readonly type: BaseContext['identifier'] | BaseContext['type'];
+			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'type.splat': {
 			readonly operator: string;
 		};
 		readonly 'type.template': {
-			readonly elements: unknown | V.Element.Template.Substitution<BaseContext>;
+			readonly elements: unknown | V.Element.Template.Substitution<G>;
 		};
 		readonly 'type.tuple': {
 			readonly tupleTypeMembers:
-				| BaseContext['identifier']
-				| V.Element.Tuple.Member.Any<BaseContext>
-				| BaseContext['type'];
+				| G['identifier']
+				| V.Element.Tuple.Member.Any<G>
+				| G['type'];
 			readonly types:
-				| V.Clause.Bounds.Removed<BaseContext>
-				| V.Expression.Call.Macro<BaseContext>
-				| BaseContext['identifier']
-				| BaseContext['type'];
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['type'];
 		};
 		readonly 'type.union': {
-			readonly left: BaseContext['identifier'] | BaseContext['type'];
-			readonly right: BaseContext['identifier'] | BaseContext['type'];
+			readonly left: G['identifier'] | G['type'];
+			readonly right: G['identifier'] | G['type'];
 		};
 	};
 }
+
+/** A grammar kind a member admits that no binding claims yet; the name says which. */
+export interface Unmapped<K extends string> {
+	readonly $unmapped: K;
+}
+

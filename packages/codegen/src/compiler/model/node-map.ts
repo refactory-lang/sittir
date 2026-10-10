@@ -14,7 +14,8 @@ import type {
 	SymbolRule,
 	Multiplicity,
 	RuleId,
-	RuleAnnotations
+	RuleAnnotations,
+	LabelProvenance
 } from '../../types/rule.ts';
 import { isBlank, isEnumChoiceRule, collectFixedLiteral } from '../../dsl/rule-patterns.ts';
 import {
@@ -178,6 +179,10 @@ export interface FieldStorageInfo {
 	readonly collapsesMultiplicity: boolean;
 }
 
+export function storesNodes(info: FieldStorageInfo): boolean {
+	return info.kind !== 'boolean' && info.kind !== 'bitflag' && info.kind !== 'kindEnum';
+}
+
 export type KindStorage = 'node' | 'kindId';
 
 export type ValueStorage =
@@ -238,6 +243,7 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly parseName?: string;
 	readonly variant?: string;
 	readonly variantOf?: string;
+	readonly definedBy?: LabelProvenance;
 	readonly default?: true;
 	readonly flattened?: true;
 	readonly multiplicity: Multiplicity;
@@ -678,6 +684,7 @@ function findKindEntryById(lookup: {
 export interface ArmFacts {
 	readonly variant?: string;
 	readonly variantOf?: string;
+	readonly definedBy?: LabelProvenance;
 	readonly default?: true;
 	readonly flattened?: true;
 }
@@ -706,6 +713,7 @@ export function armFactsOf(
 	const variant = annotations.variant ?? literalName;
 	return {
 		...(variant === undefined ? {} : { variant, variantOf: annotations.variantOf }),
+		...(variant === undefined || annotations.definedBy === undefined ? {} : { definedBy: annotations.definedBy }),
 		...(annotations.default === true ? { default: true as const } : {}),
 		...(annotations.flattened === true ? { flattened: true as const } : {})
 	};
@@ -1003,6 +1011,9 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 	factoryName?: string;
 	readonly hidden: boolean;
 	irKey?: string;
+	typeKey?: string;
+	builderPath?: readonly string[];
+	builderPathAlternates?: readonly (readonly string[])[];
 	abstract readonly modelType: ModelType;
 
 	get kindId(): number | undefined {

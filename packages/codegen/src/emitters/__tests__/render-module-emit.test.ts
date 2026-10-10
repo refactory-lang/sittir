@@ -98,7 +98,7 @@ let _rustOptionsRs: string | undefined;
 
 const _models = new Map<string, ReturnType<typeof buildModel>>();
 
-async function buildModel(grammar: 'rust' | 'typescript' | 'scm') {
+async function buildModel(grammar: 'rust' | 'typescript' | 'scm' | 'python') {
 	const raw = await evaluatePackage(grammarPackage(grammar));
 	const generatedIdTables = await loadGeneratedIdTables(grammar);
 	if (generatedIdTables === undefined) throw new Error(`no generated id tables for ${grammar}`);
@@ -122,7 +122,7 @@ async function buildModel(grammar: 'rust' | 'typescript' | 'scm') {
 	return { raw, nodeMap, kindEntries, generatedIdTables, templates, renderRules };
 }
 
-function modelFor(grammar: 'rust' | 'typescript' | 'scm') {
+function modelFor(grammar: 'rust' | 'typescript' | 'scm' | 'python') {
 	const cached = _models.get(grammar);
 	if (cached !== undefined) return cached;
 	const built = buildModel(grammar);
@@ -130,7 +130,7 @@ function modelFor(grammar: 'rust' | 'typescript' | 'scm') {
 	return built;
 }
 
-async function getTransportRsForGrammar(grammar: 'rust' | 'typescript' | 'scm'): Promise<string> {
+async function getTransportRsForGrammar(grammar: 'rust' | 'typescript' | 'scm' | 'python'): Promise<string> {
 	const { raw, nodeMap, kindEntries, generatedIdTables, templates, renderRules } = await modelFor(grammar);
 	if (grammar === 'rust') _rustKindEntries = kindEntries;
 	const emit = emitRenderModule(
@@ -537,7 +537,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		expect(cells.filter((c) => c !== 'NO_SITE').length).toBeGreaterThan(0);
 		expect(cells.every((c) => c === 'NO_SITE' || /^\d+$/.test(c))).toBe(true);
 		expect(transportRs).toContain(
-			'if let Some(seated_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_SOURCE_FILE_STATEMENTS, ctx); }'
+			'::sittir_core::prepare::fill_seated_gaps(self.statements.iter_mut().map(Some), options::SEATS_SOURCE_FILE_STATEMENTS, ctx);'
 		);
 		expect(transportRs).not.toContain('let seated_last');
 		expect(transportRs).not.toContain('edges_mut().after.get_or_insert');
@@ -841,4 +841,13 @@ describe('the payload ceiling', () => {
 		const [stale] = BOXED_PAYLOADS.rust!;
 		expect(() => payloadCeilingAssertions(BOXED_PAYLOADS.rust!, new Set())).toThrow(`${stale} is pinned in boxed-payloads.ts but no choice holds it`);
 	});
+});
+
+describe('list storage', () => {
+	it('prints a possibly-empty list as a Vec and a repeat1 list as a NonEmptyVec', async () => {
+		const rust = await getTransportRsForGrammar('python');
+		expect(rust).toContain('pub except_clauses: Vec<::sittir_core::SlotValue<ExceptClauseTransport>>');
+		expect(rust).not.toMatch(/Option<Vec</);
+		expect(rust).toContain('pub decorator: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<DecoratorTransport>>');
+	}, 120_000);
 });

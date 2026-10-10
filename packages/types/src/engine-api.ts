@@ -1,7 +1,7 @@
 import type { AnyUntypedNode, ErrorNode, ErrorRegion, FormatRecord, GrammarTriviaEntry, RenderCallOptions, TriviaItem, TriviaSetter } from './core-types.ts';
 import type { IndentOption } from './options.ts';
 import type { Admit } from './node-surface.ts';
-import type { QueryFacet, QuerySlots } from './query.ts';
+import type { KindMembership, QueryFacet, QuerySlots } from './query.ts';
 
 /** One line-break run a read node owns as trivia: the whitespace member it reads as and the byte its run starts at. */
 export interface LineGap {
@@ -159,9 +159,10 @@ export interface LanguageHooks<API extends LanguageAPI> {
 	readonly kinds: API['kinds'];
 	readonly trivia: TriviaFacts;
 	readonly querySlots: QuerySlots;
+	readonly membership: KindMembership;
 	createNative(options?: NativeEngineOptions<API['options']>): NativeLanguageEngine<API>;
 	wrap(root: unknown, tree: unknown): API['root'];
-	hydrate?(node: unknown, tree: unknown): unknown;
+	hydrate(node: unknown, tree: unknown): unknown;
 }
 
 export interface NativeLanguageEngine<API extends LanguageAPI> {
@@ -298,9 +299,15 @@ export type RenderArgument<API extends LanguageAPI> = RenderInput<API> | RenderB
 export type RenderOptionsCheck<API extends LanguageAPI, R, Extra extends PropertyKey = never> =
 	IsExactly<R, API['options']> extends true
 		? unknown
-		: IndentOption<R extends { readonly indent?: infer I extends string } ? I : string, API['indentChar']> & {
+		: IndentOption<R extends { readonly layout?: { readonly indent?: infer I extends string } } ? I : string, API['indentChar']> & {
 				readonly [K in Exclude<keyof R, keyof API['options'] | Extra>]: never;
-			};
+			} & LayoutKeysCheck<API, R>;
+
+type DeclaredLayout<API extends LanguageAPI> = API['options'] extends { readonly layout?: infer G } ? NonNullable<G> : object;
+
+type LayoutKeysCheck<API extends LanguageAPI, R> = R extends { readonly layout?: infer L extends object }
+	? { readonly layout?: { readonly [K in Exclude<keyof L, keyof DeclaredLayout<API>>]: never } }
+	: unknown;
 
 type IsExactly<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
 

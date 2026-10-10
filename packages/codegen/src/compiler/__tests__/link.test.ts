@@ -14,6 +14,7 @@ import {
 } from '../../types/rule-types.ts'; // @rule-type-consts
 // PR-P Task 2: TERMINAL removed from import — TerminalRule deleted from Rule union.
 import { describe, it, expect } from 'vitest';
+import { stampLabelProvenance } from '../variant-structural.ts';
 import {
 	link,
 	enrichPositions,
@@ -696,7 +697,8 @@ describe('Link — variant tagging + polymorph promotion', () => {
 		// The variant children come from the arms' variant annotations
 		// (`deriveVariantChildren`), so the inner choice's two annotated
 		// symbols are found without an explicit pairs argument.
-		applyOverridePolymorphs(rules, derivations, undefined);
+		stampLabelProvenance(rules, undefined);
+		applyOverridePolymorphs(rules, derivations);
 		// Parent rule stays as a choice (not replaced by flat polymorph).
 		expect(rules['visibility_modifier']!.type).toBe('CHOICE');
 		// Each variant-child hidden rule now has its body wrapped in the

@@ -56,17 +56,26 @@ impl Depth {
     }
 }
 
-/// What every read of one tree shares: the source its spans index into and
-/// the id its coordinates carry.
+/// What every read of one tree shares: the source its spans index into, the
+/// id its coordinates carry, and the display ids the grammar claims a node by
+/// (`ReadTransport::shows` of its transports).
 #[derive(Debug, Clone, Copy)]
 pub struct ReadCtx<'s> {
     pub source: &'s str,
     pub tree_id: u32,
+    pub shows: fn(KindId) -> bool,
 }
 
 impl<'s> ReadCtx<'s> {
-    pub fn new(source: &'s str, tree_id: u32) -> Self {
-        Self { source, tree_id }
+    pub fn new(source: &'s str, tree_id: u32, shows: fn(KindId) -> bool) -> Self {
+        Self { source, tree_id, shows }
+    }
+
+    /// The kind every coordinate of a node stamps as its `$type`, on every
+    /// route: the display id where the grammar claims the node by it (an alias
+    /// envelope), the grammar id everywhere else.
+    pub fn stamped_kind(&self, grammar: KindId, display: KindId) -> KindId {
+        if display != grammar && (self.shows)(display) { display } else { grammar }
     }
 
     /// The coordinate of the node the cursor is on: each transport's own
@@ -76,11 +85,11 @@ impl<'s> ReadCtx<'s> {
     }
 
     /// The coordinate of a surveyed child: its tree and index, its span and its
-    /// grammar kind.
+    /// stamped kind (`ReadCtx::stamped_kind`).
     pub fn coordinate_of(&self, child: &Child) -> NodeCoordinate {
         NodeCoordinate {
-            kind: Some(child.grammar),
-            ..NodeCoordinate::new(self.tree_id, child.index, Span { start: child.start, end: child.end })
+            kind: Some(self.stamped_kind(child.grammar, child.display)),
+            ..NodeCoordinate::new(self.tree_id, child.index, child.index + child.descendants, Span { start: child.start, end: child.end })
         }
     }
 
@@ -96,8 +105,8 @@ impl<'s> ReadCtx<'s> {
             Span { start: range.start as u32, end: range.end as u32 }
         };
         NodeCoordinate {
-            kind: Some(KindId(node.grammar_id())),
-            ..NodeCoordinate::new(self.tree_id, index, span)
+            kind: Some(self.stamped_kind(KindId(node.grammar_id()), display_id(node))),
+            ..NodeCoordinate::new(self.tree_id, index, index + node.descendant_count() as u32, span)
         }
     }
 
@@ -125,6 +134,9 @@ pub struct Child {
     pub trivia: bool,
     pub start: u32,
     pub end: u32,
+    /// The child's descendant count: its subtree is the indexes
+    /// `[index, index + descendants)`.
+    pub descendants: u32,
     /// The source row the child starts on.
     pub start_row: usize,
     /// The source row of the child's last byte: a span that ends with its
@@ -180,6 +192,7 @@ pub fn survey(cursor: &mut TreeCursor<'_>) -> Vec<Child> {
                 field: cursor.field_id().map(|field| FieldId(field.get())),
                 named: node.is_named(),
                 trivia: node.is_extra() || node.is_error(),
+                descendants: node.descendant_count() as u32,
                 start: node.start_byte() as u32,
                 end: node.end_byte() as u32,
                 start_row: node.start_position().row,
@@ -318,6 +331,12 @@ pub trait ReadTransport: Sized {
     /// Whether a node with these ids is stored as a unit variant.
     fn scalar(grammar: KindId, display: KindId) -> bool {
         let _ = (grammar, display);
+        false
+    }
+    /// Whether this transport claims a node by its display id: an alias
+    /// envelope, or another alias kind the grammar models.
+    fn shows(display: KindId) -> bool {
+        let _ = display;
         false
     }
     /// What an optional slot of this type holds when no child came: the
@@ -504,24 +523,24 @@ impl<T: ReadTransport, const A: bool> ReadSlot for Vec<SlotValue<T, A>> {
         acc.push(read_value(cursor, ctx, depth, sides)?);
         Ok(())
     }
-    fn finish(acc: Self::Acc, at: SlotSite) -> Result<Self, ReadError> {
-        if acc.is_empty() { Err(missing(at)) } else { Ok(acc) }
+    /// An empty list is `[]`.
+    fn finish(acc: Self::Acc, _at: SlotSite) -> Result<Self, ReadError> {
+        Ok(acc)
     }
 }
 
-impl<T: ReadTransport, const A: bool> ReadSlot for Option<Vec<SlotValue<T, A>>> {
+/// A `repeat1` list: `Vec`'s read, with an empty one refused as missing.
+impl<T: ReadTransport, const A: bool> ReadSlot for crate::NonEmptyVec<SlotValue<T, A>> {
     type Acc = Vec<SlotValue<T, A>>;
     fn start() -> Self::Acc {
         Vec::new()
     }
     slot_value_kinds!();
-    fn take(acc: &mut Self::Acc, cursor: &mut TreeCursor<'_>, ctx: &ReadCtx<'_>, depth: Depth, sides: Sides, _at: SlotSite) -> Result<(), ReadError> {
-        acc.push(read_value(cursor, ctx, depth, sides)?);
-        Ok(())
+    fn take(acc: &mut Self::Acc, cursor: &mut TreeCursor<'_>, ctx: &ReadCtx<'_>, depth: Depth, sides: Sides, at: SlotSite) -> Result<(), ReadError> {
+        <Vec<SlotValue<T, A>> as ReadSlot>::take(acc, cursor, ctx, depth, sides, at)
     }
-    /// Present even when empty: today's wrap stores an empty list.
-    fn finish(acc: Self::Acc, _at: SlotSite) -> Result<Self, ReadError> {
-        Ok(Some(acc))
+    fn finish(acc: Self::Acc, at: SlotSite) -> Result<Self, ReadError> {
+        Self::try_from(acc).map_err(|crate::non_empty::EmptyList| missing(at))
     }
 }
 
@@ -582,27 +601,27 @@ impl<T: ReadTransport, const A: bool> ReadSlot for Vec<Option<SlotValue<T, A>>> 
     fn separator(acc: &mut Self::Acc, tagged: bool) {
         acc.separator(tagged);
     }
-    fn finish(acc: Self::Acc, at: SlotSite) -> Result<Self, ReadError> {
-        let positions = acc.positions();
-        if positions.is_empty() { Err(missing(at)) } else { Ok(positions) }
+    /// An empty list is `[]`.
+    fn finish(acc: Self::Acc, _at: SlotSite) -> Result<Self, ReadError> {
+        Ok(acc.positions())
     }
 }
 
-impl<T: ReadTransport, const A: bool> ReadSlot for Option<Vec<Option<SlotValue<T, A>>>> {
+/// A `repeat1` elided list: the elided read, with an empty one refused as missing.
+impl<T: ReadTransport, const A: bool> ReadSlot for crate::NonEmptyVec<Option<SlotValue<T, A>>> {
     type Acc = Elided<SlotValue<T, A>>;
     fn start() -> Self::Acc {
         Elided::default()
     }
     slot_value_kinds!();
-    fn take(acc: &mut Self::Acc, cursor: &mut TreeCursor<'_>, ctx: &ReadCtx<'_>, depth: Depth, sides: Sides, _at: SlotSite) -> Result<(), ReadError> {
-        acc.push(read_value(cursor, ctx, depth, sides)?);
-        Ok(())
+    fn take(acc: &mut Self::Acc, cursor: &mut TreeCursor<'_>, ctx: &ReadCtx<'_>, depth: Depth, sides: Sides, at: SlotSite) -> Result<(), ReadError> {
+        <Vec<Option<SlotValue<T, A>>> as ReadSlot>::take(acc, cursor, ctx, depth, sides, at)
     }
     fn separator(acc: &mut Self::Acc, tagged: bool) {
         acc.separator(tagged);
     }
-    fn finish(acc: Self::Acc, _at: SlotSite) -> Result<Self, ReadError> {
-        Ok(Some(acc.positions()))
+    fn finish(acc: Self::Acc, at: SlotSite) -> Result<Self, ReadError> {
+        Self::try_from(acc.positions()).map_err(|crate::non_empty::EmptyList| missing(at))
     }
 }
 
@@ -911,6 +930,22 @@ mod tests {
     use super::*;
 
     #[test]
+    fn a_coordinate_ends_past_its_last_descendant() {
+        let source = "fn a() { let x = 1; }";
+        let mut parser = tree_sitter::Parser::new();
+        parser.set_language(&tree_sitter_rust::LANGUAGE.into()).unwrap();
+        let tree = parser.parse(source, None).unwrap();
+        let ctx = ReadCtx::new(source, 1, |_| false);
+        let mut cursor = tree.walk();
+        for index in 0..tree.root_node().descendant_count() {
+            cursor.goto_descendant(index);
+            let coordinate = ctx.at_of(&cursor);
+            assert_eq!(coordinate.index as usize, index);
+            assert_eq!(coordinate.end as usize, index + cursor.node().descendant_count());
+        }
+    }
+
+    #[test]
     fn one_level_reads_the_node_and_leaves_its_children_as_coordinates() {
         assert_eq!(Depth::ONE.below(), None);
         assert_eq!(Depth::Levels(NonZeroU32::new(3).unwrap()).below(), Some(Depth::Levels(NonZeroU32::new(2).unwrap())));
@@ -964,7 +999,7 @@ mod tests {
     type Plain = Probe<false>;
 
     fn token(start: u32, end: u32, trivia: bool) -> Child {
-        Child { index: 0, grammar: KindId(9), display: KindId(9), field: None, named: false, trivia, start, end, start_row: 0, end_row: 0 }
+        Child { index: 0, grammar: KindId(9), display: KindId(9), field: None, named: false, trivia, start, end, descendants: 1, start_row: 0, end_row: 0 }
     }
 
     #[test]
@@ -1027,8 +1062,16 @@ mod tests {
     }
 
     #[test]
-    fn an_optional_list_reads_as_present_when_empty() {
-        assert_eq!(<Option<Vec<SlotValue<Plain>>> as ReadSlot>::finish(Vec::new(), site()), Ok(Some(Vec::new())));
+    fn an_empty_list_reads_as_an_empty_vec() {
+        assert_eq!(<Vec<SlotValue<Plain>> as ReadSlot>::finish(Vec::new(), site()), Ok(Vec::new()));
+        assert_eq!(<Vec<Option<SlotValue<Plain>>> as ReadSlot>::finish(Elided::default(), site()), Ok(Vec::new()));
+    }
+
+    #[test]
+    fn an_empty_repeat1_list_is_missing() {
+        let missing = ReadError::Missing { kind: KindId(1), slot: "items", index: 0 };
+        assert_eq!(<crate::NonEmptyVec<SlotValue<Plain>> as ReadSlot>::finish(Vec::new(), site()).err(), Some(missing.clone()));
+        assert_eq!(<crate::NonEmptyVec<Option<SlotValue<Plain>>> as ReadSlot>::finish(Elided::default(), site()).err(), Some(missing));
     }
 
     #[test]
@@ -1044,7 +1087,7 @@ mod tests {
     }
 
     fn child(index: u32, named: bool, trivia: bool, (start_row, end_row): (usize, usize), (start, end): (u32, u32)) -> Child {
-        Child { index, grammar: KindId(if trivia { 900 } else if named { 100 } else { 50 }), display: KindId(0), field: None, named, trivia, start, end, start_row, end_row }
+        Child { index, grammar: KindId(if trivia { 900 } else if named { 100 } else { 50 }), display: KindId(0), field: None, named, trivia, start, end, descendants: 1, start_row, end_row }
     }
     fn owner_routes(children: &[Child]) -> Vec<Route> {
         children.iter().map(|c| if c.trivia { Route::Trivia } else if c.named { Route::Slot { slot: 0, scalar: false } } else { Route::Layout }).collect()
@@ -1065,7 +1108,7 @@ mod tests {
             child(3, false, true, (0, 0), (3, 7)),   // // c
             child(4, true, false, (1, 1), (8, 9)),   // b
         ];
-        let ctx = ReadCtx::new("", 0);
+        let ctx = ReadCtx::new("", 0, |_| false);
         let placement = place(&ctx, &children, &owner_routes(&children), true, no_gap);
         assert_eq!(spans(&placement.sides[0].trailing), vec![(3, true, 1)]);
         assert!(placement.sides[3].leading.is_empty());
@@ -1079,7 +1122,7 @@ mod tests {
             child(2, false, true, (1, 1), (2, 6)),
             child(3, true, false, (2, 2), (7, 8)),
         ];
-        let placement = place(&ReadCtx::new("", 0), &children, &owner_routes(&children), true, no_gap);
+        let placement = place(&ReadCtx::new("", 0, |_| false), &children, &owner_routes(&children), true, no_gap);
         assert!(placement.sides[0].trailing.is_empty());
         assert_eq!(spans(&placement.sides[2].leading), vec![(2, false, 0)]);
     }
@@ -1087,7 +1130,7 @@ mod tests {
     #[test]
     fn an_extra_after_the_last_owner_trails_it() {
         let children = [child(1, true, false, (0, 0), (0, 1)), child(2, false, true, (1, 1), (2, 6))];
-        let placement = place(&ReadCtx::new("", 0), &children, &owner_routes(&children), true, no_gap);
+        let placement = place(&ReadCtx::new("", 0, |_| false), &children, &owner_routes(&children), true, no_gap);
         assert_eq!(spans(&placement.sides[0].trailing), vec![(2, false, 0)]);
     }
 
@@ -1100,7 +1143,7 @@ mod tests {
             child(3, false, true, (0, 0), (2, 6)),
         ];
         let routes = [Route::Slot { slot: 0, scalar: true }, Route::Slot { slot: 1, scalar: false }, Route::Trivia];
-        let placement = place(&ReadCtx::new("", 0), &children, &routes, true, no_gap);
+        let placement = place(&ReadCtx::new("", 0, |_| false), &children, &routes, true, no_gap);
         assert!(!placement.sides[0].owner && !placement.sides[1].owner);
         // no owner child: rule 4, a named child precedes, so the node's own trailing
         assert_eq!(spans(&placement.own_trailing), vec![(2, true, 0)]);
@@ -1117,7 +1160,7 @@ mod tests {
         fn gap(preceding: u16) -> Option<&'static str> {
             (preceding == 1).then_some("statements")
         }
-        let placement = place(&ReadCtx::new("", 0), &children, &owner_routes(&children), true, gap);
+        let placement = place(&ReadCtx::new("", 0, |_| false), &children, &owner_routes(&children), true, gap);
         assert_eq!(spans(&placement.inner["statements"]), vec![(2, false, 0)]);
         assert!(placement.own_leading.is_empty() && placement.own_trailing.is_empty());
     }
@@ -1125,7 +1168,7 @@ mod tests {
     #[test]
     fn a_node_that_owns_nothing_keeps_no_extra_of_its_own() {
         let children = [child(1, false, true, (0, 0), (0, 4))];
-        let placement = place(&ReadCtx::new("", 0), &children, &owner_routes(&children), false, no_gap);
+        let placement = place(&ReadCtx::new("", 0, |_| false), &children, &owner_routes(&children), false, no_gap);
         assert!(placement.own_leading.is_empty() && placement.own_trailing.is_empty() && placement.inner.is_empty());
     }
 
@@ -1133,7 +1176,7 @@ mod tests {
     fn an_error_child_is_placed_as_trivia() {
         // an ERROR is surveyed with `trivia: true`; it leads the next owner like an extra
         let children = [child(1, true, true, (0, 0), (0, 3)), child(2, true, false, (1, 1), (4, 5))];
-        let placement = place(&ReadCtx::new("", 0), &children, &owner_routes(&children), true, no_gap);
+        let placement = place(&ReadCtx::new("", 0, |_| false), &children, &owner_routes(&children), true, no_gap);
         assert_eq!(spans(&placement.sides[1].leading), vec![(0, false, 0)]);
     }
 
@@ -1141,13 +1184,13 @@ mod tests {
     fn the_parents_entries_come_before_the_nodes_own() {
         let children = [child(1, true, false, (0, 0), (0, 1)), child(2, false, true, (0, 0), (2, 6))];
         let routes = [Route::Slot { slot: 0, scalar: true }, Route::Trivia];
-        let placement = place(&ReadCtx::new("", 0), &children, &routes, true, no_gap);
+        let placement = place(&ReadCtx::new("", 0, |_| false), &children, &routes, true, no_gap);
         let parent = Sides {
             owner: true,
             leading: vec![],
-            trailing: vec![Entry { coord: NodeCoordinate::new(0, 0, Span { start: 40, end: 44 }), same_line: true, tokens_between: 0 }],
+            trailing: vec![Entry { coord: NodeCoordinate::new(0, 0, 1, Span { start: 40, end: 44 }), same_line: true, tokens_between: 0 }],
         };
-        let layout = placement.into_layout::<()>(parent, NodeCoordinate::new(0, 0, Span { start: 0, end: 6 }));
+        let layout = placement.into_layout::<()>(parent, NodeCoordinate::new(0, 0, 1, Span { start: 0, end: 6 }));
         let trailing = layout.trivia.unwrap().trailing.unwrap();
         assert_eq!(trailing.iter().map(|e| e.value.coord().unwrap().span.start).collect::<Vec<_>>(), vec![40, 2]);
     }

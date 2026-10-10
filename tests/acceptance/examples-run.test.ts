@@ -106,9 +106,11 @@ describe('the compile-checked examples run', () => {
 		expect(example.privateHelpers(PYTHON_SOURCE)).toEqual(['_next', '_parse']);
 		expect(example.methodsOf(PYTHON_SOURCE, 'Reader')).toEqual(['__init__', '_next']);
 		expect(example.parameterTexts(PYTHON_SOURCE, 'load')).toEqual(['path', '*', 'strict=False']);
-		expect(example.renameFunction(PYTHON_SOURCE, '_next', '_advance')?.$render()).toBe(
-			'def _advance(self):\n        return self.source'
-		);
+		const renamed = example.renameFunction(PYTHON_SOURCE, '_next', '_advance')?.$render();
+		expect(renamed).toBe('def _advance(self):\n    return self.source');
+		const { createEngine } = await import('@sittir/common');
+		const python = await createEngine((await import('@sittir/python')).default);
+		expect(python.parse(renamed ?? '').$errors).toEqual([]);
 		expect(example.renameInFile(PYTHON_SOURCE, 'load', 'read_file').$render()).toBe(
 			PYTHON_SOURCE.replace('def load(', 'def read_file(')
 		);

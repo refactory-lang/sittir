@@ -52,7 +52,7 @@ describe('read trivia layout, rendered detached', () => {
 		const binary = data._statements[0]._body._statements[0]._content._expression._right;
 		const at = source.indexOf('+');
 		const comment = binary._left.$_layout.trivia.trailing[0];
-		binary._operator = carryTree(comment, { $type: binary._operator, $treeHandle: comment.$_layout.at.$treeHandle, $span: { start: at, end: at + 1 } });
+		binary._operator = carryTree(comment, { $type: binary._operator, $treeHandle: comment.$_layout.at.$treeHandle, $end: comment.$_layout.at.$end, $span: { start: at, end: at + 1 } });
 		expect(engine.render(data as never as AnyUntypedNode).toString()).toBe('fn f() {\n    x = a + /* x */ b;\n}\n');
 	});
 

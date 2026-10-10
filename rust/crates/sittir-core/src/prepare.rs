@@ -77,8 +77,8 @@ pub fn fill_source_flanks<T: Edged + ?Sized>(
     let (before_site, after_site) = ctx.options.edge_sites(t.kind_id());
     let before_ws = &head[head.trim_end().len()..];
     let after_ws = &tail[..tail.len() - tail.trim_start().len()];
-    let opens = before_ws.contains('\n') && line_depth(before_ws) > indent_width(line_of(head, head.len() - before_ws.len()));
-    let closes = after_ws.contains('\n') && line_depth(after_ws) < indent_width(line_of(source, end.saturating_sub(1)));
+    let opens = crate::line_endings::logical_breaks(before_ws) > 0 && line_depth(before_ws) > indent_width(line_of(head, head.len() - before_ws.len()));
+    let closes = crate::line_endings::logical_breaks(after_ws) > 0 && line_depth(after_ws) < indent_width(line_of(source, end.saturating_sub(1)));
     let before = before_site.filter(|_| flank.before).and_then(|site| {
         let arms = allowed(site);
         if opens && arms.contains(&table.indent) {
@@ -136,9 +136,7 @@ pub fn source_trailing_delimiter(
 
 /// The line of `text` that byte `at` sits on.
 fn line_of(text: &str, at: usize) -> &str {
-    let at = at.min(text.len());
-    let start = text[..at].rfind('\n').map_or(0, |i| i + 1);
-    let end = text[start..].find('\n').map_or(text.len(), |i| start + i);
+    let (start, end) = crate::line_endings::line_bounds(text, at);
     &text[start..end]
 }
 
@@ -149,7 +147,7 @@ fn indent_width(line: &str) -> usize {
 
 /// How far the last line of a whitespace run is indented: what follows its last break.
 fn line_depth(run: &str) -> usize {
-    run.rfind('\n').map_or(0, |i| run.len() - i - 1)
+    crate::line_endings::bytes_after_last_break(run)
 }
 
 /// A child position of a root transport, read for the item at either end of
@@ -178,12 +176,31 @@ impl<X: EdgeItems> EdgeItems for Option<X> {
     }
 }
 
+/// The first edge item of a list: its first item that has one.
+fn first_edge_item<X: EdgeItems>(items: &[X]) -> Option<Option<&crate::NodeCoordinate>> {
+    items.iter().find_map(X::first_item)
+}
+
+/// The last edge item of a list: its last item that has one.
+fn last_edge_item<X: EdgeItems>(items: &[X]) -> Option<Option<&crate::NodeCoordinate>> {
+    items.iter().rev().find_map(X::last_item)
+}
+
 impl<X: EdgeItems> EdgeItems for Vec<X> {
     fn first_item(&self) -> Option<Option<&crate::NodeCoordinate>> {
-        self.iter().find_map(X::first_item)
+        first_edge_item(self)
     }
     fn last_item(&self) -> Option<Option<&crate::NodeCoordinate>> {
-        self.iter().rev().find_map(X::last_item)
+        last_edge_item(self)
+    }
+}
+
+impl<X: EdgeItems> EdgeItems for crate::NonEmptyVec<X> {
+    fn first_item(&self) -> Option<Option<&crate::NodeCoordinate>> {
+        first_edge_item(self)
+    }
+    fn last_item(&self) -> Option<Option<&crate::NodeCoordinate>> {
+        last_edge_item(self)
     }
 }
 
@@ -372,6 +389,9 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
     fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
         match self {
             SlotValue::Coord(coord) => {
+                if let Some(trivia) = coord.writes.as_mut().and_then(|writes| writes.trivia.as_mut()) {
+                    trivia.0.prepare(ctx)?;
+                }
                 coord.resolve(ctx.sources)?;
                 let seated = coord.edges;
                 coord.edges = coord.kind_in(ctx.sources).and_then(|kind| ctx.options.edge_arms(kind));
@@ -393,14 +413,25 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
     fn source_gap(&self) -> Option<&SourceGap> {
         match self {
             SlotValue::Transport(t) => t.source_gap(),
-            SlotValue::Coord(coord) => coord.gap.as_ref(),
+            SlotValue::Coord(coord) => coord.gap(),
         }
     }
 }
 
+/// Prepare every item of a list.
+fn prepare_items<T: Prepare>(items: &mut [T], ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
+    items.iter_mut().try_for_each(|item| item.prepare(ctx))
+}
+
 impl<T: Prepare> Prepare for Vec<T> {
     fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
-        self.iter_mut().try_for_each(|item| item.prepare(ctx))
+        prepare_items(self, ctx)
+    }
+}
+
+impl<T: Prepare> Prepare for crate::NonEmptyVec<T> {
+    fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
+        prepare_items(self, ctx)
     }
 }
 
@@ -481,7 +512,7 @@ mod tests {
     };
 
     fn coordinate(start: u32, end: u32) -> NodeCoordinate {
-        NodeCoordinate::new(3, 0, Span { start, end })
+        NodeCoordinate::new(3, 0, 1, Span { start, end })
     }
 
     fn before_flank(first: &NodeCoordinate, source: &str) -> Option<u16> {
@@ -516,7 +547,7 @@ mod tests {
         let end = source.len() as u32;
         let first = coordinate(0, 1);
         let second = NodeCoordinate {
-            gap: second_gap,
+            writes: second_gap.map(|gap| Box::new(crate::slot::CoordinateWrites { gap: Some(gap), trivia: None })),
             ..coordinate(end - 1, end)
         };
         let mut items: Vec<SlotValue<String>> = vec![SlotValue::Coord(first), SlotValue::Coord(second)];
@@ -616,6 +647,22 @@ mod tests {
     #[test]
     fn a_flank_after_never_closes_a_depth_the_flank_before_did_not_open() {
         assert_eq!(flanks(BROKEN, "a,\n    b,", false, true), (None, Some(NEWLINE)));
+    }
+
+    #[test]
+    fn a_flank_reads_the_same_whatever_spells_its_breaks() {
+        for ending in ["\r\n", "\r"] {
+            let source = BROKEN.replace('\n', ending);
+            let list = "a,\n    b,".replace('\n', ending);
+            assert_eq!(flanks(&source, &list, true, true), (Some(INDENT), Some(DEDENT)), "{ending:?}");
+            assert_eq!(flanks(&source, &list, false, true), (None, Some(NEWLINE)), "{ending:?}");
+            let nested = "g(\n    a,\n    b)".replace('\n', ending);
+            let start = nested.find('a').unwrap() as u32;
+            let span = Span { start, end: nested.find(')').unwrap() as u32 };
+            let edges = flank_edges(&nested, crate::slot::FlankSource::Tree(3), span, true, true);
+            assert_eq!(edges.before.map(|edge| edge.arm), Some(INDENT), "{ending:?}");
+            assert_eq!(edges.after.map(|edge| (edge.arm, edge.dedent)), Some((TIGHT, Some(true))), "{ending:?}");
+        }
     }
 
     #[test]

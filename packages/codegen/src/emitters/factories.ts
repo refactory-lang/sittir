@@ -2,11 +2,11 @@ import { LIST_VIEW_MEMBERS } from '@sittir/common/utils';
 import { hostTemplateFor } from '@sittir/common';
 import type { ReparseHostsConfig } from '../dsl/wire/reparse-hosts.ts';
 import { REPARSE_HOST_PRIORITY } from '../dsl/wire/reparse-hosts.ts';
-import { groupSeatParts, innerPositionsOf, listSelfViewParts, nodeMemberLines, ownerViewParts, seatedSetters, spelledGroupSlots, triviaInnerImports, type SetterEntry } from './node-members.ts';
+import { groupSeatParts, innerPositionsOf, listSelfViewParts, nodeMemberLines, ownerViewParts, seatedSetters, spelledGroupSlots, triviaInnerImports, type SetterEntry, type StoredAccessor } from './node-members.ts';
 import { findOwnKindEntry, reservedWordset } from '../dsl/symbol-table.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { holdsFixedText, isBuilderTextLeaf, isPatternValue, isHiddenPresenceMarker, separatorRequired, slotFilledWhenOmitted } from '../compiler/model/node-map.ts';
+import { holdsFixedText, isBuilderTextLeaf, isPatternValue, isHiddenPresenceMarker, separatorRequired, slotFilledWhenOmitted, storesNodes } from '../compiler/model/node-map.ts';
 import { hasBlankArm } from '../compiler/model/site-preferences.ts';
 import {
 	interiorSlotGuards,
@@ -101,7 +101,7 @@ import {
 	type RefineFormInfo
 } from './refine-emit.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
-import { configKeysOf, elementsSeatOf, emittedElementsSeats, flattenSeatsOf, prefixedKey } from './overlays/sub-factories.ts';
+import { configKeysOf, elementsSeatOf, emittedElementsSeats, flattenSeatsOf, prefixedKey } from '../compiler/model/sub-factories.ts';
 import type { CodegenEmitter } from './emitter.ts';
 
 export interface EmitFactoriesConfig {
@@ -1540,7 +1540,7 @@ function emitFieldCarryingFactory(
 				: shape === undefined
 					? valueSourceFor(f)
 					: `numberText(${numberTextArgs(shape)}, ${valueSourceFor(f)})`;
-		const stored = owner?.storage === f.storageKey ? `hydrateListStorage(${source})` : source;
+		const stored = owner?.storage === f.storageKey ? `hydrateStored(${source})` : source;
 		lines.push(`  const ${f.storageKey} = ${stored};`);
 		const guard = leafReConsts.get(slotGuardKey(node.kind, f.name));
 		const requiredUnfilled = isRequired(f) && !registeredSet.has(f) && !slotFilledWhenOmitted(f, nodeMap);
@@ -1565,7 +1565,7 @@ function emitFieldCarryingFactory(
 	lines.push(
 		...nodeMemberLines({
 			setters: seatedSetters(setters, plan),
-			accessors: slotsToEmit.filter((f) => !spelled.has(f.propertyName)).map((f) => ({ name: f.propertyName, read: f.storageKey })),
+			accessors: slotsToEmit.filter((f) => !spelled.has(f.propertyName)).map((f) => storedAccessor(f.propertyName, f.storageKey, f, nodeMap, kindEntries)),
 			extra: [...(view?.members ?? []), ...groups.members],
 			inner: innerPositionsOf(typeKind, nodeMap)
 		})
@@ -1771,7 +1771,7 @@ function emitRefineFormFactory(
 	lines.push(
 		...nodeMemberLines({
 			setters: formSetters,
-			accessors: allSlots.map((f) => ({ name: f.propertyName, read: f.storageKey })),
+			accessors: allSlots.map((f) => storedAccessor(f.propertyName, f.storageKey, f, nodeMap, kindEntries)),
 			inner: innerPositionsOf(node.kind, nodeMap)
 		})
 	);
@@ -2168,6 +2168,17 @@ export function seatPlanOf(
 	};
 }
 
+function storedAccessor(
+	name: string,
+	read: string,
+	slot: AssembledNonterminal,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): StoredAccessor {
+	if (!storesNodes(resolveFieldStorageInfo(slot, nodeMap, kindEntries))) return { name, read };
+	return { name, read, hydrates: isMultiple(slot) ? 'many' : 'one' };
+}
+
 export function seatedSetterImports(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): readonly string[] {
 	const names = new Set<string>();
 	for (const node of nodeMap.nodes.values()) {
@@ -2176,7 +2187,7 @@ export function seatedSetterImports(nodeMap: NodeMap, kindEntries: readonly Kind
 		if (plan.elements.length > 0) names.add('elementsWith');
 		if (plan.groups.length > 0) for (const name of ['seatWith', 'groupField', 'STORED_SLOT_READERS']) names.add(name);
 		if (plan.viewPlan !== undefined) {
-			const names_ = plan.viewPlan.owner === undefined ? ['LIST_ITEMS', 'LIST_READ', 'LIST_METHODS', 'listIterator', 'listItems', 'storedElements', 'defineListIndices'] : ['LIST_ITEMS', 'LIST_READ', 'LIST_METHODS', 'listIterator', 'listItems', 'ownerView', 'ownerElements', 'listOption', 'refuseReadStub', 'hydrateListStorage'];
+			const names_ = plan.viewPlan.owner === undefined ? ['LIST_ITEMS', 'LIST_READ', 'LIST_METHODS', 'listIterator', 'listItems', 'storedElements', 'ownerElements', 'defineListIndices'] : ['LIST_ITEMS', 'LIST_READ', 'LIST_METHODS', 'listIterator', 'listItems', 'ownerView', 'ownerElements', 'listOption', 'refuseReadStub', 'hydrateStored', 'defineListIndices'];
 			for (const name of names_) names.add(name);
 		}
 	}
@@ -2389,7 +2400,7 @@ function emitSeparatedListFactory(
 		lines.push(
 			...nodeMemberLines({
 				setters: seatedSetters(setters, plan),
-				accessors: [{ name: contentAccessorName, read: contentStorageKey }],
+				accessors: [storedAccessor(contentAccessorName, contentStorageKey, buildSeparatedListContentSlot(node), nodeMap, kindEntries)],
 				extra: view.members,
 				inner: innerPositionsOf(node.kind, nodeMap)
 			})
@@ -2498,7 +2509,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
 		if (hasDelimited(nodeMap)) lines.push(`import type { DelimitedSpec } from '@sittir/common/utils';`);
 		lines.push(
-			`import { ${['currentHandle', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports].join(', ')} } from '@sittir/common/utils';`
+			`import { ${['currentHandle', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'hydrateStoredSlot', 'hydrateStoredSlots', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports].join(', ')} } from '@sittir/common/utils';`
 		);
 		lines.push('');
 		lines.push(...emitFluentSetterHelpers());

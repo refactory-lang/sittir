@@ -285,6 +285,23 @@ macro_rules! napi_engine {
                 })
             }
 
+            /// The byte offsets of the lines under the node at `index` of the
+            /// live tree `treeId` (its root when absent) that begin inside a
+            /// token (`engine::line_starts_inside_tokens`): what anything that
+            /// re-indents the tree's text leaves where it is. Refuses a tree
+            /// that is not live and an index naming no node of it.
+            #[::napi_derive::napi]
+            pub fn line_starts_inside_tokens(&self, tree_id: f64, index: Option<u32>) -> ::napi::Result<Vec<u32>> {
+                let tree_id = tree_id as u32;
+                LIVE_TREES.with(|trees| {
+                    let trees = trees.borrow();
+                    let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                    let node = $crate::engine::node_at_index(parsed.tree(), index.unwrap_or(0))
+                        .ok_or_else(|| ::napi::Error::from_reason(format!("index {} names no node of tree {tree_id}", index.unwrap_or(0))))?;
+                    Ok($crate::engine::line_starts_inside_tokens(node, parsed.source()).into_iter().map(|at| at as u32).collect())
+                })
+            }
+
             /// Whether each node `addresses` names (a JSON array of
             /// `query::Address`, all in one tree) satisfies the `where` plan
             /// (JSON, see `query::PlanSpec`), in order. Refuses a tree that is
@@ -354,6 +371,7 @@ macro_rules! napi_engine {
                         canonical,
                         self.engine.engine_format(),
                         tree_format,
+                        &table.newline,
                     ))
                 })
             }

@@ -178,7 +178,10 @@ engine.render(node, { options, reformat: true });       // per-call override
 
 - **Top level:** one key per preference label, for every declared and every
   spacing preference; one key per array-flank address (`block_start`,
-  `statement_start` for a supertype); `indent`, the indentation unit. Every site of a label
+  `statement_start` for a supertype); `layout`, the group of whole-render
+  settings, holding `indent` (the indentation unit) and `newline` (the line
+  ending: one of the arms of the `_newline` whitespace member, default `'\n'`), each present only where
+  the grammar admits it. Every site of a label
   must agree on its arms and default, otherwise the build fails.
 - **Kind × slot:** a key per kind that owns at least one site, holding one
   key per site: `<slot>_<label>` for a declared preference,
@@ -188,7 +191,7 @@ engine.render(node, { options, reformat: true });       // per-call override
   holding the union, key by key, of what its members declare; the
   membership is the node map's, the same table the wrap emitter uses.
 - Kinds and supertypes are spelled by their visible names. Labels, kind
-  names, supertype names and `indent` share one namespace; a collision is a
+  names, supertype names and `layout` share one namespace; a collision is a
   codegen error.
 
 ### What is emitted

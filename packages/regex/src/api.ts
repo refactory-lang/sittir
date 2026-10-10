@@ -3,11 +3,11 @@ import type { IndentOption, KindTypes, LanguageAPI, LanguageHooks } from '@sitti
 import type { TreeHandle } from '@sittir/common/utils';
 import { nativeLanguageEngine, type ParsedRoot } from '@sittir/common/engine';
 import { ir } from './ir.js';
-import { is } from './is.js';
+import { is, isMember, membersOf } from './is.js';
 import {
 	TSKindId,
 	type FixedTextKindId,
-	type IrKeyOf,
+	type TypeKeyOf,
 	type NamespaceMap,
 	type RegexNode,
 	type RegexTypeMap
@@ -23,7 +23,7 @@ export interface RegexAPI extends LanguageAPI {
 	readonly build: typeof ir;
 	readonly is: typeof is;
 	readonly kinds: typeof TSKindId;
-	readonly types: KindTypes<IrKeyOf, NamespaceMap>;
+	readonly types: KindTypes<TypeKeyOf, NamespaceMap>;
 	readonly root: PatternTree;
 	readonly node: RegexNode;
 	readonly fixedTextKindId: FixedTextKindId;
@@ -40,6 +40,7 @@ export const hooks: LanguageHooks<RegexAPI> = Object.freeze<LanguageHooks<RegexA
 	kinds: TSKindId,
 	trivia: triviaFacts,
 	querySlots,
+	membership: Object.freeze({ isMember, membersOf }),
 	createNative: (options) => nativeLanguageEngine<RegexAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as PatternRoot & ParsedRoot, tree as TreeHandle),
 	hydrate: (node, tree) => hydrate(node, tree as TreeHandle)

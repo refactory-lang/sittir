@@ -3394,7 +3394,7 @@ export enum CharLiteralEscapedKind {
 export interface SourceFile {
 	readonly $type: TSKindId.SourceFile;
 	readonly _shebang?: Shebang;
-	readonly _statements?: readonly Statement[];
+	readonly _statements: readonly Statement[];
 	readonly __inputHints__?: {
 		readonly statements?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
 	};
@@ -3512,7 +3512,7 @@ export interface TokenBindingPattern {
 
 export interface TokenRepetitionPattern {
 	readonly $type: TSKindId.TokenRepetitionPattern;
-	readonly _token_patterns?: readonly (
+	readonly _token_patterns: readonly (
 		| TokenTreePattern
 		| TokenRepetitionPattern
 		| TokenBindingPattern
@@ -3546,7 +3546,7 @@ export interface TokenRepetitionPattern {
 
 export interface TokenRepetition {
 	readonly $type: TSKindId.TokenRepetition;
-	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
+	readonly _tokens: readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
 	readonly _separator?: TokenRepetitionPatternText;
 	readonly _operator: number;
 	readonly __inputHints__?: {
@@ -4199,7 +4199,7 @@ export interface Attribute {
 
 export interface DeclarationList {
 	readonly $type: TSKindId.DeclarationList;
-	readonly _declarations?: readonly DeclarationStatement[];
+	readonly _declarations: readonly DeclarationStatement[];
 	readonly __inputHints__?: {
 		readonly declarations?: readonly (KindEnum<';', TSKindId.Semi> | DeclarationStatement)[];
 	};
@@ -7941,7 +7941,7 @@ export interface ParenthesizedExpression {
 
 export interface TupleExpression {
 	readonly $type: TSKindId.TupleExpression;
-	readonly _attributes?: readonly AttributeItem[];
+	readonly _attributes: readonly AttributeItem[];
 	readonly _expressions: Expressions;
 	readonly __looseHints__?: {
 		readonly expressions: readonly Expression[];
@@ -8007,7 +8007,7 @@ export interface FieldInitializerList {
 
 export interface ShorthandFieldInitializer {
 	readonly $type: TSKindId.ShorthandFieldInitializer;
-	readonly _attributes?: readonly AttributeItem[];
+	readonly _attributes: readonly AttributeItem[];
 	readonly _name: Identifier;
 	readonly __slotHints__?: {
 		readonly attributes: SlotHint<T.AttributeItem[], true, true>;
@@ -8019,7 +8019,7 @@ export interface ShorthandFieldInitializer {
 
 export interface FieldInitializer {
 	readonly $type: TSKindId.FieldInitializer;
-	readonly _attribute_item?: readonly AttributeItem[];
+	readonly _attribute_item: readonly AttributeItem[];
 	readonly _field: FieldIdentifier | IntegerLiteral;
 	readonly _value: Expression;
 	readonly __inputHints__?: {
@@ -8102,7 +8102,7 @@ export interface LetCondition {
 export interface LetChain {
 	readonly $type: TSKindId.LetChain;
 	readonly _left: LetChain | LetCondition | Expression;
-	readonly _right?: readonly (LetCondition | Expression)[];
+	readonly _right: readonly (LetCondition | Expression)[];
 	readonly __inputHints__?: {
 		readonly left:
 			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
@@ -8170,7 +8170,7 @@ export interface MatchBlock {
 
 export interface LastMatchArm {
 	readonly $type: TSKindId.LastMatchArm;
-	readonly _attributes?: readonly (AttributeItem | InnerAttributeItem)[];
+	readonly _attributes: readonly (AttributeItem | InnerAttributeItem)[];
 	readonly _pattern: MatchPattern;
 	readonly _value: Expression;
 	readonly _comma?: boolean;
@@ -8298,7 +8298,7 @@ export interface ConstBlock {
 
 export interface ClosureParameters {
 	readonly $type: TSKindId.ClosureParameters;
-	readonly _parameters?: readonly (Pattern | Parameter)[];
+	readonly _parameters: readonly (Pattern | Parameter)[];
 	readonly __inputHints__?: {
 		readonly parameters?: readonly (
 			| KindEnum<
@@ -8452,7 +8452,7 @@ export interface TryBlock {
 export interface Block {
 	readonly $type: TSKindId.Block;
 	readonly _label?: Label;
-	readonly _statements?: readonly Statement[];
+	readonly _statements: readonly Statement[];
 	readonly _trailing_expression?: Expression;
 	readonly __inputHints__?: {
 		readonly statements?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
@@ -8659,7 +8659,7 @@ export interface NegativeLiteral {
 export interface StringLiteral {
 	readonly $type: TSKindId.StringLiteral;
 	readonly _string_open: StringOpen;
-	readonly _elements?: readonly (EscapeSequence | StringContent)[];
+	readonly _elements: readonly (EscapeSequence | StringContent)[];
 	readonly __slotHints__?: {
 		readonly stringOpen: SlotHint<T.StringOpen>;
 		readonly elements: SlotHint<(T.EscapeSequence | T.StringContent)[], true, true>;
@@ -9609,7 +9609,7 @@ export interface EscapeSequenceHex {
 
 export interface ArrayExpressionSemi {
 	readonly $type: TSKindId.ArrayExpressionSemi;
-	readonly _attributes?: readonly AttributeItem[];
+	readonly _attributes: readonly AttributeItem[];
 	readonly _element: Expression;
 	readonly _length: Expression;
 	readonly __inputHints__?: {
@@ -9632,7 +9632,7 @@ export interface ArrayExpressionSemi {
 
 export interface ArrayExpressionList {
 	readonly $type: TSKindId.ArrayExpressionList;
-	readonly _attributes?: readonly AttributeItem[];
+	readonly _attributes: readonly AttributeItem[];
 	readonly _elements?: ArgumentsElements;
 	readonly __looseHints__?: {
 		readonly elements?: readonly AttributedArgument[];
@@ -9857,7 +9857,7 @@ export interface ImplItemBody {
 	readonly _trait_clause?: ImplItemPositiveClause | ImplItemNegativeClause;
 	readonly _type: Type;
 	readonly _where_clause?: WhereClause;
-	readonly _declaration_list: DeclarationList;
+	readonly _body: DeclarationList;
 	readonly __inputHints__?: {
 		readonly unsafe?: BaseBooleanKeyword<'unsafe'>;
 		readonly type:
@@ -9905,7 +9905,7 @@ export interface ImplItemBody {
 		readonly unsafe?: 'unsafe' | 'unsafe';
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
-		readonly declaration_list: readonly DeclarationStatement[];
+		readonly body: readonly DeclarationStatement[];
 	};
 	readonly __slotHints__?: {
 		readonly unsafe: SlotHint<NonNullable<T.ImplItemBody.Config>['unsafe'], true>;
@@ -9913,7 +9913,7 @@ export interface ImplItemBody {
 		readonly traitClause: SlotHint<T.ImplItemPositiveClause | T.ImplItemNegativeClause, true>;
 		readonly type: SlotHint<NonNullable<T.ImplItemBody.Config>['type']>;
 		readonly whereClause: SlotHint<T.WhereClause, true>;
-		readonly declarationList: SlotHint<T.DeclarationList>;
+		readonly body: SlotHint<T.DeclarationList>;
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<
 				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
@@ -9928,7 +9928,7 @@ export interface ImplItemBody {
 	traitClause(): ImplItemPositiveClause | ImplItemNegativeClause | undefined;
 	type(): Type;
 	whereClause(): WhereClause | undefined;
-	declarationList(): DeclarationList;
+	body(): DeclarationList;
 }
 
 export interface ImplItemSemi {
@@ -10501,7 +10501,7 @@ export interface ForeignModItemBody {
 
 export interface MatchArmWithComma {
 	readonly $type: TSKindId.MatchArmWithComma;
-	readonly _attributes?: readonly (AttributeItem | InnerAttributeItem)[];
+	readonly _attributes: readonly (AttributeItem | InnerAttributeItem)[];
 	readonly _pattern: MatchPattern;
 	readonly _value: Expression;
 	readonly __inputHints__?: {
@@ -10528,7 +10528,7 @@ export interface MatchArmWithComma {
 
 export interface MatchArmBlockEnding {
 	readonly $type: TSKindId.MatchArmBlockEnding;
-	readonly _attributes?: readonly (AttributeItem | InnerAttributeItem)[];
+	readonly _attributes: readonly (AttributeItem | InnerAttributeItem)[];
 	readonly _pattern: MatchPattern;
 	readonly _value:
 		| UnsafeBlock
@@ -10620,7 +10620,7 @@ export interface BlockCommentDocInner {
 
 export interface TokenTreePatternParen {
 	readonly $type: TSKindId.TokenTreePatternParen;
-	readonly _token_patterns?: readonly (
+	readonly _token_patterns: readonly (
 		| TokenTreePattern
 		| TokenRepetitionPattern
 		| TokenBindingPattern
@@ -10645,7 +10645,7 @@ export interface TokenTreePatternParen {
 
 export interface TokenTreePatternBracket {
 	readonly $type: TSKindId.TokenTreePatternBracket;
-	readonly _token_patterns?: readonly (
+	readonly _token_patterns: readonly (
 		| TokenTreePattern
 		| TokenRepetitionPattern
 		| TokenBindingPattern
@@ -10670,7 +10670,7 @@ export interface TokenTreePatternBracket {
 
 export interface TokenTreePatternBrace {
 	readonly $type: TSKindId.TokenTreePatternBrace;
-	readonly _token_patterns?: readonly (
+	readonly _token_patterns: readonly (
 		| TokenTreePattern
 		| TokenRepetitionPattern
 		| TokenBindingPattern
@@ -10695,7 +10695,7 @@ export interface TokenTreePatternBrace {
 
 export interface TokenTreeParen {
 	readonly $type: TSKindId.TokenTreeParen;
-	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
+	readonly _tokens: readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
 	readonly __slotHints__?: {
 		readonly tokens: SlotHint<(T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[], false, true>;
 	};
@@ -10704,7 +10704,7 @@ export interface TokenTreeParen {
 
 export interface TokenTreeBracket {
 	readonly $type: TSKindId.TokenTreeBracket;
-	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
+	readonly _tokens: readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
 	readonly __slotHints__?: {
 		readonly tokens: SlotHint<(T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[], false, true>;
 	};
@@ -10713,7 +10713,7 @@ export interface TokenTreeBracket {
 
 export interface TokenTreeBrace {
 	readonly $type: TSKindId.TokenTreeBrace;
-	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
+	readonly _tokens: readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
 	readonly __slotHints__?: {
 		readonly tokens: SlotHint<(T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[], false, true>;
 	};
@@ -10722,7 +10722,7 @@ export interface TokenTreeBrace {
 
 export interface DelimTokenTreeParen {
 	readonly $type: TSKindId.DelimTokenTreeParen;
-	readonly _delim_tokens?: readonly (NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
+	readonly _delim_tokens: readonly (NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
 	readonly __inputHints__?: {
 		readonly delim_tokens?: readonly (KindEnum<'$', TSKindId.Dollar> | NonSpecialToken | DelimTokenTree)[];
 	};
@@ -10734,7 +10734,7 @@ export interface DelimTokenTreeParen {
 
 export interface DelimTokenTreeBracket {
 	readonly $type: TSKindId.DelimTokenTreeBracket;
-	readonly _delim_tokens?: readonly (NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
+	readonly _delim_tokens: readonly (NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
 	readonly __inputHints__?: {
 		readonly delim_tokens?: readonly (KindEnum<'$', TSKindId.Dollar> | NonSpecialToken | DelimTokenTree)[];
 	};
@@ -10746,7 +10746,7 @@ export interface DelimTokenTreeBracket {
 
 export interface DelimTokenTreeBrace {
 	readonly $type: TSKindId.DelimTokenTreeBrace;
-	readonly _delim_tokens?: readonly (NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
+	readonly _delim_tokens: readonly (NonSpecialToken | TSKindId.Dollar | DelimTokenTree)[];
 	readonly __inputHints__?: {
 		readonly delim_tokens?: readonly (KindEnum<'$', TSKindId.Dollar> | NonSpecialToken | DelimTokenTree)[];
 	};
@@ -11371,7 +11371,7 @@ export interface StructItemUnit {
 
 export interface AttributedFieldDeclaration {
 	readonly $type: TSKindId.AttributedFieldDeclaration;
-	readonly _attribute_item?: readonly AttributeItem[];
+	readonly _attribute_item: readonly AttributeItem[];
 	readonly _field_declaration: FieldDeclaration;
 	readonly __slotHints__?: {
 		readonly attributeItems: SlotHint<T.AttributeItem[], true, true>;
@@ -11383,7 +11383,7 @@ export interface AttributedFieldDeclaration {
 
 export interface AttributedEnumVariant {
 	readonly $type: TSKindId.AttributedEnumVariant;
-	readonly _attribute_item?: readonly AttributeItem[];
+	readonly _attribute_item: readonly AttributeItem[];
 	readonly _enum_variant: EnumVariant;
 	readonly __slotHints__?: {
 		readonly attributeItems: SlotHint<T.AttributeItem[], true, true>;
@@ -11484,7 +11484,7 @@ export interface AttributedParameter {
 
 export interface AttributedTypeParameter {
 	readonly $type: TSKindId.AttributedTypeParameter;
-	readonly _attribute_item?: readonly AttributeItem[];
+	readonly _attribute_item: readonly AttributeItem[];
 	readonly _content: Metavariable | TypeParameter | LifetimeParameter | ConstParameter;
 	readonly __slotHints__?: {
 		readonly attributeItems: SlotHint<T.AttributeItem[], true, true>;
@@ -11496,7 +11496,7 @@ export interface AttributedTypeParameter {
 
 export interface AttributedArgument {
 	readonly $type: TSKindId.AttributedArgument;
-	readonly _attribute_item?: readonly AttributeItem[];
+	readonly _attribute_item: readonly AttributeItem[];
 	readonly _expression: Expression;
 	readonly __inputHints__?: {
 		readonly expression:
@@ -11513,7 +11513,7 @@ export interface AttributedArgument {
 
 export interface AttributedOrderedField {
 	readonly $type: TSKindId.AttributedOrderedField;
-	readonly _attribute_item?: readonly AttributeItem[];
+	readonly _attribute_item: readonly AttributeItem[];
 	readonly _visibility_modifier?: VisibilityModifier;
 	readonly _type: Type;
 	readonly __inputHints__?: {
@@ -11638,7 +11638,7 @@ export interface TypeArgument {
 
 export interface MatchBlockArms {
 	readonly $type: TSKindId.MatchBlockArms;
-	readonly _match_arm?: readonly MatchArm[];
+	readonly _match_arm: readonly MatchArm[];
 	readonly _last_arm: LastMatchArm;
 	readonly __slotHints__?: {
 		readonly matchArms: SlotHint<T.MatchArm[], true, true>;
@@ -19573,7 +19573,7 @@ export type FixedTextKindId =
 	| TSKindId.RawKeyword
 	| TSKindId.MacroRulesBang;
 
-export interface IrKeyOf {
+export interface TypeKeyOf {
 	[TSKindId.SourceFile]: 'sourceFile';
 	[TSKindId.ExpressionStatement]: 'expressionStatement';
 	[TSKindId.MacroRule]: 'macroRule';

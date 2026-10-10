@@ -12151,8 +12151,15 @@
           ]
         },
         {
-          "type": "SYMBOL",
-          "name": "declaration_list"
+          "type": "FIELD",
+          "name": "body",
+          "content": {
+            "type": "SYMBOL",
+            "name": "declaration_list"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ],
       "annotations": {

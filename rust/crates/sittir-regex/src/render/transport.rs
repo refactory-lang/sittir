@@ -1419,7 +1419,7 @@ pub struct AlternationTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_terms")]
     #[slot(field = field::TERMS, separator = kind::PIPE)]
-    pub terms: Vec<Option<::sittir_core::SlotValue<TermTransport>>>,
+    pub terms: ::sittir_core::NonEmptyVec<Option<::sittir_core::SlotValue<TermTransport>>>,
     #[wire(key = "_terms_separator_space_before")]
     pub terms_separator_space_before: Option<u16>,
     #[wire(key = "_terms_separator_space_after")]
@@ -1468,7 +1468,7 @@ pub struct TermTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_term_group")]
     #[slot]
-    pub term_group: Vec<::sittir_core::SlotValue<TermGroupTransport>>,
+    pub term_group: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<TermGroupTransport>>,
     #[wire(key = "_term_group_separator_space")]
     pub term_group_separator_space: Option<u16>,
 }
@@ -1826,7 +1826,7 @@ pub struct CharacterClassTransport {
     pub leading: Option<bool>,
     #[wire(key = "_class_atoms")]
     #[slot(field = field::CLASS_ATOMS)]
-    pub class_atoms: Option<Vec<::sittir_core::SlotValue<CharacterClassClassAtomsTransportSlot>>>,
+    pub class_atoms: Vec<::sittir_core::SlotValue<CharacterClassClassAtomsTransportSlot>>,
     #[wire(key = "_trailing")]
     #[slot(field = field::TRAILING, presence = display(kind::CLASS_CHARACTER))]
     pub trailing: Option<bool>,
@@ -4329,7 +4329,7 @@ fn render_pattern_character(t: &PatternCharacterTransport, w: &mut dyn ::sittir_
 
 fn render_character_class(node: &CharacterClassTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let class_atoms = ListView {
-        items: node.class_atoms.as_deref().unwrap_or(&[]),
+        items: &node.class_atoms,
         template: "{}",
         token: "",
         before: 0,
@@ -5094,3 +5094,5 @@ const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueExpressionGroup
 const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueExpressionTransport>() <= 256, "UnicodePropertyValueExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueTransport>() <= 256, "UnicodePropertyValueTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ZeroOrMoreTransport>() <= 256, "ZeroOrMoreTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+
+::sittir_core::grammar_trivia!(TriviaTransport; AnyTransport, PatternContentTransportSlot, LookaroundAssertionContentTransportSlot, LookaheadAssertionContentTransportSlot, LookbehindAssertionContentTransportSlot, CharacterClassClassAtomsTransportSlot, ClassRangeStartTransportSlot, NamedCapturingGroupContentTransportSlot, CountQuantifierContentTransportSlot, CharacterClassEscapeContentTransportSlot, TermGroupQuantifierTransportSlot, TermGroupContentTransportSlot, LazyContentTransportSlot, PatternTransport, AlternationTransport, TermTransport, AnyCharacterTransport, StartAssertionTransport, EndAssertionTransport, BoundaryAssertionTransport, NonBoundaryAssertionTransport, LookaroundAssertionTransport, LookaheadAssertionTransport, LookbehindAssertionTransport, PatternCharacterTransport, CharacterClassTransport, PosixCharacterClassTransport, PosixClassNameTransport, ClassRangeTransport, ClassCharacterTransport, AnonymousCapturingGroupTransport, NamedCapturingGroupTransport, NonCapturingGroupTransport, FlagsTransport, ZeroOrMoreTransport, OneOrMoreTransport, OptionalTransport, CountQuantifierTransport, BackreferenceEscapeTransport, NamedGroupBackreferenceTransport, DecimalEscapeTransport, CharacterClassEscapeTransport, UnicodeCharacterEscapeTransport, UnicodePropertyValueExpressionTransport, UnicodePropertyValueTransport, ControlEscapeTransport, ControlLetterEscapeTransport, IdentityEscapeTransport, GroupNameTransport, DecimalDigitsTransport, TermGroupTransport, CountQuantifierGroupTransport, CountQuantifierArmTransport, CharacterClassEscapeArmTransport, UnicodePropertyValueExpressionGroupTransport, CharacterClassEscapeText1Transport, CharacterClassEscapeText2Transport, NegationTransport, InlineFlagsGroupEnableTransport, InlineFlagsGroupToggleTransport, InlineFlagsGroupDisableTransport, TightTransport, NewlineTransport, BlanklineTransport, DoubleBlanklineTransport, LazyTransport, UnicodePropertyNameTransport, CaretTransport, LparenQmarkTransport, EqTransport, BangTransport, RparenTransport, LparenQmarkLtTransport, LbrackTransport, DashTransport, BslashDashTransport, RbrackTransport, LbrackColonTransport, ColonRbrackTransport, LparenTransport, LparenQmarkPLtTransport, GtTransport, LparenQmarkColonTransport, StarTransport, QmarkTransport, PlusTransport, LbraceTransport, RbraceTransport, BslashkTransport, LtTransport, LparenQmarkPEqTransport, CommaTransport, ColonTransport, TriviaTransport);

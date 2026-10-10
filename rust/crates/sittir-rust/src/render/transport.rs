@@ -60,7 +60,7 @@ pub enum AnyTransport {
     #[kind(kind::ORDERED_FIELD_DECLARATION_LIST)]
     OrderedFieldDeclarationList(OrderedFieldDeclarationListTransport),
     #[kind(kind::EXTERN_CRATE_DECLARATION)]
-    ExternCrateDeclaration(Box<ExternCrateDeclarationTransport>),
+    ExternCrateDeclaration(ExternCrateDeclarationTransport),
     #[kind(kind::CONST_ITEM)]
     ConstItem(Box<ConstItemTransport>),
     #[kind(kind::STATIC_ITEM)]
@@ -360,7 +360,7 @@ pub enum AnyTransport {
     #[kind(kind::ARRAY_EXPRESSION_LIST)]
     ArrayExpressionList(ArrayExpressionListTransport),
     #[kind(kind::ATTRIBUTE_INPUT)]
-    AttributeInput(Box<AttributeInputTransport>),
+    AttributeInput(AttributeInputTransport),
     #[kind(kind::CLOSURE_EXPRESSION_BLOCK)]
     ClosureExpressionBlock(ClosureExpressionBlockTransport),
     #[kind(kind::CLOSURE_EXPRESSION_EXPR)]
@@ -394,7 +394,7 @@ pub enum AnyTransport {
     #[kind(kind::MOD_ITEM_EXTERNAL)]
     ModItemExternal(ModItemExternalTransport),
     #[kind(kind::MOD_ITEM_INLINE)]
-    ModItemInline(Box<ModItemInlineTransport>),
+    ModItemInline(ModItemInlineTransport),
     #[kind(kind::OR_PATTERN_BINARY)]
     OrPatternBinary(OrPatternBinaryTransport),
     #[kind(kind::OR_PATTERN_PREFIX)]
@@ -416,7 +416,7 @@ pub enum AnyTransport {
     #[kind(kind::FOREIGN_MOD_ITEM_SEMI)]
     ForeignModItemSemi(ForeignModItemSemiTransport),
     #[kind(kind::FOREIGN_MOD_ITEM_BODY)]
-    ForeignModItemBody(Box<ForeignModItemBodyTransport>),
+    ForeignModItemBody(ForeignModItemBodyTransport),
     #[kind(kind::MATCH_ARM_WITH_COMMA)]
     MatchArmWithComma(Box<MatchArmWithCommaTransport>),
     #[kind(kind::MATCH_ARM_BLOCK_ENDING)]
@@ -474,7 +474,7 @@ pub enum AnyTransport {
     #[kind(kind::STRUCT_ITEM_TUPLE)]
     StructItemTuple(Box<StructItemTupleTransport>),
     #[kind(kind::STRUCT_ITEM_UNIT)]
-    StructItemUnit(Box<StructItemUnitTransport>),
+    StructItemUnit(StructItemUnitTransport),
     #[kind(kind::_ATTRIBUTED_FIELD_DECLARATION)]
     AttributedFieldDeclaration(Box<AttributedFieldDeclarationTransport>),
     #[kind(kind::_ATTRIBUTED_ENUM_VARIANT)]
@@ -484,11 +484,11 @@ pub enum AnyTransport {
     #[kind(kind::_ATTRIBUTED_TYPE_PARAMETER)]
     AttributedTypeParameter(AttributedTypeParameterTransport),
     #[kind(kind::_ATTRIBUTED_ARGUMENT)]
-    AttributedArgument(Box<AttributedArgumentTransport>),
+    AttributedArgument(AttributedArgumentTransport),
     #[kind(kind::_ATTRIBUTED_ORDERED_FIELD)]
     AttributedOrderedField(Box<AttributedOrderedFieldTransport>),
     #[kind(kind::_TYPE_ARGUMENT)]
-    TypeArgument(Box<TypeArgumentTransport>),
+    TypeArgument(TypeArgumentTransport),
     #[kind(kind::_MATCH_BLOCK_ARMS)]
     MatchBlockArms(MatchBlockArmsTransport),
     #[kind(kind::FLOAT_LITERAL)]
@@ -2142,7 +2142,7 @@ pub enum StatementTransport {
     #[kind(kind::EXPRESSION_STATEMENT)]
     ExpressionStatement(ExpressionStatementTransport),
     #[kind(kind::CONST_ITEM, kind::MACRO_INVOCATION, kind::MACRO_DEFINITION_PAREN, kind::MACRO_DEFINITION_BRACKET, kind::MACRO_DEFINITION_BRACE, kind::ATTRIBUTE_ITEM, kind::INNER_ATTRIBUTE_ITEM, kind::MOD_ITEM_EXTERNAL, kind::MOD_ITEM_INLINE, kind::FOREIGN_MOD_ITEM_SEMI, kind::FOREIGN_MOD_ITEM_BODY, kind::STRUCT_ITEM_BRACE, kind::STRUCT_ITEM_TUPLE, kind::STRUCT_ITEM_UNIT, kind::UNION_ITEM, kind::ENUM_ITEM, kind::TYPE_ITEM, kind::FUNCTION_ITEM, kind::FUNCTION_SIGNATURE_ITEM, kind::IMPL_ITEM_BODY, kind::IMPL_ITEM_SEMI, kind::TRAIT_ITEM, kind::ASSOCIATED_TYPE, kind::LET_DECLARATION, kind::USE_DECLARATION, kind::EXTERN_CRATE_DECLARATION, kind::STATIC_ITEM, kind::MACRO_DEFINITION, kind::MOD_ITEM, kind::FOREIGN_MOD_ITEM, kind::STRUCT_ITEM, kind::IMPL_ITEM)]
-    DeclarationStatement(Box<DeclarationStatementTransport>),
+    DeclarationStatement(DeclarationStatementTransport),
     ConstItem(Box<ConstItemTransport>),
     MacroInvocation(MacroInvocationTransport),
     MacroDefinition(MacroDefinitionTransport),
@@ -2163,7 +2163,7 @@ pub enum StatementTransport {
     AssociatedType(AssociatedTypeTransport),
     LetDeclaration(Box<LetDeclarationTransport>),
     UseDeclaration(Box<UseDeclarationTransport>),
-    ExternCrateDeclaration(Box<ExternCrateDeclarationTransport>),
+    ExternCrateDeclaration(ExternCrateDeclarationTransport),
     StaticItem(Box<StaticItemTransport>),
 }
 
@@ -2329,7 +2329,7 @@ pub enum DeclarationStatementTransport {
     #[kind(kind::USE_DECLARATION)]
     UseDeclaration(Box<UseDeclarationTransport>),
     #[kind(kind::EXTERN_CRATE_DECLARATION)]
-    ExternCrateDeclaration(Box<ExternCrateDeclarationTransport>),
+    ExternCrateDeclaration(ExternCrateDeclarationTransport),
     #[kind(kind::STATIC_ITEM)]
     StaticItem(Box<StaticItemTransport>),
 }
@@ -2639,7 +2639,7 @@ pub enum ModItemTransport {
     #[kind(kind::MOD_ITEM_EXTERNAL)]
     ModItemExternal(ModItemExternalTransport),
     #[kind(kind::MOD_ITEM_INLINE)]
-    ModItemInline(Box<ModItemInlineTransport>),
+    ModItemInline(ModItemInlineTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for ModItemTransport {
@@ -2691,7 +2691,7 @@ pub enum ForeignModItemTransport {
     #[kind(kind::FOREIGN_MOD_ITEM_SEMI)]
     ForeignModItemSemi(ForeignModItemSemiTransport),
     #[kind(kind::FOREIGN_MOD_ITEM_BODY)]
-    ForeignModItemBody(Box<ForeignModItemBodyTransport>),
+    ForeignModItemBody(ForeignModItemBodyTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for ForeignModItemTransport {
@@ -2745,7 +2745,7 @@ pub enum StructItemTransport {
     #[kind(kind::STRUCT_ITEM_TUPLE)]
     StructItemTuple(Box<StructItemTupleTransport>),
     #[kind(kind::STRUCT_ITEM_UNIT)]
-    StructItemUnit(Box<StructItemUnitTransport>),
+    StructItemUnit(StructItemUnitTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for StructItemTransport {
@@ -14665,7 +14665,7 @@ pub struct SourceFileTransport {
     pub shebang: Option<::sittir_core::SlotValue<ShebangTransport>>,
     #[wire(key = "_statements")]
     #[slot(field = field::STATEMENTS)]
-    pub statements: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
+    pub statements: Vec<::sittir_core::SlotValue<StatementTransport>>,
     #[wire(key = "_statements_separator_space")]
     pub statements_separator_space: Option<u16>,
 }
@@ -14698,9 +14698,9 @@ impl ::sittir_core::prepare::Prepare for SourceFileTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_SOURCE_FILE_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.statements.iter_mut().map(Some), "", options::allowed(options::SITE_SOURCE_FILE_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.statements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_SOURCE_FILE_STATEMENTS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_SOURCE_FILE_STATEMENTS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.statements.iter_mut().map(Some), options::SEATS_SOURCE_FILE_STATEMENTS, ctx);
         self.shebang.prepare(ctx)?;
         self.statements.prepare(ctx)?;
         Ok(())
@@ -14885,7 +14885,7 @@ pub struct TokenRepetitionPatternTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_token_patterns")]
     #[slot(field = field::TOKEN_PATTERNS)]
-    pub token_patterns: Option<Vec<::sittir_core::SlotValue<TokenRepetitionPatternTokenPatternsTransportSlot>>>,
+    pub token_patterns: Vec<::sittir_core::SlotValue<TokenRepetitionPatternTokenPatternsTransportSlot>>,
     #[wire(key = "_separator")]
     #[slot(field = field::SEPARATOR)]
     pub separator: Option<::sittir_core::SlotValue<TokenRepetitionPatternTextTransport>>,
@@ -14924,9 +14924,9 @@ impl ::sittir_core::prepare::Prepare for TokenRepetitionPatternTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.token_patterns.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.token_patterns.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.token_patterns_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.token_patterns.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.token_patterns.iter_mut().map(Some), options::SEATS_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS, ctx);
         self.token_patterns.prepare(ctx)?;
         self.separator.prepare(ctx)?;
         self.operator.prepare(ctx)?;
@@ -15032,7 +15032,7 @@ pub struct TokenRepetitionTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_tokens")]
     #[slot(field = field::TOKENS)]
-    pub tokens: Option<Vec<::sittir_core::SlotValue<TokenRepetitionTokensTransportSlot>>>,
+    pub tokens: Vec<::sittir_core::SlotValue<TokenRepetitionTokensTransportSlot>>,
     #[wire(key = "_separator")]
     #[slot(field = field::SEPARATOR)]
     pub separator: Option<::sittir_core::SlotValue<TokenRepetitionPatternTextTransport>>,
@@ -15071,9 +15071,9 @@ impl ::sittir_core::prepare::Prepare for TokenRepetitionTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.tokens.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_REPETITION_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.tokens.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_REPETITION_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.tokens_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_REPETITION_TOKENS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.tokens.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_TOKEN_REPETITION_TOKENS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.tokens.iter_mut().map(Some), options::SEATS_TOKEN_REPETITION_TOKENS, ctx);
         self.tokens.prepare(ctx)?;
         self.separator.prepare(ctx)?;
         self.operator.prepare(ctx)?;
@@ -15275,7 +15275,7 @@ pub struct DeclarationListTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_declarations")]
     #[slot(field = field::DECLARATIONS)]
-    pub declarations: Option<Vec<::sittir_core::SlotValue<DeclarationStatementTransport>>>,
+    pub declarations: Vec<::sittir_core::SlotValue<DeclarationStatementTransport>>,
     #[wire(key = "_declarations_separator_space")]
     pub declarations_separator_space: Option<u16>,
 }
@@ -15304,9 +15304,9 @@ impl ::sittir_core::prepare::Prepare for DeclarationListTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.declarations.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_DECLARATION_LIST_DECLARATIONS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.declarations.iter_mut().map(Some), "", options::allowed(options::SITE_DECLARATION_LIST_DECLARATIONS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.declarations_separator_space.get_or_insert(ctx.options.spacing[options::SITE_DECLARATION_LIST_DECLARATIONS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.declarations.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_DECLARATION_LIST_DECLARATIONS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.declarations.iter_mut().map(Some), options::SEATS_DECLARATION_LIST_DECLARATIONS, ctx);
         self.declarations.prepare(ctx)?;
         Ok(())
     }
@@ -16074,7 +16074,7 @@ pub struct FunctionModifiersTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_modifier")]
     #[slot(field = field::MODIFIER)]
-    pub modifier: Vec<::sittir_core::SlotValue<FunctionModifiersModifierTransportSlot>>,
+    pub modifier: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<FunctionModifiersModifierTransportSlot>>,
     #[wire(key = "_modifier_separator_space")]
     pub modifier_separator_space: Option<u16>,
 }
@@ -16344,7 +16344,7 @@ pub struct TraitBoundsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_bounds")]
     #[slot(field = field::BOUNDS, separator = kind::PLUS)]
-    pub bounds: Vec<::sittir_core::SlotValue<TraitBoundsBoundsTransportSlot>>,
+    pub bounds: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<TraitBoundsBoundsTransportSlot>>,
     #[wire(key = "_bounds_separator_space_before")]
     pub bounds_separator_space_before: Option<u16>,
     #[wire(key = "_bounds_separator_space_after")]
@@ -18899,7 +18899,7 @@ pub struct TupleExpressionTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attributes")]
     #[slot(field = field::ATTRIBUTES)]
-    pub attributes: Option<Vec<::sittir_core::SlotValue<AttributeItemTransport>>>,
+    pub attributes: Vec<::sittir_core::SlotValue<AttributeItemTransport>>,
     #[wire(key = "_expressions")]
     #[slot]
     pub expressions: ::sittir_core::SlotValue<ExpressionsTransport>,
@@ -18931,9 +18931,9 @@ impl ::sittir_core::prepare::Prepare for TupleExpressionTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.attributes.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_TUPLE_EXPRESSION_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.attributes.iter_mut().map(Some), "", options::allowed(options::SITE_TUPLE_EXPRESSION_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.attributes_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_EXPRESSION_ATTRIBUTES_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.attributes.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_TUPLE_EXPRESSION_ATTRIBUTES, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.attributes.iter_mut().map(Some), options::SEATS_TUPLE_EXPRESSION_ATTRIBUTES, ctx);
         self.attributes.prepare(ctx)?;
         self.expressions.prepare(ctx)?;
         Ok(())
@@ -19072,7 +19072,7 @@ pub struct ShorthandFieldInitializerTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attributes")]
     #[slot(field = field::ATTRIBUTES)]
-    pub attributes: Option<Vec<::sittir_core::SlotValue<AttributeItemTransport>>>,
+    pub attributes: Vec<::sittir_core::SlotValue<AttributeItemTransport>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
@@ -19104,9 +19104,9 @@ impl ::sittir_core::prepare::Prepare for ShorthandFieldInitializerTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.attributes.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.attributes.iter_mut().map(Some), "", options::allowed(options::SITE_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.attributes_separator_space.get_or_insert(ctx.options.spacing[options::SITE_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.attributes.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.attributes.iter_mut().map(Some), options::SEATS_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES, ctx);
         self.attributes.prepare(ctx)?;
         self.name.prepare(ctx)?;
         Ok(())
@@ -19126,7 +19126,7 @@ pub struct FieldInitializerTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attribute_item")]
     #[slot]
-    pub attribute_item: Option<Vec<::sittir_core::SlotValue<AttributeItemTransport>>>,
+    pub attribute_item: Vec<::sittir_core::SlotValue<AttributeItemTransport>>,
     #[wire(key = "_field")]
     #[slot(field = field::FIELD)]
     pub field: ::sittir_core::SlotValue<FieldInitializerFieldTransportSlot>,
@@ -19161,9 +19161,9 @@ impl ::sittir_core::prepare::Prepare for FieldInitializerTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.attribute_item.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_FIELD_INITIALIZER_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.attribute_item.iter_mut().map(Some), "", options::allowed(options::SITE_FIELD_INITIALIZER_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.attribute_item_separator_space.get_or_insert(ctx.options.spacing[options::SITE_FIELD_INITIALIZER_ATTRIBUTE_ITEM_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.attribute_item.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_FIELD_INITIALIZER_ATTRIBUTE_ITEM, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.attribute_item.iter_mut().map(Some), options::SEATS_FIELD_INITIALIZER_ATTRIBUTE_ITEM, ctx);
         self.attribute_item.prepare(ctx)?;
         self.field.prepare(ctx)?;
         self.value.prepare(ctx)?;
@@ -19334,7 +19334,7 @@ pub struct LetChainTransport {
     pub left: ::sittir_core::SlotValue<Box<LetChainLeftTransportSlot>>,
     #[wire(key = "_right")]
     #[slot(field = field::RIGHT, separator = kind::AMP_AMP)]
-    pub right: Option<Vec<::sittir_core::SlotValue<LetChainRightTransportSlot>>>,
+    pub right: Vec<::sittir_core::SlotValue<LetChainRightTransportSlot>>,
     #[wire(key = "_right_separator_space_before")]
     pub right_separator_space_before: Option<u16>,
     #[wire(key = "_right_separator_space_after")]
@@ -19362,10 +19362,10 @@ impl ::sittir_core::render::Render for LetChainTransport {
 impl ::sittir_core::prepare::Prepare for LetChainTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        if let Some(gap_items) = self.right.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "&&", options::allowed(options::SITE_LET_CHAIN_RIGHT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_LET_CHAIN_RIGHT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.right.iter_mut().map(Some), "&&", options::allowed(options::SITE_LET_CHAIN_RIGHT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_LET_CHAIN_RIGHT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.right_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_LET_CHAIN_RIGHT_SEPARATOR_SPACE_BEFORE].arm);
         self.right_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_LET_CHAIN_RIGHT_SEPARATOR_SPACE_AFTER].arm);
-        if let Some(seated_items) = self.right.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_LET_CHAIN_RIGHT, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.right.iter_mut().map(Some), options::SEATS_LET_CHAIN_RIGHT, ctx);
         self.left.prepare(ctx)?;
         self.right.prepare(ctx)?;
         Ok(())
@@ -19524,7 +19524,7 @@ pub struct LastMatchArmTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attributes")]
     #[slot(field = field::ATTRIBUTES)]
-    pub attributes: Option<Vec<::sittir_core::SlotValue<LastMatchArmAttributesTransportSlot>>>,
+    pub attributes: Vec<::sittir_core::SlotValue<LastMatchArmAttributesTransportSlot>>,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN)]
     pub pattern: ::sittir_core::SlotValue<Box<MatchPatternTransport>>,
@@ -19562,9 +19562,9 @@ impl ::sittir_core::prepare::Prepare for LastMatchArmTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.attributes.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_LAST_MATCH_ARM_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.attributes.iter_mut().map(Some), "", options::allowed(options::SITE_LAST_MATCH_ARM_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.attributes_separator_space.get_or_insert(ctx.options.spacing[options::SITE_LAST_MATCH_ARM_ATTRIBUTES_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.attributes.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_LAST_MATCH_ARM_ATTRIBUTES, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.attributes.iter_mut().map(Some), options::SEATS_LAST_MATCH_ARM_ATTRIBUTES, ctx);
         self.attributes.prepare(ctx)?;
         self.pattern.prepare(ctx)?;
         self.value.prepare(ctx)?;
@@ -19839,7 +19839,7 @@ pub struct ClosureParametersTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_parameters")]
     #[slot(field = field::PARAMETERS, separator = kind::COMMA)]
-    pub parameters: Option<Vec<::sittir_core::SlotValue<ClosureParametersParametersTransportSlot>>>,
+    pub parameters: Vec<::sittir_core::SlotValue<ClosureParametersParametersTransportSlot>>,
     #[wire(key = "_parameters_separator_space_before")]
     pub parameters_separator_space_before: Option<u16>,
     #[wire(key = "_parameters_separator_space_after")]
@@ -19870,10 +19870,10 @@ impl ::sittir_core::prepare::Prepare for ClosureParametersTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.parameters.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), ",", options::allowed(options::SITE_CLOSURE_PARAMETERS_PARAMETERS_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_CLOSURE_PARAMETERS_PARAMETERS_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.parameters.iter_mut().map(Some), ",", options::allowed(options::SITE_CLOSURE_PARAMETERS_PARAMETERS_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_CLOSURE_PARAMETERS_PARAMETERS_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.parameters_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_CLOSURE_PARAMETERS_PARAMETERS_SEPARATOR_SPACE_BEFORE].arm);
         self.parameters_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_CLOSURE_PARAMETERS_PARAMETERS_SEPARATOR_SPACE_AFTER].arm);
-        if let Some(seated_items) = self.parameters.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_CLOSURE_PARAMETERS_PARAMETERS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.parameters.iter_mut().map(Some), options::SEATS_CLOSURE_PARAMETERS_PARAMETERS, ctx);
         self.parameters.prepare(ctx)?;
         Ok(())
     }
@@ -20365,7 +20365,7 @@ pub struct BlockTransport {
     pub label: Option<::sittir_core::SlotValue<LabelTransport>>,
     #[wire(key = "_statements")]
     #[slot(field = field::STATEMENTS)]
-    pub statements: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
+    pub statements: Vec<::sittir_core::SlotValue<StatementTransport>>,
     #[wire(key = "_trailing_expression")]
     #[slot(field = field::TRAILING_EXPRESSION)]
     pub trailing_expression: Option<::sittir_core::SlotValue<Box<ExpressionTransport>>>,
@@ -20397,9 +20397,9 @@ impl ::sittir_core::prepare::Prepare for BlockTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.statements.iter_mut().map(Some), "", options::allowed(options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.statements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_BLOCK_STATEMENTS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.statements.iter_mut().map(Some), options::SEATS_BLOCK_STATEMENTS, ctx);
         self.label.prepare(ctx)?;
         self.statements.prepare(ctx)?;
         self.trailing_expression.prepare(ctx)?;
@@ -20918,7 +20918,7 @@ pub struct StringLiteralTransport {
     pub string_open: ::sittir_core::SlotValue<StringOpenTransport>,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
-    pub elements: Option<Vec<::sittir_core::SlotValue<StringLiteralElementsTransportSlot, true>>>,
+    pub elements: Vec<::sittir_core::SlotValue<StringLiteralElementsTransportSlot, true>>,
 }
 
 impl ::sittir_core::view::KindOf for StringLiteralTransport {
@@ -21482,7 +21482,7 @@ pub struct MacroRulesTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::SEMI)]
-    pub item: Vec<::sittir_core::SlotValue<MacroRuleTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<MacroRuleTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -21539,7 +21539,7 @@ pub struct EnumVariantListElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<AttributedEnumVariantTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<AttributedEnumVariantTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -21596,7 +21596,7 @@ pub struct FieldDeclarationListElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<AttributedFieldDeclarationTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<AttributedFieldDeclarationTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -21653,7 +21653,7 @@ pub struct OrderedFieldDeclarationListElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<AttributedOrderedFieldTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<AttributedOrderedFieldTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -21710,7 +21710,7 @@ pub struct WherePredicatesTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<WherePredicateTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<WherePredicateTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -21767,7 +21767,7 @@ pub struct TypeParametersElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<AttributedTypeParameterTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<AttributedTypeParameterTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -21824,7 +21824,7 @@ pub struct UseClausesTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<UseDeclarationArgumentTransportSlot>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<UseDeclarationArgumentTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -21881,7 +21881,7 @@ pub struct ParametersElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<AttributedParameterTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<AttributedParameterTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -21938,7 +21938,7 @@ pub struct LifetimesTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<LifetimeTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<LifetimeTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -21995,7 +21995,7 @@ pub struct TypesTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<TypeTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<TypeTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -22052,7 +22052,7 @@ pub struct UseBoundsElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<UseBoundsElementsItemTransportSlot>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<UseBoundsElementsItemTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -22109,7 +22109,7 @@ pub struct TypeArgumentsElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<TypeArgumentTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<TypeArgumentTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -22166,7 +22166,7 @@ pub struct ArgumentsElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<AttributedArgumentTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<AttributedArgumentTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -22223,7 +22223,7 @@ pub struct ExpressionsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -22280,7 +22280,7 @@ pub struct FieldInitializerListElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<FieldInitializerListElementsItemTransportSlot>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<FieldInitializerListElementsItemTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -22337,7 +22337,7 @@ pub struct TuplePatternElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<TuplePatternElementsItemTransportSlot>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<TuplePatternElementsItemTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -22394,7 +22394,7 @@ pub struct PatternsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<PatternTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<PatternTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -22451,7 +22451,7 @@ pub struct StructPatternElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<StructPatternElementsItemTransportSlot>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<StructPatternElementsItemTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -23647,7 +23647,7 @@ pub struct ArrayExpressionSemiTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attributes")]
     #[slot(field = field::ATTRIBUTES)]
-    pub attributes: Option<Vec<::sittir_core::SlotValue<AttributeItemTransport>>>,
+    pub attributes: Vec<::sittir_core::SlotValue<AttributeItemTransport>>,
     #[wire(key = "_element")]
     #[slot(field = field::ELEMENT)]
     pub element: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
@@ -23682,9 +23682,9 @@ impl ::sittir_core::prepare::Prepare for ArrayExpressionSemiTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.attributes.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_ARRAY_EXPRESSION_SEMI_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.attributes.iter_mut().map(Some), "", options::allowed(options::SITE_ARRAY_EXPRESSION_SEMI_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.attributes_separator_space.get_or_insert(ctx.options.spacing[options::SITE_ARRAY_EXPRESSION_SEMI_ATTRIBUTES_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.attributes.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_ARRAY_EXPRESSION_SEMI_ATTRIBUTES, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.attributes.iter_mut().map(Some), options::SEATS_ARRAY_EXPRESSION_SEMI_ATTRIBUTES, ctx);
         self.attributes.prepare(ctx)?;
         self.element.prepare(ctx)?;
         self.length.prepare(ctx)?;
@@ -23705,7 +23705,7 @@ pub struct ArrayExpressionListTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attributes")]
     #[slot(field = field::ATTRIBUTES)]
-    pub attributes: Option<Vec<::sittir_core::SlotValue<AttributeItemTransport>>>,
+    pub attributes: Vec<::sittir_core::SlotValue<AttributeItemTransport>>,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
     pub elements: Option<::sittir_core::SlotValue<ArgumentsElementsTransport>>,
@@ -23737,9 +23737,9 @@ impl ::sittir_core::prepare::Prepare for ArrayExpressionListTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.attributes.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_ARRAY_EXPRESSION_LIST_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.attributes.iter_mut().map(Some), "", options::allowed(options::SITE_ARRAY_EXPRESSION_LIST_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.attributes_separator_space.get_or_insert(ctx.options.spacing[options::SITE_ARRAY_EXPRESSION_LIST_ATTRIBUTES_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.attributes.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_ARRAY_EXPRESSION_LIST_ATTRIBUTES, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.attributes.iter_mut().map(Some), options::SEATS_ARRAY_EXPRESSION_LIST_ATTRIBUTES, ctx);
         self.attributes.prepare(ctx)?;
         self.elements.prepare(ctx)?;
         Ok(())
@@ -24214,9 +24214,9 @@ pub struct ImplItemBodyTransport {
     #[wire(key = "_where_clause")]
     #[slot(field = field::WHERE_CLAUSE)]
     pub where_clause: Option<::sittir_core::SlotValue<WhereClauseTransport>>,
-    #[wire(key = "_declaration_list")]
-    #[slot]
-    pub declaration_list: ::sittir_core::SlotValue<DeclarationListTransport>,
+    #[wire(key = "_body")]
+    #[slot(field = field::BODY)]
+    pub body: ::sittir_core::SlotValue<DeclarationListTransport>,
 }
 
 impl ::sittir_core::view::KindOf for ImplItemBodyTransport {
@@ -24248,7 +24248,7 @@ impl ::sittir_core::prepare::Prepare for ImplItemBodyTransport {
         self.trait_clause.prepare(ctx)?;
         self.type_.prepare(ctx)?;
         self.where_clause.prepare(ctx)?;
-        self.declaration_list.prepare(ctx)?;
+        self.body.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -25167,7 +25167,7 @@ pub struct MatchArmWithCommaTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attributes")]
     #[slot(field = field::ATTRIBUTES)]
-    pub attributes: Option<Vec<::sittir_core::SlotValue<LastMatchArmAttributesTransportSlot>>>,
+    pub attributes: Vec<::sittir_core::SlotValue<LastMatchArmAttributesTransportSlot>>,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN)]
     pub pattern: ::sittir_core::SlotValue<MatchPatternTransport>,
@@ -25202,9 +25202,9 @@ impl ::sittir_core::prepare::Prepare for MatchArmWithCommaTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.attributes.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_MATCH_ARM_WITH_COMMA_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.attributes.iter_mut().map(Some), "", options::allowed(options::SITE_MATCH_ARM_WITH_COMMA_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.attributes_separator_space.get_or_insert(ctx.options.spacing[options::SITE_MATCH_ARM_WITH_COMMA_ATTRIBUTES_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.attributes.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_MATCH_ARM_WITH_COMMA_ATTRIBUTES, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.attributes.iter_mut().map(Some), options::SEATS_MATCH_ARM_WITH_COMMA_ATTRIBUTES, ctx);
         self.attributes.prepare(ctx)?;
         self.pattern.prepare(ctx)?;
         self.value.prepare(ctx)?;
@@ -25225,7 +25225,7 @@ pub struct MatchArmBlockEndingTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attributes")]
     #[slot(field = field::ATTRIBUTES)]
-    pub attributes: Option<Vec<::sittir_core::SlotValue<LastMatchArmAttributesTransportSlot>>>,
+    pub attributes: Vec<::sittir_core::SlotValue<LastMatchArmAttributesTransportSlot>>,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN)]
     pub pattern: ::sittir_core::SlotValue<MatchPatternTransport>,
@@ -25260,9 +25260,9 @@ impl ::sittir_core::prepare::Prepare for MatchArmBlockEndingTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.attributes.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.attributes.iter_mut().map(Some), "", options::allowed(options::SITE_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.attributes_separator_space.get_or_insert(ctx.options.spacing[options::SITE_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.attributes.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.attributes.iter_mut().map(Some), options::SEATS_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES, ctx);
         self.attributes.prepare(ctx)?;
         self.pattern.prepare(ctx)?;
         self.value.prepare(ctx)?;
@@ -25571,7 +25571,7 @@ pub struct TokenTreePatternParenTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_token_patterns")]
     #[slot(field = field::TOKEN_PATTERNS)]
-    pub token_patterns: Option<Vec<::sittir_core::SlotValue<TokenRepetitionPatternTokenPatternsTransportSlot>>>,
+    pub token_patterns: Vec<::sittir_core::SlotValue<TokenRepetitionPatternTokenPatternsTransportSlot>>,
     #[wire(key = "_token_patterns_separator_space")]
     pub token_patterns_separator_space: Option<u16>,
 }
@@ -25600,9 +25600,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternParenTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.token_patterns.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.token_patterns.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.token_patterns_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.token_patterns.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.token_patterns.iter_mut().map(Some), options::SEATS_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS, ctx);
         self.token_patterns.prepare(ctx)?;
         Ok(())
     }
@@ -25621,7 +25621,7 @@ pub struct TokenTreePatternBracketTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_token_patterns")]
     #[slot(field = field::TOKEN_PATTERNS)]
-    pub token_patterns: Option<Vec<::sittir_core::SlotValue<TokenRepetitionPatternTokenPatternsTransportSlot>>>,
+    pub token_patterns: Vec<::sittir_core::SlotValue<TokenRepetitionPatternTokenPatternsTransportSlot>>,
     #[wire(key = "_token_patterns_separator_space")]
     pub token_patterns_separator_space: Option<u16>,
 }
@@ -25650,9 +25650,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternBracketTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.token_patterns.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.token_patterns.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.token_patterns_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.token_patterns.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.token_patterns.iter_mut().map(Some), options::SEATS_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS, ctx);
         self.token_patterns.prepare(ctx)?;
         Ok(())
     }
@@ -25671,7 +25671,7 @@ pub struct TokenTreePatternBraceTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_token_patterns")]
     #[slot(field = field::TOKEN_PATTERNS)]
-    pub token_patterns: Option<Vec<::sittir_core::SlotValue<TokenRepetitionPatternTokenPatternsTransportSlot>>>,
+    pub token_patterns: Vec<::sittir_core::SlotValue<TokenRepetitionPatternTokenPatternsTransportSlot>>,
     #[wire(key = "_token_patterns_separator_space")]
     pub token_patterns_separator_space: Option<u16>,
 }
@@ -25700,9 +25700,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternBraceTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.token_patterns.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.token_patterns.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.token_patterns_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.token_patterns.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.token_patterns.iter_mut().map(Some), options::SEATS_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS, ctx);
         self.token_patterns.prepare(ctx)?;
         Ok(())
     }
@@ -25721,7 +25721,7 @@ pub struct TokenTreeParenTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_tokens")]
     #[slot(field = field::TOKENS)]
-    pub tokens: Option<Vec<::sittir_core::SlotValue<TokenRepetitionTokensTransportSlot>>>,
+    pub tokens: Vec<::sittir_core::SlotValue<TokenRepetitionTokensTransportSlot>>,
     #[wire(key = "_tokens_separator_space")]
     pub tokens_separator_space: Option<u16>,
 }
@@ -25750,9 +25750,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreeParenTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.tokens.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_TREE_PAREN_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.tokens.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_TREE_PAREN_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.tokens_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_PAREN_TOKENS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.tokens.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_TOKEN_TREE_PAREN_TOKENS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.tokens.iter_mut().map(Some), options::SEATS_TOKEN_TREE_PAREN_TOKENS, ctx);
         self.tokens.prepare(ctx)?;
         Ok(())
     }
@@ -25771,7 +25771,7 @@ pub struct TokenTreeBracketTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_tokens")]
     #[slot(field = field::TOKENS)]
-    pub tokens: Option<Vec<::sittir_core::SlotValue<TokenRepetitionTokensTransportSlot>>>,
+    pub tokens: Vec<::sittir_core::SlotValue<TokenRepetitionTokensTransportSlot>>,
     #[wire(key = "_tokens_separator_space")]
     pub tokens_separator_space: Option<u16>,
 }
@@ -25800,9 +25800,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreeBracketTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.tokens.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_TREE_BRACKET_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.tokens.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_TREE_BRACKET_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.tokens_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_BRACKET_TOKENS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.tokens.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_TOKEN_TREE_BRACKET_TOKENS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.tokens.iter_mut().map(Some), options::SEATS_TOKEN_TREE_BRACKET_TOKENS, ctx);
         self.tokens.prepare(ctx)?;
         Ok(())
     }
@@ -25821,7 +25821,7 @@ pub struct TokenTreeBraceTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_tokens")]
     #[slot(field = field::TOKENS)]
-    pub tokens: Option<Vec<::sittir_core::SlotValue<TokenRepetitionTokensTransportSlot>>>,
+    pub tokens: Vec<::sittir_core::SlotValue<TokenRepetitionTokensTransportSlot>>,
     #[wire(key = "_tokens_separator_space")]
     pub tokens_separator_space: Option<u16>,
 }
@@ -25850,9 +25850,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreeBraceTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.tokens.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_TREE_BRACE_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.tokens.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_TREE_BRACE_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.tokens_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_BRACE_TOKENS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.tokens.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_TOKEN_TREE_BRACE_TOKENS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.tokens.iter_mut().map(Some), options::SEATS_TOKEN_TREE_BRACE_TOKENS, ctx);
         self.tokens.prepare(ctx)?;
         Ok(())
     }
@@ -25871,7 +25871,7 @@ pub struct DelimTokenTreeParenTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_delim_tokens")]
     #[slot(field = field::DELIM_TOKENS)]
-    pub delim_tokens: Option<Vec<::sittir_core::SlotValue<DelimTokenTreeParenDelimTokensTransportSlot>>>,
+    pub delim_tokens: Vec<::sittir_core::SlotValue<DelimTokenTreeParenDelimTokensTransportSlot>>,
     #[wire(key = "_delim_tokens_separator_space")]
     pub delim_tokens_separator_space: Option<u16>,
 }
@@ -25900,9 +25900,9 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeParenTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.delim_tokens.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.delim_tokens.iter_mut().map(Some), "", options::allowed(options::SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.delim_tokens_separator_space.get_or_insert(ctx.options.spacing[options::SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.delim_tokens.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.delim_tokens.iter_mut().map(Some), options::SEATS_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS, ctx);
         self.delim_tokens.prepare(ctx)?;
         Ok(())
     }
@@ -25921,7 +25921,7 @@ pub struct DelimTokenTreeBracketTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_delim_tokens")]
     #[slot(field = field::DELIM_TOKENS)]
-    pub delim_tokens: Option<Vec<::sittir_core::SlotValue<DelimTokenTreeParenDelimTokensTransportSlot>>>,
+    pub delim_tokens: Vec<::sittir_core::SlotValue<DelimTokenTreeParenDelimTokensTransportSlot>>,
     #[wire(key = "_delim_tokens_separator_space")]
     pub delim_tokens_separator_space: Option<u16>,
 }
@@ -25950,9 +25950,9 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeBracketTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.delim_tokens.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.delim_tokens.iter_mut().map(Some), "", options::allowed(options::SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.delim_tokens_separator_space.get_or_insert(ctx.options.spacing[options::SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.delim_tokens.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.delim_tokens.iter_mut().map(Some), options::SEATS_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS, ctx);
         self.delim_tokens.prepare(ctx)?;
         Ok(())
     }
@@ -25971,7 +25971,7 @@ pub struct DelimTokenTreeBraceTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_delim_tokens")]
     #[slot(field = field::DELIM_TOKENS)]
-    pub delim_tokens: Option<Vec<::sittir_core::SlotValue<DelimTokenTreeParenDelimTokensTransportSlot>>>,
+    pub delim_tokens: Vec<::sittir_core::SlotValue<DelimTokenTreeParenDelimTokensTransportSlot>>,
     #[wire(key = "_delim_tokens_separator_space")]
     pub delim_tokens_separator_space: Option<u16>,
 }
@@ -26000,9 +26000,9 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeBraceTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.delim_tokens.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.delim_tokens.iter_mut().map(Some), "", options::allowed(options::SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.delim_tokens_separator_space.get_or_insert(ctx.options.spacing[options::SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.delim_tokens.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.delim_tokens.iter_mut().map(Some), options::SEATS_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS, ctx);
         self.delim_tokens.prepare(ctx)?;
         Ok(())
     }
@@ -26658,7 +26658,7 @@ pub struct AttributedFieldDeclarationTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attribute_item")]
     #[slot]
-    pub attribute_item: Option<Vec<::sittir_core::SlotValue<AttributeItemTransport>>>,
+    pub attribute_item: Vec<::sittir_core::SlotValue<AttributeItemTransport>>,
     #[wire(key = "_field_declaration")]
     #[slot]
     pub field_declaration: ::sittir_core::SlotValue<FieldDeclarationTransport>,
@@ -26690,9 +26690,9 @@ impl ::sittir_core::prepare::Prepare for AttributedFieldDeclarationTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.attribute_item.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_ATTRIBUTED_FIELD_DECLARATION_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.attribute_item.iter_mut().map(Some), "", options::allowed(options::SITE_ATTRIBUTED_FIELD_DECLARATION_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.attribute_item_separator_space.get_or_insert(ctx.options.spacing[options::SITE_ATTRIBUTED_FIELD_DECLARATION_ATTRIBUTE_ITEM_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.attribute_item.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_ATTRIBUTED_FIELD_DECLARATION_ATTRIBUTE_ITEM, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.attribute_item.iter_mut().map(Some), options::SEATS_ATTRIBUTED_FIELD_DECLARATION_ATTRIBUTE_ITEM, ctx);
         self.attribute_item.prepare(ctx)?;
         self.field_declaration.prepare(ctx)?;
         Ok(())
@@ -26712,7 +26712,7 @@ pub struct AttributedEnumVariantTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attribute_item")]
     #[slot]
-    pub attribute_item: Option<Vec<::sittir_core::SlotValue<AttributeItemTransport>>>,
+    pub attribute_item: Vec<::sittir_core::SlotValue<AttributeItemTransport>>,
     #[wire(key = "_enum_variant")]
     #[slot]
     pub enum_variant: ::sittir_core::SlotValue<EnumVariantTransport>,
@@ -26744,9 +26744,9 @@ impl ::sittir_core::prepare::Prepare for AttributedEnumVariantTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.attribute_item.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_ATTRIBUTED_ENUM_VARIANT_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.attribute_item.iter_mut().map(Some), "", options::allowed(options::SITE_ATTRIBUTED_ENUM_VARIANT_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.attribute_item_separator_space.get_or_insert(ctx.options.spacing[options::SITE_ATTRIBUTED_ENUM_VARIANT_ATTRIBUTE_ITEM_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.attribute_item.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_ATTRIBUTED_ENUM_VARIANT_ATTRIBUTE_ITEM, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.attribute_item.iter_mut().map(Some), options::SEATS_ATTRIBUTED_ENUM_VARIANT_ATTRIBUTE_ITEM, ctx);
         self.attribute_item.prepare(ctx)?;
         self.enum_variant.prepare(ctx)?;
         Ok(())
@@ -26815,7 +26815,7 @@ pub struct AttributedTypeParameterTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attribute_item")]
     #[slot]
-    pub attribute_item: Option<Vec<::sittir_core::SlotValue<AttributeItemTransport>>>,
+    pub attribute_item: Vec<::sittir_core::SlotValue<AttributeItemTransport>>,
     #[wire(key = "_content")]
     #[slot]
     pub content: ::sittir_core::SlotValue<AttributedTypeParameterContentTransportSlot>,
@@ -26847,9 +26847,9 @@ impl ::sittir_core::prepare::Prepare for AttributedTypeParameterTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.attribute_item.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_ATTRIBUTED_TYPE_PARAMETER_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.attribute_item.iter_mut().map(Some), "", options::allowed(options::SITE_ATTRIBUTED_TYPE_PARAMETER_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.attribute_item_separator_space.get_or_insert(ctx.options.spacing[options::SITE_ATTRIBUTED_TYPE_PARAMETER_ATTRIBUTE_ITEM_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.attribute_item.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_ATTRIBUTED_TYPE_PARAMETER_ATTRIBUTE_ITEM, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.attribute_item.iter_mut().map(Some), options::SEATS_ATTRIBUTED_TYPE_PARAMETER_ATTRIBUTE_ITEM, ctx);
         self.attribute_item.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
@@ -26869,7 +26869,7 @@ pub struct AttributedArgumentTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attribute_item")]
     #[slot]
-    pub attribute_item: Option<Vec<::sittir_core::SlotValue<AttributeItemTransport>>>,
+    pub attribute_item: Vec<::sittir_core::SlotValue<AttributeItemTransport>>,
     #[wire(key = "_expression")]
     #[slot]
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
@@ -26901,9 +26901,9 @@ impl ::sittir_core::prepare::Prepare for AttributedArgumentTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.attribute_item.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_ATTRIBUTED_ARGUMENT_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.attribute_item.iter_mut().map(Some), "", options::allowed(options::SITE_ATTRIBUTED_ARGUMENT_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.attribute_item_separator_space.get_or_insert(ctx.options.spacing[options::SITE_ATTRIBUTED_ARGUMENT_ATTRIBUTE_ITEM_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.attribute_item.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_ATTRIBUTED_ARGUMENT_ATTRIBUTE_ITEM, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.attribute_item.iter_mut().map(Some), options::SEATS_ATTRIBUTED_ARGUMENT_ATTRIBUTE_ITEM, ctx);
         self.attribute_item.prepare(ctx)?;
         self.expression.prepare(ctx)?;
         Ok(())
@@ -26923,7 +26923,7 @@ pub struct AttributedOrderedFieldTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attribute_item")]
     #[slot]
-    pub attribute_item: Option<Vec<::sittir_core::SlotValue<AttributeItemTransport>>>,
+    pub attribute_item: Vec<::sittir_core::SlotValue<AttributeItemTransport>>,
     #[wire(key = "_visibility_modifier")]
     #[slot]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierTransport>>,
@@ -26958,9 +26958,9 @@ impl ::sittir_core::prepare::Prepare for AttributedOrderedFieldTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.attribute_item.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_ATTRIBUTED_ORDERED_FIELD_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.attribute_item.iter_mut().map(Some), "", options::allowed(options::SITE_ATTRIBUTED_ORDERED_FIELD_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.attribute_item_separator_space.get_or_insert(ctx.options.spacing[options::SITE_ATTRIBUTED_ORDERED_FIELD_ATTRIBUTE_ITEM_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.attribute_item.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_ATTRIBUTED_ORDERED_FIELD_ATTRIBUTE_ITEM, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.attribute_item.iter_mut().map(Some), options::SEATS_ATTRIBUTED_ORDERED_FIELD_ATTRIBUTE_ITEM, ctx);
         self.attribute_item.prepare(ctx)?;
         self.visibility_modifier.prepare(ctx)?;
         self.type_.prepare(ctx)?;
@@ -27030,7 +27030,7 @@ pub struct MatchBlockArmsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_match_arm")]
     #[slot]
-    pub match_arm: Option<Vec<::sittir_core::SlotValue<MatchArmTransport>>>,
+    pub match_arm: Vec<::sittir_core::SlotValue<MatchArmTransport>>,
     #[wire(key = "_last_arm")]
     #[slot(field = field::LAST_ARM)]
     pub last_arm: ::sittir_core::SlotValue<Box<LastMatchArmTransport>>,
@@ -27062,9 +27062,9 @@ impl ::sittir_core::prepare::Prepare for MatchBlockArmsTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.match_arm.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_MATCH_BLOCK_ARMS_MATCH_ARM_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.match_arm.iter_mut().map(Some), "", options::allowed(options::SITE_MATCH_BLOCK_ARMS_MATCH_ARM_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.match_arm_separator_space.get_or_insert(ctx.options.spacing[options::SITE_MATCH_BLOCK_ARMS_MATCH_ARM_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.match_arm.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_MATCH_BLOCK_ARMS_MATCH_ARM, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.match_arm.iter_mut().map(Some), options::SEATS_MATCH_BLOCK_ARMS_MATCH_ARM, ctx);
         self.match_arm.prepare(ctx)?;
         self.last_arm.prepare(ctx)?;
         Ok(())
@@ -33570,7 +33570,7 @@ impl ::sittir_core::prepare::SeatTarget for AnyTransport {
 fn render_source_file(node: &SourceFileTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let shebang = View::new(&node.shebang, "{}");
     let statements = ListView {
-        items: node.statements.as_deref().unwrap_or(&[]),
+        items: &node.statements,
         template: "{}",
         token: "",
         before: 0,
@@ -33625,7 +33625,7 @@ fn render_token_repetition_pattern(node: &TokenRepetitionPatternTransport, w: &m
     let operator = &node.operator;
     let separator = View::new(&node.separator, "{}");
     let token_patterns = ListView {
-        items: node.token_patterns.as_deref().unwrap_or(&[]),
+        items: &node.token_patterns,
         template: "{}",
         token: "",
         before: 0,
@@ -33660,7 +33660,7 @@ fn render_token_repetition(node: &TokenRepetitionTransport, w: &mut dyn ::sittir
     let operator = &node.operator;
     let separator = View::new(&node.separator, "{}");
     let tokens = ListView {
-        items: node.tokens.as_deref().unwrap_or(&[]),
+        items: &node.tokens,
         template: "{}",
         token: "",
         before: 0,
@@ -33738,7 +33738,7 @@ fn render_attribute(node: &AttributeTransport, w: &mut dyn ::sittir_core::render
 
 fn render_declaration_list(node: &DeclarationListTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let declarations = ListView {
-        items: node.declarations.as_deref().unwrap_or(&[]),
+        items: &node.declarations,
         template: "{}",
         token: "",
         before: 0,
@@ -34845,7 +34845,7 @@ fn render_parenthesized_expression(node: &ParenthesizedExpressionTransport, w: &
 
 fn render_tuple_expression(node: &TupleExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attributes = ListView {
-        items: node.attributes.as_deref().unwrap_or(&[]),
+        items: &node.attributes,
         template: "{}",
         token: "",
         before: 0,
@@ -34892,7 +34892,7 @@ fn render_field_initializer_list(node: &FieldInitializerListTransport, w: &mut d
 
 fn render_shorthand_field_initializer(node: &ShorthandFieldInitializerTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attributes = ListView {
-        items: node.attributes.as_deref().unwrap_or(&[]),
+        items: &node.attributes,
         template: "{}",
         token: "",
         before: 0,
@@ -34912,7 +34912,7 @@ fn render_shorthand_field_initializer(node: &ShorthandFieldInitializerTransport,
 
 fn render_field_initializer(node: &FieldInitializerTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attribute_item = ListView {
-        items: node.attribute_item.as_deref().unwrap_or(&[]),
+        items: &node.attribute_item,
         template: "{}",
         token: "",
         before: 0,
@@ -34977,7 +34977,7 @@ fn render_let_condition(node: &LetConditionTransport, w: &mut dyn ::sittir_core:
 fn render_let_chain(node: &LetChainTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let left = &node.left;
     let right = ListView {
-        items: node.right.as_deref().unwrap_or(&[]),
+        items: &node.right,
         template: "{}",
         token: "&&",
         before: node.right_separator_space_before.unwrap_or(0),
@@ -35032,7 +35032,7 @@ fn render_match_block(node: &MatchBlockTransport, w: &mut dyn ::sittir_core::ren
 
 fn render_last_match_arm(node: &LastMatchArmTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attributes = ListView {
-        items: node.attributes.as_deref().unwrap_or(&[]),
+        items: &node.attributes,
         template: "{}",
         token: "",
         before: 0,
@@ -35150,7 +35150,7 @@ fn render_const_block(node: &ConstBlockTransport, w: &mut dyn ::sittir_core::ren
 
 fn render_closure_parameters(node: &ClosureParametersTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let parameters = ListView {
-        items: node.parameters.as_deref().unwrap_or(&[]),
+        items: &node.parameters,
         template: "{}",
         token: ",",
         before: node.parameters_separator_space_before.unwrap_or(0),
@@ -35299,7 +35299,7 @@ fn render_try_block(node: &TryBlockTransport, w: &mut dyn ::sittir_core::render:
 fn render_block(node: &BlockTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let label = View::new(&node.label, "{}");
     let statements = ListView {
-        items: node.statements.as_deref().unwrap_or(&[]),
+        items: &node.statements,
         template: "{}",
         token: "",
         before: 0,
@@ -35459,7 +35459,7 @@ fn render_negative_literal(node: &NegativeLiteralTransport, w: &mut dyn ::sittir
 
 fn render_string_literal(node: &StringLiteralTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let elements = ListView {
-        items: node.elements.as_deref().unwrap_or(&[]),
+        items: &node.elements,
         template: "{}",
         token: "",
         before: 0,
@@ -36046,7 +36046,7 @@ fn render_escape_sequence_hex(node: &EscapeSequenceHexTransport, w: &mut dyn ::s
 
 fn render_array_expression_semi(node: &ArrayExpressionSemiTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attributes = ListView {
-        items: node.attributes.as_deref().unwrap_or(&[]),
+        items: &node.attributes,
         template: "{}",
         token: "",
         before: 0,
@@ -36075,7 +36075,7 @@ fn render_array_expression_semi(node: &ArrayExpressionSemiTransport, w: &mut dyn
 
 fn render_array_expression_list(node: &ArrayExpressionListTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attributes = ListView {
-        items: node.attributes.as_deref().unwrap_or(&[]),
+        items: &node.attributes,
         template: "{}",
         token: "",
         before: 0,
@@ -36245,7 +36245,7 @@ fn render_impl_item_negative_clause(node: &ImplItemNegativeClauseTransport, w: &
 }
 
 fn render_impl_item_body(node: &ImplItemBodyTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let declaration_list = &node.declaration_list;
+    let body = &node.body;
     let trait_clause = View::new(&node.trait_clause, "{}");
     let type_ = &node.type_;
     let type_parameters = View::new(&node.type_parameters, "{}");
@@ -36263,7 +36263,7 @@ fn render_impl_item_body(node: &ImplItemBodyTransport, w: &mut dyn ::sittir_core
     trait_clause.render(w)?;
     type_.render(w)?;
     where_clause.render(w)?;
-    declaration_list.render(w)?;
+    body.render(w)?;
     w.edge(::sittir_core::types::KindId(377), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
@@ -36492,7 +36492,7 @@ fn render_foreign_mod_item_body(node: &ForeignModItemBodyTransport, w: &mut dyn 
 
 fn render_match_arm_with_comma(node: &MatchArmWithCommaTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attributes = ListView {
-        items: node.attributes.as_deref().unwrap_or(&[]),
+        items: &node.attributes,
         template: "{}",
         token: "",
         before: 0,
@@ -36519,7 +36519,7 @@ fn render_match_arm_with_comma(node: &MatchArmWithCommaTransport, w: &mut dyn ::
 
 fn render_match_arm_block_ending(node: &MatchArmBlockEndingTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attributes = ListView {
-        items: node.attributes.as_deref().unwrap_or(&[]),
+        items: &node.attributes,
         template: "{}",
         token: "",
         before: 0,
@@ -36587,7 +36587,7 @@ fn render_block_comment_regular(t: &BlockCommentRegularTransport, w: &mut dyn ::
 
 fn render_token_tree_pattern_paren(node: &TokenTreePatternParenTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let token_patterns = ListView {
-        items: node.token_patterns.as_deref().unwrap_or(&[]),
+        items: &node.token_patterns,
         template: "{}",
         token: "",
         before: 0,
@@ -36610,7 +36610,7 @@ fn render_token_tree_pattern_paren(node: &TokenTreePatternParenTransport, w: &mu
 
 fn render_token_tree_pattern_bracket(node: &TokenTreePatternBracketTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let token_patterns = ListView {
-        items: node.token_patterns.as_deref().unwrap_or(&[]),
+        items: &node.token_patterns,
         template: "{}",
         token: "",
         before: 0,
@@ -36633,7 +36633,7 @@ fn render_token_tree_pattern_bracket(node: &TokenTreePatternBracketTransport, w:
 
 fn render_token_tree_pattern_brace(node: &TokenTreePatternBraceTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let token_patterns = ListView {
-        items: node.token_patterns.as_deref().unwrap_or(&[]),
+        items: &node.token_patterns,
         template: "{}",
         token: "",
         before: 0,
@@ -36656,7 +36656,7 @@ fn render_token_tree_pattern_brace(node: &TokenTreePatternBraceTransport, w: &mu
 
 fn render_token_tree_paren(node: &TokenTreeParenTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let tokens = ListView {
-        items: node.tokens.as_deref().unwrap_or(&[]),
+        items: &node.tokens,
         template: "{}",
         token: "",
         before: 0,
@@ -36679,7 +36679,7 @@ fn render_token_tree_paren(node: &TokenTreeParenTransport, w: &mut dyn ::sittir_
 
 fn render_token_tree_bracket(node: &TokenTreeBracketTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let tokens = ListView {
-        items: node.tokens.as_deref().unwrap_or(&[]),
+        items: &node.tokens,
         template: "{}",
         token: "",
         before: 0,
@@ -36702,7 +36702,7 @@ fn render_token_tree_bracket(node: &TokenTreeBracketTransport, w: &mut dyn ::sit
 
 fn render_token_tree_brace(node: &TokenTreeBraceTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let tokens = ListView {
-        items: node.tokens.as_deref().unwrap_or(&[]),
+        items: &node.tokens,
         template: "{}",
         token: "",
         before: 0,
@@ -36725,7 +36725,7 @@ fn render_token_tree_brace(node: &TokenTreeBraceTransport, w: &mut dyn ::sittir_
 
 fn render_delim_token_tree_paren(node: &DelimTokenTreeParenTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let delim_tokens = ListView {
-        items: node.delim_tokens.as_deref().unwrap_or(&[]),
+        items: &node.delim_tokens,
         template: "{}",
         token: "",
         before: 0,
@@ -36748,7 +36748,7 @@ fn render_delim_token_tree_paren(node: &DelimTokenTreeParenTransport, w: &mut dy
 
 fn render_delim_token_tree_bracket(node: &DelimTokenTreeBracketTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let delim_tokens = ListView {
-        items: node.delim_tokens.as_deref().unwrap_or(&[]),
+        items: &node.delim_tokens,
         template: "{}",
         token: "",
         before: 0,
@@ -36771,7 +36771,7 @@ fn render_delim_token_tree_bracket(node: &DelimTokenTreeBracketTransport, w: &mu
 
 fn render_delim_token_tree_brace(node: &DelimTokenTreeBraceTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let delim_tokens = ListView {
-        items: node.delim_tokens.as_deref().unwrap_or(&[]),
+        items: &node.delim_tokens,
         template: "{}",
         token: "",
         before: 0,
@@ -36981,7 +36981,7 @@ fn render_struct_item_unit(node: &StructItemUnitTransport, w: &mut dyn ::sittir_
 
 fn render_attributed_field_declaration(node: &AttributedFieldDeclarationTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attribute_item = ListView {
-        items: node.attribute_item.as_deref().unwrap_or(&[]),
+        items: &node.attribute_item,
         template: "{}",
         token: "",
         before: 0,
@@ -37001,7 +37001,7 @@ fn render_attributed_field_declaration(node: &AttributedFieldDeclarationTranspor
 
 fn render_attributed_enum_variant(node: &AttributedEnumVariantTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attribute_item = ListView {
-        items: node.attribute_item.as_deref().unwrap_or(&[]),
+        items: &node.attribute_item,
         template: "{}",
         token: "",
         before: 0,
@@ -37031,7 +37031,7 @@ fn render_attributed_parameter(node: &AttributedParameterTransport, w: &mut dyn 
 
 fn render_attributed_type_parameter(node: &AttributedTypeParameterTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attribute_item = ListView {
-        items: node.attribute_item.as_deref().unwrap_or(&[]),
+        items: &node.attribute_item,
         template: "{}",
         token: "",
         before: 0,
@@ -37051,7 +37051,7 @@ fn render_attributed_type_parameter(node: &AttributedTypeParameterTransport, w: 
 
 fn render_attributed_argument(node: &AttributedArgumentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attribute_item = ListView {
-        items: node.attribute_item.as_deref().unwrap_or(&[]),
+        items: &node.attribute_item,
         template: "{}",
         token: "",
         before: 0,
@@ -37071,7 +37071,7 @@ fn render_attributed_argument(node: &AttributedArgumentTransport, w: &mut dyn ::
 
 fn render_attributed_ordered_field(node: &AttributedOrderedFieldTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attribute_item = ListView {
-        items: node.attribute_item.as_deref().unwrap_or(&[]),
+        items: &node.attribute_item,
         template: "{}",
         token: "",
         before: 0,
@@ -37104,7 +37104,7 @@ fn render_type_argument(node: &TypeArgumentTransport, w: &mut dyn ::sittir_core:
 fn render_match_block_arms(node: &MatchBlockArmsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let last_arm = &node.last_arm;
     let match_arm = ListView {
-        items: node.match_arm.as_deref().unwrap_or(&[]),
+        items: &node.match_arm,
         template: "{}",
         token: "",
         before: 0,
@@ -37791,7 +37791,7 @@ fn render_macro_rules_bang(w: &mut dyn ::sittir_core::render::RenderSink) -> ::s
 fn render_statement(t: &StatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         StatementTransport::ExpressionStatement(inner) => inner.render(w),
-        StatementTransport::DeclarationStatement(inner) => inner.as_ref().render(w),
+        StatementTransport::DeclarationStatement(inner) => inner.render(w),
         StatementTransport::ConstItem(inner) => inner.as_ref().render(w),
         StatementTransport::MacroInvocation(inner) => inner.render(w),
         StatementTransport::MacroDefinition(inner) => inner.render(w),
@@ -37811,7 +37811,7 @@ fn render_statement(t: &StatementTransport, w: &mut dyn ::sittir_core::render::R
         StatementTransport::AssociatedType(inner) => inner.render(w),
         StatementTransport::LetDeclaration(inner) => inner.as_ref().render(w),
         StatementTransport::UseDeclaration(inner) => inner.as_ref().render(w),
-        StatementTransport::ExternCrateDeclaration(inner) => inner.as_ref().render(w),
+        StatementTransport::ExternCrateDeclaration(inner) => inner.render(w),
         StatementTransport::StaticItem(inner) => inner.as_ref().render(w),
     }
 }
@@ -37837,7 +37837,7 @@ fn render_declaration_statement(t: &DeclarationStatementTransport, w: &mut dyn :
         DeclarationStatementTransport::AssociatedType(inner) => inner.render(w),
         DeclarationStatementTransport::LetDeclaration(inner) => inner.as_ref().render(w),
         DeclarationStatementTransport::UseDeclaration(inner) => inner.as_ref().render(w),
-        DeclarationStatementTransport::ExternCrateDeclaration(inner) => inner.as_ref().render(w),
+        DeclarationStatementTransport::ExternCrateDeclaration(inner) => inner.render(w),
         DeclarationStatementTransport::StaticItem(inner) => inner.as_ref().render(w),
     }
 }
@@ -37869,14 +37869,14 @@ fn render_token_tree(t: &TokenTreeTransport, w: &mut dyn ::sittir_core::render::
 fn render_mod_item(t: &ModItemTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         ModItemTransport::ModItemExternal(inner) => inner.render(w),
-        ModItemTransport::ModItemInline(inner) => inner.as_ref().render(w),
+        ModItemTransport::ModItemInline(inner) => inner.render(w),
     }
 }
 
 fn render_foreign_mod_item(t: &ForeignModItemTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         ForeignModItemTransport::ForeignModItemSemi(inner) => inner.render(w),
-        ForeignModItemTransport::ForeignModItemBody(inner) => inner.as_ref().render(w),
+        ForeignModItemTransport::ForeignModItemBody(inner) => inner.render(w),
     }
 }
 
@@ -37884,7 +37884,7 @@ fn render_struct_item(t: &StructItemTransport, w: &mut dyn ::sittir_core::render
     match t {
         StructItemTransport::StructItemBrace(inner) => inner.as_ref().render(w),
         StructItemTransport::StructItemTuple(inner) => inner.as_ref().render(w),
-        StructItemTransport::StructItemUnit(inner) => inner.as_ref().render(w),
+        StructItemTransport::StructItemUnit(inner) => inner.render(w),
     }
 }
 
@@ -39000,10 +39000,10 @@ const _: () = assert!(::core::mem::size_of::<ArrayTypeTransport>() <= 256, "Arra
 const _: () = assert!(::core::mem::size_of::<AssignmentExpressionTransport>() <= 256, "AssignmentExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AssociatedTypeTransport>() <= 256, "AssociatedTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AsyncBlockTransport>() <= 256, "AsyncBlockTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AttributeInputTransport>() > 256, "AttributeInputTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<AttributeInputTransport>() <= 256, "AttributeInputTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AttributeItemTransport>() > 256, "AttributeItemTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AttributeTransport>() > 256, "AttributeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AttributedArgumentTransport>() > 256, "AttributedArgumentTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<AttributedArgumentTransport>() <= 256, "AttributedArgumentTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AttributedEnumVariantTransport>() > 256, "AttributedEnumVariantTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AttributedFieldDeclarationTransport>() > 256, "AttributedFieldDeclarationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AttributedOrderedFieldTransport>() > 256, "AttributedOrderedFieldTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
@@ -39042,7 +39042,7 @@ const _: () = assert!(::core::mem::size_of::<ConstItemTransport>() > 256, "Const
 const _: () = assert!(::core::mem::size_of::<ConstParameterTransport>() > 256, "ConstParameterTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ContinueExpressionTransport>() <= 256, "ContinueExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DeclarationListTransport>() <= 256, "DeclarationListTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<DeclarationStatementTransport>() > 256, "DeclarationStatementTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<DeclarationStatementTransport>() <= 256, "DeclarationStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DelimTokenTreeBraceTransport>() <= 256, "DelimTokenTreeBraceTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DelimTokenTreeBracketTransport>() <= 256, "DelimTokenTreeBracketTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DelimTokenTreeParenTransport>() <= 256, "DelimTokenTreeParenTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -39061,7 +39061,7 @@ const _: () = assert!(::core::mem::size_of::<EscapeSequenceUnicodeFixedTransport
 const _: () = assert!(::core::mem::size_of::<ExpressionStatementTransport>() <= 256, "ExpressionStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExpressionStatementWithSemiTransport>() <= 256, "ExpressionStatementWithSemiTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExpressionsTransport>() <= 256, "ExpressionsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ExternCrateDeclarationTransport>() > 256, "ExternCrateDeclarationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ExternCrateDeclarationTransport>() <= 256, "ExternCrateDeclarationTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExternModifierTransport>() <= 256, "ExternModifierTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FieldDeclarationListElementsTransport>() <= 256, "FieldDeclarationListElementsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FieldDeclarationListTransport>() <= 256, "FieldDeclarationListTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -39076,7 +39076,7 @@ const _: () = assert!(::core::mem::size_of::<FieldPatternShorthandTransport>() <
 const _: () = assert!(::core::mem::size_of::<FloatLiteralTransport>() <= 256, "FloatLiteralTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ForExpressionTransport>() <= 256, "ForExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ForLifetimesTransport>() <= 256, "ForLifetimesTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ForeignModItemBodyTransport>() > 256, "ForeignModItemBodyTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ForeignModItemBodyTransport>() <= 256, "ForeignModItemBodyTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ForeignModItemSemiTransport>() <= 256, "ForeignModItemSemiTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ForeignModItemTransport>() <= 256, "ForeignModItemTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FragmentSpecifierEnum>() <= 256, "FragmentSpecifierEnum is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -39136,7 +39136,7 @@ const _: () = assert!(::core::mem::size_of::<MatchExpressionTransport>() <= 256,
 const _: () = assert!(::core::mem::size_of::<MatchPatternTransport>() <= 256, "MatchPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<MetavariableTransport>() <= 256, "MetavariableTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ModItemExternalTransport>() <= 256, "ModItemExternalTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ModItemInlineTransport>() > 256, "ModItemInlineTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ModItemInlineTransport>() <= 256, "ModItemInlineTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ModItemTransport>() <= 256, "ModItemTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<MutPatternTransport>() <= 256, "MutPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<NegativeLiteralTransport>() <= 256, "NegativeLiteralTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -39197,7 +39197,7 @@ const _: () = assert!(::core::mem::size_of::<StructExpressionTransport>() <= 256
 const _: () = assert!(::core::mem::size_of::<StructItemBraceTransport>() > 256, "StructItemBraceTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<StructItemTransport>() <= 256, "StructItemTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<StructItemTupleTransport>() > 256, "StructItemTupleTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<StructItemUnitTransport>() > 256, "StructItemUnitTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<StructItemUnitTransport>() <= 256, "StructItemUnitTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<StructPatternElementsTransport>() <= 256, "StructPatternElementsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<StructPatternTransport>() <= 256, "StructPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TokenBindingPatternTransport>() <= 256, "TokenBindingPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -39221,7 +39221,7 @@ const _: () = assert!(::core::mem::size_of::<TuplePatternElementsTransport>() <=
 const _: () = assert!(::core::mem::size_of::<TuplePatternTransport>() <= 256, "TuplePatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TupleStructPatternTransport>() <= 256, "TupleStructPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TupleTypeTransport>() <= 256, "TupleTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TypeArgumentTransport>() > 256, "TypeArgumentTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<TypeArgumentTransport>() <= 256, "TypeArgumentTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeArgumentsElementsTransport>() <= 256, "TypeArgumentsElementsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeArgumentsTransport>() <= 256, "TypeArgumentsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeBindingTransport>() > 256, "TypeBindingTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
@@ -39253,3 +39253,5 @@ const _: () = assert!(::core::mem::size_of::<WherePredicateTransport>() <= 256, 
 const _: () = assert!(::core::mem::size_of::<WherePredicatesTransport>() <= 256, "WherePredicatesTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<WhileExpressionTransport>() <= 256, "WhileExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<YieldExpressionTransport>() <= 256, "YieldExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+
+::sittir_core::grammar_trivia!(TriviaTransport; AnyTransport, StatementTransport, DeclarationStatementTransport, MacroDefinitionTransport, TokenTreePatternTransport, TokenTreeTransport, ModItemTransport, ForeignModItemTransport, StructItemTransport, ImplItemTransport, TypeTransport, PointerTypeTransport, ExpressionTransport, DelimTokenTreeTransport, RangeExpressionTransport, ReferenceExpressionTransport, ArrayExpressionTransport, MatchArmTransport, ClosureExpressionTransport, PatternTransport, RangePatternTransport, OrPatternTransport, LiteralPatternTransport, IntegerLiteralTransport, CharLiteralTransport, CharLiteralEscapedTransport, ExpressionStatementContentTransportSlot, TokenRepetitionPatternTokenPatternsTransportSlot, TokenRepetitionPatternOperatorTransportSlot, TokenRepetitionTokensTransportSlot, TokenRepetitionOperatorTransportSlot, NonSpecialTokenContentTransportSlot, AttributePathTransportSlot, EnumVariantBodyTransportSlot, FunctionItemNameTransportSlot, FunctionModifiersModifierTransportSlot, WherePredicateLeftTransportSlot, TraitBoundsBoundsTransportSlot, ConstParameterValueTransportSlot, UseDeclarationArgumentTransportSlot, ParameterNameTransportSlot, VisibilityModifierContentTransportSlot, BracketedTypeTypeTransportSlot, FunctionTypeContentTransportSlot, GenericFunctionFunctionTransportSlot, GenericTypeTypeTransportSlot, GenericTypeWithTurbofishTypeTransportSlot, BoundedTypeLeftTransportSlot, AbstractTypeTraitTransportSlot, DynamicTypeTraitTransportSlot, MacroInvocationMacroTransportSlot, ScopedIdentifierPathTransportSlot, ScopedIdentifierNameTransportSlot, ScopedTypeIdentifierInExpressionPositionPathTransportSlot, ScopedTypeIdentifierPathTransportSlot, UnaryExpressionOperatorTransportSlot, BinaryExpressionOperatorTransportSlot, CompoundAssignmentExprOperatorTransportSlot, CallExpressionFunctionTransportSlot, StructExpressionNameTransportSlot, FieldInitializerFieldTransportSlot, IfExpressionConditionTransportSlot, LetChainLeftTransportSlot, LetChainRightTransportSlot, ElseClauseBodyTransportSlot, LastMatchArmAttributesTransportSlot, ClosureParametersParametersTransportSlot, GenericPatternNameTransportSlot, TupleStructPatternTypeTransportSlot, StructPatternTypeTransportSlot, NegativeLiteralValueTransportSlot, StringLiteralElementsTransportSlot, LineCommentContentTransportSlot, BlockCommentContentTransportSlot, UseBoundsElementsItemTransportSlot, FieldInitializerListElementsItemTransportSlot, TuplePatternElementsItemTransportSlot, StructPatternElementsItemTransportSlot, ClosureExpressionExprBodyTransportSlot, ImplItemPositiveClauseTraitTransportSlot, ImplItemBodyTraitClauseTransportSlot, VisibilityModifierPubScopeContentTransportSlot, RangeExpressionBinaryOperatorTransportSlot, MatchArmBlockEndingValueTransportSlot, DelimTokenTreeParenDelimTokensTransportSlot, MacroDefinitionParenNameTransportSlot, RangePatternPrefixRightTransportSlot, RangePatternPrefixContentTransportSlot, RangePatternWithLeftWithRightContentTransportSlot, RangePatternWithLeftContentTransportSlot, AttributedParameterContentTransportSlot, AttributedTypeParameterContentTransportSlot, TypeArgumentContentTransportSlot, SourceFileTransport, EmptyStatementTransport, ExpressionStatementTransport, MacroRuleTransport, TokenBindingPatternTransport, TokenRepetitionPatternTransport, FragmentSpecifierEnum, TokenRepetitionTransport, NonSpecialTokenTransport, AttributeItemTransport, InnerAttributeItemTransport, AttributeTransport, DeclarationListTransport, UnionItemTransport, EnumItemTransport, EnumVariantListTransport, EnumVariantTransport, FieldDeclarationListTransport, FieldDeclarationTransport, OrderedFieldDeclarationListTransport, ExternCrateDeclarationTransport, ConstItemTransport, StaticItemTransport, TypeItemTransport, FunctionItemTransport, FunctionSignatureItemTransport, FunctionModifiersTransport, WhereClauseTransport, WherePredicateTransport, TraitItemTransport, AssociatedTypeTransport, TraitBoundsTransport, HigherRankedTraitBoundTransport, RemovedTraitBoundTransport, TypeParametersTransport, ConstParameterTransport, TypeParameterTransport, LifetimeParameterTransport, LetDeclarationTransport, UseDeclarationTransport, ScopedUseListTransport, UseListTransport, UseAsClauseTransport, UseWildcardTransport, ParametersTransport, SelfParameterTransport, VariadicParameterTransport, ParameterTransport, ExternModifierTransport, VisibilityModifierTransport, BracketedTypeTransport, QualifiedTypeTransport, LifetimeTransport, ArrayTypeTransport, ForLifetimesTransport, FunctionTypeTransport, TupleTypeTransport, UnitTypeTransport, GenericFunctionTransport, GenericTypeTransport, GenericTypeWithTurbofishTransport, BoundedTypeTransport, UseBoundsTransport, TypeArgumentsTransport, TypeBindingTransport, ReferenceTypeTransport, NeverTypeTransport, AbstractTypeTransport, DynamicTypeTransport, MutableSpecifierTransport, MacroInvocationTransport, ScopedIdentifierTransport, ScopedTypeIdentifierInExpressionPositionTransport, ScopedTypeIdentifierTransport, UnaryExpressionTransport, TryExpressionTransport, BinaryExpressionTransport, AssignmentExpressionTransport, CompoundAssignmentExprTransport, TypeCastExpressionTransport, ReturnExpressionTransport, YieldExpressionTransport, CallExpressionTransport, ArgumentsTransport, ParenthesizedExpressionTransport, TupleExpressionTransport, UnitExpressionTransport, StructExpressionTransport, FieldInitializerListTransport, ShorthandFieldInitializerTransport, FieldInitializerTransport, BaseFieldInitializerTransport, IfExpressionTransport, LetConditionTransport, LetChainTransport, ElseClauseTransport, MatchExpressionTransport, MatchBlockTransport, LastMatchArmTransport, MatchPatternTransport, WhileExpressionTransport, LoopExpressionTransport, ForExpressionTransport, ConstBlockTransport, ClosureParametersTransport, LabelTransport, BreakExpressionTransport, ContinueExpressionTransport, IndexExpressionTransport, AwaitExpressionTransport, FieldExpressionTransport, UnsafeBlockTransport, AsyncBlockTransport, GenBlockTransport, TryBlockTransport, BlockTransport, GenericPatternTransport, TuplePatternTransport, SlicePatternTransport, TupleStructPatternTransport, StructPatternTransport, RemainingFieldPatternTransport, MutPatternTransport, RefPatternTransport, CapturedPatternTransport, ReferencePatternTransport, NegativeLiteralTransport, StringLiteralTransport, RawStringLiteralTransport, BooleanLiteralEnum, LineCommentTransport, InnerLineDocCommentMarkerTransport, OuterLineDocCommentMarkerTransport, BlockCommentTransport, IdentifierTransport, ShebangTransport, Self_Transport, SuperTransport, CrateTransport, MetavariableTransport, PrimitiveTypeEnum, MacroRulesTransport, EnumVariantListElementsTransport, FieldDeclarationListElementsTransport, OrderedFieldDeclarationListElementsTransport, WherePredicatesTransport, TypeParametersElementsTransport, UseClausesTransport, ParametersElementsTransport, LifetimesTransport, TypesTransport, UseBoundsElementsTransport, TypeArgumentsElementsTransport, ArgumentsElementsTransport, ExpressionsTransport, FieldInitializerListElementsTransport, TuplePatternElementsTransport, PatternsTransport, StructPatternElementsTransport, UseWildcardGroupTransport, TokenRepetitionPatternTextTransport, StringOpenTransport, TokenTreePunctuationEnum, TokenKeywordsEnum, _RangeExpressionBareTransport, ImplItemUnsafeMarkerTransport, IntegerLiteralDecimalTransport, IntegerLiteralHexTransport, IntegerLiteralBinaryTransport, IntegerLiteralOctalTransport, CharLiteralPlainTransport, CharLiteralEmptyTransport, CharLiteralEscapedSimpleTransport, CharLiteralEscapedUnicodeFixedTransport, CharLiteralEscapedUnicodeBracedTransport, CharLiteralEscapedHexTransport, EscapeSequenceSimpleTransport, EscapeSequenceUnicodeFixedTransport, EscapeSequenceUnicodeBracedTransport, EscapeSequenceHexTransport, ArrayExpressionSemiTransport, ArrayExpressionListTransport, AttributeInputTransport, ClosureExpressionBlockTransport, ClosureExpressionExprTransport, ReferenceExpressionRawConstTransport, ReferenceExpressionRawMutTransport, ReferenceExpressionMutTransport, ReferenceExpressionBareTransport, ImplItemPositiveClauseTransport, ImplItemNegativeClauseTransport, ImplItemBodyTransport, ImplItemSemiTransport, VisibilityModifierPubScopeInPathTransport, VisibilityModifierPubScopeTransport, VisibilityModifierPubTransport, FunctionTypeTraitFormTransport, FunctionTypeFnFormTransport, ModItemExternalTransport, ModItemInlineTransport, OrPatternBinaryTransport, OrPatternPrefixTransport, PointerTypeConstTransport, PointerTypeMutTransport, RangeExpressionBinaryTransport, RangeExpressionPostfixTransport, RangeExpressionPrefixTransport, RangeExpressionBareTransport, ExpressionStatementWithSemiTransport, ForeignModItemSemiTransport, ForeignModItemBodyTransport, MatchArmWithCommaTransport, MatchArmBlockEndingTransport, LineCommentExtraSlashesTransport, LineCommentDocOuterTransport, LineCommentDocInnerTransport, LineCommentRegularTransport, BlockCommentDocOuterTransport, BlockCommentDocInnerTransport, BlockCommentRegularTransport, TokenTreePatternParenTransport, TokenTreePatternBracketTransport, TokenTreePatternBraceTransport, TokenTreeParenTransport, TokenTreeBracketTransport, TokenTreeBraceTransport, DelimTokenTreeParenTransport, DelimTokenTreeBracketTransport, DelimTokenTreeBraceTransport, FieldPatternShorthandTransport, FieldPatternNamedTransport, MacroDefinitionParenTransport, MacroDefinitionBracketTransport, MacroDefinitionBraceTransport, RangePatternPrefixTransport, RangePatternWithLeftWithRightTransport, RangePatternWithLeftBareTransport, RangePatternWithLeftTransport, StructItemBraceTransport, StructItemTupleTransport, StructItemUnitTransport, WildcardPatternTransport, AttributedFieldDeclarationTransport, AttributedEnumVariantTransport, AttributedParameterTransport, AttributedTypeParameterTransport, AttributedArgumentTransport, AttributedOrderedFieldTransport, TypeArgumentTransport, MatchBlockArmsTransport, FloatLiteralTransport, StringContentTransport, RawStringLiteralContentTransport, OuterDocCommentMarkerTransport, InnerDocCommentMarkerTransport, RawStringLiteralStartTransport, RawStringLiteralEndTransport, DocCommentTransport, BlockCommentContentTransport, TightTransport, SpaceTransport, TabTransport, NewlineTransport, BlanklineTransport, DoubleBlanklineTransport, IndentTransport, DedentTransport, ErrorSentinelTransport, TypeIdentifierTransport, FieldIdentifierTransport, ShorthandFieldIdentifierTransport, SemiTransport, EqGtTransport, ColonTransport, DollarTransport, LparenTransport, RparenTransport, PlusTransport, StarTransport, QmarkTransport, BlockKeywordTransport, ExprKeywordTransport, Expr2021KeywordTransport, IdentKeywordTransport, ItemKeywordTransport, LifetimeKeywordTransport, LiteralKeywordTransport, MetaKeywordTransport, PatKeywordTransport, PatParamKeywordTransport, PathKeywordTransport, StmtKeywordTransport, TtKeywordTransport, TyKeywordTransport, VisKeywordTransport, PoundTransport, LbrackTransport, RbrackTransport, BangTransport, U8KeywordTransport, I8KeywordTransport, U16KeywordTransport, I16KeywordTransport, U32KeywordTransport, I32KeywordTransport, U64KeywordTransport, I64KeywordTransport, U128KeywordTransport, I128KeywordTransport, IsizeKeywordTransport, UsizeKeywordTransport, F32KeywordTransport, F64KeywordTransport, BoolKeywordTransport, StrKeywordTransport, CharKeywordTransport, DefaultKeywordTransport, UnionKeywordTransport, GenKeywordTransport, LbraceTransport, RbraceTransport, EnumKeywordTransport, EqTransport, ExternKeywordTransport, AsKeywordTransport, ConstKeywordTransport, StaticKeywordTransport, RefKeywordTransport, TypeKeywordTransport, FnKeywordTransport, DashGtTransport, AsyncKeywordTransport, UnsafeKeywordTransport, WhereKeywordTransport, TraitKeywordTransport, ForKeywordTransport, LtTransport, GtTransport, LetKeywordTransport, ElseKeywordTransport, UseKeywordTransport, ColonColonTransport, AmpTransport, DotDotDotTransport, SquoteTransport, ImplKeywordTransport, DynKeywordTransport, DashTransport, AmpAmpTransport, PipePipeTransport, PipeTransport, CaretTransport, EqEqTransport, BangEqTransport, LtEqTransport, GtEqTransport, LtLtTransport, GtGtTransport, SlashTransport, PercentTransport, PlusEqTransport, DashEqTransport, StarEqTransport, SlashEqTransport, PercentEqTransport, AmpEqTransport, PipeEqTransport, CaretEqTransport, LtLtEqTransport, GtGtEqTransport, ReturnKeywordTransport, YieldKeywordTransport, DotDotTransport, IfKeywordTransport, MatchKeywordTransport, CommaTransport, WhileKeywordTransport, LoopKeywordTransport, InKeywordTransport, BreakKeywordTransport, ContinueKeywordTransport, DotTransport, AwaitKeywordTransport, MoveKeywordTransport, TryKeywordTransport, AtTransport, DquoteTransport, TrueKeywordTransport, FalseKeywordTransport, SlashSlashTransport, SlashStarTransport, StarSlashTransport, UnderscoreTransport, DotDotEqTransport, ModKeywordTransport, PubKeywordTransport, StructKeywordTransport, RawKeywordTransport, MacroRulesBangTransport, TriviaTransport);

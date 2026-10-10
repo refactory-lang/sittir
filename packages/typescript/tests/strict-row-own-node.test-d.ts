@@ -16,7 +16,7 @@ import type * as T from '../src/types.ts';
 
 export type StrictRowsThatTakeTheirOwnNode = Expect<
 	SameKinds<
-		TakesOwnNode<T.IrKeyOf, T.NamespaceMap, 'BuildArgs'>,
+		TakesOwnNode<T.TypeKeyOf, T.NamespaceMap, 'BuildArgs'>,
 		  'ambientDeclaration'
 		| 'array'
 		| 'arrayType'

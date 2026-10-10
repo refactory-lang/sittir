@@ -23,6 +23,8 @@ export const layout: {
 	doubleBlankline: F.buildDoubleBlankline
 };
 
+export const inlineFlagsGroup: typeof F.inlineFlagsGroup = F.inlineFlagsGroup;
+
 export const ir: {
 	readonly pattern: typeof F.pattern;
 	readonly alternation: typeof F.alternation;

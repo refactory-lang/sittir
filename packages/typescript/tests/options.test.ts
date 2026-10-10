@@ -24,7 +24,7 @@ it('types every site by kind id at its address and rejects a wrong member at com
 		statements: { terminator: ts.kinds.AutomaticSemicolon },
 		quotes: { style: ts.kinds.StringSingle },
 		classBody: { lbrace: { after: ts.kinds.Indent }, rbrace: { before: ts.kinds.Dedent } },
-		indent: '\t'
+		layout: { indent: '\t' }
 	};
 	const bad: Options = {
 		// @ts-expect-error a semicolon is not a whitespace kind

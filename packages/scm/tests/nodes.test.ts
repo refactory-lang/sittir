@@ -154,7 +154,8 @@ describe('list', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any
+					_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any,
+					_elements: []
 				} as any
 			]
 		});
@@ -169,7 +170,8 @@ describe('list', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any
+					_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any,
+					_elements: []
 				} as any
 			]
 		});
@@ -197,14 +199,16 @@ describe('grouping', () => {
 							$text: 'test',
 							$source: 2,
 							$named: true,
-							_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any
+							_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any,
+							_elements: []
 						} as any,
 						_right: {
 							$type: TSKindId.AnonymousNode,
 							$text: 'test',
 							$source: 2,
 							$named: true,
-							_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any
+							_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any,
+							_elements: []
 						} as any
 					} as any
 				} as any
@@ -231,14 +235,16 @@ describe('grouping', () => {
 							$text: 'test',
 							$source: 2,
 							$named: true,
-							_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any
+							_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any,
+							_elements: []
 						} as any,
 						_right: {
 							$type: TSKindId.AnonymousNode,
 							$text: 'test',
 							$source: 2,
 							$named: true,
-							_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any
+							_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any,
+							_elements: []
 						} as any
 					} as any
 				} as any
@@ -283,7 +289,8 @@ describe('field_definition', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any
+				_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any,
+				_elements: []
 			} as any
 		});
 		expect(node.$type).toBe(TSKindId.FieldDefinition);
@@ -297,7 +304,8 @@ describe('field_definition', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any
+				_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any,
+				_elements: []
 			} as any
 		});
 		const rendered = node.$render!();
@@ -366,14 +374,16 @@ describe('group_expression_arm', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any
+					_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any,
+					_elements: []
 				} as any,
 				_right: {
 					$type: TSKindId.AnonymousNode,
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any
+					_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any,
+					_elements: []
 				} as any
 			} as any,
 			right: {
@@ -386,14 +396,16 @@ describe('group_expression_arm', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any
+					_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any,
+					_elements: []
 				} as any,
 				_right: {
 					$type: TSKindId.AnonymousNode,
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any
+					_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any,
+					_elements: []
 				} as any
 			} as any
 		});
@@ -412,14 +424,16 @@ describe('group_expression_arm', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any
+					_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any,
+					_elements: []
 				} as any,
 				_right: {
 					$type: TSKindId.AnonymousNode,
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any
+					_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any,
+					_elements: []
 				} as any
 			} as any,
 			right: {
@@ -432,14 +446,16 @@ describe('group_expression_arm', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any
+					_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any,
+					_elements: []
 				} as any,
 				_right: {
 					$type: TSKindId.AnonymousNode,
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any
+					_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any,
+					_elements: []
 				} as any
 			} as any
 		});

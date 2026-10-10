@@ -693,6 +693,9 @@ One export of a grammar's generated wrap module, loaded through the typed intern
  */
 ```
 
+A `forwarded` seat names a group whose builder forwards to another kind's
+builder: the parent takes the group's value whole under the slot key.
+
 ### `packages/tools/src/validate/common.ts::Seat.seated`
 
 ```text
@@ -1757,3 +1760,7 @@ The reparsed node of a kind at the splice offset. The kind is a grammar id where
 ### `packages/tools/src/validate/read-render-parse.ts::candidateData`
 
 The candidate as its own source span has it. A trailing entry held past tokens that follow the node (`$tokensBetween` above zero) sits outside the span, where the parent renders it after those tokens, so a candidate rendered alone leaves it out. `renderReparse` applies it first, so the read-render-parse, factory and ir lanes prepare a candidate in one place.
+
+value. An `elements` seat projects each element, a `tuple` seat takes the
+group's call arguments as the slot's value, and a `forwarded` seat assigns the
+value under the slot key as an unseated slot's value is.

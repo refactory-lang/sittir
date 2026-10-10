@@ -32,11 +32,11 @@
   - Rust: `OptionTables.indent_chars` → `Options.indent` (`Options::read` reads the `"indent"` key) → validated in `resolve` → `ResolvedOptions.indent` → `SpacingWriter::with_indent`.
   - TypeScript: the generated options module emits `IndentChar`; `IndentOption<I, IndentChar>` in `packages/types/src/options.ts` adds the key; `DerivedOptions` and the engine emitter (`emitters/engine.ts`) carry it.
   - Test model: `packages/rust/tests/indent-option.test.ts`.
-- **Where a root render ends.** Every root render's text passes through `apply_render_format` (`sittir-core/src/engine.rs`): the napi `render` (and `render_to_file` through it) and both `render_canonical_node`s. The generated `render_transport_dispatch` writes into a `String` before that.
+- **Where a root render ends.** One site: the napi `render` macro (`sittir-core/src/napi_engine.rs`). It resolves the call's options against the engine's (`opts.resolve(self.engine.options())`), builds a `RenderContext { options, sources }`, and `$render_parts(transport, &ctx)` returns `(source, canonical)`; the canonical text then passes through `apply_render_format(source, canonical, engine_format, tree_format)` (`sittir-core/src/engine.rs`). `render_to_file` renders through `render`. The generated `render_transport_dispatch(transport, ctx)` writes into a `String` before that. No other caller of `apply_render_format` exists outside its own tests.
 
 ## Global Constraints
 
-- Branch `feat/line-endings` from `origin/master` **after the typed reader's 1c-i has merged**: Tasks 3 and 4 touch `engine.rs` and `napi_engine.rs`, which 1c-i rewrites. Work in `scratchpad/wt-line-endings`. Commits use pathspecs (`git commit -F msg -- <paths>`).
+- Branch `feat/line-endings` from the current `origin/master` (the typed reader's 1c-i has merged; Tasks 3 and 4 build on the `RenderContext` shape it left in `napi_engine.rs`). Work in `scratchpad/wt-line-endings`. Commits use pathspecs (`git commit -F msg -- <paths>`).
 - Generated outputs are never hand-edited: change the DSL or emitter and regenerate.
 - No comments in `packages/codegen/src/`; every new declaration gets a `docs/glossary/` entry. No plan, task, PR or issue numbers in comments or glossary text.
 - DRY: the line-ending arms are declared once (`NEWLINE_ARMS` in `whitespace.ts`). The Rust tables, the TypeScript `Newline` type and `_newline`'s model all read that constant. Each member's canonical text has one derivation (`canonicalText`). Breaks are counted by one function in Rust (`logical_breaks`).
@@ -203,7 +203,7 @@ pub fn to_internal(text: &str) -> Cow<'_, str> {
 
 **Files:**
 - Modify: `rust/crates/sittir-core/src/line_endings.rs` (`LineEndings<W>`)
-- Modify: `rust/crates/sittir-core/src/engine.rs` (`apply_render_format` takes `newline: &str` and spells last), `rust/crates/sittir-core/src/napi_engine.rs` (passes the resolved `newline`), both `render_canonical_node`s
+- Modify: `rust/crates/sittir-core/src/engine.rs` (`apply_render_format` takes `newline: &str` and spells last), `rust/crates/sittir-core/src/napi_engine.rs` (the `render` macro passes the resolved `newline` from its `RenderContext` options between `$render_parts` and `apply_render_format`)
 - Test: `line_endings.rs`'s test module
 
 **Interfaces:**
@@ -253,7 +253,7 @@ impl<W: fmt::Write + ?Sized> fmt::Write for LineEndings<'_, W> {
   - `spell` returns the same allocation for an LF text under `"\n"` (compare `as_ptr` before and after: Review Focus 3).
 
   Run: `cargo test -p sittir-core --no-default-features line_endings`. Expected: FAIL (module missing).
-- [ ] **Step 2: Implement** the adapter, `spell` and the `apply_render_format` parameter. Every caller passes `"\n"` until Task 4.
+- [ ] **Step 2: Implement** the adapter, `spell` and the `apply_render_format` parameter. Its one non-test caller, the napi `render` macro, passes `"\n"` until Task 4.
 - [ ] **Step 3: Gates,** as in Task 2.
 - [ ] **Step 4: Glossary** entries for `LineEndings` and `spell`, and an update to `apply_render_format`'s entry.
 - [ ] **Step 5: Commit** `feat(core): one adapter spells every line break of a render`.

@@ -28,7 +28,7 @@ use sittir_core::engine::EngineGrammar;
 use render::{render_transport_parts, AnyTransport, RenderRoot, RENDER_MODULE_HASH};
 
 #[cfg(feature = "napi-bindings")]
-const NATIVE_RENDER_TRANSPORT_ABI: u32 = 21;
+const NATIVE_RENDER_TRANSPORT_ABI: u32 = 22;
 
 #[derive(Clone, Copy, Default)]
 pub struct ScmGrammar;
@@ -57,6 +57,10 @@ impl EngineGrammar for ScmGrammar {
         index: u32,
     ) -> std::result::Result<sittir_core::read::Sides, sittir_core::read::ReadError> {
         <AnyTransport as sittir_core::read::ReadTransport>::sides_of(cursor, ctx, index)
+    }
+
+    fn shows(self) -> fn(sittir_core::types::KindId) -> bool {
+        <AnyTransport as sittir_core::read::ReadTransport>::shows
     }
 }
 

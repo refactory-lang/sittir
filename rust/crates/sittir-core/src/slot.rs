@@ -19,6 +19,9 @@ use crate::types::Span;
 pub struct NodeCoordinate {
     pub tree: u32,
     pub index: u32,
+    /// `index + descendant_count()`: the node's subtree is the indexes
+    /// `[index, end)`.
+    pub end: u32,
     pub span: Span,
     /// The kind the reader stamped on the node, when the wire carries it. A
     /// handle names a tree position, which for trivia is its owner's, so the
@@ -27,9 +30,23 @@ pub struct NodeCoordinate {
     /// The edge seams of the kind this coordinate names, filled by the prepare
     /// walk so a verbatim slice meets its neighbours like a rendered node does.
     pub edges: Option<CoordinateEdges>,
+    /// What JavaScript wrote on the coordinate it sent (`CoordinateWrites`),
+    /// behind one pointer, so a read coordinate pays only that pointer.
+    pub writes: Option<Box<CoordinateWrites>>,
+}
+
+/// What JavaScript writes on a coordinate it sends back, kept off the read's
+/// own path in one box (`NodeCoordinate::writes`): a coordinate the reader
+/// built carries neither.
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub struct CoordinateWrites {
     /// The gap toward the item before this one in a list, when the two are
-    /// still adjacent in the source both were read from (`$_layout.gap`).
+    /// still adjacent in the source both were read from (`$_layout.gap`),
+    /// written on a rebuilt list's items.
     pub gap: Option<SourceGap>,
+    /// The outside trivia a folded node carries (`$_layout.trivia`), which
+    /// its bytes render between.
+    pub trivia: Option<crate::trivia::OutsideTrivia>,
 }
 
 /// The bytes between a list item and the item before it, in the source both
@@ -144,15 +161,34 @@ pub struct CoordinateEdges {
 }
 
 impl NodeCoordinate {
-    pub fn new(tree: u32, index: u32, span: Span) -> Self {
+    pub fn new(tree: u32, index: u32, end: u32, span: Span) -> Self {
         Self {
             tree,
             index,
+            end,
             span,
             kind: None,
             edges: None,
-            gap: None,
+            writes: None,
         }
+    }
+
+    /// The source gap JavaScript wrote on this coordinate (`CoordinateWrites::gap`).
+    pub fn gap(&self) -> Option<&SourceGap> {
+        self.writes.as_ref()?.gap.as_ref()
+    }
+
+    /// The outside trivia JavaScript wrote on this coordinate (`CoordinateWrites::trivia`).
+    pub fn outside_trivia(&self) -> Option<&dyn crate::trivia::FramedTrivia> {
+        self.writes.as_ref()?.trivia.as_ref().map(|trivia| &*trivia.0)
+    }
+
+    /// This coordinate carrying `trivia` as its outside trivia, or as it is when `trivia` is `None`.
+    pub fn with_outside_trivia(mut self, trivia: Option<crate::trivia::OutsideTrivia>) -> Self {
+        if trivia.is_some() {
+            self.writes.get_or_insert_with(Default::default).trivia = trivia;
+        }
+        self
     }
 
     /// The tree and the index packed as one handle: the wire's `$treeHandle`.
@@ -220,7 +256,8 @@ impl NodeCoordinate {
 #[derive(Debug, Clone)]
 pub enum SlotValue<T, const ADJACENT: bool = false> {
     /// The content is in the tree: the sink slices it from the source the
-    /// engine still holds.
+    /// engine still holds, between the outside trivia a folded node carries
+    /// (`NodeCoordinate::outside_trivia`).
     Coord(NodeCoordinate),
     /// The content is in this message.
     Transport(T),
@@ -252,7 +289,7 @@ impl<T, const ADJACENT: bool> SlotValue<T, ADJACENT> {
     ) -> Result<Option<&T>, crate::render::RenderError> {
         match self {
             Self::Coord(coord) => {
-                coord.write_between_edges(w, ADJACENT)?;
+                write_coordinate(coord, ADJACENT, w)?;
                 Ok(None)
             }
             Self::Transport(t) => Ok(Some(t)),
@@ -268,7 +305,7 @@ impl<T: PartialEq, const ADJACENT: bool> PartialEq for SlotValue<T, ADJACENT> {
         match (self, other) {
             (Self::Transport(a), Self::Transport(b)) => a == b,
             (Self::Coord(a), Self::Coord(b)) => {
-                a.tree == b.tree && a.span == b.span && a.kind == b.kind
+                a.tree == b.tree && a.span == b.span && a.kind == b.kind && a.writes.as_ref().map(|w| &w.trivia) == b.writes.as_ref().map(|w| &w.trivia)
             }
             _ => false,
         }
@@ -280,9 +317,30 @@ impl<T: crate::render::Render, const ADJACENT: bool> crate::render::Render
 {
     fn render(&self, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
         match self {
-            Self::Coord(coord) => coord.write_between_edges(w, ADJACENT),
+            Self::Coord(coord) => write_coordinate(coord, ADJACENT, w),
             Self::Transport(t) => t.render(w),
         }
+    }
+}
+
+/// Write a coordinate's bytes, framed by the outside trivia it carries as a
+/// rendered owner is (`render_framed`); its kind's edges are the coordinate's
+/// own (`write_between_edges`).
+fn write_coordinate(
+    coord: &NodeCoordinate,
+    adjacent: bool,
+    w: &mut dyn crate::render::RenderSink,
+) -> crate::render::RenderResult {
+    match coord.outside_trivia() {
+        None => coord.write_between_edges(w, adjacent),
+        Some(trivia) => crate::layout::render_framed(
+            Some(trivia),
+            crate::options::Edges::default(),
+            None,
+            crate::layout::TriviaRole::Owner,
+            w,
+            |w| coord.write_between_edges(w, adjacent),
+        ),
     }
 }
 
@@ -308,7 +366,7 @@ pub unsafe fn transport_value_type(
 }
 
 #[cfg(feature = "napi-bindings")]
-impl<T: ::napi::bindgen_prelude::FromNapiValue, const ADJACENT: bool>
+impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia, const ADJACENT: bool>
     ::napi::bindgen_prelude::FromNapiValue for SlotValue<T, ADJACENT>
 {
     /// Dispatch on the wire shape: an object carrying `$treeHandle` is a
@@ -322,7 +380,7 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue, const ADJACENT: bool>
         let value_type = unsafe { transport_value_type(env, napi_val)? };
         if value_type == ::napi::ValueType::Object {
             if let Some(coord) = unsafe { coordinate_from_napi(env, napi_val)? } {
-                return Ok(Self::Coord(coord));
+                return Ok(Self::Coord(coord.with_outside_trivia(unsafe { outside_trivia_from_napi::<T::Trivia>(env, napi_val)? })));
             }
         }
         Ok(Self::Transport(unsafe {
@@ -345,9 +403,9 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue, const ADJACENT: bool> ::napi::bind
     }
 }
 
-/// The coordinate the object `napi_val` spells, `{ $treeHandle, $span,
+/// The coordinate the object `napi_val` spells, `{ $treeHandle, $end, $span,
 /// $type?, $_layout?: { gap } }`, or `None` when it carries no `$treeHandle`.
-/// A `$treeHandle` without a `$span` is refused.
+/// A `$treeHandle` without a `$span` or an `$end` is refused.
 ///
 /// # Safety
 /// `napi_val` must be a live object in `env`.
@@ -360,13 +418,34 @@ pub(crate) unsafe fn coordinate_from_napi(env: ::napi::sys::napi_env, napi_val: 
     let handle = crate::napi_engine::checked_index(handle, "$treeHandle")?;
     let span: Span = unsafe { property(env, napi_val, c"$span")? }
         .ok_or_else(|| ::napi::Error::from_reason(format!("coordinate with $treeHandle {handle} carries no $span")))?;
+    let end: u32 = unsafe { property(env, napi_val, c"$end")? }
+        .ok_or_else(|| ::napi::Error::from_reason(format!("coordinate with $treeHandle {handle} carries no $end")))?;
     let kind = unsafe { property::<u32>(env, napi_val, c"$type")? }.map(|id| crate::types::KindId(id as u16));
     let gap = match unsafe { property::<::napi::bindgen_prelude::Object>(env, napi_val, c"$_layout")? } {
         Some(layout) => unsafe { property::<SourceGap>(env, ::napi::JsValue::raw(&layout), c"gap")? },
         None => None,
     };
     let (tree, index) = crate::engine::decode_handle(handle);
-    Ok(Some(NodeCoordinate { kind, gap, ..NodeCoordinate::new(tree, index, span) }))
+    let writes = gap.map(|gap| Box::new(CoordinateWrites { gap: Some(gap), trivia: None }));
+    Ok(Some(NodeCoordinate { kind, writes, ..NodeCoordinate::new(tree, index, end, span) }))
+}
+
+/// The outside trivia a coordinate object carries in `$_layout.trivia`, or
+/// `None` when it carries none.
+///
+/// # Safety
+/// `napi_val` must be a live object in `env`.
+#[cfg(feature = "napi-bindings")]
+unsafe fn outside_trivia_from_napi<Tr: crate::trivia::TriviaItem + crate::trivia::HasTrivia<Trivia = Tr>>(
+    env: ::napi::sys::napi_env,
+    napi_val: ::napi::sys::napi_value,
+) -> ::napi::Result<Option<crate::trivia::OutsideTrivia>> {
+    use crate::boundary::property;
+    let Some(layout) = (unsafe { property::<::napi::bindgen_prelude::Object>(env, napi_val, c"$_layout")? }) else {
+        return Ok(None);
+    };
+    let trivia = unsafe { property::<crate::trivia::TransportTrivia<Tr>>(env, ::napi::JsValue::raw(&layout), c"trivia")? };
+    Ok(trivia.map(|trivia| crate::trivia::OutsideTrivia(Box::new(trivia))))
 }
 
 /// `{ $treeHandle, $span, $type? }`, the object `coordinate_from_napi` reads
@@ -378,6 +457,7 @@ pub(crate) unsafe fn coordinate_to_napi(env: ::napi::sys::napi_env, coord: NodeC
     unsafe {
         object_with_present(env, &[
             present(env, c"$treeHandle", Some(coord.handle() as f64))?,
+            present(env, c"$end", Some(coord.end))?,
             present(env, c"$span", Some(coord.span))?,
             present(env, c"$type", coord.kind.map(|kind| u32::from(kind.0)))?,
         ])
@@ -420,7 +500,7 @@ mod tests {
     #[test]
     fn a_coordinate_renders_its_slice_of_its_own_tree() {
         let sources = Sources(HashMap::from([(3, Arc::from("let main() {}"))]));
-        let coord = NodeCoordinate::new(3, 0, Span { start: 4, end: 8 });
+        let coord = NodeCoordinate::new(3, 0, 1, Span { start: 4, end: 8 });
         assert_eq!(coord.handle(), encode_handle(3, 0));
         assert_eq!(coord.resolve(&sources), Ok("main"));
         let slot: SlotValue<Word> = SlotValue::Coord(coord);
@@ -436,7 +516,7 @@ mod tests {
                 w.text("let")?;
                 let slot: SlotValue<Word, true> = SlotValue::Coord(NodeCoordinate::new(
                     1,
-                    0,
+                    0, 1,
                     Span { start: 0, end: 1 },
                 ));
                 slot.render(w)
@@ -482,7 +562,7 @@ mod tests {
         let render_with = |options: &ResolvedOptions, held: u8| {
             let mut slot: SlotValue<Word> = SlotValue::Coord(NodeCoordinate::new(
                 1,
-                0,
+                0, 1,
                 Span { start: 1, end: 3 },
             ));
             slot.prepare(&RenderContext {
@@ -519,7 +599,7 @@ mod tests {
     fn a_coordinate_into_an_unknown_tree_is_refused_with_its_handle() {
         let sources = Sources(HashMap::new());
         let handle = encode_handle(9, 2);
-        let coord = NodeCoordinate::new(9, 2, Span { start: 0, end: 1 });
+        let coord = NodeCoordinate::new(9, 2, 3, Span { start: 0, end: 1 });
         assert_eq!(
             coord.resolve(&sources),
             Err(CoordinateError::UnknownTree { handle, tree_id: 9 })
@@ -534,12 +614,12 @@ mod tests {
             (1, Arc::from("é")),
             (2, Arc::from("short")),
         ]));
-        let off = NodeCoordinate::new(1, 0, Span { start: 1, end: 2 });
+        let off = NodeCoordinate::new(1, 0, 1, Span { start: 1, end: 2 });
         assert!(matches!(
             off.resolve(&sources),
             Err(CoordinateError::BadSpan { .. })
         ));
-        let out = NodeCoordinate::new(2, 0, Span { start: 2, end: 40 });
+        let out = NodeCoordinate::new(2, 0, 1, Span { start: 2, end: 40 });
         let Err(CoordinateError::BadSpan { detail, .. }) = out.resolve(&sources) else {
             panic!("expected BadSpan")
         };
@@ -550,7 +630,7 @@ mod tests {
     fn a_writer_without_sources_refuses_every_coordinate() {
         let slot: SlotValue<Word> = SlotValue::Coord(NodeCoordinate::new(
             1,
-            0,
+            0, 1,
             Span { start: 0, end: 1 },
         ));
         let mut out = String::new();
@@ -608,7 +688,7 @@ mod tests {
         assert!(!absent.kind_in(&w, &[WORD_KIND]));
         // A table of bare sources holds no tree to ask, so a coordinate is no kind.
         let coord: SlotValue<Word> =
-            SlotValue::Coord(NodeCoordinate::new(3, 0, Span { start: 4, end: 8 }));
+            SlotValue::Coord(NodeCoordinate::new(3, 0, 1, Span { start: 4, end: 8 }));
         assert!(!coord.kind_in(&w, &[WORD_KIND]));
     }
 
@@ -650,7 +730,7 @@ mod tests {
             .with_sources(&sources);
         let coord: SlotValue<Word> = SlotValue::Coord(NodeCoordinate::new(
             1,
-            0,
+            0, 1,
             Span { start: 0, end: 3 },
         ));
         assert!(coord.transport_or_write(&mut w2).unwrap().is_none());

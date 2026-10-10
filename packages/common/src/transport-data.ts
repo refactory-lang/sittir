@@ -1,6 +1,7 @@
 import type { AnyUntypedNode, NodeLayout, TransportCoordinate } from '@sittir/types';
-import { isCoordinate } from './read.ts';
-import { assertHoldsTree, holdsParse, holdTreeOn, releaseTreeOn, treeTokenOf, type TreeToken } from './tree-token.ts';
+import { decodeIndex, decodeTree, isCoordinate } from './read.ts';
+import { assertHoldsTree, holdTreeOn, releaseTreeOn, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
+import { editedWithin } from './identity.ts';
 import { forEachTriviaList, type TriviaSides } from './trivia.ts';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -70,6 +71,12 @@ export function treeHandleOf(node: object): number | undefined {
 	return coordinateOf(node)?.$treeHandle;
 }
 
+/** The descendant index a read node or a coordinate names itself by, in its tree. */
+export function indexOf(node: object): number | undefined {
+	const handle = treeHandleOf(node);
+	return handle === undefined ? undefined : decodeIndex(handle);
+}
+
 /** Whether `key` names one of a node's slots (`_<name>`). */
 export function isSlotKey(key: string): boolean {
 	return key.charCodeAt(0) === 95;
@@ -98,43 +105,32 @@ export function holdsSlots(node: object): boolean {
 }
 
 /**
- * Whether nothing under `value` was rebuilt: it still names the node it was
- * read from, and the same holds all the way down. A kind id, a boolean or a
- * bare string in a slot is inert — the parent's own coordinate is what
- * places it, and an edit that put it there detached that coordinate at the
- * setter.
- *
- * Its coordinate is the whole requirement below the node that folds: that
- * node names the tree, and what lies below it is carried by its bytes. A
- * descendant's attached comments do not keep an ancestor from folding: they
- * lie inside the ancestor's span, so its bytes carry them — only a node's OWN
- * trivia sits outside its span, which is why `foldedCoordinate` refuses that node and
- * no other.
+ * The coordinate a node crosses to the render as (`$_layout.at`) in place of
+ * its storage: a node of a live tree whose range holds no edit inside it.
+ * Outside trivia does not stop it: it renders around the folded bytes.
  */
-function isUntouchedBelow(value: unknown): boolean {
-	if (Array.isArray(value)) return value.every(isUntouchedBelow);
-	if (value === undefined || value === null || typeof value !== 'object') return true;
-	const record = value as Record<string, unknown>;
-	if (coordinateOf(record) === undefined) return false;
-	for (const key of Object.keys(record)) {
-		if (isStorageKey(key) && !isUntouchedBelow(record[key])) return false;
-	}
-	return true;
+function foldedCoordinate(record: Record<string, unknown>): TransportCoordinate | undefined {
+	const coordinate = coordinateOf(record);
+	if (coordinate === undefined) return undefined;
+	const tree = treeOf(record);
+	if (tree === undefined) return undefined;
+	return editedWithin(tree, decodeIndex(coordinate.$treeHandle), coordinate.$end) ? undefined : coordinate;
 }
 
 /**
- * Whether this node can cross as its coordinate (`$_layout.at`): it still
- * names the node it was read from, carries no trivia outside that node's
- * span, and nothing below it was rebuilt. Every node a read hands back names
- * itself, because an edit detaches the coordinate of the node it rebuilds and
- * each untouched child below then folds on its own. On a tree a parse
- * registered, holding the coordinate is the proof, so nothing below is
- * walked; any other data is walked.
+ * A coordinate a holder stores without having read it, as it crosses: its
+ * bytes, unless a write landed in its range, its own outside trivia included
+ * (a raw coordinate carries none). That write lives on the node another route
+ * read, which this holder does not hold, so its bytes would silently drop the
+ * write; the crossing refuses instead, naming the range.
  */
-function foldedCoordinate(record: Record<string, unknown>, trivia: unknown): TransportCoordinate | undefined {
-	const coordinate = coordinateOf(record);
-	if (coordinate === undefined || hasOutsideTrivia(trivia)) return undefined;
-	return holdsParse(record) || isUntouchedBelow(record) ? coordinate : undefined;
+function unreadCoordinate(coordinate: TransportCoordinate): TransportCoordinate {
+	const tree = treeOf(coordinate);
+	const index = decodeIndex(coordinate.$treeHandle);
+	if (tree === undefined || !editedWithin(tree, index, coordinate.$end, false)) return coordinate;
+	throw new Error(
+		`render: nodes ${index}..${coordinate.$end} of tree ${decodeTree(coordinate.$treeHandle)} are held here as a coordinate this holder never read, and a write landed in that range on a node read through another route. The write lives on that node, not on this holder, so it cannot render here. Build this holder from the written node itself (the node the accessor that reached it returns), or render the holder the write went through`
+	);
 }
 
 /**
@@ -156,15 +152,27 @@ export function carryPlacement<T extends object>(from: object, to: T): T {
 	return to;
 }
 
-/** A coordinate as transport data: its three fields and its placement facts, holding no tree. */
+/** A coordinate as transport data: its four fields and its placement facts, holding no tree. */
 function plainCoordinate(coordinate: TransportCoordinate): Record<string, unknown> {
-	return carryPlacement(coordinate, { $treeHandle: coordinate.$treeHandle, $span: { start: coordinate.$span.start, end: coordinate.$span.end }, $type: coordinate.$type });
+	return carryPlacement(coordinate, {
+		$treeHandle: coordinate.$treeHandle,
+		$end: coordinate.$end,
+		$span: { start: coordinate.$span.start, end: coordinate.$span.end },
+		$type: coordinate.$type
+	});
 }
 
-/** The coordinate a folded node crosses as: its `$_layout.at`, with the format stamp it carries. */
-function foldToCoordinate(record: Record<string, unknown>, coordinate: TransportCoordinate): Record<string, unknown> {
+/**
+ * The coordinate a folded node crosses as: its `$_layout.at`, with the format
+ * stamp it carries and its outside trivia (`$_layout.trivia`, leading and
+ * trailing only: inner entries lie inside the span, so its bytes carry them).
+ */
+function foldToCoordinate(record: Record<string, unknown>, coordinate: TransportCoordinate, trivia: unknown): Record<string, unknown> {
 	const out = carryPlacement(record, plainCoordinate(coordinate));
 	if (record.$format !== undefined) out.$format = record.$format;
+	if (isRecord(trivia) && hasOutsideTrivia(trivia)) {
+		setLayout(out, 'trivia', { ...(trivia.leading != null ? { leading: trivia.leading } : {}), ...(trivia.trailing != null ? { trailing: trivia.trailing } : {}) });
+	}
 	return out;
 }
 
@@ -497,19 +505,16 @@ function toTransportValue(
 		});
 	}
 	if (!isRecord(value)) return value;
-	if (isCoordinate(value)) {
-		if (fold) assertHoldsTree(value);
-		return plainCoordinate(value);
-	}
+	if (isCoordinate(value) && !fold) return plainCoordinate(value);
 	const bears = bearer === undefined || bearer === value;
 	const trivia = owner !== undefined && namesSameNode(owner, value) ? triviaOf(value) : crossingTrivia(value, view, bears ? changed : NO_EDGES);
-	const folded = fold ? foldedCoordinate(value, trivia) : undefined;
-	if (folded !== undefined) {
-		assertHoldsTree(value);
-		return foldToCoordinate(value, folded);
-	}
 	// Trivia entries cross as they are, coordinates included.
 	if (fold && trivia != null) forEachTriviaList(trivia as TriviaSides<unknown>, assertTriviaHoldsTree);
+	const folded = !fold ? undefined : isCoordinate(value) ? unreadCoordinate(value) : foldedCoordinate(value);
+	if (folded !== undefined) {
+		assertHoldsTree(value);
+		return foldToCoordinate(value, folded, trivia);
+	}
 	const out: Record<string, unknown> = {};
 	for (const key of Object.keys(value)) {
 		if (!isDataKey(key) || key === '$_layout') continue;

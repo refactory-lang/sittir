@@ -1296,9 +1296,12 @@ export interface IsGuards {
 	};
 }
 
-// Runtime: kind guards compare numeric TSKindId only.
+// Runtime: every guard tests membership through `isMember`, the test a query's `ofType` uses.
 function _g(id: number): (v: { readonly $type: number } | number) => boolean {
-	return (v) => typeof v !== 'number' && v.$type === id;
+	return (v) => typeof v !== 'number' && isMember(id, v.$type);
+}
+function _mg(kind: number): (v: { readonly $type: number } | number) => boolean {
+	return (v) => isMember(kind, typeof v === 'number' ? v : v.$type);
 }
 function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number) => boolean {
 	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
@@ -1357,90 +1360,124 @@ const _supertype_comment_ids = new Set<number>([337, 340]);
 const _supertype_layout_ids = new Set<number>([168, 169, 170, 171, 172, 173, 174, 175]);
 const _supertype_charLiteralEscaped_ids = new Set<number>([147, 148, 149, 150]);
 
-const _supertype_macroDefinition_guard = _vg(_sg(_supertype_macroDefinition_ids), {
+const _members = new Map<number, ReadonlySet<number>>([
+	[177, _supertype_statement_ids],
+	[180, _supertype_macroDefinition_ids],
+	[183, _supertype_tokenTreePattern_ids],
+	[187, _supertype_tokenTree_ids],
+	[193, _supertype_modItem_ids],
+	[194, _supertype_foreignModItem_ids],
+	[196, _supertype_structItem_ids],
+	[213, _supertype_implItem_ids],
+	[236, _supertype_type_ids],
+	[253, _supertype_pointerType_ids],
+	[258, _supertype_expression_ids],
+	[260, _supertype_delimTokenTree_ids],
+	[266, _supertype_rangeExpression_ids],
+	[269, _supertype_referenceExpression_ids],
+	[278, _supertype_arrayExpression_ids],
+	[294, _supertype_matchArm_ids],
+	[301, _supertype_closureExpression_ids],
+	[314, _supertype_pattern_ids],
+	[320, _supertype_fieldPattern_ids],
+	[323, _supertype_rangePattern_ids],
+	[327, _supertype_orPattern_ids],
+	[328, _supertype_literal_ids],
+	[329, _supertype_literalPattern_ids],
+	[331, _supertype_integerLiteral_ids],
+	[334, _supertype_charLiteral_ids],
+	[335, _supertype_escapeSequence_ids],
+	[365, _supertype_charLiteralEscaped_ids]
+]);
+export function isMember(kind: number, type: number): boolean {
+	return _members.get(kind)?.has(type) ?? type === kind;
+}
+export function membersOf(kind: number): readonly number[] {
+	const members = _members.get(kind);
+	return members === undefined ? [kind] : [...members];
+}
+
+const _supertype_macroDefinition_guard = _vg(_mg(180), {
 	paren: _g(TSKindId.MacroDefinitionParen),
 	bracket: _g(TSKindId.MacroDefinitionBracket),
 	brace: _g(TSKindId.MacroDefinitionBrace)
 });
-const _supertype_tokenTreePattern_guard = _vg(_sg(_supertype_tokenTreePattern_ids), {
+const _supertype_tokenTreePattern_guard = _vg(_mg(183), {
 	paren: _g(TSKindId.TokenTreePatternParen),
 	bracket: _g(TSKindId.TokenTreePatternBracket),
 	brace: _g(TSKindId.TokenTreePatternBrace)
 });
-const _supertype_tokenTree_guard = _vg(_sg(_supertype_tokenTree_ids), {
+const _supertype_tokenTree_guard = _vg(_mg(187), {
 	paren: _g(TSKindId.TokenTreeParen),
 	bracket: _g(TSKindId.TokenTreeBracket),
 	brace: _g(TSKindId.TokenTreeBrace)
 });
-const _supertype_modItem_guard = _vg(_sg(_supertype_modItem_ids), {
+const _supertype_modItem_guard = _vg(_mg(193), {
 	external: _g(TSKindId.ModItemExternal),
 	inline: _g(TSKindId.ModItemInline)
 });
-const _supertype_foreignModItem_guard = _vg(_sg(_supertype_foreignModItem_ids), {
+const _supertype_foreignModItem_guard = _vg(_mg(194), {
 	semi: _g(TSKindId.ForeignModItemSemi),
 	body: _g(TSKindId.ForeignModItemBody)
 });
-const _supertype_structItem_guard = _vg(_sg(_supertype_structItem_ids), {
+const _supertype_structItem_guard = _vg(_mg(196), {
 	brace: _g(TSKindId.StructItemBrace),
 	tuple: _g(TSKindId.StructItemTuple),
 	unit: _g(TSKindId.StructItemUnit)
 });
-const _supertype_implItem_guard = _vg(_sg(_supertype_implItem_ids), {
-	body: _g(TSKindId.ImplItemBody),
-	semi: _g(TSKindId.ImplItemSemi)
-});
-const _supertype_pointerType_guard = _vg(_sg(_supertype_pointerType_ids), {
+const _supertype_implItem_guard = _vg(_mg(213), { body: _g(TSKindId.ImplItemBody), semi: _g(TSKindId.ImplItemSemi) });
+const _supertype_pointerType_guard = _vg(_mg(253), {
 	const: _g(TSKindId.PointerTypeConst),
 	mut: _g(TSKindId.PointerTypeMut)
 });
-const _supertype_delimTokenTree_guard = _vg(_sg(_supertype_delimTokenTree_ids), {
+const _supertype_delimTokenTree_guard = _vg(_mg(260), {
 	paren: _g(TSKindId.DelimTokenTreeParen),
 	bracket: _g(TSKindId.DelimTokenTreeBracket),
 	brace: _g(TSKindId.DelimTokenTreeBrace)
 });
-const _supertype_rangeExpression_guard = _vg(_sg(_supertype_rangeExpression_ids), {
+const _supertype_rangeExpression_guard = _vg(_mg(266), {
 	binary: _g(TSKindId.RangeExpressionBinary),
 	postfix: _g(TSKindId.RangeExpressionPostfix),
 	prefix: _g(TSKindId.RangeExpressionPrefix),
 	bare: _g(TSKindId.RangeExpressionBare)
 });
-const _supertype_referenceExpression_guard = _vg(_sg(_supertype_referenceExpression_ids), {
+const _supertype_referenceExpression_guard = _vg(_mg(269), {
 	rawConst: _g(TSKindId.ReferenceExpressionRawConst),
 	rawMut: _g(TSKindId.ReferenceExpressionRawMut),
 	mut: _g(TSKindId.ReferenceExpressionMut),
 	bare: _g(TSKindId.ReferenceExpressionBare)
 });
-const _supertype_arrayExpression_guard = _vg(_sg(_supertype_arrayExpression_ids), {
+const _supertype_arrayExpression_guard = _vg(_mg(278), {
 	semi: _g(TSKindId.ArrayExpressionSemi),
 	list: _g(TSKindId.ArrayExpressionList)
 });
-const _supertype_matchArm_guard = _vg(_sg(_supertype_matchArm_ids), {
+const _supertype_matchArm_guard = _vg(_mg(294), {
 	withComma: _g(TSKindId.MatchArmWithComma),
 	blockEnding: _g(TSKindId.MatchArmBlockEnding)
 });
-const _supertype_closureExpression_guard = _vg(_sg(_supertype_closureExpression_ids), {
+const _supertype_closureExpression_guard = _vg(_mg(301), {
 	block: _g(TSKindId.ClosureExpressionBlock),
 	expr: _g(TSKindId.ClosureExpressionExpr)
 });
-const _supertype_fieldPattern_guard = _vg(_sg(_supertype_fieldPattern_ids), {
+const _supertype_fieldPattern_guard = _vg(_mg(320), {
 	shorthand: _g(TSKindId.FieldPatternShorthand),
 	named: _g(TSKindId.FieldPatternNamed)
 });
-const _supertype_rangePattern_guard = _vg(_sg(_supertype_rangePattern_ids), {
+const _supertype_rangePattern_guard = _vg(_mg(323), {
 	withLeft: _g(TSKindId.RangePatternWithLeft),
 	prefix: _g(TSKindId.RangePatternPrefix)
 });
-const _supertype_orPattern_guard = _vg(_sg(_supertype_orPattern_ids), {
+const _supertype_orPattern_guard = _vg(_mg(327), {
 	binary: _g(TSKindId.OrPatternBinary),
 	prefix: _g(TSKindId.OrPatternPrefix)
 });
-const _supertype_integerLiteral_guard = _vg(_sg(_supertype_integerLiteral_ids), {
+const _supertype_integerLiteral_guard = _vg(_mg(331), {
 	decimal: _g(TSKindId.IntegerLiteralDecimal),
 	hex: _g(TSKindId.IntegerLiteralHex),
 	binary: _g(TSKindId.IntegerLiteralBinary),
 	octal: _g(TSKindId.IntegerLiteralOctal)
 });
-const _supertype_escapeSequence_guard = _vg(_sg(_supertype_escapeSequence_ids), {
+const _supertype_escapeSequence_guard = _vg(_mg(335), {
 	simple: _g(TSKindId.EscapeSequenceSimple),
 	unicodeFixed: _g(TSKindId.EscapeSequenceUnicodeFixed),
 	unicodeBraced: _g(TSKindId.EscapeSequenceUnicodeBraced),
@@ -1450,7 +1487,7 @@ const _supertype_comment_guard = _vg(_sg(_supertype_comment_ids), {
 	lineComment: _g(TSKindId.LineComment),
 	blockComment: _g(TSKindId.BlockComment)
 });
-const _supertype_charLiteralEscaped_guard = _vg(_sg(_supertype_charLiteralEscaped_ids), {
+const _supertype_charLiteralEscaped_guard = _vg(_mg(365), {
 	simple: _g(TSKindId.CharLiteralEscapedSimple),
 	unicodeFixed: _g(TSKindId.CharLiteralEscapedUnicodeFixed),
 	unicodeBraced: _g(TSKindId.CharLiteralEscapedUnicodeBraced),
@@ -1479,7 +1516,7 @@ const _supertype_declarationStatement_guard = _vg(_sg(_supertype_declarationStat
 	externCrate: _g(TSKindId.ExternCrateDeclaration),
 	static: _g(TSKindId.StaticItem)
 });
-const _supertype_charLiteral_guard = _vg(_sg(_supertype_charLiteral_ids), {
+const _supertype_charLiteral_guard = _vg(_mg(334), {
 	escaped: _supertype_charLiteralEscaped_guard,
 	plain: _g(TSKindId.CharLiteralPlain),
 	empty: _g(TSKindId.CharLiteralEmpty)
@@ -1689,8 +1726,8 @@ export const is = Object.freeze({
 	typeIdentifier: _g(TSKindId.TypeIdentifier),
 	fieldIdentifier: _g(TSKindId.FieldIdentifier),
 	shorthandFieldIdentifier: _g(TSKindId.ShorthandFieldIdentifier),
-	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
-	statement: _sg(_supertype_statement_ids),
+	kind: (v: { readonly $type: number }, k: number): boolean => isMember(k, v.$type),
+	statement: _mg(177),
 	declarationStatement: _supertype_declarationStatement_guard,
 	macroDefinition: _supertype_macroDefinition_guard,
 	tokenTreePattern: _supertype_tokenTreePattern_guard,
@@ -1699,21 +1736,21 @@ export const is = Object.freeze({
 	foreignModItem: _supertype_foreignModItem_guard,
 	structItem: _supertype_structItem_guard,
 	implItem: _supertype_implItem_guard,
-	type: _sg(_supertype_type_ids),
+	type: _mg(236),
 	pointerType: _supertype_pointerType_guard,
-	expression: _sg(_supertype_expression_ids),
+	expression: _mg(258),
 	delimTokenTree: _supertype_delimTokenTree_guard,
 	rangeExpression: _supertype_rangeExpression_guard,
 	referenceExpression: _supertype_referenceExpression_guard,
 	arrayExpression: _supertype_arrayExpression_guard,
 	matchArm: _supertype_matchArm_guard,
 	closureExpression: _supertype_closureExpression_guard,
-	pattern: _sg(_supertype_pattern_ids),
+	pattern: _mg(314),
 	fieldPattern: _supertype_fieldPattern_guard,
 	rangePattern: _supertype_rangePattern_guard,
 	orPattern: _supertype_orPattern_guard,
-	literal: _sg(_supertype_literal_ids),
-	literalPattern: _sg(_supertype_literalPattern_ids),
+	literal: _mg(328),
+	literalPattern: _mg(329),
 	integerLiteral: _supertype_integerLiteral_guard,
 	charLiteral: _supertype_charLiteral_guard,
 	escapeSequence: _supertype_escapeSequence_guard,

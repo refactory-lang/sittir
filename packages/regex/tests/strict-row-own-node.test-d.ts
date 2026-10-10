@@ -11,4 +11,4 @@
 import type { Expect, IsNever, TakesOwnNode } from '../../types/tests/support/row-is-the-call.ts';
 import type * as T from '../src/types.ts';
 
-export type NoStrictRowTakesItsOwnNode = Expect<IsNever<TakesOwnNode<T.IrKeyOf, T.NamespaceMap, 'BuildArgs'>>>;
+export type NoStrictRowTakesItsOwnNode = Expect<IsNever<TakesOwnNode<T.TypeKeyOf, T.NamespaceMap, 'BuildArgs'>>>;

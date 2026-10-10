@@ -139,7 +139,7 @@ The name of a grammar's type map, `<Prefix>TypeMap` (`RustTypeMap`), from the sa
 
 ### `packages/codegen/src/emitters/engine.ts::emitApi`
 
-The grammar's `api.ts`: the implementation a language descriptor loads. It declares the grammar's `LanguageAPI` (the builder table, guards, kind ids, the kind-to-node-type map keyed by each kind's ir key, the parsed root, the node union, the render options, and `indentChar`, which names the grammar's `IndentChar` alias from `options.ts`, and `empty`, the grammar's type-map member naming each kind's empty form) and exports `hooks`, which wire the package's render module hash, the builder table, guards, kind ids and trivia facts (joined by the grammar's comment coercer, `commentCoercer`, when it has a default trivia form, so a loose trivia string builds a comment), a native engine per engine through the shared `nativeLanguageEngine` adapter over `createRenderEngine`, and `wrapNode` for a parsed root and its tree. The `hydrate` hook points to the existing `hydrateChild`, so factories resolve bound list stubs through the grammar's single child-hydration implementation.
+The grammar's `api.ts`: the implementation a language descriptor loads. It declares the grammar's `LanguageAPI` (the builder table, guards, kind ids, the kind-to-node-type map keyed by each kind's ir key, the parsed root, the node union, the render options, and `indentChar`, which names the grammar's `IndentChar` alias from `options.ts`, and `empty`, the grammar's type-map member naming each kind's empty form) and exports `hooks`, which wire the package's render module hash, the builder table, guards, kind ids and trivia facts (joined by the grammar's comment coercer, `commentCoercer`, when it has a default trivia form, so a loose trivia string builds a comment), a native engine per engine through the shared `nativeLanguageEngine` adapter over `createRenderEngine`, and `wrapNode` for a parsed root and its tree, and `membership`, the guards' membership test (`isMember`, `membersOf`) for a query's `ofType`. The `hydrate` hook points to the existing `hydrateChild`, so factories resolve bound list stubs through the grammar's single child-hydration implementation.
 
 
 ```text
@@ -271,8 +271,8 @@ One `fill_seated_gaps` call per repeat slot that has seated sites and whose
 elements can reach a seat (`slotElementsReach`), passing the slot's seat
 table (`SEATS_<KIND>_<SLOT>`). The runtime walks the elements, so there is
 no per-list match block: each element answers its own seat through
-`SeatTarget`. An optional slot is unwrapped first; a slot whose elements may
-be absent is iterated through `Option::as_mut`, a required one through
+`SeatTarget`. A list field is never optional; a slot whose elements may
+be absent is iterated through `Option::as_mut`, any other through
 `Some`, so one core function serves both.
 
 The core walk skips the last present element. A child's edge is written at
@@ -637,7 +637,7 @@ A pattern value contributes `string`; a slot holding only pattern values never t
 
 ### `packages/codegen/src/emitters/factories.ts::emitFieldCarryingFactory`
 
-A list owner's storage expression passes through `hydrateListStorage` before the shared view sizes it. The existing seat plan identifies that storage; the initializer, getter and list view then use the same resolved value. A missing live tree binding retains the existing refusal.
+A list owner's storage expression passes through `hydrateStored` before the shared view sizes it. The existing seat plan identifies that storage; the initializer, getter and list view then use the same resolved value. A missing live tree binding retains the existing refusal.
 
 ```text
 /**
@@ -1511,7 +1511,7 @@ A direct-value coercer whose kind has a `listSpreadTarget` also takes the list's
 
 #### interior passthrough
 
-A direct coercer whose sole slot is an interior text slot (it has an `interiorSlotGuards` entry) returns any read node as it is (`isNode`), where every other direct coercer returns only a node of its own kind. A text slot cannot hold a node, so a node reaching it can only be a read leaf of another stored kind: an in-place leaf alias reads as the shared anonymous token, and `from` on that read must not rebuild it and lose its handle. This is the same scope as the text-shaped leaf coercers, which pass any non-string through. A config object `{ content }` and a string still reach the slot, spelled through `spelledInterior` and checked by the slot guard.
+A direct coercer whose sole slot is an interior text slot (it has an `interiorSlotGuards` entry) returns any read node as it is (`isNodeValue`), where every other direct coercer returns only a node of its own kind. A text slot cannot hold a node, so a node reaching it can only be a read leaf of another stored kind: an in-place leaf alias reads as the shared anonymous token, and `from` on that read must not rebuild it and lose its handle. This is the same scope as the text-shaped leaf coercers, which pass any non-string through. A config object `{ content }` and a string still reach the slot, spelled through `spelledInterior` and checked by the slot guard.
 
 ### `packages/codegen/src/emitters/from.ts::refuseSiblingLeadExpr`
 
@@ -2201,7 +2201,7 @@ strings, numbers and built nodes pass through unchanged.
 
 ### `packages/codegen/src/emitters/from.ts::emitResolveOneHelper`
 
-A value names its own kind when it is a node or a coordinate: a coordinate (`isCoordinate`) is a node of its `$type` that the read left unread, so a parsed node's shallow child reaches `from()` as one, and `_resolveOne` admits it by that `$type` and returns it as stored, never hydrated (`from()` holds no tree to read it with). A coordinate whose kind the slot does not list goes through the same arm search as a node, and is returned as it is when no single arm takes it.
+A value names its own kind when it is a node or a coordinate (`isNodeValue`, the one test every coercer asks before reading a value as a config, a tag or a scalar): a coordinate is a node of its `$type` that the read left unread, so a parsed node's shallow child reaches `from()` as one, and `_resolveOne` admits it by that `$type` and returns it as stored, never hydrated (`from()` holds no tree to read it with). A coordinate whose kind the slot does not list goes through the same arm search as a node, and is returned as it is when no single arm takes it.
 
 The order of the three kind-route branches is load-bearing. A value that
 already carries a `$type` is a finished node, so it short-circuits and is
@@ -2458,25 +2458,6 @@ Emits the role-named getters on `synonym` (`function`, `class`, `method`, `modul
  * loose `from()` path by default and expose the raw factory as `.strict`.
  */
 ```
-
-### `packages/codegen/src/emitters/ir.ts::groupNameFor`
-
-```text
-/**
- * Supertype kind → group namespace name.
- *   `_expression`            → `expression`
- *   `_declaration_statement` → `declarationStatement`
- *   `_literal_pattern`       → `literalPattern`
- */
-```
-
-### `packages/codegen/src/emitters/ir.ts::memberKeyFor`
-
-`memberKind`'s short key within `supertypeKind`'s group namespace:
-`compiler/variant-structural.ts`'s `supertypeMemberName`, camelCased. A
-member that reduces to the empty string or to the supertype's own name
-falls back to the bare kind before camelCasing, so no member key is ever
-empty or a stutter of its group's name.
 
 ### `packages/codegen/src/emitters/ir.ts::resolveRoleNodes`
 
@@ -3082,7 +3063,9 @@ writer exists.
 The render function for a compound kind that has no body: each slot is
 written in declaration order through `buildSlotWriteCall`, with the class
 `slotClassOfShape` gives the slot's shape, or, when there are no slots, the
-transport's captured text.
+transport's captured text. A list slot is a `Vec` or a `NonEmptyVec`, never
+optional, so its items are iterated directly; a single slot that may be
+absent is an `Option`.
 
 ### `packages/codegen/src/emitters/render-module.ts::literalWrite`
 
@@ -3214,7 +3197,7 @@ template, `templateOf(struct.flanks.get(name))`:
   named kind seats held trivia, a line-terminated one ends its line);
 - text: a plain reference when required, a view when optional;
 - list: a `ListView` literal with `items` borrowed from the transport
-  (`&node.x`, or the deref'd slice of an optional list, or `NO_ITEMS` when
+  (`&node.x`, a list field being never optional, or `NO_ITEMS` when
   the transport has no field), the template, the separator token or the
   `separator_kind` match, `before`/`after`/`head`/`tail` from the node's
   stamped spacing sites, and `leading`/`trailing` from the list's delimiter
@@ -3277,6 +3260,14 @@ variant the module names holds the core's type.
 // AnyTransport enum + per-kind transport structs + typed dispatch +
 // transport bridge helpers.
 ```
+
+### `packages/codegen/src/emitters/render-module.ts::grammarTriviaStatement`
+
+The render module's last statement, `::sittir_core::grammar_trivia!(TriviaTransport; …)`: it states once, for every transport the module emits (each `pub struct` or `pub enum` deriving `Transport`, unit-only enums included), that the grammar's trivia type is `TriviaTransport`. A coordinate in any slot then decodes and frames the outside trivia a folded node carries (`HasTrivia`), whatever the slot's transport type. The names come from `ReadPrint.transports`, which `transportDeclaration` fills as each transport is printed.
+
+### `packages/codegen/src/emitters/render-module.ts::transportDeclaration`
+
+The head of a transport's declaration: its derive, its `#[transport(...)]` arguments and `pub struct` or `pub enum` with its name. Every printer of a transport goes through it, so it records the name in `ReadPrint.transports` where the type is printed.
 
 ### `packages/codegen/src/emitters/render-module.ts::pruneUnreferencedBridges`
 
@@ -3864,7 +3855,9 @@ The Rust type of a transport slot's field, printed from the slot's
 (or `Option<String>`), and every other shape is its type in the `SlotValue`
 carrier — the kind's transport, the supertype's enum, the slot's choice
 as `choiceNameOf` names it, or `AnyTransport` — wrapped as
-`T`, `Option<T>`, `Vec<T>` or `Option<Vec<T>>`. A singular slot whose
+`T` or `Option<T>` for a single value, and for a list as
+`NonEmptyVec<T>` (a `repeat1` slot, whose read refuses an empty list) or
+`Vec<T>` (any other, an empty list being `[]`), never optional. A singular slot whose
 reachable kinds share an SCC with `parentKind` boxes its value.
 
 #### body
@@ -5973,8 +5966,11 @@ The kinds a field's dummy must build a stub from: none when `dummyValueForField`
  * and a per-branch `visiting` set (cycle guard for self-referential
  * grammars).
  *
+ * Every list slot the stub does not populate is `[]`, at the depth limit
+ * too: an empty list is `[]`, and the transport refuses a missing list key.
+ *
  * When recursion bottoms out (depth limit or cycle) the stub still declares
- * `$type`/`$text`/`$source`/`$named` but omits nested required fields —
+ * `$type`/`$text`/`$source`/`$named` but omits nested required single fields —
  * this may still fail construction for pathological kinds, matching the
  * existing "skip when no safe sample found" precedent elsewhere in this
  * emitter (see {@link pickSampleForPattern}) rather than guessing further.
@@ -7982,6 +7978,8 @@ All producers emit a numeric `$type`, so the emitted guards compare numeric
 `generatedIdTables` is absent — unit-test callers that bypass the full codegen
 pipeline — which falls back to string equality.
 
+Every guard tests membership through the emitted `isMember(kind, type)`: a kind with a row in `_members`, the table of each declared supertype's member ids (a polymorph parent's arms included), admits its members; any other kind admits itself. A supertype or a polymorph parent is never a node's own type, so its row does not list it. `membersOf(kind)` lists the same set, which is what a walk selects and a `where` compiles against. The language's hooks export both as `membership`, so a query's `ofType` and `is.*` run one test. A supertype with no kind id (a phantom) keeps a guard over its id set, since no query can name it.
+
 A supertype guard is generic over its input and narrows through the shared `NarrowTo<T, <member kind ids>>`: storage data stays storage, and a `.Bound` or `.Parsed` node stays `.Bound` or `.Parsed`, so a guard never claims node methods its input lacks. A numeric input narrows to its member ids, and a node broadly typed `{ $type: number }` narrows to the intersection with them, so the declared narrowing matches the runtime guard, which accepts raw kind ids. The check reads one property, where relating a `.Parsed` union to a storage member walks both interfaces past the checker's relation depth.
 
 #### body
@@ -8782,7 +8780,7 @@ The types module of `emitTypesModules`, for callers that need only the public su
 
 `FixedTextKindId` is the union of the kind ids `kindIdText` gives a text, so it holds exactly the kinds whose leaf transport renders a bare kind id. `engine.render` accepts it beside the language's nodes.
 
-`IrKeyOf` is emitted from exactly the kinds `NamespaceMap` is emitted from that have a kind id, mapping each id to the kind's stamped `irKey`, so the engine's kind-to-type map keys each kind as the builder table does, never by re-casing a kind-id name.
+`TypeKeyOf` is emitted from exactly the kinds `NamespaceMap` is emitted from that have a kind id, mapping each id to the kind's stamped `typeKey`, so the engine's kind-to-type map keys every kind with an id, whether or not `ir` exports a builder for it, never by re-casing a kind-id name.
 
 #### body
 
@@ -9014,6 +9012,8 @@ After the namespaces, one `Empty<TypeName>` interface per empty form. It extends
 ```
 
 ### `packages/codegen/src/emitters/types.ts::emitInterface`
+
+A storage key is optional exactly when its slot is a single optional value: a list's key never is, a possibly-empty list storing `readonly (X)[]` (`[]` when empty) and a `repeat1` list `NonEmptyArray<X>`. A builder input still omits a possibly-empty list: `ConfigOf` and `LooseConfigOf` take input optionality from `RequiredKeys`, which leaves such a list out, and the factory stores `[]`.
 
 #### body
 
@@ -11588,37 +11588,13 @@ The flat namespace holds each builder once, under its own `irKey`; a supertype-s
 
 A supertype gets an ir namespace if and only if the grammar declares it (`AssembledSupertype.declared`). An undeclared hidden choice gets no ir namespace however it would be emitted, neither a supertype group here nor flattened-parent routes (`flattenedVariantParents`); each of its arms keeps its own flat builder. Declare it in `grammar.sittir.ts` (`supertypes`) to give it one. The kind's type union is unaffected.
 
-### `packages/codegen/src/emitters/overlays/module.ts::isFlatLeafOrKeyword`
-
-```text
-/** Does this keyword / pattern kind get a flat `ir.<irKey>` entry —
- *  user-facing (the assemble-time fact: visible, or hidden but an alias
- *  source or a variant child; sittir's own layout kinds are not), not
- *  inlined, with a factory, a legal identifier key and a catalog id?
- *  A hidden pattern whose key keeps its underscore because the bare name
- *  is taken (python's `_string_content` beside `string_content`) still
- *  gets its entry: a strict slot takes only built leaves, so every leaf
- *  a slot stores needs a builder on `ir`. A hidden keyword gets no entry: its value is its kind
- *  id, so a slot takes `TSKindId.<Kind>` and there is nothing to build;
- *  an enum of literals gets none for the same reason, per member. One
- *  predicate for ir's flat-key set, its two emission loops, and the flat
- *  leaf keys `flattenedVariantParents` checks its parent keys against. */
-```
-
-
-### `packages/codegen/src/emitters/overlays/module.ts::hasOneSurface`
-
-```text
-A kind with one builder and no strict/coerce pair: a pattern leaf, whose builder takes its text, a
-lexed kind whose one slot is its own text (`ownTextLeaf`), whose builder takes that text, or a
-kind stored as its id (a keyword or fixed-text token), whose entry is the constant. Every place such a
-kind is exposed uses the same raw entry — at the top of `ir`, in a supertype group, and under a parent
-as a variant route — so the kind has one entry form wherever it is reached.
-```
-
 ### `packages/codegen/src/emitters/overlays/module.ts::ownTextEntries`
 
-The keyed kinds that have one surface: the complement of `bundleEntries` over the same derivation (`keyedEntries`). They have a raw factory, a coercer for the slots that hold them, and a catalog entry, and get a flat `ir` entry that is the raw factory instead of a bundle.
+The keyed kinds that have one surface (`ownTextKeyedNodes`) with their `maxArgs`. They get a flat `ir` entry that is the raw factory instead of a bundle.
+
+### `packages/codegen/src/emitters/overlays/module.ts::withMaxArgs`
+
+Adds each keyed node's `BuiltTypeSurface.maxArgs`, the one fact a bundle entry carries that is the emitter's own: it is computed from the built type surface, which the model does not hold.
 
 ### `packages/codegen/src/emitters/shared.ts::ownTextLeaf`
 
@@ -11630,26 +11606,11 @@ Such a kind is a leaf. Its builder takes text only and has one surface. It never
 
 The argument row of an own-text leaf, as both its `BuildArgs` and its `LooseArgs`: `[content: T, affix?: true] | [text: <spelled type>, affix: false]`. `T` is `ownTextContentType`, the content slot's storage type widened by what its storage coercion accepts (a numeric content also takes `number | bigint`). With `affix` true or absent the first argument is the content, and the builder adds the affixes; with `affix: false` it is the token spelled in full, typed by the kind's affixes, and the builder removes them (`unaffixed`), refusing text that lacks either. Text that carries the affixes passed without `affix: false` is content like any other: it is refused when the content pattern excludes it, and renders with the affixes doubled when the pattern admits it.
 
-### `packages/codegen/src/emitters/overlays/module.ts::hasFlatEntry`
-
-```text
-Does this leaf or keyword get its own flat `ir.<irKey>` entry: `isFlatLeafOrKeyword`, and not a
-token form. The predicate of ir's two flat emission loops.
-```
-
 ### `packages/codegen/src/emitters/ir.ts::emitIr`
 
-No emitted code attaches properties to a factory: a factory is shared under
-every key that reaches it, so a mutation made for one key shows under all
-of them. Only a declared supertype gets a group. A flattened parent whose key is also
-a flat leaf's key throws (`flattenedVariantParents`), as does a supertype
-group whose name is a flat key: two surfaces never share one `ir` key.
+Prints the `ir` module from the model's plan (`irPlanOf`): the supertype groups as top-level consts, then the frozen `ir` table — bundled node factories, the variant parents, keyword factories, own-text leaves, leaf node factories, the group namespaces and `synonym`. Which kinds appear, under what key and through which factory export is the plan's decision (`deriveIrPlan`); the emitter adds only the role synonyms, which come from the grammar's roles rather than the model.
 
-A group lists a surface-hidden member only when it is a punctuation leaf
-with a builder (`isBuilderTextLeaf`), which gives `ir.layout` its
-members; any other surface-hidden member stays out of the group.
-
-The `ir` namespace's node-factory members come from `bundleEntries` — the same SSOT the bundle module and the overlay wire map consume — so `ir`, the bundles, and `keyByKind` can never disagree on which kinds are surfaced or under what key. Aliased-hidden kinds therefore appear in `ir` under their visible-style keys the moment they qualify for a bundle; `ir` adds only the group-name dedupe on top. Keyword and leaf members keep their own loops (leaves have no coercers, so no bundle entry exists to consume).
+No emitted code attaches properties to a factory: a factory is shared under every key that reaches it, so a mutation made for one key shows under all of them.
 
 #### body
 
@@ -11703,20 +11664,6 @@ The `ir` namespace's node-factory members come from `bundleEntries` — the same
 // Explicit typeof-composed surface — same TS7056 rationale as the
 // hoisted bundle consts above.
 ```
-
-A flattened parent's namespace is its variant routes. The supertype-group namespaces (`ir.expression.binary`) skip flattened parents — a group would name members by subtype suffix and shadow the routes — and a flattened parent that is a member of another supertype's group appears there as its route object (`ir.statement.impl` is `ir.implItem`).
-
-A flattened parent not already claimed as a group name gets one of three
-treatments, by whether every one of its routes is `minted` (§
-`overlays/module.ts::flattenedVariantParents`). All-minted: the parent's key
-is only recorded (`variantParentKeys`) and later placed straight into `ir`'s
-body as `<key>: F.<key>` — no standalone top-level export, since every
-variant is reachable only through this parent anyway. Any non-minted
-member: the parent gets a standalone top-level export like a grouped
-namespace, so a route to a shared kind stays reachable without going
-through `ir`. If that export's key collides with a flat leaf/keyword
-factory's own `ir` key, the parent's route object is attached onto that
-leaf's factory instead of shadowing it (`attachProps(<leaf>, F.<key>)`).
 
 `ir` and `synonym` are frozen tables: the emitted module is the one place each is built, and nothing writes to either afterwards.
 
@@ -11781,6 +11728,8 @@ leaf's factory instead of shadowing it (`attachProps(<leaf>, F.<key>)`).
 ```
 
 ### `packages/codegen/src/emitters/ir.ts::emitSynonymComment`
+
+Emits `synonym.comment` from the grammar's trivia kinds (a trivia supertype contributes its subtypes). Each kind is reached through its stamped `builderPath` on `ir` (`ir.commentLine`), never by splicing a name; a trivia kind with no builder path is refused. With more than one leaf comment kind, the line comment is the one whose text ends only at a line break (`lineTerminatedKinds`) and the block comment one that does not (typescript `comment_line` and `comment_block`).
 
 #### body
 
@@ -12378,7 +12327,7 @@ What `slotAccessorBody` needs to know about a slot beyond its model: the element
 
 ### `packages/codegen/src/emitters/wrap.ts::slotAccessorBody`
 
-The body of one slot accessor. A scalar slot (`boolean`, `bitflag` or `kindEnum` storage: a flag, a set of flags, a kind id) returns its storage as it is; a node slot hydrates through `hydrateSlots` (`many`) or `hydrateSlot`, typed by the slot's element type.
+The body of one slot accessor. A scalar slot (one whose storage holds no node, `storesNodes`: a flag, a set of flags, a kind id) returns its storage as it is; a node slot hydrates through `hydrateSlots` (`many`) or `hydrateSlot`, typed by the slot's element type. An alias envelope's content slot (`aliasContent`) passes the role `contentRole` gives its stored content, so a content that shares the envelope's parser node is registered apart from the envelope.
 
 
 ### `packages/codegen/src/emitters/wrap.ts::fieldAccessorLines`
@@ -12539,7 +12488,7 @@ normalization; a node that already carries slot storage (built or edited) is lef
 
 Assembles the wrap module: the imports `pruneUnusedImports` leaves, `ParsedOfData` (a transport's `$type` mapped to its wrapped surface through `T.ParsedByKindId`, the data type itself for a grammar with no kind catalog), the hydrate helpers, every per-kind wrap function, the `_wrapTable` dispatch table and `wrapNode`.
 
-`hydrate`, `hydrateSlot` and `hydrateSlots` bind `@sittir/common`'s `hydrateWith`, `hydrateSlotWith` and `hydrateSlotsWith` to this module's `wrapNode`: a stored coordinate is read through `readNode` on the holder's tree and wrapped, a transport is wrapped, anything else (a kind id, a text leaf already plain) is returned as it is. A slot accessor writes what it hydrated back into the slot and adopts it, so the next read returns the same node, and a list is stored once as a frozen array. `hydrate` is exported, so a tool that hydrates read data takes the same path as the accessors.
+`hydrate`, `hydrateSlot` and `hydrateSlots` bind `@sittir/common`'s `hydrateWith`, `hydrateSlotWith` and `hydrateSlotsWith` to this module's `wrapNode` (`hydrateSlot` also passes the route's registry role): a stored coordinate is read through `readNode` on the holder's tree and wrapped, a transport is wrapped, anything else (a kind id, a text leaf already plain) is returned as it is. A slot accessor writes what it hydrated back into the slot and adopts it, so the next read returns the same node, and a list is stored once as a frozen array. `hydrate` is exported, so a tool that hydrates read data takes the same path as the accessors.
 
 `wrapNode` dispatches on `data.$type` through `_wrapTable` and runs the kind's wrap function inside `inTreeEngine`, so a node is built under the engine that read its tree however long after the parse it is first reached; it carries read provenance (`carryRead`) from the transport to the wrapped node. Data whose kind has no row (an ERROR read, a plain text leaf) is returned as it crossed. With a catalog, `wrapNode` has a narrowing overload: a `$type`-narrowed input (an `is.*` guard) resolves to that kind's wrapped surface, read through an indexed `D['$type']` so a guard-narrowed intersection reduces instead of unioning every constituent's discriminant.
 
@@ -13089,7 +13038,7 @@ keeps that id on the `Identifier` member, where a read identifier belongs.
 /**
  * Per-slot emission metadata for `emitStruct`'s typed dispatch, collected
  * from the assembled node's slots so generated code stays consistent with
- * what the transport struct emits (Vec<...> vs Option<Vec<...>>, Box<...>
+ * what the transport struct emits (NonEmptyVec<...> vs Vec<...>, Box<...>
  * vs Option<Box<...>>). Named and unnamed slots are symmetric (cleanup
  * rules §E1) — both contribute transport fields.
  *
@@ -13294,12 +13243,7 @@ and the option may choose the blank.
 
 ### `packages/codegen/src/emitters/render-module.ts::isTransportRequired`
 
-Whether a slot's transport field is required (a bare `SlotValue`, `Vec`, or
-`String`) rather than an `Option`: the slot is required and not
-prepare-filled. Every transport-shape decision in this module (field types,
-render bindings, prepare loops, seat targets, napi dispatch order) asks this
-one predicate, so a prepare-filled slot decodes when absent and renders once
-`prepare` has filled it.
+Whether a slot's transport field is required (a bare `SlotValue`, `NonEmptyVec`, or `String`) rather than an `Option` or a possibly empty `Vec`. A list is required when it holds at least one item (`isNonEmpty`, the predicate the types' `NonEmptyArray` reads, so the transport and the types state one fact). A single slot is required when it is required and not prepare-filled. Every transport-shape decision in this module (field types, render bindings, prepare loops, seat targets, napi dispatch order) asks this one predicate, so a prepare-filled slot decodes when absent and renders once `prepare` has filled it.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderTransportField`
 
@@ -13382,73 +13326,11 @@ Shared header for a static overlay module: imports the previous layer as `B`, an
 
 ### `packages/codegen/src/emitters/overlays/module.ts::BundleEntry`
 
-One bundled kind: `key` is the ir property key (irKey, falling back to camelCase(kind)); `exportName` is the module-level export identifier — `key` suffixed with `_` when the key is a reserved identifier (e.g. `arguments`), since a reserved word is legal as an object property but not as a top-level export.
-
-`maxArgs` is the kind's `BuiltTypeSurface.maxArgs`: the stamp `emitBundleModule` gives the entry's pair, absent for an unbounded (rest) calling convention.
+One bundled kind: the model's keyed node (`IrKeyedNode`: `key`, `exportName`, `node`) with `maxArgs`, the kind's `BuiltTypeSurface.maxArgs`: the stamp `emitBundleModule` gives the entry's pair, absent for an unbounded (rest) calling convention.
 
 ### `packages/codegen/src/emitters/overlays/module.ts::bundleEntries`
 
-The single derivation of which kinds get bundles and under what names — consumed by the bundle module, the overlays, the index hoisting, and `ir.ts`. A kind qualifies with both a raw factory and a coercer, compound or list class, not factoryInline, and a catalog entry. A hoisted non-list compound is excluded here rather than at `classifyFromEmission`: a form has a coercer and belongs on its parent's wire, but never gets a top-level `ir` key of its own. Lists are exempt because a hoisted separated list owns a public surface. An AssembledAlias is excluded: it is a transparent wrapper, so every position that holds one takes its content and builds the alias through its raw factory (`aliasContentAdmission`).
-
-### `packages/codegen/src/emitters/overlays/module.ts::referrersOf`
-
-Every node's referrers, purely structurally: for a supertype, the supertype
-itself against each of its subtype names; for a slot-bearing compound, the
-compound itself against the storage kind of each node-ref slot value. No
-variant facts enter this walk — it answers "who can reach this kind at
-all", the question `flattenedVariantParents` asks to decide whether a child
-is reachable ONLY through one parent's variant arm.
-
-### `packages/codegen/src/emitters/overlays/module.ts::flattenedVariantParents`
-
-The supertypes that stand in for a flattened polymorph parent, each with its variant routes, so `ir.<parent>.<variant>` survives the parent losing its own node. A supertype qualifies when the grammar declares it (an undeclared hidden choice gets no ir namespace; see `ir.ts::module`), it has at least two subtypes, every subtype ref carries the `variant` / `variantOf` arm facts naming this supertype, and its ir key is a valid identifier not already taken. Each subtype must resolve to a kind with a raw factory, to another qualifying flattened parent (a nested parent routes to that parent's own route object, `ir.exportStatement.default.from`), or — when it has no factory at all — to a kind-id-stored leaf (a keyword/punctuation kind, not an enum), which gets `leaf: true` instead of a `child`-factory route. A subtype that resolves to none of these (and isn't a pending flattened parent) disqualifies the whole parent. Parents are accepted in rounds until nothing changes, so a nested parent is always listed, and emitted, before the parent that routes to it. The route name is the stamped `variant`, never a suffix recovered from the subtype's name. A route also carries `default` when the arm was declared with `arm.default` — at most one per parent, checked here (a second throws). A nested parent's default only propagates when the nested parent itself resolved a default; an undeclared default at any hop in the chain simply leaves the outer parent with none.
-
-A route also carries `minted` when the child kind is exactly the name
-`polymorphVisibleName(parent, variant)` would mint for this variant AND
-`referrersOf` finds exactly one referrer of that child kind — this parent
-itself. Name-matching alone isn't enough: the child must be reachable from
-nowhere else (no other supertype's subtype list, no other compound's slot)
-for its route to be the child's only public address. `variantRoutePaths`
-nests one parent's routes under another parent's path only through a
-`minted` relationship, never through a parent that merely happens to route
-to the same kind elsewhere.
-
-
-A parent key that is also a flat leaf's key throws, whether or not the
-leaf is one of the parent's arms: `ir.<key>` names one thing, and a
-parent's key never stands for one of its arms.
-
-### `packages/codegen/src/emitters/overlays/module.ts::flatLeafKindByKey`
-
-Each flat leaf's ir key mapped to its kind, by `isFlatLeafOrKeyword`.
-
-### `packages/codegen/src/emitters/overlays/module.ts::variantRoutePaths`
-
-The public path of every `minted` variant a flattened parent routes to,
-keyed by the variant kind (`assignment_eq` → `assignment.eq`) — a
-non-minted route (the child is reachable some other way too) gets no entry
-here. Parents are walked in reverse, and a parent's own base path is
-whatever path a shallower parent already recorded for it as a `minted`
-route (`mintedPaths`), falling back to the parent's own bundle key when
-nothing minted it — so a nested parent's variants compose through the
-parent that actually minted it as a variant (`exportStatement.default.from`),
-never through a parent that merely routes to the same kind some other way.
-Each child kind's path is recorded once, and — again only for a `minted`
-route — recorded a second time as that child's own base path for whichever
-parent is walked next. Codegen's single derivation of these paths: the test
-emitter addresses sub-factory tests through it, and `node-model.json5`'s
-`variantRoutes` publishes it for tools (the hoisted census, the
-factory-source printer).
-
-### `packages/codegen/src/emitters/overlays/module.ts::FlattenedVariantRoute`
-
-One variant route of a flattened parent: its name, the child kind, whether it
-is `arm.default`, whether it is `minted` (the child is reachable only through
-this parent's arm — `referrersOf` finds no other referrer — and is named
-exactly what this variant would mint), whether it is `leaf` (the child has
-no factory of its own; `emitPolymorphsOverlay` spells the route as the
-child's kind-id expression instead of a factory reference), and — when the
-child is itself a flattened parent — that parent's route key.
+The bundled kinds (`bundleKeyedNodes`) with their `maxArgs` (`withMaxArgs`) — consumed by the bundle module, the overlays, the index hoisting, and `ir.ts`. Which kinds are keyed, and under what names, is the model's decision (`irKeyedNodes`).
 
 ### `packages/codegen/src/emitters/overlays/module.ts::emitBundleModule`
 
@@ -13496,10 +13378,6 @@ that has methods.
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::inDependencyOrder`
 
 Orders the overlay's chunks so each const is declared before any chunk that reads it. Each chunk is keyed by the node kind it provides, and a chunk waits until every kind in its `uses` that another chunk provides has been placed. Among ready chunks the original order wins, so chunks with no such dependency keep the order the overlay built them in. A sub-factory set that routes an arm through a flattened parent's const is placed after that const, and a flattened parent after the nested parents it names.
-
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::isNamespaceArm`
-
-Whether a direct arm is a namespace with no call of its own: its child is a variant-bearing supertype with no default variant. Such an arm is emitted as an object holding only its nested arms, the shape the flattened-parent const of a defaultless supertype has, so the arm is never a call through a `.strict` that does not exist.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::renderArm`
 
@@ -13662,51 +13540,17 @@ its config type, all as type text and none as a `typeof` reference, because
 the result is printed into `types.ts`, which cannot name a factory. A spread
 seat has no `typeFor`; its kind's row already holds the seated element.
 
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::isHoistedCompound`
-
-A non-list compound the model seats on its parent. Decides two things in
-this emitter: the kind gets a private wiring key (`collectPolymorphWires`)
-and its wiring const is not exported (`emitPolymorphsOverlay`). A list is
-excluded whatever its annotation says — a group-lifted list carries
-`hoisted` but is bundled and bound on `ir` like any list, so its wiring
-const must be the export `ir` reaches (its elements seat lives there).
-
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::AliasWire`
-
-A form wire with no seat: the child kind is a complete alternative of the parent's rule, so the wire is the child's own factory pair exposed under the parent, not a transformation method.
-
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::variantAliasWires`
-
-Whole-rule alternative arms. A parent's `variantChildKinds` can name arms that are complete alternatives of the parent's rule rather than values in any slot (`binary_expression = choice(seq(left, op, right), _binary_expression_in)`); `derive`'s per-slot walk (`armValuesOf`) never sees those, because they are not in a slot at all — nothing to label. Each resolves to its node (visible key, else `_`-prefixed), takes the name the variant child already carries, and wires as the child's own factory pair — the form IS its own node kind in the CST, so there is nothing to seat. Arms already claimed by a sub-factory (same child kind or same name) are skipped: when the arms sit in a real choice slot (rust `token_tree`), the seated path owns them.
-
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::methodName`
 
 Transformation-method identifier for one sub-factory: `<parentKey>$<name>`, with non-identifier characters in the name replaced by `_`.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::collectPolymorphWires`
 
-The single derivation of which sub-factories the polymorph overlay actually wires — traversal order (children before flattened parents), per-parent filtered entry lists (name ambiguity settled in `subFactoriesOf`; unreferenceable children filtered here, and a flattened arm survives only when the child's ALREADY-EMITTED wire set — children visit first, DFS post-order — carries the referenced property, because the child's context-sensitive derivation under this parent can name entries the child's own top-level set resolved away), the emission predicates, and the bundle key map. Consumed by `emitPolymorphsOverlay` AND by the generated-test emitter (`test.ts::emitSubFactoryTests`), so a test is emitted exactly for the wires that exist; the test emitter passes `silent` so diagnostics print once. Alias wires from `variantAliasWires` ride the same sets: a parent enters the map when it has seated subs or alias forms. Any consumer deriving the wire set independently will drift — this map is the fact. The emit pass computes it once and hands the same map to the types emitter (seated rows) and to `emitPolymorphsOverlay`; a caller that runs outside that pass (`emitTypes`, the node-model and generated-test emitters) computes its own with `silent`.
+The wire sets the polymorph overlay emits: per parent, the arm routes the model settled (`armRoutesOf`: the parent's key, its filtered sub-factories and alias wires) plus the seats this walk adds — flatten seats (`flattenSeatsOf`), elements seats (`emittedElementsSeats`), tuple seats and the seats a forwarding owner takes from its list (`forwardedSeatsOf`) — and the traversal order (children, seat groups and alias children before their parent, DFS post-order). Consumed by `emitPolymorphsOverlay` AND by the generated-test emitter (`test.ts::emitSubFactoryTests`), so a test is emitted exactly for the wires that exist; the test emitter passes `silent` so diagnostics print once. The diagnostics the model recorded (ambiguous and shared-key sub-factories, context-mismatched arms) print here, as each parent is visited. The emit pass computes the wires once and hands the same map to the types emitter (seated rows) and to `emitPolymorphsOverlay`; a caller that runs outside that pass (`emitTypes`, the node-model and generated-test emitters) computes its own with `silent`.
 
-A hoisted compound has no bundle key, so `keyByKind` gives it a private one —
-its `factoryName` (`_visibilityModifierPub`) — and it gets a wire set like
-any parent. That set is never exported; it exists so a parent's flattened
-arm (`visibilityModifier.inPath` two hops down through the hoisted `pub`
-form) has a decorated child const to reference. Without it every arm routed
-through a hoisted kind was dropped as a context mismatch.
+A parent enters the map when it has subs, alias forms or seats: a parent with a seat and no subs still enters, because the seat rewrites its `strict`.
 
-A wire set also carries the parent's flatten seats (`flattenSeatsOf`) whose
-group factory is emitted; a parent with a seat and no subs still enters
-the map, because the seat rewrites its `strict`.
-
-A wire set also carries the parent's elements seats (`elementsSeatOf`) whose
-group factory is emitted; a parent with only seats still enters the map.
-
-An alias wire's child visits before its parent too, like a seat's group.
-`variantRouteOf` reads whether the child's entry is already emitted when the
-parent's route is written. A child emitted later would leave its route as a
-bare `{ strict, coerce }` pair and its own entry unreferenced.
-
-`keyByKind` also maps each flattened variant parent to its const's key, so a sub-factory arm whose child is a variant-bearing supertype resolves to that const. A nested arm through such a child is present when the supertype has a variant of that name (`variantArmsOf`), since the child has no wire set of its own.
+An alias wire's child visits before its parent too, like a seat's group. `variantRouteOf` reads whether the child's entry is already emitted when the parent's route is written. A child emitted later would leave its route as a bare `{ strict, coerce }` pair and its own entry unreferenced.
 
 The wires also carry the node map, the flattened variant parents by kind, and `routes`, the arity of every rendered arm path, which the emitter fills in chunk order and `routeArity` reads.
 
@@ -13723,176 +13567,6 @@ The emission carries its method's name, which `armPair` builds the flavor const 
 Static wiring for refine forms over bundles: for each kind with refine forms, spreads the bundle (`...B.<key>`) and wires each form as `bundle(F.<refineFormFactory>, undefined, { key, max })` under its camelCase key (plus the raw form name when it differs), stamped with the form's `refineFormBuiltTypeSurfaceOf` arity. Refine forms have no emitted coercers, so the pair carries only `strict`.
 
 The overlay table and each form's pair are frozen.
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::ValueArm`
-
-```text
-/** A sub-factory arm that seats a VALUE directly into the parent's choice
- *  slot instead of composing a child factory. Two shapes reach it: a
- *  literal branch of the slot (`op: choice('and', 'or')` yields one per
- *  string), and a reference to a factoryless value kind — an
- *  AssembledKeyword or AssembledPunctuation whose whole body is a fixed literal,
- *  which owns a kind identity but has no factory to call. The arm carries
- *  the value's stamped `storage` and nothing else: its text, and — for a
- *  value that resolved to a kind — that kind and its id. What the emitter
- *  seats is read from the stamp by `valueStorageExpr`; the arm never
- *  re-derives it and carries no second copy of the fact. */
-```
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::NodeArm`
-
-A sub-factory arm backed by a child kind reachable through one of the
-parent's own non-multiple slots. `child` is always the *direct* child under
-that slot, even for a nested entry reached through the child's own arms;
-`path` is empty for a direct arm and otherwise holds exactly one name — the
-child's own sub-factory entry the arm forwards to (`nestedArmsOf`), itself
-nested when the arm reaches more than one hop down.
-`leaf` is the deepest kind the entry ultimately builds (undefined when
-`child` is the leaf); outer levels name their nested entries from it, so
-`visibility_modifier` calls the in-path form `inPath` even though the arm's
-direct child is the pub hop.
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::SubFactory`
-
-One named narrowing of a parent's factory: `residual` is every parent field
-except the chosen `slot` — the slot whose labelled value (`armValuesOf`)
-the arm narrows, kept on every entry (direct and nested alike) so a caller
-can tell which field the sub-factory narrows without re-deriving it. `depth`
-is `DIRECT` (0) for a value arm or a direct kind arm straight off a slot's
-labelled value, and one more than the inner entry's depth for an arm
-reached through a direct arm's child (`nestedArmsOf`); a name clash is checked only among `DIRECT`
-arms (`settle`), since a nested arm's `<host>$<inner>` name is already
-namespaced under the host it nests within. `merges` is whether the arm's
-wrapper merges its child's config keys into the parent's config: stamped
-once by `settle` (`sharedKeysOf`), read by `armConfigKeys`, the polymorphs
-overlay's wrapper shape, the test emitter's call spelling and `seatOf`, so
-the keys a caller may pass, the wrapper that partitions them and the
-validator's spelling cannot disagree.
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::SubFactoryDiagnostic`
-
-```text
-/** What the derivation could not settle silently. `ambiguous` is recorded
- *  instead of an entry: two or more DIRECT arms of one parent land on the
- *  same name — a name clash among NESTED arms cannot happen, since a
- *  nested arm's name is namespaced under the host arm it nests within.
- *  `shared-key` is recorded beside an entry that is kept: a config-shaped
- *  arm whose merged keys (`keys`) are also slots of the parent, so its
- *  wrapper takes the child's config whole under the slot key instead of
- *  merging — the regen log names every such arm. `claimants` lists what
- *  the diagnostic is about — `'<literal>'` for a value arm, `<kind>` for a
- *  direct node arm, `<child>.<path>` for a nested one. */
-```
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::SubFactorySet`
-
-```text
-/** The complete result of deriving sub-factories for one node: the
- *  survivors in `entries`, everything dropped (and why) in `diagnostics`. */
-```
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::derive`
-
-The per-kind derivation behind `subFactoriesOf`. Walks every one of the
-parent's non-multiple slots — not one chosen slot — and, within each,
-every labelled value (`armValuesOf`, the values carrying a stamped
-`variant`): the arm follows the slot's stored representation. A value
-the slot stores as text or a kind id (`textStorageOf`) becomes a value
-arm that seats that id, whether or not its kind has a factory of its
-own; otherwise a node-backed value whose child has its own emitted
-factory becomes a direct `DIRECT` node arm, and anything else is
-skipped. Choosing by factory presence instead would flip an arm's
-signature whenever a kind gains a factory while its slot still stores
-an id. Each direct node arm then
-contributes every arm of its child's own set, nested ones included
-(`nestedArmsOf`), and `settle` resolves the collected direct and nested
-arms into the final wire set. A node with no labelled value in any slot
-derives nothing: a sub-factory arm exists exactly where a variant label
-sits at the end of wire, nowhere else.
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::isCallableArm`
-
-Whether a mounted child can be a node arm. A supertype qualifies when it is variant-bearing (`variantSubtypes`): its callable is its flattened-parent const, reached through `keyByKind`, the same way a nested polymorph is. Any other child needs its own raw factory, emitted, on a slot-bearing compound or a text leaf.
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::armValuesOf`
-
-The values `derive` walks for one slot. A value mounts one of two ways: a
-labelled value (`isLabelled`) mounts unless it is itself a member of the
-supertype its label names (`isInlinedMember` — an inlined supertype member
-is that supertype's own arm, not a second arm of the slot holding the
-reference to it) or fails `seatsInlinedLabel` (a label minted by an inline
-rule only seats through an unnamed slot; a fielded slot already addresses
-inline content by its field name); an UNlabelled value mounts only when its
-child is a supertype (`AssembledSupertype.variantSubtypes`) and the slot is
-unnamed — a named slot with no label of its own names nothing to walk. A
-mounted value whose child is a supertype expands into that supertype's own
-labelled subtypes, each carrying the slot value's multiplicity, in place of
-the original value — so a flattened parent's variants surface as ordinary
-arms of whatever slot holds it; a mounted labelled value with no such child
-is pushed as itself.
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::isLabelled`
-
-Whether a value carries a stamped `variant` name at all — the one
-predicate that decides whether a slot value is a sub-factory arm.
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::kindOfValue`
-
-The kind a value resolves to for identity comparisons: a node ref's
-storage kind, or a terminal's `resolvedKind`.
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::isInlinedMember`
-
-Whether a labelled value is one of the very supertype's own subtypes that
-its label names (`owner = nodeMap.nodes.get(value.variantOf)`, matched by
-`kindOfValue` against `owner.subtypes`). `armValuesOf` skips such a value:
-it is the supertype's own arm, surfaced when the supertype itself is
-walked, not a second arm of the parent slot holding the reference to it.
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::seatsInlinedLabel`
-
-Whether a labelled value minted by an inline rule (no model node for its
-`variantOf` owner) still seats at this slot: only when the slot is unnamed
-(`isUnnamed`) — a fielded slot already addresses inline content by its
-field name, so the label adds nothing there. A labelled value whose owner
-DOES have a node (a real, named rule) always seats, since there the label
-means an actual arm that rule declares.
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::NESTED`
-
-The depth increment for an arm nested one level under its host: a nested
-arm's own `depth` is its inner entry's `depth` plus `NESTED` (`nestedArmsOf`'s
-`depth: inner.depth + NESTED`), so a doubly-nested arm accumulates two.
-Paired with `DIRECT` (0), the depth a directly-reached arm carries.
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::nestedArmsOf`
-
-The arms a direct node arm's child contributes under it (`innerArmsOf`), renamed `<host>$<inner>` and nested under the host's own `slot`/`residual`, with `path` naming the child's entry and `depth` one more than the inner entry's. A compound child's nested entries carry its own children's arms, so nesting reaches every depth with no cap. The only stop is the kind-keyed cycle guard: a child already on the derivation path contributes nothing, which cuts a kind arming itself (`ambient_declaration`, `parenthesized_list_splat`). `leaf` is the deepest kind the entry builds (`leafOf`). `settle` keeps a host's nested arms only when the host itself made it into the parent's final entries.
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::innerArmsOf`
-
-The inner arms of a node arm's child: a compound's own sub-factory set (`subFactoriesInternal`), direct and nested alike, or a variant-bearing supertype's variants (`variantArmsOf`), each with that variant's kind as its leaf.
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::variantArmsOf`
-
-A variant-bearing supertype's arms as sub-factory names: each variant subtype with its variant name in lower camel case. The one source for those names in the overlay: the nested-arm derivation and the wire filter's presence check both read it.
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::leafOf`
-
-The `leaf` a nested entry records for an inner entry: the inner arm's own
-`leaf` when it is itself nested, its child when it is a direct node arm,
-nothing for a value arm.
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::tupleSeatOf`
-
-The shape-4 seat. A singular slot whose one value is a hoisted kind whose OWN
-factory surface takes rest parameters (`spread`, or a separated list's
-`elements`, which also carries an options bag) has nothing to flatten and no
-choice to name, so the slot takes the child's whole argument list as a tuple
-and the parent builds it: `ir.structPattern.strict({ type, fields: [a, b] })`.
-Only a config-shaped parent needs one. A parent that takes its sole slot
-positionally already spreads the child's arguments into its own call, and its
-bundle overloads already declare them.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::tupleShape`
 
@@ -14005,209 +13679,6 @@ arms span two slots emits any of this.
 
 Each chain it builds is recorded by the outer arm's name, so a parent that mounts this kind's arms can mount the chains too (`childChains`).
 
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::prefixedKey`
-
-The name a flattened group field takes on the parent when its own name collides with another of the parent's slots: the seat's name followed by the field's, capitalised (`binaryIn` + `left` = `binaryInLeft`). The config key and the node-surface member are both named by it, from the seat's config key and accessor respectively.
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::flattenSeatsOf`
-
-The shape-2 seats: each non-multiple slot of the parent whose value set is
-exactly one hoisted, config-shaped kind — excluding a labelled value
-(`value.variant !== undefined`), since a labelled value already mounts as
-an arm elsewhere (`ir.exceptClause.exception.as`, `…exception.list`);
-splicing it too would flatten its one key onto the parent and leave the
-arm with no spelling to reach it by. Such an (unlabelled) group is not an
-arm — there is nothing to choose between — and has no name a caller would
-type; its keys are flattened onto the parent's `strict` by the overlay
-(`flattenShape`), present as a whole or absent as a whole. A parent may seat several such groups, and every one flattens. The seat lists its keys, each as the parent's config key (`key`) for a group field (`field`). A group field that collides with another slot of the parent, or with a field of another group the parent seats, is flattened under `prefixedKey` of its own seat's config key and the field (the group's `left` in seat `binaryIn` is `binaryInLeft`; two groups that both have `step` flatten it once per seat, each under its own seat's prefix), so no two keys meet; a prefixed key that still collides fails the emit, naming both. A key that spells the seat's own slot is not a collision, since the group's value is what that slot reads. A direct-shaped group (one slot, taken positionally by its factory) is a
-flatten with one key: the seat records `directKey` and `flattenShape` builds
-the group from that key's value alone (python `slice.step`, `except_clause.exception`,
-typescript `_import_clause_default_import.import_clause_group`). A forwarded
-group is not a seat: the parent's own builder already takes it whole.
-
-#### declared visible wrappers
-
-A group is flattenable when its kind is `seated` (a hidden group) or the reference to it carries `annotations.flattened` (a visible wrapper the grammar declares, `isHoistedAt`). A declared seat is never inferred: only `flatten()` in `grammar.sittir.ts` puts the annotation on a reference.
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::elementsSeatOf`
-
-The shape-3 seats: every multiple slot — a compound's list slot or a list
-kind's own elements — among whose values exactly one is a hoisted,
-config-shaped compound (python `comparison_operator.comparators` holding
-`_comparison_operator_comparator`; rust's `_type_arguments_elements` holding
-`_type_argument` beside the bare types it also admits). A repeated group
-cannot flatten, so the slot takes the group's configs among its elements and
-the overlay builds each one (`elementsShape`); an element that is not a
-config of that group — a built node, a kind id — passes through. A parent
-may have several; each gets its own wire, composed in slot order.
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::seatsConfigChild`
-
-Whether a sub-factory's wrapper takes its child's config whole under the
-slot key: a direct (path-empty) node arm whose child is config-shaped and
-that does not merge (`merges` false — a key it would merge is also the
-parent's). The one predicate behind the config-seat wrapper shape, the
-test emitter's call spelling and the seat stamp the node model carries for
-the validator, so all three spell the same call.
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::configKeysOf`
-
-A compound's config keys, the one list both the config-shaped arm merge
-(`armConfigKeys`) and the flatten seat partition by.
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::seatOf`
-
-The one derivation of how a hoisted slot value is seated on its parent,
-serialized into `node-model.json5` for the tools. It reads the parent's
-emitted wire set (`SeatSource`: the `PolymorphWireSet` the overlay actually
-prints, after its own emission and collision filters), never a fresh
-`subFactoriesOf`, so a stamped seat is by construction a route the overlay
-exports: `arm` with the mount name when the wire set carries a sub-factory
-for that value (a node arm on the child, or a value arm on the leaf's
-text — marked `seated` when the arm's child is config-shaped but the
-wrapper takes its config whole under the slot key rather than merging its
-keys (`seatsConfigChild`), which is how the validator knows to spell the
-call), `flatten` when the slot
-is one of the wire set's flatten seats, `elements` when the slot is one of its
-elements seats; `undefined` for a value that is not a hoisted kind, or
-whose parent has no wire set, or that no seating reaches. The validators' `ir-storage` and the example emitter consume
-the stamp rather than re-deriving it; the census reports every hoisted kind
-no seat names.
-
-#### declared visible wrappers
-
-The gate that a seated child be hoisted reads `isHoistedAt`, so a visible wrapper whose reference is stamped `flattened` gets its `flatten` seat recorded in the node model like a hidden group.
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::textStorageOf`
-
-```text
-/** The value's stamped storage when it seats text or a kind id, or
- *  `undefined` when it stores a node — a node-storage value composes a
- *  child factory (a NodeArm) and is never a value arm. Factoryless
- *  AssembledKeyword / AssembledPunctuation references arrive here already
- *  stamped `kindId` by `classifyValueStorage`; everything else that lacks
- *  a factory — supertypes above all — has no value to seat and stays
- *  skipped by the caller's own test. */
-```
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::settle`
-
-Resolves a parent's collected direct and nested arms into its wire set.
-Ambiguity is checked only among the `DIRECT` arms: entries sharing a name
-are grouped, and a name two or more direct arms claim becomes an
-`ambiguous` diagnostic instead of an entry — no declared/derived
-fallback-name tie-break survives it, since each labelled value's `variant`
-is already its final, owner-relative name (stamped once, at the point it
-was labelled), not something `settle` re-derives per consuming parent. A
-surviving direct node arm is checked for config-shape key sharing
-(`sharedKeysOf`) and, when its child is config-shaped and shares no key
-with the parent, marked `merges`; its child is recorded as a `host`. Every
-nested (`NESTED`) arm is kept once its host node made it into the settled
-direct entries — unconditionally, with no name-clash check of its own,
-since a `<host>$<inner>` name is already namespaced by the host it nests
-under.
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::subFactoriesInternal`
-
-The cached derivation behind `subFactoriesOf` and every internal re-entry
-(`nestedArmsOf`, `armIsConfigShaped`, `mergedKeysOf`, `armConfigKeys`):
-looks up a cached `SubFactorySet` per (nodeMap, `isEmitted` predicate,
-kind), but ONLY for a top-level call (an empty `visiting` set) — a nested
-derivation always recomputes, since ambiguity and nesting are
-context-sensitive (the same kind derived through two different ancestor
-chains can settle its arms differently), and a context-free result cached
-from one caller must never leak into another's context. A per-(nodeMap,
-predicate) in-progress set breaks a true cycle by returning `EMPTY` for a
-kind already being derived on the current call stack, rather than caching
-that empty result.
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::subFactoriesOf`
-
-Top-level entry: derives the sub-factory set for a kind with an empty
-visiting context (`subFactoriesInternal`), so every nested derivation
-reached transitively starts its own ancestor-chain tracking fresh from
-this call.
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::sharedKeysOf`
-
-The keys a config-shaped arm would merge (`mergedKeysOf`) that are also
-residual keys of the parent; `undefined` when the arm is not config-shaped
-(`armIsConfigShaped`) and so never merges. An empty list means the arm
-merges its child's config keys into the parent's config
-(`ir.callExpression.unaryExpression({ operator, operand, arguments })`); a
-non-empty one means the wrapper takes the child's config whole under the
-slot key instead
-(`ir.callExpression.macroInvocation({ function: { macro, arguments }, arguments })`),
-since a merged config could not say which of the two owners a shared key
-fills. `settle` stamps the answer on the entry as `merges` and
-records the non-empty case as a `shared-key` diagnostic.
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::mergedKeysOf`
-
-The keys a node arm would merge into the parent's config if it merged: a
-direct arm's child config keys, or for a flattened arm the nested entry's
-residual keys unioned with what the nested step contributes
-(`armConfigKeys` recursed). Computed without asking whether the arm merges,
-so `sharedKeysOf` can test those keys against the residual.
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::armIsConfigShaped`
-
-Whether an arm's call takes a config object. It does for a direct node arm
-whose child is `config`-shaped. For a nested arm, the answer is the answer
-for the child's entry it forwards to, recursed to whatever depth that entry
-reaches. A value arm never does.
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::armConfigKeys`
-
-```text
-/** The config keys a sub-factory's arm accepts as a config object; empty
- *  when the arm's call takes its residual fields positionally instead —
- *  callers read the entry's `merges` themselves to tell the two
- *  apart, this function never re-derives or reports the calling
- *  convention. A value arm always returns `[]` — a seated value has no child
- *  to read config keys from. A direct node arm (empty `path`) returns
- *  `[]` when it does not merge (`merges`: not config-shaped, or a
- *  key shared with the parent's residual); otherwise it returns the child's own field config keys. A
- *  flattened arm (non-empty `path`) looks up the child's sub-factory named
- *  `path[0]` (threading `opts` through the lookup so it agrees with
- *  whatever `isEmitted` the caller resolved the arm under — a mismatched
- *  default here would let the nested lookup diverge from the entry the
- *  caller actually built) and returns that sub-factory's residual keys
- *  unioned with what the nested step itself contributes: when the nested
- *  arm's own child is `config`-shaped, that's `armConfigKeys` recursed
- *  one level deeper (the nested sub-factory destructures its child's
- *  fields individually, so the merged config needs each of those fields
- *  by name); otherwise — a nested value arm, or a node arm whose child
- *  is `text`/`direct`/`forwarded`/`spread`/`elements`-shaped — the nested
- *  sub-factory calls its own child wholesale (`C(k)` / `C(...k)`, never
- *  destructured), so the merged config needs the nested arm's own slot
- *  key as one explicit prop instead (empty contribution for a value arm,
- *  which needs nothing beyond its residual). When that sub-factory is
- *  itself nested (non-empty `path`), its own keys (`armConfigKeys`
- *  recursed) are appended, so a deeper arm accepts every key along its
- *  path. `visiting` guards this
- *  recursion against the mutual cycle `derive → armConfigKeys →
- *  subFactoriesOf → derive → …` can otherwise walk into: a flattened
- *  step's own `subFactoriesOf` call always starts a fresh (empty)
- *  `visiting` set, so without a caller-supplied one a cycle spanning
- *  several distinct kinds is invisible to any single call's local
- *  tracking — `derive`'s call site seeds it with its own ancestor chain
- *  for exactly this reason. */
-```
-
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::claimantOf`
-
-```text
-/** Renders one `SubFactory` as the diagnostic-facing string that names it
- *  in `SubFactoryDiagnostic.claimants` — the single formatter every
- *  diagnostic builds from, so no two ever disagree on how a claimant reads. A
- *  value arm renders as `'<literal>'`; a node arm renders as
- *  `<child.kind>` joined by `.` with every name in `path` — `<child>` for
- *  a direct arm (empty `path`), `<child>.<path…>` for a flattened one, so
- *  a claimant several levels deep still names the full chain instead of
- *  just its first hop. */
-```
-
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::emitPolymorphsOverlay`
 
 Static wiring for sub-factories over bundles. One module-local transformation method per sub-factory (`<parentKey>$<name>`), applied twice — once to the strict pair (`F.*`), once to the coerce pair (`C.*`). Wiring consts carry explicit type annotations (`typeof B.<key> & { <n>: { strict: <sig>; coerce: <sig> } }`) so declaration emit never exceeds the compiler's serialization limit. Coerce applications exist only where the coerce emitter actually emits the coercer (`classifyFromEmission === 'emit'`); a child with no coercer is seated with its strict builder inside the parent's coercer. Alias wires (`variantAliasWires`) emit inside the same wiring const with no method; each is the child's variant route (below), so a child with its own overlay entry keeps its sub-factories under the alias. In per-slot transport enums, id claims are ordered literal variants → enum-kind arms → other kind arms: alias-wire id sets legitimately overlap (identifier accepts primitive-keyword ids for OBJECT payloads carrying `$text`), but a bare number must reach the arm that can render it from the id alone — an `IdentifierTransport` built from a number has an empty `$text` and renders nothing. Parents emit DFS post-order so flattened wires reference the decorated child const above. Skipped sub-factories print `[codegen] <parent>: sub-factory <name> skipped (<reason>): <claimants>` on console.warn.
@@ -14253,12 +13724,15 @@ The blank arm is typed `null`.
 Source text for `options.ts`: a re-export of `WhitespaceKindId` and `LayoutKindId`
 (declared in `types.ts`, where the hints that use them live), `LabelOptions`
 from the label roots, `IndentChar` (the `indentChars` texts as a union,
-`never` when there are none), and `Options = DerivedOptions<T.OptionsHintMap,
-IndentChar> & LabelOptions`. There is no address table and no mapped type over one: every
+`never` when there are none), `LineEnding` (the `newlineArms` as a union, `never`
+when the grammar admits no `_newline`; named `LineEnding` because `Newline` is
+the whitespace kind's own type), and `Options = DerivedOptions<T.OptionsHintMap,
+IndentChar, LineEnding> & LabelOptions`. There is no address table and no mapped type over one: every
 kind's sites are on its namespace as `X.Hints` (`emitOptionsHints`),
 `OptionsHintMap` points at them by key, and `DerivedOptions` in
 `@sittir/types` is a plain mapped type over that map, so each property
-resolves lazily. `indent` comes with `DerivedOptions`, only where `IndentChar`
+resolves lazily. The `layout` group comes with `DerivedOptions`: `layout.indent`
+only where `IndentChar` is not `never`, `layout.newline` only where `LineEnding`
 is not `never`. Without the kind aliases (a
 grammar with no sites) the two aliases are declared `never` here instead of
 re-exported.
@@ -14268,7 +13742,7 @@ re-exported.
 What the module is written from: the kind aliases (`layoutKindAliasesOf`), the
 hint emitter over the address tables (`hintEmitterOf`), whose label roots
 become `LabelOptions`, and the grammar's indent characters (`indentChars`),
-which become `IndentChar`.
+which become `IndentChar`, and its line-ending arms (`newlineArms`), which become `LineEnding`.
 
 ### `packages/codegen/src/emitters/options.ts::addressTablesFor`
 
@@ -14529,7 +14003,9 @@ grouping whether a slot has seats.
  *  the layout kinds' render text. */
 ```
 
-`indentChars` is the grammar's indent characters (`indentChars`), written as `OptionTables.indent_chars`: the runtime refuses an `indent` unit that is empty or holds any other character, and treats `indent` as an unknown key when there are none.
+`indentChars` is the grammar's indent characters (`indentChars`), written as `OptionTables.indent_chars`: the runtime refuses a `layout.indent` unit that is empty or holds any other character, and treats `layout.indent` as an unknown key when there are none.
+
+`newlineArms` is the grammar's line-ending arms (`newlineArms`), written as `OptionTables.newline_arms`: the runtime refuses a `layout.newline` outside them, naming them, and treats `layout.newline` as an unknown key when there are none. `newline` is the preferred arm (`PREFERRED_NEWLINE`), written into the generated `defaults()` as `newline: "<arm>".to_string()`, so the default ending comes from the model's preference; core's own `Default` holds the writer's internal spelling only, for tables built outside a generated grammar.
 
 `indent` is the grammar's declared indent unit (`indentUnitOf`), empty for a grammar whose whitespace admits no indent characters. `renderOptionsRs` writes it into the generated `defaults()` as `indent: "<unit>".to_string()`, so the unit is the grammar's and core has no default of its own; an empty unit emits no line and `defaults()` keeps core's empty unit.
 
@@ -15444,7 +14920,7 @@ The rest parameter of a spreading kind is typed from the slot's own cardinality,
 
 ### `packages/codegen/src/emitters/native-crate.ts::nativeCrateFiles`
 
-The scaffold of a grammar's native crate (`rust/crates/sittir-<name>`): `Cargo.toml`, `build.rs` (compiles the generated `.sittir/src/parser.c` and a C `scanner.c` as C11; a C++ `scanner.cc`, which transpile also copies, compiles in its own C++ build so `parser.c` never goes through the C++ compiler), the napi `package.json` (private: the crate is never published; its `build` scripts run `scripts/build-native.mts`, which writes the loader, typings and binary into the grammar package's `native/` directory), and `src/lib.rs` (the `LanguageFn`, the `EngineGrammar` impl over the generated render module, and `sittir_core::napi_engine!`). `runCodegenInternal` writes these files on every `gen --all`, like the render module beside them, so a crate exists only alongside generated code it can compile and never lags its generator. No grammar edits its crate. A scanner that shares a header outside the generated sources (typescript's `scanner.c` includes `common/scanner.h`) needs no special case: `build.rs` follows each scanner source's quoted `#include`s at build time and has cargo rebuild when any of them changes. A new crate (no `Cargo.toml` yet) also triggers `pnpm install`. Pinned by a test: every grammar's crate files match the emitter.
+The scaffold of a grammar's native crate (`rust/crates/sittir-<name>`): `Cargo.toml`, `build.rs` (compiles the generated `.sittir/src/parser.c` and a C `scanner.c` as C11; a C++ `scanner.cc`, which transpile also copies, compiles in its own C++ build so `parser.c` never goes through the C++ compiler), the napi `package.json` (private: the crate is never published; its `build` scripts run `scripts/build-native.mts`, which writes the loader, typings and binary into the grammar package's `native/` directory), and `src/lib.rs` (the `LanguageFn`, the `EngineGrammar` impl over the generated render module, whose `shows` is the generated `AnyTransport`'s set of display ids it claims a node by, so every coordinate stamps the display id at an alias envelope and the grammar id elsewhere, and `sittir_core::napi_engine!`). `runCodegenInternal` writes these files on every `gen --all`, like the render module beside them, so a crate exists only alongside generated code it can compile and never lags its generator. No grammar edits its crate. A scanner that shares a header outside the generated sources (typescript's `scanner.c` includes `common/scanner.h`) needs no special case: `build.rs` follows each scanner source's quoted `#include`s at build time and has cargo rebuild when any of them changes. A new crate (no `Cargo.toml` yet) also triggers `pnpm install`. Pinned by a test: every grammar's crate files match the emitter.
 
 ### `packages/codegen/src/emitters/native-crate.ts::NativeCrateFile`
 
@@ -15460,7 +14936,7 @@ The per-grammar runtime glue shared by every grammar package, emitted into `pack
 
 ### `packages/codegen/src/emitters/native-crate.ts::NATIVE_RENDER_TRANSPORT_ABI`
 
-The version of the wire between the JS packages and a native build: the render transport shape JS sends, the read shape the native reader sends back (`$type` / `$displayType`, which children and tokens arrive, when `$text` is present, which of `$handle` / `$parentHandle` / `$treeHandle` a node carries, and the error regions a parse returns beside its root), and the read calls' names and arguments (a read takes a level count; a descendant walk takes the address it starts from, kinds, a resume path, a limit, a plan and a depth, and returns its start's own handle with each batch; a plan is evaluated over a list of addresses in one call). It is the one source for both sides of the handshake: `emitBackend` bakes it into each package's `backend.ts`, and `nativeCrateFiles` into each crate's generated `lib.rs` (passed to `napi_engine!`, reported by the native engine). `backend.ts` refuses a native build reporting a different value. The render-module hash covers only the render templates, so a reader change with unchanged templates passes the hash check; bump this whenever any of these changes, and regenerate every grammar.
+The version of the wire between the JS packages and a native build: the render transport shape JS sends, the read shape the native reader sends back (`$type` / `$displayType`, which children and tokens arrive, when `$text` is present, which of `$handle` / `$parentHandle` / `$treeHandle` a node carries, and the error regions a parse returns beside its root), and the read calls' names and arguments (a read takes a level count; a descendant walk takes the address it starts from, kinds, a resume path, a limit, a plan and a depth, and returns its start's own handle with each batch; a plan is evaluated over a list of addresses in one call; the line starts inside tokens take a tree and an optional descendant index, and return byte offsets). It is the one source for both sides of the handshake: `emitBackend` bakes it into each package's `backend.ts`, and `nativeCrateFiles` into each crate's generated `lib.rs` (passed to `napi_engine!`, reported by the native engine). `backend.ts` refuses a native build reporting a different value. The render-module hash covers only the render templates, so a reader change with unchanged templates passes the hash check; bump this whenever any of these changes, and regenerate every grammar.
 
 ### `packages/codegen/src/emitters/types.ts::emitNodeSurfaceInterfaces`
 
@@ -15556,7 +15032,19 @@ One `$with` setter of a node literal: its name, its parameter list and the rebui
 
 ### `packages/codegen/src/emitters/node-members.ts::nodeMemberLines`
 
-The member lines of a node's literal after its storage keys: the `$with` block, a reader per slot, the `$render` closure, the `$trivia` positions, `$query` when the literal is a parsed node's (`parsed`), and `$engine`. Every closure reads the `handle` the builder captured with `currentHandle()` and the `node` the literal is assigned to, so the node needs no helper after it is built and every node of a kind has one shape. `$query` is one closure that makes the query facet only when called (`queryOf`), so a node that is never queried pays only for the closure. A `$with` rebuild calls the same wrap with data `markEdited` stripped of its coordinates, so the member checks that the data still names its tree (`treeHandleOf`) and is `undefined` on a draft; `undefined` rather than absent keeps every node of a kind on one shape. `extra` carries the lines a group seat or a list owner adds. One function writes these lines for the factories and the wraps; only the wraps pass `parsed`, because a built node holds no tree to query. A parsed leaf is not written here and stays plain data with no `$query`.
+The member lines of a node's literal after its storage keys: the `$with` block, a reader per slot (`accessorRead`), the `$render` closure, the `$trivia` positions, `$query` when the literal is a parsed node's (`parsed`), and `$engine`. Every closure reads the `handle` the builder captured with `currentHandle()` and the `node` the literal is assigned to, so the node needs no helper after it is built and every node of a kind has one shape. `$query` is one closure that makes the query facet only when called (`queryOf`), so a node that is never queried pays only for the closure. A `$with` rebuild calls the same wrap with data `markEdited` stripped of its coordinates, so the member checks that the data still names its tree (`treeHandleOf`) and is `undefined` on a draft; `undefined` rather than absent keeps every node of a kind on one shape. `extra` carries the lines a group seat or a list owner adds. One function writes these lines for the factories and the wraps; only the wraps pass `parsed`, because a built node holds no tree to query. A parsed leaf is not written here and stays plain data with no `$query`.
+
+### `packages/codegen/src/emitters/node-members.ts::StoredAccessor`
+
+One slot reader of a node literal: its name, the storage key it reads, and, for a built node's slot whose storage holds nodes, whether it hydrates one value or a list (`hydrates`). The factory emitter sets `hydrates` (`storedAccessor`); the wraps never do, since their accessors are written by `slotAccessorBody`.
+
+### `packages/codegen/src/emitters/node-members.ts::accessorRead`
+
+The expression a slot reader returns: the storage key as it is, or `hydrateStoredSlot(node, key)` / `hydrateStoredSlots(node, key)` when the reader hydrates, so a coordinate a built node stores comes back as the node every route returns, written back into the slot.
+
+### `packages/codegen/src/emitters/factories.ts::storedAccessor`
+
+A builder's reader for one slot: it hydrates when the slot's storage holds nodes (`storesNodes` over `resolveFieldStorageInfo`, the classification `slotAccessorBody` reads), a list when the slot is multiple; a scalar slot reads its storage as it is. Every builder literal's readers come from it: field-carrying factories, form factories and a list's content.
 
 ### `packages/codegen/src/emitters/node-members.ts::innerPositionsOf`
 
@@ -15588,11 +15076,11 @@ The lines a group seat adds to a node's builder: a reader of the seated group, h
 
 ### `packages/codegen/src/emitters/node-members.ts::ownerViewParts`
 
-The lines that make a list owner read as an array: before the literal, the owner's view of its list; as members, `length`, the items under `LIST_ITEMS`, the shared array methods, the iterator, `isConcatSpreadable`, `unscopables` and the list's options; after the literal, the index positions. A built owner holds its items and writes them as plain properties; a wrapped owner holds none until first use (`LIST_READ`) and takes the shared index getters, and hands `ownerView` its own `hydrateChild`, so a list stored as a stub is read wrapped. A raw factory given a list that is a read stub refuses the build (`refuseReadStub`) before the literal, so a built owner always has a plain data `length`.
+The lines that make a list owner read as an array: before the literal, the owner's view of its list; as members, `length`, the items under `LIST_ITEMS`, the shared array methods, the iterator, `isConcatSpreadable`, `unscopables` and the list's options; after the literal, the index positions. Built and wrapped owners hold no items until first use (`LIST_READ`), read them through the owner's own list accessor (so `at`, an index and iteration return what the accessors return, hydrated), and take the shared index getters; only the view before the literal differs. A wrapped owner hands `ownerView` its own `hydrate`, so a list stored as a stub is read wrapped; a raw factory has already resolved its list through `hydrateStored`, and refuses a list that is still a read stub (`refuseReadStub`) before the literal.
 
 ### `packages/codegen/src/emitters/node-members.ts::listSelfViewParts`
 
-The same lines for a separated list node that is the list itself: its own stored elements instead of an owner's view, and its options read from its own storage keys, hoisted before the literal in a wrap. A built list and a wrapped list differ only in where the items come from, and both read them on first use.
+The same lines for a separated list node that is the list itself: its own stored elements instead of an owner's view, and its options read from its own storage keys, hoisted before the literal in a wrap. A built list and a wrapped list read their items the same way, on first use and through the list's own items accessor (`ownerElements(node, reader)`), so `at`, an index and iteration return what the accessor returns: a built list's accessor hydrates a stored coordinate (`hydrateStoredSlots`), a wrapped list's reads its storage (`hydrateSlots`).
 
 ### `packages/codegen/src/emitters/kind-id-rust.ts::kindConstName`
 
@@ -15702,7 +15190,7 @@ Whether a presence slot's value is a keyword the site wraps in an alias, read fr
 
 ### `packages/codegen/src/emitters/render-module.ts::ReadPrint`
 
-What the transport printers share while they state the read facts: the facts' context, the template bodies by kind, the kind ids each printed type admits, the choices that carry a blank arm, and the payload types the choices hold (`choicePayloads`), which the ceiling assertions check. One value is threaded through every printer so a type's ids are recorded where they are printed and checked after all of them are.
+What the transport printers share while they state the read facts: the facts' context, the template bodies by kind, the kind ids each printed type admits, the choices that carry a blank arm, the payload types the choices hold (`choicePayloads`), which the ceiling assertions check, and the transports printed (`transports`), which `grammarTriviaStatement` lists. One value is threaded through every printer so a type's ids and name are recorded where it is printed and checked after all of them are.
 
 ### `packages/codegen/src/emitters/render-module.ts::readPrintOf`
 

@@ -80,7 +80,7 @@ fn read_on_thread(probe: Probe, stack: usize) {
         .stack_size(stack)
         .spawn(move || {
             let tree = parse(&source);
-            let ctx = ReadCtx::new(&source, 1);
+            let ctx = ReadCtx::new(&source, 1, <sittir_rust::render::AnyTransport as sittir_core::read::ReadTransport>::shows);
             RenderRoot::read_root(&mut tree.walk(), &ctx, Depth::All).unwrap();
         })
         .unwrap()

@@ -318,23 +318,24 @@ describe('render pipeline optimization — views built as locals in the kind ren
 		const renderBody = emitted.transportRs.contents.slice(renderStart, renderEnd);
 
 		expect(renderBody).toContain('let identifier = ListView {');
-		// The slot is genuinely Option<Vec<...>> (its own fixture name says
-		// "optional"), so the items are the deref'd slice, not
-		// `node.identifier` directly.
-		expect(renderBody).toContain('items: node.identifier.as_deref().unwrap_or(&[]),');
+		// The slot may hold no item (its fixture name says "optional"), and an
+		// empty list is `[]`: the field is a bare `Vec`, borrowed as the items.
+		expect(emitted.transportRs.contents).toMatch(/pub identifier: Vec</);
+		expect(renderBody).toContain('items: &node.identifier,');
 	});
 
 	it('keeps fallback repeated unnamed children on direct Vec-backed transport views', () => {
-		// Same kind-named slot (`identifier`, Option<Vec<...>>) as the test
-		// above, exercised via the fallback (no custom jinja) render path.
+		// Same kind-named slot (`identifier`, a possibly empty `Vec`) as the
+		// test above, exercised via the fallback (no custom jinja) render path.
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeOptionalRepeatedChildrenNodeMap);
 		const emitted = emitRenderModule('rust', emittedTemplates({}), nodeMap, generatedIdTables);
 		const renderStart = emitted.transportRs.contents.indexOf('fn render_optional_repeated_child_parent(');
 		const renderEnd = emitted.transportRs.contents.indexOf('\n}', renderStart) + 2;
 		const renderBody = emitted.transportRs.contents.slice(renderStart, renderEnd);
 
-		expect(renderBody).toContain('if let Some(items) = &node.identifier {');
-		expect(renderBody).toContain('for child in items.iter() {');
+		expect(emitted.transportRs.contents).toMatch(/pub identifier: Vec</);
+		expect(renderBody).toContain('for child in node.identifier.iter() {');
+		expect(renderBody).not.toContain('if let Some(items)');
 	});
 
 	it('renders choice parents through the parent helper without per-form typed helpers', () => {

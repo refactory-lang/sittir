@@ -18,12 +18,12 @@ import type {
 	RenderCallOptions,
 	CreateEngineOptions
 } from '@sittir/types';
-import { bindTree, engineOf, inEngine, sameLanguage, type EngineHandle } from './engine-scope.ts';
+import { bindTree, engineOf, inEngine, sameLanguage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
 import { metricsEnabled, recordFfi } from './metrics.ts';
 import { ParseErrors } from './parse-errors.ts';
 import { queryFacet, type QueryHooks } from './query.ts';
 import { createRenderHandle } from './engine.ts';
-import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode } from './utils.ts';
+import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode, wrapRegistered } from './utils.ts';
 
 type Middleware<Call, Result> = (call: Call, next: () => Result) => Result;
 
@@ -172,7 +172,7 @@ function assembleEngine<API extends LanguageAPI>(
 		options: options?.render,
 		trivia: hooks.trivia
 	});
-	const handle: EngineHandle = {
+	const handle: TreeEngineHandle = {
 		current: identity,
 		lineGapsOf: (address) => native.lineGapsOf(address),
 		hydrate: hooks.hydrate
@@ -202,6 +202,7 @@ function assembleEngine<API extends LanguageAPI>(
 	};
 	const queryHooks: QueryHooks = {
 		querySlots: hooks.querySlots,
+		membership: hooks.membership,
 		kindName: (kind) => hooks.trivia.kindName(kind),
 		wrap: hooks.wrap
 	};
@@ -233,7 +234,7 @@ function assembleEngine<API extends LanguageAPI>(
 			const run = (): API['root'] => {
 				const { root, tree } = readAndBind(source, parseOptions);
 				if (parseOptions?.errors === 'throw' && root.$errors.length > 0) throw new ParseErrors(root.$errors);
-				return hooks.wrap(root, tree);
+				return wrapRegistered(root, tree, hooks.wrap);
 			};
 			return parseChain === undefined ? run() : parseChain({ source }, run);
 		},
@@ -262,7 +263,7 @@ function assembleEngine<API extends LanguageAPI>(
 			}
 			const call: Parameters<NonNullable<Interceptor<API>['render']>>[0] = {
 				node: target,
-				options: { ...options?.render, ...renderOptions }
+				options: mergeRenderOptions(options?.render, renderOptions)
 			};
 			return interceptedRender(call, renderChain, rendered, () => materializeNative(target, rendered));
 		},
@@ -283,6 +284,16 @@ function assembleEngine<API extends LanguageAPI>(
 	};
 	handle.current = engine;
 	return Object.freeze(engine);
+}
+
+function mergeRenderOptions<O extends object>(engine: O | undefined, call: O | undefined): O {
+	const merged: Record<string, unknown> = { ...engine, ...call };
+	const layouts = [engine, call].flatMap((options) => {
+		const layout = (options as { readonly layout?: unknown } | undefined)?.layout;
+		return typeof layout === 'object' && layout !== null ? [layout] : [];
+	});
+	if (layouts.length > 0) merged['layout'] = Object.assign({}, ...layouts);
+	return merged as O;
 }
 
 export async function createEngine<API extends LanguageAPI, const R extends API['options'] = API['options']>(

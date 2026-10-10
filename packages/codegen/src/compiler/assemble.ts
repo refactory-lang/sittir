@@ -493,6 +493,7 @@ function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
 	const { phase1, phase2 } = partitionNodesIntoIrKeyPhases(nodes);
 	for (const node of phase1) assignIrKeyWithFallback(node, claimed);
 	for (const node of phase2) assignIrKeyWithFallback(node, claimed);
+	for (const node of nodes.values()) node.typeKey = node.irKey;
 }
 
 function resolveHiddenSubtypes(
@@ -685,6 +686,7 @@ function resolveHiddenRuleContent(
 
 export interface HydrateSlotRefsConfig {
 	readonly inline?: ReadonlySet<string>;
+	readonly spliced?: ReadonlySet<string>;
 	readonly reportedAbsentNames?: ReadonlySet<string>;
 	readonly grammar?: string;
 }
@@ -703,6 +705,7 @@ export function hydrateSlotRefs(nodeMap: NodeMap, cfg: HydrateSlotRefsConfig = {
 				nodes: nodeMap.nodes,
 				externals,
 				inline,
+				spliced: cfg.spliced,
 				reportedAbsentNames: cfg.reportedAbsentNames,
 				grammar: cfg.grammar
 			});
@@ -725,6 +728,7 @@ function hydrateSlots(
 			nodes,
 			externals,
 			inline,
+			spliced: cfg.spliced,
 			reportedAbsentNames: cfg.reportedAbsentNames,
 			grammar: cfg.grammar
 		});
@@ -737,29 +741,38 @@ interface HydrateValuesCtx {
 	readonly nodes: Map<string, AssembledNode>;
 	readonly externals: ReadonlySet<string>;
 	readonly inline: ReadonlySet<string>;
+	readonly spliced?: ReadonlySet<string>;
 	readonly reportedAbsentNames?: ReadonlySet<string>;
 	readonly grammar?: string;
 }
 
 function hydrateValues(values: readonly NodeOrTerminal[], ctx: HydrateValuesCtx): void {
-	const { parentKind, siteLabel, nodes, externals, inline, reportedAbsentNames, grammar } = ctx;
+	const { parentKind, siteLabel, grammar } = ctx;
 	for (const v of values) {
+		if (v.variantOf !== undefined && !ctx.nodes.has(v.variantOf) && !isAbsentByDesign(v.variantOf, ctx)) {
+			throw new Error(
+				`hydrateSlotRefs: kind '${parentKind}' ${siteLabel} labels variant '${v.variant}' of '${v.variantOf}', which is absent from ` +
+					`the ${grammar ?? ''} node map, is not external, was not spliced, and is not in the grammar's inline: array`
+			);
+		}
 		if (!isNodeRef(v)) continue;
 		if (!isUnresolvedRef(v.node)) continue;
 		const targetName = v.node.name;
-		const target = nodes.get(targetName);
+		const target = ctx.nodes.get(targetName);
 		if (target) {
 			(v as { node: AssembledNode | UnresolvedRef }).node = target;
 			continue;
 		}
-		if (externals.has(targetName)) continue;
-		if (inline.has(targetName)) continue;
-		if (reportedAbsentNames?.has(targetName)) continue;
+		if (isAbsentByDesign(targetName, ctx)) continue;
 		throw new Error(
 			`hydrateSlotRefs: kind '${parentKind}' ${siteLabel} references kind '${targetName}', which is absent from ` +
 				`the ${grammar ?? ''} node map, is not external, and is not in the grammar's inline: array`
 		);
 	}
+}
+
+function isAbsentByDesign(name: string, ctx: HydrateValuesCtx): boolean {
+	return ctx.externals.has(name) || ctx.inline.has(name) || ctx.spliced?.has(name) === true || ctx.reportedAbsentNames?.has(name) === true;
 }
 
 interface _UserFacingCtx {

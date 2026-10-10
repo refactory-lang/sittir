@@ -5,7 +5,7 @@
 
 import type { CamelCase } from 'type-fest';
 import type { NodeMethods } from './engine-api.ts';
-export type { Cond, QueryFacet, QueryPlan, QuerySlots, Recorder, SlotNameOf, SlotRef, SlotRoutes, View } from './query.ts';
+export type { Cond, KindMembership, QueryFacet, QueryPlan, QuerySlots, Recorder, SlotNameOf, SlotRef, SlotRoutes, View } from './query.ts';
 import type { Admit } from './node-surface.ts';
 
 // ---------------------------------------------------------------------------
@@ -513,15 +513,13 @@ export type LooseValue<V, Scalars = {}, Strings = {}, NsMap = {}> = WidenChildSl
 export type ConfigOf<T> = T extends unknown
 	? Simplify<
 			{
-				[K in keyof FieldsOf<T> as EscapeReservedAccessor<CamelCase<K & string>>]: IsBooleanKeywordSlot<
-					FieldInputType<T, K>
-				> extends true
-					? boolean | UndefinedIfOptional<FieldsOf<T>, K>
-					: IsBitflagSlot<FieldInputType<T, K>> extends true
-						? BitflagSlotEnum<FieldInputType<T, K>> | UndefinedIfOptional<FieldsOf<T>, K>
-						: IsKindEnumSlot<FieldInputType<T, K>> extends true
-							? Admit<FieldInputType<T, K>> | UndefinedIfOptional<FieldsOf<T>, K>
-							: Admit<AdmitSlotInput<FieldInputType<T, K>>>;
+				[K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>>
+					? EscapeReservedAccessor<CamelCase<K & string>>
+					: never]: ConfigFieldValue<T, K>;
+			} & {
+				[K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>>
+					? never
+					: EscapeReservedAccessor<CamelCase<K & string>>]?: ConfigFieldValue<T, K>;
 			} &
 				// Child surface: polymorph variants with a single-child slot hoist
 				// the inner child's Config up when the inner has meaningful Config
@@ -766,12 +764,22 @@ type WidenSlotValue<T, Scalars, Strings, Depth extends number[], NsMap, Visited 
 				? KindEnumSlotInput<T>
 				: WidenValue<T, Scalars, Strings, Depth, NsMap, Visited>;
 
-/** @internal — `undefined` for a key the node declares optional, never for a required one. */
+/** @internal — the Config value of field `K` of T: a keyword-presence slot as a boolean, a bitflag slot as its enum, a kind-enum slot as its kinds, any other as the node it admits; `undefined` too when an input may omit it. */
+type ConfigFieldValue<T, K extends keyof FieldsOf<T>> =
+	IsBooleanKeywordSlot<FieldInputType<T, K>> extends true
+		? boolean | UndefinedIfOptional<FieldsOf<T>, K>
+		: IsBitflagSlot<FieldInputType<T, K>> extends true
+			? BitflagSlotEnum<FieldInputType<T, K>> | UndefinedIfOptional<FieldsOf<T>, K>
+			: IsKindEnumSlot<FieldInputType<T, K>> extends true
+				? Admit<FieldInputType<T, K>> | UndefinedIfOptional<FieldsOf<T>, K>
+				: Admit<AdmitSlotInput<FieldInputType<T, K>>> | UndefinedIfOptional<FieldsOf<T>, K>;
+
+/** @internal — `undefined` for a key an input may omit (`RequiredKeys`), never for one it must supply. */
 type UndefinedIfOptional<F, K extends keyof F> = K extends RequiredKeys<F> ? never : undefined;
 
-/** Keys of T that are required (not optional). */
+/** Keys an input of T must supply: required ones, less a list that may be empty, which an input omits and the builder stores as `[]`. */
 type RequiredKeys<T> = {
-	[K in keyof T]-?: {} extends Pick<T, K> ? never : K;
+	[K in keyof T]-?: {} extends Pick<T, K> ? never : readonly [] extends T[K] ? never : K;
 }[keyof T];
 
 /**
@@ -1249,7 +1257,7 @@ export interface LeafNs<
 	readonly Kind: Kind;
 }
 
-export type { DerivedOptions, IndentOption, OptionsHintOf } from './options.ts';
+export type { DerivedOptions, IndentOption, LayoutOption, NewlineOption, OptionsHintOf } from './options.ts';
 export type * from './node-surface.ts';
 export type {
 	Interior,

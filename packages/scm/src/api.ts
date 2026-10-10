@@ -3,11 +3,11 @@ import type { IndentOption, KindTypes, LanguageAPI, LanguageHooks } from '@sitti
 import type { TreeHandle } from '@sittir/common/utils';
 import { nativeLanguageEngine, type ParsedRoot } from '@sittir/common/engine';
 import { ir } from './ir.js';
-import { is } from './is.js';
+import { is, isMember, membersOf } from './is.js';
 import {
 	TSKindId,
 	type FixedTextKindId,
-	type IrKeyOf,
+	type TypeKeyOf,
 	type NamespaceMap,
 	type ScmNode,
 	type ScmTypeMap
@@ -24,7 +24,7 @@ export interface ScmAPI extends LanguageAPI {
 	readonly build: typeof ir;
 	readonly is: typeof is;
 	readonly kinds: typeof TSKindId;
-	readonly types: KindTypes<IrKeyOf, NamespaceMap>;
+	readonly types: KindTypes<TypeKeyOf, NamespaceMap>;
 	readonly root: ProgramTree;
 	readonly node: ScmNode;
 	readonly fixedTextKindId: FixedTextKindId;
@@ -41,6 +41,7 @@ export const hooks: LanguageHooks<ScmAPI> = Object.freeze<LanguageHooks<ScmAPI>>
 	kinds: TSKindId,
 	trivia: Object.freeze({ ...triviaFacts, comment: coerceToComment }),
 	querySlots,
+	membership: Object.freeze({ isMember, membersOf }),
 	createNative: (options) => nativeLanguageEngine<ScmAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as ProgramRoot & ParsedRoot, tree as TreeHandle),
 	hydrate: (node, tree) => hydrate(node, tree as TreeHandle)

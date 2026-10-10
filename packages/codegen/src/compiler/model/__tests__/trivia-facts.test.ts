@@ -142,8 +142,8 @@ describe('trivia model facts', () => {
 			coercer: 'coerceToLineComment',
 			siblings: [
 				['/^(?:(?:\\/\\/))/u', 'ir.lineCommentExtraSlashes'],
-				['/^(?:\\/)/u', 'ir.lineCommentDocOuter'],
-				['/^(?:!)/u', 'ir.lineCommentDocInner']
+				['/^(?:\\/)/u', 'ir.lineComment.docOuter'],
+				['/^(?:!)/u', 'ir.lineComment.docInner']
 			]
 		});
 		expect(defaultTriviaForm(await nodeMapOf('python'))).toEqual({ kind: 'comment', open: '#', close: '', coercer: 'coerceToComment', siblings: [] });

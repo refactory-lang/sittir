@@ -1,0 +1,7 @@
+  fromPass=180    fromTotal=180    fromTrivia=0
+  covPass=147    covTotal=147
+  read-render-parsePass=115    read-render-parseTotal=116    read-render-parseAstMatchPass=114    read-render-parseTrivia=0
+  read-render-parse-shallowPass=115    read-render-parse-shallowTotal=116    read-render-parse-shallowAstMatchPass=114    read-render-parse-shallowTrivia=0
+  factory-storagePass=1410    factory-storageTotal=1410    factory-storageAstMatchPass=1410
+  ir-storagePass=1393    ir-storageTotal=1393    ir-storageAstMatchPass=1393
+  built-render-parsePass=1286    built-render-parseTotal=1286    built-render-parseAstMatchPass=1284

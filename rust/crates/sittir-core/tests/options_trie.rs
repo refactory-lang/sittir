@@ -31,6 +31,7 @@ impl OptionSites for Sites {
         indent: 20,
         dedent: 21,
         indent_chars: " \t",
+        newline_arms: &["\n", "\r\n", "\r"],
     };
 }
 
@@ -39,6 +40,13 @@ struct NoIndentSites;
 
 impl OptionSites for NoIndentSites {
     const TABLES: OptionTables = OptionTables { indent_chars: "", ..Sites::TABLES };
+}
+
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+struct NoLayoutSites;
+
+impl OptionSites for NoLayoutSites {
+    const TABLES: OptionTables = OptionTables { indent_chars: "", newline_arms: &[], ..Sites::TABLES };
 }
 
 static SITES: &[SiteSpec] = &[SiteSpec { default_arm: 1, strength: 0 }, SiteSpec { default_arm: 1, strength: 0 }];
@@ -68,24 +76,67 @@ fn a_value_set_to_the_default_arm_still_writes_at_declared_strength() {
 
 #[test]
 fn indent_and_delimiter_resolve_beside_spacing() {
-    let table = resolve(r#"{ "indent": "\t", "a": { "d": 2 } }"#).unwrap();
+    let table = resolve(r#"{ "layout": { "indent": "\t" }, "a": { "d": 2 } }"#).unwrap();
     assert_eq!(table.indent, "\t");
     assert_eq!(table.delimiter, vec![2]);
 }
 
 #[test]
 fn an_indent_unit_is_one_or_more_admitted_characters() {
-    assert_eq!(resolve(r#"{ "indent": "\t \t" }"#).unwrap().indent, "\t \t");
+    assert_eq!(resolve(r#"{ "layout": { "indent": "\t \t" } }"#).unwrap().indent, "\t \t");
     let refused = |unit: &str| Err(format!("options: indent {unit:?} is not a unit of [' ', '\\t'] (one or more of them)"));
-    assert_eq!(resolve(r#"{ "indent": "x" }"#), refused("x"));
-    assert_eq!(resolve(r#"{ "indent": " \n" }"#), refused(" \n"));
-    assert_eq!(resolve(r#"{ "indent": "" }"#), refused(""));
+    assert_eq!(resolve(r#"{ "layout": { "indent": "x" } }"#), refused("x"));
+    assert_eq!(resolve(r#"{ "layout": { "indent": " \n" } }"#), refused(" \n"));
+    assert_eq!(resolve(r#"{ "layout": { "indent": "" } }"#), refused(""));
 }
 
 #[test]
 fn indent_is_no_option_where_no_character_is_admitted() {
-    let serde_json::Value::Object(obj) = serde_json::from_str(r#"{ "indent": "\t" }"#).unwrap() else { panic!("not an object") };
-    assert_eq!(Options::<NoIndentSites>::read(&obj).map(|_| ()), Err("options: unknown key indent".to_string()));
+    let read = |json: &str| {
+        let serde_json::Value::Object(obj) = serde_json::from_str(json).unwrap() else { panic!("not an object") };
+        Options::<NoIndentSites>::read(&obj).map(|_| ())
+    };
+    assert_eq!(read(r#"{ "layout": { "indent": "\t" } }"#), Err("options: unknown key layout/indent".to_string()));
+    assert_eq!(read(r#"{ "layout": { "newline": "\n" } }"#), Ok(()));
+}
+
+#[test]
+fn indent_is_not_read_at_the_top_level() {
+    assert_eq!(resolve(r#"{ "indent": "\t" }"#), Err("options: unknown key indent".to_string()));
+}
+
+#[test]
+fn layout_is_no_option_where_neither_indent_nor_newline_is_admitted() {
+    let serde_json::Value::Object(obj) = serde_json::from_str(r#"{ "layout": {} }"#).unwrap() else { panic!("not an object") };
+    assert_eq!(Options::<NoLayoutSites>::read(&obj).map(|_| ()), Err("options: unknown key layout".to_string()));
+}
+
+#[test]
+fn a_layout_key_outside_indent_and_newline_is_refused() {
+    assert_eq!(resolve(r#"{ "layout": { "width": 80 } }"#), Err("options: unknown key layout/width".to_string()));
+}
+
+#[test]
+fn newline_defaults_to_the_preferred_arm_and_resolves_each_admitted_arm() {
+    assert_eq!(resolve("{}").unwrap().newline, "\n");
+    for arm in ["\n", "\r\n", "\r"] {
+        let json = format!(r#"{{ "layout": {{ "newline": {arm:?} }} }}"#);
+        assert_eq!(resolve(&json).unwrap().newline, arm);
+    }
+}
+
+#[test]
+fn a_newline_outside_the_arms_is_refused_naming_them() {
+    assert_eq!(
+        resolve(r#"{ "layout": { "newline": "\t" } }"#),
+        Err(r#"options: newline "\t" is not one of ['\n', '\r\n', '\r']"#.to_string())
+    );
+}
+
+#[test]
+fn layout_holds_indent_and_newline_together() {
+    let table = resolve(r#"{ "layout": { "indent": "\t", "newline": "\r\n" } }"#).unwrap();
+    assert_eq!((table.indent.as_str(), table.newline.as_str()), ("\t", "\r\n"));
 }
 
 #[test]

@@ -685,7 +685,7 @@ export interface CharacterClass {
 	readonly $type: TSKindId.CharacterClass;
 	readonly _negation?: boolean;
 	readonly _leading?: boolean;
-	readonly _class_atoms?: readonly (
+	readonly _class_atoms: readonly (
 		| ClassCharacter
 		| TSKindId.BslashDash
 		| CharacterClassEscape
@@ -2075,7 +2075,7 @@ export type FixedTextKindId =
 	| TSKindId.Comma
 	| TSKindId.Colon;
 
-export interface IrKeyOf {
+export interface TypeKeyOf {
 	[TSKindId.Pattern]: 'pattern';
 	[TSKindId.Alternation]: 'alternation';
 	[TSKindId.Term]: 'term';

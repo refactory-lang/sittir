@@ -8,6 +8,7 @@ import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx, hydrateSlotRefs } from '../assemble.ts';
 import { predictionRecords } from '../diagnostics/grammar-diagnostics.ts';
 import type { RawGrammar } from '../types.ts';
+import type { AssembledSupertype } from '../model/node-map.ts';
 import { NO_FILE_TYPES } from '../upstream-file-types.ts';
 
 async function evaluateSource(source: string): Promise<RawGrammar> {
@@ -46,6 +47,16 @@ describe('dangling internal refs', () => {
 		const nodeMap = assemble(AssembleCtx.from(normalizeGrammar(link(raw))));
 		nodeMap.nodes.delete('other');
 		expect(() => hydrateSlotRefs(nodeMap, { inline: new Set(raw.inline), grammar: 'dr' })).toThrow(/'other'/);
+	});
+
+	it('hydrate throws on a variant whose owner is absent from the node map, naming the owner', async () => {
+		const raw = await evaluateSource(containerGrammar('$.visible, $.other'));
+		const nodeMap = assemble(AssembleCtx.from(normalizeGrammar(link(raw))));
+		const container = nodeMap.nodes.get('_container') as AssembledSupertype;
+		Object.assign(container.subtypes[0]!, { variant: 'seen', variantOf: 'ghost' });
+		expect(() => hydrateSlotRefs(nodeMap, { inline: new Set(raw.inline), grammar: 'dr' })).toThrow(/'ghost'/);
+		expect(() => hydrateSlotRefs(nodeMap, { inline: new Set(['ghost']), grammar: 'dr' })).not.toThrow();
+		expect(() => hydrateSlotRefs(nodeMap, { spliced: new Set(['ghost']), grammar: 'dr' })).not.toThrow();
 	});
 
 	it('hydrate skips a kind assemble dropped with a shape record', async () => {

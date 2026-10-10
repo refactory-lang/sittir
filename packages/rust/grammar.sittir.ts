@@ -687,7 +687,7 @@ export default sittirGrammar(base, {
 				),
 				field('type', $._type),
 				optional(field('where_clause', $.where_clause)),
-				choice($.declaration_list, ';')
+				choice(field('body', $.declaration_list), ';')
 			)
 		)
 	},
