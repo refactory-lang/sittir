@@ -321,7 +321,7 @@ describe('render pipeline optimization — views built as locals in the kind ren
 		// The slot is genuinely Option<Vec<...>> (its own fixture name says
 		// "optional"), so the items are the deref'd slice, not
 		// `node.identifier` directly.
-		expect(renderBody).toContain('items: node.identifier.as_deref().unwrap_or(&[]),');
+		expect(renderBody).toContain('items: &node.identifier,');
 	});
 
 	it('keeps fallback repeated unnamed children on direct Vec-backed transport views', () => {

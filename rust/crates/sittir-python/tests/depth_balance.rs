@@ -24,7 +24,7 @@ fn an_empty_suite_block_closes_the_indent_it_opened() {
     let ctx = RenderContext { options: &options, sources: &NoSources };
     let block = BlockTransport {
         layout: None,
-        statements: None,
+        statements: Vec::new(),
         statements_separator_space: None,
     };
     let suite = SuiteBlockTransport {

@@ -523,24 +523,24 @@ impl<T: ReadTransport, const A: bool> ReadSlot for Vec<SlotValue<T, A>> {
         acc.push(read_value(cursor, ctx, depth, sides)?);
         Ok(())
     }
-    fn finish(acc: Self::Acc, at: SlotSite) -> Result<Self, ReadError> {
-        if acc.is_empty() { Err(missing(at)) } else { Ok(acc) }
+    /// An empty list is `[]`.
+    fn finish(acc: Self::Acc, _at: SlotSite) -> Result<Self, ReadError> {
+        Ok(acc)
     }
 }
 
-impl<T: ReadTransport, const A: bool> ReadSlot for Option<Vec<SlotValue<T, A>>> {
+/// A `repeat1` list: `Vec`'s read, with an empty one refused as missing.
+impl<T: ReadTransport, const A: bool> ReadSlot for crate::NonEmptyVec<SlotValue<T, A>> {
     type Acc = Vec<SlotValue<T, A>>;
     fn start() -> Self::Acc {
         Vec::new()
     }
     slot_value_kinds!();
-    fn take(acc: &mut Self::Acc, cursor: &mut TreeCursor<'_>, ctx: &ReadCtx<'_>, depth: Depth, sides: Sides, _at: SlotSite) -> Result<(), ReadError> {
-        acc.push(read_value(cursor, ctx, depth, sides)?);
-        Ok(())
+    fn take(acc: &mut Self::Acc, cursor: &mut TreeCursor<'_>, ctx: &ReadCtx<'_>, depth: Depth, sides: Sides, at: SlotSite) -> Result<(), ReadError> {
+        <Vec<SlotValue<T, A>> as ReadSlot>::take(acc, cursor, ctx, depth, sides, at)
     }
-    /// Present even when empty: today's wrap stores an empty list.
-    fn finish(acc: Self::Acc, _at: SlotSite) -> Result<Self, ReadError> {
-        Ok(Some(acc))
+    fn finish(acc: Self::Acc, at: SlotSite) -> Result<Self, ReadError> {
+        Self::try_from(acc).map_err(|crate::non_empty::EmptyList| missing(at))
     }
 }
 
@@ -601,27 +601,27 @@ impl<T: ReadTransport, const A: bool> ReadSlot for Vec<Option<SlotValue<T, A>>> 
     fn separator(acc: &mut Self::Acc, tagged: bool) {
         acc.separator(tagged);
     }
-    fn finish(acc: Self::Acc, at: SlotSite) -> Result<Self, ReadError> {
-        let positions = acc.positions();
-        if positions.is_empty() { Err(missing(at)) } else { Ok(positions) }
+    /// An empty list is `[]`.
+    fn finish(acc: Self::Acc, _at: SlotSite) -> Result<Self, ReadError> {
+        Ok(acc.positions())
     }
 }
 
-impl<T: ReadTransport, const A: bool> ReadSlot for Option<Vec<Option<SlotValue<T, A>>>> {
+/// A `repeat1` elided list: the elided read, with an empty one refused as missing.
+impl<T: ReadTransport, const A: bool> ReadSlot for crate::NonEmptyVec<Option<SlotValue<T, A>>> {
     type Acc = Elided<SlotValue<T, A>>;
     fn start() -> Self::Acc {
         Elided::default()
     }
     slot_value_kinds!();
-    fn take(acc: &mut Self::Acc, cursor: &mut TreeCursor<'_>, ctx: &ReadCtx<'_>, depth: Depth, sides: Sides, _at: SlotSite) -> Result<(), ReadError> {
-        acc.push(read_value(cursor, ctx, depth, sides)?);
-        Ok(())
+    fn take(acc: &mut Self::Acc, cursor: &mut TreeCursor<'_>, ctx: &ReadCtx<'_>, depth: Depth, sides: Sides, at: SlotSite) -> Result<(), ReadError> {
+        <Vec<Option<SlotValue<T, A>>> as ReadSlot>::take(acc, cursor, ctx, depth, sides, at)
     }
     fn separator(acc: &mut Self::Acc, tagged: bool) {
         acc.separator(tagged);
     }
-    fn finish(acc: Self::Acc, _at: SlotSite) -> Result<Self, ReadError> {
-        Ok(Some(acc.positions()))
+    fn finish(acc: Self::Acc, at: SlotSite) -> Result<Self, ReadError> {
+        Self::try_from(acc.positions()).map_err(|crate::non_empty::EmptyList| missing(at))
     }
 }
 
@@ -1062,8 +1062,16 @@ mod tests {
     }
 
     #[test]
-    fn an_optional_list_reads_as_present_when_empty() {
-        assert_eq!(<Option<Vec<SlotValue<Plain>>> as ReadSlot>::finish(Vec::new(), site()), Ok(Some(Vec::new())));
+    fn an_empty_list_reads_as_an_empty_vec() {
+        assert_eq!(<Vec<SlotValue<Plain>> as ReadSlot>::finish(Vec::new(), site()), Ok(Vec::new()));
+        assert_eq!(<Vec<Option<SlotValue<Plain>>> as ReadSlot>::finish(Elided::default(), site()), Ok(Vec::new()));
+    }
+
+    #[test]
+    fn an_empty_repeat1_list_is_missing() {
+        let missing = ReadError::Missing { kind: KindId(1), slot: "items", index: 0 };
+        assert_eq!(<crate::NonEmptyVec<SlotValue<Plain>> as ReadSlot>::finish(Vec::new(), site()).err(), Some(missing.clone()));
+        assert_eq!(<crate::NonEmptyVec<Option<SlotValue<Plain>>> as ReadSlot>::finish(Elided::default(), site()).err(), Some(missing));
     }
 
     #[test]

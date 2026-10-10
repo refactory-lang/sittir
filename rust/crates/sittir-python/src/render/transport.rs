@@ -9299,7 +9299,7 @@ pub struct ModuleTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_statements")]
     #[slot(field = field::STATEMENTS)]
-    pub statements: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
+    pub statements: Vec<::sittir_core::SlotValue<StatementTransport>>,
     #[wire(key = "_statements_separator_space")]
     pub statements_separator_space: Option<u16>,
 }
@@ -9332,9 +9332,9 @@ impl ::sittir_core::prepare::Prepare for ModuleTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_MODULE_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.statements.iter_mut().map(Some), "", options::allowed(options::SITE_MODULE_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.statements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_MODULE_STATEMENTS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_MODULE_STATEMENTS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.statements.iter_mut().map(Some), options::SEATS_MODULE_STATEMENTS, ctx);
         self.statements.prepare(ctx)?;
         Ok(())
     }
@@ -9626,7 +9626,7 @@ pub struct ImportListTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, separator = kind::COMMA)]
-    pub name: Vec<::sittir_core::SlotValue<ImportListNameTransportSlot>>,
+    pub name: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ImportListNameTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -9842,7 +9842,7 @@ pub struct AssertStatementTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_expression")]
     #[slot(field = field::EXPRESSION, separator = kind::COMMA)]
-    pub expression: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
+    pub expression: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_expression_separator_space_before")]
     pub expression_separator_space_before: Option<u16>,
     #[wire(key = "_expression_separator_space_after")]
@@ -10206,7 +10206,7 @@ pub struct IfStatementTransport {
     pub consequence: ::sittir_core::SlotValue<SuiteTransport>,
     #[wire(key = "_alternative")]
     #[slot(field = field::ALTERNATIVE)]
-    pub alternative: Option<Vec<::sittir_core::SlotValue<IfStatementAlternativeTransportSlot>>>,
+    pub alternative: Vec<::sittir_core::SlotValue<IfStatementAlternativeTransportSlot>>,
     #[wire(key = "_alternative_separator_space")]
     pub alternative_separator_space: Option<u16>,
 }
@@ -10235,9 +10235,9 @@ impl ::sittir_core::prepare::Prepare for IfStatementTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.alternative.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_IF_STATEMENT_ALTERNATIVE_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.alternative.iter_mut().map(Some), "", options::allowed(options::SITE_IF_STATEMENT_ALTERNATIVE_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.alternative_separator_space.get_or_insert(ctx.options.spacing[options::SITE_IF_STATEMENT_ALTERNATIVE_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.alternative.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_IF_STATEMENT_ALTERNATIVE, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.alternative.iter_mut().map(Some), options::SEATS_IF_STATEMENT_ALTERNATIVE, ctx);
         self.condition.prepare(ctx)?;
         self.consequence.prepare(ctx)?;
         self.alternative.prepare(ctx)?;
@@ -10613,7 +10613,7 @@ pub struct TryStatementTransport {
     pub body: ::sittir_core::SlotValue<SuiteTransport>,
     #[wire(key = "_except_clauses")]
     #[slot(field = field::EXCEPT_CLAUSES)]
-    pub except_clauses: Option<Vec<::sittir_core::SlotValue<ExceptClauseTransport>>>,
+    pub except_clauses: Vec<::sittir_core::SlotValue<ExceptClauseTransport>>,
     #[wire(key = "_else_clause")]
     #[slot(field = field::ELSE_CLAUSE)]
     pub else_clause: Option<::sittir_core::SlotValue<ElseClauseTransport>>,
@@ -10648,9 +10648,9 @@ impl ::sittir_core::prepare::Prepare for TryStatementTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.except_clauses.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_TRY_STATEMENT_EXCEPT_CLAUSES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.except_clauses.iter_mut().map(Some), "", options::allowed(options::SITE_TRY_STATEMENT_EXCEPT_CLAUSES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.except_clauses_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TRY_STATEMENT_EXCEPT_CLAUSES_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.except_clauses.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_TRY_STATEMENT_EXCEPT_CLAUSES, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.except_clauses.iter_mut().map(Some), options::SEATS_TRY_STATEMENT_EXCEPT_CLAUSES, ctx);
         self.body.prepare(ctx)?;
         self.except_clauses.prepare(ctx)?;
         self.else_clause.prepare(ctx)?;
@@ -11107,7 +11107,7 @@ pub struct GlobalStatementTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_names")]
     #[slot(field = field::NAMES, separator = kind::COMMA)]
-    pub names: Vec<::sittir_core::SlotValue<IdentifierTransport>>,
+    pub names: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<IdentifierTransport>>,
     #[wire(key = "_names_separator_space_before")]
     pub names_separator_space_before: Option<u16>,
     #[wire(key = "_names_separator_space_after")]
@@ -11159,7 +11159,7 @@ pub struct NonlocalStatementTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_names")]
     #[slot(field = field::NAMES, separator = kind::COMMA)]
-    pub names: Vec<::sittir_core::SlotValue<IdentifierTransport>>,
+    pub names: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<IdentifierTransport>>,
     #[wire(key = "_names_separator_space_before")]
     pub names_separator_space_before: Option<u16>,
     #[wire(key = "_names_separator_space_after")]
@@ -11214,7 +11214,7 @@ pub struct ExecStatementTransport {
     pub code: ::sittir_core::SlotValue<ExecStatementCodeTransportSlot>,
     #[wire(key = "_in_clause")]
     #[slot(field = field::IN_CLAUSE, separator = kind::COMMA)]
-    pub in_clause: Option<Vec<::sittir_core::SlotValue<ExpressionTransport>>>,
+    pub in_clause: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_in_clause_separator_space_before")]
     pub in_clause_separator_space_before: Option<u16>,
     #[wire(key = "_in_clause_separator_space_after")]
@@ -11245,10 +11245,10 @@ impl ::sittir_core::prepare::Prepare for ExecStatementTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.in_clause.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), ",", options::allowed(options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.in_clause.iter_mut().map(Some), ",", options::allowed(options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.in_clause_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_BEFORE].arm);
         self.in_clause_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_AFTER].arm);
-        if let Some(seated_items) = self.in_clause.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_EXEC_STATEMENT_IN_CLAUSE, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.in_clause.iter_mut().map(Some), options::SEATS_EXEC_STATEMENT_IN_CLAUSE, ctx);
         self.code.prepare(ctx)?;
         self.in_clause.prepare(ctx)?;
         Ok(())
@@ -11509,7 +11509,7 @@ pub struct DecoratedDefinitionTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_decorator")]
     #[slot]
-    pub decorator: Vec<::sittir_core::SlotValue<DecoratorTransport>>,
+    pub decorator: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<DecoratorTransport>>,
     #[wire(key = "_definition")]
     #[slot(field = field::DEFINITION)]
     pub definition: ::sittir_core::SlotValue<DecoratedDefinitionDefinitionTransportSlot>,
@@ -11608,7 +11608,7 @@ pub struct BlockTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_statements")]
     #[slot(field = field::STATEMENTS)]
-    pub statements: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
+    pub statements: Vec<::sittir_core::SlotValue<StatementTransport>>,
     #[wire(key = "_statements_separator_space")]
     pub statements_separator_space: Option<u16>,
 }
@@ -11637,9 +11637,9 @@ impl ::sittir_core::prepare::Prepare for BlockTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.statements.iter_mut().map(Some), "", options::allowed(options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.statements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_BLOCK_STATEMENTS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.statements.iter_mut().map(Some), options::SEATS_BLOCK_STATEMENTS, ctx);
         self.statements.prepare(ctx)?;
         Ok(())
     }
@@ -11658,7 +11658,7 @@ pub struct ExpressionListTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -11713,7 +11713,7 @@ pub struct DottedNameTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_names")]
     #[slot(field = field::NAMES, separator = kind::DOT)]
-    pub names: Vec<::sittir_core::SlotValue<IdentifierTransport>>,
+    pub names: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<IdentifierTransport>>,
     #[wire(key = "_names_separator_space_before")]
     pub names_separator_space_before: Option<u16>,
     #[wire(key = "_names_separator_space_after")]
@@ -11895,7 +11895,7 @@ pub struct UnionPatternTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_patterns")]
     #[slot(field = field::PATTERNS, separator = kind::PIPE)]
-    pub patterns: Vec<::sittir_core::SlotValue<SimplePatternContentTransportSlot>>,
+    pub patterns: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<SimplePatternContentTransportSlot>>,
     #[wire(key = "_patterns_separator_space_before")]
     pub patterns_separator_space_before: Option<u16>,
     #[wire(key = "_patterns_separator_space_after")]
@@ -12247,7 +12247,7 @@ pub struct ParametersElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<ParameterTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ParameterTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -12302,7 +12302,7 @@ pub struct PatternsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<PatternTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<PatternTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -12895,7 +12895,7 @@ pub struct ComparisonOperatorTransport {
     pub left: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
     #[wire(key = "_comparators")]
     #[slot(field = field::COMPARATORS)]
-    pub comparators: Vec<::sittir_core::SlotValue<ComparisonOperatorComparatorTransport>>,
+    pub comparators: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ComparisonOperatorComparatorTransport>>,
     #[wire(key = "_comparators_separator_space")]
     pub comparators_separator_space: Option<u16>,
 }
@@ -13097,7 +13097,7 @@ pub struct PatternListTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<PatternTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<PatternTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -14281,7 +14281,7 @@ pub struct CollectionElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<CollectionElementsItemTransportSlot>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<CollectionElementsItemTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -14342,7 +14342,7 @@ pub struct ForInClauseTransport {
     pub left: ::sittir_core::SlotValue<ForStatementLeftTransportSlot>,
     #[wire(key = "_right")]
     #[slot(field = field::RIGHT, separator = kind::COMMA)]
-    pub right: Vec<::sittir_core::SlotValue<LambdaWithinForInClauseBodyTransportSlot>>,
+    pub right: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<LambdaWithinForInClauseBodyTransportSlot>>,
     #[wire(key = "_comma")]
     #[slot(field = field::COMMA, presence = kind::COMMA)]
     pub comma: Option<bool>,
@@ -14499,7 +14499,7 @@ pub struct ConcatenatedStringTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_string")]
     #[slot]
-    pub string: Vec<::sittir_core::SlotValue<StringTransport>>,
+    pub string: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<StringTransport>>,
     #[wire(key = "_string_separator_space")]
     pub string_separator_space: Option<u16>,
 }
@@ -14552,7 +14552,7 @@ pub struct StringTransport {
     pub string_start: ::sittir_core::SlotValue<StringStartTransport>,
     #[wire(key = "_content")]
     #[slot(field = field::CONTENT)]
-    pub content: Option<Vec<::sittir_core::SlotValue<StringContentTransportSlot>>>,
+    pub content: Vec<::sittir_core::SlotValue<StringContentTransportSlot>>,
     #[wire(key = "_string_end")]
     #[slot(field = field::STRING_END)]
     pub string_end: ::sittir_core::SlotValue<StringEndTransport, true>,
@@ -14602,7 +14602,7 @@ pub struct StringContentTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot]
-    pub content: Vec<::sittir_core::SlotValue<StringContentContentTransportSlot, true>>,
+    pub content: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<StringContentContentTransportSlot, true>>,
 }
 
 impl ::sittir_core::view::KindOf for StringContentTransport {
@@ -14726,7 +14726,7 @@ pub struct FormatSpecifierTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
-    pub elements: Option<Vec<::sittir_core::SlotValue<FormatSpecifierElementsTransportSlot, true>>>,
+    pub elements: Vec<::sittir_core::SlotValue<FormatSpecifierElementsTransportSlot, true>>,
 }
 
 impl ::sittir_core::view::KindOf for FormatSpecifierTransport {
@@ -15063,7 +15063,7 @@ pub struct SimpleStatementsElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::SEMI)]
-    pub item: Vec<::sittir_core::SlotValue<SimpleStatementTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<SimpleStatementTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -15118,7 +15118,7 @@ pub struct SubjectsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_subject")]
     #[slot(field = field::SUBJECT, separator = kind::COMMA)]
-    pub subject: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
+    pub subject: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -15173,7 +15173,7 @@ pub struct CasePatternsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<CasePatternTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<CasePatternTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -15228,7 +15228,7 @@ pub struct WithClauseWithItemsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<WithItemTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<WithItemTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -15282,7 +15282,7 @@ pub struct TypesTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<TypeTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<TypeTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -15337,7 +15337,7 @@ pub struct ArgumentListElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<ArgumentListElementsItemTransportSlot>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ArgumentListElementsItemTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -15392,7 +15392,7 @@ pub struct ListPatternCasePatternsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<CasePatternTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<CasePatternTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -15447,7 +15447,7 @@ pub struct DictPatternElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<DictPatternElementsItemTransportSlot>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<DictPatternElementsItemTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -15502,7 +15502,7 @@ pub struct SubscriptsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_subscript")]
     #[slot(field = field::SUBSCRIPT, separator = kind::COMMA)]
-    pub subscript: Vec<::sittir_core::SlotValue<SubscriptsSubscriptTransportSlot>>,
+    pub subscript: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<SubscriptsSubscriptTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -15557,7 +15557,7 @@ pub struct DictionaryElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<DictionaryElementsItemTransportSlot>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<DictionaryElementsItemTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -15697,7 +15697,7 @@ pub struct TuplePatternElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<PatternTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<PatternTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -15752,7 +15752,7 @@ pub struct TupleElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<CollectionElementsItemTransportSlot>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<CollectionElementsItemTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -15946,7 +15946,7 @@ pub struct PrintArgumentsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_argument")]
     #[slot(field = field::ARGUMENT, separator = kind::COMMA)]
-    pub argument: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
+    pub argument: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -16001,7 +16001,7 @@ pub struct PrintChevronArgumentsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_argument")]
     #[slot(field = field::ARGUMENT, separator = kind::COMMA)]
-    pub argument: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
+    pub argument: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 1)]
     pub delimiter: Option<u8>,
@@ -16220,7 +16220,7 @@ pub struct ComprehensionClausesTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot(field = field::CONTENT)]
-    pub content: Vec<::sittir_core::SlotValue<ComprehensionClausesContentTransportSlot>>,
+    pub content: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ComprehensionClausesContentTransportSlot>>,
     #[wire(key = "_content_separator_space")]
     pub content_separator_space: Option<u16>,
 }
@@ -17103,7 +17103,7 @@ pub struct ExceptClauseExceptionListTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE, separator = kind::COMMA)]
-    pub value: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
+    pub value: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_value_separator_space_before")]
     pub value_separator_space_before: Option<u16>,
     #[wire(key = "_value_separator_space_after")]
@@ -17346,7 +17346,7 @@ pub struct ExpressionStatementTupleTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -17401,7 +17401,7 @@ pub struct WithClauseBareTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<WithItemTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<WithItemTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -17500,7 +17500,7 @@ pub struct MatchBlockBlockTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_alternative")]
     #[slot(field = field::ALTERNATIVE)]
-    pub alternative: Option<Vec<::sittir_core::SlotValue<CaseClauseTransport>>>,
+    pub alternative: Vec<::sittir_core::SlotValue<CaseClauseTransport>>,
     #[wire(key = "_alternative_separator_space")]
     pub alternative_separator_space: Option<u16>,
 }
@@ -17529,9 +17529,9 @@ impl ::sittir_core::prepare::Prepare for MatchBlockBlockTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.alternative.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_MATCH_BLOCK_BLOCK_ALTERNATIVE_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.alternative.iter_mut().map(Some), "", options::allowed(options::SITE_MATCH_BLOCK_BLOCK_ALTERNATIVE_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.alternative_separator_space.get_or_insert(ctx.options.spacing[options::SITE_MATCH_BLOCK_BLOCK_ALTERNATIVE_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.alternative.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_MATCH_BLOCK_BLOCK_ALTERNATIVE, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.alternative.iter_mut().map(Some), options::SEATS_MATCH_BLOCK_BLOCK_ALTERNATIVE, ctx);
         self.alternative.prepare(ctx)?;
         Ok(())
     }
@@ -22205,7 +22205,7 @@ impl ::sittir_core::prepare::SeatTarget for AnyTransport {
 
 fn render_module(node: &ModuleTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let statements = ListView {
-        items: node.statements.as_deref().unwrap_or(&[]),
+        items: &node.statements,
         template: "{}",
         token: "",
         before: 0,
@@ -22409,7 +22409,7 @@ fn render_raise_statement(node: &RaiseStatementTransport, w: &mut dyn ::sittir_c
 
 fn render_if_statement(node: &IfStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let alternative = ListView {
-        items: node.alternative.as_deref().unwrap_or(&[]),
+        items: &node.alternative,
         template: "{}",
         token: "",
         before: 0,
@@ -22549,7 +22549,7 @@ fn render_try_statement(node: &TryStatementTransport, w: &mut dyn ::sittir_core:
     let body = &node.body;
     let else_clause = View::new(&node.else_clause, "{}");
     let except_clauses = ListView {
-        items: node.except_clauses.as_deref().unwrap_or(&[]),
+        items: &node.except_clauses,
         template: "{}",
         token: "",
         before: 0,
@@ -22749,7 +22749,7 @@ fn render_nonlocal_statement(node: &NonlocalStatementTransport, w: &mut dyn ::si
 fn render_exec_statement(node: &ExecStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let code = &node.code;
     let in_clause = ListView {
-        items: node.in_clause.as_deref().unwrap_or(&[]),
+        items: &node.in_clause,
         template: "{}",
         token: ",",
         before: node.in_clause_separator_space_before.unwrap_or(0),
@@ -22877,7 +22877,7 @@ fn render_decorator(node: &DecoratorTransport, w: &mut dyn ::sittir_core::render
 
 fn render_block(node: &BlockTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let statements = ListView {
-        items: node.statements.as_deref().unwrap_or(&[]),
+        items: &node.statements,
         template: "{}",
         token: "",
         before: 0,
@@ -22905,7 +22905,7 @@ fn render_expression_list(node: &ExpressionListTransport, w: &mut dyn ::sittir_c
         before: node.item_separator_space_before.unwrap_or(0),
         after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
-        trailing: node.item.len() == 1 || node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        trailing: (&node.item).len() == 1 || node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         head: None,
         tail: None,
     };
@@ -23297,7 +23297,7 @@ fn render_pattern_list(node: &PatternListTransport, w: &mut dyn ::sittir_core::r
         before: node.item_separator_space_before.unwrap_or(0),
         after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
-        trailing: node.item.len() == 1 || node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        trailing: (&node.item).len() == 1 || node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         head: None,
         tail: None,
     };
@@ -23692,7 +23692,7 @@ fn render_concatenated_string(node: &ConcatenatedStringTransport, w: &mut dyn ::
 
 fn render_string(node: &StringTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = ListView {
-        items: node.content.as_deref().unwrap_or(&[]),
+        items: &node.content,
         template: "{}",
         token: "",
         before: 0,
@@ -23752,7 +23752,7 @@ fn render_interpolation(node: &InterpolationTransport, w: &mut dyn ::sittir_core
 
 fn render_format_specifier(node: &FormatSpecifierTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let elements = ListView {
-        items: node.elements.as_deref().unwrap_or(&[]),
+        items: &node.elements,
         template: "{}",
         token: "",
         before: 0,
@@ -23979,7 +23979,7 @@ fn render_tuple_pattern_elements(node: &TuplePatternElementsTransport, w: &mut d
         before: node.item_separator_space_before.unwrap_or(0),
         after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
-        trailing: node.item.len() == 1 || node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        trailing: (&node.item).len() == 1 || node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         head: None,
         tail: None,
     };
@@ -23995,7 +23995,7 @@ fn render_tuple_elements(node: &TupleElementsTransport, w: &mut dyn ::sittir_cor
         before: node.item_separator_space_before.unwrap_or(0),
         after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
-        trailing: node.item.len() == 1 || node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
+        trailing: (&node.item).len() == 1 || node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         head: None,
         tail: None,
     };
@@ -24428,7 +24428,7 @@ fn render_with_clause_paren(node: &WithClauseParenTransport, w: &mut dyn ::sitti
 
 fn render_match_block_block(node: &MatchBlockBlockTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let alternative = ListView {
-        items: node.alternative.as_deref().unwrap_or(&[]),
+        items: &node.alternative,
         template: "{}",
         token: "",
         before: 0,

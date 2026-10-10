@@ -271,8 +271,8 @@ One `fill_seated_gaps` call per repeat slot that has seated sites and whose
 elements can reach a seat (`slotElementsReach`), passing the slot's seat
 table (`SEATS_<KIND>_<SLOT>`). The runtime walks the elements, so there is
 no per-list match block: each element answers its own seat through
-`SeatTarget`. An optional slot is unwrapped first; a slot whose elements may
-be absent is iterated through `Option::as_mut`, a required one through
+`SeatTarget`. A list field is never optional; a slot whose elements may
+be absent is iterated through `Option::as_mut`, any other through
 `Some`, so one core function serves both.
 
 The core walk skips the last present element. A child's edge is written at
@@ -3214,7 +3214,7 @@ template, `templateOf(struct.flanks.get(name))`:
   named kind seats held trivia, a line-terminated one ends its line);
 - text: a plain reference when required, a view when optional;
 - list: a `ListView` literal with `items` borrowed from the transport
-  (`&node.x`, or the deref'd slice of an optional list, or `NO_ITEMS` when
+  (`&node.x`, a list field being never optional, or `NO_ITEMS` when
   the transport has no field), the template, the separator token or the
   `separator_kind` match, `before`/`after`/`head`/`tail` from the node's
   stamped spacing sites, and `leading`/`trailing` from the list's delimiter
@@ -3868,7 +3868,9 @@ The Rust type of a transport slot's field, printed from the slot's
 (or `Option<String>`), and every other shape is its type in the `SlotValue`
 carrier — the kind's transport, the supertype's enum, the slot's choice
 as `choiceNameOf` names it, or `AnyTransport` — wrapped as
-`T`, `Option<T>`, `Vec<T>` or `Option<Vec<T>>`. A singular slot whose
+`T` or `Option<T>` for a single value, and for a list as
+`NonEmptyVec<T>` (a `repeat1` slot, whose read refuses an empty list) or
+`Vec<T>` (any other, an empty list being `[]`), never optional. A singular slot whose
 reachable kinds share an SCC with `parentKind` boxes its value.
 
 #### body
@@ -5977,8 +5979,11 @@ The kinds a field's dummy must build a stub from: none when `dummyValueForField`
  * and a per-branch `visiting` set (cycle guard for self-referential
  * grammars).
  *
+ * Every list slot the stub does not populate is `[]`, at the depth limit
+ * too: an empty list is `[]`, and the transport refuses a missing list key.
+ *
  * When recursion bottoms out (depth limit or cycle) the stub still declares
- * `$type`/`$text`/`$source`/`$named` but omits nested required fields —
+ * `$type`/`$text`/`$source`/`$named` but omits nested required single fields —
  * this may still fail construction for pathological kinds, matching the
  * existing "skip when no safe sample found" precedent elsewhere in this
  * emitter (see {@link pickSampleForPattern}) rather than guessing further.
@@ -9020,6 +9025,8 @@ After the namespaces, one `Empty<TypeName>` interface per empty form. It extends
 ```
 
 ### `packages/codegen/src/emitters/types.ts::emitInterface`
+
+A storage key is optional exactly when its slot is a single optional value: a list's key never is, a possibly-empty list storing `readonly (X)[]` (`[]` when empty) and a `repeat1` list `NonEmptyArray<X>`. A builder input still omits a possibly-empty list: `ConfigOf` and `LooseConfigOf` take input optionality from `RequiredKeys`, which leaves such a list out, and the factory stores `[]`.
 
 #### body
 
@@ -13095,7 +13102,7 @@ keeps that id on the `Identifier` member, where a read identifier belongs.
 /**
  * Per-slot emission metadata for `emitStruct`'s typed dispatch, collected
  * from the assembled node's slots so generated code stays consistent with
- * what the transport struct emits (Vec<...> vs Option<Vec<...>>, Box<...>
+ * what the transport struct emits (NonEmptyVec<...> vs Vec<...>, Box<...>
  * vs Option<Box<...>>). Named and unnamed slots are symmetric (cleanup
  * rules §E1) — both contribute transport fields.
  *

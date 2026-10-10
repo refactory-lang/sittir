@@ -614,10 +614,6 @@ A bitflag slot's loose input as the number the slot stores: a number as it is (0
 
 A keyword-presence slot's loose input as what the slot stores: `true` for any present value (a non-empty array included) and `undefined` for absent, `false` or an empty array. The factories call it for every keyword marker slot.
 
-### `packages/common/src/utils.ts::NO_CHILDREN`
-
-The one frozen empty list `hydrateSlotsWith` answers for an absent list slot, so a read of an empty slot writes nothing and allocates nothing.
-
 ### `packages/common/src/utils.ts::hydrateTriviaEntry`
 
 A trivia entry as a reader of trivia gets it: a coordinate entry read and wrapped through the tree it holds (`hydrateStored`, which finds the tree by the coordinate's tree token and refuses a coordinate that lost it), with the entry's placement facts carried onto the node (`carryPlacement`); any other entry as it is.

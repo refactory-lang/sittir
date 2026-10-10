@@ -2246,7 +2246,7 @@ export enum IntegerDecimalKind {
 // Node types — concrete interfaces
 export interface Module {
 	readonly $type: TSKindId.Module;
-	readonly _statements?: readonly Statement[];
+	readonly _statements: readonly Statement[];
 	readonly __slotHints__?: {
 		readonly statements: SlotHint<T.Statement[], false, true>;
 	};
@@ -2504,7 +2504,7 @@ export interface IfStatement {
 	readonly $type: TSKindId.IfStatement;
 	readonly _condition: Expression;
 	readonly _consequence: Suite;
-	readonly _alternative?: readonly (ElifClause | ElseClause)[];
+	readonly _alternative: readonly (ElifClause | ElseClause)[];
 	readonly __inputHints__?: {
 		readonly condition:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -2653,7 +2653,7 @@ export interface WhileStatement {
 export interface TryStatement {
 	readonly $type: TSKindId.TryStatement;
 	readonly _body: Suite;
-	readonly _except_clauses?: readonly ExceptClause[];
+	readonly _except_clauses: readonly ExceptClause[];
 	readonly _else_clause?: ElseClause;
 	readonly _finally_clause?: FinallyClause;
 	readonly __looseHints__?: {
@@ -2851,7 +2851,7 @@ export interface NonlocalStatement {
 export interface ExecStatement {
 	readonly $type: TSKindId.ExecStatement;
 	readonly _code: String | Identifier;
-	readonly _in_clause?: readonly Expression[];
+	readonly _in_clause: readonly Expression[];
 	readonly __inputHints__?: {
 		readonly in_clause?: readonly (
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -2998,7 +2998,7 @@ export interface Decorator {
 
 export interface Block {
 	readonly $type: TSKindId.Block;
-	readonly _statements?: readonly Statement[];
+	readonly _statements: readonly Statement[];
 	readonly __slotHints__?: {
 		readonly statements: SlotHint<T.Statement[], false, true>;
 	};
@@ -4399,7 +4399,7 @@ export interface ConcatenatedString {
 export interface String {
 	readonly $type: TSKindId.String;
 	readonly _string_start: StringStart;
-	readonly _content?: readonly (Interpolation | StringContent)[];
+	readonly _content: readonly (Interpolation | StringContent)[];
 	readonly _string_end: StringEnd;
 	readonly __slotHints__?: {
 		readonly stringStart: SlotHint<T.StringStart>;
@@ -4464,7 +4464,7 @@ export interface Interpolation {
 
 export interface FormatSpecifier {
 	readonly $type: TSKindId.FormatSpecifier;
-	readonly _elements?: readonly (FormatSpecifierText | FormatExpression)[];
+	readonly _elements: readonly (FormatSpecifierText | FormatExpression)[];
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<
 			((T.FormatSpecifierText | T.FormatExpression) | T.FormatExpression.Types)[],
@@ -5116,7 +5116,7 @@ export interface WithClauseParen {
 
 export interface MatchBlockBlock {
 	readonly $type: TSKindId.MatchBlockBlock;
-	readonly _alternative?: readonly CaseClause[];
+	readonly _alternative: readonly CaseClause[];
 	readonly __slotHints__?: {
 		readonly alternatives: SlotHint<T.CaseClause[], false, true>;
 	};

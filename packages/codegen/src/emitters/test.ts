@@ -835,21 +835,26 @@ function buildDummyStub(
 		if (node !== undefined && (isFixedTextLeaf(node) || node.modelType === 'enum' || node.modelType === 'pattern')) options?.texts?.push(dummyText);
 		return base;
 	}
-	if (depth >= MAX_DUMMY_DEPTH || visiting.has(kind)) return base;
+	const withParts = (parts: readonly string[]): string =>
+		parts.length === 0 ? base : base.replace(/\}\s*as any$/, `, ${parts.join(', ')} } as any`);
+	const emptyList = (f: AssembledNonterminal): string => `${f.storageKey}: []`;
+	if (depth >= MAX_DUMMY_DEPTH || visiting.has(kind)) return withParts(node.slots.filter(isMultiple).map(emptyList));
 
 	const nextVisiting = new Set(visiting);
 	nextVisiting.add(kind);
 	const fieldParts: string[] = [];
 	const populateOptional = depth === 0 && options?.populateOptional === true;
 	for (const f of node.slots) {
-		if (!isRequired(f) && !(populateOptional && !isMultiple(f))) continue;
+		if (!isRequired(f) && !(populateOptional && !isMultiple(f))) {
+			if (isMultiple(f)) fieldParts.push(emptyList(f));
+			continue;
+		}
 		const value = isMultiple(f)
 			? `[${dummyValueForField(f, nodeMap, kindEntries, depth + 1, nextVisiting, options)}]`
 			: dummyValueForField(f, nodeMap, kindEntries, depth + 1, nextVisiting, options);
 		fieldParts.push(`${f.storageKey}: ${value}`);
 	}
-	if (fieldParts.length === 0) return base;
-	return base.replace(/\}\s*as any$/, `, ${fieldParts.join(', ')} } as any`);
+	return withParts(fieldParts);
 }
 
 function dummyValue(

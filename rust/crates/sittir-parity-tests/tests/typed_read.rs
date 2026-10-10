@@ -35,7 +35,7 @@ struct Block {
     layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_statements")]
     #[slot(field = field::STATEMENTS)]
-    statements: Option<Vec<SlotValue<Function>>>,
+    statements: Vec<SlotValue<Function>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Transport)]
@@ -75,7 +75,7 @@ struct File {
     layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
     #[wire(key = "_statements")]
     #[slot(field = field::STATEMENTS)]
-    statements: Option<Vec<SlotValue<Function>>>,
+    statements: Vec<SlotValue<Function>>,
 }
 
 /// A zero-width node read as a text leaf: its span is empty, so it reads as its fixed text.
@@ -133,7 +133,7 @@ fn placed(layout: &Layout) -> Option<sittir_core::layout::TransportLayout<()>> {
 }
 
 fn function(file: &File, i: usize) -> &Function {
-    file.statements.as_ref().unwrap()[i].transport().expect("read within the depth")
+    file.statements[i].transport().expect("read within the depth")
 }
 
 /// One side's entries, or one inner gap's, as (start, end, same_line, tokens_between).
@@ -160,7 +160,7 @@ fn a_function_reads_into_its_slots_with_its_layout_tokens_skipped() {
     let file: File = read(&parse_rust(source), source, Depth::All).unwrap();
     let f = function(&file, 0);
     assert_eq!(f.name.transport().unwrap().text, "f");
-    assert_eq!(f.body.transport().unwrap().statements, Some(vec![]));
+    assert_eq!(f.body.transport().unwrap().statements, vec![]);
     assert_eq!((placed(&f.layout), placed(&file.layout)), (None, None));
 }
 
@@ -190,7 +190,7 @@ fn past_the_depth_a_child_with_structure_is_its_coordinate() {
     let source = "fn f() { fn g() {} }";
     let tree = parse_rust(source);
     let shallow: File = read(&tree, source, Depth::ONE).unwrap();
-    let coord = shallow.statements.as_ref().unwrap()[0].coord().expect("a coordinate at depth one");
+    let coord = shallow.statements[0].coord().expect("a coordinate at depth one");
     assert_eq!((coord.span.start, coord.span.end, coord.kind), (0, 20, Some(kind::FUNCTION_ITEM)));
     assert_eq!(coord.tree, 7);
     let two: File = read(&tree, source, Depth::Levels(std::num::NonZeroU32::new(2).unwrap())).unwrap();
@@ -221,7 +221,7 @@ fn a_comment_in_an_empty_block_takes_the_blocks_inner_gap() {
 fn a_file_of_comments_keeps_them_in_its_own_gap() {
     let source = "// only\n";
     let file: File = read(&parse_rust(source), source, Depth::All).unwrap();
-    assert_eq!(file.statements, Some(vec![]));
+    assert_eq!(file.statements, vec![]);
     assert_eq!(trivia_spans(&file.layout, "statements"), vec![(0, 7, false, 0)]);
 }
 
@@ -591,7 +591,7 @@ fn a_row_read_equals_the_same_node_in_a_whole_read_trivia_included() {
     let ctx = ReadCtx::new(source, 7, <File as ReadTransport>::shows);
     let whole: File = read(&tree, source, Depth::All).unwrap();
     let shallow: File = read(&tree, source, Depth::ONE).unwrap();
-    let index = shallow.statements.as_ref().unwrap()[0].coord().unwrap().index;
+    let index = shallow.statements[0].coord().unwrap().index;
     let outer: Function = sittir_core::read::read_at::<Function, File>(&mut tree.walk(), &ctx, index, Depth::All).unwrap();
     assert_eq!(&outer, function(&whole, 0));
     assert_eq!(trivia_spans(&outer.layout, "leading"), vec![(0, 7, false, 0)]);
@@ -599,7 +599,7 @@ fn a_row_read_equals_the_same_node_in_a_whole_read_trivia_included() {
     let inner_row = find(&tree, kind::FUNCTION_ITEM, 1).descendant_index() as u32;
     let inner: Function = sittir_core::read::read_at::<Function, Block>(&mut tree.walk(), &ctx, inner_row, Depth::All).unwrap();
     let body = function(&whole, 0).body.transport().unwrap();
-    assert_eq!(&inner, body.statements.as_ref().unwrap()[0].transport().unwrap());
+    assert_eq!(&inner, body.statements[0].transport().unwrap());
 }
 
 #[derive(Debug, Clone, PartialEq, Transport)]

@@ -21,6 +21,8 @@ pub mod napi_engine;
 pub mod options;
 pub mod prepare;
 pub mod query;
+pub mod non_empty;
+pub use non_empty::NonEmptyVec;
 pub mod read;
 pub mod render;
 pub mod slot;

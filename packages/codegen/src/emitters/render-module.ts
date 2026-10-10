@@ -904,12 +904,7 @@ function buildTypedTemplateBody(
 			continue;
 		}
 		if (f.view === 'list' || f.multiple) {
-			const itemValue = !f.hasTransportField
-				? 'NO_ITEMS'
-				: f.required
-					? `node.${rIdent}`
-					: `node.${rIdent}.as_deref().unwrap_or(&[])`;
-			const items = f.hasTransportField && f.required ? `&${itemValue}` : itemValue;
+			const items = f.hasTransportField ? `&node.${rIdent}` : 'NO_ITEMS';
 			const fieldSepLiteral = f.separator !== undefined ? JSON.stringify(f.separator) : sepLiteral;
 			const separatedList = node instanceof AssembledList ? node : undefined;
 			const leadingExpr =
@@ -925,7 +920,7 @@ function buildTypedTemplateBody(
 						? 'true'
 						: 'false';
 			const trailingExpr = separatedList?.singleElementNeedsTrailing
-				? `${itemValue}.len() == 1 || ${trailingOption}`
+				? `(${items}).len() == 1 || ${trailingOption}`
 				: trailingOption;
 			const separatorSite = separatedList === undefined ? undefined : separatorSiteOf(plan, separatedList);
 			const fallback =
@@ -2637,11 +2632,7 @@ function listGapClassification(plan: RenderPlan, node: AssembledNode): string[] 
 			site === undefined ? '&[]' : `options::allowed(options::${site.constName})`;
 		const call = (list: string) =>
 			`::sittir_core::prepare::fill_list_gaps(${list}.${items}, ${JSON.stringify(token)}, ${allowedOf(first)}, ${allowedOf(sites.after)}, &options::WHITESPACE, ctx);`;
-		body.push(
-			isTransportRequired(field)
-				? `        ${call(`self.${ident}`)}`
-				: `        if let Some(gap_items) = self.${ident}.as_mut() { ${call('gap_items')} }`
-		);
+		body.push(`        ${call(`self.${ident}`)}`);
 	}
 	return body;
 }
@@ -2839,11 +2830,7 @@ function seatLoops(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMap): str
 		const ident = rustFieldIdent(field.name);
 		const table = `options::${seatTableName(node.display.name, field.name)}`;
 		const items = hasOptionalElements(field) ? 'iter_mut().map(Option::as_mut)' : 'iter_mut().map(Some)';
-		lines.push(
-			isTransportRequired(field)
-				? `        ::sittir_core::prepare::fill_seated_gaps(self.${ident}.${items}, ${table}, ctx);`
-				: `        if let Some(seated_items) = self.${ident}.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.${items}, ${table}, ctx); }`
-		);
+		lines.push(`        ::sittir_core::prepare::fill_seated_gaps(self.${ident}.${items}, ${table}, ctx);`);
 	}
 	return lines;
 }
@@ -3488,9 +3475,8 @@ function rustTransportSlotType(
 	const wrap = (inner: string): string => {
 		if (multiple) {
 			const element = slotCarrier(inner, adjacent);
-			const vec = optionalElement ? `Vec<Option<${element}>>` : `Vec<${element}>`;
-			if (required) return vec;
-			return `Option<${vec}>`;
+			const items = optionalElement ? `Option<${element}>` : element;
+			return required ? `::sittir_core::NonEmptyVec<${items}>` : `Vec<${items}>`;
 		}
 		const sized = slotCarrier(createsBackEdge ? `Box<${inner}>` : inner, adjacent);
 		return required ? sized : `Option<${sized}>`;

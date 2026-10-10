@@ -178,12 +178,31 @@ impl<X: EdgeItems> EdgeItems for Option<X> {
     }
 }
 
+/// The first edge item of a list: its first item that has one.
+fn first_edge_item<X: EdgeItems>(items: &[X]) -> Option<Option<&crate::NodeCoordinate>> {
+    items.iter().find_map(X::first_item)
+}
+
+/// The last edge item of a list: its last item that has one.
+fn last_edge_item<X: EdgeItems>(items: &[X]) -> Option<Option<&crate::NodeCoordinate>> {
+    items.iter().rev().find_map(X::last_item)
+}
+
 impl<X: EdgeItems> EdgeItems for Vec<X> {
     fn first_item(&self) -> Option<Option<&crate::NodeCoordinate>> {
-        self.iter().find_map(X::first_item)
+        first_edge_item(self)
     }
     fn last_item(&self) -> Option<Option<&crate::NodeCoordinate>> {
-        self.iter().rev().find_map(X::last_item)
+        last_edge_item(self)
+    }
+}
+
+impl<X: EdgeItems> EdgeItems for crate::NonEmptyVec<X> {
+    fn first_item(&self) -> Option<Option<&crate::NodeCoordinate>> {
+        first_edge_item(self)
+    }
+    fn last_item(&self) -> Option<Option<&crate::NodeCoordinate>> {
+        last_edge_item(self)
     }
 }
 
@@ -401,9 +420,20 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
     }
 }
 
+/// Prepare every item of a list.
+fn prepare_items<T: Prepare>(items: &mut [T], ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
+    items.iter_mut().try_for_each(|item| item.prepare(ctx))
+}
+
 impl<T: Prepare> Prepare for Vec<T> {
     fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
-        self.iter_mut().try_for_each(|item| item.prepare(ctx))
+        prepare_items(self, ctx)
+    }
+}
+
+impl<T: Prepare> Prepare for crate::NonEmptyVec<T> {
+    fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
+        prepare_items(self, ctx)
     }
 }
 

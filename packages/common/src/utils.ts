@@ -695,8 +695,6 @@ function setTriviaData(node: AnyUntypedNode, triviaData: NodeTrivia): void {
 	node.$_layout = { ...node.$_layout, trivia: triviaData };
 }
 
-const NO_CHILDREN: readonly never[] = Object.freeze([]);
-
 /** How a hydrate turns a transport into its kind's node: the grammar's `wrapNode`. */
 export type WrapTransport = (data: object, tree: TreeHandle) => unknown;
 
@@ -750,7 +748,7 @@ export function hydrateSlotWith(node: object, key: string, tree: TreeHandle, wra
 export function hydrateSlotsWith(node: object, key: string, tree: TreeHandle, wrap: WrapTransport): readonly unknown[] {
 	const slots = node as Record<string, unknown>;
 	const stored = slots[key];
-	if (!Array.isArray(stored)) return stored == null ? NO_CHILDREN : [hydrateSlotWith(node, key, tree, wrap)];
+	if (!Array.isArray(stored)) return [hydrateSlotWith(node, key, tree, wrap)];
 	if (Object.isFrozen(stored)) return stored;
 	const children = Object.freeze(stored.map((entry) => hydrateWith(entry, tree, wrap)));
 	for (const child of children) holdBySlot(child);
@@ -773,7 +771,7 @@ export function hydrateStoredSlot(node: object, key: string): unknown {
 export function hydrateStoredSlots(node: object, key: string): readonly unknown[] {
 	const slots = node as Record<string, unknown>;
 	const stored = slots[key];
-	if (!Array.isArray(stored)) return stored == null ? NO_CHILDREN : [hydrateStoredSlot(node, key)];
+	if (!Array.isArray(stored)) return [hydrateStoredSlot(node, key)];
 	if (!stored.some(isCoordinate)) return stored;
 	const children = Object.freeze(stored.map(hydrateStored));
 	for (const child of children) holdBySlot(child);
