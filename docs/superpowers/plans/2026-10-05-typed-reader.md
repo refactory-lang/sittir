@@ -6889,6 +6889,7 @@ Brainstorm's, 2026-10-09, unless marked otherwise.
     ```
 
     The leading write stops the block folding (`hasOutsideTrivia`), so it renders from storage; its children are bare coordinates, each folding to its own span, and `# four` (`c`'s leading as the reader places it) lies between those spans with nothing to print it. The native render cannot frame a coordinate with trivia today (`SlotValue::Coord` renders `write_between_edges` alone, and `coordinate_from_napi` reads only `$_layout.gap`), so Task 25 adds it.
+13. **The render sees what a write landed on** (brainstorm, 2026-10-09, on a gap found building Task 25). A query hydrates a node straight from the registry and writes it back into no parent slot, so a parent holds a bare coordinate (a shallow read) or its own nested record (a deep read) where the written wrapper should be. One function resolves a parsed value at a slot position for the render: inside an edited range (an edit inside its range, or its own index written) it takes the wrapper registered at its index and role (the role from `contentRole`); with no wrapper registered, a bare coordinate is read (`tree.read(index, 1)`) and resolved in turn, so every ancestor between the root and the written node unfolds. Untouched ranges still fold. The edited set holds each written node strongly (index to node, keyed weakly by the `TreeHandle`): a written node is the only copy of its edit, so it is never collected while its tree lives, and a later route returns the same written object. The registry itself stays weak.
 
 ### Brainstorm's rulings on the plan questions (2026-10-09)
 
@@ -6944,7 +6945,7 @@ Modify:
 - No rendered byte and no validation row moves, in any task, except the bytes Ruling 12 restores to an edited tree (master drops a comment there). A moved row stops the work for review (no revert). Python's shallow AST match row is the hosts branch's to report (115 once Task 25 lands); on this branch it does not move either.
 - The stack pins (`typed_read_nesting.rs`, per level, linux and macos) do not rise. If `end: u32` pushes a choice payload past the 512-byte ceiling, the build asks for it to be pinned: pin it (the list moves, the ceiling never does).
 - `index` names the descendant index; `end` names `index + descendant_count()`; the half-open range `[index, end)` is a node's subtree. No other names for either in new code, docs or glossary.
-- The registry holds wrappers weakly: nothing it holds keeps a wrapper, a token or a tree alive.
+- The registry holds wrappers weakly: nothing it holds keeps a wrapper, a token or a tree alive. A written node is the one exception, held by the edited set (not the registry) for its tree's life, since it is the only copy of its edit (Ruling 13).
 - No `!`, no cast as a fix, no runtime guard standing in for a type fact.
 
 ### Review Focus (1c-ii)
@@ -7297,7 +7298,7 @@ describe('the fold by range', () => {
 		const q = b.body().statements()[0];
 		if (q === undefined) throw new Error('expected a statement');
 		q.$trivia.leading(engine.build.lineComment(' q'));
-		expect(root.$render()).toBe('fn a() { let p = 1; }\nfn b() {\n    // q\n    let q = 2;\n    let r = 3;\n}\nfn c() { let s = 4; }\n');
+		expect(root.$render()).toBe('fn a() { let p = 1; }\nfn b() {\n    // q\n    let q = 2; let r = 3;\n}\nfn c() { let s = 4; }\n');
 	});
 
 	it('nested writes fold only untouched ranges', () => {
@@ -7311,7 +7312,7 @@ describe('the fold by range', () => {
 		r.$trivia.trailing(engine.build.lineComment(' r'));
 		const out = root.$render();
 		expect(out).toContain('// p\n');
-		expect(out).toContain('let r = 3; // r');
+		expect(out).toContain('let r = 3;\n    // r\n');
 		expect(out.endsWith('fn c() { let s = 4; }\n')).toBe(true);
 	});
 
@@ -7322,8 +7323,8 @@ describe('the fold by range', () => {
 		const q = b.body().statements()[0];
 		if (q === undefined) throw new Error('expected a statement');
 		q.$trivia.leading(engine.build.lineComment(' q'));
-		const built = engine.build.sourceFile(b);
-		expect(built.$render()).toBe('fn b() {\n    // q\n    let q = 2;\n    let r = 3;\n}\n');
+		const built = engine.build.sourceFile({ statements: [b] });
+		expect(built.$render()).toBe('fn b() {\n    // q\n    let q = 2; let r = 3;\n}\n');
 	});
 
 	it('an untouched node folds after a write elsewhere', () => {
@@ -7336,7 +7337,7 @@ describe('the fold by range', () => {
 });
 ```
 
-If `engine.build.sourceFile`'s factory spelling differs at the base, take it from `packages/rust/src/factories/raw.ts`'s `buildSourceFile` (`sourceFile(...statements)`).
+The two-statement expectations keep the source gap between untouched neighbours (`let q = 2; let r = 3;`), and a written trailing entry goes where the trivia writer places it (its own line). If `engine.build.sourceFile`'s factory spelling differs at the base, take it from `packages/rust/src/factories/raw.ts`'s `buildSourceFile` (`sourceFile(...statements)`).
 
 Append to `packages/common/tests/identity.test.ts`:
 
@@ -7407,6 +7408,19 @@ describe('an outside write keeps the span\'s bytes', () => {
 ```
 
 The trailing case pins the comment's survival and its side, not the join (the trailing entry's line placement is the trivia writer's, unchanged here); Step 8 pins the exact string the run prints.
+
+Add to `packages/rust/tests/identity.test.ts` (Ruling 13), run in a child process under `--expose-gc` like the collected-wrapper fixture:
+
+```ts
+describe('a written node', () => {
+	it('survives every reference dropped and a collection, and a re-query returns it', () => {
+		// fixture: parse at depth 1; reach `let x` by a query; write a leading
+		// comment; keep only a WeakRef to it; gc between yields; then
+		// ref.deref() is defined, the re-queried node === ref.deref(), and the
+		// root's render holds the comment.
+	});
+});
+```
 
 In `slot.rs`'s tests, add a framed coordinate:
 
@@ -7605,6 +7619,12 @@ function foldedCoordinate(record: Record<string, unknown>): TransportCoordinate 
 `prepare.rs`: the `Coord` arm prepares its trivia (`TransportTrivia::prepare`), so a coordinate entry inside it takes its kind's edges.
 
 `SlotValue<T>` grows by one pointer only where the `Coord` arm is its widest; if a payload assertion asks for a pin, pin it (Global Constraints).
+
+- [ ] **Step 7c: The render resolves a written range through the registry** (Ruling 13)
+
+`identity.ts`: the edited set keeps, beside its two index lists, the written node per index (`markIndexEdited(tree, index, side, node)`), held strongly; `writtenAt(tree, index)` returns it. `utils.ts`'s `markEditedNode` passes the node.
+
+`transport-data.ts`: one function, `resolvedForRender(value, owner)`, resolves a parsed value at a slot position before the fold: a record or bare coordinate at index `i` of a live tree, whose range holds an edit or whose own index is written, becomes `writtenAt(tree, i) ?? registered(tree, i, contentRole(owner, value))`, else, for a bare coordinate, `tree.read(i, 1)`; any other value is returned as it is. `toTransportValue` resolves every slot value through it.
 
 - [ ] **Step 8: Run the tests to verify they pass**
 
