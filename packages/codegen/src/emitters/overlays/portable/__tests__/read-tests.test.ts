@@ -20,7 +20,6 @@ const node = (kind: string, slots: readonly ModelSlot[] = []): ModelNode => ({
 	slots,
 	subtypes: [],
 	elementKinds: [],
-	enumValues: [],
 	enumMembers: [],
 	text: null,
 	pattern: null

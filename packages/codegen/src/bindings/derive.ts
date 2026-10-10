@@ -278,7 +278,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 		if (unclaimedOf.get(g)?.has(k)) return scalarOf([]);
 		const node = modelNode(input.model, k);
 		if (input.textTokens.has(k) && node?.pattern != null) return scalarOf([`text:${node.pattern}`]);
-		if (node?.modelType === 'enum') return scalarOf(node.enumValues.map((v) => `text:${v}`));
+		if (node?.modelType === 'enum') return scalarOf(node.enumMembers.map((m) => `text:${m.text}`));
 		if (node?.modelType === 'keyword' || node?.modelType === 'punctuation') return scalarOf([`literal:${k}`]);
 		const container = node !== undefined && !context.includes(node.kind) ? (routesOf(g)?.containers.get(node.kind) ?? null) : null;
 		if (node !== undefined && container !== null) {

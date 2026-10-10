@@ -1,5 +1,5 @@
 import { type RuleListEntry } from '../dsl/rule-patterns.ts';
-import type { AuthoredCompound, FullForm } from '../compiler/model/node-map.ts';
+import type { AssembledEnum, AuthoredCompound, FullForm } from '../compiler/model/node-map.ts';
 import { innerGapsKeyed, spelledTriviaTable, type SpelledTriviaTable } from '../compiler/model/trivia.ts';
 import type { RuleAnnotations } from '../types/rule.ts';
 import { seatOf, type Seat } from '../compiler/model/sub-factories.ts';
@@ -109,7 +109,6 @@ interface SerializedFixedText extends SerializedNodeBase {
 
 interface SerializedEnum extends SerializedNodeBase {
 	modelType: 'enum';
-	values: string[];
 	members: { kind: string; text: string }[];
 }
 
@@ -213,6 +212,13 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedId
 	};
 }
 
+function enumMembersOf(node: AssembledEnum): { kind: string; text: string }[] {
+	const members = node.members.map(({ kind, text }) => ({ kind, text }));
+	const unresolved = node.values.filter((value) => !members.some((member) => member.text === value));
+	if (unresolved.length > 0) throw new Error(`node model: enum '${node.kind}' has values no member resolves: ${unresolved.join(', ')}`);
+	return members;
+}
+
 function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWires): SerializedNode {
 	const base: SerializedNodeBase = {
 		kind: node.kind,
@@ -255,12 +261,7 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 				text: node.text
 			};
 		case 'enum':
-			return {
-				...base,
-				modelType: 'enum',
-				values: [...node.values],
-				members: node.members.map(({ kind, text }) => ({ kind, text }))
-			};
+			return { ...base, modelType: 'enum', members: enumMembersOf(node) };
 		case 'list':
 			return {
 				...base,

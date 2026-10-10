@@ -5549,11 +5549,6 @@
       "typeName": "AccessibilityModifier",
       "factoryName": "accessibilityModifier",
       "hidden": false,
-      "values": [
-        "public",
-        "private",
-        "protected"
-      ],
       "members": [
         {
           "kind": "public_keyword",
@@ -23601,18 +23596,6 @@
       "typeName": "PredefinedType",
       "factoryName": "predefinedType",
       "hidden": false,
-      "values": [
-        "any",
-        "number",
-        "boolean",
-        "string",
-        "symbol",
-        "unique symbol",
-        "void",
-        "unknown",
-        "never",
-        "object"
-      ],
       "members": [
         {
           "kind": "any_keyword",

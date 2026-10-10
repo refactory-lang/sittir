@@ -18,7 +18,6 @@ const node = (kind: string, slots: readonly ModelSlot[] = [], extra: Partial<Mod
 	slots,
 	subtypes: [],
 	elementKinds: [],
-	enumValues: [],
 	enumMembers: [],
 	text: null,
 	pattern: null,
@@ -56,7 +55,6 @@ const MODEL = [
 	node('choice_holder', [slot('part', ['modifiers', 'identifier'])]),
 	node('bool', [], {
 		modelType: 'enum',
-		enumValues: ['true', 'false'],
 		enumMembers: [
 			{ kind: 'true_keyword', text: 'true' },
 			{ kind: 'false_keyword', text: 'false' }

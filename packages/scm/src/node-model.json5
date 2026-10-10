@@ -2323,10 +2323,6 @@
       "typeName": "PredicateType",
       "factoryName": "predicateType",
       "hidden": false,
-      "values": [
-        "?",
-        "!"
-      ],
       "members": [
         {
           "kind": "qmark",
@@ -2391,11 +2387,6 @@
       "typeName": "Quantifier",
       "factoryName": "quantifier",
       "hidden": false,
-      "values": [
-        "*",
-        "+",
-        "?"
-      ],
       "members": [
         {
           "kind": "star",

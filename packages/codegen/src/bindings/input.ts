@@ -29,7 +29,6 @@ export interface NodeModelNode {
 	readonly slots?: readonly NodeModelSlot[];
 	readonly subtypes?: readonly string[];
 	readonly elementKinds?: readonly string[];
-	readonly values?: readonly string[];
 	readonly members?: readonly EnumMember[];
 	readonly text?: string;
 	readonly pattern?: string;
@@ -59,7 +58,6 @@ export function slotModelOf(record: NodeModelRecord): SlotModel {
 			})),
 			subtypes: n.subtypes ?? [],
 			elementKinds: n.elementKinds ?? [],
-			enumValues: n.values ?? [],
 			enumMembers: n.members ?? [],
 			text: n.text ?? null,
 			pattern: n.pattern ?? null
