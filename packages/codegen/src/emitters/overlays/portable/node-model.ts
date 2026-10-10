@@ -16,7 +16,11 @@ const readEntryRecord = (entry: ReadEntry, test: readonly PortableCondition[]) =
 function memberRecord(route: MemberRoute) {
 	switch (route.route) {
 		case 'slot':
-			return { name: route.name, route: route.route, slot: route.slot.name, path: route.path };
+			return { name: route.name, route: route.route, slot: route.slot.name, ...(route.except === undefined ? {} : { except: route.except }), path: route.path };
+		case 'kind':
+			return { name: route.name, route: route.route, kind: route.kind, path: route.path ?? null };
+		case 'self':
+			return { name: route.name, route: route.route, path: route.path };
 		case 'presence':
 			return { name: route.name, route: route.route, via: route.via, token: route.token, path: route.path ?? null };
 		case 'nested':

@@ -3,10 +3,10 @@
 import { alias, bindings, field, rename } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "9a0f7050f02bb84297a70922e16b4e537eaec8269943f053dbab5c6ca7b97cff",
+	hash: "cef50792a54baa4a9ee2782935182f157011ed993398ec594fcd209fadad85e4",
 	patches: {
 		_expression_within_for_in_clause: { "-1": alias(sym("lambda_within_for_in_clause"), sym("lambda_expression")) },
-		assignment: { "-3": alias(sym("assignment_eq"), sym("variable_declaration")), "-2": alias(sym("assignment_type"), sym("variable_declaration")), "-1": alias(sym("assignment_typed"), sym("variable_declaration")) },
+		assignment: { "-3": alias(sym("assignment_eq"), sym("variable_declaration")), "-1": alias(sym("assignment_typed"), sym("variable_declaration")) },
 		assignment_eq: { "0": field("name"), "1/1": field("value") },
 		assignment_type: { "0": field("name") },
 		assignment_typed: { "0": field("name"), "1/3": field("value") },
@@ -18,11 +18,10 @@ export default bindings({
 		conditional_expression: { "0": field("consequence") },
 		default_parameter: { "2": field("default") },
 		dictionary_comprehension: { "2": field("comprehension_clauses") },
-		expression: { "-8": alias(sym("comparison_operator"), sym("binary_expression")), "-5": alias(sym("lambda"), sym("lambda_expression")) },
+		expression: { "-5": alias(sym("lambda"), sym("lambda_expression")) },
 		generator_expression: { "2": field("comprehension_clauses") },
 		list_comprehension: { "2": field("comprehension_clauses") },
 		named_expression: { "0": field("left"), "2": field("right") },
-		primary_expression: { "-25": alias(sym("binary_operator"), sym("binary_expression")) },
 		print_statement_chevron: { "1": field("chevron") },
 		set_comprehension: { "2": field("comprehension_clauses") },
 		subscript: { "0": field("object") },
@@ -58,6 +57,7 @@ export default bindings({
 		rename("dictionary_splat", "dictionary_splat_element"),
 		rename("parenthesized_list_splat", "parenthesized_splat_element"),
 		rename("call", "call_expression"),
+		rename("binary_operator", "binary_expression"),
 		rename("boolean_operator", "logical_binary_expression"),
 		rename("unary_operator", "unary_expression"),
 		rename("not_operator", "not_unary_expression"),

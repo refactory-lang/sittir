@@ -1,4 +1,4 @@
-import { WILDCARD, type BindingFacts, type ClaimFact, type ModelNode, type ModelSlot, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
+import { WILDCARD, type BindingFacts, type ClaimFact, type EnumMember, type ModelNode, type ModelSlot, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
 import { camel, snake } from './names.ts';
 
 export interface LayoutSlot {
@@ -27,6 +27,7 @@ export interface Pin {
 
 export interface ReadEntry {
 	readonly kind: string;
+	readonly claimed: string;
 	readonly vocab: string;
 	readonly claim: ClaimFact;
 	readonly index: number;
@@ -35,7 +36,15 @@ export interface ReadEntry {
 }
 
 export type MemberRoute =
-	| { readonly route: 'slot'; readonly name: string; readonly slot: ModelSlot; readonly path: readonly SlotStep[] }
+	| {
+			readonly route: 'slot';
+			readonly name: string;
+			readonly slot: ModelSlot;
+			readonly except?: readonly string[];
+			readonly path: readonly SlotStep[];
+	  }
+	| { readonly route: 'kind'; readonly name: string; readonly kind: string; readonly path: readonly SlotStep[] | undefined }
+	| { readonly route: 'self'; readonly name: string; readonly path: readonly SlotStep[] }
 	| {
 			readonly route: 'presence';
 			readonly name: string;
@@ -141,7 +150,8 @@ function pinsOf(node: ModelNode | undefined, claim: ClaimFact, renames: Readonly
 const specificity = (entry: ReadEntry): number => {
 	const placed = entry.claim.within.length > 0;
 	const predicated = entry.claim.predicates.length > 0;
-	return placed && predicated ? 0 : predicated ? 1 : placed ? 2 : entry.pins.length > 0 ? 3 : 4;
+	const literal = entry.pins.length > 0 || entry.claim.tokens.length > 0;
+	return placed && predicated ? 0 : predicated ? 1 : placed ? 2 : literal ? 3 : 4;
 };
 
 function viaPath(model: SlotModel, owner: string, via: readonly string[]): { readonly steps: SlotStep[]; readonly at: ModelNode } | undefined {
@@ -161,15 +171,31 @@ function membersOf(input: GrammarInput, kind: string, renames: ReadonlyMap<strin
 	const node = modelNode(input.model, kind);
 	if (node === undefined) return [];
 	const deep = input.bindings.members.filter((m) => m.owner === kind && m.route !== 'rename');
-	const via = new Set(deep.flatMap((m) => (m.route === 'rename' ? [] : m.via)));
+	const via = new Set(deep.flatMap((m) => (m.route === 'presence' || m.route === 'nested' ? m.via : [])));
 	const routes: MemberRoute[] = [];
 	for (const slot of node.slots) {
-		if (isLayout(input, kind, slot) || slot.kinds.some((k) => via.has(k))) continue;
-		routes.push({ route: 'slot', name: memberNameOf(renames, slot.name, slot.propertyName), slot, path: [{ owner: kind, slot: slot.name }] });
+		if (isLayout(input, kind, slot)) continue;
+		const except = slot.kinds.filter((k) => via.has(k));
+		if (except.length > 0 && except.length === slot.kinds.length) continue;
+		const name = memberNameOf(renames, slot.name, slot.propertyName);
+		const path = [{ owner: kind, slot: slot.name }];
+		routes.push(
+			except.length === 0
+				? { route: 'slot', name, slot, path }
+				: { route: 'slot', name, slot: { ...slot, kinds: slot.kinds.filter((k) => !via.has(k)) }, except, path }
+		);
 	}
 	for (const member of deep) {
-		const chain = member.route === 'rename' ? undefined : viaPath(input.model, kind, member.via);
+		const chain = member.route === 'presence' || member.route === 'nested' ? viaPath(input.model, kind, member.via) : undefined;
 		switch (member.route) {
+			case 'kind': {
+				const named = routes.find((r) => r.route === 'slot' && r.name === camel(member.member));
+				routes.push({ route: 'kind', name: camel(member.name), kind: member.kind, path: named?.route === 'slot' ? named.path : undefined });
+				break;
+			}
+			case 'self':
+				routes.push({ route: 'self', name: camel(member.name), path: [] });
+				break;
 			case 'presence': {
 				const leaf = chain?.at.slots.find((s) => s.terminals.includes(member.token));
 				routes.push({
@@ -222,6 +248,24 @@ function admittedKinds(model: SlotModel, claim: ClaimFact): string[] {
 	return [...new Set(admitted.flatMap((kind) => concreteKinds(model, kind, seen)))].sort();
 }
 
+function ownTextEquals(claim: ClaimFact): readonly string[] {
+	return [
+		...claim.tokens,
+		...claim.predicates.flatMap((p) => {
+			const [argument, ...rest] = p.arguments;
+			const own = p.subject !== null && p.subject.up === 0 && p.subject.down.length === 0;
+			return own && p.operator === 'eq' && argument !== undefined && 'text' in argument && rest.length === 0 ? [argument.text] : [];
+		})
+	];
+}
+
+function readKinds(model: SlotModel, kind: string, claim: ClaimFact): readonly string[] {
+	const members = modelNode(model, kind)?.enumMembers ?? [];
+	if (members.length === 0) return [kind];
+	const texts = ownTextEquals(claim);
+	return members.filter((member: EnumMember) => texts.every((text) => text === member.text)).map((member) => member.kind);
+}
+
 export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 	const renames = new Map<string, Map<string, string>>();
 	for (const member of input.bindings.members) {
@@ -237,9 +281,10 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 	input.bindings.claims.forEach((claim, index) => {
 		if (claim.kind === null) return;
 		const kinds = claim.kind === WILDCARD ? admittedKinds(input.model, claim).filter((kind) => !claimsOwn.has(`${kind} ${claim.vocab}`)) : [claim.kind];
-		for (const kind of kinds) {
+		for (const [claimed, kind] of kinds.flatMap((k) => readKinds(input.model, k, claim).map((read) => [k, read] as const))) {
 			const entry: ReadEntry = {
 				kind,
+				claimed,
 				vocab: claim.vocab,
 				claim,
 				index,

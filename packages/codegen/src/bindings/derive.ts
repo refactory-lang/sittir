@@ -38,19 +38,19 @@ function wildcardUnrouted(
 	routesOf: (grammar: string) => GrammarRoutes | undefined,
 	members: ReadonlyMap<string, ReadonlyMap<string, MemberFacts>>
 ): string[] {
-	const out: string[] = [];
+	const out = new Set<string>();
 	for (const input of inputs) {
 		const routes = routesOf(input.grammar);
 		for (const [kind, entries] of routes?.readEntries ?? []) {
 			const routed = new Set((routes?.members.get(kind) ?? []).map((m) => m.name));
-			for (const { claim, vocab } of entries) {
+			for (const { claim, claimed, vocab } of entries) {
 				if (claim.kind !== WILDCARD) continue;
 				const missing = [...(members.get(vocab) ?? [])].filter(([name, f]) => !f.optional && !routed.has(name)).map(([name]) => name);
-				if (missing.length > 0) out.push(`${input.grammar}: ${kind} as ${vocab} has no route for ${missing.join(', ')}`);
+				if (missing.length > 0) out.add(`${input.grammar}: ${claimed} as ${vocab} has no route for ${missing.join(', ')}`);
 			}
 		}
 	}
-	return out.sort();
+	return [...out].sort();
 }
 
 function wildcardContainers(inputs: readonly GrammarInput[], routesOf: (grammar: string) => GrammarRoutes | undefined): string[] {
@@ -87,6 +87,8 @@ export interface Derivation {
 	readonly wildcardContainers: readonly string[];
 	readonly wildcardUnrouted: readonly string[];
 }
+
+const unmappedToken = (grammar: string, kind: string): string => `<${grammar}:${kind.replace(/^_+/, '')}>`;
 
 export function commonPrefix(paths: readonly string[]): string | null {
 	if (paths.length === 0) return null;
@@ -293,7 +295,11 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 			const parts = supertypeKind(input, k, [], context);
 			if (parts) return scalarOf(parts);
 		}
-		return scalarOf([`<${g}:${k.replace(/^_+/, '')}>`]);
+		return scalarOf([unmappedToken(g, k)]);
+	};
+	const leafText = (input: GrammarInput, k: string): string => {
+		const node = modelNode(input.model, k);
+		return input.textTokens.has(k) && node?.pattern != null ? `text:${node.pattern}` : unmappedToken(input.grammar, k);
 	};
 	const slotResolution = (input: GrammarInput, owner: string, slot: ModelSlot): Resolution => {
 		if (slot.storage === 'boolean') return scalarOf(['boolean']);
@@ -346,6 +352,19 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 						f.optional ||= !route.slot.required;
 						f.multiple ||= route.slot.multiple || resolved.list;
 						f.scalar ||= !route.slot.multiple && resolved.scalar;
+						f.grammars.add(input.grammar);
+						continue;
+					}
+					if (route.route === 'kind') {
+						f.kinds.add('boolean');
+						f.optional = true;
+						f.scalar = true;
+						f.grammars.add(input.grammar);
+						continue;
+					}
+					if (route.route === 'self') {
+						f.kinds.add(leafText(input, gk));
+						f.scalar = true;
 						f.grammars.add(input.grammar);
 						continue;
 					}

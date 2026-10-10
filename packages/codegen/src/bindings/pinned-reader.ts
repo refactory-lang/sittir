@@ -113,7 +113,7 @@ function unparsed(node: NodeMethodsOf): number[] {
 
 async function definitionsOf(text: string): Promise<readonly Definition.Parsed[]> {
 	await ready();
-	return engine.parse(text, { deep: true }).definitions();
+	return engine.parse(text, { depth: Infinity }).definitions();
 }
 
 async function parsedPatterns(text: string): Promise<ParsedPattern[]> {
@@ -418,16 +418,33 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 		if (template !== null) facts.templates.push({ vocabs, ...template });
 	}
 	const claimPredicates = predicates.flatMap((p) => predicateFact(p) ?? []);
+	const topClaimed = captures(top).some((name) => isPath(name) && !isTokenClass(name));
 	for (const v of nodes) {
+		const members: MemberFact[] = [];
 		for (const name of captures(v)) {
-			if (inClaimPosition(name, v === top)) {
+			const selfRoute = v === top && topClaimed && !isPath(name);
+			if (!selfRoute && inClaimPosition(name, v === top)) {
 				if (isClaim(name, v === top)) facts.claims.push(claimFact(v, name, top, nodes, claimPredicates));
 			} else if (!name.startsWith('_') && name !== 'element') {
-				const member = memberFact(v, name, top, topKind);
-				if (member !== null) facts.members.push(member);
+				const member: MemberFact | null =
+					selfRoute && topKind !== null ? { route: 'self', owner: topKind, name } : (kindPresence(members[0], v, name) ?? memberFact(v, name, top, topKind));
+				if (member !== null) members.push(member);
 			}
 		}
+		facts.members.push(...slotNamed(members));
 	}
+}
+
+function kindPresence(first: MemberFact | undefined, v: Visit, name: string): MemberFact | null {
+	const kind = namedKind(v);
+	if (first === undefined || kind === null || first.route === 'self' || first.route === 'presence') return null;
+	return { route: 'kind', owner: first.owner, name, member: first.name, kind };
+}
+
+function slotNamed(members: readonly MemberFact[]): readonly MemberFact[] {
+	const [first, ...rest] = members;
+	if (first?.route !== 'rename' || first.field === null || !rest.some((m) => m.route === 'kind')) return members;
+	return [{ ...first, kind: null }, ...rest];
 }
 
 function patternsOf(

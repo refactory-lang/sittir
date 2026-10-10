@@ -5,8 +5,11 @@ import rust from '../../../rust/src/index.ts';
 import typescript from '../../../typescript/src/index.ts';
 
 type Node = { readonly $type: number; readonly $text?: string; readonly $render?: () => string };
+type Item = Node | number;
 type Guard = ((node: unknown, context?: readonly Node[]) => boolean) & Record<string, unknown>;
-type Located = readonly [node: Node, context: readonly Node[]];
+type Located = readonly [node: Item, context: readonly Node[]];
+
+const kindOf = (item: Item): number => (typeof item === 'number' ? item : item.$type);
 
 const languages = { python, rust, typescript } as const;
 
@@ -14,13 +17,16 @@ async function surfaces(name: keyof typeof languages) {
 	const language = languages[name] as typeof rust;
 	const engine = await createEngine(language);
 	const portable = (await createEngine(language, { api: 'portable' })) as unknown as { kinds: Record<string, unknown>; is: Record<string, unknown> };
-	const kindName = (node: Node) => engine.trivia.kindName(node.$type);
+	const kindName = (item: Item) => engine.trivia.kindName(kindOf(item));
 	const located = (source: string): Located[] => {
 		const out: Located[] = [];
 		const walk = (node: Node, context: readonly Node[]): void => {
 			out.push([node, context]);
-			const facet = (engine.query as unknown as (n: Node) => { readonly $children: Iterable<Node> })(node);
-			for (const child of facet.$children) walk(child, [...context, node]);
+			const facet = (engine.query as unknown as (n: Node) => { readonly $children: Iterable<Item> })(node);
+			for (const child of facet.$children) {
+				if (typeof child === 'number') out.push([child, [...context, node]]);
+				else walk(child, [...context, node]);
+			}
 		};
 		walk(engine.parse(source) as unknown as Node, []);
 		return out;
@@ -35,7 +41,7 @@ async function surfaces(name: keyof typeof languages) {
 				return [path, ...paths((node as Record<string, unknown>)[key], path)];
 			});
 	const find = (source: string, kind: string, text?: string, nth = 0): Located => {
-		const hit = located(source).filter(([n]) => kindName(n) === kind && (text === undefined || (n.$text ?? n.$render?.()) === text))[nth];
+		const hit = located(source).filter(([n]) => kindName(n) === kind && (text === undefined || (typeof n !== 'number' && (n.$text ?? n.$render?.()) === text)))[nth];
 		if (hit === undefined) throw new Error(`no ${kind}${text === undefined ? '' : ` '${text}'`} in ${JSON.stringify(source)}`);
 		return hit;
 	};
@@ -78,11 +84,17 @@ describe('portable is: rust', async () => {
 	const { engine, at, find } = await surfaces('rust');
 
 	it('compares a boolean literal\'s own text', () => {
-		const [t, tc] = find('fn f() { let a = true; let b = false; }\n', 'boolean_literal', 'true');
-		const [f, fc] = find('fn f() { let a = true; let b = false; }\n', 'boolean_literal', 'false');
+		const [t, tc] = find('fn f() { let a = true; let b = false; }\n', 'true_keyword');
+		const [f, fc] = find('fn f() { let a = true; let b = false; }\n', 'false_keyword');
 		expect(at('literal.boolean.true')(t, tc)).toBe(true);
 		expect(at('literal.boolean.false')(t, tc)).toBe(false);
 		expect(at('literal.boolean.false')(f, fc)).toBe(true);
+	});
+
+	it('reads a kind-id leaf in the asking engine\'s language, on the low-level surface too', () => {
+		const [wildcard] = find('fn f(x: u8) { match x { _ => 1 } }\n', 'wildcard_pattern');
+		expect(typeof wildcard).toBe('number');
+		expect((engine.is as unknown as Record<string, (v: unknown) => boolean>).pattern!(wildcard)).toBe(true);
 	});
 
 	it('pins an operator on a parsed node and on a built one alike', () => {
@@ -120,7 +132,8 @@ describe('portable is: typescript', async () => {
 
 	it('compares a comment\'s own text', () => {
 		const root = engine.parse('/** doc */\n/* block */\nlet x = 1;\n') as unknown as { statements(): readonly { $trivia: { leading(): readonly Node[] } }[] };
-		const [doc, block] = root.statements()[0]!.$trivia.leading().filter((item) => item.$text?.startsWith('/'));
+		const { CommentBlock } = engine.kinds as unknown as Readonly<Record<string, number>>;
+		const [doc, block] = root.statements()[0]!.$trivia.leading().filter((item) => item.$type === CommentBlock);
 		expect(at('comment.block.doc')(doc)).toBe(true);
 		expect(at('comment.block.doc')(block)).toBe(false);
 		expect(at('comment.block')(block)).toBe(true);
@@ -164,7 +177,7 @@ describe('portable is agrees with one classification', () => {
 				const deepest = held.reduce((a, b) => (b.split('.').length > a.split('.').length ? b : a), held[0] ?? '');
 				for (const path of held) {
 					expect(deepest === path || deepest.startsWith(`${path}.`), `${path} beside ${deepest}`).toBe(true);
-					expect(kindsAt(path).$ids).toContain(node.$type);
+					expect(kindsAt(path).$ids).toContain(kindOf(node));
 				}
 			}
 		});

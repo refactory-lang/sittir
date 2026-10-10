@@ -1,19 +1,20 @@
 // Generated from bindings.scm and the vocabulary by `pnpm exec tsx packages/cli/src/cli.ts tool bindings-inventory --write`. Do not edit.
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
-import { alias, bindings, field, rename, split } from '../codegen/src/dsl/dsl-authoring.ts';
+import { bindings, field, rename, split } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "4e7f13124819035087ee3e5c6332505c2f31b757545ac33b814289969fef44d4",
+	hash: "f6b0c7ec39e8b45a4d6e98b86292fea98072ccab702374a9e2cead2143af3284",
 	patches: {
 		attribute_item: { "2": field("content") },
 		field_expression: { "0": field("object"), "2": field("property") },
+		field_initializer: { "0/0": field("attributes") },
 		for_expression: { "2": field("left"), "4": field("right") },
 		for_lifetimes: { "2": field("lifetimes") },
-		impl_item: { "-2": alias(sym("impl_item_body"), sym("extension_declaration")), "-1": alias(sym("impl_item_semi"), sym("extension_declaration")) },
 		inner_attribute_item: { "3": field("content") },
 		let_declaration: { "2": field("name") },
 		macro_invocation: { "0": field("function") },
 		match_expression: { "1": field("subject") },
+		shorthand_field_initializer: { "1": field("field") },
 		slice_pattern: { "1/0": field("patterns") },
 		trait_item: { "5": field("extends") },
 		try_expression: { "0": field("argument") },
@@ -25,13 +26,14 @@ export default bindings({
 		unary_expression: { "1": field("argument") },
 		use_list: { "1/0": field("use_clauses") },
 		use_wildcard: { "0/0": field("use_wildcard_group") },
-		visibility_modifier_pub: { "1/0": field("visibility_modifier_pub_scope") },
+		visibility_modifier_pub: { "1/0": field("scope") },
 		where_clause: { "1/0": field("where_predicates") }
 	},
 	renames: [
 		rename("source_file", "module"),
 		rename("function_item", "function_declaration"),
 		rename("function_signature_item", "signature_function_declaration"),
+		rename("impl_item_body", "extension_declaration"),
 		rename("trait_item", "trait_interface_declaration"),
 		rename("struct_item", "struct_declaration"),
 		rename("enum_item", "enum_declaration"),
@@ -77,7 +79,6 @@ export default bindings({
 		rename("use_bounds", "use_bounds_clause"),
 		rename("for_lifetimes", "lifetimes_clause"),
 		rename("field_initializer", "field_struct_element"),
-		rename("shorthand_field_initializer", "shorthand_field_struct_element"),
 		rename("base_field_initializer", "base_struct_element"),
 		rename("type_binding", "type_binding_element"),
 		rename("token_tree", "token_tree_macro_element"),
@@ -125,7 +126,7 @@ export default bindings({
 		rename("self", "self_identifier"),
 		rename("super", "super_identifier"),
 		rename("crate", "crate_identifier"),
-		rename("visibility_modifier_pub", "pub_visibility_modifier"),
+		rename("visibility_modifier_pub", "public_visibility_modifier"),
 		rename("attribute_item", "attribute"),
 		rename("inner_attribute_item", "inner_attribute"),
 		rename("attribute", "content_attribute")

@@ -1,7 +1,7 @@
 import { childFields, fieldRenameGrammar, fieldRenameIssue, fieldWrapGrammar, fieldWrapIssue, type FieldRename, type FieldWrap, type Split } from '../dsl/bind.ts';
 import type { RawGrammar } from '../compiler/types.ts';
 import type { GrammarName } from '../grammars.ts';
-import { type BindingFacts, type RefinedClaim, WILDCARD, refineClaims } from './facts.ts';
+import { type BindingFacts, type MemberFact, type RefinedClaim, WILDCARD, refineClaims } from './facts.ts';
 
 export type OverlayEdit = { readonly field: string } | { readonly alias: { readonly from: string; readonly to: string } };
 
@@ -89,6 +89,20 @@ const targetKey = (r: FieldRequest): string =>
 	'from' in r ? `${r.owner}\u0000field:${r.from}` : `${r.owner}\u0000${'token' in r.target ? `token:${r.target.token}` : `symbol:${r.target.symbol}`}`;
 const fieldKey = (r: FieldRequest): string => `${r.owner}\u0000${'from' in r ? r.to : r.field}`;
 
+function sameShapeAs(kinds: readonly string[], members: readonly MemberFact[]): readonly string[] {
+	const readAsKind = new Set(members.flatMap((m) => (m.route === 'kind' ? [m.kind] : m.route === 'self' ? [m.owner] : [])));
+	const captured = (kind: string): string =>
+		members
+			.filter((m) => m.owner === kind)
+			.map((m) => m.name)
+			.sort()
+			.join('\0');
+	const [first, ...rest] = kinds;
+	if (first === undefined) return [];
+	const same = (kind: string): boolean => !readAsKind.has(first) && !readAsKind.has(kind) && captured(kind) === captured(first);
+	return [first, ...rest.filter(same)];
+}
+
 export function deriveOverlay(input: OverlayInput): { overlay: BindingsOverlay; report: OverlayReport } {
 	const { grammar, facts, base, vocabMembers } = input;
 	const rules = base.rules as Record<string, unknown>;
@@ -99,9 +113,11 @@ export function deriveOverlay(input: OverlayInput): { overlay: BindingsOverlay; 
 	};
 	const claims = refineClaims(facts.claims);
 	const placed = (c: RefinedClaim): boolean => c.within.length > 0;
-	const plain = claims.filter((c) => c.refinement === null && c.kind !== null && c.kind !== WILDCARD && c.toplevel && !placed(c));
+	const naming = new Map<string, RefinedClaim>();
+	for (const c of claims) if (c.refinement === null && c.kind !== null && c.kind !== WILDCARD && c.toplevel && !placed(c) && !naming.has(c.kind)) naming.set(c.kind, c);
 	const kindsOfPath = new Map<string, Set<string>>();
-	for (const c of plain) (kindsOfPath.get(c.vocab) ?? kindsOfPath.set(c.vocab, new Set()).get(c.vocab)!).add(c.kind!);
+	for (const [kind, c] of naming) (kindsOfPath.get(c.vocab) ?? kindsOfPath.set(c.vocab, new Set()).get(c.vocab)!).add(kind);
+	const mergedOfPath = new Map([...kindsOfPath].map(([path, kinds]) => [path, sameShapeAs([...kinds], facts.members)]));
 
 	const renames: Record<string, string> = {};
 	const aliases: Record<string, string> = {};
@@ -145,7 +161,16 @@ export function deriveOverlay(input: OverlayInput): { overlay: BindingsOverlay; 
 			left('nested claim', row);
 			continue;
 		}
-		if ((kindsOfPath.get(c.vocab)?.size ?? 0) > 1) {
+		if (naming.get(c.kind) !== c) {
+			left('kind named by an earlier claim', row);
+			continue;
+		}
+		const merged = mergedOfPath.get(c.vocab) ?? [];
+		if (!merged.includes(c.kind)) {
+			left('kind kept apart by its shape', row);
+			continue;
+		}
+		if (merged.length > 1) {
 			wantedAliases.push({ kind: c.kind, to, row });
 			continue;
 		}
@@ -196,7 +221,7 @@ export function deriveOverlay(input: OverlayInput): { overlay: BindingsOverlay; 
 	});
 
 	const checks = { ...base, rules } as unknown as GrammarRecord;
-	const vocabOf = new Map(plain.map((c) => [c.kind!, c.vocab]));
+	const vocabOf = new Map([...naming].map(([kind, c]) => [kind, c.vocab]));
 	const realizedMembers: string[] = [];
 	const candidates: { row: string; request: FieldRequest }[] = [];
 	for (const m of facts.members) {
@@ -207,6 +232,10 @@ export function deriveOverlay(input: OverlayInput): { overlay: BindingsOverlay; 
 			continue;
 		}
 		const to = memberFieldName(m.name);
+		if (m.route === 'kind' || m.route === 'self') {
+			realizedMembers.push(row);
+			continue;
+		}
 		if (m.route === 'nested') {
 			left('nested route', row);
 			continue;

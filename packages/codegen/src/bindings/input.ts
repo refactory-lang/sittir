@@ -3,7 +3,7 @@ import { boundNameOf } from '../dsl/bind.ts';
 import { SEPARATOR_LABEL } from '../dsl/primitives/spacing.ts';
 import { parsePreferencePath } from '../dsl/primitives/preference-path.ts';
 import { type OptionsConfig, readOptionsBlock } from '../dsl/wire/options-block.ts';
-import { bindFacts, bindingsPath, type ModelNode, type SlotModel } from './facts.ts';
+import { bindFacts, bindingsPath, type EnumMember, type ModelNode, type SlotModel } from './facts.ts';
 import { readBindings } from './read.ts';
 import type { GrammarInput, LayoutSlot } from './routes.ts';
 
@@ -30,6 +30,7 @@ export interface NodeModelNode {
 	readonly subtypes?: readonly string[];
 	readonly elementKinds?: readonly string[];
 	readonly values?: readonly string[];
+	readonly members?: readonly EnumMember[];
 	readonly text?: string;
 	readonly pattern?: string;
 }
@@ -59,6 +60,7 @@ export function slotModelOf(record: NodeModelRecord): SlotModel {
 			subtypes: n.subtypes ?? [],
 			elementKinds: n.elementKinds ?? [],
 			enumValues: n.values ?? [],
+			enumMembers: n.members ?? [],
 			text: n.text ?? null,
 			pattern: n.pattern ?? null
 		});

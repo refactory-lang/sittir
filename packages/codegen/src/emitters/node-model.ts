@@ -110,6 +110,7 @@ interface SerializedFixedText extends SerializedNodeBase {
 interface SerializedEnum extends SerializedNodeBase {
 	modelType: 'enum';
 	values: string[];
+	members: { kind: string; text: string }[];
 }
 
 interface SerializedSupertype extends SerializedNodeBase {
@@ -257,7 +258,8 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 			return {
 				...base,
 				modelType: 'enum',
-				values: [...node.values]
+				values: [...node.values],
+				members: node.members.map(({ kind, text }) => ({ kind, text }))
 			};
 		case 'list':
 			return {

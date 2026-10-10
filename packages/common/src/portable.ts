@@ -1,11 +1,20 @@
 import type { PortableCondition, PortableReadEntry, PortableTable, QuerySlots, QuerySubject, SlotRoutes } from '@sittir/types';
 import { holds, slotItems } from './query.ts';
+import { spanSlicer, type ByteSpan } from './span.ts';
+import { treeOf } from './tree-token.ts';
+import { spanOf } from './utils.ts';
 
-type Node = { readonly $type: number; readonly $subType?: unknown };
+type Node = { readonly $type: number; readonly $subType?: unknown; readonly $text?: string };
 type Context = readonly Node[] | undefined;
+
+type Item = Node | number;
 
 const isNode = (value: unknown): value is Node =>
 	typeof value === 'object' && value !== null && typeof (value as Node).$type === 'number';
+
+const asItem = (value: unknown): Item | undefined => (typeof value === 'number' || isNode(value) ? value : undefined);
+
+const kindOf = (item: Item): number => (typeof item === 'number' ? item : item.$type);
 
 const sameRoutes = (a: SlotRoutes, b: SlotRoutes): boolean =>
 	a.fields.length === b.fields.length &&
@@ -24,10 +33,19 @@ export function portableSurface<Kinds, Is>(table: PortableTable, querySlots: Que
 		const accessor = querySlots[node.$type]?.find(([, r]) => sameRoutes(r, routes))?.[0];
 		return accessor === undefined ? [] : slotItems(node, accessor);
 	};
+	const slicers = new WeakMap<object, (span: ByteSpan) => string>();
+	const sliceOf = (node: Node): string | undefined => {
+		const tree = treeOf(node);
+		const span = spanOf(node);
+		if (tree?.source === undefined || span === undefined) return undefined;
+		let slice = slicers.get(tree);
+		if (slice === undefined) slicers.set(tree, (slice = spanSlicer(tree.source)));
+		return slice(span);
+	};
 	const textOf = (item: unknown): string | undefined =>
-		typeof item === 'number' ? table.fixedText[item] : isNode(item) ? (item as { readonly $text?: string }).$text : undefined;
-	const conditionHolds = (condition: PortableCondition, node: Node, context: Context): boolean => {
-		const holder = condition.up === 0 ? node : context?.[context.length - condition.up];
+		typeof item === 'number' ? table.fixedText[item] : isNode(item) ? (item.$text ?? sliceOf(item)) : undefined;
+	const conditionHolds = (condition: PortableCondition, node: Item, context: Context): boolean => {
+		const holder: Item | undefined = condition.up === 0 ? node : context?.[context.length - condition.up];
 		if (holder === undefined) return false;
 		let reached: readonly unknown[] = [holder];
 		for (const step of condition.via) reached = reached.filter(isNode).flatMap((n) => itemsIn(n, step));
@@ -37,9 +55,8 @@ export function portableSurface<Kinds, Is>(table: PortableTable, querySlots: Que
 			return holds(condition.plan, texts);
 		});
 	};
-	const classify = (node: Node, context: Context): string | undefined =>
-		table.entries[node.$type]?.find((entry) => placed(entry, context) && entry.test.every((c) => conditionHolds(c, node, context)))
-			?.path;
+	const classify = (item: Item, context: Context): string | undefined =>
+		table.entries[kindOf(item)]?.find((entry) => placed(entry, context) && entry.test.every((c) => conditionHolds(c, item, context)))?.path;
 	const kinds = new Map<string, object>([['', {}]]);
 	const guards = new Map<string, object>([['', {}]]);
 	const paths = Object.keys(table.paths);
@@ -50,10 +67,13 @@ export function portableSurface<Kinds, Is>(table: PortableTable, querySlots: Que
 		kinds.set(path, { $ids: Object.freeze([...ids]) });
 		guards.set(
 			path,
-			exact
-				? (node: unknown): boolean => isNode(node) && admitted.has(node.$type)
-				: (node: unknown, context?: readonly Node[]): boolean =>
-						isNode(node) && admitted.has(node.$type) && under(path, typeof node.$subType === 'string' ? node.$subType : classify(node, context))
+			(node: unknown, context?: readonly Node[]): boolean => {
+				const item = asItem(node);
+				if (item === undefined || !admitted.has(kindOf(item))) return false;
+				if (exact) return true;
+				if (typeof item !== 'number' && typeof item.$subType === 'string') return under(path, item.$subType);
+				return under(path, classify(item, context));
+			}
 		);
 	}
 	const link = (at: string, name: string, path: string): void => {

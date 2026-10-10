@@ -351,6 +351,19 @@
         }
       ]
     },
+    "any_keyword": {
+      "vocab": "type.primitive",
+      "read": [
+        {
+          "vocab": "type.primitive",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
     "arguments": {
       "container": {
         "kinds": [
@@ -1871,6 +1884,19 @@
           ]
         }
       ]
+    },
+    "boolean_keyword": {
+      "vocab": "type.primitive",
+      "read": [
+        {
+          "vocab": "type.primitive",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
     },
     "break_statement": {
       "vocab": "statement.break",
@@ -4723,10 +4749,62 @@
       ]
     },
     "lexical_declaration": {
-      "vocab": "declaration.variable.lexical",
+      "vocab": "declaration.variable",
       "read": [
         {
-          "vocab": "declaration.variable.lexical",
+          "vocab": "declaration.variable.constant",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "binding",
+              "slot": "kind",
+              "text": "const"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "const",
+                "fields": [
+                  "kind"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.variable.reassignable",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "binding",
+              "slot": "kind",
+              "text": "let"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "let",
+                "fields": [
+                  "kind"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.variable",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4735,7 +4813,7 @@
       ],
       "members": [
         {
-          "name": "keyword",
+          "name": "binding",
           "route": "slot",
           "slot": "kind",
           "path": [
@@ -5497,6 +5575,36 @@
         }
       ]
     },
+    "never_keyword": {
+      "vocab": "type.primitive",
+      "read": [
+        {
+          "vocab": "type.primitive.never",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "never",
+                "self": true
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "type.primitive",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
     "new_expression": {
       "vocab": "expression.call.new",
       "read": [
@@ -5972,6 +6080,19 @@
         }
       ]
     },
+    "number_keyword": {
+      "vocab": "type.primitive",
+      "read": [
+        {
+          "vocab": "type.primitive",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
     "number_octal": {
       "vocab": "literal.number.integer.octal",
       "read": [
@@ -6101,6 +6222,19 @@
           ]
         }
       ]
+    },
+    "object_keyword": {
+      "vocab": "type.primitive",
+      "read": [
+        {
+          "vocab": "type.primitive",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
     },
     "object_pattern": {
       "vocab": "pattern.object",
@@ -6531,28 +6665,18 @@
         "list": false
       }
     },
-    "predefined_type": {
-      "vocab": "type.primitive",
+    "private_keyword": {
+      "vocab": "modifier.visibility",
       "read": [
         {
-          "vocab": "type.primitive.never",
+          "vocab": "modifier.visibility.private",
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "never",
-                "self": true
-              }
-            }
-          ]
+          "test": []
         },
         {
-          "vocab": "type.primitive",
+          "vocab": "modifier.visibility",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -6757,6 +6881,26 @@
         }
       ]
     },
+    "protected_keyword": {
+      "vocab": "modifier.visibility",
+      "read": [
+        {
+          "vocab": "modifier.visibility.protected",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "modifier.visibility",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
     "public_field_definition": {
       "vocab": "declaration.field",
       "read": [
@@ -6926,6 +7070,26 @@
           ]
         }
       ]
+    },
+    "public_keyword": {
+      "vocab": "modifier.visibility",
+      "read": [
+        {
+          "vocab": "modifier.visibility.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "modifier.visibility",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
     },
     "readonly_type": {
       "vocab": "type.readonly",
@@ -7520,6 +7684,19 @@
         "list": true
       }
     },
+    "string_keyword": {
+      "vocab": "type.primitive",
+      "read": [
+        {
+          "vocab": "type.primitive",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
     "string_single": {
       "container": {
         "kinds": [
@@ -7703,6 +7880,19 @@
           ]
         }
       ]
+    },
+    "symbol_keyword": {
+      "vocab": "type.primitive",
+      "read": [
+        {
+          "vocab": "type.primitive",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
     },
     "template_literal_type": {
       "vocab": "type.template",
@@ -8602,6 +8792,32 @@
         }
       ]
     },
+    "unique": {
+      "vocab": "type.primitive",
+      "read": [
+        {
+          "vocab": "type.primitive",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
+    "unknown_keyword": {
+      "vocab": "type.primitive",
+      "read": [
+        {
+          "vocab": "type.primitive",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
     "update_expression_postfix": {
       "vocab": "expression.update",
       "read": [
@@ -8779,10 +8995,10 @@
       ]
     },
     "variable_declaration": {
-      "vocab": "declaration.variable.var",
+      "vocab": "declaration.variable.reassignable.function_scoped",
       "read": [
         {
-          "vocab": "declaration.variable.var",
+          "vocab": "declaration.variable.reassignable.function_scoped",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -8899,6 +9115,19 @@
           ]
         }
       ]
+    },
+    "void_keyword": {
+      "vocab": "type.primitive",
+      "read": [
+        {
+          "vocab": "type.primitive",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
     },
     "while_statement": {
       "vocab": "statement.loop.while",
@@ -9042,30 +9271,30 @@
     "levels": [
       {
         "depth": 1,
-        "paths": 12,
+        "paths": 13,
         "kinds": 5,
         "refinements": 0,
-        "aliases": 145
+        "aliases": 148
       },
       {
         "depth": 2,
-        "paths": 110,
-        "kinds": 103,
+        "paths": 111,
+        "kinds": 116,
         "refinements": 8,
-        "aliases": 93
+        "aliases": 97
       },
       {
         "depth": 3,
-        "paths": 81,
-        "kinds": 68,
-        "refinements": 55,
-        "aliases": 40
+        "paths": 84,
+        "kinds": 70,
+        "refinements": 58,
+        "aliases": 41
       },
       {
         "depth": 4,
-        "paths": 47,
-        "kinds": 10,
-        "refinements": 23,
+        "paths": 48,
+        "kinds": 11,
+        "refinements": 24,
         "aliases": 0
       },
       {
@@ -9327,6 +9556,14 @@
           "attribute.content.parenthesized",
           "expression.parenthesized",
           "type.parenthesized"
+        ]
+      },
+      {
+        "under": "",
+        "name": "private",
+        "paths": [
+          "identifier.property.private",
+          "modifier.visibility.private"
         ]
       },
       {

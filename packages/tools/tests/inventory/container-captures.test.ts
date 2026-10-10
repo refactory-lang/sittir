@@ -28,6 +28,7 @@ const node = (kind: string, slots: readonly ModelSlot[] = [], subtypes: readonly
 	subtypes,
 	elementKinds: [],
 	enumValues: [],
+	enumMembers: [],
 	text: null,
 	pattern: null
 });

@@ -2327,6 +2327,16 @@
         "?",
         "!"
       ],
+      "members": [
+        {
+          "kind": "qmark",
+          "text": "?"
+        },
+        {
+          "kind": "bang",
+          "text": "!"
+        }
+      ],
       "factoryShape": "text"
     },
     {
@@ -2385,6 +2395,20 @@
         "*",
         "+",
         "?"
+      ],
+      "members": [
+        {
+          "kind": "star",
+          "text": "*"
+        },
+        {
+          "kind": "plus",
+          "text": "+"
+        },
+        {
+          "kind": "qmark",
+          "text": "?"
+        }
       ],
       "factoryShape": "text"
     },

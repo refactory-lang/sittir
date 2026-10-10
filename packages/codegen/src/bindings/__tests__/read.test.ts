@@ -2,6 +2,23 @@ import { describe, it, expect } from 'vitest';
 import { BindingsSyntaxError, bindingPatterns, readBindings } from '../index.ts';
 
 describe('readBindings', () => {
+	it('reads a second single-segment capture on a node as the presence of that node\'s kind in the slot the first capture names', async () => {
+		const facts = await readBindings('(public_field_definition name: (private_property_identifier) @name @private)');
+		expect(facts.members).toEqual([
+			{ route: 'rename', owner: 'public_field_definition', name: 'name', field: 'name', kind: null, after: null },
+			{ route: 'kind', owner: 'public_field_definition', name: 'private', member: 'name', kind: 'private_property_identifier' }
+		]);
+	});
+	it('reads a single-segment capture beside the top node\'s claim as a member the node supplies by being the node', async () => {
+		const facts = await readBindings('(shorthand_property_identifier) @element.pair @key');
+		expect(facts.claims.map((c) => [c.vocab, c.kind])).toEqual([['element.pair', 'shorthand_property_identifier']]);
+		expect(facts.members).toEqual([{ route: 'self', owner: 'shorthand_property_identifier', name: 'key' }]);
+	});
+	it('still reads a lone single-segment capture on the top node as a claim', async () => {
+		const facts = await readBindings('(source_file) @module');
+		expect(facts.claims.map((c) => [c.vocab, c.kind])).toEqual([['module', 'source_file']]);
+		expect(facts.members).toEqual([]);
+	});
 	it('keeps a presence capture\'s token text beside its name', async () => {
 		const facts = await readBindings('(function_item "async" @isAsync) @declaration.function');
 		expect(facts.members).toEqual([{ route: 'presence', owner: 'function_item', name: 'isAsync', token: 'async', via: [] }]);

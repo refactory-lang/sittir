@@ -146,6 +146,7 @@ function interceptedRender<Call>(
 
 function inLanguageOf(identity: EngineIdentity<LanguageAPI>): (value: unknown) => boolean {
 	return (value) => {
+		if (typeof value === 'number') return true;
 		const stamp = engineOf(value);
 		return stamp !== undefined && sameLanguage(stamp, identity);
 	};

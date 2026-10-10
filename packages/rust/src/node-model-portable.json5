@@ -1047,57 +1047,22 @@
         "list": false
       }
     },
-    "bool_keyword": {
+    "block_keyword": {
+      "vocab": "element.macro.fragment",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
+          "vocab": "element.macro.fragment",
+          "toplevel": true,
+          "within": [],
           "pins": [],
           "test": []
         }
       ],
       "members": []
     },
-    "boolean_literal": {
-      "vocab": "literal.boolean",
+    "bool_keyword": {
+      "vocab": "type.primitive",
       "read": [
-        {
-          "vocab": "literal.boolean.true",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "true",
-                "self": true
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "literal.boolean.false",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "false",
-                "self": true
-              }
-            }
-          ]
-        },
         {
           "vocab": "declaration.parameter",
           "toplevel": false,
@@ -1108,7 +1073,7 @@
           "test": []
         },
         {
-          "vocab": "literal.boolean",
+          "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -1310,6 +1275,7 @@
       ]
     },
     "char_keyword": {
+      "vocab": "type.primitive",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -1317,6 +1283,13 @@
           "within": [
             "closure_parameters"
           ],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "type.primitive",
+          "toplevel": true,
+          "within": [],
           "pins": [],
           "test": []
         }
@@ -2047,6 +2020,15 @@
       "vocab": "identifier.crate",
       "read": [
         {
+          "vocab": "modifier.visibility.public.internal",
+          "toplevel": false,
+          "within": [
+            "visibility_modifier"
+          ],
+          "pins": [],
+          "test": []
+        },
+        {
           "vocab": "identifier.crate",
           "toplevel": true,
           "within": [],
@@ -2363,6 +2345,32 @@
       ],
       "members": []
     },
+    "expr_2021_keyword": {
+      "vocab": "element.macro.fragment",
+      "read": [
+        {
+          "vocab": "element.macro.fragment",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
+    "expr_keyword": {
+      "vocab": "element.macro.fragment",
+      "read": [
+        {
+          "vocab": "element.macro.fragment",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
     "expression_statement": {
       "vocab": "statement.expression",
       "read": [
@@ -2504,6 +2512,7 @@
       }
     },
     "f32_keyword": {
+      "vocab": "type.primitive",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -2513,11 +2522,19 @@
           ],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "type.primitive",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": []
     },
     "f64_keyword": {
+      "vocab": "type.primitive",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -2525,6 +2542,52 @@
           "within": [
             "closure_parameters"
           ],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "type.primitive",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
+    "false_keyword": {
+      "vocab": "literal.boolean",
+      "read": [
+        {
+          "vocab": "literal.boolean.false",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "false",
+                "self": true
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.parameter",
+          "toplevel": false,
+          "within": [
+            "closure_parameters"
+          ],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "literal.boolean",
+          "toplevel": true,
+          "within": [],
           "pins": [],
           "test": []
         }
@@ -2677,7 +2740,7 @@
       ],
       "members": [
         {
-          "name": "attributeItems",
+          "name": "attributes",
           "route": "slot",
           "slot": "attribute_item",
           "path": [
@@ -2861,19 +2924,6 @@
       "read": [
         {
           "vocab": "declaration.module.foreign",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
-    "fragment_specifier": {
-      "vocab": "element.macro.fragment",
-      "read": [
-        {
-          "vocab": "element.macro.fragment",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3517,6 +3567,7 @@
       ]
     },
     "i128_keyword": {
+      "vocab": "type.primitive",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -3524,6 +3575,13 @@
           "within": [
             "closure_parameters"
           ],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "type.primitive",
+          "toplevel": true,
+          "within": [],
           "pins": [],
           "test": []
         }
@@ -3531,6 +3589,7 @@
       "members": []
     },
     "i16_keyword": {
+      "vocab": "type.primitive",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -3538,6 +3597,13 @@
           "within": [
             "closure_parameters"
           ],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "type.primitive",
+          "toplevel": true,
+          "within": [],
           "pins": [],
           "test": []
         }
@@ -3545,6 +3611,7 @@
       "members": []
     },
     "i32_keyword": {
+      "vocab": "type.primitive",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -3552,6 +3619,13 @@
           "within": [
             "closure_parameters"
           ],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "type.primitive",
+          "toplevel": true,
+          "within": [],
           "pins": [],
           "test": []
         }
@@ -3559,6 +3633,7 @@
       "members": []
     },
     "i64_keyword": {
+      "vocab": "type.primitive",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -3568,11 +3643,19 @@
           ],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "type.primitive",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": []
     },
     "i8_keyword": {
+      "vocab": "type.primitive",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -3580,6 +3663,26 @@
           "within": [
             "closure_parameters"
           ],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "type.primitive",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
+    "ident_keyword": {
+      "vocab": "element.macro.fragment",
+      "read": [
+        {
+          "vocab": "element.macro.fragment",
+          "toplevel": true,
+          "within": [],
           "pins": [],
           "test": []
         }
@@ -4075,6 +4178,7 @@
       ]
     },
     "isize_keyword": {
+      "vocab": "type.primitive",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -4082,6 +4186,26 @@
           "within": [
             "closure_parameters"
           ],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "type.primitive",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
+    "item_keyword": {
+      "vocab": "element.macro.fragment",
+      "read": [
+        {
+          "vocab": "element.macro.fragment",
+          "toplevel": true,
+          "within": [],
           "pins": [],
           "test": []
         }
@@ -4351,6 +4475,19 @@
         "list": false
       }
     },
+    "lifetime_keyword": {
+      "vocab": "element.macro.fragment",
+      "read": [
+        {
+          "vocab": "element.macro.fragment",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
     "lifetime_parameter": {
       "vocab": "declaration.type_parameter.lifetime",
       "read": [
@@ -4462,6 +4599,19 @@
         "terminals": [],
         "list": false
       }
+    },
+    "literal_keyword": {
+      "vocab": "element.macro.fragment",
+      "read": [
+        {
+          "vocab": "element.macro.fragment",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
     },
     "loop_expression": {
       "vocab": "statement.loop",
@@ -4695,6 +4845,19 @@
           ]
         }
       ]
+    },
+    "meta_keyword": {
+      "vocab": "element.macro.fragment",
+      "read": [
+        {
+          "vocab": "element.macro.fragment",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
     },
     "metavariable": {
       "vocab": "identifier.metavariable",
@@ -5037,6 +5200,45 @@
         "list": false
       }
     },
+    "pat_keyword": {
+      "vocab": "element.macro.fragment",
+      "read": [
+        {
+          "vocab": "element.macro.fragment",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
+    "pat_param_keyword": {
+      "vocab": "element.macro.fragment",
+      "read": [
+        {
+          "vocab": "element.macro.fragment",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
+    "path_keyword": {
+      "vocab": "element.macro.fragment",
+      "read": [
+        {
+          "vocab": "element.macro.fragment",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
     "patterns": {
       "container": {
         "kinds": [
@@ -5076,19 +5278,6 @@
         "terminals": [],
         "list": false
       }
-    },
-    "primitive_type": {
-      "vocab": "type.primitive",
-      "read": [
-        {
-          "vocab": "type.primitive",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
     },
     "qualified_type": {
       "vocab": "type.qualified",
@@ -5778,10 +5967,10 @@
       }
     },
     "shorthand_field_initializer": {
-      "vocab": "element.struct.field.shorthand",
+      "vocab": "element.struct.field",
       "read": [
         {
-          "vocab": "element.struct.field.shorthand",
+          "vocab": "element.struct.field",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5801,7 +5990,7 @@
           ]
         },
         {
-          "name": "name",
+          "name": "field",
           "route": "slot",
           "slot": "name",
           "path": [
@@ -5959,7 +6148,21 @@
         }
       ]
     },
+    "stmt_keyword": {
+      "vocab": "element.macro.fragment",
+      "read": [
+        {
+          "vocab": "element.macro.fragment",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
     "str_keyword": {
+      "vocab": "type.primitive",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -5967,6 +6170,13 @@
           "within": [
             "closure_parameters"
           ],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "type.primitive",
+          "toplevel": true,
+          "within": [],
           "pins": [],
           "test": []
         }
@@ -6458,6 +6668,45 @@
         }
       ]
     },
+    "true_keyword": {
+      "vocab": "literal.boolean",
+      "read": [
+        {
+          "vocab": "literal.boolean.true",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "true",
+                "self": true
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.parameter",
+          "toplevel": false,
+          "within": [
+            "closure_parameters"
+          ],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "literal.boolean",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
     "try_block": {
       "vocab": "expression.block.try",
       "read": [
@@ -6521,6 +6770,19 @@
         "terminals": [],
         "list": false
       }
+    },
+    "tt_keyword": {
+      "vocab": "element.macro.fragment",
+      "read": [
+        {
+          "vocab": "element.macro.fragment",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
     },
     "tuple_expression": {
       "vocab": "expression.collection.tuple",
@@ -6685,6 +6947,19 @@
         "terminals": [],
         "list": false
       }
+    },
+    "ty_keyword": {
+      "vocab": "element.macro.fragment",
+      "read": [
+        {
+          "vocab": "element.macro.fragment",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
     },
     "type_argument": {
       "vocab": "element.type_argument",
@@ -7034,6 +7309,7 @@
       }
     },
     "u128_keyword": {
+      "vocab": "type.primitive",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -7041,6 +7317,13 @@
           "within": [
             "closure_parameters"
           ],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "type.primitive",
+          "toplevel": true,
+          "within": [],
           "pins": [],
           "test": []
         }
@@ -7048,6 +7331,7 @@
       "members": []
     },
     "u16_keyword": {
+      "vocab": "type.primitive",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -7055,6 +7339,13 @@
           "within": [
             "closure_parameters"
           ],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "type.primitive",
+          "toplevel": true,
+          "within": [],
           "pins": [],
           "test": []
         }
@@ -7062,6 +7353,7 @@
       "members": []
     },
     "u32_keyword": {
+      "vocab": "type.primitive",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -7069,6 +7361,13 @@
           "within": [
             "closure_parameters"
           ],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "type.primitive",
+          "toplevel": true,
+          "within": [],
           "pins": [],
           "test": []
         }
@@ -7076,6 +7375,7 @@
       "members": []
     },
     "u64_keyword": {
+      "vocab": "type.primitive",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -7085,11 +7385,19 @@
           ],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "type.primitive",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": []
     },
     "u8_keyword": {
+      "vocab": "type.primitive",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -7097,6 +7405,13 @@
           "within": [
             "closure_parameters"
           ],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "type.primitive",
+          "toplevel": true,
+          "within": [],
           "pins": [],
           "test": []
         }
@@ -7555,6 +7870,7 @@
       }
     },
     "usize_keyword": {
+      "vocab": "type.primitive",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -7562,6 +7878,13 @@
           "within": [
             "closure_parameters"
           ],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "type.primitive",
+          "toplevel": true,
+          "within": [],
           "pins": [],
           "test": []
         }
@@ -7604,30 +7927,20 @@
         }
       ]
     },
-    "visibility_modifier": {
-      "vocab": "modifier.visibility",
+    "vis_keyword": {
+      "vocab": "element.macro.fragment",
       "read": [
         {
-          "vocab": "modifier.visibility",
+          "vocab": "element.macro.fragment",
           "toplevel": true,
           "within": [],
           "pins": [],
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "visibility_modifier",
-              "slot": "content"
-            }
-          ]
-        }
-      ],
+      "members": []
+    },
+    "visibility_modifier": {
       "container": {
         "kinds": [
           "crate",
@@ -7638,10 +7951,31 @@
       }
     },
     "visibility_modifier_pub": {
-      "vocab": "modifier.visibility.pub",
+      "vocab": "modifier.visibility.public",
       "read": [
         {
-          "vocab": "modifier.visibility.pub",
+          "vocab": "modifier.visibility.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "modifier.visibility.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "modifier.visibility.public.internal",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "modifier.visibility.public.restricted",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -7650,7 +7984,7 @@
       ],
       "members": [
         {
-          "name": "visibilityModifierPubScope",
+          "name": "scope",
           "route": "slot",
           "slot": "visibility_modifier_pub_scope",
           "path": [
@@ -7902,27 +8236,27 @@
         "paths": 13,
         "kinds": 3,
         "refinements": 0,
-        "aliases": 121
+        "aliases": 123
       },
       {
         "depth": 2,
         "paths": 101,
-        "kinds": 133,
+        "kinds": 132,
         "refinements": 11,
-        "aliases": 83
+        "aliases": 85
       },
       {
         "depth": 3,
-        "paths": 72,
-        "kinds": 61,
-        "refinements": 47,
-        "aliases": 33
+        "paths": 73,
+        "kinds": 77,
+        "refinements": 46,
+        "aliases": 34
       },
       {
         "depth": 4,
-        "paths": 39,
-        "kinds": 13,
-        "refinements": 21,
+        "paths": 40,
+        "kinds": 14,
+        "refinements": 22,
         "aliases": 0
       }
     ],

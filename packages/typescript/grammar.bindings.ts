@@ -3,7 +3,7 @@
 import { bindings, field, rename } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "60bf4253556dae563f599d0261c36e778d9c8587884e648e8d0a4d918862940e",
+	hash: "29092a04de4fff5eb11b8966027cde1b8437e590bd02ea59193d3368c62cf8c2",
 	patches: {
 		_parameter_name: { "1/0": field("visibility"), "4": field("name") },
 		abstract_class_declaration: { "1": field("abstract") },
@@ -14,7 +14,7 @@ export default bindings({
 		generator_function: { "2": field("generator") },
 		generator_function_declaration: { "2": field("generator") },
 		interface_declaration: { "3/0": field("extends") },
-		lexical_declaration: { "0": field("keyword") },
+		lexical_declaration: { "0": field("binding") },
 		method_definition: { "0/0": field("visibility") },
 		method_signature: { "0/0": field("visibility"), "5/0": field("accessor") },
 		new_expression: { "1": field("function") },
@@ -34,8 +34,8 @@ export default bindings({
 		rename("abstract_method_signature", "abstract_signature_method_declaration"),
 		rename("property_signature", "signature_field_declaration"),
 		rename("public_field_definition", "field_declaration"),
-		rename("lexical_declaration", "lexical_variable_declaration"),
-		rename("variable_declaration", "var_variable_declaration"),
+		rename("lexical_declaration", "variable_declaration"),
+		rename("variable_declaration", "function_scoped_reassignable_variable_declaration"),
 		rename("required_parameter", "parameter_declaration"),
 		rename("optional_parameter", "optional_parameter_declaration"),
 		rename("type_parameter", "type_parameter_declaration"),
@@ -128,6 +128,7 @@ export default bindings({
 		rename("this", "self_identifier"),
 		rename("super", "super_identifier"),
 		rename("computed_property_name", "computed_property_identifier"),
+		rename("accessibility_modifier", "visibility_modifier"),
 		rename("decorator", "decorator_attribute")
 	],
 	splits: []

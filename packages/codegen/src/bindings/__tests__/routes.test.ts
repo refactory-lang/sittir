@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { type GrammarInput, type ModelNode, type ModelSlot, readBindings, resolveRoutes } from '../index.ts';
+import { type GrammarInput, type ModelNode, type ModelSlot, derive, readBindings, resolveRoutes } from '../index.ts';
 
 const slot = (name: string, kinds: readonly string[], extra: Partial<ModelSlot> = {}): ModelSlot => ({
 	name,
@@ -19,6 +19,7 @@ const node = (kind: string, slots: readonly ModelSlot[] = [], extra: Partial<Mod
 	subtypes: [],
 	elementKinds: [],
 	enumValues: [],
+	enumMembers: [],
 	text: null,
 	pattern: null,
 	...extra
@@ -51,7 +52,18 @@ const MODEL = [
 	node('let_decl', [slot('pattern', ['_param']), slot('value', ['expr'])]),
 	node('mut_pattern'),
 	node('parameter'),
-	node('members', [], { modelType: 'list', elementKinds: ['_param'] })
+	node('members', [], { modelType: 'list', elementKinds: ['_param'] }),
+	node('choice_holder', [slot('part', ['modifiers', 'identifier'])]),
+	node('bool', [], {
+		modelType: 'enum',
+		enumValues: ['true', 'false'],
+		enumMembers: [
+			{ kind: 'true_keyword', text: 'true' },
+			{ kind: 'false_keyword', text: 'false' }
+		]
+	}),
+	node('true_keyword', [], { modelType: 'keyword', text: 'true' }),
+	node('false_keyword', [], { modelType: 'keyword', text: 'false' })
 ];
 
 const grammar = async (bindings: string): Promise<GrammarInput> => ({
@@ -152,6 +164,34 @@ describe('resolveRoutes', () => {
 		});
 	});
 
+	it('takes only the arm a deep member routes through, and keeps the slot\'s other arms', async () => {
+		const routes = resolveRoutes(await grammar('(choice_holder (modifiers "async" @isAsync)) @declaration.function'));
+		const members = routes.members.get('choice_holder') ?? [];
+		expect(members.map((m) => m.name)).toEqual(['part', 'isAsync']);
+		expect(members[0]).toEqual({
+			route: 'slot',
+			name: 'part',
+			slot: slot('part', ['identifier']),
+			except: ['modifiers'],
+			path: [{ owner: 'choice_holder', slot: 'part' }]
+		});
+	});
+
+	it('routes a flag through the slot its first capture names, testing that slot\'s kind', async () => {
+		const routes = resolveRoutes(await grammar('(function_definition) @declaration.function\n(function_definition name: (identifier) @name @private)'));
+		expect(routes.members.get('function_definition')?.find((m) => m.name === 'private')).toEqual({
+			route: 'kind',
+			name: 'private',
+			kind: 'identifier',
+			path: [{ owner: 'function_definition', slot: 'name' }]
+		});
+	});
+
+	it('routes a member the claimed node supplies by being the node', async () => {
+		const routes = resolveRoutes(await grammar('(identifier) @element.pair @key'));
+		expect(routes.members.get('identifier')).toEqual([{ route: 'self', name: 'key', path: [] }]);
+	});
+
 	it('builds a nested member back from the owner outward, though the facts name its route nearest first', async () => {
 		const routes = resolveRoutes(await grammar('(outer (middle (binary left: (_) @lhs))) @expression.outer'));
 		const member = routes.members.get('outer')?.find((m) => m.name === 'lhs');
@@ -186,6 +226,27 @@ describe('resolveRoutes', () => {
 		expect(routes.containers.has('binary')).toBe(false);
 	});
 
+	it('enters a claim on a kind the reader stores as its member\'s kind id on each member, an equality on its text decided by the member\'s', async () => {
+		const routes = resolveRoutes(
+			await grammar(['(bool) @literal.boolean', '((bool) @literal.boolean.true (#eq? @literal.boolean.true "true"))'].join('\n'))
+		);
+		expect(routes.readEntries.has('bool')).toBe(false);
+		expect(routes.readEntries.get('true_keyword')?.map((e) => e.claimed)).toEqual(['bool', 'bool']);
+		expect(routes.readEntries.get('true_keyword')?.map((e) => e.vocab)).toEqual(['literal.boolean.true', 'literal.boolean']);
+		expect(routes.readEntries.get('false_keyword')?.map((e) => e.vocab)).toEqual(['literal.boolean']);
+	});
+
+	it('enters a claim pinning an enum kind\'s token only on the member that is that token', async () => {
+		const routes = resolveRoutes(await grammar(['(bool) @literal.boolean', '(bool "false") @literal.boolean.false'].join('\n')));
+		expect(routes.readEntries.get('false_keyword')?.map((e) => e.vocab)).toEqual(['literal.boolean.false', 'literal.boolean']);
+		expect(routes.readEntries.get('true_keyword')?.map((e) => e.vocab)).toEqual(['literal.boolean']);
+	});
+
+	it('leaves a pattern test on a kind the reader stores as its member\'s kind id to every member, for the read to decide', async () => {
+		const routes = resolveRoutes(await grammar('((bool) @literal.boolean.true (#match? @literal.boolean.true "^t"))'));
+		expect([...routes.readEntries.keys()].filter((k) => k.endsWith('_keyword')).sort()).toEqual(['false_keyword', 'true_keyword']);
+	});
+
 	it('keeps the template a templated claim builds from', async () => {
 		const routes = resolveRoutes(
 			await grammar('((function_definition name: (identifier) @name) @declaration.method.dunder (#match? @name "^__(?<stem>.*)__$"))')
@@ -193,3 +254,22 @@ describe('resolveRoutes', () => {
 		expect(routes.readEntries.get('function_definition')?.[0]?.template).toMatchObject({ holes: ['stem'] });
 	});
 });
+
+describe('derive', () => {
+	it('types a flag as an optional boolean member of the claimed kind', async () => {
+		const d = derive([await grammar('(function_definition) @declaration.function\n(function_definition name: (identifier) @name @private)')]);
+		const flag = d.members.get('declaration.function')?.get('private');
+		expect([...(flag?.kinds ?? [])]).toEqual(['boolean']);
+		expect(flag?.optional).toBe(true);
+	});
+
+	it('types a self route by the node\'s own text, required wherever the node is claimed', async () => {
+		const model = new Map(MODEL.map((n) => [n.kind, n]));
+		model.set('shorthand', node('shorthand', [], { modelType: 'pattern', pattern: '[a-z]+' }));
+		const input = { ...(await grammar('(shorthand) @element.pair @key')), model, textTokens: new Set(['shorthand']) };
+		const key = derive([input]).members.get('element.pair')?.get('key');
+		expect([...(key?.kinds ?? [])]).toEqual(['text:[a-z]+']);
+		expect(key?.optional).toBe(false);
+	});
+});
+

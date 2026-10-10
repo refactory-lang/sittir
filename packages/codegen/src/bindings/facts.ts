@@ -50,6 +50,8 @@ export type MemberFact =
 			readonly token: string;
 			readonly via: readonly string[];
 	  }
+	| { readonly route: 'kind'; readonly owner: string; readonly name: string; readonly member: string; readonly kind: string }
+	| { readonly route: 'self'; readonly owner: string; readonly name: string }
 	| ({
 			readonly route: 'nested';
 			readonly owner: string;
@@ -118,6 +120,10 @@ export interface ModelSlot {
 	readonly terminals: readonly string[];
 }
 
+export interface EnumMember {
+	readonly kind: string;
+	readonly text: string;
+}
 export interface ModelNode {
 	readonly kind: string;
 	readonly modelType: string;
@@ -125,6 +131,7 @@ export interface ModelNode {
 	readonly subtypes: readonly string[];
 	readonly elementKinds: readonly string[];
 	readonly enumValues: readonly string[];
+	readonly enumMembers: readonly EnumMember[];
 	readonly text: string | null;
 	readonly pattern: string | null;
 }
@@ -198,6 +205,8 @@ export function bindFacts(facts: BindingFacts, rename: (kind: string) => string)
 		claims: facts.claims.map((c) => ({ ...c, kind: kind(c.kind), within: c.within.map(rename) })),
 		members: facts.members.map((m): MemberFact => {
 			if (m.route === 'presence') return { ...m, owner: rename(m.owner), via: m.via.map(rename) };
+			if (m.route === 'kind') return { ...m, owner: rename(m.owner), kind: rename(m.kind) };
+			if (m.route === 'self') return { ...m, owner: rename(m.owner) };
 			if (m.route === 'nested') return { ...bindSelector(m, rename), owner: rename(m.owner), parent: rename(m.parent), via: m.via.map(rename) };
 			return { ...bindSelector(m, rename), owner: rename(m.owner) };
 		}),

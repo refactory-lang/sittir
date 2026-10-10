@@ -4,6 +4,7 @@ import type { TreeHandle } from '@sittir/common/utils';
 import { nativeLanguageEngine, type ParsedRoot } from '@sittir/common/engine';
 import { ir } from './ir.js';
 import { is } from './is.js';
+import { portable } from './portable.js';
 import {
 	TSKindId,
 	type FixedTextKindId,
@@ -31,6 +32,7 @@ export interface RustAPI extends LanguageAPI {
 	readonly options: Options & IndentOption<string, IndentChar>;
 	readonly indentChar: IndentChar;
 	readonly empty: RustTypeMap['empty'];
+	readonly portable: typeof portable;
 }
 
 export const hooks: LanguageHooks<RustAPI> = Object.freeze<LanguageHooks<RustAPI>>({
@@ -50,5 +52,6 @@ export const hooks: LanguageHooks<RustAPI> = Object.freeze<LanguageHooks<RustAPI
 	querySlots,
 	createNative: (options) => nativeLanguageEngine<RustAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as SourceFileRoot & ParsedRoot, tree as TreeHandle),
-	hydrate: (node, tree) => hydrate(node, tree as TreeHandle)
+	hydrate: (node, tree) => hydrate(node, tree as TreeHandle),
+	portable
 });

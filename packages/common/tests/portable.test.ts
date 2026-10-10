@@ -11,6 +11,8 @@ const BLOCK = 6;
 const CLASS = 7;
 const BINARY = 8;
 const PLUS = 9;
+const TRUE = 10;
+const FALSE = 11;
 
 const SLOTS: QuerySlots = {
 	[FUNCTION]: [['name', { fields: ['name'], kinds: [] }]],
@@ -32,11 +34,13 @@ const TABLE: PortableTable = {
 		literal: { ids: [BOOLEAN], exact: true },
 		'literal.boolean': { ids: [BOOLEAN], exact: true },
 		'literal.boolean.true': { ids: [BOOLEAN], exact: false },
+		'literal.keyword': { ids: [TRUE, FALSE], exact: true },
+		'literal.keyword.true': { ids: [TRUE], exact: true },
 		expression: { ids: [IDENTIFIER, BINARY], exact: false },
 		'expression.call': { ids: [IDENTIFIER], exact: true },
 		'expression.add': { ids: [BINARY], exact: false }
 	},
-	fixedText: { [PLUS]: '+' },
+	fixedText: { [PLUS]: '+', [TRUE]: 'true', [FALSE]: 'false' },
 	aliases: [['', 'static', 'declaration.method.static']],
 	entries: {
 		[FUNCTION]: [
@@ -54,6 +58,8 @@ const TABLE: PortableTable = {
 			{ path: 'literal.boolean', within: [], test: [] }
 		],
 		[IDENTIFIER]: [{ path: 'expression.call', within: [], test: [] }],
+		[TRUE]: [{ path: 'literal.keyword.true', within: [], test: [] }],
+		[FALSE]: [{ path: 'literal.keyword', within: [], test: [{ up: 0, via: [], plan: { op: 'eq', text: 'false', self: true } }] }],
 		[BINARY]: [{ path: 'expression.add', within: [], test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', ...SLOTS[BINARY]![0]![1] } }] }]
 	}
 };
@@ -135,6 +141,13 @@ describe('portableSurface is', () => {
 		expect(is.declaration.method.static(method)).toBe(true);
 		expect(is.declaration.method(method)).toBe(true);
 		expect(is.declaration.constructor({ ...fn('__init__'), $subType: 'declaration.function' })).toBe(false);
+	});
+
+	it('reads a kind-id leaf as a node of its kind, its text the fixed literal\'s', () => {
+		expect(is.literal.keyword.true(TRUE)).toBe(true);
+		expect(is.literal.keyword.true(FALSE)).toBe(false);
+		expect(is.literal.keyword(FALSE)).toBe(true);
+		expect(is.literal.keyword(PLUS)).toBe(false);
 	});
 
 	it('rejects a kind no entry reads', () => {

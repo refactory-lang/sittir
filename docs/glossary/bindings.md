@@ -4,7 +4,7 @@ The bindings facts and the derivation over them. The facts are what a grammar's 
 
 ### `packages/codegen/src/bindings/facts.ts::BindingFacts`
 
-What a bindings file says, before the slot model is consulted: the claims (`ClaimFact`, with the kinds enclosing a claim made below the top), the member captures (`MemberFact`: a `rename` of the slot its selector finds, the `presence` of a token, or a `nested` member with the kinds it routes through and the selector of its slot), the containers (`ContainerFact`: the element's selector, every other capture, the selectors of the slots it drops on purpose with the pattern's reason, and the line and text of its pattern), the templates (`TemplateFact`) and the unclaimed kinds (`UnclaimedFact`, each with its reason). Facts come in file order and, within a pattern, in pre-order, which the derivation's first-claim and rename rules rely on. A presence member keeps its token's text (`"async" @isAsync` has the name `isAsync` and the token `async`); codegen resolves the text to a kind id through the stamped public symbol, never by a text lookup of its own.
+What a bindings file says, before the slot model is consulted: the claims (`ClaimFact`, with the kinds enclosing a claim made below the top), the member captures (`MemberFact`: a `rename` of the slot its selector finds, the `presence` of a token, the presence of a `kind` in the slot another member names (a flag), a `self` member the claimed node supplies by being the node, or a `nested` member with the kinds it routes through and the selector of its slot), the containers (`ContainerFact`: the element's selector, every other capture, the selectors of the slots it drops on purpose with the pattern's reason, and the line and text of its pattern), the templates (`TemplateFact`) and the unclaimed kinds (`UnclaimedFact`, each with its reason). Facts come in file order and, within a pattern, in pre-order, which the derivation's first-claim and rename rules rely on. A presence member keeps its token's text (`"async" @isAsync` has the name `isAsync` and the token `async`); codegen resolves the text to a kind id through the stamped public symbol, never by a text lookup of its own.
 
 ### `packages/codegen/src/bindings/facts.ts::SlotSelector`
 
@@ -49,8 +49,9 @@ The derivation over every grammar's binding facts and model. In order: resolve
 each grammar's routes (`routes.ts::resolveRoutes`: read entries with their pins,
 member routes, container unwraps), and make templates hole members of every
 claim in their pattern; fold each claimed kind's member routes, claim by claim
-in file order, into member types (a slot route's slot resolved, a presence a
-`boolean`, a nested member its named kind or the kinds of the slot its
+in file order, into member types (a slot route's slot resolved, a presence or
+a flag an optional `boolean`, a self route the claimed node's own text
+(`leafText`), a nested member its named kind or the kinds of the slot its
 selector finds in its parent); fold pinned claims into refinements, each pin
 named by the kind's converged member (a capture on the field renames it)
 rather than by the grammar's field; assign container captures to
@@ -87,6 +88,14 @@ A layout slot is never a member (`routes.ts::isLayout`). A resolution is a
 list when the container is a list or a part is, and scalar when a part is
 scalar, so a member admitting both reads `T | T[]`.
 ```
+
+### `packages/codegen/src/bindings/derive.ts::leafText`
+
+A self route's member type: the claimed node's own text, `text:<pattern>` when the node is a text token with a pattern, otherwise the node's `<grammar:kind>` placeholder (`unmappedToken`). Resolving the node by its claim would name the very kind that owns the member.
+
+### `packages/codegen/src/bindings/derive.ts::unmappedToken`
+
+The `<grammar:kind>` placeholder for a grammar kind no claim maps, with the kind's leading underscores dropped.
 
 ### `packages/codegen/src/bindings/derive.ts::inclusionCycles`
 
@@ -250,28 +259,38 @@ The field a request leaves on its owner.
 
 ```text
 The bindings overlay from a grammar's facts, against its grammar evaluated
-without the overlay. Claims: a plain top-level claim renames its kind to its
-path's bound name; several kinds claiming one path alias to it; a placed claim
-splits its kind by placement, its containers named by the placement's bound
-name and the member that holds them; a refinement stays a mapping. Renames
-apply at once, so a name is free when its holder is renamed away; an alias
-target must be free too; clashing ones are dropped until stable, and a kind
-claiming its own parent's path is realized by the parent, its arms staying the
-parent's variants.
+without the overlay. Claims: a kind is named by its first plain top-level
+claim, the first in file order as in `resolveRoutes`: that claim renames the
+kind to its path's bound name. A further kind named by the same path aliases to
+it only when nothing about its shape tells it from the path's first kind
+(`sameShapeAs`); otherwise it is kept apart under its own grammar name, and a
+path left with one kind is renamed as a single claim is.
+A later plain claim on the kind stays a mapping, as a refinement does. A placed
+claim splits its kind by placement, its containers named by the placement's
+bound name and the member that holds them. Renames apply at once, so a name is
+free when its holder is renamed away; an alias target must be free too;
+clashing ones are dropped until stable, and a kind claiming its own parent's
+path is realized by the parent, its arms staying the parent's variants.
 
-Members: every declared member becomes a field. A member routed to a whole
-field renames that field; a member routed to an unfielded child, or to a
-token's presence, wraps the child or token in a field of the member's name. A
-child or token the bindings leave unfielded may already sit in a field of the
-enriched base. A vocabulary member with no route resolves implicitly when the
-owner has an unfielded child whose kind spells it. One target feeding several
-members, or two fields routing to one member, are refused. A field in a hidden
-rule several kinds share is edited in place only when every kind reaching it
-asks for the same edit; an edit counts only while it is itself accepted, so the
+Members: a member the vocabulary kind naming its owner does not declare stays
+a mapping. A flag or a self route reads structure the grammar already has and
+needs no field; every other member becomes a field. A member routed to a whole field
+renames that field; a member routed to an unfielded child, or to a token's
+presence, wraps the child or token in a field of the member's name. A child or
+token the bindings leave unfielded may already sit in a field of the enriched
+base. A vocabulary member with no route resolves implicitly when the owner has
+an unfielded child whose kind spells it. One target feeding several members,
+or two fields routing to one member, are refused. A field in a hidden rule
+several kinds share is edited in place only when every kind reaching it asks
+for the same edit; an edit counts only while it is itself accepted, so the
 batch narrows until it agrees with itself.
 
 Everything not turned into a grammar change is residue, with its cause.
 ```
+
+### `packages/codegen/src/bindings/overlay.ts::sameShapeAs`
+
+The kinds one path names that the overlay may merge under the path's name: the path's first kind and every further kind with the same captured member names, where neither is read as a kind (a flag's kind or a self route's owner). It is the other face of injectivity: two kinds share a vocabulary leaf only where a holder's flag or a member's absence tells them apart, and a kind told apart that way keeps its own grammar kind so the reader and the builder can tell it. Containment is no distinction: a container member admitting both kinds does not keep them apart.
 
 ### `packages/codegen/src/bindings/overlay.ts::overlayPatches`
 
@@ -333,7 +352,9 @@ engine into the query grammar's typed tree, and each top-level pattern (a named
 node, a token or a grouping) is read; a top-level alternation reads as one
 pattern per option, each carrying the alternation's captures. In a pattern, a
 dotted capture, or a capture on the top node that does not start with `_`, is
-in claim position. There, a capture in the `keyword` or `punctuation`
+in claim position, unless the top node also carries a dotted claim: then a
+single-segment capture beside it is a member the node supplies by being the
+node (a self route). There, a capture in the `keyword` or `punctuation`
 namespace is a token class, which names no vocabulary kind; any other is a
 claim: its kind is the node's (`_` for a wildcard), a grouping's first
 child's, and none on a token, and it records the kinds enclosing it, nearest
@@ -341,7 +362,10 @@ first, which place a claim made below the top. Another capture names a
 member. On a child of the top node, or on any node of a grouping, it renames
 the member its slot selector finds, or, on an unfielded token, marks that
 token's presence; deeper inside a named top it is a nested member of the top
-kind, routed through the kinds in between. A pattern that captures
+kind, routed through the kinds in between. A second single-segment member
+capture on a node is the presence of that node's kind in the slot the first
+names (a flag: `name: (private_property_identifier) @name @private`), and the
+first then names the whole slot. A pattern that captures
 `@unclaimed` declares each captured kind unclaimed, with the reason its
 `#set! reason` gives, and says nothing else. A pattern whose top node (the
 pattern, or the one node of a grouping that also holds the pattern's
@@ -358,6 +382,14 @@ the alternation's field, captures and quantifier.
 The parse reports no errors of its own. A file is refused with `BindingsSyntaxError` when an ERROR region surfaces as trivia on a node the reader visits, or when a non-blank file parses to no pattern; a malformed pattern the parse absorbs without a trace passes here and is caught by the compile gate (`compileQuery`).
 
 The scm engine behind it is the pinned build's (`ready`), created by the first read and shared by the rest. The module runs only in the reader's own process (`pinned-reader.child.ts`); codegen and the inventory read through `read.ts`.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::kindPresence`
+
+The flag a further single-segment capture on a node makes: the presence of the node's kind in the slot the node's first member capture names, owned by that member's owner. A node whose first capture is a token's presence or a self route has no slot to name, so its further captures are read as ordinary members.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::slotNamed`
+
+A node's member captures with the first naming its whole slot when a flag follows it: a fielded rename drops its kind selector, since the flag, not the first capture, says which arm of the slot is present.
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::parsedPatterns`
 
@@ -445,7 +477,7 @@ One grammar as the bindings derivation sees it: its binding facts (bound to the 
 
 ### `packages/codegen/src/bindings/routes.ts::ReadEntry`
 
-A grammar kind read as one vocabulary kind: the claim, its position in `bindings.scm` (`index`), the pins that tell its nodes apart (`Pin`), and the template it builds from when its predicate has named holes.
+A grammar kind read as one vocabulary kind: the kind the claim captured (`claimed`; the kind itself unless the reader stores the captured node as a member's kind id, `readKinds`), the claim, its position in `bindings.scm` (`index`), the pins that tell its nodes apart (`Pin`), and the template it builds from when its predicate has named holes.
 
 ### `packages/codegen/src/bindings/routes.ts::Pin`
 
@@ -453,7 +485,7 @@ A literal a claim fixes in a slot: a field literal, or a token the claim names t
 
 ### `packages/codegen/src/bindings/routes.ts::MemberRoute`
 
-Where a member of a claimed kind reads from: a `slot` of the kind; the `presence` of a token in a slot reached through the `via` kinds; or a `nested` slot of a `parent` reached through the `via` kinds, found by its selector. `via` lists the kinds between the owner and the member nearest first, as the facts give them (the convention a claim's `within` follows). `path` is the build inverse: the slots, owner by owner, from the claimed kind to the member's slot. It is `undefined` when a step holds many nodes or a kind on the way has no slot for the next, since a single member cannot be built back through it.
+Where a member of a claimed kind reads from: a `slot` of the kind; the `presence` of a token in a slot reached through the `via` kinds; the presence of a `kind` in the slot another member of the kind names (a flag, its `path` that slot's); the claimed node itself (`self`, its `path` empty); or a `nested` slot of a `parent` reached through the `via` kinds, found by its selector. A slot one of whose arms a deep member routes through keeps its other arms: its `slot` lists only those, and `except` the arms the deep members take; a slot every arm of which they take is left out. `via` lists the kinds between the owner and the member nearest first, as the facts give them (the convention a claim's `within` follows). `path` is the build inverse: the slots, owner by owner, from the claimed kind to the member's slot. It is `undefined` when a step holds many nodes or a kind on the way has no slot for the next, since a single member cannot be built back through it.
 
 ### `packages/codegen/src/bindings/routes.ts::ContainerUnwrap`
 
@@ -489,7 +521,7 @@ A kind's container unwrap: a kind the bindings declare with `@element` unwraps t
 
 ### `packages/codegen/src/bindings/routes.ts::specificity`
 
-The order read entries are tried in: a claim both placed (made below enclosing kinds) and tested by a predicate, then a predicate claim, then a placed claim, then a claim with pins, then the plain claim. `resolveRoutes` breaks a tie by more pins, then by position in `bindings.scm`. Python's `__init__` inside a class reads as `declaration.constructor` (a predicate claim) before `declaration.method` (a placed one).
+The order read entries are tried in: a claim both placed (made below enclosing kinds) and tested by a predicate, then a predicate claim, then a placed claim, then a claim that pins a literal (a pin, or a token the claimed node holds), then the plain claim. `resolveRoutes` breaks a tie by more pins, then by position in `bindings.scm`. Python's `__init__` inside a class reads as `declaration.constructor` (a predicate claim) before `declaration.method` (a placed one).
 
 ### `packages/codegen/src/bindings/routes.ts::viaPath`
 
@@ -497,19 +529,27 @@ The slots from an owner kind outward through the `via` kinds (walked farthest fi
 
 ### `packages/codegen/src/bindings/routes.ts::resolveRoutes`
 
-Resolves one grammar's routes. Renames are collected per owner kind first, since a pin's member name and a slot route's name both follow them. A kind's default vocabulary kind is its first top-level claim with no predicate and no pin, else its first top-level claim, in file order; the read entries are then sorted by `specificity`. Member routes are resolved for every claimed kind and container unwraps for every kind of the model.
+Resolves one grammar's routes. Renames are collected per owner kind first, since a pin's member name and a slot route's name both follow them. A claim's read entries go on the kinds the reader produces for the claimed node (`readKinds`), so a claim on an enum kind is entered on its members' kinds. A kind's default vocabulary kind is its first top-level claim with no predicate and no pin, else its first top-level claim, in file order; the read entries are then sorted by `specificity`. Member routes are resolved for every claimed kind and container unwraps for every kind of the model.
 
 ### `packages/codegen/src/bindings/input.ts::module`
 
 How one grammar's routes input is assembled, for codegen and the inventory alike. Codegen hands it the node-model record it is about to write and its evaluated grammar; the inventory hands it the committed `node-model.json5` and the grammar it evaluates. One assembly, so the routes codegen writes are the routes the inventory folds.
 
+### `packages/codegen/src/bindings/routes.ts::readKinds`
+
+The kinds the typed reader produces for a node of `kind`. A kind with no enum members is read as itself. An enum kind is stored as one member's kind id, so a node of it reads as that member's kind (`ModelNode.enumMembers`): every member whose text equals each text the claim requires of the node's own text (`ownTextEquals`). Any other test on that text keeps every member, and the claim's read test decides at run time on the member's fixed text. The claim itself is entered unchanged, so its specificity and its read test are those of the claim as written.
+
+### `packages/codegen/src/bindings/routes.ts::ownTextEquals`
+
+The texts a claim requires of the claimed node's own text: its tokens, which on an enum kind are the member's own literal, and each `eq` whose subject is the claimed node itself (`up` 0, no step down) and that compares it with one text.
+
 ### `packages/codegen/src/bindings/input.ts::NodeModelRecord`
 
-The part of a node-model record the bindings read: each node's kind, model type, base kind when the overlay renamed it, slots (with each slot's terminal values), subtypes, element kinds, enum values, text and pattern. The record `buildNodeModel` returns and the parsed `node-model.json5` both fit it.
+The part of a node-model record the bindings read: each node's kind, model type, base kind when the overlay renamed it, slots (with each slot's terminal values), subtypes, element kinds, enum values, an enum's members (each member's kind and text), text and pattern. The record `buildNodeModel` returns and the parsed `node-model.json5` both fit it.
 
 ### `packages/codegen/src/bindings/input.ts::slotModelOf`
 
-The slot model of a node-model record: per kind its slots, a slot's terminals being the values it stores as terminal text, with the record's omissions filled (`branch`, not required, single, `verbatim`).
+The slot model of a node-model record: per kind its slots, a slot's terminals being the values it stores as terminal text, and an enum's members as `enumMembers`, with the record's omissions filled (`branch`, not required, single, `verbatim`, no members).
 
 ### `packages/codegen/src/bindings/input.ts::renamedFromOf`
 
@@ -535,10 +575,14 @@ A kind's concrete kinds: itself, or its subtypes' concrete kinds when it is a su
 
 Every wildcard claim that lands on a list kind or a declared container, one line each with the pattern and the kind. Such a claim reads the list or container node, which stands between its enclosing kind and the members the claim means, as when the grammar's enrich lifts a group into a list node the bindings do not name. The inventory prints them and fails. An explicit claim on a list or a wrapper is deliberate and not reported.
 
+### `packages/codegen/src/bindings/facts.ts::EnumMember`
+
+One member of an enum kind as the assembled model stamps it: the member's kind, which a node of the enum is stored and read as, and the member's text.
+
 ### `packages/codegen/src/bindings/facts.ts::ClaimFact`
 
 A vocabulary capture on a node: its path, its grammar kind (`_` for a wildcard), the field it sits under in its enclosing node (`null` for none), its predicates, whether it is top-level, the kinds enclosing it nearest first (`within`), and the field literals and tokens it pins. A wildcard claim's kinds are read from its enclosing kind and field (`routes.ts::admittedKinds`).
 
 ### `packages/codegen/src/bindings/derive.ts::wildcardUnrouted`
 
-Every required member of a path that a kind reached by a wildcard claim of that path has no route for, one line per kind and path. A read through such an entry still owes the path's interface, so each line is a conformance gap the build stage closes; the ratchet test in the tools inventory pins the list until then.
+Every required member of a path that a kind reached by a wildcard claim of that path has no route for, one line per claimed kind and path: the kinds a claimed node is read as share its line. A read through such an entry still owes the path's interface, so each line is a conformance gap the build stage closes; the ratchet test in the tools inventory pins the list until then.

@@ -79,6 +79,65 @@ describe('deriveOverlay', () => {
 		]);
 	});
 
+	it('names a kind claimed plainly twice by its first claim, and checks its members against that claim\'s vocabulary kind', () => {
+		const facts: BindingFacts = {
+			...FACTS,
+			claims: [claim('expression.call', 'call'), claim('expression.invocation', 'call')],
+			members: [{ route: 'rename', owner: 'call', name: 'callee', field: null, kind: 'identifier', after: null }]
+		};
+		const { overlay, report } = deriveOverlay({ grammar: 'bindtest', facts, base, vocabMembers: VOCABULARY });
+		expect(overlay.renames).toEqual({ call: 'call_expression' });
+		expect(report.residue).toEqual([
+			{ cause: 'kind named by an earlier claim', row: 'call → expression.invocation' },
+			{ cause: 'member not in the vocabulary', row: 'call.callee' }
+		]);
+	});
+
+	describe('two kinds claiming one path', () => {
+		const sharing = (members: BindingFacts['members']): BindingFacts => ({
+			...FACTS,
+			claims: [claim('expression.call', 'call'), claim('expression.call', 'let_item')],
+			members
+		});
+		const vocab = new Map([['expression.call', new Set(['name', 'callee', 'private', 'key'])]]);
+
+		it('aliases both to the path\'s name when nothing about their shape tells them apart', () => {
+			const { report } = deriveOverlay({ grammar: 'bindtest', facts: sharing([]), base, vocabMembers: vocab });
+			expect(report.aliases).toEqual({ call: 'call_expression', let_item: 'call_expression' });
+		});
+
+		it('keeps the further kind apart when a flag reads it', () => {
+			const facts = sharing([{ route: 'kind', owner: 'call', name: 'private', member: 'callee', kind: 'let_item' }]);
+			const { overlay, report } = deriveOverlay({ grammar: 'bindtest', facts, base, vocabMembers: vocab });
+			expect(report.aliases).toEqual({});
+			expect(overlay.renames).toEqual({ call: 'call_expression' });
+			expect(report.residue).toContainEqual({ cause: 'kind kept apart by its shape', row: 'let_item → expression.call' });
+		});
+
+		it('keeps the further kind apart when it is a self route', () => {
+			const { overlay, report } = deriveOverlay({ grammar: 'bindtest', facts: sharing([{ route: 'self', owner: 'let_item', name: 'key' }]), base, vocabMembers: vocab });
+			expect(report.aliases).toEqual({});
+			expect(overlay.renames).toEqual({ call: 'call_expression' });
+		});
+
+		it('keeps the further kind apart when their captured members differ', () => {
+			const facts = sharing([{ route: 'rename', owner: 'let_item', name: 'name', field: 'left', kind: null, after: null }]);
+			const { overlay, report } = deriveOverlay({ grammar: 'bindtest', facts, base, vocabMembers: vocab });
+			expect(report.aliases).toEqual({});
+			expect(overlay.renames).toEqual({ call: 'call_expression' });
+		});
+
+		it('realizes a flag and a self route without a field edit', () => {
+			const facts = sharing([
+				{ route: 'kind', owner: 'call', name: 'private', member: 'callee', kind: 'let_item' },
+				{ route: 'self', owner: 'let_item', name: 'key' }
+			]);
+			const { overlay, report } = deriveOverlay({ grammar: 'bindtest', facts, base, vocabMembers: vocab });
+			expect(overlay.patches.size).toBe(0);
+			expect(report.residue.filter((r) => r.row === 'call.private' || r.row === 'let_item.key')).toEqual([]);
+		});
+	});
+
 	it('leaves a member its vocabulary kind does not declare in the residue', () => {
 		const { overlay, report } = deriveOverlay({ grammar: 'bindtest', facts: FACTS, base, vocabMembers: new Map([['declaration.variable', new Set<string>()]]) });
 		expect(overlay.patches.size).toBe(0);

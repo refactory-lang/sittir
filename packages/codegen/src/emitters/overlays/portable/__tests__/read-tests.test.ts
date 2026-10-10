@@ -21,6 +21,7 @@ const node = (kind: string, slots: readonly ModelSlot[] = []): ModelNode => ({
 	subtypes: [],
 	elementKinds: [],
 	enumValues: [],
+	enumMembers: [],
 	text: null,
 	pattern: null
 });
