@@ -4,6 +4,7 @@ import { makeSiteKindsNodeMap, withGeneratedIdTables } from '../../__tests__/hel
 import { ERROR_KIND_ROW, collectGeneratedKindEntries, type GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { stampIrSurface } from '../../compiler/model/ir-surface.ts';
 import type { SitePreference } from '../../compiler/model/site-preferences.ts';
+import { collectCatalogKinds, collectKindEntries } from '../kind-discriminant.ts';
 import { deriveAddressTables, kindIdArmType } from '../options.ts';
 import { emitTypesModules } from '../types.ts';
 
@@ -24,9 +25,9 @@ describe('an options root', () => {
 			generatedIdTables.kindIds.set(kind, { ...row, parser: { ...row.parser!, symbolName: 'block' } });
 		}
 		generatedIdTables.kindIds.set(ERROR_KIND_NAME, ERROR_KIND_ROW);
-		const kindEntries = collectGeneratedKindEntries(generatedIdTables);
-		const nodeMap = build(kindEntries);
+		const nodeMap = build(collectGeneratedKindEntries(generatedIdTables));
 		stampIrSurface(nodeMap, generatedIdTables);
+		const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
 		const addresses = deriveAddressTables(sites, kindEntries, nodeMap, kindIdArmType(kindEntries), new Map());
 		expect(() => emitTypesModules({ grammar: 'synth', nodeMap, generatedIdTables, addresses })).toThrow(/names both 'first_block' and 'second_block'/);
 	});

@@ -210,10 +210,6 @@ What the derivation realized and left: the claim and member totals, the aliases,
 
 The derivation's inputs: the grammar's name, its binding facts in base names, its grammar evaluated without the overlay, each vocabulary path's members, the ones its interface declares and the ones it inherits (a member an interface inherits is its member), and each claimed kind's member routes as `resolveRoutes` gives them over the model of the grammar compiled without the overlay (`routedMembers`).
 
-### `packages/codegen/src/bindings/overlay.ts::NAME_OVERRIDES`
-
-Per grammar, a vocabulary path's bound name where the naming rule's would not do. Empty for every grammar.
-
 ### `packages/codegen/src/bindings/overlay.ts::CONTAINER_MEMBER_OVERRIDES`
 
 Per grammar, the member name of a placement's container where the vocabulary has none: outer kind to member. Each entry is a vocabulary gap (rust's `impl_item_body` is `body`).

@@ -43,14 +43,11 @@ export interface OverlayInput {
 	readonly routedMembers: ReadonlyMap<string, readonly MemberRoute[]>;
 }
 
-const NAME_OVERRIDES: Readonly<Record<string, Readonly<Record<string, string>>>> = {};
-
 const CONTAINER_MEMBER_OVERRIDES: Readonly<Record<string, Readonly<Record<string, string>>>> = {
 	rust: { impl_item_body: 'body' }
 };
 
-export const boundKindName = (grammar: GrammarName, vocab: string, hidden: boolean): string =>
-	NAME_OVERRIDES[grammar]?.[vocab] ?? `${hidden ? '_' : ''}${vocab.split('.').reverse().join('_')}`;
+export const boundKindName = (vocab: string, hidden: boolean): string => `${hidden ? '_' : ''}${vocab.split('.').reverse().join('_')}`;
 
 export const memberFieldName = (member: string): string => member.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`);
 
@@ -141,7 +138,7 @@ export function deriveOverlay(input: OverlayInput): { overlay: BindingsOverlay; 
 			left('not a base rule', row);
 			continue;
 		}
-		const to = boundKindName(grammar, c.vocab, c.kind.startsWith('_'));
+		const to = boundKindName(c.vocab, c.kind.startsWith('_'));
 		if (placed(c)) {
 			if (!c.within.every((w) => ruleNames.has(w))) {
 				left('placed claim', row);
