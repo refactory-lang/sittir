@@ -1216,22 +1216,6 @@ function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidat
 	return rule;
 }
 
-let detectingPatterns = false;
-
-function buildPatternReplacingFn(
-	fn: RuleFn,
-	candidates: ($: Parameters<RuleFn>[0]) => readonly WirePatternCandidate[],
-	automatic: () => AutomaticVariants,
-	evaluated: () => { has(): boolean; get(): unknown }
-): RuleFn {
-	return function patternReplacingRuleFn($, previous) {
-		if (detectingPatterns) return fn($, previous);
-		const active = candidates($);
-		const memo = evaluated();
-		return replaceInBodyRt(memo.has() ? memo.get() : fn($, previous), active, automatic);
-	};
-}
-
 function withStringGlobalShim<T>(fn: () => T): T {
 	const g = globalThis as Record<string, unknown>;
 	const shims: Record<string, unknown> = {
@@ -1342,58 +1326,44 @@ export function applyWirePatternReplacement(
 	context: WireContext,
 	injects?: GroupsConfig
 ): void {
-	const candidates: WirePatternCandidate[] = [];
-	const $ = makeSimpleDollarProxy();
-
-	for (const name of authoredRuleNames) {
-		if (!name.startsWith('_')) continue;
-		const fn = rules[name];
-		if (!fn) continue;
-		let body: RuntimeRule;
-		try {
-			detectingPatterns = true;
-			const result = fn.call(undefined, $, undefined);
-			if (!result || typeof result !== 'object' || typeof (result as { type?: unknown }).type !== 'string') continue;
-			body = result as RuntimeRule;
-		} catch {
-			continue;
-		} finally {
-			detectingPatterns = false;
-		}
-		if (!isComplexBody(body)) continue;
-		candidates.push({ name, body });
-	}
-
+	const declared: WirePatternCandidate[] = [];
 	for (const { section, key, value, body } of declaredPatterns(groups, injects)) {
 		const hiddenName = declaredGroupMintName(key);
 		const hidden = hiddenName === key;
-		candidates.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key });
+		declared.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key });
 		const registered = wrapOneRuleFn(hiddenName, value, context);
 		rules[hiddenName] = section === 'groups' ? stampHoistedFn(registered) : registered;
 	}
 
-	if (candidates.length === 0) return;
-
-	const candidateNames = new Set(candidates.map((c) => c.name));
 	const originals = new Map(Object.entries(rules));
-	const authored = [...authoredRuleNames].filter((name) => originals.has(name) && !candidateNames.has(name));
-	const authoredBodies = new Map<string, unknown>();
-	let folding: readonly WirePatternCandidate[] | undefined;
-	const foldingCandidates = (runtime$: Parameters<RuleFn>[0]): readonly WirePatternCandidate[] => {
+	const authored = [...authoredRuleNames].filter((name) => originals.has(name));
+	const evaluationOrder = [...authored.filter((name) => name.startsWith('_')), ...authored.filter((name) => !name.startsWith('_'))];
+	const declaredNames = new Set(declared.map((c) => c.name));
+	const bodies = new Map<string, unknown>();
+	let folding: { readonly names: ReadonlySet<string>; readonly candidates: readonly WirePatternCandidate[] } | undefined;
+	const fold = (runtime$: Parameters<RuleFn>[0]): NonNullable<typeof folding> => {
 		if (folding === undefined) {
-			for (const name of authored) authoredBodies.set(name, originals.get(name)!(runtime$, context.baseRuleBodies[name]));
-			const aliasOnly = onlyAliasedSymbols([...authoredBodies.values(), ...candidates.map((c) => c.body)]);
-			folding = candidates.filter((c) => c.aliasAs !== undefined || !aliasOnly.has(c.name));
+			const detected: WirePatternCandidate[] = [];
+			for (const name of evaluationOrder) {
+				const body = originals.get(name)!(runtime$, context.baseRuleBodies[name]);
+				bodies.set(name, body);
+				if (name.startsWith('_') && !declaredNames.has(name) && isComplexBody(body as RuntimeRule)) detected.push({ name, body: body as RuntimeRule });
+			}
+			const all = [...detected, ...declared];
+			const aliasOnly = onlyAliasedSymbols([...bodies.values(), ...declared.map((c) => c.body)]);
+			folding = {
+				names: new Set(all.map((c) => c.name)),
+				candidates: all.filter((c) => c.aliasAs !== undefined || !aliasOnly.has(c.name))
+			};
 		}
 		return folding;
 	};
 	for (const [name, fn] of originals) {
-		if (candidateNames.has(name)) continue;
-		rules[name] = buildPatternReplacingFn(
-			fn,
-			foldingCandidates,
-			() => context.automaticVariants,
-			() => ({ has: () => authoredBodies.has(name), get: () => authoredBodies.get(name) })
-		);
+		if (declaredNames.has(name)) continue;
+		rules[name] = function patternReplacingRuleFn($, previous) {
+			const { names, candidates } = fold($);
+			const body = bodies.has(name) ? bodies.get(name) : fn($, previous);
+			return names.has(name) ? body : replaceInBodyRt(body, candidates, () => context.automaticVariants);
+		};
 	}
 }
