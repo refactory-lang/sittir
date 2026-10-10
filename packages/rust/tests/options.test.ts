@@ -22,7 +22,7 @@ it('types every site by kind id at its address and rejects a wrong member at com
 		block: { lbrace: { after: rs.kinds.Indent }, rbrace: { before: rs.kinds.Dedent } },
 		abstractType: { forKeyword: { before: rs.kinds.Space } },
 		tokenTreePunctuation: { slash: { after: rs.kinds.Tight }, colonColon: { after: rs.kinds.Tight } },
-		indent: '    '
+		layout: { indent: '    ' }
 	};
 	const bad: Options = {
 		argumentsElements: {

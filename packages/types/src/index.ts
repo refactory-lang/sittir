@@ -1249,7 +1249,7 @@ export interface LeafNs<
 	readonly Kind: Kind;
 }
 
-export type { DerivedOptions, IndentOption, OptionsHintOf } from './options.ts';
+export type { DerivedOptions, IndentOption, LayoutOption, NewlineOption, OptionsHintOf } from './options.ts';
 export type * from './node-surface.ts';
 export type {
 	Interior,

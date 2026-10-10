@@ -54,6 +54,10 @@ A lazy output handle whose text is produced through render middleware. The hook 
 
 Produces text from an already captured native handle and, when enabled, records the native materialization duration and input/output sizes. Render middleware reaches it through `next`; the direct path retains its existing immediate measurement when metrics are enabled.
 
+### `packages/common/src/create-engine.ts::mergeRenderOptions`
+
+The options a render interceptor sees: the engine's render options with the call's laid over them, key by key, and the `layout` group merged one level down, so a call that sets only `layout.newline` leaves the engine's `layout.indent` in place. The native render resolves the same way over the engine's table; this is the object form of that result for middleware.
+
 ### `packages/common/src/create-engine.ts::createEngine`
 
 The entry point: refuses unimplemented options, loads the language (once per descriptor), and assembles an engine. Engines share no state: each owns its native engine and its options. Its `render` option is inferred `const` and checked by `RenderOptionsCheck`, so an indent unit outside the language's indent characters, or a key the language's options do not declare, fails to compile.

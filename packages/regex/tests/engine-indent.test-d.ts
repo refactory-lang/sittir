@@ -7,6 +7,11 @@ declare const node: RegexNode;
 
 void createEngine(regex);
 // @ts-expect-error no indent character is admitted
-void createEngine(regex, { render: { indent: '\t' } });
+void createEngine(regex, { render: { layout: { indent: '\t' } } });
 // @ts-expect-error per-call options have no indent either
-rx.render(node, { indent: '\t' });
+rx.render(node, { layout: { indent: '\t' } });
+// @ts-expect-error indent stays refused beside an admitted newline
+void createEngine(regex, { render: { layout: { indent: '\t', newline: '\n' } } });
+// @ts-expect-error per call too
+rx.render(node, { layout: { indent: '\t', newline: '\n' } });
+void createEngine(regex, { render: { layout: { newline: '\r\n' } } });

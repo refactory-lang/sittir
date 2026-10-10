@@ -247,7 +247,7 @@ pub fn line_gaps(
     }
     let push = |side: &mut Vec<LineGap>, start: usize, end: usize| {
         let Some(run) = source.get(start..end) else { return };
-        if run.contains('\n') && run.chars().all(char::is_whitespace) {
+        if crate::line_endings::logical_breaks(run) > 0 && run.chars().all(char::is_whitespace) {
             if let Some(kind) = classify(run) {
                 side.push(LineGap { kind, start });
             }
@@ -702,17 +702,22 @@ fn resolve_render_format_from_source<'a>(
 /// - `canonical` — the template-rendered string to format.
 /// - `engine_format` — engine-wide format override (highest priority).
 /// - `tree_format` — tree-level format detected from parsed source.
+/// - `newline` — the spelling every line break of the result takes. The format
+///   record applies first, to the internal spelling its offsets index; the
+///   result is spelled last.
 pub fn apply_render_format(
     source: Source,
     canonical: String,
     engine_format: Option<&FormatRecord>,
     tree_format: Option<&FormatRecord>,
+    newline: &str,
 ) -> String {
     let effective_format = resolve_render_format_from_source(source, engine_format, tree_format);
-    match effective_format {
+    let formatted = match effective_format {
         Some(format) => apply_format(&canonical, format),
         None => canonical,
-    }
+    };
+    crate::line_endings::spell(formatted, newline)
 }
 
 pub fn panic_msg(payload: Box<dyn std::any::Any + Send>, fallback: &str) -> String {
@@ -1054,18 +1059,23 @@ mod tests {
     #[test]
     fn the_engine_format_wraps_any_render() {
         let engine_format = format_record("<<", ">>");
-        assert_eq!(apply_render_format(Source::Factory, "rendered:1".to_string(), Some(&engine_format), None), "<<rendered:1>>");
+        assert_eq!(apply_render_format(Source::Factory, "rendered:1".to_string(), Some(&engine_format), None, "\n"), "<<rendered:1>>");
     }
 
     #[test]
     fn the_tree_format_wraps_a_read_node() {
         let tree_format = format_record("[", "]");
-        assert_eq!(apply_render_format(Source::Ts, "canonical".to_string(), None, Some(&tree_format)), "[canonical]");
+        assert_eq!(apply_render_format(Source::Ts, "canonical".to_string(), None, Some(&tree_format), "\n"), "[canonical]");
+    }
+
+    #[test]
+    fn the_result_is_spelled_with_the_requested_line_ending() {
+        assert_eq!(apply_render_format(Source::Factory, "a\nb".to_string(), None, None, "\r\n"), "a\r\nb");
     }
 
     #[test]
     fn the_tree_format_leaves_a_factory_node_alone() {
         let tree_format = format_record("[", "]");
-        assert_eq!(apply_render_format(Source::Factory, "canonical".to_string(), None, Some(&tree_format)), "canonical");
+        assert_eq!(apply_render_format(Source::Factory, "canonical".to_string(), None, Some(&tree_format), "\n"), "canonical");
     }
 }
