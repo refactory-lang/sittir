@@ -60,7 +60,7 @@ pub enum AnyTransport {
     #[kind(kind::ORDERED_FIELD_DECLARATION_LIST)]
     OrderedFieldDeclarationList(OrderedFieldDeclarationListTransport),
     #[kind(kind::EXTERN_CRATE_DECLARATION)]
-    ExternCrateDeclaration(Box<ExternCrateDeclarationTransport>),
+    ExternCrateDeclaration(ExternCrateDeclarationTransport),
     #[kind(kind::CONST_ITEM)]
     ConstItem(Box<ConstItemTransport>),
     #[kind(kind::STATIC_ITEM)]
@@ -394,7 +394,7 @@ pub enum AnyTransport {
     #[kind(kind::MOD_ITEM_EXTERNAL)]
     ModItemExternal(ModItemExternalTransport),
     #[kind(kind::MOD_ITEM_INLINE)]
-    ModItemInline(Box<ModItemInlineTransport>),
+    ModItemInline(ModItemInlineTransport),
     #[kind(kind::OR_PATTERN_BINARY)]
     OrPatternBinary(OrPatternBinaryTransport),
     #[kind(kind::OR_PATTERN_PREFIX)]
@@ -484,7 +484,7 @@ pub enum AnyTransport {
     #[kind(kind::_ATTRIBUTED_TYPE_PARAMETER)]
     AttributedTypeParameter(AttributedTypeParameterTransport),
     #[kind(kind::_ATTRIBUTED_ARGUMENT)]
-    AttributedArgument(Box<AttributedArgumentTransport>),
+    AttributedArgument(AttributedArgumentTransport),
     #[kind(kind::_ATTRIBUTED_ORDERED_FIELD)]
     AttributedOrderedField(Box<AttributedOrderedFieldTransport>),
     #[kind(kind::_TYPE_ARGUMENT)]
@@ -2142,7 +2142,7 @@ pub enum StatementTransport {
     #[kind(kind::EXPRESSION_STATEMENT)]
     ExpressionStatement(ExpressionStatementTransport),
     #[kind(kind::CONST_ITEM, kind::MACRO_INVOCATION, kind::MACRO_DEFINITION_PAREN, kind::MACRO_DEFINITION_BRACKET, kind::MACRO_DEFINITION_BRACE, kind::ATTRIBUTE_ITEM, kind::INNER_ATTRIBUTE_ITEM, kind::MOD_ITEM_EXTERNAL, kind::MOD_ITEM_INLINE, kind::FOREIGN_MOD_ITEM_SEMI, kind::FOREIGN_MOD_ITEM_BODY, kind::STRUCT_ITEM_BRACE, kind::STRUCT_ITEM_TUPLE, kind::STRUCT_ITEM_UNIT, kind::UNION_ITEM, kind::ENUM_ITEM, kind::TYPE_ITEM, kind::FUNCTION_ITEM, kind::FUNCTION_SIGNATURE_ITEM, kind::IMPL_ITEM_BODY, kind::IMPL_ITEM_SEMI, kind::TRAIT_ITEM, kind::ASSOCIATED_TYPE, kind::LET_DECLARATION, kind::USE_DECLARATION, kind::EXTERN_CRATE_DECLARATION, kind::STATIC_ITEM, kind::MACRO_DEFINITION, kind::MOD_ITEM, kind::FOREIGN_MOD_ITEM, kind::STRUCT_ITEM, kind::IMPL_ITEM)]
-    DeclarationStatement(Box<DeclarationStatementTransport>),
+    DeclarationStatement(DeclarationStatementTransport),
     ConstItem(Box<ConstItemTransport>),
     MacroInvocation(MacroInvocationTransport),
     MacroDefinition(MacroDefinitionTransport),
@@ -2163,7 +2163,7 @@ pub enum StatementTransport {
     AssociatedType(AssociatedTypeTransport),
     LetDeclaration(Box<LetDeclarationTransport>),
     UseDeclaration(Box<UseDeclarationTransport>),
-    ExternCrateDeclaration(Box<ExternCrateDeclarationTransport>),
+    ExternCrateDeclaration(ExternCrateDeclarationTransport),
     StaticItem(Box<StaticItemTransport>),
 }
 
@@ -2329,7 +2329,7 @@ pub enum DeclarationStatementTransport {
     #[kind(kind::USE_DECLARATION)]
     UseDeclaration(Box<UseDeclarationTransport>),
     #[kind(kind::EXTERN_CRATE_DECLARATION)]
-    ExternCrateDeclaration(Box<ExternCrateDeclarationTransport>),
+    ExternCrateDeclaration(ExternCrateDeclarationTransport),
     #[kind(kind::STATIC_ITEM)]
     StaticItem(Box<StaticItemTransport>),
 }
@@ -2639,7 +2639,7 @@ pub enum ModItemTransport {
     #[kind(kind::MOD_ITEM_EXTERNAL)]
     ModItemExternal(ModItemExternalTransport),
     #[kind(kind::MOD_ITEM_INLINE)]
-    ModItemInline(Box<ModItemInlineTransport>),
+    ModItemInline(ModItemInlineTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for ModItemTransport {
@@ -37791,7 +37791,7 @@ fn render_macro_rules_bang(w: &mut dyn ::sittir_core::render::RenderSink) -> ::s
 fn render_statement(t: &StatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         StatementTransport::ExpressionStatement(inner) => inner.render(w),
-        StatementTransport::DeclarationStatement(inner) => inner.as_ref().render(w),
+        StatementTransport::DeclarationStatement(inner) => inner.render(w),
         StatementTransport::ConstItem(inner) => inner.as_ref().render(w),
         StatementTransport::MacroInvocation(inner) => inner.render(w),
         StatementTransport::MacroDefinition(inner) => inner.render(w),
@@ -37811,7 +37811,7 @@ fn render_statement(t: &StatementTransport, w: &mut dyn ::sittir_core::render::R
         StatementTransport::AssociatedType(inner) => inner.render(w),
         StatementTransport::LetDeclaration(inner) => inner.as_ref().render(w),
         StatementTransport::UseDeclaration(inner) => inner.as_ref().render(w),
-        StatementTransport::ExternCrateDeclaration(inner) => inner.as_ref().render(w),
+        StatementTransport::ExternCrateDeclaration(inner) => inner.render(w),
         StatementTransport::StaticItem(inner) => inner.as_ref().render(w),
     }
 }
@@ -37837,7 +37837,7 @@ fn render_declaration_statement(t: &DeclarationStatementTransport, w: &mut dyn :
         DeclarationStatementTransport::AssociatedType(inner) => inner.render(w),
         DeclarationStatementTransport::LetDeclaration(inner) => inner.as_ref().render(w),
         DeclarationStatementTransport::UseDeclaration(inner) => inner.as_ref().render(w),
-        DeclarationStatementTransport::ExternCrateDeclaration(inner) => inner.as_ref().render(w),
+        DeclarationStatementTransport::ExternCrateDeclaration(inner) => inner.render(w),
         DeclarationStatementTransport::StaticItem(inner) => inner.as_ref().render(w),
     }
 }
@@ -37869,7 +37869,7 @@ fn render_token_tree(t: &TokenTreeTransport, w: &mut dyn ::sittir_core::render::
 fn render_mod_item(t: &ModItemTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         ModItemTransport::ModItemExternal(inner) => inner.render(w),
-        ModItemTransport::ModItemInline(inner) => inner.as_ref().render(w),
+        ModItemTransport::ModItemInline(inner) => inner.render(w),
     }
 }
 
@@ -39003,7 +39003,7 @@ const _: () = assert!(::core::mem::size_of::<AsyncBlockTransport>() <= 256, "Asy
 const _: () = assert!(::core::mem::size_of::<AttributeInputTransport>() > 256, "AttributeInputTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AttributeItemTransport>() > 256, "AttributeItemTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AttributeTransport>() > 256, "AttributeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AttributedArgumentTransport>() > 256, "AttributedArgumentTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<AttributedArgumentTransport>() <= 256, "AttributedArgumentTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AttributedEnumVariantTransport>() > 256, "AttributedEnumVariantTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AttributedFieldDeclarationTransport>() > 256, "AttributedFieldDeclarationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AttributedOrderedFieldTransport>() > 256, "AttributedOrderedFieldTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
@@ -39042,7 +39042,7 @@ const _: () = assert!(::core::mem::size_of::<ConstItemTransport>() > 256, "Const
 const _: () = assert!(::core::mem::size_of::<ConstParameterTransport>() > 256, "ConstParameterTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ContinueExpressionTransport>() <= 256, "ContinueExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DeclarationListTransport>() <= 256, "DeclarationListTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<DeclarationStatementTransport>() > 256, "DeclarationStatementTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<DeclarationStatementTransport>() <= 256, "DeclarationStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DelimTokenTreeBraceTransport>() <= 256, "DelimTokenTreeBraceTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DelimTokenTreeBracketTransport>() <= 256, "DelimTokenTreeBracketTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DelimTokenTreeParenTransport>() <= 256, "DelimTokenTreeParenTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -39061,7 +39061,7 @@ const _: () = assert!(::core::mem::size_of::<EscapeSequenceUnicodeFixedTransport
 const _: () = assert!(::core::mem::size_of::<ExpressionStatementTransport>() <= 256, "ExpressionStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExpressionStatementWithSemiTransport>() <= 256, "ExpressionStatementWithSemiTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExpressionsTransport>() <= 256, "ExpressionsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ExternCrateDeclarationTransport>() > 256, "ExternCrateDeclarationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ExternCrateDeclarationTransport>() <= 256, "ExternCrateDeclarationTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExternModifierTransport>() <= 256, "ExternModifierTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FieldDeclarationListElementsTransport>() <= 256, "FieldDeclarationListElementsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FieldDeclarationListTransport>() <= 256, "FieldDeclarationListTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -39136,7 +39136,7 @@ const _: () = assert!(::core::mem::size_of::<MatchExpressionTransport>() <= 256,
 const _: () = assert!(::core::mem::size_of::<MatchPatternTransport>() <= 256, "MatchPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<MetavariableTransport>() <= 256, "MetavariableTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ModItemExternalTransport>() <= 256, "ModItemExternalTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ModItemInlineTransport>() > 256, "ModItemInlineTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ModItemInlineTransport>() <= 256, "ModItemInlineTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ModItemTransport>() <= 256, "ModItemTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<MutPatternTransport>() <= 256, "MutPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<NegativeLiteralTransport>() <= 256, "NegativeLiteralTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -39253,3 +39253,5 @@ const _: () = assert!(::core::mem::size_of::<WherePredicateTransport>() <= 256, 
 const _: () = assert!(::core::mem::size_of::<WherePredicatesTransport>() <= 256, "WherePredicatesTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<WhileExpressionTransport>() <= 256, "WhileExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<YieldExpressionTransport>() <= 256, "YieldExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+
+::sittir_core::grammar_trivia!(TriviaTransport; AnyTransport, TriviaTransport, StatementTransport, DeclarationStatementTransport, MacroDefinitionTransport, TokenTreePatternTransport, TokenTreeTransport, ModItemTransport, ForeignModItemTransport, StructItemTransport, ImplItemTransport, TypeTransport, PointerTypeTransport, ExpressionTransport, DelimTokenTreeTransport, RangeExpressionTransport, ReferenceExpressionTransport, ArrayExpressionTransport, MatchArmTransport, ClosureExpressionTransport, PatternTransport, RangePatternTransport, OrPatternTransport, LiteralPatternTransport, IntegerLiteralTransport, CharLiteralTransport, CharLiteralEscapedTransport, ExpressionStatementContentTransportSlot, TokenRepetitionPatternTokenPatternsTransportSlot, TokenRepetitionPatternOperatorTransportSlot, TokenRepetitionTokensTransportSlot, TokenRepetitionOperatorTransportSlot, NonSpecialTokenContentTransportSlot, AttributePathTransportSlot, EnumVariantBodyTransportSlot, FunctionItemNameTransportSlot, FunctionModifiersModifierTransportSlot, WherePredicateLeftTransportSlot, TraitBoundsBoundsTransportSlot, ConstParameterValueTransportSlot, UseDeclarationArgumentTransportSlot, ParameterNameTransportSlot, VisibilityModifierContentTransportSlot, BracketedTypeTypeTransportSlot, FunctionTypeContentTransportSlot, GenericFunctionFunctionTransportSlot, GenericTypeTypeTransportSlot, GenericTypeWithTurbofishTypeTransportSlot, BoundedTypeLeftTransportSlot, AbstractTypeTraitTransportSlot, DynamicTypeTraitTransportSlot, MacroInvocationMacroTransportSlot, ScopedIdentifierPathTransportSlot, ScopedIdentifierNameTransportSlot, ScopedTypeIdentifierInExpressionPositionPathTransportSlot, ScopedTypeIdentifierPathTransportSlot, UnaryExpressionOperatorTransportSlot, BinaryExpressionOperatorTransportSlot, CompoundAssignmentExprOperatorTransportSlot, CallExpressionFunctionTransportSlot, StructExpressionNameTransportSlot, FieldInitializerFieldTransportSlot, IfExpressionConditionTransportSlot, LetChainLeftTransportSlot, LetChainRightTransportSlot, ElseClauseBodyTransportSlot, LastMatchArmAttributesTransportSlot, ClosureParametersParametersTransportSlot, GenericPatternNameTransportSlot, TupleStructPatternTypeTransportSlot, StructPatternTypeTransportSlot, NegativeLiteralValueTransportSlot, StringLiteralElementsTransportSlot, LineCommentContentTransportSlot, BlockCommentContentTransportSlot, UseBoundsElementsItemTransportSlot, FieldInitializerListElementsItemTransportSlot, TuplePatternElementsItemTransportSlot, StructPatternElementsItemTransportSlot, ClosureExpressionExprBodyTransportSlot, ImplItemPositiveClauseTraitTransportSlot, ImplItemBodyTraitClauseTransportSlot, VisibilityModifierPubScopeContentTransportSlot, RangeExpressionBinaryOperatorTransportSlot, MatchArmBlockEndingValueTransportSlot, DelimTokenTreeParenDelimTokensTransportSlot, MacroDefinitionParenNameTransportSlot, RangePatternPrefixRightTransportSlot, RangePatternPrefixContentTransportSlot, RangePatternWithLeftWithRightContentTransportSlot, RangePatternWithLeftContentTransportSlot, AttributedParameterContentTransportSlot, AttributedTypeParameterContentTransportSlot, TypeArgumentContentTransportSlot, SourceFileTransport, EmptyStatementTransport, ExpressionStatementTransport, MacroRuleTransport, TokenBindingPatternTransport, TokenRepetitionPatternTransport, FragmentSpecifierEnum, TokenRepetitionTransport, NonSpecialTokenTransport, AttributeItemTransport, InnerAttributeItemTransport, AttributeTransport, DeclarationListTransport, UnionItemTransport, EnumItemTransport, EnumVariantListTransport, EnumVariantTransport, FieldDeclarationListTransport, FieldDeclarationTransport, OrderedFieldDeclarationListTransport, ExternCrateDeclarationTransport, ConstItemTransport, StaticItemTransport, TypeItemTransport, FunctionItemTransport, FunctionSignatureItemTransport, FunctionModifiersTransport, WhereClauseTransport, WherePredicateTransport, TraitItemTransport, AssociatedTypeTransport, TraitBoundsTransport, HigherRankedTraitBoundTransport, RemovedTraitBoundTransport, TypeParametersTransport, ConstParameterTransport, TypeParameterTransport, LifetimeParameterTransport, LetDeclarationTransport, UseDeclarationTransport, ScopedUseListTransport, UseListTransport, UseAsClauseTransport, UseWildcardTransport, ParametersTransport, SelfParameterTransport, VariadicParameterTransport, ParameterTransport, ExternModifierTransport, VisibilityModifierTransport, BracketedTypeTransport, QualifiedTypeTransport, LifetimeTransport, ArrayTypeTransport, ForLifetimesTransport, FunctionTypeTransport, TupleTypeTransport, UnitTypeTransport, GenericFunctionTransport, GenericTypeTransport, GenericTypeWithTurbofishTransport, BoundedTypeTransport, UseBoundsTransport, TypeArgumentsTransport, TypeBindingTransport, ReferenceTypeTransport, NeverTypeTransport, AbstractTypeTransport, DynamicTypeTransport, MutableSpecifierTransport, MacroInvocationTransport, ScopedIdentifierTransport, ScopedTypeIdentifierInExpressionPositionTransport, ScopedTypeIdentifierTransport, UnaryExpressionTransport, TryExpressionTransport, BinaryExpressionTransport, AssignmentExpressionTransport, CompoundAssignmentExprTransport, TypeCastExpressionTransport, ReturnExpressionTransport, YieldExpressionTransport, CallExpressionTransport, ArgumentsTransport, ParenthesizedExpressionTransport, TupleExpressionTransport, UnitExpressionTransport, StructExpressionTransport, FieldInitializerListTransport, ShorthandFieldInitializerTransport, FieldInitializerTransport, BaseFieldInitializerTransport, IfExpressionTransport, LetConditionTransport, LetChainTransport, ElseClauseTransport, MatchExpressionTransport, MatchBlockTransport, LastMatchArmTransport, MatchPatternTransport, WhileExpressionTransport, LoopExpressionTransport, ForExpressionTransport, ConstBlockTransport, ClosureParametersTransport, LabelTransport, BreakExpressionTransport, ContinueExpressionTransport, IndexExpressionTransport, AwaitExpressionTransport, FieldExpressionTransport, UnsafeBlockTransport, AsyncBlockTransport, GenBlockTransport, TryBlockTransport, BlockTransport, GenericPatternTransport, TuplePatternTransport, SlicePatternTransport, TupleStructPatternTransport, StructPatternTransport, RemainingFieldPatternTransport, MutPatternTransport, RefPatternTransport, CapturedPatternTransport, ReferencePatternTransport, NegativeLiteralTransport, StringLiteralTransport, RawStringLiteralTransport, BooleanLiteralEnum, LineCommentTransport, InnerLineDocCommentMarkerTransport, OuterLineDocCommentMarkerTransport, BlockCommentTransport, IdentifierTransport, ShebangTransport, Self_Transport, SuperTransport, CrateTransport, MetavariableTransport, PrimitiveTypeEnum, MacroRulesTransport, EnumVariantListElementsTransport, FieldDeclarationListElementsTransport, OrderedFieldDeclarationListElementsTransport, WherePredicatesTransport, TypeParametersElementsTransport, UseClausesTransport, ParametersElementsTransport, LifetimesTransport, TypesTransport, UseBoundsElementsTransport, TypeArgumentsElementsTransport, ArgumentsElementsTransport, ExpressionsTransport, FieldInitializerListElementsTransport, TuplePatternElementsTransport, PatternsTransport, StructPatternElementsTransport, UseWildcardGroupTransport, TokenRepetitionPatternTextTransport, StringOpenTransport, TokenTreePunctuationEnum, TokenKeywordsEnum, _RangeExpressionBareTransport, ImplItemUnsafeMarkerTransport, IntegerLiteralDecimalTransport, IntegerLiteralHexTransport, IntegerLiteralBinaryTransport, IntegerLiteralOctalTransport, CharLiteralPlainTransport, CharLiteralEmptyTransport, CharLiteralEscapedSimpleTransport, CharLiteralEscapedUnicodeFixedTransport, CharLiteralEscapedUnicodeBracedTransport, CharLiteralEscapedHexTransport, EscapeSequenceSimpleTransport, EscapeSequenceUnicodeFixedTransport, EscapeSequenceUnicodeBracedTransport, EscapeSequenceHexTransport, ArrayExpressionSemiTransport, ArrayExpressionListTransport, AttributeInputTransport, ClosureExpressionBlockTransport, ClosureExpressionExprTransport, ReferenceExpressionRawConstTransport, ReferenceExpressionRawMutTransport, ReferenceExpressionMutTransport, ReferenceExpressionBareTransport, ImplItemPositiveClauseTransport, ImplItemNegativeClauseTransport, ImplItemBodyTransport, ImplItemSemiTransport, VisibilityModifierPubScopeInPathTransport, VisibilityModifierPubScopeTransport, VisibilityModifierPubTransport, FunctionTypeTraitFormTransport, FunctionTypeFnFormTransport, ModItemExternalTransport, ModItemInlineTransport, OrPatternBinaryTransport, OrPatternPrefixTransport, PointerTypeConstTransport, PointerTypeMutTransport, RangeExpressionBinaryTransport, RangeExpressionPostfixTransport, RangeExpressionPrefixTransport, RangeExpressionBareTransport, ExpressionStatementWithSemiTransport, ForeignModItemSemiTransport, ForeignModItemBodyTransport, MatchArmWithCommaTransport, MatchArmBlockEndingTransport, LineCommentExtraSlashesTransport, LineCommentDocOuterTransport, LineCommentDocInnerTransport, LineCommentRegularTransport, BlockCommentDocOuterTransport, BlockCommentDocInnerTransport, BlockCommentRegularTransport, TokenTreePatternParenTransport, TokenTreePatternBracketTransport, TokenTreePatternBraceTransport, TokenTreeParenTransport, TokenTreeBracketTransport, TokenTreeBraceTransport, DelimTokenTreeParenTransport, DelimTokenTreeBracketTransport, DelimTokenTreeBraceTransport, FieldPatternShorthandTransport, FieldPatternNamedTransport, MacroDefinitionParenTransport, MacroDefinitionBracketTransport, MacroDefinitionBraceTransport, RangePatternPrefixTransport, RangePatternWithLeftWithRightTransport, RangePatternWithLeftBareTransport, RangePatternWithLeftTransport, StructItemBraceTransport, StructItemTupleTransport, StructItemUnitTransport, WildcardPatternTransport, AttributedFieldDeclarationTransport, AttributedEnumVariantTransport, AttributedParameterTransport, AttributedTypeParameterTransport, AttributedArgumentTransport, AttributedOrderedFieldTransport, TypeArgumentTransport, MatchBlockArmsTransport, FloatLiteralTransport, StringContentTransport, RawStringLiteralContentTransport, OuterDocCommentMarkerTransport, InnerDocCommentMarkerTransport, RawStringLiteralStartTransport, RawStringLiteralEndTransport, DocCommentTransport, BlockCommentContentTransport, TightTransport, SpaceTransport, TabTransport, NewlineTransport, BlanklineTransport, DoubleBlanklineTransport, IndentTransport, DedentTransport, ErrorSentinelTransport, TypeIdentifierTransport, FieldIdentifierTransport, ShorthandFieldIdentifierTransport, SemiTransport, EqGtTransport, ColonTransport, DollarTransport, LparenTransport, RparenTransport, PlusTransport, StarTransport, QmarkTransport, BlockKeywordTransport, ExprKeywordTransport, Expr2021KeywordTransport, IdentKeywordTransport, ItemKeywordTransport, LifetimeKeywordTransport, LiteralKeywordTransport, MetaKeywordTransport, PatKeywordTransport, PatParamKeywordTransport, PathKeywordTransport, StmtKeywordTransport, TtKeywordTransport, TyKeywordTransport, VisKeywordTransport, PoundTransport, LbrackTransport, RbrackTransport, BangTransport, U8KeywordTransport, I8KeywordTransport, U16KeywordTransport, I16KeywordTransport, U32KeywordTransport, I32KeywordTransport, U64KeywordTransport, I64KeywordTransport, U128KeywordTransport, I128KeywordTransport, IsizeKeywordTransport, UsizeKeywordTransport, F32KeywordTransport, F64KeywordTransport, BoolKeywordTransport, StrKeywordTransport, CharKeywordTransport, DefaultKeywordTransport, UnionKeywordTransport, GenKeywordTransport, LbraceTransport, RbraceTransport, EnumKeywordTransport, EqTransport, ExternKeywordTransport, AsKeywordTransport, ConstKeywordTransport, StaticKeywordTransport, RefKeywordTransport, TypeKeywordTransport, FnKeywordTransport, DashGtTransport, AsyncKeywordTransport, UnsafeKeywordTransport, WhereKeywordTransport, TraitKeywordTransport, ForKeywordTransport, LtTransport, GtTransport, LetKeywordTransport, ElseKeywordTransport, UseKeywordTransport, ColonColonTransport, AmpTransport, DotDotDotTransport, SquoteTransport, ImplKeywordTransport, DynKeywordTransport, DashTransport, AmpAmpTransport, PipePipeTransport, PipeTransport, CaretTransport, EqEqTransport, BangEqTransport, LtEqTransport, GtEqTransport, LtLtTransport, GtGtTransport, SlashTransport, PercentTransport, PlusEqTransport, DashEqTransport, StarEqTransport, SlashEqTransport, PercentEqTransport, AmpEqTransport, PipeEqTransport, CaretEqTransport, LtLtEqTransport, GtGtEqTransport, ReturnKeywordTransport, YieldKeywordTransport, DotDotTransport, IfKeywordTransport, MatchKeywordTransport, CommaTransport, WhileKeywordTransport, LoopKeywordTransport, InKeywordTransport, BreakKeywordTransport, ContinueKeywordTransport, DotTransport, AwaitKeywordTransport, MoveKeywordTransport, TryKeywordTransport, AtTransport, DquoteTransport, TrueKeywordTransport, FalseKeywordTransport, SlashSlashTransport, SlashStarTransport, StarSlashTransport, UnderscoreTransport, DotDotEqTransport, ModKeywordTransport, PubKeywordTransport, StructKeywordTransport, RawKeywordTransport, MacroRulesBangTransport);

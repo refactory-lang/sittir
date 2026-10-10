@@ -1,13 +1,13 @@
 import type { AnyUntypedNode, ByteSpan, ErrorNode, LineGap, LineGapAddress, LineGaps, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
-import { carryPlacement, carryRead, carrySource, coordinateOf, detachCoordinate, holdsSlots, indexOf, isRead, isStorageKey, sourceOf, triviaOf, type DerivedSides } from './transport-data.ts';
+import { carryPlacement, carryRead, carrySource, coordinateOf, holdsSlots, indexOf, isRead, isStorageKey, sourceOf, triviaOf, type DerivedSides } from './transport-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { hydrateListStorage, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
 import { Delimiter } from './delimiter.ts';
 import { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle } from './read.ts';
-import { register, registered, type Role } from './identity.ts';
-import { holdsParse } from './tree-token.ts';
+import { markIndexEdited, register, registered, type EditSide, type Role } from './identity.ts';
+import { treeOf } from './tree-token.ts';
 import { spelledForm } from './interior.ts';
 
 export { Delimiter } from './delimiter.ts';
@@ -94,8 +94,9 @@ const scopedBy = (handle: EngineHandle | undefined): Scoped => (handle === undef
 /**
  * The writes of a node's trivia, bound to its engine. An item is an extra kind's node, or a
  * loose string built through `ir.comment`: its full spelling (`'// note'`) or its interior
- * (`' note'`). `inner` and `innerAt` write only to an empty node of a kind with inner gaps,
- * and a write detaches the node's coordinate.
+ * (`' note'`). `inner` and `innerAt` write only to an empty node of a kind with inner gaps.
+ * A write marks the node edited (`markEditedNode`): a leading or trailing write on the outside
+ * of its span, an inner write inside it.
  */
 function triviaWriter(target: object, handle: EngineHandle | undefined) {
 	const node = target as AnyUntypedNode;
@@ -104,7 +105,7 @@ function triviaWriter(target: object, handle: EngineHandle | undefined) {
 	const scoped = scopedBy(handle);
 	const kind = (): string => facts.kindName(node.$type) ?? String(node.$type);
 	const refuseUnheld = (): void => {
-		if (!holdsParse(node) || sourceOf(node) === undefined || parents.has(node) || '$errors' in node) return;
+		if (treeOf(node) === undefined || sourceOf(node) === undefined || heldBySlot.has(node) || '$errors' in node) return;
 		throw new Error(
 			`trivia: this ${kind()} was reached outside its parent's accessors (through a query), so no parent holds it and a comment written on it would not render; reach it through the accessors from the root instead`
 		);
@@ -122,13 +123,12 @@ function triviaWriter(target: object, handle: EngineHandle | undefined) {
 			if (!gaps.includes(gap)) throw new Error(`trivia: ${kind()} has no gap '${gap}'`);
 		}
 		if (!isEmptyNode(node)) throw new Error(`trivia: ${kind()} is not empty; attach to a child with leading/trailing`);
-		detachCoordinate(node);
 		return inner;
 	};
 	const store = (trivia: NodeTrivia, side: TriviaSideName): AnyUntypedNode => {
 		markWritten(node, side);
 		setTriviaData(node, trivia);
-		detachAncestors(node);
+		markEditedNode(node, side === 'inner' ? 'inside' : 'outside');
 		return node;
 	};
 	const innerAt = (gap: string, items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] => {
@@ -190,18 +190,30 @@ function carryEdit(from: object, to: object): void {
 	if (written !== undefined) writtenSides.set(to, new Set(written));
 }
 
-const parents = new WeakMap<object, object>();
+/**
+ * The parsed nodes a parent's slot holds, put there by an accessor (`hydrateSlotWith`,
+ * `hydrateSlotsWith`): a guard only. A write on a parsed node no slot holds (one a query
+ * reached) is refused, since nothing the render walks would carry it; it decides that refusal
+ * and never what renders.
+ */
+const heldBySlot = new WeakSet<object>();
 
-/** Record that a wrapped node's accessor handed out `child` from one of its slots. */
-export function adoptChild(parent: object, child: unknown): void {
-	if (typeof child === 'object' && child !== null) parents.set(child, parent);
+function holdBySlot(child: unknown): void {
+	if (typeof child === 'object' && child !== null) heldBySlot.add(child);
 }
 
-function detachAncestors(node: object): void {
-	for (let parent = parents.get(node); parent !== undefined; parent = parents.get(parent)) {
-		carrySource(parent, parent);
-		detachCoordinate(parent);
-	}
+/**
+ * Record an in-place write on a parsed node, on `side` of its span: the one hook every
+ * in-place write marks through, so a node folds to its bytes only while no write lies inside
+ * its range. A content that shares its envelope's parser node (registered as `aliasContent`)
+ * marks `inside`: its outside lies inside the envelope's span. A built node holds no tree and
+ * renders from its data already, so nothing is marked.
+ */
+export function markEditedNode(node: object, side: EditSide): void {
+	const tree = treeOf(node);
+	const index = indexOf(node);
+	if (tree === undefined || index === undefined) return;
+	markIndexEdited(tree, index, registered(tree, index, 'aliasContent') === node ? 'inside' : side);
 }
 
 function markWritten(node: object, side: TriviaSideName): void {
@@ -720,12 +732,12 @@ export function contentRole(envelope: object, content: unknown): Role {
 	return own !== undefined && own === indexOf(content) ? 'aliasContent' : 'node';
 }
 
-/** The value of slot `key` of a wrapped node, hydrated by `hydrateWith`, written back into the slot and adopted by the node. */
+/** The value of slot `key` of a wrapped node, hydrated by `hydrateWith`, written back into the slot and held by it (`heldBySlot`). */
 export function hydrateSlotWith(node: object, key: string, tree: TreeHandle, wrap: WrapTransport, role: Role = 'node'): unknown {
 	const slots = node as Record<string, unknown>;
 	const child = hydrateWith(slots[key], tree, wrap, undefined, role);
 	if (child !== slots[key]) slots[key] = child;
-	adoptChild(node, child);
+	holdBySlot(child);
 	return child;
 }
 
@@ -736,7 +748,7 @@ export function hydrateSlotsWith(node: object, key: string, tree: TreeHandle, wr
 	if (!Array.isArray(stored)) return stored == null ? NO_CHILDREN : [hydrateSlotWith(node, key, tree, wrap)];
 	if (Object.isFrozen(stored)) return stored;
 	const children = Object.freeze(stored.map((entry) => hydrateWith(entry, tree, wrap)));
-	for (const child of children) adoptChild(node, child);
+	for (const child of children) holdBySlot(child);
 	slots[key] = children;
 	return children;
 }

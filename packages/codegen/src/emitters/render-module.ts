@@ -1304,7 +1304,7 @@ function renderTransportSupport(
 		choices.emitted.map(({ entry }) => entry)
 	);
 
-	return pruneUnreferencedBridges(
+	const rendered = pruneUnreferencedBridges(
 		[
 			...anyTransportLines,
 			'',
@@ -1334,6 +1334,14 @@ function renderTransportSupport(
 			...payloadCeilingAssertions(read.boxedPayloads, read.choicePayloads)
 		].join('\n')
 	);
+	return [rendered, '', grammarTriviaStatement(rendered)].join('\n');
+}
+
+function grammarTriviaStatement(rendered: string): string {
+	const transports = [...rendered.matchAll(/#\[derive\([^)\n]*::sittir_core::Transport\)\]\n(?:#\[[^\n]*\]\n)*pub (?:struct|enum) (\w+)/g)].map(
+		(match) => match[1]!
+	);
+	return `::sittir_core::grammar_trivia!(TriviaTransport; ${transports.join(', ')});`;
 }
 
 function supertypeAdmitsVerbatim(supertypeNode: AssembledSupertype, nodeMap: NodeMap): boolean {

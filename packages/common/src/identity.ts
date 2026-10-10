@@ -30,3 +30,38 @@ export function register(tree: TreeHandle, index: number, role: Role, wrapper: o
 	wrappers.set(key, ref);
 	collected.register(wrapper, { wrappers, key, ref });
 }
+
+/** Which side of a node's span an in-place write edits: its outside trivia (leading, trailing), or what lies inside the span. */
+export type EditSide = 'inside' | 'outside';
+
+const edited = new WeakMap<TreeHandle, Record<EditSide, number[]>>();
+
+function lowerBound(sorted: readonly number[], value: number): number {
+	let low = 0;
+	let high = sorted.length;
+	while (low < high) {
+		const middle = (low + high) >>> 1;
+		if ((sorted.at(middle) ?? Infinity) < value) low = middle + 1;
+		else high = middle;
+	}
+	return low;
+}
+
+function anyWithin(sorted: readonly number[], from: number, end: number): boolean {
+	return (sorted.at(lowerBound(sorted, from)) ?? Infinity) < end;
+}
+
+/** Record an in-place write on the node at `index` of `tree`, on `side` of its span. */
+export function markIndexEdited(tree: TreeHandle, index: number, side: EditSide): void {
+	let sides = edited.get(tree);
+	if (sides === undefined) edited.set(tree, (sides = { inside: [], outside: [] }));
+	const indexes = sides[side];
+	const at = lowerBound(indexes, index);
+	if (indexes.at(at) !== index) indexes.splice(at, 0, index);
+}
+
+/** Whether a write edits the bytes of the node whose subtree is `[index, end)`: one inside its range, or one outside a descendant's span. */
+export function editedWithin(tree: TreeHandle, index: number, end: number): boolean {
+	const sides = edited.get(tree);
+	return sides !== undefined && (anyWithin(sides.inside, index, end) || anyWithin(sides.outside, index + 1, end));
+}

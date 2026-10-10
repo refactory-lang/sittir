@@ -90,10 +90,6 @@ Resolves a list owner's shallow read stub before a factory stores and sizes its 
 
 Records the tree handle a parse made under the tree's token, so anything holding the token reaches the handle (`treeOf`). A weak entry: the handle lives exactly as long as the token, which every node of the tree holds.
 
-### `packages/common/src/tree-token.ts::holdsParse`
-
-Whether a node holds a tree a parse registered (`registerTree`). For such a node holding its coordinate proves nothing below it was rebuilt, so the fold needs no walk. Data whose token no parse registered (hand-assembled data) answers no.
-
 ### `packages/common/src/tree-token.ts::treeOf`
 
 The tree handle of the parse a node was read from, through the token the node holds; `undefined` for a node that holds no tree (a built node, a draft, a copy that lost its token).
@@ -235,13 +231,17 @@ The bitflag encoding of a separated list's optional flanks: the wire's `_delimit
 
 Where a node came from, the value of its `$source` stamp: `Ts` for a node read from a tree-sitter parse, `Sg` for the ast-grep read path, `Factory` for a node a builder made. The reader and the factories stamp it once, and an edit keeps it (`$with` and `detachCoordinate` drop only coordinates), so it records the node's origin, not whether it still holds a live tree handle. Rust's `enum Source` in sittir-core is the mirror the native renderer branches on: any non-`Factory` node renders with its tree's format. The object `satisfies` `AnyUntypedNode['$source']`, so the type-level `0 | 1 | 2` union stays the one declaration of the values.
 
-### `packages/common/src/utils.ts::adoptChild`
+### `packages/common/src/utils.ts::markEditedNode`
 
-Records the node a wrapped node's accessor handed `child` out of, the generated wrap's `hydrateSlot` and `hydrateSlots` call it for every child they return. Only a parsed node reached through an accessor has a parent recorded; a root, a built node and a draft have none. The trivia writer refuses a write on a parsed node that still sits at its source position (`sourceOf`), has no parent recorded and is not its tree's root (the root alone carries `$errors`): such a node was reached outside the accessors, through a query, which hands out a node of its own that no parent slot holds, so the render, which walks parent slots, would never reach a comment written on it.
+The one hook every in-place write on a parsed node marks through: the trivia writer marks a leading or trailing write `outside` the node's span and an inner write `inside` it, and any future in-place verb (the node query's edit verbs) marks through it too, naming the side it edits, so the fold stays correct when they land. A `$with` edit mints a draft and marks nothing. A content that shares its envelope's parser node, registered as `aliasContent`, marks `inside` whatever the side: its outside lies inside the envelope's span, so the envelope must not fold over it. A built node holds no tree and renders from its data already, so nothing is marked. Nothing is detached either: the node and every ancestor keep their coordinates, and the fold reads the edited set (`editedWithin`).
 
-### `packages/common/src/utils.ts::detachAncestors`
+### `packages/common/src/utils.ts::heldBySlot`
 
-Detaches the coordinate of every node above one a trivia writer just changed, following the parents `adoptChild` recorded. Extras are not part of the node they are written on: they sit in the parent's gaps, so a comment written in place changes the text of every ancestor, whose coordinate would otherwise fold to bytes without it. Each ancestor first carries its source identity (`carrySource`), as a rebuilt node does, so it still renders with its source layout from its slots; untouched siblings keep their coordinates and fold.
+The parsed nodes a parent's slot holds, added by the accessors (`hydrateSlotWith`, `hydrateSlotsWith`, through `holdBySlot`) as they write a hydrated child back into its slot. A guard only: the trivia writer refuses a write on a parsed node that still sits at its source position, is not its tree's root (the root alone carries `$errors`) and no slot holds, since a node a query reached sits in no slot the render walks and its comment would not render. It decides that refusal, never what renders.
+
+### `packages/common/src/utils.ts::holdBySlot`
+
+Adds an object a slot now holds to `heldBySlot`; a kind id, a boolean or text is not a node and is skipped.
 
 ### `packages/common/src/utils.ts::isNode`
 
@@ -351,11 +351,11 @@ The handle a node's coordinate names it by (`$_layout.at.$treeHandle`), which pa
 
 ### `packages/common/src/transport-data.ts::foldedCoordinate`
 
-The coordinate a node crosses to the render as (its span and the tree that span slices) in place of its storage, or `undefined` when it cannot fold; `foldToCoordinate` takes it, so a folded node is known to hold one. A node folds when it names its tree, carries no trivia outside its span, and nothing below it was rebuilt. Read depth plays no part: an untouched node renders its source bytes however it was read. Nor does it cost anything: on a tree a parse registered (`holdsParse`) a node that still holds its coordinate has nothing rebuilt below it, so the check is local, however much of the tree was expanded. That holds because nothing changes a read node's text without detaching its coordinate: every rebuild goes through `markEdited`, and `$with` rebuilds each ancestor up to the edit; a trivia writer, which changes a node in place, detaches every ancestor it was reached through (`detachAncestors`). The walk below (`isUntouchedBelow`) runs only for data no parse registered: hand-assembled test and tool data. That holds because every node a read hands back names its tree: the read's root by its own handle, a stub by its parent's, and a child the read expanded by the tree's tag. An edit detaches the coordinate of the node it rebuilds, so each untouched child below it is then the node that folds, and it must be able to name the tree itself. Below the node that folds a span is the whole requirement, since its bytes carry everything under it. The trivia it is judged by is the trivia it crosses with (`TriviaOf`), so a read node that owns a line-break run outside its span does not fold. A node that cannot fold (it was rebuilt, or it owns leading or trailing trivia) crosses as its stored slots, which the generated wrap keeps in model shape at every level (`storeExpanded`).
+The coordinate a node crosses to the render as (its span and the tree that span slices) in place of its storage, or `undefined` when it cannot fold; `foldToCoordinate` takes it. A node folds when it names a live tree and no edit lies inside its range (`editedWithin` over `[index, $end)`): an in-place write under any descendant, or on its own inner trivia, stops it, and an outside write on a descendant does too, because that comment changes the node's bytes. Its own outside trivia does not: leading and trailing entries lie outside its span, so it folds and they render around the folded bytes (`foldToCoordinate` carries them). Read depth plays no part, and the check is local: no walk below the node. A record with a coordinate but no live tree (a copy that lost its token) does not fold and crosses as its slots.
 
-### `packages/common/src/transport-data.ts::TriviaView`
+### `packages/common/src/transport-data.ts::foldToCoordinate`
 
-The trivia a node crosses to the render with, and which of its sides the read derived (`DerivedSides`). The engine's render passes `readTrivia` and `readDerivedSides`, so an untouched child of a rebuilt parent crosses with the whitespace its parse gave it, minus the runs whose neighbour changed (`changedEdges`). Every caller names its view: data with no derived trivia (a test's hand-written nodes, a probe's detached data) passes `STORED_TRIVIA`, where a node crosses with the trivia it stores and nothing is derived. There is no default, so no caller can skip the derived view by leaving it out. The fold decision and the `$_trivia` an unfolded node carries both come from this one view; a node's raw `$_trivia` never crosses beside it. The view also answers `isWrapper`: whether a kind id is one a rebuild constructs around an existing node (`TriviaFacts.rebuildWrappers`), which `evidenceOf` asks before looking through an entry. `STORED_TRIVIA` answers no for every kind, since nothing in its data is judged for source adjacency.
+The object a folded node crosses as: its coordinate (`plainCoordinate`), its format stamp and placement facts, and, when the node owns any, its outside trivia under `$_layout.trivia` (the leading and trailing sides only: inner entries lie inside the span, so its bytes carry them). The native render frames the coordinate's bytes with that trivia as it frames a rendered owner.
 
 ### `packages/common/src/transport-data.ts::detachCoordinates`
 
@@ -641,6 +641,26 @@ The wrapper registered for a node of a tree, by index and role, while it lives: 
 ### `packages/common/src/identity.ts::register`
 
 Records a wrapper for a node of a tree, by index and role, weakly. A finalization registry drops the entry when the wrapper is collected, unless a newer wrapper took the key since; the next route then wraps the node afresh and registers that.
+
+### `packages/common/src/identity.ts::EditSide`
+
+Which side of a node's span an in-place write edits: `outside` for its leading or trailing trivia, `inside` for anything within the span (its inner trivia, or a descendant).
+
+### `packages/common/src/identity.ts::markIndexEdited`
+
+Records an in-place write on the node at an index of a tree, on one side of its span, in that tree's sorted index lists (one per side, held weakly by the `TreeHandle` object). A second write at the same index and side adds nothing.
+
+### `packages/common/src/identity.ts::editedWithin`
+
+Whether a write edits the bytes of the node whose subtree is `[index, end)`: an `inside` index in `[index, end)`, or an `outside` index in `(index, end)`. A node's own outside write is excluded, since its comment sits outside its span; an ancestor's range strictly contains the index, so the ancestor sees it. Two binary searches, so the fold check costs the same however many nodes were written.
+
+### `packages/common/src/identity.ts::lowerBound`
+
+The first position in a sorted index list whose index is not below a value: a binary search, reading past the end as `Infinity`.
+
+### `packages/common/src/identity.ts::anyWithin`
+
+Whether a sorted index list holds an index in `[from, end)`.
 
 ### `packages/common/src/transport-data.ts::indexOf`
 

@@ -39,7 +39,7 @@ pub trait ArmOf {
 impl<T: crate::view::KindOf, const ADJACENT: bool> ArmOf for SlotValue<T, ADJACENT> {
     fn arm_among(&self, ctx: &RenderContext<'_>, arms: &[crate::options::ArmSite]) -> Option<KindId> {
         match self {
-            SlotValue::Coord(coord) => coord.kind_in(ctx.sources).filter(|kind| arms.iter().any(|a| a.arm == kind.0)),
+            SlotValue::Coord(coord, _) => coord.kind_in(ctx.sources).filter(|kind| arms.iter().any(|a| a.arm == kind.0)),
             SlotValue::Transport(t) => arms.iter().map(|a| KindId(a.arm)).find(|kind| t.kind_in(&[*kind])),
         }
     }
@@ -302,7 +302,7 @@ fn single_separator<'g>(gap: &'g str, token: &str) -> Option<(&'g str, &'g str)>
 fn set_gap_edge<T: Prepare, const ADJACENT: bool>(item: &mut SlotValue<T, ADJACENT>, side: Side, arm: u16) {
     let seam = SeamArm { arm, strength: crate::spacing::SEAM_TRIVIA, dedent: false };
     match item {
-        SlotValue::Coord(coord) => {
+        SlotValue::Coord(coord, _) => {
             let edges = coord.edges.get_or_insert(crate::slot::CoordinateEdges { before: None, after: None });
             match side {
                 Side::Before => edges.before.get_or_insert(seam),
@@ -340,7 +340,7 @@ pub fn fill_seated_gaps<'i, T: SeatTarget + 'i, const ADJACENT: bool>(
                     edges.after.get_or_insert(EdgeArm::from(ctx.options.spacing[site]));
                 }
             }
-            SlotValue::Coord(coord) => {
+            SlotValue::Coord(coord, _) => {
                 if let Some(site) = coord.kind_in(ctx.sources).and_then(|kind| seat_site(table, kind)) {
                     let edges = coord.edges.get_or_insert(crate::slot::CoordinateEdges { before: None, after: None });
                     edges.after.get_or_insert(ctx.options.spacing[site]);
@@ -371,7 +371,10 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
     /// the sink re-resolves at write time against the same table.
     fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
         match self {
-            SlotValue::Coord(coord) => {
+            SlotValue::Coord(coord, trivia) => {
+                if let Some(trivia) = trivia {
+                    trivia.0.prepare(ctx)?;
+                }
                 coord.resolve(ctx.sources)?;
                 let seated = coord.edges;
                 coord.edges = coord.kind_in(ctx.sources).and_then(|kind| ctx.options.edge_arms(kind));
@@ -393,7 +396,7 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
     fn source_gap(&self) -> Option<&SourceGap> {
         match self {
             SlotValue::Transport(t) => t.source_gap(),
-            SlotValue::Coord(coord) => coord.gap.as_ref(),
+            SlotValue::Coord(coord, _) => coord.gap.as_deref(),
         }
     }
 }
@@ -481,7 +484,7 @@ mod tests {
     };
 
     fn coordinate(start: u32, end: u32) -> NodeCoordinate {
-        NodeCoordinate::new(3, 0, Span { start, end })
+        NodeCoordinate::new(3, 0, 1, Span { start, end })
     }
 
     fn before_flank(first: &NodeCoordinate, source: &str) -> Option<u16> {
@@ -516,13 +519,13 @@ mod tests {
         let end = source.len() as u32;
         let first = coordinate(0, 1);
         let second = NodeCoordinate {
-            gap: second_gap,
+            gap: second_gap.map(Box::new),
             ..coordinate(end - 1, end)
         };
-        let mut items: Vec<SlotValue<String>> = vec![SlotValue::Coord(first), SlotValue::Coord(second)];
+        let mut items: Vec<SlotValue<String>> = vec![SlotValue::Coord(first, None), SlotValue::Coord(second, None)];
         fill_list_gaps(items.iter_mut().map(Some), ",", &[TIGHT, NEWLINE], &[TIGHT, NEWLINE], &TABLE, &ctx);
         let edge = |item: &SlotValue<String>, after: bool| match item {
-            SlotValue::Coord(coord) => coord.edges.and_then(|edges| if after { edges.after } else { edges.before }).map(|seam| seam.arm),
+            SlotValue::Coord(coord, _) => coord.edges.and_then(|edges| if after { edges.after } else { edges.before }).map(|seam| seam.arm),
             SlotValue::Transport(_) => None,
         };
         (edge(&items[0], true), edge(&items[1], false))

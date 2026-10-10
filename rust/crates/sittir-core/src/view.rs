@@ -36,7 +36,7 @@ pub trait KindTest {
 impl<T: KindOf, const ADJACENT: bool> KindTest for SlotValue<T, ADJACENT> {
     fn kind_in(&self, w: &dyn RenderSink, kinds: &[KindId]) -> bool {
         match self {
-            SlotValue::Coord(coord) => w.kind_of(coord).is_some_and(|kind| kinds.contains(&kind)),
+            SlotValue::Coord(coord, _) => w.kind_of(coord).is_some_and(|kind| kinds.contains(&kind)),
             SlotValue::Transport(t) => t.kind_in(kinds),
         }
     }

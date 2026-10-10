@@ -117,6 +117,8 @@ export interface AnyUntypedNode {
  */
 export interface TransportCoordinate {
 	readonly $treeHandle: number;
+	/** The index past the node's last descendant: its subtree is the indexes from its own up to this one, exclusive. */
+	readonly $end: number;
 	readonly $span: ByteSpan;
 	readonly $type: number;
 }

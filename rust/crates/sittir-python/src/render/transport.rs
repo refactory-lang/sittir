@@ -40,13 +40,13 @@ pub enum AnyTransport {
     #[kind(kind::ALIASED_IMPORT)]
     AliasedImport(AliasedImportTransport),
     #[kind(kind::PRINT_STATEMENT)]
-    PrintStatement(Box<PrintStatementTransport>),
+    PrintStatement(PrintStatementTransport),
     #[kind(kind::CHEVRON)]
     Chevron(ChevronTransport),
     #[kind(kind::ASSERT_STATEMENT)]
     AssertStatement(AssertStatementTransport),
     #[kind(kind::EXPRESSION_STATEMENT)]
-    ExpressionStatement(Box<ExpressionStatementTransport>),
+    ExpressionStatement(ExpressionStatementTransport),
     #[kind(kind::NAMED_EXPRESSION)]
     NamedExpression(NamedExpressionTransport),
     #[kind(kind::RETURN_STATEMENT)]
@@ -58,7 +58,7 @@ pub enum AnyTransport {
     #[kind(kind::IF_STATEMENT)]
     IfStatement(Box<IfStatementTransport>),
     #[kind(kind::ELIF_CLAUSE)]
-    ElifClause(Box<ElifClauseTransport>),
+    ElifClause(ElifClauseTransport),
     #[kind(kind::ELSE_CLAUSE)]
     ElseClause(ElseClauseTransport),
     #[kind(kind::MATCH_STATEMENT)]
@@ -72,7 +72,7 @@ pub enum AnyTransport {
     #[kind(kind::WHILE_STATEMENT)]
     WhileStatement(Box<WhileStatementTransport>),
     #[kind(kind::TRY_STATEMENT)]
-    TryStatement(Box<TryStatementTransport>),
+    TryStatement(TryStatementTransport),
     #[kind(kind::EXCEPT_CLAUSE)]
     ExceptClause(ExceptClauseTransport),
     #[kind(kind::FINALLY_CLAUSE)]
@@ -100,7 +100,7 @@ pub enum AnyTransport {
     #[kind(kind::TYPE_ALIAS_STATEMENT)]
     TypeAliasStatement(TypeAliasStatementTransport),
     #[kind(kind::CLASS_DEFINITION)]
-    ClassDefinition(Box<ClassDefinitionTransport>),
+    ClassDefinition(ClassDefinitionTransport),
     #[kind(kind::TYPE_PARAMETER)]
     TypeParameter(TypeParameterTransport),
     #[kind(kind::PARENTHESIZED_LIST_SPLAT)]
@@ -108,7 +108,7 @@ pub enum AnyTransport {
     #[kind(kind::ARGUMENT_LIST)]
     ArgumentList(ArgumentListTransport),
     #[kind(kind::DECORATED_DEFINITION)]
-    DecoratedDefinition(DecoratedDefinitionTransport),
+    DecoratedDefinition(Box<DecoratedDefinitionTransport>),
     #[kind(kind::DECORATOR)]
     Decorator(DecoratorTransport),
     #[kind(kind::BLOCK)]
@@ -1579,11 +1579,11 @@ pub enum StatementTransport {
     IfStatement(Box<IfStatementTransport>),
     ForStatement(Box<ForStatementTransport>),
     WhileStatement(Box<WhileStatementTransport>),
-    TryStatement(Box<TryStatementTransport>),
+    TryStatement(TryStatementTransport),
     WithStatement(WithStatementTransport),
     FunctionDefinition(Box<FunctionDefinitionTransport>),
-    ClassDefinition(Box<ClassDefinitionTransport>),
-    DecoratedDefinition(DecoratedDefinitionTransport),
+    ClassDefinition(ClassDefinitionTransport),
+    DecoratedDefinition(Box<DecoratedDefinitionTransport>),
     MatchStatement(MatchStatementTransport),
 }
 
@@ -1669,11 +1669,11 @@ pub enum SimpleStatementTransport {
     #[kind(kind::IMPORT_FROM_STATEMENT)]
     ImportFromStatement(ImportFromStatementTransport),
     #[kind(kind::PRINT_STATEMENT)]
-    PrintStatement(Box<PrintStatementTransport>),
+    PrintStatement(PrintStatementTransport),
     #[kind(kind::ASSERT_STATEMENT)]
     AssertStatement(AssertStatementTransport),
     #[kind(kind::EXPRESSION_STATEMENT)]
-    ExpressionStatement(Box<ExpressionStatementTransport>),
+    ExpressionStatement(ExpressionStatementTransport),
     #[kind(kind::RETURN_STATEMENT)]
     ReturnStatement(ReturnStatementTransport),
     #[kind(kind::DELETE_STATEMENT)]
@@ -1798,15 +1798,15 @@ pub enum CompoundStatementTransport {
     #[kind(kind::WHILE_STATEMENT)]
     WhileStatement(Box<WhileStatementTransport>),
     #[kind(kind::TRY_STATEMENT)]
-    TryStatement(Box<TryStatementTransport>),
+    TryStatement(TryStatementTransport),
     #[kind(kind::WITH_STATEMENT)]
     WithStatement(WithStatementTransport),
     #[kind(kind::FUNCTION_DEFINITION)]
     FunctionDefinition(Box<FunctionDefinitionTransport>),
     #[kind(kind::CLASS_DEFINITION)]
-    ClassDefinition(Box<ClassDefinitionTransport>),
+    ClassDefinition(ClassDefinitionTransport),
     #[kind(kind::DECORATED_DEFINITION)]
-    DecoratedDefinition(DecoratedDefinitionTransport),
+    DecoratedDefinition(Box<DecoratedDefinitionTransport>),
     #[kind(kind::MATCH_STATEMENT)]
     MatchStatement(MatchStatementTransport),
 }
@@ -3844,7 +3844,7 @@ impl ::sittir_core::render::Render for ReturnStatementExpressionsTransportSlot {
 #[transport(choice)]
 pub enum IfStatementAlternativeTransportSlot {
     #[kind(kind::ELIF_CLAUSE)]
-    ElifClause(Box<ElifClauseTransport>),
+    ElifClause(ElifClauseTransport),
     #[kind(kind::ELSE_CLAUSE)]
     ElseClause(ElseClauseTransport),
 }
@@ -3882,7 +3882,7 @@ impl ::sittir_core::view::KindOf for IfStatementAlternativeTransportSlot {
 impl ::sittir_core::render::Render for IfStatementAlternativeTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            IfStatementAlternativeTransportSlot::ElifClause(inner) => inner.as_ref().render(w),
+            IfStatementAlternativeTransportSlot::ElifClause(inner) => inner.render(w),
             IfStatementAlternativeTransportSlot::ElseClause(inner) => inner.render(w),
         }
     }
@@ -4175,7 +4175,7 @@ impl ::sittir_core::render::Render for ParenthesizedListSplatContentTransportSlo
 #[transport(choice)]
 pub enum DecoratedDefinitionDefinitionTransportSlot {
     #[kind(kind::CLASS_DEFINITION)]
-    ClassDefinition(Box<ClassDefinitionTransport>),
+    ClassDefinition(ClassDefinitionTransport),
     #[kind(kind::FUNCTION_DEFINITION)]
     FunctionDefinition(Box<FunctionDefinitionTransport>),
 }
@@ -4213,7 +4213,7 @@ impl ::sittir_core::view::KindOf for DecoratedDefinitionDefinitionTransportSlot 
 impl ::sittir_core::render::Render for DecoratedDefinitionDefinitionTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            DecoratedDefinitionDefinitionTransportSlot::ClassDefinition(inner) => inner.as_ref().render(w),
+            DecoratedDefinitionDefinitionTransportSlot::ClassDefinition(inner) => inner.render(w),
             DecoratedDefinitionDefinitionTransportSlot::FunctionDefinition(inner) => inner.as_ref().render(w),
         }
     }
@@ -24987,11 +24987,11 @@ fn render_statement(t: &StatementTransport, w: &mut dyn ::sittir_core::render::R
         StatementTransport::IfStatement(inner) => inner.as_ref().render(w),
         StatementTransport::ForStatement(inner) => inner.as_ref().render(w),
         StatementTransport::WhileStatement(inner) => inner.as_ref().render(w),
-        StatementTransport::TryStatement(inner) => inner.as_ref().render(w),
+        StatementTransport::TryStatement(inner) => inner.render(w),
         StatementTransport::WithStatement(inner) => inner.render(w),
         StatementTransport::FunctionDefinition(inner) => inner.as_ref().render(w),
-        StatementTransport::ClassDefinition(inner) => inner.as_ref().render(w),
-        StatementTransport::DecoratedDefinition(inner) => inner.render(w),
+        StatementTransport::ClassDefinition(inner) => inner.render(w),
+        StatementTransport::DecoratedDefinition(inner) => inner.as_ref().render(w),
         StatementTransport::MatchStatement(inner) => inner.render(w),
     }
 }
@@ -25001,9 +25001,9 @@ fn render_simple_statement(t: &SimpleStatementTransport, w: &mut dyn ::sittir_co
         SimpleStatementTransport::FutureImportStatement(inner) => inner.render(w),
         SimpleStatementTransport::ImportStatement(inner) => inner.render(w),
         SimpleStatementTransport::ImportFromStatement(inner) => inner.render(w),
-        SimpleStatementTransport::PrintStatement(inner) => inner.as_ref().render(w),
+        SimpleStatementTransport::PrintStatement(inner) => inner.render(w),
         SimpleStatementTransport::AssertStatement(inner) => inner.render(w),
-        SimpleStatementTransport::ExpressionStatement(inner) => inner.as_ref().render(w),
+        SimpleStatementTransport::ExpressionStatement(inner) => inner.render(w),
         SimpleStatementTransport::ReturnStatement(inner) => inner.render(w),
         SimpleStatementTransport::DeleteStatement(inner) => inner.render(w),
         SimpleStatementTransport::RaiseStatement(inner) => inner.as_ref().render(w),
@@ -25022,11 +25022,11 @@ fn render_compound_statement(t: &CompoundStatementTransport, w: &mut dyn ::sitti
         CompoundStatementTransport::IfStatement(inner) => inner.as_ref().render(w),
         CompoundStatementTransport::ForStatement(inner) => inner.as_ref().render(w),
         CompoundStatementTransport::WhileStatement(inner) => inner.as_ref().render(w),
-        CompoundStatementTransport::TryStatement(inner) => inner.as_ref().render(w),
+        CompoundStatementTransport::TryStatement(inner) => inner.render(w),
         CompoundStatementTransport::WithStatement(inner) => inner.render(w),
         CompoundStatementTransport::FunctionDefinition(inner) => inner.as_ref().render(w),
-        CompoundStatementTransport::ClassDefinition(inner) => inner.as_ref().render(w),
-        CompoundStatementTransport::DecoratedDefinition(inner) => inner.render(w),
+        CompoundStatementTransport::ClassDefinition(inner) => inner.render(w),
+        CompoundStatementTransport::DecoratedDefinition(inner) => inner.as_ref().render(w),
         CompoundStatementTransport::MatchStatement(inner) => inner.render(w),
     }
 }
@@ -25800,7 +25800,7 @@ const _: () = assert!(::core::mem::size_of::<CasePatternTransport>() <= 256, "Ca
 const _: () = assert!(::core::mem::size_of::<CasePatternsTransport>() <= 256, "CasePatternsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<CaseTuplePatternTransport>() <= 256, "CaseTuplePatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ChevronTransport>() <= 256, "ChevronTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ClassDefinitionTransport>() > 256, "ClassDefinitionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ClassDefinitionTransport>() <= 256, "ClassDefinitionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ClassPatternTransport>() <= 256, "ClassPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<CollectionElementsTransport>() <= 256, "CollectionElementsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<CommentTransport>() <= 256, "CommentTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -25812,7 +25812,7 @@ const _: () = assert!(::core::mem::size_of::<ComprehensionClausesTransport>() <=
 const _: () = assert!(::core::mem::size_of::<ConcatenatedStringTransport>() <= 256, "ConcatenatedStringTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ConditionalExpressionTransport>() <= 256, "ConditionalExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ConstrainedTypeTransport>() <= 256, "ConstrainedTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<DecoratedDefinitionTransport>() <= 256, "DecoratedDefinitionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<DecoratedDefinitionTransport>() > 256, "DecoratedDefinitionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DecoratorTransport>() <= 256, "DecoratorTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DedentTransport>() <= 256, "DedentTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DefaultParameterTransport>() <= 256, "DefaultParameterTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -25825,7 +25825,7 @@ const _: () = assert!(::core::mem::size_of::<DictionarySplatPatternTransport>() 
 const _: () = assert!(::core::mem::size_of::<DictionarySplatTransport>() <= 256, "DictionarySplatTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DictionaryTransport>() <= 256, "DictionaryTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DottedNameTransport>() <= 256, "DottedNameTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ElifClauseTransport>() > 256, "ElifClauseTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ElifClauseTransport>() <= 256, "ElifClauseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ElseClauseTransport>() <= 256, "ElseClauseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<EscapeInterpolationTransport>() <= 256, "EscapeInterpolationTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<EscapeSequenceHexTransport>() <= 256, "EscapeSequenceHexTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -25841,7 +25841,7 @@ const _: () = assert!(::core::mem::size_of::<ExceptClauseExceptionTransport>() <
 const _: () = assert!(::core::mem::size_of::<ExceptClauseTransport>() <= 256, "ExceptClauseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExecStatementTransport>() <= 256, "ExecStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExpressionListTransport>() <= 256, "ExpressionListTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ExpressionStatementTransport>() > 256, "ExpressionStatementTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ExpressionStatementTransport>() <= 256, "ExpressionStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExpressionStatementTupleTransport>() <= 256, "ExpressionStatementTupleTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FinallyClauseTransport>() <= 256, "FinallyClauseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FloatLeadingPointTransport>() <= 256, "FloatLeadingPointTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -25911,7 +25911,7 @@ const _: () = assert!(::core::mem::size_of::<PrintArgumentsTransport>() <= 256, 
 const _: () = assert!(::core::mem::size_of::<PrintChevronArgumentsTransport>() <= 256, "PrintChevronArgumentsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<PrintStatementChevronTransport>() <= 256, "PrintStatementChevronTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<PrintStatementPlainTransport>() <= 256, "PrintStatementPlainTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<PrintStatementTransport>() > 256, "PrintStatementTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<PrintStatementTransport>() <= 256, "PrintStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<RaiseStatementTransport>() > 256, "RaiseStatementTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<RelativeImportTransport>() <= 256, "RelativeImportTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ReturnStatementTransport>() <= 256, "ReturnStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -25936,7 +25936,7 @@ const _: () = assert!(::core::mem::size_of::<SubscriptsTransport>() <= 256, "Sub
 const _: () = assert!(::core::mem::size_of::<SuiteBlockTransport>() <= 256, "SuiteBlockTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<SuiteEmptyTransport>() <= 256, "SuiteEmptyTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<SuiteInlineTransport>() <= 256, "SuiteInlineTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TryStatementTransport>() > 256, "TryStatementTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<TryStatementTransport>() <= 256, "TryStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TupleElementsTransport>() <= 256, "TupleElementsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TuplePatternElementsTransport>() <= 256, "TuplePatternElementsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TuplePatternTransport>() <= 256, "TuplePatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -25959,3 +25959,5 @@ const _: () = assert!(::core::mem::size_of::<WithItemTransport>() <= 256, "WithI
 const _: () = assert!(::core::mem::size_of::<WithStatementTransport>() <= 256, "WithStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<YieldFromClauseTransport>() <= 256, "YieldFromClauseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<YieldTransport>() <= 256, "YieldTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+
+::sittir_core::grammar_trivia!(TriviaTransport; AnyTransport, TriviaTransport, StatementTransport, SimpleStatementTransport, CompoundStatementTransport, WithClauseTransport, SuiteTransport, ParameterTransport, PatternTransport, ExpressionTransport, PrimaryExpressionTransport, IntegerTransport, FloatTransport, IntegerDecimalTransport, FutureImportStatementContentTransportSlot, ImportFromStatementModuleNameTransportSlot, ImportFromStatementContentTransportSlot, ImportListNameTransportSlot, PrintStatementContentTransportSlot, ExpressionStatementContentTransportSlot, NamedExpressionNameTransportSlot, ReturnStatementExpressionsTransportSlot, IfStatementAlternativeTransportSlot, MatchBlockContentTransportSlot, ForStatementLeftTransportSlot, ExecStatementCodeTransportSlot, ParenthesizedListSplatContentTransportSlot, DecoratedDefinitionDefinitionTransportSlot, CasePatternContentTransportSlot, SimplePatternContentTransportSlot, SplatPatternOperatorTransportSlot, SplatPatternNameTransportSlot, ComplexPatternRealTransportSlot, ComplexPatternOperatorTransportSlot, DefaultParameterNameTransportSlot, ListSplatPatternTargetTransportSlot, BooleanOperatorOperatorTransportSlot, BinaryOperatorOperatorTransportSlot, UnaryOperatorOperatorTransportSlot, LambdaWithinForInClauseBodyTransportSlot, AugmentedAssignmentOperatorTransportSlot, AugmentedAssignmentRightTransportSlot, YieldContentTransportSlot, CallArgumentsTransportSlot, TypedParameterNameTransportSlot, TypeContentTransportSlot, SplatTypeOperatorTransportSlot, GenericTypeNameTransportSlot, ParenthesizedExpressionExpressionTransportSlot, CollectionElementsItemTransportSlot, StringContentTransportSlot, StringContentContentTransportSlot, InterpolationExpressionTransportSlot, FormatSpecifierElementsTransportSlot, ArgumentListElementsItemTransportSlot, DictPatternElementsItemTransportSlot, SubscriptsSubscriptTransportSlot, DictionaryElementsItemTransportSlot, PrintStatementChevronPrintChevronArgumentsTransportSlot, ComprehensionClausesContentTransportSlot, ExceptClauseExceptionContentTransportSlot, ComparisonOperatorComparatorOperatorsTransportSlot, ModuleTransport, SimpleStatementsTransport, ImportStatementTransport, ImportPrefixTransport, RelativeImportTransport, FutureImportStatementTransport, ImportFromStatementTransport, ImportListTransport, AliasedImportTransport, WildcardImportTransport, PrintStatementTransport, ChevronTransport, AssertStatementTransport, ExpressionStatementTransport, NamedExpressionTransport, ReturnStatementTransport, DeleteStatementTransport, RaiseStatementTransport, PassStatementTransport, BreakStatementTransport, ContinueStatementTransport, IfStatementTransport, ElifClauseTransport, ElseClauseTransport, MatchStatementTransport, MatchBlockTransport, CaseClauseTransport, ForStatementTransport, WhileStatementTransport, TryStatementTransport, ExceptClauseTransport, FinallyClauseTransport, WithStatementTransport, WithItemTransport, FunctionDefinitionTransport, ParametersTransport, LambdaParametersTransport, ListSplatTransport, DictionarySplatTransport, GlobalStatementTransport, NonlocalStatementTransport, ExecStatementTransport, TypeAliasStatementTransport, ClassDefinitionTransport, TypeParameterTransport, ParenthesizedListSplatTransport, ArgumentListTransport, DecoratedDefinitionTransport, DecoratorTransport, BlockTransport, ExpressionListTransport, DottedNameTransport, CasePatternTransport, SimplePatternTransport, CaseAsPatternTransport, UnionPatternTransport, DictPatternTransport, KeyValuePatternTransport, KeywordPatternTransport, SplatPatternTransport, ClassPatternTransport, ComplexPatternTransport, ParametersElementsTransport, PatternsTransport, TuplePatternTransport, ListPatternTransport, DefaultParameterTransport, TypedDefaultParameterTransport, ListSplatPatternTransport, DictionarySplatPatternTransport, AsPatternTransport, NotOperatorTransport, BooleanOperatorTransport, BinaryOperatorTransport, UnaryOperatorTransport, ComparisonOperatorTransport, LambdaTransport, LambdaWithinForInClauseTransport, AugmentedAssignmentTransport, PatternListTransport, YieldTransport, AttributeTransport, SubscriptTransport, SliceTransport, EllipsisTransport, CallTransport, TypedParameterTransport, TypeTransport, SplatTypeTransport, GenericTypeTransport, UnionTypeTransport, ConstrainedTypeTransport, MemberTypeTransport, KeywordArgumentTransport, ListTransport, SetTransport, TupleTransport, DictionaryTransport, PairTransport, ListComprehensionTransport, DictionaryComprehensionTransport, SetComprehensionTransport, GeneratorExpressionTransport, ParenthesizedExpressionTransport, CollectionElementsTransport, ForInClauseTransport, IfClauseTransport, ConditionalExpressionTransport, ConcatenatedStringTransport, StringTransport, StringContentTransport, InterpolationTransport, NotEscapeSequenceTransport, FormatSpecifierTransport, TypeConversionTransport, IdentifierTransport, TrueTransport, FalseTransport, NoneTransport, AwaitTransport, CommentTransport, PositionalSeparatorTransport, KeywordSeparatorTransport, SimpleStatementsElementsTransport, SubjectsTransport, CasePatternsTransport, WithClauseWithItemsTransport, TypesTransport, ArgumentListElementsTransport, ListPatternCasePatternsTransport, DictPatternElementsTransport, SubscriptsTransport, DictionaryElementsTransport, SliceGroupTransport, FormatSpecifierTextTransport, TuplePatternElementsTransport, TupleElementsTransport, ExceptClauseExceptionAsTransport, CaseTuplePatternTransport, CaseListPatternTransport, PrintArgumentsTransport, PrintChevronArgumentsTransport, PrintStatementChevronTransport, PrintStatementPlainTransport, WildcardPatternTransport, ParenthesizedImportListTransport, ComprehensionClausesTransport, IntegerHexTransport, IntegerOctalTransport, IntegerBinaryTransport, IntegerDecimalLongTransport, IntegerDecimalImaginaryTransport, IntegerDecimalPlainTransport, FloatPointTransport, FloatLeadingPointTransport, FloatScientificTransport, EscapeSequenceUnicodeFixedTransport, EscapeSequenceUnicodeWideTransport, EscapeSequenceHexTransport, EscapeSequenceOctalTransport, EscapeSequenceLineBreakTransport, EscapeSequenceSimpleTransport, EscapeSequenceNamedTransport, LineContinuationNewlineTransport, LineContinuationNulTransport, SimplePatternNegativeTransport, ExceptClauseExceptionListTransport, ExceptClauseExceptionTransport, AssignmentEqTransport, AssignmentTypeTransport, AssignmentTypedTransport, ExpressionStatementTupleTransport, WithClauseBareTransport, WithClauseParenTransport, MatchBlockBlockTransport, MatchBlockEmptyTransport, SuiteInlineTransport, SuiteBlockTransport, SuiteEmptyTransport, ComparisonOperatorComparatorTransport, YieldFromClauseTransport, StringStartTransport, StringFragmentTransport, EscapeInterpolationTransport, StringEndTransport, TightTransport, SpaceTransport, TabTransport, NewlineTransport, BlanklineTransport, DoubleBlanklineTransport, IndentTransport, DedentTransport, NamesTransport, AsPatternTargetTransport, FormatExpressionTransport, ImportKeywordTransport, DotTransport, FromKeywordTransport, FutureUKeywordTransport, AsKeywordTransport, StarTransport, GtGtTransport, AssertKeywordTransport, PrintKeywordTransport, ExecKeywordTransport, AsyncKeywordTransport, AwaitKeywordTransport, TypeKeywordTransport, MatchKeywordTransport, ColonEqTransport, ReturnKeywordTransport, DelKeywordTransport, RaiseKeywordTransport, PassKeywordTransport, BreakKeywordTransport, ContinueKeywordTransport, IfKeywordTransport, ColonTransport, ElifKeywordTransport, ElseKeywordTransport, CaseKeywordTransport, ForKeywordTransport, InKeywordTransport, WhileKeywordTransport, TryKeywordTransport, ExceptKeywordTransport, FinallyKeywordTransport, WithKeywordTransport, DefKeywordTransport, DashGtTransport, LparenTransport, RparenTransport, StarStarTransport, GlobalKeywordTransport, NonlocalKeywordTransport, EqTransport, ClassKeywordTransport, LbrackTransport, RbrackTransport, AtTransport, LbraceTransport, RbraceTransport, UnderscoreTransport, DashTransport, PlusTransport, NotKeywordTransport, AndKeywordTransport, OrKeywordTransport, SlashTransport, PercentTransport, SlashSlashTransport, PipeTransport, AmpTransport, CaretTransport, LtLtTransport, TildeTransport, LambdaKeywordTransport, PlusEqTransport, DashEqTransport, StarEqTransport, SlashEqTransport, AtEqTransport, SlashSlashEqTransport, PercentEqTransport, StarStarEqTransport, GtGtEqTransport, LtLtEqTransport, AmpEqTransport, CaretEqTransport, PipeEqTransport, YieldKeywordTransport, CommaTransport, BslashTransport, LtTransport, LtEqTransport, EqEqTransport, BangEqTransport, GtEqTransport, GtTransport, LtGtTransport, NotInTransport, IsKeywordTransport, IsNotTransport);

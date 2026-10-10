@@ -3278,6 +3278,10 @@ variant the module names holds the core's type.
 // transport bridge helpers.
 ```
 
+### `packages/codegen/src/emitters/render-module.ts::grammarTriviaStatement`
+
+The render module's last statement, `::sittir_core::grammar_trivia!(TriviaTransport; …)`: it states once, for every transport the module emits (each `pub struct` or `pub enum` deriving `Transport`, unit-only enums included), that the grammar's trivia type is `TriviaTransport`. A coordinate in any slot then decodes and frames the outside trivia a folded node carries (`HasTrivia`), whatever the slot's transport type. The list is read from the emitted module itself, so it names exactly the transports that exist after pruning.
+
 ### `packages/codegen/src/emitters/render-module.ts::pruneUnreferencedBridges`
 
 ```text
@@ -15462,7 +15466,7 @@ The per-grammar runtime glue shared by every grammar package, emitted into `pack
 
 ### `packages/codegen/src/emitters/native-crate.ts::NATIVE_RENDER_TRANSPORT_ABI`
 
-The version of the wire between the JS packages and a native build: the render transport shape JS sends, the read shape the native reader sends back (`$type` / `$displayType`, which children and tokens arrive, when `$text` is present, which of `$handle` / `$parentHandle` / `$treeHandle` a node carries, and the error regions a parse returns beside its root), and the read calls' names and arguments (a read takes a level count; a descendant walk takes the address it starts from, kinds, a resume path, a limit, a plan and a depth, and returns its start's own handle with each batch; a plan is evaluated over a list of addresses in one call). It is the one source for both sides of the handshake: `emitBackend` bakes it into each package's `backend.ts`, and `nativeCrateFiles` into each crate's generated `lib.rs` (passed to `napi_engine!`, reported by the native engine). `backend.ts` refuses a native build reporting a different value. The render-module hash covers only the render templates, so a reader change with unchanged templates passes the hash check; bump this whenever any of these changes, and regenerate every grammar.
+The version of the wire between the JS packages and a native build: the render transport shape JS sends, the read shape the native reader sends back (`$type` / `$displayType`, which children and tokens arrive, when `$text` is present, which of `$handle` / `$parentHandle` / `$treeHandle` a node carries, and the error regions a parse returns beside its root), and the read calls' names and arguments (a read takes a level count; a descendant walk takes the address it starts from, kinds, a resume path, a limit, a plan and a depth, and returns its start's own handle with each batch; a plan is evaluated over a list of addresses in one call; the line starts inside tokens take a tree and an optional descendant index, and return byte offsets). It is the one source for both sides of the handshake: `emitBackend` bakes it into each package's `backend.ts`, and `nativeCrateFiles` into each crate's generated `lib.rs` (passed to `napi_engine!`, reported by the native engine). `backend.ts` refuses a native build reporting a different value. The render-module hash covers only the render templates, so a reader change with unchanged templates passes the hash check; bump this whenever any of these changes, and regenerate every grammar.
 
 ### `packages/codegen/src/emitters/types.ts::emitNodeSurfaceInterfaces`
 

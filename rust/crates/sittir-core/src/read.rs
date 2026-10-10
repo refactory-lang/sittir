@@ -89,7 +89,7 @@ impl<'s> ReadCtx<'s> {
     pub fn coordinate_of(&self, child: &Child) -> NodeCoordinate {
         NodeCoordinate {
             kind: Some(self.stamped_kind(child.grammar, child.display)),
-            ..NodeCoordinate::new(self.tree_id, child.index, Span { start: child.start, end: child.end })
+            ..NodeCoordinate::new(self.tree_id, child.index, child.index + child.descendants, Span { start: child.start, end: child.end })
         }
     }
 
@@ -106,7 +106,7 @@ impl<'s> ReadCtx<'s> {
         };
         NodeCoordinate {
             kind: Some(self.stamped_kind(KindId(node.grammar_id()), display_id(node))),
-            ..NodeCoordinate::new(self.tree_id, index, span)
+            ..NodeCoordinate::new(self.tree_id, index, index + node.descendant_count() as u32, span)
         }
     }
 
@@ -134,6 +134,9 @@ pub struct Child {
     pub trivia: bool,
     pub start: u32,
     pub end: u32,
+    /// The child's descendant count: its subtree is the indexes
+    /// `[index, index + descendants)`.
+    pub descendants: u32,
     /// The source row the child starts on.
     pub start_row: usize,
     /// The source row of the child's last byte: a span that ends with its
@@ -189,6 +192,7 @@ pub fn survey(cursor: &mut TreeCursor<'_>) -> Vec<Child> {
                 field: cursor.field_id().map(|field| FieldId(field.get())),
                 named: node.is_named(),
                 trivia: node.is_extra() || node.is_error(),
+                descendants: node.descendant_count() as u32,
                 start: node.start_byte() as u32,
                 end: node.end_byte() as u32,
                 start_row: node.start_position().row,
@@ -286,7 +290,7 @@ pub struct Entry {
 impl Entry {
     pub fn into_trivia<T>(self) -> TriviaEntry<T> {
         TriviaEntry {
-            value: SlotValue::Coord(self.coord),
+            value: SlotValue::Coord(self.coord, None),
             same_line: self.same_line,
             tokens_between: self.tokens_between,
         }
@@ -426,7 +430,7 @@ pub fn read_value<T: ReadTransport, const A: bool>(
     match depth.below() {
         Some(below) => Ok(SlotValue::Transport(T::read(cursor, ctx, below, sides)?)),
         None if cursor.node().named_child_count() == 0 => Ok(SlotValue::Transport(T::read(cursor, ctx, Depth::ONE, sides)?)),
-        None => Ok(SlotValue::Coord(ctx.coordinate(&cursor.node(), index_of(cursor)))),
+        None => Ok(SlotValue::Coord(ctx.coordinate(&cursor.node(), index_of(cursor)), None)),
     }
 }
 
@@ -926,6 +930,22 @@ mod tests {
     use super::*;
 
     #[test]
+    fn a_coordinate_ends_past_its_last_descendant() {
+        let source = "fn a() { let x = 1; }";
+        let mut parser = tree_sitter::Parser::new();
+        parser.set_language(&tree_sitter_rust::LANGUAGE.into()).unwrap();
+        let tree = parser.parse(source, None).unwrap();
+        let ctx = ReadCtx::new(source, 1, |_| false);
+        let mut cursor = tree.walk();
+        for index in 0..tree.root_node().descendant_count() {
+            cursor.goto_descendant(index);
+            let coordinate = ctx.at_of(&cursor);
+            assert_eq!(coordinate.index as usize, index);
+            assert_eq!(coordinate.end as usize, index + cursor.node().descendant_count());
+        }
+    }
+
+    #[test]
     fn one_level_reads_the_node_and_leaves_its_children_as_coordinates() {
         assert_eq!(Depth::ONE.below(), None);
         assert_eq!(Depth::Levels(NonZeroU32::new(3).unwrap()).below(), Some(Depth::Levels(NonZeroU32::new(2).unwrap())));
@@ -979,7 +999,7 @@ mod tests {
     type Plain = Probe<false>;
 
     fn token(start: u32, end: u32, trivia: bool) -> Child {
-        Child { index: 0, grammar: KindId(9), display: KindId(9), field: None, named: false, trivia, start, end, start_row: 0, end_row: 0 }
+        Child { index: 0, grammar: KindId(9), display: KindId(9), field: None, named: false, trivia, start, end, descendants: 1, start_row: 0, end_row: 0 }
     }
 
     #[test]
@@ -1059,7 +1079,7 @@ mod tests {
     }
 
     fn child(index: u32, named: bool, trivia: bool, (start_row, end_row): (usize, usize), (start, end): (u32, u32)) -> Child {
-        Child { index, grammar: KindId(if trivia { 900 } else if named { 100 } else { 50 }), display: KindId(0), field: None, named, trivia, start, end, start_row, end_row }
+        Child { index, grammar: KindId(if trivia { 900 } else if named { 100 } else { 50 }), display: KindId(0), field: None, named, trivia, start, end, descendants: 1, start_row, end_row }
     }
     fn owner_routes(children: &[Child]) -> Vec<Route> {
         children.iter().map(|c| if c.trivia { Route::Trivia } else if c.named { Route::Slot { slot: 0, scalar: false } } else { Route::Layout }).collect()
@@ -1160,9 +1180,9 @@ mod tests {
         let parent = Sides {
             owner: true,
             leading: vec![],
-            trailing: vec![Entry { coord: NodeCoordinate::new(0, 0, Span { start: 40, end: 44 }), same_line: true, tokens_between: 0 }],
+            trailing: vec![Entry { coord: NodeCoordinate::new(0, 0, 1, Span { start: 40, end: 44 }), same_line: true, tokens_between: 0 }],
         };
-        let layout = placement.into_layout::<()>(parent, NodeCoordinate::new(0, 0, Span { start: 0, end: 6 }));
+        let layout = placement.into_layout::<()>(parent, NodeCoordinate::new(0, 0, 1, Span { start: 0, end: 6 }));
         let trailing = layout.trivia.unwrap().trailing.unwrap();
         assert_eq!(trailing.iter().map(|e| e.value.coord().unwrap().span.start).collect::<Vec<_>>(), vec![40, 2]);
     }

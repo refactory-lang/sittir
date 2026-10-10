@@ -48,6 +48,59 @@ pub fn node_at_index(tree: &tree_sitter::Tree, index: u32) -> Option<tree_sitter
     Some(cursor.node())
 }
 
+/// The byte offsets in `source` of the lines under `node` that begin inside a
+/// token spanning lines (a multi-line string or comment), or right after a
+/// token ending in a line break with the next token starting at that very
+/// offset (a string's content continuing past an interpolation): shifting
+/// such a line changes the token's content, so anything that re-indents text
+/// leaves it where it is. A hidden token is never a child node, so text
+/// between a node's children that is not whitespace is one (a block
+/// comment's body): every line starting in that gap, or at the child ending
+/// it, counts as inside a token. In source order, each offset once.
+pub fn line_starts_inside_tokens(node: tree_sitter::Node<'_>, source: &str) -> Vec<usize> {
+    fn lines_within(source: &str, from: usize, to: usize, before: usize, starts: &mut Vec<usize>) {
+        let mut at = from;
+        while let Some(found) = source.get(at..to).and_then(|text| text.find('\n')) {
+            let line = at + found + 1;
+            if line >= before {
+                break;
+            }
+            starts.push(line);
+            at = line;
+        }
+    }
+    fn hidden_text(source: &str, from: usize, to: usize, end: usize, starts: &mut Vec<usize>) {
+        if source.get(from..to).is_some_and(|gap| !gap.trim().is_empty()) {
+            lines_within(source, from, to, end.min(to + 1), starts);
+        }
+    }
+    fn walk(node: tree_sitter::Node<'_>, source: &str, previous_end: &mut Option<usize>, starts: &mut Vec<usize>) {
+        let (start, end) = (node.start_byte(), node.end_byte());
+        if node.child_count() > 0 {
+            let mut at = start;
+            let mut cursor = node.walk();
+            for child in node.children(&mut cursor) {
+                hidden_text(source, at, child.start_byte(), end, starts);
+                walk(child, source, previous_end, starts);
+                at = child.end_byte();
+            }
+            hidden_text(source, at, end, end, starts);
+            return;
+        }
+        if *previous_end == Some(start) {
+            starts.push(start);
+        }
+        lines_within(source, start, end, end, starts);
+        if end > start {
+            *previous_end = source.as_bytes().get(end - 1).filter(|byte| **byte == b'\n').map(|_| end);
+        }
+    }
+    let mut starts = Vec::new();
+    walk(node, source, &mut None, &mut starts);
+    starts.dedup();
+    starts
+}
+
 /// The descendant index of child `position` of the node at `index`: its own
 /// index, one for the node, and every earlier child's descendant count.
 pub fn child_index_of(node: tree_sitter::Node<'_>, index: u32, position: u32) -> u32 {
@@ -740,6 +793,11 @@ impl<G: EngineGrammar> SourceTable for HashMap<u32, ParsedTree<G>> {
         node_at_index(&tree.tree, coord.index).map(|node| KindId(node.grammar_id()))
     }
 
+    fn line_starts_inside_tokens(&self, coord: &NodeCoordinate) -> Vec<usize> {
+        let Some(tree) = self.get(&coord.tree) else { return Vec::new() };
+        node_at_index(&tree.tree, coord.index).map_or_else(Vec::new, |node| line_starts_inside_tokens(node, &tree.source))
+    }
+
     fn last_list_child_kind(&self, tree: u32, span: crate::types::Span, kind: KindId) -> Option<KindId> {
         let tree = self.get(&tree)?;
         last_list_child(&tree.tree, span.start as usize, span.end as usize, kind.0)
@@ -840,6 +898,29 @@ mod tests {
         fn shows(self) -> fn(KindId) -> bool {
             |_| false
         }
+    }
+
+    fn rust_tree(source: &str) -> tree_sitter::Tree {
+        let mut parser = tree_sitter::Parser::new();
+        TestGrammar.configure_parser(&mut parser).unwrap();
+        parser.parse(source, None).unwrap()
+    }
+
+    #[test]
+    fn a_line_inside_a_string_or_block_comment_starts_inside_a_token() {
+        let source = "fn f() {\n    let s = \"a\n  b\";\n    /* x\n  y\n*/\n    g();\n}\n";
+        let tree = rust_tree(source);
+        let b = source.find("  b").unwrap();
+        let y = source.find("  y").unwrap();
+        let close = source.find("*/").unwrap();
+        assert_eq!(line_starts_inside_tokens(tree.root_node(), source), vec![b, y, close]);
+    }
+
+    #[test]
+    fn lines_between_tokens_start_outside_every_token() {
+        let source = "fn f() {\n    g();\n    // c\n    h();\n}\n// d\nfn i() {}\n";
+        let tree = rust_tree(source);
+        assert_eq!(line_starts_inside_tokens(tree.root_node(), source), Vec::<usize>::new());
     }
 
     const FNS: &str = "fn a() {}\nmod m { fn b() -> u8 { 0 } fn _c() {} }\nfn _d() { fn e() {} }\n";

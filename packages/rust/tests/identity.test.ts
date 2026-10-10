@@ -124,3 +124,51 @@ describe('ofType at an alias envelope', () => {
 		expect(identifiers.every((node) => (node as { readonly $type: number }).$type === engine.kinds.Identifier)).toBe(true);
 	});
 });
+
+const NESTED = 'fn a() { let p = 1; }\nfn b() { let q = 2; let r = 3; }\nfn c() { let s = 4; }\n';
+
+type RootStatement = ReturnType<ReturnType<typeof engine.parse>['statements']>[number];
+
+function letAt(fn: RootStatement | undefined, at: number) {
+	if (fn === undefined || !engine.is.functionItem(fn)) throw new Error('expected a function');
+	const statement = fn.body().statements()[at];
+	if (statement === undefined || !engine.is.letDeclaration(statement)) throw new Error('expected a let declaration');
+	return statement;
+}
+
+describe('the fold by range', () => {
+	it('a deep write unfolds its ancestors and leaves siblings and cousins as bytes', () => {
+		const root = engine.parse(NESTED, { depth: 1 });
+		const [, b] = root.statements();
+		letAt(b, 0).$trivia.leading(engine.build.lineComment(' q'));
+		expect(root.$render()).toBe('fn a() { let p = 1; }\nfn b() {\n    // q\n    let q = 2; let r = 3;\n}\nfn c() { let s = 4; }\n');
+	});
+
+	it('nested writes fold only untouched ranges', () => {
+		const root = engine.parse(NESTED, { depth: 1 });
+		const [a, b] = root.statements();
+		letAt(a, 0).$trivia.leading(engine.build.lineComment(' p'));
+		letAt(b, 1).$trivia.trailing(engine.build.lineComment(' r'));
+		const out = root.$render();
+		expect(out).toContain('// p\n');
+		expect(out).toContain('let r = 3;\n    // r\n');
+		expect(out.endsWith('fn c() { let s = 4; }\n')).toBe(true);
+	});
+
+	it('a built holder of an edited parsed child', () => {
+		const root = engine.parse(NESTED, { depth: 1 });
+		const [, b] = root.statements();
+		if (b === undefined || !engine.is.functionItem(b)) throw new Error('expected a function');
+		letAt(b, 0).$trivia.leading(engine.build.lineComment(' q'));
+		const built = engine.build.sourceFile({ statements: [b] });
+		expect(built.$render()).toBe('fn b() {\n    // q\n    let q = 2; let r = 3;\n}\n');
+	});
+
+	it('an untouched node folds after a write elsewhere', () => {
+		const root = engine.parse(NESTED, { depth: 1 });
+		const [a, , c] = root.statements();
+		if (c === undefined || !engine.is.functionItem(c)) throw new Error('expected a function');
+		letAt(a, 0).$trivia.leading(engine.build.lineComment(' p'));
+		expect(c.$render()).toBe('fn c() { let s = 4; }');
+	});
+});

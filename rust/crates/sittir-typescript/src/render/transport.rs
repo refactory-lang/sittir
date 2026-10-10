@@ -82,7 +82,7 @@ pub enum AnyTransport {
     #[kind(kind::SWITCH_BODY)]
     SwitchBody(SwitchBodyTransport),
     #[kind(kind::SWITCH_CASE)]
-    SwitchCase(Box<SwitchCaseTransport>),
+    SwitchCase(SwitchCaseTransport),
     #[kind(kind::SWITCH_DEFAULT)]
     SwitchDefault(SwitchDefaultTransport),
     #[kind(kind::CATCH_CLAUSE)]
@@ -168,7 +168,7 @@ pub enum AnyTransport {
     #[kind(kind::ARGUMENTS)]
     Arguments(ArgumentsTransport),
     #[kind(kind::DECORATOR)]
-    Decorator(Box<DecoratorTransport>),
+    Decorator(DecoratorTransport),
     #[kind(kind::DECORATOR_MEMBER_EXPRESSION)]
     DecoratorMemberExpression(DecoratorMemberExpressionTransport),
     #[kind(kind::DECORATOR_CALL_EXPRESSION)]
@@ -200,7 +200,7 @@ pub enum AnyTransport {
     #[kind(kind::FUNCTION_SIGNATURE)]
     FunctionSignature(Box<FunctionSignatureTransport>),
     #[kind(kind::DECORATOR_PARENTHESIZED_EXPRESSION)]
-    DecoratorParenthesizedExpression(Box<DecoratorParenthesizedExpressionTransport>),
+    DecoratorParenthesizedExpression(DecoratorParenthesizedExpressionTransport),
     #[kind(kind::TYPE_ASSERTION)]
     TypeAssertion(TypeAssertionTransport),
     #[kind(kind::AS_EXPRESSION)]
@@ -282,7 +282,7 @@ pub enum AnyTransport {
     #[kind(kind::CONDITIONAL_TYPE)]
     ConditionalType(ConditionalTypeTransport),
     #[kind(kind::GENERIC_TYPE)]
-    GenericType(Box<GenericTypeTransport>),
+    GenericType(GenericTypeTransport),
     #[kind(kind::TYPE_PREDICATE)]
     TypePredicate(TypePredicateTransport),
     #[kind(kind::TYPE_PREDICATE_ANNOTATION)]
@@ -3625,7 +3625,7 @@ pub enum PrimaryTypeTransport {
     #[kind(kind::NESTED_TYPE_IDENTIFIER)]
     NestedTypeIdentifier(NestedTypeIdentifierTransport),
     #[kind(kind::GENERIC_TYPE)]
-    GenericType(Box<GenericTypeTransport>),
+    GenericType(GenericTypeTransport),
     #[kind(kind::OBJECT_TYPE)]
     ObjectType(ObjectTypeTransport),
     #[kind(kind::ARRAY_TYPE)]
@@ -6785,7 +6785,7 @@ impl ::sittir_core::render::Render for LabeledStatementLabelTransportSlot {
 #[transport(choice)]
 pub enum SwitchBodyCasesTransportSlot {
     #[kind(kind::SWITCH_CASE)]
-    SwitchCase(Box<SwitchCaseTransport>),
+    SwitchCase(SwitchCaseTransport),
     #[kind(kind::SWITCH_DEFAULT)]
     SwitchDefault(SwitchDefaultTransport),
 }
@@ -6823,7 +6823,7 @@ impl ::sittir_core::view::KindOf for SwitchBodyCasesTransportSlot {
 impl ::sittir_core::render::Render for SwitchBodyCasesTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            SwitchBodyCasesTransportSlot::SwitchCase(inner) => inner.as_ref().render(w),
+            SwitchBodyCasesTransportSlot::SwitchCase(inner) => inner.render(w),
             SwitchBodyCasesTransportSlot::SwitchDefault(inner) => inner.render(w),
         }
     }
@@ -11636,7 +11636,7 @@ pub enum DecoratorExpressionTransportSlot {
     #[kind(kind::DECORATOR_CALL_EXPRESSION)]
     DecoratorCallExpression(DecoratorCallExpressionTransport),
     #[kind(kind::DECORATOR_PARENTHESIZED_EXPRESSION)]
-    DecoratorParenthesizedExpression(Box<DecoratorParenthesizedExpressionTransport>),
+    DecoratorParenthesizedExpression(DecoratorParenthesizedExpressionTransport),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -11689,7 +11689,7 @@ impl ::sittir_core::render::Render for DecoratorExpressionTransportSlot {
             DecoratorExpressionTransportSlot::Identifier(inner) => inner.render(w),
             DecoratorExpressionTransportSlot::DecoratorMemberExpression(inner) => inner.render(w),
             DecoratorExpressionTransportSlot::DecoratorCallExpression(inner) => inner.render(w),
-            DecoratorExpressionTransportSlot::DecoratorParenthesizedExpression(inner) => inner.as_ref().render(w),
+            DecoratorExpressionTransportSlot::DecoratorParenthesizedExpression(inner) => inner.render(w),
             DecoratorExpressionTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -12249,7 +12249,7 @@ pub enum AsExpressionTypeAnnotationTransportSlot {
     #[kind(kind::NESTED_TYPE_IDENTIFIER)]
     NestedTypeIdentifier(NestedTypeIdentifierTransport),
     #[kind(kind::GENERIC_TYPE)]
-    GenericType(Box<GenericTypeTransport>),
+    GenericType(GenericTypeTransport),
     #[kind(kind::OBJECT_TYPE)]
     ObjectType(ObjectTypeTransport),
     #[kind(kind::ARRAY_TYPE)]
@@ -12427,7 +12427,7 @@ impl ::sittir_core::render::Render for AsExpressionTypeAnnotationTransportSlot {
             AsExpressionTypeAnnotationTransportSlot::PredefinedType(inner) => inner.render(w),
             AsExpressionTypeAnnotationTransportSlot::TypeIdentifier(inner) => inner.render(w),
             AsExpressionTypeAnnotationTransportSlot::NestedTypeIdentifier(inner) => inner.render(w),
-            AsExpressionTypeAnnotationTransportSlot::GenericType(inner) => inner.as_ref().render(w),
+            AsExpressionTypeAnnotationTransportSlot::GenericType(inner) => inner.render(w),
             AsExpressionTypeAnnotationTransportSlot::ObjectType(inner) => inner.render(w),
             AsExpressionTypeAnnotationTransportSlot::ArrayType(inner) => inner.render(w),
             AsExpressionTypeAnnotationTransportSlot::TupleType(inner) => inner.render(w),
@@ -12722,7 +12722,7 @@ pub enum ExtendsTypeClauseTypeTransportSlot {
     #[kind(kind::NESTED_TYPE_IDENTIFIER)]
     NestedTypeIdentifier(NestedTypeIdentifierTransport),
     #[kind(kind::GENERIC_TYPE)]
-    GenericType(Box<GenericTypeTransport>),
+    GenericType(GenericTypeTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for ExtendsTypeClauseTypeTransportSlot {
@@ -12764,7 +12764,7 @@ impl ::sittir_core::render::Render for ExtendsTypeClauseTypeTransportSlot {
         match self {
             ExtendsTypeClauseTypeTransportSlot::TypeIdentifier(inner) => inner.render(w),
             ExtendsTypeClauseTypeTransportSlot::NestedTypeIdentifier(inner) => inner.render(w),
-            ExtendsTypeClauseTypeTransportSlot::GenericType(inner) => inner.as_ref().render(w),
+            ExtendsTypeClauseTypeTransportSlot::GenericType(inner) => inner.render(w),
         }
     }
 }
@@ -13097,7 +13097,7 @@ pub enum TemplateTypeTypeTransportSlot {
     #[kind(kind::NESTED_TYPE_IDENTIFIER)]
     NestedTypeIdentifier(NestedTypeIdentifierTransport),
     #[kind(kind::GENERIC_TYPE)]
-    GenericType(Box<GenericTypeTransport>),
+    GenericType(GenericTypeTransport),
     #[kind(kind::OBJECT_TYPE)]
     ObjectType(ObjectTypeTransport),
     #[kind(kind::ARRAY_TYPE)]
@@ -13239,7 +13239,7 @@ impl ::sittir_core::render::Render for TemplateTypeTypeTransportSlot {
             TemplateTypeTypeTransportSlot::PredefinedType(inner) => inner.render(w),
             TemplateTypeTypeTransportSlot::TypeIdentifier(inner) => inner.render(w),
             TemplateTypeTypeTransportSlot::NestedTypeIdentifier(inner) => inner.render(w),
-            TemplateTypeTypeTransportSlot::GenericType(inner) => inner.as_ref().render(w),
+            TemplateTypeTypeTransportSlot::GenericType(inner) => inner.render(w),
             TemplateTypeTypeTransportSlot::ObjectType(inner) => inner.render(w),
             TemplateTypeTypeTransportSlot::ArrayType(inner) => inner.render(w),
             TemplateTypeTypeTransportSlot::TupleType(inner) => inner.render(w),
@@ -14158,7 +14158,7 @@ pub enum FunctionTypeReturnTypeTransportSlot {
     #[kind(kind::NESTED_TYPE_IDENTIFIER)]
     NestedTypeIdentifier(NestedTypeIdentifierTransport),
     #[kind(kind::GENERIC_TYPE)]
-    GenericType(Box<GenericTypeTransport>),
+    GenericType(GenericTypeTransport),
     #[kind(kind::OBJECT_TYPE)]
     ObjectType(ObjectTypeTransport),
     #[kind(kind::ARRAY_TYPE)]
@@ -14342,7 +14342,7 @@ impl ::sittir_core::render::Render for FunctionTypeReturnTypeTransportSlot {
             FunctionTypeReturnTypeTransportSlot::PredefinedType(inner) => inner.render(w),
             FunctionTypeReturnTypeTransportSlot::TypeIdentifier(inner) => inner.render(w),
             FunctionTypeReturnTypeTransportSlot::NestedTypeIdentifier(inner) => inner.render(w),
-            FunctionTypeReturnTypeTransportSlot::GenericType(inner) => inner.as_ref().render(w),
+            FunctionTypeReturnTypeTransportSlot::GenericType(inner) => inner.render(w),
             FunctionTypeReturnTypeTransportSlot::ObjectType(inner) => inner.render(w),
             FunctionTypeReturnTypeTransportSlot::ArrayType(inner) => inner.render(w),
             FunctionTypeReturnTypeTransportSlot::TupleType(inner) => inner.render(w),
@@ -14437,7 +14437,7 @@ pub enum TupleTypeMembersItemTransportSlot {
     #[kind(kind::NESTED_TYPE_IDENTIFIER)]
     NestedTypeIdentifier(NestedTypeIdentifierTransport),
     #[kind(kind::GENERIC_TYPE)]
-    GenericType(Box<GenericTypeTransport>),
+    GenericType(GenericTypeTransport),
     #[kind(kind::OBJECT_TYPE)]
     ObjectType(ObjectTypeTransport),
     #[kind(kind::ARRAY_TYPE)]
@@ -14629,7 +14629,7 @@ impl ::sittir_core::render::Render for TupleTypeMembersItemTransportSlot {
             TupleTypeMembersItemTransportSlot::PredefinedType(inner) => inner.render(w),
             TupleTypeMembersItemTransportSlot::TypeIdentifier(inner) => inner.render(w),
             TupleTypeMembersItemTransportSlot::NestedTypeIdentifier(inner) => inner.render(w),
-            TupleTypeMembersItemTransportSlot::GenericType(inner) => inner.as_ref().render(w),
+            TupleTypeMembersItemTransportSlot::GenericType(inner) => inner.render(w),
             TupleTypeMembersItemTransportSlot::ObjectType(inner) => inner.render(w),
             TupleTypeMembersItemTransportSlot::ArrayType(inner) => inner.render(w),
             TupleTypeMembersItemTransportSlot::TupleType(inner) => inner.render(w),
@@ -40597,7 +40597,7 @@ fn render_primary_type(t: &PrimaryTypeTransport, w: &mut dyn ::sittir_core::rend
         PrimaryTypeTransport::PredefinedType(inner) => inner.render(w),
         PrimaryTypeTransport::TypeIdentifier(inner) => inner.render(w),
         PrimaryTypeTransport::NestedTypeIdentifier(inner) => inner.render(w),
-        PrimaryTypeTransport::GenericType(inner) => inner.as_ref().render(w),
+        PrimaryTypeTransport::GenericType(inner) => inner.render(w),
         PrimaryTypeTransport::ObjectType(inner) => inner.render(w),
         PrimaryTypeTransport::ArrayType(inner) => inner.render(w),
         PrimaryTypeTransport::TupleType(inner) => inner.render(w),
@@ -41553,8 +41553,8 @@ const _: () = assert!(::core::mem::size_of::<DebuggerStatementTransport>() <= 25
 const _: () = assert!(::core::mem::size_of::<DeclarationTransport>() <= 256, "DeclarationTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DecoratorCallExpressionTransport>() <= 256, "DecoratorCallExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DecoratorMemberExpressionTransport>() <= 256, "DecoratorMemberExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<DecoratorParenthesizedExpressionTransport>() > 256, "DecoratorParenthesizedExpressionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<DecoratorTransport>() > 256, "DecoratorTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<DecoratorParenthesizedExpressionTransport>() <= 256, "DecoratorParenthesizedExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<DecoratorTransport>() <= 256, "DecoratorTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DefaultTypeTransport>() <= 256, "DefaultTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DoStatementTransport>() <= 256, "DoStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ElseClauseTransport>() <= 256, "ElseClauseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -41599,7 +41599,7 @@ const _: () = assert!(::core::mem::size_of::<FunctionSignatureTransport>() > 256
 const _: () = assert!(::core::mem::size_of::<FunctionTypeTransport>() <= 256, "FunctionTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<GeneratorFunctionDeclarationTransport>() > 256, "GeneratorFunctionDeclarationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<GeneratorFunctionTransport>() > 256, "GeneratorFunctionTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<GenericTypeTransport>() > 256, "GenericTypeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<GenericTypeTransport>() <= 256, "GenericTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<HashBangLineTransport>() <= 256, "HashBangLineTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<HtmlCommentTransport>() <= 256, "HtmlCommentTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<IdentifierTransport>() <= 256, "IdentifierTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -41702,7 +41702,7 @@ const _: () = assert!(::core::mem::size_of::<StringSingleTransport>() <= 256, "S
 const _: () = assert!(::core::mem::size_of::<StringTransport>() <= 256, "StringTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<SubscriptExpressionTransport>() <= 256, "SubscriptExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<SwitchBodyTransport>() <= 256, "SwitchBodyTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<SwitchCaseTransport>() > 256, "SwitchCaseTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<SwitchCaseTransport>() <= 256, "SwitchCaseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<SwitchDefaultTransport>() <= 256, "SwitchDefaultTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<SwitchStatementTransport>() <= 256, "SwitchStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TemplateCharsTransport>() <= 256, "TemplateCharsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -41749,3 +41749,5 @@ const _: () = assert!(::core::mem::size_of::<WhileStatementTransport>() <= 256, 
 const _: () = assert!(::core::mem::size_of::<WithStatementTransport>() <= 256, "WithStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<YieldExpressionDelegateTransport>() <= 256, "YieldExpressionDelegateTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<YieldExpressionTransport>() <= 256, "YieldExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+
+::sittir_core::grammar_trivia!(TriviaTransport; AnyTransport, TriviaTransport, ExportStatementTransport, DeclarationTransport, ImportSpecifierTransport, StatementTransport, VariableDeclaratorTransport, ForHeaderTransport, ParenthesizedExpressionTransport, ExpressionTransport, PrimaryExpressionTransport, CallExpressionTransport, UpdateExpressionTransport, StringTransport, NumberTransport, MetaPropertyTransport, PatternTransport, TypeTransport, PrimaryTypeTransport, ClassBodyMemberTransport, EnumBodyElementTransport, ExportStatementDefaultTransport, NumberBigintTransport, NamespaceExportModuleExportNameTransportSlot, ExportSpecifierExportKindTransportSlot, ImportStatementImportClauseTransportSlot, ImportStatementFromClauseTransportSlot, ImportStatementTerminatorTransportSlot, ImportClauseContentTransportSlot, ImportAttributeAttributeKindTransportSlot, ExpressionStatementExpressionTransportSlot, ExpressionStatementTerminatorTransportSlot, VariableDeclarationTerminatorTransportSlot, LexicalDeclarationKindTransportSlot, LexicalDeclarationTerminatorTransportSlot, StatementBlockTerminatorTransportSlot, ForStatementInitializerTransportSlot, ForStatementConditionTransportSlot, DoStatementTerminatorTransportSlot, BreakStatementTerminatorTransportSlot, ContinueStatementTerminatorTransportSlot, DebuggerStatementTerminatorTransportSlot, ReturnStatementTerminatorTransportSlot, ThrowStatementTerminatorTransportSlot, LabeledStatementLabelTransportSlot, SwitchBodyCasesTransportSlot, YieldExpressionExpressionTransportSlot, ObjectPropertiesTransportSlot, ObjectPatternPropertiesTransportSlot, ObjectAssignmentPatternLeftTransportSlot, ArrayElementsTransportSlot, ArrayPatternElementsTransportSlot, NestedIdentifierObjectTransportSlot, ClassHeritageContentTransportSlot, FunctionExpressionReturnTypeTransportSlot, ArrowFunctionBodyTransportSlot, ArrowFunctionContentTransportSlot, MemberExpressionObjectTransportSlot, MemberExpressionSeparatorTransportSlot, MemberExpressionPropertyTransportSlot, SubscriptExpressionObjectTransportSlot, LhsExpressionContentTransportSlot, AssignmentExpressionLeftTransportSlot, AugmentedAssignmentExpressionLeftTransportSlot, AugmentedAssignmentExpressionOperatorTransportSlot, BinaryExpressionOperatorTransportSlot, UnaryExpressionOperatorTransportSlot, TemplateStringElementsTransportSlot, DecoratorExpressionTransportSlot, DecoratorMemberExpressionObjectTransportSlot, MethodDefinitionAccessorKindTransportSlot, MethodDefinitionNameTransportSlot, PublicFieldDefinitionOptionalityTransportSlot, FunctionSignatureTerminatorTransportSlot, DecoratorParenthesizedExpressionExpressionTransportSlot, AsExpressionTypeAnnotationTransportSlot, AmbientDeclarationContentTransportSlot, ModuleNameTransportSlot, ImportAliasTerminatorTransportSlot, ExtendsTypeClauseTypeTransportSlot, TypeAliasDeclarationTerminatorTransportSlot, RequiredParameterPatternTransportSlot, TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot, TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot, AssertsValueTransportSlot, TupleParameterNameTransportSlot, TemplateTypeTypeTransportSlot, TemplateLiteralTypeElementsTransportSlot, GenericTypeNameTransportSlot, TypePredicateNameTransportSlot, TypeQueryMemberExpressionObjectTransportSlot, TypeQueryMemberExpressionContentTransportSlot, TypeQuerySubscriptExpressionIndexTransportSlot, TypeQueryCallExpressionFunctionTransportSlot, TypeQueryExpressionTransportSlot, LiteralTypeContentTransportSlot, ObjectTypeOpeningTransportSlot, ObjectTypeClosingTransportSlot, ConstraintContentTransportSlot, FunctionTypeReturnTypeTransportSlot, FormalParametersElementsItemTransportSlot, TupleTypeMembersItemTransportSlot, ImportClauseGroupContentTransportSlot, CatchClauseGroupParameterTransportSlot, AmbientDeclarationModuleTerminatorTransportSlot, ObjectTypeContentItemTransportSlot, ExportStatementNamespaceExportTerminatorTransportSlot, ExportStatementTypeExportTerminatorTransportSlot, ExportStatementEqualsExportTerminatorTransportSlot, LiteralTypeNegativeNumberOperatorTransportSlot, BinaryExpressionInLeftTransportSlot, ClassBodyMemberMethodTerminatorTransportSlot, ClassBodyMemberMethodSigTerminatorTransportSlot, ClassBodyMemberDeclarationMemberTransportSlot, ClassBodyMemberDeclarationTerminatorTransportSlot, IndexSignatureColonSignTransportSlot, IndexSignatureColonNameTransportSlot, IndexSignatureColonTypeTransportSlot, ImportSpecifierNameImportKindTransportSlot, ImportSpecifierNameNameTransportSlot, ImportSpecifierAsImportKindTransportSlot, ImportSpecifierAsNameTransportSlot, ImportSpecifierAsAliasTransportSlot, CallExpressionTemplateCallFunctionTransportSlot, StringDoubleElementsTransportSlot, StringSingleElementsTransportSlot, UpdateExpressionPostfixOperatorTransportSlot, UpdateExpressionPrefixOperatorTransportSlot, ImportClauseDefaultImportIdentifierTransportSlot, ExportStatementDefaultFromContentTransportSlot, ExportStatementDefaultFromAutomaticSemicolonTransportSlot, ExportStatementDefaultDeclarationContentTransportSlot, ExportStatementDefaultDeclarationDefaultKwContentTransportSlot, ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot, ForHeaderLhsLeftTransportSlot, ForHeaderLhsOperatorTransportSlot, ForHeaderLetConstKindKindTransportSlot, ProgramTransport, HashBangLineTransport, NamespaceExportTransport, ExportClauseTransport, ExportSpecifierTransport, ImportTransport, ImportStatementTransport, ImportClauseTransport, NamespaceImportTransport, NamedImportsTransport, ImportAttributeTransport, ExpressionStatementTransport, VariableDeclarationTransport, LexicalDeclarationTransport, StatementBlockTransport, ElseClauseTransport, IfStatementTransport, SwitchStatementTransport, ForStatementTransport, ForInStatementTransport, WhileStatementTransport, DoStatementTransport, TryStatementTransport, WithStatementTransport, BreakStatementTransport, ContinueStatementTransport, DebuggerStatementTransport, ReturnStatementTransport, ThrowStatementTransport, EmptyStatementTransport, LabeledStatementTransport, SwitchBodyTransport, SwitchCaseTransport, SwitchDefaultTransport, CatchClauseTransport, FinallyClauseTransport, YieldExpressionTransport, ObjectTransport, ObjectPatternTransport, AssignmentPatternTransport, ObjectAssignmentPatternTransport, ArrayTransport, ArrayPatternTransport, NestedIdentifierTransport, ClassTransport, ClassDeclarationTransport, ClassHeritageTransport, FunctionExpressionTransport, FunctionDeclarationTransport, GeneratorFunctionTransport, GeneratorFunctionDeclarationTransport, ArrowFunctionTransport, OptionalChainTransport, NewExpressionTransport, AwaitExpressionTransport, MemberExpressionTransport, SubscriptExpressionTransport, LhsExpressionTransport, AssignmentExpressionTransport, AugmentedAssignmentExpressionTransport, SpreadElementTransport, TernaryExpressionTransport, BinaryExpressionTransport, UnaryExpressionTransport, SequenceExpressionTransport, UnescapedDoubleStringFragmentTransport, UnescapedSingleStringFragmentTransport, EscapeSequenceTransport, TemplateStringTransport, TemplateSubstitutionTransport, RegexTransport, RegexPatternTransport, RegexFlagsTransport, IdentifierTransport, PrivatePropertyIdentifierTransport, ThisTransport, SuperTransport, TrueTransport, FalseTransport, NullTransport, UndefinedTransport, ArgumentsTransport, DecoratorTransport, DecoratorMemberExpressionTransport, DecoratorCallExpressionTransport, ClassBodyTransport, FormalParametersTransport, ClassStaticBlockTransport, RestPatternTransport, MethodDefinitionTransport, PairTransport, PairPatternTransport, ComputedPropertyNameTransport, PublicFieldDefinitionTransport, NonNullExpressionTransport, MethodSignatureTransport, AbstractMethodSignatureTransport, FunctionSignatureTransport, DecoratorParenthesizedExpressionTransport, TypeAssertionTransport, AsExpressionTransport, SatisfiesExpressionTransport, InstantiationExpressionTransport, ImportRequireClauseTransport, ExtendsClauseTransport, ExtendsClauseSingleTransport, ImplementsClauseTransport, AmbientDeclarationTransport, AbstractClassDeclarationTransport, ModuleTransport, InternalModuleTransport, ImportAliasTransport, NestedTypeIdentifierTransport, InterfaceDeclarationTransport, ExtendsTypeClauseTransport, EnumDeclarationTransport, EnumBodyTransport, EnumAssignmentTransport, TypeAliasDeclarationTransport, AccessibilityModifierEnum, OverrideModifierTransport, RequiredParameterTransport, OptionalParameterTransport, OmittingTypeAnnotationTransport, AddingTypeAnnotationTransport, OptingTypeAnnotationTransport, TypeAnnotationTransport, TypeQueryMemberExpressionInTypeAnnotationTransport, TypeQueryCallExpressionInTypeAnnotationTransport, AssertsTransport, AssertsAnnotationTransport, TupleParameterTransport, OptionalTupleParameterTransport, OptionalTypeTransport, RestTypeTransport, ConstructorTypeTransport, TemplateTypeTransport, TemplateLiteralTypeTransport, InferTypeTransport, ConditionalTypeTransport, GenericTypeTransport, TypePredicateTransport, TypePredicateAnnotationTransport, TypeQueryMemberExpressionTransport, TypeQuerySubscriptExpressionTransport, TypeQueryCallExpressionTransport, TypeQueryInstantiationExpressionTransport, TypeQueryTransport, IndexTypeQueryTransport, LookupTypeTransport, MappedTypeClauseTransport, LiteralTypeTransport, ExistentialTypeTransport, FlowMaybeTypeTransport, ParenthesizedTypeTransport, PredefinedTypeEnum, TypeArgumentsTransport, ObjectTypeTransport, CallSignatureTransport, PropertySignatureTransport, TypeParametersTransport, TypeParameterTransport, DefaultTypeTransport, ConstraintTransport, ConstructSignatureTransport, ArrayTypeTransport, TupleTypeTransport, ReadonlyTypeTransport, UnionTypeTransport, IntersectionTypeTransport, FunctionTypeTransport, ExportSpecifiersTransport, ImportSpecifiersTransport, FormalParametersElementsTransport, EnumBodyElementNameTransport, EnumBodyElementsTransport, TypesTransport, TypeParametersElementsTransport, TupleTypeMembersTransport, ImportClauseGroupTransport, CatchClauseGroupTransport, AmbientDeclarationGlobalTransport, AmbientDeclarationModuleTransport, ObjectTypeContentTransport, ExportStatementNamespaceExportTransport, ExportStatementTypeExportTransport, ExportStatementEqualsExportTransport, CommentLineTransport, CommentBlockTransport, LiteralTypeNegativeNumberTransport, NumberHexTransport, NumberFloatPointTransport, NumberFloatLeadingPointTransport, NumberFloatScientificTransport, NumberDecimalTransport, NumberBinaryTransport, NumberOctalTransport, NumberBigintHexTransport, NumberBigintBinaryTransport, NumberBigintOctalTransport, NumberBigintDecimalTransport, BinaryExpressionInTransport, EmptyMemberTransport, ClassBodyMemberMethodTransport, ClassBodyMemberMethodSigTransport, ClassBodyMemberDeclarationTransport, IndexSignatureColonTransport, IndexSignatureMappedTypeClauseTransport, ImportStatementClauseFromTransport, YieldExpressionDelegateTransport, OptionalChainMarkerTransport, ImportSpecifierNameTransport, ImportSpecifierAsTransport, ParenthesizedExpressionTypedTransport, ParenthesizedExpressionSequenceTransport, CallExpressionCallTransport, CallExpressionTemplateCallTransport, CallExpressionMemberTransport, StringDoubleTransport, StringSingleTransport, UpdateExpressionPostfixTransport, UpdateExpressionPrefixTransport, ArrowFunctionParameterTransport, ClassHeritageExtendsClauseTransport, ImportClauseDefaultImportTransport, ExportStatementDefaultFromTransport, ExportStatementDefaultDeclarationTransport, ExportStatementDefaultFromStarFromTransport, ExportStatementDefaultFromNsFromTransport, ExportStatementDefaultFromClauseFromTransport, ExportStatementDefaultDeclarationDefaultKwTransport, ExportStatementDefaultDeclarationDefaultKwValueTransport, VariableDeclaratorPlainTransport, VariableDeclaratorDefiniteTransport, MetaPropertyNewTargetTransport, MetaPropertyImportMetaTransport, ForHeaderLhsTransport, ForHeaderVarKindTransport, ForHeaderLetConstKindTransport, HtmlCommentTransport, JsxTextTransport, TemplateCharsTransport, AutomaticSemicolonTransport, FunctionSignatureAutomaticSemicolonTransport, TightTransport, SpaceTransport, TabTransport, NewlineTransport, BlanklineTransport, DoubleBlanklineTransport, IndentTransport, DedentTransport, TernaryQmarkTransport, ErrorRecoveryTransport, StatementIdentifierTransport, ShorthandPropertyIdentifierTransport, ShorthandPropertyIdentifierPatternTransport, PropertyIdentifierTransport, TypeIdentifierTransport, InterfaceBodyTransport, StarTransport, AsKeywordTransport, LbraceTransport, RbraceTransport, TypeKeywordTransport, TypeofKeywordTransport, ImportKeywordTransport, SemiTransport, WithKeywordTransport, AssertKeywordTransport, VarKeywordTransport, LetKeywordTransport, ConstKeywordTransport, ElseKeywordTransport, IfKeywordTransport, SwitchKeywordTransport, ForKeywordTransport, LparenTransport, RparenTransport, AwaitKeywordTransport, WhileKeywordTransport, DoKeywordTransport, TryKeywordTransport, BreakKeywordTransport, ContinueKeywordTransport, DebuggerKeywordTransport, ReturnKeywordTransport, ThrowKeywordTransport, DeclareKeywordTransport, NamespaceKeywordTransport, PublicKeywordTransport, PrivateKeywordTransport, ProtectedKeywordTransport, OverrideKeywordTransport, ReadonlyKeywordTransport, ModuleKeywordTransport, AnyKeywordTransport, NumberKeywordTransport, BooleanKeywordTransport, StringKeywordTransport, SymbolKeywordTransport, ExportKeywordTransport, ObjectKeywordTransport, NewKeywordTransport, GetKeywordTransport, SetKeywordTransport, AsyncKeywordTransport, StaticKeywordTransport, ColonTransport, CaseKeywordTransport, DefaultKeywordTransport, CatchKeywordTransport, FinallyKeywordTransport, YieldKeywordTransport, EqTransport, LbrackTransport, RbrackTransport, DotTransport, ClassKeywordTransport, FunctionKeywordTransport, EqGtTransport, QmarkDotTransport, UsingKeywordTransport, PlusEqTransport, DashEqTransport, StarEqTransport, SlashEqTransport, PercentEqTransport, CaretEqTransport, AmpEqTransport, PipeEqTransport, GtGtEqTransport, GtGtGtEqTransport, LtLtEqTransport, StarStarEqTransport, AmpAmpEqTransport, PipePipeEqTransport, QmarkQmarkEqTransport, DotDotDotTransport, QmarkTransport, AmpAmpTransport, PipePipeTransport, GtGtTransport, GtGtGtTransport, LtLtTransport, AmpTransport, CaretTransport, PipeTransport, PlusTransport, DashTransport, SlashTransport, PercentTransport, StarStarTransport, LtTransport, LtEqTransport, EqEqTransport, EqEqEqTransport, BangEqTransport, BangEqEqTransport, GtEqTransport, GtTransport, QmarkQmarkTransport, InstanceofKeywordTransport, BangTransport, TildeTransport, VoidKeywordTransport, DeleteKeywordTransport, BquoteTransport, DollarLbraceTransport, AtTransport, AbstractKeywordTransport, AccessorKeywordTransport, SatisfiesKeywordTransport, RequireKeywordTransport, ExtendsKeywordTransport, ImplementsKeywordTransport, InterfaceKeywordTransport, EnumKeywordTransport, DashQmarkColonTransport, PlusQmarkColonTransport, QmarkColonTransport, AssertsKeywordTransport, InferKeywordTransport, IsKeywordTransport, KeyofKeywordTransport, InKeywordTransport, UniqueTransport, UnknownKeywordTransport, NeverKeywordTransport, LbracePipeTransport, PipeRbraceTransport, CommaTransport, GlobalKeywordTransport, FromKeywordTransport, DquoteTransport, SquoteTransport, PlusPlusTransport, DashDashTransport, TargetKeywordTransport, MetaKeywordTransport, OfKeywordTransport);
