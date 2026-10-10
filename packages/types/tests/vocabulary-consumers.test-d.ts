@@ -5,10 +5,24 @@
  * member only a refinement carries must never be required on the ancestor.
  * Each check is generic over the context, as portable code is: the roles it
  * fills arrive typed by the namespace map. A concrete context, as a grammar
- * declares one, narrows the map and instantiates them.
+ * declares one, narrows the map and instantiates them. A member a feature owns
+ * is gated on the context, so a structure that sets one is built over a
+ * context composing the feature, and generic code reads one when the feature
+ * bounds the context.
  */
 
-import type { Declaration, Expression, GrammarContext, Identifier, Statement } from '../src/vocabulary/index.ts';
+import type {
+	AccessLevel,
+	Accessors,
+	Declaration,
+	EnumLeaf,
+	Expression,
+	GrammarContext,
+	Identifier,
+	Statement,
+	UnsafeCode,
+	Visibility
+} from '../src/vocabulary/index.ts';
 
 // An ordinary function needs a name and parameters, nothing accessor-shaped.
 export function fn<G extends GrammarContext<G>>(name: G['identifier']): Declaration.Function<G> {
@@ -28,17 +42,26 @@ export function parameterless<G extends GrammarContext<G>>(name: G['identifier']
 	return { $kind: 'declaration.method', name };
 }
 
-// A getter pins the converged accessor member.
-export function getter<G extends GrammarContext<G>>(name: G['identifier']): Declaration.Method.Getter<G> {
+// A context composing the features whose members the checks below set, and one composing none.
+interface Composed extends GrammarContext<Composed>, Accessors, UnsafeCode, Visibility {}
+interface Bare extends GrammarContext<Bare> {}
+
+// A getter pins the converged accessor member, which `accessors` owns.
+export function getter(name: Composed['identifier']): Declaration.Method.Getter<Composed> {
 	return { $kind: 'declaration.method.getter', name, parameters: [], accessor: 'get' };
 }
-export function notGetter<G extends GrammarContext<G>>(name: G['identifier']): Declaration.Method.Getter<G> {
+export function notGetter(name: Composed['identifier']): Declaration.Method.Getter<Composed> {
 	return {
-		...getter<G>(name),
+		...getter(name),
 		// @ts-expect-error a getter's accessor is 'get'
 		accessor: 'set'
 	};
 }
+export function accessorOf<G extends GrammarContext<G> & Accessors>(g: Declaration.Method.Getter<G>): 'get' {
+	return g.accessor;
+}
+// @ts-expect-error a context without accessors has no accessor
+export const noAccessor: Declaration.Method.Getter<Bare>['accessor'] = 'get';
 
 // A call carries no operator; a binary expression carries no arguments.
 export function call<G extends GrammarContext<G>>(callee: G['identifier']): Expression.Call<G> {
@@ -73,7 +96,7 @@ export function notEqual<G extends GrammarContext<G>>(left: G['identifier'], rig
 }
 
 // A trait is an interface with more: a refinement carries its own kind and the members its parent lacks.
-export function trait<G extends GrammarContext<G>>(name: Declaration.Interface.Trait<G>['name']): Declaration.Interface.Trait<G> {
+export function trait(name: Declaration.Interface.Trait<Composed>['name']): Declaration.Interface.Trait<Composed> {
 	return { $kind: 'declaration.interface.trait', name, body: [], unsafe: true };
 }
 
@@ -92,6 +115,37 @@ export function forIn<G extends GrammarContext<G>>(right: G['identifier'], body:
 export function nameKind<G extends GrammarContext<G>>(f: Declaration.Function<G>): string {
 	return f.name.$kind;
 }
+
+// A level is whole: it holds the kinds a feature adds, for every context.
+export function yields<G extends GrammarContext<G>>(y: Expression.Yield<G>): Expression.Any<G> {
+	return y;
+}
+
+// A value refinement pins its member to the values at or beneath its value, and a deeper value refines it further.
+export function crateFn(name: Composed['identifier']): Declaration.Function.Public.Internal<Composed> {
+	return { $kind: 'declaration.function.public.internal', name, parameters: [], visibility: 'modifier.visibility.public.internal' };
+}
+export const anyPublic: Declaration.Function.Public.Any<Composed> = crateFn({ $kind: 'identifier' });
+export function notPublic(name: Composed['identifier']): Declaration.Function.Public<Composed> {
+	return {
+		$kind: 'declaration.function.public',
+		name,
+		parameters: [],
+		// @ts-expect-error a public function's visibility is a public level
+		visibility: 'modifier.visibility.private'
+	};
+}
+
+// Structural refinements come first and values last: a public getter is a getter's value refinement.
+export function publicGetter(name: Composed['identifier']): Declaration.Method.Getter.Public<Composed> {
+	return { $kind: 'declaration.method.getter.public', name, parameters: [], accessor: 'get', visibility: 'modifier.visibility.public' };
+}
+
+// A value's short form is its path beneath the enumeration's root.
+export const shortForms: readonly EnumLeaf<AccessLevel>[] = ['private', 'protected', 'public', 'public.internal', 'public.restricted'];
+export const crateLevel: EnumLeaf<AccessLevel, 'modifier.visibility.public.internal'> = 'public.internal';
+// @ts-expect-error a nested level's short form keeps its parent's segment
+export const notALevel: EnumLeaf<AccessLevel> = 'internal';
 
 // A grammar's context extends the map over itself and narrows it to what the grammar realizes: here the identifier
 // role to the plain identifier, and a function's parameters to identifiers.

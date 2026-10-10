@@ -1,6 +1,4 @@
-import { readdirSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import ts from 'typescript6';
+import { isKind, readVocabularySource } from '../vocabulary/read.ts';
 
 export interface VocabularyMember {
 	readonly optional: boolean;
@@ -17,23 +15,21 @@ export interface Vocabulary {
 	members(path: string): ReadonlyMap<string, VocabularyMember>;
 }
 
-interface Declared {
-	readonly name: string;
-	readonly path: string;
-	readonly own: Map<string, VocabularyMember>;
-	readonly parentName: string | undefined;
-}
-
 export function readVocabulary(dir: string): Vocabulary {
-	const declared: Declared[] = [];
-	for (const file of readdirSync(dir).filter((f) => f.endsWith('.ts'))) {
-		const source = ts.createSourceFile(file, readFileSync(join(dir, file), 'utf8'), ts.ScriptTarget.Latest, true);
-		collect(source.statements, [], declared);
+	const source = readVocabularySource(dir);
+	const stubs = source.features.flatMap((feature) => feature.stubs);
+	const declared = [...source.kinds, ...stubs.filter(isKind)];
+	const pathByName = new Map(declared.map((d) => [d.qname, d.path]));
+	const own = new Map(declared.map((d) => [d.qname, new Map(d.members.map((m) => [m.name, { optional: m.optional }]))]));
+	for (const stub of stubs) {
+		const members = own.get(stub.qname);
+		if (isKind(stub) || members === undefined) continue;
+		for (const m of stub.members) members.set(m.name, { optional: m.optional || members.get(m.name)?.optional === true });
 	}
-	const pathByName = new Map(declared.map((d) => [d.name, d.path]));
-	const kinds = new Map<string, VocabularyKind>(
-		declared.map((d) => [d.path, { name: d.name, own: d.own, parent: d.parentName === undefined ? undefined : pathByName.get(d.parentName) }])
-	);
+	const kinds = new Map<string, VocabularyKind>();
+	for (const d of declared) {
+		kinds.set(d.path, { name: d.qname, own: own.get(d.qname) ?? new Map(), parent: d.parent === undefined ? undefined : pathByName.get(d.parent) });
+	}
 	const members = (path: string): ReadonlyMap<string, VocabularyMember> => {
 		const all = new Map<string, VocabularyMember>();
 		for (let kind = kinds.get(path); kind !== undefined; kind = kind.parent === undefined ? undefined : kinds.get(kind.parent)) {
@@ -42,46 +38,4 @@ export function readVocabulary(dir: string): Vocabulary {
 		return all;
 	};
 	return { kinds, members };
-}
-
-function collect(statements: ts.NodeArray<ts.Statement>, scope: readonly string[], out: Declared[]): void {
-	for (const statement of statements) {
-		if (ts.isModuleDeclaration(statement) && statement.body !== undefined && ts.isModuleBlock(statement.body)) {
-			collect(statement.body.statements, [...scope, statement.name.text], out);
-			continue;
-		}
-		if (!ts.isInterfaceDeclaration(statement)) continue;
-		const name = [...scope, statement.name.text].join('.');
-		let path: string | undefined;
-		const own = new Map<string, VocabularyMember>();
-		for (const member of statement.members) {
-			if (!ts.isPropertySignature(member) || !ts.isIdentifier(member.name)) continue;
-			if (member.name.text === '$kind') {
-				const type = member.type;
-				if (type !== undefined && ts.isLiteralTypeNode(type) && ts.isStringLiteral(type.literal)) path = type.literal.text;
-				continue;
-			}
-			own.set(member.name.text, { optional: member.questionToken !== undefined });
-		}
-		if (path === undefined) continue;
-		out.push({ name, path, own, parentName: parentNameOf(statement) });
-	}
-}
-
-function parentNameOf(declaration: ts.InterfaceDeclaration): string | undefined {
-	for (const clause of declaration.heritageClauses ?? []) {
-		for (const type of clause.types) {
-			const found = vocabularyReference(type);
-			if (found !== undefined) return found;
-		}
-	}
-	return undefined;
-}
-
-function vocabularyReference(node: ts.Node): string | undefined {
-	if (ts.isTypeReferenceNode(node) && ts.isQualifiedName(node.typeName)) {
-		const text = node.typeName.getText();
-		if (text.startsWith('V.')) return text.slice(2);
-	}
-	return ts.forEachChild(node, vocabularyReference);
 }

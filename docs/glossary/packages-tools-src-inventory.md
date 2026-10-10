@@ -48,7 +48,13 @@ Where the bindings and the authored vocabulary disagree, one line each: a claime
 
 ### `packages/tools/src/inventory/vocabulary.ts::readVocabulary`
 
-Reads the authored vocabulary structurally, with the TypeScript parser, never by matching lines: every interface under its namespaces, keyed by its `$kind` literal, with its own members (each marked optional or required) and its parent, the interface its `extends` clause names through `V.`. `members(path)` adds the inherited members, nearest first. An interface with no `$kind` literal is not a vocabulary kind (the context's typemap and `Unmapped`).
+Reads the vocabulary through the feature tool's reader (`readVocabularySource`), so the inventory and the tool see the same declarations. That covers the namespace files' kinds and each feature folder's stubs.
+
+- A stub that declares a `$kind` is a kind of its own.
+- A stub that does not declare one adds its members to the kind with the same qualified name.
+- A member declared more than once is optional when any declaration of it is optional, which is how the augmentation gates it.
+
+Every kind is keyed by its `$kind` literal and carries its own members (each marked optional or required) and its parent, the interface its `extends` clause names through `V.`. `members(path)` adds the inherited members, nearest first. An interface with no `$kind` literal and no kind of the same name is not a vocabulary kind (the context's typemap and `Unmapped`).
 
 ### `packages/tools/src/inventory/index.ts::BindingsModule`
 

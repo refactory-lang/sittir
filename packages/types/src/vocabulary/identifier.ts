@@ -21,25 +21,6 @@ export namespace Identifier {
 		readonly $kind: 'identifier.field';
 		readonly content: G['identifier'];
 	}
-	export interface Label<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
-		// claimed by rt
-		readonly $kind: 'identifier.label';
-		readonly content?: G['identifier'];
-		// t only
-		readonly name?: G['identifier'];
-		// r only
-	}
-	export interface Lifetime<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
-		// claimed by r
-		readonly $kind: 'identifier.lifetime';
-		readonly name: G['identifier'];
-	}
-	export interface Metavariable<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
-		// claimed by r
-		readonly $kind: 'identifier.metavariable';
-		readonly attributes?: G['attribute'][];
-		readonly name: G['slots']['identifier.metavariable']['name'];
-	}
 	export interface Nested<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
 		// claimed by t
 		readonly $kind: 'identifier.nested';
@@ -57,10 +38,6 @@ export namespace Identifier {
 		readonly name: G['identifier'];
 		readonly path?: G['slots']['identifier.scoped']['path'];
 	}
-	export interface Self<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
-		// claimed by rt
-		readonly $kind: 'identifier.self';
-	}
 	export interface Super<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
 		// claimed by rt
 		readonly $kind: 'identifier.super';
@@ -71,18 +48,4 @@ export namespace Identifier {
 		readonly content?: G['identifier'];
 		// rt only
 	}
-	export type Any<G extends GrammarContext<G>> =
-		| V.Identifier<G>
-		| V.Identifier.Crate<G>
-		| V.Identifier.Dotted<G>
-		| V.Identifier.Field<G>
-		| V.Identifier.Label<G>
-		| V.Identifier.Lifetime<G>
-		| V.Identifier.Metavariable<G>
-		| V.Identifier.Nested<G>
-		| V.Identifier.Property<G>
-		| V.Identifier.Scoped<G>
-		| V.Identifier.Self<G>
-		| V.Identifier.Super<G>
-		| V.Identifier.Type<G>;
 }
