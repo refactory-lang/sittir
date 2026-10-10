@@ -91,12 +91,25 @@ Two relations, kept apart:
 
 A node carries one claim. Rust's `if` is claimed as `statement.if`; that it sits in rust's expression set is membership, not a second claim.
 
-### 3.3 Refinements, decomposition and placement
+### 3.3 Refinements, values, decomposition and placement
 
 - **A refinement narrows, never widens.** It may add members, narrow a member's kind-set and pin a literal; it never makes a parent's required member optional, and it never admits a kind its parent does not.
-- **Enumerations are const strings:** the token's text as the language spells it, `'const'`, `'&&'`, `'of'`, never a sittir kind name or a grammar's kind id, typed per language as a string-literal union. The const string is the literal's identity on the portable surface, as the kind id is on a grammar's (§9). A choice that is a refined leaf is carried by the kind, and its string is derived from it per language, so `logical.and` builds as `&&` in typescript and `and` in python. A fixed-literal leaf stays its const string (`'+='`); the semantic name lives on the parent's sub-kind (`expression.assignment.compound.add`), never on the leaf.
+- **A value of the vocabulary's is a kind.** Some members hold a value that is the vocabulary's own rather than a language's text. Such a member holds an enumeration of kinds: each value is a kind beneath the enumeration's root, nested where one value includes another. The access levels are `modifier.visibility.public`, `.public.internal`, `.public.restricted`, `.protected` and `.private`, beneath the root `modifier.visibility`.
+  - To `bindings.scm` a value is a kind name like any other, claimed on the node that spells it: `(visibility_modifier (crate) @modifier.visibility.public.internal)`. The owner's member takes its value from the kind its route reaches.
+  - In the base, a value kind declares nothing but its `$kind`: a value is a name.
+  - Visibility is the first enumeration of kinds; a variable's binding (`let`, `const`, `var`) is the next (§11).
+- **A value is its kind's full path:** `visibility: 'modifier.visibility.public.internal'`. The member's type is derived from the kinds by type: `V.AccessLevel` is the `$kind` of every kind beneath `modifier.visibility`, so adding a value kind adds the value.
+  - One generic transform, `EnumLeaf`, gives the short form by stripping the enumeration's root, the parent of each value whose own parent is not a value: `EnumLeaf<'modifier.visibility.public.internal'>` is `'public.internal'`.
+  - Sugar builders are named by the short form, one namespace per segment and never flattened: `build.declaration.function.public.internal(…)`.
+  - Stored data and comparisons use the full path.
+- **A language's text is a const string.** A token the language spells, an operator or a keyword, is held as the language spells it: `'const'`, `'&&'`, `'of'`, never a sittir kind name or a grammar's kind id, typed per language as a string-literal union. The const string is the literal's identity on the portable surface, as the kind id is on a grammar's (§9).
+  - A choice that is a refined leaf is carried by the kind, and its string is derived from it per language, so `logical.and` builds as `&&` in typescript and `and` in python.
+  - A fixed-literal leaf stays its const string (`'+='`); the semantic name lives on the parent's sub-kind (`expression.assignment.compound.add`), never on the leaf.
+- **Every owner × value is a refinement kind.** `<owner>.<value>` extends its owner and pins the member to the values at or beneath its value. `declaration.function.public` pins `visibility` to `public`, `public.internal` or `public.restricted`; `declaration.function.public.internal`, which extends it, pins `public.internal`.
+  - A value refinement may add members, each owned by a feature. `<owner>.public.restricted` adds `scope`, the ancestor module that `pub(super)` and `pub(in path)` name. `scope` is owned by `scoped-visibility`, which extends `visibility`. How a feature writes such a member is open (§11).
+- **Structural refinements come first, values last.** A refinement that inherits an enumerated member has value refinements of its own, so a public getter is `declaration.method.getter.public` and every node has one deepest kind. `declaration.method.public` does not hold the public getter, so code that asks for any public method reads `visibility`.
+- **Value refinements are generated.** The vocabulary states each value once, as its kind, and types each enumerated member once. `sittir tool vocabulary-features` writes every owner × value into `augment.ts` as a named interface extending its owner, in the same pass that writes the feature kinds and the levels (§4.4). `--check` fails when the committed output drifts from what the folders generate.
 - **Keyword modifiers decompose into members.** `async`, `static`, `readonly`, `abstract`, `declare`, `override`, `const`, `unsafe`, `move`, `mutable`, `accessor`, `optional`, `definite` and `generator` are booleans. `accessorKind` (`get`/`set`) is text where the language spells it as a keyword. Rust's modifier set projects to the same booleans. A modifier with structure of its own (`extern "C"`) is a kind.
-- **`visibility` is an access level,** a value of the vocabulary's rather than the language's text (§4.3): typescript's `protected` and rust's `pub(crate)` are spellings of the levels `protected` and `internal`. A level that names a module, rust's `pub(in path)`, is `restricted`, with the path in `visibilityScope`.
 - **A fact about a property is the property's.** What a property's name says of the property sits on the node that declares or reads the property, never on a kind of the name:
   - a private member (`#x`) is named by an `identifier.property`, and the field, method or member access that holds the name is `private: true`, a flag of `encapsulation` (§4.3). In a brand check (`#x in obj`) the private name is the left operand of a binary `in`, which admits it in a language that composes `encapsulation`, with no kind of its own;
   - a computed key is its expression, and the property is `computed: true`, a flag of `computed-keys`;
@@ -110,11 +123,11 @@ A node carries one claim. Rust's `if` is claimed as `statement.if`; that it sits
   - neither: sibling kinds (`class` and `struct`, `match` and `switch`, `with` and `scope`);
   - a wrapper or a keyword: a member or a transparent container (`decorator`, `attributes`, a type annotation), or a kind of its own where the wrapper's element is only a supertype (`declaration.ambient`, `statement.labeled`).
   A rust trait has everything a typescript interface has, once typescript's index and call signatures are left out as members of `structural-conformance`, which rust does not compose; it adds default method bodies and associated items. So it is `declaration.interface.trait`, and a Swift protocol is `declaration.interface.protocol`. That keeps the distinction SCIP keeps between interface, trait and protocol, while cross-language reading sees each of them as an interface.
-- **Refinement routes are sugar.** `d.method('__init__', …)` builds the same tree as `d.method.dunder('init', …)`, and both read back as `declaration.method.dunder`, because classification is by match, never by construction route. A read is classified as the most specific kind: `is.declaration.method.dunder(x)` holds for both.
+- **A read classifies to the deepest kind.** Classification is by match, never by construction route. `d.method('__init__', …)` builds the same tree as `d.method.dunder('init', …)`, both read back as `declaration.method.dunder`, and `is.declaration.method.dunder(x)` holds for both. A value refinement is selected by its member's value, so the bindings claim no owner × value: a rust method declared `pub(crate)` reads as `declaration.method.public.internal`.
 
 ### 3.4 How the interfaces are written
 
-- **One file per top-level namespace,** plus `context.ts`, `index.ts`, the feature folders under `features/` (§4.1) and the generated `augment.ts` (§4.4).
+- **One file per top-level namespace,** plus `context.ts`, `index.ts`, the feature folders under `features/` (§4.1), the languages' compositions in `compositions.ts` (§4.1), and the generated `augment.ts` and `features/index.ts` (§4.4).
 - **Every level is an interface merged with a namespace:** the interface carries the level's members, the namespace its children. A leaf is an interface alone.
 - **Every interface is generic over the language context:** `Name<G extends GrammarContext<G>>`, with `G` passed through every cross-reference. Cross-references go through one import alias (`V.Expression.Call<G>`), so a local interface never shadows a namespace.
 - **Each namespace exports `Any<G>`,** the union of every kind beneath it, the prefix itself included when it is a kind. A level is the vocabulary's: it holds every kind beneath it, whichever feature adds it, and a language's own level is its context's key. Features add kinds beneath a level, so the unions are generated, into `augment.ts` (§4.4).
@@ -183,6 +196,7 @@ Nothing in the vocabulary is language-specific; it is feature-specific. A langua
 | bounded-quantification | bounds, constraints, concepts, where | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | accessors | getter, setter | † | ✓ | | ✓ | | | ✓ |
 | visibility | `visibility`, an access level (values below) | † | ✓ | ✓ | ✓ | † | ✓ | ✓ |
+| scoped-visibility | a level restricted to a module the declaration names, `pub(in path)`; extends `visibility` | | | ✓ | | | | |
 | encapsulation | `private`: a member hidden from code outside its class, enforced at run time (`#x`) | | ✓ | | | | | |
 | computed-keys | `computed`: a property whose key is evaluated (`[k]: v`) | | ✓ | | | | | |
 | async-await | async functions, await | ✓ | ✓ | ✓ | ✓ | | ✓ | ✓ |
@@ -206,15 +220,15 @@ Nothing in the vocabulary is language-specific; it is feature-specific. A langua
 
 Decisions the table records: `enumerations` and `algebraic-data-types` are separate features, since a C# enum and a rust enum share a keyword and nothing else; `decorators` and `attributes` are separate, since Swift's `@` forms are never evaluated applications; `exceptions` and `error-propagation` are separate, since Swift has both and rust has only the second. `oop` as a superset reads as `classes`, one of the inheritance features, `interface-conformance`, `accessors` and `visibility`; that composition names typescript, C# and Swift exactly, and python and C++ with the other inheritance feature. `open-type-extension` is kept apart from `typeclasses` because C# and Go have the former without the latter. `visibility` and `encapsulation` are separate: typescript's `private` is a level the compiler checks, `#x` a name the runtime hides, and the two never mark the same member. A key that is always an expression, as in python's, Go's and Swift's dictionary literals, has nothing for `computed-keys` to flag. `comprehensions` and `jsx` are real features shaped by one language each and compose as leaves under `expression` without a row here.
 
-**Visibility's values.** `visibility` holds one of these levels, from the widest to the narrowest. A cell is the language's spelling of the level; † marks a level spelled by content rather than a keyword, by a naming convention or by C++'s unnamed namespace; blank, the language has no such level.
+**Visibility's values.** `visibility` holds one of these levels, from the widest to the narrowest. A level is a kind beneath `modifier.visibility`, named here by its short form (§3.3). The three grammars claim `public`, `public.internal`, `public.restricted`, `protected` and `private`; where the other levels nest is open (§11). A cell is the language's spelling of the level; † marks a level spelled by content rather than a keyword, by a naming convention or by C++'s unnamed namespace; blank, the language has no such level.
 
 | value | visible to | py | ts | rs | C# | Go | C++ | Swift |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `open` | everything, and subclassed or overridden outside its module | | | | | | | `open` |
 | `public` | everything | † `name` | `public` | `pub` | `public` | † `Name` | `public` | `public` |
 | `package` | the modules of its package | | | | | | | `package` |
-| `internal` | its compilation unit: crate, assembly, package or module | | | `pub(crate)`, `crate` | `internal` | † `name` | | `internal` |
-| `restricted` | the ancestor module `visibilityScope` names | | | `pub(super)`, `pub(in path)` | | | | |
+| `public.internal` | its compilation unit: crate, assembly, package or module | | | `pub(crate)`, `crate` | `internal` | † `name` | | `internal` |
+| `public.restricted` | the ancestor module its `scope` names | | | `pub(super)`, `pub(in path)` | | | | |
 | `protected internal` | the types derived from its type, and its compilation unit | | | | `protected internal` | | | |
 | `protected` | its type and the types derived from it | † `_name` | `protected` | | `protected` | | `protected` | |
 | `private protected` | the types derived from its type within its compilation unit | | | | `private protected` | | | |
@@ -222,17 +236,20 @@ Decisions the table records: `enumerations` and `algebraic-data-types` are separ
 | `private` | its declaring scope: its type, or its module in rust | † `__name` | `private` | `pub(self)` | `private` | | `private` | `private` |
 
 - **The level is the source's.** A node has `visibility` where its source spells a level, in a keyword or, at a †, in its name. A level the language assumes when nothing is spelled (rust's private, Swift's `internal`, typescript's `public`) is a fact about the language, not about the node.
-- **Rust's paths reduce to the levels they mean.** `pub(crate)` and `pub(in crate)` are `internal`; `pub(self)` and `pub(in self)` are `private`; `pub(super)` is `restricted` to `super`.
+- **Rust's paths reduce to the levels they mean.** `pub(crate)`, `pub(in crate)` and `crate` are `public.internal`; `pub(self)` and `pub(in self)` are `private`; `pub(super)` is `public.restricted`, with `super` as its `scope`. Only `public.restricted` carries a scope the level lacks, so only its value refinements have `scope` (§3.3).
 - **A level is not a seal.** Swift orders `open` above `public` because it lets other modules subclass; elsewhere that permission is the absence of a seal (C#'s `sealed`), which is not an access level.
 
 ### 4.4 Presence is gated, requiredness is restated
 
 The context `G` carries kind-sets by namespace, and that alone cannot make a member absent for one language: a member that references a specific interface (`whereClause: V.Clause.Where<G>`) is untouched by whatever `G['clause']` projects to. So the vocabulary carries every feature's kinds and members for every language and gates each member on the context, while a language's context lists only the kinds its composition has. A kind keeps one name, `V.Declaration.Function.Generator<G>`, and code written over the vocabulary does not change with the language.
 
-- **The augmentation is generated from the feature folders.** `augment.ts` holds one `declare module` block per namespace file, which adds back everything the features own:
+- **The augmentation is generated from the base and the feature folders.** `augment.ts` holds one `declare module` block per namespace file, which adds back everything the features own:
   - a kind a feature adds, as an interface extending its stub: `interface Generator<G> extends generators.Declaration.Function.Generator<G> {}`;
   - each gated member, declared on its own, its type indexed from the stub that owns it: `readonly generator?: In<G, Generators, generators.Declaration.Method<G>['generator']>`;
+  - each value refinement (§3.3): an interface extending its owner that pins the enumerated member and adds, gated, the members its value's features own;
   - each level's `Any`: the base's kinds beneath the level and every feature's.
+
+  `features/index.ts`, which exports every feature's marker, is generated with it.
 
   The base files hold everything no feature owns, and nothing else. Each member is declared on its own rather than through a mapped `extends`. Otherwise a refinement that restates a gated member would inherit two disagreeing declarations of it (TS2320). The generated code reaches its own helpers through lowercase namespaces (`gate.In`, `features.Generators`). Inside a `declare module` block the vocabulary's names are in scope, and kinds named `In` and `F` exist to shadow them.
 - **Levels are whole.** The namespace map types each slot by levels over any context (§3.4), so every refinement is checked against its parent for every `G`. A level arm gated on a feature cannot be shown to hold the feature's kind for an arbitrary `G`. With gated arms, a refinement that narrows a slot to a kind a feature adds fails to compile: `expression.call.template` narrows `arguments` to the template string `string-interpolation` adds. A language's own level is its context's key: `PythonContext['expression']` lists only what Python's composition has, and has no async block.
@@ -376,13 +393,14 @@ A portable node reads through the grammar's typed surface: its low-level node's 
 14. **Crossing:** a parsed node attached to its language's other engine is re-wrapped from its tree row with no reparse and renders the same text; a built node attached to the other surface is rebuilt through the map and renders the same text; attaching a low-level node of a kind that does not cross on its own is a type error; attaching a node to the engine it is bound to returns it.
 15. **Role tests:** `is.<role path>` holds for exactly the nodes whose read entries classify them under the path, on both surfaces, and tells `identifier` from `type_identifier` where their roles differ; a grammar node narrows to the row's grammar types and a portable node to the vocabulary interface, checked at compile time.
 16. **Refinements fit their parents:** the vocabulary type-checks under the namespace map, which types every slot, so a refinement whose fill falls outside its parent's fails to compile; so does a language's context that does not fit the map over itself.
+17. **The generated vocabulary is current:** `sittir tool vocabulary-features --check` reports no planning issue and no drift. The planning issues are item 10's ownership rules plus feature folders nested by inheritance. No drift means `augment.ts` and `features/index.ts` are what the base and the folders generate. The tool's test holds the check at a ceiling of none.
 
 ## 11. Open questions
 
 - **One word, two mechanisms.** "Bindings" names `bindings.scm` and also the `_bindings` key of each grammar's `options` block, which groups option addresses under a user-facing key. One of them should be renamed before the portable API ships; the read-side consumer surface (`roles.as/is/find`) is named by the same decision.
 - **Trivia and provenance through `build`.** A parsed node that crosses keeps its tree row, and with it its coordinates, but `build` builds from members alone, and a structure has no coordinates. `doc` survives as a member; free trivia needs a `trivia` member or is declared lost.
 - **A user's own bindings.** Whether a user's bindings file compiles to a map composed after the package's, by the seed's per-kind override rule, and whether that happens at generation or at load. Also whether a user's own features can add kinds to the vocabulary's levels: generated unions take kinds only from features inside the vocabulary package (§4.4).
-- **Features (§4).** What the features probe (`docs/superpowers/probes/2026-10-09-vocabulary-features/`) leaves for a ruling, each with a recommendation:
+- **Features (§4).** What the features probe (`docs/superpowers/probes/2026-10-09-vocabulary-features/`) and the value refinements (§3.3) leave for a ruling, each with a recommendation:
   1. **What a missing member is.**
      - `Absent<F>` names the missing feature in every error, and lets a portable node drop exactly the members its language lacks. But a consumer generic over the context sees every gated member as possibly `Absent<F>` and must narrow it.
      - `never` leaves generic consumers unchanged. It costs both: errors that do not name the feature, and portable nodes that cannot tell a missing member from a member whose type is `never`.
@@ -435,12 +453,17 @@ A portable node reads through the grammar's typed surface: its low-level node's 
      `modules` then adds import, export and re-export, and `module-declarations` the namespace. `comprehensions` and `async-blocks` (rust's `async { }`, under `async-await`) are features without rows, like `jsx`. Five features own nothing in the three grammars and are markers a composition names: `overloading`, `operator-overloading` (by content in python and rust), `nullable-types` (a union type in python and typescript), `concurrency-syntax` and `deferred-execution`.
   7. **Python's generators.** Python composes `generators`, but its bindings claim no generator kind and route no `generator` member, so the inventory reports the feature unreached. Python does delegate: `yield from` is tree-sitter's `yield` with a `from` token. Recommendation: python's bindings claim it as a refinement, `((yield "from") @expression.yield.delegate)`, which reaches `generators`; the composition stays.
   8. **TypeScript's other typing kinds.** The features probe moves every typing kind and member into the feature that owns its concept: interfaces and their property signatures to `interfaces`, type aliases to `type-aliases`, enums to `enumerations`, call, construct and index signatures to `structural-conformance`, abstract classes and methods to `abstract-classes`, the casts to `type-annotations`, namespaces to `module-declarations`, and four modifiers to features of their own (question 6): `optional-members` (`x?: T`, the optional parameter), `readonly-members`, `ambient-declarations` (`declare`) and `non-null-assertions` (`x!`, `x!: T`). Under `type-annotations` the modifiers would have reached rust's and python's fields, which compose annotations and none of them. A JavaScript context, over TypeScript's claims, then has none of the typing kinds. Recommendation: adopt.
-  9. **Refinements outside their parent, and visibility's values.** The namespace map checks every refinement's fill against its parent's (§10.16). Of the three refinements in the binding prototype's vocabulary that fail, the property rule (§3.3) removes `identifier.property.private`. Open:
+  9. **Refinements outside their parent, and visibility's values.** The namespace map checks every refinement's fill against its parent's (§10.16). Of the three refinements in the binding prototype's vocabulary that fail, the property rule (§3.3) removes `identifier.property.private`.
+
+     Visibility's values are ruled:
+     - they are kinds, and a value is its kind's full path (§3.3);
+     - the levels the three grammars claim nest under `public` (`public.internal`, `public.restricted`);
+     - rust's `pub(super)` and `pub(in path)` are the one level `public.restricted`, and the module they name is `scope` on the owner's value refinement, owned by `scoped-visibility`.
+
+     Open:
      - **The identity and membership operators.** `expression.binary.identity` and `.membership` leave `operator` `unknown`, outside `expression.binary`'s `string`, and so do their leaves (`.is`, `.is_not`, `.not_in`), though python routes it there. Recommendation: fill it as `string`, the keyword text it is, as the features probe does.
-     - **Visibility's values** (§4.3). Recommendation: the table's ten levels. Three choices in it:
-       - rust's `pub(super)` and `pub(in path)` are one level, `restricted`, with the path in `visibilityScope`, rather than a level per form;
-       - `open` is a level, because Swift orders it above `public`, while elsewhere the same permission is the absence of a seal;
-       - a level spelled by naming convention (†) is read from the name, and a build that gives a level the name contradicts is refused rather than renaming the declaration.
+     - **The levels no grammar claims** (§4.3): `open`, `package`, `protected internal`, `private protected` and `file`, and where each nests. `open` is a level because Swift orders it above `public`, while elsewhere the same permission is the absence of a seal. Recommendation: add each as a kind when a grammar claims it, nested by what it admits.
+     - **A level spelled by naming convention** (†) is read from the name, and a build that gives a level the name contradicts is refused rather than renaming the declaration. Recommendation: adopt.
   10. **Text in a role.** Every context must fit the namespace map over itself, and the map types each role by kinds: `identifier` is `V.Identifier.Any<G>`. Two contexts put text in a role:
       - The binding generator's contexts admit a grammar's keyword text where its grammar aliases a keyword to a role (`identifier: … | 'bool' | 'gen' | 'union'`).
       - §8's structure context types leaves as text.
@@ -454,5 +477,9 @@ A portable node reads through the grammar's typed surface: its low-level node's 
       - **Operators and keyword leaves stay in the base.** A language never claims an operator it lacks, so its context already leaves the leaf out, and a feature per token would add a marker and no member. `coercive-equality` is the exception, because its leaf is a different comparison.
       - **One grammar's statements stay too:** python's `print`, `exec`, `global`, `nonlocal`, `assert`, `del` and `pass`, typescript's `debugger` and `with`. Each is a leaf only its grammar claims, with nothing for a feature to gate.
       - **A kind two features share is split where their members differ.** `clause.case` holds python's match case and typescript's switch case; `match-expressions` and `multiway-branch` gate their members on it. Splitting it into two kinds lets each feature own its case.
-      - **One fact in two shapes is unified before a feature owns it.** Rust's `mut` is a `mutable` flag; typescript's `let` and `const` are `declaration.variable.lexical`'s keyword.
+      - **One fact in two shapes is unified before a feature owns it, and two facts in one shape are kept apart.** typescript's `let`, `const` and `var` say whether a binding may be reassigned. That is one fact: `declaration.variable`'s refinements `.reassignable`, `.constant` and `.reassignable.function_scoped`, and the binding is the next enumeration of kinds (§3.3). Rust's `mut` is an ownership fact, not that one, and stays the `mutable` flag.
       - **A feature composed by content reaches nothing until a reader derives it.** Python composes `visibility`, `accessors`, `abstract-classes`, `explicit-overrides` and `operator-overloading` by naming conventions, decorators and dunders, and its bindings route none of their members. They stay composed, as the table says, and the inventory reports them.
+  12. **How a feature writes a member a value adds.** `scoped-visibility` adds `scope` to every `<owner>.public.restricted` (§3.3), which states something about a value rather than about one kind. Recommendation:
+      - The feature writes the member on the value's kind, as it writes a member any kind gains (§4.1): `Modifier.Visibility.Public.Restricted<G> { readonly scope: G['identifier'] }`, in `scoped-visibility`'s folder.
+      - The generator gives the member to each owner's value refinement, gated.
+      - The bindings route it on the value's claim, `(visibility_modifier_pub (visibility_modifier_pub_scope […]) @scope) @modifier.visibility.public.restricted`, so the inventory finds the route where the vocabulary declares the member.
