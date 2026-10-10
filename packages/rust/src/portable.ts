@@ -51,13 +51,14 @@ export interface PortableIds {
 	'clause.match.arm.last': TSKindId.LastMatchArm;
 	'clause.where': TSKindId.WhereClause | TSKindId.WherePredicate;
 	'clause.where.predicate': TSKindId.WherePredicate;
-	comment: TSKindId.BlockComment | TSKindId.LineComment;
+	comment: TSKindId.BlockComment | TSKindId.DocComment | TSKindId.LineComment;
 	'comment.block': TSKindId.BlockComment;
 	'comment.block.doc': TSKindId.BlockComment;
 	'comment.block.doc.inner': TSKindId.BlockComment;
 	'comment.line': TSKindId.LineComment;
 	'comment.line.doc': TSKindId.LineComment;
 	'comment.line.doc.inner': TSKindId.LineComment;
+	'comment.text': TSKindId.DocComment;
 	declaration:
 		| TSKindId.AssociatedType
 		| TSKindId.BoolKeyword
@@ -435,6 +436,7 @@ export interface PortableIds {
 		| TSKindId.IntegerLiteralOctal
 		| TSKindId.NegativeLiteral
 		| TSKindId.RawStringLiteral
+		| TSKindId.StringContent
 		| TSKindId.StringLiteral
 		| TSKindId.TrueKeyword;
 	'literal.boolean': TSKindId.FalseKeyword | TSKindId.TrueKeyword;
@@ -458,9 +460,14 @@ export interface PortableIds {
 	'literal.number.integer.hex': TSKindId.IntegerLiteralHex;
 	'literal.number.integer.octal': TSKindId.IntegerLiteralOctal;
 	'literal.number.negative': TSKindId.NegativeLiteral;
-	'literal.string': TSKindId.EscapeSequence | TSKindId.RawStringLiteral | TSKindId.StringLiteral;
+	'literal.string':
+		| TSKindId.EscapeSequence
+		| TSKindId.RawStringLiteral
+		| TSKindId.StringContent
+		| TSKindId.StringLiteral;
 	'literal.string.escape': TSKindId.EscapeSequence;
 	'literal.string.raw': TSKindId.RawStringLiteral;
+	'literal.string.text': TSKindId.StringContent;
 	modifier: TSKindId.Crate | TSKindId.ExternModifier | TSKindId.VisibilityModifierPub;
 	'modifier.extern': TSKindId.ExternModifier;
 	'modifier.visibility': TSKindId.Crate | TSKindId.VisibilityModifierPub;
@@ -686,6 +693,7 @@ export interface PortableKindsAt {
 		readonly $ids: readonly PortableIds['comment'][];
 		readonly block: PortableKindsAt['comment.block'];
 		readonly line: PortableKindsAt['comment.line'];
+		readonly text: PortableKindsAt['comment.text'];
 	};
 	'comment.block': {
 		readonly $ids: readonly PortableIds['comment.block'][];
@@ -707,6 +715,7 @@ export interface PortableKindsAt {
 		readonly inner: PortableKindsAt['comment.line.doc.inner'];
 	};
 	'comment.line.doc.inner': { readonly $ids: readonly PortableIds['comment.line.doc.inner'][] };
+	'comment.text': { readonly $ids: readonly PortableIds['comment.text'][] };
 	declaration: {
 		readonly $ids: readonly PortableIds['declaration'][];
 		readonly constant: PortableKindsAt['declaration.constant'];
@@ -1145,6 +1154,7 @@ export interface PortableKindsAt {
 		readonly negative: PortableKindsAt['literal.number.negative'];
 		readonly octal: PortableKindsAt['literal.number.integer.octal'];
 		readonly raw: PortableKindsAt['literal.string.raw'];
+		readonly text: PortableKindsAt['literal.string.text'];
 		readonly true: PortableKindsAt['literal.boolean.true'];
 	};
 	'literal.boolean': {
@@ -1179,9 +1189,11 @@ export interface PortableKindsAt {
 		readonly $ids: readonly PortableIds['literal.string'][];
 		readonly escape: PortableKindsAt['literal.string.escape'];
 		readonly raw: PortableKindsAt['literal.string.raw'];
+		readonly text: PortableKindsAt['literal.string.text'];
 	};
 	'literal.string.escape': { readonly $ids: readonly PortableIds['literal.string.escape'][] };
 	'literal.string.raw': { readonly $ids: readonly PortableIds['literal.string.raw'][] };
+	'literal.string.text': { readonly $ids: readonly PortableIds['literal.string.text'][] };
 	modifier: {
 		readonly $ids: readonly PortableIds['modifier'][];
 		readonly extern: PortableKindsAt['modifier.extern'];
@@ -1415,6 +1427,7 @@ export interface PortableIsAt {
 	comment: PortableGuard<PortableIds['comment']> & {
 		readonly block: PortableIsAt['comment.block'];
 		readonly line: PortableIsAt['comment.line'];
+		readonly text: PortableIsAt['comment.text'];
 	};
 	'comment.block': PortableGuard<PortableIds['comment.block']> & {
 		readonly doc: PortableIsAt['comment.block.doc'];
@@ -1432,6 +1445,7 @@ export interface PortableIsAt {
 		readonly inner: PortableIsAt['comment.line.doc.inner'];
 	};
 	'comment.line.doc.inner': PortableGuard<PortableIds['comment.line.doc.inner']> & {};
+	'comment.text': PortableGuard<PortableIds['comment.text']> & {};
 	declaration: PortableGuard<PortableIds['declaration']> & {
 		readonly constant: PortableIsAt['declaration.constant'];
 		readonly enum: PortableIsAt['declaration.enum'];
@@ -1811,6 +1825,7 @@ export interface PortableIsAt {
 		readonly negative: PortableIsAt['literal.number.negative'];
 		readonly octal: PortableIsAt['literal.number.integer.octal'];
 		readonly raw: PortableIsAt['literal.string.raw'];
+		readonly text: PortableIsAt['literal.string.text'];
 		readonly true: PortableIsAt['literal.boolean.true'];
 	};
 	'literal.boolean': PortableGuard<PortableIds['literal.boolean']> & {
@@ -1841,9 +1856,11 @@ export interface PortableIsAt {
 	'literal.string': PortableGuard<PortableIds['literal.string']> & {
 		readonly escape: PortableIsAt['literal.string.escape'];
 		readonly raw: PortableIsAt['literal.string.raw'];
+		readonly text: PortableIsAt['literal.string.text'];
 	};
 	'literal.string.escape': PortableGuard<PortableIds['literal.string.escape']> & {};
 	'literal.string.raw': PortableGuard<PortableIds['literal.string.raw']> & {};
+	'literal.string.text': PortableGuard<PortableIds['literal.string.text']> & {};
 	modifier: PortableGuard<PortableIds['modifier']> & {
 		readonly extern: PortableIsAt['modifier.extern'];
 		readonly visibility: PortableIsAt['modifier.visibility'];
@@ -2319,13 +2336,14 @@ const table: PortableTable = {
 		'clause.match.arm.last': { ids: [TSKindId.LastMatchArm], exact: true },
 		'clause.where': { ids: [TSKindId.WhereClause, TSKindId.WherePredicate], exact: true },
 		'clause.where.predicate': { ids: [TSKindId.WherePredicate], exact: true },
-		comment: { ids: [TSKindId.BlockComment, TSKindId.LineComment], exact: true },
+		comment: { ids: [TSKindId.BlockComment, TSKindId.DocComment, TSKindId.LineComment], exact: true },
 		'comment.block': { ids: [TSKindId.BlockComment], exact: true },
 		'comment.block.doc': { ids: [TSKindId.BlockComment], exact: false },
 		'comment.block.doc.inner': { ids: [TSKindId.BlockComment], exact: false },
 		'comment.line': { ids: [TSKindId.LineComment], exact: true },
 		'comment.line.doc': { ids: [TSKindId.LineComment], exact: false },
 		'comment.line.doc.inner': { ids: [TSKindId.LineComment], exact: false },
+		'comment.text': { ids: [TSKindId.DocComment], exact: true },
 		declaration: {
 			ids: [
 				TSKindId.AssociatedType,
@@ -2742,6 +2760,7 @@ const table: PortableTable = {
 				TSKindId.IntegerLiteralOctal,
 				TSKindId.NegativeLiteral,
 				TSKindId.RawStringLiteral,
+				TSKindId.StringContent,
 				TSKindId.StringLiteral,
 				TSKindId.TrueKeyword
 			],
@@ -2777,11 +2796,12 @@ const table: PortableTable = {
 		'literal.number.integer.octal': { ids: [TSKindId.IntegerLiteralOctal], exact: false },
 		'literal.number.negative': { ids: [TSKindId.NegativeLiteral], exact: false },
 		'literal.string': {
-			ids: [TSKindId.EscapeSequence, TSKindId.RawStringLiteral, TSKindId.StringLiteral],
+			ids: [TSKindId.EscapeSequence, TSKindId.RawStringLiteral, TSKindId.StringContent, TSKindId.StringLiteral],
 			exact: false
 		},
 		'literal.string.escape': { ids: [TSKindId.EscapeSequence], exact: true },
 		'literal.string.raw': { ids: [TSKindId.RawStringLiteral], exact: false },
+		'literal.string.text': { ids: [TSKindId.StringContent], exact: true },
 		modifier: { ids: [TSKindId.Crate, TSKindId.ExternModifier, TSKindId.VisibilityModifierPub], exact: false },
 		'modifier.extern': { ids: [TSKindId.ExternModifier], exact: true },
 		'modifier.visibility': { ids: [TSKindId.Crate, TSKindId.VisibilityModifierPub], exact: false },
@@ -3169,6 +3189,7 @@ const table: PortableTable = {
 		['literal', 'negative', 'literal.number.negative'],
 		['literal', 'octal', 'literal.number.integer.octal'],
 		['literal', 'raw', 'literal.string.raw'],
+		['literal', 'text', 'literal.string.text'],
 		['literal', 'true', 'literal.boolean.true'],
 		['literal.number', 'binary', 'literal.number.integer.binary'],
 		['literal.number', 'hex', 'literal.number.integer.hex'],
@@ -3403,6 +3424,7 @@ const table: PortableTable = {
 		],
 		[TSKindId.DefaultKeyword]: [{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] }],
 		[TSKindId.DelimTokenTree]: [{ path: 'element.macro.token_tree.delimited', within: [], test: [] }],
+		[TSKindId.DocComment]: [{ path: 'comment.text', within: [], test: [] }],
 		[TSKindId.DynamicType]: [{ path: 'type.dynamic', within: [], test: [] }],
 		[TSKindId.ElseClause]: [{ path: 'clause.else', within: [], test: [] }],
 		[TSKindId.EmptyStatement]: [{ path: 'statement.empty', within: [], test: [] }],
@@ -3703,6 +3725,7 @@ const table: PortableTable = {
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
+		[TSKindId.StringContent]: [{ path: 'literal.string.text', within: [], test: [] }],
 		[TSKindId.StringLiteral]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'literal.string', within: [], test: [] }

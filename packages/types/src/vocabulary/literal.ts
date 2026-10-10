@@ -246,6 +246,10 @@ export namespace Literal {
 			readonly content: G['slots']['literal.string.raw']['content'];
 			// r only
 		}
+		export interface Text<G extends GrammarContext<G>> extends SubKindOf<V.Literal.String<G>> {
+			// claimed by prt
+			readonly $kind: 'literal.string.text';
+		}
 		export interface Triple<G extends GrammarContext<G>> extends SubKindOf<V.Literal.String<G>> {
 			// claimed by p
 			readonly $kind: 'literal.string.triple';
@@ -257,6 +261,7 @@ export namespace Literal {
 			| V.Literal.String.Escape<G>
 			| V.Literal.String.F<G>
 			| V.Literal.String.Raw<G>
+			| V.Literal.String.Text<G>
 			| V.Literal.String.Triple<G>;
 	}
 	export interface Template<G extends GrammarContext<G>> extends SubKindOf<V.Literal<G>> {
@@ -295,6 +300,7 @@ export namespace Literal {
 		| V.Literal.String.Escape<G>
 		| V.Literal.String.F<G>
 		| V.Literal.String.Raw<G>
+		| V.Literal.String.Text<G>
 		| V.Literal.String.Triple<G>
 		| V.Literal.Template<G>;
 }

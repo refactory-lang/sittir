@@ -269,6 +269,7 @@
 ; ── literal ────────────────────────────────────────────────────────────────────
 (string) @literal.string
 (escape_sequence) @literal.string.escape
+(string_fragment) @literal.string.text
 (template_string) @literal.template
 (regex) @literal.regex
 (number) @literal.number

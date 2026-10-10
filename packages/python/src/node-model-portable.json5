@@ -5147,6 +5147,19 @@
         "list": true
       }
     },
+    "string_fragment": {
+      "vocab": "literal.string.text",
+      "read": [
+        {
+          "vocab": "literal.string.text",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
     "subjects": {
       "container": {
         "kinds": [
@@ -6035,20 +6048,20 @@
         "paths": 13,
         "kinds": 3,
         "refinements": 0,
-        "aliases": 113
+        "aliases": 114
       },
       {
         "depth": 2,
         "paths": 74,
         "kinds": 68,
         "refinements": 7,
-        "aliases": 77
+        "aliases": 78
       },
       {
         "depth": 3,
-        "paths": 64,
-        "kinds": 52,
-        "refinements": 46,
+        "paths": 65,
+        "kinds": 53,
+        "refinements": 47,
         "aliases": 42
       },
       {

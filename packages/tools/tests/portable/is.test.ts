@@ -74,6 +74,16 @@ describe('portable is: python', async () => {
 		expect(at('literal.string.bytes')(b, bc)).toBe(true);
 	});
 
+	it('reads each text piece of a string as its text, an f-string\'s included', () => {
+		const SOURCE = 'x = "a\\nb"\ny = f"c{x}"\n';
+		for (const text of ['a', 'b', 'c']) {
+			const [fragment, context] = find(SOURCE, 'string_fragment', text);
+			expect(at('literal.string.text')(fragment, context), text).toBe(true);
+		}
+		const [escape, escapeContext] = find(SOURCE, 'escape_sequence_simple');
+		expect(at('literal.string.text')(escape, escapeContext)).toBe(false);
+	});
+
 	it('keeps the constructor and call paths though a function owns those names', () => {
 		const [init, context] = find(SOURCE, 'function_definition', undefined, 2);
 		expect(at('declaration.constructor')).not.toBe(Function.prototype.constructor);
@@ -91,6 +101,14 @@ describe('portable is: rust', async () => {
 		expect(at('literal.boolean.true')(t, tc)).toBe(true);
 		expect(at('literal.boolean.false')(t, tc)).toBe(false);
 		expect(at('literal.boolean.false')(f, fc)).toBe(true);
+	});
+
+	it('reads a string literal\'s content as its text', () => {
+		const SOURCE = 'fn f() { let a = "x\\ny"; }\n';
+		for (const text of ['x', 'y']) {
+			const [content, context] = find(SOURCE, 'string_content', text);
+			expect(at('literal.string.text')(content, context), text).toBe(true);
+		}
 	});
 
 	it('reads a kind-id leaf in the asking engine\'s language, on the low-level surface too', () => {
@@ -149,6 +167,11 @@ describe('portable is: typescript', async () => {
 		expect(at('comment.block.doc')(doc)).toBe(true);
 		expect(at('comment.block.doc')(block)).toBe(false);
 		expect(at('comment.block')(block)).toBe(true);
+	});
+
+	it('reads a double-quoted string\'s fragment as its text', () => {
+		const [fragment, context] = find('let a = "x";\n', 'unescaped_double_string_fragment');
+		expect(at('literal.string.text')(fragment, context)).toBe(true);
 	});
 
 	it('keeps each path whose last segment a function owns', () => {

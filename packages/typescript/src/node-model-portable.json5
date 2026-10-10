@@ -7815,6 +7815,19 @@
         "list": true
       }
     },
+    "string_fragment": {
+      "vocab": "literal.string.text",
+      "read": [
+        {
+          "vocab": "literal.string.text",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
     "string_keyword": {
       "vocab": "type.primitive",
       "read": [
@@ -9393,20 +9406,20 @@
         "paths": 13,
         "kinds": 5,
         "refinements": 0,
-        "aliases": 149
+        "aliases": 150
       },
       {
         "depth": 2,
         "paths": 111,
         "kinds": 120,
         "refinements": 8,
-        "aliases": 93
+        "aliases": 94
       },
       {
         "depth": 3,
-        "paths": 78,
-        "kinds": 65,
-        "refinements": 52,
+        "paths": 79,
+        "kinds": 66,
+        "refinements": 53,
         "aliases": 41
       },
       {

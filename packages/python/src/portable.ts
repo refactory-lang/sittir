@@ -215,6 +215,7 @@ export interface PortableIds {
 		| TSKindId.IntegerOctal
 		| TSKindId.None
 		| TSKindId.String
+		| TSKindId.StringFragment
 		| TSKindId.True;
 	'literal.boolean': TSKindId.False | TSKindId.True;
 	'literal.boolean.false': TSKindId.False;
@@ -246,12 +247,13 @@ export interface PortableIds {
 	'literal.number.integer.hex': TSKindId.IntegerHex;
 	'literal.number.integer.imaginary': TSKindId.IntegerDecimalImaginary;
 	'literal.number.integer.octal': TSKindId.IntegerOctal;
-	'literal.string': TSKindId.ConcatenatedString | TSKindId.EscapeSequence | TSKindId.String;
+	'literal.string': TSKindId.ConcatenatedString | TSKindId.EscapeSequence | TSKindId.String | TSKindId.StringFragment;
 	'literal.string.bytes': TSKindId.String;
 	'literal.string.concatenated': TSKindId.ConcatenatedString;
 	'literal.string.escape': TSKindId.EscapeSequence;
 	'literal.string.f': TSKindId.String;
 	'literal.string.raw': TSKindId.String;
+	'literal.string.text': TSKindId.StringFragment;
 	'literal.string.triple': TSKindId.String;
 	module: TSKindId.Module;
 	pattern:
@@ -823,6 +825,7 @@ export interface PortableKindsAt {
 		readonly octal: PortableKindsAt['literal.number.integer.octal'];
 		readonly raw: PortableKindsAt['literal.string.raw'];
 		readonly scientific: PortableKindsAt['literal.number.float.scientific'];
+		readonly text: PortableKindsAt['literal.string.text'];
 		readonly triple: PortableKindsAt['literal.string.triple'];
 		readonly true: PortableKindsAt['literal.boolean.true'];
 	};
@@ -874,6 +877,7 @@ export interface PortableKindsAt {
 		readonly escape: PortableKindsAt['literal.string.escape'];
 		readonly f: PortableKindsAt['literal.string.f'];
 		readonly raw: PortableKindsAt['literal.string.raw'];
+		readonly text: PortableKindsAt['literal.string.text'];
 		readonly triple: PortableKindsAt['literal.string.triple'];
 	};
 	'literal.string.bytes': { readonly $ids: readonly PortableIds['literal.string.bytes'][] };
@@ -881,6 +885,7 @@ export interface PortableKindsAt {
 	'literal.string.escape': { readonly $ids: readonly PortableIds['literal.string.escape'][] };
 	'literal.string.f': { readonly $ids: readonly PortableIds['literal.string.f'][] };
 	'literal.string.raw': { readonly $ids: readonly PortableIds['literal.string.raw'][] };
+	'literal.string.text': { readonly $ids: readonly PortableIds['literal.string.text'][] };
 	'literal.string.triple': { readonly $ids: readonly PortableIds['literal.string.triple'][] };
 	module: { readonly $ids: readonly PortableIds['module'][] };
 	pattern: {
@@ -1395,6 +1400,7 @@ export interface PortableIsAt {
 		readonly octal: PortableIsAt['literal.number.integer.octal'];
 		readonly raw: PortableIsAt['literal.string.raw'];
 		readonly scientific: PortableIsAt['literal.number.float.scientific'];
+		readonly text: PortableIsAt['literal.string.text'];
 		readonly triple: PortableIsAt['literal.string.triple'];
 		readonly true: PortableIsAt['literal.boolean.true'];
 	};
@@ -1441,6 +1447,7 @@ export interface PortableIsAt {
 		readonly escape: PortableIsAt['literal.string.escape'];
 		readonly f: PortableIsAt['literal.string.f'];
 		readonly raw: PortableIsAt['literal.string.raw'];
+		readonly text: PortableIsAt['literal.string.text'];
 		readonly triple: PortableIsAt['literal.string.triple'];
 	};
 	'literal.string.bytes': PortableGuard<PortableIds['literal.string.bytes']> & {};
@@ -1448,6 +1455,7 @@ export interface PortableIsAt {
 	'literal.string.escape': PortableGuard<PortableIds['literal.string.escape']> & {};
 	'literal.string.f': PortableGuard<PortableIds['literal.string.f']> & {};
 	'literal.string.raw': PortableGuard<PortableIds['literal.string.raw']> & {};
+	'literal.string.text': PortableGuard<PortableIds['literal.string.text']> & {};
 	'literal.string.triple': PortableGuard<PortableIds['literal.string.triple']> & {};
 	module: PortableGuard<PortableIds['module']> & {};
 	pattern: PortableGuard<PortableIds['pattern']> & {
@@ -1674,6 +1682,7 @@ export interface PortableKinds {
 	readonly static: PortableKindsAt['declaration.method.static'];
 	readonly string: PortableKindsAt['literal.string'];
 	readonly subscript: PortableKindsAt['expression.subscript'];
+	readonly text: PortableKindsAt['literal.string.text'];
 	readonly throw: PortableKindsAt['statement.throw'];
 	readonly triple: PortableKindsAt['literal.string.triple'];
 	readonly true: PortableKindsAt['literal.boolean.true'];
@@ -1803,6 +1812,7 @@ export interface PortableIs {
 	readonly static: PortableIsAt['declaration.method.static'];
 	readonly string: PortableIsAt['literal.string'];
 	readonly subscript: PortableIsAt['expression.subscript'];
+	readonly text: PortableIsAt['literal.string.text'];
 	readonly throw: PortableIsAt['statement.throw'];
 	readonly triple: PortableIsAt['literal.string.triple'];
 	readonly true: PortableIsAt['literal.boolean.true'];
@@ -2069,6 +2079,7 @@ const table: PortableTable = {
 				TSKindId.IntegerOctal,
 				TSKindId.None,
 				TSKindId.String,
+				TSKindId.StringFragment,
 				TSKindId.True
 			],
 			exact: true
@@ -2114,12 +2125,16 @@ const table: PortableTable = {
 		'literal.number.integer.hex': { ids: [TSKindId.IntegerHex], exact: true },
 		'literal.number.integer.imaginary': { ids: [TSKindId.IntegerDecimalImaginary], exact: true },
 		'literal.number.integer.octal': { ids: [TSKindId.IntegerOctal], exact: true },
-		'literal.string': { ids: [TSKindId.ConcatenatedString, TSKindId.EscapeSequence, TSKindId.String], exact: true },
+		'literal.string': {
+			ids: [TSKindId.ConcatenatedString, TSKindId.EscapeSequence, TSKindId.String, TSKindId.StringFragment],
+			exact: true
+		},
 		'literal.string.bytes': { ids: [TSKindId.String], exact: false },
 		'literal.string.concatenated': { ids: [TSKindId.ConcatenatedString], exact: true },
 		'literal.string.escape': { ids: [TSKindId.EscapeSequence], exact: true },
 		'literal.string.f': { ids: [TSKindId.String], exact: false },
 		'literal.string.raw': { ids: [TSKindId.String], exact: false },
+		'literal.string.text': { ids: [TSKindId.StringFragment], exact: true },
 		'literal.string.triple': { ids: [TSKindId.String], exact: false },
 		module: { ids: [TSKindId.Module], exact: true },
 		pattern: {
@@ -2348,6 +2363,7 @@ const table: PortableTable = {
 		['', 'static', 'declaration.method.static'],
 		['', 'string', 'literal.string'],
 		['', 'subscript', 'expression.subscript'],
+		['', 'text', 'literal.string.text'],
 		['', 'throw', 'statement.throw'],
 		['', 'triple', 'literal.string.triple'],
 		['', 'true', 'literal.boolean.true'],
@@ -2463,6 +2479,7 @@ const table: PortableTable = {
 		['literal', 'octal', 'literal.number.integer.octal'],
 		['literal', 'raw', 'literal.string.raw'],
 		['literal', 'scientific', 'literal.number.float.scientific'],
+		['literal', 'text', 'literal.string.text'],
 		['literal', 'triple', 'literal.string.triple'],
 		['literal', 'true', 'literal.boolean.true'],
 		['literal.number', 'big', 'literal.number.integer.big'],
@@ -2828,6 +2845,7 @@ const table: PortableTable = {
 			},
 			{ path: 'literal.string', within: [], test: [] }
 		],
+		[TSKindId.StringFragment]: [{ path: 'literal.string.text', within: [], test: [] }],
 		[TSKindId.Subscript]: [{ path: 'expression.subscript', within: [], test: [] }],
 		[TSKindId.True]: [{ path: 'literal.boolean.true', within: [], test: [] }],
 		[TSKindId.TryStatement]: [{ path: 'statement.try', within: [], test: [] }],

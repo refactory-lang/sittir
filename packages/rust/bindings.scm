@@ -215,6 +215,7 @@
 (raw_string_literal string_content: (string_content) @content) @literal.string.raw
 (char_literal) @literal.char
 (escape_sequence) @literal.string.escape
+(string_content) @literal.string.text
 (integer_literal_decimal) @literal.number.integer
 (integer_literal_hex) @literal.number.integer.hex
 (integer_literal_binary) @literal.number.integer.binary
@@ -261,6 +262,7 @@
 (line_comment (line_comment_doc_inner)) @comment.line.doc.inner
 (block_comment (block_comment_doc_outer)) @comment.block.doc
 (block_comment (block_comment_doc_inner)) @comment.block.doc.inner
+(doc_comment) @comment.text
 
 ; ── keyword / punctuation ──────────────────────────────────────────────────────
 ["fn" "let" "impl" "trait" "struct" "enum" "mod" "type"] @keyword.declaration

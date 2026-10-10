@@ -320,6 +320,7 @@ export interface PortableIds {
 		| TSKindId.RegexFlags
 		| TSKindId.RegexPattern
 		| TSKindId.String
+		| TSKindId.UnescapedDoubleStringFragment
 		| TSKindId.TemplateString
 		| TSKindId.True
 		| TSKindId.Undefined;
@@ -367,8 +368,9 @@ export interface PortableIds {
 	'literal.regex': TSKindId.Regex | TSKindId.RegexFlags | TSKindId.RegexPattern;
 	'literal.regex.flags': TSKindId.RegexFlags;
 	'literal.regex.pattern': TSKindId.RegexPattern;
-	'literal.string': TSKindId.EscapeSequence | TSKindId.String;
+	'literal.string': TSKindId.EscapeSequence | TSKindId.String | TSKindId.UnescapedDoubleStringFragment;
 	'literal.string.escape': TSKindId.EscapeSequence;
+	'literal.string.text': TSKindId.UnescapedDoubleStringFragment;
 	'literal.template': TSKindId.TemplateString;
 	modifier: TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword | TSKindId.PublicKeyword;
 	'modifier.visibility': TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword | TSKindId.PublicKeyword;
@@ -1091,6 +1093,7 @@ export interface PortableKindsAt {
 		readonly leading_point: PortableKindsAt['literal.number.float.leading_point'];
 		readonly pattern: PortableKindsAt['literal.regex.pattern'];
 		readonly scientific: PortableKindsAt['literal.number.float.scientific'];
+		readonly text: PortableKindsAt['literal.string.text'];
 		readonly true: PortableKindsAt['literal.boolean.true'];
 		readonly undefined: PortableKindsAt['literal.null.undefined'];
 	};
@@ -1150,8 +1153,10 @@ export interface PortableKindsAt {
 	'literal.string': {
 		readonly $ids: readonly PortableIds['literal.string'][];
 		readonly escape: PortableKindsAt['literal.string.escape'];
+		readonly text: PortableKindsAt['literal.string.text'];
 	};
 	'literal.string.escape': { readonly $ids: readonly PortableIds['literal.string.escape'][] };
+	'literal.string.text': { readonly $ids: readonly PortableIds['literal.string.text'][] };
 	'literal.template': { readonly $ids: readonly PortableIds['literal.template'][] };
 	modifier: {
 		readonly $ids: readonly PortableIds['modifier'][];
@@ -1816,6 +1821,7 @@ export interface PortableIsAt {
 		readonly leading_point: PortableIsAt['literal.number.float.leading_point'];
 		readonly pattern: PortableIsAt['literal.regex.pattern'];
 		readonly scientific: PortableIsAt['literal.number.float.scientific'];
+		readonly text: PortableIsAt['literal.string.text'];
 		readonly true: PortableIsAt['literal.boolean.true'];
 		readonly undefined: PortableIsAt['literal.null.undefined'];
 	};
@@ -1867,8 +1873,10 @@ export interface PortableIsAt {
 	'literal.regex.pattern': PortableGuard<PortableIds['literal.regex.pattern']> & {};
 	'literal.string': PortableGuard<PortableIds['literal.string']> & {
 		readonly escape: PortableIsAt['literal.string.escape'];
+		readonly text: PortableIsAt['literal.string.text'];
 	};
 	'literal.string.escape': PortableGuard<PortableIds['literal.string.escape']> & {};
+	'literal.string.text': PortableGuard<PortableIds['literal.string.text']> & {};
 	'literal.template': PortableGuard<PortableIds['literal.template']> & {};
 	modifier: PortableGuard<PortableIds['modifier']> & {
 		readonly visibility: PortableIsAt['modifier.visibility'];
@@ -2161,6 +2169,7 @@ export interface PortableKinds {
 	readonly substitution: PortableKindsAt['element.template.substitution'];
 	readonly super: PortableKindsAt['identifier.super'];
 	readonly switch: PortableKindsAt['statement.switch'];
+	readonly text: PortableKindsAt['literal.string.text'];
 	readonly throw: PortableKindsAt['statement.throw'];
 	readonly true: PortableKindsAt['literal.boolean.true'];
 	readonly try: PortableKindsAt['statement.try'];
@@ -2326,6 +2335,7 @@ export interface PortableIs {
 	readonly substitution: PortableIsAt['element.template.substitution'];
 	readonly super: PortableIsAt['identifier.super'];
 	readonly switch: PortableIsAt['statement.switch'];
+	readonly text: PortableIsAt['literal.string.text'];
 	readonly throw: PortableIsAt['statement.throw'];
 	readonly true: PortableIsAt['literal.boolean.true'];
 	readonly try: PortableIsAt['statement.try'];
@@ -2728,6 +2738,7 @@ const table: PortableTable = {
 				TSKindId.RegexFlags,
 				TSKindId.RegexPattern,
 				TSKindId.String,
+				TSKindId.UnescapedDoubleStringFragment,
 				TSKindId.TemplateString,
 				TSKindId.True,
 				TSKindId.Undefined
@@ -2793,8 +2804,12 @@ const table: PortableTable = {
 		'literal.regex': { ids: [TSKindId.Regex, TSKindId.RegexFlags, TSKindId.RegexPattern], exact: true },
 		'literal.regex.flags': { ids: [TSKindId.RegexFlags], exact: true },
 		'literal.regex.pattern': { ids: [TSKindId.RegexPattern], exact: true },
-		'literal.string': { ids: [TSKindId.EscapeSequence, TSKindId.String], exact: true },
+		'literal.string': {
+			ids: [TSKindId.EscapeSequence, TSKindId.String, TSKindId.UnescapedDoubleStringFragment],
+			exact: true
+		},
 		'literal.string.escape': { ids: [TSKindId.EscapeSequence], exact: true },
+		'literal.string.text': { ids: [TSKindId.UnescapedDoubleStringFragment], exact: true },
 		'literal.template': { ids: [TSKindId.TemplateString], exact: true },
 		modifier: { ids: [TSKindId.PrivateKeyword, TSKindId.ProtectedKeyword, TSKindId.PublicKeyword], exact: true },
 		'modifier.visibility': {
@@ -3088,6 +3103,7 @@ const table: PortableTable = {
 		['', 'substitution', 'element.template.substitution'],
 		['', 'super', 'identifier.super'],
 		['', 'switch', 'statement.switch'],
+		['', 'text', 'literal.string.text'],
 		['', 'throw', 'statement.throw'],
 		['', 'true', 'literal.boolean.true'],
 		['', 'try', 'statement.try'],
@@ -3221,6 +3237,7 @@ const table: PortableTable = {
 		['literal', 'leading_point', 'literal.number.float.leading_point'],
 		['literal', 'pattern', 'literal.regex.pattern'],
 		['literal', 'scientific', 'literal.number.float.scientific'],
+		['literal', 'text', 'literal.string.text'],
 		['literal', 'true', 'literal.boolean.true'],
 		['literal', 'undefined', 'literal.null.undefined'],
 		['literal.number', 'big', 'literal.number.integer.big'],
@@ -3669,6 +3686,7 @@ const table: PortableTable = {
 		[TSKindId.StatementBlock]: [{ path: 'statement.block', within: [], test: [] }],
 		[TSKindId.StatementIdentifier]: [{ path: 'identifier.label', within: [], test: [] }],
 		[TSKindId.String]: [{ path: 'literal.string', within: [], test: [] }],
+		[TSKindId.UnescapedDoubleStringFragment]: [{ path: 'literal.string.text', within: [], test: [] }],
 		[TSKindId.StringKeyword]: [{ path: 'type.primitive', within: [], test: [] }],
 		[TSKindId.SubscriptExpression]: [{ path: 'expression.subscript', within: [], test: [] }],
 		[TSKindId.Super]: [{ path: 'identifier.super', within: [], test: [] }],

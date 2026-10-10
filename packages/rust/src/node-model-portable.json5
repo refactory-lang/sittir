@@ -2110,6 +2110,19 @@
         "list": true
       }
     },
+    "doc_comment": {
+      "vocab": "comment.text",
+      "read": [
+        {
+          "vocab": "comment.text",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
     "dynamic_type": {
       "vocab": "type.dynamic",
       "read": [
@@ -6351,6 +6364,19 @@
       ],
       "members": []
     },
+    "string_content": {
+      "vocab": "literal.string.text",
+      "read": [
+        {
+          "vocab": "literal.string.text",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
     "string_literal": {
       "vocab": "literal.string",
       "read": [
@@ -8396,16 +8422,16 @@
       },
       {
         "depth": 2,
-        "paths": 102,
-        "kinds": 132,
+        "paths": 103,
+        "kinds": 133,
         "refinements": 12,
-        "aliases": 86
+        "aliases": 87
       },
       {
         "depth": 3,
-        "paths": 74,
-        "kinds": 78,
-        "refinements": 46,
+        "paths": 75,
+        "kinds": 79,
+        "refinements": 47,
         "aliases": 34
       },
       {
@@ -8676,6 +8702,14 @@
         "paths": [
           "expression.assignment.compound.subtract",
           "expression.binary.arithmetic.subtract"
+        ]
+      },
+      {
+        "under": "",
+        "name": "text",
+        "paths": [
+          "comment.text",
+          "literal.string.text"
         ]
       },
       {

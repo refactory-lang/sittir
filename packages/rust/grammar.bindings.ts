@@ -3,7 +3,7 @@
 import { bindings, field, rename, split } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "77537b06d6fa5f5ee4bc4a6c85b8c01b744b1bea2d240f94855ce35f82e7ae30",
+	hash: "45516483e396b30f3d7be3997f3dc89a07c6d434c92a39f17e6c816b11932d3f",
 	patches: {
 		attribute_item: { "2": field("content") },
 		field_expression: { "0": field("object"), "2": field("property") },
@@ -121,6 +121,7 @@ export default bindings({
 		rename("scoped_type_identifier", "path_type"),
 		rename("scoped_type_identifier_in_expression_position", "expression_path_type"),
 		rename("escape_sequence", "escape_string_literal"),
+		rename("string_content", "text_string_literal"),
 		rename("integer_literal_decimal", "integer_number_literal"),
 		rename("integer_literal_hex", "hex_integer_number_literal"),
 		rename("integer_literal_binary", "binary_integer_number_literal"),
