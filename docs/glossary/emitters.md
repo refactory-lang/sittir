@@ -4549,7 +4549,9 @@ transport node.
 ```text
 /** The slot a kind's factory takes as its one positional value: the
  *  compound's structural sole slot (`AbstractAssembledCompound.soleSlot`)
- *  when it is singular; never for a hidden, non-user-facing kind. The
+ *  when it is singular; never for a hidden, non-user-facing kind, and
+ *  never for a keyword-presence slot (a boolean or bitflag marker), which
+ *  is a flag in the config object (`{ lazy: true }`), not a value. The
  *  class is the surface — no derived "user slot" filtering. */
 ```
 
