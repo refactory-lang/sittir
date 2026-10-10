@@ -26,6 +26,8 @@ import {
 	sittirGrammar
 } from '../codegen/src/dsl/dsl-authoring.ts';
 
+const printItem = { renamedFrom: 'argument' } as const;
+
 const comprehensionClauses = rule('comprehension_clauses', ($) =>
 	field('content', repeat1(choice($.for_in_clause, $.if_clause)))
 );
@@ -428,10 +430,14 @@ export default sittirGrammar(base, {
 		case_list_pattern: vocabulary(($) => seq('[', optional($.list_pattern_case_patterns), ']')),
 
 		_print_arguments: vocabulary(($) =>
-			seq(field('item', $.expression), repeat(seq(',', field('item', $.expression))), optional(','))
+			seq(
+				field('item', $.expression, printItem),
+				repeat(seq(',', field('item', $.expression, printItem))),
+				optional(',')
+			)
 		),
 		_print_chevron_arguments: vocabulary(($) =>
-			seq(repeat1(seq(',', field('item', $.expression))), optional(','))
+			seq(repeat1(seq(',', field('item', $.expression, printItem))), optional(','))
 		),
 		print_statement_chevron: vocabulary(($) =>
 			seq('print', $.chevron, optional(choice(alias($._print_chevron_arguments, $.print_chevron_arguments), ',')))

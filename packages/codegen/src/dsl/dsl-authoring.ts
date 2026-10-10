@@ -1,4 +1,4 @@
-import { field as fieldImpl, type FieldPlaceholder } from './primitives/field.ts';
+import { field as fieldImpl, type FieldOptions, type FieldPlaceholder } from './primitives/field.ts';
 import { alias as aliasImpl, type AliasPlaceholder } from './primitives/alias.ts';
 import { rule as ruleImpl, type RulePlaceholder } from './primitives/rule.ts';
 import { role as roleImpl } from './primitives/role.ts';
@@ -37,7 +37,7 @@ export type { WireConfig, WiredOpts } from './wire/wire.ts';
 
 interface AuthoringField {
 	<const N extends string>(name: N): FieldPlaceholder<N>;
-	<const N extends string>(name: N, content: AuthoringRule): FieldRule<N, GrammarRule>;
+	<const N extends string>(name: N, content: AuthoringRule, options?: FieldOptions): FieldRule<N, GrammarRule>;
 }
 export const field = fieldImpl as unknown as AuthoringField;
 

@@ -13741,6 +13741,9 @@
         "printArguments"
       ],
       "hidden": false,
+      "annotations": {
+        "renamedFrom": "argument"
+      },
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -13821,6 +13824,9 @@
         "printChevronArguments"
       ],
       "hidden": false,
+      "annotations": {
+        "renamedFrom": "argument"
+      },
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "mandatory",

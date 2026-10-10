@@ -7276,6 +7276,9 @@
           },
           "metadata": {
             "fieldSource": "override"
+          },
+          "annotations": {
+            "renamedFrom": "argument"
           }
         },
         {
@@ -7296,6 +7299,9 @@
                 },
                 "metadata": {
                   "fieldSource": "override"
+                },
+                "annotations": {
+                  "renamedFrom": "argument"
                 }
               }
             ]
@@ -7336,6 +7342,9 @@
                 },
                 "metadata": {
                   "fieldSource": "override"
+                },
+                "annotations": {
+                  "renamedFrom": "argument"
                 }
               }
             ]
