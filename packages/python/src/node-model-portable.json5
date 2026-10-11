@@ -1790,7 +1790,7 @@
       ]
     },
     "comparison_operator": {
-      "vocab": "expression.binary.comparison",
+      "vocab": "expression.binary",
       "read": [
         {
           "vocab": "expression.binary.comparison.chain",
@@ -1870,6 +1870,34 @@
               "plan": {
                 "op": "eq",
                 "text": "!=",
+                "fields": [
+                  "operators"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.binary.comparison.not_equal",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [
+                    "comparators"
+                  ],
+                  "kinds": [],
+                  "anchor": "only"
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "<>",
                 "fields": [
                   "operators"
                 ],
@@ -2103,7 +2131,7 @@
           ]
         },
         {
-          "vocab": "expression.binary.comparison",
+          "vocab": "expression.binary",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2130,6 +2158,351 @@
             {
               "owner": "comparison_operator",
               "slot": "comparators"
+            }
+          ]
+        },
+        {
+          "name": "right",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "comparison_operator_comparator",
+              "after": null,
+              "anchor": "last",
+              "adjacent": {
+                "previous": {
+                  "field": null,
+                  "kind": null,
+                  "after": null,
+                  "anchor": null
+                }
+              }
+            }
+          ],
+          "parent": "comparison_operator_comparator",
+          "slot": "primary_expression",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "comparison_operator",
+              "slot": "comparators",
+              "anchor": "only"
+            },
+            {
+              "owner": "comparison_operator_comparator",
+              "slot": "primary_expression"
+            }
+          ]
+        }
+      ]
+    },
+    "comparison_operator_comparator": {
+      "vocab": "element.comparator",
+      "read": [
+        {
+          "vocab": "element.comparator.comparison.equal",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "operators",
+              "slot": "operators",
+              "text": "=="
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "==",
+                "fields": [
+                  "operators"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "element.comparator.comparison.not_equal",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "operators",
+              "slot": "operators",
+              "text": "!="
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "!=",
+                "fields": [
+                  "operators"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "element.comparator.comparison.not_equal",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "operators",
+              "slot": "operators",
+              "text": "<>"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "<>",
+                "fields": [
+                  "operators"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "element.comparator.comparison.less",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "operators",
+              "slot": "operators",
+              "text": "<"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "<",
+                "fields": [
+                  "operators"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "element.comparator.comparison.greater",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "operators",
+              "slot": "operators",
+              "text": ">"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": ">",
+                "fields": [
+                  "operators"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "element.comparator.comparison.less_equal",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "operators",
+              "slot": "operators",
+              "text": "<="
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "<=",
+                "fields": [
+                  "operators"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "element.comparator.comparison.greater_equal",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "operators",
+              "slot": "operators",
+              "text": ">="
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": ">=",
+                "fields": [
+                  "operators"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "element.comparator.membership.in",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "operators",
+              "slot": "operators",
+              "text": "in"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "in",
+                "fields": [
+                  "operators"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "element.comparator.membership.not_in",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "operators",
+              "slot": "operators",
+              "text": "not in"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "not in",
+                "fields": [
+                  "operators"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "element.comparator.identity.is",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "operators",
+              "slot": "operators",
+              "text": "is"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "is",
+                "fields": [
+                  "operators"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "element.comparator.identity.is_not",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "operators",
+              "slot": "operators",
+              "text": "is not"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "is not",
+                "fields": [
+                  "operators"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "element.comparator",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "right",
+          "route": "slot",
+          "slot": "primary_expression",
+          "path": [
+            {
+              "owner": "comparison_operator_comparator",
+              "slot": "primary_expression"
             }
           ]
         }
@@ -6614,27 +6987,27 @@
         "paths": 13,
         "kinds": 3,
         "refinements": 0,
-        "aliases": 115
+        "aliases": 103
       },
       {
         "depth": 2,
-        "paths": 74,
-        "kinds": 69,
+        "paths": 75,
+        "kinds": 71,
         "refinements": 7,
-        "aliases": 79
+        "aliases": 92
       },
       {
         "depth": 3,
-        "paths": 65,
-        "kinds": 62,
-        "refinements": 47,
-        "aliases": 43
+        "paths": 68,
+        "kinds": 61,
+        "refinements": 50,
+        "aliases": 53
       },
       {
         "depth": 4,
-        "paths": 47,
-        "kinds": 13,
-        "refinements": 31,
+        "paths": 57,
+        "kinds": 14,
+        "refinements": 24,
         "aliases": 0
       }
     ],
@@ -6705,6 +7078,14 @@
       },
       {
         "under": "",
+        "name": "comparison",
+        "paths": [
+          "element.comparator.comparison",
+          "expression.binary.comparison"
+        ]
+      },
+      {
+        "under": "",
         "name": "comprehension",
         "paths": [
           "clause.comprehension",
@@ -6728,6 +7109,14 @@
         "paths": [
           "expression.assignment.compound.divide",
           "expression.binary.arithmetic.divide"
+        ]
+      },
+      {
+        "under": "",
+        "name": "equal",
+        "paths": [
+          "element.comparator.comparison.equal",
+          "expression.binary.comparison.equal"
         ]
       },
       {
@@ -6756,6 +7145,30 @@
       },
       {
         "under": "",
+        "name": "greater",
+        "paths": [
+          "element.comparator.comparison.greater",
+          "expression.binary.comparison.greater"
+        ]
+      },
+      {
+        "under": "",
+        "name": "greater_equal",
+        "paths": [
+          "element.comparator.comparison.greater_equal",
+          "expression.binary.comparison.greater_equal"
+        ]
+      },
+      {
+        "under": "",
+        "name": "identity",
+        "paths": [
+          "element.comparator.identity",
+          "expression.binary.identity"
+        ]
+      },
+      {
+        "under": "",
         "name": "if",
         "paths": [
           "clause.comprehension.if",
@@ -6772,10 +7185,50 @@
       },
       {
         "under": "",
+        "name": "in",
+        "paths": [
+          "element.comparator.membership.in",
+          "expression.binary.membership.in"
+        ]
+      },
+      {
+        "under": "",
+        "name": "is",
+        "paths": [
+          "element.comparator.identity.is",
+          "expression.binary.identity.is"
+        ]
+      },
+      {
+        "under": "",
+        "name": "is_not",
+        "paths": [
+          "element.comparator.identity.is_not",
+          "expression.binary.identity.is_not"
+        ]
+      },
+      {
+        "under": "",
         "name": "keyword",
         "paths": [
           "argument.keyword",
           "pattern.case.keyword"
+        ]
+      },
+      {
+        "under": "",
+        "name": "less",
+        "paths": [
+          "element.comparator.comparison.less",
+          "expression.binary.comparison.less"
+        ]
+      },
+      {
+        "under": "",
+        "name": "less_equal",
+        "paths": [
+          "element.comparator.comparison.less_equal",
+          "expression.binary.comparison.less_equal"
         ]
       },
       {
@@ -6806,6 +7259,14 @@
       },
       {
         "under": "",
+        "name": "membership",
+        "paths": [
+          "element.comparator.membership",
+          "expression.binary.membership"
+        ]
+      },
+      {
+        "under": "",
         "name": "modulo",
         "paths": [
           "expression.assignment.compound.modulo",
@@ -6818,6 +7279,22 @@
         "paths": [
           "expression.assignment.compound.multiply",
           "expression.binary.arithmetic.multiply"
+        ]
+      },
+      {
+        "under": "",
+        "name": "not_equal",
+        "paths": [
+          "element.comparator.comparison.not_equal",
+          "expression.binary.comparison.not_equal"
+        ]
+      },
+      {
+        "under": "",
+        "name": "not_in",
+        "paths": [
+          "element.comparator.membership.not_in",
+          "expression.binary.membership.not_in"
         ]
       },
       {

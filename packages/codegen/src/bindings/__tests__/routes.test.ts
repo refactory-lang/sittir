@@ -101,7 +101,7 @@ const MODEL = [
 	node('clause_neg', [slot('trait', ['type_x'])]),
 	node('type_x'),
 	node('cmp', [slot('left', ['expr']), slot('ops', ['cmp_op'], { multiple: true })]),
-	node('cmp_op', [slot('operators', [], { terminals: ['==', '<'] })]),
+	node('cmp_op', [slot('operators', [], { terminals: ['==', '<'] }), slot('value', ['expr'])]),
 	node('trio', [slot('head', ['expr']), slot('mid', ['identifier'], { required: false }), slot('tail', ['expr'], { multiple: true })]),
 	node('rng', [slot('left', ['expr']), slot('content', ['rng_right', '_dots'])]),
 	node('rng_right', [slot('op', [], { terminals: ['..=', '..'] }), slot('right', ['expr'])]),
@@ -508,6 +508,29 @@ describe('resolveRoutes', () => {
 		await expect(grammar(pattern).then(resolveRoutes)).rejects.toThrow(message);
 	});
 
+	it('routes each entry the members its own tests guarantee: a path through a slot\'s only node only where the entry tests that node', async () => {
+		const rows = ['(cmp) @expression.binary', '(cmp (cmp_op) . (cmp_op)) @expression.binary.chain', '(cmp . (_) . (cmp_op operators: "<") .) @expression.binary.less', '(cmp . (_) . (cmp_op (_) @right) .)'];
+		const routes = resolveRoutes(await grammar(rows.join('\n')));
+		const byPath = Object.fromEntries((routes.readEntries.get('cmp') ?? []).map((e) => [e.vocab, e.members.map((m) => m.name)]));
+		expect(byPath).toEqual({ 'expression.binary': ['left'], 'expression.binary.chain': ['left', 'ops'], 'expression.binary.less': ['left', 'right'] });
+		expect(routes.members.get('cmp')?.map((m) => m.name).sort()).toEqual(['left', 'ops', 'right']);
+	});
+
+	it('keeps every route a member has, though several share its name', async () => {
+		const routes = resolveRoutes(await grammar('(function_definition (modifiers "async" @flag)) @declaration.function\n(function_definition (modifiers "static" @flag))'));
+		expect(routes.members.get('function_definition')?.filter((m) => m.name === 'flag')).toHaveLength(2);
+	});
+
+	it('routes a slot no member counts through on every entry', async () => {
+		const routes = resolveRoutes(await grammar('(cmp) @expression.binary\n(cmp (cmp_op) . (cmp_op)) @expression.binary.chain'));
+		for (const entry of routes.readEntries.get('cmp') ?? []) expect(entry.members.map((m) => m.name)).toEqual(['left', 'ops']);
+	});
+
+	it('routes a path through a slot\'s first node on every entry: a first node is no count', async () => {
+		const routes = resolveRoutes(await grammar('(block . (function_definition name: (identifier) @first)) @statement.block\n(block (function_definition)) @statement.block.defs'));
+		for (const entry of routes.readEntries.get('block') ?? []) expect(entry.members.map((m) => m.name)).toContain('first');
+	});
+
 	it('keeps the template a templated claim builds from', async () => {
 		const routes = resolveRoutes(
 			await grammar('((function_definition name: (identifier) @name) @declaration.method.dunder (#match? @name "^__(?<stem>.*)__$"))')
@@ -517,6 +540,13 @@ describe('resolveRoutes', () => {
 });
 
 describe('derive', () => {
+	it('gives each path the members of its own entries', async () => {
+		const rows = ['(cmp (cmp_op) . (cmp_op)) @expression.binary.chain', '(cmp . (_) . (cmp_op operators: "<") .) @expression.binary.less', '(cmp . (_) . (cmp_op (_) @right) .)'];
+		const d = derive([await grammar(rows.join('\n'))]);
+		expect([...(d.members.get('expression.binary.less')?.keys() ?? [])].sort()).toEqual(['left', 'right']);
+		expect([...(d.members.get('expression.binary.chain')?.keys() ?? [])].sort()).toEqual(['left', 'ops']);
+	});
+
 	it('types a flag as an optional boolean member of the claimed kind', async () => {
 		const d = derive([await grammar('(function_definition) @declaration.function\n(function_definition name: (identifier) @name @private)')]);
 		const flag = d.members.get('declaration.function')?.get('private');

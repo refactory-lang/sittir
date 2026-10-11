@@ -77,7 +77,26 @@ export interface PortableIds {
 	'declaration.type_alias': TSKindId.TypeAliasStatement;
 	'declaration.type_parameter': TSKindId.TypeParameter;
 	'declaration.variable': TSKindId.AssignmentEq | TSKindId.AssignmentType | TSKindId.AssignmentTyped;
-	element: TSKindId.DictionarySplat | TSKindId.ListSplat | TSKindId.Pair | TSKindId.ParenthesizedListSplat;
+	element:
+		| TSKindId.ComparisonOperatorComparator
+		| TSKindId.DictionarySplat
+		| TSKindId.ListSplat
+		| TSKindId.Pair
+		| TSKindId.ParenthesizedListSplat;
+	'element.comparator': TSKindId.ComparisonOperatorComparator;
+	'element.comparator.comparison': TSKindId.ComparisonOperatorComparator;
+	'element.comparator.comparison.equal': TSKindId.ComparisonOperatorComparator;
+	'element.comparator.comparison.greater': TSKindId.ComparisonOperatorComparator;
+	'element.comparator.comparison.greater_equal': TSKindId.ComparisonOperatorComparator;
+	'element.comparator.comparison.less': TSKindId.ComparisonOperatorComparator;
+	'element.comparator.comparison.less_equal': TSKindId.ComparisonOperatorComparator;
+	'element.comparator.comparison.not_equal': TSKindId.ComparisonOperatorComparator;
+	'element.comparator.identity': TSKindId.ComparisonOperatorComparator;
+	'element.comparator.identity.is': TSKindId.ComparisonOperatorComparator;
+	'element.comparator.identity.is_not': TSKindId.ComparisonOperatorComparator;
+	'element.comparator.membership': TSKindId.ComparisonOperatorComparator;
+	'element.comparator.membership.in': TSKindId.ComparisonOperatorComparator;
+	'element.comparator.membership.not_in': TSKindId.ComparisonOperatorComparator;
 	'element.pair': TSKindId.Pair;
 	'element.splat': TSKindId.DictionarySplat | TSKindId.ListSplat | TSKindId.ParenthesizedListSplat;
 	'element.splat.dictionary': TSKindId.DictionarySplat;
@@ -507,10 +526,81 @@ export interface PortableKindsAt {
 	'declaration.variable': { readonly $ids: readonly PortableIds['declaration.variable'][] };
 	element: {
 		readonly $ids: readonly PortableIds['element'][];
+		readonly comparator: PortableKindsAt['element.comparator'];
 		readonly pair: PortableKindsAt['element.pair'];
 		readonly splat: PortableKindsAt['element.splat'];
+		readonly comparison: PortableKindsAt['element.comparator.comparison'];
 		readonly dictionary: PortableKindsAt['element.splat.dictionary'];
+		readonly equal: PortableKindsAt['element.comparator.comparison.equal'];
+		readonly greater: PortableKindsAt['element.comparator.comparison.greater'];
+		readonly greater_equal: PortableKindsAt['element.comparator.comparison.greater_equal'];
+		readonly identity: PortableKindsAt['element.comparator.identity'];
+		readonly in: PortableKindsAt['element.comparator.membership.in'];
+		readonly is: PortableKindsAt['element.comparator.identity.is'];
+		readonly is_not: PortableKindsAt['element.comparator.identity.is_not'];
+		readonly less: PortableKindsAt['element.comparator.comparison.less'];
+		readonly less_equal: PortableKindsAt['element.comparator.comparison.less_equal'];
+		readonly membership: PortableKindsAt['element.comparator.membership'];
+		readonly not_equal: PortableKindsAt['element.comparator.comparison.not_equal'];
+		readonly not_in: PortableKindsAt['element.comparator.membership.not_in'];
 		readonly parenthesized: PortableKindsAt['element.splat.parenthesized'];
+	};
+	'element.comparator': {
+		readonly $ids: readonly PortableIds['element.comparator'][];
+		readonly comparison: PortableKindsAt['element.comparator.comparison'];
+		readonly identity: PortableKindsAt['element.comparator.identity'];
+		readonly membership: PortableKindsAt['element.comparator.membership'];
+		readonly equal: PortableKindsAt['element.comparator.comparison.equal'];
+		readonly greater: PortableKindsAt['element.comparator.comparison.greater'];
+		readonly greater_equal: PortableKindsAt['element.comparator.comparison.greater_equal'];
+		readonly in: PortableKindsAt['element.comparator.membership.in'];
+		readonly is: PortableKindsAt['element.comparator.identity.is'];
+		readonly is_not: PortableKindsAt['element.comparator.identity.is_not'];
+		readonly less: PortableKindsAt['element.comparator.comparison.less'];
+		readonly less_equal: PortableKindsAt['element.comparator.comparison.less_equal'];
+		readonly not_equal: PortableKindsAt['element.comparator.comparison.not_equal'];
+		readonly not_in: PortableKindsAt['element.comparator.membership.not_in'];
+	};
+	'element.comparator.comparison': {
+		readonly $ids: readonly PortableIds['element.comparator.comparison'][];
+		readonly equal: PortableKindsAt['element.comparator.comparison.equal'];
+		readonly greater: PortableKindsAt['element.comparator.comparison.greater'];
+		readonly greater_equal: PortableKindsAt['element.comparator.comparison.greater_equal'];
+		readonly less: PortableKindsAt['element.comparator.comparison.less'];
+		readonly less_equal: PortableKindsAt['element.comparator.comparison.less_equal'];
+		readonly not_equal: PortableKindsAt['element.comparator.comparison.not_equal'];
+	};
+	'element.comparator.comparison.equal': {
+		readonly $ids: readonly PortableIds['element.comparator.comparison.equal'][];
+	};
+	'element.comparator.comparison.greater': {
+		readonly $ids: readonly PortableIds['element.comparator.comparison.greater'][];
+	};
+	'element.comparator.comparison.greater_equal': {
+		readonly $ids: readonly PortableIds['element.comparator.comparison.greater_equal'][];
+	};
+	'element.comparator.comparison.less': { readonly $ids: readonly PortableIds['element.comparator.comparison.less'][] };
+	'element.comparator.comparison.less_equal': {
+		readonly $ids: readonly PortableIds['element.comparator.comparison.less_equal'][];
+	};
+	'element.comparator.comparison.not_equal': {
+		readonly $ids: readonly PortableIds['element.comparator.comparison.not_equal'][];
+	};
+	'element.comparator.identity': {
+		readonly $ids: readonly PortableIds['element.comparator.identity'][];
+		readonly is: PortableKindsAt['element.comparator.identity.is'];
+		readonly is_not: PortableKindsAt['element.comparator.identity.is_not'];
+	};
+	'element.comparator.identity.is': { readonly $ids: readonly PortableIds['element.comparator.identity.is'][] };
+	'element.comparator.identity.is_not': { readonly $ids: readonly PortableIds['element.comparator.identity.is_not'][] };
+	'element.comparator.membership': {
+		readonly $ids: readonly PortableIds['element.comparator.membership'][];
+		readonly in: PortableKindsAt['element.comparator.membership.in'];
+		readonly not_in: PortableKindsAt['element.comparator.membership.not_in'];
+	};
+	'element.comparator.membership.in': { readonly $ids: readonly PortableIds['element.comparator.membership.in'][] };
+	'element.comparator.membership.not_in': {
+		readonly $ids: readonly PortableIds['element.comparator.membership.not_in'][];
 	};
 	'element.pair': { readonly $ids: readonly PortableIds['element.pair'][] };
 	'element.splat': {
@@ -1140,11 +1230,70 @@ export interface PortableIsAt {
 	'declaration.type_parameter': PortableGuard<PortableIds['declaration.type_parameter']> & {};
 	'declaration.variable': PortableGuard<PortableIds['declaration.variable']> & {};
 	element: PortableGuard<PortableIds['element']> & {
+		readonly comparator: PortableIsAt['element.comparator'];
 		readonly pair: PortableIsAt['element.pair'];
 		readonly splat: PortableIsAt['element.splat'];
+		readonly comparison: PortableIsAt['element.comparator.comparison'];
 		readonly dictionary: PortableIsAt['element.splat.dictionary'];
+		readonly equal: PortableIsAt['element.comparator.comparison.equal'];
+		readonly greater: PortableIsAt['element.comparator.comparison.greater'];
+		readonly greater_equal: PortableIsAt['element.comparator.comparison.greater_equal'];
+		readonly identity: PortableIsAt['element.comparator.identity'];
+		readonly in: PortableIsAt['element.comparator.membership.in'];
+		readonly is: PortableIsAt['element.comparator.identity.is'];
+		readonly is_not: PortableIsAt['element.comparator.identity.is_not'];
+		readonly less: PortableIsAt['element.comparator.comparison.less'];
+		readonly less_equal: PortableIsAt['element.comparator.comparison.less_equal'];
+		readonly membership: PortableIsAt['element.comparator.membership'];
+		readonly not_equal: PortableIsAt['element.comparator.comparison.not_equal'];
+		readonly not_in: PortableIsAt['element.comparator.membership.not_in'];
 		readonly parenthesized: PortableIsAt['element.splat.parenthesized'];
 	};
+	'element.comparator': PortableGuard<PortableIds['element.comparator']> & {
+		readonly comparison: PortableIsAt['element.comparator.comparison'];
+		readonly identity: PortableIsAt['element.comparator.identity'];
+		readonly membership: PortableIsAt['element.comparator.membership'];
+		readonly equal: PortableIsAt['element.comparator.comparison.equal'];
+		readonly greater: PortableIsAt['element.comparator.comparison.greater'];
+		readonly greater_equal: PortableIsAt['element.comparator.comparison.greater_equal'];
+		readonly in: PortableIsAt['element.comparator.membership.in'];
+		readonly is: PortableIsAt['element.comparator.identity.is'];
+		readonly is_not: PortableIsAt['element.comparator.identity.is_not'];
+		readonly less: PortableIsAt['element.comparator.comparison.less'];
+		readonly less_equal: PortableIsAt['element.comparator.comparison.less_equal'];
+		readonly not_equal: PortableIsAt['element.comparator.comparison.not_equal'];
+		readonly not_in: PortableIsAt['element.comparator.membership.not_in'];
+	};
+	'element.comparator.comparison': PortableGuard<PortableIds['element.comparator.comparison']> & {
+		readonly equal: PortableIsAt['element.comparator.comparison.equal'];
+		readonly greater: PortableIsAt['element.comparator.comparison.greater'];
+		readonly greater_equal: PortableIsAt['element.comparator.comparison.greater_equal'];
+		readonly less: PortableIsAt['element.comparator.comparison.less'];
+		readonly less_equal: PortableIsAt['element.comparator.comparison.less_equal'];
+		readonly not_equal: PortableIsAt['element.comparator.comparison.not_equal'];
+	};
+	'element.comparator.comparison.equal': PortableGuard<PortableIds['element.comparator.comparison.equal']> & {};
+	'element.comparator.comparison.greater': PortableGuard<PortableIds['element.comparator.comparison.greater']> & {};
+	'element.comparator.comparison.greater_equal': PortableGuard<
+		PortableIds['element.comparator.comparison.greater_equal']
+	> & {};
+	'element.comparator.comparison.less': PortableGuard<PortableIds['element.comparator.comparison.less']> & {};
+	'element.comparator.comparison.less_equal': PortableGuard<
+		PortableIds['element.comparator.comparison.less_equal']
+	> & {};
+	'element.comparator.comparison.not_equal': PortableGuard<PortableIds['element.comparator.comparison.not_equal']> & {};
+	'element.comparator.identity': PortableGuard<PortableIds['element.comparator.identity']> & {
+		readonly is: PortableIsAt['element.comparator.identity.is'];
+		readonly is_not: PortableIsAt['element.comparator.identity.is_not'];
+	};
+	'element.comparator.identity.is': PortableGuard<PortableIds['element.comparator.identity.is']> & {};
+	'element.comparator.identity.is_not': PortableGuard<PortableIds['element.comparator.identity.is_not']> & {};
+	'element.comparator.membership': PortableGuard<PortableIds['element.comparator.membership']> & {
+		readonly in: PortableIsAt['element.comparator.membership.in'];
+		readonly not_in: PortableIsAt['element.comparator.membership.not_in'];
+	};
+	'element.comparator.membership.in': PortableGuard<PortableIds['element.comparator.membership.in']> & {};
+	'element.comparator.membership.not_in': PortableGuard<PortableIds['element.comparator.membership.not_in']> & {};
 	'element.pair': PortableGuard<PortableIds['element.pair']> & {};
 	'element.splat': PortableGuard<PortableIds['element.splat']> & {
 		readonly dictionary: PortableIsAt['element.splat.dictionary'];
@@ -1642,7 +1791,7 @@ export interface PortableKinds {
 	readonly call: PortableKindsAt['expression.call'];
 	readonly chain: PortableKindsAt['expression.binary.comparison.chain'];
 	readonly collection: PortableKindsAt['expression.collection'];
-	readonly comparison: PortableKindsAt['expression.binary.comparison'];
+	readonly comparator: PortableKindsAt['element.comparator'];
 	readonly complex: PortableKindsAt['pattern.case.complex'];
 	readonly compound: PortableKindsAt['expression.assignment.compound'];
 	readonly concatenated: PortableKindsAt['literal.string.concatenated'];
@@ -1660,7 +1809,6 @@ export interface PortableKinds {
 	readonly elif: PortableKindsAt['clause.elif'];
 	readonly ellipsis: PortableKindsAt['literal.ellipsis'];
 	readonly else: PortableKindsAt['clause.else'];
-	readonly equal: PortableKindsAt['expression.binary.comparison.equal'];
 	readonly escape: PortableKindsAt['literal.string.escape'];
 	readonly except: PortableKindsAt['clause.except'];
 	readonly exec: PortableKindsAt['statement.exec'];
@@ -1675,33 +1823,22 @@ export interface PortableKinds {
 	readonly generator: PortableKindsAt['expression.comprehension.generator'];
 	readonly generic: PortableKindsAt['type.generic'];
 	readonly global: PortableKindsAt['statement.global'];
-	readonly greater: PortableKindsAt['expression.binary.comparison.greater'];
-	readonly greater_equal: PortableKindsAt['expression.binary.comparison.greater_equal'];
 	readonly hex: PortableKindsAt['literal.number.integer.hex'];
-	readonly identity: PortableKindsAt['expression.binary.identity'];
 	readonly imaginary: PortableKindsAt['literal.number.integer.imaginary'];
-	readonly in: PortableKindsAt['expression.binary.membership.in'];
 	readonly integer: PortableKindsAt['literal.number.integer'];
 	readonly interpolation: PortableKindsAt['expression.interpolation'];
-	readonly is: PortableKindsAt['expression.binary.identity.is'];
-	readonly is_not: PortableKindsAt['expression.binary.identity.is_not'];
 	readonly item: PortableKindsAt['clause.with.item'];
 	readonly lambda: PortableKindsAt['expression.lambda'];
 	readonly leading_point: PortableKindsAt['literal.number.float.leading_point'];
 	readonly left: PortableKindsAt['expression.binary.shift.left'];
-	readonly less: PortableKindsAt['expression.binary.comparison.less'];
-	readonly less_equal: PortableKindsAt['expression.binary.comparison.less_equal'];
 	readonly line: PortableKindsAt['comment.line'];
 	readonly logical: PortableKindsAt['expression.binary.logical'];
 	readonly loop: PortableKindsAt['statement.loop'];
 	readonly match: PortableKindsAt['statement.match'];
-	readonly membership: PortableKindsAt['expression.binary.membership'];
 	readonly method: PortableKindsAt['declaration.method'];
 	readonly negation: PortableKindsAt['expression.unary.negation'];
 	readonly nonlocal: PortableKindsAt['statement.nonlocal'];
 	readonly not: PortableKindsAt['expression.unary.not'];
-	readonly not_equal: PortableKindsAt['expression.binary.comparison.not_equal'];
-	readonly not_in: PortableKindsAt['expression.binary.membership.not_in'];
 	readonly null: PortableKindsAt['literal.null'];
 	readonly number: PortableKindsAt['literal.number'];
 	readonly octal: PortableKindsAt['literal.number.integer.octal'];
@@ -1773,7 +1910,7 @@ export interface PortableIs {
 	readonly call: PortableIsAt['expression.call'];
 	readonly chain: PortableIsAt['expression.binary.comparison.chain'];
 	readonly collection: PortableIsAt['expression.collection'];
-	readonly comparison: PortableIsAt['expression.binary.comparison'];
+	readonly comparator: PortableIsAt['element.comparator'];
 	readonly complex: PortableIsAt['pattern.case.complex'];
 	readonly compound: PortableIsAt['expression.assignment.compound'];
 	readonly concatenated: PortableIsAt['literal.string.concatenated'];
@@ -1791,7 +1928,6 @@ export interface PortableIs {
 	readonly elif: PortableIsAt['clause.elif'];
 	readonly ellipsis: PortableIsAt['literal.ellipsis'];
 	readonly else: PortableIsAt['clause.else'];
-	readonly equal: PortableIsAt['expression.binary.comparison.equal'];
 	readonly escape: PortableIsAt['literal.string.escape'];
 	readonly except: PortableIsAt['clause.except'];
 	readonly exec: PortableIsAt['statement.exec'];
@@ -1806,33 +1942,22 @@ export interface PortableIs {
 	readonly generator: PortableIsAt['expression.comprehension.generator'];
 	readonly generic: PortableIsAt['type.generic'];
 	readonly global: PortableIsAt['statement.global'];
-	readonly greater: PortableIsAt['expression.binary.comparison.greater'];
-	readonly greater_equal: PortableIsAt['expression.binary.comparison.greater_equal'];
 	readonly hex: PortableIsAt['literal.number.integer.hex'];
-	readonly identity: PortableIsAt['expression.binary.identity'];
 	readonly imaginary: PortableIsAt['literal.number.integer.imaginary'];
-	readonly in: PortableIsAt['expression.binary.membership.in'];
 	readonly integer: PortableIsAt['literal.number.integer'];
 	readonly interpolation: PortableIsAt['expression.interpolation'];
-	readonly is: PortableIsAt['expression.binary.identity.is'];
-	readonly is_not: PortableIsAt['expression.binary.identity.is_not'];
 	readonly item: PortableIsAt['clause.with.item'];
 	readonly lambda: PortableIsAt['expression.lambda'];
 	readonly leading_point: PortableIsAt['literal.number.float.leading_point'];
 	readonly left: PortableIsAt['expression.binary.shift.left'];
-	readonly less: PortableIsAt['expression.binary.comparison.less'];
-	readonly less_equal: PortableIsAt['expression.binary.comparison.less_equal'];
 	readonly line: PortableIsAt['comment.line'];
 	readonly logical: PortableIsAt['expression.binary.logical'];
 	readonly loop: PortableIsAt['statement.loop'];
 	readonly match: PortableIsAt['statement.match'];
-	readonly membership: PortableIsAt['expression.binary.membership'];
 	readonly method: PortableIsAt['declaration.method'];
 	readonly negation: PortableIsAt['expression.unary.negation'];
 	readonly nonlocal: PortableIsAt['statement.nonlocal'];
 	readonly not: PortableIsAt['expression.unary.not'];
-	readonly not_equal: PortableIsAt['expression.binary.comparison.not_equal'];
-	readonly not_in: PortableIsAt['expression.binary.membership.not_in'];
 	readonly null: PortableIsAt['literal.null'];
 	readonly number: PortableIsAt['literal.number'];
 	readonly octal: PortableIsAt['literal.number.integer.octal'];
@@ -1968,9 +2093,29 @@ const table: PortableTable = {
 			exact: false
 		},
 		element: {
-			ids: [TSKindId.DictionarySplat, TSKindId.ListSplat, TSKindId.Pair, TSKindId.ParenthesizedListSplat],
+			ids: [
+				TSKindId.ComparisonOperatorComparator,
+				TSKindId.DictionarySplat,
+				TSKindId.ListSplat,
+				TSKindId.Pair,
+				TSKindId.ParenthesizedListSplat
+			],
 			exact: true
 		},
+		'element.comparator': { ids: [TSKindId.ComparisonOperatorComparator], exact: true },
+		'element.comparator.comparison': { ids: [TSKindId.ComparisonOperatorComparator], exact: false },
+		'element.comparator.comparison.equal': { ids: [TSKindId.ComparisonOperatorComparator], exact: false },
+		'element.comparator.comparison.greater': { ids: [TSKindId.ComparisonOperatorComparator], exact: false },
+		'element.comparator.comparison.greater_equal': { ids: [TSKindId.ComparisonOperatorComparator], exact: false },
+		'element.comparator.comparison.less': { ids: [TSKindId.ComparisonOperatorComparator], exact: false },
+		'element.comparator.comparison.less_equal': { ids: [TSKindId.ComparisonOperatorComparator], exact: false },
+		'element.comparator.comparison.not_equal': { ids: [TSKindId.ComparisonOperatorComparator], exact: false },
+		'element.comparator.identity': { ids: [TSKindId.ComparisonOperatorComparator], exact: false },
+		'element.comparator.identity.is': { ids: [TSKindId.ComparisonOperatorComparator], exact: false },
+		'element.comparator.identity.is_not': { ids: [TSKindId.ComparisonOperatorComparator], exact: false },
+		'element.comparator.membership': { ids: [TSKindId.ComparisonOperatorComparator], exact: false },
+		'element.comparator.membership.in': { ids: [TSKindId.ComparisonOperatorComparator], exact: false },
+		'element.comparator.membership.not_in': { ids: [TSKindId.ComparisonOperatorComparator], exact: false },
 		'element.pair': { ids: [TSKindId.Pair], exact: true },
 		'element.splat': {
 			ids: [TSKindId.DictionarySplat, TSKindId.ListSplat, TSKindId.ParenthesizedListSplat],
@@ -2365,7 +2510,7 @@ const table: PortableTable = {
 		['', 'call', 'expression.call'],
 		['', 'chain', 'expression.binary.comparison.chain'],
 		['', 'collection', 'expression.collection'],
-		['', 'comparison', 'expression.binary.comparison'],
+		['', 'comparator', 'element.comparator'],
 		['', 'complex', 'pattern.case.complex'],
 		['', 'compound', 'expression.assignment.compound'],
 		['', 'concatenated', 'literal.string.concatenated'],
@@ -2383,7 +2528,6 @@ const table: PortableTable = {
 		['', 'elif', 'clause.elif'],
 		['', 'ellipsis', 'literal.ellipsis'],
 		['', 'else', 'clause.else'],
-		['', 'equal', 'expression.binary.comparison.equal'],
 		['', 'escape', 'literal.string.escape'],
 		['', 'except', 'clause.except'],
 		['', 'exec', 'statement.exec'],
@@ -2398,33 +2542,22 @@ const table: PortableTable = {
 		['', 'generator', 'expression.comprehension.generator'],
 		['', 'generic', 'type.generic'],
 		['', 'global', 'statement.global'],
-		['', 'greater', 'expression.binary.comparison.greater'],
-		['', 'greater_equal', 'expression.binary.comparison.greater_equal'],
 		['', 'hex', 'literal.number.integer.hex'],
-		['', 'identity', 'expression.binary.identity'],
 		['', 'imaginary', 'literal.number.integer.imaginary'],
-		['', 'in', 'expression.binary.membership.in'],
 		['', 'integer', 'literal.number.integer'],
 		['', 'interpolation', 'expression.interpolation'],
-		['', 'is', 'expression.binary.identity.is'],
-		['', 'is_not', 'expression.binary.identity.is_not'],
 		['', 'item', 'clause.with.item'],
 		['', 'lambda', 'expression.lambda'],
 		['', 'leading_point', 'literal.number.float.leading_point'],
 		['', 'left', 'expression.binary.shift.left'],
-		['', 'less', 'expression.binary.comparison.less'],
-		['', 'less_equal', 'expression.binary.comparison.less_equal'],
 		['', 'line', 'comment.line'],
 		['', 'logical', 'expression.binary.logical'],
 		['', 'loop', 'statement.loop'],
 		['', 'match', 'statement.match'],
-		['', 'membership', 'expression.binary.membership'],
 		['', 'method', 'declaration.method'],
 		['', 'negation', 'expression.unary.negation'],
 		['', 'nonlocal', 'statement.nonlocal'],
 		['', 'not', 'expression.unary.not'],
-		['', 'not_equal', 'expression.binary.comparison.not_equal'],
-		['', 'not_in', 'expression.binary.membership.not_in'],
 		['', 'null', 'literal.null'],
 		['', 'number', 'literal.number'],
 		['', 'octal', 'literal.number.integer.octal'],
@@ -2476,8 +2609,31 @@ const table: PortableTable = {
 		['declaration', 'static', 'declaration.method.static'],
 		['declaration', 'typed', 'declaration.parameter.typed'],
 		['declaration', 'typed_default', 'declaration.parameter.typed_default'],
+		['element', 'comparison', 'element.comparator.comparison'],
 		['element', 'dictionary', 'element.splat.dictionary'],
+		['element', 'equal', 'element.comparator.comparison.equal'],
+		['element', 'greater', 'element.comparator.comparison.greater'],
+		['element', 'greater_equal', 'element.comparator.comparison.greater_equal'],
+		['element', 'identity', 'element.comparator.identity'],
+		['element', 'in', 'element.comparator.membership.in'],
+		['element', 'is', 'element.comparator.identity.is'],
+		['element', 'is_not', 'element.comparator.identity.is_not'],
+		['element', 'less', 'element.comparator.comparison.less'],
+		['element', 'less_equal', 'element.comparator.comparison.less_equal'],
+		['element', 'membership', 'element.comparator.membership'],
+		['element', 'not_equal', 'element.comparator.comparison.not_equal'],
+		['element', 'not_in', 'element.comparator.membership.not_in'],
 		['element', 'parenthesized', 'element.splat.parenthesized'],
+		['element.comparator', 'equal', 'element.comparator.comparison.equal'],
+		['element.comparator', 'greater', 'element.comparator.comparison.greater'],
+		['element.comparator', 'greater_equal', 'element.comparator.comparison.greater_equal'],
+		['element.comparator', 'in', 'element.comparator.membership.in'],
+		['element.comparator', 'is', 'element.comparator.identity.is'],
+		['element.comparator', 'is_not', 'element.comparator.identity.is_not'],
+		['element.comparator', 'less', 'element.comparator.comparison.less'],
+		['element.comparator', 'less_equal', 'element.comparator.comparison.less_equal'],
+		['element.comparator', 'not_equal', 'element.comparator.comparison.not_equal'],
+		['element.comparator', 'not_in', 'element.comparator.membership.not_in'],
 		['expression', 'arithmetic', 'expression.binary.arithmetic'],
 		['expression', 'bare', 'expression.collection.tuple.bare'],
 		['expression', 'bitwise', 'expression.binary.bitwise'],
@@ -2827,6 +2983,17 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'expression.binary.comparison.not_equal',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [{ fields: ['comparators'], kinds: [], anchor: 'only' }],
+						plan: { op: 'eq', text: '<>', fields: ['operators'], kinds: [] }
+					}
+				]
+			},
+			{
 				path: 'expression.binary.comparison.less',
 				within: [],
 				test: [
@@ -2914,7 +3081,65 @@ const table: PortableTable = {
 					}
 				]
 			},
-			{ path: 'expression.binary.comparison', within: [], test: [] }
+			{ path: 'expression.binary', within: [], test: [] }
+		],
+		[TSKindId.ComparisonOperatorComparator]: [
+			{
+				path: 'element.comparator.comparison.equal',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '==', fields: ['operators'], kinds: [] } }]
+			},
+			{
+				path: 'element.comparator.comparison.not_equal',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!=', fields: ['operators'], kinds: [] } }]
+			},
+			{
+				path: 'element.comparator.comparison.not_equal',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<>', fields: ['operators'], kinds: [] } }]
+			},
+			{
+				path: 'element.comparator.comparison.less',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<', fields: ['operators'], kinds: [] } }]
+			},
+			{
+				path: 'element.comparator.comparison.greater',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>', fields: ['operators'], kinds: [] } }]
+			},
+			{
+				path: 'element.comparator.comparison.less_equal',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<=', fields: ['operators'], kinds: [] } }]
+			},
+			{
+				path: 'element.comparator.comparison.greater_equal',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>=', fields: ['operators'], kinds: [] } }]
+			},
+			{
+				path: 'element.comparator.membership.in',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'in', fields: ['operators'], kinds: [] } }]
+			},
+			{
+				path: 'element.comparator.membership.not_in',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'not in', fields: ['operators'], kinds: [] } }]
+			},
+			{
+				path: 'element.comparator.identity.is',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'is', fields: ['operators'], kinds: [] } }]
+			},
+			{
+				path: 'element.comparator.identity.is_not',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'is not', fields: ['operators'], kinds: [] } }]
+			},
+			{ path: 'element.comparator', within: [], test: [] }
 		],
 		[TSKindId.ComplexPattern]: [{ path: 'pattern.case.complex', within: [], test: [] }],
 		[TSKindId.ComprehensionClauses]: [{ path: 'clause.comprehension', within: [], test: [] }],

@@ -64,7 +64,7 @@ Every claim predicate whose operator is not in `KNOWN_PREDICATE_OPERATORS`, one 
 The derivation over every grammar's binding facts and model. In order: resolve
 each grammar's routes (`routes.ts::resolveRoutes`: read entries with their pins,
 member routes, container unwraps), and make templates hole members of every
-claim in their pattern; fold each claimed kind's member routes, claim by claim
+claim in their pattern; fold each read entry's own member routes, claim by claim
 in file order, into member types (a slot route's slot resolved, a presence or
 a flag an optional `boolean`, a nested member its named kind or the kinds of the slot its
 selector finds in its parent; a member is optional when some kind the path is read from in that
@@ -885,7 +885,7 @@ One grammar as the bindings derivation sees it: its binding facts (bound to the 
 
 ### `packages/codegen/src/bindings/routes.ts::ReadEntry`
 
-A grammar kind read as one vocabulary kind: the kind the claim captured (`claimed`; the kind itself unless the reader stores the captured node as a member's kind id, `readKinds`), the claim, its position in `bindings.scm` (`index`), the pins that tell its nodes apart (`Pin`), the tests on the nodes below it (`ChildTest`), and the template it builds from when its predicate has named holes.
+A grammar kind read as one vocabulary kind: the kind the claim captured (`claimed`; the kind itself unless the reader stores the captured node as a member's kind id, `readKinds`), the claim, its position in `bindings.scm` (`index`), the pins that tell its nodes apart (`Pin`), the tests on the nodes below it (`ChildTest`), the template it builds from when its predicate has named holes, and its own member routes (`membersOf` under the entry's `guaranteedBy`).
 
 ### `packages/codegen/src/bindings/routes.ts::Pin`
 
@@ -901,7 +901,7 @@ How a container reads as its element: the element slot's kinds and terminals, an
 
 ### `packages/codegen/src/bindings/routes.ts::GrammarRoutes`
 
-A grammar's routes: per claimed kind, its read entries (most specific first) and member routes; per kind, the vocabulary kind it reads as by default (`vocabOf`); and per kind with one, its container unwrap.
+A grammar's routes: per claimed kind, its read entries (most specific first, each with its own members) and the union of their member routes: the first entry's, then each other route an entry adds; per kind, the vocabulary kind it reads as by default (`vocabOf`); and per kind with one, its container unwrap.
 
 ### `packages/codegen/src/bindings/routes.ts::slotFor`
 
@@ -939,9 +939,29 @@ The order read entries are tried in: a claim both placed (made below enclosing k
 
 Whether a model node is an alias envelope over leaf text: `modelType` `alias`, with every slot holding only `pattern` kinds. Rust's `field_identifier` and typescript's `property_identifier`, for example, are sittir envelopes whose one `content` slot holds `identifier`. The parser sees them as leaves, and their text is their own value, so such a kind supplies no members (`membersOf` gives it no slot routes) and needs no `@dropped`. A bindings query couldn't reach the slot anyway. An alias envelope over a structured kind (typescript's `interface_body` over `object_type`) keeps its slot routes.
 
+### `packages/codegen/src/bindings/routes.ts::guaranteedBy`
+
+What a read entry's own tests guarantee about the slots they reach, as `membersOf` asks it: an entry routes what its own tests guarantee. A member whose build path steps through a slot's only node is routed only by an entry whose positive tests (kinds or text) reach that same step, so they hold only where the slot holds exactly one node. A slot that such a member leads through is routed as a member only by an entry whose excludes test over the slot's only node guarantees it does not hold exactly one. A step to a first or last node is no count and filters nothing.
+
+### `packages/codegen/src/bindings/routes.ts::Guaranteed`
+
+An entry's guarantees: whether a build path's steps to an only node all hold (`holds`), and whether a step's slot holds other than exactly one node (`many`).
+
+### `packages/codegen/src/bindings/routes.ts::stepKey`
+
+A `SlotStep` as a set key: its owner, slot and anchor.
+
+### `packages/codegen/src/bindings/routes.ts::DeepMember`
+
+A member fact reached through a child: a `presence` or a `nested` member.
+
+### `packages/codegen/src/bindings/routes.ts::deepRouteOf`
+
+A deep member's route on a kind, with the build path back through its `via` steps (`viaPath`) to the slot that holds it, `undefined` when some step has no slot or holds many with no anchor.
+
 ### `packages/codegen/src/bindings/routes.ts::membersOf`
 
-A kind's member routes: one `slot` route per slot of the model node, then the member facts the bindings state for it (`kind`, `presence`, `nested`). A slot routes no member when it is a layout slot, when a claim drops it (`SlotNames` gives it `null`), when the read already tells its value (`toldByRead`, over the values the kind's read entries test on it: their pins, and their child tests on a node directly below: a text test's text, or the text of each fixed-text kind a kinds test names), or when it holds only text on a kind read as an identifier (`facts.ts::isIdentifierPath`, `holdsOnlyText`: an identifier's text is its own value, while a compound identifier's node slots stay members); the kinds a `presence` or `nested` route reaches through are taken out of their slot, which the read then tells as optional. A leaf alias envelope (`isLeafAlias`) takes no slot routes. A list's item slot is its container content (`containerOf`), a step a path may take but no member, unless the list is a form of a supertype, whose items route as its sibling forms name them (`listFormItems`).
+A read entry's member routes on its kind, as the entry's `Guaranteed` admits them: one `slot` route per slot of the model node, then the member facts the bindings state for it (`kind`, `presence`, `nested`). A slot routes no member when it is a layout slot, when a claim drops it (`SlotNames` gives it `null`), when the read already tells its value (`toldByRead`, over the values the kind's read entries test on it: their pins, and their child tests on a node directly below: a text test's text, or the text of each fixed-text kind a kinds test names), or when it holds only text on a kind read as an identifier (`facts.ts::isIdentifierPath`, `holdsOnlyText`: an identifier's text is its own value, while a compound identifier's node slots stay members); the kinds a `presence` or `nested` route the entry routes reaches through are taken out of their slot, which the read then tells as optional; and a slot a member counts through (a step to its only node) is routed only where the entry guarantees it holds more than one (`guaranteedBy`). A leaf alias envelope (`isLeafAlias`) takes no slot routes. A list's item slot is its container content (`containerOf`), a step a path may take but no member, unless the list is a form of a supertype, whose items route as its sibling forms name them (`listFormItems`).
 
 ### `packages/codegen/src/bindings/routes.ts::holdsOnlyText`
 
@@ -961,7 +981,7 @@ The slots from an owner kind outward through the `via` steps (walked farthest fi
 
 ### `packages/codegen/src/bindings/routes.ts::resolveRoutes`
 
-Resolves one grammar's routes. A claim on a kind reaches the kind and each of its forms (`formsOf`) that has no claim of its own: a self-claimed form reads by its own claim, and `is` still passes it for the supertype's path by the kind table. Slot names (`SlotNames`: renames, and a claim's `@dropped` slots) are collected first on every kind their claim reaches, since a pin's member name and a slot route's name both follow them, so a supertype claim's field rename or drop applies to the field on each form. A claim's read entries go on the kinds the reader produces for each kind it reaches (`readKinds`), so a claim on an enum kind is entered on its members' kinds; an entry's `claimed` is the kind the claim names. A kind's default vocabulary kind is its first top-level claim with no predicate, no pin and no child test, in file order, else the parent its refining claims' paths share (`refinedParent`); the read entries are then sorted by `specificity`. Member routes are resolved for every claimed kind, from its sorted read entries, and container unwraps for every kind of the model.
+Resolves one grammar's routes. A claim on a kind reaches the kind and each of its forms (`formsOf`) that has no claim of its own: a self-claimed form reads by its own claim, and `is` still passes it for the supertype's path by the kind table. Slot names (`SlotNames`: renames, and a claim's `@dropped` slots) are collected first on every kind their claim reaches, since a pin's member name and a slot route's name both follow them, so a supertype claim's field rename or drop applies to the field on each form. A claim's read entries go on the kinds the reader produces for each kind it reaches (`readKinds`), so a claim on an enum kind is entered on its members' kinds; an entry's `claimed` is the kind the claim names. A kind's default vocabulary kind is its first top-level claim with no predicate, no pin and no child test, in file order, else the parent its refining claims' paths share (`refinedParent`); the read entries are then sorted by `specificity`. Member routes are resolved for each read entry of every claimed kind, from the kind's sorted read entries and the entry's own guarantees (`guaranteedBy`); the kind's member routes are their union, the first entry's routes as they are and then each route another entry adds, since several routes may share a member's name; and container unwraps for every kind of the model.
 
 ### `packages/codegen/src/bindings/routes.ts::refinedParent`
 
