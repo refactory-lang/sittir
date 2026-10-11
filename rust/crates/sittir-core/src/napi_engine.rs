@@ -40,11 +40,9 @@
 /// - `$render_parts` — `fn(&$render_root) -> Result<(Source, String), _>`.
 /// - `$abi` — the render transport ABI version this crate was generated against.
 /// - `$defaults` — `fn() -> ResolvedOptions`, the grammar's site table at its declared defaults.
-/// - `$whitespace` — the grammar's [`WhitespaceTable`](crate::render::WhitespaceTable).
-/// - `$layout_kinds` — every layout kind of the grammar (each `_layout` member, the depth movers among them where the grammar has them), the domain of `$whitespace`.
 #[macro_export]
 macro_rules! napi_engine {
-    ($grammar:ty, $render_root:ty, $any:ty, $options:ty, $render_parts:path, $abi:expr, $defaults:path, $whitespace:path, $layout_kinds:path) => {
+    ($grammar:ty, $render_root:ty, $any:ty, $options:ty, $render_parts:path, $abi:expr, $defaults:path) => {
         #[::napi_derive::napi(object, object_to_js = false)]
         pub struct EngineOptions {
             pub format: Option<String>,
@@ -87,6 +85,28 @@ macro_rules! napi_engine {
             LIVE_TREES.with(|trees| {
                 trees.borrow_mut().remove(&tree_id);
             });
+        }
+
+        /// Runs `f` on the live tree `tree_id` and the node at `index` of it,
+        /// both checked: refuses a tree that is not live and an index naming
+        /// no node of it.
+        fn with_live_node<R>(
+            tree_id: f64,
+            index: f64,
+            f: impl FnOnce(&mut $crate::ParsedTree<$grammar>, u32) -> ::napi::Result<R>,
+        ) -> ::napi::Result<R> {
+            let tree_id = u32::try_from($crate::napi_engine::checked_index(tree_id, "treeId")?)
+                .map_err(|_| ::napi::Error::from_reason(format!("treeId {tree_id} names no tree")))?;
+            let index = u32::try_from($crate::napi_engine::checked_index(index, "index")?)
+                .map_err(|_| ::napi::Error::from_reason(format!("index {index} names no node")))?;
+            LIVE_TREES.with(|trees| {
+                let mut trees = trees.borrow_mut();
+                let parsed = trees.get_mut(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                if $crate::engine::node_at_index(parsed.tree(), index).is_none() {
+                    return Err(::napi::Error::from_reason(format!("index {index} names no node of tree {tree_id}")));
+                }
+                f(parsed, index)
+            })
         }
 
         /// Number of trees still held on this thread. Diagnostics only — the
@@ -171,12 +191,6 @@ macro_rules! napi_engine {
             pub fn line_gaps_of(&self, handle: f64) -> ::napi::Result<String> {
                 let handle = $crate::napi_engine::checked_index(handle, "handle")?;
                 let (tree_id, _) = $crate::engine::decode_handle(handle);
-                let allowed: Vec<u16> = $layout_kinds
-                    .iter()
-                    .copied()
-                    .filter(|&kind| ($whitespace.text_of)(kind).contains('\n'))
-                    .collect();
-                let classify = |run: &str| $crate::classify::classify_whitespace(run, &allowed, &$whitespace);
                 LIVE_TREES.with(|trees| {
                     let trees = trees.borrow();
                     let parsed = trees.get(&tree_id).ok_or_else(|| {
@@ -185,7 +199,7 @@ macro_rules! napi_engine {
                              (never parsed on this thread, or already released)"
                         ))
                     })?;
-                    let gaps = parsed.line_gaps_at(handle, &classify).map_err(::napi::Error::from_reason)?;
+                    let gaps = parsed.line_gaps_at(handle).map_err(::napi::Error::from_reason)?;
                     ::serde_json::to_string(&gaps).map_err(|e| ::napi::Error::from_reason(e.to_string()))
                 })
             }
@@ -278,6 +292,48 @@ macro_rules! napi_engine {
                 })
             }
 
+            /// The entries of `side` (`leading`, `trailing` or `inner`) of the
+            /// node at `index` of the live tree `treeId`: the ones a write gave
+            /// it, else the ones the tree's trivia table assigns it. Refuses a
+            /// tree that is not live, an index naming no node of it, and any
+            /// other side.
+            #[::napi_derive::napi(ts_return_type = "object[]")]
+            pub fn trivia_side(
+                &self,
+                tree_id: f64,
+                index: f64,
+                side: String,
+            ) -> ::napi::Result<Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>> {
+                let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
+                with_live_node(tree_id, index, |parsed, index| Ok(parsed.trivia_side(index, side)))
+            }
+
+            /// Replace `side` of the node at `index` of the live tree `treeId`
+            /// with `entries`. Refuses as `triviaSide` does.
+            #[::napi_derive::napi]
+            pub fn write_trivia_side(
+                &self,
+                tree_id: f64,
+                index: f64,
+                side: String,
+                #[napi(ts_arg_type = "object[]")] entries: Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>,
+            ) -> ::napi::Result<()> {
+                let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
+                with_live_node(tree_id, index, |parsed, index| {
+                    parsed.write_trivia_side(index, side, entries);
+                    Ok(())
+                })
+            }
+
+            /// Whether a write replaced a side of a node under the node at
+            /// `index` of the live tree `treeId`, its own `inner` included, and
+            /// its own leading and trailing too when `ownSides` is set. Refuses
+            /// a tree that is not live and an index naming no node of it.
+            #[::napi_derive::napi]
+            pub fn edited_within(&self, tree_id: f64, index: f64, own_sides: bool) -> ::napi::Result<bool> {
+                with_live_node(tree_id, index, |parsed, index| Ok(parsed.edited_within(index, own_sides)))
+            }
+
             /// The spans of byte `ranges` (start and end pairs) of the live
             /// tree `treeId`, measured from the byte `holderByte`, as row and
             /// column pairs, flat. Refuses a tree that is not live, an odd
@@ -342,7 +398,7 @@ macro_rules! napi_engine {
                     let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
                     let node = $crate::engine::node_at_index(parsed.tree(), index.unwrap_or(0))
                         .ok_or_else(|| ::napi::Error::from_reason(format!("index {} names no node of tree {tree_id}", index.unwrap_or(0))))?;
-                    Ok($crate::engine::line_starts_inside_tokens(node, parsed.source()).into_iter().map(|at| at as u32).collect())
+                    Ok($crate::engine::line_starts_inside_tokens(node, index.unwrap_or(0), parsed.source()).into_iter().map(|at| at as u32).collect())
                 })
             }
 
@@ -534,6 +590,17 @@ pub fn depth_from_wire(depth: Option<f64>) -> napi::Result<crate::read::Depth> {
         )));
     }
     Ok(crate::read::Depth::Levels(std::num::NonZeroU32::new(levels as u32).expect("levels >= 1")))
+}
+
+/// A trivia side from its wire name: `leading`, `trailing` or `inner`.
+pub fn trivia_side_from_wire(side: &str) -> napi::Result<crate::trivia_table::TriviaSide> {
+    use crate::trivia_table::TriviaSide;
+    match side {
+        "leading" => Ok(TriviaSide::Leading),
+        "trailing" => Ok(TriviaSide::Trailing),
+        "inner" => Ok(TriviaSide::Inner),
+        other => Err(napi::Error::from_reason(format!("{other:?} is not a trivia side (leading, trailing or inner)"))),
+    }
 }
 
 /// The refusal for an address into a tree this thread does not hold.

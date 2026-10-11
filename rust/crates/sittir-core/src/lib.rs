@@ -21,6 +21,7 @@ pub mod line_endings;
 pub mod napi_engine;
 pub mod options;
 pub mod points;
+pub mod trivia_table;
 pub mod prepare;
 pub mod query;
 pub mod non_empty;

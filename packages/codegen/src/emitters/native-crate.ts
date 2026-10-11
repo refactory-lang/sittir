@@ -1,6 +1,6 @@
 import { NATIVE_TARGETS, grammarDisplayName, nativeBinaryName, type GrammarName } from '../grammars.ts';
 
-export const NATIVE_RENDER_TRANSPORT_ABI = 22;
+export const NATIVE_RENDER_TRANSPORT_ABI = 23;
 
 export interface NativeCrateFile {
 	readonly path: string;
@@ -211,6 +211,12 @@ impl EngineGrammar for ${v.Name}Grammar {
     fn shows(self) -> fn(sittir_core::types::KindId) -> bool {
         <AnyTransport as sittir_core::read::ReadTransport>::shows
     }
+
+    type Trivia = render::transport::TriviaTransport;
+
+    fn whitespace(self) -> (&'static sittir_core::render::WhitespaceTable, &'static [u16]) {
+        (&render::options::WHITESPACE, render::options::LAYOUT_KINDS)
+    }
 }
 
 // The engine class itself — parse, read, render, edits, and the live-tree
@@ -223,9 +229,7 @@ sittir_core::napi_engine!(
     render::options::Options,
     render_transport_parts,
     NATIVE_RENDER_TRANSPORT_ABI,
-    render::options::defaults,
-    render::options::WHITESPACE,
-    render::options::LAYOUT_KINDS
+    render::options::defaults
 );
 `
 		}

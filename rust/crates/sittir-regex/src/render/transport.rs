@@ -597,6 +597,13 @@ impl ::sittir_core::trivia::FromTriviaText for TriviaTransport {
     fn from_text(text: ::sittir_core::trivia::TriviaText) -> Self {
         TriviaTransport::Text(text)
     }
+
+    fn from_layout(kind: ::sittir_core::types::KindId) -> Option<Self> {
+        if kind == kind::_NEWLINE { return Some(TriviaTransport::Newline); }
+        if kind == kind::_BLANKLINE { return Some(TriviaTransport::Blankline); }
+        if kind == kind::_DOUBLE_BLANKLINE { return Some(TriviaTransport::DoubleBlankline); }
+        None
+    }
 }
 
 impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {

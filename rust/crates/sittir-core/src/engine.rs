@@ -18,7 +18,9 @@ use crate::query::{Address, DescendantBatch, Plan, QueryCoordinate};
 use crate::read::{display_id, survey, Child, ReadCtx, ReadError, Sides};
 use crate::types::Span;
 use crate::render::SourceTable;
-use crate::slot::NodeCoordinate;
+use crate::slot::{NodeCoordinate, SlotValue};
+use crate::trivia::{FromTriviaText, TriviaEntry, TriviaText};
+use crate::trivia_table::{Assigned, TriviaSide, TriviaTable};
 use crate::types::{FormatRecord, KindId, Source};
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -36,6 +38,10 @@ pub trait EngineGrammar: Copy {
     /// The display ids this grammar claims a node by (`ReadTransport::shows`
     /// of its transports), which a coordinate stamps in place of the grammar id.
     fn shows(self) -> fn(KindId) -> bool;
+    /// The grammar's trivia type: what a side of a parsed node holds.
+    type Trivia: crate::trivia::FromTriviaText + Clone + std::fmt::Debug + PartialEq;
+    /// The grammar's whitespace table, and its layout kinds (the table's domain).
+    fn whitespace(self) -> (&'static crate::render::WhitespaceTable, &'static [u16]);
 }
 
 /// The node at descendant `index` of `tree`, or `None` past its last node.
@@ -48,55 +54,38 @@ pub fn node_at_index(tree: &tree_sitter::Tree, index: u32) -> Option<tree_sitter
     Some(cursor.node())
 }
 
-/// The byte offsets in `source` of the lines under `node` that begin inside a
-/// token spanning lines (a multi-line string or comment), or right after a
-/// token ending in a line break with the next token starting at that very
-/// offset (a string's content continuing past an interpolation): shifting
-/// such a line changes the token's content, so anything that re-indents text
-/// leaves it where it is. A hidden token is never a child node, so text
-/// between a node's children that is not whitespace is one (a block
-/// comment's body): every line starting in that gap, or at the child ending
-/// it, counts as inside a token. In source order, each offset once.
-pub fn line_starts_inside_tokens(node: tree_sitter::Node<'_>, source: &str) -> Vec<usize> {
-    fn lines_within(source: &str, from: usize, to: usize, before: usize, starts: &mut Vec<usize>) {
-        let mut at = from;
-        while let Some(found) = source.get(at..to).and_then(|text| text.find('\n')) {
+/// The byte offsets in `source` of the lines under the node at `index` that
+/// begin inside a token spanning lines (a multi-line string or comment), or
+/// right after a token ending in a line break with the next token starting at
+/// that very offset (a string's content continuing past an interpolation):
+/// shifting such a line changes the token's content, so anything that
+/// re-indents text leaves it where it is. The tokens are the token walk's
+/// (`trivia_table::walk`) and its entries, each an extra or an `ERROR` taken
+/// whole. In source order, each offset once.
+pub fn line_starts_inside_tokens(node: tree_sitter::Node<'_>, index: u32, source: &str) -> Vec<usize> {
+    let walk = crate::trivia_table::walk(node, index, source);
+    let mut spans: Vec<(u32, u32)> = walk.tokens.iter().map(|token| (token.start, token.end)).collect();
+    spans.extend(walk.entries.iter().map(|&entry| walk.span(entry)));
+    spans.sort_unstable();
+    let mut starts = Vec::new();
+    let mut previous_end: Option<u32> = None;
+    for (start, end) in spans {
+        if previous_end == Some(start) {
+            starts.push(start as usize);
+        }
+        let mut at = start as usize;
+        while let Some(found) = source.get(at..end as usize).and_then(|text| text.find('\n')) {
             let line = at + found + 1;
-            if line >= before {
+            if line >= end as usize {
                 break;
             }
             starts.push(line);
             at = line;
         }
-    }
-    fn hidden_text(source: &str, from: usize, to: usize, end: usize, starts: &mut Vec<usize>) {
-        if source.get(from..to).is_some_and(|gap| !gap.trim().is_empty()) {
-            lines_within(source, from, to, end.min(to + 1), starts);
-        }
-    }
-    fn walk(node: tree_sitter::Node<'_>, source: &str, previous_end: &mut Option<usize>, starts: &mut Vec<usize>) {
-        let (start, end) = (node.start_byte(), node.end_byte());
-        if node.child_count() > 0 {
-            let mut at = start;
-            let mut cursor = node.walk();
-            for child in node.children(&mut cursor) {
-                hidden_text(source, at, child.start_byte(), end, starts);
-                walk(child, source, previous_end, starts);
-                at = child.end_byte();
-            }
-            hidden_text(source, at, end, end, starts);
-            return;
-        }
-        if *previous_end == Some(start) {
-            starts.push(start);
-        }
-        lines_within(source, start, end, end, starts);
         if end > start {
-            *previous_end = source.as_bytes().get(end - 1).filter(|byte| **byte == b'\n').map(|_| end);
+            previous_end = source.as_bytes().get(end as usize - 1).filter(|byte| **byte == b'\n').map(|_| end);
         }
     }
-    let mut starts = Vec::new();
-    walk(node, source, &mut None, &mut starts);
     starts.dedup();
     starts
 }
@@ -396,6 +385,10 @@ pub struct ParsedTree<G: EngineGrammar> {
     /// The source's row starts, built on the first snapshot and shared by
     /// every later one.
     lines: std::sync::OnceLock<crate::points::LineTable>,
+    /// The tree's trivia, assigned on the first read of a side.
+    trivia: std::sync::OnceLock<TriviaTable>,
+    /// The sides a write replaced, by node and side.
+    written: std::collections::BTreeMap<(u32, TriviaSide), Vec<crate::trivia::TriviaEntry<G::Trivia>>>,
 }
 
 /// Bits of a handle given over to the node index; the rest carry the tree id.
@@ -718,13 +711,90 @@ impl<G: EngineGrammar> ParsedTree<G> {
     }
 
     /// The line-break runs the node named by `handle` owns as trivia
-    /// (`line_gaps`), each classified by `classify`.
-    pub fn line_gaps_at(&self, handle: u64, classify: &dyn Fn(&str) -> Option<u16>) -> Result<LineGaps, String> {
+    /// (`line_gaps`), each classified as `layout_kind` classifies it.
+    pub fn line_gaps_at(&self, handle: u64) -> Result<LineGaps, String> {
         let index = self.local_index(handle)?;
         node_at_index(&self.tree, index).ok_or_else(|| format!("handle {handle} names no node of tree {}", self.tree_id))?;
         let ctx = ReadCtx::new(&self.source, self.tree_id, self.grammar.shows());
         let sides_at = |cursor: &mut tree_sitter::TreeCursor<'_>, child: u32| self.grammar.sides_at(cursor, &ctx, child);
-        line_gaps(&self.tree, index, &self.source, &sides_at, classify).map_err(|refusal| refusal.describe(&|kind| self.grammar.kind_name(kind)))
+        let classify = |run: &str| self.layout_kind(run);
+        line_gaps(&self.tree, index, &self.source, &sides_at, &classify).map_err(|refusal| refusal.describe(&|kind| self.grammar.kind_name(kind)))
+    }
+
+    /// The whitespace member a run holding a line break reads as: among the
+    /// grammar's layout kinds whose text holds a break, the one of its seam
+    /// rank (`classify_whitespace`).
+    pub fn layout_kind(&self, run: &str) -> Option<u16> {
+        let (table, kinds) = self.grammar.whitespace();
+        let breaking: Vec<u16> = kinds.iter().copied().filter(|&kind| (table.text_of)(kind).contains('\n')).collect();
+        crate::classify::classify_whitespace(run, &breaking, table)
+    }
+
+    /// The tree's trivia table, assigned on first use.
+    pub fn trivia_table(&self) -> &TriviaTable {
+        self.trivia.get_or_init(|| TriviaTable::assign(&self.tree, &self.source))
+    }
+
+    /// The entries of `side` of the node at `index`: the ones a write gave it,
+    /// else the assigned ones, each as a value. An extra is its coordinate, an
+    /// `ERROR` its kind and source text, and a layout run its whitespace
+    /// member. An entry shares its owner's row when it ends on the owner's
+    /// first row (leading) or starts on its last (trailing).
+    pub fn trivia_side(&self, index: u32, side: TriviaSide) -> Vec<TriviaEntry<G::Trivia>> {
+        if let Some(entries) = self.written.get(&(index, side)) {
+            return entries.clone();
+        }
+        let assigned = self.trivia_table().side(index, side);
+        if assigned.is_empty() {
+            return Vec::new();
+        }
+        let Some(owner) = node_at_index(&self.tree, index) else { return Vec::new() };
+        let ctx = self.read_ctx();
+        let lines = self.lines();
+        let row = |byte: u32| lines.point(byte as usize).map_or(0, |point| point.row);
+        let same_line = |start: u32, end: u32| match side {
+            TriviaSide::Leading => row(end) == owner.start_position().row as u32,
+            TriviaSide::Trailing => row(start) == owner.end_position().row as u32,
+            TriviaSide::Inner => false,
+        };
+        let entry = |value: SlotValue<G::Trivia>, start: u32, end: u32| TriviaEntry { value, same_line: same_line(start, end), tokens_between: 0 };
+        assigned
+            .iter()
+            .filter_map(|assigned| match *assigned {
+                Assigned::Extra(at) => {
+                    let node = node_at_index(&self.tree, at)?;
+                    let coord = ctx.coordinate(&node, at);
+                    let (start, end) = (coord.span.start, coord.span.end);
+                    Some(entry(SlotValue::Coord(coord), start, end))
+                }
+                Assigned::Error(at) => {
+                    let node = node_at_index(&self.tree, at)?;
+                    let (start, end) = (node.start_byte() as u32, node.end_byte() as u32);
+                    let text = TriviaText { kind: KindId(node.grammar_id()), text: self.source[start as usize..end as usize].to_owned(), span: None };
+                    Some(entry(SlotValue::Transport(G::Trivia::from_text(text)), start, end))
+                }
+                Assigned::Layout { start, end } => {
+                    let kind = self.layout_kind(&self.source[start as usize..end as usize])?;
+                    Some(entry(SlotValue::Transport(G::Trivia::from_layout(KindId(kind))?), start, end))
+                }
+            })
+            .collect()
+    }
+
+    /// Replace `side` of the node at `index` with `entries`.
+    pub fn write_trivia_side(&mut self, index: u32, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) {
+        self.written.insert((index, side), entries);
+    }
+
+    /// Whether a write replaced a side of a node under the node at `index`:
+    /// of a descendant, or of the node's own `inner`, and of its own leading
+    /// and trailing too when `own_sides` is set.
+    pub fn edited_within(&self, index: u32, own_sides: bool) -> bool {
+        let Some(node) = node_at_index(&self.tree, index) else { return false };
+        let end = index + node.descendant_count() as u32;
+        self.written
+            .range((index, TriviaSide::Leading)..(end, TriviaSide::Leading))
+            .any(|(&(at, side), _)| at != index || own_sides || side == TriviaSide::Inner)
     }
 }
 
@@ -791,6 +861,8 @@ impl<G: EngineGrammar> Engine<G> {
             format,
             tree_id,
             lines: std::sync::OnceLock::new(),
+            trivia: std::sync::OnceLock::new(),
+            written: std::collections::BTreeMap::new(),
         })
     }
 
@@ -870,7 +942,7 @@ impl<G: EngineGrammar> SourceTable for HashMap<u32, ParsedTree<G>> {
 
     fn line_starts_inside_tokens(&self, coord: &NodeCoordinate) -> Vec<usize> {
         let Some(tree) = self.get(&coord.tree) else { return Vec::new() };
-        node_at_index(&tree.tree, coord.index).map_or_else(Vec::new, |node| line_starts_inside_tokens(node, &tree.source))
+        node_at_index(&tree.tree, coord.index).map_or_else(Vec::new, |node| line_starts_inside_tokens(node, coord.index, &tree.source))
     }
 
     fn last_list_child_kind(&self, tree: u32, span: crate::types::Span, kind: KindId) -> Option<KindId> {
@@ -973,7 +1045,41 @@ mod tests {
         fn shows(self) -> fn(KindId) -> bool {
             |_| false
         }
+
+        type Trivia = TestTrivia;
+
+        fn whitespace(self) -> (&'static crate::render::WhitespaceTable, &'static [u16]) {
+            (&TEST_WHITESPACE, &[1, 2])
+        }
     }
+
+    /// A trivia type with text and one whitespace member, the break (kind 2).
+    #[derive(Debug, Clone, PartialEq)]
+    enum TestTrivia {
+        Text(TriviaText),
+        Newline,
+    }
+
+    impl FromTriviaText for TestTrivia {
+        fn from_text(text: TriviaText) -> Self {
+            TestTrivia::Text(text)
+        }
+
+        fn from_layout(kind: KindId) -> Option<Self> {
+            (kind == KindId(2)).then_some(TestTrivia::Newline)
+        }
+    }
+
+    fn test_spacing_text(kind: u16) -> &'static str {
+        match kind {
+            1 => " ",
+            2 => "\n",
+            _ => "",
+        }
+    }
+
+    const TEST_WHITESPACE: crate::render::WhitespaceTable =
+        crate::render::WhitespaceTable { text_of: test_spacing_text, indent: 0, dedent: 0, leaf_edges: &[], gaps: &[] };
 
     fn rust_tree(source: &str) -> tree_sitter::Tree {
         let mut parser = tree_sitter::Parser::new();
@@ -988,14 +1094,14 @@ mod tests {
         let b = source.find("  b").unwrap();
         let y = source.find("  y").unwrap();
         let close = source.find("*/").unwrap();
-        assert_eq!(line_starts_inside_tokens(tree.root_node(), source), vec![b, y, close]);
+        assert_eq!(line_starts_inside_tokens(tree.root_node(), 0, source), vec![b, y, close]);
     }
 
     #[test]
     fn lines_between_tokens_start_outside_every_token() {
         let source = "fn f() {\n    g();\n    // c\n    h();\n}\n// d\nfn i() {}\n";
         let tree = rust_tree(source);
-        assert_eq!(line_starts_inside_tokens(tree.root_node(), source), Vec::<usize>::new());
+        assert_eq!(line_starts_inside_tokens(tree.root_node(), 0, source), Vec::<usize>::new());
     }
 
     const FNS: &str = "fn a() {}\nmod m { fn b() -> u8 { 0 } fn _c() {} }\nfn _d() { fn e() {} }\n";
@@ -1097,7 +1203,7 @@ mod tests {
     fn a_handle_past_the_last_node_is_refused() {
         let (tree, _) = parsed(FNS);
         let past = encode_handle(1, tree.tree.root_node().descendant_count() as u32);
-        assert!(tree.line_gaps_at(past, &|_| None).unwrap_err().contains("names no node"));
+        assert!(tree.line_gaps_at(past).unwrap_err().contains("names no node"));
     }
 
     #[test]
@@ -1250,5 +1356,68 @@ mod tests {
     fn the_tree_format_leaves_a_factory_node_alone() {
         let tree_format = format_record("[", "]");
         assert_eq!(apply_render_format(Source::Factory, "canonical".to_string(), None, Some(&tree_format), "\n"), "canonical");
+    }
+
+    fn index_of_kind(tree: &ParsedTree<TestGrammar>, kind: &str, nth: usize) -> u32 {
+        (0..tree.tree().root_node().descendant_count() as u32)
+            .filter(|&at| node_at_index(tree.tree(), at).is_some_and(|node| node.kind() == kind))
+            .nth(nth)
+            .unwrap_or_else(|| panic!("no {kind} number {nth}"))
+    }
+
+    #[test]
+    fn a_side_reads_an_extra_as_its_coordinate_and_a_layout_run_as_its_member() {
+        let (tree, _) = parsed("// c\nfn f() {}\n");
+        let f = index_of_kind(&tree, "function_item", 0);
+        let comment = index_of_kind(&tree, "line_comment", 0);
+        let leading = tree.trivia_side(f, TriviaSide::Leading);
+        let SlotValue::Coord(coord) = &leading[0].value else { panic!("an extra reads as its coordinate: {leading:?}") };
+        assert_eq!((coord.tree, coord.index, coord.span.start, coord.span.end), (1, comment, 0, 4));
+        assert!(!leading[0].same_line);
+        assert_eq!(leading[1..], [TriviaEntry { value: SlotValue::Transport(TestTrivia::Newline), same_line: true, tokens_between: 0 }]);
+        assert_eq!(tree.trivia_side(f, TriviaSide::Trailing), [TriviaEntry { value: SlotValue::Transport(TestTrivia::Newline), same_line: true, tokens_between: 0 }]);
+    }
+
+    #[test]
+    fn a_same_line_trailing_comment_shares_its_owners_row() {
+        let (tree, _) = parsed("fn f() {} // c\nfn g() {}\n");
+        let f = index_of_kind(&tree, "function_item", 0);
+        let trailing = tree.trivia_side(f, TriviaSide::Trailing);
+        assert!(trailing[0].same_line, "{trailing:?}");
+    }
+
+    #[test]
+    fn an_error_in_a_side_reads_as_its_kind_and_source_text() {
+        let (tree, _) = parsed("fn f() {} @@ fn g() {}");
+        let sides = (0..tree.tree().root_node().descendant_count() as u32)
+            .flat_map(|at| [TriviaSide::Leading, TriviaSide::Trailing, TriviaSide::Inner].map(|side| tree.trivia_side(at, side)))
+            .flatten()
+            .collect::<Vec<_>>();
+        let text = TriviaText { kind: KindId(u16::MAX), text: "@@".to_owned(), span: None };
+        assert!(sides.contains(&TriviaEntry { value: SlotValue::Transport(TestTrivia::Text(text)), same_line: true, tokens_between: 0 }), "{sides:?}");
+    }
+
+    #[test]
+    fn a_written_side_replaces_the_assigned_one_and_marks_its_ancestors_edited() {
+        let (mut tree, _) = parsed("fn f() { a(); }\nfn g() {}\n");
+        let f = index_of_kind(&tree, "function_item", 0);
+        let g = index_of_kind(&tree, "function_item", 1);
+        let a = index_of_kind(&tree, "expression_statement", 0);
+        let written = vec![TriviaEntry { value: SlotValue::Transport(TestTrivia::Text(TriviaText { kind: KindId(1), text: "// w".to_owned(), span: None })), same_line: false, tokens_between: 0 }];
+        tree.write_trivia_side(a, TriviaSide::Leading, written.clone());
+        assert_eq!(tree.trivia_side(a, TriviaSide::Leading), written);
+        assert!(tree.edited_within(0, false));
+        assert!(tree.edited_within(f, false));
+        assert!(!tree.edited_within(g, false));
+        assert!(!tree.edited_within(a, false), "a node's own leading is not within it");
+        assert!(tree.edited_within(a, true));
+    }
+
+    #[test]
+    fn a_written_inner_side_is_within_its_own_node() {
+        let (mut tree, _) = parsed("fn f() {}\n");
+        let block = index_of_kind(&tree, "block", 0);
+        tree.write_trivia_side(block, TriviaSide::Inner, Vec::new());
+        assert!(tree.edited_within(block, false));
     }
 }

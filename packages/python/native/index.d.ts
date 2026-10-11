@@ -48,6 +48,26 @@ export declare class SittirEngine {
    */
   snapshot(treeId: number, index: number, holderByte?: number | undefined | null): object
   /**
+   * The entries of `side` (`leading`, `trailing` or `inner`) of the
+   * node at `index` of the live tree `treeId`: the ones a write gave
+   * it, else the ones the tree's trivia table assigns it. Refuses a
+   * tree that is not live, an index naming no node of it, and any
+   * other side.
+   */
+  triviaSide(treeId: number, index: number, side: string): object[]
+  /**
+   * Replace `side` of the node at `index` of the live tree `treeId`
+   * with `entries`. Refuses as `triviaSide` does.
+   */
+  writeTriviaSide(treeId: number, index: number, side: string, entries: object[]): void
+  /**
+   * Whether a write replaced a side of a node under the node at
+   * `index` of the live tree `treeId`, its own `inner` included, and
+   * its own leading and trailing too when `ownSides` is set. Refuses
+   * a tree that is not live and an index naming no node of it.
+   */
+  editedWithin(treeId: number, index: number, ownSides: boolean): boolean
+  /**
    * The spans of byte `ranges` (start and end pairs) of the live
    * tree `treeId`, measured from the byte `holderByte`, as row and
    * column pairs, flat. Refuses a tree that is not live, an odd

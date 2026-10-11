@@ -1,6 +1,9 @@
 import type { FormatRecord, TransportCoordinate } from '@sittir/types';
 import type { TreeQuery } from './query.ts';
 
+/** A side of a node that holds trivia: before its first token, after its last, or, for a node with no named child, between its own tokens. */
+export type TriviaSideName = 'leading' | 'trailing' | 'inner';
+
 /** A parsed tree: the source it was read from, and the read of any node in it. */
 export interface TreeHandle {
 	/** Original source text. */
@@ -16,6 +19,12 @@ export interface TreeHandle {
 	snapshot?(index: number, holderByte?: number): unknown;
 	/** The spans of byte `ranges` (start and end pairs) measured from the byte `holderByte`, as row and column pairs, flat. */
 	snapshotSpans?(holderByte: number, ranges: number[]): number[];
+	/** The entries of `side` of the node at descendant `index`: the ones a write gave it, else the ones the tree's trivia table assigns it. */
+	triviaSide?(index: number, side: TriviaSideName): unknown[];
+	/** Replaces `side` of the node at descendant `index` with `entries`. */
+	writeTriviaSide?(index: number, side: TriviaSideName, entries: readonly unknown[]): void;
+	/** Whether a write replaced a side of a node under the node at descendant `index`, its own `inner` included, and its own leading and trailing too when `ownSides` is set. */
+	editedWithin?(index: number, ownSides: boolean): boolean;
 }
 
 const INDEX_RANGE = 2 ** 32;

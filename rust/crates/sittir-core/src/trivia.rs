@@ -124,27 +124,43 @@ impl<T: HasTrivia> HasTrivia for Box<T> {
     type Trivia = T::Trivia;
 }
 
-/// A grammar's trivia type built from an extra's text and kind: what a
-/// snapshot read makes of each extra it places. Codegen implements it once per
-/// grammar, as the variant that takes a `TriviaText`.
-pub trait FromTriviaText {
+/// A grammar's trivia type built from what a read finds: an extra's text and
+/// kind (the variant that takes a `TriviaText`), or a whitespace member by its
+/// kind id (its unit variant). Codegen implements it once per grammar.
+pub trait FromTriviaText: Sized {
     fn from_text(text: TriviaText) -> Self;
+    /// The whitespace member of `kind`, or `None` when `kind` is none of the
+    /// grammar's whitespace members.
+    fn from_layout(kind: KindId) -> Option<Self>;
 }
 
-/// A transport family that keeps no trivia drops what a snapshot read places.
+/// A transport family that keeps no trivia drops what a read finds.
 impl FromTriviaText for () {
     fn from_text(_: TriviaText) -> Self {}
+
+    fn from_layout(_: KindId) -> Option<Self> {
+        Some(())
+    }
 }
 
+/// Text holds no whitespace member.
 impl FromTriviaText for TriviaText {
     fn from_text(text: TriviaText) -> Self {
         text
+    }
+
+    fn from_layout(_: KindId) -> Option<Self> {
+        None
     }
 }
 
 impl<T: FromTriviaText> FromTriviaText for Box<T> {
     fn from_text(text: TriviaText) -> Self {
         Box::new(T::from_text(text))
+    }
+
+    fn from_layout(kind: KindId) -> Option<Self> {
+        T::from_layout(kind).map(Box::new)
     }
 }
 

@@ -15,7 +15,7 @@ import type {
 	RenderCallOptions,
 	Rendered
 } from '@sittir/types';
-import { readObject, type TreeHandle } from './read.ts';
+import { readObject, type TreeHandle, type TriviaSideName } from './read.ts';
 import { holdReadTree, toTransportData, type TriviaView } from './transport-data.ts';
 import { readDerivedSides, readTrivia } from './utils.ts';
 import { mintTreeToken, registerTree } from './tree-token.ts';
@@ -99,6 +99,28 @@ export interface NativeEngineLike<TTransport = unknown> {
 	 *   before the holder.
 	 */
 	snapshotSpans(treeId: number, holderByte: number, ranges: number[]): number[];
+	/**
+	 * The entries of `side` of the node at descendant `index` of tree `treeId`: the ones a write gave it,
+	 * else the ones the tree's trivia table assigns it. An extra is its coordinate, an `ERROR` its kind
+	 * and source text, and a run of line layout its whitespace member.
+	 *
+	 * @throws when the tree is not live, `index` is past its last node, or `side` is none of the three.
+	 */
+	triviaSide(treeId: number, index: number, side: TriviaSideName): unknown[];
+	/**
+	 * Replaces `side` of the node at descendant `index` of tree `treeId` with `entries`.
+	 *
+	 * @throws as {@link triviaSide} does.
+	 */
+	writeTriviaSide(treeId: number, index: number, side: TriviaSideName, entries: readonly unknown[]): void;
+	/**
+	 * Whether a write replaced a side of a node under the node at descendant `index` of tree `treeId`:
+	 * of a descendant or of the node's own `inner`, and of its own leading and trailing too when
+	 * `ownSides` is set.
+	 *
+	 * @throws when the tree is not live or `index` is past its last node.
+	 */
+	editedWithin(treeId: number, index: number, ownSides: boolean): boolean;
 	lineGapsOf(handle: number): string;
 	descendants(
 		from: string,
@@ -360,6 +382,9 @@ export function createNativeEngine<
 							format: parsed.format,
 							snapshot: (index, holderByte) => engine.snapshot(parsed.treeId, index, holderByte),
 							snapshotSpans: (holderByte, ranges) => engine.snapshotSpans(parsed.treeId, holderByte, ranges),
+							triviaSide: (index, side) => engine.triviaSide(parsed.treeId, index, side),
+							writeTriviaSide: (index, side, entries) => engine.writeTriviaSide(parsed.treeId, index, side, entries),
+							editedWithin: (index, ownSides) => engine.editedWithin(parsed.treeId, index, ownSides),
 							query: {
 								descendants: (walk) =>
 									JSON.parse(

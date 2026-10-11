@@ -2391,16 +2391,23 @@ function renderTriviaTransportSupport(
 	lines.push('}');
 	lines.push('');
 
+	const whitespaceKinds = new Set(whitespaceTriviaKinds(nodeMap));
 	lines.push(
 		'impl ::sittir_core::trivia::FromTriviaText for TriviaTransport {',
 		'    fn from_text(text: ::sittir_core::trivia::TriviaText) -> Self {',
 		'        TriviaTransport::Text(text)',
 		'    }',
-		'}',
-		''
+		'',
+		'    fn from_layout(kind: ::sittir_core::types::KindId) -> Option<Self> {'
 	);
+	for (const node of extrasNodes) {
+		const id = kindIdByKind.get(node.kind);
+		if (!whitespaceKinds.has(node.kind) || id === undefined) continue;
+		const unit = fixedLiteralOf(fixed, node.kind);
+		lines.push(`        if kind == ${variantKindArgs([id], false, read.ctx)} { return Some(TriviaTransport::${unit.variant}); }`);
+	}
+	lines.push('        None', '    }', '}', '');
 
-	const whitespaceKinds = new Set(whitespaceTriviaKinds(nodeMap));
 	lines.push('impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {');
 	lines.push('    fn seam_gap(&self) -> Option<(::sittir_core::layout_kinds::LayoutKinds, Option<&str>)> {');
 	lines.push('        match self {');
