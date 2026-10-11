@@ -50,7 +50,7 @@ The repository's `SyncBaseTarget`: every registered grammar's generated roots (s
 
 ### `packages/tools/src/regen.ts::regenerateGrammars`
 
-Regenerates `grammars` with `gen --grammar <name> --all`, each in a fresh process, in two passes. The first writes every grammar's generated files with no native build and no workspace check, because cargo resolves every workspace crate and a grammar not yet regenerated would not compile against the new emitters. The second builds each native addon, and only its last grammar runs the workspace `cargo check`. Throws on the first `gen` that fails. `pnpm run regen:all` runs it over the stable grammars, and `repoSyncTarget` over the grammars a merge affected.
+Regenerates `grammars` with `gen --grammar <name> --all`, each in a fresh process, in two passes. The first writes every grammar's generated files with no native build and no workspace check, because cargo resolves every workspace crate and a grammar not yet regenerated would not compile against the new emitters. The second builds each native addon, and only its last grammar runs the workspace `cargo check`. Stops at the first `gen` that fails and returns its exit status (1 when it has none), 0 when every one succeeds: `regen:all` exits with it, and `repoSyncTarget` throws on it. `pnpm run regen:all` runs it over the stable grammars, and `repoSyncTarget` over the grammars a merge affected.
 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::departureExplainsDrop`
 

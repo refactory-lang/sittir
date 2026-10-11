@@ -110,7 +110,10 @@ export async function repoSyncTarget(): Promise<{ target: SyncBaseTarget; cwd: s
 		target: {
 			roots,
 			verify: (grammar) => manifest.verifyManifestForGrammar(grammar as GrammarName).ok,
-			regenerate: (grammars) => regenerateGrammars(grammars, cwd)
+			regenerate(grammars) {
+				const status = regenerateGrammars(grammars, cwd);
+				if (status !== 0) throw new Error(`sync-base: regenerating ${grammars.join(', ')} failed (exit ${status})`);
+			}
 		}
 	};
 }
