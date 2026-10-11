@@ -230,8 +230,10 @@ export function resolveBindings(
 
 	for (let i = 0; i < entries.length; i++) {
 		for (let j = i + 1; j < entries.length; j++) {
-			const a = nestable(entries[i]!);
-			const b = nestable(entries[j]!);
+			const refined = (entry: (typeof entries)[number], other: (typeof entries)[number]): Set<number> =>
+				new Set([...nestable(entry)].filter((site) => !(entry.cascaded.has(site) && other.hits.has(site) && !other.cascaded.has(site))));
+			const a = refined(entries[i]!, entries[j]!);
+			const b = refined(entries[j]!, entries[i]!);
 			if (![...a].some((site) => b.has(site))) continue;
 			const nests = [...a].every((site) => b.has(site)) || [...b].every((site) => a.has(site));
 			if (!nests) {
@@ -257,11 +259,12 @@ export function resolveBindings(
 		const arms = [...byToken.values()];
 		if (byToken.size === (sites[site]!.cascadePaths?.length ?? 1) && arms.every((arm) => arm === arms[0])) unanimous.set(site, arms[0]!);
 	}
+	const explicit = new Set(entries.flatMap((entry) => [...entry.hits].filter((site) => !entry.cascaded.has(site))));
 	for (const { arm, hits, cascaded, address } of order) {
 		const origin = originOf(address);
 		for (const site of hits) {
 			if (!cascaded.has(site)) out.set(site, { arm, origin });
-			else if (unanimous.has(site)) out.set(site, { arm: unanimous.get(site)!, origin: 'cascade' });
+			else if (unanimous.has(site) && !explicit.has(site)) out.set(site, { arm: unanimous.get(site)!, origin: 'cascade' });
 		}
 	}
 	return out;
