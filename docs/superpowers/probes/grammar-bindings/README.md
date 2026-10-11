@@ -22,7 +22,7 @@ The base layer's authoring metadata keeps base names: `ruleCauses`, `expectDiagn
 
 ## Naming
 
-The overlay derivation (`deriveOverlay`, `packages/codegen/src/bindings/overlay.ts`) names a claim with its vocabulary path reversed, subkind first, keeping hiddenness: `declaration.function` becomes `function_declaration` (`boundKindName`). `NAME_OVERRIDES` is the per-row hook; it is empty for all three grammars. A member's field name is its camelCase name in snake case, so every slot a member reaches is named by the member, never by a kind.
+The grammar-bindings derivation (`deriveGrammarBindings`, `packages/codegen/src/bindings/grammar-bindings.ts`) names a claim with its vocabulary path reversed, subkind first, keeping hiddenness: `declaration.function` becomes `function_declaration` (`boundKindName`). `NAME_OVERRIDES` is the per-row hook; it is empty for all three grammars. A member's field name is its camelCase name in snake case, so every slot a member reaches is named by the member, never by a kind.
 
 `CONTAINER_MEMBER_OVERRIDES` names a placement's container where the vocabulary has no member for it. rust needs one (`impl_item_body` → `body`), and it is a vocabulary gap: `declaration.extension` declares no `body`.
 
@@ -262,7 +262,7 @@ These hold with bindings on and pass in the checked-in state:
 
 | file | what it does |
 | --- | --- |
-| `generate-bindings.mts` | The measurement copy of the overlay derivation: derives a bindings overlay from `bindings.scm` and prints convergence and the residue with reasons. Flags: `--out <file>` (write the overlay module there; it never writes the package's own `grammar.bindings.ts`), `--no-aliases`, `--no-splits`, `--no-externals`, `--clone-shared` (measures the shared-hidden-rule clones; the result is not a binding to keep), `--record <file>`, `--verbose`. Production writes `packages/<grammar>/grammar.bindings.ts` (the overlay, the claim rows and their hash) through `sittir tool bindings-inventory --write`, whose derivation is `packages/codegen/src/bindings/overlay.ts`. |
+| `generate-bindings.mts` | The measurement copy of the grammar-bindings derivation: derives grammar bindings from `bindings.scm` and prints convergence and the residue with reasons. Flags: `--out <file>` (write the grammar-bindings module there; it never writes the package's own `grammar.bindings.ts`), `--no-aliases`, `--no-splits`, `--no-externals`, `--clone-shared` (measures the shared-hidden-rule clones; the result is not a binding to keep), `--record <file>`, `--verbose`. Production writes `packages/<grammar>/grammar.bindings.ts` (the grammar bindings, the claim rows and their hash) through `sittir tool bindings-inventory --write`, whose derivation is `packages/codegen/src/bindings/grammar-bindings.ts`. |
 | `parser-neutrality.py` | Compares two parser.c files: the define counts, the byte sizes, and the lines that still differ after bound names map back. |
 | `dump-corpus.mts` | Writes each corpus entry to its own file for `tree-sitter parse`. |
 | `tree-neutrality.py` | Compares the base and bound parse trees after mapping kinds, fields, wrap fields, aliases, split arms and clones back. |

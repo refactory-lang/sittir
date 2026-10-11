@@ -29,7 +29,7 @@ export function assertBindingsFresh(
 	vocabularyDir: string = VOCABULARY_DIR
 ): void {
 	if (!existsSync(scmPath)) return;
-	if (hash === undefined) throw new StaleBindingsError(`${grammar}: bindings.scm exists but no grammar.bindings.ts carries its overlay; write it with \`${REGENERATE_BINDINGS_COMMAND}\``);
+	if (hash === undefined) throw new StaleBindingsError(`${grammar}: bindings.scm exists but no grammar.bindings.ts carries its grammar bindings; write it with \`${REGENERATE_BINDINGS_COMMAND}\``);
 	if (hash !== bindingsSourceHash(scmPath, vocabularyDir)) {
 		throw new StaleBindingsError(`${grammar}: grammar.bindings.ts is stale against bindings.scm and the vocabulary; regenerate it with \`${REGENERATE_BINDINGS_COMMAND}\``);
 	}

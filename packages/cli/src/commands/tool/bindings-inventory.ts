@@ -7,7 +7,7 @@ export const bindingsInventory: CommandModule = {
 		defineCommand(program, bindingsInventory)
 			.option('--check', 'Compile every bindings.scm against its parser, report totality diagnostics, report where the bindings and the vocabulary disagree, and check the vocabulary flags module against its Flag declarations')
 			.option('--members', 'Print member names and kinds per shared kind')
-			.option('--write', 'Write the vocabulary flags module from its Flag declarations, then each grammar.bindings.ts: the bindings overlay and the hash of the sources it was derived from')
+			.option('--write', 'Write the vocabulary flags module from its Flag declarations, then each grammar.bindings.ts: the grammar bindings and the hash of the sources it was derived from')
 			.action(async (opts: { check?: boolean; members?: boolean; write?: boolean }) => {
 				const { bindingsInventory: runBindingsInventory } = await import('@sittir/tools');
 				const code = await runBindingsInventory({

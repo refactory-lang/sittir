@@ -15,9 +15,9 @@ const unboundRequested = (): boolean => process.env[UNBOUND_ENV] === '1';
 
 const patchSets = (entry: unknown): readonly unknown[] => (entry === undefined ? [] : Array.isArray(entry) ? entry : [entry]);
 
-function withBindingPatches(authored: PatchesConfig | undefined, overlay: PatchesConfig): PatchesConfig {
+function withBindingPatches(authored: PatchesConfig | undefined, bindingPatches: PatchesConfig): PatchesConfig {
 	const out: Record<string, unknown> = { ...authored };
-	for (const [kind, entry] of Object.entries(overlay)) out[kind] = [...patchSets(out[kind]), ...patchSets(entry).map((set) => markBindingSet(set as object))];
+	for (const [kind, entry] of Object.entries(bindingPatches)) out[kind] = [...patchSets(out[kind]), ...patchSets(entry).map((set) => markBindingSet(set as object))];
 	return out as PatchesConfig;
 }
 
@@ -30,8 +30,8 @@ export function sittirGrammar<B extends GrammarJson, const P = PatchesConfig<Enr
 		readonly bindings?: Bindings;
 	}
 ): GrammarResult {
-	const { resolutions, bindings: overlay, ...wireConfig } = config;
-	const bindings = unboundRequested() ? undefined : overlay;
+	const { resolutions, bindings: grammarBindings, ...wireConfig } = config;
+	const bindings = unboundRequested() ? undefined : grammarBindings;
 	const enriched = enrich(base, { groupBodies: authoredGroupBodies(wireConfig.groups), extras: wireConfig.extras, fieldSites: authoredFieldSites(wireConfig.patches) });
 	const grammar = (globalThis as unknown as { grammar: GrammarFn }).grammar;
 	if (bindings?.patches !== undefined) checkBindingPatches(enriched, bindings.patches);

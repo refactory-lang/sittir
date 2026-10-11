@@ -23,7 +23,7 @@ let dir: string;
 let baseModule: string;
 
 beforeAll(() => {
-	dir = mkdtempSync(join(tmpdir(), 'bindings-overlay-'));
+	dir = mkdtempSync(join(tmpdir(), 'grammar-bindings-'));
 	baseModule = join(dir, 'base.mjs');
 	writeFileSync(
 		baseModule,
@@ -52,7 +52,7 @@ const BINDINGS = `bindings: bindings({
 	renames: [rename('let_item', 'binding')]
 })`;
 
-describe('a bindings overlay on sittirGrammar', () => {
+describe('grammar bindings on sittirGrammar', () => {
 	it('applies its patches at the patch stage and its renames after grammar()', async () => {
 		const raw = await evaluateSittirGrammar(baseModule, 'bindtest', BINDINGS);
 		expect(Object.keys(raw.rules)).toContain('binding');
@@ -71,7 +71,7 @@ describe('a bindings overlay on sittirGrammar', () => {
 		expect(raw.reparseHosts).toEqual({ hosts: { binding: '$r', call: '$r' }, priority: ['_item', 'binding'], gated: ['binding'] });
 	}, 120_000);
 
-	it('evaluates unbound to the grammar without the overlay', async () => {
+	it('evaluates unbound to the grammar without its grammar bindings', async () => {
 		const raw = await evaluateSittirGrammar(baseModule, 'bindtest', BINDINGS, undefined, { unbound: true });
 		expect(Object.keys(raw.rules)).toContain('let_item');
 		expect(Object.keys(raw.rules)).not.toContain('binding');
@@ -85,7 +85,7 @@ describe('a bindings overlay on sittirGrammar', () => {
 		).rejects.toThrow(/alias 'identifier' → 'type'.*already names/);
 	}, 120_000);
 
-	it('derives conflicts from the grammar without the overlay', () => {
+	it('derives conflicts from the grammar without its grammar bindings', () => {
 		const bound = evaluateForDerivation(grammarPackageWith(BINDINGS));
 		const unbound = evaluateForDerivation(grammarPackageWith(''));
 		expect(bound.grammarHash).toBe(unbound.grammarHash);
@@ -96,11 +96,11 @@ describe('a bindings overlay on sittirGrammar', () => {
 		let_item: { 'left:/before': preference('tight'), '";"/before': preference('tight') },
 		_labels: { 'identifier/x:/separator': 'gap/separator' }
 	}`;
-		const overlay = `bindings: bindings({
+		const bindingsOption = `bindings: bindings({
 		patches: { let_item: { 1: field('name'), 3: field('terminator') }, call: { '0/0': alias(sym('identifier'), sym('callee')) } },
 		renames: [rename('let_item', 'binding')]
 	})`;
-		const raw = await evaluateSittirGrammar(baseModule, 'bindtest', `${options}, ${overlay}`);
+		const raw = await evaluateSittirGrammar(baseModule, 'bindtest', `${options}, ${bindingsOption}`);
 		const block = raw.options as Record<string, Record<string, unknown>>;
 		expect(Object.keys(block.binding ?? {}).sort()).toEqual(['name:/before', 'terminator:/before']);
 		expect(Object.keys(block._labels ?? {})).toEqual(['callee/x:/separator']);

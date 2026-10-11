@@ -253,7 +253,7 @@ A slot selector, the selectors chained after it, and the neighbours its anchors 
 
 ### `packages/codegen/src/bindings/facts.ts::bindFacts`
 
-The facts with every grammar kind they name (claims and their placements, the kind arguments of `KIND_PREDICATE_OPERATORS` predicates, the selectors of every predicate's and child condition's site, the kinds a child condition names and the selectors of a sibling order, member owners, paths and selectors, containers and their captures, unclaimed kinds) named by its bound kind. The facts are read and written in base names; with the bindings overlay on, a consumer binds them through the node model's stamped `renamedFrom` (`boundNameOf`). A wildcard claim stays a wildcard, and templates name no kinds.
+The facts with every grammar kind they name (claims and their placements, the kind arguments of `KIND_PREDICATE_OPERATORS` predicates, the selectors of every predicate's and child condition's site, the kinds a child condition names and the selectors of a sibling order, member owners, paths and selectors, containers and their captures, unclaimed kinds) named by its bound kind. The facts are read and written in base names; with the grammar bindings on, a consumer binds them through the node model's stamped `renamedFrom` (`boundNameOf`). A wildcard claim stays a wildcard, and templates name no kinds.
 
 ### `packages/codegen/src/bindings/facts.ts::bindSite`
 
@@ -269,85 +269,85 @@ The SHA-256 of a `bindings.scm` and every `.ts` source under the vocabulary dire
 
 ### `packages/codegen/src/bindings/hash.ts::REGENERATE_BINDINGS_COMMAND`
 
-The command that writes every `grammar.bindings.ts`. The module's banner and the stale-overlay refusal both name it.
+The command that writes every `grammar.bindings.ts`. The module's banner and the stale-bindings refusal both name it.
 
 ### `packages/codegen/src/bindings/hash.ts::StaleBindingsError`
 
-Generation refused over a grammar's committed bindings overlay: missing, or derived from other sources than the grammar's `bindings.scm` and the vocabulary now.
+Generation refused over a grammar's committed grammar bindings: missing, or derived from other sources than the grammar's `bindings.scm` and the vocabulary now.
 
 ### `packages/codegen/src/bindings/hash.ts::assertBindingsFresh`
 
-Codegen's check of a grammar's committed `grammar.bindings.ts`: a grammar with a `bindings.scm` must commit the module, and the hash the module's `bindings({ hash, … })` carries must equal the hash of `bindings.scm` and the vocabulary now. Otherwise it throws `StaleBindingsError` naming `REGENERATE_BINDINGS_COMMAND`. A grammar with no `bindings.scm` passes. It runs whether the overlay is on or off, since the facts codegen reads come from `bindings.scm` itself and the overlay must agree with them. `compileGrammar` runs it after its diagnostic gate; the base grammar's own staleness is the generated-output freshness check's.
+Codegen's check of a grammar's committed `grammar.bindings.ts`: a grammar with a `bindings.scm` must commit the module, and the hash the module's `bindings({ hash, … })` carries must equal the hash of `bindings.scm` and the vocabulary now. Otherwise it throws `StaleBindingsError` naming `REGENERATE_BINDINGS_COMMAND`. A grammar with no `bindings.scm` passes. It runs whether the grammar bindings are on or off, since the facts codegen reads come from `bindings.scm` itself and the grammar bindings must agree with them. `compileGrammar` runs it after its diagnostic gate; the base grammar's own staleness is the generated-output freshness check's.
 
-### `packages/codegen/src/bindings/overlay.ts::OverlayEdit`
+### `packages/codegen/src/bindings/grammar-bindings.ts::GrammarBindingsEdit`
 
 One grammar change at a patch position: a field of the member's name, or an alias of a symbol to its bound name.
 
-### `packages/codegen/src/bindings/overlay.ts::OverlayPatch`
+### `packages/codegen/src/bindings/grammar-bindings.ts::GrammarBindingsPatch`
 
-An `OverlayEdit` at a patch path of its rule, in the patch stage's path syntax.
+An `GrammarBindingsEdit` at a patch path of its rule, in the patch stage's path syntax.
 
-### `packages/codegen/src/bindings/overlay.ts::BindingsOverlay`
+### `packages/codegen/src/bindings/grammar-bindings.ts::GrammarBindings`
 
-The derived bindings overlay: per rule, its patch sets (field edits first, then alias edits); the kind renames; and the splits. `printBindingsModule` prints it as the `Bindings` the grammar applies.
+The derived grammar bindings: per rule, its patch sets (field edits first, then alias edits); the kind renames; and the splits. `printBindingsModule` prints it as the `Bindings` the grammar applies.
 
-### `packages/codegen/src/bindings/overlay.ts::OverlayResidue`
+### `packages/codegen/src/bindings/grammar-bindings.ts::GrammarBindingsResidue`
 
 A claim or member the derivation did not turn into a grammar change, with the cause.
 
-### `packages/codegen/src/bindings/overlay.ts::OverlayReport`
+### `packages/codegen/src/bindings/grammar-bindings.ts::GrammarBindingsReport`
 
 What the derivation realized and left: the claim and member totals, the aliases, field renames and field wraps behind the patches, the claims realized as kinds (and those realized by their parent), the members realized as field names and the implicit routes fielded, and the residue. The inventory prints it as convergence.
 
-### `packages/codegen/src/bindings/overlay.ts::OverlayInput`
+### `packages/codegen/src/bindings/grammar-bindings.ts::GrammarBindingsInput`
 
-The derivation's inputs: its binding facts in base names, its grammar evaluated without the overlay, each vocabulary path's members, the ones its interface declares and the ones it inherits (a member an interface inherits is its member), and each claimed kind's member routes as `resolveRoutes` gives them over the model of the grammar compiled without the overlay (`routedMembers`).
+The derivation's inputs: its binding facts in base names, its grammar evaluated without its grammar bindings, each vocabulary path's members, the ones its interface declares and the ones it inherits (a member an interface inherits is its member), and each claimed kind's member routes as `resolveRoutes` gives them over the model of the grammar compiled without its grammar bindings (`routedMembers`).
 
-### `packages/codegen/src/bindings/overlay.ts::boundKindName`
+### `packages/codegen/src/bindings/grammar-bindings.ts::boundKindName`
 
 The bound name of a vocabulary path: its segments reversed, subkind first, keeping hiddenness (`declaration.function` is `function_declaration`; a hidden kind's is `_function_declaration`). The one place the naming lives.
 
-### `packages/codegen/src/bindings/overlay.ts::memberFieldName`
+### `packages/codegen/src/bindings/grammar-bindings.ts::memberFieldName`
 
 A vocabulary member's field name: its camelCase name in snake case, so every slot a member reaches is named by the member.
 
-### `packages/codegen/src/bindings/overlay.ts::isLift`
+### `packages/codegen/src/bindings/grammar-bindings.ts::isLift`
 
 A group lift at the patch stage: the symbol enrich's group lift leaves in a rule, unless it is a variant's arm (a rule of its own at the patch stage).
 
-### `packages/codegen/src/bindings/overlay.ts::isGroupAlias`
+### `packages/codegen/src/bindings/grammar-bindings.ts::isGroupAlias`
 
 The alias enrich wraps a visible group in.
 
-### `packages/codegen/src/bindings/overlay.ts::FieldRequest`
+### `packages/codegen/src/bindings/grammar-bindings.ts::FieldRequest`
 
 A field edit the derivation asks bind for: a rename of an existing field or a wrap of an unfielded child.
 
-### `packages/codegen/src/bindings/overlay.ts::SINGLE`
+### `packages/codegen/src/bindings/grammar-bindings.ts::SINGLE`
 
 The rule types with one `content` child, which the patch walk descends at path index `0`.
 
-### `packages/codegen/src/bindings/overlay.ts::metaOf`
+### `packages/codegen/src/bindings/grammar-bindings.ts::metaOf`
 
 A rule's `metadata` record, or an empty one.
 
-### `packages/codegen/src/bindings/overlay.ts::fieldOfReference`
+### `packages/codegen/src/bindings/grammar-bindings.ts::fieldOfReference`
 
 The field a rule holds a reference to a child kind in, if any.
 
-### `packages/codegen/src/bindings/overlay.ts::targetKey`
+### `packages/codegen/src/bindings/grammar-bindings.ts::targetKey`
 
 What a field request edits: a field of the owner by its name, or the owner's token or symbol it wraps.
 
-### `packages/codegen/src/bindings/overlay.ts::fieldKey`
+### `packages/codegen/src/bindings/grammar-bindings.ts::fieldKey`
 
 The field a request leaves on its owner.
 
-### `packages/codegen/src/bindings/overlay.ts::deriveOverlay`
+### `packages/codegen/src/bindings/grammar-bindings.ts::deriveGrammarBindings`
 
 ```text
-The bindings overlay from a grammar's facts, against its grammar evaluated
-without the overlay. Claims: a kind is named by its first plain top-level
+The grammar bindings from a grammar's facts, against its grammar evaluated
+without them. Claims: a kind is named by its first plain top-level
 claim, the first in file order as in `resolveRoutes`: that claim renames the
 kind to its path's bound name. A further kind named by the same path aliases to
 it only when nothing about its shape tells it from the path's first kind
@@ -376,11 +376,11 @@ batch narrows until it agrees with itself.
 Everything not turned into a grammar change is residue, with its cause.
 ```
 
-### `packages/codegen/src/bindings/overlay.ts::sameShapeAs`
+### `packages/codegen/src/bindings/grammar-bindings.ts::sameShapeAs`
 
-The kinds one path names that the overlay may merge under the path's name: the path's first kind and every further kind that supplies the same member names, where neither is read as a kind (a flag's kind). A kind's members are its routed members (`OverlayInput.routedMembers`): its captures, renamed, and every other non-layout slot by its property name, so a slot no claim captures still tells two kinds apart (python's `assignment_typed` carries a `type` that `assignment_eq` lacks). A form restricted to a context is a legitimate merge: python's `lambda_within_for_in_clause` supplies `lambda`'s `parameters` and `body`, and differs only in what its body admits. It is the other face of injectivity: two kinds share a vocabulary leaf only where a holder's flag or a member's absence tells them apart, and a kind told apart that way keeps its own grammar kind so the reader and the builder can tell it. Containment is no distinction: a container member admitting both kinds does not keep them apart.
+The kinds one path names that the grammar bindings may merge under the path's name: the path's first kind and every further kind that supplies the same member names, where neither is read as a kind (a flag's kind). A kind's members are its routed members (`GrammarBindingsInput.routedMembers`): its captures, renamed, and every other non-layout slot by its property name, so a slot no claim captures still tells two kinds apart (python's `assignment_typed` carries a `type` that `assignment_eq` lacks). A form restricted to a context is a legitimate merge: python's `lambda_within_for_in_clause` supplies `lambda`'s `parameters` and `body`, and differs only in what its body admits. It is the other face of injectivity: two kinds share a vocabulary leaf only where a holder's flag or a member's absence tells them apart, and a kind told apart that way keeps its own grammar kind so the reader and the builder can tell it. Containment is no distinction: a container member admitting both kinds does not keep them apart.
 
-### `packages/codegen/src/bindings/overlay.ts::overlayPatches`
+### `packages/codegen/src/bindings/grammar-bindings.ts::grammarBindingsPatches`
 
 ```text
 The grammar changes as patch-stage edits. bind.ts's field renames and wraps
@@ -406,7 +406,7 @@ A grammar's `grammar.bindings.ts`, beside its `grammar.sittir.ts`.
 
 ### `packages/codegen/src/bindings/module.ts::printBindingsModule`
 
-The generated `grammar.bindings.ts`: its default export is the overlay with the hash of the sources it was derived from (`bindings({ hash, patches, renames, splits })`), and nothing else; codegen reads the facts from `bindings.scm` through the pinned reader, never from the module. It imports only the authoring helpers it calls, and is erasable syntax only, since tree-sitter's run of the grammar evaluates it too. `grammar.sittir.ts` passes the overlay as `bindings` only while the overlay is on.
+The generated `grammar.bindings.ts`: its default export is the grammar bindings with the hash of the sources it was derived from (`bindings({ hash, patches, renames, splits })`), and nothing else; codegen reads the facts from `bindings.scm` through the pinned reader, never from the module. It imports only the authoring helpers it calls, and is erasable syntax only, since tree-sitter's run of the grammar evaluates it too. `grammar.sittir.ts` passes them as `bindings` only while the grammar bindings are on.
 
 ### `packages/codegen/src/bindings/module.ts::loadBindingsModule`
 
@@ -414,7 +414,7 @@ A package's committed `grammar.bindings.ts`, imported outside the grammar's eval
 
 ### `packages/codegen/src/bindings/module.ts::editCall`
 
-An `OverlayEdit` as the authoring call that makes it.
+An `GrammarBindingsEdit` as the authoring call that makes it.
 
 ### `packages/codegen/src/bindings/module.ts::patchSet`
 
@@ -426,11 +426,11 @@ Printed entries as an array, `[]` when there are none.
 
 ### `packages/codegen/src/bindings/module.ts::BINDINGS_MODULE`
 
-The file name of a grammar's committed bindings overlay, beside its `grammar.sittir.ts`.
+The file name of a grammar's committed grammar bindings, beside its `grammar.sittir.ts`.
 
 ### `packages/codegen/src/bindings/module.ts::q`
 
-A string as a quoted TypeScript literal, for the emitted overlay module.
+A string as a quoted TypeScript literal, for the emitted grammar-bindings module.
 
 ### `packages/codegen/src/bindings/flags.ts::FLAGS_PATH`
 
@@ -1005,7 +1005,7 @@ The texts a claim requires of the claimed node's own text: its tokens, which on 
 
 ### `packages/codegen/src/bindings/input.ts::NodeModelRecord`
 
-The part of a node-model record the bindings read: each node's kind, model type, base kind when the overlay renamed it, slots (with each slot's terminal values), subtypes, element kinds, enum values, an enum's members (each member's kind and text), text and pattern. The record `buildNodeModel` returns and the parsed `node-model.json5` both fit it.
+The part of a node-model record the bindings read: each node's kind, model type, base kind when the grammar bindings renamed it, slots (with each slot's terminal values), subtypes, element kinds, enum values, an enum's members (each member's kind and text), text and pattern. The record `buildNodeModel` returns and the parsed `node-model.json5` both fit it.
 
 ### `packages/codegen/src/bindings/input.ts::slotModelOf`
 
@@ -1017,7 +1017,7 @@ Per grammar kind, the names the parser shows it by where a slot holds it under a
 
 ### `packages/codegen/src/bindings/input.ts::renamedFromOf`
 
-Each kind the bindings overlay renamed, mapped to its base kind, from the record. `bindFacts` names the facts' base kinds by it (`boundNameOf`).
+Each kind the grammar bindings renamed, mapped to its base kind, from the record. `bindFacts` names the facts' base kinds by it (`boundNameOf`).
 
 ### `packages/codegen/src/bindings/input.ts::layoutSlots`
 
@@ -1197,7 +1197,7 @@ A member fact that names a member: every route but `dropped`.
 
 ### `packages/codegen/src/bindings/facts.ts::isNamedMember`
 
-Whether a member fact names a member (`NamedMemberFact`). The overlay derivation reads only these: a dropped slot asks for no grammar change.
+Whether a member fact names a member (`NamedMemberFact`). The grammar-bindings derivation reads only these: a dropped slot asks for no grammar change.
 
 ### `packages/codegen/src/bindings/facts.ts::ContainerCapture`
 

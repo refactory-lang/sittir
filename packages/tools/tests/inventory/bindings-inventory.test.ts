@@ -253,7 +253,7 @@ describe('readVocabulary', () => {
 		});
 	});
 
-	it('gives the overlay derivation every member a kind declares or inherits', () => {
+	it('gives the grammar-bindings derivation every member a kind declares or inherits', () => {
 		expect(vocabularyMembers(vocabulary).get('declaration.function')).toEqual(new Set(['body', 'name']));
 	});
 });
