@@ -96,6 +96,16 @@
 (import_statement import_clause: "typeof") @statement.import.typeof
 (import_statement from_clause: (import_statement_clause_from source: (_) @source))
 (export_statement) @statement.export
+(export_statement_default_declaration (declaration) @declaration)
+(export_statement_default_declaration (export_statement_default_declaration_default_kw (declaration) @declaration))
+(export_statement_default_declaration (export_statement_default_declaration_default_kw (export_statement_default_declaration_default_kw_value value: (_) @value)))
+(export_statement_equals_export expression: (_) @value)
+(export_statement_default_from (export_clause) @exportClause)
+(export_statement_default_from (export_statement_default_from_clause_from (export_clause) @exportClause))
+(export_statement_default_from (export_statement_default_from_ns_from (namespace_export) @exportClause))
+(export_statement_default_from (export_statement_default_from_clause_from source: (_) @source))
+(export_statement_default_from (export_statement_default_from_ns_from source: (_) @source))
+(export_statement_default_from (export_statement_default_from_star_from source: (_) @source))
 (expression_statement) @statement.expression
 (break_statement) @statement.break
 (continue_statement) @statement.continue

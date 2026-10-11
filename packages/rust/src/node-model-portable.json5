@@ -6874,6 +6874,60 @@
           "test": []
         },
         {
+          "vocab": "pattern.range.inclusive",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "content",
+              "slot": "content",
+              "text": "..="
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "..=",
+                "fields": [],
+                "kinds": [
+                  "dot_dot_eq",
+                  "dot_dot"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "pattern.range.exclusive",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "content",
+              "slot": "content",
+              "text": ".."
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "..",
+                "fields": [],
+                "kinds": [
+                  "dot_dot_eq",
+                  "dot_dot"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "vocab": "pattern.range",
           "toplevel": true,
           "within": [],
@@ -6882,17 +6936,6 @@
         }
       ],
       "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "range_pattern_prefix",
-              "slot": "content"
-            }
-          ]
-        },
         {
           "name": "right",
           "route": "slot",
@@ -10216,20 +10259,20 @@
         "paths": 13,
         "kinds": 3,
         "refinements": 0,
-        "aliases": 126
+        "aliases": 128
       },
       {
         "depth": 2,
         "paths": 103,
         "kinds": 157,
         "refinements": 12,
-        "aliases": 88
+        "aliases": 90
       },
       {
         "depth": 3,
-        "paths": 77,
-        "kinds": 97,
-        "refinements": 49,
+        "paths": 79,
+        "kinds": 98,
+        "refinements": 51,
         "aliases": 35
       },
       {
