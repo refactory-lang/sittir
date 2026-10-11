@@ -1377,7 +1377,7 @@
           ]
         },
         {
-          "vocab": "expression.binary.comparison.equal",
+          "vocab": "expression.binary.comparison.loose_equal",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -1403,7 +1403,7 @@
           ]
         },
         {
-          "vocab": "expression.binary.comparison.not_equal",
+          "vocab": "expression.binary.comparison.loose_not_equal",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -1429,7 +1429,7 @@
           ]
         },
         {
-          "vocab": "expression.binary.comparison.strict_equal",
+          "vocab": "expression.binary.comparison.equal",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -1455,7 +1455,7 @@
           ]
         },
         {
-          "vocab": "expression.binary.comparison.strict_not_equal",
+          "vocab": "expression.binary.comparison.not_equal",
           "toplevel": true,
           "within": [],
           "pins": [

@@ -16,6 +16,7 @@ import type * as boundedQuantification from './features/parametric-polymorphism/
 import type * as byteStrings from './features/byte-strings/index.ts';
 import type * as characters from './features/characters/index.ts';
 import type * as classes from './features/methods/classes/index.ts';
+import type * as coerciveEquality from './features/coercive-equality/index.ts';
 import type * as compileTimeEvaluation from './features/compile-time-evaluation/index.ts';
 import type * as complexNumbers from './features/complex-numbers/index.ts';
 import type * as comprehensions from './features/comprehensions/index.ts';
@@ -1174,6 +1175,10 @@ declare module './expression.ts' {
 					| V.Expression.Binary.Bitwise.Xor<G>;
 			}
 			namespace Comparison {
+				interface LooseEqual<G extends GrammarContext<G>> extends coerciveEquality.Expression.Binary.Comparison
+					.LooseEqual<G> {}
+				interface LooseNotEqual<G extends GrammarContext<G>> extends coerciveEquality.Expression.Binary.Comparison
+					.LooseNotEqual<G> {}
 				type Any<G extends GrammarContext<G>> =
 					| V.Expression.Binary.Comparison<G>
 					| V.Expression.Binary.Comparison.Chain<G>
@@ -1182,9 +1187,9 @@ declare module './expression.ts' {
 					| V.Expression.Binary.Comparison.GreaterEqual<G>
 					| V.Expression.Binary.Comparison.Less<G>
 					| V.Expression.Binary.Comparison.LessEqual<G>
-					| V.Expression.Binary.Comparison.NotEqual<G>
-					| V.Expression.Binary.Comparison.StrictEqual<G>
-					| V.Expression.Binary.Comparison.StrictNotEqual<G>;
+					| V.Expression.Binary.Comparison.LooseEqual<G>
+					| V.Expression.Binary.Comparison.LooseNotEqual<G>
+					| V.Expression.Binary.Comparison.NotEqual<G>;
 			}
 			namespace Identity {
 				type Any<G extends GrammarContext<G>> =
@@ -1233,9 +1238,9 @@ declare module './expression.ts' {
 				| V.Expression.Binary.Comparison.GreaterEqual<G>
 				| V.Expression.Binary.Comparison.Less<G>
 				| V.Expression.Binary.Comparison.LessEqual<G>
+				| V.Expression.Binary.Comparison.LooseEqual<G>
+				| V.Expression.Binary.Comparison.LooseNotEqual<G>
 				| V.Expression.Binary.Comparison.NotEqual<G>
-				| V.Expression.Binary.Comparison.StrictEqual<G>
-				| V.Expression.Binary.Comparison.StrictNotEqual<G>
 				| V.Expression.Binary.Identity<G>
 				| V.Expression.Binary.Identity.Is<G>
 				| V.Expression.Binary.Identity.IsNot<G>
@@ -1484,9 +1489,9 @@ declare module './expression.ts' {
 			| V.Expression.Binary.Comparison.GreaterEqual<G>
 			| V.Expression.Binary.Comparison.Less<G>
 			| V.Expression.Binary.Comparison.LessEqual<G>
+			| V.Expression.Binary.Comparison.LooseEqual<G>
+			| V.Expression.Binary.Comparison.LooseNotEqual<G>
 			| V.Expression.Binary.Comparison.NotEqual<G>
-			| V.Expression.Binary.Comparison.StrictEqual<G>
-			| V.Expression.Binary.Comparison.StrictNotEqual<G>
 			| V.Expression.Binary.Identity<G>
 			| V.Expression.Binary.Identity.Is<G>
 			| V.Expression.Binary.Identity.IsNot<G>

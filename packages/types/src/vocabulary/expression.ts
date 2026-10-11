@@ -144,7 +144,7 @@ export namespace Expression {
 			}
 			export interface Equal<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
 				readonly $kind: 'expression.binary.comparison.equal';
-				readonly operator: '==';
+				readonly operator: '==' | '===';
 			}
 			export interface Greater<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
 				readonly $kind: 'expression.binary.comparison.greater';
@@ -164,15 +164,7 @@ export namespace Expression {
 			}
 			export interface NotEqual<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
 				readonly $kind: 'expression.binary.comparison.not_equal';
-				readonly operator: '!=';
-			}
-			export interface StrictEqual<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-				readonly $kind: 'expression.binary.comparison.strict_equal';
-				readonly operator: '===';
-			}
-			export interface StrictNotEqual<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-				readonly $kind: 'expression.binary.comparison.strict_not_equal';
-				readonly operator: '!==';
+				readonly operator: '!=' | '!==' | '<>';
 			}
 		}
 		// @ts-expect-error expression.binary.identity: its operator fill is unknown, outside expression.binary's string.

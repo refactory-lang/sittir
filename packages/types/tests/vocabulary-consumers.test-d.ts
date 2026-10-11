@@ -85,6 +85,20 @@ export function notEqual<G extends GrammarContext<G>>(left: G['identifier'], rig
 	};
 }
 
+// Equality is strict in every language, typescript's `===` included; its coercing `==` is a comparison of its own.
+export function strictEqual<G extends GrammarContext<G>>(left: G['identifier'], right: G['identifier']): Expression.Binary.Comparison.Equal<G> {
+	return { ...equal<G>(left, right), operator: '===' };
+}
+export function looseEqual<G extends GrammarContext<G>>(left: G['identifier'], right: G['identifier']): Expression.Binary.Comparison.LooseEqual<G> {
+	return {
+		$kind: 'expression.binary.comparison.loose_equal',
+		left,
+		right,
+		// @ts-expect-error a coercing comparison is never strict
+		operator: '==='
+	};
+}
+
 // A trait is an interface with more: a refinement carries its own kind and the members its parent lacks.
 export function trait(name: Declaration.Interface.Trait<Composed>['name'], whereClause: Clause.Where<Composed>): Declaration.Interface.Trait<Composed> {
 	return { $kind: 'declaration.interface.trait', name, body: [], whereClause };

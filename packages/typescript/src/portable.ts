@@ -239,9 +239,9 @@ export interface PortableIds {
 	'expression.binary.comparison.greater_equal': TSKindId.BinaryExpression;
 	'expression.binary.comparison.less': TSKindId.BinaryExpression;
 	'expression.binary.comparison.less_equal': TSKindId.BinaryExpression;
+	'expression.binary.comparison.loose_equal': TSKindId.BinaryExpression;
+	'expression.binary.comparison.loose_not_equal': TSKindId.BinaryExpression;
 	'expression.binary.comparison.not_equal': TSKindId.BinaryExpression;
-	'expression.binary.comparison.strict_equal': TSKindId.BinaryExpression;
-	'expression.binary.comparison.strict_not_equal': TSKindId.BinaryExpression;
 	'expression.binary.logical': TSKindId.BinaryExpression;
 	'expression.binary.logical.and': TSKindId.BinaryExpression;
 	'expression.binary.logical.or': TSKindId.BinaryExpression;
@@ -831,6 +831,8 @@ export interface PortableKindsAt {
 		readonly less_equal: PortableKindsAt['expression.binary.comparison.less_equal'];
 		readonly list: PortableKindsAt['expression.collection.list'];
 		readonly logical: PortableKindsAt['expression.binary.logical'];
+		readonly loose_equal: PortableKindsAt['expression.binary.comparison.loose_equal'];
+		readonly loose_not_equal: PortableKindsAt['expression.binary.comparison.loose_not_equal'];
 		readonly membership: PortableKindsAt['expression.binary.membership'];
 		readonly negation: PortableKindsAt['expression.unary.negation'];
 		readonly new: PortableKindsAt['expression.call.new'];
@@ -846,8 +848,6 @@ export interface PortableKindsAt {
 		readonly shift_left: PortableKindsAt['expression.assignment.compound.shift_left'];
 		readonly shift_right: PortableKindsAt['expression.assignment.compound.shift_right'];
 		readonly shift_right_unsigned: PortableKindsAt['expression.assignment.compound.shift_right_unsigned'];
-		readonly strict_equal: PortableKindsAt['expression.binary.comparison.strict_equal'];
-		readonly strict_not_equal: PortableKindsAt['expression.binary.comparison.strict_not_equal'];
 		readonly template: PortableKindsAt['expression.call.template'];
 		readonly typeof: PortableKindsAt['expression.unary.typeof'];
 		readonly void: PortableKindsAt['expression.unary.void'];
@@ -950,13 +950,13 @@ export interface PortableKindsAt {
 		readonly left: PortableKindsAt['expression.binary.shift.left'];
 		readonly less: PortableKindsAt['expression.binary.comparison.less'];
 		readonly less_equal: PortableKindsAt['expression.binary.comparison.less_equal'];
+		readonly loose_equal: PortableKindsAt['expression.binary.comparison.loose_equal'];
+		readonly loose_not_equal: PortableKindsAt['expression.binary.comparison.loose_not_equal'];
 		readonly modulo: PortableKindsAt['expression.binary.arithmetic.modulo'];
 		readonly multiply: PortableKindsAt['expression.binary.arithmetic.multiply'];
 		readonly not_equal: PortableKindsAt['expression.binary.comparison.not_equal'];
 		readonly right: PortableKindsAt['expression.binary.shift.right'];
 		readonly right_unsigned: PortableKindsAt['expression.binary.shift.right_unsigned'];
-		readonly strict_equal: PortableKindsAt['expression.binary.comparison.strict_equal'];
-		readonly strict_not_equal: PortableKindsAt['expression.binary.comparison.strict_not_equal'];
 		readonly subtract: PortableKindsAt['expression.binary.arithmetic.subtract'];
 		readonly xor: PortableKindsAt['expression.binary.bitwise.xor'];
 	};
@@ -1001,9 +1001,9 @@ export interface PortableKindsAt {
 		readonly greater_equal: PortableKindsAt['expression.binary.comparison.greater_equal'];
 		readonly less: PortableKindsAt['expression.binary.comparison.less'];
 		readonly less_equal: PortableKindsAt['expression.binary.comparison.less_equal'];
+		readonly loose_equal: PortableKindsAt['expression.binary.comparison.loose_equal'];
+		readonly loose_not_equal: PortableKindsAt['expression.binary.comparison.loose_not_equal'];
 		readonly not_equal: PortableKindsAt['expression.binary.comparison.not_equal'];
-		readonly strict_equal: PortableKindsAt['expression.binary.comparison.strict_equal'];
-		readonly strict_not_equal: PortableKindsAt['expression.binary.comparison.strict_not_equal'];
 	};
 	'expression.binary.comparison.equal': { readonly $ids: readonly PortableIds['expression.binary.comparison.equal'][] };
 	'expression.binary.comparison.greater': {
@@ -1016,14 +1016,14 @@ export interface PortableKindsAt {
 	'expression.binary.comparison.less_equal': {
 		readonly $ids: readonly PortableIds['expression.binary.comparison.less_equal'][];
 	};
+	'expression.binary.comparison.loose_equal': {
+		readonly $ids: readonly PortableIds['expression.binary.comparison.loose_equal'][];
+	};
+	'expression.binary.comparison.loose_not_equal': {
+		readonly $ids: readonly PortableIds['expression.binary.comparison.loose_not_equal'][];
+	};
 	'expression.binary.comparison.not_equal': {
 		readonly $ids: readonly PortableIds['expression.binary.comparison.not_equal'][];
-	};
-	'expression.binary.comparison.strict_equal': {
-		readonly $ids: readonly PortableIds['expression.binary.comparison.strict_equal'][];
-	};
-	'expression.binary.comparison.strict_not_equal': {
-		readonly $ids: readonly PortableIds['expression.binary.comparison.strict_not_equal'][];
 	};
 	'expression.binary.logical': {
 		readonly $ids: readonly PortableIds['expression.binary.logical'][];
@@ -1633,6 +1633,8 @@ export interface PortableIsAt {
 		readonly less_equal: PortableIsAt['expression.binary.comparison.less_equal'];
 		readonly list: PortableIsAt['expression.collection.list'];
 		readonly logical: PortableIsAt['expression.binary.logical'];
+		readonly loose_equal: PortableIsAt['expression.binary.comparison.loose_equal'];
+		readonly loose_not_equal: PortableIsAt['expression.binary.comparison.loose_not_equal'];
 		readonly membership: PortableIsAt['expression.binary.membership'];
 		readonly negation: PortableIsAt['expression.unary.negation'];
 		readonly new: PortableIsAt['expression.call.new'];
@@ -1648,8 +1650,6 @@ export interface PortableIsAt {
 		readonly shift_left: PortableIsAt['expression.assignment.compound.shift_left'];
 		readonly shift_right: PortableIsAt['expression.assignment.compound.shift_right'];
 		readonly shift_right_unsigned: PortableIsAt['expression.assignment.compound.shift_right_unsigned'];
-		readonly strict_equal: PortableIsAt['expression.binary.comparison.strict_equal'];
-		readonly strict_not_equal: PortableIsAt['expression.binary.comparison.strict_not_equal'];
 		readonly template: PortableIsAt['expression.call.template'];
 		readonly typeof: PortableIsAt['expression.unary.typeof'];
 		readonly void: PortableIsAt['expression.unary.void'];
@@ -1737,13 +1737,13 @@ export interface PortableIsAt {
 		readonly left: PortableIsAt['expression.binary.shift.left'];
 		readonly less: PortableIsAt['expression.binary.comparison.less'];
 		readonly less_equal: PortableIsAt['expression.binary.comparison.less_equal'];
+		readonly loose_equal: PortableIsAt['expression.binary.comparison.loose_equal'];
+		readonly loose_not_equal: PortableIsAt['expression.binary.comparison.loose_not_equal'];
 		readonly modulo: PortableIsAt['expression.binary.arithmetic.modulo'];
 		readonly multiply: PortableIsAt['expression.binary.arithmetic.multiply'];
 		readonly not_equal: PortableIsAt['expression.binary.comparison.not_equal'];
 		readonly right: PortableIsAt['expression.binary.shift.right'];
 		readonly right_unsigned: PortableIsAt['expression.binary.shift.right_unsigned'];
-		readonly strict_equal: PortableIsAt['expression.binary.comparison.strict_equal'];
-		readonly strict_not_equal: PortableIsAt['expression.binary.comparison.strict_not_equal'];
 		readonly subtract: PortableIsAt['expression.binary.arithmetic.subtract'];
 		readonly xor: PortableIsAt['expression.binary.bitwise.xor'];
 	};
@@ -1775,9 +1775,9 @@ export interface PortableIsAt {
 		readonly greater_equal: PortableIsAt['expression.binary.comparison.greater_equal'];
 		readonly less: PortableIsAt['expression.binary.comparison.less'];
 		readonly less_equal: PortableIsAt['expression.binary.comparison.less_equal'];
+		readonly loose_equal: PortableIsAt['expression.binary.comparison.loose_equal'];
+		readonly loose_not_equal: PortableIsAt['expression.binary.comparison.loose_not_equal'];
 		readonly not_equal: PortableIsAt['expression.binary.comparison.not_equal'];
-		readonly strict_equal: PortableIsAt['expression.binary.comparison.strict_equal'];
-		readonly strict_not_equal: PortableIsAt['expression.binary.comparison.strict_not_equal'];
 	};
 	'expression.binary.comparison.equal': PortableGuard<PortableIds['expression.binary.comparison.equal']> & {};
 	'expression.binary.comparison.greater': PortableGuard<PortableIds['expression.binary.comparison.greater']> & {};
@@ -1786,13 +1786,13 @@ export interface PortableIsAt {
 	> & {};
 	'expression.binary.comparison.less': PortableGuard<PortableIds['expression.binary.comparison.less']> & {};
 	'expression.binary.comparison.less_equal': PortableGuard<PortableIds['expression.binary.comparison.less_equal']> & {};
+	'expression.binary.comparison.loose_equal': PortableGuard<
+		PortableIds['expression.binary.comparison.loose_equal']
+	> & {};
+	'expression.binary.comparison.loose_not_equal': PortableGuard<
+		PortableIds['expression.binary.comparison.loose_not_equal']
+	> & {};
 	'expression.binary.comparison.not_equal': PortableGuard<PortableIds['expression.binary.comparison.not_equal']> & {};
-	'expression.binary.comparison.strict_equal': PortableGuard<
-		PortableIds['expression.binary.comparison.strict_equal']
-	> & {};
-	'expression.binary.comparison.strict_not_equal': PortableGuard<
-		PortableIds['expression.binary.comparison.strict_not_equal']
-	> & {};
 	'expression.binary.logical': PortableGuard<PortableIds['expression.binary.logical']> & {
 		readonly and: PortableIsAt['expression.binary.logical.and'];
 		readonly or: PortableIsAt['expression.binary.logical.or'];
@@ -2224,6 +2224,8 @@ export interface PortableKinds {
 	readonly logical: PortableKindsAt['expression.binary.logical'];
 	readonly lookup: PortableKindsAt['type.lookup'];
 	readonly loop: PortableKindsAt['statement.loop'];
+	readonly loose_equal: PortableKindsAt['expression.binary.comparison.loose_equal'];
+	readonly loose_not_equal: PortableKindsAt['expression.binary.comparison.loose_not_equal'];
 	readonly mapped: PortableKindsAt['declaration.signature.index.mapped'];
 	readonly mapped_type: PortableKindsAt['clause.mapped_type'];
 	readonly maybe: PortableKindsAt['type.maybe'];
@@ -2272,8 +2274,6 @@ export interface PortableKinds {
 	readonly shorthand: PortableKindsAt['identifier.property.shorthand'];
 	readonly splat: PortableKindsAt['element.splat'];
 	readonly static: PortableKindsAt['statement.block.static'];
-	readonly strict_equal: PortableKindsAt['expression.binary.comparison.strict_equal'];
-	readonly strict_not_equal: PortableKindsAt['expression.binary.comparison.strict_not_equal'];
 	readonly string: PortableKindsAt['literal.string'];
 	readonly subscript: PortableKindsAt['expression.subscript'];
 	readonly substitution: PortableKindsAt['element.template.substitution'];
@@ -2392,6 +2392,8 @@ export interface PortableIs {
 	readonly logical: PortableIsAt['expression.binary.logical'];
 	readonly lookup: PortableIsAt['type.lookup'];
 	readonly loop: PortableIsAt['statement.loop'];
+	readonly loose_equal: PortableIsAt['expression.binary.comparison.loose_equal'];
+	readonly loose_not_equal: PortableIsAt['expression.binary.comparison.loose_not_equal'];
 	readonly mapped: PortableIsAt['declaration.signature.index.mapped'];
 	readonly mapped_type: PortableIsAt['clause.mapped_type'];
 	readonly maybe: PortableIsAt['type.maybe'];
@@ -2440,8 +2442,6 @@ export interface PortableIs {
 	readonly shorthand: PortableIsAt['identifier.property.shorthand'];
 	readonly splat: PortableIsAt['element.splat'];
 	readonly static: PortableIsAt['statement.block.static'];
-	readonly strict_equal: PortableIsAt['expression.binary.comparison.strict_equal'];
-	readonly strict_not_equal: PortableIsAt['expression.binary.comparison.strict_not_equal'];
 	readonly string: PortableIsAt['literal.string'];
 	readonly subscript: PortableIsAt['expression.subscript'];
 	readonly substitution: PortableIsAt['element.template.substitution'];
@@ -2751,9 +2751,9 @@ const table: PortableTable = {
 		'expression.binary.comparison.greater_equal': { ids: [TSKindId.BinaryExpression], exact: false },
 		'expression.binary.comparison.less': { ids: [TSKindId.BinaryExpression], exact: false },
 		'expression.binary.comparison.less_equal': { ids: [TSKindId.BinaryExpression], exact: false },
+		'expression.binary.comparison.loose_equal': { ids: [TSKindId.BinaryExpression], exact: false },
+		'expression.binary.comparison.loose_not_equal': { ids: [TSKindId.BinaryExpression], exact: false },
 		'expression.binary.comparison.not_equal': { ids: [TSKindId.BinaryExpression], exact: false },
-		'expression.binary.comparison.strict_equal': { ids: [TSKindId.BinaryExpression], exact: false },
-		'expression.binary.comparison.strict_not_equal': { ids: [TSKindId.BinaryExpression], exact: false },
 		'expression.binary.logical': { ids: [TSKindId.BinaryExpression], exact: false },
 		'expression.binary.logical.and': { ids: [TSKindId.BinaryExpression], exact: false },
 		'expression.binary.logical.or': { ids: [TSKindId.BinaryExpression], exact: false },
@@ -3238,6 +3238,8 @@ const table: PortableTable = {
 		['', 'logical', 'expression.binary.logical'],
 		['', 'lookup', 'type.lookup'],
 		['', 'loop', 'statement.loop'],
+		['', 'loose_equal', 'expression.binary.comparison.loose_equal'],
+		['', 'loose_not_equal', 'expression.binary.comparison.loose_not_equal'],
 		['', 'mapped', 'declaration.signature.index.mapped'],
 		['', 'mapped_type', 'clause.mapped_type'],
 		['', 'maybe', 'type.maybe'],
@@ -3286,8 +3288,6 @@ const table: PortableTable = {
 		['', 'shorthand', 'identifier.property.shorthand'],
 		['', 'splat', 'element.splat'],
 		['', 'static', 'statement.block.static'],
-		['', 'strict_equal', 'expression.binary.comparison.strict_equal'],
-		['', 'strict_not_equal', 'expression.binary.comparison.strict_not_equal'],
 		['', 'string', 'literal.string'],
 		['', 'subscript', 'expression.subscript'],
 		['', 'substitution', 'element.template.substitution'],
@@ -3362,6 +3362,8 @@ const table: PortableTable = {
 		['expression', 'less_equal', 'expression.binary.comparison.less_equal'],
 		['expression', 'list', 'expression.collection.list'],
 		['expression', 'logical', 'expression.binary.logical'],
+		['expression', 'loose_equal', 'expression.binary.comparison.loose_equal'],
+		['expression', 'loose_not_equal', 'expression.binary.comparison.loose_not_equal'],
 		['expression', 'membership', 'expression.binary.membership'],
 		['expression', 'negation', 'expression.unary.negation'],
 		['expression', 'new', 'expression.call.new'],
@@ -3377,8 +3379,6 @@ const table: PortableTable = {
 		['expression', 'shift_left', 'expression.assignment.compound.shift_left'],
 		['expression', 'shift_right', 'expression.assignment.compound.shift_right'],
 		['expression', 'shift_right_unsigned', 'expression.assignment.compound.shift_right_unsigned'],
-		['expression', 'strict_equal', 'expression.binary.comparison.strict_equal'],
-		['expression', 'strict_not_equal', 'expression.binary.comparison.strict_not_equal'],
 		['expression', 'template', 'expression.call.template'],
 		['expression', 'typeof', 'expression.unary.typeof'],
 		['expression', 'void', 'expression.unary.void'],
@@ -3409,13 +3409,13 @@ const table: PortableTable = {
 		['expression.binary', 'left', 'expression.binary.shift.left'],
 		['expression.binary', 'less', 'expression.binary.comparison.less'],
 		['expression.binary', 'less_equal', 'expression.binary.comparison.less_equal'],
+		['expression.binary', 'loose_equal', 'expression.binary.comparison.loose_equal'],
+		['expression.binary', 'loose_not_equal', 'expression.binary.comparison.loose_not_equal'],
 		['expression.binary', 'modulo', 'expression.binary.arithmetic.modulo'],
 		['expression.binary', 'multiply', 'expression.binary.arithmetic.multiply'],
 		['expression.binary', 'not_equal', 'expression.binary.comparison.not_equal'],
 		['expression.binary', 'right', 'expression.binary.shift.right'],
 		['expression.binary', 'right_unsigned', 'expression.binary.shift.right_unsigned'],
-		['expression.binary', 'strict_equal', 'expression.binary.comparison.strict_equal'],
-		['expression.binary', 'strict_not_equal', 'expression.binary.comparison.strict_not_equal'],
 		['expression.binary', 'subtract', 'expression.binary.arithmetic.subtract'],
 		['expression.binary', 'xor', 'expression.binary.bitwise.xor'],
 		['identifier', 'shorthand', 'identifier.property.shorthand'],
@@ -3578,22 +3578,22 @@ const table: PortableTable = {
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '**', fields: ['operator'], kinds: [] } }]
 			},
 			{
-				path: 'expression.binary.comparison.equal',
+				path: 'expression.binary.comparison.loose_equal',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '==', fields: ['operator'], kinds: [] } }]
 			},
 			{
-				path: 'expression.binary.comparison.not_equal',
+				path: 'expression.binary.comparison.loose_not_equal',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!=', fields: ['operator'], kinds: [] } }]
 			},
 			{
-				path: 'expression.binary.comparison.strict_equal',
+				path: 'expression.binary.comparison.equal',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '===', fields: ['operator'], kinds: [] } }]
 			},
 			{
-				path: 'expression.binary.comparison.strict_not_equal',
+				path: 'expression.binary.comparison.not_equal',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!==', fields: ['operator'], kinds: [] } }]
 			},
