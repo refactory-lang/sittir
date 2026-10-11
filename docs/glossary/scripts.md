@@ -588,8 +588,8 @@ Materializes the files of the index under the given pathspecs into a scratch dir
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::grammarSourceInputs`
 
-The per-grammar files a generation depends on besides the codegen source: `grammar.sittir.ts` and `package.json`, and for a grammar that ships a `bindings.scm` that file and `bootstrap.json`, since `node-model-portable.json5` is read from `bindings.scm` through the pinned reader. A grammar with no `bindings.scm` does not depend on the pin, so bumping it leaves that grammar fresh.
+The per-grammar files a generation depends on besides the codegen source: `grammar.sittir.ts` and `package.json`, and for a grammar that ships a `bindings.scm` that file, `bootstrap.json` and every source of the vocabulary (`bindings/hash.ts::vocabularySources`), since `node-model-portable.json5` is read from `bindings.scm` through the pinned reader and its routes against the vocabulary. A grammar with no `bindings.scm` depends on neither the pin nor the vocabulary, so changing them leaves that grammar fresh. A tree with no vocabulary directory hashes none, as an absent input is not hashed.
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::stagedInputPathspecs`
 
-The paths the pre-commit check snapshots from the index before it verifies: the codegen source, `bootstrap.json`, and every grammar's package and native crate. It covers every path `grammarSourceInputs` and `generatedRootsFor` can name, so a staged snapshot hashes the same inputs a working-tree check does; a source input left out of it reads as absent and fails a just-regenerated grammar as changed.
+The paths the pre-commit check snapshots from the index before it verifies: the codegen source, `bootstrap.json`, the vocabulary, and every grammar's package and native crate. It covers every path `grammarSourceInputs` and `generatedRootsFor` can name, so a staged snapshot hashes the same inputs a working-tree check does; a source input left out of it reads as absent and fails a just-regenerated grammar as changed.

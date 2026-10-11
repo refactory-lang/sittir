@@ -4,6 +4,7 @@ import type { Socket } from 'node:net';
 import { createInterface } from 'node:readline';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { type BindingFacts, type BindingPattern, type BindingsRoundTrip, BindingsSyntaxError } from './facts.ts';
+import type { VocabularyDeclaration } from './vocabulary.ts';
 
 export const PINNED_READER_MARKER = '\u0000sittir-pinned-reader\u0000';
 
@@ -11,6 +12,7 @@ export interface PinnedReaderModes {
 	readonly facts: { readonly input: string; readonly output: BindingFacts };
 	readonly patterns: { readonly input: string; readonly output: BindingPattern[] };
 	readonly roundTrip: { readonly input: string; readonly output: BindingsRoundTrip };
+	readonly vocabulary: { readonly input: string; readonly output: VocabularyDeclaration[] };
 }
 
 export type PinnedReaderMode = keyof PinnedReaderModes;

@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { FLAG_BITS, FLAGS_PATH, REGENERATE_BINDINGS_COMMAND, printFlagsModule } from '@sittir/codegen/bindings';
 import { VOCABULARY_DIR, flagsCurrent } from '../../src/inventory/index.ts';
-import { readVocabulary } from '../../src/inventory/vocabulary.ts';
+import { readVocabulary } from '@sittir/codegen/bindings';
 
 const HEADER = `// Generated from the vocabulary's Flag declarations by \`${REGENERATE_BINDINGS_COMMAND}\`. Do not edit.`;
 
@@ -48,24 +48,24 @@ describe('printFlagsModule', () => {
 });
 
 describe('the vocabulary flags', () => {
-	it('are the members declared with the marker type Flag, and a boolean member is data', () => {
+	it('are the members declared with the marker type Flag, and a boolean member is data', async () => {
 		const dir = mkdtempSync(join(tmpdir(), 'vocabulary-'));
 		vocabularyIn(dir);
-		const vocabulary = readVocabulary(dir);
+		const vocabulary = await readVocabulary(dir);
 		rmSync(dir, { recursive: true, force: true });
 		expect([...vocabulary.flags].sort()).toEqual(['exclusive', 'writable']);
 		expect(vocabulary.members('expression.complex').get('sign')).toEqual({ optional: true, flag: false });
 		expect(vocabulary.members('expression.complex').get('writable')).toEqual({ optional: true, flag: true });
 	});
 
-	it('are written to the module their declarations imply', () => {
-		expect(readFileSync(FLAGS_PATH, 'utf8')).toBe(printFlagsModule(readVocabulary(VOCABULARY_DIR).flags));
+	it('are written to the module their declarations imply', async () => {
+		expect(readFileSync(FLAGS_PATH, 'utf8')).toBe(printFlagsModule((await readVocabulary(VOCABULARY_DIR)).flags));
 	});
 
-	it('are stale while their module is missing or names other flags', () => {
+	it('are stale while their module is missing or names other flags', async () => {
 		const dir = mkdtempSync(join(tmpdir(), 'vocabulary-'));
 		vocabularyIn(dir);
-		const vocabulary = readVocabulary(dir);
+		const vocabulary = await readVocabulary(dir);
 		const path = join(dir, 'flags.ts');
 		const missing = flagsCurrent(vocabulary, path);
 		writeFileSync(path, printFlagsModule(vocabulary.flags));

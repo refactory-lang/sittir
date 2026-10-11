@@ -259,9 +259,45 @@ The facts with every grammar kind they name (claims and their placements, the ki
 
 A `CaptureSite` with the kind of each of its `down` selectors named by its bound kind.
 
+### `packages/codegen/src/bindings/vocabulary.ts::readVocabulary`
+
+Reads the authored vocabulary structurally, never by matching lines or calling the compiler: each file is parsed by the pinned build's TypeScript package in the pinned child (`runPinned`, `pinned-vocabulary.ts::vocabularyDeclarationsInProcess`), so a regeneration of `packages/typescript` cannot move how the vocabulary reads. The result is every interface under its namespaces, keyed by its `$kind` literal, with its own members (each marked optional or required, and a flag when its declared type is the marker `Flag`, the vocabulary's declaration of a flag in `utils.ts`; a `boolean` member is data) and its parent, the interface its `extends` clause names through `V.`. `members(path)` adds the inherited members, nearest first. `flags` is every name some kind declares as a flag. An interface with no `$kind` literal is not a vocabulary kind (the context's typemap and `Unmapped`). The reader is syntactic: it resolves no types.
+
+### `packages/codegen/src/bindings/vocabulary.ts::VocabularyDeclaration`
+
+One vocabulary interface as the pinned child reports it: its scoped name, its path, its own members as entries and the scoped name of its parent, if it names one. Plain JSON, so it crosses the process; `readVocabulary` resolves parent names to paths once every file is read.
+
+### `packages/codegen/src/bindings/pinned-vocabulary.ts::vocabularyDeclarationsInProcess`
+
+The vocabulary interfaces one file declares (`VocabularyDeclaration`), read by the pinned build's TypeScript engine through its typed nodes. It runs in the pinned child (`pinned-reader.child.ts::READS`), never in the workspace process, and imports `@sittir/typescript` for types only.
+
+### `packages/codegen/src/bindings/pinned-vocabulary.ts::typescriptReader`
+
+The pinned TypeScript package's kinds and engine, with the pinned build they come from, loaded once per child and shared by every read; a failed load is forgotten so the next read tries again.
+
+### `packages/codegen/src/bindings/pinned-vocabulary.ts::collect`
+
+Walks a file's statements: an `export` is read through to what it exports, a namespace adds its name to the scope and is walked in turn, and an interface is declared (`declare`).
+
+### `packages/codegen/src/bindings/pinned-vocabulary.ts::declare`
+
+Records an interface that has a `$kind` literal: its scoped name, its path, its own members and the name of its parent (`vocabularyReference`).
+
+### `packages/codegen/src/bindings/pinned-vocabulary.ts::vocabularyReference`
+
+The vocabulary interface a type names through `V.`, looked for in the type itself and then in its type arguments, so `SubKindOf<V.X<G>>` names `X`.
+
+### `packages/codegen/src/bindings/pinned-vocabulary.ts::isNode`
+
+Whether a child is a node rather than an absent child or the kind id that stands for an anonymous token.
+
+### `packages/codegen/src/bindings/hash.ts::vocabularySources`
+
+Every `.ts` source of the vocabulary, in name order. The bindings hash and the generated-output manifest both read the vocabulary through it, so the two agree on what the vocabulary is.
+
 ### `packages/codegen/src/bindings/hash.ts::bindingsSourceHash`
 
-The SHA-256 of a `bindings.scm` and every `.ts` source of the vocabulary, each source keyed by its file name in name order, over their bytes. Nothing is parsed, so the hash is checked without the scm parser.
+The SHA-256 of a `bindings.scm` and every source of the vocabulary (`vocabularySources`), each source keyed by its file name in name order, over their bytes. Nothing is parsed, so the hash is checked without the scm parser.
 
 ### `packages/codegen/src/bindings/hash.ts::grammarBindingsHash`
 

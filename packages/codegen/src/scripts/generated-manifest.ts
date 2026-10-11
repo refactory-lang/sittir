@@ -2,7 +2,8 @@ import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, statSync, writeFileSync } from 'node:fs';
 import { basename, join, relative, dirname } from 'node:path';
-import { BINDINGS_FILE } from '../bindings/facts.ts';
+import { BINDINGS_FILE, VOCABULARY_DIR } from '../bindings/facts.ts';
+import { vocabularySources } from '../bindings/hash.ts';
 import { PIN_FILE } from '../bootstrap/bootstrap.ts';
 import { hostBinaryFreshnessFor } from './native-binary-freshness.ts';
 import {
@@ -134,11 +135,14 @@ const CODEGEN_SOURCE_DIR = 'packages/codegen/src';
 function grammarSourceInputs(grammar: GrammarName, src: ManifestSource): string[] {
 	const dir = relative(REPO_ROOT, grammarPackageDir(grammar));
 	const bindings = `${dir}/${BINDINGS_FILE}`;
-	return [`${dir}/${GRAMMAR_ENTRY}`, `${dir}/package.json`, ...(existsSync(join(src.root, bindings)) ? [bindings, PIN_FILE] : [])];
+	if (!existsSync(join(src.root, bindings))) return [`${dir}/${GRAMMAR_ENTRY}`, `${dir}/package.json`];
+	const vocabularyDir = join(src.root, relative(REPO_ROOT, VOCABULARY_DIR));
+	const vocabulary = existsSync(vocabularyDir) ? vocabularySources(vocabularyDir).map((path) => relative(src.root, path)) : [];
+	return [`${dir}/${GRAMMAR_ENTRY}`, `${dir}/package.json`, bindings, PIN_FILE, ...vocabulary];
 }
 
 export function stagedInputPathspecs(): string[] {
-	return [CODEGEN_SOURCE_DIR, PIN_FILE, ...allGrammars().flatMap((grammar) => [`packages/${grammar}`, nativeCrateRelDir(grammar)])];
+	return [CODEGEN_SOURCE_DIR, PIN_FILE, relative(REPO_ROOT, VOCABULARY_DIR), ...allGrammars().flatMap((grammar) => [`packages/${grammar}`, nativeCrateRelDir(grammar)])];
 }
 
 function isCodegenSourceInput(relPath: string): boolean {
@@ -329,7 +333,7 @@ export function assertGeneratedManifestsClean(
 		lines.push(`  ${r.grammar}:`);
 		if (r.sourceChanged) {
 			lines.push(
-				`    SOURCE INPUTS CHANGED (grammar.sittir.ts, package.json, bindings.scm, bootstrap.json, or packages/codegen/src/** edited since last regen)`
+				`    SOURCE INPUTS CHANGED (grammar.sittir.ts, package.json, bindings.scm, the vocabulary, bootstrap.json, or packages/codegen/src/** edited since last regen)`
 			);
 		}
 		for (const f of r.modified) lines.push(`    MODIFIED: ${f}`);
