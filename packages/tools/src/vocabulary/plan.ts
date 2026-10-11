@@ -104,7 +104,7 @@ export function plan(source: VocabularySource): Plan {
 		}
 	}
 
-	const owned = ownership(declarations, features, issues);
+	const { owned, restated } = ownership(declarations, features, issues);
 	const lineage = (path: string): string[] => {
 		const out: string[] = [];
 		for (let k = kinds.get(path); k !== undefined; k = k.parent === undefined ? undefined : kinds.get(k.parent)) out.push(k.path);
@@ -133,7 +133,10 @@ export function plan(source: VocabularySource): Plan {
 		if (left.length > 0) notes.push(`${name} is gated at some kinds and stays in the base at ${left.length}: ${left.join(', ')}`);
 	}
 
-	return { features, kinds, owned, levels: levels([...kinds.values()]), issues, notes };
+	const levelArms = levels([...kinds.values()]);
+	issues.push(...directReferences(declarations, restated, kinds, levelArms));
+
+	return { features, kinds, owned, levels: levelArms, issues, notes };
 }
 
 const topSegment = (path: string): string => path.replace(/\..*$/, '');
@@ -170,8 +173,9 @@ function ownership(
 	declarations: ReadonlyMap<string, ReadonlyMap<string, readonly Declaration[]>>,
 	features: ReadonlyMap<string, Feature>,
 	issues: string[]
-): Map<string, Map<string, Owned>> {
+): { owned: Map<string, Map<string, Owned>>; restated: Map<string, Set<string>> } {
 	const owned = new Map<string, Map<string, Owned>>();
+	const restated = new Map<string, Set<string>>();
 	for (const [path, byName] of declarations) {
 		for (const [name, list] of byName) {
 			const kindOwn = list.find((d) => !d.gated);
@@ -193,14 +197,47 @@ function ownership(
 			for (const d of list) {
 				if (d === first) continue;
 				const restates = d.gated && !d.member.optional && first.member.optional && d.member.type === first.member.type;
-				if (!restates) issues.push(`${path}.${name}: declared by ${owner(first.by)} and by ${owner(d.by)}`);
-				else if (first.by !== undefined && !closure(d.by.name, features).has(first.by.name)) {
+				if (!restates) {
+					issues.push(`${path}.${name}: declared by ${owner(first.by)} and by ${owner(d.by)}`);
+					continue;
+				}
+				const by = restated.get(path) ?? new Set<string>();
+				restated.set(path, by.add(d.by.name));
+				if (first.by !== undefined && !closure(d.by.name, features).has(first.by.name)) {
 					issues.push(`${d.by.name} restates ${path}.${name}, which ${first.by.name} owns, and does not extend ${first.by.name}`);
 				}
 			}
 		}
 	}
-	return owned;
+	return { owned, restated };
+}
+
+function directReferences(
+	declarations: ReadonlyMap<string, ReadonlyMap<string, readonly Declaration[]>>,
+	restated: ReadonlyMap<string, ReadonlySet<string>>,
+	kinds: ReadonlyMap<string, Kind>,
+	levelArms: ReadonlyMap<string, readonly string[]>
+): string[] {
+	const restaters = new Map<string, string>();
+	for (const kind of kinds.values()) {
+		const by = restated.get(kind.path);
+		if (by !== undefined) restaters.set(kind.qname, `${[...by].sort(byCodepoint).join(' and ')} restates ${kind.path}`);
+	}
+	const out = new Set<string>();
+	for (const [path, byName] of declarations) {
+		for (const [name, list] of byName) {
+			for (const d of list) {
+				for (const [ref] of d.member.type.matchAll(/(?<=\bV\.)[\w.]+(?=<)/g)) {
+					const arms = ref.endsWith('.Any') ? (levelArms.get(ref.slice(0, -'.Any'.length)) ?? []) : [ref];
+					for (const arm of arms) {
+						const by = restaters.get(arm);
+						if (by !== undefined) out.add(`${path}.${name} references V.${ref}, and ${by}: type it through the slot table`);
+					}
+				}
+			}
+		}
+	}
+	return [...out];
 }
 
 function levels(kinds: readonly { readonly qname: string; readonly path: string }[]): Map<string, readonly string[]> {

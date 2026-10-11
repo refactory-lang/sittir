@@ -174,6 +174,37 @@ describe('plan', () => {
 		expect(issues({ ...CLEAN, ...generators('export interface Generators extends AsyncAwait {\n\treadonly generators: true;\n}') })).toEqual([]);
 	});
 
+	it('reports a member typed by a direct reference to a kind a feature restates, or to a level holding one', () => {
+		const field = DECLARATION.replace(
+			'\t}\n}\n',
+			`\t}
+	export interface Field<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
+		readonly $kind: 'declaration.field';
+		readonly type?: G['slots']['declaration.field']['type'];
+	}
+	export interface Union<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
+		readonly $kind: 'declaration.union';
+		readonly body: V.Declaration.Field<G>[];
+		readonly fields: G['slots']['declaration.union']['fields'][];
+		readonly members: V.Declaration.Any<G>[];
+	}
+}
+`
+		);
+		const typing = feature('manifest-typing', 'export interface ManifestTyping {\n\treadonly manifestTyping: true;\n}', {
+			'declaration.ts': `export namespace Declaration {
+	export interface Field<G extends GrammarContext<G>> {
+		readonly type: G['slots']['declaration.field']['type'];
+	}
+}
+`
+		});
+		expect(issues({ ...CLEAN, 'declaration.ts': field, ...typing })).toEqual([
+			'declaration.union.body references V.Declaration.Field, and ManifestTyping restates declaration.field: type it through the slot table',
+			'declaration.union.members references V.Declaration.Any, and ManifestTyping restates declaration.field: type it through the slot table'
+		]);
+	});
+
 	it('reports a base declaration of a member a feature gates on the same line', () => {
 		const arrow = DECLARATION.replace(
 			'\t}\n}\n',

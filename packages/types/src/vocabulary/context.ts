@@ -580,6 +580,9 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['type'];
 			readonly value: G['identifier'] | G['literal'] | V.Statement.Block<G>;
 		};
+		readonly 'declaration.union': {
+			readonly body: V.Declaration.Field<G>;
+		};
 		readonly 'declaration.variable': {
 			readonly name: unknown | G['expression'] | G['identifier'] | G['pattern'];
 			readonly type:

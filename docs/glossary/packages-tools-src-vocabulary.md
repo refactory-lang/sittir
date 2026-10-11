@@ -72,7 +72,7 @@ An interface's parent: the first `V.`-qualified type reference in its heritage c
 
 ### `packages/tools/src/vocabulary/plan.ts::plan`
 
-The planner. It works in four parts.
+The planner. It works in five parts.
 
 **Kinds.** Every base kind and every kind a feature declares, keyed by path. These are issues:
 - a path declared twice;
@@ -92,6 +92,8 @@ A member that some kinds gate while base kinds leave it ungated is a note naming
 
 **Levels.** Computed by `levels`, over the kinds.
 
+**Direct references.** `directReferences` reports, as issues, the members that reach a restated kind without the slot table.
+
 ### `packages/tools/src/vocabulary/plan.ts::ownership`
 
 At each kind, collects each member's declarations: the kind's own (from the base, or from the feature that adds the kind) and the gated ones from member-only stubs. The owner is the first that applies:
@@ -103,9 +105,13 @@ These are issues:
 - two optional gated declarations, meaning two features own the member;
 - several required declarations and no optional one.
 
-Every other declaration must restate the owner: required, gated, with the same printed type as the owner's optional declaration, and from a feature that extends the owner's feature. This is how a feature that needs a member requires it.
+Every other declaration must restate the owner: required, gated, with the same printed type as the owner's optional declaration, and from a feature that extends the owner's feature. This is how a feature that needs a member requires it. Each restating feature is recorded against the kind in `restated`.
 
 A gated owner is recorded in `owned`. A kind's own declaration is not, since the kind already carries it.
+
+### `packages/tools/src/vocabulary/plan.ts::directReferences`
+
+The members typed by a direct reference to a kind some feature restates (`V.Declaration.Field<G>`), or to a level holding one (`V.Declaration.Any<G>`, read as each of its arms). A language's context applies a restatement only where it names the kind, in its namespace sets and slot fills, so a direct reference would type the member without it. Such a member takes its type from the slot table, as `declaration.union`'s `body` does. Each member and reference is reported once, naming the features that restate the kind.
 
 ### `packages/tools/src/vocabulary/plan.ts::levels`
 
