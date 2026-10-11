@@ -30,6 +30,7 @@ import { doubledFlanks,
 	tokenSeam,
 	weight
 } from '../render-body.ts';
+import type { IfNode } from '../render-body.ts';
 
 describe('concat', () => {
 	it('merges adjacent literal text but never a depth node', () => {
@@ -281,6 +282,28 @@ describe('gateOptionalSlotSeams', () => {
 		expect(site).toBeGreaterThan(open);
 	});
 
+	it('keeps a folded gate present for inner trivia and prints the pad, the trivia and the slot in source order', () => {
+		const padding = (field: string): boolean => field === 'lbrace_after' || field === 'rbrace_before';
+		const body = gateOptionalSlotSeams(concat(text('{'), seam('lbrace_after'), gate('x', slot('x')), seam('rbrace_before'), text('}')), own, padding);
+		const lines = printRustBody(body, {
+			field: (n) => n,
+			site: (n) => `options::SITE_${n.toUpperCase()}`,
+			kinds: (names) => `&[${names.join(', ')}]`,
+			innerGap: (n) => n === 'x'
+		}).map((line) => line.trim());
+		expect(lines).toEqual([
+			'w.text("{")?;',
+			'if x.is_present() || ::sittir_core::trivia::has_inner(node.layout.trivia(), "x") {',
+			'w.site_at(options::SITE_LBRACE_AFTER);',
+			'::sittir_core::trivia::render_inner(node.layout.trivia(), "x", w)?;',
+			'x.render(w)?;',
+			'w.site_at(options::SITE_RBRACE_BEFORE);',
+			'}',
+			'w.text("}")?;',
+			'Ok(())'
+		]);
+	});
+
 	it('leaves a gate with a fallback, a kinds test, or a body that is not the bare slot alone', () => {
 		const withFallback = branches([{ test: 'x', body: slot('x') }], text('none'));
 		const kinded = [{ kind: 'if' as const, arms: [{ test: 'x', kinds: ['a'], body: slot('x') }], fallback: undefined }];
@@ -301,9 +324,8 @@ describe('gateOptionalSlotSeams', () => {
 	it('folds a padding seam beside the gate, so an absent slot leaves no pad between its brackets', () => {
 		const padding = (field: string): boolean => field === 'lbrace_after' || field === 'rbrace_before';
 		const body = concat(text('{'), seam('lbrace_after'), gate('x', slot('x')), seam('rbrace_before'), text('}'));
-		expect(gateOptionalSlotSeams(body, own, padding)).toEqual(
-			concat(text('{'), gate('x', concat(seam('lbrace_after'), slot('x'), seam('rbrace_before'))), text('}'))
-		);
+		const folded = gate('x', concat(seam('lbrace_after'), slot('x'), seam('rbrace_before')));
+		expect(gateOptionalSlotSeams(body, own, padding)).toEqual(concat(text('{'), [{ ...(folded[0] as IfNode), padded: true as const }], text('}')));
 	});
 
 	it('never folds a padding seam beside a slot that has no presence gate', () => {

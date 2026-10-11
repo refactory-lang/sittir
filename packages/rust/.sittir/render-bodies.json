@@ -2491,7 +2491,8 @@
 						}
 					]
 				}
-			]
+			],
+			"padded": true
 		},
 		{
 			"kind": "text",

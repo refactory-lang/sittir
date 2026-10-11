@@ -38,6 +38,7 @@ import {
 	seamChoiceDefault,
 	seamPartOf,
 	spacedSeparatorOf,
+	spacingSitesOf,
 	type RenderRules
 } from '../compiler/model/render-rules.ts';
 import type { KindEntryLike } from '../dsl/symbol-table.ts';
@@ -146,9 +147,18 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 	#bodies = new Map<string, Body>();
 	#droppedTokens: DroppedTokens[] = [];
 	readonly #seamBoundaries: SeamBoundaryRecord[] = [];
+	readonly #paddingFields = new Map<string, Set<string>>();
 
 	constructor(config: EmitTemplatesConfig) {
 		this.#wordMatcher = config.nodeMap.wordMatcher ?? /\w/;
+		if (config.renderRules !== undefined) {
+			for (const site of spacingSitesOf(config.renderRules, config.nodeMap)) {
+				if (site.padding !== true) continue;
+				const fields = this.#paddingFields.get(site.kind) ?? new Set<string>();
+				fields.add(site.address);
+				this.#paddingFields.set(site.kind, fields);
+			}
+		}
 		this.#kindEntries = config.kindEntries ?? [];
 		this.#ctx = {
 			nodeMap: config.nodeMap,
@@ -256,7 +266,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 			emitted === undefined
 				? undefined
 				: gateKeywordSlotSeams(
-						gateOptionalSlotSeams(emitted, (slot) => this.#slotSeamNames(node, slot), paddingSeamsOf(node.kind, this.#ctx.rules[node.kind])),
+						gateOptionalSlotSeams(emitted, (slot) => this.#slotSeamNames(node, slot), (field) => this.#paddingFields.get(node.kind)?.has(field) === true),
 						(slot) => this.#mixedSlotKeywordKinds(node, slot)
 					);
 
@@ -277,23 +287,6 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 		const tokens = droppedLiteralTexts(this.#ctx.rules[node.kind] ?? node.renderRule, body, node);
 		if (tokens.length > 0) this.#droppedTokens.push({ kind: node.kind, tokens });
 	}
-}
-
-function paddingSeamsOf(kind: string, rule: unknown): (field: string) => boolean {
-	const labels = new Set<string>();
-	const walk = (value: unknown): void => {
-		if (Array.isArray(value)) value.forEach(walk);
-		else if (value !== null && typeof value === 'object') {
-			if (isSeamChoice(value as RenderRule)) {
-				const resolved = seamChoiceDefault(value as RenderRule);
-				if (resolved?.origin === 'preference' && resolved.arm === 'space' && resolved.label !== `${kind}_before` && resolved.label !== `${kind}_after`) labels.add(resolved.label);
-				return;
-			}
-			Object.values(value).forEach(walk);
-		}
-	};
-	walk(rule);
-	return (field) => labels.has(field);
 }
 
 function templateTexts(body: Body, out: Set<string>): Set<string> {

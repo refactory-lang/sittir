@@ -240,6 +240,11 @@ impl<T: Render + TriviaSeam> TransportTrivia<T> {
     }
 }
 
+/// Whether a transport's trivia holds inner entries at gap `key`.
+pub fn has_inner<T: Render + TriviaSeam>(trivia: Option<&TransportTrivia<T>>, key: &str) -> bool {
+    trivia.is_some_and(|trivia| trivia.inner.as_ref().is_some_and(|inner| inner.get(key).is_some_and(|entries| !entries.is_empty())))
+}
+
 /// The inner entries at gap `key` of a transport's trivia, if it has any.
 pub fn render_inner<T: Render + TriviaSeam>(
     trivia: Option<&TransportTrivia<T>>,
