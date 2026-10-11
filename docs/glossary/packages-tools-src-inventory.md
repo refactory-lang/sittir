@@ -44,7 +44,7 @@ Each grammar's binding facts (`readBindings`), named by their bound kinds throug
 
 ### `packages/tools/src/inventory/index.ts::vocabularyDisagreements`
 
-Where the bindings and the authored vocabulary disagree, one line each: a claimed path no vocabulary interface has as its `$kind`, a member the bindings route to a kind whose interface (its own members and its parents') does not declare it, a refinement's pinned field its interface does not declare, and a template hole its interface does not declare. The vocabulary is authored, so a disagreement is fixed on whichever side is wrong: a feature adds the kind or member, or the binding drops it.
+Where the bindings and the authored vocabulary disagree, one line each: a claimed path no vocabulary interface has as its `$kind`, a member the bindings route to a kind whose interface (its own members and its parents') does not declare it, and a template hole its interface does not declare. A refinement's pinned slot needs no declaration: the read tells it, so it is no member, and the bindings claim is the one source of the refinement's spelling. The vocabulary is authored, so a disagreement is fixed on whichever side is wrong: a feature adds the kind or member, or the binding drops it.
 
 ### `packages/tools/src/inventory/vocabulary.ts::readVocabulary`
 
