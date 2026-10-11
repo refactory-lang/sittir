@@ -29,6 +29,7 @@ One file per grammar package, `packages/<grammar>/bindings.scm`, written in tree
 - **Sixteen sections in a fixed order,** identical in every file, an empty section left visible where a grammar has nothing: `module`, `declaration`, `statement`, `clause`, `argument`, `element`, `expression`, `pattern`, `type`, `literal`, `identifier`, `modifier`, `attribute`, `comment`, `keyword / punctuation`, `unclaimed`.
 - **One claim per line,** the parent before its refinements, refinements in the order of the vocabulary.
 - **Kind claims** are dotted captures on nodes: `(binary_expression) @expression.binary`. A single-segment capture alone on a pattern's top node claims the namespace's root kind: `(identifier) @identifier`.
+- **A text piece is a kind.** A node that carries only text is claimed as a kind of its own: a string's text between its escapes and interpolations is `literal.string.text` (`(string_fragment) @literal.string.text`), a comment's text after its marker is `comment.text`, and a regex's pattern and flags are `literal.regex.pattern` and `literal.regex.flags`. Like `literal.string.escape`, each extends the kind it sits in, so a text piece also reads as that kind, and the slot that holds it is a member of its parent typed by its kind.
 - **Member captures are constructive and exhaustive.** A claim's members and the facts it routes are exactly its single-segment captures on nested nodes and on tokens. Every non-layout slot of a claimed kind is captured, as a member, as a fact or as `@dropped`, and the inventory fails on a slot that is none of them; a dropped slot is not a member and has no route in the map.
   - The capture's name is the converged member name (§6), whether or not the upstream field already spells it: `(class_definition superclasses: (_)? @bases)`.
   - A deep capture reaches through a wrapper to the node that matters, so nesting artefacts (`content`, body wrappers, hidden arms) exist only where a capture names them: `(class_declaration (class_heritage (extends_clause (_) @extends)))`.
@@ -62,10 +63,9 @@ One file per grammar package, `packages/<grammar>/bindings.scm`, written in tree
 
 - **Grammar supertypes.** Namespaces are the vocabulary's supertypes (§3.2); a grammar union maps to its members' claims.
 - **Containers.** A list holder with no members of its own (`argument_list`, `parameters`, a class body, a use list) is bound through its elements: by the elements' own claims where they have them. A bare identifier in a role slot stays an identifier, and the slot names its role (§2.1): a bare identifier in a python parameter list is an item of the parameters, typed `Parameter | Identifier`. A name alone in a typescript enum body is not bare: the grammar gives it a node, `enum_body_element_name`, the body's name arm lifted with a `name` slot, so it is claimed as a kind, `declaration.enum_member`, beside `enum_assignment`. The parser's kinds decide, here as for a bare identifier. A value in argument position supplies nothing but itself, so there is no `argument` role kind for it: a positional argument is the expression.
-- **Text leaves.** A node that carries only text (string content and fragments, comment content, regex pattern and flags) is a `string`-typed member of its parent, not a kind.
 - **Layout.** Terminators, automatic semicolons, quote tokens, separators, indentation. These are render options and never members. The grammar's options block names the terminator and semicolon slots, every separated list's separator slot carries the compiler's separator name, and a delimiter token the options do not reach is unclaimed with its reason, so a slot holding only unclaimed kinds is layout too.
 
-**Totality** is measured on the meaningful kinds: every visible kind that is not a container, a grammar supertype or a text leaf is claimed or explicitly unclaimed.
+**Totality** is measured on the meaningful kinds: every visible kind that is not a container or a grammar supertype is claimed or explicitly unclaimed.
 
 ## 3. The vocabulary
 
@@ -355,7 +355,7 @@ Names converge before kinds. The rules govern the names the vocabulary uses and 
 1. Containers unwrap to their element kind-set as a list.
 2. A wrapper clause that carries one member around punctuation is transparent: typescript's type annotation makes `returnType: type`; python's suite forms make a function body `statement.block`, the encoding chosen at build time. The slot model decides it: an envelope, an alias or a polymorph whose one non-layout slot holds nodes is transparent. A wrapper with structure of its own (rust's `attributed_parameter`, typescript's class body members) is transparent only through a container pattern, because reading a kind as its content drops whatever its own text says (`impl !Trait`).
 3. A member's kind is the smallest kind-set covering every grammar's admitted set.
-4. Text leaves are strings.
+4. A text piece is a kind (§2.1); a token's text is a string.
 5. Markers decompose: one that picks one of several values is an axis, and a yes/no one a flag, unless it changes what the node admits or where it is admitted, when it is a refinement kind (§3.3).
 6. Inclusion is a DAG with full-coverage admission and flattened unions.
 7. Refinements narrow, never widen.

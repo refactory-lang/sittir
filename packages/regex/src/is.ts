@@ -44,6 +44,15 @@ export interface IsGuards {
 	nonCapturingGroup<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NonCapturingGroup };
+	zeroOrMore<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ZeroOrMore };
+	oneOrMore<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.OneOrMore };
+	optional<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Optional };
 	countQuantifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CountQuantifier };
@@ -145,6 +154,9 @@ export const is = Object.freeze({
 	anonymousCapturingGroup: _g(TSKindId.AnonymousCapturingGroup),
 	namedCapturingGroup: _g(TSKindId.NamedCapturingGroup),
 	nonCapturingGroup: _g(TSKindId.NonCapturingGroup),
+	zeroOrMore: _g(TSKindId.ZeroOrMore),
+	oneOrMore: _g(TSKindId.OneOrMore),
+	optional: _g(TSKindId.Optional),
 	countQuantifier: _g(TSKindId.CountQuantifier),
 	backreferenceEscape: _g(TSKindId.BackreferenceEscape),
 	namedGroupBackreference: _g(TSKindId.NamedGroupBackreference),

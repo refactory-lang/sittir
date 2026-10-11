@@ -401,6 +401,78 @@ export function wrapNonCapturingGroup(data: T.NonCapturingGroup, tree: TreeHandl
 	return node as unknown as T.NonCapturingGroup.Parsed;
 }
 
+export function wrapZeroOrMore(data: T.ZeroOrMore, tree: TreeHandle): T.ZeroOrMore.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.ZeroOrMore as const,
+		lazy() {
+			return this._lazy;
+		},
+		$with: {
+			lazy: (v: NonNullable<T.ZeroOrMore['_lazy']>) =>
+				rebuilt(node, handle, () => wrapZeroOrMore({ ...$edited(data), _lazy: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ZeroOrMore.Parsed;
+}
+
+export function wrapOneOrMore(data: T.OneOrMore, tree: TreeHandle): T.OneOrMore.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.OneOrMore as const,
+		lazy() {
+			return this._lazy;
+		},
+		$with: {
+			lazy: (v: NonNullable<T.OneOrMore['_lazy']>) =>
+				rebuilt(node, handle, () => wrapOneOrMore({ ...$edited(data), _lazy: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.OneOrMore.Parsed;
+}
+
+export function wrapOptional(data: T.Optional, tree: TreeHandle): T.Optional.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.Optional as const,
+		lazy() {
+			return this._lazy;
+		},
+		$with: {
+			lazy: (v: NonNullable<T.Optional['_lazy']>) =>
+				rebuilt(node, handle, () => wrapOptional({ ...$edited(data), _lazy: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.Optional.Parsed;
+}
+
 export function wrapCountQuantifier(data: T.CountQuantifier, tree: TreeHandle): T.CountQuantifier.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -918,6 +990,9 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 		wrapAnonymousCapturingGroup(d as unknown as T.AnonymousCapturingGroup, t),
 	[TSKindId.NamedCapturingGroup]: (d, t) => wrapNamedCapturingGroup(d as unknown as T.NamedCapturingGroup, t),
 	[TSKindId.NonCapturingGroup]: (d, t) => wrapNonCapturingGroup(d as unknown as T.NonCapturingGroup, t),
+	[TSKindId.ZeroOrMore]: (d, t) => wrapZeroOrMore(d as unknown as T.ZeroOrMore, t),
+	[TSKindId.OneOrMore]: (d, t) => wrapOneOrMore(d as unknown as T.OneOrMore, t),
+	[TSKindId.Optional]: (d, t) => wrapOptional(d as unknown as T.Optional, t),
 	[TSKindId.CountQuantifier]: (d, t) => wrapCountQuantifier(d as unknown as T.CountQuantifier, t),
 	[TSKindId.BackreferenceEscape]: (d, t) => wrapBackreferenceEscape(d as unknown as T.BackreferenceEscape, t),
 	[TSKindId.NamedGroupBackreference]: (d, t) =>

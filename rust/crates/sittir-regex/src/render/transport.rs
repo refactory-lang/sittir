@@ -1209,8 +1209,6 @@ pub enum TermGroupQuantifierTransportSlot {
     Optional(OptionalTransport),
     #[kind(kind::COUNT_QUANTIFIER)]
     CountQuantifier(CountQuantifierTransport),
-    #[transport(verbatim)]
-    Verbatim(VerbatimTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for TermGroupQuantifierTransportSlot {
@@ -1220,7 +1218,6 @@ impl ::sittir_core::prepare::Prepare for TermGroupQuantifierTransportSlot {
             TermGroupQuantifierTransportSlot::OneOrMore(t) => t.prepare(ctx),
             TermGroupQuantifierTransportSlot::Optional(t) => t.prepare(ctx),
             TermGroupQuantifierTransportSlot::CountQuantifier(t) => t.prepare(ctx),
-            TermGroupQuantifierTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -1229,7 +1226,6 @@ impl ::sittir_core::prepare::Prepare for TermGroupQuantifierTransportSlot {
             TermGroupQuantifierTransportSlot::OneOrMore(t) => t.source_gap(),
             TermGroupQuantifierTransportSlot::Optional(t) => t.source_gap(),
             TermGroupQuantifierTransportSlot::CountQuantifier(t) => t.source_gap(),
-            TermGroupQuantifierTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -1238,7 +1234,6 @@ impl ::sittir_core::prepare::Prepare for TermGroupQuantifierTransportSlot {
             TermGroupQuantifierTransportSlot::OneOrMore(t) => t.gap_edges(),
             TermGroupQuantifierTransportSlot::Optional(t) => t.gap_edges(),
             TermGroupQuantifierTransportSlot::CountQuantifier(t) => t.gap_edges(),
-            TermGroupQuantifierTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -1247,7 +1242,6 @@ impl ::sittir_core::prepare::Prepare for TermGroupQuantifierTransportSlot {
             TermGroupQuantifierTransportSlot::OneOrMore(t) => t.snapshot_edge(),
             TermGroupQuantifierTransportSlot::Optional(t) => t.snapshot_edge(),
             TermGroupQuantifierTransportSlot::CountQuantifier(t) => t.snapshot_edge(),
-            TermGroupQuantifierTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
 }
@@ -1259,7 +1253,6 @@ impl ::sittir_core::view::KindOf for TermGroupQuantifierTransportSlot {
             Self::OneOrMore(inner) => inner.kind_in(kinds),
             Self::Optional(inner) => inner.kind_in(kinds),
             Self::CountQuantifier(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(67), ::sittir_core::types::KindId(68), ::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -1271,7 +1264,6 @@ impl ::sittir_core::render::Render for TermGroupQuantifierTransportSlot {
             TermGroupQuantifierTransportSlot::OneOrMore(inner) => inner.render(w),
             TermGroupQuantifierTransportSlot::Optional(inner) => inner.render(w),
             TermGroupQuantifierTransportSlot::CountQuantifier(inner) => inner.render(w),
-            TermGroupQuantifierTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -2474,12 +2466,13 @@ impl ::sittir_core::prepare::Prepare for FlagsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::ZERO_OR_MORE, text)]
+#[transport(kind = kind::ZERO_OR_MORE, layout = [kind::STAR, kind::QMARK])]
 pub struct ZeroOrMoreTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "$text")]
-    pub text: String,
+    #[wire(key = "_lazy")]
+    #[slot(presence = display(kind::_LAZY))]
+    pub lazy: Option<bool>,
 }
 
 impl ::sittir_core::view::KindOf for ZeroOrMoreTransport {
@@ -2496,13 +2489,17 @@ impl ::sittir_core::options::Edged for ZeroOrMoreTransport {
 
 impl ::sittir_core::render::Render for ZeroOrMoreTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(67)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(67)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_zero_or_more(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for ZeroOrMoreTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::prepare_edges(self, ctx);
+        self.lazy.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -2517,12 +2514,13 @@ impl ::sittir_core::prepare::Prepare for ZeroOrMoreTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::ONE_OR_MORE, text)]
+#[transport(kind = kind::ONE_OR_MORE, layout = [kind::PLUS, kind::QMARK])]
 pub struct OneOrMoreTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "$text")]
-    pub text: String,
+    #[wire(key = "_lazy")]
+    #[slot(presence = display(kind::_LAZY))]
+    pub lazy: Option<bool>,
 }
 
 impl ::sittir_core::view::KindOf for OneOrMoreTransport {
@@ -2539,13 +2537,17 @@ impl ::sittir_core::options::Edged for OneOrMoreTransport {
 
 impl ::sittir_core::render::Render for OneOrMoreTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(68)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(68)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_one_or_more(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for OneOrMoreTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::prepare_edges(self, ctx);
+        self.lazy.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -2560,12 +2562,13 @@ impl ::sittir_core::prepare::Prepare for OneOrMoreTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::OPTIONAL, text)]
+#[transport(kind = kind::OPTIONAL, layout = [kind::QMARK])]
 pub struct OptionalTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "$text")]
-    pub text: String,
+    #[wire(key = "_lazy")]
+    #[slot(presence = display(kind::_LAZY))]
+    pub lazy: Option<bool>,
 }
 
 impl ::sittir_core::view::KindOf for OptionalTransport {
@@ -2582,13 +2585,17 @@ impl ::sittir_core::options::Edged for OptionalTransport {
 
 impl ::sittir_core::render::Render for OptionalTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(69)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text(&self.text))
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(69)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_optional(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for OptionalTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
+        let flank = self.layout.take_flank();
+        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::prepare_edges(self, ctx);
+        self.lazy.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -4774,16 +4781,34 @@ fn render_flags(t: &FlagsTransport, w: &mut dyn ::sittir_core::render::RenderSin
     w.text(&t.text)
 }
 
-fn render_zero_or_more(t: &ZeroOrMoreTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
+fn render_zero_or_more(node: &ZeroOrMoreTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let lazy = View::new(&node.lazy, "?");
+    w.edge(::sittir_core::types::KindId(67), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    w.text("*")?;
+    w.site_at(options::SITE_ZERO_OR_MORE_STAR_AFTER);
+    lazy.render(w)?;
+    w.edge(::sittir_core::types::KindId(67), ::sittir_core::options::Side::After, node.layout.edges().after);
+    Ok(())
 }
 
-fn render_one_or_more(t: &OneOrMoreTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
+fn render_one_or_more(node: &OneOrMoreTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let lazy = View::new(&node.lazy, "?");
+    w.edge(::sittir_core::types::KindId(68), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    w.text("+")?;
+    w.site_at(options::SITE_ONE_OR_MORE_PLUS_AFTER);
+    lazy.render(w)?;
+    w.edge(::sittir_core::types::KindId(68), ::sittir_core::options::Side::After, node.layout.edges().after);
+    Ok(())
 }
 
-fn render_optional(t: &OptionalTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
+fn render_optional(node: &OptionalTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let lazy = View::new(&node.lazy, "?");
+    w.edge(::sittir_core::types::KindId(69), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    w.text("?")?;
+    w.site_at(options::SITE_OPTIONAL_QMARK_AFTER);
+    lazy.render(w)?;
+    w.edge(::sittir_core::types::KindId(69), ::sittir_core::options::Side::After, node.layout.edges().after);
+    Ok(())
 }
 
 fn render_count_quantifier(node: &CountQuantifierTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {

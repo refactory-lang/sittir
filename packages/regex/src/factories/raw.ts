@@ -33,9 +33,6 @@ const _leafRe_buildPatternCharacter = /^(?:(?:[^^$\\.*+?()[\]|\r?\n]))$/u;
 const _leafRe_buildPosixClassName = /^(?:(?:[a-zA-Z]+))$/u;
 const _leafRe_buildClassCharacter = /^(?:(?:[^\\\]-]))$/u;
 const _leafRe_buildFlags = /^(?:(?:[a-zA-Z]+))$/u;
-const _leafRe_buildZeroOrMore = /^(?:\*(?:\?)?)$/u;
-const _leafRe_buildOneOrMore = /^(?:\+(?:\?)?)$/u;
-const _leafRe_buildOptional = /^(?:\?(?:\?)?)$/u;
 const _leafRe_buildDecimalEscape = /^(?:(?:\\[1-9][0-9]*))$/u;
 const _leafRe_buildUnicodeCharacterEscape = /^(?:(?:(?:\\u[0-9a-fA-F]{4})|(?:\\u\{[0-9a-fA-F]{1,6}\})))$/u;
 const _leafRe_buildUnicodePropertyValue = /^(?:(?:[a-zA-Z_0-9]+))$/u;
@@ -531,16 +528,19 @@ export function buildFlags(text: string): T.Flags.Bound {
 	return node as unknown as T.Flags.Bound;
 }
 
-export function buildZeroOrMore(text: string): T.ZeroOrMore.Bound {
-	if (text.length === 0) throw new Error(`zero_or_more: text must be non-empty`);
-	if (!_leafRe_buildZeroOrMore.test(text))
-		throw new Error(`zero_or_more: text does not match pattern: ${describeValue(text)}`);
+export function buildZeroOrMore(config: Partial<T.ZeroOrMore.Config> = {}): T.ZeroOrMore.Bound {
+	const _lazy = coerceBooleanKeywordStorage(rejectBareText(config.lazy, 'ZeroOrMore.lazy', 'a boolean'));
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ZeroOrMore as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		_lazy,
+		$with: {
+			lazy: (value?: Admit<NonNullable<T.ZeroOrMore.Config>['lazy']>) =>
+				rebuilt(node, handle, () => buildZeroOrMore({ ...config, lazy: value }))
+		},
+		lazy: () => _lazy,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -551,16 +551,19 @@ export function buildZeroOrMore(text: string): T.ZeroOrMore.Bound {
 	return node as unknown as T.ZeroOrMore.Bound;
 }
 
-export function buildOneOrMore(text: string): T.OneOrMore.Bound {
-	if (text.length === 0) throw new Error(`one_or_more: text must be non-empty`);
-	if (!_leafRe_buildOneOrMore.test(text))
-		throw new Error(`one_or_more: text does not match pattern: ${describeValue(text)}`);
+export function buildOneOrMore(config: Partial<T.OneOrMore.Config> = {}): T.OneOrMore.Bound {
+	const _lazy = coerceBooleanKeywordStorage(rejectBareText(config.lazy, 'OneOrMore.lazy', 'a boolean'));
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.OneOrMore as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		_lazy,
+		$with: {
+			lazy: (value?: Admit<NonNullable<T.OneOrMore.Config>['lazy']>) =>
+				rebuilt(node, handle, () => buildOneOrMore({ ...config, lazy: value }))
+		},
+		lazy: () => _lazy,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -571,16 +574,19 @@ export function buildOneOrMore(text: string): T.OneOrMore.Bound {
 	return node as unknown as T.OneOrMore.Bound;
 }
 
-export function buildOptional(text: string): T.Optional.Bound {
-	if (text.length === 0) throw new Error(`optional: text must be non-empty`);
-	if (!_leafRe_buildOptional.test(text))
-		throw new Error(`optional: text does not match pattern: ${describeValue(text)}`);
+export function buildOptional(config: Partial<T.Optional.Config> = {}): T.Optional.Bound {
+	const _lazy = coerceBooleanKeywordStorage(rejectBareText(config.lazy, 'Optional.lazy', 'a boolean'));
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Optional as const,
 		$source: 2 as const,
 		$named: true as const,
-		$text: text,
+		_lazy,
+		$with: {
+			lazy: (value?: Admit<NonNullable<T.Optional.Config>['lazy']>) =>
+				rebuilt(node, handle, () => buildOptional({ ...config, lazy: value }))
+		},
+		lazy: () => _lazy,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -912,7 +918,7 @@ export function buildTermGroup(config: T.TermGroup.Config): T.TermGroup.Bound {
 	const _quantifier = rejectBareText(
 		config.quantifier,
 		'TermGroup.quantifier',
-		'buildZeroOrMore(…) / buildOneOrMore(…) / buildOptional(…)'
+		'a built ZeroOrMore / OneOrMore / Optional / CountQuantifier'
 	);
 	const handle = currentHandle();
 	const node = {
@@ -1302,9 +1308,9 @@ export type FluentKindMap = {
 	named_capturing_group: T.NamedCapturingGroup.Bound;
 	non_capturing_group: T.NonCapturingGroup.Bound;
 	flags: T.Flags;
-	zero_or_more: T.ZeroOrMore;
-	one_or_more: T.OneOrMore;
-	optional: T.Optional;
+	zero_or_more: T.ZeroOrMore.Bound;
+	one_or_more: T.OneOrMore.Bound;
+	optional: T.Optional.Bound;
 	count_quantifier: T.CountQuantifier.Bound;
 	backreference_escape: T.BackreferenceEscape.Bound;
 	named_group_backreference: T.NamedGroupBackreference.Bound;
