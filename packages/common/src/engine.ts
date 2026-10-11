@@ -82,6 +82,23 @@ export interface NativeEngineLike<TTransport = unknown> {
 	 *   route for a child, naming the kind, the child and the index.
 	 */
 	read(treeId: number, index: number, depth?: number): TTransport;
+	/**
+	 * A snapshot of the node at descendant `index` of tree `treeId`: the node read at every depth into
+	 * plain data that names no tree, each node with its span (`$_layout.span`) measured from the start of
+	 * the transport that holds it, each placed extra with its text, and the node itself measured from the
+	 * byte `holderByte`, or from its own start when absent.
+	 *
+	 * @throws as {@link read} does.
+	 */
+	snapshot(treeId: number, index: number, holderByte?: number | null): TTransport;
+	/**
+	 * The spans of the byte `ranges` (start and end pairs) of tree `treeId`, measured from the byte
+	 * `holderByte`, as row and column pairs, flat.
+	 *
+	 * @throws when the tree is not live, the list has an odd length, or a byte lies past the source or
+	 *   before the holder.
+	 */
+	snapshotSpans(treeId: number, holderByte: number, ranges: number[]): number[];
 	lineGapsOf(handle: number): string;
 	descendants(
 		from: string,
@@ -341,6 +358,8 @@ export function createNativeEngine<
 								return cached;
 							},
 							format: parsed.format,
+							snapshot: (index, holderByte) => engine.snapshot(parsed.treeId, index, holderByte),
+							snapshotSpans: (holderByte, ranges) => engine.snapshotSpans(parsed.treeId, holderByte, ranges),
 							query: {
 								descendants: (walk) =>
 									JSON.parse(

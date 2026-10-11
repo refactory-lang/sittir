@@ -58,6 +58,10 @@ impl EngineGrammar for RustGrammar {
     ) -> std::result::Result<sittir_core::read::Sides, sittir_core::read::ReadError> {
         <AnyTransport as sittir_core::read::ReadTransport>::sides_of(cursor, ctx, index)
     }
+
+    fn shows(self) -> fn(sittir_core::types::KindId) -> bool {
+        <AnyTransport as sittir_core::read::ReadTransport>::shows
+    }
 }
 
 // The engine class itself — parse, read, render, edits, and the live-tree

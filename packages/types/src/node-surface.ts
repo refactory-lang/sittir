@@ -4,6 +4,19 @@ import type { NodeMethods } from './engine-api.ts';
 /** The member a parsed object holds its `TreeToken` under. Type-only: no value of it is exported. */
 export declare const TreeMember: unique symbol;
 
+/** The brand a `Snapshot` carries. Type-only: no value of it is exported. */
+export declare const SnapshotBrand: unique symbol;
+
+/**
+ * A snapshot of a parsed node of kind `K`, as `$snapshot()` returns it: plain data that names no
+ * tree, with each node's span measured from the start of the node that holds it. `engine.render`
+ * takes it and renders it from its data and its geometry.
+ */
+export interface Snapshot<K extends number = number> {
+	readonly $type: K;
+	readonly [SnapshotBrand]: true;
+}
+
 /** What a parsed object holds to keep its tree live: one per tree, shared by every object read from it. */
 export interface TreeToken {
 	readonly treeId: number;
@@ -150,7 +163,7 @@ type ResolveInput<V, ByBound> =
 		: never;
 type BoundFormOf<Self, ByBound> = Self extends { readonly $type: infer T } ? (T extends keyof ByBound ? ByBound[T] : Self) : Self;
 type DraftTrivia<Self, ByBound> = Self extends { readonly $trivia: TriviaSetter<any, infer Trivia> } ? TriviaSetter<BoundFormOf<Self, ByBound>, Trivia> : never;
-export type WithSlot<Self, K extends PropertyKey, V, ByBound> = Remap<Self, K | '$with' | '$trivia' | '$query'> & {
+export type WithSlot<Self, K extends PropertyKey, V, ByBound> = Remap<Self, K | '$with' | '$trivia' | '$query' | '$snapshot'> & {
 	[P in K]: () => ResolveInput<V, ByBound>;
 } & {
 	readonly $trivia: DraftTrivia<Self, ByBound>;

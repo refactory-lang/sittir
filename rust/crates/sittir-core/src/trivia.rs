@@ -69,6 +69,9 @@ impl<T: crate::prepare::Prepare> crate::prepare::Prepare for TransportTrivia<T> 
 pub struct TriviaText {
     pub kind: KindId,
     pub text: String,
+    /// In a snapshot, where the entry lies: its span measured from the start
+    /// of its owner's holder.
+    pub span: Option<crate::points::PointSpan>,
 }
 
 impl Render for TriviaText {
@@ -84,6 +87,11 @@ impl Render for TriviaText {
 impl crate::prepare::Prepare for TriviaText {
     fn prepare(&mut self, _ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError> {
         Ok(())
+    }
+
+    fn snapshot_edge(&self) -> Option<crate::prepare::SnapshotEdge> {
+        let bare = crate::prepare::TriviaReach::Bare;
+        self.span.map(|span| crate::prepare::SnapshotEdge { span, leading: bare, trailing: bare })
     }
 }
 
@@ -102,6 +110,125 @@ impl<T> Default for TransportTrivia<T> {
             trailing: None,
             inner: None,
         }
+    }
+}
+
+/// The trivia type of the grammar a transport belongs to: what a coordinate
+/// of it carries as outside trivia. Codegen states it once per grammar
+/// (`grammar_trivia!`).
+pub trait HasTrivia {
+    type Trivia: TriviaItem + HasTrivia<Trivia = Self::Trivia>;
+}
+
+impl<T: HasTrivia> HasTrivia for Box<T> {
+    type Trivia = T::Trivia;
+}
+
+/// A grammar's trivia type built from an extra's text and kind: what a
+/// snapshot read makes of each extra it places. Codegen implements it once per
+/// grammar, as the variant that takes a `TriviaText`.
+pub trait FromTriviaText {
+    fn from_text(text: TriviaText) -> Self;
+}
+
+/// A transport family that keeps no trivia drops what a snapshot read places.
+impl FromTriviaText for () {
+    fn from_text(_: TriviaText) -> Self {}
+}
+
+impl FromTriviaText for TriviaText {
+    fn from_text(text: TriviaText) -> Self {
+        text
+    }
+}
+
+impl<T: FromTriviaText> FromTriviaText for Box<T> {
+    fn from_text(text: TriviaText) -> Self {
+        Box::new(T::from_text(text))
+    }
+}
+
+/// What a grammar's trivia type provides to frame a coordinate: its render,
+/// its prepare walk and, with the bindings, its wire decode.
+#[cfg(not(feature = "napi-bindings"))]
+pub trait TriviaItem: Render + TriviaSeam + crate::prepare::Prepare + Clone + PartialEq + std::fmt::Debug + 'static {}
+
+#[cfg(not(feature = "napi-bindings"))]
+impl<T: Render + TriviaSeam + crate::prepare::Prepare + Clone + PartialEq + std::fmt::Debug + 'static> TriviaItem for T {}
+
+#[cfg(feature = "napi-bindings")]
+pub trait TriviaItem:
+    Render + TriviaSeam + crate::prepare::Prepare + Clone + PartialEq + std::fmt::Debug + 'static + ::napi::bindgen_prelude::FromNapiValue
+{
+}
+
+#[cfg(feature = "napi-bindings")]
+impl<T: Render + TriviaSeam + crate::prepare::Prepare + Clone + PartialEq + std::fmt::Debug + 'static + ::napi::bindgen_prelude::FromNapiValue> TriviaItem
+    for T
+{
+}
+
+/// Trivia that frames what a node renders: its leading entries before, its
+/// trailing entries after.
+pub trait Framing {
+    fn frame_leading(&self, w: &mut dyn RenderSink) -> RenderResult;
+    fn frame_trailing(&self, w: &mut dyn RenderSink) -> RenderResult;
+}
+
+impl<T: Render + TriviaSeam> Framing for TransportTrivia<T> {
+    fn frame_leading(&self, w: &mut dyn RenderSink) -> RenderResult {
+        self.render_leading(w)
+    }
+
+    fn frame_trailing(&self, w: &mut dyn RenderSink) -> RenderResult {
+        self.render_trailing(w)
+    }
+}
+
+/// The outside trivia a folded coordinate renders between, with its
+/// grammar's trivia type erased, so a coordinate carries it whatever its
+/// slot's transport type.
+pub trait FramedTrivia: Framing + std::fmt::Debug {
+    fn prepare(&mut self, ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError>;
+    fn boxed_clone(&self) -> Box<dyn FramedTrivia>;
+    fn as_any(&self) -> &dyn std::any::Any;
+    fn same_as(&self, other: &dyn FramedTrivia) -> bool;
+}
+
+impl<T: TriviaItem> FramedTrivia for TransportTrivia<T> {
+    fn prepare(&mut self, ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError> {
+        crate::prepare::Prepare::prepare(self, ctx)
+    }
+
+    fn boxed_clone(&self) -> Box<dyn FramedTrivia> {
+        Box::new(self.clone())
+    }
+
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
+    }
+
+    fn same_as(&self, other: &dyn FramedTrivia) -> bool {
+        other.as_any().downcast_ref::<Self>() == Some(self)
+    }
+}
+
+/// A folded coordinate's outside trivia, with its grammar's trivia type
+/// erased; it rides in the coordinate's `CoordinateWrites`.
+#[derive(Debug, Clone)]
+pub struct OutsideTrivia(pub Box<dyn FramedTrivia>);
+
+impl PartialEq for OutsideTrivia {
+    fn eq(&self, other: &Self) -> bool {
+        self.0.same_as(other.0.as_ref())
+    }
+}
+
+impl Eq for OutsideTrivia {}
+
+impl Clone for Box<dyn FramedTrivia> {
+    fn clone(&self) -> Self {
+        self.boxed_clone()
     }
 }
 
@@ -253,7 +380,7 @@ pub fn render_inner<T: Render + TriviaSeam>(
 }
 
 #[cfg(feature = "napi-bindings")]
-impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNapiValue
+impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::napi::bindgen_prelude::FromNapiValue
     for TriviaEntry<T>
 {
     /// A trivia entry is a slot value that may carry `$sameLine`: a node, a
@@ -294,7 +421,7 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNap
 }
 
 #[cfg(feature = "napi-bindings")]
-impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNapiValue
+impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::napi::bindgen_prelude::FromNapiValue
     for TransportTrivia<T>
 {
     unsafe fn from_napi_value(
@@ -369,24 +496,30 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
     }
 }
 
-/// `{ $type, $text }`, both required.
+/// `{ $type, $text, span? }`, the type and the text required.
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for TriviaText {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { crate::boundary::object(env, napi_val)? };
         let kind: u16 = unsafe { crate::boundary::required(env, obj, c"$type", "TriviaText")? };
-        Ok(Self { kind: KindId(kind), text: unsafe { crate::boundary::required(env, obj, c"$text", "TriviaText")? } })
+        Ok(Self {
+            kind: KindId(kind),
+            text: unsafe { crate::boundary::required(env, obj, c"$text", "TriviaText")? },
+            span: unsafe { crate::boundary::property(env, obj, c"span")? },
+        })
     }
 }
 
-/// `{ $type, $text }`.
+/// `{ $type, $text, span? }`.
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for TriviaText {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        use crate::boundary::{object_with_present, present};
         unsafe {
-            crate::boundary::object_with(env, &[
-                (c"$type", u16::to_napi_value(env, val.kind.0)?),
-                (c"$text", String::to_napi_value(env, val.text)?),
+            object_with_present(env, &[
+                present(env, c"$type", Some(val.kind.0))?,
+                present(env, c"$text", Some(val.text))?,
+                present(env, c"span", val.span)?,
             ])
         }
     }

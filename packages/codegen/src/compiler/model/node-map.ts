@@ -179,6 +179,10 @@ export interface FieldStorageInfo {
 	readonly collapsesMultiplicity: boolean;
 }
 
+export function storesNodes(info: FieldStorageInfo): boolean {
+	return info.kind !== 'boolean' && info.kind !== 'bitflag' && info.kind !== 'kindEnum';
+}
+
 export type KindStorage = 'node' | 'kindId';
 
 export type ValueStorage =

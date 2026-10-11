@@ -497,7 +497,8 @@ const VOCABULARY_IMPORTS = [
 	'SupertypeSurface',
 	'WithNode',
 	'BoundWithNode',
-	'QueryFacet'
+	'QueryFacet',
+	'Snapshot'
 ];
 
 function emitGrammarTypeMap(grammar: string, nodeMap: NodeMap, triviaKinds: readonly string[], keyed: boolean): string[] {
@@ -927,7 +928,10 @@ function emitNodeSurfaceInterfaces(lines: string[], surface: BuiltTypeSurface, i
 			lines.push(
 				`${indent}  readonly $with: ${name.startsWith('Bound') ? 'BoundWithNode' : 'WithNode'}<${self}, BoundByKindId${self === 'this' ? '' : `, ${name}`}>;`
 			);
-		if (withNode && name.startsWith('Parsed')) lines.push(`${indent}  readonly $query: () => QueryFacet<${self}, ParsedByKindId>;`);
+		if (withNode && name.startsWith('Parsed')) {
+			lines.push(`${indent}  readonly $query: () => QueryFacet<${self}, ParsedByKindId>;`);
+			lines.push(`${indent}  readonly $snapshot: () => Snapshot<${surface.mainType}['$type']>;`);
+		}
 		for (const member of surface.members) lines.push(`${indent}${member}`);
 		lines.push(`${indent}}`);
 	};
@@ -977,7 +981,7 @@ function emitInterface(
 		for (const f of slots) {
 			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
 			const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
-			const opt = isRequired(f) ? '' : '?';
+			const opt = isRequired(f) || (isMultiple(f) && !storageInfo.collapsesMultiplicity) ? '' : '?';
 			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr, kindEntries);
 			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
 				const elemType = hasOptionalElements(f) ? `${storageType} | undefined` : storageType;

@@ -322,11 +322,11 @@ describe('the view verbs', () => {
 		expect([...view]).toEqual([...view]);
 	});
 
-	it('includes compares occurrences: the same node read twice, never a built node', () => {
+	it('includes is identity: a node a query reaches is the object its accessor returns, never a built node', () => {
 		const fn = root.statements()[0]!;
 		const walked = descendants().ofType(K.FunctionDefinition);
 		expect(walked.includes(fn as never)).toBe(true);
-		expect(walked.find() === fn).toBe(false);
+		expect(walked.find() === fn).toBe(true);
 		expect(walked.includes(py.build.parameters() as never)).toBe(false);
 	});
 });

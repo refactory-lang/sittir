@@ -14,7 +14,7 @@ use crate::options::{Edges, Side};
 use crate::prepare::{Prepare, RenderContext};
 use crate::render::{CoordinateError, Render, RenderResult, RenderSink};
 use crate::slot::{NodeCoordinate, SourceFlank, SourceGap};
-use crate::trivia::{TransportTrivia, TriviaSeam};
+use crate::trivia::{Framing, TransportTrivia, TriviaSeam};
 use crate::types::KindId;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -28,6 +28,10 @@ pub struct TransportLayout<T> {
     /// from it: JavaScript crosses an untouched node as this coordinate, and an
     /// edited one without it.
     pub at: Option<NodeCoordinate>,
+    /// Where a snapshot node lies: its span measured from the start of the
+    /// transport that holds it. A snapshot node has no `at`; a read or built
+    /// node has no span.
+    pub span: Option<crate::points::PointSpan>,
 }
 
 impl<T> Default for TransportLayout<T> {
@@ -38,6 +42,7 @@ impl<T> Default for TransportLayout<T> {
             gap: None,
             flank: None,
             at: None,
+            span: None,
         }
     }
 }
@@ -62,9 +67,16 @@ pub trait Layout {
     /// two are still adjacent in their source.
     fn gap(&self) -> Option<&SourceGap>;
     fn take_flank(&mut self) -> Option<SourceFlank>;
+    /// Where a snapshot node lies, and how far its leading and trailing
+    /// trivia reach (`TransportLayout::span`).
+    fn snapshot_edge(&self) -> Option<crate::prepare::SnapshotEdge>;
+    /// Where a snapshot node's inner trivia lies, as one item spanning all of
+    /// it: `None` with no inner trivia, `Rebuilt` when an entry has no
+    /// geometry.
+    fn snapshot_inner(&self) -> Option<crate::prepare::EdgeItem<'_>>;
 }
 
-impl<T> Layout for Option<Box<TransportLayout<T>>> {
+impl<T: Prepare> Layout for Option<Box<TransportLayout<T>>> {
     type Trivia = T;
 
     fn trivia(&self) -> Option<&TransportTrivia<T>> {
@@ -90,20 +102,40 @@ impl<T> Layout for Option<Box<TransportLayout<T>>> {
     fn take_flank(&mut self) -> Option<SourceFlank> {
         self.as_mut()?.flank.take()
     }
+
+    fn snapshot_edge(&self) -> Option<crate::prepare::SnapshotEdge> {
+        use crate::prepare::TriviaReach;
+        let layout = self.as_ref()?;
+        let trivia = layout.trivia.as_ref();
+        let reach = |entry: Option<&crate::trivia::TriviaEntry<T>>, end: fn(crate::points::PointSpan) -> crate::points::Point| match entry {
+            None => TriviaReach::Bare,
+            Some(entry) => entry.value.snapshot_edge().map_or(TriviaReach::Unplaced, |edge| TriviaReach::To(end(edge.span))),
+        };
+        Some(crate::prepare::SnapshotEdge {
+            span: layout.span?,
+            leading: reach(trivia.and_then(|trivia| trivia.leading.as_ref()?.first()), |span| span.start),
+            trailing: reach(trivia.and_then(|trivia| trivia.trailing.as_ref()?.last()), |span| span.end),
+        })
+    }
+
+    fn snapshot_inner(&self) -> Option<crate::prepare::EdgeItem<'_>> {
+        use crate::prepare::{EdgeItem, SnapshotEdge, TriviaReach};
+        let entries = self.as_ref()?.trivia.as_ref()?.inner.as_ref()?.values().flatten();
+        let mut extent: Option<crate::points::PointSpan> = None;
+        for entry in entries {
+            let Some(edge) = entry.value.snapshot_edge() else { return Some(EdgeItem::Rebuilt) };
+            extent = Some(extent.map_or(edge.span, |span| crate::points::PointSpan {
+                start: span.start.min(edge.span.start),
+                end: span.end.max(edge.span.end),
+            }));
+        }
+        extent.map(|span| EdgeItem::Snapshot(SnapshotEdge { span, leading: TriviaReach::Bare, trailing: TriviaReach::Bare }))
+    }
 }
 
 impl<T: Render + TriviaSeam> TransportLayout<T> {
-    /// Writes a node of `kind` between its layout. An owner first seats the
-    /// trailing trivia an earlier owner held; then the node's leading entries,
-    /// the body, and its trailing entries render. Before the leading entries
-    /// and after the body the sink is handed each side of the node's stamped
-    /// base edges (`RenderSink::unsited_edge`), which writes a stamp only where
-    /// the kind has no edge site of its own, so a list gap's source class or a
-    /// seat on a leaf item renders although no template writes that edge.
-    /// After the body the sink is told the kind was written
-    /// (`RenderSink::end_line_after`), so a line-terminated kind holds its line
-    /// end before any trailing entry renders, and an owner seats what its
-    /// children held, so held trivia never passes a token outside its parent.
+    /// Writes a node of `kind` between its layout: `render_framed` over its
+    /// trivia and base edges.
     pub fn render(
         layout: Option<&Self>,
         kind: Option<KindId>,
@@ -113,33 +145,57 @@ impl<T: Render + TriviaSeam> TransportLayout<T> {
     ) -> RenderResult {
         let trivia = layout.and_then(|layout| layout.trivia.as_ref());
         let edges = layout.and_then(|layout| layout.edges).unwrap_or_default();
-        if role == TriviaRole::Owner {
-            w.seat_trailing()?;
-        }
-        if let Some(kind) = kind {
-            w.unsited_edge(kind, Side::Before, edges.before);
-        }
-        if let Some(trivia) = trivia {
-            trivia.render_leading(w)?;
-        }
-        let line_terminated = kind.is_some_and(|kind| w.kind_has(kind, crate::options::KIND_LINE_TERMINATED));
-        let outer = line_terminated.then(|| w.swallow_cr(true));
-        body(w)?;
-        if let Some(outer) = outer {
-            w.swallow_cr(outer);
-        }
-        if let Some(kind) = kind {
-            w.unsited_edge(kind, Side::After, edges.after);
-            w.end_line_after(kind);
-        }
-        if role == TriviaRole::Owner {
-            w.seat_trailing()?;
-        }
-        if let Some(trivia) = trivia {
-            trivia.render_trailing(w)?;
-        }
-        Ok(())
+        render_framed(trivia, edges, kind, role, w, body)
     }
+}
+
+/// Writes a node of `kind` between its trivia and base edges. An owner first
+/// seats the trailing trivia an earlier owner held; then the node's leading entries,
+/// the body, and its trailing entries render. Before the leading entries
+/// and after the body the sink is handed each side of the node's stamped
+/// base edges (`RenderSink::unsited_edge`), which writes a stamp only where
+/// the kind has no edge site of its own, so a list gap's source class or a
+/// seat on a leaf item renders although no template writes that edge.
+/// After the body the sink is told the kind was written
+/// (`RenderSink::end_line_after`), so a line-terminated kind holds its line
+/// end before any trailing entry renders, and an owner seats what its
+/// children held, so held trivia never passes a token outside its parent. A
+/// folded coordinate with outside trivia renders through it too, its slice as
+/// the body.
+pub fn render_framed<F: Framing + ?Sized>(
+    trivia: Option<&F>,
+    edges: Edges,
+    kind: Option<KindId>,
+    role: TriviaRole,
+    w: &mut dyn RenderSink,
+    body: impl FnOnce(&mut dyn RenderSink) -> RenderResult,
+) -> RenderResult {
+    if role == TriviaRole::Owner {
+        w.seat_trailing()?;
+    }
+    if let Some(kind) = kind {
+        w.unsited_edge(kind, Side::Before, edges.before);
+    }
+    if let Some(trivia) = trivia {
+        trivia.frame_leading(w)?;
+    }
+    let line_terminated = kind.is_some_and(|kind| w.kind_has(kind, crate::options::KIND_LINE_TERMINATED));
+    let outer = line_terminated.then(|| w.swallow_cr(true));
+    body(w)?;
+    if let Some(outer) = outer {
+        w.swallow_cr(outer);
+    }
+    if let Some(kind) = kind {
+        w.unsited_edge(kind, Side::After, edges.after);
+        w.end_line_after(kind);
+    }
+    if role == TriviaRole::Owner {
+        w.seat_trailing()?;
+    }
+    if let Some(trivia) = trivia {
+        trivia.frame_trailing(w)?;
+    }
+    Ok(())
 }
 
 impl<T: Prepare> Prepare for TransportLayout<T> {
@@ -149,7 +205,8 @@ impl<T: Prepare> Prepare for TransportLayout<T> {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNapiValue for Box<TransportLayout<T>> {
+impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::napi::bindgen_prelude::FromNapiValue for Box<TransportLayout<T>>
+{
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         Ok(Box::new(unsafe { TransportLayout::from_napi_value(env, napi_val)? }))
     }
@@ -163,7 +220,7 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
 }
 
 #[cfg(feature = "napi-bindings")]
-impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNapiValue
+impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::napi::bindgen_prelude::FromNapiValue
     for TransportLayout<T>
 {
     unsafe fn from_napi_value(
@@ -184,6 +241,7 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNap
                     ),
                     None => None,
                 },
+                span: property(env, napi_val, c"span")?,
             })
         }
     }
@@ -191,14 +249,15 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNap
 
 #[cfg(feature = "napi-bindings")]
 impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for TransportLayout<T> {
-    /// `{ trivia?, at? }`, each only when present: what a read writes. The
-    /// edges, the gap and the flanks never cross back.
+    /// `{ trivia?, at?, span? }`, each only when present: what a read writes.
+    /// The edges, the gap and the flanks never cross back.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         use crate::boundary::{object_with_present, present, present_with};
         unsafe {
             object_with_present(env, &[
                 present(env, c"trivia", val.trivia)?,
                 present_with(c"at", val.at, |at| crate::slot::coordinate_to_napi(env, at))?,
+                present(env, c"span", val.span)?,
             ])
         }
     }
@@ -215,9 +274,16 @@ mod tests {
     /// comment kind's template does: a line comment's edge breaks the line,
     /// a block comment's is a space. The render protocol is under test, not
     /// any grammar's comment template.
+    #[derive(Debug, Clone, PartialEq)]
     struct MockTrivia(String);
 
     impl crate::trivia::TriviaSeam for MockTrivia {}
+
+    impl crate::prepare::Prepare for MockTrivia {
+        fn prepare(&mut self, _: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError> {
+            Ok(())
+        }
+    }
 
     impl Render for MockTrivia {
         fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
@@ -286,6 +352,27 @@ mod tests {
 
     fn render(t: &MockTransport) -> String {
         render_with(|w| t.render(w))
+    }
+
+    #[test]
+    fn a_coordinate_renders_between_its_outside_trivia_as_a_node_does() {
+        struct Sources(std::sync::Arc<str>);
+        impl crate::render::SourceTable for Sources {
+            fn source_of(&self, tree_id: u32) -> Option<&std::sync::Arc<str>> {
+                (tree_id == 1).then_some(&self.0)
+            }
+        }
+        let sources = Sources(std::sync::Arc::from("CONTENT"));
+        let trivia = TransportTrivia { leading: entries(&["// top"], false), trailing: entries(&["// bottom"], false), inner: None };
+        let framed: SlotValue<MockTrivia> = SlotValue::Coord(
+            crate::slot::NodeCoordinate::new(1, 0, 1, crate::types::Span { start: 0, end: 7 })
+                .with_outside_trivia(Some(crate::trivia::OutsideTrivia(Box::new(trivia)))),
+        );
+        let mut out = String::new();
+        let mut w = crate::spacing::SpacingWriter::new(&mut out, crate::spacing::WordMatcher::default_ident()).with_sources(&sources);
+        framed.render(&mut w).unwrap();
+        w.finish().unwrap();
+        assert_eq!(out, render(&owner("CONTENT", &["// top"], &["// bottom"], false)));
     }
 
     #[test]

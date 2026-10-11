@@ -16,6 +16,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 How a slot's values are stored on the built node: `verbatim` (values as given), `boolean`/`bitflag` (keyword presence collapsed), `kindEnum` (every value is a literal arm — the slot stores kind ids), and `mixedEnum` (literal arms store their kind ids beside whole-node arms). Classified once in `emitters/shared.ts::classifyFieldStorageInfo` and cached on the slot; every storage-aware emitter reads the cached classification.
 
+### `packages/codegen/src/compiler/model/node-map.ts::storesNodes`
+
+Whether a slot's storage can hold a node: every storage kind but `boolean`, `bitflag` and `kindEnum`, which hold a flag, a set of flags or a kind id. A slot that stores nodes can store a coordinate past a read's depth, so its readers hydrate (the wraps' `slotAccessorBody`, the builders' `storedAccessor`).
+
 ### `packages/codegen/src/compiler/model/node-map.ts::concreteKindsOf`
 
 A kind expanded to the concrete kinds it can stand for: itself when it is not

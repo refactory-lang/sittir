@@ -60,7 +60,7 @@ pub enum AnyTransport {
     #[kind(kind::ORDERED_FIELD_DECLARATION_LIST)]
     OrderedFieldDeclarationList(OrderedFieldDeclarationListTransport),
     #[kind(kind::EXTERN_CRATE_DECLARATION)]
-    ExternCrateDeclaration(Box<ExternCrateDeclarationTransport>),
+    ExternCrateDeclaration(ExternCrateDeclarationTransport),
     #[kind(kind::CONST_ITEM)]
     ConstItem(Box<ConstItemTransport>),
     #[kind(kind::STATIC_ITEM)]
@@ -360,7 +360,7 @@ pub enum AnyTransport {
     #[kind(kind::ARRAY_EXPRESSION_LIST)]
     ArrayExpressionList(ArrayExpressionListTransport),
     #[kind(kind::ATTRIBUTE_INPUT)]
-    AttributeInput(Box<AttributeInputTransport>),
+    AttributeInput(AttributeInputTransport),
     #[kind(kind::CLOSURE_EXPRESSION_BLOCK)]
     ClosureExpressionBlock(ClosureExpressionBlockTransport),
     #[kind(kind::CLOSURE_EXPRESSION_EXPR)]
@@ -394,7 +394,7 @@ pub enum AnyTransport {
     #[kind(kind::MOD_ITEM_EXTERNAL)]
     ModItemExternal(ModItemExternalTransport),
     #[kind(kind::MOD_ITEM_INLINE)]
-    ModItemInline(Box<ModItemInlineTransport>),
+    ModItemInline(ModItemInlineTransport),
     #[kind(kind::OR_PATTERN_BINARY)]
     OrPatternBinary(OrPatternBinaryTransport),
     #[kind(kind::OR_PATTERN_PREFIX)]
@@ -416,7 +416,7 @@ pub enum AnyTransport {
     #[kind(kind::FOREIGN_MOD_ITEM_SEMI)]
     ForeignModItemSemi(ForeignModItemSemiTransport),
     #[kind(kind::FOREIGN_MOD_ITEM_BODY)]
-    ForeignModItemBody(Box<ForeignModItemBodyTransport>),
+    ForeignModItemBody(ForeignModItemBodyTransport),
     #[kind(kind::MATCH_ARM_WITH_COMMA)]
     MatchArmWithComma(Box<MatchArmWithCommaTransport>),
     #[kind(kind::MATCH_ARM_BLOCK_ENDING)]
@@ -474,7 +474,7 @@ pub enum AnyTransport {
     #[kind(kind::STRUCT_ITEM_TUPLE)]
     StructItemTuple(Box<StructItemTupleTransport>),
     #[kind(kind::STRUCT_ITEM_UNIT)]
-    StructItemUnit(Box<StructItemUnitTransport>),
+    StructItemUnit(StructItemUnitTransport),
     #[kind(kind::_ATTRIBUTED_FIELD_DECLARATION)]
     AttributedFieldDeclaration(Box<AttributedFieldDeclarationTransport>),
     #[kind(kind::_ATTRIBUTED_ENUM_VARIANT)]
@@ -484,11 +484,11 @@ pub enum AnyTransport {
     #[kind(kind::_ATTRIBUTED_TYPE_PARAMETER)]
     AttributedTypeParameter(AttributedTypeParameterTransport),
     #[kind(kind::_ATTRIBUTED_ARGUMENT)]
-    AttributedArgument(Box<AttributedArgumentTransport>),
+    AttributedArgument(AttributedArgumentTransport),
     #[kind(kind::_ATTRIBUTED_ORDERED_FIELD)]
     AttributedOrderedField(Box<AttributedOrderedFieldTransport>),
     #[kind(kind::_TYPE_ARGUMENT)]
-    TypeArgument(Box<TypeArgumentTransport>),
+    TypeArgument(TypeArgumentTransport),
     #[kind(kind::_MATCH_BLOCK_ARMS)]
     MatchBlockArms(MatchBlockArmsTransport),
     #[kind(kind::FLOAT_LITERAL)]
@@ -2035,6 +2035,410 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            AnyTransport::SourceFile(t) => t.snapshot_edge(),
+            AnyTransport::ExpressionStatement(t) => t.snapshot_edge(),
+            AnyTransport::MacroRule(t) => t.snapshot_edge(),
+            AnyTransport::TokenBindingPattern(t) => t.snapshot_edge(),
+            AnyTransport::TokenRepetitionPattern(t) => t.snapshot_edge(),
+            AnyTransport::FragmentSpecifier(t) => t.snapshot_edge(),
+            AnyTransport::TokenRepetition(t) => t.snapshot_edge(),
+            AnyTransport::NonSpecialToken(t) => t.snapshot_edge(),
+            AnyTransport::AttributeItem(t) => t.snapshot_edge(),
+            AnyTransport::InnerAttributeItem(t) => t.snapshot_edge(),
+            AnyTransport::Attribute(t) => t.snapshot_edge(),
+            AnyTransport::DeclarationList(t) => t.snapshot_edge(),
+            AnyTransport::UnionItem(t) => t.snapshot_edge(),
+            AnyTransport::EnumItem(t) => t.snapshot_edge(),
+            AnyTransport::EnumVariantList(t) => t.snapshot_edge(),
+            AnyTransport::EnumVariant(t) => t.snapshot_edge(),
+            AnyTransport::FieldDeclarationList(t) => t.snapshot_edge(),
+            AnyTransport::FieldDeclaration(t) => t.snapshot_edge(),
+            AnyTransport::OrderedFieldDeclarationList(t) => t.snapshot_edge(),
+            AnyTransport::ExternCrateDeclaration(t) => t.snapshot_edge(),
+            AnyTransport::ConstItem(t) => t.snapshot_edge(),
+            AnyTransport::StaticItem(t) => t.snapshot_edge(),
+            AnyTransport::TypeItem(t) => t.snapshot_edge(),
+            AnyTransport::FunctionItem(t) => t.snapshot_edge(),
+            AnyTransport::FunctionSignatureItem(t) => t.snapshot_edge(),
+            AnyTransport::FunctionModifiers(t) => t.snapshot_edge(),
+            AnyTransport::WhereClause(t) => t.snapshot_edge(),
+            AnyTransport::WherePredicate(t) => t.snapshot_edge(),
+            AnyTransport::TraitItem(t) => t.snapshot_edge(),
+            AnyTransport::AssociatedType(t) => t.snapshot_edge(),
+            AnyTransport::TraitBounds(t) => t.snapshot_edge(),
+            AnyTransport::HigherRankedTraitBound(t) => t.snapshot_edge(),
+            AnyTransport::RemovedTraitBound(t) => t.snapshot_edge(),
+            AnyTransport::TypeParameters(t) => t.snapshot_edge(),
+            AnyTransport::ConstParameter(t) => t.snapshot_edge(),
+            AnyTransport::TypeParameter(t) => t.snapshot_edge(),
+            AnyTransport::LifetimeParameter(t) => t.snapshot_edge(),
+            AnyTransport::LetDeclaration(t) => t.snapshot_edge(),
+            AnyTransport::UseDeclaration(t) => t.snapshot_edge(),
+            AnyTransport::ScopedUseList(t) => t.snapshot_edge(),
+            AnyTransport::UseList(t) => t.snapshot_edge(),
+            AnyTransport::UseAsClause(t) => t.snapshot_edge(),
+            AnyTransport::UseWildcard(t) => t.snapshot_edge(),
+            AnyTransport::Parameters(t) => t.snapshot_edge(),
+            AnyTransport::SelfParameter(t) => t.snapshot_edge(),
+            AnyTransport::VariadicParameter(t) => t.snapshot_edge(),
+            AnyTransport::Parameter(t) => t.snapshot_edge(),
+            AnyTransport::ExternModifier(t) => t.snapshot_edge(),
+            AnyTransport::VisibilityModifier(t) => t.snapshot_edge(),
+            AnyTransport::BracketedType(t) => t.snapshot_edge(),
+            AnyTransport::QualifiedType(t) => t.snapshot_edge(),
+            AnyTransport::Lifetime(t) => t.snapshot_edge(),
+            AnyTransport::ArrayType(t) => t.snapshot_edge(),
+            AnyTransport::ForLifetimes(t) => t.snapshot_edge(),
+            AnyTransport::FunctionType(t) => t.snapshot_edge(),
+            AnyTransport::TupleType(t) => t.snapshot_edge(),
+            AnyTransport::GenericFunction(t) => t.snapshot_edge(),
+            AnyTransport::GenericType(t) => t.snapshot_edge(),
+            AnyTransport::GenericTypeWithTurbofish(t) => t.snapshot_edge(),
+            AnyTransport::BoundedType(t) => t.snapshot_edge(),
+            AnyTransport::UseBounds(t) => t.snapshot_edge(),
+            AnyTransport::TypeArguments(t) => t.snapshot_edge(),
+            AnyTransport::TypeBinding(t) => t.snapshot_edge(),
+            AnyTransport::ReferenceType(t) => t.snapshot_edge(),
+            AnyTransport::AbstractType(t) => t.snapshot_edge(),
+            AnyTransport::DynamicType(t) => t.snapshot_edge(),
+            AnyTransport::MacroInvocation(t) => t.snapshot_edge(),
+            AnyTransport::ScopedIdentifier(t) => t.snapshot_edge(),
+            AnyTransport::ScopedTypeIdentifierInExpressionPosition(t) => t.snapshot_edge(),
+            AnyTransport::ScopedTypeIdentifier(t) => t.snapshot_edge(),
+            AnyTransport::UnaryExpression(t) => t.snapshot_edge(),
+            AnyTransport::TryExpression(t) => t.snapshot_edge(),
+            AnyTransport::BinaryExpression(t) => t.snapshot_edge(),
+            AnyTransport::AssignmentExpression(t) => t.snapshot_edge(),
+            AnyTransport::CompoundAssignmentExpr(t) => t.snapshot_edge(),
+            AnyTransport::TypeCastExpression(t) => t.snapshot_edge(),
+            AnyTransport::ReturnExpression(t) => t.snapshot_edge(),
+            AnyTransport::YieldExpression(t) => t.snapshot_edge(),
+            AnyTransport::CallExpression(t) => t.snapshot_edge(),
+            AnyTransport::Arguments(t) => t.snapshot_edge(),
+            AnyTransport::ParenthesizedExpression(t) => t.snapshot_edge(),
+            AnyTransport::TupleExpression(t) => t.snapshot_edge(),
+            AnyTransport::StructExpression(t) => t.snapshot_edge(),
+            AnyTransport::FieldInitializerList(t) => t.snapshot_edge(),
+            AnyTransport::ShorthandFieldInitializer(t) => t.snapshot_edge(),
+            AnyTransport::FieldInitializer(t) => t.snapshot_edge(),
+            AnyTransport::BaseFieldInitializer(t) => t.snapshot_edge(),
+            AnyTransport::IfExpression(t) => t.snapshot_edge(),
+            AnyTransport::LetCondition(t) => t.snapshot_edge(),
+            AnyTransport::LetChain(t) => t.snapshot_edge(),
+            AnyTransport::ElseClause(t) => t.snapshot_edge(),
+            AnyTransport::MatchExpression(t) => t.snapshot_edge(),
+            AnyTransport::MatchBlock(t) => t.snapshot_edge(),
+            AnyTransport::LastMatchArm(t) => t.snapshot_edge(),
+            AnyTransport::MatchPattern(t) => t.snapshot_edge(),
+            AnyTransport::WhileExpression(t) => t.snapshot_edge(),
+            AnyTransport::LoopExpression(t) => t.snapshot_edge(),
+            AnyTransport::ForExpression(t) => t.snapshot_edge(),
+            AnyTransport::ConstBlock(t) => t.snapshot_edge(),
+            AnyTransport::ClosureParameters(t) => t.snapshot_edge(),
+            AnyTransport::Label(t) => t.snapshot_edge(),
+            AnyTransport::BreakExpression(t) => t.snapshot_edge(),
+            AnyTransport::ContinueExpression(t) => t.snapshot_edge(),
+            AnyTransport::IndexExpression(t) => t.snapshot_edge(),
+            AnyTransport::AwaitExpression(t) => t.snapshot_edge(),
+            AnyTransport::FieldExpression(t) => t.snapshot_edge(),
+            AnyTransport::UnsafeBlock(t) => t.snapshot_edge(),
+            AnyTransport::AsyncBlock(t) => t.snapshot_edge(),
+            AnyTransport::GenBlock(t) => t.snapshot_edge(),
+            AnyTransport::TryBlock(t) => t.snapshot_edge(),
+            AnyTransport::Block(t) => t.snapshot_edge(),
+            AnyTransport::GenericPattern(t) => t.snapshot_edge(),
+            AnyTransport::TuplePattern(t) => t.snapshot_edge(),
+            AnyTransport::SlicePattern(t) => t.snapshot_edge(),
+            AnyTransport::TupleStructPattern(t) => t.snapshot_edge(),
+            AnyTransport::StructPattern(t) => t.snapshot_edge(),
+            AnyTransport::MutPattern(t) => t.snapshot_edge(),
+            AnyTransport::RefPattern(t) => t.snapshot_edge(),
+            AnyTransport::CapturedPattern(t) => t.snapshot_edge(),
+            AnyTransport::ReferencePattern(t) => t.snapshot_edge(),
+            AnyTransport::NegativeLiteral(t) => t.snapshot_edge(),
+            AnyTransport::StringLiteral(t) => t.snapshot_edge(),
+            AnyTransport::RawStringLiteral(t) => t.snapshot_edge(),
+            AnyTransport::BooleanLiteral(t) => t.snapshot_edge(),
+            AnyTransport::LineComment(t) => t.snapshot_edge(),
+            AnyTransport::BlockComment(t) => t.snapshot_edge(),
+            AnyTransport::Identifier(t) => t.snapshot_edge(),
+            AnyTransport::Shebang(t) => t.snapshot_edge(),
+            AnyTransport::Metavariable(t) => t.snapshot_edge(),
+            AnyTransport::PrimitiveType(t) => t.snapshot_edge(),
+            AnyTransport::MacroRules(t) => t.snapshot_edge(),
+            AnyTransport::EnumVariantListElements(t) => t.snapshot_edge(),
+            AnyTransport::FieldDeclarationListElements(t) => t.snapshot_edge(),
+            AnyTransport::OrderedFieldDeclarationListElements(t) => t.snapshot_edge(),
+            AnyTransport::WherePredicates(t) => t.snapshot_edge(),
+            AnyTransport::TypeParametersElements(t) => t.snapshot_edge(),
+            AnyTransport::UseClauses(t) => t.snapshot_edge(),
+            AnyTransport::ParametersElements(t) => t.snapshot_edge(),
+            AnyTransport::Lifetimes(t) => t.snapshot_edge(),
+            AnyTransport::Types(t) => t.snapshot_edge(),
+            AnyTransport::UseBoundsElements(t) => t.snapshot_edge(),
+            AnyTransport::TypeArgumentsElements(t) => t.snapshot_edge(),
+            AnyTransport::ArgumentsElements(t) => t.snapshot_edge(),
+            AnyTransport::Expressions(t) => t.snapshot_edge(),
+            AnyTransport::FieldInitializerListElements(t) => t.snapshot_edge(),
+            AnyTransport::TuplePatternElements(t) => t.snapshot_edge(),
+            AnyTransport::Patterns(t) => t.snapshot_edge(),
+            AnyTransport::StructPatternElements(t) => t.snapshot_edge(),
+            AnyTransport::UseWildcardGroup(t) => t.snapshot_edge(),
+            AnyTransport::TokenRepetitionPatternText(t) => t.snapshot_edge(),
+            AnyTransport::StringOpen(t) => t.snapshot_edge(),
+            AnyTransport::TokenTreePunctuation(t) => t.snapshot_edge(),
+            AnyTransport::TokenKeywords(t) => t.snapshot_edge(),
+            AnyTransport::IntegerLiteralDecimal(t) => t.snapshot_edge(),
+            AnyTransport::IntegerLiteralHex(t) => t.snapshot_edge(),
+            AnyTransport::IntegerLiteralBinary(t) => t.snapshot_edge(),
+            AnyTransport::IntegerLiteralOctal(t) => t.snapshot_edge(),
+            AnyTransport::CharLiteralPlain(t) => t.snapshot_edge(),
+            AnyTransport::CharLiteralEmpty(t) => t.snapshot_edge(),
+            AnyTransport::CharLiteralEscapedSimple(t) => t.snapshot_edge(),
+            AnyTransport::CharLiteralEscapedUnicodeFixed(t) => t.snapshot_edge(),
+            AnyTransport::CharLiteralEscapedUnicodeBraced(t) => t.snapshot_edge(),
+            AnyTransport::CharLiteralEscapedHex(t) => t.snapshot_edge(),
+            AnyTransport::EscapeSequenceSimple(t) => t.snapshot_edge(),
+            AnyTransport::EscapeSequenceUnicodeFixed(t) => t.snapshot_edge(),
+            AnyTransport::EscapeSequenceUnicodeBraced(t) => t.snapshot_edge(),
+            AnyTransport::EscapeSequenceHex(t) => t.snapshot_edge(),
+            AnyTransport::ArrayExpressionSemi(t) => t.snapshot_edge(),
+            AnyTransport::ArrayExpressionList(t) => t.snapshot_edge(),
+            AnyTransport::AttributeInput(t) => t.snapshot_edge(),
+            AnyTransport::ClosureExpressionBlock(t) => t.snapshot_edge(),
+            AnyTransport::ClosureExpressionExpr(t) => t.snapshot_edge(),
+            AnyTransport::ReferenceExpressionRawConst(t) => t.snapshot_edge(),
+            AnyTransport::ReferenceExpressionRawMut(t) => t.snapshot_edge(),
+            AnyTransport::ReferenceExpressionMut(t) => t.snapshot_edge(),
+            AnyTransport::ReferenceExpressionBare(t) => t.snapshot_edge(),
+            AnyTransport::ImplItemPositiveClause(t) => t.snapshot_edge(),
+            AnyTransport::ImplItemNegativeClause(t) => t.snapshot_edge(),
+            AnyTransport::ImplItemBody(t) => t.snapshot_edge(),
+            AnyTransport::ImplItemSemi(t) => t.snapshot_edge(),
+            AnyTransport::VisibilityModifierPubScopeInPath(t) => t.snapshot_edge(),
+            AnyTransport::VisibilityModifierPubScope(t) => t.snapshot_edge(),
+            AnyTransport::VisibilityModifierPub(t) => t.snapshot_edge(),
+            AnyTransport::FunctionTypeTraitForm(t) => t.snapshot_edge(),
+            AnyTransport::FunctionTypeFnForm(t) => t.snapshot_edge(),
+            AnyTransport::ModItemExternal(t) => t.snapshot_edge(),
+            AnyTransport::ModItemInline(t) => t.snapshot_edge(),
+            AnyTransport::OrPatternBinary(t) => t.snapshot_edge(),
+            AnyTransport::OrPatternPrefix(t) => t.snapshot_edge(),
+            AnyTransport::PointerTypeConst(t) => t.snapshot_edge(),
+            AnyTransport::PointerTypeMut(t) => t.snapshot_edge(),
+            AnyTransport::RangeExpressionBinary(t) => t.snapshot_edge(),
+            AnyTransport::RangeExpressionPostfix(t) => t.snapshot_edge(),
+            AnyTransport::RangeExpressionPrefix(t) => t.snapshot_edge(),
+            AnyTransport::RangeExpressionBare(t) => t.snapshot_edge(),
+            AnyTransport::ExpressionStatementWithSemi(t) => t.snapshot_edge(),
+            AnyTransport::ForeignModItemSemi(t) => t.snapshot_edge(),
+            AnyTransport::ForeignModItemBody(t) => t.snapshot_edge(),
+            AnyTransport::MatchArmWithComma(t) => t.snapshot_edge(),
+            AnyTransport::MatchArmBlockEnding(t) => t.snapshot_edge(),
+            AnyTransport::LineCommentExtraSlashes(t) => t.snapshot_edge(),
+            AnyTransport::LineCommentDocOuter(t) => t.snapshot_edge(),
+            AnyTransport::LineCommentDocInner(t) => t.snapshot_edge(),
+            AnyTransport::LineCommentRegular(t) => t.snapshot_edge(),
+            AnyTransport::BlockCommentDocOuter(t) => t.snapshot_edge(),
+            AnyTransport::BlockCommentDocInner(t) => t.snapshot_edge(),
+            AnyTransport::BlockCommentRegular(t) => t.snapshot_edge(),
+            AnyTransport::TokenTreePatternParen(t) => t.snapshot_edge(),
+            AnyTransport::TokenTreePatternBracket(t) => t.snapshot_edge(),
+            AnyTransport::TokenTreePatternBrace(t) => t.snapshot_edge(),
+            AnyTransport::TokenTreeParen(t) => t.snapshot_edge(),
+            AnyTransport::TokenTreeBracket(t) => t.snapshot_edge(),
+            AnyTransport::TokenTreeBrace(t) => t.snapshot_edge(),
+            AnyTransport::DelimTokenTreeParen(t) => t.snapshot_edge(),
+            AnyTransport::DelimTokenTreeBracket(t) => t.snapshot_edge(),
+            AnyTransport::DelimTokenTreeBrace(t) => t.snapshot_edge(),
+            AnyTransport::FieldPatternShorthand(t) => t.snapshot_edge(),
+            AnyTransport::FieldPatternNamed(t) => t.snapshot_edge(),
+            AnyTransport::MacroDefinitionParen(t) => t.snapshot_edge(),
+            AnyTransport::MacroDefinitionBracket(t) => t.snapshot_edge(),
+            AnyTransport::MacroDefinitionBrace(t) => t.snapshot_edge(),
+            AnyTransport::RangePatternPrefix(t) => t.snapshot_edge(),
+            AnyTransport::RangePatternWithLeftWithRight(t) => t.snapshot_edge(),
+            AnyTransport::RangePatternWithLeft(t) => t.snapshot_edge(),
+            AnyTransport::StructItemBrace(t) => t.snapshot_edge(),
+            AnyTransport::StructItemTuple(t) => t.snapshot_edge(),
+            AnyTransport::StructItemUnit(t) => t.snapshot_edge(),
+            AnyTransport::AttributedFieldDeclaration(t) => t.snapshot_edge(),
+            AnyTransport::AttributedEnumVariant(t) => t.snapshot_edge(),
+            AnyTransport::AttributedParameter(t) => t.snapshot_edge(),
+            AnyTransport::AttributedTypeParameter(t) => t.snapshot_edge(),
+            AnyTransport::AttributedArgument(t) => t.snapshot_edge(),
+            AnyTransport::AttributedOrderedField(t) => t.snapshot_edge(),
+            AnyTransport::TypeArgument(t) => t.snapshot_edge(),
+            AnyTransport::MatchBlockArms(t) => t.snapshot_edge(),
+            AnyTransport::FloatLiteral(t) => t.snapshot_edge(),
+            AnyTransport::StringContent(t) => t.snapshot_edge(),
+            AnyTransport::RawStringLiteralContent(t) => t.snapshot_edge(),
+            AnyTransport::RawStringLiteralStart(t) => t.snapshot_edge(),
+            AnyTransport::RawStringLiteralEnd(t) => t.snapshot_edge(),
+            AnyTransport::DocComment(t) => t.snapshot_edge(),
+            AnyTransport::BlockCommentContent(t) => t.snapshot_edge(),
+            AnyTransport::ErrorSentinel(t) => t.snapshot_edge(),
+            AnyTransport::TypeIdentifier(t) => t.snapshot_edge(),
+            AnyTransport::FieldIdentifier(t) => t.snapshot_edge(),
+            AnyTransport::ShorthandFieldIdentifier(t) => t.snapshot_edge(),
+            AnyTransport::EmptyStatement => None,
+            AnyTransport::UnitType => None,
+            AnyTransport::NeverType => None,
+            AnyTransport::MutableSpecifier => None,
+            AnyTransport::UnitExpression => None,
+            AnyTransport::RemainingFieldPattern => None,
+            AnyTransport::InnerLineDocCommentMarker => None,
+            AnyTransport::OuterLineDocCommentMarker => None,
+            AnyTransport::Self_ => None,
+            AnyTransport::Super => None,
+            AnyTransport::Crate => None,
+            AnyTransport::_RangeExpressionBare => None,
+            AnyTransport::ImplItemUnsafeMarker => None,
+            AnyTransport::RangePatternWithLeftBare => None,
+            AnyTransport::WildcardPattern => None,
+            AnyTransport::OuterDocCommentMarker => None,
+            AnyTransport::InnerDocCommentMarker => None,
+            AnyTransport::Tight => None,
+            AnyTransport::Space => None,
+            AnyTransport::Tab => None,
+            AnyTransport::Newline => None,
+            AnyTransport::Blankline => None,
+            AnyTransport::DoubleBlankline => None,
+            AnyTransport::Indent => None,
+            AnyTransport::Dedent => None,
+            AnyTransport::Semi => None,
+            AnyTransport::EqGt => None,
+            AnyTransport::Colon => None,
+            AnyTransport::Dollar => None,
+            AnyTransport::Lparen => None,
+            AnyTransport::Rparen => None,
+            AnyTransport::Plus => None,
+            AnyTransport::Star => None,
+            AnyTransport::Qmark => None,
+            AnyTransport::BlockKeyword => None,
+            AnyTransport::ExprKeyword => None,
+            AnyTransport::Expr2021Keyword => None,
+            AnyTransport::IdentKeyword => None,
+            AnyTransport::ItemKeyword => None,
+            AnyTransport::LifetimeKeyword => None,
+            AnyTransport::LiteralKeyword => None,
+            AnyTransport::MetaKeyword => None,
+            AnyTransport::PatKeyword => None,
+            AnyTransport::PatParamKeyword => None,
+            AnyTransport::PathKeyword => None,
+            AnyTransport::StmtKeyword => None,
+            AnyTransport::TtKeyword => None,
+            AnyTransport::TyKeyword => None,
+            AnyTransport::VisKeyword => None,
+            AnyTransport::Pound => None,
+            AnyTransport::Lbrack => None,
+            AnyTransport::Rbrack => None,
+            AnyTransport::Bang => None,
+            AnyTransport::U8Keyword => None,
+            AnyTransport::I8Keyword => None,
+            AnyTransport::U16Keyword => None,
+            AnyTransport::I16Keyword => None,
+            AnyTransport::U32Keyword => None,
+            AnyTransport::I32Keyword => None,
+            AnyTransport::U64Keyword => None,
+            AnyTransport::I64Keyword => None,
+            AnyTransport::U128Keyword => None,
+            AnyTransport::I128Keyword => None,
+            AnyTransport::IsizeKeyword => None,
+            AnyTransport::UsizeKeyword => None,
+            AnyTransport::F32Keyword => None,
+            AnyTransport::F64Keyword => None,
+            AnyTransport::BoolKeyword => None,
+            AnyTransport::StrKeyword => None,
+            AnyTransport::CharKeyword => None,
+            AnyTransport::DefaultKeyword => None,
+            AnyTransport::UnionKeyword => None,
+            AnyTransport::GenKeyword => None,
+            AnyTransport::Lbrace => None,
+            AnyTransport::Rbrace => None,
+            AnyTransport::EnumKeyword => None,
+            AnyTransport::Eq => None,
+            AnyTransport::ExternKeyword => None,
+            AnyTransport::AsKeyword => None,
+            AnyTransport::ConstKeyword => None,
+            AnyTransport::StaticKeyword => None,
+            AnyTransport::RefKeyword => None,
+            AnyTransport::TypeKeyword => None,
+            AnyTransport::FnKeyword => None,
+            AnyTransport::DashGt => None,
+            AnyTransport::AsyncKeyword => None,
+            AnyTransport::UnsafeKeyword => None,
+            AnyTransport::WhereKeyword => None,
+            AnyTransport::TraitKeyword => None,
+            AnyTransport::ForKeyword => None,
+            AnyTransport::Lt => None,
+            AnyTransport::Gt => None,
+            AnyTransport::LetKeyword => None,
+            AnyTransport::ElseKeyword => None,
+            AnyTransport::UseKeyword => None,
+            AnyTransport::ColonColon => None,
+            AnyTransport::Amp => None,
+            AnyTransport::DotDotDot => None,
+            AnyTransport::Squote => None,
+            AnyTransport::ImplKeyword => None,
+            AnyTransport::DynKeyword => None,
+            AnyTransport::Dash => None,
+            AnyTransport::AmpAmp => None,
+            AnyTransport::PipePipe => None,
+            AnyTransport::Pipe => None,
+            AnyTransport::Caret => None,
+            AnyTransport::EqEq => None,
+            AnyTransport::BangEq => None,
+            AnyTransport::LtEq => None,
+            AnyTransport::GtEq => None,
+            AnyTransport::LtLt => None,
+            AnyTransport::GtGt => None,
+            AnyTransport::Slash => None,
+            AnyTransport::Percent => None,
+            AnyTransport::PlusEq => None,
+            AnyTransport::DashEq => None,
+            AnyTransport::StarEq => None,
+            AnyTransport::SlashEq => None,
+            AnyTransport::PercentEq => None,
+            AnyTransport::AmpEq => None,
+            AnyTransport::PipeEq => None,
+            AnyTransport::CaretEq => None,
+            AnyTransport::LtLtEq => None,
+            AnyTransport::GtGtEq => None,
+            AnyTransport::ReturnKeyword => None,
+            AnyTransport::YieldKeyword => None,
+            AnyTransport::DotDot => None,
+            AnyTransport::IfKeyword => None,
+            AnyTransport::MatchKeyword => None,
+            AnyTransport::Comma => None,
+            AnyTransport::WhileKeyword => None,
+            AnyTransport::LoopKeyword => None,
+            AnyTransport::InKeyword => None,
+            AnyTransport::BreakKeyword => None,
+            AnyTransport::ContinueKeyword => None,
+            AnyTransport::Dot => None,
+            AnyTransport::AwaitKeyword => None,
+            AnyTransport::MoveKeyword => None,
+            AnyTransport::TryKeyword => None,
+            AnyTransport::At => None,
+            AnyTransport::Dquote => None,
+            AnyTransport::TrueKeyword => None,
+            AnyTransport::FalseKeyword => None,
+            AnyTransport::SlashSlash => None,
+            AnyTransport::SlashStar => None,
+            AnyTransport::StarSlash => None,
+            AnyTransport::Underscore => None,
+            AnyTransport::DotDotEq => None,
+            AnyTransport::ModKeyword => None,
+            AnyTransport::PubKeyword => None,
+            AnyTransport::StructKeyword => None,
+            AnyTransport::RawKeyword => None,
+            AnyTransport::MacroRulesBang => None,
+            AnyTransport::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 
@@ -2102,6 +2506,19 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
             TriviaTransport::Text(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            TriviaTransport::LineComment(t) => t.snapshot_edge(),
+            TriviaTransport::BlockComment(t) => t.snapshot_edge(),
+            TriviaTransport::Space => None,
+            TriviaTransport::Tab => None,
+            TriviaTransport::Newline => None,
+            TriviaTransport::Blankline => None,
+            TriviaTransport::DoubleBlankline => None,
+            TriviaTransport::Verbatim(t) => t.snapshot_edge(),
+            TriviaTransport::Text(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::render::Render for TriviaTransport {
@@ -2117,6 +2534,12 @@ impl ::sittir_core::render::Render for TriviaTransport {
             TriviaTransport::Verbatim(t) => t.render(w),
             TriviaTransport::Text(t) => t.render(w),
         }
+    }
+}
+
+impl ::sittir_core::trivia::FromTriviaText for TriviaTransport {
+    fn from_text(text: ::sittir_core::trivia::TriviaText) -> Self {
+        TriviaTransport::Text(text)
     }
 }
 
@@ -2142,7 +2565,7 @@ pub enum StatementTransport {
     #[kind(kind::EXPRESSION_STATEMENT)]
     ExpressionStatement(ExpressionStatementTransport),
     #[kind(kind::CONST_ITEM, kind::MACRO_INVOCATION, kind::MACRO_DEFINITION_PAREN, kind::MACRO_DEFINITION_BRACKET, kind::MACRO_DEFINITION_BRACE, kind::ATTRIBUTE_ITEM, kind::INNER_ATTRIBUTE_ITEM, kind::MOD_ITEM_EXTERNAL, kind::MOD_ITEM_INLINE, kind::FOREIGN_MOD_ITEM_SEMI, kind::FOREIGN_MOD_ITEM_BODY, kind::STRUCT_ITEM_BRACE, kind::STRUCT_ITEM_TUPLE, kind::STRUCT_ITEM_UNIT, kind::UNION_ITEM, kind::ENUM_ITEM, kind::TYPE_ITEM, kind::FUNCTION_ITEM, kind::FUNCTION_SIGNATURE_ITEM, kind::IMPL_ITEM_BODY, kind::IMPL_ITEM_SEMI, kind::TRAIT_ITEM, kind::ASSOCIATED_TYPE, kind::LET_DECLARATION, kind::USE_DECLARATION, kind::EXTERN_CRATE_DECLARATION, kind::STATIC_ITEM, kind::MACRO_DEFINITION, kind::MOD_ITEM, kind::FOREIGN_MOD_ITEM, kind::STRUCT_ITEM, kind::IMPL_ITEM)]
-    DeclarationStatement(Box<DeclarationStatementTransport>),
+    DeclarationStatement(DeclarationStatementTransport),
     ConstItem(Box<ConstItemTransport>),
     MacroInvocation(MacroInvocationTransport),
     MacroDefinition(MacroDefinitionTransport),
@@ -2163,7 +2586,7 @@ pub enum StatementTransport {
     AssociatedType(AssociatedTypeTransport),
     LetDeclaration(Box<LetDeclarationTransport>),
     UseDeclaration(Box<UseDeclarationTransport>),
-    ExternCrateDeclaration(Box<ExternCrateDeclarationTransport>),
+    ExternCrateDeclaration(ExternCrateDeclarationTransport),
     StaticItem(Box<StaticItemTransport>),
 }
 
@@ -2249,6 +2672,33 @@ impl ::sittir_core::prepare::Prepare for StatementTransport {
             StatementTransport::StaticItem(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            StatementTransport::ExpressionStatement(t) => t.snapshot_edge(),
+            StatementTransport::DeclarationStatement(t) => t.snapshot_edge(),
+            StatementTransport::ConstItem(t) => t.snapshot_edge(),
+            StatementTransport::MacroInvocation(t) => t.snapshot_edge(),
+            StatementTransport::MacroDefinition(t) => t.snapshot_edge(),
+            StatementTransport::EmptyStatement => None,
+            StatementTransport::AttributeItem(t) => t.snapshot_edge(),
+            StatementTransport::InnerAttributeItem(t) => t.snapshot_edge(),
+            StatementTransport::ModItem(t) => t.snapshot_edge(),
+            StatementTransport::ForeignModItem(t) => t.snapshot_edge(),
+            StatementTransport::StructItem(t) => t.snapshot_edge(),
+            StatementTransport::UnionItem(t) => t.snapshot_edge(),
+            StatementTransport::EnumItem(t) => t.snapshot_edge(),
+            StatementTransport::TypeItem(t) => t.snapshot_edge(),
+            StatementTransport::FunctionItem(t) => t.snapshot_edge(),
+            StatementTransport::FunctionSignatureItem(t) => t.snapshot_edge(),
+            StatementTransport::ImplItem(t) => t.snapshot_edge(),
+            StatementTransport::TraitItem(t) => t.snapshot_edge(),
+            StatementTransport::AssociatedType(t) => t.snapshot_edge(),
+            StatementTransport::LetDeclaration(t) => t.snapshot_edge(),
+            StatementTransport::UseDeclaration(t) => t.snapshot_edge(),
+            StatementTransport::ExternCrateDeclaration(t) => t.snapshot_edge(),
+            StatementTransport::StaticItem(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for StatementTransport {
@@ -2329,7 +2779,7 @@ pub enum DeclarationStatementTransport {
     #[kind(kind::USE_DECLARATION)]
     UseDeclaration(Box<UseDeclarationTransport>),
     #[kind(kind::EXTERN_CRATE_DECLARATION)]
-    ExternCrateDeclaration(Box<ExternCrateDeclarationTransport>),
+    ExternCrateDeclaration(ExternCrateDeclarationTransport),
     #[kind(kind::STATIC_ITEM)]
     StaticItem(Box<StaticItemTransport>),
 }
@@ -2408,6 +2858,31 @@ impl ::sittir_core::prepare::Prepare for DeclarationStatementTransport {
             DeclarationStatementTransport::UseDeclaration(t) => t.gap_edges(),
             DeclarationStatementTransport::ExternCrateDeclaration(t) => t.gap_edges(),
             DeclarationStatementTransport::StaticItem(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            DeclarationStatementTransport::ConstItem(t) => t.snapshot_edge(),
+            DeclarationStatementTransport::MacroInvocation(t) => t.snapshot_edge(),
+            DeclarationStatementTransport::MacroDefinition(t) => t.snapshot_edge(),
+            DeclarationStatementTransport::EmptyStatement => None,
+            DeclarationStatementTransport::AttributeItem(t) => t.snapshot_edge(),
+            DeclarationStatementTransport::InnerAttributeItem(t) => t.snapshot_edge(),
+            DeclarationStatementTransport::ModItem(t) => t.snapshot_edge(),
+            DeclarationStatementTransport::ForeignModItem(t) => t.snapshot_edge(),
+            DeclarationStatementTransport::StructItem(t) => t.snapshot_edge(),
+            DeclarationStatementTransport::UnionItem(t) => t.snapshot_edge(),
+            DeclarationStatementTransport::EnumItem(t) => t.snapshot_edge(),
+            DeclarationStatementTransport::TypeItem(t) => t.snapshot_edge(),
+            DeclarationStatementTransport::FunctionItem(t) => t.snapshot_edge(),
+            DeclarationStatementTransport::FunctionSignatureItem(t) => t.snapshot_edge(),
+            DeclarationStatementTransport::ImplItem(t) => t.snapshot_edge(),
+            DeclarationStatementTransport::TraitItem(t) => t.snapshot_edge(),
+            DeclarationStatementTransport::AssociatedType(t) => t.snapshot_edge(),
+            DeclarationStatementTransport::LetDeclaration(t) => t.snapshot_edge(),
+            DeclarationStatementTransport::UseDeclaration(t) => t.snapshot_edge(),
+            DeclarationStatementTransport::ExternCrateDeclaration(t) => t.snapshot_edge(),
+            DeclarationStatementTransport::StaticItem(t) => t.snapshot_edge(),
         }
     }
 }
@@ -2505,6 +2980,13 @@ impl ::sittir_core::prepare::Prepare for MacroDefinitionTransport {
             MacroDefinitionTransport::MacroDefinitionBrace(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            MacroDefinitionTransport::MacroDefinitionParen(t) => t.snapshot_edge(),
+            MacroDefinitionTransport::MacroDefinitionBracket(t) => t.snapshot_edge(),
+            MacroDefinitionTransport::MacroDefinitionBrace(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for MacroDefinitionTransport {
@@ -2564,6 +3046,13 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternTransport {
             TokenTreePatternTransport::TokenTreePatternBrace(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            TokenTreePatternTransport::TokenTreePatternParen(t) => t.snapshot_edge(),
+            TokenTreePatternTransport::TokenTreePatternBracket(t) => t.snapshot_edge(),
+            TokenTreePatternTransport::TokenTreePatternBrace(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for TokenTreePatternTransport {
@@ -2615,6 +3104,13 @@ impl ::sittir_core::prepare::Prepare for TokenTreeTransport {
             TokenTreeTransport::TokenTreeBrace(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            TokenTreeTransport::TokenTreeParen(t) => t.snapshot_edge(),
+            TokenTreeTransport::TokenTreeBracket(t) => t.snapshot_edge(),
+            TokenTreeTransport::TokenTreeBrace(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for TokenTreeTransport {
@@ -2639,7 +3135,7 @@ pub enum ModItemTransport {
     #[kind(kind::MOD_ITEM_EXTERNAL)]
     ModItemExternal(ModItemExternalTransport),
     #[kind(kind::MOD_ITEM_INLINE)]
-    ModItemInline(Box<ModItemInlineTransport>),
+    ModItemInline(ModItemInlineTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for ModItemTransport {
@@ -2659,6 +3155,12 @@ impl ::sittir_core::prepare::Prepare for ModItemTransport {
         match self {
             ModItemTransport::ModItemExternal(t) => t.gap_edges(),
             ModItemTransport::ModItemInline(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            ModItemTransport::ModItemExternal(t) => t.snapshot_edge(),
+            ModItemTransport::ModItemInline(t) => t.snapshot_edge(),
         }
     }
 }
@@ -2691,7 +3193,7 @@ pub enum ForeignModItemTransport {
     #[kind(kind::FOREIGN_MOD_ITEM_SEMI)]
     ForeignModItemSemi(ForeignModItemSemiTransport),
     #[kind(kind::FOREIGN_MOD_ITEM_BODY)]
-    ForeignModItemBody(Box<ForeignModItemBodyTransport>),
+    ForeignModItemBody(ForeignModItemBodyTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for ForeignModItemTransport {
@@ -2711,6 +3213,12 @@ impl ::sittir_core::prepare::Prepare for ForeignModItemTransport {
         match self {
             ForeignModItemTransport::ForeignModItemSemi(t) => t.gap_edges(),
             ForeignModItemTransport::ForeignModItemBody(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            ForeignModItemTransport::ForeignModItemSemi(t) => t.snapshot_edge(),
+            ForeignModItemTransport::ForeignModItemBody(t) => t.snapshot_edge(),
         }
     }
 }
@@ -2745,7 +3253,7 @@ pub enum StructItemTransport {
     #[kind(kind::STRUCT_ITEM_TUPLE)]
     StructItemTuple(Box<StructItemTupleTransport>),
     #[kind(kind::STRUCT_ITEM_UNIT)]
-    StructItemUnit(Box<StructItemUnitTransport>),
+    StructItemUnit(StructItemUnitTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for StructItemTransport {
@@ -2768,6 +3276,13 @@ impl ::sittir_core::prepare::Prepare for StructItemTransport {
             StructItemTransport::StructItemBrace(t) => t.gap_edges(),
             StructItemTransport::StructItemTuple(t) => t.gap_edges(),
             StructItemTransport::StructItemUnit(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            StructItemTransport::StructItemBrace(t) => t.snapshot_edge(),
+            StructItemTransport::StructItemTuple(t) => t.snapshot_edge(),
+            StructItemTransport::StructItemUnit(t) => t.snapshot_edge(),
         }
     }
 }
@@ -2822,6 +3337,12 @@ impl ::sittir_core::prepare::Prepare for ImplItemTransport {
         match self {
             ImplItemTransport::ImplItemBody(t) => t.gap_edges(),
             ImplItemTransport::ImplItemSemi(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            ImplItemTransport::ImplItemBody(t) => t.snapshot_edge(),
+            ImplItemTransport::ImplItemSemi(t) => t.snapshot_edge(),
         }
     }
 }
@@ -2951,6 +3472,27 @@ impl ::sittir_core::prepare::Prepare for TypeTransport {
             TypeTransport::PrimitiveType(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            TypeTransport::AbstractType(t) => t.snapshot_edge(),
+            TypeTransport::ReferenceType(t) => t.snapshot_edge(),
+            TypeTransport::Metavariable(t) => t.snapshot_edge(),
+            TypeTransport::PointerType(t) => t.snapshot_edge(),
+            TypeTransport::GenericType(t) => t.snapshot_edge(),
+            TypeTransport::ScopedTypeIdentifier(t) => t.snapshot_edge(),
+            TypeTransport::TupleType(t) => t.snapshot_edge(),
+            TypeTransport::UnitType => None,
+            TypeTransport::ArrayType(t) => t.snapshot_edge(),
+            TypeTransport::FunctionType(t) => t.snapshot_edge(),
+            TypeTransport::TypeIdentifier(t) => t.snapshot_edge(),
+            TypeTransport::MacroInvocation(t) => t.snapshot_edge(),
+            TypeTransport::NeverType => None,
+            TypeTransport::DynamicType(t) => t.snapshot_edge(),
+            TypeTransport::BoundedType(t) => t.snapshot_edge(),
+            TypeTransport::RemovedTraitBound(t) => t.snapshot_edge(),
+            TypeTransport::PrimitiveType(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for TypeTransport {
@@ -3009,6 +3551,12 @@ impl ::sittir_core::prepare::Prepare for PointerTypeTransport {
         match self {
             PointerTypeTransport::PointerTypeConst(t) => t.gap_edges(),
             PointerTypeTransport::PointerTypeMut(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            PointerTypeTransport::PointerTypeConst(t) => t.snapshot_edge(),
+            PointerTypeTransport::PointerTypeMut(t) => t.snapshot_edge(),
         }
     }
 }
@@ -3383,6 +3931,76 @@ impl ::sittir_core::prepare::Prepare for ExpressionTransport {
             ExpressionTransport::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            ExpressionTransport::UnaryExpression(t) => t.snapshot_edge(),
+            ExpressionTransport::ReferenceExpression(t) => t.snapshot_edge(),
+            ExpressionTransport::TryExpression(t) => t.snapshot_edge(),
+            ExpressionTransport::BinaryExpression(t) => t.snapshot_edge(),
+            ExpressionTransport::AssignmentExpression(t) => t.snapshot_edge(),
+            ExpressionTransport::CompoundAssignmentExpr(t) => t.snapshot_edge(),
+            ExpressionTransport::TypeCastExpression(t) => t.snapshot_edge(),
+            ExpressionTransport::CallExpression(t) => t.snapshot_edge(),
+            ExpressionTransport::ReturnExpression(t) => t.snapshot_edge(),
+            ExpressionTransport::YieldExpression(t) => t.snapshot_edge(),
+            ExpressionTransport::StringLiteral(t) => t.snapshot_edge(),
+            ExpressionTransport::RawStringLiteral(t) => t.snapshot_edge(),
+            ExpressionTransport::CharLiteral(t) => t.snapshot_edge(),
+            ExpressionTransport::BooleanLiteral(t) => t.snapshot_edge(),
+            ExpressionTransport::IntegerLiteral(t) => t.snapshot_edge(),
+            ExpressionTransport::FloatLiteral(t) => t.snapshot_edge(),
+            ExpressionTransport::Identifier(t) => t.snapshot_edge(),
+            ExpressionTransport::U8Keyword => None,
+            ExpressionTransport::I8Keyword => None,
+            ExpressionTransport::U16Keyword => None,
+            ExpressionTransport::I16Keyword => None,
+            ExpressionTransport::U32Keyword => None,
+            ExpressionTransport::I32Keyword => None,
+            ExpressionTransport::U64Keyword => None,
+            ExpressionTransport::I64Keyword => None,
+            ExpressionTransport::U128Keyword => None,
+            ExpressionTransport::I128Keyword => None,
+            ExpressionTransport::IsizeKeyword => None,
+            ExpressionTransport::UsizeKeyword => None,
+            ExpressionTransport::F32Keyword => None,
+            ExpressionTransport::F64Keyword => None,
+            ExpressionTransport::BoolKeyword => None,
+            ExpressionTransport::StrKeyword => None,
+            ExpressionTransport::CharKeyword => None,
+            ExpressionTransport::DefaultKeyword => None,
+            ExpressionTransport::UnionKeyword => None,
+            ExpressionTransport::GenKeyword => None,
+            ExpressionTransport::Self_ => None,
+            ExpressionTransport::ScopedIdentifier(t) => t.snapshot_edge(),
+            ExpressionTransport::GenericFunction(t) => t.snapshot_edge(),
+            ExpressionTransport::AwaitExpression(t) => t.snapshot_edge(),
+            ExpressionTransport::FieldExpression(t) => t.snapshot_edge(),
+            ExpressionTransport::ArrayExpression(t) => t.snapshot_edge(),
+            ExpressionTransport::TupleExpression(t) => t.snapshot_edge(),
+            ExpressionTransport::MacroInvocation(t) => t.snapshot_edge(),
+            ExpressionTransport::UnitExpression => None,
+            ExpressionTransport::BreakExpression(t) => t.snapshot_edge(),
+            ExpressionTransport::ContinueExpression(t) => t.snapshot_edge(),
+            ExpressionTransport::IndexExpression(t) => t.snapshot_edge(),
+            ExpressionTransport::Metavariable(t) => t.snapshot_edge(),
+            ExpressionTransport::ClosureExpression(t) => t.snapshot_edge(),
+            ExpressionTransport::ParenthesizedExpression(t) => t.snapshot_edge(),
+            ExpressionTransport::StructExpression(t) => t.snapshot_edge(),
+            ExpressionTransport::UnsafeBlock(t) => t.snapshot_edge(),
+            ExpressionTransport::AsyncBlock(t) => t.snapshot_edge(),
+            ExpressionTransport::GenBlock(t) => t.snapshot_edge(),
+            ExpressionTransport::TryBlock(t) => t.snapshot_edge(),
+            ExpressionTransport::Block(t) => t.snapshot_edge(),
+            ExpressionTransport::IfExpression(t) => t.snapshot_edge(),
+            ExpressionTransport::MatchExpression(t) => t.snapshot_edge(),
+            ExpressionTransport::WhileExpression(t) => t.snapshot_edge(),
+            ExpressionTransport::LoopExpression(t) => t.snapshot_edge(),
+            ExpressionTransport::ForExpression(t) => t.snapshot_edge(),
+            ExpressionTransport::ConstBlock(t) => t.snapshot_edge(),
+            ExpressionTransport::RangeExpression(t) => t.snapshot_edge(),
+            ExpressionTransport::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for ExpressionTransport {
@@ -3497,6 +4115,13 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeTransport {
             DelimTokenTreeTransport::DelimTokenTreeBrace(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            DelimTokenTreeTransport::DelimTokenTreeParen(t) => t.snapshot_edge(),
+            DelimTokenTreeTransport::DelimTokenTreeBracket(t) => t.snapshot_edge(),
+            DelimTokenTreeTransport::DelimTokenTreeBrace(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for DelimTokenTreeTransport {
@@ -3551,6 +4176,14 @@ impl ::sittir_core::prepare::Prepare for RangeExpressionTransport {
             RangeExpressionTransport::RangeExpressionPostfix(t) => t.gap_edges(),
             RangeExpressionTransport::RangeExpressionPrefix(t) => t.gap_edges(),
             RangeExpressionTransport::RangeExpressionBare(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            RangeExpressionTransport::RangeExpressionBinary(t) => t.snapshot_edge(),
+            RangeExpressionTransport::RangeExpressionPostfix(t) => t.snapshot_edge(),
+            RangeExpressionTransport::RangeExpressionPrefix(t) => t.snapshot_edge(),
+            RangeExpressionTransport::RangeExpressionBare(t) => t.snapshot_edge(),
         }
     }
 }
@@ -3619,6 +4252,14 @@ impl ::sittir_core::prepare::Prepare for ReferenceExpressionTransport {
             ReferenceExpressionTransport::ReferenceExpressionBare(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            ReferenceExpressionTransport::ReferenceExpressionRawConst(t) => t.snapshot_edge(),
+            ReferenceExpressionTransport::ReferenceExpressionRawMut(t) => t.snapshot_edge(),
+            ReferenceExpressionTransport::ReferenceExpressionMut(t) => t.snapshot_edge(),
+            ReferenceExpressionTransport::ReferenceExpressionBare(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for ReferenceExpressionTransport {
@@ -3675,6 +4316,12 @@ impl ::sittir_core::prepare::Prepare for ArrayExpressionTransport {
             ArrayExpressionTransport::ArrayExpressionList(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            ArrayExpressionTransport::ArrayExpressionSemi(t) => t.snapshot_edge(),
+            ArrayExpressionTransport::ArrayExpressionList(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for ArrayExpressionTransport {
@@ -3727,6 +4374,12 @@ impl ::sittir_core::prepare::Prepare for MatchArmTransport {
             MatchArmTransport::MatchArmBlockEnding(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            MatchArmTransport::MatchArmWithComma(t) => t.snapshot_edge(),
+            MatchArmTransport::MatchArmBlockEnding(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for MatchArmTransport {
@@ -3770,6 +4423,12 @@ impl ::sittir_core::prepare::Prepare for ClosureExpressionTransport {
         match self {
             ClosureExpressionTransport::ClosureExpressionBlock(t) => t.gap_edges(),
             ClosureExpressionTransport::ClosureExpressionExpr(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            ClosureExpressionTransport::ClosureExpressionBlock(t) => t.snapshot_edge(),
+            ClosureExpressionTransport::ClosureExpressionExpr(t) => t.snapshot_edge(),
         }
     }
 }
@@ -4009,6 +4668,49 @@ impl ::sittir_core::prepare::Prepare for PatternTransport {
             PatternTransport::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            PatternTransport::LiteralPattern(t) => t.snapshot_edge(),
+            PatternTransport::U8Keyword => None,
+            PatternTransport::I8Keyword => None,
+            PatternTransport::U16Keyword => None,
+            PatternTransport::I16Keyword => None,
+            PatternTransport::U32Keyword => None,
+            PatternTransport::I32Keyword => None,
+            PatternTransport::U64Keyword => None,
+            PatternTransport::I64Keyword => None,
+            PatternTransport::U128Keyword => None,
+            PatternTransport::I128Keyword => None,
+            PatternTransport::IsizeKeyword => None,
+            PatternTransport::UsizeKeyword => None,
+            PatternTransport::F32Keyword => None,
+            PatternTransport::F64Keyword => None,
+            PatternTransport::BoolKeyword => None,
+            PatternTransport::StrKeyword => None,
+            PatternTransport::CharKeyword => None,
+            PatternTransport::Identifier(t) => t.snapshot_edge(),
+            PatternTransport::ScopedIdentifier(t) => t.snapshot_edge(),
+            PatternTransport::GenericPattern(t) => t.snapshot_edge(),
+            PatternTransport::TuplePattern(t) => t.snapshot_edge(),
+            PatternTransport::TupleStructPattern(t) => t.snapshot_edge(),
+            PatternTransport::StructPattern(t) => t.snapshot_edge(),
+            PatternTransport::DefaultKeyword => None,
+            PatternTransport::UnionKeyword => None,
+            PatternTransport::GenKeyword => None,
+            PatternTransport::RefPattern(t) => t.snapshot_edge(),
+            PatternTransport::SlicePattern(t) => t.snapshot_edge(),
+            PatternTransport::CapturedPattern(t) => t.snapshot_edge(),
+            PatternTransport::ReferencePattern(t) => t.snapshot_edge(),
+            PatternTransport::RemainingFieldPattern => None,
+            PatternTransport::MutPattern(t) => t.snapshot_edge(),
+            PatternTransport::RangePattern(t) => t.snapshot_edge(),
+            PatternTransport::OrPattern(t) => t.snapshot_edge(),
+            PatternTransport::ConstBlock(t) => t.snapshot_edge(),
+            PatternTransport::MacroInvocation(t) => t.snapshot_edge(),
+            PatternTransport::WildcardPattern => None,
+            PatternTransport::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for PatternTransport {
@@ -4091,6 +4793,12 @@ impl ::sittir_core::prepare::Prepare for RangePatternTransport {
             RangePatternTransport::RangePatternPrefix(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            RangePatternTransport::RangePatternWithLeft(t) => t.snapshot_edge(),
+            RangePatternTransport::RangePatternPrefix(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for RangePatternTransport {
@@ -4141,6 +4849,12 @@ impl ::sittir_core::prepare::Prepare for OrPatternTransport {
         match self {
             OrPatternTransport::OrPatternBinary(t) => t.gap_edges(),
             OrPatternTransport::OrPatternPrefix(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            OrPatternTransport::OrPatternBinary(t) => t.snapshot_edge(),
+            OrPatternTransport::OrPatternPrefix(t) => t.snapshot_edge(),
         }
     }
 }
@@ -4225,6 +4939,18 @@ impl ::sittir_core::prepare::Prepare for LiteralPatternTransport {
             LiteralPatternTransport::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            LiteralPatternTransport::StringLiteral(t) => t.snapshot_edge(),
+            LiteralPatternTransport::RawStringLiteral(t) => t.snapshot_edge(),
+            LiteralPatternTransport::CharLiteral(t) => t.snapshot_edge(),
+            LiteralPatternTransport::BooleanLiteral(t) => t.snapshot_edge(),
+            LiteralPatternTransport::IntegerLiteral(t) => t.snapshot_edge(),
+            LiteralPatternTransport::FloatLiteral(t) => t.snapshot_edge(),
+            LiteralPatternTransport::NegativeLiteral(t) => t.snapshot_edge(),
+            LiteralPatternTransport::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for LiteralPatternTransport {
@@ -4299,6 +5025,14 @@ impl ::sittir_core::prepare::Prepare for IntegerLiteralTransport {
             IntegerLiteralTransport::IntegerLiteralOctal(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            IntegerLiteralTransport::IntegerLiteralDecimal(t) => t.snapshot_edge(),
+            IntegerLiteralTransport::IntegerLiteralHex(t) => t.snapshot_edge(),
+            IntegerLiteralTransport::IntegerLiteralBinary(t) => t.snapshot_edge(),
+            IntegerLiteralTransport::IntegerLiteralOctal(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for IntegerLiteralTransport {
@@ -4365,6 +5099,14 @@ impl ::sittir_core::prepare::Prepare for CharLiteralTransport {
             CharLiteralTransport::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            CharLiteralTransport::CharLiteralEscaped(t) => t.snapshot_edge(),
+            CharLiteralTransport::CharLiteralPlain(t) => t.snapshot_edge(),
+            CharLiteralTransport::CharLiteralEmpty(t) => t.snapshot_edge(),
+            CharLiteralTransport::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for CharLiteralTransport {
@@ -4429,6 +5171,14 @@ impl ::sittir_core::prepare::Prepare for CharLiteralEscapedTransport {
             CharLiteralEscapedTransport::CharLiteralEscapedUnicodeFixed(t) => t.gap_edges(),
             CharLiteralEscapedTransport::CharLiteralEscapedUnicodeBraced(t) => t.gap_edges(),
             CharLiteralEscapedTransport::CharLiteralEscapedHex(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            CharLiteralEscapedTransport::CharLiteralEscapedSimple(t) => t.snapshot_edge(),
+            CharLiteralEscapedTransport::CharLiteralEscapedUnicodeFixed(t) => t.snapshot_edge(),
+            CharLiteralEscapedTransport::CharLiteralEscapedUnicodeBraced(t) => t.snapshot_edge(),
+            CharLiteralEscapedTransport::CharLiteralEscapedHex(t) => t.snapshot_edge(),
         }
     }
 }
@@ -4538,6 +5288,22 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementContentTransportSlot
             ExpressionStatementContentTransportSlot::ConstBlock(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            ExpressionStatementContentTransportSlot::ExpressionStatementWithSemi(t) => t.snapshot_edge(),
+            ExpressionStatementContentTransportSlot::UnsafeBlock(t) => t.snapshot_edge(),
+            ExpressionStatementContentTransportSlot::AsyncBlock(t) => t.snapshot_edge(),
+            ExpressionStatementContentTransportSlot::GenBlock(t) => t.snapshot_edge(),
+            ExpressionStatementContentTransportSlot::TryBlock(t) => t.snapshot_edge(),
+            ExpressionStatementContentTransportSlot::Block(t) => t.snapshot_edge(),
+            ExpressionStatementContentTransportSlot::IfExpression(t) => t.snapshot_edge(),
+            ExpressionStatementContentTransportSlot::MatchExpression(t) => t.snapshot_edge(),
+            ExpressionStatementContentTransportSlot::WhileExpression(t) => t.snapshot_edge(),
+            ExpressionStatementContentTransportSlot::LoopExpression(t) => t.snapshot_edge(),
+            ExpressionStatementContentTransportSlot::ForExpression(t) => t.snapshot_edge(),
+            ExpressionStatementContentTransportSlot::ConstBlock(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for ExpressionStatementContentTransportSlot {
@@ -4629,6 +5395,17 @@ impl ::sittir_core::prepare::Prepare for TokenRepetitionPatternTokenPatternsTran
             TokenRepetitionPatternTokenPatternsTransportSlot::TokenBindingPattern(t) => t.gap_edges(),
             TokenRepetitionPatternTokenPatternsTransportSlot::Metavariable(t) => t.gap_edges(),
             TokenRepetitionPatternTokenPatternsTransportSlot::NonSpecialToken(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            TokenRepetitionPatternTokenPatternsTransportSlot::TokenTreePatternParen(t) => t.snapshot_edge(),
+            TokenRepetitionPatternTokenPatternsTransportSlot::TokenTreePatternBracket(t) => t.snapshot_edge(),
+            TokenRepetitionPatternTokenPatternsTransportSlot::TokenTreePatternBrace(t) => t.snapshot_edge(),
+            TokenRepetitionPatternTokenPatternsTransportSlot::TokenRepetitionPattern(t) => t.snapshot_edge(),
+            TokenRepetitionPatternTokenPatternsTransportSlot::TokenBindingPattern(t) => t.snapshot_edge(),
+            TokenRepetitionPatternTokenPatternsTransportSlot::Metavariable(t) => t.snapshot_edge(),
+            TokenRepetitionPatternTokenPatternsTransportSlot::NonSpecialToken(t) => t.snapshot_edge(),
         }
     }
 }
@@ -4763,6 +5540,16 @@ impl ::sittir_core::prepare::Prepare for TokenRepetitionTokensTransportSlot {
             TokenRepetitionTokensTransportSlot::TokenRepetition(t) => t.gap_edges(),
             TokenRepetitionTokensTransportSlot::Metavariable(t) => t.gap_edges(),
             TokenRepetitionTokensTransportSlot::NonSpecialToken(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            TokenRepetitionTokensTransportSlot::TokenTreeParen(t) => t.snapshot_edge(),
+            TokenRepetitionTokensTransportSlot::TokenTreeBracket(t) => t.snapshot_edge(),
+            TokenRepetitionTokensTransportSlot::TokenTreeBrace(t) => t.snapshot_edge(),
+            TokenRepetitionTokensTransportSlot::TokenRepetition(t) => t.snapshot_edge(),
+            TokenRepetitionTokensTransportSlot::Metavariable(t) => t.snapshot_edge(),
+            TokenRepetitionTokensTransportSlot::NonSpecialToken(t) => t.snapshot_edge(),
         }
     }
 }
@@ -4982,6 +5769,33 @@ impl ::sittir_core::prepare::Prepare for NonSpecialTokenContentTransportSlot {
             NonSpecialTokenContentTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            NonSpecialTokenContentTransportSlot::StringLiteral(t) => t.snapshot_edge(),
+            NonSpecialTokenContentTransportSlot::RawStringLiteral(t) => t.snapshot_edge(),
+            NonSpecialTokenContentTransportSlot::CharLiteralEscapedSimple(t) => t.snapshot_edge(),
+            NonSpecialTokenContentTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.snapshot_edge(),
+            NonSpecialTokenContentTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.snapshot_edge(),
+            NonSpecialTokenContentTransportSlot::CharLiteralEscapedHex(t) => t.snapshot_edge(),
+            NonSpecialTokenContentTransportSlot::CharLiteralPlain(t) => t.snapshot_edge(),
+            NonSpecialTokenContentTransportSlot::CharLiteralEmpty(t) => t.snapshot_edge(),
+            NonSpecialTokenContentTransportSlot::BooleanLiteral(t) => t.snapshot_edge(),
+            NonSpecialTokenContentTransportSlot::IntegerLiteralDecimal(t) => t.snapshot_edge(),
+            NonSpecialTokenContentTransportSlot::IntegerLiteralHex(t) => t.snapshot_edge(),
+            NonSpecialTokenContentTransportSlot::IntegerLiteralBinary(t) => t.snapshot_edge(),
+            NonSpecialTokenContentTransportSlot::IntegerLiteralOctal(t) => t.snapshot_edge(),
+            NonSpecialTokenContentTransportSlot::FloatLiteral(t) => t.snapshot_edge(),
+            NonSpecialTokenContentTransportSlot::Identifier(t) => t.snapshot_edge(),
+            NonSpecialTokenContentTransportSlot::PrimitiveType(t) => t.snapshot_edge(),
+            NonSpecialTokenContentTransportSlot::TokenTreePunctuation(t) => t.snapshot_edge(),
+            NonSpecialTokenContentTransportSlot::TokenKeywords(t) => t.snapshot_edge(),
+            NonSpecialTokenContentTransportSlot::MutableSpecifier => None,
+            NonSpecialTokenContentTransportSlot::Self_ => None,
+            NonSpecialTokenContentTransportSlot::Super => None,
+            NonSpecialTokenContentTransportSlot::Crate => None,
+            NonSpecialTokenContentTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for NonSpecialTokenContentTransportSlot {
@@ -5197,6 +6011,37 @@ impl ::sittir_core::prepare::Prepare for AttributePathTransportSlot {
             AttributePathTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            AttributePathTransportSlot::Metavariable(t) => t.snapshot_edge(),
+            AttributePathTransportSlot::Identifier(t) => t.snapshot_edge(),
+            AttributePathTransportSlot::ScopedIdentifier(t) => t.snapshot_edge(),
+            AttributePathTransportSlot::Self_ => None,
+            AttributePathTransportSlot::U8Keyword => None,
+            AttributePathTransportSlot::I8Keyword => None,
+            AttributePathTransportSlot::U16Keyword => None,
+            AttributePathTransportSlot::I16Keyword => None,
+            AttributePathTransportSlot::U32Keyword => None,
+            AttributePathTransportSlot::I32Keyword => None,
+            AttributePathTransportSlot::U64Keyword => None,
+            AttributePathTransportSlot::I64Keyword => None,
+            AttributePathTransportSlot::U128Keyword => None,
+            AttributePathTransportSlot::I128Keyword => None,
+            AttributePathTransportSlot::IsizeKeyword => None,
+            AttributePathTransportSlot::UsizeKeyword => None,
+            AttributePathTransportSlot::F32Keyword => None,
+            AttributePathTransportSlot::F64Keyword => None,
+            AttributePathTransportSlot::BoolKeyword => None,
+            AttributePathTransportSlot::StrKeyword => None,
+            AttributePathTransportSlot::CharKeyword => None,
+            AttributePathTransportSlot::Super => None,
+            AttributePathTransportSlot::Crate => None,
+            AttributePathTransportSlot::DefaultKeyword => None,
+            AttributePathTransportSlot::UnionKeyword => None,
+            AttributePathTransportSlot::GenKeyword => None,
+            AttributePathTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for AttributePathTransportSlot {
@@ -5295,6 +6140,12 @@ impl ::sittir_core::prepare::Prepare for EnumVariantBodyTransportSlot {
             EnumVariantBodyTransportSlot::OrderedFieldDeclarationList(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            EnumVariantBodyTransportSlot::FieldDeclarationList(t) => t.snapshot_edge(),
+            EnumVariantBodyTransportSlot::OrderedFieldDeclarationList(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for EnumVariantBodyTransportSlot {
@@ -5346,6 +6197,13 @@ impl ::sittir_core::prepare::Prepare for FunctionItemNameTransportSlot {
             FunctionItemNameTransportSlot::Identifier(t) => t.gap_edges(),
             FunctionItemNameTransportSlot::Metavariable(t) => t.gap_edges(),
             FunctionItemNameTransportSlot::Verbatim(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            FunctionItemNameTransportSlot::Identifier(t) => t.snapshot_edge(),
+            FunctionItemNameTransportSlot::Metavariable(t) => t.snapshot_edge(),
+            FunctionItemNameTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
 }
@@ -5407,6 +6265,15 @@ impl ::sittir_core::prepare::Prepare for FunctionModifiersModifierTransportSlot 
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             FunctionModifiersModifierTransportSlot::ExternModifier(t) => t.gap_edges(),
+            FunctionModifiersModifierTransportSlot::AsyncKeyword => None,
+            FunctionModifiersModifierTransportSlot::DefaultKeyword => None,
+            FunctionModifiersModifierTransportSlot::ConstKeyword => None,
+            FunctionModifiersModifierTransportSlot::UnsafeKeyword => None,
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            FunctionModifiersModifierTransportSlot::ExternModifier(t) => t.snapshot_edge(),
             FunctionModifiersModifierTransportSlot::AsyncKeyword => None,
             FunctionModifiersModifierTransportSlot::DefaultKeyword => None,
             FunctionModifiersModifierTransportSlot::ConstKeyword => None,
@@ -5510,6 +6377,21 @@ impl ::sittir_core::prepare::Prepare for WherePredicateLeftTransportSlot {
             WherePredicateLeftTransportSlot::ArrayType(t) => t.gap_edges(),
             WherePredicateLeftTransportSlot::HigherRankedTraitBound(t) => t.gap_edges(),
             WherePredicateLeftTransportSlot::PrimitiveType(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            WherePredicateLeftTransportSlot::Lifetime(t) => t.snapshot_edge(),
+            WherePredicateLeftTransportSlot::TypeIdentifier(t) => t.snapshot_edge(),
+            WherePredicateLeftTransportSlot::ScopedTypeIdentifier(t) => t.snapshot_edge(),
+            WherePredicateLeftTransportSlot::GenericType(t) => t.snapshot_edge(),
+            WherePredicateLeftTransportSlot::ReferenceType(t) => t.snapshot_edge(),
+            WherePredicateLeftTransportSlot::PointerTypeConst(t) => t.snapshot_edge(),
+            WherePredicateLeftTransportSlot::PointerTypeMut(t) => t.snapshot_edge(),
+            WherePredicateLeftTransportSlot::TupleType(t) => t.snapshot_edge(),
+            WherePredicateLeftTransportSlot::ArrayType(t) => t.snapshot_edge(),
+            WherePredicateLeftTransportSlot::HigherRankedTraitBound(t) => t.snapshot_edge(),
+            WherePredicateLeftTransportSlot::PrimitiveType(t) => t.snapshot_edge(),
         }
     }
 }
@@ -5664,6 +6546,30 @@ impl ::sittir_core::prepare::Prepare for TraitBoundsBoundsTransportSlot {
             TraitBoundsBoundsTransportSlot::PrimitiveType(t) => t.gap_edges(),
             TraitBoundsBoundsTransportSlot::Lifetime(t) => t.gap_edges(),
             TraitBoundsBoundsTransportSlot::HigherRankedTraitBound(t) => t.gap_edges(),
+            TraitBoundsBoundsTransportSlot::UnitType => None,
+            TraitBoundsBoundsTransportSlot::NeverType => None,
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            TraitBoundsBoundsTransportSlot::AbstractType(t) => t.snapshot_edge(),
+            TraitBoundsBoundsTransportSlot::ReferenceType(t) => t.snapshot_edge(),
+            TraitBoundsBoundsTransportSlot::Metavariable(t) => t.snapshot_edge(),
+            TraitBoundsBoundsTransportSlot::PointerTypeConst(t) => t.snapshot_edge(),
+            TraitBoundsBoundsTransportSlot::PointerTypeMut(t) => t.snapshot_edge(),
+            TraitBoundsBoundsTransportSlot::GenericType(t) => t.snapshot_edge(),
+            TraitBoundsBoundsTransportSlot::ScopedTypeIdentifier(t) => t.snapshot_edge(),
+            TraitBoundsBoundsTransportSlot::TupleType(t) => t.snapshot_edge(),
+            TraitBoundsBoundsTransportSlot::ArrayType(t) => t.snapshot_edge(),
+            TraitBoundsBoundsTransportSlot::FunctionType(t) => t.snapshot_edge(),
+            TraitBoundsBoundsTransportSlot::TypeIdentifier(t) => t.snapshot_edge(),
+            TraitBoundsBoundsTransportSlot::MacroInvocation(t) => t.snapshot_edge(),
+            TraitBoundsBoundsTransportSlot::DynamicType(t) => t.snapshot_edge(),
+            TraitBoundsBoundsTransportSlot::BoundedType(t) => t.snapshot_edge(),
+            TraitBoundsBoundsTransportSlot::RemovedTraitBound(t) => t.snapshot_edge(),
+            TraitBoundsBoundsTransportSlot::PrimitiveType(t) => t.snapshot_edge(),
+            TraitBoundsBoundsTransportSlot::Lifetime(t) => t.snapshot_edge(),
+            TraitBoundsBoundsTransportSlot::HigherRankedTraitBound(t) => t.snapshot_edge(),
             TraitBoundsBoundsTransportSlot::UnitType => None,
             TraitBoundsBoundsTransportSlot::NeverType => None,
         }
@@ -5830,6 +6736,28 @@ impl ::sittir_core::prepare::Prepare for ConstParameterValueTransportSlot {
             ConstParameterValueTransportSlot::FloatLiteral(t) => t.gap_edges(),
             ConstParameterValueTransportSlot::NegativeLiteral(t) => t.gap_edges(),
             ConstParameterValueTransportSlot::Verbatim(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            ConstParameterValueTransportSlot::Block(t) => t.snapshot_edge(),
+            ConstParameterValueTransportSlot::Identifier(t) => t.snapshot_edge(),
+            ConstParameterValueTransportSlot::StringLiteral(t) => t.snapshot_edge(),
+            ConstParameterValueTransportSlot::RawStringLiteral(t) => t.snapshot_edge(),
+            ConstParameterValueTransportSlot::CharLiteralEscapedSimple(t) => t.snapshot_edge(),
+            ConstParameterValueTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.snapshot_edge(),
+            ConstParameterValueTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.snapshot_edge(),
+            ConstParameterValueTransportSlot::CharLiteralEscapedHex(t) => t.snapshot_edge(),
+            ConstParameterValueTransportSlot::CharLiteralPlain(t) => t.snapshot_edge(),
+            ConstParameterValueTransportSlot::CharLiteralEmpty(t) => t.snapshot_edge(),
+            ConstParameterValueTransportSlot::BooleanLiteral(t) => t.snapshot_edge(),
+            ConstParameterValueTransportSlot::IntegerLiteralDecimal(t) => t.snapshot_edge(),
+            ConstParameterValueTransportSlot::IntegerLiteralHex(t) => t.snapshot_edge(),
+            ConstParameterValueTransportSlot::IntegerLiteralBinary(t) => t.snapshot_edge(),
+            ConstParameterValueTransportSlot::IntegerLiteralOctal(t) => t.snapshot_edge(),
+            ConstParameterValueTransportSlot::FloatLiteral(t) => t.snapshot_edge(),
+            ConstParameterValueTransportSlot::NegativeLiteral(t) => t.snapshot_edge(),
+            ConstParameterValueTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
 }
@@ -6055,6 +6983,41 @@ impl ::sittir_core::prepare::Prepare for UseDeclarationArgumentTransportSlot {
             UseDeclarationArgumentTransportSlot::UnionKeyword => None,
             UseDeclarationArgumentTransportSlot::GenKeyword => None,
             UseDeclarationArgumentTransportSlot::Verbatim(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            UseDeclarationArgumentTransportSlot::Metavariable(t) => t.snapshot_edge(),
+            UseDeclarationArgumentTransportSlot::Identifier(t) => t.snapshot_edge(),
+            UseDeclarationArgumentTransportSlot::ScopedIdentifier(t) => t.snapshot_edge(),
+            UseDeclarationArgumentTransportSlot::UseAsClause(t) => t.snapshot_edge(),
+            UseDeclarationArgumentTransportSlot::UseList(t) => t.snapshot_edge(),
+            UseDeclarationArgumentTransportSlot::ScopedUseList(t) => t.snapshot_edge(),
+            UseDeclarationArgumentTransportSlot::UseWildcard(t) => t.snapshot_edge(),
+            UseDeclarationArgumentTransportSlot::Self_ => None,
+            UseDeclarationArgumentTransportSlot::U8Keyword => None,
+            UseDeclarationArgumentTransportSlot::I8Keyword => None,
+            UseDeclarationArgumentTransportSlot::U16Keyword => None,
+            UseDeclarationArgumentTransportSlot::I16Keyword => None,
+            UseDeclarationArgumentTransportSlot::U32Keyword => None,
+            UseDeclarationArgumentTransportSlot::I32Keyword => None,
+            UseDeclarationArgumentTransportSlot::U64Keyword => None,
+            UseDeclarationArgumentTransportSlot::I64Keyword => None,
+            UseDeclarationArgumentTransportSlot::U128Keyword => None,
+            UseDeclarationArgumentTransportSlot::I128Keyword => None,
+            UseDeclarationArgumentTransportSlot::IsizeKeyword => None,
+            UseDeclarationArgumentTransportSlot::UsizeKeyword => None,
+            UseDeclarationArgumentTransportSlot::F32Keyword => None,
+            UseDeclarationArgumentTransportSlot::F64Keyword => None,
+            UseDeclarationArgumentTransportSlot::BoolKeyword => None,
+            UseDeclarationArgumentTransportSlot::StrKeyword => None,
+            UseDeclarationArgumentTransportSlot::CharKeyword => None,
+            UseDeclarationArgumentTransportSlot::Super => None,
+            UseDeclarationArgumentTransportSlot::Crate => None,
+            UseDeclarationArgumentTransportSlot::DefaultKeyword => None,
+            UseDeclarationArgumentTransportSlot::UnionKeyword => None,
+            UseDeclarationArgumentTransportSlot::GenKeyword => None,
+            UseDeclarationArgumentTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
 }
@@ -6433,6 +7396,66 @@ impl ::sittir_core::prepare::Prepare for ParameterNameTransportSlot {
             ParameterNameTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            ParameterNameTransportSlot::StringLiteral(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::RawStringLiteral(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::CharLiteralEscapedSimple(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::CharLiteralEscapedHex(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::CharLiteralPlain(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::CharLiteralEmpty(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::BooleanLiteral(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::IntegerLiteralDecimal(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::IntegerLiteralHex(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::IntegerLiteralBinary(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::IntegerLiteralOctal(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::FloatLiteral(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::NegativeLiteral(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::Identifier(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::ScopedIdentifier(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::GenericPattern(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::TuplePattern(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::TupleStructPattern(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::StructPattern(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::RefPattern(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::SlicePattern(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::CapturedPattern(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::ReferencePattern(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::MutPattern(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::RangePatternWithLeft(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::RangePatternPrefix(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::OrPatternBinary(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::OrPatternPrefix(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::ConstBlock(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::MacroInvocation(t) => t.snapshot_edge(),
+            ParameterNameTransportSlot::U8Keyword => None,
+            ParameterNameTransportSlot::I8Keyword => None,
+            ParameterNameTransportSlot::U16Keyword => None,
+            ParameterNameTransportSlot::I16Keyword => None,
+            ParameterNameTransportSlot::U32Keyword => None,
+            ParameterNameTransportSlot::I32Keyword => None,
+            ParameterNameTransportSlot::U64Keyword => None,
+            ParameterNameTransportSlot::I64Keyword => None,
+            ParameterNameTransportSlot::U128Keyword => None,
+            ParameterNameTransportSlot::I128Keyword => None,
+            ParameterNameTransportSlot::IsizeKeyword => None,
+            ParameterNameTransportSlot::UsizeKeyword => None,
+            ParameterNameTransportSlot::F32Keyword => None,
+            ParameterNameTransportSlot::F64Keyword => None,
+            ParameterNameTransportSlot::BoolKeyword => None,
+            ParameterNameTransportSlot::StrKeyword => None,
+            ParameterNameTransportSlot::CharKeyword => None,
+            ParameterNameTransportSlot::DefaultKeyword => None,
+            ParameterNameTransportSlot::UnionKeyword => None,
+            ParameterNameTransportSlot::GenKeyword => None,
+            ParameterNameTransportSlot::RemainingFieldPattern => None,
+            ParameterNameTransportSlot::WildcardPattern => None,
+            ParameterNameTransportSlot::Self_ => None,
+            ParameterNameTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for ParameterNameTransportSlot {
@@ -6589,6 +7612,12 @@ impl ::sittir_core::prepare::Prepare for VisibilityModifierContentTransportSlot 
             VisibilityModifierContentTransportSlot::Crate => None,
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            VisibilityModifierContentTransportSlot::VisibilityModifierPub(t) => t.snapshot_edge(),
+            VisibilityModifierContentTransportSlot::Crate => None,
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for VisibilityModifierContentTransportSlot {
@@ -6722,6 +7751,29 @@ impl ::sittir_core::prepare::Prepare for BracketedTypeTypeTransportSlot {
             BracketedTypeTypeTransportSlot::NeverType => None,
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            BracketedTypeTypeTransportSlot::AbstractType(t) => t.snapshot_edge(),
+            BracketedTypeTypeTransportSlot::ReferenceType(t) => t.snapshot_edge(),
+            BracketedTypeTypeTransportSlot::Metavariable(t) => t.snapshot_edge(),
+            BracketedTypeTypeTransportSlot::PointerTypeConst(t) => t.snapshot_edge(),
+            BracketedTypeTypeTransportSlot::PointerTypeMut(t) => t.snapshot_edge(),
+            BracketedTypeTypeTransportSlot::GenericType(t) => t.snapshot_edge(),
+            BracketedTypeTypeTransportSlot::ScopedTypeIdentifier(t) => t.snapshot_edge(),
+            BracketedTypeTypeTransportSlot::TupleType(t) => t.snapshot_edge(),
+            BracketedTypeTypeTransportSlot::ArrayType(t) => t.snapshot_edge(),
+            BracketedTypeTypeTransportSlot::FunctionType(t) => t.snapshot_edge(),
+            BracketedTypeTypeTransportSlot::TypeIdentifier(t) => t.snapshot_edge(),
+            BracketedTypeTypeTransportSlot::MacroInvocation(t) => t.snapshot_edge(),
+            BracketedTypeTypeTransportSlot::DynamicType(t) => t.snapshot_edge(),
+            BracketedTypeTypeTransportSlot::BoundedType(t) => t.snapshot_edge(),
+            BracketedTypeTypeTransportSlot::RemovedTraitBound(t) => t.snapshot_edge(),
+            BracketedTypeTypeTransportSlot::PrimitiveType(t) => t.snapshot_edge(),
+            BracketedTypeTypeTransportSlot::QualifiedType(t) => t.snapshot_edge(),
+            BracketedTypeTypeTransportSlot::UnitType => None,
+            BracketedTypeTypeTransportSlot::NeverType => None,
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for BracketedTypeTypeTransportSlot {
@@ -6804,6 +7856,12 @@ impl ::sittir_core::prepare::Prepare for FunctionTypeContentTransportSlot {
             FunctionTypeContentTransportSlot::FunctionTypeFnForm(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            FunctionTypeContentTransportSlot::FunctionTypeTraitForm(t) => t.snapshot_edge(),
+            FunctionTypeContentTransportSlot::FunctionTypeFnForm(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for FunctionTypeContentTransportSlot {
@@ -6860,6 +7918,14 @@ impl ::sittir_core::prepare::Prepare for GenericFunctionFunctionTransportSlot {
             GenericFunctionFunctionTransportSlot::ScopedIdentifier(t) => t.gap_edges(),
             GenericFunctionFunctionTransportSlot::FieldExpression(t) => t.gap_edges(),
             GenericFunctionFunctionTransportSlot::Verbatim(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            GenericFunctionFunctionTransportSlot::Identifier(t) => t.snapshot_edge(),
+            GenericFunctionFunctionTransportSlot::ScopedIdentifier(t) => t.snapshot_edge(),
+            GenericFunctionFunctionTransportSlot::FieldExpression(t) => t.snapshot_edge(),
+            GenericFunctionFunctionTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
 }
@@ -6929,6 +7995,15 @@ impl ::sittir_core::prepare::Prepare for GenericTypeTypeTransportSlot {
             GenericTypeTypeTransportSlot::GenKeyword => None,
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            GenericTypeTypeTransportSlot::TypeIdentifier(t) => t.snapshot_edge(),
+            GenericTypeTypeTransportSlot::ScopedTypeIdentifier(t) => t.snapshot_edge(),
+            GenericTypeTypeTransportSlot::DefaultKeyword => None,
+            GenericTypeTypeTransportSlot::UnionKeyword => None,
+            GenericTypeTypeTransportSlot::GenKeyword => None,
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for GenericTypeTypeTransportSlot {
@@ -6981,6 +8056,12 @@ impl ::sittir_core::prepare::Prepare for GenericTypeWithTurbofishTypeTransportSl
         match self {
             GenericTypeWithTurbofishTypeTransportSlot::TypeIdentifier(t) => t.gap_edges(),
             GenericTypeWithTurbofishTypeTransportSlot::ScopedIdentifier(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            GenericTypeWithTurbofishTypeTransportSlot::TypeIdentifier(t) => t.snapshot_edge(),
+            GenericTypeWithTurbofishTypeTransportSlot::ScopedIdentifier(t) => t.snapshot_edge(),
         }
     }
 }
@@ -7121,6 +8202,30 @@ impl ::sittir_core::prepare::Prepare for BoundedTypeLeftTransportSlot {
             BoundedTypeLeftTransportSlot::NeverType => None,
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            BoundedTypeLeftTransportSlot::Lifetime(t) => t.snapshot_edge(),
+            BoundedTypeLeftTransportSlot::AbstractType(t) => t.snapshot_edge(),
+            BoundedTypeLeftTransportSlot::ReferenceType(t) => t.snapshot_edge(),
+            BoundedTypeLeftTransportSlot::Metavariable(t) => t.snapshot_edge(),
+            BoundedTypeLeftTransportSlot::PointerTypeConst(t) => t.snapshot_edge(),
+            BoundedTypeLeftTransportSlot::PointerTypeMut(t) => t.snapshot_edge(),
+            BoundedTypeLeftTransportSlot::GenericType(t) => t.snapshot_edge(),
+            BoundedTypeLeftTransportSlot::ScopedTypeIdentifier(t) => t.snapshot_edge(),
+            BoundedTypeLeftTransportSlot::TupleType(t) => t.snapshot_edge(),
+            BoundedTypeLeftTransportSlot::ArrayType(t) => t.snapshot_edge(),
+            BoundedTypeLeftTransportSlot::FunctionType(t) => t.snapshot_edge(),
+            BoundedTypeLeftTransportSlot::TypeIdentifier(t) => t.snapshot_edge(),
+            BoundedTypeLeftTransportSlot::MacroInvocation(t) => t.snapshot_edge(),
+            BoundedTypeLeftTransportSlot::DynamicType(t) => t.snapshot_edge(),
+            BoundedTypeLeftTransportSlot::BoundedType(t) => t.snapshot_edge(),
+            BoundedTypeLeftTransportSlot::RemovedTraitBound(t) => t.snapshot_edge(),
+            BoundedTypeLeftTransportSlot::PrimitiveType(t) => t.snapshot_edge(),
+            BoundedTypeLeftTransportSlot::UseBounds(t) => t.snapshot_edge(),
+            BoundedTypeLeftTransportSlot::UnitType => None,
+            BoundedTypeLeftTransportSlot::NeverType => None,
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for BoundedTypeLeftTransportSlot {
@@ -7230,6 +8335,17 @@ impl ::sittir_core::prepare::Prepare for AbstractTypeTraitTransportSlot {
             AbstractTypeTraitTransportSlot::BoundedType(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            AbstractTypeTraitTransportSlot::TypeIdentifier(t) => t.snapshot_edge(),
+            AbstractTypeTraitTransportSlot::ScopedTypeIdentifier(t) => t.snapshot_edge(),
+            AbstractTypeTraitTransportSlot::RemovedTraitBound(t) => t.snapshot_edge(),
+            AbstractTypeTraitTransportSlot::GenericType(t) => t.snapshot_edge(),
+            AbstractTypeTraitTransportSlot::FunctionType(t) => t.snapshot_edge(),
+            AbstractTypeTraitTransportSlot::TupleType(t) => t.snapshot_edge(),
+            AbstractTypeTraitTransportSlot::BoundedType(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for AbstractTypeTraitTransportSlot {
@@ -7308,6 +8424,16 @@ impl ::sittir_core::prepare::Prepare for DynamicTypeTraitTransportSlot {
             DynamicTypeTraitTransportSlot::TupleType(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            DynamicTypeTraitTransportSlot::HigherRankedTraitBound(t) => t.snapshot_edge(),
+            DynamicTypeTraitTransportSlot::TypeIdentifier(t) => t.snapshot_edge(),
+            DynamicTypeTraitTransportSlot::ScopedTypeIdentifier(t) => t.snapshot_edge(),
+            DynamicTypeTraitTransportSlot::GenericType(t) => t.snapshot_edge(),
+            DynamicTypeTraitTransportSlot::FunctionType(t) => t.snapshot_edge(),
+            DynamicTypeTraitTransportSlot::TupleType(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for DynamicTypeTraitTransportSlot {
@@ -7382,6 +8508,16 @@ impl ::sittir_core::prepare::Prepare for MacroInvocationMacroTransportSlot {
             MacroInvocationMacroTransportSlot::UnionKeyword => None,
             MacroInvocationMacroTransportSlot::GenKeyword => None,
             MacroInvocationMacroTransportSlot::Verbatim(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            MacroInvocationMacroTransportSlot::ScopedIdentifier(t) => t.snapshot_edge(),
+            MacroInvocationMacroTransportSlot::Identifier(t) => t.snapshot_edge(),
+            MacroInvocationMacroTransportSlot::DefaultKeyword => None,
+            MacroInvocationMacroTransportSlot::UnionKeyword => None,
+            MacroInvocationMacroTransportSlot::GenKeyword => None,
+            MacroInvocationMacroTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
 }
@@ -7575,6 +8711,39 @@ impl ::sittir_core::prepare::Prepare for ScopedIdentifierPathTransportSlot {
             ScopedIdentifierPathTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            ScopedIdentifierPathTransportSlot::Metavariable(t) => t.snapshot_edge(),
+            ScopedIdentifierPathTransportSlot::Identifier(t) => t.snapshot_edge(),
+            ScopedIdentifierPathTransportSlot::ScopedIdentifier(t) => t.snapshot_edge(),
+            ScopedIdentifierPathTransportSlot::BracketedType(t) => t.snapshot_edge(),
+            ScopedIdentifierPathTransportSlot::GenericTypeWithTurbofish(t) => t.snapshot_edge(),
+            ScopedIdentifierPathTransportSlot::Self_ => None,
+            ScopedIdentifierPathTransportSlot::U8Keyword => None,
+            ScopedIdentifierPathTransportSlot::I8Keyword => None,
+            ScopedIdentifierPathTransportSlot::U16Keyword => None,
+            ScopedIdentifierPathTransportSlot::I16Keyword => None,
+            ScopedIdentifierPathTransportSlot::U32Keyword => None,
+            ScopedIdentifierPathTransportSlot::I32Keyword => None,
+            ScopedIdentifierPathTransportSlot::U64Keyword => None,
+            ScopedIdentifierPathTransportSlot::I64Keyword => None,
+            ScopedIdentifierPathTransportSlot::U128Keyword => None,
+            ScopedIdentifierPathTransportSlot::I128Keyword => None,
+            ScopedIdentifierPathTransportSlot::IsizeKeyword => None,
+            ScopedIdentifierPathTransportSlot::UsizeKeyword => None,
+            ScopedIdentifierPathTransportSlot::F32Keyword => None,
+            ScopedIdentifierPathTransportSlot::F64Keyword => None,
+            ScopedIdentifierPathTransportSlot::BoolKeyword => None,
+            ScopedIdentifierPathTransportSlot::StrKeyword => None,
+            ScopedIdentifierPathTransportSlot::CharKeyword => None,
+            ScopedIdentifierPathTransportSlot::Super => None,
+            ScopedIdentifierPathTransportSlot::Crate => None,
+            ScopedIdentifierPathTransportSlot::DefaultKeyword => None,
+            ScopedIdentifierPathTransportSlot::UnionKeyword => None,
+            ScopedIdentifierPathTransportSlot::GenKeyword => None,
+            ScopedIdentifierPathTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for ScopedIdentifierPathTransportSlot {
@@ -7680,6 +8849,13 @@ impl ::sittir_core::prepare::Prepare for ScopedIdentifierNameTransportSlot {
             ScopedIdentifierNameTransportSlot::Identifier(t) => t.gap_edges(),
             ScopedIdentifierNameTransportSlot::Super => None,
             ScopedIdentifierNameTransportSlot::Verbatim(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            ScopedIdentifierNameTransportSlot::Identifier(t) => t.snapshot_edge(),
+            ScopedIdentifierNameTransportSlot::Super => None,
+            ScopedIdentifierNameTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
 }
@@ -7860,6 +9036,38 @@ impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierInExpressionPositio
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::UnionKeyword => None,
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::GenKeyword => None,
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Verbatim(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Metavariable(t) => t.snapshot_edge(),
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Identifier(t) => t.snapshot_edge(),
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::ScopedIdentifier(t) => t.snapshot_edge(),
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::GenericTypeWithTurbofish(t) => t.snapshot_edge(),
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Self_ => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U8Keyword => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I8Keyword => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U16Keyword => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I16Keyword => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U32Keyword => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I32Keyword => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U64Keyword => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I64Keyword => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U128Keyword => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I128Keyword => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::IsizeKeyword => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::UsizeKeyword => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::F32Keyword => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::F64Keyword => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::BoolKeyword => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::StrKeyword => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::CharKeyword => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Super => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Crate => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::DefaultKeyword => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::UnionKeyword => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::GenKeyword => None,
+            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
 }
@@ -8100,6 +9308,40 @@ impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierPathTransportSlot {
             ScopedTypeIdentifierPathTransportSlot::UnionKeyword => None,
             ScopedTypeIdentifierPathTransportSlot::GenKeyword => None,
             ScopedTypeIdentifierPathTransportSlot::Verbatim(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            ScopedTypeIdentifierPathTransportSlot::Metavariable(t) => t.snapshot_edge(),
+            ScopedTypeIdentifierPathTransportSlot::Identifier(t) => t.snapshot_edge(),
+            ScopedTypeIdentifierPathTransportSlot::ScopedIdentifier(t) => t.snapshot_edge(),
+            ScopedTypeIdentifierPathTransportSlot::GenericTypeWithTurbofish(t) => t.snapshot_edge(),
+            ScopedTypeIdentifierPathTransportSlot::BracketedType(t) => t.snapshot_edge(),
+            ScopedTypeIdentifierPathTransportSlot::GenericType(t) => t.snapshot_edge(),
+            ScopedTypeIdentifierPathTransportSlot::Self_ => None,
+            ScopedTypeIdentifierPathTransportSlot::U8Keyword => None,
+            ScopedTypeIdentifierPathTransportSlot::I8Keyword => None,
+            ScopedTypeIdentifierPathTransportSlot::U16Keyword => None,
+            ScopedTypeIdentifierPathTransportSlot::I16Keyword => None,
+            ScopedTypeIdentifierPathTransportSlot::U32Keyword => None,
+            ScopedTypeIdentifierPathTransportSlot::I32Keyword => None,
+            ScopedTypeIdentifierPathTransportSlot::U64Keyword => None,
+            ScopedTypeIdentifierPathTransportSlot::I64Keyword => None,
+            ScopedTypeIdentifierPathTransportSlot::U128Keyword => None,
+            ScopedTypeIdentifierPathTransportSlot::I128Keyword => None,
+            ScopedTypeIdentifierPathTransportSlot::IsizeKeyword => None,
+            ScopedTypeIdentifierPathTransportSlot::UsizeKeyword => None,
+            ScopedTypeIdentifierPathTransportSlot::F32Keyword => None,
+            ScopedTypeIdentifierPathTransportSlot::F64Keyword => None,
+            ScopedTypeIdentifierPathTransportSlot::BoolKeyword => None,
+            ScopedTypeIdentifierPathTransportSlot::StrKeyword => None,
+            ScopedTypeIdentifierPathTransportSlot::CharKeyword => None,
+            ScopedTypeIdentifierPathTransportSlot::Super => None,
+            ScopedTypeIdentifierPathTransportSlot::Crate => None,
+            ScopedTypeIdentifierPathTransportSlot::DefaultKeyword => None,
+            ScopedTypeIdentifierPathTransportSlot::UnionKeyword => None,
+            ScopedTypeIdentifierPathTransportSlot::GenKeyword => None,
+            ScopedTypeIdentifierPathTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
 }
@@ -8834,6 +10076,88 @@ impl ::sittir_core::prepare::Prepare for CallExpressionFunctionTransportSlot {
             CallExpressionFunctionTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            CallExpressionFunctionTransportSlot::UnaryExpression(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::ReferenceExpressionRawConst(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::ReferenceExpressionRawMut(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::ReferenceExpressionMut(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::ReferenceExpressionBare(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::TryExpression(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::BinaryExpression(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::AssignmentExpression(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::CompoundAssignmentExpr(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::TypeCastExpression(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::CallExpression(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::ReturnExpression(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::YieldExpression(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::StringLiteral(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::RawStringLiteral(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::CharLiteralEscapedSimple(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::CharLiteralEscapedHex(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::CharLiteralPlain(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::CharLiteralEmpty(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::BooleanLiteral(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::IntegerLiteralDecimal(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::IntegerLiteralHex(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::IntegerLiteralBinary(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::IntegerLiteralOctal(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::FloatLiteral(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::Identifier(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::ScopedIdentifier(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::GenericFunction(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::AwaitExpression(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::FieldExpression(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::ArrayExpressionSemi(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::ArrayExpressionList(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::TupleExpression(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::MacroInvocation(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::BreakExpression(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::ContinueExpression(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::IndexExpression(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::Metavariable(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::ClosureExpressionBlock(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::ClosureExpressionExpr(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::ParenthesizedExpression(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::StructExpression(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::UnsafeBlock(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::AsyncBlock(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::GenBlock(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::TryBlock(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::Block(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::IfExpression(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::MatchExpression(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::WhileExpression(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::LoopExpression(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::ForExpression(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::ConstBlock(t) => t.snapshot_edge(),
+            CallExpressionFunctionTransportSlot::U8Keyword => None,
+            CallExpressionFunctionTransportSlot::I8Keyword => None,
+            CallExpressionFunctionTransportSlot::U16Keyword => None,
+            CallExpressionFunctionTransportSlot::I16Keyword => None,
+            CallExpressionFunctionTransportSlot::U32Keyword => None,
+            CallExpressionFunctionTransportSlot::I32Keyword => None,
+            CallExpressionFunctionTransportSlot::U64Keyword => None,
+            CallExpressionFunctionTransportSlot::I64Keyword => None,
+            CallExpressionFunctionTransportSlot::U128Keyword => None,
+            CallExpressionFunctionTransportSlot::I128Keyword => None,
+            CallExpressionFunctionTransportSlot::IsizeKeyword => None,
+            CallExpressionFunctionTransportSlot::UsizeKeyword => None,
+            CallExpressionFunctionTransportSlot::F32Keyword => None,
+            CallExpressionFunctionTransportSlot::F64Keyword => None,
+            CallExpressionFunctionTransportSlot::BoolKeyword => None,
+            CallExpressionFunctionTransportSlot::StrKeyword => None,
+            CallExpressionFunctionTransportSlot::CharKeyword => None,
+            CallExpressionFunctionTransportSlot::DefaultKeyword => None,
+            CallExpressionFunctionTransportSlot::UnionKeyword => None,
+            CallExpressionFunctionTransportSlot::GenKeyword => None,
+            CallExpressionFunctionTransportSlot::Self_ => None,
+            CallExpressionFunctionTransportSlot::UnitExpression => None,
+            CallExpressionFunctionTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for CallExpressionFunctionTransportSlot {
@@ -9039,6 +10363,13 @@ impl ::sittir_core::prepare::Prepare for StructExpressionNameTransportSlot {
             StructExpressionNameTransportSlot::GenericTypeWithTurbofish(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            StructExpressionNameTransportSlot::TypeIdentifier(t) => t.snapshot_edge(),
+            StructExpressionNameTransportSlot::ScopedTypeIdentifierInExpressionPosition(t) => t.snapshot_edge(),
+            StructExpressionNameTransportSlot::GenericTypeWithTurbofish(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for StructExpressionNameTransportSlot {
@@ -9102,6 +10433,15 @@ impl ::sittir_core::prepare::Prepare for FieldInitializerFieldTransportSlot {
             FieldInitializerFieldTransportSlot::IntegerLiteralHex(t) => t.gap_edges(),
             FieldInitializerFieldTransportSlot::IntegerLiteralBinary(t) => t.gap_edges(),
             FieldInitializerFieldTransportSlot::IntegerLiteralOctal(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            FieldInitializerFieldTransportSlot::FieldIdentifier(t) => t.snapshot_edge(),
+            FieldInitializerFieldTransportSlot::IntegerLiteralDecimal(t) => t.snapshot_edge(),
+            FieldInitializerFieldTransportSlot::IntegerLiteralHex(t) => t.snapshot_edge(),
+            FieldInitializerFieldTransportSlot::IntegerLiteralBinary(t) => t.snapshot_edge(),
+            FieldInitializerFieldTransportSlot::IntegerLiteralOctal(t) => t.snapshot_edge(),
         }
     }
 }
@@ -9566,6 +10906,94 @@ impl ::sittir_core::prepare::Prepare for IfExpressionConditionTransportSlot {
             IfExpressionConditionTransportSlot::Self_ => None,
             IfExpressionConditionTransportSlot::UnitExpression => None,
             IfExpressionConditionTransportSlot::Verbatim(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            IfExpressionConditionTransportSlot::UnaryExpression(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::ReferenceExpressionRawConst(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::ReferenceExpressionRawMut(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::ReferenceExpressionMut(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::ReferenceExpressionBare(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::TryExpression(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::BinaryExpression(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::AssignmentExpression(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::CompoundAssignmentExpr(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::TypeCastExpression(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::CallExpression(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::ReturnExpression(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::YieldExpression(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::StringLiteral(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::RawStringLiteral(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::CharLiteralEscapedSimple(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::CharLiteralEscapedHex(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::CharLiteralPlain(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::CharLiteralEmpty(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::BooleanLiteral(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::IntegerLiteralDecimal(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::IntegerLiteralHex(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::IntegerLiteralBinary(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::IntegerLiteralOctal(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::FloatLiteral(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::Identifier(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::ScopedIdentifier(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::GenericFunction(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::AwaitExpression(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::FieldExpression(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::ArrayExpressionSemi(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::ArrayExpressionList(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::TupleExpression(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::MacroInvocation(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::BreakExpression(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::ContinueExpression(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::IndexExpression(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::Metavariable(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::ClosureExpressionBlock(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::ClosureExpressionExpr(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::ParenthesizedExpression(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::StructExpression(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::UnsafeBlock(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::AsyncBlock(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::GenBlock(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::TryBlock(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::Block(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::IfExpression(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::MatchExpression(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::WhileExpression(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::LoopExpression(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::ForExpression(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::ConstBlock(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::RangeExpressionBinary(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::RangeExpressionPostfix(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::RangeExpressionPrefix(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::RangeExpressionBare(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::LetCondition(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::LetChain(t) => t.snapshot_edge(),
+            IfExpressionConditionTransportSlot::U8Keyword => None,
+            IfExpressionConditionTransportSlot::I8Keyword => None,
+            IfExpressionConditionTransportSlot::U16Keyword => None,
+            IfExpressionConditionTransportSlot::I16Keyword => None,
+            IfExpressionConditionTransportSlot::U32Keyword => None,
+            IfExpressionConditionTransportSlot::I32Keyword => None,
+            IfExpressionConditionTransportSlot::U64Keyword => None,
+            IfExpressionConditionTransportSlot::I64Keyword => None,
+            IfExpressionConditionTransportSlot::U128Keyword => None,
+            IfExpressionConditionTransportSlot::I128Keyword => None,
+            IfExpressionConditionTransportSlot::IsizeKeyword => None,
+            IfExpressionConditionTransportSlot::UsizeKeyword => None,
+            IfExpressionConditionTransportSlot::F32Keyword => None,
+            IfExpressionConditionTransportSlot::F64Keyword => None,
+            IfExpressionConditionTransportSlot::BoolKeyword => None,
+            IfExpressionConditionTransportSlot::StrKeyword => None,
+            IfExpressionConditionTransportSlot::CharKeyword => None,
+            IfExpressionConditionTransportSlot::DefaultKeyword => None,
+            IfExpressionConditionTransportSlot::UnionKeyword => None,
+            IfExpressionConditionTransportSlot::GenKeyword => None,
+            IfExpressionConditionTransportSlot::Self_ => None,
+            IfExpressionConditionTransportSlot::UnitExpression => None,
+            IfExpressionConditionTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
 }
@@ -10190,6 +11618,94 @@ impl ::sittir_core::prepare::Prepare for LetChainLeftTransportSlot {
             LetChainLeftTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            LetChainLeftTransportSlot::LetChain(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::LetCondition(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::UnaryExpression(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::ReferenceExpressionRawConst(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::ReferenceExpressionRawMut(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::ReferenceExpressionMut(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::ReferenceExpressionBare(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::TryExpression(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::BinaryExpression(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::AssignmentExpression(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::CompoundAssignmentExpr(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::TypeCastExpression(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::CallExpression(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::ReturnExpression(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::YieldExpression(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::StringLiteral(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::RawStringLiteral(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::CharLiteralEscapedSimple(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::CharLiteralEscapedHex(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::CharLiteralPlain(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::CharLiteralEmpty(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::BooleanLiteral(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::IntegerLiteralDecimal(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::IntegerLiteralHex(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::IntegerLiteralBinary(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::IntegerLiteralOctal(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::FloatLiteral(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::Identifier(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::ScopedIdentifier(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::GenericFunction(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::AwaitExpression(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::FieldExpression(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::ArrayExpressionSemi(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::ArrayExpressionList(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::TupleExpression(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::MacroInvocation(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::BreakExpression(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::ContinueExpression(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::IndexExpression(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::Metavariable(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::ClosureExpressionBlock(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::ClosureExpressionExpr(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::ParenthesizedExpression(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::StructExpression(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::UnsafeBlock(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::AsyncBlock(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::GenBlock(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::TryBlock(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::Block(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::IfExpression(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::MatchExpression(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::WhileExpression(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::LoopExpression(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::ForExpression(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::ConstBlock(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::RangeExpressionBinary(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::RangeExpressionPostfix(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::RangeExpressionPrefix(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::RangeExpressionBare(t) => t.snapshot_edge(),
+            LetChainLeftTransportSlot::U8Keyword => None,
+            LetChainLeftTransportSlot::I8Keyword => None,
+            LetChainLeftTransportSlot::U16Keyword => None,
+            LetChainLeftTransportSlot::I16Keyword => None,
+            LetChainLeftTransportSlot::U32Keyword => None,
+            LetChainLeftTransportSlot::I32Keyword => None,
+            LetChainLeftTransportSlot::U64Keyword => None,
+            LetChainLeftTransportSlot::I64Keyword => None,
+            LetChainLeftTransportSlot::U128Keyword => None,
+            LetChainLeftTransportSlot::I128Keyword => None,
+            LetChainLeftTransportSlot::IsizeKeyword => None,
+            LetChainLeftTransportSlot::UsizeKeyword => None,
+            LetChainLeftTransportSlot::F32Keyword => None,
+            LetChainLeftTransportSlot::F64Keyword => None,
+            LetChainLeftTransportSlot::BoolKeyword => None,
+            LetChainLeftTransportSlot::StrKeyword => None,
+            LetChainLeftTransportSlot::CharKeyword => None,
+            LetChainLeftTransportSlot::DefaultKeyword => None,
+            LetChainLeftTransportSlot::UnionKeyword => None,
+            LetChainLeftTransportSlot::GenKeyword => None,
+            LetChainLeftTransportSlot::Self_ => None,
+            LetChainLeftTransportSlot::UnitExpression => None,
+            LetChainLeftTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for LetChainLeftTransportSlot {
@@ -10807,6 +12323,93 @@ impl ::sittir_core::prepare::Prepare for LetChainRightTransportSlot {
             LetChainRightTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            LetChainRightTransportSlot::LetCondition(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::UnaryExpression(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::ReferenceExpressionRawConst(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::ReferenceExpressionRawMut(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::ReferenceExpressionMut(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::ReferenceExpressionBare(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::TryExpression(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::BinaryExpression(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::AssignmentExpression(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::CompoundAssignmentExpr(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::TypeCastExpression(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::CallExpression(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::ReturnExpression(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::YieldExpression(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::StringLiteral(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::RawStringLiteral(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::CharLiteralEscapedSimple(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::CharLiteralEscapedHex(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::CharLiteralPlain(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::CharLiteralEmpty(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::BooleanLiteral(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::IntegerLiteralDecimal(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::IntegerLiteralHex(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::IntegerLiteralBinary(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::IntegerLiteralOctal(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::FloatLiteral(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::Identifier(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::ScopedIdentifier(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::GenericFunction(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::AwaitExpression(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::FieldExpression(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::ArrayExpressionSemi(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::ArrayExpressionList(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::TupleExpression(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::MacroInvocation(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::BreakExpression(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::ContinueExpression(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::IndexExpression(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::Metavariable(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::ClosureExpressionBlock(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::ClosureExpressionExpr(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::ParenthesizedExpression(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::StructExpression(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::UnsafeBlock(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::AsyncBlock(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::GenBlock(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::TryBlock(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::Block(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::IfExpression(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::MatchExpression(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::WhileExpression(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::LoopExpression(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::ForExpression(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::ConstBlock(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::RangeExpressionBinary(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::RangeExpressionPostfix(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::RangeExpressionPrefix(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::RangeExpressionBare(t) => t.snapshot_edge(),
+            LetChainRightTransportSlot::U8Keyword => None,
+            LetChainRightTransportSlot::I8Keyword => None,
+            LetChainRightTransportSlot::U16Keyword => None,
+            LetChainRightTransportSlot::I16Keyword => None,
+            LetChainRightTransportSlot::U32Keyword => None,
+            LetChainRightTransportSlot::I32Keyword => None,
+            LetChainRightTransportSlot::U64Keyword => None,
+            LetChainRightTransportSlot::I64Keyword => None,
+            LetChainRightTransportSlot::U128Keyword => None,
+            LetChainRightTransportSlot::I128Keyword => None,
+            LetChainRightTransportSlot::IsizeKeyword => None,
+            LetChainRightTransportSlot::UsizeKeyword => None,
+            LetChainRightTransportSlot::F32Keyword => None,
+            LetChainRightTransportSlot::F64Keyword => None,
+            LetChainRightTransportSlot::BoolKeyword => None,
+            LetChainRightTransportSlot::StrKeyword => None,
+            LetChainRightTransportSlot::CharKeyword => None,
+            LetChainRightTransportSlot::DefaultKeyword => None,
+            LetChainRightTransportSlot::UnionKeyword => None,
+            LetChainRightTransportSlot::GenKeyword => None,
+            LetChainRightTransportSlot::Self_ => None,
+            LetChainRightTransportSlot::UnitExpression => None,
+            LetChainRightTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for LetChainRightTransportSlot {
@@ -11017,6 +12620,12 @@ impl ::sittir_core::prepare::Prepare for ElseClauseBodyTransportSlot {
             ElseClauseBodyTransportSlot::IfExpression(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            ElseClauseBodyTransportSlot::Block(t) => t.snapshot_edge(),
+            ElseClauseBodyTransportSlot::IfExpression(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for ElseClauseBodyTransportSlot {
@@ -11063,6 +12672,12 @@ impl ::sittir_core::prepare::Prepare for LastMatchArmAttributesTransportSlot {
         match self {
             LastMatchArmAttributesTransportSlot::AttributeItem(t) => t.gap_edges(),
             LastMatchArmAttributesTransportSlot::InnerAttributeItem(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            LastMatchArmAttributesTransportSlot::AttributeItem(t) => t.snapshot_edge(),
+            LastMatchArmAttributesTransportSlot::InnerAttributeItem(t) => t.snapshot_edge(),
         }
     }
 }
@@ -11383,6 +12998,66 @@ impl ::sittir_core::prepare::Prepare for ClosureParametersParametersTransportSlo
             ClosureParametersParametersTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            ClosureParametersParametersTransportSlot::StringLiteral(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::RawStringLiteral(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::CharLiteralEscapedSimple(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::CharLiteralEscapedHex(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::CharLiteralPlain(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::CharLiteralEmpty(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::BooleanLiteral(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::IntegerLiteralDecimal(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::IntegerLiteralHex(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::IntegerLiteralBinary(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::IntegerLiteralOctal(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::FloatLiteral(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::NegativeLiteral(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::Identifier(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::ScopedIdentifier(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::GenericPattern(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::TuplePattern(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::TupleStructPattern(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::StructPattern(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::RefPattern(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::SlicePattern(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::CapturedPattern(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::ReferencePattern(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::MutPattern(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::RangePatternWithLeft(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::RangePatternPrefix(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::OrPatternBinary(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::OrPatternPrefix(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::ConstBlock(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::MacroInvocation(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::Parameter(t) => t.snapshot_edge(),
+            ClosureParametersParametersTransportSlot::U8Keyword => None,
+            ClosureParametersParametersTransportSlot::I8Keyword => None,
+            ClosureParametersParametersTransportSlot::U16Keyword => None,
+            ClosureParametersParametersTransportSlot::I16Keyword => None,
+            ClosureParametersParametersTransportSlot::U32Keyword => None,
+            ClosureParametersParametersTransportSlot::I32Keyword => None,
+            ClosureParametersParametersTransportSlot::U64Keyword => None,
+            ClosureParametersParametersTransportSlot::I64Keyword => None,
+            ClosureParametersParametersTransportSlot::U128Keyword => None,
+            ClosureParametersParametersTransportSlot::I128Keyword => None,
+            ClosureParametersParametersTransportSlot::IsizeKeyword => None,
+            ClosureParametersParametersTransportSlot::UsizeKeyword => None,
+            ClosureParametersParametersTransportSlot::F32Keyword => None,
+            ClosureParametersParametersTransportSlot::F64Keyword => None,
+            ClosureParametersParametersTransportSlot::BoolKeyword => None,
+            ClosureParametersParametersTransportSlot::StrKeyword => None,
+            ClosureParametersParametersTransportSlot::CharKeyword => None,
+            ClosureParametersParametersTransportSlot::DefaultKeyword => None,
+            ClosureParametersParametersTransportSlot::UnionKeyword => None,
+            ClosureParametersParametersTransportSlot::GenKeyword => None,
+            ClosureParametersParametersTransportSlot::RemainingFieldPattern => None,
+            ClosureParametersParametersTransportSlot::WildcardPattern => None,
+            ClosureParametersParametersTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for ClosureParametersParametersTransportSlot {
@@ -11544,6 +13219,13 @@ impl ::sittir_core::prepare::Prepare for GenericPatternNameTransportSlot {
             GenericPatternNameTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            GenericPatternNameTransportSlot::Identifier(t) => t.snapshot_edge(),
+            GenericPatternNameTransportSlot::ScopedIdentifier(t) => t.snapshot_edge(),
+            GenericPatternNameTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for GenericPatternNameTransportSlot {
@@ -11604,6 +13286,14 @@ impl ::sittir_core::prepare::Prepare for TupleStructPatternTypeTransportSlot {
             TupleStructPatternTypeTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            TupleStructPatternTypeTransportSlot::Identifier(t) => t.snapshot_edge(),
+            TupleStructPatternTypeTransportSlot::ScopedIdentifier(t) => t.snapshot_edge(),
+            TupleStructPatternTypeTransportSlot::GenericTypeWithTurbofish(t) => t.snapshot_edge(),
+            TupleStructPatternTypeTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for TupleStructPatternTypeTransportSlot {
@@ -11654,6 +13344,12 @@ impl ::sittir_core::prepare::Prepare for StructPatternTypeTransportSlot {
         match self {
             StructPatternTypeTransportSlot::TypeIdentifier(t) => t.gap_edges(),
             StructPatternTypeTransportSlot::ScopedTypeIdentifier(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            StructPatternTypeTransportSlot::TypeIdentifier(t) => t.snapshot_edge(),
+            StructPatternTypeTransportSlot::ScopedTypeIdentifier(t) => t.snapshot_edge(),
         }
     }
 }
@@ -11722,6 +13418,16 @@ impl ::sittir_core::prepare::Prepare for NegativeLiteralValueTransportSlot {
             NegativeLiteralValueTransportSlot::IntegerLiteralOctal(t) => t.gap_edges(),
             NegativeLiteralValueTransportSlot::FloatLiteral(t) => t.gap_edges(),
             NegativeLiteralValueTransportSlot::Verbatim(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            NegativeLiteralValueTransportSlot::IntegerLiteralDecimal(t) => t.snapshot_edge(),
+            NegativeLiteralValueTransportSlot::IntegerLiteralHex(t) => t.snapshot_edge(),
+            NegativeLiteralValueTransportSlot::IntegerLiteralBinary(t) => t.snapshot_edge(),
+            NegativeLiteralValueTransportSlot::IntegerLiteralOctal(t) => t.snapshot_edge(),
+            NegativeLiteralValueTransportSlot::FloatLiteral(t) => t.snapshot_edge(),
+            NegativeLiteralValueTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
 }
@@ -11800,6 +13506,16 @@ impl ::sittir_core::prepare::Prepare for StringLiteralElementsTransportSlot {
             StringLiteralElementsTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            StringLiteralElementsTransportSlot::EscapeSequenceSimple(t) => t.snapshot_edge(),
+            StringLiteralElementsTransportSlot::EscapeSequenceUnicodeFixed(t) => t.snapshot_edge(),
+            StringLiteralElementsTransportSlot::EscapeSequenceUnicodeBraced(t) => t.snapshot_edge(),
+            StringLiteralElementsTransportSlot::EscapeSequenceHex(t) => t.snapshot_edge(),
+            StringLiteralElementsTransportSlot::StringContent(t) => t.snapshot_edge(),
+            StringLiteralElementsTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for StringLiteralElementsTransportSlot {
@@ -11871,6 +13587,15 @@ impl ::sittir_core::prepare::Prepare for LineCommentContentTransportSlot {
             LineCommentContentTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            LineCommentContentTransportSlot::LineCommentExtraSlashes(t) => t.snapshot_edge(),
+            LineCommentContentTransportSlot::LineCommentDocOuter(t) => t.snapshot_edge(),
+            LineCommentContentTransportSlot::LineCommentDocInner(t) => t.snapshot_edge(),
+            LineCommentContentTransportSlot::LineCommentRegular(t) => t.snapshot_edge(),
+            LineCommentContentTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for LineCommentContentTransportSlot {
@@ -11935,6 +13660,14 @@ impl ::sittir_core::prepare::Prepare for BlockCommentContentTransportSlot {
             BlockCommentContentTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            BlockCommentContentTransportSlot::BlockCommentDocOuter(t) => t.snapshot_edge(),
+            BlockCommentContentTransportSlot::BlockCommentDocInner(t) => t.snapshot_edge(),
+            BlockCommentContentTransportSlot::BlockCommentRegular(t) => t.snapshot_edge(),
+            BlockCommentContentTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for BlockCommentContentTransportSlot {
@@ -11985,6 +13718,12 @@ impl ::sittir_core::prepare::Prepare for UseBoundsElementsItemTransportSlot {
         match self {
             UseBoundsElementsItemTransportSlot::Lifetime(t) => t.gap_edges(),
             UseBoundsElementsItemTransportSlot::TypeIdentifier(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            UseBoundsElementsItemTransportSlot::Lifetime(t) => t.snapshot_edge(),
+            UseBoundsElementsItemTransportSlot::TypeIdentifier(t) => t.snapshot_edge(),
         }
     }
 }
@@ -12038,6 +13777,13 @@ impl ::sittir_core::prepare::Prepare for FieldInitializerListElementsItemTranspo
             FieldInitializerListElementsItemTransportSlot::ShorthandFieldInitializer(t) => t.gap_edges(),
             FieldInitializerListElementsItemTransportSlot::FieldInitializer(t) => t.gap_edges(),
             FieldInitializerListElementsItemTransportSlot::BaseFieldInitializer(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            FieldInitializerListElementsItemTransportSlot::ShorthandFieldInitializer(t) => t.snapshot_edge(),
+            FieldInitializerListElementsItemTransportSlot::FieldInitializer(t) => t.snapshot_edge(),
+            FieldInitializerListElementsItemTransportSlot::BaseFieldInitializer(t) => t.snapshot_edge(),
         }
     }
 }
@@ -12365,6 +14111,67 @@ impl ::sittir_core::prepare::Prepare for TuplePatternElementsItemTransportSlot {
             TuplePatternElementsItemTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            TuplePatternElementsItemTransportSlot::StringLiteral(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::RawStringLiteral(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::CharLiteralEscapedSimple(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::CharLiteralEscapedHex(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::CharLiteralPlain(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::CharLiteralEmpty(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::BooleanLiteral(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::IntegerLiteralDecimal(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::IntegerLiteralHex(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::IntegerLiteralBinary(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::IntegerLiteralOctal(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::FloatLiteral(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::NegativeLiteral(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::Identifier(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::ScopedIdentifier(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::GenericPattern(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::TuplePattern(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::TupleStructPattern(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::StructPattern(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::RefPattern(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::SlicePattern(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::CapturedPattern(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::ReferencePattern(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::MutPattern(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::RangePatternWithLeft(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::RangePatternPrefix(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::OrPatternBinary(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::OrPatternPrefix(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::ConstBlock(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::MacroInvocation(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::ClosureExpressionBlock(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::ClosureExpressionExpr(t) => t.snapshot_edge(),
+            TuplePatternElementsItemTransportSlot::U8Keyword => None,
+            TuplePatternElementsItemTransportSlot::I8Keyword => None,
+            TuplePatternElementsItemTransportSlot::U16Keyword => None,
+            TuplePatternElementsItemTransportSlot::I16Keyword => None,
+            TuplePatternElementsItemTransportSlot::U32Keyword => None,
+            TuplePatternElementsItemTransportSlot::I32Keyword => None,
+            TuplePatternElementsItemTransportSlot::U64Keyword => None,
+            TuplePatternElementsItemTransportSlot::I64Keyword => None,
+            TuplePatternElementsItemTransportSlot::U128Keyword => None,
+            TuplePatternElementsItemTransportSlot::I128Keyword => None,
+            TuplePatternElementsItemTransportSlot::IsizeKeyword => None,
+            TuplePatternElementsItemTransportSlot::UsizeKeyword => None,
+            TuplePatternElementsItemTransportSlot::F32Keyword => None,
+            TuplePatternElementsItemTransportSlot::F64Keyword => None,
+            TuplePatternElementsItemTransportSlot::BoolKeyword => None,
+            TuplePatternElementsItemTransportSlot::StrKeyword => None,
+            TuplePatternElementsItemTransportSlot::CharKeyword => None,
+            TuplePatternElementsItemTransportSlot::DefaultKeyword => None,
+            TuplePatternElementsItemTransportSlot::UnionKeyword => None,
+            TuplePatternElementsItemTransportSlot::GenKeyword => None,
+            TuplePatternElementsItemTransportSlot::RemainingFieldPattern => None,
+            TuplePatternElementsItemTransportSlot::WildcardPattern => None,
+            TuplePatternElementsItemTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for TuplePatternElementsItemTransportSlot {
@@ -12525,6 +14332,13 @@ impl ::sittir_core::prepare::Prepare for StructPatternElementsItemTransportSlot 
         match self {
             StructPatternElementsItemTransportSlot::FieldPatternShorthand(t) => t.gap_edges(),
             StructPatternElementsItemTransportSlot::FieldPatternNamed(t) => t.gap_edges(),
+            StructPatternElementsItemTransportSlot::RemainingFieldPattern => None,
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            StructPatternElementsItemTransportSlot::FieldPatternShorthand(t) => t.snapshot_edge(),
+            StructPatternElementsItemTransportSlot::FieldPatternNamed(t) => t.snapshot_edge(),
             StructPatternElementsItemTransportSlot::RemainingFieldPattern => None,
         }
     }
@@ -12983,6 +14797,93 @@ impl ::sittir_core::prepare::Prepare for ClosureExpressionExprBodyTransportSlot 
             ClosureExpressionExprBodyTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            ClosureExpressionExprBodyTransportSlot::UnaryExpression(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::ReferenceExpressionRawConst(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::ReferenceExpressionRawMut(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::ReferenceExpressionMut(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::ReferenceExpressionBare(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::TryExpression(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::BinaryExpression(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::AssignmentExpression(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::CompoundAssignmentExpr(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::TypeCastExpression(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::CallExpression(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::ReturnExpression(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::YieldExpression(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::StringLiteral(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::RawStringLiteral(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::CharLiteralEscapedSimple(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::CharLiteralEscapedHex(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::CharLiteralPlain(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::CharLiteralEmpty(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::BooleanLiteral(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::IntegerLiteralDecimal(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::IntegerLiteralHex(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::IntegerLiteralBinary(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::IntegerLiteralOctal(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::FloatLiteral(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::Identifier(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::ScopedIdentifier(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::GenericFunction(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::AwaitExpression(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::FieldExpression(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::ArrayExpressionSemi(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::ArrayExpressionList(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::TupleExpression(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::MacroInvocation(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::BreakExpression(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::ContinueExpression(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::IndexExpression(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::Metavariable(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::ClosureExpressionBlock(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::ClosureExpressionExpr(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::ParenthesizedExpression(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::StructExpression(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::UnsafeBlock(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::AsyncBlock(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::GenBlock(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::TryBlock(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::Block(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::IfExpression(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::MatchExpression(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::WhileExpression(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::LoopExpression(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::ForExpression(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::ConstBlock(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::RangeExpressionBinary(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::RangeExpressionPostfix(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::RangeExpressionPrefix(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::RangeExpressionBare(t) => t.snapshot_edge(),
+            ClosureExpressionExprBodyTransportSlot::U8Keyword => None,
+            ClosureExpressionExprBodyTransportSlot::I8Keyword => None,
+            ClosureExpressionExprBodyTransportSlot::U16Keyword => None,
+            ClosureExpressionExprBodyTransportSlot::I16Keyword => None,
+            ClosureExpressionExprBodyTransportSlot::U32Keyword => None,
+            ClosureExpressionExprBodyTransportSlot::I32Keyword => None,
+            ClosureExpressionExprBodyTransportSlot::U64Keyword => None,
+            ClosureExpressionExprBodyTransportSlot::I64Keyword => None,
+            ClosureExpressionExprBodyTransportSlot::U128Keyword => None,
+            ClosureExpressionExprBodyTransportSlot::I128Keyword => None,
+            ClosureExpressionExprBodyTransportSlot::IsizeKeyword => None,
+            ClosureExpressionExprBodyTransportSlot::UsizeKeyword => None,
+            ClosureExpressionExprBodyTransportSlot::F32Keyword => None,
+            ClosureExpressionExprBodyTransportSlot::F64Keyword => None,
+            ClosureExpressionExprBodyTransportSlot::BoolKeyword => None,
+            ClosureExpressionExprBodyTransportSlot::StrKeyword => None,
+            ClosureExpressionExprBodyTransportSlot::CharKeyword => None,
+            ClosureExpressionExprBodyTransportSlot::DefaultKeyword => None,
+            ClosureExpressionExprBodyTransportSlot::UnionKeyword => None,
+            ClosureExpressionExprBodyTransportSlot::GenKeyword => None,
+            ClosureExpressionExprBodyTransportSlot::Self_ => None,
+            ClosureExpressionExprBodyTransportSlot::UnitExpression => None,
+            ClosureExpressionExprBodyTransportSlot::Underscore => None,
+            ClosureExpressionExprBodyTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for ClosureExpressionExprBodyTransportSlot {
@@ -13203,6 +15104,13 @@ impl ::sittir_core::prepare::Prepare for ImplItemPositiveClauseTraitTransportSlo
             ImplItemPositiveClauseTraitTransportSlot::GenericType(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            ImplItemPositiveClauseTraitTransportSlot::TypeIdentifier(t) => t.snapshot_edge(),
+            ImplItemPositiveClauseTraitTransportSlot::ScopedTypeIdentifier(t) => t.snapshot_edge(),
+            ImplItemPositiveClauseTraitTransportSlot::GenericType(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for ImplItemPositiveClauseTraitTransportSlot {
@@ -13251,6 +15159,12 @@ impl ::sittir_core::prepare::Prepare for ImplItemBodyTraitClauseTransportSlot {
         match self {
             ImplItemBodyTraitClauseTransportSlot::ImplItemPositiveClause(t) => t.gap_edges(),
             ImplItemBodyTraitClauseTransportSlot::ImplItemNegativeClause(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            ImplItemBodyTraitClauseTransportSlot::ImplItemPositiveClause(t) => t.snapshot_edge(),
+            ImplItemBodyTraitClauseTransportSlot::ImplItemNegativeClause(t) => t.snapshot_edge(),
         }
     }
 }
@@ -13306,6 +15220,14 @@ impl ::sittir_core::prepare::Prepare for VisibilityModifierPubScopeContentTransp
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             VisibilityModifierPubScopeContentTransportSlot::VisibilityModifierPubScopeInPath(t) => t.gap_edges(),
+            VisibilityModifierPubScopeContentTransportSlot::Self_ => None,
+            VisibilityModifierPubScopeContentTransportSlot::Super => None,
+            VisibilityModifierPubScopeContentTransportSlot::Crate => None,
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            VisibilityModifierPubScopeContentTransportSlot::VisibilityModifierPubScopeInPath(t) => t.snapshot_edge(),
             VisibilityModifierPubScopeContentTransportSlot::Self_ => None,
             VisibilityModifierPubScopeContentTransportSlot::Super => None,
             VisibilityModifierPubScopeContentTransportSlot::Crate => None,
@@ -13449,6 +15371,21 @@ impl ::sittir_core::prepare::Prepare for MatchArmBlockEndingValueTransportSlot {
             MatchArmBlockEndingValueTransportSlot::ConstBlock(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            MatchArmBlockEndingValueTransportSlot::UnsafeBlock(t) => t.snapshot_edge(),
+            MatchArmBlockEndingValueTransportSlot::AsyncBlock(t) => t.snapshot_edge(),
+            MatchArmBlockEndingValueTransportSlot::GenBlock(t) => t.snapshot_edge(),
+            MatchArmBlockEndingValueTransportSlot::TryBlock(t) => t.snapshot_edge(),
+            MatchArmBlockEndingValueTransportSlot::Block(t) => t.snapshot_edge(),
+            MatchArmBlockEndingValueTransportSlot::IfExpression(t) => t.snapshot_edge(),
+            MatchArmBlockEndingValueTransportSlot::MatchExpression(t) => t.snapshot_edge(),
+            MatchArmBlockEndingValueTransportSlot::WhileExpression(t) => t.snapshot_edge(),
+            MatchArmBlockEndingValueTransportSlot::LoopExpression(t) => t.snapshot_edge(),
+            MatchArmBlockEndingValueTransportSlot::ForExpression(t) => t.snapshot_edge(),
+            MatchArmBlockEndingValueTransportSlot::ConstBlock(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for MatchArmBlockEndingValueTransportSlot {
@@ -13530,6 +15467,15 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeParenDelimTokensTransport
             DelimTokenTreeParenDelimTokensTransportSlot::Dollar => None,
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            DelimTokenTreeParenDelimTokensTransportSlot::NonSpecialToken(t) => t.snapshot_edge(),
+            DelimTokenTreeParenDelimTokensTransportSlot::DelimTokenTreeParen(t) => t.snapshot_edge(),
+            DelimTokenTreeParenDelimTokensTransportSlot::DelimTokenTreeBracket(t) => t.snapshot_edge(),
+            DelimTokenTreeParenDelimTokensTransportSlot::DelimTokenTreeBrace(t) => t.snapshot_edge(),
+            DelimTokenTreeParenDelimTokensTransportSlot::Dollar => None,
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for DelimTokenTreeParenDelimTokensTransportSlot {
@@ -13597,6 +15543,15 @@ impl ::sittir_core::prepare::Prepare for MacroDefinitionParenNameTransportSlot {
             MacroDefinitionParenNameTransportSlot::UnionKeyword => None,
             MacroDefinitionParenNameTransportSlot::GenKeyword => None,
             MacroDefinitionParenNameTransportSlot::Verbatim(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            MacroDefinitionParenNameTransportSlot::Identifier(t) => t.snapshot_edge(),
+            MacroDefinitionParenNameTransportSlot::DefaultKeyword => None,
+            MacroDefinitionParenNameTransportSlot::UnionKeyword => None,
+            MacroDefinitionParenNameTransportSlot::GenKeyword => None,
+            MacroDefinitionParenNameTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
 }
@@ -13853,6 +15808,52 @@ impl ::sittir_core::prepare::Prepare for RangePatternPrefixRightTransportSlot {
             RangePatternPrefixRightTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            RangePatternPrefixRightTransportSlot::StringLiteral(t) => t.snapshot_edge(),
+            RangePatternPrefixRightTransportSlot::RawStringLiteral(t) => t.snapshot_edge(),
+            RangePatternPrefixRightTransportSlot::CharLiteralEscapedSimple(t) => t.snapshot_edge(),
+            RangePatternPrefixRightTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.snapshot_edge(),
+            RangePatternPrefixRightTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.snapshot_edge(),
+            RangePatternPrefixRightTransportSlot::CharLiteralEscapedHex(t) => t.snapshot_edge(),
+            RangePatternPrefixRightTransportSlot::CharLiteralPlain(t) => t.snapshot_edge(),
+            RangePatternPrefixRightTransportSlot::CharLiteralEmpty(t) => t.snapshot_edge(),
+            RangePatternPrefixRightTransportSlot::BooleanLiteral(t) => t.snapshot_edge(),
+            RangePatternPrefixRightTransportSlot::IntegerLiteralDecimal(t) => t.snapshot_edge(),
+            RangePatternPrefixRightTransportSlot::IntegerLiteralHex(t) => t.snapshot_edge(),
+            RangePatternPrefixRightTransportSlot::IntegerLiteralBinary(t) => t.snapshot_edge(),
+            RangePatternPrefixRightTransportSlot::IntegerLiteralOctal(t) => t.snapshot_edge(),
+            RangePatternPrefixRightTransportSlot::FloatLiteral(t) => t.snapshot_edge(),
+            RangePatternPrefixRightTransportSlot::NegativeLiteral(t) => t.snapshot_edge(),
+            RangePatternPrefixRightTransportSlot::Metavariable(t) => t.snapshot_edge(),
+            RangePatternPrefixRightTransportSlot::Identifier(t) => t.snapshot_edge(),
+            RangePatternPrefixRightTransportSlot::ScopedIdentifier(t) => t.snapshot_edge(),
+            RangePatternPrefixRightTransportSlot::Self_ => None,
+            RangePatternPrefixRightTransportSlot::U8Keyword => None,
+            RangePatternPrefixRightTransportSlot::I8Keyword => None,
+            RangePatternPrefixRightTransportSlot::U16Keyword => None,
+            RangePatternPrefixRightTransportSlot::I16Keyword => None,
+            RangePatternPrefixRightTransportSlot::U32Keyword => None,
+            RangePatternPrefixRightTransportSlot::I32Keyword => None,
+            RangePatternPrefixRightTransportSlot::U64Keyword => None,
+            RangePatternPrefixRightTransportSlot::I64Keyword => None,
+            RangePatternPrefixRightTransportSlot::U128Keyword => None,
+            RangePatternPrefixRightTransportSlot::I128Keyword => None,
+            RangePatternPrefixRightTransportSlot::IsizeKeyword => None,
+            RangePatternPrefixRightTransportSlot::UsizeKeyword => None,
+            RangePatternPrefixRightTransportSlot::F32Keyword => None,
+            RangePatternPrefixRightTransportSlot::F64Keyword => None,
+            RangePatternPrefixRightTransportSlot::BoolKeyword => None,
+            RangePatternPrefixRightTransportSlot::StrKeyword => None,
+            RangePatternPrefixRightTransportSlot::CharKeyword => None,
+            RangePatternPrefixRightTransportSlot::Super => None,
+            RangePatternPrefixRightTransportSlot::Crate => None,
+            RangePatternPrefixRightTransportSlot::DefaultKeyword => None,
+            RangePatternPrefixRightTransportSlot::UnionKeyword => None,
+            RangePatternPrefixRightTransportSlot::GenKeyword => None,
+            RangePatternPrefixRightTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for RangePatternPrefixRightTransportSlot {
@@ -14088,6 +16089,12 @@ impl ::sittir_core::prepare::Prepare for RangePatternWithLeftContentTransportSlo
             RangePatternWithLeftContentTransportSlot::RangePatternWithLeftBare => None,
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            RangePatternWithLeftContentTransportSlot::RangePatternWithLeftWithRight(t) => t.snapshot_edge(),
+            RangePatternWithLeftContentTransportSlot::RangePatternWithLeftBare => None,
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for RangePatternWithLeftContentTransportSlot {
@@ -14241,6 +16248,32 @@ impl ::sittir_core::prepare::Prepare for AttributedParameterContentTransportSlot
             AttributedParameterContentTransportSlot::Underscore => None,
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            AttributedParameterContentTransportSlot::Parameter(t) => t.snapshot_edge(),
+            AttributedParameterContentTransportSlot::SelfParameter(t) => t.snapshot_edge(),
+            AttributedParameterContentTransportSlot::VariadicParameter(t) => t.snapshot_edge(),
+            AttributedParameterContentTransportSlot::AbstractType(t) => t.snapshot_edge(),
+            AttributedParameterContentTransportSlot::ReferenceType(t) => t.snapshot_edge(),
+            AttributedParameterContentTransportSlot::Metavariable(t) => t.snapshot_edge(),
+            AttributedParameterContentTransportSlot::PointerTypeConst(t) => t.snapshot_edge(),
+            AttributedParameterContentTransportSlot::PointerTypeMut(t) => t.snapshot_edge(),
+            AttributedParameterContentTransportSlot::GenericType(t) => t.snapshot_edge(),
+            AttributedParameterContentTransportSlot::ScopedTypeIdentifier(t) => t.snapshot_edge(),
+            AttributedParameterContentTransportSlot::TupleType(t) => t.snapshot_edge(),
+            AttributedParameterContentTransportSlot::ArrayType(t) => t.snapshot_edge(),
+            AttributedParameterContentTransportSlot::FunctionType(t) => t.snapshot_edge(),
+            AttributedParameterContentTransportSlot::TypeIdentifier(t) => t.snapshot_edge(),
+            AttributedParameterContentTransportSlot::MacroInvocation(t) => t.snapshot_edge(),
+            AttributedParameterContentTransportSlot::DynamicType(t) => t.snapshot_edge(),
+            AttributedParameterContentTransportSlot::BoundedType(t) => t.snapshot_edge(),
+            AttributedParameterContentTransportSlot::RemovedTraitBound(t) => t.snapshot_edge(),
+            AttributedParameterContentTransportSlot::PrimitiveType(t) => t.snapshot_edge(),
+            AttributedParameterContentTransportSlot::UnitType => None,
+            AttributedParameterContentTransportSlot::NeverType => None,
+            AttributedParameterContentTransportSlot::Underscore => None,
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for AttributedParameterContentTransportSlot {
@@ -14342,6 +16375,14 @@ impl ::sittir_core::prepare::Prepare for AttributedTypeParameterContentTransport
             AttributedTypeParameterContentTransportSlot::TypeParameter(t) => t.gap_edges(),
             AttributedTypeParameterContentTransportSlot::LifetimeParameter(t) => t.gap_edges(),
             AttributedTypeParameterContentTransportSlot::ConstParameter(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            AttributedTypeParameterContentTransportSlot::Metavariable(t) => t.snapshot_edge(),
+            AttributedTypeParameterContentTransportSlot::TypeParameter(t) => t.snapshot_edge(),
+            AttributedTypeParameterContentTransportSlot::LifetimeParameter(t) => t.snapshot_edge(),
+            AttributedTypeParameterContentTransportSlot::ConstParameter(t) => t.snapshot_edge(),
         }
     }
 }
@@ -14566,6 +16607,46 @@ impl ::sittir_core::prepare::Prepare for TypeArgumentContentTransportSlot {
             TypeArgumentContentTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            TypeArgumentContentTransportSlot::AbstractType(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::ReferenceType(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::Metavariable(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::PointerTypeConst(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::PointerTypeMut(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::GenericType(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::ScopedTypeIdentifier(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::TupleType(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::ArrayType(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::FunctionType(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::TypeIdentifier(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::MacroInvocation(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::DynamicType(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::BoundedType(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::RemovedTraitBound(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::PrimitiveType(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::TypeBinding(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::Lifetime(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::StringLiteral(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::RawStringLiteral(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::CharLiteralEscapedSimple(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::CharLiteralEscapedUnicodeFixed(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::CharLiteralEscapedUnicodeBraced(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::CharLiteralEscapedHex(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::CharLiteralPlain(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::CharLiteralEmpty(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::BooleanLiteral(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::IntegerLiteralDecimal(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::IntegerLiteralHex(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::IntegerLiteralBinary(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::IntegerLiteralOctal(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::FloatLiteral(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::Block(t) => t.snapshot_edge(),
+            TypeArgumentContentTransportSlot::UnitType => None,
+            TypeArgumentContentTransportSlot::NeverType => None,
+            TypeArgumentContentTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::view::KindOf for TypeArgumentContentTransportSlot {
@@ -14665,7 +16746,7 @@ pub struct SourceFileTransport {
     pub shebang: Option<::sittir_core::SlotValue<ShebangTransport>>,
     #[wire(key = "_statements")]
     #[slot(field = field::STATEMENTS)]
-    pub statements: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
+    pub statements: Vec<::sittir_core::SlotValue<StatementTransport>>,
     #[wire(key = "_statements_separator_space")]
     pub statements_separator_space: Option<u16>,
 }
@@ -14691,16 +16772,18 @@ impl ::sittir_core::render::Render for SourceFileTransport {
 impl ::sittir_core::prepare::Prepare for SourceFileTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let first = [::sittir_core::prepare::EdgeItems::first_item(&self.shebang), ::sittir_core::prepare::EdgeItems::first_item(&self.statements)].into_iter().flatten().next();
-        let last = [::sittir_core::prepare::EdgeItems::last_item(&self.statements), ::sittir_core::prepare::EdgeItems::last_item(&self.shebang)].into_iter().flatten().next();
-        let flanks = ::sittir_core::prepare::root_flanks(first, last, options::allowed(options::SITE_SOURCE_FILE_SOURCE_FILE_BEFORE), options::allowed(options::SITE_SOURCE_FILE_SOURCE_FILE_AFTER), &options::WHITESPACE, ctx);
+        let inner = ::sittir_core::layout::Layout::snapshot_inner(&self.layout);
+        let first = ::sittir_core::prepare::outermost([::sittir_core::prepare::EdgeItems::first_item(&self.shebang), ::sittir_core::prepare::EdgeItems::first_item(&self.statements)].into_iter().flatten().next(), inner, ::sittir_core::options::Side::Before);
+        let last = ::sittir_core::prepare::outermost([::sittir_core::prepare::EdgeItems::last_item(&self.statements), ::sittir_core::prepare::EdgeItems::last_item(&self.shebang)].into_iter().flatten().next(), inner, ::sittir_core::options::Side::After);
+        let root = ::sittir_core::layout::Layout::snapshot_edge(&self.layout).map(|edge| edge.span);
+        let flanks = ::sittir_core::prepare::root_flanks(first, last, root, options::allowed(options::SITE_SOURCE_FILE_SOURCE_FILE_BEFORE), options::allowed(options::SITE_SOURCE_FILE_SOURCE_FILE_AFTER), &options::WHITESPACE, ctx);
         ::sittir_core::prepare::fill_edges(self, flanks);
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_SOURCE_FILE_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.statements.iter_mut().map(Some), "", options::allowed(options::SITE_SOURCE_FILE_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.statements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_SOURCE_FILE_STATEMENTS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_SOURCE_FILE_STATEMENTS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.statements.iter_mut().map(Some), options::SEATS_SOURCE_FILE_STATEMENTS, ctx);
         self.shebang.prepare(ctx)?;
         self.statements.prepare(ctx)?;
         Ok(())
@@ -14710,6 +16793,9 @@ impl ::sittir_core::prepare::Prepare for SourceFileTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -14778,6 +16864,9 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -14826,6 +16915,9 @@ impl ::sittir_core::prepare::Prepare for MacroRuleTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -14876,6 +16968,9 @@ impl ::sittir_core::prepare::Prepare for TokenBindingPatternTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -14885,7 +16980,7 @@ pub struct TokenRepetitionPatternTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_token_patterns")]
     #[slot(field = field::TOKEN_PATTERNS)]
-    pub token_patterns: Option<Vec<::sittir_core::SlotValue<TokenRepetitionPatternTokenPatternsTransportSlot>>>,
+    pub token_patterns: Vec<::sittir_core::SlotValue<TokenRepetitionPatternTokenPatternsTransportSlot>>,
     #[wire(key = "_separator")]
     #[slot(field = field::SEPARATOR)]
     pub separator: Option<::sittir_core::SlotValue<TokenRepetitionPatternTextTransport>>,
@@ -14924,9 +17019,9 @@ impl ::sittir_core::prepare::Prepare for TokenRepetitionPatternTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.token_patterns.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.token_patterns.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.token_patterns_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.token_patterns.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.token_patterns.iter_mut().map(Some), options::SEATS_TOKEN_REPETITION_PATTERN_TOKEN_PATTERNS, ctx);
         self.token_patterns.prepare(ctx)?;
         self.separator.prepare(ctx)?;
         self.operator.prepare(ctx)?;
@@ -14937,6 +17032,9 @@ impl ::sittir_core::prepare::Prepare for TokenRepetitionPatternTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -15032,7 +17130,7 @@ pub struct TokenRepetitionTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_tokens")]
     #[slot(field = field::TOKENS)]
-    pub tokens: Option<Vec<::sittir_core::SlotValue<TokenRepetitionTokensTransportSlot>>>,
+    pub tokens: Vec<::sittir_core::SlotValue<TokenRepetitionTokensTransportSlot>>,
     #[wire(key = "_separator")]
     #[slot(field = field::SEPARATOR)]
     pub separator: Option<::sittir_core::SlotValue<TokenRepetitionPatternTextTransport>>,
@@ -15071,9 +17169,9 @@ impl ::sittir_core::prepare::Prepare for TokenRepetitionTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.tokens.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_REPETITION_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.tokens.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_REPETITION_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.tokens_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_REPETITION_TOKENS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.tokens.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_TOKEN_REPETITION_TOKENS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.tokens.iter_mut().map(Some), options::SEATS_TOKEN_REPETITION_TOKENS, ctx);
         self.tokens.prepare(ctx)?;
         self.separator.prepare(ctx)?;
         self.operator.prepare(ctx)?;
@@ -15084,6 +17182,9 @@ impl ::sittir_core::prepare::Prepare for TokenRepetitionTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -15126,6 +17227,9 @@ impl ::sittir_core::prepare::Prepare for NonSpecialTokenTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -15172,6 +17276,9 @@ impl ::sittir_core::prepare::Prepare for AttributeItemTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -15216,6 +17323,9 @@ impl ::sittir_core::prepare::Prepare for InnerAttributeItemTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -15266,6 +17376,9 @@ impl ::sittir_core::prepare::Prepare for AttributeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -15275,7 +17388,7 @@ pub struct DeclarationListTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_declarations")]
     #[slot(field = field::DECLARATIONS)]
-    pub declarations: Option<Vec<::sittir_core::SlotValue<DeclarationStatementTransport>>>,
+    pub declarations: Vec<::sittir_core::SlotValue<DeclarationStatementTransport>>,
     #[wire(key = "_declarations_separator_space")]
     pub declarations_separator_space: Option<u16>,
 }
@@ -15304,9 +17417,9 @@ impl ::sittir_core::prepare::Prepare for DeclarationListTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.declarations.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_DECLARATION_LIST_DECLARATIONS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.declarations.iter_mut().map(Some), "", options::allowed(options::SITE_DECLARATION_LIST_DECLARATIONS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.declarations_separator_space.get_or_insert(ctx.options.spacing[options::SITE_DECLARATION_LIST_DECLARATIONS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.declarations.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_DECLARATION_LIST_DECLARATIONS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.declarations.iter_mut().map(Some), options::SEATS_DECLARATION_LIST_DECLARATIONS, ctx);
         self.declarations.prepare(ctx)?;
         Ok(())
     }
@@ -15315,6 +17428,9 @@ impl ::sittir_core::prepare::Prepare for DeclarationListTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -15377,6 +17493,9 @@ impl ::sittir_core::prepare::Prepare for UnionItemTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -15438,6 +17557,9 @@ impl ::sittir_core::prepare::Prepare for EnumItemTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -15482,6 +17604,9 @@ impl ::sittir_core::prepare::Prepare for EnumVariantListTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -15540,6 +17665,9 @@ impl ::sittir_core::prepare::Prepare for EnumVariantTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -15584,6 +17712,9 @@ impl ::sittir_core::prepare::Prepare for FieldDeclarationListTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -15638,6 +17769,9 @@ impl ::sittir_core::prepare::Prepare for FieldDeclarationTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -15682,6 +17816,9 @@ impl ::sittir_core::prepare::Prepare for OrderedFieldDeclarationListTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -15735,6 +17872,9 @@ impl ::sittir_core::prepare::Prepare for ExternCrateDeclarationTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -15792,6 +17932,9 @@ impl ::sittir_core::prepare::Prepare for ConstItemTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -15858,6 +18001,9 @@ impl ::sittir_core::prepare::Prepare for StaticItemTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -15922,6 +18068,9 @@ impl ::sittir_core::prepare::Prepare for TypeItemTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -15996,6 +18145,9 @@ impl ::sittir_core::prepare::Prepare for FunctionItemTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -16065,6 +18217,9 @@ impl ::sittir_core::prepare::Prepare for FunctionSignatureItemTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -16074,7 +18229,7 @@ pub struct FunctionModifiersTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_modifier")]
     #[slot(field = field::MODIFIER)]
-    pub modifier: Vec<::sittir_core::SlotValue<FunctionModifiersModifierTransportSlot>>,
+    pub modifier: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<FunctionModifiersModifierTransportSlot>>,
     #[wire(key = "_modifier_separator_space")]
     pub modifier_separator_space: Option<u16>,
 }
@@ -16114,6 +18269,9 @@ impl ::sittir_core::prepare::Prepare for FunctionModifiersTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -16159,6 +18317,9 @@ impl ::sittir_core::prepare::Prepare for WhereClauseTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -16208,6 +18369,9 @@ impl ::sittir_core::prepare::Prepare for WherePredicateTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -16278,6 +18442,9 @@ impl ::sittir_core::prepare::Prepare for TraitItemTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -16335,6 +18502,9 @@ impl ::sittir_core::prepare::Prepare for AssociatedTypeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -16344,7 +18514,7 @@ pub struct TraitBoundsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_bounds")]
     #[slot(field = field::BOUNDS, separator = kind::PLUS)]
-    pub bounds: Vec<::sittir_core::SlotValue<TraitBoundsBoundsTransportSlot>>,
+    pub bounds: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<TraitBoundsBoundsTransportSlot>>,
     #[wire(key = "_bounds_separator_space_before")]
     pub bounds_separator_space_before: Option<u16>,
     #[wire(key = "_bounds_separator_space_after")]
@@ -16387,6 +18557,9 @@ impl ::sittir_core::prepare::Prepare for TraitBoundsTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -16437,6 +18610,9 @@ impl ::sittir_core::prepare::Prepare for HigherRankedTraitBoundTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -16482,6 +18658,9 @@ impl ::sittir_core::prepare::Prepare for RemovedTraitBoundTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -16526,6 +18705,9 @@ impl ::sittir_core::prepare::Prepare for TypeParametersTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -16580,6 +18762,9 @@ impl ::sittir_core::prepare::Prepare for ConstParameterTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -16633,6 +18818,9 @@ impl ::sittir_core::prepare::Prepare for TypeParameterTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -16681,6 +18869,9 @@ impl ::sittir_core::prepare::Prepare for LifetimeParameterTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -16743,6 +18934,9 @@ impl ::sittir_core::prepare::Prepare for LetDeclarationTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -16791,6 +18985,9 @@ impl ::sittir_core::prepare::Prepare for UseDeclarationTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -16841,6 +19038,9 @@ impl ::sittir_core::prepare::Prepare for ScopedUseListTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -16885,6 +19085,9 @@ impl ::sittir_core::prepare::Prepare for UseListTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -16935,6 +19138,9 @@ impl ::sittir_core::prepare::Prepare for UseAsClauseTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -16980,6 +19186,9 @@ impl ::sittir_core::prepare::Prepare for UseWildcardTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -17024,6 +19233,9 @@ impl ::sittir_core::prepare::Prepare for ParametersTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -17078,6 +19290,9 @@ impl ::sittir_core::prepare::Prepare for SelfParameterTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -17126,6 +19341,9 @@ impl ::sittir_core::prepare::Prepare for VariadicParameterTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -17180,6 +19398,9 @@ impl ::sittir_core::prepare::Prepare for ParameterTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -17225,6 +19446,9 @@ impl ::sittir_core::prepare::Prepare for ExternModifierTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -17266,6 +19490,9 @@ impl ::sittir_core::prepare::Prepare for VisibilityModifierTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -17311,6 +19538,9 @@ impl ::sittir_core::prepare::Prepare for BracketedTypeTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -17361,6 +19591,9 @@ impl ::sittir_core::prepare::Prepare for QualifiedTypeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -17405,6 +19638,9 @@ impl ::sittir_core::prepare::Prepare for LifetimeTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -17455,6 +19691,9 @@ impl ::sittir_core::prepare::Prepare for ArrayTypeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -17499,6 +19738,9 @@ impl ::sittir_core::prepare::Prepare for ForLifetimesTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -17557,6 +19799,9 @@ impl ::sittir_core::prepare::Prepare for FunctionTypeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -17601,6 +19846,9 @@ impl ::sittir_core::prepare::Prepare for TupleTypeTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -17676,6 +19924,9 @@ impl ::sittir_core::prepare::Prepare for GenericFunctionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -17724,6 +19975,9 @@ impl ::sittir_core::prepare::Prepare for GenericTypeTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -17774,6 +20028,9 @@ impl ::sittir_core::prepare::Prepare for GenericTypeWithTurbofishTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -17823,6 +20080,9 @@ impl ::sittir_core::prepare::Prepare for BoundedTypeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -17868,6 +20128,9 @@ impl ::sittir_core::prepare::Prepare for UseBoundsTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -17912,6 +20175,9 @@ impl ::sittir_core::prepare::Prepare for TypeArgumentsTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -17966,6 +20232,9 @@ impl ::sittir_core::prepare::Prepare for TypeBindingTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -18018,6 +20287,9 @@ impl ::sittir_core::prepare::Prepare for ReferenceTypeTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -18093,6 +20365,9 @@ impl ::sittir_core::prepare::Prepare for AbstractTypeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -18137,6 +20412,9 @@ impl ::sittir_core::prepare::Prepare for DynamicTypeTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -18212,6 +20490,9 @@ impl ::sittir_core::prepare::Prepare for MacroInvocationTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -18260,6 +20541,9 @@ impl ::sittir_core::prepare::Prepare for ScopedIdentifierTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -18310,6 +20594,9 @@ impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierInExpressionPositio
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -18358,6 +20645,9 @@ impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -18412,6 +20702,9 @@ impl ::sittir_core::prepare::Prepare for UnaryExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -18456,6 +20749,9 @@ impl ::sittir_core::prepare::Prepare for TryExpressionTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -18510,6 +20806,9 @@ impl ::sittir_core::prepare::Prepare for BinaryExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -18558,6 +20857,9 @@ impl ::sittir_core::prepare::Prepare for AssignmentExpressionTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -18612,6 +20914,9 @@ impl ::sittir_core::prepare::Prepare for CompoundAssignmentExprTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -18661,6 +20966,9 @@ impl ::sittir_core::prepare::Prepare for TypeCastExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -18706,6 +21014,9 @@ impl ::sittir_core::prepare::Prepare for ReturnExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -18750,6 +21061,9 @@ impl ::sittir_core::prepare::Prepare for YieldExpressionTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -18800,6 +21114,9 @@ impl ::sittir_core::prepare::Prepare for CallExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -18844,6 +21161,9 @@ impl ::sittir_core::prepare::Prepare for ArgumentsTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -18890,6 +21210,9 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -18899,7 +21222,7 @@ pub struct TupleExpressionTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attributes")]
     #[slot(field = field::ATTRIBUTES)]
-    pub attributes: Option<Vec<::sittir_core::SlotValue<AttributeItemTransport>>>,
+    pub attributes: Vec<::sittir_core::SlotValue<AttributeItemTransport>>,
     #[wire(key = "_expressions")]
     #[slot]
     pub expressions: ::sittir_core::SlotValue<ExpressionsTransport>,
@@ -18931,9 +21254,9 @@ impl ::sittir_core::prepare::Prepare for TupleExpressionTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.attributes.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_TUPLE_EXPRESSION_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.attributes.iter_mut().map(Some), "", options::allowed(options::SITE_TUPLE_EXPRESSION_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.attributes_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_EXPRESSION_ATTRIBUTES_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.attributes.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_TUPLE_EXPRESSION_ATTRIBUTES, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.attributes.iter_mut().map(Some), options::SEATS_TUPLE_EXPRESSION_ATTRIBUTES, ctx);
         self.attributes.prepare(ctx)?;
         self.expressions.prepare(ctx)?;
         Ok(())
@@ -18943,6 +21266,9 @@ impl ::sittir_core::prepare::Prepare for TupleExpressionTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -19018,6 +21344,9 @@ impl ::sittir_core::prepare::Prepare for StructExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -19063,6 +21392,9 @@ impl ::sittir_core::prepare::Prepare for FieldInitializerListTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -19072,7 +21404,7 @@ pub struct ShorthandFieldInitializerTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attributes")]
     #[slot(field = field::ATTRIBUTES)]
-    pub attributes: Option<Vec<::sittir_core::SlotValue<AttributeItemTransport>>>,
+    pub attributes: Vec<::sittir_core::SlotValue<AttributeItemTransport>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
@@ -19104,9 +21436,9 @@ impl ::sittir_core::prepare::Prepare for ShorthandFieldInitializerTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.attributes.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.attributes.iter_mut().map(Some), "", options::allowed(options::SITE_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.attributes_separator_space.get_or_insert(ctx.options.spacing[options::SITE_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.attributes.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.attributes.iter_mut().map(Some), options::SEATS_SHORTHAND_FIELD_INITIALIZER_ATTRIBUTES, ctx);
         self.attributes.prepare(ctx)?;
         self.name.prepare(ctx)?;
         Ok(())
@@ -19117,6 +21449,9 @@ impl ::sittir_core::prepare::Prepare for ShorthandFieldInitializerTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -19126,7 +21461,7 @@ pub struct FieldInitializerTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attribute_item")]
     #[slot]
-    pub attribute_item: Option<Vec<::sittir_core::SlotValue<AttributeItemTransport>>>,
+    pub attribute_item: Vec<::sittir_core::SlotValue<AttributeItemTransport>>,
     #[wire(key = "_field")]
     #[slot(field = field::FIELD)]
     pub field: ::sittir_core::SlotValue<FieldInitializerFieldTransportSlot>,
@@ -19161,9 +21496,9 @@ impl ::sittir_core::prepare::Prepare for FieldInitializerTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.attribute_item.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_FIELD_INITIALIZER_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.attribute_item.iter_mut().map(Some), "", options::allowed(options::SITE_FIELD_INITIALIZER_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.attribute_item_separator_space.get_or_insert(ctx.options.spacing[options::SITE_FIELD_INITIALIZER_ATTRIBUTE_ITEM_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.attribute_item.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_FIELD_INITIALIZER_ATTRIBUTE_ITEM, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.attribute_item.iter_mut().map(Some), options::SEATS_FIELD_INITIALIZER_ATTRIBUTE_ITEM, ctx);
         self.attribute_item.prepare(ctx)?;
         self.field.prepare(ctx)?;
         self.value.prepare(ctx)?;
@@ -19174,6 +21509,9 @@ impl ::sittir_core::prepare::Prepare for FieldInitializerTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -19219,6 +21557,9 @@ impl ::sittir_core::prepare::Prepare for BaseFieldInitializerTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -19273,6 +21614,9 @@ impl ::sittir_core::prepare::Prepare for IfExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -19322,6 +21666,9 @@ impl ::sittir_core::prepare::Prepare for LetConditionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -19334,7 +21681,7 @@ pub struct LetChainTransport {
     pub left: ::sittir_core::SlotValue<Box<LetChainLeftTransportSlot>>,
     #[wire(key = "_right")]
     #[slot(field = field::RIGHT, separator = kind::AMP_AMP)]
-    pub right: Option<Vec<::sittir_core::SlotValue<LetChainRightTransportSlot>>>,
+    pub right: Vec<::sittir_core::SlotValue<LetChainRightTransportSlot>>,
     #[wire(key = "_right_separator_space_before")]
     pub right_separator_space_before: Option<u16>,
     #[wire(key = "_right_separator_space_after")]
@@ -19362,10 +21709,10 @@ impl ::sittir_core::render::Render for LetChainTransport {
 impl ::sittir_core::prepare::Prepare for LetChainTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        if let Some(gap_items) = self.right.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "&&", options::allowed(options::SITE_LET_CHAIN_RIGHT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_LET_CHAIN_RIGHT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.right.iter_mut().map(Some), "&&", options::allowed(options::SITE_LET_CHAIN_RIGHT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_LET_CHAIN_RIGHT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.right_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_LET_CHAIN_RIGHT_SEPARATOR_SPACE_BEFORE].arm);
         self.right_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_LET_CHAIN_RIGHT_SEPARATOR_SPACE_AFTER].arm);
-        if let Some(seated_items) = self.right.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_LET_CHAIN_RIGHT, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.right.iter_mut().map(Some), options::SEATS_LET_CHAIN_RIGHT, ctx);
         self.left.prepare(ctx)?;
         self.right.prepare(ctx)?;
         Ok(())
@@ -19375,6 +21722,9 @@ impl ::sittir_core::prepare::Prepare for LetChainTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -19420,6 +21770,9 @@ impl ::sittir_core::prepare::Prepare for ElseClauseTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -19470,6 +21823,9 @@ impl ::sittir_core::prepare::Prepare for MatchExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -19515,6 +21871,9 @@ impl ::sittir_core::prepare::Prepare for MatchBlockTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -19524,7 +21883,7 @@ pub struct LastMatchArmTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attributes")]
     #[slot(field = field::ATTRIBUTES)]
-    pub attributes: Option<Vec<::sittir_core::SlotValue<LastMatchArmAttributesTransportSlot>>>,
+    pub attributes: Vec<::sittir_core::SlotValue<LastMatchArmAttributesTransportSlot>>,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN)]
     pub pattern: ::sittir_core::SlotValue<Box<MatchPatternTransport>>,
@@ -19562,9 +21921,9 @@ impl ::sittir_core::prepare::Prepare for LastMatchArmTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.attributes.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_LAST_MATCH_ARM_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.attributes.iter_mut().map(Some), "", options::allowed(options::SITE_LAST_MATCH_ARM_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.attributes_separator_space.get_or_insert(ctx.options.spacing[options::SITE_LAST_MATCH_ARM_ATTRIBUTES_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.attributes.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_LAST_MATCH_ARM_ATTRIBUTES, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.attributes.iter_mut().map(Some), options::SEATS_LAST_MATCH_ARM_ATTRIBUTES, ctx);
         self.attributes.prepare(ctx)?;
         self.pattern.prepare(ctx)?;
         self.value.prepare(ctx)?;
@@ -19576,6 +21935,9 @@ impl ::sittir_core::prepare::Prepare for LastMatchArmTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -19625,6 +21987,9 @@ impl ::sittir_core::prepare::Prepare for MatchPatternTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -19679,6 +22044,9 @@ impl ::sittir_core::prepare::Prepare for WhileExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -19727,6 +22095,9 @@ impl ::sittir_core::prepare::Prepare for LoopExpressionTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -19785,6 +22156,9 @@ impl ::sittir_core::prepare::Prepare for ForExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -19830,6 +22204,9 @@ impl ::sittir_core::prepare::Prepare for ConstBlockTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -19839,7 +22216,7 @@ pub struct ClosureParametersTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_parameters")]
     #[slot(field = field::PARAMETERS, separator = kind::COMMA)]
-    pub parameters: Option<Vec<::sittir_core::SlotValue<ClosureParametersParametersTransportSlot>>>,
+    pub parameters: Vec<::sittir_core::SlotValue<ClosureParametersParametersTransportSlot>>,
     #[wire(key = "_parameters_separator_space_before")]
     pub parameters_separator_space_before: Option<u16>,
     #[wire(key = "_parameters_separator_space_after")]
@@ -19870,10 +22247,10 @@ impl ::sittir_core::prepare::Prepare for ClosureParametersTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.parameters.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), ",", options::allowed(options::SITE_CLOSURE_PARAMETERS_PARAMETERS_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_CLOSURE_PARAMETERS_PARAMETERS_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.parameters.iter_mut().map(Some), ",", options::allowed(options::SITE_CLOSURE_PARAMETERS_PARAMETERS_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_CLOSURE_PARAMETERS_PARAMETERS_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
         self.parameters_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_CLOSURE_PARAMETERS_PARAMETERS_SEPARATOR_SPACE_BEFORE].arm);
         self.parameters_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_CLOSURE_PARAMETERS_PARAMETERS_SEPARATOR_SPACE_AFTER].arm);
-        if let Some(seated_items) = self.parameters.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_CLOSURE_PARAMETERS_PARAMETERS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.parameters.iter_mut().map(Some), options::SEATS_CLOSURE_PARAMETERS_PARAMETERS, ctx);
         self.parameters.prepare(ctx)?;
         Ok(())
     }
@@ -19882,6 +22259,9 @@ impl ::sittir_core::prepare::Prepare for ClosureParametersTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -19927,6 +22307,9 @@ impl ::sittir_core::prepare::Prepare for LabelTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -19977,6 +22360,9 @@ impl ::sittir_core::prepare::Prepare for BreakExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -20021,6 +22407,9 @@ impl ::sittir_core::prepare::Prepare for ContinueExpressionTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -20071,6 +22460,9 @@ impl ::sittir_core::prepare::Prepare for IndexExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -20115,6 +22507,9 @@ impl ::sittir_core::prepare::Prepare for AwaitExpressionTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -20165,6 +22560,9 @@ impl ::sittir_core::prepare::Prepare for FieldExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -20209,6 +22607,9 @@ impl ::sittir_core::prepare::Prepare for UnsafeBlockTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -20259,6 +22660,9 @@ impl ::sittir_core::prepare::Prepare for AsyncBlockTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -20308,6 +22712,9 @@ impl ::sittir_core::prepare::Prepare for GenBlockTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -20353,6 +22760,9 @@ impl ::sittir_core::prepare::Prepare for TryBlockTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -20365,7 +22775,7 @@ pub struct BlockTransport {
     pub label: Option<::sittir_core::SlotValue<LabelTransport>>,
     #[wire(key = "_statements")]
     #[slot(field = field::STATEMENTS)]
-    pub statements: Option<Vec<::sittir_core::SlotValue<StatementTransport>>>,
+    pub statements: Vec<::sittir_core::SlotValue<StatementTransport>>,
     #[wire(key = "_trailing_expression")]
     #[slot(field = field::TRAILING_EXPRESSION)]
     pub trailing_expression: Option<::sittir_core::SlotValue<Box<ExpressionTransport>>>,
@@ -20397,9 +22807,9 @@ impl ::sittir_core::prepare::Prepare for BlockTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.statements.iter_mut().map(Some), "", options::allowed(options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.statements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_BLOCK_STATEMENTS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.statements.iter_mut().map(Some), options::SEATS_BLOCK_STATEMENTS, ctx);
         self.label.prepare(ctx)?;
         self.statements.prepare(ctx)?;
         self.trailing_expression.prepare(ctx)?;
@@ -20410,6 +22820,9 @@ impl ::sittir_core::prepare::Prepare for BlockTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -20460,6 +22873,9 @@ impl ::sittir_core::prepare::Prepare for GenericPatternTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -20505,6 +22921,9 @@ impl ::sittir_core::prepare::Prepare for TuplePatternTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -20549,6 +22968,9 @@ impl ::sittir_core::prepare::Prepare for SlicePatternTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -20599,6 +23021,9 @@ impl ::sittir_core::prepare::Prepare for TupleStructPatternTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -20647,6 +23072,9 @@ impl ::sittir_core::prepare::Prepare for StructPatternTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -20718,6 +23146,9 @@ impl ::sittir_core::prepare::Prepare for MutPatternTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -20762,6 +23193,9 @@ impl ::sittir_core::prepare::Prepare for RefPatternTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -20812,6 +23246,9 @@ impl ::sittir_core::prepare::Prepare for CapturedPatternTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -20861,6 +23298,9 @@ impl ::sittir_core::prepare::Prepare for ReferencePatternTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -20906,6 +23346,9 @@ impl ::sittir_core::prepare::Prepare for NegativeLiteralTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -20918,7 +23361,7 @@ pub struct StringLiteralTransport {
     pub string_open: ::sittir_core::SlotValue<StringOpenTransport>,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
-    pub elements: Option<Vec<::sittir_core::SlotValue<StringLiteralElementsTransportSlot, true>>>,
+    pub elements: Vec<::sittir_core::SlotValue<StringLiteralElementsTransportSlot, true>>,
 }
 
 impl ::sittir_core::view::KindOf for StringLiteralTransport {
@@ -20954,6 +23397,9 @@ impl ::sittir_core::prepare::Prepare for StringLiteralTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -21007,6 +23453,9 @@ impl ::sittir_core::prepare::Prepare for RawStringLiteralTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -21085,6 +23534,9 @@ impl ::sittir_core::prepare::Prepare for LineCommentTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -21181,6 +23633,9 @@ impl ::sittir_core::prepare::Prepare for BlockCommentTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -21220,6 +23675,9 @@ impl ::sittir_core::prepare::Prepare for IdentifierTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -21262,6 +23720,9 @@ impl ::sittir_core::prepare::Prepare for ShebangTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -21380,6 +23841,9 @@ impl ::sittir_core::prepare::Prepare for MetavariableTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, ::sittir_core::Transport)]
@@ -21482,7 +23946,7 @@ pub struct MacroRulesTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::SEMI)]
-    pub item: Vec<::sittir_core::SlotValue<MacroRuleTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<MacroRuleTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -21530,6 +23994,9 @@ impl ::sittir_core::prepare::Prepare for MacroRulesTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -21539,7 +24006,7 @@ pub struct EnumVariantListElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<AttributedEnumVariantTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<AttributedEnumVariantTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -21587,6 +24054,9 @@ impl ::sittir_core::prepare::Prepare for EnumVariantListElementsTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -21596,7 +24066,7 @@ pub struct FieldDeclarationListElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<AttributedFieldDeclarationTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<AttributedFieldDeclarationTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -21644,6 +24114,9 @@ impl ::sittir_core::prepare::Prepare for FieldDeclarationListElementsTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -21653,7 +24126,7 @@ pub struct OrderedFieldDeclarationListElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<AttributedOrderedFieldTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<AttributedOrderedFieldTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -21701,6 +24174,9 @@ impl ::sittir_core::prepare::Prepare for OrderedFieldDeclarationListElementsTran
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -21710,7 +24186,7 @@ pub struct WherePredicatesTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<WherePredicateTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<WherePredicateTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -21758,6 +24234,9 @@ impl ::sittir_core::prepare::Prepare for WherePredicatesTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -21767,7 +24246,7 @@ pub struct TypeParametersElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<AttributedTypeParameterTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<AttributedTypeParameterTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -21815,6 +24294,9 @@ impl ::sittir_core::prepare::Prepare for TypeParametersElementsTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -21824,7 +24306,7 @@ pub struct UseClausesTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<UseDeclarationArgumentTransportSlot>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<UseDeclarationArgumentTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -21872,6 +24354,9 @@ impl ::sittir_core::prepare::Prepare for UseClausesTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -21881,7 +24366,7 @@ pub struct ParametersElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<AttributedParameterTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<AttributedParameterTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -21929,6 +24414,9 @@ impl ::sittir_core::prepare::Prepare for ParametersElementsTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -21938,7 +24426,7 @@ pub struct LifetimesTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<LifetimeTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<LifetimeTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -21986,6 +24474,9 @@ impl ::sittir_core::prepare::Prepare for LifetimesTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -21995,7 +24486,7 @@ pub struct TypesTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<TypeTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<TypeTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -22043,6 +24534,9 @@ impl ::sittir_core::prepare::Prepare for TypesTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -22052,7 +24546,7 @@ pub struct UseBoundsElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<UseBoundsElementsItemTransportSlot>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<UseBoundsElementsItemTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -22100,6 +24594,9 @@ impl ::sittir_core::prepare::Prepare for UseBoundsElementsTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -22109,7 +24606,7 @@ pub struct TypeArgumentsElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<TypeArgumentTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<TypeArgumentTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -22157,6 +24654,9 @@ impl ::sittir_core::prepare::Prepare for TypeArgumentsElementsTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -22166,7 +24666,7 @@ pub struct ArgumentsElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<AttributedArgumentTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<AttributedArgumentTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -22214,6 +24714,9 @@ impl ::sittir_core::prepare::Prepare for ArgumentsElementsTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -22223,7 +24726,7 @@ pub struct ExpressionsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -22271,6 +24774,9 @@ impl ::sittir_core::prepare::Prepare for ExpressionsTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -22280,7 +24786,7 @@ pub struct FieldInitializerListElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<FieldInitializerListElementsItemTransportSlot>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<FieldInitializerListElementsItemTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -22328,6 +24834,9 @@ impl ::sittir_core::prepare::Prepare for FieldInitializerListElementsTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -22337,7 +24846,7 @@ pub struct TuplePatternElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<TuplePatternElementsItemTransportSlot>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<TuplePatternElementsItemTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -22385,6 +24894,9 @@ impl ::sittir_core::prepare::Prepare for TuplePatternElementsTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -22394,7 +24906,7 @@ pub struct PatternsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<PatternTransport>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<PatternTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -22442,6 +24954,9 @@ impl ::sittir_core::prepare::Prepare for PatternsTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -22451,7 +24966,7 @@ pub struct StructPatternElementsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, separator = kind::COMMA)]
-    pub item: Vec<::sittir_core::SlotValue<StructPatternElementsItemTransportSlot>>,
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<StructPatternElementsItemTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
@@ -22499,6 +25014,9 @@ impl ::sittir_core::prepare::Prepare for StructPatternElementsTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -22544,6 +25062,9 @@ impl ::sittir_core::prepare::Prepare for UseWildcardGroupTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -22584,6 +25105,9 @@ impl ::sittir_core::prepare::Prepare for TokenRepetitionPatternTextTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -22623,6 +25147,9 @@ impl ::sittir_core::prepare::Prepare for StringOpenTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -23062,6 +25589,9 @@ impl ::sittir_core::prepare::Prepare for IntegerLiteralDecimalTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -23107,6 +25637,9 @@ impl ::sittir_core::prepare::Prepare for IntegerLiteralHexTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -23154,6 +25687,9 @@ impl ::sittir_core::prepare::Prepare for IntegerLiteralBinaryTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -23199,6 +25735,9 @@ impl ::sittir_core::prepare::Prepare for IntegerLiteralOctalTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -23246,6 +25785,9 @@ impl ::sittir_core::prepare::Prepare for CharLiteralPlainTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -23285,6 +25827,9 @@ impl ::sittir_core::prepare::Prepare for CharLiteralEmptyTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -23332,6 +25877,9 @@ impl ::sittir_core::prepare::Prepare for CharLiteralEscapedSimpleTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -23377,6 +25925,9 @@ impl ::sittir_core::prepare::Prepare for CharLiteralEscapedUnicodeFixedTransport
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -23424,6 +25975,9 @@ impl ::sittir_core::prepare::Prepare for CharLiteralEscapedUnicodeBracedTranspor
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -23470,6 +26024,9 @@ impl ::sittir_core::prepare::Prepare for CharLiteralEscapedHexTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -23511,6 +26068,9 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceSimpleTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -23554,6 +26114,9 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceUnicodeFixedTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -23595,6 +26158,9 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceUnicodeBracedTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -23638,6 +26204,9 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceHexTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -23647,7 +26216,7 @@ pub struct ArrayExpressionSemiTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attributes")]
     #[slot(field = field::ATTRIBUTES)]
-    pub attributes: Option<Vec<::sittir_core::SlotValue<AttributeItemTransport>>>,
+    pub attributes: Vec<::sittir_core::SlotValue<AttributeItemTransport>>,
     #[wire(key = "_element")]
     #[slot(field = field::ELEMENT)]
     pub element: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
@@ -23682,9 +26251,9 @@ impl ::sittir_core::prepare::Prepare for ArrayExpressionSemiTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.attributes.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_ARRAY_EXPRESSION_SEMI_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.attributes.iter_mut().map(Some), "", options::allowed(options::SITE_ARRAY_EXPRESSION_SEMI_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.attributes_separator_space.get_or_insert(ctx.options.spacing[options::SITE_ARRAY_EXPRESSION_SEMI_ATTRIBUTES_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.attributes.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_ARRAY_EXPRESSION_SEMI_ATTRIBUTES, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.attributes.iter_mut().map(Some), options::SEATS_ARRAY_EXPRESSION_SEMI_ATTRIBUTES, ctx);
         self.attributes.prepare(ctx)?;
         self.element.prepare(ctx)?;
         self.length.prepare(ctx)?;
@@ -23696,6 +26265,9 @@ impl ::sittir_core::prepare::Prepare for ArrayExpressionSemiTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -23705,7 +26277,7 @@ pub struct ArrayExpressionListTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attributes")]
     #[slot(field = field::ATTRIBUTES)]
-    pub attributes: Option<Vec<::sittir_core::SlotValue<AttributeItemTransport>>>,
+    pub attributes: Vec<::sittir_core::SlotValue<AttributeItemTransport>>,
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
     pub elements: Option<::sittir_core::SlotValue<ArgumentsElementsTransport>>,
@@ -23737,9 +26309,9 @@ impl ::sittir_core::prepare::Prepare for ArrayExpressionListTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.attributes.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_ARRAY_EXPRESSION_LIST_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.attributes.iter_mut().map(Some), "", options::allowed(options::SITE_ARRAY_EXPRESSION_LIST_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.attributes_separator_space.get_or_insert(ctx.options.spacing[options::SITE_ARRAY_EXPRESSION_LIST_ATTRIBUTES_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.attributes.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_ARRAY_EXPRESSION_LIST_ATTRIBUTES, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.attributes.iter_mut().map(Some), options::SEATS_ARRAY_EXPRESSION_LIST_ATTRIBUTES, ctx);
         self.attributes.prepare(ctx)?;
         self.elements.prepare(ctx)?;
         Ok(())
@@ -23749,6 +26321,9 @@ impl ::sittir_core::prepare::Prepare for ArrayExpressionListTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -23795,6 +26370,9 @@ impl ::sittir_core::prepare::Prepare for AttributeInputTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -23861,6 +26439,9 @@ impl ::sittir_core::prepare::Prepare for ClosureExpressionBlockTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -23922,6 +26503,9 @@ impl ::sittir_core::prepare::Prepare for ClosureExpressionExprTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -23966,6 +26550,9 @@ impl ::sittir_core::prepare::Prepare for ReferenceExpressionRawConstTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -24012,6 +26599,9 @@ impl ::sittir_core::prepare::Prepare for ReferenceExpressionRawMutTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -24056,6 +26646,9 @@ impl ::sittir_core::prepare::Prepare for ReferenceExpressionMutTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -24102,6 +26695,9 @@ impl ::sittir_core::prepare::Prepare for ReferenceExpressionBareTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -24147,6 +26743,9 @@ impl ::sittir_core::prepare::Prepare for ImplItemPositiveClauseTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -24191,6 +26790,9 @@ impl ::sittir_core::prepare::Prepare for ImplItemNegativeClauseTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -24257,6 +26859,9 @@ impl ::sittir_core::prepare::Prepare for ImplItemBodyTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -24318,6 +26923,9 @@ impl ::sittir_core::prepare::Prepare for ImplItemSemiTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -24362,6 +26970,9 @@ impl ::sittir_core::prepare::Prepare for VisibilityModifierPubScopeInPathTranspo
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -24408,6 +27019,9 @@ impl ::sittir_core::prepare::Prepare for VisibilityModifierPubScopeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -24453,6 +27067,9 @@ impl ::sittir_core::prepare::Prepare for VisibilityModifierPubTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -24494,6 +27111,9 @@ impl ::sittir_core::prepare::Prepare for FunctionTypeTraitFormTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -24539,6 +27159,9 @@ impl ::sittir_core::prepare::Prepare for FunctionTypeFnFormTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -24588,6 +27211,9 @@ impl ::sittir_core::prepare::Prepare for ModItemExternalTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -24642,6 +27268,9 @@ impl ::sittir_core::prepare::Prepare for ModItemInlineTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -24691,6 +27320,9 @@ impl ::sittir_core::prepare::Prepare for OrPatternBinaryTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -24735,6 +27367,9 @@ impl ::sittir_core::prepare::Prepare for OrPatternPrefixTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -24781,6 +27416,9 @@ impl ::sittir_core::prepare::Prepare for PointerTypeConstTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -24825,6 +27463,9 @@ impl ::sittir_core::prepare::Prepare for PointerTypeMutTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -24879,6 +27520,9 @@ impl ::sittir_core::prepare::Prepare for RangeExpressionBinaryTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -24923,6 +27567,9 @@ impl ::sittir_core::prepare::Prepare for RangeExpressionPostfixTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -24969,6 +27616,9 @@ impl ::sittir_core::prepare::Prepare for RangeExpressionPrefixTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -25010,6 +27660,9 @@ impl ::sittir_core::prepare::Prepare for RangeExpressionBareTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -25055,6 +27708,9 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementWithSemiTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -25104,6 +27760,9 @@ impl ::sittir_core::prepare::Prepare for ForeignModItemSemiTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -25158,6 +27817,9 @@ impl ::sittir_core::prepare::Prepare for ForeignModItemBodyTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -25167,7 +27829,7 @@ pub struct MatchArmWithCommaTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attributes")]
     #[slot(field = field::ATTRIBUTES)]
-    pub attributes: Option<Vec<::sittir_core::SlotValue<LastMatchArmAttributesTransportSlot>>>,
+    pub attributes: Vec<::sittir_core::SlotValue<LastMatchArmAttributesTransportSlot>>,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN)]
     pub pattern: ::sittir_core::SlotValue<MatchPatternTransport>,
@@ -25202,9 +27864,9 @@ impl ::sittir_core::prepare::Prepare for MatchArmWithCommaTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.attributes.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_MATCH_ARM_WITH_COMMA_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.attributes.iter_mut().map(Some), "", options::allowed(options::SITE_MATCH_ARM_WITH_COMMA_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.attributes_separator_space.get_or_insert(ctx.options.spacing[options::SITE_MATCH_ARM_WITH_COMMA_ATTRIBUTES_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.attributes.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_MATCH_ARM_WITH_COMMA_ATTRIBUTES, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.attributes.iter_mut().map(Some), options::SEATS_MATCH_ARM_WITH_COMMA_ATTRIBUTES, ctx);
         self.attributes.prepare(ctx)?;
         self.pattern.prepare(ctx)?;
         self.value.prepare(ctx)?;
@@ -25216,6 +27878,9 @@ impl ::sittir_core::prepare::Prepare for MatchArmWithCommaTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -25225,7 +27890,7 @@ pub struct MatchArmBlockEndingTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attributes")]
     #[slot(field = field::ATTRIBUTES)]
-    pub attributes: Option<Vec<::sittir_core::SlotValue<LastMatchArmAttributesTransportSlot>>>,
+    pub attributes: Vec<::sittir_core::SlotValue<LastMatchArmAttributesTransportSlot>>,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN)]
     pub pattern: ::sittir_core::SlotValue<MatchPatternTransport>,
@@ -25260,9 +27925,9 @@ impl ::sittir_core::prepare::Prepare for MatchArmBlockEndingTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.attributes.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.attributes.iter_mut().map(Some), "", options::allowed(options::SITE_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.attributes_separator_space.get_or_insert(ctx.options.spacing[options::SITE_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.attributes.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.attributes.iter_mut().map(Some), options::SEATS_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES, ctx);
         self.attributes.prepare(ctx)?;
         self.pattern.prepare(ctx)?;
         self.value.prepare(ctx)?;
@@ -25273,6 +27938,9 @@ impl ::sittir_core::prepare::Prepare for MatchArmBlockEndingTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -25313,6 +27981,9 @@ impl ::sittir_core::prepare::Prepare for LineCommentExtraSlashesTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -25356,6 +28027,9 @@ impl ::sittir_core::prepare::Prepare for LineCommentDocOuterTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -25398,6 +28072,9 @@ impl ::sittir_core::prepare::Prepare for LineCommentDocInnerTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -25437,6 +28114,9 @@ impl ::sittir_core::prepare::Prepare for LineCommentRegularTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -25480,6 +28160,9 @@ impl ::sittir_core::prepare::Prepare for BlockCommentDocOuterTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -25522,6 +28205,9 @@ impl ::sittir_core::prepare::Prepare for BlockCommentDocInnerTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -25562,6 +28248,9 @@ impl ::sittir_core::prepare::Prepare for BlockCommentRegularTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -25571,7 +28260,7 @@ pub struct TokenTreePatternParenTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_token_patterns")]
     #[slot(field = field::TOKEN_PATTERNS)]
-    pub token_patterns: Option<Vec<::sittir_core::SlotValue<TokenRepetitionPatternTokenPatternsTransportSlot>>>,
+    pub token_patterns: Vec<::sittir_core::SlotValue<TokenRepetitionPatternTokenPatternsTransportSlot>>,
     #[wire(key = "_token_patterns_separator_space")]
     pub token_patterns_separator_space: Option<u16>,
 }
@@ -25600,9 +28289,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternParenTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.token_patterns.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.token_patterns.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.token_patterns_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.token_patterns.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.token_patterns.iter_mut().map(Some), options::SEATS_TOKEN_TREE_PATTERN_PAREN_TOKEN_PATTERNS, ctx);
         self.token_patterns.prepare(ctx)?;
         Ok(())
     }
@@ -25611,6 +28300,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternParenTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -25621,7 +28313,7 @@ pub struct TokenTreePatternBracketTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_token_patterns")]
     #[slot(field = field::TOKEN_PATTERNS)]
-    pub token_patterns: Option<Vec<::sittir_core::SlotValue<TokenRepetitionPatternTokenPatternsTransportSlot>>>,
+    pub token_patterns: Vec<::sittir_core::SlotValue<TokenRepetitionPatternTokenPatternsTransportSlot>>,
     #[wire(key = "_token_patterns_separator_space")]
     pub token_patterns_separator_space: Option<u16>,
 }
@@ -25650,9 +28342,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternBracketTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.token_patterns.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.token_patterns.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.token_patterns_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.token_patterns.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.token_patterns.iter_mut().map(Some), options::SEATS_TOKEN_TREE_PATTERN_BRACKET_TOKEN_PATTERNS, ctx);
         self.token_patterns.prepare(ctx)?;
         Ok(())
     }
@@ -25661,6 +28353,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternBracketTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -25671,7 +28366,7 @@ pub struct TokenTreePatternBraceTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_token_patterns")]
     #[slot(field = field::TOKEN_PATTERNS)]
-    pub token_patterns: Option<Vec<::sittir_core::SlotValue<TokenRepetitionPatternTokenPatternsTransportSlot>>>,
+    pub token_patterns: Vec<::sittir_core::SlotValue<TokenRepetitionPatternTokenPatternsTransportSlot>>,
     #[wire(key = "_token_patterns_separator_space")]
     pub token_patterns_separator_space: Option<u16>,
 }
@@ -25700,9 +28395,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternBraceTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.token_patterns.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.token_patterns.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.token_patterns_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.token_patterns.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.token_patterns.iter_mut().map(Some), options::SEATS_TOKEN_TREE_PATTERN_BRACE_TOKEN_PATTERNS, ctx);
         self.token_patterns.prepare(ctx)?;
         Ok(())
     }
@@ -25711,6 +28406,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternBraceTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -25721,7 +28419,7 @@ pub struct TokenTreeParenTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_tokens")]
     #[slot(field = field::TOKENS)]
-    pub tokens: Option<Vec<::sittir_core::SlotValue<TokenRepetitionTokensTransportSlot>>>,
+    pub tokens: Vec<::sittir_core::SlotValue<TokenRepetitionTokensTransportSlot>>,
     #[wire(key = "_tokens_separator_space")]
     pub tokens_separator_space: Option<u16>,
 }
@@ -25750,9 +28448,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreeParenTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.tokens.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_TREE_PAREN_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.tokens.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_TREE_PAREN_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.tokens_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_PAREN_TOKENS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.tokens.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_TOKEN_TREE_PAREN_TOKENS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.tokens.iter_mut().map(Some), options::SEATS_TOKEN_TREE_PAREN_TOKENS, ctx);
         self.tokens.prepare(ctx)?;
         Ok(())
     }
@@ -25761,6 +28459,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreeParenTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -25771,7 +28472,7 @@ pub struct TokenTreeBracketTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_tokens")]
     #[slot(field = field::TOKENS)]
-    pub tokens: Option<Vec<::sittir_core::SlotValue<TokenRepetitionTokensTransportSlot>>>,
+    pub tokens: Vec<::sittir_core::SlotValue<TokenRepetitionTokensTransportSlot>>,
     #[wire(key = "_tokens_separator_space")]
     pub tokens_separator_space: Option<u16>,
 }
@@ -25800,9 +28501,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreeBracketTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.tokens.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_TREE_BRACKET_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.tokens.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_TREE_BRACKET_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.tokens_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_BRACKET_TOKENS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.tokens.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_TOKEN_TREE_BRACKET_TOKENS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.tokens.iter_mut().map(Some), options::SEATS_TOKEN_TREE_BRACKET_TOKENS, ctx);
         self.tokens.prepare(ctx)?;
         Ok(())
     }
@@ -25811,6 +28512,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreeBracketTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -25821,7 +28525,7 @@ pub struct TokenTreeBraceTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_tokens")]
     #[slot(field = field::TOKENS)]
-    pub tokens: Option<Vec<::sittir_core::SlotValue<TokenRepetitionTokensTransportSlot>>>,
+    pub tokens: Vec<::sittir_core::SlotValue<TokenRepetitionTokensTransportSlot>>,
     #[wire(key = "_tokens_separator_space")]
     pub tokens_separator_space: Option<u16>,
 }
@@ -25850,9 +28554,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreeBraceTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.tokens.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_TREE_BRACE_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.tokens.iter_mut().map(Some), "", options::allowed(options::SITE_TOKEN_TREE_BRACE_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.tokens_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TOKEN_TREE_BRACE_TOKENS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.tokens.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_TOKEN_TREE_BRACE_TOKENS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.tokens.iter_mut().map(Some), options::SEATS_TOKEN_TREE_BRACE_TOKENS, ctx);
         self.tokens.prepare(ctx)?;
         Ok(())
     }
@@ -25861,6 +28565,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreeBraceTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -25871,7 +28578,7 @@ pub struct DelimTokenTreeParenTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_delim_tokens")]
     #[slot(field = field::DELIM_TOKENS)]
-    pub delim_tokens: Option<Vec<::sittir_core::SlotValue<DelimTokenTreeParenDelimTokensTransportSlot>>>,
+    pub delim_tokens: Vec<::sittir_core::SlotValue<DelimTokenTreeParenDelimTokensTransportSlot>>,
     #[wire(key = "_delim_tokens_separator_space")]
     pub delim_tokens_separator_space: Option<u16>,
 }
@@ -25900,9 +28607,9 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeParenTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.delim_tokens.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.delim_tokens.iter_mut().map(Some), "", options::allowed(options::SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.delim_tokens_separator_space.get_or_insert(ctx.options.spacing[options::SITE_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.delim_tokens.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.delim_tokens.iter_mut().map(Some), options::SEATS_DELIM_TOKEN_TREE_PAREN_DELIM_TOKENS, ctx);
         self.delim_tokens.prepare(ctx)?;
         Ok(())
     }
@@ -25911,6 +28618,9 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeParenTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -25921,7 +28631,7 @@ pub struct DelimTokenTreeBracketTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_delim_tokens")]
     #[slot(field = field::DELIM_TOKENS)]
-    pub delim_tokens: Option<Vec<::sittir_core::SlotValue<DelimTokenTreeParenDelimTokensTransportSlot>>>,
+    pub delim_tokens: Vec<::sittir_core::SlotValue<DelimTokenTreeParenDelimTokensTransportSlot>>,
     #[wire(key = "_delim_tokens_separator_space")]
     pub delim_tokens_separator_space: Option<u16>,
 }
@@ -25950,9 +28660,9 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeBracketTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.delim_tokens.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.delim_tokens.iter_mut().map(Some), "", options::allowed(options::SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.delim_tokens_separator_space.get_or_insert(ctx.options.spacing[options::SITE_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.delim_tokens.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.delim_tokens.iter_mut().map(Some), options::SEATS_DELIM_TOKEN_TREE_BRACKET_DELIM_TOKENS, ctx);
         self.delim_tokens.prepare(ctx)?;
         Ok(())
     }
@@ -25961,6 +28671,9 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeBracketTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -25971,7 +28684,7 @@ pub struct DelimTokenTreeBraceTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_delim_tokens")]
     #[slot(field = field::DELIM_TOKENS)]
-    pub delim_tokens: Option<Vec<::sittir_core::SlotValue<DelimTokenTreeParenDelimTokensTransportSlot>>>,
+    pub delim_tokens: Vec<::sittir_core::SlotValue<DelimTokenTreeParenDelimTokensTransportSlot>>,
     #[wire(key = "_delim_tokens_separator_space")]
     pub delim_tokens_separator_space: Option<u16>,
 }
@@ -26000,9 +28713,9 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeBraceTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.delim_tokens.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.delim_tokens.iter_mut().map(Some), "", options::allowed(options::SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.delim_tokens_separator_space.get_or_insert(ctx.options.spacing[options::SITE_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.delim_tokens.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.delim_tokens.iter_mut().map(Some), options::SEATS_DELIM_TOKEN_TREE_BRACE_DELIM_TOKENS, ctx);
         self.delim_tokens.prepare(ctx)?;
         Ok(())
     }
@@ -26011,6 +28724,9 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeBraceTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -26064,6 +28780,9 @@ impl ::sittir_core::prepare::Prepare for FieldPatternShorthandTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -26122,6 +28841,9 @@ impl ::sittir_core::prepare::Prepare for FieldPatternNamedTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -26170,6 +28892,9 @@ impl ::sittir_core::prepare::Prepare for MacroDefinitionParenTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -26220,6 +28945,9 @@ impl ::sittir_core::prepare::Prepare for MacroDefinitionBracketTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -26268,6 +28996,9 @@ impl ::sittir_core::prepare::Prepare for MacroDefinitionBraceTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -26322,6 +29053,9 @@ impl ::sittir_core::prepare::Prepare for RangePatternPrefixTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -26374,6 +29108,9 @@ impl ::sittir_core::prepare::Prepare for RangePatternWithLeftWithRightTransport 
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -26449,6 +29186,9 @@ impl ::sittir_core::prepare::Prepare for RangePatternWithLeftTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -26509,6 +29249,9 @@ impl ::sittir_core::prepare::Prepare for StructItemBraceTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -26571,6 +29314,9 @@ impl ::sittir_core::prepare::Prepare for StructItemTupleTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -26624,6 +29370,9 @@ impl ::sittir_core::prepare::Prepare for StructItemUnitTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
@@ -26658,7 +29407,7 @@ pub struct AttributedFieldDeclarationTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attribute_item")]
     #[slot]
-    pub attribute_item: Option<Vec<::sittir_core::SlotValue<AttributeItemTransport>>>,
+    pub attribute_item: Vec<::sittir_core::SlotValue<AttributeItemTransport>>,
     #[wire(key = "_field_declaration")]
     #[slot]
     pub field_declaration: ::sittir_core::SlotValue<FieldDeclarationTransport>,
@@ -26690,9 +29439,9 @@ impl ::sittir_core::prepare::Prepare for AttributedFieldDeclarationTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.attribute_item.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_ATTRIBUTED_FIELD_DECLARATION_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.attribute_item.iter_mut().map(Some), "", options::allowed(options::SITE_ATTRIBUTED_FIELD_DECLARATION_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.attribute_item_separator_space.get_or_insert(ctx.options.spacing[options::SITE_ATTRIBUTED_FIELD_DECLARATION_ATTRIBUTE_ITEM_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.attribute_item.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_ATTRIBUTED_FIELD_DECLARATION_ATTRIBUTE_ITEM, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.attribute_item.iter_mut().map(Some), options::SEATS_ATTRIBUTED_FIELD_DECLARATION_ATTRIBUTE_ITEM, ctx);
         self.attribute_item.prepare(ctx)?;
         self.field_declaration.prepare(ctx)?;
         Ok(())
@@ -26703,6 +29452,9 @@ impl ::sittir_core::prepare::Prepare for AttributedFieldDeclarationTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -26712,7 +29464,7 @@ pub struct AttributedEnumVariantTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attribute_item")]
     #[slot]
-    pub attribute_item: Option<Vec<::sittir_core::SlotValue<AttributeItemTransport>>>,
+    pub attribute_item: Vec<::sittir_core::SlotValue<AttributeItemTransport>>,
     #[wire(key = "_enum_variant")]
     #[slot]
     pub enum_variant: ::sittir_core::SlotValue<EnumVariantTransport>,
@@ -26744,9 +29496,9 @@ impl ::sittir_core::prepare::Prepare for AttributedEnumVariantTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.attribute_item.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_ATTRIBUTED_ENUM_VARIANT_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.attribute_item.iter_mut().map(Some), "", options::allowed(options::SITE_ATTRIBUTED_ENUM_VARIANT_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.attribute_item_separator_space.get_or_insert(ctx.options.spacing[options::SITE_ATTRIBUTED_ENUM_VARIANT_ATTRIBUTE_ITEM_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.attribute_item.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_ATTRIBUTED_ENUM_VARIANT_ATTRIBUTE_ITEM, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.attribute_item.iter_mut().map(Some), options::SEATS_ATTRIBUTED_ENUM_VARIANT_ATTRIBUTE_ITEM, ctx);
         self.attribute_item.prepare(ctx)?;
         self.enum_variant.prepare(ctx)?;
         Ok(())
@@ -26756,6 +29508,9 @@ impl ::sittir_core::prepare::Prepare for AttributedEnumVariantTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -26806,6 +29561,9 @@ impl ::sittir_core::prepare::Prepare for AttributedParameterTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -26815,7 +29573,7 @@ pub struct AttributedTypeParameterTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attribute_item")]
     #[slot]
-    pub attribute_item: Option<Vec<::sittir_core::SlotValue<AttributeItemTransport>>>,
+    pub attribute_item: Vec<::sittir_core::SlotValue<AttributeItemTransport>>,
     #[wire(key = "_content")]
     #[slot]
     pub content: ::sittir_core::SlotValue<AttributedTypeParameterContentTransportSlot>,
@@ -26847,9 +29605,9 @@ impl ::sittir_core::prepare::Prepare for AttributedTypeParameterTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.attribute_item.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_ATTRIBUTED_TYPE_PARAMETER_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.attribute_item.iter_mut().map(Some), "", options::allowed(options::SITE_ATTRIBUTED_TYPE_PARAMETER_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.attribute_item_separator_space.get_or_insert(ctx.options.spacing[options::SITE_ATTRIBUTED_TYPE_PARAMETER_ATTRIBUTE_ITEM_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.attribute_item.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_ATTRIBUTED_TYPE_PARAMETER_ATTRIBUTE_ITEM, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.attribute_item.iter_mut().map(Some), options::SEATS_ATTRIBUTED_TYPE_PARAMETER_ATTRIBUTE_ITEM, ctx);
         self.attribute_item.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
@@ -26860,6 +29618,9 @@ impl ::sittir_core::prepare::Prepare for AttributedTypeParameterTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -26869,7 +29630,7 @@ pub struct AttributedArgumentTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attribute_item")]
     #[slot]
-    pub attribute_item: Option<Vec<::sittir_core::SlotValue<AttributeItemTransport>>>,
+    pub attribute_item: Vec<::sittir_core::SlotValue<AttributeItemTransport>>,
     #[wire(key = "_expression")]
     #[slot]
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
@@ -26901,9 +29662,9 @@ impl ::sittir_core::prepare::Prepare for AttributedArgumentTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.attribute_item.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_ATTRIBUTED_ARGUMENT_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.attribute_item.iter_mut().map(Some), "", options::allowed(options::SITE_ATTRIBUTED_ARGUMENT_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.attribute_item_separator_space.get_or_insert(ctx.options.spacing[options::SITE_ATTRIBUTED_ARGUMENT_ATTRIBUTE_ITEM_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.attribute_item.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_ATTRIBUTED_ARGUMENT_ATTRIBUTE_ITEM, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.attribute_item.iter_mut().map(Some), options::SEATS_ATTRIBUTED_ARGUMENT_ATTRIBUTE_ITEM, ctx);
         self.attribute_item.prepare(ctx)?;
         self.expression.prepare(ctx)?;
         Ok(())
@@ -26914,6 +29675,9 @@ impl ::sittir_core::prepare::Prepare for AttributedArgumentTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -26923,7 +29687,7 @@ pub struct AttributedOrderedFieldTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_attribute_item")]
     #[slot]
-    pub attribute_item: Option<Vec<::sittir_core::SlotValue<AttributeItemTransport>>>,
+    pub attribute_item: Vec<::sittir_core::SlotValue<AttributeItemTransport>>,
     #[wire(key = "_visibility_modifier")]
     #[slot]
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierTransport>>,
@@ -26958,9 +29722,9 @@ impl ::sittir_core::prepare::Prepare for AttributedOrderedFieldTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.attribute_item.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_ATTRIBUTED_ORDERED_FIELD_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.attribute_item.iter_mut().map(Some), "", options::allowed(options::SITE_ATTRIBUTED_ORDERED_FIELD_ATTRIBUTE_ITEM_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.attribute_item_separator_space.get_or_insert(ctx.options.spacing[options::SITE_ATTRIBUTED_ORDERED_FIELD_ATTRIBUTE_ITEM_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.attribute_item.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_ATTRIBUTED_ORDERED_FIELD_ATTRIBUTE_ITEM, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.attribute_item.iter_mut().map(Some), options::SEATS_ATTRIBUTED_ORDERED_FIELD_ATTRIBUTE_ITEM, ctx);
         self.attribute_item.prepare(ctx)?;
         self.visibility_modifier.prepare(ctx)?;
         self.type_.prepare(ctx)?;
@@ -26971,6 +29735,9 @@ impl ::sittir_core::prepare::Prepare for AttributedOrderedFieldTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -27021,6 +29788,9 @@ impl ::sittir_core::prepare::Prepare for TypeArgumentTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -27030,7 +29800,7 @@ pub struct MatchBlockArmsTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_match_arm")]
     #[slot]
-    pub match_arm: Option<Vec<::sittir_core::SlotValue<MatchArmTransport>>>,
+    pub match_arm: Vec<::sittir_core::SlotValue<MatchArmTransport>>,
     #[wire(key = "_last_arm")]
     #[slot(field = field::LAST_ARM)]
     pub last_arm: ::sittir_core::SlotValue<Box<LastMatchArmTransport>>,
@@ -27062,9 +29832,9 @@ impl ::sittir_core::prepare::Prepare for MatchBlockArmsTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        if let Some(gap_items) = self.match_arm.as_mut() { ::sittir_core::prepare::fill_list_gaps(gap_items.iter_mut().map(Some), "", options::allowed(options::SITE_MATCH_BLOCK_ARMS_MATCH_ARM_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx); }
+        ::sittir_core::prepare::fill_list_gaps(self.match_arm.iter_mut().map(Some), "", options::allowed(options::SITE_MATCH_BLOCK_ARMS_MATCH_ARM_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
         self.match_arm_separator_space.get_or_insert(ctx.options.spacing[options::SITE_MATCH_BLOCK_ARMS_MATCH_ARM_SEPARATOR_SPACE].arm);
-        if let Some(seated_items) = self.match_arm.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_MATCH_BLOCK_ARMS_MATCH_ARM, ctx); }
+        ::sittir_core::prepare::fill_seated_gaps(self.match_arm.iter_mut().map(Some), options::SEATS_MATCH_BLOCK_ARMS_MATCH_ARM, ctx);
         self.match_arm.prepare(ctx)?;
         self.last_arm.prepare(ctx)?;
         Ok(())
@@ -27074,6 +29844,9 @@ impl ::sittir_core::prepare::Prepare for MatchBlockArmsTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -27115,6 +29888,9 @@ impl ::sittir_core::prepare::Prepare for FloatLiteralTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -27155,6 +29931,9 @@ impl ::sittir_core::prepare::Prepare for StringContentTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -27194,6 +29973,9 @@ impl ::sittir_core::prepare::Prepare for RawStringLiteralContentTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -27285,6 +30067,9 @@ impl ::sittir_core::prepare::Prepare for RawStringLiteralStartTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -27324,6 +30109,9 @@ impl ::sittir_core::prepare::Prepare for RawStringLiteralEndTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -27365,6 +30153,9 @@ impl ::sittir_core::prepare::Prepare for DocCommentTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -27404,6 +30195,9 @@ impl ::sittir_core::prepare::Prepare for BlockCommentContentTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -27645,6 +30439,9 @@ impl ::sittir_core::prepare::Prepare for ErrorSentinelTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -27685,6 +30482,9 @@ impl ::sittir_core::prepare::Prepare for TypeIdentifierTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -27727,6 +30527,9 @@ impl ::sittir_core::prepare::Prepare for FieldIdentifierTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -27767,6 +30570,9 @@ impl ::sittir_core::prepare::Prepare for ShorthandFieldIdentifierTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
 }
 
@@ -33570,7 +36376,7 @@ impl ::sittir_core::prepare::SeatTarget for AnyTransport {
 fn render_source_file(node: &SourceFileTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let shebang = View::new(&node.shebang, "{}");
     let statements = ListView {
-        items: node.statements.as_deref().unwrap_or(&[]),
+        items: &node.statements,
         template: "{}",
         token: "",
         before: 0,
@@ -33625,7 +36431,7 @@ fn render_token_repetition_pattern(node: &TokenRepetitionPatternTransport, w: &m
     let operator = &node.operator;
     let separator = View::new(&node.separator, "{}");
     let token_patterns = ListView {
-        items: node.token_patterns.as_deref().unwrap_or(&[]),
+        items: &node.token_patterns,
         template: "{}",
         token: "",
         before: 0,
@@ -33660,7 +36466,7 @@ fn render_token_repetition(node: &TokenRepetitionTransport, w: &mut dyn ::sittir
     let operator = &node.operator;
     let separator = View::new(&node.separator, "{}");
     let tokens = ListView {
-        items: node.tokens.as_deref().unwrap_or(&[]),
+        items: &node.tokens,
         template: "{}",
         token: "",
         before: 0,
@@ -33738,7 +36544,7 @@ fn render_attribute(node: &AttributeTransport, w: &mut dyn ::sittir_core::render
 
 fn render_declaration_list(node: &DeclarationListTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let declarations = ListView {
-        items: node.declarations.as_deref().unwrap_or(&[]),
+        items: &node.declarations,
         template: "{}",
         token: "",
         before: 0,
@@ -34845,7 +37651,7 @@ fn render_parenthesized_expression(node: &ParenthesizedExpressionTransport, w: &
 
 fn render_tuple_expression(node: &TupleExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attributes = ListView {
-        items: node.attributes.as_deref().unwrap_or(&[]),
+        items: &node.attributes,
         template: "{}",
         token: "",
         before: 0,
@@ -34892,7 +37698,7 @@ fn render_field_initializer_list(node: &FieldInitializerListTransport, w: &mut d
 
 fn render_shorthand_field_initializer(node: &ShorthandFieldInitializerTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attributes = ListView {
-        items: node.attributes.as_deref().unwrap_or(&[]),
+        items: &node.attributes,
         template: "{}",
         token: "",
         before: 0,
@@ -34912,7 +37718,7 @@ fn render_shorthand_field_initializer(node: &ShorthandFieldInitializerTransport,
 
 fn render_field_initializer(node: &FieldInitializerTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attribute_item = ListView {
-        items: node.attribute_item.as_deref().unwrap_or(&[]),
+        items: &node.attribute_item,
         template: "{}",
         token: "",
         before: 0,
@@ -34977,7 +37783,7 @@ fn render_let_condition(node: &LetConditionTransport, w: &mut dyn ::sittir_core:
 fn render_let_chain(node: &LetChainTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let left = &node.left;
     let right = ListView {
-        items: node.right.as_deref().unwrap_or(&[]),
+        items: &node.right,
         template: "{}",
         token: "&&",
         before: node.right_separator_space_before.unwrap_or(0),
@@ -35032,7 +37838,7 @@ fn render_match_block(node: &MatchBlockTransport, w: &mut dyn ::sittir_core::ren
 
 fn render_last_match_arm(node: &LastMatchArmTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attributes = ListView {
-        items: node.attributes.as_deref().unwrap_or(&[]),
+        items: &node.attributes,
         template: "{}",
         token: "",
         before: 0,
@@ -35150,7 +37956,7 @@ fn render_const_block(node: &ConstBlockTransport, w: &mut dyn ::sittir_core::ren
 
 fn render_closure_parameters(node: &ClosureParametersTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let parameters = ListView {
-        items: node.parameters.as_deref().unwrap_or(&[]),
+        items: &node.parameters,
         template: "{}",
         token: ",",
         before: node.parameters_separator_space_before.unwrap_or(0),
@@ -35299,7 +38105,7 @@ fn render_try_block(node: &TryBlockTransport, w: &mut dyn ::sittir_core::render:
 fn render_block(node: &BlockTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let label = View::new(&node.label, "{}");
     let statements = ListView {
-        items: node.statements.as_deref().unwrap_or(&[]),
+        items: &node.statements,
         template: "{}",
         token: "",
         before: 0,
@@ -35459,7 +38265,7 @@ fn render_negative_literal(node: &NegativeLiteralTransport, w: &mut dyn ::sittir
 
 fn render_string_literal(node: &StringLiteralTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let elements = ListView {
-        items: node.elements.as_deref().unwrap_or(&[]),
+        items: &node.elements,
         template: "{}",
         token: "",
         before: 0,
@@ -36046,7 +38852,7 @@ fn render_escape_sequence_hex(node: &EscapeSequenceHexTransport, w: &mut dyn ::s
 
 fn render_array_expression_semi(node: &ArrayExpressionSemiTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attributes = ListView {
-        items: node.attributes.as_deref().unwrap_or(&[]),
+        items: &node.attributes,
         template: "{}",
         token: "",
         before: 0,
@@ -36075,7 +38881,7 @@ fn render_array_expression_semi(node: &ArrayExpressionSemiTransport, w: &mut dyn
 
 fn render_array_expression_list(node: &ArrayExpressionListTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attributes = ListView {
-        items: node.attributes.as_deref().unwrap_or(&[]),
+        items: &node.attributes,
         template: "{}",
         token: "",
         before: 0,
@@ -36492,7 +39298,7 @@ fn render_foreign_mod_item_body(node: &ForeignModItemBodyTransport, w: &mut dyn 
 
 fn render_match_arm_with_comma(node: &MatchArmWithCommaTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attributes = ListView {
-        items: node.attributes.as_deref().unwrap_or(&[]),
+        items: &node.attributes,
         template: "{}",
         token: "",
         before: 0,
@@ -36519,7 +39325,7 @@ fn render_match_arm_with_comma(node: &MatchArmWithCommaTransport, w: &mut dyn ::
 
 fn render_match_arm_block_ending(node: &MatchArmBlockEndingTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attributes = ListView {
-        items: node.attributes.as_deref().unwrap_or(&[]),
+        items: &node.attributes,
         template: "{}",
         token: "",
         before: 0,
@@ -36587,7 +39393,7 @@ fn render_block_comment_regular(t: &BlockCommentRegularTransport, w: &mut dyn ::
 
 fn render_token_tree_pattern_paren(node: &TokenTreePatternParenTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let token_patterns = ListView {
-        items: node.token_patterns.as_deref().unwrap_or(&[]),
+        items: &node.token_patterns,
         template: "{}",
         token: "",
         before: 0,
@@ -36610,7 +39416,7 @@ fn render_token_tree_pattern_paren(node: &TokenTreePatternParenTransport, w: &mu
 
 fn render_token_tree_pattern_bracket(node: &TokenTreePatternBracketTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let token_patterns = ListView {
-        items: node.token_patterns.as_deref().unwrap_or(&[]),
+        items: &node.token_patterns,
         template: "{}",
         token: "",
         before: 0,
@@ -36633,7 +39439,7 @@ fn render_token_tree_pattern_bracket(node: &TokenTreePatternBracketTransport, w:
 
 fn render_token_tree_pattern_brace(node: &TokenTreePatternBraceTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let token_patterns = ListView {
-        items: node.token_patterns.as_deref().unwrap_or(&[]),
+        items: &node.token_patterns,
         template: "{}",
         token: "",
         before: 0,
@@ -36656,7 +39462,7 @@ fn render_token_tree_pattern_brace(node: &TokenTreePatternBraceTransport, w: &mu
 
 fn render_token_tree_paren(node: &TokenTreeParenTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let tokens = ListView {
-        items: node.tokens.as_deref().unwrap_or(&[]),
+        items: &node.tokens,
         template: "{}",
         token: "",
         before: 0,
@@ -36679,7 +39485,7 @@ fn render_token_tree_paren(node: &TokenTreeParenTransport, w: &mut dyn ::sittir_
 
 fn render_token_tree_bracket(node: &TokenTreeBracketTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let tokens = ListView {
-        items: node.tokens.as_deref().unwrap_or(&[]),
+        items: &node.tokens,
         template: "{}",
         token: "",
         before: 0,
@@ -36702,7 +39508,7 @@ fn render_token_tree_bracket(node: &TokenTreeBracketTransport, w: &mut dyn ::sit
 
 fn render_token_tree_brace(node: &TokenTreeBraceTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let tokens = ListView {
-        items: node.tokens.as_deref().unwrap_or(&[]),
+        items: &node.tokens,
         template: "{}",
         token: "",
         before: 0,
@@ -36725,7 +39531,7 @@ fn render_token_tree_brace(node: &TokenTreeBraceTransport, w: &mut dyn ::sittir_
 
 fn render_delim_token_tree_paren(node: &DelimTokenTreeParenTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let delim_tokens = ListView {
-        items: node.delim_tokens.as_deref().unwrap_or(&[]),
+        items: &node.delim_tokens,
         template: "{}",
         token: "",
         before: 0,
@@ -36748,7 +39554,7 @@ fn render_delim_token_tree_paren(node: &DelimTokenTreeParenTransport, w: &mut dy
 
 fn render_delim_token_tree_bracket(node: &DelimTokenTreeBracketTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let delim_tokens = ListView {
-        items: node.delim_tokens.as_deref().unwrap_or(&[]),
+        items: &node.delim_tokens,
         template: "{}",
         token: "",
         before: 0,
@@ -36771,7 +39577,7 @@ fn render_delim_token_tree_bracket(node: &DelimTokenTreeBracketTransport, w: &mu
 
 fn render_delim_token_tree_brace(node: &DelimTokenTreeBraceTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let delim_tokens = ListView {
-        items: node.delim_tokens.as_deref().unwrap_or(&[]),
+        items: &node.delim_tokens,
         template: "{}",
         token: "",
         before: 0,
@@ -36981,7 +39787,7 @@ fn render_struct_item_unit(node: &StructItemUnitTransport, w: &mut dyn ::sittir_
 
 fn render_attributed_field_declaration(node: &AttributedFieldDeclarationTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attribute_item = ListView {
-        items: node.attribute_item.as_deref().unwrap_or(&[]),
+        items: &node.attribute_item,
         template: "{}",
         token: "",
         before: 0,
@@ -37001,7 +39807,7 @@ fn render_attributed_field_declaration(node: &AttributedFieldDeclarationTranspor
 
 fn render_attributed_enum_variant(node: &AttributedEnumVariantTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attribute_item = ListView {
-        items: node.attribute_item.as_deref().unwrap_or(&[]),
+        items: &node.attribute_item,
         template: "{}",
         token: "",
         before: 0,
@@ -37031,7 +39837,7 @@ fn render_attributed_parameter(node: &AttributedParameterTransport, w: &mut dyn 
 
 fn render_attributed_type_parameter(node: &AttributedTypeParameterTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attribute_item = ListView {
-        items: node.attribute_item.as_deref().unwrap_or(&[]),
+        items: &node.attribute_item,
         template: "{}",
         token: "",
         before: 0,
@@ -37051,7 +39857,7 @@ fn render_attributed_type_parameter(node: &AttributedTypeParameterTransport, w: 
 
 fn render_attributed_argument(node: &AttributedArgumentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attribute_item = ListView {
-        items: node.attribute_item.as_deref().unwrap_or(&[]),
+        items: &node.attribute_item,
         template: "{}",
         token: "",
         before: 0,
@@ -37071,7 +39877,7 @@ fn render_attributed_argument(node: &AttributedArgumentTransport, w: &mut dyn ::
 
 fn render_attributed_ordered_field(node: &AttributedOrderedFieldTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attribute_item = ListView {
-        items: node.attribute_item.as_deref().unwrap_or(&[]),
+        items: &node.attribute_item,
         template: "{}",
         token: "",
         before: 0,
@@ -37104,7 +39910,7 @@ fn render_type_argument(node: &TypeArgumentTransport, w: &mut dyn ::sittir_core:
 fn render_match_block_arms(node: &MatchBlockArmsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let last_arm = &node.last_arm;
     let match_arm = ListView {
-        items: node.match_arm.as_deref().unwrap_or(&[]),
+        items: &node.match_arm,
         template: "{}",
         token: "",
         before: 0,
@@ -37791,7 +40597,7 @@ fn render_macro_rules_bang(w: &mut dyn ::sittir_core::render::RenderSink) -> ::s
 fn render_statement(t: &StatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         StatementTransport::ExpressionStatement(inner) => inner.render(w),
-        StatementTransport::DeclarationStatement(inner) => inner.as_ref().render(w),
+        StatementTransport::DeclarationStatement(inner) => inner.render(w),
         StatementTransport::ConstItem(inner) => inner.as_ref().render(w),
         StatementTransport::MacroInvocation(inner) => inner.render(w),
         StatementTransport::MacroDefinition(inner) => inner.render(w),
@@ -37811,7 +40617,7 @@ fn render_statement(t: &StatementTransport, w: &mut dyn ::sittir_core::render::R
         StatementTransport::AssociatedType(inner) => inner.render(w),
         StatementTransport::LetDeclaration(inner) => inner.as_ref().render(w),
         StatementTransport::UseDeclaration(inner) => inner.as_ref().render(w),
-        StatementTransport::ExternCrateDeclaration(inner) => inner.as_ref().render(w),
+        StatementTransport::ExternCrateDeclaration(inner) => inner.render(w),
         StatementTransport::StaticItem(inner) => inner.as_ref().render(w),
     }
 }
@@ -37837,7 +40643,7 @@ fn render_declaration_statement(t: &DeclarationStatementTransport, w: &mut dyn :
         DeclarationStatementTransport::AssociatedType(inner) => inner.render(w),
         DeclarationStatementTransport::LetDeclaration(inner) => inner.as_ref().render(w),
         DeclarationStatementTransport::UseDeclaration(inner) => inner.as_ref().render(w),
-        DeclarationStatementTransport::ExternCrateDeclaration(inner) => inner.as_ref().render(w),
+        DeclarationStatementTransport::ExternCrateDeclaration(inner) => inner.render(w),
         DeclarationStatementTransport::StaticItem(inner) => inner.as_ref().render(w),
     }
 }
@@ -37869,14 +40675,14 @@ fn render_token_tree(t: &TokenTreeTransport, w: &mut dyn ::sittir_core::render::
 fn render_mod_item(t: &ModItemTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         ModItemTransport::ModItemExternal(inner) => inner.render(w),
-        ModItemTransport::ModItemInline(inner) => inner.as_ref().render(w),
+        ModItemTransport::ModItemInline(inner) => inner.render(w),
     }
 }
 
 fn render_foreign_mod_item(t: &ForeignModItemTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         ForeignModItemTransport::ForeignModItemSemi(inner) => inner.render(w),
-        ForeignModItemTransport::ForeignModItemBody(inner) => inner.as_ref().render(w),
+        ForeignModItemTransport::ForeignModItemBody(inner) => inner.render(w),
     }
 }
 
@@ -37884,7 +40690,7 @@ fn render_struct_item(t: &StructItemTransport, w: &mut dyn ::sittir_core::render
     match t {
         StructItemTransport::StructItemBrace(inner) => inner.as_ref().render(w),
         StructItemTransport::StructItemTuple(inner) => inner.as_ref().render(w),
-        StructItemTransport::StructItemUnit(inner) => inner.as_ref().render(w),
+        StructItemTransport::StructItemUnit(inner) => inner.render(w),
     }
 }
 
@@ -39000,10 +41806,10 @@ const _: () = assert!(::core::mem::size_of::<ArrayTypeTransport>() <= 256, "Arra
 const _: () = assert!(::core::mem::size_of::<AssignmentExpressionTransport>() <= 256, "AssignmentExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AssociatedTypeTransport>() <= 256, "AssociatedTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AsyncBlockTransport>() <= 256, "AsyncBlockTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AttributeInputTransport>() > 256, "AttributeInputTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<AttributeInputTransport>() <= 256, "AttributeInputTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AttributeItemTransport>() > 256, "AttributeItemTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AttributeTransport>() > 256, "AttributeTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<AttributedArgumentTransport>() > 256, "AttributedArgumentTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<AttributedArgumentTransport>() <= 256, "AttributedArgumentTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AttributedEnumVariantTransport>() > 256, "AttributedEnumVariantTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AttributedFieldDeclarationTransport>() > 256, "AttributedFieldDeclarationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<AttributedOrderedFieldTransport>() > 256, "AttributedOrderedFieldTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
@@ -39042,7 +41848,7 @@ const _: () = assert!(::core::mem::size_of::<ConstItemTransport>() > 256, "Const
 const _: () = assert!(::core::mem::size_of::<ConstParameterTransport>() > 256, "ConstParameterTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ContinueExpressionTransport>() <= 256, "ContinueExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DeclarationListTransport>() <= 256, "DeclarationListTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<DeclarationStatementTransport>() > 256, "DeclarationStatementTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<DeclarationStatementTransport>() <= 256, "DeclarationStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DelimTokenTreeBraceTransport>() <= 256, "DelimTokenTreeBraceTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DelimTokenTreeBracketTransport>() <= 256, "DelimTokenTreeBracketTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<DelimTokenTreeParenTransport>() <= 256, "DelimTokenTreeParenTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -39061,7 +41867,7 @@ const _: () = assert!(::core::mem::size_of::<EscapeSequenceUnicodeFixedTransport
 const _: () = assert!(::core::mem::size_of::<ExpressionStatementTransport>() <= 256, "ExpressionStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExpressionStatementWithSemiTransport>() <= 256, "ExpressionStatementWithSemiTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExpressionsTransport>() <= 256, "ExpressionsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ExternCrateDeclarationTransport>() > 256, "ExternCrateDeclarationTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ExternCrateDeclarationTransport>() <= 256, "ExternCrateDeclarationTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ExternModifierTransport>() <= 256, "ExternModifierTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FieldDeclarationListElementsTransport>() <= 256, "FieldDeclarationListElementsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FieldDeclarationListTransport>() <= 256, "FieldDeclarationListTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -39076,7 +41882,7 @@ const _: () = assert!(::core::mem::size_of::<FieldPatternShorthandTransport>() <
 const _: () = assert!(::core::mem::size_of::<FloatLiteralTransport>() <= 256, "FloatLiteralTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ForExpressionTransport>() <= 256, "ForExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ForLifetimesTransport>() <= 256, "ForLifetimesTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ForeignModItemBodyTransport>() > 256, "ForeignModItemBodyTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ForeignModItemBodyTransport>() <= 256, "ForeignModItemBodyTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ForeignModItemSemiTransport>() <= 256, "ForeignModItemSemiTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ForeignModItemTransport>() <= 256, "ForeignModItemTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<FragmentSpecifierEnum>() <= 256, "FragmentSpecifierEnum is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -39136,7 +41942,7 @@ const _: () = assert!(::core::mem::size_of::<MatchExpressionTransport>() <= 256,
 const _: () = assert!(::core::mem::size_of::<MatchPatternTransport>() <= 256, "MatchPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<MetavariableTransport>() <= 256, "MetavariableTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ModItemExternalTransport>() <= 256, "ModItemExternalTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<ModItemInlineTransport>() > 256, "ModItemInlineTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<ModItemInlineTransport>() <= 256, "ModItemInlineTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ModItemTransport>() <= 256, "ModItemTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<MutPatternTransport>() <= 256, "MutPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<NegativeLiteralTransport>() <= 256, "NegativeLiteralTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -39197,7 +42003,7 @@ const _: () = assert!(::core::mem::size_of::<StructExpressionTransport>() <= 256
 const _: () = assert!(::core::mem::size_of::<StructItemBraceTransport>() > 256, "StructItemBraceTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<StructItemTransport>() <= 256, "StructItemTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<StructItemTupleTransport>() > 256, "StructItemTupleTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<StructItemUnitTransport>() > 256, "StructItemUnitTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<StructItemUnitTransport>() <= 256, "StructItemUnitTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<StructPatternElementsTransport>() <= 256, "StructPatternElementsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<StructPatternTransport>() <= 256, "StructPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TokenBindingPatternTransport>() <= 256, "TokenBindingPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -39221,7 +42027,7 @@ const _: () = assert!(::core::mem::size_of::<TuplePatternElementsTransport>() <=
 const _: () = assert!(::core::mem::size_of::<TuplePatternTransport>() <= 256, "TuplePatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TupleStructPatternTransport>() <= 256, "TupleStructPatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TupleTypeTransport>() <= 256, "TupleTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
-const _: () = assert!(::core::mem::size_of::<TypeArgumentTransport>() > 256, "TypeArgumentTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<TypeArgumentTransport>() <= 256, "TypeArgumentTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeArgumentsElementsTransport>() <= 256, "TypeArgumentsElementsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeArgumentsTransport>() <= 256, "TypeArgumentsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<TypeBindingTransport>() > 256, "TypeBindingTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
@@ -39253,3 +42059,5 @@ const _: () = assert!(::core::mem::size_of::<WherePredicateTransport>() <= 256, 
 const _: () = assert!(::core::mem::size_of::<WherePredicatesTransport>() <= 256, "WherePredicatesTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<WhileExpressionTransport>() <= 256, "WhileExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<YieldExpressionTransport>() <= 256, "YieldExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+
+::sittir_core::grammar_trivia!(TriviaTransport; AnyTransport, StatementTransport, DeclarationStatementTransport, MacroDefinitionTransport, TokenTreePatternTransport, TokenTreeTransport, ModItemTransport, ForeignModItemTransport, StructItemTransport, ImplItemTransport, TypeTransport, PointerTypeTransport, ExpressionTransport, DelimTokenTreeTransport, RangeExpressionTransport, ReferenceExpressionTransport, ArrayExpressionTransport, MatchArmTransport, ClosureExpressionTransport, PatternTransport, RangePatternTransport, OrPatternTransport, LiteralPatternTransport, IntegerLiteralTransport, CharLiteralTransport, CharLiteralEscapedTransport, ExpressionStatementContentTransportSlot, TokenRepetitionPatternTokenPatternsTransportSlot, TokenRepetitionPatternOperatorTransportSlot, TokenRepetitionTokensTransportSlot, TokenRepetitionOperatorTransportSlot, NonSpecialTokenContentTransportSlot, AttributePathTransportSlot, EnumVariantBodyTransportSlot, FunctionItemNameTransportSlot, FunctionModifiersModifierTransportSlot, WherePredicateLeftTransportSlot, TraitBoundsBoundsTransportSlot, ConstParameterValueTransportSlot, UseDeclarationArgumentTransportSlot, ParameterNameTransportSlot, VisibilityModifierContentTransportSlot, BracketedTypeTypeTransportSlot, FunctionTypeContentTransportSlot, GenericFunctionFunctionTransportSlot, GenericTypeTypeTransportSlot, GenericTypeWithTurbofishTypeTransportSlot, BoundedTypeLeftTransportSlot, AbstractTypeTraitTransportSlot, DynamicTypeTraitTransportSlot, MacroInvocationMacroTransportSlot, ScopedIdentifierPathTransportSlot, ScopedIdentifierNameTransportSlot, ScopedTypeIdentifierInExpressionPositionPathTransportSlot, ScopedTypeIdentifierPathTransportSlot, UnaryExpressionOperatorTransportSlot, BinaryExpressionOperatorTransportSlot, CompoundAssignmentExprOperatorTransportSlot, CallExpressionFunctionTransportSlot, StructExpressionNameTransportSlot, FieldInitializerFieldTransportSlot, IfExpressionConditionTransportSlot, LetChainLeftTransportSlot, LetChainRightTransportSlot, ElseClauseBodyTransportSlot, LastMatchArmAttributesTransportSlot, ClosureParametersParametersTransportSlot, GenericPatternNameTransportSlot, TupleStructPatternTypeTransportSlot, StructPatternTypeTransportSlot, NegativeLiteralValueTransportSlot, StringLiteralElementsTransportSlot, LineCommentContentTransportSlot, BlockCommentContentTransportSlot, UseBoundsElementsItemTransportSlot, FieldInitializerListElementsItemTransportSlot, TuplePatternElementsItemTransportSlot, StructPatternElementsItemTransportSlot, ClosureExpressionExprBodyTransportSlot, ImplItemPositiveClauseTraitTransportSlot, ImplItemBodyTraitClauseTransportSlot, VisibilityModifierPubScopeContentTransportSlot, RangeExpressionBinaryOperatorTransportSlot, MatchArmBlockEndingValueTransportSlot, DelimTokenTreeParenDelimTokensTransportSlot, MacroDefinitionParenNameTransportSlot, RangePatternPrefixRightTransportSlot, RangePatternPrefixContentTransportSlot, RangePatternWithLeftWithRightContentTransportSlot, RangePatternWithLeftContentTransportSlot, AttributedParameterContentTransportSlot, AttributedTypeParameterContentTransportSlot, TypeArgumentContentTransportSlot, SourceFileTransport, EmptyStatementTransport, ExpressionStatementTransport, MacroRuleTransport, TokenBindingPatternTransport, TokenRepetitionPatternTransport, FragmentSpecifierEnum, TokenRepetitionTransport, NonSpecialTokenTransport, AttributeItemTransport, InnerAttributeItemTransport, AttributeTransport, DeclarationListTransport, UnionItemTransport, EnumItemTransport, EnumVariantListTransport, EnumVariantTransport, FieldDeclarationListTransport, FieldDeclarationTransport, OrderedFieldDeclarationListTransport, ExternCrateDeclarationTransport, ConstItemTransport, StaticItemTransport, TypeItemTransport, FunctionItemTransport, FunctionSignatureItemTransport, FunctionModifiersTransport, WhereClauseTransport, WherePredicateTransport, TraitItemTransport, AssociatedTypeTransport, TraitBoundsTransport, HigherRankedTraitBoundTransport, RemovedTraitBoundTransport, TypeParametersTransport, ConstParameterTransport, TypeParameterTransport, LifetimeParameterTransport, LetDeclarationTransport, UseDeclarationTransport, ScopedUseListTransport, UseListTransport, UseAsClauseTransport, UseWildcardTransport, ParametersTransport, SelfParameterTransport, VariadicParameterTransport, ParameterTransport, ExternModifierTransport, VisibilityModifierTransport, BracketedTypeTransport, QualifiedTypeTransport, LifetimeTransport, ArrayTypeTransport, ForLifetimesTransport, FunctionTypeTransport, TupleTypeTransport, UnitTypeTransport, GenericFunctionTransport, GenericTypeTransport, GenericTypeWithTurbofishTransport, BoundedTypeTransport, UseBoundsTransport, TypeArgumentsTransport, TypeBindingTransport, ReferenceTypeTransport, NeverTypeTransport, AbstractTypeTransport, DynamicTypeTransport, MutableSpecifierTransport, MacroInvocationTransport, ScopedIdentifierTransport, ScopedTypeIdentifierInExpressionPositionTransport, ScopedTypeIdentifierTransport, UnaryExpressionTransport, TryExpressionTransport, BinaryExpressionTransport, AssignmentExpressionTransport, CompoundAssignmentExprTransport, TypeCastExpressionTransport, ReturnExpressionTransport, YieldExpressionTransport, CallExpressionTransport, ArgumentsTransport, ParenthesizedExpressionTransport, TupleExpressionTransport, UnitExpressionTransport, StructExpressionTransport, FieldInitializerListTransport, ShorthandFieldInitializerTransport, FieldInitializerTransport, BaseFieldInitializerTransport, IfExpressionTransport, LetConditionTransport, LetChainTransport, ElseClauseTransport, MatchExpressionTransport, MatchBlockTransport, LastMatchArmTransport, MatchPatternTransport, WhileExpressionTransport, LoopExpressionTransport, ForExpressionTransport, ConstBlockTransport, ClosureParametersTransport, LabelTransport, BreakExpressionTransport, ContinueExpressionTransport, IndexExpressionTransport, AwaitExpressionTransport, FieldExpressionTransport, UnsafeBlockTransport, AsyncBlockTransport, GenBlockTransport, TryBlockTransport, BlockTransport, GenericPatternTransport, TuplePatternTransport, SlicePatternTransport, TupleStructPatternTransport, StructPatternTransport, RemainingFieldPatternTransport, MutPatternTransport, RefPatternTransport, CapturedPatternTransport, ReferencePatternTransport, NegativeLiteralTransport, StringLiteralTransport, RawStringLiteralTransport, BooleanLiteralEnum, LineCommentTransport, InnerLineDocCommentMarkerTransport, OuterLineDocCommentMarkerTransport, BlockCommentTransport, IdentifierTransport, ShebangTransport, Self_Transport, SuperTransport, CrateTransport, MetavariableTransport, PrimitiveTypeEnum, MacroRulesTransport, EnumVariantListElementsTransport, FieldDeclarationListElementsTransport, OrderedFieldDeclarationListElementsTransport, WherePredicatesTransport, TypeParametersElementsTransport, UseClausesTransport, ParametersElementsTransport, LifetimesTransport, TypesTransport, UseBoundsElementsTransport, TypeArgumentsElementsTransport, ArgumentsElementsTransport, ExpressionsTransport, FieldInitializerListElementsTransport, TuplePatternElementsTransport, PatternsTransport, StructPatternElementsTransport, UseWildcardGroupTransport, TokenRepetitionPatternTextTransport, StringOpenTransport, TokenTreePunctuationEnum, TokenKeywordsEnum, _RangeExpressionBareTransport, ImplItemUnsafeMarkerTransport, IntegerLiteralDecimalTransport, IntegerLiteralHexTransport, IntegerLiteralBinaryTransport, IntegerLiteralOctalTransport, CharLiteralPlainTransport, CharLiteralEmptyTransport, CharLiteralEscapedSimpleTransport, CharLiteralEscapedUnicodeFixedTransport, CharLiteralEscapedUnicodeBracedTransport, CharLiteralEscapedHexTransport, EscapeSequenceSimpleTransport, EscapeSequenceUnicodeFixedTransport, EscapeSequenceUnicodeBracedTransport, EscapeSequenceHexTransport, ArrayExpressionSemiTransport, ArrayExpressionListTransport, AttributeInputTransport, ClosureExpressionBlockTransport, ClosureExpressionExprTransport, ReferenceExpressionRawConstTransport, ReferenceExpressionRawMutTransport, ReferenceExpressionMutTransport, ReferenceExpressionBareTransport, ImplItemPositiveClauseTransport, ImplItemNegativeClauseTransport, ImplItemBodyTransport, ImplItemSemiTransport, VisibilityModifierPubScopeInPathTransport, VisibilityModifierPubScopeTransport, VisibilityModifierPubTransport, FunctionTypeTraitFormTransport, FunctionTypeFnFormTransport, ModItemExternalTransport, ModItemInlineTransport, OrPatternBinaryTransport, OrPatternPrefixTransport, PointerTypeConstTransport, PointerTypeMutTransport, RangeExpressionBinaryTransport, RangeExpressionPostfixTransport, RangeExpressionPrefixTransport, RangeExpressionBareTransport, ExpressionStatementWithSemiTransport, ForeignModItemSemiTransport, ForeignModItemBodyTransport, MatchArmWithCommaTransport, MatchArmBlockEndingTransport, LineCommentExtraSlashesTransport, LineCommentDocOuterTransport, LineCommentDocInnerTransport, LineCommentRegularTransport, BlockCommentDocOuterTransport, BlockCommentDocInnerTransport, BlockCommentRegularTransport, TokenTreePatternParenTransport, TokenTreePatternBracketTransport, TokenTreePatternBraceTransport, TokenTreeParenTransport, TokenTreeBracketTransport, TokenTreeBraceTransport, DelimTokenTreeParenTransport, DelimTokenTreeBracketTransport, DelimTokenTreeBraceTransport, FieldPatternShorthandTransport, FieldPatternNamedTransport, MacroDefinitionParenTransport, MacroDefinitionBracketTransport, MacroDefinitionBraceTransport, RangePatternPrefixTransport, RangePatternWithLeftWithRightTransport, RangePatternWithLeftBareTransport, RangePatternWithLeftTransport, StructItemBraceTransport, StructItemTupleTransport, StructItemUnitTransport, WildcardPatternTransport, AttributedFieldDeclarationTransport, AttributedEnumVariantTransport, AttributedParameterTransport, AttributedTypeParameterTransport, AttributedArgumentTransport, AttributedOrderedFieldTransport, TypeArgumentTransport, MatchBlockArmsTransport, FloatLiteralTransport, StringContentTransport, RawStringLiteralContentTransport, OuterDocCommentMarkerTransport, InnerDocCommentMarkerTransport, RawStringLiteralStartTransport, RawStringLiteralEndTransport, DocCommentTransport, BlockCommentContentTransport, TightTransport, SpaceTransport, TabTransport, NewlineTransport, BlanklineTransport, DoubleBlanklineTransport, IndentTransport, DedentTransport, ErrorSentinelTransport, TypeIdentifierTransport, FieldIdentifierTransport, ShorthandFieldIdentifierTransport, SemiTransport, EqGtTransport, ColonTransport, DollarTransport, LparenTransport, RparenTransport, PlusTransport, StarTransport, QmarkTransport, BlockKeywordTransport, ExprKeywordTransport, Expr2021KeywordTransport, IdentKeywordTransport, ItemKeywordTransport, LifetimeKeywordTransport, LiteralKeywordTransport, MetaKeywordTransport, PatKeywordTransport, PatParamKeywordTransport, PathKeywordTransport, StmtKeywordTransport, TtKeywordTransport, TyKeywordTransport, VisKeywordTransport, PoundTransport, LbrackTransport, RbrackTransport, BangTransport, U8KeywordTransport, I8KeywordTransport, U16KeywordTransport, I16KeywordTransport, U32KeywordTransport, I32KeywordTransport, U64KeywordTransport, I64KeywordTransport, U128KeywordTransport, I128KeywordTransport, IsizeKeywordTransport, UsizeKeywordTransport, F32KeywordTransport, F64KeywordTransport, BoolKeywordTransport, StrKeywordTransport, CharKeywordTransport, DefaultKeywordTransport, UnionKeywordTransport, GenKeywordTransport, LbraceTransport, RbraceTransport, EnumKeywordTransport, EqTransport, ExternKeywordTransport, AsKeywordTransport, ConstKeywordTransport, StaticKeywordTransport, RefKeywordTransport, TypeKeywordTransport, FnKeywordTransport, DashGtTransport, AsyncKeywordTransport, UnsafeKeywordTransport, WhereKeywordTransport, TraitKeywordTransport, ForKeywordTransport, LtTransport, GtTransport, LetKeywordTransport, ElseKeywordTransport, UseKeywordTransport, ColonColonTransport, AmpTransport, DotDotDotTransport, SquoteTransport, ImplKeywordTransport, DynKeywordTransport, DashTransport, AmpAmpTransport, PipePipeTransport, PipeTransport, CaretTransport, EqEqTransport, BangEqTransport, LtEqTransport, GtEqTransport, LtLtTransport, GtGtTransport, SlashTransport, PercentTransport, PlusEqTransport, DashEqTransport, StarEqTransport, SlashEqTransport, PercentEqTransport, AmpEqTransport, PipeEqTransport, CaretEqTransport, LtLtEqTransport, GtGtEqTransport, ReturnKeywordTransport, YieldKeywordTransport, DotDotTransport, IfKeywordTransport, MatchKeywordTransport, CommaTransport, WhileKeywordTransport, LoopKeywordTransport, InKeywordTransport, BreakKeywordTransport, ContinueKeywordTransport, DotTransport, AwaitKeywordTransport, MoveKeywordTransport, TryKeywordTransport, AtTransport, DquoteTransport, TrueKeywordTransport, FalseKeywordTransport, SlashSlashTransport, SlashStarTransport, StarSlashTransport, UnderscoreTransport, DotDotEqTransport, ModKeywordTransport, PubKeywordTransport, StructKeywordTransport, RawKeywordTransport, MacroRulesBangTransport, TriviaTransport);

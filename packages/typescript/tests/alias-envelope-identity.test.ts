@@ -31,3 +31,19 @@ describe('an alias envelope is seated by the kind the parser shows', () => {
 		expect(ts.parse(source).$render()).toBe(source);
 	});
 });
+
+describe("a trivia write on a content that shares its envelope's parser node", () => {
+	it.each(['leading', 'trailing'] as const)('%s: the envelope unfolds and the written comment renders', (side) => {
+		const root = ts.parse('interface A { x: number }\nlet b = 1;\n');
+		const declaration = root.statements()[0];
+		if (declaration === undefined || !ts.is.interfaceDeclaration(declaration)) throw new Error('expected an interface declaration');
+		const envelope = declaration.body();
+		const content = envelope.content();
+		expect(content).not.toBe(envelope);
+		content.$trivia[side]('// c');
+		const out = root.$render();
+		expect(out).toContain('// c\n');
+		expect(out.endsWith('let b = 1;\n')).toBe(true);
+		expect(ts.parse(out).$errors).toEqual([]);
+	});
+});

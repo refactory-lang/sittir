@@ -149,6 +149,9 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     table: Option<&'a crate::render::WhitespaceTable>,
     indent: &'a str,
     depth: usize,
+    /// The depth the current output line's indentation was paid at: what a
+    /// re-indented slice's continuation lines take.
+    line_depth: usize,
     /// For each open depth level, how many further opens asked for it at the
     /// position it opened (`indent` while armed): depth is one fact per
     /// position, so those merge into it, and their dedents unwind first.
@@ -223,6 +226,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             table: None,
             indent: "",
             depth: 0,
+            line_depth: 0,
             merged: Vec::new(),
             indent_pending: false,
             indent_armed: false,
@@ -289,6 +293,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             return Ok(());
         }
         self.indent_pending = false;
+        self.line_depth = self.depth;
         for _ in 0..self.depth {
             self.emit(self.indent)?;
         }
@@ -296,6 +301,47 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             self.last = self.indent.chars().next_back();
         }
         Ok(())
+    }
+
+    /// A slice's text moved to the column the writer puts it at: each
+    /// continuation line that starts with the source indentation of the
+    /// slice's first line has that prefix replaced by the indentation the
+    /// writer gives the line the slice starts on, so the slice keeps its
+    /// inner layout wherever it lands. Leading whitespace between tokens is
+    /// layout, not content; a line that starts inside a token
+    /// (`SourceTable::line_starts_inside_tokens`) keeps its bytes, as does a
+    /// blank line.
+    fn reindented<'t>(&self, coord: &crate::slot::NodeCoordinate, text: &'t str, sources: &dyn crate::render::SourceTable) -> std::borrow::Cow<'t, str> {
+        if !text.contains('\n') {
+            return std::borrow::Cow::Borrowed(text);
+        }
+        let Some(source) = sources.source_of(coord.tree) else { return std::borrow::Cow::Borrowed(text) };
+        let start = coord.span.start as usize;
+        let line_start = source[..start].rfind('\n').map_or(0, |at| at + 1);
+        let base = &source[line_start..start];
+        let base = &base[..base.len() - base.trim_start_matches([' ', '\t']).len()];
+        let depth = if self.indent_pending || self.held_breaks() { self.depth } else { self.line_depth };
+        let target = self.indent.repeat(depth);
+        if base == target {
+            return std::borrow::Cow::Borrowed(text);
+        }
+        let inside = sources.line_starts_inside_tokens(coord);
+        let mut out = String::with_capacity(text.len());
+        let mut at = start;
+        for (index, line) in text.split('\n').enumerate() {
+            if index > 0 {
+                out.push('\n');
+            }
+            let shifted = index > 0 && !line.trim().is_empty() && line.starts_with(base) && inside.binary_search(&at).is_err();
+            if shifted {
+                out.push_str(&target);
+                out.push_str(&line[base.len()..]);
+            } else {
+                out.push_str(line);
+            }
+            at += line.len() + 1;
+        }
+        std::borrow::Cow::Owned(out)
     }
 
     fn at_line_start(&self) -> bool {
@@ -414,6 +460,9 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         }
         self.emit(s)?;
         self.last = s.chars().next_back();
+        if s.contains('\n') {
+            self.line_depth = 0;
+        }
         if self.last == Some('\n') {
             self.indent_pending = true;
         }
@@ -843,7 +892,9 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         let swallowed = sources
             .source_of(coord.tree)
             .is_some_and(|source| source.as_bytes().get(coord.span.end as usize) == Some(&b'\n'));
-        let text = crate::line_endings::to_internal(if swallowed { crate::line_endings::without_swallowed_cr(raw) } else { raw });
+        let raw = if swallowed { crate::line_endings::without_swallowed_cr(raw) } else { raw };
+        let reindented = self.reindented(coord, raw, sources);
+        let text = crate::line_endings::to_internal(&reindented);
         let text = text.as_ref();
         let token = crate::render::RenderSink::kind_of(self, coord)
             .is_some_and(|kind| crate::render::RenderSink::kind_has(self, kind, crate::options::KIND_ANON));

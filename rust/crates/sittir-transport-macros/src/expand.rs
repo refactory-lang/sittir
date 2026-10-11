@@ -24,6 +24,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
     let mut by_display = Vec::new();
     let mut by_grammar = Vec::new();
     let mut by_folded = Vec::new();
+    let mut displayed = Vec::new();
     let mut scalars = Vec::new();
     let mut read_table: Vec<TokenStream> = vec![quote!(__unadmitted); data.variants.len()];
     let mut boxed_table: Vec<TokenStream> = vec![quote!(__unadmitted); data.variants.len()];
@@ -92,6 +93,10 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
         });
         let ids = &kinds.kinds;
         let shown = &kinds.shown;
+        displayed.extend(shown.iter().cloned());
+        if kinds.display {
+            displayed.extend(ids.iter().cloned());
+        }
         if !shown.is_empty() {
             by_display.push(quote!(if [#(#shown),*].contains(&display) { return ::core::option::Option::Some(#i); }));
         }
@@ -249,6 +254,9 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 }
                 fn takes_tagged(grammar: __Kind, display: __Kind, _named: bool) -> bool {
                     __variant(grammar, display).is_some()
+                }
+                fn shows(display: __Kind) -> bool {
+                    [#(#displayed),*].contains(&display)
                 }
                 fn scalar(grammar: __Kind, display: __Kind) -> bool {
                     match __variant(grammar, display) {
@@ -553,6 +561,7 @@ fn pass(min_depth: u32) -> TokenStream {
         let depth = depth.at_least(#min_depth);
         let index = __rt::index_of(cursor);
         let __at = ctx.at_of(cursor);
+        ctx.hold(cursor);
         let children = __rt::survey(cursor);
         let routes = children
             .iter()
@@ -595,7 +604,7 @@ fn common_inits(fields: &[Field<'_>], skip: &str) -> Vec<TokenStream> {
         .filter_map(|field| {
             let name = field.ident;
             match field.role {
-                Role::Layout => Some(quote!(#name: Some(placement.into_layout(sides, __at)),)),
+                Role::Layout => Some(quote!(#name: Some(placement.into_layout(sides, __at, ctx)),)),
                 Role::Other => Some(quote!(#name: ::core::default::Default::default(),)),
                 _ => None,
             }
@@ -707,7 +716,7 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
             let mut content = <#inner as __rt::ReadTransport>::read(cursor, ctx, depth, sides.clone());
             #restore
             let mut content = content?;
-            let layout: #layout_ty = Some(__rt::envelope_layout(<#inner as __rt::HasLayout<#layout_ty>>::take_layout(&mut content), sides, __at));
+            let layout: #layout_ty = Some(__rt::envelope_layout(<#inner as __rt::HasLayout<#layout_ty>>::take_layout(&mut content), sides, __at, ctx));
             ::core::result::Result::Ok(Self { #(#inits)* })
         },
         sides_of: quote!(<#inner as __rt::ReadTransport>::sides_of(cursor, ctx, index)),

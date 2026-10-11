@@ -132,7 +132,6 @@ describe('rendering parts parsed by other engines of the language', () => {
 describe('the tree table across threads and processes', () => {
 	const fixture = (name: string): string =>
 		fileURLToPath(new URL(`../../common/tests/fixtures/${name}`, import.meta.url));
-	const REFUSAL = /does not hold that tree.*parse the source here/;
 	const reply = <T>(worker: Worker): Promise<T> =>
 		new Promise((resolve, reject) => {
 			worker.once('message', resolve);
@@ -154,7 +153,7 @@ describe('the tree table across threads and processes', () => {
 		native.disposeTree(mine);
 	});
 
-	it('refuses read data cloned in from another thread', async () => {
+	it('renders read data cloned in from another thread from its own data, never from a tree it names', async () => {
 		const engine = await createEngine(rust);
 		const leaf = (engine.parse('fn f() {}\n').statements()[0] as unknown as { name(): object }).name();
 		const worker = new Worker(fixture('tree-clone-worker.mts'), {
@@ -162,11 +161,10 @@ describe('the tree table across threads and processes', () => {
 			execArgv: ['--import', 'tsx']
 		});
 		const message = await reply<{ rendered?: string; error?: string }>(worker);
-		expect(message.rendered).toBeUndefined();
-		expect(message.error).toMatch(REFUSAL);
+		expect(message.rendered).toBe('f + y');
 	}, 60_000);
 
-	it('refuses read data copied in from another process', () => {
+	it('renders read data copied in from another process from its own data, never from a tree of the receiver', () => {
 		// Every process counts its tree ids from 0, so the copy's coordinate
 		// names a tree of the receiver: only the missing hold tells them apart.
 		const run = (name: string, ...args: string[]): string =>
@@ -180,7 +178,6 @@ describe('the tree table across threads and processes', () => {
 				.at(-1) ?? '';
 		const leaf = run('tree-leaf-process.mts');
 		const message = JSON.parse(run('tree-leaf-receiver.mts', leaf)) as { rendered?: string; error?: string };
-		expect(message.rendered).toBeUndefined();
-		expect(message.error).toMatch(REFUSAL);
+		expect(message.rendered).toBe('f + y');
 	}, 60_000);
 });

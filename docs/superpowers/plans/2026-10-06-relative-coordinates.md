@@ -25,7 +25,7 @@ The trivia and snapshot steps build on the one-reader step of `docs/superpowers/
 | 2. Index offsets from a start node | now | the typed-reader plan's Task 17, as its first step |
 | 3. The closing gap in the model | now | superseded: no side is named on a kind |
 | 4–8. The trivia step | outline | 5, 7 and 8 in the arena-tables plan (3a); 4 and 6 superseded |
-| 9–13. The snapshot step | outline | the snapshot step's PR |
+| 9–13. The snapshot step | detailed against `feat/typed-reader` | 9, 10 and 11a in the first snapshot PR; 11b, 11c, 12 and 13 in the second, after the arena-tables plan's 3a |
 
 Task 1 adds declarations that only the snapshot step reads, so it lands with that step, never alone: the repo keeps no export without a reader.
 
@@ -604,15 +604,673 @@ Detailed against master after the one-reader step lands. The PR carries Tasks 1 
 7. **The stamps go.** `$sameLine` and `$tokensBetween` leave `TriviaEntry`, the wire, the types and the self-contained fixture copies; the codec and the typed reader stop carrying them.
 8. **Gates.** Verifications 7 (built), 8, 9, 10 and 11: the `trivia-placement` census and the validation rows before and after, each moved row reported to the maintainer.
 
-## Outline: the snapshot step (Tasks 9–13)
+## The snapshot step (Tasks 1, 9–13)
 
-9. **`PointSpan`'s codec** and the snapshot transport form: a node with a `span`, its kind and its leaves' text, and no tree, index or bytes.
-10. **`$snapshot()`.** A native call reads a clean range from its index at full depth into snapshot data, each point measured from its holder's start through `LineTable::point` and `Point::offset_from`; an edited parsed node's data is copied with its span from its index; built nodes carry no span. Types: `$snapshot()` on parsed nodes only.
-11. **Seams from geometry.** The gap classifier's entry takes two points in place of bytes; root edges from the first and last child's geometry. Until the trivia table, a snapshot's trivia joins by its entries' `$sameLine` and `$tokensBetween`, as a fixture's does today; the trivia step's joins (Task 6) are superseded. From the arena-tables plan's Task 4, each snapshot node carries its own sides, rendered with the seam defaults, and the stamps go.
-12. **Fixtures are snapshots.** `selfContainedRenderInput` becomes `$snapshot()`; the parity fixtures are rewritten through it; rust's left-out fixtures return to their count before the root-edge change.
-13. **`$cst()` by index**, with the parked branch's API and `cst.test.ts` carried over by hand; then verifications 7 (snapshots), 12–18.
+Detailed against `feat/typed-reader` at 86894f532. The step lands as two PRs into `feat/typed-reader`, around the arena-tables plan's 3a:
+
+- **The first snapshot PR**, from `feat/typed-reader-snapshots`, carries Tasks 1, 9, 10 and 11a, census included. Its first commit is this plan.
+- **3a** follows: the native trivia table, which assigns trivia to (node, side) at read.
+- **The second snapshot PR**, after 3a, carries Tasks 11b, 11c, 12 and 13. 11b and 11c read flank indentation and line-break sides from the table, so each fact has one derivation and there is no interim.
+
+### What the code holds today
+
+- **Every read transport records where it came from.** That is `TransportLayout::at`, a `NodeCoordinate` with the tree, index, end and byte span. `ReadCtx::at_of` is its one source; the derive calls it for a struct's layout (`placement.into_layout(sides, __at)`) and for an envelope's (`envelope_layout(.., sides, __at)`).
+- **A full-depth read (`Depth::All`) leaves no coordinate in a slot** (`read_value`). The coordinates that remain are `at` on every transport and each trivia entry (`Entry::into_trivia` → `SlotValue::Coord`).
+- **A render fixture today is `selfContainedRenderInput`** (`packages/tools/src/validate/read-render-parse.ts`). It takes `toDetachedTransportData` through the engine's trivia view and turns every byte range into text:
+  - a leaf becomes `$text`;
+  - a trivia entry becomes `{ $type, $text, $sameLine?, $tokensBetween? }`;
+  - a list gap becomes `gap: { $text }`;
+  - a list's flanks become `flank: { $text, $span }`, a window from the opener's line to the closer.
+  
+  The trivia view also adds the line-break whitespace each owner derives from `lineGapsOf`, as bare kind ids in its trivia arrays.
+- **What today's fixtures carry, by grammar.** The rows below count render fixtures. A trivia line-gap entry is an id, or `{ $type, … }` with no `$text`.
+
+  | grammar | render fixtures | with trivia | with line-gap entries | with a flank | with a list gap |
+  | --- | --- | --- | --- | --- | --- |
+  | rust | 2036 | 280 | 271 | 577 | 250 |
+  | python | 1395 | 170 | 167 | 581 | 345 |
+  | typescript | 2079 | 261 | 261 | 512 | 178 |
+  | scm | 19 | 19 | 19 | 0 | 7 |
+  | regex | 54 | 9 | 9 | 0 | 37 |
+
+  A snapshot has to give each of these from geometry, or its fixture renders differently and is left out.
+- **The seams that read source bytes.** These are what Task 11 gives a geometry entry:
+  - `prepare::root_flanks` reads the bytes before the first coordinate item and after the last;
+  - `prepare::fill_list_gaps` reads `SourceGap` text;
+  - `prepare::fill_source_flanks` reads `SourceFlank`'s source.
+- **Rust's left-out fixtures are already below their count before the root-edge change.** `source_file` is at 3; it was 4 before the root-edge change and 6 just after it. The other kinds are at most what they were then. Task 12's gate becomes "no fixture newly left out", against today's sidecars.
+
+### Decisions this detail takes
+
+Accepted on review. D4's JavaScript walk covers edited ranges only.
+
+- **D1. The wire.** A snapshot node's geometry is `$_layout.span: { start: { row, column }, end: { row, column } }`; it has no `at`. A snapshot trivia entry is `{ $type, $text, span, $sameLine?, $tokensBetween? }`. In Rust, `TransportLayout` gains `span: Option<PointSpan>` and `TriviaText` gains `span: Option<PointSpan>`.
+- **D2. One read, two origins.** A snapshot is the typed read at `Depth::All` with a snapshot context:
+  - `ReadCtx` gains `snapshot: Option<SnapshotCtx>`, which holds the source's `LineTable` and the holder's start point.
+  - `ReadCtx::at_of` returns an `Origin`: `Tree(NodeCoordinate)` or `Snapshot(PointSpan)`.
+  - The derive reads a node's slots under `ctx.holding(cursor)`, so each child is measured from the transport that holds it.
+  - A node's own span, and its leading and trailing entries, use the incoming context: an entry is measured from its owner's holder.
+  - Its inner-gap entries use the holding context: they are measured from the node that holds the gap.
+  - A placed entry becomes a text entry when the context is a snapshot's.
+  
+  No second reader is added.
+- **D3. What a point is measured from when there is no holder.** The snapshot's root, and any tree-backed node whose holder is built, is measured from its own start: its span starts at `Point::ZERO`. A tree-backed holder passes its start byte to the native call.
+- **D4. Edited parsed nodes are walked in JavaScript.** `snapshotOf(value)` in `@sittir/common`, which the `$snapshot` member calls:
+  - **A clean range** (`!editedWithin(tree, index, end)`) is one native `snapshot(treeId, index, holderByte?)`.
+  - **An edited parsed node** keeps its own data and slots, with every key that names a tree removed. Its span, and the spans of the coordinate trivia it still carries, come from one native `snapshotSpans(treeId, holderByte, ranges)`. Each coordinate slot is a clean range, so it gets a native `snapshot`.
+  - **A built node or draft** keeps its data and gets no span.
+- **D5. `$snapshot()` returns plain data.** It is not wrapped, not registered and has no members. It is typed as `Snapshot<K>`, a branded plain-data type that `engine.render` accepts; it does not reuse a node surface type.
+- **D6. Task 12's gate.** No render fixture is newly left out on any grammar, measured against the left-out sidecars at the PR's base.
+
+### Rulings on the questions this detail raised
+
+- **Q1. Where a list's separator sits.** Geometry has the gap's two points but not the separator's position. Ruled (a): on a shared row the separator sits against the earlier item, behind Task 11a's census. If any fixture is left out for this cause, the snapshot records each separator's points on the item after it (b).
+- **Q2 and Q3. A list's flanks, and line breaks between owners.** Geometry gives neither the indentation of the opener's line nor which side of an owner a line break belongs to.
+  - Both wait for the trivia table (3a), which stores line-break sides and the indentation a side needs. Tasks 11b and 11c read them from the table.
+  - Deriving line-break sides in prepare from neighbours' spans was rejected: until 3a it would be a second derivation of what `readDerivedSides` derives for a live read.
+  - Keeping a text window in snapshot data was rejected because it puts bytes in a snapshot.
+- **Q4. `$cst()` on a leaf.** Ruled (a) by the maintainer: `engine.cst(value)` answers for any parsed value, leaves included, and `$cst()` is a member of node objects. The engine method carries JSDoc.
+
+### Review Focus for this step
+
+1. **A separator written against the next item** (`a ,b`). Under Q1 (a) the gap misplaces it. Test: Task 11a's census names every fixture this leaves out.
+2. **A CRLF source.** A `\r` ends its row's columns, so a gap across rows must not read it as a column. Test: Task 11a (`a_gap_across_a_crlf_row_is_one_break`).
+3. **A tree-backed node seated in a built parent.** Its span starts at `Point::ZERO` (D3), and it renders its data. Test: Task 10 (`a clean node under a built parent is measured from its own start`).
+4. **A multi-byte character before a gap.** Columns count bytes, so `é = 1` keeps one space. Test: Task 11a (`a_gap_after_a_multi_byte_char_counts_bytes`).
+5. **The grammar root with leading blank lines and no final newline.** Its edges come from its first and last children's geometry. Test: Task 11a (`root_edges_from_geometry`).
+
+---
+
+### Task 1: Points and the line table
+
+As detailed above, unchanged. It is the PR's first commit.
+
+---
+
+### Task 9: The snapshot wire form
+
+**Files:**
+- Modify: `rust/crates/sittir-core/src/points.rs` (napi codec for `Point` and `PointSpan`)
+- Modify: `rust/crates/sittir-core/src/layout.rs` (`TransportLayout::span`, decoded and encoded under `span`)
+- Modify: `rust/crates/sittir-core/src/trivia.rs` (`TriviaText::span`, under `span`)
+- Modify: every literal of `TransportLayout { … }` and `TriviaText { … }` (`read.rs`, `layout.rs` tests, `prepare.rs` tests, `error_read.rs`)
+- Test: `rust/crates/sittir-core/src/points.rs` (unit), `packages/rust/tests/snapshot-wire.test.ts`
+
+**Interfaces:**
+- Consumes: Task 1's `Point` and `PointSpan`.
+- Produces:
+  - `TransportLayout<T>::span: Option<PointSpan>`;
+  - `TriviaText::span: Option<PointSpan>`;
+  - the napi codec `{ start: { row, column }, end: { row, column } }`, which decodes the same JavaScript shape it encodes.
+
+- [ ] **Step 1: Write the failing round-trip test**
+
+`packages/rust/tests/snapshot-wire.test.ts`:
+
+```ts
+import { describe, expect, it } from 'vitest';
+import { createEngine } from '@sittir/common';
+import language from '../src/index.ts';
+
+const engine = await createEngine(language);
+
+describe('a snapshot span on the wire', () => {
+	it('renders a built node whose layout carries a span exactly as one without it', () => {
+		const plain = { $type: engine.kinds.Identifier, $text: 'x' };
+		const spanned = { ...plain, $_layout: { span: { start: { row: 0, column: 4 }, end: { row: 0, column: 5 } } } };
+		expect(engine.render(spanned as never).toString()).toBe(engine.render(plain as never).toString());
+	});
+	it('refuses a span whose point is not a row and a column', () => {
+		const bad = { $type: engine.kinds.Identifier, $text: 'x', $_layout: { span: { start: 3, end: 4 } } };
+		expect(() => engine.render(bad as never).toString()).toThrow(/span/);
+	});
+});
+```
+
+- [ ] **Step 2: Run it to verify it fails**
+
+Run: `pnpm exec vitest run packages/rust/tests/snapshot-wire.test.ts`
+Expected: the second test FAILS (no throw: `span` is ignored today).
+
+- [ ] **Step 3: Implement**
+
+`points.rs`, under `#[cfg(feature = "napi-bindings")]`. The codec reuses `crate::boundary::{property, required, object_with}`, as `SourceGap` does:
+
+```rust
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Point {
+    unsafe fn from_napi_value(env: ::napi::sys::napi_env, val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
+        use crate::boundary::required;
+        unsafe { Ok(Point { row: required(env, val, c"row", "a span point")?, column: required(env, val, c"column", "a span point")? }) }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Point {
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        use crate::boundary::object_with;
+        unsafe { object_with(env, &[(c"row", u32::to_napi_value(env, val.row)?), (c"column", u32::to_napi_value(env, val.column)?)]) }
+    }
+}
+```
+
+The same pair is written for `PointSpan` over `start` and `end`. `TransportLayout`'s codec adds `span: property(env, napi_val, c"span")?` on decode and `present(env, c"span", val.span)?` on encode. Its encode doc becomes "`{ trivia?, at?, span? }`". `TriviaText`'s codec does the same.
+
+- [ ] **Step 4: Run it to verify it passes**
+
+Run: `pnpm --filter @sittir/rust run build:native && pnpm exec vitest run packages/rust/tests/snapshot-wire.test.ts`
+Expected: 2 passed.
+
+- [ ] **Step 5: Gates and commit**
+
+`rtk cargo test --workspace --no-default-features`; `rtk cargo clippy --workspace --no-default-features --all-targets -- -D warnings`. Commit `feat(core): a snapshot span crosses the wire`.
+
+---
+
+### Task 10: `$snapshot()`
+
+**Files:**
+- Modify: `rust/crates/sittir-core/src/read.rs` (`SnapshotCtx`, `Origin`, `ReadCtx::{snapshot, holding, at_of}`, `Entry::into_trivia`, `into_layout`, `envelope_layout`)
+- Modify: `rust/crates/sittir-transport-macros/src/expand.rs` (the struct and envelope reads take children under `ctx.holding(cursor)`)
+- Modify: `rust/crates/sittir-core/src/engine.rs` (`ParsedTree::lines`, `ParsedTree::snapshot`, `ParsedTree::snapshot_spans`)
+- Modify: `rust/crates/sittir-core/src/napi_engine.rs` (`snapshot`, `snapshot_spans`)
+- Modify: `packages/common/src/engine.ts` (`NativeEngineLike`, `TreeHandle` gains `snapshot` and `snapshotSpans`), `packages/common/src/read.ts` (`TreeHandle`)
+- Create: `packages/common/src/snapshot.ts` (`snapshotOf`)
+- Modify: `packages/codegen/src/emitters/node-members.ts` (`$snapshot` beside `$query`), `packages/codegen/src/emitters/types.ts` (`readonly $snapshot: () => Snapshot<…>` on `Parsed…`), `packages/types/src/` (`Snapshot<K>`)
+- Docs: `docs/glossary/emitters.md`, `docs/glossary/packages-common-src.md`, `docs/glossary/packages-types-src.md`
+- Test: `rust/crates/sittir-core/src/read.rs` (unit), `packages/rust/tests/snapshot.test.ts`, `packages/typescript/tests/parsed-surface.test-d.ts`
+
+**Interfaces:**
+- Consumes: Task 1's `LineTable::point` and `Point::offset_from`; Task 9's spans.
+- Produces:
+  - `ParsedTree::snapshot<T: ReadTransport>(&self, index: u32, holder: Option<u32>) -> Result<T, ReadError>`;
+  - napi `snapshot(treeId, index, holderByte?)`, which returns `$any | ErrorRead` like `read`, and `snapshotSpans(treeId, holderByte, ranges: number[]) -> number[]`, whose output is row and column pairs, flat;
+  - `snapshotOf(value: unknown): unknown` from `@sittir/common`;
+  - the node member `$snapshot`.
+
+- [ ] **Step 1: Write the failing Rust test**
+
+The test goes in `read.rs`'s tests, and builds its tree the way `a_coordinate_ends_past_its_last_descendant` does. A snapshot of `\n\nfn f() {\n    x\n}\n` has its root at `Point::ZERO`, and its child item is measured from the root's start.
+
+```rust
+#[test]
+fn a_snapshot_measures_each_child_from_its_holders_start() {
+    let source = "\n\nfn f() {\n    x\n}\n";
+    let mut parser = tree_sitter::Parser::new();
+    parser.set_language(&tree_sitter_rust::LANGUAGE.into()).unwrap();
+    let tree = parser.parse(source, None).unwrap();
+    let lines = crate::points::LineTable::new(source);
+    let ctx = ReadCtx::new(source, 1, |_| true).snapshot(&lines, None);
+    let root = ctx.at_of(&tree.walk());
+    assert_eq!(root, Origin::Snapshot(PointSpan { start: Point::ZERO, end: lines.point(source.len()).unwrap() }));
+    let mut cursor = tree.walk();
+    cursor.goto_first_child();
+    let held = ctx.holding(&tree.walk());
+    assert_eq!(held.at_of(&cursor), Origin::Snapshot(PointSpan { start: Point { row: 2, column: 0 }, end: Point { row: 4, column: 1 } }));
+}
+```
+
+- [ ] **Step 2: Run it to verify it fails**
+
+Run: `rtk cargo test -p sittir-core --no-default-features a_snapshot_measures`
+Expected: a compile error, since `snapshot`, `holding` and `Origin` don't exist yet.
+
+- [ ] **Step 3: Implement the context**
+
+In `read.rs`:
+
+```rust
+/// What a snapshot read measures with: the source's lines and the start of
+/// the transport the read is inside, from which each point it writes is
+/// measured.
+#[derive(Debug, Clone, Copy)]
+pub struct SnapshotCtx<'s> {
+    pub lines: &'s crate::points::LineTable,
+    pub holder: crate::points::Point,
+}
+
+/// Where a read node came from: its coordinate in a live tree, or, in a
+/// snapshot, its span measured from its holder's start.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum Origin {
+    Tree(NodeCoordinate),
+    Snapshot(crate::points::PointSpan),
+}
+```
+
+`at_of`'s other callers match `Origin::Tree`: `a_coordinate_ends_past_its_last_descendant` and `ParsedTree::read_error` (the `ErrorRead`'s `at`). An error region read in a snapshot keeps its text and takes the span.
+
+`ReadCtx` gains `pub snapshot: Option<SnapshotCtx<'s>>`. `ReadCtx::new` sets it to `None`; every other literal of `ReadCtx { … }` gains `snapshot: None`, which is nine in `read.rs`, four in `engine.rs` and ten in the parity tests.
+
+```rust
+    /// This context, reading a snapshot of a source whose lines are `lines`,
+    /// measured from the byte `holder` (from each node's own start when
+    /// absent: a root, or a node whose holder holds no tree).
+    pub fn snapshot(self, lines: &'s crate::points::LineTable, holder: Option<u32>) -> Self {
+        let holder = holder.and_then(|byte| lines.point(byte as usize));
+        Self { snapshot: Some(SnapshotCtx { lines, holder: holder.unwrap_or(crate::points::Point::ZERO) }), ..self }
+    }
+
+    /// The context a transport reads its slots under: in a snapshot, measured
+    /// from the transport's own start; otherwise this one.
+    pub fn holding(&self, cursor: &TreeCursor<'_>) -> Self {
+        let Some(snapshot) = self.snapshot else { return *self };
+        let at = self.coordinate(&cursor.node(), index_of(cursor));
+        let start = snapshot.lines.point(at.span.start as usize).expect("a node's start lies in its source");
+        Self { snapshot: Some(SnapshotCtx { holder: start, ..snapshot }), ..*self }
+    }
+
+    /// Where the node the cursor is on came from (`TransportLayout::at` or
+    /// `::span`).
+    pub fn at_of(&self, cursor: &TreeCursor<'_>) -> Origin {
+        let at = self.coordinate(&cursor.node(), index_of(cursor));
+        match self.snapshot {
+            None => Origin::Tree(at),
+            Some(snapshot) => Origin::Snapshot(snapshot.span_of(at.span)),
+        }
+    }
+```
+
+`SnapshotCtx::span_of(span: Span) -> PointSpan` takes both ends through `lines.point` and then `offset_from(holder)`. The holder is `Point::ZERO` for a root, so a root's points are absolute. That is D3: a root with no holder measures from its own start. Its own start is `Point::ZERO` only for the grammar root (index 0, spanning the source). For any other node with no holder, `snapshot(…, None)` sets `holder` to that node's start; `ParsedTree::snapshot` does this (Step 5).
+
+`Placement::into_layout`, `Sides::into_layout` and `envelope_layout` take an `Origin` in place of the `NodeCoordinate`, plus two contexts: `outer`, the one the node was read under, and `own`, its holding one. `Origin::Tree` fills `at`; `Origin::Snapshot` fills `span`. Leading and trailing entries become `outer.entry(entry)`, and inner-gap entries become `own.entry(entry)`:
+
+```rust
+    /// One placed extra as a trivia entry: its coordinate on a live read; in a
+    /// snapshot, its text and its span from this context's holder, with the
+    /// reader's stamps.
+    pub fn entry<T>(&self, entry: Entry) -> TriviaEntry<T> {
+        match self.snapshot {
+            None => entry.into_trivia(),
+            Some(snapshot) => TriviaEntry::text(
+                entry.coord.kind.expect("a placed extra carries its stamped kind"),
+                &self.source[entry.coord.span.start as usize..entry.coord.span.end as usize],
+                snapshot.span_of(entry.coord.span),
+                entry.same_line,
+                entry.tokens_between,
+            ),
+        }
+    }
+```
+
+`TriviaEntry::text` builds the `TriviaText` value that today's `TriviaEntry` decode builds for a `{ $type, $text }` entry, with the span set. Its value arm is the one `trivia.rs` already gives a text entry.
+
+- [ ] **Step 4: The derive reads slots under its own holder**
+
+In `expand.rs`, the struct read (`pass`, where `let __at = ctx.at_of(cursor);` is) and the envelope read (`let __at = ctx.at_of(cursor);` before `#hidden`) both add the following right after `__at`:
+
+```rust
+let __outer = *ctx;
+let ctx = &ctx.holding(cursor);
+```
+
+Every slot read below it then measures from this node. The layout calls take both contexts: `placement.into_layout(sides, __at, &__outer, ctx)` and `envelope_layout(…, sides, __at, &__outer, ctx)`. A node's leading and trailing entries are measured from its holder, and its inner-gap entries from itself.
+
+- [ ] **Step 5: The engine and the napi calls**
+
+`ParsedTree` gains `lines: std::sync::OnceLock<LineTable>` and `fn lines(&self) -> &LineTable`, built on first use. Then:
+
+```rust
+    /// A snapshot of the node at `index` (`Depth::All`): every node with its
+    /// span from the transport that holds it, every leaf with its text, and
+    /// the node itself measured from the byte `holder`, or from its own start.
+    pub fn snapshot<T: crate::read::ReadTransport>(&self, index: u32, holder: Option<u32>) -> Result<T, crate::read::ReadError> {
+        let own = || node_at_index(&self.tree, index).map(|node| node.start_byte() as u32);
+        let from = holder.or_else(own).filter(|_| index != 0);
+        let ctx = crate::read::ReadCtx::new(&self.source, self.tree_id, self.grammar.shows()).snapshot(self.lines(), from);
+        crate::read::read_at::<T, T>(&mut self.tree.walk(), &ctx, index, crate::read::Depth::All)
+    }
+
+    /// The spans of the byte `ranges` (start, end pairs), measured from the
+    /// byte `holder`, as row and column pairs.
+    pub fn snapshot_spans(&self, holder: u32, ranges: &[u32]) -> Option<Vec<u32>> { /* through lines().point and offset_from */ }
+```
+
+Next to `read`, `napi_engine.rs` gains `snapshot(tree_id, index, holder_byte: Option<u32>)`. Its body is `read`'s, with `parsed.snapshot::<$any>(index, holder_byte)`. It also gains `snapshot_spans(tree_id, holder_byte, ranges: Vec<u32>) -> Vec<u32>`, which refuses an odd length or a range past the source.
+
+- [ ] **Step 6: The JavaScript walk**
+
+`packages/common/src/snapshot.ts`:
+
+```ts
+/**
+ * A snapshot of `value`: plain data with geometry that renders without its tree.
+ * A clean range is one native read; an edited parsed node keeps its own data with
+ * its span from its index; a built node keeps its data with no span.
+ */
+export function snapshotOf(value: unknown, holderByte?: number): unknown {
+	if (Array.isArray(value)) return value.map((entry) => snapshotOf(entry, holderByte));
+	if (!isRecord(value)) return value;
+	const at = coordinateOf(value);
+	const tree = at === undefined ? undefined : liveTreeOf(value);
+	if (at !== undefined && tree !== undefined && !editedWithin(tree.id, at.index, at.$end)) {
+		return tree.snapshot(at.index, holderByte);
+	}
+	const own = at === undefined ? undefined : at.$span.start;
+	const out: Record<string, unknown> = {};
+	for (const [key, raw] of Object.entries(value)) {
+		if (typeof raw === 'function' || key === '$with') continue;
+		if (key === '$_layout') out.$_layout = snapshotLayout(raw, tree, holderByte ?? own);
+		else out[key] = isStorageKey(key) ? snapshotOf(raw, own) : raw;
+	}
+	if (at !== undefined && tree !== undefined) {
+		(out.$_layout as Record<string, unknown>).span = spanOf(tree.snapshotSpans(holderByte ?? at.$span.start, [at.$span.start, at.$span.end]));
+	}
+	return out;
+}
+```
+
+`coordinateOf`, `liveTreeOf` and `snapshotLayout` read what `toTransportData` already reads:
+- a node's coordinate is `$_layout.at`, and its tree is `treeHandleOf` decoded through `engine-scope`'s tree table;
+- `snapshotLayout` keeps `trivia`, turning each coordinate entry into `{ $type, $text, span, $sameLine?, $tokensBetween? }` through one `snapshotSpans` call for the layout's entries. Its text is sliced from the tree's `source` by the shared byte slicer;
+- it drops `at`, `gap` and `flank`.
+
+The byte slicer moves from `packages/tools/src/validate/read-render-parse.ts::spanSlicer` to `packages/common/src/snapshot.ts`. The tools import it from there.
+
+The member: `nodeMemberLines`' parsed branch adds the following after `$query`:
+
+```ts
+'    $snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,',
+```
+
+`emitNodeSurfaceInterfaces` adds this beside `$query`:
+
+```ts
+if (withNode && name.startsWith('Parsed')) lines.push(`${indent}  readonly $snapshot: () => Snapshot<${surface.mainType}['$type']>;`);
+```
+
+`@sittir/types` exports:
+
+```ts
+/** A snapshot of a parsed node of kind `K` (`$snapshot()`): plain data with geometry that `engine.render` accepts. */
+export type Snapshot<K extends number = number> = { readonly $type: K } & { readonly [snapshotBrand]: true };
+```
+
+`engine.render`'s parameter admits `Snapshot`.
+
+- [ ] **Step 7: The JavaScript tests**
+
+`packages/rust/tests/snapshot.test.ts` covers verification 14, Review Focus 3, D5, and that no snapshot names a tree. Until 11b and 11c, a snapshot's flanks and the line breaks between owners fall to the options, so the render tests use sources whose every gap is a list gap or a root edge, and the edit test asserts the snapshot's data rather than its render. The full render comparisons are the census's, and they reach zero after 3a.
+
+```ts
+import { describe, expect, it } from 'vitest';
+import { createEngine, snapshotOf } from '@sittir/common';
+import language from '../src/index.ts';
+
+const engine = await createEngine(language);
+const WHOLE = { deep: true, depth: Infinity };
+const namesATree = (value: unknown): boolean => /"\$(treeHandle|end)"|"at":/.test(JSON.stringify(value));
+
+describe('$snapshot()', () => {
+	it('names no tree and renders as the source', () => {
+		const source = '\n\nuse a;\n\nuse b;\n';
+		const snap = engine.parse(source, WHOLE).$snapshot();
+		expect(namesATree(snap)).toBe(false);
+		expect(engine.render(snap).toString()).toBe(source);
+	});
+	it('keeps an edit, and the edited node its geometry', () => {
+		const root = engine.parse('fn f() {\n    let x = 1; // keep\n}\n', WHOLE);
+		const fn = root.statements()[0]!;
+		if (!engine.is.functionItem(fn)) throw new Error('expected a function');
+		const stmt = fn.body().statements()[0]!;
+		stmt.$trivia.leading('// new');
+		const snapped = JSON.stringify(root.$snapshot());
+		expect(snapped).toContain('"$text":"// new"');
+		expect(snapped).toContain('"$text":"// keep"');
+		expect(snapped).toContain('"span":{"start":{"row":1,"column":4},"end":{"row":1,"column":14}}');
+	});
+	it('a clean node under a built parent is measured from its own start', () => {
+		const root = engine.parse('\n\nfn f() {}\n', WHOLE);
+		const built = engine.build.sourceFile({ statements: [root.statements()[0]!] });
+		const fn = (snapshotOf(built) as { _statements: { $_layout: { span: unknown } }[] })._statements[0]!;
+		expect(fn.$_layout.span).toEqual({ start: { row: 0, column: 0 }, end: { row: 0, column: 9 } });
+	});
+	it('is a new graph, not the node', () => {
+		const root = engine.parse('fn f() {}\n', WHOLE);
+		expect(root.$snapshot()).not.toBe(root);
+		expect(typeof (root.$snapshot() as Record<string, unknown>).items).not.toBe('function');
+	});
+});
+```
+
+The accessors (`statements`, `body`) and `engine.build.sourceFile` are the generated rust surface's, as `identity.test.ts` uses them. The third test takes the built parent through `snapshotOf`, since a built node has no `$snapshot`. The storage key `_statements` follows the reader's model slot names.
+
+`parsed-surface.test-d.ts`: `expectTypeOf(root.$snapshot()).toEqualTypeOf<Snapshot<typeof TSKindId.SourceFile>>()`. It also checks that a factory node's surface has no `$snapshot`.
+
+- [ ] **Step 8: Run, gates, commit**
+
+Run: `pnpm exec vitest run packages/rust/tests/snapshot.test.ts`. Expected: 4 passed. The first test passes once Task 11a has also landed, because before 11a a snapshot root has no edges and no list gaps. The order inside the PR is therefore Task 10's Rust and wire steps, then Task 11a, then this test file, committed with 11a.
+
+Gates: the step's full set (Global Constraints); validation rows identical, since nothing on the live path changes. Commit `feat(engine): $snapshot() reads a clean range natively and walks an edited one`.
+
+---
+
+### Task 11a: Gaps and root edges from geometry
+
+**Files:**
+- Modify: `rust/crates/sittir-core/src/classify.rs` (`geometry_gap_text`, `classify_points`)
+- Modify: `rust/crates/sittir-core/src/prepare.rs` (`root_flanks` and `fill_list_gaps` take an item's span when it has no coordinate or gap)
+- Modify: `rust/crates/sittir-core/src/layout.rs` (`Layout::span`), `prepare.rs` (`Prepare::source_span`, defaulting to `None`; `SlotValue`'s reads its transport's layout)
+- Docs: the doc comments of the touched functions
+- Test: `rust/crates/sittir-core/tests/classify.rs`, `rust/crates/sittir-core/tests/prepare.rs`, the census in `packages/tools/src/validate/__tests__/snapshot-census.test.ts`
+
+**Interfaces:**
+- Consumes: Task 9's `TransportLayout::span`.
+- Produces: `classify::geometry_gap_text(a: &PointSpan, b: &PointSpan) -> String`, and `classify::classify_points(a: &PointSpan, b: &PointSpan, allowed: &[u16], table: &WhitespaceTable) -> Option<u16>`, which is `classify_whitespace(&geometry_gap_text(a, b), …)`.
+
+- [ ] **Step 1: Failing tests** (`tests/classify.rs`)
+
+```rust
+use sittir_core::classify::geometry_gap_text;
+use sittir_core::points::{Point, PointSpan};
+
+const fn s(r0: u32, c0: u32, r1: u32, c1: u32) -> PointSpan {
+    PointSpan { start: Point { row: r0, column: c0 }, end: Point { row: r1, column: c1 } }
+}
+
+#[test]
+fn a_same_row_gap_is_its_columns() {
+    assert_eq!(geometry_gap_text(&s(0, 0, 0, 1), &s(0, 2, 0, 3)), " ");
+    assert_eq!(geometry_gap_text(&s(0, 0, 0, 1), &s(0, 1, 0, 2)), "");
+}
+
+#[test]
+fn a_gap_across_rows_is_a_break_per_row_and_the_next_rows_indentation() {
+    assert_eq!(geometry_gap_text(&s(0, 0, 0, 3), &s(2, 4, 2, 5)), "\n\n    ");
+}
+
+#[test]
+fn a_gap_across_a_crlf_row_is_one_break() {
+    // "a\r\nb": `a` ends at column 1 before the `\r`; `b` starts at row 1.
+    assert_eq!(geometry_gap_text(&s(0, 0, 0, 1), &s(1, 0, 1, 1)), "\n");
+}
+
+#[test]
+fn a_span_ending_with_its_line_break_ends_on_the_row_it_closes() {
+    assert_eq!(geometry_gap_text(&s(0, 0, 1, 0), &s(1, 0, 1, 1)), "\n");
+}
+
+#[test]
+fn a_gap_after_a_multi_byte_char_counts_bytes() {
+    // "é = 1": `é` is two bytes, `=` starts at byte column 3.
+    assert_eq!(geometry_gap_text(&s(0, 0, 0, 2), &s(0, 3, 0, 4)), " ");
+}
+```
+
+In `tests/prepare.rs`, `root_edges_from_geometry` takes a root whose two items have the spans `(2,0)-(2,9)` and `(3,0)-(3,9)` inside a root ending at `(4,0)`. Its before edge is the arm the newline-pair table classifies `"\n\n"` to, and its after edge is the arm for `"\n"`. `a_list_gap_between_spanned_items_classifies_from_geometry` takes two spanned items on one row with `token = ","`: `a, b` gives the after side `" "` and nothing before.
+
+- [ ] **Step 2: Run them to verify they fail**
+
+Run: `rtk cargo test -p sittir-core --no-default-features --test classify --test prepare`
+Expected: compile errors.
+
+- [ ] **Step 3: Implement**
+
+`geometry_gap_text` is the parked branch's function (`git show cf34dc2f4:rust/crates/sittir-core/src/classify.rs`), on `PointSpan` and `last_row`. Code:
+
+```rust
+/// The whitespace two spans in one frame imply for the gap between them, `a`
+/// before `b`: the columns between them when `b` starts on `a`'s last row,
+/// else a break per row crossed and `b`'s column as indentation. What
+/// geometry cannot give (tabs, trailing spaces, line endings) is left to the
+/// options.
+pub fn geometry_gap_text(a: &PointSpan, b: &PointSpan) -> String {
+    let last = a.last_row();
+    if b.start.row == last {
+        let from = if a.end.row == last { a.end.column } else { 0 };
+        " ".repeat(b.start.column.saturating_sub(from) as usize)
+    } else {
+        let mut gap = "\n".repeat((b.start.row - last) as usize);
+        gap.push_str(&" ".repeat(b.start.column as usize));
+        gap
+    }
+}
+```
+
+`root_flanks` takes `first` and `last` as `Option<Option<EdgeItem>>`, where an `EdgeItem` is `Coord(&NodeCoordinate)` or `Span(PointSpan, PointSpan)`: the item's span and the root's. The span arm classifies `geometry_gap_text(&PointSpan { start: ZERO, end: ZERO }, item)` before, and `geometry_gap_text(item, &PointSpan { start: root.end, end: root.end })` after. A first item's leading trivia widens its span: the gap is measured to the first trivia entry's start. The generated `root_flanks` call site in `render-module.ts` reads `EdgeItems::first_item`, which gains the span arm.
+
+`fill_list_gaps` falls back to `classify_points` when an item has no `source_gap` but it and the item before it both carry spans. That applies Q1 (a): with a `token`, on a shared row the first `token.len()` columns of the gap are the separator's.
+
+- [ ] **Step 4: Run them to verify they pass**
+
+Run the same command. Expected: all pass.
+
+- [ ] **Step 5: The census**
+
+`packages/tools/src/validate/__tests__/snapshot-census.test.ts` renders each grammar's corpus roots twice: once untouched, and once as `engine.render(root.$snapshot())`. It records the files whose two renders differ, and the first differing line of each, in `docs/superpowers/probes/2026-10-09-relative-coordinates/snapshot-census.json`. That file is the probe output this step's gates read. `census-classes/` beside it classes every differing region: (i) in-line spacing, (ii) layout inside a template, (iii) layout beside a comment, (iv) anything else.
+
+The test asserts that every difference is in a file the census names, and that the count per grammar is no higher than the committed census. That is verification 13. The first run writes the census, which goes to brainstorm with the PR. Each file's first difference is classed as a list gap, a root edge, a flank or a line break between owners. 11a must leave no list-gap or root-edge difference except those Q1's rule explains, and each of those is named. 11b and 11c, after 3a, bring classes (ii) and (iii) to zero.
+
+**Class (i) is normalized** (the maintainer, 2026-10-10). A snapshot, like a built node, spells in-line spacing with the seam defaults, and snapshots and fixtures accept it. The wrong seam defaults the census found (rust `* const`, `'static : 'static`; typescript `void ;`; python `print ()`; scm `( MISSING x )`) are fixed first, since they render wrong on built nodes too. From then on the census still names every remaining class (i) entry, and the gates of 11b, 11c and 12 count class (i) as normalized, not as a difference.
+
+- [ ] **Step 6: Gates and commit**
+
+Full gates; validation rows identical. Commit `feat(core): gaps and root edges classify from geometry`.
+
+---
+
+### Task 11b: A list's flanks, after 3a
+
+After the arena-tables plan's 3a, each node's sides live in the native trivia table. For a parsed tree a side holds its comments and the source's line layout: every run that holds a break, with its blank lines and indentation, whatever its seam's default.
+- A snapshot carries each node's sides in its layout, read from the table.
+- `fill_source_flanks` takes a snapshot list's flanks from its first item's leading side and its last item's trailing side, in place of the text window.
+- It gets no geometry-only indentation rule.
+
+Tests:
+- the parked `a_detached_window_from_the_openers_line_to_the_closer_classifies_as_its_tree_does` case, redone over a snapshot;
+- the census's flank lines reach zero, class (i) counted as normalized.
+
+This task is detailed against 3a's code once 3a lands.
+
+### Task 11c: Line breaks between owners, after 3a
+
+A snapshot node carries the line-break sides the table assigned it at read. They render with the seam defaults, as a live render's do after 3a, and the `$sameLine` and `$tokensBetween` stamps go with 3a's Task 4.
+- No derivation from neighbours' spans is added (Q3).
+- The census's line-break lines reach zero, class (i) counted as normalized.
+
+This task is detailed against 3a's code once 3a lands.
+
+---
+
+### Task 12: Fixtures are snapshots (after 3a)
+
+This task follows 11b and 11c: until then, a fixture rewritten as a snapshot would lose the flanks and line breaks today's fixtures carry, and be left out.
+
+**Files:**
+- Modify: `packages/tools/src/validate/read-render-parse.ts`:
+  - `RenderFixture.input` is `snapshotOf(data)`;
+  - `selfContainedRenderInput`, `flankWindow` and `spanSlicer` are removed (the slicer moved in Task 10).
+- Modify: `packages/tools/src/validate/__tests__/helpers/detached-renderer.ts` (renders `snapshotOf`)
+- Delete: `packages/tools/src/validate/__tests__/self-contained-render-input.test.ts`; its four cases become `snapshot.test.ts` cases where a case still applies.
+- Modify: `packages/tools/src/validate/parity-fixtures.ts` (the left-out gate, D6)
+- Regenerate: `rust/crates/sittir-*/test-fixtures.json` and `test-fixtures.left-out.json`, through `pnpm run validate:native`.
+- Docs: `docs/glossary/packages-tools-src-validate.md` (`RenderFixture`, `validateReadRenderParse`); remove `selfContainedRenderInput`'s entry.
+
+- [ ] **Step 1: Failing gate**
+
+In `parity-fixtures.ts`, after extraction, compare each kind's left-out count with the sidecar at the PR's base (read before it is rewritten). Throw `parity-fixtures[<g>]: <kind> newly left out (<before> → <after>)` for any increase. Test: `packages/tools/src/validate/__tests__/parity-left-out.test.ts` feeds the comparison function a before of `{ a: 1 }` and an after of `{ a: 2, b: 1 }`, and expects two named increases.
+
+- [ ] **Step 2: Swap the fixture input**
+
+`input: snapshotOf(data)`. Then regenerate.
+
+- [ ] **Step 3: Gates**
+
+- validation rows identical;
+- `sittir-parity-tests` green: every fixture renders its `expectedOutput`;
+- no kind newly left out on any grammar (D6). Rust's `source_file` stays at 3 or below;
+- a fixture's expected output differs from its source only in class (i) in-line spacing, and the census names each such fixture.
+
+A fixture that moves is reported with the census line that explains it; nothing is pinned by hand.
+
+- [ ] **Step 4: Commit**
+
+`test(parity): render fixtures are snapshots`. The regenerated fixture files go in the same commit.
+
+---
+
+### Task 13: `$cst()` by index, and the step's verifications
+
+This lands in the second snapshot PR, with Task 12. Nothing in it depends on 3a, so it can move to the first PR if that is wanted.
+
+**Files:**
+- Modify: `rust/crates/sittir-core/src/engine.rs` (`ParsedTree::cst`), `napi_engine.rs` (`cst(treeId, index)`)
+- Modify: `packages/common/src/engine.ts` (`NativeEngineLike.cst`, `TreeHandle.cst`), `packages/common/src/snapshot.ts` or a sibling `cst.ts` (`cstOf`)
+- Modify: `packages/codegen/src/emitters/node-members.ts` (`$cst`), `types.ts` (`readonly $cst: () => CstFacts` on `Parsed…`), `packages/types/src/engine-api.ts` (`CstFacts`)
+- `engine.cst(value)` on the engine surface, for any parsed value, leaves included (Q4), with JSDoc: what it returns, and that it throws for a value no live tree holds.
+- Test: `packages/typescript/tests/cst.test.ts`, carried over from the parked branch (`git show b9ea951f6:packages/typescript/tests/cst.test.ts`), which moves from handles to `{ treeId, index }`. Also `parsed-surface.test-d.ts`, and `packages/tools/src/validate/__tests__/relative-positions.test.ts`.
+
+**Interfaces:**
+- Produces:
+
+  ```ts
+  CstFacts {
+    kind: string;
+    startByte: number;
+    endByte: number;
+    startPosition: { row; column };
+    endPosition: { row; column };
+    text: string;
+  }
+  ```
+
+  `ParsedTree::cst(index) -> Option<CstFacts>` seeks the index and reads `kind`, the two bytes and the two positions; the text is a slice of the source.
+
+- [ ] **Step 1: Failing tests**
+
+`cst.test.ts` (from the parked branch):
+- a node's `$cst()` equals tree-sitter's facts for `const x = 1;`;
+- an edited node's `$cst()` describes the node as parsed;
+- a built node has no `$cst`.
+
+`relative-positions.test.ts` covers verification 15. For every corpus file, every node reached through the accessors, composed from the root through its snapshot spans with `Point::then`, equals `$cst().startPosition`; and no row or column in any snapshot is negative or past its source.
+
+`parsed-surface.test-d.ts` covers verification 17: `$cst` exists on `Parsed` surfaces and not on `Bound` or factory ones, and `Snapshot` has no `$cst`.
+
+`cst.test.ts` also covers `engine.cst`: `engine.cst(leaf)` equals tree-sitter's facts for a parsed leaf, and it throws for a built node.
+
+- [ ] **Step 2: Run them to verify they fail**, then **Step 3: implement** from the parked commits `db61f58ce` (engine and napi) and `b9ea951f6` (member and types), rewritten from handles to indexes. Then **Step 4: run them to verify they pass**.
+
+- [ ] **Step 5: The step's verifications**
+
+| verification | where |
+| --- | --- |
+| 12 | Task 12's gates |
+| 13 | Task 11a's census, at zero after 11b and 11c or with each remaining file named |
+| 14 | Task 10 (`keeps an edit, and the edited node its geometry`) |
+| 15 | this task (`relative-positions.test.ts`) |
+| 16 | `snapshot.test.ts` (a clean node under a built parent) and the live render test that already covers it |
+| 17 | this task |
+| 18 | validation rows identical on all five grammars |
+
+Verification 7, in its snapshot form, moves to 3a with the rest of 7.
+
+- [ ] **Step 6: Gates and commit**
+
+`feat(engine): $cst() reads tree-sitter's facts by index`.
+
 
 ## Self-review notes
 
-- Spec coverage: § The index → Task 2; § Lines for tree-backed nodes → Task 1 and Task 6; § Trivia ownership → Task 5; § The closing gap → Tasks 3–4; § Factory nodes and § Joins resolved at prepare → Task 6; § Snapshots, § Rendering snapshot data, § Serialized data → Tasks 9–12; § `$cst()` → Task 13. § Identity, § Edits and folding and the query offsets belong to the one-reader step, amended in the typed-reader plan. § The record wire belongs to the record step.
+- Spec coverage: § The index → Task 2; § Lines for tree-backed nodes → Task 1 and Task 6; § Trivia ownership → Task 5; § The closing gap → Tasks 3–4; § Factory nodes and § Joins resolved at prepare → Task 6; § Snapshots, § Rendering snapshot data, § Serialized data → Tasks 9–12; § `$cst()` → Task 13. The snapshot step's Review Focus is its own section's. § Identity, § Edits and folding and the query offsets belong to the one-reader step, amended in the typed-reader plan. § The record wire belongs to the record step.
 - Review Focus: lines 1–2 are Task 1's tests, line 3 Task 2's, lines 4–5 Task 3's.

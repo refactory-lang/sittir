@@ -12,7 +12,8 @@ type ReadEngine = {
 };
 
 // Alias envelopes the parser issues one node for: the envelope and its
-// content name the same parser node, so both carry its coordinate.
+// content name the same parser node, so both carry its coordinate, which
+// stamps the envelope's display id.
 const CASES = [
 	{ grammar: 'typescript', envelope: 'interface_body', content: 'object_type', source: 'interface I { x(): number }\n' },
 	{ grammar: 'python', envelope: 'format_expression', content: 'interpolation', source: 'x = f"{a:{b}}"\n' },
@@ -49,7 +50,7 @@ describe('an alias envelope and its content, read', () => {
 			expect(at).toBeDefined();
 			expect(kindName(inner.$type)).toBe(content);
 			expect(inner.$_layout?.at).toEqual(at);
-			expect(inner.$type).toBe(at!.$type);
+			expect(at!.$type).toBe(env.$type);
 			const bytes = source.slice(at!.$span.start, at!.$span.end);
 			expect(engine.render(env as never).toString()).toBe(bytes);
 			expect(engine.render(inner as never).toString()).toBe(bytes);

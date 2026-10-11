@@ -39,6 +39,22 @@ export declare class SittirEngine {
    */
   read(treeId: number, index: number, depth?: number | undefined | null): object
   /**
+   * A snapshot of the node at `index` of the live tree `treeId`: the
+   * node read at every depth into plain data with no tree, each
+   * node with its span (`$_layout.span`) from the transport that
+   * holds it and each placed extra with its text, the node itself
+   * measured from the byte `holderByte`, or from its own start when
+   * absent. Refuses as `read` does.
+   */
+  snapshot(treeId: number, index: number, holderByte?: number | undefined | null): object
+  /**
+   * The spans of byte `ranges` (start and end pairs) of the live
+   * tree `treeId`, measured from the byte `holderByte`, as row and
+   * column pairs, flat. Refuses a tree that is not live, an odd
+   * length, and a byte past the source or before the holder.
+   */
+  snapshotSpans(treeId: number, holderByte: number, ranges: Array<number>): Array<number>
+  /**
    * One batch of a pre-order walk of the named descendants under
    * the node `from` names (JSON, see `query::Address`), filtered to
    * `kinds` when given and to the `where` plan (JSON, see
@@ -49,6 +65,14 @@ export declare class SittirEngine {
    * matcher cannot compile.
    */
   descendants(from: string, kinds: Array<number> | undefined | null, resume: Array<number> | undefined | null, limit: number, plan?: string | undefined | null, depth?: number | undefined | null): string
+  /**
+   * The byte offsets of the lines under the node at `index` of the
+   * live tree `treeId` (its root when absent) that begin inside a
+   * token (`engine::line_starts_inside_tokens`): what anything that
+   * re-indents the tree's text leaves where it is. Refuses a tree
+   * that is not live and an index naming no node of it.
+   */
+  lineStartsInsideTokens(treeId: number, index?: number | undefined | null): Array<number>
   /**
    * Whether each node `addresses` names (a JSON array of
    * `query::Address`, all in one tree) satisfies the `where` plan

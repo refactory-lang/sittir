@@ -42,6 +42,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # `pnpm run build` builds the napi crates in parallel, so the pinned
+      # toolchain must be installed before it: otherwise each crate's cargo
+      # asks rustup to install it at once and the downloads collide.
+      - name: Install the pinned Rust toolchain
+        uses: ./.github/actions/rust-toolchain
+
       # `pnpm run build` compiles the napi crates from a cold cargo registry.
       # Cache the registry + target dir so cached crates skip the download path
       # entirely (the `.cargo/config.toml` net hardening covers the cold-cache run).
@@ -217,6 +223,8 @@ jobs:
         run: |
           cp -R /tmp/published-bindings/. packages/
           find packages -path "*/native/*.node" -print
+      - name: Install the pinned Rust toolchain
+        uses: ./.github/actions/rust-toolchain
       - name: Build the packages
         run: pnpm run build
       - name: Pack, install outside the workspace, createEngine + parse + render
@@ -276,8 +284,8 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v6
-      - name: Install Rust toolchain (stable)
-        uses: dtolnay/rust-toolchain@stable
+      - name: Install Rust toolchain (pinned)
+        uses: ./.github/actions/rust-toolchain
         with:
           components: clippy
       - name: Cache cargo registry + target
@@ -319,8 +327,8 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Install Rust toolchain (stable)
-        uses: dtolnay/rust-toolchain@stable
+      - name: Install Rust toolchain (pinned)
+        uses: ./.github/actions/rust-toolchain
       - name: Cache cargo registry + target
         uses: Swatinem/rust-cache@v2
       - name: Regenerate every grammar
@@ -351,7 +359,7 @@ jobs:
   #
   # Cross-compile setup uses `napi-rs/setup-node-and-napi@v3` for the
   # musl + arm64 targets that need a sysroot; native targets use the
-  # standard `dtolnay/rust-toolchain@stable` action.
+  # repo's `.github/actions/rust-toolchain`, which installs the pinned version.
   napi-build:
     name: napi build (${{ matrix.target }})
     needs: rust
@@ -391,8 +399,8 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Install Rust toolchain (stable, ${{ matrix.target }})
-        uses: dtolnay/rust-toolchain@stable
+      - name: Install Rust toolchain (pinned, ${{ matrix.target }})
+        uses: ./.github/actions/rust-toolchain
         with:
           targets: ${{ matrix.target }}
       # `napi-rs/setup-node-and-napi@v3` was removed upstream (repo no
@@ -510,8 +518,8 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v6
-      - name: Install Rust toolchain (stable)
-        uses: dtolnay/rust-toolchain@stable
+      - name: Install Rust toolchain (pinned)
+        uses: ./.github/actions/rust-toolchain
       - name: Cache cargo registry + target
         uses: Swatinem/rust-cache@v2
       - name: assert scope boundaries

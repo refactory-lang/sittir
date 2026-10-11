@@ -1,9 +1,8 @@
-import type { AnyUntypedNode, Cond, QueryPlan, QuerySlots, Recorder, SlotRef, SlotRoutes, TransportCoordinate } from '@sittir/types';
+import type { AnyUntypedNode, Cond, KindMembership, QueryPlan, QuerySlots, Recorder, SlotRef, SlotRoutes, TransportCoordinate } from '@sittir/types';
 import { inTreeEngine } from './engine-scope.ts';
-import { readNode, type TreeHandle } from './read.ts';
+import type { TreeHandle } from './read.ts';
 import { treeOf, treeTokenOf } from './tree-token.ts';
-import { treeHandleOf } from './transport-data.ts';
-import { nodeAddressOf, type NodeAddress } from './utils.ts';
+import { hydrateWith, nodeAddressOf, type NodeAddress } from './utils.ts';
 
 export interface DescendantWalk {
 	readonly from: NodeAddress;
@@ -27,6 +26,7 @@ export interface TreeQuery {
 
 export interface QueryHooks {
 	readonly querySlots: QuerySlots;
+	readonly membership: KindMembership;
 	readonly kindName: (kind: number) => string | undefined;
 	readonly wrap: (data: unknown, tree: unknown) => unknown;
 }
@@ -185,7 +185,7 @@ function view(context: Context, source: Source, steps: readonly Step[]): QueryVi
 		findIndex: (predicate) => findIndex(items(), predicate),
 		some: (predicate) => findIndex(items(), predicate) >= 0,
 		every: (predicate) => findIndex(items(), (node, index) => !predicate(node, index)) < 0,
-		includes: (node) => findIndex(items(), (candidate) => sameOccurrence(candidate, node)) >= 0,
+		includes: (node) => findIndex(items(), (candidate) => candidate === node) >= 0,
 		reduce: (fn, ...initial) => reduce(items(), fn, initial),
 		forEach: (fn) => forEach(items(), fn),
 		at: (index) => at(items(), index),
@@ -203,7 +203,7 @@ function ofTypeStep(kind: number): Step {
 }
 
 function whereStep(context: Context, steps: readonly Step[], condition: Where): Step {
-	const kinds = knownKinds(steps);
+	const kinds = knownKinds(context, steps);
 	if (kinds === undefined) planOf(condition(recorder(context, undefined)));
 	else for (const kind of kinds) compileFor(context, condition, kind);
 	return { op: 'where', condition };
@@ -236,7 +236,7 @@ function pushdown(context: Context, early: readonly Declarative[]): { kinds: rea
 	let count = 0;
 	for (const step of early) {
 		if (step.op === 'ofType') {
-			kinds = kinds === undefined ? [step.kind] : kinds.filter((kind) => kind === step.kind);
+			kinds = narrowed(context, kinds, step.kind);
 			if (kinds.length === 0) return 'none';
 		} else if (step.op === 'where') {
 			const plan = kinds === undefined ? undefined : sharedPlan(context, step.condition, kinds);
@@ -331,7 +331,7 @@ function entryOfCoordinate(coordinate: TransportCoordinate, tree: TreeHandle, ho
 	return {
 		kind: coordinate.$type,
 		address: { handle: coordinate.$treeHandle },
-		hydrate: () => inTreeEngine(tree, () => hooks.wrap(readNode(tree, coordinate), tree))
+		hydrate: () => inTreeEngine(tree, () => hydrateWith(coordinate, tree, hooks.wrap))
 	};
 }
 
@@ -356,7 +356,7 @@ function declarativeStep(
 ): Iterable<readonly Entry[]> {
 	switch (step.op) {
 		case 'ofType':
-			return mapBatches(batches, (batch) => batch.filter((entry) => entry.kind === step.kind));
+			return mapBatches(batches, (batch) => batch.filter((entry) => isOfType(context, entry.kind, step.kind)));
 		case 'where':
 			return mapBatches(batches, (batch) => whereHolds(batch, step.condition, context));
 		case 'slice':
@@ -418,7 +418,7 @@ function applyStep(step: Step, items: Iterable<unknown>, context: Context): Iter
 		case 'slice':
 			return sliceItems(items, step.start, step.end);
 		case 'ofType':
-			return filterItems(items, (item) => (item as AnyUntypedNode | undefined)?.$type === step.kind);
+			return filterItems(items, (item) => isOfType(context, (item as AnyUntypedNode | undefined)?.$type, step.kind));
 		case 'where':
 			return filterItems(items, (item) => whereHolds([entryOfItem(item)], step.condition, context).length > 0);
 		case 'filter':
@@ -460,10 +460,19 @@ function* sliceItems(items: Iterable<unknown>, start: number, end: number | unde
 	}
 }
 
-function knownKinds(steps: readonly Step[]): readonly number[] | undefined {
+function isOfType(context: Context, type: unknown, kind: number): boolean {
+	return typeof type === 'number' && context.hooks.membership.isMember(kind, type);
+}
+
+function narrowed(context: Context, kinds: readonly number[] | undefined, kind: number): readonly number[] {
+	const { membership } = context.hooks;
+	return kinds === undefined ? membership.membersOf(kind) : kinds.filter((type) => membership.isMember(kind, type));
+}
+
+function knownKinds(context: Context, steps: readonly Step[]): readonly number[] | undefined {
 	let kinds: readonly number[] | undefined;
 	for (const step of steps) {
-		if (step.op === 'ofType') kinds = kinds === undefined ? [step.kind] : kinds.filter((kind) => kind === step.kind);
+		if (step.op === 'ofType') kinds = narrowed(context, kinds, step.kind);
 		else if (step.op === 'map' || step.op === 'flatMap') kinds = undefined;
 	}
 	return kinds;
@@ -553,15 +562,6 @@ function recorder(context: Context, kind: number | undefined): Recorder<unknown>
 				? { configurable: true, enumerable: true, value: slotRef(key, slots.get(key)!) }
 				: undefined
 	});
-}
-
-function sameOccurrence(a: unknown, b: unknown): boolean {
-	if (a === b) return true;
-	if (a === null || b === null || typeof a !== 'object' || typeof b !== 'object') return false;
-	const tokenA = treeTokenOf(a);
-	if (tokenA === undefined || tokenA !== treeTokenOf(b)) return false;
-	const handle = treeHandleOf(a);
-	return handle !== undefined && handle === treeHandleOf(b);
 }
 
 export function holds(plan: QueryPlan, texts: (routes: SlotRoutes) => readonly string[]): boolean {
