@@ -370,6 +370,7 @@ function memberFact(v: Visit, name: string, top: Visit, topKind: string | null):
 	if (parent === null || isGroup(parent)) return null;
 	const owner = kindOf(parent);
 	if (owner === null) return null;
+	if (name === DROPPED) return { route: 'dropped', owner, ...selector(v) };
 	const token = tokenText(v);
 	if (parent === top || topKind === null) {
 		if (token !== null && v.field === null) return { route: 'presence', owner, name, token, via: [] };
@@ -468,7 +469,7 @@ function refuseAnchoredPlacement(claim: Visit, vocab: string, origin: PatternOri
 
 function kindPresence(first: MemberFact | undefined, v: Visit, name: string): MemberFact | null {
 	const kind = namedKind(v);
-	if (first === undefined || kind === null || first.route === 'presence') return null;
+	if (first === undefined || kind === null || first.route === 'presence' || first.route === 'dropped') return null;
 	return { route: 'kind', owner: first.owner, name, member: first.name, kind };
 }
 

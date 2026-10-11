@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { BindingsSyntaxError, bindingPatterns, readBindings } from '../index.ts';
+import { BindingsSyntaxError, bindingPatterns, isNamedMember, readBindings } from '../index.ts';
 
 describe('readBindings', () => {
 	it('reads a second single-segment capture on a node as the presence of that node\'s kind in the slot the first capture names', async () => {
@@ -23,7 +23,7 @@ describe('readBindings', () => {
 			['declaration.function', 'function_definition'],
 			['literal.string.docstring', 'string']
 		]);
-		expect(facts.members.map((m) => [m.route, m.owner, m.name])).toEqual([['nested', 'function_definition', 'doc']]);
+		expect(facts.members.filter(isNamedMember).map((m) => [m.route, m.owner, m.name])).toEqual([['nested', 'function_definition', 'doc']]);
 	});
 	it('still reads a lone single-segment capture on the top node as a claim', async () => {
 		const facts = await readBindings('(source_file) @module');
@@ -147,6 +147,11 @@ describe('readBindings', () => {
 				pattern: { line: 1, source }
 			}
 		]);
+	});
+
+	it('reads a slot a claim drops on purpose as a dropped member of the claimed kind, never a member named dropped', async () => {
+		const facts = await readBindings('(binary left: (_) @dropped) @expression.binary');
+		expect(facts.members).toEqual([{ route: 'dropped', owner: 'binary', field: 'left', kind: null, after: null, anchor: null }]);
 	});
 
 	it('keeps the text of a token a container captures', async () => {

@@ -76,7 +76,24 @@ const MODEL = [
 	node('plain_text', [], { modelType: 'pattern' }),
 	node('plain_holder', [slot('text', ['_plain_text'])]),
 	node('shown_holder', [slot('text', ['_template_text'])]),
-	node('false_keyword', [], { modelType: 'keyword', text: 'false' })
+	node('false_keyword', [], { modelType: 'keyword', text: 'false' }),
+	node('_decl', [], { modelType: 'supertype', subtypes: ['decl_plain', '_decl_default'] }),
+	node('decl_plain', [slot('name', ['identifier'])], { variantOf: '_decl' }),
+	node('_decl_default', [], { modelType: 'supertype', subtypes: ['default_fn'], variantOf: '_decl' }),
+	node('default_fn', [slot('declaration', ['identifier'])], { variantOf: '_decl_default' }),
+	node('_clause', [], { modelType: 'supertype', subtypes: ['clause_bare', 'clause_paren'] }),
+	node('clause_bare', [slot('item', ['identifier'], { propertyName: 'items', multiple: true })], { modelType: 'list', elementKinds: ['identifier'], variantOf: '_clause' }),
+	node('clause_paren', [slot('wrapped', ['clause_items'])], { modelType: 'envelope', variantOf: '_clause' }),
+	node('clause_items', [slot('item', ['identifier'], { propertyName: 'items', multiple: true })], { modelType: 'list', elementKinds: ['identifier'] }),
+	node('range', [slot('start', ['expr']), slot('dots', ['_dots'])]),
+	node('_dots', [], { modelType: 'punctuation', text: '..' }),
+	node('span', [slot('lo', ['expr']), slot('op', ['_dotdot', '_dotdoteq'])]),
+	node('_dotdot', [], { modelType: 'punctuation', text: '..' }),
+	node('_dotdoteq', [], { modelType: 'punctuation', text: '..=' }),
+	node('private_name', [slot('content', [])]),
+	node('scoped_name', [slot('path', ['identifier']), slot('name', ['identifier'])]),
+	node('char_text', [slot('content', [])]),
+	node('maybe_op', [slot('left', ['expr']), slot('operator', [], { required: false, terminals: ['+', '-'] }), slot('bang', [], { required: false, terminals: ['!'] })])
 ];
 
 const grammar = async (bindings: string): Promise<GrammarInput> => ({
@@ -307,6 +324,66 @@ describe('resolveRoutes', () => {
 	it('leaves a pattern test on a kind the reader stores as its member\'s kind id to every member, for the read to decide', async () => {
 		const routes = resolveRoutes(await grammar('((bool) @literal.boolean.true (#match? @literal.boolean.true "^t"))'));
 		expect([...routes.readEntries.keys()].filter((k) => k.endsWith('_keyword')).sort()).toEqual(['false_keyword', 'true_keyword']);
+	});
+
+	it('enters a claim on the forms of a form that is itself a supertype', async () => {
+		const routes = resolveRoutes(await grammar('(_decl) @statement.export'));
+		expect(routes.readEntries.get('default_fn')?.map((e) => [e.claimed, e.vocab])).toEqual([['_decl', 'statement.export']]);
+		expect(routes.members.get('default_fn')?.map((r) => r.name)).toEqual(['declaration']);
+	});
+
+	it('routes a list form\'s items as the member its sibling forms hold the same elements under', async () => {
+		const routes = resolveRoutes(await grammar('(_clause wrapped: (_) @entries) @clause.with'));
+		expect(routes.members.get('clause_paren')?.map((r) => r.name)).toEqual(['entries']);
+		expect(routes.members.get('clause_bare')).toEqual([
+			{ route: 'slot', name: 'entries', slot: slot('item', ['identifier'], { propertyName: 'items', multiple: true }), path: [{ owner: 'clause_bare', slot: 'item' }] }
+		]);
+	});
+
+	it('routes no member through a required slot that can hold only one fixed text', async () => {
+		const routes = resolveRoutes(await grammar('(range) @expression.range'));
+		expect(routes.members.get('range')?.map((r) => r.name)).toEqual(['start']);
+	});
+
+	it('routes no member through a slot whose every value a refinement pins, and keeps one a refinement leaves open', async () => {
+		const told = resolveRoutes(
+			await grammar(['(binary) @expression.binary', '(binary operator: "+") @expression.binary.add', '(binary operator: "-") @expression.binary.subtract'].join('\n'))
+		);
+		expect(told.members.get('binary')?.map((r) => r.name)).toEqual(['left', 'right']);
+		const open = resolveRoutes(await grammar(['(binary) @expression.binary', '(binary operator: "+") @expression.binary.add'].join('\n')));
+		expect(open.members.get('binary')?.map((r) => r.name)).toEqual(['left', 'operator', 'right']);
+	});
+
+	it('routes no member through an optional slot whose every value a refinement pins, and keeps an optional one-value slot as its presence', async () => {
+		const routes = resolveRoutes(
+			await grammar(['(maybe_op) @expression.binary', '(maybe_op operator: "+") @expression.binary.add', '(maybe_op operator: "-") @expression.binary.subtract'].join('\n'))
+		);
+		expect(routes.members.get('maybe_op')?.map((r) => r.name)).toEqual(['left', 'bang']);
+	});
+
+	it('routes no member through a slot that holds only text on a kind read as an identifier, and keeps its node slots', async () => {
+		const routes = resolveRoutes(await grammar(['(private_name) @identifier.property', '(scoped_name) @identifier.scoped', '(char_text) @literal.char'].join('\n')));
+		expect(routes.members.get('private_name')).toEqual([]);
+		expect(routes.members.get('scoped_name')?.map((r) => r.name)).toEqual(['path', 'name']);
+		expect(routes.members.get('char_text')?.map((r) => r.name)).toEqual(['content']);
+	});
+
+	it('pins a token on the slot whose fixed-text kind is that text, and counts it as a value the refinement tells', async () => {
+		const routes = resolveRoutes(
+			await grammar(['(span) @expression.range', '(span "..") @expression.range.exclusive', '(span "..=") @expression.range.inclusive'].join('\n'))
+		);
+		expect(routes.readEntries.get('span')?.map((e) => e.pins)).toEqual([
+			[{ member: 'op', slot: 'op', text: '..' }],
+			[{ member: 'op', slot: 'op', text: '..=' }],
+			[]
+		]);
+		expect(routes.members.get('span')?.map((r) => r.name)).toEqual(['lo']);
+	});
+
+	it('routes no member through a slot a claim marks @dropped, on each form the claim reaches', async () => {
+		const routes = resolveRoutes(await grammar('(binary left: (_) @dropped) @expression.binary\n(_struct name: (_) @dropped) @declaration.struct'));
+		expect(routes.members.get('binary')?.map((r) => r.name)).toEqual(['operator', 'right']);
+		expect(routes.members.get('struct_tuple')?.map((r) => r.name)).toEqual(['fields']);
 	});
 
 	it('keeps the template a templated claim builds from', async () => {

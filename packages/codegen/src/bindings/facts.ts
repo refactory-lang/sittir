@@ -46,6 +46,7 @@ export interface UnclaimedFact {
 
 export type MemberFact =
 	| ({ readonly route: 'rename'; readonly owner: string; readonly name: string } & SlotSelector)
+	| ({ readonly route: 'dropped'; readonly owner: string } & SlotSelector)
 	| {
 			readonly route: 'presence';
 			readonly owner: string;
@@ -62,6 +63,10 @@ export type MemberFact =
 			readonly multiple: boolean;
 			readonly via: readonly SlotSelector[];
 	  } & SlotSelector);
+
+export type NamedMemberFact = Exclude<MemberFact, { readonly route: 'dropped' }>;
+
+export const isNamedMember = (member: MemberFact): member is NamedMemberFact => member.route !== 'dropped';
 
 export interface ContainerCapture extends SlotSelector {
 	readonly name: string;
@@ -138,6 +143,11 @@ export interface ModelNode {
 	readonly variantOf: string | null;
 	readonly shownAs: readonly string[];
 }
+
+const FIXED_TEXT_MODEL_TYPES: ReadonlySet<string> = new Set(['keyword', 'punctuation']);
+
+export const isFixedText = (node: ModelNode | undefined): node is ModelNode & { readonly text: string } =>
+	node !== undefined && FIXED_TEXT_MODEL_TYPES.has(node.modelType) && node.text !== null;
 
 export type SlotModel = ReadonlyMap<string, ModelNode>;
 

@@ -6,6 +6,7 @@ import {
 	reconstructContainer,
 	wrapInPrecStack,
 	isEnrichGroupLiftSymbol,
+	insideLexicalToken,
 	ApplyPathSkip
 } from './transform-path.ts';
 import type { PathSegment } from './transform-path.ts';
@@ -884,7 +885,7 @@ function resolveFieldPlaceholder(
 			content = unified;
 		}
 	}
-	const maybeSymbolized = maybeKeywordSymbol(patch.name, content, (body) => wrapInPrec(body, precStack));
+	const maybeSymbolized = insideLexicalToken() ? content : maybeKeywordSymbol(patch.name, content, (body) => wrapInPrec(body, precStack));
 	if (maybeSymbolized !== content) {
 		content = maybeSymbolized;
 	}

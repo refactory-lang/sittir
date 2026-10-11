@@ -1,4 +1,4 @@
-import { type ContainerCapture, type ModelSlot, KNOWN_PREDICATE_OPERATORS, WILDCARD } from './facts.ts';
+import { type ContainerCapture, type ModelSlot, KNOWN_PREDICATE_OPERATORS, WILDCARD, isFixedText } from './facts.ts';
 import { camel, snake } from './names.ts';
 import { type GrammarInput, type GrammarRoutes, isLayout, modelNode, resolveRoutes, slotFor } from './routes.ts';
 
@@ -279,7 +279,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 		const node = modelNode(input.model, k);
 		if (input.textTokens.has(k) && node?.pattern != null) return scalarOf([`text:${node.pattern}`]);
 		if (node?.modelType === 'enum') return scalarOf(node.enumMembers.map((m) => `text:${m.text}`));
-		if (node?.modelType === 'keyword' || node?.modelType === 'punctuation') return scalarOf([`literal:${k}`]);
+		if (isFixedText(node)) return scalarOf([`literal:${k}`]);
 		const container = node !== undefined && !context.includes(node.kind) ? (routesOf(g)?.containers.get(node.kind) ?? null) : null;
 		if (node !== undefined && container !== null) {
 			const inner = [...context, node.kind];

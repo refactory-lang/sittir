@@ -68,6 +68,13 @@ describe('deriveOverlay', () => {
 		expect(overlay.renames).toEqual({ let_item: 'variable_declaration', call: 'call_expression' });
 	});
 
+	it('makes no grammar change for a slot a claim drops', () => {
+		const facts: BindingFacts = { ...FACTS, members: [{ route: 'dropped', owner: 'let_item', field: 'left', kind: null, after: null, anchor: null }] };
+		const { overlay, report } = deriveOverlay({ facts, base, vocabMembers: VOCABULARY, routedMembers: NO_MEMBERS });
+		expect(overlay.patches).toEqual(new Map());
+		expect(report.residue.filter((r) => r.row.startsWith('let_item.'))).toEqual([]);
+	});
+
 	it('patches a member routed to a field of another name into a field of the member\'s name', () => {
 		const { overlay } = deriveOverlay({ facts: FACTS, base, vocabMembers: VOCABULARY, routedMembers: NO_MEMBERS });
 		expect(overlay.patches).toEqual(new Map([['let_item', [[{ path: '1', edit: { field: 'name' } }]]]]));

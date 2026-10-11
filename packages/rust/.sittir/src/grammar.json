@@ -11120,16 +11120,23 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "b"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
+            "type": "FIELD",
+            "name": "byte",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "b"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "STRING",
@@ -11188,16 +11195,23 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "b"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
+            "type": "FIELD",
+            "name": "byte",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "b"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "STRING",
@@ -11233,16 +11247,23 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "b"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
+            "type": "FIELD",
+            "name": "byte",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "b"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "STRING",
@@ -11278,16 +11299,23 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "b"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
+            "type": "FIELD",
+            "name": "byte",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "b"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "STRING",
@@ -11323,16 +11351,23 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "b"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
+            "type": "FIELD",
+            "name": "byte",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "b"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "STRING",

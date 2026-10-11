@@ -745,17 +745,6 @@
           ]
         },
         {
-          "name": "operator",
-          "route": "slot",
-          "slot": "operator",
-          "path": [
-            {
-              "owner": "augmented_assignment",
-              "slot": "operator"
-            }
-          ]
-        },
-        {
           "name": "right",
           "route": "slot",
           "slot": "right",
@@ -1162,17 +1151,6 @@
           ]
         },
         {
-          "name": "operator",
-          "route": "slot",
-          "slot": "operator",
-          "path": [
-            {
-              "owner": "binary_operator",
-              "slot": "operator"
-            }
-          ]
-        },
-        {
           "name": "right",
           "route": "slot",
           "slot": "right",
@@ -1289,17 +1267,6 @@
             {
               "owner": "boolean_operator",
               "slot": "left"
-            }
-          ]
-        },
-        {
-          "name": "operator",
-          "route": "slot",
-          "slot": "operator",
-          "path": [
-            {
-              "owner": "boolean_operator",
-              "slot": "operator"
             }
           ]
         },
@@ -5905,17 +5872,6 @@
       ],
       "members": [
         {
-          "name": "operator",
-          "route": "slot",
-          "slot": "operator",
-          "path": [
-            {
-              "owner": "unary_operator",
-              "slot": "operator"
-            }
-          ]
-        },
-        {
           "name": "argument",
           "route": "slot",
           "slot": "argument",
@@ -6094,7 +6050,19 @@
           "test": []
         }
       ],
-      "members": [],
+      "members": [
+        {
+          "name": "withItems",
+          "route": "slot",
+          "slot": "item",
+          "path": [
+            {
+              "owner": "with_clause_bare",
+              "slot": "item"
+            }
+          ]
+        }
+      ],
       "container": {
         "kinds": [
           "with_item"

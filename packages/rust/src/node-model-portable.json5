@@ -1030,17 +1030,6 @@
           ]
         },
         {
-          "name": "operator",
-          "route": "slot",
-          "slot": "operator",
-          "path": [
-            {
-              "owner": "binary_expression",
-              "slot": "operator"
-            }
-          ]
-        },
-        {
           "name": "right",
           "route": "slot",
           "slot": "right",
@@ -1464,6 +1453,7 @@
       "members": []
     },
     "char_literal_escaped_hex": {
+      "vocab": "literal.char",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -1473,17 +1463,24 @@
           ],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "literal.char",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [
         {
-          "name": "b",
+          "name": "byte",
           "route": "slot",
-          "slot": "b",
+          "slot": "byte",
           "path": [
             {
               "owner": "char_literal_escaped_hex",
-              "slot": "b"
+              "slot": "byte"
             }
           ]
         },
@@ -1501,6 +1498,7 @@
       ]
     },
     "char_literal_escaped_simple": {
+      "vocab": "literal.char",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -1510,17 +1508,24 @@
           ],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "literal.char",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [
         {
-          "name": "b",
+          "name": "byte",
           "route": "slot",
-          "slot": "b",
+          "slot": "byte",
           "path": [
             {
               "owner": "char_literal_escaped_simple",
-              "slot": "b"
+              "slot": "byte"
             }
           ]
         },
@@ -1538,6 +1543,7 @@
       ]
     },
     "char_literal_escaped_unicode_braced": {
+      "vocab": "literal.char",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -1547,17 +1553,24 @@
           ],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "literal.char",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [
         {
-          "name": "b",
+          "name": "byte",
           "route": "slot",
-          "slot": "b",
+          "slot": "byte",
           "path": [
             {
               "owner": "char_literal_escaped_unicode_braced",
-              "slot": "b"
+              "slot": "byte"
             }
           ]
         },
@@ -1575,6 +1588,7 @@
       ]
     },
     "char_literal_escaped_unicode_fixed": {
+      "vocab": "literal.char",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -1584,17 +1598,24 @@
           ],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "literal.char",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [
         {
-          "name": "b",
+          "name": "byte",
           "route": "slot",
-          "slot": "b",
+          "slot": "byte",
           "path": [
             {
               "owner": "char_literal_escaped_unicode_fixed",
-              "slot": "b"
+              "slot": "byte"
             }
           ]
         },
@@ -1633,13 +1654,13 @@
       ],
       "members": [
         {
-          "name": "b",
+          "name": "byte",
           "route": "slot",
-          "slot": "b",
+          "slot": "byte",
           "path": [
             {
               "owner": "char_literal_plain",
-              "slot": "b"
+              "slot": "byte"
             }
           ]
         },
@@ -2108,17 +2129,6 @@
             {
               "owner": "compound_assignment_expr",
               "slot": "left"
-            }
-          ]
-        },
-        {
-          "name": "operator",
-          "route": "slot",
-          "slot": "operator",
-          "path": [
-            {
-              "owner": "compound_assignment_expr",
-              "slot": "operator"
             }
           ]
         },
@@ -5883,19 +5893,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "name",
-          "route": "slot",
-          "slot": "name",
-          "path": [
-            {
-              "owner": "metavariable",
-              "slot": "name"
-            }
-          ]
-        }
-      ]
+      "members": []
     },
     "mod_item": {
       "vocab": "declaration.module",
@@ -6497,19 +6495,7 @@
           "test": []
         }
       ],
-      "members": [
-        {
-          "name": "rangeExpressionBare",
-          "route": "slot",
-          "slot": "range_expression_bare",
-          "path": [
-            {
-              "owner": "range_expression_bare",
-              "slot": "range_expression_bare"
-            }
-          ]
-        }
-      ],
+      "members": [],
       "container": {
         "kinds": [
           "_range_expression_bare"
@@ -9212,17 +9198,6 @@
         }
       ],
       "members": [
-        {
-          "name": "operator",
-          "route": "slot",
-          "slot": "operator",
-          "path": [
-            {
-              "owner": "unary_expression",
-              "slot": "operator"
-            }
-          ]
-        },
         {
           "name": "argument",
           "route": "slot",

@@ -14751,7 +14751,7 @@ Turns the members of a lexed kind's render rule into interior nodes: an entry fo
 
 ### `packages/codegen/src/emitters/interior.ts::groupMembers`
 
-The members of a nested sequence member, which is an optional group of interior members. The render rule carries no optional marker here: `flattenMembers` in the token-interior pass splices every nested sequence that is not a group arm, so a nested sequence that survives to the render rule is, by construction, the arm of an optional group and the regex wraps it as one.
+The members of a nested sequence member, which is an optional group of interior members. The render rule carries no optional marker here: the token-interior pass splices every nested sequence that names a part or holds no pattern and composes the rest into slots (`compiler/token-interior.ts::flattenSeqs`), so a nested sequence that survives to the render rule is, by construction, the arm of an optional group and the regex wraps it as one.
 
 ### `packages/codegen/src/emitters/interior.ts::interiorNodePattern`
 

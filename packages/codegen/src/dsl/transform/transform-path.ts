@@ -5,7 +5,8 @@ import {
 	isWrapperType,
 	isSeqType,
 	isChoiceType,
-	isFieldType
+	isFieldType,
+	isTokenWrapperType
 } from '../../types/runtime-shapes.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { readRuleMetadata } from '../rule-metadata.ts';
@@ -237,6 +238,20 @@ function descendThroughEnrichContentAlias(
 	return { ...(rule as unknown as Record<string, unknown>), content: newBody } as unknown as RuntimeRule;
 }
 
+let lexicalDepth = 0;
+
+export const insideLexicalToken = (): boolean => lexicalDepth > 0;
+
+function withinWrapper<T>(rule: RuntimeRule, fn: () => T): T {
+	if (!isTokenWrapperType(rule.type)) return fn();
+	lexicalDepth++;
+	try {
+		return fn();
+	} finally {
+		lexicalDepth--;
+	}
+}
+
 function descendThroughSingleWrapper(
 	rule: RuntimeRule,
 	head: PathSegment,
@@ -244,16 +259,12 @@ function descendThroughSingleWrapper(
 	patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
 	precStack: readonly RuntimeRule[] | undefined
 ): RuntimeRule {
+	const descend = (): RuntimeRule => reconstructWrapper(rule, withinWrapper(rule, () => applyPath(contentOf(rule), rest, patch, precStack)));
 	switch (head.kind) {
-		case 'wildcard': {
-			const newContent = applyPath(contentOf(rule), rest, patch, precStack);
-			return reconstructWrapper(rule, newContent);
-		}
+		case 'wildcard':
+			return descend();
 		case 'index': {
-			if (head.value === 0 || head.value === -1) {
-				const newContent = applyPath(contentOf(rule), rest, patch, precStack);
-				return reconstructWrapper(rule, newContent);
-			}
+			if (head.value === 0 || head.value === -1) return descend();
 			throw new ApplyPathSkip(
 				`applyPath: index ${head.value} out of bounds — '${rule.type}' wraps a single content rule (only index 0 / -1 is valid)`
 			);
@@ -264,8 +275,7 @@ function descendThroughSingleWrapper(
 					`applyPath: '${rule.type}' does not wrap the literal ${JSON.stringify(head.text)}`
 				);
 			}
-			const newContent = applyPath(contentOf(rule), rest, patch, precStack);
-			return reconstructWrapper(rule, newContent);
+			return descend();
 		}
 		case 'kind-match':
 		case 'fieldName': {

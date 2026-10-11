@@ -9225,7 +9225,9 @@ export function coerceToIntegerLiteralOctal(
 	});
 }
 
-export function resolveCharLiteralPlain_b(value: T.CharLiteralPlain.LooseConfig['b']): Admit<T.CharLiteralPlain['_b']> {
+export function resolveCharLiteralPlain_byte(
+	value: T.CharLiteralPlain.LooseConfig['byte']
+): Admit<T.CharLiteralPlain['_byte']> {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -9240,7 +9242,7 @@ export function coerceToCharLiteralPlain(input: T.CharLiteralPlain.Loose): Retur
 		return input as unknown as ReturnType<typeof F.buildCharLiteralPlain>;
 	const _cfg = (typeof input === 'string' ? { content: input } : input) as T.CharLiteralPlain.LooseConfig;
 	return F.buildCharLiteralPlain({
-		b: resolveCharLiteralPlain_b(_cfg.b),
+		byte: resolveCharLiteralPlain_byte(_cfg.byte),
 		content: _requireField('char_literal_plain', 'content', resolveCharLiteralPlain_content(_cfg.content))
 	});
 }
@@ -9250,9 +9252,9 @@ export function coerceToCharLiteralEmpty(input: T.CharLiteralEmpty.Loose): Retur
 	return F.buildCharLiteralEmpty(input as Parameters<typeof F.buildCharLiteralEmpty>[0]);
 }
 
-export function resolveCharLiteralEscapedSimple_b(
-	value: T.CharLiteralEscapedSimple.LooseConfig['b']
-): Admit<T.CharLiteralEscapedSimple['_b']> {
+export function resolveCharLiteralEscapedSimple_byte(
+	value: T.CharLiteralEscapedSimple.LooseConfig['byte']
+): Admit<T.CharLiteralEscapedSimple['_byte']> {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -9269,7 +9271,7 @@ export function coerceToCharLiteralEscapedSimple(
 		return input as unknown as ReturnType<typeof F.buildCharLiteralEscapedSimple>;
 	const _cfg = (typeof input === 'string' ? { content: input } : input) as T.CharLiteralEscapedSimple.LooseConfig;
 	return F.buildCharLiteralEscapedSimple({
-		b: resolveCharLiteralEscapedSimple_b(_cfg.b),
+		byte: resolveCharLiteralEscapedSimple_byte(_cfg.byte),
 		content: _requireField(
 			'char_literal_escaped_simple',
 			'content',
@@ -9278,9 +9280,9 @@ export function coerceToCharLiteralEscapedSimple(
 	});
 }
 
-export function resolveCharLiteralEscapedUnicodeFixed_b(
-	value: T.CharLiteralEscapedUnicodeFixed.LooseConfig['b']
-): Admit<T.CharLiteralEscapedUnicodeFixed['_b']> {
+export function resolveCharLiteralEscapedUnicodeFixed_byte(
+	value: T.CharLiteralEscapedUnicodeFixed.LooseConfig['byte']
+): Admit<T.CharLiteralEscapedUnicodeFixed['_byte']> {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -9297,7 +9299,7 @@ export function coerceToCharLiteralEscapedUnicodeFixed(
 		return input as unknown as ReturnType<typeof F.buildCharLiteralEscapedUnicodeFixed>;
 	const _cfg = (typeof input === 'string' ? { content: input } : input) as T.CharLiteralEscapedUnicodeFixed.LooseConfig;
 	return F.buildCharLiteralEscapedUnicodeFixed({
-		b: resolveCharLiteralEscapedUnicodeFixed_b(_cfg.b),
+		byte: resolveCharLiteralEscapedUnicodeFixed_byte(_cfg.byte),
 		content: _requireField(
 			'char_literal_escaped_unicode_fixed',
 			'content',
@@ -9306,9 +9308,9 @@ export function coerceToCharLiteralEscapedUnicodeFixed(
 	});
 }
 
-export function resolveCharLiteralEscapedUnicodeBraced_b(
-	value: T.CharLiteralEscapedUnicodeBraced.LooseConfig['b']
-): Admit<T.CharLiteralEscapedUnicodeBraced['_b']> {
+export function resolveCharLiteralEscapedUnicodeBraced_byte(
+	value: T.CharLiteralEscapedUnicodeBraced.LooseConfig['byte']
+): Admit<T.CharLiteralEscapedUnicodeBraced['_byte']> {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -9327,7 +9329,7 @@ export function coerceToCharLiteralEscapedUnicodeBraced(
 		typeof input === 'string' ? { content: input } : input
 	) as T.CharLiteralEscapedUnicodeBraced.LooseConfig;
 	return F.buildCharLiteralEscapedUnicodeBraced({
-		b: resolveCharLiteralEscapedUnicodeBraced_b(_cfg.b),
+		byte: resolveCharLiteralEscapedUnicodeBraced_byte(_cfg.byte),
 		content: _requireField(
 			'char_literal_escaped_unicode_braced',
 			'content',
@@ -9336,9 +9338,9 @@ export function coerceToCharLiteralEscapedUnicodeBraced(
 	});
 }
 
-export function resolveCharLiteralEscapedHex_b(
-	value: T.CharLiteralEscapedHex.LooseConfig['b']
-): Admit<T.CharLiteralEscapedHex['_b']> {
+export function resolveCharLiteralEscapedHex_byte(
+	value: T.CharLiteralEscapedHex.LooseConfig['byte']
+): Admit<T.CharLiteralEscapedHex['_byte']> {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -9355,7 +9357,7 @@ export function coerceToCharLiteralEscapedHex(
 		return input as unknown as ReturnType<typeof F.buildCharLiteralEscapedHex>;
 	const _cfg = (typeof input === 'string' ? { content: input } : input) as T.CharLiteralEscapedHex.LooseConfig;
 	return F.buildCharLiteralEscapedHex({
-		b: resolveCharLiteralEscapedHex_b(_cfg.b),
+		byte: resolveCharLiteralEscapedHex_byte(_cfg.byte),
 		content: _requireField('char_literal_escaped_hex', 'content', resolveCharLiteralEscapedHex_content(_cfg.content))
 	});
 }

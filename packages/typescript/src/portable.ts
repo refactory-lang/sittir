@@ -427,6 +427,8 @@ export interface PortableIds {
 		| TSKindId.EmptyStatement
 		| TSKindId.ExportStatement
 		| TSKindId.ExportStatementDefault
+		| TSKindId.ExportStatementDefaultDeclaration
+		| TSKindId.ExportStatementDefaultFrom
 		| TSKindId.ExportStatementEqualsExport
 		| TSKindId.ExportStatementNamespaceExport
 		| TSKindId.ExportStatementTypeExport
@@ -452,6 +454,8 @@ export interface PortableIds {
 	'statement.export':
 		| TSKindId.ExportStatement
 		| TSKindId.ExportStatementDefault
+		| TSKindId.ExportStatementDefaultDeclaration
+		| TSKindId.ExportStatementDefaultFrom
 		| TSKindId.ExportStatementEqualsExport
 		| TSKindId.ExportStatementNamespaceExport
 		| TSKindId.ExportStatementTypeExport;
@@ -2943,6 +2947,8 @@ const table: PortableTable = {
 				TSKindId.EmptyStatement,
 				TSKindId.ExportStatement,
 				TSKindId.ExportStatementDefault,
+				TSKindId.ExportStatementDefaultDeclaration,
+				TSKindId.ExportStatementDefaultFrom,
 				TSKindId.ExportStatementEqualsExport,
 				TSKindId.ExportStatementNamespaceExport,
 				TSKindId.ExportStatementTypeExport,
@@ -2972,6 +2978,8 @@ const table: PortableTable = {
 			ids: [
 				TSKindId.ExportStatement,
 				TSKindId.ExportStatementDefault,
+				TSKindId.ExportStatementDefaultDeclaration,
+				TSKindId.ExportStatementDefaultFrom,
 				TSKindId.ExportStatementEqualsExport,
 				TSKindId.ExportStatementNamespaceExport,
 				TSKindId.ExportStatementTypeExport
@@ -3636,6 +3644,8 @@ const table: PortableTable = {
 		[TSKindId.ExportSpecifier]: [{ path: 'clause.export.specifier', within: [], test: [] }],
 		[TSKindId.ExportStatement]: [{ path: 'statement.export', within: [], test: [] }],
 		[TSKindId.ExportStatementDefault]: [{ path: 'statement.export', within: [], test: [] }],
+		[TSKindId.ExportStatementDefaultDeclaration]: [{ path: 'statement.export', within: [], test: [] }],
+		[TSKindId.ExportStatementDefaultFrom]: [{ path: 'statement.export', within: [], test: [] }],
 		[TSKindId.ExportStatementEqualsExport]: [{ path: 'statement.export', within: [], test: [] }],
 		[TSKindId.ExportStatementNamespaceExport]: [{ path: 'statement.export', within: [], test: [] }],
 		[TSKindId.ExportStatementTypeExport]: [{ path: 'statement.export', within: [], test: [] }],

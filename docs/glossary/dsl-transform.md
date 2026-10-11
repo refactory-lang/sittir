@@ -150,6 +150,18 @@ single-content / index-0 behaviour).
  */
 ```
 
+### `packages/codegen/src/dsl/transform/transform-path.ts::lexicalDepth`
+
+How many token wrappers (`TOKEN`, `IMMEDIATE_TOKEN`) the path walk is inside.
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::insideLexicalToken`
+
+Whether the path walk is inside a token. A patch landing there edits a lexeme's interior, where tree-sitter admits no symbol.
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::withinWrapper`
+
+Runs a descent through a wrapper, counted in `lexicalDepth` when the wrapper is a token.
+
 ### `packages/codegen/src/dsl/transform/transform-path.ts::descendThroughSingleWrapper`
 
 ```text
@@ -1507,6 +1519,8 @@ value is `literal`, and a one-argument or full `field()` is `field`.
 Only a HIDDEN group lift (`isHiddenKind`) is looked through. A visible lift is a node of its own — fielding it names that node, so the field wraps the reference like any other symbol; relabeling inside it would push the parent's field name onto the list's elements (rust `struct_pattern`'s `fields` became `structPatternElements` when lifts turned visible).
 
 ### `packages/codegen/src/dsl/transform/transform.ts::resolveFieldPlaceholder`
+
+A one-arg `field(name)` patch at its site. Content that is a keyword string (or an optional one) is indirected through a hidden `_kw_<name>` symbol so the field survives tree-sitter's normalizer (`primitives/field.ts::maybeKeywordSymbol`), except inside a token (`transform-path.ts::insideLexicalToken`): there the field names an interior part of the lexeme, which the parser ignores, and the string stays, since a token cannot reference a symbol.
 
 #### body
 

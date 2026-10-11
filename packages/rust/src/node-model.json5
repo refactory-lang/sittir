@@ -2664,7 +2664,7 @@
       }
     },
     "char_literal_plain": {
-      "b": {
+      "byte": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2680,7 +2680,7 @@
       }
     },
     "char_literal_escaped_simple": {
-      "b": {
+      "byte": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2696,7 +2696,7 @@
       }
     },
     "char_literal_escaped_unicode_fixed": {
-      "b": {
+      "byte": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2712,7 +2712,7 @@
       }
     },
     "char_literal_escaped_unicode_braced": {
-      "b": {
+      "byte": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2728,7 +2728,7 @@
       }
     },
     "char_literal_escaped_hex": {
-      "b": {
+      "byte": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -8226,9 +8226,9 @@
       "variantOf": "char_literal_escaped",
       "slots": [
         {
-          "name": "b",
-          "propertyName": "b",
-          "paramName": "b",
+          "name": "byte",
+          "propertyName": "byte",
+          "paramName": "byte",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8263,7 +8263,7 @@
       "interior": {
         "entries": [
           {
-            "flag": "b",
+            "flag": "byte",
             "text": "b"
           },
           {
@@ -8277,11 +8277,11 @@
             "lit": "'"
           }
         ],
-        "regex": "^(?<b>b)?'(?<content>\\\\(?:x[0-9a-fA-F]{2}))'$",
+        "regex": "^(?<byte>b)?'(?<content>\\\\(?:x[0-9a-fA-F]{2}))'$",
         "slots": [
           {
-            "name": "b",
-            "configKey": "b",
+            "name": "byte",
+            "configKey": "byte",
             "flag": true
           },
           {
@@ -8292,7 +8292,7 @@
       },
       "factoryShape": "config",
       "factoryFields": [
-        "b",
+        "byte",
         "content"
       ]
     },
@@ -8337,9 +8337,9 @@
       "variantOf": "char_literal_escaped",
       "slots": [
         {
-          "name": "b",
-          "propertyName": "b",
-          "paramName": "b",
+          "name": "byte",
+          "propertyName": "byte",
+          "paramName": "byte",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8374,7 +8374,7 @@
       "interior": {
         "entries": [
           {
-            "flag": "b",
+            "flag": "byte",
             "text": "b"
           },
           {
@@ -8388,11 +8388,11 @@
             "lit": "'"
           }
         ],
-        "regex": "^(?<b>b)?'(?<content>\\\\(?:[^xu]))'$",
+        "regex": "^(?<byte>b)?'(?<content>\\\\(?:[^xu]))'$",
         "slots": [
           {
-            "name": "b",
-            "configKey": "b",
+            "name": "byte",
+            "configKey": "byte",
             "flag": true
           },
           {
@@ -8403,7 +8403,7 @@
       },
       "factoryShape": "config",
       "factoryFields": [
-        "b",
+        "byte",
         "content"
       ]
     },
@@ -8448,9 +8448,9 @@
       "variantOf": "char_literal_escaped",
       "slots": [
         {
-          "name": "b",
-          "propertyName": "b",
-          "paramName": "b",
+          "name": "byte",
+          "propertyName": "byte",
+          "paramName": "byte",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8485,7 +8485,7 @@
       "interior": {
         "entries": [
           {
-            "flag": "b",
+            "flag": "byte",
             "text": "b"
           },
           {
@@ -8499,11 +8499,11 @@
             "lit": "'"
           }
         ],
-        "regex": "^(?<b>b)?'(?<content>\\\\(?:u\\{[0-9a-fA-F]+\\}))'$",
+        "regex": "^(?<byte>b)?'(?<content>\\\\(?:u\\{[0-9a-fA-F]+\\}))'$",
         "slots": [
           {
-            "name": "b",
-            "configKey": "b",
+            "name": "byte",
+            "configKey": "byte",
             "flag": true
           },
           {
@@ -8514,7 +8514,7 @@
       },
       "factoryShape": "config",
       "factoryFields": [
-        "b",
+        "byte",
         "content"
       ]
     },
@@ -8559,9 +8559,9 @@
       "variantOf": "char_literal_escaped",
       "slots": [
         {
-          "name": "b",
-          "propertyName": "b",
-          "paramName": "b",
+          "name": "byte",
+          "propertyName": "byte",
+          "paramName": "byte",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8596,7 +8596,7 @@
       "interior": {
         "entries": [
           {
-            "flag": "b",
+            "flag": "byte",
             "text": "b"
           },
           {
@@ -8610,11 +8610,11 @@
             "lit": "'"
           }
         ],
-        "regex": "^(?<b>b)?'(?<content>\\\\(?:u[0-9a-fA-F]{4}))'$",
+        "regex": "^(?<byte>b)?'(?<content>\\\\(?:u[0-9a-fA-F]{4}))'$",
         "slots": [
           {
-            "name": "b",
-            "configKey": "b",
+            "name": "byte",
+            "configKey": "byte",
             "flag": true
           },
           {
@@ -8625,7 +8625,7 @@
       },
       "factoryShape": "config",
       "factoryFields": [
-        "b",
+        "byte",
         "content"
       ]
     },
@@ -8663,9 +8663,9 @@
       "variantOf": "char_literal",
       "slots": [
         {
-          "name": "b",
-          "propertyName": "b",
-          "paramName": "b",
+          "name": "byte",
+          "propertyName": "byte",
+          "paramName": "byte",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8700,7 +8700,7 @@
       "interior": {
         "entries": [
           {
-            "flag": "b",
+            "flag": "byte",
             "text": "b"
           },
           {
@@ -8714,11 +8714,11 @@
             "lit": "'"
           }
         ],
-        "regex": "^(?<b>b)?'(?<content>(?:[^\\\\']))'$",
+        "regex": "^(?<byte>b)?'(?<content>(?:[^\\\\']))'$",
         "slots": [
           {
-            "name": "b",
-            "configKey": "b",
+            "name": "byte",
+            "configKey": "byte",
             "flag": true
           },
           {
@@ -8729,7 +8729,7 @@
       },
       "factoryShape": "config",
       "factoryFields": [
-        "b",
+        "byte",
         "content"
       ]
     },

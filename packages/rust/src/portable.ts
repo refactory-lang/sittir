@@ -523,6 +523,10 @@ export interface PortableIds {
 		| TSKindId.CharLiteral
 		| TSKindId.CharLiteralEmpty
 		| TSKindId.CharLiteralEscaped
+		| TSKindId.CharLiteralEscapedHex
+		| TSKindId.CharLiteralEscapedSimple
+		| TSKindId.CharLiteralEscapedUnicodeBraced
+		| TSKindId.CharLiteralEscapedUnicodeFixed
 		| TSKindId.CharLiteralPlain
 		| TSKindId.EscapeSequence
 		| TSKindId.EscapeSequenceHex
@@ -546,6 +550,10 @@ export interface PortableIds {
 		| TSKindId.CharLiteral
 		| TSKindId.CharLiteralEmpty
 		| TSKindId.CharLiteralEscaped
+		| TSKindId.CharLiteralEscapedHex
+		| TSKindId.CharLiteralEscapedSimple
+		| TSKindId.CharLiteralEscapedUnicodeBraced
+		| TSKindId.CharLiteralEscapedUnicodeFixed
 		| TSKindId.CharLiteralPlain;
 	'literal.number':
 		| TSKindId.FloatLiteral
@@ -2997,6 +3005,10 @@ const table: PortableTable = {
 				TSKindId.CharLiteral,
 				TSKindId.CharLiteralEmpty,
 				TSKindId.CharLiteralEscaped,
+				TSKindId.CharLiteralEscapedHex,
+				TSKindId.CharLiteralEscapedSimple,
+				TSKindId.CharLiteralEscapedUnicodeBraced,
+				TSKindId.CharLiteralEscapedUnicodeFixed,
 				TSKindId.CharLiteralPlain,
 				TSKindId.EscapeSequence,
 				TSKindId.EscapeSequenceHex,
@@ -3020,7 +3032,16 @@ const table: PortableTable = {
 		'literal.boolean.false': { ids: [TSKindId.FalseKeyword], exact: false },
 		'literal.boolean.true': { ids: [TSKindId.TrueKeyword], exact: false },
 		'literal.char': {
-			ids: [TSKindId.CharLiteral, TSKindId.CharLiteralEmpty, TSKindId.CharLiteralEscaped, TSKindId.CharLiteralPlain],
+			ids: [
+				TSKindId.CharLiteral,
+				TSKindId.CharLiteralEmpty,
+				TSKindId.CharLiteralEscaped,
+				TSKindId.CharLiteralEscapedHex,
+				TSKindId.CharLiteralEscapedSimple,
+				TSKindId.CharLiteralEscapedUnicodeBraced,
+				TSKindId.CharLiteralEscapedUnicodeFixed,
+				TSKindId.CharLiteralPlain
+			],
 			exact: false
 		},
 		'literal.number': {
@@ -3640,16 +3661,20 @@ const table: PortableTable = {
 		],
 		[TSKindId.CharLiteralEscaped]: [{ path: 'literal.char', within: [], test: [] }],
 		[TSKindId.CharLiteralEscapedHex]: [
-			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] }
+			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
+			{ path: 'literal.char', within: [], test: [] }
 		],
 		[TSKindId.CharLiteralEscapedSimple]: [
-			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] }
+			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
+			{ path: 'literal.char', within: [], test: [] }
 		],
 		[TSKindId.CharLiteralEscapedUnicodeBraced]: [
-			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] }
+			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
+			{ path: 'literal.char', within: [], test: [] }
 		],
 		[TSKindId.CharLiteralEscapedUnicodeFixed]: [
-			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] }
+			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
+			{ path: 'literal.char', within: [], test: [] }
 		],
 		[TSKindId.CharLiteralPlain]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },

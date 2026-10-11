@@ -86318,7 +86318,7 @@
             "$type": 394,
             "_expression": {
               "$type": 145,
-              "_b": true,
+              "_byte": true,
               "_content": "x"
             }
           },
@@ -86427,7 +86427,7 @@
     "pattern": "char_literal_plain",
     "input": {
       "$type": 145,
-      "_b": true,
+      "_byte": true,
       "_content": "x"
     },
     "expectedOutput": "b'x'"

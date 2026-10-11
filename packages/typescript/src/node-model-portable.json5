@@ -1174,17 +1174,6 @@
           ]
         },
         {
-          "name": "operator",
-          "route": "slot",
-          "slot": "operator",
-          "path": [
-            {
-              "owner": "augmented_assignment_expression",
-              "slot": "operator"
-            }
-          ]
-        },
-        {
           "name": "right",
           "route": "slot",
           "slot": "right",
@@ -1899,17 +1888,6 @@
             {
               "owner": "binary_expression",
               "slot": "left"
-            }
-          ]
-        },
-        {
-          "name": "operator",
-          "route": "slot",
-          "slot": "operator",
-          "path": [
-            {
-              "owner": "binary_expression",
-              "slot": "operator"
             }
           ]
         },
@@ -3400,6 +3378,42 @@
       ],
       "members": []
     },
+    "export_statement_default_declaration": {
+      "vocab": "statement.export",
+      "read": [
+        {
+          "vocab": "statement.export",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "decorators",
+          "route": "slot",
+          "slot": "decorator",
+          "path": [
+            {
+              "owner": "export_statement_default_declaration",
+              "slot": "decorator"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "export_statement_default_declaration",
+              "slot": "content"
+            }
+          ]
+        }
+      ]
+    },
     "export_statement_default_declaration_default_kw": {
       "container": {
         "kinds": [
@@ -3409,6 +3423,31 @@
         "terminals": [],
         "list": false
       }
+    },
+    "export_statement_default_from": {
+      "vocab": "statement.export",
+      "read": [
+        {
+          "vocab": "statement.export",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "export_statement_default_from",
+              "slot": "content"
+            }
+          ]
+        }
+      ]
     },
     "export_statement_default_from_star_from": {
       "container": {
@@ -5188,17 +5227,6 @@
         }
       ],
       "members": [
-        {
-          "name": "binding",
-          "route": "slot",
-          "slot": "kind",
-          "path": [
-            {
-              "owner": "lexical_declaration",
-              "slot": "kind"
-            }
-          ]
-        },
         {
           "name": "declarators",
           "route": "slot",
@@ -9299,17 +9327,6 @@
       ],
       "members": [
         {
-          "name": "operator",
-          "route": "slot",
-          "slot": "operator",
-          "path": [
-            {
-              "owner": "unary_expression",
-              "slot": "operator"
-            }
-          ]
-        },
-        {
           "name": "argument",
           "route": "slot",
           "slot": "argument",
@@ -9471,17 +9488,6 @@
               "slot": "argument"
             }
           ]
-        },
-        {
-          "name": "operator",
-          "route": "slot",
-          "slot": "operator",
-          "path": [
-            {
-              "owner": "update_expression_postfix",
-              "slot": "operator"
-            }
-          ]
         }
       ]
     },
@@ -9549,17 +9555,6 @@
         }
       ],
       "members": [
-        {
-          "name": "operator",
-          "route": "slot",
-          "slot": "operator",
-          "path": [
-            {
-              "owner": "update_expression_prefix",
-              "slot": "operator"
-            }
-          ]
-        },
         {
           "name": "argument",
           "route": "slot",
@@ -9858,7 +9853,7 @@
       {
         "depth": 2,
         "paths": 111,
-        "kinds": 127,
+        "kinds": 129,
         "refinements": 8,
         "aliases": 95
       },
