@@ -7378,7 +7378,7 @@ The parser catalog rows (`kindEntries`) a link pass reads before `LinkCtx` exist
 // original node's own stamped facts (id, metadata, …) must ride
 // along, so spread it under attributeBuilder's freshly-built shape.
 // For SEQ the built node may be a collapsed singleton survivor with
-// no `members` of its own — `overlaySeq` drops the stale array.
+// no `members` of its own — `carrySeqFacts` drops the stale array.
 ```
 
 #### body
