@@ -287,6 +287,15 @@ function membersOf(input: GrammarInput, kind: string, entries: readonly ReadEntr
 	return routes;
 }
 
+function refinedParent(kind: string, entries: readonly ReadEntry[]): string | undefined {
+	if (entries.length === 0) return undefined;
+	const parents = new Set(entries.map((e) => e.vocab.slice(0, Math.max(0, e.vocab.lastIndexOf('.')))));
+	const [parent] = parents;
+	if (parents.size > 1 || !parent)
+		throw new Error(`bindings: ${kind} has only refining claims, and their paths share no parent (${entries.map((e) => e.vocab).join(', ')}); claim the kind itself`);
+	return parent;
+}
+
 function concreteKinds(model: SlotModel, kind: string, seen: Set<string> = new Set<string>()): string[] {
 	if (seen.has(kind)) return [];
 	seen.add(kind);
@@ -375,8 +384,8 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 	for (const [kind, entries] of readEntries) {
 		const top = entries.filter((e) => e.claim.toplevel);
 		const plain = top.find((e) => e.claim.predicates.length === 0 && e.pins.length === 0);
-		const first = plain ?? top[0];
-		if (first) vocabOf.set(kind, first.vocab);
+		const vocab = plain?.vocab ?? refinedParent(kind, top);
+		if (vocab !== undefined) vocabOf.set(kind, vocab);
 	}
 	for (const entries of readEntries.values()) entries.sort((a, b) => specificity(a) - specificity(b) || b.pins.length - a.pins.length || a.index - b.index);
 
