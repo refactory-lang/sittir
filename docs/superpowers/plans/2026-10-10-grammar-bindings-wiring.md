@@ -1,4 +1,4 @@
-# Overlay wiring and the runtime generator: implementation plan
+# Grammar bindings wiring and the runtime bindings generator: implementation plan
 
 **Specs:** the bindings spec (`2026-09-13-bindings-and-vocabulary-design.md`, §2.1 and §9) and the binding generator spec (`2026-10-06-binding-generator-design.md`). **Probes:** `docs/superpowers/probes/2026-10-10-contextual-alias/` and `docs/superpowers/probes/2026-10-10-placed-claims/`. **Earlier stages:** `2026-10-06-binding-generator.md`.
 
@@ -8,13 +8,13 @@ Three stages, in order. Each is one PR into `feat/bindings`, stacked on the one 
 - the cargo workspace (`cargo test --workspace --no-default-features`);
 - workspace type-check and lint;
 - `bindings-inventory --check`: bindings and vocabulary agree, and the unmapped count is at or below its ceiling (tightened when it falls);
-- every Copilot comment answered.
+- the Codex adversarial review, run before the PR opens, with each finding fixed or declined in the PR body.
 
 Each stage starts with a census, sent to brainstorm before any code: the sites the stage changes, per grammar, and the inventory and validation numbers it is expected to move. A row that moves outside the census stops the stage for review.
 
 ## Where things are today
 
-- `grammar.bindings.ts` is generated and hash-checked for rust, typescript and python, but no `grammar.sittir.ts` passes it to `sittirGrammar` (`bindings:` is unset). The parser and the node model are upstream's plus the authored overrides: no renamed or split kind exists in any node model, and `renamedFrom` and `splitFrom` are never written.
+- `grammar.bindings.ts`, the grammar bindings, is generated and hash-checked for rust, typescript and python, but no `grammar.sittir.ts` passes it to `sittirGrammar` (`bindings:` is unset). The parser and the node model are upstream's plus the authored overrides: no renamed or split kind exists in any node model, and `renamedFrom` and `splitFrom` are never written.
 - Route derivation runs against the unbound model. Claims resolve through kind renames (`bindFacts` maps base names to bound names) but not yet through field renames.
 - `fieldAliasMap` (node model) holds a parser alias of a visible kind, the same table as `type_identifier` over `identifier`. Such an alias kind has no builder, wrap or transport.
 - `formsOf` reaches a supertype's owned variants (`variantOf`). A split clone (`splitFrom`) is not yet a form.
@@ -32,11 +32,11 @@ Each stage starts with a census, sent to brainstorm before any code: the sites t
 - **Needs:** the vocabulary's `Flag`-typed members from `feat/vocabulary-facts`.
 - **Gate:** the census's rows leave the inventory and no others move; validation identical.
 
-## Stage 2: the overlay reaches the parser
+## Stage 2: the grammar bindings reach the parser
 
-Ruled: everything in the overlay except kind renames reaches the parser (field renames, wraps, splits, merges and aliases, patches). Kind renames stay out, so low-level kind names stay upstream's and the portable layer maps them. Claims resolve through field renames as they do through kind renames.
+Ruled: everything in the grammar bindings except kind renames reaches the parser (field renames, wraps, splits, merges and aliases, patches). Kind renames stay out, so low-level kind names stay upstream's and the portable layer maps them. Claims resolve through field renames as they do through kind renames.
 
-**Census first:** per grammar, the overlay's entries by type (field rename, wrap, split, alias, patch), the parse-state and `parser.c` deltas against the unbound build, and every validation row and generated file the bound build moves. The contextual-alias probe has the alias numbers (rust's splits: +0.65% STATE; python's class-body method: +0.60%; decorated: +0.73%).
+**Census first:** per grammar, the grammar bindings' entries by type (field rename, wrap, split, alias, patch), the parse-state and `parser.c` deltas against the unbound build, and every validation row and generated file the bound build moves. The contextual-alias probe has the alias numbers (rust's splits: +0.65% STATE; python's class-body method: +0.60%; decorated: +0.73%).
 
 ### 2a. Translation gaps the bound build hits
 
@@ -49,16 +49,16 @@ Each gets its own red test before its fix:
 - portable read tests that name base fields and kinds (`left`, `decorator`), which must name the bound ones;
 - the validators' same-span locator, which must also match a node's grammar kind.
 
-### 2b. Wire the overlay, minus kind renames
+### 2b. Wire the grammar bindings, minus kind renames
 
-- `grammar.sittir.ts` passes the generated overlay to `sittirGrammar` for each bound grammar; `bindGrammar` applies everything but `renames`.
-- `bindFacts` maps field names through the overlay's field renames, so claims and member routes resolve against the bound fields.
+- `grammar.sittir.ts` passes the generated grammar bindings to `sittirGrammar` for each bound grammar; `bindGrammar` applies everything but `renames`.
+- `bindFacts` maps field names through the grammar bindings' field renames, so claims and member routes resolve against the bound fields.
 - **Gate:** validation rows equal to the unbound baseline, or each moved row named in the census and ruled.
 
 ### 2c. Contextual aliases
 
 Ruled to be parser aliases at a context-unique site, with the ancestor clones kept and no target clone:
-- rust's three context splits: `function_signature_item` → `signature_method_declaration` in a trait, and `function_item` → `method_declaration` in a trait and in an impl body. Today's overlay derives only the two trait splits: the impl-body one went when rust's impl methods became claimed by a read test (receiver or not), an interim. Ruled: all three are aliases, so the impl-body alias comes back; the census confirms its cost. With the alias, `$type` says method, and the no-receiver read test only sets the `static` flag (stage 1);
+- rust's three context splits: `function_signature_item` → `signature_method_declaration` in a trait, and `function_item` → `method_declaration` in a trait and in an impl body. Today's grammar bindings derive only the two trait splits: the impl-body one went when rust's impl methods became claimed by a read test (receiver or not), an interim. Ruled: all three are aliases, so the impl-body alias comes back; the census confirms its cost. With the alias, `$type` says method, and the no-receiver read test only sets the `static` flag (stage 1);
 - rust `crate` in `visibility_modifier` (`internal_public_visibility_modifier`), with no clones;
 - python's method in a class body (five clones, `_suite` down to `_compound_statement`);
 - python's decorated method in a class body (a second split within `decorated_definition`, reusing the first split's clones).
@@ -85,9 +85,9 @@ Each alias kind gets its own low-level builder beside the aliased kind's (`build
 The python docstring's `doc` member resolves through the `_simple_statements` site alias (2d) instead of stopping at `simple_statements`.
 - **Gate:** the `doc` path resolves for `function_definition` and `class_definition`, and the unbuildable-routes list loses `class_definition.doc` and `function_definition.doc`.
 
-## Stage 3: the runtime generator
+## Stage 3: the runtime bindings generator
 
-What the portable engine runs, generated per grammar from the routes. The vocabulary's mapped types (owner × value crossings, per-kind flag unions) are authored in the vocabulary, not generated here.
+The runtime bindings are what the portable engine runs, generated per grammar from the routes. The vocabulary's mapped types (owner × value crossings, per-kind flag unions) are authored in the vocabulary, not generated here.
 - `build`, `is` and `kinds` per vocabulary path, keyed by `$type`;
 - the builder-chain steps and their guards: an `is` guard per segment carries the segment's read test and its flag bits;
 - each language's `$exclusions`: per kind, the flag pairs the grammar never spells together, derived from the rule by the generator, not declared by the vocabulary. The vocabulary's mapped types read them for the typed chains, so after a step the incompatible steps are gone, and the runtime check refuses a structure whose `$flags` break them;
