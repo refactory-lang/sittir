@@ -426,6 +426,12 @@ describe('seamRenderRules', () => {
 		expect(spacingSitesOf(one.out, one.config.nodeMap).map((s) => s.address)).toEqual(['opening_before', 'opening_after']);
 	});
 
+	it('seats the arm seams of a choice nested in a choice, so a terminator of an automatic arm, a semicolon and a comma has all three', () => {
+		const terminator = choice(choice(sym('auto'), str(';')), str(','));
+		const { out, config } = seamed({ member: seq(sym('head'), { ...terminator, fieldName: 'terminator' } as RenderRule) });
+		expect(spacingSitesOf(out, config.nodeMap).map((s) => s.address)).toEqual(expect.arrayContaining(['semi_before', 'comma_before']));
+	});
+
 	it('puts a seam inside a nested group whose edge member is a token, so an optional clause carries its opener seam', () => {
 		const clause = { ...seq(str('='), sym('value')), multiplicity: 'optional' } as unknown as RenderRule;
 		const ret = { ...seq(str('->'), sym('type')), staticSeamBefore: 'spaced' } as unknown as RenderRule;

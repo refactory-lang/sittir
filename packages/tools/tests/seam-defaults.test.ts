@@ -11,6 +11,8 @@ const CASES: readonly (readonly [grammar: string, label: string, source: string]
 	['rust', 'a filled initializer list is padded', 'fn h() {\n    let s = S { a: 1 };\n}\n'],
 	['rust', 'a comment alone in the braces keeps the pad', 'fn h() {\n    let s = S { /* c */ };\n}\n'],
 	['rust', 'a lifetime bound after a type keeps its plus spaced', "type a = Box<Something + 'a>;\n"],
+	['typescript', 'a class member terminator is glued to the member', 'abstract class A {\n  abstract m(): void;\n  x: string;\n  y;\n  static q = 1;\n}\n'],
+	['typescript', 'an ambient function signature terminator is glued', 'declare function f(): void;\n'],
 	['scm', 'a missing node is glued inside its parentheses', '(program (MISSING x))\n'],
 	['scm', 'a quantifier is glued to its operand', '(a)*\n(b)?\n'],
 	['scm', 'a negated field is glued to its name', '(a !b)\n'],
