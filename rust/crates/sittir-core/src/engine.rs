@@ -39,7 +39,7 @@ pub trait EngineGrammar: Copy {
     /// of its transports), which a coordinate stamps in place of the grammar id.
     fn shows(self) -> fn(KindId) -> bool;
     /// The grammar's trivia type: what a side of a parsed node holds.
-    type Trivia: crate::trivia::FromTriviaText + Clone + std::fmt::Debug + PartialEq;
+    type Trivia: crate::trivia::FromTriviaText + crate::trivia::TriviaItem;
     /// The grammar's whitespace table, and its layout kinds (the table's domain).
     fn whitespace(self) -> (&'static crate::render::WhitespaceTable, &'static [u16]);
 }
@@ -957,6 +957,22 @@ impl<G: EngineGrammar> SourceTable for HashMap<u32, ParsedTree<G>> {
             .map(|child| KindId(child.grammar_id()))
     }
 
+    fn sides(&self, coord: &NodeCoordinate) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
+        let tree = self.get(&coord.tree)?;
+        let side = |side: TriviaSide| Some(tree.trivia_side(coord.index, side)).filter(|entries| !entries.is_empty());
+        let trivia = crate::trivia::TransportTrivia { leading: side(TriviaSide::Leading), trailing: side(TriviaSide::Trailing), inner: side(TriviaSide::Inner) };
+        (trivia.leading.is_some() || trivia.trailing.is_some() || trivia.inner.is_some()).then(|| Box::new(trivia) as Box<dyn crate::trivia::FramedTrivia>)
+    }
+
+    fn edited_within(&self, coord: &NodeCoordinate) -> bool {
+        self.get(&coord.tree).is_some_and(|tree| tree.edited_within(coord.index, false))
+    }
+
+    fn read_ctx(&self, tree: u32) -> Option<(&tree_sitter::Tree, crate::read::ReadCtx<'_>)> {
+        let parsed = self.get(&tree)?;
+        Some((&parsed.tree, parsed.read_ctx()))
+    }
+
     fn for_each_kind_ending_with(&self, coord: &NodeCoordinate, f: &mut dyn FnMut(KindId)) {
         let Some(tree) = self.get(&coord.tree) else {
             return;
@@ -1073,6 +1089,27 @@ mod tests {
 
         fn from_layout(kind: KindId) -> Option<Self> {
             (kind == KindId(2)).then_some(TestTrivia::Newline)
+        }
+    }
+
+    impl crate::render::Render for TestTrivia {
+        fn render(&self, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
+            match self {
+                TestTrivia::Text(text) => w.text(&text.text),
+                TestTrivia::Newline => Ok(()),
+            }
+        }
+    }
+
+    impl crate::trivia::TriviaSeam for TestTrivia {
+        fn seam_gap(&self) -> Option<(crate::layout_kinds::LayoutKinds, Option<&str>)> {
+            matches!(self, TestTrivia::Newline).then_some((crate::layout_kinds::LayoutKinds::NEWLINE, None))
+        }
+    }
+
+    impl crate::prepare::Prepare for TestTrivia {
+        fn prepare(&mut self, _: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError> {
+            Ok(())
         }
     }
 
@@ -1425,5 +1462,62 @@ mod tests {
         let block = index_of_kind(&tree, "block", 0);
         tree.write_trivia_side(block, TriviaSide::Inner, Vec::new());
         assert!(tree.edited_within(block, false));
+    }
+
+    fn table(tree: ParsedTree<TestGrammar>) -> HashMap<u32, ParsedTree<TestGrammar>> {
+        HashMap::from([(1, tree)])
+    }
+
+    fn coordinate(tree: &ParsedTree<TestGrammar>, index: u32) -> NodeCoordinate {
+        let node = node_at_index(tree.tree(), index).expect("a node");
+        NodeCoordinate::new(1, index, index + node.descendant_count() as u32, crate::types::Span { start: node.start_byte() as u32, end: node.end_byte() as u32 })
+    }
+
+    #[test]
+    fn the_tree_table_gives_a_coordinate_its_sides() {
+        let (tree, _) = parsed("// c\nfn f() {}\n");
+        let f = coordinate(&tree, index_of_kind(&tree, "function_item", 0));
+        let leading = tree.trivia_side(f.index, TriviaSide::Leading);
+        let trailing = tree.trivia_side(f.index, TriviaSide::Trailing);
+        let sources = table(tree);
+        let sides = sources.sides(&f).expect("the function has sides");
+        let sides = sides.as_any().downcast_ref::<crate::trivia::TransportTrivia<TestTrivia>>().expect("the grammar's trivia");
+        assert_eq!((sides.leading.as_deref(), sides.trailing.as_deref(), sides.inner.as_deref()), (Some(&leading[..]), Some(&trailing[..]), None));
+    }
+
+    #[test]
+    fn a_coordinate_with_no_side_has_no_frame() {
+        let (tree, _) = parsed("fn f() { a(); }\n");
+        let a = coordinate(&tree, index_of_kind(&tree, "call_expression", 0));
+        assert!(table(tree).sides(&a).is_none());
+    }
+
+    #[test]
+    fn the_tree_table_answers_whether_a_coordinates_range_holds_a_write() {
+        let (mut tree, _) = parsed("fn f() { a(); }\nfn g() {}\n");
+        let f = coordinate(&tree, index_of_kind(&tree, "function_item", 0));
+        let g = coordinate(&tree, index_of_kind(&tree, "function_item", 1));
+        tree.write_trivia_side(index_of_kind(&tree, "expression_statement", 0), TriviaSide::Leading, Vec::new());
+        let sources = table(tree);
+        assert!(sources.edited_within(&f));
+        assert!(!sources.edited_within(&g));
+    }
+
+    #[test]
+    fn the_tree_table_hands_out_a_tree_and_its_read_context() {
+        let (tree, _) = parsed("fn f() {}\n");
+        let sources = table(tree);
+        let (tree, ctx) = sources.read_ctx(1).expect("tree 1 is live");
+        assert_eq!(tree.root_node().kind(), "source_file");
+        assert_eq!(ctx.text(&tree.root_node()), "fn f() {}\n");
+        assert!(sources.read_ctx(2).is_none());
+    }
+
+    #[test]
+    fn a_value_with_no_read_reads_no_coordinate() {
+        let (tree, _) = parsed("fn f() {}\n");
+        let sources = table(tree);
+        let (tree, ctx) = sources.read_ctx(1).expect("tree 1 is live");
+        assert!(<TestTrivia as crate::prepare::Prepare>::read_coordinate(tree, &ctx, 0).is_none());
     }
 }

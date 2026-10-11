@@ -2303,7 +2303,7 @@ function renderAnyTransport(
 	lines.push('}');
 	lines.push('');
 	admit(read, 'AnyTransport', [...claimedBy.values()].flat());
-	lines.push(...prepareEnumImpl('AnyTransport', anyTransportPrepareArms(payloadNodes, fixed)));
+	lines.push(...prepareEnumImpl('AnyTransport', anyTransportPrepareArms(payloadNodes, fixed), false));
 
 	return lines;
 }
@@ -2367,7 +2367,7 @@ function renderTriviaTransportSupport(
 			...extrasNodes.map((node) => ({ variant: rustTransportVariantName(node), payload: unitOf(node) === undefined })),
 			{ variant: 'Verbatim', payload: true },
 			{ variant: 'Text', payload: true }
-		])
+		], false)
 	);
 
 	lines.push('impl ::sittir_core::render::Render for TriviaTransport {');
@@ -2441,10 +2441,16 @@ function renderTriviaTransportSupport(
 const PREPARE_MOD = '::sittir_core::prepare';
 const BLANK_VARIANT = 'Blank';
 const PREPARE_SIG = `fn prepare(&mut self, ctx: &${PREPARE_MOD}::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {`;
+const READ_COORDINATE = [
+	`    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {`,
+	`        Some(::sittir_core::read::read_coordinate(tree, ctx, index))`,
+	`    }`
+];
 
 function prepareEnumImpl(
 	enumName: string,
-	arms: readonly { readonly variant: string; readonly payload: boolean }[]
+	arms: readonly { readonly variant: string; readonly payload: boolean }[],
+	reads = true
 ): string[] {
 	const anyPayload = arms.some((a) => a.payload);
 	return [
@@ -2483,6 +2489,7 @@ function prepareEnumImpl(
 					`    }`
 				]
 			: []),
+		...(reads ? READ_COORDINATE : []),
 		`}`,
 		''
 	];
@@ -2494,6 +2501,7 @@ function inertPrepareImpl(typeName: string): string[] {
 		`    ${PREPARE_SIG.replace('ctx:', '_ctx:')}`,
 		`        Ok(())`,
 		`    }`,
+		...READ_COORDINATE,
 		`}`,
 		''
 	];
@@ -2957,6 +2965,7 @@ function prepareStructImpl(
 		`    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {`,
 		`        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)`,
 		`    }`,
+		...READ_COORDINATE,
 		`}`,
 		''
 	];

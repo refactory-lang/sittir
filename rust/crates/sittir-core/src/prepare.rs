@@ -487,6 +487,17 @@ pub trait Prepare {
     fn gap_edges(&mut self) -> Option<&mut Edges> {
         None
     }
+
+    /// The node at descendant `index` of `tree` read one level into this
+    /// type (`read::read_coordinate`), when the type reads; `None` for a
+    /// value no read produces.
+    fn read_coordinate(tree: &tree_sitter::Tree, ctx: &crate::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, crate::read::ReadError>>
+    where
+        Self: Sized,
+    {
+        let _ = (tree, ctx, index);
+        None
+    }
 }
 
 impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
@@ -570,9 +581,13 @@ impl<T: Prepare> Prepare for Option<T> {
     }
 }
 
-impl<T: Prepare + ?Sized> Prepare for Box<T> {
+impl<T: Prepare> Prepare for Box<T> {
     fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
         (**self).prepare(ctx)
+    }
+
+    fn read_coordinate(tree: &tree_sitter::Tree, ctx: &crate::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, crate::read::ReadError>> {
+        T::read_coordinate(tree, ctx, index).map(|read| read.map(Box::new))
     }
 
     fn source_gap(&self) -> Option<&SourceGap> {

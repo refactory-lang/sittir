@@ -414,6 +414,15 @@ impl Sides {
     }
 }
 
+/// The node at descendant `index` of `tree` read one level into `T`: its own
+/// slots, each child with structure a coordinate. Nothing outside it placed
+/// trivia on it.
+pub fn read_coordinate<T: ReadTransport>(tree: &tree_sitter::Tree, ctx: &ReadCtx<'_>, index: u32) -> Result<T, ReadError> {
+    let mut cursor = tree.walk();
+    cursor.goto_descendant(index as usize);
+    T::read(&mut cursor, ctx, Depth::ONE, Sides::root())
+}
+
 /// A transport a node is read into: a kind's struct, a choice over kinds, or
 /// an enum kind's members.
 pub trait ReadTransport: Sized {

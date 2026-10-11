@@ -656,3 +656,16 @@ fn an_envelope_over_a_choice_holds_the_trivia_its_content_variant_was_given() {
     assert_eq!(ident.layout, coordinate_only(&envelope.layout));
     assert_eq!(trivia_spans(&envelope.layout, "trailing"), vec![(12, 19, true, 0)]);
 }
+
+#[test]
+fn a_coordinate_reads_one_level_into_its_generated_transport() {
+    use sittir_core::prepare::Prepare;
+    use sittir_rust::render::transport::FunctionItemTransport;
+    let source = "fn f() { g(); }\n";
+    let tree = parse_rust(source);
+    let index = find(&tree, kind::FUNCTION_ITEM, 0).descendant_index() as u32;
+    let ctx = ReadCtx::new(source, 7, <FunctionItemTransport as ReadTransport>::shows);
+    let read = FunctionItemTransport::read_coordinate(&tree, &ctx, index).expect("a generated transport reads a coordinate").unwrap();
+    let direct = read_nth::<FunctionItemTransport>(&tree, source, kind::FUNCTION_ITEM, 0, Depth::ONE).unwrap();
+    assert_eq!(read, direct);
+}

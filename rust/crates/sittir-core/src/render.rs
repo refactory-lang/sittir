@@ -114,6 +114,28 @@ pub trait SourceTable {
             f(kind);
         }
     }
+
+    /// The sides of the node a coordinate names, as its tree's trivia table
+    /// and writes give them (`ParsedTree::trivia_side`), or `None` when it has
+    /// none. A table of bare sources knows no sides.
+    fn sides(&self, coord: &crate::slot::NodeCoordinate) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
+        let _ = coord;
+        None
+    }
+
+    /// Whether a write replaced a side of a node in the range of the node a
+    /// coordinate names, its own `inner` included (`ParsedTree::edited_within`).
+    fn edited_within(&self, coord: &crate::slot::NodeCoordinate) -> bool {
+        let _ = coord;
+        false
+    }
+
+    /// The live tree `tree` and the context its reads share. A table of bare
+    /// sources holds no trees.
+    fn read_ctx(&self, tree: u32) -> Option<(&tree_sitter::Tree, crate::read::ReadCtx<'_>)> {
+        let _ = tree;
+        None
+    }
 }
 
 /// Why a coordinate cannot be turned into bytes. Both arms carry the handle:

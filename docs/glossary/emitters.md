@@ -14288,7 +14288,13 @@ payload's `prepare(ctx)`, unit variants (literals) are `Ok(())`. The match
 is the tail expression, so the impl's result is whichever arm ran. An enum
 with payloads also delegates `source_gap`, `gap_edges` and `snapshot_edge`,
 so a list's gap fill reaches the gap, the edges and the geometry of
-whichever kind the item is.
+whichever kind the item is. An enum the reader reads into also reads a
+coordinate (`READ_COORDINATE`); the two dispatch unions no read produces,
+`AnyTransport` and `TriviaTransport`, pass `reads` false.
+
+### `packages/codegen/src/emitters/render-module.ts::READ_COORDINATE`
+
+The `Prepare::read_coordinate` every generated transport the reader reads into overrides: the node a coordinate names, read one level into the type (`sittir_core::read::read_coordinate`). The render reads an edited coordinate's node through it.
 
 ### `packages/codegen/src/emitters/render-module.ts::PREPARE_MOD`
 
@@ -14304,7 +14310,7 @@ replacement on this constant, so the two spellings cannot drift.
 ### `packages/codegen/src/emitters/render-module.ts::inertPrepareImpl`
 
 A `Prepare` impl for a type that owns no slots and no coordinates (leaf
-enums, `VerbatimTransport`): `Ok(())`.
+enums, `VerbatimTransport`): `Ok(())`. It reads a coordinate (`READ_COORDINATE`).
 
 ### `packages/codegen/src/emitters/render-module.ts::spacingFieldExprs`
 
@@ -14349,7 +14355,7 @@ the transport's own value still wins. One exception: a list whose trailing
 separator is optional takes its trailing flag from the source while its
 source flank after is kept (`sourceTrailingSeparator`).
 
-Every struct transport prepares its layout's trivia first, leaves included. A trivia entry that is a source coordinate takes its kind's edges there, as a coordinate in a slot does.
+Every struct transport prepares its layout's trivia first, leaves included. A trivia entry that is a source coordinate takes its kind's edges there, as a coordinate in a slot does. It reads a coordinate (`READ_COORDINATE`).
 
 ### `packages/codegen/src/emitters/render-module.ts::sourceTrailingSeparator`
 
