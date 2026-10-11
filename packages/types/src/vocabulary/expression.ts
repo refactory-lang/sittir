@@ -577,7 +577,7 @@ export namespace Expression {
 		export interface Set<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Collection<G>> {
 			// claimed by p
 			readonly $kind: 'expression.collection.set';
-			readonly collectionElements: G['slots']['expression.collection.set']['collectionElements'][];
+			readonly elements: G['slots']['expression.collection.set']['elements'][];
 		}
 		export interface Struct<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Collection<G>> {
 			// claimed by r
@@ -591,9 +591,6 @@ export namespace Expression {
 			readonly attributes?: G['attribute'][];
 			// r only
 			readonly elements?: G['slots']['expression.collection.tuple']['elements'][];
-			// p only
-			readonly expressions?: G['slots']['expression.collection.tuple']['expressions'][];
-			// r only
 		}
 		export namespace Tuple {
 			export interface Bare<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Collection.Tuple<G>> {

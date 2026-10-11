@@ -108,7 +108,7 @@ export namespace Pattern {
 	export interface List<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
 		// claimed by p
 		readonly $kind: 'pattern.list';
-		readonly patterns?: G['slots']['pattern.list']['patterns'][];
+		readonly elements?: G['slots']['pattern.list']['elements'][];
 	}
 	export interface Match<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
 		// claimed by r
@@ -222,8 +222,6 @@ export namespace Pattern {
 		// claimed by pr
 		readonly $kind: 'pattern.tuple';
 		readonly elements?: G['slots']['pattern.tuple']['elements'][];
-		// r only
-		readonly patterns?: G['slots']['pattern.tuple']['patterns'][];
 	}
 	export namespace Tuple {
 		export interface Bare<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Tuple<G>> {

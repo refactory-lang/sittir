@@ -160,7 +160,7 @@
 (range_expression) @expression.range
 (type_cast_expression) @expression.cast.as
 (parenthesized_expression) @expression.parenthesized
-(tuple_expression) @expression.collection.tuple
+(tuple_expression (expressions) @elements) @expression.collection.tuple
 (array_expression) @expression.collection.list
 (array_expression_semi) @expression.collection.list.repeat
 (struct_expression) @expression.collection.struct

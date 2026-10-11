@@ -979,7 +979,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| string;
 		};
 		readonly 'expression.collection.set': {
-			readonly collectionElements:
+			readonly elements:
 				| G['expression']
 				| G['identifier']
 				| G['literal']
@@ -991,16 +991,13 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'expression.collection.tuple': {
 			readonly elements:
+				| V.Element.Splat.Any<G>
 				| G['expression']
 				| G['identifier']
 				| G['literal']
 				| G['pattern']
-				| V.Element.Splat.Any<G>;
-			readonly expressions:
-				| G['expression']
-				| G['identifier']
-				| G['literal']
-				| G['statement'];
+				| G['statement']
+				| V.Type.Primitive<G>;
 		};
 		readonly 'expression.comprehension': {
 			readonly body:
@@ -1230,6 +1227,9 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		readonly 'identifier.scoped': {
 			readonly path: G['identifier'] | string | G['type'];
 		};
+		readonly 'literal.char': {
+			readonly content: string;
+		};
 		readonly 'literal.number.float': {
 			readonly exponent: unknown;
 			readonly fraction: unknown;
@@ -1374,7 +1374,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly operator: string;
 		};
 		readonly 'pattern.list': {
-			readonly patterns: G['expression'] | G['identifier'] | G['pattern'];
+			readonly elements: G['expression'] | G['identifier'] | G['pattern'];
 		};
 		readonly 'pattern.match': {
 			readonly condition:
@@ -1463,8 +1463,12 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Type.Primitive<G>;
 		};
 		readonly 'pattern.tuple': {
-			readonly elements: unknown | V.Expression.Lambda<G>;
-			readonly patterns: unknown | G['expression'] | G['identifier'] | G['pattern'];
+			readonly elements:
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| V.Type.Primitive<G>;
 		};
 		readonly 'pattern.tuple.struct': {
 			readonly patterns: unknown;

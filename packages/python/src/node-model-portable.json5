@@ -4177,7 +4177,7 @@
       ],
       "members": [
         {
-          "name": "patterns",
+          "name": "elements",
           "route": "slot",
           "slot": "patterns",
           "path": [
@@ -4922,7 +4922,7 @@
       ],
       "members": [
         {
-          "name": "collectionElements",
+          "name": "elements",
           "route": "slot",
           "slot": "collection_elements",
           "path": [

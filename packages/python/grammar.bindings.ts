@@ -3,7 +3,7 @@
 import { alias, bindings, field, rename } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "be2e6a10f7d6b54056331342e335820c5d4470ce15dc9aa2ad8839f5a239b442",
+	hash: "98e411fe2cb08f50ec27d4f874c2dc9036adaf3e96a039d47121e05c2fb695a3",
 	patches: {
 		_expression_within_for_in_clause: { "-1": alias(sym("lambda_within_for_in_clause"), sym("lambda_expression")) },
 		assignment_eq: { "0": field("name"), "1/1": field("value") },
@@ -21,8 +21,10 @@ export default bindings({
 		generator_expression: { "2": field("comprehension_clauses") },
 		list: { "1/0": field("elements") },
 		list_comprehension: { "2": field("comprehension_clauses") },
+		list_pattern: { "1/0": field("elements") },
 		named_expression: { "0": field("left"), "2": field("right") },
 		print_statement_chevron: { "1": field("chevron") },
+		set: { "1": field("elements") },
 		set_comprehension: { "2": field("comprehension_clauses") },
 		subscript: { "0": field("object") },
 		try_statement: { "3": field("handlers"), "4/0": field("alternative"), "5/0": field("finalizer") },

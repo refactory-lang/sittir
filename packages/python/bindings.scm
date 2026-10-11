@@ -153,7 +153,7 @@
 (list (collection_elements)? @elements) @expression.collection.list
 (tuple) @expression.collection.tuple
 (expression_list) @expression.collection.tuple.bare
-(set) @expression.collection.set
+(set (collection_elements) @elements) @expression.collection.set
 (dictionary) @expression.collection.dictionary
 (ellipsis) @literal.ellipsis
 (format_specifier) @expression.interpolation.format
@@ -162,7 +162,7 @@
 ; ── pattern ────────────────────────────────────────────────────────────────────
 (tuple_pattern) @pattern.tuple
 (pattern_list) @pattern.tuple.bare
-(list_pattern) @pattern.list
+(list_pattern (patterns)? @elements) @pattern.list
 (list_splat_pattern) @pattern.splat
 (dictionary_splat_pattern) @pattern.splat.dictionary
 (as_pattern) @pattern.as
