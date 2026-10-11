@@ -71,6 +71,20 @@ export namespace Statement {
 		readonly source?: V.Literal.String<G>;
 		readonly value?: G['slots']['statement.export']['value'];
 	}
+	export namespace Export {
+		export interface All<G extends GrammarContext<G>> extends SubKindOf<V.Statement.Export<G>> {
+			// claimed by t
+			readonly $kind: 'statement.export.all';
+		}
+		export interface Default<G extends GrammarContext<G>> extends SubKindOf<V.Statement.Export<G>> {
+			// claimed by t
+			readonly $kind: 'statement.export.default';
+		}
+		export type Any<G extends GrammarContext<G>> =
+			| V.Statement.Export<G>
+			| V.Statement.Export.All<G>
+			| V.Statement.Export.Default<G>;
+	}
 	export interface Expression<G extends GrammarContext<G>> extends SubKindOf<V.Statement<G>> {
 		// claimed by prt
 		readonly $kind: 'statement.expression';
@@ -295,6 +309,8 @@ export namespace Statement {
 		| V.Statement.Empty<G>
 		| V.Statement.Exec<G>
 		| V.Statement.Export<G>
+		| V.Statement.Export.All<G>
+		| V.Statement.Export.Default<G>
 		| V.Statement.Expression<G>
 		| V.Statement.Global<G>
 		| V.Statement.If<G>
