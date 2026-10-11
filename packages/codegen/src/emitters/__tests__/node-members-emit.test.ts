@@ -32,12 +32,11 @@ describe('a node writes its members in its literal', () => {
 });
 
 describe('nodeMemberLines', () => {
-	it('adds inner positions only where the kind has them, and innerAt only where gaps are keyed', () => {
-		const text = (inner: boolean, keyed: boolean) => nodeMemberLines({ accessors: [], inner: { inner, keyed } }).join('\n');
-		expect(text(false, false)).not.toContain('inner:');
-		expect(text(true, false)).toContain('inner: (...items: unknown[]) => triviaInner(node, handle, items),');
-		expect(text(true, false)).not.toContain('innerAt');
-		expect(text(true, true)).toContain('innerAt: (gap: string, ...items: unknown[]) => triviaInnerAt(node, handle, gap, items),');
+	it('adds the inner side only where the kind has one, and never a named gap', () => {
+		const text = (inner: boolean) => nodeMemberLines({ accessors: [], inner: { inner } }).join('\n');
+		expect(text(false)).not.toContain('inner:');
+		expect(text(true)).toContain('inner: (...items: unknown[]) => triviaInner(node, handle, items),');
+		expect(text(true)).not.toContain('innerAt');
 	});
 });
 

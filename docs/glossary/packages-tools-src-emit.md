@@ -581,7 +581,7 @@ The text between a full form's `open` and `close` delimiters, over each pair of 
 
 ### `packages/tools/src/emit/factory-source.ts::triviaSuffix`
 
-The `$trivia` calls after a printed node: leading and trailing entries, then each inner gap's entries through the surface the types emitted, `.$trivia.inner(…)` or, when the grammar keys its gaps (`PrintContext.innerGapsKeyed`), `.$trivia.innerAt(gap, …)`. Whitespace entries print as the member they name; `seatLineGaps` decides which of them reach the print.
+The `$trivia` calls after a printed node: leading and trailing entries, then the inner entries through `.$trivia.inner(…)`. Whitespace entries print as the member they name; `seatLineGaps` decides which of them reach the print.
 
 ### `packages/tools/src/emit/factory-source.ts::seatLineGaps`
 

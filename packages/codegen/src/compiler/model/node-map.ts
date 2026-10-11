@@ -1759,6 +1759,10 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		return this.renderRule.tokenized === true || this.renderRule.lexed === true;
 	}
 
+	get innerSite(): InnerGap | undefined {
+		return this.innerGaps.at(-1);
+	}
+
 	get innerGaps(): readonly InnerGap[] {
 		if (this.triviaInterior) return [];
 		const root = this.renderRule;

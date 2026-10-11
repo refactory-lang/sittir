@@ -24055,7 +24055,7 @@ fn render_module(node: &ModuleTransport, w: &mut dyn ::sittir_core::render::Rend
         tail: None,
     };
     w.edge(::sittir_core::types::KindId(127), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "statements", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     statements.render(w)?;
     w.edge(::sittir_core::types::KindId(127), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
@@ -24511,7 +24511,7 @@ fn render_parameters(node: &ParametersTransport, w: &mut dyn ::sittir_core::rend
     w.edge(::sittir_core::types::KindId(165), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_PARAMETERS_LPAREN_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "elements", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     elements.render(w)?;
     w.site_at(options::SITE_PARAMETERS_RPAREN_BEFORE);
     w.text(")")?;
@@ -24675,7 +24675,7 @@ fn render_argument_list(node: &ArgumentListTransport, w: &mut dyn ::sittir_core:
     w.edge(::sittir_core::types::KindId(176), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_ARGUMENT_LIST_LPAREN_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "arguments", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     arguments.render(w)?;
     w.site_at(options::SITE_ARGUMENT_LIST_RPAREN_BEFORE);
     w.text(")")?;
@@ -24814,7 +24814,7 @@ fn render_dict_pattern(node: &DictPatternTransport, w: &mut dyn ::sittir_core::r
     w.edge(::sittir_core::types::KindId(186), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("{")?;
     w.site_at(options::SITE_DICT_PATTERN_LBRACE_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "elements", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     elements.render(w)?;
     w.site_at(options::SITE_DICT_PATTERN_RBRACE_BEFORE);
     w.text("}")?;
@@ -24930,7 +24930,7 @@ fn render_tuple_pattern(node: &TuplePatternTransport, w: &mut dyn ::sittir_core:
     w.edge(::sittir_core::types::KindId(196), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_TUPLE_PATTERN_LPAREN_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "elements", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     elements.render(w)?;
     w.site_at(options::SITE_TUPLE_PATTERN_RPAREN_BEFORE);
     w.text(")")?;
@@ -24943,7 +24943,7 @@ fn render_list_pattern(node: &ListPatternTransport, w: &mut dyn ::sittir_core::r
     w.edge(::sittir_core::types::KindId(197), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("[")?;
     w.site_at(options::SITE_LIST_PATTERN_LBRACK_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "patterns", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     patterns.render(w)?;
     w.site_at(options::SITE_LIST_PATTERN_RBRACK_BEFORE);
     w.text("]")?;
@@ -25304,7 +25304,7 @@ fn render_list(node: &ListTransport, w: &mut dyn ::sittir_core::render::RenderSi
     w.edge(::sittir_core::types::KindId(232), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("[")?;
     w.site_at(options::SITE_LIST_LBRACK_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "collection_elements", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     collection_elements.render(w)?;
     w.site_at(options::SITE_LIST_RBRACK_BEFORE);
     w.text("]")?;
@@ -25329,7 +25329,7 @@ fn render_tuple(node: &TupleTransport, w: &mut dyn ::sittir_core::render::Render
     w.edge(::sittir_core::types::KindId(234), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_TUPLE_LPAREN_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "elements", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     elements.render(w)?;
     w.site_at(options::SITE_TUPLE_RPAREN_BEFORE);
     w.text(")")?;
@@ -25342,7 +25342,7 @@ fn render_dictionary(node: &DictionaryTransport, w: &mut dyn ::sittir_core::rend
     w.edge(::sittir_core::types::KindId(235), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("{")?;
     w.site_at(options::SITE_DICTIONARY_LBRACE_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "elements", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     elements.render(w)?;
     w.site_at(options::SITE_DICTIONARY_RBRACE_BEFORE);
     w.text("}")?;
@@ -25862,7 +25862,7 @@ fn render_case_tuple_pattern(node: &CaseTuplePatternTransport, w: &mut dyn ::sit
     w.edge(::sittir_core::types::KindId(273), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_CASE_TUPLE_PATTERN_LPAREN_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "list_pattern_case_patterns", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     list_pattern_case_patterns.render(w)?;
     w.site_at(options::SITE_CASE_TUPLE_PATTERN_RPAREN_BEFORE);
     w.text(")")?;
@@ -25875,7 +25875,7 @@ fn render_case_list_pattern(node: &CaseListPatternTransport, w: &mut dyn ::sitti
     w.edge(::sittir_core::types::KindId(274), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("[")?;
     w.site_at(options::SITE_CASE_LIST_PATTERN_LBRACK_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "list_pattern_case_patterns", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     list_pattern_case_patterns.render(w)?;
     w.site_at(options::SITE_CASE_LIST_PATTERN_RBRACK_BEFORE);
     w.text("]")?;
@@ -26281,7 +26281,7 @@ fn render_match_block_block(node: &MatchBlockBlockTransport, w: &mut dyn ::sitti
     w.indent();
     w.seam(::sittir_core::layout_kinds::LayoutKinds::from_bits(120));
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "alternative", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     alternative.render(w)?;
     if alternative.is_present() {
         w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);

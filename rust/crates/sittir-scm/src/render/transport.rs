@@ -3696,7 +3696,7 @@ fn render_program(node: &ProgramTransport, w: &mut dyn ::sittir_core::render::Re
         tail: Some(options::SITE_PROGRAM_DEFINITIONS_END),
     };
     w.edge(::sittir_core::types::KindId(33), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "definitions", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     definitions.render(w)?;
     w.edge(::sittir_core::types::KindId(33), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
@@ -3883,7 +3883,7 @@ fn render_missing_node(node: &MissingNodeTransport, w: &mut dyn ::sittir_core::r
     w.site_at(options::SITE_MISSING_NODE_MISSING_KEYWORD_BEFORE);
     w.text("MISSING")?;
     w.site_at(options::SITE_MISSING_NODE_MISSING_KEYWORD_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "name", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     name.render(w)?;
     w.site_at(options::SITE_MISSING_NODE_RPAREN_BEFORE);
     w.text(")")?;

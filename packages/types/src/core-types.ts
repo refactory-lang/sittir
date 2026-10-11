@@ -25,7 +25,7 @@ export type TriviaEntry = AnyUntypedNode | number;
 export interface NodeTrivia {
 	leading?: readonly TriviaEntry[];
 	trailing?: readonly TriviaEntry[];
-	inner?: Readonly<Partial<Record<string, readonly TriviaEntry[]>>>;
+	inner?: readonly TriviaEntry[];
 }
 
 // ---------------------------------------------------------------------------

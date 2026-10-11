@@ -11,7 +11,6 @@ use crate::layout::TransportLayout;
 use crate::slot::{NodeCoordinate, SlotValue};
 use crate::trivia::{TransportTrivia, TriviaEntry};
 use crate::types::{FieldId, KindId, Span};
-use std::collections::BTreeMap;
 use std::num::NonZeroU32;
 use std::sync::OnceLock;
 use tree_sitter::{Node, TreeCursor};
@@ -948,7 +947,7 @@ pub struct Placement {
     pub sides: Vec<Sides>,
     pub own_leading: Vec<Entry>,
     pub own_trailing: Vec<Entry>,
-    pub inner: BTreeMap<String, Vec<Entry>>,
+    pub inner: Vec<Entry>,
     indexes: Vec<u32>,
 }
 
@@ -975,11 +974,7 @@ impl Placement {
     }
 
     fn layout<T: crate::trivia::FromTriviaText>(self, sides: Sides, at: Origin, ctx: &ReadCtx<'_>, held: bool) -> Box<TransportLayout<T>> {
-        let inner: BTreeMap<String, Vec<TriviaEntry<T>>> = self
-            .inner
-            .into_iter()
-            .map(|(key, entries)| (key, entries.into_iter().map(|entry| ctx.entry(entry)).collect()))
-            .collect();
+        let inner: Vec<TriviaEntry<T>> = self.inner.into_iter().map(|entry| ctx.entry(entry)).collect();
         if held {
             ctx.release();
         }
@@ -1023,8 +1018,8 @@ pub fn place(ctx: &ReadCtx<'_>, children: &[Child], routes: &[Route], owner_self
             if !child.trivia {
                 preceding += 1;
                 named_before |= child.named;
-            } else if let Some(key) = gap(preceding) {
-                placement.inner.entry(key.to_string()).or_default().push(entry(child, false, 0));
+            } else if gap(preceding).is_some() {
+                placement.inner.push(entry(child, false, 0));
             } else if owner_self {
                 let side = if named_before { &mut placement.own_trailing } else { &mut placement.own_leading };
                 side.push(entry(child, true, 0));
@@ -1332,7 +1327,7 @@ mod tests {
             (preceding == 1).then_some("statements")
         }
         let placement = place(&ReadCtx::new("", 0, |_| false), &children, &owner_routes(&children), true, gap);
-        assert_eq!(spans(&placement.inner["statements"]), vec![(2, false, 0)]);
+        assert_eq!(spans(&placement.inner), vec![(2, false, 0)]);
         assert!(placement.own_leading.is_empty() && placement.own_trailing.is_empty());
     }
 

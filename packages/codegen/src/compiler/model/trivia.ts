@@ -257,7 +257,19 @@ export function stampTriviaInterior(nodeMap: NodeMap): void {
 
 export interface EmptyForm {
 	readonly typeName: string;
-	readonly gaps: readonly string[];
+}
+
+const innerKindsByNodeMap = new WeakMap<NodeMap, ReadonlySet<string>>();
+
+export function innerKinds(nodeMap: NodeMap): ReadonlySet<string> {
+	const cached = innerKindsByNodeMap.get(nodeMap);
+	if (cached !== undefined) return cached;
+	const kinds = new Set<string>();
+	for (const [kind, node] of nodeMap.nodes) {
+		if (node instanceof AbstractAssembledCompound && node.innerSite !== undefined) kinds.add(kind);
+	}
+	innerKindsByNodeMap.set(nodeMap, kinds);
+	return kinds;
 }
 
 const emptyFormsByNodeMap = new WeakMap<NodeMap, ReadonlyMap<string, EmptyForm>>();
@@ -268,19 +280,13 @@ export function emptyForms(nodeMap: NodeMap): ReadonlyMap<string, EmptyForm> {
 	const typeNames = new Set([...nodeMap.nodes.values()].map((node) => node.typeName));
 	const forms = new Map<string, EmptyForm>();
 	for (const [kind, node] of nodeMap.nodes) {
-		if (!(node instanceof AbstractAssembledCompound) || node.factoryName === undefined) continue;
-		const gaps = node.innerGaps.map((gap) => gap.key);
-		if (gaps.length === 0) continue;
+		if (!(node instanceof AbstractAssembledCompound) || node.factoryName === undefined || !innerKinds(nodeMap).has(kind)) continue;
 		const typeName = `Empty${node.typeName}`;
 		if (typeNames.has(typeName)) throw new Error(`trivia: '${kind}' would name its empty form ${typeName}, which a kind already names`);
-		forms.set(kind, { typeName, gaps });
+		forms.set(kind, { typeName });
 	}
 	emptyFormsByNodeMap.set(nodeMap, forms);
 	return forms;
-}
-
-export function innerGapsKeyed(nodeMap: NodeMap): boolean {
-	return [...emptyForms(nodeMap).values()].some((form) => form.gaps.length > 1);
 }
 
 const lineTerminatedKindsByNodeMap = new WeakMap<NodeMap, ReadonlySet<string>>();

@@ -41,7 +41,6 @@ export interface PrintContext {
 	readonly slotStorage?: Record<string, Record<string, string>>;
 	readonly memberIdOfText?: (text: string) => number | undefined;
 	readonly source?: string;
-	readonly innerGapsKeyed?: boolean;
 }
 
 export interface ModelFacts {
@@ -104,7 +103,7 @@ function isPlainObject(v: unknown): v is Record<string, unknown> {
 }
 
 function printedSource(value: Printed): string {
-	const inner = Object.values(value.$_layout?.trivia?.inner ?? {}).some((entries) => (entries?.length ?? 0) > 0);
+	const inner = (value.$_layout?.trivia?.inner?.length ?? 0) > 0;
 	return (inner ? value.facts?.emptyCall : undefined) ?? value.source;
 }
 
@@ -115,14 +114,7 @@ function triviaSuffix(trivia: ReadTrivia | undefined, ctx: PrintContext): string
 		const entries = trivia[name] ?? [];
 		return entries.length === 0 ? '' : `.$trivia.${name}(${args(entries)})`;
 	};
-	const inner = Object.entries(trivia.inner ?? {})
-		.filter(([, entries]) => (entries?.length ?? 0) > 0)
-		.map(([gap, entries]) =>
-			ctx.innerGapsKeyed === true
-				? `.$trivia.innerAt(${JSON.stringify(gap)}, ${args(entries!)})`
-				: `.$trivia.inner(${args(entries!)})`
-		)
-		.join('');
+	const inner = trivia.inner === undefined || trivia.inner.length === 0 ? '' : `.$trivia.inner(${args(trivia.inner)})`;
 	return side('leading') + side('trailing') + inner;
 }
 
@@ -1097,7 +1089,6 @@ export async function emitFactorySourceText(
 		),
 		memberIdOfText: (text) => findEntryForLiteralText(catalog, text)?.id,
 		source,
-		innerGapsKeyed: model.innerGapsKeyed,
 		delimiterArmOfId: (id) => {
 			const member = Object.entries(Delimiter).find(([, bits]) => bits === id)?.[0];
 			return member === undefined ? undefined : `Delimiter.${member}`;

@@ -30,7 +30,8 @@ export interface LineGaps {
 export interface TriviaFacts {
 	readonly kindName: (type: AnyUntypedNode['$type']) => string | undefined;
 	readonly kinds: ReadonlySet<string>;
-	readonly innerGaps: { readonly [kind: string]: readonly string[] };
+	/** The kinds whose template renders an inner side, where an empty node of the kind holds its trivia. */
+	readonly innerKinds: ReadonlySet<string>;
 	/**
 	 * Engine plumbing, not for callers: the kind ids of what a rebuild
 	 * constructs around an existing node, the kinds enrich mints (hoisted) and
@@ -100,11 +101,6 @@ export interface NodeMethods<Trivia = any> {
 export interface GrammarInnerTrivia<N, Trivia> {
 	inner(): readonly TriviaItem<Trivia>[];
 	inner(...items: GrammarTriviaEntry<Trivia>[]): N;
-}
-
-export interface GrammarInnerTriviaAt<N, Trivia, Gap extends string> extends GrammarInnerTrivia<N, Trivia> {
-	innerAt(gap: Gap): readonly TriviaItem<Trivia>[];
-	innerAt(gap: Gap, ...items: GrammarTriviaEntry<Trivia>[]): N;
 }
 
 export interface LanguageAPI {

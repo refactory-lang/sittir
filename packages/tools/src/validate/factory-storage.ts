@@ -21,7 +21,7 @@
  */
 
 import type { AnyUntypedNode, NodeTrivia } from '@sittir/types';
-import { engineOf, sourceOf, spanOf } from '@sittir/common/utils';
+import { sourceOf, spanOf } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { load } from '../codegen-surface.ts';
 import { importGrammarModule, type FactoryEntry } from '../grammar-internals.ts';
@@ -633,7 +633,6 @@ export async function validateFactoryStorage(
 		// to use the native engine).
 		const handle = await buildReadHandle(grammar, entry.source);
 		const wrappedRoot = readNode(handle) as TypedNode;
-		const triviaFacts = engineOf(wrappedRoot)?.trivia;
 		const candidatesByKind = new Map<string, { start: number; end: number; node: TypedNode }[]>();
 		const seen = new Set<string>();
 		walkWrappedTree(wrappedRoot, (w: TypedNode) => {
@@ -722,7 +721,7 @@ export async function validateFactoryStorage(
 						rebuildChildren(
 							referenceData as unknown as Record<string, unknown>,
 							buildInner,
-							(read, rebuild) => tableSides(read, handle, triviaFacts, rebuild)
+							(read, rebuild) => tableSides(read, handle, rebuild)
 						) as unknown as AnyUntypedNode,
 						kind,
 						node1?.type,

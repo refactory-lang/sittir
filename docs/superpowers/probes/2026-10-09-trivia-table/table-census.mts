@@ -104,7 +104,7 @@ function placementOf(root: unknown): Map<number, string> {
 			return;
 		}
 		if (value === null || typeof value !== 'object') return;
-		const layout = (value as { $_layout?: { at?: { $treeHandle?: number }; trivia?: { leading?: unknown[]; trailing?: unknown[]; inner?: Record<string, unknown[]> } } }).$_layout;
+		const layout = (value as { $_layout?: { at?: { $treeHandle?: number }; trivia?: { leading?: unknown[]; trailing?: unknown[]; inner?: unknown[] } } }).$_layout;
 		const at = layout?.at?.$treeHandle;
 		const trivia = layout?.trivia;
 		if (at !== undefined && trivia !== undefined) {
@@ -114,7 +114,7 @@ function placementOf(root: unknown): Map<number, string> {
 			};
 			seat(trivia.leading, 'leading');
 			seat(trivia.trailing, 'trailing');
-			for (const entries of Object.values(trivia.inner ?? {})) seat(entries, 'inner');
+			seat(trivia.inner ?? [], 'inner');
 		}
 		for (const [key, child] of Object.entries(value)) if (key !== '$_layout') visit(child);
 	};

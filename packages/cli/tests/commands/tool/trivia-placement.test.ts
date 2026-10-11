@@ -8,7 +8,7 @@ describe('tool trivia-placement', () => {
 			source: 'fn f() { // TODO\n}\nfn g() {\n a; // note\n // lead\n b;\n}\n'
 		});
 		expect(rows.map((row) => [row.kind, row.owner, row.position])).toEqual([
-			['line_comment', 'block', 'inner:statements'],
+			['line_comment', 'block', 'inner'],
 			['line_comment', 'expression_statement', 'trailing'],
 			['line_comment', 'expression_statement', 'leading']
 		]);

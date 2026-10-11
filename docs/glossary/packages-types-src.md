@@ -90,10 +90,6 @@ The members every built and wrapped node carries: `$render` and `$trivia` over t
 
 The inner trivia of a node that realizes empty: `inner()` reads its inner entries and `inner(...items)` rebuilds the node with them.
 
-### `packages/types/src/engine-api.ts::GrammarInnerTriviaAt`
-
-`GrammarInnerTrivia` for a grammar where some kind has more than one gap: `innerAt(gap, ...)` reads or rebuilds one named gap.
-
 ### `packages/types/src/engine-api.ts::LanguageAPI`
 
 The type-level shape of one language: its name, builder table, guards, kind ids, the kind-to-node-type map (`types`, type-only), its root and any-node types, the kind ids that render standalone (`fixedTextKindId`: those whose kind alone determines their text), its render options, `empty` (the grammar's map from each kind that can be empty to its empty form), and `indentChar`, the characters an indent unit may be made of (`never` for a grammar with none). `indentChar` names the grammar's own `IndentChar` alias, because the options type cannot carry it: its `indent` key is typed at a plain `string` unit, which `OnlyOf` passes through unchanged. Every engine type is derived from it.

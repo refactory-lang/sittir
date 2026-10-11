@@ -26,7 +26,6 @@ import {
 } from '@sittir/common/utils';
 import {
 	decodeIndex,
-	engineOf,
 	isNode,
 	treeHandleOf,
 	treeOf,
@@ -42,7 +41,7 @@ import {
 } from '@sittir/common/utils';
 import type * as TS from 'web-tree-sitter';
 
-import type { AnyUntypedNode, Engine, LanguageAPI, NodeLayout, NodeTrivia, ParseOptions, TransportCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
+import type { AnyUntypedNode, Engine, LanguageAPI, NodeLayout, NodeTrivia, ParseOptions, TransportCoordinate, TriviaEntry } from '@sittir/types';
 import type { TriviaSides } from '@sittir/common';
 import type { TreeHandle } from '@sittir/common/utils';
 import { load } from '../codegen-surface.ts';
@@ -255,7 +254,7 @@ function storedChildren(d: AnyUntypedNode): readonly AnyUntypedNode[] {
 function storedTriviaEntries(d: AnyUntypedNode): readonly AnyUntypedNode[] {
 	const trivia = d.$_layout?.trivia;
 	if (trivia === undefined) return [];
-	return [trivia.leading, trivia.trailing, ...Object.values(trivia.inner ?? {})].flatMap((entries) => (entries ?? []) as AnyUntypedNode[]);
+	return [trivia.leading, trivia.trailing, trivia.inner].flatMap((entries) => (entries ?? []) as AnyUntypedNode[]);
 }
 
 function coordsOf(d: AnyUntypedNode): NativeNodeCoords {
@@ -450,7 +449,6 @@ export interface LoadedNodeModel {
 	readonly listDefaults: Record<string, string>;
 	readonly listElementKinds: Record<string, readonly string[]>;
 	readonly fullForms: Record<string, ModelFullForm>;
-	readonly innerGapsKeyed: boolean;
 }
 
 export interface ModelFullForm {
@@ -489,7 +487,6 @@ interface ParsedNodeModel {
 		leafPattern?: string;
 		fullForm?: ModelFullForm;
 	}>;
-	innerGapsKeyed?: boolean;
 	factorySlots?: Record<string, Record<string, FactorySlotMeta>>;
 	fieldAliasMap?: Record<string, Record<string, string>>;
 	polymorphVariants?: PolymorphVariantMap;
@@ -521,8 +518,7 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	forwardsTo: {},
 	listDefaults: {},
 	listElementKinds: {},
-	fullForms: {},
-	innerGapsKeyed: false
+	fullForms: {}
 };
 
 export function readNodeModelFile(grammar: string): string | undefined {
@@ -634,8 +630,7 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 		forwardsTo,
 		listDefaults,
 		listElementKinds,
-		fullForms,
-		innerGapsKeyed: model.innerGapsKeyed === true
+		fullForms
 	};
 }
 
@@ -1338,12 +1333,7 @@ export function sideOf(source: ReadNodeLike, side: TriviaSideName, tree: TreeHan
 	return tree.triviaSide(decodeIndex(handle), side);
 }
 
-export function tableSides(
-	source: ReadNodeLike,
-	tree: TreeHandle,
-	facts: TriviaFacts | undefined,
-	build: (read: unknown) => unknown
-): NodeTrivia | undefined {
+export function tableSides(source: ReadNodeLike, tree: TreeHandle, build: (read: unknown) => unknown): NodeTrivia | undefined {
 	const entries = (side: TriviaSideName): readonly TriviaEntry[] =>
 		sideOf(source, side, tree).flatMap((entry): TriviaEntry[] => {
 			if (!isCoordinate(entry)) return isNode(entry) ? [entry] : [];
@@ -1353,11 +1343,7 @@ export function tableSides(
 		});
 	const [leading, trailing, inner] = [entries('leading'), entries('trailing'), entries('inner')];
 	if (leading.length === 0 && trailing.length === 0 && inner.length === 0) return undefined;
-	if (inner.length === 0) return { leading, trailing };
-	const kind = source.$type === undefined ? undefined : facts?.kindName(source.$type);
-	const gap = kind === undefined ? undefined : facts?.innerGaps[kind]?.[0];
-	if (gap === undefined) throw new Error(`ir lane: ${kind ?? String(source.$type)} has inner trivia and no inner gap`);
-	return { leading, trailing, inner: { [gap]: inner } };
+	return { leading, trailing, ...(inner.length > 0 && { inner }) };
 }
 
 function writeSides(source: ReadNodeLike, built: unknown, opts: NodeToConfigOpts): unknown {
@@ -1366,7 +1352,7 @@ function writeSides(source: ReadNodeLike, built: unknown, opts: NodeToConfigOpts
 	const carried = source.$_layout?.trivia;
 	const trivia =
 		tree !== undefined
-			? tableSides(source, tree, engineOf(built)?.trivia, (read) => resolveChild(read, { ...childOpts(opts), tree }))
+			? tableSides(source, tree, (read) => resolveChild(read, { ...childOpts(opts), tree }))
 			: carried &&
 				(mapTriviaEntries(carried, (entries) => entries.map((entry) => resolveChild(entry, childOpts(opts)))) as NodeTrivia);
 	if (trivia === undefined) return built;

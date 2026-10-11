@@ -4,7 +4,8 @@ import { compileGrammar } from '../../compiler/compile.ts';
 import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { AbstractAssembledCompound } from '../../compiler/model/node-map.ts';
-import { emptyForms, triviaKinds } from '../../compiler/model/trivia.ts';
+import { emptyForms, innerKinds, triviaKinds } from '../../compiler/model/trivia.ts';
+import type { NodeMap } from '../../compiler/types.ts';
 import { emitTypes } from '../types.ts';
 
 describe('empty forms in the emitted types', () => {
@@ -25,17 +26,25 @@ describe('empty forms in the emitted types', () => {
 		expect(types).not.toContain('readonly node: FunctionItem;');
 	});
 
-	it('emits an empty form only for a kind with an inner gap', () => {
-		for (const [kind, form] of emptyForms(nodeMap)) {
+	it('emits an empty form only for a kind with an inner side', () => {
+		for (const kind of emptyForms(nodeMap).keys()) {
 			const node = nodeMap.nodes.get(kind);
-			expect(node instanceof AbstractAssembledCompound ? node.innerGaps.map((gap) => gap.key) : []).toEqual(form.gaps);
+			expect(node instanceof AbstractAssembledCompound ? node.innerGaps.length : 0).toBe(1);
+			expect(innerKinds(nodeMap).has(kind)).toBe(true);
 		}
 	});
 
-	it('keys inner trivia by gap only when some kind has more than one gap', () => {
-		expect([...emptyForms(nodeMap).values()].every((form) => form.gaps.length === 1)).toBe(true);
+	it('types the inner side with no gap name', () => {
 		const types = emitTypes({ grammar: 'rust', nodeMap, generatedIdTables, triviaKinds: [...triviaKinds(nodeMap)] });
-		expect(types).not.toContain('GrammarInnerTriviaAt<');
+		expect(types).not.toMatch(/\binnerAt\b/);
 		expect(types).toContain("export type InnerTrivia<N> = GrammarInnerTrivia<N, RustTypeMap['trivia']>;");
+	});
+
+	it('puts the inner side of a kind with two inner gaps at its last', () => {
+		const twoGaps = Object.create(AbstractAssembledCompound.prototype, {
+			innerGaps: { value: [{ key: 'initializer', precedingTokens: 1 }, { key: 'elements', precedingTokens: 2 }] }
+		});
+		expect(twoGaps.innerSite).toEqual({ key: 'elements', precedingTokens: 2 });
+		expect(innerKinds({ nodes: new Map([['switch', twoGaps]]) } as NodeMap)).toEqual(new Set(['switch']));
 	});
 });

@@ -65,7 +65,7 @@ describe('selfContainedRenderInput', () => {
 				$_layout: {
 					trivia: {
 						trailing: [{ $type: 3, $treeHandle: 1, $span: { start: 4, end: 8 }, $sameLine: true, $tokensBetween: 1 }],
-						inner: { x: [{ $type: 3, $treeHandle: 1, $span: { start: 4, end: 8 } }] }
+						inner: [{ $type: 3, $treeHandle: 1, $span: { start: 4, end: 8 } }]
 					}
 				}
 			},
@@ -75,7 +75,7 @@ describe('selfContainedRenderInput', () => {
 		) as { $_layout: { trivia: unknown } };
 		expect(out.$_layout.trivia).toEqual({
 			trailing: [{ $type: 3, $text: '// c', $sameLine: true, $tokensBetween: 1 }],
-			inner: { x: [{ $type: 3, $text: '// c' }] }
+			inner: [{ $type: 3, $text: '// c' }]
 		});
 	});
 });

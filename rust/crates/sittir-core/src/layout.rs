@@ -120,7 +120,7 @@ impl<T: Prepare> Layout for Option<Box<TransportLayout<T>>> {
 
     fn snapshot_inner(&self) -> Option<crate::prepare::EdgeItem<'_>> {
         use crate::prepare::{EdgeItem, SnapshotEdge, TriviaReach};
-        let entries = self.as_ref()?.trivia.as_ref()?.inner.as_ref()?.values().flatten();
+        let entries = self.as_ref()?.trivia.as_ref()?.inner.as_ref()?.iter();
         let mut extent: Option<crate::points::PointSpan> = None;
         for entry in entries {
             let Some(edge) = entry.value.snapshot_edge() else { return Some(EdgeItem::Rebuilt) };

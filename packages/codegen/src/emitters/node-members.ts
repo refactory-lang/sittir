@@ -1,4 +1,4 @@
-import { emptyForms, innerGapsKeyed } from '../compiler/model/trivia.ts';
+import { emptyForms } from '../compiler/model/trivia.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { GroupSeatHint, ListViewPlan, SeatPlan } from './factories.ts';
 
@@ -10,7 +10,6 @@ export interface SetterEntry {
 
 export interface InnerPositions {
 	readonly inner: boolean;
-	readonly keyed: boolean;
 }
 
 export interface StoredAccessor {
@@ -28,13 +27,12 @@ export interface NodeMemberSpec {
 }
 
 export function innerPositionsOf(kind: string, nodeMap: NodeMap): InnerPositions {
-	const inner = emptyForms(nodeMap).has(kind);
-	return { inner, keyed: inner && innerGapsKeyed(nodeMap) };
+	return { inner: emptyForms(nodeMap).has(kind) };
 }
 
 export function triviaInnerImports(nodeMap: NodeMap): readonly string[] {
 	if (emptyForms(nodeMap).size === 0) return [];
-	return innerGapsKeyed(nodeMap) ? ['triviaInner', 'triviaInnerAt'] : ['triviaInner'];
+	return ['triviaInner'];
 }
 
 function accessorRead(accessor: StoredAccessor): string {
@@ -59,7 +57,6 @@ export function nodeMemberLines(spec: NodeMemberSpec): string[] {
 		"      leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),",
 		"      trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),",
 		...(spec.inner.inner ? ['      inner: (...items: unknown[]) => triviaInner(node, handle, items),'] : []),
-		...(spec.inner.keyed ? ['      innerAt: (gap: string, ...items: unknown[]) => triviaInnerAt(node, handle, gap, items),'] : []),
 		'    },',
 		...(spec.parsed
 			? [

@@ -1397,7 +1397,7 @@ The entries of one side of a read node, from the trivia table of a tree: by defa
 
 ### `packages/tools/src/validate/common.ts::tableSides`
 
-A read node's sides from a tree's trivia table, as trivia data a built value can carry. A comment is read whole through the tree and built by the caller's builder, so it is built the way the caller builds every other node; an `ERROR` keeps its text. Layout runs are left out: a copy's sides are written, and a written side's layout is the render's. The inner entries go to the node kind's inner gap, named by the engine's trivia facts; inner trivia on a kind with no inner gap is an error, since the render has nowhere to put it. `undefined` when no side holds an extra or an `ERROR`.
+A read node's sides from a tree's trivia table, as trivia data a built value can carry. A comment is read whole through the tree and built by the caller's builder, so it is built the way the caller builds every other node; an `ERROR` keeps its text. Layout runs are left out: a copy's sides are written, and a written side's layout is the render's. `undefined` when no side holds an extra or an `ERROR`.
 
 ### `packages/tools/src/validate/common.ts::writeSides`
 
@@ -1581,7 +1581,7 @@ A factory rebuilds a node from its config alone, and trivia is not config, so th
 
 ### `packages/tools/src/validate/trivia-placement.ts::module`
 
-The trivia placement census behind `sittir tool trivia-placement`. It reads, it never changes behaviour. The owner rule is never re-derived here: placement comes from the reader itself. For every extra in a source's tree-sitter parse, the census finds the `$_trivia` entry with the extra's span in the native deep read. It records the owner's kind and the position (`leading`, `trailing` or `inner:<gap key>`), or `lost` when no entry holds the extra. The summary counts each position. The command exits non-zero when any extra is lost, and a test pins every corpus and probe extra of rust, typescript and python to a placement.
+The trivia placement census behind `sittir tool trivia-placement`. It reads, it never changes behaviour. The owner rule is never re-derived here: placement comes from the reader itself. For every extra in a source's tree-sitter parse, the census finds the `$_trivia` entry with the extra's span in the native deep read. It records the owner's kind and the position (`leading`, `trailing` or `inner`), or `lost` when no entry holds the extra. The summary counts each position. The command exits non-zero when any extra is lost, and a test pins every corpus and probe extra of rust, typescript and python to a placement.
 
 ### `packages/tools/src/validate/trivia-placement.ts::readPlacements`
 
@@ -1614,10 +1614,6 @@ The kinds the node model stamps `oneSurface`: one builder, no `.strict` or `.coe
 ### `packages/tools/src/validate/common.ts::LoadedNodeModel.root`
 
 The grammar's root kind as the node model records it; `undefined` when no model is loaded.
-
-### `packages/tools/src/validate/common.ts::LoadedNodeModel.innerGapsKeyed`
-
-Whether the grammar's emitted `InnerTrivia` takes a gap key, as the node model stamps it.
 
 ### `packages/tools/src/validate/read-render-parse.ts::validateReadRenderParse`
 
@@ -1711,7 +1707,7 @@ Every node a transport stores in its `_` slots, list items included, in key orde
 
 ### `packages/tools/src/validate/common.ts::storedTriviaEntries`
 
-Every trivia entry a transport holds: its leading and trailing sides and each inner gap's entries, in that order.
+Every trivia entry a transport holds: its leading, trailing and inner sides, in that order.
 
 ### `packages/tools/src/validate/gap-census.ts::adjacentPairs`
 

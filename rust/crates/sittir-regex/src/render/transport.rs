@@ -4678,7 +4678,7 @@ fn render_character_class(node: &CharacterClassTransport, w: &mut dyn ::sittir_c
     w.edge(::sittir_core::types::KindId(58), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("[")?;
     w.site_at(options::SITE_CHARACTER_CLASS_LBRACK_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "negation", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     if negation.is_present() {
         w.site_at(options::SITE_CHARACTER_CLASS_CARET_BEFORE);
         negation.render(w)?;

@@ -996,7 +996,7 @@ function buildTypedTemplateBody(
 				return `options::SITE_${toScreamingSnakeCase(owner, owner)}_${toScreamingSnakeCase(name, name)}`;
 			},
 			kinds: (names) => rustKindIdSlice(names, nodeMap, kindIdByKind, struct.kind),
-			innerGap: (name) => node instanceof AbstractAssembledCompound && node.innerGaps.some((gap) => gap.key === name)
+			innerGap: (name) => node instanceof AbstractAssembledCompound && node.innerSite?.key === name
 		})
 	);
 	return lines;

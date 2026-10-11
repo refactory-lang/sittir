@@ -168,10 +168,10 @@ describe('the tree token a parsed object holds', () => {
 	it('is removed from the trivia a detached node owns, at every side and depth', () => {
 		const comment = () => ({ $type: 7, $_layout: { at: at(7, 0, 1) }, _content: [{ $type: 8 }] });
 		const node = detachCoordinates(
-			held({ $type: 1, _a: 1, $_layout: { trivia: { leading: [comment()], trailing: [comment()], inner: { gap: [comment()] } } } })
+			held({ $type: 1, _a: 1, $_layout: { trivia: { leading: [comment()], trailing: [comment()], inner: [comment()] } } })
 		);
 		const trivia = node.$_layout.trivia;
-		const entries = [...trivia.leading, ...trivia.trailing, ...trivia.inner.gap];
+		const entries = [...trivia.leading, ...trivia.trailing, ...trivia.inner];
 		expect(entries).toHaveLength(3);
 		for (const entry of entries) {
 			expect(treeTokenOf(entry)).toBeUndefined();
@@ -182,7 +182,7 @@ describe('the tree token a parsed object holds', () => {
 	it('is required of a bare coordinate: one that holds no tree is refused, as a child and as a trivia entry', () => {
 		const refusal = /does not hold that tree.*parse the source here/;
 		expect(() => toTransportData({ $type: 1, _child: at(5, 1, 2) } as never, STORED_TRIVIA)).toThrow(refusal);
-		expect(() => toTransportData({ $type: 1, _a: 1, $_layout: { trivia: { inner: { gap: [at(7, 0, 1)] } } } } as never, STORED_TRIVIA)).toThrow(refusal);
+		expect(() => toTransportData({ $type: 1, _a: 1, $_layout: { trivia: { inner: [at(7, 0, 1)] } } } as never, STORED_TRIVIA)).toThrow(refusal);
 	});
 
 	it('never folds a read node that lost its tree: it crosses as its own data, never naming a tree', () => {

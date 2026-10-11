@@ -1,13 +1,13 @@
-/** The trivia a node owns, by position: before it, after it, and at each inner gap. */
+/** The trivia a node owns, by position: before it, after it, and, with no child, inside it. */
 export interface TriviaSides<Entry> {
 	readonly leading?: readonly Entry[];
 	readonly trailing?: readonly Entry[];
-	readonly inner?: Readonly<Partial<Record<string, readonly Entry[]>>>;
+	readonly inner?: readonly Entry[];
 }
 
 /**
- * Visit every list of trivia entries a node owns — leading, trailing, and each
- * inner gap's — skipping the sides that are absent. Trivia entries are
+ * Visit every list of trivia entries a node owns — leading, trailing and
+ * inner — skipping the sides that are absent. Trivia entries are
  * children of their owner, so whatever a pass does to slot children it does
  * to each of these lists through this one walk.
  */
@@ -15,7 +15,7 @@ export function forEachTriviaList<Entry>(trivia: TriviaSides<Entry>, visit: (ent
 	const { leading, trailing, inner } = trivia;
 	if (leading) visit(leading);
 	if (trailing) visit(trailing);
-	if (inner) for (const gap in inner) if (inner[gap]) visit(inner[gap]);
+	if (inner) visit(inner);
 }
 
 /**
@@ -30,10 +30,6 @@ export function mapTriviaEntries<In, Out>(
 	return {
 		...(leading && { leading: map(leading) }),
 		...(trailing && { trailing: map(trailing) }),
-		...(inner && {
-			inner: Object.fromEntries(
-				Object.entries(inner).flatMap(([gap, entries]) => (entries ? [[gap, map(entries)] as const] : []))
-			)
-		})
+		...(inner && { inner: map(inner) })
 	};
 }

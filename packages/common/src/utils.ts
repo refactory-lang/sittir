@@ -66,7 +66,7 @@ export function rebuilt<R>(source: object, handle: EngineHandle | undefined, bui
 	}
 	const trivia = triviaOf(node);
 	if (trivia === undefined || !isNode(result)) return result;
-	if (Object.values(trivia.inner ?? {}).some((entries) => (entries?.length ?? 0) > 0) && !isEmptyNode(result)) {
+	if ((trivia.inner?.length ?? 0) > 0 && !isEmptyNode(result)) {
 		const kind = handle?.current.trivia.kindName(node.$type) ?? String(node.$type);
 		throw new Error(`trivia: ${kind} holds inner comments; move them to leading/trailing on the new child`);
 	}
@@ -104,7 +104,7 @@ const scopedBy = (handle: EngineHandle | undefined): Scoped => (handle === undef
 /**
  * The writes of a node's trivia, bound to its engine. An item is an extra kind's node, or a
  * loose string built through `ir.comment`: its full spelling (`'// note'`) or its interior
- * (`' note'`). `inner` and `innerAt` write only to an empty node of a kind with inner gaps.
+ * (`' note'`). `inner` writes only to an empty node of a kind with an inner site.
  * A write marks the node edited (`markEditedNode`): a leading or trailing write on the outside
  * of its span, an inner write inside it.
  */
@@ -122,18 +122,8 @@ function triviaWriter(target: object, handle: EngineHandle | undefined) {
 	};
 	const entriesOf = (items: readonly unknown[]): readonly TriviaEntry[] =>
 		scoped(() => items.map((item) => triviaEntryOf(item, facts)));
-	const gapsOf = (): readonly string[] => {
-		const gaps = facts.innerGaps[kind()] ?? [];
-		if (gaps.length === 0) throw new Error(`trivia: ${kind()} has no inner gap; attach to a child with leading/trailing`);
-		return gaps;
-	};
-	const writeInner = (inner: NonNullable<NodeTrivia['inner']>): NodeTrivia['inner'] => {
-		const gaps = gapsOf();
-		for (const gap of Object.keys(inner)) {
-			if (!gaps.includes(gap)) throw new Error(`trivia: ${kind()} has no gap '${gap}'`);
-		}
-		if (!isEmptyNode(node)) throw new Error(`trivia: ${kind()} is not empty; attach to a child with leading/trailing`);
-		return inner;
+	const refuseInnerless = (): void => {
+		if (!facts.innerKinds.has(kind())) throw new Error(`trivia: ${kind()} has no inner site; attach to a child with leading/trailing`);
 	};
 	const store = (trivia: NodeTrivia, side: TriviaSideName): AnyUntypedNode => {
 		markWritten(node, side);
@@ -141,19 +131,19 @@ function triviaWriter(target: object, handle: EngineHandle | undefined) {
 		markEditedNode(node, side === 'inner' ? 'inside' : 'outside');
 		return node;
 	};
-	const innerAt = (gap: string, items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] => {
-		if (!gapsOf().includes(gap)) throw new Error(`trivia: ${kind()} has no gap '${gap}'`);
-		if (items.length === 0) return hydratedEntries(triviaOf(node)?.inner?.[gap] ?? []);
+	const inner = (items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] => {
+		refuseInnerless();
+		if (items.length === 0) return hydratedEntries(triviaOf(node)?.inner ?? []);
 		refuseUnheld();
-		return store({ ...triviaOf(node), inner: writeInner({ ...triviaOf(node)?.inner, [gap]: entriesOf(items) }) }, 'inner');
+		if (!isEmptyNode(node)) throw new Error(`trivia: ${kind()} is not empty; attach to a child with leading/trailing`);
+		return store({ ...triviaOf(node), inner: entriesOf(items) }, 'inner');
 	};
 	return {
 		side: (position: 'leading' | 'trailing', items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] =>
 			items.length === 0
 				? hydratedEntries(readTrivia(node, handle.lineGapsOf)?.[position] ?? [])
 				: (refuseUnheld(), store({ ...triviaOf(node), [position]: entriesOf(items) }, position)),
-		inner: (items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] => innerAt(gapsOf()[0]!, items),
-		innerAt
+		inner
 	};
 }
 
@@ -330,23 +320,13 @@ export function triviaSide(
 	return triviaWriter(node, handle).side(position, items);
 }
 
-/** `node.$trivia.inner(...)`: the first inner gap of a kind that has one. */
+/** `node.$trivia.inner(...)`: the inner side of a kind with an inner site. */
 export function triviaInner(
 	node: object,
 	handle: EngineHandle | undefined,
 	items: readonly unknown[]
 ): AnyUntypedNode | readonly TriviaEntry[] {
 	return triviaWriter(node, handle).inner(items);
-}
-
-/** `node.$trivia.innerAt(gap, ...)`: a named inner gap of a kind that keys its gaps. */
-export function triviaInnerAt(
-	node: object,
-	handle: EngineHandle | undefined,
-	gap: string,
-	items: readonly unknown[]
-): AnyUntypedNode | readonly TriviaEntry[] {
-	return triviaWriter(node, handle).innerAt(gap, items);
 }
 
 /** One trivia item as its entry: a trivia node, a parsed ERROR node or a whitespace kind id as it is, a string by `textEntryOf`. */
@@ -812,7 +792,7 @@ export function hydrateStoredSlots(node: object, key: string): readonly unknown[
 export { numberText, type NumberBase } from './number.ts';
 export { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
 export type { Role } from './identity.ts';
-export { currentHandle, engineOf, inEngine, hydrateStored, type EngineHandle } from './engine-scope.ts';
+export { currentHandle, inEngine, hydrateStored, type EngineHandle } from './engine-scope.ts';
 export { checkDelimited, type DelimitedSpec } from './delimited-check.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';

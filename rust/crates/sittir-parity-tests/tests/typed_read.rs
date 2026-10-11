@@ -142,7 +142,8 @@ fn trivia_spans(layout: &Layout, side: &str) -> Vec<(u32, u32, bool, u16)> {
     let entries = match side {
         "leading" => trivia.and_then(|t| t.leading.clone()),
         "trailing" => trivia.and_then(|t| t.trailing.clone()),
-        key => trivia.and_then(|t| t.inner.as_ref()?.get(key).cloned()),
+        "inner" => trivia.and_then(|t| t.inner.clone()),
+        other => panic!("{other} is not a trivia side"),
     };
     entries
         .unwrap_or_default()
@@ -214,7 +215,7 @@ fn a_comment_in_an_empty_block_takes_the_blocks_inner_gap() {
     let source = "fn f() { /* c */ }";
     let file: File = read(&parse_rust(source), source, Depth::All).unwrap();
     let block = function(&file, 0).body.transport().unwrap();
-    assert_eq!(trivia_spans(&block.layout, "statements"), vec![(9, 16, false, 0)]);
+    assert_eq!(trivia_spans(&block.layout, "inner"), vec![(9, 16, false, 0)]);
 }
 
 #[test]
@@ -222,7 +223,7 @@ fn a_file_of_comments_keeps_them_in_its_own_gap() {
     let source = "// only\n";
     let file: File = read(&parse_rust(source), source, Depth::All).unwrap();
     assert_eq!(file.statements, vec![]);
-    assert_eq!(trivia_spans(&file.layout, "statements"), vec![(0, 7, false, 0)]);
+    assert_eq!(trivia_spans(&file.layout, "inner"), vec![(0, 7, false, 0)]);
 }
 
 #[test]
@@ -231,7 +232,7 @@ fn an_error_inside_a_node_is_trivia() {
     let file: File = read(&parse_rust(source), source, Depth::All).unwrap();
     let block = function(&file, 0).body.transport().unwrap();
     let inner = block.layout.as_ref().unwrap().trivia.as_ref().unwrap().inner.as_ref().unwrap();
-    assert_eq!(inner["statements"][0].value.coord().unwrap().kind, Some(kind::ERROR));
+    assert_eq!(inner[0].value.coord().unwrap().kind, Some(kind::ERROR));
 }
 
 #[test]

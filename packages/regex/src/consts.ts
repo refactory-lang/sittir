@@ -10,7 +10,5 @@ export const TOKEN_INTERIORS = {
 	}
 } as const satisfies { readonly [kind: string]: TokenInterior };
 
-/** The gaps an empty node of each kind holds inner trivia in, in render order. */
-export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = Object.freeze({
-	character_class: Object.freeze(['negation'])
-});
+/** The kinds whose template renders an inner side, where an empty node of the kind holds its trivia. */
+export const INNER_SITES: ReadonlySet<string> = new Set<string>(['character_class']);

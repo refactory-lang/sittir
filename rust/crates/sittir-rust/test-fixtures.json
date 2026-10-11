@@ -90235,28 +90235,26 @@
             "_delim_tokens": [],
             "$_layout": {
               "trivia": {
-                "inner": {
-                  "delim_tokens": [
-                    {
-                      "$type": 337,
+                "inner": [
+                  {
+                    "$type": 337,
+                    "$_layout": {},
+                    "_content": {
+                      "$type": 156,
                       "$_layout": {},
-                      "_content": {
-                        "$type": 156,
-                        "$_layout": {},
-                        "$text": " one"
-                      }
-                    },
-                    {
-                      "$type": 340,
-                      "$_layout": {},
-                      "_content": {
-                        "$type": 404,
-                        "$_layout": {},
-                        "$text": " two "
-                      }
+                      "$text": " one"
                     }
-                  ]
-                }
+                  },
+                  {
+                    "$type": 340,
+                    "$_layout": {},
+                    "_content": {
+                      "$type": 404,
+                      "$_layout": {},
+                      "$text": " two "
+                    }
+                  }
+                ]
               }
             }
           },
@@ -90299,28 +90297,26 @@
         "_delim_tokens": [],
         "$_layout": {
           "trivia": {
-            "inner": {
-              "delim_tokens": [
-                {
-                  "$type": 337,
+            "inner": [
+              {
+                "$type": 337,
+                "$_layout": {},
+                "_content": {
+                  "$type": 156,
                   "$_layout": {},
-                  "_content": {
-                    "$type": 156,
-                    "$_layout": {},
-                    "$text": " one"
-                  }
-                },
-                {
-                  "$type": 340,
-                  "$_layout": {},
-                  "_content": {
-                    "$type": 404,
-                    "$_layout": {},
-                    "$text": " two "
-                  }
+                  "$text": " one"
                 }
-              ]
-            }
+              },
+              {
+                "$type": 340,
+                "$_layout": {},
+                "_content": {
+                  "$type": 404,
+                  "$_layout": {},
+                  "$text": " two "
+                }
+              }
+            ]
           }
         }
       }
@@ -90347,28 +90343,26 @@
       "_delim_tokens": [],
       "$_layout": {
         "trivia": {
-          "inner": {
-            "delim_tokens": [
-              {
-                "$type": 337,
+          "inner": [
+            {
+              "$type": 337,
+              "$_layout": {},
+              "_content": {
+                "$type": 156,
                 "$_layout": {},
-                "_content": {
-                  "$type": 156,
-                  "$_layout": {},
-                  "$text": " one"
-                }
-              },
-              {
-                "$type": 340,
-                "$_layout": {},
-                "_content": {
-                  "$type": 404,
-                  "$_layout": {},
-                  "$text": " two "
-                }
+                "$text": " one"
               }
-            ]
-          }
+            },
+            {
+              "$type": 340,
+              "$_layout": {},
+              "_content": {
+                "$type": 404,
+                "$_layout": {},
+                "$text": " two "
+              }
+            }
+          ]
         }
       }
     },
@@ -105087,58 +105081,56 @@
       "$errors": [],
       "$_layout": {
         "trivia": {
-          "inner": {
-            "statements": [
-              {
-                "$type": 340,
+          "inner": [
+            {
+              "$type": 340,
+              "$_layout": {},
+              "_content": {
+                "$type": 404,
                 "$_layout": {},
-                "_content": {
-                  "$type": 404,
-                  "$_layout": {},
-                  "$text": "\n * Block comments\n "
-                }
-              },
-              {
-                "$type": 340,
-                "$_layout": {},
-                "_content": {
-                  "$type": 404,
-                  "$_layout": {},
-                  "$text": " Comment with asterisks *"
-                }
-              },
-              {
-                "$type": 340,
-                "$_layout": {},
-                "_content": {
-                  "$type": 402,
-                  "$_layout": {},
-                  "_doc": {
-                    "$type": 165,
-                    "$_layout": {},
-                    "$text": " Outer block comment "
-                  }
-                }
-              },
-              {
-                "$type": 340,
-                "$_layout": {},
-                "_content": {
-                  "$type": 403,
-                  "$_layout": {},
-                  "_doc": {
-                    "$type": 165,
-                    "$_layout": {},
-                    "$text": " Inner block comment "
-                  }
-                }
-              },
-              {
-                "$type": 340,
-                "$text": "/**/"
+                "$text": "\n * Block comments\n "
               }
-            ]
-          }
+            },
+            {
+              "$type": 340,
+              "$_layout": {},
+              "_content": {
+                "$type": 404,
+                "$_layout": {},
+                "$text": " Comment with asterisks *"
+              }
+            },
+            {
+              "$type": 340,
+              "$_layout": {},
+              "_content": {
+                "$type": 402,
+                "$_layout": {},
+                "_doc": {
+                  "$type": 165,
+                  "$_layout": {},
+                  "$text": " Outer block comment "
+                }
+              }
+            },
+            {
+              "$type": 340,
+              "$_layout": {},
+              "_content": {
+                "$type": 403,
+                "$_layout": {},
+                "_doc": {
+                  "$type": 165,
+                  "$_layout": {},
+                  "$text": " Inner block comment "
+                }
+              }
+            },
+            {
+              "$type": 340,
+              "$text": "/**/"
+            }
+          ]
         }
       }
     },
@@ -105165,64 +105157,62 @@
       "$errors": [],
       "$_layout": {
         "trivia": {
-          "inner": {
-            "statements": [
-              {
-                "$type": 340,
+          "inner": [
+            {
+              "$type": 340,
+              "$_layout": {},
+              "_content": {
+                "$type": 404,
                 "$_layout": {},
-                "_content": {
-                  "$type": 404,
-                  "$_layout": {},
-                  "$text": " /* double nested */ "
-                }
-              },
-              {
-                "$type": 337,
-                "$_layout": {},
-                "_content": {
-                  "$type": 156,
-                  "$_layout": {},
-                  "$text": " ---"
-                }
-              },
-              {
-                "$type": 340,
-                "$_layout": {},
-                "_content": {
-                  "$type": 404,
-                  "$_layout": {},
-                  "$text": "/*/* triple nested */*/"
-                }
-              },
-              {
-                "$type": 337,
-                "$_layout": {},
-                "_content": {
-                  "$type": 156,
-                  "$_layout": {},
-                  "$text": " ---"
-                }
-              },
-              {
-                "$type": 340,
-                "$_layout": {},
-                "_content": {
-                  "$type": 404,
-                  "$_layout": {},
-                  "$text": "***\n  /****\n    nested with extra stars which makes it a regular block comment\n    and not a block doc comment\n  ****/\n***"
-                }
-              },
-              {
-                "$type": 337,
-                "$_layout": {},
-                "_content": {
-                  "$type": 156,
-                  "$_layout": {},
-                  "$text": " ---"
-                }
+                "$text": " /* double nested */ "
               }
-            ]
-          }
+            },
+            {
+              "$type": 337,
+              "$_layout": {},
+              "_content": {
+                "$type": 156,
+                "$_layout": {},
+                "$text": " ---"
+              }
+            },
+            {
+              "$type": 340,
+              "$_layout": {},
+              "_content": {
+                "$type": 404,
+                "$_layout": {},
+                "$text": "/*/* triple nested */*/"
+              }
+            },
+            {
+              "$type": 337,
+              "$_layout": {},
+              "_content": {
+                "$type": 156,
+                "$_layout": {},
+                "$text": " ---"
+              }
+            },
+            {
+              "$type": 340,
+              "$_layout": {},
+              "_content": {
+                "$type": 404,
+                "$_layout": {},
+                "$text": "***\n  /****\n    nested with extra stars which makes it a regular block comment\n    and not a block doc comment\n  ****/\n***"
+              }
+            },
+            {
+              "$type": 337,
+              "$_layout": {},
+              "_content": {
+                "$type": 156,
+                "$_layout": {},
+                "$text": " ---"
+              }
+            }
+          ]
         }
       }
     },
@@ -105249,45 +105239,43 @@
       "$errors": [],
       "$_layout": {
         "trivia": {
-          "inner": {
-            "statements": [
-              {
-                "$type": 337,
+          "inner": [
+            {
+              "$type": 337,
+              "$_layout": {},
+              "_content": {
+                "$type": 156,
                 "$_layout": {},
-                "_content": {
-                  "$type": 156,
-                  "$_layout": {},
-                  "$text": " Comment"
-                }
-              },
-              {
-                "$type": 337,
+                "$text": " Comment"
+              }
+            },
+            {
+              "$type": 337,
+              "$_layout": {},
+              "_content": {
+                "$type": 400,
                 "$_layout": {},
-                "_content": {
-                  "$type": 400,
+                "_doc": {
+                  "$type": 166,
                   "$_layout": {},
-                  "_doc": {
-                    "$type": 166,
-                    "$_layout": {},
-                    "$text": " Outer line doc comment\n"
-                  }
-                }
-              },
-              {
-                "$type": 337,
-                "$_layout": {},
-                "_content": {
-                  "$type": 401,
-                  "$_layout": {},
-                  "_doc": {
-                    "$type": 166,
-                    "$_layout": {},
-                    "$text": " Inner line doc comment\n"
-                  }
+                  "$text": " Outer line doc comment\n"
                 }
               }
-            ]
-          }
+            },
+            {
+              "$type": 337,
+              "$_layout": {},
+              "_content": {
+                "$type": 401,
+                "$_layout": {},
+                "_doc": {
+                  "$type": 166,
+                  "$_layout": {},
+                  "$text": " Inner line doc comment\n"
+                }
+              }
+            }
+          ]
         }
       }
     },
@@ -105314,80 +105302,78 @@
       "$errors": [],
       "$_layout": {
         "trivia": {
-          "inner": {
-            "statements": [
-              {
-                "$type": 337,
+          "inner": [
+            {
+              "$type": 337,
+              "$_layout": {},
+              "_content": {
+                "$type": 401,
                 "$_layout": {},
-                "_content": {
-                  "$type": 401,
+                "_doc": {
+                  "$type": 166,
                   "$_layout": {},
-                  "_doc": {
-                    "$type": 166,
-                    "$_layout": {},
-                    "$text": "  - Inner line doc\n"
-                  }
-                }
-              },
-              {
-                "$type": 337,
-                "$_layout": {},
-                "_content": {
-                  "$type": 401,
-                  "$_layout": {},
-                  "_doc": {
-                    "$type": 166,
-                    "$_layout": {},
-                    "$text": "! - Still an inner line doc (but with a bang at the beginning)\n"
-                  }
-                }
-              },
-              {
-                "$type": 337,
-                "$_layout": {},
-                "_content": {
-                  "$type": 156,
-                  "$_layout": {},
-                  "$text": "   - Only a comment"
-                }
-              },
-              {
-                "$type": 337,
-                "$_layout": {},
-                "_content": {
-                  "$type": 400,
-                  "$_layout": {},
-                  "_doc": {
-                    "$type": 166,
-                    "$_layout": {},
-                    "$text": "  - Outer line doc (exactly 3 slashes)\n"
-                  }
-                }
-              },
-              {
-                "$type": 337,
-                "$_layout": {},
-                "_content": {
-                  "$type": 400,
-                  "$_layout": {},
-                  "_doc": {
-                    "$type": 166,
-                    "$_layout": {},
-                    "$text": "\n"
-                  }
-                }
-              },
-              {
-                "$type": 337,
-                "$_layout": {},
-                "_content": {
-                  "$type": 399,
-                  "$_layout": {},
-                  "$text": "// - Only a comment"
+                  "$text": "  - Inner line doc\n"
                 }
               }
-            ]
-          }
+            },
+            {
+              "$type": 337,
+              "$_layout": {},
+              "_content": {
+                "$type": 401,
+                "$_layout": {},
+                "_doc": {
+                  "$type": 166,
+                  "$_layout": {},
+                  "$text": "! - Still an inner line doc (but with a bang at the beginning)\n"
+                }
+              }
+            },
+            {
+              "$type": 337,
+              "$_layout": {},
+              "_content": {
+                "$type": 156,
+                "$_layout": {},
+                "$text": "   - Only a comment"
+              }
+            },
+            {
+              "$type": 337,
+              "$_layout": {},
+              "_content": {
+                "$type": 400,
+                "$_layout": {},
+                "_doc": {
+                  "$type": 166,
+                  "$_layout": {},
+                  "$text": "  - Outer line doc (exactly 3 slashes)\n"
+                }
+              }
+            },
+            {
+              "$type": 337,
+              "$_layout": {},
+              "_content": {
+                "$type": 400,
+                "$_layout": {},
+                "_doc": {
+                  "$type": 166,
+                  "$_layout": {},
+                  "$text": "\n"
+                }
+              }
+            },
+            {
+              "$type": 337,
+              "$_layout": {},
+              "_content": {
+                "$type": 399,
+                "$_layout": {},
+                "$text": "// - Only a comment"
+              }
+            }
+          ]
         }
       }
     },
@@ -105414,67 +105400,65 @@
       "$errors": [],
       "$_layout": {
         "trivia": {
-          "inner": {
-            "statements": [
-              {
-                "$type": 340,
+          "inner": [
+            {
+              "$type": 340,
+              "$_layout": {},
+              "_content": {
+                "$type": 403,
                 "$_layout": {},
-                "_content": {
-                  "$type": 403,
+                "_doc": {
+                  "$type": 165,
                   "$_layout": {},
-                  "_doc": {
-                    "$type": 165,
-                    "$_layout": {},
-                    "$text": "  - Inner block doc "
-                  }
-                }
-              },
-              {
-                "$type": 340,
-                "$_layout": {},
-                "_content": {
-                  "$type": 403,
-                  "$_layout": {},
-                  "_doc": {
-                    "$type": 165,
-                    "$_layout": {},
-                    "$text": "! - Still an inner block doc (but with a bang at the beginning) "
-                  }
-                }
-              },
-              {
-                "$type": 340,
-                "$_layout": {},
-                "_content": {
-                  "$type": 404,
-                  "$_layout": {},
-                  "$text": "   - Only a comment "
-                }
-              },
-              {
-                "$type": 340,
-                "$_layout": {},
-                "_content": {
-                  "$type": 402,
-                  "$_layout": {},
-                  "_doc": {
-                    "$type": 165,
-                    "$_layout": {},
-                    "$text": "  - Outer block doc (exactly) 2 asterisks "
-                  }
-                }
-              },
-              {
-                "$type": 340,
-                "$_layout": {},
-                "_content": {
-                  "$type": 404,
-                  "$_layout": {},
-                  "$text": "** - Only a comment "
+                  "$text": "  - Inner block doc "
                 }
               }
-            ]
-          }
+            },
+            {
+              "$type": 340,
+              "$_layout": {},
+              "_content": {
+                "$type": 403,
+                "$_layout": {},
+                "_doc": {
+                  "$type": 165,
+                  "$_layout": {},
+                  "$text": "! - Still an inner block doc (but with a bang at the beginning) "
+                }
+              }
+            },
+            {
+              "$type": 340,
+              "$_layout": {},
+              "_content": {
+                "$type": 404,
+                "$_layout": {},
+                "$text": "   - Only a comment "
+              }
+            },
+            {
+              "$type": 340,
+              "$_layout": {},
+              "_content": {
+                "$type": 402,
+                "$_layout": {},
+                "_doc": {
+                  "$type": 165,
+                  "$_layout": {},
+                  "$text": "  - Outer block doc (exactly) 2 asterisks "
+                }
+              }
+            },
+            {
+              "$type": 340,
+              "$_layout": {},
+              "_content": {
+                "$type": 404,
+                "$_layout": {},
+                "$text": "** - Only a comment "
+              }
+            }
+          ]
         }
       }
     },
@@ -105501,45 +105485,43 @@
       "$errors": [],
       "$_layout": {
         "trivia": {
-          "inner": {
-            "statements": [
-              {
-                "$type": 340,
+          "inner": [
+            {
+              "$type": 340,
+              "$_layout": {},
+              "_content": {
+                "$type": 404,
                 "$_layout": {},
-                "_content": {
-                  "$type": 404,
-                  "$_layout": {},
-                  "$text": "   /* */  /** */  /*! */  "
-                }
-              },
-              {
-                "$type": 340,
+                "$text": "   /* */  /** */  /*! */  "
+              }
+            },
+            {
+              "$type": 340,
+              "$_layout": {},
+              "_content": {
+                "$type": 403,
                 "$_layout": {},
-                "_content": {
-                  "$type": 403,
+                "_doc": {
+                  "$type": 165,
                   "$_layout": {},
-                  "_doc": {
-                    "$type": 165,
-                    "$_layout": {},
-                    "$text": "  /* */  /** */  /*! */  "
-                  }
-                }
-              },
-              {
-                "$type": 340,
-                "$_layout": {},
-                "_content": {
-                  "$type": 402,
-                  "$_layout": {},
-                  "_doc": {
-                    "$type": 165,
-                    "$_layout": {},
-                    "$text": "  /* */  /** */  /*! */  "
-                  }
+                  "$text": "  /* */  /** */  /*! */  "
                 }
               }
-            ]
-          }
+            },
+            {
+              "$type": 340,
+              "$_layout": {},
+              "_content": {
+                "$type": 402,
+                "$_layout": {},
+                "_doc": {
+                  "$type": 165,
+                  "$_layout": {},
+                  "$text": "  /* */  /** */  /*! */  "
+                }
+              }
+            }
+          ]
         }
       }
     },
@@ -105779,23 +105761,21 @@
       "$errors": [],
       "$_layout": {
         "trivia": {
-          "inner": {
-            "statements": [
-              {
-                "$type": 337,
+          "inner": [
+            {
+              "$type": 337,
+              "$_layout": {},
+              "_content": {
+                "$type": 401,
                 "$_layout": {},
-                "_content": {
-                  "$type": 401,
+                "_doc": {
+                  "$type": 166,
                   "$_layout": {},
-                  "_doc": {
-                    "$type": 166,
-                    "$_layout": {},
-                    "$text": " Doc comment"
-                  }
+                  "$text": " Doc comment"
                 }
               }
-            ]
-          }
+            }
+          ]
         }
       }
     },

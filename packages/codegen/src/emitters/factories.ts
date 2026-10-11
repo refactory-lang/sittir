@@ -2459,7 +2459,7 @@ function emitTextFactory(
 		`    $source: 2 as const,`,
 		'    $named: true as const,',
 		`    $text: ${textExpr},`,
-		...nodeMemberLines({ accessors: [], inner: nodeMap === undefined ? { inner: false, keyed: false } : innerPositionsOf(node.kind, nodeMap) }),
+		...nodeMemberLines({ accessors: [], inner: nodeMap === undefined ? { inner: false } : innerPositionsOf(node.kind, nodeMap) }),
 		'  };',
 		`  return node as unknown as T.${node.typeName}.Bound;`,
 		'}'

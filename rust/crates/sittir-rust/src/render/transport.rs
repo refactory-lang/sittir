@@ -36397,7 +36397,7 @@ fn render_source_file(node: &SourceFileTransport, w: &mut dyn ::sittir_core::ren
     };
     w.edge(::sittir_core::types::KindId(176), ::sittir_core::options::Side::Before, node.layout.edges().before);
     shebang.render(w)?;
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "statements", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     statements.render(w)?;
     w.edge(::sittir_core::types::KindId(176), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
@@ -36566,7 +36566,7 @@ fn render_declaration_list(node: &DeclarationListTransport, w: &mut dyn ::sittir
     w.edge(::sittir_core::types::KindId(195), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("{")?;
     w.site_at(options::SITE_DECLARATION_LIST_LBRACE_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "declarations", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     declarations.render(w)?;
     w.site_at(options::SITE_DECLARATION_LIST_RBRACE_BEFORE);
     w.text("}")?;
@@ -36617,7 +36617,7 @@ fn render_enum_variant_list(node: &EnumVariantListTransport, w: &mut dyn ::sitti
     w.edge(::sittir_core::types::KindId(199), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("{")?;
     w.site_at(options::SITE_ENUM_VARIANT_LIST_LBRACE_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "elements", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     elements.render(w)?;
     w.site_at(options::SITE_ENUM_VARIANT_LIST_RBRACE_BEFORE);
     w.text("}")?;
@@ -36649,7 +36649,7 @@ fn render_field_declaration_list(node: &FieldDeclarationListTransport, w: &mut d
     w.edge(::sittir_core::types::KindId(201), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("{")?;
     w.site_at(options::SITE_FIELD_DECLARATION_LIST_LBRACE_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "elements", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     elements.render(w)?;
     w.site_at(options::SITE_FIELD_DECLARATION_LIST_RBRACE_BEFORE);
     w.text("}")?;
@@ -36677,7 +36677,7 @@ fn render_ordered_field_declaration_list(node: &OrderedFieldDeclarationListTrans
     w.edge(::sittir_core::types::KindId(203), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_ORDERED_FIELD_DECLARATION_LIST_LPAREN_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "attributes", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     attributes.render(w)?;
     w.site_at(options::SITE_ORDERED_FIELD_DECLARATION_LIST_RPAREN_BEFORE);
     w.text(")")?;
@@ -37120,7 +37120,7 @@ fn render_use_list(node: &UseListTransport, w: &mut dyn ::sittir_core::render::R
     w.edge(::sittir_core::types::KindId(227), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("{")?;
     w.site_at(options::SITE_USE_LIST_LBRACE_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "use_clauses", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     use_clauses.render(w)?;
     w.site_at(options::SITE_USE_LIST_RBRACE_BEFORE);
     w.text("}")?;
@@ -37156,7 +37156,7 @@ fn render_parameters(node: &ParametersTransport, w: &mut dyn ::sittir_core::rend
     w.edge(::sittir_core::types::KindId(230), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_PARAMETERS_LPAREN_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "elements", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     elements.render(w)?;
     w.site_at(options::SITE_PARAMETERS_RPAREN_BEFORE);
     w.text(")")?;
@@ -37396,7 +37396,7 @@ fn render_use_bounds(node: &UseBoundsTransport, w: &mut dyn ::sittir_core::rende
     w.site_at(options::SITE_USE_BOUNDS_LT_BEFORE);
     w.text("<")?;
     w.site_at(options::SITE_USE_BOUNDS_LT_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "bounds", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     bounds.render(w)?;
     w.site_at(options::SITE_USE_BOUNDS_GT_BEFORE);
     w.text(">")?;
@@ -37638,7 +37638,7 @@ fn render_arguments(node: &ArgumentsTransport, w: &mut dyn ::sittir_core::render
     w.edge(::sittir_core::types::KindId(277), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_ARGUMENTS_LPAREN_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "elements", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     elements.render(w)?;
     w.site_at(options::SITE_ARGUMENTS_RPAREN_BEFORE);
     w.text(")")?;
@@ -37696,9 +37696,9 @@ fn render_field_initializer_list(node: &FieldInitializerListTransport, w: &mut d
     let initializers = View::new(&node.initializers, "{}");
     w.edge(::sittir_core::types::KindId(283), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("{")?;
-    if initializers.is_present() || ::sittir_core::trivia::has_inner(node.layout.trivia(), "initializers") {
+    if initializers.is_present() || ::sittir_core::trivia::has_inner(node.layout.trivia()) {
         w.site_at(options::SITE_FIELD_INITIALIZER_LIST_LBRACE_AFTER);
-        ::sittir_core::trivia::render_inner(node.layout.trivia(), "initializers", w)?;
+        ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
         initializers.render(w)?;
         w.site_at(options::SITE_FIELD_INITIALIZER_LIST_RBRACE_BEFORE);
     }
@@ -37839,7 +37839,7 @@ fn render_match_block(node: &MatchBlockTransport, w: &mut dyn ::sittir_core::ren
     w.edge(::sittir_core::types::KindId(293), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("{")?;
     w.site_at(options::SITE_MATCH_BLOCK_LBRACE_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "match_block_arms", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     match_block_arms.render(w)?;
     w.site_at(options::SITE_MATCH_BLOCK_RBRACE_BEFORE);
     w.text("}")?;
@@ -37980,7 +37980,7 @@ fn render_closure_parameters(node: &ClosureParametersTransport, w: &mut dyn ::si
     w.edge(::sittir_core::types::KindId(302), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("|")?;
     w.site_at(options::SITE_CLOSURE_PARAMETERS_PIPE_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "parameters", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     parameters.render(w)?;
     w.site_at(options::SITE_CLOSURE_PARAMETERS_PIPE_BEFORE);
     w.text("|")?;
@@ -38137,7 +38137,7 @@ fn render_block(node: &BlockTransport, w: &mut dyn ::sittir_core::render::Render
     w.site_at(options::SITE_BLOCK_LBRACE_BEFORE);
     w.text("{")?;
     w.site_at(options::SITE_BLOCK_LBRACE_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "statements", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     statements.render(w)?;
     trailing_expression.render(w)?;
     w.site_at(options::SITE_BLOCK_RBRACE_BEFORE);
@@ -38164,7 +38164,7 @@ fn render_tuple_pattern(node: &TuplePatternTransport, w: &mut dyn ::sittir_core:
     w.edge(::sittir_core::types::KindId(316), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_TUPLE_PATTERN_LPAREN_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "elements", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     elements.render(w)?;
     w.site_at(options::SITE_TUPLE_PATTERN_RPAREN_BEFORE);
     w.text(")")?;
@@ -38177,7 +38177,7 @@ fn render_slice_pattern(node: &SlicePatternTransport, w: &mut dyn ::sittir_core:
     w.edge(::sittir_core::types::KindId(317), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("[")?;
     w.site_at(options::SITE_SLICE_PATTERN_LBRACK_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "patterns", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     patterns.render(w)?;
     w.site_at(options::SITE_SLICE_PATTERN_RBRACK_BEFORE);
     w.text("]")?;
@@ -38906,7 +38906,7 @@ fn render_array_expression_list(node: &ArrayExpressionListTransport, w: &mut dyn
     w.edge(::sittir_core::types::KindId(367), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("[")?;
     w.site_at(options::SITE_ARRAY_EXPRESSION_LIST_LBRACK_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "attributes", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     attributes.render(w)?;
     elements.render(w)?;
     w.site_at(options::SITE_ARRAY_EXPRESSION_LIST_RBRACK_BEFORE);
@@ -39417,7 +39417,7 @@ fn render_token_tree_pattern_paren(node: &TokenTreePatternParenTransport, w: &mu
     w.edge(::sittir_core::types::KindId(405), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_TOKEN_TREE_PATTERN_PAREN_LPAREN_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "token_patterns", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     token_patterns.render(w)?;
     w.site_at(options::SITE_TOKEN_TREE_PATTERN_PAREN_RPAREN_BEFORE);
     w.text(")")?;
@@ -39440,7 +39440,7 @@ fn render_token_tree_pattern_bracket(node: &TokenTreePatternBracketTransport, w:
     w.edge(::sittir_core::types::KindId(406), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("[")?;
     w.site_at(options::SITE_TOKEN_TREE_PATTERN_BRACKET_LBRACK_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "token_patterns", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     token_patterns.render(w)?;
     w.site_at(options::SITE_TOKEN_TREE_PATTERN_BRACKET_RBRACK_BEFORE);
     w.text("]")?;
@@ -39463,7 +39463,7 @@ fn render_token_tree_pattern_brace(node: &TokenTreePatternBraceTransport, w: &mu
     w.edge(::sittir_core::types::KindId(407), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("{")?;
     w.site_at(options::SITE_TOKEN_TREE_PATTERN_BRACE_LBRACE_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "token_patterns", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     token_patterns.render(w)?;
     w.site_at(options::SITE_TOKEN_TREE_PATTERN_BRACE_RBRACE_BEFORE);
     w.text("}")?;
@@ -39486,7 +39486,7 @@ fn render_token_tree_paren(node: &TokenTreeParenTransport, w: &mut dyn ::sittir_
     w.edge(::sittir_core::types::KindId(408), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_TOKEN_TREE_PAREN_LPAREN_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "tokens", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     tokens.render(w)?;
     w.site_at(options::SITE_TOKEN_TREE_PAREN_RPAREN_BEFORE);
     w.text(")")?;
@@ -39509,7 +39509,7 @@ fn render_token_tree_bracket(node: &TokenTreeBracketTransport, w: &mut dyn ::sit
     w.edge(::sittir_core::types::KindId(409), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("[")?;
     w.site_at(options::SITE_TOKEN_TREE_BRACKET_LBRACK_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "tokens", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     tokens.render(w)?;
     w.site_at(options::SITE_TOKEN_TREE_BRACKET_RBRACK_BEFORE);
     w.text("]")?;
@@ -39532,7 +39532,7 @@ fn render_token_tree_brace(node: &TokenTreeBraceTransport, w: &mut dyn ::sittir_
     w.edge(::sittir_core::types::KindId(410), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("{")?;
     w.site_at(options::SITE_TOKEN_TREE_BRACE_LBRACE_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "tokens", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     tokens.render(w)?;
     w.site_at(options::SITE_TOKEN_TREE_BRACE_RBRACE_BEFORE);
     w.text("}")?;
@@ -39555,7 +39555,7 @@ fn render_delim_token_tree_paren(node: &DelimTokenTreeParenTransport, w: &mut dy
     w.edge(::sittir_core::types::KindId(411), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_DELIM_TOKEN_TREE_PAREN_LPAREN_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "delim_tokens", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     delim_tokens.render(w)?;
     w.site_at(options::SITE_DELIM_TOKEN_TREE_PAREN_RPAREN_BEFORE);
     w.text(")")?;
@@ -39578,7 +39578,7 @@ fn render_delim_token_tree_bracket(node: &DelimTokenTreeBracketTransport, w: &mu
     w.edge(::sittir_core::types::KindId(412), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("[")?;
     w.site_at(options::SITE_DELIM_TOKEN_TREE_BRACKET_LBRACK_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "delim_tokens", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     delim_tokens.render(w)?;
     w.site_at(options::SITE_DELIM_TOKEN_TREE_BRACKET_RBRACK_BEFORE);
     w.text("]")?;
@@ -39601,7 +39601,7 @@ fn render_delim_token_tree_brace(node: &DelimTokenTreeBraceTransport, w: &mut dy
     w.edge(::sittir_core::types::KindId(413), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("{")?;
     w.site_at(options::SITE_DELIM_TOKEN_TREE_BRACE_LBRACE_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "delim_tokens", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     delim_tokens.render(w)?;
     w.site_at(options::SITE_DELIM_TOKEN_TREE_BRACE_RBRACE_BEFORE);
     w.text("}")?;

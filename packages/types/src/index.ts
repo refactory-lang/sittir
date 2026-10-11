@@ -1281,7 +1281,6 @@ export type {
 	EngineOptions,
 	FileChange,
 	GrammarInnerTrivia,
-	GrammarInnerTriviaAt,
 	NodeMethods,
 	GrammarTypeMap,
 	Interceptor,

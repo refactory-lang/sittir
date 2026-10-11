@@ -4611,6 +4611,10 @@ The separator token an option declared for this list, stamped once resolution
 has run. A list that chooses its separator per instance and has no stamp is a
 build error naming the arms it admits.
 
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.innerSite`
+
+The gap the kind's one inner side renders at: the last of its `innerGaps`. A node has one inner side, so a kind with several gaps (tree-sitter-go's `expression_switch_statement`, an initializer then a body) renders the side once, at the gap of its body.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.innerGaps`
 
 Where an inner comment can sit in an empty node of this kind: one `InnerGap` per optional or repeat slot, keyed by the slot name, with `precedingTokens` counting the kind's unconditional literal tokens before it in render order.
@@ -4621,6 +4625,7 @@ Where an inner comment can sit in an empty node of this kind: one `InnerGap` per
 - Tokens under an optional or repeat member, or inside a choice, are conditional and not counted: they are absent from an empty node.
 - A slot is found by its source rule ids, never at the rule root.
 - When several slots share a span, only the first in render order keys it.
+- A kind with several gaps still has one inner side (`innerSite`).
 - A gap before the kind's first token or after its last is not inner: tree-sitter gives an extra outside a node's own tokens to the parent. A kind with no unconditional token is the exception only when it is the grammar root (`grammarRoot`), since only the root can hold an extra there (rust `source_file`, python `module`, typescript `program`). Its one gap is its first repeat slot in render order, or the root's own rule when that is the repeat slot (scm `program`), because `inner` carries the comments of an empty repeat: a comment-only file is a root whose statements are empty. An optional single slot before it (`shebang`, `hash_bang_line`) never owns the gap.
 - A compound with no slots and at least two tokens has the one gap `interior` after its first token.
 
@@ -4762,15 +4767,15 @@ The alternatives a kind's text can begin with (`LeadAlternative`): each literal,
 
 ### `packages/codegen/src/compiler/model/trivia.ts::emptyForms`
 
-The kinds a builder can make with nothing in them, keyed by kind: every compound with a factory and at least one inner gap. Having an inner gap already means the kind realizes empty, so no emitter checks emptiness again. Each gets an `Empty<TypeName>` form, and it throws when another kind already names that type. The result is cached per node map because five emitters read it.
+The kinds a builder can make with nothing in them, keyed by kind: every compound with a factory and an inner side (`innerKinds`). Having an inner gap already means the kind realizes empty, so no emitter checks emptiness again. Each gets an `Empty<TypeName>` form, and it throws when another kind already names that type. The result is cached per node map because five emitters read it.
 
-### `packages/codegen/src/compiler/model/trivia.ts::innerGapsKeyed`
+### `packages/codegen/src/compiler/model/trivia.ts::innerKinds`
 
-True when some kind's empty form has more than one inner gap, so a gap has to be named when writing to it. Only then does `InnerTrivia` take a `Gap` parameter and an `innerAt(gap, ...)` method. With one gap per kind, `inner(...)` already says where the entries go.
+The kinds whose template renders an inner side (`innerSite`), cached per node map. The emitted `INNER_SITES` and `emptyForms` read it, so the surface, the facts and the render agree on which kinds take `inner`.
 
 ### `packages/codegen/src/compiler/model/trivia.ts::EmptyForm`
 
-One kind's empty form: the emitted type name (`Empty<TypeName>`) and the keys of its inner gaps, in render order. When some kind has more than one gap (`innerGapsKeyed`), those keys are the `Gap` union of its `InnerTrivia`.
+One kind's empty form: the emitted type name (`Empty<TypeName>`).
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.lexedInterior`
 

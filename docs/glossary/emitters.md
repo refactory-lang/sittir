@@ -1141,7 +1141,7 @@ The `@sittir/types` vocabulary a generated types module may import, in the order
 
 ### `packages/codegen/src/emitters/types.ts::emitGrammarTypeMap`
 
-The grammar's `GrammarTypeMap`: `namespaces` is its `NamespaceMap`, `empty` pairs each kind that realizes empty (`emptyForms`) with its `Empty<TypeName>` form (`never` when none does), once per form of the node: the main interface and `.Bound` with `Empty<TypeName>`, and `.Parsed` with `Empty<TypeName>.Parsed`. `engine.isEmptyNode` looks its argument up by exact form, so the node an accessor returns narrows without the checker comparing a parsed surface to a built one; `Empty<TypeName>.Parsed` adds only the inner-trivia `$trivia` to `.Parsed`, because the built empty form extends `.Bound` and intersecting the two surfaces in full exceeds the checker's depth. and `trivia` is the union of its trivia kind types (`buildTriviaNodeType`). The three per-grammar aliases the node types use read the map's `trivia` member, so it is their one source: `NodeMethodsOf`, `TriviaSetterOf<Self>`, and `InnerTrivia<N>`, which takes a `Gap` parameter and becomes `GrammarInnerTriviaAt` when some kind has more than one gap (`innerGapsKeyed`).
+The grammar's `GrammarTypeMap`: `namespaces` is its `NamespaceMap`, `empty` pairs each kind that realizes empty (`emptyForms`) with its `Empty<TypeName>` form (`never` when none does), once per form of the node: the main interface and `.Bound` with `Empty<TypeName>`, and `.Parsed` with `Empty<TypeName>.Parsed`. `engine.isEmptyNode` looks its argument up by exact form, so the node an accessor returns narrows without the checker comparing a parsed surface to a built one; `Empty<TypeName>.Parsed` adds only the inner-trivia `$trivia` to `.Parsed`, because the built empty form extends `.Bound` and intersecting the two surfaces in full exceeds the checker's depth. and `trivia` is the union of its trivia kind types (`buildTriviaNodeType`). The three per-grammar aliases the node types use read the map's `trivia` member, so it is their one source: `NodeMethodsOf`, `TriviaSetterOf<Self>`, and `InnerTrivia<N>`.
 
 ### `packages/codegen/src/emitters/from.ts::buildSupertypeByKey`
 
@@ -5063,10 +5063,7 @@ arms, so a gap prints once.
 
 ### `packages/codegen/src/emitters/render-body.ts::RustBodyPrinter.innerGap`
 
-Whether a slot name is one of the node's inner-trivia gaps
-(`AbstractAssembledCompound.innerGaps`), the keys the reader files ownerless
-extras under (each transport's `gap(n) = key` attributes). `render-module.ts` supplies it
-from the node the body renders.
+Whether a slot name is the node's inner site (`AbstractAssembledCompound.innerSite`), where the body renders the transport's inner entries. `render-module.ts` supplies it from the node the body renders.
 
 ### `packages/codegen/src/emitters/render-body.ts::escapeBraces`
 
@@ -8991,7 +8988,7 @@ The types module of `emitTypesModules`, for callers that need only the public su
 // generated interface name can ever contain `$`.
 ```
 
-After the namespaces, one `Empty<TypeName>` interface per empty form. It extends the kind's `Built`, and its `$trivia` adds `InnerTrivia<this>`, keyed by the form's gap keys only under `innerGapsKeyed`. It uses `this` because the base declares `TriviaSetterOf<this>`.
+After the namespaces, one `Empty<TypeName>` interface per empty form. It extends the kind's `Built`, and its `$trivia` adds `InnerTrivia<this>`. It uses `this` because the base declares `TriviaSetterOf<this>`.
 
 ### `packages/codegen/src/emitters/types.ts::NodeCategories`
 
@@ -10117,7 +10114,7 @@ Emits the grammar's `utils.ts`: its trivia facts (`triviaFacts`) and the runtime
 Emits `triviaFacts`, the grammar's `TriviaFacts`, which the language hooks carry to the engine, and which a node's `$trivia` reads through its engine:
 - `kindName`, from `KIND_NAMES`;
 - `kinds`, the trivia kind names (`triviaKinds`); the runtime refuses a node or kind id of any other kind, saying it is not an extra;
-- `innerGaps` (`INNER_GAPS`);
+- `innerKinds` (`INNER_SITES`), the kinds with an inner side;
 - `whitespace` (`whitespaceTrivia`), when the grammar has lexical extras: loose text the extras run accepts becomes the kind id of the whitespace kind spelled exactly so, and any other such text is refused;
 - `rebuildWrappers` (`rebuildWrapperKindIds`), engine plumbing: the kind ids of what a rebuild constructs around an existing node;
 - `listKinds` (`listKindIds`), engine plumbing: the kind ids of the grammar's list kinds, the only nodes that have list flanks.
@@ -10317,8 +10314,6 @@ passes the generator's `generatedIdTables` through for that reason.
 
 `textLeavesThrough` publishes `transparentEnvelopeTextLeaves` per envelope, so the loose source emitter predicts which bare strings the coercer routes through an envelope.
 
-`innerGapsKeyed` publishes the predicate that decided whether the emitted `InnerTrivia` takes a gap key, so the source emitter prints the inner-trivia surface that was emitted: `innerAt(gap, …)` when keyed, `.inner(…)` otherwise.
-
 `root` is the grammar's root kind (`NodeMap.root`, the first rule), so tools reparse a rendered root without naming it per grammar.
 
 `externals` and `extras` are the grammar's rule lists, serialized as grammar.json holds them (SYMBOL, STRING and PATTERN entries, in declaration order).
@@ -10427,7 +10422,7 @@ package itself. Consumes the NodeMap directly.
 ### `packages/codegen/src/emitters/consts.ts::emitConsts`
 
 Prints `TOKEN_INTERIORS` (read by the generated `wrap.ts` and
-`factories/coerce.ts`), `INNER_GAPS` (read by the generated `utils.ts`) and,
+`factories/coerce.ts`), `INNER_SITES` (read by the generated `utils.ts`) and,
 when a grammar has bitflag fields, their enums (read through the imports
 `types.ts` builds with `resolveBitflagConstName`). Kind names and ids are not
 repeated here: `KIND_NAMES` and `TSKindId` in `types.ts` are their one source.
@@ -14767,11 +14762,9 @@ The leaf entries of an interior tree in order, the flat list consumers read.
 Emits `TOKEN_INTERIORS`, the runtime table (`regex`, `slots`) of every lexed kind, typed by `TokenInterior`.
 ```
 
-### `packages/codegen/src/emitters/consts.ts::emitInnerGaps`
+### `packages/codegen/src/emitters/consts.ts::emitInnerKinds`
 
-Emits `INNER_GAPS`: for every compound with inner gaps, the gap keys in render order, from the node map's `innerGaps` rows (the same rows each Rust transport's `gap(n) = key` attributes print). `$trivia.inner` writes to the first key, and `$trivia.innerAt(key)` to a named one; a kind with no row has no inner position.
-
-The table and each row's key list are frozen.
+Emits `INNER_SITES`: the kinds with an inner side (`innerKinds`), sorted. `$trivia.inner` writes only to a node of one of them; a kind with none has no inner side.
 
 ### `packages/codegen/src/emitters/shared.ts::holdsOwnKind`
 
@@ -15054,11 +15047,11 @@ A builder's reader for one slot: it hydrates when the slot's storage holds nodes
 
 ### `packages/codegen/src/emitters/node-members.ts::innerPositionsOf`
 
-Whether a kind's `$trivia` carries `inner`, and `innerAt`. `inner` is present exactly for the kinds in `emptyForms` (the kinds with an inner gap, which the type surface offers `inner` on as their empty form), and `innerAt` only when the grammar keys its gaps (`innerGapsKeyed`). The types and the literal read the same fact, so they cannot drift.
+Whether a kind's `$trivia` carries `inner`: exactly for the kinds in `emptyForms` (the kinds with an inner side, which the type surface offers `inner` on as their empty form). The types and the literal read the same fact, so they cannot drift.
 
 ### `packages/codegen/src/emitters/node-members.ts::triviaInnerImports`
 
-The inner-trivia functions a grammar's builder module imports: none when no kind has an inner gap, `triviaInner` when some does, and `triviaInnerAt` as well when the gaps are keyed. Unused imports would fail the lint of the generated file.
+The inner-trivia function a grammar's builder module imports: none when no kind has an inner side, `triviaInner` when some does. Unused imports would fail the lint of the generated file.
 
 ### `packages/codegen/src/emitters/node-members.ts::withEntry`
 

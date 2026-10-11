@@ -637,7 +637,7 @@ function printStatements(
 		if (seated.has(name) || printer.innerGap?.(name) !== true) return;
 		seated.add(name);
 		lines.push(
-			`${pad}::sittir_core::trivia::render_inner(node.layout.trivia(), ${rustStringLiteral(name)}, w)?;`
+			`${pad}::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;`
 		);
 	};
 	let literal = '';
@@ -738,7 +738,7 @@ function printStatements(
 					const test =
 						arm.kinds === undefined
 							? arm.test === paddedGap
-								? `${printer.field(arm.test)}.is_present() || ::sittir_core::trivia::has_inner(node.layout.trivia(), ${rustStringLiteral(arm.test)})`
+								? `${printer.field(arm.test)}.is_present() || ::sittir_core::trivia::has_inner(node.layout.trivia())`
 								: `${printer.field(arm.test)}.is_present()`
 							: `${printer.field(arm.test)}.kind_in(&*w, ${printer.kinds(arm.kinds)})`;
 					lines.push(`${pad}${i === 0 ? 'if' : '} else if'} ${test} {`);

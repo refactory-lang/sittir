@@ -226,7 +226,7 @@ function assembleEngine<API extends LanguageAPI>(
 			return (
 				engine.isNode(node) &&
 				kind !== undefined &&
-				hooks.trivia.innerGaps[kind] !== undefined &&
+				hooks.trivia.innerKinds.has(kind) &&
 				isEmptyUntypedNode(node)
 			);
 		}) as Engine<API>['isEmptyNode'],

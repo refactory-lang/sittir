@@ -3,12 +3,12 @@
 import type { AnyUntypedNode, QuerySlots, TriviaFacts } from '@sittir/types';
 import { bindRuntime } from '@sittir/common/utils';
 import { KIND_NAMES, type ScmTypeMap } from './types.js';
-import { INNER_GAPS } from './consts.js';
+import { INNER_SITES } from './consts.js';
 
 export const triviaFacts = Object.freeze({
 	kindName: (type: AnyUntypedNode['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
 	kinds: new Set<string>(['_blankline', '_double_blankline', '_newline', '_space', '_tab', 'comment']),
-	innerGaps: INNER_GAPS,
+	innerKinds: INNER_SITES,
 	rebuildWrappers: new Set<number>([54, 58, 61, 62, 63, 64]),
 	listKinds: new Set<number>([]),
 	whitespace: Object.freeze({

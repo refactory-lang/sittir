@@ -105,6 +105,6 @@ function snapshotTrivia(
 	return {
 		...(leading && { leading: entries(leading, outer) }),
 		...(trailing && { trailing: entries(trailing, outer) }),
-		...(inner && { inner: Object.fromEntries(Object.entries(inner).map(([gap, list]) => [gap, list && entries(list, own)])) })
+		...(inner && { inner: entries(inner, own) })
 	};
 }

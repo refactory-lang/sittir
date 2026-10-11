@@ -12,7 +12,6 @@ use crate::options::Side;
 use crate::render::{Render, RenderResult, RenderSink};
 use crate::types::KindId;
 use crate::slot::SlotValue;
-use std::collections::BTreeMap;
 
 /// One trivia entry: the node (or the coordinate of one), whether it shares
 /// a row with its owner, and on a same-line trailing entry the anonymous
@@ -54,8 +53,7 @@ impl<T: crate::prepare::Prepare> crate::prepare::Prepare for TransportTrivia<T> 
     /// kind's edges, as a coordinate in a slot does.
     fn prepare(&mut self, ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError> {
         let sides = self.leading.iter_mut().chain(self.trailing.iter_mut());
-        let inner = self.inner.iter_mut().flat_map(|gaps| gaps.values_mut());
-        for entry in sides.chain(inner).flatten() {
+        for entry in sides.chain(self.inner.iter_mut()).flatten() {
             entry.value.prepare(ctx)?;
         }
         Ok(())
@@ -100,7 +98,7 @@ impl crate::prepare::Prepare for TriviaText {
 pub struct TransportTrivia<T> {
     pub leading: Option<Vec<TriviaEntry<T>>>,
     pub trailing: Option<Vec<TriviaEntry<T>>>,
-    pub inner: Option<BTreeMap<String, Vec<TriviaEntry<T>>>>,
+    pub inner: Option<Vec<TriviaEntry<T>>>,
 }
 
 impl<T> Default for TransportTrivia<T> {
@@ -369,13 +367,12 @@ impl<T: Render + TriviaSeam> TransportTrivia<T> {
         Ok(())
     }
 
-    /// The inner entries at the gap `key`, where the owner renders that gap's
-    /// slot: one per line when the gap starts a line (the start of a block
-    /// body, which the body's own indent and dedent frame, or output standing
-    /// at a line start, as at the grammar root), and joined by spaces
-    /// anywhere else.
-    pub fn render_inner(&self, key: &str, w: &mut dyn RenderSink) -> RenderResult {
-        let Some(entries) = self.inner.as_ref().and_then(|inner| inner.get(key)) else {
+    /// The inner entries, where the owner renders its inner site: one per
+    /// line when the site starts a line (the start of a block body, which the
+    /// body's own indent and dedent frame, or output standing at a line
+    /// start, as at the grammar root), and joined by spaces anywhere else.
+    pub fn render_inner(&self, w: &mut dyn RenderSink) -> RenderResult {
+        let Some(entries) = self.inner.as_ref() else {
             return Ok(());
         };
         let between = if w.at_body_start() || w.ends_line() { LayoutKinds::NEWLINE } else { LayoutKinds::SPACE };
@@ -383,19 +380,15 @@ impl<T: Render + TriviaSeam> TransportTrivia<T> {
     }
 }
 
-/// Whether a transport's trivia holds inner entries at gap `key`.
-pub fn has_inner<T: Render + TriviaSeam>(trivia: Option<&TransportTrivia<T>>, key: &str) -> bool {
-    trivia.is_some_and(|trivia| trivia.inner.as_ref().is_some_and(|inner| inner.get(key).is_some_and(|entries| !entries.is_empty())))
+/// Whether a transport's trivia holds inner entries.
+pub fn has_inner<T: Render + TriviaSeam>(trivia: Option<&TransportTrivia<T>>) -> bool {
+    trivia.is_some_and(|trivia| trivia.inner.as_ref().is_some_and(|entries| !entries.is_empty()))
 }
 
-/// The inner entries at gap `key` of a transport's trivia, if it has any.
-pub fn render_inner<T: Render + TriviaSeam>(
-    trivia: Option<&TransportTrivia<T>>,
-    key: &str,
-    w: &mut dyn RenderSink,
-) -> RenderResult {
+/// The inner entries of a transport's trivia, if it has any.
+pub fn render_inner<T: Render + TriviaSeam>(trivia: Option<&TransportTrivia<T>>, w: &mut dyn RenderSink) -> RenderResult {
     match trivia {
-        Some(trivia) => trivia.render_inner(key, w),
+        Some(trivia) => trivia.render_inner(w),
         None => Ok(()),
     }
 }
@@ -450,44 +443,22 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         use crate::boundary::property;
-        let inner = match unsafe { property::<::napi::bindgen_prelude::Object>(env, napi_val, c"inner")? } {
-            None => None,
-            Some(gaps) => {
-                let mut inner = BTreeMap::new();
-                for key in ::napi::bindgen_prelude::Object::keys(&gaps)? {
-                    if let Some(entries) = gaps.get::<Vec<TriviaEntry<T>>>(&key)? {
-                        inner.insert(key, entries);
-                    }
-                }
-                Some(inner)
-            }
-        };
         Ok(Self {
             leading: unsafe { property(env, napi_val, c"leading")? },
             trailing: unsafe { property(env, napi_val, c"trailing")? },
-            inner,
+            inner: unsafe { property(env, napi_val, c"inner")? },
         })
     }
 }
 
 #[cfg(feature = "napi-bindings")]
 impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for TransportTrivia<T> {
-    /// `{ leading?, trailing?, inner? }`, each only when present. An inner
-    /// gap's name is data, so its key is too: the gaps object is defined, not
-    /// assigned, so any name (`__proto__` included) stays an own property.
+    /// `{ leading?, trailing?, inner? }`, each only when present.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
-        use crate::boundary::{object_with, object_with_present, present, present_with};
+        use crate::boundary::{object_with_present, present};
         let leading = unsafe { present(env, c"leading", val.leading)? };
         let trailing = unsafe { present(env, c"trailing", val.trailing)? };
-        let inner = present_with(c"inner", val.inner, |inner| {
-            let mut fields = Vec::with_capacity(inner.len());
-            for (name, entries) in inner {
-                let name = ::std::ffi::CString::new(name).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
-                fields.push((name, unsafe { Vec::to_napi_value(env, entries)? }));
-            }
-            let fields: Vec<_> = fields.iter().map(|(name, entries)| (name.as_c_str(), *entries)).collect();
-            unsafe { object_with(env, &fields) }
-        })?;
+        let inner = unsafe { present(env, c"inner", val.inner)? };
         unsafe { object_with_present(env, &[leading, trailing, inner]) }
     }
 }

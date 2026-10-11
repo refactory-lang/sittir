@@ -108,7 +108,7 @@ import type { RefineKindInfo } from './refine-emit.ts';
 import { layoutKindAliasesOf, hintEmitterOf, type AddressTables, type HintEmitter, type HintRoot } from './options.ts';
 import type { SitePreference } from '../compiler/model/site-preferences.ts';
 import { displayNameOf, displayedKinds, ownsItsDisplay } from '../compiler/model/display-name.ts';
-import { emptyForms, innerGapsKeyed } from '../compiler/model/trivia.ts';
+import { emptyForms } from '../compiler/model/trivia.ts';
 
 type StructuralNode = SlotBearingCompound;
 
@@ -392,12 +392,10 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 	}
 	lines.push('');
 
-	const keyed = innerGapsKeyed(nodeMap);
-	lines.push(...emitGrammarTypeMap(grammar, nodeMap, config.triviaKinds ?? [], keyed));
+	lines.push(...emitGrammarTypeMap(grammar, nodeMap, config.triviaKinds ?? []));
 	for (const [kind, empty] of emptyForms(nodeMap)) {
 		const node = nodeMap.nodes.get(kind)!;
-		const gaps = keyed ? `, ${empty.gaps.map((gap) => JSON.stringify(gap)).join(' | ')}` : '';
-		const innerTrivia = (self: string): string => `readonly $trivia: TriviaSetterOf<${self}> & InnerTrivia<${self}${gaps}>;`;
+		const innerTrivia = (self: string): string => `readonly $trivia: TriviaSetterOf<${self}> & InnerTrivia<${self}>;`;
 		lines.push(
 			...(groupSeatHints(node, nodeMap, kindEntries).length > 0
 				? [`export type ${empty.typeName} = ${node.typeName}.Bound & {`, `  ${innerTrivia(empty.typeName)}`, '};']
@@ -484,7 +482,6 @@ const VOCABULARY_IMPORTS = [
 	'HoldsTree',
 	'TriviaSetter',
 	'GrammarInnerTrivia',
-	'GrammarInnerTriviaAt',
 	'SlotHint',
 	'ListViewHint',
 	'ListSlotHint',
@@ -501,7 +498,7 @@ const VOCABULARY_IMPORTS = [
 	'Snapshot'
 ];
 
-function emitGrammarTypeMap(grammar: string, nodeMap: NodeMap, triviaKinds: readonly string[], keyed: boolean): string[] {
+function emitGrammarTypeMap(grammar: string, nodeMap: NodeMap, triviaKinds: readonly string[]): string[] {
 	const map = grammarTypeMapName(grammar);
 	const trivia = `${map}['trivia']`;
 	const empties = [...emptyForms(nodeMap)].flatMap(([kind, empty]) => {
@@ -521,9 +518,7 @@ function emitGrammarTypeMap(grammar: string, nodeMap: NodeMap, triviaKinds: read
 		'',
 		`export type NodeMethodsOf = NodeMethods<${trivia}>;`,
 		`export type TriviaSetterOf<Self> = TriviaSetter<Self, ${trivia}>;`,
-		keyed
-			? `export type InnerTrivia<N, Gap extends string> = GrammarInnerTriviaAt<N, ${trivia}, Gap>;`
-			: `export type InnerTrivia<N> = GrammarInnerTrivia<N, ${trivia}>;`,
+		`export type InnerTrivia<N> = GrammarInnerTrivia<N, ${trivia}>;`,
 		''
 	];
 }

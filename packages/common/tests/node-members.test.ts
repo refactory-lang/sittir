@@ -13,19 +13,18 @@ import {
 	renderText,
 	seatWith,
 	triviaInner,
-	triviaInnerAt,
 	triviaSide
 } from '../src/utils.ts';
 
 const comment = (text: string): AnyUntypedNode => ({ $type: 9, $source: 2, $text: text });
-const facts = (gaps: Record<string, readonly string[]> = {}) => ({
+const facts = (inner: readonly string[] = []) => ({
 	kindName: (type: unknown) => (type === 9 ? 'comment' : type === 1 ? 'block' : undefined),
 	kinds: new Set(['comment']),
-	innerGaps: gaps,
+	innerKinds: new Set(inner),
 	rebuildWrappers: new Set<number>(),
 	listKinds: new Set<number>()
 });
-const handleOf = (gaps?: Record<string, readonly string[]>) => liveHandle({ render: () => 'rendered', trivia: facts(gaps) });
+const handleOf = (inner?: readonly string[]) => liveHandle({ render: () => 'rendered', trivia: facts(inner) });
 
 describe('renderText', () => {
 	it('renders through the handle it is given, and refuses with none', () => {
@@ -56,7 +55,7 @@ describe('rebuilt', () => {
 
 	it('refuses inner comments on a node that is no longer empty', () => {
 		const handle = handleOf();
-		const source = { $type: 1, $source: 2, $_layout: { trivia: { inner: { body: [comment('// c')] } } } } as unknown as AnyUntypedNode;
+		const source = { $type: 1, $source: 2, $_layout: { trivia: { inner: [comment('// c')] } } } as unknown as AnyUntypedNode;
 		expect(() => rebuilt(source, handle, () => ({ $type: 1, $source: 2, _a: 'v' }) as unknown as AnyUntypedNode)).toThrow(
 			'holds inner comments'
 		);
@@ -80,17 +79,15 @@ describe('trivia positions', () => {
 		expect(() => triviaSide(node, undefined, 'leading', [])).toThrow('node has no engine');
 	});
 
-	it('write inner entries only to an empty node of a kind with inner gaps', () => {
-		const handle = handleOf({ block: ['body', 'tail'] });
+	it('write inner entries only to an empty node of a kind with an inner site', () => {
+		const handle = handleOf(['block']);
 		const empty = { $type: 1, $source: 2, _statements: [] } as unknown as AnyUntypedNode;
 		expect(triviaInner(empty, handle, [comment('// x')])).toBe(empty);
-		expect(empty.$_layout?.trivia?.inner?.body).toHaveLength(1);
-		expect(triviaInnerAt(empty, handle, 'tail', [comment('// y')])).toBe(empty);
-		expect(triviaInnerAt(empty, handle, 'tail', [])).toHaveLength(1);
-		expect(() => triviaInnerAt(empty, handle, 'nope', [comment('// z')])).toThrow("has no gap 'nope'");
+		expect(empty.$_layout?.trivia?.inner).toHaveLength(1);
+		expect(triviaInner(empty, handle, [])).toHaveLength(1);
 		const full = { $type: 1, $source: 2, _statements: [1] } as unknown as AnyUntypedNode;
 		expect(() => triviaInner(full, handle, [comment('// x')])).toThrow('not empty');
-		expect(() => triviaInner({ $type: 2, $source: 2 } as AnyUntypedNode, handle, [comment('// x')])).toThrow('no inner gap');
+		expect(() => triviaInner({ $type: 2, $source: 2 } as AnyUntypedNode, handle, [comment('// x')])).toThrow('no inner site');
 	});
 });
 

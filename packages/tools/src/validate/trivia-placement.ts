@@ -1,7 +1,7 @@
 import { assertGrammar, stableGrammars } from '@sittir/codegen/grammars';
 import { loadCorpusEntries, loadKindNameFromId, loadLanguageForGrammar, loadNativeEngine, readNativeTree, type TSNode, type TSTree } from './common.ts';
 
-export type TriviaPosition = 'leading' | 'trailing' | `inner:${string}` | 'lost';
+export type TriviaPosition = 'leading' | 'trailing' | 'inner' | 'lost';
 
 export interface TriviaPlacementRow {
 	readonly entry: string;
@@ -18,7 +18,7 @@ export interface TriviaPlacementSummary {
 	readonly extras: number;
 	readonly leading: number;
 	readonly trailing: number;
-	readonly inner: Readonly<Record<string, number>>;
+	readonly inner: number;
 	readonly lost: number;
 }
 
@@ -34,7 +34,7 @@ interface ReadEntry {
 interface ReadTrivia {
 	readonly leading?: readonly ReadEntry[];
 	readonly trailing?: readonly ReadEntry[];
-	readonly inner?: Readonly<Record<string, readonly ReadEntry[]>>;
+	readonly inner?: readonly ReadEntry[];
 }
 
 interface Placement {
@@ -67,7 +67,7 @@ function readPlacements(root: unknown): Map<string, Placement> {
 		if (trivia !== undefined && typeof node.$type === 'number') {
 			place(trivia.leading, node.$type, 'leading');
 			place(trivia.trailing, node.$type, 'trailing');
-			for (const [key, entries] of Object.entries(trivia.inner ?? {})) place(entries, node.$type, `inner:${key}`);
+			place(trivia.inner, node.$type, 'inner');
 		}
 		for (const [key, child] of Object.entries(node)) if (key !== '$_layout') visit(child);
 	};
@@ -122,8 +122,6 @@ export async function computeTriviaPlacementCensus(grammar: string): Promise<Tri
 		const parsed = parse(entry.source);
 		if (!parsed.rootNode.hasError) rows.push(...place(entry.name, entry.source, parsed));
 	}
-	const inner: Record<string, number> = {};
-	for (const { position } of rows) if (position.startsWith('inner:')) inner[position] = (inner[position] ?? 0) + 1;
 	const count = (position: TriviaPosition): number => rows.filter((row) => row.position === position).length;
 	return {
 		rows,
@@ -133,7 +131,7 @@ export async function computeTriviaPlacementCensus(grammar: string): Promise<Tri
 			extras: rows.length,
 			leading: count('leading'),
 			trailing: count('trailing'),
-			inner,
+			inner: count('inner'),
 			lost: count('lost')
 		}
 	};
