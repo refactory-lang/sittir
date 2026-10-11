@@ -27,7 +27,7 @@ import {
 	transitiveParseKinds
 } from '../../types/rule.ts';
 import { isStringType, realizesEmpty, type EmptinessCtx } from '../../types/runtime-shapes.ts';
-import { isDepthText } from '../../dsl/primitives/spacing.ts';
+import { DEDENT_TEXT, isDepthText } from '../../dsl/primitives/spacing.ts';
 import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
 import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { findEntryForKindName, findEntryForLiteralText, findOwnKindEntry, isAliasedHiddenStorage, seatedOf, surfaceHiddenOf } from '../../dsl/symbol-table.ts';
@@ -48,7 +48,7 @@ import { wordCharAsciiTable } from '../../util/word-matcher.ts';
 const renderRuleWalker = new RuleWalker<RenderRule>();
 const anyRuleWalker = new RuleWalker<AnyRule>();
 
-export type LineEnd = 'open' | 'closed' | 'empty' | { readonly symbol: string };
+export type LineEnd = 'open' | 'closed' | 'dedent' | 'empty' | { readonly symbol: string };
 
 export type EdgeTerminal = { readonly literal: string } | { readonly pattern: string } | 'empty' | { readonly symbol: string };
 
@@ -91,7 +91,7 @@ function seqEdgeTerminals(fromEdge: readonly AnyRule[], ctx: EdgeCtx): EdgeTermi
 function ruleLineEnds(rule: AnyRule, ctx: LineEndCtx): LineEnd[] {
 	return ruleEdgeTerminals(rule, { edge: 'end' }).map((terminal) => {
 		if (terminal === 'empty' || 'symbol' in terminal) return terminal;
-		if ('literal' in terminal) return 'closed';
+		if ('literal' in terminal) return terminal.literal === DEDENT_TEXT ? 'dedent' : 'closed';
 		const opens = opensLineEnd(terminal.pattern);
 		if (opens === undefined) {
 			throw new Error(

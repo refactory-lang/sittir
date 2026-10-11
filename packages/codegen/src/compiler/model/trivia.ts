@@ -227,7 +227,7 @@ function resolvedLineEnds(nodeMap: NodeMap, kind: string, seen: ReadonlySet<stri
 	const node = nodeMap.nodes.get(kind);
 	if (node === undefined || seen.has(kind)) return ['unknown'];
 	const within = new Set([...seen, kind]);
-	return node.lineEnds.flatMap((end) => (typeof end === 'string' ? [end] : resolvedLineEnds(nodeMap, end.symbol, within)));
+	return node.lineEnds.flatMap((end) => (end === 'dedent' ? ['closed'] : typeof end === 'string' ? [end] : resolvedLineEnds(nodeMap, end.symbol, within)));
 }
 
 function verdict(ends: readonly ResolvedLineEnd[]): boolean | undefined {
@@ -306,16 +306,16 @@ export function lineTerminatedKinds(nodeMap: NodeMap): ReadonlySet<string> {
 }
 
 export function lineBreakTerminated(nodeMap: NodeMap, kind: string): boolean {
-	return endsInNewlineRole(nodeMap, kind, new Set());
+	return endsInLineBreak(nodeMap, kind, new Set());
 }
 
-function endsInNewlineRole(nodeMap: NodeMap, kind: string, seen: ReadonlySet<string>): boolean {
+function endsInLineBreak(nodeMap: NodeMap, kind: string, seen: ReadonlySet<string>): boolean {
 	const node = nodeMap.nodes.get(kind);
 	if (node === undefined || seen.has(kind)) return false;
-	if (node.externalRole === 'newline') return true;
+	if (node.externalRole === 'newline' || node.externalRole === 'dedent') return true;
 	const within = new Set([...seen, kind]);
 	const ends = node.lineEnds;
-	return ends.length > 0 && ends.every((end) => typeof end !== 'string' && endsInNewlineRole(nodeMap, end.symbol, within));
+	return ends.length > 0 && ends.every((end) => end === 'dedent' || (typeof end !== 'string' && endsInLineBreak(nodeMap, end.symbol, within)));
 }
 
 const lineBreakTerminatedKindsByNodeMap = new WeakMap<NodeMap, ReadonlySet<string>>();

@@ -3,7 +3,7 @@ import { compileGrammar } from '../../compile.ts';
 import { loadGeneratedIdTables } from '../../generated-metadata.ts';
 import { grammarPackage } from '../../../grammars.ts';
 import { AbstractAssembledCompound } from '../node-map.ts';
-import { defaultTriviaForm, lexicalExtrasRun, lineTerminated, triviaKinds, whitespaceTrivia, whitespaceTriviaKinds } from '../trivia.ts';
+import { defaultTriviaForm, lexicalExtrasRun, lineBreakTerminated, lineTerminated, triviaKinds, whitespaceTrivia, whitespaceTriviaKinds } from '../trivia.ts';
 import { assertWhitespaceAdmitted } from '../../assemble.ts';
 import { collectGrammarDiagnosticsForGrammar } from '../../diagnostics/grammar-diagnostics.ts';
 import { evaluateTempGrammar } from '../../__tests__/_temp-grammar.ts';
@@ -179,5 +179,12 @@ describe('trivia model facts', () => {
 		const rust = await nodeMapOf('rust');
 		expect(() => assertWhitespaceAdmitted(rust)).not.toThrow();
 		expect(() => assertWhitespaceAdmitted({ ...rust, nodelessExtrasRun: /^(?:\t)+$/ })).toThrow(/lists '_space'/);
+	});
+
+	it('ends a line at the dedent that closes an indentation level, as at the newline token', async () => {
+		const python = await nodeMapOf('python');
+		expect(lineBreakTerminated(python, '_dedent')).toBe(true);
+		expect(lineBreakTerminated(python, 'block')).toBe(true);
+		expect(lineBreakTerminated(python, '_indent')).toBe(false);
 	});
 });

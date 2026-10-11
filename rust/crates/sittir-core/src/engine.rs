@@ -534,7 +534,9 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// child indices, from the node at `handle`, of the last node an earlier
     /// batch visited; the walk continues after it. `depth` bounds the levels
     /// walked below `from` (every level when absent). An extra is trivia: the
-    /// walk neither returns nor enters it.
+    /// walk neither returns nor enters it. A depth member the parser issues
+    /// (`SurfaceKinds::indent`, `dedent`) is the op that opens or closes a
+    /// level, not structure: the walk does not return it.
     pub fn descendants(
         &self,
         from: Address,
@@ -555,6 +557,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
         let mut path: Vec<u32> = Vec::new();
         let mut coordinates = Vec::new();
         let ctx = crate::read::ReadCtx::new(&self.source, self.tree_id, self.grammar.shows());
+        let surface = self.grammar.surface_kinds();
+        let depth_member = |node: &tree_sitter::Node<'_>| node.grammar_id() != 0 && [surface.indent, surface.dedent].contains(&node.grammar_id());
         if let Some(resume) = resume {
             for &child in resume {
                 if !cursor.goto_first_child() {
@@ -573,6 +577,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
             let node = cursor.node();
             if node.is_named()
                 && !node.is_extra()
+                && !depth_member(&node)
                 && (kinds.is_empty() || kinds.contains(&ctx.stamped_kind(KindId(node.grammar_id()), display_id(&node)).0))
                 && plan.is_none_or(|plan| plan.holds(&node, &self.source))
             {

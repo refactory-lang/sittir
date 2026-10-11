@@ -4683,11 +4683,11 @@ A pattern's reading is exact: `opensLineEnd` decides it from the pattern's autom
 
 ### `packages/codegen/src/compiler/model/node-map.ts::LineEnd`
 
-One way a kind's text can end: `open`, `closed`, `empty`, or the kind named by `symbol`.
+One way a kind's text can end: `open`, `closed`, `dedent` (the dedent marker that closes an indentation level), `empty`, or the kind named by `symbol`.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::ruleLineEnds`
 
-`lineEnds` from the end terminals (`ruleEdgeTerminals`): a literal is `closed`, and a pattern is `open` exactly when `opensLineEnd` holds for it. A pattern the automaton cannot read stops codegen naming the kind and the pattern, so no pattern silently reads `closed`.
+`lineEnds` from the end terminals (`ruleEdgeTerminals`): the dedent marker (`DEDENT_TEXT`) is `dedent`, any other literal is `closed`, and a pattern is `open` exactly when `opensLineEnd` holds for it. A pattern the automaton cannot read stops codegen naming the kind and the pattern, so no pattern silently reads `closed`.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::EdgeTerminal`
 
@@ -4757,7 +4757,7 @@ Whether a kind's text always ends its line, so the next token must start on a ne
 
 ### `packages/codegen/src/compiler/model/trivia.ts::lineBreakTerminated`
 
-Whether every way a kind's text can end reaches the grammar's declared newline token: the kind is one whose node carries the `newline` role (`AssembledNodeBase.externalRole`), or every one of its `lineEnds` is a symbol that is. A literal, a pattern or an empty end is false. It is a different fact from `lineTerminated`: the token lies outside the span of the kind that ends in it (python's `_simple_statements` ends in `_newline`, and its span stops before the line break), so a source slice of the kind never ends its line. Only python declares a newline role: its `_simple_statements`, `decorator`, `suite_inline` and `suite_empty` hold, and no rust, typescript, scm or regex kind does.
+Whether every way a kind's text can end reaches a line break outside its span: the kind is one whose node carries the `newline` or `dedent` role (`AssembledNodeBase.externalRole`), or every one of its `lineEnds` is the `dedent` marker or a symbol that is. Closing an indentation level always ends the line, so a kind ending in its dedent holds as one ending in the newline token does, whether or not the parse exposes the dedent as a node. Any other literal, a pattern or an empty end is false; `lineTerminated` reads a `dedent` end as `closed`. It is a different fact from `lineTerminated`: the token lies outside the span of the kind that ends in it (python's `_simple_statements` ends in `_newline`, and its span stops before the line break), so a source slice of the kind never ends its line. Only python declares a newline role: its `_simple_statements`, `decorator`, `suite_inline`, `suite_empty` and, through the dedent, `block` and `suite_block` hold. In rust, typescript and scm only the dedent member kind does, and no regex kind does.
 
 ### `packages/codegen/src/compiler/model/trivia.ts::lineBreakTerminatedKinds`
 
