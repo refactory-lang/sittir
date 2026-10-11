@@ -1790,8 +1790,38 @@
       ]
     },
     "comparison_operator": {
-      "vocab": "expression.binary",
+      "vocab": "expression.binary.comparison",
       "read": [
+        {
+          "vocab": "expression.binary.comparison.chain",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [
+                    "comparators"
+                  ],
+                  "kinds": [],
+                  "anchor": "only"
+                }
+              ],
+              "plan": {
+                "op": "not",
+                "of": {
+                  "op": "is",
+                  "types": [
+                    297
+                  ],
+                  "self": true
+                }
+              }
+            }
+          ]
+        },
         {
           "vocab": "expression.binary.comparison.equal",
           "toplevel": true,
@@ -1805,7 +1835,8 @@
                   "fields": [
                     "comparators"
                   ],
-                  "kinds": []
+                  "kinds": [],
+                  "anchor": "only"
                 }
               ],
               "plan": {
@@ -1832,7 +1863,8 @@
                   "fields": [
                     "comparators"
                   ],
-                  "kinds": []
+                  "kinds": [],
+                  "anchor": "only"
                 }
               ],
               "plan": {
@@ -1859,7 +1891,8 @@
                   "fields": [
                     "comparators"
                   ],
-                  "kinds": []
+                  "kinds": [],
+                  "anchor": "only"
                 }
               ],
               "plan": {
@@ -1886,7 +1919,8 @@
                   "fields": [
                     "comparators"
                   ],
-                  "kinds": []
+                  "kinds": [],
+                  "anchor": "only"
                 }
               ],
               "plan": {
@@ -1913,7 +1947,8 @@
                   "fields": [
                     "comparators"
                   ],
-                  "kinds": []
+                  "kinds": [],
+                  "anchor": "only"
                 }
               ],
               "plan": {
@@ -1940,7 +1975,8 @@
                   "fields": [
                     "comparators"
                   ],
-                  "kinds": []
+                  "kinds": [],
+                  "anchor": "only"
                 }
               ],
               "plan": {
@@ -1967,7 +2003,8 @@
                   "fields": [
                     "comparators"
                   ],
-                  "kinds": []
+                  "kinds": [],
+                  "anchor": "only"
                 }
               ],
               "plan": {
@@ -1994,7 +2031,8 @@
                   "fields": [
                     "comparators"
                   ],
-                  "kinds": []
+                  "kinds": [],
+                  "anchor": "only"
                 }
               ],
               "plan": {
@@ -2021,7 +2059,8 @@
                   "fields": [
                     "comparators"
                   ],
-                  "kinds": []
+                  "kinds": [],
+                  "anchor": "only"
                 }
               ],
               "plan": {
@@ -2048,7 +2087,8 @@
                   "fields": [
                     "comparators"
                   ],
-                  "kinds": []
+                  "kinds": [],
+                  "anchor": "only"
                 }
               ],
               "plan": {
@@ -2063,7 +2103,7 @@
           ]
         },
         {
-          "vocab": "expression.binary",
+          "vocab": "expression.binary.comparison",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2083,20 +2123,15 @@
           ]
         },
         {
-          "name": "operator",
-          "route": "nested",
-          "via": [
+          "name": "comparators",
+          "route": "slot",
+          "slot": "comparators",
+          "path": [
             {
-              "field": null,
-              "kind": "comparison_operator_comparator",
-              "after": null,
-              "anchor": null
+              "owner": "comparison_operator",
+              "slot": "comparators"
             }
-          ],
-          "parent": "comparison_operator_comparator",
-          "slot": "operators",
-          "multiple": false,
-          "path": null
+          ]
         }
       ]
     },
@@ -6579,27 +6614,27 @@
         "paths": 13,
         "kinds": 3,
         "refinements": 0,
-        "aliases": 114
+        "aliases": 115
       },
       {
         "depth": 2,
         "paths": 74,
-        "kinds": 70,
+        "kinds": 69,
         "refinements": 7,
-        "aliases": 78
+        "aliases": 79
       },
       {
         "depth": 3,
         "paths": 65,
-        "kinds": 61,
+        "kinds": 62,
         "refinements": 47,
-        "aliases": 42
+        "aliases": 43
       },
       {
         "depth": 4,
-        "paths": 46,
+        "paths": 47,
         "kinds": 13,
-        "refinements": 24,
+        "refinements": 31,
         "aliases": 0
       }
     ],

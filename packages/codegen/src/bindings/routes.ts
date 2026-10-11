@@ -1,4 +1,4 @@
-import { WILDCARD, isFixedText, isIdentifierPath, type Anchor, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type EnumMember, type ModelNode, type ModelSlot, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
+import { WILDCARD, isFixedText, isIdentifierPath, type Anchor, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type EnumMember, type ModelNode, type ModelSlot, type Sibling, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
 import { camel, snake } from './names.ts';
 
 export interface LayoutSlot {
@@ -112,6 +112,15 @@ export function slotFor(model: SlotModel, slots: readonly ModelSlot[], n: SlotSe
 	return slots.slice(previous === undefined ? 0 : slots.indexOf(previous) + 1).find(holdsNodes);
 }
 
+export function slotAnchor(model: SlotModel, holder: string, selector: SlotSelector): Anchor | null {
+	const slots = modelNode(model, holder)?.slots ?? [];
+	const own = slotFor(model, slots, selector);
+	const crosses = (neighbour: SlotSelector | undefined): boolean => neighbour !== undefined && slotFor(model, slots, neighbour) !== own;
+	const first = selector.anchor === 'first' || selector.anchor === 'only' || crosses(selector.adjacent?.previous);
+	const last = selector.anchor === 'last' || selector.anchor === 'only' || crosses(selector.adjacent?.next);
+	return first && last ? 'only' : first ? 'first' : last ? 'last' : null;
+}
+
 export function modelNode(model: SlotModel, kind: string): ModelNode | undefined {
 	return model.get(kind) ?? model.get(`_${kind}`);
 }
@@ -205,7 +214,7 @@ function tokenSite(model: SlotModel, kind: string, child: { readonly subject: Ca
 
 const matchedKinds = (model: SlotModel, kinds: readonly string[]): string[] => concreteKinds(model, kinds.flatMap((kind) => shownKinds(model, kind)));
 
-function guarantees(model: SlotModel, slot: ModelSlot, child: Exclude<ChildFact, { readonly token: string }>): boolean {
+function guarantees(model: SlotModel, slot: ModelSlot, child: Exclude<ChildFact, { readonly token: string } | { readonly siblings: readonly Sibling[] }>): boolean {
 	if (!slot.required) return false;
 	if ('present' in child) return true;
 	if ('text' in child) {
@@ -216,17 +225,64 @@ function guarantees(model: SlotModel, slot: ModelSlot, child: Exclude<ChildFact,
 	return concreteKinds(model, slot.kinds).every((k) => kinds.includes(k));
 }
 
-function childTestOf(model: SlotModel, kind: string, fact: ChildFact): ChildTest | undefined {
+function siblingTestsAt(model: SlotModel, kind: string, holder: string, fact: { readonly subject: CaptureSite; readonly siblings: readonly Sibling[] }): ChildTest[] {
+	const slots = modelNode(model, holder)?.slots ?? [];
+	const placed = fact.siblings.flatMap((sibling) => {
+		const slot = slotFor(model, slots, sibling.selector);
+		return slot === undefined ? [] : [{ ...sibling, slot, index: slots.indexOf(slot) }];
+	});
+	if (placed.length < fact.siblings.length) return [];
+	const never = (why: string): never => {
+		throw new Error(`bindings: ${kind}'s claim never matches: ${why}`);
+	};
+	const skipped = new Set<ModelSlot>();
+	const skip = (from: number, to: number): void => slots.slice(from, to).filter(holdsNodes).forEach((slot) => skipped.add(slot));
+	placed.forEach(({ selector, slot, index }, i) => {
+		const previous = placed[i - 1];
+		if (previous !== undefined && index < previous.index) never(`its children come in an order ${holder}'s slots do not (${previous.slot.name} before ${slot.name})`);
+		if (selector.anchor === 'first' || selector.anchor === 'only') skip(0, index);
+		if (selector.anchor === 'last' || selector.anchor === 'only') skip(index + 1, slots.length);
+		if (selector.adjacent?.previous !== undefined && previous !== undefined) skip(previous.index + 1, index);
+	});
+	const site = (slot: ModelSlot, anchor: Anchor | null): CaptureSite => ({ ...fact.subject, down: [...fact.subject.down, { field: slot.name, kind: null, after: null, anchor }] });
+	const tests: ChildTest[] = [];
+	for (const slot of skipped) {
+		if (slot.required) never(`${holder}'s required slot ${slot.name} lies between an anchor and its node`);
+		tests.push({ subject: site(slot, null), excludes: concreteKinds(model, slot.kinds) });
+	}
+	for (const slot of new Set(placed.map((p) => p.slot))) {
+		const shared = placed.filter((p) => p.slot === slot);
+		if (shared.length < 2) continue;
+		if (!slot.multiple) never(`${shared.length} of its children sit in ${holder}'s slot ${slot.name}, which holds one node`);
+		const held = concreteKinds(model, slot.kinds);
+		const guaranteed = ({ bare, selector: { kind } }: Sibling): boolean => bare && (kind === null || held.every((k) => matchedKinds(model, [kind]).includes(k)));
+		if (shared.length > 2 || !shared.every(guaranteed))
+			throw new Error(`bindings: ${kind}'s claim tests ${shared.length} nodes of ${holder}'s slot ${slot.name} with their own tests; a read test counts only two nodes the slot guarantees`);
+		tests.push({ subject: site(slot, 'only'), excludes: held });
+	}
+	return tests;
+}
+
+function siblingTests(model: SlotModel, kind: string, fact: { readonly subject: CaptureSite; readonly siblings: readonly Sibling[] }): ChildTest[] {
+	const tests = (reachedAt(model, kind, fact.subject)?.holders ?? []).map((holder) => siblingTestsAt(model, kind, holder, fact));
+	const [first = []] = tests;
+	if (tests.some((t) => JSON.stringify(t) !== JSON.stringify(first)))
+		throw new Error(`bindings: ${kind}'s claim orders children below a node of several kinds whose slots differ`);
+	return first;
+}
+
+function childTestsOf(model: SlotModel, kind: string, fact: ChildFact): ChildTest[] {
+	if ('siblings' in fact) return siblingTests(model, kind, fact);
 	const child = 'token' in fact ? { subject: tokenSite(model, kind, fact), text: fact.token } : fact;
 	const slots = reachedAt(model, kind, child.subject)?.slots ?? [];
-	if (slots.length > 0 && slots.every((slot) => guarantees(model, slot, child))) return undefined;
-	if ('text' in child) return child;
+	if (slots.length > 0 && slots.every((slot) => guarantees(model, slot, child))) return [];
+	if ('text' in child) return [child];
 	const held = concreteKinds(model, slots.flatMap((slot) => slot.kinds));
-	if ('present' in child) return { subject: child.subject, kinds: held };
-	if (!child.captured || slots.length === 0 || slots.every((slot) => slot.required)) return { subject: child.subject, kinds: concreteKinds(model, child.kinds) };
+	if ('present' in child) return [{ subject: child.subject, kinds: held }];
+	if (!child.captured || slots.every((slot) => slot.required)) return [{ subject: child.subject, kinds: concreteKinds(model, child.kinds) }];
 	const matched = matchedKinds(model, child.kinds);
 	const excludes = held.filter((k) => !matched.includes(k));
-	return excludes.length === 0 ? undefined : { subject: child.subject, excludes };
+	return excludes.length === 0 ? [] : [{ subject: child.subject, excludes }];
 }
 
 const specificity = (entry: ReadEntry): number => {
@@ -242,8 +298,9 @@ function viaPath(model: SlotModel, owner: string, via: readonly SlotSelector[]):
 	for (const step of [...via].reverse()) {
 		const slot = at === undefined ? undefined : slotFor(model, at.slots, step);
 		const next = step.kind === null ? undefined : modelNode(model, step.kind);
-		if (at === undefined || slot === undefined || next === undefined || (slot.multiple && step.anchor === null)) return undefined;
-		steps.push(stepOf(at.kind, slot.name, step.anchor));
+		const anchor = at === undefined ? null : slotAnchor(model, at.kind, step);
+		if (at === undefined || slot === undefined || next === undefined || (slot.multiple && anchor === null)) return undefined;
+		steps.push(stepOf(at.kind, slot.name, anchor));
 		at = next;
 	}
 	return at === undefined ? undefined : { steps, at };
@@ -348,7 +405,7 @@ function membersOf(input: GrammarInput, kind: string, entries: readonly ReadEntr
 					selector: member,
 					slot,
 					multiple: member.multiple,
-					path: chain && parent && slot ? [...chain.steps, stepOf(parent.kind, slot.name, member.anchor)] : undefined
+					path: chain && parent && slot ? [...chain.steps, stepOf(parent.kind, slot.name, slotAnchor(input.model, parent.kind, member))] : undefined
 				});
 				break;
 			}
@@ -448,7 +505,7 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 				claim,
 				index,
 				pins: pinsOf(input.model, modelNode(input.model, kind), claim, slotNamesOf(kind)),
-				children: modelNode(input.model, kind)?.modelType === 'supertype' ? [] : claim.children.flatMap((child) => childTestOf(input.model, kind, child) ?? []),
+				children: modelNode(input.model, kind)?.modelType === 'supertype' ? [] : claim.children.flatMap((child) => childTestsOf(input.model, kind, child)),
 				template: input.bindings.templates.find((t) => t.vocabs.includes(claim.vocab))
 			};
 			(readEntries.get(kind) ?? readEntries.set(kind, []).get(kind))?.push(entry);

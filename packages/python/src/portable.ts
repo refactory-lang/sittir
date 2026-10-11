@@ -142,6 +142,7 @@ export interface PortableIds {
 	'expression.binary.bitwise.or': TSKindId.BinaryOperator;
 	'expression.binary.bitwise.xor': TSKindId.BinaryOperator;
 	'expression.binary.comparison': TSKindId.ComparisonOperator;
+	'expression.binary.comparison.chain': TSKindId.ComparisonOperator;
 	'expression.binary.comparison.equal': TSKindId.ComparisonOperator;
 	'expression.binary.comparison.greater': TSKindId.ComparisonOperator;
 	'expression.binary.comparison.greater_equal': TSKindId.ComparisonOperator;
@@ -543,6 +544,7 @@ export interface PortableKindsAt {
 		readonly bitwise_not: PortableKindsAt['expression.unary.bitwise_not'];
 		readonly bitwise_or: PortableKindsAt['expression.assignment.compound.bitwise_or'];
 		readonly bitwise_xor: PortableKindsAt['expression.assignment.compound.bitwise_xor'];
+		readonly chain: PortableKindsAt['expression.binary.comparison.chain'];
 		readonly comparison: PortableKindsAt['expression.binary.comparison'];
 		readonly compound: PortableKindsAt['expression.assignment.compound'];
 		readonly conversion: PortableKindsAt['expression.interpolation.conversion'];
@@ -654,6 +656,7 @@ export interface PortableKindsAt {
 		readonly membership: PortableKindsAt['expression.binary.membership'];
 		readonly shift: PortableKindsAt['expression.binary.shift'];
 		readonly add: PortableKindsAt['expression.binary.arithmetic.add'];
+		readonly chain: PortableKindsAt['expression.binary.comparison.chain'];
 		readonly divide: PortableKindsAt['expression.binary.arithmetic.divide'];
 		readonly equal: PortableKindsAt['expression.binary.comparison.equal'];
 		readonly exponent: PortableKindsAt['expression.binary.arithmetic.exponent'];
@@ -714,6 +717,7 @@ export interface PortableKindsAt {
 	'expression.binary.bitwise.xor': { readonly $ids: readonly PortableIds['expression.binary.bitwise.xor'][] };
 	'expression.binary.comparison': {
 		readonly $ids: readonly PortableIds['expression.binary.comparison'][];
+		readonly chain: PortableKindsAt['expression.binary.comparison.chain'];
 		readonly equal: PortableKindsAt['expression.binary.comparison.equal'];
 		readonly greater: PortableKindsAt['expression.binary.comparison.greater'];
 		readonly greater_equal: PortableKindsAt['expression.binary.comparison.greater_equal'];
@@ -721,6 +725,7 @@ export interface PortableKindsAt {
 		readonly less_equal: PortableKindsAt['expression.binary.comparison.less_equal'];
 		readonly not_equal: PortableKindsAt['expression.binary.comparison.not_equal'];
 	};
+	'expression.binary.comparison.chain': { readonly $ids: readonly PortableIds['expression.binary.comparison.chain'][] };
 	'expression.binary.comparison.equal': { readonly $ids: readonly PortableIds['expression.binary.comparison.equal'][] };
 	'expression.binary.comparison.greater': {
 		readonly $ids: readonly PortableIds['expression.binary.comparison.greater'][];
@@ -1170,6 +1175,7 @@ export interface PortableIsAt {
 		readonly bitwise_not: PortableIsAt['expression.unary.bitwise_not'];
 		readonly bitwise_or: PortableIsAt['expression.assignment.compound.bitwise_or'];
 		readonly bitwise_xor: PortableIsAt['expression.assignment.compound.bitwise_xor'];
+		readonly chain: PortableIsAt['expression.binary.comparison.chain'];
 		readonly comparison: PortableIsAt['expression.binary.comparison'];
 		readonly compound: PortableIsAt['expression.assignment.compound'];
 		readonly conversion: PortableIsAt['expression.interpolation.conversion'];
@@ -1266,6 +1272,7 @@ export interface PortableIsAt {
 		readonly membership: PortableIsAt['expression.binary.membership'];
 		readonly shift: PortableIsAt['expression.binary.shift'];
 		readonly add: PortableIsAt['expression.binary.arithmetic.add'];
+		readonly chain: PortableIsAt['expression.binary.comparison.chain'];
 		readonly divide: PortableIsAt['expression.binary.arithmetic.divide'];
 		readonly equal: PortableIsAt['expression.binary.comparison.equal'];
 		readonly exponent: PortableIsAt['expression.binary.arithmetic.exponent'];
@@ -1313,6 +1320,7 @@ export interface PortableIsAt {
 	'expression.binary.bitwise.or': PortableGuard<PortableIds['expression.binary.bitwise.or']> & {};
 	'expression.binary.bitwise.xor': PortableGuard<PortableIds['expression.binary.bitwise.xor']> & {};
 	'expression.binary.comparison': PortableGuard<PortableIds['expression.binary.comparison']> & {
+		readonly chain: PortableIsAt['expression.binary.comparison.chain'];
 		readonly equal: PortableIsAt['expression.binary.comparison.equal'];
 		readonly greater: PortableIsAt['expression.binary.comparison.greater'];
 		readonly greater_equal: PortableIsAt['expression.binary.comparison.greater_equal'];
@@ -1320,6 +1328,7 @@ export interface PortableIsAt {
 		readonly less_equal: PortableIsAt['expression.binary.comparison.less_equal'];
 		readonly not_equal: PortableIsAt['expression.binary.comparison.not_equal'];
 	};
+	'expression.binary.comparison.chain': PortableGuard<PortableIds['expression.binary.comparison.chain']> & {};
 	'expression.binary.comparison.equal': PortableGuard<PortableIds['expression.binary.comparison.equal']> & {};
 	'expression.binary.comparison.greater': PortableGuard<PortableIds['expression.binary.comparison.greater']> & {};
 	'expression.binary.comparison.greater_equal': PortableGuard<
@@ -1631,6 +1640,7 @@ export interface PortableKinds {
 	readonly break: PortableKindsAt['statement.break'];
 	readonly bytes: PortableKindsAt['literal.string.bytes'];
 	readonly call: PortableKindsAt['expression.call'];
+	readonly chain: PortableKindsAt['expression.binary.comparison.chain'];
 	readonly collection: PortableKindsAt['expression.collection'];
 	readonly comparison: PortableKindsAt['expression.binary.comparison'];
 	readonly complex: PortableKindsAt['pattern.case.complex'];
@@ -1761,6 +1771,7 @@ export interface PortableIs {
 	readonly break: PortableIsAt['statement.break'];
 	readonly bytes: PortableIsAt['literal.string.bytes'];
 	readonly call: PortableIsAt['expression.call'];
+	readonly chain: PortableIsAt['expression.binary.comparison.chain'];
 	readonly collection: PortableIsAt['expression.collection'];
 	readonly comparison: PortableIsAt['expression.binary.comparison'];
 	readonly complex: PortableIsAt['pattern.case.complex'];
@@ -2034,6 +2045,7 @@ const table: PortableTable = {
 		'expression.binary.bitwise.or': { ids: [TSKindId.BinaryOperator], exact: false },
 		'expression.binary.bitwise.xor': { ids: [TSKindId.BinaryOperator], exact: false },
 		'expression.binary.comparison': { ids: [TSKindId.ComparisonOperator], exact: false },
+		'expression.binary.comparison.chain': { ids: [TSKindId.ComparisonOperator], exact: false },
 		'expression.binary.comparison.equal': { ids: [TSKindId.ComparisonOperator], exact: false },
 		'expression.binary.comparison.greater': { ids: [TSKindId.ComparisonOperator], exact: false },
 		'expression.binary.comparison.greater_equal': { ids: [TSKindId.ComparisonOperator], exact: false },
@@ -2351,6 +2363,7 @@ const table: PortableTable = {
 		['', 'break', 'statement.break'],
 		['', 'bytes', 'literal.string.bytes'],
 		['', 'call', 'expression.call'],
+		['', 'chain', 'expression.binary.comparison.chain'],
 		['', 'collection', 'expression.collection'],
 		['', 'comparison', 'expression.binary.comparison'],
 		['', 'complex', 'pattern.case.complex'],
@@ -2472,6 +2485,7 @@ const table: PortableTable = {
 		['expression', 'bitwise_not', 'expression.unary.bitwise_not'],
 		['expression', 'bitwise_or', 'expression.assignment.compound.bitwise_or'],
 		['expression', 'bitwise_xor', 'expression.assignment.compound.bitwise_xor'],
+		['expression', 'chain', 'expression.binary.comparison.chain'],
 		['expression', 'comparison', 'expression.binary.comparison'],
 		['expression', 'compound', 'expression.assignment.compound'],
 		['expression', 'conversion', 'expression.interpolation.conversion'],
@@ -2514,6 +2528,7 @@ const table: PortableTable = {
 		['expression.assignment', 'shift_right', 'expression.assignment.compound.shift_right'],
 		['expression.assignment', 'subtract', 'expression.assignment.compound.subtract'],
 		['expression.binary', 'add', 'expression.binary.arithmetic.add'],
+		['expression.binary', 'chain', 'expression.binary.comparison.chain'],
 		['expression.binary', 'divide', 'expression.binary.arithmetic.divide'],
 		['expression.binary', 'equal', 'expression.binary.comparison.equal'],
 		['expression.binary', 'exponent', 'expression.binary.arithmetic.exponent'],
@@ -2779,12 +2794,23 @@ const table: PortableTable = {
 		[TSKindId.Comment]: [{ path: 'comment.line', within: [], test: [] }],
 		[TSKindId.ComparisonOperator]: [
 			{
+				path: 'expression.binary.comparison.chain',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [{ fields: ['comparators'], kinds: [], anchor: 'only' }],
+						plan: { op: 'not', of: { op: 'is', types: [297], self: true } }
+					}
+				]
+			},
+			{
 				path: 'expression.binary.comparison.equal',
 				within: [],
 				test: [
 					{
 						up: 0,
-						via: [{ fields: ['comparators'], kinds: [] }],
+						via: [{ fields: ['comparators'], kinds: [], anchor: 'only' }],
 						plan: { op: 'eq', text: '==', fields: ['operators'], kinds: [] }
 					}
 				]
@@ -2795,7 +2821,7 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ fields: ['comparators'], kinds: [] }],
+						via: [{ fields: ['comparators'], kinds: [], anchor: 'only' }],
 						plan: { op: 'eq', text: '!=', fields: ['operators'], kinds: [] }
 					}
 				]
@@ -2806,7 +2832,7 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ fields: ['comparators'], kinds: [] }],
+						via: [{ fields: ['comparators'], kinds: [], anchor: 'only' }],
 						plan: { op: 'eq', text: '<', fields: ['operators'], kinds: [] }
 					}
 				]
@@ -2817,7 +2843,7 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ fields: ['comparators'], kinds: [] }],
+						via: [{ fields: ['comparators'], kinds: [], anchor: 'only' }],
 						plan: { op: 'eq', text: '>', fields: ['operators'], kinds: [] }
 					}
 				]
@@ -2828,7 +2854,7 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ fields: ['comparators'], kinds: [] }],
+						via: [{ fields: ['comparators'], kinds: [], anchor: 'only' }],
 						plan: { op: 'eq', text: '<=', fields: ['operators'], kinds: [] }
 					}
 				]
@@ -2839,7 +2865,7 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ fields: ['comparators'], kinds: [] }],
+						via: [{ fields: ['comparators'], kinds: [], anchor: 'only' }],
 						plan: { op: 'eq', text: '>=', fields: ['operators'], kinds: [] }
 					}
 				]
@@ -2850,7 +2876,7 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ fields: ['comparators'], kinds: [] }],
+						via: [{ fields: ['comparators'], kinds: [], anchor: 'only' }],
 						plan: { op: 'eq', text: 'in', fields: ['operators'], kinds: [] }
 					}
 				]
@@ -2861,7 +2887,7 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ fields: ['comparators'], kinds: [] }],
+						via: [{ fields: ['comparators'], kinds: [], anchor: 'only' }],
 						plan: { op: 'eq', text: 'not in', fields: ['operators'], kinds: [] }
 					}
 				]
@@ -2872,7 +2898,7 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ fields: ['comparators'], kinds: [] }],
+						via: [{ fields: ['comparators'], kinds: [], anchor: 'only' }],
 						plan: { op: 'eq', text: 'is', fields: ['operators'], kinds: [] }
 					}
 				]
@@ -2883,12 +2909,12 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ fields: ['comparators'], kinds: [] }],
+						via: [{ fields: ['comparators'], kinds: [], anchor: 'only' }],
 						plan: { op: 'eq', text: 'is not', fields: ['operators'], kinds: [] }
 					}
 				]
 			},
-			{ path: 'expression.binary', within: [], test: [] }
+			{ path: 'expression.binary.comparison', within: [], test: [] }
 		],
 		[TSKindId.ComplexPattern]: [{ path: 'pattern.case.complex', within: [], test: [] }],
 		[TSKindId.ComprehensionClauses]: [{ path: 'clause.comprehension', within: [], test: [] }],

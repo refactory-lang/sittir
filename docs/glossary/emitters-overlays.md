@@ -142,7 +142,7 @@ The slot routes from a read entry's holder down to a predicate's capture, and th
 
 ### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::stepsOf`
 
-The steps from the kind a capture site starts at (the claimed kind, or an enclosing one `up` levels out) down its selectors, each anchored as its selector is. A step under a wildcard, or one no slot of its holder takes, gives the reason the predicate cannot compile instead.
+The steps from the kind a capture site starts at (the claimed kind, or an enclosing one `up` levels out) down its selectors, each anchored as `routes.ts::slotAnchor` reads its selector in its holder. A step under a wildcard, or one no slot of its holder takes, gives the reason the predicate cannot compile instead.
 
 ### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::aliasContent`
 

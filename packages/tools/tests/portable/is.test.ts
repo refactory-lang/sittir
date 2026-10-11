@@ -90,6 +90,17 @@ describe('portable is: python', async () => {
 		expect(at('declaration.constructor')(init, context)).toBe(true);
 		expect(at('expression.call')).not.toBe(Function.prototype.call);
 	});
+
+	it('reads a comparison of one comparator by its operator, and of two or more as a chain, as tree-sitter matches the claims', () => {
+		const COMPARISONS = 'a < b\na < b == c\na in b\n';
+		const [less] = find(COMPARISONS, 'comparison_operator', 'a < b');
+		const [chain] = find(COMPARISONS, 'comparison_operator', 'a < b == c');
+		const [membership] = find(COMPARISONS, 'comparison_operator', 'a in b');
+		expect([less, chain, membership].map((n) => at('expression.binary.comparison.less')(n))).toEqual([true, false, false]);
+		expect([less, chain, membership].map((n) => at('expression.binary.comparison.equal')(n))).toEqual([false, false, false]);
+		expect([less, chain, membership].map((n) => at('expression.binary.comparison.chain')(n))).toEqual([false, true, false]);
+		expect([less, chain, membership].map((n) => at('expression.binary.membership.in')(n))).toEqual([false, false, true]);
+	});
 });
 
 describe('portable is: rust', async () => {

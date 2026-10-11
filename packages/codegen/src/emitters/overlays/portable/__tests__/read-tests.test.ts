@@ -42,7 +42,9 @@ const MODEL = new Map(
 		node('param', [slot('element', ['self', 'plain'])]),
 		node('self'),
 		node('plain'),
-		node('annotated', [slot('type', ['type_identifier', 'identifier'])])
+		node('annotated', [slot('type', ['type_identifier', 'identifier'])]),
+		node('cmp', [slot('left', ['identifier']), slot('ops', ['cmp_op'], { multiple: true })]),
+		node('cmp_op', [slot('operators', [], { terminals: ['==', '<'] }), slot('right', ['identifier'])])
 	].map((n) => [n.kind, n])
 );
 
@@ -56,10 +58,12 @@ const ROUTES: Readonly<Record<string, SlotRoutes>> = {
 	'fn.params': { fields: ['params'], kinds: [] },
 	'params.items': { fields: [], kinds: ['param'] },
 	'param.element': { fields: [], kinds: ['self', 'plain'] },
-	'annotated.type': { fields: ['type'], kinds: [] }
+	'annotated.type': { fields: ['type'], kinds: [] },
+	'cmp.ops': { fields: [], kinds: ['cmp_op'] },
+	'cmp_op.operators': { fields: ['operators'], kinds: [] }
 };
 
-const TYPES: Readonly<Record<string, number>> = { param: 30, self: 31, plain: 32, type_identifier: 33 };
+const TYPES: Readonly<Record<string, number>> = { param: 30, self: 31, plain: 32, type_identifier: 33, cmp_op: 34 };
 
 const testsOf = async (bindings: string, kind: string) => {
 	const input: GrammarInput = { grammar: 'g', bindings: await readBindings(bindings), model: MODEL, textTokens: new Set(), layoutSlots: [] };
@@ -148,6 +152,18 @@ describe('readTestOf', () => {
 				'declaration.method.static',
 				[{ up: 0, via: [ROUTES['fn.params'], ROUTES['params.items']], plan: { op: 'not', of: { op: 'is', types: [31, 32], ...ROUTES['param.element'] } } }]
 			]
+		]);
+	});
+
+	it('steps to a slot\'s only node when the anchors place it after a node of another slot and last', async () => {
+		expect(await testsOf('(cmp . (_) . (cmp_op operators: "<") .) @expression.binary.less', 'cmp')).toEqual([
+			['expression.binary.less', [{ up: 0, via: [{ ...ROUTES['cmp.ops'], anchor: 'only' }], plan: { op: 'eq', text: '<', ...ROUTES['cmp_op.operators'] } }]]
+		]);
+	});
+
+	it('tests two adjacent nodes of one slot as the slot not holding exactly one', async () => {
+		expect(await testsOf('(cmp (cmp_op) . (cmp_op)) @expression.binary.chain', 'cmp')).toEqual([
+			['expression.binary.chain', [{ up: 0, via: [{ ...ROUTES['cmp.ops'], anchor: 'only' }], plan: { op: 'not', of: { op: 'is', types: [34], self: true } } }]]
 		]);
 	});
 

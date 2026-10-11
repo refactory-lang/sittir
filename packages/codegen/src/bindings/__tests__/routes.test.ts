@@ -102,6 +102,7 @@ const MODEL = [
 	node('type_x'),
 	node('cmp', [slot('left', ['expr']), slot('ops', ['cmp_op'], { multiple: true })]),
 	node('cmp_op', [slot('operators', [], { terminals: ['==', '<'] })]),
+	node('trio', [slot('head', ['expr']), slot('mid', ['identifier'], { required: false }), slot('tail', ['expr'], { multiple: true })]),
 	node('rng', [slot('left', ['expr']), slot('content', ['rng_right', '_dots'])]),
 	node('rng_right', [slot('op', [], { terminals: ['..=', '..'] }), slot('right', ['expr'])]),
 	node('maybe_op', [slot('left', ['expr']), slot('operator', [], { required: false, terminals: ['+', '-'] }), slot('bang', [], { required: false, terminals: ['!'] })])
@@ -475,6 +476,36 @@ describe('resolveRoutes', () => {
 		expect(routes.readEntries.get('cmp')?.[0]?.children).toEqual([
 			{ subject: { up: 0, down: [step, { field: 'operators', kind: null, after: null, anchor: null }] }, text: '==' }
 		]);
+	});
+
+	it('tests no more for a node anchored to its holder\'s only slot of nodes after a required one: the model places it there', async () => {
+		const routes = resolveRoutes(await grammar('(cmp . (_) . (cmp_op operators: "<") .) @expression.binary.less'));
+		const op = { field: null, kind: 'cmp_op', after: null, anchor: 'last', adjacent: { previous: { field: null, kind: null, after: null, anchor: null } } };
+		expect(routes.readEntries.get('cmp')?.[0]?.children).toEqual([
+			{ subject: { up: 0, down: [op, { field: 'operators', kind: null, after: null, anchor: null }] }, text: '<' }
+		]);
+	});
+
+	it('tests two adjacent bare nodes of one slot as the slot holding more than one node', async () => {
+		const routes = resolveRoutes(await grammar('(cmp (cmp_op) . (cmp_op)) @expression.binary.chain'));
+		expect(routes.readEntries.get('cmp')?.[0]?.children).toEqual([
+			{ subject: { up: 0, down: [{ field: 'ops', kind: null, after: null, anchor: 'only' }] }, excludes: ['cmp_op'] }
+		]);
+	});
+
+	it('tests an optional slot an anchor steps over as holding no node', async () => {
+		const routes = resolveRoutes(await grammar('(trio head: (_) . tail: (_)) @expression.trio'));
+		expect(routes.readEntries.get('trio')?.[0]?.children).toEqual([
+			{ subject: { up: 0, down: [{ field: 'mid', kind: null, after: null, anchor: null }] }, excludes: ['identifier'] }
+		]);
+	});
+
+	it.each([
+		['a required slot lies between an anchor and its node', '(trio . tail: (_)) @expression.trio', /trio.*never matches.*head/],
+		['its nodes come in an order the slots do not', '(trio tail: (_) head: (_)) @expression.trio', /trio.*never matches.*order/],
+		['two nodes of one slot carry their own tests', '(cmp (cmp_op operators: "<") . (cmp_op)) @expression.binary.chain', /cmp.*ops.*own tests/]
+	])('refuses a claim whose children cannot match or be tested when %s', async (_why, pattern, message) => {
+		await expect(grammar(pattern).then(resolveRoutes)).rejects.toThrow(message);
 	});
 
 	it('keeps the template a templated claim builds from', async () => {

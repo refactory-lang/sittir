@@ -1,6 +1,6 @@
 import type { PortableCondition, PortableStep, QueryPlan, QuerySubject, SlotRoutes } from '@sittir/types';
 import { WILDCARD, type CaptureSite, type PredicateFact, type SlotModel } from '../../../bindings/facts.ts';
-import { slotFor, type ChildTest, type ReadEntry } from '../../../bindings/routes.ts';
+import { slotAnchor, slotFor, type ChildTest, type ReadEntry } from '../../../bindings/routes.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { queryRoutesOf } from '../../client-utils.ts';
 
@@ -28,7 +28,8 @@ function stepsOf(entry: ReadEntry, site: CaptureSite, model: SlotModel, routesOf
 		const slot = slotFor(model, model.get(holder)?.slots ?? [], selector);
 		const routes = slot === undefined ? undefined : routesOf(holder, slot.name);
 		if (routes === undefined) return `no slot of ${holder} holds ${JSON.stringify(selector)}`;
-		steps.push(selector.anchor === null ? routes : { ...routes, anchor: selector.anchor });
+		const anchor = slotAnchor(model, holder, selector);
+		steps.push(anchor === null ? routes : { ...routes, anchor });
 		holder = selector.kind ?? undefined;
 	}
 	return { steps, kind: holder };

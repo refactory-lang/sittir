@@ -180,6 +180,13 @@ describe('readBindings', () => {
 		const facts = await readBindings('(comparison (comparator operators: "==") right: (_)) @expression.equal');
 		const comparator = { field: null, kind: 'comparator', after: null, anchor: null };
 		expect(facts.claims[0]?.children).toEqual([
+			{
+				subject: { up: 0, down: [] },
+				siblings: [
+					{ selector: comparator, bare: false },
+					{ selector: { field: 'right', kind: null, after: null, anchor: null }, bare: true }
+				]
+			},
 			{ subject: { up: 0, down: [comparator] }, kinds: ['comparator'], captured: false },
 			{ subject: { up: 0, down: [comparator, { field: 'operators', kind: null, after: null, anchor: null }] }, text: '==' },
 			{ subject: { up: 0, down: [{ field: 'right', kind: null, after: null, anchor: null }] }, present: true }
@@ -354,11 +361,42 @@ describe('readBindings', () => {
 		await expect(readBindings(`(module) @module\n${pattern}`)).rejects.toThrow(/line 2: .*anchor.*@(declaration\.parameter\.self|identifier\.statement)/);
 	});
 
-	it.each([
-		['between two children', '(block (expression_statement) . (expression_statement)) @statement.block'],
-		['between two grouped patterns', '((comment) . (function_definition)) @declaration.function']
-	])('refuses an anchor %s: it ties siblings together, which no step expresses', async (_where, pattern) => {
-		await expect(readBindings(pattern)).rejects.toThrow(/line 1: .*anchor.*sibling/);
+	it('pins a child anchored on both sides to its parent\'s only named child', async () => {
+		const { members } = await readBindings('(block . (expression_statement) @only .) @statement.block');
+		expect(members).toEqual([
+			{ route: 'rename', owner: 'block', name: 'only', field: null, kind: 'expression_statement', after: null, anchor: 'only' }
+		]);
+	});
+
+	it('ties two children an anchor joins as adjacent, each naming the other', async () => {
+		const { members } = await readBindings('(block (comment) @a . (expression_statement) @b) @statement.block');
+		const comment = { field: null, kind: 'comment', after: null, anchor: null };
+		const statement = { field: null, kind: 'expression_statement', after: null, anchor: null };
+		expect(members).toEqual([
+			{ route: 'rename', owner: 'block', name: 'a', ...comment, adjacent: { next: statement } },
+			{ route: 'rename', owner: 'block', name: 'b', ...statement, adjacent: { previous: comment } }
+		]);
+	});
+
+	it('states the order of the node children below the claimed node, with their anchors, when an anchor or a shared slot can matter', async () => {
+		const facts = await readBindings('(comparison . (_) . (comparator operators: "<") .) @expression.less');
+		const first = { field: null, kind: null, after: null, anchor: null };
+		const comparator = { field: null, kind: 'comparator', after: null, anchor: null };
+		expect(facts.claims[0]?.children).toContainEqual({
+			subject: { up: 0, down: [] },
+			siblings: [
+				{ selector: { ...first, anchor: 'first', adjacent: { next: comparator } }, bare: true },
+				{ selector: { ...comparator, anchor: 'last', adjacent: { previous: first } }, bare: false }
+			]
+		});
+	});
+
+	it('refuses an anchor next to a token: tree-sitter anchors name nodes', async () => {
+		await expect(readBindings('(block "{" . (expression_statement)) @statement.block')).rejects.toThrow(/line 1: .*anchor.*token/);
+	});
+
+	it('refuses an anchor between two grouped patterns: it ties siblings that share no parent below a claim', async () => {
+		await expect(readBindings('((comment) . (function_definition)) @declaration.function')).rejects.toThrow(/line 1: .*anchor.*sibling/);
 	});
 });
 

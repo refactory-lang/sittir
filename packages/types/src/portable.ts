@@ -1,8 +1,8 @@
 import type { QueryPlan, QuerySubject, SlotRoutes } from './query.ts';
 
-/** One step of a condition: a slot by its parser routes, narrowed to its first or last node when `anchor` is set. */
+/** One step of a condition: a slot by its parser routes, narrowed to its first or last node when `anchor` is set, or reaching its node only when it holds exactly one (`only`). */
 export interface PortableStep extends SlotRoutes {
-	readonly anchor?: 'first' | 'last';
+	readonly anchor?: 'first' | 'last' | 'only';
 }
 
 /** One condition of a read entry's test: `plan` holds over the nodes the `via` steps reach, together, from the tested node (`up` 0) or its `up`-th enclosing context node. */

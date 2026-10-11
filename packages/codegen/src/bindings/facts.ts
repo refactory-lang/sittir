@@ -5,13 +5,24 @@ import { allGrammars, grammarPackageDir, PACKAGES_DIR, type GrammarName } from '
 
 export const WILDCARD = '_';
 
-export type Anchor = 'first' | 'last';
+export type Anchor = 'first' | 'last' | 'only';
+
+export interface Adjacent {
+	readonly previous?: SlotSelector;
+	readonly next?: SlotSelector;
+}
 
 export interface SlotSelector {
 	readonly field: string | null;
 	readonly kind: string | null;
 	readonly after: SlotSelector | null;
 	readonly anchor: Anchor | null;
+	readonly adjacent?: Adjacent;
+}
+
+export interface Sibling {
+	readonly selector: SlotSelector;
+	readonly bare: boolean;
 }
 
 export type PredicateArgument = { readonly capture: string } | { readonly text: string };
@@ -32,7 +43,8 @@ export type ChildFact =
 	| { readonly subject: CaptureSite; readonly kinds: readonly string[]; readonly captured: boolean }
 	| { readonly subject: CaptureSite; readonly text: string }
 	| { readonly subject: CaptureSite; readonly token: string }
-	| { readonly subject: CaptureSite; readonly present: true };
+	| { readonly subject: CaptureSite; readonly present: true }
+	| { readonly subject: CaptureSite; readonly siblings: readonly Sibling[] };
 export interface ClaimFact {
 	readonly vocab: string;
 	readonly kind: string | null;
