@@ -87,15 +87,16 @@ fn is_entry(node: &tree_sitter::Node<'_>) -> bool {
     node.is_extra() || node.is_error()
 }
 
-/// Whether `node` holds trivia sides: it is named, neither an extra nor an
-/// `ERROR`, and at least a byte wide.
+/// Whether `node` holds trivia sides: a child holds sides when it is named,
+/// not an extra or `ERROR`, and has width. Width is read from the tree here;
+/// a built node's child has the width of its rendered text, so a stored
+/// automatic semicolon, which renders `"\n"`, has width there.
 pub fn holds_sides(node: &tree_sitter::Node<'_>) -> bool {
     node.is_named() && !is_entry(node) && node.end_byte() > node.start_byte()
 }
 
-/// Whether `node` is empty: no child of it holds trivia sides
-/// (`holds_sides`), so the assignment gives it the trivia between its
-/// own tokens as `inner`.
+/// Whether `node` is empty: no child of it holds sides (`holds_sides`), so
+/// the assignment gives it the trivia between its own tokens as `inner`.
 pub fn is_empty(node: &tree_sitter::Node<'_>) -> bool {
     let mut cursor = node.walk();
     let holds = node.children(&mut cursor).any(|child| holds_sides(&child));

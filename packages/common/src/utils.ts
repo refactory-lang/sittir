@@ -79,10 +79,12 @@ export function rebuilt<R>(source: object, handle: EngineHandle | undefined, bui
  * comment beside any child has that child to lead or trail.
  *
  * @param node - A built or parsed node.
- * @returns For a parsed node, its tree's answer: no named child that is neither an extra nor an
- *   error is at least a byte wide, so a zero-width child (typescript's automatic semicolon) counts
- *   as none. For a built node, whether every `_`-keyed storage entry is absent or an empty list,
- *   since every child it stores renders text.
+ * @returns Whether no child holds sides: a child holds sides when it is named, not an extra or
+ *   `ERROR`, and has width. A parsed node's width is read from its tree, so a zero-width child
+ *   (typescript's automatic semicolon) holds none. A built node's child has the width of its
+ *   rendered text, and every child a built node stores renders text (a stored automatic semicolon
+ *   renders `"\n"`), so a built node is empty when every `_`-keyed storage entry is absent or an
+ *   empty list.
  */
 export function isEmptyNode(node: AnyUntypedNode): boolean {
 	const tree = treeOf(node);

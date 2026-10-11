@@ -360,7 +360,7 @@ The ir lane's change lands with Task 4 (brainstorm, 2026-10-10). The storage lan
   Each changed function's glossary entry changes with it.
 - Test: `packages/{python,rust,typescript}/tests/trivia-table.test.ts`, `packages/tools/src/validate/__tests__/ir-lane-trivia.test.ts`, `packages/common/tests/empty-node.test.ts`.
 
-**One owner rule.** A child owns trivia when it has tokens: it is named, not an extra, and at least a byte wide, whatever its storage. A zero-width child (typescript's automatic semicolon, a `MISSING` leaf) owns none. The table applies it (Task 2), `isEmptyNode` applies it (ruling 13), and the reader's per-route exclusion of children stored as unit variants retires with the reader's placement.
+**One owner rule.** A child holds sides when it is named, not an extra or `ERROR`, and has width, whatever its storage (`holds_sides`). Width is read from the tree for a parsed node, so a zero-width child (typescript's automatic semicolon, a `MISSING` leaf) holds none, and from the rendered text for a built one (a stored automatic semicolon renders `"\n"`, so it has width). The table applies it (Task 2), `isEmptyNode` applies it (ruling 13), and the reader's per-route exclusion of children stored as unit variants retires with the reader's placement.
 
 **Step 1: the failing tests**, in python, rust and typescript each unless named:
 - the typed-reader plan's Ruling 12 defect on every route, the query route included: `# four` survives a leading write on the block;
@@ -380,7 +380,8 @@ The ir lane's change lands with Task 4 (brainstorm, 2026-10-10). The storage lan
 - ruling 10: rust `\n//! doc`, `//! doc`, `fn main() {}\n// end` and `fn main() {} // end`, and python `# c`, `x = 1\n# c` and `x = 1 # c`, each with and without a final line break, render as their source: no held break is written at the document's end, and a final break the source has is kept;
 - a snapshot of an edited tree takes its sides from the table, with no `$sameLine` or `$tokensBetween` in its data;
 - the ir lane (`ir-lane-trivia.test.ts`): `sideOf` reads a source node's side from its table; a built tree renders each own-line comment back to the source bytes (a file's edges, between statements, a childless node's `inner`), and keeps each same-line comment on its side of its owner and of a separator. The comments the lane lost when Task 3 landed alone are rows: a python comment at a block's end (corpus "Comments at the ends of indented blocks"), a rust macro token tree's comments (`ok! {⏎  // one⏎  /* two */⏎}`), a python line continuation (corpus "Escaped newline"), and typescript comments between a function's signature and its body (corpus "Ambiguity between function signature and function declaration: comments and newlines");
-- ruling 13: `isEmptyNode` is true for a typescript `statement_block` whose only child is its automatic semicolon, and `inner` is accepted on it; it is false for a node whose only child is a unit-stored kind with text (a real `;`).
+- ruling 13: `isEmptyNode` is true for a typescript `statement_block` whose only child is its automatic semicolon, and `inner` is accepted on it; it is false for a node whose only child is a unit-stored kind with text (a real `;`);
+- a parsed typescript `interface Bar {⏎  }` holds its line break as `object_type`'s `inner` layout run, though the kind has no named inner gap (ruling 9 retires them). A `$with` draft of the interface, and the body moved into another tree, carry the run through their coordinate and render it between `{` and `}`. The validator lanes' detached copy, which carries extras and `ERROR`s only, is not on this path.
 
 Expected: FAIL. A write through a query is refused today, and the defect test drops `# four`.
 

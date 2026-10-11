@@ -246,9 +246,11 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	/** Whether `value` is a parsed ERROR node of this engine's language, read in a slot or as a trivia item. */
 	readonly isErrorNode: (value: unknown) => value is ErrorNode;
 	/**
-	 * Whether `node` is this engine's node of a kind with inner gaps and has no child with width,
-	 * so it takes `$trivia.inner`. A parsed node's zero-width child (typescript's automatic
-	 * semicolon) counts as no child; a child with text (a real `;`) counts.
+	 * Whether `node` is this engine's node of a kind with inner gaps and no child of it holds
+	 * sides, so it takes `$trivia.inner`. A child holds sides when it is named, not an extra or
+	 * `ERROR`, and has width: read from the tree for a parsed node, so its zero-width automatic
+	 * semicolon holds none, and from the rendered text for a built one. A child with text (a real
+	 * `;`) holds sides.
 	 */
 	readonly isEmptyNode: <N extends API['empty']['node']>(
 		node: N
