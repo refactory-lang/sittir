@@ -229,7 +229,7 @@ How a refinement claim tells its nodes apart from the claim it refines: a predic
 
 ### `packages/codegen/src/bindings/facts.ts::RefinedClaim`
 
-A claim with what it refines: `refines` is the deepest earlier claim's path that the claim's path extends, on the same kind in the same placement, and `refinement` is how it tells its nodes apart. A top-level claim that refines nothing still carries a refinement kind when it pins something (a predicate, a field literal or a token); one that pins nothing has none and is a plain claim.
+A claim with what it refines: `refines` is the deepest path, among all the claims on the same kind in the same placement, that the claim's path extends, so claim order never decides it; and `refinement` is how it tells its nodes apart. A top-level claim that refines nothing still carries a refinement kind when it pins something (a predicate, a field literal or a token); one that pins nothing has none and is a plain claim.
 
 ### `packages/codegen/src/bindings/facts.ts::refinementKindOf`
 

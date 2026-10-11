@@ -62,7 +62,7 @@ describe('bindFacts', () => {
 });
 
 describe('refineClaims', () => {
-	it('marks a claim that extends an earlier claim of the same kind and placement as its refinement', () => {
+	it('marks a claim that extends another claim of the same kind and placement as its refinement', () => {
 		const [parent, child] = refineClaims([
 			claim('expression.binary', 'binary_expression'),
 			claim('expression.binary.add', 'binary_expression', { fieldLiterals: { operator: '+' } })
@@ -71,14 +71,16 @@ describe('refineClaims', () => {
 		expect([child?.refines, child?.refinement]).toEqual(['expression.binary', 'field-literal']);
 	});
 
-	it('refines the deepest earlier path, and not a claim placed elsewhere', () => {
-		const claims = refineClaims([
+	it('refines the deepest claimed ancestor path in either order, and not a claim placed elsewhere', () => {
+		const claims = [
 			claim('literal.number', 'number'),
 			claim('literal.number.integer', 'number', { tokens: ['0x'] }),
 			claim('literal.number.integer.hex', 'number', { tokens: ['0x'] }),
 			claim('literal.number.integer.big', 'number', { within: ['call'], tokens: ['n'] })
-		]);
-		expect(claims.map((c) => c.refines)).toEqual([null, 'literal.number', 'literal.number.integer', null]);
+		];
+		const expected = [null, 'literal.number', 'literal.number.integer', null];
+		expect(refineClaims(claims).map((c) => c.refines)).toEqual(expected);
+		expect(refineClaims([...claims].reverse()).map((c) => c.refines)).toEqual([...expected].reverse());
 	});
 
 	it('names how a refinement tells its nodes apart: predicate, field literal, token or child pattern', () => {
