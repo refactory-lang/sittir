@@ -97,6 +97,10 @@
 (import_statement from_clause: (import_statement_clause_from source: (_) @source))
 (import_statement from_clause: (import_statement_clause_from (import_clause) @importClause))
 (export_statement) @statement.export
+(export_statement_default_declaration) @statement.export
+(export_statement_default_declaration (export_statement_default_declaration_default_kw)) @statement.export.default
+(export_statement_default_from) @statement.export
+(export_statement_default_from (export_statement_default_from_star_from)) @statement.export.all
 (export_statement_default_declaration (declaration) @declaration)
 (export_statement_default_declaration (export_statement_default_declaration_default_kw (declaration) @declaration))
 (export_statement_default_declaration (export_statement_default_declaration_default_kw (export_statement_default_declaration_default_kw_value value: (_) @value)))
@@ -220,8 +224,9 @@
 (member_expression property: (private_property_identifier) @property @privateName)
 (subscript_expression (optional_chain) @optional_chain)
 (subscript_expression) @expression.subscript
-(arrow_function (arrow_function_parameter parameter: (_) @parameters)) @expression.lambda
-(arrow_function (call_signature parameters: (_) @parameters)) @expression.lambda
+(arrow_function) @expression.lambda
+(arrow_function (arrow_function_parameter parameter: (_) @parameters))
+(arrow_function (call_signature parameters: (_) @parameters))
 (function_expression) @expression.function
 (generator_function) @expression.function
 (generator_function "*" @generator)

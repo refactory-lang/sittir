@@ -23,7 +23,7 @@ const sameRoutes = (a: SlotRoutes, b: SlotRoutes): boolean =>
 	a.kinds.every((kind, i) => kind === b.kinds[i]);
 
 const anchored = (items: readonly unknown[], anchor: PortableStep['anchor']): readonly unknown[] =>
-	anchor === undefined ? items : anchor === 'first' ? items.slice(0, 1) : items.slice(-1);
+	anchor === undefined ? items : anchor === 'first' ? items.slice(0, 1) : anchor === 'last' ? items.slice(-1) : items.length === 1 ? items : [];
 
 function placed(entry: PortableReadEntry, context: Context): boolean {
 	if (entry.within.length === 0) return true;

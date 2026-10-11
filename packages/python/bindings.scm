@@ -106,17 +106,33 @@
 (boolean_operator) @expression.binary.logical
 (boolean_operator operator: "and") @expression.binary.logical.and
 (boolean_operator operator: "or") @expression.binary.logical.or
-(comparison_operator (comparison_operator_comparator operators: _ @operator)) @expression.binary
-(comparison_operator (comparison_operator_comparator operators: "==")) @expression.binary.comparison.equal
-(comparison_operator (comparison_operator_comparator operators: "!=")) @expression.binary.comparison.not_equal
-(comparison_operator (comparison_operator_comparator operators: "<")) @expression.binary.comparison.less
-(comparison_operator (comparison_operator_comparator operators: ">")) @expression.binary.comparison.greater
-(comparison_operator (comparison_operator_comparator operators: "<=")) @expression.binary.comparison.less_equal
-(comparison_operator (comparison_operator_comparator operators: ">=")) @expression.binary.comparison.greater_equal
-(comparison_operator (comparison_operator_comparator operators: "in")) @expression.binary.membership.in
-(comparison_operator (comparison_operator_comparator operators: "not in")) @expression.binary.membership.not_in
-(comparison_operator (comparison_operator_comparator operators: "is")) @expression.binary.identity.is
-(comparison_operator (comparison_operator_comparator operators: "is not")) @expression.binary.identity.is_not
+(comparison_operator) @expression.binary
+(comparison_operator (comparison_operator_comparator) . (comparison_operator_comparator)) @expression.binary.comparison.chain
+(comparison_operator . (_) . (comparison_operator_comparator operators: "==") .) @expression.binary.comparison.equal
+(comparison_operator . (_) . (comparison_operator_comparator operators: "!=") .) @expression.binary.comparison.not_equal
+(comparison_operator . (_) . (comparison_operator_comparator operators: "<>") .) @expression.binary.comparison.not_equal
+(comparison_operator . (_) . (comparison_operator_comparator operators: "<") .) @expression.binary.comparison.less
+(comparison_operator . (_) . (comparison_operator_comparator operators: ">") .) @expression.binary.comparison.greater
+(comparison_operator . (_) . (comparison_operator_comparator operators: "<=") .) @expression.binary.comparison.less_equal
+(comparison_operator . (_) . (comparison_operator_comparator operators: ">=") .) @expression.binary.comparison.greater_equal
+(comparison_operator . (_) . (comparison_operator_comparator operators: "in") .) @expression.binary.membership.in
+(comparison_operator . (_) . (comparison_operator_comparator operators: "not in") .) @expression.binary.membership.not_in
+(comparison_operator . (_) . (comparison_operator_comparator operators: "is") .) @expression.binary.identity.is
+(comparison_operator . (_) . (comparison_operator_comparator operators: "is not") .) @expression.binary.identity.is_not
+(comparison_operator . (_) . (comparison_operator_comparator (_) @right) .)
+(comparison_operator_comparator) @element.comparator
+(comparison_operator_comparator operators: "==") @element.comparator.comparison.equal
+(comparison_operator_comparator operators: "!=") @element.comparator.comparison.not_equal
+(comparison_operator_comparator operators: "<>") @element.comparator.comparison.not_equal
+(comparison_operator_comparator operators: "<") @element.comparator.comparison.less
+(comparison_operator_comparator operators: ">") @element.comparator.comparison.greater
+(comparison_operator_comparator operators: "<=") @element.comparator.comparison.less_equal
+(comparison_operator_comparator operators: ">=") @element.comparator.comparison.greater_equal
+(comparison_operator_comparator operators: "in") @element.comparator.membership.in
+(comparison_operator_comparator operators: "not in") @element.comparator.membership.not_in
+(comparison_operator_comparator operators: "is") @element.comparator.identity.is
+(comparison_operator_comparator operators: "is not") @element.comparator.identity.is_not
+(comparison_operator_comparator (_) @right)
 (unary_operator) @expression.unary
 (unary_operator operator: "-") @expression.unary.negation
 (unary_operator operator: "+") @expression.unary.plus

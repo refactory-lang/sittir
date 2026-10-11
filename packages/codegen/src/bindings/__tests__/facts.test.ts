@@ -10,6 +10,7 @@ const claim = (vocab: string, kind: string | null, extra: Partial<ClaimFact> = {
 	within: [],
 	fieldLiterals: {},
 	tokens: [],
+	children: [],
 	...extra
 });
 
@@ -40,6 +41,50 @@ describe('bindFacts', () => {
 		expect(bound.claims.map((c) => [c.kind, c.within])).toEqual([
 			['bound_function_item', ['bound_impl_item']],
 			['_', []]
+		]);
+	});
+
+	it('names the kinds each claim\'s child tests and predicates read, and the steps to them, by their bound kinds', () => {
+		const step = { field: null, kind: 'block', after: null, anchor: null };
+		const [claimed] = bindFacts(
+			{
+				...facts,
+				claims: [
+					claim('declaration.function', 'function_item', {
+						predicates: [{ operator: 'kind-eq', capture: 'r', arguments: [{ text: 'self' }], subject: { up: 0, down: [step] } }],
+						children: [
+							{ subject: { up: 0, down: [step] }, kinds: ['block'], captured: false },
+							{ subject: { up: 0, down: [step] }, text: '+' }
+						]
+					})
+				]
+			},
+			(kind) => `bound_${kind}`
+		).claims;
+		const boundStep = { ...step, kind: 'bound_block' };
+		expect(claimed?.predicates).toEqual([{ operator: 'kind-eq', capture: 'r', arguments: [{ text: 'bound_self' }], subject: { up: 0, down: [boundStep] } }]);
+		expect(claimed?.children).toEqual([
+			{ subject: { up: 0, down: [boundStep] }, kinds: ['bound_block'], captured: false },
+			{ subject: { up: 0, down: [boundStep] }, text: '+' }
+		]);
+	});
+
+	it('names the kinds a claim\'s sibling order and its anchors\' neighbours select by their bound kinds', () => {
+		const op = { field: null, kind: 'cmp_op', after: null, anchor: null };
+		const [claimed] = bindFacts(
+			{
+				...facts,
+				claims: [
+					claim('expression.binary.chain', 'cmp', {
+						children: [{ subject: { up: 0, down: [] }, siblings: [{ selector: op, bare: true }, { selector: { ...op, adjacent: { previous: op } }, bare: true }] }]
+					})
+				]
+			},
+			(kind) => `bound_${kind}`
+		).claims;
+		const boundOp = { ...op, kind: 'bound_cmp_op' };
+		expect(claimed?.children).toEqual([
+			{ subject: { up: 0, down: [] }, siblings: [{ selector: boundOp, bare: true }, { selector: { ...boundOp, adjacent: { previous: boundOp } }, bare: true }] }
 		]);
 	});
 

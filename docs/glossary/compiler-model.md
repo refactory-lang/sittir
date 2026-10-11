@@ -2067,7 +2067,7 @@ The kind's `renamedFrom`, `splitFrom` and `variantOf`, read from the constructio
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.renamedFrom`
 
-The base kind a bindings overlay renamed into this kind, or `undefined`. It is read from `KindFacts.provenance` once, when the node is built, and is the node model's only record of the rename.
+The base kind grammar bindings renamed into this kind, or `undefined`. It is read from `KindFacts.provenance` once, when the node is built, and is the node model's only record of the rename.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.splitFrom`
 

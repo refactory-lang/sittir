@@ -50,8 +50,8 @@ export function isBindingSet(set: object): boolean {
 	return (set as { [BINDING_SET]?: boolean })[BINDING_SET] === true;
 }
 
-export function bindings<const B extends Bindings>(overlay: B): B {
-	return overlay;
+export function bindings<const B extends Bindings>(grammarBindings: B): B {
+	return grammarBindings;
 }
 
 export function rename(from: string, to: string): Rename {
@@ -538,13 +538,13 @@ export function rewriteBindingOptions(grammar: GrammarRecord, effects: readonly 
 	return out;
 }
 
-export function bindGrammar(grammar: GrammarRecord, overlay: Bindings, effects: readonly BindingEffect[] = []): GrammarRecord {
-	const renames = Object.fromEntries((overlay.renames ?? []).map((r) => [r.from, r.to]));
+export function bindGrammar(grammar: GrammarRecord, grammarBindings: Bindings, effects: readonly BindingEffect[] = []): GrammarRecord {
+	const renames = Object.fromEntries((grammarBindings.renames ?? []).map((r) => [r.from, r.to]));
 	const renamed = renameGrammar(rewriteBindingOptions(grammar, effects), renames);
 	const boundName = (name: string): string => mappedName(renames, name);
 	return splitGrammar(
 		renamed,
-		(overlay.splits ?? []).map((s) => ({ ...s, kind: boundName(s.kind), within: s.within.map(boundName) }))
+		(grammarBindings.splits ?? []).map((s) => ({ ...s, kind: boundName(s.kind), within: s.within.map(boundName) }))
 	);
 }
 

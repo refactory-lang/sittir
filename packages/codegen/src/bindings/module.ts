@@ -5,7 +5,7 @@ import { withDslGlobals } from '../compiler/evaluate.ts';
 import type { Bindings } from '../dsl/bind.ts';
 import { grammarPackageDir, type GrammarName } from '../grammars.ts';
 import { REGENERATE_BINDINGS_COMMAND } from './hash.ts';
-import type { BindingsOverlay, OverlayEdit, OverlayPatch } from './overlay.ts';
+import type { GrammarBindings, GrammarBindingsEdit, GrammarBindingsPatch } from './grammar-bindings.ts';
 
 export const BINDINGS_MODULE = 'grammar.bindings.ts';
 
@@ -20,21 +20,21 @@ export async function loadBindingsModule(dir: string): Promise<Bindings | undefi
 
 const q = (v: string): string => JSON.stringify(v);
 
-const editCall = (edit: OverlayEdit): string => ('field' in edit ? `field(${q(edit.field)})` : `alias(sym(${q(edit.alias.from)}), sym(${q(edit.alias.to)}))`);
+const editCall = (edit: GrammarBindingsEdit): string => ('field' in edit ? `field(${q(edit.field)})` : `alias(sym(${q(edit.alias.from)}), sym(${q(edit.alias.to)}))`);
 
-const patchSet = (patches: readonly OverlayPatch[]): string => `{ ${patches.map((p) => `${q(p.path)}: ${editCall(p.edit)}`).join(', ')} }`;
+const patchSet = (patches: readonly GrammarBindingsPatch[]): string => `{ ${patches.map((p) => `${q(p.path)}: ${editCall(p.edit)}`).join(', ')} }`;
 
 function list(lines: readonly string[]): string {
 	return lines.length === 0 ? '[]' : `[\n${lines.join(',\n')}\n\t]`;
 }
 
-export function printBindingsModule(overlay: BindingsOverlay, hash: string): string {
-	const patchLines = [...overlay.patches].map(([kind, sets]) => `\t\t${kind}: ${sets.length === 1 ? patchSet(sets[0]!) : `[${sets.map(patchSet).join(', ')}]`}`);
-	const renameLines = Object.entries(overlay.renames).map(([from, to]) => `\t\trename(${q(from)}, ${q(to)})`);
-	const splitLines = overlay.splits.map(
+export function printBindingsModule(bindings: GrammarBindings, hash: string): string {
+	const patchLines = [...bindings.patches].map(([kind, sets]) => `\t\t${kind}: ${sets.length === 1 ? patchSet(sets[0]!) : `[${sets.map(patchSet).join(', ')}]`}`);
+	const renameLines = Object.entries(bindings.renames).map(([from, to]) => `\t\trename(${q(from)}, ${q(to)})`);
+	const splitLines = bindings.splits.map(
 		(s) => `\t\tsplit(${q(s.kind)}, ${q(s.as)}, { within: [${s.within.map(q).join(', ')}], containers: [${s.containers.map((c) => `{ name: ${q(c.name)}, field: ${q(c.field)} }`).join(', ')}] })`
 	);
-	const edits = [...overlay.patches.values()].flat(2).map((p) => p.edit);
+	const edits = [...bindings.patches.values()].flat(2).map((p) => p.edit);
 	const helpers = [
 		...(edits.some((e) => 'alias' in e) ? ['alias'] : []),
 		'bindings',

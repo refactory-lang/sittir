@@ -1,17 +1,16 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { bindingIssues, compileQuery } from './bindings.ts';
 import {
-	type BindingsOverlay,
+	type GrammarBindings,
 	type Derivation,
 	type GrammarInput,
 	type NodeModelRecord,
-	type OverlayReport,
+	type GrammarBindingsReport,
 	bindingGrammars,
 	bindingsModulePath,
 	bindingsPath,
-	camel,
 	derive,
-	deriveOverlay,
+	deriveGrammarBindings,
 	FLAGS_PATH,
 	grammarBindingsHash,
 	grammarInput,
@@ -75,8 +74,8 @@ export async function loadInputs(grammars: readonly GrammarName[]): Promise<Gram
 
 export interface BindingsModule {
 	readonly text: string;
-	readonly overlay: BindingsOverlay;
-	readonly report: OverlayReport;
+	readonly bindings: GrammarBindings;
+	readonly report: GrammarBindingsReport;
 }
 
 export function vocabularyMembers(vocabulary: Vocabulary): ReadonlyMap<string, ReadonlySet<string>> {
@@ -88,20 +87,20 @@ export async function bindingsModule(grammar: GrammarName): Promise<BindingsModu
 	const model = await invoke('nodeModel', 'buildNodeModel', await compileNodeMap(grammar, { unbound: true }));
 	const input = await grammarInput(grammar, base, model);
 	if (input === undefined) throw new Error(`bindings-inventory: ${grammar} has no bindings.scm`);
-	const { overlay, report } = deriveOverlay({
+	const { bindings, report } = deriveGrammarBindings({
 		facts: input.bindings,
 		base,
 		vocabMembers: vocabularyMembers(readVocabulary(VOCABULARY_DIR)),
 		routedMembers: resolveRoutes(input).members
 	});
-	return { text: printBindingsModule(overlay, grammarBindingsHash(grammar)), overlay, report };
+	return { text: printBindingsModule(bindings, grammarBindingsHash(grammar)), bindings, report };
 }
 
-export function overlaySummary(grammar: string, { overlay, report }: Omit<BindingsModule, 'text'>): string {
+export function grammarBindingsSummary(grammar: string, { bindings, report }: Omit<BindingsModule, 'text'>): string {
 	const pct = (n: number, d: number): string => `${n}/${d} (${d === 0 ? 0 : Math.round((1000 * n) / d) / 10} %)`;
-	const sites = [...overlay.patches.values()].flat(2).length;
+	const sites = [...bindings.patches.values()].flat(2).length;
 	const lines = [
-		`${grammar}: ${Object.keys(overlay.renames).length} renames, ${Object.keys(report.aliases).length} aliases, ${report.fieldRenames.length} field renames, ${report.fieldWraps.length} field wraps, ${overlay.splits.length} splits, ${sites} patch sites (${overlay.patches.size} rules)`,
+		`${grammar}: ${Object.keys(bindings.renames).length} renames, ${Object.keys(report.aliases).length} aliases, ${report.fieldRenames.length} field renames, ${report.fieldWraps.length} field wraps, ${bindings.splits.length} splits, ${sites} patch sites (${bindings.patches.size} rules)`,
 		`  claims realized as kinds ${pct(report.realizedKinds.length + report.realizedByParent.length, report.claims)} (${report.realizedByParent.length} by the parent)`,
 		`  members realized as field names ${pct(report.realizedMembers.length, report.members)}; implicit routes fielded ${report.implicitMembers.length}${report.implicitMembers.length > 0 ? ` (${report.implicitMembers.join(', ')})` : ''}`
 	];
@@ -131,9 +130,6 @@ export function vocabularyDisagreements(d: Derivation, vocabulary: Vocabulary): 
 	};
 	for (const [v, members] of d.members) {
 		for (const member of members.keys()) undeclared(v, member, 'routed');
-	}
-	for (const [v, refinement] of d.refinements) {
-		for (const field of refinement.literals.keys()) undeclared(v, camel(field), 'pinned');
 	}
 	for (const [v, holes] of d.holes) {
 		for (const hole of holes.keys()) undeclared(v, hole, 'templated');
@@ -198,7 +194,7 @@ export async function run(opts: BindingsInventoryOptions): Promise<number> {
 		for (const grammar of grammars) {
 			const module = await bindingsModule(grammar);
 			writeFileSync(bindingsModulePath(grammar), module.text);
-			process.stdout.write(`${overlaySummary(grammar, module)}\n`);
+			process.stdout.write(`${grammarBindingsSummary(grammar, module)}\n`);
 		}
 	}
 	if (opts.check) {

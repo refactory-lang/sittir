@@ -7,7 +7,6 @@ import { grammarPackageDir } from '@sittir/codegen/grammars';
 const CEILING: Readonly<Record<string, readonly string[]>> = {
 	python: [
 		'class_definition.doc',
-		'comparison_operator.operator',
 		'function_definition.doc'
 	],
 	rust: [

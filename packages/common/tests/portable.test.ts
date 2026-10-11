@@ -175,12 +175,14 @@ describe('portableSurface conditions through a list', () => {
 				method: { ids: [METHOD], exact: false },
 				'method.first': { ids: [METHOD], exact: false },
 				'method.last': { ids: [METHOD], exact: false },
+				'method.only': { ids: [METHOD], exact: false },
 				'method.static': { ids: [METHOD], exact: false }
 			},
 			fixedText: {},
 			aliases: [],
 			entries: {
 				[METHOD]: [
+					{ path: 'method.only', within: [], test: [{ up: 0, via: [PARAMS_STEP, { ...ITEMS, anchor: 'only' }], plan: { op: 'is', types: [PLAIN], ...ELEMENT } }] },
 					{ path: 'method.last', within: [], test: [{ up: 0, via: [PARAMS_STEP, { ...ITEMS, anchor: 'last' }], plan: { op: 'is', types: [SELF], ...ELEMENT } }] },
 					{ path: 'method.first', within: [], test: [{ up: 0, via: [PARAMS_STEP, { ...ITEMS, anchor: 'first' }], plan: { op: 'is', types: [SELF], ...ELEMENT } }] },
 					{ path: 'method.static', within: [], test: [{ up: 0, via: [PARAMS_STEP, ITEMS], plan: { op: 'not', of: { op: 'is', types: [SELF], ...ELEMENT } } }] },
@@ -200,6 +202,12 @@ describe('portableSurface conditions through a list', () => {
 		expect(is.method.last(method(SELF, PLAIN))).toBe(false);
 		expect(is.method.first(method(PLAIN, SELF))).toBe(false);
 		expect(is.method.last(method(PLAIN, SELF))).toBe(true);
+	});
+
+	it('reads a step anchored as only when its slot holds exactly one node', () => {
+		expect(is.method.only(method(PLAIN))).toBe(true);
+		expect(is.method.only(method(PLAIN, PLAIN))).toBe(false);
+		expect(is.method.only(method())).toBe(false);
 	});
 
 	it('tests a negated plan against every node the steps reach, so it holds only when none matches', () => {

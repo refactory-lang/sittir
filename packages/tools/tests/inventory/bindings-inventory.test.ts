@@ -12,7 +12,7 @@ import {
 	vocabularyDisagreements,
 	vocabularyMembers
 } from '../../src/inventory/index.ts';
-import { type Derivation, FLAGS_PATH, bindingPatterns, levelMembers } from '@sittir/codegen/bindings';
+import { type Derivation, FLAGS_PATH, bindingPatterns, camel, levelMembers } from '@sittir/codegen/bindings';
 import { readVocabulary } from '../../src/inventory/vocabulary.ts';
 
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
@@ -196,6 +196,17 @@ describe('the authored vocabulary', () => {
 		};
 		expect(vocabularyDisagreements(d, withoutHole)).toContain(`${path}.${hole}: templated, but its interface does not declare it`);
 	}, 120_000);
+	it('needs no declaration for a refinement pinned slot: the read tells it, so it is no member', async () => {
+		const d = await deriveVocabulary();
+		const vocabulary = readVocabulary(VOCABULARY_DIR);
+		const pinned = [...d.refinements].flatMap(([v, r]) => [...r.literals.keys()].map((field) => [v, camel(field)] as const).filter(([, p]) => !d.members.get(v)?.has(p)));
+		expect(pinned.length).toBeGreaterThan(0);
+		const unpinned = {
+			...vocabulary,
+			members: (kind: string) => new Map([...vocabulary.members(kind)].filter(([m]) => !pinned.some(([v, p]) => v === kind && p === m)))
+		};
+		expect(vocabularyDisagreements(d, unpinned)).toEqual(vocabularyDisagreements(d, vocabulary));
+	}, 120_000);
 
 	it('is authored: no file but the flags module says it is generated', () => {
 		for (const file of readdirSync(VOCABULARY_DIR).filter((f) => join(VOCABULARY_DIR, f) !== FLAGS_PATH)) {
@@ -238,7 +249,7 @@ describe('readVocabulary', () => {
 		});
 	});
 
-	it('gives the overlay derivation every member a kind declares or inherits', () => {
+	it('gives the grammar-bindings derivation every member a kind declares or inherits', () => {
 		expect(vocabularyMembers(vocabulary).get('declaration.function')).toEqual(new Set(['body', 'name']));
 	});
 });

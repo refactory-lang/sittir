@@ -998,7 +998,7 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 			expect(nodeMap.nodes.get('method')?.renamedFrom).toBeUndefined();
 		});
 
-		it('stamps nothing on a kind the overlay left alone', () => {
+		it('stamps nothing on a kind the grammar bindings left alone', () => {
 			const nodeMap = assemble(AssembleCtx.from(provenanced(), makeIdTables({})));
 			expect(nodeMap.nodes.get('plain')?.renamedFrom).toBeUndefined();
 			expect(nodeMap.nodes.get('plain')?.splitFrom).toBeUndefined();

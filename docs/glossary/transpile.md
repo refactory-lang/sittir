@@ -392,7 +392,7 @@ stdout.
 
 It evaluates the entry unbound, so the grammar hash, the upstream conflicts and
 the derived resolutions are those of the base grammar, in base names; a
-bindings overlay renames them with the grammar after `grammar()`.
+its grammar bindings rename them with the grammar after `grammar()`.
 
 ### `packages/codegen/src/transpile/conflict-resolutions-file.ts::conflictResolutionsPath`
 
@@ -457,13 +457,13 @@ The resolutions are derived against the base grammar: each derivation run
 generates with `GeneratedGrammar` `base`, so tree-sitter reports conflicts in
 the base names the resolutions are applied in. A converged set is then checked
 by one `bound` generate, which builds the parser that ships; a bound parser it
-does not settle is `stale` (a bindings overlay changed the parse), with the
+does not settle is `stale` (grammar bindings changed the parse), with the
 derived set kept. The reuse probe generates `bound` too.
 
 ### `packages/codegen/src/transpile/conflict-driver.ts::GeneratedGrammar`
 
 Which grammar a `tree-sitter generate` run builds: `base` (with
-`UNBOUND_ENV` set, the bindings overlay skipped) or `bound`.
+`UNBOUND_ENV` set, the grammar bindings skipped) or `bound`.
 
 ### `packages/codegen/src/transpile/conflict-driver.ts::generateWithDerivedConflicts`
 
