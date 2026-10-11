@@ -204,6 +204,8 @@ export const _fromMap = {
 	string_fragment: coerceToStringFragment,
 	escape_interpolation: coerceToEscapeInterpolation,
 	string_end: coerceToStringEnd,
+	_indent: coerceToIndent,
+	_dedent: coerceToDedent,
 	_tight: coerceToTight,
 	_space: coerceToSpace,
 	_tab: coerceToTab,
@@ -302,6 +304,8 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	string_fragment: { pattern: /^(?:(?:[\s\S]+))$/u, factory: F.buildStringFragment },
 	escape_interpolation: { pattern: /^(?:(?:\{\{|\}\}))$/u, factory: F.buildEscapeInterpolation },
 	string_end: { pattern: /^(?:(?:\\*["'`]+))$/u, factory: F.buildStringEnd },
+	_indent: { values: ['﷐\n'], factory: () => F.buildIndent },
+	_dedent: { values: ['﷑\n'], factory: () => F.buildDedent },
 	_tight: { values: [''], factory: () => F.buildTight },
 	_space: { values: [' '], factory: () => F.buildSpace },
 	_tab: { values: ['\t'], factory: () => F.buildTab },
@@ -333,6 +337,8 @@ function _buildGuardedText(v: string, kind: string): AnyUntypedNode | number {
 
 const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'_newline',
+	'_indent',
+	'_dedent',
 	'string_start',
 	'string_fragment',
 	'escape_interpolation',
@@ -475,7 +481,7 @@ const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33,
 	34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62,
 	63, 64, 65, 67, 68, 69, 70, 71, 72, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 107, 108, 109, 110, 111,
-	112, 113, 114, 115, 122, 123, 124, 125, 126, 137, 147, 148, 149, 210, 211, 252, 257, 258, 279
+	112, 113, 114, 115, 116, 117, 122, 123, 124, 125, 126, 137, 147, 148, 149, 210, 211, 252, 257, 258, 279
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	_simple_statements: new Set([
@@ -7544,6 +7550,14 @@ export function coerceToEscapeInterpolation(
 export function coerceToStringEnd(input: T.StringEnd.Loose): ReturnType<typeof F.buildStringEnd> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildStringEnd>;
 	return F.buildStringEnd(input as Parameters<typeof F.buildStringEnd>[0]);
+}
+
+export function coerceToIndent(_input?: T.Indent.Loose): typeof F.buildIndent {
+	return F.buildIndent;
+}
+
+export function coerceToDedent(_input?: T.Dedent.Loose): typeof F.buildDedent {
+	return F.buildDedent;
 }
 
 export function coerceToTight(_input?: T.Tight.Loose): typeof F.buildTight {

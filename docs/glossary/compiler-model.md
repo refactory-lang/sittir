@@ -4661,6 +4661,7 @@ Where an inner comment can sit in an empty node of this kind: one `InnerGap` per
 
 - A kind has gaps only when its render rule can realise with no slot value (`realizesEmpty` over `slotEmptiness`). A filled required slot, a required choice between slots, or a repeat1 gives every comment a named neighbour, so leading or trailing always holds it.
 - A trivia-interior kind (`triviaInterior`) has no gaps: it is lexically one unit.
+- A literal token is a text rule or a non-slot symbol of a fixed-text kind (`nonterminal: false`). A grammar that exposes a zero-width scanner token as a named kind (python's `indent` / `dedent`) keeps it as that symbol instead of inlining its text, and it counts in `precedingTokens` as the inlined text did, so exposing it does not remove the kind's empty form.
 - A gap whose closing token is immediate is not a gap: tree-sitter lexes no extra before an immediate token. The same holds for the slotless `interior` gap's second token.
 - Tokens under an optional or repeat member, or inside a choice, are conditional and not counted: they are absent from an empty node.
 - A slot is found by its source rule ids, never at the rule root.

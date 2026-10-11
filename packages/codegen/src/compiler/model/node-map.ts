@@ -1776,7 +1776,7 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 				occurrences.push({ slot, precedingTokens: immediateTokens.length });
 				return;
 			}
-			if (rule.type === STRING) {
+			if (rule.type === STRING || (rule.type === SYMBOL && rule.nonterminal === false)) {
 				if (!ctx.conditional) immediateTokens.push(rule.immediate === true);
 				return;
 			}

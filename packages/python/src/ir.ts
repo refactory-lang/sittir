@@ -366,6 +366,8 @@ export const ir: {
 	readonly positionalSeparator: typeof F.buildPositionalSeparator;
 	readonly keywordSeparator: typeof F.buildKeywordSeparator;
 	readonly wildcardPattern: typeof F.buildWildcardPattern;
+	readonly indent: typeof F.buildIndent;
+	readonly dedent: typeof F.buildDedent;
 	readonly newline: typeof F.buildNewline;
 	readonly comment: typeof F.buildComment;
 	readonly escapeSequenceUnicodeFixed: typeof F.buildEscapeSequenceUnicodeFixed;
@@ -561,6 +563,8 @@ export const ir: {
 	positionalSeparator: F.buildPositionalSeparator,
 	keywordSeparator: F.buildKeywordSeparator,
 	wildcardPattern: F.buildWildcardPattern,
+	indent: F.buildIndent,
+	dedent: F.buildDedent,
 	newline: F.buildNewline,
 
 	// Leaves whose one slot is their own text

@@ -134,6 +134,13 @@ describe('trivia model facts', () => {
 		expect(innerGapsOf(await nodeMapOf('python'), 'comprehension_clauses')).toEqual([]);
 	});
 
+	it('counts a zero-width kind between the slots as a token, as it did when the grammar hid it', async () => {
+		const python = await nodeMapOf('python');
+		expect(innerGapsOf(python, 'match_block_block')).toEqual([{ key: 'alternative', precedingTokens: 1 }]);
+		expect(innerGapsOf(python, 'block')).toEqual([]);
+		expect(innerGapsOf(python, 'suite_block')).toEqual([]);
+	});
+
 	it('gives a tokenless kind a gap only when it is the grammar root, keying its repeat slot', async () => {
 		expect(innerGapsOf(await nodeMapOf('typescript'), 'enum_body_elements')).toEqual([]);
 		expect(innerGapsOf(await nodeMapOf('scm'), 'program')).toEqual([{ key: 'definitions', precedingTokens: 0 }]);
