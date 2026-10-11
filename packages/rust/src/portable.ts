@@ -651,8 +651,8 @@ export interface PortableIds {
 	'pattern.mutable': TSKindId.MutPattern;
 	'pattern.or': TSKindId.OrPattern | TSKindId.OrPatternBinary | TSKindId.OrPatternPrefix;
 	'pattern.range': TSKindId.RangePattern | TSKindId.RangePatternPrefix | TSKindId.RangePatternWithLeft;
-	'pattern.range.exclusive': TSKindId.RangePatternPrefix;
-	'pattern.range.inclusive': TSKindId.RangePatternPrefix;
+	'pattern.range.exclusive': TSKindId.RangePatternPrefix | TSKindId.RangePatternWithLeft;
+	'pattern.range.inclusive': TSKindId.RangePatternPrefix | TSKindId.RangePatternWithLeft;
 	'pattern.reference': TSKindId.RefPattern | TSKindId.ReferencePattern;
 	'pattern.reference.value': TSKindId.ReferencePattern;
 	'pattern.slice': TSKindId.SlicePattern;
@@ -3269,8 +3269,8 @@ const table: PortableTable = {
 			ids: [TSKindId.RangePattern, TSKindId.RangePatternPrefix, TSKindId.RangePatternWithLeft],
 			exact: false
 		},
-		'pattern.range.exclusive': { ids: [TSKindId.RangePatternPrefix], exact: false },
-		'pattern.range.inclusive': { ids: [TSKindId.RangePatternPrefix], exact: false },
+		'pattern.range.exclusive': { ids: [TSKindId.RangePatternPrefix, TSKindId.RangePatternWithLeft], exact: false },
+		'pattern.range.inclusive': { ids: [TSKindId.RangePatternPrefix, TSKindId.RangePatternWithLeft], exact: false },
 		'pattern.reference': { ids: [TSKindId.RefPattern, TSKindId.ReferencePattern], exact: false },
 		'pattern.reference.value': { ids: [TSKindId.ReferencePattern], exact: false },
 		'pattern.slice': { ids: [TSKindId.SlicePattern], exact: false },
@@ -3775,9 +3775,39 @@ const table: PortableTable = {
 		],
 		[TSKindId.Block]: [{ path: 'statement.block', within: [], test: [] }],
 		[TSKindId.BlockComment]: [
-			{ path: 'comment.block', within: [], test: [] },
-			{ path: 'comment.block.doc', within: [], test: [] },
-			{ path: 'comment.block.doc.inner', within: [], test: [] }
+			{
+				path: 'comment.block.doc',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [],
+						plan: {
+							op: 'is',
+							types: [402],
+							fields: [],
+							kinds: ['block_comment_doc_outer', 'block_comment_doc_inner', 'block_comment_regular']
+						}
+					}
+				]
+			},
+			{
+				path: 'comment.block.doc.inner',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [],
+						plan: {
+							op: 'is',
+							types: [403],
+							fields: [],
+							kinds: ['block_comment_doc_outer', 'block_comment_doc_inner', 'block_comment_regular']
+						}
+					}
+				]
+			},
+			{ path: 'comment.block', within: [], test: [] }
 		],
 		[TSKindId.BlockCommentRegular]: [{ path: 'comment.text', within: [], test: [] }],
 		[TSKindId.BlockKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
@@ -3789,9 +3819,17 @@ const table: PortableTable = {
 		[TSKindId.BracketedType]: [{ path: 'type.bracketed', within: [], test: [] }],
 		[TSKindId.BreakExpression]: [{ path: 'statement.break', within: [], test: [] }],
 		[TSKindId.CallExpression]: [
-			{ path: 'expression.call', within: [], test: [] },
-			{ path: 'expression.call.member', within: [], test: [] },
-			{ path: 'expression.call.path', within: [], test: [] }
+			{
+				path: 'expression.call.member',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [308], fields: ['function'], kinds: [] } }]
+			},
+			{
+				path: 'expression.call.path',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [263], fields: ['function'], kinds: [] } }]
+			},
+			{ path: 'expression.call', within: [], test: [] }
 		],
 		[TSKindId.CapturedPattern]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
@@ -3905,9 +3943,17 @@ const table: PortableTable = {
 		[TSKindId.EmptyStatement]: [{ path: 'statement.empty', within: [], test: [] }],
 		[TSKindId.EnumItem]: [{ path: 'declaration.enum', within: [], test: [] }],
 		[TSKindId.EnumVariant]: [
-			{ path: 'declaration.enum_member', within: [], test: [] },
-			{ path: 'declaration.enum_member.tuple', within: [], test: [] },
-			{ path: 'declaration.enum_member.struct', within: [], test: [] }
+			{
+				path: 'declaration.enum_member.tuple',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [203], fields: ['body'], kinds: [] } }]
+			},
+			{
+				path: 'declaration.enum_member.struct',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [201], fields: ['body'], kinds: [] } }]
+			},
+			{ path: 'declaration.enum_member', within: [], test: [] }
 		],
 		[TSKindId.EscapeSequence]: [{ path: 'literal.string.escape', within: [], test: [] }],
 		[TSKindId.EscapeSequenceHex]: [{ path: 'literal.string.escape', within: [], test: [] }],
@@ -3993,6 +4039,11 @@ const table: PortableTable = {
 								'primitive_type'
 							]
 						}
+					},
+					{
+						up: 0,
+						via: [{ fields: ['parameters'], kinds: [] }],
+						plan: { op: 'is', types: [349], fields: ['elements'], kinds: [] }
 					}
 				]
 			},
@@ -4087,8 +4138,12 @@ const table: PortableTable = {
 		],
 		[TSKindId.IfExpression]: [{ path: 'statement.if', within: [], test: [] }],
 		[TSKindId.ImplItemBody]: [
-			{ path: 'declaration.extension', within: [], test: [] },
-			{ path: 'declaration.extension.conformance', within: [], test: [] }
+			{
+				path: 'declaration.extension.conformance',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [376, 375], fields: ['trait_clause'], kinds: [] } }]
+			},
+			{ path: 'declaration.extension', within: [], test: [] }
 		],
 		[TSKindId.ImplItemSemi]: [{ path: 'declaration.extension', within: [], test: [] }],
 		[TSKindId.IndexExpression]: [{ path: 'expression.subscript', within: [], test: [] }],
@@ -4122,9 +4177,49 @@ const table: PortableTable = {
 		[TSKindId.LifetimeKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.LifetimeParameter]: [{ path: 'declaration.type_parameter.lifetime', within: [], test: [] }],
 		[TSKindId.LineComment]: [
-			{ path: 'comment.line', within: [], test: [] },
-			{ path: 'comment.line.doc', within: [], test: [] },
-			{ path: 'comment.line.doc.inner', within: [], test: [] }
+			{
+				path: 'comment.line.doc',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [],
+						plan: {
+							op: 'is',
+							types: [400],
+							fields: [],
+							kinds: [
+								'line_comment_extra_slashes',
+								'line_comment_doc_outer',
+								'line_comment_doc_inner',
+								'line_comment_regular'
+							]
+						}
+					}
+				]
+			},
+			{
+				path: 'comment.line.doc.inner',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [],
+						plan: {
+							op: 'is',
+							types: [401],
+							fields: [],
+							kinds: [
+								'line_comment_extra_slashes',
+								'line_comment_doc_outer',
+								'line_comment_doc_inner',
+								'line_comment_regular'
+							]
+						}
+					}
+				]
+			},
+			{ path: 'comment.line', within: [], test: [] }
 		],
 		[TSKindId.LineCommentExtraSlashes]: [{ path: 'comment.text', within: [], test: [] }],
 		[TSKindId.LineCommentRegular]: [{ path: 'comment.text', within: [], test: [] }],
@@ -4215,6 +4310,85 @@ const table: PortableTable = {
 		],
 		[TSKindId.RangePatternWithLeft]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
+			{
+				path: 'pattern.range.inclusive',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [],
+						plan: {
+							op: 'is',
+							types: [420],
+							fields: [],
+							kinds: ['range_pattern_with_left_with_right', 'range_pattern_with_left_bare']
+						}
+					},
+					{
+						up: 0,
+						via: [{ fields: [], kinds: ['range_pattern_with_left_with_right', 'range_pattern_with_left_bare'] }],
+						plan: { op: 'eq', text: '..=', fields: [], kinds: ['dot_dot_dot', 'dot_dot_eq', 'dot_dot'] }
+					}
+				]
+			},
+			{
+				path: 'pattern.range.inclusive',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [],
+						plan: {
+							op: 'is',
+							types: [420],
+							fields: [],
+							kinds: ['range_pattern_with_left_with_right', 'range_pattern_with_left_bare']
+						}
+					},
+					{
+						up: 0,
+						via: [{ fields: [], kinds: ['range_pattern_with_left_with_right', 'range_pattern_with_left_bare'] }],
+						plan: { op: 'eq', text: '...', fields: [], kinds: ['dot_dot_dot', 'dot_dot_eq', 'dot_dot'] }
+					}
+				]
+			},
+			{
+				path: 'pattern.range.exclusive',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [],
+						plan: {
+							op: 'is',
+							types: [420],
+							fields: [],
+							kinds: ['range_pattern_with_left_with_right', 'range_pattern_with_left_bare']
+						}
+					},
+					{
+						up: 0,
+						via: [{ fields: [], kinds: ['range_pattern_with_left_with_right', 'range_pattern_with_left_bare'] }],
+						plan: { op: 'eq', text: '..', fields: [], kinds: ['dot_dot_dot', 'dot_dot_eq', 'dot_dot'] }
+					}
+				]
+			},
+			{
+				path: 'pattern.range.exclusive',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [],
+						plan: {
+							op: 'is',
+							types: [421],
+							fields: [],
+							kinds: ['range_pattern_with_left_with_right', 'range_pattern_with_left_bare']
+						}
+					}
+				]
+			},
 			{ path: 'pattern.range', within: [], test: [] }
 		],
 		[TSKindId.RawStringLiteral]: [
@@ -4389,10 +4563,58 @@ const table: PortableTable = {
 		[TSKindId.VariadicParameter]: [{ path: 'declaration.parameter.variadic', within: [], test: [] }],
 		[TSKindId.VisKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.VisibilityModifierPub]: [
-			{ path: 'modifier.visibility.public', within: [], test: [] },
-			{ path: 'modifier.visibility.private', within: [], test: [] },
-			{ path: 'modifier.visibility.public.internal', within: [], test: [] },
-			{ path: 'modifier.visibility.public.restricted', within: [], test: [] }
+			{
+				path: 'modifier.visibility.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] } },
+					{
+						up: 0,
+						via: [{ fields: [], kinds: ['visibility_modifier_pub_scope'] }],
+						plan: {
+							op: 'is',
+							types: [125],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'modifier.visibility.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] } },
+					{
+						up: 0,
+						via: [{ fields: [], kinds: ['visibility_modifier_pub_scope'] }],
+						plan: {
+							op: 'is',
+							types: [127],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'modifier.visibility.public.restricted',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] } },
+					{
+						up: 0,
+						via: [{ fields: [], kinds: ['visibility_modifier_pub_scope'] }],
+						plan: {
+							op: 'is',
+							types: [126, 379],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{ path: 'modifier.visibility.public', within: [], test: [] }
 		],
 		[TSKindId.WhereClause]: [{ path: 'clause.where', within: [], test: [] }],
 		[TSKindId.WherePredicate]: [{ path: 'clause.where.predicate', within: [], test: [] }],

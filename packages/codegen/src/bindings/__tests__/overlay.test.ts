@@ -15,6 +15,7 @@ const claim = (vocab: string, kind: string, extra: Partial<ClaimFact> = {}): Cla
 	within: [],
 	fieldLiterals: {},
 	tokens: [],
+	children: [],
 	...extra
 });
 
@@ -78,6 +79,14 @@ describe('deriveOverlay', () => {
 	it('patches a member routed to a field of another name into a field of the member\'s name', () => {
 		const { overlay } = deriveOverlay({ facts: FACTS, base, vocabMembers: VOCABULARY, routedMembers: NO_MEMBERS });
 		expect(overlay.patches).toEqual(new Map([['let_item', [[{ path: '1', edit: { field: 'name' } }]]]]));
+	});
+
+	it('patches no field for a member an anchor ties to its neighbour: its slot is a position, not a field', () => {
+		const left = { route: 'rename', owner: 'let_item', name: 'name', field: 'left', kind: null, after: null, anchor: null } as const;
+		const facts = { ...FACTS, members: [{ ...left, adjacent: { previous: { field: null, kind: 'identifier', after: null, anchor: null } } }] };
+		const { overlay, report } = deriveOverlay({ facts, base, vocabMembers: VOCABULARY, routedMembers: NO_MEMBERS });
+		expect(overlay.patches).toEqual(new Map());
+		expect(report.residue).toContainEqual({ cause: 'positional child', row: 'let_item.name' });
 	});
 
 	it('leaves each claim it does not turn into a grammar change in the residue, with the reason', () => {

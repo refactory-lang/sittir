@@ -93,6 +93,18 @@ const MODEL = [
 	node('private_name', [slot('content', [])]),
 	node('scoped_name', [slot('path', ['identifier']), slot('name', ['identifier'])]),
 	node('char_text', [slot('content', [])]),
+	node('call_x', [slot('function', ['field_expr', 'path_expr', 'identifier']), slot('args', ['expr'])]),
+	node('field_expr'),
+	node('path_expr'),
+	node('impl_x', [slot('trait', ['type_x'], { required: false }), slot('body', ['block']), slot('clause', ['clause_pos', 'clause_neg'], { required: false })]),
+	node('clause_pos', [slot('trait', ['type_x'])]),
+	node('clause_neg', [slot('trait', ['type_x'])]),
+	node('type_x'),
+	node('cmp', [slot('left', ['expr']), slot('ops', ['cmp_op'], { multiple: true })]),
+	node('cmp_op', [slot('operators', [], { terminals: ['==', '<'] }), slot('value', ['expr'])]),
+	node('trio', [slot('head', ['expr']), slot('mid', ['identifier'], { required: false }), slot('tail', ['expr'], { multiple: true })]),
+	node('rng', [slot('left', ['expr']), slot('content', ['rng_right', '_dots'])]),
+	node('rng_right', [slot('op', [], { terminals: ['..=', '..'] }), slot('right', ['expr'])]),
 	node('maybe_op', [slot('left', ['expr']), slot('operator', [], { required: false, terminals: ['+', '-'] }), slot('bang', [], { required: false, terminals: ['!'] })])
 ];
 
@@ -397,6 +409,140 @@ describe('resolveRoutes', () => {
 		expect(routes.members.get('struct_tuple')?.map((r) => r.name)).toEqual(['fields']);
 	});
 
+	it('tests a child of a narrower kind than its slot holds, and orders that entry before the plain one', async () => {
+		const routes = resolveRoutes(await grammar(['(call_x) @expression.call', '(call_x function: (field_expr)) @expression.call.member'].join('\n')));
+		const entries = routes.readEntries.get('call_x') ?? [];
+		expect(entries.map((e) => e.vocab)).toEqual(['expression.call.member', 'expression.call']);
+		expect(entries[0]?.children).toEqual([{ subject: { up: 0, down: [{ field: 'function', kind: 'field_expr', after: null, anchor: null }] }, kinds: ['field_expr'] }]);
+		expect(routes.vocabOf.get('call_x')).toBe('expression.call');
+	});
+
+	it('tests no child the model already guarantees: a required slot that holds only that kind, or a required field', async () => {
+		const routes = resolveRoutes(await grammar('(call_x args: (expr)) @expression.call\n(impl_x body: (_)) @declaration.extension'));
+		expect(routes.readEntries.get('call_x')?.[0]?.children).toEqual([]);
+		expect(routes.readEntries.get('impl_x')?.[0]?.children).toEqual([]);
+	});
+
+	it('reads a child by the name the parser shows it by, so a slot holding only kinds shown by that name guarantees it', async () => {
+		const routes = resolveRoutes(await grammar('(shown_holder text: (text_fragment)) @literal.shown'));
+		expect(routes.readEntries.get('shown_holder')?.[0]?.children).toEqual([]);
+	});
+
+	it('tests a member capture on an optional slot only against the other kinds the slot holds', async () => {
+		const routes = resolveRoutes(await grammar('(impl_x trait: (type_x) @implements) @declaration.extension\n(impl_x clause: (clause_pos) @clause) @declaration.extension.positive'));
+		const [positive, plain] = routes.readEntries.get('impl_x') ?? [];
+		expect(plain?.children).toEqual([]);
+		expect(positive?.children).toEqual([{ subject: { up: 0, down: [{ field: 'clause', kind: 'clause_pos', after: null, anchor: null }] }, excludes: ['clause_neg'] }]);
+	});
+
+	it('tests an optional field\'s presence as any kind it holds', async () => {
+		const routes = resolveRoutes(await grammar('(impl_x trait: (_)) @declaration.extension.conformance'));
+		expect(routes.readEntries.get('impl_x')?.[0]?.children).toEqual([
+			{ subject: { up: 0, down: [{ field: 'trait', kind: null, after: null, anchor: null }] }, kinds: ['type_x'] }
+		]);
+	});
+
+	it('tests nothing below a wildcard that every kind it may be guarantees, and gives a supertype\'s own entry no child test', async () => {
+		const routes = resolveRoutes(await grammar('(impl_x clause: (_ trait: (_))) @declaration.extension.conformance\n(_struct (identifier)) @declaration.struct'));
+		expect(routes.readEntries.get('impl_x')?.[0]?.children).toEqual([
+			{ subject: { up: 0, down: [{ field: 'clause', kind: null, after: null, anchor: null }] }, kinds: ['clause_neg', 'clause_pos'] }
+		]);
+		expect(routes.readEntries.get('_struct')?.[0]?.children).toEqual([]);
+	});
+
+	it('routes no slot whose values, beside the kinds a member path leads through, a child test of a refinement tells', async () => {
+		const rows = ['(rng) @pattern.range', '(rng (rng_right "..=")) @pattern.range.inclusive', '(rng (rng_right right: (_) @right))'];
+		const told = resolveRoutes(await grammar([...rows, '(rng (_dots)) @pattern.range.exclusive'].join('\n')));
+		expect(told.members.get('rng')?.map((r) => r.name)).toEqual(['left', 'right']);
+		const untold = resolveRoutes(await grammar(rows.join('\n')));
+		expect(untold.members.get('rng')?.map((r) => r.name)).toEqual(['left', 'content', 'right']);
+	});
+
+	it('tests a fieldless token below the claimed node in the slot that holds its text, as a pin finds its slot', async () => {
+		const routes = resolveRoutes(await grammar('(cmp (cmp_op "<")) @expression.binary.less'));
+		const step = { field: null, kind: 'cmp_op', after: null, anchor: null };
+		expect(routes.readEntries.get('cmp')?.[0]?.children).toEqual([
+			{ subject: { up: 0, down: [step, { field: 'operators', kind: null, after: null, anchor: null }] }, text: '<' }
+		]);
+	});
+
+	it('refuses a fieldless token below the claimed node that no slot of its holder holds', async () => {
+		await expect(grammar('(cmp (cmp_op "+")) @expression.binary.plus').then(resolveRoutes)).rejects.toThrow(/cmp.*"\+".*no slot/);
+	});
+
+	it('tests a field literal through a child, and not the child the slot can only hold', async () => {
+		const routes = resolveRoutes(await grammar('(cmp (cmp_op operators: "==")) @expression.binary.equal'));
+		const step = { field: null, kind: 'cmp_op', after: null, anchor: null };
+		expect(routes.readEntries.get('cmp')?.[0]?.children).toEqual([
+			{ subject: { up: 0, down: [step, { field: 'operators', kind: null, after: null, anchor: null }] }, text: '==' }
+		]);
+	});
+
+	it('tests no more for a node anchored to its holder\'s only slot of nodes after a required one: the model places it there', async () => {
+		const routes = resolveRoutes(await grammar('(cmp . (_) . (cmp_op operators: "<") .) @expression.binary.less'));
+		const op = { field: null, kind: 'cmp_op', after: null, anchor: 'last', adjacent: { previous: { field: null, kind: null, after: null, anchor: null } } };
+		expect(routes.readEntries.get('cmp')?.[0]?.children).toEqual([
+			{ subject: { up: 0, down: [op, { field: 'operators', kind: null, after: null, anchor: null }] }, text: '<' }
+		]);
+	});
+
+	it('tests a node anchored as its slot\'s only one though the model guarantees its kind: the slot holds many', async () => {
+		const routes = resolveRoutes(await grammar('(block . (function_definition) .) @statement.block.single'));
+		expect(routes.readEntries.get('block')?.[0]?.children).toEqual([
+			{ subject: { up: 0, down: [{ field: null, kind: 'function_definition', after: null, anchor: 'only' }] }, kinds: ['function_definition'] }
+		]);
+	});
+
+	it('tests a guaranteed only node by nothing more when another test reaches through it, a token\'s included', async () => {
+		const routes = resolveRoutes(await grammar('(cmp . (_) . (cmp_op "<") .) @expression.binary.less'));
+		expect(routes.readEntries.get('cmp')?.[0]?.children.map((c) => 'text' in c)).toEqual([true]);
+	});
+
+	it('tests two adjacent bare nodes of one slot as the slot holding more than one node', async () => {
+		const routes = resolveRoutes(await grammar('(cmp (cmp_op) . (cmp_op)) @expression.binary.chain'));
+		expect(routes.readEntries.get('cmp')?.[0]?.children).toEqual([
+			{ subject: { up: 0, down: [{ field: 'ops', kind: null, after: null, anchor: 'only' }] }, excludes: ['cmp_op'] }
+		]);
+	});
+
+	it('tests an optional slot an anchor steps over as holding no node', async () => {
+		const routes = resolveRoutes(await grammar('(trio head: (_) . tail: (_)) @expression.trio'));
+		expect(routes.readEntries.get('trio')?.[0]?.children).toEqual([
+			{ subject: { up: 0, down: [{ field: 'mid', kind: null, after: null, anchor: null }] }, excludes: ['identifier'] }
+		]);
+	});
+
+	it.each([
+		['a required slot lies between an anchor and its node', '(trio . tail: (_)) @expression.trio', /trio.*never matches.*head/],
+		['its nodes come in an order the slots do not', '(trio tail: (_) head: (_)) @expression.trio', /trio.*never matches.*order/],
+		['two nodes of one slot carry their own tests', '(cmp (cmp_op operators: "<") . (cmp_op)) @expression.binary.chain', /cmp.*ops.*own tests/]
+	])('refuses a claim whose children cannot match or be tested when %s', async (_why, pattern, message) => {
+		await expect(grammar(pattern).then(resolveRoutes)).rejects.toThrow(message);
+	});
+
+	it('routes each entry the members its own tests guarantee: a path through a slot\'s only node only where the entry tests that node', async () => {
+		const rows = ['(cmp) @expression.binary', '(cmp (cmp_op) . (cmp_op)) @expression.binary.chain', '(cmp . (_) . (cmp_op operators: "<") .) @expression.binary.less', '(cmp . (_) . (cmp_op (_) @right) .)'];
+		const routes = resolveRoutes(await grammar(rows.join('\n')));
+		const byPath = Object.fromEntries((routes.readEntries.get('cmp') ?? []).map((e) => [e.vocab, e.members.map((m) => m.name)]));
+		expect(byPath).toEqual({ 'expression.binary': ['left'], 'expression.binary.chain': ['left', 'ops'], 'expression.binary.less': ['left', 'right'] });
+		expect(routes.members.get('cmp')?.map((m) => m.name).sort()).toEqual(['left', 'ops', 'right']);
+	});
+
+	it('keeps every route a member has, though several share its name', async () => {
+		const routes = resolveRoutes(await grammar('(function_definition (modifiers "async" @flag)) @declaration.function\n(function_definition (modifiers "static" @flag))'));
+		expect(routes.members.get('function_definition')?.filter((m) => m.name === 'flag')).toHaveLength(2);
+	});
+
+	it('routes a slot no member counts through on every entry', async () => {
+		const routes = resolveRoutes(await grammar('(cmp) @expression.binary\n(cmp (cmp_op) . (cmp_op)) @expression.binary.chain'));
+		for (const entry of routes.readEntries.get('cmp') ?? []) expect(entry.members.map((m) => m.name)).toEqual(['left', 'ops']);
+	});
+
+	it('routes a path through a slot\'s first node on every entry: a first node is no count', async () => {
+		const routes = resolveRoutes(await grammar('(block . (function_definition name: (identifier) @first)) @statement.block\n(block (function_definition)) @statement.block.defs'));
+		for (const entry of routes.readEntries.get('block') ?? []) expect(entry.members.map((m) => m.name)).toContain('first');
+	});
+
 	it('keeps the template a templated claim builds from', async () => {
 		const routes = resolveRoutes(
 			await grammar('((function_definition name: (identifier) @name) @declaration.method.dunder (#match? @name "^__(?<stem>.*)__$"))')
@@ -406,6 +552,13 @@ describe('resolveRoutes', () => {
 });
 
 describe('derive', () => {
+	it('gives each path the members of its own entries', async () => {
+		const rows = ['(cmp (cmp_op) . (cmp_op)) @expression.binary.chain', '(cmp . (_) . (cmp_op operators: "<") .) @expression.binary.less', '(cmp . (_) . (cmp_op (_) @right) .)'];
+		const d = derive([await grammar(rows.join('\n'))]);
+		expect([...(d.members.get('expression.binary.less')?.keys() ?? [])].sort()).toEqual(['left', 'right']);
+		expect([...(d.members.get('expression.binary.chain')?.keys() ?? [])].sort()).toEqual(['left', 'ops']);
+	});
+
 	it('types a flag as an optional boolean member of the claimed kind', async () => {
 		const d = derive([await grammar('(function_definition) @declaration.function\n(function_definition name: (identifier) @name @private)')]);
 		const flag = d.members.get('declaration.function')?.get('private');

@@ -5,13 +5,24 @@ import { allGrammars, grammarPackageDir, PACKAGES_DIR, type GrammarName } from '
 
 export const WILDCARD = '_';
 
-export type Anchor = 'first' | 'last';
+export type Anchor = 'first' | 'last' | 'only';
+
+export interface Adjacent {
+	readonly previous?: SlotSelector;
+	readonly next?: SlotSelector;
+}
 
 export interface SlotSelector {
 	readonly field: string | null;
 	readonly kind: string | null;
 	readonly after: SlotSelector | null;
 	readonly anchor: Anchor | null;
+	readonly adjacent?: Adjacent;
+}
+
+export interface Sibling {
+	readonly selector: SlotSelector;
+	readonly bare: boolean;
 }
 
 export type PredicateArgument = { readonly capture: string } | { readonly text: string };
@@ -28,6 +39,12 @@ export interface PredicateFact {
 	readonly subject: CaptureSite | null;
 }
 
+export type ChildFact =
+	| { readonly subject: CaptureSite; readonly kinds: readonly string[]; readonly captured: boolean }
+	| { readonly subject: CaptureSite; readonly text: string }
+	| { readonly subject: CaptureSite; readonly token: string }
+	| { readonly subject: CaptureSite; readonly present: true }
+	| { readonly subject: CaptureSite; readonly siblings: readonly Sibling[] };
 export interface ClaimFact {
 	readonly vocab: string;
 	readonly kind: string | null;
@@ -37,6 +54,7 @@ export interface ClaimFact {
 	readonly within: readonly string[];
 	readonly fieldLiterals: Readonly<Record<string, string>>;
 	readonly tokens: readonly string[];
+	readonly children: readonly ChildFact[];
 }
 
 export interface UnclaimedFact {
@@ -216,11 +234,24 @@ export function refineClaims(claims: readonly ClaimFact[]): RefinedClaim[] {
 }
 
 function bindSelector<S extends SlotSelector>(selector: S, rename: (kind: string) => string): S {
+	const { adjacent } = selector;
 	return {
 		...selector,
 		kind: selector.kind === null ? null : rename(selector.kind),
-		after: selector.after === null ? null : bindSelector(selector.after, rename)
+		after: selector.after === null ? null : bindSelector(selector.after, rename),
+		...(adjacent === undefined
+			? {}
+			: {
+					adjacent: {
+						...(adjacent.previous && { previous: bindSelector(adjacent.previous, rename) }),
+						...(adjacent.next && { next: bindSelector(adjacent.next, rename) })
+					}
+				})
 	};
+}
+
+function bindSite(site: CaptureSite, rename: (kind: string) => string): CaptureSite {
+	return { ...site, down: site.down.map((step) => bindSelector(step, rename)) };
 }
 
 export function bindFacts(facts: BindingFacts, rename: (kind: string) => string): BindingFacts {
@@ -230,11 +261,17 @@ export function bindFacts(facts: BindingFacts, rename: (kind: string) => string)
 			...c,
 			kind: kind(c.kind),
 			within: c.within.map(rename),
-			predicates: c.predicates.map((p) =>
-				KIND_PREDICATE_OPERATORS.has(p.operator)
-					? { ...p, arguments: p.arguments.map((a) => ('text' in a ? { text: rename(a.text) } : a)) }
-					: p
-			)
+			predicates: c.predicates.map((p) => ({
+				...p,
+				subject: p.subject === null ? null : bindSite(p.subject, rename),
+				arguments: KIND_PREDICATE_OPERATORS.has(p.operator) ? p.arguments.map((a) => ('text' in a ? { text: rename(a.text) } : a)) : p.arguments
+			})),
+			children: c.children.map((child) => ({
+				...child,
+				subject: bindSite(child.subject, rename),
+				...('kinds' in child ? { kinds: child.kinds.map(rename) } : {}),
+				...('siblings' in child ? { siblings: child.siblings.map((sibling) => ({ ...sibling, selector: bindSelector(sibling.selector, rename) })) } : {})
+			}))
 		})),
 		members: facts.members.map((m): MemberFact => {
 			if (m.route === 'presence') return { ...m, owner: rename(m.owner), via: m.via.map((step) => bindSelector(step, rename)) };

@@ -1192,21 +1192,55 @@
       "vocab": "comment.block",
       "read": [
         {
-          "vocab": "comment.block",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "comment.block.doc",
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  402
+                ],
+                "fields": [],
+                "kinds": [
+                  "block_comment_doc_outer",
+                  "block_comment_doc_inner",
+                  "block_comment_regular"
+                ]
+              }
+            }
+          ]
         },
         {
           "vocab": "comment.block.doc.inner",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  403
+                ],
+                "fields": [],
+                "kinds": [
+                  "block_comment_doc_outer",
+                  "block_comment_doc_inner",
+                  "block_comment_regular"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "comment.block",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -1403,21 +1437,51 @@
       "vocab": "expression.call",
       "read": [
         {
-          "vocab": "expression.call",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "expression.call.member",
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  308
+                ],
+                "fields": [
+                  "function"
+                ],
+                "kinds": []
+              }
+            }
+          ]
         },
         {
           "vocab": "expression.call.path",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  263
+                ],
+                "fields": [
+                  "function"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.call",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2747,21 +2811,51 @@
       "vocab": "declaration.enum_member",
       "read": [
         {
-          "vocab": "declaration.enum_member",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "declaration.enum_member.tuple",
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  203
+                ],
+                "fields": [
+                  "body"
+                ],
+                "kinds": []
+              }
+            }
+          ]
         },
         {
           "vocab": "declaration.enum_member.struct",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  201
+                ],
+                "fields": [
+                  "body"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.enum_member",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3775,6 +3869,27 @@
                   "primitive_type"
                 ]
               }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [
+                    "parameters"
+                  ],
+                  "kinds": []
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  349
+                ],
+                "fields": [
+                  "elements"
+                ],
+                "kinds": []
+              }
             }
           ]
         },
@@ -4760,14 +4875,30 @@
       "vocab": "declaration.extension",
       "read": [
         {
-          "vocab": "declaration.extension",
+          "vocab": "declaration.extension.conformance",
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  376,
+                  375
+                ],
+                "fields": [
+                  "trait_clause"
+                ],
+                "kinds": []
+              }
+            }
+          ]
         },
         {
-          "vocab": "declaration.extension.conformance",
+          "vocab": "declaration.extension",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5565,21 +5696,57 @@
       "vocab": "comment.line",
       "read": [
         {
-          "vocab": "comment.line",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "comment.line.doc",
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  400
+                ],
+                "fields": [],
+                "kinds": [
+                  "line_comment_extra_slashes",
+                  "line_comment_doc_outer",
+                  "line_comment_doc_inner",
+                  "line_comment_regular"
+                ]
+              }
+            }
+          ]
         },
         {
           "vocab": "comment.line.doc.inner",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  401
+                ],
+                "fields": [],
+                "kinds": [
+                  "line_comment_extra_slashes",
+                  "line_comment_doc_outer",
+                  "line_comment_doc_inner",
+                  "line_comment_regular"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "comment.line",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -7029,6 +7196,164 @@
           "test": []
         },
         {
+          "vocab": "pattern.range.inclusive",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  420
+                ],
+                "fields": [],
+                "kinds": [
+                  "range_pattern_with_left_with_right",
+                  "range_pattern_with_left_bare"
+                ]
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [],
+                  "kinds": [
+                    "range_pattern_with_left_with_right",
+                    "range_pattern_with_left_bare"
+                  ]
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "..=",
+                "fields": [],
+                "kinds": [
+                  "dot_dot_dot",
+                  "dot_dot_eq",
+                  "dot_dot"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "pattern.range.inclusive",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  420
+                ],
+                "fields": [],
+                "kinds": [
+                  "range_pattern_with_left_with_right",
+                  "range_pattern_with_left_bare"
+                ]
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [],
+                  "kinds": [
+                    "range_pattern_with_left_with_right",
+                    "range_pattern_with_left_bare"
+                  ]
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "...",
+                "fields": [],
+                "kinds": [
+                  "dot_dot_dot",
+                  "dot_dot_eq",
+                  "dot_dot"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "pattern.range.exclusive",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  420
+                ],
+                "fields": [],
+                "kinds": [
+                  "range_pattern_with_left_with_right",
+                  "range_pattern_with_left_bare"
+                ]
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [],
+                  "kinds": [
+                    "range_pattern_with_left_with_right",
+                    "range_pattern_with_left_bare"
+                  ]
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "..",
+                "fields": [],
+                "kinds": [
+                  "dot_dot_dot",
+                  "dot_dot_eq",
+                  "dot_dot"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "pattern.range.exclusive",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  421
+                ],
+                "fields": [],
+                "kinds": [
+                  "range_pattern_with_left_with_right",
+                  "range_pattern_with_left_bare"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "vocab": "pattern.range",
           "toplevel": true,
           "within": [],
@@ -7045,20 +7370,6 @@
             {
               "owner": "range_pattern_with_left",
               "slot": "left"
-            }
-          ]
-        },
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "except": [
-            "range_pattern_with_left_with_right"
-          ],
-          "path": [
-            {
-              "owner": "range_pattern_with_left",
-              "slot": "content"
             }
           ]
         },
@@ -10044,28 +10355,146 @@
       "vocab": "modifier.visibility.public",
       "read": [
         {
-          "vocab": "modifier.visibility.public",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "modifier.visibility.private",
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "fields": [],
+                "kinds": [
+                  "visibility_modifier_pub_scope"
+                ]
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [],
+                  "kinds": [
+                    "visibility_modifier_pub_scope"
+                  ]
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  125
+                ],
+                "fields": [],
+                "kinds": [
+                  "self",
+                  "super",
+                  "crate",
+                  "visibility_modifier_pub_scope_in_path"
+                ]
+              }
+            }
+          ]
         },
         {
           "vocab": "modifier.visibility.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "fields": [],
+                "kinds": [
+                  "visibility_modifier_pub_scope"
+                ]
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [],
+                  "kinds": [
+                    "visibility_modifier_pub_scope"
+                  ]
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  127
+                ],
+                "fields": [],
+                "kinds": [
+                  "self",
+                  "super",
+                  "crate",
+                  "visibility_modifier_pub_scope_in_path"
+                ]
+              }
+            }
+          ]
         },
         {
           "vocab": "modifier.visibility.public.restricted",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "fields": [],
+                "kinds": [
+                  "visibility_modifier_pub_scope"
+                ]
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [],
+                  "kinds": [
+                    "visibility_modifier_pub_scope"
+                  ]
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  126,
+                  379
+                ],
+                "fields": [],
+                "kinds": [
+                  "self",
+                  "super",
+                  "crate",
+                  "visibility_modifier_pub_scope_in_path"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "modifier.visibility.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -10338,7 +10767,7 @@
       {
         "depth": 3,
         "paths": 81,
-        "kinds": 102,
+        "kinds": 103,
         "refinements": 53,
         "aliases": 35
       },

@@ -614,6 +614,13 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['literal']
 				| G['statement'];
 		};
+		readonly 'element.comparator': {
+			readonly right:
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| V.Pattern.Splat<G>;
+		};
 		readonly 'element.macro.token_repetition': {
 			readonly operator: string;
 			readonly tokens:

@@ -41,7 +41,10 @@ const MODEL = new Map(
 		node('params', [slot('items', ['param'], { multiple: true })]),
 		node('param', [slot('element', ['self', 'plain'])]),
 		node('self'),
-		node('plain')
+		node('plain'),
+		node('annotated', [slot('type', ['type_identifier', 'identifier'])]),
+		node('cmp', [slot('left', ['identifier']), slot('ops', ['cmp_op'], { multiple: true })]),
+		node('cmp_op', [slot('operators', [], { terminals: ['==', '<'] }), slot('right', ['identifier'])])
 	].map((n) => [n.kind, n])
 );
 
@@ -54,10 +57,13 @@ const ROUTES: Readonly<Record<string, SlotRoutes>> = {
 	'type_identifier.content': { fields: [], kinds: ['identifier'] },
 	'fn.params': { fields: ['params'], kinds: [] },
 	'params.items': { fields: [], kinds: ['param'] },
-	'param.element': { fields: [], kinds: ['self', 'plain'] }
+	'param.element': { fields: [], kinds: ['self', 'plain'] },
+	'annotated.type': { fields: ['type'], kinds: [] },
+	'cmp.ops': { fields: [], kinds: ['cmp_op'] },
+	'cmp_op.operators': { fields: ['operators'], kinds: [] }
 };
 
-const TYPES: Readonly<Record<string, number>> = { param: 30, self: 31, plain: 32 };
+const TYPES: Readonly<Record<string, number>> = { param: 30, self: 31, plain: 32, type_identifier: 33, cmp_op: 34 };
 
 const testsOf = async (bindings: string, kind: string) => {
 	const input: GrammarInput = { grammar: 'g', bindings: await readBindings(bindings), model: MODEL, textTokens: new Set(), layoutSlots: [] };
@@ -79,6 +85,12 @@ describe('readTestOf', () => {
 	it('compares an alias\'s own text through the content it wraps', async () => {
 		expect(await testsOf('((type_identifier) @type.named.prelude (#match? @type.named.prelude "^Option$"))', 'type_identifier')).toEqual([
 			['type.named.prelude', [{ up: 0, via: [{ fields: [], kinds: ['identifier'] }], plan: { op: 'match', pattern: '^Option$', self: true } }]]
+		]);
+	});
+
+	it('tests an alias child\'s own kind, not the content it wraps', async () => {
+		expect(await testsOf('(annotated type: (type_identifier)) @type.annotated.named', 'annotated')).toEqual([
+			['type.annotated.named', [{ up: 0, via: [], plan: { op: 'is', types: [33], fields: ['type'], kinds: [] } }]]
 		]);
 	});
 
@@ -135,7 +147,7 @@ describe('readTestOf', () => {
 	});
 
 	it('negates a type test over every node a list step reaches', async () => {
-		expect(await testsOf('((fn (params (param (self) @r))) @declaration.method.static (#not-kind-eq? @r "self" "plain"))', 'fn')).toEqual([
+		expect(await testsOf('((fn (params (param (_) @r))) @declaration.method.static (#not-kind-eq? @r "self" "plain"))', 'fn')).toEqual([
 			[
 				'declaration.method.static',
 				[{ up: 0, via: [ROUTES['fn.params'], ROUTES['params.items']], plan: { op: 'not', of: { op: 'is', types: [31, 32], ...ROUTES['param.element'] } } }]
@@ -143,9 +155,39 @@ describe('readTestOf', () => {
 		]);
 	});
 
+	it('steps to a slot\'s only node when the anchors place it after a node of another slot and last', async () => {
+		expect(await testsOf('(cmp . (_) . (cmp_op operators: "<") .) @expression.binary.less', 'cmp')).toEqual([
+			['expression.binary.less', [{ up: 0, via: [{ ...ROUTES['cmp.ops'], anchor: 'only' }], plan: { op: 'eq', text: '<', ...ROUTES['cmp_op.operators'] } }]]
+		]);
+	});
+
+	it('tests two adjacent nodes of one slot as the slot not holding exactly one', async () => {
+		expect(await testsOf('(cmp (cmp_op) . (cmp_op)) @expression.binary.chain', 'cmp')).toEqual([
+			['expression.binary.chain', [{ up: 0, via: [{ ...ROUTES['cmp.ops'], anchor: 'only' }], plan: { op: 'not', of: { op: 'is', types: [34], self: true } } }]]
+		]);
+	});
+
 	it('keeps an anchored last step as a step, and tests the node it reaches', async () => {
 		expect(await testsOf('((params . (param) @p) @list.parameters (#kind-eq? @p "param"))', 'params')).toEqual([
 			['list.parameters', [{ up: 0, via: [{ ...ROUTES['params.items'], anchor: 'first' }], plan: { op: 'is', types: [30], self: true } }]]
+		]);
+	});
+
+	it('tests a child the pattern names by the type of its kind, once though a predicate restates it', async () => {
+		expect(await testsOf('(param (self)) @declaration.parameter.self', 'param')).toEqual([
+			['declaration.parameter.self', [{ up: 0, via: [], plan: { op: 'is', types: [31], ...ROUTES['param.element'] } }]]
+		]);
+		expect(await testsOf('((param (self) @r) @declaration.parameter.self (#kind-eq? @r "self"))', 'param')).toEqual([
+			['declaration.parameter.self', [{ up: 0, via: [], plan: { op: 'is', types: [31], ...ROUTES['param.element'] } }]]
+		]);
+	});
+
+	it('tests a member capture on an optional slot as holding no node of another kind', async () => {
+		const model = new Map([...MODEL, ['opt', node('opt', [slot('element', ['self', 'plain'], { required: false })])]]);
+		const input: GrammarInput = { grammar: 'g', bindings: await readBindings('(opt (self) @receiver) @declaration.parameter.self'), model, textTokens: new Set(), layoutSlots: [] };
+		const [entry] = resolveRoutes(input).readEntries.get('opt') ?? [];
+		expect(readTestOf(entry!, model, (owner, name) => (owner === 'opt' ? ROUTES['param.element'] : ROUTES[`${owner}.${name}`]), (kind) => TYPES[kind])).toEqual([
+			{ up: 0, via: [], plan: { op: 'not', of: { op: 'is', types: [32], ...ROUTES['param.element'] } } }
 		]);
 	});
 

@@ -225,7 +225,7 @@ export function deriveOverlay(input: OverlayInput): { overlay: BindingsOverlay; 
 			left('token reached through a child', row);
 			continue;
 		}
-		if (m.route === 'rename' && m.anchor !== null) {
+		if (m.route === 'rename' && (m.anchor !== null || m.adjacent !== undefined)) {
 			left('positional child', row);
 			continue;
 		}

@@ -9,7 +9,6 @@ import {
 	bindingGrammars,
 	bindingsModulePath,
 	bindingsPath,
-	camel,
 	derive,
 	deriveOverlay,
 	FLAGS_PATH,
@@ -131,9 +130,6 @@ export function vocabularyDisagreements(d: Derivation, vocabulary: Vocabulary): 
 	};
 	for (const [v, members] of d.members) {
 		for (const member of members.keys()) undeclared(v, member, 'routed');
-	}
-	for (const [v, refinement] of d.refinements) {
-		for (const field of refinement.literals.keys()) undeclared(v, camel(field), 'pinned');
 	}
 	for (const [v, holes] of d.holes) {
 		for (const hole of holes.keys()) undeclared(v, hole, 'templated');

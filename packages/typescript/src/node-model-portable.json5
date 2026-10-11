@@ -529,13 +529,6 @@
           "within": [],
           "pins": [],
           "test": []
-        },
-        {
-          "vocab": "expression.lambda",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
         }
       ],
       "members": [
@@ -1852,14 +1845,29 @@
           ]
         },
         {
-          "vocab": "expression.binary",
+          "vocab": "expression.binary.membership.in",
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  397
+                ],
+                "fields": [],
+                "kinds": [
+                  "binary_expression_in"
+                ]
+              }
+            }
+          ]
         },
         {
-          "vocab": "expression.binary.membership.in",
+          "vocab": "expression.binary",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3408,6 +3416,42 @@
       "vocab": "statement.export",
       "read": [
         {
+          "vocab": "statement.export.default",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  426
+                ],
+                "fields": [],
+                "kinds": [
+                  "function_declaration",
+                  "generator_function_declaration",
+                  "class_declaration",
+                  "lexical_declaration",
+                  "variable_declaration",
+                  "function_signature",
+                  "abstract_class_declaration",
+                  "module",
+                  "internal_module",
+                  "type_alias_declaration",
+                  "enum_declaration",
+                  "interface_declaration",
+                  "import_alias",
+                  "ambient_declaration",
+                  "export_statement_default_declaration_default_kw"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "vocab": "statement.export",
           "toplevel": true,
           "within": [],
@@ -3516,6 +3560,31 @@
     "export_statement_default_from": {
       "vocab": "statement.export",
       "read": [
+        {
+          "vocab": "statement.export.all",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  423
+                ],
+                "fields": [],
+                "kinds": [
+                  "export_statement_default_from_star_from",
+                  "export_statement_default_from_ns_from",
+                  "export_statement_default_from_clause_from",
+                  "export_clause"
+                ]
+              }
+            }
+          ]
+        },
         {
           "vocab": "statement.export",
           "toplevel": true,
@@ -5884,6 +5953,20 @@
                 "op": "eq",
                 "text": "constructor",
                 "self": true
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  462
+                ],
+                "fields": [
+                  "name"
+                ],
+                "kinds": []
               }
             }
           ]
@@ -10100,14 +10183,30 @@
       "vocab": "declaration.variable",
       "read": [
         {
-          "vocab": "declaration.variable",
+          "vocab": "declaration.variable.pattern",
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  240,
+                  236
+                ],
+                "fields": [
+                  "name"
+                ],
+                "kinds": []
+              }
+            }
+          ]
         },
         {
-          "vocab": "declaration.variable.pattern",
+          "vocab": "declaration.variable",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -10308,20 +10407,20 @@
         "paths": 13,
         "kinds": 5,
         "refinements": 0,
-        "aliases": 151
+        "aliases": 152
       },
       {
         "depth": 2,
         "paths": 111,
         "kinds": 134,
         "refinements": 8,
-        "aliases": 98
+        "aliases": 100
       },
       {
         "depth": 3,
-        "paths": 82,
-        "kinds": 74,
-        "refinements": 56,
+        "paths": 84,
+        "kinds": 76,
+        "refinements": 58,
         "aliases": 42
       },
       {
@@ -10429,7 +10528,8 @@
         "name": "default",
         "paths": [
           "clause.case.default",
-          "clause.default"
+          "clause.default",
+          "statement.export.default"
         ]
       },
       {

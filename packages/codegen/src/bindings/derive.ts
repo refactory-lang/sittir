@@ -347,7 +347,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 				const node = modelNode(input.model, gk);
 				if (!node) continue;
 				if (node.modelType !== 'supertype') tally(readFrom, `${vocab}${KEY_SEPARATOR}${input.grammar}`, gk);
-				for (const route of routes.members.get(gk) ?? []) {
+				for (const route of entry.members) {
 					const f = memberOf(vocab, route.name);
 					tally(carriedBy, `${vocab}${KEY_SEPARATOR}${input.grammar}${KEY_SEPARATOR}${route.name}`, gk);
 					if (route.route === 'slot') {

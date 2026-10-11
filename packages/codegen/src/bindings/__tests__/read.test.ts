@@ -154,6 +154,61 @@ describe('readBindings', () => {
 		expect(facts.members).toEqual([{ route: 'dropped', owner: 'binary', field: 'left', kind: null, after: null, anchor: null }]);
 	});
 
+	it('reads each node below a claimed node as a test of its kind at its site', async () => {
+		const facts = await readBindings('(call_expression function: (field_expression) @function) @expression.call.member');
+		expect(facts.claims[0]?.children).toEqual([
+			{ subject: { up: 0, down: [{ field: 'function', kind: 'field_expression', after: null, anchor: null }] }, kinds: ['field_expression'], captured: true }
+		]);
+	});
+
+	it('reads no test from a subtree that places another claim', async () => {
+		const facts = await readBindings('(trait_item bounds: (_)? @extends (declaration_list (function_item) @declaration.method)) @declaration.interface.trait');
+		expect(facts.claims.find((c) => c.vocab === 'declaration.interface.trait')?.children).toEqual([]);
+	});
+
+	it('reads no presence test from a member capture on a wildcard: a member may be absent', async () => {
+		const facts = await readBindings('(let_declaration value: (_) @value) @declaration.variable');
+		expect(facts.claims[0]?.children).toEqual([]);
+	});
+
+	it('reads an alternation of nodes as one test of the union of their kinds', async () => {
+		const facts = await readBindings('(scope [(super) (in_path)]) @modifier.restricted');
+		expect(facts.claims[0]?.children).toEqual([{ subject: { up: 0, down: [{ field: null, kind: 'super', after: null, anchor: null }] }, kinds: ['super', 'in_path'], captured: false }]);
+	});
+
+	it('reads a field literal below a child as a text test through the child, and a field wildcard as a presence', async () => {
+		const facts = await readBindings('(comparison (comparator operators: "==") right: (_)) @expression.equal');
+		const comparator = { field: null, kind: 'comparator', after: null, anchor: null };
+		expect(facts.claims[0]?.children).toEqual([
+			{
+				subject: { up: 0, down: [] },
+				siblings: [
+					{ selector: comparator, bare: false },
+					{ selector: { field: 'right', kind: null, after: null, anchor: null }, bare: true }
+				]
+			},
+			{ subject: { up: 0, down: [comparator] }, kinds: ['comparator'], captured: false },
+			{ subject: { up: 0, down: [comparator, { field: 'operators', kind: null, after: null, anchor: null }] }, text: '==' },
+			{ subject: { up: 0, down: [{ field: 'right', kind: null, after: null, anchor: null }] }, present: true }
+		]);
+	});
+
+	it('reads no test from a node the pattern makes optional or repeats from zero, nor from anything below it', async () => {
+		const facts = await readBindings('(type_parameter bounds: (bounds (bound))? @constraint (attribute)*) @declaration.type_parameter');
+		expect(facts.claims[0]?.children).toEqual([]);
+	});
+
+	it('reads no test from the path to a presence capture: the flag is a member, not a condition of the claim', async () => {
+		const facts = await readBindings('(function_definition (modifiers "async" @isAsync)) @declaration.function');
+		expect(facts.claims[0]?.children).toEqual([]);
+	});
+
+	it('keeps a token below a claimed node that no field places at the site of the node holding it', async () => {
+		const facts = await readBindings('(outer (inner "-")) @expression.outer');
+		const inner = { up: 0, down: [{ field: null, kind: 'inner', after: null, anchor: null }] };
+		expect(facts.claims[0]?.children).toEqual([{ subject: inner, kinds: ['inner'], captured: false }, { subject: inner, token: '-' }]);
+	});
+
 	it('keeps the text of a token a container captures', async () => {
 		const { containers } = await readBindings('(ambient_declaration "declare" @declare (_) @element)');
 		expect(containers[0]?.captures.map((c) => [c.name, c.token])).toEqual([['declare', 'declare']]);
@@ -306,11 +361,42 @@ describe('readBindings', () => {
 		await expect(readBindings(`(module) @module\n${pattern}`)).rejects.toThrow(/line 2: .*anchor.*@(declaration\.parameter\.self|identifier\.statement)/);
 	});
 
-	it.each([
-		['between two children', '(block (expression_statement) . (expression_statement)) @statement.block'],
-		['between two grouped patterns', '((comment) . (function_definition)) @declaration.function']
-	])('refuses an anchor %s: it ties siblings together, which no step expresses', async (_where, pattern) => {
-		await expect(readBindings(pattern)).rejects.toThrow(/line 1: .*anchor.*sibling/);
+	it('pins a child anchored on both sides to its parent\'s only named child', async () => {
+		const { members } = await readBindings('(block . (expression_statement) @only .) @statement.block');
+		expect(members).toEqual([
+			{ route: 'rename', owner: 'block', name: 'only', field: null, kind: 'expression_statement', after: null, anchor: 'only' }
+		]);
+	});
+
+	it('ties two children an anchor joins as adjacent, each naming the other', async () => {
+		const { members } = await readBindings('(block (comment) @a . (expression_statement) @b) @statement.block');
+		const comment = { field: null, kind: 'comment', after: null, anchor: null };
+		const statement = { field: null, kind: 'expression_statement', after: null, anchor: null };
+		expect(members).toEqual([
+			{ route: 'rename', owner: 'block', name: 'a', ...comment, adjacent: { next: statement } },
+			{ route: 'rename', owner: 'block', name: 'b', ...statement, adjacent: { previous: comment } }
+		]);
+	});
+
+	it('states the order of the node children below the claimed node, with their anchors, when an anchor or a shared slot can matter', async () => {
+		const facts = await readBindings('(comparison . (_) . (comparator operators: "<") .) @expression.less');
+		const first = { field: null, kind: null, after: null, anchor: null };
+		const comparator = { field: null, kind: 'comparator', after: null, anchor: null };
+		expect(facts.claims[0]?.children).toContainEqual({
+			subject: { up: 0, down: [] },
+			siblings: [
+				{ selector: { ...first, anchor: 'first', adjacent: { next: comparator } }, bare: true },
+				{ selector: { ...comparator, anchor: 'last', adjacent: { previous: first } }, bare: false }
+			]
+		});
+	});
+
+	it('refuses an anchor next to a token: tree-sitter anchors name nodes', async () => {
+		await expect(readBindings('(block "{" . (expression_statement)) @statement.block')).rejects.toThrow(/line 1: .*anchor.*token/);
+	});
+
+	it('refuses an anchor between two grouped patterns: it ties siblings that share no parent below a claim', async () => {
+		await expect(readBindings('((comment) . (function_definition)) @declaration.function')).rejects.toThrow(/line 1: .*anchor.*sibling/);
 	});
 });
 
