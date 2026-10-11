@@ -504,6 +504,17 @@ describe('seamRenderRules', () => {
 		expect(spacingSitesOf(out, nodeMap).find((s) => s.address === 'args_before')?.edgeLiterals).toEqual(['lparen']);
 	});
 
+	it('marks a token face a kind row declares space as padding, and no other site', () => {
+		const rules = { braced: seq(str('('), sym('body'), str(')')) };
+		const nodeMap = nodeMapOf(rules, {});
+		nodeMap.nodes.set('braced', new AssembledBranch('braced', rules.braced as never, rules.braced));
+		const options = { braced: { '"("/after': preference('space'), '")"/before': preference('tight'), before: preference('space') } };
+		const out = resolveRenderRules({ nodeMap, kindEntries, options } as never, () => {}).seamed;
+		const sites = spacingSitesOf(out, nodeMap);
+		expect(sites.filter((site) => site.padding).map((site) => site.address)).toEqual(['lparen_after']);
+		expect(sites.map((site) => site.address)).toContain('braced_before');
+	});
+
 	it('cascades a token-set edge only when every token of its choice resolves to one declared face', () => {
 		const entries = [
 			...(kindEntries as never as object[]),
