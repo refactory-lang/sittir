@@ -68,6 +68,53 @@
       ],
       "members": []
     },
+    "array_expression_semi": {
+      "vocab": "expression.collection.list.repeat",
+      "read": [
+        {
+          "vocab": "expression.collection.list.repeat",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "attributes",
+          "route": "slot",
+          "slot": "attributes",
+          "path": [
+            {
+              "owner": "array_expression_semi",
+              "slot": "attributes"
+            }
+          ]
+        },
+        {
+          "name": "element",
+          "route": "slot",
+          "slot": "element",
+          "path": [
+            {
+              "owner": "array_expression_semi",
+              "slot": "element"
+            }
+          ]
+        },
+        {
+          "name": "length",
+          "route": "slot",
+          "slot": "length",
+          "path": [
+            {
+              "owner": "array_expression_semi",
+              "slot": "length"
+            }
+          ]
+        }
+      ]
+    },
     "array_type": {
       "vocab": "type.array",
       "read": [
@@ -367,6 +414,53 @@
         "terminals": [],
         "list": false
       }
+    },
+    "attributed_ordered_field": {
+      "vocab": "declaration.field",
+      "read": [
+        {
+          "vocab": "declaration.field",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "attributes",
+          "route": "slot",
+          "slot": "attribute_item",
+          "path": [
+            {
+              "owner": "attributed_ordered_field",
+              "slot": "attribute_item"
+            }
+          ]
+        },
+        {
+          "name": "visibility",
+          "route": "slot",
+          "slot": "visibility_modifier",
+          "path": [
+            {
+              "owner": "attributed_ordered_field",
+              "slot": "visibility_modifier"
+            }
+          ]
+        },
+        {
+          "name": "type",
+          "route": "slot",
+          "slot": "type",
+          "path": [
+            {
+              "owner": "attributed_ordered_field",
+              "slot": "type"
+            }
+          ]
+        }
+      ]
     },
     "attributed_parameter": {
       "container": {
@@ -6587,7 +6681,7 @@
       ],
       "members": [
         {
-          "name": "content",
+          "name": "elements",
           "route": "slot",
           "slot": "elements",
           "path": [
@@ -6647,6 +6741,122 @@
         }
       ],
       "members": []
+    },
+    "struct_item_tuple": {
+      "vocab": "declaration.struct.tuple",
+      "read": [
+        {
+          "vocab": "declaration.struct.tuple",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "visibility",
+          "route": "slot",
+          "slot": "visibility_modifier",
+          "path": [
+            {
+              "owner": "struct_item_tuple",
+              "slot": "visibility_modifier"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "struct_item_tuple",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "typeParameters",
+          "route": "slot",
+          "slot": "type_parameters",
+          "path": [
+            {
+              "owner": "struct_item_tuple",
+              "slot": "type_parameters"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "struct_item_tuple",
+              "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "whereClause",
+          "route": "slot",
+          "slot": "where_clause",
+          "path": [
+            {
+              "owner": "struct_item_tuple",
+              "slot": "where_clause"
+            }
+          ]
+        }
+      ]
+    },
+    "struct_item_unit": {
+      "vocab": "declaration.struct.unit",
+      "read": [
+        {
+          "vocab": "declaration.struct.unit",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "visibility",
+          "route": "slot",
+          "slot": "visibility_modifier",
+          "path": [
+            {
+              "owner": "struct_item_unit",
+              "slot": "visibility_modifier"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "struct_item_unit",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "typeParameters",
+          "route": "slot",
+          "slot": "type_parameters",
+          "path": [
+            {
+              "owner": "struct_item_unit",
+              "slot": "type_parameters"
+            }
+          ]
+        }
+      ]
     },
     "struct_pattern": {
       "vocab": "pattern.struct",
@@ -8606,27 +8816,27 @@
         "paths": 13,
         "kinds": 3,
         "refinements": 0,
-        "aliases": 125
+        "aliases": 126
       },
       {
         "depth": 2,
         "paths": 103,
-        "kinds": 136,
+        "kinds": 137,
         "refinements": 12,
-        "aliases": 87
+        "aliases": 88
       },
       {
         "depth": 3,
-        "paths": 75,
-        "kinds": 79,
-        "refinements": 47,
-        "aliases": 34
+        "paths": 77,
+        "kinds": 81,
+        "refinements": 49,
+        "aliases": 35
       },
       {
         "depth": 4,
-        "paths": 40,
-        "kinds": 14,
-        "refinements": 22,
+        "paths": 41,
+        "kinds": 15,
+        "refinements": 23,
         "aliases": 0
       }
     ],
@@ -8913,6 +9123,7 @@
         "name": "tuple",
         "paths": [
           "declaration.enum_member.tuple",
+          "declaration.struct.tuple",
           "expression.collection.tuple",
           "pattern.tuple",
           "type.tuple"
@@ -8922,6 +9133,7 @@
         "under": "",
         "name": "unit",
         "paths": [
+          "declaration.struct.unit",
           "expression.unit",
           "type.unit"
         ]
@@ -8964,6 +9176,14 @@
         "paths": [
           "declaration.method.static",
           "declaration.variable.static"
+        ]
+      },
+      {
+        "under": "declaration",
+        "name": "tuple",
+        "paths": [
+          "declaration.enum_member.tuple",
+          "declaration.struct.tuple"
         ]
       },
       {

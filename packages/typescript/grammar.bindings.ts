@@ -3,7 +3,7 @@
 import { bindings, field, rename } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "4550c12bbe4b093d67163419a022e46ba651b4db24a0c7f4c154b150a1010357",
+	hash: "b5ca4671dbdf1e297cf0bbee8dcd528f23b1d3fd48b4cd9fac388e679d187c62",
 	patches: {
 		_parameter_name: { "1/0": field("visibility"), "4": field("name") },
 		abstract_class_declaration: { "1": field("abstract") },
@@ -15,6 +15,7 @@ export default bindings({
 		for_in_statement: { "1/0": field("async") },
 		generator_function: { "2": field("generator") },
 		generator_function_declaration: { "2": field("generator") },
+		index_signature_mapped_type_clause: { "2": field("mapped_type_clause") },
 		interface_declaration: { "3/0": field("extends") },
 		lexical_declaration: { "0": field("binding") },
 		method_definition: { "0/0": field("visibility") },
@@ -48,6 +49,7 @@ export default bindings({
 		rename("call_signature", "call_signature_declaration"),
 		rename("construct_signature", "construct_signature_declaration"),
 		rename("index_signature", "index_signature_declaration"),
+		rename("index_signature_mapped_type_clause", "mapped_index_signature_declaration"),
 		rename("statement_block", "block_statement"),
 		rename("for_statement", "counted_loop_statement"),
 		rename("for_in_statement", "for_loop_statement"),

@@ -135,7 +135,7 @@ export namespace Declaration {
 		// t only
 		readonly definite?: Flag;
 		// t only
-		readonly name: G['slots']['declaration.field']['name'];
+		readonly name?: G['slots']['declaration.field']['name'];
 		readonly optional?: Flag;
 		// t only
 		readonly optionality?: G['slots']['declaration.field']['optionality'];
@@ -508,16 +508,26 @@ export namespace Declaration {
 			// claimed by t
 			readonly $kind: 'declaration.signature.index';
 			readonly indexType?: G['slots']['declaration.signature.index']['indexType'];
-			readonly mappedTypeClause?: V.Clause.MappedType<G>;
 			readonly name?: G['slots']['declaration.signature.index']['name'];
 			readonly readonly?: Flag;
 			readonly sign?: G['slots']['declaration.signature.index']['sign'];
 			readonly type: G['slots']['declaration.signature.index']['type'];
 		}
+		export namespace Index {
+			export interface Mapped<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Signature.Index<G>> {
+				// claimed by t
+				readonly $kind: 'declaration.signature.index.mapped';
+				readonly mappedTypeClause: V.Clause.MappedType<G>;
+			}
+			export type Any<G extends GrammarContext<G>> =
+				| V.Declaration.Signature.Index<G>
+				| V.Declaration.Signature.Index.Mapped<G>;
+		}
 		export type Any<G extends GrammarContext<G>> =
 			| V.Declaration.Signature.Call<G>
 			| V.Declaration.Signature.Construct<G>
-			| V.Declaration.Signature.Index<G>;
+			| V.Declaration.Signature.Index<G>
+			| V.Declaration.Signature.Index.Mapped<G>;
 	}
 	export interface Struct<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
 		// claimed by r
@@ -527,6 +537,21 @@ export namespace Declaration {
 		readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
 		readonly visibility?: V.Modifier.Visibility<G>;
 		readonly whereClause?: V.Clause.Where<G>;
+	}
+	export namespace Struct {
+		export interface Tuple<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Struct<G>> {
+			// claimed by r
+			readonly $kind: 'declaration.struct.tuple';
+			readonly body: G['slots']['declaration.struct.tuple']['body'][];
+		}
+		export interface Unit<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Struct<G>> {
+			// claimed by r
+			readonly $kind: 'declaration.struct.unit';
+		}
+		export type Any<G extends GrammarContext<G>> =
+			| V.Declaration.Struct<G>
+			| V.Declaration.Struct.Tuple<G>
+			| V.Declaration.Struct.Unit<G>;
 	}
 	export interface TypeAlias<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
 		// claimed by prt
@@ -708,7 +733,10 @@ export namespace Declaration {
 		| V.Declaration.Signature.Call<G>
 		| V.Declaration.Signature.Construct<G>
 		| V.Declaration.Signature.Index<G>
+		| V.Declaration.Signature.Index.Mapped<G>
 		| V.Declaration.Struct<G>
+		| V.Declaration.Struct.Tuple<G>
+		| V.Declaration.Struct.Unit<G>
 		| V.Declaration.TypeAlias<G>
 		| V.Declaration.TypeAlias.Associated<G>
 		| V.Declaration.TypeParameter<G>

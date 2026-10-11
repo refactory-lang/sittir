@@ -150,7 +150,7 @@
 (dictionary_comprehension) @expression.comprehension.dictionary
 (generator_expression) @expression.comprehension.generator
 (parenthesized_expression) @expression.parenthesized
-(list) @expression.collection.list
+(list (collection_elements)? @elements) @expression.collection.list
 (tuple) @expression.collection.tuple
 (expression_list) @expression.collection.tuple.bare
 (set) @expression.collection.set
@@ -186,7 +186,7 @@
 (splat_type) @type.splat
 
 ; ── literal ────────────────────────────────────────────────────────────────────
-(string) @literal.string
+(string [(interpolation) (string_content)]* @elements) @literal.string
 (escape_sequence) @literal.string.escape
 (string_fragment) @literal.string.text
 (concatenated_string) @literal.string.concatenated

@@ -21,6 +21,8 @@
 (impl_item_body trait_clause: (_ trait: (_) @implements)) @declaration.extension.conformance
 (trait_item bounds: (_)? @extends (declaration_list (function_item) @declaration.method)) @declaration.interface.trait
 (struct_item) @declaration.struct
+(struct_item_tuple) @declaration.struct.tuple
+(struct_item_unit) @declaration.struct.unit
 (enum_item) @declaration.enum
 (enum_variant) @declaration.enum_member
 (enum_variant body: (ordered_field_declaration_list)) @declaration.enum_member.tuple
@@ -37,6 +39,7 @@
 (static_item ref: _ @byReference)
 (let_declaration pattern: (_) @name) @declaration.variable
 (field_declaration) @declaration.field
+(attributed_ordered_field (attribute_item)* @attributes) @declaration.field
 (attributed_field_declaration (attribute_item)* @attributes (_) @element)
 (macro_definition name: (_) (_)? @rules) @declaration.macro
 (parameter name: (_) @name) @declaration.parameter
@@ -159,6 +162,7 @@
 (parenthesized_expression) @expression.parenthesized
 (tuple_expression) @expression.collection.tuple
 (array_expression) @expression.collection.list
+(array_expression_semi) @expression.collection.list.repeat
 (struct_expression) @expression.collection.struct
 (unit_expression) @expression.unit
 (unsafe_block) @expression.block.unsafe
@@ -215,7 +219,7 @@
 ((type_identifier) @type.named.prelude (#match? @type.named.prelude "^(Option|Result|String|Vec|Box)$"))
 
 ; ── literal ────────────────────────────────────────────────────────────────────
-(string_literal (string_content)* @content) @literal.string
+(string_literal) @literal.string
 (raw_string_literal string_content: (string_content) @content) @literal.string.raw
 (char_literal) @literal.char
 (escape_sequence) @literal.string.escape

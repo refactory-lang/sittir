@@ -556,14 +556,18 @@ export namespace Expression {
 			readonly $kind: 'expression.collection.list';
 			readonly attributes?: G['attribute'][];
 			// r only
-			readonly collectionElements?: G['slots']['expression.collection.list']['collectionElements'][];
-			// p only
-			readonly element?: G['slots']['expression.collection.list']['element'];
-			// r only
 			readonly elements?: G['slots']['expression.collection.list']['elements'][];
-			// rt only
-			readonly length?: G['slots']['expression.collection.list']['length'];
-			// r only
+		}
+		export namespace List {
+			export interface Repeat<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Collection.List<G>> {
+				// claimed by r
+				readonly $kind: 'expression.collection.list.repeat';
+				readonly element: G['slots']['expression.collection.list.repeat']['element'];
+				readonly length: G['slots']['expression.collection.list.repeat']['length'];
+			}
+			export type Any<G extends GrammarContext<G>> =
+				| V.Expression.Collection.List<G>
+				| V.Expression.Collection.List.Repeat<G>;
 		}
 		export interface Object<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Collection<G>> {
 			// claimed by t
@@ -603,6 +607,7 @@ export namespace Expression {
 		export type Any<G extends GrammarContext<G>> =
 			| V.Expression.Collection.Dictionary<G>
 			| V.Expression.Collection.List<G>
+			| V.Expression.Collection.List.Repeat<G>
 			| V.Expression.Collection.Object<G>
 			| V.Expression.Collection.Set<G>
 			| V.Expression.Collection.Struct<G>
@@ -937,6 +942,7 @@ export namespace Expression {
 		| V.Expression.Class<G>
 		| V.Expression.Collection.Dictionary<G>
 		| V.Expression.Collection.List<G>
+		| V.Expression.Collection.List.Repeat<G>
 		| V.Expression.Collection.Object<G>
 		| V.Expression.Collection.Set<G>
 		| V.Expression.Collection.Struct<G>

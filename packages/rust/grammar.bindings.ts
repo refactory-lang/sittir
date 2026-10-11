@@ -3,7 +3,7 @@
 import { alias, bindings, field, rename, split } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "e67a24d62d73700a5ecde299f0be8789703f7cf2161e8db83a21e1ae95501338",
+	hash: "f7d6d88ac605efd009878d349ef4f0eec407077669493b59f87f7fc323862485",
 	patches: {
 		attribute_item: { "2": field("content") },
 		block_comment: { "1/0/2": alias(sym("block_comment_regular"), sym("text_comment")) },
@@ -25,6 +25,7 @@ export default bindings({
 		shorthand_field_initializer: { "1": field("field") },
 		slice_pattern: { "1/0": field("patterns") },
 		static_item: { "2/0": field("by_reference") },
+		struct_item_tuple: { "4/1/0": field("where_clause") },
 		trait_item: { "5": field("extends") },
 		try_expression: { "0": field("argument") },
 		tuple_expression: { "2": field("expressions") },
@@ -45,6 +46,8 @@ export default bindings({
 		rename("impl_item_body", "extension_declaration"),
 		rename("trait_item", "trait_interface_declaration"),
 		rename("struct_item", "struct_declaration"),
+		rename("struct_item_tuple", "tuple_struct_declaration"),
+		rename("struct_item_unit", "unit_struct_declaration"),
 		rename("enum_item", "enum_declaration"),
 		rename("enum_variant", "enum_member_declaration"),
 		rename("union_item", "union_declaration"),
@@ -105,6 +108,7 @@ export default bindings({
 		rename("type_cast_expression", "as_cast_expression"),
 		rename("tuple_expression", "tuple_collection_expression"),
 		rename("array_expression", "list_collection_expression"),
+		rename("array_expression_semi", "repeat_list_collection_expression"),
 		rename("struct_expression", "struct_collection_expression"),
 		rename("unsafe_block", "unsafe_block_expression"),
 		rename("async_block", "async_block_expression"),

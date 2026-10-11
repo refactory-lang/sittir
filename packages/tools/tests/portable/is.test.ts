@@ -155,6 +155,26 @@ describe('portable is: rust', async () => {
 		expect(at('declaration.parameter')(a, ac)).toBe(true);
 		expect(at('declaration.parameter')(b, bc)).toBe(true);
 	});
+
+	it('reads a tuple struct and a unit struct by their forms, and a tuple struct\'s fields as fields', () => {
+		const SOURCE = 'struct T(u8, pub u16);\nstruct U;\n';
+		const [tuple, tc] = find(SOURCE, 'struct_item_tuple');
+		const [unit, uc] = find(SOURCE, 'struct_item_unit');
+		expect(at('declaration.struct.tuple')(tuple, tc)).toBe(true);
+		expect(at('declaration.struct.unit')(tuple, tc)).toBe(false);
+		expect(at('declaration.struct.unit')(unit, uc)).toBe(true);
+		expect(at('declaration.struct')(unit, uc)).toBe(true);
+		const [field, fc] = find(SOURCE, 'attributed_ordered_field', 'pub u16');
+		expect(at('declaration.field')(field, fc)).toBe(true);
+	});
+
+	it('reads an array repeat expression by its form', () => {
+		const SOURCE = 'fn f() { let a = [0; 3]; let b = [1, 2]; }\n';
+		const [repeat, rc] = find(SOURCE, 'array_expression_semi');
+		const [list, lc] = find(SOURCE, 'array_expression_list');
+		expect(at('expression.collection.list.repeat')(repeat, rc)).toBe(true);
+		expect(at('expression.collection.list.repeat')(list, lc)).toBe(false);
+	});
 });
 
 describe('portable is: typescript', async () => {
@@ -190,6 +210,26 @@ describe('portable is: typescript', async () => {
 	it('reads an enum member through the wildcard claim under the enum body\'s elements', () => {
 		const [member, context] = find('enum E { A, B = 1 }\n', 'enum_assignment');
 		expect(at('declaration.enum_member')(member, context)).toBe(true);
+	});
+
+	it('reads a mapped index signature by its form', () => {
+		const SOURCE = 'type M = { [K in keyof T]: T[K] };\ninterface I { [k: string]: number }\n';
+		const [mapped, mc] = find(SOURCE, 'index_signature_mapped_type_clause');
+		const [colon, cc] = find(SOURCE, 'index_signature_colon');
+		expect(at('declaration.signature.index.mapped')(mapped, mc)).toBe(true);
+		expect(at('declaration.signature.index.mapped')(colon, cc)).toBe(false);
+	});
+
+	it('pins a type-only and a typeof import by their keyword', () => {
+		const SOURCE = 'import type { A } from "a";\nimport typeof B from "b";\nimport { C } from "c";\n';
+		const [type, tc] = find(SOURCE, 'import_statement');
+		const [typeOf, oc] = find(SOURCE, 'import_statement', undefined, 1);
+		const [plain, pc] = find(SOURCE, 'import_statement', undefined, 2);
+		expect(at('statement.import.type')(type, tc)).toBe(true);
+		expect(at('statement.import.typeof')(type, tc)).toBe(false);
+		expect(at('statement.import.typeof')(typeOf, oc)).toBe(true);
+		expect(at('statement.import.type')(plain, pc)).toBe(false);
+		expect(at('statement.import')(plain, pc)).toBe(true);
 	});
 });
 

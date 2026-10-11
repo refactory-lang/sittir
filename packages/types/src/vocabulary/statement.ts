@@ -105,6 +105,8 @@ export namespace Statement {
 		// t only
 		readonly names?: (V.Clause.Import.Alias<G> | V.Identifier.Dotted<G>)[];
 		// p only
+		readonly source?: V.Literal.String<G>;
+		// t only
 		readonly visibility?: V.Modifier.Visibility<G>;
 		// r only
 	}
@@ -130,11 +132,21 @@ export namespace Statement {
 			readonly $kind: 'statement.import.future';
 			readonly content: (V.Clause.Import.Alias<G> | V.Identifier.Dotted<G>)[];
 		}
+		export interface Type<G extends GrammarContext<G>> extends SubKindOf<V.Statement.Import<G>> {
+			// claimed by t
+			readonly $kind: 'statement.import.type';
+		}
+		export interface Typeof<G extends GrammarContext<G>> extends SubKindOf<V.Statement.Import<G>> {
+			// claimed by t
+			readonly $kind: 'statement.import.typeof';
+		}
 		export type Any<G extends GrammarContext<G>> =
 			| V.Statement.Import<G>
 			| V.Statement.Import.Crate<G>
 			| V.Statement.Import.From<G>
-			| V.Statement.Import.Future<G>;
+			| V.Statement.Import.Future<G>
+			| V.Statement.Import.Type<G>
+			| V.Statement.Import.Typeof<G>;
 	}
 	export interface Labeled<G extends GrammarContext<G>> extends SubKindOf<V.Statement<G>> {
 		// claimed by t
@@ -288,6 +300,8 @@ export namespace Statement {
 		| V.Statement.Import.Crate<G>
 		| V.Statement.Import.From<G>
 		| V.Statement.Import.Future<G>
+		| V.Statement.Import.Type<G>
+		| V.Statement.Import.Typeof<G>
 		| V.Statement.Labeled<G>
 		| V.Statement.Loop<G>
 		| V.Statement.Loop.Counted<G>

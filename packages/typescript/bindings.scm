@@ -77,6 +77,7 @@
 (call_signature) @declaration.signature.call
 (construct_signature) @declaration.signature.construct
 (index_signature) @declaration.signature.index
+(index_signature_mapped_type_clause) @declaration.signature.index.mapped
 
 ; ── statement ──────────────────────────────────────────────────────────────────
 (statement_block) @statement.block
@@ -91,6 +92,9 @@
 (try_statement handler: (_)? @handlers) @statement.try
 (throw_statement) @statement.throw
 (import_statement) @statement.import
+(import_statement import_clause: "type") @statement.import.type
+(import_statement import_clause: "typeof") @statement.import.typeof
+(import_statement from_clause: (import_statement_clause_from source: (_) @source))
 (export_statement) @statement.export
 (expression_statement) @statement.expression
 (break_statement) @statement.break
@@ -111,6 +115,8 @@
 (implements_clause) @clause.implements
 (export_clause) @clause.export
 (import_clause) @clause.import.names
+(import_clause (import_clause_default_import (identifier) @default))
+(import_clause (import_clause_default_import (import_clause_group (_) @content)))
 (import_require_clause) @clause.import.require
 (namespace_import) @clause.import.namespace
 (import_specifier) @clause.import.specifier

@@ -4109,7 +4109,7 @@
       ],
       "members": [
         {
-          "name": "collectionElements",
+          "name": "elements",
           "route": "slot",
           "slot": "collection_elements",
           "path": [
@@ -5207,7 +5207,7 @@
       ],
       "members": [
         {
-          "name": "contents",
+          "name": "elements",
           "route": "slot",
           "slot": "content",
           "path": [

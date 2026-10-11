@@ -185,7 +185,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly useClauses: G['identifier'] | V.Clause.Import.Any<G>;
 		};
 		readonly 'clause.import.names': {
-			readonly content: unknown | V.Clause.Import.Any<G>;
+			readonly content: V.Clause.Import.Any<G>;
 		};
 		readonly 'clause.import.specifier': {
 			readonly alias: G['identifier'] | string;
@@ -314,7 +314,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['statement'];
 		};
 		readonly 'declaration.enum_member': {
-			readonly body: unknown | V.Declaration.Field<G>;
+			readonly body: V.Declaration.Field<G>;
 			readonly name: G['identifier'] | G['literal'] | string;
 			readonly value:
 				| V.Declaration.Module<G>
@@ -324,7 +324,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['statement'];
 		};
 		readonly 'declaration.enum_member.struct': {
-			readonly body: unknown | V.Declaration.Field<G>;
+			readonly body: V.Declaration.Field<G>;
 			readonly value:
 				| G['expression']
 				| G['identifier']
@@ -332,7 +332,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['statement'];
 		};
 		readonly 'declaration.enum_member.tuple': {
-			readonly body: unknown | V.Declaration.Field<G>;
+			readonly body: V.Declaration.Field<G>;
 			readonly value:
 				| G['expression']
 				| G['identifier']
@@ -551,7 +551,10 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'declaration.struct': {
-			readonly body: unknown | V.Declaration.Field<G>;
+			readonly body: V.Declaration.Field<G>;
+		};
+		readonly 'declaration.struct.tuple': {
+			readonly body: V.Declaration.Field<G>;
 		};
 		readonly 'declaration.type_alias': {
 			readonly value:
@@ -944,25 +947,22 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly implements: G['identifier'] | G['type'];
 		};
 		readonly 'expression.collection.list': {
-			readonly collectionElements:
-				| G['expression']
-				| G['identifier']
-				| G['literal']
-				| G['pattern']
-				| V.Element.Splat.Any<G>;
-			readonly element:
-				| G['expression']
-				| G['identifier']
-				| G['literal']
-				| G['statement']
-				| V.Type.Primitive<G>;
 			readonly elements:
 				| V.Declaration.Module<G>
-				| V.Element.Splat<G>
+				| V.Element.Splat.Any<G>
 				| G['expression']
 				| G['identifier']
 				| G['literal']
 				| G['modifier']
+				| G['pattern']
+				| G['statement']
+				| V.Type.Primitive<G>;
+		};
+		readonly 'expression.collection.list.repeat': {
+			readonly element:
+				| G['expression']
+				| G['identifier']
+				| G['literal']
 				| G['statement']
 				| V.Type.Primitive<G>;
 			readonly length:
@@ -1282,14 +1282,12 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly suffix: string;
 		};
 		readonly 'literal.string': {
-			readonly content: unknown | V.Literal.String.Escape<G> | V.Literal.String.Text<G>;
-			readonly contents:
+			readonly elements:
 				| unknown
 				| V.Expression.Interpolation<G>
 				| V.Literal.String.Escape<G>
 				| V.Literal.String.Text<G>
 				| string;
-			readonly elements: unknown | V.Literal.String.Escape<G>;
 		};
 		readonly 'literal.string.escape': {
 			readonly content: unknown;
@@ -1549,7 +1547,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'statement.import': {
 			readonly argument: G['identifier'] | V.Clause.Import.Any<G> | string;
-			readonly fromClause: unknown | V.Clause.Import.Require<G> | V.Literal.String<G>;
+			readonly fromClause: V.Clause.Import.Require<G> | V.Literal.String<G>;
 			readonly importClause: string;
 		};
 		readonly 'statement.labeled': {

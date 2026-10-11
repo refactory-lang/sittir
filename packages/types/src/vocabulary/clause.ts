@@ -207,7 +207,8 @@ export namespace Clause {
 		export interface Names<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Import<G>> {
 			// claimed by t
 			readonly $kind: 'clause.import.names';
-			readonly content: G['slots']['clause.import.names']['content'] | G['slots']['clause.import.names']['content'][];
+			readonly content?: G['slots']['clause.import.names']['content'] | G['slots']['clause.import.names']['content'][];
+			readonly default?: G['identifier'];
 		}
 		export interface Namespace<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Import<G>> {
 			// claimed by t
