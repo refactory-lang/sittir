@@ -4755,36 +4755,6 @@
     "source": "validator",
     "grammar": "regex",
     "backend": "native",
-    "kind": "_one_or_more",
-    "count": 1,
-    "entries": [
-      "one_or_more"
-    ],
-    "stage": "coverage-excluded",
-    "code": "coverage-excluded",
-    "severity": "info",
-    "message": "no-rule",
-    "label": "_one_or_more"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "_optional",
-    "count": 1,
-    "entries": [
-      "optional"
-    ],
-    "stage": "coverage-excluded",
-    "code": "coverage-excluded",
-    "severity": "info",
-    "message": "no-rule",
-    "label": "_optional"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
     "kind": "_unicode_character_escape",
     "count": 1,
     "entries": [
@@ -4795,21 +4765,6 @@
     "severity": "info",
     "message": "no-rule",
     "label": "_unicode_character_escape"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "_zero_or_more",
-    "count": 1,
-    "entries": [
-      "zero_or_more"
-    ],
-    "stage": "coverage-excluded",
-    "code": "coverage-excluded",
-    "severity": "info",
-    "message": "no-rule",
-    "label": "_zero_or_more"
   },
   {
     "source": "validator",

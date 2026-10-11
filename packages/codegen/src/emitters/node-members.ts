@@ -62,7 +62,10 @@ export function nodeMemberLines(spec: NodeMemberSpec): string[] {
 		...(spec.inner.keyed ? ['      innerAt: (gap: string, ...items: unknown[]) => triviaInnerAt(node, handle, gap, items),'] : []),
 		'    },',
 		...(spec.parsed
-			? ['    $query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,']
+			? [
+					'    $query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,',
+					'    $snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,'
+				]
 			: []),
 		'    $engine: handle && (() => handle.current)'
 	);

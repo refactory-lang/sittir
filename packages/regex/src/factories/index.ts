@@ -30,6 +30,9 @@ export const namedCapturingGroup: Hoisted<typeof O.namedCapturingGroup> = hoistA
 export const nonCapturingGroup: Hoisted<typeof O.nonCapturingGroup> = hoistAs<typeof O.nonCapturingGroup>(
 	O.nonCapturingGroup
 );
+export const zeroOrMore: Hoisted<typeof O.zeroOrMore> = hoistAs<typeof O.zeroOrMore>(O.zeroOrMore);
+export const oneOrMore: Hoisted<typeof O.oneOrMore> = hoistAs<typeof O.oneOrMore>(O.oneOrMore);
+export const optional: Hoisted<typeof O.optional> = hoistAs<typeof O.optional>(O.optional);
 export const countQuantifier: Hoisted<typeof O.countQuantifier> = hoistAs<typeof O.countQuantifier>(O.countQuantifier);
 export const backreferenceEscape: Hoisted<typeof O.backreferenceEscape> = hoistAs<typeof O.backreferenceEscape>(
 	O.backreferenceEscape

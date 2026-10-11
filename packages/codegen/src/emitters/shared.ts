@@ -673,12 +673,13 @@ export function transparentContentKindNames(kinds: readonly string[], nodeMap: N
 
 export function resolveSingleFieldFactorySlot(
 	node: AssembledNode,
-	_nodeMap: NodeMap
+	nodeMap: NodeMap
 ): AssembledNonterminal | undefined {
 	if (!isSlotBearingCompound(node)) return undefined;
 	if (node.surfaceHidden && !node.userFacing) return undefined;
 	const slot = node.soleSlot;
-	return slot !== undefined && !isMultiple(slot) ? slot : undefined;
+	if (slot === undefined || isMultiple(slot)) return undefined;
+	return keywordPresenceKind(slot, nodeMap) === null ? slot : undefined;
 }
 
 export function resolveDirectFactorySlot(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal | undefined {

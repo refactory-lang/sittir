@@ -348,6 +348,34 @@ describe('a kind edge answers to its edge token’s face as a cascaded address',
 	});
 });
 
+describe('a kind row over a kind and its members refines a site the wildcard only cascades onto', () => {
+	const kindEntries = [{ kind: 'lparen', anon: true, symbolName: '(', literalText: '(', member: 'Lparen', id: 7 }] as unknown as KindEntryLike[];
+	const raw = [
+		{ kind: 'args', slot: 'args', address: 'args_before', label: 'args_before', edgeLiterals: ['lparen'] },
+		{ kind: 'args_in', slot: 'args_in', address: 'args_in_before', label: 'args_in_before' },
+		{ kind: 'call', slot: 'lparen', address: 'lparen_before', label: 'lparen_before' }
+	];
+	const sites = addressSites(raw, kindEntries, makeSiteKindsNodeMap(raw));
+	const members = new Map<string, readonly string[]>([['args', ['args_in']]]);
+
+	it('takes the explicit row on the cascaded site and the member, without a containment error', () => {
+		const resolved = resolveBindings(
+			[
+				{ path: '_/"("/before', arm: 'tight' },
+				{ path: 'args/before', arm: 'space' }
+			],
+			[],
+			sites,
+			members,
+			false
+		);
+		const byAddress = new Map([...resolved].map(([i, v]) => [sites[i]!.address, v]));
+		expect(byAddress.get('args_before')).toEqual({ arm: 'space', origin: 'preference' });
+		expect(byAddress.get('args_in_before')).toEqual({ arm: 'space', origin: 'preference' });
+		expect(byAddress.get('lparen_before')).toEqual({ arm: 'tight', origin: 'literal-default' });
+	});
+});
+
 describe('a kind edge over a choice of tokens cascades only a unanimous face', () => {
 	const kindEntries = [
 		{ kind: 'dot_dot', anon: true, symbolName: '..', literalText: '..', member: 'DotDot', id: 3 },

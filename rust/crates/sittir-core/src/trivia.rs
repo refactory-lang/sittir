@@ -69,6 +69,9 @@ impl<T: crate::prepare::Prepare> crate::prepare::Prepare for TransportTrivia<T> 
 pub struct TriviaText {
     pub kind: KindId,
     pub text: String,
+    /// In a snapshot, where the entry lies: its span measured from the start
+    /// of its owner's holder.
+    pub span: Option<crate::points::PointSpan>,
 }
 
 impl Render for TriviaText {
@@ -84,6 +87,11 @@ impl Render for TriviaText {
 impl crate::prepare::Prepare for TriviaText {
     fn prepare(&mut self, _ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError> {
         Ok(())
+    }
+
+    fn snapshot_edge(&self) -> Option<crate::prepare::SnapshotEdge> {
+        let bare = crate::prepare::TriviaReach::Bare;
+        self.span.map(|span| crate::prepare::SnapshotEdge { span, leading: bare, trailing: bare })
     }
 }
 
@@ -114,6 +122,30 @@ pub trait HasTrivia {
 
 impl<T: HasTrivia> HasTrivia for Box<T> {
     type Trivia = T::Trivia;
+}
+
+/// A grammar's trivia type built from an extra's text and kind: what a
+/// snapshot read makes of each extra it places. Codegen implements it once per
+/// grammar, as the variant that takes a `TriviaText`.
+pub trait FromTriviaText {
+    fn from_text(text: TriviaText) -> Self;
+}
+
+/// A transport family that keeps no trivia drops what a snapshot read places.
+impl FromTriviaText for () {
+    fn from_text(_: TriviaText) -> Self {}
+}
+
+impl FromTriviaText for TriviaText {
+    fn from_text(text: TriviaText) -> Self {
+        text
+    }
+}
+
+impl<T: FromTriviaText> FromTriviaText for Box<T> {
+    fn from_text(text: TriviaText) -> Self {
+        Box::new(T::from_text(text))
+    }
 }
 
 /// What a grammar's trivia type provides to frame a coordinate: its render,
@@ -464,24 +496,30 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
     }
 }
 
-/// `{ $type, $text }`, both required.
+/// `{ $type, $text, span? }`, the type and the text required.
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for TriviaText {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { crate::boundary::object(env, napi_val)? };
         let kind: u16 = unsafe { crate::boundary::required(env, obj, c"$type", "TriviaText")? };
-        Ok(Self { kind: KindId(kind), text: unsafe { crate::boundary::required(env, obj, c"$text", "TriviaText")? } })
+        Ok(Self {
+            kind: KindId(kind),
+            text: unsafe { crate::boundary::required(env, obj, c"$text", "TriviaText")? },
+            span: unsafe { crate::boundary::property(env, obj, c"span")? },
+        })
     }
 }
 
-/// `{ $type, $text }`.
+/// `{ $type, $text, span? }`.
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for TriviaText {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        use crate::boundary::{object_with_present, present};
         unsafe {
-            crate::boundary::object_with(env, &[
-                (c"$type", u16::to_napi_value(env, val.kind.0)?),
-                (c"$text", String::to_napi_value(env, val.text)?),
+            object_with_present(env, &[
+                present(env, c"$type", Some(val.kind.0))?,
+                present(env, c"$text", Some(val.text))?,
+                present(env, c"span", val.span)?,
             ])
         }
     }

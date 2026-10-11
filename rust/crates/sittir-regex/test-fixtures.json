@@ -554,7 +554,7 @@
             },
             "_quantifier": {
               "$type": 67,
-              "$text": "*?"
+              "_lazy": true
             }
           },
           {
@@ -564,8 +564,7 @@
               "$text": "e"
             },
             "_quantifier": {
-              "$type": 67,
-              "$text": "*"
+              "$type": 67
             },
             "$_layout": {
               "gap": {
@@ -580,8 +579,7 @@
               "$text": "l"
             },
             "_quantifier": {
-              "$type": 68,
-              "$text": "+"
+              "$type": 68
             },
             "$_layout": {
               "gap": {
@@ -593,8 +591,7 @@
             "$type": 77,
             "_content": 2,
             "_quantifier": {
-              "$type": 69,
-              "$text": "?"
+              "$type": 69
             },
             "$_layout": {
               "gap": {
@@ -634,7 +631,7 @@
           },
           "_quantifier": {
             "$type": 67,
-            "$text": "*?"
+            "_lazy": true
           }
         },
         {
@@ -644,8 +641,7 @@
             "$text": "e"
           },
           "_quantifier": {
-            "$type": 67,
-            "$text": "*"
+            "$type": 67
           },
           "$_layout": {
             "gap": {
@@ -660,8 +656,7 @@
             "$text": "l"
           },
           "_quantifier": {
-            "$type": 68,
-            "$text": "+"
+            "$type": 68
           },
           "$_layout": {
             "gap": {
@@ -673,8 +668,7 @@
           "$type": 77,
           "_content": 2,
           "_quantifier": {
-            "$type": 69,
-            "$text": "?"
+            "$type": 69
           },
           "$_layout": {
             "gap": {
@@ -709,7 +703,7 @@
       },
       "_quantifier": {
         "$type": 67,
-        "$text": "*?"
+        "_lazy": true
       }
     },
     "expectedOutput": "h*?"
@@ -736,8 +730,7 @@
         "$text": "e"
       },
       "_quantifier": {
-        "$type": 67,
-        "$text": "*"
+        "$type": 67
       }
     },
     "expectedOutput": "e*"
@@ -764,8 +757,7 @@
         "$text": "l"
       },
       "_quantifier": {
-        "$type": 68,
-        "$text": "+"
+        "$type": 68
       }
     },
     "expectedOutput": "l+"
@@ -789,8 +781,7 @@
       "$type": 77,
       "_content": 2,
       "_quantifier": {
-        "$type": 69,
-        "$text": "?"
+        "$type": 69
       }
     },
     "expectedOutput": ".?"
@@ -805,6 +796,87 @@
     "expectedReparseTree": "(term_group (any_character) quantifier: (optional))",
     "wrappedText": ".?",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "regex",
+    "pattern": "zero_or_more",
+    "input": {
+      "$type": 67,
+      "_lazy": true
+    },
+    "expectedOutput": "*?"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "regex",
+    "sourceIn": "*?",
+    "pattern": "zero_or_more",
+    "edits": [],
+    "expectedSourceOut": "*?",
+    "expectedReparseTree": "(zero_or_more (lazy))",
+    "wrappedText": "h*?",
+    "wrappedOffset": 1
+  },
+  {
+    "kind": "render",
+    "grammar": "regex",
+    "pattern": "zero_or_more",
+    "input": {
+      "$type": 67
+    },
+    "expectedOutput": "*"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "regex",
+    "sourceIn": "*",
+    "pattern": "zero_or_more",
+    "edits": [],
+    "expectedSourceOut": "*",
+    "expectedReparseTree": "(zero_or_more)",
+    "wrappedText": "h*",
+    "wrappedOffset": 1
+  },
+  {
+    "kind": "render",
+    "grammar": "regex",
+    "pattern": "one_or_more",
+    "input": {
+      "$type": 68
+    },
+    "expectedOutput": "+"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "regex",
+    "sourceIn": "+",
+    "pattern": "one_or_more",
+    "edits": [],
+    "expectedSourceOut": "+",
+    "expectedReparseTree": "(one_or_more)",
+    "wrappedText": "l+",
+    "wrappedOffset": 1
+  },
+  {
+    "kind": "render",
+    "grammar": "regex",
+    "pattern": "optional",
+    "input": {
+      "$type": 69
+    },
+    "expectedOutput": "?"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "regex",
+    "sourceIn": "?",
+    "pattern": "optional",
+    "edits": [],
+    "expectedSourceOut": "?",
+    "expectedReparseTree": "(optional)",
+    "wrappedText": ".?",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -11878,8 +11950,7 @@
                       "$type": 77,
                       "_content": 2,
                       "_quantifier": {
-                        "$type": 67,
-                        "$text": "*"
+                        "$type": 67
                       }
                     }
                   ]
@@ -11922,8 +11993,7 @@
             "$type": 77,
             "_content": 2,
             "_quantifier": {
-              "$type": 67,
-              "$text": "*"
+              "$type": 67
             }
           }
         ]
@@ -12029,8 +12099,7 @@
                     "$type": 77,
                     "_content": 2,
                     "_quantifier": {
-                      "$type": 67,
-                      "$text": "*"
+                      "$type": 67
                     }
                   }
                 ]
@@ -12069,8 +12138,7 @@
           "$type": 77,
           "_content": 2,
           "_quantifier": {
-            "$type": 67,
-            "$text": "*"
+            "$type": 67
           }
         }
       ]
@@ -12225,8 +12293,7 @@
                 "$type": 77,
                 "_content": 2,
                 "_quantifier": {
-                  "$type": 67,
-                  "$text": "*"
+                  "$type": 67
                 }
               }
             ]
@@ -12255,8 +12322,7 @@
       "$type": 77,
       "_content": 2,
       "_quantifier": {
-        "$type": 67,
-        "$text": "*"
+        "$type": 67
       }
     },
     "expectedOutput": ".*"
@@ -12287,8 +12353,7 @@
               "$type": 77,
               "_content": 2,
               "_quantifier": {
-                "$type": 67,
-                "$text": "*"
+                "$type": 67
               }
             }
           ]
@@ -12307,6 +12372,26 @@
     "expectedReparseTree": "(anonymous_capturing_group pattern: (pattern (term (term_group (any_character) quantifier: (zero_or_more)))))",
     "wrappedText": "(.*)",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "regex",
+    "pattern": "zero_or_more",
+    "input": {
+      "$type": 67
+    },
+    "expectedOutput": "*"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "regex",
+    "sourceIn": "*",
+    "pattern": "zero_or_more",
+    "edits": [],
+    "expectedSourceOut": "*",
+    "expectedReparseTree": "(zero_or_more)",
+    "wrappedText": "h*",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -12335,8 +12420,7 @@
                       "$type": 77,
                       "_content": 2,
                       "_quantifier": {
-                        "$type": 67,
-                        "$text": "*"
+                        "$type": 67
                       }
                     }
                   ]
@@ -12362,8 +12446,7 @@
                       "$type": 77,
                       "_content": 2,
                       "_quantifier": {
-                        "$type": 67,
-                        "$text": "*"
+                        "$type": 67
                       }
                     }
                   ]
@@ -12408,8 +12491,7 @@
             "$type": 77,
             "_content": 2,
             "_quantifier": {
-              "$type": 67,
-              "$text": "*"
+              "$type": 67
             }
           }
         ]
@@ -12441,8 +12523,7 @@
             "$type": 77,
             "_content": 2,
             "_quantifier": {
-              "$type": 67,
-              "$text": "*"
+              "$type": 67
             }
           }
         ]
@@ -12486,8 +12567,7 @@
                     "$type": 77,
                     "_content": 2,
                     "_quantifier": {
-                      "$type": 67,
-                      "$text": "*"
+                      "$type": 67
                     }
                   }
                 ]
@@ -12513,8 +12593,7 @@
                     "$type": 77,
                     "_content": 2,
                     "_quantifier": {
-                      "$type": 67,
-                      "$text": "*"
+                      "$type": 67
                     }
                   }
                 ]
@@ -12555,8 +12634,7 @@
           "$type": 77,
           "_content": 2,
           "_quantifier": {
-            "$type": 67,
-            "$text": "*"
+            "$type": 67
           }
         }
       ]
@@ -12585,8 +12663,7 @@
           "$type": 77,
           "_content": 2,
           "_quantifier": {
-            "$type": 67,
-            "$text": "*"
+            "$type": 67
           }
         }
       ]
@@ -12626,8 +12703,7 @@
                 "$type": 77,
                 "_content": 2,
                 "_quantifier": {
-                  "$type": 67,
-                  "$text": "*"
+                  "$type": 67
                 }
               }
             ]
@@ -12656,8 +12732,7 @@
       "$type": 77,
       "_content": 2,
       "_quantifier": {
-        "$type": 67,
-        "$text": "*"
+        "$type": 67
       }
     },
     "expectedOutput": ".*"
@@ -12695,8 +12770,7 @@
                 "$type": 77,
                 "_content": 2,
                 "_quantifier": {
-                  "$type": 67,
-                  "$text": "*"
+                  "$type": 67
                 }
               }
             ]
@@ -12725,8 +12799,7 @@
       "$type": 77,
       "_content": 2,
       "_quantifier": {
-        "$type": 67,
-        "$text": "*"
+        "$type": 67
       }
     },
     "expectedOutput": ".*"
@@ -12762,8 +12835,7 @@
               "$type": 77,
               "_content": 2,
               "_quantifier": {
-                "$type": 67,
-                "$text": "*"
+                "$type": 67
               }
             }
           ]
@@ -12803,8 +12875,7 @@
               "$type": 77,
               "_content": 2,
               "_quantifier": {
-                "$type": 67,
-                "$text": "*"
+                "$type": 67
               }
             }
           ]
@@ -12823,6 +12894,46 @@
     "expectedReparseTree": "(named_capturing_group group_name: (group_name) pattern: (pattern (term (term_group (any_character) quantifier: (zero_or_more)))))",
     "wrappedText": "(?P<python>.*)",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "regex",
+    "pattern": "zero_or_more",
+    "input": {
+      "$type": 67
+    },
+    "expectedOutput": "*"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "regex",
+    "sourceIn": "*",
+    "pattern": "zero_or_more",
+    "edits": [],
+    "expectedSourceOut": "*",
+    "expectedReparseTree": "(zero_or_more)",
+    "wrappedText": "h*",
+    "wrappedOffset": 1
+  },
+  {
+    "kind": "render",
+    "grammar": "regex",
+    "pattern": "zero_or_more",
+    "input": {
+      "$type": 67
+    },
+    "expectedOutput": "*"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "regex",
+    "sourceIn": "*",
+    "pattern": "zero_or_more",
+    "edits": [],
+    "expectedSourceOut": "*",
+    "expectedReparseTree": "(zero_or_more)",
+    "wrappedText": "h*",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -12851,8 +12962,7 @@
                       "$type": 77,
                       "_content": 2,
                       "_quantifier": {
-                        "$type": 67,
-                        "$text": "*"
+                        "$type": 67
                       }
                     }
                   ]
@@ -12893,8 +13003,7 @@
                       "$type": 77,
                       "_content": 2,
                       "_quantifier": {
-                        "$type": 67,
-                        "$text": "*"
+                        "$type": 67
                       }
                     }
                   ]
@@ -12954,8 +13063,7 @@
             "$type": 77,
             "_content": 2,
             "_quantifier": {
-              "$type": 67,
-              "$text": "*"
+              "$type": 67
             }
           }
         ]
@@ -12987,8 +13095,7 @@
             "$type": 77,
             "_content": 2,
             "_quantifier": {
-              "$type": 67,
-              "$text": "*"
+              "$type": 67
             }
           }
         ]
@@ -13032,8 +13139,7 @@
                     "$type": 77,
                     "_content": 2,
                     "_quantifier": {
-                      "$type": 67,
-                      "$text": "*"
+                      "$type": 67
                     }
                   }
                 ]
@@ -13074,8 +13180,7 @@
                     "$type": 77,
                     "_content": 2,
                     "_quantifier": {
-                      "$type": 67,
-                      "$text": "*"
+                      "$type": 67
                     }
                   }
                 ]
@@ -13131,8 +13236,7 @@
           "$type": 77,
           "_content": 2,
           "_quantifier": {
-            "$type": 67,
-            "$text": "*"
+            "$type": 67
           }
         }
       ]
@@ -13161,8 +13265,7 @@
           "$type": 77,
           "_content": 2,
           "_quantifier": {
-            "$type": 67,
-            "$text": "*"
+            "$type": 67
           }
         }
       ]
@@ -13202,8 +13305,7 @@
                 "$type": 77,
                 "_content": 2,
                 "_quantifier": {
-                  "$type": 67,
-                  "$text": "*"
+                  "$type": 67
                 }
               }
             ]
@@ -13232,8 +13334,7 @@
       "$type": 77,
       "_content": 2,
       "_quantifier": {
-        "$type": 67,
-        "$text": "*"
+        "$type": 67
       }
     },
     "expectedOutput": ".*"
@@ -13298,8 +13399,7 @@
                 "$type": 77,
                 "_content": 2,
                 "_quantifier": {
-                  "$type": 67,
-                  "$text": "*"
+                  "$type": 67
                 }
               }
             ]
@@ -13328,8 +13428,7 @@
       "$type": 77,
       "_content": 2,
       "_quantifier": {
-        "$type": 67,
-        "$text": "*"
+        "$type": 67
       }
     },
     "expectedOutput": ".*"
@@ -13392,8 +13491,7 @@
               "$type": 77,
               "_content": 2,
               "_quantifier": {
-                "$type": 67,
-                "$text": "*"
+                "$type": 67
               }
             }
           ]
@@ -13433,8 +13531,7 @@
               "$type": 77,
               "_content": 2,
               "_quantifier": {
-                "$type": 67,
-                "$text": "*"
+                "$type": 67
               }
             }
           ]
@@ -13453,6 +13550,46 @@
     "expectedReparseTree": "(named_capturing_group group_name: (group_name) pattern: (pattern (term (term_group (any_character) quantifier: (zero_or_more)))))",
     "wrappedText": "(?P<python>.*)",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "regex",
+    "pattern": "zero_or_more",
+    "input": {
+      "$type": 67
+    },
+    "expectedOutput": "*"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "regex",
+    "sourceIn": "*",
+    "pattern": "zero_or_more",
+    "edits": [],
+    "expectedSourceOut": "*",
+    "expectedReparseTree": "(zero_or_more)",
+    "wrappedText": "h*",
+    "wrappedOffset": 1
+  },
+  {
+    "kind": "render",
+    "grammar": "regex",
+    "pattern": "zero_or_more",
+    "input": {
+      "$type": 67
+    },
+    "expectedOutput": "*"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "regex",
+    "sourceIn": "*",
+    "pattern": "zero_or_more",
+    "edits": [],
+    "expectedSourceOut": "*",
+    "expectedReparseTree": "(zero_or_more)",
+    "wrappedText": "h*",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -15525,8 +15662,7 @@
                         ]
                       },
                       "_quantifier": {
-                        "$type": 67,
-                        "$text": "*"
+                        "$type": 67
                       }
                     }
                   ]
@@ -15744,8 +15880,7 @@
               ]
             },
             "_quantifier": {
-              "$type": 67,
-              "$text": "*"
+              "$type": 67
             }
           }
         ]
@@ -16163,8 +16298,7 @@
                       ]
                     },
                     "_quantifier": {
-                      "$type": 67,
-                      "$text": "*"
+                      "$type": 67
                     }
                   }
                 ]
@@ -16378,8 +16512,7 @@
             ]
           },
           "_quantifier": {
-            "$type": 67,
-            "$text": "*"
+            "$type": 67
           }
         }
       ]
@@ -16844,8 +16977,7 @@
                   ]
                 },
                 "_quantifier": {
-                  "$type": 67,
-                  "$text": "*"
+                  "$type": 67
                 }
               }
             ]
@@ -17049,8 +17181,7 @@
         ]
       },
       "_quantifier": {
-        "$type": 67,
-        "$text": "*"
+        "$type": 67
       }
     },
     "expectedOutput": "[-a-zA-Z0-9@:%_\\+.~#?&//=]*"
@@ -18046,8 +18177,7 @@
                 ]
               },
               "_quantifier": {
-                "$type": 67,
-                "$text": "*"
+                "$type": 67
               }
             }
           ]
@@ -18080,6 +18210,26 @@
   {
     "kind": "render",
     "grammar": "regex",
+    "pattern": "zero_or_more",
+    "input": {
+      "$type": 67
+    },
+    "expectedOutput": "*"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "regex",
+    "sourceIn": "*",
+    "pattern": "zero_or_more",
+    "edits": [],
+    "expectedSourceOut": "*",
+    "expectedReparseTree": "(zero_or_more)",
+    "wrappedText": "h*",
+    "wrappedOffset": 1
+  },
+  {
+    "kind": "render",
+    "grammar": "regex",
     "pattern": "pattern",
     "input": {
       "$type": 51,
@@ -18101,8 +18251,7 @@
               ]
             },
             "_quantifier": {
-              "$type": 68,
-              "$text": "+"
+              "$type": 68
             }
           }
         ],
@@ -18151,8 +18300,7 @@
             ]
           },
           "_quantifier": {
-            "$type": 68,
-            "$text": "+"
+            "$type": 68
           }
         }
       ]
@@ -18189,8 +18337,7 @@
         ]
       },
       "_quantifier": {
-        "$type": 68,
-        "$text": "+"
+        "$type": 68
       }
     },
     "expectedOutput": "[[:alnum:]]+"
@@ -18257,6 +18404,26 @@
     "expectedSourceOut": "[:alnum:]",
     "expectedReparseTree": "(posix_character_class posix_class_name: (posix_class_name))",
     "wrappedText": "[[:alnum:]]",
+    "wrappedOffset": 1
+  },
+  {
+    "kind": "render",
+    "grammar": "regex",
+    "pattern": "one_or_more",
+    "input": {
+      "$type": 68
+    },
+    "expectedOutput": "+"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "regex",
+    "sourceIn": "+",
+    "pattern": "one_or_more",
+    "edits": [],
+    "expectedSourceOut": "+",
+    "expectedReparseTree": "(one_or_more)",
+    "wrappedText": "l+",
     "wrappedOffset": 1
   },
   {

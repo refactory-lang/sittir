@@ -2391,6 +2391,15 @@ function renderTriviaTransportSupport(
 	lines.push('}');
 	lines.push('');
 
+	lines.push(
+		'impl ::sittir_core::trivia::FromTriviaText for TriviaTransport {',
+		'    fn from_text(text: ::sittir_core::trivia::TriviaText) -> Self {',
+		'        TriviaTransport::Text(text)',
+		'    }',
+		'}',
+		''
+	);
+
 	const whitespaceKinds = new Set(whitespaceTriviaKinds(nodeMap));
 	lines.push('impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {');
 	lines.push('    fn seam_gap(&self) -> Option<(::sittir_core::layout_kinds::LayoutKinds, Option<&str>)> {');
@@ -2455,6 +2464,13 @@ function prepareEnumImpl(
 					`        match self {`,
 					...arms.map((a) =>
 						a.payload ? `            ${enumName}::${a.variant}(t) => t.gap_edges(),` : `            ${enumName}::${a.variant} => None,`
+					),
+					`        }`,
+					`    }`,
+					`    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {`,
+					`        match self {`,
+					...arms.map((a) =>
+						a.payload ? `            ${enumName}::${a.variant}(t) => t.snapshot_edge(),` : `            ${enumName}::${a.variant} => None,`
 					),
 					`        }`,
 					`    }`
@@ -2865,9 +2881,11 @@ function rootEdgeStamp(plan: RenderPlan, node: AssembledNode, fillFields: readon
 	const items = (end: 'first' | 'last'): string =>
 		`[${(end === 'first' ? fillFields : [...fillFields].reverse()).map((f) => `::sittir_core::prepare::EdgeItems::${end}_item(&self.${f})`).join(', ')}].into_iter().flatten().next()`;
 	return [
-		`        let first = ${items('first')};`,
-		`        let last = ${items('last')};`,
-		`        let flanks = ::sittir_core::prepare::root_flanks(first, last, ${allowedOf('before')}, ${allowedOf('after')}, &options::WHITESPACE, ctx);`,
+		`        let inner = ::sittir_core::layout::Layout::snapshot_inner(&self.layout);`,
+		`        let first = ::sittir_core::prepare::outermost(${items('first')}, inner, ::sittir_core::options::Side::Before);`,
+		`        let last = ::sittir_core::prepare::outermost(${items('last')}, inner, ::sittir_core::options::Side::After);`,
+		`        let root = ::sittir_core::layout::Layout::snapshot_edge(&self.layout).map(|edge| edge.span);`,
+		`        let flanks = ::sittir_core::prepare::root_flanks(first, last, root, ${allowedOf('before')}, ${allowedOf('after')}, &options::WHITESPACE, ctx);`,
 		`        ::sittir_core::prepare::fill_edges(self, flanks);`
 	];
 }
@@ -2928,6 +2946,9 @@ function prepareStructImpl(
 		`    }`,
 		`    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {`,
 		`        Some(self.layout.edges_mut())`,
+		`    }`,
+		`    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {`,
+		`        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)`,
 		`    }`,
 		`}`,
 		''

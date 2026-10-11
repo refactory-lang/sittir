@@ -249,6 +249,50 @@ macro_rules! napi_engine {
                 })
             }
 
+            /// A snapshot of the node at `index` of the live tree `treeId`: the
+            /// node read at every depth into plain data with no tree, each
+            /// node with its span (`$_layout.span`) from the transport that
+            /// holds it and each placed extra with its text, the node itself
+            /// measured from the byte `holderByte`, or from its own start when
+            /// absent. Refuses as `read` does.
+            #[::napi_derive::napi(ts_return_type = "object")]
+            pub fn snapshot(&self, tree_id: f64, index: f64, holder_byte: Option<u32>) -> ::napi::Result<::napi::Either<$any, $crate::ErrorRead>> {
+                let tree_id = u32::try_from($crate::napi_engine::checked_index(tree_id, "treeId")?)
+                    .map_err(|_| ::napi::Error::from_reason(format!("treeId {tree_id} names no tree")))?;
+                let index = u32::try_from($crate::napi_engine::checked_index(index, "index")?)
+                    .map_err(|_| ::napi::Error::from_reason(format!("index {index} names no node")))?;
+                LIVE_TREES.with(|trees| {
+                    let trees = trees.borrow();
+                    let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                    if $crate::engine::node_at_index(parsed.tree(), index).is_none() {
+                        return Err(::napi::Error::from_reason(format!("index {index} names no node of tree {tree_id}")));
+                    }
+                    if let Some(error) = parsed.snapshot_error(index, holder_byte) {
+                        return Ok(::napi::Either::B(error));
+                    }
+                    let grammar = <$grammar as ::std::default::Default>::default();
+                    ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.snapshot::<$any>(index, holder_byte)))
+                        .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(payload, "snapshot panicked")))?
+                        .map(::napi::Either::A)
+                        .map_err(|refusal| ::napi::Error::from_reason(refusal.describe(&|kind| $crate::engine::EngineGrammar::kind_name(grammar, kind))))
+                })
+            }
+
+            /// The spans of byte `ranges` (start and end pairs) of the live
+            /// tree `treeId`, measured from the byte `holderByte`, as row and
+            /// column pairs, flat. Refuses a tree that is not live, an odd
+            /// length, and a byte past the source or before the holder.
+            #[::napi_derive::napi]
+            pub fn snapshot_spans(&self, tree_id: f64, holder_byte: u32, ranges: Vec<u32>) -> ::napi::Result<Vec<u32>> {
+                let tree_id = u32::try_from($crate::napi_engine::checked_index(tree_id, "treeId")?)
+                    .map_err(|_| ::napi::Error::from_reason(format!("treeId {tree_id} names no tree")))?;
+                LIVE_TREES.with(|trees| {
+                    let trees = trees.borrow();
+                    let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                    parsed.snapshot_spans(holder_byte, &ranges).map_err(::napi::Error::from_reason)
+                })
+            }
+
             /// One batch of a pre-order walk of the named descendants under
             /// the node `from` names (JSON, see `query::Address`), filtered to
             /// `kinds` when given and to the `where` plan (JSON, see

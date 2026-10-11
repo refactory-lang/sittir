@@ -28,6 +28,10 @@ pub struct TransportLayout<T> {
     /// from it: JavaScript crosses an untouched node as this coordinate, and an
     /// edited one without it.
     pub at: Option<NodeCoordinate>,
+    /// Where a snapshot node lies: its span measured from the start of the
+    /// transport that holds it. A snapshot node has no `at`; a read or built
+    /// node has no span.
+    pub span: Option<crate::points::PointSpan>,
 }
 
 impl<T> Default for TransportLayout<T> {
@@ -38,6 +42,7 @@ impl<T> Default for TransportLayout<T> {
             gap: None,
             flank: None,
             at: None,
+            span: None,
         }
     }
 }
@@ -62,9 +67,16 @@ pub trait Layout {
     /// two are still adjacent in their source.
     fn gap(&self) -> Option<&SourceGap>;
     fn take_flank(&mut self) -> Option<SourceFlank>;
+    /// Where a snapshot node lies, and how far its leading and trailing
+    /// trivia reach (`TransportLayout::span`).
+    fn snapshot_edge(&self) -> Option<crate::prepare::SnapshotEdge>;
+    /// Where a snapshot node's inner trivia lies, as one item spanning all of
+    /// it: `None` with no inner trivia, `Rebuilt` when an entry has no
+    /// geometry.
+    fn snapshot_inner(&self) -> Option<crate::prepare::EdgeItem<'_>>;
 }
 
-impl<T> Layout for Option<Box<TransportLayout<T>>> {
+impl<T: Prepare> Layout for Option<Box<TransportLayout<T>>> {
     type Trivia = T;
 
     fn trivia(&self) -> Option<&TransportTrivia<T>> {
@@ -89,6 +101,35 @@ impl<T> Layout for Option<Box<TransportLayout<T>>> {
 
     fn take_flank(&mut self) -> Option<SourceFlank> {
         self.as_mut()?.flank.take()
+    }
+
+    fn snapshot_edge(&self) -> Option<crate::prepare::SnapshotEdge> {
+        use crate::prepare::TriviaReach;
+        let layout = self.as_ref()?;
+        let trivia = layout.trivia.as_ref();
+        let reach = |entry: Option<&crate::trivia::TriviaEntry<T>>, end: fn(crate::points::PointSpan) -> crate::points::Point| match entry {
+            None => TriviaReach::Bare,
+            Some(entry) => entry.value.snapshot_edge().map_or(TriviaReach::Unplaced, |edge| TriviaReach::To(end(edge.span))),
+        };
+        Some(crate::prepare::SnapshotEdge {
+            span: layout.span?,
+            leading: reach(trivia.and_then(|trivia| trivia.leading.as_ref()?.first()), |span| span.start),
+            trailing: reach(trivia.and_then(|trivia| trivia.trailing.as_ref()?.last()), |span| span.end),
+        })
+    }
+
+    fn snapshot_inner(&self) -> Option<crate::prepare::EdgeItem<'_>> {
+        use crate::prepare::{EdgeItem, SnapshotEdge, TriviaReach};
+        let entries = self.as_ref()?.trivia.as_ref()?.inner.as_ref()?.values().flatten();
+        let mut extent: Option<crate::points::PointSpan> = None;
+        for entry in entries {
+            let Some(edge) = entry.value.snapshot_edge() else { return Some(EdgeItem::Rebuilt) };
+            extent = Some(extent.map_or(edge.span, |span| crate::points::PointSpan {
+                start: span.start.min(edge.span.start),
+                end: span.end.max(edge.span.end),
+            }));
+        }
+        extent.map(|span| EdgeItem::Snapshot(SnapshotEdge { span, leading: TriviaReach::Bare, trailing: TriviaReach::Bare }))
     }
 }
 
@@ -200,6 +241,7 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
                     ),
                     None => None,
                 },
+                span: property(env, napi_val, c"span")?,
             })
         }
     }
@@ -207,14 +249,15 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
 
 #[cfg(feature = "napi-bindings")]
 impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for TransportLayout<T> {
-    /// `{ trivia?, at? }`, each only when present: what a read writes. The
-    /// edges, the gap and the flanks never cross back.
+    /// `{ trivia?, at?, span? }`, each only when present: what a read writes.
+    /// The edges, the gap and the flanks never cross back.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         use crate::boundary::{object_with_present, present, present_with};
         unsafe {
             object_with_present(env, &[
                 present(env, c"trivia", val.trivia)?,
                 present_with(c"at", val.at, |at| crate::slot::coordinate_to_napi(env, at))?,
+                present(env, c"span", val.span)?,
             ])
         }
     }
