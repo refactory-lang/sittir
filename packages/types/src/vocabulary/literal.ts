@@ -174,7 +174,7 @@ export namespace Literal {
 				| V.Literal.Number.Integer.Octal<G>;
 		}
 		export interface Negative<G extends GrammarContext<G>> extends SubKindOf<V.Literal.Number<G>> {
-			// claimed by r
+			// claimed by rt
 			readonly $kind: 'literal.number.negative';
 			readonly value: V.Literal.Number.Any<G>;
 		}

@@ -103,7 +103,7 @@ export namespace Statement {
 		// t only
 		readonly importAttribute?: V.Clause.Import.Attribute<G>;
 		// t only
-		readonly importClause?: G['slots']['statement.import']['importClause'];
+		readonly importClause?: V.Clause.Import.Names<G>;
 		// t only
 		readonly names?: (V.Clause.Import.Alias<G> | V.Identifier.Dotted<G>)[];
 		// p only

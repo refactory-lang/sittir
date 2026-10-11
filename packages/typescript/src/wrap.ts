@@ -6349,15 +6349,10 @@ export function wrapLiteralTypeNegativeNumber(
 	const node = {
 		...data,
 		$type: TSKindId.LiteralTypeNegativeNumber as const,
-		operator() {
-			return this._operator;
-		},
 		argument() {
 			return hydrateSlot<T.Number>(this, '_argument', tree);
 		},
 		$with: {
-			operator: (v: NonNullable<T.LiteralTypeNegativeNumber['_operator']>) =>
-				rebuilt(node, handle, () => wrapLiteralTypeNegativeNumber({ ...$edited(data), _operator: v }, tree)),
 			argument: (v: NonNullable<T.LiteralTypeNegativeNumber['_argument']>) =>
 				rebuilt(node, handle, () => wrapLiteralTypeNegativeNumber({ ...$edited(data), _argument: v }, tree))
 		},

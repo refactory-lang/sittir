@@ -15046,52 +15046,6 @@ impl ::sittir_core::render::Render for ExportStatementEqualsExportTerminatorTran
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
-pub enum LiteralTypeNegativeNumberOperatorTransportSlot {
-    #[kind(kind::DASH)]
-    Dash,
-    #[kind(kind::PLUS)]
-    Plus,
-}
-
-impl ::sittir_core::prepare::Prepare for LiteralTypeNegativeNumberOperatorTransportSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            LiteralTypeNegativeNumberOperatorTransportSlot::Dash => Ok(()),
-            LiteralTypeNegativeNumberOperatorTransportSlot::Plus => Ok(()),
-        }
-    }
-}
-
-impl ::sittir_core::view::KindOf for LiteralTypeNegativeNumberOperatorTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::Dash => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
-            Self::Plus => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for LiteralTypeNegativeNumberOperatorTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            LiteralTypeNegativeNumberOperatorTransportSlot::Dash => {
-                w.site_at(options::SITE_LITERAL_TYPE_NEGATIVE_NUMBER_DASH_BEFORE);
-                let written = render_dash(w);
-                written?;
-                Ok(())
-            }
-            LiteralTypeNegativeNumberOperatorTransportSlot::Plus => {
-                w.site_at(options::SITE_LITERAL_TYPE_NEGATIVE_NUMBER_PLUS_BEFORE);
-                let written = render_plus(w);
-                written?;
-                Ok(())
-            }
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
 pub enum BinaryExpressionInLeftTransportSlot {
     #[kind(kind::AS_EXPRESSION)]
     AsExpression(Box<AsExpressionTransport>),
@@ -27147,13 +27101,10 @@ impl ::sittir_core::prepare::Prepare for CommentBlockTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::LITERAL_TYPE_NEGATIVE_NUMBER)]
+#[transport(kind = kind::LITERAL_TYPE_NEGATIVE_NUMBER, layout = [kind::DASH])]
 pub struct LiteralTypeNegativeNumberTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_operator")]
-    #[slot(field = field::OPERATOR)]
-    pub operator: ::sittir_core::SlotValue<LiteralTypeNegativeNumberOperatorTransportSlot>,
     #[wire(key = "_argument")]
     #[slot(field = field::ARGUMENT)]
     pub argument: ::sittir_core::SlotValue<NumberTransport>,
@@ -27169,10 +27120,6 @@ impl ::sittir_core::options::Edged for LiteralTypeNegativeNumberTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(395) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
-    fn edge_arm_kinds(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> (Option<::sittir_core::types::KindId>, Option<::sittir_core::types::KindId>) {
-        use ::sittir_core::prepare::ArmOf;
-        (self.operator.arm_among(ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(395), ::sittir_core::options::Side::Before)), None)
-    }
 }
 
 impl ::sittir_core::render::Render for LiteralTypeNegativeNumberTransport {
@@ -27187,7 +27134,6 @@ impl ::sittir_core::prepare::Prepare for LiteralTypeNegativeNumberTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.operator.prepare(ctx)?;
         self.argument.prepare(ctx)?;
         Ok(())
     }
@@ -39008,9 +38954,8 @@ fn render_comment_block(node: &CommentBlockTransport, w: &mut dyn ::sittir_core:
 
 fn render_literal_type_negative_number(node: &LiteralTypeNegativeNumberTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let argument = &node.argument;
-    let operator = &node.operator;
     w.edge(::sittir_core::types::KindId(395), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    operator.render(w)?;
+    w.text("-")?;
     w.site_at(options::SITE_LITERAL_TYPE_NEGATIVE_NUMBER_OPERATOR_AFTER);
     argument.render(w)?;
     w.edge(::sittir_core::types::KindId(395), ::sittir_core::options::Side::After, node.layout.edges().after);

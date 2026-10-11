@@ -3827,9 +3827,11 @@ describe('literal_type', () => {
 describe('literal_type sub-factories', () => {
 	it('negativeNumber builds the parent', () => {
 		const node = ir.literalType.negativeNumber({
-			operator: '-',
-			argument: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any
-		});
+			$type: TSKindId.NumberDecimal,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);

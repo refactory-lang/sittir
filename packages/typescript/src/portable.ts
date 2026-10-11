@@ -305,6 +305,7 @@ export interface PortableIds {
 	identifier:
 		| TSKindId.Identifier
 		| TSKindId.NestedIdentifier
+		| TSKindId.PrivatePropertyIdentifier
 		| TSKindId.PropertyIdentifier
 		| TSKindId.ShorthandPropertyIdentifier
 		| TSKindId.ShorthandPropertyIdentifierPattern
@@ -315,6 +316,7 @@ export interface PortableIds {
 	'identifier.label': TSKindId.StatementIdentifier;
 	'identifier.nested': TSKindId.NestedIdentifier;
 	'identifier.property':
+		| TSKindId.PrivatePropertyIdentifier
 		| TSKindId.PropertyIdentifier
 		| TSKindId.ShorthandPropertyIdentifier
 		| TSKindId.ShorthandPropertyIdentifierPattern;
@@ -326,6 +328,7 @@ export interface PortableIds {
 		| TSKindId.TemplateChars
 		| TSKindId.EscapeSequence
 		| TSKindId.False
+		| TSKindId.LiteralTypeNegativeNumber
 		| TSKindId.Null
 		| TSKindId.Number
 		| TSKindId.NumberBigint
@@ -357,6 +360,7 @@ export interface PortableIds {
 	'literal.null': TSKindId.Null | TSKindId.Undefined;
 	'literal.null.undefined': TSKindId.Undefined;
 	'literal.number':
+		| TSKindId.LiteralTypeNegativeNumber
 		| TSKindId.Number
 		| TSKindId.NumberBigint
 		| TSKindId.NumberBigintBinary
@@ -393,6 +397,7 @@ export interface PortableIds {
 	'literal.number.integer.binary': TSKindId.NumberBinary;
 	'literal.number.integer.hex': TSKindId.NumberHex;
 	'literal.number.integer.octal': TSKindId.NumberOctal;
+	'literal.number.negative': TSKindId.LiteralTypeNegativeNumber;
 	'literal.regex': TSKindId.Regex | TSKindId.RegexFlags | TSKindId.RegexPattern;
 	'literal.regex.flags': TSKindId.RegexFlags;
 	'literal.regex.pattern': TSKindId.RegexPattern;
@@ -1150,6 +1155,7 @@ export interface PortableKindsAt {
 		readonly float: PortableKindsAt['literal.number.float'];
 		readonly integer: PortableKindsAt['literal.number.integer'];
 		readonly leading_point: PortableKindsAt['literal.number.float.leading_point'];
+		readonly negative: PortableKindsAt['literal.number.negative'];
 		readonly pattern: PortableKindsAt['literal.regex.pattern'];
 		readonly scientific: PortableKindsAt['literal.number.float.scientific'];
 		readonly text: PortableKindsAt['literal.string.text'];
@@ -1172,6 +1178,7 @@ export interface PortableKindsAt {
 		readonly $ids: readonly PortableIds['literal.number'][];
 		readonly float: PortableKindsAt['literal.number.float'];
 		readonly integer: PortableKindsAt['literal.number.integer'];
+		readonly negative: PortableKindsAt['literal.number.negative'];
 		readonly big: PortableKindsAt['literal.number.integer.big'];
 		readonly leading_point: PortableKindsAt['literal.number.float.leading_point'];
 		readonly scientific: PortableKindsAt['literal.number.float.scientific'];
@@ -1202,6 +1209,7 @@ export interface PortableKindsAt {
 	'literal.number.integer.binary': { readonly $ids: readonly PortableIds['literal.number.integer.binary'][] };
 	'literal.number.integer.hex': { readonly $ids: readonly PortableIds['literal.number.integer.hex'][] };
 	'literal.number.integer.octal': { readonly $ids: readonly PortableIds['literal.number.integer.octal'][] };
+	'literal.number.negative': { readonly $ids: readonly PortableIds['literal.number.negative'][] };
 	'literal.regex': {
 		readonly $ids: readonly PortableIds['literal.regex'][];
 		readonly flags: PortableKindsAt['literal.regex.flags'];
@@ -1891,6 +1899,7 @@ export interface PortableIsAt {
 		readonly float: PortableIsAt['literal.number.float'];
 		readonly integer: PortableIsAt['literal.number.integer'];
 		readonly leading_point: PortableIsAt['literal.number.float.leading_point'];
+		readonly negative: PortableIsAt['literal.number.negative'];
 		readonly pattern: PortableIsAt['literal.regex.pattern'];
 		readonly scientific: PortableIsAt['literal.number.float.scientific'];
 		readonly text: PortableIsAt['literal.string.text'];
@@ -1910,6 +1919,7 @@ export interface PortableIsAt {
 	'literal.number': PortableGuard<PortableIds['literal.number']> & {
 		readonly float: PortableIsAt['literal.number.float'];
 		readonly integer: PortableIsAt['literal.number.integer'];
+		readonly negative: PortableIsAt['literal.number.negative'];
 		readonly big: PortableIsAt['literal.number.integer.big'];
 		readonly leading_point: PortableIsAt['literal.number.float.leading_point'];
 		readonly scientific: PortableIsAt['literal.number.float.scientific'];
@@ -1937,6 +1947,7 @@ export interface PortableIsAt {
 	'literal.number.integer.binary': PortableGuard<PortableIds['literal.number.integer.binary']> & {};
 	'literal.number.integer.hex': PortableGuard<PortableIds['literal.number.integer.hex']> & {};
 	'literal.number.integer.octal': PortableGuard<PortableIds['literal.number.integer.octal']> & {};
+	'literal.number.negative': PortableGuard<PortableIds['literal.number.negative']> & {};
 	'literal.regex': PortableGuard<PortableIds['literal.regex']> & {
 		readonly flags: PortableIsAt['literal.regex.flags'];
 		readonly pattern: PortableIsAt['literal.regex.pattern'];
@@ -2204,6 +2215,7 @@ export interface PortableKinds {
 	readonly module_property: PortableKindsAt['declaration.module_property'];
 	readonly names: PortableKindsAt['clause.import.names'];
 	readonly negation: PortableKindsAt['expression.unary.negation'];
+	readonly negative: PortableKindsAt['literal.number.negative'];
 	readonly nested: PortableKindsAt['identifier.nested'];
 	readonly never: PortableKindsAt['type.primitive.never'];
 	readonly new: PortableKindsAt['expression.call.new'];
@@ -2370,6 +2382,7 @@ export interface PortableIs {
 	readonly module_property: PortableIsAt['declaration.module_property'];
 	readonly names: PortableIsAt['clause.import.names'];
 	readonly negation: PortableIsAt['expression.unary.negation'];
+	readonly negative: PortableIsAt['literal.number.negative'];
 	readonly nested: PortableIsAt['identifier.nested'];
 	readonly never: PortableIsAt['type.primitive.never'];
 	readonly new: PortableIsAt['expression.call.new'];
@@ -2802,6 +2815,7 @@ const table: PortableTable = {
 			ids: [
 				TSKindId.Identifier,
 				TSKindId.NestedIdentifier,
+				TSKindId.PrivatePropertyIdentifier,
 				TSKindId.PropertyIdentifier,
 				TSKindId.ShorthandPropertyIdentifier,
 				TSKindId.ShorthandPropertyIdentifierPattern,
@@ -2816,6 +2830,7 @@ const table: PortableTable = {
 		'identifier.nested': { ids: [TSKindId.NestedIdentifier], exact: true },
 		'identifier.property': {
 			ids: [
+				TSKindId.PrivatePropertyIdentifier,
 				TSKindId.PropertyIdentifier,
 				TSKindId.ShorthandPropertyIdentifier,
 				TSKindId.ShorthandPropertyIdentifierPattern
@@ -2834,6 +2849,7 @@ const table: PortableTable = {
 				TSKindId.TemplateChars,
 				TSKindId.EscapeSequence,
 				TSKindId.False,
+				TSKindId.LiteralTypeNegativeNumber,
 				TSKindId.Null,
 				TSKindId.Number,
 				TSKindId.NumberBigint,
@@ -2869,6 +2885,7 @@ const table: PortableTable = {
 		'literal.null.undefined': { ids: [TSKindId.Undefined], exact: true },
 		'literal.number': {
 			ids: [
+				TSKindId.LiteralTypeNegativeNumber,
 				TSKindId.Number,
 				TSKindId.NumberBigint,
 				TSKindId.NumberBigintBinary,
@@ -2919,6 +2936,7 @@ const table: PortableTable = {
 		'literal.number.integer.binary': { ids: [TSKindId.NumberBinary], exact: true },
 		'literal.number.integer.hex': { ids: [TSKindId.NumberHex], exact: true },
 		'literal.number.integer.octal': { ids: [TSKindId.NumberOctal], exact: true },
+		'literal.number.negative': { ids: [TSKindId.LiteralTypeNegativeNumber], exact: true },
 		'literal.regex': { ids: [TSKindId.Regex, TSKindId.RegexFlags, TSKindId.RegexPattern], exact: true },
 		'literal.regex.flags': { ids: [TSKindId.RegexFlags], exact: true },
 		'literal.regex.pattern': { ids: [TSKindId.RegexPattern], exact: true },
@@ -3207,6 +3225,7 @@ const table: PortableTable = {
 		['', 'module_property', 'declaration.module_property'],
 		['', 'names', 'clause.import.names'],
 		['', 'negation', 'expression.unary.negation'],
+		['', 'negative', 'literal.number.negative'],
 		['', 'nested', 'identifier.nested'],
 		['', 'never', 'type.primitive.never'],
 		['', 'new', 'expression.call.new'],
@@ -3385,6 +3404,7 @@ const table: PortableTable = {
 		['literal', 'float', 'literal.number.float'],
 		['literal', 'integer', 'literal.number.integer'],
 		['literal', 'leading_point', 'literal.number.float.leading_point'],
+		['literal', 'negative', 'literal.number.negative'],
 		['literal', 'pattern', 'literal.regex.pattern'],
 		['literal', 'scientific', 'literal.number.float.scientific'],
 		['literal', 'text', 'literal.string.text'],
@@ -3749,6 +3769,7 @@ const table: PortableTable = {
 			{ path: 'declaration.variable', within: [], test: [] }
 		],
 		[TSKindId.LiteralType]: [{ path: 'type.literal', within: [], test: [] }],
+		[TSKindId.LiteralTypeNegativeNumber]: [{ path: 'literal.number.negative', within: [], test: [] }],
 		[TSKindId.LookupType]: [{ path: 'type.lookup', within: [], test: [] }],
 		[TSKindId.MappedTypeClause]: [{ path: 'clause.mapped_type', within: [], test: [] }],
 		[TSKindId.MemberExpression]: [{ path: 'expression.member', within: [], test: [] }],
@@ -3831,6 +3852,7 @@ const table: PortableTable = {
 			{ path: 'modifier.visibility.private', within: [], test: [] },
 			{ path: 'modifier.visibility', within: [], test: [] }
 		],
+		[TSKindId.PrivatePropertyIdentifier]: [{ path: 'identifier.property', within: [], test: [] }],
 		[TSKindId.Program]: [{ path: 'module', within: [], test: [] }],
 		[TSKindId.PropertyIdentifier]: [{ path: 'identifier.property', within: [], test: [] }],
 		[TSKindId.PropertySignature]: [{ path: 'declaration.field.signature', within: [], test: [] }],
