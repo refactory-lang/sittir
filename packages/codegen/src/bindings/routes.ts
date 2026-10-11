@@ -1,4 +1,4 @@
-import { WILDCARD, isFixedText, type Anchor, type BindingFacts, type ClaimFact, type EnumMember, type ModelNode, type ModelSlot, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
+import { WILDCARD, isFixedText, isIdentifierPath, type Anchor, type BindingFacts, type ClaimFact, type EnumMember, type ModelNode, type ModelSlot, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
 import { camel, snake } from './names.ts';
 
 export interface LayoutSlot {
@@ -217,8 +217,6 @@ function listFormItems(input: GrammarInput, node: ModelNode, slotNamesOf: (kind:
 	return [];
 }
 
-const IDENTIFIER = 'identifier';
-
 const holdsOnlyText = (slot: ModelSlot): boolean => slot.storage !== 'boolean' && slot.kinds.length === 0 && slot.terminals.length === 0;
 
 function membersOf(input: GrammarInput, kind: string, entries: readonly ReadEntry[], slotNamesOf: (kind: string) => SlotNames): MemberRoute[] {
@@ -228,7 +226,7 @@ function membersOf(input: GrammarInput, kind: string, entries: readonly ReadEntr
 	const names = slotNamesOf(kind);
 	const pinned = new Map<string, Set<string>>();
 	for (const pin of entries.flatMap((entry) => entry.pins)) (pinned.get(pin.slot) ?? pinned.set(pin.slot, new Set<string>()).get(pin.slot))?.add(pin.text);
-	const identifier = entries.some((entry) => entry.vocab === IDENTIFIER || entry.vocab.startsWith(`${IDENTIFIER}.`));
+	const identifier = entries.some((entry) => isIdentifierPath(entry.vocab));
 	const deep = input.bindings.members.filter((m) => m.owner === kind && m.route !== 'rename' && m.route !== 'dropped');
 	const via = new Set(deep.flatMap((m) => (m.route === 'presence' || m.route === 'nested' ? m.via.flatMap((step) => step.kind ?? []) : [])));
 	const routes: MemberRoute[] = [];

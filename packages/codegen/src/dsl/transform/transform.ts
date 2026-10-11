@@ -159,7 +159,7 @@ function applyPathPatches(original: RuntimeRule, patches: Record<number | string
 		const segments = parsePath(key);
 		if (isArmDefault(value)) assertChoiceArmPath(rule, key, segments);
 		rule = wireWithPatchSites(patchSitesOf([[key, value]]), () =>
-			applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, key, precStack))
+			applyPath(rule, segments, (member, enclosing) => resolvePatch(value, member, key, enclosing))
 		);
 		if (isArmDefault(value)) rule = clearSiblingDefaults(rule, segments);
 	}
@@ -235,7 +235,7 @@ function applyVariantPatches(
 		const segments = parsePath(key);
 		try {
 			result = wireWithPatchSites(patchSitesOf([[key, value]]), () =>
-				applyPath(result, segments, (member, precStack) => resolvePatch(value, member, key, precStack))
+				applyPath(result, segments, (member, enclosing) => resolvePatch(value, member, key, enclosing))
 			);
 		} catch (error) {
 			if (error instanceof Error) error.message = `${wireGetCurrentRuleKind()} patch ${key}: ${error.message}`;
@@ -662,7 +662,7 @@ function assertElementSlotName(fieldName: string, member: RuntimeRule): void {
 	}
 }
 
-function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, key: string, precStack?: readonly RuntimeRule[]): RuntimeRule {
+function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, key: string, enclosing?: readonly RuntimeRule[]): RuntimeRule {
 	const textToken = wireTextTokenOf(originalMember);
 	if (textToken !== undefined && rewritesText(patch)) {
 		wireDepositTextToken(textToken, (body) => resolvePatch(patch, body, key));
@@ -674,7 +674,7 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, key: strin
 	if (isFieldPlaceholder(patch)) {
 		assertElementSlotName(patch.name, originalMember);
 		recordFieldEffect(patch.name, originalMember);
-		return resolveFieldPlaceholder(patch, originalMember, precStack);
+		return resolveFieldPlaceholder(patch, originalMember, enclosing);
 	}
 	if (isFieldLike(patch)) {
 		return { ...patch, metadata: makeRuleMetadata({ fieldSource: 'override' }) } as unknown as RuntimeRule;
@@ -698,7 +698,7 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, key: strin
 		if (textToken !== undefined) {
 			const { annotations } = originalMember as RuntimeRule & { annotations?: RuleAnnotations };
 			const body = wireTextTokenBody(textToken);
-			return resolvePatch(patch, (annotations === undefined ? body : { ...(body as object), annotations }) as RuntimeRule, key, precStack);
+			return resolvePatch(patch, (annotations === undefined ? body : { ...(body as object), annotations }) as RuntimeRule, key, enclosing);
 		}
 		const parentKind = wireGetCurrentRuleKind();
 		if (!parentKind) {
@@ -725,10 +725,10 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, key: strin
 				metadata: makeRuleMetadata({ fieldSource: 'override' })
 			});
 		}
-		return annotated(registerAliasedVariant(name, name, originalMember, (body) => wrapInPrec(body, precStack)));
+		return annotated(registerAliasedVariant(name, name, originalMember, (body) => wrapInPrec(body, enclosing)));
 	}
 	if (isAliasPlaceholder(patch)) {
-		return resolveAliasPlaceholder(patch, originalMember, precStack);
+		return resolveAliasPlaceholder(patch, originalMember, enclosing);
 	}
 	recordAliasEffect(patch);
 	if (isAliasOfSymbol(patch, originalMember)) return { ...(patch as object), content: originalMember } as unknown as RuntimeRule;
@@ -847,7 +847,7 @@ function relabelUniformFieldSet(content: unknown, newName: string): unknown | nu
 function resolveFieldPlaceholder(
 	patch: FieldPlaceholder,
 	originalMember: RuntimeRule,
-	precStack?: readonly RuntimeRule[]
+	enclosing?: readonly RuntimeRule[]
 ): RuntimeRule {
 	let content: unknown = originalMember;
 	if (isFieldLike(content)) {
@@ -885,7 +885,7 @@ function resolveFieldPlaceholder(
 			content = unified;
 		}
 	}
-	const maybeSymbolized = insideLexicalToken() ? content : maybeKeywordSymbol(patch.name, content, (body) => wrapInPrec(body, precStack));
+	const maybeSymbolized = insideLexicalToken(enclosing) ? content : maybeKeywordSymbol(patch.name, content, (body) => wrapInPrec(body, enclosing));
 	if (maybeSymbolized !== content) {
 		content = maybeSymbolized;
 	}
@@ -903,14 +903,14 @@ function resolveFieldPlaceholder(
 function resolveAliasPlaceholder(
 	patch: AliasPlaceholder,
 	site: RuntimeRule,
-	precStack?: readonly RuntimeRule[]
+	enclosing?: readonly RuntimeRule[]
 ): RuntimeRule {
 	const originalMember = isEnrichShapedFieldWrapper(site) ? (site.content as RuntimeRule) : site;
 	const labelled = (resolved: RuntimeRule): RuntimeRule => relabelledArm(resolved, originalMember, wireAutomaticVariants()) as RuntimeRule;
 	const ruleName = '_' + patch.name;
 	const lift = enrichLiftArmOf(originalMember);
 	if (lift !== null) return labelled(renameEnrichLift(originalMember, lift, ruleName, patch.name));
-	const mint = (body: RuntimeRule): RuntimeRule => registerAliasedVariant(ruleName, patch.name, body, (b) => wrapInPrec(b, precStack));
+	const mint = (body: RuntimeRule): RuntimeRule => registerAliasedVariant(ruleName, patch.name, body, (b) => wrapInPrec(b, enclosing));
 	if ((originalMember as { type?: string }).type === 'ALIAS') {
 		const content = contentOf(originalMember);
 		if (!isSymbolType(content.type)) return labelled(mint(content));

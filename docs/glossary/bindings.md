@@ -877,11 +877,7 @@ Whether a model node is an alias envelope over leaf text: `modelType` `alias`, w
 
 ### `packages/codegen/src/bindings/routes.ts::membersOf`
 
-A kind's member routes: one `slot` route per slot of the model node, then the member facts the bindings state for it (`kind`, `presence`, `nested`). A slot routes no member when it is a layout slot, when a claim drops it (`SlotNames` gives it `null`), when the read already tells its value (`toldByRead`, over the pins of the kind's read entries), or when it holds only text on a kind read as an identifier (`holdsOnlyText`: an identifier's text is its own value, while a compound identifier's node slots stay members); the kinds a `presence` or `nested` route reaches through are taken out of their slot. A leaf alias envelope (`isLeafAlias`) takes no slot routes. A list's item slot is its container content (`containerOf`), a step a path may take but no member, unless the list is a form of a supertype, whose items route as its sibling forms name them (`listFormItems`).
-
-### `packages/codegen/src/bindings/routes.ts::IDENTIFIER`
-
-The vocabulary root whose kinds are identifiers. A kind with a read entry at this path or beneath it routes no member through a slot that holds only text.
+A kind's member routes: one `slot` route per slot of the model node, then the member facts the bindings state for it (`kind`, `presence`, `nested`). A slot routes no member when it is a layout slot, when a claim drops it (`SlotNames` gives it `null`), when the read already tells its value (`toldByRead`, over the pins of the kind's read entries), or when it holds only text on a kind read as an identifier (`facts.ts::isIdentifierPath`, `holdsOnlyText`: an identifier's text is its own value, while a compound identifier's node slots stay members); the kinds a `presence` or `nested` route reaches through are taken out of their slot. A leaf alias envelope (`isLeafAlias`) takes no slot routes. A list's item slot is its container content (`containerOf`), a step a path may take but no member, unless the list is a form of a supertype, whose items route as its sibling forms name them (`listFormItems`).
 
 ### `packages/codegen/src/bindings/routes.ts::holdsOnlyText`
 
@@ -1078,6 +1074,14 @@ The model types of a kind that is always one fixed text: keywords and punctuatio
 ### `packages/codegen/src/bindings/facts.ts::isFixedText`
 
 Whether a model node is one fixed text (`FIXED_TEXT_MODEL_TYPES`, with its text known).
+
+### `packages/codegen/src/bindings/facts.ts::IDENTIFIER`
+
+The vocabulary root whose kinds are identifiers.
+
+### `packages/codegen/src/bindings/facts.ts::isIdentifierPath`
+
+Whether a vocabulary path is `IDENTIFIER` or beneath it. A kind with a read entry at such a path routes no member through a slot that holds only text (`routes.ts::membersOf`).
 
 ### `packages/codegen/src/bindings/facts.ts::ModelNode`
 

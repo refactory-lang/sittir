@@ -88,7 +88,7 @@ elsewhere. It is what a literal segment matches against.
  * @param rule - The prec wrapper to descend through.
  * @param segments - Remaining path segments (not consumed by this descent).
  * @param patch - Patch value or function to apply at the addressed position.
- * @param precStack - Previously accumulated prec wrappers.
+ * @param enclosing - The prec and token wrappers the walk has descended through.
  * @returns Reconstructed prec wrapper with the patched inner content.
  */
 ```
@@ -150,17 +150,9 @@ single-content / index-0 behaviour).
  */
 ```
 
-### `packages/codegen/src/dsl/transform/transform-path.ts::lexicalDepth`
-
-How many token wrappers (`TOKEN`, `IMMEDIATE_TOKEN`) the path walk is inside.
-
 ### `packages/codegen/src/dsl/transform/transform-path.ts::insideLexicalToken`
 
-Whether the path walk is inside a token. A patch landing there edits a lexeme's interior, where tree-sitter admits no symbol.
-
-### `packages/codegen/src/dsl/transform/transform-path.ts::withinWrapper`
-
-Runs a descent through a wrapper, counted in `lexicalDepth` when the wrapper is a token.
+Whether the wrappers the walk has descended through (`enclosing`) include a token. A patch landing there edits a lexeme's interior, where tree-sitter admits no symbol. `descendThroughSingleWrapper` adds a token wrapper to the stack as `descendThroughPrecWrapper` adds a prec wrapper.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::descendThroughSingleWrapper`
 
@@ -177,7 +169,7 @@ Runs a descent through a wrapper, counted in `lexicalDepth` when the wrapper is 
  * @param head - The current path segment (index or wildcard).
  * @param rest - Remaining path segments after this descent.
  * @param patch - Patch value or function to apply at the addressed position.
- * @param precStack - Accumulated prec wrappers for the patch callback.
+ * @param enclosing - The prec and token wrappers the walk has descended through.
  * @returns Reconstructed wrapper with the patched inner content.
  * @throws {ApplyPathSkip} If the index is out of range for a single-slot wrapper.
  */
@@ -238,7 +230,7 @@ Runs a descent through a wrapper, counted in `lexicalDepth` when the wrapper is 
  * @param fieldName - The expected field name.
  * @param rest - Remaining path segments after this descent.
  * @param patch - Patch value or function to apply at the addressed position.
- * @param precStack - Accumulated prec wrappers for the patch callback.
+ * @param enclosing - The prec and token wrappers the walk has descended through.
  * @returns Reconstructed field wrapper with the patched inner content.
  * @throws {Error} If the rule is not a field wrapper, or if the field name doesn't match.
  */
@@ -263,7 +255,7 @@ Runs a descent through a wrapper, counted in `lexicalDepth` when the wrapper is 
  * @param kindName - The symbol kind name to match against.
  * @param rest - Remaining path segments after the kind-match step.
  * @param patch - Patch value or function to apply at each matched symbol.
- * @param precStack - Accumulated prec wrappers for the patch callback.
+ * @param enclosing - The prec and token wrappers the walk has descended through.
  * @returns The rule with all matching occurrences patched.
  */
 ```
@@ -308,7 +300,7 @@ Runs a descent through a wrapper, counted in `lexicalDepth` when the wrapper is 
  * @param targetKind - The kind name that must match `rule.name`.
  * @param rest - Remaining path segments after the kind-match step.
  * @param patch - Patch value or function to apply when the name matches.
- * @param precStack - Accumulated prec wrappers for the patch callback.
+ * @param enclosing - The prec and token wrappers the walk has descended through.
  * @param insideNamedField - Whether this symbol is already inside a named field.
  * @returns `{ rule, matched }` — `matched` is `false` when name or field guard fails.
  */
@@ -414,10 +406,10 @@ whether a group seats on its parent.
 
 ```text
 /**
- * Wrap `content` in the accumulated prec stack collected during path
- * descent. Each entry in `precStack` is the original prec wrapper the
- * path crossed; we reapply them inner-first so the outer-most prec is
- * the outermost in the result.
+ * Wrap `content` in the prec wrappers the path descent crossed. The stack
+ * also holds the token wrappers crossed, which are not reapplied; the prec
+ * wrappers are reapplied inner-first so the outer-most prec is the outermost
+ * in the result.
  */
 ```
 
@@ -437,7 +429,7 @@ whether a group seats on its parent.
  * @param indexValue - The raw index value (may be negative).
  * @param rest - Remaining path segments after this step.
  * @param patch - Patch value or function.
- * @param precStack - Accumulated prec wrappers.
+ * @param enclosing - The prec and token wrappers the walk has descended through.
  * @returns Reconstructed container with the patched member.
  * @throws {ApplyPathSkip} If the resolved index is out of bounds.
  */
@@ -461,7 +453,7 @@ whether a group seats on its parent.
  * @param members - Mutable copy of the container's members.
  * @param rest - Remaining path segments after the wildcard step.
  * @param patch - Patch value or function.
- * @param precStack - Accumulated prec wrappers.
+ * @param enclosing - The prec and token wrappers the walk has descended through.
  * @returns Reconstructed container with all matching members patched.
  * @throws {ApplyPathSkip} If the container is empty or no member accepted the patch.
  */
@@ -969,7 +961,7 @@ built from the name-neutral `$` and compared as `canonicalRuleText`
  *
  * @param patch - The AliasPlaceholder with the desired alias name.
  * @param originalMember - The rule currently at the target position.
- * @param precStack - Accumulated prec wrappers for the hidden rule body.
+ * @param enclosing - The wrappers the walk descended through; their prec wrappers wrap the hidden rule body.
  * @returns A new alias rule wrapping the hidden rule.
  */
 ```

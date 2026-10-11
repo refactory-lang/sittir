@@ -149,6 +149,10 @@ const FIXED_TEXT_MODEL_TYPES: ReadonlySet<string> = new Set(['keyword', 'punctua
 export const isFixedText = (node: ModelNode | undefined): node is ModelNode & { readonly text: string } =>
 	node !== undefined && FIXED_TEXT_MODEL_TYPES.has(node.modelType) && node.text !== null;
 
+const IDENTIFIER = 'identifier';
+
+export const isIdentifierPath = (vocab: string): boolean => vocab === IDENTIFIER || vocab.startsWith(`${IDENTIFIER}.`);
+
 export type SlotModel = ReadonlyMap<string, ModelNode>;
 
 export const KNOWN_PREDICATE_OPERATORS: ReadonlySet<string> = new Set([
