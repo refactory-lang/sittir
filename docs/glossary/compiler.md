@@ -1630,11 +1630,11 @@ and gates it through `diagnoseGrammar`, throwing `GrammarDiagnosticError` with t
 records and every record the gate saw when it does not pass. The config names the package, not the grammar, so the
 caller resolves it once. Hydrate then runs on the collected grammar with
 `droppedKinds` as the names whose absence is already reported, and the `ir` surface is stamped on the hydrated node map (`stampIrSurface`).
-After the gate it refuses a stale bindings overlay (`bindings/hash.ts::assertBindingsFresh`
+After the gate it refuses stale grammar bindings (`bindings/hash.ts::assertBindingsFresh`
 over the package's committed `grammar.bindings.ts` and its `bindings.scm`), so
-codegen never runs with an overlay derived from other sources than the ones on disk.
-With `unbound` it evaluates the package without its overlay and skips that check: the
-base grammar's compilation, whose model the overlay is derived against.
+codegen never runs with grammar bindings derived from other sources than the ones on disk.
+With `unbound` it evaluates the package without its grammar bindings and skips that check: the
+base grammar's compilation, whose model the grammar bindings are derived against.
 
 ### `packages/codegen/src/compiler/compile.ts::diagnoseGrammar`
 
@@ -2809,7 +2809,7 @@ boundary; a caller that wants the DSL's own shape calls it directly.
 
 ### `packages/codegen/src/compiler/evaluate.ts::evaluateUnboundDsl`
 
-`evaluateDsl` for the entry without its bindings overlay: the same extraction under the DSL globals, with the module imported through `importUnbound`. `evaluate` calls it when `EvaluateOptions.unbound` is set; the conflict-derivation child calls it directly.
+`evaluateDsl` for the entry without its grammar bindings: the same extraction under the DSL globals, with the module imported through `importUnbound`. `evaluate` calls it when `EvaluateOptions.unbound` is set; the conflict-derivation child calls it directly.
 
 ### `packages/codegen/src/compiler/evaluate.ts::importAndExtractGrammar`
 
@@ -10215,11 +10215,11 @@ The raw symbols a parser folds onto another public symbol: the entries of `ts_sy
 
 ### `packages/codegen/src/compiler/evaluate.ts::EvaluateOptions`
 
-`unbound`: evaluate the entry without its bindings overlay (`evaluateUnboundDsl`).
+`unbound`: evaluate the entry without its grammar bindings (`evaluateUnboundDsl`).
 
 ### `packages/codegen/src/compiler/evaluate.ts::importUnbound`
 
-Imports a grammar entry with `sittir-grammar.ts::UNBOUND_ENV` set (the prior value restored after), so `sittirGrammar` skips the bindings overlay. The entry is imported under its own `?unbound` URL, which keeps the unbound module apart from a bound import of the same file in the module cache.
+Imports a grammar entry with `sittir-grammar.ts::UNBOUND_ENV` set (the prior value restored after), so `sittirGrammar` skips the grammar bindings. The entry is imported under its own `?unbound` URL, which keeps the unbound module apart from a bound import of the same file in the module cache.
 
 ### `packages/codegen/src/compiler/evaluate.ts::withDslGlobals`
 

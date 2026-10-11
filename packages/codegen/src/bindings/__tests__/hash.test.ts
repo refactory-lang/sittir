@@ -39,21 +39,21 @@ describe('assertBindingsFresh', () => {
 	const paths = sources('(identifier) @identifier', { 'a.ts': 'A' });
 	const fresh = bindingsSourceHash(paths.scm, paths.vocabulary);
 
-	it('accepts an overlay derived against the current bindings and vocabulary', () => {
+	it('accepts grammar bindings derived against the current bindings and vocabulary', () => {
 		expect(() => assertBindingsFresh('g', fresh, paths.scm, paths.vocabulary)).not.toThrow();
 	});
 
-	it('refuses a stale overlay, naming the command that regenerates it', () => {
+	it('refuses stale grammar bindings, naming the command that regenerates it', () => {
 		const check = () => assertBindingsFresh('g', 'stale', paths.scm, paths.vocabulary);
 		expect(check).toThrow(StaleBindingsError);
 		expect(check).toThrow(REGENERATE_BINDINGS_COMMAND);
 	});
 
-	it('refuses a grammar with a bindings.scm and no committed overlay', () => {
+	it('refuses a grammar with a bindings.scm and no committed grammar bindings', () => {
 		expect(() => assertBindingsFresh('g', undefined, paths.scm, paths.vocabulary)).toThrow(REGENERATE_BINDINGS_COMMAND);
 	});
 
-	it('accepts a grammar with no bindings.scm and no overlay', () => {
+	it('accepts a grammar with no bindings.scm and no grammar bindings', () => {
 		expect(() => assertBindingsFresh('g', undefined, join(paths.vocabulary, 'missing.scm'), paths.vocabulary)).not.toThrow();
 	});
 });

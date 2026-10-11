@@ -4611,7 +4611,7 @@ for the conflict loop, and the imported resolutions and whether the config
 authors `conflicts` for the diagnostics, and last `applyConflictResolutions`, which sets the
 grammar's conflicts to the derived resolutions the config passes as
 `resolutions` (each grammar imports its own `.sittir/resolutions.json`).
-A `bindings` overlay is applied after that (`bindGrammar`).
+Its grammar bindings (`bindings`) are applied after that (`bindGrammar`).
 Every `grammar.sittir.ts` and the bootstrap template call it as
 `export default sittirGrammar(base, { … })`.
 
@@ -4829,7 +4829,7 @@ a stamp made there would be lost. The stamp is the declaration link collects
 `hoistedKinds` from; enrich is one of its minting routes.
 
 
-A config may carry a `bindings` overlay (`bind.ts::Bindings`). `checkBindingPatches` checks its alias patches against the enriched grammar, `withBindingPatches` joins its patch sets to wire's patch stage (base names, enriched paths), and after `applyConflictResolutions` the result's grammar goes through `bindGrammar` with the effects wire recorded (`wire.ts::wireBindingEffects`). Resolutions therefore stay in base names, and `bindGrammar`'s renames carry them along. Under an unbound evaluation (`UNBOUND_ENV`) the overlay is skipped.
+A config may carry grammar bindings as `bindings` (`bind.ts::Bindings`). `checkBindingPatches` checks its alias patches against the enriched grammar, `withBindingPatches` joins its patch sets to wire's patch stage (base names, enriched paths), and after `applyConflictResolutions` the result's grammar goes through `bindGrammar` with the effects wire recorded (`wire.ts::wireBindingEffects`). Resolutions therefore stay in base names, and `bindGrammar`'s renames carry them along. Under an unbound evaluation (`UNBOUND_ENV`) the grammar bindings are skipped.
 
 ### `packages/codegen/src/dsl/enrich.ts::applyFieldWrapPasses`
 
@@ -7218,23 +7218,23 @@ The parser's field table as `{ name, id }` rows in id order, skipping entries wi
 
 ### `packages/codegen/src/dsl/bind.ts::isRecord`
 
-A grammar value that is a record (a rule, or a map of rules or names), not an array or a scalar. The bindings overlay walks rules with it too.
+A grammar value that is a record (a rule, or a map of rules or names), not an array or a scalar. The grammar bindings walk rules with it too.
 
 ### `packages/codegen/src/dsl/bind.ts::symbolNames`
 
-Every symbol name a rule references, at any depth. The bindings overlay uses it to tell whether an alias's target holds the aliased kind.
+Every symbol name a rule references, at any depth. The grammar bindings use it to tell whether an alias's target holds the aliased kind.
 
 ### `packages/codegen/src/dsl/bind.ts::Rename`
 
-A kind-level rename in a bindings overlay: the base rule or external `from` takes the name `to`.
+A kind-level rename in a grammar's bindings: the base rule or external `from` takes the name `to`.
 
 ### `packages/codegen/src/dsl/bind.ts::Bindings`
 
-A grammar's bindings overlay, the argument of `bindings()`. `patches` holds ordinary patch sets in base names and enriched paths; `sittirGrammar` appends them after the authored sets of the same kind. `renames` and `splits` are kind-level edits that `bindGrammar` applies to the grammar `grammar()` returned. `hash` is the hash of the `bindings.scm` and vocabulary sources the overlay was derived from (`bindings/hash.ts::bindingsSourceHash`); `bindings/hash.ts::assertBindingsFresh` compares it with the sources on disk.
+The grammar bindings of a grammar, the argument of `bindings()`. `patches` holds ordinary patch sets in base names and enriched paths; `sittirGrammar` appends them after the authored sets of the same kind. `renames` and `splits` are kind-level edits that `bindGrammar` applies to the grammar `grammar()` returned. `hash` is the hash of the `bindings.scm` and vocabulary sources they were derived from (`bindings/hash.ts::bindingsSourceHash`); `bindings/hash.ts::assertBindingsFresh` compares it with the sources on disk.
 
 ### `packages/codegen/src/dsl/bind.ts::bindings`
 
-Declares a bindings overlay and returns it unchanged; the call exists to type the overlay. A `grammar.bindings.ts` default-exports one and `grammar.sittir.ts` passes it to `sittirGrammar` as `bindings` while the overlay is on.
+Declares grammar bindings and returns them unchanged; the call exists to type them. A `grammar.bindings.ts` default-exports one and `grammar.sittir.ts` passes it to `sittirGrammar` as `bindings` while the grammar bindings are on.
 
 ### `packages/codegen/src/dsl/bind.ts::rename`
 
@@ -7250,11 +7250,11 @@ What one binding patch did, as wire records it while the patch applies: a `segme
 
 ### `packages/codegen/src/dsl/bind.ts::BINDING_SET`
 
-The non-enumerable mark on a patch set that came from a bindings overlay. `transform` applies a marked set inside `wireWithBindingEffects`, so only binding patches record effects.
+The non-enumerable mark on a patch set that came from grammar bindings. `transform` applies a marked set inside `wireWithBindingEffects`, so only binding patches record effects.
 
 ### `packages/codegen/src/dsl/bind.ts::markBindingSet`
 
-A copy of a patch set carrying `BINDING_SET`; the overlay's own object stays unmarked.
+A copy of a patch set carrying `BINDING_SET`; the grammar bindings' own object stays unmarked.
 
 ### `packages/codegen/src/dsl/bind.ts::isBindingSet`
 
@@ -7266,7 +7266,7 @@ Why an alias from `from` to `to` cannot stand, or `undefined`: an alias never fl
 
 ### `packages/codegen/src/dsl/bind.ts::checkBindingPatches`
 
-Refuses every named alias of a symbol in a bindings overlay's patches that `aliasTargetIssue` rejects against the enriched grammar, before wire applies any of them.
+Refuses every named alias of a symbol in grammar bindings' patches that `aliasTargetIssue` rejects against the enriched grammar, before wire applies any of them.
 
 ### `packages/codegen/src/dsl/bind.ts::rewriteBindingOptions`
 
@@ -7274,7 +7274,7 @@ Carries the authored options block through the binding patches. The block is aut
 
 ### `packages/codegen/src/dsl/bind.ts::bindGrammar`
 
-The kind-level half of a bindings overlay, applied to the grammar `grammar()` returned: the options block first takes the binding patches' effects (`rewriteBindingOptions`), then `renameGrammar` renames the kinds and `splitGrammar` splits them, the splits named in base names and mapped through the renames.
+The kind-level half of grammar bindings, applied to the grammar `grammar()` returned: the options block first takes the binding patches' effects (`rewriteBindingOptions`), then `renameGrammar` renames the kinds and `splitGrammar` splits them, the splits named in base names and mapped through the renames.
 
 ### `packages/codegen/src/dsl/bind.ts::renameReparseHosts`
 
@@ -7282,11 +7282,11 @@ The authored `reparseHosts` block under a rename. It is authored in base names; 
 
 ### `packages/codegen/src/dsl/bind.ts::Split`
 
-A placement split in a bindings overlay: the base kind `kind`, wherever it is reached under the chain `within` (innermost first, the outermost kind last), becomes the new kind `as`. `containers` names, per intermediate kind of `within` that is visible, the clone that holds the split kind there and the field the outer kind reaches the clone under. `splitGrammar` applies it.
+A placement split in grammar bindings: the base kind `kind`, wherever it is reached under the chain `within` (innermost first, the outermost kind last), becomes the new kind `as`. `containers` names, per intermediate kind of `within` that is visible, the clone that holds the split kind there and the field the outer kind reaches the clone under. `splitGrammar` applies it.
 
 ### `packages/codegen/src/dsl/bind.ts::FieldRename`
 
-A field-level rename the overlay derives from a member: the field `from` that `owner` reaches (directly or through hidden rules only it reaches) takes the member's name `to`.
+A field-level rename the grammar bindings derive from a member: the field `from` that `owner` reaches (directly or through hidden rules only it reaches) takes the member's name `to`.
 
 ### `packages/codegen/src/dsl/bind.ts::FieldWrapTarget`
 
@@ -7294,11 +7294,11 @@ What a field wrap fields: an unfielded reference to a kind (`symbol`, matched by
 
 ### `packages/codegen/src/dsl/bind.ts::FieldWrap`
 
-A field the overlay adds for a member whose child arrives under no field: every unfielded `target` the owner reaches is wrapped in `field(field, …)`.
+A field the grammar bindings add for a member whose child arrives under no field: every unfielded `target` the owner reaches is wrapped in `field(field, …)`.
 
 ### `packages/codegen/src/dsl/bind.ts::GrammarRecord`
 
-A grammar, a rule or any grammar sub-record as untyped JSON-like data. The bind functions take the evaluated grammar this way, since they run on what `grammar()` returned, before sittir types any of it. The bindings overlay walks the base grammar as the same type.
+A grammar, a rule or any grammar sub-record as untyped JSON-like data. The bind functions take the evaluated grammar this way, since they run on what `grammar()` returned, before sittir types any of it. The grammar bindings walk the base grammar as the same type.
 
 ### `packages/codegen/src/dsl/bind.ts::LIST_FIELDS`
 
@@ -7434,7 +7434,7 @@ A rule with its precedence wrappers peeled.
 
 ### `packages/codegen/src/dsl/bind.ts::childFields`
 
-Where an owner's child sits across its transparent reach, for the overlay to choose between renaming a field and wrapping a reference. With a `null` target it reports the owner's named children: references to non-hidden kinds and named aliases. The owner's top-level choice decides `arm`.
+Where an owner's child sits across its transparent reach, for the grammar bindings to choose between renaming a field and wrapping a reference. With a `null` target it reports the owner's named children: references to non-hidden kinds and named aliases. The owner's top-level choice decides `arm`.
 
 ### `packages/codegen/src/dsl/bind.ts::sharedHosts`
 
@@ -7470,7 +7470,7 @@ The bound name of a base name, from the grammar's `renamedFrom` record: the phas
 
 ### `packages/codegen/src/dsl/sittir-grammar.ts::UNBOUND_ENV`
 
-The environment variable that asks for a grammar's base: while it is `1`, `sittirGrammar` skips the bindings overlay. `evaluate`'s unbound import sets it around its import, and conflict derivation sets it on the `tree-sitter generate` runs that derive resolutions, so both see the base without building the bound grammar first, and a broken overlay cannot stop the base from evaluating.
+The environment variable that asks for a grammar's base: while it is `1`, `sittirGrammar` skips the grammar bindings. `evaluate`'s unbound import sets it around its import, and conflict derivation sets it on the `tree-sitter generate` runs that derive resolutions, so both see the base without building the bound grammar first, and broken grammar bindings cannot stop the base from evaluating.
 
 ### `packages/codegen/src/dsl/sittir-grammar.ts::unboundRequested`
 
@@ -7482,7 +7482,7 @@ A patches entry as its list of sets: one map, an array of maps, or none.
 
 ### `packages/codegen/src/dsl/sittir-grammar.ts::withBindingPatches`
 
-The authored patches with each overlay kind's sets appended after the kind's authored sets, each marked by `markBindingSet`. A binding patch therefore sees the rule the authored patches produced, and its paths address that shape.
+The authored patches with each grammar-bindings kind's sets appended after the kind's authored sets, each marked by `markBindingSet`. A binding patch therefore sees the rule the authored patches produced, and its paths address that shape.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::onlyAliasedSymbols`
 
