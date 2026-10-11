@@ -1793,36 +1793,6 @@
       "vocab": "expression.binary",
       "read": [
         {
-          "vocab": "expression.binary.comparison.chain",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "comparators"
-                  ],
-                  "kinds": [],
-                  "anchor": "only"
-                }
-              ],
-              "plan": {
-                "op": "not",
-                "of": {
-                  "op": "is",
-                  "types": [
-                    297
-                  ],
-                  "self": true
-                }
-              }
-            }
-          ]
-        },
-        {
           "vocab": "expression.binary.comparison.equal",
           "toplevel": true,
           "within": [],
@@ -2131,6 +2101,36 @@
           ]
         },
         {
+          "vocab": "expression.binary.comparison.chain",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [
+                    "comparators"
+                  ],
+                  "kinds": [],
+                  "anchor": "only"
+                }
+              ],
+              "plan": {
+                "op": "not",
+                "of": {
+                  "op": "is",
+                  "types": [
+                    297
+                  ],
+                  "self": true
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "expression.binary",
           "toplevel": true,
           "within": [],
@@ -2147,17 +2147,6 @@
             {
               "owner": "comparison_operator",
               "slot": "left"
-            }
-          ]
-        },
-        {
-          "name": "comparators",
-          "route": "slot",
-          "slot": "comparators",
-          "path": [
-            {
-              "owner": "comparison_operator",
-              "slot": "comparators"
             }
           ]
         },
@@ -2192,6 +2181,17 @@
             {
               "owner": "comparison_operator_comparator",
               "slot": "primary_expression"
+            }
+          ]
+        },
+        {
+          "name": "comparators",
+          "route": "slot",
+          "slot": "comparators",
+          "path": [
+            {
+              "owner": "comparison_operator",
+              "slot": "comparators"
             }
           ]
         }
@@ -4073,6 +4073,7 @@
           "vocab": "declaration.method",
           "toplevel": false,
           "within": [
+            "decorated_definition",
             "block",
             "suite_block",
             "class_definition"
@@ -4084,7 +4085,6 @@
           "vocab": "declaration.method",
           "toplevel": false,
           "within": [
-            "decorated_definition",
             "block",
             "suite_block",
             "class_definition"

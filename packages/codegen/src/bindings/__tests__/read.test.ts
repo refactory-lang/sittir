@@ -32,7 +32,7 @@ describe('readBindings', () => {
 	});
 	it('keeps a presence capture\'s token text beside its name', async () => {
 		const facts = await readBindings('(function_item "async" @isAsync) @declaration.function');
-		expect(facts.members).toEqual([{ route: 'presence', owner: 'function_item', name: 'isAsync', token: 'async', via: [] }]);
+		expect(facts.members).toEqual([{ route: 'presence', owner: 'function_item', name: 'isAsync', token: 'async', via: [], claims: [0] }]);
 	});
 	it('keeps a property predicate that tests no capture', async () => {
 		const facts = await readBindings('((identifier) @identifier.local (#is-not? local))');
@@ -118,9 +118,10 @@ describe('readBindings', () => {
 				field: null,
 				kind: 'identifier',
 				after: null,
-				anchor: null
+				anchor: null,
+				claims: [0]
 			},
-			{ route: 'rename', owner: 'function_definition', name: 'name', field: 'name', kind: 'identifier', after: null, anchor: null }
+			{ route: 'rename', owner: 'function_definition', name: 'name', field: 'name', kind: 'identifier', after: null, anchor: null, claims: [2] }
 		]);
 		expect(facts.containers).toEqual([
 			{
@@ -151,7 +152,7 @@ describe('readBindings', () => {
 
 	it('reads a slot a claim drops on purpose as a dropped member of the claimed kind, never a member named dropped', async () => {
 		const facts = await readBindings('(binary left: (_) @dropped) @expression.binary');
-		expect(facts.members).toEqual([{ route: 'dropped', owner: 'binary', field: 'left', kind: null, after: null, anchor: null }]);
+		expect(facts.members).toEqual([{ route: 'dropped', owner: 'binary', field: 'left', kind: null, after: null, anchor: null, claims: [0] }]);
 	});
 
 	it('reads each node below a claimed node as a test of its kind at its site', async () => {
@@ -224,9 +225,9 @@ describe('readBindings', () => {
 		);
 		const first = { field: null, kind: null, after: null, anchor: null };
 		expect(members).toEqual([
-			{ route: 'rename', owner: 'index_expression', name: 'object', ...first },
-			{ route: 'rename', owner: 'index_expression', name: 'index', field: null, kind: null, after: first, anchor: null },
-			{ route: 'rename', owner: 'unary_expression', name: 'argument', ...first }
+			{ route: 'rename', owner: 'index_expression', name: 'object', ...first, claims: [0] },
+			{ route: 'rename', owner: 'index_expression', name: 'index', field: null, kind: null, after: first, anchor: null, claims: [0] },
+			{ route: 'rename', owner: 'unary_expression', name: 'argument', ...first, claims: [1] }
 		]);
 		expect(containers.map((c) => c.element)).toEqual([
 			{ field: null, kind: null, after: { field: null, kind: 'attribute_item', after: null, anchor: null }, anchor: null }
@@ -263,14 +264,14 @@ describe('readBindings', () => {
 
 	it('reads a token capture as the presence of the token', async () => {
 		const { members } = await readBindings('(expression_statement ";" @semi) @statement.expression');
-		expect(members).toEqual([{ route: 'presence', owner: 'expression_statement', name: 'semi', token: ';', via: [] }]);
+		expect(members).toEqual([{ route: 'presence', owner: 'expression_statement', name: 'semi', token: ';', via: [], claims: [0] }]);
 	});
 
 	it('gives each option of an alternation the field and the captures of the alternation', async () => {
 		const { members } = await readBindings('(foo name: [(a) (b)] @x) @y.z');
 		expect(members).toEqual([
-			{ route: 'rename', owner: 'foo', name: 'x', field: 'name', kind: 'a', after: null, anchor: null },
-			{ route: 'rename', owner: 'foo', name: 'x', field: 'name', kind: 'b', after: null, anchor: null }
+			{ route: 'rename', owner: 'foo', name: 'x', field: 'name', kind: 'a', after: null, anchor: null, claims: [0] },
+			{ route: 'rename', owner: 'foo', name: 'x', field: 'name', kind: 'b', after: null, anchor: null, claims: [0] }
 		]);
 	});
 
@@ -285,7 +286,7 @@ describe('readBindings', () => {
 		);
 		expect(claims.map((c) => c.vocab)).toEqual(['identifier.crate', 'declaration.variable']);
 		expect(members).toEqual([
-			{ route: 'rename', owner: 'lexical_declaration', name: 'keyword', field: 'kind', kind: null, after: null, anchor: null }
+			{ route: 'rename', owner: 'lexical_declaration', name: 'keyword', field: 'kind', kind: null, after: null, anchor: null, claims: [1] }
 		]);
 	});
 
@@ -336,7 +337,7 @@ describe('readBindings', () => {
 	it('pins a child to its parent\'s last child when the anchor follows it', async () => {
 		const { members } = await readBindings('(block (expression_statement) @last .) @statement.block');
 		expect(members).toEqual([
-			{ route: 'rename', owner: 'block', name: 'last', field: null, kind: 'expression_statement', after: null, anchor: 'last' }
+			{ route: 'rename', owner: 'block', name: 'last', field: null, kind: 'expression_statement', after: null, anchor: 'last', claims: [0] }
 		]);
 	});
 
@@ -364,7 +365,7 @@ describe('readBindings', () => {
 	it('pins a child anchored on both sides to its parent\'s only named child', async () => {
 		const { members } = await readBindings('(block . (expression_statement) @only .) @statement.block');
 		expect(members).toEqual([
-			{ route: 'rename', owner: 'block', name: 'only', field: null, kind: 'expression_statement', after: null, anchor: 'only' }
+			{ route: 'rename', owner: 'block', name: 'only', field: null, kind: 'expression_statement', after: null, anchor: 'only', claims: [0] }
 		]);
 	});
 
@@ -373,8 +374,8 @@ describe('readBindings', () => {
 		const comment = { field: null, kind: 'comment', after: null, anchor: null };
 		const statement = { field: null, kind: 'expression_statement', after: null, anchor: null };
 		expect(members).toEqual([
-			{ route: 'rename', owner: 'block', name: 'a', ...comment, adjacent: { next: statement } },
-			{ route: 'rename', owner: 'block', name: 'b', ...statement, adjacent: { previous: comment } }
+			{ route: 'rename', owner: 'block', name: 'a', ...comment, adjacent: { next: statement }, claims: [0] },
+			{ route: 'rename', owner: 'block', name: 'b', ...statement, adjacent: { previous: comment }, claims: [0] }
 		]);
 	});
 
