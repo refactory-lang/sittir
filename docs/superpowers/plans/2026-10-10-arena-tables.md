@@ -174,6 +174,11 @@ fn read_ctx(&self, tree: u32) -> Option<(&tree_sitter::Tree, ReadCtx<'_>)>;
 10. **The held break protects following text; at the document's end there is none** (the maintainer, 2026-10-10). The stored line layout (ruling 11) wins at the end of a document, so no held break is written after an entry that ends the document, a trailing line comment included. The rule is the held break's (`LineHold::Terminated`), not a case for line comments: it holds a break for the text after it, and none follows. A source with no final break renders with none. A source that ends in a break keeps it as its stored layout.
 11. **A parsed tree's table stores the source's line layout** (the maintainer, 2026-10-10). Every gap whose source run holds a break stores its breaks, blank lines and indentation, whether or not they equal the seam's default. An in-line run is never stored. For a parsed node rendered from its template, a seam with no entry stays on one line. The seam defaults apply only to built and written content. Whether a run equals its seam's default is known only to a template render, while the source's line layout is known at read. Task 1 records the cost: per set, the entries and bytes this stores against storing only the gaps whose layout differs from their seam default.
 
+12. **A stored layout run carries the source's indentation as a step** (the maintainer, 2026-10-10). On a parsed side, every run that holds a break carries its last line's indentation as a step relative to its enclosing line's indentation (`"  "`, say). The writer writes the enclosing line's actual indentation in the output, then the step, so a moved node keeps the source's indentation style and follows its new nesting. Built and written content keeps the writer's depth tracking.
+    - **The enclosing line** is the first row of the gap's owner: the line its first token is on. Its indentation is that line's leading whitespace in the source.
+    - **The step** is the run's indentation with the enclosing indentation removed, when the enclosing indentation is a byte prefix of it (the same tabs and spaces, then more). Where it is not, because the two lines mix tabs and spaces differently (enclosing `"\t"`, run `"        "`), the step is measured in columns, a tab advancing to the next multiple of the render's tab width, and spelled in the run's own last indentation character. A run indented less than its enclosing line has an empty step. Task 5 counts both cases per grammar.
+    - **Where it lives.** The table keeps each run's bytes. The side read returns the run's whitespace member with its step, the text a seam entry already carries (`TriviaSeam`).
+
 **Terms.** Token *k* is the *k*-th token of the tree's token walk (Task 2). Gap *k* is the seam between token *k* and token *k + 1*; the gaps before the first token and after the last are the file's edges. A node's sides are its `leading`, its `trailing` and, with no children, its `inner`. A written side is edited.
 
 **Gates for every task.**
@@ -380,6 +385,7 @@ Run vitest on that file: FAIL first, then PASS.
 - two reads of a side are equal and are not the same object;
 - a write through a parsed holder renders through a built holder that stores the same range as a coordinate it never read;
 - ruling 11: a parsed one-line block (`fn f() { a(); b(); }`) written through elsewhere in its tree renders on one line, since no entry breaks it; a statement written into a parsed block (its new seams have no source) renders with the seam defaults; a node moved into another tree carries its sides' layout entries with it, and renders with them there;
+- ruling 12: a typescript block indented two spaces (`function f() {⏎  a();⏎}`), rendered in place from its template after an edit elsewhere in it, keeps two spaces; the same block moved one level deeper (into another function's body) renders its statements at the new enclosing line's indentation plus two spaces; a continuation line aligned under a paren (`foo(a,⏎    b);`) keeps its four-column step, in place and moved one level deeper; a built statement written into the block takes the writer's depth;
 - ruling 10: rust `\n//! doc`, `//! doc`, `fn main() {}\n// end` and `fn main() {} // end`, and python `# c`, `x = 1\n# c` and `x = 1 # c`, each with and without a final line break, render as their source: no held break is written at the document's end, and a final break the source has is kept;
 - a snapshot of an edited tree takes its sides from the table, with no `$sameLine` or `$tokensBetween` in its data.
 
@@ -418,7 +424,8 @@ Expected: FAIL. A write through a query is refused today, and the defect test dr
 - the table's native memory and build time on the three arena inputs, against the placement read;
 - the fold's timing after one leading write on the deepest statement (1c-ii's `fold-timing.mts`);
 - the heap of an untouched whole-tree read (`transport/measure-heap.mts`);
-- the rebuilt render's per-slot time (`transport/layout-rounds.sh`).
+- the rebuilt render's per-slot time (`transport/layout-rounds.sh`);
+- per grammar, the layout runs whose step is measured in columns (the enclosing indentation not a byte prefix of the run's) and those with an empty step because the run is indented less than its enclosing line (ruling 12).
 
 **Whole-branch gates.** The typed-reader plan's 1c-ii gates hold, and:
 - `packages/common/src` holds no `lineGapsOf`, `markIndexEdited`, `editedWithin` (the client's), `refuseUnheld`, `unreadCoordinate`, `carryPlacement` or `hasOutsideTrivia`;
