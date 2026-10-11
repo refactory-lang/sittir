@@ -234,10 +234,19 @@ export function refineClaims(claims: readonly ClaimFact[]): RefinedClaim[] {
 }
 
 function bindSelector<S extends SlotSelector>(selector: S, rename: (kind: string) => string): S {
+	const { adjacent } = selector;
 	return {
 		...selector,
 		kind: selector.kind === null ? null : rename(selector.kind),
-		after: selector.after === null ? null : bindSelector(selector.after, rename)
+		after: selector.after === null ? null : bindSelector(selector.after, rename),
+		...(adjacent === undefined
+			? {}
+			: {
+					adjacent: {
+						...(adjacent.previous && { previous: bindSelector(adjacent.previous, rename) }),
+						...(adjacent.next && { next: bindSelector(adjacent.next, rename) })
+					}
+				})
 	};
 }
 
@@ -260,7 +269,8 @@ export function bindFacts(facts: BindingFacts, rename: (kind: string) => string)
 			children: c.children.map((child) => ({
 				...child,
 				subject: bindSite(child.subject, rename),
-				...('kinds' in child ? { kinds: child.kinds.map(rename) } : {})
+				...('kinds' in child ? { kinds: child.kinds.map(rename) } : {}),
+				...('siblings' in child ? { siblings: child.siblings.map((sibling) => ({ ...sibling, selector: bindSelector(sibling.selector, rename) })) } : {})
 			}))
 		})),
 		members: facts.members.map((m): MemberFact => {

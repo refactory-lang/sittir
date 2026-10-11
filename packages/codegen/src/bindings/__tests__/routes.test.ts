@@ -486,6 +486,18 @@ describe('resolveRoutes', () => {
 		]);
 	});
 
+	it('tests a node anchored as its slot\'s only one though the model guarantees its kind: the slot holds many', async () => {
+		const routes = resolveRoutes(await grammar('(block . (function_definition) .) @statement.block.single'));
+		expect(routes.readEntries.get('block')?.[0]?.children).toEqual([
+			{ subject: { up: 0, down: [{ field: null, kind: 'function_definition', after: null, anchor: 'only' }] }, kinds: ['function_definition'] }
+		]);
+	});
+
+	it('tests a guaranteed only node by nothing more when another test reaches through it, a token\'s included', async () => {
+		const routes = resolveRoutes(await grammar('(cmp . (_) . (cmp_op "<") .) @expression.binary.less'));
+		expect(routes.readEntries.get('cmp')?.[0]?.children.map((c) => 'text' in c)).toEqual([true]);
+	});
+
 	it('tests two adjacent bare nodes of one slot as the slot holding more than one node', async () => {
 		const routes = resolveRoutes(await grammar('(cmp (cmp_op) . (cmp_op)) @expression.binary.chain'));
 		expect(routes.readEntries.get('cmp')?.[0]?.children).toEqual([

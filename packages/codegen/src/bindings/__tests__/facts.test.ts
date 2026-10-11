@@ -69,6 +69,25 @@ describe('bindFacts', () => {
 		]);
 	});
 
+	it('names the kinds a claim\'s sibling order and its anchors\' neighbours select by their bound kinds', () => {
+		const op = { field: null, kind: 'cmp_op', after: null, anchor: null };
+		const [claimed] = bindFacts(
+			{
+				...facts,
+				claims: [
+					claim('expression.binary.chain', 'cmp', {
+						children: [{ subject: { up: 0, down: [] }, siblings: [{ selector: op, bare: true }, { selector: { ...op, adjacent: { previous: op } }, bare: true }] }]
+					})
+				]
+			},
+			(kind) => `bound_${kind}`
+		).claims;
+		const boundOp = { ...op, kind: 'bound_cmp_op' };
+		expect(claimed?.children).toEqual([
+			{ subject: { up: 0, down: [] }, siblings: [{ selector: boundOp, bare: true }, { selector: { ...boundOp, adjacent: { previous: boundOp } }, bare: true }] }
+		]);
+	});
+
 	it('names each member route\'s owner, path and selected kinds by their bound kinds', () => {
 		expect(bound.members).toEqual([
 			{ route: 'rename', owner: 'bound_function_item', name: 'name', field: 'name', kind: 'bound_identifier', after: { field: null, kind: 'bound_fn', after: null, anchor: null }, anchor: null },

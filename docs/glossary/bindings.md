@@ -249,11 +249,11 @@ Every claim as a `RefinedClaim`, derived from the claims alone, so the reader st
 
 ### `packages/codegen/src/bindings/facts.ts::bindSelector`
 
-A slot selector, and the selectors chained after it, with every kind named by its bound kind.
+A slot selector, the selectors chained after it, and the neighbours its anchors name, with every kind named by its bound kind.
 
 ### `packages/codegen/src/bindings/facts.ts::bindFacts`
 
-The facts with every grammar kind they name (claims and their placements, the kind arguments of `KIND_PREDICATE_OPERATORS` predicates, the selectors of every predicate's and child condition's site and the kinds a child condition names, member owners, paths and selectors, containers and their captures, unclaimed kinds) named by its bound kind. The facts are read and written in base names; with the bindings overlay on, a consumer binds them through the node model's stamped `renamedFrom` (`boundNameOf`). A wildcard claim stays a wildcard, and templates name no kinds.
+The facts with every grammar kind they name (claims and their placements, the kind arguments of `KIND_PREDICATE_OPERATORS` predicates, the selectors of every predicate's and child condition's site, the kinds a child condition names and the selectors of a sibling order, member owners, paths and selectors, containers and their captures, unclaimed kinds) named by its bound kind. The facts are read and written in base names; with the bindings overlay on, a consumer binds them through the node model's stamped `renamedFrom` (`boundNameOf`). A wildcard claim stays a wildcard, and templates name no kinds.
 
 ### `packages/codegen/src/bindings/facts.ts::bindSite`
 
@@ -1063,9 +1063,21 @@ One kind's concrete kinds, skipping kinds already in `seen`, so a supertype cycl
 
 A test a read entry runs on a node below the read node, at its `CaptureSite`: the node is one of `kinds`; or it is absent or none of `excludes`; or its text is `text`.
 
+### `packages/codegen/src/bindings/routes.ts::Reached`
+
+What `reachedAt` finds: the slots at the last step, the kinds owning each of them (`owners`, in step), and the kinds that can be the node the site names (`holders`).
+
+### `packages/codegen/src/bindings/routes.ts::countsOne`
+
+Whether a site's last step narrows a slot that holds many nodes to its only one (`slotAnchor`): the model then guarantees no count, though it may guarantee the node's kind.
+
+### `packages/codegen/src/bindings/routes.ts::reachesThrough`
+
+Whether one site steps through another: the same placement, and the other's steps as its first ones.
+
 ### `packages/codegen/src/bindings/routes.ts::reachedAt`
 
-The model slots a `CaptureSite` below a kind reaches, one per possible holder at the last step, and the kinds that can hold the node the site names: each step finds its slot on every kind the previous step can hold: a named step's `matchedKinds`, a wildcard step's slots' concrete kinds. Nothing when the site starts above the kind or some holder has no such slot.
+The model slots a `CaptureSite` below a kind reaches, one per possible holder at the last step, with the kinds owning them, and the kinds that can hold the node the site names: each step finds its slot on every kind the previous step can hold: a named step's `matchedKinds`, a wildcard step's slots' concrete kinds. Nothing when the site starts above the kind or some holder has no such slot.
 
 ### `packages/codegen/src/bindings/routes.ts::tokenSite`
 
@@ -1093,7 +1105,7 @@ The `ChildTest`s a holder kind's node children, in order, need beyond each child
 
 ### `packages/codegen/src/bindings/routes.ts::childTestsOf`
 
-A `ChildFact` narrowed to the `ChildTest`s a read entry runs, none when the model guarantees it on every slot it reaches. A siblings fact gives its `siblingTests`. A token fact first becomes a text condition at its `tokenSite`. A text condition tests the text, and a presence condition tests the slot's concrete kinds. A kinds condition tests the kinds, except on an optional slot whose node the pattern captures as a member: matching that pattern does not need the node, so the test only excludes the slot's kinds the condition's kinds do not match, and is dropped when there are none. A kinds test names the kinds as the pattern does.
+A `ChildFact` narrowed to the `ChildTest`s a read entry runs, none when the model guarantees it on every slot it reaches. A step to a slot's only node (`countsOne`) is a count the model never guarantees, so its test stays unless another of the claim's conditions steps through that node (`reachesThrough`, or a token held there), which already needs the node to be the slot's only one. A siblings fact gives its `siblingTests`. A token fact first becomes a text condition at its `tokenSite`. A text condition tests the text, and a presence condition tests the slot's concrete kinds. A kinds condition tests the kinds, except on an optional slot whose node the pattern captures as a member: matching that pattern does not need the node, so the test only excludes the slot's kinds the condition's kinds do not match, and is dropped when there are none. A kinds test names the kinds as the pattern does.
 
 ### `packages/codegen/src/bindings/routes.ts::LayoutSlot`
 
