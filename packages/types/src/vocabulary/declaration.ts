@@ -635,8 +635,6 @@ export namespace Declaration {
 		readonly $kind: 'declaration.variable';
 		readonly alternative?: V.Statement.Block<G>;
 		// r only
-		readonly binding?: G['slots']['declaration.variable']['binding'];
-		// t only
 		readonly declarators?: V.Declaration.Variable<G>[];
 		// t only
 		readonly definite?: Flag;

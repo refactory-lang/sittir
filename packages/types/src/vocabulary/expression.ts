@@ -18,7 +18,6 @@ export namespace Expression {
 			// claimed by prt
 			readonly $kind: 'expression.assignment.compound';
 			readonly left: G['slots']['expression.assignment.compound']['left'];
-			readonly operator: G['slots']['expression.assignment.compound']['operator'];
 			readonly right: G['slots']['expression.assignment.compound']['right'];
 		}
 		export namespace Compound {
@@ -741,8 +740,23 @@ export namespace Expression {
 		// claimed by r
 		readonly $kind: 'expression.range';
 		readonly end?: G['slots']['expression.range']['end'];
-		readonly operator?: G['slots']['expression.range']['operator'];
 		readonly start?: G['slots']['expression.range']['start'];
+	}
+	export namespace Range {
+		export interface Exclusive<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Range<G>> {
+			// claimed by r
+			readonly $kind: 'expression.range.exclusive';
+			readonly operator?: '..';
+		}
+		export interface Inclusive<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Range<G>> {
+			// claimed by r
+			readonly $kind: 'expression.range.inclusive';
+			readonly operator: '..=' | '...';
+		}
+		export type Any<G extends GrammarContext<G>> =
+			| V.Expression.Range<G>
+			| V.Expression.Range.Exclusive<G>
+			| V.Expression.Range.Inclusive<G>;
 	}
 	export interface Reference<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		// claimed by r
@@ -781,7 +795,6 @@ export namespace Expression {
 		// claimed by prt
 		readonly $kind: 'expression.unary';
 		readonly argument: G['slots']['expression.unary']['argument'];
-		readonly operator: G['slots']['expression.unary']['operator'];
 	}
 	export namespace Unary {
 		export interface BitwiseNot<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Unary<G>> {
@@ -835,7 +848,6 @@ export namespace Expression {
 		// claimed by t
 		readonly $kind: 'expression.update';
 		readonly argument: G['slots']['expression.update']['argument'];
-		readonly operator: G['slots']['expression.update']['operator'];
 	}
 	export namespace Update {
 		export interface Decrement<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Update<G>> {

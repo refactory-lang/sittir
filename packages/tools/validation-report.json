@@ -24713,9 +24713,10 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "count": 2,
+    "count": 3,
     "entries": [
       "Interface declarations",
+      "Literal types",
       "Object types with automatic semicolon insertion"
     ],
     "stage": "from-excluded",
@@ -24754,6 +24755,19 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
+    "entry": "Literal types",
+    "reason": "parse-error",
+    "input": "\nlet x: 2\nlet x: 2 | -3 | +4\nlet x: \"string\"\nlet x: false\n",
+    "stage": "read-render-parse-skip",
+    "code": "read-render-parse-skip",
+    "severity": "info",
+    "message": "parse-error",
+    "label": "Literal types"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
     "kind": "class_body_member_declaration",
     "count": 31,
     "entries": [
@@ -25956,21 +25970,6 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "enum_assignment"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "literal_type_negative_number",
-    "count": 2,
-    "entries": [
-      "Literal types"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "literal_type_negative_number"
   },
   {
     "source": "validator",
@@ -26237,6 +26236,19 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
+    "entry": "Literal types",
+    "reason": "parse-error",
+    "input": "\nlet x: 2\nlet x: 2 | -3 | +4\nlet x: \"string\"\nlet x: false\n",
+    "stage": "read-render-parse-shallow-skip",
+    "code": "read-render-parse-shallow-skip",
+    "severity": "info",
+    "message": "parse-error",
+    "label": "Literal types"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
     "kind": "class_body_member_declaration",
     "count": 31,
     "entries": [
@@ -27444,21 +27456,6 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "kind": "literal_type_negative_number",
-    "count": 2,
-    "entries": [
-      "Literal types"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "literal_type_negative_number"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
     "kind": "type_query_member_expression",
     "count": 3,
     "entries": [
@@ -27694,9 +27691,10 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "count": 2,
+    "count": 3,
     "entries": [
       "Interface declarations",
+      "Literal types",
       "Object types with automatic semicolon insertion"
     ],
     "stage": "factory-storage-excluded",
@@ -27709,9 +27707,10 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "count": 2,
+    "count": 3,
     "entries": [
       "Interface declarations",
+      "Literal types",
       "Object types with automatic semicolon insertion"
     ],
     "stage": "ir-storage-excluded",
@@ -28923,21 +28922,6 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "factory: enum_assignment"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "kind": "factory: literal_type_negative_number",
-    "count": 1,
-    "entries": [
-      "Literal types"
-    ],
-    "stage": "built-render-parse-excluded",
-    "code": "built-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "factory: literal_type_negative_number"
   },
   {
     "source": "validator",

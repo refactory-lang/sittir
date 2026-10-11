@@ -6718,10 +6718,10 @@
       "members": []
     },
     "range_expression_bare": {
-      "vocab": "expression.range",
+      "vocab": "expression.range.exclusive",
       "read": [
         {
-          "vocab": "expression.range",
+          "vocab": "expression.range.exclusive",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -6740,6 +6740,84 @@
     "range_expression_binary": {
       "vocab": "expression.range",
       "read": [
+        {
+          "vocab": "expression.range.inclusive",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "operator",
+              "slot": "operator",
+              "text": "..="
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "..=",
+                "fields": [
+                  "operator"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.range.inclusive",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "operator",
+              "slot": "operator",
+              "text": "..."
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "...",
+                "fields": [
+                  "operator"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.range.exclusive",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "operator",
+              "slot": "operator",
+              "text": ".."
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "..",
+                "fields": [
+                  "operator"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
         {
           "vocab": "expression.range",
           "toplevel": true,
@@ -6761,17 +6839,6 @@
           ]
         },
         {
-          "name": "operator",
-          "route": "slot",
-          "slot": "operator",
-          "path": [
-            {
-              "owner": "range_expression_binary",
-              "slot": "operator"
-            }
-          ]
-        },
-        {
           "name": "end",
           "route": "slot",
           "slot": "end",
@@ -6785,10 +6852,10 @@
       ]
     },
     "range_expression_postfix": {
-      "vocab": "expression.range",
+      "vocab": "expression.range.exclusive",
       "read": [
         {
-          "vocab": "expression.range",
+          "vocab": "expression.range.exclusive",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -6817,10 +6884,10 @@
       }
     },
     "range_expression_prefix": {
-      "vocab": "expression.range",
+      "vocab": "expression.range.exclusive",
       "read": [
         {
-          "vocab": "expression.range",
+          "vocab": "expression.range.exclusive",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -10259,20 +10326,20 @@
         "paths": 13,
         "kinds": 3,
         "refinements": 0,
-        "aliases": 128
+        "aliases": 126
       },
       {
         "depth": 2,
         "paths": 103,
-        "kinds": 157,
+        "kinds": 154,
         "refinements": 12,
-        "aliases": 90
+        "aliases": 92
       },
       {
         "depth": 3,
-        "paths": 79,
-        "kinds": 98,
-        "refinements": 51,
+        "paths": 81,
+        "kinds": 102,
+        "refinements": 53,
         "aliases": 35
       },
       {
@@ -10359,6 +10426,14 @@
       },
       {
         "under": "",
+        "name": "exclusive",
+        "paths": [
+          "expression.range.exclusive",
+          "pattern.range.exclusive"
+        ]
+      },
+      {
+        "under": "",
         "name": "field",
         "paths": [
           "declaration.field",
@@ -10389,6 +10464,14 @@
         "paths": [
           "clause.import",
           "statement.import"
+        ]
+      },
+      {
+        "under": "",
+        "name": "inclusive",
+        "paths": [
+          "expression.range.inclusive",
+          "pattern.range.inclusive"
         ]
       },
       {

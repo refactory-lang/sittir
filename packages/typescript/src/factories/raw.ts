@@ -8492,29 +8492,17 @@ export function buildCommentBlock(input: string, affix: boolean = true): T.Comme
 	return node as unknown as T.CommentBlock.Bound;
 }
 
-export function buildLiteralTypeNegativeNumber(
-	config: T.LiteralTypeNegativeNumber.Config
-): T.LiteralTypeNegativeNumber.Bound {
-	const _operator = rejectBareText(
-		kindIdStorage<NonNullable<T.LiteralTypeNegativeNumber['_operator']>>(config.operator),
-		'LiteralTypeNegativeNumber.operator',
-		'a kind id'
-	);
-	const _argument = rejectBareText(config.argument, 'LiteralTypeNegativeNumber.argument', 'a built Number');
+export function buildLiteralTypeNegativeNumber(value: Admit<T.Number>): T.LiteralTypeNegativeNumber.Bound {
+	const _argument = rejectBareText(value, 'LiteralTypeNegativeNumber.argument', 'a built Number');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.LiteralTypeNegativeNumber as const,
 		$source: 2 as const,
 		$named: true as const,
-		_operator,
 		_argument,
 		$with: {
-			operator: (value: Admit<NonNullable<T.LiteralTypeNegativeNumber.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildLiteralTypeNegativeNumber({ ...config, operator: value })),
-			argument: (value: Admit<T.Number>) =>
-				rebuilt(node, handle, () => buildLiteralTypeNegativeNumber({ ...config, argument: value }))
+			argument: (value: Admit<T.Number>) => rebuilt(node, handle, () => buildLiteralTypeNegativeNumber(value))
 		},
-		operator: () => _operator,
 		argument: () => _argument,
 		$render: () => renderText(handle, node),
 		$trivia: {

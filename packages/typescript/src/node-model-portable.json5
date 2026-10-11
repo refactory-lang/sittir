@@ -5092,6 +5092,31 @@
               "slot": "source"
             }
           ]
+        },
+        {
+          "name": "importClause",
+          "route": "nested",
+          "via": [
+            {
+              "field": "from_clause",
+              "kind": "import_statement_clause_from",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "import_statement_clause_from",
+          "slot": "import_clause",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "import_statement",
+              "slot": "from_clause"
+            },
+            {
+              "owner": "import_statement_clause_from",
+              "slot": "import_clause"
+            }
+          ]
         }
       ]
     },
@@ -5624,6 +5649,38 @@
           "false",
           "null",
           "undefined"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
+    "literal_type_negative_number": {
+      "vocab": "literal.number.negative",
+      "read": [
+        {
+          "vocab": "literal.number.negative",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "value",
+          "route": "slot",
+          "slot": "argument",
+          "path": [
+            {
+              "owner": "literal_type_negative_number",
+              "slot": "argument"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "kinds": [
+          "number"
         ],
         "terminals": [],
         "list": false
@@ -7607,6 +7664,19 @@
         },
         {
           "vocab": "modifier.visibility",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
+    "private_property_identifier": {
+      "vocab": "identifier.property",
+      "read": [
+        {
+          "vocab": "identifier.property",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -10238,20 +10308,20 @@
         "paths": 13,
         "kinds": 5,
         "refinements": 0,
-        "aliases": 150
+        "aliases": 151
       },
       {
         "depth": 2,
         "paths": 111,
-        "kinds": 133,
+        "kinds": 134,
         "refinements": 8,
-        "aliases": 97
+        "aliases": 98
       },
       {
         "depth": 3,
-        "paths": 81,
-        "kinds": 73,
-        "refinements": 55,
+        "paths": 82,
+        "kinds": 74,
+        "refinements": 56,
         "aliases": 42
       },
       {
