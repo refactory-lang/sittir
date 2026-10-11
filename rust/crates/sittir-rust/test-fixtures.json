@@ -10654,7 +10654,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "extern \"C\" fn foo() {}\nextern \"C\" fn printf(\n    * const c_char,\n    ...,\n) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}\n"
+    "expectedOutput": "extern \"C\" fn foo() {}\nextern \"C\" fn printf(\n    *const c_char,\n    ...,\n) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: *const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -10662,9 +10662,9 @@
     "sourceIn": "\nextern \"C\" fn foo() {}\nextern \"C\" fn printf(\n    *const c_char,\n    ...,\n) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: *const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "extern \"C\" fn foo() {}\nextern \"C\" fn printf(\n    * const c_char,\n    ...,\n) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}\n",
+    "expectedSourceOut": "extern \"C\" fn foo() {}\nextern \"C\" fn printf(\n    *const c_char,\n    ...,\n) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: *const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}\n",
     "expectedReparseTree": "(source_file statements: (function_item function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters) body: (block)) statements: (function_item function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (pointer_type_const type: (type_identifier))) item: (attributed_parameter (variadic_parameter)))) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (pointer_type_const type: (primitive_type)))) item: (attributed_parameter (variadic_parameter mutable: (mutable_specifier) pattern: (identifier))))) return_type: (primitive_type) body: (block (line_comment (line_comment_regular)) trailing_expression: (call_expression function: (identifier) arguments: (arguments elements: (arguments_elements item: (attributed_argument (identifier)) item: (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))) (line_comment (line_comment_regular)))))",
-    "wrappedText": "extern \"C\" fn foo() {}\nextern \"C\" fn printf(\n    * const c_char,\n    ...,\n) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}\n",
+    "wrappedText": "extern \"C\" fn foo() {}\nextern \"C\" fn printf(\n    *const c_char,\n    ...,\n) {}\n\npub unsafe extern \"C\" fn c_variadic_no_use(fmt: *const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -10801,7 +10801,7 @@
         "_statements": []
       }
     },
-    "expectedOutput": "extern \"C\" fn printf(\n    * const c_char,\n    ...,\n) {}"
+    "expectedOutput": "extern \"C\" fn printf(\n    *const c_char,\n    ...,\n) {}"
   },
   {
     "kind": "roundtrip",
@@ -10809,9 +10809,9 @@
     "sourceIn": "extern \"C\" fn printf(\n    *const c_char,\n    ...,\n) {}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "extern \"C\" fn printf(\n    * const c_char,\n    ...,\n) {}",
+    "expectedSourceOut": "extern \"C\" fn printf(\n    *const c_char,\n    ...,\n) {}",
     "expectedReparseTree": "(function_item function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (pointer_type_const type: (type_identifier))) item: (attributed_parameter (variadic_parameter)))) body: (block))",
-    "wrappedText": "extern \"C\" fn printf(\n    * const c_char,\n    ...,\n) {}",
+    "wrappedText": "extern \"C\" fn printf(\n    *const c_char,\n    ...,\n) {}",
     "wrappedOffset": 0
   },
   {
@@ -11002,7 +11002,7 @@
         }
       }
     },
-    "expectedOutput": "pub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}"
+    "expectedOutput": "pub unsafe extern \"C\" fn c_variadic_no_use(fmt: *const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}"
   },
   {
     "kind": "roundtrip",
@@ -11010,9 +11010,9 @@
     "sourceIn": "pub unsafe extern \"C\" fn c_variadic_no_use(fmt: *const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "pub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}",
+    "expectedSourceOut": "pub unsafe extern \"C\" fn c_variadic_no_use(fmt: *const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}",
     "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) function_modifiers: (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content)))) name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (pointer_type_const type: (primitive_type)))) item: (attributed_parameter (variadic_parameter mutable: (mutable_specifier) pattern: (identifier))))) return_type: (primitive_type) body: (block (line_comment (line_comment_regular)) trailing_expression: (call_expression function: (identifier) arguments: (arguments elements: (arguments_elements item: (attributed_argument (identifier)) item: (attributed_argument (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))) (line_comment (line_comment_regular))))",
-    "wrappedText": "pub unsafe extern \"C\" fn c_variadic_no_use(fmt: * const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}",
+    "wrappedText": "pub unsafe extern \"C\" fn c_variadic_no_use(fmt: *const i8, mut ap: ...) -> i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}",
     "wrappedOffset": 0
   },
   {
@@ -11175,7 +11175,7 @@
         }
       }
     },
-    "expectedOutput": "(\n    * const c_char,\n    ...,\n)"
+    "expectedOutput": "(\n    *const c_char,\n    ...,\n)"
   },
   {
     "kind": "roundtrip",
@@ -11183,9 +11183,9 @@
     "sourceIn": "(\n    *const c_char,\n    ...,\n)",
     "pattern": "parameters",
     "edits": [],
-    "expectedSourceOut": "(\n    * const c_char,\n    ...,\n)",
+    "expectedSourceOut": "(\n    *const c_char,\n    ...,\n)",
     "expectedReparseTree": "(parameters elements: (parameters_elements item: (attributed_parameter (pointer_type_const type: (type_identifier))) item: (attributed_parameter (variadic_parameter))))",
-    "wrappedText": "fn _f(\n    * const c_char,\n    ...,\n) {}",
+    "wrappedText": "fn _f(\n    *const c_char,\n    ...,\n) {}",
     "wrappedOffset": 5
   },
   {
@@ -11242,7 +11242,7 @@
         }
       }
     },
-    "expectedOutput": "(fmt: * const i8, mut ap: ...)"
+    "expectedOutput": "(fmt: *const i8, mut ap: ...)"
   },
   {
     "kind": "roundtrip",
@@ -11250,9 +11250,9 @@
     "sourceIn": "(fmt: *const i8, mut ap: ...)",
     "pattern": "parameters",
     "edits": [],
-    "expectedSourceOut": "(fmt: * const i8, mut ap: ...)",
+    "expectedSourceOut": "(fmt: *const i8, mut ap: ...)",
     "expectedReparseTree": "(parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (pointer_type_const type: (primitive_type)))) item: (attributed_parameter (variadic_parameter mutable: (mutable_specifier) pattern: (identifier)))))",
-    "wrappedText": "fn _f(fmt: * const i8, mut ap: ...) {}",
+    "wrappedText": "fn _f(fmt: *const i8, mut ap: ...) {}",
     "wrappedOffset": 5
   },
   {
@@ -11426,7 +11426,7 @@
         }
       }
     },
-    "expectedOutput": "* const c_char"
+    "expectedOutput": "*const c_char"
   },
   {
     "kind": "roundtrip",
@@ -11434,9 +11434,9 @@
     "sourceIn": "*const c_char",
     "pattern": "pointer_type_const",
     "edits": [],
-    "expectedSourceOut": "* const c_char",
+    "expectedSourceOut": "*const c_char",
     "expectedReparseTree": "(pointer_type_const type: (type_identifier))",
-    "wrappedText": "type _X = * const c_char;",
+    "wrappedText": "type _X = *const c_char;",
     "wrappedOffset": 10
   },
   {
@@ -11447,7 +11447,7 @@
       "$type": 388,
       "_type": 59
     },
-    "expectedOutput": "* const i8"
+    "expectedOutput": "*const i8"
   },
   {
     "kind": "roundtrip",
@@ -11455,9 +11455,9 @@
     "sourceIn": "*const i8",
     "pattern": "pointer_type_const",
     "edits": [],
-    "expectedSourceOut": "* const i8",
+    "expectedSourceOut": "*const i8",
     "expectedReparseTree": "(pointer_type_const type: (primitive_type))",
-    "wrappedText": "type _X = * const i8;",
+    "wrappedText": "type _X = *const i8;",
     "wrappedOffset": 10
   },
   {
@@ -11522,7 +11522,7 @@
         "_type": 59
       }
     },
-    "expectedOutput": "fmt: * const i8"
+    "expectedOutput": "fmt: *const i8"
   },
   {
     "kind": "roundtrip",
@@ -11530,9 +11530,9 @@
     "sourceIn": "fmt: *const i8",
     "pattern": "parameter",
     "edits": [],
-    "expectedSourceOut": "fmt: * const i8",
+    "expectedSourceOut": "fmt: *const i8",
     "expectedReparseTree": "(parameter name: (identifier) type: (pointer_type_const type: (primitive_type)))",
-    "wrappedText": "fn _f(fmt: * const i8) {}",
+    "wrappedText": "fn _f(fmt: *const i8) {}",
     "wrappedOffset": 6
   },
   {
@@ -15214,6 +15214,391 @@
     "wrappedOffset": 18
   },
   {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "source_file",
+    "input": {
+      "$type": 176,
+      "_statements": [
+        {
+          "$type": 425,
+          "_name": {
+            "$type": 468,
+            "_content": {
+              "$type": 1,
+              "$text": "Proton"
+            }
+          }
+        },
+        {
+          "$type": 423,
+          "_name": {
+            "$type": 468,
+            "_content": {
+              "$type": 1,
+              "$text": "Electron"
+            }
+          },
+          "_body": {
+            "$type": 201
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                171
+              ]
+            }
+          }
+        },
+        {
+          "$type": 423,
+          "_name": {
+            "$type": 468,
+            "_content": {
+              "$type": 1,
+              "$text": "Person"
+            }
+          },
+          "_body": {
+            "$type": 201,
+            "_elements": {
+              "$type": 344,
+              "_item": [
+                {
+                  "$type": 427,
+                  "_attribute_item": [],
+                  "_field_declaration": {
+                    "$type": 202,
+                    "_visibility_modifier": {
+                      "$type": 235,
+                      "_content": {
+                        "$type": 381
+                      }
+                    },
+                    "_name": {
+                      "$type": 465,
+                      "_content": {
+                        "$type": 1,
+                        "$text": "name"
+                      }
+                    },
+                    "_type": {
+                      "$type": 468,
+                      "_content": {
+                        "$type": 1,
+                        "$text": "String"
+                      }
+                    }
+                  }
+                },
+                {
+                  "$type": 427,
+                  "_attribute_item": [],
+                  "_field_declaration": {
+                    "$type": 202,
+                    "_visibility_modifier": {
+                      "$type": 235,
+                      "_content": {
+                        "$type": 381
+                      }
+                    },
+                    "_name": {
+                      "$type": 465,
+                      "_content": {
+                        "$type": 1,
+                        "$text": "age"
+                      }
+                    },
+                    "_type": 62
+                  },
+                  "$_layout": {
+                    "gap": {
+                      "$text": ", "
+                    }
+                  }
+                }
+              ],
+              "_delimiter": 0,
+              "$_layout": {
+                "flank": {
+                  "$text": "struct Person {pub name: String, pub age: u32}",
+                  "$span": {
+                    "start": 15,
+                    "end": 45
+                  },
+                  "$before": true,
+                  "$after": true
+                }
+              }
+            }
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                171
+              ]
+            }
+          }
+        },
+        {
+          "$type": 423,
+          "_name": {
+            "$type": 468,
+            "_content": {
+              "$type": 1,
+              "$text": "Point"
+            }
+          },
+          "_body": {
+            "$type": 201,
+            "_elements": {
+              "$type": 344,
+              "_item": [
+                {
+                  "$type": 427,
+                  "_attribute_item": [],
+                  "_field_declaration": {
+                    "$type": 202,
+                    "_name": {
+                      "$type": 465,
+                      "_content": {
+                        "$type": 1,
+                        "$text": "x"
+                      }
+                    },
+                    "_type": 63
+                  }
+                },
+                {
+                  "$type": 427,
+                  "_attribute_item": [
+                    {
+                      "$type": 190,
+                      "_attribute": {
+                        "$type": 192,
+                        "_path": {
+                          "$type": 1,
+                          "$text": "attribute1"
+                        }
+                      }
+                    }
+                  ],
+                  "_field_declaration": {
+                    "$type": 202,
+                    "_name": {
+                      "$type": 465,
+                      "_content": {
+                        "$type": 1,
+                        "$text": "y"
+                      }
+                    },
+                    "_type": 63,
+                    "$_layout": {
+                      "trivia": {
+                        "leading": [
+                          171
+                        ]
+                      }
+                    }
+                  },
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        172
+                      ]
+                    }
+                  }
+                }
+              ],
+              "_delimiter": 2,
+              "$_layout": {
+                "flank": {
+                  "$text": "struct Point {\n  x: i32,\n\n  #[attribute1]\n  y: i32,\n}",
+                  "$span": {
+                    "start": 17,
+                    "end": 51
+                  },
+                  "$before": true,
+                  "$after": true
+                }
+              }
+            }
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                171
+              ]
+            }
+          }
+        },
+        {
+          "$type": 424,
+          "_name": {
+            "$type": 468,
+            "_content": {
+              "$type": 1,
+              "$text": "Color"
+            }
+          },
+          "_body": {
+            "$type": 203,
+            "_attributes": {
+              "$type": 345,
+              "_item": [
+                {
+                  "$type": 432,
+                  "_attribute_item": [],
+                  "_visibility_modifier": {
+                    "$type": 235,
+                    "_content": {
+                      "$type": 381
+                    }
+                  },
+                  "_type": 63
+                },
+                {
+                  "$type": 432,
+                  "_attribute_item": [],
+                  "_type": 63,
+                  "$_layout": {
+                    "gap": {
+                      "$text": ", "
+                    }
+                  }
+                },
+                {
+                  "$type": 432,
+                  "_attribute_item": [],
+                  "_type": 63,
+                  "$_layout": {
+                    "gap": {
+                      "$text": ", "
+                    }
+                  }
+                }
+              ],
+              "_delimiter": 0,
+              "$_layout": {
+                "flank": {
+                  "$text": "struct Color(pub i32, i32, i32)",
+                  "$span": {
+                    "start": 13,
+                    "end": 30
+                  },
+                  "$before": true,
+                  "$after": true
+                }
+              }
+            }
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                171
+              ]
+            }
+          }
+        },
+        {
+          "$type": 424,
+          "_name": {
+            "$type": 468,
+            "_content": {
+              "$type": 1,
+              "$text": "Inches"
+            }
+          },
+          "_body": {
+            "$type": 203,
+            "_attributes": {
+              "$type": 345,
+              "_item": [
+                {
+                  "$type": 432,
+                  "_attribute_item": [],
+                  "_type": 63
+                }
+              ],
+              "_delimiter": 0,
+              "$_layout": {
+                "flank": {
+                  "$text": "struct Inches(i32)",
+                  "$span": {
+                    "start": 14,
+                    "end": 17
+                  },
+                  "$before": true,
+                  "$after": true
+                }
+              }
+            }
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                171
+              ]
+            }
+          }
+        },
+        {
+          "$type": 424,
+          "_name": {
+            "$type": 468,
+            "_content": {
+              "$type": 1,
+              "$text": "Empty"
+            }
+          },
+          "_body": {
+            "$type": 203,
+            "_attributes": {
+              "$type": 345,
+              "_item": [
+                {
+                  "$type": 432,
+                  "_attribute_item": [],
+                  "_visibility_modifier": {
+                    "$type": 235,
+                    "_content": {
+                      "$type": 381
+                    }
+                  },
+                  "_type": 244
+                }
+              ],
+              "_delimiter": 0,
+              "$_layout": {
+                "flank": {
+                  "$text": "struct Empty(pub ())",
+                  "$span": {
+                    "start": 13,
+                    "end": 19
+                  },
+                  "$before": true,
+                  "$after": true
+                }
+              }
+            }
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                171
+              ],
+              "trailing": [
+                171
+              ]
+            }
+          }
+        }
+      ],
+      "$errors": []
+    },
+    "expectedOutput": "struct Proton;\nstruct Electron {}\nstruct Person {pub name: String, pub age: u32}\nstruct Point {\n    x: i32,\n\n    #[attribute1]\n    y: i32,\n}\nstruct Color(pub i32, i32, i32);\nstruct Inches(i32);\nstruct Empty(pub ());\n"
+  },
+  {
     "kind": "roundtrip",
     "grammar": "rust",
     "sourceIn": "\nstruct Proton;\nstruct Electron {}\nstruct Person {pub name: String, pub age: u32}\nstruct Point {\n  x: i32,\n\n  #[attribute1]\n  y: i32,\n}\nstruct Color(pub i32, i32, i32);\nstruct Inches(i32);\nstruct Empty(pub ());\n",
@@ -15923,6 +16308,53 @@
     "expectedReparseTree": "(struct_item_tuple name: (type_identifier) body: (ordered_field_declaration_list attributes: (ordered_field_declaration_list_elements item: (attributed_ordered_field type: (primitive_type)))))",
     "wrappedText": "struct Inches(i32);",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "struct_item_tuple",
+    "input": {
+      "$type": 424,
+      "_name": {
+        "$type": 468,
+        "_content": {
+          "$type": 1,
+          "$text": "Empty"
+        }
+      },
+      "_body": {
+        "$type": 203,
+        "_attributes": {
+          "$type": 345,
+          "_item": [
+            {
+              "$type": 432,
+              "_attribute_item": [],
+              "_visibility_modifier": {
+                "$type": 235,
+                "_content": {
+                  "$type": 381
+                }
+              },
+              "_type": 244
+            }
+          ],
+          "_delimiter": 0,
+          "$_layout": {
+            "flank": {
+              "$text": "struct Empty(pub ())",
+              "$span": {
+                "start": 13,
+                "end": 19
+              },
+              "$before": true,
+              "$after": true
+            }
+          }
+        }
+      }
+    },
+    "expectedOutput": "struct Empty(pub ());"
   },
   {
     "kind": "roundtrip",
@@ -23786,7 +24218,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "static N: i32 = 5;\nstatic mut __progname: * mut::c_char;\n"
+    "expectedOutput": "static N: i32 = 5;\nstatic mut __progname: *mut::c_char;\n"
   },
   {
     "kind": "roundtrip",
@@ -23794,9 +24226,9 @@
     "sourceIn": "\nstatic N: i32 = 5;\nstatic mut __progname: *mut ::c_char;\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "static N: i32 = 5;\nstatic mut __progname: * mut::c_char;\n",
+    "expectedSourceOut": "static N: i32 = 5;\nstatic mut __progname: *mut::c_char;\n",
     "expectedReparseTree": "(source_file statements: (static_item name: (identifier) type: (primitive_type) value: (integer_literal_decimal)) statements: (static_item mutable: (mutable_specifier) name: (identifier) type: (pointer_type_mut (mutable_specifier) type: (scoped_type_identifier name: (type_identifier)))))",
-    "wrappedText": "static N: i32 = 5;\nstatic mut __progname: * mut::c_char;\n",
+    "wrappedText": "static N: i32 = 5;\nstatic mut __progname: *mut::c_char;\n",
     "wrappedOffset": 0
   },
   {
@@ -23853,7 +24285,7 @@
         }
       }
     },
-    "expectedOutput": "static mut __progname: * mut::c_char;"
+    "expectedOutput": "static mut __progname: *mut::c_char;"
   },
   {
     "kind": "roundtrip",
@@ -23861,9 +24293,9 @@
     "sourceIn": "static mut __progname: *mut ::c_char;",
     "pattern": "static_item",
     "edits": [],
-    "expectedSourceOut": "static mut __progname: * mut::c_char;",
+    "expectedSourceOut": "static mut __progname: *mut::c_char;",
     "expectedReparseTree": "(static_item mutable: (mutable_specifier) name: (identifier) type: (pointer_type_mut (mutable_specifier) type: (scoped_type_identifier name: (type_identifier))))",
-    "wrappedText": "static mut __progname: * mut::c_char;",
+    "wrappedText": "static mut __progname: *mut::c_char;",
     "wrappedOffset": 0
   },
   {
@@ -23904,7 +24336,7 @@
         }
       }
     },
-    "expectedOutput": "* mut::c_char"
+    "expectedOutput": "*mut::c_char"
   },
   {
     "kind": "roundtrip",
@@ -23912,9 +24344,9 @@
     "sourceIn": "*mut ::c_char",
     "pattern": "pointer_type_mut",
     "edits": [],
-    "expectedSourceOut": "* mut::c_char",
+    "expectedSourceOut": "*mut::c_char",
     "expectedReparseTree": "(pointer_type_mut (mutable_specifier) type: (scoped_type_identifier name: (type_identifier)))",
-    "wrappedText": "type _X = * mut::c_char;",
+    "wrappedText": "type _X = *mut::c_char;",
     "wrappedOffset": 10
   },
   {
@@ -44007,7 +44439,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "impl Trait for T {\n    type Associated = T where 'static : 'static;\n}\n"
+    "expectedOutput": "impl Trait for T {\n    type Associated = T where 'static: 'static;\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -44015,9 +44447,9 @@
     "sourceIn": "\nimpl Trait for T {\n    type Associated = T where 'static: 'static;\n}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "impl Trait for T {\n    type Associated = T where 'static : 'static;\n}\n",
+    "expectedSourceOut": "impl Trait for T {\n    type Associated = T where 'static: 'static;\n}\n",
     "expectedReparseTree": "(source_file statements: (impl_item_body trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (type_identifier) body: (declaration_list declarations: (type_item name: (type_identifier) type: (type_identifier) trailing_where_clause: (where_clause (where_predicates item: (where_predicate left: (lifetime name: (identifier)) bounds: (trait_bounds bounds: (lifetime name: (identifier))))))))))",
-    "wrappedText": "impl Trait for T {\n    type Associated = T where 'static : 'static;\n}\n",
+    "wrappedText": "impl Trait for T {\n    type Associated = T where 'static: 'static;\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -44118,7 +44550,7 @@
         ]
       }
     },
-    "expectedOutput": "impl Trait for T {\n    type Associated = T where 'static : 'static;\n}"
+    "expectedOutput": "impl Trait for T {\n    type Associated = T where 'static: 'static;\n}"
   },
   {
     "kind": "roundtrip",
@@ -44126,9 +44558,9 @@
     "sourceIn": "impl Trait for T {\n    type Associated = T where 'static: 'static;\n}",
     "pattern": "impl_item_body",
     "edits": [],
-    "expectedSourceOut": "impl Trait for T {\n    type Associated = T where 'static : 'static;\n}",
+    "expectedSourceOut": "impl Trait for T {\n    type Associated = T where 'static: 'static;\n}",
     "expectedReparseTree": "(impl_item_body trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (type_identifier) body: (declaration_list declarations: (type_item name: (type_identifier) type: (type_identifier) trailing_where_clause: (where_clause (where_predicates item: (where_predicate left: (lifetime name: (identifier)) bounds: (trait_bounds bounds: (lifetime name: (identifier)))))))))",
-    "wrappedText": "impl Trait for T {\n    type Associated = T where 'static : 'static;\n}",
+    "wrappedText": "impl Trait for T {\n    type Associated = T where 'static: 'static;\n}",
     "wrappedOffset": 0
   },
   {
@@ -44290,7 +44722,7 @@
         }
       }
     },
-    "expectedOutput": "type Associated = T where 'static : 'static;"
+    "expectedOutput": "type Associated = T where 'static: 'static;"
   },
   {
     "kind": "roundtrip",
@@ -44298,9 +44730,9 @@
     "sourceIn": "type Associated = T where 'static: 'static;",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type Associated = T where 'static : 'static;",
+    "expectedSourceOut": "type Associated = T where 'static: 'static;",
     "expectedReparseTree": "(type_item name: (type_identifier) type: (type_identifier) trailing_where_clause: (where_clause (where_predicates item: (where_predicate left: (lifetime name: (identifier)) bounds: (trait_bounds bounds: (lifetime name: (identifier)))))))",
-    "wrappedText": "type Associated = T where 'static : 'static;",
+    "wrappedText": "type Associated = T where 'static: 'static;",
     "wrappedOffset": 0
   },
   {
@@ -49752,7 +50184,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "fn foo(str: * const c_char) {}\nfn bar(bool: bool) {}\n"
+    "expectedOutput": "fn foo(str: *const c_char) {}\nfn bar(bool: bool) {}\n"
   },
   {
     "kind": "roundtrip",
@@ -49760,9 +50192,9 @@
     "sourceIn": "\nfn foo(str: *const c_char) {}\nfn bar(bool: bool) {}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "fn foo(str: * const c_char) {}\nfn bar(bool: bool) {}\n",
+    "expectedSourceOut": "fn foo(str: *const c_char) {}\nfn bar(bool: bool) {}\n",
     "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (pointer_type_const type: (type_identifier)))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) body: (block)))",
-    "wrappedText": "fn foo(str: * const c_char) {}\nfn bar(bool: bool) {}\n",
+    "wrappedText": "fn foo(str: *const c_char) {}\nfn bar(bool: bool) {}\n",
     "wrappedOffset": 0
   },
   {
@@ -49817,7 +50249,7 @@
         "_statements": []
       }
     },
-    "expectedOutput": "fn foo(str: * const c_char) {}"
+    "expectedOutput": "fn foo(str: *const c_char) {}"
   },
   {
     "kind": "roundtrip",
@@ -49825,9 +50257,9 @@
     "sourceIn": "fn foo(str: *const c_char) {}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "fn foo(str: * const c_char) {}",
+    "expectedSourceOut": "fn foo(str: *const c_char) {}",
     "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (pointer_type_const type: (type_identifier)))))) body: (block))",
-    "wrappedText": "fn foo(str: * const c_char) {}",
+    "wrappedText": "fn foo(str: *const c_char) {}",
     "wrappedOffset": 0
   },
   {
@@ -49927,7 +50359,7 @@
         }
       }
     },
-    "expectedOutput": "(str: * const c_char)"
+    "expectedOutput": "(str: *const c_char)"
   },
   {
     "kind": "roundtrip",
@@ -49935,9 +50367,9 @@
     "sourceIn": "(str: *const c_char)",
     "pattern": "parameters",
     "edits": [],
-    "expectedSourceOut": "(str: * const c_char)",
+    "expectedSourceOut": "(str: *const c_char)",
     "expectedReparseTree": "(parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (pointer_type_const type: (type_identifier))))))",
-    "wrappedText": "fn _f(str: * const c_char) {}",
+    "wrappedText": "fn _f(str: *const c_char) {}",
     "wrappedOffset": 5
   },
   {
@@ -50003,7 +50435,7 @@
         }
       }
     },
-    "expectedOutput": "str: * const c_char"
+    "expectedOutput": "str: *const c_char"
   },
   {
     "kind": "roundtrip",
@@ -50011,9 +50443,9 @@
     "sourceIn": "str: *const c_char",
     "pattern": "parameter",
     "edits": [],
-    "expectedSourceOut": "str: * const c_char",
+    "expectedSourceOut": "str: *const c_char",
     "expectedReparseTree": "(parameter name: (identifier) type: (pointer_type_const type: (type_identifier)))",
-    "wrappedText": "fn _f(str: * const c_char) {}",
+    "wrappedText": "fn _f(str: *const c_char) {}",
     "wrappedOffset": 6
   },
   {
@@ -50052,7 +50484,7 @@
         }
       }
     },
-    "expectedOutput": "* const c_char"
+    "expectedOutput": "*const c_char"
   },
   {
     "kind": "roundtrip",
@@ -50060,9 +50492,9 @@
     "sourceIn": "*const c_char",
     "pattern": "pointer_type_const",
     "edits": [],
-    "expectedSourceOut": "* const c_char",
+    "expectedSourceOut": "*const c_char",
     "expectedReparseTree": "(pointer_type_const type: (type_identifier))",
-    "wrappedText": "type _X = * const c_char;",
+    "wrappedText": "type _X = *const c_char;",
     "wrappedOffset": 10
   },
   {
@@ -51832,7 +52264,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "fn walk<F>(&self, it: &mut F) -> bool\nwhere F: FnMut(&Pat) -> bool\n{\n    return false\n}\n\nimpl<'a, T: 'a + Item> Iterator for Iter<'a, T> where Self: 'a {}\n\nimpl<T> A for B<T>\nwhere C<T>: D,\nT: 'c,\n'c : 'b,\n{}\n\nimpl<'a, E> Read\nwhere &'a E: Read,\n{}\n\nimpl<T> A for B<T> where (T, T, T): C, {}\n\nimpl<T> A for B<T>\nwhere for<'a> D<T>: E<'a>,\n{}\n\npub trait A<B> where B: C,\n{}\n\nfn foo<A>() where A: B + As<f64>, f64: As<A> {}\n\nimpl<A> Default for B<A> where * mut A: C + D {}\n"
+    "expectedOutput": "fn walk<F>(&self, it: &mut F) -> bool\nwhere F: FnMut(&Pat) -> bool\n{\n    return false\n}\n\nimpl<'a, T: 'a + Item> Iterator for Iter<'a, T> where Self: 'a {}\n\nimpl<T> A for B<T>\nwhere C<T>: D,\nT: 'c,\n'c: 'b,\n{}\n\nimpl<'a, E> Read\nwhere &'a E: Read,\n{}\n\nimpl<T> A for B<T> where (T, T, T): C, {}\n\nimpl<T> A for B<T>\nwhere for<'a> D<T>: E<'a>,\n{}\n\npub trait A<B> where B: C,\n{}\n\nfn foo<A>() where A: B + As<f64>, f64: As<A> {}\n\nimpl<A> Default for B<A> where *mut A: C + D {}\n"
   },
   {
     "kind": "roundtrip",
@@ -51840,9 +52272,9 @@
     "sourceIn": "\nfn walk<F>(&self, it: &mut F) -> bool\n    where F: FnMut(&Pat) -> bool\n{\n  return false\n}\n\nimpl<'a, T: 'a + Item> Iterator for Iter<'a, T> where Self: 'a {\n}\n\nimpl<T> A for B<T>\n    where C<T>: D,\n          T: 'c,\n          'c: 'b,\n{\n}\n\nimpl<'a, E> Read\nwhere &'a E: Read,\n{\n}\n\nimpl<T> A for B<T> where (T, T, T): C, {}\n\nimpl<T> A for B<T>\n    where for<'a> D<T>: E<'a>,\n{\n}\n\npub trait A<B> where B: C,\n{\n}\n\nfn foo<A>() where A: B + As<f64>, f64: As<A> {}\n\nimpl<A> Default for B<A> where *mut A: C + D {}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "fn walk<F>(&self, it: &mut F) -> bool\nwhere F: FnMut(&Pat) -> bool\n{\n    return false\n}\n\nimpl<'a, T: 'a + Item> Iterator for Iter<'a, T> where Self: 'a {}\n\nimpl<T> A for B<T>\nwhere C<T>: D,\nT: 'c,\n'c : 'b,\n{}\n\nimpl<'a, E> Read\nwhere &'a E: Read,\n{}\n\nimpl<T> A for B<T> where (T, T, T): C, {}\n\nimpl<T> A for B<T>\nwhere for<'a> D<T>: E<'a>,\n{}\n\npub trait A<B> where B: C,\n{}\n\nfn foo<A>() where A: B + As<f64>, f64: As<A> {}\n\nimpl<A> Default for B<A> where * mut A: C + D {}\n",
+    "expectedSourceOut": "fn walk<F>(&self, it: &mut F) -> bool\nwhere F: FnMut(&Pat) -> bool\n{\n    return false\n}\n\nimpl<'a, T: 'a + Item> Iterator for Iter<'a, T> where Self: 'a {}\n\nimpl<T> A for B<T>\nwhere C<T>: D,\nT: 'c,\n'c: 'b,\n{}\n\nimpl<'a, E> Read\nwhere &'a E: Read,\n{}\n\nimpl<T> A for B<T> where (T, T, T): C, {}\n\nimpl<T> A for B<T>\nwhere for<'a> D<T>: E<'a>,\n{}\n\npub trait A<B> where B: C,\n{}\n\nfn foo<A>() where A: B + As<f64>, f64: As<A> {}\n\nimpl<A> Default for B<A> where *mut A: C + D {}\n",
     "expectedReparseTree": "(source_file statements: (function_item name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (self_parameter self: (self))) item: (attributed_parameter (parameter name: (identifier) type: (reference_type mutable: (mutable_specifier) type: (type_identifier)))))) return_type: (primitive_type) where_clause: (where_clause (where_predicates item: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (reference_type type: (type_identifier))))) return_type: (primitive_type)))))) body: (block trailing_expression: (return_expression expression: (boolean_literal)))) statements: (impl_item_body type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))) item: (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (lifetime name: (identifier)) bounds: (type_identifier)))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (lifetime name: (identifier))) item: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates item: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (lifetime name: (identifier)))))) body: (declaration_list)) statements: (impl_item_body type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates item: (where_predicate left: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))) bounds: (trait_bounds bounds: (type_identifier))) item: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (lifetime name: (identifier)))) item: (where_predicate left: (lifetime name: (identifier)) bounds: (trait_bounds bounds: (lifetime name: (identifier)))))) body: (declaration_list)) statements: (impl_item_body type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))) item: (attributed_type_parameter (type_parameter name: (type_identifier))))) type: (type_identifier) where_clause: (where_clause (where_predicates item: (where_predicate left: (reference_type lifetime: (lifetime name: (identifier)) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier))))) body: (declaration_list)) statements: (impl_item_body type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates item: (where_predicate left: (tuple_type (types item: (type_identifier) item: (type_identifier) item: (type_identifier))) bounds: (trait_bounds bounds: (type_identifier))))) body: (declaration_list)) statements: (impl_item_body type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates item: (where_predicate left: (higher_ranked_trait_bound type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier)))))) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (lifetime name: (identifier)))))))))) body: (declaration_list)) statements: (trait_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) where_clause: (where_clause (where_predicates item: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (type_identifier))))) body: (declaration_list)) statements: (function_item name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) parameters: (parameters) where_clause: (where_clause (where_predicates item: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (type_identifier) bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (primitive_type))))))) item: (where_predicate left: (primitive_type) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))))))) body: (block)) statements: (impl_item_body type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates item: (where_predicate left: (pointer_type_mut (mutable_specifier) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier) bounds: (type_identifier))))) body: (declaration_list)))",
-    "wrappedText": "fn walk<F>(&self, it: &mut F) -> bool\nwhere F: FnMut(&Pat) -> bool\n{\n    return false\n}\n\nimpl<'a, T: 'a + Item> Iterator for Iter<'a, T> where Self: 'a {}\n\nimpl<T> A for B<T>\nwhere C<T>: D,\nT: 'c,\n'c : 'b,\n{}\n\nimpl<'a, E> Read\nwhere &'a E: Read,\n{}\n\nimpl<T> A for B<T> where (T, T, T): C, {}\n\nimpl<T> A for B<T>\nwhere for<'a> D<T>: E<'a>,\n{}\n\npub trait A<B> where B: C,\n{}\n\nfn foo<A>() where A: B + As<f64>, f64: As<A> {}\n\nimpl<A> Default for B<A> where * mut A: C + D {}\n",
+    "wrappedText": "fn walk<F>(&self, it: &mut F) -> bool\nwhere F: FnMut(&Pat) -> bool\n{\n    return false\n}\n\nimpl<'a, T: 'a + Item> Iterator for Iter<'a, T> where Self: 'a {}\n\nimpl<T> A for B<T>\nwhere C<T>: D,\nT: 'c,\n'c: 'b,\n{}\n\nimpl<'a, E> Read\nwhere &'a E: Read,\n{}\n\nimpl<T> A for B<T> where (T, T, T): C, {}\n\nimpl<T> A for B<T>\nwhere for<'a> D<T>: E<'a>,\n{}\n\npub trait A<B> where B: C,\n{}\n\nfn foo<A>() where A: B + As<f64>, f64: As<A> {}\n\nimpl<A> Default for B<A> where *mut A: C + D {}\n",
     "wrappedOffset": 0
   },
   {
@@ -55285,7 +55717,7 @@
         }
       }
     },
-    "expectedOutput": "impl<T> A for B<T>\nwhere C<T>: D,\nT: 'c,\n'c : 'b,\n{}"
+    "expectedOutput": "impl<T> A for B<T>\nwhere C<T>: D,\nT: 'c,\n'c: 'b,\n{}"
   },
   {
     "kind": "roundtrip",
@@ -55293,9 +55725,9 @@
     "sourceIn": "impl<T> A for B<T>\n    where C<T>: D,\n          T: 'c,\n          'c: 'b,\n{\n}",
     "pattern": "impl_item_body",
     "edits": [],
-    "expectedSourceOut": "impl<T> A for B<T>\nwhere C<T>: D,\nT: 'c,\n'c : 'b,\n{}",
+    "expectedSourceOut": "impl<T> A for B<T>\nwhere C<T>: D,\nT: 'c,\n'c: 'b,\n{}",
     "expectedReparseTree": "(impl_item_body type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates item: (where_predicate left: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))) bounds: (trait_bounds bounds: (type_identifier))) item: (where_predicate left: (type_identifier) bounds: (trait_bounds bounds: (lifetime name: (identifier)))) item: (where_predicate left: (lifetime name: (identifier)) bounds: (trait_bounds bounds: (lifetime name: (identifier)))))) body: (declaration_list))",
-    "wrappedText": "impl<T> A for B<T>\nwhere C<T>: D,\nT: 'c,\n'c : 'b,\n{}",
+    "wrappedText": "impl<T> A for B<T>\nwhere C<T>: D,\nT: 'c,\n'c: 'b,\n{}",
     "wrappedOffset": 0
   },
   {
@@ -56061,7 +56493,7 @@
         "_declarations": []
       }
     },
-    "expectedOutput": "impl<A> Default for B<A> where * mut A: C + D {}"
+    "expectedOutput": "impl<A> Default for B<A> where *mut A: C + D {}"
   },
   {
     "kind": "roundtrip",
@@ -56069,9 +56501,9 @@
     "sourceIn": "impl<A> Default for B<A> where *mut A: C + D {}",
     "pattern": "impl_item_body",
     "edits": [],
-    "expectedSourceOut": "impl<A> Default for B<A> where * mut A: C + D {}",
+    "expectedSourceOut": "impl<A> Default for B<A> where *mut A: C + D {}",
     "expectedReparseTree": "(impl_item_body type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (type_parameter name: (type_identifier))))) trait_clause: (impl_item_positive_clause trait: (type_identifier)) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))) where_clause: (where_clause (where_predicates item: (where_predicate left: (pointer_type_mut (mutable_specifier) type: (type_identifier)) bounds: (trait_bounds bounds: (type_identifier) bounds: (type_identifier))))) body: (declaration_list))",
-    "wrappedText": "impl<A> Default for B<A> where * mut A: C + D {}",
+    "wrappedText": "impl<A> Default for B<A> where *mut A: C + D {}",
     "wrappedOffset": 0
   },
   {
@@ -56878,7 +57310,7 @@
         }
       }
     },
-    "expectedOutput": "* mut A"
+    "expectedOutput": "*mut A"
   },
   {
     "kind": "roundtrip",
@@ -56886,9 +57318,9 @@
     "sourceIn": "*mut A",
     "pattern": "pointer_type_mut",
     "edits": [],
-    "expectedSourceOut": "* mut A",
+    "expectedSourceOut": "*mut A",
     "expectedReparseTree": "(pointer_type_mut (mutable_specifier) type: (type_identifier))",
-    "wrappedText": "type _X = * mut A;",
+    "wrappedText": "type _X = *mut A;",
     "wrappedOffset": 10
   },
   {
@@ -57014,7 +57446,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "pub extern {\n    pub fn napi_module_register(mod_: * mut napi_module);\n}\n\nextern \"C\" {}\n"
+    "expectedOutput": "pub extern {\n    pub fn napi_module_register(mod_: *mut napi_module);\n}\n\nextern \"C\" {}\n"
   },
   {
     "kind": "roundtrip",
@@ -57022,9 +57454,9 @@
     "sourceIn": "\npub extern {\n  pub fn napi_module_register(mod_: *mut napi_module);\n}\n\nextern \"C\" {}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "pub extern {\n    pub fn napi_module_register(mod_: * mut napi_module);\n}\n\nextern \"C\" {}\n",
+    "expectedSourceOut": "pub extern {\n    pub fn napi_module_register(mod_: *mut napi_module);\n}\n\nextern \"C\" {}\n",
     "expectedReparseTree": "(source_file statements: (foreign_mod_item_body visibility_modifier: (visibility_modifier (visibility_modifier_pub)) extern_modifier: (extern_modifier) body: (declaration_list declarations: (function_signature_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (pointer_type_mut (mutable_specifier) type: (type_identifier))))))))) statements: (foreign_mod_item_body extern_modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content))) body: (declaration_list)))",
-    "wrappedText": "pub extern {\n    pub fn napi_module_register(mod_: * mut napi_module);\n}\n\nextern \"C\" {}\n",
+    "wrappedText": "pub extern {\n    pub fn napi_module_register(mod_: *mut napi_module);\n}\n\nextern \"C\" {}\n",
     "wrappedOffset": 0
   },
   {
@@ -57111,7 +57543,7 @@
         ]
       }
     },
-    "expectedOutput": "pub extern {\n    pub fn napi_module_register(mod_: * mut napi_module);\n}"
+    "expectedOutput": "pub extern {\n    pub fn napi_module_register(mod_: *mut napi_module);\n}"
   },
   {
     "kind": "roundtrip",
@@ -57119,9 +57551,9 @@
     "sourceIn": "pub extern {\n  pub fn napi_module_register(mod_: *mut napi_module);\n}",
     "pattern": "foreign_mod_item_body",
     "edits": [],
-    "expectedSourceOut": "pub extern {\n    pub fn napi_module_register(mod_: * mut napi_module);\n}",
+    "expectedSourceOut": "pub extern {\n    pub fn napi_module_register(mod_: *mut napi_module);\n}",
     "expectedReparseTree": "(foreign_mod_item_body visibility_modifier: (visibility_modifier (visibility_modifier_pub)) extern_modifier: (extern_modifier) body: (declaration_list declarations: (function_signature_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (pointer_type_mut (mutable_specifier) type: (type_identifier)))))))))",
-    "wrappedText": "pub extern {\n    pub fn napi_module_register(mod_: * mut napi_module);\n}",
+    "wrappedText": "pub extern {\n    pub fn napi_module_register(mod_: *mut napi_module);\n}",
     "wrappedOffset": 0
   },
   {
@@ -57267,7 +57699,7 @@
         }
       }
     },
-    "expectedOutput": "pub fn napi_module_register(mod_: * mut napi_module);"
+    "expectedOutput": "pub fn napi_module_register(mod_: *mut napi_module);"
   },
   {
     "kind": "roundtrip",
@@ -57275,9 +57707,9 @@
     "sourceIn": "pub fn napi_module_register(mod_: *mut napi_module);",
     "pattern": "function_signature_item",
     "edits": [],
-    "expectedSourceOut": "pub fn napi_module_register(mod_: * mut napi_module);",
+    "expectedSourceOut": "pub fn napi_module_register(mod_: *mut napi_module);",
     "expectedReparseTree": "(function_signature_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (pointer_type_mut (mutable_specifier) type: (type_identifier)))))))",
-    "wrappedText": "pub fn napi_module_register(mod_: * mut napi_module);",
+    "wrappedText": "pub fn napi_module_register(mod_: *mut napi_module);",
     "wrappedOffset": 0
   },
   {
@@ -57324,7 +57756,7 @@
         }
       }
     },
-    "expectedOutput": "(mod_: * mut napi_module)"
+    "expectedOutput": "(mod_: *mut napi_module)"
   },
   {
     "kind": "roundtrip",
@@ -57332,9 +57764,9 @@
     "sourceIn": "(mod_: *mut napi_module)",
     "pattern": "parameters",
     "edits": [],
-    "expectedSourceOut": "(mod_: * mut napi_module)",
+    "expectedSourceOut": "(mod_: *mut napi_module)",
     "expectedReparseTree": "(parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (pointer_type_mut (mutable_specifier) type: (type_identifier))))))",
-    "wrappedText": "fn _f(mod_: * mut napi_module) {}",
+    "wrappedText": "fn _f(mod_: *mut napi_module) {}",
     "wrappedOffset": 5
   },
   {
@@ -57358,7 +57790,7 @@
         }
       }
     },
-    "expectedOutput": "mod_: * mut napi_module"
+    "expectedOutput": "mod_: *mut napi_module"
   },
   {
     "kind": "roundtrip",
@@ -57366,9 +57798,9 @@
     "sourceIn": "mod_: *mut napi_module",
     "pattern": "parameter",
     "edits": [],
-    "expectedSourceOut": "mod_: * mut napi_module",
+    "expectedSourceOut": "mod_: *mut napi_module",
     "expectedReparseTree": "(parameter name: (identifier) type: (pointer_type_mut (mutable_specifier) type: (type_identifier)))",
-    "wrappedText": "fn _f(mod_: * mut napi_module) {}",
+    "wrappedText": "fn _f(mod_: *mut napi_module) {}",
     "wrappedOffset": 6
   },
   {
@@ -57385,7 +57817,7 @@
         }
       }
     },
-    "expectedOutput": "* mut napi_module"
+    "expectedOutput": "*mut napi_module"
   },
   {
     "kind": "roundtrip",
@@ -57393,9 +57825,9 @@
     "sourceIn": "*mut napi_module",
     "pattern": "pointer_type_mut",
     "edits": [],
-    "expectedSourceOut": "* mut napi_module",
+    "expectedSourceOut": "*mut napi_module",
     "expectedReparseTree": "(pointer_type_mut (mutable_specifier) type: (type_identifier))",
-    "wrappedText": "type _X = * mut napi_module;",
+    "wrappedText": "type _X = *mut napi_module;",
     "wrappedOffset": 10
   },
   {
@@ -106305,7 +106737,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "type A = * mut B;\ntype C = * const str;\n"
+    "expectedOutput": "type A = *mut B;\ntype C = *const str;\n"
   },
   {
     "kind": "roundtrip",
@@ -106313,9 +106745,9 @@
     "sourceIn": "\ntype A = *mut B;\ntype C = *const str;\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "type A = * mut B;\ntype C = * const str;\n",
+    "expectedSourceOut": "type A = *mut B;\ntype C = *const str;\n",
     "expectedReparseTree": "(source_file statements: (type_item name: (type_identifier) type: (pointer_type_mut (mutable_specifier) type: (type_identifier))) statements: (type_item name: (type_identifier) type: (pointer_type_const type: (primitive_type))))",
-    "wrappedText": "type A = * mut B;\ntype C = * const str;\n",
+    "wrappedText": "type A = *mut B;\ntype C = *const str;\n",
     "wrappedOffset": 0
   },
   {
@@ -106342,7 +106774,7 @@
         }
       }
     },
-    "expectedOutput": "type A = * mut B;"
+    "expectedOutput": "type A = *mut B;"
   },
   {
     "kind": "roundtrip",
@@ -106350,9 +106782,9 @@
     "sourceIn": "type A = *mut B;",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type A = * mut B;",
+    "expectedSourceOut": "type A = *mut B;",
     "expectedReparseTree": "(type_item name: (type_identifier) type: (pointer_type_mut (mutable_specifier) type: (type_identifier)))",
-    "wrappedText": "type A = * mut B;",
+    "wrappedText": "type A = *mut B;",
     "wrappedOffset": 0
   },
   {
@@ -106373,7 +106805,7 @@
         "_type": 73
       }
     },
-    "expectedOutput": "type C = * const str;"
+    "expectedOutput": "type C = *const str;"
   },
   {
     "kind": "roundtrip",
@@ -106381,9 +106813,9 @@
     "sourceIn": "type C = *const str;",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type C = * const str;",
+    "expectedSourceOut": "type C = *const str;",
     "expectedReparseTree": "(type_item name: (type_identifier) type: (pointer_type_const type: (primitive_type)))",
-    "wrappedText": "type C = * const str;",
+    "wrappedText": "type C = *const str;",
     "wrappedOffset": 0
   },
   {
@@ -106472,7 +106904,7 @@
         }
       }
     },
-    "expectedOutput": "* mut B"
+    "expectedOutput": "*mut B"
   },
   {
     "kind": "roundtrip",
@@ -106480,9 +106912,9 @@
     "sourceIn": "*mut B",
     "pattern": "pointer_type_mut",
     "edits": [],
-    "expectedSourceOut": "* mut B",
+    "expectedSourceOut": "*mut B",
     "expectedReparseTree": "(pointer_type_mut (mutable_specifier) type: (type_identifier))",
-    "wrappedText": "type _X = * mut B;",
+    "wrappedText": "type _X = *mut B;",
     "wrappedOffset": 10
   },
   {
@@ -106493,7 +106925,7 @@
       "$type": 388,
       "_type": 73
     },
-    "expectedOutput": "* const str"
+    "expectedOutput": "*const str"
   },
   {
     "kind": "roundtrip",
@@ -106501,9 +106933,9 @@
     "sourceIn": "*const str",
     "pattern": "pointer_type_const",
     "edits": [],
-    "expectedSourceOut": "* const str",
+    "expectedSourceOut": "*const str",
     "expectedReparseTree": "(pointer_type_const type: (primitive_type))",
-    "wrappedText": "type _X = * const str;",
+    "wrappedText": "type _X = *const str;",
     "wrappedOffset": 10
   },
   {
@@ -112436,7 +112868,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "type a = extern \"C\" fn(* mut c_void);\ntype b = unsafe extern \"C\" fn() -> * mut c_void;\n"
+    "expectedOutput": "type a = extern \"C\" fn(*mut c_void);\ntype b = unsafe extern \"C\" fn() -> *mut c_void;\n"
   },
   {
     "kind": "roundtrip",
@@ -112444,9 +112876,9 @@
     "sourceIn": "\ntype a = extern \"C\" fn(*mut c_void);\ntype b = unsafe extern \"C\" fn() -> *mut c_void;\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "type a = extern \"C\" fn(* mut c_void);\ntype b = unsafe extern \"C\" fn() -> * mut c_void;\n",
+    "expectedSourceOut": "type a = extern \"C\" fn(*mut c_void);\ntype b = unsafe extern \"C\" fn() -> *mut c_void;\n",
     "expectedReparseTree": "(source_file statements: (type_item name: (type_identifier) type: (function_type (function_type_fn_form (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content))))) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (pointer_type_mut (mutable_specifier) type: (type_identifier))))))) statements: (type_item name: (type_identifier) type: (function_type (function_type_fn_form (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content))))) parameters: (parameters) return_type: (pointer_type_mut (mutable_specifier) type: (type_identifier)))))",
-    "wrappedText": "type a = extern \"C\" fn(* mut c_void);\ntype b = unsafe extern \"C\" fn() -> * mut c_void;\n",
+    "wrappedText": "type a = extern \"C\" fn(*mut c_void);\ntype b = unsafe extern \"C\" fn() -> *mut c_void;\n",
     "wrappedOffset": 0
   },
   {
@@ -112523,7 +112955,7 @@
         }
       }
     },
-    "expectedOutput": "type a = extern \"C\" fn(* mut c_void);"
+    "expectedOutput": "type a = extern \"C\" fn(*mut c_void);"
   },
   {
     "kind": "roundtrip",
@@ -112531,9 +112963,9 @@
     "sourceIn": "type a = extern \"C\" fn(*mut c_void);",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type a = extern \"C\" fn(* mut c_void);",
+    "expectedSourceOut": "type a = extern \"C\" fn(*mut c_void);",
     "expectedReparseTree": "(type_item name: (type_identifier) type: (function_type (function_type_fn_form (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content))))) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (pointer_type_mut (mutable_specifier) type: (type_identifier)))))))",
-    "wrappedText": "type a = extern \"C\" fn(* mut c_void);",
+    "wrappedText": "type a = extern \"C\" fn(*mut c_void);",
     "wrappedOffset": 0
   },
   {
@@ -112591,7 +113023,7 @@
         }
       }
     },
-    "expectedOutput": "type b = unsafe extern \"C\" fn() -> * mut c_void;"
+    "expectedOutput": "type b = unsafe extern \"C\" fn() -> *mut c_void;"
   },
   {
     "kind": "roundtrip",
@@ -112599,9 +113031,9 @@
     "sourceIn": "type b = unsafe extern \"C\" fn() -> *mut c_void;",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type b = unsafe extern \"C\" fn() -> * mut c_void;",
+    "expectedSourceOut": "type b = unsafe extern \"C\" fn() -> *mut c_void;",
     "expectedReparseTree": "(type_item name: (type_identifier) type: (function_type (function_type_fn_form (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content))))) parameters: (parameters) return_type: (pointer_type_mut (mutable_specifier) type: (type_identifier))))",
-    "wrappedText": "type b = unsafe extern \"C\" fn() -> * mut c_void;",
+    "wrappedText": "type b = unsafe extern \"C\" fn() -> *mut c_void;",
     "wrappedOffset": 0
   },
   {
@@ -112764,7 +113196,7 @@
         }
       }
     },
-    "expectedOutput": "extern \"C\" fn(* mut c_void)"
+    "expectedOutput": "extern \"C\" fn(*mut c_void)"
   },
   {
     "kind": "roundtrip",
@@ -112772,9 +113204,9 @@
     "sourceIn": "extern \"C\" fn(*mut c_void)",
     "pattern": "function_type",
     "edits": [],
-    "expectedSourceOut": "extern \"C\" fn(* mut c_void)",
+    "expectedSourceOut": "extern \"C\" fn(*mut c_void)",
     "expectedReparseTree": "(function_type (function_type_fn_form (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content))))) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (pointer_type_mut (mutable_specifier) type: (type_identifier))))))",
-    "wrappedText": "type _X = extern \"C\" fn(* mut c_void);",
+    "wrappedText": "type _X = extern \"C\" fn(*mut c_void);",
     "wrappedOffset": 10
   },
   {
@@ -112822,7 +113254,7 @@
         }
       }
     },
-    "expectedOutput": "unsafe extern \"C\" fn() -> * mut c_void"
+    "expectedOutput": "unsafe extern \"C\" fn() -> *mut c_void"
   },
   {
     "kind": "roundtrip",
@@ -112830,9 +113262,9 @@
     "sourceIn": "unsafe extern \"C\" fn() -> *mut c_void",
     "pattern": "function_type",
     "edits": [],
-    "expectedSourceOut": "unsafe extern \"C\" fn() -> * mut c_void",
+    "expectedSourceOut": "unsafe extern \"C\" fn() -> *mut c_void",
     "expectedReparseTree": "(function_type (function_type_fn_form (function_modifiers modifier: (extern_modifier abi: (string_literal string_open: (string_open) elements: (string_content))))) parameters: (parameters) return_type: (pointer_type_mut (mutable_specifier) type: (type_identifier)))",
-    "wrappedText": "type _X = unsafe extern \"C\" fn() -> * mut c_void;",
+    "wrappedText": "type _X = unsafe extern \"C\" fn() -> *mut c_void;",
     "wrappedOffset": 10
   },
   {
@@ -112932,7 +113364,7 @@
         }
       }
     },
-    "expectedOutput": "(* mut c_void)"
+    "expectedOutput": "(*mut c_void)"
   },
   {
     "kind": "roundtrip",
@@ -112940,9 +113372,9 @@
     "sourceIn": "(*mut c_void)",
     "pattern": "parameters",
     "edits": [],
-    "expectedSourceOut": "(* mut c_void)",
+    "expectedSourceOut": "(*mut c_void)",
     "expectedReparseTree": "(parameters elements: (parameters_elements item: (attributed_parameter (pointer_type_mut (mutable_specifier) type: (type_identifier)))))",
-    "wrappedText": "fn _f(* mut c_void) {}",
+    "wrappedText": "fn _f(*mut c_void) {}",
     "wrappedOffset": 5
   },
   {
@@ -112979,7 +113411,7 @@
         }
       }
     },
-    "expectedOutput": "* mut c_void"
+    "expectedOutput": "*mut c_void"
   },
   {
     "kind": "roundtrip",
@@ -112987,9 +113419,9 @@
     "sourceIn": "*mut c_void",
     "pattern": "pointer_type_mut",
     "edits": [],
-    "expectedSourceOut": "* mut c_void",
+    "expectedSourceOut": "*mut c_void",
     "expectedReparseTree": "(pointer_type_mut (mutable_specifier) type: (type_identifier))",
-    "wrappedText": "type _X = * mut c_void;",
+    "wrappedText": "type _X = *mut c_void;",
     "wrappedOffset": 10
   },
   {
@@ -113006,7 +113438,7 @@
         }
       }
     },
-    "expectedOutput": "* mut c_void"
+    "expectedOutput": "*mut c_void"
   },
   {
     "kind": "roundtrip",
@@ -113014,9 +113446,9 @@
     "sourceIn": "*mut c_void",
     "pattern": "pointer_type_mut",
     "edits": [],
-    "expectedSourceOut": "* mut c_void",
+    "expectedSourceOut": "*mut c_void",
     "expectedReparseTree": "(pointer_type_mut (mutable_specifier) type: (type_identifier))",
-    "wrappedText": "type _X = * mut c_void;",
+    "wrappedText": "type _X = *mut c_void;",
     "wrappedOffset": 10
   },
   {
@@ -114549,7 +114981,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "a as B<C>;\nd as * mut E<<F as E>::G>;\n"
+    "expectedOutput": "a as B<C>;\nd as *mut E<<F as E>::G>;\n"
   },
   {
     "kind": "roundtrip",
@@ -114557,9 +114989,9 @@
     "sourceIn": "\na as B<C>;\nd as *mut E<<F as E>::G>;\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "a as B<C>;\nd as * mut E<<F as E>::G>;\n",
+    "expectedSourceOut": "a as B<C>;\nd as *mut E<<F as E>::G>;\n",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (type_cast_expression value: (identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier)))))))) statements: (expression_statement (expression_statement_with_semi expression: (type_cast_expression value: (identifier) type: (pointer_type_mut (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (scoped_type_identifier path: (bracketed_type type: (qualified_type type: (type_identifier) alias: (type_identifier))) name: (type_identifier)))))))))))",
-    "wrappedText": "a as B<C>;\nd as * mut E<<F as E>::G>;\n",
+    "wrappedText": "a as B<C>;\nd as *mut E<<F as E>::G>;\n",
     "wrappedOffset": 0
   },
   {
@@ -114703,7 +115135,7 @@
         }
       }
     },
-    "expectedOutput": "d as * mut E<<F as E>::G>"
+    "expectedOutput": "d as *mut E<<F as E>::G>"
   },
   {
     "kind": "roundtrip",
@@ -114711,9 +115143,9 @@
     "sourceIn": "d as *mut E<<F as E>::G>",
     "pattern": "type_cast_expression",
     "edits": [],
-    "expectedSourceOut": "d as * mut E<<F as E>::G>",
+    "expectedSourceOut": "d as *mut E<<F as E>::G>",
     "expectedReparseTree": "(type_cast_expression value: (identifier) type: (pointer_type_mut (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (scoped_type_identifier path: (bracketed_type type: (qualified_type type: (type_identifier) alias: (type_identifier))) name: (type_identifier))))))))",
-    "wrappedText": "fn _f() { let _ = d as * mut E<<F as E>::G>; }",
+    "wrappedText": "fn _f() { let _ = d as *mut E<<F as E>::G>; }",
     "wrappedOffset": 18
   },
   {
@@ -115067,7 +115499,7 @@
         }
       }
     },
-    "expectedOutput": "* mut E<<F as E>::G>"
+    "expectedOutput": "*mut E<<F as E>::G>"
   },
   {
     "kind": "roundtrip",
@@ -115075,9 +115507,9 @@
     "sourceIn": "*mut E<<F as E>::G>",
     "pattern": "pointer_type_mut",
     "edits": [],
-    "expectedSourceOut": "* mut E<<F as E>::G>",
+    "expectedSourceOut": "*mut E<<F as E>::G>",
     "expectedReparseTree": "(pointer_type_mut (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (scoped_type_identifier path: (bracketed_type type: (qualified_type type: (type_identifier) alias: (type_identifier))) name: (type_identifier)))))))",
-    "wrappedText": "type _X = * mut E<<F as E>::G>;",
+    "wrappedText": "type _X = *mut E<<F as E>::G>;",
     "wrappedOffset": 10
   },
   {

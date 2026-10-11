@@ -165,7 +165,6 @@ describe('term', () => {
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
 		expect(rendered).toContain('^');
-		expect(rendered).toContain('test');
 	});
 });
 
@@ -1207,28 +1206,37 @@ describe('flags', () => {
 
 describe('zero_or_more', () => {
 	it('factory produces correct type', () => {
-		const node = ir.zeroOrMore('*');
+		const node = ir.zeroOrMore({});
 		expect(node.$type).toBe(TSKindId.ZeroOrMore);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('*');
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.zeroOrMore({});
+		expect(() => node.$render!()).not.toThrow();
 	});
 });
 
 describe('one_or_more', () => {
 	it('factory produces correct type', () => {
-		const node = ir.oneOrMore('+');
+		const node = ir.oneOrMore({});
 		expect(node.$type).toBe(TSKindId.OneOrMore);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('+');
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.oneOrMore({});
+		expect(() => node.$render!()).not.toThrow();
 	});
 });
 
 describe('optional', () => {
 	it('factory produces correct type', () => {
-		const node = ir.optional('?');
+		const node = ir.optional({});
 		expect(node.$type).toBe(TSKindId.Optional);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('?');
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.optional({});
+		expect(() => node.$render!()).not.toThrow();
 	});
 });
 

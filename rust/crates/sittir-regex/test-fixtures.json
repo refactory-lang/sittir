@@ -172,7 +172,7 @@
             },
             "_quantifier": {
               "$type": 67,
-              "$text": "*?"
+              "_lazy": true
             }
           },
           {
@@ -182,8 +182,7 @@
               "$text": "e"
             },
             "_quantifier": {
-              "$type": 67,
-              "$text": "*"
+              "$type": 67
             },
             "$_layout": {
               "gap": {
@@ -198,8 +197,7 @@
               "$text": "l"
             },
             "_quantifier": {
-              "$type": 68,
-              "$text": "+"
+              "$type": 68
             },
             "$_layout": {
               "gap": {
@@ -211,8 +209,7 @@
             "$type": 77,
             "_content": 2,
             "_quantifier": {
-              "$type": 69,
-              "$text": "?"
+              "$type": 69
             },
             "$_layout": {
               "gap": {
@@ -2930,8 +2927,7 @@
                       "$type": 77,
                       "_content": 2,
                       "_quantifier": {
-                        "$type": 67,
-                        "$text": "*"
+                        "$type": 67
                       }
                     }
                   ]
@@ -2974,8 +2970,7 @@
             "$type": 77,
             "_content": 2,
             "_quantifier": {
-              "$type": 67,
-              "$text": "*"
+              "$type": 67
             }
           }
         ]
@@ -3021,8 +3016,7 @@
                       "$type": 77,
                       "_content": 2,
                       "_quantifier": {
-                        "$type": 67,
-                        "$text": "*"
+                        "$type": 67
                       }
                     }
                   ]
@@ -3048,8 +3042,7 @@
                       "$type": 77,
                       "_content": 2,
                       "_quantifier": {
-                        "$type": 67,
-                        "$text": "*"
+                        "$type": 67
                       }
                     }
                   ]
@@ -3094,8 +3087,7 @@
             "$type": 77,
             "_content": 2,
             "_quantifier": {
-              "$type": 67,
-              "$text": "*"
+              "$type": 67
             }
           }
         ]
@@ -3127,8 +3119,7 @@
             "$type": 77,
             "_content": 2,
             "_quantifier": {
-              "$type": 67,
-              "$text": "*"
+              "$type": 67
             }
           }
         ]
@@ -3174,8 +3165,7 @@
                       "$type": 77,
                       "_content": 2,
                       "_quantifier": {
-                        "$type": 67,
-                        "$text": "*"
+                        "$type": 67
                       }
                     }
                   ]
@@ -3216,8 +3206,7 @@
                       "$type": 77,
                       "_content": 2,
                       "_quantifier": {
-                        "$type": 67,
-                        "$text": "*"
+                        "$type": 67
                       }
                     }
                   ]
@@ -3277,8 +3266,7 @@
             "$type": 77,
             "_content": 2,
             "_quantifier": {
-              "$type": 67,
-              "$text": "*"
+              "$type": 67
             }
           }
         ]
@@ -3310,8 +3298,7 @@
             "$type": 77,
             "_content": 2,
             "_quantifier": {
-              "$type": 67,
-              "$text": "*"
+              "$type": 67
             }
           }
         ]
@@ -4097,8 +4084,7 @@
                         ]
                       },
                       "_quantifier": {
-                        "$type": 67,
-                        "$text": "*"
+                        "$type": 67
                       }
                     }
                   ]
@@ -4316,8 +4302,7 @@
               ]
             },
             "_quantifier": {
-              "$type": 67,
-              "$text": "*"
+              "$type": 67
             }
           }
         ]
@@ -4360,8 +4345,7 @@
               ]
             },
             "_quantifier": {
-              "$type": 68,
-              "$text": "+"
+              "$type": 68
             }
           }
         ],

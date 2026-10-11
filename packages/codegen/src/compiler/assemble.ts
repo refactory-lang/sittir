@@ -1127,8 +1127,13 @@ function isSeparatedListShape(rule: SimplifiedRule): boolean {
 	return sep.trailing === 'optional' || sep.leading === 'optional';
 }
 
+function isStampedTerminal(rule: AnyRule): boolean {
+	const stamps = rule as { readonly nonterminal?: boolean; readonly aliasedTo?: string };
+	return (rule.type === STRING || rule.type === PATTERN) && stamps.nonterminal === true && stamps.aliasedTo !== undefined;
+}
+
 function hasSlotBearingContent(rule: SimplifiedRule): boolean {
-	if (rule.fieldName !== undefined) return true;
+	if (rule.fieldName !== undefined || isStampedTerminal(rule)) return true;
 	switch (rule.type) {
 		case SYMBOL:
 		case SUPERTYPE:
@@ -1151,7 +1156,7 @@ export function isAllTextShape(rule: AnyRule): boolean {
 	switch (rule.type) {
 		case STRING:
 		case PATTERN:
-			return true;
+			return !isStampedTerminal(rule);
 		case SYMBOL:
 		case FIELD:
 			return false;
