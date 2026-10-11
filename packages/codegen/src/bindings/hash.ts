@@ -4,9 +4,11 @@ import { basename, join } from 'node:path';
 import type { GrammarName } from '../grammars.ts';
 import { bindingsPath, VOCABULARY_DIR } from './facts.ts';
 
+export const isVocabularySource = (file: string): boolean => file.endsWith('.ts');
+
 export const vocabularySources = (vocabularyDir: string = VOCABULARY_DIR): readonly string[] =>
 	readdirSync(vocabularyDir)
-		.filter((f) => f.endsWith('.ts'))
+		.filter(isVocabularySource)
 		.sort()
 		.map((name) => join(vocabularyDir, name));
 

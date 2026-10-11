@@ -1,5 +1,5 @@
-import { readdirSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { readFileSync } from 'node:fs';
+import { vocabularySources } from './hash.ts';
 import { runPinned } from './read.ts';
 
 export interface VocabularyMember {
@@ -27,8 +27,7 @@ export interface VocabularyDeclaration {
 }
 
 export async function readVocabulary(dir: string): Promise<Vocabulary> {
-	const files = readdirSync(dir).filter((f) => f.endsWith('.ts')).sort();
-	const declared = (await Promise.all(files.map((file) => runPinned('vocabulary', readFileSync(join(dir, file), 'utf8'))))).flat();
+	const declared = (await Promise.all(vocabularySources(dir).map((path) => runPinned('vocabulary', readFileSync(path, 'utf8'))))).flat();
 	const pathByName = new Map(declared.map((d) => [d.name, d.path]));
 	const kinds = new Map<string, VocabularyKind>(
 		declared.map((d) => [d.path, { name: d.name, own: new Map(d.own), parent: d.parentName === undefined ? undefined : pathByName.get(d.parentName) }])

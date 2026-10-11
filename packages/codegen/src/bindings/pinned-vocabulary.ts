@@ -1,4 +1,4 @@
-import type { GenericType, InterfaceDeclaration, Program, TypescriptAPI } from '@sittir/typescript';
+import type { ExtendsTypeClause, InterfaceDeclaration, Program, TypescriptAPI } from '@sittir/typescript';
 import type { Engine } from '@sittir/types';
 import { loadPinnedBuild, type PinnedBuild } from '../bootstrap/pinned.ts';
 import type { VocabularyDeclaration, VocabularyMember } from './vocabulary.ts';
@@ -26,6 +26,7 @@ function typescriptReader(): Promise<Reader> {
 
 interface Source {
 	readonly K: Kinds;
+	readonly engine: Engine<TypescriptAPI>;
 	readonly text: (item: object | number) => string;
 }
 
@@ -38,13 +39,11 @@ export async function vocabularyDeclarationsInProcess(code: string): Promise<Voc
 		return span === undefined ? '' : slice(span);
 	};
 	const declared: VocabularyDeclaration[] = [];
-	collect(engine.parse(code, { depth: Infinity }).statements(), [], declared, { K, text });
+	collect(engine.parse(code, { depth: Infinity }).statements(), [], declared, { K, engine, text });
 	return declared;
 }
 
 type Statement = ReturnType<Program.Parsed['statements']>[number];
-
-type TypeNode = Exclude<ReturnType<NonNullable<ReturnType<GenericType.Parsed['typeArguments']>>['types']>[number], number | undefined>;
 
 const isNode = <T>(value: T): value is Exclude<T, number | undefined> => typeof value === 'object' && value !== null;
 
@@ -79,18 +78,15 @@ function declare(declaration: InterfaceDeclaration.Parsed, scope: readonly strin
 	}
 	if (path === undefined) return;
 	const heritage = declaration.extendsTypeClause();
-	const parentName = heritage === undefined ? undefined : [heritage.types()].flat().filter(isNode).map((type) => vocabularyReference(type, source)).find((name) => name !== undefined);
+	const parentName = heritage === undefined ? undefined : vocabularyReference(heritage, source);
 	out.push({ name: [...scope, text(declaration.name())].join('.'), path, own, ...(parentName === undefined ? {} : { parentName }) });
 }
 
-function vocabularyReference(type: TypeNode, source: Source): string | undefined {
-	const { K, text } = source;
-	if (type.$type !== K.GenericType) return undefined;
-	const name = type.name();
-	if (name.$type === K.NestedTypeIdentifier && text(name).startsWith('V.')) return text(name).slice(2);
-	for (const argument of (type.typeArguments()?.types() ?? []).filter(isNode)) {
-		const found = vocabularyReference(argument, source);
-		if (found !== undefined) return found;
+function vocabularyReference(heritage: ExtendsTypeClause.Parsed, source: Source): string | undefined {
+	const { K, engine, text } = source;
+	for (const name of engine.query(heritage).$descendants.ofType(K.NestedTypeIdentifier)) {
+		const reference = text(name);
+		if (reference.startsWith('V.')) return reference.slice(2);
 	}
 	return undefined;
 }

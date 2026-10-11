@@ -285,15 +285,19 @@ Records an interface that has a `$kind` literal: its scoped name, its path, its 
 
 ### `packages/codegen/src/bindings/pinned-vocabulary.ts::vocabularyReference`
 
-The vocabulary interface a type names through `V.`, looked for in the type itself and then in its type arguments, so `SubKindOf<V.X<G>>` names `X`.
+The vocabulary interface a heritage clause names through `V.`: the first `V.`-qualified type name among its descendants (`engine.query`), however the reference is written, so `SubKindOf<V.X<G>>`, `SubKindOf<(V.X<G>)>` and `V.X` all name `X`.
 
 ### `packages/codegen/src/bindings/pinned-vocabulary.ts::isNode`
 
 Whether a child is a node rather than an absent child or the kind id that stands for an anonymous token.
 
+### `packages/codegen/src/bindings/hash.ts::isVocabularySource`
+
+Whether a file name is a vocabulary source: a `.ts` file.
+
 ### `packages/codegen/src/bindings/hash.ts::vocabularySources`
 
-Every `.ts` source of the vocabulary, in name order. The bindings hash and the generated-output manifest both read the vocabulary through it, so the two agree on what the vocabulary is.
+Every source of the vocabulary (`isVocabularySource`), in name order. The reader, the bindings hash and the generated-output manifest all read the vocabulary through it, so they agree on what the vocabulary is.
 
 ### `packages/codegen/src/bindings/hash.ts::bindingsSourceHash`
 

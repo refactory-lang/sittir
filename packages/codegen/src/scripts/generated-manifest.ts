@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, statSync, writeFileSync } from 'node:fs';
 import { basename, join, relative, dirname } from 'node:path';
 import { BINDINGS_FILE, VOCABULARY_DIR } from '../bindings/facts.ts';
-import { vocabularySources } from '../bindings/hash.ts';
+import { isVocabularySource, vocabularySources } from '../bindings/hash.ts';
 import { PIN_FILE } from '../bootstrap/bootstrap.ts';
 import { hostBinaryFreshnessFor } from './native-binary-freshness.ts';
 import {
@@ -132,17 +132,25 @@ const samePair = (a: GenerationPair, b: GenerationPair): boolean => a.source ===
 
 const CODEGEN_SOURCE_DIR = 'packages/codegen/src';
 
+const VOCABULARY_SOURCE_DIR = relative(REPO_ROOT, VOCABULARY_DIR);
+
+const isVocabularyInput = (rel: string): boolean => dirname(rel) === VOCABULARY_SOURCE_DIR && isVocabularySource(rel);
+
+const bindingsInput = (grammar: GrammarName): string => `${relative(REPO_ROOT, grammarPackageDir(grammar))}/${BINDINGS_FILE}`;
+
+const isBound = (grammar: GrammarName, src: ManifestSource): boolean => existsSync(join(src.root, bindingsInput(grammar)));
+
 function grammarSourceInputs(grammar: GrammarName, src: ManifestSource): string[] {
 	const dir = relative(REPO_ROOT, grammarPackageDir(grammar));
-	const bindings = `${dir}/${BINDINGS_FILE}`;
-	if (!existsSync(join(src.root, bindings))) return [`${dir}/${GRAMMAR_ENTRY}`, `${dir}/package.json`];
-	const vocabularyDir = join(src.root, relative(REPO_ROOT, VOCABULARY_DIR));
+	const own = [`${dir}/${GRAMMAR_ENTRY}`, `${dir}/package.json`, bindingsInput(grammar)];
+	if (!isBound(grammar, src)) return own;
+	const vocabularyDir = join(src.root, VOCABULARY_SOURCE_DIR);
 	const vocabulary = existsSync(vocabularyDir) ? vocabularySources(vocabularyDir).map((path) => relative(src.root, path)) : [];
-	return [`${dir}/${GRAMMAR_ENTRY}`, `${dir}/package.json`, bindings, PIN_FILE, ...vocabulary];
+	return [...own, PIN_FILE, ...vocabulary];
 }
 
 export function stagedInputPathspecs(): string[] {
-	return [CODEGEN_SOURCE_DIR, PIN_FILE, relative(REPO_ROOT, VOCABULARY_DIR), ...allGrammars().flatMap((grammar) => [`packages/${grammar}`, nativeCrateRelDir(grammar)])];
+	return [CODEGEN_SOURCE_DIR, PIN_FILE, VOCABULARY_SOURCE_DIR, ...allGrammars().flatMap((grammar) => [`packages/${grammar}`, nativeCrateRelDir(grammar)])];
 }
 
 function isCodegenSourceInput(relPath: string): boolean {
@@ -194,11 +202,13 @@ function trustedCommits(checkout: string): string[] {
 
 function differencesFromTrustedCommit(grammar: GrammarName, src: ManifestSource): string[] {
 	const sourceInputs = grammarSourceInputs(grammar, src);
+	const bound = isBound(grammar, src);
 	const roots = generatedRootsFor(grammar);
-	const pathspecs = [CODEGEN_SOURCE_DIR, ...sourceInputs, ...roots];
+	const pathspecs = [CODEGEN_SOURCE_DIR, ...sourceInputs, ...(bound ? [VOCABULARY_SOURCE_DIR] : []), ...roots];
 	const matters = (rel: string): boolean =>
 		isCodegenSourceInput(rel) ||
 		sourceInputs.includes(rel) ||
+		(bound && isVocabularyInput(rel)) ||
 		(!landsOnItsOwnCadence(rel) && roots.some((root) => rel === root || rel.startsWith(`${root}/`)));
 	const untracked = isCheckout(src)
 		? gitPaths(src.checkout, ['ls-files', '-z', '--others', '--exclude-standard', '--', ...pathspecs])
