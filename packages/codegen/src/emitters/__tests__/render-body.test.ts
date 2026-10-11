@@ -306,6 +306,18 @@ describe('gateOptionalSlotSeams', () => {
 		);
 	});
 
+	it('never folds a padding seam beside a slot that has no presence gate', () => {
+		const padding = (field: string): boolean => field === 'lbrace_after' || field === 'rbrace_before';
+		const body = concat(text('{'), seam('lbrace_after'), slot('x'), seam('rbrace_before'), text('}'));
+		expect(gateOptionalSlotSeams(body, own, padding)).toEqual(body);
+	});
+
+	it('leaves a padding seam beside a gate that is not the bare slot where it is', () => {
+		const padding = (field: string): boolean => field === 'lbrace_after';
+		const body = concat(text('{'), seam('lbrace_after'), gate('x', concat(text('->'), slot('x'))));
+		expect(gateOptionalSlotSeams(body, own, padding)).toEqual(body);
+	});
+
 	it('leaves a seam beside the gate that is not padding where it is', () => {
 		const body = concat(text('&'), seam('amp_after'), gate('x', slot('x')), seam('mut_before'), text('mut'));
 		expect(gateOptionalSlotSeams(body, own, () => false)).toEqual(body);
