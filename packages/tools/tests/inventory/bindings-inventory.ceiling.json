@@ -1,5 +1,5 @@
 {
-	"unmapped": 63,
+	"unmapped": 56,
 	"compiling": ["python", "rust", "typescript"],
 	"vocabularyDisagreements": []
 }

@@ -64,17 +64,17 @@ afterAll(() => rmSync(dir, { recursive: true, force: true }));
 
 describe('deriveOverlay', () => {
 	it('renames each plain claimed kind to its path\'s bound name, subkind first', () => {
-		const { overlay } = deriveOverlay({ grammar: 'bindtest', facts: FACTS, base, vocabMembers: VOCABULARY, routedMembers: NO_MEMBERS });
+		const { overlay } = deriveOverlay({ facts: FACTS, base, vocabMembers: VOCABULARY, routedMembers: NO_MEMBERS });
 		expect(overlay.renames).toEqual({ let_item: 'variable_declaration', call: 'call_expression' });
 	});
 
 	it('patches a member routed to a field of another name into a field of the member\'s name', () => {
-		const { overlay } = deriveOverlay({ grammar: 'bindtest', facts: FACTS, base, vocabMembers: VOCABULARY, routedMembers: NO_MEMBERS });
+		const { overlay } = deriveOverlay({ facts: FACTS, base, vocabMembers: VOCABULARY, routedMembers: NO_MEMBERS });
 		expect(overlay.patches).toEqual(new Map([['let_item', [[{ path: '1', edit: { field: 'name' } }]]]]));
 	});
 
 	it('leaves each claim it does not turn into a grammar change in the residue, with the reason', () => {
-		const { report } = deriveOverlay({ grammar: 'bindtest', facts: FACTS, base, vocabMembers: VOCABULARY, routedMembers: NO_MEMBERS });
+		const { report } = deriveOverlay({ facts: FACTS, base, vocabMembers: VOCABULARY, routedMembers: NO_MEMBERS });
 		expect(report.residue).toEqual([
 			{ cause: 'token refinement', row: 'call → expression.call.method' },
 			{ cause: 'not a base rule', row: 'nope → type.named' }
@@ -87,7 +87,7 @@ describe('deriveOverlay', () => {
 			claims: [claim('expression.call', 'call'), claim('expression.invocation', 'call')],
 			members: [{ route: 'rename', owner: 'call', name: 'callee', field: null, kind: 'identifier', after: null, anchor: null }]
 		};
-		const { overlay, report } = deriveOverlay({ grammar: 'bindtest', facts, base, vocabMembers: VOCABULARY, routedMembers: NO_MEMBERS });
+		const { overlay, report } = deriveOverlay({ facts, base, vocabMembers: VOCABULARY, routedMembers: NO_MEMBERS });
 		expect(overlay.renames).toEqual({ call: 'call_expression' });
 		expect(report.residue).toEqual([
 			{ cause: 'kind named by an earlier claim', row: 'call → expression.invocation' },
@@ -108,7 +108,7 @@ describe('deriveOverlay', () => {
 				['let_item', named(...letItem)]
 			]);
 		const derive = (facts: BindingFacts, routedMembers: ReadonlyMap<string, readonly MemberRoute[]>) =>
-			deriveOverlay({ grammar: 'bindtest', facts, base, vocabMembers: vocab, routedMembers });
+			deriveOverlay({ facts, base, vocabMembers: vocab, routedMembers });
 
 		it('aliases both to the path\'s name when they supply the same members, as a form restricted to a context does', () => {
 			const { report } = derive(sharing([]), routed(['parameters', 'body'], ['body', 'parameters']));
@@ -140,7 +140,7 @@ describe('deriveOverlay', () => {
 
 
 	it('leaves a member its vocabulary kind does not declare in the residue', () => {
-		const { overlay, report } = deriveOverlay({ grammar: 'bindtest', facts: FACTS, base, vocabMembers: new Map([['declaration.variable', new Set<string>()]]), routedMembers: NO_MEMBERS });
+		const { overlay, report } = deriveOverlay({ facts: FACTS, base, vocabMembers: new Map([['declaration.variable', new Set<string>()]]), routedMembers: NO_MEMBERS });
 		expect(overlay.patches.size).toBe(0);
 		expect(report.residue).toContainEqual({ cause: 'member not in the vocabulary', row: 'let_item.name' });
 	});
@@ -148,7 +148,7 @@ describe('deriveOverlay', () => {
 
 describe('printBindingsModule', () => {
 	it('prints the overlay with the hash of the sources it was derived from, and nothing else', () => {
-		const { overlay } = deriveOverlay({ grammar: 'bindtest', facts: FACTS, base, vocabMembers: VOCABULARY, routedMembers: NO_MEMBERS });
+		const { overlay } = deriveOverlay({ facts: FACTS, base, vocabMembers: VOCABULARY, routedMembers: NO_MEMBERS });
 		const text = printBindingsModule(overlay, 'h');
 		expect(text).toContain('export default bindings({\n\thash: "h",');
 		expect(text).toContain('rename("let_item", "variable_declaration")');

@@ -202,6 +202,7 @@ export interface PortableIds {
 	literal:
 		| TSKindId.ConcatenatedString
 		| TSKindId.Ellipsis
+		| TSKindId.EscapeInterpolation
 		| TSKindId.EscapeSequence
 		| TSKindId.False
 		| TSKindId.FloatLeadingPoint
@@ -247,10 +248,15 @@ export interface PortableIds {
 	'literal.number.integer.hex': TSKindId.IntegerHex;
 	'literal.number.integer.imaginary': TSKindId.IntegerDecimalImaginary;
 	'literal.number.integer.octal': TSKindId.IntegerOctal;
-	'literal.string': TSKindId.ConcatenatedString | TSKindId.EscapeSequence | TSKindId.String | TSKindId.StringFragment;
+	'literal.string':
+		| TSKindId.ConcatenatedString
+		| TSKindId.EscapeInterpolation
+		| TSKindId.EscapeSequence
+		| TSKindId.String
+		| TSKindId.StringFragment;
 	'literal.string.bytes': TSKindId.String;
 	'literal.string.concatenated': TSKindId.ConcatenatedString;
-	'literal.string.escape': TSKindId.EscapeSequence;
+	'literal.string.escape': TSKindId.EscapeInterpolation | TSKindId.EscapeSequence;
 	'literal.string.f': TSKindId.String;
 	'literal.string.raw': TSKindId.String;
 	'literal.string.text': TSKindId.StringFragment;
@@ -2066,6 +2072,7 @@ const table: PortableTable = {
 			ids: [
 				TSKindId.ConcatenatedString,
 				TSKindId.Ellipsis,
+				TSKindId.EscapeInterpolation,
 				TSKindId.EscapeSequence,
 				TSKindId.False,
 				TSKindId.FloatLeadingPoint,
@@ -2126,12 +2133,18 @@ const table: PortableTable = {
 		'literal.number.integer.imaginary': { ids: [TSKindId.IntegerDecimalImaginary], exact: true },
 		'literal.number.integer.octal': { ids: [TSKindId.IntegerOctal], exact: true },
 		'literal.string': {
-			ids: [TSKindId.ConcatenatedString, TSKindId.EscapeSequence, TSKindId.String, TSKindId.StringFragment],
+			ids: [
+				TSKindId.ConcatenatedString,
+				TSKindId.EscapeInterpolation,
+				TSKindId.EscapeSequence,
+				TSKindId.String,
+				TSKindId.StringFragment
+			],
 			exact: true
 		},
 		'literal.string.bytes': { ids: [TSKindId.String], exact: false },
 		'literal.string.concatenated': { ids: [TSKindId.ConcatenatedString], exact: true },
-		'literal.string.escape': { ids: [TSKindId.EscapeSequence], exact: true },
+		'literal.string.escape': { ids: [TSKindId.EscapeInterpolation, TSKindId.EscapeSequence], exact: true },
 		'literal.string.f': { ids: [TSKindId.String], exact: false },
 		'literal.string.raw': { ids: [TSKindId.String], exact: false },
 		'literal.string.text': { ids: [TSKindId.StringFragment], exact: true },
@@ -2725,6 +2738,7 @@ const table: PortableTable = {
 		[TSKindId.ElifClause]: [{ path: 'clause.elif', within: [], test: [] }],
 		[TSKindId.Ellipsis]: [{ path: 'literal.ellipsis', within: [], test: [] }],
 		[TSKindId.ElseClause]: [{ path: 'clause.else', within: [], test: [] }],
+		[TSKindId.EscapeInterpolation]: [{ path: 'literal.string.escape', within: [], test: [] }],
 		[TSKindId.EscapeSequence]: [{ path: 'literal.string.escape', within: [], test: [] }],
 		[TSKindId.ExceptClause]: [{ path: 'clause.except', within: [], test: [] }],
 		[TSKindId.ExecStatement]: [{ path: 'statement.exec', within: [], test: [] }],

@@ -188,6 +188,7 @@
 ; ── literal ────────────────────────────────────────────────────────────────────
 (string [(interpolation) (string_content)]* @elements) @literal.string
 (escape_sequence) @literal.string.escape
+(escape_interpolation) @literal.string.escape
 (string_fragment) @literal.string.text
 (concatenated_string) @literal.string.concatenated
 ((string (string_start) @_p) @literal.string.f (#match? @_p "^[fF]"))

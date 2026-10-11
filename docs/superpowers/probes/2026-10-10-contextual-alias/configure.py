@@ -1,14 +1,15 @@
-"""Configure a worktree's grammar for one mode: python3 configure.py <worktree> <unbound|nosplit|split|alias> [grammar].
+"""Configure a worktree's grammar for one mode: python3 configure.py <worktree> <unbound|nosplit|split|alias|alias-decorated> [grammar].
 
 The grammar is rust unless named. unbound: the grammar without its overlay. nosplit: the overlay with
 no splits. split: the overlay's splits as clones. alias: the same splits as parser aliases at their
-sites. The bound modes also re-address the options labels the overlay's fields move (README, gap 2).
+sites. alias-decorated (python): the alias splits, and a second that reaches a decorated method. The bound
+modes also re-address the options labels the overlay's fields move (README, gap 2).
 """
 import os, sys
 
 wt, mode = sys.argv[1], sys.argv[2]
 grammar = sys.argv[3] if len(sys.argv) > 3 else 'rust'
-assert mode in ('unbound', 'nosplit', 'split', 'alias'), mode
+assert mode in ('unbound', 'nosplit', 'split', 'alias', 'alias-decorated'), mode
 here = os.path.dirname(os.path.abspath(__file__))
 
 # Per grammar: each options label the overlay moves (base, bound), and the splits block measured.
@@ -17,6 +18,7 @@ LABELS = {
     'python': [],
 }
 SPLITS = {'rust': 'splits-block.txt', 'python': 'splits-block-python.txt'}
+DECORATED_SPLITS = {'python': 'splits-block-python-decorated.txt'}
 
 g = f'{wt}/packages/{grammar}/grammar.sittir.ts'
 t = open(g).read()
@@ -39,8 +41,8 @@ b = f'{wt}/packages/{grammar}/grammar.bindings.ts'
 s = open(b).read()
 start = s.index('\tsplits: [')
 end = start + len('\tsplits: []\n') if s.startswith('\tsplits: []\n', start) else s.index('\t]\n', start) + 3
-block = open(os.path.join(here, SPLITS[grammar])).read()
-if mode == 'alias':
+block = open(os.path.join(here, (DECORATED_SPLITS if mode == 'alias-decorated' else SPLITS)[grammar])).read()
+if mode in ('alias', 'alias-decorated'):
     block = block.replace(' })', ', alias: true })')
 s = s[:start] + ('\tsplits: []\n' if mode == 'nosplit' else block) + s[end:]
 dsl = "} from '../codegen/src/dsl/dsl-authoring.ts';"

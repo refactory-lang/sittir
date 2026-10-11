@@ -3,7 +3,7 @@
 import { alias, bindings, field, rename } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "98e411fe2cb08f50ec27d4f874c2dc9036adaf3e96a039d47121e05c2fb695a3",
+	hash: "d4d5b78b32047752f658d037d3e3c52acde54c8990677a8040e20d422534c82f",
 	patches: {
 		_expression_within_for_in_clause: { "-1": alias(sym("lambda_within_for_in_clause"), sym("lambda_expression")) },
 		assignment_eq: { "0": field("name"), "1/1": field("value") },
@@ -26,6 +26,7 @@ export default bindings({
 		print_statement_chevron: { "1": field("chevron") },
 		set: { "1": field("elements") },
 		set_comprehension: { "2": field("comprehension_clauses") },
+		string_content: { "0/0": alias(sym("escape_interpolation"), sym("escape_string_literal")), "0/1": alias(sym("escape_sequence"), sym("escape_string_literal")) },
 		subscript: { "0": field("object") },
 		try_statement: { "3": field("handlers"), "4/0": field("alternative"), "5/0": field("finalizer") },
 		type_parameter: { "1": field("types") },
@@ -96,7 +97,6 @@ export default bindings({
 		rename("case_list_pattern", "list_case_pattern"),
 		rename("member_type", "path_type"),
 		rename("string", "string_literal"),
-		rename("escape_sequence", "escape_string_literal"),
 		rename("concatenated_string", "concatenated_string_literal"),
 		rename("integer_decimal_plain", "integer_number_literal"),
 		rename("integer_decimal_long", "big_integer_number_literal"),

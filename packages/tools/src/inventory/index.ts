@@ -89,7 +89,6 @@ export async function bindingsModule(grammar: GrammarName): Promise<BindingsModu
 	const input = await grammarInput(grammar, base, model);
 	if (input === undefined) throw new Error(`bindings-inventory: ${grammar} has no bindings.scm`);
 	const { overlay, report } = deriveOverlay({
-		grammar,
 		facts: input.bindings,
 		base,
 		vocabMembers: vocabularyMembers(readVocabulary(VOCABULARY_DIR)),
