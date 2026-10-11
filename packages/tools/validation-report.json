@@ -26210,6 +26210,21 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
+    "kind": "literal_type_negative_number",
+    "count": 2,
+    "entries": [
+      "Literal types with a minus sign"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "literal_type_negative_number"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
     "entry": "Object types with automatic semicolon insertion",
     "reason": "parse-error",
     "input": "\ntype Something = {\n  length: number\n  (string): string\n  [index:string] : number\n}\n",
@@ -27691,6 +27706,21 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
+    "kind": "literal_type_negative_number",
+    "count": 2,
+    "entries": [
+      "Literal types with a minus sign"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "literal_type_negative_number"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
     "count": 3,
     "entries": [
       "Interface declarations",
@@ -29157,6 +29187,21 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "factory: template_substitution"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "factory: literal_type_negative_number",
+    "count": 1,
+    "entries": [
+      "Literal types with a minus sign"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "factory: literal_type_negative_number"
   },
   {
     "source": "validator",
