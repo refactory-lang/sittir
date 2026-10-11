@@ -1,12 +1,14 @@
 import { createInterface } from 'node:readline';
 import { BindingsSyntaxError } from './facts.ts';
+import { flagsModuleInProcess } from './flags-module.ts';
 import { bindingPatternsInProcess, readBindingsInProcess, roundTripBindingsInProcess } from './pinned-reader.ts';
 import { PINNED_READER_MARKER, type PinnedInput, type PinnedOutput, type PinnedReaderMode, type PinnedReaderReply, type PinnedReaderRequest } from './read.ts';
 
 const READS: { readonly [M in PinnedReaderMode]: (input: PinnedInput<M>) => Promise<PinnedOutput<M>> } = {
 	facts: readBindingsInProcess,
 	patterns: bindingPatternsInProcess,
-	roundTrip: roundTripBindingsInProcess
+	roundTrip: roundTripBindingsInProcess,
+	flagsModule: flagsModuleInProcess
 };
 
 const run = <M extends PinnedReaderMode>({ mode, input }: PinnedReaderRequest<M>): Promise<PinnedOutput<M>> => READS[mode](input);
