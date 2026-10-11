@@ -67,6 +67,7 @@ export type { References } from './references/index.ts';
 export type { RegularExpressions } from './regular-expressions/index.ts';
 export type { ResourceManagement } from './resource-management/index.ts';
 export type { ScopeDeclarations } from './scope-declarations/index.ts';
+export type { ScopedVisibility } from './visibility/scoped-visibility/index.ts';
 export type { SingleInheritance } from './methods/classes/single-inheritance/index.ts';
 export type { SliceExpressions } from './slice-expressions/index.ts';
 export type { StringInterpolation } from './string-interpolation/index.ts';

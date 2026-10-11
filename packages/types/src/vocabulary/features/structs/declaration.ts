@@ -8,7 +8,6 @@ export namespace Declaration {
 		readonly body?: G['slots']['declaration.struct']['body'][];
 		readonly name: V.Identifier.Type<G>;
 		readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
-		readonly visibility?: V.Modifier.Visibility<G>;
 		readonly whereClause?: V.Clause.Where<G>;
 	}
 	export namespace Struct {

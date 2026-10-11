@@ -4,6 +4,13 @@ export type SubKindOf<T extends { readonly $kind: string }> = {
 	readonly [K in keyof T]: K extends '$kind' ? `${T['$kind']}.${string}` : T[K];
 };
 
+/**
+ * An owner refined by one value of an axis many owners share: the owner's members, with a `$kind` beneath the owner's,
+ * and the members the value's kind adds.
+ */
+export type RefinedBy<Owner extends { readonly $kind: string }, Value extends { readonly $kind: string }> = SubKindOf<Owner> &
+	Omit<Value, '$kind'>;
+
 /** A gated member where the context lacks the feature `F` that owns it. */
 export interface Absent<F> {
 	readonly absent: F;

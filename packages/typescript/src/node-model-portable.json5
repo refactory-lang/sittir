@@ -191,6 +191,472 @@
       "vocab": "declaration.method.signature.abstract",
       "read": [
         {
+          "vocab": "declaration.method.signature.abstract.getter.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "generator",
+              "slot": "accessor_kind",
+              "text": "get"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "get",
+                "fields": [
+                  "accessor_kind"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "private",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.signature.abstract.getter.protected",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "generator",
+              "slot": "accessor_kind",
+              "text": "get"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "get",
+                "fields": [
+                  "accessor_kind"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "protected",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.signature.abstract.getter.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "generator",
+              "slot": "accessor_kind",
+              "text": "get"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "get",
+                "fields": [
+                  "accessor_kind"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "public",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.signature.abstract.setter.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "generator",
+              "slot": "accessor_kind",
+              "text": "set"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "set",
+                "fields": [
+                  "accessor_kind"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "private",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.signature.abstract.setter.protected",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "generator",
+              "slot": "accessor_kind",
+              "text": "set"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "set",
+                "fields": [
+                  "accessor_kind"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "protected",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.signature.abstract.setter.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "generator",
+              "slot": "accessor_kind",
+              "text": "set"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "set",
+                "fields": [
+                  "accessor_kind"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "public",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.signature.abstract.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "private",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.signature.abstract.protected",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "protected",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.signature.abstract.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "public",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.signature.abstract.getter",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "generator",
+              "slot": "accessor_kind",
+              "text": "get"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "get",
+                "fields": [
+                  "accessor_kind"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.signature.abstract.setter",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "generator",
+              "slot": "accessor_kind",
+              "text": "set"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "set",
+                "fields": [
+                  "accessor_kind"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.method.signature.abstract",
           "toplevel": true,
           "within": [],
@@ -199,17 +665,6 @@
         }
       ],
       "members": [
-        {
-          "name": "visibility",
-          "route": "slot",
-          "slot": "accessibility_modifier",
-          "path": [
-            {
-              "owner": "abstract_method_signature",
-              "slot": "accessibility_modifier"
-            }
-          ]
-        },
         {
           "name": "override",
           "route": "slot",
@@ -222,7 +677,7 @@
           ]
         },
         {
-          "name": "accessorKind",
+          "name": "generator",
           "route": "slot",
           "slot": "accessor_kind",
           "path": [
@@ -5617,7 +6072,7 @@
           "within": [],
           "pins": [
             {
-              "member": "binding",
+              "member": "kind",
               "slot": "kind",
               "text": "const"
             }
@@ -5643,7 +6098,7 @@
           "within": [],
           "pins": [
             {
-              "member": "binding",
+              "member": "kind",
               "slot": "kind",
               "text": "let"
             }
@@ -5928,6 +6383,216 @@
       "vocab": "declaration.method",
       "read": [
         {
+          "vocab": "declaration.constructor.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [
+                    "name"
+                  ],
+                  "kinds": []
+                },
+                {
+                  "fields": [
+                    "content"
+                  ],
+                  "kinds": []
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "constructor",
+                "self": true
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "private",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  462
+                ],
+                "fields": [
+                  "name"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.constructor.protected",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [
+                    "name"
+                  ],
+                  "kinds": []
+                },
+                {
+                  "fields": [
+                    "content"
+                  ],
+                  "kinds": []
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "constructor",
+                "self": true
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "protected",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  462
+                ],
+                "fields": [
+                  "name"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.constructor.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [
+                    "name"
+                  ],
+                  "kinds": []
+                },
+                {
+                  "fields": [
+                    "content"
+                  ],
+                  "kinds": []
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "constructor",
+                "self": true
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "public",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  462
+                ],
+                "fields": [
+                  "name"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.constructor",
           "toplevel": true,
           "within": [],
@@ -5972,12 +6637,426 @@
           ]
         },
         {
+          "vocab": "declaration.method.getter.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "generator",
+              "slot": "accessor_kind",
+              "text": "get"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "get",
+                "fields": [
+                  "accessor_kind"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "private",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.getter.protected",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "generator",
+              "slot": "accessor_kind",
+              "text": "get"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "get",
+                "fields": [
+                  "accessor_kind"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "protected",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.getter.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "generator",
+              "slot": "accessor_kind",
+              "text": "get"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "get",
+                "fields": [
+                  "accessor_kind"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "public",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.setter.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "generator",
+              "slot": "accessor_kind",
+              "text": "set"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "set",
+                "fields": [
+                  "accessor_kind"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "private",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.setter.protected",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "generator",
+              "slot": "accessor_kind",
+              "text": "set"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "set",
+                "fields": [
+                  "accessor_kind"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "protected",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.setter.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "generator",
+              "slot": "accessor_kind",
+              "text": "set"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "set",
+                "fields": [
+                  "accessor_kind"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "public",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "private",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.protected",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "protected",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "public",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.method.getter",
           "toplevel": true,
           "within": [],
           "pins": [
             {
-              "member": "accessor",
+              "member": "generator",
               "slot": "accessor_kind",
               "text": "get"
             }
@@ -6003,7 +7082,7 @@
           "within": [],
           "pins": [
             {
-              "member": "accessor",
+              "member": "generator",
               "slot": "accessor_kind",
               "text": "set"
             }
@@ -6032,17 +7111,6 @@
         }
       ],
       "members": [
-        {
-          "name": "visibility",
-          "route": "slot",
-          "slot": "accessibility_modifier",
-          "path": [
-            {
-              "owner": "method_definition",
-              "slot": "accessibility_modifier"
-            }
-          ]
-        },
         {
           "name": "static",
           "route": "slot",
@@ -6088,7 +7156,7 @@
           ]
         },
         {
-          "name": "accessor",
+          "name": "generator",
           "route": "slot",
           "slot": "accessor_kind",
           "path": [
@@ -6165,18 +7233,6 @@
           ]
         },
         {
-          "name": "generator",
-          "route": "presence",
-          "via": [],
-          "token": "*",
-          "path": [
-            {
-              "owner": "method_definition",
-              "slot": "accessor_kind"
-            }
-          ]
-        },
-        {
           "name": "optional",
           "route": "presence",
           "via": [],
@@ -6216,6 +7272,472 @@
       "vocab": "declaration.method.signature",
       "read": [
         {
+          "vocab": "declaration.method.signature.getter.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "generator",
+              "slot": "accessor_kind",
+              "text": "get"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "get",
+                "fields": [
+                  "accessor_kind"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "private",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.signature.getter.protected",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "generator",
+              "slot": "accessor_kind",
+              "text": "get"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "get",
+                "fields": [
+                  "accessor_kind"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "protected",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.signature.getter.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "generator",
+              "slot": "accessor_kind",
+              "text": "get"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "get",
+                "fields": [
+                  "accessor_kind"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "public",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.signature.setter.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "generator",
+              "slot": "accessor_kind",
+              "text": "set"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "set",
+                "fields": [
+                  "accessor_kind"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "private",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.signature.setter.protected",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "generator",
+              "slot": "accessor_kind",
+              "text": "set"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "set",
+                "fields": [
+                  "accessor_kind"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "protected",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.signature.setter.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "generator",
+              "slot": "accessor_kind",
+              "text": "set"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "set",
+                "fields": [
+                  "accessor_kind"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "public",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.signature.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "private",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.signature.protected",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "protected",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.signature.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "public",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.signature.getter",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "generator",
+              "slot": "accessor_kind",
+              "text": "get"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "get",
+                "fields": [
+                  "accessor_kind"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.signature.setter",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "generator",
+              "slot": "accessor_kind",
+              "text": "set"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "set",
+                "fields": [
+                  "accessor_kind"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.method.signature",
           "toplevel": true,
           "within": [],
@@ -6224,17 +7746,6 @@
         }
       ],
       "members": [
-        {
-          "name": "visibility",
-          "route": "slot",
-          "slot": "accessibility_modifier",
-          "path": [
-            {
-              "owner": "method_signature",
-              "slot": "accessibility_modifier"
-            }
-          ]
-        },
         {
           "name": "static",
           "route": "slot",
@@ -6280,7 +7791,7 @@
           ]
         },
         {
-          "name": "accessor",
+          "name": "generator",
           "route": "slot",
           "slot": "accessor_kind",
           "path": [
@@ -7366,6 +8877,108 @@
       "vocab": "declaration.parameter",
       "read": [
         {
+          "vocab": "declaration.parameter.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [],
+                "kinds": [
+                  "accessibility_modifier"
+                ]
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "private",
+                "fields": [],
+                "kinds": [
+                  "accessibility_modifier"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.parameter.protected",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [],
+                "kinds": [
+                  "accessibility_modifier"
+                ]
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "protected",
+                "fields": [],
+                "kinds": [
+                  "accessibility_modifier"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.parameter.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [],
+                "kinds": [
+                  "accessibility_modifier"
+                ]
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "public",
+                "fields": [],
+                "kinds": [
+                  "accessibility_modifier"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.parameter",
           "toplevel": true,
           "within": [],
@@ -7382,17 +8995,6 @@
             {
               "owner": "optional_parameter",
               "slot": "decorator"
-            }
-          ]
-        },
-        {
-          "name": "visibility",
-          "route": "slot",
-          "slot": "accessibility_modifier",
-          "path": [
-            {
-              "owner": "optional_parameter",
-              "slot": "accessibility_modifier"
             }
           ]
         },
@@ -7840,6 +9442,108 @@
       "vocab": "declaration.field.signature",
       "read": [
         {
+          "vocab": "declaration.field.signature.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "private",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.field.signature.protected",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "protected",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.field.signature.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "public",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.field.signature",
           "toplevel": true,
           "within": [],
@@ -7848,17 +9552,6 @@
         }
       ],
       "members": [
-        {
-          "name": "visibility",
-          "route": "slot",
-          "slot": "accessibility_modifier",
-          "path": [
-            {
-              "owner": "property_signature",
-              "slot": "accessibility_modifier"
-            }
-          ]
-        },
         {
           "name": "static",
           "route": "slot",
@@ -7973,6 +9666,108 @@
       "vocab": "declaration.field",
       "read": [
         {
+          "vocab": "declaration.field.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "private",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.field.protected",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "protected",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.field.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "public",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.field",
           "toplevel": true,
           "within": [],
@@ -8000,17 +9795,6 @@
             {
               "owner": "public_field_definition",
               "slot": "declare"
-            }
-          ]
-        },
-        {
-          "name": "visibility",
-          "route": "slot",
-          "slot": "accessibility_modifier",
-          "path": [
-            {
-              "owner": "public_field_definition",
-              "slot": "accessibility_modifier"
             }
           ]
         },
@@ -8279,6 +10063,108 @@
       "vocab": "declaration.parameter",
       "read": [
         {
+          "vocab": "declaration.parameter.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [],
+                "kinds": [
+                  "accessibility_modifier"
+                ]
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "private",
+                "fields": [],
+                "kinds": [
+                  "accessibility_modifier"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.parameter.protected",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [],
+                "kinds": [
+                  "accessibility_modifier"
+                ]
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "protected",
+                "fields": [],
+                "kinds": [
+                  "accessibility_modifier"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.parameter.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318
+                ],
+                "fields": [],
+                "kinds": [
+                  "accessibility_modifier"
+                ]
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "public",
+                "fields": [],
+                "kinds": [
+                  "accessibility_modifier"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.parameter",
           "toplevel": true,
           "within": [],
@@ -8295,17 +10181,6 @@
             {
               "owner": "required_parameter",
               "slot": "decorator"
-            }
-          ]
-        },
-        {
-          "name": "visibility",
-          "route": "slot",
-          "slot": "accessibility_modifier",
-          "path": [
-            {
-              "owner": "required_parameter",
-              "slot": "accessibility_modifier"
             }
           ]
         },
@@ -10407,34 +12282,41 @@
         "paths": 13,
         "kinds": 5,
         "refinements": 0,
-        "aliases": 151
+        "aliases": 146
       },
       {
         "depth": 2,
         "paths": 111,
         "kinds": 133,
         "refinements": 8,
-        "aliases": 101
+        "aliases": 99
       },
       {
         "depth": 3,
-        "paths": 85,
-        "kinds": 77,
-        "refinements": 57,
+        "paths": 97,
+        "kinds": 80,
+        "refinements": 69,
         "aliases": 42
       },
       {
         "depth": 4,
-        "paths": 49,
-        "kinds": 12,
-        "refinements": 25,
+        "paths": 63,
+        "kinds": 15,
+        "refinements": 39,
         "aliases": 0
       },
       {
         "depth": 5,
-        "paths": 3,
-        "kinds": 3,
-        "refinements": 3,
+        "paths": 14,
+        "kinds": 5,
+        "refinements": 14,
+        "aliases": 0
+      },
+      {
+        "depth": 6,
+        "paths": 6,
+        "kinds": 1,
+        "refinements": 6,
         "aliases": 0
       }
     ],
@@ -10567,6 +12449,15 @@
       },
       {
         "under": "",
+        "name": "getter",
+        "paths": [
+          "declaration.method.getter",
+          "declaration.method.signature.abstract.getter",
+          "declaration.method.signature.getter"
+        ]
+      },
+      {
+        "under": "",
         "name": "hex",
         "paths": [
           "literal.number.integer.big.hex",
@@ -10677,10 +12568,79 @@
       },
       {
         "under": "",
+        "name": "private",
+        "paths": [
+          "declaration.constructor.private",
+          "declaration.field.private",
+          "declaration.field.signature.private",
+          "declaration.method.getter.private",
+          "declaration.method.private",
+          "declaration.method.setter.private",
+          "declaration.method.signature.abstract.getter.private",
+          "declaration.method.signature.abstract.private",
+          "declaration.method.signature.abstract.setter.private",
+          "declaration.method.signature.getter.private",
+          "declaration.method.signature.private",
+          "declaration.method.signature.setter.private",
+          "declaration.parameter.private",
+          "modifier.visibility.private"
+        ]
+      },
+      {
+        "under": "",
+        "name": "protected",
+        "paths": [
+          "declaration.constructor.protected",
+          "declaration.field.protected",
+          "declaration.field.signature.protected",
+          "declaration.method.getter.protected",
+          "declaration.method.protected",
+          "declaration.method.setter.protected",
+          "declaration.method.signature.abstract.getter.protected",
+          "declaration.method.signature.abstract.protected",
+          "declaration.method.signature.abstract.setter.protected",
+          "declaration.method.signature.getter.protected",
+          "declaration.method.signature.protected",
+          "declaration.method.signature.setter.protected",
+          "declaration.parameter.protected",
+          "modifier.visibility.protected"
+        ]
+      },
+      {
+        "under": "",
+        "name": "public",
+        "paths": [
+          "declaration.constructor.public",
+          "declaration.field.public",
+          "declaration.field.signature.public",
+          "declaration.method.getter.public",
+          "declaration.method.public",
+          "declaration.method.setter.public",
+          "declaration.method.signature.abstract.getter.public",
+          "declaration.method.signature.abstract.public",
+          "declaration.method.signature.abstract.setter.public",
+          "declaration.method.signature.getter.public",
+          "declaration.method.signature.public",
+          "declaration.method.signature.setter.public",
+          "declaration.parameter.public",
+          "modifier.visibility.public"
+        ]
+      },
+      {
+        "under": "",
         "name": "rest",
         "paths": [
           "pattern.rest",
           "type.rest"
+        ]
+      },
+      {
+        "under": "",
+        "name": "setter",
+        "paths": [
+          "declaration.method.setter",
+          "declaration.method.signature.abstract.setter",
+          "declaration.method.signature.setter"
         ]
       },
       {
@@ -10757,6 +12717,81 @@
         "paths": [
           "clause.export.specifier",
           "clause.import.specifier"
+        ]
+      },
+      {
+        "under": "declaration",
+        "name": "getter",
+        "paths": [
+          "declaration.method.getter",
+          "declaration.method.signature.abstract.getter",
+          "declaration.method.signature.getter"
+        ]
+      },
+      {
+        "under": "declaration",
+        "name": "private",
+        "paths": [
+          "declaration.constructor.private",
+          "declaration.field.private",
+          "declaration.field.signature.private",
+          "declaration.method.getter.private",
+          "declaration.method.private",
+          "declaration.method.setter.private",
+          "declaration.method.signature.abstract.getter.private",
+          "declaration.method.signature.abstract.private",
+          "declaration.method.signature.abstract.setter.private",
+          "declaration.method.signature.getter.private",
+          "declaration.method.signature.private",
+          "declaration.method.signature.setter.private",
+          "declaration.parameter.private"
+        ]
+      },
+      {
+        "under": "declaration",
+        "name": "protected",
+        "paths": [
+          "declaration.constructor.protected",
+          "declaration.field.protected",
+          "declaration.field.signature.protected",
+          "declaration.method.getter.protected",
+          "declaration.method.protected",
+          "declaration.method.setter.protected",
+          "declaration.method.signature.abstract.getter.protected",
+          "declaration.method.signature.abstract.protected",
+          "declaration.method.signature.abstract.setter.protected",
+          "declaration.method.signature.getter.protected",
+          "declaration.method.signature.protected",
+          "declaration.method.signature.setter.protected",
+          "declaration.parameter.protected"
+        ]
+      },
+      {
+        "under": "declaration",
+        "name": "public",
+        "paths": [
+          "declaration.constructor.public",
+          "declaration.field.public",
+          "declaration.field.signature.public",
+          "declaration.method.getter.public",
+          "declaration.method.public",
+          "declaration.method.setter.public",
+          "declaration.method.signature.abstract.getter.public",
+          "declaration.method.signature.abstract.public",
+          "declaration.method.signature.abstract.setter.public",
+          "declaration.method.signature.getter.public",
+          "declaration.method.signature.public",
+          "declaration.method.signature.setter.public",
+          "declaration.parameter.public"
+        ]
+      },
+      {
+        "under": "declaration",
+        "name": "setter",
+        "paths": [
+          "declaration.method.setter",
+          "declaration.method.signature.abstract.setter",
+          "declaration.method.signature.setter"
         ]
       },
       {

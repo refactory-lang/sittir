@@ -12,34 +12,164 @@
 (function_item (function_modifiers "unsafe" @unsafe))
 (function_item (function_modifiers "default" @default))
 (function_item (function_modifiers (extern_modifier) @extern))
+(function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.function.private
+(function_item (visibility_modifier (visibility_modifier_pub))) @declaration.function.public
+(function_item (visibility_modifier (crate))) @declaration.function.public.internal
+(function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.function.public.internal
+(function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.function.public.restricted
 (function_signature_item) @declaration.function.signature
+(function_signature_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.function.signature.private
+(function_signature_item (visibility_modifier (visibility_modifier_pub))) @declaration.function.signature.public
+(function_signature_item (visibility_modifier (crate))) @declaration.function.signature.public.internal
+(function_signature_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.function.signature.public.internal
+(function_signature_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.function.signature.public.restricted
 (trait_item (declaration_list (function_signature_item) @declaration.method.signature))
+(trait_item (declaration_list (function_signature_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.method.signature.private))
+(trait_item (declaration_list (function_signature_item (visibility_modifier (visibility_modifier_pub))) @declaration.method.signature.public))
+(trait_item (declaration_list (function_signature_item (visibility_modifier (crate))) @declaration.method.signature.public.internal))
+(trait_item (declaration_list (function_signature_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.method.signature.public.internal))
+(trait_item (declaration_list (function_signature_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)])))) @declaration.method.signature.public.restricted))
 (impl_item_body (declaration_list (function_item (parameters (parameters_elements . (attributed_parameter (self_parameter) @receiver)))) @declaration.method) (#kind-eq? @receiver "self_parameter"))
+(impl_item_body (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self)))) (parameters (parameters_elements . (attributed_parameter (self_parameter))))) @declaration.method.private))
+(impl_item_body (declaration_list (function_item (visibility_modifier (visibility_modifier_pub)) (parameters (parameters_elements . (attributed_parameter (self_parameter))))) @declaration.method.public))
+(impl_item_body (declaration_list (function_item (visibility_modifier (crate)) (parameters (parameters_elements . (attributed_parameter (self_parameter))))) @declaration.method.public.internal))
+(impl_item_body (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate)))) (parameters (parameters_elements . (attributed_parameter (self_parameter))))) @declaration.method.public.internal))
+(impl_item_body (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]))) (parameters (parameters_elements . (attributed_parameter (self_parameter))))) @declaration.method.public.restricted))
 (impl_item_body (declaration_list (function_item (parameters (parameters_elements (attributed_parameter (attribute_item)? (_) @_p)*)?)) @declaration.method.static) (#not-kind-eq? @_p "self_parameter"))
+(impl_item_body (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self)))) (parameters (parameters_elements (attributed_parameter (attribute_item)? (_) @_p)*)?)) @declaration.method.static.private) (#not-kind-eq? @_p "self_parameter"))
+(impl_item_body (declaration_list (function_item (visibility_modifier (visibility_modifier_pub)) (parameters (parameters_elements (attributed_parameter (attribute_item)? (_) @_p)*)?)) @declaration.method.static.public) (#not-kind-eq? @_p "self_parameter"))
+(impl_item_body (declaration_list (function_item (visibility_modifier (crate)) (parameters (parameters_elements (attributed_parameter (attribute_item)? (_) @_p)*)?)) @declaration.method.static.public.internal) (#not-kind-eq? @_p "self_parameter"))
+(impl_item_body (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate)))) (parameters (parameters_elements (attributed_parameter (attribute_item)? (_) @_p)*)?)) @declaration.method.static.public.internal) (#not-kind-eq? @_p "self_parameter"))
+(impl_item_body (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]))) (parameters (parameters_elements (attributed_parameter (attribute_item)? (_) @_p)*)?)) @declaration.method.static.public.restricted) (#not-kind-eq? @_p "self_parameter"))
 (impl_item_body) @declaration.extension
 (impl_item_semi) @declaration.extension
 (impl_item_body trait_clause: (_ trait: (_) @implements)) @declaration.extension.conformance
 (trait_item bounds: (_)? @extends (declaration_list (function_item) @declaration.method)) @declaration.interface.trait
+(trait_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.interface.trait.private
+(trait_item (visibility_modifier (visibility_modifier_pub))) @declaration.interface.trait.public
+(trait_item (visibility_modifier (crate))) @declaration.interface.trait.public.internal
+(trait_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.interface.trait.public.internal
+(trait_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.interface.trait.public.restricted
+(trait_item (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.method.private))
+(trait_item (declaration_list (function_item (visibility_modifier (visibility_modifier_pub))) @declaration.method.public))
+(trait_item (declaration_list (function_item (visibility_modifier (crate))) @declaration.method.public.internal))
+(trait_item (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.method.public.internal))
+(trait_item (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)])))) @declaration.method.public.restricted))
 (struct_item) @declaration.struct
+(struct_item_brace) @declaration.struct
+(struct_item_brace (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.struct.private
+(struct_item_brace (visibility_modifier (visibility_modifier_pub))) @declaration.struct.public
+(struct_item_brace (visibility_modifier (crate))) @declaration.struct.public.internal
+(struct_item_brace (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.struct.public.internal
+(struct_item_brace (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.struct.public.restricted
 (struct_item_tuple) @declaration.struct.tuple
+(struct_item_tuple (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.struct.tuple.private
+(struct_item_tuple (visibility_modifier (visibility_modifier_pub))) @declaration.struct.tuple.public
+(struct_item_tuple (visibility_modifier (crate))) @declaration.struct.tuple.public.internal
+(struct_item_tuple (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.struct.tuple.public.internal
+(struct_item_tuple (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.struct.tuple.public.restricted
 (struct_item_unit) @declaration.struct.unit
+(struct_item_unit (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.struct.unit.private
+(struct_item_unit (visibility_modifier (visibility_modifier_pub))) @declaration.struct.unit.public
+(struct_item_unit (visibility_modifier (crate))) @declaration.struct.unit.public.internal
+(struct_item_unit (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.struct.unit.public.internal
+(struct_item_unit (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.struct.unit.public.restricted
 (enum_item) @declaration.enum
+(enum_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.enum.private
+(enum_item (visibility_modifier (visibility_modifier_pub))) @declaration.enum.public
+(enum_item (visibility_modifier (crate))) @declaration.enum.public.internal
+(enum_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.enum.public.internal
+(enum_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.enum.public.restricted
 (enum_variant) @declaration.enum_member
+(enum_variant (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.enum_member.private
+(enum_variant (visibility_modifier (visibility_modifier_pub))) @declaration.enum_member.public
+(enum_variant (visibility_modifier (crate))) @declaration.enum_member.public.internal
+(enum_variant (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.enum_member.public.internal
+(enum_variant (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.enum_member.public.restricted
 (enum_variant body: (ordered_field_declaration_list)) @declaration.enum_member.tuple
+(enum_variant (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self)))) body: (ordered_field_declaration_list)) @declaration.enum_member.tuple.private
+(enum_variant (visibility_modifier (visibility_modifier_pub)) body: (ordered_field_declaration_list)) @declaration.enum_member.tuple.public
+(enum_variant (visibility_modifier (crate)) body: (ordered_field_declaration_list)) @declaration.enum_member.tuple.public.internal
+(enum_variant (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate)))) body: (ordered_field_declaration_list)) @declaration.enum_member.tuple.public.internal
+(enum_variant (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]))) body: (ordered_field_declaration_list)) @declaration.enum_member.tuple.public.restricted
 (enum_variant body: (field_declaration_list)) @declaration.enum_member.struct
+(enum_variant (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self)))) body: (field_declaration_list)) @declaration.enum_member.struct.private
+(enum_variant (visibility_modifier (visibility_modifier_pub)) body: (field_declaration_list)) @declaration.enum_member.struct.public
+(enum_variant (visibility_modifier (crate)) body: (field_declaration_list)) @declaration.enum_member.struct.public.internal
+(enum_variant (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate)))) body: (field_declaration_list)) @declaration.enum_member.struct.public.internal
+(enum_variant (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]))) body: (field_declaration_list)) @declaration.enum_member.struct.public.restricted
 (attributed_enum_variant (attribute_item)* @attributes (_) @element)
 (union_item) @declaration.union
+(union_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.union.private
+(union_item (visibility_modifier (visibility_modifier_pub))) @declaration.union.public
+(union_item (visibility_modifier (crate))) @declaration.union.public.internal
+(union_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.union.public.internal
+(union_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.union.public.restricted
 (type_item type: (_) @value) @declaration.type_alias
+(type_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.type_alias.private
+(type_item (visibility_modifier (visibility_modifier_pub))) @declaration.type_alias.public
+(type_item (visibility_modifier (crate))) @declaration.type_alias.public.internal
+(type_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.type_alias.public.internal
+(type_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.type_alias.public.restricted
 (associated_type) @declaration.type_alias.associated
 (mod_item) @declaration.module
+(mod_item_external) @declaration.module
+(mod_item_external (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.module.private
+(mod_item_external (visibility_modifier (visibility_modifier_pub))) @declaration.module.public
+(mod_item_external (visibility_modifier (crate))) @declaration.module.public.internal
+(mod_item_external (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.module.public.internal
+(mod_item_external (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.module.public.restricted
+(mod_item_inline) @declaration.module
+(mod_item_inline (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.module.private
+(mod_item_inline (visibility_modifier (visibility_modifier_pub))) @declaration.module.public
+(mod_item_inline (visibility_modifier (crate))) @declaration.module.public.internal
+(mod_item_inline (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.module.public.internal
+(mod_item_inline (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.module.public.restricted
 (foreign_mod_item) @declaration.module.foreign
+(foreign_mod_item_body) @declaration.module.foreign
+(foreign_mod_item_body (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.module.foreign.private
+(foreign_mod_item_body (visibility_modifier (visibility_modifier_pub))) @declaration.module.foreign.public
+(foreign_mod_item_body (visibility_modifier (crate))) @declaration.module.foreign.public.internal
+(foreign_mod_item_body (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.module.foreign.public.internal
+(foreign_mod_item_body (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.module.foreign.public.restricted
+(foreign_mod_item_semi) @declaration.module.foreign
+(foreign_mod_item_semi (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.module.foreign.private
+(foreign_mod_item_semi (visibility_modifier (visibility_modifier_pub))) @declaration.module.foreign.public
+(foreign_mod_item_semi (visibility_modifier (crate))) @declaration.module.foreign.public.internal
+(foreign_mod_item_semi (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.module.foreign.public.internal
+(foreign_mod_item_semi (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.module.foreign.public.restricted
 (extern_crate_declaration) @statement.import.crate
+(extern_crate_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @statement.import.crate.private
+(extern_crate_declaration (visibility_modifier (visibility_modifier_pub))) @statement.import.crate.public
+(extern_crate_declaration (visibility_modifier (crate))) @statement.import.crate.public.internal
+(extern_crate_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @statement.import.crate.public.internal
+(extern_crate_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @statement.import.crate.public.restricted
 (const_item) @declaration.constant
+(const_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.constant.private
+(const_item (visibility_modifier (visibility_modifier_pub))) @declaration.constant.public
+(const_item (visibility_modifier (crate))) @declaration.constant.public.internal
+(const_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.constant.public.internal
+(const_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.constant.public.restricted
 (static_item) @declaration.variable.static
 (static_item ref: _ @byReference)
+(static_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.variable.static.private
+(static_item (visibility_modifier (visibility_modifier_pub))) @declaration.variable.static.public
+(static_item (visibility_modifier (crate))) @declaration.variable.static.public.internal
+(static_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.variable.static.public.internal
+(static_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.variable.static.public.restricted
 (let_declaration pattern: (_) @name) @declaration.variable
 (field_declaration) @declaration.field
+(field_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.field.private
+(field_declaration (visibility_modifier (visibility_modifier_pub))) @declaration.field.public
+(field_declaration (visibility_modifier (crate))) @declaration.field.public.internal
+(field_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.field.public.internal
+(field_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.field.public.restricted
 (attributed_ordered_field (attribute_item)* @attributes) @declaration.field
+(attributed_ordered_field (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.field.private
+(attributed_ordered_field (visibility_modifier (visibility_modifier_pub))) @declaration.field.public
+(attributed_ordered_field (visibility_modifier (crate))) @declaration.field.public.internal
+(attributed_ordered_field (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.field.public.internal
+(attributed_ordered_field (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.field.public.restricted
 (attributed_field_declaration (attribute_item)* @attributes (_) @element)
 (macro_definition name: (_) (_)? @rules) @declaration.macro
 (parameter name: (_) @name) @declaration.parameter
@@ -63,6 +193,11 @@
 (return_expression (_)? @expression) @statement.return
 (match_expression value: (_) @subject) @statement.match
 (use_declaration) @statement.import
+(use_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @statement.import.private
+(use_declaration (visibility_modifier (visibility_modifier_pub))) @statement.import.public
+(use_declaration (visibility_modifier (crate))) @statement.import.public.internal
+(use_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @statement.import.public.internal
+(use_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @statement.import.public.restricted
 (expression_statement) @statement.expression
 (empty_statement) @statement.empty
 (break_expression) @statement.break
@@ -267,10 +402,10 @@
 (visibility_modifier (_) @element)
 (visibility_modifier (crate) @modifier.visibility.public.internal)
 (visibility_modifier_pub) @modifier.visibility.public
-(visibility_modifier_pub (visibility_modifier_pub_scope) @scope)
 (visibility_modifier_pub (visibility_modifier_pub_scope (self))) @modifier.visibility.private
 (visibility_modifier_pub (visibility_modifier_pub_scope (crate))) @modifier.visibility.public.internal
-(visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)])) @modifier.visibility.public.restricted
+(visibility_modifier_pub (visibility_modifier_pub_scope (super) @scope)) @modifier.visibility.public.restricted
+(visibility_modifier_pub (visibility_modifier_pub_scope (visibility_modifier_pub_scope_in_path (_) @scope))) @modifier.visibility.public.restricted
 (extern_modifier) @modifier.extern
 
 ; ── attribute ──────────────────────────────────────────────────────────────────

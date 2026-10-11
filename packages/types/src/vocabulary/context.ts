@@ -372,12 +372,10 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['expression']
 				| G['identifier']
 				| G['literal'];
-			readonly visibility: V.Modifier.Visibility<G>;
 		};
 		readonly 'declaration.field.signature': {
 			readonly name: G['expression'] | G['literal'] | V.Identifier.Property<G> | string;
 			readonly type: G['identifier'] | G['type'];
-			readonly visibility: V.Modifier.Visibility<G>;
 		};
 		readonly 'declaration.function': {
 			readonly body: V.Declaration.TypeAlias<G> | G['statement'];
@@ -429,7 +427,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly name: G['identifier'] | string;
 		};
 		readonly 'declaration.method': {
-			readonly accessor: string;
 			readonly body: V.Declaration.TypeAlias<G> | G['statement'];
 			readonly name: G['expression'] | G['identifier'] | G['literal'] | string;
 			readonly parameters:
@@ -445,10 +442,8 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Expression.Call.Macro<G>
 				| G['identifier']
 				| G['type'];
-			readonly visibility: V.Modifier.Visibility<G>;
 		};
 		readonly 'declaration.method.signature': {
-			readonly accessor: string;
 			readonly functionModifiers: V.Modifier.Extern<G> | string;
 			readonly name: G['expression'] | G['identifier'] | G['literal'] | string;
 			readonly parameters:
@@ -463,13 +458,10 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Expression.Call.Macro<G>
 				| G['identifier']
 				| G['type'];
-			readonly visibility: V.Modifier.Visibility<G>;
 		};
 		readonly 'declaration.method.signature.abstract': {
-			readonly accessorKind: string;
 			readonly name: G['expression'] | G['literal'] | V.Identifier.Property<G> | string;
 			readonly returnType: G['identifier'] | G['type'];
-			readonly visibility: V.Modifier.Visibility<G>;
 		};
 		readonly 'declaration.method.static': {
 			readonly parameters:
@@ -517,7 +509,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Expression.Call.Macro<G>
 				| G['identifier']
 				| G['type'];
-			readonly visibility: V.Modifier.Visibility<G>;
 		};
 		readonly 'declaration.parameter.default': {
 			readonly default:

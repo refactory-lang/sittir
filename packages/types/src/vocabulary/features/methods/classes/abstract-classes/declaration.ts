@@ -15,7 +15,6 @@ export namespace Declaration {
 			export interface Abstract<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Method.Signature<G>> {
 				// claimed by t
 				readonly $kind: 'declaration.method.signature.abstract';
-				readonly accessorKind?: G['slots']['declaration.method.signature.abstract']['accessorKind'];
 				readonly name: G['slots']['declaration.method.signature.abstract']['name'];
 				readonly parameters: V.Declaration.Parameter.Any<G>[];
 			}

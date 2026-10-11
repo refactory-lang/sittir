@@ -22,39 +22,73 @@
 (enum_body_element_name name: (_) @name) @declaration.enum_member
 (type_alias_declaration) @declaration.type_alias
 (method_definition) @declaration.method
-(method_definition (accessibility_modifier) @visibility)
-(method_definition "*" @generator)
+(method_definition accessor_kind: "*" @generator)
 (method_definition "?" @optional)
-(method_definition accessor_kind: _ @accessor)
 (method_definition name: (private_property_identifier) @name @privateName)
 (method_definition name: (computed_property_name) @name @computed)
+(method_definition (accessibility_modifier "private")) @declaration.method.private
+(method_definition (accessibility_modifier "protected")) @declaration.method.protected
+(method_definition (accessibility_modifier "public")) @declaration.method.public
 (method_definition accessor_kind: "get") @declaration.method.getter
+(method_definition (accessibility_modifier "private") accessor_kind: "get") @declaration.method.getter.private
+(method_definition (accessibility_modifier "protected") accessor_kind: "get") @declaration.method.getter.protected
+(method_definition (accessibility_modifier "public") accessor_kind: "get") @declaration.method.getter.public
 (method_definition accessor_kind: "set") @declaration.method.setter
+(method_definition (accessibility_modifier "private") accessor_kind: "set") @declaration.method.setter.private
+(method_definition (accessibility_modifier "protected") accessor_kind: "set") @declaration.method.setter.protected
+(method_definition (accessibility_modifier "public") accessor_kind: "set") @declaration.method.setter.public
 ((method_definition name: (property_identifier) @name) @declaration.constructor (#eq? @name "constructor"))
+((method_definition (accessibility_modifier "private") name: (property_identifier) @name) @declaration.constructor.private (#eq? @name "constructor"))
+((method_definition (accessibility_modifier "protected") name: (property_identifier) @name) @declaration.constructor.protected (#eq? @name "constructor"))
+((method_definition (accessibility_modifier "public") name: (property_identifier) @name) @declaration.constructor.public (#eq? @name "constructor"))
 (method_signature) @declaration.method.signature
-(method_signature (accessibility_modifier) @visibility)
-(method_signature accessor_kind: _ @accessor)
+(method_signature accessor_kind: "*" @generator)
 (method_signature name: (private_property_identifier) @name @privateName)
 (method_signature name: (computed_property_name) @name @computed)
+(method_signature (accessibility_modifier "private")) @declaration.method.signature.private
+(method_signature (accessibility_modifier "protected")) @declaration.method.signature.protected
+(method_signature (accessibility_modifier "public")) @declaration.method.signature.public
+(method_signature accessor_kind: "get") @declaration.method.signature.getter
+(method_signature (accessibility_modifier "private") accessor_kind: "get") @declaration.method.signature.getter.private
+(method_signature (accessibility_modifier "protected") accessor_kind: "get") @declaration.method.signature.getter.protected
+(method_signature (accessibility_modifier "public") accessor_kind: "get") @declaration.method.signature.getter.public
+(method_signature accessor_kind: "set") @declaration.method.signature.setter
+(method_signature (accessibility_modifier "private") accessor_kind: "set") @declaration.method.signature.setter.private
+(method_signature (accessibility_modifier "protected") accessor_kind: "set") @declaration.method.signature.setter.protected
+(method_signature (accessibility_modifier "public") accessor_kind: "set") @declaration.method.signature.setter.public
 (abstract_method_signature) @declaration.method.signature.abstract
-(abstract_method_signature (accessibility_modifier) @visibility)
+(abstract_method_signature accessor_kind: "*" @generator)
 (abstract_method_signature name: (private_property_identifier) @name @privateName)
 (abstract_method_signature name: (computed_property_name) @name @computed)
+(abstract_method_signature (accessibility_modifier "private")) @declaration.method.signature.abstract.private
+(abstract_method_signature (accessibility_modifier "protected")) @declaration.method.signature.abstract.protected
+(abstract_method_signature (accessibility_modifier "public")) @declaration.method.signature.abstract.public
+(abstract_method_signature accessor_kind: "get") @declaration.method.signature.abstract.getter
+(abstract_method_signature (accessibility_modifier "private") accessor_kind: "get") @declaration.method.signature.abstract.getter.private
+(abstract_method_signature (accessibility_modifier "protected") accessor_kind: "get") @declaration.method.signature.abstract.getter.protected
+(abstract_method_signature (accessibility_modifier "public") accessor_kind: "get") @declaration.method.signature.abstract.getter.public
+(abstract_method_signature accessor_kind: "set") @declaration.method.signature.abstract.setter
+(abstract_method_signature (accessibility_modifier "private") accessor_kind: "set") @declaration.method.signature.abstract.setter.private
+(abstract_method_signature (accessibility_modifier "protected") accessor_kind: "set") @declaration.method.signature.abstract.setter.protected
+(abstract_method_signature (accessibility_modifier "public") accessor_kind: "set") @declaration.method.signature.abstract.setter.public
 (property_signature) @declaration.field.signature
-(property_signature (accessibility_modifier) @visibility)
 (property_signature name: (private_property_identifier) @name @privateName)
 (property_signature name: (computed_property_name) @name @computed)
+(property_signature (accessibility_modifier "private")) @declaration.field.signature.private
+(property_signature (accessibility_modifier "protected")) @declaration.field.signature.protected
+(property_signature (accessibility_modifier "public")) @declaration.field.signature.public
 (public_field_definition) @declaration.field
-(public_field_definition (accessibility_modifier) @visibility)
 (public_field_definition "?" @optional)
 (public_field_definition "!" @definite)
 (public_field_definition name: (private_property_identifier) @name @privateName)
 (public_field_definition name: (computed_property_name) @name @computed)
+(public_field_definition (accessibility_modifier "private")) @declaration.field.private
+(public_field_definition (accessibility_modifier "protected")) @declaration.field.protected
+(public_field_definition (accessibility_modifier "public")) @declaration.field.public
 (class_body_member_declaration (_) @element)
 (class_body_member_method (decorator)* @decorators (_) @element)
 (class_body_member_method_sig (_) @element)
 (lexical_declaration) @declaration.variable
-(lexical_declaration kind: _ @binding)
 (lexical_declaration kind: "const") @declaration.variable.constant
 (lexical_declaration kind: "let") @declaration.variable.reassignable
 (variable_declaration) @declaration.variable.reassignable.function_scoped
@@ -63,10 +97,14 @@
 (variable_declarator_definite "!" @definite)
 (variable_declarator_plain name: [(array_pattern) (object_pattern)]) @declaration.variable.pattern
 (required_parameter pattern: (_) @name value: (_)? @default) @declaration.parameter
-(required_parameter (accessibility_modifier) @visibility)
+(required_parameter (accessibility_modifier "private")) @declaration.parameter.private
+(required_parameter (accessibility_modifier "protected")) @declaration.parameter.protected
+(required_parameter (accessibility_modifier "public")) @declaration.parameter.public
 (optional_parameter pattern: (_) @name value: (_)? @default) @declaration.parameter
 (optional_parameter "?" @optional)
-(optional_parameter (accessibility_modifier) @visibility)
+(optional_parameter (accessibility_modifier "private")) @declaration.parameter.private
+(optional_parameter (accessibility_modifier "protected")) @declaration.parameter.protected
+(optional_parameter (accessibility_modifier "public")) @declaration.parameter.public
 (type_parameter value: (_)? @default) @declaration.type_parameter
 (ambient_declaration) @declaration.ambient
 (ambient_declaration_module) @declaration.module_property

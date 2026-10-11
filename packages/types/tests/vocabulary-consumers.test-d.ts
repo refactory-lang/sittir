@@ -11,7 +11,17 @@
  * bounds the context.
  */
 
-import type { Accessors, BoundedQuantification, Clause, Declaration, Expression, GrammarContext, Identifier, Statement } from '../src/vocabulary/index.ts';
+import type {
+	Accessors,
+	BoundedQuantification,
+	Clause,
+	Declaration,
+	Expression,
+	GrammarContext,
+	Identifier,
+	ScopedVisibility,
+	Statement
+} from '../src/vocabulary/index.ts';
 import { Flags } from '../src/vocabulary/index.ts';
 
 // An ordinary function needs a name and parameters, nothing accessor-shaped.
@@ -33,25 +43,41 @@ export function parameterless<G extends GrammarContext<G>>(name: G['identifier']
 }
 
 // A context composing the features whose members the checks below set, and one composing none.
-interface Composed extends GrammarContext<Composed>, Accessors, BoundedQuantification {}
+interface Composed extends GrammarContext<Composed>, Accessors, BoundedQuantification, ScopedVisibility {}
 interface Bare extends GrammarContext<Bare> {}
 
-// A getter pins the converged accessor member, which `accessors` owns.
+// A getter is an accessor kind, which `accessors` owns: no member holds `get`.
 export function getter(name: Composed['identifier']): Declaration.Method.Getter<Composed> {
-	return { $kind: 'declaration.method.getter', name, parameters: [], accessor: 'get' };
+	return { $kind: 'declaration.method.getter', name, parameters: [] };
 }
-export function notGetter(name: Composed['identifier']): Declaration.Method.Getter<Composed> {
+export function getterWithAccessor(name: Composed['identifier']): Declaration.Method.Getter<Composed> {
 	return {
 		...getter(name),
-		// @ts-expect-error a getter's accessor is 'get'
-		accessor: 'set'
+		// @ts-expect-error no member holds the accessor kind
+		accessor: 'get'
 	};
 }
-export function accessorOf<G extends GrammarContext<G> & Accessors>(g: Declaration.Method.Getter<G>): 'get' {
-	return g.accessor;
+
+// An owner's access level is its refinement kind, and no member holds the level. A deeper level refines it further.
+export function crateFn(name: Composed['identifier']): Declaration.Function.Public.Internal<Composed> {
+	return { $kind: 'declaration.function.public.internal', name, parameters: [] };
 }
-// @ts-expect-error a context without accessors has no accessor
-export const noAccessor: Declaration.Method.Getter<Bare>['accessor'] = 'get';
+export const anyPublic: Declaration.Function.Public.Any<Composed> = crateFn({ $kind: 'identifier' });
+export function privateFn(name: Composed['identifier']): Declaration.Function.Private<Composed> {
+	return {
+		$kind: 'declaration.function.private',
+		name,
+		parameters: [],
+		// @ts-expect-error no member holds the level
+		visibility: 'private'
+	};
+}
+// The restricted level adds the module it names, and every owner's restricted refinement has it.
+export function superFn(name: Composed['identifier'], scope: Composed['identifier']): Declaration.Function.Public.Restricted<Composed> {
+	return { $kind: 'declaration.function.public.restricted', name, parameters: [], scope };
+}
+// @ts-expect-error a context without scoped visibility has no scope
+export const noScope: Declaration.Function.Public.Restricted<Bare>['scope'] = { $kind: 'identifier' };
 
 // A call carries no operator; a binary expression carries no arguments.
 export function call<G extends GrammarContext<G>>(callee: G['identifier']): Expression.Call<G> {

@@ -98,12 +98,16 @@ describe('deriveVocabulary', () => {
 		const method = levelMembers(d, 'declaration.method');
 		expect(method.get('name')?.optional).toBe(false);
 		expect(method.get('parameters')?.optional).toBe(false);
-		expect(method.get('accessor')?.optional).toBe(true);
+		expect(method.get('decorators')?.optional).toBe(true);
 	});
-	it('names a refinement literal by the converged member, not the grammar field', () => {
+	it('names a refinement literal by the member that holds it', () => {
 		const equal = d.refinements.get('expression.binary.comparison.equal');
 		expect([...(equal?.literals.keys() ?? [])]).toEqual(['operator']);
-		expect([...(d.refinements.get('declaration.method.getter')?.literals.keys() ?? [])]).toEqual(['accessor']);
+	});
+	it('refines by an axis value through its text alone, which no member holds', () => {
+		const getter = d.refinements.get('declaration.method.getter');
+		expect(getter?.parent).toBe('declaration.method');
+		expect([...(getter?.literals.values() ?? [])].flatMap((texts) => [...texts])).toEqual(['get']);
 	});
 	it('lands a container pattern capture only on the kinds its element slot names directly', () => {
 		expect(levelMembers(d, 'declaration.class').get('decorators')?.grammars.has('python')).toBe(true);

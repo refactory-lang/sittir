@@ -25,12 +25,6 @@ export namespace Declaration {
 			readonly name: `__${string}__`;
 			readonly stem: string;
 		}
-		export interface Getter<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Method<G>> {
-			readonly $kind: 'declaration.method.getter';
-		}
-		export interface Setter<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Method<G>> {
-			readonly $kind: 'declaration.method.setter';
-		}
 		export interface Signature<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Method<G>> {
 			// claimed by rt
 			readonly $kind: 'declaration.method.signature';

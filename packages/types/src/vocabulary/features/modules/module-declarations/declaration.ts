@@ -7,8 +7,6 @@ export namespace Declaration {
 		readonly $kind: 'declaration.module';
 		readonly body?: V.Statement.Block<G> | G['slots']['declaration.module']['body'][];
 		readonly name?: G['slots']['declaration.module']['name'];
-		readonly visibility?: V.Modifier.Visibility<G>;
-		// r only
 	}
 	export namespace Module {
 		export interface External<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Module<G>> {
