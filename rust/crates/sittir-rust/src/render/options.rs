@@ -3763,7 +3763,7 @@ pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[
     ::sittir_core::options::SiteSpec { default_arm: 169, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 169, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 169, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 169, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 169, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 169, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 169, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 168, strength: 2 },
