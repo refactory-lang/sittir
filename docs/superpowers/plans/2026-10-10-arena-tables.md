@@ -340,7 +340,7 @@ The ir lane's change lands with Task 4 (brainstorm, 2026-10-10). The storage lan
   - `napi_engine.rs`: `line_gaps_of` goes.
   - the derive (`sittir-transport-macros`): `read_coordinate`, and no placement in `sides_of`.
 - Modify (tools, the ir lane):
-  - `packages/tools/src/validate/common.ts`: `sideOf` reads a source node's side through its tree (`triviaSide`), and `writeSides` writes each side onto the node built from it through its `$trivia`, with comments built from their reads; `carryTrivia` and `carryElementTrivia` go;
+  - `packages/tools/src/validate/common.ts`: `sideOf` reads a source node's side through its tree (`triviaSide`), `tableSides` gives its extras and `ERROR`s as trivia data with comments built from their reads, and `writeSides` copies them onto the node built from it as data (a copy, not an edit, so the writers' refusals do not apply; a written side's layout is the render's); `carryTrivia` and `carryElementTrivia` go;
   - `packages/tools/src/validate/factory-storage.ts`: `rebuildChildren` takes each node's sides from the table while the node still holds its tree, so the detached copy carries them;
   - `packages/tools/src/emit/factory-source.ts`: `seatLineGaps` goes, and `triviaSuffix` reads sides;
   - their glossary entries in `docs/glossary/packages-tools-src-*.md`.
@@ -407,6 +407,7 @@ Expected: FAIL. A write through a query is refused today, and the defect test dr
 - sides named from a parent (ruling 9): `innerAt` (`GrammarInnerTriviaAt` in `packages/types`, `triviaInnerAt` in `packages/common`, and the member the node-members emitter writes), `INNER_GAPS` with `emitInnerGaps`, the `innerGaps` fact, `innerGapsKeyed`, and the source emitter's `innerAt` output, which writes each comment to the side the assignment gives it. `inner` stays, on a childless node;
 - the refusal of a coordinate a holder never read whose range holds a write (`unreadCoordinate`): the write is the table's, so the coordinate renders it;
 - the outside trivia a folded coordinate carries: `FramedTrivia` in `SlotValue::Coord`, `outside_trivia_from_napi`, and `write_coordinate`'s framing;
+- `sittir_core::trivia::has_inner` over the transport trivia: an optional slot's padding gate asks the table's inner side of the slot's node instead (the predicate the render reads sides by), and its rows hold (`S { /* c */ }` keeps its pad, `S {}` is tight);
 - `triviaViewOf` in the validators, which now read the table;
 - the ir lane's carriers: `carryTrivia`, `carryElementTrivia` (and the hosts branch's edge-carrier rule, if it has landed), and `seatLineGaps` with its line-gap query;
 - the reader's per-route exclusion of unit-stored children from owning trivia (one owner rule).
