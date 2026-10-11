@@ -56,6 +56,8 @@ export interface IfArm {
 
 export interface IfNode {
 	readonly kind: 'if';
+	/** The gate holds a padding seam beside its slot, so it also stays open for inner trivia at the slot's gap. */
+	readonly padded?: true;
 	readonly arms: readonly IfArm[];
 	readonly fallback: Body | undefined;
 }
@@ -149,26 +151,32 @@ export function gateKeywordSlotSeams(body: Body, keywordKindsOf: (slot: string) 
 	return out;
 }
 
-export function gateOptionalSlotSeams(body: Body, seamNamesOf: (slot: string) => readonly string[]): Body {
+export function gateOptionalSlotSeams(
+	body: Body,
+	seamNamesOf: (slot: string) => readonly string[],
+	isPaddingSeam: (field: string) => boolean = () => false
+): Body {
 	const out: BodyNode[] = [];
 	for (let i = 0; i < body.length; i++) {
 		const node = body[i]!;
 		if (node.kind === 'if') {
-			const arms = node.arms.map((arm) => ({ ...arm, body: gateOptionalSlotSeams(arm.body, seamNamesOf) }));
-			const fallback = node.fallback === undefined ? undefined : gateOptionalSlotSeams(node.fallback, seamNamesOf);
+			const arms = node.arms.map((arm) => ({ ...arm, body: gateOptionalSlotSeams(arm.body, seamNamesOf, isPaddingSeam) }));
+			const fallback = node.fallback === undefined ? undefined : gateOptionalSlotSeams(node.fallback, seamNamesOf, isPaddingSeam);
 			const folded: IfNode = { ...node, arms, fallback };
 			if (isBareSlotGate(folded)) {
 				const test = folded.arms[0].test;
 				const prev = out[out.length - 1];
 				const next = body[i + 1];
 				const names = seamNamesOf(test);
-				const before = prev?.kind === 'seam' && names.some((name) => prev.field === `${name}_before`) ? prev : undefined;
-				const after = next?.kind === 'seam' && names.some((name) => next.field === `${name}_after`) ? next : undefined;
+				const before = prev?.kind === 'seam' && (names.some((name) => prev.field === `${name}_before`) || isPaddingSeam(prev.field)) ? prev : undefined;
+				const after = next?.kind === 'seam' && (names.some((name) => next.field === `${name}_after`) || isPaddingSeam(next.field)) ? next : undefined;
+				const padded = (before !== undefined && isPaddingSeam(before.field)) || (after !== undefined && isPaddingSeam(after.field));
 				if (before !== undefined || after !== undefined) {
 					if (before !== undefined) out.pop();
 					if (after !== undefined) i++;
 					out.push({
 						...folded,
+						...(padded ? { padded: true as const } : {}),
 						arms: [{ ...folded.arms[0], body: [...(before === undefined ? [] : [before]), ...folded.arms[0].body, ...(after === undefined ? [] : [after])] }]
 					});
 					continue;
@@ -535,7 +543,7 @@ export function liftGates(body: Body, viewOf: (name: string) => ViewKind): Lifte
 			const suffix = only === undefined || at === -1 ? undefined : literalOf(only.body.slice(at + 1));
 			const kind = only === undefined ? 'text' : viewOf(only.test);
 			if (only === undefined || prefix === undefined || suffix === undefined || kind === 'text') {
-				out.push(branches(arms, fallback));
+				out.push([{ ...node, arms, fallback }]);
 				continue;
 			}
 			if (kind === 'single') {
@@ -713,14 +721,25 @@ function printStatements(
 				break;
 			case 'if': {
 				flush();
+				const only = node.arms.length === 1 && node.fallback === undefined ? node.arms[0]! : undefined;
+				const paddedGap =
+					only !== undefined &&
+					node.padded === true &&
+					only.kinds === undefined &&
+					!seated.has(only.test) &&
+					printer.innerGap?.(only.test) === true
+						? only.test
+						: undefined;
 				for (const arm of node.arms) {
-					if (arm.kinds === undefined) seatGap(arm.test);
+					if (arm.kinds === undefined && arm.test !== paddedGap) seatGap(arm.test);
 				}
 				const gatedGaps = new Set(seated);
 				node.arms.forEach((arm, i) => {
 					const test =
 						arm.kinds === undefined
-							? `${printer.field(arm.test)}.is_present()`
+							? arm.test === paddedGap
+								? `${printer.field(arm.test)}.is_present() || ::sittir_core::trivia::has_inner(node.layout.trivia(), ${rustStringLiteral(arm.test)})`
+								: `${printer.field(arm.test)}.is_present()`
 							: `${printer.field(arm.test)}.kind_in(&*w, ${printer.kinds(arm.kinds)})`;
 					lines.push(`${pad}${i === 0 ? 'if' : '} else if'} ${test} {`);
 					lines.push(...printStatements(arm.body, printer, depth + 1, gatedGaps));

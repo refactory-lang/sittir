@@ -38,6 +38,7 @@ import {
 	seamChoiceDefault,
 	seamPartOf,
 	spacedSeparatorOf,
+	spacingSitesOf,
 	type RenderRules
 } from '../compiler/model/render-rules.ts';
 import type { KindEntryLike } from '../dsl/symbol-table.ts';
@@ -146,9 +147,18 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 	#bodies = new Map<string, Body>();
 	#droppedTokens: DroppedTokens[] = [];
 	readonly #seamBoundaries: SeamBoundaryRecord[] = [];
+	readonly #paddingFields = new Map<string, Set<string>>();
 
 	constructor(config: EmitTemplatesConfig) {
 		this.#wordMatcher = config.nodeMap.wordMatcher ?? /\w/;
+		if (config.renderRules !== undefined) {
+			for (const site of spacingSitesOf(config.renderRules, config.nodeMap)) {
+				if (site.padding !== true) continue;
+				const fields = this.#paddingFields.get(site.kind) ?? new Set<string>();
+				fields.add(site.address);
+				this.#paddingFields.set(site.kind, fields);
+			}
+		}
 		this.#kindEntries = config.kindEntries ?? [];
 		this.#ctx = {
 			nodeMap: config.nodeMap,
@@ -256,7 +266,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 			emitted === undefined
 				? undefined
 				: gateKeywordSlotSeams(
-						gateOptionalSlotSeams(emitted, (slot) => this.#slotSeamNames(node, slot)),
+						gateOptionalSlotSeams(emitted, (slot) => this.#slotSeamNames(node, slot), (field) => this.#paddingFields.get(node.kind)?.has(field) === true),
 						(slot) => this.#mixedSlotKeywordKinds(node, slot)
 					);
 
