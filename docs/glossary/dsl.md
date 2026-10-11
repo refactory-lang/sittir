@@ -2986,7 +2986,7 @@ unwraps `prec` and a stamp on the wrapper is lost.
  */
 ```
 
-### `packages/codegen/src/dsl/builders.ts::overlaySeq`
+### `packages/codegen/src/dsl/builders.ts::carrySeqFacts`
 
 ```text
 /**
