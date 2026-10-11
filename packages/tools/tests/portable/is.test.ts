@@ -200,6 +200,14 @@ describe('portable is: rust', async () => {
 		expect(at('pattern.range.exclusive')(left, lc)).toBe(false);
 	});
 
+	it('reads a range with a left bound by its operator, as tree-sitter matches the claims', () => {
+		const SOURCE = 'fn f() { match x { 1..=5 => {}, 1...5 => {}, 1..5 => {}, 1.. => {}, _ => {} } }\n';
+		const ranges = ['1..=5', '1...5', '1..5', '1..'].map((text) => find(SOURCE, 'range_pattern_with_left', text));
+		expect(ranges.map(([n, c]) => at('pattern.range.inclusive')(n, c))).toEqual([true, true, false, false]);
+		expect(ranges.map(([n, c]) => at('pattern.range.exclusive')(n, c))).toEqual([false, false, true, true]);
+		expect(ranges.map(([n, c]) => at('pattern.range')(n, c))).toEqual([true, true, true, true]);
+	});
+
 	it('pins a range expression by its operator, and reads a range open at either end as exclusive', () => {
 		const SOURCE = 'fn f() { let a = 1..=2; let b = 1...2; let c = 1..2; let d = 1..; let e = ..2; let g = ..; }\n';
 		for (const text of ['1..=2', '1...2']) {
@@ -279,6 +287,16 @@ describe('portable is: typescript', async () => {
 		expect(at('statement.import.typeof')(typeOf, oc)).toBe(true);
 		expect(at('statement.import.type')(plain, pc)).toBe(false);
 		expect(at('statement.import')(plain, pc)).toBe(true);
+	});
+
+	it('reads a default export and an export of all by their forms, as tree-sitter matches the claims', () => {
+		const SOURCE = "export default x;\nexport * from 's';\nexport { a } from 's';\nexport * as n from 's';\nexport default function f() {}\nexport const c = 1;\n";
+		const declarations = [0, 1, 2].map((nth) => find(SOURCE, 'export_statement_default_declaration', undefined, nth));
+		const froms = [0, 1, 2].map((nth) => find(SOURCE, 'export_statement_default_from', undefined, nth));
+		expect(declarations.map(([n, c]) => at('statement.export.default')(n, c))).toEqual([true, true, false]);
+		expect(declarations.map(([n, c]) => at('statement.export')(n, c))).toEqual([true, true, true]);
+		expect(froms.map(([n, c]) => at('statement.export.all')(n, c))).toEqual([true, false, false]);
+		expect(froms.map(([n, c]) => at('statement.export')(n, c))).toEqual([true, true, true]);
 	});
 
 	it('reads a negative literal type as a negative number', () => {
