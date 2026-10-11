@@ -93,6 +93,15 @@ const MODEL = [
 	node('private_name', [slot('content', [])]),
 	node('scoped_name', [slot('path', ['identifier']), slot('name', ['identifier'])]),
 	node('char_text', [slot('content', [])]),
+	node('call_x', [slot('function', ['field_expr', 'path_expr', 'identifier']), slot('args', ['expr'])]),
+	node('field_expr'),
+	node('path_expr'),
+	node('impl_x', [slot('trait', ['type_x'], { required: false }), slot('body', ['block']), slot('clause', ['clause_pos', 'clause_neg'], { required: false })]),
+	node('clause_pos', [slot('trait', ['type_x'])]),
+	node('clause_neg', [slot('trait', ['type_x'])]),
+	node('type_x'),
+	node('cmp', [slot('left', ['expr']), slot('ops', ['cmp_op'], { multiple: true })]),
+	node('cmp_op', [slot('operators', [], { terminals: ['==', '<'] })]),
 	node('maybe_op', [slot('left', ['expr']), slot('operator', [], { required: false, terminals: ['+', '-'] }), slot('bang', [], { required: false, terminals: ['!'] })])
 ];
 
@@ -384,6 +393,50 @@ describe('resolveRoutes', () => {
 		const routes = resolveRoutes(await grammar('(binary left: (_) @dropped) @expression.binary\n(_struct name: (_) @dropped) @declaration.struct'));
 		expect(routes.members.get('binary')?.map((r) => r.name)).toEqual(['operator', 'right']);
 		expect(routes.members.get('struct_tuple')?.map((r) => r.name)).toEqual(['fields']);
+	});
+
+	it('tests a child of a narrower kind than its slot holds, and orders that entry before the plain one', async () => {
+		const routes = resolveRoutes(await grammar(['(call_x) @expression.call', '(call_x function: (field_expr)) @expression.call.member'].join('\n')));
+		const entries = routes.readEntries.get('call_x') ?? [];
+		expect(entries.map((e) => e.vocab)).toEqual(['expression.call.member', 'expression.call']);
+		expect(entries[0]?.children).toEqual([{ subject: { up: 0, down: [{ field: 'function', kind: 'field_expr', after: null, anchor: null }] }, kinds: ['field_expr'] }]);
+		expect(routes.vocabOf.get('call_x')).toBe('expression.call');
+	});
+
+	it('tests no child the model already guarantees: a required slot that holds only that kind, or a required field', async () => {
+		const routes = resolveRoutes(await grammar('(call_x args: (expr)) @expression.call\n(impl_x body: (_)) @declaration.extension'));
+		expect(routes.readEntries.get('call_x')?.[0]?.children).toEqual([]);
+		expect(routes.readEntries.get('impl_x')?.[0]?.children).toEqual([]);
+	});
+
+	it('tests a member capture on an optional slot only against the other kinds the slot holds', async () => {
+		const routes = resolveRoutes(await grammar('(impl_x trait: (type_x) @implements) @declaration.extension\n(impl_x clause: (clause_pos) @clause) @declaration.extension.positive'));
+		const [positive, plain] = routes.readEntries.get('impl_x') ?? [];
+		expect(plain?.children).toEqual([]);
+		expect(positive?.children).toEqual([{ subject: { up: 0, down: [{ field: 'clause', kind: 'clause_pos', after: null, anchor: null }] }, excludes: ['clause_neg'] }]);
+	});
+
+	it('tests an optional field\'s presence as any kind it holds', async () => {
+		const routes = resolveRoutes(await grammar('(impl_x trait: (_)) @declaration.extension.conformance'));
+		expect(routes.readEntries.get('impl_x')?.[0]?.children).toEqual([
+			{ subject: { up: 0, down: [{ field: 'trait', kind: null, after: null, anchor: null }] }, kinds: ['type_x'] }
+		]);
+	});
+
+	it('tests nothing below a wildcard that every kind it may be guarantees, and gives a supertype\'s own entry no child test', async () => {
+		const routes = resolveRoutes(await grammar('(impl_x clause: (_ trait: (_))) @declaration.extension.conformance\n(_struct (identifier)) @declaration.struct'));
+		expect(routes.readEntries.get('impl_x')?.[0]?.children).toEqual([
+			{ subject: { up: 0, down: [{ field: 'clause', kind: null, after: null, anchor: null }] }, kinds: ['clause_neg', 'clause_pos'] }
+		]);
+		expect(routes.readEntries.get('_struct')?.[0]?.children).toEqual([]);
+	});
+
+	it('tests a field literal through a child, and not the child the slot can only hold', async () => {
+		const routes = resolveRoutes(await grammar('(cmp (cmp_op operators: "==")) @expression.binary.equal'));
+		const step = { field: null, kind: 'cmp_op', after: null, anchor: null };
+		expect(routes.readEntries.get('cmp')?.[0]?.children).toEqual([
+			{ subject: { up: 0, down: [step, { field: 'operators', kind: null, after: null, anchor: null }] }, text: '==' }
+		]);
 	});
 
 	it('keeps the template a templated claim builds from', async () => {

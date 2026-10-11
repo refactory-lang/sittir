@@ -245,7 +245,11 @@ A slot selector, and the selectors chained after it, with every kind named by it
 
 ### `packages/codegen/src/bindings/facts.ts::bindFacts`
 
-The facts with every grammar kind they name (claims and their placements, the kind arguments of `KIND_PREDICATE_OPERATORS` predicates, member owners, paths and selectors, containers and their captures, unclaimed kinds) named by its bound kind. The facts are read and written in base names; with the bindings overlay on, a consumer binds them through the node model's stamped `renamedFrom` (`boundNameOf`). A wildcard claim stays a wildcard, and templates name no kinds.
+The facts with every grammar kind they name (claims and their placements, the kind arguments of `KIND_PREDICATE_OPERATORS` predicates, the selectors of every predicate's and child condition's site and the kinds a child condition names, member owners, paths and selectors, containers and their captures, unclaimed kinds) named by its bound kind. The facts are read and written in base names; with the bindings overlay on, a consumer binds them through the node model's stamped `renamedFrom` (`boundNameOf`). A wildcard claim stays a wildcard, and templates name no kinds.
+
+### `packages/codegen/src/bindings/facts.ts::bindSite`
+
+A `CaptureSite` with the kind of each of its `down` selectors named by its bound kind.
 
 ### `packages/codegen/src/bindings/hash.ts::bindingsSourceHash`
 
@@ -503,6 +507,30 @@ A pattern's `#…?` predicate as a fact: its operator (the name between `#` and 
 
 A predicate capture's `CaptureSite` for one claim. It walks from the claimed node outward, through the pattern's named nodes only, to the first node that holds the capture, counting each step up, and records the selectors from there down to the capture. It is `null` when the capture names no node in the pattern, or when only a group holds both.
 
+### `packages/codegen/src/bindings/pinned-reader.ts::siteOf`
+
+The `CaptureSite` of a visited node below a claim: like `captureSite`, it walks out from the claimed node through named nodes only, counting each step up, to the first that holds the node, and records the selectors from there down, skipping groups. It is `null` when no enclosing node holds it.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::mayBeAbsent`
+
+Whether a visited node may be missing from a match: it, or an alternation enclosing it, carries a `?` or `*` quantifier. Such a node states no condition.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::leadsToPresence`
+
+Whether a visited node is, or leads down to, a captured token: the path to a presence member, which the member's own route tests, so it states no child condition.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::placesClaim`
+
+Whether a visited node is, or holds, a capture of a vocabulary path that is not a token class: a claim placed below this one, which is read as its own claim rather than tested as a condition of the outer one.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::capturesMember`
+
+Whether a visited node carries a member capture: a name that is not a vocabulary path, not hidden (`_`-prefixed) and not `element`.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::childFacts`
+
+The `ChildFact`s a claim's pattern states below the claimed node, walked in pattern order. A node that may be absent, leads to a presence capture or places another claim states nothing. An alternation's options give one fact listing their kinds, and each option must be a named node with nothing below it. A token under a field gives a text fact (a token directly under the claimed node is a claim token instead, and a token with no field is refused). A named child gives a kinds fact and is walked into; a wildcard gives a presence fact unless it captures a member, whose own route then stands for it.
+
 ### `packages/codegen/src/bindings/pinned-reader.ts::roundTripBindingsInProcess`
 
 Parses a `bindings.scm` with the pinned engine and renders the parsed root back (`BindingsRoundTrip`). The test over every grammar's `bindings.scm` is the gate a change of pin runs.
@@ -553,7 +581,7 @@ A top-level definition with its origin (line and source text).
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::Visit`
 
-One visited pattern node: the node, the field it sits under, the anchor that pins it to an end of its parent's children, its parent visit, whether it is one option of an alternation (`alternative`), the list elements (captures, quantifiers) an enclosing alternation hands it (`inherited`), and its child visits in order.
+One visited pattern node: the node, the field it sits under, the anchor that pins it to an end of its parent's children, its parent visit, the alternation it is one option of (`alternation`, the alternation expression, so its sibling options are found by identity; `null` outside one), the list elements (captures, quantifiers) an enclosing alternation hands it (`inherited`), and its child visits in order.
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::Anchored`
 
@@ -821,7 +849,7 @@ One grammar as the bindings derivation sees it: its binding facts (bound to the 
 
 ### `packages/codegen/src/bindings/routes.ts::ReadEntry`
 
-A grammar kind read as one vocabulary kind: the kind the claim captured (`claimed`; the kind itself unless the reader stores the captured node as a member's kind id, `readKinds`), the claim, its position in `bindings.scm` (`index`), the pins that tell its nodes apart (`Pin`), and the template it builds from when its predicate has named holes.
+A grammar kind read as one vocabulary kind: the kind the claim captured (`claimed`; the kind itself unless the reader stores the captured node as a member's kind id, `readKinds`), the claim, its position in `bindings.scm` (`index`), the pins that tell its nodes apart (`Pin`), the tests on the nodes below it (`ChildTest`), and the template it builds from when its predicate has named holes.
 
 ### `packages/codegen/src/bindings/routes.ts::Pin`
 
@@ -869,7 +897,7 @@ A kind's container unwrap: a kind the bindings declare with `@element` unwraps t
 
 ### `packages/codegen/src/bindings/routes.ts::specificity`
 
-The order read entries are tried in: a claim both placed (made below enclosing kinds) and tested by a predicate, then a predicate claim, then a placed claim, then a claim that pins a literal (a pin, or a token the claimed node holds), then the plain claim. `resolveRoutes` breaks a tie by more pins, then by position in `bindings.scm`. Python's `__init__` inside a class reads as `declaration.constructor` (a predicate claim) before `declaration.method` (a placed one).
+The order read entries are tried in: a claim both placed (made below enclosing kinds) and tested by a predicate, then a predicate claim, then a placed claim, then a claim that pins a literal or tests the nodes below it (a pin, a token the claimed node holds, or a child test), then the plain claim. `resolveRoutes` breaks a tie by more pins, then by position in `bindings.scm`. Python's `__init__` inside a class reads as `declaration.constructor` (a predicate claim) before `declaration.method` (a placed one).
 
 ### `packages/codegen/src/bindings/routes.ts::isLeafAlias`
 
@@ -965,7 +993,27 @@ The kinds a wildcard claim (`(holder (_) @path)`) reads: the concrete named kind
 
 ### `packages/codegen/src/bindings/routes.ts::concreteKinds`
 
-A kind's concrete kinds: itself, or its subtypes' concrete kinds when it is a supertype.
+The concrete kinds of a list of kinds, deduplicated and sorted: each kind itself, or its subtypes' concrete kinds when it is a supertype (`concreteKindsOf`, which visits each kind once).
+
+### `packages/codegen/src/bindings/routes.ts::concreteKindsOf`
+
+One kind's concrete kinds, skipping kinds already in `seen`, so a supertype cycle ends.
+
+### `packages/codegen/src/bindings/routes.ts::ChildTest`
+
+A test a read entry runs on a node below the read node, at its `CaptureSite`: the node is one of `kinds`; or it is absent or none of `excludes`; or its text is `text`.
+
+### `packages/codegen/src/bindings/routes.ts::slotsAt`
+
+The model slots a `CaptureSite` below a kind reaches, one per possible holder at the last step: each step finds its slot on every kind the previous step can hold, through a wildcard step's concrete kinds. Empty when the site starts above the kind or some holder has no such slot.
+
+### `packages/codegen/src/bindings/routes.ts::guarantees`
+
+Whether the model already makes a child condition true on a slot: the slot is required and either the condition is presence, or its one fixed value is the condition's text, or every concrete kind it holds is one the condition lists.
+
+### `packages/codegen/src/bindings/routes.ts::childTestOf`
+
+A `ChildFact` narrowed to the `ChildTest` a read entry runs, or none when the model guarantees it on every slot it reaches. A text condition tests the text, and a presence condition tests the slot's concrete kinds. A kinds condition tests the kinds, except on an optional slot whose node the pattern captures as a member: matching that pattern does not need the node, so the test only excludes the slot's other kinds, and is dropped when there are none.
 
 ### `packages/codegen/src/bindings/routes.ts::LayoutSlot`
 
@@ -1021,7 +1069,11 @@ One member of an enum kind as the assembled model stamps it: the member's kind, 
 
 ### `packages/codegen/src/bindings/facts.ts::ClaimFact`
 
-A vocabulary capture on a node: its path, its grammar kind (`_` for a wildcard), the field it sits under in its enclosing node (`null` for none), its predicates, whether it is top-level, the kinds enclosing it nearest first (`within`), and the field literals and tokens it pins. A wildcard claim's kinds are read from its enclosing kind and field (`routes.ts::admittedKinds`).
+A vocabulary capture on a node: its path, its grammar kind (`_` for a wildcard), the field it sits under in its enclosing node (`null` for none), its predicates, whether it is top-level, the kinds enclosing it nearest first (`within`), the field literals and tokens it pins, and the conditions its pattern states on the nodes below the claimed node (`children`, `ChildFact`). A wildcard claim's kinds are read from its enclosing kind and field (`routes.ts::admittedKinds`).
+
+### `packages/codegen/src/bindings/facts.ts::ChildFact`
+
+One condition a claim's pattern states on a node below the claimed node, at its `CaptureSite`: the node is one of `kinds` (a named child, or an alternation of named children), and `captured` says whether the pattern also captures it as a member; or the node's text is `text` (a token under a field); or the node is present (a wildcard under a field). The routes narrow each against the model into a `ChildTest`.
 
 ### `packages/codegen/src/bindings/facts.ts::WILDCARD`
 

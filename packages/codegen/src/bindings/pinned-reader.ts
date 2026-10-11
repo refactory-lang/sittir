@@ -347,13 +347,19 @@ function leadsToPresence(v: Visit): boolean {
 	return (tokenText(v) !== null && captures(v).length > 0) || v.children.some(leadsToPresence);
 }
 
+function placesClaim(v: Visit): boolean {
+	return captures(v).some((name) => isPath(name) && !isTokenClass(name)) || v.children.some(placesClaim);
+}
+
+const capturesMember = (v: Visit): boolean => captures(v).some((name) => !isPath(name) && !name.startsWith('_') && name !== 'element');
+
 function childFacts(claim: Visit, origin: PatternOrigin): ChildFact[] {
 	const out: ChildFact[] = [];
 	const at = (v: Visit): CaptureSite => siteOf(claim, v) ?? refuse(origin, 'a node below the claimed node has no site');
 	const walk = (holder: Visit): void => {
 		const seen = new Set<Expression>();
 		for (const child of holder.children) {
-			if (mayBeAbsent(child) || leadsToPresence(child)) continue;
+			if (mayBeAbsent(child) || leadsToPresence(child) || placesClaim(child)) continue;
 			if (child.alternation !== null) {
 				if (seen.has(child.alternation)) continue;
 				seen.add(child.alternation);
@@ -361,7 +367,7 @@ function childFacts(claim: Visit, origin: PatternOrigin): ChildFact[] {
 				const kinds = options.map((option) => (option.children.length === 0 ? namedKind(option) : null));
 				if (kinds.some((kind) => kind === null))
 					refuse(origin, 'an alternation below the claimed node tests only named nodes with nothing below them');
-				out.push({ subject: at(child), kinds: kinds as string[] });
+				out.push({ subject: at(child), kinds: kinds as string[], captured: options.some(capturesMember) });
 				continue;
 			}
 			if (isGroup(child)) {
@@ -376,7 +382,8 @@ function childFacts(claim: Visit, origin: PatternOrigin): ChildFact[] {
 				continue;
 			}
 			const kind = kindOf(child);
-			out.push(kind === WILDCARD || kind === null ? { subject: at(child), present: true } : { subject: at(child), kinds: [kind] });
+			if (kind !== WILDCARD && kind !== null) out.push({ subject: at(child), kinds: [kind], captured: capturesMember(child) });
+			else if (!capturesMember(child)) out.push({ subject: at(child), present: true });
 			walk(child);
 		}
 	};

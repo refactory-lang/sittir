@@ -528,14 +528,46 @@
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  418
+                ],
+                "fields": [],
+                "kinds": [
+                  "arrow_function_parameter",
+                  "call_signature"
+                ]
+              }
+            }
+          ]
         },
         {
           "vocab": "expression.lambda",
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  362
+                ],
+                "fields": [],
+                "kinds": [
+                  "arrow_function_parameter",
+                  "call_signature"
+                ]
+              }
+            }
+          ]
         }
       ],
       "members": [
@@ -1852,14 +1884,29 @@
           ]
         },
         {
-          "vocab": "expression.binary",
+          "vocab": "expression.binary.membership.in",
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  397
+                ],
+                "fields": [],
+                "kinds": [
+                  "binary_expression_in"
+                ]
+              }
+            }
+          ]
         },
         {
-          "vocab": "expression.binary.membership.in",
+          "vocab": "expression.binary",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5633,6 +5680,30 @@
               "plan": {
                 "op": "eq",
                 "text": "constructor",
+                "self": true
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [
+                    "name"
+                  ],
+                  "kinds": []
+                },
+                {
+                  "fields": [
+                    "content"
+                  ],
+                  "kinds": []
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  462
+                ],
                 "self": true
               }
             }
@@ -9837,14 +9908,30 @@
       "vocab": "declaration.variable",
       "read": [
         {
-          "vocab": "declaration.variable",
+          "vocab": "declaration.variable.pattern",
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  240,
+                  236
+                ],
+                "fields": [
+                  "name"
+                ],
+                "kinds": []
+              }
+            }
+          ]
         },
         {
-          "vocab": "declaration.variable.pattern",
+          "vocab": "declaration.variable",
           "toplevel": true,
           "within": [],
           "pins": [],

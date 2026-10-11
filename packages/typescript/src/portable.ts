@@ -2675,7 +2675,7 @@ const table: PortableTable = {
 				TSKindId.YieldExpression,
 				TSKindId.YieldExpressionDelegate
 			],
-			exact: true
+			exact: false
 		},
 		'expression.assignment': {
 			ids: [TSKindId.AssignmentExpression, TSKindId.AugmentedAssignmentExpression],
@@ -2763,7 +2763,7 @@ const table: PortableTable = {
 		'expression.function': { ids: [TSKindId.FunctionExpression, TSKindId.GeneratorFunction], exact: true },
 		'expression.instantiation': { ids: [TSKindId.InstantiationExpression], exact: true },
 		'expression.interpolation': { ids: [TSKindId.TemplateSubstitution], exact: true },
-		'expression.lambda': { ids: [TSKindId.ArrowFunction], exact: true },
+		'expression.lambda': { ids: [TSKindId.ArrowFunction], exact: false },
 		'expression.member': { ids: [TSKindId.MemberExpression], exact: true },
 		'expression.meta': {
 			ids: [TSKindId.MetaProperty, TSKindId.MetaPropertyImportMeta, TSKindId.MetaPropertyNewTarget],
@@ -3418,7 +3418,30 @@ const table: PortableTable = {
 		[TSKindId.Array]: [{ path: 'expression.collection.list', within: [], test: [] }],
 		[TSKindId.ArrayPattern]: [{ path: 'pattern.array', within: [], test: [] }],
 		[TSKindId.ArrayType]: [{ path: 'type.array', within: [], test: [] }],
-		[TSKindId.ArrowFunction]: [{ path: 'expression.lambda', within: [], test: [] }],
+		[TSKindId.ArrowFunction]: [
+			{
+				path: 'expression.lambda',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [418], fields: [], kinds: ['arrow_function_parameter', 'call_signature'] }
+					}
+				]
+			},
+			{
+				path: 'expression.lambda',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [362], fields: [], kinds: ['arrow_function_parameter', 'call_signature'] }
+					}
+				]
+			}
+		],
 		[TSKindId.AsExpression]: [{ path: 'expression.cast.as', within: [], test: [] }],
 		[TSKindId.Asserts]: [{ path: 'type.predicate.asserts', within: [], test: [] }],
 		[TSKindId.AssignmentExpression]: [{ path: 'expression.assignment', within: [], test: [] }],
@@ -3623,8 +3646,12 @@ const table: PortableTable = {
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'instanceof', fields: ['operator'], kinds: [] } }]
 			},
-			{ path: 'expression.binary', within: [], test: [] },
-			{ path: 'expression.binary.membership.in', within: [], test: [] }
+			{
+				path: 'expression.binary.membership.in',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [397], fields: [], kinds: ['binary_expression_in'] } }]
+			},
+			{ path: 'expression.binary', within: [], test: [] }
 		],
 		[TSKindId.BooleanKeyword]: [{ path: 'type.primitive', within: [], test: [] }],
 		[TSKindId.BreakStatement]: [{ path: 'statement.break', within: [], test: [] }],
@@ -3767,6 +3794,14 @@ const table: PortableTable = {
 							{ fields: ['content'], kinds: [] }
 						],
 						plan: { op: 'eq', text: 'constructor', self: true }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['name'], kinds: [] },
+							{ fields: ['content'], kinds: [] }
+						],
+						plan: { op: 'is', types: [462], self: true }
 					}
 				]
 			},
@@ -3960,8 +3995,12 @@ const table: PortableTable = {
 		],
 		[TSKindId.VariableDeclaratorDefinite]: [{ path: 'declaration.variable', within: [], test: [] }],
 		[TSKindId.VariableDeclaratorPlain]: [
-			{ path: 'declaration.variable', within: [], test: [] },
-			{ path: 'declaration.variable.pattern', within: [], test: [] }
+			{
+				path: 'declaration.variable.pattern',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [240, 236], fields: ['name'], kinds: [] } }]
+			},
+			{ path: 'declaration.variable', within: [], test: [] }
 		],
 		[TSKindId.VoidKeyword]: [{ path: 'type.primitive', within: [], test: [] }],
 		[TSKindId.WhileStatement]: [{ path: 'statement.loop.while', within: [], test: [] }],

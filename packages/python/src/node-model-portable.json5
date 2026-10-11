@@ -188,6 +188,20 @@
                 ],
                 "kinds": []
               }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  1
+                ],
+                "fields": [
+                  "left"
+                ],
+                "kinds": []
+              }
             }
           ]
         },
@@ -244,6 +258,20 @@
                 ],
                 "kinds": []
               }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  1
+                ],
+                "fields": [
+                  "left"
+                ],
+                "kinds": []
+              }
             }
           ]
         },
@@ -295,6 +323,20 @@
               "plan": {
                 "op": "match",
                 "pattern": "^[A-Z][A-Z_0-9]*$",
+                "fields": [
+                  "left"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  1
+                ],
                 "fields": [
                   "left"
                 ],
@@ -1300,14 +1342,29 @@
       "vocab": "expression.call",
       "read": [
         {
-          "vocab": "expression.call",
+          "vocab": "expression.call.member",
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  220
+                ],
+                "fields": [
+                  "function"
+                ],
+                "kinds": []
+              }
+            }
+          ]
         },
         {
-          "vocab": "expression.call.member",
+          "vocab": "expression.call",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -1736,77 +1793,277 @@
       "vocab": "expression.binary",
       "read": [
         {
-          "vocab": "expression.binary",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "expression.binary.comparison.equal",
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [
+                    "comparators"
+                  ],
+                  "kinds": []
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "==",
+                "fields": [
+                  "operators"
+                ],
+                "kinds": []
+              }
+            }
+          ]
         },
         {
           "vocab": "expression.binary.comparison.not_equal",
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [
+                    "comparators"
+                  ],
+                  "kinds": []
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "!=",
+                "fields": [
+                  "operators"
+                ],
+                "kinds": []
+              }
+            }
+          ]
         },
         {
           "vocab": "expression.binary.comparison.less",
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [
+                    "comparators"
+                  ],
+                  "kinds": []
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "<",
+                "fields": [
+                  "operators"
+                ],
+                "kinds": []
+              }
+            }
+          ]
         },
         {
           "vocab": "expression.binary.comparison.greater",
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [
+                    "comparators"
+                  ],
+                  "kinds": []
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": ">",
+                "fields": [
+                  "operators"
+                ],
+                "kinds": []
+              }
+            }
+          ]
         },
         {
           "vocab": "expression.binary.comparison.less_equal",
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [
+                    "comparators"
+                  ],
+                  "kinds": []
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "<=",
+                "fields": [
+                  "operators"
+                ],
+                "kinds": []
+              }
+            }
+          ]
         },
         {
           "vocab": "expression.binary.comparison.greater_equal",
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [
+                    "comparators"
+                  ],
+                  "kinds": []
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": ">=",
+                "fields": [
+                  "operators"
+                ],
+                "kinds": []
+              }
+            }
+          ]
         },
         {
           "vocab": "expression.binary.membership.in",
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [
+                    "comparators"
+                  ],
+                  "kinds": []
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "in",
+                "fields": [
+                  "operators"
+                ],
+                "kinds": []
+              }
+            }
+          ]
         },
         {
           "vocab": "expression.binary.membership.not_in",
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [
+                    "comparators"
+                  ],
+                  "kinds": []
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "not in",
+                "fields": [
+                  "operators"
+                ],
+                "kinds": []
+              }
+            }
+          ]
         },
         {
           "vocab": "expression.binary.identity.is",
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": []
+          "test": [
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [
+                    "comparators"
+                  ],
+                  "kinds": []
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "is",
+                "fields": [
+                  "operators"
+                ],
+                "kinds": []
+              }
+            }
+          ]
         },
         {
           "vocab": "expression.binary.identity.is_not",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [
+                    "comparators"
+                  ],
+                  "kinds": []
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "is not",
+                "fields": [
+                  "operators"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "expression.binary",
           "toplevel": true,
           "within": [],
           "pins": [],

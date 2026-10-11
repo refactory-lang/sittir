@@ -1,4 +1,4 @@
-import { WILDCARD, isFixedText, isIdentifierPath, type Anchor, type BindingFacts, type ClaimFact, type EnumMember, type ModelNode, type ModelSlot, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
+import { WILDCARD, isFixedText, isIdentifierPath, type Anchor, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type EnumMember, type ModelNode, type ModelSlot, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
 import { camel, snake } from './names.ts';
 
 export interface LayoutSlot {
@@ -29,6 +29,11 @@ export interface Pin {
 	readonly text: string;
 }
 
+export type ChildTest =
+	| { readonly subject: CaptureSite; readonly kinds: readonly string[] }
+	| { readonly subject: CaptureSite; readonly excludes: readonly string[] }
+	| { readonly subject: CaptureSite; readonly text: string };
+
 export interface ReadEntry {
 	readonly kind: string;
 	readonly claimed: string;
@@ -36,6 +41,7 @@ export interface ReadEntry {
 	readonly claim: ClaimFact;
 	readonly index: number;
 	readonly pins: readonly Pin[];
+	readonly children: readonly ChildTest[];
 	readonly template: TemplateFact | undefined;
 }
 
@@ -168,10 +174,48 @@ function pinsOf(model: SlotModel, node: ModelNode | undefined, claim: ClaimFact,
 	});
 }
 
+function slotsAt(model: SlotModel, kind: string, site: CaptureSite): readonly ModelSlot[] {
+	if (site.up !== 0) return [];
+	let holders: readonly string[] = [kind];
+	let slots: ModelSlot[] = [];
+	for (const selector of site.down) {
+		slots = holders.flatMap((holder) => {
+			const slot = slotFor(model, modelNode(model, holder)?.slots ?? [], selector);
+			return slot === undefined ? [] : [slot];
+		});
+		if (slots.length < holders.length) return [];
+		holders = selector.kind !== null ? [selector.kind] : concreteKinds(model, slots.flatMap((slot) => slot.kinds));
+	}
+	return slots;
+}
+
+function guarantees(model: SlotModel, slot: ModelSlot, child: ChildFact): boolean {
+	if (!slot.required) return false;
+	if ('present' in child) return true;
+	if ('text' in child) {
+		const values = fixedValues(model, slot);
+		return values?.length === 1 && values[0] === child.text;
+	}
+	const kinds = concreteKinds(model, child.kinds);
+	return concreteKinds(model, slot.kinds).every((k) => kinds.includes(k));
+}
+
+function childTestOf(model: SlotModel, kind: string, child: ChildFact): ChildTest | undefined {
+	const slots = slotsAt(model, kind, child.subject);
+	if (slots.length > 0 && slots.every((slot) => guarantees(model, slot, child))) return undefined;
+	if ('text' in child) return child;
+	const held = concreteKinds(model, slots.flatMap((slot) => slot.kinds));
+	if ('present' in child) return { subject: child.subject, kinds: held };
+	const kinds = concreteKinds(model, child.kinds);
+	if (!child.captured || slots.length === 0 || slots.every((slot) => slot.required)) return { subject: child.subject, kinds };
+	const excludes = held.filter((k) => !kinds.includes(k));
+	return excludes.length === 0 ? undefined : { subject: child.subject, excludes };
+}
+
 const specificity = (entry: ReadEntry): number => {
 	const placed = entry.claim.within.length > 0;
 	const predicated = entry.claim.predicates.length > 0;
-	const literal = entry.pins.length > 0 || entry.claim.tokens.length > 0;
+	const literal = entry.pins.length > 0 || entry.claim.tokens.length > 0 || entry.children.length > 0;
 	return placed && predicated ? 0 : predicated ? 1 : placed ? 2 : literal ? 3 : 4;
 };
 
@@ -287,11 +331,16 @@ function membersOf(input: GrammarInput, kind: string, entries: readonly ReadEntr
 	return routes;
 }
 
-function concreteKinds(model: SlotModel, kind: string, seen: Set<string> = new Set<string>()): string[] {
+function concreteKindsOf(model: SlotModel, kind: string, seen: Set<string>): string[] {
 	if (seen.has(kind)) return [];
 	seen.add(kind);
 	const subtypes = modelNode(model, kind)?.subtypes ?? [];
-	return subtypes.length === 0 ? [kind] : subtypes.flatMap((subtype) => concreteKinds(model, subtype, seen));
+	return subtypes.length === 0 ? [kind] : subtypes.flatMap((subtype) => concreteKindsOf(model, subtype, seen));
+}
+
+function concreteKinds(model: SlotModel, kinds: readonly string[]): string[] {
+	const seen = new Set<string>();
+	return [...new Set(kinds.flatMap((kind) => concreteKindsOf(model, kind, seen)))].sort();
 }
 
 function admittedKinds(model: SlotModel, claim: ClaimFact): string[] {
@@ -304,8 +353,7 @@ function admittedKinds(model: SlotModel, claim: ClaimFact): string[] {
 		claim.field === null
 			? [...slots.filter(holdsNodes).flatMap((slot) => slot.kinds), ...(node?.elementKinds ?? [])]
 			: (slotByField(slots, claim.field)?.kinds ?? []);
-	const seen = new Set<string>();
-	return [...new Set(admitted.flatMap((kind) => concreteKinds(model, kind, seen)))].sort();
+	return concreteKinds(model, admitted);
 }
 
 function ownTextEquals(claim: ClaimFact): readonly string[] {
@@ -365,6 +413,7 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 				claim,
 				index,
 				pins: pinsOf(input.model, modelNode(input.model, kind), claim, slotNamesOf(kind)),
+				children: modelNode(input.model, kind)?.modelType === 'supertype' ? [] : claim.children.flatMap((child) => childTestOf(input.model, kind, child) ?? []),
 				template: input.bindings.templates.find((t) => t.vocabs.includes(claim.vocab))
 			};
 			(readEntries.get(kind) ?? readEntries.set(kind, []).get(kind))?.push(entry);
@@ -374,7 +423,7 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 	const vocabOf = new Map<string, string>();
 	for (const [kind, entries] of readEntries) {
 		const top = entries.filter((e) => e.claim.toplevel);
-		const plain = top.find((e) => e.claim.predicates.length === 0 && e.pins.length === 0);
+		const plain = top.find((e) => e.claim.predicates.length === 0 && e.pins.length === 0 && e.children.length === 0);
 		const first = plain ?? top[0];
 		if (first) vocabOf.set(kind, first.vocab);
 	}

@@ -135,7 +135,7 @@ describe('readTestOf', () => {
 	});
 
 	it('negates a type test over every node a list step reaches', async () => {
-		expect(await testsOf('((fn (params (param (self) @r))) @declaration.method.static (#not-kind-eq? @r "self" "plain"))', 'fn')).toEqual([
+		expect(await testsOf('((fn (params (param (_) @r))) @declaration.method.static (#not-kind-eq? @r "self" "plain"))', 'fn')).toEqual([
 			[
 				'declaration.method.static',
 				[{ up: 0, via: [ROUTES['fn.params'], ROUTES['params.items']], plan: { op: 'not', of: { op: 'is', types: [31, 32], ...ROUTES['param.element'] } } }]
@@ -146,6 +146,24 @@ describe('readTestOf', () => {
 	it('keeps an anchored last step as a step, and tests the node it reaches', async () => {
 		expect(await testsOf('((params . (param) @p) @list.parameters (#kind-eq? @p "param"))', 'params')).toEqual([
 			['list.parameters', [{ up: 0, via: [{ ...ROUTES['params.items'], anchor: 'first' }], plan: { op: 'is', types: [30], self: true } }]]
+		]);
+	});
+
+	it('tests a child the pattern names by the type of its kind, once though a predicate restates it', async () => {
+		expect(await testsOf('(param (self)) @declaration.parameter.self', 'param')).toEqual([
+			['declaration.parameter.self', [{ up: 0, via: [], plan: { op: 'is', types: [31], ...ROUTES['param.element'] } }]]
+		]);
+		expect(await testsOf('((param (self) @r) @declaration.parameter.self (#kind-eq? @r "self"))', 'param')).toEqual([
+			['declaration.parameter.self', [{ up: 0, via: [], plan: { op: 'is', types: [31], ...ROUTES['param.element'] } }]]
+		]);
+	});
+
+	it('tests a member capture on an optional slot as holding no node of another kind', async () => {
+		const model = new Map([...MODEL, ['opt', node('opt', [slot('element', ['self', 'plain'], { required: false })])]]);
+		const input: GrammarInput = { grammar: 'g', bindings: await readBindings('(opt (self) @receiver) @declaration.parameter.self'), model, textTokens: new Set(), layoutSlots: [] };
+		const [entry] = resolveRoutes(input).readEntries.get('opt') ?? [];
+		expect(readTestOf(entry!, model, (owner, name) => (owner === 'opt' ? ROUTES['param.element'] : ROUTES[`${owner}.${name}`]), (kind) => TYPES[kind])).toEqual([
+			{ up: 0, via: [], plan: { op: 'not', of: { op: 'is', types: [32], ...ROUTES['param.element'] } } }
 		]);
 	});
 

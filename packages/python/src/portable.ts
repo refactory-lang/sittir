@@ -2578,7 +2578,10 @@ const table: PortableTable = {
 			{
 				path: 'declaration.constant',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', fields: ['left'], kinds: [] } }]
+				test: [
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', fields: ['left'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [1], fields: ['left'], kinds: [] } }
+				]
 			},
 			{ path: 'declaration.variable', within: [], test: [] }
 		],
@@ -2586,7 +2589,10 @@ const table: PortableTable = {
 			{
 				path: 'declaration.constant',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', fields: ['left'], kinds: [] } }]
+				test: [
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', fields: ['left'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [1], fields: ['left'], kinds: [] } }
+				]
 			},
 			{ path: 'declaration.variable', within: [], test: [] }
 		],
@@ -2594,7 +2600,10 @@ const table: PortableTable = {
 			{
 				path: 'declaration.constant',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', fields: ['left'], kinds: [] } }]
+				test: [
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', fields: ['left'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [1], fields: ['left'], kinds: [] } }
+				]
 			},
 			{ path: 'declaration.variable', within: [], test: [] }
 		],
@@ -2752,8 +2761,12 @@ const table: PortableTable = {
 		],
 		[TSKindId.BreakStatement]: [{ path: 'statement.break', within: [], test: [] }],
 		[TSKindId.Call]: [
-			{ path: 'expression.call', within: [], test: [] },
-			{ path: 'expression.call.member', within: [], test: [] }
+			{
+				path: 'expression.call.member',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [220], fields: ['function'], kinds: [] } }]
+			},
+			{ path: 'expression.call', within: [], test: [] }
 		],
 		[TSKindId.CaseAsPattern]: [{ path: 'pattern.case.as', within: [], test: [] }],
 		[TSKindId.CaseClause]: [{ path: 'clause.case', within: [], test: [] }],
@@ -2765,17 +2778,117 @@ const table: PortableTable = {
 		[TSKindId.ClassPattern]: [{ path: 'pattern.case.class', within: [], test: [] }],
 		[TSKindId.Comment]: [{ path: 'comment.line', within: [], test: [] }],
 		[TSKindId.ComparisonOperator]: [
-			{ path: 'expression.binary', within: [], test: [] },
-			{ path: 'expression.binary.comparison.equal', within: [], test: [] },
-			{ path: 'expression.binary.comparison.not_equal', within: [], test: [] },
-			{ path: 'expression.binary.comparison.less', within: [], test: [] },
-			{ path: 'expression.binary.comparison.greater', within: [], test: [] },
-			{ path: 'expression.binary.comparison.less_equal', within: [], test: [] },
-			{ path: 'expression.binary.comparison.greater_equal', within: [], test: [] },
-			{ path: 'expression.binary.membership.in', within: [], test: [] },
-			{ path: 'expression.binary.membership.not_in', within: [], test: [] },
-			{ path: 'expression.binary.identity.is', within: [], test: [] },
-			{ path: 'expression.binary.identity.is_not', within: [], test: [] }
+			{
+				path: 'expression.binary.comparison.equal',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [{ fields: ['comparators'], kinds: [] }],
+						plan: { op: 'eq', text: '==', fields: ['operators'], kinds: [] }
+					}
+				]
+			},
+			{
+				path: 'expression.binary.comparison.not_equal',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [{ fields: ['comparators'], kinds: [] }],
+						plan: { op: 'eq', text: '!=', fields: ['operators'], kinds: [] }
+					}
+				]
+			},
+			{
+				path: 'expression.binary.comparison.less',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [{ fields: ['comparators'], kinds: [] }],
+						plan: { op: 'eq', text: '<', fields: ['operators'], kinds: [] }
+					}
+				]
+			},
+			{
+				path: 'expression.binary.comparison.greater',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [{ fields: ['comparators'], kinds: [] }],
+						plan: { op: 'eq', text: '>', fields: ['operators'], kinds: [] }
+					}
+				]
+			},
+			{
+				path: 'expression.binary.comparison.less_equal',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [{ fields: ['comparators'], kinds: [] }],
+						plan: { op: 'eq', text: '<=', fields: ['operators'], kinds: [] }
+					}
+				]
+			},
+			{
+				path: 'expression.binary.comparison.greater_equal',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [{ fields: ['comparators'], kinds: [] }],
+						plan: { op: 'eq', text: '>=', fields: ['operators'], kinds: [] }
+					}
+				]
+			},
+			{
+				path: 'expression.binary.membership.in',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [{ fields: ['comparators'], kinds: [] }],
+						plan: { op: 'eq', text: 'in', fields: ['operators'], kinds: [] }
+					}
+				]
+			},
+			{
+				path: 'expression.binary.membership.not_in',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [{ fields: ['comparators'], kinds: [] }],
+						plan: { op: 'eq', text: 'not in', fields: ['operators'], kinds: [] }
+					}
+				]
+			},
+			{
+				path: 'expression.binary.identity.is',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [{ fields: ['comparators'], kinds: [] }],
+						plan: { op: 'eq', text: 'is', fields: ['operators'], kinds: [] }
+					}
+				]
+			},
+			{
+				path: 'expression.binary.identity.is_not',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [{ fields: ['comparators'], kinds: [] }],
+						plan: { op: 'eq', text: 'is not', fields: ['operators'], kinds: [] }
+					}
+				]
+			},
+			{ path: 'expression.binary', within: [], test: [] }
 		],
 		[TSKindId.ComplexPattern]: [{ path: 'pattern.case.complex', within: [], test: [] }],
 		[TSKindId.ComprehensionClauses]: [{ path: 'clause.comprehension', within: [], test: [] }],

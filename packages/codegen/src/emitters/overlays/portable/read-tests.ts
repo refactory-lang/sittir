@@ -1,6 +1,6 @@
 import type { PortableCondition, PortableStep, QueryPlan, QuerySubject, SlotRoutes } from '@sittir/types';
 import { WILDCARD, type CaptureSite, type PredicateFact, type SlotModel } from '../../../bindings/facts.ts';
-import { slotFor, type ReadEntry } from '../../../bindings/routes.ts';
+import { slotFor, type ChildTest, type ReadEntry } from '../../../bindings/routes.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { queryRoutesOf } from '../../client-utils.ts';
 
@@ -78,13 +78,22 @@ function conditionOf(entry: ReadEntry, predicate: PredicateFact, model: SlotMode
 	return { up: predicate.subject.up, via: steps, plan: planOn(subject) };
 }
 
+function childPredicate(child: ChildTest): PredicateFact | string {
+	if ('text' in child) return { operator: 'eq', capture: null, arguments: [{ text: child.text }], subject: child.subject };
+	if ('excludes' in child) return { operator: 'not-kind-eq', capture: null, arguments: child.excludes.map((text) => ({ text })), subject: child.subject };
+	if (child.kinds.length === 0) return 'a child test reaches a slot that holds no node kind';
+	return { operator: 'kind-eq', capture: null, arguments: child.kinds.map((text) => ({ text })), subject: child.subject };
+}
+
 export function readTestOf(entry: ReadEntry, model: SlotModel, routesOf: SlotRoutesOf, typeOf: TypeOf): PortableCondition[] {
 	const pins = entry.pins.map((pin): PortableCondition | string => {
 		const routes = routesOf(entry.kind, pin.slot);
 		return routes === undefined ? `no routes for pinned slot ${pin.slot}` : { up: 0, via: [], plan: { op: 'eq', text: pin.text, ...routes } };
 	});
-	const conditions = [...pins, ...entry.claim.predicates.map((p) => conditionOf(entry, p, model, routesOf, typeOf))];
+	const predicates = [...entry.claim.predicates, ...entry.children.map(childPredicate)];
+	const conditions = [...pins, ...predicates.map((p) => (typeof p === 'string' ? p : conditionOf(entry, p, model, routesOf, typeOf)))];
 	const refused = conditions.filter((c) => typeof c === 'string');
 	if (refused.length > 0) throw new Error(`portable: cannot test ${entry.kind} as ${entry.vocab}: ${refused.join('; ')}`);
-	return conditions as PortableCondition[];
+	const unique = new Map((conditions as PortableCondition[]).map((condition) => [JSON.stringify(condition), condition]));
+	return [...unique.values()];
 }
