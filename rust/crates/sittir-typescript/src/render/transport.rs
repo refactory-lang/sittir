@@ -12169,7 +12169,12 @@ impl ::sittir_core::render::Render for FunctionSignatureTerminatorTransportSlot 
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             FunctionSignatureTerminatorTransportSlot::AutomaticSemicolon => render_automatic_semicolon(w),
-            FunctionSignatureTerminatorTransportSlot::Semi => render_semi(w),
+            FunctionSignatureTerminatorTransportSlot::Semi => {
+                w.site_at(options::SITE_FUNCTION_SIGNATURE_SEMI_BEFORE);
+                let written = render_semi(w);
+                written?;
+                Ok(())
+            }
             FunctionSignatureTerminatorTransportSlot::FunctionSignatureAutomaticSemicolon => render_function_signature_automatic_semicolon(w),
         }
     }
@@ -15854,7 +15859,12 @@ impl ::sittir_core::render::Render for ClassBodyMemberDeclarationTerminatorTrans
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             ClassBodyMemberDeclarationTerminatorTransportSlot::AutomaticSemicolon => render_automatic_semicolon(w),
-            ClassBodyMemberDeclarationTerminatorTransportSlot::Semi => render_semi(w),
+            ClassBodyMemberDeclarationTerminatorTransportSlot::Semi => {
+                w.site_at(options::SITE_CLASS_BODY_MEMBER_DECLARATION_SEMI_BEFORE);
+                let written = render_semi(w);
+                written?;
+                Ok(())
+            }
             ClassBodyMemberDeclarationTerminatorTransportSlot::Comma => {
                 w.site_at(options::SITE_CLASS_BODY_MEMBER_DECLARATION_COMMA_BEFORE);
                 let written = render_comma(w);

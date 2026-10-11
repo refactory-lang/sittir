@@ -13277,6 +13277,7 @@ export namespace FunctionSignature {
 			readonly asyncKeyword?: { readonly after?: LayoutKindId };
 			readonly before?: LayoutKindId;
 			readonly functionKeyword?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+			readonly semi?: { readonly before?: LayoutKindId };
 			readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.FunctionSignatureAutomaticSemicolon;
 		};
 	}
@@ -14379,6 +14380,7 @@ export namespace ClassBodyMemberDeclaration {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
 			readonly comma?: { readonly before?: LayoutKindId };
+			readonly semi?: { readonly before?: LayoutKindId };
 			readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.Comma;
 		};
 	}

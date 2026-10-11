@@ -3748,6 +3748,9 @@ An arm's token is its literal (`literalTokenOf`) or, for a reference to a
 visible punctuation kind, that kind's text (`punctuationReferenceTokenOf`).
 A choice that is itself one seam site (a token set or an enum slot, which
 `seamNameOf` names as a whole) is left to the boundary's own token seams.
+An arm that is itself a choice is walked the same way, so a terminator of
+`choice(choice(automatic, ';'), ',')` seats `semi/before` and `comma/before`
+each in its own arm, as `choice(automatic, ';', ',')` does.
 Runs from `withTokenSeams` on both neighbours of every boundary, before
 those seams are placed.
 
