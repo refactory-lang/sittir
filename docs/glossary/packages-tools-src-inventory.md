@@ -54,7 +54,7 @@ Reads the vocabulary through the feature tool's reader (`readVocabularySource`),
 - A stub that does not declare one adds its members to the kind with the same qualified name.
 - A member declared more than once is optional when any declaration of it is optional, which is how the augmentation gates it.
 
-Every kind is keyed by its `$kind` literal and carries its own members (each marked optional or required, and a flag when it is declared with the marker type `Flag`, `read.ts::FLAG`) and its parent, the interface its `extends` clause names through `V.`. `members(path)` adds the inherited members, nearest first. `flags` is every name some kind or stub declares as a flag. An interface with no `$kind` literal and no kind of the same name is not a vocabulary kind (the context's typemap and `Unmapped`).
+Every kind is keyed by its `$kind` literal and carries its own members (each marked optional or required, and a flag when it is declared with the marker type `Flag`, `read.ts::FLAG`) its parent, the interface its `extends` clause names through `V.`, and the value it is refined by, when it is an owner's refinement (`read.ts::refinesOf`). `members(path)` adds the inherited members, nearest first: at each kind on the line its own, then those of the value it is refined by, along the value's own line. So `declaration.function.public.restricted` has the `scope` that `scoped-visibility` gives `modifier.visibility.public.restricted`. `flags` is every name some kind or stub declares as a flag. An interface with no `$kind` literal and no kind of the same name is not a vocabulary kind (the context's typemap and `Unmapped`).
 
 ### `packages/tools/src/inventory/index.ts::BindingsModule`
 

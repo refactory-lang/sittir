@@ -9,6 +9,7 @@ export interface VocabularyKind {
 	readonly name: string;
 	readonly own: ReadonlyMap<string, VocabularyMember>;
 	readonly parent: string | undefined;
+	readonly refines: string | undefined;
 }
 
 export interface Vocabulary {
@@ -29,14 +30,19 @@ export function readVocabulary(dir: string): Vocabulary {
 		for (const m of stub.members) members.set(m.name, { optional: m.optional || members.get(m.name)?.optional === true, flag: m.type === FLAG });
 	}
 	const kinds = new Map<string, VocabularyKind>();
+	const pathOf = (qname: string | undefined): string | undefined => (qname === undefined ? undefined : pathByName.get(qname));
 	for (const d of declared) {
-		kinds.set(d.path, { name: d.qname, own: own.get(d.qname) ?? new Map(), parent: d.parent === undefined ? undefined : pathByName.get(d.parent) });
+		kinds.set(d.path, { name: d.qname, own: own.get(d.qname) ?? new Map(), parent: pathOf(d.parent), refines: pathOf(d.refines) });
 	}
 	const members = (path: string): ReadonlyMap<string, VocabularyMember> => {
 		const all = new Map<string, VocabularyMember>();
-		for (let kind = kinds.get(path); kind !== undefined; kind = kind.parent === undefined ? undefined : kinds.get(kind.parent)) {
-			for (const [name, member] of kind.own) if (!all.has(name)) all.set(name, member);
-		}
+		const line = (from: string | undefined): void => {
+			for (let kind = from === undefined ? undefined : kinds.get(from); kind !== undefined; kind = kind.parent === undefined ? undefined : kinds.get(kind.parent)) {
+				for (const [name, member] of kind.own) if (!all.has(name)) all.set(name, member);
+				line(kind.refines);
+			}
+		};
+		line(path);
 		return all;
 	};
 	const flags = new Set([...kinds.values()].flatMap((kind) => [...kind.own].flatMap(([name, member]) => (member.flag ? [name] : []))));

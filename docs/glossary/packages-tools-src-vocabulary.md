@@ -28,6 +28,7 @@ One interface as declared:
 - its qualified name, the namespace path plus the interface name;
 - its `$kind` literal, if it has one;
 - its parent, the qualified name its `extends` clause names through `V.`;
+- the value it is refined by, when it is an owner's refinement (`refinesOf`);
 - its own property members.
 
 A declaration with a `$kind` is a kind (`DeclaredKind`, `isKind`). In a feature folder, a declaration without one adds members to the kind with the same qualified name.
@@ -70,6 +71,14 @@ An interface's marker key: its one property member, typed `true`, named by an id
 
 An interface's parent: the first `V.`-qualified type reference in its heritage clauses, at any depth (`vocabularyReference`). For example, `SubKindOf<V.Declaration<G>>` names `Declaration`.
 
+
+### `packages/tools/src/vocabulary/read.ts::REFINED_BY`
+
+The name of the helper an owner's refinement by a value extends (`utils.ts::RefinedBy`). A heritage clause naming it gives the owner as its first type argument and the value as its second.
+
+### `packages/tools/src/vocabulary/read.ts::refinesOf`
+
+The value an owner's refinement is refined by: the `V.`-qualified reference in the second type argument of a `RefinedBy` heritage clause (`vocabularyReference`). `RefinedBy<V.Declaration.Function<G>, V.Modifier.Visibility.Public<G>>` gives `Modifier.Visibility.Public`, and the parent (`parentOf`) stays the owner, the first reference.
 ### `packages/tools/src/vocabulary/plan.ts::plan`
 
 The planner. It works in five parts.
@@ -80,6 +89,7 @@ The planner. It works in five parts.
 - a kind a feature declares in a namespace no base file declares, since only the base adds a namespace and its key in the context;
 - a parent that is not a kind;
 - a parent that is not a level above the kind (a prefix of its path);
+- a value the kind is refined by that is not a kind, such as a level's `Any`, which would leave the value's members off the kind;
 - a base kind under a kind a feature adds.
 
 A feature kind under another feature's kind is only a note, when its own feature does not extend that feature.

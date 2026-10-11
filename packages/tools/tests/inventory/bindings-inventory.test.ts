@@ -305,3 +305,69 @@ describe('readVocabulary over feature folders', () => {
 		});
 	});
 });
+
+describe('readVocabulary over an owner refined by a value', () => {
+	const dir = mkdtempSync(join(tmpdir(), 'vocabulary-'));
+	const write = (file: string, lines: readonly string[]): void => {
+		mkdirSync(dirname(join(dir, file)), { recursive: true });
+		writeFileSync(join(dir, file), [...lines, ''].join('\n'));
+	};
+	write('decl.ts', [
+		'export interface Declaration<G> {',
+		"\treadonly $kind: 'declaration';",
+		'\treadonly name: string;',
+		'}',
+		'export namespace Declaration {',
+		'\texport interface Function<G> extends SubKindOf<V.Declaration<G>> {',
+		"\t\treadonly $kind: 'declaration.function';",
+		'\t}',
+		'\texport interface Public<G> extends RefinedBy<V.Declaration<G>, V.Modifier.Public<G>> {',
+		"\t\treadonly $kind: 'declaration.public';",
+		'\t}',
+		'\texport namespace Public {',
+		'\t\texport interface Restricted<G> extends RefinedBy<V.Declaration.Public<G>, V.Modifier.Public.Restricted<G>> {',
+		"\t\t\treadonly $kind: 'declaration.public.restricted';",
+		'\t\t}',
+		'\t}',
+		'}'
+	]);
+	write('modifier.ts', [
+		'export interface Modifier<G> {',
+		"\treadonly $kind: 'modifier';",
+		'}',
+		'export namespace Modifier {',
+		'\texport interface Public<G> extends SubKindOf<V.Modifier<G>> {',
+		"\t\treadonly $kind: 'modifier.public';",
+		'\t}',
+		'\texport namespace Public {',
+		'\t\texport interface Restricted<G> extends SubKindOf<V.Modifier.Public<G>> {',
+		"\t\t\treadonly $kind: 'modifier.public.restricted';",
+		'\t\t}',
+		'\t}',
+		'}'
+	]);
+	write('features/scoped/index.ts', ["export type * from './modifier.ts';", 'export interface Scoped {', '\treadonly scoped: true;', '}']);
+	write('features/scoped/modifier.ts', [
+		'export namespace Modifier {',
+		'\texport namespace Public {',
+		'\t\texport interface Restricted<G> {',
+		'\t\t\treadonly scope: string;',
+		'\t\t}',
+		'\t}',
+		'}'
+	]);
+	const vocabulary = readVocabulary(dir);
+	rmSync(dir, { recursive: true, force: true });
+
+	it('keeps the owner as the parent and records the value the kind is refined by', () => {
+		expect(vocabulary.kinds.get('declaration.public.restricted')).toMatchObject({ parent: 'declaration.public', refines: 'modifier.public.restricted' });
+	});
+
+	it("gives an owner's refinement the members its value adds, beside the owner's", () => {
+		expect(Object.fromEntries(vocabulary.members('declaration.public.restricted'))).toEqual({
+			name: { optional: false, flag: false },
+			scope: { optional: false, flag: false }
+		});
+		expect(vocabularyMembers(vocabulary).get('declaration.public')).toEqual(new Set(['name']));
+	});
+});

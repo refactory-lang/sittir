@@ -5,6 +5,7 @@ import ts from 'typescript6';
 export const AUGMENTATION = 'augment.ts';
 export const FEATURES = 'features';
 export const FLAG = 'Flag';
+export const REFINED_BY = 'RefinedBy';
 
 export interface Member {
 	readonly name: string;
@@ -16,6 +17,7 @@ export interface Declared {
 	readonly qname: string;
 	readonly path: string | undefined;
 	readonly parent: string | undefined;
+	readonly refines: string | undefined;
 	readonly members: readonly Member[];
 }
 
@@ -93,7 +95,7 @@ function declared(statement: ts.InterfaceDeclaration, qname: string, source: ts.
 			type: member.type === undefined ? 'any' : printer.printNode(ts.EmitHint.Unspecified, member.type, source)
 		});
 	}
-	return { qname, path, parent: parentOf(statement), members };
+	return { qname, path, parent: parentOf(statement), refines: refinesOf(statement), members };
 }
 
 function parentOf(declaration: ts.InterfaceDeclaration): string | undefined {
@@ -101,6 +103,16 @@ function parentOf(declaration: ts.InterfaceDeclaration): string | undefined {
 		for (const type of clause.types) {
 			const found = vocabularyReference(type);
 			if (found !== undefined) return found;
+		}
+	}
+	return undefined;
+}
+
+function refinesOf(declaration: ts.InterfaceDeclaration): string | undefined {
+	for (const clause of declaration.heritageClauses ?? []) {
+		for (const type of clause.types) {
+			const value = type.expression.getText() === REFINED_BY ? type.typeArguments?.[1] : undefined;
+			if (value !== undefined) return vocabularyReference(value);
 		}
 	}
 	return undefined;

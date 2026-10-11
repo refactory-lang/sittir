@@ -81,6 +81,7 @@ export function plan(source: VocabularySource): Plan {
 		}
 		const parent = d.parent === undefined ? undefined : pathOf.get(d.parent)?.path;
 		if (d.parent !== undefined && parent === undefined) issues.push(`${d.path} extends ${d.parent}, which is not a kind`);
+		if (d.refines !== undefined && !pathOf.has(d.refines)) issues.push(`${d.path} is refined by ${d.refines}, which is not a kind`);
 		if (parent !== undefined && (parent === d.path || !under(d.path, parent))) issues.push(`${d.path} extends ${parent}, which is not a level above it`);
 		const kind: Kind = { qname: d.qname, path: d.path, parent, feature };
 		kinds.set(d.path, kind);

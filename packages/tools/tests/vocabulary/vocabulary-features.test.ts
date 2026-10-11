@@ -242,6 +242,19 @@ describe('plan', () => {
 		]);
 	});
 
+	it('reports a kind refined by a value that is not a kind', () => {
+		const refined = DECLARATION.replace(
+			'\t}\n}\n',
+			`\t}
+	export interface Public<G extends GrammarContext<G>> extends RefinedBy<V.Declaration<G>, V.Declaration.Function.Any<G>> {
+		readonly $kind: 'declaration.public';
+	}
+}
+`
+		);
+		expect(issues({ ...CLEAN, 'declaration.ts': refined })).toEqual(['declaration.public is refined by Declaration.Function.Any, which is not a kind']);
+	});
+
 	it('reports a kind in a namespace no base file declares', () => {
 		expect(issues({ ...CLEAN, ...MACROS })).toEqual(['macro.rule: Macros declares it in Macro, a namespace no base file declares']);
 	});
