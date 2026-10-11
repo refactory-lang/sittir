@@ -40,10 +40,10 @@
       }
     },
     "abstract_class_declaration": {
-      "vocab": "declaration.class.abstract",
+      "vocab": "declaration.class",
       "read": [
         {
-          "vocab": "declaration.class.abstract",
+          "vocab": "declaration.class",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -275,14 +275,7 @@
           ]
         },
         {
-          "name": "abstract",
-          "route": "presence",
-          "via": [],
-          "token": "abstract",
-          "path": null
-        },
-        {
-          "name": "private",
+          "name": "privateName",
           "route": "kind",
           "kind": "private_property_identifier",
           "path": [
@@ -690,7 +683,7 @@
       ],
       "members": [
         {
-          "name": "using",
+          "name": "disposable",
           "route": "slot",
           "slot": "using",
           "path": [
@@ -1831,32 +1824,6 @@
           ]
         },
         {
-          "vocab": "expression.binary.membership.in",
-          "toplevel": true,
-          "within": [],
-          "pins": [
-            {
-              "member": "operator",
-              "slot": "operator",
-              "text": "in"
-            }
-          ],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "in",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
-              }
-            }
-          ]
-        },
-        {
           "vocab": "expression.binary.membership.instanceof",
           "toplevel": true,
           "within": [],
@@ -1884,6 +1851,13 @@
         },
         {
           "vocab": "expression.binary",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "expression.binary.membership.in",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -1925,13 +1899,52 @@
           ]
         },
         {
-          "name": "binaryExpressionIn",
-          "route": "slot",
-          "slot": "binary_expression_in",
+          "name": "left",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "binary_expression_in",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "binary_expression_in",
+          "slot": "left",
+          "multiple": false,
           "path": [
             {
               "owner": "binary_expression",
               "slot": "binary_expression_in"
+            },
+            {
+              "owner": "binary_expression_in",
+              "slot": "left"
+            }
+          ]
+        },
+        {
+          "name": "right",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "binary_expression_in",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "binary_expression_in",
+          "slot": "right",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "binary_expression",
+              "slot": "binary_expression_in"
+            },
+            {
+              "owner": "binary_expression_in",
+              "slot": "right"
             }
           ]
         }
@@ -3587,7 +3600,7 @@
       ],
       "members": [
         {
-          "name": "await",
+          "name": "async",
           "route": "slot",
           "slot": "await",
           "path": [
@@ -3975,10 +3988,10 @@
       ]
     },
     "generator_function": {
-      "vocab": "expression.function.generator",
+      "vocab": "expression.function",
       "read": [
         {
-          "vocab": "expression.function.generator",
+          "vocab": "expression.function",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4062,10 +4075,10 @@
       ]
     },
     "generator_function_declaration": {
-      "vocab": "declaration.function.generator",
+      "vocab": "declaration.function",
       "read": [
         {
-          "vocab": "declaration.function.generator",
+          "vocab": "declaration.function",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4390,9 +4403,72 @@
           "name": "content",
           "route": "slot",
           "slot": "content",
+          "except": [
+            "import_clause_default_import"
+          ],
           "path": [
             {
               "owner": "import_clause",
+              "slot": "content"
+            }
+          ]
+        },
+        {
+          "name": "default",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "import_clause_default_import",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "import_clause_default_import",
+          "slot": "identifier",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "import_clause",
+              "slot": "content"
+            },
+            {
+              "owner": "import_clause_default_import",
+              "slot": "identifier"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "import_clause_group",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "import_clause_default_import",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "import_clause_group",
+          "slot": "content",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "import_clause",
+              "slot": "content"
+            },
+            {
+              "owner": "import_clause_default_import",
+              "slot": "import_clause_group"
+            },
+            {
+              "owner": "import_clause_group",
               "slot": "content"
             }
           ]
@@ -4480,6 +4556,58 @@
       "vocab": "statement.import",
       "read": [
         {
+          "vocab": "statement.import.type",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "importClause",
+              "slot": "import_clause",
+              "text": "type"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "type",
+                "fields": [
+                  "import_clause"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "statement.import.typeof",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "importClause",
+              "slot": "import_clause",
+              "text": "typeof"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "typeof",
+                "fields": [
+                  "import_clause"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
           "vocab": "statement.import",
           "toplevel": true,
           "within": [],
@@ -4503,6 +4631,9 @@
           "name": "fromClause",
           "route": "slot",
           "slot": "from_clause",
+          "except": [
+            "import_statement_clause_from"
+          ],
           "path": [
             {
               "owner": "import_statement",
@@ -4520,6 +4651,31 @@
               "slot": "import_attribute"
             }
           ]
+        },
+        {
+          "name": "source",
+          "route": "nested",
+          "via": [
+            {
+              "field": "from_clause",
+              "kind": "import_statement_clause_from",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "import_statement_clause_from",
+          "slot": "source",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "import_statement",
+              "slot": "from_clause"
+            },
+            {
+              "owner": "import_statement_clause_from",
+              "slot": "source"
+            }
+          ]
         }
       ]
     },
@@ -4535,6 +4691,64 @@
         }
       ],
       "members": []
+    },
+    "index_signature_mapped_type_clause": {
+      "vocab": "declaration.signature.index.mapped",
+      "read": [
+        {
+          "vocab": "declaration.signature.index.mapped",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "sign",
+          "route": "slot",
+          "slot": "sign",
+          "path": [
+            {
+              "owner": "index_signature_mapped_type_clause",
+              "slot": "sign"
+            }
+          ]
+        },
+        {
+          "name": "readonly",
+          "route": "slot",
+          "slot": "readonly",
+          "path": [
+            {
+              "owner": "index_signature_mapped_type_clause",
+              "slot": "readonly"
+            }
+          ]
+        },
+        {
+          "name": "mappedTypeClause",
+          "route": "slot",
+          "slot": "mapped_type_clause",
+          "path": [
+            {
+              "owner": "index_signature_mapped_type_clause",
+              "slot": "mapped_type_clause"
+            }
+          ]
+        },
+        {
+          "name": "type",
+          "route": "slot",
+          "slot": "type",
+          "path": [
+            {
+              "owner": "index_signature_mapped_type_clause",
+              "slot": "type"
+            }
+          ]
+        }
+      ]
     },
     "index_type_query": {
       "vocab": "type.index_query",
@@ -5059,7 +5273,7 @@
           ]
         },
         {
-          "name": "private",
+          "name": "privateName",
           "route": "kind",
           "kind": "private_property_identifier",
           "path": [
@@ -5335,7 +5549,7 @@
           ]
         },
         {
-          "name": "private",
+          "name": "privateName",
           "route": "kind",
           "kind": "private_property_identifier",
           "path": [
@@ -5492,7 +5706,7 @@
           ]
         },
         {
-          "name": "private",
+          "name": "privateName",
           "route": "kind",
           "kind": "private_property_identifier",
           "path": [
@@ -6496,10 +6710,10 @@
       }
     },
     "optional_parameter": {
-      "vocab": "declaration.parameter.optional",
+      "vocab": "declaration.parameter",
       "read": [
         {
-          "vocab": "declaration.parameter.optional",
+          "vocab": "declaration.parameter",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -6987,7 +7201,7 @@
           ]
         },
         {
-          "name": "private",
+          "name": "privateName",
           "route": "kind",
           "kind": "private_property_identifier",
           "path": [
@@ -7199,7 +7413,7 @@
           ]
         },
         {
-          "name": "private",
+          "name": "privateName",
           "route": "kind",
           "kind": "private_property_identifier",
           "path": [
@@ -7821,6 +8035,19 @@
         "terminals": [],
         "list": true
       }
+    },
+    "string_fragment": {
+      "vocab": "literal.string.text",
+      "read": [
+        {
+          "vocab": "literal.string.text",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
     },
     "string_keyword": {
       "vocab": "type.primitive",
@@ -9400,27 +9627,27 @@
         "paths": 13,
         "kinds": 5,
         "refinements": 0,
-        "aliases": 148
+        "aliases": 150
       },
       {
         "depth": 2,
         "paths": 111,
-        "kinds": 116,
+        "kinds": 120,
         "refinements": 8,
-        "aliases": 95
+        "aliases": 97
       },
       {
         "depth": 3,
-        "paths": 82,
-        "kinds": 69,
-        "refinements": 56,
-        "aliases": 41
+        "paths": 81,
+        "kinds": 67,
+        "refinements": 55,
+        "aliases": 42
       },
       {
         "depth": 4,
-        "paths": 48,
-        "kinds": 11,
-        "refinements": 24,
+        "paths": 49,
+        "kinds": 12,
+        "refinements": 25,
         "aliases": 0
       },
       {
@@ -9432,14 +9659,6 @@
       }
     ],
     "dropped": [
-      {
-        "under": "",
-        "name": "abstract",
-        "paths": [
-          "declaration.class.abstract",
-          "declaration.method.signature.abstract"
-        ]
-      },
       {
         "under": "",
         "name": "add",
@@ -9567,14 +9786,6 @@
       },
       {
         "under": "",
-        "name": "generator",
-        "paths": [
-          "declaration.function.generator",
-          "expression.function.generator"
-        ]
-      },
-      {
-        "under": "",
         "name": "hex",
         "paths": [
           "literal.number.integer.big.hex",
@@ -9653,7 +9864,6 @@
         "under": "",
         "name": "optional",
         "paths": [
-          "declaration.parameter.optional",
           "element.tuple.member.optional",
           "type.optional"
         ]
@@ -9737,6 +9947,14 @@
         ]
       },
       {
+        "under": "",
+        "name": "typeof",
+        "paths": [
+          "expression.unary.typeof",
+          "statement.import.typeof"
+        ]
+      },
+      {
         "under": "clause",
         "name": "namespace",
         "paths": [
@@ -9750,14 +9968,6 @@
         "paths": [
           "clause.export.specifier",
           "clause.import.specifier"
-        ]
-      },
-      {
-        "under": "declaration",
-        "name": "abstract",
-        "paths": [
-          "declaration.class.abstract",
-          "declaration.method.signature.abstract"
         ]
       },
       {

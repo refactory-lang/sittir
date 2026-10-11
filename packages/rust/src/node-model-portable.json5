@@ -68,6 +68,53 @@
       ],
       "members": []
     },
+    "array_expression_semi": {
+      "vocab": "expression.collection.list.repeat",
+      "read": [
+        {
+          "vocab": "expression.collection.list.repeat",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "attributes",
+          "route": "slot",
+          "slot": "attributes",
+          "path": [
+            {
+              "owner": "array_expression_semi",
+              "slot": "attributes"
+            }
+          ]
+        },
+        {
+          "name": "element",
+          "route": "slot",
+          "slot": "element",
+          "path": [
+            {
+              "owner": "array_expression_semi",
+              "slot": "element"
+            }
+          ]
+        },
+        {
+          "name": "length",
+          "route": "slot",
+          "slot": "length",
+          "path": [
+            {
+              "owner": "array_expression_semi",
+              "slot": "length"
+            }
+          ]
+        }
+      ]
+    },
     "array_type": {
       "vocab": "type.array",
       "read": [
@@ -259,12 +306,51 @@
         },
         {
           "name": "input",
-          "route": "slot",
-          "slot": "input",
+          "route": "nested",
+          "via": [
+            {
+              "field": "input",
+              "kind": "attribute_input",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "attribute_input",
+          "slot": "value",
+          "multiple": false,
           "path": [
             {
               "owner": "attribute",
               "slot": "input"
+            },
+            {
+              "owner": "attribute_input",
+              "slot": "value"
+            }
+          ]
+        },
+        {
+          "name": "input",
+          "route": "nested",
+          "via": [
+            {
+              "field": "input",
+              "kind": "attribute_input",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "attribute_input",
+          "slot": "arguments",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "attribute",
+              "slot": "input"
+            },
+            {
+              "owner": "attribute_input",
+              "slot": "arguments"
             }
           ]
         }
@@ -328,6 +414,53 @@
         "terminals": [],
         "list": false
       }
+    },
+    "attributed_ordered_field": {
+      "vocab": "declaration.field",
+      "read": [
+        {
+          "vocab": "declaration.field",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "attributes",
+          "route": "slot",
+          "slot": "attribute_item",
+          "path": [
+            {
+              "owner": "attributed_ordered_field",
+              "slot": "attribute_item"
+            }
+          ]
+        },
+        {
+          "name": "visibility",
+          "route": "slot",
+          "slot": "visibility_modifier",
+          "path": [
+            {
+              "owner": "attributed_ordered_field",
+              "slot": "visibility_modifier"
+            }
+          ]
+        },
+        {
+          "name": "type",
+          "route": "slot",
+          "slot": "type",
+          "path": [
+            {
+              "owner": "attributed_ordered_field",
+              "slot": "type"
+            }
+          ]
+        }
+      ]
     },
     "attributed_parameter": {
       "container": {
@@ -1046,6 +1179,19 @@
         "terminals": [],
         "list": false
       }
+    },
+    "block_comment_regular": {
+      "vocab": "comment.text",
+      "read": [
+        {
+          "vocab": "comment.text",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
     },
     "block_keyword": {
       "vocab": "element.macro.fragment",
@@ -2109,6 +2255,19 @@
         ],
         "list": true
       }
+    },
+    "doc_comment": {
+      "vocab": "comment.text",
+      "read": [
+        {
+          "vocab": "comment.text",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
     },
     "dynamic_type": {
       "vocab": "type.dynamic",
@@ -3411,17 +3570,6 @@
           ]
         },
         {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "function_type",
-              "slot": "content"
-            }
-          ]
-        },
-        {
           "name": "parameters",
           "route": "slot",
           "slot": "parameters",
@@ -3440,6 +3588,99 @@
             {
               "owner": "function_type",
               "slot": "return_type"
+            }
+          ]
+        },
+        {
+          "name": "trait",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "function_type_trait_form",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "function_type_trait_form",
+          "slot": "trait",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "function_type",
+              "slot": "content"
+            },
+            {
+              "owner": "function_type_trait_form",
+              "slot": "trait"
+            }
+          ]
+        },
+        {
+          "name": "unsafe",
+          "route": "presence",
+          "via": [
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "function_type_fn_form",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "token": "unsafe",
+          "path": [
+            {
+              "owner": "function_type",
+              "slot": "content"
+            },
+            {
+              "owner": "function_type_fn_form",
+              "slot": "function_modifiers"
+            },
+            {
+              "owner": "function_modifiers",
+              "slot": "modifier"
+            }
+          ]
+        },
+        {
+          "name": "extern",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "function_type_fn_form",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "function_modifiers",
+          "slot": "modifier",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "function_type",
+              "slot": "content"
+            },
+            {
+              "owner": "function_type_fn_form",
+              "slot": "function_modifiers"
+            },
+            {
+              "owner": "function_modifiers",
+              "slot": "modifier"
             }
           ]
         }
@@ -4757,6 +4998,32 @@
         "list": false
       }
     },
+    "line_comment_extra_slashes": {
+      "vocab": "comment.text",
+      "read": [
+        {
+          "vocab": "comment.text",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
+    "line_comment_regular": {
+      "vocab": "comment.text",
+      "read": [
+        {
+          "vocab": "comment.text",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
     "literal_keyword": {
       "vocab": "element.macro.fragment",
       "read": [
@@ -5590,10 +5857,38 @@
           "name": "content",
           "route": "slot",
           "slot": "content",
+          "except": [
+            "range_pattern_with_left_with_right"
+          ],
           "path": [
             {
               "owner": "range_pattern_with_left",
               "slot": "content"
+            }
+          ]
+        },
+        {
+          "name": "right",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "range_pattern_with_left_with_right",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "range_pattern_with_left_with_right",
+          "slot": "right",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "range_pattern_with_left",
+              "slot": "content"
+            },
+            {
+              "owner": "range_pattern_with_left_with_right",
+              "slot": "right"
             }
           ]
         }
@@ -5745,7 +6040,7 @@
       ],
       "members": [
         {
-          "name": "mutable",
+          "name": "exclusive",
           "route": "slot",
           "slot": "mutable",
           "path": [
@@ -5792,7 +6087,7 @@
           ]
         },
         {
-          "name": "mutable",
+          "name": "exclusive",
           "route": "slot",
           "slot": "mutable",
           "path": [
@@ -6260,7 +6555,7 @@
           ]
         },
         {
-          "name": "ref",
+          "name": "byReference",
           "route": "slot",
           "slot": "ref",
           "path": [
@@ -6351,6 +6646,19 @@
       ],
       "members": []
     },
+    "string_content": {
+      "vocab": "literal.string.text",
+      "read": [
+        {
+          "vocab": "literal.string.text",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
     "string_literal": {
       "vocab": "literal.string",
       "read": [
@@ -6373,7 +6681,7 @@
       ],
       "members": [
         {
-          "name": "content",
+          "name": "elements",
           "route": "slot",
           "slot": "elements",
           "path": [
@@ -6433,6 +6741,122 @@
         }
       ],
       "members": []
+    },
+    "struct_item_tuple": {
+      "vocab": "declaration.struct.tuple",
+      "read": [
+        {
+          "vocab": "declaration.struct.tuple",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "visibility",
+          "route": "slot",
+          "slot": "visibility_modifier",
+          "path": [
+            {
+              "owner": "struct_item_tuple",
+              "slot": "visibility_modifier"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "struct_item_tuple",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "typeParameters",
+          "route": "slot",
+          "slot": "type_parameters",
+          "path": [
+            {
+              "owner": "struct_item_tuple",
+              "slot": "type_parameters"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "struct_item_tuple",
+              "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "whereClause",
+          "route": "slot",
+          "slot": "where_clause",
+          "path": [
+            {
+              "owner": "struct_item_tuple",
+              "slot": "where_clause"
+            }
+          ]
+        }
+      ]
+    },
+    "struct_item_unit": {
+      "vocab": "declaration.struct.unit",
+      "read": [
+        {
+          "vocab": "declaration.struct.unit",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "visibility",
+          "route": "slot",
+          "slot": "visibility_modifier",
+          "path": [
+            {
+              "owner": "struct_item_unit",
+              "slot": "visibility_modifier"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "struct_item_unit",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "typeParameters",
+          "route": "slot",
+          "slot": "type_parameters",
+          "path": [
+            {
+              "owner": "struct_item_unit",
+              "slot": "type_parameters"
+            }
+          ]
+        }
+      ]
     },
     "struct_pattern": {
       "vocab": "pattern.struct",
@@ -6976,7 +7400,7 @@
           ]
         },
         {
-          "name": "expressions",
+          "name": "elements",
           "route": "slot",
           "slot": "expressions",
           "path": [
@@ -8392,27 +8816,27 @@
         "paths": 13,
         "kinds": 3,
         "refinements": 0,
-        "aliases": 125
+        "aliases": 126
       },
       {
         "depth": 2,
-        "paths": 102,
-        "kinds": 132,
+        "paths": 103,
+        "kinds": 137,
         "refinements": 12,
-        "aliases": 86
+        "aliases": 88
       },
       {
         "depth": 3,
-        "paths": 74,
-        "kinds": 78,
-        "refinements": 46,
-        "aliases": 34
+        "paths": 77,
+        "kinds": 81,
+        "refinements": 49,
+        "aliases": 35
       },
       {
         "depth": 4,
-        "paths": 40,
-        "kinds": 14,
-        "refinements": 22,
+        "paths": 41,
+        "kinds": 15,
+        "refinements": 23,
         "aliases": 0
       }
     ],
@@ -8680,6 +9104,14 @@
       },
       {
         "under": "",
+        "name": "text",
+        "paths": [
+          "comment.text",
+          "literal.string.text"
+        ]
+      },
+      {
+        "under": "",
         "name": "try",
         "paths": [
           "expression.block.try",
@@ -8691,6 +9123,7 @@
         "name": "tuple",
         "paths": [
           "declaration.enum_member.tuple",
+          "declaration.struct.tuple",
           "expression.collection.tuple",
           "pattern.tuple",
           "type.tuple"
@@ -8700,6 +9133,7 @@
         "under": "",
         "name": "unit",
         "paths": [
+          "declaration.struct.unit",
           "expression.unit",
           "type.unit"
         ]
@@ -8742,6 +9176,14 @@
         "paths": [
           "declaration.method.static",
           "declaration.variable.static"
+        ]
+      },
+      {
+        "under": "declaration",
+        "name": "tuple",
+        "paths": [
+          "declaration.enum_member.tuple",
+          "declaration.struct.tuple"
         ]
       },
       {

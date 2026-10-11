@@ -1,5 +1,5 @@
 import type { GrammarContext } from './context.ts';
-import type { SubKindOf } from './utils.ts';
+import type { Flag, SubKindOf } from './utils.ts';
 import type * as V from './index.ts';
 export interface Element<G extends GrammarContext<G>> {
 	readonly $kind: 'element';
@@ -40,6 +40,7 @@ export namespace Element {
 		export interface TokenTree<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro<G>> {
 			// claimed by r
 			readonly $kind: 'element.macro.token_tree';
+			readonly tokens?: G['slots']['element.macro.token_tree']['tokens'][];
 		}
 		export namespace TokenTree {
 			export interface Delimited<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro.TokenTree<G>> {
@@ -67,7 +68,7 @@ export namespace Element {
 	export interface Pair<G extends GrammarContext<G>> extends SubKindOf<V.Element<G>> {
 		// claimed by pt
 		readonly $kind: 'element.pair';
-		readonly computed?: boolean;
+		readonly computed?: Flag;
 		// t only
 		readonly key: G['slots']['element.pair']['key'];
 		readonly value?: G['slots']['element.pair']['value'];

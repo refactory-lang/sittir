@@ -1,5 +1,5 @@
 import type { GrammarContext } from './context.ts';
-import type { SubKindOf } from './utils.ts';
+import type { Flag, SubKindOf } from './utils.ts';
 import type * as V from './index.ts';
 export interface Type<G extends GrammarContext<G>> {
 	// claimed by p
@@ -62,20 +62,24 @@ export namespace Type {
 	export interface Function<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by rt
 		readonly $kind: 'type.function';
-		readonly content?: G['slots']['type.function']['content'] | G['slots']['type.function']['content'][];
+		readonly extern?: V.Modifier.Extern<G>;
 		// r only
 		readonly forLifetimes?: V.Clause.Lifetimes<G>;
 		// r only
 		readonly parameters: G['slots']['type.function']['parameters'][];
 		readonly returnType?: G['slots']['type.function']['returnType'];
+		readonly trait?: G['slots']['type.function']['trait'];
+		// r only
 		readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 		// t only
+		readonly unsafe?: Flag;
+		// r only
 	}
 	export namespace Function {
 		export interface Constructor<G extends GrammarContext<G>> extends SubKindOf<V.Type.Function<G>> {
 			// claimed by t
 			readonly $kind: 'type.function.constructor';
-			readonly abstract?: boolean;
+			readonly abstract?: Flag;
 			readonly parameters: V.Declaration.Parameter.Any<G>[];
 			readonly type: G['slots']['type.function.constructor']['type'];
 			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
@@ -186,6 +190,8 @@ export namespace Type {
 	export interface Pointer<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by r
 		readonly $kind: 'type.pointer';
+		readonly type: G['slots']['type.pointer']['type'];
+		readonly writable?: Flag;
 	}
 	export interface Predicate<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by t
@@ -231,8 +237,8 @@ export namespace Type {
 	export interface Reference<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by r
 		readonly $kind: 'type.reference';
+		readonly exclusive?: Flag;
 		readonly lifetime?: V.Identifier.Lifetime<G>;
-		readonly mutable?: boolean;
 		readonly type: G['slots']['type.reference']['type'];
 	}
 	export interface Rest<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {

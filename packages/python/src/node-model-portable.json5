@@ -2546,17 +2546,6 @@
           ]
         },
         {
-          "name": "exception",
-          "route": "slot",
-          "slot": "exception",
-          "path": [
-            {
-              "owner": "except_clause",
-              "slot": "exception"
-            }
-          ]
-        },
-        {
           "name": "suite",
           "route": "slot",
           "slot": "suite",
@@ -2564,6 +2553,101 @@
             {
               "owner": "except_clause",
               "slot": "suite"
+            }
+          ]
+        },
+        {
+          "name": "exception",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "except_clause_exception_as",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "except_clause_exception",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "except_clause_exception_as",
+          "slot": "value",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "except_clause",
+              "slot": "exception"
+            },
+            {
+              "owner": "except_clause_exception",
+              "slot": "content"
+            },
+            {
+              "owner": "except_clause_exception_as",
+              "slot": "value"
+            }
+          ]
+        },
+        {
+          "name": "alias",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "except_clause_exception_as",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "except_clause_exception",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "except_clause_exception_as",
+          "slot": "alias",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "except_clause",
+              "slot": "exception"
+            },
+            {
+              "owner": "except_clause_exception",
+              "slot": "content"
+            },
+            {
+              "owner": "except_clause_exception_as",
+              "slot": "alias"
+            }
+          ]
+        },
+        {
+          "name": "exception",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "except_clause_exception",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "except_clause_exception",
+          "slot": "content",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "except_clause",
+              "slot": "exception"
+            },
+            {
+              "owner": "except_clause_exception",
+              "slot": "content"
             }
           ]
         }
@@ -3132,35 +3216,6 @@
           ]
         },
         {
-          "vocab": "declaration.method.class",
-          "toplevel": false,
-          "within": [
-            "decorated_definition"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 1,
-              "via": [
-                {
-                  "fields": [],
-                  "kinds": [
-                    "decorator"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "eq",
-                "text": "classmethod",
-                "fields": [
-                  "expression"
-                ],
-                "kinds": []
-              }
-            }
-          ]
-        },
-        {
           "vocab": "declaration.constructor",
           "toplevel": true,
           "within": [],
@@ -3211,6 +3266,18 @@
           "vocab": "declaration.method",
           "toplevel": false,
           "within": [
+            "block",
+            "suite_block",
+            "class_definition"
+          ],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "declaration.method",
+          "toplevel": false,
+          "within": [
+            "decorated_definition",
             "block",
             "suite_block",
             "class_definition"
@@ -4055,7 +4122,7 @@
       ],
       "members": [
         {
-          "name": "collectionElements",
+          "name": "elements",
           "route": "slot",
           "slot": "collection_elements",
           "path": [
@@ -4123,7 +4190,7 @@
       ],
       "members": [
         {
-          "name": "patterns",
+          "name": "elements",
           "route": "slot",
           "slot": "patterns",
           "path": [
@@ -4868,7 +4935,7 @@
       ],
       "members": [
         {
-          "name": "collectionElements",
+          "name": "elements",
           "route": "slot",
           "slot": "collection_elements",
           "path": [
@@ -5153,7 +5220,7 @@
       ],
       "members": [
         {
-          "name": "contents",
+          "name": "elements",
           "route": "slot",
           "slot": "content",
           "path": [
@@ -5176,6 +5243,19 @@
         "terminals": [],
         "list": true
       }
+    },
+    "string_fragment": {
+      "vocab": "literal.string.text",
+      "read": [
+        {
+          "vocab": "literal.string.text",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
     },
     "subjects": {
       "container": {
@@ -6065,19 +6145,19 @@
         "paths": 13,
         "kinds": 3,
         "refinements": 0,
-        "aliases": 113
+        "aliases": 114
       },
       {
         "depth": 2,
         "paths": 74,
         "kinds": 68,
         "refinements": 7,
-        "aliases": 77
+        "aliases": 78
       },
       {
         "depth": 3,
         "paths": 65,
-        "kinds": 53,
+        "kinds": 54,
         "refinements": 47,
         "aliases": 42
       },
@@ -6151,7 +6231,6 @@
         "name": "class",
         "paths": [
           "declaration.class",
-          "declaration.method.class",
           "pattern.case.class"
         ]
       },

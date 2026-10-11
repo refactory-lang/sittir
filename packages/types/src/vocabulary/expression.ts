@@ -1,5 +1,5 @@
 import type { GrammarContext } from './context.ts';
-import type { SubKindOf } from './utils.ts';
+import type { Flag, SubKindOf } from './utils.ts';
 import type * as V from './index.ts';
 export interface Expression<G extends GrammarContext<G>> {
 	readonly $kind: 'expression';
@@ -9,9 +9,9 @@ export namespace Expression {
 	export interface Assignment<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		// claimed by prt
 		readonly $kind: 'expression.assignment';
+		readonly disposable?: Flag;
 		readonly left: G['slots']['expression.assignment']['left'];
 		readonly right: G['slots']['expression.assignment']['right'];
-		readonly using?: boolean;
 	}
 	export namespace Assignment {
 		export interface Compound<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment<G>> {
@@ -141,7 +141,6 @@ export namespace Expression {
 	export interface Binary<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		// claimed by prt
 		readonly $kind: 'expression.binary';
-		readonly binaryExpressionIn?: G['slots']['expression.binary']['binaryExpressionIn'];
 		readonly left?: G['slots']['expression.binary']['left'];
 		readonly operator?: G['slots']['expression.binary']['operator'];
 		readonly right?: G['slots']['expression.binary']['right'];
@@ -405,7 +404,7 @@ export namespace Expression {
 			// claimed by r
 			readonly $kind: 'expression.block.async';
 			readonly body: V.Statement.Block<G>;
-			readonly move?: boolean;
+			readonly move?: Flag;
 		}
 		export interface Const<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Block<G>> {
 			// claimed by r
@@ -416,7 +415,7 @@ export namespace Expression {
 			// claimed by r
 			readonly $kind: 'expression.block.gen';
 			readonly body: V.Statement.Block<G>;
-			readonly move?: boolean;
+			readonly move?: Flag;
 		}
 		export interface Try<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Block<G>> {
 			// claimed by r
@@ -555,10 +554,20 @@ export namespace Expression {
 		export interface List<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Collection<G>> {
 			// claimed by prt
 			readonly $kind: 'expression.collection.list';
-			readonly collectionElements?: G['slots']['expression.collection.list']['collectionElements'][];
-			// p only
+			readonly attributes?: G['attribute'][];
+			// r only
 			readonly elements?: G['slots']['expression.collection.list']['elements'][];
-			// t only
+		}
+		export namespace List {
+			export interface Repeat<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Collection.List<G>> {
+				// claimed by r
+				readonly $kind: 'expression.collection.list.repeat';
+				readonly element: G['slots']['expression.collection.list.repeat']['element'];
+				readonly length: G['slots']['expression.collection.list.repeat']['length'];
+			}
+			export type Any<G extends GrammarContext<G>> =
+				| V.Expression.Collection.List<G>
+				| V.Expression.Collection.List.Repeat<G>;
 		}
 		export interface Object<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Collection<G>> {
 			// claimed by t
@@ -568,7 +577,7 @@ export namespace Expression {
 		export interface Set<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Collection<G>> {
 			// claimed by p
 			readonly $kind: 'expression.collection.set';
-			readonly collectionElements: G['slots']['expression.collection.set']['collectionElements'][];
+			readonly elements: G['slots']['expression.collection.set']['elements'][];
 		}
 		export interface Struct<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Collection<G>> {
 			// claimed by r
@@ -582,9 +591,6 @@ export namespace Expression {
 			readonly attributes?: G['attribute'][];
 			// r only
 			readonly elements?: G['slots']['expression.collection.tuple']['elements'][];
-			// p only
-			readonly expressions?: G['slots']['expression.collection.tuple']['expressions'][];
-			// r only
 		}
 		export namespace Tuple {
 			export interface Bare<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Collection.Tuple<G>> {
@@ -598,6 +604,7 @@ export namespace Expression {
 		export type Any<G extends GrammarContext<G>> =
 			| V.Expression.Collection.Dictionary<G>
 			| V.Expression.Collection.List<G>
+			| V.Expression.Collection.List.Repeat<G>
 			| V.Expression.Collection.Object<G>
 			| V.Expression.Collection.Set<G>
 			| V.Expression.Collection.Struct<G>
@@ -652,26 +659,13 @@ export namespace Expression {
 	export interface Function<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		// claimed by t
 		readonly $kind: 'expression.function';
-		readonly async?: boolean;
+		readonly async?: Flag;
 		readonly body: V.Statement.Block<G>;
+		readonly generator?: Flag;
 		readonly name?: G['identifier'];
 		readonly parameters: V.Declaration.Parameter.Any<G>[];
 		readonly returnType?: G['slots']['expression.function']['returnType'];
 		readonly typeParameters?: V.Declaration.TypeParameter<G>[];
-	}
-	export namespace Function {
-		export interface Generator<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Function<G>> {
-			// claimed by t
-			readonly $kind: 'expression.function.generator';
-			readonly async?: boolean;
-			readonly body: V.Statement.Block<G>;
-			readonly generator?: boolean;
-			readonly name?: G['identifier'];
-			readonly parameters: V.Declaration.Parameter.Any<G>[];
-			readonly returnType?: G['slots']['expression.function.generator']['returnType'];
-			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
-		}
-		export type Any<G extends GrammarContext<G>> = V.Expression.Function<G> | V.Expression.Function.Generator<G>;
 	}
 	export interface Instantiation<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		// claimed by rt
@@ -685,7 +679,7 @@ export namespace Expression {
 	export interface Interpolation<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		// claimed by pt
 		readonly $kind: 'expression.interpolation';
-		readonly debug?: boolean;
+		readonly debug?: Flag;
 		// p only
 		readonly expression?: G['slots']['expression.interpolation']['expression'];
 		readonly formatSpecifier?: V.Expression.Interpolation.Format<G>;
@@ -711,20 +705,24 @@ export namespace Expression {
 	export interface Lambda<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		// claimed by prt
 		readonly $kind: 'expression.lambda';
-		readonly async?: boolean;
-		// t only
-		readonly body?: G['slots']['expression.lambda']['body'];
-		// pt only
+		readonly async?: Flag;
+		// rt only
+		readonly body: G['slots']['expression.lambda']['body'];
+		readonly move?: Flag;
+		// r only
 		readonly parameters?:
 			| G['slots']['expression.lambda']['parameters']
 			| G['slots']['expression.lambda']['parameters'][];
-		// pt only
+		readonly returnType?: G['slots']['expression.lambda']['returnType'];
+		// r only
+		readonly static?: Flag;
+		// r only
 	}
 	export interface Member<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		// claimed by prt
 		readonly $kind: 'expression.member';
 		readonly object: G['slots']['expression.member']['object'];
-		readonly private?: boolean;
+		readonly privateName?: Flag;
 		// t only
 		readonly property: G['slots']['expression.member']['property'];
 	}
@@ -735,16 +733,24 @@ export namespace Expression {
 	export interface Parenthesized<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		// claimed by prt
 		readonly $kind: 'expression.parenthesized';
-		readonly expression?: G['slots']['expression.parenthesized']['expression'];
-		// pr only
+		readonly expression: G['slots']['expression.parenthesized']['expression'];
+		readonly type?: G['slots']['expression.parenthesized']['type'];
+		// t only
 	}
 	export interface Range<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		// claimed by r
 		readonly $kind: 'expression.range';
+		readonly end?: G['slots']['expression.range']['end'];
+		readonly operator?: G['slots']['expression.range']['operator'];
+		readonly start?: G['slots']['expression.range']['start'];
 	}
 	export interface Reference<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		// claimed by r
 		readonly $kind: 'expression.reference';
+		readonly argument: G['slots']['expression.reference']['argument'];
+		readonly exclusive?: Flag;
+		readonly raw?: Flag;
+		readonly writable?: Flag;
 	}
 	export interface Sequence<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		// claimed by t
@@ -763,7 +769,7 @@ export namespace Expression {
 		readonly $kind: 'expression.subscript';
 		readonly index?: G['slots']['expression.subscript']['index'] | G['slots']['expression.subscript']['index'][];
 		readonly object: G['slots']['expression.subscript']['object'];
-		readonly optionalChain?: boolean;
+		readonly optionalChain?: Flag;
 		// t only
 	}
 	export interface Try<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
@@ -933,6 +939,7 @@ export namespace Expression {
 		| V.Expression.Class<G>
 		| V.Expression.Collection.Dictionary<G>
 		| V.Expression.Collection.List<G>
+		| V.Expression.Collection.List.Repeat<G>
 		| V.Expression.Collection.Object<G>
 		| V.Expression.Collection.Set<G>
 		| V.Expression.Collection.Struct<G>
@@ -944,7 +951,6 @@ export namespace Expression {
 		| V.Expression.Comprehension.Set<G>
 		| V.Expression.Conditional<G>
 		| V.Expression.Function<G>
-		| V.Expression.Function.Generator<G>
 		| V.Expression.Instantiation<G>
 		| V.Expression.Interpolation<G>
 		| V.Expression.Interpolation.Conversion<G>

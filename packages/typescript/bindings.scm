@@ -7,12 +7,12 @@
 
 ; ── declaration ────────────────────────────────────────────────────────────────
 (function_declaration) @declaration.function
-(generator_function_declaration) @declaration.function.generator
+(generator_function_declaration) @declaration.function
 (generator_function_declaration "*" @generator)
 (class_declaration) @declaration.class
 (class_declaration (class_heritage (class_heritage_extends_clause (_) @extends)))
 (class_declaration (class_heritage (implements_clause type: (_) @implements)))
-(abstract_class_declaration) @declaration.class.abstract
+(abstract_class_declaration) @declaration.class
 (abstract_class_declaration "abstract" @abstract)
 (abstract_class_declaration (class_heritage (class_heritage_extends_clause (_) @extends)))
 (abstract_class_declaration (class_heritage (implements_clause type: (_) @implements)))
@@ -26,7 +26,7 @@
 (method_definition "*" @generator)
 (method_definition "?" @optional)
 (method_definition accessor_kind: _ @accessor)
-(method_definition name: (private_property_identifier) @name @private)
+(method_definition name: (private_property_identifier) @name @privateName)
 (method_definition name: (computed_property_name) @name @computed)
 (method_definition accessor_kind: "get") @declaration.method.getter
 (method_definition accessor_kind: "set") @declaration.method.setter
@@ -34,22 +34,21 @@
 (method_signature) @declaration.method.signature
 (method_signature (accessibility_modifier) @visibility)
 (method_signature accessor_kind: _ @accessor)
-(method_signature name: (private_property_identifier) @name @private)
+(method_signature name: (private_property_identifier) @name @privateName)
 (method_signature name: (computed_property_name) @name @computed)
 (abstract_method_signature) @declaration.method.signature.abstract
-(abstract_method_signature "abstract" @abstract)
 (abstract_method_signature (accessibility_modifier) @visibility)
-(abstract_method_signature name: (private_property_identifier) @name @private)
+(abstract_method_signature name: (private_property_identifier) @name @privateName)
 (abstract_method_signature name: (computed_property_name) @name @computed)
 (property_signature) @declaration.field.signature
 (property_signature (accessibility_modifier) @visibility)
-(property_signature name: (private_property_identifier) @name @private)
+(property_signature name: (private_property_identifier) @name @privateName)
 (property_signature name: (computed_property_name) @name @computed)
 (public_field_definition) @declaration.field
 (public_field_definition (accessibility_modifier) @visibility)
 (public_field_definition "?" @optional)
 (public_field_definition "!" @definite)
-(public_field_definition name: (private_property_identifier) @name @private)
+(public_field_definition name: (private_property_identifier) @name @privateName)
 (public_field_definition name: (computed_property_name) @name @computed)
 (class_body_member_declaration (_) @element)
 (class_body_member_method (decorator)* @decorators (_) @element)
@@ -65,7 +64,7 @@
 (variable_declarator_plain name: [(array_pattern) (object_pattern)]) @declaration.variable.pattern
 (required_parameter pattern: (_) @name value: (_)? @default) @declaration.parameter
 (required_parameter (accessibility_modifier) @visibility)
-(optional_parameter pattern: (_) @name value: (_)? @default) @declaration.parameter.optional
+(optional_parameter pattern: (_) @name value: (_)? @default) @declaration.parameter
 (optional_parameter "?" @optional)
 (optional_parameter (accessibility_modifier) @visibility)
 (type_parameter value: (_)? @default) @declaration.type_parameter
@@ -78,12 +77,14 @@
 (call_signature) @declaration.signature.call
 (construct_signature) @declaration.signature.construct
 (index_signature) @declaration.signature.index
+(index_signature_mapped_type_clause) @declaration.signature.index.mapped
 
 ; ── statement ──────────────────────────────────────────────────────────────────
 (statement_block) @statement.block
 (if_statement) @statement.if
 (for_statement) @statement.loop.counted
 (for_in_statement) @statement.loop.for
+(for_in_statement await: _ @async)
 (while_statement) @statement.loop.while
 (do_statement) @statement.loop.do_while
 (return_statement) @statement.return
@@ -91,6 +92,9 @@
 (try_statement handler: (_)? @handlers) @statement.try
 (throw_statement) @statement.throw
 (import_statement) @statement.import
+(import_statement import_clause: "type") @statement.import.type
+(import_statement import_clause: "typeof") @statement.import.typeof
+(import_statement from_clause: (import_statement_clause_from source: (_) @source))
 (export_statement) @statement.export
 (expression_statement) @statement.expression
 (break_statement) @statement.break
@@ -111,6 +115,8 @@
 (implements_clause) @clause.implements
 (export_clause) @clause.export
 (import_clause) @clause.import.names
+(import_clause (import_clause_default_import (identifier) @default))
+(import_clause (import_clause_default_import (import_clause_group (_) @content)))
 (import_require_clause) @clause.import.require
 (namespace_import) @clause.import.namespace
 (import_specifier) @clause.import.specifier
@@ -163,7 +169,7 @@
 (binary_expression operator: "&&") @expression.binary.logical.and
 (binary_expression operator: "||") @expression.binary.logical.or
 (binary_expression operator: "??") @expression.binary.nullish
-(binary_expression operator: "in") @expression.binary.membership.in
+(binary_expression (binary_expression_in left: (_) @left right: (_) @right)) @expression.binary.membership.in
 (binary_expression operator: "instanceof") @expression.binary.membership.instanceof
 (unary_expression) @expression.unary
 (unary_expression operator: "-") @expression.unary.negation
@@ -196,22 +202,23 @@
 (augmented_assignment_expression operator: "||=") @expression.assignment.compound.or
 (augmented_assignment_expression operator: "??=") @expression.assignment.compound.nullish
 (assignment_expression) @expression.assignment
+(assignment_expression using: _ @disposable)
 (ternary_expression) @expression.conditional
 (member_expression) @expression.member
 (member_expression (optional_chain) @optional_chain)
-(member_expression property: (private_property_identifier) @property @private)
+(member_expression property: (private_property_identifier) @property @privateName)
 (subscript_expression (optional_chain) @optional_chain)
 (subscript_expression) @expression.subscript
 (arrow_function (arrow_function_parameter parameter: (_) @parameters)) @expression.lambda
 (arrow_function (call_signature parameters: (_) @parameters)) @expression.lambda
 (function_expression) @expression.function
-(generator_function) @expression.function.generator
+(generator_function) @expression.function
 (generator_function "*" @generator)
 (await_expression) @expression.await
 (yield_expression) @expression.yield
 (yield_expression_delegate (_) @expression) @expression.yield.delegate
 (template_substitution) @expression.interpolation
-(parenthesized_expression) @expression.parenthesized
+(parenthesized_expression (_) @expression) @expression.parenthesized
 (sequence_expression) @expression.sequence
 (object) @expression.collection.object
 (array) @expression.collection.list
@@ -268,6 +275,7 @@
 ; ── literal ────────────────────────────────────────────────────────────────────
 (string) @literal.string
 (escape_sequence) @literal.string.escape
+(string_fragment) @literal.string.text
 (template_string) @literal.template
 (regex) @literal.regex
 (number) @literal.number

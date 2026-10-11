@@ -419,6 +419,18 @@ The file name of a grammar's committed bindings overlay, beside its `grammar.sit
 
 A string as a quoted TypeScript literal, for the emitted overlay module.
 
+### `packages/codegen/src/bindings/flags.ts::FLAGS_PATH`
+
+The vocabulary's generated flags module, `flags.ts` in `VOCABULARY_DIR`. The inventory writes it from the vocabulary's `Flag` declarations, and it is the one file there that is not authored. The bindings hash covers it with the rest of the vocabulary, so `--write` writes it before any `grammar.bindings.ts`.
+
+### `packages/codegen/src/bindings/flags.ts::FLAG_BITS`
+
+The flags one bitflag word holds: 31, below the sign bit, so every bit is a positive number that `|` and `&` keep.
+
+### `packages/codegen/src/bindings/flags.ts::printFlagsModule`
+
+The generated flags module: one numeric `enum Flags` with a bit per flag name, in name order, each named by its TypeScript name (`byReference` is `Flags.ByReference = 1 << 3`). A name has one bit wherever it is declared, so `Flags.Static | Flags.Async` is the same number in every language. More names than `FLAG_BITS` are refused, naming the ones past the word, since their bits need a second word, which is designed when one is needed. A feature never adds a member to the enum, since a member added by augmentation has no bit at run time.
+
 ### `packages/codegen/src/bindings/pinned-reader.ts::module`
 
 The `bindings.scm` reader, over the pinned `@sittir/scm` build (`loadPinnedScm`). It imports `@sittir/scm` and `@sittir/common` for types only: every value it uses comes from the pinned build, so the facts depend on the pin and not on the workspace's packages.

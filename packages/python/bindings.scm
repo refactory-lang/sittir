@@ -11,10 +11,10 @@
 (class_definition superclasses: (_)? @bases) @declaration.class
 (class_definition body: (suite_block (block . (simple_statements (simple_statements_elements . item: (expression_statement (string) @doc))))))
 (class_definition body: (suite_block (block (function_definition) @declaration.method)))
+(class_definition body: (suite_block (block (decorated_definition definition: (function_definition) @declaration.method))))
 ((function_definition name: (identifier) @name) @declaration.constructor (#eq? @name "__init__"))
 ((function_definition name: (identifier) @name) @declaration.method.dunder (#match? @name "^__(?<stem>.*)__$"))
 ((decorated_definition (decorator (identifier) @_d) (function_definition) @declaration.method.static) (#eq? @_d "staticmethod"))
-((decorated_definition (decorator (identifier) @_d) (function_definition) @declaration.method.class) (#eq? @_d "classmethod"))
 (decorated_definition (decorator)* @decorators definition: (_) @element)
 (parameters (parameters_elements (identifier) @declaration.parameter))
 (lambda_parameters (parameters_elements (identifier) @declaration.parameter))
@@ -60,9 +60,12 @@
 (elif_clause) @clause.elif
 (else_clause) @clause.else
 (except_clause) @clause.except
+(except_clause (except_clause_exception (except_clause_exception_as value: (_) @exception)))
+(except_clause (except_clause_exception (except_clause_exception_as alias: (_) @alias)))
+(except_clause (except_clause_exception (except_clause_exception_list) @exception))
 (finally_clause) @clause.finally
 (case_clause) @clause.case
-(with_clause) @clause.with
+(with_clause with_items: (_)? @items) @clause.with
 (with_item) @clause.with.item
 (for_in_clause) @clause.comprehension.for
 (if_clause) @clause.comprehension.if
@@ -147,10 +150,10 @@
 (dictionary_comprehension) @expression.comprehension.dictionary
 (generator_expression) @expression.comprehension.generator
 (parenthesized_expression) @expression.parenthesized
-(list) @expression.collection.list
+(list (collection_elements)? @elements) @expression.collection.list
 (tuple) @expression.collection.tuple
 (expression_list) @expression.collection.tuple.bare
-(set) @expression.collection.set
+(set (collection_elements) @elements) @expression.collection.set
 (dictionary) @expression.collection.dictionary
 (ellipsis) @literal.ellipsis
 (format_specifier) @expression.interpolation.format
@@ -159,7 +162,7 @@
 ; ── pattern ────────────────────────────────────────────────────────────────────
 (tuple_pattern) @pattern.tuple
 (pattern_list) @pattern.tuple.bare
-(list_pattern) @pattern.list
+(list_pattern (patterns)? @elements) @pattern.list
 (list_splat_pattern) @pattern.splat
 (dictionary_splat_pattern) @pattern.splat.dictionary
 (as_pattern) @pattern.as
@@ -183,9 +186,10 @@
 (splat_type) @type.splat
 
 ; ── literal ────────────────────────────────────────────────────────────────────
-(string) @literal.string
+(string [(interpolation) (string_content)]* @elements) @literal.string
 (escape_sequence) @literal.string.escape
 (escape_interpolation) @literal.string.escape
+(string_fragment) @literal.string.text
 (concatenated_string) @literal.string.concatenated
 ((string (string_start) @_p) @literal.string.f (#match? @_p "^[fF]"))
 ((string (string_start) @_p) @literal.string.bytes (#match? @_p "^[bB]"))

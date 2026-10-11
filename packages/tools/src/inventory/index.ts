@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { bindingIssues, compileQuery } from './bindings.ts';
 import {
 	type BindingsOverlay,
@@ -12,9 +12,12 @@ import {
 	camel,
 	derive,
 	deriveOverlay,
+	FLAGS_PATH,
 	grammarBindingsHash,
 	grammarInput,
 	printBindingsModule,
+	printFlagsModule,
+	REGENERATE_BINDINGS_COMMAND,
 	resolveRoutes,
 	VOCABULARY_DIR
 } from '@sittir/codegen/bindings';
@@ -114,6 +117,10 @@ export async function deriveVocabulary(grammars: readonly GrammarName[] = bindin
 	return derive(await loadInputs(grammars));
 }
 
+export function flagsCurrent(vocabulary: Vocabulary, path: string = FLAGS_PATH): boolean {
+	return existsSync(path) && readFileSync(path, 'utf8') === printFlagsModule(vocabulary.flags);
+}
+
 export function vocabularyDisagreements(d: Derivation, vocabulary: Vocabulary): string[] {
 	const out: string[] = [];
 	for (const v of d.allvocab) {
@@ -185,6 +192,9 @@ export async function run(opts: BindingsInventoryOptions): Promise<number> {
 	const grammars = opts.grammars ?? bindingGrammars();
 	let code = 0;
 	if (opts.write) {
+		const { flags } = readVocabulary(VOCABULARY_DIR);
+		writeFileSync(FLAGS_PATH, printFlagsModule(flags));
+		process.stdout.write(`vocabulary flags: ${flags.size} written\n`);
 		for (const grammar of grammars) {
 			const module = await bindingsModule(grammar);
 			writeFileSync(bindingsModulePath(grammar), module.text);
@@ -203,10 +213,16 @@ export async function run(opts: BindingsInventoryOptions): Promise<number> {
 	process.stdout.write(`${summarize(d)}\n`);
 	if (opts.members) process.stdout.write(`${membersTable(d)}\n`);
 	if (opts.check) {
-		const disagreements = vocabularyDisagreements(d, readVocabulary(VOCABULARY_DIR));
+		const vocabulary = readVocabulary(VOCABULARY_DIR);
+		const disagreements = vocabularyDisagreements(d, vocabulary);
 		if (disagreements.length > 0) code = 1;
 		process.stdout.write(
 			`bindings and vocabulary: ${disagreements.length === 0 ? 'agree' : `${disagreements.length} disagreements\n  ${disagreements.join('\n  ')}`}\n`
+		);
+		const current = flagsCurrent(vocabulary);
+		if (!current) code = 1;
+		process.stdout.write(
+			`vocabulary flags: ${current ? `${vocabulary.flags.size} current` : `flags.ts is stale against the Flag declarations; write it with \`${REGENERATE_BINDINGS_COMMAND}\``}\n`
 		);
 	}
 	if (d.cycles.length > 0 || d.untargeted.length > 0 || d.uncaptured.length > 0 || d.unknownPredicates.length > 0 || d.wildcardContainers.length > 0)

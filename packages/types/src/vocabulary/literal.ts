@@ -1,5 +1,5 @@
 import type { GrammarContext } from './context.ts';
-import type { SubKindOf } from './utils.ts';
+import type { Flag, SubKindOf } from './utils.ts';
 import type * as V from './index.ts';
 export interface Literal<G extends GrammarContext<G>> {
 	readonly $kind: 'literal';
@@ -27,6 +27,8 @@ export namespace Literal {
 	export interface Char<G extends GrammarContext<G>> extends SubKindOf<V.Literal<G>> {
 		// claimed by r
 		readonly $kind: 'literal.char';
+		readonly byte?: Flag;
+		readonly content?: G['slots']['literal.char']['content'];
 	}
 	export interface Ellipsis<G extends GrammarContext<G>> extends SubKindOf<V.Literal<G>> {
 		// claimed by p
@@ -215,10 +217,7 @@ export namespace Literal {
 	export interface String<G extends GrammarContext<G>> extends SubKindOf<V.Literal<G>> {
 		// claimed by prt
 		readonly $kind: 'literal.string';
-		readonly content?: G['slots']['literal.string']['content'] | G['slots']['literal.string']['content'][];
-		// rt only
-		readonly contents?: G['slots']['literal.string']['contents'][];
-		// p only
+		readonly elements?: G['slots']['literal.string']['elements'][];
 	}
 	export namespace String {
 		export interface Bytes<G extends GrammarContext<G>> extends SubKindOf<V.Literal.String<G>> {
@@ -246,6 +245,10 @@ export namespace Literal {
 			readonly content: G['slots']['literal.string.raw']['content'];
 			// r only
 		}
+		export interface Text<G extends GrammarContext<G>> extends SubKindOf<V.Literal.String<G>> {
+			// claimed by prt
+			readonly $kind: 'literal.string.text';
+		}
 		export interface Triple<G extends GrammarContext<G>> extends SubKindOf<V.Literal.String<G>> {
 			// claimed by p
 			readonly $kind: 'literal.string.triple';
@@ -257,6 +260,7 @@ export namespace Literal {
 			| V.Literal.String.Escape<G>
 			| V.Literal.String.F<G>
 			| V.Literal.String.Raw<G>
+			| V.Literal.String.Text<G>
 			| V.Literal.String.Triple<G>;
 	}
 	export interface Template<G extends GrammarContext<G>> extends SubKindOf<V.Literal<G>> {
@@ -295,6 +299,7 @@ export namespace Literal {
 		| V.Literal.String.Escape<G>
 		| V.Literal.String.F<G>
 		| V.Literal.String.Raw<G>
+		| V.Literal.String.Text<G>
 		| V.Literal.String.Triple<G>
 		| V.Literal.Template<G>;
 }

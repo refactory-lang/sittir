@@ -62,7 +62,6 @@ export interface PortableIds {
 	'declaration.constructor': TSKindId.FunctionDefinition;
 	'declaration.function': TSKindId.FunctionDefinition;
 	'declaration.method': TSKindId.FunctionDefinition;
-	'declaration.method.class': TSKindId.FunctionDefinition;
 	'declaration.method.dunder': TSKindId.FunctionDefinition;
 	'declaration.method.static': TSKindId.FunctionDefinition;
 	'declaration.parameter':
@@ -217,6 +216,7 @@ export interface PortableIds {
 		| TSKindId.IntegerOctal
 		| TSKindId.None
 		| TSKindId.String
+		| TSKindId.StringFragment
 		| TSKindId.True;
 	'literal.boolean': TSKindId.False | TSKindId.True;
 	'literal.boolean.false': TSKindId.False;
@@ -252,12 +252,14 @@ export interface PortableIds {
 		| TSKindId.ConcatenatedString
 		| TSKindId.EscapeInterpolation
 		| TSKindId.EscapeSequence
-		| TSKindId.String;
+		| TSKindId.String
+		| TSKindId.StringFragment;
 	'literal.string.bytes': TSKindId.String;
 	'literal.string.concatenated': TSKindId.ConcatenatedString;
 	'literal.string.escape': TSKindId.EscapeInterpolation | TSKindId.EscapeSequence;
 	'literal.string.f': TSKindId.String;
 	'literal.string.raw': TSKindId.String;
+	'literal.string.text': TSKindId.StringFragment;
 	'literal.string.triple': TSKindId.String;
 	module: TSKindId.Module;
 	pattern:
@@ -458,11 +460,9 @@ export interface PortableKindsAt {
 	'declaration.function': { readonly $ids: readonly PortableIds['declaration.function'][] };
 	'declaration.method': {
 		readonly $ids: readonly PortableIds['declaration.method'][];
-		readonly class: PortableKindsAt['declaration.method.class'];
 		readonly dunder: PortableKindsAt['declaration.method.dunder'];
 		readonly static: PortableKindsAt['declaration.method.static'];
 	};
-	'declaration.method.class': { readonly $ids: readonly PortableIds['declaration.method.class'][] };
 	'declaration.method.dunder': { readonly $ids: readonly PortableIds['declaration.method.dunder'][] };
 	'declaration.method.static': { readonly $ids: readonly PortableIds['declaration.method.static'][] };
 	'declaration.parameter': {
@@ -831,6 +831,7 @@ export interface PortableKindsAt {
 		readonly octal: PortableKindsAt['literal.number.integer.octal'];
 		readonly raw: PortableKindsAt['literal.string.raw'];
 		readonly scientific: PortableKindsAt['literal.number.float.scientific'];
+		readonly text: PortableKindsAt['literal.string.text'];
 		readonly triple: PortableKindsAt['literal.string.triple'];
 		readonly true: PortableKindsAt['literal.boolean.true'];
 	};
@@ -882,6 +883,7 @@ export interface PortableKindsAt {
 		readonly escape: PortableKindsAt['literal.string.escape'];
 		readonly f: PortableKindsAt['literal.string.f'];
 		readonly raw: PortableKindsAt['literal.string.raw'];
+		readonly text: PortableKindsAt['literal.string.text'];
 		readonly triple: PortableKindsAt['literal.string.triple'];
 	};
 	'literal.string.bytes': { readonly $ids: readonly PortableIds['literal.string.bytes'][] };
@@ -889,6 +891,7 @@ export interface PortableKindsAt {
 	'literal.string.escape': { readonly $ids: readonly PortableIds['literal.string.escape'][] };
 	'literal.string.f': { readonly $ids: readonly PortableIds['literal.string.f'][] };
 	'literal.string.raw': { readonly $ids: readonly PortableIds['literal.string.raw'][] };
+	'literal.string.text': { readonly $ids: readonly PortableIds['literal.string.text'][] };
 	'literal.string.triple': { readonly $ids: readonly PortableIds['literal.string.triple'][] };
 	module: { readonly $ids: readonly PortableIds['module'][] };
 	pattern: {
@@ -1090,11 +1093,9 @@ export interface PortableIsAt {
 	'declaration.constructor': PortableGuard<PortableIds['declaration.constructor']> & {};
 	'declaration.function': PortableGuard<PortableIds['declaration.function']> & {};
 	'declaration.method': PortableGuard<PortableIds['declaration.method']> & {
-		readonly class: PortableIsAt['declaration.method.class'];
 		readonly dunder: PortableIsAt['declaration.method.dunder'];
 		readonly static: PortableIsAt['declaration.method.static'];
 	};
-	'declaration.method.class': PortableGuard<PortableIds['declaration.method.class']> & {};
 	'declaration.method.dunder': PortableGuard<PortableIds['declaration.method.dunder']> & {};
 	'declaration.method.static': PortableGuard<PortableIds['declaration.method.static']> & {};
 	'declaration.parameter': PortableGuard<PortableIds['declaration.parameter']> & {
@@ -1405,6 +1406,7 @@ export interface PortableIsAt {
 		readonly octal: PortableIsAt['literal.number.integer.octal'];
 		readonly raw: PortableIsAt['literal.string.raw'];
 		readonly scientific: PortableIsAt['literal.number.float.scientific'];
+		readonly text: PortableIsAt['literal.string.text'];
 		readonly triple: PortableIsAt['literal.string.triple'];
 		readonly true: PortableIsAt['literal.boolean.true'];
 	};
@@ -1451,6 +1453,7 @@ export interface PortableIsAt {
 		readonly escape: PortableIsAt['literal.string.escape'];
 		readonly f: PortableIsAt['literal.string.f'];
 		readonly raw: PortableIsAt['literal.string.raw'];
+		readonly text: PortableIsAt['literal.string.text'];
 		readonly triple: PortableIsAt['literal.string.triple'];
 	};
 	'literal.string.bytes': PortableGuard<PortableIds['literal.string.bytes']> & {};
@@ -1458,6 +1461,7 @@ export interface PortableIsAt {
 	'literal.string.escape': PortableGuard<PortableIds['literal.string.escape']> & {};
 	'literal.string.f': PortableGuard<PortableIds['literal.string.f']> & {};
 	'literal.string.raw': PortableGuard<PortableIds['literal.string.raw']> & {};
+	'literal.string.text': PortableGuard<PortableIds['literal.string.text']> & {};
 	'literal.string.triple': PortableGuard<PortableIds['literal.string.triple']> & {};
 	module: PortableGuard<PortableIds['module']> & {};
 	pattern: PortableGuard<PortableIds['pattern']> & {
@@ -1684,6 +1688,7 @@ export interface PortableKinds {
 	readonly static: PortableKindsAt['declaration.method.static'];
 	readonly string: PortableKindsAt['literal.string'];
 	readonly subscript: PortableKindsAt['expression.subscript'];
+	readonly text: PortableKindsAt['literal.string.text'];
 	readonly throw: PortableKindsAt['statement.throw'];
 	readonly triple: PortableKindsAt['literal.string.triple'];
 	readonly true: PortableKindsAt['literal.boolean.true'];
@@ -1813,6 +1818,7 @@ export interface PortableIs {
 	readonly static: PortableIsAt['declaration.method.static'];
 	readonly string: PortableIsAt['literal.string'];
 	readonly subscript: PortableIsAt['expression.subscript'];
+	readonly text: PortableIsAt['literal.string.text'];
 	readonly throw: PortableIsAt['statement.throw'];
 	readonly triple: PortableIsAt['literal.string.triple'];
 	readonly true: PortableIsAt['literal.boolean.true'];
@@ -1905,7 +1911,6 @@ const table: PortableTable = {
 		'declaration.constructor': { ids: [TSKindId.FunctionDefinition], exact: false },
 		'declaration.function': { ids: [TSKindId.FunctionDefinition], exact: false },
 		'declaration.method': { ids: [TSKindId.FunctionDefinition], exact: false },
-		'declaration.method.class': { ids: [TSKindId.FunctionDefinition], exact: false },
 		'declaration.method.dunder': { ids: [TSKindId.FunctionDefinition], exact: false },
 		'declaration.method.static': { ids: [TSKindId.FunctionDefinition], exact: false },
 		'declaration.parameter': {
@@ -2081,6 +2086,7 @@ const table: PortableTable = {
 				TSKindId.IntegerOctal,
 				TSKindId.None,
 				TSKindId.String,
+				TSKindId.StringFragment,
 				TSKindId.True
 			],
 			exact: true
@@ -2127,7 +2133,13 @@ const table: PortableTable = {
 		'literal.number.integer.imaginary': { ids: [TSKindId.IntegerDecimalImaginary], exact: true },
 		'literal.number.integer.octal': { ids: [TSKindId.IntegerOctal], exact: true },
 		'literal.string': {
-			ids: [TSKindId.ConcatenatedString, TSKindId.EscapeInterpolation, TSKindId.EscapeSequence, TSKindId.String],
+			ids: [
+				TSKindId.ConcatenatedString,
+				TSKindId.EscapeInterpolation,
+				TSKindId.EscapeSequence,
+				TSKindId.String,
+				TSKindId.StringFragment
+			],
 			exact: true
 		},
 		'literal.string.bytes': { ids: [TSKindId.String], exact: false },
@@ -2135,6 +2147,7 @@ const table: PortableTable = {
 		'literal.string.escape': { ids: [TSKindId.EscapeInterpolation, TSKindId.EscapeSequence], exact: true },
 		'literal.string.f': { ids: [TSKindId.String], exact: false },
 		'literal.string.raw': { ids: [TSKindId.String], exact: false },
+		'literal.string.text': { ids: [TSKindId.StringFragment], exact: true },
 		'literal.string.triple': { ids: [TSKindId.String], exact: false },
 		module: { ids: [TSKindId.Module], exact: true },
 		pattern: {
@@ -2363,6 +2376,7 @@ const table: PortableTable = {
 		['', 'static', 'declaration.method.static'],
 		['', 'string', 'literal.string'],
 		['', 'subscript', 'expression.subscript'],
+		['', 'text', 'literal.string.text'],
 		['', 'throw', 'statement.throw'],
 		['', 'triple', 'literal.string.triple'],
 		['', 'true', 'literal.boolean.true'],
@@ -2478,6 +2492,7 @@ const table: PortableTable = {
 		['literal', 'octal', 'literal.number.integer.octal'],
 		['literal', 'raw', 'literal.string.raw'],
 		['literal', 'scientific', 'literal.number.float.scientific'],
+		['literal', 'text', 'literal.string.text'],
 		['literal', 'triple', 'literal.string.triple'],
 		['literal', 'true', 'literal.boolean.true'],
 		['literal.number', 'big', 'literal.number.integer.big'],
@@ -2750,17 +2765,6 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.class',
-				within: [TSKindId.DecoratedDefinition],
-				test: [
-					{
-						up: 1,
-						via: [{ fields: [], kinds: ['decorator'] }],
-						plan: { op: 'eq', text: 'classmethod', fields: ['expression'], kinds: [] }
-					}
-				]
-			},
-			{
 				path: 'declaration.constructor',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '__init__', fields: ['name'], kinds: [] } }]
@@ -2771,6 +2775,11 @@ const table: PortableTable = {
 				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', fields: ['name'], kinds: [] } }]
 			},
 			{ path: 'declaration.method', within: [TSKindId.Block, TSKindId.SuiteBlock, TSKindId.ClassDefinition], test: [] },
+			{
+				path: 'declaration.method',
+				within: [TSKindId.DecoratedDefinition, TSKindId.Block, TSKindId.SuiteBlock, TSKindId.ClassDefinition],
+				test: []
+			},
 			{ path: 'declaration.function', within: [], test: [] }
 		],
 		[TSKindId.FutureImportStatement]: [{ path: 'statement.import.future', within: [], test: [] }],
@@ -2850,6 +2859,7 @@ const table: PortableTable = {
 			},
 			{ path: 'literal.string', within: [], test: [] }
 		],
+		[TSKindId.StringFragment]: [{ path: 'literal.string.text', within: [], test: [] }],
 		[TSKindId.Subscript]: [{ path: 'expression.subscript', within: [], test: [] }],
 		[TSKindId.True]: [{ path: 'literal.boolean.true', within: [], test: [] }],
 		[TSKindId.TryStatement]: [{ path: 'statement.try', within: [], test: [] }],
