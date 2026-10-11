@@ -6,6 +6,93 @@ export interface Element<G extends GrammarContext<G>> {
 }
 
 export namespace Element {
+	export interface Comparator<G extends GrammarContext<G>> extends SubKindOf<V.Element<G>> {
+		// claimed by p
+		readonly $kind: 'element.comparator';
+		readonly right: G['slots']['element.comparator']['right'];
+	}
+	export namespace Comparator {
+		export interface Comparison<G extends GrammarContext<G>> extends SubKindOf<V.Element.Comparator<G>> {
+			readonly $kind: 'element.comparator.comparison';
+		}
+		export namespace Comparison {
+			export interface Equal<G extends GrammarContext<G>> extends SubKindOf<V.Element.Comparator.Comparison<G>> {
+				// claimed by p
+				readonly $kind: 'element.comparator.comparison.equal';
+			}
+			export interface Greater<G extends GrammarContext<G>> extends SubKindOf<V.Element.Comparator.Comparison<G>> {
+				// claimed by p
+				readonly $kind: 'element.comparator.comparison.greater';
+			}
+			export interface GreaterEqual<G extends GrammarContext<G>> extends SubKindOf<V.Element.Comparator.Comparison<G>> {
+				// claimed by p
+				readonly $kind: 'element.comparator.comparison.greater_equal';
+			}
+			export interface Less<G extends GrammarContext<G>> extends SubKindOf<V.Element.Comparator.Comparison<G>> {
+				// claimed by p
+				readonly $kind: 'element.comparator.comparison.less';
+			}
+			export interface LessEqual<G extends GrammarContext<G>> extends SubKindOf<V.Element.Comparator.Comparison<G>> {
+				// claimed by p
+				readonly $kind: 'element.comparator.comparison.less_equal';
+			}
+			export interface NotEqual<G extends GrammarContext<G>> extends SubKindOf<V.Element.Comparator.Comparison<G>> {
+				// claimed by p
+				readonly $kind: 'element.comparator.comparison.not_equal';
+			}
+			export type Any<G extends GrammarContext<G>> =
+				| V.Element.Comparator.Comparison.Equal<G>
+				| V.Element.Comparator.Comparison.Greater<G>
+				| V.Element.Comparator.Comparison.GreaterEqual<G>
+				| V.Element.Comparator.Comparison.Less<G>
+				| V.Element.Comparator.Comparison.LessEqual<G>
+				| V.Element.Comparator.Comparison.NotEqual<G>;
+		}
+		export interface Identity<G extends GrammarContext<G>> extends SubKindOf<V.Element.Comparator<G>> {
+			readonly $kind: 'element.comparator.identity';
+		}
+		export namespace Identity {
+			export interface Is<G extends GrammarContext<G>> extends SubKindOf<V.Element.Comparator.Identity<G>> {
+				// claimed by p
+				readonly $kind: 'element.comparator.identity.is';
+			}
+			export interface IsNot<G extends GrammarContext<G>> extends SubKindOf<V.Element.Comparator.Identity<G>> {
+				// claimed by p
+				readonly $kind: 'element.comparator.identity.is_not';
+			}
+			export type Any<G extends GrammarContext<G>> =
+				| V.Element.Comparator.Identity.Is<G>
+				| V.Element.Comparator.Identity.IsNot<G>;
+		}
+		export interface Membership<G extends GrammarContext<G>> extends SubKindOf<V.Element.Comparator<G>> {
+			readonly $kind: 'element.comparator.membership';
+		}
+		export namespace Membership {
+			export interface In<G extends GrammarContext<G>> extends SubKindOf<V.Element.Comparator.Membership<G>> {
+				// claimed by p
+				readonly $kind: 'element.comparator.membership.in';
+			}
+			export interface NotIn<G extends GrammarContext<G>> extends SubKindOf<V.Element.Comparator.Membership<G>> {
+				// claimed by p
+				readonly $kind: 'element.comparator.membership.not_in';
+			}
+			export type Any<G extends GrammarContext<G>> =
+				| V.Element.Comparator.Membership.In<G>
+				| V.Element.Comparator.Membership.NotIn<G>;
+		}
+		export type Any<G extends GrammarContext<G>> =
+			| V.Element.Comparator<G>
+			| V.Element.Comparator.Comparison.Equal<G>
+			| V.Element.Comparator.Comparison.Greater<G>
+			| V.Element.Comparator.Comparison.GreaterEqual<G>
+			| V.Element.Comparator.Comparison.Less<G>
+			| V.Element.Comparator.Comparison.LessEqual<G>
+			| V.Element.Comparator.Comparison.NotEqual<G>
+			| V.Element.Comparator.Identity.Is<G>
+			| V.Element.Comparator.Identity.IsNot<G>
+			| V.Element.Comparator.Membership.In<G>
+			| V.Element.Comparator.Membership.NotIn<G>;
+	}
 	export interface Macro<G extends GrammarContext<G>> extends SubKindOf<V.Element<G>> {
 		readonly $kind: 'element.macro';
 	}
@@ -164,6 +251,17 @@ export namespace Element {
 		readonly typeArguments?: V.Element.TypeArgument<G>[];
 	}
 	export type Any<G extends GrammarContext<G>> =
+		| V.Element.Comparator<G>
+		| V.Element.Comparator.Comparison.Equal<G>
+		| V.Element.Comparator.Comparison.Greater<G>
+		| V.Element.Comparator.Comparison.GreaterEqual<G>
+		| V.Element.Comparator.Comparison.Less<G>
+		| V.Element.Comparator.Comparison.LessEqual<G>
+		| V.Element.Comparator.Comparison.NotEqual<G>
+		| V.Element.Comparator.Identity.Is<G>
+		| V.Element.Comparator.Identity.IsNot<G>
+		| V.Element.Comparator.Membership.In<G>
+		| V.Element.Comparator.Membership.NotIn<G>
 		| V.Element.Macro.Fragment<G>
 		| V.Element.Macro.TokenBinding<G>
 		| V.Element.Macro.TokenRepetition<G>

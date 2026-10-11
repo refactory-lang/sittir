@@ -24,73 +24,56 @@ export namespace Expression {
 		export namespace Compound {
 			export interface Add<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
 				readonly $kind: 'expression.assignment.compound.add';
-				readonly operator: '+=';
 			}
 			export interface And<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
 				readonly $kind: 'expression.assignment.compound.and';
-				readonly operator: '&&=';
 			}
 			export interface BitwiseAnd<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
 				readonly $kind: 'expression.assignment.compound.bitwise_and';
-				readonly operator: '&=';
 			}
 			export interface BitwiseOr<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
 				readonly $kind: 'expression.assignment.compound.bitwise_or';
-				readonly operator: '|=';
 			}
 			export interface BitwiseXor<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
 				readonly $kind: 'expression.assignment.compound.bitwise_xor';
-				readonly operator: '^=';
 			}
 			export interface Divide<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
 				readonly $kind: 'expression.assignment.compound.divide';
-				readonly operator: '/=';
 			}
 			export interface Exponent<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
 				readonly $kind: 'expression.assignment.compound.exponent';
-				readonly operator: '**=';
 			}
 			export interface FloorDivide<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
 				readonly $kind: 'expression.assignment.compound.floor_divide';
-				readonly operator: '//=';
 			}
 			export interface Matmul<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
 				readonly $kind: 'expression.assignment.compound.matmul';
-				readonly operator: '@=';
 			}
 			export interface Modulo<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
 				readonly $kind: 'expression.assignment.compound.modulo';
-				readonly operator: '%=';
 			}
 			export interface Multiply<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
 				readonly $kind: 'expression.assignment.compound.multiply';
-				readonly operator: '*=';
 			}
 			export interface Nullish<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
 				readonly $kind: 'expression.assignment.compound.nullish';
-				readonly operator: '??=';
 			}
 			export interface Or<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
 				readonly $kind: 'expression.assignment.compound.or';
-				readonly operator: '||=';
 			}
 			export interface ShiftLeft<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
 				readonly $kind: 'expression.assignment.compound.shift_left';
-				readonly operator: '<<=';
 			}
 			export interface ShiftRight<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
 				readonly $kind: 'expression.assignment.compound.shift_right';
-				readonly operator: '>>=';
 			}
 			export interface ShiftRightUnsigned<G extends GrammarContext<G>> extends SubKindOf<
 				V.Expression.Assignment.Compound<G>
 			> {
 				readonly $kind: 'expression.assignment.compound.shift_right_unsigned';
-				readonly operator: '>>>=';
 			}
 			export interface Subtract<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
 				readonly $kind: 'expression.assignment.compound.subtract';
-				readonly operator: '-=';
 			}
 			export type Any<G extends GrammarContext<G>> =
 				| V.Expression.Assignment.Compound<G>
@@ -209,9 +192,15 @@ export namespace Expression {
 				| V.Expression.Binary.Bitwise.Xor<G>;
 		}
 		export interface Comparison<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
+			// claimed by p
 			readonly $kind: 'expression.binary.comparison';
 		}
 		export namespace Comparison {
+			export interface Chain<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary.Comparison<G>> {
+				// claimed by p
+				readonly $kind: 'expression.binary.comparison.chain';
+				readonly comparators: V.Element.Comparator.Any<G>[];
+			}
 			export interface Equal<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
 				readonly $kind: 'expression.binary.comparison.equal';
 				readonly operator: '==';
@@ -245,6 +234,8 @@ export namespace Expression {
 				readonly operator: '!==';
 			}
 			export type Any<G extends GrammarContext<G>> =
+				| V.Expression.Binary.Comparison<G>
+				| V.Expression.Binary.Comparison.Chain<G>
 				| V.Expression.Binary.Comparison.Equal<G>
 				| V.Expression.Binary.Comparison.Greater<G>
 				| V.Expression.Binary.Comparison.GreaterEqual<G>
@@ -372,6 +363,8 @@ export namespace Expression {
 			| V.Expression.Binary.Bitwise.And<G>
 			| V.Expression.Binary.Bitwise.Or<G>
 			| V.Expression.Binary.Bitwise.Xor<G>
+			| V.Expression.Binary.Comparison<G>
+			| V.Expression.Binary.Comparison.Chain<G>
 			| V.Expression.Binary.Comparison.Equal<G>
 			| V.Expression.Binary.Comparison.Greater<G>
 			| V.Expression.Binary.Comparison.GreaterEqual<G>
@@ -786,35 +779,27 @@ export namespace Expression {
 	export namespace Unary {
 		export interface BitwiseNot<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Unary<G>> {
 			readonly $kind: 'expression.unary.bitwise_not';
-			readonly operator: '~';
 		}
 		export interface Delete<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Unary<G>> {
 			readonly $kind: 'expression.unary.delete';
-			readonly operator: 'delete';
 		}
 		export interface Deref<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Unary<G>> {
 			readonly $kind: 'expression.unary.deref';
-			readonly operator: '*';
 		}
 		export interface Negation<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Unary<G>> {
 			readonly $kind: 'expression.unary.negation';
-			readonly operator: '-';
 		}
 		export interface Not<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Unary<G>> {
 			readonly $kind: 'expression.unary.not';
-			readonly operator: '!';
 		}
 		export interface Plus<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Unary<G>> {
 			readonly $kind: 'expression.unary.plus';
-			readonly operator: '+';
 		}
 		export interface Typeof<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Unary<G>> {
 			readonly $kind: 'expression.unary.typeof';
-			readonly operator: 'typeof';
 		}
 		export interface Void<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Unary<G>> {
 			readonly $kind: 'expression.unary.void';
-			readonly operator: 'void';
 		}
 		export type Any<G extends GrammarContext<G>> =
 			| V.Expression.Unary<G>
@@ -840,11 +825,9 @@ export namespace Expression {
 	export namespace Update {
 		export interface Decrement<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Update<G>> {
 			readonly $kind: 'expression.update.decrement';
-			readonly operator: '--';
 		}
 		export interface Increment<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Update<G>> {
 			readonly $kind: 'expression.update.increment';
-			readonly operator: '++';
 		}
 		export type Any<G extends GrammarContext<G>> =
 			| V.Expression.Update<G>
@@ -899,6 +882,8 @@ export namespace Expression {
 		| V.Expression.Binary.Bitwise.And<G>
 		| V.Expression.Binary.Bitwise.Or<G>
 		| V.Expression.Binary.Bitwise.Xor<G>
+		| V.Expression.Binary.Comparison<G>
+		| V.Expression.Binary.Comparison.Chain<G>
 		| V.Expression.Binary.Comparison.Equal<G>
 		| V.Expression.Binary.Comparison.Greater<G>
 		| V.Expression.Binary.Comparison.GreaterEqual<G>

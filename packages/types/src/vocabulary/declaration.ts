@@ -651,7 +651,6 @@ export namespace Declaration {
 		export interface Constant<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Variable<G>> {
 			// claimed by t
 			readonly $kind: 'declaration.variable.constant';
-			readonly binding: 'const';
 			readonly declarators: V.Declaration.Variable<G>[];
 		}
 		export interface Pattern<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Variable<G>> {
@@ -664,14 +663,12 @@ export namespace Declaration {
 		export interface Reassignable<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Variable<G>> {
 			// claimed by t
 			readonly $kind: 'declaration.variable.reassignable';
-			readonly binding?: 'let';
 			readonly declarators: V.Declaration.Variable<G>[];
 		}
 		export namespace Reassignable {
 			export interface FunctionScoped<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Variable.Reassignable<G>> {
 				// claimed by t
 				readonly $kind: 'declaration.variable.reassignable.function_scoped';
-				readonly binding?: never;
 			}
 			export type Any<G extends GrammarContext<G>> =
 				| V.Declaration.Variable.Reassignable<G>
