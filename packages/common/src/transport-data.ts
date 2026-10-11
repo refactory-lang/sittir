@@ -414,17 +414,31 @@ export interface SourceFlankEvidence {
 	readonly $after: boolean;
 }
 
+/** A row and a byte column, as tree-sitter counts them. */
+export interface PointData {
+	readonly row: number;
+	readonly column: number;
+}
+
+/** A snapshot node's span (`$_layout.span`), measured from the start of the transport that holds it. */
+export interface PointSpanData {
+	readonly start: PointData;
+	readonly end: PointData;
+}
+
 /**
  * A node's layout as the transport sends it (`$_layout`): the trivia that
- * crosses with it, and the source evidence a rebuilt node keeps, its gap
- * toward the list item before it and, for a list, its flanks. Absent when
- * the node has none of these. A node's own coordinate (`at`) never crosses
- * here: a node that keeps it crosses as it (`foldedCoordinate`).
+ * crosses with it, the source evidence a rebuilt node keeps (its gap toward
+ * the list item before it and, for a list, its flanks), and a snapshot
+ * node's span. Absent when the node has none of these. A node's own
+ * coordinate (`at`) never crosses here: a node that keeps it crosses as it
+ * (`foldedCoordinate`).
  */
 export interface TransportLayout {
 	trivia?: unknown;
 	gap?: SourceGapEvidence;
 	flank?: SourceFlankEvidence;
+	span?: PointSpanData;
 }
 
 function setLayout<K extends keyof TransportLayout>(out: Record<string, unknown>, key: K, value: TransportLayout[K]): void {
@@ -525,6 +539,7 @@ function toTransportValue(
 	const given = (value as { readonly $_layout?: TransportLayout }).$_layout;
 	if (given?.gap !== undefined) setLayout(out, 'gap', given.gap);
 	if (given?.flank !== undefined) setLayout(out, 'flank', given.flank);
+	if (given?.span !== undefined) setLayout(out, 'span', given.span);
 	if (trivia != null) setLayout(out, 'trivia', trivia);
 	const flank = sourceFlankOf(value, view);
 	if (flank !== undefined) setLayout(out, 'flank', flank);

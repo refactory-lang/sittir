@@ -3693,7 +3693,7 @@ The carrier's shape (leading, trailing and inner entries, each with its
 same-line facts) and where each entry renders are the core module's, the
 same for every grammar.
 
-It also emits a `Text` variant (`sittir_core::trivia::TriviaText`): a detached read entry that carries its stamped kind and captured text. It writes that kind's edges around the text, like a rendered node of the kind. It is decoded from an object with `$text` whose kind is a compound trivia kind; a leaf trivia kind stores `$text` itself and keeps its own transport. A trivia entry needs no line-end handling of its own: each variant's render tells the sink its kind (`TransportLayout::render` for a typed variant, the kind's render function for a unit, `TriviaText`'s own render for `Text`), and the sink holds the line end from the grammar's `KIND_FLAGS` table (`renderOptionsRs`), as it does for any node.
+It also emits a `Text` variant (`sittir_core::trivia::TriviaText`): a detached read entry that carries its stamped kind and captured text. `TriviaTransport` implements `FromTriviaText` as that variant, so a snapshot read builds each extra it places as its text and span. It writes that kind's edges around the text, like a rendered node of the kind. It is decoded from an object with `$text` whose kind is a compound trivia kind; a leaf trivia kind stores `$text` itself and keeps its own transport. A trivia entry needs no line-end handling of its own: each variant's render tells the sink its kind (`TransportLayout::render` for a typed variant, the kind's render function for a unit, `TriviaText`'s own render for `Text`), and the sink holds the line end from the grammar's `KIND_FLAGS` table (`renderOptionsRs`), as it does for any node.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderVerbatimTransportStruct`
 
@@ -14287,8 +14287,9 @@ The render inputs a grammar's real emission passes: the caller's facts plus the 
 A `Prepare` impl for a generated enum: payload variants delegate to the
 payload's `prepare(ctx)`, unit variants (literals) are `Ok(())`. The match
 is the tail expression, so the impl's result is whichever arm ran. An enum
-with payloads also delegates `source_gap` and `gap_edges`, so a list's gap
-fill reaches the gap and the edges of whichever kind the item is.
+with payloads also delegates `source_gap`, `gap_edges` and `snapshot_edge`,
+so a list's gap fill reaches the gap, the edges and the geometry of
+whichever kind the item is.
 
 ### `packages/codegen/src/emitters/render-module.ts::PREPARE_MOD`
 
@@ -14316,13 +14317,14 @@ enums, `VerbatimTransport`): `Ok(())`.
 
 ### `packages/codegen/src/emitters/render-module.ts::rootEdgeStamp`
 
-The grammar root's prepare lines that give an edited root its source flanks, ahead of `prepare_edges`: the first and last present item across its child fields (`EdgeItems`, fields in declaration order), whose coordinates `root_flanks` reads the tree bytes around, classified into the root's before and after sites exactly as a list gap is; `fill_edges` sets only the sides the wire left unset. A field order that put a non-edge item first only costs evidence: the bytes before it are not whitespace and classify to nothing. Empty for every other kind.
+The grammar root's prepare lines that give an edited root its source flanks, ahead of `prepare_edges`: the first and last present item across its child fields (`EdgeItems`, fields in declaration order), whose coordinates `root_flanks` reads the tree bytes around, classified into the root's before and after sites exactly as a list gap is (for a snapshot root, the gaps from the root's own span, `Layout::snapshot_edge`, to where its first item's render begins and its last item's ends, trivia included; `outermost` puts the root's inner trivia, `Layout::snapshot_inner`, in place of an end item it lies beyond or of a missing one); `fill_edges` sets only the sides the wire left unset. A field order that put a non-edge item first only costs evidence: the bytes before it are not whitespace and classify to nothing. Empty for every other kind.
 
 ### `packages/codegen/src/emitters/render-module.ts::prepareStructImpl`
 
 A transport struct's `Prepare` impl. Every struct answers `source_gap` from
-its layout's gap (`$_layout.gap`) and `gap_edges` with its own base edges,
-made when the layout holds none. A compound kind first fills its own
+its layout's gap (`$_layout.gap`), `gap_edges` with its own base edges,
+made when the layout holds none, and `snapshot_edge` from its layout's
+span and trivia, so a snapshot list's gaps and root's edges read geometry. A compound kind first fills its own
 base edges (for the grammar root, from its source flanks, `rootEdgeStamp`;
 then, for a kind that owns kind-edge sites, from the source flanks the
 wire carries for a list node, `fill_source_flanks`, and from its edge row,
@@ -14940,7 +14942,7 @@ The version of the wire between the JS packages and a native build: the render t
 
 ### `packages/codegen/src/emitters/types.ts::emitNodeSurfaceInterfaces`
 
-Emits a kind's `Bound` and `Parsed` interfaces. Every `Parsed` extends `HoldsTree`, because every object a read returns holds its tree's token. A terminal kind (no main type) gets the same members twice: `Bound` over the node methods, and `Parsed` over `HoldsTree` alone, because a parsed leaf is plain data with no methods. Otherwise each declares `$type` first, then `$with` over `this`, then (on `Parsed` only) `$query`, the node's `QueryFacet`, then its own members. A draft drops `$query` with `$with` and `$trivia` (`WithSlot`), so only a node read from a parse has one. A kind that seats a flattened group gets its `Bound` and `Parsed` as type aliases instead, `BoundSurface & FlatShapesOf<…>` and `ParsedSurface & FlatShapesOf<…>`, because an interface cannot extend the present-or-absent union; each unexported surface interface carries the members, and its `$with` returns the alias while reading its hints from the interface itself, so a rebuilt node keeps the union without the alias referring to itself. The kind's empty form is then an alias too, whose `$trivia` names the alias where an interface would use `this`. The order matters: the checker compares a target's properties in declaration order, and a mismatched kind must fail on the `$type` discriminant before it reaches the deep `$with` and accessor members; without it every non-matching arm of a wide union is compared structurally to the checker's depth limit.
+Emits a kind's `Bound` and `Parsed` interfaces. Every `Parsed` extends `HoldsTree`, because every object a read returns holds its tree's token. A terminal kind (no main type) gets the same members twice: `Bound` over the node methods, and `Parsed` over `HoldsTree` alone, because a parsed leaf is plain data with no methods. Otherwise each declares `$type` first, then `$with` over `this`, then (on `Parsed` only) `$query`, the node's `QueryFacet`, and `$snapshot`, the kind's `Snapshot`, then its own members. A draft drops `$query` and `$snapshot` with `$with` and `$trivia` (`WithSlot`), so only a node read from a parse has them. A kind that seats a flattened group gets its `Bound` and `Parsed` as type aliases instead, `BoundSurface & FlatShapesOf<…>` and `ParsedSurface & FlatShapesOf<…>`, because an interface cannot extend the present-or-absent union; each unexported surface interface carries the members, and its `$with` returns the alias while reading its hints from the interface itself, so a rebuilt node keeps the union without the alias referring to itself. The kind's empty form is then an alias too, whose `$trivia` names the alias where an interface would use `this`. The order matters: the checker compares a target's properties in declaration order, and a mismatched kind must fail on the `$type` discriminant before it reaches the deep `$with` and accessor members; without it every non-matching arm of a wide union is compared structurally to the checker's depth limit.
 
 ### `packages/codegen/src/emitters/shared.ts::listOptionsParam`
 
@@ -15032,7 +15034,7 @@ One `$with` setter of a node literal: its name, its parameter list and the rebui
 
 ### `packages/codegen/src/emitters/node-members.ts::nodeMemberLines`
 
-The member lines of a node's literal after its storage keys: the `$with` block, a reader per slot (`accessorRead`), the `$render` closure, the `$trivia` positions, `$query` when the literal is a parsed node's (`parsed`), and `$engine`. Every closure reads the `handle` the builder captured with `currentHandle()` and the `node` the literal is assigned to, so the node needs no helper after it is built and every node of a kind has one shape. `$query` is one closure that makes the query facet only when called (`queryOf`), so a node that is never queried pays only for the closure. A `$with` rebuild calls the same wrap with data `markEdited` stripped of its coordinates, so the member checks that the data still names its tree (`treeHandleOf`) and is `undefined` on a draft; `undefined` rather than absent keeps every node of a kind on one shape. `extra` carries the lines a group seat or a list owner adds. One function writes these lines for the factories and the wraps; only the wraps pass `parsed`, because a built node holds no tree to query. A parsed leaf is not written here and stays plain data with no `$query`.
+The member lines of a node's literal after its storage keys: the `$with` block, a reader per slot (`accessorRead`), the `$render` closure, the `$trivia` positions, `$query` and `$snapshot` when the literal is a parsed node's (`parsed`), and `$engine`. Every closure reads the `handle` the builder captured with `currentHandle()` and the `node` the literal is assigned to, so the node needs no helper after it is built and every node of a kind has one shape. `$query` is one closure that makes the query facet only when called (`queryOf`), so a node that is never queried pays only for the closure. `$snapshot` is the same: it calls `snapshotOf` on the node, and is `undefined` where `$query` is. A `$with` rebuild calls the same wrap with data `markEdited` stripped of its coordinates, so the member checks that the data still names its tree (`treeHandleOf`) and is `undefined` on a draft; `undefined` rather than absent keeps every node of a kind on one shape. `extra` carries the lines a group seat or a list owner adds. One function writes these lines for the factories and the wraps; only the wraps pass `parsed`, because a built node holds no tree to query. A parsed leaf is not written here and stays plain data with no `$query`.
 
 ### `packages/codegen/src/emitters/node-members.ts::StoredAccessor`
 

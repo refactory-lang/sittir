@@ -64,11 +64,96 @@ pub struct ReadCtx<'s> {
     pub source: &'s str,
     pub tree_id: u32,
     pub shows: fn(KindId) -> bool,
+    /// Set on a snapshot read (`ReadCtx::snapshot`): each node it reads gets a
+    /// span in place of a coordinate, and each trivia entry its text.
+    pub snapshot: Option<&'s SnapshotCtx<'s>>,
+}
+
+/// What a snapshot read measures with: the source's lines, and the start of
+/// the transport the read is inside, from which each point it writes is
+/// measured. The holder moves as the read enters and leaves a transport
+/// (`ReadCtx::hold`, `Placement::into_layout`), and the holders it replaced
+/// wait here, so a recursive read frame holds no context of its own.
+#[derive(Debug)]
+pub struct SnapshotCtx<'s> {
+    pub lines: &'s crate::points::LineTable,
+    holder: std::cell::Cell<crate::points::Point>,
+    replaced: std::cell::RefCell<Vec<crate::points::Point>>,
+}
+
+impl<'s> SnapshotCtx<'s> {
+    /// Measuring from the byte `holder`, or from the source's start when absent.
+    pub fn new(lines: &'s crate::points::LineTable, holder: Option<u32>) -> Self {
+        let holder = holder.and_then(|byte| lines.point(byte as usize)).unwrap_or(crate::points::Point::ZERO);
+        Self { lines, holder: std::cell::Cell::new(holder), replaced: std::cell::RefCell::default() }
+    }
+
+    /// `span`'s two ends as points measured from the holder's start.
+    pub fn span_of(&self, span: Span) -> crate::points::PointSpan {
+        let holder = self.holder.get();
+        let point = |byte: u32| self.lines.point(byte as usize).expect("a node's bytes lie in its source").offset_from(holder);
+        crate::points::PointSpan { start: point(span.start), end: point(span.end) }
+    }
+}
+
+/// Where a read node came from: its coordinate in a live tree, or, in a
+/// snapshot, its span measured from its holder's start.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum Origin {
+    Tree(NodeCoordinate),
+    Snapshot(crate::points::PointSpan),
 }
 
 impl<'s> ReadCtx<'s> {
     pub fn new(source: &'s str, tree_id: u32, shows: fn(KindId) -> bool) -> Self {
-        Self { source, tree_id, shows }
+        Self { source, tree_id, shows, snapshot: None }
+    }
+
+    /// This context, reading a snapshot measured as `snapshot` measures.
+    pub fn snapshot(self, snapshot: &'s SnapshotCtx<'s>) -> Self {
+        Self { snapshot: Some(snapshot), ..self }
+    }
+
+    /// In a snapshot, makes the start of the transport the cursor is on the
+    /// holder its slots are measured from, keeping the holder it replaces for
+    /// the transport's layout to restore (`Placement::into_layout`).
+    /// Elsewhere nothing moves. A read that fails leaves the holder where it
+    /// was moved: the snapshot is not read further.
+    pub fn hold(&self, cursor: &TreeCursor<'_>) {
+        if let Some(snapshot) = self.snapshot {
+            self.hold_in(snapshot, cursor);
+        }
+    }
+
+    /// `hold` in a snapshot, kept out of line so that a read frame, which
+    /// recurses, does not carry its temporaries.
+    #[inline(never)]
+    fn hold_in(&self, snapshot: &SnapshotCtx<'_>, cursor: &TreeCursor<'_>) {
+        let start = self.coordinate(&cursor.node(), index_of(cursor)).span.start;
+        let own = snapshot.lines.point(start as usize).expect("a node's start lies in its source");
+        snapshot.replaced.borrow_mut().push(snapshot.holder.replace(own));
+    }
+
+    /// Restores the holder the last `hold` replaced.
+    fn release(&self) {
+        if let Some(snapshot) = self.snapshot {
+            let outer = snapshot.replaced.borrow_mut().pop().expect("a release follows its hold");
+            snapshot.holder.set(outer);
+        }
+    }
+
+    /// One placed extra as a trivia entry: its coordinate on a live read; in a
+    /// snapshot, its text and its span from this context's holder, with the
+    /// reader's stamps.
+    pub fn entry<T: crate::trivia::FromTriviaText>(&self, entry: Entry) -> TriviaEntry<T> {
+        let Some(snapshot) = self.snapshot else { return entry.into_trivia() };
+        let span = entry.coord.span;
+        let text = crate::trivia::TriviaText {
+            kind: entry.coord.kind.expect("a placed extra carries its stamped kind"),
+            text: self.source[span.start as usize..span.end as usize].to_owned(),
+            span: Some(snapshot.span_of(span)),
+        };
+        TriviaEntry { value: SlotValue::Transport(T::from_text(text)), same_line: entry.same_line, tokens_between: entry.tokens_between }
     }
 
     /// The kind every coordinate of a node stamps as its `$type`, on every
@@ -78,10 +163,20 @@ impl<'s> ReadCtx<'s> {
         if display != grammar && (self.shows)(display) { display } else { grammar }
     }
 
-    /// The coordinate of the node the cursor is on: each transport's own
-    /// (`TransportLayout::at`).
-    pub fn at_of(&self, cursor: &TreeCursor<'_>) -> NodeCoordinate {
-        self.coordinate(&cursor.node(), index_of(cursor))
+    /// Where the node the cursor is on came from: each transport's own
+    /// (`TransportLayout::at`, or `::span` in a snapshot).
+    pub fn at_of(&self, cursor: &TreeCursor<'_>) -> Origin {
+        self.origin(&cursor.node(), index_of(cursor))
+    }
+
+    /// Where the node at `index` came from: its coordinate, or in a snapshot
+    /// its span from this context's holder.
+    pub fn origin(&self, node: &Node<'_>, index: u32) -> Origin {
+        let at = self.coordinate(node, index);
+        match self.snapshot {
+            None => Origin::Tree(at),
+            Some(snapshot) => Origin::Snapshot(snapshot.span_of(at.span)),
+        }
     }
 
     /// The coordinate of a surveyed child: its tree and index, its span and its
@@ -314,9 +409,9 @@ impl Sides {
     }
 
     /// The layout of a node that read none of its own: the extras its parent
-    /// placed on it and the node's own coordinate.
-    pub fn into_layout<T>(self, at: NodeCoordinate) -> Box<TransportLayout<T>> {
-        Placement::default().into_layout(self, at)
+    /// placed on it, measured under `ctx`, and where the node came from.
+    pub fn into_layout<T: crate::trivia::FromTriviaText>(self, at: Origin, ctx: &ReadCtx<'_>) -> Box<TransportLayout<T>> {
+        Placement::default().layout(self, at, ctx, false)
     }
 }
 
@@ -388,12 +483,26 @@ pub trait HasLayout<L> {
     fn take_layout(&mut self) -> L;
 }
 
-/// A struct's layout taken for its envelope: the whole layout, with the
-/// coordinate left behind on the struct when it has one.
+/// A layout holding only where its node came from: `at` for a node read
+/// from a live tree, `span` for a snapshot node.
+pub fn placed_at<T>(at: Origin) -> TransportLayout<T> {
+    match at {
+        Origin::Tree(coord) => TransportLayout { at: Some(coord), ..TransportLayout::default() },
+        Origin::Snapshot(span) => TransportLayout { span: Some(span), ..TransportLayout::default() },
+    }
+}
+
+/// Where the layout's node came from, when the layout records it.
+fn origin_of<T>(layout: &TransportLayout<T>) -> Option<Origin> {
+    layout.at.clone().map(Origin::Tree).or(layout.span.map(Origin::Snapshot))
+}
+
+/// A struct's layout taken for its envelope: the whole layout, with where
+/// the struct came from left behind on it when the layout records that.
 pub fn take_layout_keeping_at<T>(layout: &mut Option<Box<TransportLayout<T>>>) -> Option<Box<TransportLayout<T>>> {
     let taken = layout.take();
-    if let Some(at) = taken.as_ref().and_then(|layout| layout.at.clone()) {
-        *layout = Some(Box::new(TransportLayout { at: Some(at), ..TransportLayout::default() }));
+    if let Some(at) = taken.as_deref().and_then(origin_of) {
+        *layout = Some(Box::new(placed_at(at)));
     }
     taken
 }
@@ -405,16 +514,26 @@ impl<L, T: HasLayout<L>> HasLayout<L> for Box<T> {
 }
 
 /// An envelope's layout: the one its content was read with, else the extras
-/// its parent placed on it, naming the envelope's own node either way (`at`,
-/// taken where the envelope stands, since a content read through a hidden
-/// child names that child).
-pub fn envelope_layout<T>(taken: Option<Box<TransportLayout<T>>>, sides: Sides, at: NodeCoordinate) -> Box<TransportLayout<T>> {
+/// its parent placed on it measured under `ctx`, naming the envelope's own
+/// node either way (`at`, or `span` in a snapshot, taken where the envelope
+/// stands, since a content read through a hidden child names that child).
+/// An envelope reads its content under the context it was read under, so its
+/// content's trivia, which is the envelope's, is measured from the
+/// envelope's holder.
+pub fn envelope_layout<T: crate::trivia::FromTriviaText>(
+    taken: Option<Box<TransportLayout<T>>>,
+    sides: Sides,
+    at: Origin,
+    ctx: &ReadCtx<'_>,
+) -> Box<TransportLayout<T>> {
     match taken {
         Some(mut layout) => {
-            layout.at = Some(at);
+            let placed = placed_at::<T>(at);
+            layout.at = placed.at;
+            layout.span = placed.span;
             layout
         }
-        None => sides.into_layout(at),
+        None => sides.into_layout(at, ctx),
     }
 }
 
@@ -845,16 +964,27 @@ impl Placement {
         Some(self.take(i))
     }
 
-    /// The node's layout: what its parent placed, then its own entries, and
-    /// the node's own coordinate. With no entry it carries no trivia.
-    pub fn into_layout<T>(self, sides: Sides, at: NodeCoordinate) -> Box<TransportLayout<T>> {
-        let leading: Vec<TriviaEntry<T>> = sides.leading.into_iter().chain(self.own_leading).map(Entry::into_trivia).collect();
-        let trailing: Vec<TriviaEntry<T>> = sides.trailing.into_iter().chain(self.own_trailing).map(Entry::into_trivia).collect();
+    /// The layout of a node that held the read (`ReadCtx::hold`): what its
+    /// parent placed, then its own entries, and where the node came from.
+    /// With no entry it carries no trivia. Its inner-gap entries are measured
+    /// from the holder its slots were read under; then the holder its hold
+    /// replaced is restored, and its leading and trailing entries are measured
+    /// from it.
+    pub fn into_layout<T: crate::trivia::FromTriviaText>(self, sides: Sides, at: Origin, ctx: &ReadCtx<'_>) -> Box<TransportLayout<T>> {
+        self.layout(sides, at, ctx, true)
+    }
+
+    fn layout<T: crate::trivia::FromTriviaText>(self, sides: Sides, at: Origin, ctx: &ReadCtx<'_>, held: bool) -> Box<TransportLayout<T>> {
         let inner: BTreeMap<String, Vec<TriviaEntry<T>>> = self
             .inner
             .into_iter()
-            .map(|(key, entries)| (key, entries.into_iter().map(Entry::into_trivia).collect()))
+            .map(|(key, entries)| (key, entries.into_iter().map(|entry| ctx.entry(entry)).collect()))
             .collect();
+        if held {
+            ctx.release();
+        }
+        let leading: Vec<TriviaEntry<T>> = sides.leading.into_iter().chain(self.own_leading).map(|entry| ctx.entry(entry)).collect();
+        let trailing: Vec<TriviaEntry<T>> = sides.trailing.into_iter().chain(self.own_trailing).map(|entry| ctx.entry(entry)).collect();
         let held = !(leading.is_empty() && trailing.is_empty() && inner.is_empty());
         let some = |entries: Vec<TriviaEntry<T>>| (!entries.is_empty()).then_some(entries);
         Box::new(TransportLayout {
@@ -862,7 +992,7 @@ impl Placement {
             edges: None,
             gap: None,
             flank: None,
-            at: Some(at),
+            ..placed_at(at)
         })
     }
 }
@@ -930,6 +1060,47 @@ mod tests {
     use super::*;
 
     #[test]
+    fn a_snapshot_measures_each_child_from_its_holders_start() {
+        use crate::points::{LineTable, Point, PointSpan};
+        let source = "\n\nfn f() {\n    x\n}\n";
+        let mut parser = tree_sitter::Parser::new();
+        parser.set_language(&tree_sitter_rust::LANGUAGE.into()).unwrap();
+        let tree = parser.parse(source, None).unwrap();
+        let lines = LineTable::new(source);
+        let measure = SnapshotCtx::new(&lines, None);
+        let ctx = ReadCtx::new(source, 1, |_| false).snapshot(&measure);
+        let root = tree.walk();
+        let item_span = Origin::Snapshot(PointSpan { start: Point { row: 2, column: 0 }, end: Point { row: 4, column: 1 } });
+        assert_eq!(ctx.at_of(&root), Origin::Snapshot(PointSpan { start: Point::ZERO, end: lines.point(source.len()).unwrap() }));
+        let mut item = tree.walk();
+        item.goto_first_child();
+        ctx.hold(&root);
+        assert_eq!(ctx.at_of(&item), item_span);
+        let mut name = tree.walk();
+        name.goto_first_child();
+        name.goto_first_child();
+        name.goto_next_sibling();
+        ctx.hold(&item);
+        assert_eq!(ctx.at_of(&name), Origin::Snapshot(PointSpan { start: Point { row: 0, column: 3 }, end: Point { row: 0, column: 4 } }));
+        ctx.release();
+        assert_eq!(ctx.at_of(&item), item_span, "a released holder measures the next sibling from the shared holder");
+        ctx.release();
+        assert_eq!(ctx.at_of(&root), Origin::Snapshot(PointSpan { start: Point::ZERO, end: lines.point(source.len()).unwrap() }));
+    }
+
+    #[test]
+    fn a_snapshot_entry_is_its_text_measured_from_the_context_holder() {
+        use crate::points::{LineTable, Point, PointSpan};
+        let source = "a\n  // x\nb";
+        let lines = LineTable::new(source);
+        let measure = SnapshotCtx::new(&lines, Some(2));
+        let ctx = ReadCtx::new(source, 1, |_| false).snapshot(&measure);
+        let entry = Entry { coord: NodeCoordinate { kind: Some(KindId(7)), ..NodeCoordinate::new(1, 3, 4, Span { start: 4, end: 8 }) }, same_line: false, tokens_between: 0 };
+        let TriviaEntry { value: SlotValue::Transport(text), .. } = ctx.entry::<crate::trivia::TriviaText>(entry) else { panic!("a snapshot entry is its text") };
+        assert_eq!(text, crate::trivia::TriviaText { kind: KindId(7), text: "// x".into(), span: Some(PointSpan { start: Point { row: 0, column: 2 }, end: Point { row: 0, column: 6 } }) });
+    }
+
+    #[test]
     fn a_coordinate_ends_past_its_last_descendant() {
         let source = "fn a() { let x = 1; }";
         let mut parser = tree_sitter::Parser::new();
@@ -939,7 +1110,7 @@ mod tests {
         let mut cursor = tree.walk();
         for index in 0..tree.root_node().descendant_count() {
             cursor.goto_descendant(index);
-            let coordinate = ctx.at_of(&cursor);
+            let Origin::Tree(coordinate) = ctx.at_of(&cursor) else { panic!("a live read names a coordinate") };
             assert_eq!(coordinate.index as usize, index);
             assert_eq!(coordinate.end as usize, index + cursor.node().descendant_count());
         }
@@ -1184,13 +1355,14 @@ mod tests {
     fn the_parents_entries_come_before_the_nodes_own() {
         let children = [child(1, true, false, (0, 0), (0, 1)), child(2, false, true, (0, 0), (2, 6))];
         let routes = [Route::Slot { slot: 0, scalar: true }, Route::Trivia];
-        let placement = place(&ReadCtx::new("", 0, |_| false), &children, &routes, true, no_gap);
+        let ctx = ReadCtx::new("", 0, |_| false);
+        let placement = place(&ctx, &children, &routes, true, no_gap);
         let parent = Sides {
             owner: true,
             leading: vec![],
             trailing: vec![Entry { coord: NodeCoordinate::new(0, 0, 1, Span { start: 40, end: 44 }), same_line: true, tokens_between: 0 }],
         };
-        let layout = placement.into_layout::<()>(parent, NodeCoordinate::new(0, 0, 1, Span { start: 0, end: 6 }));
+        let layout = placement.into_layout::<()>(parent, Origin::Tree(NodeCoordinate::new(0, 0, 1, Span { start: 0, end: 6 })), &ctx);
         let trailing = layout.trivia.unwrap().trailing.unwrap();
         assert_eq!(trailing.iter().map(|e| e.value.coord().unwrap().span.start).collect::<Vec<_>>(), vec![40, 2]);
     }
