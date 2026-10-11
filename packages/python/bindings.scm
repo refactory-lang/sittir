@@ -64,7 +64,7 @@
 (except_clause (except_clause_exception (except_clause_exception_as alias: (_) @alias)))
 (except_clause (except_clause_exception (except_clause_exception_list) @exception))
 (finally_clause) @clause.finally
-(case_clause) @clause.case
+(case_clause) @clause.case.match
 (with_clause with_items: (_)? @items) @clause.with
 (with_item) @clause.with.item
 (for_in_clause) @clause.comprehension.for

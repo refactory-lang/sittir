@@ -2,13 +2,14 @@ import type { GrammarContext } from '../../context.ts';
 import type { SubKindOf } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Clause {
-	export interface Case<G extends GrammarContext<G>> {
-		readonly casePatterns?: V.Pattern.Case<G>[];
-		// p only
-		readonly consequence?: G['slots']['clause.case']['consequence'];
-		// p only
-		readonly guard?: V.Clause.Comprehension.If<G>;
-		// p only
+	export namespace Case {
+		export interface Match<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Case<G>> {
+			// claimed by p
+			readonly $kind: 'clause.case.match';
+			readonly casePatterns: V.Pattern.Case<G>[];
+			readonly consequence: G['slots']['clause.case.match']['consequence'];
+			readonly guard?: V.Clause.Comprehension.If<G>;
+		}
 	}
 	export interface Let<G extends GrammarContext<G>> extends SubKindOf<V.Clause<G>> {
 		// claimed by r

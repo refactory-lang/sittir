@@ -96,17 +96,19 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['identifier']
 				| G['type'];
 		};
-		readonly 'clause.case': {
+		readonly 'clause.case.default': {
 			readonly bodies: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+		};
+		readonly 'clause.case.match': {
 			readonly consequence: V.Declaration.TypeAlias<G> | G['statement'];
+		};
+		readonly 'clause.case.switch': {
+			readonly bodies: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
 			readonly value:
 				| V.Declaration.Module<G>
 				| G['expression']
 				| G['identifier']
 				| G['literal'];
-		};
-		readonly 'clause.case.default': {
-			readonly bodies: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
 		};
 		readonly 'clause.catch': {
 			readonly catchClauseGroup: unknown;
@@ -1606,7 +1608,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['statement'];
 		};
 		readonly 'statement.match': {
-			readonly body: unknown | V.Clause.Case<G> | string;
+			readonly body: unknown | V.Clause.Case.Match<G> | string;
 			readonly subject:
 				| G['expression']
 				| G['identifier']

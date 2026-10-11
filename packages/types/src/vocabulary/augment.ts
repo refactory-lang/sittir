@@ -125,18 +125,15 @@ declare module './clause.ts' {
 				| V.Clause.Bounds.Removed<G>
 				| V.Clause.Bounds.Use<G>;
 		}
-		interface Case<G extends GrammarContext<G>> {
-			readonly bodies?: gate.In<G, features.MultiwayBranch, multiwayBranch.Clause.Case<G>['bodies']>;
-			readonly casePatterns?: gate.In<G, features.MatchExpressions, matchExpressions.Clause.Case<G>['casePatterns']>;
-			readonly consequence?: gate.In<G, features.MatchExpressions, matchExpressions.Clause.Case<G>['consequence']>;
-			readonly guard?: gate.In<G, features.MatchExpressions, matchExpressions.Clause.Case<G>['guard']>;
-			readonly value?: gate.In<G, features.MultiwayBranch, multiwayBranch.Clause.Case<G>['value']>;
-		}
 		namespace Case {
-			interface Default<G extends GrammarContext<G>> {
-				readonly bodies?: gate.In<G, features.MultiwayBranch, multiwayBranch.Clause.Case.Default<G>['bodies']>;
-			}
-			type Any<G extends GrammarContext<G>> = V.Clause.Case<G> | V.Clause.Case.Default<G>;
+			interface Default<G extends GrammarContext<G>> extends multiwayBranch.Clause.Case.Default<G> {}
+			interface Match<G extends GrammarContext<G>> extends matchExpressions.Clause.Case.Match<G> {}
+			interface Switch<G extends GrammarContext<G>> extends multiwayBranch.Clause.Case.Switch<G> {}
+			type Any<G extends GrammarContext<G>> =
+				| V.Clause.Case<G>
+				| V.Clause.Case.Default<G>
+				| V.Clause.Case.Match<G>
+				| V.Clause.Case.Switch<G>;
 		}
 		interface Catch<G extends GrammarContext<G>> extends exceptions.Clause.Catch<G> {}
 		interface Comprehension<G extends GrammarContext<G>> extends comprehensions.Clause.Comprehension<G> {}
@@ -252,6 +249,8 @@ declare module './clause.ts' {
 			| V.Clause.Bounds.Use<G>
 			| V.Clause.Case<G>
 			| V.Clause.Case.Default<G>
+			| V.Clause.Case.Match<G>
+			| V.Clause.Case.Switch<G>
 			| V.Clause.Catch<G>
 			| V.Clause.Comprehension<G>
 			| V.Clause.Comprehension.For<G>

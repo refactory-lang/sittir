@@ -1433,10 +1433,10 @@
       ]
     },
     "case_clause": {
-      "vocab": "clause.case",
+      "vocab": "clause.case.match",
       "read": [
         {
-          "vocab": "clause.case",
+          "vocab": "clause.case.match",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -7010,19 +7010,19 @@
         "paths": 13,
         "kinds": 3,
         "refinements": 0,
-        "aliases": 104
+        "aliases": 103
       },
       {
         "depth": 2,
         "paths": 75,
-        "kinds": 71,
+        "kinds": 70,
         "refinements": 7,
-        "aliases": 93
+        "aliases": 94
       },
       {
         "depth": 3,
-        "paths": 69,
-        "kinds": 62,
+        "paths": 70,
+        "kinds": 63,
         "refinements": 51,
         "aliases": 53
       },
@@ -7262,6 +7262,14 @@
           "expression.comprehension.list",
           "pattern.case.list",
           "pattern.list"
+        ]
+      },
+      {
+        "under": "",
+        "name": "match",
+        "paths": [
+          "clause.case.match",
+          "statement.match"
         ]
       },
       {

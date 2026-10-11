@@ -3,7 +3,7 @@
 import { bindings, field, rename } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "99898da824c0d408b985da7b387c4aca1592923b3322af8e7e565d3409bbb01e",
+	hash: "d7ea13fc2db6883b36d7f6948c39779ca069836ddf899f51129742c157bea514",
 	patches: {
 		_number: { "1": field("value") },
 		_parameter_name: { "1/0": field("visibility"), "4": field("name") },
@@ -59,7 +59,7 @@ export default bindings({
 		rename("while_statement", "while_loop_statement"),
 		rename("do_statement", "do_while_loop_statement"),
 		rename("with_statement", "scope_statement"),
-		rename("switch_case", "case_clause"),
+		rename("switch_case", "switch_case_clause"),
 		rename("switch_default", "default_case_clause"),
 		rename("extends_type_clause", "type_extends_clause"),
 		rename("import_clause", "names_import_clause"),

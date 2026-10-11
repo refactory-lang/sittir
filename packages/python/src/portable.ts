@@ -29,6 +29,7 @@ export interface PortableIds {
 		| TSKindId.WithClauseParen
 		| TSKindId.WithItem;
 	'clause.case': TSKindId.CaseClause;
+	'clause.case.match': TSKindId.CaseClause;
 	'clause.comprehension': TSKindId.ComprehensionClauses | TSKindId.ForInClause | TSKindId.IfClause;
 	'clause.comprehension.for': TSKindId.ForInClause;
 	'clause.comprehension.if': TSKindId.IfClause;
@@ -442,11 +443,16 @@ export interface PortableKindsAt {
 		readonly for: PortableKindsAt['clause.comprehension.for'];
 		readonly if: PortableKindsAt['clause.comprehension.if'];
 		readonly item: PortableKindsAt['clause.with.item'];
+		readonly match: PortableKindsAt['clause.case.match'];
 		readonly prefix: PortableKindsAt['clause.import.relative.prefix'];
 		readonly relative: PortableKindsAt['clause.import.relative'];
 		readonly wildcard: PortableKindsAt['clause.import.wildcard'];
 	};
-	'clause.case': { readonly $ids: readonly PortableIds['clause.case'][] };
+	'clause.case': {
+		readonly $ids: readonly PortableIds['clause.case'][];
+		readonly match: PortableKindsAt['clause.case.match'];
+	};
+	'clause.case.match': { readonly $ids: readonly PortableIds['clause.case.match'][] };
 	'clause.comprehension': {
 		readonly $ids: readonly PortableIds['clause.comprehension'][];
 		readonly for: PortableKindsAt['clause.comprehension.for'];
@@ -1164,11 +1170,13 @@ export interface PortableIsAt {
 		readonly for: PortableIsAt['clause.comprehension.for'];
 		readonly if: PortableIsAt['clause.comprehension.if'];
 		readonly item: PortableIsAt['clause.with.item'];
+		readonly match: PortableIsAt['clause.case.match'];
 		readonly prefix: PortableIsAt['clause.import.relative.prefix'];
 		readonly relative: PortableIsAt['clause.import.relative'];
 		readonly wildcard: PortableIsAt['clause.import.wildcard'];
 	};
-	'clause.case': PortableGuard<PortableIds['clause.case']> & {};
+	'clause.case': PortableGuard<PortableIds['clause.case']> & { readonly match: PortableIsAt['clause.case.match'] };
+	'clause.case.match': PortableGuard<PortableIds['clause.case.match']> & {};
 	'clause.comprehension': PortableGuard<PortableIds['clause.comprehension']> & {
 		readonly for: PortableIsAt['clause.comprehension.for'];
 		readonly if: PortableIsAt['clause.comprehension.if'];
@@ -1847,7 +1855,6 @@ export interface PortableKinds {
 	readonly line: PortableKindsAt['comment.line'];
 	readonly logical: PortableKindsAt['expression.binary.logical'];
 	readonly loop: PortableKindsAt['statement.loop'];
-	readonly match: PortableKindsAt['statement.match'];
 	readonly method: PortableKindsAt['declaration.method'];
 	readonly negation: PortableKindsAt['expression.unary.negation'];
 	readonly nonlocal: PortableKindsAt['statement.nonlocal'];
@@ -1967,7 +1974,6 @@ export interface PortableIs {
 	readonly line: PortableIsAt['comment.line'];
 	readonly logical: PortableIsAt['expression.binary.logical'];
 	readonly loop: PortableIsAt['statement.loop'];
-	readonly match: PortableIsAt['statement.match'];
 	readonly method: PortableIsAt['declaration.method'];
 	readonly negation: PortableIsAt['expression.unary.negation'];
 	readonly nonlocal: PortableIsAt['statement.nonlocal'];
@@ -2039,6 +2045,7 @@ const table: PortableTable = {
 			exact: true
 		},
 		'clause.case': { ids: [TSKindId.CaseClause], exact: true },
+		'clause.case.match': { ids: [TSKindId.CaseClause], exact: true },
 		'clause.comprehension': {
 			ids: [TSKindId.ComprehensionClauses, TSKindId.ForInClause, TSKindId.IfClause],
 			exact: true
@@ -2570,7 +2577,6 @@ const table: PortableTable = {
 		['', 'line', 'comment.line'],
 		['', 'logical', 'expression.binary.logical'],
 		['', 'loop', 'statement.loop'],
-		['', 'match', 'statement.match'],
 		['', 'method', 'declaration.method'],
 		['', 'negation', 'expression.unary.negation'],
 		['', 'nonlocal', 'statement.nonlocal'],
@@ -2616,6 +2622,7 @@ const table: PortableTable = {
 		['clause', 'for', 'clause.comprehension.for'],
 		['clause', 'if', 'clause.comprehension.if'],
 		['clause', 'item', 'clause.with.item'],
+		['clause', 'match', 'clause.case.match'],
 		['clause', 'prefix', 'clause.import.relative.prefix'],
 		['clause', 'relative', 'clause.import.relative'],
 		['clause', 'wildcard', 'clause.import.wildcard'],
@@ -2957,7 +2964,7 @@ const table: PortableTable = {
 			{ path: 'expression.call', within: [], test: [] }
 		],
 		[TSKindId.CaseAsPattern]: [{ path: 'pattern.case.as', within: [], test: [] }],
-		[TSKindId.CaseClause]: [{ path: 'clause.case', within: [], test: [] }],
+		[TSKindId.CaseClause]: [{ path: 'clause.case.match', within: [], test: [] }],
 		[TSKindId.CaseListPattern]: [{ path: 'pattern.case.list', within: [], test: [] }],
 		[TSKindId.CasePattern]: [{ path: 'pattern.case', within: [], test: [] }],
 		[TSKindId.CaseTuplePattern]: [{ path: 'pattern.case.tuple', within: [], test: [] }],

@@ -123,7 +123,7 @@
 (else_clause) @clause.else
 (catch_clause) @clause.catch
 (finally_clause) @clause.finally
-(switch_case) @clause.case
+(switch_case) @clause.case.switch
 (switch_default) @clause.case.default
 (extends_clause) @clause.extends
 (extends_type_clause) @clause.extends.type

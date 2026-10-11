@@ -5,7 +5,7 @@ export namespace Statement {
 	export interface Switch<G extends GrammarContext<G>> extends SubKindOf<V.Statement<G>> {
 		// claimed by t
 		readonly $kind: 'statement.switch';
-		readonly body: V.Clause.Case.Any<G>[];
+		readonly body: (V.Clause.Case.Default<G> | V.Clause.Case.Switch<G>)[];
 		readonly value: V.Expression.Parenthesized<G>;
 	}
 }

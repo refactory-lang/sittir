@@ -7,14 +7,7 @@ export interface Clause<G extends GrammarContext<G>> {
 
 export namespace Clause {
 	export interface Case<G extends GrammarContext<G>> extends SubKindOf<V.Clause<G>> {
-		// claimed by pt
 		readonly $kind: 'clause.case';
-	}
-	export namespace Case {
-		export interface Default<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Case<G>> {
-			// claimed by t
-			readonly $kind: 'clause.case.default';
-		}
 	}
 	export interface Elif<G extends GrammarContext<G>> extends SubKindOf<V.Clause<G>> {
 		// claimed by p

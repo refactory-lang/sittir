@@ -129,6 +129,15 @@ export function forIn<G extends GrammarContext<G>>(right: G['identifier'], body:
 	return { $kind: 'statement.loop.for', right, body };
 }
 
+// A switch holds its cases, each naming its value, and its default, which names none; a match case is no clause of a switch.
+export function switchBody<G extends GrammarContext<G>>(value: Clause.Case.Switch<G>['value']): Statement.Switch<G>['body'] {
+	return [{ $kind: 'clause.case.switch', value }, { $kind: 'clause.case.default' }];
+}
+export function matchInSwitch<G extends GrammarContext<G>>(c: Clause.Case.Match<G>): Statement.Switch<G>['body'] {
+	// @ts-expect-error a match case is no clause of a switch
+	return [c];
+}
+
 // Roles read through the namespace map, which types each by its permissive fill.
 export function nameKind<G extends GrammarContext<G>>(f: Declaration.Function<G>): string {
 	return f.name.$kind;

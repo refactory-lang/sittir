@@ -8914,10 +8914,10 @@
       }
     },
     "switch_case": {
-      "vocab": "clause.case",
+      "vocab": "clause.case.switch",
       "read": [
         {
-          "vocab": "clause.case",
+          "vocab": "clause.case.switch",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -10407,20 +10407,20 @@
         "paths": 13,
         "kinds": 5,
         "refinements": 0,
-        "aliases": 152
+        "aliases": 151
       },
       {
         "depth": 2,
         "paths": 111,
-        "kinds": 134,
+        "kinds": 133,
         "refinements": 8,
-        "aliases": 100
+        "aliases": 101
       },
       {
         "depth": 3,
-        "paths": 84,
-        "kinds": 76,
-        "refinements": 58,
+        "paths": 85,
+        "kinds": 77,
+        "refinements": 57,
         "aliases": 42
       },
       {
@@ -10707,6 +10707,14 @@
         "paths": [
           "expression.assignment.compound.subtract",
           "expression.binary.arithmetic.subtract"
+        ]
+      },
+      {
+        "under": "",
+        "name": "switch",
+        "paths": [
+          "clause.case.switch",
+          "statement.switch"
         ]
       },
       {
