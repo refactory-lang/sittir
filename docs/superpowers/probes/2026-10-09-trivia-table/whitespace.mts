@@ -5,8 +5,9 @@
  *
  * For each source, the gaps between its tokens are compared with those of its default render: the
  * source's snapshot with every `span` removed, so every gap renders with its seam default. Both
- * texts are parsed with the grammar's wasm parser and their token walks (leaves and the text a
- * hidden token leaves between two children; never an extra) lined up one to one. A zero-width node
+ * texts are parsed with the grammar's wasm parser and their token walks (`walk.mts`: leaves and the
+ * text a hidden token leaves between two children; an extra or an `ERROR` is an entry, never a
+ * token) lined up one to one. A zero-width node
  * (typescript's automatic semicolon, a default render's line break may add one) has no whitespace of
  * its own, so the walk passes it and the runs either side of it are one gap. A
  * default render whose tokens differ from the source's is counted and left out. Each gap's
@@ -26,15 +27,13 @@
  *   with every whitespace run stored, and the empty gaps under each. Writes examples to out.json.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
+import { walk, type Walk } from './walk.mts';
 
 const ROOT = `${process.cwd()}/`;
 const { loadCorpusEntries, loadWebTreeSitter } = await import(`${ROOT}packages/tools/src/validate/common.ts`);
 const { languageByName } = await import(`${ROOT}packages/tools/src/languages.ts`);
 const { createEngine, snapshotOf } = await import(`${ROOT}packages/common/src/index.ts`);
 
-type TsNode = { type: string; isExtra: boolean; startIndex: number; endIndex: number; childCount: number; children: TsNode[] };
-type Token = { start: number; end: number; text: string };
-type Span = { start: number; end: number };
 type Gap = { comments: string[]; runs: string[] };
 const CLASSES = ['a', 'b', 'c', 'd', 'e'] as const;
 type Class = (typeof CLASSES)[number];
@@ -46,48 +45,16 @@ const ARENA: [string, string][] = [
 	['typescript', `${INPUTS}/create-engine.ts`]
 ];
 
-/** The token walk, and the extras it passes, in source order. */
-function tokens(root: TsNode, source: string): { tokens: Token[]; extras: Span[] } {
-	const out: Token[] = [];
-	const extras: Span[] = [];
-	const hidden = (from: number, to: number): void => {
-		const text = source.slice(from, to);
-		const trimmed = text.trim();
-		if (trimmed === '') return;
-		const start = from + text.indexOf(trimmed);
-		out.push({ start, end: start + trimmed.length, text: trimmed });
-	};
-	const walk = (node: TsNode): void => {
-		if (node.isExtra) {
-			extras.push({ start: node.startIndex, end: node.endIndex });
-			return;
-		}
-		if (node.childCount === 0) {
-			if (node.endIndex > node.startIndex) out.push({ start: node.startIndex, end: node.endIndex, text: source.slice(node.startIndex, node.endIndex) });
-			return;
-		}
-		let at = node.startIndex;
-		for (const child of node.children) {
-			hidden(at, child.startIndex);
-			walk(child);
-			at = child.endIndex;
-		}
-		hidden(at, node.endIndex);
-	};
-	walk(root);
-	return { tokens: out, extras };
-}
-
 /** Each gap between tokens: the comments (extras) in it, and the whitespace runs around them. */
-function gaps(source: string, walk: { tokens: Token[]; extras: Span[] }): Gap[] {
+function gaps(source: string, walk: Walk): Gap[] {
 	const out: Gap[] = [];
 	let extra = 0;
 	const gap = (from: number, to: number): Gap => {
 		const comments: string[] = [];
 		const runs: string[] = [];
 		let at = from;
-		while (extra < walk.extras.length && walk.extras[extra]!.start < to) {
-			const { start, end } = walk.extras[extra++]!;
+		while (extra < walk.entries.length && walk.entries[extra]!.start < to) {
+			const { start, end } = walk.entries[extra++]!;
 			runs.push(source.slice(at, start));
 			comments.push(source.slice(start, end));
 			at = end;
@@ -177,7 +144,7 @@ async function measure(set: string, grammar: string, name: string, source: strin
 		into.failed++;
 		return;
 	}
-	const [srcWalk, defWalk] = [source, fallback].map((text) => tokens(parser.parse(text).rootNode, text));
+	const [srcWalk, defWalk] = [source, fallback].map((text) => walk(parser.parse(text).rootNode, text, false));
 	const [src, def] = [srcWalk!.tokens, defWalk!.tokens];
 	if (src.length !== def.length || src.some((token, i) => token.text !== def[i]!.text)) {
 		into.unaligned++;

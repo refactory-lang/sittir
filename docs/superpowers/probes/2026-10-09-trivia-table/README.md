@@ -47,3 +47,27 @@ Examples of each class:
 - **Typescript "Object types with automatic semicolon insertion".** The source's `ERROR` text is missing from the default render: the read drops an `ERROR` placed on a `predefined_type` enum leaf. The assignment walk gives it a side (`ERROR` is an entry).
 
 **What a `$trivia` read returns under the rule.** A side's entries are its comments and `ERROR`s with their text, and the stored layout runs of classes (a)–(d) as whitespace members. A read today returns the comments the reader placed and the line-break runs the line-gap query derives (`lineGapsOf`), whatever their seam's default. Under the rule, a run equal to its default is not an entry, and an in-line run never is.
+
+## `table-census.mts`: a gap's owner is the parser's own
+
+For every corpus entry (`walk.mts`, zero-width tokens included), each entry (an extra or an `ERROR`) in gap *k* is checked: is the smallest node containing tokens *k* and *k + 1* the entry's tree-sitter parent? It also records the side the assignment gives it.
+
+```sh
+./node_modules/.bin/tsx docs/superpowers/probes/2026-10-09-trivia-table/table-census.mts /tmp/table-census.json
+```
+
+### Results
+
+At `feat/arena` after the whitespace probe.
+
+| grammar | sources | entries | owner not parent | leading | trailing | inner | unowned | hidden-token texts | node-edge tokens | zero-width leaves | `ERROR` |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| rust | 148 | 43 | 0 | 8 | 4 | 31 | 0 | 0 | 0 | 0 | 0 |
+| typescript | 115 | 10 | 0 | 10 | 0 | 0 | 0 | 0 | 0 | 209 | 2 |
+| python | 116 | 46 | 0 | 23 | 23 | 0 | 0 | 0 | 168 | 455 | 1 |
+| scm | 19 | 3 | 0 | 2 | 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| regex | 37 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+**Every entry's owner is its tree-sitter parent**, once the walk yields python's hidden zero-width tokens. `_indent` and `_dedent` are no nodes, but tree-sitter extends a block over the comments up to its dedent. A walk that sees only visible tokens finds 9 python comments at a block's edge whose smallest node spanning the gap is the block's parent (`module`, `if_statement`), not the block. The walk puts a zero-width token at each node edge that reaches past the node's own first or last token (168 in python, none elsewhere), and the gap splits there.
+
+Every corpus entry lands in a side; none is unowned. Whitespace between two children is never a token: python's `_newline` text is a gap's line break, equal to its seam's default.
