@@ -38,6 +38,9 @@ export const ir: {
 	readonly anonymousCapturingGroup: typeof F.anonymousCapturingGroup;
 	readonly namedCapturingGroup: typeof F.namedCapturingGroup;
 	readonly nonCapturingGroup: typeof F.nonCapturingGroup;
+	readonly zeroOrMore: typeof F.zeroOrMore;
+	readonly oneOrMore: typeof F.oneOrMore;
+	readonly optional: typeof F.optional;
 	readonly countQuantifier: typeof F.countQuantifier;
 	readonly backreferenceEscape: typeof F.backreferenceEscape;
 	readonly namedGroupBackreference: typeof F.namedGroupBackreference;
@@ -58,9 +61,6 @@ export const ir: {
 	readonly posixClassName: typeof F.buildPosixClassName;
 	readonly classCharacter: typeof F.buildClassCharacter;
 	readonly flags: typeof F.buildFlags;
-	readonly zeroOrMore: typeof F.buildZeroOrMore;
-	readonly oneOrMore: typeof F.buildOneOrMore;
-	readonly optional: typeof F.buildOptional;
 	readonly decimalEscape: typeof F.buildDecimalEscape;
 	readonly unicodeCharacterEscape: typeof F.buildUnicodeCharacterEscape;
 	readonly unicodePropertyValue: typeof F.buildUnicodePropertyValue;
@@ -85,6 +85,9 @@ export const ir: {
 	anonymousCapturingGroup: F.anonymousCapturingGroup,
 	namedCapturingGroup: F.namedCapturingGroup,
 	nonCapturingGroup: F.nonCapturingGroup,
+	zeroOrMore: F.zeroOrMore,
+	oneOrMore: F.oneOrMore,
+	optional: F.optional,
 	countQuantifier: F.countQuantifier,
 	backreferenceEscape: F.backreferenceEscape,
 	namedGroupBackreference: F.namedGroupBackreference,
@@ -111,9 +114,6 @@ export const ir: {
 	posixClassName: F.buildPosixClassName,
 	classCharacter: F.buildClassCharacter,
 	flags: F.buildFlags,
-	zeroOrMore: F.buildZeroOrMore,
-	oneOrMore: F.buildOneOrMore,
-	optional: F.buildOptional,
 	decimalEscape: F.buildDecimalEscape,
 	unicodeCharacterEscape: F.buildUnicodeCharacterEscape,
 	unicodePropertyValue: F.buildUnicodePropertyValue,

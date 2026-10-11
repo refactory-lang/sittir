@@ -789,6 +789,70 @@
 			"field": "non_capturing_group_after"
 		}
 	],
+	"one_or_more": [
+		{
+			"kind": "seam",
+			"field": "one_or_more_before"
+		},
+		{
+			"kind": "text",
+			"text": "+"
+		},
+		{
+			"kind": "seam",
+			"field": "plus_after"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "lazy",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "lazy"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "one_or_more_after"
+		}
+	],
+	"optional": [
+		{
+			"kind": "seam",
+			"field": "optional_before"
+		},
+		{
+			"kind": "text",
+			"text": "?"
+		},
+		{
+			"kind": "seam",
+			"field": "qmark_after"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "lazy",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "lazy"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "optional_after"
+		}
+	],
 	"pattern": [
 		{
 			"kind": "seam",
@@ -921,6 +985,38 @@
 		{
 			"kind": "seam",
 			"field": "unicode_property_value_expression_group_after"
+		}
+	],
+	"zero_or_more": [
+		{
+			"kind": "seam",
+			"field": "zero_or_more_before"
+		},
+		{
+			"kind": "text",
+			"text": "*"
+		},
+		{
+			"kind": "seam",
+			"field": "star_after"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "lazy",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "lazy"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "zero_or_more_after"
 		}
 	]
 }

@@ -787,6 +787,24 @@ describe('Assemble — T027a empty seq after stripping', () => {
 	});
 });
 
+describe('Assemble — a literal that is itself the slot', () => {
+	const quantifier = (marker: object): Rule<'link'> => ({
+		type: SEQ,
+		members: [
+			{ type: STRING, value: '*' },
+			{ type: OPTIONAL, content: { type: STRING, value: '?', ...marker } }
+		]
+	});
+
+	it('makes a kind with an aliased, nonterminal literal a branch', () => {
+		expect(classifyNode('zero_or_more', flatten(quantifier({ nonterminal: true, aliasedTo: 'lazy' })))).toBe('branch');
+	});
+
+	it('keeps a nonterminal literal with no alias target as text', () => {
+		expect(classifyNode('zero_or_more', flatten(quantifier({ nonterminal: true })))).toBe('pattern');
+	});
+});
+
 describe('Rule — deriveFields', () => {
 	it('extracts fields from a seq rule', () => {
 		const rule: Rule<'link'> = {

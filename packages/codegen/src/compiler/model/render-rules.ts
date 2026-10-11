@@ -117,6 +117,7 @@ export interface RuleSpacingSite {
 	readonly edgeLiterals?: readonly string[];
 	readonly edgeArm?: EdgeArm;
 	readonly kindEdge?: true;
+	readonly padding?: true;
 }
 
 export interface EdgeArm {
@@ -692,6 +693,11 @@ function withArmEdgeSeams(
 	if (c.type !== CHOICE || c.members === undefined || isAnyWhitespaceChoice(choice)) return undefined;
 	let changed = false;
 	const members = c.members.map((arm) => {
+		const nested = withArmEdgeSeams(arm, side, kind, config, resolver, seams);
+		if (nested !== undefined) {
+			changed = true;
+			return nested;
+		}
 		const edge = edgeMember(arm, side) ?? arm;
 		if (isAnyWhitespaceChoice(edge)) return arm;
 		if (side === 'first' && isImmediateArm(choice, edge, config)) return arm;
@@ -936,7 +942,7 @@ export function declaredOptionArms(
 export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): RuleSpacingSite[] {
 	const out = new Map<string, RuleSpacingSite>();
 	const seats: Seat[] = [];
-	const add = (kind: string, slot: string, part: SpacingPart, address: string, stamp: Pick<RuleSpacingSite, 'edgeArm' | 'kindEdge'> = {}): void => {
+	const add = (kind: string, slot: string, part: SpacingPart, address: string, stamp: Pick<RuleSpacingSite, 'edgeArm' | 'kindEdge' | 'padding'> = {}): void => {
 		const key = `${kind} ${part.fieldName}`;
 		const prior = out.get(key);
 		if (prior !== undefined && prior.defaultArm !== part.defaultArm) {
@@ -981,7 +987,7 @@ export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): Rule
 			const part = seamPartOf(m);
 			const seam = parseSeamLabel(part.fieldName)!;
 			const kindEdge = seam.token === displayNameOf(kind, nodeMap);
-			add(kind, seam.token, part, part.fieldName, kindEdge ? { kindEdge } : {});
+			add(kind, seam.token, part, part.fieldName, kindEdge ? { kindEdge } : seamChoiceDefault(m)?.origin === 'preference' && part.defaultArm === 'space' ? { padding: true } : {});
 			if (!kindEdge) continue;
 			for (const token of part.edgeLiterals ?? []) {
 				const address = seamLabel(token, seam.side);

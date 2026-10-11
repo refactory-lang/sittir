@@ -368,8 +368,8 @@ Trivia is native, keyed by node and side, and never a field of a transport. The 
 `2026-10-09-trivia-table-design.md`'s: a gap is the seam between two adjacent tokens, and its owner
 is the smallest node containing tokens on both sides, tree-sitter's convention for extras, derived
 and never stored. One walk at read assigns a gap's entries to a side of one of the owner's two
-children beside it. A side holds one value, its comments and the layout that differs from the
-seam's default, and a node's sides travel with it.
+children beside it. A side holds one value, its comments and its line layout, and a node's sides
+travel with it.
 
 - **A parsed tree's table** is on the native `ParsedTree`, keyed by (node, side). One token walk
   builds it from the source and the tree, and it holds every write to the tree's trivia, each

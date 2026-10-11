@@ -13531,6 +13531,56 @@
     "source": "validator",
     "grammar": "regex",
     "backend": "native",
+    "kind": "zero_or_more",
+    "count": 8,
+    "entries": [
+      "a multiline url regex",
+      "capturing groups",
+      "named capturing groups",
+      "named capturing groups - backreferences",
+      "quantifiers"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "zero_or_more"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "one_or_more",
+    "count": 2,
+    "entries": [
+      "POSIX Character Class",
+      "quantifiers"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "one_or_more"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "optional",
+    "count": 1,
+    "entries": [
+      "quantifiers"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "optional"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
     "kind": "count_quantifier",
     "count": 9,
     "entries": [
@@ -14028,6 +14078,56 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "term_group"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "zero_or_more",
+    "count": 8,
+    "entries": [
+      "a multiline url regex",
+      "capturing groups",
+      "named capturing groups",
+      "named capturing groups - backreferences",
+      "quantifiers"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "zero_or_more"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "one_or_more",
+    "count": 2,
+    "entries": [
+      "POSIX Character Class",
+      "quantifiers"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "one_or_more"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "optional",
+    "count": 1,
+    "entries": [
+      "quantifiers"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "optional"
   },
   {
     "source": "validator",
@@ -14535,6 +14635,56 @@
     "source": "validator",
     "grammar": "regex",
     "backend": "native",
+    "kind": "factory: zero_or_more",
+    "count": 5,
+    "entries": [
+      "a multiline url regex",
+      "capturing groups",
+      "named capturing groups",
+      "named capturing groups - backreferences",
+      "quantifiers"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "factory: zero_or_more"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "factory: one_or_more",
+    "count": 2,
+    "entries": [
+      "POSIX Character Class",
+      "quantifiers"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "factory: one_or_more"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "factory: optional",
+    "count": 1,
+    "entries": [
+      "quantifiers"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "factory: optional"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
     "kind": "factory: count_quantifier",
     "count": 3,
     "entries": [
@@ -14986,6 +15136,56 @@
     "source": "validator",
     "grammar": "regex",
     "backend": "native",
+    "kind": "ir: zero_or_more",
+    "count": 5,
+    "entries": [
+      "a multiline url regex",
+      "capturing groups",
+      "named capturing groups",
+      "named capturing groups - backreferences",
+      "quantifiers"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: zero_or_more"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "ir: one_or_more",
+    "count": 2,
+    "entries": [
+      "POSIX Character Class",
+      "quantifiers"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: one_or_more"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "ir: optional",
+    "count": 1,
+    "entries": [
+      "quantifiers"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: optional"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
     "kind": "ir: count_quantifier",
     "count": 3,
     "entries": [
@@ -15322,36 +15522,6 @@
     "source": "validator",
     "grammar": "regex",
     "backend": "native",
-    "kind": "_one_or_more",
-    "count": 1,
-    "entries": [
-      "one_or_more"
-    ],
-    "stage": "coverage-excluded",
-    "code": "coverage-excluded",
-    "severity": "info",
-    "message": "no-rule",
-    "label": "_one_or_more"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "_optional",
-    "count": 1,
-    "entries": [
-      "optional"
-    ],
-    "stage": "coverage-excluded",
-    "code": "coverage-excluded",
-    "severity": "info",
-    "message": "no-rule",
-    "label": "_optional"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
     "kind": "_unicode_character_escape",
     "count": 1,
     "entries": [
@@ -15362,21 +15532,6 @@
     "severity": "info",
     "message": "no-rule",
     "label": "_unicode_character_escape"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "_zero_or_more",
-    "count": 1,
-    "entries": [
-      "zero_or_more"
-    ],
-    "stage": "coverage-excluded",
-    "code": "coverage-excluded",
-    "severity": "info",
-    "message": "no-rule",
-    "label": "_zero_or_more"
   },
   {
     "source": "validator",
