@@ -44,11 +44,13 @@ function aliasContent(model: SlotModel, kind: string | undefined, routesOf: Slot
 
 type PlanOn = (subject: QuerySubject) => QueryPlan<QuerySubject>;
 
+const comparesText = (predicate: PredicateFact): boolean => predicate.operator === 'eq' || predicate.operator === 'match';
+
 function comparisonOf(predicate: PredicateFact, typeOf: TypeOf): PlanOn | string {
 	const { operator } = predicate;
 	if (operator !== 'eq' && operator !== 'match' && operator !== 'kind-eq' && operator !== 'not-kind-eq') return `operator ${operator}`;
 	const texts = predicate.arguments.flatMap((a) => ('text' in a ? [a.text] : []));
-	const single = operator === 'eq' || operator === 'match';
+	const single = comparesText(predicate);
 	if (predicate.subject === null || texts.length === 0 || texts.length < predicate.arguments.length || (single && texts.length > 1))
 		return `${operator} does not compare one capture with ${single ? 'one text' : 'kind names'}`;
 	const [text] = texts as [string];
@@ -68,7 +70,7 @@ function conditionOf(entry: ReadEntry, predicate: PredicateFact, model: SlotMode
 	const steps = [...reached.steps];
 	let kind = reached.kind;
 	let wrapped = false;
-	for (let content = aliasContent(model, kind, routesOf); content !== undefined; content = aliasContent(model, kind, routesOf)) {
+	for (let content = comparesText(predicate) ? aliasContent(model, kind, routesOf) : undefined; content !== undefined; content = aliasContent(model, kind, routesOf)) {
 		steps.push(content.routes);
 		kind = content.kind;
 		wrapped = true;

@@ -41,7 +41,8 @@ const MODEL = new Map(
 		node('params', [slot('items', ['param'], { multiple: true })]),
 		node('param', [slot('element', ['self', 'plain'])]),
 		node('self'),
-		node('plain')
+		node('plain'),
+		node('annotated', [slot('type', ['type_identifier', 'identifier'])])
 	].map((n) => [n.kind, n])
 );
 
@@ -54,10 +55,11 @@ const ROUTES: Readonly<Record<string, SlotRoutes>> = {
 	'type_identifier.content': { fields: [], kinds: ['identifier'] },
 	'fn.params': { fields: ['params'], kinds: [] },
 	'params.items': { fields: [], kinds: ['param'] },
-	'param.element': { fields: [], kinds: ['self', 'plain'] }
+	'param.element': { fields: [], kinds: ['self', 'plain'] },
+	'annotated.type': { fields: ['type'], kinds: [] }
 };
 
-const TYPES: Readonly<Record<string, number>> = { param: 30, self: 31, plain: 32 };
+const TYPES: Readonly<Record<string, number>> = { param: 30, self: 31, plain: 32, type_identifier: 33 };
 
 const testsOf = async (bindings: string, kind: string) => {
 	const input: GrammarInput = { grammar: 'g', bindings: await readBindings(bindings), model: MODEL, textTokens: new Set(), layoutSlots: [] };
@@ -79,6 +81,12 @@ describe('readTestOf', () => {
 	it('compares an alias\'s own text through the content it wraps', async () => {
 		expect(await testsOf('((type_identifier) @type.named.prelude (#match? @type.named.prelude "^Option$"))', 'type_identifier')).toEqual([
 			['type.named.prelude', [{ up: 0, via: [{ fields: [], kinds: ['identifier'] }], plan: { op: 'match', pattern: '^Option$', self: true } }]]
+		]);
+	});
+
+	it('tests an alias child\'s own kind, not the content it wraps', async () => {
+		expect(await testsOf('(annotated type: (type_identifier)) @type.annotated.named', 'annotated')).toEqual([
+			['type.annotated.named', [{ up: 0, via: [], plan: { op: 'is', types: [33], fields: ['type'], kinds: [] } }]]
 		]);
 	});
 

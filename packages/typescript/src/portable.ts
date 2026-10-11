@@ -3795,14 +3795,7 @@ const table: PortableTable = {
 						],
 						plan: { op: 'eq', text: 'constructor', self: true }
 					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['name'], kinds: [] },
-							{ fields: ['content'], kinds: [] }
-						],
-						plan: { op: 'is', types: [462], self: true }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [462], fields: ['name'], kinds: [] } }
 				]
 			},
 			{

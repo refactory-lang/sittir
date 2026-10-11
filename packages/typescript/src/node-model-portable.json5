@@ -5878,26 +5878,16 @@
             },
             {
               "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "name"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "content"
-                  ],
-                  "kinds": []
-                }
-              ],
+              "via": [],
               "plan": {
                 "op": "is",
                 "types": [
                   462
                 ],
-                "self": true
+                "fields": [
+                  "name"
+                ],
+                "kinds": []
               }
             }
           ]
