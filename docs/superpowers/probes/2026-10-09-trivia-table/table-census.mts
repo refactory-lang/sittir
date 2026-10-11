@@ -14,7 +14,9 @@
  *   an owner with named children but none beside the gap takes none (unowned).
  * Run (from the root of a checkout):
  *   ./node_modules/.bin/tsx docs/superpowers/probes/2026-10-09-trivia-table/table-census.mts [out.json]
- * Prints: per grammar, entries, owner-not-parent entries, sides, unowned entries by owner kind,
+ * Prints: per grammar, entries, owner-not-parent entries, sides (and the trailing entries that lie
+ *   before their owner's closing edge token, after its last child: a comment after a python block's
+ *   last statement, before its dedent), unowned entries by owner kind,
  *   hidden-token texts, node-edge tokens (hidden zero-width tokens, `walk.mts`), zero-width leaves
  *   and `ERROR` entries. Exits 1 if any entry's owner is not its
  *   tree-sitter parent.
@@ -58,6 +60,7 @@ interface Tally {
 	unownedBy: Record<string, number>;
 	hiddenTokens: number;
 	edges: number;
+	beforeEdge: number;
 	zeroWidth: number;
 	errors: number;
 }
@@ -67,7 +70,7 @@ const misses: { grammar: string; entry: string; kind: string; row: number; owner
 for (const grammar of ['rust', 'typescript', 'python', 'scm', 'regex']) {
 	const parser = new Parser();
 	parser.setLanguage(await Language.load(`${ROOT}packages/${grammar}/.sittir/parser.wasm`));
-	const t: Tally = (results[grammar] = { sources: 0, entries: 0, notParent: 0, sides: { leading: 0, trailing: 0, inner: 0, unowned: 0 }, unownedBy: {}, hiddenTokens: 0, edges: 0, zeroWidth: 0, errors: 0 });
+	const t: Tally = (results[grammar] = { sources: 0, entries: 0, notParent: 0, sides: { leading: 0, trailing: 0, inner: 0, unowned: 0 }, unownedBy: {}, hiddenTokens: 0, edges: 0, beforeEdge: 0, zeroWidth: 0, errors: 0 });
 	for (const { name, source } of loadCorpusEntries(grammar)) {
 		t.sources++;
 		const root: TsNode = parser.parse(source).rootNode;
@@ -101,15 +104,16 @@ for (const grammar of ['rust', 'typescript', 'python', 'scm', 'regex']) {
 			else if (r === undefined) side = 'trailing';
 			else side = entry.node.startPosition.row === left!.endRow ? 'trailing' : 'leading';
 			t.sides[side]++;
+			if (side === 'trailing' && r === undefined && right !== undefined && right.hidden && right.text === '' && right.node.id === owner.id) t.beforeEdge++;
 			if (side === 'unowned') t.unownedBy[owner.type] = (t.unownedBy[owner.type] ?? 0) + 1;
 		}
 	}
 }
 
-console.log(`${'grammar'.padEnd(11)} ${'srcs'.padStart(5)} ${'entries'.padStart(8)} ${'¬parent'.padStart(8)} ${SIDES.map((s) => s.padStart(9)).join(' ')} ${'hidden'.padStart(7)} ${'edges'.padStart(6)} ${'0-width'.padStart(8)} ${'ERROR'.padStart(6)}  unowned by owner`);
+console.log(`${'grammar'.padEnd(11)} ${'srcs'.padStart(5)} ${'entries'.padStart(8)} ${'¬parent'.padStart(8)} ${SIDES.map((s) => s.padStart(9)).join(' ')} ${'hidden'.padStart(7)} ${'edges'.padStart(6)} ${'0-width'.padStart(8)} ${'@edge'.padStart(6)} ${'ERROR'.padStart(6)}  unowned by owner`);
 for (const [grammar, t] of Object.entries(results)) {
 	const by = Object.entries(t.unownedBy).sort((a, b) => b[1] - a[1]).map(([kind, n]) => `${kind} ${n}`).join(', ');
-	console.log(`${grammar.padEnd(11)} ${String(t.sources).padStart(5)} ${String(t.entries).padStart(8)} ${String(t.notParent).padStart(8)} ${SIDES.map((s) => String(t.sides[s]).padStart(9)).join(' ')} ${String(t.hiddenTokens).padStart(7)} ${String(t.edges).padStart(6)} ${String(t.zeroWidth).padStart(8)} ${String(t.errors).padStart(6)}  ${by}`);
+	console.log(`${grammar.padEnd(11)} ${String(t.sources).padStart(5)} ${String(t.entries).padStart(8)} ${String(t.notParent).padStart(8)} ${SIDES.map((s) => String(t.sides[s]).padStart(9)).join(' ')} ${String(t.hiddenTokens).padStart(7)} ${String(t.edges).padStart(6)} ${String(t.zeroWidth).padStart(8)} ${String(t.beforeEdge).padStart(6)} ${String(t.errors).padStart(6)}  ${by}`);
 }
 for (const miss of misses.slice(0, 40)) console.log(`  owner is not the parent: ${miss.grammar} ${miss.kind} row ${miss.row} in "${miss.entry}": owner ${miss.owner}, parent ${miss.parent}`);
 if (process.argv[2]) writeFileSync(process.argv[2], JSON.stringify({ results, misses }, null, '\t'));

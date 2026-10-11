@@ -248,7 +248,8 @@ An extra whose owner is not its tree-sitter parent stops the task for review, na
 - `a_comment_before_a_separator_trails_the_item_before_it` (`[a /* x */, b]`) and `…_after_a_separator_leads_the_item_after_it` (`[a, /* y */ b]`);
 - `a_comment_between_a_trailing_separator_and_the_closer_is_unowned` (`[a, b, // c⏎]`);
 - `a_comment_on_a_statements_line_trails_the_statement_not_the_call` (`s1(); // x⏎s2();`), with the next line's comment leading `s2`;
-- `python_newline_text_is_a_token_and_never_an_entry` (`x = 1  # c⏎y = 2`);
+- `python_newline_text_is_layout_and_never_an_entry` (`x = 1  # c⏎y = 2`);
+- `a_comment_after_a_blocks_last_statement_trails_it` (python `if a:⏎    b⏎    # c⏎d`: `# c` trails `b`, not the block's `inner`);
 - `a_comment_after_an_automatic_semicolon_trails_its_statement` (typescript `a // c⏎b`);
 - `a_childless_nodes_comment_is_its_inner` (`{ /* c */ }`);
 - `a_comment_between_two_of_a_for_expressions_own_tokens_is_unowned` (rust `for /* c */ x in y {}`);
@@ -259,16 +260,17 @@ An extra whose owner is not its tree-sitter parent stops the task for review, na
 Run `cargo test -p sittir-parity-tests --no-default-features --test trivia_table`. Expected: FAIL, since `sittir_core::trivia_table` does not resolve.
 
 **Step 3: the token walk.** `tokens` yields in tree order:
-- every leaf (a node with no children that is not an extra);
-- every stretch of non-whitespace text between two children that no child covers (hidden-token text: python's `_newline`);
-- every zero-width node: `MISSING`, python's `_indent` and `_dedent`, typescript's automatic semicolon.
+- every leaf (a node with no children that is not an extra or an `ERROR`);
+- every stretch of non-whitespace text between two children that no child covers (hidden-token text). Whitespace between children is never a token: whitespace is layout only, so python's `_newline` is a gap's line break, not a token;
+- every zero-width leaf (`MISSING`, typescript's automatic semicolon);
+- a zero-width token at each node edge that reaches past the node's own first or last token. This is how the walk reads a hidden external token that is no node (python's `_indent` and `_dedent`): tree-sitter extends the node it bounds over the extras up to it. The fact is the tree's geometry (a node's span past its own tokens), not a kind name, so the walk keeps tree-sitter's ownership: without it, nine python comments at a block's edge have an owner other than their tree-sitter parent (Step 1's census).
 
 `line_starts_inside_tokens` keeps its contract and reads these tokens.
 
 **Step 4: the assignment.** One walk over the tokens and extras in source order. Each gap's entries are its extras, and the layout runs between them that ruling 5 stores (Task 1's classes (a)–(d)), each classified by `layout` into the whitespace member it reads as. The owner of gap *k* is the smallest node containing tokens *k* and *k + 1*, and at the file's edges the root. Within the owner, the child ending at token *k* is the left child and the child starting at token *k + 1* the right child. The entries go by ruling 6:
 - an entry on token *k*'s row goes to the left child's `trailing`;
 - the rest go to the right child's `leading`;
-- with no left child, all lead the right; with no right child, all trail the left;
+- with no left child, all lead the right; with no right child, all trail the left. A comment on its own line after a block's last statement, before the block's dedent, has the statement as its left child and no right child (the right token is the block's own edge token), so it trails the statement and renders inside the block at its indent. The owner's `inner` takes entries only when the owner has no children. The census counts five such python entries;
 - an owner with no children takes them as its `inner`;
 - an owner with children but none beside the gap takes none, and the extra goes to `unowned`.
 
