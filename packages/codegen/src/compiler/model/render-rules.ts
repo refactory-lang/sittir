@@ -114,6 +114,7 @@ export interface RuleSpacingSite {
 	readonly path?: readonly PreferenceSegment[];
 	readonly edgeLiterals?: readonly string[];
 	readonly edgeArm?: EdgeArm;
+	readonly padding?: true;
 }
 
 export interface EdgeArm {
@@ -931,7 +932,7 @@ export function declaredOptionArms(
 export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): RuleSpacingSite[] {
 	const out = new Map<string, RuleSpacingSite>();
 	const seats: Seat[] = [];
-	const add = (kind: string, slot: string, part: SpacingPart, address: string, edgeArm?: EdgeArm): void => {
+	const add = (kind: string, slot: string, part: SpacingPart, address: string, edgeArm?: EdgeArm, padding: boolean = false): void => {
 		const key = `${kind} ${part.fieldName}`;
 		const prior = out.get(key);
 		if (prior !== undefined && prior.defaultArm !== part.defaultArm) {
@@ -948,7 +949,8 @@ export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): Rule
 				arms: part.arms,
 				...(part.origin === 'word-default' ? { origin: part.origin } : {}),
 				...(part.edgeLiterals === undefined ? {} : { edgeLiterals: part.edgeLiterals }),
-				...(edgeArm === undefined ? {} : { edgeArm })
+				...(edgeArm === undefined ? {} : { edgeArm }),
+				...(padding ? { padding: true as const } : {})
 			});
 		}
 	};
@@ -975,8 +977,9 @@ export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): Rule
 			}
 			const part = seamPartOf(m);
 			const seam = parseSeamLabel(part.fieldName)!;
-			add(kind, seam.token, part, part.fieldName);
-			if (seam.token !== displayNameOf(kind, nodeMap)) continue;
+			const kindEdge = seam.token === displayNameOf(kind, nodeMap);
+			add(kind, seam.token, part, part.fieldName, undefined, !kindEdge && seamChoiceDefault(m)?.origin === 'preference' && part.defaultArm === 'space');
+			if (!kindEdge) continue;
 			for (const token of part.edgeLiterals ?? []) {
 				const address = seamLabel(token, seam.side);
 				const armDefault = renderRules.edgeArms?.get(edgeArmKey(kind, address));

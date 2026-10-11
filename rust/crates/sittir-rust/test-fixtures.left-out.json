@@ -1,8 +1,4 @@
 {
-  "expression_statement": 1,
-  "expression_statement_with_semi": 1,
-  "field_initializer_list": 1,
-  "source_file": 2,
-  "struct_expression": 1,
+  "source_file": 1,
   "use_declaration": 1
 }
