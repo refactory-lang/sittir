@@ -192,7 +192,6 @@ export namespace Expression {
 				| V.Expression.Binary.Bitwise.Xor<G>;
 		}
 		export interface Comparison<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-			// claimed by p
 			readonly $kind: 'expression.binary.comparison';
 		}
 		export namespace Comparison {
@@ -234,7 +233,6 @@ export namespace Expression {
 				readonly operator: '!==';
 			}
 			export type Any<G extends GrammarContext<G>> =
-				| V.Expression.Binary.Comparison<G>
 				| V.Expression.Binary.Comparison.Chain<G>
 				| V.Expression.Binary.Comparison.Equal<G>
 				| V.Expression.Binary.Comparison.Greater<G>
@@ -363,7 +361,6 @@ export namespace Expression {
 			| V.Expression.Binary.Bitwise.And<G>
 			| V.Expression.Binary.Bitwise.Or<G>
 			| V.Expression.Binary.Bitwise.Xor<G>
-			| V.Expression.Binary.Comparison<G>
 			| V.Expression.Binary.Comparison.Chain<G>
 			| V.Expression.Binary.Comparison.Equal<G>
 			| V.Expression.Binary.Comparison.Greater<G>
@@ -882,7 +879,6 @@ export namespace Expression {
 		| V.Expression.Binary.Bitwise.And<G>
 		| V.Expression.Binary.Bitwise.Or<G>
 		| V.Expression.Binary.Bitwise.Xor<G>
-		| V.Expression.Binary.Comparison<G>
 		| V.Expression.Binary.Comparison.Chain<G>
 		| V.Expression.Binary.Comparison.Equal<G>
 		| V.Expression.Binary.Comparison.Greater<G>
