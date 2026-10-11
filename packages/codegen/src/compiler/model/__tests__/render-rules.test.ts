@@ -426,6 +426,12 @@ describe('seamRenderRules', () => {
 		expect(spacingSitesOf(one.out, one.config.nodeMap).map((s) => s.address)).toEqual(['opening_before', 'opening_after']);
 	});
 
+	it('seats the arm seams of a choice nested in a choice, so a terminator of an automatic arm, a semicolon and a comma has all three', () => {
+		const terminator = choice(choice(sym('auto'), str(';')), str(','));
+		const { out, config } = seamed({ member: seq(sym('head'), { ...terminator, fieldName: 'terminator' } as RenderRule) });
+		expect(spacingSitesOf(out, config.nodeMap).map((s) => s.address)).toEqual(expect.arrayContaining(['semi_before', 'comma_before']));
+	});
+
 	it('puts a seam inside a nested group whose edge member is a token, so an optional clause carries its opener seam', () => {
 		const clause = { ...seq(str('='), sym('value')), multiplicity: 'optional' } as unknown as RenderRule;
 		const ret = { ...seq(str('->'), sym('type')), staticSeamBefore: 'spaced' } as unknown as RenderRule;
@@ -502,6 +508,17 @@ describe('seamRenderRules', () => {
 		expect(edge('call', 0)).toEqual({ fieldName: 'call_before', defaultArm: 'space', origin: 'fallback', edgeLiterals: undefined });
 		expect(seamPartOf(membersOf(out.rules.call!)[0]!).edgeLiterals).toBeUndefined();
 		expect(spacingSitesOf(out, nodeMap).find((s) => s.address === 'args_before')?.edgeLiterals).toEqual(['lparen']);
+	});
+
+	it('marks a token face a kind row declares space as padding, and no other site', () => {
+		const rules = { braced: seq(str('('), sym('body'), str(')')) };
+		const nodeMap = nodeMapOf(rules, {});
+		nodeMap.nodes.set('braced', new AssembledBranch('braced', rules.braced as never, rules.braced));
+		const options = { braced: { '"("/after': preference('space'), '")"/before': preference('tight'), before: preference('space') } };
+		const out = resolveRenderRules({ nodeMap, kindEntries, options } as never, () => {}).seamed;
+		const sites = spacingSitesOf(out, nodeMap);
+		expect(sites.filter((site) => site.padding).map((site) => site.address)).toEqual(['lparen_after']);
+		expect(sites.map((site) => site.address)).toContain('braced_before');
 	});
 
 	it('cascades a token-set edge only when every token of its choice resolves to one declared face', () => {

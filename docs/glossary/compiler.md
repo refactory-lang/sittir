@@ -6738,7 +6738,7 @@ grammar that never ran through `wire()`; then no label is automatic.
 
 ### `packages/codegen/src/compiler/types.ts::KindProvenance`
 
-Where a kind came from: `renamedFrom` maps a renamed kind to its base kind, `splitFrom` maps a split clone to the kind it was cloned from, and `variantOf` maps an owned variant to the kind it is a variant of (`ownedVariants`). `bindGrammar` writes the first two maps onto the evaluated grammar and link derives the third from the linked rules; link carries them under linked names, and every stage after it passes the one object through to the nodes.
+Where a kind came from: `renamedFrom` maps a kind the grammar bindings renamed to its base kind, `splitFrom` maps a split clone to the kind it was cloned from, and `variantOf` maps an owned variant to the kind it is a variant of (`ownedVariants`). `bindGrammar` writes the first two maps onto the evaluated grammar and link derives the third from the linked rules; link carries them under linked names, and every stage after it passes the one object through to the nodes.
 
 A `splitFrom` value is the source kind's bound name, never a base name: `bindGrammar` splits after it renames, and link renames the values with the keys. A clone of a renamed kind therefore names the renamed kind (rust `method_declaration` → `function_declaration`), and the base name is one more step through `renamedFrom` (`function_declaration` → `function_item`).
 
@@ -9724,6 +9724,12 @@ A literal ref whose storage name is its literal text (`name === literal`, a dist
 // The one structural "is there a named field or a rule reference here" walk,
 // the same, narrower question — see "classifyNode's RenderRule-only design"
 // in docs/compiler-phase-glossary.md.
+```
+
+### `packages/codegen/src/compiler/assemble.ts::isStampedTerminal`
+
+```text
+A literal that is itself the slot: a STRING or PATTERN carrying both `nonterminal: true` and `aliasedTo`. The alias is the node the parser produces for the literal, so the literal is a child with its own kind and not text of the enclosing kind. `hasSlotBearingContent` counts it as slot-bearing and `isAllTextShape` does not count it as text, so a kind whose only varying content is such a literal (a quantifier whose lazy marker is an alias) is a branch with an optional slot instead of a text leaf. A literal that is merely an arm of a choice carries `nonterminal` without `aliasedTo` and stays text.
 ```
 
 ### `packages/codegen/src/compiler/assemble.ts::computeSignatures`

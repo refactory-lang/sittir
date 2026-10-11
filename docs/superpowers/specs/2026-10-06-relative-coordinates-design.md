@@ -193,10 +193,9 @@ object.
 
 ### Joins resolved at prepare
 
-Superseded by the trivia table: a side holds the line breaks that differ from the seam's default
-beside its comments, so whether an entry joins its neighbour's line is read from the side, and a
-write stores the whitespace it renders with (`2026-10-09-trivia-table-design.md`, § 1, § 2 and
-§ 7.3).
+Superseded by the trivia table: a side holds its line layout beside its comments, so whether an
+entry joins its neighbour's line is read from the side, and a write stores the whitespace it
+renders with (`2026-10-09-trivia-table-design.md`, § 1, § 2 and § 7.3).
 
 Whether a trivia entry joins its neighbour on the same line is resolved once, at prepare, and the
 render reads only the resolved join:

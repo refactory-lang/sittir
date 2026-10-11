@@ -91,9 +91,6 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	posix_class_name: { pattern: /^(?:(?:[a-zA-Z]+))$/u, factory: F.buildPosixClassName },
 	class_character: { pattern: /^(?:(?:[^\\\]-]))$/u, factory: F.buildClassCharacter },
 	flags: { pattern: /^(?:(?:[a-zA-Z]+))$/u, factory: F.buildFlags },
-	zero_or_more: { pattern: /^(?:\*(?:\?)?)$/u, factory: F.buildZeroOrMore },
-	one_or_more: { pattern: /^(?:\+(?:\?)?)$/u, factory: F.buildOneOrMore },
-	optional: { pattern: /^(?:\?(?:\?)?)$/u, factory: F.buildOptional },
 	decimal_escape: { pattern: /^(?:(?:\\[1-9][0-9]*))$/u, factory: F.buildDecimalEscape },
 	unicode_character_escape: {
 		pattern: /^(?:(?:(?:\\u[0-9a-fA-F]{4})|(?:\\u\{[0-9a-fA-F]{1,6}\})))$/u,
@@ -145,9 +142,6 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'posix_class_name',
 	'class_character',
 	'flags',
-	'zero_or_more',
-	'one_or_more',
-	'optional',
 	'decimal_escape',
 	'unicode_character_escape',
 	'unicode_property_value',
@@ -643,8 +637,7 @@ const _K12: readonly string[] = [
 	'inline_flags_group_toggle',
 	'inline_flags_group_disable'
 ];
-const _K13: readonly string[] = ['zero_or_more', 'one_or_more', 'optional'];
-const _K14: readonly string[] = ['count_quantifier'];
+const _K13: readonly string[] = ['zero_or_more', 'one_or_more', 'optional', 'count_quantifier'];
 
 export function resolvePattern_content(value: T.Pattern.LooseConfig['content']): Admit<T.Pattern['_content']> {
 	return _resolveOne<T.Alternation | T.Term>(value, _K0, _K1);
@@ -1012,19 +1005,40 @@ export function coerceToFlags(input: T.Flags.Loose): ReturnType<typeof F.buildFl
 	return F.buildFlags(input as Parameters<typeof F.buildFlags>[0]);
 }
 
-export function coerceToZeroOrMore(input: T.ZeroOrMore.Loose): ReturnType<typeof F.buildZeroOrMore> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildZeroOrMore>;
-	return F.buildZeroOrMore(input as Parameters<typeof F.buildZeroOrMore>[0]);
+export function resolveZeroOrMore_lazy(value: T.ZeroOrMore.LooseConfig['lazy']): Admit<T.ZeroOrMore['_lazy']> {
+	return _resolveBooleanKeyword(value);
 }
 
-export function coerceToOneOrMore(input: T.OneOrMore.Loose): ReturnType<typeof F.buildOneOrMore> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildOneOrMore>;
-	return F.buildOneOrMore(input as Parameters<typeof F.buildOneOrMore>[0]);
+export function coerceToZeroOrMore(input?: T.ZeroOrMore.Loose): ReturnType<typeof F.buildZeroOrMore> {
+	if (!_isLooseConfig<T.ZeroOrMore.LooseConfig | undefined>(input))
+		return input as unknown as ReturnType<typeof F.buildZeroOrMore>;
+	return F.buildZeroOrMore({
+		lazy: resolveZeroOrMore_lazy(input?.lazy)
+	});
 }
 
-export function coerceToOptional(input: T.Optional.Loose): ReturnType<typeof F.buildOptional> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildOptional>;
-	return F.buildOptional(input as Parameters<typeof F.buildOptional>[0]);
+export function resolveOneOrMore_lazy(value: T.OneOrMore.LooseConfig['lazy']): Admit<T.OneOrMore['_lazy']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function coerceToOneOrMore(input?: T.OneOrMore.Loose): ReturnType<typeof F.buildOneOrMore> {
+	if (!_isLooseConfig<T.OneOrMore.LooseConfig | undefined>(input))
+		return input as unknown as ReturnType<typeof F.buildOneOrMore>;
+	return F.buildOneOrMore({
+		lazy: resolveOneOrMore_lazy(input?.lazy)
+	});
+}
+
+export function resolveOptional_lazy(value: T.Optional.LooseConfig['lazy']): Admit<T.Optional['_lazy']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function coerceToOptional(input?: T.Optional.Loose): ReturnType<typeof F.buildOptional> {
+	if (!_isLooseConfig<T.Optional.LooseConfig | undefined>(input))
+		return input as unknown as ReturnType<typeof F.buildOptional>;
+	return F.buildOptional({
+		lazy: resolveOptional_lazy(input?.lazy)
+	});
 }
 
 export function resolveCountQuantifier_content(
@@ -1264,7 +1278,7 @@ export function resolveTermGroup_content(value: T.TermGroup.LooseConfig['content
 export function resolveTermGroup_quantifier(
 	value: T.TermGroup.LooseConfig['quantifier']
 ): Admit<T.TermGroup['_quantifier']> {
-	return _resolveOne<T.ZeroOrMore | T.OneOrMore | T.Optional | T.CountQuantifier>(value, _K13, _K14);
+	return _resolveOne<T.ZeroOrMore | T.OneOrMore | T.Optional | T.CountQuantifier>(value, _K0, _K13);
 }
 
 export function coerceToTermGroup(input: T.TermGroup.Loose): ReturnType<typeof F.buildTermGroup> {

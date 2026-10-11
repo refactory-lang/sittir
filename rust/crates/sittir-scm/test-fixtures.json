@@ -629,7 +629,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "(program\nfield: (identifier) @capture\n! negated-field)\n\n(program\n(identifier) @capture\n! negated-field)\n"
+    "expectedOutput": "(program\nfield: (identifier) @capture\n!negated-field)\n\n(program\n(identifier) @capture\n!negated-field)\n"
   },
   {
     "kind": "roundtrip",
@@ -637,9 +637,9 @@
     "sourceIn": "\n(program\n  field: (identifier) @capture\n  !negated-field)\n\n(program\n  (identifier) @capture\n  !negated-field)\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "(program\nfield: (identifier) @capture\n! negated-field)\n\n(program\n(identifier) @capture\n! negated-field)\n",
+    "expectedSourceOut": "(program\nfield: (identifier) @capture\n!negated-field)\n\n(program\n(identifier) @capture\n!negated-field)\n",
     "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier) elements: (capture name: (identifier)))) named_node_expressions: (negated_field identifier: (identifier)))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (capture name: (identifier))) named_node_expressions: (negated_field identifier: (identifier)))))",
-    "wrappedText": "(program\nfield: (identifier) @capture\n! negated-field)\n\n(program\n(identifier) @capture\n! negated-field)\n",
+    "wrappedText": "(program\nfield: (identifier) @capture\n!negated-field)\n\n(program\n(identifier) @capture\n!negated-field)\n",
     "wrappedOffset": 0
   },
   {
@@ -692,7 +692,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "(program\n(identifier) +)\n"
+    "expectedOutput": "(program\n(identifier)+)\n"
   },
   {
     "kind": "roundtrip",
@@ -700,9 +700,9 @@
     "sourceIn": "\n(program\n  (identifier)+)\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "(program\n(identifier) +)\n",
+    "expectedSourceOut": "(program\n(identifier)+)\n",
     "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (list_element_quantifier quantifier: (quantifier))))))",
-    "wrappedText": "(program\n(identifier) +)\n",
+    "wrappedText": "(program\n(identifier)+)\n",
     "wrappedOffset": 0
   },
   {
@@ -755,7 +755,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "(program\n(identifier) ?)\n"
+    "expectedOutput": "(program\n(identifier)?)\n"
   },
   {
     "kind": "roundtrip",
@@ -763,9 +763,9 @@
     "sourceIn": "\n(program\n  (identifier)?)\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "(program\n(identifier) ?)\n",
+    "expectedSourceOut": "(program\n(identifier)?)\n",
     "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (list_element_quantifier quantifier: (quantifier))))))",
-    "wrappedText": "(program\n(identifier) ?)\n",
+    "wrappedText": "(program\n(identifier)?)\n",
     "wrappedOffset": 0
   },
   {
@@ -818,7 +818,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "(program\n(identifier) *)\n"
+    "expectedOutput": "(program\n(identifier)*)\n"
   },
   {
     "kind": "roundtrip",
@@ -826,9 +826,9 @@
     "sourceIn": "\n(program\n  (identifier)*)\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "(program\n(identifier) *)\n",
+    "expectedSourceOut": "(program\n(identifier)*)\n",
     "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (list_element_quantifier quantifier: (quantifier))))))",
-    "wrappedText": "(program\n(identifier) *)\n",
+    "wrappedText": "(program\n(identifier)*)\n",
     "wrappedOffset": 0
   },
   {
@@ -914,7 +914,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "(program\n(identifier) ? @variable* @spell)\n"
+    "expectedOutput": "(program\n(identifier)? @variable* @spell)\n"
   },
   {
     "kind": "roundtrip",
@@ -922,9 +922,9 @@
     "sourceIn": "\n(program\n  (identifier)? @variable* @spell)\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "(program\n(identifier) ? @variable* @spell)\n",
+    "expectedSourceOut": "(program\n(identifier)? @variable* @spell)\n",
     "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (list_element_quantifier quantifier: (quantifier)) elements: (capture name: (identifier)) elements: (list_element_quantifier quantifier: (quantifier)) elements: (capture name: (identifier))))))",
-    "wrappedText": "(program\n(identifier) ? @variable* @spell)\n",
+    "wrappedText": "(program\n(identifier)? @variable* @spell)\n",
     "wrappedOffset": 0
   },
   {
@@ -1353,7 +1353,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "[\n\"?\"\n\"+\"\n\"-\"] @ops\n\n(if_statement\n[\ncondition: (_)\nconsequence: (_)\nalternative: (_) ?] @conditional.inner) @conditional.outer\n"
+    "expectedOutput": "[\n\"?\"\n\"+\"\n\"-\"] @ops\n\n(if_statement\n[\ncondition: (_)\nconsequence: (_)\nalternative: (_)?] @conditional.inner) @conditional.outer\n"
   },
   {
     "kind": "roundtrip",
@@ -1361,9 +1361,9 @@
     "sourceIn": "\n[\n  \"?\"\n  \"+\"\n  \"-\"\n] @ops\n\n(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?\n  ] @conditional.inner) @conditional.outer\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "[\n\"?\"\n\"+\"\n\"-\"] @ops\n\n(if_statement\n[\ncondition: (_)\nconsequence: (_)\nalternative: (_) ?] @conditional.inner) @conditional.outer\n",
+    "expectedSourceOut": "[\n\"?\"\n\"+\"\n\"-\"] @ops\n\n(if_statement\n[\ncondition: (_)\nconsequence: (_)\nalternative: (_)?] @conditional.inner) @conditional.outer\n",
     "expectedReparseTree": "(program definitions: (list definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))) elements: (capture name: (identifier))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (list definitions: (field_definition name: (identifier) definition: (named_node_plain)) definitions: (field_definition name: (identifier) definition: (named_node_plain)) definitions: (field_definition name: (identifier) definition: (named_node_plain elements: (list_element_quantifier quantifier: (quantifier)))) elements: (capture name: (identifier)))) elements: (capture name: (identifier))))",
-    "wrappedText": "[\n\"?\"\n\"+\"\n\"-\"] @ops\n\n(if_statement\n[\ncondition: (_)\nconsequence: (_)\nalternative: (_) ?] @conditional.inner) @conditional.outer\n",
+    "wrappedText": "[\n\"?\"\n\"+\"\n\"-\"] @ops\n\n(if_statement\n[\ncondition: (_)\nconsequence: (_)\nalternative: (_)?] @conditional.inner) @conditional.outer\n",
     "wrappedOffset": 0
   },
   {
@@ -3922,7 +3922,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "( MISSING program ) @prog\n\n( MISSING ) @missing\n\n(program (named_node ( MISSING identifier ) @cap))\n"
+    "expectedOutput": "(MISSING program) @prog\n\n(MISSING) @missing\n\n(program (named_node (MISSING identifier) @cap))\n"
   },
   {
     "kind": "roundtrip",
@@ -3930,9 +3930,9 @@
     "sourceIn": "\n(MISSING program) @prog\n\n(MISSING) @missing\n\n(program (named_node (MISSING identifier) @cap))\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "( MISSING program ) @prog\n\n( MISSING ) @missing\n\n(program (named_node ( MISSING identifier ) @cap))\n",
+    "expectedSourceOut": "(MISSING program) @prog\n\n(MISSING) @missing\n\n(program (named_node (MISSING identifier) @cap))\n",
     "expectedReparseTree": "(program definitions: (missing_node name: (identifier) elements: (capture name: (identifier))) definitions: (missing_node elements: (capture name: (identifier))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (missing_node name: (identifier) elements: (capture name: (identifier))))))))",
-    "wrappedText": "( MISSING program ) @prog\n\n( MISSING ) @missing\n\n(program (named_node ( MISSING identifier ) @cap))\n",
+    "wrappedText": "(MISSING program) @prog\n\n(MISSING) @missing\n\n(program (named_node (MISSING identifier) @cap))\n",
     "wrappedOffset": 0
   }
 ]

@@ -12,7 +12,7 @@
 
 **The trivia step (Tasks 3–8) moved to the trivia table** (`docs/superpowers/specs/2026-10-09-trivia-table-design.md`), which `docs/superpowers/plans/2026-10-10-arena-tables.md` lands after this plan, in the shared arena's step 3. The table assigns each comment a side of a node once at read and keeps it natively, by node. That brings back this plan's sides, with the table's rule: a gap's entries go to its owner's two children beside it, split at the left token's line.
 - **Now the arena-tables plan's (3a):** Task 5's ownership by side, in its Tasks 2 and 4; Task 7's removal of the `$sameLine` and `$tokensBetween` stamps, in its Task 4; and Task 8's census and gates, in its Tasks 2 and 5.
-- **Still superseded:** the closing gap, Tasks 3 and 4, because no side is named on a kind, and a comment between the last child and the closer trails the last child. Task 6's joins at prepare are superseded too: a side stores the line breaks that differ from the seam's default, and the seam defaults give the rest.
+- **Still superseded:** the closing gap, Tasks 3 and 4, because no side is named on a kind, and a comment between the last child and the closer trails the last child. Task 6's joins at prepare are superseded too: a side stores its line layout beside its comments, so whether an entry joins its neighbour's line is read from the side.
 - **Snapshots.** Task 1 lands with the snapshot step. Until 3a, a snapshot carries the reader's placed trivia with its `$sameLine` and `$tokensBetween` stamps, as a parity fixture does today. From 3a's Task 4, each snapshot node carries its own sides from the table, with no stamps, and renders them with the seam defaults.
 
 ## Scope and sequencing

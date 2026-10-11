@@ -25,7 +25,7 @@ The reader also drops anchors, so today it cannot test the docstrings' position 
   top. The reader is `@sittir/codegen/bindings`, the pinned reader in its child process.
   `placed-claims.mts` reads each pattern on its own, so each claim keeps its line and source.
 - Sites are read from each grammar's committed `.sittir/src/grammar.json`. On `68a5b8ba2` that is
-  the base grammar: the overlay is not yet wired into `grammar.sittir.ts`, and `bindings.scm`
+  the base grammar: the grammar bindings are not yet wired into `grammar.sittir.ts`, and `bindings.scm`
   names base kinds.
 - `sites.py` reads each claim's chain from its pattern, top to the claimed node, with fields and
   anchors, and checks the chain against the reader's `within`.
@@ -84,7 +84,7 @@ first child.
      unmeasured; rust's three aliases cost 23 states.
 2. **Five are bare identifiers in role slots:** python's parameters (`self` among them), python's
    `type > identifier` and rust's closure parameters. §2.1 rules that such an identifier stays an
-   identifier and its slot names its role, and that neither a claim nor an overlay pretends
+   identifier and its slot names its role, and that neither a claim nor the grammar bindings pretend
    otherwise. So these need neither an alias nor `$subType`. `bindings.scm` still has them.
 3. **Typescript's one is ruled.** In place of the wildcard, §2.3 claims `enum_body_element_name`
    and `enum_assignment`, which the grammar has only in an enum body.

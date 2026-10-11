@@ -3762,6 +3762,9 @@ An arm's token is its literal (`literalTokenOf`) or, for a reference to a
 visible punctuation kind, that kind's text (`punctuationReferenceTokenOf`).
 A choice that is itself one seam site (a token set or an enum slot, which
 `seamNameOf` names as a whole) is left to the boundary's own token seams.
+An arm that is itself a choice is walked the same way, so a terminator of
+`choice(choice(automatic, ';'), ',')` seats `semi/before` and `comma/before`
+each in its own arm, as `choice(automatic, ';', ',')` does.
 Runs from `withTokenSeams` on both neighbours of every boundary, before
 those seams are placed.
 
@@ -4215,6 +4218,10 @@ which `indent()` and `dedent()` stand for). Every whitespace kind is a
 literal. A visible external outside the supertype is not whitespace and is
 skipped. Flanks are injected only when both indentation kinds are declared.
 
+### `packages/codegen/src/compiler/model/render-rules.ts::RuleSpacingSite.padding`
+
+Set on a token seam (never a kind's own edge) whose default is `space` and whose origin is a kind row's `preference`: the face pads the content between two tokens, as rust's `{` after and `}` before around an initializer list. The template emitter reads it to fold such a seam into the presence gate of the optional slot beside it.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::RuleSpacingSite.address`
 
 ```text
@@ -4429,6 +4436,8 @@ can reach one site from different roots with neither a prefix of the other. Two
 addresses whose sets overlap without one containing the other are a conflict,
 reported before anything is written, so an ambiguous pair fails rather than
 resolving by declaration order.
+
+A site one address only reaches through the cascade of a token face is not part of that overlap when the other address names it directly: the direct row refines the cascaded one, so a kind row may span its members (a kind and the variants nested under it) even though the grammar-wide face cascades onto the kind's own edge. The cascade never overwrites a site a direct row reaches, whichever order the entries are resolved in.
 
 Declarations and bindings are resolved together, because both are an address
 with an arm: a binding takes its arm from the label it names, a declaration

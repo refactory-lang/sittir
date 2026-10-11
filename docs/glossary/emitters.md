@@ -4553,7 +4553,9 @@ transport node.
 ```text
 /** The slot a kind's factory takes as its one positional value: the
  *  compound's structural sole slot (`AbstractAssembledCompound.soleSlot`)
- *  when it is singular; never for a hidden, non-user-facing kind. The
+ *  when it is singular; never for a hidden, non-user-facing kind, and
+ *  never for a keyword-presence slot (a boolean or bitflag marker), which
+ *  is a flag in the config object (`{ lazy: true }`), not a value. The
  *  class is the surface — no derived "user slot" filtering. */
 ```
 
@@ -4964,6 +4966,8 @@ its only values are visible punctuation kinds (`seamNamesOf`, supplied by the
 caller), so an optional `?.` reference folds `qmark_dot_before` and
 `qmark_dot_after` into its presence gate and an absent chain marker leaves no
 site behind.
+
+A third argument names the padding seams: a token's face that a kind row declares `space`, which `spacingSitesOf` marks `padding` (a kind's own edge never is). One of those beside the gate is folded in too, so `{`, an optional list and `}` with the list absent leave no pad between the brackets, while the same pad around a present list is unchanged. A gate that took a padding seam is `padded`: the printer keeps it open when the slot's gap holds inner trivia (`has_inner`), and writes the pad, the trivia and the slot in source order inside it, so a comment alone in the braces keeps its pad. A token's tight face is not padding and stays outside the gate, which is what keeps `&mut` glued when the lifetime is absent.
 
 ### `packages/codegen/src/emitters/render-body.ts::WordSeamNode`
 

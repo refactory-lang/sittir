@@ -28,6 +28,9 @@ export default sittirGrammar(base, {
 	options: {
 		indent: preference('    '),
 		named_node: { '"("/after': preference('tight'), '")"/before': preference('tight') },
+		negated_field: { '"!"/after': preference('tight') },
+		missing_node: { '"("/after': preference('tight'), '")"/before': preference('tight') },
+		quantifier: { '"*"/before': preference('tight'), '"+"/before': preference('tight'), '"?"/before': preference('tight') },
 		program: { 'definitions:/separator': preference('newline') },
 		field_definition: { '":"/before': preference('tight') },
 		list: { '"["/after': preference('tight'), '"]"/before': preference('tight') },
