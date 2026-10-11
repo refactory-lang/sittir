@@ -2421,10 +2421,10 @@
       ]
     },
     "const_parameter": {
-      "vocab": "declaration.type_parameter.const",
+      "vocab": "declaration.type_parameter.value",
       "read": [
         {
-          "vocab": "declaration.type_parameter.const",
+          "vocab": "declaration.type_parameter.value",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2455,7 +2455,7 @@
           ]
         },
         {
-          "name": "value",
+          "name": "default",
           "route": "slot",
           "slot": "value",
           "path": [
@@ -10823,14 +10823,6 @@
       },
       {
         "under": "",
-        "name": "const",
-        "paths": [
-          "declaration.type_parameter.const",
-          "expression.block.const"
-        ]
-      },
-      {
-        "under": "",
         "name": "crate",
         "paths": [
           "identifier.crate",
@@ -11091,6 +11083,14 @@
           "declaration.struct.unit",
           "expression.unit",
           "type.unit"
+        ]
+      },
+      {
+        "under": "",
+        "name": "value",
+        "paths": [
+          "declaration.type_parameter.value",
+          "pattern.reference.value"
         ]
       },
       {

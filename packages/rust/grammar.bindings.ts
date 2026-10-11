@@ -3,10 +3,11 @@
 import { alias, bindings, field, rename, split } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "63bafa93df28e34ac8027310d23ae897fca49192130cf5b8283c7f7b906f64ec",
+	hash: "9ed15a453fe3a8f7de194d7c48e58d78932a1a7b4ac8018c8ccf05491564df39",
 	patches: {
 		attribute_item: { "2": field("content") },
 		block_comment: { "1/0/2": alias(sym("block_comment_regular"), sym("text_comment")) },
+		const_parameter: { "4/0/1": field("default") },
 		field_expression: { "0": field("object"), "2": field("property") },
 		field_initializer: { "0/0": field("attributes") },
 		for_expression: { "2": field("left"), "4": field("right") },
@@ -64,7 +65,7 @@ export default bindings({
 		rename("self_parameter", "self_parameter_declaration"),
 		rename("variadic_parameter", "variadic_parameter_declaration"),
 		rename("type_parameter", "type_parameter_declaration"),
-		rename("const_parameter", "const_type_parameter_declaration"),
+		rename("const_parameter", "value_type_parameter_declaration"),
 		rename("lifetime_parameter", "lifetime_type_parameter_declaration"),
 		rename("block", "block_statement"),
 		rename("if_expression", "if_statement"),

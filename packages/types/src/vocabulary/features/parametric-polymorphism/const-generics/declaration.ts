@@ -3,12 +3,12 @@ import type { SubKindOf } from '../../../utils.ts';
 import type * as V from '../../../index.ts';
 export namespace Declaration {
 	export namespace TypeParameter {
-		export interface Const<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.TypeParameter<G>> {
+		export interface Value<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.TypeParameter<G>> {
 			// claimed by r
-			readonly $kind: 'declaration.type_parameter.const';
+			readonly $kind: 'declaration.type_parameter.value';
+			readonly default?: G['slots']['declaration.type_parameter.value']['default'];
 			readonly name: G['identifier'];
-			readonly type: G['slots']['declaration.type_parameter.const']['type'];
-			readonly value?: G['slots']['declaration.type_parameter.const']['value'];
+			readonly type: G['slots']['declaration.type_parameter.value']['type'];
 		}
 	}
 }

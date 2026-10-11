@@ -267,8 +267,8 @@ export interface PortableIds {
 	'declaration.type_alias': TSKindId.AssociatedType | TSKindId.TypeItem;
 	'declaration.type_alias.associated': TSKindId.AssociatedType;
 	'declaration.type_parameter': TSKindId.ConstParameter | TSKindId.LifetimeParameter | TSKindId.TypeParameter;
-	'declaration.type_parameter.const': TSKindId.ConstParameter;
 	'declaration.type_parameter.lifetime': TSKindId.LifetimeParameter;
+	'declaration.type_parameter.value': TSKindId.ConstParameter;
 	'declaration.union': TSKindId.UnionItem;
 	'declaration.variable': TSKindId.LetDeclaration | TSKindId.StaticItem;
 	'declaration.variable.static': TSKindId.StaticItem;
@@ -898,12 +898,12 @@ export interface PortableKindsAt {
 		readonly variable: PortableKindsAt['declaration.variable'];
 		readonly associated: PortableKindsAt['declaration.type_alias.associated'];
 		readonly conformance: PortableKindsAt['declaration.extension.conformance'];
-		readonly const: PortableKindsAt['declaration.type_parameter.const'];
 		readonly foreign: PortableKindsAt['declaration.module.foreign'];
 		readonly lifetime: PortableKindsAt['declaration.type_parameter.lifetime'];
 		readonly self: PortableKindsAt['declaration.parameter.self'];
 		readonly trait: PortableKindsAt['declaration.interface.trait'];
 		readonly unit: PortableKindsAt['declaration.struct.unit'];
+		readonly value: PortableKindsAt['declaration.type_parameter.value'];
 		readonly variadic: PortableKindsAt['declaration.parameter.variadic'];
 	};
 	'declaration.constant': { readonly $ids: readonly PortableIds['declaration.constant'][] };
@@ -965,13 +965,13 @@ export interface PortableKindsAt {
 	'declaration.type_alias.associated': { readonly $ids: readonly PortableIds['declaration.type_alias.associated'][] };
 	'declaration.type_parameter': {
 		readonly $ids: readonly PortableIds['declaration.type_parameter'][];
-		readonly const: PortableKindsAt['declaration.type_parameter.const'];
 		readonly lifetime: PortableKindsAt['declaration.type_parameter.lifetime'];
+		readonly value: PortableKindsAt['declaration.type_parameter.value'];
 	};
-	'declaration.type_parameter.const': { readonly $ids: readonly PortableIds['declaration.type_parameter.const'][] };
 	'declaration.type_parameter.lifetime': {
 		readonly $ids: readonly PortableIds['declaration.type_parameter.lifetime'][];
 	};
+	'declaration.type_parameter.value': { readonly $ids: readonly PortableIds['declaration.type_parameter.value'][] };
 	'declaration.union': { readonly $ids: readonly PortableIds['declaration.union'][] };
 	'declaration.variable': {
 		readonly $ids: readonly PortableIds['declaration.variable'][];
@@ -1655,12 +1655,12 @@ export interface PortableIsAt {
 		readonly variable: PortableIsAt['declaration.variable'];
 		readonly associated: PortableIsAt['declaration.type_alias.associated'];
 		readonly conformance: PortableIsAt['declaration.extension.conformance'];
-		readonly const: PortableIsAt['declaration.type_parameter.const'];
 		readonly foreign: PortableIsAt['declaration.module.foreign'];
 		readonly lifetime: PortableIsAt['declaration.type_parameter.lifetime'];
 		readonly self: PortableIsAt['declaration.parameter.self'];
 		readonly trait: PortableIsAt['declaration.interface.trait'];
 		readonly unit: PortableIsAt['declaration.struct.unit'];
+		readonly value: PortableIsAt['declaration.type_parameter.value'];
 		readonly variadic: PortableIsAt['declaration.parameter.variadic'];
 	};
 	'declaration.constant': PortableGuard<PortableIds['declaration.constant']> & {};
@@ -1712,11 +1712,11 @@ export interface PortableIsAt {
 	};
 	'declaration.type_alias.associated': PortableGuard<PortableIds['declaration.type_alias.associated']> & {};
 	'declaration.type_parameter': PortableGuard<PortableIds['declaration.type_parameter']> & {
-		readonly const: PortableIsAt['declaration.type_parameter.const'];
 		readonly lifetime: PortableIsAt['declaration.type_parameter.lifetime'];
+		readonly value: PortableIsAt['declaration.type_parameter.value'];
 	};
-	'declaration.type_parameter.const': PortableGuard<PortableIds['declaration.type_parameter.const']> & {};
 	'declaration.type_parameter.lifetime': PortableGuard<PortableIds['declaration.type_parameter.lifetime']> & {};
+	'declaration.type_parameter.value': PortableGuard<PortableIds['declaration.type_parameter.value']> & {};
 	'declaration.union': PortableGuard<PortableIds['declaration.union']> & {};
 	'declaration.variable': PortableGuard<PortableIds['declaration.variable']> & {
 		readonly static: PortableIsAt['declaration.variable.static'];
@@ -2256,6 +2256,7 @@ export interface PortableKinds {
 	readonly comparison: PortableKindsAt['expression.binary.comparison'];
 	readonly compound: PortableKindsAt['expression.assignment.compound'];
 	readonly conformance: PortableKindsAt['declaration.extension.conformance'];
+	readonly const: PortableKindsAt['expression.block.const'];
 	readonly constant: PortableKindsAt['declaration.constant'];
 	readonly content: PortableKindsAt['attribute.content'];
 	readonly continue: PortableKindsAt['statement.continue'];
@@ -2347,7 +2348,6 @@ export interface PortableKinds {
 	readonly union: PortableKindsAt['declaration.union'];
 	readonly unsafe: PortableKindsAt['expression.block.unsafe'];
 	readonly use: PortableKindsAt['clause.bounds.use'];
-	readonly value: PortableKindsAt['pattern.reference.value'];
 	readonly variable: PortableKindsAt['declaration.variable'];
 	readonly variadic: PortableKindsAt['declaration.parameter.variadic'];
 	readonly visibility: PortableKindsAt['modifier.visibility'];
@@ -2398,6 +2398,7 @@ export interface PortableIs {
 	readonly comparison: PortableIsAt['expression.binary.comparison'];
 	readonly compound: PortableIsAt['expression.assignment.compound'];
 	readonly conformance: PortableIsAt['declaration.extension.conformance'];
+	readonly const: PortableIsAt['expression.block.const'];
 	readonly constant: PortableIsAt['declaration.constant'];
 	readonly content: PortableIsAt['attribute.content'];
 	readonly continue: PortableIsAt['statement.continue'];
@@ -2489,7 +2490,6 @@ export interface PortableIs {
 	readonly union: PortableIsAt['declaration.union'];
 	readonly unsafe: PortableIsAt['expression.block.unsafe'];
 	readonly use: PortableIsAt['clause.bounds.use'];
-	readonly value: PortableIsAt['pattern.reference.value'];
 	readonly variable: PortableIsAt['declaration.variable'];
 	readonly variadic: PortableIsAt['declaration.parameter.variadic'];
 	readonly visibility: PortableIsAt['modifier.visibility'];
@@ -2799,8 +2799,8 @@ const table: PortableTable = {
 			ids: [TSKindId.ConstParameter, TSKindId.LifetimeParameter, TSKindId.TypeParameter],
 			exact: true
 		},
-		'declaration.type_parameter.const': { ids: [TSKindId.ConstParameter], exact: true },
 		'declaration.type_parameter.lifetime': { ids: [TSKindId.LifetimeParameter], exact: true },
+		'declaration.type_parameter.value': { ids: [TSKindId.ConstParameter], exact: true },
 		'declaration.union': { ids: [TSKindId.UnionItem], exact: true },
 		'declaration.variable': { ids: [TSKindId.LetDeclaration, TSKindId.StaticItem], exact: true },
 		'declaration.variable.static': { ids: [TSKindId.StaticItem], exact: true },
@@ -3437,6 +3437,7 @@ const table: PortableTable = {
 		['', 'comparison', 'expression.binary.comparison'],
 		['', 'compound', 'expression.assignment.compound'],
 		['', 'conformance', 'declaration.extension.conformance'],
+		['', 'const', 'expression.block.const'],
 		['', 'constant', 'declaration.constant'],
 		['', 'content', 'attribute.content'],
 		['', 'continue', 'statement.continue'],
@@ -3528,7 +3529,6 @@ const table: PortableTable = {
 		['', 'union', 'declaration.union'],
 		['', 'unsafe', 'expression.block.unsafe'],
 		['', 'use', 'clause.bounds.use'],
-		['', 'value', 'pattern.reference.value'],
 		['', 'variable', 'declaration.variable'],
 		['', 'variadic', 'declaration.parameter.variadic'],
 		['', 'visibility', 'modifier.visibility'],
@@ -3554,12 +3554,12 @@ const table: PortableTable = {
 		['comment.line', 'inner', 'comment.line.doc.inner'],
 		['declaration', 'associated', 'declaration.type_alias.associated'],
 		['declaration', 'conformance', 'declaration.extension.conformance'],
-		['declaration', 'const', 'declaration.type_parameter.const'],
 		['declaration', 'foreign', 'declaration.module.foreign'],
 		['declaration', 'lifetime', 'declaration.type_parameter.lifetime'],
 		['declaration', 'self', 'declaration.parameter.self'],
 		['declaration', 'trait', 'declaration.interface.trait'],
 		['declaration', 'unit', 'declaration.struct.unit'],
+		['declaration', 'value', 'declaration.type_parameter.value'],
 		['declaration', 'variadic', 'declaration.parameter.variadic'],
 		['element', 'base', 'element.struct.base'],
 		['element', 'delimited', 'element.macro.token_tree.delimited'],
@@ -3926,7 +3926,7 @@ const table: PortableTable = {
 			{ path: 'expression.block.const', within: [], test: [] }
 		],
 		[TSKindId.ConstItem]: [{ path: 'declaration.constant', within: [], test: [] }],
-		[TSKindId.ConstParameter]: [{ path: 'declaration.type_parameter.const', within: [], test: [] }],
+		[TSKindId.ConstParameter]: [{ path: 'declaration.type_parameter.value', within: [], test: [] }],
 		[TSKindId.ContinueExpression]: [{ path: 'statement.continue', within: [], test: [] }],
 		[TSKindId.Crate]: [
 			{ path: 'modifier.visibility.public.internal', within: [TSKindId.VisibilityModifier], test: [] },

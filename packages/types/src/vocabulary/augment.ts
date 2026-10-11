@@ -826,13 +826,6 @@ declare module './declaration.ts' {
 			>;
 		}
 		namespace TypeParameter {
-			interface Const<G extends GrammarContext<G>> extends constGenerics.Declaration.TypeParameter.Const<G> {
-				readonly attributes?: gate.In<
-					G,
-					features.Attributes,
-					attributes.Declaration.TypeParameter.Const<G>['attributes']
-				>;
-			}
 			interface Lifetime<G extends GrammarContext<G>> extends lifetimes.Declaration.TypeParameter.Lifetime<G> {
 				readonly attributes?: gate.In<
 					G,
@@ -840,10 +833,17 @@ declare module './declaration.ts' {
 					attributes.Declaration.TypeParameter.Lifetime<G>['attributes']
 				>;
 			}
+			interface Value<G extends GrammarContext<G>> extends constGenerics.Declaration.TypeParameter.Value<G> {
+				readonly attributes?: gate.In<
+					G,
+					features.Attributes,
+					attributes.Declaration.TypeParameter.Value<G>['attributes']
+				>;
+			}
 			type Any<G extends GrammarContext<G>> =
 				| V.Declaration.TypeParameter<G>
-				| V.Declaration.TypeParameter.Const<G>
-				| V.Declaration.TypeParameter.Lifetime<G>;
+				| V.Declaration.TypeParameter.Lifetime<G>
+				| V.Declaration.TypeParameter.Value<G>;
 		}
 		interface Union<G extends GrammarContext<G>> extends untaggedUnions.Declaration.Union<G> {
 			readonly typeParameters?: gate.In<
@@ -935,8 +935,8 @@ declare module './declaration.ts' {
 			| V.Declaration.TypeAlias<G>
 			| V.Declaration.TypeAlias.Associated<G>
 			| V.Declaration.TypeParameter<G>
-			| V.Declaration.TypeParameter.Const<G>
 			| V.Declaration.TypeParameter.Lifetime<G>
+			| V.Declaration.TypeParameter.Value<G>
 			| V.Declaration.Union<G>
 			| V.Declaration.Variable<G>
 			| V.Declaration.Variable.Constant<G>

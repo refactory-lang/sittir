@@ -570,15 +570,17 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['clause']
 				| V.Expression.Call.Macro<G>
 				| G['identifier']
+				| G['literal']
+				| V.Statement.Block<G>
 				| G['type'];
 		};
-		readonly 'declaration.type_parameter.const': {
+		readonly 'declaration.type_parameter.value': {
+			readonly default: G['identifier'] | G['literal'] | V.Statement.Block<G>;
 			readonly type:
 				| V.Clause.Bounds.Removed<G>
 				| V.Expression.Call.Macro<G>
 				| G['identifier']
 				| G['type'];
-			readonly value: G['identifier'] | G['literal'] | V.Statement.Block<G>;
 		};
 		readonly 'declaration.union': {
 			readonly body: V.Declaration.Field<G>;

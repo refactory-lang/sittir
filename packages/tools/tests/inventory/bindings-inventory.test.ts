@@ -113,8 +113,8 @@ describe('deriveVocabulary', () => {
 			'declaration.enum_member',
 			'declaration.field',
 			'declaration.type_parameter',
-			'declaration.type_parameter.const',
-			'declaration.type_parameter.lifetime'
+			'declaration.type_parameter.lifetime',
+			'declaration.type_parameter.value'
 		])
 			expect(d.members.get(v)?.get('attributes')?.grammars.has('rust'), v).toBe(true);
 		expect(d.members.get('declaration.parameter')?.has('attributes')).toBe(false);

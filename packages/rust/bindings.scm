@@ -50,7 +50,7 @@
 (closure_parameters (_) @declaration.parameter)
 ((attributed_parameter (attribute_item)? @dropped (_) @element) (#set! reason "the element admits the _type supertype, so an attributes capture would reach only some of the kinds it holds"))
 (type_parameter bounds: (_)? @constraint default_type: (_)? @default) @declaration.type_parameter
-(const_parameter) @declaration.type_parameter.const
+(const_parameter value: (_)? @default) @declaration.type_parameter.value
 (lifetime_parameter) @declaration.type_parameter.lifetime
 (attributed_type_parameter (attribute_item)* @attributes (_) @element)
 

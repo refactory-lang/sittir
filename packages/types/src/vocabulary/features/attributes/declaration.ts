@@ -13,10 +13,10 @@ export namespace Declaration {
 		// r only
 	}
 	export namespace TypeParameter {
-		export interface Const<G extends GrammarContext<G>> {
+		export interface Lifetime<G extends GrammarContext<G>> {
 			readonly attributes?: G['attribute'][];
 		}
-		export interface Lifetime<G extends GrammarContext<G>> {
+		export interface Value<G extends GrammarContext<G>> {
 			readonly attributes?: G['attribute'][];
 		}
 	}
