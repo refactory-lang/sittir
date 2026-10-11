@@ -1422,6 +1422,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Type.Primitive<G>;
 		};
 		readonly 'pattern.range': {
+			readonly content: string;
 			readonly left:
 				| G['identifier']
 				| G['literal']
@@ -1517,7 +1518,8 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['pattern'];
 		};
 		readonly 'statement.export': {
-			readonly expression:
+			readonly declaration: V.Clause.Import.Alias<G> | G['declaration'];
+			readonly value:
 				| V.Declaration.Module<G>
 				| G['expression']
 				| G['identifier']

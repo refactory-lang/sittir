@@ -175,6 +175,19 @@ describe('portable is: rust', async () => {
 		expect(at('expression.collection.list.repeat')(repeat, rc)).toBe(true);
 		expect(at('expression.collection.list.repeat')(list, lc)).toBe(false);
 	});
+
+	it('pins a prefix range pattern by its operator, and never reads a range with a left bound as exclusive by default', () => {
+		const SOURCE = 'fn f(x: u8) { match x { ..=5 => 0, ..9 => 1, 1..=5 => 2, _ => 3 } }\n';
+		const [inclusive, ic] = find(SOURCE, 'range_pattern_prefix', '..=5');
+		const [exclusive, ec] = find(SOURCE, 'range_pattern_prefix', '..9');
+		const [left, lc] = find(SOURCE, 'range_pattern_with_left', '1..=5');
+		expect(at('pattern.range.inclusive')(inclusive, ic)).toBe(true);
+		expect(at('pattern.range.exclusive')(inclusive, ic)).toBe(false);
+		expect(at('pattern.range.exclusive')(exclusive, ec)).toBe(true);
+		expect(at('pattern.range.inclusive')(exclusive, ec)).toBe(false);
+		expect(at('pattern.range')(left, lc)).toBe(true);
+		expect(at('pattern.range.exclusive')(left, lc)).toBe(false);
+	});
 });
 
 describe('portable is: typescript', async () => {
