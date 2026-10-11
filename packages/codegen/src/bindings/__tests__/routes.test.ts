@@ -531,12 +531,24 @@ describe('resolveRoutes', () => {
 	});
 
 	it('routes no member through a slot whose node\'s every kind a refinement tests one level below, and keeps it while one is open', async () => {
-		const claims = (...levels: readonly string[]): Promise<GrammarInput> =>
-			grammar(['(fn_x) @declaration.function', ...levels].join('\n'));
-		const told = resolveRoutes(await claims('(fn_x (vis_mod (vis_pub))) @declaration.function.public', '(fn_x (vis_mod (crate_kw))) @declaration.function.public.internal'));
-		expect(told.members.get('fn_x')?.map((r) => r.name)).toEqual(['name']);
+		const claims = (...lines: readonly string[]): Promise<GrammarInput> => grammar(['(fn_x) @declaration.function', ...lines].join('\n'));
+		const told = resolveRoutes(
+			await claims(
+				'(fn_x (vis_mod (vis_pub (identifier) @scope)))',
+				'(fn_x (vis_mod (vis_pub))) @declaration.function.public',
+				'(fn_x (vis_mod (crate_kw))) @declaration.function.public.internal'
+			)
+		);
+		expect(told.members.get('fn_x')?.map((r) => r.name)).toEqual(['name', 'scope']);
 		const open = resolveRoutes(await claims('(fn_x (vis_mod (vis_pub))) @declaration.function.public'));
 		expect(open.members.get('fn_x')?.map((r) => r.name)).toEqual(['vis', 'name']);
+	});
+
+	it('refuses to hide a slot whose covered kind holds content no claim captures, naming the owner, the slot, the kind and its slots', async () => {
+		const input = await grammar(
+			['(fn_x) @declaration.function', '(fn_x (vis_mod (vis_pub))) @declaration.function.public', '(fn_x (vis_mod (crate_kw))) @declaration.function.public.internal'].join('\n')
+		);
+		expect(() => resolveRoutes(input)).toThrow(/fn_x.*vis.*vis_pub.*scope/);
 	});
 
 	it('routes a slot a capture names though refinements test every kind its node holds: a kind leaves the node\'s content open', async () => {

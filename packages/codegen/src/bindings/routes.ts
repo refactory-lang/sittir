@@ -443,11 +443,19 @@ function membersOf(
 	for (const pin of entries.flatMap((entry) => entry.pins)) tell(pin.slot, pin.text);
 	const below = new Map<string, Set<string>>();
 	const innerSlot = (holder: string, step: SlotSelector): ModelSlot | undefined => slotFor(input.model, modelNode(input.model, holder)?.slots ?? [], step);
+	const beneath = new Map<string, Set<string>>();
 	for (const child of entries.flatMap((entry) => entry.children)) {
-		const [step, inner, ...deeper] = child.subject.down;
+		const [step, inner, third, ...deeper] = child.subject.down;
 		const slot = child.subject.up === 0 && step !== undefined && deeper.length === 0 ? slotFor(input.model, node.slots, step) : undefined;
 		if (slot === undefined) continue;
-		if (inner !== undefined) {
+		if (third !== undefined) {
+			const at = inner?.kind ?? null;
+			const held = at === null ? undefined : innerSlot(at, third);
+			if (at === null || held === undefined) continue;
+			const key = `${at} ${held.name}`;
+			const told = beneath.get(key) ?? beneath.set(key, new Set<string>()).get(key);
+			for (const value of 'text' in child ? [child.text] : 'kinds' in child ? concreteKinds(input.model, child.kinds) : []) told?.add(value);
+		} else if (inner !== undefined) {
 			if (!('kinds' in child)) continue;
 			for (const holder of slot.kinds) {
 				const name = innerSlot(holder, inner)?.name;
@@ -459,15 +467,38 @@ function membersOf(
 		} else if ('text' in child) tell(slot.name, child.text);
 		else if ('kinds' in child) for (const text of child.kinds.flatMap((k) => textOfKind(input.model, k) ?? [])) tell(slot.name, text);
 	}
-	const toldBelow = (slot: ModelSlot): boolean =>
-		!slot.multiple &&
-		slot.kinds.length > 0 &&
-		slot.kinds.every((holder) =>
-			(modelNode(input.model, holder)?.slots ?? []).some((inner) => {
+	const hiddenBelow = (slot: ModelSlot): readonly ModelSlot[] | undefined => {
+		if (slot.multiple || slot.kinds.length === 0) return undefined;
+		const covered = slot.kinds.map((holder) =>
+			(modelNode(input.model, holder)?.slots ?? []).find((inner) => {
 				const told = below.get(`${slot.name} ${holder} ${inner.name}`);
 				return told !== undefined && inner.required && !inner.multiple && concreteKinds(input.model, inner.kinds).every((kind) => told.has(kind));
 			})
 		);
+		return covered.every((inner) => inner !== undefined) ? (covered as ModelSlot[]) : undefined;
+	};
+	const accounted = (at: string, held: ModelSlot): boolean => {
+		const told = beneath.get(`${at} ${held.name}`) ?? new Set<string>();
+		const values = fixedValues(input.model, held);
+		return (
+			isLayout(input, at, held) ||
+			slotNamesOf(at).get(held.name) === null ||
+			input.bindings.members.some((m) => m.owner === kind && m.route === 'nested' && m.parent === at && slotFor(input.model, modelNode(input.model, at)?.slots ?? [], m) === held) ||
+			(values !== undefined && values.every((value) => told.has(value))) ||
+			concreteKinds(input.model, held.kinds).every((k) => told.has(k))
+		);
+	};
+	const refuseHidden = (slot: ModelSlot, covered: readonly ModelSlot[]): void => {
+		for (const at of concreteKinds(input.model, covered.flatMap((inner) => inner.kinds))) {
+			const held = modelNode(input.model, at);
+			if (isFixedText(held) || (held?.enumMembers.length ?? 0) > 0) continue;
+			const open = held === undefined || held.slots.length === 0 ? ['its text'] : held.slots.filter((s) => !accounted(at, s)).map((s) => s.name);
+			if (open.length > 0)
+				throw new Error(
+					`bindings: ${kind}'s read entries test every kind its ${slot.name} slot's node can hold, so the slot is no member, but ${at} there holds ${open.join(', ')}, which no claim on ${kind} captures or tests; capture it or test it`
+				);
+		}
+	};
 	const identifier = entries.some((entry) => isIdentifierPath(entry.vocab));
 	const shaping = input.bindings.members.filter((m) => m.owner === kind && m.route !== 'rename' && m.route !== 'dropped');
 	const deep = shaping.filter((m) => m.claims === undefined || m.claims.some((index) => inherited.has(index)));
@@ -490,7 +521,12 @@ function membersOf(
 		const captured = input.bindings.members.some(
 			(m) => m.route === 'rename' && (m.claims === undefined || m.claims.some((index) => inherited.has(index))) && slotFor(input.model, node.slots, m) === slot && formsOf(input.model, m.owner).includes(kind)
 		);
-		if (toldByRead(input.model, rest, told.get(slot.name) ?? new Set<string>()) || (!captured && toldBelow(slot))) continue;
+		if (toldByRead(input.model, rest, told.get(slot.name) ?? new Set<string>())) continue;
+		const hidden = captured ? undefined : hiddenBelow(slot);
+		if (hidden !== undefined) {
+			refuseHidden(slot, hidden);
+			continue;
+		}
 		const name = memberNameOf(names, slot.name, slot.propertyName);
 		const path = [{ owner: kind, slot: slot.name }];
 		routes.push(
