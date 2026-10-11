@@ -66475,6 +66475,412 @@
     "wrappedOffset": 14
   },
   {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "source_file",
+    "input": {
+      "$type": 176,
+      "_statements": [
+        {
+          "$type": 179,
+          "_content": {
+            "$type": 394,
+            "_expression": {
+              "$type": 282,
+              "_name": {
+                "$type": 468,
+                "_content": {
+                  "$type": 1,
+                  "$text": "NothingInMe"
+                }
+              },
+              "_body": {
+                "$type": 283
+              }
+            }
+          }
+        },
+        {
+          "$type": 179,
+          "_content": {
+            "$type": 394,
+            "_expression": {
+              "$type": 282,
+              "_name": {
+                "$type": 468,
+                "_content": {
+                  "$type": 1,
+                  "$text": "Point"
+                }
+              },
+              "_body": {
+                "$type": 283,
+                "_initializers": {
+                  "$type": 356,
+                  "_item": [
+                    {
+                      "$type": 285,
+                      "_attribute_item": [],
+                      "_field": {
+                        "$type": 465,
+                        "_content": {
+                          "$type": 1,
+                          "$text": "x"
+                        }
+                      },
+                      "_value": {
+                        "$type": 162,
+                        "$text": "10.0"
+                      }
+                    },
+                    {
+                      "$type": 285,
+                      "_attribute_item": [],
+                      "_field": {
+                        "$type": 465,
+                        "_content": {
+                          "$type": 1,
+                          "$text": "y"
+                        }
+                      },
+                      "_value": {
+                        "$type": 162,
+                        "$text": "20.0"
+                      },
+                      "$_layout": {
+                        "gap": {
+                          "$text": ", "
+                        }
+                      }
+                    }
+                  ],
+                  "_delimiter": 0,
+                  "$_layout": {
+                    "flank": {
+                      "$text": "Point {x: 10.0, y: 20.0}",
+                      "$span": {
+                        "start": 7,
+                        "end": 23
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                171
+              ]
+            }
+          }
+        },
+        {
+          "$type": 223,
+          "_pattern": {
+            "$type": 1,
+            "$text": "a"
+          },
+          "_value": {
+            "$type": 282,
+            "_name": {
+              "$type": 468,
+              "_content": {
+                "$type": 1,
+                "$text": "SomeStruct"
+              }
+            },
+            "_body": {
+              "$type": 283,
+              "_initializers": {
+                "$type": 356,
+                "_item": [
+                  {
+                    "$type": 284,
+                    "_attributes": [],
+                    "_name": {
+                      "$type": 1,
+                      "$text": "field1"
+                    }
+                  },
+                  {
+                    "$type": 285,
+                    "_attribute_item": [],
+                    "_field": {
+                      "$type": 465,
+                      "_content": {
+                        "$type": 1,
+                        "$text": "field2"
+                      }
+                    },
+                    "_value": {
+                      "$type": 1,
+                      "$text": "expression"
+                    },
+                    "$_layout": {
+                      "gap": {
+                        "$text": ", "
+                      }
+                    }
+                  },
+                  {
+                    "$type": 284,
+                    "_attributes": [],
+                    "_name": {
+                      "$type": 1,
+                      "$text": "field3"
+                    },
+                    "$_layout": {
+                      "gap": {
+                        "$text": ", "
+                      }
+                    }
+                  }
+                ],
+                "_delimiter": 2,
+                "$_layout": {
+                  "flank": {
+                    "$text": "let a = SomeStruct { field1, field2: expression, field3, }",
+                    "$span": {
+                      "start": 21,
+                      "end": 56
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
+                }
+              }
+            }
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                171
+              ]
+            }
+          }
+        },
+        {
+          "$type": 223,
+          "_pattern": {
+            "$type": 1,
+            "$text": "u"
+          },
+          "_value": {
+            "$type": 282,
+            "_name": {
+              "$type": 264,
+              "_path": {
+                "$type": 1,
+                "$text": "game"
+              },
+              "_name": {
+                "$type": 468,
+                "_content": {
+                  "$type": 1,
+                  "$text": "User"
+                }
+              }
+            },
+            "_body": {
+              "$type": 283,
+              "_initializers": {
+                "$type": 356,
+                "_item": [
+                  {
+                    "$type": 285,
+                    "_attribute_item": [],
+                    "_field": {
+                      "$type": 465,
+                      "_content": {
+                        "$type": 1,
+                        "$text": "name"
+                      }
+                    },
+                    "_value": {
+                      "$type": 332,
+                      "_string_open": {
+                        "$type": 133,
+                        "$text": "\""
+                      },
+                      "_elements": [
+                        {
+                          "$type": 158,
+                          "$text": "Joe"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "$type": 285,
+                    "_attribute_item": [],
+                    "_field": {
+                      "$type": 465,
+                      "_content": {
+                        "$type": 1,
+                        "$text": "age"
+                      }
+                    },
+                    "_value": {
+                      "$type": 141,
+                      "_content": "35"
+                    },
+                    "$_layout": {
+                      "gap": {
+                        "$text": ", "
+                      }
+                    }
+                  },
+                  {
+                    "$type": 285,
+                    "_attribute_item": [],
+                    "_field": {
+                      "$type": 465,
+                      "_content": {
+                        "$type": 1,
+                        "$text": "score"
+                      }
+                    },
+                    "_value": {
+                      "$type": 141,
+                      "_content": "100_000"
+                    },
+                    "$_layout": {
+                      "gap": {
+                        "$text": ", "
+                      }
+                    }
+                  }
+                ],
+                "_delimiter": 0,
+                "$_layout": {
+                  "flank": {
+                    "$text": "let u = game::User {name: \"Joe\", age: 35, score: 100_000}",
+                    "$span": {
+                      "start": 20,
+                      "end": 56
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
+                }
+              }
+            }
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                171
+              ]
+            }
+          }
+        },
+        {
+          "$type": 223,
+          "_pattern": {
+            "$type": 1,
+            "$text": "i"
+          },
+          "_value": {
+            "$type": 282,
+            "_name": {
+              "$type": 468,
+              "_content": {
+                "$type": 1,
+                "$text": "Instant"
+              }
+            },
+            "_body": {
+              "$type": 283,
+              "_initializers": {
+                "$type": 356,
+                "_item": [
+                  {
+                    "$type": 285,
+                    "_attribute_item": [],
+                    "_field": {
+                      "$type": 141,
+                      "_content": "0"
+                    },
+                    "_value": {
+                      "$type": 276,
+                      "_function": {
+                        "$type": 263,
+                        "_path": {
+                          "$type": 1,
+                          "$text": "Duration"
+                        },
+                        "_name": {
+                          "$type": 1,
+                          "$text": "from_millis"
+                        }
+                      },
+                      "_arguments": {
+                        "$type": 277,
+                        "_elements": {
+                          "$type": 354,
+                          "_item": [
+                            {
+                              "$type": 431,
+                              "_attribute_item": [],
+                              "_expression": {
+                                "$type": 141,
+                                "_content": "0"
+                              }
+                            }
+                          ],
+                          "_delimiter": 0,
+                          "$_layout": {
+                            "flank": {
+                              "$text": "let i = Instant { 0: Duration::from_millis(0)",
+                              "$span": {
+                                "start": 43,
+                                "end": 44
+                              },
+                              "$before": true,
+                              "$after": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                ],
+                "_delimiter": 0,
+                "$_layout": {
+                  "flank": {
+                    "$text": "let i = Instant { 0: Duration::from_millis(0) }",
+                    "$span": {
+                      "start": 18,
+                      "end": 45
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
+                }
+              }
+            }
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                171
+              ],
+              "trailing": [
+                171
+              ]
+            }
+          }
+        }
+      ],
+      "$errors": []
+    },
+    "expectedOutput": "NothingInMe {};\nPoint {x: 10.0, y: 20.0};\nlet a = SomeStruct { field1, field2: expression, field3, };\nlet u = game::User {name: \"Joe\", age: 35, score: 100_000};\nlet i = Instant { 0: Duration::from_millis(0) };\n"
+  },
+  {
     "kind": "roundtrip",
     "grammar": "rust",
     "sourceIn": "\nNothingInMe {};\nPoint {x: 10.0, y: 20.0};\nlet a = SomeStruct { field1, field2: expression, field3, };\nlet u = game::User {name: \"Joe\", age: 35, score: 100_000};\nlet i = Instant { 0: Duration::from_millis(0) };\n",
@@ -66484,6 +66890,25 @@
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (struct_expression name: (type_identifier) body: (field_initializer_list)))) statements: (expression_statement (expression_statement_with_semi expression: (struct_expression name: (type_identifier) body: (field_initializer_list initializers: (field_initializer_list_elements item: (field_initializer field: (field_identifier) value: (float_literal)) item: (field_initializer field: (field_identifier) value: (float_literal))))))) statements: (let_declaration pattern: (identifier) value: (struct_expression name: (type_identifier) body: (field_initializer_list initializers: (field_initializer_list_elements item: (shorthand_field_initializer name: (identifier)) item: (field_initializer field: (field_identifier) value: (identifier)) item: (shorthand_field_initializer name: (identifier)))))) statements: (let_declaration pattern: (identifier) value: (struct_expression name: (scoped_type_identifier_in_expression_position path: (identifier) name: (type_identifier)) body: (field_initializer_list initializers: (field_initializer_list_elements item: (field_initializer field: (field_identifier) value: (string_literal string_open: (string_open) elements: (string_content))) item: (field_initializer field: (field_identifier) value: (integer_literal_decimal)) item: (field_initializer field: (field_identifier) value: (integer_literal_decimal)))))) statements: (let_declaration pattern: (identifier) value: (struct_expression name: (type_identifier) body: (field_initializer_list initializers: (field_initializer_list_elements item: (field_initializer field: (integer_literal_decimal) value: (call_expression function: (scoped_identifier path: (identifier) name: (identifier)) arguments: (arguments elements: (arguments_elements item: (attributed_argument (integer_literal_decimal)))))))))))",
     "wrappedText": "NothingInMe {};\nPoint {x: 10.0, y: 20.0};\nlet a = SomeStruct { field1, field2: expression, field3, };\nlet u = game::User {name: \"Joe\", age: 35, score: 100_000};\nlet i = Instant { 0: Duration::from_millis(0) };\n",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "struct_expression",
+    "input": {
+      "$type": 282,
+      "_name": {
+        "$type": 468,
+        "_content": {
+          "$type": 1,
+          "$text": "NothingInMe"
+        }
+      },
+      "_body": {
+        "$type": 283
+      }
+    },
+    "expectedOutput": "NothingInMe {}"
   },
   {
     "kind": "roundtrip",

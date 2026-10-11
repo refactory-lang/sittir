@@ -2472,26 +2472,26 @@
 			"text": "{"
 		},
 		{
-			"kind": "seam",
-			"field": "lbrace_after"
-		},
-		{
 			"kind": "if",
 			"arms": [
 				{
 					"test": "initializers",
 					"body": [
 						{
+							"kind": "seam",
+							"field": "lbrace_after"
+						},
+						{
 							"kind": "slot",
 							"name": "initializers"
+						},
+						{
+							"kind": "seam",
+							"field": "rbrace_before"
 						}
 					]
 				}
 			]
-		},
-		{
-			"kind": "seam",
-			"field": "rbrace_before"
 		},
 		{
 			"kind": "text",

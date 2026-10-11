@@ -256,7 +256,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 			emitted === undefined
 				? undefined
 				: gateKeywordSlotSeams(
-						gateOptionalSlotSeams(emitted, (slot) => this.#slotSeamNames(node, slot)),
+						gateOptionalSlotSeams(emitted, (slot) => this.#slotSeamNames(node, slot), paddingSeamsOf(node.kind, this.#ctx.rules[node.kind])),
 						(slot) => this.#mixedSlotKeywordKinds(node, slot)
 					);
 
@@ -277,6 +277,23 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 		const tokens = droppedLiteralTexts(this.#ctx.rules[node.kind] ?? node.renderRule, body, node);
 		if (tokens.length > 0) this.#droppedTokens.push({ kind: node.kind, tokens });
 	}
+}
+
+function paddingSeamsOf(kind: string, rule: unknown): (field: string) => boolean {
+	const labels = new Set<string>();
+	const walk = (value: unknown): void => {
+		if (Array.isArray(value)) value.forEach(walk);
+		else if (value !== null && typeof value === 'object') {
+			if (isSeamChoice(value as RenderRule)) {
+				const resolved = seamChoiceDefault(value as RenderRule);
+				if (resolved?.origin === 'preference' && resolved.arm === 'space' && resolved.label !== `${kind}_before` && resolved.label !== `${kind}_after`) labels.add(resolved.label);
+				return;
+			}
+			Object.values(value).forEach(walk);
+		}
+	};
+	walk(rule);
+	return (field) => labels.has(field);
 }
 
 function templateTexts(body: Body, out: Set<string>): Set<string> {

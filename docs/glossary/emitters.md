@@ -4963,6 +4963,8 @@ caller), so an optional `?.` reference folds `qmark_dot_before` and
 `qmark_dot_after` into its presence gate and an absent chain marker leaves no
 site behind.
 
+A third argument names the padding seams: a token's face that a kind row declares `space` (preference origin), found by `templates.ts::paddingSeamsOf`. One of those beside the gate is folded in too, so `{`, an optional list and `}` with the list absent leave no pad between the brackets, while the same pad around a present list is unchanged. A token's tight face is not padding and stays outside the gate, which is what keeps `&mut` glued when the lifetime is absent.
+
 ### `packages/codegen/src/emitters/render-body.ts::WordSeamNode`
 
 A seam whose payload is one space, written as a plain (non-token) seam: it
