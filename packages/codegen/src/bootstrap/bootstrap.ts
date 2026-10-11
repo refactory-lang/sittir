@@ -3,7 +3,7 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { REPO_ROOT } from '../grammars.ts';
 
-export const BOOTSTRAP_PACKAGES = ['scm'] as const;
+export const BOOTSTRAP_PACKAGES = ['scm', 'typescript'] as const;
 
 export type BootstrapPackage = (typeof BOOTSTRAP_PACKAGES)[number];
 
@@ -29,7 +29,16 @@ export function bootstrapDir(root: string = REPO_ROOT): string {
 	return join(process.env[BOOTSTRAP_DIR_ENV] ?? join(mainCheckout(root), 'scratchpad', 'bootstrap'), readPin(root));
 }
 
-export const isBootstrapped = (dir: string): boolean => existsSync(join(dir, COMPLETE));
+export function isBootstrapped(dir: string): boolean {
+	const marker = join(dir, COMPLETE);
+	if (!existsSync(marker)) return false;
+	const built = new Set(readFileSync(marker, 'utf8').split(/\s+/));
+	return BOOTSTRAP_PACKAGES.every((p) => built.has(p));
+}
+
+export function markBootstrapped(dir: string, sha: string): void {
+	writeFileSync(join(dir, COMPLETE), `${sha}\n${BOOTSTRAP_PACKAGES.join(' ')}\n`);
+}
 
 export interface BootstrapStep {
 	readonly command: string;
@@ -57,6 +66,6 @@ export function bootstrap(root: string = REPO_ROOT): string {
 	for (const step of existsSync(dir) ? steps.slice(1) : steps) {
 		execFileSync(step.command, step.args, { cwd: step.cwd, stdio: 'inherit' });
 	}
-	writeFileSync(join(dir, COMPLETE), `${sha}\n`);
+	markBootstrapped(dir, sha);
 	return dir;
 }
