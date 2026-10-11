@@ -1,5 +1,5 @@
 import type { GrammarContext } from './context.ts';
-import type { SubKindOf } from './utils.ts';
+import type { Flag, SubKindOf } from './utils.ts';
 import type * as V from './index.ts';
 export interface Clause<G extends GrammarContext<G>> {
 	readonly $kind: 'clause';
@@ -71,7 +71,7 @@ export namespace Clause {
 		export interface For<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Comprehension<G>> {
 			// claimed by p
 			readonly $kind: 'clause.comprehension.for';
-			readonly async?: boolean;
+			readonly async?: Flag;
 			readonly comma?: boolean;
 			readonly left: G['slots']['clause.comprehension.for']['left'];
 			readonly rights: G['slots']['clause.comprehension.for']['rights'][];
@@ -111,8 +111,9 @@ export namespace Clause {
 	export interface Except<G extends GrammarContext<G>> extends SubKindOf<V.Clause<G>> {
 		// claimed by p
 		readonly $kind: 'clause.except';
+		readonly alias?: G['slots']['clause.except']['alias'];
 		readonly exception?: G['slots']['clause.except']['exception'] | G['slots']['clause.except']['exception'][];
-		readonly group?: boolean;
+		readonly group?: Flag;
 		readonly suite: G['slots']['clause.except']['suite'];
 	}
 	export interface Export<G extends GrammarContext<G>> extends SubKindOf<V.Clause<G>> {
@@ -206,7 +207,8 @@ export namespace Clause {
 		export interface Names<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Import<G>> {
 			// claimed by t
 			readonly $kind: 'clause.import.names';
-			readonly content: G['slots']['clause.import.names']['content'] | G['slots']['clause.import.names']['content'][];
+			readonly content?: G['slots']['clause.import.names']['content'] | G['slots']['clause.import.names']['content'][];
+			readonly default?: G['identifier'];
 		}
 		export interface Namespace<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Import<G>> {
 			// claimed by t
@@ -235,6 +237,9 @@ export namespace Clause {
 		export interface Specifier<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Import<G>> {
 			// claimed by t
 			readonly $kind: 'clause.import.specifier';
+			readonly alias?: G['slots']['clause.import.specifier']['alias'];
+			readonly importKind?: G['slots']['clause.import.specifier']['importKind'];
+			readonly name: G['slots']['clause.import.specifier']['name'];
 		}
 		export interface Wildcard<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Import<G>> {
 			// claimed by pr
@@ -306,6 +311,9 @@ export namespace Clause {
 		export interface Arm<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Match<G>> {
 			// claimed by r
 			readonly $kind: 'clause.match.arm';
+			readonly attributes?: G['attribute'][];
+			readonly pattern: V.Pattern.Match<G>;
+			readonly value: G['slots']['clause.match.arm']['value'];
 		}
 		export namespace Arm {
 			export interface Last<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Match.Arm<G>> {
@@ -350,6 +358,7 @@ export namespace Clause {
 	export interface With<G extends GrammarContext<G>> extends SubKindOf<V.Clause<G>> {
 		// claimed by p
 		readonly $kind: 'clause.with';
+		readonly items: V.Clause.With.Item<G>[];
 	}
 	export namespace With {
 		export interface Item<G extends GrammarContext<G>> extends SubKindOf<V.Clause.With<G>> {

@@ -13,7 +13,6 @@ const CEILING: Readonly<Record<string, readonly string[]>> = {
 	rust: ['impl_item_body.implements', 'impl_item_body.receiver'],
 	typescript: [
 		'abstract_class_declaration.abstract',
-		'abstract_method_signature.abstract',
 		'generator_function.generator',
 		'generator_function_declaration.generator',
 		'optional_parameter.optional',

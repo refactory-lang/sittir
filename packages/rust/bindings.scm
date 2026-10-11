@@ -21,6 +21,8 @@
 (impl_item_body trait_clause: (_ trait: (_) @implements)) @declaration.extension.conformance
 (trait_item bounds: (_)? @extends (declaration_list (function_item) @declaration.method)) @declaration.interface.trait
 (struct_item) @declaration.struct
+(struct_item_tuple) @declaration.struct.tuple
+(struct_item_unit) @declaration.struct.unit
 (enum_item) @declaration.enum
 (enum_variant) @declaration.enum_member
 (enum_variant body: (ordered_field_declaration_list)) @declaration.enum_member.tuple
@@ -34,10 +36,12 @@
 (extern_crate_declaration) @statement.import.crate
 (const_item) @declaration.constant
 (static_item) @declaration.variable.static
+(static_item ref: _ @byReference)
 (let_declaration pattern: (_) @name) @declaration.variable
 (field_declaration) @declaration.field
+(attributed_ordered_field (attribute_item)* @attributes) @declaration.field
 (attributed_field_declaration (attribute_item)* @attributes (_) @element)
-(macro_definition) @declaration.macro
+(macro_definition name: (_) (_)? @rules) @declaration.macro
 (parameter name: (_) @name) @declaration.parameter
 (parameter (mutable_specifier) @mutable)
 (self_parameter) @declaration.parameter.self
@@ -95,8 +99,8 @@
 (base_field_initializer) @element.struct.base
 (type_binding) @element.type_binding
 (token_tree) @element.macro.token_tree
-(delim_token_tree) @element.macro.token_tree.delimited
-(token_tree_pattern) @element.macro.token_tree.pattern
+(delim_token_tree (_)* @tokens) @element.macro.token_tree.delimited
+(token_tree_pattern (_)* @tokens) @element.macro.token_tree.pattern
 (token_binding_pattern) @element.macro.token_binding
 (token_repetition) @element.macro.token_repetition
 (token_repetition_pattern) @element.macro.token_repetition.pattern
@@ -131,6 +135,10 @@
 (unary_expression "!" (_) @argument) @expression.unary.not
 (unary_expression "*" (_) @argument) @expression.unary.deref
 (reference_expression value: (_) @argument) @expression.reference
+(reference_expression_mut (mutable_specifier) @exclusive)
+(reference_expression_raw_const "raw" @raw)
+(reference_expression_raw_mut "raw" @raw)
+(reference_expression_raw_mut (mutable_specifier) @writable)
 (try_expression (_) @argument) @expression.try
 (compound_assignment_expr) @expression.assignment.compound
 (compound_assignment_expr operator: "+=") @expression.assignment.compound.add
@@ -152,8 +160,9 @@
 (range_expression) @expression.range
 (type_cast_expression) @expression.cast.as
 (parenthesized_expression) @expression.parenthesized
-(tuple_expression) @expression.collection.tuple
+(tuple_expression (expressions) @elements) @expression.collection.tuple
 (array_expression) @expression.collection.list
+(array_expression_semi) @expression.collection.list.repeat
 (struct_expression) @expression.collection.struct
 (unit_expression) @expression.unit
 (unsafe_block) @expression.block.unsafe
@@ -169,13 +178,15 @@
 (tuple_pattern) @pattern.tuple
 (tuple_struct_pattern) @pattern.tuple.struct
 (struct_pattern) @pattern.struct
-(field_pattern) @pattern.struct.field
+(field_pattern ref: _? @byReference) @pattern.struct.field
 (remaining_field_pattern) @pattern.struct.rest
 (slice_pattern) @pattern.slice
 (or_pattern) @pattern.or
 (range_pattern) @pattern.range
+(range_pattern_with_left (range_pattern_with_left_with_right right: (_) @right))
 (ref_pattern) @pattern.reference
 (reference_pattern) @pattern.reference.value
+(reference_pattern (mutable_specifier) @exclusive)
 (mut_pattern) @pattern.mutable
 (captured_pattern) @pattern.captured
 (generic_pattern) @pattern.generic
@@ -187,12 +198,17 @@
 (generic_type_with_turbofish) @type.generic.turbofish
 (type_argument (trait_bounds)? @constraint) @element.type_argument
 (reference_type) @type.reference
+(reference_type (mutable_specifier) @exclusive)
 (pointer_type) @type.pointer
+(pointer_type_mut (mutable_specifier) @writable)
 (array_type) @type.array
 (tuple_type) @type.tuple
 (unit_type) @type.unit
 (never_type) @type.primitive.never
 (function_type) @type.function
+(function_type (function_type_trait_form trait: (_) @trait))
+(function_type (function_type_fn_form (function_modifiers "unsafe" @unsafe)))
+(function_type (function_type_fn_form (function_modifiers (extern_modifier) @extern)))
 (abstract_type) @type.abstract
 (dynamic_type) @type.dynamic
 (bounded_type) @type.bounded
@@ -203,10 +219,11 @@
 ((type_identifier) @type.named.prelude (#match? @type.named.prelude "^(Option|Result|String|Vec|Box)$"))
 
 ; ── literal ────────────────────────────────────────────────────────────────────
-(string_literal (string_content)* @content) @literal.string
+(string_literal) @literal.string
 (raw_string_literal string_content: (string_content) @content) @literal.string.raw
 (char_literal) @literal.char
 (escape_sequence) @literal.string.escape
+(string_content) @literal.string.text
 (integer_literal_decimal) @literal.number.integer
 (integer_literal_hex) @literal.number.integer.hex
 (integer_literal_binary) @literal.number.integer.binary
@@ -245,6 +262,8 @@
 (attribute_item (attribute)? @content) @attribute
 (inner_attribute_item (attribute)? @content) @attribute.inner
 (attribute) @attribute.content
+(attribute input: (attribute_input value: (_) @input))
+(attribute input: (attribute_input arguments: (_) @input))
 
 ; ── comment ────────────────────────────────────────────────────────────────────
 (line_comment) @comment.line
@@ -253,6 +272,10 @@
 (line_comment (line_comment_doc_inner)) @comment.line.doc.inner
 (block_comment (block_comment_doc_outer)) @comment.block.doc
 (block_comment (block_comment_doc_inner)) @comment.block.doc.inner
+(doc_comment) @comment.text
+(line_comment_regular) @comment.text
+(line_comment_extra_slashes) @comment.text
+(block_comment_regular) @comment.text
 
 ; ── keyword / punctuation ──────────────────────────────────────────────────────
 ["fn" "let" "impl" "trait" "struct" "enum" "mod" "type"] @keyword.declaration
