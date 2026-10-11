@@ -57007,7 +57007,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "let person: {name: string,\n  age: number};\nlet thing: { [type: string]: string };\ntype T = { [K in keyof T] -?: any }\ntype T = { [K in keyof T] ?: any }\ntype T = { - readonly[K in keyof T]: any }\n"
+    "expectedOutput": "let person: {name: string,\n  age: number};\nlet thing: { [type: string]: string };\ntype T = { [K in keyof T] -?: any }\ntype T = { [K in keyof T] ?: any }\ntype T = { -readonly [K in keyof T]: any }\n"
   },
   {
     "kind": "roundtrip",
@@ -57015,9 +57015,9 @@
     "sourceIn": "\nlet person: {name: string, age: number};\nlet thing: { [type: string]: string };\ntype T = { [K in keyof T]-?: any }\ntype T = { [K in keyof T]?: any }\ntype T = { -readonly [K in keyof T]: any }\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "let person: {name: string,\n  age: number};\nlet thing: { [type: string]: string };\ntype T = { [K in keyof T] -?: any }\ntype T = { [K in keyof T] ?: any }\ntype T = { - readonly[K in keyof T]: any }\n",
+    "expectedSourceOut": "let person: {name: string,\n  age: number};\nlet thing: { [type: string]: string };\ntype T = { [K in keyof T] -?: any }\ntype T = { [K in keyof T] ?: any }\ntype T = { -readonly [K in keyof T]: any }\n",
     "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (object_type members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (object_type members: (object_type_content item: (index_signature_colon name: (identifier) index_type: (predefined_type) type: (type_annotation type: (predefined_type)))))))) statements: (type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content item: (index_signature_mapped_type_clause (mapped_type_clause name: (type_identifier) type: (index_type_query type: (type_identifier))) type: (omitting_type_annotation type: (predefined_type))))) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content item: (index_signature_mapped_type_clause (mapped_type_clause name: (type_identifier) type: (index_type_query type: (type_identifier))) type: (opting_type_annotation type: (predefined_type))))) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content item: (index_signature_mapped_type_clause (mapped_type_clause name: (type_identifier) type: (index_type_query type: (type_identifier))) type: (type_annotation type: (predefined_type))))) terminator: (automatic_semicolon)))",
-    "wrappedText": "let person: {name: string,\n  age: number};\nlet thing: { [type: string]: string };\ntype T = { [K in keyof T] -?: any }\ntype T = { [K in keyof T] ?: any }\ntype T = { - readonly[K in keyof T]: any }\n",
+    "wrappedText": "let person: {name: string,\n  age: number};\nlet thing: { [type: string]: string };\ntype T = { [K in keyof T] -?: any }\ntype T = { [K in keyof T] ?: any }\ntype T = { -readonly [K in keyof T]: any }\n",
     "wrappedOffset": 0
   },
   {
@@ -57842,7 +57842,7 @@
       },
       "_closing": 6
     },
-    "expectedOutput": "{ - readonly[K in keyof T]: any }"
+    "expectedOutput": "{ -readonly [K in keyof T]: any }"
   },
   {
     "kind": "roundtrip",
@@ -57850,9 +57850,9 @@
     "sourceIn": "{ -readonly [K in keyof T]: any }",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{ - readonly[K in keyof T]: any }",
+    "expectedSourceOut": "{ -readonly [K in keyof T]: any }",
     "expectedReparseTree": "(object_type members: (object_type_content item: (index_signature_mapped_type_clause (mapped_type_clause name: (type_identifier) type: (index_type_query type: (type_identifier))) type: (type_annotation type: (predefined_type)))))",
-    "wrappedText": "type _X = { - readonly[K in keyof T]: any };",
+    "wrappedText": "type _X = { -readonly [K in keyof T]: any };",
     "wrappedOffset": 10
   },
   {
@@ -58166,7 +58166,7 @@
       },
       "_terminator": 173
     },
-    "expectedOutput": "type T = { - readonly[K in keyof T]: any }\n"
+    "expectedOutput": "type T = { -readonly [K in keyof T]: any }\n"
   },
   {
     "kind": "roundtrip",
@@ -58174,9 +58174,9 @@
     "sourceIn": "type T = { -readonly [K in keyof T]: any }",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type T = { - readonly[K in keyof T]: any }\n",
+    "expectedSourceOut": "type T = { -readonly [K in keyof T]: any }\n",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content item: (index_signature_mapped_type_clause (mapped_type_clause name: (type_identifier) type: (index_type_query type: (type_identifier))) type: (type_annotation type: (predefined_type))))) terminator: (automatic_semicolon))",
-    "wrappedText": "type T = { - readonly[K in keyof T]: any }\n",
+    "wrappedText": "type T = { -readonly [K in keyof T]: any }\n",
     "wrappedOffset": 0
   },
   {
@@ -58516,7 +58516,7 @@
         "_type": 38
       }
     },
-    "expectedOutput": "- readonly[K in keyof T]: any"
+    "expectedOutput": "-readonly [K in keyof T]: any"
   },
   {
     "kind": "roundtrip",
@@ -58524,9 +58524,9 @@
     "sourceIn": "-readonly [K in keyof T]: any",
     "pattern": "index_signature_mapped_type_clause",
     "edits": [],
-    "expectedSourceOut": "- readonly[K in keyof T]: any",
+    "expectedSourceOut": "-readonly [K in keyof T]: any",
     "expectedReparseTree": "(index_signature_mapped_type_clause (mapped_type_clause name: (type_identifier) type: (index_type_query type: (type_identifier))) type: (type_annotation type: (predefined_type)))",
-    "wrappedText": "type _T = { - readonly[K in keyof T]: any }",
+    "wrappedText": "type _T = { -readonly [K in keyof T]: any }",
     "wrappedOffset": 12
   },
   {
@@ -59376,7 +59376,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "type Foo = {\n  [b: string]: any;\n  readonly[c: number]: string;\n}\n"
+    "expectedOutput": "type Foo = {\n  [b: string]: any;\n  readonly [c: number]: string;\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -59384,9 +59384,9 @@
     "sourceIn": "\ntype Foo = {\n  [b: string]: any;\n  readonly [c: number]: string;\n}\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "type Foo = {\n  [b: string]: any;\n  readonly[c: number]: string;\n}\n",
+    "expectedSourceOut": "type Foo = {\n  [b: string]: any;\n  readonly [c: number]: string;\n}\n",
     "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content item: (index_signature_colon name: (identifier) index_type: (predefined_type) type: (type_annotation type: (predefined_type))) item: (index_signature_colon name: (identifier) index_type: (predefined_type) type: (type_annotation type: (predefined_type))))) terminator: (automatic_semicolon)))",
-    "wrappedText": "type Foo = {\n  [b: string]: any;\n  readonly[c: number]: string;\n}\n",
+    "wrappedText": "type Foo = {\n  [b: string]: any;\n  readonly [c: number]: string;\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -59459,7 +59459,7 @@
       },
       "_terminator": 173
     },
-    "expectedOutput": "type Foo = {\n  [b: string]: any;\n  readonly[c: number]: string;\n}\n"
+    "expectedOutput": "type Foo = {\n  [b: string]: any;\n  readonly [c: number]: string;\n}\n"
   },
   {
     "kind": "roundtrip",
@@ -59467,9 +59467,9 @@
     "sourceIn": "type Foo = {\n  [b: string]: any;\n  readonly [c: number]: string;\n}",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type Foo = {\n  [b: string]: any;\n  readonly[c: number]: string;\n}\n",
+    "expectedSourceOut": "type Foo = {\n  [b: string]: any;\n  readonly [c: number]: string;\n}\n",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content item: (index_signature_colon name: (identifier) index_type: (predefined_type) type: (type_annotation type: (predefined_type))) item: (index_signature_colon name: (identifier) index_type: (predefined_type) type: (type_annotation type: (predefined_type))))) terminator: (automatic_semicolon))",
-    "wrappedText": "type Foo = {\n  [b: string]: any;\n  readonly[c: number]: string;\n}\n",
+    "wrappedText": "type Foo = {\n  [b: string]: any;\n  readonly [c: number]: string;\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -59555,7 +59555,7 @@
       },
       "_closing": 6
     },
-    "expectedOutput": "{\n  [b: string]: any;\n  readonly[c: number]: string;\n}"
+    "expectedOutput": "{\n  [b: string]: any;\n  readonly [c: number]: string;\n}"
   },
   {
     "kind": "roundtrip",
@@ -59563,9 +59563,9 @@
     "sourceIn": "{\n  [b: string]: any;\n  readonly [c: number]: string;\n}",
     "pattern": "object_type",
     "edits": [],
-    "expectedSourceOut": "{\n  [b: string]: any;\n  readonly[c: number]: string;\n}",
+    "expectedSourceOut": "{\n  [b: string]: any;\n  readonly [c: number]: string;\n}",
     "expectedReparseTree": "(object_type members: (object_type_content item: (index_signature_colon name: (identifier) index_type: (predefined_type) type: (type_annotation type: (predefined_type))) item: (index_signature_colon name: (identifier) index_type: (predefined_type) type: (type_annotation type: (predefined_type)))))",
-    "wrappedText": "type _X = {\n  [b: string]: any;\n  readonly[c: number]: string;\n};",
+    "wrappedText": "type _X = {\n  [b: string]: any;\n  readonly [c: number]: string;\n};",
     "wrappedOffset": 10
   },
   {
@@ -59614,7 +59614,7 @@
         "_type": 41
       }
     },
-    "expectedOutput": "readonly[c: number]: string"
+    "expectedOutput": "readonly [c: number]: string"
   },
   {
     "kind": "roundtrip",
@@ -59622,9 +59622,9 @@
     "sourceIn": "readonly [c: number]: string",
     "pattern": "index_signature_colon",
     "edits": [],
-    "expectedSourceOut": "readonly[c: number]: string",
+    "expectedSourceOut": "readonly [c: number]: string",
     "expectedReparseTree": "(index_signature_colon name: (identifier) index_type: (predefined_type) type: (type_annotation type: (predefined_type)))",
-    "wrappedText": "type _T = { readonly[c: number]: string }",
+    "wrappedText": "type _T = { readonly [c: number]: string }",
     "wrappedOffset": 12
   },
   {
@@ -88016,7 +88016,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "type T = X extends Y ? Z: Y\ntype T = X extends ? Y ? ? X: Y\ntype F<T, X, Y> = ((t: T) => X extends Y ? X: Y) extends ((t: T) => X extends Y ? Y: X) ? X: Y\ntype F<T, X, Y> = (t: T) => X extends Y ? X: Y extends (t: T) => X extends Y ? Y: X ? X: Y\ntype T<X, Y> = T extends X<infer Y> ? Y: X\ntype T<X> = X extends (infer X)[] ? X: never;\ntype T<X> = T extends { x: infer X } ? X: never;\ntype T<X> = T extends { x: infer X extends number } ? X: never;\n"
+    "expectedOutput": "type T = X extends Y ? Z : Y\ntype T = X extends ? Y ? ? X : Y\ntype F<T, X, Y> = ((t: T) => X extends Y ? X : Y) extends ((t: T) => X extends Y ? Y : X) ? X : Y\ntype F<T, X, Y> = (t: T) => X extends Y ? X : Y extends (t: T) => X extends Y ? Y : X ? X : Y\ntype T<X, Y> = T extends X<infer Y> ? Y : X\ntype T<X> = X extends (infer X)[] ? X : never;\ntype T<X> = T extends { x: infer X } ? X : never;\ntype T<X> = T extends { x: infer X extends number } ? X : never;\n"
   },
   {
     "kind": "roundtrip",
@@ -88024,9 +88024,9 @@
     "sourceIn": "\ntype T = X extends Y ? Z : Y\ntype T = X extends ?Y ? ?X : Y\ntype F<T, X, Y> = ((t: T) => X extends Y ? X : Y) extends ((t: T) => X extends Y ? Y : X) ? X : Y\ntype F<T, X, Y> = (t: T) => X extends Y ? X : Y extends (t: T) => X extends Y ? Y : X ? X : Y\ntype T<X, Y> = T extends X<infer Y> ? Y : X\ntype T<X> = X extends (infer X)[] ? X : never;\ntype T<X> = T extends { x: infer X } ? X : never;\ntype T<X> = T extends { x: infer X extends number } ? X : never;\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "type T = X extends Y ? Z: Y\ntype T = X extends ? Y ? ? X: Y\ntype F<T, X, Y> = ((t: T) => X extends Y ? X: Y) extends ((t: T) => X extends Y ? Y: X) ? X: Y\ntype F<T, X, Y> = (t: T) => X extends Y ? X: Y extends (t: T) => X extends Y ? Y: X ? X: Y\ntype T<X, Y> = T extends X<infer Y> ? Y: X\ntype T<X> = X extends (infer X)[] ? X: never;\ntype T<X> = T extends { x: infer X } ? X: never;\ntype T<X> = T extends { x: infer X extends number } ? X: never;\n",
+    "expectedSourceOut": "type T = X extends Y ? Z : Y\ntype T = X extends ? Y ? ? X : Y\ntype F<T, X, Y> = ((t: T) => X extends Y ? X : Y) extends ((t: T) => X extends Y ? Y : X) ? X : Y\ntype F<T, X, Y> = (t: T) => X extends Y ? X : Y extends (t: T) => X extends Y ? Y : X ? X : Y\ntype T<X, Y> = T extends X<infer Y> ? Y : X\ntype T<X> = X extends (infer X)[] ? X : never;\ntype T<X> = T extends { x: infer X } ? X : never;\ntype T<X> = T extends { x: infer X extends number } ? X : never;\n",
     "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (type_identifier)) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (conditional_type left: (type_identifier) right: (flow_maybe_type type: (type_identifier)) consequence: (flow_maybe_type type: (type_identifier)) alternative: (type_identifier)) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) value: (conditional_type left: (parenthesized_type type: (function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (type_identifier)))) right: (parenthesized_type type: (function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (type_identifier)))) consequence: (type_identifier) alternative: (type_identifier)) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) value: (function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (conditional_type left: (type_identifier) right: (function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (type_identifier))) consequence: (type_identifier) alternative: (type_identifier)))) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) value: (conditional_type left: (type_identifier) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (infer_type name: (type_identifier))))) consequence: (type_identifier) alternative: (type_identifier)) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) value: (conditional_type left: (type_identifier) right: (array_type type: (parenthesized_type type: (infer_type name: (type_identifier)))) consequence: (type_identifier) alternative: (predefined_type))) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) value: (conditional_type left: (type_identifier) right: (object_type members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (infer_type name: (type_identifier)))))) consequence: (type_identifier) alternative: (predefined_type))) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) value: (conditional_type left: (type_identifier) right: (object_type members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (infer_type name: (type_identifier) type: (predefined_type)))))) consequence: (type_identifier) alternative: (predefined_type))))",
-    "wrappedText": "type T = X extends Y ? Z: Y\ntype T = X extends ? Y ? ? X: Y\ntype F<T, X, Y> = ((t: T) => X extends Y ? X: Y) extends ((t: T) => X extends Y ? Y: X) ? X: Y\ntype F<T, X, Y> = (t: T) => X extends Y ? X: Y extends (t: T) => X extends Y ? Y: X ? X: Y\ntype T<X, Y> = T extends X<infer Y> ? Y: X\ntype T<X> = X extends (infer X)[] ? X: never;\ntype T<X> = T extends { x: infer X } ? X: never;\ntype T<X> = T extends { x: infer X extends number } ? X: never;\n",
+    "wrappedText": "type T = X extends Y ? Z : Y\ntype T = X extends ? Y ? ? X : Y\ntype F<T, X, Y> = ((t: T) => X extends Y ? X : Y) extends ((t: T) => X extends Y ? Y : X) ? X : Y\ntype F<T, X, Y> = (t: T) => X extends Y ? X : Y extends (t: T) => X extends Y ? Y : X ? X : Y\ntype T<X, Y> = T extends X<infer Y> ? Y : X\ntype T<X> = X extends (infer X)[] ? X : never;\ntype T<X> = T extends { x: infer X } ? X : never;\ntype T<X> = T extends { x: infer X extends number } ? X : never;\n",
     "wrappedOffset": 0
   },
   {
@@ -88075,7 +88075,7 @@
       },
       "_terminator": 173
     },
-    "expectedOutput": "type T = X extends Y ? Z: Y\n"
+    "expectedOutput": "type T = X extends Y ? Z : Y\n"
   },
   {
     "kind": "roundtrip",
@@ -88083,9 +88083,9 @@
     "sourceIn": "type T = X extends Y ? Z : Y",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type T = X extends Y ? Z: Y\n",
+    "expectedSourceOut": "type T = X extends Y ? Z : Y\n",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (type_identifier)) terminator: (automatic_semicolon))",
-    "wrappedText": "type T = X extends Y ? Z: Y\n",
+    "wrappedText": "type T = X extends Y ? Z : Y\n",
     "wrappedOffset": 0
   },
   {
@@ -88140,7 +88140,7 @@
       },
       "_terminator": 173
     },
-    "expectedOutput": "type T = X extends ? Y ? ? X: Y\n"
+    "expectedOutput": "type T = X extends ? Y ? ? X : Y\n"
   },
   {
     "kind": "roundtrip",
@@ -88148,9 +88148,9 @@
     "sourceIn": "type T = X extends ?Y ? ?X : Y",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type T = X extends ? Y ? ? X: Y\n",
+    "expectedSourceOut": "type T = X extends ? Y ? ? X : Y\n",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (conditional_type left: (type_identifier) right: (flow_maybe_type type: (type_identifier)) consequence: (flow_maybe_type type: (type_identifier)) alternative: (type_identifier)) terminator: (automatic_semicolon))",
-    "wrappedText": "type T = X extends ? Y ? ? X: Y\n",
+    "wrappedText": "type T = X extends ? Y ? ? X : Y\n",
     "wrappedOffset": 0
   },
   {
@@ -88401,7 +88401,7 @@
       },
       "_terminator": 173
     },
-    "expectedOutput": "type F<T, X, Y> = ((t: T) => X extends Y ? X: Y) extends ((t: T) => X extends Y ? Y: X) ? X: Y\n"
+    "expectedOutput": "type F<T, X, Y> = ((t: T) => X extends Y ? X : Y) extends ((t: T) => X extends Y ? Y : X) ? X : Y\n"
   },
   {
     "kind": "roundtrip",
@@ -88409,9 +88409,9 @@
     "sourceIn": "type F<T, X, Y> = ((t: T) => X extends Y ? X : Y) extends ((t: T) => X extends Y ? Y : X) ? X : Y",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type F<T, X, Y> = ((t: T) => X extends Y ? X: Y) extends ((t: T) => X extends Y ? Y: X) ? X: Y\n",
+    "expectedSourceOut": "type F<T, X, Y> = ((t: T) => X extends Y ? X : Y) extends ((t: T) => X extends Y ? Y : X) ? X : Y\n",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) value: (conditional_type left: (parenthesized_type type: (function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (type_identifier)))) right: (parenthesized_type type: (function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (type_identifier)))) consequence: (type_identifier) alternative: (type_identifier)) terminator: (automatic_semicolon))",
-    "wrappedText": "type F<T, X, Y> = ((t: T) => X extends Y ? X: Y) extends ((t: T) => X extends Y ? Y: X) ? X: Y\n",
+    "wrappedText": "type F<T, X, Y> = ((t: T) => X extends Y ? X : Y) extends ((t: T) => X extends Y ? Y : X) ? X : Y\n",
     "wrappedOffset": 0
   },
   {
@@ -88656,7 +88656,7 @@
       },
       "_terminator": 173
     },
-    "expectedOutput": "type F<T, X, Y> = (t: T) => X extends Y ? X: Y extends (t: T) => X extends Y ? Y: X ? X: Y\n"
+    "expectedOutput": "type F<T, X, Y> = (t: T) => X extends Y ? X : Y extends (t: T) => X extends Y ? Y : X ? X : Y\n"
   },
   {
     "kind": "roundtrip",
@@ -88664,9 +88664,9 @@
     "sourceIn": "type F<T, X, Y> = (t: T) => X extends Y ? X : Y extends (t: T) => X extends Y ? Y : X ? X : Y",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type F<T, X, Y> = (t: T) => X extends Y ? X: Y extends (t: T) => X extends Y ? Y: X ? X: Y\n",
+    "expectedSourceOut": "type F<T, X, Y> = (t: T) => X extends Y ? X : Y extends (t: T) => X extends Y ? Y : X ? X : Y\n",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) value: (function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (conditional_type left: (type_identifier) right: (function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (type_identifier))) consequence: (type_identifier) alternative: (type_identifier)))) terminator: (automatic_semicolon))",
-    "wrappedText": "type F<T, X, Y> = (t: T) => X extends Y ? X: Y extends (t: T) => X extends Y ? Y: X ? X: Y\n",
+    "wrappedText": "type F<T, X, Y> = (t: T) => X extends Y ? X : Y extends (t: T) => X extends Y ? Y : X ? X : Y\n",
     "wrappedOffset": 0
   },
   {
@@ -88793,7 +88793,7 @@
       },
       "_terminator": 173
     },
-    "expectedOutput": "type T<X, Y> = T extends X<infer Y> ? Y: X\n"
+    "expectedOutput": "type T<X, Y> = T extends X<infer Y> ? Y : X\n"
   },
   {
     "kind": "roundtrip",
@@ -88801,9 +88801,9 @@
     "sourceIn": "type T<X, Y> = T extends X<infer Y> ? Y : X",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type T<X, Y> = T extends X<infer Y> ? Y: X\n",
+    "expectedSourceOut": "type T<X, Y> = T extends X<infer Y> ? Y : X\n",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) value: (conditional_type left: (type_identifier) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (infer_type name: (type_identifier))))) consequence: (type_identifier) alternative: (type_identifier)) terminator: (automatic_semicolon))",
-    "wrappedText": "type T<X, Y> = T extends X<infer Y> ? Y: X\n",
+    "wrappedText": "type T<X, Y> = T extends X<infer Y> ? Y : X\n",
     "wrappedOffset": 0
   },
   {
@@ -88885,7 +88885,7 @@
       },
       "_terminator": 20
     },
-    "expectedOutput": "type T<X> = X extends (infer X)[] ? X: never;"
+    "expectedOutput": "type T<X> = X extends (infer X)[] ? X : never;"
   },
   {
     "kind": "roundtrip",
@@ -88893,9 +88893,9 @@
     "sourceIn": "type T<X> = X extends (infer X)[] ? X : never;",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type T<X> = X extends (infer X)[] ? X: never;",
+    "expectedSourceOut": "type T<X> = X extends (infer X)[] ? X : never;",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) value: (conditional_type left: (type_identifier) right: (array_type type: (parenthesized_type type: (infer_type name: (type_identifier)))) consequence: (type_identifier) alternative: (predefined_type)))",
-    "wrappedText": "type T<X> = X extends (infer X)[] ? X: never;",
+    "wrappedText": "type T<X> = X extends (infer X)[] ? X : never;",
     "wrappedOffset": 0
   },
   {
@@ -89007,7 +89007,7 @@
       },
       "_terminator": 20
     },
-    "expectedOutput": "type T<X> = T extends { x: infer X } ? X: never;"
+    "expectedOutput": "type T<X> = T extends { x: infer X } ? X : never;"
   },
   {
     "kind": "roundtrip",
@@ -89015,9 +89015,9 @@
     "sourceIn": "type T<X> = T extends { x: infer X } ? X : never;",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type T<X> = T extends { x: infer X } ? X: never;",
+    "expectedSourceOut": "type T<X> = T extends { x: infer X } ? X : never;",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) value: (conditional_type left: (type_identifier) right: (object_type members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (infer_type name: (type_identifier)))))) consequence: (type_identifier) alternative: (predefined_type)))",
-    "wrappedText": "type T<X> = T extends { x: infer X } ? X: never;",
+    "wrappedText": "type T<X> = T extends { x: infer X } ? X : never;",
     "wrappedOffset": 0
   },
   {
@@ -89130,7 +89130,7 @@
       },
       "_terminator": 20
     },
-    "expectedOutput": "type T<X> = T extends { x: infer X extends number } ? X: never;"
+    "expectedOutput": "type T<X> = T extends { x: infer X extends number } ? X : never;"
   },
   {
     "kind": "roundtrip",
@@ -89138,9 +89138,9 @@
     "sourceIn": "type T<X> = T extends { x: infer X extends number } ? X : never;",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type T<X> = T extends { x: infer X extends number } ? X: never;",
+    "expectedSourceOut": "type T<X> = T extends { x: infer X extends number } ? X : never;",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) value: (conditional_type left: (type_identifier) right: (object_type members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (infer_type name: (type_identifier) type: (predefined_type)))))) consequence: (type_identifier) alternative: (predefined_type)))",
-    "wrappedText": "type T<X> = T extends { x: infer X extends number } ? X: never;",
+    "wrappedText": "type T<X> = T extends { x: infer X extends number } ? X : never;",
     "wrappedOffset": 0
   },
   {
@@ -90738,7 +90738,7 @@
         }
       }
     },
-    "expectedOutput": "X extends Y ? Z: Y"
+    "expectedOutput": "X extends Y ? Z : Y"
   },
   {
     "kind": "roundtrip",
@@ -90746,9 +90746,9 @@
     "sourceIn": "X extends Y ? Z : Y",
     "pattern": "conditional_type",
     "edits": [],
-    "expectedSourceOut": "X extends Y ? Z: Y",
+    "expectedSourceOut": "X extends Y ? Z : Y",
     "expectedReparseTree": "(conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (type_identifier))",
-    "wrappedText": "type _X = X extends Y ? Z: Y;",
+    "wrappedText": "type _X = X extends Y ? Z : Y;",
     "wrappedOffset": 10
   },
   {
@@ -90792,7 +90792,7 @@
         }
       }
     },
-    "expectedOutput": "X extends ? Y ? ? X: Y"
+    "expectedOutput": "X extends ? Y ? ? X : Y"
   },
   {
     "kind": "roundtrip",
@@ -90800,9 +90800,9 @@
     "sourceIn": "X extends ?Y ? ?X : Y",
     "pattern": "conditional_type",
     "edits": [],
-    "expectedSourceOut": "X extends ? Y ? ? X: Y",
+    "expectedSourceOut": "X extends ? Y ? ? X : Y",
     "expectedReparseTree": "(conditional_type left: (type_identifier) right: (flow_maybe_type type: (type_identifier)) consequence: (flow_maybe_type type: (type_identifier)) alternative: (type_identifier))",
-    "wrappedText": "type _X = X extends ? Y ? ? X: Y;",
+    "wrappedText": "type _X = X extends ? Y ? ? X : Y;",
     "wrappedOffset": 10
   },
   {
@@ -90982,7 +90982,7 @@
         }
       }
     },
-    "expectedOutput": "((t: T) => X extends Y ? X: Y) extends ((t: T) => X extends Y ? Y: X) ? X: Y"
+    "expectedOutput": "((t: T) => X extends Y ? X : Y) extends ((t: T) => X extends Y ? Y : X) ? X : Y"
   },
   {
     "kind": "roundtrip",
@@ -90990,9 +90990,9 @@
     "sourceIn": "((t: T) => X extends Y ? X : Y) extends ((t: T) => X extends Y ? Y : X) ? X : Y",
     "pattern": "conditional_type",
     "edits": [],
-    "expectedSourceOut": "((t: T) => X extends Y ? X: Y) extends ((t: T) => X extends Y ? Y: X) ? X: Y",
+    "expectedSourceOut": "((t: T) => X extends Y ? X : Y) extends ((t: T) => X extends Y ? Y : X) ? X : Y",
     "expectedReparseTree": "(conditional_type left: (parenthesized_type type: (function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (type_identifier)))) right: (parenthesized_type type: (function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (type_identifier)))) consequence: (type_identifier) alternative: (type_identifier))",
-    "wrappedText": "type _X = ((t: T) => X extends Y ? X: Y) extends ((t: T) => X extends Y ? Y: X) ? X: Y;",
+    "wrappedText": "type _X = ((t: T) => X extends Y ? X : Y) extends ((t: T) => X extends Y ? Y : X) ? X : Y;",
     "wrappedOffset": 10
   },
   {
@@ -91030,7 +91030,7 @@
         }
       }
     },
-    "expectedOutput": "X extends Y ? X: Y"
+    "expectedOutput": "X extends Y ? X : Y"
   },
   {
     "kind": "roundtrip",
@@ -91038,9 +91038,9 @@
     "sourceIn": "X extends Y ? X : Y",
     "pattern": "conditional_type",
     "edits": [],
-    "expectedSourceOut": "X extends Y ? X: Y",
+    "expectedSourceOut": "X extends Y ? X : Y",
     "expectedReparseTree": "(conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (type_identifier))",
-    "wrappedText": "type _X = X extends Y ? X: Y;",
+    "wrappedText": "type _X = X extends Y ? X : Y;",
     "wrappedOffset": 10
   },
   {
@@ -91078,7 +91078,7 @@
         }
       }
     },
-    "expectedOutput": "X extends Y ? Y: X"
+    "expectedOutput": "X extends Y ? Y : X"
   },
   {
     "kind": "roundtrip",
@@ -91086,9 +91086,9 @@
     "sourceIn": "X extends Y ? Y : X",
     "pattern": "conditional_type",
     "edits": [],
-    "expectedSourceOut": "X extends Y ? Y: X",
+    "expectedSourceOut": "X extends Y ? Y : X",
     "expectedReparseTree": "(conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (type_identifier))",
-    "wrappedText": "type _X = X extends Y ? Y: X;",
+    "wrappedText": "type _X = X extends Y ? Y : X;",
     "wrappedOffset": 10
   },
   {
@@ -91218,7 +91218,7 @@
         }
       }
     },
-    "expectedOutput": "X extends Y ? X: Y extends (t: T) => X extends Y ? Y: X ? X: Y"
+    "expectedOutput": "X extends Y ? X : Y extends (t: T) => X extends Y ? Y : X ? X : Y"
   },
   {
     "kind": "roundtrip",
@@ -91226,9 +91226,9 @@
     "sourceIn": "X extends Y ? X : Y extends (t: T) => X extends Y ? Y : X ? X : Y",
     "pattern": "conditional_type",
     "edits": [],
-    "expectedSourceOut": "X extends Y ? X: Y extends (t: T) => X extends Y ? Y: X ? X: Y",
+    "expectedSourceOut": "X extends Y ? X : Y extends (t: T) => X extends Y ? Y : X ? X : Y",
     "expectedReparseTree": "(conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (conditional_type left: (type_identifier) right: (function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (type_identifier))) consequence: (type_identifier) alternative: (type_identifier)))",
-    "wrappedText": "type _X = X extends Y ? X: Y extends (t: T) => X extends Y ? Y: X ? X: Y;",
+    "wrappedText": "type _X = X extends Y ? X : Y extends (t: T) => X extends Y ? Y : X ? X : Y;",
     "wrappedOffset": 10
   },
   {
@@ -91334,7 +91334,7 @@
         }
       }
     },
-    "expectedOutput": "Y extends (t: T) => X extends Y ? Y: X ? X: Y"
+    "expectedOutput": "Y extends (t: T) => X extends Y ? Y : X ? X : Y"
   },
   {
     "kind": "roundtrip",
@@ -91342,9 +91342,9 @@
     "sourceIn": "Y extends (t: T) => X extends Y ? Y : X ? X : Y",
     "pattern": "conditional_type",
     "edits": [],
-    "expectedSourceOut": "Y extends (t: T) => X extends Y ? Y: X ? X: Y",
+    "expectedSourceOut": "Y extends (t: T) => X extends Y ? Y : X ? X : Y",
     "expectedReparseTree": "(conditional_type left: (type_identifier) right: (function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (type_identifier))) consequence: (type_identifier) alternative: (type_identifier))",
-    "wrappedText": "type _X = Y extends (t: T) => X extends Y ? Y: X ? X: Y;",
+    "wrappedText": "type _X = Y extends (t: T) => X extends Y ? Y : X ? X : Y;",
     "wrappedOffset": 10
   },
   {
@@ -91382,7 +91382,7 @@
         }
       }
     },
-    "expectedOutput": "X extends Y ? Y: X"
+    "expectedOutput": "X extends Y ? Y : X"
   },
   {
     "kind": "roundtrip",
@@ -91390,9 +91390,9 @@
     "sourceIn": "X extends Y ? Y : X",
     "pattern": "conditional_type",
     "edits": [],
-    "expectedSourceOut": "X extends Y ? Y: X",
+    "expectedSourceOut": "X extends Y ? Y : X",
     "expectedReparseTree": "(conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (type_identifier))",
-    "wrappedText": "type _X = X extends Y ? Y: X;",
+    "wrappedText": "type _X = X extends Y ? Y : X;",
     "wrappedOffset": 10
   },
   {
@@ -91463,7 +91463,7 @@
         }
       }
     },
-    "expectedOutput": "T extends X<infer Y> ? Y: X"
+    "expectedOutput": "T extends X<infer Y> ? Y : X"
   },
   {
     "kind": "roundtrip",
@@ -91471,9 +91471,9 @@
     "sourceIn": "T extends X<infer Y> ? Y : X",
     "pattern": "conditional_type",
     "edits": [],
-    "expectedSourceOut": "T extends X<infer Y> ? Y: X",
+    "expectedSourceOut": "T extends X<infer Y> ? Y : X",
     "expectedReparseTree": "(conditional_type left: (type_identifier) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (infer_type name: (type_identifier))))) consequence: (type_identifier) alternative: (type_identifier))",
-    "wrappedText": "type _X = T extends X<infer Y> ? Y: X;",
+    "wrappedText": "type _X = T extends X<infer Y> ? Y : X;",
     "wrappedOffset": 10
   },
   {
@@ -91514,7 +91514,7 @@
       },
       "_alternative": 145
     },
-    "expectedOutput": "X extends (infer X)[] ? X: never"
+    "expectedOutput": "X extends (infer X)[] ? X : never"
   },
   {
     "kind": "roundtrip",
@@ -91522,9 +91522,9 @@
     "sourceIn": "X extends (infer X)[] ? X : never",
     "pattern": "conditional_type",
     "edits": [],
-    "expectedSourceOut": "X extends (infer X)[] ? X: never",
+    "expectedSourceOut": "X extends (infer X)[] ? X : never",
     "expectedReparseTree": "(conditional_type left: (type_identifier) right: (array_type type: (parenthesized_type type: (infer_type name: (type_identifier)))) consequence: (type_identifier) alternative: (predefined_type))",
-    "wrappedText": "type _X = X extends (infer X)[] ? X: never;",
+    "wrappedText": "type _X = X extends (infer X)[] ? X : never;",
     "wrappedOffset": 10
   },
   {
@@ -91595,7 +91595,7 @@
       },
       "_alternative": 145
     },
-    "expectedOutput": "T extends { x: infer X } ? X: never"
+    "expectedOutput": "T extends { x: infer X } ? X : never"
   },
   {
     "kind": "roundtrip",
@@ -91603,9 +91603,9 @@
     "sourceIn": "T extends { x: infer X } ? X : never",
     "pattern": "conditional_type",
     "edits": [],
-    "expectedSourceOut": "T extends { x: infer X } ? X: never",
+    "expectedSourceOut": "T extends { x: infer X } ? X : never",
     "expectedReparseTree": "(conditional_type left: (type_identifier) right: (object_type members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (infer_type name: (type_identifier)))))) consequence: (type_identifier) alternative: (predefined_type))",
-    "wrappedText": "type _X = T extends { x: infer X } ? X: never;",
+    "wrappedText": "type _X = T extends { x: infer X } ? X : never;",
     "wrappedOffset": 10
   },
   {
@@ -91677,7 +91677,7 @@
       },
       "_alternative": 145
     },
-    "expectedOutput": "T extends { x: infer X extends number } ? X: never"
+    "expectedOutput": "T extends { x: infer X extends number } ? X : never"
   },
   {
     "kind": "roundtrip",
@@ -91685,9 +91685,9 @@
     "sourceIn": "T extends { x: infer X extends number } ? X : never",
     "pattern": "conditional_type",
     "edits": [],
-    "expectedSourceOut": "T extends { x: infer X extends number } ? X: never",
+    "expectedSourceOut": "T extends { x: infer X extends number } ? X : never",
     "expectedReparseTree": "(conditional_type left: (type_identifier) right: (object_type members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (infer_type name: (type_identifier) type: (predefined_type)))))) consequence: (type_identifier) alternative: (predefined_type))",
-    "wrappedText": "type _X = T extends { x: infer X extends number } ? X: never;",
+    "wrappedText": "type _X = T extends { x: infer X extends number } ? X : never;",
     "wrappedOffset": 10
   },
   {
@@ -92183,7 +92183,7 @@
         }
       }
     },
-    "expectedOutput": "((t: T) => X extends Y ? X: Y)"
+    "expectedOutput": "((t: T) => X extends Y ? X : Y)"
   },
   {
     "kind": "roundtrip",
@@ -92191,9 +92191,9 @@
     "sourceIn": "((t: T) => X extends Y ? X : Y)",
     "pattern": "parenthesized_type",
     "edits": [],
-    "expectedSourceOut": "((t: T) => X extends Y ? X: Y)",
+    "expectedSourceOut": "((t: T) => X extends Y ? X : Y)",
     "expectedReparseTree": "(parenthesized_type type: (function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (type_identifier))))",
-    "wrappedText": "type _X = ((t: T) => X extends Y ? X: Y);",
+    "wrappedText": "type _X = ((t: T) => X extends Y ? X : Y);",
     "wrappedOffset": 10
   },
   {
@@ -92278,7 +92278,7 @@
         }
       }
     },
-    "expectedOutput": "((t: T) => X extends Y ? Y: X)"
+    "expectedOutput": "((t: T) => X extends Y ? Y : X)"
   },
   {
     "kind": "roundtrip",
@@ -92286,9 +92286,9 @@
     "sourceIn": "((t: T) => X extends Y ? Y : X)",
     "pattern": "parenthesized_type",
     "edits": [],
-    "expectedSourceOut": "((t: T) => X extends Y ? Y: X)",
+    "expectedSourceOut": "((t: T) => X extends Y ? Y : X)",
     "expectedReparseTree": "(parenthesized_type type: (function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (type_identifier))))",
-    "wrappedText": "type _X = ((t: T) => X extends Y ? Y: X);",
+    "wrappedText": "type _X = ((t: T) => X extends Y ? Y : X);",
     "wrappedOffset": 10
   },
   {
@@ -92400,7 +92400,7 @@
         }
       }
     },
-    "expectedOutput": "(t: T) => X extends Y ? X: Y"
+    "expectedOutput": "(t: T) => X extends Y ? X : Y"
   },
   {
     "kind": "roundtrip",
@@ -92408,9 +92408,9 @@
     "sourceIn": "(t: T) => X extends Y ? X : Y",
     "pattern": "function_type",
     "edits": [],
-    "expectedSourceOut": "(t: T) => X extends Y ? X: Y",
+    "expectedSourceOut": "(t: T) => X extends Y ? X : Y",
     "expectedReparseTree": "(function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (type_identifier)))",
-    "wrappedText": "type _X = (t: T) => X extends Y ? X: Y;",
+    "wrappedText": "type _X = (t: T) => X extends Y ? X : Y;",
     "wrappedOffset": 10
   },
   {
@@ -92492,7 +92492,7 @@
         }
       }
     },
-    "expectedOutput": "(t: T) => X extends Y ? Y: X"
+    "expectedOutput": "(t: T) => X extends Y ? Y : X"
   },
   {
     "kind": "roundtrip",
@@ -92500,9 +92500,9 @@
     "sourceIn": "(t: T) => X extends Y ? Y : X",
     "pattern": "function_type",
     "edits": [],
-    "expectedSourceOut": "(t: T) => X extends Y ? Y: X",
+    "expectedSourceOut": "(t: T) => X extends Y ? Y : X",
     "expectedReparseTree": "(function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (type_identifier)))",
-    "wrappedText": "type _X = (t: T) => X extends Y ? Y: X;",
+    "wrappedText": "type _X = (t: T) => X extends Y ? Y : X;",
     "wrappedOffset": 10
   },
   {
@@ -92676,7 +92676,7 @@
         }
       }
     },
-    "expectedOutput": "(t: T) => X extends Y ? X: Y extends (t: T) => X extends Y ? Y: X ? X: Y"
+    "expectedOutput": "(t: T) => X extends Y ? X : Y extends (t: T) => X extends Y ? Y : X ? X : Y"
   },
   {
     "kind": "roundtrip",
@@ -92684,9 +92684,9 @@
     "sourceIn": "(t: T) => X extends Y ? X : Y extends (t: T) => X extends Y ? Y : X ? X : Y",
     "pattern": "function_type",
     "edits": [],
-    "expectedSourceOut": "(t: T) => X extends Y ? X: Y extends (t: T) => X extends Y ? Y: X ? X: Y",
+    "expectedSourceOut": "(t: T) => X extends Y ? X : Y extends (t: T) => X extends Y ? Y : X ? X : Y",
     "expectedReparseTree": "(function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (conditional_type left: (type_identifier) right: (function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (type_identifier))) consequence: (type_identifier) alternative: (type_identifier))))",
-    "wrappedText": "type _X = (t: T) => X extends Y ? X: Y extends (t: T) => X extends Y ? Y: X ? X: Y;",
+    "wrappedText": "type _X = (t: T) => X extends Y ? X : Y extends (t: T) => X extends Y ? Y : X ? X : Y;",
     "wrappedOffset": 10
   },
   {
@@ -92768,7 +92768,7 @@
         }
       }
     },
-    "expectedOutput": "(t: T) => X extends Y ? Y: X"
+    "expectedOutput": "(t: T) => X extends Y ? Y : X"
   },
   {
     "kind": "roundtrip",
@@ -92776,9 +92776,9 @@
     "sourceIn": "(t: T) => X extends Y ? Y : X",
     "pattern": "function_type",
     "edits": [],
-    "expectedSourceOut": "(t: T) => X extends Y ? Y: X",
+    "expectedSourceOut": "(t: T) => X extends Y ? Y : X",
     "expectedReparseTree": "(function_type parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (type_identifier) alternative: (type_identifier)))",
-    "wrappedText": "type _X = (t: T) => X extends Y ? Y: X;",
+    "wrappedText": "type _X = (t: T) => X extends Y ? Y : X;",
     "wrappedOffset": 10
   },
   {
@@ -94574,7 +94574,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "type A<B, C> = `${B}${C}`;\ntype A = `${B[0]}-foo-${C}-bar-${D<U, D>}`\ntype A = `[${'a'}${0}]`\ntype A<B, C> = B extends C ? C extends string ? `${C}${\"\" extends C ? \"\": \".\"}${B}`: never: never\ntype Trim<S extends string> = S extends `${infer R}` ? Trim<R>: S;\ntype A = `${true & ('foo' | false)}`;\ntype StringToNumber<S extends string> = S extends `${infer N extends number}` ? N: never;\n"
+    "expectedOutput": "type A<B, C> = `${B}${C}`;\ntype A = `${B[0]}-foo-${C}-bar-${D<U, D>}`\ntype A = `[${'a'}${0}]`\ntype A<B, C> = B extends C ? C extends string ? `${C}${\"\" extends C ? \"\" : \".\"}${B}` : never : never\ntype Trim<S extends string> = S extends `${infer R}` ? Trim<R> : S;\ntype A = `${true & ('foo' | false)}`;\ntype StringToNumber<S extends string> = S extends `${infer N extends number}` ? N : never;\n"
   },
   {
     "kind": "roundtrip",
@@ -94582,9 +94582,9 @@
     "sourceIn": "\ntype A<B, C> = `${B}${C}`;\ntype A = `${B[0]}-foo-${C}-bar-${D<U, D>}`\ntype A = `[${'a'}${0}]`\ntype A<B, C> = B extends C\n  ? C extends string\n    ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n    : never\n  : never\ntype Trim<S extends string> = S extends `${infer R}` ? Trim<R>  : S;\ntype A = `${true & ('foo' | false)}`;\ntype StringToNumber<S extends string> = S extends `${infer N extends number}` ? N : never;",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "type A<B, C> = `${B}${C}`;\ntype A = `${B[0]}-foo-${C}-bar-${D<U, D>}`\ntype A = `[${'a'}${0}]`\ntype A<B, C> = B extends C ? C extends string ? `${C}${\"\" extends C ? \"\": \".\"}${B}`: never: never\ntype Trim<S extends string> = S extends `${infer R}` ? Trim<R>: S;\ntype A = `${true & ('foo' | false)}`;\ntype StringToNumber<S extends string> = S extends `${infer N extends number}` ? N: never;\n",
+    "expectedSourceOut": "type A<B, C> = `${B}${C}`;\ntype A = `${B[0]}-foo-${C}-bar-${D<U, D>}`\ntype A = `[${'a'}${0}]`\ntype A<B, C> = B extends C ? C extends string ? `${C}${\"\" extends C ? \"\" : \".\"}${B}` : never : never\ntype Trim<S extends string> = S extends `${infer R}` ? Trim<R> : S;\ntype A = `${true & ('foo' | false)}`;\ntype StringToNumber<S extends string> = S extends `${infer N extends number}` ? N : never;\n",
     "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) value: (template_literal_type elements: (template_type type: (type_identifier)) elements: (template_type type: (type_identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (template_literal_type elements: (template_type type: (lookup_type type: (type_identifier) index_type: (literal_type (number_decimal)))) elements: (string_fragment) elements: (template_type type: (type_identifier)) elements: (string_fragment) elements: (template_type type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (template_literal_type elements: (string_fragment) elements: (template_type type: (literal_type (string_single elements: (string_fragment)))) elements: (template_type type: (literal_type (number_decimal))) elements: (string_fragment)) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) value: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (conditional_type left: (type_identifier) right: (predefined_type) consequence: (template_literal_type elements: (template_type type: (type_identifier)) elements: (template_type type: (conditional_type left: (literal_type (string_double)) right: (type_identifier) consequence: (literal_type (string_double)) alternative: (literal_type (string_double elements: (string_fragment))))) elements: (template_type type: (type_identifier))) alternative: (predefined_type)) alternative: (predefined_type)) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint type: (predefined_type))))) value: (conditional_type left: (type_identifier) right: (template_literal_type elements: (template_type type: (infer_type name: (type_identifier)))) consequence: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))) alternative: (type_identifier))) statements: (type_alias_declaration name: (type_identifier) value: (template_literal_type elements: (template_type type: (intersection_type left: (literal_type (true)) right: (parenthesized_type type: (union_type left: (literal_type (string_single elements: (string_fragment))) right: (literal_type (false)))))))) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint type: (predefined_type))))) value: (conditional_type left: (type_identifier) right: (template_literal_type elements: (template_type type: (infer_type name: (type_identifier) type: (predefined_type)))) consequence: (type_identifier) alternative: (predefined_type))))",
-    "wrappedText": "type A<B, C> = `${B}${C}`;\ntype A = `${B[0]}-foo-${C}-bar-${D<U, D>}`\ntype A = `[${'a'}${0}]`\ntype A<B, C> = B extends C ? C extends string ? `${C}${\"\" extends C ? \"\": \".\"}${B}`: never: never\ntype Trim<S extends string> = S extends `${infer R}` ? Trim<R>: S;\ntype A = `${true & ('foo' | false)}`;\ntype StringToNumber<S extends string> = S extends `${infer N extends number}` ? N: never;\n",
+    "wrappedText": "type A<B, C> = `${B}${C}`;\ntype A = `${B[0]}-foo-${C}-bar-${D<U, D>}`\ntype A = `[${'a'}${0}]`\ntype A<B, C> = B extends C ? C extends string ? `${C}${\"\" extends C ? \"\" : \".\"}${B}` : never : never\ntype Trim<S extends string> = S extends `${infer R}` ? Trim<R> : S;\ntype A = `${true & ('foo' | false)}`;\ntype StringToNumber<S extends string> = S extends `${infer N extends number}` ? N : never;\n",
     "wrappedOffset": 0
   },
   {
@@ -95078,7 +95078,7 @@
       },
       "_terminator": 173
     },
-    "expectedOutput": "type A<B, C> = B extends C ? C extends string ? `${C}${\"\" extends C ? \"\": \".\"}${B}`: never: never\n"
+    "expectedOutput": "type A<B, C> = B extends C ? C extends string ? `${C}${\"\" extends C ? \"\" : \".\"}${B}` : never : never\n"
   },
   {
     "kind": "roundtrip",
@@ -95086,9 +95086,9 @@
     "sourceIn": "type A<B, C> = B extends C\n  ? C extends string\n    ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n    : never\n  : never",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type A<B, C> = B extends C ? C extends string ? `${C}${\"\" extends C ? \"\": \".\"}${B}`: never: never\n",
+    "expectedSourceOut": "type A<B, C> = B extends C ? C extends string ? `${C}${\"\" extends C ? \"\" : \".\"}${B}` : never : never\n",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) value: (conditional_type left: (type_identifier) right: (type_identifier) consequence: (conditional_type left: (type_identifier) right: (predefined_type) consequence: (template_literal_type elements: (template_type type: (type_identifier)) elements: (template_type type: (conditional_type left: (literal_type (string_double)) right: (type_identifier) consequence: (literal_type (string_double)) alternative: (literal_type (string_double elements: (string_fragment))))) elements: (template_type type: (type_identifier))) alternative: (predefined_type)) alternative: (predefined_type)) terminator: (automatic_semicolon))",
-    "wrappedText": "type A<B, C> = B extends C ? C extends string ? `${C}${\"\" extends C ? \"\": \".\"}${B}`: never: never\n",
+    "wrappedText": "type A<B, C> = B extends C ? C extends string ? `${C}${\"\" extends C ? \"\" : \".\"}${B}` : never : never\n",
     "wrappedOffset": 0
   },
   {
@@ -95213,7 +95213,7 @@
       },
       "_terminator": 20
     },
-    "expectedOutput": "type Trim<S extends string> = S extends `${infer R}` ? Trim<R>: S;"
+    "expectedOutput": "type Trim<S extends string> = S extends `${infer R}` ? Trim<R> : S;"
   },
   {
     "kind": "roundtrip",
@@ -95221,9 +95221,9 @@
     "sourceIn": "type Trim<S extends string> = S extends `${infer R}` ? Trim<R>  : S;",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type Trim<S extends string> = S extends `${infer R}` ? Trim<R>: S;",
+    "expectedSourceOut": "type Trim<S extends string> = S extends `${infer R}` ? Trim<R> : S;",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint type: (predefined_type))))) value: (conditional_type left: (type_identifier) right: (template_literal_type elements: (template_type type: (infer_type name: (type_identifier)))) consequence: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))) alternative: (type_identifier)))",
-    "wrappedText": "type Trim<S extends string> = S extends `${infer R}` ? Trim<R>: S;",
+    "wrappedText": "type Trim<S extends string> = S extends `${infer R}` ? Trim<R> : S;",
     "wrappedOffset": 0
   },
   {
@@ -95378,7 +95378,7 @@
       },
       "_terminator": 20
     },
-    "expectedOutput": "type StringToNumber<S extends string> = S extends `${infer N extends number}` ? N: never;"
+    "expectedOutput": "type StringToNumber<S extends string> = S extends `${infer N extends number}` ? N : never;"
   },
   {
     "kind": "roundtrip",
@@ -95386,9 +95386,9 @@
     "sourceIn": "type StringToNumber<S extends string> = S extends `${infer N extends number}` ? N : never;",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type StringToNumber<S extends string> = S extends `${infer N extends number}` ? N: never;",
+    "expectedSourceOut": "type StringToNumber<S extends string> = S extends `${infer N extends number}` ? N : never;",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier) constraint: (constraint type: (predefined_type))))) value: (conditional_type left: (type_identifier) right: (template_literal_type elements: (template_type type: (infer_type name: (type_identifier) type: (predefined_type)))) consequence: (type_identifier) alternative: (predefined_type)))",
-    "wrappedText": "type StringToNumber<S extends string> = S extends `${infer N extends number}` ? N: never;",
+    "wrappedText": "type StringToNumber<S extends string> = S extends `${infer N extends number}` ? N : never;",
     "wrappedOffset": 0
   },
   {
@@ -96762,7 +96762,7 @@
         }
       ]
     },
-    "expectedOutput": "`${C}${\"\" extends C ? \"\": \".\"}${B}`"
+    "expectedOutput": "`${C}${\"\" extends C ? \"\" : \".\"}${B}`"
   },
   {
     "kind": "roundtrip",
@@ -96770,9 +96770,9 @@
     "sourceIn": "`${C}${\"\" extends C ? \"\" : \".\"}${B}`",
     "pattern": "template_literal_type",
     "edits": [],
-    "expectedSourceOut": "`${C}${\"\" extends C ? \"\": \".\"}${B}`",
+    "expectedSourceOut": "`${C}${\"\" extends C ? \"\" : \".\"}${B}`",
     "expectedReparseTree": "(template_literal_type elements: (template_type type: (type_identifier)) elements: (template_type type: (conditional_type left: (literal_type (string_double)) right: (type_identifier) consequence: (literal_type (string_double)) alternative: (literal_type (string_double elements: (string_fragment))))) elements: (template_type type: (type_identifier)))",
-    "wrappedText": "type _X = `${C}${\"\" extends C ? \"\": \".\"}${B}`;",
+    "wrappedText": "type _X = `${C}${\"\" extends C ? \"\" : \".\"}${B}`;",
     "wrappedOffset": 10
   },
   {
@@ -97439,7 +97439,7 @@
       },
       "_alternative": 145
     },
-    "expectedOutput": "B extends C ? C extends string ? `${C}${\"\" extends C ? \"\": \".\"}${B}`: never: never"
+    "expectedOutput": "B extends C ? C extends string ? `${C}${\"\" extends C ? \"\" : \".\"}${B}` : never : never"
   },
   {
     "kind": "roundtrip",
@@ -97447,9 +97447,9 @@
     "sourceIn": "B extends C\n  ? C extends string\n    ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n    : never\n  : never",
     "pattern": "conditional_type",
     "edits": [],
-    "expectedSourceOut": "B extends C ? C extends string ? `${C}${\"\" extends C ? \"\": \".\"}${B}`: never: never",
+    "expectedSourceOut": "B extends C ? C extends string ? `${C}${\"\" extends C ? \"\" : \".\"}${B}` : never : never",
     "expectedReparseTree": "(conditional_type left: (type_identifier) right: (type_identifier) consequence: (conditional_type left: (type_identifier) right: (predefined_type) consequence: (template_literal_type elements: (template_type type: (type_identifier)) elements: (template_type type: (conditional_type left: (literal_type (string_double)) right: (type_identifier) consequence: (literal_type (string_double)) alternative: (literal_type (string_double elements: (string_fragment))))) elements: (template_type type: (type_identifier))) alternative: (predefined_type)) alternative: (predefined_type))",
-    "wrappedText": "type _X = B extends C ? C extends string ? `${C}${\"\" extends C ? \"\": \".\"}${B}`: never: never;",
+    "wrappedText": "type _X = B extends C ? C extends string ? `${C}${\"\" extends C ? \"\" : \".\"}${B}` : never : never;",
     "wrappedOffset": 10
   },
   {
@@ -97542,7 +97542,7 @@
       },
       "_alternative": 145
     },
-    "expectedOutput": "C extends string ? `${C}${\"\" extends C ? \"\": \".\"}${B}`: never"
+    "expectedOutput": "C extends string ? `${C}${\"\" extends C ? \"\" : \".\"}${B}` : never"
   },
   {
     "kind": "roundtrip",
@@ -97550,9 +97550,9 @@
     "sourceIn": "C extends string\n    ? `${C}${\"\" extends C ? \"\" : \".\"}${B}`\n    : never",
     "pattern": "conditional_type",
     "edits": [],
-    "expectedSourceOut": "C extends string ? `${C}${\"\" extends C ? \"\": \".\"}${B}`: never",
+    "expectedSourceOut": "C extends string ? `${C}${\"\" extends C ? \"\" : \".\"}${B}` : never",
     "expectedReparseTree": "(conditional_type left: (type_identifier) right: (predefined_type) consequence: (template_literal_type elements: (template_type type: (type_identifier)) elements: (template_type type: (conditional_type left: (literal_type (string_double)) right: (type_identifier) consequence: (literal_type (string_double)) alternative: (literal_type (string_double elements: (string_fragment))))) elements: (template_type type: (type_identifier))) alternative: (predefined_type))",
-    "wrappedText": "type _X = C extends string ? `${C}${\"\" extends C ? \"\": \".\"}${B}`: never;",
+    "wrappedText": "type _X = C extends string ? `${C}${\"\" extends C ? \"\" : \".\"}${B}` : never;",
     "wrappedOffset": 10
   },
   {
@@ -97595,7 +97595,7 @@
         }
       }
     },
-    "expectedOutput": "\"\" extends C ? \"\": \".\""
+    "expectedOutput": "\"\" extends C ? \"\" : \".\""
   },
   {
     "kind": "roundtrip",
@@ -97603,9 +97603,9 @@
     "sourceIn": "\"\" extends C ? \"\" : \".\"",
     "pattern": "conditional_type",
     "edits": [],
-    "expectedSourceOut": "\"\" extends C ? \"\": \".\"",
+    "expectedSourceOut": "\"\" extends C ? \"\" : \".\"",
     "expectedReparseTree": "(conditional_type left: (literal_type (string_double)) right: (type_identifier) consequence: (literal_type (string_double)) alternative: (literal_type (string_double elements: (string_fragment))))",
-    "wrappedText": "type _X = \"\" extends C ? \"\": \".\";",
+    "wrappedText": "type _X = \"\" extends C ? \"\" : \".\";",
     "wrappedOffset": 10
   },
   {
@@ -97684,7 +97684,7 @@
         }
       }
     },
-    "expectedOutput": "S extends `${infer R}` ? Trim<R>: S"
+    "expectedOutput": "S extends `${infer R}` ? Trim<R> : S"
   },
   {
     "kind": "roundtrip",
@@ -97692,9 +97692,9 @@
     "sourceIn": "S extends `${infer R}` ? Trim<R>  : S",
     "pattern": "conditional_type",
     "edits": [],
-    "expectedSourceOut": "S extends `${infer R}` ? Trim<R>: S",
+    "expectedSourceOut": "S extends `${infer R}` ? Trim<R> : S",
     "expectedReparseTree": "(conditional_type left: (type_identifier) right: (template_literal_type elements: (template_type type: (infer_type name: (type_identifier)))) consequence: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))) alternative: (type_identifier))",
-    "wrappedText": "type _X = S extends `${infer R}` ? Trim<R>: S;",
+    "wrappedText": "type _X = S extends `${infer R}` ? Trim<R> : S;",
     "wrappedOffset": 10
   },
   {
@@ -97738,7 +97738,7 @@
       },
       "_alternative": 145
     },
-    "expectedOutput": "S extends `${infer N extends number}` ? N: never"
+    "expectedOutput": "S extends `${infer N extends number}` ? N : never"
   },
   {
     "kind": "roundtrip",
@@ -97746,9 +97746,9 @@
     "sourceIn": "S extends `${infer N extends number}` ? N : never",
     "pattern": "conditional_type",
     "edits": [],
-    "expectedSourceOut": "S extends `${infer N extends number}` ? N: never",
+    "expectedSourceOut": "S extends `${infer N extends number}` ? N : never",
     "expectedReparseTree": "(conditional_type left: (type_identifier) right: (template_literal_type elements: (template_type type: (infer_type name: (type_identifier) type: (predefined_type)))) consequence: (type_identifier) alternative: (predefined_type))",
-    "wrappedText": "type _X = S extends `${infer N extends number}` ? N: never;",
+    "wrappedText": "type _X = S extends `${infer N extends number}` ? N : never;",
     "wrappedOffset": 10
   },
   {

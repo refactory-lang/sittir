@@ -10,11 +10,16 @@ const CASES: readonly (readonly [grammar: string, label: string, source: string]
 	['rust', 'an empty initializer list is empty braces', 'fn h() {\n    let s = S {};\n}\n'],
 	['rust', 'a filled initializer list is padded', 'fn h() {\n    let s = S { a: 1 };\n}\n'],
 	['rust', 'a comment alone in the braces keeps the pad', 'fn h() {\n    let s = S { /* c */ };\n}\n'],
+	['rust', 'a lifetime bound after a type keeps its plus spaced', "type a = Box<Something + 'a>;\n"],
 	['scm', 'a missing node is glued inside its parentheses', '(program (MISSING x))\n'],
 	['scm', 'a quantifier is glued to its operand', '(a)*\n(b)?\n'],
 	['scm', 'a negated field is glued to its name', '(a !b)\n'],
 	['typescript', 'a generator star is glued to function', 'function* g() {}\n'],
 	['typescript', 'a decorator name is glued to the at sign', '@dec\nclass A {}\n'],
+	['typescript', 'a conditional type spaces its colon', 'type T = X extends Y ? X : Y;\n'],
+	['typescript', 'readonly keeps a space before an index signature bracket', 'type Foo = {\n  readonly [c: number]: string;\n};\n'],
+	['typescript', 'a mapped type sign is glued to readonly', 'type T = {\n  -readonly [K in keyof T]: any;\n};\n'],
+	['typescript', 'an index signature without readonly starts at its bracket', 'type Foo = {\n  [b: string]: any;\n};\n'],
 ];
 
 describe('the default seams spell the idiom', () => {
