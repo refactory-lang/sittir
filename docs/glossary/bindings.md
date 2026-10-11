@@ -440,9 +440,9 @@ The vocabulary's generated flags module, `flags.ts` in `VOCABULARY_DIR`. The inv
 
 The flags one bitflag word holds: 31, below the sign bit, so every bit is a positive number that `|` and `&` keep.
 
-### `packages/codegen/src/bindings/flags.ts::printFlagsModule`
+### `packages/codegen/src/bindings/flags.ts::flagMembers`
 
-The generated flags module: one numeric `enum Flags` with a bit per flag name, in name order, each named by its TypeScript name (`byReference` is `Flags.ByReference = 1 << 3`). A name has one bit wherever it is declared, so `Flags.Static | Flags.Async` is the same number in every language. More names than `FLAG_BITS` are refused, naming the ones past the word, since their bits need a second word, which is designed when one is needed. A feature never adds a member to the enum, since a member added by augmentation has no bit at run time.
+The members of the generated flags module: one bit per flag name, in name order, each named by its TypeScript name (`byReference` is `ByReference` at bit 3). A name has one bit wherever it is declared, so `Flags.Static | Flags.Async` is the same number in every language. More names than `FLAG_BITS` are refused, naming the ones past the word, since their bits need a second word, which is designed when one is needed. A feature never adds a member to the enum, since a member added by augmentation has no bit at run time. `printFlagsModule` in tools builds the module from these members.
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::module`
 

@@ -2,6 +2,7 @@ import type { Command } from 'commander';
 import type { CommandModule } from '../../framework/command-module.ts';
 import { registerNamespace } from '../../framework/command-module.ts';
 
+import { astDiff } from './ast-diff.ts';
 import { assembleShapeCensus } from './assemble-shape-census.ts';
 import { bench } from './bench.ts';
 import { bootstrapGrammar } from './bootstrap-grammar.ts';
@@ -49,6 +50,7 @@ import { walk } from './walk.ts';
 /** All developer-diagnostic tool CommandModules, registered under `sittir tool`. */
 export const toolModules: readonly CommandModule[] = [
 	assembleShapeCensus,
+	astDiff,
 	bench,
 	benchCodemod,
 	bootstrapGrammar,

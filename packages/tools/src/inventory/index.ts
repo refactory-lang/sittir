@@ -15,11 +15,11 @@ import {
 	grammarBindingsHash,
 	grammarInput,
 	printBindingsModule,
-	printFlagsModule,
 	REGENERATE_BINDINGS_COMMAND,
 	resolveRoutes,
 	VOCABULARY_DIR
 } from '@sittir/codegen/bindings';
+import { printFlagsModule } from './flags.ts';
 import { type Vocabulary, readVocabulary } from './vocabulary.ts';
 import type { GrammarName } from '@sittir/codegen/grammars';
 import { compileNodeMap, evaluateGrammar, invoke } from '../codegen-surface.ts';
@@ -116,8 +116,8 @@ export async function deriveVocabulary(grammars: readonly GrammarName[] = bindin
 	return derive(await loadInputs(grammars));
 }
 
-export function flagsCurrent(vocabulary: Vocabulary, path: string = FLAGS_PATH): boolean {
-	return existsSync(path) && readFileSync(path, 'utf8') === printFlagsModule(vocabulary.flags);
+export async function flagsCurrent(vocabulary: Vocabulary, path: string = FLAGS_PATH): Promise<boolean> {
+	return existsSync(path) && readFileSync(path, 'utf8') === (await printFlagsModule(vocabulary.flags));
 }
 
 export function vocabularyDisagreements(d: Derivation, vocabulary: Vocabulary): string[] {
@@ -189,7 +189,7 @@ export async function run(opts: BindingsInventoryOptions): Promise<number> {
 	let code = 0;
 	if (opts.write) {
 		const { flags } = readVocabulary(VOCABULARY_DIR);
-		writeFileSync(FLAGS_PATH, printFlagsModule(flags));
+		writeFileSync(FLAGS_PATH, await printFlagsModule(flags));
 		process.stdout.write(`vocabulary flags: ${flags.size} written\n`);
 		for (const grammar of grammars) {
 			const module = await bindingsModule(grammar);
@@ -215,7 +215,7 @@ export async function run(opts: BindingsInventoryOptions): Promise<number> {
 		process.stdout.write(
 			`bindings and vocabulary: ${disagreements.length === 0 ? 'agree' : `${disagreements.length} disagreements\n  ${disagreements.join('\n  ')}`}\n`
 		);
-		const current = flagsCurrent(vocabulary);
+		const current = await flagsCurrent(vocabulary);
 		if (!current) code = 1;
 		process.stdout.write(
 			`vocabulary flags: ${current ? `${vocabulary.flags.size} current` : `flags.ts is stale against the Flag declarations; write it with \`${REGENERATE_BINDINGS_COMMAND}\``}\n`
