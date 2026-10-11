@@ -1,9 +1,9 @@
-// A measurement copy of the overlay derivation, kept runnable as the record of how the binding was measured. Production
+// A measurement copy of the grammar-bindings derivation, kept runnable as the record of how the binding was measured. Production
 // writes packages/<grammar>/grammar.bindings.ts through `sittir tool bindings-inventory --write`
-// (packages/codegen/src/bindings/overlay.ts); this script never writes there.
-// Derives a bindings overlay from the grammar's bindings.scm against its base grammar and prints every claim and member
+// (packages/codegen/src/bindings/grammar-bindings.ts); this script never writes there.
+// Derives grammar bindings from the grammar's bindings.scm against its base grammar and prints every claim and member
 // route it does not turn into a grammar change, with the reason.
-//   --out <file>   write the overlay module (overlay only, no rows) to <file>
+//   --out <file>   write the grammar-bindings module (bindings only, no rows) to <file>
 //   --no-aliases   leave alias pairs as mappings
 //   --no-splits    leave placed claims as mappings
 import { readFileSync, readdirSync, writeFileSync } from 'node:fs';

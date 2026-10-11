@@ -4,25 +4,25 @@ import type { RawGrammar } from '../compiler/types.ts';
 import { type BindingFacts, type MemberFact, type RefinedClaim, WILDCARD, isNamedMember, refineClaims } from './facts.ts';
 import type { MemberRoute } from './routes.ts';
 
-export type OverlayEdit = { readonly field: string } | { readonly alias: { readonly from: string; readonly to: string } };
+export type GrammarBindingsEdit = { readonly field: string } | { readonly alias: { readonly from: string; readonly to: string } };
 
-export interface OverlayPatch {
+export interface GrammarBindingsPatch {
 	readonly path: string;
-	readonly edit: OverlayEdit;
+	readonly edit: GrammarBindingsEdit;
 }
 
-export interface BindingsOverlay {
-	readonly patches: ReadonlyMap<string, readonly (readonly OverlayPatch[])[]>;
+export interface GrammarBindings {
+	readonly patches: ReadonlyMap<string, readonly (readonly GrammarBindingsPatch[])[]>;
 	readonly renames: Readonly<Record<string, string>>;
 	readonly splits: readonly Split[];
 }
 
-export interface OverlayResidue {
+export interface GrammarBindingsResidue {
 	readonly cause: string;
 	readonly row: string;
 }
 
-export interface OverlayReport {
+export interface GrammarBindingsReport {
 	readonly claims: number;
 	readonly members: number;
 	readonly aliases: Readonly<Record<string, string>>;
@@ -32,10 +32,10 @@ export interface OverlayReport {
 	readonly realizedByParent: readonly string[];
 	readonly realizedMembers: readonly string[];
 	readonly implicitMembers: readonly string[];
-	readonly residue: readonly OverlayResidue[];
+	readonly residue: readonly GrammarBindingsResidue[];
 }
 
-export interface OverlayInput {
+export interface GrammarBindingsInput {
 	readonly facts: BindingFacts;
 	readonly base: RawGrammar;
 	readonly vocabMembers: ReadonlyMap<string, ReadonlySet<string>>;
@@ -83,11 +83,11 @@ function sameShapeAs(kinds: readonly string[], members: readonly MemberFact[], r
 	return [first, ...rest.filter(same)];
 }
 
-export function deriveOverlay(input: OverlayInput): { overlay: BindingsOverlay; report: OverlayReport } {
+export function deriveGrammarBindings(input: GrammarBindingsInput): { bindings: GrammarBindings; report: GrammarBindingsReport } {
 	const { facts, base, vocabMembers, routedMembers } = input;
 	const rules = base.rules as Record<string, unknown>;
 	const ruleNames = new Set(Object.keys(rules));
-	const residue: OverlayResidue[] = [];
+	const residue: GrammarBindingsResidue[] = [];
 	const left = (cause: string, row: string): void => {
 		residue.push({ cause, row });
 	};
@@ -342,9 +342,9 @@ export function deriveOverlay(input: OverlayInput): { overlay: BindingsOverlay; 
 		else fieldWraps.push(request);
 	}
 
-	const patches = overlayPatches(rules, fieldWrapGrammar(fieldRenameGrammar(checks, fieldRenames), fieldWraps).rules as Record<string, unknown>, aliases);
+	const patches = grammarBindingsPatches(rules, fieldWrapGrammar(fieldRenameGrammar(checks, fieldRenames), fieldWraps).rules as Record<string, unknown>, aliases);
 	return {
-		overlay: { patches, renames, splits },
+		bindings: { patches, renames, splits },
 		report: {
 			claims: facts.claims.length,
 			members: facts.members.length,
@@ -360,11 +360,11 @@ export function deriveOverlay(input: OverlayInput): { overlay: BindingsOverlay; 
 	};
 }
 
-function overlayPatches(
+function grammarBindingsPatches(
 	before: Record<string, unknown>,
 	fielded: Record<string, unknown>,
 	aliases: Readonly<Record<string, string>>
-): Map<string, OverlayPatch[][]> {
+): Map<string, GrammarBindingsPatch[][]> {
 	const liftNames = new Set<string>();
 	const collectLifts = (r: unknown): void => {
 		if (Array.isArray(r)) r.forEach(collectLifts);
@@ -376,18 +376,18 @@ function overlayPatches(
 	Object.values(before).forEach(collectLifts);
 	const roots = Object.keys(before).filter((name) => !liftNames.has(name));
 
-	const pathMode = (root: unknown, patches: readonly OverlayPatch[]): OverlayPatch[] => {
+	const pathMode = (root: unknown, patches: readonly GrammarBindingsPatch[]): GrammarBindingsPatch[] => {
 		let node = root;
 		while (isRecord(node) && isPrecWrapper(node as { type: string })) node = node.content;
 		if (!isRecord(node) || node.type === 'SEQ' || patches.some((p) => p.path.includes('/') || p.path === '.')) return [...patches];
 		const length = Array.isArray(node.members) ? node.members.length : 1;
 		return patches.map((p) => ({ ...p, path: String(Number(p.path) - length) }));
 	};
-	const patchesBetween = (b0: Record<string, unknown>, a0: Record<string, unknown>, site: (b: GrammarRecord, a: GrammarRecord) => OverlayEdit | undefined): Map<string, OverlayPatch[]> => {
-		const out = new Map<string, OverlayPatch[]>();
+	const patchesBetween = (b0: Record<string, unknown>, a0: Record<string, unknown>, site: (b: GrammarRecord, a: GrammarRecord) => GrammarBindingsEdit | undefined): Map<string, GrammarBindingsPatch[]> => {
+		const out = new Map<string, GrammarBindingsPatch[]>();
 		const reached = new Set<string>();
 		for (const root of roots) {
-			const patches: OverlayPatch[] = [];
+			const patches: GrammarBindingsPatch[] = [];
 			const walk = (b: unknown, a: unknown, path: readonly number[]): void => {
 				if (!isRecord(b) || !isRecord(a)) return;
 				if (isPrecWrapper(b as { type: string })) return walk(b.content, a.content, path);
@@ -436,6 +436,6 @@ function overlayPatches(
 	return new Map(
 		[...new Set([...fieldPatches.keys(), ...aliasPatches.keys()])]
 			.sort()
-			.map((kind) => [kind, [fieldPatches.get(kind), aliasPatches.get(kind)].filter((p): p is OverlayPatch[] => p !== undefined)])
+			.map((kind) => [kind, [fieldPatches.get(kind), aliasPatches.get(kind)].filter((p): p is GrammarBindingsPatch[] => p !== undefined)])
 	);
 }

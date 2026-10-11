@@ -5,6 +5,6 @@ export * from './names.ts';
 export * from './routes.ts';
 export * from './input.ts';
 export * from './hash.ts';
-export * from './overlay.ts';
+export * from './grammar-bindings.ts';
 export * from './module.ts';
 export * from './read.ts';

@@ -28,7 +28,7 @@ function raw(rules: Record<string, Rule<'evaluate'>>, extra: Partial<RawGrammar>
 const word = (text: string): Rule<'evaluate'> => ({ type: STRING, value: text });
 
 describe('link carries each kind\'s provenance', () => {
-	it('keeps the renamed and split kinds a bindings overlay produced', () => {
+	it('keeps the renamed and split kinds grammar bindings produced', () => {
 		const linked = link(
 			raw(
 				{
@@ -56,7 +56,7 @@ describe('link carries each kind\'s provenance', () => {
 		expect(linked.provenance?.variantOf).toEqual({ pointer_const: 'pointer' });
 	});
 
-	it('carries no provenance for a grammar without an overlay', () => {
+	it('carries no provenance for a grammar without grammar bindings', () => {
 		const linked = link(raw({ root: word('x') }));
 
 		expect(linked.provenance).toEqual({});
