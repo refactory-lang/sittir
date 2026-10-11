@@ -359,3 +359,17 @@ fn a_comment_in_an_empty_block_sits_at_the_blocks_level() {
     let block = case.at("block", "{\n    // TODO\n}");
     assert_eq!(case.depths(block, Inner), [0, 0]);
 }
+
+
+#[test]
+fn a_list_items_siblings_are_the_items_of_its_own_list() {
+    let (language, _) = python();
+    let source = "@a\n@b\ndef f(): pass\n";
+    let tree = parse(&language, source);
+    let decorator = language.id_for_node_kind("decorator", true);
+    let sibling = |start, end| Some(sittir_core::engine::Sibling { start, end, kind: decorator });
+    let first = sittir_core::engine::siblings(&tree, index_of(&tree, source, "decorator", "@a"));
+    let last = sittir_core::engine::siblings(&tree, index_of(&tree, source, "decorator", "@b"));
+    assert_eq!((first.previous, first.next), (None, sibling(3, 5)));
+    assert_eq!((last.previous, last.next), (sibling(0, 2), None), "the definition after the decorators is another slot's");
+}

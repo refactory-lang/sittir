@@ -32,13 +32,14 @@ export interface TreeHandle {
 }
 
 /**
- * The siblings that hold sides beside a node in its source, taken at the outermost node spanning
- * exactly its bytes (a list item's wrapper holds the item's neighbours): the span of the one before
- * it, `null` when that node starts its parent, and of the one after it, `null` when it ends it.
+ * The siblings that hold sides beside a node in its source and in its own slot (the same field),
+ * taken at the outermost node spanning exactly its bytes (a list item's wrapper holds the item's
+ * neighbours): the item before it, `null` when it is its list's first, and the one after it, `null`
+ * when it is the last. Each is its span and its grammar kind id.
  */
 export interface Siblings {
-	readonly previous: { readonly start: number; readonly end: number } | null;
-	readonly next: { readonly start: number; readonly end: number } | null;
+	readonly previous: { readonly start: number; readonly end: number; readonly kind: number } | null;
+	readonly next: { readonly start: number; readonly end: number; readonly kind: number } | null;
 }
 
 const INDEX_RANGE = 2 ** 32;
