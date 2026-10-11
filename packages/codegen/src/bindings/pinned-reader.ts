@@ -23,6 +23,7 @@ import {
 	type BindingPattern,
 	type BindingsRoundTrip,
 	type PatternReference,
+	type ChildFact,
 	type ClaimFact,
 	type ContainerFact,
 	type MemberFact,
@@ -73,7 +74,7 @@ interface Visit {
 	readonly field: string | null;
 	readonly anchor: Anchor | null;
 	readonly parent: Visit | null;
-	readonly alternative: boolean;
+	readonly alternation: Expression | null;
 	readonly inherited: readonly ListElement.Parsed[];
 	readonly children: Visit[];
 }
@@ -138,6 +139,11 @@ function captures(v: Visit): string[] {
 	return [...v.node.elements(), ...v.inherited].flatMap((e) => (e.$type === K.Capture ? [e.name().$text] : []));
 }
 
+function mayBeAbsent(v: Visit): boolean {
+	return [...v.node.elements(), ...v.inherited].some(
+		(e) => e.$type === K.ListElementQuantifier && (e.quantifier() === K.Star || e.quantifier() === K.Qmark)
+	);
+}
 function quantified(v: Visit): boolean {
 	return [...v.node.elements(), ...v.inherited].some(
 		(e) => e.$type === K.ListElementQuantifier && (e.quantifier() === K.Star || e.quantifier() === K.Plus)
@@ -239,13 +245,13 @@ function readPattern(top: PatternNode, errors: number[], inherited: readonly Lis
 		field: string | null,
 		anchor: Anchor | null,
 		parent: Visit | null,
-		alternative: boolean,
+		alternation: Expression | null,
 		inherited: readonly ListElement.Parsed[]
 	): Visit => {
-		const v: Visit = { node, field, anchor, parent, alternative, inherited, children: [] };
+		const v: Visit = { node, field, anchor, parent, alternation, inherited, children: [] };
 		nodes.push(v);
 		errors.push(...unparsed(node));
-		for (const { expression, anchor } of expressionsOf(node, errors, origin)) place(expression, null, anchor, v, false, []);
+		for (const { expression, anchor } of expressionsOf(node, errors, origin)) place(expression, null, anchor, v, null, []);
 		return v;
 	};
 	const place = (
@@ -253,7 +259,7 @@ function readPattern(top: PatternNode, errors: number[], inherited: readonly Lis
 		field: string | null,
 		anchor: Anchor | null,
 		parent: Visit,
-		alternative: boolean,
+		alternation: Expression | null,
 		inherited: readonly ListElement.Parsed[]
 	): void => {
 		switch (expression.$type) {
@@ -261,14 +267,14 @@ function readPattern(top: PatternNode, errors: number[], inherited: readonly Lis
 			case K.NamedNodeSupertyped:
 			case K.AnonymousNode:
 			case K.Grouping:
-				parent.children.push(visit(expression, field, anchor, parent, alternative, inherited));
+				parent.children.push(visit(expression, field, anchor, parent, alternation, inherited));
 				return;
 			case K.FieldDefinition:
-				place(expression.definition(), expression.name().$text, anchor, parent, alternative, inherited);
+				place(expression.definition(), expression.name().$text, anchor, parent, alternation, inherited);
 				return;
 			case K.List:
 				for (const option of expression.definitions())
-					place(option, field, anchor, parent, true, [...inherited, ...expression.elements()]);
+					place(option, field, anchor, parent, expression, [...inherited, ...expression.elements()]);
 				return;
 			case K.NamedNodeExpressionArm:
 			case K.GroupExpressionArm:
@@ -281,7 +287,7 @@ function readPattern(top: PatternNode, errors: number[], inherited: readonly Lis
 				return;
 		}
 	};
-	return { top: visit(top, null, null, null, false, inherited), nodes, predicates };
+	return { top: visit(top, null, null, null, null, inherited), nodes, predicates };
 }
 
 function templateOf(predicate: Predicate.Parsed): Omit<TemplateFact, 'vocabs'> | null {
@@ -319,7 +325,10 @@ function predicateFact(predicate: Predicate.Parsed): Omit<PredicateFact, 'subjec
 
 function captureSite(claim: Visit, capture: string, nodes: readonly Visit[]): CaptureSite | null {
 	const at = nodes.find((v) => captures(v).includes(capture));
-	if (at === undefined) return null;
+	return at === undefined ? null : siteOf(claim, at);
+}
+
+function siteOf(claim: Visit, at: Visit): CaptureSite | null {
 	let up = 0;
 	for (let holder: Visit | null = claim; holder !== null; holder = holder.parent) {
 		if (holder !== claim) {
@@ -334,12 +343,54 @@ function captureSite(claim: Visit, capture: string, nodes: readonly Visit[]): Ca
 	return null;
 }
 
+function leadsToPresence(v: Visit): boolean {
+	return (tokenText(v) !== null && captures(v).length > 0) || v.children.some(leadsToPresence);
+}
+
+function childFacts(claim: Visit, origin: PatternOrigin): ChildFact[] {
+	const out: ChildFact[] = [];
+	const at = (v: Visit): CaptureSite => siteOf(claim, v) ?? refuse(origin, 'a node below the claimed node has no site');
+	const walk = (holder: Visit): void => {
+		const seen = new Set<Expression>();
+		for (const child of holder.children) {
+			if (mayBeAbsent(child) || leadsToPresence(child)) continue;
+			if (child.alternation !== null) {
+				if (seen.has(child.alternation)) continue;
+				seen.add(child.alternation);
+				const options = holder.children.filter((c) => c.alternation === child.alternation);
+				const kinds = options.map((option) => (option.children.length === 0 ? namedKind(option) : null));
+				if (kinds.some((kind) => kind === null))
+					refuse(origin, 'an alternation below the claimed node tests only named nodes with nothing below them');
+				out.push({ subject: at(child), kinds: kinds as string[] });
+				continue;
+			}
+			if (isGroup(child)) {
+				walk(child);
+				continue;
+			}
+			const text = tokenText(child);
+			if (text !== null) {
+				if (holder === claim) continue;
+				if (child.field === null) refuse(origin, 'a token below the claimed node names no field to place it in a slot');
+				out.push({ subject: at(child), text });
+				continue;
+			}
+			const kind = kindOf(child);
+			out.push(kind === WILDCARD || kind === null ? { subject: at(child), present: true } : { subject: at(child), kinds: [kind] });
+			walk(child);
+		}
+	};
+	walk(claim);
+	return out;
+}
+
 function claimFact(
 	v: Visit,
 	vocab: string,
 	top: Visit,
 	nodes: readonly Visit[],
-	patternPredicates: readonly Omit<PredicateFact, 'subject'>[]
+	patternPredicates: readonly Omit<PredicateFact, 'subject'>[],
+	origin: PatternOrigin
 ): ClaimFact {
 	const predicates = patternPredicates.map((p) => ({
 		...p,
@@ -351,7 +402,7 @@ function claimFact(
 	const tokens: string[] = [];
 	for (const child of v.children) {
 		const text = tokenText(child);
-		if (text === null || child.alternative) continue;
+		if (text === null || child.alternation !== null) continue;
 		if (child.field !== null) {
 			if (!isGroup(v)) fieldLiterals[child.field] = text;
 		} else if (captures(child).length === 0) tokens.push(text);
@@ -362,7 +413,7 @@ function claimFact(
 		const enclosing = kindOf(cursor);
 		if (enclosing !== null) within.push(enclosing);
 	}
-	return { vocab, kind, field: v.field, predicates, toplevel, within, fieldLiterals, tokens };
+	return { vocab, kind, field: v.field, predicates, toplevel, within, fieldLiterals, tokens, children: isGroup(v) ? [] : childFacts(v, origin) };
 }
 
 function memberFact(v: Visit, name: string, top: Visit, topKind: string | null): MemberFact | null {
@@ -450,7 +501,7 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 			if (inClaimPosition(name, v === top)) {
 				if (isClaim(name, v === top)) {
 					refuseAnchoredPlacement(v, name, origin);
-					facts.claims.push(claimFact(v, name, top, nodes, claimPredicates));
+					facts.claims.push(claimFact(v, name, top, nodes, claimPredicates, origin));
 				}
 			} else if (!name.startsWith('_') && name !== 'element') {
 				const member: MemberFact | null = kindPresence(members[0], v, name) ?? memberFact(v, name, top, topKind);

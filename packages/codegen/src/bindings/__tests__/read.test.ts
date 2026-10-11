@@ -154,6 +154,42 @@ describe('readBindings', () => {
 		expect(facts.members).toEqual([{ route: 'dropped', owner: 'binary', field: 'left', kind: null, after: null, anchor: null }]);
 	});
 
+	it('reads each node below a claimed node as a test of its kind at its site', async () => {
+		const facts = await readBindings('(call_expression function: (field_expression) @function) @expression.call.member');
+		expect(facts.claims[0]?.children).toEqual([
+			{ subject: { up: 0, down: [{ field: 'function', kind: 'field_expression', after: null, anchor: null }] }, kinds: ['field_expression'] }
+		]);
+	});
+
+	it('reads an alternation of nodes as one test of the union of their kinds', async () => {
+		const facts = await readBindings('(scope [(super) (in_path)]) @modifier.restricted');
+		expect(facts.claims[0]?.children).toEqual([{ subject: { up: 0, down: [{ field: null, kind: 'super', after: null, anchor: null }] }, kinds: ['super', 'in_path'] }]);
+	});
+
+	it('reads a field literal below a child as a text test through the child, and a field wildcard as a presence', async () => {
+		const facts = await readBindings('(comparison (comparator operators: "==") right: (_)) @expression.equal');
+		const comparator = { field: null, kind: 'comparator', after: null, anchor: null };
+		expect(facts.claims[0]?.children).toEqual([
+			{ subject: { up: 0, down: [comparator] }, kinds: ['comparator'] },
+			{ subject: { up: 0, down: [comparator, { field: 'operators', kind: null, after: null, anchor: null }] }, text: '==' },
+			{ subject: { up: 0, down: [{ field: 'right', kind: null, after: null, anchor: null }] }, present: true }
+		]);
+	});
+
+	it('reads no test from a node the pattern makes optional or repeats from zero, nor from anything below it', async () => {
+		const facts = await readBindings('(type_parameter bounds: (bounds (bound))? @constraint (attribute)*) @declaration.type_parameter');
+		expect(facts.claims[0]?.children).toEqual([]);
+	});
+
+	it('reads no test from the path to a presence capture: the flag is a member, not a condition of the claim', async () => {
+		const facts = await readBindings('(function_definition (modifiers "async" @isAsync)) @declaration.function');
+		expect(facts.claims[0]?.children).toEqual([]);
+	});
+
+	it('refuses a token below a claimed node that no field places in a slot', async () => {
+		await expect(readBindings('(outer (inner "-")) @expression.outer')).rejects.toThrow(/a token below the claimed node names no field/);
+	});
+
 	it('keeps the text of a token a container captures', async () => {
 		const { containers } = await readBindings('(ambient_declaration "declare" @declare (_) @element)');
 		expect(containers[0]?.captures.map((c) => [c.name, c.token])).toEqual([['declare', 'declare']]);

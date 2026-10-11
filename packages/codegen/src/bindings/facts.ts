@@ -28,6 +28,10 @@ export interface PredicateFact {
 	readonly subject: CaptureSite | null;
 }
 
+export type ChildFact =
+	| { readonly subject: CaptureSite; readonly kinds: readonly string[] }
+	| { readonly subject: CaptureSite; readonly text: string }
+	| { readonly subject: CaptureSite; readonly present: true };
 export interface ClaimFact {
 	readonly vocab: string;
 	readonly kind: string | null;
@@ -37,6 +41,7 @@ export interface ClaimFact {
 	readonly within: readonly string[];
 	readonly fieldLiterals: Readonly<Record<string, string>>;
 	readonly tokens: readonly string[];
+	readonly children: readonly ChildFact[];
 }
 
 export interface UnclaimedFact {
@@ -220,6 +225,10 @@ function bindSelector<S extends SlotSelector>(selector: S, rename: (kind: string
 	};
 }
 
+function bindSite(site: CaptureSite, rename: (kind: string) => string): CaptureSite {
+	return { ...site, down: site.down.map((step) => bindSelector(step, rename)) };
+}
+
 export function bindFacts(facts: BindingFacts, rename: (kind: string) => string): BindingFacts {
 	const kind = (k: string | null): string | null => (k === null || k === WILDCARD ? k : rename(k));
 	return {
@@ -227,11 +236,16 @@ export function bindFacts(facts: BindingFacts, rename: (kind: string) => string)
 			...c,
 			kind: kind(c.kind),
 			within: c.within.map(rename),
-			predicates: c.predicates.map((p) =>
-				KIND_PREDICATE_OPERATORS.has(p.operator)
-					? { ...p, arguments: p.arguments.map((a) => ('text' in a ? { text: rename(a.text) } : a)) }
-					: p
-			)
+			predicates: c.predicates.map((p) => ({
+				...p,
+				subject: p.subject === null ? null : bindSite(p.subject, rename),
+				arguments: KIND_PREDICATE_OPERATORS.has(p.operator) ? p.arguments.map((a) => ('text' in a ? { text: rename(a.text) } : a)) : p.arguments
+			})),
+			children: c.children.map((child) => ({
+				...child,
+				subject: bindSite(child.subject, rename),
+				...('kinds' in child ? { kinds: child.kinds.map(rename) } : {})
+			}))
 		})),
 		members: facts.members.map((m): MemberFact => {
 			if (m.route === 'presence') return { ...m, owner: rename(m.owner), via: m.via.map((step) => bindSelector(step, rename)) };

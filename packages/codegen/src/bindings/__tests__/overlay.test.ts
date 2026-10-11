@@ -15,6 +15,7 @@ const claim = (vocab: string, kind: string, extra: Partial<ClaimFact> = {}): Cla
 	within: [],
 	fieldLiterals: {},
 	tokens: [],
+	children: [],
 	...extra
 });
 
