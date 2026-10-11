@@ -7,12 +7,22 @@ import { type BindingFacts, type BindingPattern, type BindingsRoundTrip, Binding
 
 export const PINNED_READER_MARKER = '\u0000sittir-pinned-reader\u0000';
 
-export type PinnedReaderMode = 'facts' | 'patterns' | 'roundTrip';
+export interface PinnedReaderModes {
+	readonly facts: { readonly input: string; readonly output: BindingFacts };
+	readonly patterns: { readonly input: string; readonly output: BindingPattern[] };
+	readonly roundTrip: { readonly input: string; readonly output: BindingsRoundTrip };
+}
 
-export interface PinnedReaderRequest {
+export type PinnedReaderMode = keyof PinnedReaderModes;
+
+export type PinnedInput<M extends PinnedReaderMode> = PinnedReaderModes[M]['input'];
+
+export type PinnedOutput<M extends PinnedReaderMode> = PinnedReaderModes[M]['output'];
+
+export interface PinnedReaderRequest<M extends PinnedReaderMode = PinnedReaderMode> {
 	readonly id: number;
-	readonly mode: PinnedReaderMode;
-	readonly text: string;
+	readonly mode: M;
+	readonly input: PinnedInput<M>;
 }
 
 export type PinnedReaderReply = { readonly id: number } & (
@@ -22,6 +32,7 @@ export type PinnedReaderReply = { readonly id: number } & (
 );
 
 interface PendingRead {
+	readonly mode: PinnedReaderMode;
 	readonly resolve: (value: unknown) => void;
 	readonly reject: (error: Error) => void;
 }
@@ -51,7 +62,7 @@ function settle(running: PinnedReader, reply: PinnedReaderReply): void {
 	running.pending.delete(reply.id);
 	hold(running);
 	if ('syntaxLines' in reply) waiting.reject(new BindingsSyntaxError(reply.syntaxLines));
-	else if ('error' in reply) waiting.reject(new Error(`reading bindings.scm with the pinned @sittir/scm failed:\n${reply.error}`));
+	else if ('error' in reply) waiting.reject(new Error(`the pinned build's ${waiting.mode} failed:\n${reply.error}`));
 	else waiting.resolve(reply.value);
 }
 
@@ -78,29 +89,23 @@ function startReader(): PinnedReader {
 		running.pending.clear();
 	};
 	child.on('error', fail);
-	child.on('exit', (code) => fail(new Error(`the pinned @sittir/scm reader exited (${code}):\n${running.stderr}`)));
+	child.on('exit', (code) => fail(new Error(`the pinned build's process exited (${code}):\n${running.stderr}`)));
 	return running;
 }
 
-function readPinned(mode: PinnedReaderMode, text: string): Promise<unknown> {
+export function runPinned<M extends PinnedReaderMode>(mode: M, input: PinnedInput<M>): Promise<PinnedOutput<M>> {
 	reader ??= startReader();
 	const running = reader;
 	const id = running.next++;
 	return new Promise((resolve, reject) => {
-		running.pending.set(id, { resolve, reject });
+		running.pending.set(id, { mode, resolve: resolve as (value: unknown) => void, reject });
 		hold(running);
-		running.child.stdin.write(`${JSON.stringify({ id, mode, text } satisfies PinnedReaderRequest)}\n`);
+		running.child.stdin.write(`${JSON.stringify({ id, mode, input } satisfies PinnedReaderRequest<M>)}\n`);
 	});
 }
 
-export async function readBindings(text: string): Promise<BindingFacts> {
-	return (await readPinned('facts', text)) as BindingFacts;
-}
+export const readBindings = (text: string): Promise<BindingFacts> => runPinned('facts', text);
 
-export async function bindingPatterns(text: string): Promise<BindingPattern[]> {
-	return (await readPinned('patterns', text)) as BindingPattern[];
-}
+export const bindingPatterns = (text: string): Promise<BindingPattern[]> => runPinned('patterns', text);
 
-export async function roundTripBindings(text: string): Promise<BindingsRoundTrip> {
-	return (await readPinned('roundTrip', text)) as BindingsRoundTrip;
-}
+export const roundTripBindings = (text: string): Promise<BindingsRoundTrip> => runPinned('roundTrip', text);

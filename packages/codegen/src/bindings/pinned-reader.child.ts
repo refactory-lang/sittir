@@ -1,13 +1,20 @@
 import { createInterface } from 'node:readline';
 import { BindingsSyntaxError } from './facts.ts';
 import { bindingPatternsInProcess, readBindingsInProcess, roundTripBindingsInProcess } from './pinned-reader.ts';
-import { PINNED_READER_MARKER, type PinnedReaderReply, type PinnedReaderRequest } from './read.ts';
+import { PINNED_READER_MARKER, type PinnedInput, type PinnedOutput, type PinnedReaderMode, type PinnedReaderReply, type PinnedReaderRequest } from './read.ts';
 
-const READS = { facts: readBindingsInProcess, patterns: bindingPatternsInProcess, roundTrip: roundTripBindingsInProcess };
+const READS: { readonly [M in PinnedReaderMode]: (input: PinnedInput<M>) => Promise<PinnedOutput<M>> } = {
+	facts: readBindingsInProcess,
+	patterns: bindingPatternsInProcess,
+	roundTrip: roundTripBindingsInProcess
+};
 
-async function answer({ id, mode, text }: PinnedReaderRequest): Promise<PinnedReaderReply> {
+const run = <M extends PinnedReaderMode>({ mode, input }: PinnedReaderRequest<M>): Promise<PinnedOutput<M>> => READS[mode](input);
+
+async function answer(request: PinnedReaderRequest): Promise<PinnedReaderReply> {
+	const { id } = request;
 	try {
-		return { id, value: await READS[mode](text) };
+		return { id, value: await run(request) };
 	} catch (error) {
 		if (error instanceof BindingsSyntaxError) return { id, syntaxLines: error.lines };
 		return { id, error: error instanceof Error ? (error.stack ?? error.message) : String(error) };

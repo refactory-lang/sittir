@@ -446,7 +446,7 @@ The generated flags module: one numeric `enum Flags` with a bit per flag name, i
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::module`
 
-The `bindings.scm` reader, over the pinned `@sittir/scm` build (`loadPinnedScm`). It imports `@sittir/scm` and `@sittir/common` for types only: every value it uses comes from the pinned build, so the facts depend on the pin and not on the workspace's packages.
+The `bindings.scm` reader, over the pinned `@sittir/scm` build (`bootstrap/pinned.ts::loadPinnedBuild`). It imports `@sittir/scm` and `@sittir/common` for types only: every value it uses comes from the pinned build, so the facts depend on the pin and not on the workspace's packages.
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::ready`
 
@@ -769,11 +769,15 @@ The references in a named node's group, its anchored-last `last` included.
 
 ### `packages/codegen/src/bindings/pinned-reader.child.ts::module`
 
-The reader's process. It reads requests from stdin, one JSON `PinnedReaderRequest` per line, answers them in order with the read their mode names, and writes each reply as `PINNED_READER_MARKER` and one JSON `PinnedReaderReply` line on stdout. A `BindingsSyntaxError` is replied as its lines and any other failure as its stack, so one bad file does not stop the reads after it. It exits once stdin closes and the last reply is written.
+The pinned build's process. It reads requests from stdin, one JSON `PinnedReaderRequest` per line, answers them in order with the run their mode names, and writes each reply as `PINNED_READER_MARKER` and one JSON `PinnedReaderReply` line on stdout. A `BindingsSyntaxError` is replied as its lines and any other failure as its stack, so one bad file does not stop the reads after it. It exits once stdin closes and the last reply is written.
 
 ### `packages/codegen/src/bindings/pinned-reader.child.ts::READS`
 
-The read each request mode runs in the child process.
+The run each request mode names in the child process, typed by its row of `PinnedReaderModes`.
+
+### `packages/codegen/src/bindings/pinned-reader.child.ts::run`
+
+Runs one request's mode on its input.
 
 ### `packages/codegen/src/bindings/pinned-reader.child.ts::answer`
 
@@ -785,11 +789,11 @@ The chain of pending answers, so replies leave in request order and the process 
 
 ### `packages/codegen/src/bindings/read.ts::module`
 
-The public face of the pinned reader. The reader runs in a child process because tsx resolves the root `tsconfig.json` paths for every file it loads, inside the bootstrap directory too, so an in-process import of the pinned build would load the workspace's `@sittir/common` beside the pinned one. The child runs under `tsconfig.pinned.json`, which maps no paths. A process starts one child, on its first read, and sends every later read to it, so a run pays the start-up once (`bootstrap/bootstrap.ts::module` records the cost) whatever grammars and modes it reads.
+The public face of the pinned build: codegen's every run of a sittir package on its own inputs goes through it. The runs happen in a child process because tsx resolves the root `tsconfig.json` paths for every file it loads, inside the bootstrap directory too, so an in-process import of the pinned build would load the workspace's `@sittir/common` beside the pinned one. The child runs under `tsconfig.pinned.json`, which maps no paths. A process starts one child, on its first read, and sends every later read to it, so a run pays the start-up once (`bootstrap/bootstrap.ts::module` records the cost) whatever grammars and modes it reads.
 
 ### `packages/codegen/src/bindings/read.ts::PinnedReaderRequest`
 
-One read sent to the child: the id its reply carries, the mode and the `bindings.scm` text.
+One run sent to the child: the id its reply carries, the mode and the mode's input.
 
 ### `packages/codegen/src/bindings/read.ts::PinnedReaderReply`
 
@@ -811,9 +815,21 @@ Resolves the read a reply answers, rethrowing a reply of syntax lines as `Bindin
 
 Marks where the reply starts on the child's stdout, so anything the pinned build prints before it is skipped.
 
-### `packages/codegen/src/bindings/read.ts::readPinned`
+### `packages/codegen/src/bindings/read.ts::runPinned`
 
-Sends one read to the process's child, starting it on the first read, and waits for its reply.
+Sends one run to the process's child, starting it on the first run, and waits for its reply, typed by the mode's row of `PinnedReaderModes`. The reply crosses the process as JSON, so its value is the mode's output by the child's contract, not by a check.
+
+### `packages/codegen/src/bindings/read.ts::PinnedReaderModes`
+
+Every mode the child runs, with its input and its output: one row per run, which `READS` implements in the child and `runPinned` calls in the parent. A mode's input and output are plain JSON values.
+
+### `packages/codegen/src/bindings/read.ts::PinnedInput`
+
+A mode's input (`PinnedReaderModes`).
+
+### `packages/codegen/src/bindings/read.ts::PinnedOutput`
+
+A mode's output (`PinnedReaderModes`).
 
 ### `packages/codegen/src/bindings/read.ts::readBindings`
 
@@ -829,11 +845,11 @@ A `bindings.scm` parsed and rendered back by the pinned engine (`BindingsRoundTr
 
 ### `packages/codegen/src/bindings/read.ts::PinnedReaderMode`
 
-Which read a request asks the child for: the facts, the pattern summaries, or a round trip.
+Which run a request asks the child for: a row of `PinnedReaderModes`.
 
 ### `packages/codegen/src/bindings/read.ts::PendingRead`
 
-A request waiting on its reply: the promise callbacks it settles.
+A request waiting on its reply: its mode, which a failure names, and the promise callbacks it settles.
 
 ### `packages/codegen/src/bindings/read.ts::PinnedReader`
 

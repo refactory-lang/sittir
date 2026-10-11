@@ -3,8 +3,8 @@ import { mkdtempSync, realpathSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import { BOOTSTRAP_COMMAND, BOOTSTRAP_PACKAGES, bootstrapDir, bootstrapSteps, readPin } from '../bootstrap.ts';
-import { loadPinnedScm } from '../../scm/pinned.ts';
+import { BOOTSTRAP_COMMAND, BOOTSTRAP_PACKAGES, bootstrapDir, bootstrapSteps, isBootstrapped, markBootstrapped, readPin } from '../bootstrap.ts';
+import { loadPinnedBuild } from '../pinned.ts';
 
 const SHA = 'a'.repeat(40);
 
@@ -74,9 +74,20 @@ describe('the bootstrap build', () => {
 	});
 });
 
-describe('the pinned scm loader', () => {
+describe('a finished build', () => {
+	it('is finished only once every bootstrap package is built into it', () => {
+		const dir = mkdtempSync(join(tmpdir(), 'sittir-pin-built-'));
+		expect(isBootstrapped(dir)).toBe(false);
+		writeFileSync(join(dir, '.complete'), `${SHA}\n`);
+		expect(isBootstrapped(dir)).toBe(false);
+		markBootstrapped(dir, SHA);
+		expect(isBootstrapped(dir)).toBe(true);
+	});
+});
+
+describe('the pinned build loader', () => {
 	it('refuses a missing build, naming the command that makes it', async () => {
 		process.env.SITTIR_BOOTSTRAP_DIR = mkdtempSync(join(tmpdir(), 'sittir-pin-empty-'));
-		await expect(loadPinnedScm()).rejects.toThrow(BOOTSTRAP_COMMAND);
+		await expect(loadPinnedBuild()).rejects.toThrow(BOOTSTRAP_COMMAND);
 	});
 });
