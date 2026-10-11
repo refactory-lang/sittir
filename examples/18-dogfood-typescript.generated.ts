@@ -297,7 +297,7 @@ export function rebuildFormatGenerated() {
 							}), ts.build.identifier("editStart"), ts.build.identifier("delta")),
 						}),
 					})],
-				}), ts.build.returnStatement.strict(ts.build.object.strict(ts.build.spreadElement.strict(ts.build.identifier("format")), ts.build.spreadElement.strict(ts.build.parenthesizedExpressionTyped.strict({
+				}), ts.build.returnStatement.strict(ts.build.object.strict(ts.build.spreadElement.strict(ts.build.identifier("format")).$trivia.leading(ts.kinds.Newline, ts.kinds.Indent), ts.build.spreadElement.strict(ts.build.parenthesizedExpressionTyped.strict({
 					expression: ts.build.binaryExpression.strict({
 						left: ts.build.binaryExpression.strict({
 							left: ts.build.identifier("trivia"),
@@ -317,7 +317,7 @@ export function rebuildFormatGenerated() {
 						operator: ts.kinds.AmpAmp,
 						right: ts.build.object.strict(ts.build.identifier("kinds")),
 					}),
-				}))))),
+				})).$trivia.trailing(ts.kinds.Newline, ts.kinds.Dedent)))),
 			}, {
 				terminator: ts.kinds.AutomaticSemicolon,
 			}),

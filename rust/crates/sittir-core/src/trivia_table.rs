@@ -49,30 +49,69 @@ pub struct Token {
 }
 
 /// An entry the assignment gives a side: an extra or an `ERROR` by its
-/// descendant index, a run of whitespace holding a line break by its bytes
-/// and the descendant index of its owner (whose first row is the run's
-/// enclosing line: the node itself for its `inner` side, its parent for its
-/// leading or trailing side), or an extra that is a layout member
-/// (`SurfaceKinds::layout`) by its descendant index. A run after an entry
-/// placed on a node's leading side is on that side too: it spells the gap
-/// from the entry to its owner.
+/// descendant index; a run of whitespace holding a line break by its bytes,
+/// the descendant index of its owner (the smallest node holding the tokens
+/// on both sides of the run's gap, or the node itself for its `inner` side)
+/// and the signed number of depth members it carries (`depth`); an extra
+/// that is a layout member (`SurfaceKinds::layout`) by its descendant index;
+/// or the depth members that restore an owner's excess at its end
+/// (`Depth`). A run after an entry placed on a node's leading side is on
+/// that side too: it spells the gap from the entry to its owner.
+///
+/// A run's excess is how far its last line's indentation reaches past the
+/// structural indentation at the token after it, in whole levels of the
+/// indentation unit (floored, a tab counting as one level; negative where
+/// it falls short). The structural indentation is that of the innermost
+/// stretch a template indents there (`DepthRegion`): the indentation of the
+/// line its first token starts, or one level past the stretch around it
+/// where that token shares a line with what precedes it or it holds none. A run carries the
+/// change in excess from the line before it. The excess the runs of an owner change is
+/// restored where the owner ends, inside its span: on the trailing side of
+/// its last child that holds trivia, or its `inner` side when no child does.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Assigned {
     Extra(u32),
     Error(u32),
-    Layout { start: u32, end: u32, owner: u32 },
+    Layout { start: u32, end: u32, owner: u32, depth: i32 },
     Member(u32),
+    Depth(i32),
+}
+
+/// Where a template indents a node's children: after a literal child (the
+/// first of the node's anonymous children with one of the texts) or from
+/// the node's start, until before a literal child (the last with one of
+/// the texts) or the node's end.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum DepthAnchor {
+    Start,
+    End,
+    After(&'static [&'static str]),
+    Before(&'static [&'static str]),
+}
+
+/// One level of structural indentation a kind's template opens over a
+/// stretch of its children.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct DepthRegion {
+    pub kind: u16,
+    pub open: DepthAnchor,
+    pub close: DepthAnchor,
 }
 
 /// The kinds of a grammar the assignment reads from its surface: the list
 /// kinds, whose items the surface exposes in the list's place, the unit
-/// kinds, which it exposes as a kind id rather than a node, and the extra
-/// kinds that are layout members, which it assigns as layout.
+/// kinds, which it exposes as a kind id rather than a node, the extra kinds
+/// that are layout members, which it assigns as layout, the depth members
+/// (`indent`, `dedent`, 0 where the grammar has none) and the kinds'
+/// structural indentation (`depth`).
 #[derive(Debug, Clone, Copy, Default)]
 pub struct SurfaceKinds {
     pub lists: &'static [u16],
     pub units: &'static [u16],
     pub layout: &'static [u16],
+    pub indent: u16,
+    pub dedent: u16,
+    pub depth: &'static [DepthRegion],
 }
 
 /// The nodes of a tree by descendant index, as far as the walk reads them.
@@ -84,6 +123,7 @@ struct Nodes {
     end: Vec<u32>,
     holder: Vec<bool>,
     holds: Vec<bool>,
+    count: Vec<u32>,
 }
 
 const NONE: u32 = u32::MAX;
@@ -138,6 +178,7 @@ pub fn walk(node: tree_sitter::Node<'_>, index: u32, source: &str) -> Walk {
         end: vec![0; count],
         holder: vec![false; count],
         holds: vec![false; count],
+        count: vec![0; count],
     };
     let mut tokens: Vec<Token> = Vec::new();
     let mut entries: Vec<u32> = Vec::new();
@@ -165,6 +206,7 @@ pub fn walk(node: tree_sitter::Node<'_>, index: u32, source: &str) -> Walk {
         nodes.kind[i] = node.grammar_id();
         nodes.start[i] = start;
         nodes.end[i] = end;
+        nodes.count[i] = node.descendant_count() as u32;
         let depth = frames.len() as u32;
         if let Some(frame) = frames.last() {
             nodes.parent[i] = frame.at_index;
@@ -256,6 +298,26 @@ impl Nodes {
         Some(child)
     }
 
+    /// Where the excess `owner`'s runs change is restored: the trailing side
+    /// of its last child that holds trivia, passing through list children
+    /// as `side_holder` does, or its `inner` side when no child holds any.
+    fn restore_side(&self, owner: u32, kinds: SurfaceKinds) -> (u32, TriviaSide) {
+        let last_holder = |parent: u32, skip_units: bool| {
+            (parent + 1..parent + self.count[parent as usize])
+                .rev()
+                .filter(|&at| self.parent[at as usize] == parent && self.holder[at as usize])
+                .find(|&at| !skip_units || !kinds.units.contains(&self.kind[at as usize]))
+        };
+        let Some(mut child) = last_holder(owner, false) else { return (owner, TriviaSide::Inner) };
+        while kinds.lists.contains(&self.kind[child as usize]) {
+            match last_holder(child, true) {
+                Some(inner) => child = inner,
+                None => break,
+            }
+        }
+        (child, TriviaSide::Trailing)
+    }
+
     /// The child of `owner` on `node`'s chain of parents, when it holds trivia.
     fn holder_below(&self, owner: u32, node: u32) -> Option<u32> {
         let mut at = node;
@@ -285,12 +347,14 @@ pub struct TriviaTable {
 
 impl TriviaTable {
     /// The table of `tree`, parsed from `source`, whose grammar's surface
-    /// kinds are `kinds`.
-    pub fn assign(tree: &tree_sitter::Tree, source: &str, kinds: SurfaceKinds) -> Self {
+    /// kinds are `kinds` and whose indentation level is `unit` spaces wide.
+    pub fn assign(tree: &tree_sitter::Tree, source: &str, kinds: SurfaceKinds, unit: u32) -> Self {
         let Walk { tokens, entries, nodes, .. } = walk(tree.root_node(), 0, source);
         let lines = crate::points::LineTable::new(source);
         let row = |byte: u32| lines.point(byte as usize).map_or(0, |point| point.row);
         let mut table = TriviaTable::default();
+        let mut structure = Structure::new(tree, source, kinds.depth, &tokens, unit);
+        let mut excess = Excess::default();
         let owner_of = |left: Option<&Token>, right: Option<&Token>| match (left, right) {
             (Some(left), Some(right)) => nodes.common(left.node, right.node),
             _ => 0,
@@ -315,14 +379,6 @@ impl TriviaTable {
                 }
             }
         };
-        let mut push = |place: Place, entry: Assigned| match place {
-            Place::Side(node, side) => table.sides.entry((node, side)).or_default().push(entry),
-            Place::Unowned => {
-                if let Assigned::Extra(index) | Assigned::Error(index) | Assigned::Member(index) = entry {
-                    table.unowned.push(index);
-                }
-            }
-        };
         let mut next = entries.iter().peekable();
         for k in 0..=tokens.len() {
             let left = k.checked_sub(1).map(|k| &tokens[k]);
@@ -330,19 +386,19 @@ impl TriviaTable {
             let from = left.map_or(0, |token| token.end);
             let to = right.map_or(source.len() as u32, |token| token.start);
             let left_row = left.map(|token| row(token.end));
+            excess.close_until(from, &mut table);
             let mut at = from;
             let mut led = None;
-            let run = |at: u32, until: u32, led: Option<u32>, push: &mut dyn FnMut(Place, Assigned)| {
-                if source.get(at as usize..until as usize).is_some_and(|text| text.contains('\n')) {
-                    let place = led.map_or_else(|| place(left, right, false, None), |node| Place::Side(node, TriviaSide::Leading));
-                    let owner = match place {
-                        Place::Side(node, TriviaSide::Inner) => node,
-                        Place::Side(node, _) if nodes.parent[node as usize] != NONE => nodes.parent[node as usize],
-                        Place::Side(node, _) => node,
-                        Place::Unowned => owner_of(left, right),
-                    };
-                    push(place, Assigned::Layout { start: at, end: until, owner });
-                }
+            let mut run = |at: u32, until: u32, led: Option<u32>, table: &mut TriviaTable, excess: &mut Excess| {
+                let Some(text) = source.get(at as usize..until as usize).filter(|text| text.contains('\n')) else { return };
+                let place = led.map_or_else(|| place(left, right, false, None), |node| Place::Side(node, TriviaSide::Leading));
+                let owner = match place {
+                    Place::Side(node, TriviaSide::Inner) => node,
+                    Place::Side(_, _) | Place::Unowned => owner_of(left, right),
+                };
+                let reach = structure.excess(&nodes, right.map_or(0, |right| right.node), until, text.rsplit('\n').next().unwrap_or_default());
+                let depth = excess.change(owner, nodes.end[owner as usize], reach, || nodes.restore_side(owner, kinds));
+                table.push(place, Assigned::Layout { start: at, end: until, owner, depth });
             };
             while let Some(&&index) = next.peek() {
                 let (start, end) = (nodes.start[index as usize], nodes.end[index as usize]);
@@ -350,9 +406,9 @@ impl TriviaTable {
                     break;
                 }
                 next.next();
-                run(at, start, led, &mut push);
+                run(at, start, led, &mut table, &mut excess);
                 if kinds.layout.contains(&nodes.kind[index as usize]) {
-                    push(place(left, right, false, None), Assigned::Member(index));
+                    table.push(place(left, right, false, None), Assigned::Member(index));
                 } else {
                     let entry = if is_error_index(tree, index) { Assigned::Error(index) } else { Assigned::Extra(index) };
                     let placed = place(left, right, left_row == Some(row(start)), Some(kinds));
@@ -360,13 +416,25 @@ impl TriviaTable {
                         Place::Side(node, TriviaSide::Leading) => Some(node),
                         _ => None,
                     };
-                    push(placed, entry);
+                    table.push(placed, entry);
                 }
                 at = end;
             }
-            run(at, to, led, &mut push);
+            run(at, to, led, &mut table, &mut excess);
         }
+        excess.close_until(u32::MAX, &mut table);
         table
+    }
+
+    fn push(&mut self, place: Place, entry: Assigned) {
+        match place {
+            Place::Side(node, side) => self.sides.entry((node, side)).or_default().push(entry),
+            Place::Unowned => {
+                if let Assigned::Extra(index) | Assigned::Error(index) | Assigned::Member(index) = entry {
+                    self.unowned.push(index);
+                }
+            }
+        }
     }
 
     /// The entries the assignment gives `side` of the node at `index`, in source order.
@@ -378,6 +446,144 @@ impl TriviaTable {
     /// tokens, with no named child beside them.
     pub fn unowned(&self) -> &[u32] {
         &self.unowned
+    }
+}
+
+/// The structural indentation of a tree: per node, the stretches its kind's
+/// template indents (`DepthRegion`), as byte ranges, resolved on first use.
+struct Structure<'t> {
+    tree: &'t tree_sitter::Tree,
+    source: &'t str,
+    regions: &'static [DepthRegion],
+    tokens: &'t [Token],
+    unit: u32,
+    spans: std::collections::HashMap<u32, Vec<(u32, u32)>>,
+}
+
+impl<'t> Structure<'t> {
+    fn new(tree: &'t tree_sitter::Tree, source: &'t str, regions: &'static [DepthRegion], tokens: &'t [Token], unit: u32) -> Self {
+        Self { tree, source, regions, tokens, unit: unit.max(1), spans: std::collections::HashMap::new() }
+    }
+
+    /// The width of `indentation`: its spaces, and `unit` per tab.
+    fn width(&self, indentation: &str) -> i64 {
+        indentation.chars().map(|c| if c == '\t' { i64::from(self.unit) } else { i64::from(c == ' ') }).sum()
+    }
+
+    /// The excess of a line indented by `indentation` whose first token
+    /// starts at byte `at`, held by the node at `index`.
+    fn excess(&mut self, nodes: &Nodes, index: u32, at: u32, indentation: &str) -> i32 {
+        let unit = i64::from(self.unit);
+        let reach = self.width(indentation) - self.structural(nodes, index, at);
+        i32::try_from(reach.div_euclid(unit)).unwrap_or(0)
+    }
+
+    /// The structural indentation width at byte `at`: the stretches holding
+    /// it, outermost first, each set by the line of its first token, or one
+    /// unit past the stretch around it when that token does not start a line
+    /// or the stretch holds none.
+    fn structural(&mut self, nodes: &Nodes, index: u32, at: u32) -> i64 {
+        if self.regions.is_empty() {
+            return 0;
+        }
+        let mut holding = Vec::new();
+        let mut node = index;
+        while node != NONE {
+            if self.regions.iter().any(|region| region.kind == nodes.kind[node as usize]) {
+                holding.extend(self.spans_of(node).iter().copied().filter(|&(open, close)| open <= at && at < close));
+            }
+            node = nodes.parent[node as usize];
+        }
+        holding.sort_unstable();
+        holding.iter().fold(0, |around, &(open, close)| {
+            let first = self.tokens.partition_point(|token| token.start < open);
+            let Some(token) = self.tokens.get(first).filter(|token| token.start < close) else { return around + i64::from(self.unit) };
+            let line_start = self.source[..token.start as usize].rfind('\n').map_or(0, |at| at + 1);
+            let before = &self.source[line_start..token.start as usize];
+            if before.chars().all(|c| c == ' ' || c == '\t') {
+                self.width(before)
+            } else {
+                around + i64::from(self.unit)
+            }
+        })
+    }
+
+    /// The node's stretches: from after its `open` anchor (its start, or the
+    /// end of the literal child) to before its `close` anchor (its end, or
+    /// the start of the literal child). A region whose literal the node
+    /// lacks indents nothing.
+    fn spans_of(&mut self, index: u32) -> &[(u32, u32)] {
+        let (tree, source, regions) = (self.tree, self.source, self.regions);
+        self.spans.entry(index).or_insert_with(|| {
+            let mut cursor = tree.walk();
+            cursor.goto_descendant(index as usize);
+            let node = cursor.node();
+            let literals: Vec<(u32, u32, &str)> = {
+                let mut children = node.walk();
+                node.children(&mut children)
+                    .filter(|child| !child.is_named())
+                    .filter_map(|child| source.get(child.byte_range()).map(|text| (child.start_byte() as u32, child.end_byte() as u32, text)))
+                    .collect()
+            };
+            let kind = node.grammar_id();
+            regions
+                .iter()
+                .filter(|region| region.kind == kind)
+                .filter_map(|region| {
+                    let open = match region.open {
+                        DepthAnchor::Start => node.start_byte() as u32 + 1,
+                        DepthAnchor::After(texts) => literals.iter().find(|(_, _, text)| texts.contains(text))?.1,
+                        DepthAnchor::End | DepthAnchor::Before(_) => return None,
+                    };
+                    let close = match region.close {
+                        DepthAnchor::End => node.end_byte() as u32,
+                        DepthAnchor::Before(texts) => literals.iter().rev().find(|(_, _, text)| texts.contains(text))?.0,
+                        DepthAnchor::Start | DepthAnchor::After(_) => return None,
+                    };
+                    Some((open, close))
+                })
+                .collect()
+        })
+    }
+}
+
+/// The running excess of an assignment, in source order, and the owners
+/// whose runs changed it, innermost last, each with where it ends, the
+/// excess it restores there and the side that takes the restore.
+#[derive(Default)]
+struct Excess {
+    current: i32,
+    open: Vec<OpenOwner>,
+}
+
+struct OpenOwner {
+    owner: u32,
+    end: u32,
+    restore: i32,
+    side: (u32, TriviaSide),
+}
+
+impl Excess {
+    /// A run of `owner` (ending at `end`) at `excess`: the change from the
+    /// running excess, which the owner restores at its end.
+    fn change(&mut self, owner: u32, end: u32, excess: i32, side: impl FnOnce() -> (u32, TriviaSide)) -> i32 {
+        let depth = excess - self.current;
+        if depth != 0 && self.open.last().is_none_or(|open| open.owner != owner) {
+            self.open.push(OpenOwner { owner, end, restore: self.current, side: side() });
+        }
+        self.current = excess;
+        depth
+    }
+
+    /// Restore the excess of each owner that ends by byte `at`.
+    fn close_until(&mut self, at: u32, table: &mut TriviaTable) {
+        while let Some(open) = self.open.pop_if(|open| open.end <= at) {
+            let depth = open.restore - self.current;
+            if depth != 0 {
+                table.sides.entry(open.side).or_default().push(Assigned::Depth(depth));
+            }
+            self.current = open.restore;
+        }
     }
 }
 

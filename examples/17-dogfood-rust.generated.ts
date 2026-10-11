@@ -123,10 +123,10 @@ export function rebuildSpliceGenerated() {
 								}),
 								value: rs.build.macroInvocation.strict({
 									macro: rs.build.identifier("write"),
-									arguments: rs.build.delimTokenTreeParen.strict(rs.build.nonSpecialToken.strict(rs.build.identifier("f")), rs.build.nonSpecialToken.strict(rs.kinds.Comma), rs.build.nonSpecialToken.strict(rs.build.stringLiteral.strict({
+									arguments: rs.build.delimTokenTreeParen.strict(rs.build.nonSpecialToken.strict(rs.build.identifier("f")).$trivia.leading(rs.kinds.Newline, rs.kinds.Indent), rs.build.nonSpecialToken.strict(rs.kinds.Comma), rs.build.nonSpecialToken.strict(rs.build.stringLiteral.strict({
 										stringOpen: rs.build.stringOpen("\""),
 										elements: [rs.build.stringContent("edit out of bounds: end={end} > source length={source_len}")],
-									}))),
+									})).$trivia.trailing(rs.kinds.Newline, rs.kinds.Dedent)),
 								}),
 							})],
 							lastArm: rs.build.lastMatchArm.strict({
@@ -143,10 +143,10 @@ export function rebuildSpliceGenerated() {
 								}),
 								value: rs.build.macroInvocation.strict({
 									macro: rs.build.identifier("write"),
-									arguments: rs.build.delimTokenTreeParen.strict(rs.build.nonSpecialToken.strict(rs.build.identifier("f")), rs.build.nonSpecialToken.strict(rs.kinds.Comma), rs.build.nonSpecialToken.strict(rs.build.stringLiteral.strict({
+									arguments: rs.build.delimTokenTreeParen.strict(rs.build.nonSpecialToken.strict(rs.build.identifier("f")).$trivia.leading(rs.kinds.Newline, rs.kinds.Indent), rs.build.nonSpecialToken.strict(rs.kinds.Comma), rs.build.nonSpecialToken.strict(rs.build.stringLiteral.strict({
 										stringOpen: rs.build.stringOpen("\""),
 										elements: [rs.build.stringContent("edit range not at UTF-8 char boundary: start={start}, end={end}")],
-									}))),
+									})).$trivia.trailing(rs.kinds.Newline, rs.kinds.Dedent)),
 								}),
 								comma: true,
 							}),
@@ -283,7 +283,7 @@ export function rebuildSpliceGenerated() {
 											type: rs.kinds.UsizeKeyword,
 										})),
 									}),
-								}),
+								}).$trivia.trailing(rs.kinds.Newline, rs.kinds.Indent),
 								operator: rs.kinds.PipePipe,
 								right: rs.build.unaryExpression.strict({
 									operator: rs.kinds.Bang,
@@ -300,7 +300,7 @@ export function rebuildSpliceGenerated() {
 											type: rs.kinds.UsizeKeyword,
 										})),
 									}),
-								}),
+								}).$trivia.trailing(rs.kinds.Dedent),
 							}),
 							consequence: rs.build.block.strict({
 								statements: [rs.build.expressionStatement.withSemi.strict(rs.build.returnExpression.strict(rs.build.callExpression.strict({
@@ -343,15 +343,15 @@ export function rebuildSpliceGenerated() {
 											value: rs.build.fieldExpression.strict({
 												value: rs.build.identifier("b"),
 												field: rs.build.identifier("start_pos"),
-											}),
-											field: rs.build.identifier("cmp"),
+											}).$trivia.trailing(rs.kinds.Newline, rs.kinds.Indent),
+											field: rs.build.identifier("cmp").$trivia.trailing(rs.kinds.Dedent),
 										}),
 										arguments: rs.build.arguments.strict(rs.build.referenceExpressionBare.strict(rs.build.fieldExpression.strict({
 											value: rs.build.identifier("a"),
 											field: rs.build.identifier("start_pos"),
 										}))),
-									}),
-									field: rs.build.identifier("then_with"),
+									}).$trivia.trailing(rs.kinds.Newline, rs.kinds.Indent),
+									field: rs.build.identifier("then_with").$trivia.trailing(rs.kinds.Dedent),
 								}),
 								arguments: rs.build.arguments.strict(rs.build.closureExpressionExpr.strict({
 									parameters: rs.build.closureParameters.strict(),

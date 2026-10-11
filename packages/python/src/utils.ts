@@ -9,7 +9,9 @@ export const triviaFacts = Object.freeze({
 	kindName: (type: AnyUntypedNode['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
 	kinds: new Set<string>([
 		'_blankline',
+		'_dedent',
 		'_double_blankline',
+		'_indent',
 		'_newline',
 		'_space',
 		'_tab',

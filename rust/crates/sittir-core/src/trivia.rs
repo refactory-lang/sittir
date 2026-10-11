@@ -12,20 +12,15 @@ use crate::render::{Render, RenderResult, RenderSink};
 use crate::types::KindId;
 use crate::slot::SlotValue;
 
-/// One trivia entry: the node, or the coordinate of one. A layout run read
-/// from a parsed tree also carries its indentation step: the indentation of
-/// its last line past its enclosing line's, the line its side's owner starts
-/// on (`RenderSink::begin_side`).
+/// One trivia entry: the node, or the coordinate of one.
 #[derive(Debug, Clone, PartialEq)]
 pub struct TriviaEntry<T> {
     pub value: SlotValue<T>,
-    pub step: Option<String>,
 }
 
 impl<T> TriviaEntry<T> {
-    /// An entry with no indentation step.
     pub fn new(value: SlotValue<T>) -> Self {
-        Self { value, step: None }
+        Self { value }
     }
 }
 
@@ -39,8 +34,22 @@ impl<T: Render> Render for TriviaEntry<T> {
 /// the gap it sits in (`RenderSink::trivia_seam`), replacing that gap's
 /// default, instead of being written as a line of its own. A line
 /// continuation also answers the source text it was read with.
+/// A depth member (`indent`, `dedent`) answers the change it makes to the
+/// excess indentation (`RenderSink::layout_depth`) instead, and
+/// `depth_member` is the member that makes the change `delta`'s sign names.
 pub trait TriviaSeam {
     fn seam_gap(&self) -> Option<(LayoutKinds, Option<&str>)> {
+        None
+    }
+
+    fn depth(&self) -> i32 {
+        0
+    }
+
+    fn depth_member(_delta: i32) -> Option<Self>
+    where
+        Self: Sized,
+    {
         None
     }
 }
@@ -53,9 +62,19 @@ impl<T: TriviaSeam> TriviaEntry<T> {
         }
     }
 
-    /// Whether the entry is layout: a whitespace member, merged into its gap.
+    /// The change a depth member makes to the excess indentation; 0 for any
+    /// other entry.
+    pub fn depth(&self) -> i32 {
+        match &self.value {
+            SlotValue::Transport(value) => value.depth(),
+            SlotValue::Coord(_) => 0,
+        }
+    }
+
+    /// Whether the entry is layout: a whitespace member, merged into its
+    /// gap, or a depth member.
     pub fn is_layout(&self) -> bool {
-        self.seam_gap().is_some()
+        self.seam_gap().is_some() || self.depth() != 0
     }
 
     /// Whether the entry is layout that breaks the line.
@@ -81,6 +100,28 @@ pub fn without_edge_runs<E>(entries: &mut Vec<E>, side: crate::trivia_table::Tri
             entries.truncate(last);
         }
         TriviaSide::Inner => {}
+    }
+}
+
+/// `entries` of a side whose neighbour changed: without its edge runs
+/// (`without_edge_runs`), and closed by `member`'s depth members that undo
+/// what the runs it keeps still change the excess. Those changes counted
+/// against the node's excess in the source, not where the side now renders:
+/// the side's lines keep their level against its new neighbour, and what
+/// follows the side (the node after a leading side, the next sibling after a
+/// trailing one) starts at the level the side started on.
+pub fn on_changed_edge<E>(
+    entries: &mut Vec<E>,
+    side: crate::trivia_table::TriviaSide,
+    is_layout: impl Fn(&E) -> bool,
+    depth: impl Fn(&E) -> i32,
+    member: impl Fn(i32) -> Option<E>,
+) {
+    use crate::trivia_table::TriviaSide;
+    without_edge_runs(entries, side, is_layout);
+    let net: i32 = entries.iter().map(&depth).sum();
+    if side != TriviaSide::Inner {
+        entries.extend((0..net.unsigned_abs()).filter_map(|_| member(-net.signum())));
     }
 }
 
@@ -307,10 +348,11 @@ fn whitespace(gap: LayoutKinds, text: Option<&str>, after_entry: bool, w: &mut d
 fn render_joined<T: Render + TriviaSeam>(entries: &[TriviaEntry<T>], between: LayoutKinds, w: &mut dyn RenderSink) -> RenderResult {
     let mut after_entry = false;
     for entry in entries {
+        if entry.depth() != 0 {
+            w.layout_depth(entry.depth());
+            continue;
+        }
         if let Some((gap, text)) = entry.seam_gap() {
-            if let Some(step) = &entry.step {
-                w.layout_step(step);
-            }
             whitespace(gap, text, after_entry, w);
             after_entry = false;
             continue;
@@ -377,10 +419,7 @@ impl<T: Render + TriviaSeam> TransportTrivia<T> {
             return Ok(());
         };
         let between = if w.at_body_start() || w.ends_line() { LayoutKinds::NEWLINE } else { LayoutKinds::SPACE };
-        w.begin_side(None, true);
-        let written = render_joined(entries, between, w);
-        w.end_side();
-        written
+        render_joined(entries, between, w)
     }
 }
 
@@ -475,5 +514,40 @@ impl ::napi::bindgen_prelude::ToNapiValue for TriviaText {
                 present(env, c"span", val.span)?,
             ])
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::on_changed_edge;
+    use crate::trivia_table::TriviaSide;
+
+    /// `'\n'` a line break, `'+'`/`'-'` depth members, any other a comment.
+    fn changed(side: TriviaSide, entries: &str) -> String {
+        let mut entries: Vec<char> = entries.chars().collect();
+        let depth = |entry: &char| match entry {
+            '+' => 1,
+            '-' => -1,
+            _ => 0,
+        };
+        on_changed_edge(&mut entries, side, |entry| matches!(entry, '\n' | '+' | '-'), depth, |delta| Some(if delta > 0 { '+' } else { '-' }));
+        entries.into_iter().collect()
+    }
+
+    #[test]
+    fn a_changed_leading_edge_keeps_its_comments_against_the_new_neighbour_and_starts_the_node_at_its_level() {
+        assert_eq!(changed(TriviaSide::Leading, "\n+a\n-b\n++c\n"), "a\n-b\n++c\n-");
+        assert_eq!(changed(TriviaSide::Leading, "\n+a\n+"), "a\n+-");
+    }
+
+    #[test]
+    fn a_changed_trailing_edge_leaves_the_next_sibling_at_the_level_the_node_ends_on() {
+        assert_eq!(changed(TriviaSide::Trailing, "\n+a\n+"), "\n+a-");
+        assert_eq!(changed(TriviaSide::Trailing, "a\n-b\n+"), "a\n-b+");
+    }
+
+    #[test]
+    fn a_balanced_side_keeps_every_depth_member() {
+        assert_eq!(changed(TriviaSide::Leading, "\na\n-b\n++c\n-"), "a\n-b\n++c\n-");
     }
 }

@@ -632,6 +632,9 @@ export interface RenderFixture {
 	/** The bytes the engine rendered for `input` when the fixture was
 	 *  captured; the parity gate asserts a fresh render reproduces them. */
 	expectedOutput: string;
+	/** The render options that reproduce `expectedOutput` away from the
+	 *  source: the source's indentation unit, when it is not the grammar's. */
+	options?: { readonly layout: { readonly indent: string } };
 }
 
 export interface RoundTripFixture {
@@ -1164,12 +1167,14 @@ export async function validateReadRenderParse(
 								// round-trip fixture (source → reparse s-exp). The
 								// data we have matches both shapes; only the shape
 								// type tag differs.
+								const unit = handle.format?.boundary?.leading;
 								options.onFixture({
 									kind: 'render',
 									grammar,
 									pattern: renderedKind,
 									input: selfContainedRenderInput(candidateData(data, renderReparseContext.triviaOf), entry.source, isLeafKind, view),
-									expectedOutput: rendered
+									expectedOutput: rendered,
+									...(unit === undefined || unit === null ? {} : { options: { layout: { indent: unit } } })
 								});
 								options.onFixture({
 									kind: 'roundtrip',

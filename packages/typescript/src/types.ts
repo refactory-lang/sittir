@@ -25549,8 +25549,10 @@ export interface TypescriptTypeMap extends GrammarTypeMap {
 		| Comment
 		| CommentBlock
 		| CommentLine
+		| Dedent
 		| DoubleBlankline
 		| HtmlComment
+		| Indent
 		| Newline
 		| Space
 		| Tab;

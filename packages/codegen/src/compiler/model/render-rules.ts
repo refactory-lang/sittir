@@ -2,7 +2,7 @@ import { ruleListParts } from '../../dsl/rule-patterns.ts';
 import type { NodeMap } from '../types.ts';
 import { findAnonEntryForLiteralText, findEntryForKindName, findEntryForLiteralText, modelKindOfEntry, type KindEntryLike } from '../../dsl/symbol-table.ts';
 import { aliasTargetOf, type RenderRule, type Rule, type RuleAnnotations, type RuleId, type SeamOrigin } from '../../types/rule.ts';
-import { CHOICE, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, DEDENT, INDENT, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { RuleWalker } from '../../dsl/rule-walker.ts';
 import { matchesWordShape } from '../../util/word-matcher.ts';
 import { type AssembledNode, AbstractAssembledCompound, AssembledEnum, AssembledKeyword, AssembledPolymorph, concreteKindsOf, isVisiblePunctuationLeaf, startsImmediateWhenPresent, leftmostTerminalImmediate } from './node-map.ts';
@@ -12,7 +12,7 @@ import { lineTerminatedKinds, triviaKinds } from './trivia.ts';
 import { addressSites, resolveBindings, type PreferenceOrigin } from './site-addresses.ts';
 import type { PreferenceSegment } from '../../dsl/primitives/preference-path.ts';
 import { readOptionsBlock, type OptionsConfig } from '../../dsl/wire/options-block.ts';
-import { defaultWhitespaceKindOf, lineBreakingKinds, rootEdgeKinds, whitespaceKindsOf, layoutKindsOf, layoutSymbolsOf } from './layout-kinds.ts';
+import { defaultWhitespaceKindOf, depthMembersOf, lineBreakingKinds, rootEdgeKinds, whitespaceKindsOf, layoutKindsOf, layoutSymbolsOf, type DepthMembers } from './layout-kinds.ts';
 import { displayNameOf, displayNameOfEntry, displayedKinds } from './display-name.ts';
 import {
 	EMPTY_SEPARATOR_TOKEN,
@@ -24,7 +24,9 @@ import {
 	type FlankSide,
 	type SeparatorSide,
 	type Whitespace,
-	type Layout
+	type Layout,
+	DEDENT_TEXT,
+	INDENT_TEXT
 } from '../../dsl/primitives/spacing.ts';
 
 export type SpacingSide = 'before' | 'after' | 'gap' | 'seam' | FlankSide;
@@ -1076,4 +1078,77 @@ function seatedSites(
 		}
 	}
 	return out;
+}
+
+export type DepthAnchor = { readonly after: readonly string[] } | { readonly before: readonly string[] } | 'start' | 'end';
+
+export interface DepthRegion {
+	readonly kind: string;
+	readonly open: DepthAnchor;
+	readonly close: DepthAnchor;
+}
+
+type DepthMark = { readonly depth: 1 | -1 } | { readonly literals: readonly string[] };
+
+function depthOf(rule: RenderRule, members: DepthMembers): 1 | -1 | undefined {
+	const r = bag(rule);
+	if (r.type === INDENT || (r.type === STRING && r.value === INDENT_TEXT) || (r.type === SYMBOL && r.name === members.indent)) return 1;
+	if (r.type === DEDENT || (r.type === STRING && r.value === DEDENT_TEXT) || (r.type === SYMBOL && r.name === members.dedent)) return -1;
+	return undefined;
+}
+
+function depthOfArm(arm: Layout): 1 | -1 | undefined {
+	return arm === 'indent' ? 1 : arm === 'dedent' ? -1 : undefined;
+}
+
+function literalsOf(rule: RenderRule): readonly string[] | undefined {
+	const r = bag(rule);
+	if (r.type === STRING && typeof r.value === 'string' && r.value.trim() !== '' && r.nonterminal !== true) return [r.value];
+	if (r.type === SYMBOL && typeof r.literal === 'string' && r.nonterminal !== true) return [r.literal];
+	if (r.type !== CHOICE || r.members === undefined || r.members.length === 0) return undefined;
+	const arms = r.members.map(literalsOf);
+	return arms.every((arm) => arm !== undefined) ? arms.flat() : undefined;
+}
+
+function depthMarksOf(rule: RenderRule, members: DepthMembers): DepthMark[] {
+	const depth = depthOf(rule, members);
+	if (depth !== undefined) return [{ depth }];
+	const literals = literalsOf(rule);
+	if (literals !== undefined) return [{ literals }];
+	const flanks = flanksOf(rule);
+	if (flanks !== undefined) {
+		const start = depthOfArm(flanks.start.defaultArm);
+		const end = depthOfArm(flanks.end.defaultArm);
+		return [...(start === undefined ? [] : [{ depth: start }]), ...depthMarksOf(flanks.inner, members), ...(end === undefined ? [] : [{ depth: end }])];
+	}
+	if (isSeamChoice(rule)) {
+		const seam = depthOfArm(seamPartOf(rule).defaultArm);
+		return seam === undefined ? [] : [{ depth: seam }];
+	}
+	if (isAnyWhitespaceChoice(rule)) return [];
+	const r = bag(rule);
+	return [...(r.members ?? []).flatMap((member) => depthMarksOf(member, members)), ...(r.content === undefined ? [] : depthMarksOf(r.content, members))];
+}
+
+export function depthRegionsOf(renderRules: RenderRules, nodeMap: Pick<NodeMap, 'nodes'>): DepthRegion[] {
+	const members = depthMembersOf(nodeMap);
+	return Object.entries(renderRules.rules).flatMap(([kind, rule]) => {
+		if (kind === members.indent || kind === members.dedent) return [];
+		const marks = depthMarksOf(rule, members);
+		const regions: DepthRegion[] = [];
+		const open: DepthAnchor[] = [];
+		marks.forEach((mark, at) => {
+			if (!('depth' in mark)) return;
+			if (mark.depth === 1) {
+				const before = marks.slice(0, at).reverse().find((m) => 'literals' in m);
+				open.push(before !== undefined && 'literals' in before ? { after: before.literals } : 'start');
+				return;
+			}
+			const anchor = open.pop();
+			if (anchor === undefined) return;
+			const after = marks.slice(at + 1).find((m) => 'literals' in m);
+			regions.push({ kind, open: anchor, close: after !== undefined && 'literals' in after ? { before: after.literals } : 'end' });
+		});
+		return [...regions, ...open.map((anchor) => ({ kind, open: anchor, close: 'end' as const }))];
+	});
 }

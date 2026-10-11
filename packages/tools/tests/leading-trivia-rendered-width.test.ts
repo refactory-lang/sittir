@@ -58,7 +58,7 @@ describe('leadingTriviaRenderedWidth through the first-descendant chain', () => 
 		const suite = statement.consequence();
 		if (!py.is.suiteBlock(suite)) throw new Error('expected a block suite');
 		const block = materializeDetached(suite.block());
-		expect(renderPy(block).startsWith('# one\n# two\n# three\nb')).toBe(true);
-		expect(leadingTriviaRenderedWidth(block, renderPy, triviaPy)).toBe('# one\n# two\n# three\n'.length);
+		expect(renderPy(block).startsWith('# one\n# two\n    # three\nb')).toBe(true);
+		expect(leadingTriviaRenderedWidth(block, renderPy, triviaPy)).toBe('# one\n# two\n    # three\n'.length);
 	});
 });

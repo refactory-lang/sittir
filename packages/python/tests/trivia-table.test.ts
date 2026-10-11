@@ -53,7 +53,7 @@ describe.each([
 	it('keeps a deeper-indented comment in the block', () => {
 		const root = engine.parse('if a:\n  b\n    # four\n  c\n');
 		reach(root).$trivia.leading('# lead');
-		rendersAs(root, 'if a:\n    # lead\n    b\n      # four\n    c\n');
+		rendersAs(root, 'if a:\n  # lead\n  b\n    # four\n  c\n');
 	});
 
 	it('is accepted on a statement in it, and renders in the whole tree', () => {

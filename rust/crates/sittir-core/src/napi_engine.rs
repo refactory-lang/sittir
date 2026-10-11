@@ -423,45 +423,32 @@ macro_rules! napi_engine {
                 tree_id: Option<f64>,
                 options: Option<$options>,
             ) -> ::napi::Result<String> {
-                let resolved;
-                let table = match options {
-                    Some(opts) => {
-                        resolved = opts.resolve(self.engine.options())
-                            .map_err(::napi::Error::from_reason)?;
-                        &resolved
-                    }
-                    None => self.engine.options(),
+                let named_indent = options.as_ref().is_some_and(|opts| opts.indent.is_some());
+                let resolved = match options {
+                    Some(opts) => opts.resolve(self.engine.options()).map_err(::napi::Error::from_reason)?,
+                    None => self.engine.options().clone(),
                 };
                 // No JavaScript runs while the table is borrowed, so the
                 // borrow cannot be re-entered.
                 LIVE_TREES.with(|trees| {
                     let trees = trees.borrow();
+                    let tree = tree_id.map(|id| id as u32).or(self.last_tree_id).and_then(|id| trees.get(&id));
+                    let documented;
+                    let table = match tree.filter(|_| !named_indent) {
+                        Some(tree) if tree.indent() != resolved.indent => {
+                            documented = $crate::options::ResolvedOptions { indent: tree.indent().to_owned(), ..resolved.clone() };
+                            &documented
+                        }
+                        _ => &resolved,
+                    };
                     let ctx = $crate::prepare::RenderContext {
                         options: table,
                         sources: &*trees,
                     };
-                    let (source, canonical) = $render_parts(transport, &ctx).map_err(|e| {
+                    let (_, canonical) = $render_parts(transport, &ctx).map_err(|e| {
                         ::napi::Error::from_reason(format!("render_transport failed: {e}"))
                     })?;
-                    // A node knows which tree it came from, but the wrap layer
-                    // does not thread that through yet, so an unnamed render still
-                    // resolves against the newest parse — the pre-slab behaviour.
-                    // Nodes rendered through an engine that has since parsed
-                    // something else therefore still borrow the wrong format; that
-                    // is a separate defect from tree identity and is fixed by
-                    // passing `treeId` at every render call site.
-                    let tree_format = tree_id
-                        .map(|id| id as u32)
-                        .or(self.last_tree_id)
-                        .and_then(|id| trees.get(&id))
-                        .and_then(|pt| pt.format());
-                    Ok($crate::apply_render_format(
-                        source,
-                        canonical,
-                        self.engine.engine_format(),
-                        tree_format,
-                        &table.newline,
-                    ))
+                    Ok($crate::apply_render_format(canonical, self.engine.engine_format(), &table.newline))
                 })
             }
 

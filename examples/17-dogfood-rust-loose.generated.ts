@@ -123,10 +123,10 @@ export function rebuildSpliceLoose() {
 								}),
 								value: rs.build.macroInvocation({
 									macro: "write",
-									arguments: rs.build.delimTokenTreeParen(rs.build.identifier("f"), rs.kinds.Comma, rs.build.stringLiteral({
+									arguments: rs.build.delimTokenTreeParen(rs.build.nonSpecialToken("f").$trivia.leading(rs.kinds.Newline, rs.kinds.Indent), rs.kinds.Comma, rs.build.nonSpecialToken(rs.build.stringLiteral({
 										stringOpen: "\"",
 										elements: ["edit out of bounds: end={end} > source length={source_len}"],
-									})),
+									})).$trivia.trailing(rs.kinds.Newline, rs.kinds.Dedent)),
 								}),
 							})],
 							lastArm: rs.build.lastMatchArm({
@@ -143,10 +143,10 @@ export function rebuildSpliceLoose() {
 								}),
 								value: rs.build.macroInvocation({
 									macro: "write",
-									arguments: rs.build.delimTokenTreeParen(rs.build.identifier("f"), rs.kinds.Comma, rs.build.stringLiteral({
+									arguments: rs.build.delimTokenTreeParen(rs.build.nonSpecialToken("f").$trivia.leading(rs.kinds.Newline, rs.kinds.Indent), rs.kinds.Comma, rs.build.nonSpecialToken(rs.build.stringLiteral({
 										stringOpen: "\"",
 										elements: ["edit range not at UTF-8 char boundary: start={start}, end={end}"],
-									})),
+									})).$trivia.trailing(rs.kinds.Newline, rs.kinds.Dedent)),
 								}),
 								comma: true,
 							}),
@@ -218,7 +218,7 @@ export function rebuildSpliceLoose() {
 											path: "SpliceError",
 											name: "InvalidRange",
 										}),
-										body: rs.build.fieldInitializerList({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer({
+										body: rs.build.fieldInitializerListElements({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer({
 											field: "start",
 											value: rs.build.fieldExpression({
 												value: "e",
@@ -230,7 +230,7 @@ export function rebuildSpliceLoose() {
 												value: "e",
 												field: "end_pos",
 											}),
-										})),
+										})).$trivia.leading(rs.kinds.Newline, rs.kinds.Indent).$trivia.trailing(rs.kinds.Newline, rs.kinds.Dedent),
 									}),
 								})))],
 							}),
@@ -254,7 +254,7 @@ export function rebuildSpliceLoose() {
 											path: "SpliceError",
 											name: "OutOfBounds",
 										}),
-										body: rs.build.fieldInitializerList({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer({
+										body: rs.build.fieldInitializerListElements({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer({
 											field: "end",
 											value: rs.build.fieldExpression({
 												value: "e",
@@ -262,7 +262,7 @@ export function rebuildSpliceLoose() {
 											}),
 										}), rs.build.shorthandFieldInitializer({
 											name: "source_len",
-										})),
+										})).$trivia.leading(rs.kinds.Newline, rs.kinds.Indent).$trivia.trailing(rs.kinds.Newline, rs.kinds.Dedent),
 									}),
 								})))],
 							}),
@@ -283,7 +283,7 @@ export function rebuildSpliceLoose() {
 											type: rs.kinds.UsizeKeyword,
 										}),
 									}),
-								}),
+								}).$trivia.trailing(rs.kinds.Newline, rs.kinds.Indent),
 								operator: rs.kinds.PipePipe,
 								right: rs.build.unaryExpression({
 									operator: rs.kinds.Bang,
@@ -300,7 +300,7 @@ export function rebuildSpliceLoose() {
 											type: rs.kinds.UsizeKeyword,
 										}),
 									}),
-								}),
+								}).$trivia.trailing(rs.kinds.Dedent),
 							}),
 							consequence: rs.build.block({
 								statements: [rs.build.expressionStatement.withSemi(rs.build.returnExpression(rs.build.callExpression({
@@ -310,7 +310,7 @@ export function rebuildSpliceLoose() {
 											path: "SpliceError",
 											name: "NonCharBoundary",
 										}),
-										body: rs.build.fieldInitializerList({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer({
+										body: rs.build.fieldInitializerListElements({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer({
 											field: "start",
 											value: rs.build.fieldExpression({
 												value: "e",
@@ -322,7 +322,7 @@ export function rebuildSpliceLoose() {
 												value: "e",
 												field: "end_pos",
 											}),
-										})),
+										})).$trivia.leading(rs.kinds.Newline, rs.kinds.Indent).$trivia.trailing(rs.kinds.Newline, rs.kinds.Dedent),
 									}),
 								})))],
 							}),
@@ -343,15 +343,15 @@ export function rebuildSpliceLoose() {
 											value: rs.build.fieldExpression({
 												value: "b",
 												field: "start_pos",
-											}),
-											field: "cmp",
+											}).$trivia.trailing(rs.kinds.Newline, rs.kinds.Indent),
+											field: rs.build.identifier("cmp").$trivia.trailing(rs.kinds.Dedent),
 										}),
 										arguments: rs.build.referenceExpressionBare(rs.build.fieldExpression({
 											value: "a",
 											field: "start_pos",
 										})),
-									}),
-									field: "then_with",
+									}).$trivia.trailing(rs.kinds.Newline, rs.kinds.Indent),
+									field: rs.build.identifier("then_with").$trivia.trailing(rs.kinds.Dedent),
 								}),
 								arguments: rs.build.closureExpressionExpr({
 									parameters: rs.build.closureParameters(),

@@ -3981,6 +3981,38 @@ options (`DEPTH_SITES`) and the writer asserts its depth at the end of a
 render. The walk is flat: sites in different arms of one choice count
 together, which the writer's assertion covers.
 
+### `packages/codegen/src/compiler/model/render-rules.ts::DepthAnchor`
+
+Where a structural indentation region starts or ends in a node: after a literal child with one of the texts (`after`), before one (`before`), or at the node's start or end.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::DepthRegion`
+
+One level of structural indentation a kind's template opens: the kind and the anchors of the stretch of its children it indents.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::DepthMark`
+
+One step of a kind's render rule as `depthRegionsOf` reads it: a depth change, or a literal token (a choice of literals reads as all of their texts).
+
+### `packages/codegen/src/compiler/model/render-rules.ts::depthOf`
+
+The depth change a rule makes on its own: an `INDENT`/`DEDENT` rule, a string of the depth mark's text, or a reference to the grammar's depth pair (`depthMembersOf`).
+
+### `packages/codegen/src/compiler/model/render-rules.ts::depthOfArm`
+
+The depth change a whitespace arm makes when it is a site's default: one level for `indent`, back one for `dedent`.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::literalsOf`
+
+The texts a rule writes as a literal token: a non-blank string, a symbol that carries its literal, or a choice whose every arm is one of those. Undefined for anything else.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::depthMarksOf`
+
+A render rule flattened to its depth marks in order. A flank contributes the depth its default arms make around the slot it flanks, a seam the depth of its default arm, and any other whitespace choice nothing, since its arms are options rather than what the template writes.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::depthRegionsOf`
+
+The structural indentation each kind's template opens, from its render rule: each indent is paired with the dedent that closes it. The stretch opens after the nearest literal before the indent (or at the node's start) and closes before the nearest literal after the dedent (or at the node's end); an indent with no dedent in its own rule runs to the node's end. The depth members' own rules open nothing. The native trivia table counts the regions enclosing a layout run as its structural level, so that only the excess over the template is the run's.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::admitsDepth`
 
 Whether a site's arms include `indent` or `dedent`, the sites the depth
@@ -4375,6 +4407,14 @@ The whitespace kinds: `layoutKindsOf` less the depth movers (`DEPTH_KINDS`),
 the members that write a whitespace run. They are what a separator gap
 admits, where moving depth has no meaning.
 
+### `packages/codegen/src/compiler/model/layout-kinds.ts::DepthMembers`
+
+The kinds that move indentation depth by one level, `indent` and `dedent`, each absent where the grammar has none.
+
+### `packages/codegen/src/compiler/model/layout-kinds.ts::depthMembersOf`
+
+The grammar's depth pair, found by the stamped fact, never by spelling: the kind an external's declared role names (`externalRole`, python's scanner tokens) or the fixed-text kind whose text is the depth mark (`INDENT_TEXT`/`DEDENT_TEXT`, the members `enrichWhitespace` mints). The template's structural depth and a layout run's excess both use this one pair.
+
 ### `packages/codegen/src/compiler/model/layout-kinds.ts::RootEdgeKinds`
 
 The default layout kinds of the grammar root's two edges.
@@ -4688,6 +4728,12 @@ A sequence's terminals on one edge, given its members ordered from that edge inw
 ### `packages/codegen/src/compiler/model/trivia.ts::triviaKinds`
 
 The single predicate for which kinds can be trivia entries: the kinds the grammar lists in `extras`, the whitespace kinds its lexical extras match (`whitespaceTriviaKinds`), every subtype of a supertype listed there, transitively, and every supertype whose members are all trivia (`extrasClosure`, which wire's `extraRuleNames` shares). Memoised per node map. The TriviaEntry type union, the runtime's accepted entry kinds, loose classification and the trivia transport read it. No trivia flag is stored on nodes and no scm role decides it.
+
+The depth members (`depthTriviaKinds`) are trivia kinds too: a layout run read from a parsed tree carries its excess indentation as indent and dedent entries.
+
+### `packages/codegen/src/compiler/model/trivia.ts::depthTriviaKinds`
+
+The grammar's depth pair (`depthMembersOf`) as trivia kinds, when the grammar reads whitespace as trivia at all (`whitespaceTriviaKinds` is not empty): the members a layout run spells its excess indentation with.
 
 ### `packages/codegen/src/compiler/model/trivia.ts::lexicalExtrasRun`
 

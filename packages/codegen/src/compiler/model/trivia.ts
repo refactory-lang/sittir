@@ -12,7 +12,7 @@ import {
 } from './node-map.ts';
 import { leadingRegex } from './leaf-pattern.ts';
 import { endsWithLineBreak, patternDfa, requiresNonSpace } from './pattern-automaton.ts';
-import { declaresWhitespace, layoutSymbolsOf } from './layout-kinds.ts';
+import { declaresWhitespace, depthMembersOf, layoutSymbolsOf } from './layout-kinds.ts';
 import { escapeRegexLiteral } from '../../util/word-matcher.ts';
 import { SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { extrasClosure } from '../../dsl/extras.ts';
@@ -143,7 +143,7 @@ export function triviaKinds(nodeMap: NodeMap): ReadonlySet<string> {
 	const cached = triviaKindsByNodeMap.get(nodeMap);
 	if (cached !== undefined) return cached;
 	const kinds = extrasClosure(
-		[...ruleListParts(nodeMap.extras ?? []).names, ...whitespaceTriviaKinds(nodeMap)],
+		[...ruleListParts(nodeMap.extras ?? []).names, ...whitespaceTriviaKinds(nodeMap), ...depthTriviaKinds(nodeMap)],
 		[...nodeMap.nodes].flatMap(([kind, node]) => (node instanceof AssembledSupertype ? [kind] : [])),
 		(kind) => {
 			const node = nodeMap.nodes.get(kind);
@@ -154,6 +154,12 @@ export function triviaKinds(nodeMap: NodeMap): ReadonlySet<string> {
 	);
 	triviaKindsByNodeMap.set(nodeMap, kinds);
 	return kinds;
+}
+
+export function depthTriviaKinds(nodeMap: NodeMap): string[] {
+	if (whitespaceTriviaKinds(nodeMap).length === 0) return [];
+	const { indent, dedent } = depthMembersOf(nodeMap);
+	return [indent, dedent].filter((kind): kind is string => kind !== undefined);
 }
 
 export function lexicalExtrasRun(nodeMap: NodeMap): RegExp | undefined {

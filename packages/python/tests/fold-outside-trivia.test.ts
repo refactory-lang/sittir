@@ -30,7 +30,7 @@ describe("an outside write keeps the span's layout", () => {
 		const root = engine.parse(SOURCE);
 		blockOf(root).$trivia.leading('# lead');
 		const out = root.$render();
-		expect(out).toBe('if a:\n    # lead\n    b\n      # four\n    c\n');
+		expect(out).toBe('if a:\n  # lead\n  b\n    # four\n  c\n');
 		expect(engine.parse(out).$errors).toEqual([]);
 	});
 });
@@ -40,14 +40,14 @@ describe("a folded slice keeps its inner layout at the column it lands on", () =
 		const block = blockOf(engine.parse(SOURCE));
 		const inner = engine.build.ifStatement({ condition: engine.build.identifier('y'), consequence: block });
 		const outer = engine.build.ifStatement({ condition: engine.build.identifier('x'), consequence: engine.build.block(inner) });
-		expect(outer.$render()).toBe('if x:\n    if y:\n        b\n          # four\n        c');
+		expect(outer.$render()).toBe('if x:\n  if y:\n    b\n      # four\n    c');
 	});
 
 	it('a line that starts inside a string keeps its bytes', () => {
 		const root = engine.parse('if a:\n  s = """x\n  y"""\n  c\n');
 		blockOf(root).$trivia.leading('# lead');
 		const out = root.$render();
-		expect(out).toBe('if a:\n    # lead\n    s = """x\n  y"""\n    c\n');
+		expect(out).toBe('if a:\n  # lead\n  s = """x\n  y"""\n  c\n');
 		expect(engine.parse(out).$errors).toEqual([]);
 	});
 });

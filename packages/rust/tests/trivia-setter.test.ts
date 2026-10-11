@@ -108,10 +108,11 @@ describe('loose trivia strings build ir.comment', () => {
 		const a = (): ReturnType<typeof ir.identifier> => rs.build.identifier('a');
 		// @ts-expect-error tight is not an extra, so it is no trivia entry
 		expect(() => a().$trivia.leading(rs.build.layout.tight)).toThrow(/_tight is not an extra/);
-		// @ts-expect-error indent is not an extra, so it is no trivia entry
-		expect(() => a().$trivia.leading(rs.build.layout.indent)).toThrow(/_indent is not an extra/);
-		// @ts-expect-error dedent is not an extra, so it is no trivia entry
-		expect(() => a().$trivia.leading(rs.build.layout.dedent)).toThrow(/_dedent is not an extra/);
+	});
+
+	it('takes a depth member as an entry, the excess indentation a layout run carries', () => {
+		const built = rs.build.identifier('a').$trivia.leading(rs.build.layout.newline, rs.build.layout.indent, rs.build.layout.dedent);
+		expect(built.$trivia.leading()).toEqual([rs.kinds.Newline, rs.kinds.Indent, rs.kinds.Dedent]);
 	});
 
 	it('renders a whitespace entry in place of the spacing of the gap it sits in', () => {

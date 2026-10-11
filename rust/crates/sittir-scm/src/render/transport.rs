@@ -385,6 +385,10 @@ pub enum TriviaTransport {
     Blankline,
     #[kind(kind::_DOUBLE_BLANKLINE)]
     DoubleBlankline,
+    #[kind(kind::_INDENT)]
+    Indent,
+    #[kind(kind::_DEDENT)]
+    Dedent,
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
     #[transport(text)]
@@ -401,6 +405,8 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
             TriviaTransport::Newline => Ok(()),
             TriviaTransport::Blankline => Ok(()),
             TriviaTransport::DoubleBlankline => Ok(()),
+            TriviaTransport::Indent => Ok(()),
+            TriviaTransport::Dedent => Ok(()),
             TriviaTransport::Verbatim(t) => t.prepare(ctx),
             TriviaTransport::Text(t) => t.prepare(ctx),
         }
@@ -413,6 +419,8 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
             TriviaTransport::Newline => None,
             TriviaTransport::Blankline => None,
             TriviaTransport::DoubleBlankline => None,
+            TriviaTransport::Indent => None,
+            TriviaTransport::Dedent => None,
             TriviaTransport::Verbatim(t) => t.source_gap(),
             TriviaTransport::Text(t) => t.source_gap(),
         }
@@ -425,6 +433,8 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
             TriviaTransport::Newline => None,
             TriviaTransport::Blankline => None,
             TriviaTransport::DoubleBlankline => None,
+            TriviaTransport::Indent => None,
+            TriviaTransport::Dedent => None,
             TriviaTransport::Verbatim(t) => t.gap_edges(),
             TriviaTransport::Text(t) => t.gap_edges(),
         }
@@ -437,6 +447,8 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
             TriviaTransport::Newline => None,
             TriviaTransport::Blankline => None,
             TriviaTransport::DoubleBlankline => None,
+            TriviaTransport::Indent => None,
+            TriviaTransport::Dedent => None,
             TriviaTransport::Verbatim(t) => t.snapshot_edge(),
             TriviaTransport::Text(t) => t.snapshot_edge(),
         }
@@ -452,6 +464,8 @@ impl ::sittir_core::render::Render for TriviaTransport {
             TriviaTransport::Newline => render_newline(w),
             TriviaTransport::Blankline => render_blankline(w),
             TriviaTransport::DoubleBlankline => render_double_blankline(w),
+            TriviaTransport::Indent => { w.layout_depth(1); Ok(()) }
+            TriviaTransport::Dedent => { w.layout_depth(-1); Ok(()) }
             TriviaTransport::Verbatim(t) => t.render(w),
             TriviaTransport::Text(t) => t.render(w),
         }
@@ -469,6 +483,8 @@ impl ::sittir_core::trivia::FromTriviaText for TriviaTransport {
         if kind == kind::_NEWLINE { return Some(TriviaTransport::Newline); }
         if kind == kind::_BLANKLINE { return Some(TriviaTransport::Blankline); }
         if kind == kind::_DOUBLE_BLANKLINE { return Some(TriviaTransport::DoubleBlankline); }
+        if kind == kind::_INDENT { return Some(TriviaTransport::Indent); }
+        if kind == kind::_DEDENT { return Some(TriviaTransport::Dedent); }
         None
     }
 }
@@ -481,6 +497,22 @@ impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {
             TriviaTransport::Newline => Some((::sittir_core::layout_kinds::LayoutKinds::NEWLINE, None)),
             TriviaTransport::Blankline => Some((::sittir_core::layout_kinds::LayoutKinds::BLANKLINE, None)),
             TriviaTransport::DoubleBlankline => Some((::sittir_core::layout_kinds::LayoutKinds::DOUBLE_BLANKLINE, None)),
+            _ => None,
+        }
+    }
+
+    fn depth(&self) -> i32 {
+        match self {
+            TriviaTransport::Indent => 1,
+            TriviaTransport::Dedent => -1,
+            _ => 0,
+        }
+    }
+
+    fn depth_member(delta: i32) -> Option<Self> {
+        match delta.signum() {
+            1 => Some(TriviaTransport::Indent),
+            -1 => Some(TriviaTransport::Dedent),
             _ => None,
         }
     }

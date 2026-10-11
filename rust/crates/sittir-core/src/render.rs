@@ -262,12 +262,13 @@ pub trait RenderSink {
     /// text it was read with. A sink that knows no strengths writes it as a
     /// whitespace token.
     /// A node begins, after its leading trivia, read from the source node
-    /// `origin` names (none for a built node): the line its first text lands
-    /// on is the enclosing line of the layout runs that node owns.
+    /// `origin` names (none for a built node). The excess indentation its
+    /// children's trivia opens (`layout_depth`) closes with it.
     fn open_frame(&mut self, origin: Option<&crate::slot::NodeCoordinate>) {
         let _ = origin;
     }
-    /// The node `open_frame` began last ends.
+    /// The node `open_frame` began last ends, restoring the excess
+    /// indentation it began with.
     fn close_frame(&mut self) {}
     /// Whether the open frame is `coord`'s node's: an alias envelope rebuilt
     /// around its read content names one parser node twice, and its sides
@@ -276,22 +277,11 @@ pub trait RenderSink {
         let _ = coord;
         false
     }
-    /// The trivia written next, until `end_side`, is a side of a node. An
-    /// `inner` side's owner is the node itself, the open frame; a leading or
-    /// trailing side's owner is the node's parent, the nearest open frame
-    /// that is not the node's own (`origin` names the node, whose transport
-    /// and coordinate may each have opened one).
-    fn begin_side(&mut self, origin: Option<&crate::slot::NodeCoordinate>, inner: bool) {
-        let _ = (origin, inner);
-    }
-    /// The side `begin_side` began last ends.
-    fn end_side(&mut self) {}
-    /// The layout run written next indents its last line as the enclosing
-    /// line of its side's owner (`begin_side`) is indented in the output,
-    /// then `step`; the writer's depth keeps that indentation for the lines
-    /// after it.
-    fn layout_step(&mut self, step: &str) {
-        let _ = step;
+    /// A depth member: the lines after it indent `delta` levels more (or
+    /// fewer) than the template's depth, until another changes it or the
+    /// open frame closes.
+    fn layout_depth(&mut self, delta: i32) {
+        let _ = delta;
     }
     fn trivia_seam(&mut self, gap: crate::layout_kinds::LayoutKinds, text: Option<&str>) {
         let _ = text;

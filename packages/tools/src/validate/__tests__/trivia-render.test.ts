@@ -17,7 +17,7 @@ afterAll(() => {
 describe('read trivia layout, rendered detached', () => {
 	it('keeps a same-line line comment on its line and breaks once after it', async () => {
 		const render = await detachedRenderer('rust');
-		expect(render('fn g() { a; // note\n b; }')).toBe('fn g() {\n    a; // note\n    b;\n}\n');
+		expect(render('fn g() { a; // note\n b; }')).toBe('fn g() {\n a; // note\n b;\n}\n');
 		expect(render('fn f() {\n    a; // c\n    // d\n}\n')).toBe('fn f() {\n    a; // c\n    // d\n}\n');
 	});
 
@@ -34,7 +34,7 @@ describe('read trivia layout, rendered detached', () => {
 		expect(render('fn f() { // TODO\n}\n')).toBe('fn f() {\n    // TODO\n}\n');
 		expect(render('f(/* a */);')).toBe('f(/* a */);\n');
 		expect(render('f(// a\n);')).toBe('f(// a\n);\n');
-		expect(render('ok! {\n  // one\n  /* two */\n}\n')).toBe('ok!{\n// one\n/* two */\n}\n');
+		expect(render('ok! {\n  // one\n  /* two */\n}\n')).toBe('ok!{\n  // one\n  /* two */\n}\n');
 	});
 
 	it('seats a same-line trailing entry after the anonymous tokens between it and its owner', async () => {

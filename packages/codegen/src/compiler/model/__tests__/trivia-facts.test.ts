@@ -33,7 +33,9 @@ describe('trivia model facts', () => {
 	it('reads the trivia kinds from the grammar extras, through supertypes both ways', async () => {
 		expect([...triviaKinds(await nodeMapOf('rust'))].sort()).toEqual([
 			'_blankline',
+			'_dedent',
 			'_double_blankline',
+			'_indent',
 			'_newline',
 			'_space',
 			'_tab',
@@ -43,7 +45,9 @@ describe('trivia model facts', () => {
 		]);
 		expect([...triviaKinds(await nodeMapOf('python'))].sort()).toEqual([
 			'_blankline',
+			'_dedent',
 			'_double_blankline',
+			'_indent',
 			'_newline',
 			'_space',
 			'_tab',
@@ -54,7 +58,9 @@ describe('trivia model facts', () => {
 		]);
 		expect([...triviaKinds(await nodeMapOf('typescript'))].sort()).toEqual([
 			'_blankline',
+			'_dedent',
 			'_double_blankline',
+			'_indent',
 			'_newline',
 			'_space',
 			'_tab',

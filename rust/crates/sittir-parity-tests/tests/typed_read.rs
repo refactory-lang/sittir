@@ -109,7 +109,7 @@ struct Table<'t> {
 impl<'t> Table<'t> {
     /// The table of a rust `tree`.
     fn of(tree: &'t tree_sitter::Tree, source: &'t str) -> Self {
-        Table { tree, source, table: sittir_core::trivia_table::TriviaTable::assign(tree, source, kind::SURFACE_KINDS) }
+        Table { tree, source, table: sittir_core::trivia_table::TriviaTable::assign(tree, source, kind::SURFACE_KINDS, 4) }
     }
 }
 
@@ -128,7 +128,7 @@ impl SideLookup for Table<'_> {
             .iter()
             .filter_map(|assigned| match *assigned {
                 Assigned::Extra(at) | Assigned::Error(at) => source(at),
-                Assigned::Layout { .. } | Assigned::Member(_) => Some(SideEntry::Layout(sittir_core::trivia::TriviaEntry::new(SlotValue::Transport(())))),
+                Assigned::Layout { .. } | Assigned::Member(_) | Assigned::Depth(_) => Some(SideEntry::Layout(sittir_core::trivia::TriviaEntry::new(SlotValue::Transport(())))),
             })
             .collect();
         if edge_changed {

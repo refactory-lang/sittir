@@ -15497,7 +15497,9 @@ export interface PythonTypeMap extends GrammarTypeMap {
 	readonly trivia:
 		| Blankline
 		| Comment
+		| Dedent
 		| DoubleBlankline
+		| Indent
 		| LineContinuation
 		| LineContinuationNewline
 		| LineContinuationNul

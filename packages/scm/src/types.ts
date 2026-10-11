@@ -2356,7 +2356,7 @@ export interface ScmTypeMap extends GrammarTypeMap {
 		| { readonly node: MissingNode; readonly empty: EmptyMissingNode }
 		| { readonly node: MissingNode.Bound; readonly empty: EmptyMissingNode }
 		| { readonly node: MissingNode.Parsed; readonly empty: EmptyMissingNode.Parsed };
-	readonly trivia: Blankline | Comment | DoubleBlankline | Newline | Space | Tab;
+	readonly trivia: Blankline | Comment | Dedent | DoubleBlankline | Indent | Newline | Space | Tab;
 }
 
 export type NodeMethodsOf = NodeMethods<ScmTypeMap['trivia']>;

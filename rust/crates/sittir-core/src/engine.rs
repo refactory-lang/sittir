@@ -21,7 +21,7 @@ use crate::render::SourceTable;
 use crate::slot::{NodeCoordinate, SlotValue};
 use crate::trivia::{FromTriviaText, TriviaEntry, TriviaText};
 use crate::trivia_table::{Assigned, TriviaSide, TriviaTable};
-use crate::types::{FormatRecord, KindId, Source};
+use crate::types::{FormatRecord, KindId};
 use std::collections::HashMap;
 use std::sync::Arc;
 
@@ -58,35 +58,6 @@ pub fn node_at_index(tree: &tree_sitter::Tree, index: u32) -> Option<tree_sitter
     let mut cursor = tree.walk();
     cursor.goto_descendant(index as usize);
     Some(cursor.node())
-}
-
-/// The columns a tab advances to the next multiple of, where an indentation
-/// step is measured in columns.
-const TAB_WIDTH: usize = 8;
-
-/// The indentation step of a layout run holding a line break: its last line's
-/// indentation past its enclosing line's, the line of the owner's first text
-/// (its first byte that is not whitespace, from `owner_start`). The
-/// enclosing indentation is removed as a byte prefix; where the two mix tabs
-/// and spaces differently, the step is the difference in columns, spelled in
-/// the run's own last indentation character, and empty where the run is
-/// indented less.
-pub fn indentation_step(source: &str, owner_start: usize, run: &str) -> String {
-    let first = source[owner_start..].find(|c: char| !c.is_whitespace()).map_or(owner_start, |at| owner_start + at);
-    let line_start = source[..first].rfind('\n').map_or(0, |at| at + 1);
-    let line = &source[line_start..];
-    let enclosing = &line[..line.len() - line.trim_start_matches([' ', '\t']).len()];
-    let indentation = run.rsplit('\n').next().unwrap_or_default().trim_start_matches('\r');
-    if let Some(step) = indentation.strip_prefix(enclosing) {
-        return step.to_owned();
-    }
-    let columns = |text: &str| text.chars().fold(0, |at, c| if c == '\t' { (at / TAB_WIDTH + 1) * TAB_WIDTH } else { at + 1 });
-    let wider = columns(indentation).saturating_sub(columns(enclosing));
-    match indentation.chars().next_back() {
-        Some('\t') => "\t".repeat(wider.div_ceil(TAB_WIDTH)),
-        Some(c) => c.to_string().repeat(wider),
-        None => String::new(),
-    }
 }
 
 /// The byte offsets in `source` of the lines under the node at `index` that
@@ -315,6 +286,13 @@ pub struct ParsedTree<G: EngineGrammar> {
     tree: tree_sitter::Tree,
     source: Arc<str>,
     format: Option<FormatRecord>,
+    /// The source's indentation unit (`format::indent_unit`), else the
+    /// engine's: what a render of this tree indents by unless its options
+    /// name one, and what the trivia table measures run levels in.
+    indent: String,
+    /// The spaces one indentation level spans in the source: the unit's,
+    /// else the engine unit's when the source indents by tabs.
+    level_width: u32,
     /// Identity this tree stamps into every handle it mints. Distinct per
     /// parse, so a handle names the tree it belongs to and cannot be spent
     /// against another one.
@@ -625,6 +603,11 @@ impl<G: EngineGrammar> ParsedTree<G> {
         self.format.as_ref()
     }
 
+    /// The tree's indentation unit: its source's, else the engine's.
+    pub fn indent(&self) -> &str {
+        &self.indent
+    }
+
     /// Access the source string.
     pub fn source(&self) -> &str {
         &self.source
@@ -646,7 +629,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
 
     /// The tree's trivia table, assigned on first use.
     pub fn trivia_table(&self) -> &TriviaTable {
-        self.trivia.get_or_init(|| TriviaTable::assign(&self.tree, &self.source, self.grammar.surface_kinds()))
+        self.trivia.get_or_init(|| TriviaTable::assign(&self.tree, &self.source, self.grammar.surface_kinds(), self.level_width))
     }
 
     /// The entries of `side` of the node at `index`: the ones a write gave it,
@@ -658,27 +641,33 @@ impl<G: EngineGrammar> ParsedTree<G> {
     }
 
     /// `trivia_side` with where each entry came from, and when `edge_changed`
-    /// without the layout runs at the edge `side` lies on
-    /// (`trivia::without_edge_runs`) and without the steps of the runs it
-    /// keeps, which measured from the old parent's line.
+    /// as a changed edge keeps it (`trivia::on_changed_edge`).
     pub fn side_entries(&self, index: u32, side: TriviaSide, edge_changed: bool) -> Vec<SideEntry<G::Trivia>> {
         let mut entries: Vec<SideEntry<G::Trivia>> = match self.written.get(&(index, side)) {
             Some(written) => written.iter().cloned().map(SideEntry::Written).collect(),
             None => self.assigned_side(index, side),
         };
         if edge_changed {
-            crate::trivia::without_edge_runs(&mut entries, side, |entry| match entry {
-                SideEntry::Layout(_) => true,
-                SideEntry::Written(entry) => entry.is_layout(),
-                SideEntry::Source { .. } => false,
-            });
-            for entry in &mut entries {
-                if let SideEntry::Layout(run) = entry {
-                    run.step = None;
-                }
-            }
+            crate::trivia::on_changed_edge(
+                &mut entries,
+                side,
+                |entry| match entry {
+                    SideEntry::Layout(_) => true,
+                    SideEntry::Written(entry) => entry.is_layout(),
+                    SideEntry::Source { .. } => false,
+                },
+                |entry| match entry {
+                    SideEntry::Layout(entry) | SideEntry::Written(entry) => entry.depth(),
+                    SideEntry::Source { .. } => 0,
+                },
+                Self::depth_member,
+            );
         }
         entries
+    }
+
+    fn depth_member(delta: i32) -> Option<SideEntry<G::Trivia>> {
+        <G::Trivia as crate::trivia::TriviaSeam>::depth_member(delta).map(|member| SideEntry::Layout(TriviaEntry::new(SlotValue::Transport(member))))
     }
 
     fn assigned_side(&self, index: u32, side: TriviaSide) -> Vec<SideEntry<G::Trivia>> {
@@ -688,32 +677,42 @@ impl<G: EngineGrammar> ParsedTree<G> {
         }
         let ctx = self.read_ctx();
         let entry = TriviaEntry::new;
+        let depth = |count: i32| (0..count.unsigned_abs()).filter_map(move |_| Self::depth_member(count));
         assigned
             .iter()
-            .filter_map(|assigned| match *assigned {
-                Assigned::Extra(at) => {
-                    let node = node_at_index(&self.tree, at)?;
-                    let coord = ctx.coordinate(&node, at);
-                    let (kind, span) = (coord.kind?, coord.span);
-                    Some(SideEntry::Source { entry: entry(SlotValue::Coord(coord)), kind, span })
-                }
-                Assigned::Error(at) => {
-                    let node = node_at_index(&self.tree, at)?;
-                    let span = Span { start: node.start_byte() as u32, end: node.end_byte() as u32 };
-                    let kind = KindId(node.grammar_id());
-                    let text = TriviaText { kind, text: self.source[span.start as usize..span.end as usize].to_owned(), span: None };
-                    Some(SideEntry::Source { entry: entry(SlotValue::Transport(G::Trivia::from_text(text))), kind, span })
-                }
-                Assigned::Layout { start, end, owner } => {
-                    let run = &self.source[start as usize..end as usize];
-                    let kind = self.layout_kind(run)?;
-                    let step = indentation_step(&self.source, node_at_index(&self.tree, owner)?.start_byte(), run);
-                    Some(SideEntry::Layout(TriviaEntry { step: Some(step), ..entry(SlotValue::Transport(G::Trivia::from_layout(KindId(kind), run)?)) }))
-                }
-                Assigned::Member(at) => {
-                    let node = node_at_index(&self.tree, at)?;
-                    let text = &self.source[node.start_byte()..node.end_byte()];
-                    Some(SideEntry::Layout(entry(SlotValue::Transport(G::Trivia::from_layout(KindId(node.grammar_id()), text)?))))
+            .flat_map(|assigned| -> Vec<SideEntry<G::Trivia>> {
+                match *assigned {
+                    Assigned::Extra(at) => node_at_index(&self.tree, at)
+                        .and_then(|node| {
+                            let coord = ctx.coordinate(&node, at);
+                            let (kind, span) = (coord.kind?, coord.span);
+                            Some(SideEntry::Source { entry: entry(SlotValue::Coord(coord)), kind, span })
+                        })
+                        .into_iter()
+                        .collect(),
+                    Assigned::Error(at) => node_at_index(&self.tree, at)
+                        .map(|node| {
+                            let span = Span { start: node.start_byte() as u32, end: node.end_byte() as u32 };
+                            let kind = KindId(node.grammar_id());
+                            let text = TriviaText { kind, text: self.source[span.start as usize..span.end as usize].to_owned(), span: None };
+                            SideEntry::Source { entry: entry(SlotValue::Transport(G::Trivia::from_text(text))), kind, span }
+                        })
+                        .into_iter()
+                        .collect(),
+                    Assigned::Layout { start, end, depth: count, .. } => {
+                        let run = &self.source[start as usize..end as usize];
+                        let breaks = self
+                            .layout_kind(run)
+                            .and_then(|kind| G::Trivia::from_layout(KindId(kind), run))
+                            .map(|member| SideEntry::Layout(entry(SlotValue::Transport(member))));
+                        breaks.into_iter().chain(depth(count)).collect()
+                    }
+                    Assigned::Member(at) => node_at_index(&self.tree, at)
+                        .and_then(|node| G::Trivia::from_layout(KindId(node.grammar_id()), &self.source[node.start_byte()..node.end_byte()]))
+                        .map(|member| SideEntry::Layout(entry(SlotValue::Transport(member))))
+                        .into_iter()
+                        .collect(),
+                    Assigned::Depth(count) => depth(count).collect(),
                 }
             })
             .collect()
@@ -803,12 +802,17 @@ impl<G: EngineGrammar> Engine<G> {
             let snippet: String = source.chars().take(80).collect();
             format!("parse failed (source: {snippet:?})")
         })?;
+        let indent = crate::format::indent_unit(&source).unwrap_or_else(|| self.options.indent.clone());
+        let spaces = |unit: &str| unit.chars().filter(|&c| c == ' ').count() as u32;
+        let level_width = [spaces(&indent), spaces(&self.options.indent), 1].into_iter().find(|&width| width > 0).unwrap_or(1);
         let format = extract_format(&source, &tree, &self.options.indent);
         Ok(ParsedTree {
             grammar: self.grammar,
             tree,
             source: Arc::from(source.as_str()),
             format,
+            indent,
+            level_width,
             tree_id,
             lines: std::sync::OnceLock::new(),
             trivia: std::sync::OnceLock::new(),
@@ -822,46 +826,13 @@ impl<G: EngineGrammar> Engine<G> {
 
 }
 
-/// Resolve the effective format from source provenance alone. Engine-level
-/// format takes priority; tree-level format applies only to non-factory nodes
-/// (read from a parse). Factory-constructed nodes get no tree format (they had
-/// no original source to preserve).
-fn resolve_render_format_from_source<'a>(
-    source: Source,
-    engine_format: Option<&'a FormatRecord>,
-    tree_format: Option<&'a FormatRecord>,
-) -> Option<&'a FormatRecord> {
-    if let Some(format) = engine_format {
-        return Some(format);
-    }
-    if !matches!(source, Source::Factory) {
-        return tree_format;
-    }
-    None
-}
-
-/// Apply format to a pre-rendered canonical string. This is the public
-/// standalone API for format application, for any caller that knows the
-/// node's provenance.
-///
-/// Parameters:
-/// - `source` — provenance of the node (Ts/Sg/Factory). Controls whether
-///   tree-level format is applied.
-/// - `canonical` — the template-rendered string to format.
-/// - `engine_format` — engine-wide format override (highest priority).
-/// - `tree_format` — tree-level format detected from parsed source.
-/// - `newline` — the spelling every line break of the result takes. The format
-///   record applies first, to the internal spelling its offsets index; the
-///   result is spelled last.
-pub fn apply_render_format(
-    source: Source,
-    canonical: String,
-    engine_format: Option<&FormatRecord>,
-    tree_format: Option<&FormatRecord>,
-    newline: &str,
-) -> String {
-    let effective_format = resolve_render_format_from_source(source, engine_format, tree_format);
-    let formatted = match effective_format {
+/// Apply format to a pre-rendered canonical string: the engine-wide format,
+/// when one is set, then `newline`, the spelling every line break of the
+/// result takes. The format record applies first, to the internal spelling
+/// its offsets index; the result is spelled last. A parsed tree's own layout
+/// renders through its trivia and indentation unit, never a format record.
+pub fn apply_render_format(canonical: String, engine_format: Option<&FormatRecord>, newline: &str) -> String {
+    let formatted = match engine_format {
         Some(format) => apply_format(&canonical, format),
         None => canonical,
     };
@@ -1338,37 +1309,14 @@ mod tests {
     }
 
     #[test]
-    fn a_runs_step_is_its_indentation_past_its_enclosing_lines() {
-        let source = "  fn f() {\n      a();\n}\n";
-        assert_eq!(indentation_step(source, 2, "\n      "), "    ");
-        assert_eq!(indentation_step(source, 2, "\n"), "");
-        assert_eq!(indentation_step(source, 2, "\n "), "", "a run indented less than its enclosing line has no step");
-        assert_eq!(indentation_step("\tf {\n", 1, "\n            "), "    ", "a tab and spaces are compared in columns");
-        assert_eq!(indentation_step("        f {\n", 8, "\n\t\t"), "\t", "spelled in the run's own character");
-        assert_eq!(indentation_step("def f():\n    # c\n    x\n", 8, "\n    "), "", "an owner starting at a line break takes the line of its first text");
-    }
-
-    #[test]
     fn the_engine_format_wraps_any_render() {
         let engine_format = format_record("<<", ">>");
-        assert_eq!(apply_render_format(Source::Factory, "rendered:1".to_string(), Some(&engine_format), None, "\n"), "<<rendered:1>>");
-    }
-
-    #[test]
-    fn the_tree_format_wraps_a_read_node() {
-        let tree_format = format_record("[", "]");
-        assert_eq!(apply_render_format(Source::Ts, "canonical".to_string(), None, Some(&tree_format), "\n"), "[canonical]");
+        assert_eq!(apply_render_format("rendered:1".to_string(), Some(&engine_format), "\n"), "<<rendered:1>>");
     }
 
     #[test]
     fn the_result_is_spelled_with_the_requested_line_ending() {
-        assert_eq!(apply_render_format(Source::Factory, "a\nb".to_string(), None, None, "\r\n"), "a\r\nb");
-    }
-
-    #[test]
-    fn the_tree_format_leaves_a_factory_node_alone() {
-        let tree_format = format_record("[", "]");
-        assert_eq!(apply_render_format(Source::Factory, "canonical".to_string(), None, Some(&tree_format), "\n"), "canonical");
+        assert_eq!(apply_render_format("a\nb".to_string(), None, "\r\n"), "a\r\nb");
     }
 
     fn index_of_kind(tree: &ParsedTree<TestGrammar>, kind: &str, nth: usize) -> u32 {
@@ -1379,14 +1327,14 @@ mod tests {
     }
 
     #[test]
-    fn a_side_reads_an_extra_as_its_coordinate_and_a_layout_run_as_its_member_with_its_step() {
+    fn a_side_reads_an_extra_as_its_coordinate_and_a_layout_run_as_its_member() {
         let (tree, _) = parsed("// c\nfn f() {}\n");
         let f = index_of_kind(&tree, "function_item", 0);
         let comment = index_of_kind(&tree, "line_comment", 0);
         let leading = tree.trivia_side(f, TriviaSide::Leading);
         let SlotValue::Coord(coord) = &leading[0].value else { panic!("an extra reads as its coordinate: {leading:?}") };
         assert_eq!((coord.tree, coord.index, coord.span.start, coord.span.end), (1, comment, 0, 4));
-        let newline = TriviaEntry { step: Some(String::new()), ..TriviaEntry::new(SlotValue::Transport(TestTrivia::Newline)) };
+        let newline = TriviaEntry::new(SlotValue::Transport(TestTrivia::Newline));
         assert_eq!(leading[1..], *std::slice::from_ref(&newline));
         assert_eq!(tree.trivia_side(f, TriviaSide::Trailing), [newline]);
     }
@@ -1407,15 +1355,6 @@ mod tests {
         assert_eq!(runs(TriviaSide::Leading, true), runs(TriviaSide::Leading, false), "the run between the comment and its owner stays");
         assert_eq!(runs(TriviaSide::Trailing, false).len(), 1);
         assert_eq!(runs(TriviaSide::Trailing, true), [], "the run after the owner spelled the gap to its old neighbour");
-    }
-
-    #[test]
-    fn a_changed_edge_drops_the_steps_of_the_runs_its_side_keeps() {
-        let (tree, _) = parsed("fn f() {\n    // c\n    a();\n}\n");
-        let a = index_of_kind(&tree, "expression_statement", 0);
-        let steps = |changed| tree.side_entries(a, TriviaSide::Leading, changed).into_iter().map(SideEntry::into_entry).filter(TriviaEntry::is_layout).map(|entry| entry.step).collect::<Vec<_>>();
-        assert_eq!(steps(false), [Some("    ".to_owned()), Some("    ".to_owned())]);
-        assert_eq!(steps(true), [None], "the run kept between the comment and its owner measured from the old parent's line");
     }
 
     #[test]

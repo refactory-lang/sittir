@@ -138,12 +138,12 @@ pub fn seam_rank(text: &str) -> SeamRank {
 }
 
 /// An open node of a render (`RenderSink::open_frame`): the source node it
-/// was read from (tree and descendant index), when it was, and the
-/// indentation of the line its first text landed on, once it has.
+/// was read from (tree and descendant index), when it was, and the excess
+/// indentation it began with, which it restores when it closes.
 #[derive(Debug)]
 struct Frame {
     origin: Option<(u32, u32)>,
-    base: Option<String>,
+    excess: i32,
 }
 
 /// Streaming writer inserting lexically-required spaces at write seams.
@@ -158,7 +158,7 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     table: Option<&'a crate::render::WhitespaceTable>,
     indent: &'a str,
     depth: usize,
-    /// The depth the current output line's indentation was paid at: what a
+    /// The levels the current output line's indentation was paid at: what a
     /// re-indented slice's continuation lines take.
     line_depth: usize,
     /// For each open depth level, how many further opens asked for it at the
@@ -193,16 +193,9 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     document: bool,
     /// The open nodes (`open_frame`).
     frames: Vec<Frame>,
-    /// Per depth level, the indentation a stepped layout run gave its lines
-    /// (`layout_step`), in place of the level above's plus the indent unit.
-    levels: Vec<Option<String>>,
-    /// The indentation paid on the current output line.
-    line_indent: String,
-    /// The indentation the next line takes from a stepped layout run.
-    pending_step: Option<String>,
-    /// Per side being written (`begin_side`), the frame its layout runs
-    /// indent from, when one is open.
-    side_frames: Vec<Option<usize>>,
+    /// The levels the trivia's depth members add to the template's depth
+    /// (`layout_depth`); negative where a line sits below it.
+    excess: i32,
 }
 
 /// A trailing run rendered ahead of where it is written: its text, and the
@@ -277,10 +270,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             trailing_accepts: LayoutKinds::ALL.0,
             document: false,
             frames: Vec::new(),
-            levels: Vec::new(),
-            line_indent: String::new(),
-            pending_step: None,
-            side_frames: Vec::new(),
+            excess: 0,
         }
     }
 
@@ -330,36 +320,22 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             return Ok(());
         }
         if !self.indent_pending {
-            self.pending_step = None;
             return Ok(());
         }
         self.indent_pending = false;
-        self.line_depth = self.depth;
-        let indent = match self.pending_step.take() {
-            Some(stepped) => {
-                if self.depth > 0 {
-                    self.levels.resize(self.depth, None);
-                    self.levels[self.depth - 1] = Some(stepped.clone());
-                }
-                stepped
-            }
-            None => self.level_indent(self.depth),
-        };
+        self.line_depth = self.levels();
+        let indent = self.indent.repeat(self.line_depth);
         self.emit(&indent)?;
         if let Some(last) = indent.chars().next_back() {
             self.last = Some(last);
         }
-        self.line_indent = indent;
         Ok(())
     }
 
-    /// The indentation of a line at `depth`: per level, the indentation a
-    /// stepped layout run gave it, else the level above's plus the unit.
-    fn level_indent(&self, depth: usize) -> String {
-        (0..depth).fold(String::new(), |above, level| match self.levels.get(level) {
-            Some(Some(stepped)) => stepped.clone(),
-            _ => above + self.indent,
-        })
+    /// The levels the next line indents: the template's depth and the
+    /// trivia's excess, never below none.
+    fn levels(&self) -> usize {
+        usize::try_from(self.depth as i64 + i64::from(self.excess)).unwrap_or(0)
     }
 
     /// A slice's text moved to the column the writer puts it at: each
@@ -379,8 +355,8 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         let line_start = source[..start].rfind('\n').map_or(0, |at| at + 1);
         let base = &source[line_start..start];
         let base = &base[..base.len() - base.trim_start_matches([' ', '\t']).len()];
-        let depth = if self.indent_pending || self.held_breaks() { self.depth } else { self.line_depth };
-        let target = self.level_indent(depth);
+        let levels = if self.indent_pending || self.held_breaks() { self.levels() } else { self.line_depth };
+        let target = self.indent.repeat(levels);
         if base == target {
             return std::borrow::Cow::Borrowed(text);
         }
@@ -525,18 +501,9 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             }
         }
         self.emit(s)?;
-        if !s.trim().is_empty() {
-            for frame in self.frames.iter_mut().rev() {
-                if frame.base.is_some() {
-                    break;
-                }
-                frame.base = Some(self.line_indent.clone());
-            }
-        }
         self.last = s.chars().next_back();
         if s.contains('\n') {
             self.line_depth = 0;
-            self.line_indent.clear();
         }
         if self.last == Some('\n') {
             self.indent_pending = true;
@@ -995,34 +962,21 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     }
 
     fn open_frame(&mut self, origin: Option<&crate::slot::NodeCoordinate>) {
-        self.frames.push(Frame { origin: origin.map(|origin| (origin.tree, origin.index)), base: None });
+        self.frames.push(Frame { origin: origin.map(|origin| (origin.tree, origin.index)), excess: self.excess });
     }
 
     fn close_frame(&mut self) {
-        self.frames.pop();
+        if let Some(frame) = self.frames.pop() {
+            self.excess = frame.excess;
+        }
     }
 
     fn in_frame_of(&self, coord: &crate::slot::NodeCoordinate) -> bool {
         self.frames.last().is_some_and(|frame| frame.origin == Some((coord.tree, coord.index)))
     }
 
-    fn begin_side(&mut self, origin: Option<&crate::slot::NodeCoordinate>, inner: bool) {
-        let own = origin.map(|origin| (origin.tree, origin.index));
-        let frame = if inner {
-            self.frames.len().checked_sub(1)
-        } else {
-            self.frames.iter().rposition(|frame| own.is_none() || frame.origin != own)
-        };
-        self.side_frames.push(frame);
-    }
-
-    fn end_side(&mut self) {
-        self.side_frames.pop();
-    }
-
-    fn layout_step(&mut self, step: &str) {
-        let base = self.side_frames.last().copied().flatten().and_then(|frame| self.frames[frame].base.as_deref());
-        self.pending_step = base.map(|base| format!("{base}{step}"));
+    fn layout_depth(&mut self, delta: i32) {
+        self.excess += delta;
     }
 
     fn indent(&mut self) {
@@ -1047,7 +1001,6 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         }
         self.merged.pop();
         self.depth = self.depth.saturating_sub(1);
-        self.levels.truncate(self.depth);
         let holds_trivia = self.seam.is_some() && self.seam_strength == SEAM_TRIVIA;
         if std::mem::replace(&mut self.indent_armed, false) && !holds_trivia {
             self.clear_payload();

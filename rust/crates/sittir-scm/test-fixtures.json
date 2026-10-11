@@ -750,6 +750,185 @@
     "wrappedOffset": 11
   },
   {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "program",
+    "input": {
+      "$type": 33,
+      "_definitions": [
+        {
+          "$type": 47,
+          "_name": 7,
+          "_elements": [
+            {
+              "$type": 39,
+              "_name": {
+                "$type": 6,
+                "$text": "wildcard"
+              }
+            }
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28
+              ]
+            }
+          }
+        },
+        {
+          "$type": 61,
+          "_name": 7,
+          "_elements": [
+            {
+              "$type": 39,
+              "_name": {
+                "$type": 6,
+                "$text": "wildcard"
+              }
+            }
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                29
+              ]
+            }
+          }
+        },
+        {
+          "$type": 61,
+          "_name": {
+            "$type": 5,
+            "$text": "node"
+          },
+          "_named_node_group": {
+            "$type": 63,
+            "_named_node_expressions": [
+              {
+                "$type": 47,
+                "_name": 7,
+                "_elements": [
+                  {
+                    "$type": 39,
+                    "_name": {
+                      "$type": 6,
+                      "$text": "wildcard"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "_elements": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                29
+              ]
+            }
+          }
+        },
+        {
+          "$type": 61,
+          "_name": {
+            "$type": 5,
+            "$text": "program"
+          },
+          "_named_node_group": {
+            "$type": 63,
+            "_named_node_expressions": [
+              {
+                "$type": 50,
+                "_name": {
+                  "$type": 5,
+                  "$text": "name"
+                },
+                "_definition": {
+                  "$type": 61,
+                  "_name": 7,
+                  "_elements": []
+                }
+              }
+            ],
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  28,
+                  31
+                ],
+                "trailing": [
+                  32
+                ]
+              }
+            }
+          },
+          "_elements": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                29
+              ]
+            }
+          }
+        },
+        {
+          "$type": 61,
+          "_name": {
+            "$type": 5,
+            "$text": "program"
+          },
+          "_named_node_group": {
+            "$type": 63,
+            "_named_node_expressions": [
+              {
+                "$type": 50,
+                "_name": {
+                  "$type": 5,
+                  "$text": "name"
+                },
+                "_definition": {
+                  "$type": 47,
+                  "_name": 7,
+                  "_elements": []
+                }
+              }
+            ],
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  28,
+                  31
+                ],
+                "trailing": [
+                  32
+                ]
+              }
+            }
+          },
+          "_elements": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                29
+              ],
+              "trailing": [
+                28
+              ]
+            }
+          }
+        }
+      ],
+      "$errors": []
+    },
+    "expectedOutput": "_ @wildcard\n\n(_) @wildcard\n\n(node _ @wildcard)\n\n(program\n  name: (_))\n\n(program\n  name: _)\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
+  },
+  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "\n_ @wildcard\n\n(_) @wildcard\n\n(node _ @wildcard)\n\n(program\n  name: (_))\n\n(program\n  name: _)\n",
@@ -777,7 +956,12 @@
         }
       ]
     },
-    "expectedOutput": "_ @wildcard"
+    "expectedOutput": "_ @wildcard",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -807,7 +991,12 @@
         }
       ]
     },
-    "expectedOutput": "_ @wildcard"
+    "expectedOutput": "_ @wildcard",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -829,7 +1018,12 @@
       "_name": 7,
       "_elements": []
     },
-    "expectedOutput": "_"
+    "expectedOutput": "_",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -853,7 +1047,12 @@
         "$text": "wildcard"
       }
     },
-    "expectedOutput": "@wildcard"
+    "expectedOutput": "@wildcard",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -877,7 +1076,12 @@
         "$text": "wildcard"
       }
     },
-    "expectedOutput": "@wildcard"
+    "expectedOutput": "@wildcard",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -901,7 +1105,12 @@
         "$text": "wildcard"
       }
     },
-    "expectedOutput": "@wildcard"
+    "expectedOutput": "@wildcard",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -931,7 +1140,12 @@
         }
       ]
     },
-    "expectedOutput": "(_) @wildcard"
+    "expectedOutput": "(_) @wildcard",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -974,7 +1188,12 @@
       },
       "_elements": []
     },
-    "expectedOutput": "(node _ @wildcard)"
+    "expectedOutput": "(node _ @wildcard)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -986,6 +1205,53 @@
     "expectedReparseTree": "(named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (anonymous_node elements: (capture name: (identifier)))))",
     "wrappedText": "(node _ @wildcard)\n",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "named_node_plain",
+    "input": {
+      "$type": 61,
+      "_name": {
+        "$type": 5,
+        "$text": "program"
+      },
+      "_named_node_group": {
+        "$type": 63,
+        "_named_node_expressions": [
+          {
+            "$type": 50,
+            "_name": {
+              "$type": 5,
+              "$text": "name"
+            },
+            "_definition": {
+              "$type": 61,
+              "_name": 7,
+              "_elements": []
+            }
+          }
+        ],
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              28,
+              31
+            ],
+            "trailing": [
+              32
+            ]
+          }
+        }
+      },
+      "_elements": []
+    },
+    "expectedOutput": "(program\n  name: (_))",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1007,7 +1273,12 @@
       "_name": 7,
       "_elements": []
     },
-    "expectedOutput": "(_)"
+    "expectedOutput": "(_)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1019,6 +1290,53 @@
     "expectedReparseTree": "(named_node_plain)",
     "wrappedText": "(_)\n",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "named_node_plain",
+    "input": {
+      "$type": 61,
+      "_name": {
+        "$type": 5,
+        "$text": "program"
+      },
+      "_named_node_group": {
+        "$type": 63,
+        "_named_node_expressions": [
+          {
+            "$type": 50,
+            "_name": {
+              "$type": 5,
+              "$text": "name"
+            },
+            "_definition": {
+              "$type": 47,
+              "_name": 7,
+              "_elements": []
+            }
+          }
+        ],
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              28,
+              31
+            ],
+            "trailing": [
+              32
+            ]
+          }
+        }
+      },
+      "_elements": []
+    },
+    "expectedOutput": "(program\n  name: _)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1053,7 +1371,12 @@
         }
       ]
     },
-    "expectedOutput": "_ @wildcard"
+    "expectedOutput": "_ @wildcard",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1087,7 +1410,12 @@
         }
       ]
     },
-    "expectedOutput": "name: (_)"
+    "expectedOutput": "name: (_)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1121,7 +1449,12 @@
         }
       ]
     },
-    "expectedOutput": "name: _"
+    "expectedOutput": "name: _",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1150,7 +1483,12 @@
         "_elements": []
       }
     },
-    "expectedOutput": "name: (_)"
+    "expectedOutput": "name: (_)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1179,7 +1517,12 @@
         "_elements": []
       }
     },
-    "expectedOutput": "name: _"
+    "expectedOutput": "name: _",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1193,6 +1536,149 @@
     "wrappedOffset": 52
   },
   {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "program",
+    "input": {
+      "$type": 33,
+      "_definitions": [
+        {
+          "$type": 61,
+          "_name": {
+            "$type": 5,
+            "$text": "program"
+          },
+          "_named_node_group": {
+            "$type": 63,
+            "_named_node_expressions": [
+              {
+                "$type": 50,
+                "_name": {
+                  "$type": 5,
+                  "$text": "name"
+                },
+                "_definition": {
+                  "$type": 61,
+                  "_name": {
+                    "$type": 5,
+                    "$text": "identifier"
+                  },
+                  "_elements": []
+                }
+              }
+            ],
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  28,
+                  31
+                ],
+                "trailing": [
+                  32
+                ]
+              }
+            }
+          },
+          "_elements": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28
+              ]
+            }
+          }
+        },
+        {
+          "$type": 50,
+          "_name": {
+            "$type": 5,
+            "$text": "name"
+          },
+          "_definition": {
+            "$type": 61,
+            "_name": {
+              "$type": 5,
+              "$text": "identifier"
+            },
+            "_elements": []
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                29
+              ]
+            }
+          }
+        },
+        {
+          "$type": 50,
+          "_name": {
+            "$type": 5,
+            "$text": "name"
+          },
+          "_definition": {
+            "$type": 44,
+            "_definitions": [
+              {
+                "$type": 61,
+                "_name": {
+                  "$type": 5,
+                  "$text": "identifier"
+                },
+                "_elements": [],
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      28,
+                      31
+                    ]
+                  }
+                }
+              },
+              {
+                "$type": 61,
+                "_name": {
+                  "$type": 5,
+                  "$text": "expression"
+                },
+                "_elements": [],
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      28
+                    ],
+                    "trailing": [
+                      28,
+                      32
+                    ]
+                  }
+                }
+              }
+            ],
+            "_elements": []
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                29
+              ],
+              "trailing": [
+                28
+              ]
+            }
+          }
+        }
+      ],
+      "$errors": []
+    },
+    "expectedOutput": "(program\n  name: (identifier))\n\nname: (identifier)\n\nname: [\n  (identifier)\n  (expression)\n]\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
+  },
+  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "\n(program\n  name: (identifier))\n\nname: (identifier)\n\nname: [\n  (identifier)\n  (expression)\n]\n",
@@ -1202,6 +1688,56 @@
     "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))))) definitions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) definitions: (field_definition name: (identifier) definition: (list definitions: (named_node_plain name: (identifier)) definitions: (named_node_plain name: (identifier)))))",
     "wrappedText": "(program\n  name: (identifier))\n\nname: (identifier)\n\nname: [\n  (identifier)\n  (expression)\n]\n",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "named_node_plain",
+    "input": {
+      "$type": 61,
+      "_name": {
+        "$type": 5,
+        "$text": "program"
+      },
+      "_named_node_group": {
+        "$type": 63,
+        "_named_node_expressions": [
+          {
+            "$type": 50,
+            "_name": {
+              "$type": 5,
+              "$text": "name"
+            },
+            "_definition": {
+              "$type": 61,
+              "_name": {
+                "$type": 5,
+                "$text": "identifier"
+              },
+              "_elements": []
+            }
+          }
+        ],
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              28,
+              31
+            ],
+            "trailing": [
+              32
+            ]
+          }
+        }
+      },
+      "_elements": []
+    },
+    "expectedOutput": "(program\n  name: (identifier))",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1226,7 +1762,12 @@
       },
       "_elements": []
     },
-    "expectedOutput": "(identifier)"
+    "expectedOutput": "(identifier)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1251,7 +1792,12 @@
       },
       "_elements": []
     },
-    "expectedOutput": "(identifier)"
+    "expectedOutput": "(identifier)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1276,7 +1822,12 @@
       },
       "_elements": []
     },
-    "expectedOutput": "(identifier)"
+    "expectedOutput": "(identifier)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1301,7 +1852,12 @@
       },
       "_elements": []
     },
-    "expectedOutput": "(expression)"
+    "expectedOutput": "(expression)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1338,7 +1894,12 @@
         }
       ]
     },
-    "expectedOutput": "name: (identifier)"
+    "expectedOutput": "name: (identifier)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1370,7 +1931,12 @@
         "_elements": []
       }
     },
-    "expectedOutput": "name: (identifier)"
+    "expectedOutput": "name: (identifier)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1402,7 +1968,12 @@
         "_elements": []
       }
     },
-    "expectedOutput": "name: (identifier)"
+    "expectedOutput": "name: (identifier)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1416,6 +1987,65 @@
     "wrappedOffset": 52
   },
   {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "field_definition",
+    "input": {
+      "$type": 50,
+      "_name": {
+        "$type": 5,
+        "$text": "name"
+      },
+      "_definition": {
+        "$type": 44,
+        "_definitions": [
+          {
+            "$type": 61,
+            "_name": {
+              "$type": 5,
+              "$text": "identifier"
+            },
+            "_elements": [],
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  28,
+                  31
+                ]
+              }
+            }
+          },
+          {
+            "$type": 61,
+            "_name": {
+              "$type": 5,
+              "$text": "expression"
+            },
+            "_elements": [],
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  28
+                ],
+                "trailing": [
+                  28,
+                  32
+                ]
+              }
+            }
+          }
+        ],
+        "_elements": []
+      }
+    },
+    "expectedOutput": "name: [\n  (identifier)\n  (expression)\n]",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
+  },
+  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "name: [\n  (identifier)\n  (expression)\n]",
@@ -1425,6 +2055,58 @@
     "expectedReparseTree": "(field_definition name: (identifier) definition: (list definitions: (named_node_plain name: (identifier)) definitions: (named_node_plain name: (identifier))))",
     "wrappedText": "(program\n  name: (identifier))\n\nname: (identifier)\n\nname: [\n  (identifier)\n  (expression)\n]\n",
     "wrappedOffset": 52
+  },
+  {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "list",
+    "input": {
+      "$type": 44,
+      "_definitions": [
+        {
+          "$type": 61,
+          "_name": {
+            "$type": 5,
+            "$text": "identifier"
+          },
+          "_elements": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28,
+                31
+              ]
+            }
+          }
+        },
+        {
+          "$type": 61,
+          "_name": {
+            "$type": 5,
+            "$text": "expression"
+          },
+          "_elements": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28
+              ],
+              "trailing": [
+                28,
+                32
+              ]
+            }
+          }
+        }
+      ],
+      "_elements": []
+    },
+    "expectedOutput": "[\n  (identifier)\n  (expression)\n]",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1438,6 +2120,155 @@
     "wrappedOffset": 0
   },
   {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "program",
+    "input": {
+      "$type": 33,
+      "_definitions": [
+        {
+          "$type": 61,
+          "_name": {
+            "$type": 5,
+            "$text": "program"
+          },
+          "_named_node_group": {
+            "$type": 63,
+            "_named_node_expressions": [
+              {
+                "$type": 50,
+                "_name": {
+                  "$type": 5,
+                  "$text": "field"
+                },
+                "_definition": {
+                  "$type": 61,
+                  "_name": {
+                    "$type": 5,
+                    "$text": "identifier"
+                  },
+                  "_elements": [
+                    {
+                      "$type": 39,
+                      "_name": {
+                        "$type": 6,
+                        "$text": "capture"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "$type": 51,
+                "_identifier": {
+                  "$type": 5,
+                  "$text": "negated-field"
+                },
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      28
+                    ]
+                  }
+                }
+              }
+            ],
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  28,
+                  31
+                ],
+                "trailing": [
+                  32
+                ]
+              }
+            }
+          },
+          "_elements": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28
+              ]
+            }
+          }
+        },
+        {
+          "$type": 61,
+          "_name": {
+            "$type": 5,
+            "$text": "program"
+          },
+          "_named_node_group": {
+            "$type": 63,
+            "_named_node_expressions": [
+              {
+                "$type": 61,
+                "_name": {
+                  "$type": 5,
+                  "$text": "identifier"
+                },
+                "_elements": [
+                  {
+                    "$type": 39,
+                    "_name": {
+                      "$type": 6,
+                      "$text": "capture"
+                    }
+                  }
+                ]
+              },
+              {
+                "$type": 51,
+                "_identifier": {
+                  "$type": 5,
+                  "$text": "negated-field"
+                },
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      28
+                    ]
+                  }
+                }
+              }
+            ],
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  28,
+                  31
+                ],
+                "trailing": [
+                  32
+                ]
+              }
+            }
+          },
+          "_elements": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                29
+              ],
+              "trailing": [
+                28
+              ]
+            }
+          }
+        }
+      ],
+      "$errors": []
+    },
+    "expectedOutput": "(program\n  field: (identifier) @capture\n  !negated-field)\n\n(program\n  (identifier) @capture\n  !negated-field)\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
+  },
+  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "\n(program\n  field: (identifier) @capture\n  !negated-field)\n\n(program\n  (identifier) @capture\n  !negated-field)\n",
@@ -1447,6 +2278,78 @@
     "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier) elements: (capture name: (identifier)))) named_node_expressions: (negated_field identifier: (identifier)))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (capture name: (identifier))) named_node_expressions: (negated_field identifier: (identifier)))))",
     "wrappedText": "(program\n  field: (identifier) @capture\n  !negated-field)\n\n(program\n  (identifier) @capture\n  !negated-field)\n",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "named_node_plain",
+    "input": {
+      "$type": 61,
+      "_name": {
+        "$type": 5,
+        "$text": "program"
+      },
+      "_named_node_group": {
+        "$type": 63,
+        "_named_node_expressions": [
+          {
+            "$type": 50,
+            "_name": {
+              "$type": 5,
+              "$text": "field"
+            },
+            "_definition": {
+              "$type": 61,
+              "_name": {
+                "$type": 5,
+                "$text": "identifier"
+              },
+              "_elements": [
+                {
+                  "$type": 39,
+                  "_name": {
+                    "$type": 6,
+                    "$text": "capture"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "$type": 51,
+            "_identifier": {
+              "$type": 5,
+              "$text": "negated-field"
+            },
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  28
+                ]
+              }
+            }
+          }
+        ],
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              28,
+              31
+            ],
+            "trailing": [
+              32
+            ]
+          }
+        }
+      },
+      "_elements": []
+    },
+    "expectedOutput": "(program\n  field: (identifier) @capture\n  !negated-field)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1479,7 +2382,12 @@
         }
       ]
     },
-    "expectedOutput": "(identifier) @capture"
+    "expectedOutput": "(identifier) @capture",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1491,6 +2399,71 @@
     "expectedReparseTree": "(named_node_plain name: (identifier) elements: (capture name: (identifier)))",
     "wrappedText": "(identifier) @capture\n",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "named_node_plain",
+    "input": {
+      "$type": 61,
+      "_name": {
+        "$type": 5,
+        "$text": "program"
+      },
+      "_named_node_group": {
+        "$type": 63,
+        "_named_node_expressions": [
+          {
+            "$type": 61,
+            "_name": {
+              "$type": 5,
+              "$text": "identifier"
+            },
+            "_elements": [
+              {
+                "$type": 39,
+                "_name": {
+                  "$type": 6,
+                  "$text": "capture"
+                }
+              }
+            ]
+          },
+          {
+            "$type": 51,
+            "_identifier": {
+              "$type": 5,
+              "$text": "negated-field"
+            },
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  28
+                ]
+              }
+            }
+          }
+        ],
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              28,
+              31
+            ],
+            "trailing": [
+              32
+            ]
+          }
+        }
+      },
+      "_elements": []
+    },
+    "expectedOutput": "(program\n  (identifier) @capture\n  !negated-field)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1523,7 +2496,12 @@
         }
       ]
     },
-    "expectedOutput": "(identifier) @capture"
+    "expectedOutput": "(identifier) @capture",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1582,7 +2560,12 @@
         }
       ]
     },
-    "expectedOutput": "field: (identifier) @capture\n!negated-field"
+    "expectedOutput": "field: (identifier) @capture\n!negated-field",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1634,7 +2617,12 @@
         }
       ]
     },
-    "expectedOutput": "(identifier) @capture\n!negated-field"
+    "expectedOutput": "(identifier) @capture\n!negated-field",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1674,7 +2662,12 @@
         ]
       }
     },
-    "expectedOutput": "field: (identifier) @capture"
+    "expectedOutput": "field: (identifier) @capture",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1698,7 +2691,12 @@
         "$text": "capture"
       }
     },
-    "expectedOutput": "@capture"
+    "expectedOutput": "@capture",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1722,7 +2720,12 @@
         "$text": "capture"
       }
     },
-    "expectedOutput": "@capture"
+    "expectedOutput": "@capture",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1746,7 +2749,12 @@
         "$text": "negated-field"
       }
     },
-    "expectedOutput": "!negated-field"
+    "expectedOutput": "!negated-field",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1770,7 +2778,12 @@
         "$text": "negated-field"
       }
     },
-    "expectedOutput": "!negated-field"
+    "expectedOutput": "!negated-field",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1784,6 +2797,70 @@
     "wrappedOffset": 30
   },
   {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "program",
+    "input": {
+      "$type": 33,
+      "_definitions": [
+        {
+          "$type": 61,
+          "_name": {
+            "$type": 5,
+            "$text": "program"
+          },
+          "_named_node_group": {
+            "$type": 63,
+            "_named_node_expressions": [
+              {
+                "$type": 61,
+                "_name": {
+                  "$type": 5,
+                  "$text": "identifier"
+                },
+                "_elements": [
+                  {
+                    "$type": 54,
+                    "_quantifier": 3
+                  }
+                ]
+              }
+            ],
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  28,
+                  31
+                ],
+                "trailing": [
+                  32
+                ]
+              }
+            }
+          },
+          "_elements": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28
+              ],
+              "trailing": [
+                28
+              ]
+            }
+          }
+        }
+      ],
+      "$errors": []
+    },
+    "expectedOutput": "(program\n  (identifier)+)\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
+  },
+  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "\n(program\n  (identifier)+)\n",
@@ -1793,6 +2870,54 @@
     "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (list_element_quantifier quantifier: (quantifier))))))",
     "wrappedText": "(program\n  (identifier)+)\n",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "named_node_plain",
+    "input": {
+      "$type": 61,
+      "_name": {
+        "$type": 5,
+        "$text": "program"
+      },
+      "_named_node_group": {
+        "$type": 63,
+        "_named_node_expressions": [
+          {
+            "$type": 61,
+            "_name": {
+              "$type": 5,
+              "$text": "identifier"
+            },
+            "_elements": [
+              {
+                "$type": 54,
+                "_quantifier": 3
+              }
+            ]
+          }
+        ],
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              28,
+              31
+            ],
+            "trailing": [
+              32
+            ]
+          }
+        }
+      },
+      "_elements": []
+    },
+    "expectedOutput": "(program\n  (identifier)+)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1822,7 +2947,12 @@
         }
       ]
     },
-    "expectedOutput": "(identifier)+"
+    "expectedOutput": "(identifier)+",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1857,7 +2987,12 @@
         }
       ]
     },
-    "expectedOutput": "(identifier)+"
+    "expectedOutput": "(identifier)+",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1878,7 +3013,12 @@
       "$type": 54,
       "_quantifier": 3
     },
-    "expectedOutput": "+"
+    "expectedOutput": "+",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1892,6 +3032,70 @@
     "wrappedOffset": 3
   },
   {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "program",
+    "input": {
+      "$type": 33,
+      "_definitions": [
+        {
+          "$type": 61,
+          "_name": {
+            "$type": 5,
+            "$text": "program"
+          },
+          "_named_node_group": {
+            "$type": 63,
+            "_named_node_expressions": [
+              {
+                "$type": 61,
+                "_name": {
+                  "$type": 5,
+                  "$text": "identifier"
+                },
+                "_elements": [
+                  {
+                    "$type": 54,
+                    "_quantifier": 4
+                  }
+                ]
+              }
+            ],
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  28,
+                  31
+                ],
+                "trailing": [
+                  32
+                ]
+              }
+            }
+          },
+          "_elements": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28
+              ],
+              "trailing": [
+                28
+              ]
+            }
+          }
+        }
+      ],
+      "$errors": []
+    },
+    "expectedOutput": "(program\n  (identifier)?)\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
+  },
+  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "\n(program\n  (identifier)?)\n",
@@ -1901,6 +3105,54 @@
     "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (list_element_quantifier quantifier: (quantifier))))))",
     "wrappedText": "(program\n  (identifier)?)\n",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "named_node_plain",
+    "input": {
+      "$type": 61,
+      "_name": {
+        "$type": 5,
+        "$text": "program"
+      },
+      "_named_node_group": {
+        "$type": 63,
+        "_named_node_expressions": [
+          {
+            "$type": 61,
+            "_name": {
+              "$type": 5,
+              "$text": "identifier"
+            },
+            "_elements": [
+              {
+                "$type": 54,
+                "_quantifier": 4
+              }
+            ]
+          }
+        ],
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              28,
+              31
+            ],
+            "trailing": [
+              32
+            ]
+          }
+        }
+      },
+      "_elements": []
+    },
+    "expectedOutput": "(program\n  (identifier)?)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1930,7 +3182,12 @@
         }
       ]
     },
-    "expectedOutput": "(identifier)?"
+    "expectedOutput": "(identifier)?",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1965,7 +3222,12 @@
         }
       ]
     },
-    "expectedOutput": "(identifier)?"
+    "expectedOutput": "(identifier)?",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -1986,7 +3248,12 @@
       "$type": 54,
       "_quantifier": 4
     },
-    "expectedOutput": "?"
+    "expectedOutput": "?",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -2000,6 +3267,70 @@
     "wrappedOffset": 3
   },
   {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "program",
+    "input": {
+      "$type": 33,
+      "_definitions": [
+        {
+          "$type": 61,
+          "_name": {
+            "$type": 5,
+            "$text": "program"
+          },
+          "_named_node_group": {
+            "$type": 63,
+            "_named_node_expressions": [
+              {
+                "$type": 61,
+                "_name": {
+                  "$type": 5,
+                  "$text": "identifier"
+                },
+                "_elements": [
+                  {
+                    "$type": 54,
+                    "_quantifier": 2
+                  }
+                ]
+              }
+            ],
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  28,
+                  31
+                ],
+                "trailing": [
+                  32
+                ]
+              }
+            }
+          },
+          "_elements": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28
+              ],
+              "trailing": [
+                28
+              ]
+            }
+          }
+        }
+      ],
+      "$errors": []
+    },
+    "expectedOutput": "(program\n  (identifier)*)\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
+  },
+  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "\n(program\n  (identifier)*)\n",
@@ -2009,6 +3340,54 @@
     "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (list_element_quantifier quantifier: (quantifier))))))",
     "wrappedText": "(program\n  (identifier)*)\n",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "named_node_plain",
+    "input": {
+      "$type": 61,
+      "_name": {
+        "$type": 5,
+        "$text": "program"
+      },
+      "_named_node_group": {
+        "$type": 63,
+        "_named_node_expressions": [
+          {
+            "$type": 61,
+            "_name": {
+              "$type": 5,
+              "$text": "identifier"
+            },
+            "_elements": [
+              {
+                "$type": 54,
+                "_quantifier": 2
+              }
+            ]
+          }
+        ],
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              28,
+              31
+            ],
+            "trailing": [
+              32
+            ]
+          }
+        }
+      },
+      "_elements": []
+    },
+    "expectedOutput": "(program\n  (identifier)*)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -2038,7 +3417,12 @@
         }
       ]
     },
-    "expectedOutput": "(identifier)*"
+    "expectedOutput": "(identifier)*",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -2073,7 +3457,12 @@
         }
       ]
     },
-    "expectedOutput": "(identifier)*"
+    "expectedOutput": "(identifier)*",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -2094,7 +3483,12 @@
       "$type": 54,
       "_quantifier": 2
     },
-    "expectedOutput": "*"
+    "expectedOutput": "*",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -2108,6 +3502,103 @@
     "wrappedOffset": 3
   },
   {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "program",
+    "input": {
+      "$type": 33,
+      "_definitions": [
+        {
+          "$type": 61,
+          "_name": {
+            "$type": 5,
+            "$text": "program"
+          },
+          "_named_node_group": {
+            "$type": 63,
+            "_named_node_expressions": [
+              {
+                "$type": 61,
+                "_name": {
+                  "$type": 5,
+                  "$text": "identifier"
+                },
+                "_elements": [
+                  {
+                    "$type": 54,
+                    "_quantifier": 4
+                  },
+                  {
+                    "$type": 39,
+                    "_name": {
+                      "$type": 6,
+                      "$text": "variable"
+                    },
+                    "$_layout": {
+                      "gap": {
+                        "$text": " "
+                      }
+                    }
+                  },
+                  {
+                    "$type": 54,
+                    "_quantifier": 2,
+                    "$_layout": {
+                      "gap": {
+                        "$text": ""
+                      }
+                    }
+                  },
+                  {
+                    "$type": 39,
+                    "_name": {
+                      "$type": 6,
+                      "$text": "spell"
+                    },
+                    "$_layout": {
+                      "gap": {
+                        "$text": " "
+                      }
+                    }
+                  }
+                ]
+              }
+            ],
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  28,
+                  31
+                ],
+                "trailing": [
+                  32
+                ]
+              }
+            }
+          },
+          "_elements": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28
+              ],
+              "trailing": [
+                28
+              ]
+            }
+          }
+        }
+      ],
+      "$errors": []
+    },
+    "expectedOutput": "(program\n  (identifier)? @variable* @spell)\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
+  },
+  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "\n(program\n  (identifier)? @variable* @spell)\n",
@@ -2117,6 +3608,87 @@
     "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (list_element_quantifier quantifier: (quantifier)) elements: (capture name: (identifier)) elements: (list_element_quantifier quantifier: (quantifier)) elements: (capture name: (identifier))))))",
     "wrappedText": "(program\n  (identifier)? @variable* @spell)\n",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "named_node_plain",
+    "input": {
+      "$type": 61,
+      "_name": {
+        "$type": 5,
+        "$text": "program"
+      },
+      "_named_node_group": {
+        "$type": 63,
+        "_named_node_expressions": [
+          {
+            "$type": 61,
+            "_name": {
+              "$type": 5,
+              "$text": "identifier"
+            },
+            "_elements": [
+              {
+                "$type": 54,
+                "_quantifier": 4
+              },
+              {
+                "$type": 39,
+                "_name": {
+                  "$type": 6,
+                  "$text": "variable"
+                },
+                "$_layout": {
+                  "gap": {
+                    "$text": " "
+                  }
+                }
+              },
+              {
+                "$type": 54,
+                "_quantifier": 2,
+                "$_layout": {
+                  "gap": {
+                    "$text": ""
+                  }
+                }
+              },
+              {
+                "$type": 39,
+                "_name": {
+                  "$type": 6,
+                  "$text": "spell"
+                },
+                "$_layout": {
+                  "gap": {
+                    "$text": " "
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              28,
+              31
+            ],
+            "trailing": [
+              32
+            ]
+          }
+        }
+      },
+      "_elements": []
+    },
+    "expectedOutput": "(program\n  (identifier)? @variable* @spell)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -2179,7 +3751,12 @@
         }
       ]
     },
-    "expectedOutput": "(identifier)? @variable* @spell"
+    "expectedOutput": "(identifier)? @variable* @spell",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -2247,7 +3824,12 @@
         }
       ]
     },
-    "expectedOutput": "(identifier)? @variable* @spell"
+    "expectedOutput": "(identifier)? @variable* @spell",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -2268,7 +3850,12 @@
       "$type": 54,
       "_quantifier": 4
     },
-    "expectedOutput": "?"
+    "expectedOutput": "?",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -2289,7 +3876,12 @@
       "$type": 54,
       "_quantifier": 2
     },
-    "expectedOutput": "*"
+    "expectedOutput": "*",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -2313,7 +3905,12 @@
         "$text": "variable"
       }
     },
-    "expectedOutput": "@variable"
+    "expectedOutput": "@variable",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -2337,7 +3934,12 @@
         "$text": "spell"
       }
     },
-    "expectedOutput": "@spell"
+    "expectedOutput": "@spell",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -2990,6 +4592,108 @@
     "wrappedOffset": 11
   },
   {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "program",
+    "input": {
+      "$type": 33,
+      "_definitions": [
+        {
+          "$type": 61,
+          "_name": {
+            "$type": 5,
+            "$text": "class_declaration"
+          },
+          "_named_node_group": {
+            "$type": 63,
+            "_named_node_expressions": [
+              {
+                "$type": 50,
+                "_name": {
+                  "$type": 5,
+                  "$text": "body"
+                },
+                "_definition": {
+                  "$type": 61,
+                  "_name": {
+                    "$type": 5,
+                    "$text": "class_body"
+                  },
+                  "_elements": [
+                    {
+                      "$type": 39,
+                      "_name": {
+                        "$type": 6,
+                        "$text": "class.body"
+                      }
+                    },
+                    {
+                      "$type": 39,
+                      "_name": {
+                        "$type": 6,
+                        "$text": "test"
+                      },
+                      "$_layout": {
+                        "gap": {
+                          "$text": " "
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            ],
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  28,
+                  31
+                ]
+              }
+            }
+          },
+          "_elements": [
+            {
+              "$type": 39,
+              "_name": {
+                "$type": 6,
+                "$text": "blorg"
+              },
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    32
+                  ]
+                },
+                "changed": {
+                  "leading": true,
+                  "trailing": false
+                }
+              }
+            }
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28
+              ],
+              "trailing": [
+                28
+              ]
+            }
+          }
+        }
+      ],
+      "$errors": []
+    },
+    "expectedOutput": "(class_declaration\n  body: (class_body) @class.body @test) @blorg\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
+  },
+  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "\n(class_declaration\n  body: (class_body) @class.body @test) @blorg\n",
@@ -2999,6 +4703,92 @@
     "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier) elements: (capture name: (identifier)) elements: (capture name: (identifier))))) elements: (capture name: (identifier))))",
     "wrappedText": "(class_declaration\n  body: (class_body) @class.body @test) @blorg\n",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "named_node_plain",
+    "input": {
+      "$type": 61,
+      "_name": {
+        "$type": 5,
+        "$text": "class_declaration"
+      },
+      "_named_node_group": {
+        "$type": 63,
+        "_named_node_expressions": [
+          {
+            "$type": 50,
+            "_name": {
+              "$type": 5,
+              "$text": "body"
+            },
+            "_definition": {
+              "$type": 61,
+              "_name": {
+                "$type": 5,
+                "$text": "class_body"
+              },
+              "_elements": [
+                {
+                  "$type": 39,
+                  "_name": {
+                    "$type": 6,
+                    "$text": "class.body"
+                  }
+                },
+                {
+                  "$type": 39,
+                  "_name": {
+                    "$type": 6,
+                    "$text": "test"
+                  },
+                  "$_layout": {
+                    "gap": {
+                      "$text": " "
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              28,
+              31
+            ]
+          }
+        }
+      },
+      "_elements": [
+        {
+          "$type": 39,
+          "_name": {
+            "$type": 6,
+            "$text": "blorg"
+          },
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                32
+              ]
+            },
+            "changed": {
+              "leading": true,
+              "trailing": false
+            }
+          }
+        }
+      ]
+    },
+    "expectedOutput": "(class_declaration\n  body: (class_body) @class.body @test) @blorg",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3043,7 +4833,12 @@
         }
       ]
     },
-    "expectedOutput": "(class_body) @class.body @test"
+    "expectedOutput": "(class_body) @class.body @test",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3100,7 +4895,12 @@
         }
       ]
     },
-    "expectedOutput": "body: (class_body) @class.body @test"
+    "expectedOutput": "body: (class_body) @class.body @test",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3152,7 +4952,12 @@
         ]
       }
     },
-    "expectedOutput": "body: (class_body) @class.body @test"
+    "expectedOutput": "body: (class_body) @class.body @test",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3176,7 +4981,12 @@
         "$text": "class.body"
       }
     },
-    "expectedOutput": "@class.body"
+    "expectedOutput": "@class.body",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3200,7 +5010,12 @@
         "$text": "test"
       }
     },
-    "expectedOutput": "@test"
+    "expectedOutput": "@test",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3224,7 +5039,12 @@
         "$text": "blorg"
       }
     },
-    "expectedOutput": "@blorg"
+    "expectedOutput": "@blorg",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3290,7 +5110,12 @@
       },
       "_elements": []
     },
-    "expectedOutput": "\"?\""
+    "expectedOutput": "\"?\"",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3323,7 +5148,12 @@
       },
       "_elements": []
     },
-    "expectedOutput": "\"+\""
+    "expectedOutput": "\"+\"",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3356,7 +5186,12 @@
       },
       "_elements": []
     },
-    "expectedOutput": "\"-\""
+    "expectedOutput": "\"-\"",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3385,7 +5220,12 @@
         ]
       }
     },
-    "expectedOutput": "\"?\""
+    "expectedOutput": "\"?\"",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3414,7 +5254,12 @@
         ]
       }
     },
-    "expectedOutput": "\"+\""
+    "expectedOutput": "\"+\"",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3443,7 +5288,12 @@
         ]
       }
     },
-    "expectedOutput": "\"-\""
+    "expectedOutput": "\"-\"",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3469,7 +5319,12 @@
         }
       ]
     },
-    "expectedOutput": "?"
+    "expectedOutput": "?",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3495,7 +5350,12 @@
         }
       ]
     },
-    "expectedOutput": "+"
+    "expectedOutput": "+",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3521,7 +5381,12 @@
         }
       ]
     },
-    "expectedOutput": "-"
+    "expectedOutput": "-",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3545,7 +5410,12 @@
         "$text": "ops"
       }
     },
-    "expectedOutput": "@ops"
+    "expectedOutput": "@ops",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3569,7 +5439,12 @@
         "$text": "conditional.inner"
       }
     },
-    "expectedOutput": "@conditional.inner"
+    "expectedOutput": "@conditional.inner",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3593,7 +5468,12 @@
         "$text": "conditional.outer"
       }
     },
-    "expectedOutput": "@conditional.outer"
+    "expectedOutput": "@conditional.outer",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3626,7 +5506,12 @@
       "_name": 7,
       "_elements": []
     },
-    "expectedOutput": "(_)"
+    "expectedOutput": "(_)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3648,7 +5533,12 @@
       "_name": 7,
       "_elements": []
     },
-    "expectedOutput": "(_)"
+    "expectedOutput": "(_)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3675,7 +5565,12 @@
         }
       ]
     },
-    "expectedOutput": "(_)?"
+    "expectedOutput": "(_)?",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3715,7 +5610,12 @@
         "_elements": []
       }
     },
-    "expectedOutput": "condition: (_)"
+    "expectedOutput": "condition: (_)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3744,7 +5644,12 @@
         "_elements": []
       }
     },
-    "expectedOutput": "consequence: (_)"
+    "expectedOutput": "consequence: (_)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3778,7 +5683,12 @@
         ]
       }
     },
-    "expectedOutput": "alternative: (_)?"
+    "expectedOutput": "alternative: (_)?",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3799,7 +5709,12 @@
       "$type": 54,
       "_quantifier": 4
     },
-    "expectedOutput": "?"
+    "expectedOutput": "?",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3813,6 +5728,267 @@
     "wrappedOffset": 3
   },
   {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "program",
+    "input": {
+      "$type": 33,
+      "_definitions": [
+        {
+          "$type": 45,
+          "_grouping_group": [
+            {
+              "$type": 58,
+              "_group_expression": {
+                "$type": 61,
+                "_name": {
+                  "$type": 5,
+                  "$text": "identifier"
+                },
+                "_elements": [
+                  {
+                    "$type": 39,
+                    "_name": {
+                      "$type": 6,
+                      "$text": "v"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "$type": 58,
+              "_group_expression": {
+                "$type": 52,
+                "_prefix": 19,
+                "_name": {
+                  "$type": 6,
+                  "$text": "eq"
+                },
+                "_type": 4,
+                "_parameters": {
+                  "$type": 43,
+                  "_elements": [
+                    {
+                      "$type": 39,
+                      "_name": {
+                        "$type": 6,
+                        "$text": "v"
+                      }
+                    },
+                    {
+                      "$type": 40,
+                      "_string_content": {
+                        "$type": 42,
+                        "_content": [
+                          {
+                            "$type": 23,
+                            "$text": "test"
+                          }
+                        ]
+                      },
+                      "$_layout": {
+                        "gap": {
+                          "$text": " "
+                        }
+                      }
+                    },
+                    {
+                      "$type": 5,
+                      "$text": "local",
+                      "$_layout": {
+                        "gap": {
+                          "$text": " "
+                        }
+                      }
+                    },
+                    {
+                      "$type": 5,
+                      "$text": "_",
+                      "$_layout": {
+                        "gap": {
+                          "$text": " "
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    28,
+                    31
+                  ],
+                  "trailing": [
+                    32
+                  ]
+                }
+              }
+            }
+          ],
+          "_elements": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28
+              ]
+            }
+          }
+        },
+        {
+          "$type": 45,
+          "_grouping_group": [
+            {
+              "$type": 58,
+              "_group_expression": {
+                "$type": 61,
+                "_name": {
+                  "$type": 5,
+                  "$text": "identifier"
+                },
+                "_elements": [
+                  {
+                    "$type": 39,
+                    "_name": {
+                      "$type": 6,
+                      "$text": "v"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "$type": 58,
+              "_group_expression": {
+                "$type": 52,
+                "_prefix": 20,
+                "_name": {
+                  "$type": 6,
+                  "$text": "match"
+                },
+                "_type": 4,
+                "_parameters": {
+                  "$type": 43,
+                  "_elements": [
+                    {
+                      "$type": 39,
+                      "_name": {
+                        "$type": 6,
+                        "$text": "v"
+                      }
+                    },
+                    {
+                      "$type": 40,
+                      "_string_content": {
+                        "$type": 42,
+                        "_content": [
+                          {
+                            "$type": 23,
+                            "$text": "test"
+                          }
+                        ]
+                      },
+                      "$_layout": {
+                        "gap": {
+                          "$text": " "
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    28,
+                    31
+                  ],
+                  "trailing": [
+                    32
+                  ]
+                }
+              }
+            }
+          ],
+          "_elements": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                29
+              ]
+            }
+          }
+        },
+        {
+          "$type": 45,
+          "_grouping_group": [
+            {
+              "$type": 58,
+              "_group_expression": {
+                "$type": 61,
+                "_name": {
+                  "$type": 5,
+                  "$text": "identifier"
+                },
+                "_elements": [
+                  {
+                    "$type": 39,
+                    "_name": {
+                      "$type": 6,
+                      "$text": "v"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "$type": 58,
+              "_group_expression": {
+                "$type": 52,
+                "_prefix": 19,
+                "_name": {
+                  "$type": 6,
+                  "$text": "something"
+                },
+                "_type": 18
+              },
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    28,
+                    31
+                  ],
+                  "trailing": [
+                    32
+                  ]
+                }
+              }
+            }
+          ],
+          "_elements": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                29
+              ],
+              "trailing": [
+                28
+              ]
+            }
+          }
+        }
+      ],
+      "$errors": []
+    },
+    "expectedOutput": "((identifier) @v\n  (#eq? @v \"test\" local _))\n\n((identifier) @v\n  (.match? @v \"test\"))\n\n((identifier) @v\n  (#something!))\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
+  },
+  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "\n((identifier) @v\n  (#eq? @v \"test\" local _))\n\n((identifier) @v\n  (.match? @v \"test\"))\n\n((identifier) @v\n  (#something!))\n",
@@ -3822,6 +5998,112 @@
     "expectedReparseTree": "(program definitions: (grouping (grouping_group (named_node_plain name: (identifier) elements: (capture name: (identifier)))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (string_content_text))) elements: (identifier) elements: (identifier))))) definitions: (grouping (grouping_group (named_node_plain name: (identifier) elements: (capture name: (identifier)))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (string_content_text))))))) definitions: (grouping (grouping_group (named_node_plain name: (identifier) elements: (capture name: (identifier)))) (grouping_group (predicate name: (identifier) type: (predicate_type)))))",
     "wrappedText": "((identifier) @v\n  (#eq? @v \"test\" local _))\n\n((identifier) @v\n  (.match? @v \"test\"))\n\n((identifier) @v\n  (#something!))\n",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "grouping",
+    "input": {
+      "$type": 45,
+      "_grouping_group": [
+        {
+          "$type": 58,
+          "_group_expression": {
+            "$type": 61,
+            "_name": {
+              "$type": 5,
+              "$text": "identifier"
+            },
+            "_elements": [
+              {
+                "$type": 39,
+                "_name": {
+                  "$type": 6,
+                  "$text": "v"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "$type": 58,
+          "_group_expression": {
+            "$type": 52,
+            "_prefix": 19,
+            "_name": {
+              "$type": 6,
+              "$text": "eq"
+            },
+            "_type": 4,
+            "_parameters": {
+              "$type": 43,
+              "_elements": [
+                {
+                  "$type": 39,
+                  "_name": {
+                    "$type": 6,
+                    "$text": "v"
+                  }
+                },
+                {
+                  "$type": 40,
+                  "_string_content": {
+                    "$type": 42,
+                    "_content": [
+                      {
+                        "$type": 23,
+                        "$text": "test"
+                      }
+                    ]
+                  },
+                  "$_layout": {
+                    "gap": {
+                      "$text": " "
+                    }
+                  }
+                },
+                {
+                  "$type": 5,
+                  "$text": "local",
+                  "$_layout": {
+                    "gap": {
+                      "$text": " "
+                    }
+                  }
+                },
+                {
+                  "$type": 5,
+                  "$text": "_",
+                  "$_layout": {
+                    "gap": {
+                      "$text": " "
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28,
+                31
+              ],
+              "trailing": [
+                32
+              ]
+            }
+          }
+        }
+      ],
+      "_elements": []
+    },
+    "expectedOutput": "((identifier) @v\n  (#eq? @v \"test\" local _))",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3835,6 +6117,94 @@
     "wrappedOffset": 0
   },
   {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "grouping",
+    "input": {
+      "$type": 45,
+      "_grouping_group": [
+        {
+          "$type": 58,
+          "_group_expression": {
+            "$type": 61,
+            "_name": {
+              "$type": 5,
+              "$text": "identifier"
+            },
+            "_elements": [
+              {
+                "$type": 39,
+                "_name": {
+                  "$type": 6,
+                  "$text": "v"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "$type": 58,
+          "_group_expression": {
+            "$type": 52,
+            "_prefix": 20,
+            "_name": {
+              "$type": 6,
+              "$text": "match"
+            },
+            "_type": 4,
+            "_parameters": {
+              "$type": 43,
+              "_elements": [
+                {
+                  "$type": 39,
+                  "_name": {
+                    "$type": 6,
+                    "$text": "v"
+                  }
+                },
+                {
+                  "$type": 40,
+                  "_string_content": {
+                    "$type": 42,
+                    "_content": [
+                      {
+                        "$type": 23,
+                        "$text": "test"
+                      }
+                    ]
+                  },
+                  "$_layout": {
+                    "gap": {
+                      "$text": " "
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28,
+                31
+              ],
+              "trailing": [
+                32
+              ]
+            }
+          }
+        }
+      ],
+      "_elements": []
+    },
+    "expectedOutput": "((identifier) @v\n  (.match? @v \"test\"))",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
+  },
+  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "((identifier) @v\n  (.match? @v \"test\"))",
@@ -3844,6 +6214,65 @@
     "expectedReparseTree": "(grouping (grouping_group (named_node_plain name: (identifier) elements: (capture name: (identifier)))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (string_content_text)))))))",
     "wrappedText": "((identifier) @v\n  (.match? @v \"test\"))\n",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "grouping",
+    "input": {
+      "$type": 45,
+      "_grouping_group": [
+        {
+          "$type": 58,
+          "_group_expression": {
+            "$type": 61,
+            "_name": {
+              "$type": 5,
+              "$text": "identifier"
+            },
+            "_elements": [
+              {
+                "$type": 39,
+                "_name": {
+                  "$type": 6,
+                  "$text": "v"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "$type": 58,
+          "_group_expression": {
+            "$type": 52,
+            "_prefix": 19,
+            "_name": {
+              "$type": 6,
+              "$text": "something"
+            },
+            "_type": 18
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28,
+                31
+              ],
+              "trailing": [
+                32
+              ]
+            }
+          }
+        }
+      ],
+      "_elements": []
+    },
+    "expectedOutput": "((identifier) @v\n  (#something!))",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3879,7 +6308,12 @@
         ]
       }
     },
-    "expectedOutput": "(identifier) @v"
+    "expectedOutput": "(identifier) @v",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3955,7 +6389,12 @@
         }
       }
     },
-    "expectedOutput": "(#eq? @v \"test\" local _)"
+    "expectedOutput": "(#eq? @v \"test\" local _)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -3991,7 +6430,12 @@
         ]
       }
     },
-    "expectedOutput": "(identifier) @v"
+    "expectedOutput": "(identifier) @v",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -4049,7 +6493,12 @@
         }
       }
     },
-    "expectedOutput": "(.match? @v \"test\")"
+    "expectedOutput": "(.match? @v \"test\")",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -4085,7 +6534,12 @@
         ]
       }
     },
-    "expectedOutput": "(identifier) @v"
+    "expectedOutput": "(identifier) @v",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -4114,7 +6568,12 @@
         "_type": 18
       }
     },
-    "expectedOutput": "(#something!)"
+    "expectedOutput": "(#something!)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -4147,7 +6606,12 @@
         }
       ]
     },
-    "expectedOutput": "(identifier) @v"
+    "expectedOutput": "(identifier) @v",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -4180,7 +6644,12 @@
         }
       ]
     },
-    "expectedOutput": "(identifier) @v"
+    "expectedOutput": "(identifier) @v",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -4213,7 +6682,12 @@
         }
       ]
     },
-    "expectedOutput": "(identifier) @v"
+    "expectedOutput": "(identifier) @v",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -4237,7 +6711,12 @@
         "$text": "v"
       }
     },
-    "expectedOutput": "@v"
+    "expectedOutput": "@v",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -4261,7 +6740,12 @@
         "$text": "v"
       }
     },
-    "expectedOutput": "@v"
+    "expectedOutput": "@v",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -4285,7 +6769,12 @@
         "$text": "v"
       }
     },
-    "expectedOutput": "@v"
+    "expectedOutput": "@v",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -4309,7 +6798,12 @@
         "$text": "v"
       }
     },
-    "expectedOutput": "@v"
+    "expectedOutput": "@v",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -4333,7 +6827,12 @@
         "$text": "v"
       }
     },
-    "expectedOutput": "@v"
+    "expectedOutput": "@v",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -4406,7 +6905,12 @@
         ]
       }
     },
-    "expectedOutput": "(#eq? @v \"test\" local _)"
+    "expectedOutput": "(#eq? @v \"test\" local _)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -4461,7 +6965,12 @@
         ]
       }
     },
-    "expectedOutput": "(.match? @v \"test\")"
+    "expectedOutput": "(.match? @v \"test\")",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -4487,7 +6996,12 @@
       },
       "_type": 18
     },
-    "expectedOutput": "(#something!)"
+    "expectedOutput": "(#something!)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -4551,7 +7065,12 @@
         }
       ]
     },
-    "expectedOutput": "@v \"test\" local _"
+    "expectedOutput": "@v \"test\" local _",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -4597,7 +7116,12 @@
         }
       ]
     },
-    "expectedOutput": "@v \"test\""
+    "expectedOutput": "@v \"test\"",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -4626,7 +7150,12 @@
         ]
       }
     },
-    "expectedOutput": "\"test\""
+    "expectedOutput": "\"test\"",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -4655,7 +7184,12 @@
         ]
       }
     },
-    "expectedOutput": "\"test\""
+    "expectedOutput": "\"test\"",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -4681,7 +7215,12 @@
         }
       ]
     },
-    "expectedOutput": "test"
+    "expectedOutput": "test",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -4707,7 +7246,12 @@
         }
       ]
     },
-    "expectedOutput": "test"
+    "expectedOutput": "test",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -14989,6 +17533,299 @@
     "wrappedOffset": 52
   },
   {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "program",
+    "input": {
+      "$type": 33,
+      "_definitions": [
+        {
+          "$type": 45,
+          "_grouping_group": [
+            {
+              "$type": 58,
+              "_group_expression": {
+                "$type": 61,
+                "_name": {
+                  "$type": 5,
+                  "$text": "identifier"
+                },
+                "_elements": [
+                  {
+                    "$type": 39,
+                    "_name": {
+                      "$type": 6,
+                      "$text": "v"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "$type": 58,
+              "_group_expression": {
+                "$type": 52,
+                "_prefix": 19,
+                "_name": {
+                  "$type": 6,
+                  "$text": "eq"
+                },
+                "_type": 4,
+                "_parameters": {
+                  "$type": 43,
+                  "_elements": [
+                    {
+                      "$type": 39,
+                      "_name": {
+                        "$type": 6,
+                        "$text": "v"
+                      }
+                    },
+                    {
+                      "$type": 40,
+                      "_string_content": {
+                        "$type": 42,
+                        "_content": [
+                          {
+                            "$type": 23,
+                            "$text": "I'm a string; not a comment"
+                          }
+                        ]
+                      },
+                      "$_layout": {
+                        "gap": {
+                          "$text": " "
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    28,
+                    31
+                  ]
+                }
+              }
+            },
+            {
+              "$type": 58,
+              "_group_expression": {
+                "$type": 52,
+                "_prefix": 19,
+                "_name": {
+                  "$type": 6,
+                  "$text": "eq"
+                },
+                "_type": 4,
+                "_parameters": {
+                  "$type": 43,
+                  "_elements": [
+                    {
+                      "$type": 39,
+                      "_name": {
+                        "$type": 6,
+                        "$text": "v"
+                      }
+                    },
+                    {
+                      "$type": 40,
+                      "_string_content": {
+                        "$type": 42,
+                        "_content": [
+                          {
+                            "$type": 23,
+                            "$text": "test"
+                          },
+                          {
+                            "$type": 1,
+                            "_content": "\"",
+                            "$_layout": {
+                              "gap": {
+                                "$text": ""
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      "$_layout": {
+                        "gap": {
+                          "$text": " "
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    28
+                  ]
+                }
+              }
+            },
+            {
+              "$type": 58,
+              "_group_expression": {
+                "$type": 52,
+                "_prefix": 19,
+                "_name": {
+                  "$type": 6,
+                  "$text": "eq"
+                },
+                "_type": 4,
+                "_parameters": {
+                  "$type": 43,
+                  "_elements": [
+                    {
+                      "$type": 39,
+                      "_name": {
+                        "$type": 6,
+                        "$text": "v"
+                      }
+                    },
+                    {
+                      "$type": 40,
+                      "_string_content": {
+                        "$type": 42,
+                        "_content": [
+                          {
+                            "$type": 23,
+                            "$text": "tes"
+                          },
+                          {
+                            "$type": 1,
+                            "_content": "\"",
+                            "$_layout": {
+                              "gap": {
+                                "$text": ""
+                              }
+                            }
+                          },
+                          {
+                            "$type": 1,
+                            "_content": "\"",
+                            "$_layout": {
+                              "gap": {
+                                "$text": ""
+                              }
+                            }
+                          },
+                          {
+                            "$type": 23,
+                            "$text": "ting",
+                            "$_layout": {
+                              "gap": {
+                                "$text": ""
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      "$_layout": {
+                        "gap": {
+                          "$text": " "
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    28
+                  ]
+                }
+              }
+            },
+            {
+              "$type": 58,
+              "_group_expression": {
+                "$type": 52,
+                "_prefix": 19,
+                "_name": {
+                  "$type": 6,
+                  "$text": "eq"
+                },
+                "_type": 4,
+                "_parameters": {
+                  "$type": 43,
+                  "_elements": [
+                    {
+                      "$type": 39,
+                      "_name": {
+                        "$type": 6,
+                        "$text": "v"
+                      }
+                    },
+                    {
+                      "$type": 40,
+                      "_string_content": {
+                        "$type": 42,
+                        "_content": [
+                          {
+                            "$type": 1,
+                            "_content": "\""
+                          },
+                          {
+                            "$type": 23,
+                            "$text": "test",
+                            "$_layout": {
+                              "gap": {
+                                "$text": ""
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      "$_layout": {
+                        "gap": {
+                          "$text": " "
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    28
+                  ],
+                  "trailing": [
+                    32
+                  ]
+                }
+              }
+            }
+          ],
+          "_elements": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28
+              ],
+              "trailing": [
+                28
+              ]
+            }
+          }
+        }
+      ],
+      "$errors": []
+    },
+    "expectedOutput": "((identifier) @v\n  (#eq? @v \"I'm a string; not a comment\")\n  (#eq? @v \"test\\\"\")\n  (#eq? @v \"tes\\\"\\\"ting\")\n  (#eq? @v \"\\\"test\"))\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
+  },
+  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "\n((identifier) @v\n  (#eq? @v \"I'm a string; not a comment\")\n  (#eq? @v \"test\\\"\")\n  (#eq? @v \"tes\\\"\\\"ting\")\n  (#eq? @v \"\\\"test\"))\n",
@@ -14998,6 +17835,283 @@
     "expectedReparseTree": "(program definitions: (grouping (grouping_group (named_node_plain name: (identifier) elements: (capture name: (identifier)))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (string_content_text)))))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (string_content_text) (escape_sequence)))))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (string_content_text) (escape_sequence) (escape_sequence) (string_content_text)))))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (escape_sequence) (string_content_text))))))))",
     "wrappedText": "((identifier) @v\n  (#eq? @v \"I'm a string; not a comment\")\n  (#eq? @v \"test\\\"\")\n  (#eq? @v \"tes\\\"\\\"ting\")\n  (#eq? @v \"\\\"test\"))\n",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "grouping",
+    "input": {
+      "$type": 45,
+      "_grouping_group": [
+        {
+          "$type": 58,
+          "_group_expression": {
+            "$type": 61,
+            "_name": {
+              "$type": 5,
+              "$text": "identifier"
+            },
+            "_elements": [
+              {
+                "$type": 39,
+                "_name": {
+                  "$type": 6,
+                  "$text": "v"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "$type": 58,
+          "_group_expression": {
+            "$type": 52,
+            "_prefix": 19,
+            "_name": {
+              "$type": 6,
+              "$text": "eq"
+            },
+            "_type": 4,
+            "_parameters": {
+              "$type": 43,
+              "_elements": [
+                {
+                  "$type": 39,
+                  "_name": {
+                    "$type": 6,
+                    "$text": "v"
+                  }
+                },
+                {
+                  "$type": 40,
+                  "_string_content": {
+                    "$type": 42,
+                    "_content": [
+                      {
+                        "$type": 23,
+                        "$text": "I'm a string; not a comment"
+                      }
+                    ]
+                  },
+                  "$_layout": {
+                    "gap": {
+                      "$text": " "
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28,
+                31
+              ]
+            }
+          }
+        },
+        {
+          "$type": 58,
+          "_group_expression": {
+            "$type": 52,
+            "_prefix": 19,
+            "_name": {
+              "$type": 6,
+              "$text": "eq"
+            },
+            "_type": 4,
+            "_parameters": {
+              "$type": 43,
+              "_elements": [
+                {
+                  "$type": 39,
+                  "_name": {
+                    "$type": 6,
+                    "$text": "v"
+                  }
+                },
+                {
+                  "$type": 40,
+                  "_string_content": {
+                    "$type": 42,
+                    "_content": [
+                      {
+                        "$type": 23,
+                        "$text": "test"
+                      },
+                      {
+                        "$type": 1,
+                        "_content": "\"",
+                        "$_layout": {
+                          "gap": {
+                            "$text": ""
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "$_layout": {
+                    "gap": {
+                      "$text": " "
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28
+              ]
+            }
+          }
+        },
+        {
+          "$type": 58,
+          "_group_expression": {
+            "$type": 52,
+            "_prefix": 19,
+            "_name": {
+              "$type": 6,
+              "$text": "eq"
+            },
+            "_type": 4,
+            "_parameters": {
+              "$type": 43,
+              "_elements": [
+                {
+                  "$type": 39,
+                  "_name": {
+                    "$type": 6,
+                    "$text": "v"
+                  }
+                },
+                {
+                  "$type": 40,
+                  "_string_content": {
+                    "$type": 42,
+                    "_content": [
+                      {
+                        "$type": 23,
+                        "$text": "tes"
+                      },
+                      {
+                        "$type": 1,
+                        "_content": "\"",
+                        "$_layout": {
+                          "gap": {
+                            "$text": ""
+                          }
+                        }
+                      },
+                      {
+                        "$type": 1,
+                        "_content": "\"",
+                        "$_layout": {
+                          "gap": {
+                            "$text": ""
+                          }
+                        }
+                      },
+                      {
+                        "$type": 23,
+                        "$text": "ting",
+                        "$_layout": {
+                          "gap": {
+                            "$text": ""
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "$_layout": {
+                    "gap": {
+                      "$text": " "
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28
+              ]
+            }
+          }
+        },
+        {
+          "$type": 58,
+          "_group_expression": {
+            "$type": 52,
+            "_prefix": 19,
+            "_name": {
+              "$type": 6,
+              "$text": "eq"
+            },
+            "_type": 4,
+            "_parameters": {
+              "$type": 43,
+              "_elements": [
+                {
+                  "$type": 39,
+                  "_name": {
+                    "$type": 6,
+                    "$text": "v"
+                  }
+                },
+                {
+                  "$type": 40,
+                  "_string_content": {
+                    "$type": 42,
+                    "_content": [
+                      {
+                        "$type": 1,
+                        "_content": "\""
+                      },
+                      {
+                        "$type": 23,
+                        "$text": "test",
+                        "$_layout": {
+                          "gap": {
+                            "$text": ""
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "$_layout": {
+                    "gap": {
+                      "$text": " "
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28
+              ],
+              "trailing": [
+                32
+              ]
+            }
+          }
+        }
+      ],
+      "_elements": []
+    },
+    "expectedOutput": "((identifier) @v\n  (#eq? @v \"I'm a string; not a comment\")\n  (#eq? @v \"test\\\"\")\n  (#eq? @v \"tes\\\"\\\"ting\")\n  (#eq? @v \"\\\"test\"))",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -15033,7 +18147,12 @@
         ]
       }
     },
-    "expectedOutput": "(identifier) @v"
+    "expectedOutput": "(identifier) @v",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -15091,7 +18210,12 @@
         }
       }
     },
-    "expectedOutput": "(#eq? @v \"I'm a string; not a comment\")"
+    "expectedOutput": "(#eq? @v \"I'm a string; not a comment\")",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -15158,7 +18282,12 @@
         }
       }
     },
-    "expectedOutput": "(#eq? @v \"test\\\"\")"
+    "expectedOutput": "(#eq? @v \"test\\\"\")",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -15243,7 +18372,12 @@
         }
       }
     },
-    "expectedOutput": "(#eq? @v \"tes\\\"\\\"ting\")"
+    "expectedOutput": "(#eq? @v \"tes\\\"\\\"ting\")",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -15310,7 +18444,12 @@
         }
       }
     },
-    "expectedOutput": "(#eq? @v \"\\\"test\")"
+    "expectedOutput": "(#eq? @v \"\\\"test\")",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -15343,7 +18482,12 @@
         }
       ]
     },
-    "expectedOutput": "(identifier) @v"
+    "expectedOutput": "(identifier) @v",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -15367,7 +18511,12 @@
         "$text": "v"
       }
     },
-    "expectedOutput": "@v"
+    "expectedOutput": "@v",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -15391,7 +18540,12 @@
         "$text": "v"
       }
     },
-    "expectedOutput": "@v"
+    "expectedOutput": "@v",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -15415,7 +18569,12 @@
         "$text": "v"
       }
     },
-    "expectedOutput": "@v"
+    "expectedOutput": "@v",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -15439,7 +18598,12 @@
         "$text": "v"
       }
     },
-    "expectedOutput": "@v"
+    "expectedOutput": "@v",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -15463,7 +18627,12 @@
         "$text": "v"
       }
     },
-    "expectedOutput": "@v"
+    "expectedOutput": "@v",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -15518,7 +18687,12 @@
         ]
       }
     },
-    "expectedOutput": "(#eq? @v \"I'm a string; not a comment\")"
+    "expectedOutput": "(#eq? @v \"I'm a string; not a comment\")",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -15582,7 +18756,12 @@
         ]
       }
     },
-    "expectedOutput": "(#eq? @v \"test\\\"\")"
+    "expectedOutput": "(#eq? @v \"test\\\"\")",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -15664,7 +18843,12 @@
         ]
       }
     },
-    "expectedOutput": "(#eq? @v \"tes\\\"\\\"ting\")"
+    "expectedOutput": "(#eq? @v \"tes\\\"\\\"ting\")",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -15728,7 +18912,12 @@
         ]
       }
     },
-    "expectedOutput": "(#eq? @v \"\\\"test\")"
+    "expectedOutput": "(#eq? @v \"\\\"test\")",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -15774,7 +18963,12 @@
         }
       ]
     },
-    "expectedOutput": "@v \"I'm a string; not a comment\""
+    "expectedOutput": "@v \"I'm a string; not a comment\"",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -15829,7 +19023,12 @@
         }
       ]
     },
-    "expectedOutput": "@v \"test\\\"\""
+    "expectedOutput": "@v \"test\\\"\"",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -15902,7 +19101,12 @@
         }
       ]
     },
-    "expectedOutput": "@v \"tes\\\"\\\"ting\""
+    "expectedOutput": "@v \"tes\\\"\\\"ting\"",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -15957,7 +19161,12 @@
         }
       ]
     },
-    "expectedOutput": "@v \"\\\"test\""
+    "expectedOutput": "@v \"\\\"test\"",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -15986,7 +19195,12 @@
         ]
       }
     },
-    "expectedOutput": "\"I'm a string; not a comment\""
+    "expectedOutput": "\"I'm a string; not a comment\"",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16024,7 +19238,12 @@
         ]
       }
     },
-    "expectedOutput": "\"test\\\"\""
+    "expectedOutput": "\"test\\\"\"",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16080,7 +19299,12 @@
         ]
       }
     },
-    "expectedOutput": "\"tes\\\"\\\"ting\""
+    "expectedOutput": "\"tes\\\"\\\"ting\"",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16118,7 +19342,12 @@
         ]
       }
     },
-    "expectedOutput": "\"\\\"test\""
+    "expectedOutput": "\"\\\"test\"",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16144,7 +19373,12 @@
         }
       ]
     },
-    "expectedOutput": "I'm a string; not a comment"
+    "expectedOutput": "I'm a string; not a comment",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16179,7 +19413,12 @@
         }
       ]
     },
-    "expectedOutput": "test\\\""
+    "expectedOutput": "test\\\"",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16232,7 +19471,12 @@
         }
       ]
     },
-    "expectedOutput": "tes\\\"\\\"ting"
+    "expectedOutput": "tes\\\"\\\"ting",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16267,7 +19511,12 @@
         }
       ]
     },
-    "expectedOutput": "\\\"test"
+    "expectedOutput": "\\\"test",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16288,7 +19537,12 @@
       "$type": 1,
       "_content": "\""
     },
-    "expectedOutput": "\\\""
+    "expectedOutput": "\\\"",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16309,7 +19563,12 @@
       "$type": 1,
       "_content": "\""
     },
-    "expectedOutput": "\\\""
+    "expectedOutput": "\\\"",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16330,7 +19589,12 @@
       "$type": 1,
       "_content": "\""
     },
-    "expectedOutput": "\\\""
+    "expectedOutput": "\\\"",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16351,7 +19615,12 @@
       "$type": 1,
       "_content": "\""
     },
-    "expectedOutput": "\\\""
+    "expectedOutput": "\\\"",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16363,6 +19632,165 @@
     "expectedReparseTree": "(escape_sequence)",
     "wrappedText": "(program)\n\"test\\\"\"\n\n\";\"\n",
     "wrappedOffset": 15
+  },
+  {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "program",
+    "input": {
+      "$type": 33,
+      "_definitions": [
+        {
+          "$type": 52,
+          "_prefix": 19,
+          "_name": {
+            "$type": 6,
+            "$text": "match"
+          },
+          "_type": 4,
+          "_parameters": {
+            "$type": 43,
+            "_elements": [
+              {
+                "$type": 39,
+                "_name": {
+                  "$type": 6,
+                  "$text": "foo"
+                }
+              },
+              {
+                "$type": 40,
+                "_string_content": {
+                  "$type": 42,
+                  "_content": [
+                    {
+                      "$type": 23,
+                      "$text": "foo"
+                    }
+                  ]
+                },
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      28,
+                      {
+                        "$type": 11,
+                        "$text": "; bar"
+                      },
+                      28
+                    ]
+                  }
+                }
+              }
+            ],
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  28
+                ]
+              }
+            }
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28
+              ]
+            }
+          }
+        },
+        {
+          "$type": 61,
+          "_name": {
+            "$type": 5,
+            "$text": "node"
+          },
+          "_named_node_group": {
+            "$type": 63,
+            "_named_node_expressions": [
+              {
+                "$type": 50,
+                "_name": {
+                  "$type": 5,
+                  "$text": "name"
+                },
+                "_definition": {
+                  "$type": 61,
+                  "_name": {
+                    "$type": 5,
+                    "$text": "string"
+                  },
+                  "_elements": []
+                }
+              }
+            ],
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  28,
+                  31,
+                  {
+                    "$type": 11,
+                    "$text": "; Capture the name"
+                  },
+                  28
+                ],
+                "trailing": [
+                  32
+                ]
+              }
+            }
+          },
+          "_elements": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                29
+              ]
+            }
+          }
+        },
+        {
+          "$type": 61,
+          "_name": {
+            "$type": 5,
+            "$text": "string",
+            "$_layout": {
+              "trivia": {
+                "trailing": [
+                  28,
+                  31,
+                  {
+                    "$type": 11,
+                    "$text": "; wild comment!"
+                  },
+                  28,
+                  32
+                ]
+              }
+            }
+          },
+          "_elements": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                29
+              ],
+              "trailing": [
+                28
+              ]
+            }
+          }
+        }
+      ],
+      "$errors": []
+    },
+    "expectedOutput": "(#match?\n@foo\n; bar\n\"foo\")\n\n(node\n  ; Capture the name\n  name: (string))\n\n(string\n  ; wild comment!\n)\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16370,10 +19798,73 @@
     "sourceIn": "\n(#match?\n @foo\n ; bar\n \"foo\")\n\n(node\n  ; Capture the name\n  name: (string))\n\n(string\n  ; wild comment!\n  )\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "(#match?\n @foo\n ; bar\n \"foo\")\n\n(node\n  ; Capture the name\n  name: (string))\n\n(string\n  ; wild comment!\n  )\n",
+    "expectedSourceOut": "(#match?\n@foo\n; bar\n\"foo\")\n\n(node\n  ; Capture the name\n  name: (string))\n\n(string\n  ; wild comment!\n)\n",
     "expectedReparseTree": "(program definitions: (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) (comment) elements: (string string_content: (string_content (string_content_text))))) definitions: (named_node_plain name: (identifier) (comment) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (comment)))",
-    "wrappedText": "(#match?\n @foo\n ; bar\n \"foo\")\n\n(node\n  ; Capture the name\n  name: (string))\n\n(string\n  ; wild comment!\n  )\n",
+    "wrappedText": "(#match?\n@foo\n; bar\n\"foo\")\n\n(node\n  ; Capture the name\n  name: (string))\n\n(string\n  ; wild comment!\n)\n",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "predicate",
+    "input": {
+      "$type": 52,
+      "_prefix": 19,
+      "_name": {
+        "$type": 6,
+        "$text": "match"
+      },
+      "_type": 4,
+      "_parameters": {
+        "$type": 43,
+        "_elements": [
+          {
+            "$type": 39,
+            "_name": {
+              "$type": 6,
+              "$text": "foo"
+            }
+          },
+          {
+            "$type": 40,
+            "_string_content": {
+              "$type": 42,
+              "_content": [
+                {
+                  "$type": 23,
+                  "$text": "foo"
+                }
+              ]
+            },
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  28,
+                  {
+                    "$type": 11,
+                    "$text": "; bar"
+                  },
+                  28
+                ]
+              }
+            }
+          }
+        ],
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              28
+            ]
+          }
+        }
+      }
+    },
+    "expectedOutput": "(#match?\n@foo\n; bar\n\"foo\")",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16381,9 +19872,9 @@
     "sourceIn": "(#match?\n @foo\n ; bar\n \"foo\")",
     "pattern": "predicate",
     "edits": [],
-    "expectedSourceOut": "(#match?\n @foo\n ; bar\n \"foo\")",
+    "expectedSourceOut": "(#match?\n@foo\n; bar\n\"foo\")",
     "expectedReparseTree": "(predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) (comment) elements: (string string_content: (string_content (string_content_text)))))",
-    "wrappedText": "(#match?\n @foo\n ; bar\n \"foo\")\n\n(node\n  ; Capture the name\n  name: (string))\n\n(string\n  ; wild comment!\n  )\n",
+    "wrappedText": "(#match?\n@foo\n; bar\n\"foo\")\n\n(node\n  ; Capture the name\n  name: (string))\n\n(string\n  ; wild comment!\n  )\n",
     "wrappedOffset": 0
   },
   {
@@ -16426,7 +19917,12 @@
         }
       ]
     },
-    "expectedOutput": "@foo\n; bar\n\"foo\""
+    "expectedOutput": "@foo\n; bar\n\"foo\"",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16450,7 +19946,12 @@
         "$text": "foo"
       }
     },
-    "expectedOutput": "@foo"
+    "expectedOutput": "@foo",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16479,7 +19980,12 @@
         ]
       }
     },
-    "expectedOutput": "\"foo\""
+    "expectedOutput": "\"foo\"",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16505,7 +20011,12 @@
         }
       ]
     },
-    "expectedOutput": "foo"
+    "expectedOutput": "foo",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16517,6 +20028,61 @@
     "expectedReparseTree": "(string_content (string_content_text))",
     "wrappedText": "(program)\n\"foo\"\n\n\";\"\n",
     "wrappedOffset": 11
+  },
+  {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "named_node_plain",
+    "input": {
+      "$type": 61,
+      "_name": {
+        "$type": 5,
+        "$text": "node"
+      },
+      "_named_node_group": {
+        "$type": 63,
+        "_named_node_expressions": [
+          {
+            "$type": 50,
+            "_name": {
+              "$type": 5,
+              "$text": "name"
+            },
+            "_definition": {
+              "$type": 61,
+              "_name": {
+                "$type": 5,
+                "$text": "string"
+              },
+              "_elements": []
+            }
+          }
+        ],
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              28,
+              31,
+              {
+                "$type": 11,
+                "$text": "; Capture the name"
+              },
+              28
+            ],
+            "trailing": [
+              32
+            ]
+          }
+        }
+      },
+      "_elements": []
+    },
+    "expectedOutput": "(node\n  ; Capture the name\n  name: (string))",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16541,7 +20107,12 @@
       },
       "_elements": []
     },
-    "expectedOutput": "(string)"
+    "expectedOutput": "(string)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16555,14 +20126,47 @@
     "wrappedOffset": 0
   },
   {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "named_node_plain",
+    "input": {
+      "$type": 61,
+      "_name": {
+        "$type": 5,
+        "$text": "string",
+        "$_layout": {
+          "trivia": {
+            "trailing": [
+              28,
+              31,
+              {
+                "$type": 11,
+                "$text": "; wild comment!"
+              },
+              28,
+              32
+            ]
+          }
+        }
+      },
+      "_elements": []
+    },
+    "expectedOutput": "(string\n  ; wild comment!\n)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
+  },
+  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "(string\n  ; wild comment!\n  )",
     "pattern": "named_node_plain",
     "edits": [],
-    "expectedSourceOut": "(string\n  ; wild comment!\n  )",
+    "expectedSourceOut": "(string\n  ; wild comment!\n)",
     "expectedReparseTree": "(named_node_plain name: (identifier) (comment))",
-    "wrappedText": "(string\n  ; wild comment!\n  )\n",
+    "wrappedText": "(string\n  ; wild comment!\n)\n",
     "wrappedOffset": 0
   },
   {
@@ -16589,7 +20193,12 @@
         }
       ]
     },
-    "expectedOutput": "name: (string)"
+    "expectedOutput": "name: (string)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16621,7 +20230,12 @@
         "_elements": []
       }
     },
-    "expectedOutput": "name: (string)"
+    "expectedOutput": "name: (string)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16635,6 +20249,212 @@
     "wrappedOffset": 52
   },
   {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "program",
+    "input": {
+      "$type": 33,
+      "_definitions": [
+        {
+          "$type": 61,
+          "_name": {
+            "$type": 5,
+            "$text": "program"
+          },
+          "_named_node_group": {
+            "$type": 63,
+            "_named_node_expressions": [
+              {
+                "$type": 61,
+                "_name": {
+                  "$type": 5,
+                  "$text": "named_node"
+                },
+                "_named_node_group": {
+                  "$type": 63,
+                  "_named_node_expressions": [
+                    {
+                      "$type": 50,
+                      "_name": {
+                        "$type": 5,
+                        "$text": "name"
+                      },
+                      "_definition": {
+                        "$type": 61,
+                        "_name": {
+                          "$type": 5,
+                          "$text": "identifier"
+                        },
+                        "_elements": []
+                      }
+                    },
+                    {
+                      "$type": 62,
+                      "_supertype": {
+                        "$type": 5,
+                        "$text": "supertype"
+                      },
+                      "_name": {
+                        "$type": 6,
+                        "$text": "subtype"
+                      },
+                      "_elements": [],
+                      "$_layout": {
+                        "trivia": {
+                          "leading": [
+                            28
+                          ]
+                        }
+                      }
+                    }
+                  ],
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        28,
+                        31
+                      ],
+                      "trailing": [
+                        32
+                      ]
+                    }
+                  }
+                },
+                "_elements": []
+              }
+            ],
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  28,
+                  31
+                ],
+                "trailing": [
+                  32
+                ]
+              }
+            }
+          },
+          "_elements": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28
+              ]
+            }
+          }
+        },
+        {
+          "$type": 61,
+          "_name": {
+            "$type": 5,
+            "$text": "program"
+          },
+          "_named_node_group": {
+            "$type": 63,
+            "_named_node_expressions": [
+              {
+                "$type": 61,
+                "_name": {
+                  "$type": 5,
+                  "$text": "named_node"
+                },
+                "_named_node_group": {
+                  "$type": 63,
+                  "_named_node_expressions": [
+                    {
+                      "$type": 50,
+                      "_name": {
+                        "$type": 5,
+                        "$text": "name"
+                      },
+                      "_definition": {
+                        "$type": 61,
+                        "_name": {
+                          "$type": 5,
+                          "$text": "identifier"
+                        },
+                        "_elements": []
+                      }
+                    },
+                    {
+                      "$type": 62,
+                      "_supertype": {
+                        "$type": 5,
+                        "$text": "supertype"
+                      },
+                      "_name": {
+                        "$type": 41,
+                        "_string_content": {
+                          "$type": 42,
+                          "_content": [
+                            {
+                              "$type": 23,
+                              "$text": "anonymous subtype"
+                            }
+                          ]
+                        }
+                      },
+                      "_elements": [],
+                      "$_layout": {
+                        "trivia": {
+                          "leading": [
+                            28
+                          ]
+                        }
+                      }
+                    }
+                  ],
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        28,
+                        31
+                      ],
+                      "trailing": [
+                        32
+                      ]
+                    }
+                  }
+                },
+                "_elements": []
+              }
+            ],
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  28,
+                  31
+                ],
+                "trailing": [
+                  32
+                ]
+              }
+            }
+          },
+          "_elements": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                29
+              ],
+              "trailing": [
+                28
+              ]
+            }
+          }
+        }
+      ],
+      "$errors": []
+    },
+    "expectedOutput": "(program\n  (named_node\n    name: (identifier)\n    (supertype/subtype)))\n\n(program\n  (named_node\n    name: (identifier)\n    (supertype/\"anonymous subtype\")))\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
+  },
+  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "\n(program\n  (named_node\n    name: (identifier)\n    (supertype/subtype)))\n\n(program\n  (named_node\n    name: (identifier)\n    (supertype/\"anonymous subtype\")))\n",
@@ -16646,6 +20466,99 @@
     "wrappedOffset": 0
   },
   {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "named_node_plain",
+    "input": {
+      "$type": 61,
+      "_name": {
+        "$type": 5,
+        "$text": "program"
+      },
+      "_named_node_group": {
+        "$type": 63,
+        "_named_node_expressions": [
+          {
+            "$type": 61,
+            "_name": {
+              "$type": 5,
+              "$text": "named_node"
+            },
+            "_named_node_group": {
+              "$type": 63,
+              "_named_node_expressions": [
+                {
+                  "$type": 50,
+                  "_name": {
+                    "$type": 5,
+                    "$text": "name"
+                  },
+                  "_definition": {
+                    "$type": 61,
+                    "_name": {
+                      "$type": 5,
+                      "$text": "identifier"
+                    },
+                    "_elements": []
+                  }
+                },
+                {
+                  "$type": 62,
+                  "_supertype": {
+                    "$type": 5,
+                    "$text": "supertype"
+                  },
+                  "_name": {
+                    "$type": 6,
+                    "$text": "subtype"
+                  },
+                  "_elements": [],
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        28
+                      ]
+                    }
+                  }
+                }
+              ],
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    28,
+                    31
+                  ],
+                  "trailing": [
+                    32
+                  ]
+                }
+              }
+            },
+            "_elements": []
+          }
+        ],
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              28,
+              31
+            ],
+            "trailing": [
+              32
+            ]
+          }
+        }
+      },
+      "_elements": []
+    },
+    "expectedOutput": "(program\n  (named_node\n    name: (identifier)\n    (supertype/subtype)))",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
+  },
+  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "(program\n  (named_node\n    name: (identifier)\n    (supertype/subtype)))",
@@ -16655,6 +20568,75 @@
     "expectedReparseTree": "(named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) named_node_expressions: (named_node_supertyped supertype: (identifier) name: (identifier))))))",
     "wrappedText": "(program\n  (named_node\n    name: (identifier)\n    (supertype/subtype)))\n",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "named_node_plain",
+    "input": {
+      "$type": 61,
+      "_name": {
+        "$type": 5,
+        "$text": "named_node"
+      },
+      "_named_node_group": {
+        "$type": 63,
+        "_named_node_expressions": [
+          {
+            "$type": 50,
+            "_name": {
+              "$type": 5,
+              "$text": "name"
+            },
+            "_definition": {
+              "$type": 61,
+              "_name": {
+                "$type": 5,
+                "$text": "identifier"
+              },
+              "_elements": []
+            }
+          },
+          {
+            "$type": 62,
+            "_supertype": {
+              "$type": 5,
+              "$text": "supertype"
+            },
+            "_name": {
+              "$type": 6,
+              "$text": "subtype"
+            },
+            "_elements": [],
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  28
+                ]
+              }
+            }
+          }
+        ],
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              28,
+              31
+            ],
+            "trailing": [
+              32
+            ]
+          }
+        }
+      },
+      "_elements": []
+    },
+    "expectedOutput": "(named_node\n  name: (identifier)\n  (supertype/subtype))",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16679,7 +20661,12 @@
       },
       "_elements": []
     },
-    "expectedOutput": "(identifier)"
+    "expectedOutput": "(identifier)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16693,6 +20680,107 @@
     "wrappedOffset": 0
   },
   {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "named_node_plain",
+    "input": {
+      "$type": 61,
+      "_name": {
+        "$type": 5,
+        "$text": "program"
+      },
+      "_named_node_group": {
+        "$type": 63,
+        "_named_node_expressions": [
+          {
+            "$type": 61,
+            "_name": {
+              "$type": 5,
+              "$text": "named_node"
+            },
+            "_named_node_group": {
+              "$type": 63,
+              "_named_node_expressions": [
+                {
+                  "$type": 50,
+                  "_name": {
+                    "$type": 5,
+                    "$text": "name"
+                  },
+                  "_definition": {
+                    "$type": 61,
+                    "_name": {
+                      "$type": 5,
+                      "$text": "identifier"
+                    },
+                    "_elements": []
+                  }
+                },
+                {
+                  "$type": 62,
+                  "_supertype": {
+                    "$type": 5,
+                    "$text": "supertype"
+                  },
+                  "_name": {
+                    "$type": 41,
+                    "_string_content": {
+                      "$type": 42,
+                      "_content": [
+                        {
+                          "$type": 23,
+                          "$text": "anonymous subtype"
+                        }
+                      ]
+                    }
+                  },
+                  "_elements": [],
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        28
+                      ]
+                    }
+                  }
+                }
+              ],
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    28,
+                    31
+                  ],
+                  "trailing": [
+                    32
+                  ]
+                }
+              }
+            },
+            "_elements": []
+          }
+        ],
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              28,
+              31
+            ],
+            "trailing": [
+              32
+            ]
+          }
+        }
+      },
+      "_elements": []
+    },
+    "expectedOutput": "(program\n  (named_node\n    name: (identifier)\n    (supertype/\"anonymous subtype\")))",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
+  },
+  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "(program\n  (named_node\n    name: (identifier)\n    (supertype/\"anonymous subtype\")))",
@@ -16702,6 +20790,83 @@
     "expectedReparseTree": "(named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) named_node_expressions: (named_node_supertyped supertype: (identifier) name: (immediate_string (string_content (string_content_text))))))))",
     "wrappedText": "(program\n  (named_node\n    name: (identifier)\n    (supertype/\"anonymous subtype\")))\n",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "named_node_plain",
+    "input": {
+      "$type": 61,
+      "_name": {
+        "$type": 5,
+        "$text": "named_node"
+      },
+      "_named_node_group": {
+        "$type": 63,
+        "_named_node_expressions": [
+          {
+            "$type": 50,
+            "_name": {
+              "$type": 5,
+              "$text": "name"
+            },
+            "_definition": {
+              "$type": 61,
+              "_name": {
+                "$type": 5,
+                "$text": "identifier"
+              },
+              "_elements": []
+            }
+          },
+          {
+            "$type": 62,
+            "_supertype": {
+              "$type": 5,
+              "$text": "supertype"
+            },
+            "_name": {
+              "$type": 41,
+              "_string_content": {
+                "$type": 42,
+                "_content": [
+                  {
+                    "$type": 23,
+                    "$text": "anonymous subtype"
+                  }
+                ]
+              }
+            },
+            "_elements": [],
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  28
+                ]
+              }
+            }
+          }
+        ],
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              28,
+              31
+            ],
+            "trailing": [
+              32
+            ]
+          }
+        }
+      },
+      "_elements": []
+    },
+    "expectedOutput": "(named_node\n  name: (identifier)\n  (supertype/\"anonymous subtype\"))",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16726,7 +20891,12 @@
       },
       "_elements": []
     },
-    "expectedOutput": "(identifier)"
+    "expectedOutput": "(identifier)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16738,6 +20908,80 @@
     "expectedReparseTree": "(named_node_plain name: (identifier))",
     "wrappedText": "(identifier)\n",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "named_node_group_children",
+    "input": {
+      "$type": 63,
+      "_named_node_expressions": [
+        {
+          "$type": 61,
+          "_name": {
+            "$type": 5,
+            "$text": "named_node"
+          },
+          "_named_node_group": {
+            "$type": 63,
+            "_named_node_expressions": [
+              {
+                "$type": 50,
+                "_name": {
+                  "$type": 5,
+                  "$text": "name"
+                },
+                "_definition": {
+                  "$type": 61,
+                  "_name": {
+                    "$type": 5,
+                    "$text": "identifier"
+                  },
+                  "_elements": []
+                }
+              },
+              {
+                "$type": 62,
+                "_supertype": {
+                  "$type": 5,
+                  "$text": "supertype"
+                },
+                "_name": {
+                  "$type": 6,
+                  "$text": "subtype"
+                },
+                "_elements": [],
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      28
+                    ]
+                  }
+                }
+              }
+            ],
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  28,
+                  31
+                ],
+                "trailing": [
+                  32
+                ]
+              }
+            }
+          },
+          "_elements": []
+        }
+      ]
+    },
+    "expectedOutput": "(named_node\n  name: (identifier)\n  (supertype/subtype))",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16793,7 +21037,12 @@
         }
       ]
     },
-    "expectedOutput": "name: (identifier)\n(supertype/subtype)"
+    "expectedOutput": "name: (identifier)\n(supertype/subtype)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16805,6 +21054,88 @@
     "expectedReparseTree": "(named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) named_node_expressions: (named_node_supertyped supertype: (identifier) name: (identifier)))",
     "wrappedText": "(node name: (identifier)\n(supertype/subtype))\n",
     "wrappedOffset": 6
+  },
+  {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "named_node_group_children",
+    "input": {
+      "$type": 63,
+      "_named_node_expressions": [
+        {
+          "$type": 61,
+          "_name": {
+            "$type": 5,
+            "$text": "named_node"
+          },
+          "_named_node_group": {
+            "$type": 63,
+            "_named_node_expressions": [
+              {
+                "$type": 50,
+                "_name": {
+                  "$type": 5,
+                  "$text": "name"
+                },
+                "_definition": {
+                  "$type": 61,
+                  "_name": {
+                    "$type": 5,
+                    "$text": "identifier"
+                  },
+                  "_elements": []
+                }
+              },
+              {
+                "$type": 62,
+                "_supertype": {
+                  "$type": 5,
+                  "$text": "supertype"
+                },
+                "_name": {
+                  "$type": 41,
+                  "_string_content": {
+                    "$type": 42,
+                    "_content": [
+                      {
+                        "$type": 23,
+                        "$text": "anonymous subtype"
+                      }
+                    ]
+                  }
+                },
+                "_elements": [],
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      28
+                    ]
+                  }
+                }
+              }
+            ],
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  28,
+                  31
+                ],
+                "trailing": [
+                  32
+                ]
+              }
+            }
+          },
+          "_elements": []
+        }
+      ]
+    },
+    "expectedOutput": "(named_node\n  name: (identifier)\n  (supertype/\"anonymous subtype\"))",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16868,7 +21199,12 @@
         }
       ]
     },
-    "expectedOutput": "name: (identifier)\n(supertype/\"anonymous subtype\")"
+    "expectedOutput": "name: (identifier)\n(supertype/\"anonymous subtype\")",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16900,7 +21236,12 @@
         "_elements": []
       }
     },
-    "expectedOutput": "name: (identifier)"
+    "expectedOutput": "name: (identifier)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16932,7 +21273,12 @@
         "_elements": []
       }
     },
-    "expectedOutput": "name: (identifier)"
+    "expectedOutput": "name: (identifier)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16961,7 +21307,12 @@
       },
       "_elements": []
     },
-    "expectedOutput": "(supertype/subtype)"
+    "expectedOutput": "(supertype/subtype)",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -16998,7 +21349,12 @@
       },
       "_elements": []
     },
-    "expectedOutput": "(supertype/\"anonymous subtype\")"
+    "expectedOutput": "(supertype/\"anonymous subtype\")",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -17027,7 +21383,12 @@
         ]
       }
     },
-    "expectedOutput": "\"anonymous subtype\""
+    "expectedOutput": "\"anonymous subtype\"",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -17053,7 +21414,12 @@
         }
       ]
     },
-    "expectedOutput": "anonymous subtype"
+    "expectedOutput": "anonymous subtype",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",

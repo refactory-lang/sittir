@@ -26,9 +26,8 @@ pub struct TransportLayout<T> {
     /// Where a read node came from: its own coordinate. The reader writes it
     /// for every transport it reads; a built node has none. No bytes render
     /// from it: JavaScript crosses an untouched node as this coordinate, and an
-    /// edited one without it. The writer tells the node's own frames by it,
-    /// which its leading and trailing layout runs skip to indent from its
-    /// parent's (`RenderSink::begin_side`).
+    /// edited one without it. The writer tells the node's own frames by it
+    /// (`RenderSink::in_frame_of`).
     pub at: Option<NodeCoordinate>,
     /// Where a snapshot node lies: its span measured from the start of the
     /// transport that holds it. A snapshot node has no `at`; a read or built
@@ -40,8 +39,8 @@ pub struct TransportLayout<T> {
     /// `at` names a read node's.
     pub sides: Option<NodeCoordinate>,
     /// The edges whose neighbour a built holder changed (`$_layout.changed`):
-    /// at prepare the node's sides there drop their layout runs
-    /// (`trivia::without_edge_runs`) and the steps of the runs they keep.
+    /// at prepare the node's sides there drop their layout runs and balance
+    /// the depth of the runs they keep (`trivia::on_changed_edge`).
     pub changed: crate::slot::ChangedEdges,
     /// The sides of the node's unit children (`$_layout.units`), which a
     /// slot stores as a bare kind and so carry no layout of their own: each
@@ -250,10 +249,7 @@ pub fn render_framed<F: Framing + ?Sized>(
         w.unsited_edge(kind, Side::Before, edges.before);
     }
     if let Some(trivia) = trivia {
-        w.begin_side(origin, false);
-        let written = trivia.frame_leading(w);
-        w.end_side();
-        written?;
+        trivia.frame_leading(w)?;
     }
     w.open_frame(origin);
     let line_terminated = kind.is_some_and(|kind| w.kind_has(kind, crate::options::KIND_LINE_TERMINATED));
@@ -271,10 +267,7 @@ pub fn render_framed<F: Framing + ?Sized>(
         w.seat_trailing()?;
     }
     if let Some(trivia) = trivia {
-        w.begin_side(origin, false);
-        let written = trivia.frame_trailing(w);
-        w.end_side();
-        written?;
+        trivia.frame_trailing(w)?;
     }
     Ok(())
 }
@@ -301,10 +294,9 @@ impl<T: Prepare + TriviaSeam + 'static> Prepare for TransportLayout<T> {
             use crate::trivia_table::TriviaSide;
             for (side, entries) in [(TriviaSide::Leading, &mut trivia.leading), (TriviaSide::Trailing, &mut trivia.trailing)] {
                 if let Some(list) = entries.as_mut().filter(|_| changed.on(side)) {
-                    crate::trivia::without_edge_runs(list, side, crate::trivia::TriviaEntry::is_layout);
-                    for run in list.iter_mut() {
-                        run.step = None;
-                    }
+                    crate::trivia::on_changed_edge(list, side, crate::trivia::TriviaEntry::is_layout, crate::trivia::TriviaEntry::depth, |delta| {
+                        T::depth_member(delta).map(|member| crate::trivia::TriviaEntry::new(crate::slot::SlotValue::Transport(member)))
+                    });
                     if list.is_empty() {
                         *entries = None;
                     }

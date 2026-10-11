@@ -72,7 +72,9 @@ function applyTrivia(s: string, format: FormatRecord): string {
 export function rebaseTrivia(format: FormatRecord, editStart: number, delta: number): FormatRecord {
 	const trivia = rebaseTriviaItems(format.trivia, editStart, delta);
 	const kinds = rebaseKinds(format.kinds, editStart, delta);
-	return { ...format, ...(trivia !== undefined && { trivia }), ...(kinds !== undefined && { kinds }) };
+	return {
+		...format, ...(trivia !== undefined && { trivia }), ...(kinds !== undefined && { kinds })
+	};
 }
 
 /** Rebase a trivia array, returning the adjusted array or undefined if absent. */

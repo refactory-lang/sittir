@@ -1,3 +1,4 @@
+import { depthMembersOf } from '../compiler/model/layout-kinds.ts';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { parseSeamLabel, isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
 import { isFixedTextLeaf, isTerminalNode } from '../compiler/model/node-map.ts';
@@ -113,6 +114,7 @@ import { readOptionsBlock, type OptionsConfig } from '../dsl/wire/options-block.
 import { addressTablesFor, EMPTY_ADDRESSES, type AddressTables } from './options.ts';
 import {
 	anonTokenNameOfText,
+	depthRegionsOf,
 	tokenNameOfText,
 	whitespaceTextOf,
 	type RenderRules
@@ -1088,6 +1090,7 @@ const EMPTY_PLAN: RenderPlan = {
 	sitePaths: [],
 	delimiterSites: [],
 	depthSites: [],
+	depthRegions: [],
 	indentId: 0,
 	dedentId: 0,
 	whitespaceText: [],
@@ -1115,7 +1118,15 @@ function planRenderOptionsFor(
 		collectSitePreferences({ nodeMap, kindEntries, renderRules: inputs.renderRules, options: inputs.options });
 	const declaredIndent =
 		inputs.options === undefined ? undefined : readOptionsBlock(inputs.options, displayedKinds(nodeMap)).indent;
-	const plan = planRenderOptions(sites, kindEntries, nodeMap, whitespaceTextOf(inputs.visibleExternals, nodeMap), declaredIndent, lang);
+	const plan = planRenderOptions(
+		sites,
+		kindEntries,
+		nodeMap,
+		whitespaceTextOf(inputs.visibleExternals, nodeMap),
+		declaredIndent,
+		lang,
+		depthRegionsOf(inputs.renderRules, nodeMap)
+	);
 	const addresses = inputs.addresses ?? addressTablesFor(nodeMap, kindEntries, sites, inputs.options);
 	return { plan, addresses, kindEntries };
 }
@@ -2348,7 +2359,9 @@ function renderTriviaTransportSupport(
 	kindEntries: readonly KindEnumEntry[],
 	read: ReadPrint
 ): string[] {
+	const depthMembers = depthMembersOf(nodeMap);
 	const extrasNodes = [...triviaKinds(nodeMap)]
+		.filter((kind) => kind !== depthMembers.indent && kind !== depthMembers.dedent)
 		.map((kind) => nodeMap.nodes.get(kind))
 		.filter((node): node is AssembledNode => node !== undefined && !(node instanceof AssembledSupertype));
 	const unitOf = (node: AssembledNode): FixedLiteral | undefined =>
@@ -2360,6 +2373,14 @@ function renderTriviaTransportSupport(
 		return id === undefined || !(node instanceof AbstractAssembledCompound) ? [] : [id];
 	});
 
+	const depthVariants = [
+		{ kind: depthMembers.indent, variant: 'Indent', delta: 1 },
+		{ kind: depthMembers.dedent, variant: 'Dedent', delta: -1 }
+	].flatMap(({ kind, variant, delta }) => {
+		const id = kind === undefined ? undefined : kindIdByKind.get(kind);
+		return id === undefined ? [] : [{ variant, id, delta }];
+	});
+
 	const lines: string[] = [];
 	lines.push(...transportDeclaration(read, TRANSPORT_DERIVE, 'choice, codec_only', 'enum', 'TriviaTransport'));
 	for (const node of extrasNodes) {
@@ -2368,6 +2389,7 @@ function renderTriviaTransportSupport(
 		if (id !== undefined) lines.push(`    #[kind(${variantKindArgs([id], false, read.ctx)})]`);
 		lines.push(unitOf(node) === undefined ? `    ${variant}(${rustTransportStructName(node)}),` : `    ${variant},`);
 	}
+	for (const { variant, id } of depthVariants) lines.push(`    #[kind(${variantKindArgs([id], false, read.ctx)})]`, `    ${variant},`);
 	lines.push('    #[transport(verbatim)]');
 	lines.push('    Verbatim(VerbatimTransport),');
 	if (textIds.length > 0) lines.push('    #[transport(text)]', `    #[kind(${variantKindArgs(textIds, false, read.ctx)})]`);
@@ -2377,6 +2399,7 @@ function renderTriviaTransportSupport(
 	lines.push(
 		...prepareEnumImpl('TriviaTransport', [
 			...extrasNodes.map((node) => ({ variant: rustTransportVariantName(node), payload: unitOf(node) === undefined })),
+			...depthVariants.map(({ variant }) => ({ variant, payload: false })),
 			{ variant: 'Verbatim', payload: true },
 			{ variant: 'Text', payload: true }
 		], false)
@@ -2396,6 +2419,7 @@ function renderTriviaTransportSupport(
 				: `            TriviaTransport::${variant} => ${unit.renderFn}(w),`
 		);
 	}
+	for (const { variant, delta } of depthVariants) lines.push(`            TriviaTransport::${variant} => { w.layout_depth(${delta}); Ok(()) }`);
 	lines.push('            TriviaTransport::Verbatim(t) => t.render(w),');
 	lines.push('            TriviaTransport::Text(t) => t.render(w),');
 	lines.push('        }');
@@ -2419,7 +2443,9 @@ function renderTriviaTransportSupport(
 		'',
 		`    fn from_layout(kind: ::sittir_core::types::KindId, ${members.some((m) => m.keepsText) ? 'text' : '_text'}: &str) -> Option<Self> {`
 	);
-	for (const { id, member } of members) lines.push(`        if kind == ${variantKindArgs([id], false, read.ctx)} { return Some(${member}); }`);
+	for (const { id, member } of [...members, ...depthVariants.map(({ variant, id }) => ({ id, member: `TriviaTransport::${variant}` }))]) {
+		lines.push(`        if kind == ${variantKindArgs([id], false, read.ctx)} { return Some(${member}); }`);
+	}
 	lines.push('        None', '    }', '}', '');
 
 	lines.push('impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {');
@@ -2442,6 +2468,14 @@ function renderTriviaTransportSupport(
 	lines.push('            _ => None,');
 	lines.push('        }');
 	lines.push('    }');
+	if (depthVariants.length > 0) {
+		lines.push('', '    fn depth(&self) -> i32 {', '        match self {');
+		for (const { variant, delta } of depthVariants) lines.push(`            TriviaTransport::${variant} => ${delta},`);
+		lines.push('            _ => 0,', '        }', '    }');
+		lines.push('', '    fn depth_member(delta: i32) -> Option<Self> {', '        match delta.signum() {');
+		for (const { variant, delta } of depthVariants) lines.push(`            ${delta} => Some(TriviaTransport::${variant}),`);
+		lines.push('            _ => None,', '        }', '    }');
+	}
 	lines.push('}');
 	lines.push('');
 

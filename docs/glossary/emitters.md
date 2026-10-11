@@ -2841,6 +2841,7 @@ A row's member is named from its model kind (`modelKindOfEntry`, so a renamed ro
 // otherwise fall back to the canonical kind string.
 ```
 
+`SURFACE_KINDS` also carries the depth pair's kind ids (`indent`, `dedent`, 0 for none, from `depthMembersOf`) and `depth: super::options::DEPTH_REGIONS`, the structural indentation `options.rs` writes, so the trivia table reads every surface fact from the one constant.
 
 ### `packages/codegen/src/emitters/kind-id-rust.ts::KindConstant`
 
@@ -3701,6 +3702,8 @@ same-line facts) and where each entry renders are the core module's, the
 same for every grammar.
 
 It also emits a `Text` variant (`sittir_core::trivia::TriviaText`): a detached read entry that carries its stamped kind and captured text. `TriviaTransport` implements `FromTriviaText` as that variant, so a snapshot read builds each extra it places as its text and span. Its `from_layout` builds a whitespace kind's unit variant from the kind's id, one line per whitespace trivia kind, the same kinds `TriviaSeam` names: a parsed tree's trivia table reads each stored run of line layout as the member it classifies into. It writes that kind's edges around the text, like a rendered node of the kind. It is decoded from an object with `$text` whose kind is a compound trivia kind; a leaf trivia kind stores `$text` itself and keeps its own transport. A trivia entry needs no line-end handling of its own: each variant's render tells the sink its kind (`TransportLayout::render` for a typed variant, the kind's render function for a unit, `TriviaText`'s own render for `Text`), and the sink holds the line end from the grammar's `KIND_FLAGS` table (`renderOptionsRs`), as it does for any node.
+
+The grammar's depth pair (`depthMembersOf`) takes its own unit variants, `Indent` and `Dedent`, kept out of the per-kind variants: each renders as a change to the writer's excess indentation (`RenderSink::layout_depth`) rather than as the template's depth mark, decodes from its kind id, is built by `from_layout`, and answers `TriviaSeam::depth`; `TriviaSeam::depth_member` builds the variant a change's sign names.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderVerbatimTransportStruct`
 
@@ -14096,6 +14099,8 @@ lands.
 
 A site's blank arm is the blank id (`armIdOf`) in its allowed ids and as its default.
 
+`depthRegions` are the kinds' structural indentation regions (`depthRegionsOf`), resolved to kind ids and sorted by them; a region on a kind with no id is a build error.
+
 ### `packages/codegen/src/emitters/render-options-rs.ts::renderOptionsRs`
 
 Source text of a render crate's `options.rs`: the site constants,
@@ -14113,6 +14118,16 @@ its default arm and strength. A text whitespace kind's string is written with
 the core writer's seam mark in front, so every option-driven whitespace
 coalesces in the writer; the indent and dedent kinds keep their own mark
 constants.
+
+`DEPTH_REGIONS` lists each kind's structural indentation (`depthRegionsOf`) by kind id, as `sittir_core::trivia_table::DepthRegion` rows whose anchors `depthAnchorRs` writes.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::PlannedDepthRegion`
+
+A `DepthRegion` with its kind resolved to its kind id.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::depthAnchorRs`
+
+A `DepthAnchor` as the Rust expression of `sittir_core::trivia_table::DepthAnchor`.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::allowed`
 
@@ -14311,6 +14326,8 @@ The render inputs a grammar's real emission passes: the caller's facts plus the 
  * independent ones building the same `AddressTables` from the same inputs.
  */
 ```
+
+The structural indentation regions come from the same render rules (`depthRegionsOf`).
 
 ### `packages/codegen/src/emitters/render-module.ts::whitespaceTextFromVisibleExternals`
 

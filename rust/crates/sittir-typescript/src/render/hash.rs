@@ -7,4 +7,4 @@
 // (packages/typescript/src/backend.ts) compares it against the TS-side copy to
 // detect a native binary built from older generated code.
 
-pub const RENDER_MODULE_HASH: &str = "a3ccb24c709bf701bdc1b2c588ca40db924b6d079cf488c8fa137c77987bb28a";
+pub const RENDER_MODULE_HASH: &str = "be2d28fdbbec3d0137d6a9a6c5dce6e4cc67af30757286b9913258d7bc48eba5";

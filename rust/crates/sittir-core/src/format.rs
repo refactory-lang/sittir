@@ -37,15 +37,20 @@ pub fn extract_format(
 }
 
 /// Infer `source`'s indentation unit from its indent steps and compare it
-/// with `canonical_indent`, the grammar's declared unit.
+/// with `canonical_indent`, the grammar's declared unit: the inferred unit
+/// (`indent_unit`) when it is not the declared one.
+fn detect_indent(source: &str, canonical_indent: &str) -> Option<String> {
+    indent_unit(source).filter(|unit| unit != canonical_indent)
+}
+
+/// The indentation unit of `source`, from its indent steps.
 ///
 /// A step is the leading whitespace a non-blank line adds on top of the
 /// previous non-blank line's (when it extends it). The most frequent step is
 /// the unit, so nesting depth never votes: a two-space file nested four deep
-/// still steps by two spaces. Returns `None` when the unit is the declared
-/// one, when the source never indents, or when two steps tie; otherwise the
-/// inferred unit, whatever whitespace it is made of.
-fn detect_indent(source: &str, canonical_indent: &str) -> Option<String> {
+/// still steps by two spaces. `None` when the source never indents or when
+/// two steps tie; otherwise the unit, whatever whitespace it is made of.
+pub fn indent_unit(source: &str) -> Option<String> {
     let mut steps: Vec<(&str, usize)> = Vec::new();
     let mut previous = "";
     for line in source.lines() {
@@ -69,7 +74,7 @@ fn detect_indent(source: &str, canonical_indent: &str) -> Option<String> {
     if leaders.next().is_some() {
         return None;
     }
-    (*unit != canonical_indent).then(|| unit.to_string())
+    Some(unit.to_string())
 }
 
 /// Apply a [`FormatRecord`] to a canonical render string.

@@ -289,7 +289,7 @@ export function rebuildFormatLoose() {
 							}), "editStart", "delta"],
 						}),
 					})],
-				}), ts.build.returnStatement(ts.build.object(ts.build.spreadElement("format"), ts.build.parenthesizedExpressionTyped({
+				}), ts.build.returnStatement(ts.build.object(ts.build.spreadElement("format").$trivia.leading(ts.kinds.Newline, ts.kinds.Indent), ts.build.parenthesizedExpressionTyped({
 					expression: ts.build.binaryExpression({
 						left: ts.build.binaryExpression({
 							left: "trivia",
@@ -299,7 +299,7 @@ export function rebuildFormatLoose() {
 						operator: ts.kinds.AmpAmp,
 						right: ts.build.object("trivia"),
 					}),
-				}), ts.build.parenthesizedExpressionTyped({
+				}), ts.build.spreadElement(ts.build.parenthesizedExpressionTyped({
 					expression: ts.build.binaryExpression({
 						left: ts.build.binaryExpression({
 							left: "kinds",
@@ -309,13 +309,13 @@ export function rebuildFormatLoose() {
 						operator: ts.kinds.AmpAmp,
 						right: ts.build.object("kinds"),
 					}),
-				})))],
+				})).$trivia.trailing(ts.kinds.Newline, ts.kinds.Dedent)))],
 			}, {
 				terminator: ts.kinds.AutomaticSemicolon,
 			}),
 		}).$trivia.leading(ts.kinds.Blankline, ts.build.commentBlock("*\n * Shift all {@link FormatTrivia} offsets that fall at or above `editStart`\n * by `delta` bytes, returning a shallow-cloned {@link FormatRecord}.\n *\n * Offsets below `editStart` are left unchanged. Sub-records in\n * `kinds` are rebased recursively with the same parameters.\n *\n * @param format - The source format record to rebase.\n * @param editStart - Absolute byte position of the edit boundary.\n * @param delta - Signed byte delta to apply (positive = insertion, negative = deletion).\n * @returns A new `FormatRecord` with adjusted trivia offsets.\n *\n * @remarks\n * RebaseTrivia is the single derivation for trivia offset adjustment\n * after any edit. Callers must not adjust offsets manually.\n "), ts.kinds.Newline), ts.build.functionDeclaration({
 			name: "rebaseTriviaItems",
-			parameters: [ts.build.requiredParameter({
+			parameters: ts.build.formalParametersElements(ts.build.requiredParameter({
 				pattern: "trivia",
 				type: ts.build.readonlyType(ts.build.unionType({
 					left: ts.build.arrayType("FormatTrivia"),
@@ -327,7 +327,7 @@ export function rebuildFormatLoose() {
 			}), ts.build.requiredParameter({
 				pattern: "delta",
 				type: ts.kinds.NumberKeyword,
-			})],
+			})).$trivia.leading(ts.kinds.Newline, ts.kinds.Indent).$trivia.trailing(ts.kinds.Newline, ts.kinds.Dedent),
 			returnType: ts.build.unionType({
 				left: ts.build.arrayType("FormatTrivia"),
 				right: ts.build.literalType(ts.kinds.Undefined),
@@ -396,7 +396,7 @@ export function rebuildFormatLoose() {
 			terminator: ts.kinds.AutomaticSemicolon,
 		}).$trivia.leading(ts.kinds.Blankline, ts.build.commentBlock("* Rebase a trivia array, returning the adjusted array or undefined if absent. "), ts.kinds.Newline), ts.build.functionDeclaration({
 			name: "rebaseKinds",
-			parameters: [ts.build.requiredParameter({
+			parameters: ts.build.formalParametersElements(ts.build.requiredParameter({
 				pattern: "kinds",
 				type: ts.build.unionType({
 					left: ts.build.genericType({
@@ -411,7 +411,7 @@ export function rebuildFormatLoose() {
 			}), ts.build.requiredParameter({
 				pattern: "delta",
 				type: ts.kinds.NumberKeyword,
-			})],
+			})).$trivia.leading(ts.kinds.Newline, ts.kinds.Indent).$trivia.trailing(ts.kinds.Newline, ts.kinds.Dedent),
 			returnType: ts.build.unionType({
 				left: ts.build.genericType({
 					name: "Record",
