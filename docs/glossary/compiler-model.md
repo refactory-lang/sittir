@@ -4416,6 +4416,8 @@ addresses whose sets overlap without one containing the other are a conflict,
 reported before anything is written, so an ambiguous pair fails rather than
 resolving by declaration order.
 
+A site one address only reaches through the cascade of a token face is not part of that overlap when the other address names it directly: the direct row refines the cascaded one, so a kind row may span its members (a kind and the variants nested under it) even though the grammar-wide face cascades onto the kind's own edge. The cascade never overwrites a site a direct row reaches, whichever order the entries are resolved in.
+
 Declarations and bindings are resolved together, because both are an address
 with an arm: a binding takes its arm from the label it names, a declaration
 carries its own. Where the two reach the identical set the declaration wins, so
