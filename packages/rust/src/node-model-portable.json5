@@ -8075,514 +8075,6 @@
       "vocab": "declaration.function",
       "read": [
         {
-          "vocab": "declaration.method.static.private",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "impl_item_body"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "parameters"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "elements"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "item"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "not",
-                "of": {
-                  "op": "is",
-                  "types": [
-                    231
-                  ],
-                  "fields": [],
-                  "kinds": [
-                    "parameter",
-                    "self_parameter",
-                    "variadic_parameter",
-                    "underscore",
-                    "type_identifier",
-                    "abstract_type",
-                    "reference_type",
-                    "metavariable",
-                    "pointer_type_const",
-                    "pointer_type_mut",
-                    "generic_type",
-                    "scoped_type_identifier",
-                    "tuple_type",
-                    "unit_type",
-                    "array_type",
-                    "function_type",
-                    "macro_invocation",
-                    "never_type",
-                    "dynamic_type",
-                    "bounded_type",
-                    "removed_trait_bound",
-                    "primitive_type"
-                  ]
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "fields": [
-                  "visibility_modifier"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "fields": [],
-                "kinds": [
-                  "crate",
-                  "visibility_modifier_pub"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  380
-                ],
-                "fields": [],
-                "kinds": [
-                  "visibility_modifier_pub_scope"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "visibility_modifier_pub_scope"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  125
-                ],
-                "fields": [],
-                "kinds": [
-                  "self",
-                  "super",
-                  "crate",
-                  "visibility_modifier_pub_scope_in_path"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method.static.public.internal",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "impl_item_body"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "parameters"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "elements"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "item"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "not",
-                "of": {
-                  "op": "is",
-                  "types": [
-                    231
-                  ],
-                  "fields": [],
-                  "kinds": [
-                    "parameter",
-                    "self_parameter",
-                    "variadic_parameter",
-                    "underscore",
-                    "type_identifier",
-                    "abstract_type",
-                    "reference_type",
-                    "metavariable",
-                    "pointer_type_const",
-                    "pointer_type_mut",
-                    "generic_type",
-                    "scoped_type_identifier",
-                    "tuple_type",
-                    "unit_type",
-                    "array_type",
-                    "function_type",
-                    "macro_invocation",
-                    "never_type",
-                    "dynamic_type",
-                    "bounded_type",
-                    "removed_trait_bound",
-                    "primitive_type"
-                  ]
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "fields": [
-                  "visibility_modifier"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "fields": [],
-                "kinds": [
-                  "crate",
-                  "visibility_modifier_pub"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  380
-                ],
-                "fields": [],
-                "kinds": [
-                  "visibility_modifier_pub_scope"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "visibility_modifier_pub_scope"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  127
-                ],
-                "fields": [],
-                "kinds": [
-                  "self",
-                  "super",
-                  "crate",
-                  "visibility_modifier_pub_scope_in_path"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method.static.public.restricted",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "impl_item_body"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "parameters"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "elements"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "item"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "not",
-                "of": {
-                  "op": "is",
-                  "types": [
-                    231
-                  ],
-                  "fields": [],
-                  "kinds": [
-                    "parameter",
-                    "self_parameter",
-                    "variadic_parameter",
-                    "underscore",
-                    "type_identifier",
-                    "abstract_type",
-                    "reference_type",
-                    "metavariable",
-                    "pointer_type_const",
-                    "pointer_type_mut",
-                    "generic_type",
-                    "scoped_type_identifier",
-                    "tuple_type",
-                    "unit_type",
-                    "array_type",
-                    "function_type",
-                    "macro_invocation",
-                    "never_type",
-                    "dynamic_type",
-                    "bounded_type",
-                    "removed_trait_bound",
-                    "primitive_type"
-                  ]
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "fields": [
-                  "visibility_modifier"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "fields": [],
-                "kinds": [
-                  "crate",
-                  "visibility_modifier_pub"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  380
-                ],
-                "fields": [],
-                "kinds": [
-                  "visibility_modifier_pub_scope"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "visibility_modifier_pub_scope"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  126,
-                  379
-                ],
-                "fields": [],
-                "kinds": [
-                  "self",
-                  "super",
-                  "crate",
-                  "visibility_modifier_pub_scope_in_path"
-                ]
-              }
-            }
-          ]
-        },
-        {
           "vocab": "declaration.method",
           "toplevel": false,
           "within": [
@@ -8665,214 +8157,6 @@
                   "elements"
                 ],
                 "kinds": []
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method.static.public",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "impl_item_body"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "parameters"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "elements"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "item"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "not",
-                "of": {
-                  "op": "is",
-                  "types": [
-                    231
-                  ],
-                  "fields": [],
-                  "kinds": [
-                    "parameter",
-                    "self_parameter",
-                    "variadic_parameter",
-                    "underscore",
-                    "type_identifier",
-                    "abstract_type",
-                    "reference_type",
-                    "metavariable",
-                    "pointer_type_const",
-                    "pointer_type_mut",
-                    "generic_type",
-                    "scoped_type_identifier",
-                    "tuple_type",
-                    "unit_type",
-                    "array_type",
-                    "function_type",
-                    "macro_invocation",
-                    "never_type",
-                    "dynamic_type",
-                    "bounded_type",
-                    "removed_trait_bound",
-                    "primitive_type"
-                  ]
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "fields": [
-                  "visibility_modifier"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "fields": [],
-                "kinds": [
-                  "crate",
-                  "visibility_modifier_pub"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method.static.public.internal",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "impl_item_body"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "parameters"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "elements"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "item"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "not",
-                "of": {
-                  "op": "is",
-                  "types": [
-                    231
-                  ],
-                  "fields": [],
-                  "kinds": [
-                    "parameter",
-                    "self_parameter",
-                    "variadic_parameter",
-                    "underscore",
-                    "type_identifier",
-                    "abstract_type",
-                    "reference_type",
-                    "metavariable",
-                    "pointer_type_const",
-                    "pointer_type_mut",
-                    "generic_type",
-                    "scoped_type_identifier",
-                    "tuple_type",
-                    "unit_type",
-                    "array_type",
-                    "function_type",
-                    "macro_invocation",
-                    "never_type",
-                    "dynamic_type",
-                    "bounded_type",
-                    "removed_trait_bound",
-                    "primitive_type"
-                  ]
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "fields": [
-                  "visibility_modifier"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  127
-                ],
-                "fields": [],
-                "kinds": [
-                  "crate",
-                  "visibility_modifier_pub"
-                ]
               }
             }
           ]
@@ -9054,82 +8338,6 @@
                   "visibility_modifier_pub_scope_in_path"
                 ]
               }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "parameters"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  349
-                ],
-                "fields": [
-                  "elements"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "parameters"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "elements"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "item"
-                  ],
-                  "kinds": [],
-                  "anchor": "first"
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  231
-                ],
-                "fields": [],
-                "kinds": [
-                  "parameter",
-                  "self_parameter",
-                  "variadic_parameter",
-                  "underscore",
-                  "type_identifier",
-                  "abstract_type",
-                  "reference_type",
-                  "metavariable",
-                  "pointer_type_const",
-                  "pointer_type_mut",
-                  "generic_type",
-                  "scoped_type_identifier",
-                  "tuple_type",
-                  "unit_type",
-                  "array_type",
-                  "function_type",
-                  "macro_invocation",
-                  "never_type",
-                  "dynamic_type",
-                  "bounded_type",
-                  "removed_trait_bound",
-                  "primitive_type"
-                ]
-              }
             }
           ]
         },
@@ -9240,82 +8448,6 @@
                   "super",
                   "crate",
                   "visibility_modifier_pub_scope_in_path"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "parameters"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  349
-                ],
-                "fields": [
-                  "elements"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "parameters"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "elements"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "item"
-                  ],
-                  "kinds": [],
-                  "anchor": "first"
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  231
-                ],
-                "fields": [],
-                "kinds": [
-                  "parameter",
-                  "self_parameter",
-                  "variadic_parameter",
-                  "underscore",
-                  "type_identifier",
-                  "abstract_type",
-                  "reference_type",
-                  "metavariable",
-                  "pointer_type_const",
-                  "pointer_type_mut",
-                  "generic_type",
-                  "scoped_type_identifier",
-                  "tuple_type",
-                  "unit_type",
-                  "array_type",
-                  "function_type",
-                  "macro_invocation",
-                  "never_type",
-                  "dynamic_type",
-                  "bounded_type",
-                  "removed_trait_bound",
-                  "primitive_type"
                 ]
               }
             }
@@ -9429,328 +8561,6 @@
                   "super",
                   "crate",
                   "visibility_modifier_pub_scope_in_path"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "parameters"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  349
-                ],
-                "fields": [
-                  "elements"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "parameters"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "elements"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "item"
-                  ],
-                  "kinds": [],
-                  "anchor": "first"
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  231
-                ],
-                "fields": [],
-                "kinds": [
-                  "parameter",
-                  "self_parameter",
-                  "variadic_parameter",
-                  "underscore",
-                  "type_identifier",
-                  "abstract_type",
-                  "reference_type",
-                  "metavariable",
-                  "pointer_type_const",
-                  "pointer_type_mut",
-                  "generic_type",
-                  "scoped_type_identifier",
-                  "tuple_type",
-                  "unit_type",
-                  "array_type",
-                  "function_type",
-                  "macro_invocation",
-                  "never_type",
-                  "dynamic_type",
-                  "bounded_type",
-                  "removed_trait_bound",
-                  "primitive_type"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method.public",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "impl_item_body"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "fields": [
-                  "visibility_modifier"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "fields": [],
-                "kinds": [
-                  "crate",
-                  "visibility_modifier_pub"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "parameters"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  349
-                ],
-                "fields": [
-                  "elements"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "parameters"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "elements"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "item"
-                  ],
-                  "kinds": [],
-                  "anchor": "first"
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  231
-                ],
-                "fields": [],
-                "kinds": [
-                  "parameter",
-                  "self_parameter",
-                  "variadic_parameter",
-                  "underscore",
-                  "type_identifier",
-                  "abstract_type",
-                  "reference_type",
-                  "metavariable",
-                  "pointer_type_const",
-                  "pointer_type_mut",
-                  "generic_type",
-                  "scoped_type_identifier",
-                  "tuple_type",
-                  "unit_type",
-                  "array_type",
-                  "function_type",
-                  "macro_invocation",
-                  "never_type",
-                  "dynamic_type",
-                  "bounded_type",
-                  "removed_trait_bound",
-                  "primitive_type"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method.public.internal",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "impl_item_body"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "fields": [
-                  "visibility_modifier"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  127
-                ],
-                "fields": [],
-                "kinds": [
-                  "crate",
-                  "visibility_modifier_pub"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "parameters"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  349
-                ],
-                "fields": [
-                  "elements"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "parameters"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "elements"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "item"
-                  ],
-                  "kinds": [],
-                  "anchor": "first"
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  231
-                ],
-                "fields": [],
-                "kinds": [
-                  "parameter",
-                  "self_parameter",
-                  "variadic_parameter",
-                  "underscore",
-                  "type_identifier",
-                  "abstract_type",
-                  "reference_type",
-                  "metavariable",
-                  "pointer_type_const",
-                  "pointer_type_mut",
-                  "generic_type",
-                  "scoped_type_identifier",
-                  "tuple_type",
-                  "unit_type",
-                  "array_type",
-                  "function_type",
-                  "macro_invocation",
-                  "never_type",
-                  "dynamic_type",
-                  "bounded_type",
-                  "removed_trait_bound",
-                  "primitive_type"
                 ]
               }
             }
@@ -10088,6 +8898,100 @@
                   "super",
                   "crate",
                   "visibility_modifier_pub_scope_in_path"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.public",
+          "toplevel": false,
+          "within": [
+            "declaration_list",
+            "impl_item_body"
+          ],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "fields": [
+                  "visibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [
+                    "visibility_modifier"
+                  ],
+                  "kinds": []
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "fields": [],
+                "kinds": [
+                  "crate",
+                  "visibility_modifier_pub"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.public.internal",
+          "toplevel": false,
+          "within": [
+            "declaration_list",
+            "impl_item_body"
+          ],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "fields": [
+                  "visibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [
+                    "visibility_modifier"
+                  ],
+                  "kinds": []
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  127
+                ],
+                "fields": [],
+                "kinds": [
+                  "crate",
+                  "visibility_modifier_pub"
                 ]
               }
             }
@@ -22468,16 +21372,16 @@
       },
       {
         "depth": 4,
-        "paths": 85,
+        "paths": 83,
         "kinds": 41,
-        "refinements": 67,
-        "aliases": 22
+        "refinements": 65,
+        "aliases": 20
       },
       {
         "depth": 5,
-        "paths": 22,
-        "kinds": 10,
-        "refinements": 22,
+        "paths": 20,
+        "kinds": 9,
+        "refinements": 20,
         "aliases": 0
       }
     ],
@@ -22621,7 +21525,6 @@
           "declaration.interface.trait.public.internal",
           "declaration.method.public.internal",
           "declaration.method.signature.public.internal",
-          "declaration.method.static.public.internal",
           "declaration.module.foreign.public.internal",
           "declaration.module.public.internal",
           "declaration.struct.public.internal",
@@ -22726,7 +21629,6 @@
           "declaration.interface.trait.private",
           "declaration.method.private",
           "declaration.method.signature.private",
-          "declaration.method.static.private",
           "declaration.module.foreign.private",
           "declaration.module.private",
           "declaration.struct.private",
@@ -22755,7 +21657,6 @@
           "declaration.interface.trait.public",
           "declaration.method.public",
           "declaration.method.signature.public",
-          "declaration.method.static.public",
           "declaration.module.foreign.public",
           "declaration.module.public",
           "declaration.struct.public",
@@ -22801,7 +21702,6 @@
           "declaration.interface.trait.public.restricted",
           "declaration.method.public.restricted",
           "declaration.method.signature.public.restricted",
-          "declaration.method.static.public.restricted",
           "declaration.module.foreign.public.restricted",
           "declaration.module.public.restricted",
           "declaration.struct.public.restricted",
@@ -22950,7 +21850,6 @@
           "declaration.interface.trait.public.internal",
           "declaration.method.public.internal",
           "declaration.method.signature.public.internal",
-          "declaration.method.static.public.internal",
           "declaration.module.foreign.public.internal",
           "declaration.module.public.internal",
           "declaration.struct.public.internal",
@@ -22976,7 +21875,6 @@
           "declaration.interface.trait.private",
           "declaration.method.private",
           "declaration.method.signature.private",
-          "declaration.method.static.private",
           "declaration.module.foreign.private",
           "declaration.module.private",
           "declaration.struct.private",
@@ -23002,7 +21900,6 @@
           "declaration.interface.trait.public",
           "declaration.method.public",
           "declaration.method.signature.public",
-          "declaration.method.static.public",
           "declaration.module.foreign.public",
           "declaration.module.public",
           "declaration.struct.public",
@@ -23028,7 +21925,6 @@
           "declaration.interface.trait.public.restricted",
           "declaration.method.public.restricted",
           "declaration.method.signature.public.restricted",
-          "declaration.method.static.public.restricted",
           "declaration.module.foreign.public.restricted",
           "declaration.module.public.restricted",
           "declaration.struct.public.restricted",
@@ -23102,8 +21998,7 @@
         "name": "internal",
         "paths": [
           "declaration.method.public.internal",
-          "declaration.method.signature.public.internal",
-          "declaration.method.static.public.internal"
+          "declaration.method.signature.public.internal"
         ]
       },
       {
@@ -23111,8 +22006,7 @@
         "name": "restricted",
         "paths": [
           "declaration.method.public.restricted",
-          "declaration.method.signature.public.restricted",
-          "declaration.method.static.public.restricted"
+          "declaration.method.signature.public.restricted"
         ]
       },
       {

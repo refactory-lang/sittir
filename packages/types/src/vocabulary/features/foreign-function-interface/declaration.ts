@@ -10,12 +10,6 @@ export namespace Declaration {
 		readonly extern?: V.Modifier.Extern<G>;
 		// rt only
 	}
-	export namespace Method {
-		export interface Static<G extends GrammarContext<G>> {
-			readonly extern?: V.Modifier.Extern<G>;
-			// r only
-		}
-	}
 	export namespace Module {
 		export interface Foreign<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Module<G>> {
 			// claimed by r

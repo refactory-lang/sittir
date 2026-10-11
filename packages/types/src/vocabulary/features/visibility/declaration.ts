@@ -361,26 +361,6 @@ export namespace Declaration {
 				}
 			}
 		}
-		export namespace Static {
-			export interface Private<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Static<G>, V.Modifier.Visibility.Private<G>> {
-				// claimed by r
-				readonly $kind: 'declaration.method.static.private';
-			}
-			export interface Public<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Static<G>, V.Modifier.Visibility.Public<G>> {
-				// claimed by r
-				readonly $kind: 'declaration.method.static.public';
-			}
-			export namespace Public {
-				export interface Internal<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Static.Public<G>, V.Modifier.Visibility.Public.Internal<G>> {
-					// claimed by r
-					readonly $kind: 'declaration.method.static.public.internal';
-				}
-				export interface Restricted<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Static.Public<G>, V.Modifier.Visibility.Public.Restricted<G>> {
-					// claimed by r
-					readonly $kind: 'declaration.method.static.public.restricted';
-				}
-			}
-		}
 	}
 	export namespace Module {
 		export namespace Foreign {

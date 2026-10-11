@@ -22,10 +22,4 @@ export namespace Declaration {
 		readonly unsafe?: Flag;
 		// rt only
 	}
-	export namespace Method {
-		export interface Static<G extends GrammarContext<G>> {
-			readonly unsafe?: Flag;
-			// r only
-		}
-	}
 }

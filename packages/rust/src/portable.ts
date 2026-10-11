@@ -232,10 +232,6 @@ export interface PortableIds {
 	'declaration.method.signature.public.internal': TSKindId.FunctionSignatureItem;
 	'declaration.method.signature.public.restricted': TSKindId.FunctionSignatureItem;
 	'declaration.method.static': TSKindId.FunctionItem;
-	'declaration.method.static.private': TSKindId.FunctionItem;
-	'declaration.method.static.public': TSKindId.FunctionItem;
-	'declaration.method.static.public.internal': TSKindId.FunctionItem;
-	'declaration.method.static.public.restricted': TSKindId.FunctionItem;
 	'declaration.module':
 		| TSKindId.ForeignModItem
 		| TSKindId.ForeignModItemBody
@@ -1218,25 +1214,7 @@ export interface PortableKindsAt {
 	'declaration.method.signature.public.restricted': {
 		readonly $ids: readonly PortableIds['declaration.method.signature.public.restricted'][];
 	};
-	'declaration.method.static': {
-		readonly $ids: readonly PortableIds['declaration.method.static'][];
-		readonly private: PortableKindsAt['declaration.method.static.private'];
-		readonly public: PortableKindsAt['declaration.method.static.public'];
-		readonly internal: PortableKindsAt['declaration.method.static.public.internal'];
-		readonly restricted: PortableKindsAt['declaration.method.static.public.restricted'];
-	};
-	'declaration.method.static.private': { readonly $ids: readonly PortableIds['declaration.method.static.private'][] };
-	'declaration.method.static.public': {
-		readonly $ids: readonly PortableIds['declaration.method.static.public'][];
-		readonly internal: PortableKindsAt['declaration.method.static.public.internal'];
-		readonly restricted: PortableKindsAt['declaration.method.static.public.restricted'];
-	};
-	'declaration.method.static.public.internal': {
-		readonly $ids: readonly PortableIds['declaration.method.static.public.internal'][];
-	};
-	'declaration.method.static.public.restricted': {
-		readonly $ids: readonly PortableIds['declaration.method.static.public.restricted'][];
-	};
+	'declaration.method.static': { readonly $ids: readonly PortableIds['declaration.method.static'][] };
 	'declaration.module': {
 		readonly $ids: readonly PortableIds['declaration.module'][];
 		readonly foreign: PortableKindsAt['declaration.module.foreign'];
@@ -2299,23 +2277,7 @@ export interface PortableIsAt {
 	'declaration.method.signature.public.restricted': PortableGuard<
 		PortableIds['declaration.method.signature.public.restricted']
 	> & {};
-	'declaration.method.static': PortableGuard<PortableIds['declaration.method.static']> & {
-		readonly private: PortableIsAt['declaration.method.static.private'];
-		readonly public: PortableIsAt['declaration.method.static.public'];
-		readonly internal: PortableIsAt['declaration.method.static.public.internal'];
-		readonly restricted: PortableIsAt['declaration.method.static.public.restricted'];
-	};
-	'declaration.method.static.private': PortableGuard<PortableIds['declaration.method.static.private']> & {};
-	'declaration.method.static.public': PortableGuard<PortableIds['declaration.method.static.public']> & {
-		readonly internal: PortableIsAt['declaration.method.static.public.internal'];
-		readonly restricted: PortableIsAt['declaration.method.static.public.restricted'];
-	};
-	'declaration.method.static.public.internal': PortableGuard<
-		PortableIds['declaration.method.static.public.internal']
-	> & {};
-	'declaration.method.static.public.restricted': PortableGuard<
-		PortableIds['declaration.method.static.public.restricted']
-	> & {};
+	'declaration.method.static': PortableGuard<PortableIds['declaration.method.static']> & {};
 	'declaration.module': PortableGuard<PortableIds['declaration.module']> & {
 		readonly foreign: PortableIsAt['declaration.module.foreign'];
 		readonly private: PortableIsAt['declaration.module.private'];
@@ -3506,10 +3468,6 @@ const table: PortableTable = {
 		'declaration.method.signature.public.internal': { ids: [TSKindId.FunctionSignatureItem], exact: false },
 		'declaration.method.signature.public.restricted': { ids: [TSKindId.FunctionSignatureItem], exact: false },
 		'declaration.method.static': { ids: [TSKindId.FunctionItem], exact: false },
-		'declaration.method.static.private': { ids: [TSKindId.FunctionItem], exact: false },
-		'declaration.method.static.public': { ids: [TSKindId.FunctionItem], exact: false },
-		'declaration.method.static.public.internal': { ids: [TSKindId.FunctionItem], exact: false },
-		'declaration.method.static.public.restricted': { ids: [TSKindId.FunctionItem], exact: false },
 		'declaration.module': {
 			ids: [
 				TSKindId.ForeignModItem,
@@ -4432,8 +4390,6 @@ const table: PortableTable = {
 		['declaration.interface.trait', 'restricted', 'declaration.interface.trait.public.restricted'],
 		['declaration.method.signature', 'internal', 'declaration.method.signature.public.internal'],
 		['declaration.method.signature', 'restricted', 'declaration.method.signature.public.restricted'],
-		['declaration.method.static', 'internal', 'declaration.method.static.public.internal'],
-		['declaration.method.static', 'restricted', 'declaration.method.static.public.restricted'],
 		['declaration.module.foreign', 'internal', 'declaration.module.foreign.public.internal'],
 		['declaration.module.foreign', 'restricted', 'declaration.module.foreign.public.restricted'],
 		['declaration.struct.tuple', 'internal', 'declaration.struct.tuple.public.internal'],
@@ -6111,228 +6067,6 @@ const table: PortableTable = {
 		],
 		[TSKindId.FunctionItem]: [
 			{
-				path: 'declaration.method.static.private',
-				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
-				test: [
-					{
-						up: 0,
-						via: [
-							{ fields: ['parameters'], kinds: [] },
-							{ fields: ['elements'], kinds: [] },
-							{ fields: ['item'], kinds: [] }
-						],
-						plan: {
-							op: 'not',
-							of: {
-								op: 'is',
-								types: [231],
-								fields: [],
-								kinds: [
-									'parameter',
-									'self_parameter',
-									'variadic_parameter',
-									'underscore',
-									'type_identifier',
-									'abstract_type',
-									'reference_type',
-									'metavariable',
-									'pointer_type_const',
-									'pointer_type_mut',
-									'generic_type',
-									'scoped_type_identifier',
-									'tuple_type',
-									'unit_type',
-									'array_type',
-									'function_type',
-									'macro_invocation',
-									'never_type',
-									'dynamic_type',
-									'bounded_type',
-									'removed_trait_bound',
-									'primitive_type'
-								]
-							}
-						}
-					},
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [125],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
-					}
-				]
-			},
-			{
-				path: 'declaration.method.static.public.internal',
-				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
-				test: [
-					{
-						up: 0,
-						via: [
-							{ fields: ['parameters'], kinds: [] },
-							{ fields: ['elements'], kinds: [] },
-							{ fields: ['item'], kinds: [] }
-						],
-						plan: {
-							op: 'not',
-							of: {
-								op: 'is',
-								types: [231],
-								fields: [],
-								kinds: [
-									'parameter',
-									'self_parameter',
-									'variadic_parameter',
-									'underscore',
-									'type_identifier',
-									'abstract_type',
-									'reference_type',
-									'metavariable',
-									'pointer_type_const',
-									'pointer_type_mut',
-									'generic_type',
-									'scoped_type_identifier',
-									'tuple_type',
-									'unit_type',
-									'array_type',
-									'function_type',
-									'macro_invocation',
-									'never_type',
-									'dynamic_type',
-									'bounded_type',
-									'removed_trait_bound',
-									'primitive_type'
-								]
-							}
-						}
-					},
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [127],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
-					}
-				]
-			},
-			{
-				path: 'declaration.method.static.public.restricted',
-				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
-				test: [
-					{
-						up: 0,
-						via: [
-							{ fields: ['parameters'], kinds: [] },
-							{ fields: ['elements'], kinds: [] },
-							{ fields: ['item'], kinds: [] }
-						],
-						plan: {
-							op: 'not',
-							of: {
-								op: 'is',
-								types: [231],
-								fields: [],
-								kinds: [
-									'parameter',
-									'self_parameter',
-									'variadic_parameter',
-									'underscore',
-									'type_identifier',
-									'abstract_type',
-									'reference_type',
-									'metavariable',
-									'pointer_type_const',
-									'pointer_type_mut',
-									'generic_type',
-									'scoped_type_identifier',
-									'tuple_type',
-									'unit_type',
-									'array_type',
-									'function_type',
-									'macro_invocation',
-									'never_type',
-									'dynamic_type',
-									'bounded_type',
-									'removed_trait_bound',
-									'primitive_type'
-								]
-							}
-						}
-					},
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [126, 379],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
-					}
-				]
-			},
-			{
 				path: 'declaration.method',
 				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
 				test: [
@@ -6377,110 +6111,6 @@ const table: PortableTable = {
 						up: 0,
 						via: [{ fields: ['parameters'], kinds: [] }],
 						plan: { op: 'is', types: [349], fields: ['elements'], kinds: [] }
-					}
-				]
-			},
-			{
-				path: 'declaration.method.static.public',
-				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
-				test: [
-					{
-						up: 0,
-						via: [
-							{ fields: ['parameters'], kinds: [] },
-							{ fields: ['elements'], kinds: [] },
-							{ fields: ['item'], kinds: [] }
-						],
-						plan: {
-							op: 'not',
-							of: {
-								op: 'is',
-								types: [231],
-								fields: [],
-								kinds: [
-									'parameter',
-									'self_parameter',
-									'variadic_parameter',
-									'underscore',
-									'type_identifier',
-									'abstract_type',
-									'reference_type',
-									'metavariable',
-									'pointer_type_const',
-									'pointer_type_mut',
-									'generic_type',
-									'scoped_type_identifier',
-									'tuple_type',
-									'unit_type',
-									'array_type',
-									'function_type',
-									'macro_invocation',
-									'never_type',
-									'dynamic_type',
-									'bounded_type',
-									'removed_trait_bound',
-									'primitive_type'
-								]
-							}
-						}
-					},
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
-				]
-			},
-			{
-				path: 'declaration.method.static.public.internal',
-				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
-				test: [
-					{
-						up: 0,
-						via: [
-							{ fields: ['parameters'], kinds: [] },
-							{ fields: ['elements'], kinds: [] },
-							{ fields: ['item'], kinds: [] }
-						],
-						plan: {
-							op: 'not',
-							of: {
-								op: 'is',
-								types: [231],
-								fields: [],
-								kinds: [
-									'parameter',
-									'self_parameter',
-									'variadic_parameter',
-									'underscore',
-									'type_identifier',
-									'abstract_type',
-									'reference_type',
-									'metavariable',
-									'pointer_type_const',
-									'pointer_type_mut',
-									'generic_type',
-									'scoped_type_identifier',
-									'tuple_type',
-									'unit_type',
-									'array_type',
-									'function_type',
-									'macro_invocation',
-									'never_type',
-									'dynamic_type',
-									'bounded_type',
-									'removed_trait_bound',
-									'primitive_type'
-								]
-							}
-						}
-					},
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
 					}
 				]
 			},
@@ -6561,48 +6191,6 @@ const table: PortableTable = {
 							fields: [],
 							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
 						}
-					},
-					{
-						up: 0,
-						via: [{ fields: ['parameters'], kinds: [] }],
-						plan: { op: 'is', types: [349], fields: ['elements'], kinds: [] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['parameters'], kinds: [] },
-							{ fields: ['elements'], kinds: [] },
-							{ fields: ['item'], kinds: [], anchor: 'first' }
-						],
-						plan: {
-							op: 'is',
-							types: [231],
-							fields: [],
-							kinds: [
-								'parameter',
-								'self_parameter',
-								'variadic_parameter',
-								'underscore',
-								'type_identifier',
-								'abstract_type',
-								'reference_type',
-								'metavariable',
-								'pointer_type_const',
-								'pointer_type_mut',
-								'generic_type',
-								'scoped_type_identifier',
-								'tuple_type',
-								'unit_type',
-								'array_type',
-								'function_type',
-								'macro_invocation',
-								'never_type',
-								'dynamic_type',
-								'bounded_type',
-								'removed_trait_bound',
-								'primitive_type'
-							]
-						}
 					}
 				]
 			},
@@ -6637,48 +6225,6 @@ const table: PortableTable = {
 							fields: [],
 							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
 						}
-					},
-					{
-						up: 0,
-						via: [{ fields: ['parameters'], kinds: [] }],
-						plan: { op: 'is', types: [349], fields: ['elements'], kinds: [] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['parameters'], kinds: [] },
-							{ fields: ['elements'], kinds: [] },
-							{ fields: ['item'], kinds: [], anchor: 'first' }
-						],
-						plan: {
-							op: 'is',
-							types: [231],
-							fields: [],
-							kinds: [
-								'parameter',
-								'self_parameter',
-								'variadic_parameter',
-								'underscore',
-								'type_identifier',
-								'abstract_type',
-								'reference_type',
-								'metavariable',
-								'pointer_type_const',
-								'pointer_type_mut',
-								'generic_type',
-								'scoped_type_identifier',
-								'tuple_type',
-								'unit_type',
-								'array_type',
-								'function_type',
-								'macro_invocation',
-								'never_type',
-								'dynamic_type',
-								'bounded_type',
-								'removed_trait_bound',
-								'primitive_type'
-							]
-						}
 					}
 				]
 			},
@@ -6712,156 +6258,6 @@ const table: PortableTable = {
 							types: [126, 379],
 							fields: [],
 							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
-					},
-					{
-						up: 0,
-						via: [{ fields: ['parameters'], kinds: [] }],
-						plan: { op: 'is', types: [349], fields: ['elements'], kinds: [] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['parameters'], kinds: [] },
-							{ fields: ['elements'], kinds: [] },
-							{ fields: ['item'], kinds: [], anchor: 'first' }
-						],
-						plan: {
-							op: 'is',
-							types: [231],
-							fields: [],
-							kinds: [
-								'parameter',
-								'self_parameter',
-								'variadic_parameter',
-								'underscore',
-								'type_identifier',
-								'abstract_type',
-								'reference_type',
-								'metavariable',
-								'pointer_type_const',
-								'pointer_type_mut',
-								'generic_type',
-								'scoped_type_identifier',
-								'tuple_type',
-								'unit_type',
-								'array_type',
-								'function_type',
-								'macro_invocation',
-								'never_type',
-								'dynamic_type',
-								'bounded_type',
-								'removed_trait_bound',
-								'primitive_type'
-							]
-						}
-					}
-				]
-			},
-			{
-				path: 'declaration.method.public',
-				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{
-						up: 0,
-						via: [{ fields: ['parameters'], kinds: [] }],
-						plan: { op: 'is', types: [349], fields: ['elements'], kinds: [] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['parameters'], kinds: [] },
-							{ fields: ['elements'], kinds: [] },
-							{ fields: ['item'], kinds: [], anchor: 'first' }
-						],
-						plan: {
-							op: 'is',
-							types: [231],
-							fields: [],
-							kinds: [
-								'parameter',
-								'self_parameter',
-								'variadic_parameter',
-								'underscore',
-								'type_identifier',
-								'abstract_type',
-								'reference_type',
-								'metavariable',
-								'pointer_type_const',
-								'pointer_type_mut',
-								'generic_type',
-								'scoped_type_identifier',
-								'tuple_type',
-								'unit_type',
-								'array_type',
-								'function_type',
-								'macro_invocation',
-								'never_type',
-								'dynamic_type',
-								'bounded_type',
-								'removed_trait_bound',
-								'primitive_type'
-							]
-						}
-					}
-				]
-			},
-			{
-				path: 'declaration.method.public.internal',
-				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{
-						up: 0,
-						via: [{ fields: ['parameters'], kinds: [] }],
-						plan: { op: 'is', types: [349], fields: ['elements'], kinds: [] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['parameters'], kinds: [] },
-							{ fields: ['elements'], kinds: [] },
-							{ fields: ['item'], kinds: [], anchor: 'first' }
-						],
-						plan: {
-							op: 'is',
-							types: [231],
-							fields: [],
-							kinds: [
-								'parameter',
-								'self_parameter',
-								'variadic_parameter',
-								'underscore',
-								'type_identifier',
-								'abstract_type',
-								'reference_type',
-								'metavariable',
-								'pointer_type_const',
-								'pointer_type_mut',
-								'generic_type',
-								'scoped_type_identifier',
-								'tuple_type',
-								'unit_type',
-								'array_type',
-								'function_type',
-								'macro_invocation',
-								'never_type',
-								'dynamic_type',
-								'bounded_type',
-								'removed_trait_bound',
-								'primitive_type'
-							]
 						}
 					}
 				]
@@ -6965,6 +6361,30 @@ const table: PortableTable = {
 							fields: [],
 							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
 						}
+					}
+				]
+			},
+			{
+				path: 'declaration.method.public',
+				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{
+				path: 'declaration.method.public.internal',
+				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
 					}
 				]
 			},

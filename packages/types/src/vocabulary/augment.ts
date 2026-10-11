@@ -962,55 +962,6 @@ declare module './declaration.ts' {
 					| V.Declaration.Method.Signature.Setter.Protected<G>
 					| V.Declaration.Method.Signature.Setter.Public<G>;
 			}
-			interface Static<G extends GrammarContext<G>> extends methods.Declaration.Method.Static<G> {
-				readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Declaration.Method.Static<G>['async']>;
-				readonly const?: gate.In<
-					G,
-					features.CompileTimeEvaluation,
-					compileTimeEvaluation.Declaration.Method.Static<G>['const']
-				>;
-				readonly extern?: gate.In<
-					G,
-					features.ForeignFunctionInterface,
-					foreignFunctionInterface.Declaration.Method.Static<G>['extern']
-				>;
-				readonly returnType?: gate.In<
-					G,
-					features.TypeAnnotations,
-					typeAnnotations.Declaration.Method.Static<G>['returnType']
-				>;
-				readonly typeParameters?: gate.In<
-					G,
-					features.ParametricPolymorphism,
-					parametricPolymorphism.Declaration.Method.Static<G>['typeParameters']
-				>;
-				readonly unsafe?: gate.In<G, features.UnsafeCode, unsafeCode.Declaration.Method.Static<G>['unsafe']>;
-				readonly whereClause?: gate.In<
-					G,
-					features.BoundedQuantification,
-					boundedQuantification.Declaration.Method.Static<G>['whereClause']
-				>;
-			}
-			namespace Static {
-				interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Method.Static.Private<G> {}
-				interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Method.Static.Public<G> {}
-				namespace Public {
-					interface Internal<G extends GrammarContext<G>> extends visibility.Declaration.Method.Static.Public
-						.Internal<G> {}
-					interface Restricted<G extends GrammarContext<G>> extends visibility.Declaration.Method.Static.Public
-						.Restricted<G> {}
-					type Any<G extends GrammarContext<G>> =
-						| V.Declaration.Method.Static.Public<G>
-						| V.Declaration.Method.Static.Public.Internal<G>
-						| V.Declaration.Method.Static.Public.Restricted<G>;
-				}
-				type Any<G extends GrammarContext<G>> =
-					| V.Declaration.Method.Static<G>
-					| V.Declaration.Method.Static.Private<G>
-					| V.Declaration.Method.Static.Public<G>
-					| V.Declaration.Method.Static.Public.Internal<G>
-					| V.Declaration.Method.Static.Public.Restricted<G>;
-			}
 			type Any<G extends GrammarContext<G>> =
 				| V.Declaration.Method<G>
 				| V.Declaration.Method.Dunder<G>
@@ -1052,12 +1003,7 @@ declare module './declaration.ts' {
 				| V.Declaration.Method.Signature.Setter<G>
 				| V.Declaration.Method.Signature.Setter.Private<G>
 				| V.Declaration.Method.Signature.Setter.Protected<G>
-				| V.Declaration.Method.Signature.Setter.Public<G>
-				| V.Declaration.Method.Static<G>
-				| V.Declaration.Method.Static.Private<G>
-				| V.Declaration.Method.Static.Public<G>
-				| V.Declaration.Method.Static.Public.Internal<G>
-				| V.Declaration.Method.Static.Public.Restricted<G>;
+				| V.Declaration.Method.Signature.Setter.Public<G>;
 		}
 		interface Module<G extends GrammarContext<G>> extends moduleDeclarations.Declaration.Module<G> {}
 		namespace Module {
@@ -1533,11 +1479,6 @@ declare module './declaration.ts' {
 			| V.Declaration.Method.Signature.Setter.Private<G>
 			| V.Declaration.Method.Signature.Setter.Protected<G>
 			| V.Declaration.Method.Signature.Setter.Public<G>
-			| V.Declaration.Method.Static<G>
-			| V.Declaration.Method.Static.Private<G>
-			| V.Declaration.Method.Static.Public<G>
-			| V.Declaration.Method.Static.Public.Internal<G>
-			| V.Declaration.Method.Static.Public.Restricted<G>
 			| V.Declaration.Module<G>
 			| V.Declaration.Module.External<G>
 			| V.Declaration.Module.Foreign<G>

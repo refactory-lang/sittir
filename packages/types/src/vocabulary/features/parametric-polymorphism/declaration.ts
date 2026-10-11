@@ -52,10 +52,6 @@ export namespace Declaration {
 				readonly typeParameters?: V.Declaration.TypeParameter<G>[];
 			}
 		}
-		export interface Static<G extends GrammarContext<G>> {
-			readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
-			// r only
-		}
 	}
 	export namespace Signature {
 		export interface Call<G extends GrammarContext<G>> {

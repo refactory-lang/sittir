@@ -90,6 +90,7 @@ The planner. It works in five parts.
 - a parent that is not a kind;
 - a parent that is not a level above the kind (a prefix of its path);
 - a value the kind is refined by that is not a kind, such as a level's `Any`, which would leave the value's members off the kind;
+- a path segment that the path before it declares as a flag (`flagSegments`);
 - a base kind under a kind a feature adds.
 
 A feature kind under another feature's kind is only a note, when its own feature does not extend that feature.
@@ -118,6 +119,10 @@ These are issues:
 Every other declaration must restate the owner: required, gated, with the same printed type as the owner's optional declaration, and from a feature that extends the owner's feature. This is how a feature that needs a member requires it. Each restating feature is recorded against the kind in `restated`.
 
 A gated owner is recorded in `owned`. A kind's own declaration is not, since the kind already carries it.
+
+### `packages/tools/src/vocabulary/plan.ts::flagSegments`
+
+The path segments that name a flag of the path before them. The flags of a prefix are the ones declared along the inheritance line of its nearest kind. A claim resolves each segment of its path to a kind or to a flag of the kind before it, so a segment that could be both has no single reading: `declaration.method.static` cannot be a kind while `static` is a flag of `declaration.method`. Each segment is reported once, at the path it ends (`declaration.method.static: static is a flag of declaration.method`), however many kinds lie below it.
 
 ### `packages/tools/src/vocabulary/plan.ts::directReferences`
 

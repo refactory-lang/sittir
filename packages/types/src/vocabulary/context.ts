@@ -463,20 +463,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly name: G['expression'] | G['literal'] | V.Identifier.Property<G> | string;
 			readonly returnType: G['identifier'] | G['type'];
 		};
-		readonly 'declaration.method.static': {
-			readonly parameters:
-				| V.Clause.Bounds.Removed<G>
-				| V.Expression.Call.Macro<G>
-				| G['identifier']
-				| V.Declaration.Parameter.Any<G>
-				| string
-				| G['type'];
-			readonly returnType:
-				| V.Clause.Bounds.Removed<G>
-				| V.Expression.Call.Macro<G>
-				| G['identifier']
-				| G['type'];
-		};
 		readonly 'declaration.module': {
 			readonly body:
 				| G['attribute']

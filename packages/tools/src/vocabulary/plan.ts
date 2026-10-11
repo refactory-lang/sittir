@@ -1,5 +1,5 @@
 import { posix } from 'node:path';
-import { type DeclaredKind, type Feature, type Member, type VocabularySource, byCodepoint, isKind } from './read.ts';
+import { type DeclaredKind, FLAG, type Feature, type Member, type VocabularySource, byCodepoint, isKind } from './read.ts';
 
 export interface Kind {
 	readonly qname: string;
@@ -112,6 +112,7 @@ export function plan(source: VocabularySource): Plan {
 		return out;
 	};
 	const lines = new Map([...kinds.keys()].map((path) => [path, lineage(path)]));
+	issues.push(...flagSegments(kinds, declarations, lines));
 	for (const [path, members] of owned) {
 		for (const [name, o] of members) {
 			for (const [other, byName] of declarations) {
@@ -211,6 +212,33 @@ function ownership(
 		}
 	}
 	return { owned, restated };
+}
+
+function flagSegments(
+	kinds: ReadonlyMap<string, Kind>,
+	declarations: ReadonlyMap<string, ReadonlyMap<string, readonly Declaration[]>>,
+	lines: ReadonlyMap<string, readonly string[]>
+): string[] {
+	const flagsAt = (path: string): Set<string> =>
+		new Set(
+			(lines.get(path) ?? []).flatMap((at) => [...(declarations.get(at) ?? [])].flatMap(([name, list]) => (list.some((d) => d.member.type === FLAG) ? [name] : [])))
+		);
+	const kindAt = (prefix: string): string | undefined => {
+		for (let at = prefix; ; at = at.slice(0, at.lastIndexOf('.'))) {
+			if (kinds.has(at)) return at;
+			if (!at.includes('.')) return undefined;
+		}
+	};
+	const out = new Set<string>();
+	for (const path of kinds.keys()) {
+		const segments = path.split('.');
+		for (const [i, segment] of segments.entries()) {
+			const prefix = segments.slice(0, i).join('.');
+			const at = i === 0 ? undefined : kindAt(prefix);
+			if (at !== undefined && flagsAt(at).has(segment)) out.add(`${prefix}.${segment}: ${segment} is a flag of ${prefix}`);
+		}
+	}
+	return [...out];
 }
 
 function directReferences(

@@ -255,6 +255,20 @@ describe('plan', () => {
 		expect(issues({ ...CLEAN, 'declaration.ts': refined })).toEqual(['declaration.public is refined by Declaration.Function.Any, which is not a kind']);
 	});
 
+	it('reports a path segment that is also a flag of the path before it', () => {
+		const statics = feature('methods/statics', 'export interface Statics extends Methods {\n\treadonly statics: true;\n}', {
+			'declaration.ts': `export namespace Declaration {
+	export namespace Method {
+		export interface Static<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Method<G>> {
+			readonly $kind: 'declaration.method.static';
+		}
+	}
+}
+`
+		});
+		expect(issues({ ...CLEAN, ...statics })).toEqual(['declaration.method.static: static is a flag of declaration.method']);
+	});
+
 	it('reports a kind in a namespace no base file declares', () => {
 		expect(issues({ ...CLEAN, ...MACROS })).toEqual(['macro.rule: Macros declares it in Macro, a namespace no base file declares']);
 	});

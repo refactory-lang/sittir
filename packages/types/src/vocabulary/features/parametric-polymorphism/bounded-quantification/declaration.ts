@@ -37,10 +37,6 @@ export namespace Declaration {
 			readonly whereClause?: V.Clause.Where<G>;
 			// r only
 		}
-		export interface Static<G extends GrammarContext<G>> {
-			readonly whereClause?: V.Clause.Where<G>;
-			// r only
-		}
 	}
 	export interface TypeAlias<G extends GrammarContext<G>> {
 		readonly trailingWhereClause?: V.Clause.Where<G>;
