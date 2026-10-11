@@ -7129,6 +7129,164 @@
           "test": []
         },
         {
+          "vocab": "pattern.range.inclusive",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  420
+                ],
+                "fields": [],
+                "kinds": [
+                  "range_pattern_with_left_with_right",
+                  "range_pattern_with_left_bare"
+                ]
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [],
+                  "kinds": [
+                    "range_pattern_with_left_with_right",
+                    "range_pattern_with_left_bare"
+                  ]
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "..=",
+                "fields": [],
+                "kinds": [
+                  "dot_dot_dot",
+                  "dot_dot_eq",
+                  "dot_dot"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "pattern.range.inclusive",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  420
+                ],
+                "fields": [],
+                "kinds": [
+                  "range_pattern_with_left_with_right",
+                  "range_pattern_with_left_bare"
+                ]
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [],
+                  "kinds": [
+                    "range_pattern_with_left_with_right",
+                    "range_pattern_with_left_bare"
+                  ]
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "...",
+                "fields": [],
+                "kinds": [
+                  "dot_dot_dot",
+                  "dot_dot_eq",
+                  "dot_dot"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "pattern.range.exclusive",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  420
+                ],
+                "fields": [],
+                "kinds": [
+                  "range_pattern_with_left_with_right",
+                  "range_pattern_with_left_bare"
+                ]
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [],
+                  "kinds": [
+                    "range_pattern_with_left_with_right",
+                    "range_pattern_with_left_bare"
+                  ]
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "..",
+                "fields": [],
+                "kinds": [
+                  "dot_dot_dot",
+                  "dot_dot_eq",
+                  "dot_dot"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "pattern.range.exclusive",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  421
+                ],
+                "fields": [],
+                "kinds": [
+                  "range_pattern_with_left_with_right",
+                  "range_pattern_with_left_bare"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "vocab": "pattern.range",
           "toplevel": true,
           "within": [],
@@ -7145,20 +7303,6 @@
             {
               "owner": "range_pattern_with_left",
               "slot": "left"
-            }
-          ]
-        },
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "except": [
-            "range_pattern_with_left_with_right"
-          ],
-          "path": [
-            {
-              "owner": "range_pattern_with_left",
-              "slot": "content"
             }
           ]
         },
@@ -10556,7 +10700,7 @@
       {
         "depth": 3,
         "paths": 79,
-        "kinds": 98,
+        "kinds": 99,
         "refinements": 51,
         "aliases": 35
       },

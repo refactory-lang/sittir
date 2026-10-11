@@ -31,6 +31,7 @@ export interface PredicateFact {
 export type ChildFact =
 	| { readonly subject: CaptureSite; readonly kinds: readonly string[]; readonly captured: boolean }
 	| { readonly subject: CaptureSite; readonly text: string }
+	| { readonly subject: CaptureSite; readonly token: string }
 	| { readonly subject: CaptureSite; readonly present: true };
 export interface ClaimFact {
 	readonly vocab: string;

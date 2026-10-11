@@ -102,6 +102,8 @@ const MODEL = [
 	node('type_x'),
 	node('cmp', [slot('left', ['expr']), slot('ops', ['cmp_op'], { multiple: true })]),
 	node('cmp_op', [slot('operators', [], { terminals: ['==', '<'] })]),
+	node('rng', [slot('left', ['expr']), slot('content', ['rng_right', '_dots'])]),
+	node('rng_right', [slot('op', [], { terminals: ['..=', '..'] }), slot('right', ['expr'])]),
 	node('maybe_op', [slot('left', ['expr']), slot('operator', [], { required: false, terminals: ['+', '-'] }), slot('bang', [], { required: false, terminals: ['!'] })])
 ];
 
@@ -445,6 +447,26 @@ describe('resolveRoutes', () => {
 			{ subject: { up: 0, down: [{ field: 'clause', kind: null, after: null, anchor: null }] }, kinds: ['clause_neg', 'clause_pos'] }
 		]);
 		expect(routes.readEntries.get('_struct')?.[0]?.children).toEqual([]);
+	});
+
+	it('routes no slot whose values, beside the kinds a member path leads through, a child test of a refinement tells', async () => {
+		const rows = ['(rng) @pattern.range', '(rng (rng_right "..=")) @pattern.range.inclusive', '(rng (rng_right right: (_) @right))'];
+		const told = resolveRoutes(await grammar([...rows, '(rng (_dots)) @pattern.range.exclusive'].join('\n')));
+		expect(told.members.get('rng')?.map((r) => r.name)).toEqual(['left', 'right']);
+		const untold = resolveRoutes(await grammar(rows.join('\n')));
+		expect(untold.members.get('rng')?.map((r) => r.name)).toEqual(['left', 'content', 'right']);
+	});
+
+	it('tests a fieldless token below the claimed node in the slot that holds its text, as a pin finds its slot', async () => {
+		const routes = resolveRoutes(await grammar('(cmp (cmp_op "<")) @expression.binary.less'));
+		const step = { field: null, kind: 'cmp_op', after: null, anchor: null };
+		expect(routes.readEntries.get('cmp')?.[0]?.children).toEqual([
+			{ subject: { up: 0, down: [step, { field: 'operators', kind: null, after: null, anchor: null }] }, text: '<' }
+		]);
+	});
+
+	it('refuses a fieldless token below the claimed node that no slot of its holder holds', async () => {
+		await expect(grammar('(cmp (cmp_op "+")) @expression.binary.plus').then(resolveRoutes)).rejects.toThrow(/cmp.*"\+".*no slot/);
 	});
 
 	it('tests a field literal through a child, and not the child the slot can only hold', async () => {

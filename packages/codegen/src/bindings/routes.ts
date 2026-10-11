@@ -163,11 +163,14 @@ function toldByRead(model: SlotModel, slot: ModelSlot, pinned: ReadonlySet<strin
 	return values.every((v) => pinned.has(v)) || (slot.required && values.length === 1);
 }
 
+const slotHoldingText = (model: SlotModel, slots: readonly ModelSlot[], text: string): ModelSlot | undefined =>
+	slots.find((s) => s.terminals.includes(text) || s.kinds.some((kind) => textOfKind(model, kind) === text));
+
 function pinsOf(model: SlotModel, node: ModelNode | undefined, claim: ClaimFact, renames: SlotNames): Pin[] {
 	const slots = node?.slots ?? [];
 	const literals: [string, string][] = Object.entries(claim.fieldLiterals);
 	for (const text of claim.tokens) {
-		const pinned = slots.find((s) => s.terminals.includes(text) || s.kinds.some((kind) => textOfKind(model, kind) === text));
+		const pinned = slotHoldingText(model, slots, text);
 		if (pinned && !literals.some(([field]) => field === pinned.name)) literals.push([pinned.name, text]);
 	}
 	return literals.map(([field, text]) => {
@@ -176,8 +179,8 @@ function pinsOf(model: SlotModel, node: ModelNode | undefined, claim: ClaimFact,
 	});
 }
 
-function slotsAt(model: SlotModel, kind: string, site: CaptureSite): readonly ModelSlot[] {
-	if (site.up !== 0) return [];
+function reachedAt(model: SlotModel, kind: string, site: CaptureSite): { readonly slots: readonly ModelSlot[]; readonly holders: readonly string[] } | undefined {
+	if (site.up !== 0) return undefined;
 	let holders: readonly string[] = [kind];
 	let slots: ModelSlot[] = [];
 	for (const selector of site.down) {
@@ -185,15 +188,24 @@ function slotsAt(model: SlotModel, kind: string, site: CaptureSite): readonly Mo
 			const slot = slotFor(model, modelNode(model, holder)?.slots ?? [], selector);
 			return slot === undefined ? [] : [slot];
 		});
-		if (slots.length < holders.length) return [];
+		if (slots.length < holders.length) return undefined;
 		holders = selector.kind !== null ? matchedKinds(model, [selector.kind]) : concreteKinds(model, slots.flatMap((slot) => slot.kinds));
 	}
-	return slots;
+	return { slots, holders };
+}
+
+function tokenSite(model: SlotModel, kind: string, child: { readonly subject: CaptureSite; readonly token: string }): CaptureSite {
+	const holders = reachedAt(model, kind, child.subject)?.holders ?? [];
+	const names = new Set(holders.map((holder) => slotHoldingText(model, modelNode(model, holder)?.slots ?? [], child.token)?.name));
+	const [name] = names;
+	if (holders.length === 0 || names.size > 1 || name === undefined)
+		throw new Error(`bindings: ${kind}'s claim tests a token "${child.token}" that no slot of ${holders.join(', ') || 'the node holding it'} holds`);
+	return { ...child.subject, down: [...child.subject.down, { field: name, kind: null, after: null, anchor: null }] };
 }
 
 const matchedKinds = (model: SlotModel, kinds: readonly string[]): string[] => concreteKinds(model, kinds.flatMap((kind) => shownKinds(model, kind)));
 
-function guarantees(model: SlotModel, slot: ModelSlot, child: ChildFact): boolean {
+function guarantees(model: SlotModel, slot: ModelSlot, child: Exclude<ChildFact, { readonly token: string }>): boolean {
 	if (!slot.required) return false;
 	if ('present' in child) return true;
 	if ('text' in child) {
@@ -204,8 +216,9 @@ function guarantees(model: SlotModel, slot: ModelSlot, child: ChildFact): boolea
 	return concreteKinds(model, slot.kinds).every((k) => kinds.includes(k));
 }
 
-function childTestOf(model: SlotModel, kind: string, child: ChildFact): ChildTest | undefined {
-	const slots = slotsAt(model, kind, child.subject);
+function childTestOf(model: SlotModel, kind: string, fact: ChildFact): ChildTest | undefined {
+	const child = 'token' in fact ? { subject: tokenSite(model, kind, fact), text: fact.token } : fact;
+	const slots = reachedAt(model, kind, child.subject)?.slots ?? [];
 	if (slots.length > 0 && slots.every((slot) => guarantees(model, slot, child))) return undefined;
 	if ('text' in child) return child;
 	const held = concreteKinds(model, slots.flatMap((slot) => slot.kinds));
@@ -272,8 +285,16 @@ function membersOf(input: GrammarInput, kind: string, entries: readonly ReadEntr
 	if (node === undefined) return [];
 	if (node.modelType === 'list') return listFormItems(input, node, slotNamesOf);
 	const names = slotNamesOf(kind);
-	const pinned = new Map<string, Set<string>>();
-	for (const pin of entries.flatMap((entry) => entry.pins)) (pinned.get(pin.slot) ?? pinned.set(pin.slot, new Set<string>()).get(pin.slot))?.add(pin.text);
+	const told = new Map<string, Set<string>>();
+	const tell = (slot: string, text: string): void => void (told.get(slot) ?? told.set(slot, new Set<string>()).get(slot))?.add(text);
+	for (const pin of entries.flatMap((entry) => entry.pins)) tell(pin.slot, pin.text);
+	for (const child of entries.flatMap((entry) => entry.children)) {
+		const [step, ...deeper] = child.subject.down;
+		const slot = child.subject.up === 0 && step !== undefined && deeper.length === 0 ? slotFor(input.model, node.slots, step) : undefined;
+		if (slot === undefined) continue;
+		if ('text' in child) tell(slot.name, child.text);
+		else if ('kinds' in child) for (const text of child.kinds.flatMap((k) => textOfKind(input.model, k) ?? [])) tell(slot.name, text);
+	}
 	const identifier = entries.some((entry) => isIdentifierPath(entry.vocab));
 	const deep = input.bindings.members.filter((m) => m.owner === kind && m.route !== 'rename' && m.route !== 'dropped');
 	const via = new Set(deep.flatMap((m) => (m.route === 'presence' || m.route === 'nested' ? m.via.flatMap((step) => step.kind ?? []) : [])));
@@ -282,12 +303,13 @@ function membersOf(input: GrammarInput, kind: string, entries: readonly ReadEntr
 		if (
 			isLayout(input, kind, slot) ||
 			names.get(slot.name) === null ||
-			(identifier && holdsOnlyText(slot)) ||
-			toldByRead(input.model, slot, pinned.get(slot.name) ?? new Set<string>())
+			(identifier && holdsOnlyText(slot))
 		)
 			continue;
 		const except = slot.kinds.filter((k) => via.has(k));
 		if (except.length > 0 && except.length === slot.kinds.length) continue;
+		const rest = except.length === 0 ? slot : { ...slot, kinds: slot.kinds.filter((k) => !via.has(k)), required: false };
+		if (toldByRead(input.model, rest, told.get(slot.name) ?? new Set<string>())) continue;
 		const name = memberNameOf(names, slot.name, slot.propertyName);
 		const path = [{ owner: kind, slot: slot.name }];
 		routes.push(

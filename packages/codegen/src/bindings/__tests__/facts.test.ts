@@ -53,7 +53,7 @@ describe('bindFacts', () => {
 					claim('declaration.function', 'function_item', {
 						predicates: [{ operator: 'kind-eq', capture: 'r', arguments: [{ text: 'self' }], subject: { up: 0, down: [step] } }],
 						children: [
-							{ subject: { up: 0, down: [step] }, kinds: ['block'] },
+							{ subject: { up: 0, down: [step] }, kinds: ['block'], captured: false },
 							{ subject: { up: 0, down: [step] }, text: '+' }
 						]
 					})
@@ -64,7 +64,7 @@ describe('bindFacts', () => {
 		const boundStep = { ...step, kind: 'bound_block' };
 		expect(claimed?.predicates).toEqual([{ operator: 'kind-eq', capture: 'r', arguments: [{ text: 'bound_self' }], subject: { up: 0, down: [boundStep] } }]);
 		expect(claimed?.children).toEqual([
-			{ subject: { up: 0, down: [boundStep] }, kinds: ['bound_block'] },
+			{ subject: { up: 0, down: [boundStep] }, kinds: ['bound_block'], captured: false },
 			{ subject: { up: 0, down: [boundStep] }, text: '+' }
 		]);
 	});

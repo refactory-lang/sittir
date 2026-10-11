@@ -154,7 +154,6 @@ export namespace Pattern {
 	export interface Range<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
 		// claimed by r
 		readonly $kind: 'pattern.range';
-		readonly content?: G['slots']['pattern.range']['content'];
 		readonly left?: G['slots']['pattern.range']['left'];
 		readonly right?: G['slots']['pattern.range']['right'];
 	}

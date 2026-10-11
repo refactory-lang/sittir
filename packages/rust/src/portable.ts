@@ -645,8 +645,8 @@ export interface PortableIds {
 	'pattern.mutable': TSKindId.MutPattern;
 	'pattern.or': TSKindId.OrPattern | TSKindId.OrPatternBinary | TSKindId.OrPatternPrefix;
 	'pattern.range': TSKindId.RangePattern | TSKindId.RangePatternPrefix | TSKindId.RangePatternWithLeft;
-	'pattern.range.exclusive': TSKindId.RangePatternPrefix;
-	'pattern.range.inclusive': TSKindId.RangePatternPrefix;
+	'pattern.range.exclusive': TSKindId.RangePatternPrefix | TSKindId.RangePatternWithLeft;
+	'pattern.range.inclusive': TSKindId.RangePatternPrefix | TSKindId.RangePatternWithLeft;
 	'pattern.reference': TSKindId.RefPattern | TSKindId.ReferencePattern;
 	'pattern.reference.value': TSKindId.ReferencePattern;
 	'pattern.slice': TSKindId.SlicePattern;
@@ -3242,8 +3242,8 @@ const table: PortableTable = {
 			ids: [TSKindId.RangePattern, TSKindId.RangePatternPrefix, TSKindId.RangePatternWithLeft],
 			exact: false
 		},
-		'pattern.range.exclusive': { ids: [TSKindId.RangePatternPrefix], exact: false },
-		'pattern.range.inclusive': { ids: [TSKindId.RangePatternPrefix], exact: false },
+		'pattern.range.exclusive': { ids: [TSKindId.RangePatternPrefix, TSKindId.RangePatternWithLeft], exact: false },
+		'pattern.range.inclusive': { ids: [TSKindId.RangePatternPrefix, TSKindId.RangePatternWithLeft], exact: false },
 		'pattern.reference': { ids: [TSKindId.RefPattern, TSKindId.ReferencePattern], exact: false },
 		'pattern.reference.value': { ids: [TSKindId.ReferencePattern], exact: false },
 		'pattern.slice': { ids: [TSKindId.SlicePattern], exact: false },
@@ -4266,6 +4266,85 @@ const table: PortableTable = {
 		],
 		[TSKindId.RangePatternWithLeft]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
+			{
+				path: 'pattern.range.inclusive',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [],
+						plan: {
+							op: 'is',
+							types: [420],
+							fields: [],
+							kinds: ['range_pattern_with_left_with_right', 'range_pattern_with_left_bare']
+						}
+					},
+					{
+						up: 0,
+						via: [{ fields: [], kinds: ['range_pattern_with_left_with_right', 'range_pattern_with_left_bare'] }],
+						plan: { op: 'eq', text: '..=', fields: [], kinds: ['dot_dot_dot', 'dot_dot_eq', 'dot_dot'] }
+					}
+				]
+			},
+			{
+				path: 'pattern.range.inclusive',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [],
+						plan: {
+							op: 'is',
+							types: [420],
+							fields: [],
+							kinds: ['range_pattern_with_left_with_right', 'range_pattern_with_left_bare']
+						}
+					},
+					{
+						up: 0,
+						via: [{ fields: [], kinds: ['range_pattern_with_left_with_right', 'range_pattern_with_left_bare'] }],
+						plan: { op: 'eq', text: '...', fields: [], kinds: ['dot_dot_dot', 'dot_dot_eq', 'dot_dot'] }
+					}
+				]
+			},
+			{
+				path: 'pattern.range.exclusive',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [],
+						plan: {
+							op: 'is',
+							types: [420],
+							fields: [],
+							kinds: ['range_pattern_with_left_with_right', 'range_pattern_with_left_bare']
+						}
+					},
+					{
+						up: 0,
+						via: [{ fields: [], kinds: ['range_pattern_with_left_with_right', 'range_pattern_with_left_bare'] }],
+						plan: { op: 'eq', text: '..', fields: [], kinds: ['dot_dot_dot', 'dot_dot_eq', 'dot_dot'] }
+					}
+				]
+			},
+			{
+				path: 'pattern.range.exclusive',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [],
+						plan: {
+							op: 'is',
+							types: [421],
+							fields: [],
+							kinds: ['range_pattern_with_left_with_right', 'range_pattern_with_left_bare']
+						}
+					}
+				]
+			},
 			{ path: 'pattern.range', within: [], test: [] }
 		],
 		[TSKindId.RawStringLiteral]: [

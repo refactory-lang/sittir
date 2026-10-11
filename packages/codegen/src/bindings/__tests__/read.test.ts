@@ -196,8 +196,10 @@ describe('readBindings', () => {
 		expect(facts.claims[0]?.children).toEqual([]);
 	});
 
-	it('refuses a token below a claimed node that no field places in a slot', async () => {
-		await expect(readBindings('(outer (inner "-")) @expression.outer')).rejects.toThrow(/a token below the claimed node names no field/);
+	it('keeps a token below a claimed node that no field places at the site of the node holding it', async () => {
+		const facts = await readBindings('(outer (inner "-")) @expression.outer');
+		const inner = { up: 0, down: [{ field: null, kind: 'inner', after: null, anchor: null }] };
+		expect(facts.claims[0]?.children).toEqual([{ subject: inner, kinds: ['inner'], captured: false }, { subject: inner, token: '-' }]);
 	});
 
 	it('keeps the text of a token a container captures', async () => {

@@ -529,7 +529,7 @@ Whether a visited node carries a member capture: a name that is not a vocabulary
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::childFacts`
 
-The `ChildFact`s a claim's pattern states below the claimed node, walked in pattern order. A node that may be absent, leads to a presence capture or places another claim states nothing. An alternation's options give one fact listing their kinds, and each option must be a named node with nothing below it. A token under a field gives a text fact (a token directly under the claimed node is a claim token instead, and a token with no field is refused). A named child gives a kinds fact and is walked into; a wildcard gives a presence fact unless it captures a member, whose own route then stands for it.
+The `ChildFact`s a claim's pattern states below the claimed node, walked in pattern order. A node that may be absent, leads to a presence capture or places another claim states nothing. An alternation's options give one fact listing their kinds, and each option must be a named node with nothing below it. A token under a field gives a text fact; a token with no field gives a token fact at the node holding it, whose slot the routes resolve (a token directly under the claimed node is a claim token instead). A named child gives a kinds fact and is walked into; a wildcard gives a presence fact unless it captures a member, whose own route then stands for it.
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::roundTripBindingsInProcess`
 
@@ -905,7 +905,7 @@ Whether a model node is an alias envelope over leaf text: `modelType` `alias`, w
 
 ### `packages/codegen/src/bindings/routes.ts::membersOf`
 
-A kind's member routes: one `slot` route per slot of the model node, then the member facts the bindings state for it (`kind`, `presence`, `nested`). A slot routes no member when it is a layout slot, when a claim drops it (`SlotNames` gives it `null`), when the read already tells its value (`toldByRead`, over the pins of the kind's read entries), or when it holds only text on a kind read as an identifier (`facts.ts::isIdentifierPath`, `holdsOnlyText`: an identifier's text is its own value, while a compound identifier's node slots stay members); the kinds a `presence` or `nested` route reaches through are taken out of their slot. A leaf alias envelope (`isLeafAlias`) takes no slot routes. A list's item slot is its container content (`containerOf`), a step a path may take but no member, unless the list is a form of a supertype, whose items route as its sibling forms name them (`listFormItems`).
+A kind's member routes: one `slot` route per slot of the model node, then the member facts the bindings state for it (`kind`, `presence`, `nested`). A slot routes no member when it is a layout slot, when a claim drops it (`SlotNames` gives it `null`), when the read already tells its value (`toldByRead`, over the values the kind's read entries test on it: their pins, and their child tests on a node directly below: a text test's text, or the text of each fixed-text kind a kinds test names), or when it holds only text on a kind read as an identifier (`facts.ts::isIdentifierPath`, `holdsOnlyText`: an identifier's text is its own value, while a compound identifier's node slots stay members); the kinds a `presence` or `nested` route reaches through are taken out of their slot, which the read then tells as optional. A leaf alias envelope (`isLeafAlias`) takes no slot routes. A list's item slot is its container content (`containerOf`), a step a path may take but no member, unless the list is a form of a supertype, whose items route as its sibling forms name them (`listFormItems`).
 
 ### `packages/codegen/src/bindings/routes.ts::holdsOnlyText`
 
@@ -1007,9 +1007,17 @@ One kind's concrete kinds, skipping kinds already in `seen`, so a supertype cycl
 
 A test a read entry runs on a node below the read node, at its `CaptureSite`: the node is one of `kinds`; or it is absent or none of `excludes`; or its text is `text`.
 
-### `packages/codegen/src/bindings/routes.ts::slotsAt`
+### `packages/codegen/src/bindings/routes.ts::reachedAt`
 
-The model slots a `CaptureSite` below a kind reaches, one per possible holder at the last step: each step finds its slot on every kind the previous step can hold: a named step's `matchedKinds`, a wildcard step's slots' concrete kinds. Empty when the site starts above the kind or some holder has no such slot.
+The model slots a `CaptureSite` below a kind reaches, one per possible holder at the last step, and the kinds that can hold the node the site names: each step finds its slot on every kind the previous step can hold: a named step's `matchedKinds`, a wildcard step's slots' concrete kinds. Nothing when the site starts above the kind or some holder has no such slot.
+
+### `packages/codegen/src/bindings/routes.ts::tokenSite`
+
+The site of a token fact's node: the site of the node holding the token, one step further into the slot that holds the token's text on every kind that can be that node (`slotHoldingText`, the resolver `pinsOf` uses for a claim's own tokens). Codegen stops with a diagnostic when no such slot exists or the holders place the token in different slots.
+
+### `packages/codegen/src/bindings/routes.ts::slotHoldingText`
+
+The slot among these that holds a text: by its terminals, or by a fixed-text kind it holds (`textOfKind`).
 
 ### `packages/codegen/src/bindings/routes.ts::guarantees`
 
@@ -1017,7 +1025,7 @@ Whether the model already makes a child condition true on a slot: the slot is re
 
 ### `packages/codegen/src/bindings/routes.ts::childTestOf`
 
-A `ChildFact` narrowed to the `ChildTest` a read entry runs, or none when the model guarantees it on every slot it reaches. A text condition tests the text, and a presence condition tests the slot's concrete kinds. A kinds condition tests the kinds, except on an optional slot whose node the pattern captures as a member: matching that pattern does not need the node, so the test only excludes the slot's kinds the condition's kinds do not match, and is dropped when there are none. A kinds test names the kinds as the pattern does.
+A `ChildFact` narrowed to the `ChildTest` a read entry runs, or none when the model guarantees it on every slot it reaches. A token fact first becomes a text condition at its `tokenSite`. A text condition tests the text, and a presence condition tests the slot's concrete kinds. A kinds condition tests the kinds, except on an optional slot whose node the pattern captures as a member: matching that pattern does not need the node, so the test only excludes the slot's kinds the condition's kinds do not match, and is dropped when there are none. A kinds test names the kinds as the pattern does.
 
 ### `packages/codegen/src/bindings/routes.ts::LayoutSlot`
 
@@ -1057,7 +1065,7 @@ The model types whose single content slot stands for the kind itself when it is 
 
 ### `packages/codegen/src/bindings/routes.ts::pinsOf`
 
-A claim's pins on its kind: each field literal, plus each unfielded token a slot admits, by its terminals or by a fixed-text kind it holds (`textOfKind`), unless that field is already pinned, as the member, slot and text the read tests.
+A claim's pins on its kind: each field literal, plus each unfielded token a slot admits (`slotHoldingText`), unless that field is already pinned, as the member, slot and text the read tests.
 
 ### `packages/codegen/src/bindings/routes.ts::textOfKind`
 
@@ -1085,7 +1093,7 @@ A vocabulary capture on a node: its path, its grammar kind (`_` for a wildcard),
 
 ### `packages/codegen/src/bindings/facts.ts::ChildFact`
 
-One condition a claim's pattern states on a node below the claimed node, at its `CaptureSite`: the node is one of `kinds` (a named child, or an alternation of named children), and `captured` says whether the pattern also captures it as a member; or the node's text is `text` (a token under a field); or the node is present (a wildcard under a field). The routes narrow each against the model into a `ChildTest`.
+One condition a claim's pattern states on a node below the claimed node, at its `CaptureSite`: the node is one of `kinds` (a named child, or an alternation of named children), and `captured` says whether the pattern also captures it as a member; or the node's text is `text` (a token under a field); or the node holding a token with no field is at the site, and the token is its `token` (`routes.ts::tokenSite` finds the token's slot); or the node is present (a wildcard under a field). The routes narrow each against the model into a `ChildTest`.
 
 ### `packages/codegen/src/bindings/facts.ts::WILDCARD`
 

@@ -377,8 +377,7 @@ function childFacts(claim: Visit, origin: PatternOrigin): ChildFact[] {
 			const text = tokenText(child);
 			if (text !== null) {
 				if (holder === claim) continue;
-				if (child.field === null) refuse(origin, 'a token below the claimed node names no field to place it in a slot');
-				out.push({ subject: at(child), text });
+				out.push(child.field === null ? { subject: at(holder), token: text } : { subject: at(child), text });
 				continue;
 			}
 			const kind = kindOf(child);
