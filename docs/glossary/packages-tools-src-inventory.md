@@ -48,11 +48,13 @@ Where the bindings and the authored vocabulary disagree, one line each: a claime
 
 ### `packages/tools/src/inventory/vocabulary.ts::readVocabulary`
 
-Reads the authored vocabulary structurally, with the TypeScript parser, never by matching lines: every interface under its namespaces, keyed by its `$kind` literal, with its own members (each marked optional or required, and a flag when it is declared with the marker type `Flag`) and its parent, the interface its `extends` clause names through `V.`. `members(path)` adds the inherited members, nearest first. `flags` is every name some kind declares as a flag. An interface with no `$kind` literal is not a vocabulary kind (the context's typemap and `Unmapped`).
+Reads the vocabulary through the feature tool's reader (`readVocabularySource`), so the inventory and the tool see the same declarations. That covers the namespace files' kinds and each feature folder's stubs.
 
-### `packages/tools/src/inventory/vocabulary.ts::isFlag`
+- A stub that declares a `$kind` is a kind of its own.
+- A stub that does not declare one adds its members to the kind with the same qualified name.
+- A member declared more than once is optional when any declaration of it is optional, which is how the augmentation gates it.
 
-Whether a member's declared type is the marker `Flag`, the vocabulary's declaration of a flag (`utils.ts::Flag`). A `boolean` member is data.
+Every kind is keyed by its `$kind` literal and carries its own members (each marked optional or required, and a flag when it is declared with the marker type `Flag`, `read.ts::FLAG`) and its parent, the interface its `extends` clause names through `V.`. `members(path)` adds the inherited members, nearest first. `flags` is every name some kind or stub declares as a flag. An interface with no `$kind` literal and no kind of the same name is not a vocabulary kind (the context's typemap and `Unmapped`).
 
 ### `packages/tools/src/inventory/index.ts::BindingsModule`
 

@@ -6,11 +6,6 @@ export interface Modifier<G extends GrammarContext<G>> {
 }
 
 export namespace Modifier {
-	export interface Extern<G extends GrammarContext<G>> extends SubKindOf<V.Modifier<G>> {
-		// claimed by r
-		readonly $kind: 'modifier.extern';
-		readonly abi?: V.Literal.String<G>;
-	}
 	export interface Visibility<G extends GrammarContext<G>> extends SubKindOf<V.Modifier<G>> {
 		// claimed by t
 		readonly $kind: 'modifier.visibility';
@@ -40,25 +35,6 @@ export namespace Modifier {
 				readonly $kind: 'modifier.visibility.public.restricted';
 				readonly scope: G['identifier'];
 			}
-			export type Any<G extends GrammarContext<G>> =
-				| V.Modifier.Visibility.Public<G>
-				| V.Modifier.Visibility.Public.Internal<G>
-				| V.Modifier.Visibility.Public.Restricted<G>;
 		}
-		export type Any<G extends GrammarContext<G>> =
-			| V.Modifier.Visibility<G>
-			| V.Modifier.Visibility.Private<G>
-			| V.Modifier.Visibility.Protected<G>
-			| V.Modifier.Visibility.Public<G>
-			| V.Modifier.Visibility.Public.Internal<G>
-			| V.Modifier.Visibility.Public.Restricted<G>;
 	}
-	export type Any<G extends GrammarContext<G>> =
-		| V.Modifier.Extern<G>
-		| V.Modifier.Visibility<G>
-		| V.Modifier.Visibility.Private<G>
-		| V.Modifier.Visibility.Protected<G>
-		| V.Modifier.Visibility.Public<G>
-		| V.Modifier.Visibility.Public.Internal<G>
-		| V.Modifier.Visibility.Public.Restricted<G>;
 }

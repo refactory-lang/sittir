@@ -1,6 +1,6 @@
 import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { REGENERATE_BINDINGS_COMMAND, StaleBindingsError, assertBindingsFresh, bindingsSourceHash } from '../index.ts';
 
@@ -8,7 +8,10 @@ function sources(scm: string, vocabulary: Readonly<Record<string, string>>): { s
 	const root = mkdtempSync(join(tmpdir(), 'bindings-hash-'));
 	const dir = join(root, 'vocabulary');
 	mkdirSync(dir);
-	for (const [name, text] of Object.entries(vocabulary)) writeFileSync(join(dir, name), text);
+	for (const [name, text] of Object.entries(vocabulary)) {
+		mkdirSync(dirname(join(dir, name)), { recursive: true });
+		writeFileSync(join(dir, name), text);
+	}
 	writeFileSync(join(root, 'bindings.scm'), scm);
 	return { scm: join(root, 'bindings.scm'), vocabulary: dir };
 }
@@ -32,6 +35,12 @@ describe('bindingsSourceHash', () => {
 		expect(hashOf('(identifier) @identifier', { 'a.ts': 'A', 'b.ts': 'B2' })).not.toBe(base);
 		expect(hashOf('(identifier) @identifier', { 'a.ts': 'A', 'b.ts': 'B', 'c.ts': '' })).not.toBe(base);
 		expect(hashOf('(identifier) @identifier', { 'a.ts': 'A', 'c.ts': 'B' })).not.toBe(base);
+	});
+
+	it('changes when a vocabulary source in a sub-folder changes or moves', () => {
+		const nested = hashOf('(identifier) @identifier', { 'a.ts': 'A', 'features/x/b.ts': 'B' });
+		expect(hashOf('(identifier) @identifier', { 'a.ts': 'A', 'features/x/b.ts': 'B2' })).not.toBe(nested);
+		expect(hashOf('(identifier) @identifier', { 'a.ts': 'A', 'features/y/b.ts': 'B' })).not.toBe(nested);
 	});
 });
 

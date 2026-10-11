@@ -832,6 +832,21 @@ Assert the live structural variantChildKinds derivation equals committed node-mo
 pnpm exec tsx packages/cli/src/cli.ts tool variant-derivation-probe [options]
 ```
 
+### `tool vocabulary-features`
+
+Check the vocabulary's feature folders and generate what they imply: the augmentation that adds each feature's kinds and gated members, every level's union, and the registry of markers
+
+**Options**
+
+- `--write` — Write augment.ts and features/index.ts under packages/types/src/vocabulary
+- `--check` — Fail when the planner finds an issue in the feature folders, or the committed augment.ts or features/index.ts differ from what they generate
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool vocabulary-features [options]
+```
+
 ### `tool walk`
 
 Walk a parsed tree and print kind counts

@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join, posix, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { bindingGrammars } from '@sittir/codegen/bindings';
 import { bindingIssues } from '../../src/inventory/bindings.ts';
@@ -13,6 +13,7 @@ import {
 	vocabularyMembers
 } from '../../src/inventory/index.ts';
 import { type Derivation, FLAGS_PATH, bindingPatterns, camel, levelMembers } from '@sittir/codegen/bindings';
+import { GENERATED_FILES } from '../../src/vocabulary/write.ts';
 import { readVocabulary } from '../../src/inventory/vocabulary.ts';
 
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
@@ -208,8 +209,11 @@ describe('the authored vocabulary', () => {
 		expect(vocabularyDisagreements(d, unpinned)).toEqual(vocabularyDisagreements(d, vocabulary));
 	}, 120_000);
 
-	it('is authored: no file but the flags module says it is generated', () => {
-		for (const file of readdirSync(VOCABULARY_DIR).filter((f) => join(VOCABULARY_DIR, f) !== FLAGS_PATH)) {
+	it('is authored: no file but the generated ones says it is generated', () => {
+		const generated = new Set([...GENERATED_FILES, relative(VOCABULARY_DIR, FLAGS_PATH).split(sep).join(posix.sep)]);
+		for (const entry of readdirSync(VOCABULARY_DIR, { recursive: true, encoding: 'utf8' })) {
+			const file = entry.split(sep).join(posix.sep);
+			if (!file.endsWith('.ts') || generated.has(file)) continue;
 			expect(readFileSync(join(VOCABULARY_DIR, file), 'utf8'), file).not.toMatch(/^\/\/ Generated/m);
 		}
 	});
@@ -251,5 +255,53 @@ describe('readVocabulary', () => {
 
 	it('gives the overlay derivation every member a kind declares or inherits', () => {
 		expect(vocabularyMembers(vocabulary).get('declaration.function')).toEqual(new Set(['body', 'name']));
+	});
+});
+
+describe('readVocabulary over feature folders', () => {
+	const dir = mkdtempSync(join(tmpdir(), 'vocabulary-'));
+	const write = (file: string, lines: readonly string[]): void => {
+		mkdirSync(dirname(join(dir, file)), { recursive: true });
+		writeFileSync(join(dir, file), [...lines, ''].join('\n'));
+	};
+	write('decl.ts', [
+		'export interface Declaration<G> {',
+		"\treadonly $kind: 'declaration';",
+		'\treadonly name: string;',
+		'}',
+		'export namespace Declaration {',
+		'\texport interface Function<G> extends SubKindOf<V.Declaration<G>> {',
+		"\t\treadonly $kind: 'declaration.function';",
+		'\t\treadonly body?: string;',
+		'\t}',
+		'}'
+	]);
+	write('features/lambdas/index.ts', ["export type * from './decl.ts';", 'export interface Lambdas {', '\treadonly lambdas: true;', '}']);
+	write('features/lambdas/decl.ts', [
+		'export namespace Declaration {',
+		'\texport interface Function<G> {',
+		'\t\treadonly body: string;',
+		'\t\treadonly arrow?: Flag;',
+		'\t}',
+		'\texport namespace Function {',
+		'\t\texport interface Lambda<G> extends SubKindOf<V.Declaration.Function<G>> {',
+		"\t\t\treadonly $kind: 'declaration.function.lambda';",
+		'\t\t}',
+		'\t}',
+		'}'
+	]);
+	const vocabulary = readVocabulary(dir);
+	rmSync(dir, { recursive: true, force: true });
+
+	it('holds the kinds a feature adds, under their parents', () => {
+		expect(vocabulary.kinds.get('declaration.function.lambda')).toMatchObject({ name: 'Declaration.Function.Lambda', parent: 'declaration.function' });
+	});
+
+	it('gives a kind the members a feature adds to it, optional when any declaration of one is', () => {
+		expect(Object.fromEntries(vocabulary.members('declaration.function.lambda'))).toEqual({
+			arrow: { optional: true, flag: true },
+			body: { optional: true, flag: false },
+			name: { optional: false, flag: false }
+		});
 	});
 });
