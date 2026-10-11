@@ -298,6 +298,20 @@ describe('gateOptionalSlotSeams', () => {
 		);
 	});
 
+	it('folds a padding seam beside the gate, so an absent slot leaves no pad between its brackets', () => {
+		const padding = (field: string): boolean => field === 'lbrace_after' || field === 'rbrace_before';
+		const body = concat(text('{'), seam('lbrace_after'), gate('x', slot('x')), seam('rbrace_before'), text('}'));
+		expect(gateOptionalSlotSeams(body, own, padding)).toEqual(
+			concat(text('{'), gate('x', concat(seam('lbrace_after'), slot('x'), seam('rbrace_before'))), text('}'))
+		);
+	});
+
+	it('leaves a seam beside the gate that is not padding where it is', () => {
+		const body = concat(text('&'), seam('amp_after'), gate('x', slot('x')), seam('mut_before'), text('mut'));
+		expect(gateOptionalSlotSeams(body, own, () => false)).toEqual(body);
+		expect(gateOptionalSlotSeams(body, own)).toEqual(body);
+	});
+
 	it('folds only the seam that is beside the gate and belongs to its slot', () => {
 		expect(gateOptionalSlotSeams(concat(seam('other_before'), gate('x', slot('x')), seam('x_after')), own)).toEqual(
 			concat(seam('other_before'), gate('x', concat(slot('x'), seam('x_after'))))
