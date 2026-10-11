@@ -826,6 +826,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 405, 409, 410, 411, 412, 413, 414, 415, 416,
 		417, 430, 431
 	]),
+	literal_type_negative_number: new Set([154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164]),
 	class_body_member_declaration: new Set([290, 293, 294, 402, 403]),
 	yield_expression_delegate: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
@@ -1105,6 +1106,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	object_type_content: TSKindId.ObjectTypeContent,
 	export_statement_namespace_export: TSKindId.ExportStatementNamespaceExport,
 	export_statement_equals_export: TSKindId.ExportStatementEqualsExport,
+	literal_type_negative_number: TSKindId.LiteralTypeNegativeNumber,
 	class_body_member_declaration: TSKindId.ClassBodyMemberDeclaration,
 	yield_expression_delegate: TSKindId.YieldExpressionDelegate,
 	parenthesized_expression_sequence: TSKindId.ParenthesizedExpressionSequence,
@@ -1170,6 +1172,7 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	ambient_declaration_global: 'statement_block',
 	export_statement_namespace_export: 'identifier',
 	export_statement_equals_export: 'expression',
+	literal_type_negative_number: 'number',
 	yield_expression_delegate: 'expression',
 	parenthesized_expression_sequence: 'sequence_expression',
 	arrow_function_parameter: 'identifier',
@@ -1238,6 +1241,7 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'ambient_declaration_global',
 	'export_statement_namespace_export',
 	'export_statement_equals_export',
+	'literal_type_negative_number',
 	'class_body_member_declaration',
 	'yield_expression_delegate',
 	'parenthesized_expression_sequence',
@@ -1430,6 +1434,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildExportStatementEqualsExport(
 				children[0] as Parameters<typeof F.buildExportStatementEqualsExport>[0]
 			);
+		case 'literal_type_negative_number':
+			return F.buildLiteralTypeNegativeNumber(children[0] as Parameters<typeof F.buildLiteralTypeNegativeNumber>[0]);
 		case 'class_body_member_declaration':
 			return F.buildClassBodyMemberDeclaration(children[0] as Parameters<typeof F.buildClassBodyMemberDeclaration>[0]);
 		case 'yield_expression_delegate':
@@ -10325,15 +10331,6 @@ export function coerceToCommentBlock(input: T.CommentBlock.Loose): ReturnType<ty
 	);
 }
 
-export function resolveLiteralTypeNegativeNumber_operator(
-	value: T.LiteralTypeNegativeNumber.LooseConfig['operator']
-): Admit<T.LiteralTypeNegativeNumber['_operator']> {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'-' | '+'>(value, _K2, _K2)),
-		[['-', TSKindId.Dash] as const, ['+', TSKindId.Plus] as const]
-	);
-}
-
 export function resolveLiteralTypeNegativeNumber_argument(
 	value: T.LiteralTypeNegativeNumber.LooseConfig['argument']
 ): Admit<T.LiteralTypeNegativeNumber['_argument']> {
@@ -10343,20 +10340,19 @@ export function resolveLiteralTypeNegativeNumber_argument(
 export function coerceToLiteralTypeNegativeNumber(
 	input: T.LiteralTypeNegativeNumber.Loose
 ): ReturnType<typeof F.buildLiteralTypeNegativeNumber> {
-	if (!_isLooseConfig<T.LiteralTypeNegativeNumber.LooseConfig>(input))
+	if (isNodeOfKind(input, TSKindId.LiteralTypeNegativeNumber))
 		return input as unknown as ReturnType<typeof F.buildLiteralTypeNegativeNumber>;
-	return F.buildLiteralTypeNegativeNumber({
-		operator: _requireField(
-			'literal_type_negative_number',
-			'operator',
-			resolveLiteralTypeNegativeNumber_operator(input.operator)
-		),
-		argument: _requireField(
+	return F.buildLiteralTypeNegativeNumber(
+		_requireField(
 			'literal_type_negative_number',
 			'argument',
-			resolveLiteralTypeNegativeNumber_argument(input.argument)
+			_resolveOne<T.Number>(
+				configFieldOr(input, 'argument', () => input),
+				_K35,
+				_K67
+			)
 		)
-	});
+	);
 }
 
 export function resolveNumberHex_content(value: T.NumberHex.LooseConfig['content']): Admit<T.NumberHex['_content']> {

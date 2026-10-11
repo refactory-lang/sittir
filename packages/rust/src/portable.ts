@@ -499,6 +499,12 @@ export interface PortableIds {
 		| TSKindId.RangeExpressionBinary
 		| TSKindId.RangeExpressionPostfix
 		| TSKindId.RangeExpressionPrefix;
+	'expression.range.exclusive':
+		| TSKindId.RangeExpressionBare
+		| TSKindId.RangeExpressionBinary
+		| TSKindId.RangeExpressionPostfix
+		| TSKindId.RangeExpressionPrefix;
+	'expression.range.inclusive': TSKindId.RangeExpressionBinary;
 	'expression.reference':
 		| TSKindId.ReferenceExpression
 		| TSKindId.ReferenceExpressionBare
@@ -1051,9 +1057,11 @@ export interface PortableKindsAt {
 		readonly const: PortableKindsAt['expression.block.const'];
 		readonly deref: PortableKindsAt['expression.unary.deref'];
 		readonly equal: PortableKindsAt['expression.binary.comparison.equal'];
+		readonly exclusive: PortableKindsAt['expression.range.exclusive'];
 		readonly gen: PortableKindsAt['expression.block.gen'];
 		readonly greater: PortableKindsAt['expression.binary.comparison.greater'];
 		readonly greater_equal: PortableKindsAt['expression.binary.comparison.greater_equal'];
+		readonly inclusive: PortableKindsAt['expression.range.inclusive'];
 		readonly left: PortableKindsAt['expression.binary.shift.left'];
 		readonly less: PortableKindsAt['expression.binary.comparison.less'];
 		readonly less_equal: PortableKindsAt['expression.binary.comparison.less_equal'];
@@ -1264,7 +1272,13 @@ export interface PortableKindsAt {
 	'expression.lambda': { readonly $ids: readonly PortableIds['expression.lambda'][] };
 	'expression.member': { readonly $ids: readonly PortableIds['expression.member'][] };
 	'expression.parenthesized': { readonly $ids: readonly PortableIds['expression.parenthesized'][] };
-	'expression.range': { readonly $ids: readonly PortableIds['expression.range'][] };
+	'expression.range': {
+		readonly $ids: readonly PortableIds['expression.range'][];
+		readonly exclusive: PortableKindsAt['expression.range.exclusive'];
+		readonly inclusive: PortableKindsAt['expression.range.inclusive'];
+	};
+	'expression.range.exclusive': { readonly $ids: readonly PortableIds['expression.range.exclusive'][] };
+	'expression.range.inclusive': { readonly $ids: readonly PortableIds['expression.range.inclusive'][] };
 	'expression.reference': { readonly $ids: readonly PortableIds['expression.reference'][] };
 	'expression.subscript': { readonly $ids: readonly PortableIds['expression.subscript'][] };
 	'expression.try': { readonly $ids: readonly PortableIds['expression.try'][] };
@@ -1779,9 +1793,11 @@ export interface PortableIsAt {
 		readonly const: PortableIsAt['expression.block.const'];
 		readonly deref: PortableIsAt['expression.unary.deref'];
 		readonly equal: PortableIsAt['expression.binary.comparison.equal'];
+		readonly exclusive: PortableIsAt['expression.range.exclusive'];
 		readonly gen: PortableIsAt['expression.block.gen'];
 		readonly greater: PortableIsAt['expression.binary.comparison.greater'];
 		readonly greater_equal: PortableIsAt['expression.binary.comparison.greater_equal'];
+		readonly inclusive: PortableIsAt['expression.range.inclusive'];
 		readonly left: PortableIsAt['expression.binary.shift.left'];
 		readonly less: PortableIsAt['expression.binary.comparison.less'];
 		readonly less_equal: PortableIsAt['expression.binary.comparison.less_equal'];
@@ -1957,7 +1973,12 @@ export interface PortableIsAt {
 	'expression.lambda': PortableGuard<PortableIds['expression.lambda']> & {};
 	'expression.member': PortableGuard<PortableIds['expression.member']> & {};
 	'expression.parenthesized': PortableGuard<PortableIds['expression.parenthesized']> & {};
-	'expression.range': PortableGuard<PortableIds['expression.range']> & {};
+	'expression.range': PortableGuard<PortableIds['expression.range']> & {
+		readonly exclusive: PortableIsAt['expression.range.exclusive'];
+		readonly inclusive: PortableIsAt['expression.range.inclusive'];
+	};
+	'expression.range.exclusive': PortableGuard<PortableIds['expression.range.exclusive']> & {};
+	'expression.range.inclusive': PortableGuard<PortableIds['expression.range.inclusive']> & {};
 	'expression.reference': PortableGuard<PortableIds['expression.reference']> & {};
 	'expression.subscript': PortableGuard<PortableIds['expression.subscript']> & {};
 	'expression.try': PortableGuard<PortableIds['expression.try']> & {};
@@ -2247,7 +2268,6 @@ export interface PortableKinds {
 	readonly enum_member: PortableKindsAt['declaration.enum_member'];
 	readonly equal: PortableKindsAt['expression.binary.comparison.equal'];
 	readonly escape: PortableKindsAt['literal.string.escape'];
-	readonly exclusive: PortableKindsAt['pattern.range.exclusive'];
 	readonly extension: PortableKindsAt['declaration.extension'];
 	readonly extern: PortableKindsAt['modifier.extern'];
 	readonly false: PortableKindsAt['literal.boolean.false'];
@@ -2261,7 +2281,6 @@ export interface PortableKinds {
 	readonly hex: PortableKindsAt['literal.number.integer.hex'];
 	readonly higher_ranked: PortableKindsAt['clause.bounds.higher_ranked'];
 	readonly if: PortableKindsAt['statement.if'];
-	readonly inclusive: PortableKindsAt['pattern.range.inclusive'];
 	readonly instantiation: PortableKindsAt['expression.instantiation'];
 	readonly integer: PortableKindsAt['literal.number.integer'];
 	readonly interface: PortableKindsAt['declaration.interface'];
@@ -2391,7 +2410,6 @@ export interface PortableIs {
 	readonly enum_member: PortableIsAt['declaration.enum_member'];
 	readonly equal: PortableIsAt['expression.binary.comparison.equal'];
 	readonly escape: PortableIsAt['literal.string.escape'];
-	readonly exclusive: PortableIsAt['pattern.range.exclusive'];
 	readonly extension: PortableIsAt['declaration.extension'];
 	readonly extern: PortableIsAt['modifier.extern'];
 	readonly false: PortableIsAt['literal.boolean.false'];
@@ -2405,7 +2423,6 @@ export interface PortableIs {
 	readonly hex: PortableIsAt['literal.number.integer.hex'];
 	readonly higher_ranked: PortableIsAt['clause.bounds.higher_ranked'];
 	readonly if: PortableIsAt['statement.if'];
-	readonly inclusive: PortableIsAt['pattern.range.inclusive'];
 	readonly instantiation: PortableIsAt['expression.instantiation'];
 	readonly integer: PortableIsAt['literal.number.integer'];
 	readonly interface: PortableIsAt['declaration.interface'];
@@ -3057,6 +3074,16 @@ const table: PortableTable = {
 			],
 			exact: true
 		},
+		'expression.range.exclusive': {
+			ids: [
+				TSKindId.RangeExpressionBare,
+				TSKindId.RangeExpressionBinary,
+				TSKindId.RangeExpressionPostfix,
+				TSKindId.RangeExpressionPrefix
+			],
+			exact: false
+		},
+		'expression.range.inclusive': { ids: [TSKindId.RangeExpressionBinary], exact: false },
 		'expression.reference': {
 			ids: [
 				TSKindId.ReferenceExpression,
@@ -3422,7 +3449,6 @@ const table: PortableTable = {
 		['', 'enum_member', 'declaration.enum_member'],
 		['', 'equal', 'expression.binary.comparison.equal'],
 		['', 'escape', 'literal.string.escape'],
-		['', 'exclusive', 'pattern.range.exclusive'],
 		['', 'extension', 'declaration.extension'],
 		['', 'extern', 'modifier.extern'],
 		['', 'false', 'literal.boolean.false'],
@@ -3436,7 +3462,6 @@ const table: PortableTable = {
 		['', 'hex', 'literal.number.integer.hex'],
 		['', 'higher_ranked', 'clause.bounds.higher_ranked'],
 		['', 'if', 'statement.if'],
-		['', 'inclusive', 'pattern.range.inclusive'],
 		['', 'instantiation', 'expression.instantiation'],
 		['', 'integer', 'literal.number.integer'],
 		['', 'interface', 'declaration.interface'],
@@ -3556,9 +3581,11 @@ const table: PortableTable = {
 		['expression', 'const', 'expression.block.const'],
 		['expression', 'deref', 'expression.unary.deref'],
 		['expression', 'equal', 'expression.binary.comparison.equal'],
+		['expression', 'exclusive', 'expression.range.exclusive'],
 		['expression', 'gen', 'expression.block.gen'],
 		['expression', 'greater', 'expression.binary.comparison.greater'],
 		['expression', 'greater_equal', 'expression.binary.comparison.greater_equal'],
+		['expression', 'inclusive', 'expression.range.inclusive'],
 		['expression', 'left', 'expression.binary.shift.left'],
 		['expression', 'less', 'expression.binary.comparison.less'],
 		['expression', 'less_equal', 'expression.binary.comparison.less_equal'],
@@ -4245,10 +4272,27 @@ const table: PortableTable = {
 		[TSKindId.PointerTypeMut]: [{ path: 'type.pointer', within: [], test: [] }],
 		[TSKindId.QualifiedType]: [{ path: 'type.qualified', within: [], test: [] }],
 		[TSKindId.RangeExpression]: [{ path: 'expression.range', within: [], test: [] }],
-		[TSKindId.RangeExpressionBare]: [{ path: 'expression.range', within: [], test: [] }],
-		[TSKindId.RangeExpressionBinary]: [{ path: 'expression.range', within: [], test: [] }],
-		[TSKindId.RangeExpressionPostfix]: [{ path: 'expression.range', within: [], test: [] }],
-		[TSKindId.RangeExpressionPrefix]: [{ path: 'expression.range', within: [], test: [] }],
+		[TSKindId.RangeExpressionBare]: [{ path: 'expression.range.exclusive', within: [], test: [] }],
+		[TSKindId.RangeExpressionBinary]: [
+			{
+				path: 'expression.range.inclusive',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '..=', fields: ['operator'], kinds: [] } }]
+			},
+			{
+				path: 'expression.range.inclusive',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '...', fields: ['operator'], kinds: [] } }]
+			},
+			{
+				path: 'expression.range.exclusive',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '..', fields: ['operator'], kinds: [] } }]
+			},
+			{ path: 'expression.range', within: [], test: [] }
+		],
+		[TSKindId.RangeExpressionPostfix]: [{ path: 'expression.range.exclusive', within: [], test: [] }],
+		[TSKindId.RangeExpressionPrefix]: [{ path: 'expression.range.exclusive', within: [], test: [] }],
 		[TSKindId.RangePattern]: [{ path: 'pattern.range', within: [], test: [] }],
 		[TSKindId.RangePatternPrefix]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },

@@ -95,6 +95,7 @@
 (import_statement import_clause: "type") @statement.import.type
 (import_statement import_clause: "typeof") @statement.import.typeof
 (import_statement from_clause: (import_statement_clause_from source: (_) @source))
+(import_statement from_clause: (import_statement_clause_from (import_clause) @importClause))
 (export_statement) @statement.export
 (export_statement_default_declaration) @statement.export
 (export_statement_default_declaration (export_statement_default_declaration_default_kw)) @statement.export.default
@@ -294,6 +295,7 @@
 (template_string) @literal.template
 (regex) @literal.regex
 (number) @literal.number
+(literal_type_negative_number argument: (_) @value) @literal.number.negative
 (number_decimal) @literal.number.integer
 (number_hex) @literal.number.integer.hex
 (number_binary) @literal.number.integer.binary
@@ -316,6 +318,7 @@
 (identifier) @identifier
 (type_identifier) @identifier.type
 (property_identifier) @identifier.property
+(private_property_identifier) @identifier.property
 (shorthand_property_identifier) @identifier.property.shorthand
 (shorthand_property_identifier_pattern) @identifier.property.shorthand
 (nested_identifier) @identifier.nested

@@ -4660,8 +4660,8 @@
 			"field": "literal_type_negative_number_before"
 		},
 		{
-			"kind": "slot",
-			"name": "operator"
+			"kind": "text",
+			"text": "-"
 		},
 		{
 			"kind": "seam",

@@ -3422,13 +3422,6 @@
       }
     },
     "literal_type_negative_number": {
-      "operator": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
       "argument": {
         "unnamed": false,
         "slotCount": 1,
@@ -18216,7 +18209,8 @@
               "seat": {
                 "kind": "literal_type_negative_number",
                 "shape": "arm",
-                "mount": "negativeNumber"
+                "mount": "negativeNumber",
+                "seated": true
               }
             },
             {
@@ -18285,7 +18279,7 @@
     },
     {
       "kind": "literal_type_negative_number",
-      "modelType": "branch",
+      "modelType": "envelope",
       "typeName": "LiteralTypeNegativeNumber",
       "factoryName": "literalTypeNegativeNumber",
       "builderPath": [
@@ -18306,30 +18300,6 @@
       "seated": true,
       "variantOf": "literal_type",
       "slots": [
-        {
-          "name": "operator",
-          "propertyName": "operator",
-          "paramName": "operator",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "kindEnum",
-          "kinds": [],
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "-",
-              "parseKind": "dash"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "+",
-              "parseKind": "plus"
-            }
-          ]
-        },
         {
           "name": "argument",
           "propertyName": "argument",
@@ -18352,10 +18322,22 @@
         }
       ],
       "name": "literal_type_negative_number",
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
-        "operator",
         "argument"
+      ],
+      "bareAccepts": [
+        "number_bigint_binary",
+        "number_bigint_decimal",
+        "number_bigint_hex",
+        "number_bigint_octal",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
+        "number_octal"
       ]
     },
     {

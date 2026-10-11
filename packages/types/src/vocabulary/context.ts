@@ -579,7 +579,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly value: G['identifier'] | G['literal'] | V.Statement.Block<G>;
 		};
 		readonly 'declaration.variable': {
-			readonly binding: string;
 			readonly name: unknown | G['expression'] | G['identifier'] | G['pattern'];
 			readonly type:
 				| V.Clause.Bounds.Removed<G>
@@ -748,7 +747,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['pattern']
 				| G['statement']
 				| string;
-			readonly operator: string;
 			readonly right:
 				| G['declaration']
 				| G['expression']
@@ -1128,7 +1126,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['literal']
 				| G['statement']
 				| V.Type.Primitive<G>;
-			readonly operator: string;
 			readonly start:
 				| G['expression']
 				| G['identifier']
@@ -1198,7 +1195,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['literal']
 				| V.Pattern.Splat<G>
 				| G['statement'];
-			readonly operator: string;
 		};
 		readonly 'expression.update': {
 			readonly argument:
@@ -1206,7 +1202,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['expression']
 				| G['identifier']
 				| G['literal'];
-			readonly operator: string;
 		};
 		readonly 'expression.yield': {
 			readonly content:
@@ -1227,9 +1222,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['expression']
 				| G['identifier']
 				| G['literal'];
-		};
-		readonly 'identifier.metavariable': {
-			readonly name: unknown;
 		};
 		readonly 'identifier.scoped': {
 			readonly path: G['identifier'] | string | G['type'];
@@ -1561,7 +1553,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		readonly 'statement.import': {
 			readonly argument: G['identifier'] | V.Clause.Import.Any<G> | string;
 			readonly fromClause: V.Clause.Import.Require<G> | V.Literal.String<G>;
-			readonly importClause: string;
 		};
 		readonly 'statement.labeled': {
 			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];

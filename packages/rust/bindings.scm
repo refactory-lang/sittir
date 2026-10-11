@@ -158,6 +158,13 @@
 (await_expression (_)? @expression) @expression.await
 (yield_expression) @expression.yield
 (range_expression) @expression.range
+(range_expression_binary) @expression.range
+(range_expression_binary operator: "..=") @expression.range.inclusive
+(range_expression_binary operator: "...") @expression.range.inclusive
+(range_expression_binary operator: "..") @expression.range.exclusive
+(range_expression_postfix) @expression.range.exclusive
+(range_expression_prefix) @expression.range.exclusive
+(range_expression_bare) @expression.range.exclusive
 (type_cast_expression) @expression.cast.as
 (parenthesized_expression) @expression.parenthesized
 (tuple_expression (expressions) @elements) @expression.collection.tuple

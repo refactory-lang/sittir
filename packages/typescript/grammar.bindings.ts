@@ -3,8 +3,9 @@
 import { bindings, field, rename } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "ff35669d2a4150ba4f82238c50028be6144f7aedab20635f24d040da8ef50239",
+	hash: "914256c97276bc2d4a2dfba3f0630f8784a5534520d87247f7e45b5e046d0a15",
 	patches: {
+		_number: { "1": field("value") },
 		_parameter_name: { "1/0": field("visibility"), "4": field("name") },
 		abstract_class_declaration: { "1": field("abstract") },
 		abstract_method_signature: { "0/0": field("visibility") },
@@ -20,7 +21,6 @@ export default bindings({
 		generator_function_declaration: { "2": field("generator") },
 		index_signature_mapped_type_clause: { "2": field("mapped_type_clause") },
 		interface_declaration: { "3/0": field("extends") },
-		lexical_declaration: { "0": field("binding") },
 		method_definition: { "0/0": field("visibility") },
 		method_signature: { "0/0": field("visibility"), "5/0": field("accessor") },
 		new_expression: { "1": field("function") },
@@ -112,6 +112,7 @@ export default bindings({
 		rename("template_string", "template_literal"),
 		rename("regex", "regex_literal"),
 		rename("number", "number_literal"),
+		rename("literal_type_negative_number", "negative_number_literal"),
 		rename("number_decimal", "integer_number_literal"),
 		rename("number_hex", "hex_integer_number_literal"),
 		rename("number_binary", "binary_integer_number_literal"),

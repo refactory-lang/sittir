@@ -784,10 +784,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['expression', { fields: ['expression'], kinds: [] }],
 		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
-	395: [
-		['operator', { fields: ['operator'], kinds: [] }],
-		['argument', { fields: ['argument'], kinds: [] }]
-	],
+	395: [['argument', { fields: ['argument'], kinds: [] }]],
 	397: [
 		['left', { fields: ['left'], kinds: [] }],
 		['right', { fields: ['right'], kinds: [] }]

@@ -199,6 +199,25 @@ describe('portable is: rust', async () => {
 		expect(at('pattern.range')(left, lc)).toBe(true);
 		expect(at('pattern.range.exclusive')(left, lc)).toBe(false);
 	});
+
+	it('pins a range expression by its operator, and reads a range open at either end as exclusive', () => {
+		const SOURCE = 'fn f() { let a = 1..=2; let b = 1...2; let c = 1..2; let d = 1..; let e = ..2; let g = ..; }\n';
+		for (const text of ['1..=2', '1...2']) {
+			const [range, context] = find(SOURCE, 'range_expression_binary', text);
+			expect(at('expression.range.inclusive')(range, context), text).toBe(true);
+			expect(at('expression.range.exclusive')(range, context), text).toBe(false);
+		}
+		for (const [kind, text] of [
+			['range_expression_binary', '1..2'],
+			['range_expression_postfix', '1..'],
+			['range_expression_prefix', '..2'],
+			['range_expression_bare', undefined]
+		] as const) {
+			const [range, context] = find(SOURCE, kind, text);
+			expect(at('expression.range.exclusive')(range, context), kind).toBe(true);
+			expect(at('expression.range.inclusive')(range, context), kind).toBe(false);
+		}
+	});
 });
 
 describe('portable is: typescript', async () => {
@@ -260,6 +279,19 @@ describe('portable is: typescript', async () => {
 		expect(at('statement.import.typeof')(typeOf, oc)).toBe(true);
 		expect(at('statement.import.type')(plain, pc)).toBe(false);
 		expect(at('statement.import')(plain, pc)).toBe(true);
+	});
+
+	it('reads a negative literal type as a negative number', () => {
+		const [negative, context] = find('let x: -1;\n', 'literal_type_negative_number');
+		expect(at('literal.number.negative')(negative, context)).toBe(true);
+	});
+
+	it('reads a private name as a property identifier, where it is declared and where it is read', () => {
+		const SOURCE = 'class C { #x = 1; m() { return this.#x; } }\n';
+		const [declared, dc] = find(SOURCE, 'private_property_identifier');
+		const [read, rc] = find(SOURCE, 'private_property_identifier', undefined, 1);
+		expect(at('identifier.property')(declared, dc)).toBe(true);
+		expect(at('identifier.property')(read, rc)).toBe(true);
 	});
 });
 

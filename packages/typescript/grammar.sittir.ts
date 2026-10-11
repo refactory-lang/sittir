@@ -187,6 +187,7 @@ export default sittirGrammar(base, {
 			1: variant('block')
 		},
 		literal_type: { 0: variant('negative_number') },
+		_number: { '0/0': { type: 'STRING', value: '-' } },
 		number: {
 			'1/0/0': field('integer'),
 			'1/0/2': field('fraction'),

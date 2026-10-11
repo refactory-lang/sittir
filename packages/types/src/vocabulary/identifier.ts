@@ -35,7 +35,6 @@ export namespace Identifier {
 		// claimed by r
 		readonly $kind: 'identifier.metavariable';
 		readonly attributes?: G['attribute'][];
-		readonly name: G['slots']['identifier.metavariable']['name'];
 	}
 	export interface Nested<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
 		// claimed by t
