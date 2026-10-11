@@ -37687,10 +37687,12 @@ fn render_field_initializer_list(node: &FieldInitializerListTransport, w: &mut d
     let initializers = View::new(&node.initializers, "{}");
     w.edge(::sittir_core::types::KindId(283), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("{")?;
-    w.site_at(options::SITE_FIELD_INITIALIZER_LIST_LBRACE_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "initializers", w)?;
-    initializers.render(w)?;
-    w.site_at(options::SITE_FIELD_INITIALIZER_LIST_RBRACE_BEFORE);
+    if initializers.is_present() || ::sittir_core::trivia::has_inner(node.layout.trivia(), "initializers") {
+        w.site_at(options::SITE_FIELD_INITIALIZER_LIST_LBRACE_AFTER);
+        ::sittir_core::trivia::render_inner(node.layout.trivia(), "initializers", w)?;
+        initializers.render(w)?;
+        w.site_at(options::SITE_FIELD_INITIALIZER_LIST_RBRACE_BEFORE);
+    }
     w.text("}")?;
     w.edge(::sittir_core::types::KindId(283), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())

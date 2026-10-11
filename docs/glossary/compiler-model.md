@@ -4205,6 +4205,10 @@ which `indent()` and `dedent()` stand for). Every whitespace kind is a
 literal. A visible external outside the supertype is not whitespace and is
 skipped. Flanks are injected only when both indentation kinds are declared.
 
+### `packages/codegen/src/compiler/model/render-rules.ts::RuleSpacingSite.padding`
+
+Set on a token seam (never a kind's own edge) whose default is `space` and whose origin is a kind row's `preference`: the face pads the content between two tokens, as rust's `{` after and `}` before around an initializer list. The template emitter reads it to fold such a seam into the presence gate of the optional slot beside it.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::RuleSpacingSite.address`
 
 ```text
