@@ -24,7 +24,9 @@
  * Run (from the root of a checkout with its natives built):
  *   SITTIR_BACKEND=native ./node_modules/.bin/tsx docs/superpowers/probes/2026-10-09-trivia-table/whitespace.mts [out.json]
  * Prints: per source set, the gaps of each class, entries and entry bytes stored under the rule and
- *   with every whitespace run stored, and the empty gaps under each. Writes examples to out.json.
+ *   with every whitespace run stored, and the empty gaps under each; and the same with the source's
+ *   line layout stored (every run that holds a break, whatever its default), as a parsed tree's
+ *   table stores it. Writes examples to out.json.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { walk, type Walk } from './walk.mts';
@@ -102,6 +104,9 @@ interface Tally {
 	allBytes: number;
 	ruleEmpty: number;
 	allEmpty: number;
+	lineEntries: number;
+	lineBytes: number;
+	lineEmpty: number;
 }
 const tally = (): Tally => ({
 	sources: 0,
@@ -115,7 +120,10 @@ const tally = (): Tally => ({
 	allEntries: 0,
 	allBytes: 0,
 	ruleEmpty: 0,
-	allEmpty: 0
+	allEmpty: 0,
+	lineEntries: 0,
+	lineBytes: 0,
+	lineEmpty: 0
 });
 const unaligned: { set: string; entry: string; at: number }[] = [];
 const moved: { set: string; entry: string; source: Gap; fallback: Gap; around: string }[] = [];
@@ -160,6 +168,10 @@ async function measure(set: string, grammar: string, name: string, source: strin
 		into.allEntries += stored.length;
 		into.allBytes += stored.reduce((n, run) => n + run.length, 0);
 		if (stored.length === 0) into.allEmpty++;
+		const lines = s.runs.filter((run) => run.includes('\n'));
+		into.lineEntries += lines.length;
+		into.lineBytes += lines.reduce((n, run) => n + run.length, 0);
+		if (lines.length === 0) into.lineEmpty++;
 		if (s.comments.join('\u0000') !== d.comments.join('\u0000')) {
 			into.commentMoved++;
 			moved.push({ set, entry: name, source: s, fallback: d, around: `${src[i - 1]?.text ?? '<start>'} | ${src[i]?.text ?? '<end>'}` });
@@ -199,10 +211,10 @@ for (const [grammar, path] of ARENA) {
 }
 
 const pad = (value: unknown, n: number): string => String(value).padStart(n);
-console.log(`${'set'.padEnd(22)} ${pad('srcs', 5)} ${pad('unal', 5)} ${pad('fail', 5)} ${pad('gaps', 7)} ${CLASSES.map((c) => pad(`(${c})`, 6)).join(' ')} ${pad('moved', 6)} | ${pad('rule ent', 9)} ${pad('bytes', 7)} ${pad('empty', 7)} | ${pad('all ent', 8)} ${pad('bytes', 7)} ${pad('empty', 7)}`);
+console.log(`${'set'.padEnd(22)} ${pad('srcs', 5)} ${pad('unal', 5)} ${pad('fail', 5)} ${pad('gaps', 7)} ${CLASSES.map((c) => pad(`(${c})`, 6)).join(' ')} ${pad('moved', 6)} | ${pad('rule ent', 9)} ${pad('bytes', 7)} ${pad('empty', 7)} | ${pad('all ent', 8)} ${pad('bytes', 7)} ${pad('empty', 7)} | ${pad('line ent', 8)} ${pad('bytes', 7)} ${pad('empty', 7)}`);
 for (const [set, t] of Object.entries(results)) {
 	console.log(
-		`${set.padEnd(22)} ${pad(t.sources, 5)} ${pad(t.unaligned, 5)} ${pad(t.failed, 5)} ${pad(t.gaps, 7)} ${CLASSES.map((c) => pad(t.classes[c], 6)).join(' ')} ${pad(t.commentMoved, 6)} | ${pad(t.ruleEntries, 9)} ${pad(t.ruleBytes, 7)} ${pad(t.ruleEmpty, 7)} | ${pad(t.allEntries, 8)} ${pad(t.allBytes, 7)} ${pad(t.allEmpty, 7)}`
+		`${set.padEnd(22)} ${pad(t.sources, 5)} ${pad(t.unaligned, 5)} ${pad(t.failed, 5)} ${pad(t.gaps, 7)} ${CLASSES.map((c) => pad(t.classes[c], 6)).join(' ')} ${pad(t.commentMoved, 6)} | ${pad(t.ruleEntries, 9)} ${pad(t.ruleBytes, 7)} ${pad(t.ruleEmpty, 7)} | ${pad(t.allEntries, 8)} ${pad(t.allBytes, 7)} ${pad(t.allEmpty, 7)} | ${pad(t.lineEntries, 8)} ${pad(t.lineBytes, 7)} ${pad(t.lineEmpty, 7)}`
 	);
 }
 if (process.argv[2]) writeFileSync(process.argv[2], JSON.stringify({ results, unaligned, moved, examples }, null, '\t'));

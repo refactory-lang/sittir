@@ -12,7 +12,7 @@ What a parsed tree's trivia table stores when a seam's source layout is stored o
 - **(d)** both break alike, with a different indentation;
 - **(e)** neither breaks, and the in-line run differs.
 
-(a)–(d) are stored, one layout entry each. (e) is derived. A "moved" gap holds comments the default render does not hold in the same order.
+(a)–(d) are what differs from the defaults; a parsed tree's table stores the source's line layout (below), and (e) is derived. A "moved" gap holds comments the default render does not hold in the same order.
 
 ```sh
 SITTIR_BACKEND=native ./node_modules/.bin/tsx docs/superpowers/probes/2026-10-09-trivia-table/whitespace.mts /tmp/whitespace.json
@@ -45,6 +45,21 @@ Examples of each class:
 **Moved gaps.** There are two, and neither is a layout entry:
 - **Rust "Line doc comment with no EOL"** (`\n//! Doc comment`, no final line break). The default render ends the comment with a line break, because a line comment holds a terminated break that the render writes even at its end (`LineHold::Terminated`). The source's layout has no break there, so the render reproduces it only if a stored layout of fewer breaks beats the held break at the end of a document.
 - **Typescript "Object types with automatic semicolon insertion".** The source's `ERROR` text is missing from the default render: the read drops an `ERROR` placed on a `predefined_type` enum leaf. The assignment walk gives it a side (`ERROR` is an entry).
+
+**What a parsed tree's table stores** (ruling 11): the source's line layout. Every run that holds a break is an entry, whatever its default, and an in-line run never is:
+
+| set | entries | bytes | empty gaps |
+|---|---|---|---|
+| rust corpus | 873 | 1724 | 4024 |
+| typescript corpus | 679 | 1373 | 3310 |
+| python corpus | 763 | 1962 | 2957 |
+| scm corpus | 130 | 252 | 653 |
+| regex corpus | 21 | 21 | 452 |
+| `engine.rs` | 436 | 3633 | 2522 |
+| `spacing.rs` | 1177 | 11536 | 7698 |
+| `create-engine.ts` | 227 | 628 | 1933 |
+
+This is about twice the minimum of classes (a)–(d), the cost of knowing the layout at read, with no template render. A seam with no entry stays on one line, so class (b) needs none.
 
 **What a `$trivia` read returns under the rule.** A side's entries are its comments and `ERROR`s with their text, and the stored layout runs of classes (a)–(d) as whitespace members. A read today returns the comments the reader placed and the line-break runs the line-gap query derives (`lineGapsOf`), whatever their seam's default. Under the rule, a run equal to its default is not an entry, and an in-line run never is.
 
