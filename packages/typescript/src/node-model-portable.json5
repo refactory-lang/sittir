@@ -1221,6 +1221,28 @@
       "vocab": "expression.binary",
       "read": [
         {
+          "vocab": "expression.binary.membership.in",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  397
+                ],
+                "fields": [],
+                "kinds": [
+                  "binary_expression_in"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "vocab": "expression.binary.arithmetic.add",
           "toplevel": true,
           "within": [],
@@ -1840,28 +1862,6 @@
                   "operator"
                 ],
                 "kinds": []
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "expression.binary.membership.in",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  397
-                ],
-                "fields": [],
-                "kinds": [
-                  "binary_expression_in"
-                ]
               }
             }
           ]

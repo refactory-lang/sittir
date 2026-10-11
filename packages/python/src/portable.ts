@@ -2950,17 +2950,6 @@ const table: PortableTable = {
 		[TSKindId.Comment]: [{ path: 'comment.line', within: [], test: [] }],
 		[TSKindId.ComparisonOperator]: [
 			{
-				path: 'expression.binary.comparison.chain',
-				within: [],
-				test: [
-					{
-						up: 0,
-						via: [{ fields: ['comparators'], kinds: [], anchor: 'only' }],
-						plan: { op: 'not', of: { op: 'is', types: [297], self: true } }
-					}
-				]
-			},
-			{
 				path: 'expression.binary.comparison.equal',
 				within: [],
 				test: [
@@ -3078,6 +3067,17 @@ const table: PortableTable = {
 						up: 0,
 						via: [{ fields: ['comparators'], kinds: [], anchor: 'only' }],
 						plan: { op: 'eq', text: 'is not', fields: ['operators'], kinds: [] }
+					}
+				]
+			},
+			{
+				path: 'expression.binary.comparison.chain',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [{ fields: ['comparators'], kinds: [], anchor: 'only' }],
+						plan: { op: 'not', of: { op: 'is', types: [297], self: true } }
 					}
 				]
 			},
@@ -3202,12 +3202,12 @@ const table: PortableTable = {
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', fields: ['name'], kinds: [] } }]
 			},
-			{ path: 'declaration.method', within: [TSKindId.Block, TSKindId.SuiteBlock, TSKindId.ClassDefinition], test: [] },
 			{
 				path: 'declaration.method',
 				within: [TSKindId.DecoratedDefinition, TSKindId.Block, TSKindId.SuiteBlock, TSKindId.ClassDefinition],
 				test: []
 			},
+			{ path: 'declaration.method', within: [TSKindId.Block, TSKindId.SuiteBlock, TSKindId.ClassDefinition], test: [] },
 			{ path: 'declaration.function', within: [], test: [] }
 		],
 		[TSKindId.FutureImportStatement]: [{ path: 'statement.import.future', within: [], test: [] }],

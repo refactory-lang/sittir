@@ -737,7 +737,7 @@ The `ClaimFact` for a claim capture on a visit: its kind (a grouping's first chi
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::memberFact`
 
-The `MemberFact` for a member capture on a visit. A `@dropped` capture drops the slot its selector finds on its parent's kind. On a child of the top (or under a top grouping) it renames the slot its selector finds, or marks an unfielded token's presence. Deeper, it is a nested member of the top kind (or the presence of a token) routed through the selectors of the nodes between. A capture directly under a grouping names no member.
+The `MemberFact` for a member capture on a visit. A `@dropped` capture drops the slot its selector finds on its parent's kind. On a child of the top (or under a top grouping) it renames the slot its selector finds, or marks an unfielded token's presence. Deeper, it is a nested member of the top kind (or the presence of a token) routed through the selectors of the nodes between. A capture directly under a grouping names no member. The fact carries the claims on its owner's node (the parent for a direct capture, the top for a deeper one) as `claims`.
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::refuseAnchoredPlacement`
 
@@ -753,7 +753,7 @@ The text of a pattern's `#set! reason "…"`, or `null`.
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::patternFacts`
 
-Reads one pattern into the fact lists. An `@unclaimed` pattern only declares kinds unclaimed. A pattern whose single top owner carries no claim and captures `@element` is a container. Otherwise every template predicate is a template over the pattern's vocabulary captures, and each visit's captures are claims or members in order, a further single-segment member on a node being that node's kind presence (`kindPresence`, `slotNamed`).
+Reads one pattern into the fact lists. An `@unclaimed` pattern only declares kinds unclaimed. A pattern whose single top owner carries no claim and captures `@element` is a container. Otherwise every template predicate is a template over the pattern's vocabulary captures; the claims are read first, each visit's in order, so each member knows the claims on its owner's node; then each visit's member captures in order, a further single-segment member on a node being that node's kind presence (`kindPresence`, `slotNamed`), with the claims of the member it follows.
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::patternsOf`
 
@@ -933,7 +933,11 @@ A kind's container unwrap: a kind the bindings declare with `@element` unwraps t
 
 ### `packages/codegen/src/bindings/routes.ts::specificity`
 
-The order read entries are tried in: a claim both placed (made below enclosing kinds) and tested by a predicate, then a predicate claim, then a placed claim, then a claim that pins a literal or tests the nodes below it (a pin, a token the claimed node holds, or a child test), then the plain claim. `resolveRoutes` breaks a tie by more pins, then by position in `bindings.scm`. Python's `__init__` inside a class reads as `declaration.constructor` (a predicate claim) before `declaration.method` (a placed one).
+The order read entries are tried in: a claim both placed (made below enclosing kinds) and tested by a predicate, then a predicate claim, then a placed claim, then a claim that pins a literal or tests the nodes below it (a pin, a token the claimed node holds, or a child test), then the plain claim. `resolveRoutes` breaks a tie by more tests the claim states (`testCount`), then by position in `bindings.scm`. Python's `__init__` inside a class reads as `declaration.constructor` (a predicate claim) before `declaration.method` (a placed one).
+
+### `packages/codegen/src/bindings/routes.ts::testCount`
+
+The tests a read entry's claim states: its field literals, held tokens, child facts, predicates and placement steps. Among entries of one `specificity`, more tests go first, so a read classifies to the deepest kind: a claim whose tests include another's (a refinement that adds a child test, as `declaration.method.getter.public` adds the accessibility modifier to `declaration.method.getter`) has strictly more of them, and the count never puts it after the claim it refines. The count is a total order, where including is only partial: a comparator that asked "includes?" and otherwise fell back to file order would not be transitive. Inclusion never crosses classes, since an including claim keeps the other's placement and predicates. The count reads the claim's own facts, not the entry's derived pins and child tests, because a derived test the model guarantees drops out and would break the strict count. Two claims no node matches together (a single comparison against a chain, a method in a class body against one under a decorator) may swap by the count; neither order changes a read.
 
 ### `packages/codegen/src/bindings/routes.ts::isLeafAlias`
 
@@ -961,7 +965,7 @@ A deep member's route on a kind, with the build path back through its `via` step
 
 ### `packages/codegen/src/bindings/routes.ts::membersOf`
 
-A read entry's member routes on its kind, as the entry's `Guaranteed` admits them: one `slot` route per slot of the model node, then the member facts the bindings state for it (`kind`, `presence`, `nested`). A slot routes no member when it is a layout slot, when a claim drops it (`SlotNames` gives it `null`), when the read already tells its value (`toldByRead`, over the values the kind's read entries test on it: their pins, and their child tests on a node directly below: a text test's text, or the text of each fixed-text kind a kinds test names), or when it holds only text on a kind read as an identifier (`facts.ts::isIdentifierPath`, `holdsOnlyText`: an identifier's text is its own value, while a compound identifier's node slots stay members); the kinds a `presence` or `nested` route the entry routes reaches through are taken out of their slot, which the read then tells as optional; and a slot a member counts through (a step to its only node) is routed only where the entry guarantees it holds more than one (`guaranteedBy`). A leaf alias envelope (`isLeafAlias`) takes no slot routes. A list's item slot is its container content (`containerOf`), a step a path may take but no member, unless the list is a form of a supertype, whose items route as its sibling forms name them (`listFormItems`).
+A read entry's member routes on its kind, as the entry's `Guaranteed` admits them: one `slot` route per slot of the model node, then the member facts the bindings state for it (`kind`, `presence`, `nested`). A slot routes no member when it is a layout slot, when a claim drops it (`SlotNames` gives it `null`), when the read already tells its value (`toldByRead`, over the values the kind's read entries test on it: their pins, and their child tests on a node directly below: a text test's text, or the text of each fixed-text kind a kinds test names), or when it holds only text on a kind read as an identifier (`facts.ts::isIdentifierPath`, `holdsOnlyText`: an identifier's text is its own value, while a compound identifier's node slots stay members); a slot is also told when the kind's read entries test, one step below it, every kind the node in it can hold (`toldBelow`: rust's visibility levels test `(visibility_modifier (visibility_modifier_pub))` and `(visibility_modifier (crate))`, so the `visibility_modifier` slot is no member), unless a capture the entry inherits names the slot, since a kind leaves its node's content open (`pub(in path)` carries a path); the entry routes the `presence`, `nested` and `kind` members captured by member-only patterns and by the claims it inherits (`inheritedClaims`), never a sibling's or a descendant's; the kinds any claim's `presence` or `nested` route reaches through, where the entry guarantees the path, are taken out of their slot on every entry, since a slot a path crosses is part of the kind's shape and no member, and the read then tells the slot as optional; and a slot a member counts through (a step to its only node) is routed only where the entry guarantees it holds more than one (`guaranteedBy`). A leaf alias envelope (`isLeafAlias`) takes no slot routes. A list's item slot is its container content (`containerOf`), a step a path may take but no member, unless the list is a form of a supertype, whose items route as its sibling forms name them (`listFormItems`).
 
 ### `packages/codegen/src/bindings/routes.ts::holdsOnlyText`
 
@@ -1081,7 +1085,7 @@ The model slots a `CaptureSite` below a kind reaches, one per possible holder at
 
 ### `packages/codegen/src/bindings/routes.ts::tokenSite`
 
-The site of a token fact's node: the site of the node holding the token, one step further into the slot that holds the token's text on every kind that can be that node (`slotHoldingText`, the resolver `pinsOf` uses for a claim's own tokens). Codegen stops with a diagnostic when no such slot exists or the holders place the token in different slots.
+The site of a token fact's node: the site of the node holding the token, one step further into the slot that holds the token's text on every kind that can be that node (`slotHoldingText`, the resolver `pinsOf` uses for a claim's own tokens). When no slot holds it but every such kind's own text admits it (`textsOfKind`, a slotless enum or fixed-text node), the site is the holding node itself, and the test is on its text: `(method_definition (accessibility_modifier "private"))` tests the modifier's text. Codegen stops with a diagnostic when neither holds or the holders place the token in different slots.
 
 ### `packages/codegen/src/bindings/routes.ts::slotHoldingText`
 
@@ -1147,13 +1151,21 @@ The model types whose single content slot stands for the kind itself when it is 
 
 A claim's pins on its kind: each field literal, plus each unfielded token a slot admits (`slotHoldingText`), unless that field is already pinned, as the member, slot and text the read tests.
 
+### `packages/codegen/src/bindings/routes.ts::inheritedClaims`
+
+The claims whose captures a read entry routes: every read entry of the same grammar kind whose vocabulary path is the entry's own or an ancestor of it. A refinement inherits its interface's members, so it routes what its own claim captured and what the claims it refines captured; a sibling's or a descendant's captures never reach it, and a claim on another grammar kind never transfers. An inherited route keeps every condition its pattern put on the path (its `via` kinds and anchors), so on a node the parent pattern would not match the member reads nothing.
+
 ### `packages/codegen/src/bindings/routes.ts::textOfKind`
 
 The text of a kind that is one fixed text (`facts.ts::isFixedText`), else nothing.
 
+### `packages/codegen/src/bindings/routes.ts::textsOfKind`
+
+Every text a kind's own node can be: the one text of a fixed-text kind (`facts.ts::isFixedText`), or each member's text of an enum kind (typescript's `accessibility_modifier` is `public`, `private` or `protected`), else none. A token tested on such a node is its own value, not a token in one of its slots.
+
 ### `packages/codegen/src/bindings/routes.ts::fixedValues`
 
-Every value a slot can hold when each is a fixed text: its terminals and the texts of its fixed-text kinds. A slot that holds any other kind has no such list.
+Every value a slot can hold when each is a fixed text: its terminals and the texts of each kind it holds (`textsOfKind`: a fixed-text kind's text, an enum kind's member texts). A slot that holds any other kind has no such list.
 
 ### `packages/codegen/src/bindings/routes.ts::toldByRead`
 
@@ -1189,7 +1201,7 @@ A kind `bindings.scm` declares unclaimed (`@unclaimed`), with the pattern's `#se
 
 ### `packages/codegen/src/bindings/facts.ts::MemberFact`
 
-A member capture as read. `rename` names the slot its selector finds on the owner. `dropped` marks the slot its selector finds on the owner as no member, from a claim's `@dropped` capture. `presence` marks an unfielded token's presence on the owner, through the steps in `via` when it sits deeper. `kind` is the presence of a node's kind in the slot another member names (a flag). `nested` is a member of the top kind that sits below a child, reached through `via`, in `parent`'s slot the selector finds, repeated when `multiple`. Each `via` step is the selector of a node between, nearest first, so an anchored step keeps its anchor.
+A member capture as read. `rename` names the slot its selector finds on the owner. `dropped` marks the slot its selector finds on the owner as no member, from a claim's `@dropped` capture. `presence` marks an unfielded token's presence on the owner, through the steps in `via` when it sits deeper. `kind` is the presence of a node's kind in the slot another member names (a flag). `nested` is a member of the top kind that sits below a child, reached through `via`, in `parent`'s slot the selector finds, repeated when `multiple`. Each `via` step is the selector of a node between, nearest first, so an anchored step keeps its anchor. `claims` lists the claims, by their position in the facts, that the member's owner node carries in its pattern; a member captured in a pattern whose owner carries no claim (a member-only pattern) has none and belongs to every read entry of its owner.
 
 ### `packages/codegen/src/bindings/facts.ts::NamedMemberFact`
 
