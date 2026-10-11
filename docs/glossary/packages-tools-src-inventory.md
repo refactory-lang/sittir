@@ -1,6 +1,6 @@
 # `packages/tools/src/inventory` — Function Glossary
 
-The bindings inventory: `sittir tool bindings-inventory`. It reads each grammar's `packages/<grammar>/bindings.scm` through `@sittir/scm` and each grammar's slot model, checks that the bindings compile against the grammar's parser, and derives the vocabulary the bindings imply through codegen's derivation (`packages/codegen/src/bindings/`): its kinds, members, refinements and the members the language context types. The vocabulary under `packages/types/src/vocabulary/` is authored; `--check` reports where it and the derivation disagree, and each disagreement is fixed on the side that is wrong, a feature extending the vocabulary or a binding dropping a claim.
+The bindings inventory: `sittir tool bindings-inventory`. It reads each grammar's `packages/<grammar>/bindings.scm` through `@sittir/scm` and each grammar's slot model, checks that the bindings compile against the grammar's parser, and derives the vocabulary the bindings imply through codegen's derivation (`packages/codegen/src/bindings/`): its kinds, members, refinements and the members the language context types. The vocabulary under `packages/types/src/vocabulary/` is authored, but for its flags module, which the inventory writes from the vocabulary's `Flag` declarations; `--check` reports where the vocabulary and the derivation disagree, and each disagreement is fixed on the side that is wrong, a feature extending the vocabulary or a binding dropping a claim.
 
 ---
 
@@ -48,7 +48,11 @@ Where the bindings and the authored vocabulary disagree, one line each: a claime
 
 ### `packages/tools/src/inventory/vocabulary.ts::readVocabulary`
 
-Reads the authored vocabulary structurally, with the TypeScript parser, never by matching lines: every interface under its namespaces, keyed by its `$kind` literal, with its own members (each marked optional or required) and its parent, the interface its `extends` clause names through `V.`. `members(path)` adds the inherited members, nearest first. An interface with no `$kind` literal is not a vocabulary kind (the context's typemap and `Unmapped`).
+Reads the authored vocabulary structurally, with the TypeScript parser, never by matching lines: every interface under its namespaces, keyed by its `$kind` literal, with its own members (each marked optional or required, and a flag when it is declared with the marker type `Flag`) and its parent, the interface its `extends` clause names through `V.`. `members(path)` adds the inherited members, nearest first. `flags` is every name some kind declares as a flag. An interface with no `$kind` literal is not a vocabulary kind (the context's typemap and `Unmapped`).
+
+### `packages/tools/src/inventory/vocabulary.ts::isFlag`
+
+Whether a member's declared type is the marker `Flag`, the vocabulary's declaration of a flag (`utils.ts::Flag`). A `boolean` member is data.
 
 ### `packages/tools/src/inventory/index.ts::BindingsModule`
 
@@ -75,10 +79,16 @@ derivation summary always prints (kinds, prefixes, members, refinements,
 unmapped references, cycles, container captures with no direct target,
 container slots left uncaptured);
 `--members` prints member names and kinds per shared kind. `--write` first
-writes each grammar's `grammar.bindings.ts` (`bindingsModule`) and prints its
-convergence (`overlaySummary`). `--check` also
+writes the vocabulary's flags module (`printFlagsModule`), which the bindings
+hash covers, then each grammar's `grammar.bindings.ts` (`bindingsModule`), and
+prints its convergence (`overlaySummary`). `--check` also
 reports where the bindings and the authored vocabulary disagree
-(`vocabularyDisagreements`). A cycle, a container capture with no direct
-target, a container slot left uncaptured, a failed compile or a disagreement is
-a non-zero exit.
+(`vocabularyDisagreements`), and whether the flags module is current
+(`flagsCurrent`). A cycle, a container capture with no direct
+target, a container slot left uncaptured, a failed compile, a disagreement or
+a stale flags module is a non-zero exit.
 ```
+
+### `packages/tools/src/inventory/index.ts::flagsCurrent`
+
+Whether the committed flags module is the one the vocabulary's `Flag` declarations imply (`printFlagsModule`); a missing module is not current.

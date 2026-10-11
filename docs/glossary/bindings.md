@@ -420,6 +420,18 @@ The file name of a grammar's committed bindings overlay, beside its `grammar.sit
 
 A string as a quoted TypeScript literal, for the emitted overlay module.
 
+### `packages/codegen/src/bindings/flags.ts::FLAGS_PATH`
+
+The vocabulary's generated flags module, `flags.ts` in `VOCABULARY_DIR`. The inventory writes it from the vocabulary's `Flag` declarations, and it is the one file there that is not authored. The bindings hash covers it with the rest of the vocabulary, so `--write` writes it before any `grammar.bindings.ts`.
+
+### `packages/codegen/src/bindings/flags.ts::FLAG_BITS`
+
+The flags one bitflag word holds: 31, below the sign bit, so every bit is a positive number that `|` and `&` keep.
+
+### `packages/codegen/src/bindings/flags.ts::printFlagsModule`
+
+The generated flags module: one numeric `enum Flags` with a bit per flag name, in name order, each named by its TypeScript name (`byReference` is `Flags.ByReference = 1 << 3`). A name has one bit wherever it is declared, so `Flags.Static | Flags.Async` is the same number in every language. More names than `FLAG_BITS` are refused, naming the ones past the word, since their bits need a second word, which is designed when one is needed. A feature never adds a member to the enum, since a member added by augmentation has no bit at run time.
+
 ### `packages/codegen/src/bindings/pinned-reader.ts::module`
 
 The `bindings.scm` reader, over the pinned `@sittir/scm` build (`loadPinnedScm`). It imports `@sittir/scm` and `@sittir/common` for types only: every value it uses comes from the pinned build, so the facts depend on the pin and not on the workspace's packages.
@@ -865,11 +877,7 @@ Whether a model node is an alias envelope over leaf text: `modelType` `alias`, w
 
 ### `packages/codegen/src/bindings/routes.ts::membersOf`
 
-A kind's member routes: one `slot` route per slot of the model node, then the member facts the bindings state for it (`kind`, `presence`, `nested`). A slot routes no member when it is a layout slot, when a claim drops it (`SlotNames` gives it `null`), when the read already tells its value (`toldByRead`, over the pins of the kind's read entries), or when it holds only text on a kind read as an identifier (`holdsOnlyText`: an identifier's text is its own value, while a compound identifier's node slots stay members); the kinds a `presence` or `nested` route reaches through are taken out of their slot. A leaf alias envelope (`isLeafAlias`) takes no slot routes. A list's item slot is its container content (`containerOf`), a step a path may take but no member, unless the list is a form of a supertype, whose items route as its sibling forms name them (`listFormItems`).
-
-### `packages/codegen/src/bindings/routes.ts::IDENTIFIER`
-
-The vocabulary root whose kinds are identifiers. A kind with a read entry at this path or beneath it routes no member through a slot that holds only text.
+A kind's member routes: one `slot` route per slot of the model node, then the member facts the bindings state for it (`kind`, `presence`, `nested`). A slot routes no member when it is a layout slot, when a claim drops it (`SlotNames` gives it `null`), when the read already tells its value (`toldByRead`, over the pins of the kind's read entries), or when it holds only text on a kind read as an identifier (`facts.ts::isIdentifierPath`, `holdsOnlyText`: an identifier's text is its own value, while a compound identifier's node slots stay members); the kinds a `presence` or `nested` route reaches through are taken out of their slot. A leaf alias envelope (`isLeafAlias`) takes no slot routes. A list's item slot is its container content (`containerOf`), a step a path may take but no member, unless the list is a form of a supertype, whose items route as its sibling forms name them (`listFormItems`).
 
 ### `packages/codegen/src/bindings/routes.ts::holdsOnlyText`
 
@@ -1066,6 +1074,14 @@ The model types of a kind that is always one fixed text: keywords and punctuatio
 ### `packages/codegen/src/bindings/facts.ts::isFixedText`
 
 Whether a model node is one fixed text (`FIXED_TEXT_MODEL_TYPES`, with its text known).
+
+### `packages/codegen/src/bindings/facts.ts::IDENTIFIER`
+
+The vocabulary root whose kinds are identifiers.
+
+### `packages/codegen/src/bindings/facts.ts::isIdentifierPath`
+
+Whether a vocabulary path is `IDENTIFIER` or beneath it. A kind with a read entry at such a path routes no member through a slot that holds only text (`routes.ts::membersOf`).
 
 ### `packages/codegen/src/bindings/facts.ts::ModelNode`
 
