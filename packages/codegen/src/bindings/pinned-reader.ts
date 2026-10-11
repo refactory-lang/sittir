@@ -468,22 +468,25 @@ function claimFact(
 	return { vocab, kind, field: v.field, predicates, toplevel, within, fieldLiterals, tokens, children: isGroup(v) ? [] : childFacts(v, origin) };
 }
 
-function memberFact(v: Visit, name: string, top: Visit, topKind: string | null): MemberFact | null {
+function memberFact(v: Visit, name: string, top: Visit, topKind: string | null, claimed: ReadonlyMap<Visit, readonly number[]>): MemberFact | null {
 	const parent = v.parent;
 	if (parent === null || isGroup(parent)) return null;
 	const owner = kindOf(parent);
 	if (owner === null) return null;
-	if (name === DROPPED) return { route: 'dropped', owner, ...selector(v) };
+	const direct = parent === top || topKind === null;
+	const claims = claimed.get(direct ? parent : top);
+	const of = claims === undefined ? {} : { claims };
+	if (name === DROPPED) return { route: 'dropped', owner, ...selector(v), ...of };
 	const token = tokenText(v);
-	if (parent === top || topKind === null) {
-		if (token !== null && v.field === null) return { route: 'presence', owner, name, token, via: [] };
-		return isGroup(v) && v.field === null ? null : { route: 'rename', owner, name, ...selector(v) };
+	if (direct) {
+		if (token !== null && v.field === null) return { route: 'presence', owner, name, token, via: [], ...of };
+		return isGroup(v) && v.field === null ? null : { route: 'rename', owner, name, ...selector(v), ...of };
 	}
 	const via: SlotSelector[] = [];
 	for (let cursor: Visit | null = parent; cursor !== null && cursor !== top; cursor = cursor.parent)
 		if (kindOf(cursor) !== null) via.push(selector(cursor));
-	if (token !== null) return { route: 'presence', owner: topKind, name, token, via };
-	return { route: 'nested', owner: topKind, name, parent: owner, multiple: quantified(v), via, ...selector(v) };
+	if (token !== null) return { route: 'presence', owner: topKind, name, token, via, ...of };
+	return { route: 'nested', owner: topKind, name, parent: owner, multiple: quantified(v), via, ...selector(v), ...of };
 }
 
 function containerFact(
@@ -547,18 +550,21 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 		if (template !== null) facts.templates.push({ vocabs, ...template });
 	}
 	const claimPredicates = predicates.flatMap((p) => predicateFact(p) ?? []);
+	const claimed = new Map<Visit, number[]>();
+	for (const v of nodes) {
+		for (const name of captures(v)) {
+			if (!inClaimPosition(name, v === top) || !isClaim(name, v === top)) continue;
+			refuseAnchoredPlacement(v, name, origin);
+			(claimed.get(v) ?? claimed.set(v, []).get(v))?.push(facts.claims.length);
+			facts.claims.push(claimFact(v, name, top, nodes, claimPredicates, origin));
+		}
+	}
 	for (const v of nodes) {
 		const members: MemberFact[] = [];
 		for (const name of captures(v)) {
-			if (inClaimPosition(name, v === top)) {
-				if (isClaim(name, v === top)) {
-					refuseAnchoredPlacement(v, name, origin);
-					facts.claims.push(claimFact(v, name, top, nodes, claimPredicates, origin));
-				}
-			} else if (!name.startsWith('_') && name !== 'element') {
-				const member: MemberFact | null = kindPresence(members[0], v, name) ?? memberFact(v, name, top, topKind);
-				if (member !== null) members.push(member);
-			}
+			if (inClaimPosition(name, v === top) || name.startsWith('_') || name === 'element') continue;
+			const member: MemberFact | null = kindPresence(members[0], v, name) ?? memberFact(v, name, top, topKind, claimed);
+			if (member !== null) members.push(member);
 		}
 		facts.members.push(...slotNamed(members));
 	}
@@ -573,7 +579,7 @@ function refuseAnchoredPlacement(claim: Visit, vocab: string, origin: PatternOri
 function kindPresence(first: MemberFact | undefined, v: Visit, name: string): MemberFact | null {
 	const kind = namedKind(v);
 	if (first === undefined || kind === null || first.route === 'presence' || first.route === 'dropped') return null;
-	return { route: 'kind', owner: first.owner, name, member: first.name, kind };
+	return { route: 'kind', owner: first.owner, name, member: first.name, kind, ...(first.claims === undefined ? {} : { claims: first.claims }) };
 }
 
 function slotNamed(members: readonly MemberFact[]): readonly MemberFact[] {

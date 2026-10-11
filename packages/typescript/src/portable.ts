@@ -3548,6 +3548,11 @@ const table: PortableTable = {
 		[TSKindId.AwaitExpression]: [{ path: 'expression.await', within: [], test: [] }],
 		[TSKindId.BinaryExpression]: [
 			{
+				path: 'expression.binary.membership.in',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [397], fields: [], kinds: ['binary_expression_in'] } }]
+			},
+			{
 				path: 'expression.binary.arithmetic.add',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', fields: ['operator'], kinds: [] } }]
@@ -3666,11 +3671,6 @@ const table: PortableTable = {
 				path: 'expression.binary.membership.instanceof',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'instanceof', fields: ['operator'], kinds: [] } }]
-			},
-			{
-				path: 'expression.binary.membership.in',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [397], fields: [], kinds: ['binary_expression_in'] } }]
 			},
 			{ path: 'expression.binary', within: [], test: [] }
 		],

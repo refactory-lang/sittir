@@ -62,7 +62,9 @@ export interface UnclaimedFact {
 	readonly reason: string | null;
 }
 
-export type MemberFact =
+export type MemberFact = MemberRouteFact & { readonly claims?: readonly number[] };
+
+type MemberRouteFact =
 	| ({ readonly route: 'rename'; readonly owner: string; readonly name: string } & SlotSelector)
 	| ({ readonly route: 'dropped'; readonly owner: string } & SlotSelector)
 	| {
