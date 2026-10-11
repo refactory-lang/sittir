@@ -88,7 +88,7 @@ Each prototype and measurement the arena steps already hold, and what 3a takes f
 
   The last three stay as they are, reading the spans of the table's entries.
 - The toolchain is pinned to 1.99.0 (`rust-toolchain.toml`).
-- The live render drops the line break a line comment holds at the end of a render in two shapes: rust `\n//! doc` (a root's inner comment after a break) and python `x = 1 # c` (a same-line trailing comment). It writes the break in rust `//! doc`, `fn main() {}\n// end`, `fn main() {} // end` and python `# c`, `x = 1\n# c`. Task 4 renders parsed trivia through a new path, and its tests pin every one of these shapes to `LineHold::Terminated`'s rule: the break is written.
+- The live render drops the line break a line comment holds at the end of a render in two shapes: rust `\n//! doc` (a root's inner comment after a break) and python `x = 1 # c` (a same-line trailing comment). It writes the break in rust `//! doc`, `fn main() {}\n// end`, `fn main() {} // end` and python `# c`, `x = 1\n# c`. Ruling 10 settles it: the render reproduces each source, writing no break at the end of a document whose source has none. Task 4's tests pin all seven shapes, each in each grammar where the probe shows it.
 - **The snapshot census's whitespace remainder** (classified in `docs/superpowers/probes/2026-10-09-relative-coordinates/census-classes/`) is in-line spacing, layout inside a template, and layout beside a comment. The last two are this plan's.
   - Task 1 counts one case the outline did not: a break the seam default writes that the source omits (`async { let x = 10; }` on one line). Ruling 5 covers it (brainstorm, 2026-10-10): a seam's source layout is stored whenever it differs from the seam's default, and fewer breaks than the default is a difference, so that seam stores its single space.
   - Task 2's census counts the gaps no side takes (ruling 9), which a snapshot renders with the seam defaults.
@@ -168,6 +168,7 @@ fn read_ctx(&self, tree: u32) -> Option<(&tree_sitter::Tree, ReadCtx<'_>)>;
 7. **A node's trivia travels with it** (§ 3). A `$with` draft and a moved node carry their children's sides. In `{ s1(); // a⏎ // b⏎ s2(); }` with `s2` replaced, `// a` stays as `s1`'s trailing and `// b` goes with `s2`'s leading, as today.
 8. **An `ERROR` node is an entry** (§ 1): a value of its kind and source text, rendered verbatim and never rebuilt by a builder. The reader treats `ERROR` as trivia today (the typed-reader plan's Global Constraints).
 9. **No side is named from a parent by index** (§ 2). A node with no children (`()`, `{}`) has `inner`, the only side a parent addresses. `innerAt`, `INNER_GAPS` and the named inner gaps leave the surface. A gap whose owner has children but none beside it lies between two of the owner's own tokens (`for /*c*/ (`, `[a, b, // c⏎]`). No side takes it, and it has no guarantee: its entries render while the owner copies its source bytes, and when the owner renders from its template, the template's tokens and the seam defaults decide, so they may go.
+10. **The held break protects following text; at the document's end there is none** (the maintainer, 2026-10-10). A stored layout of fewer breaks than the default wins at the end of a document, so no held break is written after an entry that ends the document, a trailing line comment included. The rule is the held break's (`LineHold::Terminated`), not a case for line comments: it holds a break for the text after it, and none follows. A source with no final break renders with none. A source that ends in a break keeps it as its stored or default layout.
 
 **Terms.** Token *k* is the *k*-th token of the tree's token walk (Task 2). Gap *k* is the seam between token *k* and token *k + 1*; the gaps before the first token and after the last are the file's edges. A node's sides are its `leading`, its `trailing` and, with no children, its `inner`. A written side is edited.
 
@@ -355,7 +356,7 @@ Run vitest on that file: FAIL first, then PASS.
 - ruling 4: a comment written to one node's side that the assignment gives to another is that other node's after a reparse;
 - two reads of a side are equal and are not the same object;
 - a write through a parsed holder renders through a built holder that stores the same range as a coordinate it never read;
-- the line break a line comment holds is written at the end of a render, in all seven shapes under "Corrections found while detailing";
+- ruling 10: rust `\n//! doc`, `//! doc`, `fn main() {}\n// end` and `fn main() {} // end`, and python `# c`, `x = 1\n# c` and `x = 1 # c`, each with and without a final line break, render as their source: no held break is written at the document's end, and a final break the source has is kept;
 - a snapshot of an edited tree takes its sides from the table, with no `$sameLine` or `$tokensBetween` in its data.
 
 Expected: FAIL. A write through a query is refused today, and the defect test drops `# four`.
