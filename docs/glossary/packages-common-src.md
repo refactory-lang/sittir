@@ -667,7 +667,7 @@ The siblings that hold sides beside the node a source identity names, as its tre
 
 ### `packages/common/src/transport-data.ts::keepsNeighbour`
 
-Whether the neighbour a node has in its holder is the sibling its source had on that side: both absent, or the neighbour's evidence (`evidenceOf`) names the same tree and span.
+Whether the neighbour a node has in its holder is the sibling its source had on that side: both absent, the neighbour's evidence (`evidenceOf`) names the same tree and span, or the neighbour is a unit held as its bare kind and the sibling is of that kind. A unit has no identity of its own, and its text is its kind's, so any unit of the sibling's kind spells the same gap.
 
 ### `packages/common/src/transport-data.ts::coordinateCrossing`
 

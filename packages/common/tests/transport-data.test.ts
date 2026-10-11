@@ -253,7 +253,7 @@ describe('sourceGapOf', () => {
 	const ATTRIBUTED = 20;
 	const ALIAS_ENVELOPE = 21;
 	const OTHER = 30;
-	const { token } = tableTree(1, (index) => (index === 3 ? { previous: { start: 1, end: 2 }, next: null } : { previous: null, next: null }));
+	const { token } = tableTree(1, (index) => (index === 3 ? { previous: { start: 1, end: 2, kind: OTHER }, next: null } : { previous: null, next: null }));
 	const a = deep(1, 2, {});
 	const b = deep(3, 4, {});
 	const owner = deep(0, 5, {});

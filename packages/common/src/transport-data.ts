@@ -312,6 +312,7 @@ function siblingsOf(source: SourceIdentity): Siblings | undefined {
 /** Whether `neighbour`, beside a node in its holder, is the sibling its source had there (`span`, `null` for none). */
 function keepsNeighbour(span: Siblings['previous'], neighbour: unknown, token: TreeToken, view: KindView): boolean {
 	if (span === null) return neighbour === undefined;
+	if (typeof neighbour === 'number') return neighbour === span.kind;
 	if (!isRecord(neighbour)) return false;
 	const other = sourceOf(evidenceOf(neighbour, view));
 	return other !== undefined && other.token === token && other.span.start === span.start && other.span.end === span.end;

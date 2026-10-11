@@ -102,15 +102,25 @@ pub fn child_index_of(node: tree_sitter::Node<'_>, index: u32, position: u32) ->
     (0..position).fold(index + 1, |at, i| at + node.child(i).map_or(0, |child| child.descendant_count() as u32))
 }
 
-/// The siblings that hold sides beside a node (`trivia_table::holds_sides`),
-/// taken at the outermost node spanning exactly its bytes (a list item's
-/// wrapper holds the item's neighbours, not the item): the one before it, or
-/// none when that node starts its parent, and the one after it, or none when
-/// that node ends its parent.
+/// The siblings that hold sides beside a node (`trivia_table::holds_sides`)
+/// in its own slot (the same field, or both in none), taken at the outermost
+/// node spanning exactly its bytes (a list item's wrapper holds the item's
+/// neighbours, not the item): the item before it in its list, or none when it
+/// is the first, and the one after it, or none when it is the last. A child
+/// of another slot past the list's closer is not its neighbour.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, serde::Serialize)]
 pub struct Siblings {
-    pub previous: Option<Span>,
-    pub next: Option<Span>,
+    pub previous: Option<Sibling>,
+    pub next: Option<Sibling>,
+}
+
+/// A sibling's span and grammar kind id. The kind is what names a unit
+/// sibling, which a rebuilt list holds as its bare kind, with no span.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
+pub struct Sibling {
+    pub start: u32,
+    pub end: u32,
+    pub kind: u16,
 }
 
 /// What kind of region of a source did not parse: an ERROR node error
@@ -257,14 +267,23 @@ pub fn siblings(tree: &tree_sitter::Tree, index: u32) -> Siblings {
     let Some(node) = node_at_index(tree, index) else { return Siblings::default() };
     let outer = outermost_same_span(node);
     let Some(parent) = outer.parent() else { return Siblings::default() };
-    let span = |node: tree_sitter::Node<'_>| Span { start: node.start_byte() as u32, end: node.end_byte() as u32 };
+    let sibling = |node: &tree_sitter::Node<'_>| Sibling { start: node.start_byte() as u32, end: node.end_byte() as u32, kind: node.grammar_id() };
+    let mut children = Vec::new();
     let mut cursor = parent.walk();
-    let children: Vec<tree_sitter::Node<'_>> = parent.children(&mut cursor).collect();
-    let at = children.iter().position(|child| child.id() == outer.id()).unwrap_or(0);
-    let holds = |child: &&tree_sitter::Node<'_>| crate::trivia_table::holds_sides(child);
+    if cursor.goto_first_child() {
+        loop {
+            children.push((cursor.node(), cursor.field_id()));
+            if !cursor.goto_next_sibling() {
+                break;
+            }
+        }
+    }
+    let at = children.iter().position(|(child, _)| child.id() == outer.id()).unwrap_or(0);
+    let field = children.get(at).and_then(|&(_, field)| field);
+    let item = |(child, of): &&(tree_sitter::Node<'_>, Option<std::num::NonZeroU16>)| *of == field && crate::trivia_table::holds_sides(child);
     Siblings {
-        previous: (parent.start_byte() != node.start_byte()).then(|| children[..at].iter().rev().find(holds).copied().map(span)).flatten(),
-        next: (parent.end_byte() != node.end_byte()).then(|| children[at + 1..].iter().find(holds).copied().map(span)).flatten(),
+        previous: (parent.start_byte() != node.start_byte()).then(|| children[..at].iter().rev().find(item).map(|(child, _)| sibling(child))).flatten(),
+        next: (parent.end_byte() != node.end_byte()).then(|| children[at + 1..].iter().find(item).map(|(child, _)| sibling(child))).flatten(),
     }
 }
 
@@ -515,7 +534,9 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// child indices, from the node at `handle`, of the last node an earlier
     /// batch visited; the walk continues after it. `depth` bounds the levels
     /// walked below `from` (every level when absent). An extra is trivia: the
-    /// walk neither returns nor enters it.
+    /// walk neither returns nor enters it. A depth member the parser issues
+    /// (`SurfaceKinds::indent`, `dedent`) is the op that opens or closes a
+    /// level, not structure: the walk does not return it.
     pub fn descendants(
         &self,
         from: Address,
@@ -536,6 +557,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
         let mut path: Vec<u32> = Vec::new();
         let mut coordinates = Vec::new();
         let ctx = crate::read::ReadCtx::new(&self.source, self.tree_id, self.grammar.shows());
+        let surface = self.grammar.surface_kinds();
+        let depth_member = |node: &tree_sitter::Node<'_>| node.grammar_id() != 0 && [surface.indent, surface.dedent].contains(&node.grammar_id());
         if let Some(resume) = resume {
             for &child in resume {
                 if !cursor.goto_first_child() {
@@ -554,6 +577,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
             let node = cursor.node();
             if node.is_named()
                 && !node.is_extra()
+                && !depth_member(&node)
                 && (kinds.is_empty() || kinds.contains(&ctx.stamped_kind(KindId(node.grammar_id()), display_id(&node)).0))
                 && plan.is_none_or(|plan| plan.holds(&node, &self.source))
             {
@@ -1173,9 +1197,10 @@ mod tests {
         let (tree, _) = parsed("fn f() {}\n// c\nfn g() {}\n");
         let f = index_of_kind(&tree, "function_item", 0);
         let g = index_of_kind(&tree, "function_item", 1);
-        let span = |start, end| Some(Span { start, end });
-        assert_eq!(tree.siblings(f), Siblings { previous: None, next: span(15, 24) });
-        assert_eq!(tree.siblings(g), Siblings { previous: span(0, 9), next: None }, "the comment between them holds no sides");
+        let item = node_at_index(&tree.tree, f).unwrap().grammar_id();
+        let sibling = |start, end| Some(Sibling { start, end, kind: item });
+        assert_eq!(tree.siblings(f), Siblings { previous: None, next: sibling(15, 24) });
+        assert_eq!(tree.siblings(g), Siblings { previous: sibling(0, 9), next: None }, "the comment between them holds no sides");
         assert_eq!(tree.siblings(tree.tree.root_node().descendant_count() as u32), Siblings::default());
     }
 

@@ -4664,10 +4664,6 @@
                   "trailing": [
                     32
                   ]
-                },
-                "changed": {
-                  "leading": true,
-                  "trailing": false
                 }
               }
             }
@@ -4774,10 +4770,6 @@
               "trailing": [
                 32
               ]
-            },
-            "changed": {
-              "leading": true,
-              "trailing": false
             }
           }
         }
@@ -5058,15 +5050,353 @@
     "wrappedOffset": 12
   },
   {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "program",
+    "input": {
+      "$type": 33,
+      "_definitions": [
+        {
+          "$type": 44,
+          "_definitions": [
+            {
+              "$type": 47,
+              "_name": {
+                "$type": 40,
+                "_string_content": {
+                  "$type": 42,
+                  "_content": [
+                    {
+                      "$type": 23,
+                      "$text": "?"
+                    }
+                  ]
+                }
+              },
+              "_elements": [],
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    28,
+                    31
+                  ]
+                }
+              }
+            },
+            {
+              "$type": 47,
+              "_name": {
+                "$type": 40,
+                "_string_content": {
+                  "$type": 42,
+                  "_content": [
+                    {
+                      "$type": 23,
+                      "$text": "+"
+                    }
+                  ]
+                }
+              },
+              "_elements": [],
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    28
+                  ]
+                }
+              }
+            },
+            {
+              "$type": 47,
+              "_name": {
+                "$type": 40,
+                "_string_content": {
+                  "$type": 42,
+                  "_content": [
+                    {
+                      "$type": 23,
+                      "$text": "-"
+                    }
+                  ]
+                }
+              },
+              "_elements": [],
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    28
+                  ],
+                  "trailing": [
+                    28,
+                    32
+                  ]
+                }
+              }
+            }
+          ],
+          "_elements": [
+            {
+              "$type": 39,
+              "_name": {
+                "$type": 6,
+                "$text": "ops"
+              }
+            }
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28
+              ]
+            }
+          }
+        },
+        {
+          "$type": 61,
+          "_name": {
+            "$type": 5,
+            "$text": "if_statement"
+          },
+          "_named_node_group": {
+            "$type": 63,
+            "_named_node_expressions": [
+              {
+                "$type": 44,
+                "_definitions": [
+                  {
+                    "$type": 50,
+                    "_name": {
+                      "$type": 5,
+                      "$text": "condition"
+                    },
+                    "_definition": {
+                      "$type": 61,
+                      "_name": 7,
+                      "_elements": []
+                    },
+                    "$_layout": {
+                      "trivia": {
+                        "leading": [
+                          28,
+                          31
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$type": 50,
+                    "_name": {
+                      "$type": 5,
+                      "$text": "consequence"
+                    },
+                    "_definition": {
+                      "$type": 61,
+                      "_name": 7,
+                      "_elements": []
+                    },
+                    "$_layout": {
+                      "trivia": {
+                        "leading": [
+                          28
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "$type": 50,
+                    "_name": {
+                      "$type": 5,
+                      "$text": "alternative"
+                    },
+                    "_definition": {
+                      "$type": 61,
+                      "_name": 7,
+                      "_elements": [
+                        {
+                          "$type": 54,
+                          "_quantifier": 4
+                        }
+                      ]
+                    },
+                    "$_layout": {
+                      "trivia": {
+                        "leading": [
+                          28
+                        ],
+                        "trailing": [
+                          28,
+                          32
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "_elements": [
+                  {
+                    "$type": 39,
+                    "_name": {
+                      "$type": 6,
+                      "$text": "conditional.inner"
+                    }
+                  }
+                ]
+              }
+            ],
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  28,
+                  31
+                ]
+              }
+            }
+          },
+          "_elements": [
+            {
+              "$type": 39,
+              "_name": {
+                "$type": 6,
+                "$text": "conditional.outer"
+              },
+              "$_layout": {
+                "trivia": {
+                  "trailing": [
+                    32
+                  ]
+                }
+              }
+            }
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                29
+              ],
+              "trailing": [
+                28
+              ]
+            }
+          }
+        }
+      ],
+      "$errors": []
+    },
+    "expectedOutput": "[\n  \"?\"\n  \"+\"\n  \"-\"\n] @ops\n\n(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?\n  ] @conditional.inner) @conditional.outer\n",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
+  },
+  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "\n[\n  \"?\"\n  \"+\"\n  \"-\"\n] @ops\n\n(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?\n  ] @conditional.inner) @conditional.outer\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "[\n  \"?\"\n  \"+\"\n  \"-\"] @ops\n\n(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?] @conditional.inner) @conditional.outer\n",
+    "expectedSourceOut": "[\n  \"?\"\n  \"+\"\n  \"-\"\n] @ops\n\n(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?\n  ] @conditional.inner) @conditional.outer\n",
     "expectedReparseTree": "(program definitions: (list definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))) elements: (capture name: (identifier))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (list definitions: (field_definition name: (identifier) definition: (named_node_plain)) definitions: (field_definition name: (identifier) definition: (named_node_plain)) definitions: (field_definition name: (identifier) definition: (named_node_plain elements: (list_element_quantifier quantifier: (quantifier)))) elements: (capture name: (identifier)))) elements: (capture name: (identifier))))",
-    "wrappedText": "[\n  \"?\"\n  \"+\"\n  \"-\"] @ops\n\n(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?] @conditional.inner) @conditional.outer\n",
+    "wrappedText": "[\n  \"?\"\n  \"+\"\n  \"-\"\n] @ops\n\n(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?\n  ] @conditional.inner) @conditional.outer\n",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "list",
+    "input": {
+      "$type": 44,
+      "_definitions": [
+        {
+          "$type": 47,
+          "_name": {
+            "$type": 40,
+            "_string_content": {
+              "$type": 42,
+              "_content": [
+                {
+                  "$type": 23,
+                  "$text": "?"
+                }
+              ]
+            }
+          },
+          "_elements": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28,
+                31
+              ]
+            }
+          }
+        },
+        {
+          "$type": 47,
+          "_name": {
+            "$type": 40,
+            "_string_content": {
+              "$type": 42,
+              "_content": [
+                {
+                  "$type": 23,
+                  "$text": "+"
+                }
+              ]
+            }
+          },
+          "_elements": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28
+              ]
+            }
+          }
+        },
+        {
+          "$type": 47,
+          "_name": {
+            "$type": 40,
+            "_string_content": {
+              "$type": 42,
+              "_content": [
+                {
+                  "$type": 23,
+                  "$text": "-"
+                }
+              ]
+            }
+          },
+          "_elements": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28
+              ],
+              "trailing": [
+                28,
+                32
+              ]
+            }
+          }
+        }
+      ],
+      "_elements": [
+        {
+          "$type": 39,
+          "_name": {
+            "$type": 6,
+            "$text": "ops"
+          }
+        }
+      ]
+    },
+    "expectedOutput": "[\n  \"?\"\n  \"+\"\n  \"-\"\n] @ops",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -5074,10 +5404,102 @@
     "sourceIn": "[\n  \"?\"\n  \"+\"\n  \"-\"\n] @ops",
     "pattern": "list",
     "edits": [],
-    "expectedSourceOut": "[\n  \"?\"\n  \"+\"\n  \"-\"] @ops",
+    "expectedSourceOut": "[\n  \"?\"\n  \"+\"\n  \"-\"\n] @ops",
     "expectedReparseTree": "(list definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))) elements: (capture name: (identifier)))",
-    "wrappedText": "[\n  \"?\"\n  \"+\"\n  \"-\"] @ops\n\n(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?\n  ] @conditional.inner) @conditional.outer\n",
+    "wrappedText": "[\n  \"?\"\n  \"+\"\n  \"-\"\n] @ops\n\n(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?\n  ] @conditional.inner) @conditional.outer\n",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "list",
+    "input": {
+      "$type": 44,
+      "_definitions": [
+        {
+          "$type": 50,
+          "_name": {
+            "$type": 5,
+            "$text": "condition"
+          },
+          "_definition": {
+            "$type": 61,
+            "_name": 7,
+            "_elements": []
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28,
+                31
+              ]
+            }
+          }
+        },
+        {
+          "$type": 50,
+          "_name": {
+            "$type": 5,
+            "$text": "consequence"
+          },
+          "_definition": {
+            "$type": 61,
+            "_name": 7,
+            "_elements": []
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28
+              ]
+            }
+          }
+        },
+        {
+          "$type": 50,
+          "_name": {
+            "$type": 5,
+            "$text": "alternative"
+          },
+          "_definition": {
+            "$type": 61,
+            "_name": 7,
+            "_elements": [
+              {
+                "$type": 54,
+                "_quantifier": 4
+              }
+            ]
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28
+              ],
+              "trailing": [
+                28,
+                32
+              ]
+            }
+          }
+        }
+      ],
+      "_elements": [
+        {
+          "$type": 39,
+          "_name": {
+            "$type": 6,
+            "$text": "conditional.inner"
+          }
+        }
+      ]
+    },
+    "expectedOutput": "[\n  condition: (_)\n  consequence: (_)\n  alternative: (_)?\n] @conditional.inner",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -5085,9 +5507,9 @@
     "sourceIn": "[\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?\n  ] @conditional.inner",
     "pattern": "list",
     "edits": [],
-    "expectedSourceOut": "[\n  condition: (_)\n  consequence: (_)\n  alternative: (_)?] @conditional.inner",
+    "expectedSourceOut": "[\n  condition: (_)\n  consequence: (_)\n  alternative: (_)?\n] @conditional.inner",
     "expectedReparseTree": "(list definitions: (field_definition name: (identifier) definition: (named_node_plain)) definitions: (field_definition name: (identifier) definition: (named_node_plain)) definitions: (field_definition name: (identifier) definition: (named_node_plain elements: (list_element_quantifier quantifier: (quantifier)))) elements: (capture name: (identifier)))",
-    "wrappedText": "[\n  condition: (_)\n  consequence: (_)\n  alternative: (_)?] @conditional.inner\n\n(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?\n  ] @conditional.inner) @conditional.outer\n",
+    "wrappedText": "[\n  condition: (_)\n  consequence: (_)\n  alternative: (_)?\n] @conditional.inner\n\n(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?\n  ] @conditional.inner) @conditional.outer\n",
     "wrappedOffset": 0
   },
   {
@@ -5487,14 +5909,142 @@
     "wrappedOffset": 12
   },
   {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "named_node_plain",
+    "input": {
+      "$type": 61,
+      "_name": {
+        "$type": 5,
+        "$text": "if_statement"
+      },
+      "_named_node_group": {
+        "$type": 63,
+        "_named_node_expressions": [
+          {
+            "$type": 44,
+            "_definitions": [
+              {
+                "$type": 50,
+                "_name": {
+                  "$type": 5,
+                  "$text": "condition"
+                },
+                "_definition": {
+                  "$type": 61,
+                  "_name": 7,
+                  "_elements": []
+                },
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      28,
+                      31
+                    ]
+                  }
+                }
+              },
+              {
+                "$type": 50,
+                "_name": {
+                  "$type": 5,
+                  "$text": "consequence"
+                },
+                "_definition": {
+                  "$type": 61,
+                  "_name": 7,
+                  "_elements": []
+                },
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      28
+                    ]
+                  }
+                }
+              },
+              {
+                "$type": 50,
+                "_name": {
+                  "$type": 5,
+                  "$text": "alternative"
+                },
+                "_definition": {
+                  "$type": 61,
+                  "_name": 7,
+                  "_elements": [
+                    {
+                      "$type": 54,
+                      "_quantifier": 4
+                    }
+                  ]
+                },
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      28
+                    ],
+                    "trailing": [
+                      28,
+                      32
+                    ]
+                  }
+                }
+              }
+            ],
+            "_elements": [
+              {
+                "$type": 39,
+                "_name": {
+                  "$type": 6,
+                  "$text": "conditional.inner"
+                }
+              }
+            ]
+          }
+        ],
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              28,
+              31
+            ]
+          }
+        }
+      },
+      "_elements": [
+        {
+          "$type": 39,
+          "_name": {
+            "$type": 6,
+            "$text": "conditional.outer"
+          },
+          "$_layout": {
+            "trivia": {
+              "trailing": [
+                32
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "expectedOutput": "(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?\n  ] @conditional.inner) @conditional.outer",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
+  },
+  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?\n  ] @conditional.inner) @conditional.outer",
     "pattern": "named_node_plain",
     "edits": [],
-    "expectedSourceOut": "(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?] @conditional.inner) @conditional.outer",
+    "expectedSourceOut": "(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?\n  ] @conditional.inner) @conditional.outer",
     "expectedReparseTree": "(named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (list definitions: (field_definition name: (identifier) definition: (named_node_plain)) definitions: (field_definition name: (identifier) definition: (named_node_plain)) definitions: (field_definition name: (identifier) definition: (named_node_plain elements: (list_element_quantifier quantifier: (quantifier)))) elements: (capture name: (identifier)))) elements: (capture name: (identifier)))",
-    "wrappedText": "(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?] @conditional.inner) @conditional.outer\n",
+    "wrappedText": "(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?\n  ] @conditional.inner) @conditional.outer\n",
     "wrappedOffset": 0
   },
   {
@@ -5584,14 +6134,111 @@
     "wrappedOffset": 0
   },
   {
+    "kind": "render",
+    "grammar": "scm",
+    "pattern": "named_node_group_children",
+    "input": {
+      "$type": 63,
+      "_named_node_expressions": [
+        {
+          "$type": 44,
+          "_definitions": [
+            {
+              "$type": 50,
+              "_name": {
+                "$type": 5,
+                "$text": "condition"
+              },
+              "_definition": {
+                "$type": 61,
+                "_name": 7,
+                "_elements": []
+              },
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    28,
+                    31
+                  ]
+                }
+              }
+            },
+            {
+              "$type": 50,
+              "_name": {
+                "$type": 5,
+                "$text": "consequence"
+              },
+              "_definition": {
+                "$type": 61,
+                "_name": 7,
+                "_elements": []
+              },
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    28
+                  ]
+                }
+              }
+            },
+            {
+              "$type": 50,
+              "_name": {
+                "$type": 5,
+                "$text": "alternative"
+              },
+              "_definition": {
+                "$type": 61,
+                "_name": 7,
+                "_elements": [
+                  {
+                    "$type": 54,
+                    "_quantifier": 4
+                  }
+                ]
+              },
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    28
+                  ],
+                  "trailing": [
+                    28,
+                    32
+                  ]
+                }
+              }
+            }
+          ],
+          "_elements": [
+            {
+              "$type": 39,
+              "_name": {
+                "$type": 6,
+                "$text": "conditional.inner"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "expectedOutput": "[\n  condition: (_)\n  consequence: (_)\n  alternative: (_)?\n] @conditional.inner",
+    "options": {
+      "layout": {
+        "indent": "  "
+      }
+    }
+  },
+  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "[\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?\n  ] @conditional.inner",
     "pattern": "named_node_group_children",
     "edits": [],
-    "expectedSourceOut": "[\n  condition: (_)\n  consequence: (_)\n  alternative: (_)?] @conditional.inner",
+    "expectedSourceOut": "[\n  condition: (_)\n  consequence: (_)\n  alternative: (_)?\n] @conditional.inner",
     "expectedReparseTree": "(named_node_group_children named_node_expressions: (list definitions: (field_definition name: (identifier) definition: (named_node_plain)) definitions: (field_definition name: (identifier) definition: (named_node_plain)) definitions: (field_definition name: (identifier) definition: (named_node_plain elements: (list_element_quantifier quantifier: (quantifier)))) elements: (capture name: (identifier))))",
-    "wrappedText": "(node [\n  condition: (_)\n  consequence: (_)\n  alternative: (_)?] @conditional.inner)\n",
+    "wrappedText": "(node [\n  condition: (_)\n  consequence: (_)\n  alternative: (_)?\n] @conditional.inner)\n",
     "wrappedOffset": 6
   },
   {
