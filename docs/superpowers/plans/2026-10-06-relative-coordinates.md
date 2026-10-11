@@ -1151,7 +1151,7 @@ Full gates; validation rows identical. Commit `feat(core): gaps and root edges c
 
 ### Task 11b: A list's flanks, after 3a
 
-After the arena-tables plan's 3a, each node's sides live in the native trivia table: its comments, the line breaks that differ from the seam's default, and the indentation a side needs.
+After the arena-tables plan's 3a, each node's sides live in the native trivia table. For a parsed tree a side holds its comments and the source's line layout: every run that holds a break, with its blank lines and indentation, whatever its seam's default.
 - A snapshot carries each node's sides in its layout, read from the table.
 - `fill_source_flanks` takes a snapshot list's flanks from its first item's leading side and its last item's trailing side, in place of the text window.
 - It gets no geometry-only indentation rule.
