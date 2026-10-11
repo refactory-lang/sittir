@@ -147,7 +147,7 @@ describe('deriveVocabulary', () => {
 		expect(cls.has('heritage')).toBe(false);
 	});
 	it('renames the slot a positional wildcard capture stands at', () => {
-		expect([...(d.members.get('expression.unary')?.keys() ?? [])].sort()).toEqual(['argument', 'operator']);
+		expect([...(d.members.get('expression.unary')?.keys() ?? [])].sort()).toEqual(['argument']);
 		expect(d.members.get('expression.try')?.has('argument')).toBe(true);
 		expect(d.members.get('expression.try')?.has('value')).toBe(false);
 	});

@@ -54,23 +54,23 @@ export const querySlots: QuerySlots = Object.freeze({
 		['suffix', { fields: ['suffix'], kinds: [] }]
 	],
 	145: [
-		['b', { fields: ['b'], kinds: [] }],
+		['byte', { fields: ['byte'], kinds: [] }],
 		['content', { fields: ['content'], kinds: [] }]
 	],
 	147: [
-		['b', { fields: ['b'], kinds: [] }],
+		['byte', { fields: ['byte'], kinds: [] }],
 		['content', { fields: ['content'], kinds: [] }]
 	],
 	148: [
-		['b', { fields: ['b'], kinds: [] }],
+		['byte', { fields: ['byte'], kinds: [] }],
 		['content', { fields: ['content'], kinds: [] }]
 	],
 	149: [
-		['b', { fields: ['b'], kinds: [] }],
+		['byte', { fields: ['byte'], kinds: [] }],
 		['content', { fields: ['content'], kinds: [] }]
 	],
 	150: [
-		['b', { fields: ['b'], kinds: [] }],
+		['byte', { fields: ['byte'], kinds: [] }],
 		['content', { fields: ['content'], kinds: [] }]
 	],
 	151: [['content', { fields: ['content'], kinds: [] }]],

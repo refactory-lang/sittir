@@ -1,7 +1,7 @@
 import { childFields, fieldRenameGrammar, fieldRenameIssue, fieldWrapGrammar, fieldWrapIssue, isRecord, symbolNames, type FieldRename, type FieldWrap, type GrammarRecord, type Split } from '../dsl/bind.ts';
 import { isPrecWrapper } from '../types/runtime-shapes.ts';
 import type { RawGrammar } from '../compiler/types.ts';
-import { type BindingFacts, type MemberFact, type RefinedClaim, WILDCARD, refineClaims } from './facts.ts';
+import { type BindingFacts, type MemberFact, type RefinedClaim, WILDCARD, isNamedMember, refineClaims } from './facts.ts';
 import type { MemberRoute } from './routes.ts';
 
 export type OverlayEdit = { readonly field: string } | { readonly alias: { readonly from: string; readonly to: string } };
@@ -204,7 +204,8 @@ export function deriveOverlay(input: OverlayInput): { overlay: BindingsOverlay; 
 	const vocabOf = new Map([...naming].map(([kind, c]) => [kind, c.vocab]));
 	const realizedMembers: string[] = [];
 	const candidates: { row: string; request: FieldRequest }[] = [];
-	for (const m of facts.members) {
+	const named = facts.members.filter(isNamedMember);
+	for (const m of named) {
 		const row = `${m.owner}.${m.name}`;
 		const vocab = vocabOf.get(m.owner);
 		if (vocab !== undefined && vocabMembers.get(vocab)?.has(m.name) === false) {
@@ -279,7 +280,7 @@ export function deriveOverlay(input: OverlayInput): { overlay: BindingsOverlay; 
 	}
 	const implicitMembers: string[] = [];
 	const implicitRows = new Set<string>();
-	const routed = new Set(facts.members.map((m) => `${m.owner}.${m.name}`));
+	const routed = new Set(named.map((m) => `${m.owner}.${m.name}`));
 	for (const [owner, vocab] of vocabOf) {
 		for (const member of vocabMembers.get(vocab) ?? []) {
 			const child = memberFieldName(member);

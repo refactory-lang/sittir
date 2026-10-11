@@ -64,10 +64,12 @@ export namespace Statement {
 	export interface Export<G extends GrammarContext<G>> extends SubKindOf<V.Statement<G>> {
 		// claimed by t
 		readonly $kind: 'statement.export';
-		readonly exportClause?: V.Clause.Export<G>;
-		readonly expression?: G['slots']['statement.export']['expression'];
+		readonly declaration?: G['slots']['statement.export']['declaration'];
+		readonly decorators?: V.Attribute.Decorator<G>[];
+		readonly exportClause?: V.Clause.Export<G> | V.Clause.Export.Namespace<G>;
 		readonly name?: G['identifier'];
 		readonly source?: V.Literal.String<G>;
+		readonly value?: G['slots']['statement.export']['value'];
 	}
 	export interface Expression<G extends GrammarContext<G>> extends SubKindOf<V.Statement<G>> {
 		// claimed by prt

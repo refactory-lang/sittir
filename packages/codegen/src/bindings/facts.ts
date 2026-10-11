@@ -46,6 +46,7 @@ export interface UnclaimedFact {
 
 export type MemberFact =
 	| ({ readonly route: 'rename'; readonly owner: string; readonly name: string } & SlotSelector)
+	| ({ readonly route: 'dropped'; readonly owner: string } & SlotSelector)
 	| {
 			readonly route: 'presence';
 			readonly owner: string;
@@ -62,6 +63,10 @@ export type MemberFact =
 			readonly multiple: boolean;
 			readonly via: readonly SlotSelector[];
 	  } & SlotSelector);
+
+export type NamedMemberFact = Exclude<MemberFact, { readonly route: 'dropped' }>;
+
+export const isNamedMember = (member: MemberFact): member is NamedMemberFact => member.route !== 'dropped';
 
 export interface ContainerCapture extends SlotSelector {
 	readonly name: string;
@@ -135,7 +140,18 @@ export interface ModelNode {
 	readonly enumMembers: readonly EnumMember[];
 	readonly text: string | null;
 	readonly pattern: string | null;
+	readonly variantOf: string | null;
+	readonly shownAs: readonly string[];
 }
+
+const FIXED_TEXT_MODEL_TYPES: ReadonlySet<string> = new Set(['keyword', 'punctuation']);
+
+export const isFixedText = (node: ModelNode | undefined): node is ModelNode & { readonly text: string } =>
+	node !== undefined && FIXED_TEXT_MODEL_TYPES.has(node.modelType) && node.text !== null;
+
+const IDENTIFIER = 'identifier';
+
+export const isIdentifierPath = (vocab: string): boolean => vocab === IDENTIFIER || vocab.startsWith(`${IDENTIFIER}.`);
 
 export type SlotModel = ReadonlyMap<string, ModelNode>;
 
@@ -186,12 +202,11 @@ function refinementKindOf(claim: ClaimFact): RefinementKind {
 }
 
 export function refineClaims(claims: readonly ClaimFact[]): RefinedClaim[] {
-	return claims.map((claim, index) => {
+	return claims.map((claim) => {
 		const unrefined = { ...claim, refines: null, refinement: null };
 		if (claim.kind === null || claim.kind === WILDCARD) return unrefined;
 		const placement = claim.within.join('/');
 		const parent = claims
-			.slice(0, index)
 			.filter((p) => p.kind === claim.kind && p.within.join('/') === placement && claim.vocab.startsWith(`${p.vocab}.`))
 			.reduce<ClaimFact | undefined>((deepest, p) => (deepest === undefined || p.vocab.length > deepest.vocab.length ? p : deepest), undefined);
 		const refinement = refinementKindOf(claim);

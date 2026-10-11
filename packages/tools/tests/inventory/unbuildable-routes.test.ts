@@ -10,8 +10,15 @@ const CEILING: Readonly<Record<string, readonly string[]>> = {
 		'comparison_operator.operator',
 		'function_definition.doc'
 	],
-	rust: ['impl_item_body.implements', 'impl_item_body.receiver'],
+	rust: [
+		'impl_item_body.implements',
+		'impl_item_body.receiver',
+		// flag told by the variant form's own text; the build picks the kind
+		'reference_expression_raw_const.raw',
+		'reference_expression_raw_mut.raw'
+	],
 	typescript: [
+		// flag told by the variant form's own text; the build picks the kind
 		'abstract_class_declaration.abstract',
 		'generator_function.generator',
 		'generator_function_declaration.generator',

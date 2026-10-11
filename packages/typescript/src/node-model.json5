@@ -5056,6 +5056,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "declaration",
       "slots": [
         {
           "name": "decorator",
@@ -5698,6 +5699,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "declaration",
       "slots": [
         {
           "name": "content",
@@ -5768,6 +5770,7 @@
         "ambientDeclarationGlobal"
       ],
       "hidden": false,
+      "variantOf": "ambient_declaration",
       "slots": [
         {
           "name": "body",
@@ -5826,6 +5829,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "ambient_declaration",
       "slots": [
         {
           "name": "name",
@@ -6006,6 +6010,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "elements",
@@ -6050,6 +6055,7 @@
         "arrayPattern"
       ],
       "hidden": false,
+      "variantOf": "_destructuring_pattern",
       "slots": [
         {
           "name": "elements",
@@ -6100,6 +6106,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_type",
       "slots": [
         {
           "name": "type",
@@ -6208,6 +6215,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "async",
@@ -6316,6 +6324,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "arrow_function",
       "slots": [
         {
           "name": "parameter",
@@ -6495,6 +6504,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "expression",
       "slots": [
         {
           "name": "expression",
@@ -6695,6 +6705,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "expression",
       "slots": [
         {
           "name": "using",
@@ -6862,6 +6873,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "expression",
       "slots": [
         {
           "name": "left",
@@ -7189,6 +7201,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "expression",
       "slots": [
         {
           "name": "expression",
@@ -7348,6 +7361,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "expression",
       "slots": [
         {
           "name": "left",
@@ -7601,6 +7615,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "binary_expression",
       "slots": [
         {
           "name": "left",
@@ -7702,6 +7717,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "statement",
       "slots": [
         {
           "name": "label",
@@ -7775,6 +7791,7 @@
         ]
       ],
       "hidden": true,
+      "variantOf": "primary_expression",
       "transparent": true,
       "subtypes": [
         "call_expression_call",
@@ -7807,6 +7824,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "call_expression",
       "slots": [
         {
           "name": "function",
@@ -7909,6 +7927,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "call_expression",
       "slots": [
         {
           "name": "function",
@@ -8004,6 +8023,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "call_expression",
       "slots": [
         {
           "name": "function",
@@ -8342,6 +8362,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "decorator",
@@ -8510,6 +8531,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "_class_body_member",
       "slots": [
         {
           "name": "member",
@@ -8618,6 +8640,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "_class_body_member",
       "slots": [
         {
           "name": "decorator",
@@ -8713,6 +8736,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "_class_body_member",
       "slots": [
         {
           "name": "method_signature",
@@ -8789,6 +8813,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "declaration",
       "slots": [
         {
           "name": "decorator",
@@ -8987,6 +9012,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "class_heritage",
       "slots": [
         {
           "name": "extends_clause",
@@ -9062,6 +9088,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_class_body_member",
       "slots": [
         {
           "name": "terminator",
@@ -9167,6 +9194,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "comment",
       "slots": [
         {
           "name": "content",
@@ -9246,6 +9274,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "comment",
       "slots": [
         {
           "name": "content",
@@ -9311,6 +9340,7 @@
         "computedPropertyName"
       ],
       "hidden": false,
+      "variantOf": "_property_name",
       "slots": [
         {
           "name": "expression",
@@ -9433,6 +9463,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_type",
       "slots": [
         {
           "name": "left",
@@ -9709,6 +9740,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "type",
       "slots": [
         {
           "name": "abstract",
@@ -9823,6 +9855,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "statement",
       "slots": [
         {
           "name": "label",
@@ -9943,6 +9976,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "statement",
       "slots": [
         {
           "name": "terminator",
@@ -10441,6 +10475,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "statement",
       "slots": [
         {
           "name": "body",
@@ -10739,6 +10774,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_class_body_member",
       "isParameterless": true,
       "stampExpression": "\";\" as const",
       "text": ";",
@@ -10783,6 +10819,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_enum_body_element",
       "slots": [
         {
           "name": "name",
@@ -11134,6 +11171,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "_enum_body_element",
       "slots": [
         {
           "name": "name",
@@ -11558,6 +11596,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "declaration",
       "slots": [
         {
           "name": "const",
@@ -11751,6 +11790,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_type",
       "isParameterless": true,
       "stampExpression": "\"*\" as const",
       "text": "*",
@@ -12010,6 +12050,7 @@
       "annotations": {
         "hoisted": true
       },
+      "variantOf": "export_statement",
       "transparent": true,
       "subtypes": [
         "export_statement_default_declaration",
@@ -12047,6 +12088,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "export_statement_default",
       "slots": [
         {
           "name": "decorator",
@@ -12143,6 +12185,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "export_statement_default_declaration",
       "slots": [
         {
           "name": "content",
@@ -12318,6 +12361,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "export_statement_default_declaration_default_kw",
       "slots": [
         {
           "name": "value",
@@ -12482,6 +12526,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "export_statement_default",
       "slots": [
         {
           "name": "content",
@@ -12618,6 +12663,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "export_statement_default_from",
       "slots": [
         {
           "name": "export_clause",
@@ -12701,6 +12747,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "export_statement_default_from",
       "slots": [
         {
           "name": "namespace_export",
@@ -12784,6 +12831,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "export_statement_default_from",
       "slots": [
         {
           "name": "source",
@@ -12841,6 +12889,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "export_statement",
       "slots": [
         {
           "name": "expression",
@@ -12999,6 +13048,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "export_statement",
       "slots": [
         {
           "name": "name",
@@ -13082,6 +13132,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "export_statement",
       "slots": [
         {
           "name": "export_clause",
@@ -13201,6 +13252,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "statement",
       "slots": [
         {
           "name": "expression",
@@ -13585,6 +13637,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_type",
       "slots": [
         {
           "name": "type",
@@ -13697,6 +13750,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "_for_header",
       "slots": [
         {
           "name": "kind",
@@ -13857,6 +13911,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "_for_header",
       "slots": [
         {
           "name": "left",
@@ -13965,6 +14020,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "_for_header",
       "slots": [
         {
           "name": "left",
@@ -14097,6 +14153,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "statement",
       "slots": [
         {
           "name": "await",
@@ -14190,6 +14247,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "statement",
       "slots": [
         {
           "name": "initializer",
@@ -14464,6 +14522,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "declaration",
       "slots": [
         {
           "name": "async",
@@ -14644,6 +14703,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "async",
@@ -14819,6 +14879,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "declaration",
       "slots": [
         {
           "name": "async",
@@ -14991,6 +15052,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "type",
       "slots": [
         {
           "name": "type_parameters",
@@ -15090,6 +15152,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "async",
@@ -15255,6 +15318,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "declaration",
       "slots": [
         {
           "name": "async",
@@ -15689,6 +15753,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "statement",
       "slots": [
         {
           "name": "condition",
@@ -15842,6 +15907,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "declaration",
       "slots": [
         {
           "name": "name",
@@ -16064,6 +16130,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "import_clause",
       "slots": [
         {
           "name": "identifier",
@@ -16140,6 +16207,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "import_clause_default_import",
       "slots": [
         {
           "name": "content",
@@ -16286,6 +16354,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "import_specifier",
       "slots": [
         {
           "name": "import_kind",
@@ -16399,6 +16468,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "import_specifier",
       "slots": [
         {
           "name": "import_kind",
@@ -16527,6 +16597,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "statement",
       "slots": [
         {
           "name": "import_clause",
@@ -16667,6 +16738,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "import_statement",
       "slots": [
         {
           "name": "import_clause",
@@ -16761,6 +16833,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "index_signature",
       "slots": [
         {
           "name": "sign",
@@ -17048,6 +17121,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "index_signature",
       "slots": [
         {
           "name": "sign",
@@ -17178,6 +17252,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_type",
       "slots": [
         {
           "name": "type",
@@ -17370,6 +17445,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "expression",
       "slots": [
         {
           "name": "expression",
@@ -17475,6 +17551,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "declaration",
       "slots": [
         {
           "name": "name",
@@ -17678,6 +17755,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_type",
       "slots": [
         {
           "name": "left",
@@ -17777,6 +17855,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "statement",
       "slots": [
         {
           "name": "label",
@@ -18109,6 +18188,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_type",
       "slots": [
         {
           "name": "content",
@@ -18224,6 +18304,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "literal_type",
       "slots": [
         {
           "name": "operator",
@@ -18293,6 +18374,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_type",
       "slots": [
         {
           "name": "type",
@@ -18602,6 +18684,7 @@
         ]
       ],
       "hidden": true,
+      "variantOf": "primary_expression",
       "transparent": true,
       "subtypes": [
         "meta_property_import_meta",
@@ -18633,6 +18716,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "meta_property",
       "isParameterless": true,
       "stampExpression": "\"import.meta\" as const",
       "text": "import.meta",
@@ -18664,6 +18748,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "meta_property",
       "isParameterless": true,
       "stampExpression": "\"new.target\" as const",
       "text": "new.target",
@@ -19558,6 +19643,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "declaration",
       "slots": [
         {
           "name": "name",
@@ -20208,6 +20294,7 @@
       "annotations": {
         "tokenForm": true
       },
+      "variantOf": "number",
       "transparent": true,
       "subtypes": [
         "number_bigint_binary",
@@ -20248,6 +20335,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "number_bigint",
       "slots": [
         {
           "name": "content",
@@ -20335,6 +20423,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "number_bigint",
       "slots": [
         {
           "name": "content",
@@ -20422,6 +20511,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "number_bigint",
       "slots": [
         {
           "name": "content",
@@ -20509,6 +20599,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "number_bigint",
       "slots": [
         {
           "name": "content",
@@ -20590,6 +20681,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "number",
       "slots": [
         {
           "name": "prefix",
@@ -20699,6 +20791,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "number",
       "pattern": "\\d(_?\\d)*",
       "leafPattern": "/^(?:(?:\\d(_?\\d)*))$/u",
       "oneSurface": true,
@@ -20730,6 +20823,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "number",
       "slots": [
         {
           "name": "fraction",
@@ -20893,6 +20987,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "number",
       "slots": [
         {
           "name": "integer",
@@ -21082,6 +21177,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "number",
       "slots": [
         {
           "name": "integer",
@@ -21241,6 +21337,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "number",
       "slots": [
         {
           "name": "prefix",
@@ -21364,6 +21461,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "number",
       "slots": [
         {
           "name": "prefix",
@@ -21871,6 +21969,7 @@
         "objectPattern"
       ],
       "hidden": false,
+      "variantOf": "_destructuring_pattern",
       "slots": [
         {
           "name": "properties",
@@ -22581,6 +22680,7 @@
         "optionalParameter"
       ],
       "hidden": false,
+      "variantOf": "_formal_parameter",
       "slots": [
         {
           "name": "decorator",
@@ -22749,6 +22849,7 @@
         "optionalTupleParameter"
       ],
       "hidden": false,
+      "variantOf": "_tuple_type_member",
       "slots": [
         {
           "name": "name",
@@ -22807,6 +22908,7 @@
         "optionalType"
       ],
       "hidden": false,
+      "variantOf": "_tuple_type_member",
       "slots": [
         {
           "name": "type",
@@ -23414,6 +23516,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "parenthesized_expression",
       "slots": [
         {
           "name": "sequence_expression",
@@ -23471,6 +23574,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "parenthesized_expression",
       "slots": [
         {
           "name": "expression",
@@ -23536,6 +23640,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_type",
       "slots": [
         {
           "name": "type",
@@ -25030,6 +25135,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "type",
       "slots": [
         {
           "name": "type",
@@ -25138,6 +25244,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "pattern",
@@ -25235,6 +25342,7 @@
         "requiredParameter"
       ],
       "hidden": false,
+      "variantOf": "_formal_parameter",
       "slots": [
         {
           "name": "decorator",
@@ -25701,6 +25809,7 @@
         "restType"
       ],
       "hidden": false,
+      "variantOf": "_tuple_type_member",
       "slots": [
         {
           "name": "type",
@@ -25819,6 +25928,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "statement",
       "slots": [
         {
           "name": "expression",
@@ -25983,6 +26093,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "expression",
       "slots": [
         {
           "name": "expression",
@@ -26932,6 +27043,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "string",
       "slots": [
         {
           "name": "elements",
@@ -27002,6 +27114,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "string",
       "slots": [
         {
           "name": "elements",
@@ -27152,6 +27265,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "isParameterless": true,
       "stampExpression": "\"super\" as const",
       "text": "super",
@@ -27330,6 +27444,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "statement",
       "slots": [
         {
           "name": "value",
@@ -27414,6 +27529,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_type",
       "slots": [
         {
           "name": "elements",
@@ -27753,6 +27869,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "expression",
       "slots": [
         {
           "name": "condition",
@@ -27874,6 +27991,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "statement",
       "slots": [
         {
           "name": "expression",
@@ -28070,6 +28188,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "statement",
       "slots": [
         {
           "name": "body",
@@ -28149,6 +28268,7 @@
         "tupleParameter"
       ],
       "hidden": false,
+      "variantOf": "_tuple_type_member",
       "slots": [
         {
           "name": "name",
@@ -28220,6 +28340,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_type",
       "slots": [
         {
           "name": "tuple_type_members",
@@ -28500,6 +28621,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "declaration",
       "slots": [
         {
           "name": "name",
@@ -28817,6 +28939,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "expression",
       "slots": [
         {
           "name": "type_arguments",
@@ -29236,6 +29359,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_type",
       "slots": [
         {
           "name": "expression",
@@ -29999,6 +30123,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "expression",
       "slots": [
         {
           "name": "operator",
@@ -30149,6 +30274,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_type",
       "slots": [
         {
           "name": "left",
@@ -30231,6 +30357,7 @@
         ]
       ],
       "hidden": true,
+      "variantOf": "expression",
       "transparent": true,
       "subtypes": [
         "update_expression_postfix",
@@ -30262,6 +30389,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "update_expression",
       "slots": [
         {
           "name": "argument",
@@ -30340,6 +30468,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "update_expression",
       "slots": [
         {
           "name": "operator",
@@ -30522,6 +30651,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "variable_declarator",
       "slots": [
         {
           "name": "name",
@@ -30591,6 +30721,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "variable_declarator",
       "slots": [
         {
           "name": "name",
@@ -30711,6 +30842,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "statement",
       "slots": [
         {
           "name": "condition",
@@ -30785,6 +30917,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "statement",
       "slots": [
         {
           "name": "object",
@@ -30849,6 +30982,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "expression",
       "slots": [
         {
           "name": "expression",
@@ -30991,6 +31125,7 @@
         "definedBy": "enrich"
       },
       "seated": true,
+      "variantOf": "yield_expression",
       "slots": [
         {
           "name": "expression",

@@ -965,7 +965,7 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 				method: { type: PATTERN, value: '[A-Z]+' },
 				plain: { type: PATTERN, value: '[0-9]+' }
 			}),
-			provenance: { renamedFrom: { binding: 'let_item' }, splitFrom: { method: 'function' } }
+			provenance: { renamedFrom: { binding: 'let_item' }, splitFrom: { method: 'function' }, variantOf: { plain: 'number' } }
 		});
 
 		it('stamps the base kind a renamed kind came from', () => {
@@ -984,6 +984,12 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 			const nodeMap = assemble(AssembleCtx.from(provenanced(), makeIdTables({})));
 			expect(nodeMap.nodes.get('plain')?.renamedFrom).toBeUndefined();
 			expect(nodeMap.nodes.get('plain')?.splitFrom).toBeUndefined();
+		});
+
+		it('stamps the kind an owned variant is a form of, and nothing on other kinds', () => {
+			const nodeMap = assemble(AssembleCtx.from(provenanced(), makeIdTables({})));
+			expect(nodeMap.nodes.get('plain')?.variantOf).toBe('number');
+			expect(nodeMap.nodes.get('binding')?.variantOf).toBeUndefined();
 		});
 	});
 

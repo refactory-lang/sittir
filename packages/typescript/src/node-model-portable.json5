@@ -39,6 +39,19 @@
         "list": false
       }
     },
+    "_template_chars": {
+      "vocab": "literal.string.text",
+      "read": [
+        {
+          "vocab": "literal.string.text",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
     "abstract_class_declaration": {
       "vocab": "declaration.class",
       "read": [
@@ -1167,17 +1180,6 @@
           ]
         },
         {
-          "name": "operator",
-          "route": "slot",
-          "slot": "operator",
-          "path": [
-            {
-              "owner": "augmented_assignment_expression",
-              "slot": "operator"
-            }
-          ]
-        },
-        {
           "name": "right",
           "route": "slot",
           "slot": "right",
@@ -1873,17 +1875,6 @@
             {
               "owner": "binary_expression",
               "slot": "left"
-            }
-          ]
-        },
-        {
-          "name": "operator",
-          "route": "slot",
-          "slot": "operator",
-          "path": [
-            {
-              "owner": "binary_expression",
-              "slot": "operator"
             }
           ]
         },
@@ -3400,6 +3391,118 @@
       ],
       "members": []
     },
+    "export_statement_default": {
+      "vocab": "statement.export",
+      "read": [
+        {
+          "vocab": "statement.export",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
+    "export_statement_default_declaration": {
+      "vocab": "statement.export",
+      "read": [
+        {
+          "vocab": "statement.export",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "decorators",
+          "route": "slot",
+          "slot": "decorator",
+          "path": [
+            {
+              "owner": "export_statement_default_declaration",
+              "slot": "decorator"
+            }
+          ]
+        },
+        {
+          "name": "declaration",
+          "route": "slot",
+          "slot": "content",
+          "except": [
+            "export_statement_default_declaration_default_kw"
+          ],
+          "path": [
+            {
+              "owner": "export_statement_default_declaration",
+              "slot": "content"
+            }
+          ]
+        },
+        {
+          "name": "declaration",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "export_statement_default_declaration_default_kw",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "export_statement_default_declaration_default_kw",
+          "slot": "content",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "export_statement_default_declaration",
+              "slot": "content"
+            },
+            {
+              "owner": "export_statement_default_declaration_default_kw",
+              "slot": "content"
+            }
+          ]
+        },
+        {
+          "name": "value",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "export_statement_default_declaration_default_kw_value",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "export_statement_default_declaration_default_kw",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "export_statement_default_declaration_default_kw_value",
+          "slot": "value",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "export_statement_default_declaration",
+              "slot": "content"
+            },
+            {
+              "owner": "export_statement_default_declaration_default_kw",
+              "slot": "content"
+            },
+            {
+              "owner": "export_statement_default_declaration_default_kw_value",
+              "slot": "value"
+            }
+          ]
+        }
+      ]
+    },
     "export_statement_default_declaration_default_kw": {
       "container": {
         "kinds": [
@@ -3410,6 +3513,161 @@
         "list": false
       }
     },
+    "export_statement_default_from": {
+      "vocab": "statement.export",
+      "read": [
+        {
+          "vocab": "statement.export",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "exportClause",
+          "route": "slot",
+          "slot": "content",
+          "except": [
+            "export_statement_default_from_star_from",
+            "export_statement_default_from_ns_from",
+            "export_statement_default_from_clause_from"
+          ],
+          "path": [
+            {
+              "owner": "export_statement_default_from",
+              "slot": "content"
+            }
+          ]
+        },
+        {
+          "name": "exportClause",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "export_statement_default_from_clause_from",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "export_statement_default_from_clause_from",
+          "slot": "export_clause",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "export_statement_default_from",
+              "slot": "content"
+            },
+            {
+              "owner": "export_statement_default_from_clause_from",
+              "slot": "export_clause"
+            }
+          ]
+        },
+        {
+          "name": "exportClause",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "export_statement_default_from_ns_from",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "export_statement_default_from_ns_from",
+          "slot": "namespace_export",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "export_statement_default_from",
+              "slot": "content"
+            },
+            {
+              "owner": "export_statement_default_from_ns_from",
+              "slot": "namespace_export"
+            }
+          ]
+        },
+        {
+          "name": "source",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "export_statement_default_from_clause_from",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "export_statement_default_from_clause_from",
+          "slot": "source",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "export_statement_default_from",
+              "slot": "content"
+            },
+            {
+              "owner": "export_statement_default_from_clause_from",
+              "slot": "source"
+            }
+          ]
+        },
+        {
+          "name": "source",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "export_statement_default_from_ns_from",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "export_statement_default_from_ns_from",
+          "slot": "source",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "export_statement_default_from",
+              "slot": "content"
+            },
+            {
+              "owner": "export_statement_default_from_ns_from",
+              "slot": "source"
+            }
+          ]
+        },
+        {
+          "name": "source",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "export_statement_default_from_star_from",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "export_statement_default_from_star_from",
+          "slot": "source",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "export_statement_default_from",
+              "slot": "content"
+            },
+            {
+              "owner": "export_statement_default_from_star_from",
+              "slot": "source"
+            }
+          ]
+        }
+      ]
+    },
     "export_statement_default_from_star_from": {
       "container": {
         "kinds": [
@@ -3418,6 +3676,92 @@
         "terminals": [],
         "list": false
       }
+    },
+    "export_statement_equals_export": {
+      "vocab": "statement.export",
+      "read": [
+        {
+          "vocab": "statement.export",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "value",
+          "route": "slot",
+          "slot": "expression",
+          "path": [
+            {
+              "owner": "export_statement_equals_export",
+              "slot": "expression"
+            }
+          ]
+        }
+      ]
+    },
+    "export_statement_namespace_export": {
+      "vocab": "statement.export",
+      "read": [
+        {
+          "vocab": "statement.export",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "export_statement_namespace_export",
+              "slot": "name"
+            }
+          ]
+        }
+      ]
+    },
+    "export_statement_type_export": {
+      "vocab": "statement.export",
+      "read": [
+        {
+          "vocab": "statement.export",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "exportClause",
+          "route": "slot",
+          "slot": "export_clause",
+          "path": [
+            {
+              "owner": "export_statement_type_export",
+              "slot": "export_clause"
+            }
+          ]
+        },
+        {
+          "name": "source",
+          "route": "slot",
+          "slot": "source",
+          "path": [
+            {
+              "owner": "export_statement_type_export",
+              "slot": "source"
+            }
+          ]
+        }
+      ]
     },
     "expression_statement": {
       "vocab": "statement.expression",
@@ -4543,6 +4887,89 @@
       ],
       "members": []
     },
+    "import_specifier_as": {
+      "vocab": "clause.import.specifier",
+      "read": [
+        {
+          "vocab": "clause.import.specifier",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "importKind",
+          "route": "slot",
+          "slot": "import_kind",
+          "path": [
+            {
+              "owner": "import_specifier_as",
+              "slot": "import_kind"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "import_specifier_as",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "alias",
+          "route": "slot",
+          "slot": "alias",
+          "path": [
+            {
+              "owner": "import_specifier_as",
+              "slot": "alias"
+            }
+          ]
+        }
+      ]
+    },
+    "import_specifier_name": {
+      "vocab": "clause.import.specifier",
+      "read": [
+        {
+          "vocab": "clause.import.specifier",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "importKind",
+          "route": "slot",
+          "slot": "import_kind",
+          "path": [
+            {
+              "owner": "import_specifier_name",
+              "slot": "import_kind"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "import_specifier_name",
+              "slot": "name"
+            }
+          ]
+        }
+      ]
+    },
     "import_specifiers": {
       "container": {
         "kinds": [
@@ -4617,17 +5044,6 @@
       ],
       "members": [
         {
-          "name": "importClause",
-          "route": "slot",
-          "slot": "import_clause",
-          "path": [
-            {
-              "owner": "import_statement",
-              "slot": "import_clause"
-            }
-          ]
-        },
-        {
           "name": "fromClause",
           "route": "slot",
           "slot": "from_clause",
@@ -4691,6 +5107,75 @@
         }
       ],
       "members": []
+    },
+    "index_signature_colon": {
+      "vocab": "declaration.signature.index",
+      "read": [
+        {
+          "vocab": "declaration.signature.index",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "sign",
+          "route": "slot",
+          "slot": "sign",
+          "path": [
+            {
+              "owner": "index_signature_colon",
+              "slot": "sign"
+            }
+          ]
+        },
+        {
+          "name": "readonly",
+          "route": "slot",
+          "slot": "readonly",
+          "path": [
+            {
+              "owner": "index_signature_colon",
+              "slot": "readonly"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "index_signature_colon",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "indexType",
+          "route": "slot",
+          "slot": "index_type",
+          "path": [
+            {
+              "owner": "index_signature_colon",
+              "slot": "index_type"
+            }
+          ]
+        },
+        {
+          "name": "type",
+          "route": "slot",
+          "slot": "type",
+          "path": [
+            {
+              "owner": "index_signature_colon",
+              "slot": "type"
+            }
+          ]
+        }
+      ]
     },
     "index_signature_mapped_type_clause": {
       "vocab": "declaration.signature.index.mapped",
@@ -5094,17 +5579,6 @@
       ],
       "members": [
         {
-          "name": "binding",
-          "route": "slot",
-          "slot": "kind",
-          "path": [
-            {
-              "owner": "lexical_declaration",
-              "slot": "kind"
-            }
-          ]
-        },
-        {
           "name": "declarators",
           "route": "slot",
           "slot": "declarators",
@@ -5286,6 +5760,32 @@
       ]
     },
     "meta_property": {
+      "vocab": "expression.meta",
+      "read": [
+        {
+          "vocab": "expression.meta",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
+    "meta_property_import_meta": {
+      "vocab": "expression.meta",
+      "read": [
+        {
+          "vocab": "expression.meta",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
+    "meta_property_new_target": {
       "vocab": "expression.meta",
       "read": [
         {
@@ -6034,6 +6534,19 @@
       "members": []
     },
     "number": {
+      "vocab": "literal.number",
+      "read": [
+        {
+          "vocab": "literal.number",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
+    "number_bigint": {
       "vocab": "literal.number",
       "read": [
         {
@@ -6983,6 +7496,29 @@
       "members": []
     },
     "parenthesized_expression_sequence": {
+      "vocab": "expression.parenthesized",
+      "read": [
+        {
+          "vocab": "expression.parenthesized",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "expression",
+          "route": "slot",
+          "slot": "sequence_expression",
+          "path": [
+            {
+              "owner": "parenthesized_expression_sequence",
+              "slot": "sequence_expression"
+            }
+          ]
+        }
+      ],
       "container": {
         "kinds": [
           "sequence_expression"
@@ -6990,6 +7526,42 @@
         "terminals": [],
         "list": false
       }
+    },
+    "parenthesized_expression_typed": {
+      "vocab": "expression.parenthesized",
+      "read": [
+        {
+          "vocab": "expression.parenthesized",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "expression",
+          "route": "slot",
+          "slot": "expression",
+          "path": [
+            {
+              "owner": "parenthesized_expression_typed",
+              "slot": "expression"
+            }
+          ]
+        },
+        {
+          "name": "type",
+          "route": "slot",
+          "slot": "type",
+          "path": [
+            {
+              "owner": "parenthesized_expression_typed",
+              "slot": "type"
+            }
+          ]
+        }
+      ]
     },
     "parenthesized_type": {
       "vocab": "type.parenthesized",
@@ -8027,6 +8599,29 @@
       "members": []
     },
     "string_double": {
+      "vocab": "literal.string",
+      "read": [
+        {
+          "vocab": "literal.string",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "elements",
+          "route": "slot",
+          "slot": "elements",
+          "path": [
+            {
+              "owner": "string_double",
+              "slot": "elements"
+            }
+          ]
+        }
+      ],
       "container": {
         "kinds": [
           "unescaped_double_string_fragment",
@@ -8063,6 +8658,29 @@
       "members": []
     },
     "string_single": {
+      "vocab": "literal.string",
+      "read": [
+        {
+          "vocab": "literal.string",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "elements",
+          "route": "slot",
+          "slot": "elements",
+          "path": [
+            {
+              "owner": "string_single",
+              "slot": "elements"
+            }
+          ]
+        }
+      ],
       "container": {
         "kinds": [
           "unescaped_single_string_fragment",
@@ -9073,17 +9691,6 @@
       ],
       "members": [
         {
-          "name": "operator",
-          "route": "slot",
-          "slot": "operator",
-          "path": [
-            {
-              "owner": "unary_expression",
-              "slot": "operator"
-            }
-          ]
-        },
-        {
           "name": "argument",
           "route": "slot",
           "slot": "argument",
@@ -9101,6 +9708,32 @@
       "read": [
         {
           "vocab": "literal.null.undefined",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
+    "unescaped_double_string_fragment": {
+      "vocab": "literal.string.text",
+      "read": [
+        {
+          "vocab": "literal.string.text",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
+    "unescaped_single_string_fragment": {
+      "vocab": "literal.string.text",
+      "read": [
+        {
+          "vocab": "literal.string.text",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -9245,17 +9878,6 @@
               "slot": "argument"
             }
           ]
-        },
-        {
-          "name": "operator",
-          "route": "slot",
-          "slot": "operator",
-          "path": [
-            {
-              "owner": "update_expression_postfix",
-              "slot": "operator"
-            }
-          ]
         }
       ]
     },
@@ -9323,17 +9945,6 @@
         }
       ],
       "members": [
-        {
-          "name": "operator",
-          "route": "slot",
-          "slot": "operator",
-          "path": [
-            {
-              "owner": "update_expression_prefix",
-              "slot": "operator"
-            }
-          ]
-        },
         {
           "name": "argument",
           "route": "slot",
@@ -9632,14 +10243,14 @@
       {
         "depth": 2,
         "paths": 111,
-        "kinds": 120,
+        "kinds": 133,
         "refinements": 8,
         "aliases": 97
       },
       {
         "depth": 3,
         "paths": 81,
-        "kinds": 67,
+        "kinds": 73,
         "refinements": 55,
         "aliases": 42
       },

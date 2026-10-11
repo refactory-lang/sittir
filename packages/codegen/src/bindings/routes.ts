@@ -1,4 +1,4 @@
-import { WILDCARD, type Anchor, type BindingFacts, type ClaimFact, type EnumMember, type ModelNode, type ModelSlot, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
+import { WILDCARD, isFixedText, isIdentifierPath, type Anchor, type BindingFacts, type ClaimFact, type EnumMember, type ModelNode, type ModelSlot, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
 import { camel, snake } from './names.ts';
 
 export interface LayoutSlot {
@@ -108,7 +108,9 @@ export function modelNode(model: SlotModel, kind: string): ModelNode | undefined
 	return model.get(kind) ?? model.get(`_${kind}`);
 }
 
-export function memberNameOf(renames: ReadonlyMap<string, string>, slotName: string, propertyName: string): string {
+export type SlotNames = ReadonlyMap<string, string | null>;
+
+export function memberNameOf(renames: SlotNames, slotName: string, propertyName: string): string {
 	return camel(renames.get(slotName) ?? propertyName.replace(/_$/, '').replace(/Modifier$/, ''));
 }
 
@@ -137,11 +139,27 @@ function containerOf(input: GrammarInput, node: ModelNode): ContainerUnwrap | un
 		: undefined;
 }
 
-function pinsOf(node: ModelNode | undefined, claim: ClaimFact, renames: ReadonlyMap<string, string>): Pin[] {
+const textOfKind = (model: SlotModel, kind: string): string | undefined => {
+	const node = modelNode(model, kind);
+	return isFixedText(node) ? node.text : undefined;
+};
+
+function fixedValues(model: SlotModel, slot: ModelSlot): readonly string[] | undefined {
+	const texts = slot.kinds.flatMap((kind) => textOfKind(model, kind) ?? []);
+	return texts.length === slot.kinds.length ? [...slot.terminals, ...texts] : undefined;
+}
+
+function toldByRead(model: SlotModel, slot: ModelSlot, pinned: ReadonlySet<string>): boolean {
+	const values = fixedValues(model, slot);
+	if (slot.multiple || values === undefined || values.length === 0) return false;
+	return values.every((v) => pinned.has(v)) || (slot.required && values.length === 1);
+}
+
+function pinsOf(model: SlotModel, node: ModelNode | undefined, claim: ClaimFact, renames: SlotNames): Pin[] {
 	const slots = node?.slots ?? [];
 	const literals: [string, string][] = Object.entries(claim.fieldLiterals);
 	for (const text of claim.tokens) {
-		const pinned = slots.find((s) => s.terminals.includes(text));
+		const pinned = slots.find((s) => s.terminals.includes(text) || s.kinds.some((kind) => textOfKind(model, kind) === text));
 		if (pinned && !literals.some(([field]) => field === pinned.name)) literals.push([pinned.name, text]);
 	}
 	return literals.map(([field, text]) => {
@@ -174,17 +192,55 @@ function isLeafAlias(input: GrammarInput, node: ModelNode): boolean {
 	return node.modelType === 'alias' && node.slots.every((slot) => slot.kinds.length > 0 && slot.kinds.every((k) => modelNode(input.model, k)?.modelType === 'pattern'));
 }
 
-function membersOf(input: GrammarInput, kind: string, renames: ReadonlyMap<string, string>): MemberRoute[] {
+function heldElements(input: GrammarInput, slot: ModelSlot): readonly string[] {
+	return slot.kinds.flatMap((kind) => {
+		const node = modelNode(input.model, kind);
+		const unwrap = node === undefined ? undefined : containerOf(input, node);
+		return unwrap?.list ? unwrap.kinds : slot.multiple ? [kind] : [];
+	});
+}
+
+function listFormItems(input: GrammarInput, node: ModelNode, slotNamesOf: (kind: string) => SlotNames): MemberRoute[] {
+	const owner = node.variantOf;
+	const items = node.slots.find((slot) => slot.multiple && holdsNodes(slot));
+	if (owner === null || items === undefined || !formsOf(input.model, owner).includes(node.kind)) return [];
+	for (const sibling of formsOf(input.model, owner)) {
+		const at = modelNode(input.model, sibling);
+		if (at === undefined || at.modelType === 'list') continue;
+		const holder = at.slots.find((slot) => {
+			const held = heldElements(input, slot);
+			return held.length > 0 && node.elementKinds.every((kind) => held.includes(kind));
+		});
+		if (holder !== undefined)
+			return [{ route: 'slot', name: memberNameOf(slotNamesOf(sibling), holder.name, holder.propertyName), slot: items, path: [{ owner: node.kind, slot: items.name }] }];
+	}
+	return [];
+}
+
+const holdsOnlyText = (slot: ModelSlot): boolean => slot.storage !== 'boolean' && slot.kinds.length === 0 && slot.terminals.length === 0;
+
+function membersOf(input: GrammarInput, kind: string, entries: readonly ReadEntry[], slotNamesOf: (kind: string) => SlotNames): MemberRoute[] {
 	const node = modelNode(input.model, kind);
 	if (node === undefined) return [];
-	const deep = input.bindings.members.filter((m) => m.owner === kind && m.route !== 'rename');
+	if (node.modelType === 'list') return listFormItems(input, node, slotNamesOf);
+	const names = slotNamesOf(kind);
+	const pinned = new Map<string, Set<string>>();
+	for (const pin of entries.flatMap((entry) => entry.pins)) (pinned.get(pin.slot) ?? pinned.set(pin.slot, new Set<string>()).get(pin.slot))?.add(pin.text);
+	const identifier = entries.some((entry) => isIdentifierPath(entry.vocab));
+	const deep = input.bindings.members.filter((m) => m.owner === kind && m.route !== 'rename' && m.route !== 'dropped');
 	const via = new Set(deep.flatMap((m) => (m.route === 'presence' || m.route === 'nested' ? m.via.flatMap((step) => step.kind ?? []) : [])));
 	const routes: MemberRoute[] = [];
-	for (const slot of isLeafAlias(input, node) || node.modelType === 'list' ? [] : node.slots) {
-		if (isLayout(input, kind, slot)) continue;
+	for (const slot of isLeafAlias(input, node) ? [] : node.slots) {
+		if (
+			isLayout(input, kind, slot) ||
+			names.get(slot.name) === null ||
+			(identifier && holdsOnlyText(slot)) ||
+			toldByRead(input.model, slot, pinned.get(slot.name) ?? new Set<string>())
+		)
+			continue;
 		const except = slot.kinds.filter((k) => via.has(k));
 		if (except.length > 0 && except.length === slot.kinds.length) continue;
-		const name = memberNameOf(renames, slot.name, slot.propertyName);
+		const name = memberNameOf(names, slot.name, slot.propertyName);
 		const path = [{ owner: kind, slot: slot.name }];
 		routes.push(
 			except.length === 0
@@ -231,6 +287,15 @@ function membersOf(input: GrammarInput, kind: string, renames: ReadonlyMap<strin
 	return routes;
 }
 
+function refinedParent(kind: string, entries: readonly ReadEntry[]): string | undefined {
+	if (entries.length === 0) return undefined;
+	const parents = new Set(entries.map((e) => e.vocab.slice(0, Math.max(0, e.vocab.lastIndexOf('.')))));
+	const [parent] = parents;
+	if (parents.size > 1 || !parent)
+		throw new Error(`bindings: ${kind} has only refining claims, and their paths share no parent (${entries.map((e) => e.vocab).join(', ')}); claim the kind itself`);
+	return parent;
+}
+
 function concreteKinds(model: SlotModel, kind: string, seen: Set<string> = new Set<string>()): string[] {
 	if (seen.has(kind)) return [];
 	seen.add(kind);
@@ -263,36 +328,52 @@ function ownTextEquals(claim: ClaimFact): readonly string[] {
 	];
 }
 
+export function formsOf(model: SlotModel, kind: string): readonly string[] {
+	if (modelNode(model, kind)?.modelType !== 'supertype') return [kind];
+	return [kind, ...[...model.values()].filter((node) => node.variantOf === kind).flatMap((node) => formsOf(model, node.kind))];
+}
+
 function readKinds(model: SlotModel, kind: string, claim: ClaimFact): readonly string[] {
+	const shown = [...model.values()].filter((node) => node.shownAs.includes(kind)).map((node) => node.kind);
 	const members = modelNode(model, kind)?.enumMembers ?? [];
-	if (members.length === 0) return [kind];
+	if (members.length === 0) return [kind, ...shown];
 	const texts = ownTextEquals(claim);
-	return members.filter((member: EnumMember) => texts.every((text) => text === member.text)).map((member) => member.kind);
+	return [...members.filter((member: EnumMember) => texts.every((text) => text === member.text)).map((member) => member.kind), ...shown];
 }
 
 export function resolveRoutes(input: GrammarInput): GrammarRoutes {
-	const renames = new Map<string, Map<string, string>>();
+	const named = input.bindings.claims.flatMap((c) => (c.kind === null || c.kind === WILDCARD ? [] : [c]));
+	const claimsOwn = new Set(named.map((c) => `${c.kind} ${c.vocab}`));
+	const selfClaimed = new Set(named.map((c) => c.kind));
+	const reached = (owner: string): readonly string[] => formsOf(input.model, owner).filter((form) => form === owner || !selfClaimed.has(form));
+
+	const slotNames = new Map<string, Map<string, string | null>>();
 	for (const member of input.bindings.members) {
-		if (member.route !== 'rename') continue;
-		const slot = slotFor(input.model, modelNode(input.model, member.owner)?.slots ?? [], member);
-		if (slot !== undefined)
-			(renames.get(member.owner) ?? renames.set(member.owner, new Map<string, string>()).get(member.owner))?.set(slot.name, member.name);
+		if (member.route !== 'rename' && member.route !== 'dropped') continue;
+		for (const form of reached(member.owner)) {
+			const slot = slotFor(input.model, modelNode(input.model, form)?.slots ?? [], member);
+			if (slot !== undefined)
+				(slotNames.get(form) ?? slotNames.set(form, new Map<string, string | null>()).get(form))?.set(slot.name, member.route === 'rename' ? member.name : null);
+		}
 	}
-	const renamesOf = (kind: string): ReadonlyMap<string, string> => renames.get(kind) ?? new Map<string, string>();
+	const slotNamesOf = (kind: string): SlotNames => slotNames.get(kind) ?? new Map<string, string | null>();
 
 	const readEntries = new Map<string, ReadEntry[]>();
-	const claimsOwn = new Set(input.bindings.claims.flatMap((c) => (c.kind === null || c.kind === WILDCARD ? [] : [`${c.kind} ${c.vocab}`])));
 	input.bindings.claims.forEach((claim, index) => {
-		if (claim.kind === null) return;
-		const kinds = claim.kind === WILDCARD ? admittedKinds(input.model, claim).filter((kind) => !claimsOwn.has(`${kind} ${claim.vocab}`)) : [claim.kind];
-		for (const [claimed, kind] of kinds.flatMap((k) => readKinds(input.model, k, claim).map((read) => [k, read] as const))) {
+		const owner = claim.kind;
+		if (owner === null) return;
+		const forms =
+			owner === WILDCARD
+				? admittedKinds(input.model, claim).filter((kind) => !claimsOwn.has(`${kind} ${claim.vocab}`))
+				: reached(owner);
+		for (const [claimed, kind] of forms.flatMap((form) => readKinds(input.model, form, claim).map((read) => [owner === WILDCARD ? form : owner, read] as const))) {
 			const entry: ReadEntry = {
 				kind,
 				claimed,
 				vocab: claim.vocab,
 				claim,
 				index,
-				pins: pinsOf(modelNode(input.model, kind), claim, renamesOf(kind)),
+				pins: pinsOf(input.model, modelNode(input.model, kind), claim, slotNamesOf(kind)),
 				template: input.bindings.templates.find((t) => t.vocabs.includes(claim.vocab))
 			};
 			(readEntries.get(kind) ?? readEntries.set(kind, []).get(kind))?.push(entry);
@@ -303,13 +384,13 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 	for (const [kind, entries] of readEntries) {
 		const top = entries.filter((e) => e.claim.toplevel);
 		const plain = top.find((e) => e.claim.predicates.length === 0 && e.pins.length === 0);
-		const first = plain ?? top[0];
-		if (first) vocabOf.set(kind, first.vocab);
+		const vocab = plain?.vocab ?? refinedParent(kind, top);
+		if (vocab !== undefined) vocabOf.set(kind, vocab);
 	}
 	for (const entries of readEntries.values()) entries.sort((a, b) => specificity(a) - specificity(b) || b.pins.length - a.pins.length || a.index - b.index);
 
 	const members = new Map<string, MemberRoute[]>();
-	for (const kind of readEntries.keys()) members.set(kind, membersOf(input, kind, renamesOf(kind)));
+	for (const [kind, entries] of readEntries) members.set(kind, membersOf(input, kind, entries, slotNamesOf));
 
 	const containers = new Map<string, ContainerUnwrap>();
 	for (const node of input.model.values()) {

@@ -5335,6 +5335,10 @@ A label's stamped provenance. A label without one was minted after `stampLabelPr
 `{parent -> VariantChild[]}` for every rule in `rules` that has at least one
 variant, by `variantChildrenOf`, with `definedBy` read from each label's stamp.
 
+### `packages/codegen/src/compiler/variant-structural.ts::ownedVariants`
+
+`{variant -> owner}` for every variant its owner owns: the variant's one reference in the grammar is the owner's arm stamped `variantOf` that owner. A variant referenced anywhere else is a kind of its own that the arm only names (rust `pointer_type`'s `mutable_specifier`), and gets no entry. `undefined` when no variant is owned. The owned variant of a supertype is a form of it: a node of the variant stands where a node of the supertype would.
+
 ### `packages/codegen/src/compiler/variant-structural.ts::variantChildrenOf`
 
 The variants of `parentKind` in `rule`, in tree-walk order and listed once
@@ -6734,7 +6738,7 @@ grammar that never ran through `wire()`; then no label is automatic.
 
 ### `packages/codegen/src/compiler/types.ts::KindProvenance`
 
-Where the bindings overlay's kinds came from: `renamedFrom` maps a renamed kind to its base kind, and `splitFrom` maps a split clone to the kind it was cloned from. `bindGrammar` writes both maps onto the evaluated grammar; link carries them under linked names, and every stage after it passes the one object through to the nodes.
+Where a kind came from: `renamedFrom` maps a renamed kind to its base kind, `splitFrom` maps a split clone to the kind it was cloned from, and `variantOf` maps an owned variant to the kind it is a variant of (`ownedVariants`). `bindGrammar` writes the first two maps onto the evaluated grammar and link derives the third from the linked rules; link carries them under linked names, and every stage after it passes the one object through to the nodes.
 
 A `splitFrom` value is the source kind's bound name, never a base name: `bindGrammar` splits after it renames, and link renames the values with the keys. A clone of a renamed kind therefore names the renamed kind (rust `method_declaration` → `function_declaration`), and the base name is one more step through `renamedFrom` (`function_declaration` → `function_item`).
 
@@ -9959,13 +9963,13 @@ it is its own slot and never merges with a neighbouring pattern run.
 #### named parts in nested structure
 
 ```text
-A token whose sequence holds an authored `field()` at any depth is structured on the flattened sequence: a
-nested sequence is the same sequence (associativity), so its members become members of the token. A
-`field(name, choice-of-strings)` is an enum slot under its own name, and a `field(name, optional(x))` over a
-pattern is an optional text slot. An optional group (a choice with a blank, or an optional, whose live arm is a
+A nested sequence that holds an authored `field()` at any depth is the same sequence (associativity), so its
+members become members of the token; a nested sequence that names nothing and holds a pattern composes into one
+slot as it would with no field anywhere (`flattenSeqs`). A `field(name, optional(string))` is a presence flag
+under its own name, a `field(name, choice-of-strings)` is an enum slot under its own name, and a
+`field(name, optional(x))` over a pattern is an optional text slot. An optional group (a choice with a blank, or an optional, whose live arm is a
 sequence that holds a named part) stays a group: its members are structured the same way and the group stays
-optional, so its slots are optional and its literal text is written only when it is present. A token with no
-authored field is untouched: its nested sequences still compose into one slot, so no existing kind changes.
+optional, so its slots are optional and its literal text is written only when it is present.
 ```
 
 ### `packages/codegen/src/compiler/token-interior.ts::structureMembers`
@@ -9974,17 +9978,20 @@ The member loop of the token-interior pass, shared by the token's own sequence a
 
 ### `packages/codegen/src/compiler/token-interior.ts::structureSeq`
 
-Structures one token's top-level sequence. A sequence carrying fields
-flattens every nested unlexed sequence; one without fields flattens only the
-pattern-free ones (`flattenLiteralSeqs`), so a literal run such as `'\\'`
-before an escape choice becomes members beside the choice. The token is
+Structures one token's top-level sequence. Nested sequences are spliced in
+where they hold a named part or no pattern (`flattenSeqs`), so a literal run
+such as `'\\'` before an escape choice becomes members beside the choice, and a
+named part inside a nested sequence becomes a member. The token is
 structured when a slot or group holds a pattern, or when its one enum is the
 whole content (`isSoleEnumContent`); otherwise it stays whole-text.
 
-### `packages/codegen/src/compiler/token-interior.ts::flattenLiteralSeqs`
+### `packages/codegen/src/compiler/token-interior.ts::flattenSeqs`
 
-Splices nested sequences that hold no pattern into their parent's members,
-keeping any sequence that is already lexed or holds a pattern whole.
+Splices a nested (non-lexed) sequence into its parent's members, recursively, when it holds a named part (a field) or no pattern. A sequence that holds a pattern and names nothing stays whole, so its members compose into one slot: rust's escaped char keeps `\\` and the escape in one `content` beside its named `byte` flag.
+
+### `packages/codegen/src/compiler/token-interior.ts::isFlag`
+
+Whether a member is an optional single string: a flag whose presence is the slot's value.
 
 ### `packages/codegen/src/compiler/token-interior.ts::InteriorState`
 
@@ -10005,10 +10012,6 @@ A token whose members hold no other content and exactly one enum has that
 enum as its content. Shared by the token-interior pass (the enum is named
 `content`) and the full-form stamp (the enum sits between the literal runs),
 so the two cannot disagree about which enum is the text.
-
-### `packages/codegen/src/compiler/token-interior.ts::flattenMembers`
-
-The members of a sequence with every nested (non-lexed) sequence spliced in, recursively.
 
 ### `packages/codegen/src/compiler/token-interior.ts::containsField`
 

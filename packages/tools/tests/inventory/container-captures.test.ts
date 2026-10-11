@@ -29,7 +29,9 @@ const node = (kind: string, slots: readonly ModelSlot[] = [], subtypes: readonly
 	elementKinds: [],
 	enumMembers: [],
 	text: null,
-	pattern: null
+	pattern: null,
+	variantOf: null,
+	shownAs: []
 });
 
 const grammar = async (bindings: string): Promise<GrammarInput> => ({

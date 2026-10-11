@@ -745,17 +745,6 @@
           ]
         },
         {
-          "name": "operator",
-          "route": "slot",
-          "slot": "operator",
-          "path": [
-            {
-              "owner": "augmented_assignment",
-              "slot": "operator"
-            }
-          ]
-        },
-        {
           "name": "right",
           "route": "slot",
           "slot": "right",
@@ -1162,17 +1151,6 @@
           ]
         },
         {
-          "name": "operator",
-          "route": "slot",
-          "slot": "operator",
-          "path": [
-            {
-              "owner": "binary_operator",
-              "slot": "operator"
-            }
-          ]
-        },
-        {
           "name": "right",
           "route": "slot",
           "slot": "right",
@@ -1289,17 +1267,6 @@
             {
               "owner": "boolean_operator",
               "slot": "left"
-            }
-          ]
-        },
-        {
-          "name": "operator",
-          "route": "slot",
-          "slot": "operator",
-          "path": [
-            {
-              "owner": "boolean_operator",
-              "slot": "operator"
             }
           ]
         },
@@ -2521,6 +2488,181 @@
         }
       ],
       "members": []
+    },
+    "escape_sequence_hex": {
+      "vocab": "literal.string.escape",
+      "read": [
+        {
+          "vocab": "literal.string.escape",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "escape_sequence_hex",
+              "slot": "content"
+            }
+          ]
+        }
+      ]
+    },
+    "escape_sequence_line_break": {
+      "vocab": "literal.string.escape",
+      "read": [
+        {
+          "vocab": "literal.string.escape",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "escape_sequence_line_break",
+              "slot": "content"
+            }
+          ]
+        }
+      ]
+    },
+    "escape_sequence_named": {
+      "vocab": "literal.string.escape",
+      "read": [
+        {
+          "vocab": "literal.string.escape",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "escape_sequence_named",
+              "slot": "content"
+            }
+          ]
+        }
+      ]
+    },
+    "escape_sequence_octal": {
+      "vocab": "literal.string.escape",
+      "read": [
+        {
+          "vocab": "literal.string.escape",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "escape_sequence_octal",
+              "slot": "content"
+            }
+          ]
+        }
+      ]
+    },
+    "escape_sequence_simple": {
+      "vocab": "literal.string.escape",
+      "read": [
+        {
+          "vocab": "literal.string.escape",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "escape_sequence_simple",
+              "slot": "content"
+            }
+          ]
+        }
+      ]
+    },
+    "escape_sequence_unicode_fixed": {
+      "vocab": "literal.string.escape",
+      "read": [
+        {
+          "vocab": "literal.string.escape",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "escape_sequence_unicode_fixed",
+              "slot": "content"
+            }
+          ]
+        }
+      ]
+    },
+    "escape_sequence_unicode_wide": {
+      "vocab": "literal.string.escape",
+      "read": [
+        {
+          "vocab": "literal.string.escape",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "content",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "escape_sequence_unicode_wide",
+              "slot": "content"
+            }
+          ]
+        }
+      ]
     },
     "except_clause": {
       "vocab": "clause.except",
@@ -5810,17 +5952,6 @@
       ],
       "members": [
         {
-          "name": "operator",
-          "route": "slot",
-          "slot": "operator",
-          "path": [
-            {
-              "owner": "unary_operator",
-              "slot": "operator"
-            }
-          ]
-        },
-        {
           "name": "argument",
           "route": "slot",
           "slot": "argument",
@@ -5989,6 +6120,29 @@
       "members": []
     },
     "with_clause_bare": {
+      "vocab": "clause.with",
+      "read": [
+        {
+          "vocab": "clause.with",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "items",
+          "route": "slot",
+          "slot": "item",
+          "path": [
+            {
+              "owner": "with_clause_bare",
+              "slot": "item"
+            }
+          ]
+        }
+      ],
       "container": {
         "kinds": [
           "with_item"
@@ -5998,6 +6152,29 @@
       }
     },
     "with_clause_paren": {
+      "vocab": "clause.with",
+      "read": [
+        {
+          "vocab": "clause.with",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "items",
+          "route": "slot",
+          "slot": "with_items",
+          "path": [
+            {
+              "owner": "with_clause_paren",
+              "slot": "with_items"
+            }
+          ]
+        }
+      ],
       "container": {
         "kinds": [
           "with_clause_with_items"
@@ -6150,14 +6327,14 @@
       {
         "depth": 2,
         "paths": 74,
-        "kinds": 68,
+        "kinds": 70,
         "refinements": 7,
         "aliases": 78
       },
       {
         "depth": 3,
         "paths": 65,
-        "kinds": 54,
+        "kinds": 61,
         "refinements": 47,
         "aliases": 42
       },

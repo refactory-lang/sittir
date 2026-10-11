@@ -10,6 +10,8 @@ import type { GrammarInput, LayoutSlot } from './routes.ts';
 export interface NodeModelValue {
 	readonly kind?: string;
 	readonly value?: string;
+	readonly name?: string;
+	readonly parseKind?: string;
 }
 
 export interface NodeModelSlot {
@@ -32,6 +34,7 @@ export interface NodeModelNode {
 	readonly members?: readonly EnumMember[];
 	readonly text?: string;
 	readonly pattern?: string;
+	readonly variantOf?: string;
 }
 
 export interface NodeModelRecord {
@@ -41,8 +44,19 @@ export interface NodeModelRecord {
 const nodesOf = (record: NodeModelRecord): readonly NodeModelNode[] =>
 	Array.isArray(record.nodes) ? record.nodes : Object.values(record.nodes);
 
+function shownNames(record: NodeModelRecord): ReadonlyMap<string, readonly string[]> {
+	const shown = new Map<string, Set<string>>();
+	for (const n of nodesOf(record))
+		for (const s of n.slots ?? [])
+			for (const v of s.values ?? [])
+				if (v.name !== undefined && v.parseKind !== undefined && v.parseKind !== v.name)
+					(shown.get(v.name) ?? shown.set(v.name, new Set()).get(v.name)!).add(v.parseKind);
+	return new Map([...shown].map(([kind, names]) => [kind, [...names].sort()]));
+}
+
 export function slotModelOf(record: NodeModelRecord): SlotModel {
 	const out = new Map<string, ModelNode>();
+	const shown = shownNames(record);
 	for (const n of nodesOf(record)) {
 		out.set(n.kind, {
 			kind: n.kind,
@@ -60,7 +74,9 @@ export function slotModelOf(record: NodeModelRecord): SlotModel {
 			elementKinds: n.elementKinds ?? [],
 			enumMembers: n.members ?? [],
 			text: n.text ?? null,
-			pattern: n.pattern ?? null
+			pattern: n.pattern ?? null,
+			variantOf: n.variantOf ?? null,
+			shownAs: shown.get(n.kind) ?? []
 		});
 	}
 	return out;

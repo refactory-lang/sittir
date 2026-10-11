@@ -35,6 +35,8 @@ export interface PortableIds {
 		| TSKindId.ImportClause
 		| TSKindId.ImportRequireClause
 		| TSKindId.ImportSpecifier
+		| TSKindId.ImportSpecifierAs
+		| TSKindId.ImportSpecifierName
 		| TSKindId.MappedTypeClause
 		| TSKindId.NamespaceExport
 		| TSKindId.NamespaceImport
@@ -59,13 +61,15 @@ export interface PortableIds {
 		| TSKindId.ImportClause
 		| TSKindId.ImportRequireClause
 		| TSKindId.ImportSpecifier
+		| TSKindId.ImportSpecifierAs
+		| TSKindId.ImportSpecifierName
 		| TSKindId.NamespaceImport;
 	'clause.import.alias': TSKindId.ImportAlias;
 	'clause.import.attribute': TSKindId.ImportAttribute;
 	'clause.import.names': TSKindId.ImportClause;
 	'clause.import.namespace': TSKindId.NamespaceImport;
 	'clause.import.require': TSKindId.ImportRequireClause;
-	'clause.import.specifier': TSKindId.ImportSpecifier;
+	'clause.import.specifier': TSKindId.ImportSpecifier | TSKindId.ImportSpecifierAs | TSKindId.ImportSpecifierName;
 	'clause.mapped_type': TSKindId.MappedTypeClause;
 	comment: TSKindId.CommentBlock | TSKindId.CommentLine | TSKindId.HtmlComment;
 	'comment.block': TSKindId.CommentBlock;
@@ -86,6 +90,7 @@ export interface PortableIds {
 		| TSKindId.FunctionSignature
 		| TSKindId.GeneratorFunctionDeclaration
 		| TSKindId.IndexSignature
+		| TSKindId.IndexSignatureColon
 		| TSKindId.IndexSignatureMappedTypeClause
 		| TSKindId.InterfaceDeclaration
 		| TSKindId.InternalModule
@@ -128,10 +133,14 @@ export interface PortableIds {
 		| TSKindId.CallSignature
 		| TSKindId.ConstructSignature
 		| TSKindId.IndexSignature
+		| TSKindId.IndexSignatureColon
 		| TSKindId.IndexSignatureMappedTypeClause;
 	'declaration.signature.call': TSKindId.CallSignature;
 	'declaration.signature.construct': TSKindId.ConstructSignature;
-	'declaration.signature.index': TSKindId.IndexSignature | TSKindId.IndexSignatureMappedTypeClause;
+	'declaration.signature.index':
+		| TSKindId.IndexSignature
+		| TSKindId.IndexSignatureColon
+		| TSKindId.IndexSignatureMappedTypeClause;
 	'declaration.signature.index.mapped': TSKindId.IndexSignatureMappedTypeClause;
 	'declaration.type_alias': TSKindId.TypeAliasDeclaration;
 	'declaration.type_parameter': TSKindId.TypeParameter;
@@ -175,10 +184,14 @@ export interface PortableIds {
 		| TSKindId.InstantiationExpression
 		| TSKindId.MemberExpression
 		| TSKindId.MetaProperty
+		| TSKindId.MetaPropertyImportMeta
+		| TSKindId.MetaPropertyNewTarget
 		| TSKindId.NewExpression
 		| TSKindId.NonNullExpression
 		| TSKindId.Object
 		| TSKindId.ParenthesizedExpression
+		| TSKindId.ParenthesizedExpressionSequence
+		| TSKindId.ParenthesizedExpressionTyped
 		| TSKindId.SatisfiesExpression
 		| TSKindId.SequenceExpression
 		| TSKindId.SubscriptExpression
@@ -269,8 +282,11 @@ export interface PortableIds {
 	'expression.interpolation': TSKindId.TemplateSubstitution;
 	'expression.lambda': TSKindId.ArrowFunction;
 	'expression.member': TSKindId.MemberExpression;
-	'expression.meta': TSKindId.MetaProperty;
-	'expression.parenthesized': TSKindId.ParenthesizedExpression;
+	'expression.meta': TSKindId.MetaProperty | TSKindId.MetaPropertyImportMeta | TSKindId.MetaPropertyNewTarget;
+	'expression.parenthesized':
+		| TSKindId.ParenthesizedExpression
+		| TSKindId.ParenthesizedExpressionSequence
+		| TSKindId.ParenthesizedExpressionTyped;
 	'expression.sequence': TSKindId.SequenceExpression;
 	'expression.subscript': TSKindId.SubscriptExpression;
 	'expression.unary': TSKindId.UnaryExpression;
@@ -307,10 +323,12 @@ export interface PortableIds {
 	'identifier.super': TSKindId.Super;
 	'identifier.type': TSKindId.TypeIdentifier;
 	literal:
+		| TSKindId.TemplateChars
 		| TSKindId.EscapeSequence
 		| TSKindId.False
 		| TSKindId.Null
 		| TSKindId.Number
+		| TSKindId.NumberBigint
 		| TSKindId.NumberBigintBinary
 		| TSKindId.NumberBigintDecimal
 		| TSKindId.NumberBigintHex
@@ -326,10 +344,13 @@ export interface PortableIds {
 		| TSKindId.RegexFlags
 		| TSKindId.RegexPattern
 		| TSKindId.String
+		| TSKindId.StringDouble
 		| TSKindId.UnescapedDoubleStringFragment
+		| TSKindId.StringSingle
 		| TSKindId.TemplateString
 		| TSKindId.True
-		| TSKindId.Undefined;
+		| TSKindId.Undefined
+		| TSKindId.UnescapedSingleStringFragment;
 	'literal.boolean': TSKindId.False | TSKindId.True;
 	'literal.boolean.false': TSKindId.False;
 	'literal.boolean.true': TSKindId.True;
@@ -337,6 +358,7 @@ export interface PortableIds {
 	'literal.null.undefined': TSKindId.Undefined;
 	'literal.number':
 		| TSKindId.Number
+		| TSKindId.NumberBigint
 		| TSKindId.NumberBigintBinary
 		| TSKindId.NumberBigintDecimal
 		| TSKindId.NumberBigintHex
@@ -374,9 +396,19 @@ export interface PortableIds {
 	'literal.regex': TSKindId.Regex | TSKindId.RegexFlags | TSKindId.RegexPattern;
 	'literal.regex.flags': TSKindId.RegexFlags;
 	'literal.regex.pattern': TSKindId.RegexPattern;
-	'literal.string': TSKindId.EscapeSequence | TSKindId.String | TSKindId.UnescapedDoubleStringFragment;
+	'literal.string':
+		| TSKindId.TemplateChars
+		| TSKindId.EscapeSequence
+		| TSKindId.String
+		| TSKindId.StringDouble
+		| TSKindId.UnescapedDoubleStringFragment
+		| TSKindId.StringSingle
+		| TSKindId.UnescapedSingleStringFragment;
 	'literal.string.escape': TSKindId.EscapeSequence;
-	'literal.string.text': TSKindId.UnescapedDoubleStringFragment;
+	'literal.string.text':
+		| TSKindId.TemplateChars
+		| TSKindId.UnescapedDoubleStringFragment
+		| TSKindId.UnescapedSingleStringFragment;
 	'literal.template': TSKindId.TemplateString;
 	modifier: TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword | TSKindId.PublicKeyword;
 	'modifier.visibility': TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword | TSKindId.PublicKeyword;
@@ -405,6 +437,12 @@ export interface PortableIds {
 		| TSKindId.DoStatement
 		| TSKindId.EmptyStatement
 		| TSKindId.ExportStatement
+		| TSKindId.ExportStatementDefault
+		| TSKindId.ExportStatementDefaultDeclaration
+		| TSKindId.ExportStatementDefaultFrom
+		| TSKindId.ExportStatementEqualsExport
+		| TSKindId.ExportStatementNamespaceExport
+		| TSKindId.ExportStatementTypeExport
 		| TSKindId.ExpressionStatement
 		| TSKindId.ForInStatement
 		| TSKindId.ForStatement
@@ -424,7 +462,14 @@ export interface PortableIds {
 	'statement.continue': TSKindId.ContinueStatement;
 	'statement.debugger': TSKindId.DebuggerStatement;
 	'statement.empty': TSKindId.EmptyStatement;
-	'statement.export': TSKindId.ExportStatement;
+	'statement.export':
+		| TSKindId.ExportStatement
+		| TSKindId.ExportStatementDefault
+		| TSKindId.ExportStatementDefaultDeclaration
+		| TSKindId.ExportStatementDefaultFrom
+		| TSKindId.ExportStatementEqualsExport
+		| TSKindId.ExportStatementNamespaceExport
+		| TSKindId.ExportStatementTypeExport;
 	'statement.expression': TSKindId.ExpressionStatement;
 	'statement.if': TSKindId.IfStatement;
 	'statement.import': TSKindId.ImportStatement;
@@ -2428,6 +2473,8 @@ const table: PortableTable = {
 				TSKindId.ImportClause,
 				TSKindId.ImportRequireClause,
 				TSKindId.ImportSpecifier,
+				TSKindId.ImportSpecifierAs,
+				TSKindId.ImportSpecifierName,
 				TSKindId.MappedTypeClause,
 				TSKindId.NamespaceExport,
 				TSKindId.NamespaceImport,
@@ -2456,6 +2503,8 @@ const table: PortableTable = {
 				TSKindId.ImportClause,
 				TSKindId.ImportRequireClause,
 				TSKindId.ImportSpecifier,
+				TSKindId.ImportSpecifierAs,
+				TSKindId.ImportSpecifierName,
 				TSKindId.NamespaceImport
 			],
 			exact: true
@@ -2465,7 +2514,10 @@ const table: PortableTable = {
 		'clause.import.names': { ids: [TSKindId.ImportClause], exact: true },
 		'clause.import.namespace': { ids: [TSKindId.NamespaceImport], exact: true },
 		'clause.import.require': { ids: [TSKindId.ImportRequireClause], exact: true },
-		'clause.import.specifier': { ids: [TSKindId.ImportSpecifier], exact: true },
+		'clause.import.specifier': {
+			ids: [TSKindId.ImportSpecifier, TSKindId.ImportSpecifierAs, TSKindId.ImportSpecifierName],
+			exact: true
+		},
 		'clause.mapped_type': { ids: [TSKindId.MappedTypeClause], exact: true },
 		comment: { ids: [TSKindId.CommentBlock, TSKindId.CommentLine, TSKindId.HtmlComment], exact: true },
 		'comment.block': { ids: [TSKindId.CommentBlock], exact: false },
@@ -2487,6 +2539,7 @@ const table: PortableTable = {
 				TSKindId.FunctionSignature,
 				TSKindId.GeneratorFunctionDeclaration,
 				TSKindId.IndexSignature,
+				TSKindId.IndexSignatureColon,
 				TSKindId.IndexSignatureMappedTypeClause,
 				TSKindId.InterfaceDeclaration,
 				TSKindId.InternalModule,
@@ -2536,6 +2589,7 @@ const table: PortableTable = {
 				TSKindId.CallSignature,
 				TSKindId.ConstructSignature,
 				TSKindId.IndexSignature,
+				TSKindId.IndexSignatureColon,
 				TSKindId.IndexSignatureMappedTypeClause
 			],
 			exact: true
@@ -2543,7 +2597,7 @@ const table: PortableTable = {
 		'declaration.signature.call': { ids: [TSKindId.CallSignature], exact: true },
 		'declaration.signature.construct': { ids: [TSKindId.ConstructSignature], exact: true },
 		'declaration.signature.index': {
-			ids: [TSKindId.IndexSignature, TSKindId.IndexSignatureMappedTypeClause],
+			ids: [TSKindId.IndexSignature, TSKindId.IndexSignatureColon, TSKindId.IndexSignatureMappedTypeClause],
 			exact: true
 		},
 		'declaration.signature.index.mapped': { ids: [TSKindId.IndexSignatureMappedTypeClause], exact: true },
@@ -2601,10 +2655,14 @@ const table: PortableTable = {
 				TSKindId.InstantiationExpression,
 				TSKindId.MemberExpression,
 				TSKindId.MetaProperty,
+				TSKindId.MetaPropertyImportMeta,
+				TSKindId.MetaPropertyNewTarget,
 				TSKindId.NewExpression,
 				TSKindId.NonNullExpression,
 				TSKindId.Object,
 				TSKindId.ParenthesizedExpression,
+				TSKindId.ParenthesizedExpressionSequence,
+				TSKindId.ParenthesizedExpressionTyped,
 				TSKindId.SatisfiesExpression,
 				TSKindId.SequenceExpression,
 				TSKindId.SubscriptExpression,
@@ -2707,8 +2765,18 @@ const table: PortableTable = {
 		'expression.interpolation': { ids: [TSKindId.TemplateSubstitution], exact: true },
 		'expression.lambda': { ids: [TSKindId.ArrowFunction], exact: true },
 		'expression.member': { ids: [TSKindId.MemberExpression], exact: true },
-		'expression.meta': { ids: [TSKindId.MetaProperty], exact: true },
-		'expression.parenthesized': { ids: [TSKindId.ParenthesizedExpression], exact: true },
+		'expression.meta': {
+			ids: [TSKindId.MetaProperty, TSKindId.MetaPropertyImportMeta, TSKindId.MetaPropertyNewTarget],
+			exact: true
+		},
+		'expression.parenthesized': {
+			ids: [
+				TSKindId.ParenthesizedExpression,
+				TSKindId.ParenthesizedExpressionSequence,
+				TSKindId.ParenthesizedExpressionTyped
+			],
+			exact: true
+		},
 		'expression.sequence': { ids: [TSKindId.SequenceExpression], exact: true },
 		'expression.subscript': { ids: [TSKindId.SubscriptExpression], exact: true },
 		'expression.unary': { ids: [TSKindId.UnaryExpression], exact: true },
@@ -2763,10 +2831,12 @@ const table: PortableTable = {
 		'identifier.type': { ids: [TSKindId.TypeIdentifier], exact: true },
 		literal: {
 			ids: [
+				TSKindId.TemplateChars,
 				TSKindId.EscapeSequence,
 				TSKindId.False,
 				TSKindId.Null,
 				TSKindId.Number,
+				TSKindId.NumberBigint,
 				TSKindId.NumberBigintBinary,
 				TSKindId.NumberBigintDecimal,
 				TSKindId.NumberBigintHex,
@@ -2782,10 +2852,13 @@ const table: PortableTable = {
 				TSKindId.RegexFlags,
 				TSKindId.RegexPattern,
 				TSKindId.String,
+				TSKindId.StringDouble,
 				TSKindId.UnescapedDoubleStringFragment,
+				TSKindId.StringSingle,
 				TSKindId.TemplateString,
 				TSKindId.True,
-				TSKindId.Undefined
+				TSKindId.Undefined,
+				TSKindId.UnescapedSingleStringFragment
 			],
 			exact: true
 		},
@@ -2797,6 +2870,7 @@ const table: PortableTable = {
 		'literal.number': {
 			ids: [
 				TSKindId.Number,
+				TSKindId.NumberBigint,
 				TSKindId.NumberBigintBinary,
 				TSKindId.NumberBigintDecimal,
 				TSKindId.NumberBigintHex,
@@ -2849,11 +2923,22 @@ const table: PortableTable = {
 		'literal.regex.flags': { ids: [TSKindId.RegexFlags], exact: true },
 		'literal.regex.pattern': { ids: [TSKindId.RegexPattern], exact: true },
 		'literal.string': {
-			ids: [TSKindId.EscapeSequence, TSKindId.String, TSKindId.UnescapedDoubleStringFragment],
+			ids: [
+				TSKindId.TemplateChars,
+				TSKindId.EscapeSequence,
+				TSKindId.String,
+				TSKindId.StringDouble,
+				TSKindId.UnescapedDoubleStringFragment,
+				TSKindId.StringSingle,
+				TSKindId.UnescapedSingleStringFragment
+			],
 			exact: true
 		},
 		'literal.string.escape': { ids: [TSKindId.EscapeSequence], exact: true },
-		'literal.string.text': { ids: [TSKindId.UnescapedDoubleStringFragment], exact: true },
+		'literal.string.text': {
+			ids: [TSKindId.TemplateChars, TSKindId.UnescapedDoubleStringFragment, TSKindId.UnescapedSingleStringFragment],
+			exact: true
+		},
 		'literal.template': { ids: [TSKindId.TemplateString], exact: true },
 		modifier: { ids: [TSKindId.PrivateKeyword, TSKindId.ProtectedKeyword, TSKindId.PublicKeyword], exact: true },
 		'modifier.visibility': {
@@ -2893,6 +2978,12 @@ const table: PortableTable = {
 				TSKindId.DoStatement,
 				TSKindId.EmptyStatement,
 				TSKindId.ExportStatement,
+				TSKindId.ExportStatementDefault,
+				TSKindId.ExportStatementDefaultDeclaration,
+				TSKindId.ExportStatementDefaultFrom,
+				TSKindId.ExportStatementEqualsExport,
+				TSKindId.ExportStatementNamespaceExport,
+				TSKindId.ExportStatementTypeExport,
 				TSKindId.ExpressionStatement,
 				TSKindId.ForInStatement,
 				TSKindId.ForStatement,
@@ -2915,7 +3006,18 @@ const table: PortableTable = {
 		'statement.continue': { ids: [TSKindId.ContinueStatement], exact: true },
 		'statement.debugger': { ids: [TSKindId.DebuggerStatement], exact: true },
 		'statement.empty': { ids: [TSKindId.EmptyStatement], exact: true },
-		'statement.export': { ids: [TSKindId.ExportStatement], exact: true },
+		'statement.export': {
+			ids: [
+				TSKindId.ExportStatement,
+				TSKindId.ExportStatementDefault,
+				TSKindId.ExportStatementDefaultDeclaration,
+				TSKindId.ExportStatementDefaultFrom,
+				TSKindId.ExportStatementEqualsExport,
+				TSKindId.ExportStatementNamespaceExport,
+				TSKindId.ExportStatementTypeExport
+			],
+			exact: true
+		},
 		'statement.expression': { ids: [TSKindId.ExpressionStatement], exact: true },
 		'statement.if': { ids: [TSKindId.IfStatement], exact: true },
 		'statement.import': { ids: [TSKindId.ImportStatement], exact: true },
@@ -3307,6 +3409,7 @@ const table: PortableTable = {
 		['type', 'never', 'type.primitive.never']
 	],
 	entries: {
+		[TSKindId.TemplateChars]: [{ path: 'literal.string.text', within: [], test: [] }],
 		[TSKindId.AbstractClassDeclaration]: [{ path: 'declaration.class', within: [], test: [] }],
 		[TSKindId.AbstractMethodSignature]: [{ path: 'declaration.method.signature.abstract', within: [], test: [] }],
 		[TSKindId.AmbientDeclaration]: [{ path: 'declaration.ambient', within: [], test: [] }],
@@ -3315,10 +3418,7 @@ const table: PortableTable = {
 		[TSKindId.Array]: [{ path: 'expression.collection.list', within: [], test: [] }],
 		[TSKindId.ArrayPattern]: [{ path: 'pattern.array', within: [], test: [] }],
 		[TSKindId.ArrayType]: [{ path: 'type.array', within: [], test: [] }],
-		[TSKindId.ArrowFunction]: [
-			{ path: 'expression.lambda', within: [], test: [] },
-			{ path: 'expression.lambda', within: [], test: [] }
-		],
+		[TSKindId.ArrowFunction]: [{ path: 'expression.lambda', within: [], test: [] }],
 		[TSKindId.AsExpression]: [{ path: 'expression.cast.as', within: [], test: [] }],
 		[TSKindId.Asserts]: [{ path: 'type.predicate.asserts', within: [], test: [] }],
 		[TSKindId.AssignmentExpression]: [{ path: 'expression.assignment', within: [], test: [] }],
@@ -3579,6 +3679,12 @@ const table: PortableTable = {
 		[TSKindId.ExportClause]: [{ path: 'clause.export', within: [], test: [] }],
 		[TSKindId.ExportSpecifier]: [{ path: 'clause.export.specifier', within: [], test: [] }],
 		[TSKindId.ExportStatement]: [{ path: 'statement.export', within: [], test: [] }],
+		[TSKindId.ExportStatementDefault]: [{ path: 'statement.export', within: [], test: [] }],
+		[TSKindId.ExportStatementDefaultDeclaration]: [{ path: 'statement.export', within: [], test: [] }],
+		[TSKindId.ExportStatementDefaultFrom]: [{ path: 'statement.export', within: [], test: [] }],
+		[TSKindId.ExportStatementEqualsExport]: [{ path: 'statement.export', within: [], test: [] }],
+		[TSKindId.ExportStatementNamespaceExport]: [{ path: 'statement.export', within: [], test: [] }],
+		[TSKindId.ExportStatementTypeExport]: [{ path: 'statement.export', within: [], test: [] }],
 		[TSKindId.ExpressionStatement]: [{ path: 'statement.expression', within: [], test: [] }],
 		[TSKindId.ExtendsClause]: [{ path: 'clause.extends', within: [], test: [] }],
 		[TSKindId.ExtendsTypeClause]: [{ path: 'clause.extends.type', within: [], test: [] }],
@@ -3604,6 +3710,8 @@ const table: PortableTable = {
 		[TSKindId.ImportClause]: [{ path: 'clause.import.names', within: [], test: [] }],
 		[TSKindId.ImportRequireClause]: [{ path: 'clause.import.require', within: [], test: [] }],
 		[TSKindId.ImportSpecifier]: [{ path: 'clause.import.specifier', within: [], test: [] }],
+		[TSKindId.ImportSpecifierAs]: [{ path: 'clause.import.specifier', within: [], test: [] }],
+		[TSKindId.ImportSpecifierName]: [{ path: 'clause.import.specifier', within: [], test: [] }],
 		[TSKindId.ImportStatement]: [
 			{
 				path: 'statement.import.type',
@@ -3618,6 +3726,7 @@ const table: PortableTable = {
 			{ path: 'statement.import', within: [], test: [] }
 		],
 		[TSKindId.IndexSignature]: [{ path: 'declaration.signature.index', within: [], test: [] }],
+		[TSKindId.IndexSignatureColon]: [{ path: 'declaration.signature.index', within: [], test: [] }],
 		[TSKindId.IndexSignatureMappedTypeClause]: [{ path: 'declaration.signature.index.mapped', within: [], test: [] }],
 		[TSKindId.IndexTypeQuery]: [{ path: 'type.index_query', within: [], test: [] }],
 		[TSKindId.InferType]: [{ path: 'type.infer', within: [], test: [] }],
@@ -3644,6 +3753,8 @@ const table: PortableTable = {
 		[TSKindId.MappedTypeClause]: [{ path: 'clause.mapped_type', within: [], test: [] }],
 		[TSKindId.MemberExpression]: [{ path: 'expression.member', within: [], test: [] }],
 		[TSKindId.MetaProperty]: [{ path: 'expression.meta', within: [], test: [] }],
+		[TSKindId.MetaPropertyImportMeta]: [{ path: 'expression.meta', within: [], test: [] }],
+		[TSKindId.MetaPropertyNewTarget]: [{ path: 'expression.meta', within: [], test: [] }],
 		[TSKindId.MethodDefinition]: [
 			{
 				path: 'declaration.constructor',
@@ -3689,6 +3800,7 @@ const table: PortableTable = {
 		[TSKindId.NonNullExpression]: [{ path: 'expression.cast.non_null', within: [], test: [] }],
 		[TSKindId.Null]: [{ path: 'literal.null', within: [], test: [] }],
 		[TSKindId.Number]: [{ path: 'literal.number', within: [], test: [] }],
+		[TSKindId.NumberBigint]: [{ path: 'literal.number', within: [], test: [] }],
 		[TSKindId.NumberBigintBinary]: [{ path: 'literal.number.integer.big.binary', within: [], test: [] }],
 		[TSKindId.NumberBigintDecimal]: [{ path: 'literal.number.integer.big', within: [], test: [] }],
 		[TSKindId.NumberBigintHex]: [{ path: 'literal.number.integer.big.hex', within: [], test: [] }],
@@ -3712,6 +3824,8 @@ const table: PortableTable = {
 		[TSKindId.Pair]: [{ path: 'element.pair', within: [], test: [] }],
 		[TSKindId.PairPattern]: [{ path: 'pattern.object.pair', within: [], test: [] }],
 		[TSKindId.ParenthesizedExpression]: [{ path: 'expression.parenthesized', within: [], test: [] }],
+		[TSKindId.ParenthesizedExpressionSequence]: [{ path: 'expression.parenthesized', within: [], test: [] }],
+		[TSKindId.ParenthesizedExpressionTyped]: [{ path: 'expression.parenthesized', within: [], test: [] }],
 		[TSKindId.ParenthesizedType]: [{ path: 'type.parenthesized', within: [], test: [] }],
 		[TSKindId.PrivateKeyword]: [
 			{ path: 'modifier.visibility.private', within: [], test: [] },
@@ -3745,8 +3859,10 @@ const table: PortableTable = {
 		[TSKindId.StatementBlock]: [{ path: 'statement.block', within: [], test: [] }],
 		[TSKindId.StatementIdentifier]: [{ path: 'identifier.label', within: [], test: [] }],
 		[TSKindId.String]: [{ path: 'literal.string', within: [], test: [] }],
+		[TSKindId.StringDouble]: [{ path: 'literal.string', within: [], test: [] }],
 		[TSKindId.UnescapedDoubleStringFragment]: [{ path: 'literal.string.text', within: [], test: [] }],
 		[TSKindId.StringKeyword]: [{ path: 'type.primitive', within: [], test: [] }],
+		[TSKindId.StringSingle]: [{ path: 'literal.string', within: [], test: [] }],
 		[TSKindId.SubscriptExpression]: [{ path: 'expression.subscript', within: [], test: [] }],
 		[TSKindId.Super]: [{ path: 'identifier.super', within: [], test: [] }],
 		[TSKindId.SwitchCase]: [{ path: 'clause.case', within: [], test: [] }],
@@ -3809,6 +3925,7 @@ const table: PortableTable = {
 			{ path: 'expression.unary', within: [], test: [] }
 		],
 		[TSKindId.Undefined]: [{ path: 'literal.null.undefined', within: [], test: [] }],
+		[TSKindId.UnescapedSingleStringFragment]: [{ path: 'literal.string.text', within: [], test: [] }],
 		[TSKindId.UnionType]: [{ path: 'type.union', within: [], test: [] }],
 		[TSKindId.Unique]: [{ path: 'type.primitive', within: [], test: [] }],
 		[TSKindId.UnknownKeyword]: [{ path: 'type.primitive', within: [], test: [] }],

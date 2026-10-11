@@ -2063,7 +2063,7 @@ The grammar-wide facts every node constructor reads about its kind: the parser's
 
 ### `packages/codegen/src/compiler/model/node-map.ts::provenanceOf`
 
-The kind's `renamedFrom` and `splitFrom`, read from the construction's `KindFacts.provenance` as own keys, so a kind named like an `Object.prototype` member is never mistaken for one.
+The kind's `renamedFrom`, `splitFrom` and `variantOf`, read from the construction's `KindFacts.provenance` as own keys, so a kind named like an `Object.prototype` member is never mistaken for one.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.renamedFrom`
 
@@ -2072,6 +2072,10 @@ The base kind a bindings overlay renamed into this kind, or `undefined`. It is r
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.splitFrom`
 
 The kind a bindings split cloned this kind from, or `undefined`. A split clone mints its own rule ids, so the split never reaches the rule catalog; the node carries it instead, read from `KindFacts.provenance` once when the node is built.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.variantOf`
+
+The kind this kind is an owned variant of (`ownedVariants`), or `undefined`, read from `KindFacts.provenance` once when the node is built.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.seated`
 

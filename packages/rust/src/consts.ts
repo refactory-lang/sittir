@@ -5,37 +5,37 @@ import type { TokenInterior } from '@sittir/common/utils';
 /** Slot structure of every token whose lexed text carries literal affixes, flags or enums around its content. */
 export const TOKEN_INTERIORS = {
 	char_literal_escaped_hex: {
-		regex: "^(?<b>b)?'(?<content>\\\\(?:x[0-9a-fA-F]{2}))'$",
+		regex: "^(?<byte>b)?'(?<content>\\\\(?:x[0-9a-fA-F]{2}))'$",
 		slots: [
-			{ name: 'b', configKey: 'b', flag: true },
+			{ name: 'byte', configKey: 'byte', flag: true },
 			{ name: 'content', configKey: 'content' }
 		]
 	},
 	char_literal_escaped_simple: {
-		regex: "^(?<b>b)?'(?<content>\\\\(?:[^xu]))'$",
+		regex: "^(?<byte>b)?'(?<content>\\\\(?:[^xu]))'$",
 		slots: [
-			{ name: 'b', configKey: 'b', flag: true },
+			{ name: 'byte', configKey: 'byte', flag: true },
 			{ name: 'content', configKey: 'content' }
 		]
 	},
 	char_literal_escaped_unicode_braced: {
-		regex: "^(?<b>b)?'(?<content>\\\\(?:u\\{[0-9a-fA-F]+\\}))'$",
+		regex: "^(?<byte>b)?'(?<content>\\\\(?:u\\{[0-9a-fA-F]+\\}))'$",
 		slots: [
-			{ name: 'b', configKey: 'b', flag: true },
+			{ name: 'byte', configKey: 'byte', flag: true },
 			{ name: 'content', configKey: 'content' }
 		]
 	},
 	char_literal_escaped_unicode_fixed: {
-		regex: "^(?<b>b)?'(?<content>\\\\(?:u[0-9a-fA-F]{4}))'$",
+		regex: "^(?<byte>b)?'(?<content>\\\\(?:u[0-9a-fA-F]{4}))'$",
 		slots: [
-			{ name: 'b', configKey: 'b', flag: true },
+			{ name: 'byte', configKey: 'byte', flag: true },
 			{ name: 'content', configKey: 'content' }
 		]
 	},
 	char_literal_plain: {
-		regex: "^(?<b>b)?'(?<content>(?:[^\\\\']))'$",
+		regex: "^(?<byte>b)?'(?<content>(?:[^\\\\']))'$",
 		slots: [
-			{ name: 'b', configKey: 'b', flag: true },
+			{ name: 'byte', configKey: 'byte', flag: true },
 			{ name: 'content', configKey: 'content' }
 		]
 	},

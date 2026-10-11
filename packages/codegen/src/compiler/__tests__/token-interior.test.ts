@@ -119,6 +119,17 @@ describe('structureTokenInterior — named parts inside nested structure', () =>
 		expect(members.map((m) => (m as { name?: string }).name)).toEqual(['integer', 'marker', 'sign', 'exponent']);
 	});
 
+	it('makes a named optional string a presence flag under its own name', () => {
+		const members = membersOf(structured(token(seq(named('byte', optional(str('b'))), str("'"), pat('[a-z]'), str("'")))));
+		expect(members[0]).toMatchObject({ type: FIELD, name: 'byte', content: { type: OPTIONAL, content: { type: STRING, value: 'b' } } });
+	});
+
+	it('keeps a nested sequence with no named part composed when another part is named', () => {
+		const members = membersOf(structured(token(seq(named('byte', optional(str('b'))), str("'"), seq(str('\\'), pat('[nt]')), str("'")))));
+		expect(members.map((m) => (m as { name?: string }).name)).toEqual(['byte', undefined, 'content', undefined]);
+		expect(members[2]).toMatchObject({ type: FIELD, name: 'content', content: { type: PATTERN, value: '\\\\(?:[nt])' } });
+	});
+
 	it('makes a named choice of strings an enum slot under its own name', () => {
 		const members = membersOf(structured(token(seq(named('integer', pat('\\d+')), exponent))));
 		expect(members[1]).toMatchObject({ type: FIELD, name: 'marker', content: { type: CHOICE } });

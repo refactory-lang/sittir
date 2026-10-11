@@ -5795,15 +5795,15 @@ export function wrapCharLiteralPlain(data: T.CharLiteralPlain, tree: TreeHandle)
 	const node = {
 		...data,
 		$type: TSKindId.CharLiteralPlain as const,
-		b() {
-			return this._b;
+		byte() {
+			return this._byte;
 		},
 		content() {
 			return hydrateSlot<string>(this, '_content', tree);
 		},
 		$with: {
-			b: (v: NonNullable<T.CharLiteralPlain['_b']>) =>
-				rebuilt(node, handle, () => wrapCharLiteralPlain({ ...$edited(data), _b: v }, tree)),
+			byte: (v: NonNullable<T.CharLiteralPlain['_byte']>) =>
+				rebuilt(node, handle, () => wrapCharLiteralPlain({ ...$edited(data), _byte: v }, tree)),
 			content: (v: NonNullable<T.CharLiteralPlain['_content']>) =>
 				rebuilt(node, handle, () => wrapCharLiteralPlain({ ...$edited(data), _content: v }, tree))
 		},
@@ -5826,15 +5826,15 @@ export function wrapCharLiteralEscapedSimple(
 	const node = {
 		...data,
 		$type: TSKindId.CharLiteralEscapedSimple as const,
-		b() {
-			return this._b;
+		byte() {
+			return this._byte;
 		},
 		content() {
 			return hydrateSlot<string>(this, '_content', tree);
 		},
 		$with: {
-			b: (v: NonNullable<T.CharLiteralEscapedSimple['_b']>) =>
-				rebuilt(node, handle, () => wrapCharLiteralEscapedSimple({ ...$edited(data), _b: v }, tree)),
+			byte: (v: NonNullable<T.CharLiteralEscapedSimple['_byte']>) =>
+				rebuilt(node, handle, () => wrapCharLiteralEscapedSimple({ ...$edited(data), _byte: v }, tree)),
 			content: (v: NonNullable<T.CharLiteralEscapedSimple['_content']>) =>
 				rebuilt(node, handle, () => wrapCharLiteralEscapedSimple({ ...$edited(data), _content: v }, tree))
 		},
@@ -5857,15 +5857,15 @@ export function wrapCharLiteralEscapedUnicodeFixed(
 	const node = {
 		...data,
 		$type: TSKindId.CharLiteralEscapedUnicodeFixed as const,
-		b() {
-			return this._b;
+		byte() {
+			return this._byte;
 		},
 		content() {
 			return hydrateSlot<string>(this, '_content', tree);
 		},
 		$with: {
-			b: (v: NonNullable<T.CharLiteralEscapedUnicodeFixed['_b']>) =>
-				rebuilt(node, handle, () => wrapCharLiteralEscapedUnicodeFixed({ ...$edited(data), _b: v }, tree)),
+			byte: (v: NonNullable<T.CharLiteralEscapedUnicodeFixed['_byte']>) =>
+				rebuilt(node, handle, () => wrapCharLiteralEscapedUnicodeFixed({ ...$edited(data), _byte: v }, tree)),
 			content: (v: NonNullable<T.CharLiteralEscapedUnicodeFixed['_content']>) =>
 				rebuilt(node, handle, () => wrapCharLiteralEscapedUnicodeFixed({ ...$edited(data), _content: v }, tree))
 		},
@@ -5888,15 +5888,15 @@ export function wrapCharLiteralEscapedUnicodeBraced(
 	const node = {
 		...data,
 		$type: TSKindId.CharLiteralEscapedUnicodeBraced as const,
-		b() {
-			return this._b;
+		byte() {
+			return this._byte;
 		},
 		content() {
 			return hydrateSlot<string>(this, '_content', tree);
 		},
 		$with: {
-			b: (v: NonNullable<T.CharLiteralEscapedUnicodeBraced['_b']>) =>
-				rebuilt(node, handle, () => wrapCharLiteralEscapedUnicodeBraced({ ...$edited(data), _b: v }, tree)),
+			byte: (v: NonNullable<T.CharLiteralEscapedUnicodeBraced['_byte']>) =>
+				rebuilt(node, handle, () => wrapCharLiteralEscapedUnicodeBraced({ ...$edited(data), _byte: v }, tree)),
 			content: (v: NonNullable<T.CharLiteralEscapedUnicodeBraced['_content']>) =>
 				rebuilt(node, handle, () => wrapCharLiteralEscapedUnicodeBraced({ ...$edited(data), _content: v }, tree))
 		},
@@ -5919,15 +5919,15 @@ export function wrapCharLiteralEscapedHex(
 	const node = {
 		...data,
 		$type: TSKindId.CharLiteralEscapedHex as const,
-		b() {
-			return this._b;
+		byte() {
+			return this._byte;
 		},
 		content() {
 			return hydrateSlot<string>(this, '_content', tree);
 		},
 		$with: {
-			b: (v: NonNullable<T.CharLiteralEscapedHex['_b']>) =>
-				rebuilt(node, handle, () => wrapCharLiteralEscapedHex({ ...$edited(data), _b: v }, tree)),
+			byte: (v: NonNullable<T.CharLiteralEscapedHex['_byte']>) =>
+				rebuilt(node, handle, () => wrapCharLiteralEscapedHex({ ...$edited(data), _byte: v }, tree)),
 			content: (v: NonNullable<T.CharLiteralEscapedHex['_content']>) =>
 				rebuilt(node, handle, () => wrapCharLiteralEscapedHex({ ...$edited(data), _content: v }, tree))
 		},

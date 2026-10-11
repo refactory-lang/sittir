@@ -1,4 +1,4 @@
-import { type ContainerCapture, type ModelSlot, KNOWN_PREDICATE_OPERATORS, WILDCARD } from './facts.ts';
+import { type ContainerCapture, type ModelSlot, KNOWN_PREDICATE_OPERATORS, WILDCARD, isFixedText } from './facts.ts';
 import { camel, snake } from './names.ts';
 import { type GrammarInput, type GrammarRoutes, isLayout, modelNode, resolveRoutes, slotFor } from './routes.ts';
 
@@ -88,7 +88,7 @@ export interface Derivation {
 	readonly wildcardUnrouted: readonly string[];
 }
 
-const unmappedToken = (grammar: string, kind: string): string => `<${grammar}:${kind.replace(/^_+/, '')}>`;
+const unmappedToken = (grammar: string, kind: string): string => `<${grammar}:${kind}>`;
 
 export function commonPrefix(paths: readonly string[]): string | null {
 	if (paths.length === 0) return null;
@@ -219,7 +219,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 		return undefined;
 	};
 	const directVocab = (input: GrammarInput, k: string, context: readonly string[]): string | undefined =>
-		placed(input, k, context) ?? vocabOf(input.grammar).get(k) ?? vocabOf(input.grammar).get(k.replace(/^_+/, ''));
+		placed(input, k, context) ?? vocabOf(input.grammar).get(k);
 
 	const derivedSuper = new Map<string, readonly string[] | null>();
 	const inclusion = new Map<string, Set<string>>();
@@ -279,7 +279,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 		const node = modelNode(input.model, k);
 		if (input.textTokens.has(k) && node?.pattern != null) return scalarOf([`text:${node.pattern}`]);
 		if (node?.modelType === 'enum') return scalarOf(node.enumMembers.map((m) => `text:${m.text}`));
-		if (node?.modelType === 'keyword' || node?.modelType === 'punctuation') return scalarOf([`literal:${k}`]);
+		if (isFixedText(node)) return scalarOf([`literal:${k}`]);
 		const container = node !== undefined && !context.includes(node.kind) ? (routesOf(g)?.containers.get(node.kind) ?? null) : null;
 		if (node !== undefined && container !== null) {
 			const inner = [...context, node.kind];
@@ -320,6 +320,11 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 		m?.set(cm, f);
 		return f;
 	};
+	const readFrom = new Map<string, Set<string>>();
+	const carriedBy = new Map<string, Set<string>>();
+	const tally = (map: Map<string, Set<string>>, key: string, kind: string): void => {
+		(map.get(key) ?? map.set(key, new Set<string>()).get(key))?.add(kind);
+	};
 	for (const input of inputs) {
 		const routes = routesOf(input.grammar);
 		if (!routes) continue;
@@ -339,9 +344,12 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 						continue;
 					}
 				}
-				if (!modelNode(input.model, gk)) continue;
+				const node = modelNode(input.model, gk);
+				if (!node) continue;
+				if (node.modelType !== 'supertype') tally(readFrom, `${vocab}${KEY_SEPARATOR}${input.grammar}`, gk);
 				for (const route of routes.members.get(gk) ?? []) {
 					const f = memberOf(vocab, route.name);
+					tally(carriedBy, `${vocab}${KEY_SEPARATOR}${input.grammar}${KEY_SEPARATOR}${route.name}`, gk);
 					if (route.route === 'slot') {
 						const resolved = slotResolution(input, gk, route.slot);
 						for (const t of resolved.tokens) f.kinds.add(t);
@@ -378,6 +386,12 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 			}
 		}
 	}
+
+	for (const [vocab, byName] of members)
+		for (const [name, f] of byName)
+			for (const grammar of f.grammars)
+				if ((carriedBy.get(`${vocab}${KEY_SEPARATOR}${grammar}${KEY_SEPARATOR}${name}`)?.size ?? 0) < (readFrom.get(`${vocab}${KEY_SEPARATOR}${grammar}`)?.size ?? 0))
+					f.optional = true;
 
 	const untargeted: string[] = [];
 	const uncaptured: string[] = [];

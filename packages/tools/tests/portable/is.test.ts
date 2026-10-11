@@ -175,6 +175,19 @@ describe('portable is: rust', async () => {
 		expect(at('expression.collection.list.repeat')(repeat, rc)).toBe(true);
 		expect(at('expression.collection.list.repeat')(list, lc)).toBe(false);
 	});
+
+	it('pins a prefix range pattern by its operator, and never reads a range with a left bound as exclusive by default', () => {
+		const SOURCE = 'fn f(x: u8) { match x { ..=5 => 0, ..9 => 1, 1..=5 => 2, _ => 3 } }\n';
+		const [inclusive, ic] = find(SOURCE, 'range_pattern_prefix', '..=5');
+		const [exclusive, ec] = find(SOURCE, 'range_pattern_prefix', '..9');
+		const [left, lc] = find(SOURCE, 'range_pattern_with_left', '1..=5');
+		expect(at('pattern.range.inclusive')(inclusive, ic)).toBe(true);
+		expect(at('pattern.range.exclusive')(inclusive, ic)).toBe(false);
+		expect(at('pattern.range.exclusive')(exclusive, ec)).toBe(true);
+		expect(at('pattern.range.inclusive')(exclusive, ec)).toBe(false);
+		expect(at('pattern.range')(left, lc)).toBe(true);
+		expect(at('pattern.range.exclusive')(left, lc)).toBe(false);
+	});
 });
 
 describe('portable is: typescript', async () => {
@@ -210,6 +223,12 @@ describe('portable is: typescript', async () => {
 	it('reads an enum member through the wildcard claim under the enum body\'s elements', () => {
 		const [member, context] = find('enum E { A, B = 1 }\n', 'enum_assignment');
 		expect(at('declaration.enum_member')(member, context)).toBe(true);
+	});
+
+	it('holds a supertype\'s path for a variant that reads by a claim of its own', () => {
+		const [hex, context] = find('let x = 0x1F;\n', 'number_hex');
+		expect(at('literal.number.integer.hex')(hex, context)).toBe(true);
+		expect(at('literal.number')(hex, context)).toBe(true);
 	});
 
 	it('reads a mapped index signature by its form', () => {

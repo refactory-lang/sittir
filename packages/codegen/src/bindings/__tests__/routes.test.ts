@@ -21,6 +21,8 @@ const node = (kind: string, slots: readonly ModelSlot[] = [], extra: Partial<Mod
 	enumMembers: [],
 	text: null,
 	pattern: null,
+	variantOf: null,
+	shownAs: [],
 	...extra
 });
 
@@ -61,7 +63,37 @@ const MODEL = [
 		]
 	}),
 	node('true_keyword', [], { modelType: 'keyword', text: 'true' }),
-	node('false_keyword', [], { modelType: 'keyword', text: 'false' })
+	node('_struct', [], { modelType: 'supertype', subtypes: ['struct_unit', 'struct_tuple', 'struct_named'] }),
+	node('struct_unit', [slot('name', ['identifier'])], { variantOf: '_struct' }),
+	node('struct_tuple', [slot('name', ['identifier']), slot('fields', ['identifier'], { multiple: true })], { variantOf: '_struct' }),
+	node('struct_named', [slot('name', ['identifier'])], { variantOf: '_struct' }),
+	node('arrow', [slot('param', ['arrow_param'])]),
+	node('arrow_param', [slot('name', ['identifier'])], { variantOf: 'arrow' }),
+	node('_template_text', [], { modelType: 'pattern', shownAs: ['text_fragment'] }),
+	node('_quoted_text', [], { modelType: 'pattern', shownAs: ['text_fragment'] }),
+	node('text_fragment', [], { modelType: 'pattern' }),
+	node('_plain_text', [], { modelType: 'pattern' }),
+	node('plain_text', [], { modelType: 'pattern' }),
+	node('plain_holder', [slot('text', ['_plain_text'])]),
+	node('shown_holder', [slot('text', ['_template_text'])]),
+	node('false_keyword', [], { modelType: 'keyword', text: 'false' }),
+	node('_decl', [], { modelType: 'supertype', subtypes: ['decl_plain', '_decl_default'] }),
+	node('decl_plain', [slot('name', ['identifier'])], { variantOf: '_decl' }),
+	node('_decl_default', [], { modelType: 'supertype', subtypes: ['default_fn'], variantOf: '_decl' }),
+	node('default_fn', [slot('declaration', ['identifier'])], { variantOf: '_decl_default' }),
+	node('_clause', [], { modelType: 'supertype', subtypes: ['clause_bare', 'clause_paren'] }),
+	node('clause_bare', [slot('item', ['identifier'], { propertyName: 'items', multiple: true })], { modelType: 'list', elementKinds: ['identifier'], variantOf: '_clause' }),
+	node('clause_paren', [slot('wrapped', ['clause_items'])], { modelType: 'envelope', variantOf: '_clause' }),
+	node('clause_items', [slot('item', ['identifier'], { propertyName: 'items', multiple: true })], { modelType: 'list', elementKinds: ['identifier'] }),
+	node('range', [slot('start', ['expr']), slot('dots', ['_dots'])]),
+	node('_dots', [], { modelType: 'punctuation', text: '..' }),
+	node('span', [slot('lo', ['expr']), slot('op', ['_dotdot', '_dotdoteq'])]),
+	node('_dotdot', [], { modelType: 'punctuation', text: '..' }),
+	node('_dotdoteq', [], { modelType: 'punctuation', text: '..=' }),
+	node('private_name', [slot('content', [])]),
+	node('scoped_name', [slot('path', ['identifier']), slot('name', ['identifier'])]),
+	node('char_text', [slot('content', [])]),
+	node('maybe_op', [slot('left', ['expr']), slot('operator', [], { required: false, terminals: ['+', '-'] }), slot('bang', [], { required: false, terminals: ['!'] })])
 ];
 
 const grammar = async (bindings: string): Promise<GrammarInput> => ({
@@ -126,6 +158,17 @@ describe('resolveRoutes', () => {
 			await grammar(['(binary operator: "+") @expression.binary.add', '(binary) @expression.binary'].join('\n'))
 		);
 		expect(routes.vocabOf.get('binary')).toBe('expression.binary');
+	});
+
+	it('names a kind with only refining claims by their paths\' shared parent, whatever their order', async () => {
+		const claims = ['(binary operator: "+") @expression.binary.add', '(binary operator: "-") @expression.binary.subtract'];
+		for (const order of [claims, [...claims].reverse()])
+			expect(resolveRoutes(await grammar(order.join('\n'))).vocabOf.get('binary')).toBe('expression.binary');
+	});
+
+	it('refuses a kind whose only claims refine different parents', async () => {
+		const bindings = await grammar(['(binary operator: "+") @expression.binary.add', '(binary operator: "-") @expression.unary.negation'].join('\n'));
+		expect(() => resolveRoutes(bindings)).toThrow(/binary.*expression\.binary.*expression\.unary/);
 	});
 
 	it('pins a field literal and a token held by a slot, each under the member name of its slot', async () => {
@@ -254,6 +297,35 @@ describe('resolveRoutes', () => {
 		expect(routes.readEntries.get('false_keyword')?.map((e) => e.vocab)).toEqual(['literal.boolean']);
 	});
 
+	it('enters a claim on a kind on each variant the kind owns, unless the variant has a claim of its own', async () => {
+		const routes = resolveRoutes(await grammar(['(_struct) @declaration.struct', '(struct_named) @declaration.struct.named'].join('\n')));
+		expect(routes.readEntries.get('struct_unit')?.map((e) => [e.claimed, e.vocab])).toEqual([['_struct', 'declaration.struct']]);
+		expect(routes.readEntries.get('struct_tuple')?.map((e) => [e.claimed, e.vocab])).toEqual([['_struct', 'declaration.struct']]);
+		expect(routes.members.get('struct_tuple')?.map((r) => r.name)).toEqual(['name', 'fields']);
+		expect(routes.readEntries.get('struct_named')?.map((e) => e.vocab)).toEqual(['declaration.struct.named']);
+	});
+
+	it('enters no claim on a variant of a branch: the variant is a part of its owner, not a form', async () => {
+		const routes = resolveRoutes(await grammar('(arrow) @expression.lambda'));
+		expect(routes.readEntries.has('arrow_param')).toBe(false);
+	});
+
+	it('carries a supertype claim\'s field renames to each form it reaches', async () => {
+		const routes = resolveRoutes(await grammar('(_struct name: (_) @title) @declaration.struct'));
+		expect(routes.members.get('struct_unit')?.map((r) => r.name)).toEqual(['title']);
+		expect(routes.members.get('struct_tuple')?.map((r) => r.name)).toEqual(['title', 'fields']);
+	});
+
+	it('enters a claim on every kind the parser shows by the claimed name', async () => {
+		const routes = resolveRoutes(await grammar('(text_fragment) @literal.string.text'));
+		expect([...routes.readEntries.keys()].filter((k) => routes.readEntries.get(k)?.[0]?.vocab === 'literal.string.text').sort()).toEqual([
+			'_quoted_text',
+			'_template_text',
+			'text_fragment'
+		]);
+		expect(routes.readEntries.get('_template_text')?.map((e) => e.claimed)).toEqual(['text_fragment']);
+	});
+
 	it('enters a claim pinning an enum kind\'s token only on the member that is that token', async () => {
 		const routes = resolveRoutes(await grammar(['(bool) @literal.boolean', '(bool "false") @literal.boolean.false'].join('\n')));
 		expect(routes.readEntries.get('false_keyword')?.map((e) => e.vocab)).toEqual(['literal.boolean.false', 'literal.boolean']);
@@ -263,6 +335,66 @@ describe('resolveRoutes', () => {
 	it('leaves a pattern test on a kind the reader stores as its member\'s kind id to every member, for the read to decide', async () => {
 		const routes = resolveRoutes(await grammar('((bool) @literal.boolean.true (#match? @literal.boolean.true "^t"))'));
 		expect([...routes.readEntries.keys()].filter((k) => k.endsWith('_keyword')).sort()).toEqual(['false_keyword', 'true_keyword']);
+	});
+
+	it('enters a claim on the forms of a form that is itself a supertype', async () => {
+		const routes = resolveRoutes(await grammar('(_decl) @statement.export'));
+		expect(routes.readEntries.get('default_fn')?.map((e) => [e.claimed, e.vocab])).toEqual([['_decl', 'statement.export']]);
+		expect(routes.members.get('default_fn')?.map((r) => r.name)).toEqual(['declaration']);
+	});
+
+	it('routes a list form\'s items as the member its sibling forms hold the same elements under', async () => {
+		const routes = resolveRoutes(await grammar('(_clause wrapped: (_) @entries) @clause.with'));
+		expect(routes.members.get('clause_paren')?.map((r) => r.name)).toEqual(['entries']);
+		expect(routes.members.get('clause_bare')).toEqual([
+			{ route: 'slot', name: 'entries', slot: slot('item', ['identifier'], { propertyName: 'items', multiple: true }), path: [{ owner: 'clause_bare', slot: 'item' }] }
+		]);
+	});
+
+	it('routes no member through a required slot that can hold only one fixed text', async () => {
+		const routes = resolveRoutes(await grammar('(range) @expression.range'));
+		expect(routes.members.get('range')?.map((r) => r.name)).toEqual(['start']);
+	});
+
+	it('routes no member through a slot whose every value a refinement pins, and keeps one a refinement leaves open', async () => {
+		const told = resolveRoutes(
+			await grammar(['(binary) @expression.binary', '(binary operator: "+") @expression.binary.add', '(binary operator: "-") @expression.binary.subtract'].join('\n'))
+		);
+		expect(told.members.get('binary')?.map((r) => r.name)).toEqual(['left', 'right']);
+		const open = resolveRoutes(await grammar(['(binary) @expression.binary', '(binary operator: "+") @expression.binary.add'].join('\n')));
+		expect(open.members.get('binary')?.map((r) => r.name)).toEqual(['left', 'operator', 'right']);
+	});
+
+	it('routes no member through an optional slot whose every value a refinement pins, and keeps an optional one-value slot as its presence', async () => {
+		const routes = resolveRoutes(
+			await grammar(['(maybe_op) @expression.binary', '(maybe_op operator: "+") @expression.binary.add', '(maybe_op operator: "-") @expression.binary.subtract'].join('\n'))
+		);
+		expect(routes.members.get('maybe_op')?.map((r) => r.name)).toEqual(['left', 'bang']);
+	});
+
+	it('routes no member through a slot that holds only text on a kind read as an identifier, and keeps its node slots', async () => {
+		const routes = resolveRoutes(await grammar(['(private_name) @identifier.property', '(scoped_name) @identifier.scoped', '(char_text) @literal.char'].join('\n')));
+		expect(routes.members.get('private_name')).toEqual([]);
+		expect(routes.members.get('scoped_name')?.map((r) => r.name)).toEqual(['path', 'name']);
+		expect(routes.members.get('char_text')?.map((r) => r.name)).toEqual(['content']);
+	});
+
+	it('pins a token on the slot whose fixed-text kind is that text, and counts it as a value the refinement tells', async () => {
+		const routes = resolveRoutes(
+			await grammar(['(span) @expression.range', '(span "..") @expression.range.exclusive', '(span "..=") @expression.range.inclusive'].join('\n'))
+		);
+		expect(routes.readEntries.get('span')?.map((e) => e.pins)).toEqual([
+			[{ member: 'op', slot: 'op', text: '..' }],
+			[{ member: 'op', slot: 'op', text: '..=' }],
+			[]
+		]);
+		expect(routes.members.get('span')?.map((r) => r.name)).toEqual(['lo']);
+	});
+
+	it('routes no member through a slot a claim marks @dropped, on each form the claim reaches', async () => {
+		const routes = resolveRoutes(await grammar('(binary left: (_) @dropped) @expression.binary\n(_struct name: (_) @dropped) @declaration.struct'));
+		expect(routes.members.get('binary')?.map((r) => r.name)).toEqual(['operator', 'right']);
+		expect(routes.members.get('struct_tuple')?.map((r) => r.name)).toEqual(['fields']);
 	});
 
 	it('keeps the template a templated claim builds from', async () => {
@@ -279,6 +411,22 @@ describe('derive', () => {
 		const flag = d.members.get('declaration.function')?.get('private');
 		expect([...(flag?.kinds ?? [])]).toEqual(['boolean']);
 		expect(flag?.optional).toBe(true);
+	});
+
+	it('types a member optional unless every kind the path is read from carries it', async () => {
+		const d = derive([await grammar('(_struct) @declaration.struct')]);
+		expect(d.members.get('declaration.struct')?.get('fields')?.optional).toBe(true);
+		expect(d.members.get('declaration.struct')?.get('name')?.optional).toBe(false);
+	});
+
+	it('types a member by the kind the parser shows, never by a name with its underscores stripped', async () => {
+		const d = derive([
+			await grammar(
+				['(plain_text) @literal.string.plain', '(text_fragment) @literal.string.text', '(plain_holder) @statement.plain', '(shown_holder) @statement.shown'].join('\n')
+			)
+		]);
+		expect([...(d.members.get('statement.shown')?.get('text')?.kinds ?? [])]).toEqual(['literal.string.text']);
+		expect([...(d.members.get('statement.plain')?.get('text')?.kinds ?? [])]).toEqual(['<g:_plain_text>']);
 	});
 });
 

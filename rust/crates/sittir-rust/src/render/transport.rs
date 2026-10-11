@@ -23203,13 +23203,13 @@ impl ::sittir_core::prepare::Prepare for IntegerLiteralOctalTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CHAR_LITERAL_PLAIN, interior = "^(?<b>b)?'(?<content>(?:[^\\\\']))'$")]
+#[transport(kind = kind::CHAR_LITERAL_PLAIN, interior = "^(?<byte>b)?'(?<content>(?:[^\\\\']))'$")]
 pub struct CharLiteralPlainTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_b")]
-    #[slot(capture = "b")]
-    pub b: Option<bool>,
+    #[wire(key = "_byte")]
+    #[slot(capture = "byte")]
+    pub byte: Option<bool>,
     #[wire(key = "_content")]
     #[slot(capture = "content")]
     pub content: String,
@@ -23236,7 +23236,7 @@ impl ::sittir_core::render::Render for CharLiteralPlainTransport {
 impl ::sittir_core::prepare::Prepare for CharLiteralPlainTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        self.b.prepare(ctx)?;
+        self.byte.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -23289,13 +23289,13 @@ impl ::sittir_core::prepare::Prepare for CharLiteralEmptyTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CHAR_LITERAL_ESCAPED_SIMPLE, interior = "^(?<b>b)?'(?<content>\\\\(?:[^xu]))'$")]
+#[transport(kind = kind::CHAR_LITERAL_ESCAPED_SIMPLE, interior = "^(?<byte>b)?'(?<content>\\\\(?:[^xu]))'$")]
 pub struct CharLiteralEscapedSimpleTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_b")]
-    #[slot(capture = "b")]
-    pub b: Option<bool>,
+    #[wire(key = "_byte")]
+    #[slot(capture = "byte")]
+    pub byte: Option<bool>,
     #[wire(key = "_content")]
     #[slot(capture = "content")]
     pub content: String,
@@ -23322,7 +23322,7 @@ impl ::sittir_core::render::Render for CharLiteralEscapedSimpleTransport {
 impl ::sittir_core::prepare::Prepare for CharLiteralEscapedSimpleTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        self.b.prepare(ctx)?;
+        self.byte.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -23335,13 +23335,13 @@ impl ::sittir_core::prepare::Prepare for CharLiteralEscapedSimpleTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CHAR_LITERAL_ESCAPED_UNICODE_FIXED, interior = "^(?<b>b)?'(?<content>\\\\(?:u[0-9a-fA-F]{4}))'$")]
+#[transport(kind = kind::CHAR_LITERAL_ESCAPED_UNICODE_FIXED, interior = "^(?<byte>b)?'(?<content>\\\\(?:u[0-9a-fA-F]{4}))'$")]
 pub struct CharLiteralEscapedUnicodeFixedTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_b")]
-    #[slot(capture = "b")]
-    pub b: Option<bool>,
+    #[wire(key = "_byte")]
+    #[slot(capture = "byte")]
+    pub byte: Option<bool>,
     #[wire(key = "_content")]
     #[slot(capture = "content")]
     pub content: String,
@@ -23368,7 +23368,7 @@ impl ::sittir_core::render::Render for CharLiteralEscapedUnicodeFixedTransport {
 impl ::sittir_core::prepare::Prepare for CharLiteralEscapedUnicodeFixedTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        self.b.prepare(ctx)?;
+        self.byte.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -23381,13 +23381,13 @@ impl ::sittir_core::prepare::Prepare for CharLiteralEscapedUnicodeFixedTransport
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CHAR_LITERAL_ESCAPED_UNICODE_BRACED, interior = "^(?<b>b)?'(?<content>\\\\(?:u\\{[0-9a-fA-F]+\\}))'$")]
+#[transport(kind = kind::CHAR_LITERAL_ESCAPED_UNICODE_BRACED, interior = "^(?<byte>b)?'(?<content>\\\\(?:u\\{[0-9a-fA-F]+\\}))'$")]
 pub struct CharLiteralEscapedUnicodeBracedTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_b")]
-    #[slot(capture = "b")]
-    pub b: Option<bool>,
+    #[wire(key = "_byte")]
+    #[slot(capture = "byte")]
+    pub byte: Option<bool>,
     #[wire(key = "_content")]
     #[slot(capture = "content")]
     pub content: String,
@@ -23414,7 +23414,7 @@ impl ::sittir_core::render::Render for CharLiteralEscapedUnicodeBracedTransport 
 impl ::sittir_core::prepare::Prepare for CharLiteralEscapedUnicodeBracedTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        self.b.prepare(ctx)?;
+        self.byte.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -23427,13 +23427,13 @@ impl ::sittir_core::prepare::Prepare for CharLiteralEscapedUnicodeBracedTranspor
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CHAR_LITERAL_ESCAPED_HEX, interior = "^(?<b>b)?'(?<content>\\\\(?:x[0-9a-fA-F]{2}))'$")]
+#[transport(kind = kind::CHAR_LITERAL_ESCAPED_HEX, interior = "^(?<byte>b)?'(?<content>\\\\(?:x[0-9a-fA-F]{2}))'$")]
 pub struct CharLiteralEscapedHexTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_b")]
-    #[slot(capture = "b")]
-    pub b: Option<bool>,
+    #[wire(key = "_byte")]
+    #[slot(capture = "byte")]
+    pub byte: Option<bool>,
     #[wire(key = "_content")]
     #[slot(capture = "content")]
     pub content: String,
@@ -23460,7 +23460,7 @@ impl ::sittir_core::render::Render for CharLiteralEscapedHexTransport {
 impl ::sittir_core::prepare::Prepare for CharLiteralEscapedHexTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        self.b.prepare(ctx)?;
+        self.byte.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -35934,10 +35934,10 @@ fn render_integer_literal_octal(node: &IntegerLiteralOctalTransport, w: &mut dyn
 }
 
 fn render_char_literal_plain(node: &CharLiteralPlainTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let b = View::new(&node.b, "b");
+    let byte = View::new(&node.byte, "b");
     let content = &node.content;
-    b.render(w)?;
-    if b.is_present() {
+    byte.render(w)?;
+    if byte.is_present() {
         w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     }
     w.text("'")?;
@@ -35953,10 +35953,10 @@ fn render_char_literal_empty(t: &CharLiteralEmptyTransport, w: &mut dyn ::sittir
 }
 
 fn render_char_literal_escaped_simple(node: &CharLiteralEscapedSimpleTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let b = View::new(&node.b, "b");
+    let byte = View::new(&node.byte, "b");
     let content = &node.content;
-    b.render(w)?;
-    if b.is_present() {
+    byte.render(w)?;
+    if byte.is_present() {
         w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     }
     w.text("'")?;
@@ -35968,10 +35968,10 @@ fn render_char_literal_escaped_simple(node: &CharLiteralEscapedSimpleTransport, 
 }
 
 fn render_char_literal_escaped_unicode_fixed(node: &CharLiteralEscapedUnicodeFixedTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let b = View::new(&node.b, "b");
+    let byte = View::new(&node.byte, "b");
     let content = &node.content;
-    b.render(w)?;
-    if b.is_present() {
+    byte.render(w)?;
+    if byte.is_present() {
         w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     }
     w.text("'")?;
@@ -35983,10 +35983,10 @@ fn render_char_literal_escaped_unicode_fixed(node: &CharLiteralEscapedUnicodeFix
 }
 
 fn render_char_literal_escaped_unicode_braced(node: &CharLiteralEscapedUnicodeBracedTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let b = View::new(&node.b, "b");
+    let byte = View::new(&node.byte, "b");
     let content = &node.content;
-    b.render(w)?;
-    if b.is_present() {
+    byte.render(w)?;
+    if byte.is_present() {
         w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     }
     w.text("'")?;
@@ -35998,10 +35998,10 @@ fn render_char_literal_escaped_unicode_braced(node: &CharLiteralEscapedUnicodeBr
 }
 
 fn render_char_literal_escaped_hex(node: &CharLiteralEscapedHexTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let b = View::new(&node.b, "b");
+    let byte = View::new(&node.byte, "b");
     let content = &node.content;
-    b.render(w)?;
-    if b.is_present() {
+    byte.render(w)?;
+    if byte.is_present() {
         w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     }
     w.text("'")?;

@@ -10260,6 +10260,10 @@ The node's `renamedFrom`, written only when the kind was renamed. Tools read the
 
 The node's `splitFrom`, written only on a split clone. The validators place a split kind's render inside its owner from it.
 
+### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.variantOf`
+
+The node's `variantOf`, written only on an owned variant. Route derivation reaches a supertype's forms by it (`formsOf`).
+
 ### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.oneSurface`
 
 Set on a kind with one builder and no strict/coerce pair (`hasOneSurface`). The predicate is the emitter's own, stamped here so a tool that spells calls reads it and does not re-derive it from the kind's shape.
@@ -14747,7 +14751,7 @@ Turns the members of a lexed kind's render rule into interior nodes: an entry fo
 
 ### `packages/codegen/src/emitters/interior.ts::groupMembers`
 
-The members of a nested sequence member, which is an optional group of interior members. The render rule carries no optional marker here: `flattenMembers` in the token-interior pass splices every nested sequence that is not a group arm, so a nested sequence that survives to the render rule is, by construction, the arm of an optional group and the regex wraps it as one.
+The members of a nested sequence member, which is an optional group of interior members. The render rule carries no optional marker here: the token-interior pass splices every nested sequence that names a part or holds no pattern and composes the rest into slots (`compiler/token-interior.ts::flattenSeqs`), so a nested sequence that survives to the render rule is, by construction, the arm of an optional group and the regex wraps it as one.
 
 ### `packages/codegen/src/emitters/interior.ts::interiorNodePattern`
 

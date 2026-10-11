@@ -67,7 +67,7 @@ import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 import { rootRuleName } from '../util/reachable-rules.ts';
 import { polymorphVisibleName } from '../dsl/arm-names.ts';
 import { mappedName } from '../dsl/bind.ts';
-import { deriveVariantChildren, isAliasMintedRef, stampLabelProvenance } from './variant-structural.ts';
+import { deriveVariantChildren, isAliasMintedRef, ownedVariants, stampLabelProvenance } from './variant-structural.ts';
 import {
 	composeTokenText,
 	deriveComplexAliasTargetHidden,
@@ -317,7 +317,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		wordMatcher: wordMatcherRegex,
 		reserved: raw.reserved,
 		fileTypes: raw.fileTypes,
-		provenance: { renamedFrom: raw.renamedFrom, splitFrom: raw.splitFrom },
+		provenance: { renamedFrom: raw.renamedFrom, splitFrom: raw.splitFrom, variantOf: ownedVariants(variantChildren, references) },
 		references,
 		derivations,
 		displayUnions,

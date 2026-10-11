@@ -59,7 +59,8 @@ member routes, container unwraps), and make templates hole members of every
 claim in their pattern; fold each claimed kind's member routes, claim by claim
 in file order, into member types (a slot route's slot resolved, a presence or
 a flag an optional `boolean`, a nested member its named kind or the kinds of the slot its
-selector finds in its parent); fold pinned claims into refinements, each pin
+selector finds in its parent; a member is optional when some kind the path is read from in that
+grammar does not carry it, a supertype counting as none since its forms stand in for it); fold pinned claims into refinements, each pin
 named by the kind's converged member (a capture on the field renames it)
 rather than by the grammar's field; assign container captures to
 the kinds the element slot names directly; collapse a namespace's leaves when
@@ -98,7 +99,7 @@ scalar, so a member admitting both reads `T | T[]`.
 
 ### `packages/codegen/src/bindings/derive.ts::unmappedToken`
 
-The `<grammar:kind>` placeholder for a grammar kind no claim maps, with the kind's leading underscores dropped.
+The `<grammar:kind>` placeholder for a grammar kind no claim maps, named by the grammar kind itself.
 
 ### `packages/codegen/src/bindings/derive.ts::inclusionCycles`
 
@@ -228,7 +229,7 @@ How a refinement claim tells its nodes apart from the claim it refines: a predic
 
 ### `packages/codegen/src/bindings/facts.ts::RefinedClaim`
 
-A claim with what it refines: `refines` is the deepest earlier claim's path that the claim's path extends, on the same kind in the same placement, and `refinement` is how it tells its nodes apart. A top-level claim that refines nothing still carries a refinement kind when it pins something (a predicate, a field literal or a token); one that pins nothing has none and is a plain claim.
+A claim with what it refines: `refines` is the deepest path, among all the claims on the same kind in the same placement, that the claim's path extends, so claim order never decides it; and `refinement` is how it tells its nodes apart. A top-level claim that refines nothing still carries a refinement kind when it pins something (a predicate, a field literal or a token); one that pins nothing has none and is a plain claim.
 
 ### `packages/codegen/src/bindings/facts.ts::refinementKindOf`
 
@@ -616,7 +617,7 @@ The capture that declares the captured kind unclaimed.
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::DROPPED`
 
-The capture that marks a container's slot as left out on purpose.
+The capture that marks a slot as left out on purpose: a container's, or, in a claim, the slot of the node it sits under.
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::isPath`
 
@@ -672,7 +673,7 @@ The `ClaimFact` for a claim capture on a visit: its kind (a grouping's first chi
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::memberFact`
 
-The `MemberFact` for a member capture on a visit. On a child of the top (or under a top grouping) it renames the slot its selector finds, or marks an unfielded token's presence. Deeper, it is a nested member of the top kind (or the presence of a token) routed through the selectors of the nodes between. A capture directly under a grouping names no member.
+The `MemberFact` for a member capture on a visit. A `@dropped` capture drops the slot its selector finds on its parent's kind. On a child of the top (or under a top grouping) it renames the slot its selector finds, or marks an unfielded token's presence. Deeper, it is a nested member of the top kind (or the presence of a token) routed through the selectors of the nodes between. A capture directly under a grouping names no member.
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::refuseAnchoredPlacement`
 
@@ -850,6 +851,10 @@ The slot that holds a kind: the first slot naming it, else the first slot naming
 
 A kind's model node, falling back to its hidden `_` spelling.
 
+### `packages/codegen/src/bindings/routes.ts::SlotNames`
+
+The names the bindings give a kind's slots, by slot name: a capture's name, or `null` where a claim marks the slot `@dropped`.
+
 ### `packages/codegen/src/bindings/routes.ts::memberNameOf`
 
 A slot's member name: the capture that renames it, else its property name without a trailing `_` or a `Modifier` suffix, in camel case.
@@ -872,7 +877,19 @@ Whether a model node is an alias envelope over leaf text: `modelType` `alias`, w
 
 ### `packages/codegen/src/bindings/routes.ts::membersOf`
 
-A kind's member routes: one `slot` route per slot of the model node (minus layout slots, and minus the kinds a `presence` or `nested` route reaches through), then the member facts the bindings state for it (`kind`, `presence`, `nested`). A leaf alias envelope (`isLeafAlias`) takes no slot routes, and neither does a list: its item slot is its container content (`containerOf`), a step a path may take but no member.
+A kind's member routes: one `slot` route per slot of the model node, then the member facts the bindings state for it (`kind`, `presence`, `nested`). A slot routes no member when it is a layout slot, when a claim drops it (`SlotNames` gives it `null`), when the read already tells its value (`toldByRead`, over the pins of the kind's read entries), or when it holds only text on a kind read as an identifier (`facts.ts::isIdentifierPath`, `holdsOnlyText`: an identifier's text is its own value, while a compound identifier's node slots stay members); the kinds a `presence` or `nested` route reaches through are taken out of their slot. A leaf alias envelope (`isLeafAlias`) takes no slot routes. A list's item slot is its container content (`containerOf`), a step a path may take but no member, unless the list is a form of a supertype, whose items route as its sibling forms name them (`listFormItems`).
+
+### `packages/codegen/src/bindings/routes.ts::holdsOnlyText`
+
+Whether a slot holds text and nothing else: no kinds, no fixed terminals, and not a boolean.
+
+### `packages/codegen/src/bindings/routes.ts::heldElements`
+
+The element kinds a slot holds many of: the kinds of a slot that repeats, and the element kinds of a list kind it holds (`containerOf`).
+
+### `packages/codegen/src/bindings/routes.ts::listFormItems`
+
+The member route of a list kind that is a form of a supertype (`formsOf` of its `variantOf` owner reaches it): its item slot, named as the first sibling form names the slot that holds all of the list's element kinds (`heldElements`), renames included. Python's bare `with a, b:` thus routes its items as the parenthesised form's `withItems`. A list that is no form, or whose siblings hold its elements nowhere, routes nothing.
 
 ### `packages/codegen/src/bindings/routes.ts::viaPath`
 
@@ -880,15 +897,23 @@ The slots from an owner kind outward through the `via` steps (walked farthest fi
 
 ### `packages/codegen/src/bindings/routes.ts::resolveRoutes`
 
-Resolves one grammar's routes. Renames are collected per owner kind first, since a pin's member name and a slot route's name both follow them. A claim's read entries go on the kinds the reader produces for the claimed node (`readKinds`), so a claim on an enum kind is entered on its members' kinds. A kind's default vocabulary kind is its first top-level claim with no predicate and no pin, else its first top-level claim, in file order; the read entries are then sorted by `specificity`. Member routes are resolved for every claimed kind and container unwraps for every kind of the model.
+Resolves one grammar's routes. A claim on a kind reaches the kind and each of its forms (`formsOf`) that has no claim of its own: a self-claimed form reads by its own claim, and `is` still passes it for the supertype's path by the kind table. Slot names (`SlotNames`: renames, and a claim's `@dropped` slots) are collected first on every kind their claim reaches, since a pin's member name and a slot route's name both follow them, so a supertype claim's field rename or drop applies to the field on each form. A claim's read entries go on the kinds the reader produces for each kind it reaches (`readKinds`), so a claim on an enum kind is entered on its members' kinds; an entry's `claimed` is the kind the claim names. A kind's default vocabulary kind is its first top-level claim with no predicate and no pin, in file order, else the parent its refining claims' paths share (`refinedParent`); the read entries are then sorted by `specificity`. Member routes are resolved for every claimed kind, from its sorted read entries, and container unwraps for every kind of the model.
+
+### `packages/codegen/src/bindings/routes.ts::refinedParent`
+
+The vocabulary kind of a kind whose top-level claims all refine: the parent path they share, so each refining claim sits under its own path's parent and none is promoted to name the kind. Claims under different parents, or a single-segment path with no parent, are refused with a diagnostic naming the paths, since nothing then says which vocabulary kind the kind reads as.
 
 ### `packages/codegen/src/bindings/input.ts::module`
 
 How one grammar's routes input is assembled, for codegen and the inventory alike. Codegen hands it the node-model record it is about to write and its evaluated grammar; the inventory hands it the committed `node-model.json5` and the grammar it evaluates. One assembly, so the routes codegen writes are the routes the inventory folds.
 
+### `packages/codegen/src/bindings/routes.ts::formsOf`
+
+The kind and, when it is a supertype, every kind the model stamps as its owned variant (`ModelNode.variantOf`), with the forms of each variant that is itself a supertype: the forms a node of the kind takes in the tree. A variant of a branch or polymorph sits under its owner as a part, so a kind that is not a supertype is its only form.
+
 ### `packages/codegen/src/bindings/routes.ts::readKinds`
 
-The kinds the typed reader produces for a node of `kind`. A kind with no enum members is read as itself. An enum kind is stored as one member's kind id, so a node of it reads as that member's kind (`ModelNode.enumMembers`): every member whose text equals each text the claim requires of the node's own text (`ownTextEquals`). Any other test on that text keeps every member, and the claim's read test decides at run time on the member's fixed text. The claim itself is entered unchanged, so its specificity and its read test are those of the claim as written.
+The kinds the typed reader produces for a node of `kind`: the kind, or its members when it is an enum, and every kind the parser shows by `kind`'s name at an alias site (`ModelNode.shownAs`), since a claim names what the parser shows. A kind with no enum members is read as itself. An enum kind is stored as one member's kind id, so a node of it reads as that member's kind (`ModelNode.enumMembers`): every member whose text equals each text the claim requires of the node's own text (`ownTextEquals`). Any other test on that text keeps every member, and the claim's read test decides at run time on the member's fixed text. The claim itself is entered unchanged, so its specificity and its read test are those of the claim as written.
 
 ### `packages/codegen/src/bindings/routes.ts::ownTextEquals`
 
@@ -900,7 +925,11 @@ The part of a node-model record the bindings read: each node's kind, model type,
 
 ### `packages/codegen/src/bindings/input.ts::slotModelOf`
 
-The slot model of a node-model record: per kind its slots, a slot's terminals being the values it stores as terminal text, and an enum's members as `enumMembers`, with the record's omissions filled (`branch`, not required, single, `verbatim`, no members).
+The slot model of a node-model record: per kind its slots, a slot's terminals being the values it stores as terminal text, and an enum's members as `enumMembers`, with the record's omissions filled (`branch`, not required, single, `verbatim`, no members, no `variantOf`), and each kind's `shownAs` from `shownNames`.
+
+### `packages/codegen/src/bindings/input.ts::shownNames`
+
+Per grammar kind, the names the parser shows it by where a slot holds it under another name: every node-reference value's stamped `parseKind` that differs from its `name`, sorted.
 
 ### `packages/codegen/src/bindings/input.ts::renamedFromOf`
 
@@ -916,7 +945,7 @@ A grammar's `GrammarInput`, or `undefined` when it ships no `bindings.scm`: its 
 
 ### `packages/codegen/src/bindings/input.ts::NodeModelValue`
 
-One admitted value of a serialized slot: its kind (`terminal` for literal text) and the text.
+One admitted value of a serialized slot: its kind (`terminal` for literal text) and the text, or for a node reference the grammar kind (`name`) and the kind the parser shows at that site (`parseKind`).
 
 ### `packages/codegen/src/bindings/input.ts::NodeModelSlot`
 
@@ -972,7 +1001,19 @@ The model types whose single content slot stands for the kind itself when it is 
 
 ### `packages/codegen/src/bindings/routes.ts::pinsOf`
 
-A claim's pins on its kind: each field literal, plus each unfielded token a slot's terminals admit (unless that field is already pinned), as the member, slot and text the read tests.
+A claim's pins on its kind: each field literal, plus each unfielded token a slot admits, by its terminals or by a fixed-text kind it holds (`textOfKind`), unless that field is already pinned, as the member, slot and text the read tests.
+
+### `packages/codegen/src/bindings/routes.ts::textOfKind`
+
+The text of a kind that is one fixed text (`facts.ts::isFixedText`), else nothing.
+
+### `packages/codegen/src/bindings/routes.ts::fixedValues`
+
+Every value a slot can hold when each is a fixed text: its terminals and the texts of its fixed-text kinds. A slot that holds any other kind has no such list.
+
+### `packages/codegen/src/bindings/routes.ts::toldByRead`
+
+Whether the read already tells a slot's value, so the slot is no member. The slot holds one value at a time from a fixed list (`fixedValues`), and either a read entry of the kind pins every value, or the slot is required and has one value only. When every value is pinned, an optional slot is told too: a node that matches no pinned entry holds none. An optional one-value slot is a presence, which the read does not tell, so it stays a member.
 
 ### `packages/codegen/src/bindings/derive.ts::wildcardContainers`
 
@@ -1000,7 +1041,15 @@ A kind `bindings.scm` declares unclaimed (`@unclaimed`), with the pattern's `#se
 
 ### `packages/codegen/src/bindings/facts.ts::MemberFact`
 
-A member capture as read. `rename` names the slot its selector finds on the owner. `presence` marks an unfielded token's presence on the owner, through the steps in `via` when it sits deeper. `kind` is the presence of a node's kind in the slot another member names (a flag). `nested` is a member of the top kind that sits below a child, reached through `via`, in `parent`'s slot the selector finds, repeated when `multiple`. Each `via` step is the selector of a node between, nearest first, so an anchored step keeps its anchor.
+A member capture as read. `rename` names the slot its selector finds on the owner. `dropped` marks the slot its selector finds on the owner as no member, from a claim's `@dropped` capture. `presence` marks an unfielded token's presence on the owner, through the steps in `via` when it sits deeper. `kind` is the presence of a node's kind in the slot another member names (a flag). `nested` is a member of the top kind that sits below a child, reached through `via`, in `parent`'s slot the selector finds, repeated when `multiple`. Each `via` step is the selector of a node between, nearest first, so an anchored step keeps its anchor.
+
+### `packages/codegen/src/bindings/facts.ts::NamedMemberFact`
+
+A member fact that names a member: every route but `dropped`.
+
+### `packages/codegen/src/bindings/facts.ts::isNamedMember`
+
+Whether a member fact names a member (`NamedMemberFact`). The overlay derivation reads only these: a dropped slot asks for no grammar change.
 
 ### `packages/codegen/src/bindings/facts.ts::ContainerCapture`
 
@@ -1022,9 +1071,25 @@ An anchored `#match?` with named holes as a template: the vocabulary paths the p
 
 A slot of the node model as the bindings read it: its name and property name, whether it is required and repeated, its storage, the kinds it holds and the terminal texts it admits.
 
+### `packages/codegen/src/bindings/facts.ts::FIXED_TEXT_MODEL_TYPES`
+
+The model types of a kind that is always one fixed text: keywords and punctuation.
+
+### `packages/codegen/src/bindings/facts.ts::isFixedText`
+
+Whether a model node is one fixed text (`FIXED_TEXT_MODEL_TYPES`, with its text known).
+
+### `packages/codegen/src/bindings/facts.ts::IDENTIFIER`
+
+The vocabulary root whose kinds are identifiers.
+
+### `packages/codegen/src/bindings/facts.ts::isIdentifierPath`
+
+Whether a vocabulary path is `IDENTIFIER` or beneath it. A kind with a read entry at such a path routes no member through a slot that holds only text (`routes.ts::membersOf`).
+
 ### `packages/codegen/src/bindings/facts.ts::ModelNode`
 
-A kind of the node model as the bindings read it: its model type, its slots, its supertype arms, a list's element kinds, an enum's members, a fixed leaf's text and a pattern leaf's pattern.
+A kind of the node model as the bindings read it: its model type, its slots, its supertype arms, a list's element kinds, an enum's members, a fixed leaf's text, a pattern leaf's pattern, the kind it is an owned variant of (`variantOf`), and the names the parser shows it by at an alias site (`shownAs`).
 
 ### `packages/codegen/src/bindings/facts.ts::SlotModel`
 

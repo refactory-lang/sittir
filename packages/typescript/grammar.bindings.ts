@@ -3,7 +3,7 @@
 import { bindings, field, rename } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "632b3972881f43b7e01144e2138c5c393886b317ac3fc9ffc86b98cfbc6be71d",
+	hash: "4f3ccdfaf192a8dcde6e11515202583f66085eac19872299df7abe9c91f150cb",
 	patches: {
 		_parameter_name: { "1/0": field("visibility"), "4": field("name") },
 		abstract_class_declaration: { "1": field("abstract") },
@@ -12,6 +12,9 @@ export default bindings({
 		catch_clause: { "1/0": field("catch_clause_group") },
 		decorator: { "1": field("content") },
 		export_clause: { "1/0": field("export_specifiers") },
+		export_statement_default_declaration: { "2/0": field("declaration") },
+		export_statement_default_from: { "1/3": field("export_clause") },
+		export_statement_equals_export: { "2": field("value") },
 		for_in_statement: { "1/0": field("async") },
 		generator_function: { "2": field("generator") },
 		generator_function_declaration: { "2": field("generator") },

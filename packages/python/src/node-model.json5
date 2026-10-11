@@ -2464,6 +2464,7 @@
         "compoundStatement"
       ],
       "hidden": true,
+      "variantOf": "_statement",
       "transparent": true,
       "subtypes": [
         "class_definition",
@@ -3413,6 +3414,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "expression",
       "slots": [
         {
           "name": "expression",
@@ -3577,6 +3579,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "slots": [
         {
           "name": "expression",
@@ -3640,6 +3643,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "assignment",
       "slots": [
         {
           "name": "left",
@@ -3751,6 +3755,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "assignment",
       "slots": [
         {
           "name": "left",
@@ -3827,6 +3832,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "assignment",
       "slots": [
         {
           "name": "left",
@@ -4242,6 +4248,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "expression",
@@ -4361,6 +4368,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "left",
@@ -4553,6 +4561,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "expression",
       "slots": [
         {
           "name": "left",
@@ -4652,6 +4661,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "isParameterless": true,
       "stampExpression": "\"break\" as const",
       "text": "break",
@@ -4683,6 +4693,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "function",
@@ -4766,6 +4777,7 @@
         "caseAsPattern"
       ],
       "hidden": false,
+      "variantOf": "case_pattern",
       "slots": [
         {
           "name": "case_pattern",
@@ -5688,6 +5700,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "expression",
       "slots": [
         {
           "name": "left",
@@ -6076,6 +6089,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "expression",
       "slots": [
         {
           "name": "body",
@@ -6155,6 +6169,7 @@
         "constrainedType"
       ],
       "hidden": false,
+      "variantOf": "type",
       "slots": [
         {
           "name": "base_type",
@@ -6229,6 +6244,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "isParameterless": true,
       "stampExpression": "\"continue\" as const",
       "text": "continue",
@@ -6282,6 +6298,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_compound_statement",
       "slots": [
         {
           "name": "decorator",
@@ -6457,6 +6474,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "parameter",
       "slots": [
         {
           "name": "name",
@@ -6538,6 +6556,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "slots": [
         {
           "name": "expressions",
@@ -6749,6 +6768,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "elements",
@@ -6850,6 +6870,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "body",
@@ -7334,6 +7355,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "isParameterless": true,
       "stampExpression": "\"...\" as const",
       "text": "...",
@@ -7553,6 +7575,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "escape_sequence",
       "slots": [
         {
           "name": "content",
@@ -7629,6 +7652,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "escape_sequence",
       "slots": [
         {
           "name": "content",
@@ -7705,6 +7729,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "escape_sequence",
       "slots": [
         {
           "name": "content",
@@ -7781,6 +7806,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "escape_sequence",
       "slots": [
         {
           "name": "content",
@@ -7857,6 +7883,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "escape_sequence",
       "slots": [
         {
           "name": "content",
@@ -7933,6 +7960,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "escape_sequence",
       "slots": [
         {
           "name": "content",
@@ -8009,6 +8037,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "escape_sequence",
       "slots": [
         {
           "name": "content",
@@ -8161,6 +8190,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "except_clause",
       "slots": [
         {
           "name": "content",
@@ -8215,6 +8245,7 @@
         "exceptClauseExceptionAs"
       ],
       "hidden": false,
+      "variantOf": "except_clause_exception",
       "slots": [
         {
           "name": "value",
@@ -8278,6 +8309,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "except_clause_exception",
       "slots": [
         {
           "name": "value",
@@ -8342,6 +8374,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "slots": [
         {
           "name": "code",
@@ -8536,6 +8569,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "slots": [
         {
           "name": "content",
@@ -8683,6 +8717,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "expression_statement",
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -8984,6 +9019,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "float",
       "slots": [
         {
           "name": "integer",
@@ -9156,6 +9192,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "float",
       "slots": [
         {
           "name": "integer",
@@ -9328,6 +9365,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "float",
       "slots": [
         {
           "name": "integer",
@@ -9583,6 +9621,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_compound_statement",
       "slots": [
         {
           "name": "async",
@@ -9977,6 +10016,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "slots": [
         {
           "name": "content",
@@ -10097,6 +10137,7 @@
         "genericType"
       ],
       "hidden": false,
+      "variantOf": "type",
       "slots": [
         {
           "name": "name",
@@ -10177,6 +10218,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "slots": [
         {
           "name": "names",
@@ -10393,6 +10435,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_compound_statement",
       "slots": [
         {
           "name": "condition",
@@ -10485,6 +10528,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "slots": [
         {
           "name": "module_name",
@@ -10657,6 +10701,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "slots": [
         {
           "name": "names",
@@ -10750,6 +10795,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "integer",
       "slots": [
         {
           "name": "prefix",
@@ -10860,6 +10906,7 @@
       "annotations": {
         "tokenForm": true
       },
+      "variantOf": "integer",
       "transparent": true,
       "subtypes": [
         "integer_decimal_imaginary",
@@ -10895,6 +10942,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "integer_decimal",
       "leafPattern": "/^(?:(?:(?:[0-9]+_?))+(?:[jJ]))$/u",
       "oneSurface": true,
       "factoryShape": "text"
@@ -10927,6 +10975,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "integer_decimal",
       "leafPattern": "/^(?:(?:(?:[0-9]+_?))+(?:[Ll]))$/u",
       "oneSurface": true,
       "factoryShape": "text"
@@ -10959,6 +11008,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "integer_decimal",
       "pattern": "[0-9]+_?",
       "leafPattern": "/^(?:(?:(?:[0-9]+_?))+)$/u",
       "oneSurface": true,
@@ -10990,6 +11040,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "integer",
       "slots": [
         {
           "name": "prefix",
@@ -11103,6 +11154,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "integer",
       "slots": [
         {
           "name": "prefix",
@@ -11600,6 +11652,7 @@
         "keywordPattern"
       ],
       "hidden": false,
+      "variantOf": "case_pattern",
       "slots": [
         {
           "name": "name",
@@ -11767,6 +11820,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "parameter",
       "isParameterless": true,
       "stampExpression": "\"*\" as const",
       "text": "*",
@@ -11789,6 +11843,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "expression",
       "slots": [
         {
           "name": "parameters",
@@ -11918,6 +11973,7 @@
         "lambdaWithinForInClause"
       ],
       "hidden": false,
+      "variantOf": "_expression_within_for_in_clause",
       "slots": [
         {
           "name": "parameters",
@@ -12021,6 +12077,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "line_continuation",
       "leafPattern": "/^(?:\\\\(?:\\r)?\\n)$/u",
       "oneSurface": true,
       "factoryShape": "text"
@@ -12040,6 +12097,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "line_continuation",
       "isParameterless": true,
       "stampExpression": "\"\\\\\\u0000\" as const",
       "text": "\\\u0000",
@@ -12062,6 +12120,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "collection_elements",
@@ -12163,6 +12222,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "body",
@@ -12227,6 +12287,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "pattern",
       "slots": [
         {
           "name": "patterns",
@@ -12679,6 +12740,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "match_block",
       "slots": [
         {
           "name": "alternative",
@@ -12727,6 +12789,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "match_block",
       "isParameterless": true,
       "slots": [
         {
@@ -12790,6 +12853,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_compound_statement",
       "slots": [
         {
           "name": "subjects",
@@ -12852,6 +12916,7 @@
         "memberType"
       ],
       "hidden": false,
+      "variantOf": "type",
       "slots": [
         {
           "name": "base_type",
@@ -12953,6 +13018,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "expression",
       "slots": [
         {
           "name": "name",
@@ -13123,6 +13189,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "slots": [
         {
           "name": "names",
@@ -13192,6 +13259,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "expression",
       "slots": [
         {
           "name": "argument",
@@ -13510,6 +13578,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "expression",
@@ -13792,6 +13861,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "isParameterless": true,
       "stampExpression": "\"pass\" as const",
       "text": "pass",
@@ -14015,6 +14085,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "parameter",
       "isParameterless": true,
       "stampExpression": "\"/\" as const",
       "text": "/",
@@ -14295,6 +14366,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "slots": [
         {
           "name": "content",
@@ -14575,6 +14647,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "slots": [
         {
           "name": "expressions",
@@ -14732,6 +14805,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "slots": [
         {
           "name": "expressions",
@@ -14848,6 +14922,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "collection_elements",
@@ -14949,6 +15024,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "body",
@@ -15011,6 +15087,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "_simple_pattern",
       "slots": [
         {
           "name": "sign",
@@ -15492,6 +15569,7 @@
         "splatType"
       ],
       "hidden": false,
+      "variantOf": "type",
       "slots": [
         {
           "name": "operator",
@@ -16088,6 +16166,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "_suite",
       "slots": [
         {
           "name": "block",
@@ -16140,6 +16219,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "_suite",
       "isParameterless": true,
       "slots": [
         {
@@ -16193,6 +16273,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "_suite",
       "slots": [
         {
           "name": "elements",
@@ -16370,6 +16451,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_compound_statement",
       "slots": [
         {
           "name": "body",
@@ -16476,6 +16558,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "elements",
@@ -16962,6 +17045,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "slots": [
         {
           "name": "left",
@@ -17153,6 +17237,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "parameter",
       "slots": [
         {
           "name": "name",
@@ -17238,6 +17323,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "parameter",
       "slots": [
         {
           "name": "name",
@@ -17428,6 +17514,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "operator",
@@ -17645,6 +17732,7 @@
         "unionType"
       ],
       "hidden": false,
+      "variantOf": "type",
       "slots": [
         {
           "name": "left",
@@ -17723,6 +17811,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_compound_statement",
       "slots": [
         {
           "name": "condition",
@@ -17802,6 +17891,7 @@
         "wildcardImport"
       ],
       "hidden": false,
+      "variantOf": "import_from_statement",
       "isParameterless": true,
       "stampExpression": "\"*\" as const",
       "text": "*",
@@ -17859,6 +17949,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "with_clause",
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -17972,6 +18063,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "with_clause",
       "slots": [
         {
           "name": "with_items",
@@ -18291,6 +18383,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_compound_statement",
       "slots": [
         {
           "name": "async",
@@ -18486,6 +18579,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "yield",
       "slots": [
         {
           "name": "expression",
