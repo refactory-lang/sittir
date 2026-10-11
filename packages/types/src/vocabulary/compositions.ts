@@ -4,6 +4,7 @@ import type {
 	AlgebraicDataTypes,
 	AmbientDeclarations,
 	ArbitraryPrecisionIntegers,
+	Assertions,
 	AssociatedTypes,
 	AsyncAwait,
 	AsyncBlocks,
@@ -20,13 +21,16 @@ import type {
 	ConstGenerics,
 	Coroutines,
 	CountedLoops,
+	DebuggerStatements,
 	Decorators,
 	DefaultArguments,
 	Destructuring,
+	DynamicScope,
 	Encapsulation,
 	Enumerations,
 	ErrorPropagation,
 	Exceptions,
+	ExecStatements,
 	ExplicitOverrides,
 	ForeignFunctionInterface,
 	Generators,
@@ -50,12 +54,14 @@ import type {
 	OptionalMembers,
 	Overloading,
 	PostTestLoops,
+	PrintStatements,
 	RangeExpressions,
 	RawStrings,
 	ReadonlyMembers,
 	References,
 	RegularExpressions,
 	ResourceManagement,
+	ScopeDeclarations,
 	SingleInheritance,
 	SliceExpressions,
 	StringInterpolation,
@@ -94,7 +100,9 @@ export interface JavaScriptFeatures
 		CountedLoops,
 		PostTestLoops,
 		ConditionalExpressions,
-		OptionalChaining {}
+		OptionalChaining,
+		DynamicScope,
+		DebuggerStatements {}
 
 /** Python's features, those it spells by content included: visibility, accessors and operators by naming convention. */
 export interface PythonFeatures
@@ -126,7 +134,11 @@ export interface PythonFeatures
 		Comprehensions,
 		ConditionalExpressions,
 		Tuples,
-		SliceExpressions {}
+		SliceExpressions,
+		Assertions,
+		ScopeDeclarations,
+		PrintStatements,
+		ExecStatements {}
 
 /** Rust's features, operator overloading through its traits included. */
 export interface RustFeatures

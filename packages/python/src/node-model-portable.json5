@@ -5464,10 +5464,10 @@
       ]
     },
     "pass_statement": {
-      "vocab": "statement.pass",
+      "vocab": "statement.empty",
       "read": [
         {
-          "vocab": "statement.pass",
+          "vocab": "statement.empty",
           "toplevel": true,
           "within": [],
           "pins": [],

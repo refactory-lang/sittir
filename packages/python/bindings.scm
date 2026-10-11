@@ -44,7 +44,7 @@
 (with_statement) @statement.with
 (assert_statement) @statement.assert
 (delete_statement) @statement.delete
-(pass_statement) @statement.pass
+(pass_statement) @statement.empty
 (break_statement) @statement.break
 (continue_statement) @statement.continue
 (global_statement) @statement.global

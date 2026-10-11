@@ -8,6 +8,7 @@ import type * as accessors from './features/methods/accessors/index.ts';
 import type * as algebraicDataTypes from './features/enumerations/algebraic-data-types/index.ts';
 import type * as ambientDeclarations from './features/type-annotations/ambient-declarations/index.ts';
 import type * as arbitraryPrecisionIntegers from './features/arbitrary-precision-integers/index.ts';
+import type * as assertions from './features/assertions/index.ts';
 import type * as associatedTypes from './features/type-aliases/associated-types/index.ts';
 import type * as asyncAwait from './features/async-await/index.ts';
 import type * as asyncBlocks from './features/async-await/async-blocks/index.ts';
@@ -25,13 +26,16 @@ import type * as conditionalExpressions from './features/conditional-expressions
 import type * as constGenerics from './features/parametric-polymorphism/const-generics/index.ts';
 import type * as coroutines from './features/coroutines/index.ts';
 import type * as countedLoops from './features/counted-loops/index.ts';
+import type * as debuggerStatements from './features/debugger-statements/index.ts';
 import type * as decorators from './features/decorators/index.ts';
 import type * as defaultArguments from './features/default-arguments/index.ts';
 import type * as destructuring from './features/destructuring/index.ts';
+import type * as dynamicScope from './features/dynamic-scope/index.ts';
 import type * as encapsulation from './features/encapsulation/index.ts';
 import type * as enumerations from './features/enumerations/index.ts';
 import type * as errorPropagation from './features/error-propagation/index.ts';
 import type * as exceptions from './features/exceptions/index.ts';
+import type * as execStatements from './features/exec-statements/index.ts';
 import type * as explicitOverrides from './features/methods/classes/explicit-overrides/index.ts';
 import type * as foreignFunctionInterface from './features/foreign-function-interface/index.ts';
 import type * as generators from './features/coroutines/generators/index.ts';
@@ -53,12 +57,14 @@ import type * as optionalChaining from './features/optional-chaining/index.ts';
 import type * as optionalMembers from './features/type-annotations/optional-members/index.ts';
 import type * as parametricPolymorphism from './features/parametric-polymorphism/index.ts';
 import type * as postTestLoops from './features/post-test-loops/index.ts';
+import type * as printStatements from './features/print-statements/index.ts';
 import type * as rangeExpressions from './features/range-expressions/index.ts';
 import type * as rawStrings from './features/raw-strings/index.ts';
 import type * as readonlyMembers from './features/readonly-members/index.ts';
 import type * as references from './features/references/index.ts';
 import type * as regularExpressions from './features/regular-expressions/index.ts';
 import type * as resourceManagement from './features/resource-management/index.ts';
+import type * as scopeDeclarations from './features/scope-declarations/index.ts';
 import type * as singleInheritance from './features/methods/classes/single-inheritance/index.ts';
 import type * as sliceExpressions from './features/slice-expressions/index.ts';
 import type * as stringInterpolation from './features/string-interpolation/index.ts';
@@ -223,7 +229,9 @@ declare module './clause.ts' {
 			}
 			type Any<G extends GrammarContext<G>> = V.Clause.Match<G> | V.Clause.Match.Arm<G> | V.Clause.Match.Arm.Last<G>;
 		}
+		interface Print<G extends GrammarContext<G>> extends printStatements.Clause.Print<G> {}
 		namespace Print {
+			interface Chevron<G extends GrammarContext<G>> extends printStatements.Clause.Print.Chevron<G> {}
 			type Any<G extends GrammarContext<G>> = V.Clause.Print<G> | V.Clause.Print.Chevron<G>;
 		}
 		interface Where<G extends GrammarContext<G>> extends boundedQuantification.Clause.Where<G> {}
@@ -1908,6 +1916,7 @@ declare module './pattern.ts' {
 
 declare module './statement.ts' {
 	namespace Statement {
+		interface Assert<G extends GrammarContext<G>> extends assertions.Statement.Assert<G> {}
 		interface Block<G extends GrammarContext<G>> {
 			readonly label?: gate.In<G, features.LabeledControlFlow, labeledControlFlow.Statement.Block<G>['label']>;
 		}
@@ -1921,6 +1930,8 @@ declare module './statement.ts' {
 		interface Continue<G extends GrammarContext<G>> {
 			readonly label?: gate.In<G, features.LabeledControlFlow, labeledControlFlow.Statement.Continue<G>['label']>;
 		}
+		interface Debugger<G extends GrammarContext<G>> extends debuggerStatements.Statement.Debugger<G> {}
+		interface Exec<G extends GrammarContext<G>> extends execStatements.Statement.Exec<G> {}
 		interface Export<G extends GrammarContext<G>> extends modules.Statement.Export<G> {}
 		namespace Export {
 			interface All<G extends GrammarContext<G>> extends modules.Statement.Export.All<G> {}
@@ -1930,6 +1941,7 @@ declare module './statement.ts' {
 				| V.Statement.Export.All<G>
 				| V.Statement.Export.Default<G>;
 		}
+		interface Global<G extends GrammarContext<G>> extends scopeDeclarations.Statement.Global<G> {}
 		interface Import<G extends GrammarContext<G>> extends modules.Statement.Import<G> {
 			readonly visibility?: gate.In<G, features.Visibility, visibility.Statement.Import<G>['visibility']>;
 		}
@@ -1971,9 +1983,13 @@ declare module './statement.ts' {
 				| V.Statement.Loop.While<G>;
 		}
 		interface Match<G extends GrammarContext<G>> extends matchExpressions.Statement.Match<G> {}
+		interface Nonlocal<G extends GrammarContext<G>> extends scopeDeclarations.Statement.Nonlocal<G> {}
+		interface Print<G extends GrammarContext<G>> extends printStatements.Statement.Print<G> {}
 		namespace Print {
+			interface Chevron<G extends GrammarContext<G>> extends printStatements.Statement.Print.Chevron<G> {}
 			type Any<G extends GrammarContext<G>> = V.Statement.Print<G> | V.Statement.Print.Chevron<G>;
 		}
+		interface Scope<G extends GrammarContext<G>> extends dynamicScope.Statement.Scope<G> {}
 		interface Switch<G extends GrammarContext<G>> extends multiwayBranch.Statement.Switch<G> {}
 		interface Throw<G extends GrammarContext<G>> extends exceptions.Statement.Throw<G> {}
 		interface Try<G extends GrammarContext<G>> extends exceptions.Statement.Try<G> {}
@@ -2011,7 +2027,6 @@ declare module './statement.ts' {
 			| V.Statement.Loop.While<G>
 			| V.Statement.Match<G>
 			| V.Statement.Nonlocal<G>
-			| V.Statement.Pass<G>
 			| V.Statement.Print<G>
 			| V.Statement.Print.Chevron<G>
 			| V.Statement.Return<G>
