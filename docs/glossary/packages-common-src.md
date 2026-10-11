@@ -653,6 +653,14 @@ The key a node keeps the readers of its seated slots under, by accessor name, fo
 
 The host template that reparses a rendered kind: its own, its target kind's, or the best-priority reachable supertype's, with the gated hosts applying only to adopted variants. `applyHost` splices the text into `$r` and reports the offset.
 
+### `packages/common/src/reparse.ts::applyHost`
+
+Splices rendered text into a host template's `$r` hole and reports the hole's offset. When only whitespace precedes the hole on its line, every continuation line of the rendered text is indented to the hole's column, so a multi-line render stays a block of the same indentation in indentation-sensitive grammars. Given a parser for the host language, lines `lineStartsInsideTokens` finds on the unindented text are left where they are. The result also carries `at`, a non-enumerable map from an offset in the rendered text to its offset in the hosted text, which counts the indentation added to the lines before it.
+
+### `packages/common/src/reparse.ts::lineStartsInsideTokens`
+
+The offsets of the lines that begin inside a token spanning lines (a multi-line string or comment), or right after a token that ends in a line break with the next token starting at that very offset (a string's content continuing past an interpolation). Shifting such a line changes the token's content, so hosts leave it alone. One function serves both sides of a host: `applyHost` for rendered text and the derivation's render-form samples for source text.
+
 ### `packages/common/src/delimited-check.ts::checkDelimited`
 
 Refuses a delimited composite whose content would not read back inside its own delimiters. Content free of the spec's excluded characters passes on its own. A delimiter pair a parse has not confirmed is confirmed by parsing the empty composite through the engine in scope, memoized per kind and pair. Anything else is parsed back in its host and must parse with no error, show a node of the kind starting where it was rendered and ending where the text ends, and show the same node arms among its children. Extras are found among the root's inner trivia. With no engine in scope, a varying pair that has not been confirmed, or content that needs the parse, is refused ("needs an engine").

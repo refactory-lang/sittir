@@ -1,6 +1,6 @@
 {
     "backend": "native",
-    "commit": "61f2a5d",
+    "commit": "8cf7724",
     "grammars": {
         "python": {
             "hoistedKindCount": 45,
@@ -23,8 +23,8 @@
                 "coverage": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 146,
-                    "total": 146
+                    "pass": 147,
+                    "total": 147
                 },
                 "factoryStorage": {
                     "astMatchPass": 1404,
@@ -240,7 +240,7 @@
     },
     "totals": {
         "fail": 3,
-        "pass": 16759,
-        "total": 16762
+        "pass": 16760,
+        "total": 16763
     }
 }
