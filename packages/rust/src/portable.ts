@@ -4270,11 +4270,7 @@ const table: PortableTable = {
 		],
 		[TSKindId.RawStringLiteral]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
-			{
-				path: 'literal.string.raw',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [158], fields: ['string_content'], kinds: [] } }]
-			}
+			{ path: 'literal.string.raw', within: [], test: [] }
 		],
 		[TSKindId.RawStringLiteralContent]: [{ path: 'literal.string.text', within: [], test: [] }],
 		[TSKindId.RefPattern]: [

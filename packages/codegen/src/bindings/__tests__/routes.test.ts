@@ -420,6 +420,11 @@ describe('resolveRoutes', () => {
 		expect(routes.readEntries.get('impl_x')?.[0]?.children).toEqual([]);
 	});
 
+	it('reads a child by the name the parser shows it by, so a slot holding only kinds shown by that name guarantees it', async () => {
+		const routes = resolveRoutes(await grammar('(shown_holder text: (text_fragment)) @literal.shown'));
+		expect(routes.readEntries.get('shown_holder')?.[0]?.children).toEqual([]);
+	});
+
 	it('tests a member capture on an optional slot only against the other kinds the slot holds', async () => {
 		const routes = resolveRoutes(await grammar('(impl_x trait: (type_x) @implements) @declaration.extension\n(impl_x clause: (clause_pos) @clause) @declaration.extension.positive'));
 		const [positive, plain] = routes.readEntries.get('impl_x') ?? [];

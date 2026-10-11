@@ -941,7 +941,7 @@ The kind and, when it is a supertype, every kind the model stamps as its owned v
 
 ### `packages/codegen/src/bindings/routes.ts::readKinds`
 
-The kinds the typed reader produces for a node of `kind`: the kind, or its members when it is an enum, and every kind the parser shows by `kind`'s name at an alias site (`ModelNode.shownAs`), since a claim names what the parser shows. A kind with no enum members is read as itself. An enum kind is stored as one member's kind id, so a node of it reads as that member's kind (`ModelNode.enumMembers`): every member whose text equals each text the claim requires of the node's own text (`ownTextEquals`). Any other test on that text keeps every member, and the claim's read test decides at run time on the member's fixed text. The claim itself is entered unchanged, so its specificity and its read test are those of the claim as written.
+The kinds the typed reader produces for a node of `kind`: the kind, or its members when it is an enum, and every kind the parser shows by `kind`'s name (`shownKinds`), since a claim names what the parser shows. A kind with no enum members is read as itself. An enum kind is stored as one member's kind id, so a node of it reads as that member's kind (`ModelNode.enumMembers`): every member whose text equals each text the claim requires of the node's own text (`ownTextEquals`). Any other test on that text keeps every member, and the claim's read test decides at run time on the member's fixed text. The claim itself is entered unchanged, so its specificity and its read test are those of the claim as written.
 
 ### `packages/codegen/src/bindings/routes.ts::ownTextEquals`
 
@@ -1009,15 +1009,15 @@ A test a read entry runs on a node below the read node, at its `CaptureSite`: th
 
 ### `packages/codegen/src/bindings/routes.ts::slotsAt`
 
-The model slots a `CaptureSite` below a kind reaches, one per possible holder at the last step: each step finds its slot on every kind the previous step can hold, through a wildcard step's concrete kinds. Empty when the site starts above the kind or some holder has no such slot.
+The model slots a `CaptureSite` below a kind reaches, one per possible holder at the last step: each step finds its slot on every kind the previous step can hold: a named step's `matchedKinds`, a wildcard step's slots' concrete kinds. Empty when the site starts above the kind or some holder has no such slot.
 
 ### `packages/codegen/src/bindings/routes.ts::guarantees`
 
-Whether the model already makes a child condition true on a slot: the slot is required and either the condition is presence, or its one fixed value is the condition's text, or every concrete kind it holds is one the condition lists.
+Whether the model already makes a child condition true on a slot: the slot is required and either the condition is presence, or its one fixed value is the condition's text, or every concrete kind it holds is one the condition's kinds match (`matchedKinds`).
 
 ### `packages/codegen/src/bindings/routes.ts::childTestOf`
 
-A `ChildFact` narrowed to the `ChildTest` a read entry runs, or none when the model guarantees it on every slot it reaches. A text condition tests the text, and a presence condition tests the slot's concrete kinds. A kinds condition tests the kinds, except on an optional slot whose node the pattern captures as a member: matching that pattern does not need the node, so the test only excludes the slot's other kinds, and is dropped when there are none.
+A `ChildFact` narrowed to the `ChildTest` a read entry runs, or none when the model guarantees it on every slot it reaches. A text condition tests the text, and a presence condition tests the slot's concrete kinds. A kinds condition tests the kinds, except on an optional slot whose node the pattern captures as a member: matching that pattern does not need the node, so the test only excludes the slot's kinds the condition's kinds do not match, and is dropped when there are none. A kinds test names the kinds as the pattern does.
 
 ### `packages/codegen/src/bindings/routes.ts::LayoutSlot`
 
@@ -1035,9 +1035,17 @@ A `SlotStep`, carrying `anchor` only when the step is anchored, so an unanchored
 
 The slot a field name finds: by the slot's name, or by its property name in snake_case.
 
+### `packages/codegen/src/bindings/routes.ts::shownKinds`
+
+A name and every grammar kind the parser shows by it at an alias site (`ModelNode.shownAs`): the kinds a pattern naming it matches, since a pattern names what the parser shows.
+
+### `packages/codegen/src/bindings/routes.ts::matchedKinds`
+
+The concrete kinds a pattern naming these kinds matches: each name's `shownKinds`, each expanded to its concrete kinds.
+
 ### `packages/codegen/src/bindings/routes.ts::reaches`
 
-Whether a kind is, or is reached through supertype arms from, another kind.
+Whether a kind is, or is shown by the name of (`ModelNode.shownAs`), or is reached through supertype arms from, another kind.
 
 ### `packages/codegen/src/bindings/routes.ts::holdsNodes`
 

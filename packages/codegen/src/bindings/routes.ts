@@ -90,8 +90,10 @@ export function slotByField(slots: readonly ModelSlot[], field: string): ModelSl
 	return slots.find((s) => s.name === field || snake(s.propertyName) === field);
 }
 
+const shownKinds = (model: SlotModel, kind: string): readonly string[] => [kind, ...[...model.values()].filter((node) => node.shownAs.includes(kind)).map((node) => node.kind)];
+
 function reaches(model: SlotModel, from: string, kind: string, seen: Set<string> = new Set<string>()): boolean {
-	if (from === kind) return true;
+	if (from === kind || modelNode(model, from)?.shownAs.includes(kind)) return true;
 	if (seen.has(from)) return false;
 	seen.add(from);
 	return (modelNode(model, from)?.subtypes ?? []).some((subtype) => reaches(model, subtype, kind, seen));
@@ -184,10 +186,12 @@ function slotsAt(model: SlotModel, kind: string, site: CaptureSite): readonly Mo
 			return slot === undefined ? [] : [slot];
 		});
 		if (slots.length < holders.length) return [];
-		holders = selector.kind !== null ? [selector.kind] : concreteKinds(model, slots.flatMap((slot) => slot.kinds));
+		holders = selector.kind !== null ? matchedKinds(model, [selector.kind]) : concreteKinds(model, slots.flatMap((slot) => slot.kinds));
 	}
 	return slots;
 }
+
+const matchedKinds = (model: SlotModel, kinds: readonly string[]): string[] => concreteKinds(model, kinds.flatMap((kind) => shownKinds(model, kind)));
 
 function guarantees(model: SlotModel, slot: ModelSlot, child: ChildFact): boolean {
 	if (!slot.required) return false;
@@ -196,7 +200,7 @@ function guarantees(model: SlotModel, slot: ModelSlot, child: ChildFact): boolea
 		const values = fixedValues(model, slot);
 		return values?.length === 1 && values[0] === child.text;
 	}
-	const kinds = concreteKinds(model, child.kinds);
+	const kinds = matchedKinds(model, child.kinds);
 	return concreteKinds(model, slot.kinds).every((k) => kinds.includes(k));
 }
 
@@ -206,9 +210,9 @@ function childTestOf(model: SlotModel, kind: string, child: ChildFact): ChildTes
 	if ('text' in child) return child;
 	const held = concreteKinds(model, slots.flatMap((slot) => slot.kinds));
 	if ('present' in child) return { subject: child.subject, kinds: held };
-	const kinds = concreteKinds(model, child.kinds);
-	if (!child.captured || slots.length === 0 || slots.every((slot) => slot.required)) return { subject: child.subject, kinds };
-	const excludes = held.filter((k) => !kinds.includes(k));
+	if (!child.captured || slots.length === 0 || slots.every((slot) => slot.required)) return { subject: child.subject, kinds: concreteKinds(model, child.kinds) };
+	const matched = matchedKinds(model, child.kinds);
+	const excludes = held.filter((k) => !matched.includes(k));
 	return excludes.length === 0 ? undefined : { subject: child.subject, excludes };
 }
 
@@ -382,7 +386,7 @@ export function formsOf(model: SlotModel, kind: string): readonly string[] {
 }
 
 function readKinds(model: SlotModel, kind: string, claim: ClaimFact): readonly string[] {
-	const shown = [...model.values()].filter((node) => node.shownAs.includes(kind)).map((node) => node.kind);
+	const [, ...shown] = shownKinds(model, kind);
 	const members = modelNode(model, kind)?.enumMembers ?? [];
 	if (members.length === 0) return [kind, ...shown];
 	const texts = ownTextEquals(claim);

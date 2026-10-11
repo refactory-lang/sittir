@@ -7190,7 +7190,7 @@
       ]
     },
     "raw_string_literal": {
-      "vocab": "literal.string",
+      "vocab": "literal.string.raw",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -7206,22 +7206,7 @@
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  158
-                ],
-                "fields": [
-                  "string_content"
-                ],
-                "kinds": []
-              }
-            }
-          ]
+          "test": []
         }
       ],
       "members": [
