@@ -4,7 +4,7 @@ import { ORPHANS, PROBES } from './helpers/trivia-sources.ts';
 
 const GRAMMARS = ['rust', 'typescript', 'python'] as const;
 
-describe('trivia placement census reads placement from the reader', () => {
+describe('trivia placement census reads placement from the trivia table', () => {
 	for (const grammar of GRAMMARS) {
 		it(`${grammar}: every corpus extra lands in a trivia entry`, async () => {
 			const { summary, rows } = await computeTriviaPlacementCensus(grammar);

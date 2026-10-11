@@ -112,7 +112,7 @@ describe('a rebuilt list gives each parsed item the gap its seat declares', () =
 		const root = rust.parse('use x;\nfn f() {}\nuse y;\n');
 		const [x, , y] = root.statements();
 		if (y === undefined || typeof y === 'number') throw new Error('expected a parsed statement');
-		expect(root.$with.statements(x!, y.$trivia.trailing('// t')).$render()).toBe('use x;\nuse y;\n// t\n');
+		expect(root.$with.statements(x!, y.$trivia.trailing('// t')).$render()).toBe('use x;\nuse y; // t\n');
 	});
 
 	it('takes the seat after an item whose leading trivia was written when it is no longer last', () => {

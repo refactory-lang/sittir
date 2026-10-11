@@ -11,17 +11,6 @@ export declare class SittirEngine {
    * the gate immune to stale env assumptions.
    */
   get buildProfile(): string
-  /**
-   * The line-break whitespace the read node named by `handle` owns
-   * as trivia. As JSON `{ leading, trailing, previous, next }`:
-   * `leading` and `trailing` are `{ kind, start }` runs in source
-   * order, each classified among the grammar's whitespace members
-   * whose text holds a line break; `previous` and `next` are the
-   * `{ start, end }` spans of the sibling owners before and after the
-   * outermost node spanning exactly the node's bytes, `null` when that
-   * node is its parent's first or last.
-   */
-  lineGapsOf(handle: number): string
   findAndRead(source: string, pattern: string): string
   /**
    * Parse `source` and keep its tree. As JSON `{ treeId, format,
@@ -38,6 +27,13 @@ export declare class SittirEngine {
    * child and the index.
    */
   read(treeId: number, index: number, depth?: number | undefined | null): object
+  /**
+   * The sides of the unit children of the node at `index` of the
+   * live tree `treeId`, which their slots store as bare kinds: each
+   * `{ slot, item, leading?, trailing?, inner? }`, by its slot's wire
+   * key and its item in that slot. Refuses as `triviaSide` does.
+   */
+  unitSides(treeId: number, index: number): object[]
   /**
    * A snapshot of the node at `index` of the live tree `treeId`: the
    * node read at every depth into plain data with no tree, each
@@ -68,18 +64,19 @@ export declare class SittirEngine {
    */
   editedWithin(treeId: number, index: number, ownSides: boolean): boolean
   /**
+   * The siblings that hold sides beside the node at `index` of the
+   * live tree `treeId`, as JSON `{ previous, next }`: the `{ start,
+   * end }` span of each, taken at the outermost node spanning exactly
+   * the node's bytes, `null` when that node starts (ends) its parent.
+   * Refuses a tree that is not live and an index naming no node of it.
+   */
+  siblings(treeId: number, index: number): string
+  /**
    * Whether the node at `index` of the live tree `treeId` is empty:
    * no child of it has width. Refuses a tree that is not live and an
    * index naming no node of it.
    */
   isEmpty(treeId: number, index: number): boolean
-  /**
-   * The spans of byte `ranges` (start and end pairs) of the live
-   * tree `treeId`, measured from the byte `holderByte`, as row and
-   * column pairs, flat. Refuses a tree that is not live, an odd
-   * length, and a byte past the source or before the holder.
-   */
-  snapshotSpans(treeId: number, holderByte: number, ranges: Array<number>): Array<number>
   /**
    * One batch of a pre-order walk of the named descendants under
    * the node `from` names (JSON, see `query::Address`), filtered to

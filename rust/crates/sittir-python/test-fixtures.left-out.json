@@ -1,1 +1,27 @@
-{}
+{
+  "_simple_statements": 3,
+  "argument_list": 1,
+  "argument_list_elements": 1,
+  "block": 3,
+  "call": 1,
+  "concatenated_string": 1,
+  "conditional_expression": 1,
+  "expression_statement": 1,
+  "function_definition": 1,
+  "future_import_statement": 1,
+  "if_statement": 2,
+  "import_list": 1,
+  "interpolation": 1,
+  "match_block": 1,
+  "match_block_block": 1,
+  "match_statement": 1,
+  "module": 8,
+  "parenthesized_import_list": 1,
+  "return_statement": 1,
+  "simple_statements_elements": 3,
+  "string": 1,
+  "suite_block": 3,
+  "with_clause_paren": 1,
+  "with_clause_with_items": 1,
+  "with_statement": 1
+}

@@ -15,6 +15,9 @@
           "_elements": [],
           "$_layout": {
             "trivia": {
+              "leading": [
+                28
+              ],
               "trailing": [
                 28
               ]
@@ -75,7 +78,14 @@
             "$type": 5,
             "$text": "program"
           },
-          "_elements": []
+          "_elements": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28
+              ]
+            }
+          }
         },
         {
           "$type": 47,
@@ -400,6 +410,9 @@
           "_elements": [],
           "$_layout": {
             "trivia": {
+              "leading": [
+                28
+              ],
               "trailing": [
                 28
               ]
@@ -737,173 +750,14 @@
     "wrappedOffset": 11
   },
   {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "program",
-    "input": {
-      "$type": 33,
-      "_definitions": [
-        {
-          "$type": 47,
-          "_name": 7,
-          "_elements": [
-            {
-              "$type": 39,
-              "_name": {
-                "$type": 6,
-                "$text": "wildcard"
-              }
-            }
-          ]
-        },
-        {
-          "$type": 61,
-          "_name": 7,
-          "_elements": [
-            {
-              "$type": 39,
-              "_name": {
-                "$type": 6,
-                "$text": "wildcard"
-              }
-            }
-          ],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                29
-              ]
-            }
-          }
-        },
-        {
-          "$type": 61,
-          "_name": {
-            "$type": 5,
-            "$text": "node"
-          },
-          "_named_node_group": {
-            "$type": 63,
-            "_named_node_expressions": [
-              {
-                "$type": 47,
-                "_name": 7,
-                "_elements": [
-                  {
-                    "$type": 39,
-                    "_name": {
-                      "$type": 6,
-                      "$text": "wildcard"
-                    }
-                  }
-                ]
-              }
-            ]
-          },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                29
-              ]
-            }
-          }
-        },
-        {
-          "$type": 61,
-          "_name": {
-            "$type": 5,
-            "$text": "program"
-          },
-          "_named_node_group": {
-            "$type": 63,
-            "_named_node_expressions": [
-              {
-                "$type": 50,
-                "_name": {
-                  "$type": 5,
-                  "$text": "name"
-                },
-                "_definition": {
-                  "$type": 61,
-                  "_name": 7,
-                  "_elements": []
-                }
-              }
-            ],
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  28
-                ]
-              }
-            }
-          },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                29
-              ]
-            }
-          }
-        },
-        {
-          "$type": 61,
-          "_name": {
-            "$type": 5,
-            "$text": "program"
-          },
-          "_named_node_group": {
-            "$type": 63,
-            "_named_node_expressions": [
-              {
-                "$type": 50,
-                "_name": {
-                  "$type": 5,
-                  "$text": "name"
-                },
-                "_definition": {
-                  "$type": 47,
-                  "_name": 7,
-                  "_elements": []
-                }
-              }
-            ],
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  28
-                ]
-              }
-            }
-          },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                29
-              ],
-              "trailing": [
-                28
-              ]
-            }
-          }
-        }
-      ],
-      "$errors": []
-    },
-    "expectedOutput": "_ @wildcard\n\n(_) @wildcard\n\n(node _ @wildcard)\n\n(program\nname: (_))\n\n(program\nname: _)\n"
-  },
-  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "\n_ @wildcard\n\n(_) @wildcard\n\n(node _ @wildcard)\n\n(program\n  name: (_))\n\n(program\n  name: _)\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "_ @wildcard\n\n(_) @wildcard\n\n(node _ @wildcard)\n\n(program\nname: (_))\n\n(program\nname: _)\n",
+    "expectedSourceOut": "_ @wildcard\n\n(_) @wildcard\n\n(node _ @wildcard)\n\n(program\n  name: (_))\n\n(program\n  name: _)\n",
     "expectedReparseTree": "(program definitions: (anonymous_node elements: (capture name: (identifier))) definitions: (named_node_plain elements: (capture name: (identifier))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (anonymous_node elements: (capture name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain)))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (anonymous_node)))))",
-    "wrappedText": "_ @wildcard\n\n(_) @wildcard\n\n(node _ @wildcard)\n\n(program\nname: (_))\n\n(program\nname: _)\n",
+    "wrappedText": "_ @wildcard\n\n(_) @wildcard\n\n(node _ @wildcard)\n\n(program\n  name: (_))\n\n(program\n  name: _)\n",
     "wrappedOffset": 0
   },
   {
@@ -1134,52 +988,14 @@
     "wrappedOffset": 0
   },
   {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "named_node_plain",
-    "input": {
-      "$type": 61,
-      "_name": {
-        "$type": 5,
-        "$text": "program"
-      },
-      "_named_node_group": {
-        "$type": 63,
-        "_named_node_expressions": [
-          {
-            "$type": 50,
-            "_name": {
-              "$type": 5,
-              "$text": "name"
-            },
-            "_definition": {
-              "$type": 61,
-              "_name": 7,
-              "_elements": []
-            }
-          }
-        ],
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              28
-            ]
-          }
-        }
-      },
-      "_elements": []
-    },
-    "expectedOutput": "(program\nname: (_))"
-  },
-  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "(program\n  name: (_))",
     "pattern": "named_node_plain",
     "edits": [],
-    "expectedSourceOut": "(program\nname: (_))",
+    "expectedSourceOut": "(program\n  name: (_))",
     "expectedReparseTree": "(named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain))))",
-    "wrappedText": "(program\nname: (_))\n",
+    "wrappedText": "(program\n  name: (_))\n",
     "wrappedOffset": 0
   },
   {
@@ -1205,52 +1021,14 @@
     "wrappedOffset": 0
   },
   {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "named_node_plain",
-    "input": {
-      "$type": 61,
-      "_name": {
-        "$type": 5,
-        "$text": "program"
-      },
-      "_named_node_group": {
-        "$type": 63,
-        "_named_node_expressions": [
-          {
-            "$type": 50,
-            "_name": {
-              "$type": 5,
-              "$text": "name"
-            },
-            "_definition": {
-              "$type": 47,
-              "_name": 7,
-              "_elements": []
-            }
-          }
-        ],
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              28
-            ]
-          }
-        }
-      },
-      "_elements": []
-    },
-    "expectedOutput": "(program\nname: _)"
-  },
-  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "(program\n  name: _)",
     "pattern": "named_node_plain",
     "edits": [],
-    "expectedSourceOut": "(program\nname: _)",
+    "expectedSourceOut": "(program\n  name: _)",
     "expectedReparseTree": "(named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (anonymous_node))))",
-    "wrappedText": "(program\nname: _)\n",
+    "wrappedText": "(program\n  name: _)\n",
     "wrappedOffset": 0
   },
   {
@@ -1415,181 +1193,15 @@
     "wrappedOffset": 52
   },
   {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "program",
-    "input": {
-      "$type": 33,
-      "_definitions": [
-        {
-          "$type": 61,
-          "_name": {
-            "$type": 5,
-            "$text": "program"
-          },
-          "_named_node_group": {
-            "$type": 63,
-            "_named_node_expressions": [
-              {
-                "$type": 50,
-                "_name": {
-                  "$type": 5,
-                  "$text": "name"
-                },
-                "_definition": {
-                  "$type": 61,
-                  "_name": {
-                    "$type": 5,
-                    "$text": "identifier"
-                  },
-                  "_elements": []
-                }
-              }
-            ],
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  28
-                ]
-              }
-            }
-          },
-          "_elements": []
-        },
-        {
-          "$type": 50,
-          "_name": {
-            "$type": 5,
-            "$text": "name"
-          },
-          "_definition": {
-            "$type": 61,
-            "_name": {
-              "$type": 5,
-              "$text": "identifier"
-            },
-            "_elements": []
-          },
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                29
-              ]
-            }
-          }
-        },
-        {
-          "$type": 50,
-          "_name": {
-            "$type": 5,
-            "$text": "name"
-          },
-          "_definition": {
-            "$type": 44,
-            "_definitions": [
-              {
-                "$type": 61,
-                "_name": {
-                  "$type": 5,
-                  "$text": "identifier"
-                },
-                "_elements": [],
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      28
-                    ]
-                  }
-                }
-              },
-              {
-                "$type": 61,
-                "_name": {
-                  "$type": 5,
-                  "$text": "expression"
-                },
-                "_elements": [],
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      28
-                    ],
-                    "trailing": [
-                      28
-                    ]
-                  }
-                }
-              }
-            ],
-            "_elements": []
-          },
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                29
-              ],
-              "trailing": [
-                28
-              ]
-            }
-          }
-        }
-      ],
-      "$errors": []
-    },
-    "expectedOutput": "(program\nname: (identifier))\n\nname: (identifier)\n\nname: [\n(identifier)\n(expression)\n]\n"
-  },
-  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "\n(program\n  name: (identifier))\n\nname: (identifier)\n\nname: [\n  (identifier)\n  (expression)\n]\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "(program\nname: (identifier))\n\nname: (identifier)\n\nname: [\n(identifier)\n(expression)\n]\n",
+    "expectedSourceOut": "(program\n  name: (identifier))\n\nname: (identifier)\n\nname: [\n  (identifier)\n  (expression)\n]\n",
     "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))))) definitions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) definitions: (field_definition name: (identifier) definition: (list definitions: (named_node_plain name: (identifier)) definitions: (named_node_plain name: (identifier)))))",
-    "wrappedText": "(program\nname: (identifier))\n\nname: (identifier)\n\nname: [\n(identifier)\n(expression)\n]\n",
+    "wrappedText": "(program\n  name: (identifier))\n\nname: (identifier)\n\nname: [\n  (identifier)\n  (expression)\n]\n",
     "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "named_node_plain",
-    "input": {
-      "$type": 61,
-      "_name": {
-        "$type": 5,
-        "$text": "program"
-      },
-      "_named_node_group": {
-        "$type": 63,
-        "_named_node_expressions": [
-          {
-            "$type": 50,
-            "_name": {
-              "$type": 5,
-              "$text": "name"
-            },
-            "_definition": {
-              "$type": 61,
-              "_name": {
-                "$type": 5,
-                "$text": "identifier"
-              },
-              "_elements": []
-            }
-          }
-        ],
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              28
-            ]
-          }
-        }
-      },
-      "_elements": []
-    },
-    "expectedOutput": "(program\nname: (identifier))"
   },
   {
     "kind": "roundtrip",
@@ -1597,9 +1209,9 @@
     "sourceIn": "(program\n  name: (identifier))",
     "pattern": "named_node_plain",
     "edits": [],
-    "expectedSourceOut": "(program\nname: (identifier))",
+    "expectedSourceOut": "(program\n  name: (identifier))",
     "expectedReparseTree": "(named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier)))))",
-    "wrappedText": "(program\nname: (identifier))\n",
+    "wrappedText": "(program\n  name: (identifier))\n",
     "wrappedOffset": 0
   },
   {
@@ -1804,112 +1416,15 @@
     "wrappedOffset": 52
   },
   {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "field_definition",
-    "input": {
-      "$type": 50,
-      "_name": {
-        "$type": 5,
-        "$text": "name"
-      },
-      "_definition": {
-        "$type": 44,
-        "_definitions": [
-          {
-            "$type": 61,
-            "_name": {
-              "$type": 5,
-              "$text": "identifier"
-            },
-            "_elements": [],
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  28
-                ]
-              }
-            }
-          },
-          {
-            "$type": 61,
-            "_name": {
-              "$type": 5,
-              "$text": "expression"
-            },
-            "_elements": [],
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  28
-                ],
-                "trailing": [
-                  28
-                ]
-              }
-            }
-          }
-        ],
-        "_elements": []
-      }
-    },
-    "expectedOutput": "name: [\n(identifier)\n(expression)\n]"
-  },
-  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "name: [\n  (identifier)\n  (expression)\n]",
     "pattern": "field_definition",
     "edits": [],
-    "expectedSourceOut": "name: [\n(identifier)\n(expression)\n]",
+    "expectedSourceOut": "name: [\n  (identifier)\n  (expression)\n]",
     "expectedReparseTree": "(field_definition name: (identifier) definition: (list definitions: (named_node_plain name: (identifier)) definitions: (named_node_plain name: (identifier))))",
-    "wrappedText": "(program\n  name: (identifier))\n\nname: (identifier)\n\nname: [\n(identifier)\n(expression)\n]\n",
+    "wrappedText": "(program\n  name: (identifier))\n\nname: (identifier)\n\nname: [\n  (identifier)\n  (expression)\n]\n",
     "wrappedOffset": 52
-  },
-  {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "list",
-    "input": {
-      "$type": 44,
-      "_definitions": [
-        {
-          "$type": 61,
-          "_name": {
-            "$type": 5,
-            "$text": "identifier"
-          },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
-        },
-        {
-          "$type": 61,
-          "_name": {
-            "$type": 5,
-            "$text": "expression"
-          },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ],
-              "trailing": [
-                28
-              ]
-            }
-          }
-        }
-      ],
-      "_elements": []
-    },
-    "expectedOutput": "[\n(identifier)\n(expression)\n]"
   },
   {
     "kind": "roundtrip",
@@ -1917,139 +1432,10 @@
     "sourceIn": "[\n  (identifier)\n  (expression)\n]",
     "pattern": "list",
     "edits": [],
-    "expectedSourceOut": "[\n(identifier)\n(expression)\n]",
+    "expectedSourceOut": "[\n  (identifier)\n  (expression)\n]",
     "expectedReparseTree": "(list definitions: (named_node_plain name: (identifier)) definitions: (named_node_plain name: (identifier)))",
-    "wrappedText": "[\n(identifier)\n(expression)\n]\n\n(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?\n  ] @conditional.inner) @conditional.outer\n",
+    "wrappedText": "[\n  (identifier)\n  (expression)\n]\n\n(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?\n  ] @conditional.inner) @conditional.outer\n",
     "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "program",
-    "input": {
-      "$type": 33,
-      "_definitions": [
-        {
-          "$type": 61,
-          "_name": {
-            "$type": 5,
-            "$text": "program"
-          },
-          "_named_node_group": {
-            "$type": 63,
-            "_named_node_expressions": [
-              {
-                "$type": 50,
-                "_name": {
-                  "$type": 5,
-                  "$text": "field"
-                },
-                "_definition": {
-                  "$type": 61,
-                  "_name": {
-                    "$type": 5,
-                    "$text": "identifier"
-                  },
-                  "_elements": [
-                    {
-                      "$type": 39,
-                      "_name": {
-                        "$type": 6,
-                        "$text": "capture"
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "$type": 51,
-                "_identifier": {
-                  "$type": 5,
-                  "$text": "negated-field"
-                },
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      28
-                    ]
-                  }
-                }
-              }
-            ],
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  28
-                ]
-              }
-            }
-          },
-          "_elements": []
-        },
-        {
-          "$type": 61,
-          "_name": {
-            "$type": 5,
-            "$text": "program"
-          },
-          "_named_node_group": {
-            "$type": 63,
-            "_named_node_expressions": [
-              {
-                "$type": 61,
-                "_name": {
-                  "$type": 5,
-                  "$text": "identifier"
-                },
-                "_elements": [
-                  {
-                    "$type": 39,
-                    "_name": {
-                      "$type": 6,
-                      "$text": "capture"
-                    }
-                  }
-                ]
-              },
-              {
-                "$type": 51,
-                "_identifier": {
-                  "$type": 5,
-                  "$text": "negated-field"
-                },
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      28
-                    ]
-                  }
-                }
-              }
-            ],
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  28
-                ]
-              }
-            }
-          },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                29
-              ],
-              "trailing": [
-                28
-              ]
-            }
-          }
-        }
-      ],
-      "$errors": []
-    },
-    "expectedOutput": "(program\nfield: (identifier) @capture\n!negated-field)\n\n(program\n(identifier) @capture\n!negated-field)\n"
   },
   {
     "kind": "roundtrip",
@@ -2057,73 +1443,10 @@
     "sourceIn": "\n(program\n  field: (identifier) @capture\n  !negated-field)\n\n(program\n  (identifier) @capture\n  !negated-field)\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "(program\nfield: (identifier) @capture\n!negated-field)\n\n(program\n(identifier) @capture\n!negated-field)\n",
+    "expectedSourceOut": "(program\n  field: (identifier) @capture\n  !negated-field)\n\n(program\n  (identifier) @capture\n  !negated-field)\n",
     "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier) elements: (capture name: (identifier)))) named_node_expressions: (negated_field identifier: (identifier)))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (capture name: (identifier))) named_node_expressions: (negated_field identifier: (identifier)))))",
-    "wrappedText": "(program\nfield: (identifier) @capture\n!negated-field)\n\n(program\n(identifier) @capture\n!negated-field)\n",
+    "wrappedText": "(program\n  field: (identifier) @capture\n  !negated-field)\n\n(program\n  (identifier) @capture\n  !negated-field)\n",
     "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "named_node_plain",
-    "input": {
-      "$type": 61,
-      "_name": {
-        "$type": 5,
-        "$text": "program"
-      },
-      "_named_node_group": {
-        "$type": 63,
-        "_named_node_expressions": [
-          {
-            "$type": 50,
-            "_name": {
-              "$type": 5,
-              "$text": "field"
-            },
-            "_definition": {
-              "$type": 61,
-              "_name": {
-                "$type": 5,
-                "$text": "identifier"
-              },
-              "_elements": [
-                {
-                  "$type": 39,
-                  "_name": {
-                    "$type": 6,
-                    "$text": "capture"
-                  }
-                }
-              ]
-            }
-          },
-          {
-            "$type": 51,
-            "_identifier": {
-              "$type": 5,
-              "$text": "negated-field"
-            },
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  28
-                ]
-              }
-            }
-          }
-        ],
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              28
-            ]
-          }
-        }
-      },
-      "_elements": []
-    },
-    "expectedOutput": "(program\nfield: (identifier) @capture\n!negated-field)"
   },
   {
     "kind": "roundtrip",
@@ -2131,9 +1454,9 @@
     "sourceIn": "(program\n  field: (identifier) @capture\n  !negated-field)",
     "pattern": "named_node_plain",
     "edits": [],
-    "expectedSourceOut": "(program\nfield: (identifier) @capture\n!negated-field)",
+    "expectedSourceOut": "(program\n  field: (identifier) @capture\n  !negated-field)",
     "expectedReparseTree": "(named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier) elements: (capture name: (identifier)))) named_node_expressions: (negated_field identifier: (identifier))))",
-    "wrappedText": "(program\nfield: (identifier) @capture\n!negated-field)\n",
+    "wrappedText": "(program\n  field: (identifier) @capture\n  !negated-field)\n",
     "wrappedOffset": 0
   },
   {
@@ -2170,70 +1493,14 @@
     "wrappedOffset": 0
   },
   {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "named_node_plain",
-    "input": {
-      "$type": 61,
-      "_name": {
-        "$type": 5,
-        "$text": "program"
-      },
-      "_named_node_group": {
-        "$type": 63,
-        "_named_node_expressions": [
-          {
-            "$type": 61,
-            "_name": {
-              "$type": 5,
-              "$text": "identifier"
-            },
-            "_elements": [
-              {
-                "$type": 39,
-                "_name": {
-                  "$type": 6,
-                  "$text": "capture"
-                }
-              }
-            ]
-          },
-          {
-            "$type": 51,
-            "_identifier": {
-              "$type": 5,
-              "$text": "negated-field"
-            },
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  28
-                ]
-              }
-            }
-          }
-        ],
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              28
-            ]
-          }
-        }
-      },
-      "_elements": []
-    },
-    "expectedOutput": "(program\n(identifier) @capture\n!negated-field)"
-  },
-  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "(program\n  (identifier) @capture\n  !negated-field)",
     "pattern": "named_node_plain",
     "edits": [],
-    "expectedSourceOut": "(program\n(identifier) @capture\n!negated-field)",
+    "expectedSourceOut": "(program\n  (identifier) @capture\n  !negated-field)",
     "expectedReparseTree": "(named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (capture name: (identifier))) named_node_expressions: (negated_field identifier: (identifier))))",
-    "wrappedText": "(program\n(identifier) @capture\n!negated-field)\n",
+    "wrappedText": "(program\n  (identifier) @capture\n  !negated-field)\n",
     "wrappedOffset": 0
   },
   {
@@ -2517,106 +1784,15 @@
     "wrappedOffset": 30
   },
   {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "program",
-    "input": {
-      "$type": 33,
-      "_definitions": [
-        {
-          "$type": 61,
-          "_name": {
-            "$type": 5,
-            "$text": "program"
-          },
-          "_named_node_group": {
-            "$type": 63,
-            "_named_node_expressions": [
-              {
-                "$type": 61,
-                "_name": {
-                  "$type": 5,
-                  "$text": "identifier"
-                },
-                "_elements": [
-                  {
-                    "$type": 54,
-                    "_quantifier": 3
-                  }
-                ]
-              }
-            ],
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  28
-                ]
-              }
-            }
-          },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "trailing": [
-                28
-              ]
-            }
-          }
-        }
-      ],
-      "$errors": []
-    },
-    "expectedOutput": "(program\n(identifier)+)\n"
-  },
-  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "\n(program\n  (identifier)+)\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "(program\n(identifier)+)\n",
+    "expectedSourceOut": "(program\n  (identifier)+)\n",
     "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (list_element_quantifier quantifier: (quantifier))))))",
-    "wrappedText": "(program\n(identifier)+)\n",
+    "wrappedText": "(program\n  (identifier)+)\n",
     "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "named_node_plain",
-    "input": {
-      "$type": 61,
-      "_name": {
-        "$type": 5,
-        "$text": "program"
-      },
-      "_named_node_group": {
-        "$type": 63,
-        "_named_node_expressions": [
-          {
-            "$type": 61,
-            "_name": {
-              "$type": 5,
-              "$text": "identifier"
-            },
-            "_elements": [
-              {
-                "$type": 54,
-                "_quantifier": 3
-              }
-            ]
-          }
-        ],
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              28
-            ]
-          }
-        }
-      },
-      "_elements": []
-    },
-    "expectedOutput": "(program\n(identifier)+)"
   },
   {
     "kind": "roundtrip",
@@ -2624,9 +1800,9 @@
     "sourceIn": "(program\n  (identifier)+)",
     "pattern": "named_node_plain",
     "edits": [],
-    "expectedSourceOut": "(program\n(identifier)+)",
+    "expectedSourceOut": "(program\n  (identifier)+)",
     "expectedReparseTree": "(named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (list_element_quantifier quantifier: (quantifier)))))",
-    "wrappedText": "(program\n(identifier)+)\n",
+    "wrappedText": "(program\n  (identifier)+)\n",
     "wrappedOffset": 0
   },
   {
@@ -2716,106 +1892,15 @@
     "wrappedOffset": 3
   },
   {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "program",
-    "input": {
-      "$type": 33,
-      "_definitions": [
-        {
-          "$type": 61,
-          "_name": {
-            "$type": 5,
-            "$text": "program"
-          },
-          "_named_node_group": {
-            "$type": 63,
-            "_named_node_expressions": [
-              {
-                "$type": 61,
-                "_name": {
-                  "$type": 5,
-                  "$text": "identifier"
-                },
-                "_elements": [
-                  {
-                    "$type": 54,
-                    "_quantifier": 4
-                  }
-                ]
-              }
-            ],
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  28
-                ]
-              }
-            }
-          },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "trailing": [
-                28
-              ]
-            }
-          }
-        }
-      ],
-      "$errors": []
-    },
-    "expectedOutput": "(program\n(identifier)?)\n"
-  },
-  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "\n(program\n  (identifier)?)\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "(program\n(identifier)?)\n",
+    "expectedSourceOut": "(program\n  (identifier)?)\n",
     "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (list_element_quantifier quantifier: (quantifier))))))",
-    "wrappedText": "(program\n(identifier)?)\n",
+    "wrappedText": "(program\n  (identifier)?)\n",
     "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "named_node_plain",
-    "input": {
-      "$type": 61,
-      "_name": {
-        "$type": 5,
-        "$text": "program"
-      },
-      "_named_node_group": {
-        "$type": 63,
-        "_named_node_expressions": [
-          {
-            "$type": 61,
-            "_name": {
-              "$type": 5,
-              "$text": "identifier"
-            },
-            "_elements": [
-              {
-                "$type": 54,
-                "_quantifier": 4
-              }
-            ]
-          }
-        ],
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              28
-            ]
-          }
-        }
-      },
-      "_elements": []
-    },
-    "expectedOutput": "(program\n(identifier)?)"
   },
   {
     "kind": "roundtrip",
@@ -2823,9 +1908,9 @@
     "sourceIn": "(program\n  (identifier)?)",
     "pattern": "named_node_plain",
     "edits": [],
-    "expectedSourceOut": "(program\n(identifier)?)",
+    "expectedSourceOut": "(program\n  (identifier)?)",
     "expectedReparseTree": "(named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (list_element_quantifier quantifier: (quantifier)))))",
-    "wrappedText": "(program\n(identifier)?)\n",
+    "wrappedText": "(program\n  (identifier)?)\n",
     "wrappedOffset": 0
   },
   {
@@ -2915,106 +2000,15 @@
     "wrappedOffset": 3
   },
   {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "program",
-    "input": {
-      "$type": 33,
-      "_definitions": [
-        {
-          "$type": 61,
-          "_name": {
-            "$type": 5,
-            "$text": "program"
-          },
-          "_named_node_group": {
-            "$type": 63,
-            "_named_node_expressions": [
-              {
-                "$type": 61,
-                "_name": {
-                  "$type": 5,
-                  "$text": "identifier"
-                },
-                "_elements": [
-                  {
-                    "$type": 54,
-                    "_quantifier": 2
-                  }
-                ]
-              }
-            ],
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  28
-                ]
-              }
-            }
-          },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "trailing": [
-                28
-              ]
-            }
-          }
-        }
-      ],
-      "$errors": []
-    },
-    "expectedOutput": "(program\n(identifier)*)\n"
-  },
-  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "\n(program\n  (identifier)*)\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "(program\n(identifier)*)\n",
+    "expectedSourceOut": "(program\n  (identifier)*)\n",
     "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (list_element_quantifier quantifier: (quantifier))))))",
-    "wrappedText": "(program\n(identifier)*)\n",
+    "wrappedText": "(program\n  (identifier)*)\n",
     "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "named_node_plain",
-    "input": {
-      "$type": 61,
-      "_name": {
-        "$type": 5,
-        "$text": "program"
-      },
-      "_named_node_group": {
-        "$type": 63,
-        "_named_node_expressions": [
-          {
-            "$type": 61,
-            "_name": {
-              "$type": 5,
-              "$text": "identifier"
-            },
-            "_elements": [
-              {
-                "$type": 54,
-                "_quantifier": 2
-              }
-            ]
-          }
-        ],
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              28
-            ]
-          }
-        }
-      },
-      "_elements": []
-    },
-    "expectedOutput": "(program\n(identifier)*)"
   },
   {
     "kind": "roundtrip",
@@ -3022,9 +2016,9 @@
     "sourceIn": "(program\n  (identifier)*)",
     "pattern": "named_node_plain",
     "edits": [],
-    "expectedSourceOut": "(program\n(identifier)*)",
+    "expectedSourceOut": "(program\n  (identifier)*)",
     "expectedReparseTree": "(named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (list_element_quantifier quantifier: (quantifier)))))",
-    "wrappedText": "(program\n(identifier)*)\n",
+    "wrappedText": "(program\n  (identifier)*)\n",
     "wrappedOffset": 0
   },
   {
@@ -3114,172 +2108,15 @@
     "wrappedOffset": 3
   },
   {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "program",
-    "input": {
-      "$type": 33,
-      "_definitions": [
-        {
-          "$type": 61,
-          "_name": {
-            "$type": 5,
-            "$text": "program"
-          },
-          "_named_node_group": {
-            "$type": 63,
-            "_named_node_expressions": [
-              {
-                "$type": 61,
-                "_name": {
-                  "$type": 5,
-                  "$text": "identifier"
-                },
-                "_elements": [
-                  {
-                    "$type": 54,
-                    "_quantifier": 4
-                  },
-                  {
-                    "$type": 39,
-                    "_name": {
-                      "$type": 6,
-                      "$text": "variable"
-                    },
-                    "$_layout": {
-                      "gap": {
-                        "$text": " "
-                      }
-                    }
-                  },
-                  {
-                    "$type": 54,
-                    "_quantifier": 2,
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
-                    }
-                  },
-                  {
-                    "$type": 39,
-                    "_name": {
-                      "$type": 6,
-                      "$text": "spell"
-                    },
-                    "$_layout": {
-                      "gap": {
-                        "$text": " "
-                      }
-                    }
-                  }
-                ]
-              }
-            ],
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  28
-                ]
-              }
-            }
-          },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "trailing": [
-                28
-              ]
-            }
-          }
-        }
-      ],
-      "$errors": []
-    },
-    "expectedOutput": "(program\n(identifier)? @variable* @spell)\n"
-  },
-  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "\n(program\n  (identifier)? @variable* @spell)\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "(program\n(identifier)? @variable* @spell)\n",
+    "expectedSourceOut": "(program\n  (identifier)? @variable* @spell)\n",
     "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (list_element_quantifier quantifier: (quantifier)) elements: (capture name: (identifier)) elements: (list_element_quantifier quantifier: (quantifier)) elements: (capture name: (identifier))))))",
-    "wrappedText": "(program\n(identifier)? @variable* @spell)\n",
+    "wrappedText": "(program\n  (identifier)? @variable* @spell)\n",
     "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "named_node_plain",
-    "input": {
-      "$type": 61,
-      "_name": {
-        "$type": 5,
-        "$text": "program"
-      },
-      "_named_node_group": {
-        "$type": 63,
-        "_named_node_expressions": [
-          {
-            "$type": 61,
-            "_name": {
-              "$type": 5,
-              "$text": "identifier"
-            },
-            "_elements": [
-              {
-                "$type": 54,
-                "_quantifier": 4
-              },
-              {
-                "$type": 39,
-                "_name": {
-                  "$type": 6,
-                  "$text": "variable"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": " "
-                  }
-                }
-              },
-              {
-                "$type": 54,
-                "_quantifier": 2,
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
-              },
-              {
-                "$type": 39,
-                "_name": {
-                  "$type": 6,
-                  "$text": "spell"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": " "
-                  }
-                }
-              }
-            ]
-          }
-        ],
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              28
-            ]
-          }
-        }
-      },
-      "_elements": []
-    },
-    "expectedOutput": "(program\n(identifier)? @variable* @spell)"
   },
   {
     "kind": "roundtrip",
@@ -3287,9 +2124,9 @@
     "sourceIn": "(program\n  (identifier)? @variable* @spell)",
     "pattern": "named_node_plain",
     "edits": [],
-    "expectedSourceOut": "(program\n(identifier)? @variable* @spell)",
+    "expectedSourceOut": "(program\n  (identifier)? @variable* @spell)",
     "expectedReparseTree": "(named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (list_element_quantifier quantifier: (quantifier)) elements: (capture name: (identifier)) elements: (list_element_quantifier quantifier: (quantifier)) elements: (capture name: (identifier)))))",
-    "wrappedText": "(program\n(identifier)? @variable* @spell)\n",
+    "wrappedText": "(program\n  (identifier)? @variable* @spell)\n",
     "wrappedOffset": 0
   },
   {
@@ -3551,7 +2388,14 @@
               }
             }
           ],
-          "_elements": []
+          "_elements": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28
+              ]
+            }
+          }
         },
         {
           "$type": 45,
@@ -4146,166 +2990,15 @@
     "wrappedOffset": 11
   },
   {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "program",
-    "input": {
-      "$type": 33,
-      "_definitions": [
-        {
-          "$type": 61,
-          "_name": {
-            "$type": 5,
-            "$text": "class_declaration"
-          },
-          "_named_node_group": {
-            "$type": 63,
-            "_named_node_expressions": [
-              {
-                "$type": 50,
-                "_name": {
-                  "$type": 5,
-                  "$text": "body"
-                },
-                "_definition": {
-                  "$type": 61,
-                  "_name": {
-                    "$type": 5,
-                    "$text": "class_body"
-                  },
-                  "_elements": [
-                    {
-                      "$type": 39,
-                      "_name": {
-                        "$type": 6,
-                        "$text": "class.body"
-                      }
-                    },
-                    {
-                      "$type": 39,
-                      "_name": {
-                        "$type": 6,
-                        "$text": "test"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": " "
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            ],
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  28
-                ]
-              }
-            }
-          },
-          "_elements": [
-            {
-              "$type": 39,
-              "_name": {
-                "$type": 6,
-                "$text": "blorg"
-              }
-            }
-          ],
-          "$_layout": {
-            "trivia": {
-              "trailing": [
-                28
-              ]
-            }
-          }
-        }
-      ],
-      "$errors": []
-    },
-    "expectedOutput": "(class_declaration\nbody: (class_body) @class.body @test) @blorg\n"
-  },
-  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "\n(class_declaration\n  body: (class_body) @class.body @test) @blorg\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "(class_declaration\nbody: (class_body) @class.body @test) @blorg\n",
+    "expectedSourceOut": "(class_declaration\n  body: (class_body) @class.body @test) @blorg\n",
     "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier) elements: (capture name: (identifier)) elements: (capture name: (identifier))))) elements: (capture name: (identifier))))",
-    "wrappedText": "(class_declaration\nbody: (class_body) @class.body @test) @blorg\n",
+    "wrappedText": "(class_declaration\n  body: (class_body) @class.body @test) @blorg\n",
     "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "named_node_plain",
-    "input": {
-      "$type": 61,
-      "_name": {
-        "$type": 5,
-        "$text": "class_declaration"
-      },
-      "_named_node_group": {
-        "$type": 63,
-        "_named_node_expressions": [
-          {
-            "$type": 50,
-            "_name": {
-              "$type": 5,
-              "$text": "body"
-            },
-            "_definition": {
-              "$type": 61,
-              "_name": {
-                "$type": 5,
-                "$text": "class_body"
-              },
-              "_elements": [
-                {
-                  "$type": 39,
-                  "_name": {
-                    "$type": 6,
-                    "$text": "class.body"
-                  }
-                },
-                {
-                  "$type": 39,
-                  "_name": {
-                    "$type": 6,
-                    "$text": "test"
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": " "
-                    }
-                  }
-                }
-              ]
-            }
-          }
-        ],
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              28
-            ]
-          }
-        }
-      },
-      "_elements": [
-        {
-          "$type": 39,
-          "_name": {
-            "$type": 6,
-            "$text": "blorg"
-          }
-        }
-      ]
-    },
-    "expectedOutput": "(class_declaration\nbody: (class_body) @class.body @test) @blorg"
   },
   {
     "kind": "roundtrip",
@@ -4313,9 +3006,9 @@
     "sourceIn": "(class_declaration\n  body: (class_body) @class.body @test) @blorg",
     "pattern": "named_node_plain",
     "edits": [],
-    "expectedSourceOut": "(class_declaration\nbody: (class_body) @class.body @test) @blorg",
+    "expectedSourceOut": "(class_declaration\n  body: (class_body) @class.body @test) @blorg",
     "expectedReparseTree": "(named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier) elements: (capture name: (identifier)) elements: (capture name: (identifier))))) elements: (capture name: (identifier)))",
-    "wrappedText": "(class_declaration\nbody: (class_body) @class.body @test) @blorg\n",
+    "wrappedText": "(class_declaration\n  body: (class_body) @class.body @test) @blorg\n",
     "wrappedOffset": 0
   },
   {
@@ -4545,313 +3238,15 @@
     "wrappedOffset": 12
   },
   {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "program",
-    "input": {
-      "$type": 33,
-      "_definitions": [
-        {
-          "$type": 44,
-          "_definitions": [
-            {
-              "$type": 47,
-              "_name": {
-                "$type": 40,
-                "_string_content": {
-                  "$type": 42,
-                  "_content": [
-                    {
-                      "$type": 23,
-                      "$text": "?"
-                    }
-                  ]
-                }
-              },
-              "_elements": [],
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    28
-                  ]
-                }
-              }
-            },
-            {
-              "$type": 47,
-              "_name": {
-                "$type": 40,
-                "_string_content": {
-                  "$type": 42,
-                  "_content": [
-                    {
-                      "$type": 23,
-                      "$text": "+"
-                    }
-                  ]
-                }
-              },
-              "_elements": [],
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    28
-                  ]
-                }
-              }
-            },
-            {
-              "$type": 47,
-              "_name": {
-                "$type": 40,
-                "_string_content": {
-                  "$type": 42,
-                  "_content": [
-                    {
-                      "$type": 23,
-                      "$text": "-"
-                    }
-                  ]
-                }
-              },
-              "_elements": [],
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    28
-                  ]
-                }
-              }
-            }
-          ],
-          "_elements": [
-            {
-              "$type": 39,
-              "_name": {
-                "$type": 6,
-                "$text": "ops"
-              }
-            }
-          ]
-        },
-        {
-          "$type": 61,
-          "_name": {
-            "$type": 5,
-            "$text": "if_statement"
-          },
-          "_named_node_group": {
-            "$type": 63,
-            "_named_node_expressions": [
-              {
-                "$type": 44,
-                "_definitions": [
-                  {
-                    "$type": 50,
-                    "_name": {
-                      "$type": 5,
-                      "$text": "condition"
-                    },
-                    "_definition": {
-                      "$type": 61,
-                      "_name": 7,
-                      "_elements": []
-                    },
-                    "$_layout": {
-                      "trivia": {
-                        "leading": [
-                          28
-                        ]
-                      }
-                    }
-                  },
-                  {
-                    "$type": 50,
-                    "_name": {
-                      "$type": 5,
-                      "$text": "consequence"
-                    },
-                    "_definition": {
-                      "$type": 61,
-                      "_name": 7,
-                      "_elements": []
-                    },
-                    "$_layout": {
-                      "trivia": {
-                        "leading": [
-                          28
-                        ]
-                      }
-                    }
-                  },
-                  {
-                    "$type": 50,
-                    "_name": {
-                      "$type": 5,
-                      "$text": "alternative"
-                    },
-                    "_definition": {
-                      "$type": 61,
-                      "_name": 7,
-                      "_elements": [
-                        {
-                          "$type": 54,
-                          "_quantifier": 4
-                        }
-                      ]
-                    },
-                    "$_layout": {
-                      "trivia": {
-                        "leading": [
-                          28
-                        ]
-                      }
-                    }
-                  }
-                ],
-                "_elements": [
-                  {
-                    "$type": 39,
-                    "_name": {
-                      "$type": 6,
-                      "$text": "conditional.inner"
-                    }
-                  }
-                ]
-              }
-            ],
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  28
-                ]
-              }
-            }
-          },
-          "_elements": [
-            {
-              "$type": 39,
-              "_name": {
-                "$type": 6,
-                "$text": "conditional.outer"
-              }
-            }
-          ],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                29
-              ],
-              "trailing": [
-                28
-              ]
-            }
-          }
-        }
-      ],
-      "$errors": []
-    },
-    "expectedOutput": "[\n\"?\"\n\"+\"\n\"-\"] @ops\n\n(if_statement\n[\ncondition: (_)\nconsequence: (_)\nalternative: (_)?] @conditional.inner) @conditional.outer\n"
-  },
-  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "\n[\n  \"?\"\n  \"+\"\n  \"-\"\n] @ops\n\n(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?\n  ] @conditional.inner) @conditional.outer\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "[\n\"?\"\n\"+\"\n\"-\"] @ops\n\n(if_statement\n[\ncondition: (_)\nconsequence: (_)\nalternative: (_)?] @conditional.inner) @conditional.outer\n",
+    "expectedSourceOut": "[\n  \"?\"\n  \"+\"\n  \"-\"] @ops\n\n(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?] @conditional.inner) @conditional.outer\n",
     "expectedReparseTree": "(program definitions: (list definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))) elements: (capture name: (identifier))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (list definitions: (field_definition name: (identifier) definition: (named_node_plain)) definitions: (field_definition name: (identifier) definition: (named_node_plain)) definitions: (field_definition name: (identifier) definition: (named_node_plain elements: (list_element_quantifier quantifier: (quantifier)))) elements: (capture name: (identifier)))) elements: (capture name: (identifier))))",
-    "wrappedText": "[\n\"?\"\n\"+\"\n\"-\"] @ops\n\n(if_statement\n[\ncondition: (_)\nconsequence: (_)\nalternative: (_)?] @conditional.inner) @conditional.outer\n",
+    "wrappedText": "[\n  \"?\"\n  \"+\"\n  \"-\"] @ops\n\n(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?] @conditional.inner) @conditional.outer\n",
     "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "list",
-    "input": {
-      "$type": 44,
-      "_definitions": [
-        {
-          "$type": 47,
-          "_name": {
-            "$type": 40,
-            "_string_content": {
-              "$type": 42,
-              "_content": [
-                {
-                  "$type": 23,
-                  "$text": "?"
-                }
-              ]
-            }
-          },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
-        },
-        {
-          "$type": 47,
-          "_name": {
-            "$type": 40,
-            "_string_content": {
-              "$type": 42,
-              "_content": [
-                {
-                  "$type": 23,
-                  "$text": "+"
-                }
-              ]
-            }
-          },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
-        },
-        {
-          "$type": 47,
-          "_name": {
-            "$type": 40,
-            "_string_content": {
-              "$type": 42,
-              "_content": [
-                {
-                  "$type": 23,
-                  "$text": "-"
-                }
-              ]
-            }
-          },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
-        }
-      ],
-      "_elements": [
-        {
-          "$type": 39,
-          "_name": {
-            "$type": 6,
-            "$text": "ops"
-          }
-        }
-      ]
-    },
-    "expectedOutput": "[\n\"?\"\n\"+\"\n\"-\"] @ops"
   },
   {
     "kind": "roundtrip",
@@ -4859,92 +3254,10 @@
     "sourceIn": "[\n  \"?\"\n  \"+\"\n  \"-\"\n] @ops",
     "pattern": "list",
     "edits": [],
-    "expectedSourceOut": "[\n\"?\"\n\"+\"\n\"-\"] @ops",
+    "expectedSourceOut": "[\n  \"?\"\n  \"+\"\n  \"-\"] @ops",
     "expectedReparseTree": "(list definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))) elements: (capture name: (identifier)))",
-    "wrappedText": "[\n\"?\"\n\"+\"\n\"-\"] @ops\n\n(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?\n  ] @conditional.inner) @conditional.outer\n",
+    "wrappedText": "[\n  \"?\"\n  \"+\"\n  \"-\"] @ops\n\n(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?\n  ] @conditional.inner) @conditional.outer\n",
     "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "list",
-    "input": {
-      "$type": 44,
-      "_definitions": [
-        {
-          "$type": 50,
-          "_name": {
-            "$type": 5,
-            "$text": "condition"
-          },
-          "_definition": {
-            "$type": 61,
-            "_name": 7,
-            "_elements": []
-          },
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
-        },
-        {
-          "$type": 50,
-          "_name": {
-            "$type": 5,
-            "$text": "consequence"
-          },
-          "_definition": {
-            "$type": 61,
-            "_name": 7,
-            "_elements": []
-          },
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
-        },
-        {
-          "$type": 50,
-          "_name": {
-            "$type": 5,
-            "$text": "alternative"
-          },
-          "_definition": {
-            "$type": 61,
-            "_name": 7,
-            "_elements": [
-              {
-                "$type": 54,
-                "_quantifier": 4
-              }
-            ]
-          },
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
-        }
-      ],
-      "_elements": [
-        {
-          "$type": 39,
-          "_name": {
-            "$type": 6,
-            "$text": "conditional.inner"
-          }
-        }
-      ]
-    },
-    "expectedOutput": "[\ncondition: (_)\nconsequence: (_)\nalternative: (_)?] @conditional.inner"
   },
   {
     "kind": "roundtrip",
@@ -4952,9 +3265,9 @@
     "sourceIn": "[\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?\n  ] @conditional.inner",
     "pattern": "list",
     "edits": [],
-    "expectedSourceOut": "[\ncondition: (_)\nconsequence: (_)\nalternative: (_)?] @conditional.inner",
+    "expectedSourceOut": "[\n  condition: (_)\n  consequence: (_)\n  alternative: (_)?] @conditional.inner",
     "expectedReparseTree": "(list definitions: (field_definition name: (identifier) definition: (named_node_plain)) definitions: (field_definition name: (identifier) definition: (named_node_plain)) definitions: (field_definition name: (identifier) definition: (named_node_plain elements: (list_element_quantifier quantifier: (quantifier)))) elements: (capture name: (identifier)))",
-    "wrappedText": "[\ncondition: (_)\nconsequence: (_)\nalternative: (_)?] @conditional.inner\n\n(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?\n  ] @conditional.inner) @conditional.outer\n",
+    "wrappedText": "[\n  condition: (_)\n  consequence: (_)\n  alternative: (_)?] @conditional.inner\n\n(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?\n  ] @conditional.inner) @conditional.outer\n",
     "wrappedOffset": 0
   },
   {
@@ -5294,124 +3607,14 @@
     "wrappedOffset": 12
   },
   {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "named_node_plain",
-    "input": {
-      "$type": 61,
-      "_name": {
-        "$type": 5,
-        "$text": "if_statement"
-      },
-      "_named_node_group": {
-        "$type": 63,
-        "_named_node_expressions": [
-          {
-            "$type": 44,
-            "_definitions": [
-              {
-                "$type": 50,
-                "_name": {
-                  "$type": 5,
-                  "$text": "condition"
-                },
-                "_definition": {
-                  "$type": 61,
-                  "_name": 7,
-                  "_elements": []
-                },
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      28
-                    ]
-                  }
-                }
-              },
-              {
-                "$type": 50,
-                "_name": {
-                  "$type": 5,
-                  "$text": "consequence"
-                },
-                "_definition": {
-                  "$type": 61,
-                  "_name": 7,
-                  "_elements": []
-                },
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      28
-                    ]
-                  }
-                }
-              },
-              {
-                "$type": 50,
-                "_name": {
-                  "$type": 5,
-                  "$text": "alternative"
-                },
-                "_definition": {
-                  "$type": 61,
-                  "_name": 7,
-                  "_elements": [
-                    {
-                      "$type": 54,
-                      "_quantifier": 4
-                    }
-                  ]
-                },
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      28
-                    ]
-                  }
-                }
-              }
-            ],
-            "_elements": [
-              {
-                "$type": 39,
-                "_name": {
-                  "$type": 6,
-                  "$text": "conditional.inner"
-                }
-              }
-            ]
-          }
-        ],
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              28
-            ]
-          }
-        }
-      },
-      "_elements": [
-        {
-          "$type": 39,
-          "_name": {
-            "$type": 6,
-            "$text": "conditional.outer"
-          }
-        }
-      ]
-    },
-    "expectedOutput": "(if_statement\n[\ncondition: (_)\nconsequence: (_)\nalternative: (_)?] @conditional.inner) @conditional.outer"
-  },
-  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?\n  ] @conditional.inner) @conditional.outer",
     "pattern": "named_node_plain",
     "edits": [],
-    "expectedSourceOut": "(if_statement\n[\ncondition: (_)\nconsequence: (_)\nalternative: (_)?] @conditional.inner) @conditional.outer",
+    "expectedSourceOut": "(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?] @conditional.inner) @conditional.outer",
     "expectedReparseTree": "(named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (list definitions: (field_definition name: (identifier) definition: (named_node_plain)) definitions: (field_definition name: (identifier) definition: (named_node_plain)) definitions: (field_definition name: (identifier) definition: (named_node_plain elements: (list_element_quantifier quantifier: (quantifier)))) elements: (capture name: (identifier)))) elements: (capture name: (identifier)))",
-    "wrappedText": "(if_statement\n[\ncondition: (_)\nconsequence: (_)\nalternative: (_)?] @conditional.inner) @conditional.outer\n",
+    "wrappedText": "(if_statement\n  [\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?] @conditional.inner) @conditional.outer\n",
     "wrappedOffset": 0
   },
   {
@@ -5486,101 +3689,14 @@
     "wrappedOffset": 0
   },
   {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "named_node_group_children",
-    "input": {
-      "$type": 63,
-      "_named_node_expressions": [
-        {
-          "$type": 44,
-          "_definitions": [
-            {
-              "$type": 50,
-              "_name": {
-                "$type": 5,
-                "$text": "condition"
-              },
-              "_definition": {
-                "$type": 61,
-                "_name": 7,
-                "_elements": []
-              },
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    28
-                  ]
-                }
-              }
-            },
-            {
-              "$type": 50,
-              "_name": {
-                "$type": 5,
-                "$text": "consequence"
-              },
-              "_definition": {
-                "$type": 61,
-                "_name": 7,
-                "_elements": []
-              },
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    28
-                  ]
-                }
-              }
-            },
-            {
-              "$type": 50,
-              "_name": {
-                "$type": 5,
-                "$text": "alternative"
-              },
-              "_definition": {
-                "$type": 61,
-                "_name": 7,
-                "_elements": [
-                  {
-                    "$type": 54,
-                    "_quantifier": 4
-                  }
-                ]
-              },
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    28
-                  ]
-                }
-              }
-            }
-          ],
-          "_elements": [
-            {
-              "$type": 39,
-              "_name": {
-                "$type": 6,
-                "$text": "conditional.inner"
-              }
-            }
-          ]
-        }
-      ]
-    },
-    "expectedOutput": "[\ncondition: (_)\nconsequence: (_)\nalternative: (_)?] @conditional.inner"
-  },
-  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "[\n    condition: (_)\n    consequence: (_)\n    alternative: (_)?\n  ] @conditional.inner",
     "pattern": "named_node_group_children",
     "edits": [],
-    "expectedSourceOut": "[\ncondition: (_)\nconsequence: (_)\nalternative: (_)?] @conditional.inner",
+    "expectedSourceOut": "[\n  condition: (_)\n  consequence: (_)\n  alternative: (_)?] @conditional.inner",
     "expectedReparseTree": "(named_node_group_children named_node_expressions: (list definitions: (field_definition name: (identifier) definition: (named_node_plain)) definitions: (field_definition name: (identifier) definition: (named_node_plain)) definitions: (field_definition name: (identifier) definition: (named_node_plain elements: (list_element_quantifier quantifier: (quantifier)))) elements: (capture name: (identifier))))",
-    "wrappedText": "(node [\ncondition: (_)\nconsequence: (_)\nalternative: (_)?] @conditional.inner)\n",
+    "wrappedText": "(node [\n  condition: (_)\n  consequence: (_)\n  alternative: (_)?] @conditional.inner)\n",
     "wrappedOffset": 6
   },
   {
@@ -5697,349 +3813,15 @@
     "wrappedOffset": 3
   },
   {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "program",
-    "input": {
-      "$type": 33,
-      "_definitions": [
-        {
-          "$type": 45,
-          "_grouping_group": [
-            {
-              "$type": 58,
-              "_group_expression": {
-                "$type": 61,
-                "_name": {
-                  "$type": 5,
-                  "$text": "identifier"
-                },
-                "_elements": [
-                  {
-                    "$type": 39,
-                    "_name": {
-                      "$type": 6,
-                      "$text": "v"
-                    }
-                  }
-                ]
-              }
-            },
-            {
-              "$type": 58,
-              "_group_expression": {
-                "$type": 52,
-                "_prefix": 19,
-                "_name": {
-                  "$type": 6,
-                  "$text": "eq"
-                },
-                "_type": 4,
-                "_parameters": {
-                  "$type": 43,
-                  "_elements": [
-                    {
-                      "$type": 39,
-                      "_name": {
-                        "$type": 6,
-                        "$text": "v"
-                      }
-                    },
-                    {
-                      "$type": 40,
-                      "_string_content": {
-                        "$type": 42,
-                        "_content": [
-                          {
-                            "$type": 23,
-                            "$text": "test"
-                          }
-                        ]
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": " "
-                        }
-                      }
-                    },
-                    {
-                      "$type": 5,
-                      "$text": "local",
-                      "$_layout": {
-                        "gap": {
-                          "$text": " "
-                        }
-                      }
-                    },
-                    {
-                      "$type": 5,
-                      "$text": "_",
-                      "$_layout": {
-                        "gap": {
-                          "$text": " "
-                        }
-                      }
-                    }
-                  ]
-                }
-              },
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    28
-                  ]
-                }
-              }
-            }
-          ],
-          "_elements": []
-        },
-        {
-          "$type": 45,
-          "_grouping_group": [
-            {
-              "$type": 58,
-              "_group_expression": {
-                "$type": 61,
-                "_name": {
-                  "$type": 5,
-                  "$text": "identifier"
-                },
-                "_elements": [
-                  {
-                    "$type": 39,
-                    "_name": {
-                      "$type": 6,
-                      "$text": "v"
-                    }
-                  }
-                ]
-              }
-            },
-            {
-              "$type": 58,
-              "_group_expression": {
-                "$type": 52,
-                "_prefix": 20,
-                "_name": {
-                  "$type": 6,
-                  "$text": "match"
-                },
-                "_type": 4,
-                "_parameters": {
-                  "$type": 43,
-                  "_elements": [
-                    {
-                      "$type": 39,
-                      "_name": {
-                        "$type": 6,
-                        "$text": "v"
-                      }
-                    },
-                    {
-                      "$type": 40,
-                      "_string_content": {
-                        "$type": 42,
-                        "_content": [
-                          {
-                            "$type": 23,
-                            "$text": "test"
-                          }
-                        ]
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": " "
-                        }
-                      }
-                    }
-                  ]
-                }
-              },
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    28
-                  ]
-                }
-              }
-            }
-          ],
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                29
-              ]
-            }
-          }
-        },
-        {
-          "$type": 45,
-          "_grouping_group": [
-            {
-              "$type": 58,
-              "_group_expression": {
-                "$type": 61,
-                "_name": {
-                  "$type": 5,
-                  "$text": "identifier"
-                },
-                "_elements": [
-                  {
-                    "$type": 39,
-                    "_name": {
-                      "$type": 6,
-                      "$text": "v"
-                    }
-                  }
-                ]
-              }
-            },
-            {
-              "$type": 58,
-              "_group_expression": {
-                "$type": 52,
-                "_prefix": 19,
-                "_name": {
-                  "$type": 6,
-                  "$text": "something"
-                },
-                "_type": 18
-              },
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    28
-                  ]
-                }
-              }
-            }
-          ],
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                29
-              ],
-              "trailing": [
-                28
-              ]
-            }
-          }
-        }
-      ],
-      "$errors": []
-    },
-    "expectedOutput": "((identifier) @v\n(#eq? @v \"test\" local _))\n\n((identifier) @v\n(.match? @v \"test\"))\n\n((identifier) @v\n(#something!))\n"
-  },
-  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "\n((identifier) @v\n  (#eq? @v \"test\" local _))\n\n((identifier) @v\n  (.match? @v \"test\"))\n\n((identifier) @v\n  (#something!))\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "((identifier) @v\n(#eq? @v \"test\" local _))\n\n((identifier) @v\n(.match? @v \"test\"))\n\n((identifier) @v\n(#something!))\n",
+    "expectedSourceOut": "((identifier) @v\n  (#eq? @v \"test\" local _))\n\n((identifier) @v\n  (.match? @v \"test\"))\n\n((identifier) @v\n  (#something!))\n",
     "expectedReparseTree": "(program definitions: (grouping (grouping_group (named_node_plain name: (identifier) elements: (capture name: (identifier)))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (string_content_text))) elements: (identifier) elements: (identifier))))) definitions: (grouping (grouping_group (named_node_plain name: (identifier) elements: (capture name: (identifier)))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (string_content_text))))))) definitions: (grouping (grouping_group (named_node_plain name: (identifier) elements: (capture name: (identifier)))) (grouping_group (predicate name: (identifier) type: (predicate_type)))))",
-    "wrappedText": "((identifier) @v\n(#eq? @v \"test\" local _))\n\n((identifier) @v\n(.match? @v \"test\"))\n\n((identifier) @v\n(#something!))\n",
+    "wrappedText": "((identifier) @v\n  (#eq? @v \"test\" local _))\n\n((identifier) @v\n  (.match? @v \"test\"))\n\n((identifier) @v\n  (#something!))\n",
     "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "grouping",
-    "input": {
-      "$type": 45,
-      "_grouping_group": [
-        {
-          "$type": 58,
-          "_group_expression": {
-            "$type": 61,
-            "_name": {
-              "$type": 5,
-              "$text": "identifier"
-            },
-            "_elements": [
-              {
-                "$type": 39,
-                "_name": {
-                  "$type": 6,
-                  "$text": "v"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "$type": 58,
-          "_group_expression": {
-            "$type": 52,
-            "_prefix": 19,
-            "_name": {
-              "$type": 6,
-              "$text": "eq"
-            },
-            "_type": 4,
-            "_parameters": {
-              "$type": 43,
-              "_elements": [
-                {
-                  "$type": 39,
-                  "_name": {
-                    "$type": 6,
-                    "$text": "v"
-                  }
-                },
-                {
-                  "$type": 40,
-                  "_string_content": {
-                    "$type": 42,
-                    "_content": [
-                      {
-                        "$type": 23,
-                        "$text": "test"
-                      }
-                    ]
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": " "
-                    }
-                  }
-                },
-                {
-                  "$type": 5,
-                  "$text": "local",
-                  "$_layout": {
-                    "gap": {
-                      "$text": " "
-                    }
-                  }
-                },
-                {
-                  "$type": 5,
-                  "$text": "_",
-                  "$_layout": {
-                    "gap": {
-                      "$text": " "
-                    }
-                  }
-                }
-              ]
-            }
-          },
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
-        }
-      ],
-      "_elements": []
-    },
-    "expectedOutput": "((identifier) @v\n(#eq? @v \"test\" local _))"
   },
   {
     "kind": "roundtrip",
@@ -6047,89 +3829,10 @@
     "sourceIn": "((identifier) @v\n  (#eq? @v \"test\" local _))",
     "pattern": "grouping",
     "edits": [],
-    "expectedSourceOut": "((identifier) @v\n(#eq? @v \"test\" local _))",
+    "expectedSourceOut": "((identifier) @v\n  (#eq? @v \"test\" local _))",
     "expectedReparseTree": "(grouping (grouping_group (named_node_plain name: (identifier) elements: (capture name: (identifier)))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (string_content_text))) elements: (identifier) elements: (identifier)))))",
-    "wrappedText": "((identifier) @v\n(#eq? @v \"test\" local _))\n",
+    "wrappedText": "((identifier) @v\n  (#eq? @v \"test\" local _))\n",
     "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "grouping",
-    "input": {
-      "$type": 45,
-      "_grouping_group": [
-        {
-          "$type": 58,
-          "_group_expression": {
-            "$type": 61,
-            "_name": {
-              "$type": 5,
-              "$text": "identifier"
-            },
-            "_elements": [
-              {
-                "$type": 39,
-                "_name": {
-                  "$type": 6,
-                  "$text": "v"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "$type": 58,
-          "_group_expression": {
-            "$type": 52,
-            "_prefix": 20,
-            "_name": {
-              "$type": 6,
-              "$text": "match"
-            },
-            "_type": 4,
-            "_parameters": {
-              "$type": 43,
-              "_elements": [
-                {
-                  "$type": 39,
-                  "_name": {
-                    "$type": 6,
-                    "$text": "v"
-                  }
-                },
-                {
-                  "$type": 40,
-                  "_string_content": {
-                    "$type": 42,
-                    "_content": [
-                      {
-                        "$type": 23,
-                        "$text": "test"
-                      }
-                    ]
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": " "
-                    }
-                  }
-                }
-              ]
-            }
-          },
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
-        }
-      ],
-      "_elements": []
-    },
-    "expectedOutput": "((identifier) @v\n(.match? @v \"test\"))"
   },
   {
     "kind": "roundtrip",
@@ -6137,60 +3840,10 @@
     "sourceIn": "((identifier) @v\n  (.match? @v \"test\"))",
     "pattern": "grouping",
     "edits": [],
-    "expectedSourceOut": "((identifier) @v\n(.match? @v \"test\"))",
+    "expectedSourceOut": "((identifier) @v\n  (.match? @v \"test\"))",
     "expectedReparseTree": "(grouping (grouping_group (named_node_plain name: (identifier) elements: (capture name: (identifier)))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (string_content_text)))))))",
-    "wrappedText": "((identifier) @v\n(.match? @v \"test\"))\n",
+    "wrappedText": "((identifier) @v\n  (.match? @v \"test\"))\n",
     "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "grouping",
-    "input": {
-      "$type": 45,
-      "_grouping_group": [
-        {
-          "$type": 58,
-          "_group_expression": {
-            "$type": 61,
-            "_name": {
-              "$type": 5,
-              "$text": "identifier"
-            },
-            "_elements": [
-              {
-                "$type": 39,
-                "_name": {
-                  "$type": 6,
-                  "$text": "v"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "$type": 58,
-          "_group_expression": {
-            "$type": 52,
-            "_prefix": 19,
-            "_name": {
-              "$type": 6,
-              "$text": "something"
-            },
-            "_type": 18
-          },
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
-        }
-      ],
-      "_elements": []
-    },
-    "expectedOutput": "((identifier) @v\n(#something!))"
   },
   {
     "kind": "roundtrip",
@@ -6198,9 +3851,9 @@
     "sourceIn": "((identifier) @v\n  (#something!))",
     "pattern": "grouping",
     "edits": [],
-    "expectedSourceOut": "((identifier) @v\n(#something!))",
+    "expectedSourceOut": "((identifier) @v\n  (#something!))",
     "expectedReparseTree": "(grouping (grouping_group (named_node_plain name: (identifier) elements: (capture name: (identifier)))) (grouping_group (predicate name: (identifier) type: (predicate_type))))",
-    "wrappedText": "((identifier) @v\n(#something!))\n",
+    "wrappedText": "((identifier) @v\n  (#something!))\n",
     "wrappedOffset": 0
   },
   {
@@ -7100,7 +4753,14 @@
               }
             }
           ],
-          "_elements": []
+          "_elements": [],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28
+              ]
+            }
+          }
         },
         {
           "$type": 45,
@@ -17329,564 +14989,15 @@
     "wrappedOffset": 52
   },
   {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "program",
-    "input": {
-      "$type": 33,
-      "_definitions": [
-        {
-          "$type": 45,
-          "_grouping_group": [
-            {
-              "$type": 58,
-              "_group_expression": {
-                "$type": 61,
-                "_name": {
-                  "$type": 5,
-                  "$text": "identifier"
-                },
-                "_elements": [
-                  {
-                    "$type": 39,
-                    "_name": {
-                      "$type": 6,
-                      "$text": "v"
-                    }
-                  }
-                ]
-              }
-            },
-            {
-              "$type": 58,
-              "_group_expression": {
-                "$type": 52,
-                "_prefix": 19,
-                "_name": {
-                  "$type": 6,
-                  "$text": "eq"
-                },
-                "_type": 4,
-                "_parameters": {
-                  "$type": 43,
-                  "_elements": [
-                    {
-                      "$type": 39,
-                      "_name": {
-                        "$type": 6,
-                        "$text": "v"
-                      }
-                    },
-                    {
-                      "$type": 40,
-                      "_string_content": {
-                        "$type": 42,
-                        "_content": [
-                          {
-                            "$type": 23,
-                            "$text": "I'm a string; not a comment"
-                          }
-                        ]
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": " "
-                        }
-                      }
-                    }
-                  ]
-                }
-              },
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    28
-                  ]
-                }
-              }
-            },
-            {
-              "$type": 58,
-              "_group_expression": {
-                "$type": 52,
-                "_prefix": 19,
-                "_name": {
-                  "$type": 6,
-                  "$text": "eq"
-                },
-                "_type": 4,
-                "_parameters": {
-                  "$type": 43,
-                  "_elements": [
-                    {
-                      "$type": 39,
-                      "_name": {
-                        "$type": 6,
-                        "$text": "v"
-                      }
-                    },
-                    {
-                      "$type": 40,
-                      "_string_content": {
-                        "$type": 42,
-                        "_content": [
-                          {
-                            "$type": 23,
-                            "$text": "test"
-                          },
-                          {
-                            "$type": 1,
-                            "_content": "\"",
-                            "$_layout": {
-                              "gap": {
-                                "$text": ""
-                              }
-                            }
-                          }
-                        ]
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": " "
-                        }
-                      }
-                    }
-                  ]
-                }
-              },
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    28
-                  ]
-                }
-              }
-            },
-            {
-              "$type": 58,
-              "_group_expression": {
-                "$type": 52,
-                "_prefix": 19,
-                "_name": {
-                  "$type": 6,
-                  "$text": "eq"
-                },
-                "_type": 4,
-                "_parameters": {
-                  "$type": 43,
-                  "_elements": [
-                    {
-                      "$type": 39,
-                      "_name": {
-                        "$type": 6,
-                        "$text": "v"
-                      }
-                    },
-                    {
-                      "$type": 40,
-                      "_string_content": {
-                        "$type": 42,
-                        "_content": [
-                          {
-                            "$type": 23,
-                            "$text": "tes"
-                          },
-                          {
-                            "$type": 1,
-                            "_content": "\"",
-                            "$_layout": {
-                              "gap": {
-                                "$text": ""
-                              }
-                            }
-                          },
-                          {
-                            "$type": 1,
-                            "_content": "\"",
-                            "$_layout": {
-                              "gap": {
-                                "$text": ""
-                              }
-                            }
-                          },
-                          {
-                            "$type": 23,
-                            "$text": "ting",
-                            "$_layout": {
-                              "gap": {
-                                "$text": ""
-                              }
-                            }
-                          }
-                        ]
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": " "
-                        }
-                      }
-                    }
-                  ]
-                }
-              },
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    28
-                  ]
-                }
-              }
-            },
-            {
-              "$type": 58,
-              "_group_expression": {
-                "$type": 52,
-                "_prefix": 19,
-                "_name": {
-                  "$type": 6,
-                  "$text": "eq"
-                },
-                "_type": 4,
-                "_parameters": {
-                  "$type": 43,
-                  "_elements": [
-                    {
-                      "$type": 39,
-                      "_name": {
-                        "$type": 6,
-                        "$text": "v"
-                      }
-                    },
-                    {
-                      "$type": 40,
-                      "_string_content": {
-                        "$type": 42,
-                        "_content": [
-                          {
-                            "$type": 1,
-                            "_content": "\""
-                          },
-                          {
-                            "$type": 23,
-                            "$text": "test",
-                            "$_layout": {
-                              "gap": {
-                                "$text": ""
-                              }
-                            }
-                          }
-                        ]
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": " "
-                        }
-                      }
-                    }
-                  ]
-                }
-              },
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    28
-                  ]
-                }
-              }
-            }
-          ],
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "trailing": [
-                28
-              ]
-            }
-          }
-        }
-      ],
-      "$errors": []
-    },
-    "expectedOutput": "((identifier) @v\n(#eq? @v \"I'm a string; not a comment\")\n(#eq? @v \"test\\\"\")\n(#eq? @v \"tes\\\"\\\"ting\")\n(#eq? @v \"\\\"test\"))\n"
-  },
-  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "\n((identifier) @v\n  (#eq? @v \"I'm a string; not a comment\")\n  (#eq? @v \"test\\\"\")\n  (#eq? @v \"tes\\\"\\\"ting\")\n  (#eq? @v \"\\\"test\"))\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "((identifier) @v\n(#eq? @v \"I'm a string; not a comment\")\n(#eq? @v \"test\\\"\")\n(#eq? @v \"tes\\\"\\\"ting\")\n(#eq? @v \"\\\"test\"))\n",
+    "expectedSourceOut": "((identifier) @v\n  (#eq? @v \"I'm a string; not a comment\")\n  (#eq? @v \"test\\\"\")\n  (#eq? @v \"tes\\\"\\\"ting\")\n  (#eq? @v \"\\\"test\"))\n",
     "expectedReparseTree": "(program definitions: (grouping (grouping_group (named_node_plain name: (identifier) elements: (capture name: (identifier)))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (string_content_text)))))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (string_content_text) (escape_sequence)))))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (string_content_text) (escape_sequence) (escape_sequence) (string_content_text)))))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (escape_sequence) (string_content_text))))))))",
-    "wrappedText": "((identifier) @v\n(#eq? @v \"I'm a string; not a comment\")\n(#eq? @v \"test\\\"\")\n(#eq? @v \"tes\\\"\\\"ting\")\n(#eq? @v \"\\\"test\"))\n",
+    "wrappedText": "((identifier) @v\n  (#eq? @v \"I'm a string; not a comment\")\n  (#eq? @v \"test\\\"\")\n  (#eq? @v \"tes\\\"\\\"ting\")\n  (#eq? @v \"\\\"test\"))\n",
     "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "grouping",
-    "input": {
-      "$type": 45,
-      "_grouping_group": [
-        {
-          "$type": 58,
-          "_group_expression": {
-            "$type": 61,
-            "_name": {
-              "$type": 5,
-              "$text": "identifier"
-            },
-            "_elements": [
-              {
-                "$type": 39,
-                "_name": {
-                  "$type": 6,
-                  "$text": "v"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "$type": 58,
-          "_group_expression": {
-            "$type": 52,
-            "_prefix": 19,
-            "_name": {
-              "$type": 6,
-              "$text": "eq"
-            },
-            "_type": 4,
-            "_parameters": {
-              "$type": 43,
-              "_elements": [
-                {
-                  "$type": 39,
-                  "_name": {
-                    "$type": 6,
-                    "$text": "v"
-                  }
-                },
-                {
-                  "$type": 40,
-                  "_string_content": {
-                    "$type": 42,
-                    "_content": [
-                      {
-                        "$type": 23,
-                        "$text": "I'm a string; not a comment"
-                      }
-                    ]
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": " "
-                    }
-                  }
-                }
-              ]
-            }
-          },
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
-        },
-        {
-          "$type": 58,
-          "_group_expression": {
-            "$type": 52,
-            "_prefix": 19,
-            "_name": {
-              "$type": 6,
-              "$text": "eq"
-            },
-            "_type": 4,
-            "_parameters": {
-              "$type": 43,
-              "_elements": [
-                {
-                  "$type": 39,
-                  "_name": {
-                    "$type": 6,
-                    "$text": "v"
-                  }
-                },
-                {
-                  "$type": 40,
-                  "_string_content": {
-                    "$type": 42,
-                    "_content": [
-                      {
-                        "$type": 23,
-                        "$text": "test"
-                      },
-                      {
-                        "$type": 1,
-                        "_content": "\"",
-                        "$_layout": {
-                          "gap": {
-                            "$text": ""
-                          }
-                        }
-                      }
-                    ]
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": " "
-                    }
-                  }
-                }
-              ]
-            }
-          },
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
-        },
-        {
-          "$type": 58,
-          "_group_expression": {
-            "$type": 52,
-            "_prefix": 19,
-            "_name": {
-              "$type": 6,
-              "$text": "eq"
-            },
-            "_type": 4,
-            "_parameters": {
-              "$type": 43,
-              "_elements": [
-                {
-                  "$type": 39,
-                  "_name": {
-                    "$type": 6,
-                    "$text": "v"
-                  }
-                },
-                {
-                  "$type": 40,
-                  "_string_content": {
-                    "$type": 42,
-                    "_content": [
-                      {
-                        "$type": 23,
-                        "$text": "tes"
-                      },
-                      {
-                        "$type": 1,
-                        "_content": "\"",
-                        "$_layout": {
-                          "gap": {
-                            "$text": ""
-                          }
-                        }
-                      },
-                      {
-                        "$type": 1,
-                        "_content": "\"",
-                        "$_layout": {
-                          "gap": {
-                            "$text": ""
-                          }
-                        }
-                      },
-                      {
-                        "$type": 23,
-                        "$text": "ting",
-                        "$_layout": {
-                          "gap": {
-                            "$text": ""
-                          }
-                        }
-                      }
-                    ]
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": " "
-                    }
-                  }
-                }
-              ]
-            }
-          },
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
-        },
-        {
-          "$type": 58,
-          "_group_expression": {
-            "$type": 52,
-            "_prefix": 19,
-            "_name": {
-              "$type": 6,
-              "$text": "eq"
-            },
-            "_type": 4,
-            "_parameters": {
-              "$type": 43,
-              "_elements": [
-                {
-                  "$type": 39,
-                  "_name": {
-                    "$type": 6,
-                    "$text": "v"
-                  }
-                },
-                {
-                  "$type": 40,
-                  "_string_content": {
-                    "$type": 42,
-                    "_content": [
-                      {
-                        "$type": 1,
-                        "_content": "\""
-                      },
-                      {
-                        "$type": 23,
-                        "$text": "test",
-                        "$_layout": {
-                          "gap": {
-                            "$text": ""
-                          }
-                        }
-                      }
-                    ]
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": " "
-                    }
-                  }
-                }
-              ]
-            }
-          },
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
-        }
-      ],
-      "_elements": []
-    },
-    "expectedOutput": "((identifier) @v\n(#eq? @v \"I'm a string; not a comment\")\n(#eq? @v \"test\\\"\")\n(#eq? @v \"tes\\\"\\\"ting\")\n(#eq? @v \"\\\"test\"))"
   },
   {
     "kind": "roundtrip",
@@ -17894,9 +15005,9 @@
     "sourceIn": "((identifier) @v\n  (#eq? @v \"I'm a string; not a comment\")\n  (#eq? @v \"test\\\"\")\n  (#eq? @v \"tes\\\"\\\"ting\")\n  (#eq? @v \"\\\"test\"))",
     "pattern": "grouping",
     "edits": [],
-    "expectedSourceOut": "((identifier) @v\n(#eq? @v \"I'm a string; not a comment\")\n(#eq? @v \"test\\\"\")\n(#eq? @v \"tes\\\"\\\"ting\")\n(#eq? @v \"\\\"test\"))",
+    "expectedSourceOut": "((identifier) @v\n  (#eq? @v \"I'm a string; not a comment\")\n  (#eq? @v \"test\\\"\")\n  (#eq? @v \"tes\\\"\\\"ting\")\n  (#eq? @v \"\\\"test\"))",
     "expectedReparseTree": "(grouping (grouping_group (named_node_plain name: (identifier) elements: (capture name: (identifier)))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (string_content_text)))))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (string_content_text) (escape_sequence)))))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (string_content_text) (escape_sequence) (escape_sequence) (string_content_text)))))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (escape_sequence) (string_content_text)))))))",
-    "wrappedText": "((identifier) @v\n(#eq? @v \"I'm a string; not a comment\")\n(#eq? @v \"test\\\"\")\n(#eq? @v \"tes\\\"\\\"ting\")\n(#eq? @v \"\\\"test\"))\n",
+    "wrappedText": "((identifier) @v\n  (#eq? @v \"I'm a string; not a comment\")\n  (#eq? @v \"test\\\"\")\n  (#eq? @v \"tes\\\"\\\"ting\")\n  (#eq? @v \"\\\"test\"))\n",
     "wrappedOffset": 0
   },
   {
@@ -19254,218 +16365,15 @@
     "wrappedOffset": 15
   },
   {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "program",
-    "input": {
-      "$type": 33,
-      "_definitions": [
-        {
-          "$type": 52,
-          "_prefix": 19,
-          "_name": {
-            "$type": 6,
-            "$text": "match"
-          },
-          "_type": 4,
-          "_parameters": {
-            "$type": 43,
-            "_elements": [
-              {
-                "$type": 39,
-                "_name": {
-                  "$type": 6,
-                  "$text": "foo"
-                }
-              },
-              {
-                "$type": 40,
-                "_string_content": {
-                  "$type": 42,
-                  "_content": [
-                    {
-                      "$type": 23,
-                      "$text": "foo"
-                    }
-                  ]
-                },
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      28,
-                      {
-                        "$type": 11,
-                        "$_layout": {},
-                        "_content": " bar"
-                      },
-                      28
-                    ]
-                  }
-                }
-              }
-            ],
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  28
-                ]
-              }
-            }
-          }
-        },
-        {
-          "$type": 61,
-          "_name": {
-            "$type": 5,
-            "$text": "node"
-          },
-          "_named_node_group": {
-            "$type": 63,
-            "_named_node_expressions": [
-              {
-                "$type": 50,
-                "_name": {
-                  "$type": 5,
-                  "$text": "name"
-                },
-                "_definition": {
-                  "$type": 61,
-                  "_name": {
-                    "$type": 5,
-                    "$text": "string"
-                  },
-                  "_elements": []
-                }
-              }
-            ],
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  28,
-                  {
-                    "$type": 11,
-                    "$_layout": {},
-                    "_content": " Capture the name"
-                  },
-                  28
-                ]
-              }
-            }
-          },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                29
-              ]
-            }
-          }
-        },
-        {
-          "$type": 61,
-          "_name": {
-            "$type": 5,
-            "$text": "string",
-            "$_layout": {
-              "trivia": {
-                "trailing": [
-                  28,
-                  {
-                    "$type": 11,
-                    "$_layout": {},
-                    "_content": " wild comment!"
-                  },
-                  28
-                ]
-              }
-            }
-          },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                29
-              ],
-              "trailing": [
-                28
-              ]
-            }
-          }
-        }
-      ],
-      "$errors": []
-    },
-    "expectedOutput": "(#match?\n@foo\n; bar\n\"foo\")\n\n(node\n; Capture the name\nname: (string))\n\n(string\n; wild comment!\n)\n"
-  },
-  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "\n(#match?\n @foo\n ; bar\n \"foo\")\n\n(node\n  ; Capture the name\n  name: (string))\n\n(string\n  ; wild comment!\n  )\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "(#match?\n@foo\n; bar\n\"foo\")\n\n(node\n; Capture the name\nname: (string))\n\n(string\n; wild comment!\n)\n",
+    "expectedSourceOut": "(#match?\n @foo\n ; bar\n \"foo\")\n\n(node\n  ; Capture the name\n  name: (string))\n\n(string\n  ; wild comment!\n  )\n",
     "expectedReparseTree": "(program definitions: (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) (comment) elements: (string string_content: (string_content (string_content_text))))) definitions: (named_node_plain name: (identifier) (comment) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (comment)))",
-    "wrappedText": "(#match?\n@foo\n; bar\n\"foo\")\n\n(node\n; Capture the name\nname: (string))\n\n(string\n; wild comment!\n)\n",
+    "wrappedText": "(#match?\n @foo\n ; bar\n \"foo\")\n\n(node\n  ; Capture the name\n  name: (string))\n\n(string\n  ; wild comment!\n  )\n",
     "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "predicate",
-    "input": {
-      "$type": 52,
-      "_prefix": 19,
-      "_name": {
-        "$type": 6,
-        "$text": "match"
-      },
-      "_type": 4,
-      "_parameters": {
-        "$type": 43,
-        "_elements": [
-          {
-            "$type": 39,
-            "_name": {
-              "$type": 6,
-              "$text": "foo"
-            }
-          },
-          {
-            "$type": 40,
-            "_string_content": {
-              "$type": 42,
-              "_content": [
-                {
-                  "$type": 23,
-                  "$text": "foo"
-                }
-              ]
-            },
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  28,
-                  {
-                    "$type": 11,
-                    "$_layout": {},
-                    "_content": " bar"
-                  },
-                  28
-                ]
-              }
-            }
-          }
-        ],
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              28
-            ]
-          }
-        }
-      }
-    },
-    "expectedOutput": "(#match?\n@foo\n; bar\n\"foo\")"
   },
   {
     "kind": "roundtrip",
@@ -19473,9 +16381,9 @@
     "sourceIn": "(#match?\n @foo\n ; bar\n \"foo\")",
     "pattern": "predicate",
     "edits": [],
-    "expectedSourceOut": "(#match?\n@foo\n; bar\n\"foo\")",
+    "expectedSourceOut": "(#match?\n @foo\n ; bar\n \"foo\")",
     "expectedReparseTree": "(predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) (comment) elements: (string string_content: (string_content (string_content_text)))))",
-    "wrappedText": "(#match?\n@foo\n; bar\n\"foo\")\n\n(node\n  ; Capture the name\n  name: (string))\n\n(string\n  ; wild comment!\n  )\n",
+    "wrappedText": "(#match?\n @foo\n ; bar\n \"foo\")\n\n(node\n  ; Capture the name\n  name: (string))\n\n(string\n  ; wild comment!\n  )\n",
     "wrappedOffset": 0
   },
   {
@@ -19509,8 +16417,7 @@
                 28,
                 {
                   "$type": 11,
-                  "$_layout": {},
-                  "_content": " bar"
+                  "$text": "; bar"
                 },
                 28
               ]
@@ -19570,21 +16477,9 @@
             "$text": "foo"
           }
         ]
-      },
-      "$_layout": {
-        "trivia": {
-          "leading": [
-            {
-              "$type": 11,
-              "$_layout": {},
-              "_content": " bar"
-            },
-            28
-          ]
-        }
       }
     },
-    "expectedOutput": "; bar\n\"foo\""
+    "expectedOutput": "\"foo\""
   },
   {
     "kind": "roundtrip",
@@ -19592,9 +16487,9 @@
     "sourceIn": "\"foo\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "; bar\n\"foo\"",
+    "expectedSourceOut": "\"foo\"",
     "expectedReparseTree": "(string string_content: (string_content (string_content_text)))",
-    "wrappedText": "(program)\n; bar\n\"foo\"\n\n\";\"\n",
+    "wrappedText": "(program)\n\"foo\"\n\n\";\"\n",
     "wrappedOffset": 10
   },
   {
@@ -19624,61 +16519,14 @@
     "wrappedOffset": 11
   },
   {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "named_node_plain",
-    "input": {
-      "$type": 61,
-      "_name": {
-        "$type": 5,
-        "$text": "node"
-      },
-      "_named_node_group": {
-        "$type": 63,
-        "_named_node_expressions": [
-          {
-            "$type": 50,
-            "_name": {
-              "$type": 5,
-              "$text": "name"
-            },
-            "_definition": {
-              "$type": 61,
-              "_name": {
-                "$type": 5,
-                "$text": "string"
-              },
-              "_elements": []
-            }
-          }
-        ],
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              28,
-              {
-                "$type": 11,
-                "$_layout": {},
-                "_content": " Capture the name"
-              },
-              28
-            ]
-          }
-        }
-      },
-      "_elements": []
-    },
-    "expectedOutput": "(node\n; Capture the name\nname: (string))"
-  },
-  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "(node\n  ; Capture the name\n  name: (string))",
     "pattern": "named_node_plain",
     "edits": [],
-    "expectedSourceOut": "(node\n; Capture the name\nname: (string))",
+    "expectedSourceOut": "(node\n  ; Capture the name\n  name: (string))",
     "expectedReparseTree": "(named_node_plain name: (identifier) (comment) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier)))))",
-    "wrappedText": "(node\n; Capture the name\nname: (string))\n",
+    "wrappedText": "(node\n  ; Capture the name\n  name: (string))\n",
     "wrappedOffset": 0
   },
   {
@@ -19707,41 +16555,14 @@
     "wrappedOffset": 0
   },
   {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "named_node_plain",
-    "input": {
-      "$type": 61,
-      "_name": {
-        "$type": 5,
-        "$text": "string",
-        "$_layout": {
-          "trivia": {
-            "trailing": [
-              28,
-              {
-                "$type": 11,
-                "$_layout": {},
-                "_content": " wild comment!"
-              },
-              28
-            ]
-          }
-        }
-      },
-      "_elements": []
-    },
-    "expectedOutput": "(string\n; wild comment!\n)"
-  },
-  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "(string\n  ; wild comment!\n  )",
     "pattern": "named_node_plain",
     "edits": [],
-    "expectedSourceOut": "(string\n; wild comment!\n)",
+    "expectedSourceOut": "(string\n  ; wild comment!\n  )",
     "expectedReparseTree": "(named_node_plain name: (identifier) (comment))",
-    "wrappedText": "(string\n; wild comment!\n)\n",
+    "wrappedText": "(string\n  ; wild comment!\n  )\n",
     "wrappedOffset": 0
   },
   {
@@ -19766,21 +16587,9 @@
             "_elements": []
           }
         }
-      ],
-      "$_layout": {
-        "trivia": {
-          "leading": [
-            {
-              "$type": 11,
-              "$_layout": {},
-              "_content": " Capture the name"
-            },
-            28
-          ]
-        }
-      }
+      ]
     },
-    "expectedOutput": "; Capture the name\nname: (string)"
+    "expectedOutput": "name: (string)"
   },
   {
     "kind": "roundtrip",
@@ -19788,9 +16597,9 @@
     "sourceIn": "name: (string)",
     "pattern": "named_node_group_children",
     "edits": [],
-    "expectedSourceOut": "; Capture the name\nname: (string)",
+    "expectedSourceOut": "name: (string)",
     "expectedReparseTree": "(named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))))",
-    "wrappedText": "(node ; Capture the name\nname: (string))\n",
+    "wrappedText": "(node name: (string))\n",
     "wrappedOffset": 6
   },
   {
@@ -19826,273 +16635,15 @@
     "wrappedOffset": 52
   },
   {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "program",
-    "input": {
-      "$type": 33,
-      "_definitions": [
-        {
-          "$type": 61,
-          "_name": {
-            "$type": 5,
-            "$text": "program"
-          },
-          "_named_node_group": {
-            "$type": 63,
-            "_named_node_expressions": [
-              {
-                "$type": 61,
-                "_name": {
-                  "$type": 5,
-                  "$text": "named_node"
-                },
-                "_named_node_group": {
-                  "$type": 63,
-                  "_named_node_expressions": [
-                    {
-                      "$type": 50,
-                      "_name": {
-                        "$type": 5,
-                        "$text": "name"
-                      },
-                      "_definition": {
-                        "$type": 61,
-                        "_name": {
-                          "$type": 5,
-                          "$text": "identifier"
-                        },
-                        "_elements": []
-                      }
-                    },
-                    {
-                      "$type": 62,
-                      "_supertype": {
-                        "$type": 5,
-                        "$text": "supertype"
-                      },
-                      "_name": {
-                        "$type": 6,
-                        "$text": "subtype"
-                      },
-                      "_elements": [],
-                      "$_layout": {
-                        "trivia": {
-                          "leading": [
-                            28
-                          ]
-                        }
-                      }
-                    }
-                  ],
-                  "$_layout": {
-                    "trivia": {
-                      "leading": [
-                        28
-                      ]
-                    }
-                  }
-                },
-                "_elements": []
-              }
-            ],
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  28
-                ]
-              }
-            }
-          },
-          "_elements": []
-        },
-        {
-          "$type": 61,
-          "_name": {
-            "$type": 5,
-            "$text": "program"
-          },
-          "_named_node_group": {
-            "$type": 63,
-            "_named_node_expressions": [
-              {
-                "$type": 61,
-                "_name": {
-                  "$type": 5,
-                  "$text": "named_node"
-                },
-                "_named_node_group": {
-                  "$type": 63,
-                  "_named_node_expressions": [
-                    {
-                      "$type": 50,
-                      "_name": {
-                        "$type": 5,
-                        "$text": "name"
-                      },
-                      "_definition": {
-                        "$type": 61,
-                        "_name": {
-                          "$type": 5,
-                          "$text": "identifier"
-                        },
-                        "_elements": []
-                      }
-                    },
-                    {
-                      "$type": 62,
-                      "_supertype": {
-                        "$type": 5,
-                        "$text": "supertype"
-                      },
-                      "_name": {
-                        "$type": 41,
-                        "_string_content": {
-                          "$type": 42,
-                          "_content": [
-                            {
-                              "$type": 23,
-                              "$text": "anonymous subtype"
-                            }
-                          ]
-                        }
-                      },
-                      "_elements": [],
-                      "$_layout": {
-                        "trivia": {
-                          "leading": [
-                            28
-                          ]
-                        }
-                      }
-                    }
-                  ],
-                  "$_layout": {
-                    "trivia": {
-                      "leading": [
-                        28
-                      ]
-                    }
-                  }
-                },
-                "_elements": []
-              }
-            ],
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  28
-                ]
-              }
-            }
-          },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                29
-              ],
-              "trailing": [
-                28
-              ]
-            }
-          }
-        }
-      ],
-      "$errors": []
-    },
-    "expectedOutput": "(program\n(named_node\nname: (identifier)\n(supertype/subtype)))\n\n(program\n(named_node\nname: (identifier)\n(supertype/\"anonymous subtype\")))\n"
-  },
-  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "\n(program\n  (named_node\n    name: (identifier)\n    (supertype/subtype)))\n\n(program\n  (named_node\n    name: (identifier)\n    (supertype/\"anonymous subtype\")))\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "(program\n(named_node\nname: (identifier)\n(supertype/subtype)))\n\n(program\n(named_node\nname: (identifier)\n(supertype/\"anonymous subtype\")))\n",
+    "expectedSourceOut": "(program\n  (named_node\n    name: (identifier)\n    (supertype/subtype)))\n\n(program\n  (named_node\n    name: (identifier)\n    (supertype/\"anonymous subtype\")))\n",
     "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) named_node_expressions: (named_node_supertyped supertype: (identifier) name: (identifier)))))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) named_node_expressions: (named_node_supertyped supertype: (identifier) name: (immediate_string (string_content (string_content_text)))))))))",
-    "wrappedText": "(program\n(named_node\nname: (identifier)\n(supertype/subtype)))\n\n(program\n(named_node\nname: (identifier)\n(supertype/\"anonymous subtype\")))\n",
+    "wrappedText": "(program\n  (named_node\n    name: (identifier)\n    (supertype/subtype)))\n\n(program\n  (named_node\n    name: (identifier)\n    (supertype/\"anonymous subtype\")))\n",
     "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "named_node_plain",
-    "input": {
-      "$type": 61,
-      "_name": {
-        "$type": 5,
-        "$text": "program"
-      },
-      "_named_node_group": {
-        "$type": 63,
-        "_named_node_expressions": [
-          {
-            "$type": 61,
-            "_name": {
-              "$type": 5,
-              "$text": "named_node"
-            },
-            "_named_node_group": {
-              "$type": 63,
-              "_named_node_expressions": [
-                {
-                  "$type": 50,
-                  "_name": {
-                    "$type": 5,
-                    "$text": "name"
-                  },
-                  "_definition": {
-                    "$type": 61,
-                    "_name": {
-                      "$type": 5,
-                      "$text": "identifier"
-                    },
-                    "_elements": []
-                  }
-                },
-                {
-                  "$type": 62,
-                  "_supertype": {
-                    "$type": 5,
-                    "$text": "supertype"
-                  },
-                  "_name": {
-                    "$type": 6,
-                    "$text": "subtype"
-                  },
-                  "_elements": [],
-                  "$_layout": {
-                    "trivia": {
-                      "leading": [
-                        28
-                      ]
-                    }
-                  }
-                }
-              ],
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    28
-                  ]
-                }
-              }
-            },
-            "_elements": []
-          }
-        ],
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              28
-            ]
-          }
-        }
-      },
-      "_elements": []
-    },
-    "expectedOutput": "(program\n(named_node\nname: (identifier)\n(supertype/subtype)))"
   },
   {
     "kind": "roundtrip",
@@ -20100,70 +16651,10 @@
     "sourceIn": "(program\n  (named_node\n    name: (identifier)\n    (supertype/subtype)))",
     "pattern": "named_node_plain",
     "edits": [],
-    "expectedSourceOut": "(program\n(named_node\nname: (identifier)\n(supertype/subtype)))",
+    "expectedSourceOut": "(program\n  (named_node\n    name: (identifier)\n    (supertype/subtype)))",
     "expectedReparseTree": "(named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) named_node_expressions: (named_node_supertyped supertype: (identifier) name: (identifier))))))",
-    "wrappedText": "(program\n(named_node\nname: (identifier)\n(supertype/subtype)))\n",
+    "wrappedText": "(program\n  (named_node\n    name: (identifier)\n    (supertype/subtype)))\n",
     "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "named_node_plain",
-    "input": {
-      "$type": 61,
-      "_name": {
-        "$type": 5,
-        "$text": "named_node"
-      },
-      "_named_node_group": {
-        "$type": 63,
-        "_named_node_expressions": [
-          {
-            "$type": 50,
-            "_name": {
-              "$type": 5,
-              "$text": "name"
-            },
-            "_definition": {
-              "$type": 61,
-              "_name": {
-                "$type": 5,
-                "$text": "identifier"
-              },
-              "_elements": []
-            }
-          },
-          {
-            "$type": 62,
-            "_supertype": {
-              "$type": 5,
-              "$text": "supertype"
-            },
-            "_name": {
-              "$type": 6,
-              "$text": "subtype"
-            },
-            "_elements": [],
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  28
-                ]
-              }
-            }
-          }
-        ],
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              28
-            ]
-          }
-        }
-      },
-      "_elements": []
-    },
-    "expectedOutput": "(named_node\nname: (identifier)\n(supertype/subtype))"
   },
   {
     "kind": "roundtrip",
@@ -20171,9 +16662,9 @@
     "sourceIn": "(named_node\n    name: (identifier)\n    (supertype/subtype))",
     "pattern": "named_node_plain",
     "edits": [],
-    "expectedSourceOut": "(named_node\nname: (identifier)\n(supertype/subtype))",
+    "expectedSourceOut": "(named_node\n  name: (identifier)\n  (supertype/subtype))",
     "expectedReparseTree": "(named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) named_node_expressions: (named_node_supertyped supertype: (identifier) name: (identifier))))",
-    "wrappedText": "(named_node\nname: (identifier)\n(supertype/subtype))\n",
+    "wrappedText": "(named_node\n  name: (identifier)\n  (supertype/subtype))\n",
     "wrappedOffset": 0
   },
   {
@@ -20200,94 +16691,6 @@
     "expectedReparseTree": "(named_node_plain name: (identifier))",
     "wrappedText": "(identifier)\n",
     "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "named_node_plain",
-    "input": {
-      "$type": 61,
-      "_name": {
-        "$type": 5,
-        "$text": "program"
-      },
-      "_named_node_group": {
-        "$type": 63,
-        "_named_node_expressions": [
-          {
-            "$type": 61,
-            "_name": {
-              "$type": 5,
-              "$text": "named_node"
-            },
-            "_named_node_group": {
-              "$type": 63,
-              "_named_node_expressions": [
-                {
-                  "$type": 50,
-                  "_name": {
-                    "$type": 5,
-                    "$text": "name"
-                  },
-                  "_definition": {
-                    "$type": 61,
-                    "_name": {
-                      "$type": 5,
-                      "$text": "identifier"
-                    },
-                    "_elements": []
-                  }
-                },
-                {
-                  "$type": 62,
-                  "_supertype": {
-                    "$type": 5,
-                    "$text": "supertype"
-                  },
-                  "_name": {
-                    "$type": 41,
-                    "_string_content": {
-                      "$type": 42,
-                      "_content": [
-                        {
-                          "$type": 23,
-                          "$text": "anonymous subtype"
-                        }
-                      ]
-                    }
-                  },
-                  "_elements": [],
-                  "$_layout": {
-                    "trivia": {
-                      "leading": [
-                        28
-                      ]
-                    }
-                  }
-                }
-              ],
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    28
-                  ]
-                }
-              }
-            },
-            "_elements": []
-          }
-        ],
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              28
-            ]
-          }
-        }
-      },
-      "_elements": []
-    },
-    "expectedOutput": "(program\n(named_node\nname: (identifier)\n(supertype/\"anonymous subtype\")))"
   },
   {
     "kind": "roundtrip",
@@ -20295,78 +16698,10 @@
     "sourceIn": "(program\n  (named_node\n    name: (identifier)\n    (supertype/\"anonymous subtype\")))",
     "pattern": "named_node_plain",
     "edits": [],
-    "expectedSourceOut": "(program\n(named_node\nname: (identifier)\n(supertype/\"anonymous subtype\")))",
+    "expectedSourceOut": "(program\n  (named_node\n    name: (identifier)\n    (supertype/\"anonymous subtype\")))",
     "expectedReparseTree": "(named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) named_node_expressions: (named_node_supertyped supertype: (identifier) name: (immediate_string (string_content (string_content_text))))))))",
-    "wrappedText": "(program\n(named_node\nname: (identifier)\n(supertype/\"anonymous subtype\")))\n",
+    "wrappedText": "(program\n  (named_node\n    name: (identifier)\n    (supertype/\"anonymous subtype\")))\n",
     "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "named_node_plain",
-    "input": {
-      "$type": 61,
-      "_name": {
-        "$type": 5,
-        "$text": "named_node"
-      },
-      "_named_node_group": {
-        "$type": 63,
-        "_named_node_expressions": [
-          {
-            "$type": 50,
-            "_name": {
-              "$type": 5,
-              "$text": "name"
-            },
-            "_definition": {
-              "$type": 61,
-              "_name": {
-                "$type": 5,
-                "$text": "identifier"
-              },
-              "_elements": []
-            }
-          },
-          {
-            "$type": 62,
-            "_supertype": {
-              "$type": 5,
-              "$text": "supertype"
-            },
-            "_name": {
-              "$type": 41,
-              "_string_content": {
-                "$type": 42,
-                "_content": [
-                  {
-                    "$type": 23,
-                    "$text": "anonymous subtype"
-                  }
-                ]
-              }
-            },
-            "_elements": [],
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  28
-                ]
-              }
-            }
-          }
-        ],
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              28
-            ]
-          }
-        }
-      },
-      "_elements": []
-    },
-    "expectedOutput": "(named_node\nname: (identifier)\n(supertype/\"anonymous subtype\"))"
   },
   {
     "kind": "roundtrip",
@@ -20374,9 +16709,9 @@
     "sourceIn": "(named_node\n    name: (identifier)\n    (supertype/\"anonymous subtype\"))",
     "pattern": "named_node_plain",
     "edits": [],
-    "expectedSourceOut": "(named_node\nname: (identifier)\n(supertype/\"anonymous subtype\"))",
+    "expectedSourceOut": "(named_node\n  name: (identifier)\n  (supertype/\"anonymous subtype\"))",
     "expectedReparseTree": "(named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) named_node_expressions: (named_node_supertyped supertype: (identifier) name: (immediate_string (string_content (string_content_text))))))",
-    "wrappedText": "(named_node\nname: (identifier)\n(supertype/\"anonymous subtype\"))\n",
+    "wrappedText": "(named_node\n  name: (identifier)\n  (supertype/\"anonymous subtype\"))\n",
     "wrappedOffset": 0
   },
   {
@@ -20405,79 +16740,14 @@
     "wrappedOffset": 0
   },
   {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "named_node_group_children",
-    "input": {
-      "$type": 63,
-      "_named_node_expressions": [
-        {
-          "$type": 61,
-          "_name": {
-            "$type": 5,
-            "$text": "named_node"
-          },
-          "_named_node_group": {
-            "$type": 63,
-            "_named_node_expressions": [
-              {
-                "$type": 50,
-                "_name": {
-                  "$type": 5,
-                  "$text": "name"
-                },
-                "_definition": {
-                  "$type": 61,
-                  "_name": {
-                    "$type": 5,
-                    "$text": "identifier"
-                  },
-                  "_elements": []
-                }
-              },
-              {
-                "$type": 62,
-                "_supertype": {
-                  "$type": 5,
-                  "$text": "supertype"
-                },
-                "_name": {
-                  "$type": 6,
-                  "$text": "subtype"
-                },
-                "_elements": [],
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      28
-                    ]
-                  }
-                }
-              }
-            ],
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  28
-                ]
-              }
-            }
-          },
-          "_elements": []
-        }
-      ]
-    },
-    "expectedOutput": "(named_node\nname: (identifier)\n(supertype/subtype))"
-  },
-  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "(named_node\n    name: (identifier)\n    (supertype/subtype))",
     "pattern": "named_node_group_children",
     "edits": [],
-    "expectedSourceOut": "(named_node\nname: (identifier)\n(supertype/subtype))",
+    "expectedSourceOut": "(named_node\n  name: (identifier)\n  (supertype/subtype))",
     "expectedReparseTree": "(named_node_group_children named_node_expressions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) named_node_expressions: (named_node_supertyped supertype: (identifier) name: (identifier)))))",
-    "wrappedText": "(node (named_node\nname: (identifier)\n(supertype/subtype)))\n",
+    "wrappedText": "(node (named_node\n  name: (identifier)\n  (supertype/subtype)))\n",
     "wrappedOffset": 6
   },
   {
@@ -20537,87 +16807,14 @@
     "wrappedOffset": 6
   },
   {
-    "kind": "render",
-    "grammar": "scm",
-    "pattern": "named_node_group_children",
-    "input": {
-      "$type": 63,
-      "_named_node_expressions": [
-        {
-          "$type": 61,
-          "_name": {
-            "$type": 5,
-            "$text": "named_node"
-          },
-          "_named_node_group": {
-            "$type": 63,
-            "_named_node_expressions": [
-              {
-                "$type": 50,
-                "_name": {
-                  "$type": 5,
-                  "$text": "name"
-                },
-                "_definition": {
-                  "$type": 61,
-                  "_name": {
-                    "$type": 5,
-                    "$text": "identifier"
-                  },
-                  "_elements": []
-                }
-              },
-              {
-                "$type": 62,
-                "_supertype": {
-                  "$type": 5,
-                  "$text": "supertype"
-                },
-                "_name": {
-                  "$type": 41,
-                  "_string_content": {
-                    "$type": 42,
-                    "_content": [
-                      {
-                        "$type": 23,
-                        "$text": "anonymous subtype"
-                      }
-                    ]
-                  }
-                },
-                "_elements": [],
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      28
-                    ]
-                  }
-                }
-              }
-            ],
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  28
-                ]
-              }
-            }
-          },
-          "_elements": []
-        }
-      ]
-    },
-    "expectedOutput": "(named_node\nname: (identifier)\n(supertype/\"anonymous subtype\"))"
-  },
-  {
     "kind": "roundtrip",
     "grammar": "scm",
     "sourceIn": "(named_node\n    name: (identifier)\n    (supertype/\"anonymous subtype\"))",
     "pattern": "named_node_group_children",
     "edits": [],
-    "expectedSourceOut": "(named_node\nname: (identifier)\n(supertype/\"anonymous subtype\"))",
+    "expectedSourceOut": "(named_node\n  name: (identifier)\n  (supertype/\"anonymous subtype\"))",
     "expectedReparseTree": "(named_node_group_children named_node_expressions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) named_node_expressions: (named_node_supertyped supertype: (identifier) name: (immediate_string (string_content (string_content_text)))))))",
-    "wrappedText": "(node (named_node\nname: (identifier)\n(supertype/\"anonymous subtype\")))\n",
+    "wrappedText": "(node (named_node\n  name: (identifier)\n  (supertype/\"anonymous subtype\")))\n",
     "wrappedOffset": 6
   },
   {
@@ -20890,7 +17087,14 @@
                 "$text": "prog"
               }
             }
-          ]
+          ],
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                28
+              ]
+            }
+          }
         },
         {
           "$type": 46,

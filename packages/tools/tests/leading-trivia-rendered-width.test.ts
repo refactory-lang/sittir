@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
-import { readTrivia } from '@sittir/common/utils';
+import { sidesOf } from '@sittir/common/utils';
 import type { AnyUntypedNode } from '@sittir/types';
 import python from '../../python/src/index.ts';
 import typescript from '../../typescript/src/index.ts';
@@ -16,7 +16,7 @@ import { leadingTriviaRenderedWidth } from '../src/validate/read-render-parse.ts
 const ts = await createEngine(typescript);
 const native = await loadNativeEngine('typescript');
 const render = (node: AnyUntypedNode): string => native.render(node).toString();
-const triviaOf = (node: object) => readTrivia(node, native.diagnostics.lineGapsOf);
+const triviaOf = (node: object) => sidesOf(node);
 
 function secondTypeArgument(source: string): AnyUntypedNode {
 	const declaration = ts.parse(source).statements()[0];
@@ -52,7 +52,7 @@ describe('leadingTriviaRenderedWidth through the first-descendant chain', () => 
 		const py = await createEngine(python);
 		const nativePy = await loadNativeEngine('python');
 		const renderPy = (node: AnyUntypedNode): string => nativePy.render(node).toString();
-		const triviaPy = (node: object) => readTrivia(node, nativePy.diagnostics.lineGapsOf);
+		const triviaPy = (node: object) => sidesOf(node);
 		const statement = py.parse('if a:\n  # one\n# two\n    # three\n  b\n    # four\n  c\n').statements()[0];
 		if (statement === undefined || !py.is.ifStatement(statement)) throw new Error('expected an if statement');
 		const suite = statement.consequence();

@@ -15,7 +15,7 @@ type Grammar = 'python' | 'rust' | 'typescript';
 export type NativeEngine = {
 	parse(src: string): string;
 	read(treeId: number, index: number, depth?: number): object;
-	lineGapsOf(handle: number): string;
+	siblings(treeId: number, index: number): string;
 	dispose(): void;
 };
 

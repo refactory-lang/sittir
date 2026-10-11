@@ -1,6 +1,6 @@
 import { afterAll, describe, expect, it } from 'vitest';
 import type { AnyUntypedNode } from '@sittir/types';
-import { carryTree } from '@sittir/common/utils';
+import { carryTree, isCoordinate, sidesOf } from '@sittir/common/utils';
 import { loadNativeEngine, readNodeOf, materializeDetached, readNativeTree } from '../common.ts';
 import { detachedRenderer } from './helpers/detached-renderer.ts';
 import { createEngine } from '@sittir/common';
@@ -34,7 +34,7 @@ describe('read trivia layout, rendered detached', () => {
 		expect(render('fn f() { // TODO\n}\n')).toBe('fn f() {\n    // TODO\n}\n');
 		expect(render('f(/* a */);')).toBe('f(/* a */);\n');
 		expect(render('f(// a\n);')).toBe('f(// a\n);\n');
-		expect(render('ok! {\n  // one\n  /* two */\n}\n')).toBe('ok!{// one\n/* two */}\n');
+		expect(render('ok! {\n  // one\n  /* two */\n}\n')).toBe('ok!{\n// one\n/* two */\n}\n');
 	});
 
 	it('seats a same-line trailing entry after the anonymous tokens between it and its owner', async () => {
@@ -42,7 +42,7 @@ describe('read trivia layout, rendered detached', () => {
 		expect(render('fn f() { x = a + /* x */ b; }')).toBe('fn f() {\n    x = a + /* x */ b;\n}\n');
 	});
 
-	it('seats a same-line trailing entry after an anonymous token kept as a source coordinate', async () => {
+	it('seats a leading entry after an anonymous token kept as a source coordinate', async () => {
 		const engine = await loadNativeEngine('rust');
 		const readNode = (await readNodeOf('rust'))!;
 		const source = 'fn f() { x = a + /* x */ b; }';
@@ -51,8 +51,9 @@ describe('read trivia layout, rendered detached', () => {
 		};
 		const binary = data._statements[0]._body._statements[0]._content._expression._right;
 		const at = source.indexOf('+');
-		const comment = binary._left.$_layout.trivia.trailing[0];
-		binary._operator = carryTree(comment, { $type: binary._operator, $treeHandle: comment.$_layout.at.$treeHandle, $end: comment.$_layout.at.$end, $span: { start: at, end: at + 1 } });
+		const comment = sidesOf(binary._right)?.leading?.find(isCoordinate);
+		if (comment === undefined) throw new Error('expected the comment as a coordinate');
+		binary._operator = carryTree(comment, { $type: binary._operator, $treeHandle: comment.$treeHandle, $end: comment.$end, $span: { start: at, end: at + 1 } });
 		expect(engine.render(data as never as AnyUntypedNode).toString()).toBe('fn f() {\n    x = a + /* x */ b;\n}\n');
 	});
 
@@ -86,7 +87,7 @@ describe('built and read trivia render alike', () => {
 			[f(ir.block().$trivia.inner(todo())), 'fn f() {\n    // TODO\n}\n'],
 			[ir.expressionStatement(ir.callExpression({ function: 'f', arguments: ir.arguments().$trivia.inner(ir.blockComment(' a ')) })), 'f(/* a */);'],
 			[
-				f(ir.block({ statements: [ir.expressionStatement(ir.identifier('a')).$trivia.trailing(ir.lineComment(' c'))] })),
+				f(ir.block({ statements: [ir.expressionStatement(ir.identifier('a')).$trivia.trailing('\n', ir.lineComment(' c'))] })),
 				'fn f() {\n    a;\n    // c\n}\n'
 			]
 		];

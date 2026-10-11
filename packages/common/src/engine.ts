@@ -4,8 +4,6 @@ import type {
 	EngineDiagnostics,
 	IndentOption,
 	LanguageAPI,
-	LineGapAddress,
-	LineGaps,
 	NativeEngineOptions,
 	NativeLanguageEngine,
 	NativeParseResult,
@@ -15,9 +13,8 @@ import type {
 	RenderCallOptions,
 	Rendered
 } from '@sittir/types';
-import { readObject, type TreeHandle, type TriviaSideName } from './read.ts';
-import { holdReadTree, toTransportData, type TriviaView } from './transport-data.ts';
-import { readDerivedSides, readTrivia } from './utils.ts';
+import { readObject, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
+import { holdReadTree, toTransportData, type KindView } from './transport-data.ts';
 import { mintTreeToken, registerTree } from './tree-token.ts';
 import type { DescendantBatch } from './query.ts';
 
@@ -92,14 +89,6 @@ export interface NativeEngineLike<TTransport = unknown> {
 	 */
 	snapshot(treeId: number, index: number, holderByte?: number | null): TTransport;
 	/**
-	 * The spans of the byte `ranges` (start and end pairs) of tree `treeId`, measured from the byte
-	 * `holderByte`, as row and column pairs, flat.
-	 *
-	 * @throws when the tree is not live, the list has an odd length, or a byte lies past the source or
-	 *   before the holder.
-	 */
-	snapshotSpans(treeId: number, holderByte: number, ranges: number[]): number[];
-	/**
 	 * The entries of `side` of the node at descendant `index` of tree `treeId`: the ones a write gave it,
 	 * else the ones the tree's trivia table assigns it. An extra is its coordinate, an `ERROR` its kind
 	 * and source text, and a run of line layout its whitespace member.
@@ -114,6 +103,14 @@ export interface NativeEngineLike<TTransport = unknown> {
 	 */
 	writeTriviaSide(treeId: number, index: number, side: TriviaSideName, entries: readonly unknown[]): void;
 	/**
+	 * The sides of the unit children of the node at descendant `index` of tree `treeId`, which their
+	 * slots store as bare kinds: each `{ slot, item, leading?, trailing?, inner? }`, by its slot's
+	 * wire key and its item in that slot.
+	 *
+	 * @throws as {@link triviaSide} does.
+	 */
+	unitSides(treeId: number, index: number): unknown[];
+	/**
 	 * Whether a write replaced a side of a node under the node at descendant `index` of tree `treeId`:
 	 * of a descendant or of the node's own `inner`, and of its own leading and trailing too when
 	 * `ownSides` is set.
@@ -127,7 +124,13 @@ export interface NativeEngineLike<TTransport = unknown> {
 	 * @throws when the tree is not live or `index` is past its last node.
 	 */
 	isEmpty(treeId: number, index: number): boolean;
-	lineGapsOf(handle: number): string;
+	/**
+	 * The siblings that hold sides beside the node at descendant `index` of tree `treeId`, as JSON
+	 * `Siblings`.
+	 *
+	 * @throws when the tree is not live or `index` is past its last node.
+	 */
+	siblings(treeId: number, index: number): string;
 	descendants(
 		from: string,
 		kinds: number[] | undefined | null,
@@ -296,10 +299,7 @@ export function createNativeEngine<
 			...(options?.options ? { options: options.options } : {})
 		};
 		const engine = new status.native.SittirEngine(Object.keys(nativeOptions).length > 0 ? nativeOptions : undefined);
-		const lineGapsOf = (address: LineGapAddress): LineGaps => JSON.parse(engine.lineGapsOf(address.handle)) as LineGaps;
-		const triviaView: TriviaView = {
-			trivia: (record) => readTrivia(record, lineGapsOf),
-			derived: (record) => readDerivedSides(record, lineGapsOf),
+		const kindView: KindView = {
 			isWrapper: (kindId) => config.rebuildWrappers.has(kindId),
 			isList: (kindId) => config.listKinds.has(kindId)
 		};
@@ -317,7 +317,7 @@ export function createNativeEngine<
 			// coordinate it read in with: it crosses here, on every render
 			// path, so a caller handing over raw read data cannot slice a
 			// pre-edit span past a rebuilt slot.
-			const transport = (typeof node === 'number' ? node : toTransportData(node, triviaView)) as TTransport;
+			const transport = (typeof node === 'number' ? node : toTransportData(node, kindView)) as TTransport;
 			// The handle renders lazily, and the transport's coordinates are
 			// numbers: the tokens stayed on `node`. Both closures name `node`,
 			// so the handle holds the trees it will slice for as long as it
@@ -351,7 +351,6 @@ export function createNativeEngine<
 
 				diagnostics: {
 					buildProfile: engine.buildProfile,
-					lineGapsOf,
 					parseAndRead(source: string, parseOptions?: ParseOptions) {
 						const parsed = JSON.parse(engine.parse(source)) as NativeParseResult;
 						// Held by `read` below and by every parsed object a read
@@ -387,11 +386,20 @@ export function createNativeEngine<
 							},
 							format: parsed.format,
 							snapshot: (index, holderByte) => engine.snapshot(parsed.treeId, index, holderByte),
-							snapshotSpans: (holderByte, ranges) => engine.snapshotSpans(parsed.treeId, holderByte, ranges),
-							triviaSide: (index, side) => engine.triviaSide(parsed.treeId, index, side),
+							triviaSide: (index, side) => {
+								const entries = engine.triviaSide(parsed.treeId, index, side);
+								holdReadTree(entries, liveToken);
+								return entries;
+							},
 							writeTriviaSide: (index, side, entries) => engine.writeTriviaSide(parsed.treeId, index, side, entries),
+							unitSides: (index) => {
+								const units = engine.unitSides(parsed.treeId, index);
+								holdReadTree(units, liveToken);
+								return units;
+							},
 							editedWithin: (index, ownSides) => engine.editedWithin(parsed.treeId, index, ownSides),
 							isEmpty: (index) => engine.isEmpty(parsed.treeId, index),
+							siblings: (index) => JSON.parse(engine.siblings(parsed.treeId, index)) as Siblings,
 							query: {
 								descendants: (walk) =>
 									JSON.parse(
@@ -434,7 +442,6 @@ export function nativeLanguageEngine<API extends LanguageAPI, IndentChar extends
 			return engine.diagnostics.parseAndRead(source, options);
 		},
 		buildProfile: engine.diagnostics.buildProfile,
-		lineGapsOf: (handle) => engine.diagnostics.lineGapsOf(handle),
 		dispose() {
 			engine.dispose();
 		}

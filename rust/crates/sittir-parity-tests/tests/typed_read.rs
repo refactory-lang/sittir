@@ -1,4 +1,4 @@
-use sittir_core::read::{Depth, ReadCtx, ReadError, ReadTransport, Sides};
+use sittir_core::read::{Depth, ReadCtx, ReadError, ReadTransport, SideEntry, SideLookup};
 use sittir_core::types::KindId;
 
 fn parse(language: &tree_sitter::Language, source: &str) -> tree_sitter::Tree {
@@ -29,7 +29,7 @@ struct Params {
 }
 
 #[derive(Debug, Clone, PartialEq, Transport)]
-#[transport(kind = kind::BLOCK, layout = [kind::LBRACE, kind::RBRACE], gap(1) = statements)]
+#[transport(kind = kind::BLOCK, layout = [kind::LBRACE, kind::RBRACE])]
 struct Block {
     #[wire(key = "$_layout")]
     layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
@@ -69,7 +69,7 @@ struct FunctionWithoutBody {
 }
 
 #[derive(Debug, Clone, PartialEq, Transport)]
-#[transport(kind = kind::SOURCE_FILE, gap(0) = statements)]
+#[transport(kind = kind::SOURCE_FILE)]
 struct File {
     #[wire(key = "$_layout")]
     layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
@@ -92,9 +92,58 @@ fn parse_rust(source: &str) -> tree_sitter::Tree {
     parse(&sittir_rust::language(), source)
 }
 
-/// Read the tree's root into `T`, as tree 7.
+/// Read the tree's root into `T`, as tree 7, seating no sides.
 fn read<T: ReadTransport>(tree: &tree_sitter::Tree, source: &str, depth: Depth) -> Result<T, ReadError> {
-    T::read(&mut tree.walk(), &ReadCtx::new(source, 7, T::shows), depth, Sides::root())
+    T::read(&mut tree.walk(), &ReadCtx::new(source, 7, T::shows), depth)
+}
+
+/// A tree's trivia table as a read's side lookup, each entry as a parsed
+/// tree gives it with `()` for the trivia type: an extra or an `ERROR` as its
+/// coordinate, a layout run as `()`.
+struct Table<'t> {
+    tree: &'t tree_sitter::Tree,
+    source: &'t str,
+    table: sittir_core::trivia_table::TriviaTable,
+}
+
+impl<'t> Table<'t> {
+    /// The table of a rust `tree`.
+    fn of(tree: &'t tree_sitter::Tree, source: &'t str) -> Self {
+        Table { tree, source, table: sittir_core::trivia_table::TriviaTable::assign(tree, source, kind::SURFACE_KINDS) }
+    }
+}
+
+impl SideLookup for Table<'_> {
+    fn side(&self, index: u32, side: sittir_core::trivia_table::TriviaSide, edge_changed: bool) -> Box<dyn std::any::Any> {
+        use sittir_core::trivia_table::Assigned;
+        let ctx = ReadCtx::new(self.source, 7, |_| false);
+        let source = |at: u32| {
+            let node = sittir_core::engine::node_at_index(self.tree, at)?;
+            let coord = ctx.coordinate(&node, at);
+            Some(SideEntry::Source { kind: coord.kind?, span: coord.span, entry: sittir_core::trivia::TriviaEntry::new(SlotValue::Coord(coord)) })
+        };
+        let mut entries: Vec<SideEntry<()>> = self
+            .table
+            .side(index, side)
+            .iter()
+            .filter_map(|assigned| match *assigned {
+                Assigned::Extra(at) | Assigned::Error(at) => source(at),
+                Assigned::Layout { .. } | Assigned::Member(_) => Some(SideEntry::Layout(sittir_core::trivia::TriviaEntry::new(SlotValue::Transport(())))),
+            })
+            .collect();
+        if edge_changed {
+            sittir_core::trivia::without_edge_runs(&mut entries, side, |entry| matches!(entry, SideEntry::Layout(_)));
+        }
+        Box::new(entries)
+    }
+}
+
+/// Read the `nth` node of kind `kind` into `T`, as tree 7, seating its sides from the tree's table.
+fn read_seated<T: ReadTransport>(source: &str, kind: KindId, nth: usize, depth: Depth) -> Result<T, ReadError> {
+    let tree = parse(&sittir_rust::language(), source);
+    let table = Table::of(&tree, source);
+    let read = T::read(&mut find(&tree, kind, nth), &ReadCtx::new(source, 7, T::shows).with_sides(&table), depth);
+    read
 }
 
 /// A cursor on the `nth` node of grammar kind `kind`, in pre-order.
@@ -121,7 +170,7 @@ fn read_nth<T: ReadTransport>(
     nth: usize,
     depth: Depth,
 ) -> Result<T, ReadError> {
-    T::read(&mut find(tree, kind, nth), &ReadCtx::new(source, 7, T::shows), depth, Sides::root())
+    T::read(&mut find(tree, kind, nth), &ReadCtx::new(source, 7, T::shows), depth)
 }
 
 /// What the read placed on a node beside its own coordinate, which every read
@@ -136,8 +185,8 @@ fn function(file: &File, i: usize) -> &Function {
     file.statements[i].transport().expect("read within the depth")
 }
 
-/// One side's entries, or one inner gap's, as (start, end, same_line, tokens_between).
-fn trivia_spans(layout: &Layout, side: &str) -> Vec<(u32, u32, bool, u16)> {
+/// The spans of a side's extras and `ERROR`s, which a seated read gives as coordinates; its layout runs are left out.
+fn trivia_spans(layout: &Layout, side: &str) -> Vec<(u32, u32)> {
     let trivia = layout.as_ref().and_then(|l| l.trivia.as_ref());
     let entries = match side {
         "leading" => trivia.and_then(|t| t.leading.clone()),
@@ -148,10 +197,7 @@ fn trivia_spans(layout: &Layout, side: &str) -> Vec<(u32, u32, bool, u16)> {
     entries
         .unwrap_or_default()
         .iter()
-        .map(|e| {
-            let c = e.value.coord().expect("trivia is a coordinate");
-            (c.span.start, c.span.end, e.same_line, e.tokens_between)
-        })
+        .filter_map(|e| e.value.coord().map(|c| (c.span.start, c.span.end)))
         .collect()
 }
 
@@ -201,35 +247,42 @@ fn past_the_depth_a_child_with_structure_is_its_coordinate() {
 }
 
 #[test]
-fn comments_take_their_owners_by_the_placement_rule() {
-    // rust's line_comment ends before its newline: `// a` is 0..4, `// b` is 15..19
+fn a_read_with_no_side_lookup_seats_nothing() {
     let source = "// a\nfn f() {} // b\n";
     let file: File = read(&parse_rust(source), source, Depth::All).unwrap();
+    assert_eq!((placed(&function(&file, 0).layout), placed(&file.layout)), (None, None));
+}
+
+#[test]
+fn a_seated_read_gives_each_node_the_sides_its_tree_assigns_it() {
+    // rust's line_comment ends before its newline: `// a` is 0..4, `// b` is 15..19
+    let source = "// a\nfn f() {} // b\n";
+    let file: File = read_seated(source, kind::SOURCE_FILE, 0, Depth::All).unwrap();
     let f = function(&file, 0);
-    assert_eq!(trivia_spans(&f.layout, "leading"), vec![(0, 4, false, 0)]);
-    assert_eq!(trivia_spans(&f.layout, "trailing"), vec![(15, 19, true, 0)]);
+    assert_eq!(trivia_spans(&f.layout, "leading"), vec![(0, 4)]);
+    assert_eq!(trivia_spans(&f.layout, "trailing"), vec![(15, 19)]);
 }
 
 #[test]
-fn a_comment_in_an_empty_block_takes_the_blocks_inner_gap() {
+fn a_seated_read_gives_a_comment_in_an_empty_block_to_the_blocks_inner_side() {
     let source = "fn f() { /* c */ }";
-    let file: File = read(&parse_rust(source), source, Depth::All).unwrap();
+    let file: File = read_seated(source, kind::SOURCE_FILE, 0, Depth::All).unwrap();
     let block = function(&file, 0).body.transport().unwrap();
-    assert_eq!(trivia_spans(&block.layout, "inner"), vec![(9, 16, false, 0)]);
+    assert_eq!(trivia_spans(&block.layout, "inner"), vec![(9, 16)]);
 }
 
 #[test]
-fn a_file_of_comments_keeps_them_in_its_own_gap() {
+fn a_seated_read_gives_a_file_of_comments_to_its_inner_side() {
     let source = "// only\n";
-    let file: File = read(&parse_rust(source), source, Depth::All).unwrap();
+    let file: File = read_seated(source, kind::SOURCE_FILE, 0, Depth::All).unwrap();
     assert_eq!(file.statements, vec![]);
-    assert_eq!(trivia_spans(&file.layout, "inner"), vec![(0, 7, false, 0)]);
+    assert_eq!(trivia_spans(&file.layout, "inner"), vec![(0, 7)]);
 }
 
 #[test]
 fn an_error_inside_a_node_is_trivia() {
     let source = "fn f() { @ }";
-    let file: File = read(&parse_rust(source), source, Depth::All).unwrap();
+    let file: File = read_seated(source, kind::SOURCE_FILE, 0, Depth::All).unwrap();
     let block = function(&file, 0).body.transport().unwrap();
     let inner = block.layout.as_ref().unwrap().trivia.as_ref().unwrap().inner.as_ref().unwrap();
     assert_eq!(inner[0].value.coord().unwrap().kind, Some(kind::ERROR));
@@ -347,10 +400,19 @@ fn a_node_whose_tokens_display_different_ids_is_none_of_its_members() {
 }
 
 #[test]
-fn a_unit_variant_owns_no_trivia_so_a_comment_after_it_trails_the_owner_before() {
-    // `!` is stored as a unit: the comment trails `()`, past the two children `->` and `!`
-    let f = typed_function("fn f() -> ! /* c */ {}").unwrap();
-    assert_eq!(trivia_spans(&f.parameters.transport().unwrap().layout, "trailing"), vec![(12, 19, true, 2)]);
+fn a_seated_read_keeps_a_unit_stored_child_past_its_depth_a_coordinate_whose_holder_frames_its_sides() {
+    // `!` is stored as a unit and holds the comment on its line: a unit variant has no layout to carry it
+    let source = "fn f() -> ! /* c */ {}";
+    let tree = parse_rust(source);
+    let table = Table::of(&tree, source);
+    let never = find(&tree, kind::NEVER_TYPE, 0).descendant_index() as u32;
+    let trailing = table.side(never, sittir_core::trivia_table::TriviaSide::Trailing, false).downcast::<Vec<SideEntry<()>>>().unwrap();
+    assert!(matches!(trailing.as_slice(), [SideEntry::Source { span, .. }] if (span.start, span.end) == (12, 19)), "{trailing:?}");
+    let f: Typed = read_seated(source, kind::FUNCTION_ITEM, 0, Depth::ONE).unwrap();
+    assert!(f.return_type.as_ref().and_then(SlotValue::coord).is_some_and(|coord| coord.index == never));
+    let parameters = find(&tree, kind::PARAMETERS, 0).descendant_index() as u32;
+    let before = table.side(parameters, sittir_core::trivia_table::TriviaSide::Trailing, false).downcast::<Vec<SideEntry<()>>>().unwrap();
+    assert!(before.is_empty(), "the comment does not trail the parameters: {before:?}");
 }
 
 #[derive(Debug, Clone, PartialEq, Transport)]
@@ -428,7 +490,7 @@ fn a_zero_width_terminator_is_a_unit_and_owns_nothing() {
     assert_eq!(first.terminator, Some(SlotValue::Transport(Terminator::Inserted)));
     assert_eq!(second.terminator, Some(SlotValue::Transport(Terminator::Semi)));
     let declarator = first.declarators[0].transport().unwrap();
-    assert_eq!(trivia_spans(&declarator.layout, "trailing"), vec![(10, 14, true, 0)]);
+    assert_eq!(placed(&declarator.layout), None, "a read with no side lookup seats nothing");
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Transport)]
@@ -533,11 +595,12 @@ fn coordinate_only<T>(envelope: &Option<Box<sittir_core::layout::TransportLayout
 fn an_envelope_holds_its_content_and_the_trivia_its_content_was_given() {
     let source = "fn f() -> T /* c */ {}";
     let tree = parse_rust(source);
-    let f: Named = read_nth(&tree, source, kind::FUNCTION_ITEM, 0, Depth::All).unwrap();
+    let _ = tree;
+    let f: Named = read_seated(source, kind::FUNCTION_ITEM, 0, Depth::All).unwrap();
     let Some(SlotValue::Transport(NamedType::TypeIdentifier(envelope))) = &f.return_type else { panic!("{:?}", f.return_type) };
     assert_eq!(envelope.content.transport().unwrap().text, "T");
     assert_eq!(envelope.content.transport().unwrap().layout, coordinate_only(&envelope.layout));
-    assert_eq!(trivia_spans(&envelope.layout, "trailing"), vec![(12, 19, true, 0)]);
+    assert_eq!(trivia_spans(&envelope.layout, "trailing"), vec![(12, 19)]);
 }
 
 #[derive(Debug, Clone, PartialEq, Transport)]
@@ -561,7 +624,7 @@ struct List {
 }
 
 #[derive(Debug, Clone, PartialEq, Transport)]
-#[transport(kind = kind::PARAMETERS, layout = [kind::LPAREN, kind::RPAREN], min_depth = 2, gap(1) = elements)]
+#[transport(kind = kind::PARAMETERS, layout = [kind::LPAREN, kind::RPAREN], min_depth = 2)]
 struct Owner {
     #[wire(key = "$_layout")]
     layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
@@ -589,16 +652,17 @@ fn a_list_owner_brings_its_list_and_the_list_knows_its_trailing_separator() {
 fn a_row_read_equals_the_same_node_in_a_whole_read_trivia_included() {
     let source = "// lead\nfn f() { fn g() {} } // trail\n";
     let tree = parse_rust(source);
-    let ctx = ReadCtx::new(source, 7, <File as ReadTransport>::shows);
-    let whole: File = read(&tree, source, Depth::All).unwrap();
-    let shallow: File = read(&tree, source, Depth::ONE).unwrap();
+    let table = Table::of(&tree, source);
+    let ctx = ReadCtx::new(source, 7, <File as ReadTransport>::shows).with_sides(&table);
+    let whole: File = File::read(&mut tree.walk(), &ctx, Depth::All).unwrap();
+    let shallow: File = File::read(&mut tree.walk(), &ctx, Depth::ONE).unwrap();
     let index = shallow.statements[0].coord().unwrap().index;
-    let outer: Function = sittir_core::read::read_at::<Function, File>(&mut tree.walk(), &ctx, index, Depth::All).unwrap();
+    let outer: Function = sittir_core::read::read_at::<Function>(&mut tree.walk(), &ctx, index, Depth::All).unwrap();
     assert_eq!(&outer, function(&whole, 0));
-    assert_eq!(trivia_spans(&outer.layout, "leading"), vec![(0, 7, false, 0)]);
+    assert_eq!(trivia_spans(&outer.layout, "leading"), vec![(0, 7)]);
 
     let inner_row = find(&tree, kind::FUNCTION_ITEM, 1).descendant_index() as u32;
-    let inner: Function = sittir_core::read::read_at::<Function, Block>(&mut tree.walk(), &ctx, inner_row, Depth::All).unwrap();
+    let inner: Function = sittir_core::read::read_at::<Function>(&mut tree.walk(), &ctx, inner_row, Depth::All).unwrap();
     let body = function(&whole, 0).body.transport().unwrap();
     assert_eq!(&inner, body.statements[0].transport().unwrap());
 }
@@ -649,12 +713,13 @@ struct NamedOfChoice {
 fn an_envelope_over_a_choice_holds_the_trivia_its_content_variant_was_given() {
     let source = "fn f() -> T /* c */ {}";
     let tree = parse_rust(source);
-    let f: NamedOfChoice = read_nth(&tree, source, kind::FUNCTION_ITEM, 0, Depth::All).unwrap();
+    let _ = tree;
+    let f: NamedOfChoice = read_seated(source, kind::FUNCTION_ITEM, 0, Depth::All).unwrap();
     let Some(SlotValue::Transport(NamedTypeOfChoice::TypeIdentifier(envelope))) = &f.return_type else { panic!("{:?}", f.return_type) };
     let Some(Name::Ident(ident)) = envelope.content.transport() else { panic!("{:?}", envelope.content) };
     assert_eq!(ident.text, "T");
     assert_eq!(ident.layout, coordinate_only(&envelope.layout));
-    assert_eq!(trivia_spans(&envelope.layout, "trailing"), vec![(12, 19, true, 0)]);
+    assert_eq!(trivia_spans(&envelope.layout, "trailing"), vec![(12, 19)]);
 }
 
 #[test]

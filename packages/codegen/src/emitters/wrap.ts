@@ -1,4 +1,5 @@
 import { hasBlankArm } from '../compiler/model/site-preferences.ts';
+import { continuationTriviaKinds } from '../compiler/model/trivia.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { AbstractAssembledCompound, AssembledAlias, AssembledList, AssembledNonterminal, storesNodes } from '../compiler/model/node-map.ts';
@@ -27,6 +28,25 @@ import type { CodegenEmitter } from './emitter.ts';
 
 export function listKindIds(nodeMap: NodeMap): number[] {
 	return [...nodeMap.nodes.values()].flatMap((node) => (node instanceof AssembledList && node.kindId !== undefined ? [node.kindId] : [])).sort((a, b) => a - b);
+}
+
+export function unitKindIds(nodeMap: NodeMap): number[] {
+	return [...nodeMap.nodes.values()]
+		.flatMap((node) => ((node.modelType === 'keyword' || node.modelType === 'punctuation') && node.kindId !== undefined ? [node.kindId] : []))
+		.sort((a, b) => a - b);
+}
+
+export function layoutMemberKindIds(nodeMap: NodeMap): number[] {
+	return continuationTriviaKinds(nodeMap)
+		.flatMap((kind) => {
+			const id = nodeMap.nodes.get(kind)?.kindId;
+			return id === undefined ? [] : [id];
+		})
+		.sort((a, b) => a - b);
+}
+
+export function rootKindIds(nodeMap: NodeMap): number[] {
+	return [...nodeMap.nodes.values()].flatMap((node) => (node.grammarRoot === true && node.kindId !== undefined ? [node.kindId] : [])).sort((a, b) => a - b);
 }
 
 export function rebuildWrapperKindIds(nodeMap: NodeMap): number[] {

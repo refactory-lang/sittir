@@ -3,8 +3,6 @@ import type {
 	EngineIdentity,
 	LanguageAPI,
 	LanguageHooks,
-	LineGapAddress,
-	LineGaps,
 	Rendered
 } from '@sittir/types';
 import { assertHoldsTree, treeOf } from './tree-token.ts';
@@ -17,7 +15,6 @@ export interface LiveEngine extends EngineIdentity {
 
 export interface EngineHandle {
 	current: LiveEngine | EngineIdentity;
-	lineGapsOf?: (address: LineGapAddress) => LineGaps;
 }
 
 /** The handle a parsed tree is bound to (`bindTree`): the engine that read it, which hydrates the coordinates it names. */

@@ -79,13 +79,14 @@ describe.each([
 	['a shallow read', 1],
 	['a deep read', Infinity]
 ])('a write under a node a query reached, on %s', (_, depth) => {
-	it('is refused while no accessor chain from the root holds it', () => {
+	it('renders while no accessor chain from the root holds it', () => {
 		const root = engine.parse(SOURCE, { depth });
 		const fn = root.$query().$descendants.ofType(engine.kinds.FunctionItem).at(1);
 		if (fn === undefined || !engine.is.functionItem(fn)) throw new Error('expected a function');
 		const statement = fn.body().statements()[0];
 		if (statement === undefined || !engine.is.letDeclaration(statement)) throw new Error('expected a let declaration');
-		expect(() => statement.$trivia.leading(engine.build.lineComment(' x'))).toThrow(/reached outside its parent's accessors/);
+		statement.$trivia.leading(engine.build.lineComment(' x'));
+		expect(root.$render()).toContain('// x\n');
 	});
 
 	it('is accepted and renders once the accessors from the root reach it', () => {
@@ -179,11 +180,11 @@ function letAt(fn: RootStatement | undefined, at: number) {
 }
 
 describe('the fold by range', () => {
-	it('a deep write unfolds its ancestors and leaves siblings and cousins as bytes', () => {
+	it('a deep write unfolds its ancestors, whose in-line gaps take the seam defaults, and leaves siblings and cousins as bytes', () => {
 		const root = engine.parse(NESTED, { depth: 1 });
 		const [, b] = root.statements();
 		letAt(b, 0).$trivia.leading(engine.build.lineComment(' q'));
-		expect(root.$render()).toBe('fn a() { let p = 1; }\nfn b() {\n    // q\n    let q = 2; let r = 3;\n}\nfn c() { let s = 4; }\n');
+		expect(root.$render()).toBe('fn a() { let p = 1; }\nfn b() {\n    // q\n    let q = 2;\n    let r = 3;\n}\nfn c() { let s = 4; }\n');
 	});
 
 	it('nested writes fold only untouched ranges', () => {
@@ -193,7 +194,7 @@ describe('the fold by range', () => {
 		letAt(b, 1).$trivia.trailing(engine.build.lineComment(' r'));
 		const out = root.$render();
 		expect(out).toContain('// p\n');
-		expect(out).toContain('let r = 3;\n    // r\n');
+		expect(out).toContain('let r = 3; // r\n');
 		expect(out.endsWith('fn c() { let s = 4; }\n')).toBe(true);
 	});
 
@@ -203,7 +204,7 @@ describe('the fold by range', () => {
 		if (b === undefined || !engine.is.functionItem(b)) throw new Error('expected a function');
 		letAt(b, 0).$trivia.leading(engine.build.lineComment(' q'));
 		const built = engine.build.sourceFile({ statements: [b] });
-		expect(built.$render()).toBe('fn b() {\n    // q\n    let q = 2; let r = 3;\n}\n');
+		expect(built.$render()).toBe('fn b() {\n    // q\n    let q = 2;\n    let r = 3;\n}\n');
 	});
 
 	it('an untouched node folds after a write elsewhere', () => {
@@ -275,22 +276,22 @@ describe('a built node over parsed storage', () => {
 		expect(built.at(0)).toBe(parsed.items()[0]);
 	});
 
-	it('refuses to render a write inside a coordinate it never read; a holder built from the written node renders it', () => {
+	it('renders a write inside a coordinate it never read, as a holder built from the written node does', () => {
 		const parsed = engine.parse(SOURCE, { depth: 1 });
 		const built = engine.build.sourceFile({ statements: storageOf(parsed)._statements });
 		letAt(parsed.statements()[1], 0).$trivia.leading(engine.build.lineComment(' x'));
-		expect(() => built.$render()).toThrow(/nodes \d+\.\.\d+ of tree \d+ are held here as a coordinate this holder never read/);
+		expect(built.$render()).toContain('// x');
 		expect(parsed.$render()).toContain('// x');
 		expect(engine.build.sourceFile({ statements: [...parsed.statements()] }).$render()).toContain('// x');
 	});
 
-	it('refuses to render an outside write on the node a stored coordinate names', () => {
+	it('renders an outside write on the node a stored coordinate names', () => {
 		const parsed = engine.parse(SOURCE, { depth: 1 });
 		const built = engine.build.sourceFile({ statements: storageOf(parsed)._statements });
 		const fn = parsed.statements()[1];
 		if (fn === undefined || !engine.is.functionItem(fn)) throw new Error('expected a function');
 		fn.$trivia.leading(engine.build.lineComment(' own'));
-		expect(() => built.$render()).toThrow(/held here as a coordinate this holder never read/);
+		expect(built.$render()).toContain('// own\n');
 		expect(engine.build.sourceFile({ statements: [...parsed.statements()] }).$render()).toContain('// own\n');
 	});
 

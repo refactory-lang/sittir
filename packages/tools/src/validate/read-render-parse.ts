@@ -14,16 +14,19 @@ import type { AnyUntypedNode, NodeTrivia } from '@sittir/types';
 import { sourceSpans, spanSlicer, type TriviaSides } from '@sittir/common';
 import {
 	carrySource,
+	isCoordinate,
 	isDataKey,
 	isStorageKey,
 	mapTriviaEntries,
+	markEdited,
 	readNode as readTransport,
-	readTrivia,
+	sidesOf,
 	spanOf,
 	toDetachedTransportData,
+	treeOf,
+	type KindView,
 	type SourceFlankEvidence,
-	type TransportLayout,
-	type TriviaView
+	type TransportLayout
 } from '@sittir/common/utils';
 import { deriveRuleKinds } from './render-bodies.ts';
 import { load } from '../codegen-surface.ts';
@@ -52,7 +55,7 @@ import {
 	type AccessorThrowRecord,
 	type ValidatorSkip,
 	loadNativeEngine,
-	triviaViewOf
+	kindViewOf
 } from './common.ts';
 import { deriveReparseHosts } from './reparse-derive.ts';
 import { importGrammarModule } from '../grammar-internals.ts';
@@ -392,15 +395,15 @@ export interface ReadRenderParseResult {
  * fallback for that raw shape — a standalone root render of the same entry
  * hard-fails decoding (`Missing field _content`).
  *
- * `triviaOf` is the trivia view the render itself uses (`readTrivia`), so the
+ * `triviaOf` is the sides view the render itself uses (`sidesOf`), so the
  * width counts what the render printed: a leading comment and the whitespace
- * between it and the node, never the root's outer-edge whitespace. The
- * stripped copy keeps an empty `leading` side rather than none: an empty side
- * still refuses the fold to a coordinate, so both renders print the node from
- * its storage and differ only by the leading trivia. The stripped copy keeps
- * the node's source identity, so an alias envelope's content still crosses
- * without the line gap the envelope owns. Both are measured
- * without trailing whitespace, which only the outer edge contributes.
+ * between it and the node, never the root's outer-edge whitespace. Each copy
+ * is an edit of its node (`markEdited`) holding every side it renders, the
+ * stripped one an empty `leading`, so both renders print the node from its
+ * storage and differ only by the leading trivia; a coordinate, which holds
+ * no storage, is read into its transport first (`storageOf`). A copy keeps
+ * the node's source identity. Both are measured without trailing whitespace,
+ * which only the outer edge contributes.
  */
 export function leadingTriviaRenderedWidth(
 	data: AnyUntypedNode,
@@ -408,8 +411,8 @@ export function leadingTriviaRenderedWidth(
 	triviaOf: (node: object) => NodeTrivia | undefined
 ): number {
 	const rendered = (node: AnyUntypedNode): string => render(node).trimEnd();
-	const withLeading = (node: AnyUntypedNode, leading: readonly unknown[]): AnyUntypedNode => {
-		const copy = { ...node, $_layout: { ...node.$_layout, trivia: { ...triviaOf(node), leading } } } as AnyUntypedNode;
+	const withLeading = (node: AnyUntypedNode, leading: readonly unknown[], data: AnyUntypedNode = node): AnyUntypedNode => {
+		const copy = markEdited({ ...storageOf(data), $_layout: { ...node.$_layout, trivia: { ...triviaOf(node), leading } } } as AnyUntypedNode);
 		carrySource(node, copy);
 		return copy;
 	};
@@ -424,7 +427,7 @@ export function leadingTriviaRenderedWidth(
 	const replaceChild = (node: AnyUntypedNode, slot: { key: string; index: number | undefined }, child: AnyUntypedNode): AnyUntypedNode => {
 		const value = (node as unknown as Record<string, unknown>)[slot.key];
 		const replaced = slot.index === undefined ? child : (value as unknown[]).map((item, index) => (index === slot.index ? child : item));
-		return withLeading({ ...node, [slot.key]: replaced } as AnyUntypedNode, triviaOf(node)?.leading ?? []);
+		return withLeading(node, triviaOf(node)?.leading ?? [], { ...node, [slot.key]: replaced } as AnyUntypedNode);
 	};
 	const hasLeading = (node: AnyUntypedNode): boolean =>
 		(triviaOf(node)?.leading?.length ?? 0) > 0 || childSlots(node).some((slot) => hasLeading(slot.child));
@@ -458,6 +461,13 @@ export function leadingTriviaRenderedWidth(
 		if (measured.startsWith(line, at) && (at === 0 || /\s/.test(measured[at - 1]!))) return at - indent;
 	}
 	return measured.length - current.length;
+}
+
+/** A node with its storage: a coordinate read one level into its transport through the tree it holds, anything else as it is. */
+function storageOf(node: AnyUntypedNode): AnyUntypedNode {
+	if (!isCoordinate(node)) return node;
+	const tree = treeOf(node);
+	return tree === undefined ? node : (readTransport(tree, node) as AnyUntypedNode);
 }
 
 function commonPrefixLength(a: string, b: string): number {
@@ -502,8 +512,7 @@ export function flankWindow(
  * its own bytes as `$text` (sliced from `source` when the reader captured
  * none); a storage-less compound keeps only its identity and rebuilds from
  * its empty slots, and a storage-less trivia entry becomes its text with the
- * kind the reader stamped on it, `{ $type, $text }`, plus `$sameLine` and
- * `$tokensBetween` when it shares its owner's row. The layout evidence a list
+ * kind the reader stamped on it, `{ $type, $text }`. The layout evidence a list
  * keeps from its source travels as text, in the node's `$_layout`: each kept
  * list gap as its bytes (`gap: { $text }`), and kept flanks as a window of the
  * source (`flank: { $text, $span }`, `flankWindow`).
@@ -512,7 +521,7 @@ export function selfContainedRenderInput(
 	data: unknown,
 	source: string,
 	isLeafKind: (kindId: number) => boolean,
-	view: TriviaView
+	view: KindView
 ): unknown {
 	const slice = spanSlicer(source);
 	const bytes = Buffer.from(source, 'utf8');
@@ -528,14 +537,14 @@ export function selfContainedRenderInput(
 			const record = entry as Record<string, unknown>;
 			const text = textOf(record);
 			if (text === undefined) return walk(entry);
-			const kind = typeof record.$type === 'number' ? { $type: record.$type } : {};
-			if (record.$sameLine !== true) return { ...kind, $text: text };
-			return { ...kind, $text: text, $sameLine: true, $tokensBetween: record.$tokensBetween };
+			return { ...(typeof record.$type === 'number' ? { $type: record.$type } : {}), $text: text };
 		});
 	const layoutOf = (layout: TransportLayout): Record<string, unknown> => ({
 		...(layout.trivia === undefined ? {} : { trivia: mapTriviaEntries(layout.trivia as TriviaSides<unknown>, walkTrivia) }),
 		...(layout.gap === undefined ? {} : { gap: { $text: slice(layout.gap.$span) } }),
-		...(layout.flank === undefined ? {} : { flank: flankWindow(bytes, layout.flank) })
+		...(layout.flank === undefined ? {} : { flank: flankWindow(bytes, layout.flank) }),
+		...(layout.changed === undefined ? {} : { changed: layout.changed }),
+		...(layout.units === undefined ? {} : { units: layout.units.map((unit) => ({ ...(unit as object), ...mapTriviaEntries(unit as TriviaSides<unknown>, walkTrivia) })) })
 	});
 	const walk = (value: unknown): unknown => {
 		if (Array.isArray(value)) return value.map(walk);
@@ -735,11 +744,9 @@ export type RenderReparseOutcome =
 export function candidateData(data: AnyUntypedNode, triviaOf: (node: object) => NodeTrivia | undefined): AnyUntypedNode {
 	const trivia = triviaOf(data);
 	if (trivia?.leading === undefined && trivia?.trailing === undefined) return data;
-	const { leading: _leading, trailing: _trailing, ...inside } = trivia;
-	const own = Object.keys(inside).length === 0 ? undefined : inside;
-	const layout = (data as { $_layout?: { trivia?: object } }).$_layout;
-	if (layout?.trivia !== undefined) return { ...data, $_layout: { ...layout, trivia: own } } as AnyUntypedNode;
-	return { ...data, $_trivia: own } as AnyUntypedNode;
+	const candidate = markEdited({ ...data, $_layout: { ...data.$_layout, trivia: { ...trivia, leading: [], trailing: [] } } } as AnyUntypedNode);
+	carrySource(data, candidate);
+	return candidate;
 }
 
 /**
@@ -864,7 +871,7 @@ export async function loadRenderReparseContext(
 		visibleKinds: new Set(loadRawEntries(grammar).filter((entry: { named: boolean }) => entry.named).map((entry: { type: string }) => entry.type)),
 		parser,
 		render: (node) => nativeEngine.render(node).toString(),
-		triviaOf: (node) => readTrivia(node, nativeEngine.diagnostics.lineGapsOf),
+		triviaOf: (node) => sidesOf(node),
 		kindToSupertypes: buildKindToSupertypes(loadRawEntries(grammar)),
 		adoptedVariantKinds: await loadVariantAdoptedKinds(grammar),
 		root: (await loadNodeModel(grammar)).root,
@@ -884,7 +891,7 @@ export async function validateReadRenderParse(
 	const { backend } = options;
 	const nativeEngine = await loadNativeEngine(grammar);
 	const renderReparseContext = await loadRenderReparseContext(grammar, parser, nativeEngine);
-	const view = triviaViewOf(nativeEngine);
+	const view = kindViewOf(nativeEngine);
 	// The kinds the renderer can handle are those with an emitted body.
 	const ruleKinds = deriveRuleKinds(grammar);
 

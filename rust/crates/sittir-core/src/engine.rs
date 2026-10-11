@@ -15,7 +15,7 @@
 use crate::format::{apply_format, extract_format};
 use crate::options::ResolvedOptions;
 use crate::query::{Address, DescendantBatch, Plan, QueryCoordinate};
-use crate::read::{display_id, survey, Child, ReadCtx, ReadError, Sides};
+use crate::read::{display_id, SideEntry};
 use crate::types::Span;
 use crate::render::SourceTable;
 use crate::slot::{NodeCoordinate, SlotValue};
@@ -31,10 +31,6 @@ pub trait EngineGrammar: Copy {
     fn render_module_hash(self) -> &'static str;
     /// The name of a kind of this grammar, for messages that name one.
     fn kind_name(self, kind: KindId) -> &'static str;
-    /// The sides the placement of the node the cursor is on gives its child
-    /// at descendant `index` (`ReadTransport::sides_of` of the grammar's
-    /// transports, dispatched by the node's kind).
-    fn sides_at(self, cursor: &mut tree_sitter::TreeCursor<'_>, ctx: &ReadCtx<'_>, index: u32) -> Result<Sides, ReadError>;
     /// The display ids this grammar claims a node by (`ReadTransport::shows`
     /// of its transports), which a coordinate stamps in place of the grammar id.
     fn shows(self) -> fn(KindId) -> bool;
@@ -42,6 +38,16 @@ pub trait EngineGrammar: Copy {
     type Trivia: crate::trivia::FromTriviaText + crate::trivia::TriviaItem;
     /// The grammar's whitespace table, and its layout kinds (the table's domain).
     fn whitespace(self) -> (&'static crate::render::WhitespaceTable, &'static [u16]);
+    /// The grammar's surface kinds the trivia table's assignment reads
+    /// (`TriviaTable::assign`).
+    fn surface_kinds(self) -> crate::trivia_table::SurfaceKinds;
+    /// The sides of the unit children of the node at `index` of `tree`, by
+    /// slot and item: the node read one level down by `ctx`
+    /// (`TransportLayout::units`). None for a grammar with no transports.
+    fn read_units(self, tree: &tree_sitter::Tree, ctx: &crate::read::ReadCtx<'_>, index: u32) -> Vec<crate::layout::UnitSides<Self::Trivia>> {
+        let _ = (tree, ctx, index);
+        Vec::new()
+    }
 }
 
 /// The node at descendant `index` of `tree`, or `None` past its last node.
@@ -52,6 +58,35 @@ pub fn node_at_index(tree: &tree_sitter::Tree, index: u32) -> Option<tree_sitter
     let mut cursor = tree.walk();
     cursor.goto_descendant(index as usize);
     Some(cursor.node())
+}
+
+/// The columns a tab advances to the next multiple of, where an indentation
+/// step is measured in columns.
+const TAB_WIDTH: usize = 8;
+
+/// The indentation step of a layout run holding a line break: its last line's
+/// indentation past its enclosing line's, the line of the owner's first text
+/// (its first byte that is not whitespace, from `owner_start`). The
+/// enclosing indentation is removed as a byte prefix; where the two mix tabs
+/// and spaces differently, the step is the difference in columns, spelled in
+/// the run's own last indentation character, and empty where the run is
+/// indented less.
+pub fn indentation_step(source: &str, owner_start: usize, run: &str) -> String {
+    let first = source[owner_start..].find(|c: char| !c.is_whitespace()).map_or(owner_start, |at| owner_start + at);
+    let line_start = source[..first].rfind('\n').map_or(0, |at| at + 1);
+    let line = &source[line_start..];
+    let enclosing = &line[..line.len() - line.trim_start_matches([' ', '\t']).len()];
+    let indentation = run.rsplit('\n').next().unwrap_or_default().trim_start_matches('\r');
+    if let Some(step) = indentation.strip_prefix(enclosing) {
+        return step.to_owned();
+    }
+    let columns = |text: &str| text.chars().fold(0, |at, c| if c == '\t' { (at / TAB_WIDTH + 1) * TAB_WIDTH } else { at + 1 });
+    let wider = columns(indentation).saturating_sub(columns(enclosing));
+    match indentation.chars().next_back() {
+        Some('\t') => "\t".repeat(wider.div_ceil(TAB_WIDTH)),
+        Some(c) => c.to_string().repeat(wider),
+        None => String::new(),
+    }
 }
 
 /// The byte offsets in `source` of the lines under the node at `index` that
@@ -96,24 +131,13 @@ pub fn child_index_of(node: tree_sitter::Node<'_>, index: u32, position: u32) ->
     (0..position).fold(index + 1, |at, i| at + node.child(i).map_or(0, |child| child.descendant_count() as u32))
 }
 
-/// One line-break run of a node's leading or closing gap: the whitespace
-/// member it reads as and the byte its run starts at.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
-pub struct LineGap {
-    pub kind: u16,
-    pub start: usize,
-}
-
-/// The line-break runs a node owns, in source order on each side, and the
-/// owners beside it among its siblings, taken at the outermost node spanning
-/// exactly its bytes (a list item's wrapper holds the item's neighbours, not
-/// the item): the sibling owner before it, or none when that node is its
-/// parent's first, and the sibling owner after it, or none when that node is
-/// its parent's last.
-#[derive(Debug, Clone, Default, PartialEq, Eq, serde::Serialize)]
-pub struct LineGaps {
-    pub leading: Vec<LineGap>,
-    pub trailing: Vec<LineGap>,
+/// The siblings that hold sides beside a node (`trivia_table::holds_sides`),
+/// taken at the outermost node spanning exactly its bytes (a list item's
+/// wrapper holds the item's neighbours, not the item): the one before it, or
+/// none when that node starts its parent, and the one after it, or none when
+/// that node ends its parent.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, serde::Serialize)]
+pub struct Siblings {
     pub previous: Option<Span>,
     pub next: Option<Span>,
 }
@@ -257,107 +281,20 @@ pub(crate) fn outermost_same_span(node: tree_sitter::Node<'_>) -> tree_sitter::N
     outer
 }
 
-/// The whitespace the node at descendant `index` owns as trivia, classified
-/// by `classify`, which answers the member a run of whitespace holding a line
-/// break reads as. What the node owns is what its parent's placement gives it
-/// (`sides_at`, asked with a cursor on the parent): a node that owns no
-/// trivia owns no gap, and the extras its sides hold split the gaps.
-///
-/// The leading gap is the bytes between the node and the sibling before it
-/// that is not trivia, unless the parent starts where the node does; an extra
-/// there that the node's sides do not hold trails the sibling before it, so
-/// the gap starts after it. The closing gap is the bytes between the node and
-/// its parent's closing token when no owner follows the node, unless the
-/// parent ends where the node does. `previous` and `next` are the sibling
-/// owners around the outermost node spanning exactly the node's bytes (a list
-/// item's wrapper holds the item's neighbours, not the item).
-pub fn line_gaps(
-    tree: &tree_sitter::Tree,
-    index: u32,
-    source: &str,
-    sides_at: &dyn Fn(&mut tree_sitter::TreeCursor<'_>, u32) -> Result<Sides, ReadError>,
-    classify: &dyn Fn(&str) -> Option<u16>,
-) -> Result<LineGaps, ReadError> {
-    let mut gaps = LineGaps::default();
-    let mut cursor = tree.walk();
-    cursor.goto_descendant(index as usize);
-    let node = cursor.node();
-    let mut at_parent = cursor.clone();
-    if !at_parent.goto_parent() {
-        return Ok(gaps);
+/// The siblings beside the node at descendant `index` (`Siblings`).
+pub fn siblings(tree: &tree_sitter::Tree, index: u32) -> Siblings {
+    let Some(node) = node_at_index(tree, index) else { return Siblings::default() };
+    let outer = outermost_same_span(node);
+    let Some(parent) = outer.parent() else { return Siblings::default() };
+    let span = |node: tree_sitter::Node<'_>| Span { start: node.start_byte() as u32, end: node.end_byte() as u32 };
+    let mut cursor = parent.walk();
+    let children: Vec<tree_sitter::Node<'_>> = parent.children(&mut cursor).collect();
+    let at = children.iter().position(|child| child.id() == outer.id()).unwrap_or(0);
+    let holds = |child: &&tree_sitter::Node<'_>| crate::trivia_table::holds_sides(child);
+    Siblings {
+        previous: (parent.start_byte() != node.start_byte()).then(|| children[..at].iter().rev().find(holds).copied().map(span)).flatten(),
+        next: (parent.end_byte() != node.end_byte()).then(|| children[at + 1..].iter().find(holds).copied().map(span)).flatten(),
     }
-    let sides = sides_at(&mut at_parent.clone(), index)?;
-    if !sides.owner {
-        return Ok(gaps);
-    }
-    let push = |side: &mut Vec<LineGap>, start: usize, end: usize| {
-        let Some(run) = source.get(start..end) else { return };
-        if crate::line_endings::logical_breaks(run) > 0 && run.chars().all(char::is_whitespace) {
-            if let Some(kind) = classify(run) {
-                side.push(LineGap { kind, start });
-            }
-        }
-    };
-    let span_of = |child: &Child| Span { start: child.start, end: child.end };
-    let mut outer = cursor;
-    loop {
-        let mut up = outer.clone();
-        if !up.goto_parent() || up.node().byte_range() != node.byte_range() {
-            break;
-        }
-        outer = up;
-    }
-    let outer_index = outer.descendant_index() as u32;
-    if outer.goto_parent() {
-        let siblings = survey(&mut outer);
-        let at = siblings.iter().position(|child| child.index == outer_index).unwrap_or(0);
-        let up = outer.node();
-        let owner = |child: &&Child| sides_at(&mut outer.clone(), child.index).map(|sides| sides.owner);
-        if up.start_byte() != node.start_byte() {
-            gaps.previous = nearest_owner(siblings[..at].iter().rev(), owner)?.map(span_of);
-        }
-        if up.end_byte() != node.end_byte() {
-            gaps.next = nearest_owner(siblings[at + 1..].iter(), owner)?.map(span_of);
-        }
-    }
-    let parent = at_parent.node();
-    let children = survey(&mut at_parent);
-    let at = children.iter().position(|child| child.index == index).unwrap_or(0);
-    if parent.start_byte() != node.start_byte() {
-        let bound = children[..at].iter().rev().find(|child| !child.trivia).map_or(parent.start_byte() as u32, |child| child.end);
-        let held = |child: &Child| sides.leading.iter().any(|entry| entry.coord.span == span_of(child));
-        let mut start = bound;
-        for child in children[..at].iter().filter(|child| child.trivia && child.start >= bound) {
-            if held(child) {
-                push(&mut gaps.leading, start as usize, child.start as usize);
-            }
-            start = child.end;
-        }
-        push(&mut gaps.leading, start as usize, node.start_byte());
-    }
-    let owner = |child: &&Child| sides_at(&mut at_parent.clone(), child.index).map(|sides| sides.owner);
-    if parent.end_byte() != node.end_byte() && nearest_owner(children[at + 1..].iter(), owner)?.is_none() {
-        let end = children[at + 1..].iter().find(|child| !child.trivia).map_or(parent.end_byte() as u32, |child| child.start);
-        let mut start = node.end_byte() as u32;
-        for entry in sides.trailing.iter().filter(|entry| entry.coord.span.end <= end) {
-            push(&mut gaps.trailing, start as usize, entry.coord.span.start as usize);
-            start = entry.coord.span.end;
-        }
-        push(&mut gaps.trailing, start as usize, end as usize);
-    }
-    Ok(gaps)
-}
-
-/// The first of `children`, in the order given, that its parent's placement
-/// makes an owner.
-fn nearest_owner<'c>(
-    mut children: impl Iterator<Item = &'c Child>,
-    owner: impl Fn(&&'c Child) -> Result<bool, ReadError>,
-) -> Result<Option<&'c Child>, ReadError> {
-    children.try_fold(None, |found, child| match found {
-        Some(_) => Ok(found),
-        None => owner(&child).map(|is| is.then_some(child)),
-    })
 }
 
 // ─── ParsedTree ────────────────────────────────────────────────────────────────────────────
@@ -471,10 +408,16 @@ impl<G: EngineGrammar> ParsedTree<G> {
         &self.tree
     }
 
-    /// The node at `index` read into `T`, `depth` levels down, with the sides
-    /// its parent's placement gives it; index 0 is the root.
+    /// The node at `index` read into `T`, `depth` levels down, seating no
+    /// sides; index 0 is the root.
     pub fn read<T: crate::read::ReadTransport>(&self, index: u32, depth: crate::read::Depth) -> Result<T, crate::read::ReadError> {
-        crate::read::read_at::<T, T>(&mut self.tree.walk(), &self.read_ctx(), index, depth)
+        crate::read::read_at::<T>(&mut self.tree.walk(), &self.read_ctx(), index, depth)
+    }
+
+    /// The sides of the unit children of the node at `index`, by slot and
+    /// item, as a render read seats them (`EngineGrammar::read_units`).
+    pub fn unit_sides(&self, index: u32) -> Vec<crate::layout::UnitSides<G::Trivia>> {
+        self.grammar.read_units(&self.tree, &self.seating_ctx(), index)
     }
 
     /// The `ERROR` node at `index` read as the bytes its coordinate spans, or
@@ -502,6 +445,12 @@ impl<G: EngineGrammar> ParsedTree<G> {
         crate::read::ReadCtx::new(&self.source, self.tree_id, self.grammar.shows())
     }
 
+    /// The context of a read that seats each node's sides from this tree's
+    /// table and writes: a render read and a snapshot read.
+    pub fn seating_ctx(&self) -> crate::read::ReadCtx<'_> {
+        self.read_ctx().with_sides(self)
+    }
+
     /// The source's row starts (`LineTable`), built on first use.
     pub fn lines(&self) -> &crate::points::LineTable {
         self.lines.get_or_init(|| crate::points::LineTable::new(&self.source))
@@ -516,41 +465,12 @@ impl<G: EngineGrammar> ParsedTree<G> {
     }
 
     /// A snapshot of the node at `index`, read at every depth: each node with
-    /// its span from the transport that holds it, each placed extra with its
-    /// text, and the node itself measured from the byte `holder`, or from its
-    /// own start when absent.
+    /// its span from the transport that holds it, each extra and `ERROR` of
+    /// its sides with its text, and the node itself measured from the byte
+    /// `holder`, or from its own start when absent.
     pub fn snapshot<T: crate::read::ReadTransport>(&self, index: u32, holder: Option<u32>) -> Result<T, crate::read::ReadError> {
         let measure = self.snapshot_measure(index, holder);
-        crate::read::read_at::<T, T>(&mut self.tree.walk(), &self.read_ctx().snapshot(&measure), index, crate::read::Depth::All)
-    }
-
-    /// The spans of byte `ranges` (start and end pairs) measured from the byte
-    /// `holder`, as row and column pairs, flat. Refuses an odd length, a range
-    /// that ends before it starts, and a byte past the source or before the
-    /// holder.
-    pub fn snapshot_spans(&self, holder: u32, ranges: &[u32]) -> Result<Vec<u32>, String> {
-        if !ranges.len().is_multiple_of(2) {
-            return Err(format!("{} range bounds is not a list of start and end pairs", ranges.len()));
-        }
-        let lines = self.lines();
-        let base = lines.point(holder as usize).ok_or_else(|| format!("holder byte {holder} lies past the source"))?;
-        let point = |byte: u32| {
-            if byte < holder {
-                return Err(format!("byte {byte} lies before the holder byte {holder}"));
-            }
-            lines.point(byte as usize).map(|point| point.offset_from(base)).ok_or_else(|| format!("byte {byte} lies past the source"))
-        };
-        let mut out = Vec::with_capacity(ranges.len() * 2);
-        for pair in ranges.chunks(2) {
-            if pair[1] < pair[0] {
-                return Err(format!("range {}..{} ends before it starts", pair[0], pair[1]));
-            }
-            for byte in pair {
-                let point = point(*byte)?;
-                out.extend([point.row, point.column]);
-            }
-        }
-        Ok(out)
+        crate::read::read_at::<T>(&mut self.tree.walk(), &self.seating_ctx().snapshot(&measure), index, crate::read::Depth::All)
     }
 
     /// Reject a handle minted by a different tree.
@@ -710,15 +630,9 @@ impl<G: EngineGrammar> ParsedTree<G> {
         &self.source
     }
 
-    /// The line-break runs the node named by `handle` owns as trivia
-    /// (`line_gaps`), each classified as `layout_kind` classifies it.
-    pub fn line_gaps_at(&self, handle: u64) -> Result<LineGaps, String> {
-        let index = self.local_index(handle)?;
-        node_at_index(&self.tree, index).ok_or_else(|| format!("handle {handle} names no node of tree {}", self.tree_id))?;
-        let ctx = ReadCtx::new(&self.source, self.tree_id, self.grammar.shows());
-        let sides_at = |cursor: &mut tree_sitter::TreeCursor<'_>, child: u32| self.grammar.sides_at(cursor, &ctx, child);
-        let classify = |run: &str| self.layout_kind(run);
-        line_gaps(&self.tree, index, &self.source, &sides_at, &classify).map_err(|refusal| refusal.describe(&|kind| self.grammar.kind_name(kind)))
+    /// The siblings beside the node at `index` (`siblings`).
+    pub fn siblings(&self, index: u32) -> Siblings {
+        siblings(&self.tree, index)
     }
 
     /// The whitespace member a run holding a line break reads as: among the
@@ -732,50 +646,74 @@ impl<G: EngineGrammar> ParsedTree<G> {
 
     /// The tree's trivia table, assigned on first use.
     pub fn trivia_table(&self) -> &TriviaTable {
-        self.trivia.get_or_init(|| TriviaTable::assign(&self.tree, &self.source))
+        self.trivia.get_or_init(|| TriviaTable::assign(&self.tree, &self.source, self.grammar.surface_kinds()))
     }
 
     /// The entries of `side` of the node at `index`: the ones a write gave it,
     /// else the assigned ones, each as a value. An extra is its coordinate, an
     /// `ERROR` its kind and source text, and a layout run its whitespace
-    /// member. An entry shares its owner's row when it ends on the owner's
-    /// first row (leading) or starts on its last (trailing).
+    /// member.
     pub fn trivia_side(&self, index: u32, side: TriviaSide) -> Vec<TriviaEntry<G::Trivia>> {
-        if let Some(entries) = self.written.get(&(index, side)) {
-            return entries.clone();
+        self.side_entries(index, side, false).into_iter().map(SideEntry::into_entry).collect()
+    }
+
+    /// `trivia_side` with where each entry came from, and when `edge_changed`
+    /// without the layout runs at the edge `side` lies on
+    /// (`trivia::without_edge_runs`) and without the steps of the runs it
+    /// keeps, which measured from the old parent's line.
+    pub fn side_entries(&self, index: u32, side: TriviaSide, edge_changed: bool) -> Vec<SideEntry<G::Trivia>> {
+        let mut entries: Vec<SideEntry<G::Trivia>> = match self.written.get(&(index, side)) {
+            Some(written) => written.iter().cloned().map(SideEntry::Written).collect(),
+            None => self.assigned_side(index, side),
+        };
+        if edge_changed {
+            crate::trivia::without_edge_runs(&mut entries, side, |entry| match entry {
+                SideEntry::Layout(_) => true,
+                SideEntry::Written(entry) => entry.is_layout(),
+                SideEntry::Source { .. } => false,
+            });
+            for entry in &mut entries {
+                if let SideEntry::Layout(run) = entry {
+                    run.step = None;
+                }
+            }
         }
+        entries
+    }
+
+    fn assigned_side(&self, index: u32, side: TriviaSide) -> Vec<SideEntry<G::Trivia>> {
         let assigned = self.trivia_table().side(index, side);
         if assigned.is_empty() {
             return Vec::new();
         }
-        let Some(owner) = node_at_index(&self.tree, index) else { return Vec::new() };
         let ctx = self.read_ctx();
-        let lines = self.lines();
-        let row = |byte: u32| lines.point(byte as usize).map_or(0, |point| point.row);
-        let same_line = |start: u32, end: u32| match side {
-            TriviaSide::Leading => row(end) == owner.start_position().row as u32,
-            TriviaSide::Trailing => row(start) == owner.end_position().row as u32,
-            TriviaSide::Inner => false,
-        };
-        let entry = |value: SlotValue<G::Trivia>, start: u32, end: u32| TriviaEntry { value, same_line: same_line(start, end), tokens_between: 0 };
+        let entry = TriviaEntry::new;
         assigned
             .iter()
             .filter_map(|assigned| match *assigned {
                 Assigned::Extra(at) => {
                     let node = node_at_index(&self.tree, at)?;
                     let coord = ctx.coordinate(&node, at);
-                    let (start, end) = (coord.span.start, coord.span.end);
-                    Some(entry(SlotValue::Coord(coord), start, end))
+                    let (kind, span) = (coord.kind?, coord.span);
+                    Some(SideEntry::Source { entry: entry(SlotValue::Coord(coord)), kind, span })
                 }
                 Assigned::Error(at) => {
                     let node = node_at_index(&self.tree, at)?;
-                    let (start, end) = (node.start_byte() as u32, node.end_byte() as u32);
-                    let text = TriviaText { kind: KindId(node.grammar_id()), text: self.source[start as usize..end as usize].to_owned(), span: None };
-                    Some(entry(SlotValue::Transport(G::Trivia::from_text(text)), start, end))
+                    let span = Span { start: node.start_byte() as u32, end: node.end_byte() as u32 };
+                    let kind = KindId(node.grammar_id());
+                    let text = TriviaText { kind, text: self.source[span.start as usize..span.end as usize].to_owned(), span: None };
+                    Some(SideEntry::Source { entry: entry(SlotValue::Transport(G::Trivia::from_text(text))), kind, span })
                 }
-                Assigned::Layout { start, end } => {
-                    let kind = self.layout_kind(&self.source[start as usize..end as usize])?;
-                    Some(entry(SlotValue::Transport(G::Trivia::from_layout(KindId(kind))?), start, end))
+                Assigned::Layout { start, end, owner } => {
+                    let run = &self.source[start as usize..end as usize];
+                    let kind = self.layout_kind(run)?;
+                    let step = indentation_step(&self.source, node_at_index(&self.tree, owner)?.start_byte(), run);
+                    Some(SideEntry::Layout(TriviaEntry { step: Some(step), ..entry(SlotValue::Transport(G::Trivia::from_layout(KindId(kind), run)?)) }))
+                }
+                Assigned::Member(at) => {
+                    let node = node_at_index(&self.tree, at)?;
+                    let text = &self.source[node.start_byte()..node.end_byte()];
+                    Some(SideEntry::Layout(entry(SlotValue::Transport(G::Trivia::from_layout(KindId(node.grammar_id()), text)?))))
                 }
             })
             .collect()
@@ -801,6 +739,12 @@ impl<G: EngineGrammar> ParsedTree<G> {
         self.written
             .range((index, TriviaSide::Leading)..(end, TriviaSide::Leading))
             .any(|(&(at, side), _)| at != index || own_sides || side == TriviaSide::Inner)
+    }
+}
+
+impl<G: EngineGrammar> crate::read::SideLookup for ParsedTree<G> {
+    fn side(&self, index: u32, side: TriviaSide, edge_changed: bool) -> Box<dyn std::any::Any> {
+        Box::new(self.side_entries(index, side, edge_changed))
     }
 }
 
@@ -959,9 +903,31 @@ impl<G: EngineGrammar> SourceTable for HashMap<u32, ParsedTree<G>> {
 
     fn sides(&self, coord: &NodeCoordinate) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
         let tree = self.get(&coord.tree)?;
-        let side = |side: TriviaSide| Some(tree.trivia_side(coord.index, side)).filter(|entries| !entries.is_empty());
+        let side = |side: TriviaSide| {
+            let entries: Vec<_> = tree.side_entries(coord.index, side, coord.changed().on(side)).into_iter().map(SideEntry::into_entry).collect();
+            (!entries.is_empty()).then_some(entries)
+        };
         let trivia = crate::trivia::TransportTrivia { leading: side(TriviaSide::Leading), trailing: side(TriviaSide::Trailing), inner: side(TriviaSide::Inner) };
         (trivia.leading.is_some() || trivia.trailing.is_some() || trivia.inner.is_some()).then(|| Box::new(trivia) as Box<dyn crate::trivia::FramedTrivia>)
+    }
+
+    fn unit_sides(&self, coord: &NodeCoordinate) -> Option<Box<dyn std::any::Any>> {
+        let units = self.get(&coord.tree)?.unit_sides(coord.index);
+        (!units.is_empty()).then(|| Box::new(units) as Box<dyn std::any::Any>)
+    }
+
+    fn framed_span(&self, coord: &NodeCoordinate) -> Span {
+        let Some(tree) = self.get(&coord.tree) else { return coord.span };
+        let spans = |side: TriviaSide| {
+            tree.side_entries(coord.index, side, coord.changed().on(side)).into_iter().filter_map(|entry| match entry {
+                SideEntry::Source { span, .. } => Some(span),
+                SideEntry::Layout(_) | SideEntry::Written(_) => None,
+            })
+        };
+        Span {
+            start: spans(TriviaSide::Leading).map(|span| span.start).min().map_or(coord.span.start, |start| start.min(coord.span.start)),
+            end: spans(TriviaSide::Trailing).map(|span| span.end).max().map_or(coord.span.end, |end| end.max(coord.span.end)),
+        }
     }
 
     fn edited_within(&self, coord: &NodeCoordinate) -> bool {
@@ -970,7 +936,7 @@ impl<G: EngineGrammar> SourceTable for HashMap<u32, ParsedTree<G>> {
 
     fn read_ctx(&self, tree: u32) -> Option<(&tree_sitter::Tree, crate::read::ReadCtx<'_>)> {
         let parsed = self.get(&tree)?;
-        Some((&parsed.tree, parsed.read_ctx()))
+        Some((&parsed.tree, parsed.seating_ctx()))
     }
 
     fn for_each_kind_ending_with(&self, coord: &NodeCoordinate, f: &mut dyn FnMut(KindId)) {
@@ -1060,10 +1026,6 @@ mod tests {
             "test"
         }
 
-        fn sides_at(self, _: &mut tree_sitter::TreeCursor<'_>, _: &ReadCtx<'_>, _: u32) -> Result<Sides, ReadError> {
-            Ok(Sides::default())
-        }
-
         fn shows(self) -> fn(KindId) -> bool {
             |_| false
         }
@@ -1072,6 +1034,10 @@ mod tests {
 
         fn whitespace(self) -> (&'static crate::render::WhitespaceTable, &'static [u16]) {
             (&TEST_WHITESPACE, &[1, 2])
+        }
+
+        fn surface_kinds(self) -> crate::trivia_table::SurfaceKinds {
+            crate::trivia_table::SurfaceKinds::default()
         }
     }
 
@@ -1087,7 +1053,7 @@ mod tests {
             TestTrivia::Text(text)
         }
 
-        fn from_layout(kind: KindId) -> Option<Self> {
+        fn from_layout(kind: KindId, _: &str) -> Option<Self> {
             (kind == KindId(2)).then_some(TestTrivia::Newline)
         }
     }
@@ -1174,17 +1140,6 @@ mod tests {
         assert_eq!((snapped.text.as_str(), snapped.at), ("@@", crate::read::Origin::Snapshot(span)));
     }
 
-    #[test]
-    fn snapshot_spans_measure_byte_ranges_from_the_holder_and_refuse_what_is_not_one() {
-        let (tree, _) = parsed("fn f() {\n    x\n}\n");
-        assert_eq!(tree.snapshot_spans(7, &[9, 14, 15, 16]), Ok(vec![1, 0, 1, 5, 2, 0, 2, 1]));
-        assert_eq!(tree.snapshot_spans(7, &[7, 8]), Ok(vec![0, 0, 0, 1]));
-        assert!(tree.snapshot_spans(7, &[9]).is_err());
-        assert!(tree.snapshot_spans(7, &[3, 8]).is_err());
-        assert!(tree.snapshot_spans(7, &[9, 8]).is_err());
-        assert!(tree.snapshot_spans(7, &[9, 99]).is_err());
-    }
-
     fn texts(tree: &ParsedTree<TestGrammar>, found: &[QueryCoordinate]) -> Vec<String> {
         found
             .iter()
@@ -1243,10 +1198,14 @@ mod tests {
     }
 
     #[test]
-    fn a_handle_past_the_last_node_is_refused() {
-        let (tree, _) = parsed(FNS);
-        let past = encode_handle(1, tree.tree.root_node().descendant_count() as u32);
-        assert!(tree.line_gaps_at(past).unwrap_err().contains("names no node"));
+    fn a_nodes_siblings_are_those_beside_it_that_hold_sides() {
+        let (tree, _) = parsed("fn f() {}\n// c\nfn g() {}\n");
+        let f = index_of_kind(&tree, "function_item", 0);
+        let g = index_of_kind(&tree, "function_item", 1);
+        let span = |start, end| Some(Span { start, end });
+        assert_eq!(tree.siblings(f), Siblings { previous: None, next: span(15, 24) });
+        assert_eq!(tree.siblings(g), Siblings { previous: span(0, 9), next: None }, "the comment between them holds no sides");
+        assert_eq!(tree.siblings(tree.tree.root_node().descendant_count() as u32), Siblings::default());
     }
 
     #[test]
@@ -1379,6 +1338,17 @@ mod tests {
     }
 
     #[test]
+    fn a_runs_step_is_its_indentation_past_its_enclosing_lines() {
+        let source = "  fn f() {\n      a();\n}\n";
+        assert_eq!(indentation_step(source, 2, "\n      "), "    ");
+        assert_eq!(indentation_step(source, 2, "\n"), "");
+        assert_eq!(indentation_step(source, 2, "\n "), "", "a run indented less than its enclosing line has no step");
+        assert_eq!(indentation_step("\tf {\n", 1, "\n            "), "    ", "a tab and spaces are compared in columns");
+        assert_eq!(indentation_step("        f {\n", 8, "\n\t\t"), "\t", "spelled in the run's own character");
+        assert_eq!(indentation_step("def f():\n    # c\n    x\n", 8, "\n    "), "", "an owner starting at a line break takes the line of its first text");
+    }
+
+    #[test]
     fn the_engine_format_wraps_any_render() {
         let engine_format = format_record("<<", ">>");
         assert_eq!(apply_render_format(Source::Factory, "rendered:1".to_string(), Some(&engine_format), None, "\n"), "<<rendered:1>>");
@@ -1409,24 +1379,43 @@ mod tests {
     }
 
     #[test]
-    fn a_side_reads_an_extra_as_its_coordinate_and_a_layout_run_as_its_member() {
+    fn a_side_reads_an_extra_as_its_coordinate_and_a_layout_run_as_its_member_with_its_step() {
         let (tree, _) = parsed("// c\nfn f() {}\n");
         let f = index_of_kind(&tree, "function_item", 0);
         let comment = index_of_kind(&tree, "line_comment", 0);
         let leading = tree.trivia_side(f, TriviaSide::Leading);
         let SlotValue::Coord(coord) = &leading[0].value else { panic!("an extra reads as its coordinate: {leading:?}") };
         assert_eq!((coord.tree, coord.index, coord.span.start, coord.span.end), (1, comment, 0, 4));
-        assert!(!leading[0].same_line);
-        assert_eq!(leading[1..], [TriviaEntry { value: SlotValue::Transport(TestTrivia::Newline), same_line: true, tokens_between: 0 }]);
-        assert_eq!(tree.trivia_side(f, TriviaSide::Trailing), [TriviaEntry { value: SlotValue::Transport(TestTrivia::Newline), same_line: true, tokens_between: 0 }]);
+        let newline = TriviaEntry { step: Some(String::new()), ..TriviaEntry::new(SlotValue::Transport(TestTrivia::Newline)) };
+        assert_eq!(leading[1..], *std::slice::from_ref(&newline));
+        assert_eq!(tree.trivia_side(f, TriviaSide::Trailing), [newline]);
     }
 
     #[test]
-    fn a_same_line_trailing_comment_shares_its_owners_row() {
+    fn a_same_line_trailing_comment_has_no_line_break_before_it() {
         let (tree, _) = parsed("fn f() {} // c\nfn g() {}\n");
         let f = index_of_kind(&tree, "function_item", 0);
         let trailing = tree.trivia_side(f, TriviaSide::Trailing);
-        assert!(trailing[0].same_line, "{trailing:?}");
+        assert!(matches!(trailing.first().map(|entry| &entry.value), Some(SlotValue::Coord(_))), "{trailing:?}");
+    }
+
+    #[test]
+    fn a_changed_edge_drops_the_layout_runs_between_the_side_and_its_neighbour() {
+        let (tree, _) = parsed("// c\nfn f() {}\n");
+        let f = index_of_kind(&tree, "function_item", 0);
+        let runs = |side, changed| tree.side_entries(f, side, changed).into_iter().map(|entry| SideEntry::into_entry(entry).value).collect::<Vec<_>>();
+        assert_eq!(runs(TriviaSide::Leading, true), runs(TriviaSide::Leading, false), "the run between the comment and its owner stays");
+        assert_eq!(runs(TriviaSide::Trailing, false).len(), 1);
+        assert_eq!(runs(TriviaSide::Trailing, true), [], "the run after the owner spelled the gap to its old neighbour");
+    }
+
+    #[test]
+    fn a_changed_edge_drops_the_steps_of_the_runs_its_side_keeps() {
+        let (tree, _) = parsed("fn f() {\n    // c\n    a();\n}\n");
+        let a = index_of_kind(&tree, "expression_statement", 0);
+        let steps = |changed| tree.side_entries(a, TriviaSide::Leading, changed).into_iter().map(SideEntry::into_entry).filter(TriviaEntry::is_layout).map(|entry| entry.step).collect::<Vec<_>>();
+        assert_eq!(steps(false), [Some("    ".to_owned()), Some("    ".to_owned())]);
+        assert_eq!(steps(true), [None], "the run kept between the comment and its owner measured from the old parent's line");
     }
 
     #[test]
@@ -1437,7 +1426,7 @@ mod tests {
             .flatten()
             .collect::<Vec<_>>();
         let text = TriviaText { kind: KindId(u16::MAX), text: "@@".to_owned(), span: None };
-        assert!(sides.contains(&TriviaEntry { value: SlotValue::Transport(TestTrivia::Text(text)), same_line: true, tokens_between: 0 }), "{sides:?}");
+        assert!(sides.contains(&TriviaEntry::new(SlotValue::Transport(TestTrivia::Text(text)))), "{sides:?}");
     }
 
     #[test]
@@ -1446,7 +1435,7 @@ mod tests {
         let f = index_of_kind(&tree, "function_item", 0);
         let g = index_of_kind(&tree, "function_item", 1);
         let a = index_of_kind(&tree, "expression_statement", 0);
-        let written = vec![TriviaEntry { value: SlotValue::Transport(TestTrivia::Text(TriviaText { kind: KindId(1), text: "// w".to_owned(), span: None })), same_line: false, tokens_between: 0 }];
+        let written = vec![TriviaEntry::new(SlotValue::Transport(TestTrivia::Text(TriviaText { kind: KindId(1), text: "// w".to_owned(), span: None })))];
         tree.write_trivia_side(a, TriviaSide::Leading, written.clone());
         assert_eq!(tree.trivia_side(a, TriviaSide::Leading), written);
         assert!(tree.edited_within(0, false));

@@ -148,9 +148,9 @@ would otherwise report a passing 0/0 run.
 
 The public engine a validator reads and renders through, typed for any grammar: `Engine<LanguageAPI>`. One engine per grammar per process, because a coordinate names the tree by the tag its engine minted.
 
-### `packages/tools/src/validate/common.ts::triviaViewOf`
+### `packages/tools/src/validate/common.ts::kindViewOf`
 
-The trivia view a validator renders through, built from the engine it loaded: `readTrivia` and `readDerivedSides` over the engine's `lineGapsOf`, and the engine's `rebuildWrappers` for `isWrapper`. It is the view the engine's own render uses, so the detached input `selfContainedRenderInput` builds carries the trivia and the source gaps the validated render printed.
+The kind view a validator crosses data through (`KindView`), built from the engine it loaded: the engine's `rebuildWrappers` for `isWrapper` and its `listKinds` for `isList`. It is the view the engine's own render uses, so the detached input `selfContainedRenderInput` builds carries the edges and the source gaps the validated render printed.
 
 ### `packages/tools/src/validate/common.ts::loadNativeEngine`
 
@@ -1283,14 +1283,12 @@ The config of a group element carries its seat kind as a mark that is not a key 
 /**
  * A seated group has no ir object, so its own trivia moves onto the children
  * the call builds: leading entries to the first built child, trailing entries to
- * the last. A moved trailing entry keeps its place relative to what follows the
- * group: its tokens-between grows by the group's own tokens after that child
- * (a trailing delimiter). One rule for every seat shape; a group with trivia
- * and no built child at that edge is recorded in `seatedTriviaEdges`.
+ * the last. One rule for every seat shape; a group with trivia and no built
+ * child at that edge is recorded in `seatedTriviaEdges`.
  */
 ```
 
-The same rule serves the `elements`, `tuple` and `flatten` shapes; the container is the config (or argument list) the shape projects, and the first and last built values are found in it past array nesting. The edge child is replaced in its container by a copy carrying the moved entries, never changed in place: a child is the cached built value of the read node, and a second projection of the same group would otherwise append the moved comment again. The group's sides are `groupSides`; entries resolve through `resolveChild` and keep their placement (`carryPlacement`), so a same-line comment stays on its line and still defers past the tokens that follow it. `seatedTriviaEdges` is the census hook: it is empty across the five grammars' ir lanes.
+The same rule serves the `elements`, `tuple` and `flatten` shapes; the container is the config (or argument list) the shape projects, and the first and last built values are found in it past array nesting. The edge child is replaced in its container by a copy carrying the moved entries, never changed in place: a child is the cached built value of the read node, and a second projection of the same group would otherwise append the moved comment again. The group's sides are `groupSides`, entries resolved through `resolveChild`. Only its comments and `ERROR`s move: its layout runs lie at its flanks, which the list's source flank spells (`sourceFlankOf`), and moved onto a child they would spell that gap twice. `seatedTriviaEdges` is the census hook: it is empty across the five grammars' ir lanes.
 
 ### `packages/tools/src/validate/common.ts::projectArmSlot`
 
@@ -1406,17 +1404,13 @@ The comparison of a from() result against a factory result when either is a kind
 
 One entry of a factory map: the factory function of a kind, or, for a `constant`-shaped kind (a keyword or punctuation kind with a build entry), the value itself. The dispatch returns a constant entry as it is and calls every other.
 
-### `packages/tools/src/validate/common.ts::sideOf`
-
-The entries of one side of a read node, from the trivia table of a tree: by default the tree the node was read from, or the one a caller holds when the node is a detached copy of a read (`materialize` keeps a node's coordinate but not its tree). None for a node no read gave.
-
 ### `packages/tools/src/validate/common.ts::tableSides`
 
-A read node's sides from a tree's trivia table, as trivia data a built value can carry. A comment is read whole through the tree and built by the caller's builder, so it is built the way the caller builds every other node, and keeps the placement the table's entry records (`carryPlacement`); an `ERROR` keeps its text. Layout runs are left out: a copy's sides are written, and a written side's layout is the render's. `undefined` when no side holds an extra or an `ERROR`.
+A read node's sides from its trivia table (`sideOf`), as trivia data a built value can carry. A comment is read whole through `tree` and built by the caller's builder, so it is built the way the caller builds every other node; an `ERROR` keeps its text, and a layout run keeps its whitespace member: a written entry with no whitespace renders on its owner's line, so the run is what keeps an own-line comment on its own line. `undefined` when every side is empty.
 
 ### `packages/tools/src/validate/common.ts::groupSides`
 
-A read node's sides as the lanes build them: from its tree's table while it holds a tree (`tableSides`), else the trivia a detached copy carries, each entry resolved as a child with its placement kept. `writeSides` and `carryGroupTrivia` both take a node's sides from here.
+A read node's sides as the lanes build them: from its tree's table while it holds a tree (`tableSides`), else the trivia a detached copy carries, each entry resolved as a child. `writeSides` and `carryGroupTrivia` both take a node's sides from here.
 
 ### `packages/tools/src/validate/common.ts::writeSides`
 
@@ -1600,11 +1594,15 @@ A factory rebuilds a node from its config alone, and trivia is not config, so th
 
 ### `packages/tools/src/validate/trivia-placement.ts::module`
 
-The trivia placement census behind `sittir tool trivia-placement`. It reads, it never changes behaviour. The owner rule is never re-derived here: placement comes from the reader itself. For every extra in a source's tree-sitter parse, the census finds the `$_trivia` entry with the extra's span in the native deep read. It records the owner's kind and the position (`leading`, `trailing` or `inner`), or `lost` when no entry holds the extra. The summary counts each position. The command exits non-zero when any extra is lost, and a test pins every corpus and probe extra of rust, typescript and python to a placement.
+The trivia placement census behind `sittir tool trivia-placement`. It reads, it never changes behaviour. The owner rule is never re-derived here: placement comes from the parsed tree's trivia table. For every extra in a source's tree-sitter parse, the census finds the table entry that holds it. It records the owner's kind and the position (`leading`, `trailing` or `inner`), or `lost` when no side holds the extra. The summary counts each position. The command exits non-zero when any extra is lost, and a test pins every corpus and probe extra of rust, typescript and python to a placement.
 
-### `packages/tools/src/validate/trivia-placement.ts::readPlacements`
+### `packages/tools/src/validate/trivia-placement.ts::descendants`
 
-Every trivia entry in a deep read, keyed by its `$span`, with the owning node's kind id and the entry's position. Entries are found wherever a node carries `$_trivia`: fields, arrays and `$other` alike.
+Every node of a tree-sitter tree in preorder, anonymous ones included: the order a descendant index counts, so the n-th node is the one the table's index n names.
+
+### `packages/tools/src/validate/trivia-placement.ts::tablePlacements`
+
+Where the table puts each extra, from every node's three sides (`triviaSide`). An extra the table holds as a coordinate is found by its span. A layout member (python's line continuation) is held as its text, with no span, so it is found by its text, taken in table order: the census counts placements, and two continuations with one text are interchangeable for it.
 
 ### `packages/tools/src/validate/trivia-placement.ts::parsedExtras`
 
@@ -1612,7 +1610,7 @@ The outermost extras of a tree-sitter tree, in document order. An extra's own ch
 
 ### `packages/tools/src/validate/trivia-placement.ts::placementReader`
 
-One grammar's parser and native engine, paired so that each source is parsed once for its extras and read once for its placements. Spans match across the two because both count from the start of the same source text, the convention the other validators use to find a native node by a tree-sitter span.
+One grammar's parser and native engine, paired so that each source is parsed once for its extras and once natively for its table. Spans and descendant indexes match across the two because both parse the same source with the same grammar.
 
 ### `packages/tools/src/validate/trivia-placement.ts::runTriviaPlacement`
 
@@ -1724,9 +1722,9 @@ A grammar's generated `hydrate`, or `null` when the grammar has no wrap module, 
 
 Every node a transport stores in its `_` slots, list items included, in key order: the children `walkNativeForKind` descends into. A kind id or a text value is not a node and is skipped.
 
-### `packages/tools/src/validate/common.ts::storedTriviaEntries`
+### `packages/tools/src/validate/common.ts::sideEntries`
 
-Every trivia entry a transport holds: its leading, trailing and inner sides, in that order.
+Every node entry of a read node's sides (`sidesOf`, its tree's trivia table): its leading, trailing and inner sides, in that order, without their layout runs. `walkNativeForKind` descends into them, so a comment kind is found where the table assigns it.
 
 ### `packages/tools/src/validate/gap-census.ts::adjacentPairs`
 
@@ -1759,7 +1757,7 @@ The reparsed node of a kind at the splice offset. The kind is a grammar id where
 
 ### `packages/tools/src/validate/read-render-parse.ts::candidateData`
 
-The candidate as its own source span has it. Its leading and trailing sides lie outside the span, where its parent renders them, so a candidate rendered alone leaves both out and keeps its inner side. The full-source lanes render those sides in place. A side the table gives a node can lie where a reparse of the node alone would take it inside (python's comment between `case …:` and its body's first statement is the body's leading side, which a reparsed block absorbs), so keeping it would compare an extra the source node never had. `renderReparse` applies it first, so the read-render-parse, factory and ir lanes prepare a candidate in one place. The render fixtures the validator captures take their input through it too, so a fixture's input renders to the output it records.
+The candidate as its own source span has it. Its leading and trailing sides lie outside the span, where its parent renders them, so a candidate rendered alone leaves both out and keeps its inner side. The full-source lanes render those sides in place. A side the table gives a node can lie where a reparse of the node alone would take it inside (python's comment between `case …:` and its body's first statement is the body's leading side, which a reparsed block absorbs), so keeping it would compare an extra the source node never had. The candidate is an edit of its node (`markEdited`) holding its sides with both outer ones empty, so a parsed candidate renders from its storage rather than as its coordinate, which the render would frame with the sides its tree's table gives it, and a filled side (`$_layout.sides`) never restores them. `renderReparse` applies it first, so the read-render-parse, factory and ir lanes prepare a candidate in one place. The render fixtures the validator captures take their input through it too, so a fixture's input renders to the output it records.
 
 value. An `elements` seat projects each element, a `tuple` seat takes the
 group's call arguments as the slot's value, and a `forwarded` seat assigns the

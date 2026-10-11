@@ -44,9 +44,28 @@ pub struct CoordinateWrites {
     /// still adjacent in the source both were read from (`$_layout.gap`),
     /// written on a rebuilt list's items.
     pub gap: Option<SourceGap>,
-    /// The outside trivia a folded node carries (`$_layout.trivia`), which
-    /// its bytes render between.
-    pub trivia: Option<crate::trivia::OutsideTrivia>,
+    /// The edges whose neighbour a built holder changed (`$_layout.changed`):
+    /// the node's sides there drop their layout runs.
+    pub changed: ChangedEdges,
+}
+
+/// The edges of a node whose neighbour is not the one its source had there.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct ChangedEdges {
+    pub leading: bool,
+    pub trailing: bool,
+}
+
+impl ChangedEdges {
+    /// Whether the edge `side` lies on changed.
+    pub fn on(self, side: crate::trivia_table::TriviaSide) -> bool {
+        use crate::trivia_table::TriviaSide;
+        match side {
+            TriviaSide::Leading => self.leading,
+            TriviaSide::Trailing => self.trailing,
+            TriviaSide::Inner => false,
+        }
+    }
 }
 
 /// The bytes between a list item and the item before it, in the source both
@@ -178,17 +197,9 @@ impl NodeCoordinate {
         self.writes.as_ref()?.gap.as_ref()
     }
 
-    /// The outside trivia JavaScript wrote on this coordinate (`CoordinateWrites::trivia`).
-    pub fn outside_trivia(&self) -> Option<&dyn crate::trivia::FramedTrivia> {
-        self.writes.as_ref()?.trivia.as_ref().map(|trivia| &*trivia.0)
-    }
-
-    /// This coordinate carrying `trivia` as its outside trivia, or as it is when `trivia` is `None`.
-    pub fn with_outside_trivia(mut self, trivia: Option<crate::trivia::OutsideTrivia>) -> Self {
-        if trivia.is_some() {
-            self.writes.get_or_insert_with(Default::default).trivia = trivia;
-        }
-        self
+    /// The edges whose neighbour JavaScript changed (`CoordinateWrites::changed`).
+    pub fn changed(&self) -> ChangedEdges {
+        self.writes.as_ref().map_or_else(ChangedEdges::default, |writes| writes.changed)
     }
 
     /// The tree and the index packed as one handle: the wire's `$treeHandle`.
@@ -256,8 +267,8 @@ impl NodeCoordinate {
 #[derive(Debug, Clone)]
 pub enum SlotValue<T, const ADJACENT: bool = false> {
     /// The content is in the tree: the sink slices it from the source the
-    /// engine still holds, between the outside trivia a folded node carries
-    /// (`NodeCoordinate::outside_trivia`).
+    /// engine still holds, between the node's leading and trailing sides
+    /// (`RenderSink::sides`).
     Coord(NodeCoordinate),
     /// The content is in this message.
     Transport(T),
@@ -304,9 +315,7 @@ impl<T: PartialEq, const ADJACENT: bool> PartialEq for SlotValue<T, ADJACENT> {
     fn eq(&self, other: &Self) -> bool {
         match (self, other) {
             (Self::Transport(a), Self::Transport(b)) => a == b,
-            (Self::Coord(a), Self::Coord(b)) => {
-                a.tree == b.tree && a.span == b.span && a.kind == b.kind && a.writes.as_ref().map(|w| &w.trivia) == b.writes.as_ref().map(|w| &w.trivia)
-            }
+            (Self::Coord(a), Self::Coord(b)) => a.tree == b.tree && a.span == b.span && a.kind == b.kind && a.changed() == b.changed(),
             _ => false,
         }
     }
@@ -323,20 +332,25 @@ impl<T: crate::render::Render, const ADJACENT: bool> crate::render::Render
     }
 }
 
-/// Write a coordinate's bytes, framed by the outside trivia it carries as a
-/// rendered owner is (`render_framed`); its kind's edges are the coordinate's
-/// own (`write_between_edges`).
+/// Write a coordinate's bytes, framed by its node's leading and trailing
+/// sides as a rendered owner is (`render_framed`), unless its node's frame
+/// is already open (`RenderSink::in_frame_of`); its kind's edges are the
+/// coordinate's own (`write_between_edges`).
 fn write_coordinate(
     coord: &NodeCoordinate,
     adjacent: bool,
     w: &mut dyn crate::render::RenderSink,
 ) -> crate::render::RenderResult {
-    match coord.outside_trivia() {
+    if w.in_frame_of(coord) {
+        return coord.write_between_edges(w, adjacent);
+    }
+    match w.sides(coord)? {
         None => coord.write_between_edges(w, adjacent),
         Some(trivia) => crate::layout::render_framed(
-            Some(trivia),
+            Some(&*trivia),
             crate::options::Edges::default(),
             None,
+            Some(coord),
             crate::layout::TriviaRole::Owner,
             w,
             |w| coord.write_between_edges(w, adjacent),
@@ -380,7 +394,7 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia, const
         let value_type = unsafe { transport_value_type(env, napi_val)? };
         if value_type == ::napi::ValueType::Object {
             if let Some(coord) = unsafe { coordinate_from_napi(env, napi_val)? } {
-                return Ok(Self::Coord(coord.with_outside_trivia(unsafe { outside_trivia_from_napi::<T::Trivia>(env, napi_val)? })));
+                return Ok(Self::Coord(coord));
             }
         }
         Ok(Self::Transport(unsafe {
@@ -404,7 +418,8 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue, const ADJACENT: bool> ::napi::bind
 }
 
 /// The coordinate the object `napi_val` spells, `{ $treeHandle, $end, $span,
-/// $type?, $_layout?: { gap } }`, or `None` when it carries no `$treeHandle`.
+/// $type?, $_layout?: { gap?, changed? } }`, or `None` when it carries no
+/// `$treeHandle`.
 /// A `$treeHandle` without a `$span` or an `$end` is refused.
 ///
 /// # Safety
@@ -421,31 +436,16 @@ pub(crate) unsafe fn coordinate_from_napi(env: ::napi::sys::napi_env, napi_val: 
     let end: u32 = unsafe { property(env, napi_val, c"$end")? }
         .ok_or_else(|| ::napi::Error::from_reason(format!("coordinate with $treeHandle {handle} carries no $end")))?;
     let kind = unsafe { property::<u32>(env, napi_val, c"$type")? }.map(|id| crate::types::KindId(id as u16));
-    let gap = match unsafe { property::<::napi::bindgen_prelude::Object>(env, napi_val, c"$_layout")? } {
-        Some(layout) => unsafe { property::<SourceGap>(env, ::napi::JsValue::raw(&layout), c"gap")? },
-        None => None,
+    let (gap, changed) = match unsafe { property::<::napi::bindgen_prelude::Object>(env, napi_val, c"$_layout")? } {
+        Some(layout) => unsafe {
+            let layout = ::napi::JsValue::raw(&layout);
+            (property::<SourceGap>(env, layout, c"gap")?, property::<ChangedEdges>(env, layout, c"changed")?.unwrap_or_default())
+        },
+        None => (None, ChangedEdges::default()),
     };
     let (tree, index) = crate::engine::decode_handle(handle);
-    let writes = gap.map(|gap| Box::new(CoordinateWrites { gap: Some(gap), trivia: None }));
+    let writes = (gap.is_some() || changed != ChangedEdges::default()).then(|| Box::new(CoordinateWrites { gap, changed }));
     Ok(Some(NodeCoordinate { kind, writes, ..NodeCoordinate::new(tree, index, end, span) }))
-}
-
-/// The outside trivia a coordinate object carries in `$_layout.trivia`, or
-/// `None` when it carries none.
-///
-/// # Safety
-/// `napi_val` must be a live object in `env`.
-#[cfg(feature = "napi-bindings")]
-unsafe fn outside_trivia_from_napi<Tr: crate::trivia::TriviaItem + crate::trivia::HasTrivia<Trivia = Tr>>(
-    env: ::napi::sys::napi_env,
-    napi_val: ::napi::sys::napi_value,
-) -> ::napi::Result<Option<crate::trivia::OutsideTrivia>> {
-    use crate::boundary::property;
-    let Some(layout) = (unsafe { property::<::napi::bindgen_prelude::Object>(env, napi_val, c"$_layout")? }) else {
-        return Ok(None);
-    };
-    let trivia = unsafe { property::<crate::trivia::TransportTrivia<Tr>>(env, ::napi::JsValue::raw(&layout), c"trivia")? };
-    Ok(trivia.map(|trivia| crate::trivia::OutsideTrivia(Box::new(trivia))))
 }
 
 /// `{ $treeHandle, $span, $type? }`, the object `coordinate_from_napi` reads
@@ -736,5 +736,17 @@ mod tests {
         assert!(coord.transport_or_write(&mut w2).unwrap().is_none());
         w2.finish().unwrap();
         assert_eq!(buf2, "raw");
+    }
+}
+
+/// `{ leading?, trailing? }`, each `true` for a changed edge.
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ChangedEdges {
+    unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
+        use crate::boundary::property;
+        Ok(Self {
+            leading: unsafe { property::<bool>(env, napi_val, c"leading")? }.unwrap_or(false),
+            trailing: unsafe { property::<bool>(env, napi_val, c"trailing")? }.unwrap_or(false),
+        })
     }
 }

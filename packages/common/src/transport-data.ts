@@ -1,7 +1,6 @@
-import type { AnyUntypedNode, NodeLayout, TransportCoordinate } from '@sittir/types';
-import { decodeIndex, decodeTree, isCoordinate } from './read.ts';
-import { assertHoldsTree, holdTreeOn, releaseTreeOn, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
-import { editedWithin } from './identity.ts';
+import type { AnyUntypedNode, NodeLayout, NodeTrivia, TransportCoordinate, TriviaEntry } from '@sittir/types';
+import { decodeIndex, isCoordinate, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
+import { assertHoldsTree, holdTreeOn, releaseTreeOn, treeOf, treeOfToken, treeTokenOf, type TreeToken } from './tree-token.ts';
 import { forEachTriviaList, type TriviaSides } from './trivia.ts';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -104,76 +103,9 @@ export function holdsSlots(node: object): boolean {
 	return false;
 }
 
-/**
- * The coordinate a node crosses to the render as (`$_layout.at`) in place of
- * its storage: a node of a live tree whose range holds no edit inside it.
- * Outside trivia does not stop it: it renders around the folded bytes.
- */
-function foldedCoordinate(record: Record<string, unknown>): TransportCoordinate | undefined {
-	const coordinate = coordinateOf(record);
-	if (coordinate === undefined) return undefined;
-	const tree = treeOf(record);
-	if (tree === undefined) return undefined;
-	return editedWithin(tree, decodeIndex(coordinate.$treeHandle), coordinate.$end) ? undefined : coordinate;
-}
-
-/**
- * A coordinate a holder stores without having read it, as it crosses: its
- * bytes, unless a write landed in its range, its own outside trivia included
- * (a raw coordinate carries none). That write lives on the node another route
- * read, which this holder does not hold, so its bytes would silently drop the
- * write; the crossing refuses instead, naming the range.
- */
-function unreadCoordinate(coordinate: TransportCoordinate): TransportCoordinate {
-	const tree = treeOf(coordinate);
-	const index = decodeIndex(coordinate.$treeHandle);
-	if (tree === undefined || !editedWithin(tree, index, coordinate.$end, false)) return coordinate;
-	throw new Error(
-		`render: nodes ${index}..${coordinate.$end} of tree ${decodeTree(coordinate.$treeHandle)} are held here as a coordinate this holder never read, and a write landed in that range on a node read through another route. The write lives on that node, not on this holder, so it cannot render here. Build this holder from the written node itself (the node the accessor that reached it returns), or render the holder the write went through`
-	);
-}
-
-/**
- * Whether trivia lies outside the node's span: leading or trailing entries. A
- * read's inner entries sit inside the span, so the coordinate already covers
- * them.
- */
-function hasOutsideTrivia(trivia: unknown): boolean {
-	if (!isRecord(trivia)) return false;
-	return trivia.leading != null || trivia.trailing != null;
-}
-
-/** The placement facts a trivia entry carries beside its coordinate: whether it sits on its owner's line, and the tokens between them. */
-const ENTRY_PLACEMENT_KEYS = ['$sameLine', '$tokensBetween'] as const;
-
-/** Copy `from`'s placement facts onto `to`, and return `to`. */
-export function carryPlacement<T extends object>(from: object, to: T): T {
-	for (const key of ENTRY_PLACEMENT_KEYS) if (key in from) (to as Record<string, unknown>)[key] = (from as Record<string, unknown>)[key];
-	return to;
-}
-
-/** A coordinate as transport data: its four fields and its placement facts, holding no tree. */
-function plainCoordinate(coordinate: TransportCoordinate): Record<string, unknown> {
-	return carryPlacement(coordinate, {
-		$treeHandle: coordinate.$treeHandle,
-		$end: coordinate.$end,
-		$span: { start: coordinate.$span.start, end: coordinate.$span.end },
-		$type: coordinate.$type
-	});
-}
-
-/**
- * The coordinate a folded node crosses as: its `$_layout.at`, with the format
- * stamp it carries and its outside trivia (`$_layout.trivia`, leading and
- * trailing only: inner entries lie inside the span, so its bytes carry them).
- */
-function foldToCoordinate(record: Record<string, unknown>, coordinate: TransportCoordinate, trivia: unknown): Record<string, unknown> {
-	const out = carryPlacement(record, plainCoordinate(coordinate));
-	if (record.$format !== undefined) out.$format = record.$format;
-	if (isRecord(trivia) && hasOutsideTrivia(trivia)) {
-		setLayout(out, 'trivia', { ...(trivia.leading != null ? { leading: trivia.leading } : {}), ...(trivia.trailing != null ? { trailing: trivia.trailing } : {}) });
-	}
-	return out;
+/** A coordinate as transport data: its four fields, holding no tree. */
+function plainCoordinate(coordinate: { readonly $treeHandle: number; readonly $end: number; readonly $span: { readonly start: number; readonly end: number }; readonly $type?: number }): Record<string, unknown> {
+	return { $treeHandle: coordinate.$treeHandle, $end: coordinate.$end, $span: { start: coordinate.$span.start, end: coordinate.$span.end }, $type: coordinate.$type };
 }
 
 /** `layout` without its coordinate; `undefined` when nothing else is left. */
@@ -203,12 +135,12 @@ export function markEdited<T extends object>(data: T): T {
 
 /**
  * Where a node sits in the source it came from: the tree, held by its token,
- * and the node's span and stamped kind there, and its own handle when the
- * reader addressed it by one, which names it where its span alone may not.
+ * and the node's coordinate there.
  */
 export interface SourceIdentity {
 	readonly token: TreeToken;
 	readonly treeHandle: number;
+	readonly end: number;
 	readonly span: { readonly start: number; readonly end: number };
 	readonly kind: number;
 }
@@ -218,7 +150,7 @@ const SOURCE = Symbol('sittir.source');
 /**
  * The source identity of a node: a read node's own coordinate and tree, or
  * the identity an edit carried forward from the node it rebuilt
- * (`markEdited`). Evidence of layout only; nothing slices it.
+ * (`carrySource`). Evidence of layout only; nothing slices it.
  */
 export function sourceOf(node: object): SourceIdentity | undefined {
 	const carried = (node as { [SOURCE]?: SourceIdentity })[SOURCE];
@@ -226,7 +158,7 @@ export function sourceOf(node: object): SourceIdentity | undefined {
 	const token = treeTokenOf(node);
 	const at = coordinateOf(node);
 	if (token === undefined || at === undefined) return undefined;
-	return { token, treeHandle: at.$treeHandle, span: at.$span, kind: at.$type };
+	return { token, treeHandle: at.$treeHandle, end: at.$end, span: at.$span, kind: at.$type };
 }
 
 /** Make `to` keep the source identity `from` has: the node an edit rebuilt from it. */
@@ -235,69 +167,107 @@ export function carrySource(from: object, to: object): void {
 	if (source !== undefined) Object.defineProperty(to, SOURCE, { value: source, enumerable: false, configurable: true });
 }
 
+/** A tree whose trivia table answers for a node: the tree and the node's index in it. */
+interface TableAt {
+	readonly tree: Required<Pick<TreeHandle, 'triviaSide' | 'writeTriviaSide'>>;
+	readonly index: number;
+}
+
+function tableOf(tree: TreeHandle | undefined, index: number | undefined): TableAt | undefined {
+	return tree?.triviaSide === undefined || tree.writeTriviaSide === undefined || index === undefined
+		? undefined
+		: { tree: { triviaSide: tree.triviaSide, writeTriviaSide: tree.writeTriviaSide }, index };
+}
+
+/** The table that holds a parsed node's sides: its live tree's, at its own index; `undefined` for a built node. */
+export function tableAt(node: object): TableAt | undefined {
+	return tableOf(treeOf(node), indexOf(node));
+}
+
+/** The tree of the node a source identity names, while it lives. */
+function sourceTree(source: SourceIdentity): TreeHandle | undefined {
+	return treeOfToken(source.token);
+}
 
 /**
- * `markEdited` for a node edited in place: the node keeps its identity and
- * methods, and loses the coordinate that would fold it back to its pre-edit
- * bytes. A write of inner trivia is such an edit, since the coordinate's span
- * already covers the gap the new entries sit in.
+ * The sides of a node's unit children, by slot and item (`TransportLayout.units`): the ones it
+ * holds, else its tree's for a parsed node, else those of the node it was rebuilt from
+ * (`sourceOf`); `undefined` when none answers.
  */
-export function detachCoordinate(data: object): void {
-	const record = data as { $_layout?: NodeLayout };
-	const layout = withoutAt(record.$_layout);
-	if (layout === undefined) delete record.$_layout;
-	else record.$_layout = layout;
-	releaseTreeOn(data);
+export function unitSidesOf(node: object): readonly unknown[] | undefined {
+	const held = (node as { readonly $_layout?: TransportLayout }).$_layout?.units;
+	if (held !== undefined) return held;
+	const tree = treeOf(node);
+	const index = indexOf(node);
+	if (tree?.unitSides !== undefined && index !== undefined) return tree.unitSides(index);
+	const source = sourceOf(node);
+	if (source === undefined) return undefined;
+	return sourceTree(source)?.unitSides?.(decodeIndex(source.treeHandle));
+}
+
+/**
+ * The entries of `side` of `node`: a parsed node's from its tree's trivia table, the written ones
+ * or else the ones the table assigns it; a built node's stored side, else the side of the node it
+ * was rebuilt from (`sourceOf`).
+ */
+export function sideOf(node: object, side: TriviaSideName): readonly TriviaEntry[] {
+	const at = tableAt(node);
+	if (at !== undefined) return at.tree.triviaSide(at.index, side) as TriviaEntry[];
+	const stored = triviaOf(node)?.[side];
+	if (stored !== undefined) return stored;
+	const source = sourceOf(node);
+	const table = source === undefined ? undefined : tableOf(sourceTree(source), decodeIndex(source.treeHandle));
+	return table === undefined ? [] : (table.tree.triviaSide(table.index, side) as TriviaEntry[]);
+}
+
+/** Every non-empty side of `node` (`sideOf`); `undefined` when it has none. */
+export function sidesOf(node: object): NodeTrivia | undefined {
+	const sides: { -readonly [S in TriviaSideName]?: readonly TriviaEntry[] } = {};
+	for (const side of ['leading', 'trailing', 'inner'] as const) {
+		const entries = sideOf(node, side);
+		if (entries.length > 0) sides[side] = entries;
+	}
+	return Object.keys(sides).length === 0 ? undefined : sides;
 }
 
 /**
  * Turn a node into the plain data the native boundary accepts.
  *
  * The wrap surface carries accessor methods and `$with`; only data crosses
- * to napi. This copies the storage (`_`-keys) through, drops everything
- * callable, and drops the node's own coordinate (`$_layout.at`) from every
- * node that does not fold: that node rebuilds from its slots, so the
- * coordinate that would slice its pre-edit text may not cross.
- *
- * A node that still names itself and was not rebuilt below crosses as its
- * coordinate alone (`foldedCoordinate`): its `$_layout.at`, which the transport's slot
- * carrier slices from the source the engine still holds. That is what keeps
- * an untouched subtree's original bytes while its rebuilt siblings render
- * canonically.
+ * to napi. This copies the storage (`_`-keys) through and drops everything
+ * callable. The render root's edges change (`rootEdges`), on the node that
+ * holds its sides (`rootBearer`). A parsed node of
+ * a live tree crosses as its coordinate alone,
+ * which the render slices from the source the engine still holds and frames
+ * with the sides its tree's trivia table gives it; one whose range holds a
+ * write is read there instead. A built node crosses as its storage and the
+ * sides it holds, and names the node it was rebuilt from (`$_layout.sides`)
+ * for the sides it does not hold.
  */
-export function toTransportData(node: AnyUntypedNode, view: TriviaView): AnyUntypedNode {
-	return toTransportValue(node, view, BOTH_EDGES, true) as AnyUntypedNode;
+export function toTransportData(node: AnyUntypedNode, view: KindView): AnyUntypedNode {
+	return toTransportValue(node, view, rootEdges(node), true, undefined, rootBearer(node, view)) as AnyUntypedNode;
 }
 
 /**
- * `toTransportData` for data that will leave the tree it was read from: the
- * same trivia, gaps and flanks, judged the same way, but no node is folded to
- * a coordinate, so every node crosses as its own storage and nothing but the
- * layout evidence still names the tree. The caller turns that evidence into
+ * `toTransportData` for data that will leave the tree it was read from: no
+ * node crosses as its coordinate, so every node crosses as its own storage
+ * with its sides as data (`sidesOf`), and nothing but the layout evidence
+ * still names the tree. An alias envelope and its content are one parser
+ * node, whose sides the envelope holds. The caller turns that evidence into
  * the text it names.
  */
-export function toDetachedTransportData(node: AnyUntypedNode, view: TriviaView): AnyUntypedNode {
-	return toTransportValue(node, view, BOTH_EDGES, false) as AnyUntypedNode;
+export function toDetachedTransportData(node: AnyUntypedNode, view: KindView): AnyUntypedNode {
+	return toTransportValue(node, view, rootEdges(node), false, undefined, rootBearer(node, view)) as AnyUntypedNode;
 }
 
-/** The sides of a read node's trivia derived from its line gaps, and the sibling its leading runs separate it from in its source. */
-export interface DerivedSides {
-	readonly previous: { readonly start: number; readonly end: number } | null;
-	readonly next: { readonly start: number; readonly end: number } | null;
-	readonly leading: boolean;
-	readonly trailing: boolean;
-}
-
-/** How a node's trivia crosses: the entries it carries, and which of them its read derived. */
-export interface TriviaView {
-	readonly trivia: (node: Record<string, unknown>) => unknown;
-	readonly derived: (node: Record<string, unknown>) => DerivedSides | undefined;
+/** How the crossing tells kinds apart: a kind a rebuild constructs around an existing node, and a list kind. */
+export interface KindView {
 	readonly isWrapper: (kindId: number) => boolean;
 	readonly isList: (kindId: number) => boolean;
 }
 
-/** The view of data whose trivia is all stored: nothing is derived. */
-export const STORED_TRIVIA: TriviaView = { trivia: (node) => triviaOf(node), derived: () => undefined, isWrapper: () => false, isList: () => false };
+/** The view of data with no wrapper or list kinds. */
+export const PLAIN_KINDS: KindView = { isWrapper: () => false, isList: () => false };
 
 /** The edges of a node whose neighbour is not the one its source had there. */
 export interface ChangedEdges {
@@ -308,24 +278,54 @@ export interface ChangedEdges {
 const NO_EDGES: ChangedEdges = { leading: false, trailing: false };
 const BOTH_EDGES: ChangedEdges = { leading: true, trailing: true };
 
-function changedEdges(list: readonly unknown[], index: number, view: TriviaView): ChangedEdges {
-	const entry = list[index];
-	if (!isRecord(entry)) return NO_EDGES;
-	const derived = view.derived(evidenceOf(entry, view));
-	if (derived === undefined) return NO_EDGES;
-	const kept = index === 0 ? derived.previous === null : sourceAdjacent(list, index, derived, view);
-	return { leading: derived.leading && !kept, trailing: derived.trailing && index < list.length - 1 };
+/**
+ * The edges of a render root: it renders with no neighbour, so both changed,
+ * unless it is its tree's root, whose edges are the document's.
+ */
+function rootEdges(node: object): ChangedEdges {
+	const source = sourceOf(node);
+	return source !== undefined && decodeIndex(source.treeHandle) === 0 ? NO_EDGES : BOTH_EDGES;
 }
 
-function sourceAdjacent(list: readonly unknown[], index: number, derived: DerivedSides, view: TriviaView): boolean {
-	const before = list[index - 1];
+/**
+ * The node that takes a render root's edges: the root, unless it is an alias
+ * envelope whose content is the same parser node (the content's coordinate
+ * carries the envelope's display id, which the reader stamps only there), in
+ * which case the content holds that node's sides and takes the edges.
+ */
+function rootBearer(node: AnyUntypedNode, view: KindView): Record<string, unknown> | undefined {
+	if (!isRecord(node)) return undefined;
+	const evidence = evidenceOf(node, view);
+	return evidence !== node && isAliasContent(node, evidence) ? evidence : node;
+}
+
+/** Whether `child` is the content of the alias envelope `holder`, the same parser node: its coordinate carries the envelope's display id. */
+function isAliasContent(holder: Record<string, unknown>, child: unknown): boolean {
+	return isRecord(child) && child.$type !== holder.$type && coordinateOf(child)?.$type === holder.$type;
+}
+
+/** The siblings beside the node a source identity names, while its tree lives. */
+function siblingsOf(source: SourceIdentity): Siblings | undefined {
+	return sourceTree(source)?.siblings?.(decodeIndex(source.treeHandle));
+}
+
+/** Whether `neighbour`, beside a node in its holder, is the sibling its source had there (`span`, `null` for none). */
+function keepsNeighbour(span: Siblings['previous'], neighbour: unknown, token: TreeToken, view: KindView): boolean {
+	if (span === null) return neighbour === undefined;
+	if (!isRecord(neighbour)) return false;
+	const other = sourceOf(evidenceOf(neighbour, view));
+	return other !== undefined && other.token === token && other.span.start === span.start && other.span.end === span.end;
+}
+
+function changedEdges(list: readonly unknown[], index: number, view: KindView): ChangedEdges {
 	const entry = list[index];
-	return (
-		derived.previous !== null &&
-		isRecord(before) &&
-		isRecord(entry) &&
-		isSourceSibling(evidenceOf(before, view), evidenceOf(entry, view), derived.previous)
-	);
+	const source = isRecord(entry) ? sourceOf(evidenceOf(entry, view)) : undefined;
+	const siblings = source === undefined ? undefined : siblingsOf(source);
+	if (source === undefined || siblings === undefined) return NO_EDGES;
+	return {
+		leading: !keepsNeighbour(siblings.previous, list[index - 1], source.token, view),
+		trailing: !keepsNeighbour(siblings.next, list[index + 1], source.token, view)
+	};
 }
 
 function isPresent(value: unknown): boolean {
@@ -335,9 +335,9 @@ function isPresent(value: unknown): boolean {
 /**
  * The node whose source identity stands for a list entry: the entry itself,
  * or, for an entry of a kind a rebuild constructs around an existing node
- * (`TriviaView.isWrapper`) that holds exactly one present node, that node.
+ * (`KindView.isWrapper`) that holds exactly one present node, that node.
  */
-function evidenceOf(entry: Record<string, unknown>, view: TriviaView): Record<string, unknown> {
+function evidenceOf(entry: Record<string, unknown>, view: KindView): Record<string, unknown> {
 	if (sourceOf(entry) !== undefined || typeof entry.$type !== 'number' || !view.isWrapper(entry.$type)) return entry;
 	const held = Object.keys(entry).flatMap((key) => (isSlotKey(key) && isPresent(entry[key]) ? [entry[key]] : []));
 	const [only] = held;
@@ -346,58 +346,21 @@ function evidenceOf(entry: Record<string, unknown>, view: TriviaView): Record<st
 
 /**
  * The source bytes between a list item and the item before it, when the two
- * are still adjacent there and no derived line-gap run already spells that
- * gap: the range from the predecessor's end to the item's start in the tree
- * both were read from. Sent only while `owner`, the node holding the items,
- * carries source identity, as the list's flanks are (`sourceFlankOf`): a list
- * with no source keeps none of its source layout.
+ * are still adjacent there and no layout run on the item's leading side
+ * already spells that gap: the range from the predecessor's end to the item's
+ * start in the tree both were read from. Sent only while `owner`, the node
+ * holding the items, carries source identity, as the list's flanks are
+ * (`sourceFlankOf`): a list with no source keeps none of its source layout.
  */
-export function sourceGapOf(
-	owner: Record<string, unknown>,
-	list: readonly unknown[],
-	index: number,
-	view: TriviaView,
-	trivia: unknown
-): SourceGapEvidence | undefined {
+export function sourceGapOf(owner: Record<string, unknown>, list: readonly unknown[], index: number, view: KindView): SourceGapEvidence | undefined {
 	const entry = list[index];
 	if (index === 0 || !isRecord(entry) || sourceOf(owner) === undefined) return undefined;
 	const evidence = evidenceOf(entry, view);
-	const derived = view.derived(evidence);
-	if (derived === undefined || derived.previous === null || !sourceAdjacent(list, index, derived, view)) return undefined;
-	if (isRecord(trivia) && typeof (trivia.leading as readonly unknown[] | undefined)?.[0] === 'number') return undefined;
 	const source = sourceOf(evidence);
-	if (source === undefined) return undefined;
-	return { $treeHandle: source.treeHandle, $span: { start: derived.previous.end, end: source.span.start } };
-}
-
-/**
- * Whether `node` names the parser node `owner` names: an alias envelope's
- * content does. The trivia derived from that node's line gaps is the
- * owner's, so the node crosses with its stored trivia only.
- */
-function namesSameNode(owner: Record<string, unknown>, node: Record<string, unknown>): boolean {
-	const own = sourceOf(owner);
-	const other = sourceOf(node);
-	return own !== undefined && other !== undefined && own.token === other.token && own.treeHandle === other.treeHandle;
-}
-
-function isSourceSibling(candidate: Record<string, unknown>, node: Record<string, unknown>, span: { readonly start: number; readonly end: number }): boolean {
-	const own = sourceOf(candidate);
-	const other = sourceOf(node);
-	return own !== undefined && other !== undefined && own.token === other.token && own.span.start === span.start && own.span.end === span.end;
-}
-
-function withoutChangedEdges(trivia: unknown, changed: ChangedEdges): unknown {
-	if (!isRecord(trivia) || (!changed.leading && !changed.trailing)) return trivia;
-	const leading = trivia.leading as readonly unknown[] | undefined;
-	const trailing = trivia.trailing as readonly unknown[] | undefined;
-	const first = leading?.findIndex((entry) => typeof entry !== 'number') ?? -1;
-	const last = trailing?.findLastIndex((entry) => typeof entry !== 'number') ?? -1;
-	const kept: Record<string, unknown> = { ...trivia };
-	if (changed.leading) kept.leading = first < 0 ? undefined : leading!.slice(first);
-	if (changed.trailing) kept.trailing = last < 0 ? undefined : trailing!.slice(0, last + 1);
-	for (const side of ['leading', 'trailing'] as const) if (kept[side] === undefined) delete kept[side];
-	return Object.keys(kept).length === 0 ? undefined : kept;
+	const previous = source === undefined ? undefined : siblingsOf(source)?.previous;
+	if (source === undefined || previous == null || !keepsNeighbour(previous, list[index - 1], source.token, view)) return undefined;
+	if (typeof sideOf(evidence, 'leading')[0] === 'number') return undefined;
+	return { $treeHandle: source.treeHandle, $span: { start: previous.end, end: source.span.start } };
 }
 
 /** A list item's gap toward the item before it as the transport sends it: the gap's range in its tree. */
@@ -429,16 +392,19 @@ export interface PointSpanData {
 /**
  * A node's layout as the transport sends it (`$_layout`): the trivia that
  * crosses with it, the source evidence a rebuilt node keeps (its gap toward
- * the list item before it and, for a list, its flanks), and a snapshot
- * node's span. Absent when the node has none of these. A node's own
- * coordinate (`at`) never crosses here: a node that keeps it crosses as it
- * (`foldedCoordinate`).
+ * the list item before it and, for a list, its flanks), a snapshot node's
+ * span, the node a built node takes its missing sides from (`sides`, a
+ * coordinate), and the edges whose neighbour changed (`changed`), where its
+ * sides drop their layout runs. Absent when the node has none of these.
  */
 export interface TransportLayout {
 	trivia?: unknown;
+	units?: readonly unknown[];
 	gap?: SourceGapEvidence;
 	flank?: SourceFlankEvidence;
 	span?: PointSpanData;
+	sides?: Record<string, unknown>;
+	changed?: ChangedEdges;
 }
 
 function setLayout<K extends keyof TransportLayout>(out: Record<string, unknown>, key: K, value: TransportLayout[K]): void {
@@ -446,11 +412,18 @@ function setLayout<K extends keyof TransportLayout>(out: Record<string, unknown>
 	layout[key] = value;
 }
 
+/** A coordinate crossing, with the edges whose neighbour changed. */
+function coordinateCrossing(coordinate: Parameters<typeof plainCoordinate>[0], changed: ChangedEdges): Record<string, unknown> {
+	const out = plainCoordinate(coordinate);
+	if (changed.leading || changed.trailing) setLayout(out, 'changed', changed);
+	return out;
+}
+
 /**
- * The items of a list node: the one array a list kind (`TriviaView.isList`)
+ * The items of a list node: the one array a list kind (`KindView.isList`)
  * holds in its slots.
  */
-function listItemsOf(record: Record<string, unknown>, view: TriviaView): readonly Record<string, unknown>[] | undefined {
+function listItemsOf(record: Record<string, unknown>, view: KindView): readonly Record<string, unknown>[] | undefined {
 	if (typeof record.$type !== 'number' || !view.isList(record.$type)) return undefined;
 	const held = Object.keys(record).flatMap((key) => {
 		const value = record[key];
@@ -467,86 +440,98 @@ function listItemsOf(record: Record<string, unknown>, view: TriviaView): readonl
  * still the source's last. `undefined` for anything that is not a list node
  * with source identity.
  */
-export function sourceFlankOf(record: Record<string, unknown>, view: TriviaView): SourceFlankEvidence | undefined {
+export function sourceFlankOf(record: Record<string, unknown>, view: KindView): SourceFlankEvidence | undefined {
 	const items = listItemsOf(record, view);
 	const source = sourceOf(record);
 	if (items === undefined || items.length === 0 || source === undefined) return undefined;
-	const inList = (item: Record<string, unknown>): SourceIdentity | undefined => {
+	const inList = (item: Record<string, unknown>): Siblings | undefined => {
 		const own = sourceOf(item);
-		return own !== undefined && own.token === source.token && own.span.start >= source.span.start && own.span.end <= source.span.end ? own : undefined;
+		return own !== undefined && own.token === source.token && own.span.start >= source.span.start && own.span.end <= source.span.end ? siblingsOf(own) : undefined;
 	};
-	const first = evidenceOf(items[0]!, view);
-	const last = evidenceOf(items[items.length - 1]!, view);
 	return {
 		$treeHandle: source.treeHandle,
 		$span: source.span,
-		$before: inList(first) !== undefined && view.derived(first)?.previous === null,
-		$after: inList(last) !== undefined && view.derived(last)?.next === null
+		$before: inList(evidenceOf(items[0]!, view))?.previous === null,
+		$after: inList(evidenceOf(items[items.length - 1]!, view))?.next === null
 	};
 }
 
 /**
- * A node's trivia as it crosses: without the runs whose neighbour changed,
- * and, for a list node, without the derived runs at its flanks, which its
- * source flanks spell instead (`sourceFlankOf`), so each flank has one source.
+ * The sides a list node crosses with: without the layout runs at its flanks,
+ * which its source flanks spell instead (`sourceFlankOf`), so each flank has
+ * one source.
  */
-export function crossingTrivia(record: Record<string, unknown>, view: TriviaView, changed: ChangedEdges = NO_EDGES): unknown {
-	const trivia = withoutChangedEdges(view.trivia(record), changed);
-	return listItemsOf(record, view) === undefined ? trivia : withoutChangedEdges(trivia, BOTH_EDGES);
+function edgesOf(record: Record<string, unknown>, view: KindView, changed: ChangedEdges): ChangedEdges {
+	return listItemsOf(record, view) === undefined ? changed : BOTH_EDGES;
 }
 
 function assertTriviaHoldsTree(entries: readonly unknown[]): void {
 	for (const entry of entries) if (isRecord(entry) && treeHandleOf(entry) !== undefined) assertHoldsTree(entry);
 }
 
-function toTransportValue(
-	value: unknown,
-	view: TriviaView,
-	changed: ChangedEdges,
-	fold: boolean,
-	owner?: Record<string, unknown>,
-	bearer?: Record<string, unknown>
-): unknown {
+function toTransportValue(value: unknown, view: KindView, changed: ChangedEdges, fold: boolean, owner?: Record<string, unknown>, bearer?: Record<string, unknown>, sided = true): unknown {
 	if (Array.isArray(value)) {
 		return value.map((entry, index) => {
 			if (!isRecord(entry)) return toTransportValue(entry, view, NO_EDGES, fold);
-			const evidence = evidenceOf(entry, view);
-			const changed = changedEdges(value, index, view);
-			const out = toTransportValue(entry, view, changed, fold, undefined, evidence);
-			const gap = owner !== undefined ? sourceGapOf(owner, value, index, view, withoutChangedEdges(view.trivia(evidence), changed)) : undefined;
+			const out = toTransportValue(entry, view, changedEdges(value, index, view), fold, undefined, evidenceOf(entry, view));
+			const gap = owner !== undefined ? sourceGapOf(owner, value, index, view) : undefined;
 			if (gap !== undefined && isRecord(out)) setLayout(out, 'gap', gap);
 			return out;
 		});
 	}
 	if (!isRecord(value)) return value;
-	if (isCoordinate(value) && !fold) return plainCoordinate(value);
 	const bears = bearer === undefined || bearer === value;
-	const trivia = owner !== undefined && namesSameNode(owner, value) ? triviaOf(value) : crossingTrivia(value, view, bears ? changed : NO_EDGES);
-	// Trivia entries cross as they are, coordinates included.
-	if (fold && trivia != null) forEachTriviaList(trivia as TriviaSides<unknown>, assertTriviaHoldsTree);
-	const folded = !fold ? undefined : isCoordinate(value) ? unreadCoordinate(value) : foldedCoordinate(value);
-	if (folded !== undefined) {
-		assertHoldsTree(value);
-		return foldToCoordinate(value, folded, trivia);
+	const edges = edgesOf(value, view, bears ? changed : NO_EDGES);
+	const at = coordinateOf(value);
+	if (at !== undefined && (isCoordinate(value) || (fold && treeOf(value) !== undefined))) {
+		if (fold) assertHoldsTree(value);
+		const out = fold ? coordinateCrossing(at, edges) : plainCoordinate(at);
+		if (value.$format !== undefined) out.$format = value.$format;
+		return out;
 	}
 	const out: Record<string, unknown> = {};
 	for (const key of Object.keys(value)) {
 		if (!isDataKey(key) || key === '$_layout') continue;
 		const raw = value[key];
 		if (typeof raw === 'function') continue;
-		out[key] = isStorageKey(key) ? toTransportValue(raw, view, bears ? NO_EDGES : changed, fold, value, bears ? undefined : bearer) : raw;
+		out[key] = isStorageKey(key) ? toTransportValue(raw, view, bears ? NO_EDGES : changed, fold, value, bears ? undefined : bearer, fold || !isAliasContent(value, raw)) : raw;
 	}
 	const given = (value as { readonly $_layout?: TransportLayout }).$_layout;
 	if (given?.gap !== undefined) setLayout(out, 'gap', given.gap);
 	if (given?.flank !== undefined) setLayout(out, 'flank', given.flank);
 	if (given?.span !== undefined) setLayout(out, 'span', given.span);
-	if (trivia != null) setLayout(out, 'trivia', trivia);
+	const content = fold ? undefined : Object.keys(value).flatMap((key) => (isStorageKey(key) && isAliasContent(value, value[key]) ? [value[key] as object] : []))[0];
+	const trivia = fold ? triviaOf(value) : sided ? (sidesOf(value) ?? (content === undefined ? undefined : sidesOf(content))) : undefined;
+	if (trivia != null) {
+		if (fold) forEachTriviaList(trivia as TriviaSides<unknown>, assertTriviaHoldsTree);
+		setLayout(out, 'trivia', trivia);
+	}
+	const units = fold ? given?.units : sided ? unitSidesOf(value) : undefined;
+	if (units !== undefined && units.length > 0) setLayout(out, 'units', units);
+	const source = fold ? sourceOf(value) : undefined;
+	if (source !== undefined && sourceTree(source) !== undefined) {
+		setLayout(out, 'sides', plainCoordinate({ $treeHandle: source.treeHandle, $end: source.end, $span: source.span, $type: source.kind }));
+	}
+	const layout = out.$_layout as TransportLayout | undefined;
+	if ((edges.leading || edges.trailing) && (layout?.trivia !== undefined || layout?.sides !== undefined)) setLayout(out, 'changed', edges);
 	const flank = sourceFlankOf(value, view);
 	if (flank !== undefined) setLayout(out, 'flank', flank);
-	// Past the fold, nothing is a coordinate: a leaf that kept its trivia
-	// crosses as itself, and a storage-bearing node rebuilds from its slots.
+	// A storage-bearing node rebuilds from its slots.
 	if (holdsSlots(out)) delete out.$text;
 	return out;
+}
+
+/**
+ * `markEdited` for a node edited in place: the node keeps its identity and
+ * methods, and loses the coordinate that would fold it back to its pre-edit
+ * bytes.
+ */
+export function detachCoordinate(data: object): void {
+	const record = data as { $_layout?: NodeLayout };
+	const layout = withoutAt(record.$_layout);
+	if (layout === undefined) delete record.$_layout;
+	else record.$_layout = layout;
+	releaseTreeOn(data);
 }
 
 /** Remove the tree token from everything under `value`, through slots and trivia: transport data holds no tree. */

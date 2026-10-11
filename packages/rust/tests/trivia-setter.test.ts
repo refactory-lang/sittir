@@ -94,7 +94,7 @@ describe('loose trivia strings build ir.comment', () => {
 
 	it('refuses a node entry whose kind is not trivia', () => {
 		expect(() => rs.build.identifier('a').$trivia.leading(rs.build.identifier('b') as never)).toThrow(/identifier is not an extra/);
-		expect(rs.build.identifier('a').$trivia.leading(rs.build.blockComment(' b ')).$render()).toBe('/* b */\na');
+		expect(rs.build.identifier('a').$trivia.leading(rs.build.blockComment(' b ')).$render()).toBe('/* b */ a');
 	});
 
 	it('takes an eligible whitespace kind, built or spelled exactly, as its kind id', () => {

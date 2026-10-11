@@ -1,7 +1,7 @@
 //! The trivia table's assignment: each gap's entries go to a side of the
 //! owner's child beside the gap, held to tree-sitter's trees in three grammars.
 
-use sittir_core::trivia_table::{is_empty, Assigned, TriviaSide, TriviaTable};
+use sittir_core::trivia_table::{is_empty, Assigned, SurfaceKinds, TriviaSide, TriviaTable};
 use tree_sitter::{Language, Node, Parser, Tree};
 
 fn parse(language: &Language, source: &str) -> Tree {
@@ -37,9 +37,9 @@ struct Case {
 }
 
 impl Case {
-    fn new(language: Language, source: &'static str) -> Self {
+    fn new((language, kinds): Grammar, source: &'static str) -> Self {
         let tree = parse(&language, source);
-        let table = TriviaTable::assign(&tree, source);
+        let table = TriviaTable::assign(&tree, source, kinds);
         Case { tree, source, table }
     }
 
@@ -64,7 +64,7 @@ impl Case {
         for index in 0..self.tree.root_node().descendant_count() as u32 {
             for side in [Leading, Trailing, Inner] {
                 for entry in self.table.side(index, side) {
-                    if let Assigned::Layout { start, end } = *entry {
+                    if let Assigned::Layout { start, end, .. } = *entry {
                         runs.push((index, side, &self.source[start as usize..end as usize]));
                     }
                 }
@@ -76,14 +76,17 @@ impl Case {
 
 use TriviaSide::{Inner, Leading, Trailing};
 
-fn rust() -> Language {
-    sittir_rust::language()
+/// A grammar's language and its surface kinds.
+type Grammar = (Language, SurfaceKinds);
+
+fn rust() -> Grammar {
+    (sittir_rust::language(), sittir_rust::render::kind_ids::SURFACE_KINDS)
 }
-fn typescript() -> Language {
-    sittir_typescript::language()
+fn typescript() -> Grammar {
+    (sittir_typescript::language(), sittir_typescript::render::kind_ids::SURFACE_KINDS)
 }
-fn python() -> Language {
-    sittir_python::language()
+fn python() -> Grammar {
+    (sittir_python::language(), sittir_python::render::kind_ids::SURFACE_KINDS)
 }
 
 #[test]
@@ -139,8 +142,28 @@ fn a_comment_on_a_statements_line_trails_the_statement_not_the_call() {
 #[test]
 fn python_newline_text_is_layout_and_never_an_entry() {
     let case = Case::new(python(), "x = 1  # c\ny = 2\n");
-    case.holds("simple_statements_elements", "x = 1", Trailing, "comment", "# c");
-    assert_eq!(case.table.side(case.at("simple_statements", "y = 2"), Leading), [Assigned::Layout { start: 10, end: 11 }]);
+    case.holds("expression_statement", "x = 1", Trailing, "comment", "# c");
+    assert_eq!(case.table.side(case.at("simple_statements", "y = 2"), Leading), [Assigned::Layout { start: 10, end: 11, owner: 0 }]);
+}
+
+#[test]
+fn a_list_node_passes_its_side_to_the_item_ending_where_it_does() {
+    let case = Case::new(python(), "def f():\n    a()  # t\n");
+    case.holds("expression_statement", "a()", Trailing, "comment", "# t");
+    assert_eq!(case.entries(case.at("simple_statements_elements", "a()"), Trailing), []);
+}
+
+#[test]
+fn a_list_node_keeps_the_side_its_unit_item_would_take() {
+    let case = Case::new(python(), "def f():\n    pass  # t\n");
+    case.holds("simple_statements_elements", "pass", Trailing, "comment", "# t");
+}
+
+#[test]
+fn a_layout_run_at_a_lists_edge_stays_on_the_list() {
+    let case = Case::new(python(), "x = [\n    a,\n    b,\n]\n");
+    assert_eq!(case.table.side(case.at("identifier", "a"), Leading), []);
+    assert!(matches!(case.table.side(case.at("collection_elements", "a,\n    b,"), Leading), [Assigned::Layout { .. }]));
 }
 
 #[test]
@@ -179,7 +202,7 @@ fn the_outer_node_takes_the_side() {
 fn a_line_break_run_is_layout_on_the_side_its_gap_goes_to() {
     let case = Case::new(rust(), "fn f() {}\n\nfn g() {}\n");
     let g = case.at("function_item", "fn g() {}");
-    assert_eq!(case.table.side(g, Leading), [Assigned::Layout { start: 9, end: 11 }]);
+    assert_eq!(case.table.side(g, Leading), [Assigned::Layout { start: 9, end: 11, owner: 0 }]);
 }
 
 #[test]
@@ -199,7 +222,7 @@ fn every_extra_of_the_probe_inputs_lands_in_one_side_or_is_unowned() {
         for index in 0..case.tree.root_node().descendant_count() as u32 {
             for side in [Leading, Trailing, Inner] {
                 placed.extend(case.entries(index, side).into_iter().map(|entry| match entry {
-                    Assigned::Extra(at) | Assigned::Error(at) => at,
+                    Assigned::Extra(at) | Assigned::Error(at) | Assigned::Member(at) => at,
                     Assigned::Layout { .. } => unreachable!(),
                 }));
             }
@@ -233,4 +256,15 @@ fn a_node_is_empty_when_no_child_has_width() {
         cursor.goto_descendant(case.at("statement_block", block) as usize);
         assert_eq!(is_empty(&cursor.node()), empty, "{source:?}");
     }
+}
+
+#[test]
+fn the_run_between_a_leading_entry_and_its_owner_is_on_the_entrys_side() {
+    let source = "interface I {\n  /** d */\n  x: number;\n}\n";
+    let case = Case::new(typescript(), source);
+    let member = case.at("property_signature", "x: number");
+    let side = case.table.side(member, Leading);
+    let after = source.find("*/").unwrap() as u32 + 2;
+    assert!(matches!(side.first(), Some(Assigned::Extra(_))), "{side:?}");
+    assert!(side.iter().any(|entry| matches!(*entry, Assigned::Layout { start, .. } if start == after)), "{side:?}");
 }

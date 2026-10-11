@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isCoordinate } from '@sittir/common/utils';
+import { isCoordinate, sideOf } from '@sittir/common/utils';
 import {
 	buildFactoryNodeFromReference,
 	buildReadHandle,
@@ -9,19 +9,18 @@ import {
 	loadNodeModel,
 	loadScopedFactoryMap,
 	readNodeOf,
-	sideOf,
 	type ReadNodeLike
 } from '../common.ts';
 import { importGrammarModule } from '../../grammar-internals.ts';
 
-/** Comments on their own lines: at a file's edges, between statements and in a childless node, laid out as the seam defaults render them. */
+/** Comments on their own lines: at a file's edges, between statements and in a childless node, laid out by the layout runs their sides carry. */
 const OWN_LINE: Record<string, readonly string[]> = {
 	rust: ['// a\nfn f() {}\n// b\n', 'fn f() {\n    s1();\n    // y\n    s2();\n}\n', 'fn f() {\n    // c\n}\n'],
 	typescript: ['// a\nf();\n// b\n', 'f();\n// y\ng();\n', 'function f() {\n  // c\n}\n'],
 	python: ['# a\nf()\n# b\n', 'f()\n# y\ng()\n', 'if a:\n    b\n    # c\nd\n']
 };
 
-/** Comments on their owner's line, and either side of a separator. A copy's sides are written, and a written side's layout is the render's, so these are compared in order, whitespace aside. */
+/** Comments on their owner's line, and either side of a separator. A side stores no in-line run, so a copy's in-line spacing is the render's: these are compared in order, whitespace aside. */
 const SAME_LINE: Record<string, readonly string[]> = {
 	rust: ['fn f() {\n    s1(); // x\n    // y\n    s2();\n}\n', 'fn f() {\n    g(a /* x */, /* y */ b);\n}\n'],
 	typescript: ['f(); // x\n// y\ng();\n', 'f(a /* x */, /* y */ b);\n'],
@@ -73,7 +72,8 @@ describe('the ir lane spells comments from the trivia table', () => {
 		const { read } = await lane('rust');
 		const root = await read('// a\nfn f() {}\n');
 		const [statement] = (root as unknown as { _statements: ReadNodeLike[] })._statements;
-		const leading = sideOf(statement as ReadNodeLike, 'leading').filter(isCoordinate);
+		if (statement === undefined) throw new Error('expected a statement');
+		const leading = sideOf(statement, 'leading').filter(isCoordinate);
 		expect(leading.map((entry) => entry.$span)).toEqual([{ start: 0, end: 4 }]);
 	});
 

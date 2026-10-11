@@ -641,17 +641,20 @@ function renderTypedDispatch(
 		}`
 	);
 	lines.push('');
-	lines.push(`/// Render a transport tree to text. Takes the trait rather than`);
-	lines.push(`/// \`&AnyTransport\` so the root's own \`SlotValue\` carrier renders through`);
-	lines.push(`/// the SAME single SpacingWriter wrap — a second entry point would be a`);
-	lines.push(`/// second place the root seam policy could drift.`);
+	lines.push(`/// Render a transport tree to text. Takes the root's own \`SlotValue\``);
+	lines.push(`/// carrier, so the root renders through the SAME single SpacingWriter`);
+	lines.push(`/// wrap — a second entry point would be a second place the root seam`);
+	lines.push(`/// policy could drift. A root of the grammar's root kind renders as a`);
+	lines.push(`/// document.`);
 	lines.push(
-		`pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {`
+		`pub fn render_transport_dispatch(transport: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {`
 	);
 	lines.push(`    let mut s = String::new();`);
 	lines.push(
-		`    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options);`
+		`    let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options);`
 	);
+	lines.push(`    let document = ::sittir_core::view::KindTest::kind_in(transport, &w, kind::ROOT_KINDS);`);
+	lines.push(`    let mut w = w.with_document(document);`);
 	lines.push(`    transport.render(&mut w)?;`);
 	lines.push(`    w.finish()?;`);
 	lines.push(`    Ok(s)`);
@@ -939,6 +942,9 @@ function buildTypedTemplateBody(
 			lines.push(`        trailing: ${trailingExpr},`);
 			lines.push(`        head: ${spacing.head ?? 'None'},`);
 			lines.push(`        tail: ${spacing.tail ?? 'None'},`);
+			lines.push(
+				`        units: ${f.hasTransportField ? `::sittir_core::layout::list_units(node.layout.as_deref(), ${JSON.stringify(slotWireKey(f.storageName))})` : 'None'},`
+			);
 			lines.push(`    };`);
 			continue;
 		}
@@ -996,6 +1002,11 @@ function buildTypedTemplateBody(
 				return `options::SITE_${toScreamingSnakeCase(owner, owner)}_${toScreamingSnakeCase(name, name)}`;
 			},
 			kinds: (names) => rustKindIdSlice(names, nodeMap, kindIdByKind, struct.kind),
+			unitSlot: (name) => {
+				const f = struct.fields.find((field) => rustFieldIdent(field.name) === rustFieldIdent(name));
+				if (f === undefined || !f.hasTransportField || f.view === 'list' || f.multiple || shapeByName.get(f.name)?.tag === 'presence') return undefined;
+				return slotWireKey(f.storageName);
+			},
 			innerGap: (name) => node instanceof AbstractAssembledCompound && node.innerSite?.key === name
 		})
 	);
@@ -2299,11 +2310,12 @@ function renderAnyTransport(
 		lines.push(...variantKindLines('AnyTransport', literal.variant, undefined, claimedBy.get(literal.variant) ?? [], read));
 		lines.push(`    ${literal.variant},`);
 	}
+	lines.push('    #[transport(error)]');
 	lines.push('    Verbatim(VerbatimTransport),');
 	lines.push('}');
 	lines.push('');
 	admit(read, 'AnyTransport', [...claimedBy.values()].flat());
-	lines.push(...prepareEnumImpl('AnyTransport', anyTransportPrepareArms(payloadNodes, fixed), false));
+	lines.push(...prepareEnumImpl('AnyTransport', anyTransportPrepareArms(payloadNodes, fixed)));
 
 	return lines;
 }
@@ -2392,26 +2404,27 @@ function renderTriviaTransportSupport(
 	lines.push('');
 
 	const whitespaceKinds = new Set(whitespaceTriviaKinds(nodeMap));
+	const continuationKinds = new Set(continuationTriviaKinds(nodeMap));
+	const members = extrasNodes.flatMap((node) => {
+		const id = kindIdByKind.get(node.kind);
+		if (id === undefined || !(whitespaceKinds.has(node.kind) || continuationKinds.has(node.kind))) return [];
+		const unit = unitOf(node) ?? (whitespaceKinds.has(node.kind) ? fixedLiteralOf(fixed, node.kind) : undefined);
+		return [{ id, keepsText: unit === undefined, member: unit === undefined ? `TriviaTransport::${rustTransportVariantName(node)}(${rustTransportStructName(node)} { layout: None, text: text.to_owned() })` : `TriviaTransport::${unit.variant}` }];
+	});
 	lines.push(
 		'impl ::sittir_core::trivia::FromTriviaText for TriviaTransport {',
 		'    fn from_text(text: ::sittir_core::trivia::TriviaText) -> Self {',
 		'        TriviaTransport::Text(text)',
 		'    }',
 		'',
-		'    fn from_layout(kind: ::sittir_core::types::KindId) -> Option<Self> {'
+		`    fn from_layout(kind: ::sittir_core::types::KindId, ${members.some((m) => m.keepsText) ? 'text' : '_text'}: &str) -> Option<Self> {`
 	);
-	for (const node of extrasNodes) {
-		const id = kindIdByKind.get(node.kind);
-		if (!whitespaceKinds.has(node.kind) || id === undefined) continue;
-		const unit = fixedLiteralOf(fixed, node.kind);
-		lines.push(`        if kind == ${variantKindArgs([id], false, read.ctx)} { return Some(TriviaTransport::${unit.variant}); }`);
-	}
+	for (const { id, member } of members) lines.push(`        if kind == ${variantKindArgs([id], false, read.ctx)} { return Some(${member}); }`);
 	lines.push('        None', '    }', '}', '');
 
 	lines.push('impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {');
 	lines.push('    fn seam_gap(&self) -> Option<(::sittir_core::layout_kinds::LayoutKinds, Option<&str>)> {');
 	lines.push('        match self {');
-	const continuationKinds = new Set(continuationTriviaKinds(nodeMap));
 	for (const node of extrasNodes) {
 		if (continuationKinds.has(node.kind)) {
 			const unit = unitOf(node);
@@ -2896,7 +2909,7 @@ function rootEdgeStamp(plan: RenderPlan, node: AssembledNode, fillFields: readon
 	const items = (end: 'first' | 'last'): string =>
 		`[${(end === 'first' ? fillFields : [...fillFields].reverse()).map((f) => `::sittir_core::prepare::EdgeItems::${end}_item(&self.${f})`).join(', ')}].into_iter().flatten().next()`;
 	return [
-		`        let inner = ::sittir_core::layout::Layout::snapshot_inner(&self.layout);`,
+		`        let inner = ::sittir_core::layout::Layout::inner_item(&self.layout);`,
 		`        let first = ::sittir_core::prepare::outermost(${items('first')}, inner, ::sittir_core::options::Side::Before);`,
 		`        let last = ::sittir_core::prepare::outermost(${items('last')}, inner, ::sittir_core::options::Side::After);`,
 		`        let root = ::sittir_core::layout::Layout::snapshot_edge(&self.layout).map(|edge| edge.span);`,
@@ -3270,6 +3283,10 @@ function renderFixedLiteralTransport(typeName: string, fixed: FixedLiteral, read
 
 const LAYOUT_FIELD = { wireKey: '$_layout', rustName: 'layout', rustType: 'Option<Box<TransportLayout>>' } as const;
 
+function slotWireKey(storageName: string): string {
+	return `_${storageName}`;
+}
+
 function wireKeyAttr(key: string): string {
 	return `    #[wire(key = ${JSON.stringify(key)})]`;
 }
@@ -3384,7 +3401,7 @@ function renderTransportField(
 ): string[] {
 	const lines: string[] = [];
 	const rustName = rustFieldIdent(field.storageName);
-	lines.push(wireKeyAttr(`_${field.storageName}`));
+	lines.push(wireKeyAttr(slotWireKey(field.storageName)));
 	if (readAttr !== undefined) lines.push(`    ${readAttr}`);
 	const required = forceOptional ? false : isTransportRequired(field);
 	const adjacent = slotVerbatimIsImmediate(field, nodeMap);

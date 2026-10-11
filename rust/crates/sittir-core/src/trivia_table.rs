@@ -18,7 +18,11 @@
 //! not beside the gap takes none (`unowned`). A zero-width node holds no
 //! side. The child is the owner's own
 //! child, so the outermost node ending or starting at the token takes the
-//! side. A run of whitespace holding a line break is a layout entry, placed
+//! side. A list node (the grammar's list kinds) passes an extra or an
+//! `ERROR` to the item ending or starting at the token, where one does and
+//! the surface exposes it as a node (not a unit kind): the surface exposes a
+//! list's items, not the list. A layout run stays on the list, whose source
+//! flanks spell its edges. A run of whitespace holding a line break is a layout entry, placed
 //! as an entry ending on its last row is: it leads the child after it, or
 //! trails the child before it when none follows. A run on one line is no
 //! entry.
@@ -45,16 +49,35 @@ pub struct Token {
 }
 
 /// An entry the assignment gives a side: an extra or an `ERROR` by its
-/// descendant index, or a run of whitespace holding a line break by its bytes.
+/// descendant index, a run of whitespace holding a line break by its bytes
+/// and the descendant index of its owner (whose first row is the run's
+/// enclosing line: the node itself for its `inner` side, its parent for its
+/// leading or trailing side), or an extra that is a layout member
+/// (`SurfaceKinds::layout`) by its descendant index. A run after an entry
+/// placed on a node's leading side is on that side too: it spells the gap
+/// from the entry to its owner.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Assigned {
     Extra(u32),
     Error(u32),
-    Layout { start: u32, end: u32 },
+    Layout { start: u32, end: u32, owner: u32 },
+    Member(u32),
+}
+
+/// The kinds of a grammar the assignment reads from its surface: the list
+/// kinds, whose items the surface exposes in the list's place, the unit
+/// kinds, which it exposes as a kind id rather than a node, and the extra
+/// kinds that are layout members, which it assigns as layout.
+#[derive(Debug, Clone, Copy, Default)]
+pub struct SurfaceKinds {
+    pub lists: &'static [u16],
+    pub units: &'static [u16],
+    pub layout: &'static [u16],
 }
 
 /// The nodes of a tree by descendant index, as far as the walk reads them.
 struct Nodes {
+    kind: Vec<u16>,
     parent: Vec<u32>,
     depth: Vec<u32>,
     start: Vec<u32>,
@@ -108,6 +131,7 @@ pub fn is_empty(node: &tree_sitter::Node<'_>) -> bool {
 pub fn walk(node: tree_sitter::Node<'_>, index: u32, source: &str) -> Walk {
     let count = node.descendant_count();
     let mut nodes = Nodes {
+        kind: vec![0; count],
         parent: vec![NONE; count],
         depth: vec![0; count],
         start: vec![0; count],
@@ -138,6 +162,7 @@ pub fn walk(node: tree_sitter::Node<'_>, index: u32, source: &str) -> Walk {
         let local = cursor.descendant_index() as u32;
         let (start, end) = (node.start_byte() as u32, node.end_byte() as u32);
         let i = local as usize;
+        nodes.kind[i] = node.grammar_id();
         nodes.start[i] = start;
         nodes.end[i] = end;
         let depth = frames.len() as u32;
@@ -215,6 +240,22 @@ impl Nodes {
         a
     }
 
+    /// The node beside a gap that takes its side, below `owner` on `node`'s
+    /// chain of parents: the holder child at the gap's edge (`at_edge`), or,
+    /// when that child is a list node and `kinds` passes through lists, the
+    /// holder below it at the same edge that is not a unit kind.
+    fn side_holder(&self, owner: u32, node: u32, kinds: Option<SurfaceKinds>, at_edge: impl Fn(u32) -> bool) -> Option<u32> {
+        let mut child = self.holder_below(owner, node).filter(|&child| at_edge(child))?;
+        let Some(kinds) = kinds else { return Some(child) };
+        while kinds.lists.contains(&self.kind[child as usize]) {
+            match self.holder_below(child, node).filter(|&inner| at_edge(inner) && !kinds.units.contains(&self.kind[inner as usize])) {
+                Some(inner) => child = inner,
+                None => break,
+            }
+        }
+        Some(child)
+    }
+
     /// The child of `owner` on `node`'s chain of parents, when it holds trivia.
     fn holder_below(&self, owner: u32, node: u32) -> Option<u32> {
         let mut at = node;
@@ -243,22 +284,24 @@ pub struct TriviaTable {
 }
 
 impl TriviaTable {
-    /// The table of `tree`, parsed from `source`.
-    pub fn assign(tree: &tree_sitter::Tree, source: &str) -> Self {
+    /// The table of `tree`, parsed from `source`, whose grammar's surface
+    /// kinds are `kinds`.
+    pub fn assign(tree: &tree_sitter::Tree, source: &str, kinds: SurfaceKinds) -> Self {
         let Walk { tokens, entries, nodes, .. } = walk(tree.root_node(), 0, source);
         let lines = crate::points::LineTable::new(source);
         let row = |byte: u32| lines.point(byte as usize).map_or(0, |point| point.row);
         let mut table = TriviaTable::default();
-        let place = |left: Option<&Token>, right: Option<&Token>, starts_on_left_row: bool| -> Place {
-            let owner = match (left, right) {
-                (Some(left), Some(right)) => nodes.common(left.node, right.node),
-                _ => 0,
-            };
+        let owner_of = |left: Option<&Token>, right: Option<&Token>| match (left, right) {
+            (Some(left), Some(right)) => nodes.common(left.node, right.node),
+            _ => 0,
+        };
+        let place = |left: Option<&Token>, right: Option<&Token>, starts_on_left_row: bool, through: Option<SurfaceKinds>| -> Place {
+            let owner = owner_of(left, right);
             if !nodes.holds[owner as usize] {
                 return Place::Side(owner, TriviaSide::Inner);
             }
-            let before = left.and_then(|left| nodes.holder_below(owner, left.node).filter(|&child| nodes.end[child as usize] == left.end));
-            let after = right.and_then(|right| nodes.holder_below(owner, right.node).filter(|&child| nodes.start[child as usize] == right.start));
+            let before = left.and_then(|left| nodes.side_holder(owner, left.node, through, |child| nodes.end[child as usize] == left.end));
+            let after = right.and_then(|right| nodes.side_holder(owner, right.node, through, |child| nodes.start[child as usize] == right.start));
             match (before, after) {
                 (None, None) => Place::Unowned,
                 (Some(before), None) => Place::Side(before, TriviaSide::Trailing),
@@ -275,7 +318,7 @@ impl TriviaTable {
         let mut push = |place: Place, entry: Assigned| match place {
             Place::Side(node, side) => table.sides.entry((node, side)).or_default().push(entry),
             Place::Unowned => {
-                if let Assigned::Extra(index) | Assigned::Error(index) = entry {
+                if let Assigned::Extra(index) | Assigned::Error(index) | Assigned::Member(index) = entry {
                     table.unowned.push(index);
                 }
             }
@@ -288,9 +331,17 @@ impl TriviaTable {
             let to = right.map_or(source.len() as u32, |token| token.start);
             let left_row = left.map(|token| row(token.end));
             let mut at = from;
-            let run = |at: u32, until: u32, push: &mut dyn FnMut(Place, Assigned)| {
+            let mut led = None;
+            let run = |at: u32, until: u32, led: Option<u32>, push: &mut dyn FnMut(Place, Assigned)| {
                 if source.get(at as usize..until as usize).is_some_and(|text| text.contains('\n')) {
-                    push(place(left, right, false), Assigned::Layout { start: at, end: until });
+                    let place = led.map_or_else(|| place(left, right, false, None), |node| Place::Side(node, TriviaSide::Leading));
+                    let owner = match place {
+                        Place::Side(node, TriviaSide::Inner) => node,
+                        Place::Side(node, _) if nodes.parent[node as usize] != NONE => nodes.parent[node as usize],
+                        Place::Side(node, _) => node,
+                        Place::Unowned => owner_of(left, right),
+                    };
+                    push(place, Assigned::Layout { start: at, end: until, owner });
                 }
             };
             while let Some(&&index) = next.peek() {
@@ -299,12 +350,21 @@ impl TriviaTable {
                     break;
                 }
                 next.next();
-                run(at, start, &mut push);
-                let entry = if is_error_index(tree, index) { Assigned::Error(index) } else { Assigned::Extra(index) };
-                push(place(left, right, left_row == Some(row(start))), entry);
+                run(at, start, led, &mut push);
+                if kinds.layout.contains(&nodes.kind[index as usize]) {
+                    push(place(left, right, false, None), Assigned::Member(index));
+                } else {
+                    let entry = if is_error_index(tree, index) { Assigned::Error(index) } else { Assigned::Extra(index) };
+                    let placed = place(left, right, left_row == Some(row(start)), Some(kinds));
+                    led = match placed {
+                        Place::Side(node, TriviaSide::Leading) => Some(node),
+                        _ => None,
+                    };
+                    push(placed, entry);
+                }
                 at = end;
             }
-            run(at, to, &mut push);
+            run(at, to, led, &mut push);
         }
         table
     }

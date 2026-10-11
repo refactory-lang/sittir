@@ -17,16 +17,28 @@ export interface TreeHandle {
 	query?: TreeQuery;
 	/** A snapshot of the node at descendant `index`, measured from the byte `holderByte`, or from its own start (`snapshotOf`). */
 	snapshot?(index: number, holderByte?: number): unknown;
-	/** The spans of byte `ranges` (start and end pairs) measured from the byte `holderByte`, as row and column pairs, flat. */
-	snapshotSpans?(holderByte: number, ranges: number[]): number[];
 	/** The entries of `side` of the node at descendant `index`: the ones a write gave it, else the ones the tree's trivia table assigns it. */
 	triviaSide?(index: number, side: TriviaSideName): unknown[];
 	/** Replaces `side` of the node at descendant `index` with `entries`. */
 	writeTriviaSide?(index: number, side: TriviaSideName, entries: readonly unknown[]): void;
+	/** The sides of the unit children of the node at descendant `index`, by slot and item (`TransportLayout.units`). */
+	unitSides?(index: number): unknown[];
 	/** Whether a write replaced a side of a node under the node at descendant `index`, its own `inner` included, and its own leading and trailing too when `ownSides` is set. */
 	editedWithin?(index: number, ownSides: boolean): boolean;
 	/** Whether the node at descendant `index` is empty: no child of it has width. */
 	isEmpty?(index: number): boolean;
+	/** The siblings that hold sides beside the node at descendant `index` (`Siblings`). */
+	siblings?(index: number): Siblings;
+}
+
+/**
+ * The siblings that hold sides beside a node in its source, taken at the outermost node spanning
+ * exactly its bytes (a list item's wrapper holds the item's neighbours): the span of the one before
+ * it, `null` when that node starts its parent, and of the one after it, `null` when it ends it.
+ */
+export interface Siblings {
+	readonly previous: { readonly start: number; readonly end: number } | null;
+	readonly next: { readonly start: number; readonly end: number } | null;
 }
 
 const INDEX_RANGE = 2 ** 32;

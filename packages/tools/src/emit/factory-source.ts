@@ -11,10 +11,9 @@ import {
 	type SeatTable
 } from '../validate/common.ts';
 import type { FactoryShape } from '../codegen-surface.ts';
-import type { NodeTrivia as ReadTrivia } from '@sittir/types';
+import type { NodeTrivia as ReadTrivia, TriviaEntry } from '@sittir/types';
 import type { TriviaSides } from '@sittir/common';
-import { isStorageKey, mapTriviaEntries, readTrivia } from '@sittir/common/utils';
-import type { LineGapAddress, LineGaps } from '@sittir/types';
+import { isStorageKey, mapTriviaEntries, sidesOf } from '@sittir/common/utils';
 
 export type Surface = 'strict' | 'loose';
 
@@ -793,7 +792,6 @@ import {
 	buildReadHandle,
 	loadKindNameFromId,
 	loadLanguageForGrammar,
-	loadNativeEngine,
 	loadNodeModel,
 	readNodeOf,
 	hydrateOf,
@@ -857,38 +855,30 @@ interface TriviaTextContext {
 	readonly slotDefaults: Record<string, Record<string, string>>;
 }
 
-function seatLineGaps(
-	node: unknown,
-	lineGapsOf: (address: LineGapAddress) => LineGaps,
-	newline: number | undefined,
-	depth = 0
-): void {
+function seatTableSides(node: unknown, newline: number | undefined, depth = 0): void {
 	if (depth > 256) return;
 	if (Array.isArray(node)) {
-		for (const entry of node) seatLineGaps(entry, lineGapsOf, newline, depth + 1);
+		for (const entry of node) seatTableSides(entry, newline, depth + 1);
 		return;
 	}
 	if (!isPlainObject(node)) return;
 	for (const [key, value] of Object.entries(node)) {
-		if (isStorageKey(key)) seatLineGaps(value, lineGapsOf, newline, depth + 1);
+		if (isStorageKey(key)) seatTableSides(value, newline, depth + 1);
 	}
-	const trivia = readTrivia(node, lineGapsOf);
-	if (trivia === undefined) return;
-	const kept = (entries: readonly unknown[] | undefined): readonly unknown[] | undefined => {
-		const printed = entries?.filter((entry) => entry !== newline);
-		return printed === undefined || printed.length === 0 ? undefined : printed;
-	};
-	const leading = kept(trivia.leading);
-	const trailing = kept(trivia.trailing);
-	const printed = {
+	const kept = (entries: readonly TriviaEntry[] | undefined): readonly TriviaEntry[] | undefined =>
+		entries?.some((entry) => entry !== newline) === true ? entries : undefined;
+	const sides = sidesOf(node);
+	const leading = kept(sides?.leading);
+	const trailing = kept(sides?.trailing);
+	const trivia = {
 		...(leading && { leading }),
 		...(trailing && { trailing }),
-		...(trivia.inner && { inner: trivia.inner })
+		...(sides?.inner && { inner: sides.inner })
 	};
 	const layout = node.$_layout as { trivia?: ReadTrivia } | undefined;
-	if (Object.keys(printed).length === 0) {
+	if (Object.keys(trivia).length === 0) {
 		if (layout !== undefined) node.$_layout = { ...layout, trivia: undefined };
-	} else node.$_layout = { ...layout, trivia: printed as ReadTrivia };
+	} else node.$_layout = { ...layout, trivia };
 }
 
 function spellTriviaTree(node: unknown, ctx: TriviaTextContext, depth = 0): void {
@@ -1046,12 +1036,7 @@ export async function emitFactorySourceText(
 	const { findEntryForLiteralText } = await load('symbolTable');
 	const root = materialize(readNode(handle)) as ReadNodeLike;
 	const { triviaFacts } = await requireGrammarModule(grammar, 'utils.ts');
-	const nativeEngine = await loadNativeEngine(grammar);
-	seatLineGaps(
-		root,
-		(address) => nativeEngine.diagnostics.lineGapsOf(address),
-		triviaFacts?.whitespace?.kindIdByText['\n']
-	);
+	seatTableSides(root, triviaFacts?.whitespace?.kindIdByText['\n']);
 	seatFormTree(root, { kindNameFromId, seats: model.seats });
 	const textLeafKinds = new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'pattern'));
 	spellTriviaTree(root, {

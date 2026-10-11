@@ -461,7 +461,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 			'fn render_function_item(node: &FunctionItemTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {'
 		);
 		expect(transportRs).toContain(
-			"pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {"
+			"pub fn render_transport_dispatch(transport: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {"
 		);
 		expect(transportRs).toContain(
 			'::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources)'
@@ -509,11 +509,12 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		);
 		expect(transportRs).toContain('.get_or_insert(ctx.options.spacing[options::');
 		expect(transportRs).toContain(
-			"pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {"
+			"pub fn render_transport_dispatch(transport: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {"
 		);
 		expect(transportRs).toContain(
 			'::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options)'
 		);
+		expect(transportRs).toContain('let document = ::sittir_core::view::KindTest::kind_in(transport, &w, kind::ROOT_KINDS);');
 	});
 
 	it('admits verbatim text only where a slot admits a pattern kind', async () => {
@@ -600,10 +601,8 @@ describe('transport read facts', () => {
 		);
 	});
 
-	it('gives a list owner its minimum depth, its tokens and its inner gap', () => {
-		expect(args('ParametersTransport')).toBe(
-			'kind = kind::PARAMETERS, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], gap(1) = elements'
-		);
+	it('gives a list owner its minimum depth and its tokens, and no named inner gap', () => {
+		expect(args('ParametersTransport')).toBe('kind = kind::PARAMETERS, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN]');
 	});
 
 	it('marks a separated list, its item slot, its separator and the flank it leaves optional', () => {
@@ -779,12 +778,12 @@ describe('the wire codec facts', () => {
 		expect(extractStructBody(src, 'IdentifierTransport')).toMatch(/    #\[wire\(key = "\$text"\)\]\n    pub text: String,/);
 	});
 
-	it('marks the verbatim arm of a choice that takes bare text, and only there', async () => {
+	it('marks the verbatim arm of a choice that takes bare text, and the root choice its ERROR arm alone', async () => {
 		const src = await getRustTemplatesRs();
 		expect(src).toMatch(/    #\[transport\(verbatim\)\]\n    Verbatim\(VerbatimTransport\),/);
 		const any = src.slice(src.indexOf('pub enum AnyTransport {'));
 		const anyBody = any.slice(0, any.indexOf('\n}'));
-		expect(anyBody).toMatch(/\n    Verbatim\(VerbatimTransport\),/);
+		expect(anyBody).toMatch(/\n    #\[transport\(error\)\]\n    Verbatim\(VerbatimTransport\),/);
 		expect(anyBody).not.toContain('#[transport(verbatim)]');
 	});
 

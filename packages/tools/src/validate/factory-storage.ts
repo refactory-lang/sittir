@@ -53,7 +53,7 @@ import {
 } from './common.ts';
 import { hostlessReason, loadRenderReparseContext, renderReparse } from './read-render-parse.ts';
 import { emptyBuiltRender, type BuiltRenderFailure, type BuiltRenderResult } from './built-render.ts';
-import { carryPlacement, sourceSpans } from '@sittir/common';
+import { sourceSpans } from '@sittir/common';
 
 /**
  * Which factory surface a run builds through: `raw` calls each kind's raw
@@ -326,8 +326,7 @@ function rebuildChildren(
 		if (typeof value !== 'object' || value === null) return value;
 		const data = rebuildChildren(value as Record<string, unknown>, build, sides);
 		if (!isComparableNode(value)) return data;
-		const built = build(data) ?? data;
-		return typeof built === 'object' && built !== null ? carryPlacement(value, built) : built;
+		return build(data) ?? data;
 	};
 	const copy = Object.fromEntries(
 		Object.entries(node).flatMap(([key, value]): [string, unknown][] =>

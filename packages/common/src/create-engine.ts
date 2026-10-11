@@ -174,7 +174,6 @@ function assembleEngine<API extends LanguageAPI>(
 	});
 	const handle: TreeEngineHandle = {
 		current: identity,
-		lineGapsOf: (address) => native.lineGapsOf(address),
 		hydrate: hooks.hydrate
 	};
 	const interceptors = options?.intercept ?? [];
@@ -214,8 +213,7 @@ function assembleEngine<API extends LanguageAPI>(
 		types: undefined as unknown as API['types'],
 		diagnostics: {
 			buildProfile: native.buildProfile,
-			parseAndRead: readAndBind,
-			lineGapsOf: (address) => native.lineGapsOf(address)
+			parseAndRead: readAndBind
 		},
 		isNode: (value): value is API['node'] => isNode(value) && inLanguage(value),
 		isParsedNode: (value): value is API['node'] => isParsedNode(value) && inLanguage(value),
@@ -278,7 +276,6 @@ function assembleEngine<API extends LanguageAPI>(
 		},
 		dispose() {
 			handle.current = identity;
-			delete handle.lineGapsOf;
 			native.dispose();
 		}
 	};

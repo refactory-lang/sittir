@@ -8,8 +8,8 @@ export function rebuildTriviaRustGenerated() {
 		statements: [rs.build.functionItem.strict({
 			name: rs.build.identifier("f"),
 			parameters: rs.build.parameters.strict(),
-			body: rs.build.block.strict().$trivia.inner(rs.build.lineComment.strict(rs.build.lineCommentRegular(" TODO"))),
-		}).$trivia.leading(rs.build.blockComment.strict(rs.build.blockCommentRegular(" a "))), rs.build.functionItem.strict({
+			body: rs.build.block.strict().$trivia.inner(rs.build.lineComment.strict(rs.build.lineCommentRegular(" TODO")), rs.kinds.Newline),
+		}).$trivia.leading(rs.build.blockComment.strict(rs.build.blockCommentRegular(" a ")), rs.kinds.Newline), rs.build.functionItem.strict({
 			name: rs.build.identifier("g"),
 			parameters: rs.build.parameters.strict(),
 			body: rs.build.block.strict({}),

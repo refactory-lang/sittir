@@ -1218,7 +1218,7 @@
 		{
 			"entry": "Function definitions",
 			"line": 2,
-			"class": "whitespace",
+			"class": "text",
 			"live": "  return (a,b)",
 			"snapshot": "    return (a,b)"
 		},
@@ -1284,6 +1284,13 @@
 			"class": "whitespace",
 			"live": "",
 			"snapshot": "    b()"
+		},
+		{
+			"entry": "Escaped newline",
+			"line": 1,
+			"class": "text",
+			"live": "len(\"a\") \\",
+			"snapshot": "len(\"a\") or len(\"aa\")"
 		},
 		{
 			"entry": "Type Alias Statements",

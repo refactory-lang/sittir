@@ -576,6 +576,7 @@ export interface RustBodyPrinter {
 	readonly kinds: (names: readonly string[]) => string;
 	readonly innerGap?: (name: string) => boolean;
 	readonly optional?: (name: string) => boolean;
+	readonly unitSlot?: (name: string) => string | undefined;
 }
 
 export function escapeBraces(value: string): string {
@@ -682,11 +683,17 @@ function printStatements(
 				}
 				break;
 			}
-			case 'slot':
+			case 'slot': {
 				flush();
 				seatGap(node.name);
-				lines.push(`${pad}${printer.field(node.name)}.render(w)?;`);
+				const unit = printer.unitSlot?.(node.name);
+				lines.push(
+					unit === undefined
+						? `${pad}${printer.field(node.name)}.render(w)?;`
+						: `${pad}::sittir_core::layout::render_unit(node.layout.as_deref(), ${JSON.stringify(unit)}, 0, w, |w| ${printer.field(node.name)}.render(w))?;`
+				);
 				break;
+			}
 			case 'seam': {
 				flush();
 				const edge = printer.edge?.(node.field);

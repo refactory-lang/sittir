@@ -48,7 +48,7 @@ fn every_statement_read_at_its_row_equals_the_statement_in_the_whole_read() {
         assert_eq!(whole.len(), shallow.len());
         for (i, (whole, shallow)) in whole.iter().zip(&shallow).enumerate() {
             let index = shallow.coord().unwrap().index;
-            let at: StatementTransport = read_at::<StatementTransport, AnyTransport>(&mut tree.walk(), &ctx, index, Depth::All).unwrap();
+            let at: StatementTransport = read_at::<StatementTransport>(&mut tree.walk(), &ctx, index, Depth::All).unwrap();
             assert_eq!(Some(&at), whole.transport(), "{name}: statement {i} at index {index}");
         }
     }
@@ -65,7 +65,7 @@ fn every_read_transport_names_its_own_node() {
         assert_eq!((at.tree, at.index, at.span.start, at.span.end), (1, 0, 0, source.len() as u32));
         let functions = file.statements.into_iter().filter_map(|s| s.coord().cloned()).filter(|c| c.kind == Some(kind_ids::FUNCTION_ITEM));
         for coord in functions {
-            let read: FunctionItemTransport = read_at::<FunctionItemTransport, AnyTransport>(&mut tree.walk(), &ctx, coord.index, Depth::ONE).unwrap();
+            let read: FunctionItemTransport = read_at::<FunctionItemTransport>(&mut tree.walk(), &ctx, coord.index, Depth::ONE).unwrap();
             let at = read.layout.as_ref().and_then(|layout| layout.at.as_ref()).expect("a read function names itself");
             assert_eq!((at.tree, at.index, at.span, at.kind), (coord.tree, coord.index, coord.span, coord.kind), "{name}");
         }
@@ -86,7 +86,7 @@ fn a_list_owner_read_at_one_level_brings_its_list() {
             })
             .unwrap() as u32
     };
-    let parameters: ParametersTransport = read_at::<_, AnyTransport>(&mut tree.walk(), &ctx, index, Depth::ONE).unwrap();
+    let parameters: ParametersTransport = read_at::<_>(&mut tree.walk(), &ctx, index, Depth::ONE).unwrap();
     let list = parameters.elements.unwrap();
     let list = list.transport().expect("min_depth reads the list");
     assert_eq!(list.item.len(), 2);
@@ -104,22 +104,12 @@ fn first_of(tree: &tree_sitter::Tree, kind: sittir_core::KindId) -> u32 {
 }
 
 #[test]
-fn a_parent_type_that_does_not_admit_the_parent_is_refused() {
-    let source = "fn f(a: u8) {}";
-    let tree = parse(source);
-    let ctx = ReadCtx::new(source, 1, <sittir_rust::render::AnyTransport as sittir_core::read::ReadTransport>::shows);
-    let index = first_of(&tree, kind_ids::FUNCTION_ITEM);
-    let refusal = read_at::<FunctionItemTransport, ParametersTransport>(&mut tree.walk(), &ctx, index, Depth::ONE).unwrap_err();
-    assert_eq!(refusal, ReadError::Unadmitted { kind: kind_ids::SOURCE_FILE, index: 0 });
-}
-
-#[test]
 fn a_struct_refuses_a_node_its_kind_does_not_admit() {
     let source = "fn f(a: u8) {}";
     let tree = parse(source);
     let ctx = ReadCtx::new(source, 1, <sittir_rust::render::AnyTransport as sittir_core::read::ReadTransport>::shows);
     let index = first_of(&tree, kind_ids::FUNCTION_ITEM);
-    let refusal = read_at::<ParametersTransport, AnyTransport>(&mut tree.walk(), &ctx, index, Depth::ONE).unwrap_err();
+    let refusal = read_at::<ParametersTransport>(&mut tree.walk(), &ctx, index, Depth::ONE).unwrap_err();
     assert_eq!(refusal, ReadError::Unadmitted { kind: kind_ids::FUNCTION_ITEM, index });
 }
 

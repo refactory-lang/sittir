@@ -14,13 +14,13 @@ export function rebuildSpliceLoose() {
 				}),
 				name: "Edit",
 			}),
-		}).$trivia.leading(rs.build.lineComment.docInner(" Byte-level `apply_edits` on a source string.\n"), rs.build.lineComment.docInner("\n"), rs.build.lineComment.docInner(" Sorts edits by `start_pos` descending, applies each as a raw byte\n"), rs.build.lineComment.docInner(" splice on a `String`. Descending order guarantees earlier edits\n"), rs.build.lineComment.docInner(" aren't shifted by later ones, so consumers can produce edits in any\n"), rs.build.lineComment.docInner(" order and let us canonicalize.\n"), rs.build.lineComment.docInner("\n"), rs.build.lineComment.docInner(" # Overlap handling\n"), rs.build.lineComment.docInner("\n"), rs.build.lineComment.docInner(" Overlap detection is **explicitly** the consumer's responsibility —\n"), rs.build.lineComment.docInner(" see contracts/napi-api.md `applyEdits` contract. This function does\n"), rs.build.lineComment.docInner(" NOT validate that edits are disjoint; overlapping edits fall through\n"), rs.build.lineComment.docInner(" to last-wins behavior (after sort-descending, the edit with the\n"), rs.build.lineComment.docInner(" greatest `start_pos` applies first, and subsequent edits whose\n"), rs.build.lineComment.docInner(" ranges still reference valid offsets within the intermediate string\n"), rs.build.lineComment.docInner(" apply afterward).\n"), rs.build.lineComment.docInner("\n"), rs.build.lineComment.docInner(" # Validation\n"), rs.build.lineComment.docInner("\n"), rs.build.lineComment.docInner(" Per-edit validation: `start_pos <= end_pos <= source.len()` (bytes).\n"), rs.build.lineComment.docInner(" Violations return `Err` rather than panic so the napi wrapper can\n"), rs.build.lineComment.docInner(" surface a typed error to JS. UTF-8 boundary correctness is also\n"), rs.build.lineComment.docInner(" checked on the splice (via `String::replace_range`) — non-char-\n"), rs.build.lineComment.docInner(" boundary ranges produce a `Result::Err` instead of panicking.\n")), rs.build.attributeItem(rs.build.attribute.input({
+		}).$trivia.leading(rs.build.lineComment.docInner(" Byte-level `apply_edits` on a source string.\n"), rs.build.lineComment.docInner("\n"), rs.build.lineComment.docInner(" Sorts edits by `start_pos` descending, applies each as a raw byte\n"), rs.build.lineComment.docInner(" splice on a `String`. Descending order guarantees earlier edits\n"), rs.build.lineComment.docInner(" aren't shifted by later ones, so consumers can produce edits in any\n"), rs.build.lineComment.docInner(" order and let us canonicalize.\n"), rs.build.lineComment.docInner("\n"), rs.build.lineComment.docInner(" # Overlap handling\n"), rs.build.lineComment.docInner("\n"), rs.build.lineComment.docInner(" Overlap detection is **explicitly** the consumer's responsibility —\n"), rs.build.lineComment.docInner(" see contracts/napi-api.md `applyEdits` contract. This function does\n"), rs.build.lineComment.docInner(" NOT validate that edits are disjoint; overlapping edits fall through\n"), rs.build.lineComment.docInner(" to last-wins behavior (after sort-descending, the edit with the\n"), rs.build.lineComment.docInner(" greatest `start_pos` applies first, and subsequent edits whose\n"), rs.build.lineComment.docInner(" ranges still reference valid offsets within the intermediate string\n"), rs.build.lineComment.docInner(" apply afterward).\n"), rs.build.lineComment.docInner("\n"), rs.build.lineComment.docInner(" # Validation\n"), rs.build.lineComment.docInner("\n"), rs.build.lineComment.docInner(" Per-edit validation: `start_pos <= end_pos <= source.len()` (bytes).\n"), rs.build.lineComment.docInner(" Violations return `Err` rather than panic so the napi wrapper can\n"), rs.build.lineComment.docInner(" surface a typed error to JS. UTF-8 boundary correctness is also\n"), rs.build.lineComment.docInner(" checked on the splice (via `String::replace_range`) — non-char-\n"), rs.build.lineComment.docInner(" boundary ranges produce a `Result::Err` instead of panicking.\n"), rs.kinds.Newline), rs.build.attributeItem(rs.build.attribute.input({
 			path: "derive",
 			arguments: rs.build.delimTokenTreeParen(rs.build.identifier("Debug"), rs.kinds.Comma, rs.build.identifier("Clone"), rs.kinds.Comma, rs.build.identifier("PartialEq"), rs.kinds.Comma, rs.build.identifier("Eq")),
 		})).$trivia.leading(rs.kinds.Blankline, rs.build.lineComment.docOuter(" Error returned from [`apply_edits`] when an edit is invalid.\n")), rs.build.enumItem({
 			visibilityModifier: rs.build.visibilityModifier.pub(),
 			name: "SpliceError",
-			body: rs.build.enumVariantListElements(rs.build.enumVariant({
+			body: [rs.build.enumVariant({
 				name: "InvalidRange",
 				body: rs.build.fieldDeclarationList({ delimiter: Delimiter.None }, rs.build.fieldDeclaration({
 					name: "start",
@@ -29,7 +29,7 @@ export function rebuildSpliceLoose() {
 					name: "end",
 					type: rs.kinds.U32Keyword,
 				})),
-			}), rs.build.enumVariant({
+			}).$trivia.leading(rs.build.lineComment.docOuter(" `end_pos < start_pos` — the edit range is reversed.\n")), rs.build.enumVariant({
 				name: "OutOfBounds",
 				body: rs.build.fieldDeclarationList({ delimiter: Delimiter.None }, rs.build.fieldDeclaration({
 					name: "end",
@@ -47,7 +47,7 @@ export function rebuildSpliceLoose() {
 					name: "end",
 					type: rs.kinds.U32Keyword,
 				})),
-			}).$trivia.leading(rs.build.lineComment.docOuter(" `start_pos` or `end_pos` isn't a UTF-8 char boundary.\n"))).$trivia.leading(rs.build.lineComment.docOuter(" `end_pos < start_pos` — the edit range is reversed.\n")),
+			}).$trivia.leading(rs.build.lineComment.docOuter(" `start_pos` or `end_pos` isn't a UTF-8 char boundary.\n"))],
 		}), rs.build.implItemBody.positiveClause({
 			traitClause: rs.build.scopedTypeIdentifier({
 				path: rs.build.scopedIdentifier({
@@ -194,7 +194,7 @@ export function rebuildSpliceLoose() {
 						}),
 						arguments: rs.build.arguments(),
 					}),
-				}).$trivia.leading(rs.build.lineComment(" Pre-validate every edit up-front so we fail atomically (no"), rs.build.lineComment(" partial application).")), rs.build.forExpression({
+				}).$trivia.leading(rs.kinds.Newline, rs.build.lineComment(" Pre-validate every edit up-front so we fail atomically (no"), rs.kinds.Newline, rs.build.lineComment(" partial application)."), rs.kinds.Newline), rs.build.forExpression({
 					pattern: "e",
 					value: rs.build.referenceExpressionBare("edits"),
 					body: rs.build.block({
@@ -372,7 +372,7 @@ export function rebuildSpliceLoose() {
 							}),
 						}),
 					}),
-				})).$trivia.leading(rs.kinds.Blankline, rs.build.lineComment(" Sort descending by start_pos. Ties broken by end_pos descending —"), rs.build.lineComment(" with identical start positions, the longer replacement applies"), rs.build.lineComment(" first so the shorter doesn't overwrite its tail. (Tie-breaking is"), rs.build.lineComment(" documented consumer-visible behavior; overlap detection is still"), rs.build.lineComment(" theirs.)")), rs.build.letDeclaration({
+				})).$trivia.leading(rs.kinds.Blankline, rs.build.lineComment(" Sort descending by start_pos. Ties broken by end_pos descending —"), rs.kinds.Newline, rs.build.lineComment(" with identical start positions, the longer replacement applies"), rs.kinds.Newline, rs.build.lineComment(" first so the shorter doesn't overwrite its tail. (Tie-breaking is"), rs.kinds.Newline, rs.build.lineComment(" documented consumer-visible behavior; overlap detection is still"), rs.kinds.Newline, rs.build.lineComment(" theirs.)"), rs.kinds.Newline), rs.build.letDeclaration({
 					mutable: true,
 					pattern: "buf",
 					value: rs.build.callExpression({

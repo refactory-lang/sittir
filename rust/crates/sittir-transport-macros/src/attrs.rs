@@ -17,7 +17,6 @@ pub struct KindAttrs {
     pub layout: Vec<TokenGroup>,
     pub folded: Vec<Path>,
     pub wraps_hidden: bool,
-    pub gaps: Vec<(u16, String)>,
     /// `text`, or `text = "…"`: a leaf read as its text, with the fixed text
     /// it reads as when its span is empty or its tokens do not tile it.
     pub text: Option<Option<LitStr>>,
@@ -28,6 +27,9 @@ pub struct KindAttrs {
     pub item: Option<Ident>,
     /// On a variant: the arm bare text and an `ERROR` object decode as.
     pub verbatim: bool,
+    /// On a variant: the arm an `ERROR` object decodes as, in a choice that
+    /// takes no bare text.
+    pub error: bool,
     /// On a choice: the wire codec alone, with no typed reader.
     pub codec_only: bool,
 }
@@ -139,13 +141,6 @@ pub fn kind_attrs(attrs: &[Attribute]) -> syn::Result<KindAttrs> {
                 "layout" => out.layout = token_groups(meta.value()?)?,
                 "folded" => out.folded = paths(meta.value()?)?,
                 "wraps_hidden" => out.wraps_hidden = true,
-                "gap" => {
-                    let content;
-                    syn::parenthesized!(content in meta.input);
-                    let preceding: u16 = content.parse::<LitInt>()?.base10_parse()?;
-                    let slot = meta.value()?.call(Ident::parse_any)?;
-                    out.gaps.push((preceding, slot.unraw().to_string()));
-                }
                 "text" => out.text = Some(if meta.input.peek(Token![=]) { Some(meta.value()?.parse()?) } else { None }),
                 "interior" => out.interior = Some(meta.value()?.parse()?),
                 "envelope" => out.envelope = true,
@@ -153,6 +148,7 @@ pub fn kind_attrs(attrs: &[Attribute]) -> syn::Result<KindAttrs> {
                 "list" => out.list = true,
                 "item" => out.item = Some(meta.value()?.parse()?),
                 "verbatim" => out.verbatim = true,
+                "error" => out.error = true,
                 "codec_only" => out.codec_only = true,
                 _ => return Err(meta.error("unknown `transport` attribute")),
             }

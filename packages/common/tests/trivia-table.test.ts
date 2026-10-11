@@ -26,7 +26,7 @@ describe('the trivia table through the tree handle', () => {
 		const [comment, layout, ...rest] = sides.triviaSide(statements[0] ?? -1, 'leading');
 		if (!isCoordinate(comment)) throw new Error('expected the comment as a coordinate');
 		expect([comment.$type, comment.$span]).toEqual([rs.kinds.LineComment, { start: 0, end: 4 }]);
-		expect(layout).toMatchObject({ $type: expect.any(Number), $sameLine: true });
+		expect(layout).toBe(rs.kinds.Newline);
 		expect(rest).toEqual([]);
 	});
 

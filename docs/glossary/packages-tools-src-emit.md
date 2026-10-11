@@ -583,9 +583,9 @@ The text between a full form's `open` and `close` delimiters, over each pair of 
 
 The `$trivia` calls after a printed node: leading and trailing entries, then the inner entries through `.$trivia.inner(…)`. Whitespace entries print as the member they name; `seatLineGaps` decides which of them reach the print.
 
-### `packages/tools/src/emit/factory-source.ts::seatLineGaps`
+### `packages/tools/src/emit/factory-source.ts::seatTableSides`
 
-Seats each read node's derived trivia (`readTrivia`) as the trivia the source emitter prints, walking the same storage keys every other tree walk does (`isStorageKey`). The read data is complete, but a printed call ends its line anyway, so a run of one line break would repeat what the print already says: the emitter prints a blank line and anything wider, and drops the `newline` member. A node left with nothing to print loses its trivia entirely, since an empty trivia block would stop the print collapsing a wrapper into its content.
+Seats each read node's sides (`sidesOf`: its tree's trivia table, through the source identity a materialized copy keeps) as the trivia the source emitter prints, walking the same storage keys every other tree walk does (`isStorageKey`). A side that holds an entry prints whole, its layout runs included: a written entry with no whitespace renders on its owner's line, so a run is what puts an own-line comment on its own line. A side holding only the `newline` member says what the seam default already writes and is dropped; a blank line and anything wider prints. A node left with nothing to print loses its trivia entirely, since an empty trivia block would stop the print collapsing a wrapper into its content.
 
 ### `packages/tools/src/emit/factory-source.ts::printedSource`
 

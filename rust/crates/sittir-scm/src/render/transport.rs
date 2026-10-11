@@ -127,6 +127,7 @@ pub enum AnyTransport {
     Dot,
     #[kind(kind::SLASH)]
     Slash,
+    #[transport(error)]
     Verbatim(VerbatimTransport),
 }
 
@@ -363,6 +364,9 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Verbatim(t) => t.snapshot_edge(),
         }
     }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 
@@ -459,7 +463,7 @@ impl ::sittir_core::trivia::FromTriviaText for TriviaTransport {
         TriviaTransport::Text(text)
     }
 
-    fn from_layout(kind: ::sittir_core::types::KindId) -> Option<Self> {
+    fn from_layout(kind: ::sittir_core::types::KindId, _text: &str) -> Option<Self> {
         if kind == kind::_SPACE { return Some(TriviaTransport::Space); }
         if kind == kind::_TAB { return Some(TriviaTransport::Tab); }
         if kind == kind::_NEWLINE { return Some(TriviaTransport::Newline); }
@@ -1420,7 +1424,7 @@ impl ::sittir_core::render::Render for NamedNodeSupertypedNameTransportSlot {
 
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::PROGRAM, gap(0) = definitions)]
+#[transport(kind = kind::PROGRAM)]
 pub struct ProgramTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -1452,7 +1456,7 @@ impl ::sittir_core::render::Render for ProgramTransport {
 impl ::sittir_core::prepare::Prepare for ProgramTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let inner = ::sittir_core::layout::Layout::snapshot_inner(&self.layout);
+        let inner = ::sittir_core::layout::Layout::inner_item(&self.layout);
         let first = ::sittir_core::prepare::outermost([::sittir_core::prepare::EdgeItems::first_item(&self.definitions)].into_iter().flatten().next(), inner, ::sittir_core::options::Side::Before);
         let last = ::sittir_core::prepare::outermost([::sittir_core::prepare::EdgeItems::last_item(&self.definitions)].into_iter().flatten().next(), inner, ::sittir_core::options::Side::After);
         let root = ::sittir_core::layout::Layout::snapshot_edge(&self.layout).map(|edge| edge.span);
@@ -2097,7 +2101,7 @@ impl ::sittir_core::prepare::Prepare for GroupingTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::MISSING_NODE, layout = [kind::LPAREN, kind::MISSING_KEYWORD, kind::RPAREN], gap(2) = name)]
+#[transport(kind = kind::MISSING_NODE, layout = [kind::LPAREN, kind::MISSING_KEYWORD, kind::RPAREN])]
 pub struct MissingNodeTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -3892,6 +3896,7 @@ fn render_program(node: &ProgramTransport, w: &mut dyn ::sittir_core::render::Re
         trailing: false,
         head: Some(options::SITE_PROGRAM_DEFINITIONS_START),
         tail: Some(options::SITE_PROGRAM_DEFINITIONS_END),
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_definitions"),
     };
     w.edge(::sittir_core::types::KindId(33), ::sittir_core::options::Side::Before, node.layout.edges().before);
     ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
@@ -3904,7 +3909,7 @@ fn render_escape_sequence(node: &EscapeSequenceTransport, w: &mut dyn ::sittir_c
     let content = &node.content;
     w.text("\\")?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-    content.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", 0, w, |w| content.render(w))?;
     Ok(())
 }
 
@@ -3926,7 +3931,7 @@ fn render_capture(node: &CaptureTransport, w: &mut dyn ::sittir_core::render::Re
     w.edge(::sittir_core::types::KindId(39), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("@")?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-    name.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", 0, w, |w| name.render(w))?;
     w.edge(::sittir_core::types::KindId(39), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
@@ -3935,7 +3940,7 @@ fn render_string(node: &StringTransport, w: &mut dyn ::sittir_core::render::Rend
     let string_content = View::new(&node.string_content, "{}");
     w.edge(::sittir_core::types::KindId(40), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("\"")?;
-    string_content.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_string_content", 0, w, |w| string_content.render(w))?;
     w.text("\"")?;
     w.edge(::sittir_core::types::KindId(40), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
@@ -3944,7 +3949,7 @@ fn render_string(node: &StringTransport, w: &mut dyn ::sittir_core::render::Rend
 fn render_immediate_string(node: &ImmediateStringTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let string_content = View::new(&node.string_content, "{}");
     w.text("\"")?;
-    string_content.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_string_content", 0, w, |w| string_content.render(w))?;
     w.text("\"")?;
     w.edge(::sittir_core::types::KindId(41), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
@@ -3961,6 +3966,7 @@ fn render_string_content(node: &StringContentTransport, w: &mut dyn ::sittir_cor
         trailing: false,
         head: None,
         tail: None,
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_content"),
     };
     content.render(w)?;
     Ok(())
@@ -3977,6 +3983,7 @@ fn render_parameters(node: &ParametersTransport, w: &mut dyn ::sittir_core::rend
         trailing: false,
         head: Some(options::SITE_PARAMETERS_ELEMENTS_START),
         tail: Some(options::SITE_PARAMETERS_ELEMENTS_END),
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_elements"),
     };
     w.edge(::sittir_core::types::KindId(43), ::sittir_core::options::Side::Before, node.layout.edges().before);
     elements.render(w)?;
@@ -3988,7 +3995,7 @@ fn render_comment(node: &CommentTransport, w: &mut dyn ::sittir_core::render::Re
     let content = &node.content;
     w.text(";")?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-    content.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", 0, w, |w| content.render(w))?;
     Ok(())
 }
 
@@ -4003,6 +4010,7 @@ fn render_list(node: &ListTransport, w: &mut dyn ::sittir_core::render::RenderSi
         trailing: false,
         head: None,
         tail: None,
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_definitions"),
     };
     let elements = ListView {
         items: &node.elements,
@@ -4014,6 +4022,7 @@ fn render_list(node: &ListTransport, w: &mut dyn ::sittir_core::render::RenderSi
         trailing: false,
         head: None,
         tail: None,
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_elements"),
     };
     w.edge(::sittir_core::types::KindId(44), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("[")?;
@@ -4038,6 +4047,7 @@ fn render_grouping(node: &GroupingTransport, w: &mut dyn ::sittir_core::render::
         trailing: false,
         head: None,
         tail: None,
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_elements"),
     };
     let grouping_group = ListView {
         items: &node.grouping_group,
@@ -4049,6 +4059,7 @@ fn render_grouping(node: &GroupingTransport, w: &mut dyn ::sittir_core::render::
         trailing: false,
         head: None,
         tail: None,
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_grouping_group"),
     };
     w.edge(::sittir_core::types::KindId(45), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
@@ -4073,6 +4084,7 @@ fn render_missing_node(node: &MissingNodeTransport, w: &mut dyn ::sittir_core::r
         trailing: false,
         head: Some(options::SITE_MISSING_NODE_ELEMENTS_START),
         tail: Some(options::SITE_MISSING_NODE_ELEMENTS_END),
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_elements"),
     };
     let name = View::new(&node.name, "{}");
     w.edge(::sittir_core::types::KindId(46), ::sittir_core::options::Side::Before, node.layout.edges().before);
@@ -4082,7 +4094,7 @@ fn render_missing_node(node: &MissingNodeTransport, w: &mut dyn ::sittir_core::r
     w.text("MISSING")?;
     w.site_at(options::SITE_MISSING_NODE_MISSING_KEYWORD_AFTER);
     ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
-    name.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", 0, w, |w| name.render(w))?;
     w.site_at(options::SITE_MISSING_NODE_RPAREN_BEFORE);
     w.text(")")?;
     w.site_at(options::SITE_MISSING_NODE_RPAREN_AFTER);
@@ -4102,10 +4114,11 @@ fn render_anonymous_node(node: &AnonymousNodeTransport, w: &mut dyn ::sittir_cor
         trailing: false,
         head: Some(options::SITE_ANONYMOUS_NODE_ELEMENTS_START),
         tail: Some(options::SITE_ANONYMOUS_NODE_ELEMENTS_END),
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_elements"),
     };
     let name = &node.name;
     w.edge(::sittir_core::types::KindId(47), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    name.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", 0, w, |w| name.render(w))?;
     elements.render(w)?;
     w.edge(::sittir_core::types::KindId(47), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
@@ -4115,11 +4128,11 @@ fn render_field_definition(node: &FieldDefinitionTransport, w: &mut dyn ::sittir
     let definition = &node.definition;
     let name = &node.name;
     w.edge(::sittir_core::types::KindId(50), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    name.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", 0, w, |w| name.render(w))?;
     w.site_at(options::SITE_FIELD_DEFINITION_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_FIELD_DEFINITION_COLON_AFTER);
-    definition.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_definition", 0, w, |w| definition.render(w))?;
     w.edge(::sittir_core::types::KindId(50), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
@@ -4129,7 +4142,7 @@ fn render_negated_field(node: &NegatedFieldTransport, w: &mut dyn ::sittir_core:
     w.edge(::sittir_core::types::KindId(51), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("!")?;
     w.site_at(options::SITE_NEGATED_FIELD_BANG_AFTER);
-    identifier.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_identifier", 0, w, |w| identifier.render(w))?;
     w.edge(::sittir_core::types::KindId(51), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
@@ -4143,11 +4156,11 @@ fn render_predicate(node: &PredicateTransport, w: &mut dyn ::sittir_core::render
     w.text("(")?;
     w.site_at(options::SITE_PREDICATE_LPAREN_AFTER);
     w.site_at(options::SITE_PREDICATE_PREFIX_BEFORE);
-    prefix.render(w)?;
-    name.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_prefix", 0, w, |w| prefix.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", 0, w, |w| name.render(w))?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-    type_.render(w)?;
-    parameters.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type", 0, w, |w| type_.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_parameters", 0, w, |w| parameters.render(w))?;
     w.site_at(options::SITE_PREDICATE_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(52), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -4161,7 +4174,7 @@ fn render_predicate_type(t: &PredicateTypeEnum, w: &mut dyn ::sittir_core::rende
 
 fn render_list_element_quantifier(node: &ListElementQuantifierTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let quantifier = &node.quantifier;
-    quantifier.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_quantifier", 0, w, |w| quantifier.render(w))?;
     Ok(())
 }
 
@@ -4169,11 +4182,11 @@ fn render_group_expression_arm(node: &GroupExpressionArmTransport, w: &mut dyn :
     let left = &node.left;
     let right = &node.right;
     w.edge(::sittir_core::types::KindId(56), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    left.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_left", 0, w, |w| left.render(w))?;
     w.site_at(options::SITE_GROUP_EXPRESSION_ARM_DOT_BEFORE);
     w.text(".")?;
     w.site_at(options::SITE_GROUP_EXPRESSION_ARM_DOT_AFTER);
-    right.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_right", 0, w, |w| right.render(w))?;
     w.edge(::sittir_core::types::KindId(56), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
@@ -4182,11 +4195,11 @@ fn render_named_node_expression_arm(node: &NamedNodeExpressionArmTransport, w: &
     let left = &node.left;
     let right = &node.right;
     w.edge(::sittir_core::types::KindId(57), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    left.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_left", 0, w, |w| left.render(w))?;
     w.site_at(options::SITE_NAMED_NODE_EXPRESSION_ARM_DOT_BEFORE);
     w.text(".")?;
     w.site_at(options::SITE_NAMED_NODE_EXPRESSION_ARM_DOT_AFTER);
-    right.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_right", 0, w, |w| right.render(w))?;
     w.edge(::sittir_core::types::KindId(57), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
@@ -4195,7 +4208,7 @@ fn render_grouping_group(node: &GroupingGroupTransport, w: &mut dyn ::sittir_cor
     let anchor = View::new(::sittir_core::view::Presence::new(node.anchor, AnchorTransport::Anchor), "{}");
     let group_expression = &node.group_expression;
     w.edge(::sittir_core::types::KindId(58), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    group_expression.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_group_expression", 0, w, |w| group_expression.render(w))?;
     if anchor.is_present() {
         w.site_at(options::SITE_GROUPING_GROUP_DOT_BEFORE);
         anchor.render(w)?;
@@ -4220,14 +4233,15 @@ fn render_named_node_plain(node: &NamedNodePlainTransport, w: &mut dyn ::sittir_
         trailing: false,
         head: Some(options::SITE_NAMED_NODE_PLAIN_ELEMENTS_START),
         tail: Some(options::SITE_NAMED_NODE_PLAIN_ELEMENTS_END),
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_elements"),
     };
     let name = &node.name;
     let named_node_group = View::new(&node.named_node_group, "{}");
     w.edge(::sittir_core::types::KindId(61), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_NAMED_NODE_PLAIN_LPAREN_AFTER);
-    name.render(w)?;
-    named_node_group.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", 0, w, |w| name.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_named_node_group", 0, w, |w| named_node_group.render(w))?;
     w.site_at(options::SITE_NAMED_NODE_PLAIN_RPAREN_BEFORE);
     w.text(")")?;
     w.site_at(options::SITE_NAMED_NODE_PLAIN_RPAREN_AFTER);
@@ -4247,6 +4261,7 @@ fn render_named_node_supertyped(node: &NamedNodeSupertypedTransport, w: &mut dyn
         trailing: false,
         head: Some(options::SITE_NAMED_NODE_SUPERTYPED_ELEMENTS_START),
         tail: Some(options::SITE_NAMED_NODE_SUPERTYPED_ELEMENTS_END),
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_elements"),
     };
     let name = &node.name;
     let named_node_group = View::new(&node.named_node_group, "{}");
@@ -4254,11 +4269,11 @@ fn render_named_node_supertyped(node: &NamedNodeSupertypedTransport, w: &mut dyn
     w.edge(::sittir_core::types::KindId(62), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_NAMED_NODE_SUPERTYPED_LPAREN_AFTER);
-    supertype.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_supertype", 0, w, |w| supertype.render(w))?;
     w.text("/")?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-    name.render(w)?;
-    named_node_group.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", 0, w, |w| name.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_named_node_group", 0, w, |w| named_node_group.render(w))?;
     w.site_at(options::SITE_NAMED_NODE_SUPERTYPED_RPAREN_BEFORE);
     w.text(")")?;
     w.site_at(options::SITE_NAMED_NODE_SUPERTYPED_RPAREN_AFTER);
@@ -4279,6 +4294,7 @@ fn render_named_node_group_children(node: &NamedNodeGroupChildrenTransport, w: &
         trailing: false,
         head: Some(options::SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_START),
         tail: Some(options::SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_END),
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_named_node_expressions"),
     };
     w.edge(::sittir_core::types::KindId(63), ::sittir_core::options::Side::Before, node.layout.edges().before);
     if anchor.is_present() {
@@ -4303,6 +4319,7 @@ fn render_named_node_group_anchored_last(node: &NamedNodeGroupAnchoredLastTransp
         trailing: false,
         head: Some(options::SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_START),
         tail: Some(options::SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_END),
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_named_node_expressions"),
     };
     w.edge(::sittir_core::types::KindId(64), ::sittir_core::options::Side::Before, node.layout.edges().before);
     if anchor.is_present() {
@@ -4310,7 +4327,7 @@ fn render_named_node_group_anchored_last(node: &NamedNodeGroupAnchoredLastTransp
         w.site_at(options::SITE_NAMED_NODE_GROUP_ANCHORED_LAST_DOT_AFTER);
     }
     named_node_expressions.render(w)?;
-    last.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_last", 0, w, |w| last.render(w))?;
     w.site_at(options::SITE_NAMED_NODE_GROUP_ANCHORED_LAST_DOT_BEFORE);
     w.text(".")?;
     w.edge(::sittir_core::types::KindId(64), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -4457,13 +4474,16 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
 )
 .with_literal_merge_pairs(&[]); // no multi-char punctuation transitions in this grammar
 
-/// Render a transport tree to text. Takes the trait rather than
-/// `&AnyTransport` so the root's own `SlotValue` carrier renders through
-/// the SAME single SpacingWriter wrap — a second entry point would be a
-/// second place the root seam policy could drift.
-pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {
+/// Render a transport tree to text. Takes the root's own `SlotValue`
+/// carrier, so the root renders through the SAME single SpacingWriter
+/// wrap — a second entry point would be a second place the root seam
+/// policy could drift. A root of the grammar's root kind renders as a
+/// document.
+pub fn render_transport_dispatch(transport: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {
     let mut s = String::new();
-    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options);
+    let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options);
+    let document = ::sittir_core::view::KindTest::kind_in(transport, &w, kind::ROOT_KINDS);
+    let mut w = w.with_document(document);
     transport.render(&mut w)?;
     w.finish()?;
     Ok(s)

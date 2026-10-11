@@ -147,6 +147,7 @@ fn list<'a>(
         trailing,
         head: None,
         tail: None,
+        units: None,
     }
 }
 
@@ -214,6 +215,7 @@ fn an_empty_list_writes_nothing_even_with_flanks_head_tail_and_template() {
         trailing: true,
         head: Some(0),
         tail: Some(1),
+        units: None,
     };
     assert_eq!(rt_with_sites(&view), "");
     let none = ListView {
@@ -226,6 +228,7 @@ fn an_empty_list_writes_nothing_even_with_flanks_head_tail_and_template() {
         trailing: false,
         head: None,
         tail: None,
+        units: None,
     };
     assert_eq!(rt(&none), "");
 }
@@ -243,6 +246,7 @@ fn template_is_outside_head_and_tail() {
         trailing: false,
         head: Some(0),
         tail: Some(1),
+        units: None,
     };
     assert_eq!(rt_with_sites(&view), "{\na,b\n}");
 }
@@ -260,6 +264,7 @@ fn optional_elements_still_take_separators() {
         trailing: false,
         head: None,
         tail: None,
+        units: None,
     };
     assert_eq!(rt(&view), ",,a");
 }

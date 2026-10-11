@@ -4,7 +4,6 @@ import { fileURLToPath } from 'node:url';
 import {
 	NO_REPARSE_HOSTS,
 	applyHost,
-	carryPlacement,
 	createEngine,
 	detachCoordinates,
 	dumpMetrics,
@@ -19,16 +18,14 @@ import {
 	carryRead,
 	carrySource,
 	holdTree,
-	readDerivedSides,
-	readTrivia,
+	sideOf,
+	sidesOf,
 	spanOf,
 	treeTokenOf,
-	type TriviaView
+	type KindView
 } from '@sittir/common/utils';
 import {
-	decodeIndex,
 	isNode,
-	treeHandleOf,
 	treeOf,
 	type TriviaSideName,
 	isCoordinate,
@@ -148,10 +145,8 @@ export { loadWebTreeSitter };
 
 export type NativeEngine = Engine<LanguageAPI>;
 
-export function triviaViewOf(engine: NativeEngine): TriviaView {
+export function kindViewOf(engine: NativeEngine): KindView {
 	return {
-		trivia: (node) => readTrivia(node, engine.diagnostics.lineGapsOf),
-		derived: (node) => readDerivedSides(node, engine.diagnostics.lineGapsOf),
 		isWrapper: (kindId) => engine.trivia.rebuildWrappers.has(kindId),
 		isList: (kindId) => engine.trivia.listKinds.has(kindId)
 	};
@@ -252,10 +247,10 @@ function storedChildren(d: AnyUntypedNode): readonly AnyUntypedNode[] {
 	return out;
 }
 
-function storedTriviaEntries(d: AnyUntypedNode): readonly AnyUntypedNode[] {
-	const trivia = d.$_layout?.trivia;
-	if (trivia === undefined) return [];
-	return [trivia.leading, trivia.trailing, trivia.inner].flatMap((entries) => (entries ?? []) as AnyUntypedNode[]);
+function sideEntries(d: AnyUntypedNode): readonly AnyUntypedNode[] {
+	const sides = sidesOf(d);
+	if (sides === undefined) return [];
+	return [sides.leading, sides.trailing, sides.inner].flatMap((entries) => (entries ?? []).filter((entry): entry is AnyUntypedNode => typeof entry === 'object'));
 }
 
 function coordsOf(d: AnyUntypedNode): NativeNodeCoords {
@@ -283,7 +278,7 @@ export function walkNativeForKind(
 	const visit = (d: AnyUntypedNode, coords: NativeNodeCoords): void => {
 		if (nativeNodeIsKind(d, kind, kindNameFromId)) results.push({ coords, span: spanOf(d) });
 		const node = isCoordinate(d) ? (readNode(handle, d, Infinity) as AnyUntypedNode) : d;
-		for (const entry of storedTriviaEntries(node)) visit(entry, coordsOf(entry));
+		for (const entry of sideEntries(node)) visit(entry, coordsOf(entry));
 		for (const child of storedChildren(node)) visit(child, coordsOf(child));
 	};
 	visit(handle.read(0, Infinity) as AnyUntypedNode, {});
@@ -1136,12 +1131,6 @@ function projectElements(
 	});
 }
 
-/** A trivia entry as the call builds it: resolved like a child, keeping the placement the read recorded. */
-function resolveTriviaEntry(entry: unknown, opts: NodeToConfigOpts): unknown {
-	const built = resolveChild(entry, childOpts(opts));
-	return typeof entry === 'object' && entry !== null && typeof built === 'object' && built !== null ? carryPlacement(entry, built) : built;
-}
-
 /** Groups whose trivia had no built child to move to, by seat shape: the cases a seat cannot spell. */
 export const seatedTriviaEdges: { readonly seat: string; readonly group: string; readonly children: string }[] = [];
 
@@ -1161,7 +1150,6 @@ function carryGroupTrivia(group: ReadNodeLike, seat: string, container: Record<s
 		if (Array.isArray(value)) value.forEach((_, index) => holders.push({ holder: value as unknown as Record<string, unknown>, key: String(index) }));
 		else holders.push({ holder: container, key });
 	}
-	const afterLast = typeof (group as Record<string, unknown>)['_delimiter'] === 'number' ? 1 : 0;
 	const move = (at: { holder: Record<string, unknown>; key: string } | undefined, side: 'leading' | 'trailing', entries: readonly unknown[] | undefined): void => {
 		if (entries === undefined || entries.length === 0) return;
 		const child = at?.holder[at.key];
@@ -1171,15 +1159,12 @@ function carryGroupTrivia(group: ReadNodeLike, seat: string, container: Record<s
 		}
 		const built = child as { $_layout?: NodeLayout };
 		const existing = built.$_layout?.trivia as Record<string, readonly unknown[] | undefined> | undefined;
-		const moved =
-			side === 'trailing' && afterLast > 0
-				? entries.map((entry) => (typeof entry === 'object' && entry !== null ? { ...entry, $tokensBetween: Number((entry as { $tokensBetween?: number }).$tokensBetween ?? 0) + afterLast } : entry))
-				: entries;
-		const trivia = { ...existing, [side]: side === 'leading' ? [...moved, ...(existing?.leading ?? [])] : [...(existing?.trailing ?? []), ...moved] } as NodeTrivia;
+		const trivia = { ...existing, [side]: side === 'leading' ? [...entries, ...(existing?.leading ?? [])] : [...(existing?.trailing ?? []), ...entries] } as NodeTrivia;
 		at.holder[at.key] = Object.assign(Object.create(Object.getPrototypeOf(built)), built, { $_layout: { ...built.$_layout, trivia } });
 	};
-	move(holders[0], 'leading', resolved.leading);
-	move(holders[holders.length - 1], 'trailing', resolved.trailing);
+	const nodes = (entries: readonly unknown[] | undefined) => entries?.filter((entry) => typeof entry !== 'number');
+	move(holders[0], 'leading', nodes(resolved.leading));
+	move(holders[holders.length - 1], 'trailing', nodes(resolved.trailing));
 }
 
 function projectArmSlot(
@@ -1381,19 +1366,13 @@ function buildWithFactory(
 	return writeSides(referenceData, built, opts);
 }
 
-export function sideOf(source: ReadNodeLike, side: TriviaSideName, tree: TreeHandle | undefined = treeOf(source as object)): readonly unknown[] {
-	const handle = treeHandleOf(source as object);
-	if (tree?.triviaSide === undefined || handle === undefined) return [];
-	return tree.triviaSide(decodeIndex(handle), side);
-}
-
 export function tableSides(source: ReadNodeLike, tree: TreeHandle, build: (read: unknown) => unknown): NodeTrivia | undefined {
 	const entries = (side: TriviaSideName): readonly TriviaEntry[] =>
-		sideOf(source, side, tree).flatMap((entry): TriviaEntry[] => {
-			if (!isCoordinate(entry)) return isNode(entry) ? [entry] : [];
+		sideOf(source as object, side).flatMap((entry): TriviaEntry[] => {
+			if (!isCoordinate(entry)) return isNode(entry) || typeof entry === 'number' ? [entry] : [];
 			const built = build(readNode(tree, entry, Infinity));
 			if (!isNode(built)) throw new Error(`ir lane: a comment built to ${JSON.stringify(built)}, not a node`);
-			return [carryPlacement(entry, built)];
+			return [built];
 		});
 	const [leading, trailing, inner] = [entries('leading'), entries('trailing'), entries('inner')];
 	if (leading.length === 0 && trailing.length === 0 && inner.length === 0) return undefined;
@@ -1405,7 +1384,7 @@ function groupSides(source: ReadNodeLike, opts: NodeToConfigOpts): NodeTrivia | 
 	const tree = treeOf(source as object);
 	const carried = source.$_layout?.trivia;
 	if (tree !== undefined) return tableSides(source, tree, (read) => resolveChild(read, { ...childOpts(opts), tree }));
-	return carried && (mapTriviaEntries(carried, (entries) => entries.map((entry) => resolveTriviaEntry(entry, opts))) as NodeTrivia);
+	return carried && (mapTriviaEntries(carried, (entries) => entries.map((entry) => resolveChild(entry, childOpts(opts)))) as NodeTrivia);
 }
 
 function writeSides(source: ReadNodeLike, built: unknown, opts: NodeToConfigOpts): unknown {

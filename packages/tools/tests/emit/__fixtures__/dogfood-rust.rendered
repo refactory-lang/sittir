@@ -22,6 +22,7 @@
 //! surface a typed error to JS. UTF-8 boundary correctness is also
 //! checked on the splice (via `String::replace_range`) — non-char-
 //! boundary ranges produce a `Result::Err` instead of panicking.
+
 use crate::types::Edit;
 
 /// Error returned from [`apply_edits`] when an edit is invalid.
