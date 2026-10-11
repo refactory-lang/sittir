@@ -229,7 +229,7 @@ How a refinement claim tells its nodes apart from the claim it refines: a predic
 
 ### `packages/codegen/src/bindings/facts.ts::RefinedClaim`
 
-A claim with what it refines: `refines` is the deepest earlier claim's path that the claim's path extends, on the same kind in the same placement, and `refinement` is how it tells its nodes apart. A top-level claim that refines nothing still carries a refinement kind when it pins something (a predicate, a field literal or a token); one that pins nothing has none and is a plain claim.
+A claim with what it refines: `refines` is the deepest path, among all the claims on the same kind in the same placement, that the claim's path extends, so claim order never decides it; and `refinement` is how it tells its nodes apart. A top-level claim that refines nothing still carries a refinement kind when it pins something (a predicate, a field literal or a token); one that pins nothing has none and is a plain claim.
 
 ### `packages/codegen/src/bindings/facts.ts::refinementKindOf`
 
@@ -925,7 +925,11 @@ The slots from an owner kind outward through the `via` steps (walked farthest fi
 
 ### `packages/codegen/src/bindings/routes.ts::resolveRoutes`
 
-Resolves one grammar's routes. A claim on a kind reaches the kind and each of its forms (`formsOf`) that has no claim of its own: a self-claimed form reads by its own claim, and `is` still passes it for the supertype's path by the kind table. Slot names (`SlotNames`: renames, and a claim's `@dropped` slots) are collected first on every kind their claim reaches, since a pin's member name and a slot route's name both follow them, so a supertype claim's field rename or drop applies to the field on each form. A claim's read entries go on the kinds the reader produces for each kind it reaches (`readKinds`), so a claim on an enum kind is entered on its members' kinds; an entry's `claimed` is the kind the claim names. A kind's default vocabulary kind is its first top-level claim with no predicate and no pin, else its first top-level claim, in file order; the read entries are then sorted by `specificity`. Member routes are resolved for every claimed kind, from its sorted read entries, and container unwraps for every kind of the model.
+Resolves one grammar's routes. A claim on a kind reaches the kind and each of its forms (`formsOf`) that has no claim of its own: a self-claimed form reads by its own claim, and `is` still passes it for the supertype's path by the kind table. Slot names (`SlotNames`: renames, and a claim's `@dropped` slots) are collected first on every kind their claim reaches, since a pin's member name and a slot route's name both follow them, so a supertype claim's field rename or drop applies to the field on each form. A claim's read entries go on the kinds the reader produces for each kind it reaches (`readKinds`), so a claim on an enum kind is entered on its members' kinds; an entry's `claimed` is the kind the claim names. A kind's default vocabulary kind is its first top-level claim with no predicate, no pin and no child test, in file order, else the parent its refining claims' paths share (`refinedParent`); the read entries are then sorted by `specificity`. Member routes are resolved for every claimed kind, from its sorted read entries, and container unwraps for every kind of the model.
+
+### `packages/codegen/src/bindings/routes.ts::refinedParent`
+
+The vocabulary kind of a kind whose top-level claims all refine: the parent path they share, so each refining claim sits under its own path's parent and none is promoted to name the kind. Claims under different parents, or a single-segment path with no parent, are refused with a diagnostic naming the paths, since nothing then says which vocabulary kind the kind reads as.
 
 ### `packages/codegen/src/bindings/input.ts::module`
 

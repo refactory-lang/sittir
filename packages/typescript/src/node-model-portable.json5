@@ -521,7 +521,7 @@
       }
     },
     "arrow_function": {
-      "vocab": "expression.lambda",
+      "vocab": "expression",
       "read": [
         {
           "vocab": "expression.lambda",
@@ -3475,13 +3475,76 @@
           ]
         },
         {
-          "name": "content",
+          "name": "declaration",
           "route": "slot",
           "slot": "content",
+          "except": [
+            "export_statement_default_declaration_default_kw"
+          ],
           "path": [
             {
               "owner": "export_statement_default_declaration",
               "slot": "content"
+            }
+          ]
+        },
+        {
+          "name": "declaration",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "export_statement_default_declaration_default_kw",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "export_statement_default_declaration_default_kw",
+          "slot": "content",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "export_statement_default_declaration",
+              "slot": "content"
+            },
+            {
+              "owner": "export_statement_default_declaration_default_kw",
+              "slot": "content"
+            }
+          ]
+        },
+        {
+          "name": "value",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "export_statement_default_declaration_default_kw_value",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "export_statement_default_declaration_default_kw",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "export_statement_default_declaration_default_kw_value",
+          "slot": "value",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "export_statement_default_declaration",
+              "slot": "content"
+            },
+            {
+              "owner": "export_statement_default_declaration_default_kw",
+              "slot": "content"
+            },
+            {
+              "owner": "export_statement_default_declaration_default_kw_value",
+              "slot": "value"
             }
           ]
         }
@@ -3510,13 +3573,143 @@
       ],
       "members": [
         {
-          "name": "content",
+          "name": "exportClause",
           "route": "slot",
           "slot": "content",
+          "except": [
+            "export_statement_default_from_star_from",
+            "export_statement_default_from_ns_from",
+            "export_statement_default_from_clause_from"
+          ],
           "path": [
             {
               "owner": "export_statement_default_from",
               "slot": "content"
+            }
+          ]
+        },
+        {
+          "name": "exportClause",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "export_statement_default_from_clause_from",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "export_statement_default_from_clause_from",
+          "slot": "export_clause",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "export_statement_default_from",
+              "slot": "content"
+            },
+            {
+              "owner": "export_statement_default_from_clause_from",
+              "slot": "export_clause"
+            }
+          ]
+        },
+        {
+          "name": "exportClause",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "export_statement_default_from_ns_from",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "export_statement_default_from_ns_from",
+          "slot": "namespace_export",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "export_statement_default_from",
+              "slot": "content"
+            },
+            {
+              "owner": "export_statement_default_from_ns_from",
+              "slot": "namespace_export"
+            }
+          ]
+        },
+        {
+          "name": "source",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "export_statement_default_from_clause_from",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "export_statement_default_from_clause_from",
+          "slot": "source",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "export_statement_default_from",
+              "slot": "content"
+            },
+            {
+              "owner": "export_statement_default_from_clause_from",
+              "slot": "source"
+            }
+          ]
+        },
+        {
+          "name": "source",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "export_statement_default_from_ns_from",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "export_statement_default_from_ns_from",
+          "slot": "source",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "export_statement_default_from",
+              "slot": "content"
+            },
+            {
+              "owner": "export_statement_default_from_ns_from",
+              "slot": "source"
+            }
+          ]
+        },
+        {
+          "name": "source",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "export_statement_default_from_star_from",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "export_statement_default_from_star_from",
+          "slot": "source",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "export_statement_default_from",
+              "slot": "content"
+            },
+            {
+              "owner": "export_statement_default_from_star_from",
+              "slot": "source"
             }
           ]
         }
@@ -3544,7 +3737,7 @@
       ],
       "members": [
         {
-          "name": "expression",
+          "name": "value",
           "route": "slot",
           "slot": "expression",
           "path": [

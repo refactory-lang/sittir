@@ -183,6 +183,9 @@
 (slice_pattern) @pattern.slice
 (or_pattern) @pattern.or
 (range_pattern) @pattern.range
+(range_pattern_prefix) @pattern.range
+(range_pattern_prefix "..=") @pattern.range.inclusive
+(range_pattern_prefix "..") @pattern.range.exclusive
 (range_pattern_with_left (range_pattern_with_left_with_right right: (_) @right))
 (ref_pattern) @pattern.reference
 (reference_pattern) @pattern.reference.value

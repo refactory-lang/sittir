@@ -645,6 +645,8 @@ export interface PortableIds {
 	'pattern.mutable': TSKindId.MutPattern;
 	'pattern.or': TSKindId.OrPattern | TSKindId.OrPatternBinary | TSKindId.OrPatternPrefix;
 	'pattern.range': TSKindId.RangePattern | TSKindId.RangePatternPrefix | TSKindId.RangePatternWithLeft;
+	'pattern.range.exclusive': TSKindId.RangePatternPrefix;
+	'pattern.range.inclusive': TSKindId.RangePatternPrefix;
 	'pattern.reference': TSKindId.RefPattern | TSKindId.ReferencePattern;
 	'pattern.reference.value': TSKindId.ReferencePattern;
 	'pattern.slice': TSKindId.SlicePattern;
@@ -1403,7 +1405,9 @@ export interface PortableKindsAt {
 		readonly struct: PortableKindsAt['pattern.struct'];
 		readonly tuple: PortableKindsAt['pattern.tuple'];
 		readonly wildcard: PortableKindsAt['pattern.wildcard'];
+		readonly exclusive: PortableKindsAt['pattern.range.exclusive'];
 		readonly field: PortableKindsAt['pattern.struct.field'];
+		readonly inclusive: PortableKindsAt['pattern.range.inclusive'];
 		readonly rest: PortableKindsAt['pattern.struct.rest'];
 		readonly value: PortableKindsAt['pattern.reference.value'];
 	};
@@ -1412,7 +1416,13 @@ export interface PortableKindsAt {
 	'pattern.match': { readonly $ids: readonly PortableIds['pattern.match'][] };
 	'pattern.mutable': { readonly $ids: readonly PortableIds['pattern.mutable'][] };
 	'pattern.or': { readonly $ids: readonly PortableIds['pattern.or'][] };
-	'pattern.range': { readonly $ids: readonly PortableIds['pattern.range'][] };
+	'pattern.range': {
+		readonly $ids: readonly PortableIds['pattern.range'][];
+		readonly exclusive: PortableKindsAt['pattern.range.exclusive'];
+		readonly inclusive: PortableKindsAt['pattern.range.inclusive'];
+	};
+	'pattern.range.exclusive': { readonly $ids: readonly PortableIds['pattern.range.exclusive'][] };
+	'pattern.range.inclusive': { readonly $ids: readonly PortableIds['pattern.range.inclusive'][] };
 	'pattern.reference': {
 		readonly $ids: readonly PortableIds['pattern.reference'][];
 		readonly value: PortableKindsAt['pattern.reference.value'];
@@ -2072,7 +2082,9 @@ export interface PortableIsAt {
 		readonly struct: PortableIsAt['pattern.struct'];
 		readonly tuple: PortableIsAt['pattern.tuple'];
 		readonly wildcard: PortableIsAt['pattern.wildcard'];
+		readonly exclusive: PortableIsAt['pattern.range.exclusive'];
 		readonly field: PortableIsAt['pattern.struct.field'];
+		readonly inclusive: PortableIsAt['pattern.range.inclusive'];
 		readonly rest: PortableIsAt['pattern.struct.rest'];
 		readonly value: PortableIsAt['pattern.reference.value'];
 	};
@@ -2081,7 +2093,12 @@ export interface PortableIsAt {
 	'pattern.match': PortableGuard<PortableIds['pattern.match']> & {};
 	'pattern.mutable': PortableGuard<PortableIds['pattern.mutable']> & {};
 	'pattern.or': PortableGuard<PortableIds['pattern.or']> & {};
-	'pattern.range': PortableGuard<PortableIds['pattern.range']> & {};
+	'pattern.range': PortableGuard<PortableIds['pattern.range']> & {
+		readonly exclusive: PortableIsAt['pattern.range.exclusive'];
+		readonly inclusive: PortableIsAt['pattern.range.inclusive'];
+	};
+	'pattern.range.exclusive': PortableGuard<PortableIds['pattern.range.exclusive']> & {};
+	'pattern.range.inclusive': PortableGuard<PortableIds['pattern.range.inclusive']> & {};
 	'pattern.reference': PortableGuard<PortableIds['pattern.reference']> & {
 		readonly value: PortableIsAt['pattern.reference.value'];
 	};
@@ -2230,6 +2247,7 @@ export interface PortableKinds {
 	readonly enum_member: PortableKindsAt['declaration.enum_member'];
 	readonly equal: PortableKindsAt['expression.binary.comparison.equal'];
 	readonly escape: PortableKindsAt['literal.string.escape'];
+	readonly exclusive: PortableKindsAt['pattern.range.exclusive'];
 	readonly extension: PortableKindsAt['declaration.extension'];
 	readonly extern: PortableKindsAt['modifier.extern'];
 	readonly false: PortableKindsAt['literal.boolean.false'];
@@ -2243,6 +2261,7 @@ export interface PortableKinds {
 	readonly hex: PortableKindsAt['literal.number.integer.hex'];
 	readonly higher_ranked: PortableKindsAt['clause.bounds.higher_ranked'];
 	readonly if: PortableKindsAt['statement.if'];
+	readonly inclusive: PortableKindsAt['pattern.range.inclusive'];
 	readonly instantiation: PortableKindsAt['expression.instantiation'];
 	readonly integer: PortableKindsAt['literal.number.integer'];
 	readonly interface: PortableKindsAt['declaration.interface'];
@@ -2372,6 +2391,7 @@ export interface PortableIs {
 	readonly enum_member: PortableIsAt['declaration.enum_member'];
 	readonly equal: PortableIsAt['expression.binary.comparison.equal'];
 	readonly escape: PortableIsAt['literal.string.escape'];
+	readonly exclusive: PortableIsAt['pattern.range.exclusive'];
 	readonly extension: PortableIsAt['declaration.extension'];
 	readonly extern: PortableIsAt['modifier.extern'];
 	readonly false: PortableIsAt['literal.boolean.false'];
@@ -2385,6 +2405,7 @@ export interface PortableIs {
 	readonly hex: PortableIsAt['literal.number.integer.hex'];
 	readonly higher_ranked: PortableIsAt['clause.bounds.higher_ranked'];
 	readonly if: PortableIsAt['statement.if'];
+	readonly inclusive: PortableIsAt['pattern.range.inclusive'];
 	readonly instantiation: PortableIsAt['expression.instantiation'];
 	readonly integer: PortableIsAt['literal.number.integer'];
 	readonly interface: PortableIsAt['declaration.interface'];
@@ -3221,6 +3242,8 @@ const table: PortableTable = {
 			ids: [TSKindId.RangePattern, TSKindId.RangePatternPrefix, TSKindId.RangePatternWithLeft],
 			exact: false
 		},
+		'pattern.range.exclusive': { ids: [TSKindId.RangePatternPrefix], exact: false },
+		'pattern.range.inclusive': { ids: [TSKindId.RangePatternPrefix], exact: false },
 		'pattern.reference': { ids: [TSKindId.RefPattern, TSKindId.ReferencePattern], exact: false },
 		'pattern.reference.value': { ids: [TSKindId.ReferencePattern], exact: false },
 		'pattern.slice': { ids: [TSKindId.SlicePattern], exact: false },
@@ -3399,6 +3422,7 @@ const table: PortableTable = {
 		['', 'enum_member', 'declaration.enum_member'],
 		['', 'equal', 'expression.binary.comparison.equal'],
 		['', 'escape', 'literal.string.escape'],
+		['', 'exclusive', 'pattern.range.exclusive'],
 		['', 'extension', 'declaration.extension'],
 		['', 'extern', 'modifier.extern'],
 		['', 'false', 'literal.boolean.false'],
@@ -3412,6 +3436,7 @@ const table: PortableTable = {
 		['', 'hex', 'literal.number.integer.hex'],
 		['', 'higher_ranked', 'clause.bounds.higher_ranked'],
 		['', 'if', 'statement.if'],
+		['', 'inclusive', 'pattern.range.inclusive'],
 		['', 'instantiation', 'expression.instantiation'],
 		['', 'integer', 'literal.number.integer'],
 		['', 'interface', 'declaration.interface'],
@@ -3599,7 +3624,9 @@ const table: PortableTable = {
 		['modifier', 'restricted', 'modifier.visibility.public.restricted'],
 		['modifier.visibility', 'internal', 'modifier.visibility.public.internal'],
 		['modifier.visibility', 'restricted', 'modifier.visibility.public.restricted'],
+		['pattern', 'exclusive', 'pattern.range.exclusive'],
 		['pattern', 'field', 'pattern.struct.field'],
+		['pattern', 'inclusive', 'pattern.range.inclusive'],
 		['pattern', 'rest', 'pattern.struct.rest'],
 		['pattern', 'value', 'pattern.reference.value'],
 		['statement', 'crate', 'statement.import.crate'],
@@ -4225,6 +4252,16 @@ const table: PortableTable = {
 		[TSKindId.RangePattern]: [{ path: 'pattern.range', within: [], test: [] }],
 		[TSKindId.RangePatternPrefix]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
+			{
+				path: 'pattern.range.inclusive',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '..=', fields: [], kinds: ['dot_dot_eq', 'dot_dot'] } }]
+			},
+			{
+				path: 'pattern.range.exclusive',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '..', fields: [], kinds: ['dot_dot_eq', 'dot_dot'] } }]
+			},
 			{ path: 'pattern.range', within: [], test: [] }
 		],
 		[TSKindId.RangePatternWithLeft]: [

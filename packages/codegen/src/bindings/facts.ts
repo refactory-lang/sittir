@@ -207,12 +207,11 @@ function refinementKindOf(claim: ClaimFact): RefinementKind {
 }
 
 export function refineClaims(claims: readonly ClaimFact[]): RefinedClaim[] {
-	return claims.map((claim, index) => {
+	return claims.map((claim) => {
 		const unrefined = { ...claim, refines: null, refinement: null };
 		if (claim.kind === null || claim.kind === WILDCARD) return unrefined;
 		const placement = claim.within.join('/');
 		const parent = claims
-			.slice(0, index)
 			.filter((p) => p.kind === claim.kind && p.within.join('/') === placement && claim.vocab.startsWith(`${p.vocab}.`))
 			.reduce<ClaimFact | undefined>((deepest, p) => (deepest === undefined || p.vocab.length > deepest.vocab.length ? p : deepest), undefined);
 		const refinement = refinementKindOf(claim);

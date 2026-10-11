@@ -169,6 +169,17 @@ describe('resolveRoutes', () => {
 		expect(routes.vocabOf.get('binary')).toBe('expression.binary');
 	});
 
+	it('names a kind with only refining claims by their paths\' shared parent, whatever their order', async () => {
+		const claims = ['(binary operator: "+") @expression.binary.add', '(binary operator: "-") @expression.binary.subtract'];
+		for (const order of [claims, [...claims].reverse()])
+			expect(resolveRoutes(await grammar(order.join('\n'))).vocabOf.get('binary')).toBe('expression.binary');
+	});
+
+	it('refuses a kind whose only claims refine different parents', async () => {
+		const bindings = await grammar(['(binary operator: "+") @expression.binary.add', '(binary operator: "-") @expression.unary.negation'].join('\n'));
+		expect(() => resolveRoutes(bindings)).toThrow(/binary.*expression\.binary.*expression\.unary/);
+	});
+
 	it('pins a field literal and a token held by a slot, each under the member name of its slot', async () => {
 		const routes = resolveRoutes(
 			await grammar(['(binary operator: "+") @expression.binary.add', '(binary left: (_) @lhs) @expression.binary'].join('\n'))
