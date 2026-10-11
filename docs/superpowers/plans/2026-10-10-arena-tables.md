@@ -93,6 +93,8 @@ Each prototype and measurement the arena steps already hold, and what 3a takes f
   - Task 1 counts one case the outline did not: a break the seam default writes that the source omits (`async { let x = 10; }` on one line). Under ruling 11 it needs no entry: a parsed tree's table stores the source's line layout, and a seam with no entry stays on one line.
   - Task 2's census counts the gaps no side takes (ruling 9), which a snapshot renders with the seam defaults.
 
+- **The trailing-separator comment has no side in typescript only.** In rust and python the elements and their trailing separator are one list node (`arguments_elements`, `collection_elements`), so in `[a, b, // c⏎]` the comment trails that node and renders after the separator. Ruling 9's example holds for typescript's `array`, whose elements are its own children.
+
 ### Interfaces
 
 Shared by Tasks 2–4. `TriviaSide` is new, in `sittir-core/src/trivia_table.rs`:
@@ -101,39 +103,39 @@ Shared by Tasks 2–4. `TriviaSide` is new, in `sittir-core/src/trivia_table.rs`
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum TriviaSide { Leading, Trailing, Inner }
 
-/// One token of a node's token walk, in tree order.
+/// One token of the walk, by its bytes and the node it is (a leaf) or belongs
+/// to (hidden text or a node edge, `own`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct Token {
-    pub start: u32,
-    pub end: u32,
-    /// The descendant index of the leaf it is, or of the node whose hidden
-    /// text or zero-width token it is.
-    pub node: u32,
-}
+pub struct Token { pub start: u32, pub end: u32, pub node: u32, pub own: bool }
 
 /// An entry the assignment gives a side: an extra or an `ERROR` by its
-/// descendant index, or a run of layout by the whitespace member it reads as.
+/// descendant index, or a run of whitespace holding a line break by its bytes.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Assigned { Extra(u32), Error(u32), Layout { kind: u16, start: u32, end: u32 } }
+pub enum Assigned { Extra(u32), Error(u32), Layout { start: u32, end: u32 } }
 
 pub struct TriviaTable {
     sides: std::collections::BTreeMap<(u32, TriviaSide), Vec<Assigned>>,
-    /// Per node, its first and last token's position in the walk.
-    bounds: Vec<Option<(u32, u32)>>,
     /// The extras no side takes (ruling 9), by descendant index.
     unowned: Vec<u32>,
 }
 
+/// The walk under one node: its tokens and its entries, in source order.
+pub struct Walk { pub tokens: Vec<Token>, pub entries: Vec<u32>, /* … */ }
+impl Walk { pub fn span(&self, index: u32) -> (u32, u32); }
+
+pub fn walk(node: tree_sitter::Node<'_>, index: u32, source: &str) -> Walk;
 pub fn tokens(tree: &tree_sitter::Tree, source: &str, index: u32) -> Vec<Token>;
 
 impl TriviaTable {
-    pub fn assign(tree: &tree_sitter::Tree, source: &str, layout: &dyn Fn(&str) -> Option<u16>) -> Self;
+    pub fn assign(tree: &tree_sitter::Tree, source: &str) -> Self;
     pub fn side(&self, index: u32, side: TriviaSide) -> &[Assigned];
     pub fn unowned(&self) -> &[u32];
 }
 ```
 
-`ParsedTree<G>` holds the table and the written sides. `EngineGrammar` gains `type Trivia`, the grammar's `TriviaTransport`:
+A layout entry keeps its bytes, and the read of a side classifies it into its whitespace member (`ParsedTree::layout_kind`, the grammar's layout kinds that hold a break, by seam rank). The grammar's trivia type builds it: `FromTriviaText` gains `fn from_layout(kind: KindId) -> Option<Self>`, which codegen emits beside `TriviaSeam` from the same whitespace members.
+
+`ParsedTree<G>` holds the table and the written sides. `EngineGrammar` gains `type Trivia` (the grammar's `TriviaTransport`) and `fn whitespace(self) -> (&'static WhitespaceTable, &'static [u16])`, so the engine macro takes neither the whitespace table nor the layout kinds:
 
 ```rust
 trivia: std::sync::OnceLock<TriviaTable>,
@@ -143,9 +145,10 @@ pub fn trivia_table(&self) -> &TriviaTable;                                    /
 pub fn trivia_side(&self, index: u32, side: TriviaSide) -> Vec<TriviaEntry<G::Trivia>>; // written, else assigned
 pub fn write_trivia_side(&mut self, index: u32, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>);
 pub fn edited_within(&self, index: u32, own_sides: bool) -> bool;            // a written key in the node's range
+pub fn layout_kind(&self, run: &str) -> Option<u16>;
 ```
 
-`edited_within` looks for a written key with an index in `[index, index + descendant_count]`. A key at `index` itself counts only for `Inner`, unless `own_sides` is set. It is a range query over `written`'s keys, which is why `written` is a `BTreeMap`. Napi exposes each operation by tree id: `triviaSide(treeId, index, side)`, `writeTriviaSide(treeId, index, side, entries)` and `editedWithin(treeId, index, ownSides)`. The engine macro takes the grammar's trivia type beside `$any`. In `packages/common`, `TreeHandle` gains `triviaSide`, `writeTriviaSide` and `editedWithin`.
+`edited_within` looks for a written key with an index in `[index, index + descendant_count]`. A key at `index` itself counts only for `Inner`, unless `own_sides` is set. It is a range query over `written`'s keys, which is why `written` is a `BTreeMap`. Napi exposes each operation by tree id: `triviaSide(treeId, index, side)`, `writeTriviaSide(treeId, index, side, entries)` and `editedWithin(treeId, index, ownSides)`. The engine macro reads the grammar's trivia type from `EngineGrammar`. In `packages/common`, `TreeHandle` gains `triviaSide`, `writeTriviaSide` and `editedWithin`.
 
 The render reaches the table through `SourceTable`:
 
@@ -163,13 +166,13 @@ fn read_ctx(&self, tree: u32) -> Option<(&tree_sitter::Tree, ReadCtx<'_>)>;
 2. **A comment is a value** (§ 1). Comments are still built with the grammar's comment builders (`ir.lineComment`, `ir.blockComment`, `ir.comment.*`), with their factories, coercion and sibling-lead refusals. A write stores the built node's value, and two reads of a side return equal nodes, not the same object.
 3. **A built node keeps its own trivia** (§ 7.1), by side, in its record, and it travels with the node. 3b builds that; until then a built node keeps its trivia on the node.
 4. **After a reparse, the assignment decides** a comment's side, not the call that wrote it (§ 7.2).
-5. **Whitespace is layout only** (§ 7.3). Trivia stores line breaks, blank lines and indentation where they differ from their seam's default; spaces between tokens on a line derive from the seam defaults. Task 1 confirms the stored size under this rule. For a parsed tree, ruling 11 replaces "where they differ from their seam's default".
+5. **Whitespace is layout only** (§ 7.3). Trivia stores line breaks, blank lines and indentation; spaces between tokens on a line derive from the seam defaults, and an in-line run is never stored. A parsed tree stores the source's line layout (ruling 11), and built and written content takes the seam defaults. Task 1 measures the stored size.
 6. **Trivia is assigned at read** (§ 1, § 2). A gap's entries go to its owner's two children beside it: those on the left token's line are the left child's `trailing`, the rest the right child's `leading`. With no left child every entry leads the right one, with no right child every entry trails the left one, and an owner with no children takes them as its `inner`. One native walk stamps the assignment, and the table is keyed by (node, side). A write replaces one node's side, so a writer that keeps a side's entries reads them and writes them back with its addition. This is not the old placement: that seated trivia on transports and the client carried it on wrappers, while here the assignment is a native fact keyed by node (§ 1).
 7. **A node's trivia travels with it** (§ 3). A `$with` draft and a moved node carry their children's sides. In `{ s1(); // a⏎ // b⏎ s2(); }` with `s2` replaced, `// a` stays as `s1`'s trailing and `// b` goes with `s2`'s leading, as today.
 8. **An `ERROR` node is an entry** (§ 1): a value of its kind and source text, rendered verbatim and never rebuilt by a builder. The reader treats `ERROR` as trivia today (the typed-reader plan's Global Constraints).
 9. **No side is named from a parent by index** (§ 2). A node with no children (`()`, `{}`) has `inner`, the only side a parent addresses. `innerAt`, `INNER_GAPS` and the named inner gaps leave the surface. A gap whose owner has children but none beside it lies between two of the owner's own tokens (`for /*c*/ (`, `[a, b, // c⏎]`). No side takes it, and it has no guarantee: its entries render while the owner copies its source bytes, and when the owner renders from its template, the template's tokens and the seam defaults decide, so they may go.
 10. **The held break protects following text; at the document's end there is none** (the maintainer, 2026-10-10). The stored line layout (ruling 11) wins at the end of a document, so no held break is written after an entry that ends the document, a trailing line comment included. The rule is the held break's (`LineHold::Terminated`), not a case for line comments: it holds a break for the text after it, and none follows. A source with no final break renders with none. A source that ends in a break keeps it as its stored layout.
-11. **A parsed tree's table stores the source's line layout** (the maintainer, 2026-10-10). Every gap whose source run holds a break stores its breaks, blank lines and indentation, whether or not they equal the seam's default. An in-line run is never stored. For a parsed node rendered from its template, a seam with no entry stays on one line. The seam defaults apply only to built and written content. This replaces ruling 5's "where they differ from their seam's default" for a parsed tree: that difference is known only to a template render, while the source's line layout is known at read. Task 1 records the cost: per set, the entries and bytes this stores against ruling 5's minimum.
+11. **A parsed tree's table stores the source's line layout** (the maintainer, 2026-10-10). Every gap whose source run holds a break stores its breaks, blank lines and indentation, whether or not they equal the seam's default. An in-line run is never stored. For a parsed node rendered from its template, a seam with no entry stays on one line. The seam defaults apply only to built and written content. Whether a run equals its seam's default is known only to a template render, while the source's line layout is known at read. Task 1 records the cost: per set, the entries and bytes this stores against storing only the gaps whose layout differs from their seam default.
 
 **Terms.** Token *k* is the *k*-th token of the tree's token walk (Task 2). Gap *k* is the seam between token *k* and token *k + 1*; the gaps before the first token and after the last are the file's edges. A node's sides are its `leading`, its `trailing` and, with no children, its `inner`. A written side is edited.
 
@@ -185,7 +188,7 @@ fn read_ctx(&self, tree: u32) -> Option<(&tree_sitter::Tree, ReadCtx<'_>)>;
 3. **Tokens with no node or no width.** Python's `_newline` text is a token and never an entry. A comment before typescript's automatic semicolon, or beside python's zero-width `_indent` or `_dedent`, lies in the gap the tree's order gives it and goes to the side the assignment gives that gap. Test: Task 2.
 4. **A file of comments only.** The root has no children, so every entry is the root's `inner`, and the render reproduces the source. Test: Task 2 and Task 4.
 5. **A write through a node a query reached.** It renders as a write through accessors does, and it survives dropping every wrapper and collecting: the registry is an identity cache, and the write is the table's. Test: Task 4.
-6. **A gap no side takes.** In `for /*c*/ (…)` the comment lies between two of the `for` statement's own tokens, and in `[a, b, // c⏎]` between the trailing separator and the closer. Each is kept while its owner copies its source, and an edit that makes the owner render from its template may drop it (ruling 9). The comment after the trailing separator does not trail `b`: `b` would print it straight after its last token, before the template's `,`, as `b // c⏎, ]`, and keeping it after the separator would take special handling in rendering (spec § 7.4). In `{ /*c*/ }`, a node with no children, the comment is `inner`'s, read and written through it. Test: Task 2 (the assignment) and Task 4 (the renders).
+6. **A gap no side takes.** In `for /*c*/ (…)` the comment lies between two of the `for` statement's own tokens, and in typescript's `[a, b, // c⏎]` between the trailing separator and the closer. Each is kept while its owner copies its source, and an edit that makes the owner render from its template may drop it (ruling 9). The comment after the trailing separator does not trail `b`: `b` would print it straight after its last token, before the template's `,`, as `b // c⏎, ]`, and keeping it after the separator would take special handling in rendering (spec § 7.4). In `{ /*c*/ }`, a node with no children, the comment is `inner`'s, read and written through it. Test: Task 2 (the assignment) and Task 4 (the renders).
 7. **The outer node takes the side.** In `s1(); // x`, `// x` trails the statement, not the call inside it. In rust `// c⏎pub fn f() {}`, `// c` leads the function, not its visibility modifier. A write to an inner node's side leaves the outer one's. Test: Task 2 and Task 4.
 
 ### Task 1: Whitespace confirmed layout only
@@ -210,8 +213,8 @@ Each gap that differs is classed:
 
 **Report.** Per grammar:
 - gaps, and the gaps of each class;
-- entries and entry bytes under ruling 5, where classes (a)–(d) are stored, one layout entry each, and class (e) is derived;
-- beside it, for the record, the same with every whitespace extra stored;
+- entries and entry bytes with every run that holds a break stored, one layout entry each (ruling 11), and class (e) derived;
+- beside it, the same with only classes (a)–(d) stored, the gaps whose layout differs from their seam default, and with every whitespace run stored;
 - empty gaps under each.
 
 The README says what a `$trivia` read returns under the rule (comments and stored line layout, no in-line spaces) against what it returns today.
@@ -220,7 +223,7 @@ Under ruling 11 the table stores every run that holds a break, and class (b) nee
 
 **Results** (at `feat/arena` `4f075c84b`, `docs/superpowers/probes/2026-10-09-trivia-table/README.md`). Every source aligned. Entries and bytes stored:
 
-| set | gaps | ruling 5's minimum (classes (a)–(d)): entries | bytes | ruling 11 (the source's line layout): entries | bytes | every run stored: entries | bytes |
+| set | gaps | the differing gaps only (classes (a)–(d)): entries | bytes | ruling 11 (the source's line layout): entries | bytes | every run stored: entries | bytes |
 |---|---|---|---|---|---|---|---|
 | rust corpus | 4862 | 410 | 794 | 873 | 1724 | 2464 | 3316 |
 | typescript corpus | 3980 | 362 | 802 | 679 | 1373 | 2327 | 3022 |
@@ -231,7 +234,7 @@ Under ruling 11 the table stores every run that holds a break, and class (b) nee
 | `spacing.rs` | 8840 | 385 | 4465 | 1177 | 11536 | 2970 | 13572 |
 | `create-engine.ts` | 2160 | 202 | 593 | 227 | 628 | 917 | 1318 |
 
-Ruling 11 stores about twice ruling 5's minimum, in one gap in five to eight, and well under every run.
+Ruling 11 stores about twice the differing gaps alone, in one gap in five to eight, and well under every run.
 
 **Retires:** nothing.
 
@@ -262,17 +265,18 @@ An extra whose owner is not its tree-sitter parent stops the task for review, na
 - `a_comment_before_the_first_item_leads_it_and_one_after_the_last_trails_it` (rust `// a⏎fn f() {}⏎// b⏎`);
 - `a_source_of_comments_only_is_the_roots_inner` (rust `\n\n// only\n\n`, python `\n# only\n`);
 - `a_comment_before_a_separator_trails_the_item_before_it` (`[a /* x */, b]`) and `…_after_a_separator_leads_the_item_after_it` (`[a, /* y */ b]`);
-- `a_comment_between_a_trailing_separator_and_the_closer_is_unowned` (`[a, b, // c⏎]`);
+- `a_comment_between_a_trailing_separator_and_the_closer_is_unowned` (typescript `x = [a, b, // c⏎];`);
+- `a_comment_after_a_trailing_separator_trails_the_list_node_holding_the_separator` (rust `[a, b, // c⏎]`, python `[a, b, # c⏎]`: the element list node ends with the trailing separator, so the comment trails it);
 - `a_comment_on_a_statements_line_trails_the_statement_not_the_call` (`s1(); // x⏎s2();`), with the next line's comment leading `s2`;
 - `python_newline_text_is_layout_and_never_an_entry` (`x = 1  # c⏎y = 2`);
 - `a_comment_after_a_blocks_last_statement_trails_it` (python `if a:⏎    b⏎    # c⏎d`: `# c` trails `b`, not the block's `inner`);
-- `a_comment_after_an_automatic_semicolon_trails_its_statement` (typescript `a // c⏎b`);
+- `a_comment_before_an_automatic_semicolon_trails_the_expression` (typescript `a // c⏎b`: the automatic semicolon is inserted at the line break, after the comment, so the comment trails `a` inside its statement);
 - `a_childless_nodes_comment_is_its_inner` (`{ /* c */ }`);
 - `a_comment_between_two_of_a_for_statements_own_tokens_is_unowned` (typescript `for /* c */ (;;) {}`: `for` and `(` are both the statement's own tokens; in rust `for /* c */ x in y {}` the pattern `x` is a child beside the gap, and the comment leads it);
 - `a_line_break_run_is_layout_on_the_side_its_gap_goes_to`: rust `fn f() {}⏎⏎fn g() {}` gives `g`'s leading one `Layout` of the blank-line member;
 - `a_one_line_block_stores_no_layout` (rust `fn f() { a(); b(); }`): no side under the block holds a `Layout` entry;
 - `line_starts_inside_tokens_is_unchanged`: the existing tests of `line_starts_inside_tokens` pass on the token walk;
-- `every_corpus_extra_lands_in_one_side_or_is_counted_unowned`: over every corpus entry, as the census checks.
+- `every_extra_of_the_probe_inputs_lands_in_one_side_or_is_unowned` (`engine.rs`, `spacing.rs`); over every corpus entry, the census checks it.
 
 Run `cargo test -p sittir-parity-tests --no-default-features --test trivia_table`. Expected: FAIL, since `sittir_core::trivia_table` does not resolve.
 
@@ -291,7 +295,7 @@ Run `cargo test -p sittir-parity-tests --no-default-features --test trivia_table
 - an owner with no children takes them as its `inner`;
 - an owner with children but none beside the gap takes none, and the extra goes to `unowned`.
 
-The outer node takes the side (Review Focus 7): when several nodes end at token *k*, the left child is the outermost of them below the owner, and likewise on the right. `bounds` records each node's first and last token as the walk passes them.
+The outer node takes the side (Review Focus 7): when several nodes end at token *k*, the left child is the outermost of them below the owner, and likewise on the right. It is the owner's child on the token's chain of parents, ending (or starting) where the token does.
 
 **Step 5: on `ParsedTree`.** The table is built on the first `trivia_side` or `edited_within`, in a `OnceLock` like `lines`.
 - `trivia_side` returns the written entries when the side is written. Otherwise it returns the assigned ones as values:
