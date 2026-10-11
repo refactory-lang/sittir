@@ -6971,6 +6971,29 @@
       }
     },
     "yield_from_clause": {
+      "vocab": "expression.yield.delegate",
+      "read": [
+        {
+          "vocab": "expression.yield.delegate",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "expression",
+          "route": "slot",
+          "slot": "expression",
+          "path": [
+            {
+              "owner": "yield_from_clause",
+              "slot": "expression"
+            }
+          ]
+        }
+      ],
       "container": {
         "kinds": [
           "expression"
@@ -6987,20 +7010,20 @@
         "paths": 13,
         "kinds": 3,
         "refinements": 0,
-        "aliases": 103
+        "aliases": 104
       },
       {
         "depth": 2,
         "paths": 75,
         "kinds": 71,
         "refinements": 7,
-        "aliases": 92
+        "aliases": 93
       },
       {
         "depth": 3,
-        "paths": 68,
-        "kinds": 61,
-        "refinements": 50,
+        "paths": 69,
+        "kinds": 62,
+        "refinements": 51,
         "aliases": 53
       },
       {

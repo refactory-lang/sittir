@@ -130,7 +130,8 @@ export interface PortableIds {
 		| TSKindId.Tuple
 		| TSKindId.TypeConversion
 		| TSKindId.UnaryOperator
-		| TSKindId.Yield;
+		| TSKindId.Yield
+		| TSKindId.YieldFromClause;
 	'expression.assignment': TSKindId.AugmentedAssignment | TSKindId.NamedExpression;
 	'expression.assignment.compound': TSKindId.AugmentedAssignment;
 	'expression.assignment.compound.add': TSKindId.AugmentedAssignment;
@@ -217,7 +218,8 @@ export interface PortableIds {
 	'expression.unary.negation': TSKindId.UnaryOperator;
 	'expression.unary.not': TSKindId.NotOperator;
 	'expression.unary.plus': TSKindId.UnaryOperator;
-	'expression.yield': TSKindId.Yield;
+	'expression.yield': TSKindId.Yield | TSKindId.YieldFromClause;
+	'expression.yield.delegate': TSKindId.YieldFromClause;
 	identifier: TSKindId.DottedName | TSKindId.Identifier;
 	'identifier.dotted': TSKindId.DottedName;
 	'identifier.type': TSKindId.Identifier;
@@ -638,6 +640,7 @@ export interface PortableKindsAt {
 		readonly comparison: PortableKindsAt['expression.binary.comparison'];
 		readonly compound: PortableKindsAt['expression.assignment.compound'];
 		readonly conversion: PortableKindsAt['expression.interpolation.conversion'];
+		readonly delegate: PortableKindsAt['expression.yield.delegate'];
 		readonly equal: PortableKindsAt['expression.binary.comparison.equal'];
 		readonly format: PortableKindsAt['expression.interpolation.format'];
 		readonly generator: PortableKindsAt['expression.comprehension.generator'];
@@ -921,7 +924,11 @@ export interface PortableKindsAt {
 	'expression.unary.negation': { readonly $ids: readonly PortableIds['expression.unary.negation'][] };
 	'expression.unary.not': { readonly $ids: readonly PortableIds['expression.unary.not'][] };
 	'expression.unary.plus': { readonly $ids: readonly PortableIds['expression.unary.plus'][] };
-	'expression.yield': { readonly $ids: readonly PortableIds['expression.yield'][] };
+	'expression.yield': {
+		readonly $ids: readonly PortableIds['expression.yield'][];
+		readonly delegate: PortableKindsAt['expression.yield.delegate'];
+	};
+	'expression.yield.delegate': { readonly $ids: readonly PortableIds['expression.yield.delegate'][] };
 	identifier: {
 		readonly $ids: readonly PortableIds['identifier'][];
 		readonly dotted: PortableKindsAt['identifier.dotted'];
@@ -1328,6 +1335,7 @@ export interface PortableIsAt {
 		readonly comparison: PortableIsAt['expression.binary.comparison'];
 		readonly compound: PortableIsAt['expression.assignment.compound'];
 		readonly conversion: PortableIsAt['expression.interpolation.conversion'];
+		readonly delegate: PortableIsAt['expression.yield.delegate'];
 		readonly equal: PortableIsAt['expression.binary.comparison.equal'];
 		readonly format: PortableIsAt['expression.interpolation.format'];
 		readonly generator: PortableIsAt['expression.comprehension.generator'];
@@ -1561,7 +1569,10 @@ export interface PortableIsAt {
 	'expression.unary.negation': PortableGuard<PortableIds['expression.unary.negation']> & {};
 	'expression.unary.not': PortableGuard<PortableIds['expression.unary.not']> & {};
 	'expression.unary.plus': PortableGuard<PortableIds['expression.unary.plus']> & {};
-	'expression.yield': PortableGuard<PortableIds['expression.yield']> & {};
+	'expression.yield': PortableGuard<PortableIds['expression.yield']> & {
+		readonly delegate: PortableIsAt['expression.yield.delegate'];
+	};
+	'expression.yield.delegate': PortableGuard<PortableIds['expression.yield.delegate']> & {};
 	identifier: PortableGuard<PortableIds['identifier']> & {
 		readonly dotted: PortableIsAt['identifier.dotted'];
 		readonly type: PortableIsAt['identifier.type'];
@@ -1803,6 +1814,7 @@ export interface PortableKinds {
 	readonly conversion: PortableKindsAt['expression.interpolation.conversion'];
 	readonly decorator: PortableKindsAt['attribute.decorator'];
 	readonly default: PortableKindsAt['declaration.parameter.default'];
+	readonly delegate: PortableKindsAt['expression.yield.delegate'];
 	readonly delete: PortableKindsAt['statement.delete'];
 	readonly dotted: PortableKindsAt['identifier.dotted'];
 	readonly dunder: PortableKindsAt['declaration.method.dunder'];
@@ -1922,6 +1934,7 @@ export interface PortableIs {
 	readonly conversion: PortableIsAt['expression.interpolation.conversion'];
 	readonly decorator: PortableIsAt['attribute.decorator'];
 	readonly default: PortableIsAt['declaration.parameter.default'];
+	readonly delegate: PortableIsAt['expression.yield.delegate'];
 	readonly delete: PortableIsAt['statement.delete'];
 	readonly dotted: PortableIsAt['identifier.dotted'];
 	readonly dunder: PortableIsAt['declaration.method.dunder'];
@@ -2153,7 +2166,8 @@ const table: PortableTable = {
 				TSKindId.Tuple,
 				TSKindId.TypeConversion,
 				TSKindId.UnaryOperator,
-				TSKindId.Yield
+				TSKindId.Yield,
+				TSKindId.YieldFromClause
 			],
 			exact: true
 		},
@@ -2251,7 +2265,8 @@ const table: PortableTable = {
 		'expression.unary.negation': { ids: [TSKindId.UnaryOperator], exact: false },
 		'expression.unary.not': { ids: [TSKindId.NotOperator], exact: true },
 		'expression.unary.plus': { ids: [TSKindId.UnaryOperator], exact: false },
-		'expression.yield': { ids: [TSKindId.Yield], exact: true },
+		'expression.yield': { ids: [TSKindId.Yield, TSKindId.YieldFromClause], exact: true },
+		'expression.yield.delegate': { ids: [TSKindId.YieldFromClause], exact: true },
 		identifier: { ids: [TSKindId.DottedName, TSKindId.Identifier], exact: false },
 		'identifier.dotted': { ids: [TSKindId.DottedName], exact: true },
 		'identifier.type': { ids: [TSKindId.Identifier], exact: false },
@@ -2522,6 +2537,7 @@ const table: PortableTable = {
 		['', 'conversion', 'expression.interpolation.conversion'],
 		['', 'decorator', 'attribute.decorator'],
 		['', 'default', 'declaration.parameter.default'],
+		['', 'delegate', 'expression.yield.delegate'],
 		['', 'delete', 'statement.delete'],
 		['', 'dotted', 'identifier.dotted'],
 		['', 'dunder', 'declaration.method.dunder'],
@@ -2645,6 +2661,7 @@ const table: PortableTable = {
 		['expression', 'comparison', 'expression.binary.comparison'],
 		['expression', 'compound', 'expression.assignment.compound'],
 		['expression', 'conversion', 'expression.interpolation.conversion'],
+		['expression', 'delegate', 'expression.yield.delegate'],
 		['expression', 'equal', 'expression.binary.comparison.equal'],
 		['expression', 'format', 'expression.interpolation.format'],
 		['expression', 'generator', 'expression.comprehension.generator'],
@@ -3326,7 +3343,8 @@ const table: PortableTable = {
 		[TSKindId.WithClauseParen]: [{ path: 'clause.with', within: [], test: [] }],
 		[TSKindId.WithItem]: [{ path: 'clause.with.item', within: [], test: [] }],
 		[TSKindId.WithStatement]: [{ path: 'statement.with', within: [], test: [] }],
-		[TSKindId.Yield]: [{ path: 'expression.yield', within: [], test: [] }]
+		[TSKindId.Yield]: [{ path: 'expression.yield', within: [], test: [] }],
+		[TSKindId.YieldFromClause]: [{ path: 'expression.yield.delegate', within: [], test: [] }]
 	},
 	fixedText: {
 		[TSKindId.WildcardImport]: '*',

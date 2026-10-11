@@ -160,6 +160,7 @@
 (lambda) @expression.lambda
 (await (_)? @expression) @expression.await
 (yield) @expression.yield
+(yield_from_clause (_) @expression) @expression.yield.delegate
 (interpolation) @expression.interpolation
 (list_comprehension) @expression.comprehension.list
 (set_comprehension) @expression.comprehension.set

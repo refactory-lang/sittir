@@ -7,7 +7,7 @@ export namespace Expression {
 	}
 	export namespace Yield {
 		export interface Delegate<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Yield<G>> {
-			// claimed by t
+			// claimed by pt
 			readonly $kind: 'expression.yield.delegate';
 			readonly expression: G['slots']['expression.yield.delegate']['expression'];
 		}
