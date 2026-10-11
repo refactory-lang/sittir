@@ -121,6 +121,12 @@ export interface NativeEngineLike<TTransport = unknown> {
 	 * @throws when the tree is not live or `index` is past its last node.
 	 */
 	editedWithin(treeId: number, index: number, ownSides: boolean): boolean;
+	/**
+	 * Whether the node at descendant `index` of tree `treeId` is empty: no child of it has width.
+	 *
+	 * @throws when the tree is not live or `index` is past its last node.
+	 */
+	isEmpty(treeId: number, index: number): boolean;
 	lineGapsOf(handle: number): string;
 	descendants(
 		from: string,
@@ -385,6 +391,7 @@ export function createNativeEngine<
 							triviaSide: (index, side) => engine.triviaSide(parsed.treeId, index, side),
 							writeTriviaSide: (index, side, entries) => engine.writeTriviaSide(parsed.treeId, index, side, entries),
 							editedWithin: (index, ownSides) => engine.editedWithin(parsed.treeId, index, ownSides),
+							isEmpty: (index) => engine.isEmpty(parsed.treeId, index),
 							query: {
 								descendants: (walk) =>
 									JSON.parse(

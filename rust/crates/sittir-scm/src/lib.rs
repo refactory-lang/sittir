@@ -28,7 +28,7 @@ use sittir_core::engine::EngineGrammar;
 use render::{render_transport_parts, AnyTransport, RenderRoot, RENDER_MODULE_HASH};
 
 #[cfg(feature = "napi-bindings")]
-const NATIVE_RENDER_TRANSPORT_ABI: u32 = 23;
+const NATIVE_RENDER_TRANSPORT_ABI: u32 = 24;
 
 #[derive(Clone, Copy, Default)]
 pub struct ScmGrammar;

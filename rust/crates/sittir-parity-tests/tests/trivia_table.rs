@@ -1,7 +1,7 @@
 //! The trivia table's assignment: each gap's entries go to a side of the
 //! owner's child beside the gap, held to tree-sitter's trees in three grammars.
 
-use sittir_core::trivia_table::{Assigned, TriviaSide, TriviaTable};
+use sittir_core::trivia_table::{is_empty, Assigned, TriviaSide, TriviaTable};
 use tree_sitter::{Language, Node, Parser, Tree};
 
 fn parse(language: &Language, source: &str) -> Tree {
@@ -215,5 +215,22 @@ fn every_extra_of_the_probe_inputs_lands_in_one_side_or_is_unowned() {
         }
         assert!(!extras.is_empty(), "{name} has comments");
         assert_eq!(placed, extras, "{name}");
+    }
+}
+
+#[test]
+fn a_zero_width_child_holds_no_side() {
+    let case = Case::new(typescript(), "function f() {\n  // c\n}\n");
+    case.holds("statement_block", "{\n  // c\n}", Inner, "comment_line", "// c");
+    assert!(case.table.unowned().is_empty());
+}
+
+#[test]
+fn a_node_is_empty_when_no_child_has_width() {
+    for (source, block, empty) in [("function f() {\n}\n", "{\n}", true), ("function f() {\n  ;\n}\n", "{\n  ;\n}", false)] {
+        let case = Case::new(typescript(), source);
+        let mut cursor = case.tree.walk();
+        cursor.goto_descendant(case.at("statement_block", block) as usize);
+        assert_eq!(is_empty(&cursor.node()), empty, "{source:?}");
     }
 }

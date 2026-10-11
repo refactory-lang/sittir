@@ -245,6 +245,11 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	readonly isFactoryNode: (value: unknown) => value is API['node'];
 	/** Whether `value` is a parsed ERROR node of this engine's language, read in a slot or as a trivia item. */
 	readonly isErrorNode: (value: unknown) => value is ErrorNode;
+	/**
+	 * Whether `node` is this engine's node of a kind with inner gaps and has no child with width,
+	 * so it takes `$trivia.inner`. A parsed node's zero-width child (typescript's automatic
+	 * semicolon) counts as no child; a child with text (a real `;`) counts.
+	 */
 	readonly isEmptyNode: <N extends API['empty']['node']>(
 		node: N
 	) => node is N & Extract<API['empty'], { readonly node: N }>['empty'];

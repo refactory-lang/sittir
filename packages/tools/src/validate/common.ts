@@ -25,6 +25,12 @@ import {
 	type TriviaView
 } from '@sittir/common/utils';
 import {
+	decodeIndex,
+	engineOf,
+	isNode,
+	treeHandleOf,
+	treeOf,
+	type TriviaSideName,
 	isCoordinate,
 	readNode,
 	metricsEnabled,
@@ -36,7 +42,7 @@ import {
 } from '@sittir/common/utils';
 import type * as TS from 'web-tree-sitter';
 
-import type { AnyUntypedNode, Engine, LanguageAPI, NodeLayout, NodeTrivia, ParseOptions, TransportCoordinate } from '@sittir/types';
+import type { AnyUntypedNode, Engine, LanguageAPI, NodeLayout, NodeTrivia, ParseOptions, TransportCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
 import type { TriviaSides } from '@sittir/common';
 import type { TreeHandle } from '@sittir/common/utils';
 import { load } from '../codegen-surface.ts';
@@ -1122,20 +1128,11 @@ function projectElements(
 			return resolveChild(item, memberValueOpts(opts, parentKind, slotName));
 		}
 		const element = hydrateForConfig(item as ReadNodeLike, opts);
-		const config = carryElementTrivia(element, nodeToConfig(element, childOpts(opts)), opts);
+		const config = nodeToConfig(element, childOpts(opts));
+		const built = Object.values(config).filter((v) => v !== null && typeof v === 'object' && !Array.isArray(v));
+		if (built.length === 1) config[Object.keys(config).find((key) => config[key] === built[0]) ?? ''] = writeSides(element, built[0], opts);
 		return withSeatKind(config, seat.kind);
 	});
-}
-
-function carryElementTrivia(
-	element: ReadNodeLike,
-	config: Record<string, unknown>,
-	opts: NodeToConfigOpts
-): Record<string, unknown> {
-	if (element.$_layout?.trivia === undefined) return config;
-	const built = Object.values(config).filter((v) => v !== null && typeof v === 'object' && !Array.isArray(v));
-	if (built.length === 1) carryTrivia(element, built[0], opts);
-	return config;
 }
 
 function projectArmSlot(
@@ -1328,25 +1325,53 @@ function buildWithFactory(
 	if (shape === 'constant') return entry;
 	const factory = entry as (...args: unknown[]) => unknown;
 	if (shape === 'text') {
-		return carryTrivia(
-			referenceData,
-			(irStrictFor(kind, undefined, opts) ?? factory)(readNodeText(referenceData, opts)),
-			opts
-		);
+		return writeSides(referenceData, (irStrictFor(kind, undefined, opts) ?? factory)(readNodeText(referenceData, opts)), opts);
 	}
 	const config = nodeToConfig(referenceData, opts);
 	const built = (irStrictFor(kind, config, opts) ?? factory)(...factoryArgs(kind, shape, config, referenceData, opts));
-	return carryTrivia(referenceData, built, opts);
+	return writeSides(referenceData, built, opts);
 }
 
-function carryTrivia(source: ReadNodeLike, built: unknown, opts: NodeToConfigOpts): unknown {
-	const trivia = source.$_layout?.trivia;
-	if (trivia === undefined || built === null || typeof built !== 'object') return built;
+export function sideOf(source: ReadNodeLike, side: TriviaSideName, tree: TreeHandle | undefined = treeOf(source as object)): readonly unknown[] {
+	const handle = treeHandleOf(source as object);
+	if (tree?.triviaSide === undefined || handle === undefined) return [];
+	return tree.triviaSide(decodeIndex(handle), side);
+}
+
+export function tableSides(
+	source: ReadNodeLike,
+	tree: TreeHandle,
+	facts: TriviaFacts | undefined,
+	build: (read: unknown) => unknown
+): NodeTrivia | undefined {
+	const entries = (side: TriviaSideName): readonly TriviaEntry[] =>
+		sideOf(source, side, tree).flatMap((entry): TriviaEntry[] => {
+			if (!isCoordinate(entry)) return isNode(entry) ? [entry] : [];
+			const built = build(readNode(tree, entry, Infinity));
+			if (!isNode(built)) throw new Error(`ir lane: a comment built to ${JSON.stringify(built)}, not a node`);
+			return [built];
+		});
+	const [leading, trailing, inner] = [entries('leading'), entries('trailing'), entries('inner')];
+	if (leading.length === 0 && trailing.length === 0 && inner.length === 0) return undefined;
+	if (inner.length === 0) return { leading, trailing };
+	const kind = source.$type === undefined ? undefined : facts?.kindName(source.$type);
+	const gap = kind === undefined ? undefined : facts?.innerGaps[kind]?.[0];
+	if (gap === undefined) throw new Error(`ir lane: ${kind ?? String(source.$type)} has inner trivia and no inner gap`);
+	return { leading, trailing, inner: { [gap]: inner } };
+}
+
+function writeSides(source: ReadNodeLike, built: unknown, opts: NodeToConfigOpts): unknown {
+	if (built === null || typeof built !== 'object') return built;
+	const tree = treeOf(source as object);
+	const carried = source.$_layout?.trivia;
+	const trivia =
+		tree !== undefined
+			? tableSides(source, tree, engineOf(built)?.trivia, (read) => resolveChild(read, { ...childOpts(opts), tree }))
+			: carried &&
+				(mapTriviaEntries(carried, (entries) => entries.map((entry) => resolveChild(entry, childOpts(opts)))) as NodeTrivia);
+	if (trivia === undefined) return built;
 	const record = built as { $_layout?: NodeLayout };
-	record.$_layout = {
-		...record.$_layout,
-		trivia: mapTriviaEntries(trivia as TriviaSides<unknown>, (entries) => entries.map((entry) => resolveChild(entry, childOpts(opts)))) as NodeTrivia
-	};
+	record.$_layout = { ...record.$_layout, trivia };
 	return built;
 }
 

@@ -334,6 +334,14 @@ macro_rules! napi_engine {
                 with_live_node(tree_id, index, |parsed, index| Ok(parsed.edited_within(index, own_sides)))
             }
 
+            /// Whether the node at `index` of the live tree `treeId` is empty:
+            /// no child of it has width. Refuses a tree that is not live and an
+            /// index naming no node of it.
+            #[::napi_derive::napi]
+            pub fn is_empty(&self, tree_id: f64, index: f64) -> ::napi::Result<bool> {
+                with_live_node(tree_id, index, |parsed, index| Ok(parsed.is_empty(index)))
+            }
+
             /// The spans of byte `ranges` (start and end pairs) of the live
             /// tree `treeId`, measured from the byte `holderByte`, as row and
             /// column pairs, flat. Refuses a tree that is not live, an odd

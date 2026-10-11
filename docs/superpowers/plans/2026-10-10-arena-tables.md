@@ -31,7 +31,7 @@ Detailed against `feat/typed-reader` at `5604cd7c0` (the first snapshot step mer
 
 **Branch.** `feat/arena`, cut from `feat/typed-reader` once the first snapshot step (Tasks 1, 9, 10 and 11a of the relative-coordinates plan) has merged into it. Each task is a commit series on `feat/arena`, and the stage is one PR into `feat/typed-reader`. `feat/typed-reader` is merged in when it moves, never rebased.
 
-**Order.** `feat/typed-reader` holds the refusal of a write through a query (the typed-reader plan's Ruling 13) and the snapshot step's `$snapshot()`, which carries the reader's placed trivia. 3a replaces both. 3b, which puts built nodes' trivia in their records, lands after it; until then a built node keeps its trivia on the node, and `$trivia` reads the same on parsed and built nodes. Within 3a: **Task 1 → Task 2 → Task 3 → Task 4 → Task 5.** Each task names what it retires; together they retire what the trivia-table spec's § 5 lists. The relative-coordinates plan's Tasks 11b, 11c and 12 follow 3a and read from its table.
+**Order.** `feat/typed-reader` holds the refusal of a write through a query (the typed-reader plan's Ruling 13) and the snapshot step's `$snapshot()`, which carries the reader's placed trivia. 3a replaces both. 3b, which puts built nodes' trivia in their records, lands after it; until then a built node keeps its trivia on the node, and `$trivia` reads the same on parsed and built nodes. Within 3a: **Task 1 → Task 2 → Task 4 (Task 3 folded in) → Task 5.** Each task names what it retires; together they retire what the trivia-table spec's § 5 lists. The relative-coordinates plan's Tasks 11b, 11c and 12 follow 3a and read from its table.
 
 ### Prior art reused
 
@@ -179,6 +179,8 @@ fn read_ctx(&self, tree: u32) -> Option<(&tree_sitter::Tree, ReadCtx<'_>)>;
     - **The step** is the run's indentation with the enclosing indentation removed, when the enclosing indentation is a byte prefix of it (the same tabs and spaces, then more). Where it is not, because the two lines mix tabs and spaces differently (enclosing `"\t"`, run `"        "`), the step is measured in columns, a tab advancing to the next multiple of the render's tab width, and spelled in the run's own last indentation character. A run indented less than its enclosing line has an empty step. Task 5 counts both cases per grammar.
     - **Where it lives.** The table keeps each run's bytes. The side read returns the run's whitespace member with its step, the text a seam entry already carries (`TriviaSeam`).
 
+13. **A node is empty when it has no child with width** (the maintainer, 2026-10-10). A zero-width child (typescript's automatic semicolon) counts as no child, so `inner` is accepted on a typescript block whose only child is its automatic semicolon, and `engine.isEmptyNode` follows the same rule. A unit-stored child with text (a real `;`) still counts. It is the table's rule that a zero-width node holds no side.
+
 **Terms.** Token *k* is the *k*-th token of the tree's token walk (Task 2). Gap *k* is the seam between token *k* and token *k + 1*; the gaps before the first token and after the last are the file's edges. A node's sides are its `leading`, its `trailing` and, with no children, its `inner`. A written side is edited.
 
 **Gates for every task.**
@@ -298,7 +300,8 @@ Run `cargo test -p sittir-parity-tests --no-default-features --test trivia_table
 - the rest go to the right child's `leading`;
 - with no left child, all lead the right; with no right child, all trail the left. A comment on its own line after a block's last statement, before the block's dedent, has the statement as its left child and no right child (the right token is the block's own edge token), so it trails the statement and renders inside the block at its indent. The owner's `inner` takes entries only when the owner has no children. The census counts five such python entries;
 - an owner with no children takes them as its `inner`;
-- an owner with children but none beside the gap takes none, and the extra goes to `unowned`.
+- an owner with children but none beside the gap takes none, and the extra goes to `unowned`;
+- a zero-width node (typescript's automatic semicolon, a `MISSING` leaf) holds no side, as a read gives it no trivia: a comment in a typescript block whose only named child is its automatic semicolon is the block's `inner`.
 
 The outer node takes the side (Review Focus 7): when several nodes end at token *k*, the left child is the outermost of them below the owner, and likewise on the right. It is the owner's child on the token's chain of parents, ending (or starting) where the token does.
 
@@ -321,28 +324,9 @@ Run vitest on that file: FAIL first, then PASS.
 
 **Retires:** `line_starts_inside_tokens`'s own walk. Nothing else reads the table yet.
 
-### Task 3: The ir validator lane spells comments from the table
+### Task 3: folded into Task 4
 
-**Files:**
-- Modify:
-  - `packages/tools/src/validate/common.ts`: `buildWithFactory`, `nodeToConfig`'s element path; `carryTrivia` and `carryElementTrivia` go.
-  - `packages/tools/src/emit/factory-source.ts`: `seatLineGaps` goes, and `triviaSuffix` reads sides.
-  - their glossary entries in `docs/glossary/packages-tools-src-*.md`.
-- Test: `packages/tools/src/validate/__tests__/ir-lane-trivia.test.ts`.
-
-**Today:**
-- `carryTrivia` copies a source node's `$_layout.trivia` onto the node built from it;
-- `carryElementTrivia` does the same for a seated element;
-- `seatLineGaps` seats line-gap whitespace for the source emitter through `lineGapsOf`;
-- the hosts branch's edge-carrier rule, which moves a seated group's trivia onto its first and last built child, is not on `feat/typed-reader`. If the hosts branch lands first, Task 3 retires that rule with the others.
-
-**Step 1: failing test.** For each of rust, typescript and python, a source with a comment on each side the assignment gives goes through the lane (`buildWithFactory`), and the built tree renders back to the source bytes. The sides covered are an edge, either side of a separator, between statements, and a node's `inner`. A comment no side takes is outside the lane's guarantee and is counted, not asserted. Expected: FAIL. Before Task 4, the lane reads `$_layout.trivia`, which the reader still seats. So the test is written against the table's reader, `sideOf(source, side)`, which does not exist yet.
-
-**Step 2:** `sideOf` reads a source node's side through its tree handle (`triviaSide`). The lane writes each side onto the node built from it through that node's `$trivia`, with comment nodes built by the grammar's builders (`ir.lineComment(…)`, `ir.comment.lineComment.docOuter(…)`). The assignment is the table's, so the lane moves no trivia between nodes. Delete `carryTrivia`, `carryElementTrivia` and `seatLineGaps`.
-
-**Step 3:** the test passes, and the lane's rows are unchanged in all five grammars, compared by number.
-
-**Retires:** `carryTrivia`, `carryElementTrivia` (and the edge-carrier rule if present); `seatLineGaps` and its line-gap query.
+The ir lane's change lands with Task 4 (brainstorm, 2026-10-10). The storage lanes build from detached copies (`rebuildChildren` in `factory-storage.ts` keeps `$_layout.trivia` and drops the tree), so a lane can read the table only where the copy step takes each node's sides, and that step changes in Task 4, once the reader seats nothing. Done alone, the lane lost comments the copies carried as data (built-render-parse: python 1284 to 1276 AST matches, rust 1878 to 1864, typescript 1798 to 1796, and 10 rust S6 entries). Its files, tests and retirements are Task 4's.
 
 ### Task 4: A parsed node's trivia is the table's
 
@@ -355,8 +339,13 @@ Run vitest on that file: FAIL first, then PASS.
   - `engine.rs`: `line_gaps`, `line_gaps_at` and `SourceTable` for the tree table.
   - `napi_engine.rs`: `line_gaps_of` goes.
   - the derive (`sittir-transport-macros`): `read_coordinate`, and no placement in `sides_of`.
+- Modify (tools, the ir lane):
+  - `packages/tools/src/validate/common.ts`: `sideOf` reads a source node's side through its tree (`triviaSide`), and `writeSides` writes each side onto the node built from it through its `$trivia`, with comments built from their reads; `carryTrivia` and `carryElementTrivia` go;
+  - `packages/tools/src/validate/factory-storage.ts`: `rebuildChildren` takes each node's sides from the table while the node still holds its tree, so the detached copy carries them;
+  - `packages/tools/src/emit/factory-source.ts`: `seatLineGaps` goes, and `triviaSuffix` reads sides;
+  - their glossary entries in `docs/glossary/packages-tools-src-*.md`.
 - Modify (TS):
-  - `packages/common/src/utils.ts`: `triviaWriter`, `readTrivia`, `readDerivedSides`, `lineGapsRead`, `writtenSides`, `readLineGaps`, `composedTrivia`, `markEditedNode`, `refuseUnheld`, `triviaInnerAt`, `setTriviaData` for parsed nodes;
+  - `packages/common/src/utils.ts`: `isEmptyNode` (ruling 13), `triviaWriter`, `readTrivia`, `readDerivedSides`, `lineGapsRead`, `writtenSides`, `readLineGaps`, `composedTrivia`, `markEditedNode`, `refuseUnheld`, `triviaInnerAt`, `setTriviaData` for parsed nodes;
   - `identity.ts`: `markIndexEdited` and `editedWithin` go;
   - `transport-data.ts`: `carryPlacement`, `ENTRY_PLACEMENT_KEYS`, `foldedCoordinate`'s edited test, `unreadCoordinate` and `hasOutsideTrivia` go;
   - `snapshot.ts`: `snapshotIn` asks `tree.editedWithin`;
@@ -369,7 +358,9 @@ Run vitest on that file: FAIL first, then PASS.
   - `packages/tools/src/emit/factory-source.ts`: the `innerAt` output.
 
   Each changed function's glossary entry changes with it.
-- Test: `packages/{python,rust,typescript}/tests/trivia-table.test.ts`.
+- Test: `packages/{python,rust,typescript}/tests/trivia-table.test.ts`, `packages/tools/src/validate/__tests__/ir-lane-trivia.test.ts`, `packages/common/tests/empty-node.test.ts`.
+
+**One owner rule.** A child owns trivia when it has tokens: it is named, not an extra, and at least a byte wide, whatever its storage. A zero-width child (typescript's automatic semicolon, a `MISSING` leaf) owns none. The table applies it (Task 2), `isEmptyNode` applies it (ruling 13), and the reader's per-route exclusion of children stored as unit variants retires with the reader's placement.
 
 **Step 1: the failing tests**, in python, rust and typescript each unless named:
 - the typed-reader plan's Ruling 12 defect on every route, the query route included: `# four` survives a leading write on the block;
@@ -387,7 +378,9 @@ Run vitest on that file: FAIL first, then PASS.
 - ruling 11: a parsed one-line block (`fn f() { a(); b(); }`) written through elsewhere in its tree renders on one line, since no entry breaks it; a statement written into a parsed block (its new seams have no source) renders with the seam defaults; a node moved into another tree carries its sides' layout entries with it, and renders with them there;
 - ruling 12: a typescript block indented two spaces (`function f() {⏎  a();⏎}`), rendered in place from its template after an edit elsewhere in it, keeps two spaces; the same block moved one level deeper (into another function's body) renders its statements at the new enclosing line's indentation plus two spaces; a continuation line aligned under a paren (`foo(a,⏎    b);`) keeps its four-column step, in place and moved one level deeper; a built statement written into the block takes the writer's depth;
 - ruling 10: rust `\n//! doc`, `//! doc`, `fn main() {}\n// end` and `fn main() {} // end`, and python `# c`, `x = 1\n# c` and `x = 1 # c`, each with and without a final line break, render as their source: no held break is written at the document's end, and a final break the source has is kept;
-- a snapshot of an edited tree takes its sides from the table, with no `$sameLine` or `$tokensBetween` in its data.
+- a snapshot of an edited tree takes its sides from the table, with no `$sameLine` or `$tokensBetween` in its data;
+- the ir lane (`ir-lane-trivia.test.ts`): `sideOf` reads a source node's side from its table; a built tree renders each own-line comment back to the source bytes (a file's edges, between statements, a childless node's `inner`), and keeps each same-line comment on its side of its owner and of a separator. The comments the lane lost when Task 3 landed alone are rows: a python comment at a block's end (corpus "Comments at the ends of indented blocks"), a rust macro token tree's comments (`ok! {⏎  // one⏎  /* two */⏎}`), a python line continuation (corpus "Escaped newline"), and typescript comments between a function's signature and its body (corpus "Ambiguity between function signature and function declaration: comments and newlines");
+- ruling 13: `isEmptyNode` is true for a typescript `statement_block` whose only child is its automatic semicolon, and `inner` is accepted on it; it is false for a node whose only child is a unit-stored kind with text (a real `;`).
 
 Expected: FAIL. A write through a query is refused today, and the defect test drops `# four`.
 
@@ -401,7 +394,7 @@ Expected: FAIL. A write through a query is refused today, and the defect test dr
 
 **Step 6: drafts and built holders.** A `$with` draft carries its children's sides, and so does a parsed node placed in a new holder (ruling 7): its coordinate names its tree, and the render asks that tree. Until 3b, a built holder's own trivia stays on the node.
 
-**Step 7:** every test passes, and the gates hold. Record the trivia-placement census as the table's assignment, with the extras that moved from placement's side listed. Per grammar, rerun the snapshot census and its classes: the layout classes should fall, and what remains is recorded with its class.
+**Step 7:** every test passes, and the gates hold. Built-render-parse returns to its numbers before Task 3 was tried alone, or better: python 1284/1284 (AST 1284), rust 1878/1878 (AST 1878), typescript 1798/1798 (AST 1798), with S6 at or under its ceiling. Record the trivia-placement census as the table's assignment, with the extras that moved from placement's side listed. Per grammar, rerun the snapshot census and its classes: the layout classes should fall, and what remains is recorded with its class.
 
 **Retires:**
 - the reader's placement: `place()` and `Placement`, `TriviaEntry`'s `same_line` and `tokens_between`, and the `$sameLine` and `$tokensBetween` stamps with their copies (`carryPlacement` and `ENTRY_PLACEMENT_KEYS` in `transport-data.ts`, the copy in `read-render-parse.ts`, and `ReadCtx::entry`'s), snapshot data included;
@@ -413,7 +406,9 @@ Expected: FAIL. A write through a query is refused today, and the defect test dr
 - sides named from a parent (ruling 9): `innerAt` (`GrammarInnerTriviaAt` in `packages/types`, `triviaInnerAt` in `packages/common`, and the member the node-members emitter writes), `INNER_GAPS` with `emitInnerGaps`, the `innerGaps` fact, `innerGapsKeyed`, and the source emitter's `innerAt` output, which writes each comment to the side the assignment gives it. `inner` stays, on a childless node;
 - the refusal of a coordinate a holder never read whose range holds a write (`unreadCoordinate`): the write is the table's, so the coordinate renders it;
 - the outside trivia a folded coordinate carries: `FramedTrivia` in `SlotValue::Coord`, `outside_trivia_from_napi`, and `write_coordinate`'s framing;
-- `triviaViewOf` in the validators, which now read the table.
+- `triviaViewOf` in the validators, which now read the table;
+- the ir lane's carriers: `carryTrivia`, `carryElementTrivia` (and the hosts branch's edge-carrier rule, if it has landed), and `seatLineGaps` with its line-gap query;
+- the reader's per-route exclusion of unit-stored children from owning trivia (one owner rule).
 
 ### Task 5: Measurements and the 3a gates
 

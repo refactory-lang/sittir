@@ -75,11 +75,19 @@ export function rebuilt<R>(source: object, handle: EngineHandle | undefined, bui
 }
 
 /**
- * Whether no slot of the node holds a value: every `_`-keyed storage entry is
- * absent or an empty list. Only such a node can hold inner trivia, since a
+ * Whether the node has no child with width. Only such a node can hold inner trivia, since a
  * comment beside any child has that child to lead or trail.
+ *
+ * @param node - A built or parsed node.
+ * @returns For a parsed node, its tree's answer: no named child that is neither an extra nor an
+ *   error is at least a byte wide, so a zero-width child (typescript's automatic semicolon) counts
+ *   as none. For a built node, whether every `_`-keyed storage entry is absent or an empty list,
+ *   since every child it stores renders text.
  */
 export function isEmptyNode(node: AnyUntypedNode): boolean {
+	const tree = treeOf(node);
+	const handle = treeHandleOf(node);
+	if (tree?.isEmpty !== undefined && handle !== undefined) return tree.isEmpty(decodeIndex(handle));
 	const record = node as unknown as Record<string, unknown>;
 	for (const key of Object.keys(record)) {
 		if (key.charCodeAt(0) !== 95) continue;
@@ -800,14 +808,14 @@ export function hydrateStoredSlots(node: object, key: string): readonly unknown[
 }
 
 export { numberText, type NumberBase } from './number.ts';
-export { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle } from './read.ts';
+export { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
 export type { Role } from './identity.ts';
-export { currentHandle, inEngine, hydrateStored, type EngineHandle } from './engine-scope.ts';
+export { currentHandle, engineOf, inEngine, hydrateStored, type EngineHandle } from './engine-scope.ts';
 export { checkDelimited, type DelimitedSpec } from './delimited-check.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
 export { toTransportData, toDetachedTransportData, STORED_TRIVIA, carrySource, type SourceGapEvidence, type SourceFlankEvidence, type TransportLayout, type TriviaView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, sourceOf } from './transport-data.ts';
-export { carryTree, treeTokenOf, type TreeToken } from './tree-token.ts';
+export { carryTree, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 export { snapshotOf } from './snapshot.ts';
 export {
 	projectInterior,

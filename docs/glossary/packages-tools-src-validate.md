@@ -1277,19 +1277,6 @@ value (`wildcard_import_clause(path)`), never the spliced keys.
 
 The config of a group element carries its seat kind as a mark that is not a key (`withSeatKind`, read back by `seatKindOf`), because a `kind` key would be an unknown slot for the strict factory. The printer reads the mark to tag the element on the loose surface; it never infers the seat from the config's keys.
 
-### `packages/tools/src/validate/common.ts::carryElementTrivia`
-
-```text
-/**
- * A seated element projects to the group's config, and a config cannot carry
- * trivia — the transport rejects the key. The group's own built value can, and
- * it renders in the element's position, so a comment the read attached to the
- * group rides that value instead. Only a group with exactly one built value
- * has an unambiguous carrier; anything else keeps the group's trivia
- * unattached rather than guessing which child owns it.
- */
-```
-
 ### `packages/tools/src/validate/common.ts::projectArmSlot`
 
 ```text
@@ -1404,17 +1391,17 @@ The comparison of a from() result against a factory result when either is a kind
 
 One entry of a factory map: the factory function of a kind, or, for a `constant`-shaped kind (a keyword or punctuation kind with a build entry), the value itself. The dispatch returns a constant entry as it is and calls every other.
 
-### `packages/tools/src/validate/common.ts::carryTrivia`
+### `packages/tools/src/validate/common.ts::sideOf`
 
-```text
-/**
- * A comment rides the FOLLOWING node's trivia, and trivia is not config — a
- * factory rebuilds from the config alone, so a node built from a read would
- * otherwise drop the comments the read attached to it. The `$with` setters
- * already carry trivia across a rebuild for the same reason; construction is
- * the other place a node is remade from its config.
- */
-```
+The entries of one side of a read node, from the trivia table of a tree: by default the tree the node was read from, or the one a caller holds when the node is a detached copy of a read (`materialize` keeps a node's coordinate but not its tree). None for a node no read gave.
+
+### `packages/tools/src/validate/common.ts::tableSides`
+
+A read node's sides from a tree's trivia table, as trivia data a built value can carry. A comment is read whole through the tree and built by the caller's builder, so it is built the way the caller builds every other node; an `ERROR` keeps its text. Layout runs are left out: a copy's sides are written, and a written side's layout is the render's. The inner entries go to the node kind's inner gap, named by the engine's trivia facts; inner trivia on a kind with no inner gap is an error, since the render has nowhere to put it. `undefined` when no side holds an extra or an `ERROR`.
+
+### `packages/tools/src/validate/common.ts::writeSides`
+
+A factory rebuilds a node from its config alone, and trivia is not config, so the lanes copy a read node's sides onto the value built from it. It is a copy, not an edit: the sides are set as data, and none of the trivia writers' refusals apply (a parsed typescript block holds its zero-width automatic semicolon as a stored child, which a built block renders with width). A node read from a tree takes its sides from the tree's table (`tableSides`); a detached copy carries its sides as data, each entry resolved as a child: `rebuildChildren` takes them from the table, and the factory-source emitter seats them from the read.
 
 ### `packages/tools/src/validate/common.ts::directFactoryValue`
 

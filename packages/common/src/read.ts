@@ -25,6 +25,8 @@ export interface TreeHandle {
 	writeTriviaSide?(index: number, side: TriviaSideName, entries: readonly unknown[]): void;
 	/** Whether a write replaced a side of a node under the node at descendant `index`, its own `inner` included, and its own leading and trailing too when `ownSides` is set. */
 	editedWithin?(index: number, ownSides: boolean): boolean;
+	/** Whether the node at descendant `index` is empty: no child of it has width. */
+	isEmpty?(index: number): boolean;
 }
 
 const INDEX_RANGE = 2 ** 32;

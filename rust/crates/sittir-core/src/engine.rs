@@ -781,6 +781,12 @@ impl<G: EngineGrammar> ParsedTree<G> {
             .collect()
     }
 
+    /// Whether the node at `index` is empty (`trivia_table::is_empty`): no
+    /// child of it has width, so its trivia is its `inner`.
+    pub fn is_empty(&self, index: u32) -> bool {
+        node_at_index(&self.tree, index).is_some_and(|node| crate::trivia_table::is_empty(&node))
+    }
+
     /// Replace `side` of the node at `index` with `entries`.
     pub fn write_trivia_side(&mut self, index: u32, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) {
         self.written.insert((index, side), entries);

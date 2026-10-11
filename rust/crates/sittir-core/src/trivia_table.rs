@@ -15,7 +15,8 @@
 //! *k*, the rest lead the child starting at token *k + 1*. With no child on
 //! one side, every entry goes to the child on the other; an owner with no
 //! named child takes them as its `inner`; an owner whose named children are
-//! not beside the gap takes none (`unowned`). The child is the owner's own
+//! not beside the gap takes none (`unowned`). A zero-width node holds no
+//! side. The child is the owner's own
 //! child, so the outermost node ending or starting at the token takes the
 //! side. A run of whitespace holding a line break is a layout entry, placed
 //! as an entry ending on its last row is: it leads the child after it, or
@@ -86,6 +87,21 @@ fn is_entry(node: &tree_sitter::Node<'_>) -> bool {
     node.is_extra() || node.is_error()
 }
 
+/// Whether `node` holds trivia sides: it is named, neither an extra nor an
+/// `ERROR`, and at least a byte wide.
+pub fn holds_sides(node: &tree_sitter::Node<'_>) -> bool {
+    node.is_named() && !is_entry(node) && node.end_byte() > node.start_byte()
+}
+
+/// Whether `node` is empty: no child of it holds trivia sides
+/// (`holds_sides`), so the assignment gives it the trivia between its
+/// own tokens as `inner`.
+pub fn is_empty(node: &tree_sitter::Node<'_>) -> bool {
+    let mut cursor = node.walk();
+    let holds = node.children(&mut cursor).any(|child| holds_sides(&child));
+    !holds
+}
+
 /// The walk under `node`, the node at descendant `index` of its tree. The
 /// walk's start has no edge tokens of its own: they would lie at its bounds.
 pub fn walk(node: tree_sitter::Node<'_>, index: u32, source: &str) -> Walk {
@@ -130,7 +146,7 @@ pub fn walk(node: tree_sitter::Node<'_>, index: u32, source: &str) -> Walk {
             hidden(&mut tokens, frame.at_index, frame.at, start);
         }
         let entry = is_entry(&node);
-        nodes.holder[i] = node.is_named() && !entry;
+        nodes.holder[i] = holds_sides(&node);
         if nodes.holder[i] && nodes.parent[i] != NONE {
             nodes.holds[nodes.parent[i] as usize] = true;
         }

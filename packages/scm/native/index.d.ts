@@ -68,6 +68,12 @@ export declare class SittirEngine {
    */
   editedWithin(treeId: number, index: number, ownSides: boolean): boolean
   /**
+   * Whether the node at `index` of the live tree `treeId` is empty:
+   * no child of it has width. Refuses a tree that is not live and an
+   * index naming no node of it.
+   */
+  isEmpty(treeId: number, index: number): boolean
+  /**
    * The spans of byte `ranges` (start and end pairs) of the live
    * tree `treeId`, measured from the byte `holderByte`, as row and
    * column pairs, flat. Refuses a tree that is not live, an odd

@@ -75,14 +75,16 @@ For every corpus entry (`walk.mts`, zero-width tokens included), each entry (an 
 
 At `feat/arena` with Task 2's native table.
 
-| grammar | sources | entries | owner not parent | leading | trailing | of which before a closing edge | inner | unowned | hidden-token texts | node-edge tokens | zero-width leaves | `ERROR` | native elsewhere |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| rust | 148 | 43 | 0 | 8 | 4 | 0 | 31 | 0 | 0 | 0 | 0 | 0 | 0 |
-| typescript | 115 | 10 | 0 | 10 | 0 | 0 | 0 | 0 | 0 | 0 | 209 | 2 | 0 |
-| python | 116 | 46 | 0 | 23 | 23 | 5 | 0 | 0 | 0 | 168 | 455 | 1 | 0 |
-| scm | 19 | 3 | 0 | 2 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| regex | 37 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| grammar | sources | entries | owner not parent | leading | trailing | of which before a closing edge | inner | unowned | hidden-token texts | node-edge tokens | zero-width leaves | `ERROR` | native elsewhere | placed elsewhere by the reader |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| rust | 148 | 43 | 0 | 8 | 4 | 0 | 31 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| typescript | 115 | 10 | 0 | 10 | 0 | 0 | 0 | 0 | 0 | 0 | 209 | 2 | 0 | 0 |
+| python | 116 | 46 | 0 | 23 | 23 | 5 | 0 | 0 | 0 | 168 | 455 | 1 | 0 | 9 |
+| scm | 19 | 3 | 0 | 2 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| regex | 37 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 
 **Every entry's owner is its tree-sitter parent**, once the walk yields python's hidden zero-width tokens. `_indent` and `_dedent` are no nodes, but tree-sitter extends a block over the comments up to its dedent. A walk that sees only visible tokens finds 9 python comments at a block's edge whose smallest node spanning the gap is the block's parent (`module`, `if_statement`), not the block. The walk puts a zero-width token at each node edge that reaches past the node's own first or last token (168 in python, none elsewhere), and the gap splits there.
 
-Every corpus entry lands in a side; none is unowned. **The native table agrees** (Task 2): the census reads every node's sides through `triviaSide` and finds each extra on the node and side the assignment gives it, and each `ERROR` on its side (`native≠` 0 in every grammar). Five python comments lie after a block's last statement, before its dedent: the edge token on their right is the block's own, so they trail the last statement, inside the block. Whitespace between two children is never a token: python's `_newline` text is a gap's line break, equal to its seam's default.
+Every corpus entry lands in a side; none is unowned. **The native table agrees** (Task 2): the census reads every node's sides through `triviaSide` and finds each extra on the node and side the assignment gives it, and each `ERROR` on its side (`native≠` 0 in every grammar).
+
+**Where the table and the reader's placement differ.** Nine python comments, each after a `case …:` colon on the case's line (`case Color.RED:  # c`). The colon is the case clause's own token, so no child ends at it, and the comment leads the clause's `suite_block`; the reader seats it as the trailing of `case_patterns` and holds it past the colon (`tokens_between`). The table's side renders after the colon by its position. Every other corpus extra sits where the reader seats it. Five python comments lie after a block's last statement, before its dedent: the edge token on their right is the block's own, so they trail the last statement, inside the block. Whitespace between two children is never a token: python's `_newline` text is a gap's line break, equal to its seam's default.
