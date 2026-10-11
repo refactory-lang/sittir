@@ -57,15 +57,29 @@ export interface PortableIds {
 	'clause.match.arm.last': TSKindId.LastMatchArm;
 	'clause.where': TSKindId.WhereClause | TSKindId.WherePredicate;
 	'clause.where.predicate': TSKindId.WherePredicate;
-	comment: TSKindId.BlockComment | TSKindId.LineComment;
+	comment:
+		| TSKindId.BlockCommentContent
+		| TSKindId.BlockComment
+		| TSKindId.BlockCommentRegular
+		| TSKindId.DocComment
+		| TSKindId.LineComment
+		| TSKindId.LineCommentExtraSlashes
+		| TSKindId.LineCommentRegular;
 	'comment.block': TSKindId.BlockComment;
 	'comment.block.doc': TSKindId.BlockComment;
 	'comment.block.doc.inner': TSKindId.BlockComment;
 	'comment.line': TSKindId.LineComment;
 	'comment.line.doc': TSKindId.LineComment;
 	'comment.line.doc.inner': TSKindId.LineComment;
+	'comment.text':
+		| TSKindId.BlockCommentContent
+		| TSKindId.BlockCommentRegular
+		| TSKindId.DocComment
+		| TSKindId.LineCommentExtraSlashes
+		| TSKindId.LineCommentRegular;
 	declaration:
 		| TSKindId.AssociatedType
+		| TSKindId.AttributedOrderedField
 		| TSKindId.BoolKeyword
 		| TSKindId.CapturedPattern
 		| TSKindId.CharKeyword
@@ -161,7 +175,7 @@ export interface PortableIds {
 	'declaration.enum_member.tuple': TSKindId.EnumVariant;
 	'declaration.extension': TSKindId.ImplItemBody | TSKindId.ImplItemSemi;
 	'declaration.extension.conformance': TSKindId.ImplItemBody;
-	'declaration.field': TSKindId.FieldDeclaration;
+	'declaration.field': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
 	'declaration.function': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
 	'declaration.function.signature': TSKindId.FunctionSignatureItem;
 	'declaration.interface': TSKindId.TraitItem;
@@ -248,6 +262,8 @@ export interface PortableIds {
 		| TSKindId.StructItemBrace
 		| TSKindId.StructItemTuple
 		| TSKindId.StructItemUnit;
+	'declaration.struct.tuple': TSKindId.StructItemTuple;
+	'declaration.struct.unit': TSKindId.StructItemUnit;
 	'declaration.type_alias': TSKindId.AssociatedType | TSKindId.TypeItem;
 	'declaration.type_alias.associated': TSKindId.AssociatedType;
 	'declaration.type_parameter': TSKindId.ConstParameter | TSKindId.LifetimeParameter | TSKindId.TypeParameter;
@@ -470,6 +486,7 @@ export interface PortableIds {
 		| TSKindId.StructExpression
 		| TSKindId.TupleExpression;
 	'expression.collection.list': TSKindId.ArrayExpression | TSKindId.ArrayExpressionList | TSKindId.ArrayExpressionSemi;
+	'expression.collection.list.repeat': TSKindId.ArrayExpressionSemi;
 	'expression.collection.struct': TSKindId.StructExpression;
 	'expression.collection.tuple': TSKindId.TupleExpression;
 	'expression.instantiation': TSKindId.GenericFunction;
@@ -537,6 +554,8 @@ export interface PortableIds {
 		| TSKindId.IntegerLiteralOctal
 		| TSKindId.NegativeLiteral
 		| TSKindId.RawStringLiteral
+		| TSKindId.RawStringLiteralContent
+		| TSKindId.StringContent
 		| TSKindId.StringLiteral
 		| TSKindId.TrueKeyword;
 	'literal.boolean': TSKindId.FalseKeyword | TSKindId.TrueKeyword;
@@ -571,6 +590,8 @@ export interface PortableIds {
 		| TSKindId.EscapeSequenceUnicodeBraced
 		| TSKindId.EscapeSequenceUnicodeFixed
 		| TSKindId.RawStringLiteral
+		| TSKindId.RawStringLiteralContent
+		| TSKindId.StringContent
 		| TSKindId.StringLiteral;
 	'literal.string.escape':
 		| TSKindId.EscapeSequence
@@ -579,6 +600,7 @@ export interface PortableIds {
 		| TSKindId.EscapeSequenceUnicodeBraced
 		| TSKindId.EscapeSequenceUnicodeFixed;
 	'literal.string.raw': TSKindId.RawStringLiteral;
+	'literal.string.text': TSKindId.RawStringLiteralContent | TSKindId.StringContent;
 	modifier: TSKindId.Crate | TSKindId.ExternModifier | TSKindId.VisibilityModifierPub;
 	'modifier.extern': TSKindId.ExternModifier;
 	'modifier.visibility': TSKindId.Crate | TSKindId.VisibilityModifierPub;
@@ -817,6 +839,7 @@ export interface PortableKindsAt {
 		readonly $ids: readonly PortableIds['comment'][];
 		readonly block: PortableKindsAt['comment.block'];
 		readonly line: PortableKindsAt['comment.line'];
+		readonly text: PortableKindsAt['comment.text'];
 	};
 	'comment.block': {
 		readonly $ids: readonly PortableIds['comment.block'][];
@@ -838,6 +861,7 @@ export interface PortableKindsAt {
 		readonly inner: PortableKindsAt['comment.line.doc.inner'];
 	};
 	'comment.line.doc.inner': { readonly $ids: readonly PortableIds['comment.line.doc.inner'][] };
+	'comment.text': { readonly $ids: readonly PortableIds['comment.text'][] };
 	declaration: {
 		readonly $ids: readonly PortableIds['declaration'][];
 		readonly constant: PortableKindsAt['declaration.constant'];
@@ -863,7 +887,7 @@ export interface PortableKindsAt {
 		readonly lifetime: PortableKindsAt['declaration.type_parameter.lifetime'];
 		readonly self: PortableKindsAt['declaration.parameter.self'];
 		readonly trait: PortableKindsAt['declaration.interface.trait'];
-		readonly tuple: PortableKindsAt['declaration.enum_member.tuple'];
+		readonly unit: PortableKindsAt['declaration.struct.unit'];
 		readonly variadic: PortableKindsAt['declaration.parameter.variadic'];
 	};
 	'declaration.constant': { readonly $ids: readonly PortableIds['declaration.constant'][] };
@@ -911,7 +935,13 @@ export interface PortableKindsAt {
 	};
 	'declaration.parameter.self': { readonly $ids: readonly PortableIds['declaration.parameter.self'][] };
 	'declaration.parameter.variadic': { readonly $ids: readonly PortableIds['declaration.parameter.variadic'][] };
-	'declaration.struct': { readonly $ids: readonly PortableIds['declaration.struct'][] };
+	'declaration.struct': {
+		readonly $ids: readonly PortableIds['declaration.struct'][];
+		readonly tuple: PortableKindsAt['declaration.struct.tuple'];
+		readonly unit: PortableKindsAt['declaration.struct.unit'];
+	};
+	'declaration.struct.tuple': { readonly $ids: readonly PortableIds['declaration.struct.tuple'][] };
+	'declaration.struct.unit': { readonly $ids: readonly PortableIds['declaration.struct.unit'][] };
 	'declaration.type_alias': {
 		readonly $ids: readonly PortableIds['declaration.type_alias'][];
 		readonly associated: PortableKindsAt['declaration.type_alias.associated'];
@@ -1024,6 +1054,7 @@ export interface PortableKindsAt {
 		readonly not: PortableKindsAt['expression.unary.not'];
 		readonly not_equal: PortableKindsAt['expression.binary.comparison.not_equal'];
 		readonly path: PortableKindsAt['expression.call.path'];
+		readonly repeat: PortableKindsAt['expression.collection.list.repeat'];
 		readonly right: PortableKindsAt['expression.binary.shift.right'];
 		readonly shift: PortableKindsAt['expression.binary.shift'];
 		readonly shift_left: PortableKindsAt['expression.assignment.compound.shift_left'];
@@ -1210,8 +1241,13 @@ export interface PortableKindsAt {
 		readonly list: PortableKindsAt['expression.collection.list'];
 		readonly struct: PortableKindsAt['expression.collection.struct'];
 		readonly tuple: PortableKindsAt['expression.collection.tuple'];
+		readonly repeat: PortableKindsAt['expression.collection.list.repeat'];
 	};
-	'expression.collection.list': { readonly $ids: readonly PortableIds['expression.collection.list'][] };
+	'expression.collection.list': {
+		readonly $ids: readonly PortableIds['expression.collection.list'][];
+		readonly repeat: PortableKindsAt['expression.collection.list.repeat'];
+	};
+	'expression.collection.list.repeat': { readonly $ids: readonly PortableIds['expression.collection.list.repeat'][] };
 	'expression.collection.struct': { readonly $ids: readonly PortableIds['expression.collection.struct'][] };
 	'expression.collection.tuple': { readonly $ids: readonly PortableIds['expression.collection.tuple'][] };
 	'expression.instantiation': { readonly $ids: readonly PortableIds['expression.instantiation'][] };
@@ -1276,6 +1312,7 @@ export interface PortableKindsAt {
 		readonly negative: PortableKindsAt['literal.number.negative'];
 		readonly octal: PortableKindsAt['literal.number.integer.octal'];
 		readonly raw: PortableKindsAt['literal.string.raw'];
+		readonly text: PortableKindsAt['literal.string.text'];
 		readonly true: PortableKindsAt['literal.boolean.true'];
 	};
 	'literal.boolean': {
@@ -1310,9 +1347,11 @@ export interface PortableKindsAt {
 		readonly $ids: readonly PortableIds['literal.string'][];
 		readonly escape: PortableKindsAt['literal.string.escape'];
 		readonly raw: PortableKindsAt['literal.string.raw'];
+		readonly text: PortableKindsAt['literal.string.text'];
 	};
 	'literal.string.escape': { readonly $ids: readonly PortableIds['literal.string.escape'][] };
 	'literal.string.raw': { readonly $ids: readonly PortableIds['literal.string.raw'][] };
+	'literal.string.text': { readonly $ids: readonly PortableIds['literal.string.text'][] };
 	modifier: {
 		readonly $ids: readonly PortableIds['modifier'][];
 		readonly extern: PortableKindsAt['modifier.extern'];
@@ -1546,6 +1585,7 @@ export interface PortableIsAt {
 	comment: PortableGuard<PortableIds['comment']> & {
 		readonly block: PortableIsAt['comment.block'];
 		readonly line: PortableIsAt['comment.line'];
+		readonly text: PortableIsAt['comment.text'];
 	};
 	'comment.block': PortableGuard<PortableIds['comment.block']> & {
 		readonly doc: PortableIsAt['comment.block.doc'];
@@ -1563,6 +1603,7 @@ export interface PortableIsAt {
 		readonly inner: PortableIsAt['comment.line.doc.inner'];
 	};
 	'comment.line.doc.inner': PortableGuard<PortableIds['comment.line.doc.inner']> & {};
+	'comment.text': PortableGuard<PortableIds['comment.text']> & {};
 	declaration: PortableGuard<PortableIds['declaration']> & {
 		readonly constant: PortableIsAt['declaration.constant'];
 		readonly enum: PortableIsAt['declaration.enum'];
@@ -1587,7 +1628,7 @@ export interface PortableIsAt {
 		readonly lifetime: PortableIsAt['declaration.type_parameter.lifetime'];
 		readonly self: PortableIsAt['declaration.parameter.self'];
 		readonly trait: PortableIsAt['declaration.interface.trait'];
-		readonly tuple: PortableIsAt['declaration.enum_member.tuple'];
+		readonly unit: PortableIsAt['declaration.struct.unit'];
 		readonly variadic: PortableIsAt['declaration.parameter.variadic'];
 	};
 	'declaration.constant': PortableGuard<PortableIds['declaration.constant']> & {};
@@ -1628,7 +1669,12 @@ export interface PortableIsAt {
 	};
 	'declaration.parameter.self': PortableGuard<PortableIds['declaration.parameter.self']> & {};
 	'declaration.parameter.variadic': PortableGuard<PortableIds['declaration.parameter.variadic']> & {};
-	'declaration.struct': PortableGuard<PortableIds['declaration.struct']> & {};
+	'declaration.struct': PortableGuard<PortableIds['declaration.struct']> & {
+		readonly tuple: PortableIsAt['declaration.struct.tuple'];
+		readonly unit: PortableIsAt['declaration.struct.unit'];
+	};
+	'declaration.struct.tuple': PortableGuard<PortableIds['declaration.struct.tuple']> & {};
+	'declaration.struct.unit': PortableGuard<PortableIds['declaration.struct.unit']> & {};
 	'declaration.type_alias': PortableGuard<PortableIds['declaration.type_alias']> & {
 		readonly associated: PortableIsAt['declaration.type_alias.associated'];
 	};
@@ -1728,6 +1774,7 @@ export interface PortableIsAt {
 		readonly not: PortableIsAt['expression.unary.not'];
 		readonly not_equal: PortableIsAt['expression.binary.comparison.not_equal'];
 		readonly path: PortableIsAt['expression.call.path'];
+		readonly repeat: PortableIsAt['expression.collection.list.repeat'];
 		readonly right: PortableIsAt['expression.binary.shift.right'];
 		readonly shift: PortableIsAt['expression.binary.shift'];
 		readonly shift_left: PortableIsAt['expression.assignment.compound.shift_left'];
@@ -1880,8 +1927,12 @@ export interface PortableIsAt {
 		readonly list: PortableIsAt['expression.collection.list'];
 		readonly struct: PortableIsAt['expression.collection.struct'];
 		readonly tuple: PortableIsAt['expression.collection.tuple'];
+		readonly repeat: PortableIsAt['expression.collection.list.repeat'];
 	};
-	'expression.collection.list': PortableGuard<PortableIds['expression.collection.list']> & {};
+	'expression.collection.list': PortableGuard<PortableIds['expression.collection.list']> & {
+		readonly repeat: PortableIsAt['expression.collection.list.repeat'];
+	};
+	'expression.collection.list.repeat': PortableGuard<PortableIds['expression.collection.list.repeat']> & {};
 	'expression.collection.struct': PortableGuard<PortableIds['expression.collection.struct']> & {};
 	'expression.collection.tuple': PortableGuard<PortableIds['expression.collection.tuple']> & {};
 	'expression.instantiation': PortableGuard<PortableIds['expression.instantiation']> & {};
@@ -1942,6 +1993,7 @@ export interface PortableIsAt {
 		readonly negative: PortableIsAt['literal.number.negative'];
 		readonly octal: PortableIsAt['literal.number.integer.octal'];
 		readonly raw: PortableIsAt['literal.string.raw'];
+		readonly text: PortableIsAt['literal.string.text'];
 		readonly true: PortableIsAt['literal.boolean.true'];
 	};
 	'literal.boolean': PortableGuard<PortableIds['literal.boolean']> & {
@@ -1972,9 +2024,11 @@ export interface PortableIsAt {
 	'literal.string': PortableGuard<PortableIds['literal.string']> & {
 		readonly escape: PortableIsAt['literal.string.escape'];
 		readonly raw: PortableIsAt['literal.string.raw'];
+		readonly text: PortableIsAt['literal.string.text'];
 	};
 	'literal.string.escape': PortableGuard<PortableIds['literal.string.escape']> & {};
 	'literal.string.raw': PortableGuard<PortableIds['literal.string.raw']> & {};
+	'literal.string.text': PortableGuard<PortableIds['literal.string.text']> & {};
 	modifier: PortableGuard<PortableIds['modifier']> & {
 		readonly extern: PortableIsAt['modifier.extern'];
 		readonly visibility: PortableIsAt['modifier.visibility'];
@@ -2219,6 +2273,7 @@ export interface PortableKinds {
 	readonly qualified: PortableKindsAt['type.qualified'];
 	readonly raw: PortableKindsAt['literal.string.raw'];
 	readonly removed: PortableKindsAt['clause.bounds.removed'];
+	readonly repeat: PortableKindsAt['expression.collection.list.repeat'];
 	readonly rest: PortableKindsAt['pattern.struct.rest'];
 	readonly restricted: PortableKindsAt['modifier.visibility.public.restricted'];
 	readonly return: PortableKindsAt['statement.return'];
@@ -2360,6 +2415,7 @@ export interface PortableIs {
 	readonly qualified: PortableIsAt['type.qualified'];
 	readonly raw: PortableIsAt['literal.string.raw'];
 	readonly removed: PortableIsAt['clause.bounds.removed'];
+	readonly repeat: PortableIsAt['expression.collection.list.repeat'];
 	readonly rest: PortableIsAt['pattern.struct.rest'];
 	readonly restricted: PortableIsAt['modifier.visibility.public.restricted'];
 	readonly return: PortableIsAt['statement.return'];
@@ -2458,16 +2514,38 @@ const table: PortableTable = {
 		'clause.match.arm.last': { ids: [TSKindId.LastMatchArm], exact: true },
 		'clause.where': { ids: [TSKindId.WhereClause, TSKindId.WherePredicate], exact: true },
 		'clause.where.predicate': { ids: [TSKindId.WherePredicate], exact: true },
-		comment: { ids: [TSKindId.BlockComment, TSKindId.LineComment], exact: true },
+		comment: {
+			ids: [
+				TSKindId.BlockCommentContent,
+				TSKindId.BlockComment,
+				TSKindId.BlockCommentRegular,
+				TSKindId.DocComment,
+				TSKindId.LineComment,
+				TSKindId.LineCommentExtraSlashes,
+				TSKindId.LineCommentRegular
+			],
+			exact: true
+		},
 		'comment.block': { ids: [TSKindId.BlockComment], exact: true },
 		'comment.block.doc': { ids: [TSKindId.BlockComment], exact: false },
 		'comment.block.doc.inner': { ids: [TSKindId.BlockComment], exact: false },
 		'comment.line': { ids: [TSKindId.LineComment], exact: true },
 		'comment.line.doc': { ids: [TSKindId.LineComment], exact: false },
 		'comment.line.doc.inner': { ids: [TSKindId.LineComment], exact: false },
+		'comment.text': {
+			ids: [
+				TSKindId.BlockCommentContent,
+				TSKindId.BlockCommentRegular,
+				TSKindId.DocComment,
+				TSKindId.LineCommentExtraSlashes,
+				TSKindId.LineCommentRegular
+			],
+			exact: true
+		},
 		declaration: {
 			ids: [
 				TSKindId.AssociatedType,
+				TSKindId.AttributedOrderedField,
 				TSKindId.BoolKeyword,
 				TSKindId.CapturedPattern,
 				TSKindId.CharKeyword,
@@ -2566,7 +2644,7 @@ const table: PortableTable = {
 		'declaration.enum_member.tuple': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.extension': { ids: [TSKindId.ImplItemBody, TSKindId.ImplItemSemi], exact: true },
 		'declaration.extension.conformance': { ids: [TSKindId.ImplItemBody], exact: false },
-		'declaration.field': { ids: [TSKindId.FieldDeclaration], exact: true },
+		'declaration.field': { ids: [TSKindId.AttributedOrderedField, TSKindId.FieldDeclaration], exact: true },
 		'declaration.function': { ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem], exact: false },
 		'declaration.function.signature': { ids: [TSKindId.FunctionSignatureItem], exact: false },
 		'declaration.interface': { ids: [TSKindId.TraitItem], exact: true },
@@ -2667,6 +2745,8 @@ const table: PortableTable = {
 			ids: [TSKindId.StructItem, TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
 			exact: true
 		},
+		'declaration.struct.tuple': { ids: [TSKindId.StructItemTuple], exact: true },
+		'declaration.struct.unit': { ids: [TSKindId.StructItemUnit], exact: true },
 		'declaration.type_alias': { ids: [TSKindId.AssociatedType, TSKindId.TypeItem], exact: true },
 		'declaration.type_alias.associated': { ids: [TSKindId.AssociatedType], exact: true },
 		'declaration.type_parameter': {
@@ -2928,6 +3008,7 @@ const table: PortableTable = {
 			ids: [TSKindId.ArrayExpression, TSKindId.ArrayExpressionList, TSKindId.ArrayExpressionSemi],
 			exact: true
 		},
+		'expression.collection.list.repeat': { ids: [TSKindId.ArrayExpressionSemi], exact: true },
 		'expression.collection.struct': { ids: [TSKindId.StructExpression], exact: true },
 		'expression.collection.tuple': { ids: [TSKindId.TupleExpression], exact: true },
 		'expression.instantiation': { ids: [TSKindId.GenericFunction], exact: true },
@@ -3011,6 +3092,8 @@ const table: PortableTable = {
 				TSKindId.IntegerLiteralOctal,
 				TSKindId.NegativeLiteral,
 				TSKindId.RawStringLiteral,
+				TSKindId.RawStringLiteralContent,
+				TSKindId.StringContent,
 				TSKindId.StringLiteral,
 				TSKindId.TrueKeyword
 			],
@@ -3056,6 +3139,8 @@ const table: PortableTable = {
 				TSKindId.EscapeSequenceUnicodeBraced,
 				TSKindId.EscapeSequenceUnicodeFixed,
 				TSKindId.RawStringLiteral,
+				TSKindId.RawStringLiteralContent,
+				TSKindId.StringContent,
 				TSKindId.StringLiteral
 			],
 			exact: false
@@ -3071,6 +3156,7 @@ const table: PortableTable = {
 			exact: true
 		},
 		'literal.string.raw': { ids: [TSKindId.RawStringLiteral], exact: false },
+		'literal.string.text': { ids: [TSKindId.RawStringLiteralContent, TSKindId.StringContent], exact: true },
 		modifier: { ids: [TSKindId.Crate, TSKindId.ExternModifier, TSKindId.VisibilityModifierPub], exact: false },
 		'modifier.extern': { ids: [TSKindId.ExternModifier], exact: true },
 		'modifier.visibility': { ids: [TSKindId.Crate, TSKindId.VisibilityModifierPub], exact: false },
@@ -3343,6 +3429,7 @@ const table: PortableTable = {
 		['', 'qualified', 'type.qualified'],
 		['', 'raw', 'literal.string.raw'],
 		['', 'removed', 'clause.bounds.removed'],
+		['', 'repeat', 'expression.collection.list.repeat'],
 		['', 'rest', 'pattern.struct.rest'],
 		['', 'restricted', 'modifier.visibility.public.restricted'],
 		['', 'return', 'statement.return'],
@@ -3401,7 +3488,7 @@ const table: PortableTable = {
 		['declaration', 'lifetime', 'declaration.type_parameter.lifetime'],
 		['declaration', 'self', 'declaration.parameter.self'],
 		['declaration', 'trait', 'declaration.interface.trait'],
-		['declaration', 'tuple', 'declaration.enum_member.tuple'],
+		['declaration', 'unit', 'declaration.struct.unit'],
 		['declaration', 'variadic', 'declaration.parameter.variadic'],
 		['element', 'base', 'element.struct.base'],
 		['element', 'delimited', 'element.macro.token_tree.delimited'],
@@ -3436,6 +3523,7 @@ const table: PortableTable = {
 		['expression', 'not', 'expression.unary.not'],
 		['expression', 'not_equal', 'expression.binary.comparison.not_equal'],
 		['expression', 'path', 'expression.call.path'],
+		['expression', 'repeat', 'expression.collection.list.repeat'],
 		['expression', 'right', 'expression.binary.shift.right'],
 		['expression', 'shift', 'expression.binary.shift'],
 		['expression', 'shift_left', 'expression.assignment.compound.shift_left'],
@@ -3468,6 +3556,7 @@ const table: PortableTable = {
 		['expression.binary', 'right', 'expression.binary.shift.right'],
 		['expression.binary', 'subtract', 'expression.binary.arithmetic.subtract'],
 		['expression.binary', 'xor', 'expression.binary.bitwise.xor'],
+		['expression.collection', 'repeat', 'expression.collection.list.repeat'],
 		['identifier', 'shorthand', 'identifier.property.shorthand'],
 		['literal', 'binary', 'literal.number.integer.binary'],
 		['literal', 'escape', 'literal.string.escape'],
@@ -3478,6 +3567,7 @@ const table: PortableTable = {
 		['literal', 'negative', 'literal.number.negative'],
 		['literal', 'octal', 'literal.number.integer.octal'],
 		['literal', 'raw', 'literal.string.raw'],
+		['literal', 'text', 'literal.string.text'],
 		['literal', 'true', 'literal.boolean.true'],
 		['literal.number', 'binary', 'literal.number.integer.binary'],
 		['literal.number', 'hex', 'literal.number.integer.hex'],
@@ -3500,17 +3590,19 @@ const table: PortableTable = {
 		['type', 'turbofish', 'type.generic.turbofish']
 	],
 	entries: {
+		[TSKindId.BlockCommentContent]: [{ path: 'comment.text', within: [], test: [] }],
 		[TSKindId.LetChain]: [{ path: 'clause.let.chain', within: [], test: [] }],
 		[TSKindId.AbstractType]: [{ path: 'type.abstract', within: [], test: [] }],
 		[TSKindId.ArrayExpression]: [{ path: 'expression.collection.list', within: [], test: [] }],
 		[TSKindId.ArrayExpressionList]: [{ path: 'expression.collection.list', within: [], test: [] }],
-		[TSKindId.ArrayExpressionSemi]: [{ path: 'expression.collection.list', within: [], test: [] }],
+		[TSKindId.ArrayExpressionSemi]: [{ path: 'expression.collection.list.repeat', within: [], test: [] }],
 		[TSKindId.ArrayType]: [{ path: 'type.array', within: [], test: [] }],
 		[TSKindId.AssignmentExpression]: [{ path: 'expression.assignment', within: [], test: [] }],
 		[TSKindId.AssociatedType]: [{ path: 'declaration.type_alias.associated', within: [], test: [] }],
 		[TSKindId.AsyncBlock]: [{ path: 'expression.block.async', within: [], test: [] }],
 		[TSKindId.Attribute]: [{ path: 'attribute.content', within: [], test: [] }],
 		[TSKindId.AttributeItem]: [{ path: 'attribute', within: [], test: [] }],
+		[TSKindId.AttributedOrderedField]: [{ path: 'declaration.field', within: [], test: [] }],
 		[TSKindId.AwaitExpression]: [{ path: 'expression.await', within: [], test: [] }],
 		[TSKindId.BaseFieldInitializer]: [{ path: 'element.struct.base', within: [], test: [] }],
 		[TSKindId.BinaryExpression]: [
@@ -3612,6 +3704,7 @@ const table: PortableTable = {
 			{ path: 'comment.block.doc', within: [], test: [] },
 			{ path: 'comment.block.doc.inner', within: [], test: [] }
 		],
+		[TSKindId.BlockCommentRegular]: [{ path: 'comment.text', within: [], test: [] }],
 		[TSKindId.BlockKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.BoolKeyword]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
@@ -3727,6 +3820,7 @@ const table: PortableTable = {
 		[TSKindId.DelimTokenTreeBrace]: [{ path: 'element.macro.token_tree.delimited', within: [], test: [] }],
 		[TSKindId.DelimTokenTreeBracket]: [{ path: 'element.macro.token_tree.delimited', within: [], test: [] }],
 		[TSKindId.DelimTokenTreeParen]: [{ path: 'element.macro.token_tree.delimited', within: [], test: [] }],
+		[TSKindId.DocComment]: [{ path: 'comment.text', within: [], test: [] }],
 		[TSKindId.DynamicType]: [{ path: 'type.dynamic', within: [], test: [] }],
 		[TSKindId.ElseClause]: [{ path: 'clause.else', within: [], test: [] }],
 		[TSKindId.EmptyStatement]: [{ path: 'statement.empty', within: [], test: [] }],
@@ -3953,6 +4047,8 @@ const table: PortableTable = {
 			{ path: 'comment.line.doc', within: [], test: [] },
 			{ path: 'comment.line.doc.inner', within: [], test: [] }
 		],
+		[TSKindId.LineCommentExtraSlashes]: [{ path: 'comment.text', within: [], test: [] }],
+		[TSKindId.LineCommentRegular]: [{ path: 'comment.text', within: [], test: [] }],
 		[TSKindId.LiteralKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.LoopExpression]: [{ path: 'statement.loop', within: [], test: [] }],
 		[TSKindId.MacroDefinition]: [{ path: 'declaration.macro', within: [], test: [] }],
@@ -4019,6 +4115,7 @@ const table: PortableTable = {
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'literal.string.raw', within: [], test: [] }
 		],
+		[TSKindId.RawStringLiteralContent]: [{ path: 'literal.string.text', within: [], test: [] }],
 		[TSKindId.RefPattern]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'pattern.reference', within: [], test: [] }
@@ -4061,6 +4158,7 @@ const table: PortableTable = {
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
+		[TSKindId.StringContent]: [{ path: 'literal.string.text', within: [], test: [] }],
 		[TSKindId.StringLiteral]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'literal.string', within: [], test: [] }
@@ -4068,8 +4166,8 @@ const table: PortableTable = {
 		[TSKindId.StructExpression]: [{ path: 'expression.collection.struct', within: [], test: [] }],
 		[TSKindId.StructItem]: [{ path: 'declaration.struct', within: [], test: [] }],
 		[TSKindId.StructItemBrace]: [{ path: 'declaration.struct', within: [], test: [] }],
-		[TSKindId.StructItemTuple]: [{ path: 'declaration.struct', within: [], test: [] }],
-		[TSKindId.StructItemUnit]: [{ path: 'declaration.struct', within: [], test: [] }],
+		[TSKindId.StructItemTuple]: [{ path: 'declaration.struct.tuple', within: [], test: [] }],
+		[TSKindId.StructItemUnit]: [{ path: 'declaration.struct.unit', within: [], test: [] }],
 		[TSKindId.StructPattern]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'pattern.struct', within: [], test: [] }

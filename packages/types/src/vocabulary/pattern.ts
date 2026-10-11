@@ -1,5 +1,5 @@
 import type { GrammarContext } from './context.ts';
-import type { SubKindOf } from './utils.ts';
+import type { Flag, SubKindOf } from './utils.ts';
 import type * as V from './index.ts';
 export interface Pattern<G extends GrammarContext<G>> {
 	readonly $kind: 'pattern';
@@ -108,7 +108,7 @@ export namespace Pattern {
 	export interface List<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
 		// claimed by p
 		readonly $kind: 'pattern.list';
-		readonly patterns?: G['slots']['pattern.list']['patterns'][];
+		readonly elements?: G['slots']['pattern.list']['elements'][];
 	}
 	export interface Match<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
 		// claimed by r
@@ -136,7 +136,7 @@ export namespace Pattern {
 		export interface Pair<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Object<G>> {
 			// claimed by t
 			readonly $kind: 'pattern.object.pair';
-			readonly computed?: boolean;
+			readonly computed?: Flag;
 			readonly key: G['slots']['pattern.object.pair']['key'];
 			readonly value?: G['slots']['pattern.object.pair']['value'];
 		}
@@ -148,10 +148,14 @@ export namespace Pattern {
 	export interface Or<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
 		// claimed by r
 		readonly $kind: 'pattern.or';
+		readonly left?: G['slots']['pattern.or']['left'];
+		readonly right: G['slots']['pattern.or']['right'];
 	}
 	export interface Range<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
 		// claimed by r
 		readonly $kind: 'pattern.range';
+		readonly left?: G['slots']['pattern.range']['left'];
+		readonly right?: G['slots']['pattern.range']['right'];
 	}
 	export interface Reference<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
 		// claimed by r
@@ -162,7 +166,7 @@ export namespace Pattern {
 		export interface Value<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Reference<G>> {
 			// claimed by r
 			readonly $kind: 'pattern.reference.value';
-			readonly mutable?: boolean;
+			readonly exclusive?: Flag;
 			readonly pattern: G['slots']['pattern.reference.value']['pattern'];
 		}
 		export type Any<G extends GrammarContext<G>> = V.Pattern.Reference<G> | V.Pattern.Reference.Value<G>;
@@ -200,6 +204,10 @@ export namespace Pattern {
 		export interface Field<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Struct<G>> {
 			// claimed by r
 			readonly $kind: 'pattern.struct.field';
+			readonly byReference?: Flag;
+			readonly mutable?: Flag;
+			readonly name: G['identifier'];
+			readonly pattern?: G['slots']['pattern.struct.field']['pattern'];
 		}
 		export interface Rest<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Struct<G>> {
 			// claimed by r
@@ -214,8 +222,6 @@ export namespace Pattern {
 		// claimed by pr
 		readonly $kind: 'pattern.tuple';
 		readonly elements?: G['slots']['pattern.tuple']['elements'][];
-		// r only
-		readonly patterns?: G['slots']['pattern.tuple']['patterns'][];
 	}
 	export namespace Tuple {
 		export interface Bare<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Tuple<G>> {

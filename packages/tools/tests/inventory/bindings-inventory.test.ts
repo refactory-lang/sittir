@@ -12,7 +12,7 @@ import {
 	vocabularyDisagreements,
 	vocabularyMembers
 } from '../../src/inventory/index.ts';
-import { type Derivation, bindingPatterns, levelMembers } from '@sittir/codegen/bindings';
+import { type Derivation, FLAGS_PATH, bindingPatterns, levelMembers } from '@sittir/codegen/bindings';
 import { readVocabulary } from '../../src/inventory/vocabulary.ts';
 
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
@@ -155,7 +155,7 @@ describe('deriveVocabulary', () => {
 		const parameters = d.members.get('declaration.function')?.get('parameters')?.kinds ?? new Set();
 		expect(parameters.has('declaration.parameter')).toBe(true);
 		expect([...parameters].filter((k) => k.startsWith('<'))).toEqual([]);
-		const body = d.members.get('declaration.class.abstract')?.get('body');
+		const body = d.members.get('expression.class')?.get('body');
 		expect([...(body?.kinds ?? [])].sort()).toEqual([
 			'declaration.field',
 			'declaration.method',
@@ -197,8 +197,8 @@ describe('the authored vocabulary', () => {
 		expect(vocabularyDisagreements(d, withoutHole)).toContain(`${path}.${hole}: templated, but its interface does not declare it`);
 	}, 120_000);
 
-	it('is authored: no file says it is generated', () => {
-		for (const file of readdirSync(VOCABULARY_DIR)) {
+	it('is authored: no file but the flags module says it is generated', () => {
+		for (const file of readdirSync(VOCABULARY_DIR).filter((f) => join(VOCABULARY_DIR, f) !== FLAGS_PATH)) {
 			expect(readFileSync(join(VOCABULARY_DIR, file), 'utf8'), file).not.toMatch(/^\/\/ Generated/m);
 		}
 	});
@@ -233,8 +233,8 @@ describe('readVocabulary', () => {
 
 	it('gives a kind its inherited members, each marked optional or required', () => {
 		expect(Object.fromEntries(vocabulary.members('declaration.function'))).toEqual({
-			body: { optional: true },
-			name: { optional: false }
+			body: { optional: true, flag: false },
+			name: { optional: false, flag: false }
 		});
 	});
 

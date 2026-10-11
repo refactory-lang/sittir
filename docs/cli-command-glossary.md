@@ -363,9 +363,9 @@ Compile the bindings, derive the vocabulary they imply, and check it against the
 
 **Options**
 
-- `--check` — Compile every bindings.scm against its parser, report totality diagnostics, and report where the bindings and the vocabulary disagree
+- `--check` — Compile every bindings.scm against its parser, report totality diagnostics, report where the bindings and the vocabulary disagree, and check the vocabulary flags module against its Flag declarations
 - `--members` — Print member names and kinds per shared kind
-- `--write` — Write each grammar.bindings.ts: the bindings overlay and the hash of the sources it was derived from
+- `--write` — Write the vocabulary flags module from its Flag declarations, then each grammar.bindings.ts: the bindings overlay and the hash of the sources it was derived from
 
 **Example**
 

@@ -57,6 +57,10 @@ export namespace Comment {
 		}
 		export type Any<G extends GrammarContext<G>> = V.Comment.Line<G> | V.Comment.Line.Doc<G> | V.Comment.Line.Doc.Inner<G>;
 	}
+	export interface Text<G extends GrammarContext<G>> extends SubKindOf<V.Comment<G>> {
+		// claimed by r
+		readonly $kind: 'comment.text';
+	}
 	export type Any<G extends GrammarContext<G>> =
 		| V.Comment<G>
 		| V.Comment.Block<G>
@@ -64,5 +68,6 @@ export namespace Comment {
 		| V.Comment.Block.Doc.Inner<G>
 		| V.Comment.Line<G>
 		| V.Comment.Line.Doc<G>
-		| V.Comment.Line.Doc.Inner<G>;
+		| V.Comment.Line.Doc.Inner<G>
+		| V.Comment.Text<G>;
 }
