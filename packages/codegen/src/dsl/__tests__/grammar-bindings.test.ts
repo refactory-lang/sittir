@@ -5,6 +5,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { evaluateSittirGrammar } from '../../compiler/__tests__/_sittir-grammar.ts';
 import { evaluateForDerivation } from '../../transpile/evaluate-for-derivation.ts';
 import { EMPTY_CONFLICT_RESOLUTIONS } from '../conflict-resolutions.ts';
+import { bindGrammar, lead, match } from '../bind.ts';
 
 const DSL = JSON.stringify(join(__dirname, '../index.ts'));
 
@@ -51,6 +52,31 @@ const BINDINGS = `bindings: bindings({
 	},
 	renames: [rename('let_item', 'binding')]
 })`;
+
+describe('lead and match', () => {
+	it('build a lead entry: the list, its item field, the lead field and what the lead admits', () => {
+		expect(lead('formal_parameters_elements', 'item', 'receiver', match('required_parameter', { pattern: [match('this')] }, 'this_parameter'))).toEqual({
+			list: 'formal_parameters_elements',
+			item: 'item',
+			field: 'receiver',
+			admits: [{ kind: 'required_parameter', within: { field: 'pattern', admits: [{ kind: 'this' }] }, as: 'this_parameter' }]
+		});
+	});
+
+	it('read an array as an unfielded restriction, and a bare kind as no restriction', () => {
+		expect(match('self_parameter')).toEqual({ kind: 'self_parameter' });
+		expect(match('attributed_parameter', [match('self_parameter')])).toEqual({ kind: 'attributed_parameter', within: { field: null, admits: [{ kind: 'self_parameter' }] } });
+	});
+
+	it('refuse a restriction of two fields', () => {
+		expect(() => match('required_parameter', { pattern: [match('this')], type: [match('type_annotation')] })).toThrow(/restricts one field, not 2/);
+	});
+
+	it('leave the grammar unapplied by bindGrammar', () => {
+		const grammar = { name: 'g', rules: { list: { type: 'SEQ', members: [] } } };
+		expect(bindGrammar(grammar, { leads: [lead('list', 'item', 'receiver', match('x'))] })).toEqual(bindGrammar(grammar, {}));
+	});
+});
 
 describe('grammar bindings on sittirGrammar', () => {
 	it('applies its patches at the patch stage and its renames after grammar()', async () => {

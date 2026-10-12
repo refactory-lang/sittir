@@ -15,6 +15,7 @@ import type {
 	ScmAPI,
 	String as QueryString
 } from '@sittir/scm';
+import type { LeadMatch } from '../dsl/bind.ts';
 import { loadPinnedBuild, type PinnedBuild } from '../bootstrap/pinned.ts';
 import {
 	type Anchor,
@@ -25,6 +26,8 @@ import {
 	type ChildFact,
 	type ClaimFact,
 	type ContainerFact,
+	type LeadLeadMatch,
+	type MatchRead,
 	type MemberFact,
 	type PatternOrigin,
 	type PredicateArgument,
@@ -379,6 +382,51 @@ function placesClaim(v: Visit): boolean {
 
 const capturesMember = (v: Visit): boolean => captures(v).some((name) => !isPath(name) && !name.startsWith('_') && name !== 'element');
 
+const leadsList = (v: Visit): boolean => v.anchor === 'first' && capturesMember(v);
+
+function inMatchTree(v: Visit): boolean {
+	for (let cursor: Visit | null = v; cursor !== null; cursor = cursor.parent) if (leadsList(cursor)) return true;
+	return false;
+}
+
+const within = (v: Visit, root: Visit): boolean => {
+	for (let cursor: Visit | null = v; cursor !== null; cursor = cursor.parent) if (cursor === root) return true;
+	return false;
+};
+
+function predicateReason(operator: string): string {
+	return operator === 'not-kind-eq' ? 'a negated kind' : operator === 'kind-eq' ? 'a kind predicate' : 'a text test';
+}
+
+function matchOf(root: Visit, nodes: readonly Visit[], predicates: readonly Omit<PredicateFact, 'subject'>[]): MatchRead {
+	const tested = predicates.find((p) => p.capture !== null && nodes.some((v) => captures(v).includes(p.capture!) && within(v, root)));
+	if (tested !== undefined) return { refused: predicateReason(tested.operator) };
+	const read = (v: Visit): MatchRead => {
+		if (v.children.some((child) => mayBeAbsent(child) || quantified(child))) return { refused: 'a quantifier' };
+		if (tokenText(v) !== null) return { refused: 'a text test' };
+		const kind = kindOf(v);
+		if (kind === WILDCARD) return { refused: 'a wildcard' };
+		if (kind === null) return { refused: 'a grouping' };
+		const restrictions: Visit[][] = [];
+		for (const child of v.children) {
+			const group = child.alternation === null ? undefined : restrictions.find((r) => r[0]!.alternation === child.alternation);
+			if (group !== undefined) group.push(child);
+			else restrictions.push([child]);
+		}
+		if (restrictions.length > 1) return { refused: 'a second restriction on one kind' };
+		const [options] = restrictions;
+		if (options === undefined) return { match: { kind } };
+		const admits: LeadMatch[] = [];
+		for (const option of options) {
+			const arm = read(option);
+			if ('refused' in arm) return arm;
+			admits.push(arm.match);
+		}
+		return { match: { kind, within: { field: options[0]!.field, admits } } };
+	};
+	return read(root);
+}
+
 function siblingsOf(holder: Visit): readonly Visit[] {
 	return holder.children.flatMap((v) =>
 		isGroup(v) ? siblingsOf(v) : tokenText(v) !== null || v.alternation !== null || mayBeAbsent(v) ? [] : [v]
@@ -401,7 +449,8 @@ function childFacts(claim: Visit, origin: PatternOrigin): ChildFact[] {
 				if (seen.has(child.alternation)) continue;
 				seen.add(child.alternation);
 				const options = holder.children.filter((c) => c.alternation === child.alternation);
-				const kinds = options.map((option) => (option.children.length === 0 ? namedKind(option) : null));
+				const named = options.map(namedKind);
+				const kinds = inMatchTree(holder) ? named : options.map((option, i) => (option.children.length === 0 ? named[i]! : null));
 				if (kinds.some((kind) => kind === null))
 					refuse(origin, 'an alternation below the claimed node tests only named nodes with nothing below them');
 				out.push({ subject: at(child), kinds: kinds as string[], captured: options.some(capturesMember) });
@@ -456,10 +505,19 @@ function claimFact(
 		const enclosing = kindOf(cursor);
 		if (enclosing !== null) within.push(enclosing);
 	}
-	return { vocab, kind, field: v.field, predicates, toplevel, within, fieldLiterals, tokens, children: isGroup(v) ? [] : childFacts(v, origin) };
+	const read = isGroup(v) || v.children.length === 0 ? undefined : matchOf(v, nodes, patternPredicates);
+	const match = read !== undefined && 'match' in read && read.match.within !== undefined ? { match: read.match } : {};
+	return { vocab, kind, field: v.field, predicates, toplevel, within, fieldLiterals, tokens, children: isGroup(v) ? [] : childFacts(v, origin), ...match };
 }
 
-function memberFact(v: Visit, name: string, top: Visit, topKind: string | null, claimed: ReadonlyMap<Visit, readonly number[]>): MemberFact | null {
+function memberFact(
+	v: Visit,
+	name: string,
+	top: Visit,
+	topKind: string | null,
+	claimed: ReadonlyMap<Visit, readonly number[]>,
+	leadMatch: LeadLeadMatch | undefined
+): MemberFact | null {
 	const parent = v.parent;
 	if (parent === null || isGroup(parent)) return null;
 	const owner = kindOf(parent);
@@ -468,7 +526,7 @@ function memberFact(v: Visit, name: string, top: Visit, topKind: string | null, 
 	const homeKind = home === top ? topKind : kindOf(home);
 	const direct = parent === home || homeKind === null;
 	const claims = claimed.get(direct ? parent : home);
-	const of = claims === undefined ? {} : { claims };
+	const of = { ...(claims === undefined ? {} : { claims }), ...(leadMatch === undefined ? {} : { leadMatch }) };
 	if (name === DROPPED) return { route: 'dropped', owner, ...selector(v), ...of };
 	const token = tokenText(v);
 	if (direct) {
@@ -562,7 +620,8 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 		const members: MemberFact[] = [];
 		for (const name of captures(v)) {
 			if (inClaimPosition(name, v === top) || name.startsWith('_') || name === 'element') continue;
-			const member: MemberFact | null = kindPresence(members[0], v, name) ?? memberFact(v, name, top, topKind, claimed);
+			const leadMatch = leadsList(v) ? { line: origin.line, ...matchOf(v, nodes, claimPredicates) } : undefined;
+			const member: MemberFact | null = kindPresence(members[0], v, name) ?? memberFact(v, name, top, topKind, claimed, leadMatch);
 			if (member !== null) members.push(member);
 		}
 		facts.members.push(...slotNamed(members));

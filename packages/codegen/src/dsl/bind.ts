@@ -29,10 +29,29 @@ export interface FieldWrap {
 	readonly target: FieldWrapTarget;
 }
 
+export interface LeadWithin {
+	readonly field: string | null;
+	readonly admits: readonly LeadMatch[];
+}
+
+export interface LeadMatch {
+	readonly kind: string;
+	readonly within?: LeadWithin;
+	readonly as?: string;
+}
+
+export interface Lead {
+	readonly list: string;
+	readonly item: string;
+	readonly field: string;
+	readonly admits: readonly LeadMatch[];
+}
+
 export interface Bindings {
 	readonly hash?: string;
 	readonly patches?: PatchesConfig;
 	readonly renames?: readonly Rename[];
+	readonly leads?: readonly Lead[];
 	readonly splits?: readonly Split[];
 }
 
@@ -56,6 +75,22 @@ export function bindings<const B extends Bindings>(grammarBindings: B): B {
 
 export function rename(from: string, to: string): Rename {
 	return { from, to };
+}
+
+export function lead(list: string, item: string, field: string, ...admits: LeadMatch[]): Lead {
+	return { list, item, field, admits };
+}
+
+function leadWithin(kind: string, within: readonly LeadMatch[] | Readonly<Record<string, readonly LeadMatch[]>>): LeadWithin {
+	if (Array.isArray(within)) return { field: null, admits: within };
+	const entries = Object.entries(within as Readonly<Record<string, readonly LeadMatch[]>>);
+	const [entry] = entries;
+	if (entry === undefined || entries.length > 1) throw new Error(`bind: match '${kind}' restricts one field, not ${entries.length}`);
+	return { field: entry[0], admits: entry[1] };
+}
+
+export function match(kind: string, within?: readonly LeadMatch[] | Readonly<Record<string, readonly LeadMatch[]>>, as?: string): LeadMatch {
+	return { kind, ...(within === undefined ? {} : { within: leadWithin(kind, within) }), ...(as === undefined ? {} : { as }) };
 }
 
 export function split(kind: string, as: string, placement: Pick<Split, 'within' | 'containers'>): Split {

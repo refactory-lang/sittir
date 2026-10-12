@@ -1,8 +1,11 @@
-import { childFields, fieldRenameGrammar, fieldRenameIssue, fieldWrapGrammar, fieldWrapIssue, isRecord, symbolNames, type FieldRename, type FieldWrap, type GrammarRecord, type Split } from '../dsl/bind.ts';
+import { childFields, fieldRenameGrammar, fieldRenameIssue, fieldWrapGrammar, fieldWrapIssue, isRecord, symbolNames, type FieldRename, type FieldWrap, type GrammarRecord, type Lead, type Split } from '../dsl/bind.ts';
+import type { GrammarDiagnostic } from '../types/diagnostics.ts';
 import { isPrecWrapper } from '../types/runtime-shapes.ts';
 import type { RawGrammar } from '../compiler/types.ts';
 import { type BindingFacts, type MemberFact, type RefinedClaim, WILDCARD, isNamedMember, refineClaims } from './facts.ts';
 import type { MemberRoute } from './routes.ts';
+import { boundKindName } from './names.ts';
+import { deriveLeads } from './leads.ts';
 
 export type GrammarBindingsEdit = { readonly field: string } | { readonly alias: { readonly from: string; readonly to: string } };
 
@@ -14,6 +17,7 @@ export interface GrammarBindingsPatch {
 export interface GrammarBindings {
 	readonly patches: ReadonlyMap<string, readonly (readonly GrammarBindingsPatch[])[]>;
 	readonly renames: Readonly<Record<string, string>>;
+	readonly leads: readonly Lead[];
 	readonly splits: readonly Split[];
 }
 
@@ -36,13 +40,12 @@ export interface GrammarBindingsReport {
 }
 
 export interface GrammarBindingsInput {
+	readonly file: string;
 	readonly facts: BindingFacts;
 	readonly base: RawGrammar;
 	readonly vocabMembers: ReadonlyMap<string, ReadonlySet<string>>;
 	readonly routedMembers: ReadonlyMap<string, readonly MemberRoute[]>;
 }
-
-export const boundKindName = (vocab: string, hidden: boolean): string => `${hidden ? '_' : ''}${vocab.split('.').reverse().join('_')}`;
 
 export const memberFieldName = (member: string): string => member.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`);
 
@@ -83,7 +86,11 @@ function sameShapeAs(kinds: readonly string[], members: readonly MemberFact[], r
 	return [first, ...rest.filter(same)];
 }
 
-export function deriveGrammarBindings(input: GrammarBindingsInput): { bindings: GrammarBindings; report: GrammarBindingsReport } {
+export function deriveGrammarBindings(input: GrammarBindingsInput): {
+	bindings: GrammarBindings;
+	report: GrammarBindingsReport;
+	diagnostics: readonly GrammarDiagnostic[];
+} {
 	const { facts, base, vocabMembers, routedMembers } = input;
 	const rules = base.rules as Record<string, unknown>;
 	const ruleNames = new Set(Object.keys(rules));
@@ -343,8 +350,10 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): { bindings: 
 	}
 
 	const patches = grammarBindingsPatches(rules, fieldWrapGrammar(fieldRenameGrammar(checks, fieldRenames), fieldWraps).rules as Record<string, unknown>, aliases);
+	const { leads, diagnostics } = deriveLeads({ file: input.file, base, facts });
 	return {
-		bindings: { patches, renames, splits },
+		bindings: { patches, renames, leads, splits },
+		diagnostics,
 		report: {
 			claims: facts.claims.length,
 			members: facts.members.length,

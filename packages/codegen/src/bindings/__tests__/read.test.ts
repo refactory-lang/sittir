@@ -424,6 +424,60 @@ describe('readBindings', () => {
 	});
 });
 
+describe('readBindings: the match tree of an anchored capture', () => {
+	const RUST = '(function_item (parameters (parameters_elements . (attributed_parameter (self_parameter)) @receiver))) @declaration.method';
+	const memberNamed = async (text: string, name: string) => (await readBindings(text)).members.find((m) => m.route !== 'dropped' && m.name === name);
+
+	it('reads an unfielded restriction of the captured item, with the claim line', async () => {
+		expect((await memberNamed(`\n${RUST}`, 'receiver'))?.leadMatch).toEqual({
+			line: 2,
+			match: { kind: 'attributed_parameter', within: { field: null, admits: [{ kind: 'self_parameter' }] } }
+		});
+	});
+	it('reads a fielded restriction of the captured item', async () => {
+		const text = '(method_definition parameters: (formal_parameters (formal_parameters_elements . (required_parameter pattern: (this)) @receiver))) @declaration.method';
+		expect((await memberNamed(text, 'receiver'))?.leadMatch).toEqual({
+			line: 1,
+			match: { kind: 'required_parameter', within: { field: 'pattern', admits: [{ kind: 'this' }] } }
+		});
+	});
+	it('reads an alternation whose arms carry tests into one admit per arm, below a captured anchored node', async () => {
+		const text = '(function_item (parameters (parameters_elements . (attributed_parameter [(self_parameter) (parameter name: (self))]) @receiver))) @declaration.method';
+		expect((await memberNamed(text, 'receiver'))?.leadMatch).toEqual({
+			line: 1,
+			match: {
+				kind: 'attributed_parameter',
+				within: { field: null, admits: [{ kind: 'self_parameter' }, { kind: 'parameter', within: { field: 'name', admits: [{ kind: 'self' }] } }] }
+			}
+		});
+	});
+	it('keeps refusing an alternation with tested arms anywhere a match tree does not read it', async () => {
+		await expect(readBindings('(function_item (parameters (parameters_elements (attributed_parameter [(self_parameter) (parameter name: (self))])))) @declaration.method')).rejects.toThrow(
+			/alternation below the claimed node tests only named nodes/
+		);
+	});
+	it('reads no match for a capture that is not anchored first', async () => {
+		expect((await memberNamed('(function_item (parameters (parameters_elements (attributed_parameter) @receiver))) @declaration.method', 'receiver'))?.leadMatch).toBeUndefined();
+	});
+	it.each([
+		['a quantifier', '(attributed_parameter (attribute_item)? (self_parameter))'],
+		['a text test', '(attributed_parameter "mut")'],
+		['a wildcard', '(attributed_parameter (_))'],
+		['a second restriction on one kind', '(required_parameter pattern: (this) type: (type_annotation))']
+	])('refuses %s in the match tree, with the claim line', async (reason, item) => {
+		const text = `(function_item (parameters (parameters_elements . ${item} @receiver))) @declaration.method`;
+		expect((await memberNamed(text, 'receiver'))?.leadMatch).toEqual({ line: 1, refused: reason });
+	});
+	it('refuses a negated kind predicate on a node of the match tree', async () => {
+		const text = '((function_item (parameters (parameters_elements . (attributed_parameter (_) @_p) @receiver))) @declaration.method (#not-kind-eq? @_p "self_parameter"))';
+		expect((await memberNamed(text, 'receiver'))?.leadMatch).toEqual({ line: 1, refused: 'a negated kind' });
+	});
+	it('reads a claim\'s own restriction as its match, for the variant-name join', async () => {
+		const facts = await readBindings('(required_parameter pattern: (this)) @parameter.this\n(required_parameter) @parameter');
+		expect(facts.claims.map((c) => c.match)).toEqual([{ kind: 'required_parameter', within: { field: 'pattern', admits: [{ kind: 'this' }] } }, undefined]);
+	});
+});
+
 describe('bindingPatterns', () => {
 	it('slices each top-level pattern by its byte span, after multibyte comments', async () => {
 		const patterns = await bindingPatterns('; ── module ──\n(module) @module\n; ── é\n(identifier) @identifier\n');

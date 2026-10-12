@@ -7225,7 +7225,7 @@ A kind-level rename in a grammar's bindings: the base rule or external `from` ta
 
 ### `packages/codegen/src/dsl/bind.ts::Bindings`
 
-The grammar bindings of a grammar, the argument of `bindings()`. `patches` holds ordinary patch sets in base names and enriched paths; `sittirGrammar` appends them after the authored sets of the same kind. `renames` and `splits` are kind-level edits that `bindGrammar` applies to the grammar `grammar()` returned. `hash` is the hash of the `bindings.scm` and vocabulary sources they were derived from (`bindings/hash.ts::bindingsSourceHash`); `bindings/hash.ts::assertBindingsFresh` compares it with the sources on disk.
+The grammar bindings of a grammar, the argument of `bindings()`. `patches` holds ordinary patch sets in base names and enriched paths; `sittirGrammar` appends them after the authored sets of the same kind. `renames` and `splits` are kind-level edits that `bindGrammar` applies to the grammar `grammar()` returned. `leads` are typed and printed, but `bindGrammar` does not apply them: a lead creates rules, which need enrich's second pass, so they stay unapplied until that pass exists. `hash` is the hash of the `bindings.scm` and vocabulary sources they were derived from (`bindings/hash.ts::bindingsSourceHash`); `bindings/hash.ts::assertBindingsFresh` compares it with the sources on disk.
 
 ### `packages/codegen/src/dsl/bind.ts::bindings`
 
@@ -7269,7 +7269,7 @@ Carries the authored options block through the binding patches. The block is aut
 
 ### `packages/codegen/src/dsl/bind.ts::bindGrammar`
 
-The kind-level half of grammar bindings, applied to the grammar `grammar()` returned: the options block first takes the binding patches' effects (`rewriteBindingOptions`), then `renameGrammar` renames the kinds and `splitGrammar` splits them, the splits named in base names and mapped through the renames.
+The kind-level half of grammar bindings, applied to the grammar `grammar()` returned: the options block first takes the binding patches' effects (`rewriteBindingOptions`), then `renameGrammar` renames the kinds and `splitGrammar` splits them, the splits named in base names and mapped through the renames. It leaves `leads` unapplied.
 
 ### `packages/codegen/src/dsl/bind.ts::renameReparseHosts`
 
@@ -7482,3 +7482,28 @@ The authored patches with each grammar-bindings kind's sets appended after the k
 ### `packages/codegen/src/dsl/rule-patterns.ts::onlyAliasedSymbols`
 
 The symbols a set of rule bodies references under a named alias and never by name. An authored hidden rule in that set is not a pattern candidate: its owner gave it a visible name at every reference, and the parser makes that alias the rule's own name only while every reference carries it. Folding an unrelated inline body of the same shape into a plain reference would add an unaliased reference, and the kind would stop being the aliased one. Evaluate's `applyPatternReplacement` and wire's `applyWirePatternReplacement` both ask it; a candidate that folds into an alias site (a declared group) is not subject to it.
+
+### `packages/codegen/src/dsl/bind.ts::LeadWithin`
+
+A lead match's restriction: the field it restricts (`null` for an unfielded child) and the matches it admits there.
+
+### `packages/codegen/src/dsl/bind.ts::LeadMatch`
+
+One kind a lead admits: the kind, its restriction (`within`), when it narrows the kind, and the name of the variant the narrowing mints (`as`), when a claim names it.
+
+### `packages/codegen/src/dsl/bind.ts::Lead`
+
+A leading-element split of a separated list: the list rule, its item field, the field the leading element takes, and the matches the leading element admits.
+
+### `packages/codegen/src/dsl/bind.ts::lead`
+
+Builds a `Lead` from the list, the item field, the lead field and the matches it admits.
+
+### `packages/codegen/src/dsl/bind.ts::leadWithin`
+
+A `match` restriction from its authored form: an array is an unfielded child; a record restricts the one field it names, and a record of any other size is refused.
+
+### `packages/codegen/src/dsl/bind.ts::match`
+
+Builds a `LeadMatch`: a kind, an optional restriction (`leadWithin`) and an optional variant name. `(required_parameter pattern: (this))` is `match('required_parameter', { pattern: [match('this')] })`.
+

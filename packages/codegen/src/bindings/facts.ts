@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import type { ErrorRegion } from '@sittir/types';
+import type { LeadMatch } from '../dsl/bind.ts';
 import { allGrammars, grammarPackageDir, PACKAGES_DIR, type GrammarName } from '../grammars.ts';
 
 export const WILDCARD = '_';
@@ -45,6 +46,10 @@ export type ChildFact =
 	| { readonly subject: CaptureSite; readonly token: string }
 	| { readonly subject: CaptureSite; readonly present: true }
 	| { readonly subject: CaptureSite; readonly siblings: readonly Sibling[] };
+export type MatchRead = { readonly match: LeadMatch } | { readonly refused: string };
+
+export type LeadLeadMatch = { readonly line: number } & MatchRead;
+
 export interface ClaimFact {
 	readonly vocab: string;
 	readonly kind: string | null;
@@ -56,6 +61,7 @@ export interface ClaimFact {
 	readonly tokens: readonly string[];
 	readonly children: readonly ChildFact[];
 	readonly flag?: string;
+	readonly match?: LeadMatch;
 }
 
 export interface UnclaimedFact {
@@ -63,7 +69,7 @@ export interface UnclaimedFact {
 	readonly reason: string | null;
 }
 
-export type MemberFact = MemberRouteFact & { readonly claims?: readonly number[] };
+export type MemberFact = MemberRouteFact & { readonly claims?: readonly number[]; readonly leadMatch?: LeadLeadMatch };
 
 type MemberRouteFact =
 	| ({ readonly route: 'rename'; readonly owner: string; readonly name: string; readonly token?: string; readonly flag?: boolean } & SlotSelector)
@@ -257,11 +263,30 @@ function bindSite(site: CaptureSite, rename: (kind: string) => string): CaptureS
 	return { ...site, down: site.down.map((step) => bindSelector(step, rename)) };
 }
 
+export function bindMatch(match: LeadMatch, rename: (kind: string) => string): LeadMatch {
+	return {
+		...match,
+		kind: rename(match.kind),
+		...(match.within === undefined ? {} : { within: { field: match.within.field, admits: match.within.admits.map((m) => bindMatch(m, rename)) } })
+	};
+}
+
+function bindMember(m: MemberFact, rename: (kind: string) => string): MemberFact {
+	if (m.route === 'presence') return { ...m, owner: rename(m.owner), via: m.via.map((step) => bindSelector(step, rename)) };
+	if (m.route === 'kind') return { ...m, owner: rename(m.owner), kind: rename(m.kind) };
+	if (m.route === 'nested') return { ...bindSelector(m, rename), owner: rename(m.owner), parent: rename(m.parent), via: m.via.map((step) => bindSelector(step, rename)) };
+	return { ...bindSelector(m, rename), owner: rename(m.owner) };
+}
+
+const bindLeadMatch =(lead: LeadLeadMatch, rename: (kind: string) => string): LeadLeadMatch =>
+	'match' in lead ? { line: lead.line, match: bindMatch(lead.match, rename) } : lead;
+
 export function bindFacts(facts: BindingFacts, rename: (kind: string) => string): BindingFacts {
 	const kind = (k: string | null): string | null => (k === null || k === WILDCARD ? k : rename(k));
 	return {
 		claims: facts.claims.map((c) => ({
 			...c,
+			...(c.match === undefined ? {} : { match: bindMatch(c.match, rename) }),
 			kind: kind(c.kind),
 			within: c.within.map(rename),
 			predicates: c.predicates.map((p) => ({
@@ -276,12 +301,7 @@ export function bindFacts(facts: BindingFacts, rename: (kind: string) => string)
 				...('siblings' in child ? { siblings: child.siblings.map((sibling) => ({ ...sibling, selector: bindSelector(sibling.selector, rename) })) } : {})
 			}))
 		})),
-		members: facts.members.map((m): MemberFact => {
-			if (m.route === 'presence') return { ...m, owner: rename(m.owner), via: m.via.map((step) => bindSelector(step, rename)) };
-			if (m.route === 'kind') return { ...m, owner: rename(m.owner), kind: rename(m.kind) };
-			if (m.route === 'nested') return { ...bindSelector(m, rename), owner: rename(m.owner), parent: rename(m.parent), via: m.via.map((step) => bindSelector(step, rename)) };
-			return { ...bindSelector(m, rename), owner: rename(m.owner) };
-		}),
+		members: facts.members.map((m): MemberFact => (m.leadMatch === undefined ? bindMember(m, rename) : { ...bindMember(m, rename), leadMatch: bindLeadMatch(m.leadMatch, rename) })),
 		containers: facts.containers.map((c) => ({
 			...c,
 			kind: rename(c.kind),
