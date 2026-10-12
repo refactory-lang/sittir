@@ -6,10 +6,17 @@ import {
 	type ResolutionSection
 } from '../dsl/conflict-resolutions.ts';
 import { conflictKey, type ConflictReport, type GenerateOutcome } from './conflict-summary.ts';
+import { mappedName } from '../dsl/bind.ts';
 
 export interface UpstreamContext {
 	readonly upstreamConflicts: readonly (readonly string[])[];
 	readonly sourceEdges: Readonly<Record<string, string>>;
+	readonly baseNames: Readonly<Record<string, string>>;
+}
+
+function sourceChainOf(name: string, upstream: UpstreamContext): readonly string[] {
+	const base = mappedName(upstream.baseNames, name);
+	return base === name ? sourceChain(name, upstream.sourceEdges) : [name, ...sourceChain(base, upstream.sourceEdges)];
 }
 
 export type PolicyChoice = { readonly kind: 'chosen'; readonly resolution: DerivedResolution } | { readonly kind: 'unusable' };
@@ -33,7 +40,7 @@ export function chooseResolution(report: ConflictReport, upstream: UpstreamConte
 	const offer = report.possible_resolutions.find((candidate) => 'AddConflict' in candidate);
 	if (!offer || !('AddConflict' in offer)) return { kind: 'unusable' };
 	const symbols = offer.AddConflict.symbols;
-	const sourceChains = symbols.map((name) => sourceChain(name, upstream.sourceEdges));
+	const sourceChains = symbols.map((name) => sourceChainOf(name, upstream));
 	return {
 		kind: 'chosen',
 		resolution: {

@@ -238,6 +238,18 @@ the reshaping records' one-step edges toward each reshaped rule's upstream
 source (`dsl/wire/derivation-records.ts::DerivationRecords`).
 ```
 
+`baseNames` maps a bound name to the base name it stands for
+(`dsl/bind.ts::baseNamesOf`), and is empty for the base grammar. It is kept
+apart from `sourceEdges`: the edges are keyed by base names, and a bound
+name may spell a base name for another rule (a clone that reuses the name a
+rename freed), so one map over both would chain the wrong rule or cycle.
+
+### `packages/codegen/src/transpile/derive-conflicts.ts::sourceChainOf`
+
+The source chain of a name a report gives: a bound name with a base name of
+its own steps to it first, then follows the base edges; any other name
+follows the base edges from itself.
+
 ### `packages/codegen/src/transpile/derive-conflicts.ts::PolicyChoice`
 
 ```text
@@ -370,11 +382,11 @@ The derivation inputs of an evaluated grammar. A grammar without derivation
 records was not built by `sittirGrammar`, which the loop cannot derive for.
 ```
 
-The edges are the records' `sourceEdges` joined with the grammar's own
-`renamedFrom` and `splitFrom` stamps. A bound name then chains through its
-unbound name to the upstream rule: a clone to its origin, a renamed rule to
-its base name. The base grammar has neither stamp, so its edges are the
-records' alone.
+The edges are the records' `sourceEdges`, the same for both grammars, since
+bindings run after the records are taken. `baseNames` comes from the bound
+grammar's own `renamedFrom` and `splitFrom` stamps (`dsl/bind.ts::baseNamesOf`),
+so a bound name chains through its base name to the upstream rule. The base
+grammar has neither stamp, so its `baseNames` is empty.
 
 ### `packages/codegen/src/transpile/evaluate-for-derivation.ts::requireFromHere`
 
@@ -467,7 +479,10 @@ instead of reporting the partial list stale.
 The base section is derived against the base grammar: each of its runs
 generates with `GeneratedGrammar` `base`, so tree-sitter reports conflicts in
 the base names the base sets are applied in. A base section whose hash matches
-is not generated on its own. The bound section follows, against the bound
+is generated on its own (`base`) only when the bound section must be derived,
+so a base section that no longer generates is reported stale before a bound
+derivation could absorb its missing sets; when both hashes match, the one
+`bound` reuse probe checks both. The bound section follows, against the bound
 grammar: each of its runs generates `bound`, which carries the renamed base
 sets and the bound candidates, so it reports only the conflicts the bindings
 add, in bound names. A split clone gets its sets here, never by copying its

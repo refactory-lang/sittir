@@ -6,7 +6,7 @@ import { sittirDirOf, type GrammarPackage } from '../grammars.ts';
 import type { GrammarDiagnostic } from '../types/diagnostics.ts';
 import { parseGenerateOutcome, type GenerateOutcome } from './conflict-summary.ts';
 import { readConflictResolutions, writeConflictResolutions } from './conflict-resolutions-file.ts';
-import { deriveConflictResolutions, reuseOrDeriveConflictResolutions, type DerivationResult } from './derive-conflicts.ts';
+import { reuseOrDeriveConflictResolutions, type DerivationResult } from './derive-conflicts.ts';
 import { evaluateForDerivation, type DerivationInputs } from './evaluate-for-derivation.ts';
 import { runTreeSitterCliCapturing } from './tree-sitter-cli.ts';
 import { UNBOUND_ENV } from '../dsl/sittir-grammar.ts';
@@ -39,13 +39,20 @@ export async function settleConflictResolutions(input: {
 		return input.runGenerate(grammar);
 	};
 	const saved = store.read();
-	const base =
-		saved.grammarHash === inputs.base.grammarHash
-			? undefined
-			: await deriveConflictResolutions({ ruleCount: inputs.base.ruleCount, upstream: inputs.base, generate: probe('base') });
+	const reusesBoth = saved.grammarHash === inputs.base.grammarHash && saved.bound.grammarHash === inputs.bound.grammarHash;
+	const base = reusesBoth
+		? undefined
+		: await reuseOrDeriveConflictResolutions({
+				saved,
+				grammarHash: inputs.base.grammarHash,
+				ruleCount: inputs.base.ruleCount,
+				upstream: inputs.base,
+				generate: probe('base'),
+				generateSaved: () => input.runGenerate('base')
+			});
 	if (base !== undefined) {
 		if (!settled(base)) return { kind: 'failed', grammar: 'base', result: base };
-		writeSection('base', { grammarHash: inputs.base.grammarHash, resolutions: base.resolutions });
+		if (base.kind === 'converged') writeSection('base', { grammarHash: inputs.base.grammarHash, resolutions: base.resolutions });
 	}
 	const bound = await reuseOrDeriveConflictResolutions({
 		saved: store.read().bound,

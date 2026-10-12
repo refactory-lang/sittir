@@ -28,7 +28,7 @@ function memoryStore(
 	};
 }
 
-const grammarInputs = { ruleCount: 10, upstreamConflicts: [], sourceEdges: {} };
+const grammarInputs = { ruleCount: 10, upstreamConflicts: [], sourceEdges: {}, baseNames: {} };
 const inputs: DerivationInputs = { base: { grammarHash: 'h1', ...grammarInputs }, bound: { grammarHash: 'b1', ...grammarInputs } };
 const UNSET = EMPTY_CONFLICT_RESOLUTIONS.bound;
 
@@ -128,9 +128,9 @@ describe('settleConflictResolutions', () => {
 		expect(store.writes.map((file) => file.bound.grammarHash)).toEqual(['', '', '', '', 'b1']);
 	});
 
-	it('chains a bound set through its bound source edges', async () => {
+	it('chains a bound set through its base names', async () => {
 		const store = memoryStore(EMPTY_CONFLICT_RESOLUTIONS);
-		const bound = { ...inputs.bound, upstreamConflicts: [['parameter', 'identifier']], sourceEdges: { this_parameter: 'parameter' } };
+		const bound = { ...inputs.bound, upstreamConflicts: [['parameter', 'identifier']], baseNames: { this_parameter: 'parameter' } };
 		const runGenerate = async (grammar: GeneratedGrammar): Promise<GenerateOutcome> =>
 			grammar === 'base' || store.read().bound.resolutions.length > 0 ? { kind: 'clean' } : { kind: 'conflict', report: reportFor('this_parameter', 'identifier') };
 		await settleConflictResolutions({ store, inputs: { ...inputs, bound }, runGenerate });
@@ -149,9 +149,23 @@ describe('settleConflictResolutions', () => {
 			base: { kind: 'reused' },
 			bound: { kind: 'converged', iterations: 1 }
 		});
-		expect(grammars).toEqual(['bound']);
+		expect(grammars).toEqual(['base', 'bound']);
 		expect(store.read().resolutions).toBe(base);
 		expect(store.read().bound).toEqual({ grammarHash: 'b1', resolutions: [] });
+	});
+
+	it('reports a reused base section stale before deriving the bound one, when the base grammar no longer generates with it', async () => {
+		const store = memoryStore(savedFile({ grammarHash: 'h1', bound: { grammarHash: 'b0', resolutions: [] } }));
+		const grammars: string[] = [];
+		const runGenerate = async (grammar: GeneratedGrammar): Promise<GenerateOutcome> =>
+			(grammars.push(grammar), grammar === 'base' ? { kind: 'conflict', report: reportFor('a', 'b') } : { kind: 'clean' });
+		expect(await settleConflictResolutions({ store, inputs, runGenerate })).toMatchObject({
+			kind: 'failed',
+			grammar: 'base',
+			result: { kind: 'stale', outcome: { kind: 'conflict' } }
+		});
+		expect(grammars).toEqual(['base']);
+		expect(store.writes).toEqual([]);
 	});
 
 	it('reports a bound section stale when it carries the current bound hash but no longer generates', async () => {

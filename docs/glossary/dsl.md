@@ -7468,6 +7468,10 @@ The grammar with each placement split applied. The split kind is minted under it
 
 Every named alias of a symbol in a patch set, as `{ from, to }`, for `checkBindingPatches`.
 
+### `packages/codegen/src/dsl/bind.ts::baseNamesOf`
+
+The base name each bound name stands for, from the bound grammar's `renamedFrom` and `splitFrom` stamps: a clone resolves to its origin, then a renamed origin to its base name. Only names whose base name differs are kept, so a clone that reuses the very name a rename freed maps to nothing. The conflict derivation chains a bound name's sources through it (`transpile/derive-conflicts.ts::sourceChainOf`).
+
 ### `packages/codegen/src/dsl/bind.ts::boundNameOf`
 
 The bound name of a base name, from the grammar's `renamedFrom` record: the phases that meet base names (`link`, rule-cause and grammar diagnostics) map them through it to the names the bound grammar uses.

@@ -5,6 +5,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { evaluateSittirGrammar } from '../../compiler/__tests__/_sittir-grammar.ts';
 import { evaluateForDerivation } from '../../transpile/evaluate-for-derivation.ts';
 import { EMPTY_CONFLICT_RESOLUTIONS } from '../conflict-resolutions.ts';
+import { baseNamesOf } from '../bind.ts';
 
 const DSL = JSON.stringify(join(__dirname, '../index.ts'));
 
@@ -52,6 +53,16 @@ const BINDINGS = `bindings: bindings({
 	renames: [rename('let_item', 'binding')]
 })`;
 
+describe('baseNamesOf', () => {
+	it('maps a renamed rule and a clone of it to the base name', () => {
+		expect(baseNamesOf({ binding: 'let_item' }, { binding_x: 'binding' })).toEqual({ binding: 'let_item', binding_x: 'let_item' });
+	});
+
+	it('maps a clone that reuses a renamed rule\'s base name to that name, and leaves it out', () => {
+		expect(baseNamesOf({ value_parameter: 'parameter' }, { parameter: 'value_parameter' })).toEqual({ value_parameter: 'parameter' });
+	});
+});
+
 describe('grammar bindings on sittirGrammar', () => {
 	it('applies its patches at the patch stage and its renames after grammar()', async () => {
 		const raw = await evaluateSittirGrammar(baseModule, 'bindtest', BINDINGS);
@@ -96,8 +107,9 @@ describe('grammar bindings on sittirGrammar', () => {
 		const unbound = evaluateForDerivation(grammarPackageWith(''));
 		expect(unbound.bound.grammarHash).toBe(unbound.base.grammarHash);
 		expect(bound.bound.grammarHash).not.toBe(unbound.bound.grammarHash);
-		expect(bound.bound.sourceEdges).toMatchObject({ binding: 'let_item' });
-		expect(bound.base.sourceEdges).not.toHaveProperty('binding');
+		expect(bound.bound.baseNames).toEqual({ binding: 'let_item' });
+		expect(bound.bound.sourceEdges).toEqual(bound.base.sourceEdges);
+		expect(bound.base.baseNames).toEqual({});
 	}, 120_000);
 
 	it('applies the bound sets after the bindings, behind the renamed base sets', async () => {

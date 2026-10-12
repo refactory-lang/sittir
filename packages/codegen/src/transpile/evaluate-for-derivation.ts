@@ -4,6 +4,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { packageEntryPath } from '../compiler/resolve-grammar.ts';
 import type { EvaluatedGrammar } from '../compiler/types.ts';
+import { baseNamesOf } from '../dsl/bind.ts';
 import type { GrammarPackage } from '../grammars.ts';
 import type { UpstreamContext } from './derive-conflicts.ts';
 import { treeSitterCliVersion } from './tree-sitter-cli.ts';
@@ -52,7 +53,8 @@ export function derivationInputsOf(evaluated: EvaluatedGrammar): GrammarDerivati
 		grammarHash: grammarHash(evaluated, treeSitterCliVersion()),
 		ruleCount: Object.keys(evaluated.rules).length,
 		upstreamConflicts: records.upstreamConflicts,
-		sourceEdges: { ...records.sourceEdges, ...evaluated.renamedFrom, ...evaluated.splitFrom }
+		sourceEdges: records.sourceEdges,
+		baseNames: baseNamesOf(evaluated.renamedFrom, evaluated.splitFrom)
 	};
 }
 

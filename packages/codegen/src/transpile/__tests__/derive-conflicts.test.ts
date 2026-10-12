@@ -28,7 +28,8 @@ function reportFor(a: string, b: string, lookahead = "';'"): ConflictReport {
 
 const identity: UpstreamContext = {
 	upstreamConflicts: [['pattern', 'primary_expression']],
-	sourceEdges: {}
+	sourceEdges: {},
+	baseNames: {}
 };
 
 describe('chooseResolution', () => {
@@ -49,7 +50,7 @@ describe('chooseResolution', () => {
 	});
 
 	it('maps reshaped names back to their upstream source before the declared test', () => {
-		const upstream: UpstreamContext = { upstreamConflicts: [['a', 'b']], sourceEdges: { a_x: 'a' } };
+		const upstream: UpstreamContext = { upstreamConflicts: [['a', 'b']], sourceEdges: { a_x: 'a' }, baseNames: {} };
 		expect(chooseResolution(reportFor('a_x', 'b'), upstream)).toMatchObject({
 			kind: 'chosen',
 			resolution: { step: 'upstream-declared', resolution: { symbols: ['a_x', 'b'] }, sourceChains: [['a_x', 'a'], ['b']] }
@@ -57,12 +58,12 @@ describe('chooseResolution', () => {
 	});
 
 	it('dedupes mapped sources before comparing: two variants of one upstream rule match its singleton set', () => {
-		const upstream: UpstreamContext = { upstreamConflicts: [['a']], sourceEdges: { a_x: 'a', a_y: 'a' } };
+		const upstream: UpstreamContext = { upstreamConflicts: [['a']], sourceEdges: { a_x: 'a', a_y: 'a' }, baseNames: {} };
 		expect(chooseResolution(reportFor('a_x', 'a_y'), upstream)).toMatchObject({ resolution: { step: 'upstream-declared' } });
 	});
 
 	it('does not treat a strict subset of an upstream set as declared', () => {
-		const upstream: UpstreamContext = { upstreamConflicts: [['a', 'b', 'c']], sourceEdges: {} };
+		const upstream: UpstreamContext = { upstreamConflicts: [['a', 'b', 'c']], sourceEdges: {}, baseNames: {} };
 		expect(chooseResolution(reportFor('a', 'b'), upstream)).toMatchObject({ resolution: { step: 'default' } });
 	});
 
@@ -70,6 +71,16 @@ describe('chooseResolution', () => {
 		expect(chooseResolution(reportFor('expression_statement', 'expression_statement_tuple'), identity)).toMatchObject({
 			kind: 'chosen',
 			resolution: { step: 'default', resolution: { kind: 'AddConflict' } }
+		});
+	});
+
+	it('chains a bound name through its base name, apart from the base names it may reuse', () => {
+		const upstream: UpstreamContext = { upstreamConflicts: [], sourceEdges: { parameter_x: 'parameter' }, baseNames: { value_parameter: 'parameter' } };
+		expect(chooseResolution(reportFor('parameter', 'value_parameter'), upstream)).toMatchObject({
+			resolution: { sourceChains: [['parameter'], ['value_parameter', 'parameter']] }
+		});
+		expect(chooseResolution(reportFor('parameter_x', 'value_parameter'), upstream)).toMatchObject({
+			resolution: { sourceChains: [['parameter_x', 'parameter'], ['value_parameter', 'parameter']] }
 		});
 	});
 
