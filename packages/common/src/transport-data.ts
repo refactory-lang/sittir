@@ -206,8 +206,92 @@ export function unitSidesOf(node: object): readonly unknown[] | undefined {
 	const index = indexOf(node);
 	if (tree?.unitSides !== undefined && index !== undefined) return tree.unitSides(index);
 	const source = sourceOf(node);
-	if (source === undefined) return undefined;
-	return sourceTree(source)?.unitSides?.(decodeIndex(source.treeHandle));
+	const from = source === undefined ? undefined : sourceTree(source);
+	return source === undefined || from === undefined ? undefined : carriedUnitSides(node as Record<string, unknown>, decodeIndex(source.treeHandle), from);
+}
+
+/** One unit child's sides as a tree gives them (`TransportLayout.units`): its slot's wire key and its item there. */
+interface UnitSidesData {
+	readonly slot: string;
+	readonly item: number;
+}
+
+/**
+ * The sides of a rebuilt node's unit children, carried from the node at `index` of `tree` it was
+ * rebuilt from. Each slot's items are aligned with the source node's (`alignedItems`): a unit's
+ * sides follow it to its new item, and a unit the rebuild removed takes its sides with it.
+ */
+function carriedUnitSides(node: Record<string, unknown>, index: number, tree: TreeHandle): readonly unknown[] | undefined {
+	const units = tree.unitSides?.(index) as readonly UnitSidesData[] | undefined;
+	if (units === undefined || units.length === 0) return units;
+	const read = tree.read?.(index, 1);
+	if (!isRecord(read)) return undefined;
+	const moved = new Map<string, ReadonlyMap<number, number>>();
+	const itemsAt = (holder: Record<string, unknown>, slot: string): readonly unknown[] => {
+		const value = holder[slot];
+		return value === undefined ? [] : Array.isArray(value) ? value : [value];
+	};
+	const carried: unknown[] = [];
+	for (const unit of units) {
+		let aligned = moved.get(unit.slot);
+		if (aligned === undefined) {
+			aligned = alignedItems(itemsAt(read, unit.slot), itemsAt(node, unit.slot));
+			moved.set(unit.slot, aligned);
+		}
+		const item = aligned.get(unit.item);
+		if (item !== undefined && typeof itemsAt(node, unit.slot)[item] === 'number') carried.push({ ...unit, item });
+	}
+	return carried;
+}
+
+/** What an item of a slot is the same item by: a unit by its kind, a read node by the handle it names; a built node is no item of the source. */
+function itemIdentity(item: unknown): string | undefined {
+	if (typeof item === 'number') return `kind:${item}`;
+	const handle = isRecord(item) ? sourceHandleOf(item) : undefined;
+	return handle === undefined ? undefined : `node:${handle}`;
+}
+
+/**
+ * The new position of each item of `before` that `after` keeps: the common subsequence of their
+ * identities (`itemIdentity`) that keeps the most units, and of those the most nodes. A unit's
+ * sides need the alignment, since a unit has no identity of its own; a node's sides are its own.
+ */
+function alignedItems(before: readonly unknown[], after: readonly unknown[]): ReadonlyMap<number, number> {
+	const from = before.map(itemIdentity);
+	const to = after.map(itemIdentity);
+	const same = (i: number, j: number): boolean => from[i] !== undefined && from[i] === to[j];
+	const unitWeight = Math.min(before.length, after.length) + 1;
+	const weight = (i: number): number => (typeof before[i] === 'number' ? unitWeight : 1);
+	const aligned = new Map<number, number>();
+	let head = 0;
+	while (head < from.length && head < to.length && same(head, head)) {
+		aligned.set(head, head);
+		head += 1;
+	}
+	let tail = 0;
+	while (tail < from.length - head && tail < to.length - head && same(from.length - 1 - tail, to.length - 1 - tail)) {
+		aligned.set(from.length - 1 - tail, to.length - 1 - tail);
+		tail += 1;
+	}
+	const rows = from.length - head - tail;
+	const columns = to.length - head - tail;
+	const width = columns + 1;
+	const lengths = new Float64Array((rows + 1) * width);
+	const length = (i: number, j: number): number => lengths[i * width + j] ?? 0;
+	for (let i = rows - 1; i >= 0; i -= 1) {
+		for (let j = columns - 1; j >= 0; j -= 1) {
+			lengths[i * width + j] = Math.max(same(head + i, head + j) ? length(i + 1, j + 1) + weight(head + i) : 0, length(i + 1, j), length(i, j + 1));
+		}
+	}
+	for (let i = 0, j = 0; i < rows && j < columns; ) {
+		if (same(head + i, head + j) && length(i, j) === length(i + 1, j + 1) + weight(head + i)) {
+			aligned.set(head + i, head + j);
+			i += 1;
+			j += 1;
+		} else if (length(i + 1, j) >= length(i, j + 1)) i += 1;
+		else j += 1;
+	}
+	return aligned;
 }
 
 /**
@@ -511,7 +595,7 @@ function toTransportValue(value: unknown, view: KindView, changed: ChangedEdges,
 		if (fold) forEachTriviaList(trivia as TriviaSides<unknown>, assertTriviaHoldsTree);
 		setLayout(out, 'trivia', trivia);
 	}
-	const units = fold ? given?.units : sided ? unitSidesOf(value) : undefined;
+	const units = fold || sided ? unitSidesOf(value) : undefined;
 	if (units !== undefined && units.length > 0) setLayout(out, 'units', units);
 	const source = fold ? sourceOf(value) : undefined;
 	if (source !== undefined && sourceTree(source) !== undefined) {

@@ -1,0 +1,57 @@
+import { describe, expect, it } from 'vitest';
+import { createEngine } from '@sittir/common';
+import typescript from '../src/index.ts';
+
+const ts = await createEngine(typescript);
+
+function leadLastStatementOfFirstBody(root: ReturnType<typeof ts.parse>): void {
+	const [loop] = root.statements();
+	if (loop === undefined || typeof loop === 'number' || !('body' in loop)) throw new Error('expected a loop');
+	const body = (loop as { body(): { statements(): readonly unknown[] } }).body();
+	const last = body.statements().at(-1);
+	if (last === undefined || typeof last === 'number') throw new Error('expected a statement');
+	(last as { $trivia: { leading(text: string): unknown } }).$trivia.leading('// lead');
+}
+
+describe('a comment between two of its owner tokens, with no named child beside it, goes to the nearest child', () => {
+	it('keeps it through an edit inside its owner and through a snapshot', () => {
+		const root = ts.parse('for /* keep */ (;;) { x(); }\n');
+		expect(ts.render(root.$snapshot()).toString()).toBe('for (/* keep */ ;;) {\n  x();\n}\n');
+		leadLastStatementOfFirstBody(root);
+		expect(root.$render()).toBe('for (/* keep */ ;;) {\n  // lead\n  x();\n}\n');
+	});
+
+	it('trails the last item of a list when it sits after the trailing separator', () => {
+		const root = ts.parse('const a = [1, 2, /* tail */];\n');
+		expect(ts.render(root.$snapshot()).toString()).toBe('const a = [1, 2 /* tail */,];\n');
+	});
+});
+
+describe("a unit child's comment renders once and follows the unit through a list edit", () => {
+	it('frames a unit once when an edit beside it rebuilds its holder', () => {
+		const root = ts.parse('while (a) { /* c */ ; x(); }\n');
+		leadLastStatementOfFirstBody(root);
+		expect(root.$render()).toBe('while (a) {\n  /* c */ ;\n  // lead\n  x();\n}\n');
+	});
+
+	const source = '// A\n;\n// B\ndebugger;\n';
+	const parsed = () => {
+		const root = ts.parse(source);
+		return { root, statements: root.statements() };
+	};
+
+	it('keeps it on the unit when an item is inserted before it', () => {
+		const { root, statements } = parsed();
+		expect(root.$with.statements(ts.build.expressionStatement(ts.build.identifier('z')), ...statements).$render()).toBe('z;\n// A\n;\n// B\ndebugger;\n');
+	});
+
+	it('drops it with the unit when the unit is removed', () => {
+		const { root, statements } = parsed();
+		expect(root.$with.statements(...statements.slice(1)).$render()).toBe('// B\ndebugger;\n');
+	});
+
+	it('moves it with the unit when the items are reordered', () => {
+		const { root, statements } = parsed();
+		expect(root.$with.statements(...[...statements].reverse()).$render()).toBe('// B\ndebugger;\n// A\n;\n');
+	});
+});

@@ -123,14 +123,6 @@ pub trait SourceTable {
         None
     }
 
-    /// The sides of the unit children of `coord`'s node, a
-    /// `Vec<layout::UnitSides<T>>` of its grammar's trivia type, as its tree
-    /// gives them (`ParsedTree::unit_sides`).
-    fn unit_sides(&self, coord: &crate::slot::NodeCoordinate) -> Option<Box<dyn std::any::Any>> {
-        let _ = coord;
-        None
-    }
-
     /// The bytes the node a coordinate names renders over with its sides: its
     /// span, widened to the outermost extra or `ERROR` of its leading and
     /// trailing sides. A layout run is the gap beside them, and a written

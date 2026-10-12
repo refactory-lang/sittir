@@ -385,6 +385,22 @@ The handle a node's coordinate names it by (`$_layout.at.$treeHandle`), which pa
 
 The handle a node names its tree by: its coordinate's, or, for a node an edit rebuilt, the one its carried source identity names (`sourceOf`). `undefined` for a node no read gave, built or detached. A query addresses a node by it (`nodeAddressOf`), and the native render passes the tree it names, so a parsed tree's inferred options layer under a render of it or of an edit of it, and a built node gets the engine's alone.
 
+### `packages/common/src/transport-data.ts::unitSidesOf`
+
+The sides of a node's unit children, by slot and item (`TransportLayout.units`): the ones it holds, else its live tree's for a parsed node, else those of the node it was rebuilt from (`sourceOf`), carried to the items the rebuild moved them to (`carriedUnitSides`). The render fold and `$snapshot()` both take a node's unit sides from here; the native side imports none, so a node that sends none has none.
+
+### `packages/common/src/transport-data.ts::carriedUnitSides`
+
+A rebuilt node's unit sides, carried from the node it was rebuilt from. A unit variant is stored as its bare kind and has no identity, so each slot's items are aligned with the source node's (`alignedItems`): a unit's sides follow it to the item it moved to, and the sides of a unit the rebuild removed go with it.
+
+### `packages/common/src/transport-data.ts::itemIdentity`
+
+What a slot item is the same item by across a rebuild: a unit by its kind, a read node (or one rebuilt from a read node) by the handle it names (`sourceHandleOf`). A built node has none and matches nothing in the source.
+
+### `packages/common/src/transport-data.ts::alignedItems`
+
+The new position of each source item a rebuilt slot keeps: a common subsequence of the two slots' identities, trimmed of their common prefix and suffix first, that keeps the most units and, of those, the most nodes. Units weigh more than every node together because only a unit needs the alignment to keep its sides; a node frames itself with its own. Two items swapped keep the unit's sides on the unit.
+
 ### `packages/common/src/transport-data.ts::KindView`
 
 How the crossing tells kinds apart. `isWrapper`: whether a kind id is one a rebuild constructs around an existing node (`TriviaFacts.rebuildWrappers`), which `evidenceOf` asks before looking through an entry. `isList`: whether a kind id is a list kind, whose one array slot holds its items (`listItemsOf`). Every caller names its view: the engine's render passes the grammar's facts, and data with no such kinds (a test's hand-written nodes, a probe's data) passes `PLAIN_KINDS`, which answers no to both for every kind. There is no default, so no caller can skip the grammar's view by leaving it out.

@@ -815,7 +815,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                                 __rt::SlotSite { kind: __KIND, slot: #labels, index },
                             )?;
                             if scalar {
-                                if let ::core::option::Option::Some(trivia) = ctx.unit_sides(__child) {
+                                if let ::core::option::Option::Some(trivia) = ctx.unit_sides(__child, depth) {
                                     __units.push(::sittir_core::layout::UnitSides { slot: ::std::string::String::from(#keys), item: __items[#idxs as usize], trivia });
                                 }
                             }
