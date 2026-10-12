@@ -293,7 +293,7 @@ A statement, or what one of the wrappers `unwrap` reads through holds.
 
 ### `packages/codegen/src/bindings/pinned-vocabulary.ts::declare`
 
-Records an interface that has a `$kind` literal: its scoped name, its path, its own members and the name of its parent (`vocabularyReference`).
+Records an interface whose `$kind` is a string literal: its scoped name, its path, its own members and the name of its parent (`vocabularyReference`). A `$kind` of any other literal (a boolean, a number) makes no kind, as no `$kind` does.
 
 ### `packages/codegen/src/bindings/pinned-vocabulary.ts::vocabularyReference`
 

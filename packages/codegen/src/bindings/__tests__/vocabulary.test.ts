@@ -94,4 +94,14 @@ describe('readVocabulary', () => {
 		await expect(vocabularyIn(...declaration('readonly [key]?: Flag;'))).rejects.toThrow(/\[key\].*identifier/);
 		await expect(vocabularyIn("declare module 'quoted' { interface Inner<G> { readonly $kind: 'inner'; } }")).rejects.toThrow(/'quoted'.*identifier/);
 	});
+
+	it('reads an interface as a kind only when its $kind is a string literal', async () => {
+		const vocabulary = await vocabularyIn(
+			"export interface Declaration<G> { readonly $kind: 'declaration'; readonly static?: Flag; }",
+			'export interface Options { readonly $kind: true; readonly aaa?: Flag; }',
+			'export interface Numbered { readonly $kind: -1; readonly bbb?: Flag; }'
+		);
+		expect([...vocabulary.kinds.keys()]).toEqual(['declaration']);
+		expect([...vocabulary.flags]).toEqual(['static']);
+	});
 });

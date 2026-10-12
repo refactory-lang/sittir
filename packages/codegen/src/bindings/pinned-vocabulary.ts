@@ -108,7 +108,8 @@ function declare(declaration: InterfaceDeclaration.Parsed, scope: readonly strin
 		const annotation = member.type()?.type();
 		const type = isNode(annotation) ? annotation : undefined;
 		if (name === '$kind') {
-			if (type?.$type === K.LiteralType) path = text(type).slice(1, -1);
+			const literal = type?.$type === K.LiteralType ? type.content() : undefined;
+			if (isNode(literal) && (literal.$type === K.StringSingle || literal.$type === K.StringDouble)) path = text(literal).slice(1, -1);
 			continue;
 		}
 		own.push([name, { optional: member.optional() !== undefined, flag: type?.$type === K.TypeIdentifier && text(type) === 'Flag' }]);
