@@ -27,13 +27,13 @@ docs/superpowers/probes/2026-10-12-vocabulary-synonyms/run.sh [commit]   # defau
   - `results/kinds.txt`: every kind except the owner × level refinements, with its owner, its claims per grammar, its members and its flags.
   - `results/identifiers.txt`: each grammar's identifier-like kinds, the paths that claim them, and the words the grammar aliases to an identifier kind.
   - `results/collisions.txt`: applies the proposal's renames to the 587 kinds, then checks every synonym against the collision rule at every position its canonical segment has.
-- **`proposal.json`** holds the proposal. It has 63 renames: 24 to neutral terms, 26 that collapse name-only kinds, and 13 that collapse identifiers. It adds one kind. It gives 56 canonical segments 85 synonyms. Its flag table is empty, and it excludes eight words. Each rename carries the question below that decides it.
+- **`proposal.json`** holds the proposal. It has 62 renames: 24 to neutral terms, 25 that collapse name-only kinds, and 13 that collapse identifiers. It adds one kind. It gives 55 canonical segments 83 synonyms. Its flag table is empty, and it excludes eight words. Each rename carries the question below that decides it.
 
 ## Answer
 
 1. **Neutral terms.**
    - Seventeen facts rename to a neutral term (§1).
-   - The table passes the collision rule: 119 synonym positions were checked, with no collision (§4).
+   - The table passes the collision rule: 117 synonym positions were checked, with no collision (§4).
    - No flag needs a synonym. Every flag name is either neutral or the only language's word for the flag. Flags can still take synonyms; that needs three more checks (§4).
 2. **Name-only.**
    - No feature is a name and nothing else.
@@ -81,7 +81,7 @@ A segment takes the term no language owns when such a term exists. Each language
 | --- | --- |
 | `argument` | `named`: keyword |
 | `clause` | `handler`: catch, except, rescue · `else_if`: elif, elsif, elseif · `finally`: ensure · `resource`: using · `wildcard`: glob · `bounds`: constraint · `case`: arm |
-| `declaration` | `receiver`: self, this · `interface`: trait, protocol · `module`: namespace, mod · `struct`: record · `type_alias`: typedef, typealias · `enum_member`: variant, enumerator · `field`: property · `constructor`: initializer, init · `extension`: impl · `special`: dunder, magic · `foreign`: extern · `internal`: crate |
+| `declaration` | `receiver`: self, this · `module`: namespace, mod · `struct`: record · `type_alias`: typedef, typealias · `enum_member`: variant, enumerator · `field`: property · `constructor`: initializer, init · `extension`: impl · `special`: dunder, magic · `foreign`: extern · `internal`: crate |
 | `element` | `spread`: splat, unpack · `map`: dictionary, dict |
 | `expression` | `coalesce`: nullish · `generator`: gen · `construct`: new · `propagate`: try · `lambda`: closure, arrow · `member`: attribute, field, property · `subscript`: index · `conditional`: ternary · `reference`: borrow · `list`: array · `compound`: augmented · `map`: dictionary, dict · `matrix_multiply`: matmul · `qualified`: path, scoped |
 | `identifier` | `qualified`: dotted, nested, scoped, path · `receiver`: self, this · `super`: base |
@@ -123,7 +123,7 @@ The bindings spec's feature table records the first five as markers that a compo
 
 | group | today | collapse | question |
 | --- | --- | --- | --- |
-| interface | `declaration.interface` (t), `declaration.interface.trait` (r) | Trait's own facts are `whereClause` and `unsafe`. `whereClause` belongs to `bounded-quantification`, which typescript composes without having any where clause; `unsafe` belongs to `unsafe-code`. So the collapse needs where clauses split out of that feature, and `unsafe` declared on the interface. Then `trait` and `protocol` become synonyms | NO1 |
+| interface | `declaration.interface` (t), `declaration.interface.trait` (r) | Kept: trait stays a refinement, and `trait` and `protocol` are no synonyms of `interface`. A collapse would have needed where clauses split out of `bounded-quantification`, which typescript composes without having any where clause, and `unsafe` declared on the interface | NO1, ruled (b) |
 | handler | `clause.catch` (t: `body`, `catchClauseGroup`), `clause.except` (p: `exception`, `alias`, `suite`) | One kind, with members `type`, `name` and `body`. Python's `group` flag stays | NO2 |
 | interpolated string | `literal.string.f` (p), `literal.template` (t) | `literal.string.interpolated` | NO3 |
 | list pattern | `pattern.array` (t), `pattern.list` (p), `pattern.slice` (r: `patterns`) | `pattern.list`, with its items in `elements` | NO4 |
@@ -158,7 +158,7 @@ The bindings spec's feature table records the first five as markers that a compo
 | `default`, `gen`, `union` and 17 primitive type names, aliased to `identifier` | r | `identifier` | relaxation | no change |
 | `crate` | r | `identifier.crate` | relaxation: a path's root. `pub(crate)` is already a kind of its own | `identifier` |
 | `super` | r | `identifier.super` | relaxation: the parent module at a path's root | `identifier` |
-| `self` | r | `identifier.self` | the receiver in expressions and typed `self` parameters; the current module at a path's root and in `pub(self)` | ID4 |
+| `self` | r | `identifier.self` | the receiver in expressions and typed `self` parameters; the current module at a path's root and in `pub(self)` | at a path's root, an alias kind that claims `identifier`; elsewhere the receiver (ID4) |
 | `this` | t | `identifier.self` | fact: the receiver | `identifier.receiver` |
 | `super` | t | `identifier.super` | fact: the base-class reference | `identifier.super` |
 | `label` (`name`) | r | `identifier.label` | fact: a sigiled name in the label namespace | `identifier.label` |
@@ -181,7 +181,7 @@ A flag's synonym is rejected when it is equal to any of these:
 
 These three checks are the ones flags need beyond the segment checks.
 
-**Result.** 119 synonym positions were checked, with no collision. There is one note: `try` is a synonym of `propagate` at the `expression` level, and also the canonical segment of `expression.block.try`. That is legal, because canonical names resolve first at each position.
+**Result.** 117 synonym positions were checked, with no collision. There is one note: `try` is a synonym of `propagate` at the `expression` level, and also the canonical segment of `expression.block.try`. That is legal, because canonical names resolve first at each position.
 
 ## Findings
 
@@ -191,7 +191,7 @@ These three checks are the ones flags need beyond the segment checks.
    - `expression.member` declares no such flag, and nothing reaches `a?.()`.
 2. **`clause.import.alias` holds two facts.** Python's renamed import, and typescript's import-equals declaration. Rust's renamed import, the first fact, has a kind of its own.
 3. **`expression.cast.as` holds two facts, and typescript's assertion has two kinds.** Rust's numeric conversion and typescript's type assertion share the keyword `as`.
-4. **Trait is a refinement because two features are cut too coarsely** (NO1). Where clauses are bundled into `bounded-quantification`. Default method bodies have no feature at all. They are typed through the body's slot, so they need no member.
+4. **Two features are cut too coarsely for trait to collapse into interface** (NO1, which keeps the refinement). Where clauses are bundled into `bounded-quantification`. Default method bodies have no feature at all. They are typed through the body's slot, so they need no member.
 5. **`clause.bounds.higher_ranked`, `.removed` and `.use` are single bounds, not clauses.** They sit beneath the clause that holds a list of them.
 6. **`type.named` has no claim. `type.named.prelude` decides by text** whether rust's `type_identifier` is one of five prelude names. That is a name's resolution, not syntax, and it gives that grammar kind a second line, beneath `type`, beside `identifier.type`.
 7. **One fact has several member names.**
@@ -212,7 +212,7 @@ These three checks are the ones flags need beyond the segment checks.
 
 ## Questions
 
-Recommendation first. Each question is answered by its number.
+Recommendation first. Each question is answered by its number. Ruled so far: NT8 (a), NO1 (b), ID1 (a), ID4 (a).
 
 **Neutral terms**
 
@@ -235,7 +235,7 @@ Recommendation first. Each question is answered by its number.
 - **NT7.** Rust's `?`:
   - (a) `expression.propagate`, with synonym `try`;
   - (b) keep `expression.try`.
-- **NT8.** Spreading and gathering, `*x` and `...x`:
+- **NT8.** *Ruled (a).* Spreading and gathering, `*x` and `...x`:
   - (a) `spread` where a value is built (`element.spread`) and `rest` in patterns and types (`pattern.rest`, `type.rest`), each with synonyms `splat` and `unpack`. These are typescript's two words by position; rust's `..` rest pattern and Kotlin's and C#'s spread share them;
   - (b) `splat` everywhere;
   - (c) `unpack` everywhere.
@@ -260,7 +260,7 @@ Recommendation first. Each question is answered by its number.
 
 **Name-only**
 
-- **NO1.** Collapse trait into interface, splitting a `where-clauses` feature out of `bounded-quantification` and declaring `unsafe` on the interface. The bindings spec's placement paragraph, which keeps trait and protocol as refinements for SCIP's distinction, reverses:
+- **NO1.** *Ruled (b).* Collapse trait into interface, splitting a `where-clauses` feature out of `bounded-quantification` and declaring `unsafe` on the interface. The bindings spec's placement paragraph, which keeps trait and protocol as refinements for SCIP's distinction, reverses:
   - (a) collapse;
   - (b) keep the refinement.
 - **NO2 – NO11.** The collapses in §2's table:
@@ -274,7 +274,7 @@ Recommendation first. Each question is answered by its number.
 
 **Identifiers**
 
-- **ID1.** The role kinds collapse into `identifier`: `identifier.type`, `.field`, `.property`, `.property.shorthand`, and typescript's label.
+- **ID1.** *Ruled (a).* The role kinds collapse into `identifier`: `identifier.type`, `.field`, `.property`, `.property.shorthand`, and typescript's label.
   - The parent's slot names the role.
   - In a build, a bare string fills the slot's own leaf kind.
   - `privateName` picks the private name.
@@ -288,7 +288,7 @@ Recommendation first. Each question is answered by its number.
   - (b) python's grammar bindings nest it as pairs.
 - **ID3.** The relaxations need nothing. Python's 6 words, typescript's 22 and rust's 20 already parse as the identifier kind they stand in:
   - (a) agree.
-- **ID4.** Rust's path roots. `super` and `crate` claim `identifier`. Rust's `self` is one grammar kind with two meanings (finding 10):
+- **ID4.** *Ruled (a).* Rust's path roots. `super` and `crate` claim `identifier`. Rust's `self` is one grammar kind with two meanings (finding 10):
   - (a) alias `self` at the path sites into a kind that claims `identifier`, so that `self` everywhere else is the receiver. Like the `crate` alias, it needs no clones. It is not measured;
   - (b) all of rust's `self` is the receiver, path roots included;
   - (c) all of it is `identifier`, so rust's receiver reads as python's does.

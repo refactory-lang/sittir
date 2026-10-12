@@ -25,7 +25,6 @@
   ["clause.with", "clause.resource", "NT6"],
   ["expression.try", "expression.propagate", "NT7"],
   ["element.splat", "element.spread", "NT8"],
-  ["declaration.interface.trait", "declaration.interface", "NO1"],
   ["literal.string.f", "literal.string.interpolated", "NO3"],
   ["literal.template", "literal.string.interpolated", "NO3"],
   ["pattern.array", "pattern.list", "NO4"],
@@ -80,7 +79,6 @@
   },
   "declaration": {
    "receiver": ["self", "this"],
-   "interface": ["trait", "protocol"],
    "module": ["namespace", "mod"],
    "struct": ["record"],
    "type_alias": ["typedef", "typealias"],
