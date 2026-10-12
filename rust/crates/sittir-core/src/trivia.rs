@@ -171,7 +171,7 @@ impl Render for TriviaText {
         if self.kind == KindId::ERROR {
             let before = self.before.as_deref().unwrap_or_default();
             let after = self.after.as_deref().unwrap_or_default();
-            return w.verbatim(&[before, self.text.as_str(), after].concat());
+            return w.verbatim(before, &self.text, after);
         }
         w.edge(self.kind, Side::Before, None);
         w.text(&self.text)?;

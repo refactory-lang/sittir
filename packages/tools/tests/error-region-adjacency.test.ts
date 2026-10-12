@@ -23,6 +23,12 @@ describe('an ERROR region keeps the source bytes beside it wherever its owner re
 		expect(ts.render(root.$snapshot()).toString()).toBe(source);
 	});
 
+	it.each(['fn f() {} @@ fn g() {}\n', 'fn f() { a b c; }\n'])('rust %j writes no in-line run where the render breaks the line beside the region', (source) => {
+		const out = rs.render(rs.parse(source).$snapshot()).toString();
+		expect(out).not.toMatch(/[ \t]\n/);
+		for (const line of out.split('\n')) expect((line.length - line.trimStart().length) % 4).toBe(0);
+	});
+
 	it('reads an ERROR entry as its own text, with the runs beside it on its line as $before and $after', () => {
 		const [first] = rs.parse('fn f() {} @@ fn g() {}').statements();
 		if (first === undefined || !rs.is.functionItem(first)) throw new Error('expected a function item');

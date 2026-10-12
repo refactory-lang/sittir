@@ -3694,8 +3694,9 @@ in a `#[kind]` line. `Verbatim` is marked `#[transport(verbatim)]`. `Text` is
 marked `#[transport(text)]` and names the kinds whose `$text` objects it takes:
 the compound trivia kinds and `ERROR`. An `ERROR` entry so keeps its kind
 across a crossing to JavaScript and back, and renders as an `ERROR` region
-(`RenderSink::verbatim`: no in-line seam on either side, since the bytes it
-carries are the gaps beside it), where `Verbatim` would render it as bare text
+(`RenderSink::verbatim`: no in-line seam on either side, since the runs it
+carries are the gaps beside it, and a line break written beside it beats the
+run on that side), where `Verbatim` would render it as bare text
 between the seams the template and the joins write.
 
 `TriviaTransport` implements `TriviaSeam` for the whitespace trivia kinds (`whitespaceTriviaKinds`): such an entry is merged into the gap it sits in and replaces that gap's spacing, instead of rendering as a line of its own. Its seam text is the kind's fixed text: JS names a whitespace entry by its exact spelling, so the kind determines the text.
