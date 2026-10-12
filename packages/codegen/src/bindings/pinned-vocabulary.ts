@@ -1,4 +1,13 @@
-import type { ExtendsTypeClause, InterfaceDeclaration, Program, TypescriptAPI } from '@sittir/typescript';
+import type {
+	AmbientDeclaration,
+	ExportStatementDefaultDeclaration,
+	ExportStatementDefaultDeclarationDefaultKw,
+	ExpressionStatement,
+	ExtendsTypeClause,
+	InterfaceDeclaration,
+	Program,
+	TypescriptAPI
+} from '@sittir/typescript';
 import type { Engine } from '@sittir/types';
 import { loadPinnedBuild, type PinnedBuild } from '../bootstrap/pinned.ts';
 import type { VocabularyDeclaration, VocabularyMember } from './vocabulary.ts';
@@ -47,12 +56,32 @@ type Statement = ReturnType<Program.Parsed['statements']>[number];
 
 const isNode = <T>(value: T): value is Exclude<T, number | undefined> => typeof value === 'object' && value !== null;
 
+type Wrapped =
+	| Statement
+	| ReturnType<ExportStatementDefaultDeclaration.Parsed['content']>
+	| ReturnType<ExportStatementDefaultDeclarationDefaultKw.Parsed['content']>
+	| ReturnType<AmbientDeclaration.Parsed['content']>
+	| ReturnType<ExpressionStatement.Parsed['expression']>;
+
+function unwrap(node: Wrapped, K: Kinds): Exclude<Wrapped, number | undefined> | undefined {
+	if (!isNode(node)) return undefined;
+	switch (node.$type) {
+		case K.ExportStatementDefaultDeclaration:
+		case K.ExportStatementDefaultDeclarationDefaultKw:
+		case K.AmbientDeclaration:
+			return unwrap(node.content(), K);
+		case K.ExpressionStatement:
+			return unwrap(node.expression(), K);
+		default:
+			return node;
+	}
+}
+
 function collect(statements: readonly Statement[], scope: readonly string[], out: VocabularyDeclaration[], source: Source): void {
 	const { K, text } = source;
 	for (const statement of statements) {
-		if (!isNode(statement)) continue;
-		const node = statement.$type === K.ExportStatementDefaultDeclaration ? statement.content() : statement;
-		if (!isNode(node)) continue;
+		const node = unwrap(statement, K);
+		if (node === undefined) continue;
 		if (node.$type === K.InternalModule) {
 			collect(node.body()?.statements() ?? [], [...scope, text(node.name())], out, source);
 			continue;

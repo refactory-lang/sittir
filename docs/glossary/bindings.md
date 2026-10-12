@@ -277,7 +277,15 @@ The pinned TypeScript package's kinds and engine, with the pinned build they com
 
 ### `packages/codegen/src/bindings/pinned-vocabulary.ts::collect`
 
-Walks a file's statements: an `export` is read through to what it exports, a namespace adds its name to the scope and is walked in turn, and an interface is declared (`declare`).
+Walks a file's statements, each read through its wrappers (`unwrap`): a namespace adds its name to the scope and is walked in turn, and an interface is declared (`declare`).
+
+### `packages/codegen/src/bindings/pinned-vocabulary.ts::unwrap`
+
+The declaration a statement holds, read through every wrapper the TypeScript grammar puts around one: `export`, `export default` and `declare`, and the expression statement a bare `namespace` parses as. The compiler sees each of these as the declaration itself, so the vocabulary reads the same however a declaration is exported or declared.
+
+### `packages/codegen/src/bindings/pinned-vocabulary.ts::Wrapped`
+
+A statement, or what one of the wrappers `unwrap` reads through holds.
 
 ### `packages/codegen/src/bindings/pinned-vocabulary.ts::declare`
 

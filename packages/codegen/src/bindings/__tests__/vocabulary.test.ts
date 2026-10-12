@@ -36,4 +36,23 @@ describe('readVocabulary', () => {
 			expect([...vocabulary.members(path).keys()], path).toEqual(['name']);
 		}
 	});
+
+	it('reads an interface or namespace however it is exported or declared', async () => {
+		const vocabulary = await vocabularyIn(
+			"export declare interface Declared<G> { readonly $kind: 'declared'; }",
+			"export default interface Defaulted<G> { readonly $kind: 'defaulted'; }",
+			"declare interface Ambient<G> { readonly $kind: 'ambient'; }",
+			"export declare namespace Exported { export interface Inner<G> { readonly $kind: 'exported.inner'; } }",
+			"declare namespace Ambient { interface Inner<G> { readonly $kind: 'ambient.inner'; } }",
+			"namespace Bare { interface Inner<G> { readonly $kind: 'bare.inner'; } }"
+		);
+		expect([...vocabulary.kinds].map(([path, kind]) => [path, kind.name])).toEqual([
+			['declared', 'Declared'],
+			['defaulted', 'Defaulted'],
+			['ambient', 'Ambient'],
+			['exported.inner', 'Exported.Inner'],
+			['ambient.inner', 'Ambient.Inner'],
+			['bare.inner', 'Bare.Inner']
+		]);
+	});
 });
