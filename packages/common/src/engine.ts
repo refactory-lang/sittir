@@ -15,6 +15,7 @@ import type {
 import { decodeTree, readObject, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
 import { holdReadTree, sourceHandleOf, toTransportData, type KindView } from './transport-data.ts';
 import { mintTreeToken, registerTree } from './tree-token.ts';
+import { forEachTriviaList, type TriviaSides } from './trivia.ts';
 import type { DescendantBatch } from './query.ts';
 
 /** The options object a grammar package types as its `Options`. */
@@ -386,7 +387,7 @@ export function createNativeEngine<
 							writeTriviaSide: (index, side, entries) => engine.writeTriviaSide(parsed.treeId, index, side, entries),
 							unitSides: (index) => {
 								const units = engine.unitSides(parsed.treeId, index);
-								holdReadTree(units, liveToken);
+								for (const unit of units) forEachTriviaList(unit as TriviaSides<unknown>, (entries) => holdReadTree(entries, liveToken));
 								return units;
 							},
 							editedWithin: (index, ownSides) => engine.editedWithin(parsed.treeId, index, ownSides),

@@ -1,3 +1,5 @@
+import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import typescript from '../src/index.ts';
@@ -53,6 +55,11 @@ describe("a unit child's comment renders once and follows the unit through a lis
 	it('moves it with the unit when the items are reordered', () => {
 		const { root, statements } = parsed();
 		expect(root.$with.statements(...[...statements].reverse()).$render()).toBe('// B\ndebugger;\n// A\n;\n');
+	});
+
+	it('keeps the comments of identical units by position', () => {
+		const root = ts.parse('// A\n;\n// B\n;\n');
+		expect(root.$with.statements(...root.statements().slice(1)).$render()).toBe('// A\n;\n');
 	});
 });
 
@@ -118,5 +125,19 @@ describe('an empty container whose inside is only layout takes its first child',
 	it('gives a program of blank lines its first statement', () => {
 		expect(ts.parse('\n').$with.statements(x()).$render()).toBe('\nx;\n');
 	});
+});
+
+describe("a snapshot of a rebuilt node names no tree, its units' sides included", () => {
+	it('renders after the tree it was read from is released', () => {
+		// A collection can only be forced under `--expose-gc`, so the case runs
+		// in a child process that reports the snapshot and its render.
+		const fixture = fileURLToPath(new URL('../../common/tests/fixtures/unit-snapshot-release.mts', import.meta.url));
+		const out = execFileSync(process.execPath, ['--expose-gc', '--import', 'tsx', fixture], {
+			cwd: fileURLToPath(new URL('..', import.meta.url)),
+			encoding: 'utf8',
+			env: { ...process.env, SITTIR_BACKEND: 'native' }
+		});
+		expect(JSON.parse(out.trim().split('\n').at(-1) ?? '')).toEqual({ coordinate: false, comment: true, same: true });
+	}, 60_000);
 });
 
