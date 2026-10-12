@@ -12,43 +12,35 @@
 - A stored deviation beats per-call options. Only `reformat` drops it.
 - List gaps migrate to deviation entries, and their stamps retire.
 - The fixture generator's detached input keeps the layout, so a moved render fixture replays from it.
+- The writer is the one source of what the options render (the maintainer, ruling on the baseline). The read never re-implements the seam law: the baseline is a render.
 
 ## What exists today
 
 - **Breaks stored, in-line runs not.** The trivia table stores every run holding a line break as a layout entry (`trivia_table.rs`, `Assigned::Layout`, read in `engine.rs::assigned_side`), whether or not it is the options' choice. A run on one line is never stored.
 - **List gaps are stamps, not entries.** A list keeps its layout runs off the entries ("its source flanks spell its edges"). At render, `prepare.rs::fill_list_gaps` classifies the source text (`SourceGap`) or the snapshot geometry between items, and stamps the items' base edges at trivia strength (`set_gap_edge`). The delimiter flanks reach the render as `SourceFlank`.
-- **The gap→site knowledge at read.** It is `DEPTH_REGIONS` alone: per kind, the token anchors of the stretch a template indents (`DepthRegion { kind, open: After(["{"]), close: Before(["}"]) }`), used by the assignment for indentation depth. Everything else (spacing sites, kind edges, seats, delimiter flanks) is known only by the render: the template's site calls and `prepare`'s seat tables.
+- **Depth at read.** `DEPTH_REGIONS` gives the assignment, per kind, the token anchors of the stretch a template indents, for indentation depth. It stays as it is.
 - **The inferred layer** (`options.rs::InferredOptions`) holds the indentation unit and the root's two edge arms, each only where the source differs from the engine's options.
 
-## The deviation test, per site kind
+## The baseline: what the options render, from the writer
 
-For a gap a side takes in a parsed tree, the **read-time arm** is what the gap's site resolves to under the baseline, and the **source class** is `classify_whitespace(run, allowed(site), whitespace)`. This is the same classification the inferred layer and `fill_list_gaps` use, now one function. The gap stores an entry of the source class when the two differ, and nothing otherwise.
+The seam the options write at a gap is not one site's arm. The writer coalesces several marks there: the left kind's after edge, the template's site or fixed seam, a depth move, the right kind's before edge, a seat or a flank, all under the seam law. So the baseline is a render, never a table the read would have to merge again.
 
-| site kind | where its site is known | read-time arm |
-|---|---|---|
-| spacing site between two template elements (slot↔slot, slot↔token) | gap-site table (new, below) | `spacing[site].arm` |
-| kind edge (a node's before or after edge) | `EDGE_SITES` (kind → site) | the edge arm |
-| seat between repeated items (statements, members) | seat tables (`SEATS_*`, item kind → site) | the seat's arm |
-| list item gap, before or after its separator | gap-site table (the separator sites) | the separator site's arm |
-| list delimiter flank | gap-site table (the flank sites, `DELIMITER_SITES`) | the flank arm |
-| depth site (open and close of a `DepthRegion`) | `DEPTH_REGIONS` | a line break, the template's depth arm |
-| the file's two edges | the inferred layer, unchanged | (stays in `InferredOptions.edges`, never an entry) |
+**The baseline render.** Once per tree, lazily, the engine renders the tree from its templates under the read-time options, the inferred layer over the engine's options, fixed at that moment. It does so in a recording mode of the spacing writer.
+- **Depth:** the tree is read to full depth, so every node renders from its template and none as a source slice.
+- **Trivia:** the render includes the tree's non-layout trivia, comments and `ERROR` entries with their `$before`/`$after`, because a line comment forces a break that would otherwise show as a false deviation. It excludes the layout entries, which are what is being derived.
+- **What it records:** at each text it writes, the line breaks written since the text before.
 
-Indentation is measured the same way. Only an excess over the template's depth is stored, as depth members, in the inferred indent unit (as today).
+**When it runs.** At the first need for layout entries: the trivia table's assignment, a snapshot, or a render of an edited node. Never for an untouched render, which is a source slice, or for a structure-only read.
 
-## Where the read computes it
+**Keying.** The trivia table addresses a layout run by its bytes (`Assigned::Layout { start, end }`). Every run lies beside a named child or a trivia entry, since a side belongs to a child or an entry. In the baseline render, each named node's frame (`open_frame`, its origin) and each comment or `ERROR` entry carries its source span. So the breaks the render wrote in a gap are keyed by the source end byte of the frame or entry the gap follows and the source start byte of the one it precedes. A run `(start, end)` reads its baseline under either key.
+- **An empty node's inner run** (`[⏎]`, an owner with no named child): keyed by the owner's frame, as the breaks written inside a frame that opened no child frame.
+- **A run between two trivia entries:** keyed by the entries' spans, like any other run.
+- **The file's edges:** never keyed and never stored. They stay in the inferred layer.
+- **A run neither key reaches:** an error from the assignment, never a silent choice. A test over every corpus entry of the five grammars keeps the count of such runs at zero.
 
-**The gap-site table** replaces `DEPTH_REGIONS`: one table states where every site sits. For each kind, codegen emits each template seam that a parsed gap can sit at: the site, and the anchors on its two sides. An anchor is a slot (by field id), a literal token (by text, as `DepthAnchor` is today), or the node's start or end. A depth region is the table's depth-site rows, and every reader of `DEPTH_REGIONS` (the assignment's indentation depth) reads them through it. The table is derived from the rendered template body, the one source of where sites sit, in `packages/codegen/src/emitters/render-options-rs.ts`.
+**The deviation test.** A run deviates when its source line breaks differ from the baseline's breaks at its key. Indentation is measured as today: only an excess over the template's depth is stored, as depth members, in the inferred indentation unit (`DEPTH_REGIONS`). A deviating run is stored as `Assigned::Layout` of its source class (`classify_whitespace`), now including an in-line class (space, tab or tight) where the baseline breaks. A run that matches stores nothing.
 
-A site the walk cannot anchor is a codegen diagnostic, and that diagnostic is a gate. It must reach zero in every grammar by the end of the pipeline, so a gap the table cannot place cannot occur at read, and the read has no fallback for one. If the diagnostic cannot reach zero for some site, the work stops and the site goes to brainstorm.
-
-**The assignment** (`trivia_table.rs::TriviaTable::assign`, run once per tree on first use) already walks each gap with its owner and the tokens on both sides. For a gap that a side takes:
-1. look up the owner kind's gap-site entry whose anchors match the gap's tokens;
-2. classify the run against the site's allowed arms;
-3. compare with the read-time arm from the baseline, which the parsed tree holds (inferred layer over engine options);
-4. store `Assigned::Layout` only on a difference, now including an in-line class (space, tab or tight) where the arm breaks.
-
-Every gap a side takes matches a row: the codegen gate guarantees it.
+**Where.** `TriviaTable::assign` runs as today, then filters its layout runs against the baseline, held in a once-per-tree cell beside the table. The baseline render reads the table's non-layout entries, so the two phases do not loop.
 
 ## How the inferred layer and the deviations stay consistent
 
@@ -65,23 +57,22 @@ Every gap a side takes matches a row: the codegen gate guarantees it.
 
 ## Files
 
-- `packages/codegen/src/emitters/render-options-rs.ts`, plus its model derivation: the gap-site table, replacing `DEPTH_REGIONS`, with its codegen diagnostic gate. Glossary: `docs/glossary/emitters.md`.
-- `rust/crates/sittir-core/src/trivia_table.rs`: the deviation test in `assign`, the in-line class, depth regions read from the gap-site table's depth rows, the list rule retired.
+- `rust/crates/sittir-core/src/trivia_table.rs`: the deviation filter after `assign`, the in-line class, the list rule retired.
 - `rust/crates/sittir-core/src/options.rs`: one `classify_whitespace` use. `InferredOptions` gives the assignment its baseline.
-- `rust/crates/sittir-core/src/engine.rs`: the baseline passed to `assign`; `assigned_side` takes the in-line kinds.
+- `rust/crates/sittir-core/src/engine.rs`: the once-per-tree baseline render and its cell; `assigned_side` takes the in-line kinds.
 - `rust/crates/sittir-core/src/prepare.rs`, `slot.rs`, `layout.rs`: `fill_list_gaps` and the `gap`/`flank` facts retired.
-- `rust/crates/sittir-core/src/spacing.rs`: the stored-gap work is dropped. One change: a held line end is widened only by a mark at least as strong as the layout that holds the gap, so a stored single break after a line comment is not widened by the template's blank line (`// c⏎fn g() {}`). Today any wider break widens the floor whatever its strength.
+- `rust/crates/sittir-core/src/spacing.rs`: the recording mode (breaks per gap, keyed by the frame and entry spans on either side). The stored-gap work is dropped. One change: a held line end is widened only by a mark at least as strong as the layout that holds the gap, so a stored single break after a line comment is not widened by the template's blank line (`// c⏎fn g() {}`). Today any wider break widens the floor whatever its strength.
 - `packages/common/src/*`: JavaScript stops writing `$_layout.gap` and `flank`.
 - `packages/tools/src/validate/read-render-parse.ts`: `selfContainedRenderInput`.
 - Spec: § 1 Layout and ruling 11, restated as above.
 
 ## Tasks
 
-1. **The gap-site table**, red first. A codegen test pins the table rows for rust `block` and `function_item`, typescript `statement_block`, a list's flanks and separator, and a seat. The diagnostic refuses a site with no anchor, and it reads zero in all five grammars. The depth regions are read from its depth rows, and `DEPTH_REGIONS` goes. Gate: no render, fixture or validation row moves.
-2. **Deviations stored at read**, red first with the four cases: rust `fn f() { x; }` and `fn f() {} // c⏎fn g() {}`, typescript `if (a) { b; }`, each in snapshot and template render, plus a built block keeping the template's breaks. Also: an enum or interface whose breaks equal the options stores nothing at its flanks and renders unchanged, and a per-call option changes a gap with no entry but not a deviating one.
+1. **The baseline render**, red first. Engine tests: the recorded breaks per key for rust `fn f() {\n    x;\n}` (a break at each depth site), `fn f() { x; }` (the same breaks: the baseline is the options', not the source's), and `fn f() {} // c\nfn g() {}` (the comment's line end and the seat's blank line). An empty list's inner key. The corpus test: zero unkeyed runs in all five grammars. The baseline is not computed for an untouched render or a structure-only read.
+2. **Deviations stored**, red first with the four cases: rust `fn f() { x; }` and `fn f() {} // c\nfn g() {}`, typescript `if (a) { b; }`, each in snapshot and template render, plus a built block keeping the template's breaks. Also: an enum or interface whose breaks equal the options stores nothing at its flanks and renders unchanged, and a per-call option changes a gap with no entry but not a deviating one.
 3. **List gaps migrate**, in this PR, as their own commit series after task 2. The list gap and flank stamps retire, so line layout has one store when the PR lands. Red first: a rebuilt list whose items moved keeps each item's own layout. Gate: no fixture moves in this task.
 4. **Detached input.** Red first: a fixture's detached input replays to the tree render for the moved kinds.
-5. **Gates:** fixtures, validation, the suite, cargo and clippy.
+5. **Gates:** fixtures, validation, the suite, cargo and clippy, and two rows over the corpora: the baseline render's cost per tree (time and peak memory, against a plain render of the same tree) and the count of stored deviations per grammar (expected small).
 
 ## Expected fixture movement
 
@@ -94,8 +85,9 @@ The gate lists every moved fixture with its before and after, checks that each n
 
 ## Review Focus
 
-1. A site the gap-site table cannot anchor: refused at codegen, never met at read.
+1. A layout run the baseline cannot key: an assignment error, held at zero by the corpus test.
 2. A source indented with a unit other than the engine's: depth deviations are counted in the inferred unit, and no gap stores a deviation for the unit alone.
+6. A line comment beside a gap: the baseline includes it, so its forced break is not a deviation.
 3. A line comment trailing a gap whose deviation is in-line: the comment's held line end still breaks the line.
 4. A rebuilt list (moved, removed, inserted items): each kept item keeps its own deviations, and a changed edge drops them.
 5. A detached fixture of every moved kind replays to its tree render.
