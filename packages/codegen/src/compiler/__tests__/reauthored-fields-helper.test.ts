@@ -8,7 +8,14 @@ const judge = (upstream: unknown, kept: unknown) => judgeFields(fieldContentsOf(
 describe('the reauthored-field guard', () => {
 	it('reads a new field over the same content as a rename', () => {
 		const verdict = judge(field('argument', sym('expression')), field('item', { ...sym('expression'), id: 'x' }, 'other'));
-		expect(verdict).toEqual({ renamed: ['argument -> item'], dropped: [] });
+		expect(verdict).toEqual({ renamed: ['argument -> item'], dropped: [], unfielded: [] });
+	});
+
+	it('accounts for a field whose content stays bare where an authored patch removed the label', () => {
+		const upstream = field('declaration', sym('declaration'));
+		const bare = new Set([JSON.stringify(sym('declaration'))]);
+		const verdict = judgeFields(fieldContentsOf(upstream), fieldContentsOf(sym('declaration')), bare);
+		expect(verdict).toEqual({ renamed: [], dropped: [], unfielded: ['declaration'] });
 	});
 
 	it('reports a field that is gone with nothing over its content', () => {

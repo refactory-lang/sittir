@@ -356,7 +356,7 @@ How many known-good pairs a grammar's local manifest keeps: eight. A pair that i
  *
  * These are inferred UNNAMED slots with a GENUINELY single parse-kind that §2
  * projects to the kind name, where legacy hard-coded the generic `content`; the
- * kind name is the desired surface, and the PR-B cutover renames the field.
+ * kind name is the desired surface, which renaming the field gives.
  *
  * NB: only TRULY single-kind slots belong here. `splat_pattern.content` looked
  * single-kind but holds `[identifier, "_"]` (a literal with no parseKind); its
@@ -476,13 +476,13 @@ Whether a repo-relative path is a codegen source that takes part in generation: 
 
 ```text
 /**
- * reconcile-naming — PR-A WIDE divergence probe.
+ * reconcile-naming — WIDE slot-naming divergence probe.
  *
  * For every AssembledNonterminal in each grammar's NodeMap, assert each legacy
  * projected slot name equals the value the §2 PROJECTION computes from the slot's
  * `values` + `fieldName` (`projectSlotNaming`): storageName, name, configKey,
  * propertyName, paramName. The probe drives `collect-slots` until 0 — proving
- * PR-B's getter swap is byte-identical.
+ * a swap to the projection's getters is byte-identical.
  *
  * Projections, not stored `_new` fields: `parseNames` is the live set of CST
  * kinds tree-sitter emits (per-value `parseKind.name`), so it can't go stale

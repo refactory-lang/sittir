@@ -505,9 +505,6 @@ export interface IsGuards {
 	exportStatementNamespaceExport<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementNamespaceExport };
-	exportStatementTypeExport<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementTypeExport };
 	exportStatementEqualsExport<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementEqualsExport };
@@ -642,14 +639,10 @@ export interface IsGuards {
 			T,
 			| TSKindId.ExportStatementDefaultFrom
 			| TSKindId.ExportStatementDefaultDeclaration
-			| TSKindId.ExportStatementTypeExport
 			| TSKindId.ExportStatementEqualsExport
 			| TSKindId.ExportStatementNamespaceExport
 		>;
 		default: IsGuards['exportStatementDefault'];
-		typeExport<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementTypeExport };
 		equalsExport<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementEqualsExport };
@@ -738,7 +731,6 @@ export interface IsGuards {
 			T,
 			| TSKindId.ExportStatementDefaultFrom
 			| TSKindId.ExportStatementDefaultDeclaration
-			| TSKindId.ExportStatementTypeExport
 			| TSKindId.ExportStatementEqualsExport
 			| TSKindId.ExportStatementNamespaceExport
 			| TSKindId.ImportStatement
@@ -1289,47 +1281,47 @@ function _vg<G extends object>(guard: G, variants: object): G {
 	return Object.freeze(Object.defineProperties(guard, Object.getOwnPropertyDescriptors(variants)));
 }
 
-const _supertype_exportStatement_ids = new Set<number>([421, 422, 393, 394, 392]);
+const _supertype_exportStatement_ids = new Set<number>([420, 421, 393, 392]);
 const _supertype_declaration_ids = new Set<number>([
 	246, 248, 243, 206, 205, 295, 306, 307, 308, 317, 314, 312, 310, 305
 ]);
-const _supertype_importSpecifier_ids = new Set<number>([407, 408]);
+const _supertype_importSpecifier_ids = new Set<number>([406, 407]);
 const _supertype_statement_ids = new Set<number>([
-	421, 422, 393, 394, 392, 196, 221, 204, 246, 248, 243, 206, 205, 295, 306, 307, 308, 317, 314, 312, 310, 305, 208,
-	210, 211, 212, 213, 215, 216, 217, 218, 219, 220, 222, 223, 224, 225
+	420, 421, 393, 392, 196, 221, 204, 246, 248, 243, 206, 205, 295, 306, 307, 308, 317, 314, 312, 310, 305, 208, 210,
+	211, 212, 213, 215, 216, 217, 218, 219, 220, 222, 223, 224, 225
 ]);
-const _supertype_variableDeclarator_ids = new Set<number>([428, 429]);
-const _supertype_forHeader_ids = new Set<number>([432, 433, 434]);
-const _supertype_parenthesizedExpression_ids = new Set<number>([409, 410]);
+const _supertype_variableDeclarator_ids = new Set<number>([427, 428]);
+const _supertype_forHeader_ids = new Set<number>([431, 432, 433]);
+const _supertype_parenthesizedExpression_ids = new Set<number>([408, 409]);
 const _supertype_expression_ids = new Set<number>([
-	298, 299, 300, 308, 297, 1, 257, 256, 409, 410, 124, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44,
-	45, 46, 47, 48, 49, 50, 119, 120, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 414, 415, 271, 273, 121, 122,
-	123, 235, 239, 245, 249, 247, 242, 430, 431, 411, 412, 413, 292, 259, 261, 255, 267, 266, 265, 416, 417, 254, 234
+	298, 299, 300, 308, 297, 1, 257, 256, 408, 409, 124, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44,
+	45, 46, 47, 48, 49, 50, 119, 120, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 413, 414, 271, 273, 121, 122,
+	123, 235, 239, 245, 249, 247, 242, 429, 430, 410, 411, 412, 292, 259, 261, 255, 267, 266, 265, 415, 416, 254, 234
 ]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	1, 257, 256, 409, 410, 124, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-	119, 120, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 414, 415, 271, 273, 121, 122, 123, 235, 239, 245,
-	249, 247, 242, 430, 431, 411, 412, 413, 292
+	1, 257, 256, 408, 409, 124, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
+	119, 120, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 413, 414, 271, 273, 121, 122, 123, 235, 239, 245,
+	249, 247, 242, 429, 430, 410, 411, 412, 292
 ]);
-const _supertype_callExpression_ids = new Set<number>([411, 412, 413]);
-const _supertype_updateExpression_ids = new Set<number>([416, 417]);
-const _supertype_string_ids = new Set<number>([414, 415]);
+const _supertype_callExpression_ids = new Set<number>([410, 411, 412]);
+const _supertype_updateExpression_ids = new Set<number>([415, 416]);
+const _supertype_string_ids = new Set<number>([413, 414]);
 const _supertype_comment_ids = new Set<number>([152, 153]);
 const _supertype_number_ids = new Set<number>([154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164]);
-const _supertype_metaProperty_ids = new Set<number>([430, 431]);
+const _supertype_metaProperty_ids = new Set<number>([429, 430]);
 const _supertype_pattern_ids = new Set<number>([258, 284]);
 const _supertype_type_ids = new Set<number>([
-	467, 466, 358, 359, 311, 343, 361, 370, 371, 357, 350, 351, 119, 356, 354, 352, 342, 340, 374, 373, 375, 372, 337,
+	466, 465, 358, 359, 311, 343, 361, 370, 371, 357, 350, 351, 119, 356, 354, 352, 342, 340, 374, 373, 375, 372, 337,
 	341, 327, 328
 ]);
 const _supertype_primaryType_ids = new Set<number>([
-	467, 466, 358, 359, 311, 343, 361, 370, 371, 357, 350, 351, 119, 356, 354, 352, 342, 340, 374, 373
+	466, 465, 358, 359, 311, 343, 361, 370, 371, 357, 350, 351, 119, 356, 354, 352, 342, 340, 374, 373
 ]);
-const _supertype_indexSignature_ids = new Set<number>([402, 403]);
-const _supertype_classBodyMember_ids = new Set<number>([399, 400, 282, 401, 398]);
+const _supertype_indexSignature_ids = new Set<number>([401, 402]);
+const _supertype_classBodyMember_ids = new Set<number>([398, 399, 282, 400, 397]);
 const _supertype_enumBodyElement_ids = new Set<number>([380, 316]);
 const _supertype_layout_ids = new Set<number>([180, 181, 182, 183, 184, 185, 186, 187]);
-const _supertype_exportStatementDefault_ids = new Set<number>([421, 422]);
+const _supertype_exportStatementDefault_ids = new Set<number>([420, 421]);
 const _supertype_numberBigint_ids = new Set<number>([161, 162, 163, 164]);
 
 const _members = new Map<number, ReadonlySet<number>>([
@@ -1354,7 +1346,7 @@ const _members = new Map<number, ReadonlySet<number>>([
 	[378, _supertype_classBodyMember_ids],
 	[381, _supertype_enumBodyElement_ids],
 	[391, _supertype_exportStatementDefault_ids],
-	[396, _supertype_numberBigint_ids]
+	[395, _supertype_numberBigint_ids]
 ]);
 export function isMember(kind: number, type: number): boolean {
 	return _members.get(kind)?.has(type) ?? type === kind;
@@ -1435,7 +1427,7 @@ const _supertype_exportStatementDefault_guard = _vg(_mg(391), {
 	from: _g(TSKindId.ExportStatementDefaultFrom),
 	declaration: _g(TSKindId.ExportStatementDefaultDeclaration)
 });
-const _supertype_numberBigint_guard = _vg(_mg(396), {
+const _supertype_numberBigint_guard = _vg(_mg(395), {
 	hex: _g(TSKindId.NumberBigintHex),
 	binary: _g(TSKindId.NumberBigintBinary),
 	octal: _g(TSKindId.NumberBigintOctal),
@@ -1443,7 +1435,6 @@ const _supertype_numberBigint_guard = _vg(_mg(396), {
 });
 const _supertype_exportStatement_guard = _vg(_mg(189), {
 	default: _supertype_exportStatementDefault_guard,
-	typeExport: _g(TSKindId.ExportStatementTypeExport),
 	equalsExport: _g(TSKindId.ExportStatementEqualsExport),
 	namespaceExport: _g(TSKindId.ExportStatementNamespaceExport)
 });
@@ -1646,7 +1637,6 @@ export const is = Object.freeze({
 	ambientDeclarationModule: _g(TSKindId.AmbientDeclarationModule),
 	objectTypeContent: _g(TSKindId.ObjectTypeContent),
 	exportStatementNamespaceExport: _g(TSKindId.ExportStatementNamespaceExport),
-	exportStatementTypeExport: _g(TSKindId.ExportStatementTypeExport),
 	exportStatementEqualsExport: _g(TSKindId.ExportStatementEqualsExport),
 	commentLine: _g(TSKindId.CommentLine),
 	commentBlock: _g(TSKindId.CommentBlock),

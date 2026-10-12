@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { type CensusModel, formatHoistedCensus, hoistedCensus, hoistedKindCount } from '../../src/census/hoisted.ts';
+import { type CensusModel, formatHoistedCensus, hoistedCensus, kindCount } from '../../src/census/hoisted.ts';
 import { readNodeModelFile } from '../../src/validate/common.ts';
 
 describe('hoistedCensus', () => {
@@ -45,17 +45,14 @@ describe('hoistedCensus', () => {
 	});
 });
 
-describe('hoistedKindCount', () => {
-	it('counts every hoisted kind, lists included', () => {
-		const model: CensusModel = {
-			nodes: [
-				{ kind: 'a', seated: true },
-				{ kind: 'a_items', modelType: 'list', seated: true },
-				{ kind: 'b' }
-			]
+describe('kindCount', () => {
+	it('counts every kind of the model, as an array or as a record', () => {
+		const asArray: CensusModel = {
+			nodes: [{ kind: 'a', seated: true }, { kind: 'a_items', modelType: 'list', seated: true }, { kind: 'b' }]
 		};
-		expect(hoistedKindCount(model)).toBe(2);
-		expect(hoistedCensus(model).hoisted).toEqual(['a']);
+		const asRecord: CensusModel = { nodes: { a: { kind: 'a', seated: true }, a_items: { kind: 'a_items' }, b: { kind: 'b' } } };
+		expect(kindCount(asArray)).toBe(3);
+		expect(kindCount(asRecord)).toBe(3);
 	});
 });
 

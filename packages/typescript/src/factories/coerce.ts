@@ -202,7 +202,6 @@ export const _fromMap = {
 	ambient_declaration_module: coerceToAmbientDeclarationModule,
 	object_type_content: coerceToObjectTypeContent,
 	export_statement_namespace_export: coerceToExportStatementNamespaceExport,
-	export_statement_type_export: coerceToExportStatementTypeExport,
 	export_statement_equals_export: coerceToExportStatementEqualsExport,
 	comment_line: coerceToCommentLine,
 	comment_block: coerceToCommentBlock,
@@ -604,74 +603,73 @@ const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 112, 114, 119, 120, 121, 122, 123, 124,
 	125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147,
 	148, 149, 150, 151, 165, 167, 169, 170, 171, 172, 173, 178, 180, 181, 182, 183, 184, 185, 186, 187, 195, 224, 252,
-	318, 319, 356, 359, 398, 406, 430, 431
+	318, 319, 356, 359, 397, 405, 429, 430
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
-	namespace_export: new Set([1, 414, 415]),
-	export_clause: new Set([1, 192, 376, 414, 415]),
-	import_clause: new Set([1, 199, 200, 377, 407, 408, 420]),
+	namespace_export: new Set([1, 413, 414]),
+	export_clause: new Set([1, 192, 376, 413, 414]),
+	import_clause: new Set([1, 199, 200, 377, 406, 407, 419]),
 	namespace_import: new Set([1]),
-	named_imports: new Set([377, 407, 408]),
+	named_imports: new Set([377, 406, 407]),
 	expression_statement: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 405, 409, 410, 411, 412, 413, 414, 415, 416,
-		417, 430, 431
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 404, 408, 409, 410, 411, 412, 413, 414, 415,
+		416, 429, 430
 	]),
 	else_clause: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
-		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 173, 191, 192, 196, 204, 205, 206, 208, 210, 211, 212,
-		213, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 234, 235, 239, 242, 243, 245, 246, 247, 248, 249, 254,
-		255, 256, 257, 259, 261, 265, 266, 267, 269, 271, 273, 292, 295, 297, 298, 299, 300, 305, 306, 307, 308, 310, 312,
-		314, 317, 376, 388, 389, 392, 393, 394, 405, 409, 410, 411, 412, 413, 414, 415, 416, 417, 421, 422, 423, 424, 425,
-		430, 431, 465
+		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 173, 196, 204, 205, 206, 208, 210, 211, 212, 213, 215,
+		216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 234, 235, 239, 242, 243, 245, 246, 247, 248, 249, 254, 255, 256,
+		257, 259, 261, 265, 266, 267, 269, 271, 273, 292, 295, 297, 298, 299, 300, 305, 306, 307, 308, 310, 312, 314, 317,
+		388, 389, 392, 393, 404, 408, 409, 410, 411, 412, 413, 414, 415, 416, 420, 421, 429, 430, 464
 	]),
-	break_statement: new Set([1, 465]),
-	continue_statement: new Set([1, 465]),
+	break_statement: new Set([1, 464]),
+	continue_statement: new Set([1, 464]),
 	debugger_statement: new Set([173]),
 	return_statement: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 405, 409, 410, 411, 412, 413, 414, 415, 416,
-		417, 430, 431
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 404, 408, 409, 410, 411, 412, 413, 414, 415,
+		416, 429, 430
 	]),
 	throw_statement: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 405, 409, 410, 411, 412, 413, 414, 415, 416,
-		417, 430, 431
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 404, 408, 409, 410, 411, 412, 413, 414, 415,
+		416, 429, 430
 	]),
 	finally_clause: new Set([208]),
 	yield_expression: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 405, 409, 410, 411, 412, 413, 414, 415, 416,
-		417, 430, 431
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 404, 408, 409, 410, 411, 412, 413, 414, 415,
+		416, 429, 430
 	]),
-	class_heritage: new Set([304, 419]),
+	class_heritage: new Set([304, 418]),
 	await_expression: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 405, 409, 410, 411, 412, 413, 414, 415, 416,
-		417, 430, 431
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 404, 408, 409, 410, 411, 412, 413, 414, 415,
+		416, 429, 430
 	]),
 	_lhs_expression: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 236, 239, 240, 242, 245, 247, 249, 254, 255,
-		256, 257, 259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 405, 409, 410, 411, 412, 413, 414,
-		415, 416, 417, 430, 431
+		256, 257, 259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 404, 408, 409, 410, 411, 412, 413,
+		414, 415, 416, 429, 430
 	]),
 	spread_element: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 405, 409, 410, 411, 412, 413, 414, 415, 416,
-		417, 430, 431
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 404, 408, 409, 410, 411, 412, 413, 414, 415,
+		416, 429, 430
 	]),
 	template_substitution: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 405, 409, 410, 411, 412, 413, 414, 415, 416,
-		417, 430, 431
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 404, 408, 409, 410, 411, 412, 413, 414, 415,
+		416, 429, 430
 	]),
 	decorator: new Set([1, 278, 279, 296]),
 	formal_parameters: new Set([320, 321, 379]),
@@ -679,173 +677,172 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	rest_pattern: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 236, 239, 240, 242, 245, 247, 249, 254, 255,
-		256, 257, 259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 405, 409, 410, 411, 412, 413, 414,
-		415, 416, 417, 430, 431
+		256, 257, 259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 404, 408, 409, 410, 411, 412, 413,
+		414, 415, 416, 429, 430
 	]),
 	computed_property_name: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 405, 409, 410, 411, 412, 413, 414, 415, 416,
-		417, 430, 431
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 404, 408, 409, 410, 411, 412, 413, 414, 415,
+		416, 429, 430
 	]),
 	non_null_expression: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 405, 409, 410, 411, 412, 413, 414, 415, 416,
-		417, 430, 431
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 404, 408, 409, 410, 411, 412, 413, 414, 415,
+		416, 429, 430
 	]),
 	decorator_parenthesized_expression: new Set([1, 278, 279]),
 	ambient_declaration: new Set([205, 206, 208, 243, 246, 248, 295, 305, 306, 307, 308, 310, 312, 314, 317, 388, 389]),
 	enum_body: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 118, 119, 120, 121, 122,
 		123, 124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256,
-		257, 259, 261, 265, 266, 267, 269, 271, 273, 289, 292, 297, 298, 299, 300, 308, 316, 380, 382, 405, 409, 410, 411,
-		412, 413, 414, 415, 416, 417, 430, 431, 462
+		257, 259, 261, 265, 266, 267, 269, 271, 273, 289, 292, 297, 298, 299, 300, 308, 316, 380, 382, 404, 408, 409, 410,
+		411, 412, 413, 414, 415, 416, 429, 430, 461
 	]),
 	omitting_type_annotation: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 394, 413, 414, 466
 	]),
 	adding_type_annotation: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 394, 413, 414, 466
 	]),
 	opting_type_annotation: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 394, 413, 414, 466
 	]),
 	type_annotation: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 394, 413, 414, 466
 	]),
 	asserts: new Set([1, 119, 344]),
 	asserts_annotation: new Set([1, 119, 329, 344]),
 	optional_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 394, 413, 414, 466
 	]),
 	rest_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 394, 413, 414, 466
 	]),
 	template_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 394, 413, 414, 466
 	]),
 	type_predicate_annotation: new Set([344]),
 	type_query: new Set([1, 119, 346, 347, 348, 349]),
 	index_type_query: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 394, 413, 414, 466
 	]),
-	literal_type: new Set([121, 122, 123, 124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 395, 414, 415]),
+	literal_type: new Set([121, 122, 123, 124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 394, 413, 414]),
 	flow_maybe_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 394, 413, 414, 466
 	]),
 	parenthesized_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 394, 413, 414, 466
 	]),
 	type_arguments: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 383, 385, 395, 414, 415, 467
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 383, 385, 394, 413, 414, 466
 	]),
-	type_parameters: new Set([1, 365, 384, 467]),
+	type_parameters: new Set([1, 365, 384, 466]),
 	default_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 394, 413, 414, 466
 	]),
 	array_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 394, 413, 414, 466
 	]),
 	tuple_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 394, 413, 414, 466
 	]),
 	readonly_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 394, 413, 414, 466
 	]),
-	export_specifiers: new Set([1, 192, 414, 415]),
-	import_specifiers: new Set([407, 408]),
+	export_specifiers: new Set([1, 192, 413, 414]),
+	import_specifiers: new Set([406, 407]),
 	formal_parameters_elements: new Set([320, 321]),
 	enum_body_element_name: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 118, 119, 120, 121, 122,
 		123, 124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256,
-		257, 259, 261, 265, 266, 267, 269, 271, 273, 289, 292, 297, 298, 299, 300, 308, 405, 409, 410, 411, 412, 413, 414,
-		415, 416, 417, 430, 431, 462
+		257, 259, 261, 265, 266, 267, 269, 271, 273, 289, 292, 297, 298, 299, 300, 308, 404, 408, 409, 410, 411, 412, 413,
+		414, 415, 416, 429, 430, 461
 	]),
 	enum_body_elements: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 118, 119, 120, 121, 122,
 		123, 124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256,
-		257, 259, 261, 265, 266, 267, 269, 271, 273, 289, 292, 297, 298, 299, 300, 308, 316, 380, 405, 409, 410, 411, 412,
-		413, 414, 415, 416, 417, 430, 431, 462
+		257, 259, 261, 265, 266, 267, 269, 271, 273, 289, 292, 297, 298, 299, 300, 308, 316, 380, 404, 408, 409, 410, 411,
+		412, 413, 414, 415, 416, 429, 430, 461
 	]),
 	types: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 394, 413, 414, 466
 	]),
-	type_parameters_elements: new Set([1, 365, 467]),
+	type_parameters_elements: new Set([1, 365, 466]),
 	tuple_type_members: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 395, 414, 415, 467
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 385, 394, 413, 414, 466
 	]),
-	import_clause_group: new Set([1, 199, 200, 377, 407, 408]),
+	import_clause_group: new Set([1, 199, 200, 377, 406, 407]),
 	ambient_declaration_global: new Set([208]),
 	object_type_content: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
-		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 191, 192, 234, 235, 239, 242, 245, 247, 249, 254, 255,
-		256, 257, 259, 261, 265, 266, 267, 269, 271, 273, 292, 293, 297, 298, 299, 300, 308, 362, 363, 368, 376, 392, 393,
-		394, 402, 403, 405, 409, 410, 411, 412, 413, 414, 415, 416, 417, 421, 422, 423, 424, 425, 430, 431
+		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 293, 297, 298, 299, 300, 308, 362, 363, 368, 392, 393, 401, 402, 404,
+		408, 409, 410, 411, 412, 413, 414, 415, 416, 420, 421, 429, 430
 	]),
 	export_statement_namespace_export: new Set([1]),
 	export_statement_equals_export: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 405, 409, 410, 411, 412, 413, 414, 415, 416,
-		417, 430, 431
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 404, 408, 409, 410, 411, 412, 413, 414, 415,
+		416, 429, 430
 	]),
-	class_body_member_declaration: new Set([290, 293, 294, 402, 403]),
+	class_body_member_declaration: new Set([290, 293, 294, 401, 402]),
 	yield_expression_delegate: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 405, 409, 410, 411, 412, 413, 414, 415, 416,
-		417, 430, 431
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 404, 408, 409, 410, 411, 412, 413, 414, 415,
+		416, 429, 430
 	]),
 	parenthesized_expression_sequence: new Set([269]),
 	arrow_function_parameter: new Set([1]),
-	export_statement_default_from: new Set([1, 191, 192, 376, 414, 415, 423, 424, 425]),
-	export_statement_default_from_star_from: new Set([414, 415]),
+	export_statement_default_from_star_from: new Set([413, 414]),
 	export_statement_default_declaration_default_kw: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 205, 206, 208, 234, 235, 239, 242, 243, 245, 246, 247,
 		248, 249, 254, 255, 256, 257, 259, 261, 265, 266, 267, 269, 271, 273, 292, 295, 297, 298, 299, 300, 305, 306, 307,
-		308, 310, 312, 314, 317, 388, 389, 405, 409, 410, 411, 412, 413, 414, 415, 416, 417, 427, 430, 431
+		308, 310, 312, 314, 317, 388, 389, 404, 408, 409, 410, 411, 412, 413, 414, 415, 416, 426, 429, 430
 	]),
 	export_statement_default_declaration_default_kw_value: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 405, 409, 410, 411, 412, 413, 414, 415, 416,
-		417, 430, 431
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 404, 408, 409, 410, 411, 412, 413, 414, 415,
+		416, 429, 430
 	]),
 	statement_identifier: new Set([1]),
 	shorthand_property_identifier: new Set([1]),
@@ -1111,7 +1108,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	string_double: TSKindId.StringDouble,
 	string_single: TSKindId.StringSingle,
 	arrow_function_parameter: TSKindId.ArrowFunctionParameter,
-	export_statement_default_from: TSKindId.ExportStatementDefaultFrom,
 	export_statement_default_from_star_from: TSKindId.ExportStatementDefaultFromStarFrom,
 	export_statement_default_declaration_default_kw: TSKindId.ExportStatementDefaultDeclarationDefaultKw,
 	export_statement_default_declaration_default_kw_value: TSKindId.ExportStatementDefaultDeclarationDefaultKwValue,
@@ -1242,7 +1238,6 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'yield_expression_delegate',
 	'parenthesized_expression_sequence',
 	'arrow_function_parameter',
-	'export_statement_default_from',
 	'export_statement_default_from_star_from',
 	'export_statement_default_declaration_default_kw',
 	'export_statement_default_declaration_default_kw_value',
@@ -1444,8 +1439,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (coerceToStringSingle as (...args: unknown[]) => unknown)(...children);
 		case 'arrow_function_parameter':
 			return F.buildArrowFunctionParameter(children[0] as Parameters<typeof F.buildArrowFunctionParameter>[0]);
-		case 'export_statement_default_from':
-			return F.buildExportStatementDefaultFrom(children[0] as Parameters<typeof F.buildExportStatementDefaultFrom>[0]);
 		case 'export_statement_default_from_star_from':
 			return F.buildExportStatementDefaultFromStarFrom(
 				children[0] as Parameters<typeof F.buildExportStatementDefaultFromStarFrom>[0]
@@ -1598,7 +1591,6 @@ const _K0: readonly string[] = ['empty_statement'];
 const _K1: readonly string[] = [
 	'export_statement_default_from',
 	'export_statement_default_declaration',
-	'export_statement_type_export',
 	'export_statement_equals_export',
 	'export_statement_namespace_export',
 	'import_statement',
@@ -2406,7 +2398,6 @@ const _K65: readonly string[] = ['namespace_import', 'named_imports'];
 const _K66: readonly string[] = [
 	'export_statement_default_from',
 	'export_statement_default_declaration',
-	'export_statement_type_export',
 	'export_statement_equals_export',
 	'export_statement_namespace_export',
 	'property_signature',
@@ -2568,8 +2559,7 @@ const _K74: readonly string[] = ['unescaped_single_string_fragment'];
 const _K75: readonly string[] = [
 	'export_statement_default_from_star_from',
 	'export_statement_default_from_ns_from',
-	'export_statement_default_from_clause_from',
-	'export_clause'
+	'export_statement_default_from_clause_from'
 ];
 const _K76: readonly string[] = [
 	'function_declaration',
@@ -10169,7 +10159,6 @@ export function coerceToObjectTypeContent(
 			[
 				'export_statement_default_from',
 				'export_statement_default_declaration',
-				'export_statement_type_export',
 				'export_statement_equals_export',
 				'export_statement_namespace_export',
 				'property_signature',
@@ -10213,33 +10202,6 @@ export function coerceToExportStatementNamespaceExport(
 				'identifier'
 			)
 		),
-		options
-	);
-}
-
-export function resolveExportStatementTypeExport_exportClause(
-	value: T.ExportStatementTypeExport.LooseConfig['exportClause'] | undefined
-): Admit<T.ExportStatementTypeExport['_export_clause']> {
-	return _resolveOneBranch<T.ExportClause>(value, 'export_clause');
-}
-
-export function resolveExportStatementTypeExport_source(
-	value: T.ExportStatementTypeExport.LooseConfig['source']
-): Admit<T.ExportStatementTypeExport['_source']> {
-	return _resolveOne<T.String>(value, _K2, _super_string, 'string_double');
-}
-
-export function coerceToExportStatementTypeExport(
-	input?: T.ExportStatementTypeExport.Loose,
-	options?: T.ExportStatementTypeExport.Options
-): ReturnType<typeof F.buildExportStatementTypeExport> {
-	if (!_isLooseConfig<T.ExportStatementTypeExport.LooseConfig | undefined>(input))
-		return input as unknown as ReturnType<typeof F.buildExportStatementTypeExport>;
-	return F.buildExportStatementTypeExport(
-		{
-			exportClause: resolveExportStatementTypeExport_exportClause(input?.exportClause) ?? F.buildExportClause(),
-			source: resolveExportStatementTypeExport_source(input?.source)
-		},
 		options
 	);
 }
@@ -11747,14 +11709,17 @@ export function coerceToImportClauseDefaultImport(
 	});
 }
 
+export function resolveExportStatementDefaultFrom_type(
+	value: T.ExportStatementDefaultFrom.LooseConfig['type']
+): Admit<T.ExportStatementDefaultFrom['_type']> {
+	return _resolveBooleanKeyword(value);
+}
+
 export function resolveExportStatementDefaultFrom_content(
 	value: T.ExportStatementDefaultFrom.LooseConfig['content']
 ): Admit<T.ExportStatementDefaultFrom['_content']> {
 	return _resolveOne<
-		| T.ExportStatementDefaultFromStarFrom
-		| T.ExportStatementDefaultFromNsFrom
-		| T.ExportStatementDefaultFromClauseFrom
-		| T.ExportClause
+		T.ExportStatementDefaultFromStarFrom | T.ExportStatementDefaultFromNsFrom | T.ExportStatementDefaultFromClauseFrom
 	>(value, _K2, _K75);
 }
 
@@ -11762,23 +11727,17 @@ export function coerceToExportStatementDefaultFrom(
 	input: T.ExportStatementDefaultFrom.Loose,
 	options?: T.ExportStatementDefaultFrom.Options
 ): ReturnType<typeof F.buildExportStatementDefaultFrom> {
-	if (isNodeOfKind(input, TSKindId.ExportStatementDefaultFrom))
+	if (!_isLooseConfig<T.ExportStatementDefaultFrom.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildExportStatementDefaultFrom>;
 	return F.buildExportStatementDefaultFrom(
-		_requireField(
-			'export_statement_default_from',
-			'content',
-			_resolveOne<
-				| T.ExportStatementDefaultFromStarFrom
-				| T.ExportStatementDefaultFromNsFrom
-				| T.ExportStatementDefaultFromClauseFrom
-				| T.ExportClause
-			>(
-				configFieldOr(input, 'content', () => input),
-				_K2,
-				_K75
+		{
+			type: resolveExportStatementDefaultFrom_type(input.type),
+			content: _requireField(
+				'export_statement_default_from',
+				'content',
+				resolveExportStatementDefaultFrom_content(input.content)
 			)
-		),
+		},
 		options
 	);
 }
@@ -11867,7 +11826,7 @@ export function coerceToExportStatementDefaultFromNsFrom(
 }
 
 export function resolveExportStatementDefaultFromClauseFrom_exportClause(
-	value: T.ExportStatementDefaultFromClauseFrom.LooseConfig['exportClause']
+	value: T.ExportStatementDefaultFromClauseFrom.LooseConfig['exportClause'] | undefined
 ): Admit<T.ExportStatementDefaultFromClauseFrom['_export_clause']> {
 	return _resolveOneBranch<T.ExportClause>(value, 'export_clause');
 }
@@ -11879,17 +11838,14 @@ export function resolveExportStatementDefaultFromClauseFrom_source(
 }
 
 export function coerceToExportStatementDefaultFromClauseFrom(
-	input: T.ExportStatementDefaultFromClauseFrom.Loose
+	input?: T.ExportStatementDefaultFromClauseFrom.Loose
 ): ReturnType<typeof F.buildExportStatementDefaultFromClauseFrom> {
-	if (!_isLooseConfig<T.ExportStatementDefaultFromClauseFrom.LooseConfig>(input))
+	if (!_isLooseConfig<T.ExportStatementDefaultFromClauseFrom.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildExportStatementDefaultFromClauseFrom>;
 	return F.buildExportStatementDefaultFromClauseFrom({
-		exportClause: resolveExportStatementDefaultFromClauseFrom_exportClause(input.exportClause) ?? F.buildExportClause(),
-		source: _requireField(
-			'export_statement_default_from_clause_from',
-			'source',
-			resolveExportStatementDefaultFromClauseFrom_source(input.source)
-		)
+		exportClause:
+			resolveExportStatementDefaultFromClauseFrom_exportClause(input?.exportClause) ?? F.buildExportClause(),
+		source: resolveExportStatementDefaultFromClauseFrom_source(input?.source)
 	});
 }
 

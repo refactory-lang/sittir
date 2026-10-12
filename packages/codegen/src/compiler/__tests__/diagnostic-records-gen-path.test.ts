@@ -15,8 +15,8 @@ const compilationOf = (grammar: string): Promise<Compilation> => {
 describe('diagnostic records on the gen path', () => {
 	it('a patch through a lift renamed by a variant hoist claims the lift-owned key', async () => {
 		const { diagnosticRecords } = await compilationOf('typescript');
-		const key = diagnosticRecords.find((r) => r.ownerKind === 'export_statement_arm5' && r.resolved);
-		expect(key?.resolvedBy?.by).toContainEqual(expect.objectContaining({ patch: expect.objectContaining({ ownerKind: 'export_statement' }) }));
+		const key = diagnosticRecords.find((r) => r.ownerKind === 'class_body_member_arm2' && r.code === 'content-collision' && r.resolved);
+		expect(key?.resolvedBy?.by).toContainEqual(expect.objectContaining({ patch: expect.objectContaining({ ownerKind: 'class_body' }) }));
 	}, 180_000);
 
 	it('the comparison_operator field patches resolve its nested-seq shape in wire', async () => {

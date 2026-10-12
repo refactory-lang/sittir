@@ -296,7 +296,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * the very fields that make it that variant.
  *
  * hasBlocking() keys on severity === 'fail' — NOT on canProceed — so the
- * gate remains inert until PR-L (when real diagnostics start emitting 'fail').
+ * gate stays inert while no diagnostic emits 'fail'.
  */
 ```
 
@@ -338,7 +338,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /**
 	 * Mint-time parser id of `parseKind`. When present, bucket identity
 	 * is the id, not the name — same-spelled parse kinds with different
-	 * parser symbols (#129 class) land in different buckets. Absent for
+	 * parser symbols (an anonymous token and a same-spelled named rule)
+	 * land in different buckets. Absent for
 	 * id-less pipelines (enrich runs pre-parser).
 	 */
 ```
@@ -485,10 +486,9 @@ Where a variant label came from: `'enrich'` (automatic) or `'override'` (authore
  * - `id` is the existing identity tag.
  * - `fieldName` / `multiplicity` / `nonterminal` / `separator` are modifier
  *   attributes populated by enrich passes when a rule was originally wrapped
- *   by `field` / `optional` / `repeat` / `repeat1`. The wrapper continues
- *   to exist until PR3; these attributes are additive and let downstream
- *   consumers (the new template emitter, future consumers) read modifier
- *   facts directly from the inner rule.
+ *   by `field` / `optional` / `repeat` / `repeat1`. They let downstream
+ *   consumers (the template emitter among them) read modifier facts
+ *   directly from the inner rule.
  *
  * Vocabulary matches NodeOrTerminal (node-map.ts:117, 144) so values that
  * flow from rules to slots use identical field names. See
@@ -604,8 +604,7 @@ every phase from link on; both are set by the token-interior pass, not by the DS
 
 ```text
 /**
-	 * Inert, OPAQUE provenance bag (debt PR-P1: `RuleMetadata` replaces the
-	 * former structurally-typed `{ source?; inlinedFrom? }` shape). NEVER
+	 * Inert, OPAQUE provenance bag (`RuleMetadata`). NEVER
 	 * drives compiler behavior beyond path-descent lookup keying
 	 * (`feedback_metadata_not_behavior`): structural facts decide
 	 * folding/slotting. The real shape (`source` / `inlinedFrom` / the
@@ -623,8 +622,7 @@ every phase from link on; both are set by the token-interior pass, not by the DS
 
 ```text
 /**
-	 * Declared structural flag (debt PR-0c / doctrine decision 3's corollary):
-	 * true when this `seq` is a hidden group's body SPLICED directly into a
+	 * Declared structural flag: true when this `seq` is a hidden group's body SPLICED directly into a
 	 * parent at what used to be an opaque `symbol(_x)` ref position
 	 * (`compiler/normalize.ts`'s `materializeInlinedBody`, the fold-inline
 	 * pass). Not provenance — it names a present-tense fact about the tree
@@ -775,8 +773,8 @@ every phase from link on; both are set by the token-interior pass, not by the DS
 
 ```text
 /**
- * A Rule shape produced by `computeSimplifiedRules` after PR2 wires
- * `canonicalizeSeqOfLeaves` and `assertUniversalShape` into the pipeline.
+ * A Rule shape produced by `computeSimplifiedRules`, after
+ * `canonicalizeSeqOfLeaves` and `assertUniversalShape` have run.
  *
  * Structurally a `RenderRule` (wrappers already pushed-down to leaf
  * attributes), additionally satisfying the universal seq-of-leaves
@@ -856,15 +854,10 @@ every phase from link on; both are set by the token-interior pass, not by the DS
 
 ```text
 /**
- * (debt PR-P1, item 2) The former top-level `source?: 'grammar' | 'override' |
- * 'enriched' | 'inferred'` field is DELETED. The fact relocated into
- * `RuleBase.metadata` as `fieldSource` (`dsl/rule-metadata.ts`'s
- * `RuleMetadataShape.fieldSource`) — write via `makeRuleMetadata`, read via
- * `readRuleMetadata` (dsl/enrich/wire/diagnostics only). The `'inferred'` arm
- * was dropped entirely: confirmed zero production writer
- * (lingering-debt-inventory-research.md §2.6) — only `compiler/collect-slots.ts`
- * wrote it, and that was the unrelated SLOT-level `AssembledNonterminal.source`,
- * not this field.
+ * Where a field came from is provenance, so it lives in `RuleBase.metadata`
+ * as `fieldSource` (`dsl/rule-metadata.ts`'s `RuleMetadataShape.fieldSource`),
+ * not on this type — write via `makeRuleMetadata`, read via `readRuleMetadata`
+ * (dsl/enrich/wire/diagnostics only).
  */
 ```
 
@@ -928,16 +921,13 @@ every phase from link on; both are set by the token-interior pass, not by the DS
 
 ```text
 /**
- * (debt PR-P1, item 3) `source` moved off this type into `metadata.source`
- * (`dsl/rule-metadata.ts`). Audited: no downstream consumer (assemble.ts,
- * emitters) reads `SupertypeRule.source` as a structural discriminant — the
- * only prior reader was link.ts's own stamp-then-reread
- * (`classifyAndLogHiddenRules`), converted to return-value dataflow (see
- * `classifyHiddenChoiceRule`'s new return shape). Unlike
+ * A supertype's provenance lives in `metadata.source` (`dsl/rule-metadata.ts`),
+ * not on this type: no consumer reads it as a structural discriminant, and
+ * link.ts's classifier returns its classification as a value
+ * (`classifyHiddenChoiceRule`) rather than stamping it here. Unlike
  * `PolymorphVariantDescriptor.definedBy` (polymorph-variant.ts — a genuine
- * structural discriminant of a tagged union, renamed from `source` per
- * decision 7 cleanup b), this was pure carried provenance with no
- * structural role.
+ * structural discriminant of a tagged union), it is carried provenance with
+ * no structural role.
  */
 ```
 
@@ -1045,14 +1035,13 @@ grammars' regenerated `wrap.ts` byte-for-byte against pre-refactor HEAD.
 
 ```text
 /**
- * (debt PR-P1, item 2) The former top-level `source?: 'grammar' | 'link' |
- * 'group-lift'` field is DELETED. The fact relocated into `RuleBase.metadata`
- * as `symbolSource` (`dsl/rule-metadata.ts`'s `RuleMetadataShape.symbolSource`).
- * The one behavior-driving reader (`emitters/templates.ts`'s `emitSymbol` /
- * `assertSlotPreservation`, keying on `'link'` to inline a literal instead of
- * emitting a slot reference) now reads the STRUCTURAL `literal` field
- * (present iff link synthesized the ref from a string token) instead —
- * see templates.ts.
+ * Where a symbol ref came from is provenance, so it lives in
+ * `RuleBase.metadata` as `symbolSource` (`dsl/rule-metadata.ts`'s
+ * `RuleMetadataShape.symbolSource`), not on this type. A reader that must
+ * inline a literal instead of emitting a slot reference
+ * (`emitters/templates.ts`'s `emitSymbol` / `assertSlotPreservation`) reads
+ * the STRUCTURAL `literal` field (present iff link synthesized the ref from a
+ * string token).
  */
 ```
 
@@ -1091,9 +1080,8 @@ grammars' regenerated `wrap.ts` byte-for-byte against pre-refactor HEAD.
 ### `packages/codegen/src/types/runtime-shapes.ts::metadata`
 
 ```text
-/** Opaque (debt PR-P1): the former `source?: string` provenance tag is
-	 *  gone — `dsl/primitives/field.ts` now stamps `metadata.fieldSource`
-	 *  instead (via `dsl/rule-metadata.ts`'s `makeRuleMetadata`). Untyped
+/** Opaque: `dsl/primitives/field.ts` stamps a field's provenance as
+	 *  `metadata.fieldSource` (via `dsl/rule-metadata.ts`'s `makeRuleMetadata`). Untyped
 	 *  here since `types/` cannot import the opaque brand's dsl-owned
 	 *  constructor; writers cast through `unknown`. */
 ```
@@ -1299,9 +1287,7 @@ narrowing guard.
  *
  * Each constant is exactly its tag value (`SEQ === 'SEQ'`). The `Rule`
  * union in `rule.ts` derives its `type` fields from these via `typeof SEQ`.
- * (UPPERCASE since debt PR-U — sittir's IR adopted tree-sitter's discriminant
- * case; see `docs/superpowers/specs/2026-07-02-rule-type-model-ssot-research.md`
- * DECISIONS item 2.)
+ * (UPPERCASE: sittir's IR uses tree-sitter's discriminant case.)
  *
  * DEPRECATED: this const-string layer violates `AGENTS.md` §"Rule type
  * discrimination" — the `Rule` union is meant to be the single source of truth,
@@ -1325,7 +1311,7 @@ narrowing guard.
  *
  * Layering note (debt): `types/` cannot import from `dsl/` (dsl → types ←
  * compiler is the acyclic dependency shape; see docs/compiler-phase-glossary.md
- * "Rule IR" §R11). But `RuleBase.metadata` (types/rule.ts) needs a TYPE here so
+ * "Rule IR"). But `RuleBase.metadata` (types/rule.ts) needs a TYPE here so
  * every phase-gated Rule shape can carry it, while the real provenance shape and
  * its construct/read accessors must live in `dsl/rule-metadata.ts` (only dsl-side
  * code — enrich, wire, diagnostics — is a sanctioned reader of the real shape).

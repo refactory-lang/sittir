@@ -1226,10 +1226,9 @@ The grammar's `GrammarTypeMap`: `namespaces` is its `NamespaceMap`, `empty` pair
 #### body
 
 ```text
-// `kindIdFromName` was a runtime kind-id resolver from before PR-K3d baked
-// kind ids into generated from.ts statically (`kindIdExpr: TSKindId.<member>`
-// above) — no call site references it anymore, so importing it here is
-// dead weight that trips no-unused-vars.
+// Kind ids are baked into generated from.ts statically (`kindIdExpr:
+// TSKindId.<member>` above), so no call site needs the runtime
+// `kindIdFromName` resolver, and importing it would trip no-unused-vars.
 // `DELIMITER_IMPORT` is emitted unconditionally and PRUNED in finalize() when
 // the body never references `Delimiter` — whether any coercer carries a
 // delimiter guard depends on per-kind emission decisions made after this
@@ -1770,18 +1769,13 @@ A builder with leading options is called through an untyped view with the option
  * shape), with ONE deliberate difference in the call expression: the
  * resolved elements are passed to the factory as the `elements` ARRAY
  * argument directly (`factory(children as Parameters<typeof factory>[0])`),
- * never spread and never indexed — factories.ts's Task 6 signature is
- * `factory(elements: T[] | NonEmptyArray<T>, options?: {...})`, not the old
- * `factory(...children: T[])` `emitRepeatedChildrenFrom` assumes. Before
- * this function existed, `classifyChildFactorySurface`'s stub-based
- * 'spread'/'direct' classification routed `'list'` kinds through the SAME
- * spread/index call shape `emitRepeatedChildrenFrom` still uses for real
- * container-shape branches — which silently bound `children[0]` to
- * `elements` and `children[1]` to `options` instead of the whole array once
- * the Task 6 factory signature landed (found in spec-compliance review of
- * that change, confirmed via code reading: `_assertNonEmpty` is a no-op
- * outside `SITTIR_DEBUG`, so the mis-binding compiled and ran silently
- * rather than throwing).
+ * never spread and never indexed — a list factory's signature is
+ * `factory(elements: T[] | NonEmptyArray<T>, options?: {...})`, not the
+ * `factory(...children: T[])` `emitRepeatedChildrenFrom` assumes. The
+ * spread/index call shape `emitRepeatedChildrenFrom` uses for real
+ * container-shape branches would bind `children[0]` to `elements` and
+ * `children[1]` to `options` instead of the whole array, and nothing would
+ * throw: `_assertNonEmpty` is a no-op outside `SITTIR_DEBUG`.
  *
  * Deliberately NOT `as unknown as Parameters<...>` (the cast pattern that
  * let the original bug hide from tsgo undetected) — empirically confirmed
@@ -1975,7 +1969,7 @@ The supertype expansion `from.ts` documents under the same name, shared so the f
 // dispatch, but they are still VALID union members: report
 // them so the single-kind fast path can pass an already-built
 // token UntypedNode through instead of auto-wrapping it into the
-// primary branch's container (#128).
+// primary branch's container.
 ```
 
 #### body
@@ -2018,8 +2012,8 @@ The supertype expansion `from.ts` documents under the same name, shared so the f
 // mod_item.content's `';' | DeclarationList`): pass the token kinds'
 // discriminants so the resolver recognizes an already-valid
 // alternate-branch UntypedNode instead of auto-wrapping it into the
-// primary container (#128). Leaf resolvers never wrap, so they need
-// no alternate list. PR-K3d: the discriminants are baked at codegen
+// primary container. Leaf resolvers never wrap, so they need no
+// alternate list. The discriminants are baked at codegen
 // (`altKindDiscriminants`) — no runtime `kindIdFromName` re-resolution.
 ```
 
@@ -2082,11 +2076,11 @@ A single branch kind at an optional slot resolves through `_resolveOneBranch(val
 ```
 
 ```text
-// kindEnumTextMapExpr: shared with factories.ts (imported above) — from.ts
-// previously carried a duplicate that emitted runtime `kindIdFromName(text)`
-// lookups, resolving literal texts through the name-polymorphic runtime
-// switch (rust `'block'` → the named block RULE's id instead of the
-// anon_sym_block token's) — the runtime face of the #129 shadowing class.
+// kindEnumTextMapExpr: shared with factories.ts (imported above). Runtime
+// `kindIdFromName(text)` lookups would resolve literal texts through the
+// name-polymorphic runtime switch (rust `'block'` → the named block RULE's
+// id instead of the anon_sym_block token's): an anonymous token shadows a
+// same-spelled named rule, so literal texts resolve at codegen, anon first.
 ```
 
 #### body
@@ -2719,11 +2713,11 @@ A row's member is named from its model kind (`modelKindOfEntry`, so a renamed ro
  * `'+'`) to its catalog entry. The anon-scoped symbolName match runs FIRST:
  * the caller holds a literal, so the anonymous token (`anon_sym_*`,
  * tree-sitter `named: false`) is the correct identity even when a NAMED
- * rule shares the same spelling (#129: python's `'type'` keyword literal
- * was resolved through {@link findKindEntry}, whose exact-catalog-key step
- * matched the `type` RULE first — the factory then stamped the rule's kind
- * id where the transport expects the anon token's, failing every
- * `ir.typeAliasStatement` render with "Missing field `_content`").
+ * rule shares the same spelling: python's `'type'` keyword literal resolved
+ * through {@link findKindEntry}, whose exact-catalog-key step matches the
+ * `type` RULE first, would stamp the rule's kind id where the transport
+ * expects the anon token's, and every `ir.typeAliasStatement` render would
+ * fail with "Missing field `_content`".
  *
  * Falls back to {@link findKindEntry} for literals with no anonymous twin —
  * tree-sitter compiles some keyword literals to named terminal symbols
@@ -2927,9 +2921,9 @@ Surface`
  * Classify a slot for emit purposes — same as `classifySlot` but also:
  * - resolves `concrete` using the assembled typeName (PascalCase)
  * - downgrades `concrete` to `heterogeneous` when the single kind maps to a
- *   multi node (no transport struct) or polymorph (no ToNapiValue in Phase 1)
+ *   multi node (no transport struct) or polymorph (no ToNapiValue)
  * - classifies multi-kind slots as `supertype` when they match an assembled
- *   supertype's subtypes (Phase 2)
+ *   supertype's subtypes
  *
  * @param kinds - the kind set for this slot
  * @param nodeMap - for modelType lookup + supertype map construction
@@ -3346,7 +3340,7 @@ as variants.
  * construction-time literal-chain stamps (`resolvedByText`), NOT the member
  * kind NAMES re-resolved through `buildKindIdByKind`. That map is last-wins
  * across catalog entries whose `kind` text collides (anon-token text ==
- * named-rule name, the #129 class), while the TS side emits the stamped
+ * named-rule name), while the TS side emits the stamped
  * anon ids on the wire (`kindEnumTextMapExpr`) — dispatch arms must accept
  * the same ids the sender bakes.
  */
@@ -4245,7 +4239,7 @@ machines.
  * multiple possible values, or the referenced kind is not a single-
  * literal terminal.
  *
- * @remarks Phase 1: omit auto-stamp-eligible fields from Config input and
+ * @remarks Omit auto-stamp-eligible fields from Config input and
  * stamp the constant directly in factory output. The field stays in the
  * `$fields` block of the concrete TypeScript interface so UntypedNode output
  * shape is unchanged and round-trips with readUntypedNode remain identical.
@@ -4423,7 +4417,9 @@ the literal component, for `literalSeamsOf`.
  *   a structural kind) disqualifies, as does mixed or required-single
  *   multiplicity.
  *
- * @see ADR-0012 for the motivation and the three-row taxonomy.
+ * Keyword presence is a boolean (is this keyword present?) or a set (which
+ * of these keywords are present?) that the grammar models as node-producing
+ * fields; the rows above give each its own type.
  */
 ```
 
@@ -5492,9 +5488,9 @@ order regardless of how the printer orders its expression evaluation.
 #### body
 
 ```text
-// PR2 Task 3.B3: field wrappers no longer appear in RenderRule. Check
-// the leaf-level fieldName attribute instead (pushed down from FieldRule
-// by the enrich / push-down pass).
+// Field wrappers do not appear in RenderRule: check the leaf-level
+// fieldName attribute (pushed down from FieldRule by the enrich /
+// push-down pass).
 ```
 
 #### body
@@ -5518,7 +5514,6 @@ order regardless of how the printer orders its expression evaluation.
 // has already pushed their facts (fieldName / aliasedTo+aliasedToId) onto
 // leaf attributes or unwrapped them to content, so those cases are
 // unreachable here and are not switch arms.
-// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from RenderRule union.
 ```
 
 #### body
@@ -5629,34 +5624,17 @@ mark instead of referencing the slot.
 #### body
 
 ```text
-// Unnamed slots ARE checked (union-slot design PR 1, tightening the
-// KNOWN_ISSUES fallback-B gate hole): a REQUIRED positional slot whose
+// Unnamed slots ARE checked: a REQUIRED positional slot whose
 // name and kinds never appear in the body is a dropped choice arm, and
 // must fail loudly at emit. The former blanket `isUnnamed` skip cited
 // `_semicolon`-style literal slots (terminal-only → still skipped
 // above), and hidden-helper choice arms (cross-arm relaxed to optional
 // → still skipped below); both documented false-positive classes
 // remain covered by the structural skips.
-// (debt PR-P1, item 4) REMOVED a former provenance-reading skip here:
-// `(slot.source as string) === 'link' || 'group-lift'`. Per the
-// doctrine, a compiler decision may not key on rule/slot provenance —
-// this had to become either a structural check or a proven-redundant
-// deletion. Verified EMPIRICALLY (not just by static reasoning) before
-// deleting: generated `node-model.json5` for all three grammars at the
-// pre-PR-P1 baseline (rust/typescript/python) has exactly ONE slot
-// anywhere with `source: 'link'` or `'group-lift'` — typescript's
-// `binary_expression.operator` (the exact case this comment used to
-// cite) — and its `values[]` are ALL terminals (zero node-refs), i.e.
-// `kindsOf(slot).length === 0`, which is ALREADY skipped by the check
-// directly above. So the condition never once changed this function's
-// outcome on any of the three grammars: it is provably redundant, not
-// merely theoretically so. Deleting it is a genuine dead-condition
-// removal — there is no structural fact to convert it to because it
-// never selected anything the prior check hadn't already excluded.
-// (Root cause: link-synthesized operator literals become terminal
-// `.value` entries with no node-ref, per `deriveValuesForRule`'s
-// SYMBOL case in node-map.ts — `kindsOf` is the exact structural
-// signal this check was informally approximating via provenance.)
+// A slot whose values are all terminals (link-synthesized operator
+// literals, such as typescript's `binary_expression.operator`) has
+// `kindsOf(slot).length === 0` and is skipped by the check directly
+// above: a compiler decision never keys on rule/slot provenance.
 // Skip slots where no value is required (all are optional/array). These
 // arise from `mergeChoiceArmSlots` cross-arm relaxation: a slot present
 // in only some choice arms gets its values' multiplicities relaxed from
@@ -6347,10 +6325,9 @@ nodes and names the variants; `slotElementKinds` reads the kinds alone.
  * emitter to inline every field and child union directly.
  *
  * @remarks
- * Spec 008 US4 / FR-007 mandates always inlining field/child unions. The
- * prior `_union_<name>` alias dedup pass saved only ~6 aliases per grammar
- * and emitted ugly auto-generated names. Inlining removes the naming problem
- * entirely and makes each field type self-describing.
+ * Field and child unions are always inlined: an alias per union would need
+ * an auto-generated name, and inlining makes each field type
+ * self-describing.
  *
  * @returns A `LookupUnion` function that unconditionally returns `undefined`.
  */
@@ -6376,7 +6353,7 @@ nodes and names the variants; `slotElementKinds` reads the kinds alone.
  * kinds alias `Terminal<kind, string>`, the one shared leaf-node shape
  * from `@sittir/types`.
  *
- * T073: a terminal is skipped when ALL of the following are true:
+ * A terminal is skipped when ALL of the following are true:
  * - It has no factory binding (`rawFactoryName` is absent) — downstream
  *   `factories.ts` would not import the type.
  * - It does not appear in any structural field/child content union.
@@ -6476,8 +6453,7 @@ nodes and names the variants; `slotElementKinds` reads the kinds alone.
 #### body
 
 ```text
-// Supertype Config/Loose unions dropped (US7 landing):
-// consumers reach supertype Config via `T.Supertype` and map it
+// No supertype Config/Loose unions: consumers reach supertype Config via `T.Supertype` and map it
 // through generic helpers rather than a flat alias.
 ```
 
@@ -6578,8 +6554,7 @@ kept, and any other pair fails at codegen.
  * function errors at emit time rather than generating broken output.
  *
  * @param nodeKinds - Ordered list of structural kind strings to check.
- * @throws {Error} If two kinds map to the same camelCase identifier
- *   (spec 008 FR-017).
+ * @throws {Error} If two kinds map to the same camelCase identifier.
  */
 ```
 
@@ -6702,8 +6677,8 @@ A kind with a construction surface narrows `BuildArgs` and `LooseArgs` (typed `r
 #### body
 
 ```text
-// Phase 2: indentation at interface body level (2 spaces) since fields are
-// now declared directly on the interface, not inside $fields: {}.
+// Indentation at interface body level (2 spaces): fields are declared
+// directly on the interface, not inside $fields: {}.
 ```
 
 ### `packages/codegen/src/emitters/types.ts::_fieldTypeParts`
@@ -7113,7 +7088,7 @@ enrich-stamped (`VariantChild.definedBy`); one hand-declared arm (a
  * {@link kindDiscriminantExpr} for call sites holding a LITERAL TOKEN TEXT
  * (a `STRING` rule's value) rather than a kind/rule name — resolves via
  * {@link findKindEntryForLiteral} so the anonymous token wins over a
- * same-spelled named rule (#129). The grammar's own rule-type
+ * same-spelled named rule. The grammar's own rule-type
  * discrimination (STRING vs SYMBOL) decides which of the two functions a
  * call site uses; this must never be called with a rule name.
  */
@@ -7179,7 +7154,7 @@ enrich-stamped (`VariantChild.definedBy`); one hand-declared arm (a
 ```text
 /**
 	 * Repeat-list separator surfaced when the assembled rule was a
-	 * `repeat` / `repeat1` (the former-container shape, Phase 1d.vii).
+	 * `repeat` / `repeat1` (the former-container shape).
 	 * Field-carrying branches don't surface this — the repeat separator
 	 * is reachable via the per-value metadata on the relevant
 	 * `AssembledNonterminal` slot.
@@ -7760,8 +7735,7 @@ seat the child into a config or tuple take the value arguments only.
 ```text
 /**
  * Per-supertype transport enum names that collide with pre-existing
- * generated items and must be skipped during Phase 2 supertype-enum
- * emission.  The `_literal` supertype has `typeName = 'Literal'` which
+ * generated items and must be skipped during supertype-enum emission.  The `_literal` supertype has `typeName = 'Literal'` which
  * would produce `pub enum LiteralTransport`.  Keep reserved so the
  * supertype enum is not emitted; slots fall back to `Box<AnyTransport>`
  * (`heterogeneous`).
@@ -7781,12 +7755,10 @@ seat the child into a config or tuple take the value arguments only.
  * `any` keyword type-names to `Any`, so its per-kind struct would otherwise
  * also be named `AnyTransport`) produces two Rust items with the identical
  * name in the same module — a hard `E0428`/`E0119` compile error, not a
- * cosmetic naming quirk. This was a documented, anticipated risk left
- * unresolved by the original typed-transport-fields plan (its "Open
- * questions" #1 covered the analogous supertype-enum case, resolved there via
- * `RESERVED_SUPERTYPE_ENUM_NAMES`'s skip-and-fall-back strategy — skipping
- * isn't available here since a kind's own per-kind struct can't just be
- * omitted without losing its data).
+ * cosmetic naming quirk. The analogous supertype-enum case skips and falls
+ * back (`RESERVED_SUPERTYPE_ENUM_NAMES`); skipping isn't available here,
+ * since a kind's own per-kind struct can't be omitted without losing its
+ * data.
  */
 ```
 
@@ -8203,8 +8175,7 @@ A supertype guard is generic over its input and narrows through the shared `Narr
 #### body
 
 ```text
-// Phase 2: factory/wrap nodes use `_<name>` storage keys (de-hoisted
-// surface). Any top-level `_*` key indicates a branch node with named fields.
+// Factory/wrap nodes use `_<name>` storage keys (de-hoisted surface). Any top-level `_*` key indicates a branch node with named fields.
 // Leaf nodes have `$text` instead.
 ```
 
@@ -8517,7 +8488,8 @@ One encoding per slot, derived from `enumArmsOf`. Presence slots come first (`ke
 
 ```text
 // member texts resolve through the node's construction-time
-// literal-chain record (anon-scoped first, #129) — the emitter
+// literal-chain record (anon-scoped first: an anonymous token shadows a
+// same-spelled named rule) — the emitter
 // catalog is consulted only to map the resolved catalog KIND to its
 // TSKindId member name (exact-key hit). The direct name-chain
 // fallback covers nodes constructed without a catalog (fixtures).
@@ -8756,8 +8728,8 @@ The inventory is the set of literals a parser token spells: a literal counts onl
 
 ```text
 /**
- * emitters/refine-emit.ts — shared helpers for that change
- * phase 2 per-form factory + Config emission.
+ * emitters/refine-emit.ts — shared helpers for per-form factory + Config
+ * emission.
  *
  * Both types.ts and factories.ts need the same naming scheme for
  * per-form types (`InterfaceBodyCurly`), fluent-case short names,
@@ -8806,11 +8778,10 @@ The inventory is the set of literals a parser token spells: a literal counts onl
  *   1. const enum TSKindId + lookup helpers
  *   2. Scoped const enums per supertype
  *   3. Concrete node interfaces
- *   4. Per-form Config aliases (polymorph forms only — base-kind
- *      aliases were dropped in spec 008 Phase 9)
+ *   4. Per-form Config aliases (polymorph forms only)
  *   5. Supertype unions
  *   6. Discriminated grammar union + KindMap + VariantMap
- *   7. NamespaceMap + per-kind Ns interfaces + namespace sugar (spec 008 US1)
+ *   7. NamespaceMap + per-kind Ns interfaces + namespace sugar
  */
 ```
 
@@ -8974,7 +8945,7 @@ The types module of `emitTypesModules`, for callers that need only the public su
 #### body
 
 ```text
-// ConfigMap / LooseMap dropped (US7 landing) — consumers use
+// No ConfigMap / LooseMap — consumers use
 // `NamespaceMap[K]['Config']` / `['Loose']` or the generic accessors
 // `ConfigFor<K>` / `LooseFor<K>`, emitted below.
 ```
@@ -9150,7 +9121,7 @@ Prints the type-only `__slotHints__` member of a kind interface: one `SlotHint` 
 ```text
 // Enum member values and storageInfo.texts are LITERAL TOKEN TEXTS —
 // the node's construction-time literal-chain record is authoritative
-// (anon token wins a same-spelled named rule, #129); the emitter
+// (anon token wins a same-spelled named rule); the emitter
 // catalog only maps resolved kind → TSKindId member. Chain fallback
 // covers catalog-less construction (fixtures). Must stay consistent
 // with factories.ts's kindEnumTextMapExpr or the declared Config
@@ -9222,14 +9193,12 @@ Prints the type-only `__slotHints__` member of a kind interface: one `SlotHint` 
 
 ```text
 /**
- * Emits per-rule `.jinja` files for the render pipeline (feature 011).
+ * Emits per-rule `.jinja` files for the render pipeline.
  *
- * The YAML template format (`templates directory`) was retired in favor of
- * per-rule `.jinja` files — see ADR-0013 / spec 011 for design notes.
  * This file owns the functions that drive that emission:
  *
  *   - `runTemplateEmitter(config)` — runs the authoritative TemplateEmitter
- *     class introduced in PR2. Walks the NodeMap, dispatches each node by
+ *     class. Walks the NodeMap, dispatches each node by
  *     its modelType, and returns a Map keyed by rule kind (values include
  *     the `@generated` header).
  *   - `writeJinjaTemplates(emitted, outputDir)` — writes the Map to
@@ -9430,9 +9399,8 @@ the `keywordKindsOf` argument the emitter passes to `gateKeywordSlotSeams`.
 #### body
 
 ```text
-// Slot-preservation gate (PR2 Task 3.B4): assert every declared slot
-// appears at least once in the emitted body. Replaces the deleted
-// byte-equivalence diff gate. Set SITTIR_SLOT_PRESERVATION=0 to bypass.
+// Slot-preservation gate: assert every declared slot appears at least
+// once in the emitted body. Set SITTIR_SLOT_PRESERVATION=0 to bypass.
 ```
 
 ### `packages/codegen/src/emitters/templates.ts::renderRuleEdge`
@@ -9521,9 +9489,9 @@ the edge of what the seam sits beside.
 #### body
 
 ```text
-// PR2 Task 3.B3: consume renderRule (RenderRule, wrapper-free) instead
-// of rule (RawRule, wrapper-bearing). Wrapper attributes (fieldName,
-// multiplicity, separator) are now on the leaf rules themselves.
+// Consume renderRule (RenderRule, wrapper-free), not rule (RawRule,
+// wrapper-bearing). Wrapper attributes (fieldName, multiplicity,
+// separator) are on the leaf rules themselves.
 //
 // Populate ownerSlots so emitSymbol can fall back to name-based slot
 // lookup when slotByRuleId lookup fails (gap: simplifyRule may create
@@ -9541,7 +9509,7 @@ For a lexed kind the top rule is recorded on the context (`lexedTop`) so `emitRu
 #### body
 
 ```text
-// PR2 Task 3.B3: consume renderRule (RenderRule, wrapper-free).
+// Consume renderRule (RenderRule, wrapper-free).
 // Populate ownerSlots for the same reason as emitBranchTemplate.
 ```
 
@@ -9554,8 +9522,7 @@ For a lexed kind the top rule is recorded on the context (`lexedTop`) so `emitRu
 // Walks a RenderRule subtree producing the render body (render-body.ts)
 // in a single pass.
 //
-// Per PR1 design:
-// - Reads PR0-enriched attributes (`fieldName`, `multiplicity`, `nonterminal`,
+// - Reads the enriched attributes (`fieldName`, `multiplicity`, `nonterminal`,
 //   `separator`) directly from the rule.
 // - Looks up slot facts (propertyName / storageName / paramName) via
 //   `ctx.nodeMap.slotByRuleId.get(rule.id)` rather than re-deriving from
@@ -9621,7 +9588,7 @@ For a lexed kind the top rule is recorded on the context (`lexedTop`) so `emitRu
 #### body
 
 ```text
-// SpacingWriter follow-on (2026-07-24 spec): seq members concatenate
+// Seq members concatenate
 // with NO compile-time boundary spaces — the render-time
 // SpacingWriter inserts a space exactly where a word-class char
 // would collide with a word-class char across write seams. This
@@ -9717,8 +9684,7 @@ For a lexed kind the top rule is recorded on the context (`lexedTop`) so `emitRu
 #### body
 
 ```text
-// PR2 Task 3.B3 / phase-visibility-tightening: wrapper rule types
-// (field / optional / repeat / repeat1) must not appear in RenderRule
+// Wrapper rule types (field / optional / repeat / repeat1) must not appear in RenderRule
 // input — they have been pushed down to leaf attributes.
 // FieldRule/OptionalRule/RepeatRule/Repeat1Rule collapse to `never`
 // under RenderRule (types/rule.ts), so the former defensive `case
@@ -9861,9 +9827,9 @@ lifted out of every arm and emitted once after the gates.
 ### `packages/codegen/src/emitters/templates.ts::restoreEmittedSlotNames`
 
 ```text
-// emitOptional and emitRepeat were deleted in PR2 Task 3.B3.
-// Those wrapper types no longer appear in RenderRule; their slot facts are
-// now leaf attributes on the inner rule, consumed by emitSymbol directly.
+// Optional and repeat wrappers do not appear in RenderRule; their slot
+// facts are leaf attributes on the inner rule, consumed by emitSymbol
+// directly.
 ```
 
 ```text
@@ -10586,10 +10552,10 @@ The kind discriminant of each literal member of a kind-enum or mixed-enum slot: 
 ### `packages/codegen/src/emitters/factories.ts::kindEnumTextMapExpr`
 
 ```text
-// Exported: from.ts's resolver emission shares this map builder (it
-// previously had its own duplicate emitting runtime `kindIdFromName(text)`
-// lookups — which resolve literal texts through the name-polymorphic
-// runtime switch and reintroduce the #129 shadowing at runtime).
+// Exported: from.ts's resolver emission shares this map builder. Runtime
+// `kindIdFromName(text)` lookups would resolve literal texts through the
+// name-polymorphic runtime switch, where an anonymous token is shadowed by
+// a same-spelled named rule.
 ```
 
 #### body
@@ -10598,8 +10564,8 @@ The kind discriminant of each literal member of a kind-enum or mixed-enum slot: 
 // Every text below is a LITERAL TOKEN TEXT (enum member values and
 // terminal STRING values), so resolution goes through the literal-aware
 // lookup — the anonymous token must win over a same-spelled named rule
-// (#129: python's `'type'` keyword stamped the `type` RULE's id, which
-// the transport dispatched to TypeTransport → "Missing field `_content`").
+// (python's `'type'` keyword would stamp the `type` RULE's id, which the
+// transport dispatches to TypeTransport → "Missing field `_content`").
 ```
 
 #### body
@@ -11650,7 +11616,6 @@ The placeholder seats the optional single-valued slots of the top-level stub as 
  *
  * Consumes NodeMap directly. Derives from factory exports — thin namespace wrapper.
  *
- * Spec 008 US5:
  *   - Namespace imports (`import * as F` / `import * as FR`) replace the
  *     per-entry import walls. Single short line per source module.
  *   - Supertype-grouped sub-namespaces (`ir.expression`, `ir.pattern`, …)
@@ -12098,7 +12063,7 @@ The arity of a keyword leaf's pair: its coercer takes one optional `<Kind>.Loose
 
 ```text
 /** Catalog entries — required for kindEnum fields to emit compile-time
-	 * literal-aware discriminants (shared kindEnumTextMapExpr, #129). */
+	 * literal-aware discriminants (shared kindEnumTextMapExpr). */
 ```
 
 #### body
@@ -12326,7 +12291,7 @@ The node resolvers (`_resolveOne`, `_resolveMany`, `_resolveOneLeaf`, `_resolveO
 // classification has no factory dispatch for, e.g. mod_item.content's
 // `';'` external form) — an UntypedNode already matching one is a VALID
 // alternate branch and must pass through, not get auto-wrapped into the
-// primary branch's container (#128).
+// primary branch's container.
 ```
 
 #### body
@@ -12606,13 +12571,9 @@ Assembles the wrap module: the imports `pruneUnusedImports` leaves, `ParsedOfDat
  * `rust/crates/sittir-{lang}/src/render/*.rs` and the companion
  * `packages/{lang}/src/hash.ts` that the TS backend shim imports.
  *
- * Spec 012:
- *  - T016 (initial scaffold): hash.rs + hash.ts emission.
- *  - T027/T028/T029: per-kind `#[derive(Template)]` structs + direct
- *    typed-transport render dispatch in
- *    `rust/crates/sittir-{lang}/src/render/templates.rs`.
- *  - T030: canonical `.jinja` copying into
- *    `rust/crates/sittir-{lang}/templates/`.
+ * It emits `hash.rs` + `hash.ts`, the kind and field id tables, the
+ * resolved options (`options.rs`), and the typed transports with their
+ * direct render dispatch (`transport.rs`).
  *
  * The emitter is pure — given a grammar's template bundle + node map,
  * it returns the string contents of each file it would write. The CLI

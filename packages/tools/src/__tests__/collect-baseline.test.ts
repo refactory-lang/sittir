@@ -111,7 +111,7 @@ describe('collect-baseline', () => {
 
 		for (const g of grammarKeys) {
 			const entry = grammars[g] as Record<string, unknown>;
-			expect(Object.keys(entry).sort()).toEqual(['hoistedKindCount', 'parityFixtures', 'supertypeKindCount', 'validators']);
+			expect(Object.keys(entry).sort()).toEqual(['kindCount', 'parityFixtures', 'validators']);
 
 			const validators = entry['validators'] as Record<string, unknown>;
 			expect(Object.keys(validators)).toEqual(['builtRenderParse', 'coverage', 'factoryStorage', 'from', 'roundtrip']);

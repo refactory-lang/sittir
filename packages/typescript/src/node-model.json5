@@ -1,7 +1,7 @@
 {
   "name": "typescript",
   "root": "program",
-  "nodeCount": 434,
+  "nodeCount": 433,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -216,8 +216,7 @@
       "childKind": {
         "export_statement_default_from_star_from": "star_from",
         "export_statement_default_from_ns_from": "ns_from",
-        "export_statement_default_from_clause_from": "clause_from",
-        "export_clause": "export_clause"
+        "export_statement_default_from_clause_from": "clause_from"
       }
     },
     "export_statement_default_declaration": {
@@ -3360,31 +3359,6 @@
         "optionDefault": 20
       }
     },
-    "export_statement_type_export": {
-      "export_clause": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "source": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "terminator": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false,
-        "registered": true,
-        "optionDefault": 20
-      }
-    },
     "export_statement_equals_export": {
       "expression": {
         "unnamed": false,
@@ -4015,6 +3989,13 @@
       }
     },
     "export_statement_default_from": {
+      "type": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "content": {
         "unnamed": false,
         "slotCount": 1,
@@ -4022,7 +4003,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "automatic_semicolon": {
+      "terminator": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -4084,7 +4065,7 @@
       "source": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -10605,18 +10586,11 @@
         "do_statement",
         "empty_statement",
         "enum_declaration",
-        "export_clause",
         "export_keyword",
-        "export_specifier",
-        "export_specifiers",
         "export_statement_default_declaration",
         "export_statement_default_from",
-        "export_statement_default_from_clause_from",
-        "export_statement_default_from_ns_from",
-        "export_statement_default_from_star_from",
         "export_statement_equals_export",
         "export_statement_namespace_export",
-        "export_statement_type_export",
         "expression_statement",
         "false",
         "for_in_statement",
@@ -11929,8 +11903,7 @@
       "subtypes": [
         "export_statement_default",
         "export_statement_equals_export",
-        "export_statement_namespace_export",
-        "export_statement_type_export"
+        "export_statement_namespace_export"
       ]
     },
     {
@@ -12430,6 +12403,24 @@
       "seated": true,
       "slots": [
         {
+          "name": "type",
+          "propertyName": "type",
+          "paramName": "type",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "type",
+              "parseKind": "type_keyword"
+            }
+          ]
+        },
+        {
           "name": "content",
           "propertyName": "content",
           "paramName": "content",
@@ -12440,8 +12431,7 @@
           "kinds": [
             "export_statement_default_from_star_from",
             "export_statement_default_from_ns_from",
-            "export_statement_default_from_clause_from",
-            "export_clause"
+            "export_statement_default_from_clause_from"
           ],
           "values": [
             {
@@ -12477,19 +12467,13 @@
                 "shape": "arm",
                 "mount": "clauseFrom"
               }
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "export_clause",
-              "parseKind": "export_clause"
             }
           ]
         },
         {
-          "name": "automatic_semicolon",
-          "propertyName": "automaticSemicolon",
-          "paramName": "automaticSemicolon",
+          "name": "terminator",
+          "propertyName": "terminator",
+          "paramName": "terminator",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -12514,20 +12498,10 @@
         }
       ],
       "name": "export_statement_default_from",
-      "factoryShape": "direct",
+      "factoryShape": "config",
       "factoryFields": [
+        "type",
         "content"
-      ],
-      "bareAccepts": [
-        "export_clause",
-        "export_specifier",
-        "export_specifiers",
-        "export_statement_default_from_clause_from",
-        "export_statement_default_from_ns_from",
-        "export_statement_default_from_star_from",
-        "identifier",
-        "string_double",
-        "string_single"
       ]
     },
     {
@@ -12589,7 +12563,7 @@
           "name": "source",
           "propertyName": "source",
           "paramName": "source",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
@@ -12599,7 +12573,7 @@
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "string",
               "parseKind": "string"
             }
@@ -13001,106 +12975,6 @@
       ],
       "bareAccepts": [
         "identifier"
-      ]
-    },
-    {
-      "kind": "export_statement_type_export",
-      "modelType": "branch",
-      "typeName": "ExportStatementTypeExport",
-      "factoryName": "exportStatementTypeExport",
-      "irKey": "exportStatementTypeExport",
-      "builderPath": [
-        "exportStatementTypeExport"
-      ],
-      "builderPathAlternates": [
-        [
-          "exportStatement",
-          "typeExport"
-        ],
-        [
-          "statement",
-          "export",
-          "typeExport"
-        ]
-      ],
-      "hidden": false,
-      "annotations": {
-        "hoisted": true
-      },
-      "seated": true,
-      "slots": [
-        {
-          "name": "export_clause",
-          "propertyName": "exportClause",
-          "paramName": "exportClause",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "export_clause"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "export_clause",
-              "parseKind": "export_clause"
-            }
-          ]
-        },
-        {
-          "name": "source",
-          "propertyName": "source",
-          "paramName": "source",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "string"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "string",
-              "parseKind": "string"
-            }
-          ]
-        },
-        {
-          "name": "terminator",
-          "propertyName": "terminator",
-          "paramName": "terminator",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "kindEnum",
-          "kinds": [
-            "_automatic_semicolon"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_automatic_semicolon",
-              "parseKind": "automatic_semicolon"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": ";",
-              "parseKind": "semi"
-            }
-          ]
-        }
-      ],
-      "name": "export_statement_type_export",
-      "factoryShape": "config",
-      "factoryFields": [
-        "export_clause",
-        "source"
       ]
     },
     {
@@ -22084,18 +21958,11 @@
         "class",
         "construct_signature",
         "declare_keyword",
-        "export_clause",
         "export_keyword",
-        "export_specifier",
-        "export_specifiers",
         "export_statement_default_declaration",
         "export_statement_default_from",
-        "export_statement_default_from_clause_from",
-        "export_statement_default_from_ns_from",
-        "export_statement_default_from_star_from",
         "export_statement_equals_export",
         "export_statement_namespace_export",
-        "export_statement_type_export",
         "false",
         "function_expression",
         "generator_function",

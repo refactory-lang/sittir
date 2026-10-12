@@ -1412,9 +1412,9 @@ A patch that lands on a reference to a minted text token (`wireTextTokenOf`) and
 // pointing at the original group-lift symbol would strand this
 // alias on the pre-split raw mint while the real, fully-split
 // content lives — unreferenced by this alias — under the deposit
-// name (confirmed: `_export_statement_group2` vs. the properly
-// split `_export_statement_default_from_arm`, PR 3 storagename-
-// collision root cause).
+// name (`_export_statement_group2` vs. the properly split
+// `_export_statement_default_from_arm`, two kinds that would then
+// collide on one storage name).
 ```
 
 #### body

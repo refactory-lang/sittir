@@ -48,8 +48,12 @@ describe('reauthoring grammar witnesses', () => {
 		expect(cases.map(({ grammar, rule }) => `${grammar}:${rule}`)).toContain('python:tuple');
 	});
 
-	it.each(cases)('$grammar $rule: upstream parses $text as $kind', async ({ grammar, rule, text, kind, cause }) => {
+	it.each(cases)('$grammar $rule: upstream accepts or rejects $text as its cause says ($kind)', async ({ grammar, rule, text, kind, cause }) => {
 		const { kinds, hasError } = await upstreamKindsOf(grammar, text);
+		if (cause === 'rejects-valid-syntax') {
+			expect(hasError).toBe(true);
+			return;
+		}
 		expect(hasError).toBe(false);
 		expect(kinds.has(kind)).toBe(true);
 		if (cause === 'accepts-other-kind') expect(kinds.has(rule)).toBe(false);

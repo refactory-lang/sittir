@@ -432,8 +432,8 @@ repo reads its parents from its own dependency tree.
  * 6. Map captures to semantic roles via {@link CAPTURE_TO_ROLE}.
  * 7. Deduplicate kind names per role.
  *
- * Phase 1 (shipped) extracted `@comment` captures for trivia.
- * Phase 2 extends this to ALL semantic roles from both query files.
+ * Covers ALL semantic roles from both query files, `@comment` captures for
+ * trivia among them.
  */
 ```
 
