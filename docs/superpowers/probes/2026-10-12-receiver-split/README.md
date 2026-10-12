@@ -20,8 +20,8 @@ split by themselves, with no group from enrich?
   receiver form:
   `seq(field('receiver', LEAD), optional(seq(',', optional(field('elements', <list>)))))`.
   - enrich lifts the receiver form's `,` and the list after it into a group, `<receiver
-    form>_group`, which holds the list. The edit runs after enrich, so its output has to pass
-    through enrich's group synthesis (question 22). With the group, sittir's model accepts the
+    form>_group`, which holds the list. The edit runs after enrich, so enrich runs again, whole,
+    over every rule the edit creates (question 22). With the group, sittir's model accepts the
     shape in both grammars as is, and every validation row passes.
   - Every case round-trips byte for byte, `(&self,)` included, except that typescript's `this: T`
     renders `this : T`. Without the group, a lone comma after the receiver is dropped.
@@ -48,9 +48,9 @@ split by themselves, with no group from enrich?
 - The bindings generate the split already: the derivation reads the anchored `@receiver` claim
   into the lead. The group is not theirs to decide. It is what the model needs to record a lone
   `,`, and enrich's synthesis decides it, so a group minted by the bindings restates enrich.
-  enrich mints the list and the groups in one pass, so a lead moved into enrich runs after that
-  pass and has it run again over the lead's rules (finding 18).
-- Questions 13 to 21 are ruled. Open: 22, how the edit's output meets enrich's group synthesis.
+- Every question is ruled. The lead stays in `bindGrammar`, and the whole of enrich runs again
+  over every rule a grammar-bindings edit newly creates; a renamed rule does not pass again
+  (question 22).
 
 ## The edit
 
@@ -61,7 +61,8 @@ narrowed to everything else. The edit emits two rules:
 - the plain list: the list rule itself, every item narrowed to `REST`;
 - the receiver form, `seq(field(field, LEAD), optional(seq(SEP, optional(field(F, <list>)))))`,
   minted as `_<list>_<field>` and aliased `<list>_<field>`, where `F` is the field that holds the
-  list in its owners. enrich's group synthesis lifts its optional into a group,
+  list in its owners. enrich, run again over the rules the edit creates, lifts its optional into
+  a group,
   `<list>_<field>_group` = `seq(SEP, optional(field(F, <list>)))`, so the receiver form is
   `seq(field(field, LEAD), optional(<list>_<field>_group))` (question 22).
 
@@ -182,7 +183,8 @@ grammar through Node, and sittir's codegen evaluated it.
 ## Setup
 
 - A worktree of `feat/bindings` at `8a80d34a3`, with `prototype.patch` applied and
-  `pnpm install`.
+  `pnpm install`. The same change is committed as source on `proto/receiver-split` at
+  `cefef884d`, with the grammars in base mode.
   - The committed grammars pass no grammar bindings at that commit, so a lead mode's bindings
     hold its lead alone.
   - The validator commits its records to the worktree's branch after each run.
@@ -662,9 +664,9 @@ Typescript (`typescript-samples-*.txt`):
    by `bindGrammar` between the renames and the splits, with variants named by the variant
    convention and recorded in `leadFrom`. It emits the plain shape: the plain list narrowed to
    the rest, and the receiver form `<list>_<field>`, which holds the receiver and then the plain
-   list. Every field that held the list holds a choice of the two (question 16). Its output
-   passes through enrich's group synthesis, which lifts the receiver form's `,` and the list after
-   it into the group `<list>_<field>_group` (question 22).
+   list. Every field that held the list holds a choice of the two (question 16). Every rule it
+   creates passes through the whole of enrich again, which lifts the receiver form's `,` and the
+   list after it into the group `<list>_<field>_group` (question 22).
 2. A visible variant is never aliased to its kind's own name. It takes `as`, which its
    classifying claim gives (question 18), or else `<kind>_<field>` (question 20). The rest
    narrows a shared visible kind in place, and clones a shared hidden rule.
@@ -707,21 +709,17 @@ Typescript (`typescript-samples-*.txt`):
 21. **Typescript's type-only export** (`export type {A} from`, `export type * from`). Ruled: a
     refinement, `statement.export.type`, mirroring `statement.import.type`. The vocabulary pass
     may rename the segment.
-22. **How the edit's output meets enrich's group synthesis.** The edit runs in `bindGrammar`,
-    after enrich (question 13), and the probe's `two-rules-plain-group` writes enrich's group by
-    hand. The bindings already generate the split: the derivation reads the anchored `@receiver`
-    claim into the lead. The group is no bindings fact. It is the model's need for a node whose
-    presence records a lone `,` (findings 12 and 17), and enrich's synthesis decides it.
-    - (a) enrich's synthesis after list extraction, the clause hoist and the passes after it,
-      becomes one function. enrich runs it over every rule, and `bindGrammar` over the rules a
-      lead mints and rewrites. Recommended: the lead stays with the renames and splits, after the
-      patches, so it reads the field names the claims use and its clones take the patches as
-      written; one synthesis decides every group.
-    - (b) The edit mints the group itself, as the probe does. That restates enrich's decision to
-      group, the group's name and its stamps in a second place.
-    - (c) The lead runs in enrich, after the clause hoist, and the hoist runs again over what it
-      mints and rewrites (finding 18). Every enrich pass after the hoist then reaches the lead's
-      rules, and the conflict driver derives the lead's sets with the rest. It reverses question
-      13: enrich takes the leads as input, a lead resolves patched field names through
-      `fieldSites`, and wire applies an origin's patches to its lead clones through `leadFrom`.
-    - Two arms in place of the group lose `(&self)` (finding 17), so they are not an option.
+22. **How the edit's output meets enrich's group synthesis.** Ruled by the maintainer: enrich
+    runs again, whole, over every rule a grammar-bindings edit newly creates, "pretty much splits
+    and merges, but may include others". A renamed rule does not pass again. The lead stays in
+    `bindGrammar`, after the patches (question 13 holds). The probe's `two-rules-plain-group`
+    writes the group by hand; under the ruling, enrich's second pass mints it. The checks the
+    ruling leaves, with implement:
+    - which rules are newly created: a fact each edit stamps on what it mints (`splitFrom`,
+      `leadFrom`), never a comparison of rule names, and which current and planned edits create
+      rules;
+    - that a second pass over a created rule, which may carry enrich's output copied from its
+      origin, mints nothing twice and wraps nothing again, or what it must skip;
+    - whether the second pass needs the patches' field sites for a clone of a patched rule;
+    - the plain shape with the second pass: rust and typescript rows, `(&self)` and `(&self,)`
+      round-trips, and parser and size deltas against `two-rules-plain-group`.
