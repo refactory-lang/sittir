@@ -65,4 +65,12 @@ describe('enrich is a fixpoint of its own output', () => {
 		const authored = { fieldSites: new Map([['class_body', [{ path: [1], name: 'members' }]]]) };
 		expect(again(grammarWith(rules), authored)).toEqual({ names: [], minted: [] });
 	});
+
+	it('keeps the authored sites of a token-form arm it minted', () => {
+		const digits = P('[0-9]+');
+		const form = (separator: string) => seq(choice(S('0'), seq(optional(S('0')), P('[1-9]'))), S(separator), optional(digits));
+		const rules = { number: token(choice(form('.'), form(','))), };
+		const authored = { fieldSites: new Map([['number', [{ path: [1, 0, 0], name: 'integer' }]]]) };
+		expect(again(grammarWith(rules), authored)).toEqual({ names: [], minted: [] });
+	});
 });

@@ -185,11 +185,12 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 		if (factored !== rule) enrichedRules[name] = factored;
 	}
 	const tokenFormParents: string[] = [];
+	const tokenFormSites = tokenFormFieldSites(enrichedRules, authored.fieldSites);
 	for (const name of Object.keys(enrichedRules)) {
 		const rule = enrichedRules[name];
 		if (!rule) continue;
 		const counter: ClauseHoistCounter = { opt: 0, grp: 0, arm: 0, supertypeNames };
-		const hoisted = hoistTokenForms(name, rule, ctx, counter, unhoistableNames, tokenFormParents, (authored.fieldSites?.get(name) ?? []).map((site) => site.path));
+		const hoisted = hoistTokenForms(name, rule, ctx, counter, unhoistableNames, tokenFormParents, tokenFormSites.get(name) ?? []);
 		if (hoisted !== rule) enrichedRules[name] = hoisted;
 	}
 	const hoistCtx = ctx.withHoist({
@@ -377,7 +378,7 @@ function hoistTokenForms(
 		);
 		if (minted === null) throw new Error(`token forms: '${parentKind}' could not mint form ${i}`);
 		const armBody = ctx.clauseGroupRules[minted]!;
-		const armFielded = fielded.flatMap((site) => (site[0] === i ? [site.slice(1)] : []));
+		const armFielded = armFieldSites(fielded, i);
 		const nested = hoistTokenForms(minted, armBody, ctx, { ...counter, opt: 0, grp: 0, arm: 0 }, unhoistableNames, parents, armFielded);
 		if (nested !== armBody) ctx.clauseGroupRules[minted] = withAnnotations(nested, { tokenForm: true });
 		return makeGroupLiftSymbol(arm, minted);
@@ -385,6 +386,37 @@ function hoistTokenForms(
 	let out = { ...core, members } as unknown as Rule;
 	for (let i = precStack.length - 1; i >= 0; i--) out = { ...precStack[i]!, content: out } as unknown as Rule;
 	return out;
+}
+
+function armFieldSites(fielded: readonly (readonly number[])[], arm: number): (readonly number[])[] {
+	return fielded.flatMap((site) => (site[0] === arm ? [site.slice(1)] : []));
+}
+
+function tokenFormFieldSites(
+	rules: Record<string, Rule>,
+	authored: ReadonlyMap<string, readonly AuthoredFieldSite[]> | undefined
+): ReadonlyMap<string, readonly (readonly number[])[]> {
+	const sites = new Map<string, readonly (readonly number[])[]>(
+		[...(authored ?? [])].map(([name, own]) => [name, own.map((site) => site.path)])
+	);
+	const queue = [...sites.keys()];
+	for (let parent = queue.shift(); parent !== undefined; parent = queue.shift()) {
+		const rule = rules[parent];
+		if (rule === undefined) continue;
+		const parentSites = sites.get(parent) ?? [];
+		throughPrec(rule, (core) => {
+			if (!isChoiceType(core.type) || !('members' in core)) return core;
+			core.members.forEach((member, i) => {
+				const { name, annotations } = member as { name?: string; annotations?: { variantOf?: string } };
+				if (name === undefined || annotations?.variantOf !== parent || sites.has(name)) return;
+				if ((rules[name] as { annotations?: { tokenForm?: boolean } } | undefined)?.annotations?.tokenForm !== true) return;
+				sites.set(name, armFieldSites(parentSites, i));
+				queue.push(name);
+			});
+			return core;
+		});
+	}
+	return sites;
 }
 
 function tokenFormArms(rules: Record<string, Rule>, parents: readonly string[]): ReadonlyMap<string, readonly string[]> {
