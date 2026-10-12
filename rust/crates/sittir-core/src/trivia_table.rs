@@ -458,8 +458,10 @@ impl TriviaTable {
                 };
                 match place {
                     Place::Side(node, side) if !edge => {
+                        let joined = at == from && left.is_some_and(|left| left.start == left.end) && table.runs.last().is_some_and(|run| run.end == at);
                         let run = table.runs.len() as u32;
                         table.runs.push(LayoutRun { start: at, end: until, node, side, owner, carries: true });
+                        parted.placed(&mut table.runs, joined);
                         table.push(place, Assigned::Layout { run, start: at, end: until, owner, depth });
                     }
                     _ if depth != 0 => table.push(place, Assigned::Depth(depth)),
@@ -487,8 +489,8 @@ impl TriviaTable {
                 at = end;
             }
             run(at, to, led, &mut table, &mut excess);
-            parted.gap(&mut table.runs, right.is_some_and(|right| right.start == right.end));
         }
+        parted.finish(&mut table.runs);
         excess.close_until(u32::MAX, &mut table);
         table
     }
@@ -521,35 +523,42 @@ impl TriviaTable {
     }
 }
 
-/// The runs of the gaps zero-width tokens part, as the assignment walks them
-/// (`LayoutRun::carries`): where they begin among the table's runs, and how
-/// many gaps they span.
+/// The runs only zero-width tokens part from one another, as the
+/// assignment places them (`LayoutRun::carries`): where the group so far
+/// begins among the table's runs.
 #[derive(Default)]
 struct Parted {
     from: usize,
-    gaps: usize,
 }
 
 impl Parted {
-    /// One gap's runs were placed, the last of `runs`; `parted` when the
-    /// token after the gap is zero-width, so the next gap's runs join them.
-    /// Once a gap ends at a token with width, the group's runs settle: when
-    /// it spans more than one gap and holds one run per gap, all but its
-    /// first run holding whitespace (else its last) carry none.
-    fn gap(&mut self, runs: &mut [LayoutRun], parted: bool) {
-        self.gaps += 1;
-        if parted {
+    /// The run just placed, the last of `runs`, joins the group when only a
+    /// zero-width token parts it from the run before it (`joined`), whatever
+    /// follows it in its own gap; otherwise the group before it settles and
+    /// it begins the next.
+    fn placed(&mut self, runs: &mut [LayoutRun], joined: bool) {
+        let last = runs.len() - 1;
+        if !joined {
+            Self::settle(&mut runs[self.from..last]);
+            self.from = last;
+        }
+    }
+
+    /// The last group settles.
+    fn finish(&mut self, runs: &mut [LayoutRun]) {
+        Self::settle(&mut runs[self.from..]);
+    }
+
+    /// A group of more than one run settles: all but its first run holding
+    /// whitespace, else its last, carry none.
+    fn settle(group: &mut [LayoutRun]) {
+        if group.len() < 2 {
             return;
         }
-        let group = &mut runs[self.from..];
-        if self.gaps > 1 && group.len() == self.gaps {
-            let carrier = group.iter().position(|run| run.start < run.end).unwrap_or(group.len() - 1);
-            for (at, run) in group.iter_mut().enumerate() {
-                run.carries = at == carrier;
-            }
+        let carrier = group.iter().position(|run| run.start < run.end).unwrap_or(group.len() - 1);
+        for (at, run) in group.iter_mut().enumerate() {
+            run.carries = at == carrier;
         }
-        self.from = runs.len();
-        self.gaps = 0;
     }
 }
 

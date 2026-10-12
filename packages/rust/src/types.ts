@@ -26517,10 +26517,12 @@ export interface RustTypeMap extends GrammarTypeMap {
 		| Dedent
 		| DoubleBlankline
 		| Indent
+		| Layout
 		| LineComment
 		| Newline
 		| Space
-		| Tab;
+		| Tab
+		| Tight;
 }
 
 export type NodeMethodsOf = NodeMethods<RustTypeMap['trivia']>;

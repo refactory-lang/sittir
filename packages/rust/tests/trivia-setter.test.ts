@@ -104,10 +104,10 @@ describe('loose trivia strings build ir.comment', () => {
 		expect(spelled.$trivia.leading()).toEqual([rs.kinds.Blankline]);
 	});
 
-	it('refuses whitespace kinds the extras do not match, for the one reason that they are not extras', () => {
-		const a = (): ReturnType<typeof ir.identifier> => rs.build.identifier('a');
-		// @ts-expect-error tight is not an extra, so it is no trivia entry
-		expect(() => a().$trivia.leading(rs.build.layout.tight)).toThrow(/_tight is not an extra/);
+	it('takes the tight member, which no extra spells, as the entry of a gap held tight', () => {
+		const built = rs.build.identifier('a').$trivia.leading(rs.build.layout.tight);
+		expect(built.$trivia.leading()).toEqual([rs.kinds.Tight]);
+		expect(rs.build.identifier('a').$trivia.leading(rs.kinds.Tight).$trivia.leading()).toEqual([rs.kinds.Tight]);
 	});
 
 	it('takes a depth member as an entry, the excess indentation a layout run carries', () => {

@@ -535,6 +535,8 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice, codec_only)]
 pub enum TriviaTransport {
+    #[kind(kind::_TIGHT)]
+    Tight,
     #[kind(kind::_NEWLINE)]
     Newline,
     #[kind(kind::_BLANKLINE)]
@@ -551,6 +553,7 @@ pub enum TriviaTransport {
 impl ::sittir_core::prepare::Prepare for TriviaTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
+            TriviaTransport::Tight => Ok(()),
             TriviaTransport::Newline => Ok(()),
             TriviaTransport::Blankline => Ok(()),
             TriviaTransport::DoubleBlankline => Ok(()),
@@ -560,6 +563,7 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
+            TriviaTransport::Tight => None,
             TriviaTransport::Newline => None,
             TriviaTransport::Blankline => None,
             TriviaTransport::DoubleBlankline => None,
@@ -569,6 +573,7 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
+            TriviaTransport::Tight => None,
             TriviaTransport::Newline => None,
             TriviaTransport::Blankline => None,
             TriviaTransport::DoubleBlankline => None,
@@ -578,6 +583,7 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
+            TriviaTransport::Tight => None,
             TriviaTransport::Newline => None,
             TriviaTransport::Blankline => None,
             TriviaTransport::DoubleBlankline => None,
@@ -590,6 +596,7 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
 impl ::sittir_core::render::Render for TriviaTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
+            TriviaTransport::Tight => render_tight(w),
             TriviaTransport::Newline => render_newline(w),
             TriviaTransport::Blankline => render_blankline(w),
             TriviaTransport::DoubleBlankline => render_double_blankline(w),
@@ -605,6 +612,7 @@ impl ::sittir_core::trivia::FromTriviaText for TriviaTransport {
     }
 
     fn from_layout(kind: ::sittir_core::types::KindId, _text: &str) -> Option<Self> {
+        if kind == kind::_TIGHT { return Some(TriviaTransport::Tight); }
         if kind == kind::_NEWLINE { return Some(TriviaTransport::Newline); }
         if kind == kind::_BLANKLINE { return Some(TriviaTransport::Blankline); }
         if kind == kind::_DOUBLE_BLANKLINE { return Some(TriviaTransport::DoubleBlankline); }
@@ -615,6 +623,7 @@ impl ::sittir_core::trivia::FromTriviaText for TriviaTransport {
 impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {
     fn seam_gap(&self) -> Option<(::sittir_core::layout_kinds::LayoutKinds, Option<&str>)> {
         match self {
+            TriviaTransport::Tight => Some((::sittir_core::layout_kinds::LayoutKinds::TIGHT, None)),
             TriviaTransport::Newline => Some((::sittir_core::layout_kinds::LayoutKinds::NEWLINE, None)),
             TriviaTransport::Blankline => Some((::sittir_core::layout_kinds::LayoutKinds::BLANKLINE, None)),
             TriviaTransport::DoubleBlankline => Some((::sittir_core::layout_kinds::LayoutKinds::DOUBLE_BLANKLINE, None)),

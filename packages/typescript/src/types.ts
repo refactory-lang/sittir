@@ -25500,9 +25500,11 @@ export interface TypescriptTypeMap extends GrammarTypeMap {
 		| DoubleBlankline
 		| HtmlComment
 		| Indent
+		| Layout
 		| Newline
 		| Space
-		| Tab;
+		| Tab
+		| Tight;
 }
 
 export type NodeMethodsOf = NodeMethods<TypescriptTypeMap['trivia']>;

@@ -15551,12 +15551,14 @@ export interface PythonTypeMap extends GrammarTypeMap {
 		| Dedent
 		| DoubleBlankline
 		| Indent
+		| Layout
 		| LineContinuation
 		| LineContinuationNewline
 		| LineContinuationNul
 		| Newline
 		| Space
-		| Tab;
+		| Tab
+		| Tight;
 }
 
 export type NodeMethodsOf = NodeMethods<PythonTypeMap['trivia']>;

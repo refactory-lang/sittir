@@ -701,12 +701,19 @@ impl<G: EngineGrammar> ParsedTree<G> {
         crate::classify::classify_whitespace(run, &class, table)
     }
 
-    /// The whitespace member a run stores: its source class
-    /// (`layout_kind`), when its line breaks differ from those the read-time
-    /// options write there (`baseline_breaks`), or no baseline reaches it;
-    /// none when they agree.
-    fn deviation(&self, run: crate::trivia_table::LayoutRun) -> Option<G::Trivia> {
-        let text = &self.source[run.start as usize..run.end as usize];
+    /// The whitespace member the run at `at` among the table's runs stores:
+    /// its source class (`layout_kind`), when its line breaks differ from
+    /// those the read-time options write there (`baseline_breaks`), or no
+    /// baseline reaches it; none when they agree. Its source is measured,
+    /// as the baseline is, from the last text that is not whitespace: the
+    /// trailing whitespace of the token before it (a shebang's line end)
+    /// counts, back to the run before it at most.
+    fn deviation(&self, at: usize) -> Option<G::Trivia> {
+        let runs = self.trivia_table().runs();
+        let run = runs[at];
+        let floor = at.checked_sub(1).map_or(0, |before| runs[before].end.min(run.start)) as usize;
+        let from = self.source[..run.start as usize].trim_end().len().max(floor);
+        let text = &self.source[from..run.end as usize];
         if self.baseline_breaks(run, false).ok().flatten() == Some(text.matches('\n').count() as u32) {
             return None;
         }
@@ -920,7 +927,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
                         .into_iter()
                         .collect(),
                     Assigned::Layout { run, depth: count, .. } => {
-                        let deviation = self.deviation(self.trivia_table().runs()[run as usize]);
+                        let deviation = self.deviation(run as usize);
                         deviation.map(|member| SideEntry::Layout(entry(SlotValue::Transport(member)))).into_iter().chain(depth(count)).collect()
                     }
                     Assigned::Member(at) => node_at_index(&self.tree, at)

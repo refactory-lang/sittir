@@ -14,6 +14,13 @@
 //! opens at `end`, either one standing in for the other when only one is
 //! anchored (`Baseline::between`).
 //!
+//! A gap is measured from the last text that is not whitespace: a text's
+//! own trailing line breaks (a slice of a token that ends its line, a
+//! shebang's) and a text of whitespace alone (a template's literal line
+//! end) belong to the gap after it, resolve no anchor and are no item. So
+//! a template that writes a token and then its line end, and a slice that
+//! writes them together, record the same breaks.
+//!
 //! A gap beside text no frame or slice holds (a literal, a unit kind, a
 //! presence keyword, a zero-width token) reads its node's frame instead:
 //! the items written directly in it, each text by its text and each node
@@ -102,6 +109,7 @@ struct OpenFrame {
 #[derive(Debug, Default)]
 struct Run {
     written: u32,
+    ended: u32,
     last_end: Option<u32>,
     opens: Vec<u32>,
     closes: Vec<(u32, u32)>,
@@ -115,6 +123,7 @@ struct Run {
 pub struct Recorder<'a> {
     baseline: &'a RefCell<Baseline>,
     written: u32,
+    ended: u32,
     last_end: Option<u32>,
     opens: Vec<u32>,
     closes: Vec<(u32, u32)>,
@@ -127,7 +136,7 @@ pub struct Recorder<'a> {
 
 impl<'a> Recorder<'a> {
     pub fn new(baseline: &'a RefCell<Baseline>) -> Self {
-        Self { baseline, written: 0, last_end: None, opens: Vec::new(), closes: Vec::new(), frames: Vec::new(), deferring: None, held: Vec::new(), counting: true, text_before: 0 }
+        Self { baseline, written: 0, ended: 0, last_end: None, opens: Vec::new(), closes: Vec::new(), frames: Vec::new(), deferring: None, held: Vec::new(), counting: true, text_before: 0 }
     }
 
     /// Text reached the output, or the run being deferred.
@@ -137,6 +146,11 @@ impl<'a> Recorder<'a> {
             Some(run) => run.written += breaks,
             None => self.written += breaks,
         }
+    }
+
+    /// The line breaks `s` ends with.
+    fn tail_of(s: &str) -> u32 {
+        s[s.trim_end().len()..].matches('\n').count() as u32
     }
 
     /// A node's frame opened, from the node at `origin` when it was read
@@ -156,7 +170,7 @@ impl<'a> Recorder<'a> {
         let Some(frame) = self.frames.pop() else { return };
         let (Some(index), Some(end)) = (frame.index, frame.end) else { return };
         let open = frame.open.unwrap_or(self.written);
-        let item = Item { what: Written::Node(index), before: open, after: self.written };
+        let item = Item { what: Written::Node(index), before: open, after: self.ended };
         if let Some(parent) = self.frames.iter_mut().rev().find(|frame| frame.index.is_some()) {
             if parent.index == Some(index) {
                 parent.items.extend(frame.items);
@@ -164,7 +178,7 @@ impl<'a> Recorder<'a> {
             }
             parent.items.push(item);
         }
-        self.baseline.borrow_mut().frames.insert(index, FrameItems { open, close: self.written, items: frame.items });
+        self.baseline.borrow_mut().frames.insert(index, FrameItems { open, close: self.ended, items: frame.items });
         self.close(end);
     }
 
@@ -179,8 +193,8 @@ impl<'a> Recorder<'a> {
     /// Source text ending at `end` was written.
     pub fn close(&mut self, end: u32) {
         match self.deferring.as_mut() {
-            Some(run) => run.closes.push((end, run.written)),
-            None => self.closes.push((end, self.written)),
+            Some(run) => run.closes.push((end, run.ended)),
+            None => self.closes.push((end, self.ended)),
         }
     }
 
@@ -191,8 +205,12 @@ impl<'a> Recorder<'a> {
     }
 
     /// The text `s` is about to be written: the anchors waiting for it
-    /// resolve, and the frames it opens have opened.
+    /// resolve, and the frames it opens have opened, unless it is
+    /// whitespace alone.
     pub fn before_text(&mut self, s: &str) {
+        if s.trim().is_empty() {
+            return;
+        }
         if let Some(run) = self.deferring.as_mut() {
             let (prev, now) = (run.last_end, run.written);
             run.resolved_opens.extend(run.opens.drain(..).map(|start| (start, (prev, now))));
@@ -219,15 +237,24 @@ impl<'a> Recorder<'a> {
         }
     }
 
-    /// A text was written.
-    pub fn after_text(&mut self) {
+    /// The text `s` was written: unless it is whitespace alone, the gap
+    /// after it is measured from its end, before its own trailing breaks.
+    pub fn after_text(&mut self, s: &str) {
+        if s.trim().is_empty() {
+            return;
+        }
+        let tail = Self::tail_of(s);
         match self.deferring.as_mut() {
-            Some(run) => run.last_end = Some(run.written),
+            Some(run) => {
+                run.ended = run.written.saturating_sub(tail);
+                run.last_end = Some(run.ended);
+            }
             None => {
-                self.last_end = Some(self.written);
+                self.ended = self.written.saturating_sub(tail);
+                self.last_end = Some(self.ended);
                 if self.counting {
                     if let Some(item) = self.frames.iter_mut().rev().find(|frame| frame.index.is_some()).and_then(|frame| frame.items.last_mut()) {
-                        item.after = self.written;
+                        item.after = self.ended;
                     }
                 }
             }
@@ -240,7 +267,7 @@ impl<'a> Recorder<'a> {
         if self.deferring.is_some() {
             return;
         }
-        let item = Item { what: Written::Node(index), before: self.text_before, after: self.written };
+        let item = Item { what: Written::Node(index), before: self.text_before, after: self.ended };
         if let Some(frame) = self.frames.iter_mut().rev().find(|frame| frame.index.is_some()) {
             frame.items.push(item);
         }
@@ -283,5 +310,8 @@ impl<'a> Recorder<'a> {
         self.opens.extend(run.opens);
         self.closes.extend(run.closes.into_iter().map(|(end, at)| (end, base + at)));
         self.last_end = run.last_end.map(|end| base + end).or(self.last_end);
+        if let Some(end) = run.last_end {
+            self.ended = base + end;
+        }
     }
 }

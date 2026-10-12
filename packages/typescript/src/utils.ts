@@ -12,9 +12,11 @@ export const triviaFacts = Object.freeze({
 		'_dedent',
 		'_double_blankline',
 		'_indent',
+		'_layout',
 		'_newline',
 		'_space',
 		'_tab',
+		'_tight',
 		'comment',
 		'comment_block',
 		'comment_line',
@@ -29,7 +31,7 @@ export const triviaFacts = Object.freeze({
 	listKinds: new Set<number>([376, 377, 379, 382, 383, 384, 385, 390]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:[\s\p{Zs}\uFEFF\u2028\u2029\u2060\u200B]))+)$/u,
-		kindIdByText: Object.freeze({ ' ': 181, '\t': 182, '\n': 183, '\n\n': 184, '\n\n\n': 185 })
+		kindIdByText: Object.freeze({ '': 180, ' ': 181, '\t': 182, '\n': 183, '\n\n': 184, '\n\n\n': 185 })
 	})
 } satisfies TriviaFacts);
 

@@ -4636,6 +4636,16 @@
                         "_name": {
                           "$type": 1,
                           "$text": "Accumulate"
+                        },
+                        "$_layout": {
+                          "trivia": {
+                            "leading": [
+                              168
+                            ],
+                            "trailing": [
+                              168
+                            ]
+                          }
                         }
                       }
                     }
@@ -4826,7 +4836,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "\nfn main() {}\n\nfn add(x: i32, y: i32) -> i32 {\n    return x + y;\n}\n\nfn takes_slice(slice: &str) {\n    println!(\"Got: {}\", slice);\n}\n\nfn foo() -> [u32; 2] {\n    return [1, 2];\n}\n\nfn foo() -> (u32, u16) {\n    return (1, 2);\n}\n\nfn foo() {\n    return\n}\n\nfn foo(x: impl FnOnce() -> result::Result<T, E>) {}\n\nfn foo(#[attr] x: i32, #[attr] x: i64) {}\n\nfn accumulate(self) -> Machine<{\n    State::Accumulate\n}> {}\n\nfn foo(bar: impl for<'a> Baz<Quux<'a>>) {}\n",
+    "expectedOutput": "\nfn main() {}\n\nfn add(x: i32, y: i32) -> i32 {\n    return x + y;\n}\n\nfn takes_slice(slice: &str) {\n    println!(\"Got: {}\", slice);\n}\n\nfn foo() -> [u32; 2] {\n    return [1, 2];\n}\n\nfn foo() -> (u32, u16) {\n    return (1, 2);\n}\n\nfn foo() {\n    return\n}\n\nfn foo(x: impl FnOnce() -> result::Result<T, E>) {}\n\nfn foo(#[attr] x: i32, #[attr] x: i64) {}\n\nfn accumulate(self) -> Machine<{State::Accumulate}> {}\n\nfn foo(bar: impl for<'a> Baz<Quux<'a>>) {}\n",
     "options": {
       "sourceFile": {
         "before": 171
@@ -4839,9 +4849,9 @@
     "sourceIn": "\nfn main() {}\n\nfn add(x: i32, y: i32) -> i32 {\n    return x + y;\n}\n\nfn takes_slice(slice: &str) {\n    println!(\"Got: {}\", slice);\n}\n\nfn foo() -> [u32; 2] {\n    return [1, 2];\n}\n\nfn foo() -> (u32, u16) {\n    return (1, 2);\n}\n\nfn foo() {\n    return\n}\n\nfn foo(x: impl FnOnce() -> result::Result<T, E>) {}\n\nfn foo(#[attr] x: i32, #[attr] x: i64) {}\n\nfn accumulate(self) -> Machine<{State::Accumulate}> {}\n\nfn foo(bar: impl for<'a> Baz<Quux<'a>>) {}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "\nfn main() {}\n\nfn add(x: i32, y: i32) -> i32 {\n    return x + y;\n}\n\nfn takes_slice(slice: &str) {\n    println!(\"Got: {}\", slice);\n}\n\nfn foo() -> [u32; 2] {\n    return [1, 2];\n}\n\nfn foo() -> (u32, u16) {\n    return (1, 2);\n}\n\nfn foo() {\n    return\n}\n\nfn foo(x: impl FnOnce() -> result::Result<T, E>) {}\n\nfn foo(#[attr] x: i32, #[attr] x: i64) {}\n\nfn accumulate(self) -> Machine<{\n    State::Accumulate\n}> {}\n\nfn foo(bar: impl for<'a> Baz<Quux<'a>>) {}\n",
+    "expectedSourceOut": "\nfn main() {}\n\nfn add(x: i32, y: i32) -> i32 {\n    return x + y;\n}\n\nfn takes_slice(slice: &str) {\n    println!(\"Got: {}\", slice);\n}\n\nfn foo() -> [u32; 2] {\n    return [1, 2];\n}\n\nfn foo() -> (u32, u16) {\n    return (1, 2);\n}\n\nfn foo() {\n    return\n}\n\nfn foo(x: impl FnOnce() -> result::Result<T, E>) {}\n\nfn foo(#[attr] x: i32, #[attr] x: i64) {}\n\nfn accumulate(self) -> Machine<{State::Accumulate}> {}\n\nfn foo(bar: impl for<'a> Baz<Quux<'a>>) {}\n",
     "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters) body: (block)) statements: (function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (primitive_type))) item: (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) return_type: (primitive_type) body: (block statements: (expression_statement (expression_statement_with_semi expression: (return_expression expression: (binary_expression left: (identifier) right: (identifier))))))) statements: (function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (reference_type type: (primitive_type)))))) body: (block statements: (expression_statement (expression_statement_with_semi expression: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content))) delim_tokens: (non_special_token (token_tree_punctuation)) delim_tokens: (non_special_token (identifier)))))))) statements: (function_item name: (identifier) parameters: (parameters) return_type: (array_type element: (primitive_type) length: (integer_literal_decimal)) body: (block statements: (expression_statement (expression_statement_with_semi expression: (return_expression expression: (array_expression_list elements: (arguments_elements item: (attributed_argument (integer_literal_decimal)) item: (attributed_argument (integer_literal_decimal))))))))) statements: (function_item name: (identifier) parameters: (parameters) return_type: (tuple_type (types item: (primitive_type) item: (primitive_type))) body: (block statements: (expression_statement (expression_statement_with_semi expression: (return_expression expression: (tuple_expression (expressions item: (integer_literal_decimal) item: (integer_literal_decimal)))))))) statements: (function_item name: (identifier) parameters: (parameters) body: (block trailing_expression: (return_expression))) statements: (function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (abstract_type trait: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters) return_type: (generic_type type: (scoped_type_identifier path: (identifier) name: (type_identifier)) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier)) item: (type_argument (type_identifier))))))))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (attribute_item attribute: (attribute path: (identifier))) (parameter name: (identifier) type: (primitive_type))) item: (attributed_parameter (attribute_item attribute: (attribute path: (identifier))) (parameter name: (identifier) type: (primitive_type))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (self_parameter self: (self))))) return_type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (block trailing_expression: (scoped_identifier path: (identifier) name: (identifier))))))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (abstract_type type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) trait: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (lifetime name: (identifier))))))))))))))) body: (block)))",
-    "wrappedText": "\nfn main() {}\n\nfn add(x: i32, y: i32) -> i32 {\n    return x + y;\n}\n\nfn takes_slice(slice: &str) {\n    println!(\"Got: {}\", slice);\n}\n\nfn foo() -> [u32; 2] {\n    return [1, 2];\n}\n\nfn foo() -> (u32, u16) {\n    return (1, 2);\n}\n\nfn foo() {\n    return\n}\n\nfn foo(x: impl FnOnce() -> result::Result<T, E>) {}\n\nfn foo(#[attr] x: i32, #[attr] x: i64) {}\n\nfn accumulate(self) -> Machine<{\n    State::Accumulate\n}> {}\n\nfn foo(bar: impl for<'a> Baz<Quux<'a>>) {}\n",
+    "wrappedText": "\nfn main() {}\n\nfn add(x: i32, y: i32) -> i32 {\n    return x + y;\n}\n\nfn takes_slice(slice: &str) {\n    println!(\"Got: {}\", slice);\n}\n\nfn foo() -> [u32; 2] {\n    return [1, 2];\n}\n\nfn foo() -> (u32, u16) {\n    return (1, 2);\n}\n\nfn foo() {\n    return\n}\n\nfn foo(x: impl FnOnce() -> result::Result<T, E>) {}\n\nfn foo(#[attr] x: i32, #[attr] x: i64) {}\n\nfn accumulate(self) -> Machine<{State::Accumulate}> {}\n\nfn foo(bar: impl for<'a> Baz<Quux<'a>>) {}\n",
     "wrappedOffset": 0
   },
   {
@@ -5649,6 +5659,16 @@
                     "_name": {
                       "$type": 1,
                       "$text": "Accumulate"
+                    },
+                    "$_layout": {
+                      "trivia": {
+                        "leading": [
+                          168
+                        ],
+                        "trailing": [
+                          168
+                        ]
+                      }
                     }
                   }
                 }
@@ -5674,7 +5694,7 @@
         "_statements": []
       }
     },
-    "expectedOutput": "fn accumulate(self) -> Machine<{\n    State::Accumulate\n}> {}",
+    "expectedOutput": "fn accumulate(self) -> Machine<{State::Accumulate}> {}",
     "options": {
       "sourceFile": {
         "before": 171
@@ -5687,9 +5707,9 @@
     "sourceIn": "fn accumulate(self) -> Machine<{State::Accumulate}> {}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "fn accumulate(self) -> Machine<{\n    State::Accumulate\n}> {}",
+    "expectedSourceOut": "fn accumulate(self) -> Machine<{State::Accumulate}> {}",
     "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (self_parameter self: (self))))) return_type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (block trailing_expression: (scoped_identifier path: (identifier) name: (identifier))))))) body: (block))",
-    "wrappedText": "fn accumulate(self) -> Machine<{\n    State::Accumulate\n}> {}",
+    "wrappedText": "fn accumulate(self) -> Machine<{State::Accumulate}> {}",
     "wrappedOffset": 0
   },
   {
@@ -6959,10 +6979,20 @@
         "_name": {
           "$type": 1,
           "$text": "Accumulate"
+        },
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              168
+            ],
+            "trailing": [
+              168
+            ]
+          }
         }
       }
     },
-    "expectedOutput": "{\n    State::Accumulate\n}",
+    "expectedOutput": "{State::Accumulate}",
     "options": {
       "sourceFile": {
         "before": 171
@@ -6975,9 +7005,9 @@
     "sourceIn": "{State::Accumulate}",
     "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "{\n    State::Accumulate\n}",
+    "expectedSourceOut": "{State::Accumulate}",
     "expectedReparseTree": "(block trailing_expression: (scoped_identifier path: (identifier) name: (identifier)))",
-    "wrappedText": "fn _f() { let _ = {\n    State::Accumulate\n}; }",
+    "wrappedText": "fn _f() { let _ = {State::Accumulate}; }",
     "wrappedOffset": 18
   },
   {
@@ -10689,6 +10719,16 @@
                   "_name": {
                     "$type": 1,
                     "$text": "Accumulate"
+                  },
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        168
+                      ],
+                      "trailing": [
+                        168
+                      ]
+                    }
                   }
                 }
               }
@@ -10709,7 +10749,7 @@
         }
       }
     },
-    "expectedOutput": "Machine<{\n    State::Accumulate\n}>",
+    "expectedOutput": "Machine<{State::Accumulate}>",
     "options": {
       "sourceFile": {
         "before": 171
@@ -10722,9 +10762,9 @@
     "sourceIn": "Machine<{State::Accumulate}>",
     "pattern": "generic_type",
     "edits": [],
-    "expectedSourceOut": "Machine<{\n    State::Accumulate\n}>",
+    "expectedSourceOut": "Machine<{State::Accumulate}>",
     "expectedReparseTree": "(generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (block trailing_expression: (scoped_identifier path: (identifier) name: (identifier)))))))",
-    "wrappedText": "type _X = Machine<{\n    State::Accumulate\n}>;",
+    "wrappedText": "type _X = Machine<{State::Accumulate}>;",
     "wrappedOffset": 10
   },
   {
@@ -11010,6 +11050,16 @@
                 "_name": {
                   "$type": 1,
                   "$text": "Accumulate"
+                },
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      168
+                    ],
+                    "trailing": [
+                      168
+                    ]
+                  }
                 }
               }
             }
@@ -11029,7 +11079,7 @@
         }
       }
     },
-    "expectedOutput": "<{\n    State::Accumulate\n}>",
+    "expectedOutput": "<{State::Accumulate}>",
     "options": {
       "sourceFile": {
         "before": 171
@@ -11042,9 +11092,9 @@
     "sourceIn": "<{State::Accumulate}>",
     "pattern": "type_arguments",
     "edits": [],
-    "expectedSourceOut": "<{\n    State::Accumulate\n}>",
+    "expectedSourceOut": "<{State::Accumulate}>",
     "expectedReparseTree": "(type_arguments elements: (type_arguments_elements item: (type_argument (block trailing_expression: (scoped_identifier path: (identifier) name: (identifier))))))",
-    "wrappedText": "type _X = B<{\n    State::Accumulate\n}>;",
+    "wrappedText": "type _X = B<{State::Accumulate}>;",
     "wrappedOffset": 11
   },
   {
@@ -11269,6 +11319,16 @@
               "_name": {
                 "$type": 1,
                 "$text": "Accumulate"
+              },
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    168
+                  ],
+                  "trailing": [
+                    168
+                  ]
+                }
               }
             }
           }
@@ -11287,7 +11347,7 @@
         }
       }
     },
-    "expectedOutput": "{\n    State::Accumulate\n}",
+    "expectedOutput": "{State::Accumulate}",
     "options": {
       "sourceFile": {
         "before": 171
@@ -11300,9 +11360,9 @@
     "sourceIn": "{State::Accumulate}",
     "pattern": "type_arguments_elements",
     "edits": [],
-    "expectedSourceOut": "{\n    State::Accumulate\n}",
+    "expectedSourceOut": "{State::Accumulate}",
     "expectedReparseTree": "(type_arguments_elements item: (type_argument (block trailing_expression: (scoped_identifier path: (identifier) name: (identifier)))))",
-    "wrappedText": "type _X = B<{\n    State::Accumulate\n}>;",
+    "wrappedText": "type _X = B<{State::Accumulate}>;",
     "wrappedOffset": 12
   },
   {
@@ -11518,11 +11578,21 @@
           "_name": {
             "$type": 1,
             "$text": "Accumulate"
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                168
+              ],
+              "trailing": [
+                168
+              ]
+            }
           }
         }
       }
     },
-    "expectedOutput": "{\n    State::Accumulate\n}",
+    "expectedOutput": "{State::Accumulate}",
     "options": {
       "sourceFile": {
         "before": 171
@@ -11535,9 +11605,9 @@
     "sourceIn": "{State::Accumulate}",
     "pattern": "type_argument",
     "edits": [],
-    "expectedSourceOut": "{\n    State::Accumulate\n}",
+    "expectedSourceOut": "{State::Accumulate}",
     "expectedReparseTree": "(type_argument (block trailing_expression: (scoped_identifier path: (identifier) name: (identifier))))",
-    "wrappedText": "type _X = B<{\n    State::Accumulate\n}>;",
+    "wrappedText": "type _X = B<{State::Accumulate}>;",
     "wrappedOffset": 12
   },
   {
@@ -24764,6 +24834,14 @@
               ],
               "_delimiter": 0,
               "$_layout": {
+                "trivia": {
+                  "leading": [
+                    168
+                  ],
+                  "trailing": [
+                    168
+                  ]
+                },
                 "flank": {
                   "$text": "struct Person {pub name: String, pub age: u32}",
                   "$span": {
@@ -24772,6 +24850,10 @@
                   },
                   "$before": true,
                   "$after": true
+                },
+                "changed": {
+                  "leading": true,
+                  "trailing": true
                 }
               }
             }
@@ -25459,6 +25541,14 @@
           ],
           "_delimiter": 0,
           "$_layout": {
+            "trivia": {
+              "leading": [
+                168
+              ],
+              "trailing": [
+                168
+              ]
+            },
             "flank": {
               "$text": "struct Person {pub name: String, pub age: u32}",
               "$span": {
@@ -25467,6 +25557,10 @@
               },
               "$before": true,
               "$after": true
+            },
+            "changed": {
+              "leading": true,
+              "trailing": true
             }
           }
         }
@@ -25698,6 +25792,14 @@
         ],
         "_delimiter": 0,
         "$_layout": {
+          "trivia": {
+            "leading": [
+              168
+            ],
+            "trailing": [
+              168
+            ]
+          },
           "flank": {
             "$text": "struct Person {pub name: String, pub age: u32}",
             "$span": {
@@ -25706,6 +25808,10 @@
             },
             "$before": true,
             "$after": true
+          },
+          "changed": {
+            "leading": true,
+            "trailing": true
           }
         }
       }
@@ -65673,6 +65779,16 @@
                         "_name": {
                           "$type": 1,
                           "$text": "Init"
+                        },
+                        "$_layout": {
+                          "trivia": {
+                            "leading": [
+                              168
+                            ],
+                            "trailing": [
+                              168
+                            ]
+                          }
                         }
                       }
                     }
@@ -65706,7 +65822,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "\nimpl Person {\n  const leg_count: u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}\n\nimpl Machine<{\n  State::Init\n}> {}\n",
+    "expectedOutput": "\nimpl Person {\n  const leg_count: u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}\n\nimpl Machine<{State::Init}> {}\n",
     "options": {
       "layout": {
         "indent": "  "
@@ -65722,9 +65838,9 @@
     "sourceIn": "\nimpl Person {\n  const leg_count : u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(& self) {}\n  fn talk_mut(&'a mut self) {}\n}\n\nimpl Machine<{State::Init}> {}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "\nimpl Person {\n  const leg_count: u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}\n\nimpl Machine<{\n  State::Init\n}> {}\n",
+    "expectedSourceOut": "\nimpl Person {\n  const leg_count: u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}\n\nimpl Machine<{State::Init}> {}\n",
     "expectedReparseTree": "(source_file statements: (impl_item_body type: (type_identifier) body: (declaration_list declarations: (const_item name: (identifier) type: (primitive_type) value: (integer_literal_decimal)) declarations: (function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (self_parameter self: (self))))) body: (block)) declarations: (function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (self_parameter mutable: (mutable_specifier) self: (self))))) body: (block)) declarations: (function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (self_parameter self: (self))))) body: (block)) declarations: (function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (self_parameter lifetime: (lifetime name: (identifier)) mutable: (mutable_specifier) self: (self))))) body: (block)))) statements: (impl_item_body type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (block trailing_expression: (scoped_identifier path: (identifier) name: (identifier))))))) body: (declaration_list)))",
-    "wrappedText": "\nimpl Person {\n  const leg_count: u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}\n\nimpl Machine<{\n  State::Init\n}> {}\n",
+    "wrappedText": "\nimpl Person {\n  const leg_count: u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(&self) {}\n  fn talk_mut(&'a mut self) {}\n}\n\nimpl Machine<{State::Init}> {}\n",
     "wrappedOffset": 0
   },
   {
@@ -66000,6 +66116,16 @@
                     "_name": {
                       "$type": 1,
                       "$text": "Init"
+                    },
+                    "$_layout": {
+                      "trivia": {
+                        "leading": [
+                          168
+                        ],
+                        "trailing": [
+                          168
+                        ]
+                      }
                     }
                   }
                 }
@@ -66025,7 +66151,7 @@
         "_declarations": []
       }
     },
-    "expectedOutput": "impl Machine<{\n  State::Init\n}> {}",
+    "expectedOutput": "impl Machine<{State::Init}> {}",
     "options": {
       "layout": {
         "indent": "  "
@@ -66041,9 +66167,9 @@
     "sourceIn": "impl Machine<{State::Init}> {}",
     "pattern": "impl_item_body",
     "edits": [],
-    "expectedSourceOut": "impl Machine<{\n  State::Init\n}> {}",
+    "expectedSourceOut": "impl Machine<{State::Init}> {}",
     "expectedReparseTree": "(impl_item_body type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (block trailing_expression: (scoped_identifier path: (identifier) name: (identifier))))))) body: (declaration_list))",
-    "wrappedText": "impl Machine<{\n  State::Init\n}> {}",
+    "wrappedText": "impl Machine<{State::Init}> {}",
     "wrappedOffset": 0
   },
   {
@@ -67519,10 +67645,20 @@
         "_name": {
           "$type": 1,
           "$text": "Init"
+        },
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              168
+            ],
+            "trailing": [
+              168
+            ]
+          }
         }
       }
     },
-    "expectedOutput": "{\n  State::Init\n}",
+    "expectedOutput": "{State::Init}",
     "options": {
       "layout": {
         "indent": "  "
@@ -67538,9 +67674,9 @@
     "sourceIn": "{State::Init}",
     "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "{\n  State::Init\n}",
+    "expectedSourceOut": "{State::Init}",
     "expectedReparseTree": "(block trailing_expression: (scoped_identifier path: (identifier) name: (identifier)))",
-    "wrappedText": "fn _f() { let _ = {\n  State::Init\n}; }",
+    "wrappedText": "fn _f() { let _ = {State::Init}; }",
     "wrappedOffset": 18
   },
   {
@@ -67607,6 +67743,16 @@
                   "_name": {
                     "$type": 1,
                     "$text": "Init"
+                  },
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        168
+                      ],
+                      "trailing": [
+                        168
+                      ]
+                    }
                   }
                 }
               }
@@ -67627,7 +67773,7 @@
         }
       }
     },
-    "expectedOutput": "Machine<{\n  State::Init\n}>",
+    "expectedOutput": "Machine<{State::Init}>",
     "options": {
       "layout": {
         "indent": "  "
@@ -67643,9 +67789,9 @@
     "sourceIn": "Machine<{State::Init}>",
     "pattern": "generic_type",
     "edits": [],
-    "expectedSourceOut": "Machine<{\n  State::Init\n}>",
+    "expectedSourceOut": "Machine<{State::Init}>",
     "expectedReparseTree": "(generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (block trailing_expression: (scoped_identifier path: (identifier) name: (identifier)))))))",
-    "wrappedText": "type _X = Machine<{\n  State::Init\n}>;",
+    "wrappedText": "type _X = Machine<{State::Init}>;",
     "wrappedOffset": 10
   },
   {
@@ -67671,6 +67817,16 @@
                 "_name": {
                   "$type": 1,
                   "$text": "Init"
+                },
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      168
+                    ],
+                    "trailing": [
+                      168
+                    ]
+                  }
                 }
               }
             }
@@ -67690,7 +67846,7 @@
         }
       }
     },
-    "expectedOutput": "<{\n  State::Init\n}>",
+    "expectedOutput": "<{State::Init}>",
     "options": {
       "layout": {
         "indent": "  "
@@ -67706,9 +67862,9 @@
     "sourceIn": "<{State::Init}>",
     "pattern": "type_arguments",
     "edits": [],
-    "expectedSourceOut": "<{\n  State::Init\n}>",
+    "expectedSourceOut": "<{State::Init}>",
     "expectedReparseTree": "(type_arguments elements: (type_arguments_elements item: (type_argument (block trailing_expression: (scoped_identifier path: (identifier) name: (identifier))))))",
-    "wrappedText": "type _X = B<{\n  State::Init\n}>;",
+    "wrappedText": "type _X = B<{State::Init}>;",
     "wrappedOffset": 11
   },
   {
@@ -67732,6 +67888,16 @@
               "_name": {
                 "$type": 1,
                 "$text": "Init"
+              },
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    168
+                  ],
+                  "trailing": [
+                    168
+                  ]
+                }
               }
             }
           }
@@ -67750,7 +67916,7 @@
         }
       }
     },
-    "expectedOutput": "{\n  State::Init\n}",
+    "expectedOutput": "{State::Init}",
     "options": {
       "layout": {
         "indent": "  "
@@ -67766,9 +67932,9 @@
     "sourceIn": "{State::Init}",
     "pattern": "type_arguments_elements",
     "edits": [],
-    "expectedSourceOut": "{\n  State::Init\n}",
+    "expectedSourceOut": "{State::Init}",
     "expectedReparseTree": "(type_arguments_elements item: (type_argument (block trailing_expression: (scoped_identifier path: (identifier) name: (identifier)))))",
-    "wrappedText": "type _X = B<{\n  State::Init\n}>;",
+    "wrappedText": "type _X = B<{State::Init}>;",
     "wrappedOffset": 12
   },
   {
@@ -67789,11 +67955,21 @@
           "_name": {
             "$type": 1,
             "$text": "Init"
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                168
+              ],
+              "trailing": [
+                168
+              ]
+            }
           }
         }
       }
     },
-    "expectedOutput": "{\n  State::Init\n}",
+    "expectedOutput": "{State::Init}",
     "options": {
       "layout": {
         "indent": "  "
@@ -67809,9 +67985,9 @@
     "sourceIn": "{State::Init}",
     "pattern": "type_argument",
     "edits": [],
-    "expectedSourceOut": "{\n  State::Init\n}",
+    "expectedSourceOut": "{State::Init}",
     "expectedReparseTree": "(type_argument (block trailing_expression: (scoped_identifier path: (identifier) name: (identifier))))",
-    "wrappedText": "type _X = B<{\n  State::Init\n}>;",
+    "wrappedText": "type _X = B<{State::Init}>;",
     "wrappedOffset": 12
   },
   {
@@ -117255,7 +117431,17 @@
                 "_statements": [],
                 "_trailing_expression": {
                   "$type": 141,
-                  "_content": "1"
+                  "_content": "1",
+                  "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        168
+                      ],
+                      "trailing": [
+                        168
+                      ]
+                    }
+                  }
                 }
               }
             }
@@ -117302,7 +117488,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "\n1..2;\n3..;\n..4;\n..;\n1..b;\na..b;\n1..(1);\n(1)..1;\n(1)..(1);\n1..{\n    1\n};\nfor i in 1.. {\n}\n",
+    "expectedOutput": "\n1..2;\n3..;\n..4;\n..;\n1..b;\na..b;\n1..(1);\n(1)..1;\n(1)..(1);\n1..{1};\nfor i in 1.. {\n}\n",
     "options": {
       "sourceFile": {
         "before": 171
@@ -117315,9 +117501,9 @@
     "sourceIn": "\n1..2;\n3..;\n..4;\n..;\n1..b;\na..b;\n1..(1);\n(1)..1;\n(1)..(1);\n1..{1};\nfor i in 1.. {\n}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "\n1..2;\n3..;\n..4;\n..;\n1..b;\na..b;\n1..(1);\n(1)..1;\n(1)..(1);\n1..{\n    1\n};\nfor i in 1.. {\n}\n",
+    "expectedSourceOut": "\n1..2;\n3..;\n..4;\n..;\n1..b;\na..b;\n1..(1);\n(1)..1;\n(1)..(1);\n1..{1};\nfor i in 1.. {\n}\n",
     "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi expression: (range_expression_binary start: (integer_literal_decimal) end: (integer_literal_decimal)))) statements: (expression_statement (expression_statement_with_semi expression: (range_expression_postfix start: (integer_literal_decimal)))) statements: (expression_statement (expression_statement_with_semi expression: (range_expression_prefix end: (integer_literal_decimal)))) statements: (expression_statement (expression_statement_with_semi expression: (range_expression_bare))) statements: (expression_statement (expression_statement_with_semi expression: (range_expression_binary start: (integer_literal_decimal) end: (identifier)))) statements: (expression_statement (expression_statement_with_semi expression: (range_expression_binary start: (identifier) end: (identifier)))) statements: (expression_statement (expression_statement_with_semi expression: (range_expression_binary start: (integer_literal_decimal) end: (parenthesized_expression expression: (integer_literal_decimal))))) statements: (expression_statement (expression_statement_with_semi expression: (range_expression_binary start: (parenthesized_expression expression: (integer_literal_decimal)) end: (integer_literal_decimal)))) statements: (expression_statement (expression_statement_with_semi expression: (range_expression_binary start: (parenthesized_expression expression: (integer_literal_decimal)) end: (parenthesized_expression expression: (integer_literal_decimal))))) statements: (expression_statement (expression_statement_with_semi expression: (range_expression_binary start: (integer_literal_decimal) end: (block trailing_expression: (integer_literal_decimal))))) statements: (expression_statement (for_expression pattern: (identifier) value: (range_expression_postfix start: (integer_literal_decimal)) body: (block))))",
-    "wrappedText": "\n1..2;\n3..;\n..4;\n..;\n1..b;\na..b;\n1..(1);\n(1)..1;\n(1)..(1);\n1..{\n    1\n};\nfor i in 1.. {\n}\n",
+    "wrappedText": "\n1..2;\n3..;\n..4;\n..;\n1..b;\na..b;\n1..(1);\n(1)..1;\n(1)..(1);\n1..{1};\nfor i in 1.. {\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -117694,13 +117880,23 @@
             "_statements": [],
             "_trailing_expression": {
               "$type": 141,
-              "_content": "1"
+              "_content": "1",
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    168
+                  ],
+                  "trailing": [
+                    168
+                  ]
+                }
+              }
             }
           }
         }
       }
     },
-    "expectedOutput": "1..{\n    1\n};",
+    "expectedOutput": "1..{1};",
     "options": {
       "sourceFile": {
         "before": 171
@@ -117713,9 +117909,9 @@
     "sourceIn": "1..{1};",
     "pattern": "expression_statement",
     "edits": [],
-    "expectedSourceOut": "1..{\n    1\n};",
+    "expectedSourceOut": "1..{1};",
     "expectedReparseTree": "(expression_statement (expression_statement_with_semi expression: (range_expression_binary start: (integer_literal_decimal) end: (block trailing_expression: (integer_literal_decimal)))))",
-    "wrappedText": "1..{\n    1\n};\n",
+    "wrappedText": "1..{1};\n",
     "wrappedOffset": 0
   },
   {
@@ -118113,12 +118309,22 @@
           "_statements": [],
           "_trailing_expression": {
             "$type": 141,
-            "_content": "1"
+            "_content": "1",
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  168
+                ],
+                "trailing": [
+                  168
+                ]
+              }
+            }
           }
         }
       }
     },
-    "expectedOutput": "1..{\n    1\n};",
+    "expectedOutput": "1..{1};",
     "options": {
       "sourceFile": {
         "before": 171
@@ -118131,9 +118337,9 @@
     "sourceIn": "1..{1};",
     "pattern": "expression_statement_with_semi",
     "edits": [],
-    "expectedSourceOut": "1..{\n    1\n};",
+    "expectedSourceOut": "1..{1};",
     "expectedReparseTree": "(expression_statement_with_semi expression: (range_expression_binary start: (integer_literal_decimal) end: (block trailing_expression: (integer_literal_decimal))))",
-    "wrappedText": "1..{\n    1\n};\n",
+    "wrappedText": "1..{1};\n",
     "wrappedOffset": 0
   },
   {
@@ -118368,11 +118574,21 @@
         "_statements": [],
         "_trailing_expression": {
           "$type": 141,
-          "_content": "1"
+          "_content": "1",
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                168
+              ],
+              "trailing": [
+                168
+              ]
+            }
+          }
         }
       }
     },
-    "expectedOutput": "1..{\n    1\n}",
+    "expectedOutput": "1..{1}",
     "options": {
       "sourceFile": {
         "before": 171
@@ -118385,9 +118601,9 @@
     "sourceIn": "1..{1}",
     "pattern": "range_expression_binary",
     "edits": [],
-    "expectedSourceOut": "1..{\n    1\n}",
+    "expectedSourceOut": "1..{1}",
     "expectedReparseTree": "(range_expression_binary start: (integer_literal_decimal) end: (block trailing_expression: (integer_literal_decimal)))",
-    "wrappedText": "fn _f() { let _ = 1..{\n    1\n}; }",
+    "wrappedText": "fn _f() { let _ = 1..{1}; }",
     "wrappedOffset": 18
   },
   {
@@ -118992,10 +119208,20 @@
       "_statements": [],
       "_trailing_expression": {
         "$type": 141,
-        "_content": "1"
+        "_content": "1",
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              168
+            ],
+            "trailing": [
+              168
+            ]
+          }
+        }
       }
     },
-    "expectedOutput": "{\n    1\n}",
+    "expectedOutput": "{1}",
     "options": {
       "sourceFile": {
         "before": 171
@@ -119008,9 +119234,9 @@
     "sourceIn": "{1}",
     "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "{\n    1\n}",
+    "expectedSourceOut": "{1}",
     "expectedReparseTree": "(block trailing_expression: (integer_literal_decimal))",
-    "wrappedText": "fn _f() { let _ = {\n    1\n}; }",
+    "wrappedText": "fn _f() { let _ = {1}; }",
     "wrappedOffset": 18
   },
   {
@@ -159656,9 +159882,20 @@
           }
         }
       ],
-      "$errors": []
+      "$errors": [],
+      "$_layout": {
+        "units": [
+          {
+            "slot": "_statements",
+            "item": 1,
+            "leading": [
+              168
+            ]
+          }
+        ]
+      }
     },
-    "expectedOutput": "\nconst { 1 + 3 }\n;\nif *x < 0 { const { &4i32.pow(4) } } else { x }\nlet three_ranges = [const { (0..=5).into_inner() }; 3];\n",
+    "expectedOutput": "\nconst { 1 + 3 };\nif *x < 0 { const { &4i32.pow(4) } } else { x }\nlet three_ranges = [const { (0..=5).into_inner() }; 3];\n",
     "options": {
       "sourceFile": {
         "before": 171
@@ -159671,9 +159908,9 @@
     "sourceIn": "\nconst { 1 + 3 };\nif *x < 0 { const { &4i32.pow(4) } } else { x }\nlet three_ranges = [const { (0..=5).into_inner() }; 3];\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "\nconst { 1 + 3 }\n;\nif *x < 0 { const { &4i32.pow(4) } } else { x }\nlet three_ranges = [const { (0..=5).into_inner() }; 3];\n",
+    "expectedSourceOut": "\nconst { 1 + 3 };\nif *x < 0 { const { &4i32.pow(4) } } else { x }\nlet three_ranges = [const { (0..=5).into_inner() }; 3];\n",
     "expectedReparseTree": "(source_file statements: (expression_statement (const_block body: (block trailing_expression: (binary_expression left: (integer_literal_decimal) right: (integer_literal_decimal))))) statements: (empty_statement) statements: (expression_statement (if_expression condition: (binary_expression left: (unary_expression operand: (identifier)) right: (integer_literal_decimal)) consequence: (block statements: (expression_statement (const_block body: (block trailing_expression: (reference_expression_bare value: (call_expression function: (field_expression value: (integer_literal_decimal) field: (field_identifier)) arguments: (arguments elements: (arguments_elements item: (attributed_argument (integer_literal_decimal)))))))))) alternative: (else_clause body: (block trailing_expression: (identifier))))) statements: (let_declaration pattern: (identifier) value: (array_expression_semi element: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (parenthesized_expression expression: (range_expression_binary start: (integer_literal_decimal) end: (integer_literal_decimal))) field: (field_identifier)) arguments: (arguments)))) length: (integer_literal_decimal))))",
-    "wrappedText": "\nconst { 1 + 3 }\n;\nif *x < 0 { const { &4i32.pow(4) } } else { x }\nlet three_ranges = [const { (0..=5).into_inner() }; 3];\n",
+    "wrappedText": "\nconst { 1 + 3 };\nif *x < 0 { const { &4i32.pow(4) } } else { x }\nlet three_ranges = [const { (0..=5).into_inner() }; 3];\n",
     "wrappedOffset": 0
   },
   {
@@ -174216,8 +174453,10 @@
                           "$type": 189,
                           "_content": 2,
                           "$_layout": {
-                            "gap": {
-                              "$text": ""
+                            "trivia": {
+                              "leading": [
+                                168
+                              ]
                             }
                           }
                         },
@@ -175088,8 +175327,10 @@
                       "$type": 189,
                       "_content": 2,
                       "$_layout": {
-                        "gap": {
-                          "$text": ""
+                        "trivia": {
+                          "leading": [
+                            168
+                          ]
                         }
                       }
                     },
@@ -175840,8 +176081,10 @@
                     "$type": 189,
                     "_content": 2,
                     "$_layout": {
-                      "gap": {
-                        "$text": ""
+                      "trivia": {
+                        "leading": [
+                          168
+                        ]
                       }
                     }
                   },
@@ -176567,8 +176810,10 @@
                 "$type": 189,
                 "_content": 2,
                 "$_layout": {
-                  "gap": {
-                    "$text": ""
+                  "trivia": {
+                    "leading": [
+                      168
+                    ]
                   }
                 }
               },
@@ -176999,8 +177244,10 @@
               "$type": 189,
               "_content": 2,
               "$_layout": {
-                "gap": {
-                  "$text": ""
+                "trivia": {
+                  "leading": [
+                    168
+                  ]
                 }
               }
             },
@@ -178979,8 +179226,10 @@
           "$type": 189,
           "_content": 2,
           "$_layout": {
-            "gap": {
-              "$text": ""
+            "trivia": {
+              "leading": [
+                168
+              ]
             }
           }
         },
@@ -205194,7 +205443,7 @@
               "$type": 337,
               "$text": "/// Outer line doc comment\n"
             },
-            171,
+            172,
             {
               "$type": 337,
               "$text": "//! Inner line doc comment\n"
@@ -205240,7 +205489,7 @@
               "$type": 337,
               "$text": "//!! - Still an inner line doc (but with a bang at the beginning)\n"
             },
-            171,
+            172,
             {
               "$type": 337,
               "$text": "//   - Only a comment"
@@ -205394,7 +205643,7 @@
                   "$type": 337,
                   "$text": "//!\n"
                 },
-                171,
+                172,
                 {
                   "$type": 340,
                   "$text": "/*!*/"

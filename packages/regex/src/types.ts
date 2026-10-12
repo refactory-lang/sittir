@@ -3170,7 +3170,7 @@ export interface RegexTypeMap extends GrammarTypeMap {
 		| { readonly node: CharacterClass; readonly empty: EmptyCharacterClass }
 		| { readonly node: CharacterClass.Bound; readonly empty: EmptyCharacterClass }
 		| { readonly node: CharacterClass.Parsed; readonly empty: EmptyCharacterClass.Parsed };
-	readonly trivia: Blankline | DoubleBlankline | Newline;
+	readonly trivia: Blankline | DoubleBlankline | Layout | Newline | Tight;
 }
 
 export type NodeMethodsOf = NodeMethods<RegexTypeMap['trivia']>;

@@ -7,13 +7,13 @@ import { INNER_SITES } from './consts.js';
 
 export const triviaFacts = Object.freeze({
 	kindName: (type: AnyUntypedNode['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
-	kinds: new Set<string>(['_blankline', '_double_blankline', '_newline']),
+	kinds: new Set<string>(['_blankline', '_double_blankline', '_layout', '_newline', '_tight']),
 	innerKinds: INNER_SITES,
 	rebuildWrappers: new Set<number>([77, 78, 79, 80, 81, 83, 84, 85, 89, 90]),
 	listKinds: new Set<number>([]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:\r?\n))+)$/u,
-		kindIdByText: Object.freeze({ '\n': 48, '\n\n': 49, '\n\n\n': 50 })
+		kindIdByText: Object.freeze({ '': 47, '\n': 48, '\n\n': 49, '\n\n\n': 50 })
 	})
 } satisfies TriviaFacts);
 

@@ -63,6 +63,31 @@ describe("a template line break at a parsed node's seam obeys the gap's stored l
 		expect(rs.render(sum.$snapshot(), { binaryExpression: { operator: { before: rs.kinds.Tight, after: rs.kinds.Tight } } }).toString()).toBe('a+\n    b');
 	});
 
+	it.each(['fn f() {x;}\n', 'fn f() {x; }\n'])('rust %j, tight where the options break, snapshots to its source', (source) => {
+		expect(rs.render(rs.parse(source).$snapshot()).toString()).toBe(source);
+	});
+
+	it('typescript "if (a) {b;}" snapshots to its source', () => {
+		const source = 'if (a) {b;}\n';
+		expect(ts.render(ts.parse(source).$snapshot()).toString()).toBe(source);
+	});
+
+	it('a tight entry written on a side holds its gap tight', () => {
+		const [item] = rs.parse('fn f() {\n    x;\n}\n').statements();
+		if (item === undefined || !rs.is.functionItem(item)) throw new Error('expected a function item');
+		const body = item.body();
+		const [statement] = body.statements();
+		if (statement === undefined || !rs.is.expressionStatement(statement)) throw new Error('expected an expression statement');
+		statement.$trivia.leading(rs.kinds.Tight);
+		expect(body.$with.statements(...body.statements()).$render()).toBe('{x;\n}');
+	});
+
+	it.each(['#!\nfn main() {}\n', '#!\n\nfn main() {}\n'])('rust %j, a token that ends its own line, renders as its source from its snapshot and its rebuilt root', (source) => {
+		const root = rs.parse(source);
+		expect(rs.render(root.$snapshot()).toString()).toBe(source);
+		expect(root.$with.statements(...root.statements()).$render()).toBe(source);
+	});
+
 	it("a built block keeps the template's line breaks", () => {
 		const statement = rs.build.expressionStatement(rs.build.identifier('x'));
 		expect(rs.build.block({ statements: [statement] }).$render()).toBe('{\n    x;\n}');

@@ -1775,6 +1775,8 @@ pub enum TriviaTransport {
     LineContinuationNewline(LineContinuationNewlineTransport),
     #[kind(kind::LINE_CONTINUATION_NUL)]
     LineContinuationNul,
+    #[kind(kind::_TIGHT)]
+    Tight,
     #[kind(kind::_SPACE)]
     Space,
     #[kind(kind::_TAB)]
@@ -1802,6 +1804,7 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
             TriviaTransport::Comment(t) => t.prepare(ctx),
             TriviaTransport::LineContinuationNewline(t) => t.prepare(ctx),
             TriviaTransport::LineContinuationNul => Ok(()),
+            TriviaTransport::Tight => Ok(()),
             TriviaTransport::Space => Ok(()),
             TriviaTransport::Tab => Ok(()),
             TriviaTransport::Newline => Ok(()),
@@ -1818,6 +1821,7 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
             TriviaTransport::Comment(t) => t.source_gap(),
             TriviaTransport::LineContinuationNewline(t) => t.source_gap(),
             TriviaTransport::LineContinuationNul => None,
+            TriviaTransport::Tight => None,
             TriviaTransport::Space => None,
             TriviaTransport::Tab => None,
             TriviaTransport::Newline => None,
@@ -1834,6 +1838,7 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
             TriviaTransport::Comment(t) => t.gap_edges(),
             TriviaTransport::LineContinuationNewline(t) => t.gap_edges(),
             TriviaTransport::LineContinuationNul => None,
+            TriviaTransport::Tight => None,
             TriviaTransport::Space => None,
             TriviaTransport::Tab => None,
             TriviaTransport::Newline => None,
@@ -1850,6 +1855,7 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
             TriviaTransport::Comment(t) => t.snapshot_edge(),
             TriviaTransport::LineContinuationNewline(t) => t.snapshot_edge(),
             TriviaTransport::LineContinuationNul => None,
+            TriviaTransport::Tight => None,
             TriviaTransport::Space => None,
             TriviaTransport::Tab => None,
             TriviaTransport::Newline => None,
@@ -1869,6 +1875,7 @@ impl ::sittir_core::render::Render for TriviaTransport {
             TriviaTransport::Comment(t) => t.render(w),
             TriviaTransport::LineContinuationNewline(t) => t.render(w),
             TriviaTransport::LineContinuationNul => render_line_continuation_nul(w),
+            TriviaTransport::Tight => render_tight(w),
             TriviaTransport::Space => render_space(w),
             TriviaTransport::Tab => render_tab(w),
             TriviaTransport::Newline => render_newline(w),
@@ -1890,6 +1897,7 @@ impl ::sittir_core::trivia::FromTriviaText for TriviaTransport {
     fn from_layout(kind: ::sittir_core::types::KindId, text: &str) -> Option<Self> {
         if kind == kind::LINE_CONTINUATION_NEWLINE { return Some(TriviaTransport::LineContinuationNewline(LineContinuationNewlineTransport { layout: None, text: text.to_owned() })); }
         if kind == kind::LINE_CONTINUATION_NUL { return Some(TriviaTransport::LineContinuationNul); }
+        if kind == kind::_TIGHT { return Some(TriviaTransport::Tight); }
         if kind == kind::_SPACE { return Some(TriviaTransport::Space); }
         if kind == kind::_TAB { return Some(TriviaTransport::Tab); }
         if kind == kind::_NEWLINE { return Some(TriviaTransport::Newline); }
@@ -1906,6 +1914,7 @@ impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {
         match self {
             TriviaTransport::LineContinuationNewline(t) => Some((::sittir_core::layout_kinds::LayoutKinds::LINE_CONTINUATION, Some(&t.text))),
             TriviaTransport::LineContinuationNul => Some((::sittir_core::layout_kinds::LayoutKinds::LINE_CONTINUATION, Some("\\\u{0}"))),
+            TriviaTransport::Tight => Some((::sittir_core::layout_kinds::LayoutKinds::TIGHT, None)),
             TriviaTransport::Space => Some((::sittir_core::layout_kinds::LayoutKinds::SPACE, None)),
             TriviaTransport::Tab => Some((::sittir_core::layout_kinds::LayoutKinds::TAB, None)),
             TriviaTransport::Newline => Some((::sittir_core::layout_kinds::LayoutKinds::NEWLINE, None)),

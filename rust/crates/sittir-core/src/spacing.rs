@@ -596,6 +596,8 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     }
 
     /// Writes a held seam's text as ordinary text and clears the held rank.
+    /// A line break the text before it already ended with counts toward a
+    /// breaking seam: the seam writes one fewer.
     fn flush_seam(&mut self) -> std::fmt::Result {
         let line_end = self.line_end_held.take();
         self.flushed_template = None;
@@ -626,6 +628,13 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
                 payload.pick = kept.narrowest();
             }
             payload.set = kept;
+        }
+        if self.last == Some('\n') && payload.pick.breaks() && payload.pick != LayoutKinds::LINE_CONTINUATION {
+            payload.pick = payload.pick.without_first_break();
+            payload.set = payload.pick;
+            if payload.pick.is_empty() {
+                return Ok(());
+            }
         }
         if template {
             self.flushed_template = Some(payload.set);
@@ -830,7 +839,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         }
         let result = self.write_text(s);
         if let Some(recorder) = self.recorder.as_mut() {
-            recorder.after_text();
+            recorder.after_text(s);
         }
         if self.leaf_lexed {
             self.indent_lazy = self.indent_pending && s.ends_with('\n');
@@ -1912,6 +1921,22 @@ mod strength_tests {
             w.text("b").unwrap();
         });
         assert_eq!(out, "a\nb");
+    }
+
+    #[test]
+    fn a_line_break_the_text_before_a_seam_ends_with_counts_toward_it() {
+        let out = render(|w| {
+            w.text("#!\n").unwrap();
+            w.site_with(4, SEAM_TRIVIA);
+            w.text("fn").unwrap();
+        });
+        assert_eq!(out, "#!\n\nfn");
+        let out = render(|w| {
+            w.text("#!\n").unwrap();
+            w.site_with(3, SEAM_DECLARED);
+            w.text("fn").unwrap();
+        });
+        assert_eq!(out, "#!\nfn");
     }
 
     #[test]

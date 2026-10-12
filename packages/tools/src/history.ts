@@ -47,6 +47,10 @@ export interface ValidationRun {
 	fromTrivia?: number;
 	readRenderParseTrivia?: number;
 	readRenderParseShallowTrivia?: number;
+	/** Layout runs over the corpus, those no region's record reaches, and the entries whose region render was refused; absent on rows recorded before the row existed. */
+	layoutRunsTotal?: number;
+	layoutRunsUnreached?: number;
+	layoutRunsRefused?: number;
 }
 
 /**

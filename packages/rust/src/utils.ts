@@ -12,9 +12,11 @@ export const triviaFacts = Object.freeze({
 		'_dedent',
 		'_double_blankline',
 		'_indent',
+		'_layout',
 		'_newline',
 		'_space',
 		'_tab',
+		'_tight',
 		'block_comment',
 		'comment',
 		'line_comment'
@@ -32,7 +34,7 @@ export const triviaFacts = Object.freeze({
 	]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:\s))+)$/u,
-		kindIdByText: Object.freeze({ ' ': 169, '\t': 170, '\n': 171, '\n\n': 172, '\n\n\n': 173 })
+		kindIdByText: Object.freeze({ '': 168, ' ': 169, '\t': 170, '\n': 171, '\n\n': 172, '\n\n\n': 173 })
 	})
 } satisfies TriviaFacts);
 

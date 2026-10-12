@@ -899,9 +899,20 @@
           }
         }
       ],
-      "$errors": []
+      "$errors": [],
+      "$_layout": {
+        "units": [
+          {
+            "slot": "_statements",
+            "item": 7,
+            "leading": [
+              180
+            ]
+          }
+        ]
+      }
     },
-    "expectedOutput": "\ndeclare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; }\n;\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n",
+    "expectedOutput": "\ndeclare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; };\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n",
     "options": {
       "program": {
         "before": 183
@@ -914,9 +925,9 @@
     "sourceIn": "\ndeclare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n\n    interface LogOptions {\n      verbose?: boolean;\n    }\n    interface AlertOptions {\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; };\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n      case 1:\n          break;\n      default:\n          break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "\ndeclare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; }\n;\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n",
+    "expectedSourceOut": "\ndeclare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; };\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n",
     "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) statements: (ambient_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (string_double elements: (string_fragment))))) statements: (ambient_declaration (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type)))) statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) terminator: (automatic_semicolon)))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (method_signature name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))))) members: (class_body_member_declaration member: (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) terminator: (automatic_semicolon))) statements: (ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier))))))) statements: (empty_statement) statements: (ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed (true))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon)))))",
-    "wrappedText": "\ndeclare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; }\n;\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n",
+    "wrappedText": "\ndeclare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; };\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n",
     "wrappedOffset": 0
   },
   {
@@ -83806,6 +83817,14 @@
                       "_delimiter": 0,
                       "_separator": 20,
                       "$_layout": {
+                        "trivia": {
+                          "leading": [
+                            180
+                          ],
+                          "trailing": [
+                            180
+                          ]
+                        },
                         "flank": {
                           "$text": "var x: ({a: any}",
                           "$span": {
@@ -83814,6 +83833,10 @@
                           },
                           "$before": true,
                           "$after": true
+                        },
+                        "changed": {
+                          "leading": true,
+                          "trailing": true
                         }
                       }
                     },
@@ -83938,6 +83961,14 @@
                   "_delimiter": 0,
                   "_separator": 20,
                   "$_layout": {
+                    "trivia": {
+                      "leading": [
+                        180
+                      ],
+                      "trailing": [
+                        180
+                      ]
+                    },
                     "flank": {
                       "$text": "var x: ({a: any}",
                       "$span": {
@@ -83946,6 +83977,10 @@
                       },
                       "$before": true,
                       "$after": true
+                    },
+                    "changed": {
+                      "leading": true,
+                      "trailing": true
                     }
                   }
                 },
@@ -84053,6 +84088,14 @@
               "_delimiter": 0,
               "_separator": 20,
               "$_layout": {
+                "trivia": {
+                  "leading": [
+                    180
+                  ],
+                  "trailing": [
+                    180
+                  ]
+                },
                 "flank": {
                   "$text": "var x: ({a: any}",
                   "$span": {
@@ -84061,6 +84104,10 @@
                   },
                   "$before": true,
                   "$after": true
+                },
+                "changed": {
+                  "leading": true,
+                  "trailing": true
                 }
               }
             },
@@ -84152,6 +84199,14 @@
             "_delimiter": 0,
             "_separator": 20,
             "$_layout": {
+              "trivia": {
+                "leading": [
+                  180
+                ],
+                "trailing": [
+                  180
+                ]
+              },
               "flank": {
                 "$text": "var x: ({a: any}",
                 "$span": {
@@ -84160,6 +84215,10 @@
                 },
                 "$before": true,
                 "$after": true
+              },
+              "changed": {
+                "leading": true,
+                "trailing": true
               }
             }
           },
@@ -84271,6 +84330,14 @@
           "_delimiter": 0,
           "_separator": 20,
           "$_layout": {
+            "trivia": {
+              "leading": [
+                180
+              ],
+              "trailing": [
+                180
+              ]
+            },
             "flank": {
               "$text": "var x: ({a: any}",
               "$span": {
@@ -84279,6 +84346,10 @@
               },
               "$before": true,
               "$after": true
+            },
+            "changed": {
+              "leading": true,
+              "trailing": true
             }
           }
         },
@@ -84335,6 +84406,14 @@
         "_delimiter": 0,
         "_separator": 20,
         "$_layout": {
+          "trivia": {
+            "leading": [
+              180
+            ],
+            "trailing": [
+              180
+            ]
+          },
           "flank": {
             "$text": "var x: ({a: any}",
             "$span": {
@@ -84343,6 +84422,10 @@
             },
             "$before": true,
             "$after": true
+          },
+          "changed": {
+            "leading": true,
+            "trailing": true
           }
         }
       },
@@ -84565,6 +84648,14 @@
                     "_delimiter": 0,
                     "_separator": 14,
                     "$_layout": {
+                      "trivia": {
+                        "leading": [
+                          180
+                        ],
+                        "trailing": [
+                          180
+                        ]
+                      },
                       "flank": {
                         "$text": "let person: {name: string, age: number}",
                         "$span": {
@@ -84573,6 +84664,10 @@
                         },
                         "$before": true,
                         "$after": true
+                      },
+                      "changed": {
+                        "leading": true,
+                        "trailing": true
                       }
                     }
                   },
@@ -84978,6 +85073,14 @@
                 "_delimiter": 0,
                 "_separator": 14,
                 "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      180
+                    ],
+                    "trailing": [
+                      180
+                    ]
+                  },
                   "flank": {
                     "$text": "let person: {name: string, age: number}",
                     "$span": {
@@ -84986,6 +85089,10 @@
                     },
                     "$before": true,
                     "$after": true
+                  },
+                  "changed": {
+                    "leading": true,
+                    "trailing": true
                   }
                 }
               },
@@ -85163,6 +85270,14 @@
             "_delimiter": 0,
             "_separator": 14,
             "$_layout": {
+              "trivia": {
+                "leading": [
+                  180
+                ],
+                "trailing": [
+                  180
+                ]
+              },
               "flank": {
                 "$text": "let person: {name: string, age: number}",
                 "$span": {
@@ -85171,6 +85286,10 @@
                 },
                 "$before": true,
                 "$after": true
+              },
+              "changed": {
+                "leading": true,
+                "trailing": true
               }
             }
           },
@@ -85332,6 +85451,14 @@
           "_delimiter": 0,
           "_separator": 14,
           "$_layout": {
+            "trivia": {
+              "leading": [
+                180
+              ],
+              "trailing": [
+                180
+              ]
+            },
             "flank": {
               "$text": "let person: {name: string, age: number}",
               "$span": {
@@ -85340,6 +85467,10 @@
               },
               "$before": true,
               "$after": true
+            },
+            "changed": {
+              "leading": true,
+              "trailing": true
             }
           }
         },
@@ -85595,6 +85726,14 @@
         "_delimiter": 0,
         "_separator": 14,
         "$_layout": {
+          "trivia": {
+            "leading": [
+              180
+            ],
+            "trailing": [
+              180
+            ]
+          },
           "flank": {
             "$text": "let person: {name: string, age: number}",
             "$span": {
@@ -85603,6 +85742,10 @@
             },
             "$before": true,
             "$after": true
+          },
+          "changed": {
+            "leading": true,
+            "trailing": true
           }
         }
       },
@@ -163426,9 +163569,20 @@
           }
         }
       ],
-      "$errors": []
+      "$errors": [],
+      "$_layout": {
+        "units": [
+          {
+            "slot": "_statements",
+            "item": 7,
+            "leading": [
+              180
+            ]
+          }
+        ]
+      }
     },
-    "expectedOutput": "\ndeclare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; }\n;\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  for (let i = 0; i < 3; i++) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n",
+    "expectedOutput": "\ndeclare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; };\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  for (let i = 0; i < 3; i++) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n",
     "options": {
       "program": {
         "before": 183
@@ -163441,9 +163595,9 @@
     "sourceIn": "\ndeclare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n\n    interface LogOptions {\n      verbose?: boolean;\n    }\n    interface AlertOptions {\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; };\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  for (let i = 0; i < 3; i++) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n      case 1:\n          break;\n      default:\n          break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "\ndeclare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; }\n;\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  for (let i = 0; i < 3; i++) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n",
+    "expectedSourceOut": "\ndeclare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; };\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  for (let i = 0; i < 3; i++) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n",
     "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) statements: (ambient_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (string_double elements: (string_fragment))))) statements: (ambient_declaration (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type)))) statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) terminator: (automatic_semicolon)))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (method_signature name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))))) members: (class_body_member_declaration member: (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) terminator: (automatic_semicolon))) statements: (ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier))))))) statements: (empty_statement) statements: (ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed (true))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (number_decimal))) condition: (binary_expression left: (identifier) right: (number_decimal)) increment: (update_expression_postfix argument: (identifier)) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon)))))",
-    "wrappedText": "\ndeclare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; }\n;\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  for (let i = 0; i < 3; i++) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n",
+    "wrappedText": "\ndeclare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; };\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do {} while (true);\n  for (x in null) {}\n  for (;;) {}\n  for (let i = 0; i < 3; i++) {}\n  if (true) {} else {}\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try {}\n  catch (e) {}\n  finally {}\n}\n",
     "wrappedOffset": 0
   },
   {

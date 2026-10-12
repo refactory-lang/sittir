@@ -378,3 +378,10 @@ fn a_list_items_siblings_are_the_items_of_its_own_list() {
     assert_eq!((first.previous, first.next), (None, sibling(3, 5)));
     assert_eq!((last.previous, last.next), (sibling(0, 2), None), "the definition after the decorators is another slot's");
 }
+
+#[test]
+fn runs_a_zero_width_token_parts_carry_once_though_an_entry_follows_in_the_second_gap() {
+    let case = Case::new(python(), "def f():\n    # c\n    pass\n");
+    let carrying: Vec<(&str, bool)> = case.table.runs().iter().filter(|run| run.start >= 8 && run.end <= 13).map(|run| (&case.source[run.start as usize..run.end as usize], run.carries)).collect();
+    assert_eq!(carrying, [("", false), ("\n    ", true)]);
+}

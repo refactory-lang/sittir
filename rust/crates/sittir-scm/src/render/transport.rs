@@ -375,6 +375,8 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
 pub enum TriviaTransport {
     #[kind(kind::COMMENT)]
     Comment(CommentTransport),
+    #[kind(kind::_TIGHT)]
+    Tight,
     #[kind(kind::_SPACE)]
     Space,
     #[kind(kind::_TAB)]
@@ -400,6 +402,7 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
             TriviaTransport::Comment(t) => t.prepare(ctx),
+            TriviaTransport::Tight => Ok(()),
             TriviaTransport::Space => Ok(()),
             TriviaTransport::Tab => Ok(()),
             TriviaTransport::Newline => Ok(()),
@@ -414,6 +417,7 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
             TriviaTransport::Comment(t) => t.source_gap(),
+            TriviaTransport::Tight => None,
             TriviaTransport::Space => None,
             TriviaTransport::Tab => None,
             TriviaTransport::Newline => None,
@@ -428,6 +432,7 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             TriviaTransport::Comment(t) => t.gap_edges(),
+            TriviaTransport::Tight => None,
             TriviaTransport::Space => None,
             TriviaTransport::Tab => None,
             TriviaTransport::Newline => None,
@@ -442,6 +447,7 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
             TriviaTransport::Comment(t) => t.snapshot_edge(),
+            TriviaTransport::Tight => None,
             TriviaTransport::Space => None,
             TriviaTransport::Tab => None,
             TriviaTransport::Newline => None,
@@ -459,6 +465,7 @@ impl ::sittir_core::render::Render for TriviaTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             TriviaTransport::Comment(t) => t.render(w),
+            TriviaTransport::Tight => render_tight(w),
             TriviaTransport::Space => render_space(w),
             TriviaTransport::Tab => render_tab(w),
             TriviaTransport::Newline => render_newline(w),
@@ -478,6 +485,7 @@ impl ::sittir_core::trivia::FromTriviaText for TriviaTransport {
     }
 
     fn from_layout(kind: ::sittir_core::types::KindId, _text: &str) -> Option<Self> {
+        if kind == kind::_TIGHT { return Some(TriviaTransport::Tight); }
         if kind == kind::_SPACE { return Some(TriviaTransport::Space); }
         if kind == kind::_TAB { return Some(TriviaTransport::Tab); }
         if kind == kind::_NEWLINE { return Some(TriviaTransport::Newline); }
@@ -492,6 +500,7 @@ impl ::sittir_core::trivia::FromTriviaText for TriviaTransport {
 impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {
     fn seam_gap(&self) -> Option<(::sittir_core::layout_kinds::LayoutKinds, Option<&str>)> {
         match self {
+            TriviaTransport::Tight => Some((::sittir_core::layout_kinds::LayoutKinds::TIGHT, None)),
             TriviaTransport::Space => Some((::sittir_core::layout_kinds::LayoutKinds::SPACE, None)),
             TriviaTransport::Tab => Some((::sittir_core::layout_kinds::LayoutKinds::TAB, None)),
             TriviaTransport::Newline => Some((::sittir_core::layout_kinds::LayoutKinds::NEWLINE, None)),

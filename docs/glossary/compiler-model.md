@@ -4806,7 +4806,7 @@ A text made of one or more of the grammar's node-less extras: the `nodelessExtra
 
 ### `packages/codegen/src/compiler/model/trivia.ts::whitespaceTriviaKinds`
 
-The `_layout` members that are extras: those whose literal text `lexicalExtrasRun` accepts whole, since tree-sitter skips a run of extras. Rust and typescript get `space`, `newline` and `blankline`, and python adds `double_blankline`. `tight` is excluded because an empty text is no run, and the depth marks because their text is not whitespace. The builders of the rest still exist; a trivia position refuses them.
+The `_layout` members a side can hold as entries: those the member table admits (`admitsWhitespaceMember`), the ones whose literal text `lexicalExtrasRun` accepts whole, since tree-sitter skips a run of extras, and the member it declares always admitted, `tight`. An empty text is no run, so `tight` is never parsed as an extra; it is trivia so that a gap the source keeps tight where the options break stores that deviation. The depth marks are excluded (`isDepthText`); `depthTriviaKinds` adds them on their own. This is where the trivia kinds stop being extras alone. The builders of the rest still exist; a trivia position refuses them.
 
 ### `packages/codegen/src/compiler/model/trivia.ts::WhitespaceTrivia`
 

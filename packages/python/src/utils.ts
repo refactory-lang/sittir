@@ -12,9 +12,11 @@ export const triviaFacts = Object.freeze({
 		'_dedent',
 		'_double_blankline',
 		'_indent',
+		'_layout',
 		'_newline',
 		'_space',
 		'_tab',
+		'_tight',
 		'comment',
 		'line_continuation',
 		'line_continuation_newline',
@@ -30,7 +32,7 @@ export const triviaFacts = Object.freeze({
 	]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:[\s\f\uFEFF\u2060\u200B]|\r?\n))+)$/u,
-		kindIdByText: Object.freeze({ ' ': 123, '\t': 124, '\n': 115, '\n\n': 125, '\n\n\n': 126 })
+		kindIdByText: Object.freeze({ '': 122, ' ': 123, '\t': 124, '\n': 115, '\n\n': 125, '\n\n\n': 126 })
 	})
 } satisfies TriviaFacts);
 
