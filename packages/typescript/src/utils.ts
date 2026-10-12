@@ -3,13 +3,15 @@
 import type { AnyUntypedNode, QuerySlots, TriviaFacts } from '@sittir/types';
 import { bindRuntime } from '@sittir/common/utils';
 import { KIND_NAMES, type TypescriptTypeMap } from './types.js';
-import { INNER_GAPS } from './consts.js';
+import { INNER_SITES } from './consts.js';
 
 export const triviaFacts = Object.freeze({
 	kindName: (type: AnyUntypedNode['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
 	kinds: new Set<string>([
 		'_blankline',
+		'_dedent',
 		'_double_blankline',
+		'_indent',
 		'_newline',
 		'_space',
 		'_tab',
@@ -18,11 +20,11 @@ export const triviaFacts = Object.freeze({
 		'comment_line',
 		'html_comment'
 	]),
-	innerGaps: INNER_GAPS,
+	innerKinds: INNER_SITES,
 	rebuildWrappers: new Set<number>([
 		152, 153, 154, 155, 156, 157, 159, 160, 161, 162, 163, 164, 376, 377, 379, 380, 382, 383, 384, 385, 386, 387, 392,
-		393, 394, 395, 397, 399, 400, 401, 402, 403, 404, 405, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418,
-		419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 432, 433, 434, 460, 462, 463, 464, 465, 467
+		393, 394, 396, 398, 399, 400, 401, 402, 403, 404, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418,
+		419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 431, 432, 433, 459, 461, 462, 463, 464, 466
 	]),
 	listKinds: new Set<number>([376, 377, 379, 382, 383, 384, 385, 390]),
 	whitespace: Object.freeze({
@@ -776,50 +778,45 @@ export const querySlots: QuerySlots = Object.freeze({
 		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
 	393: [
-		['exportClause', { fields: ['export_clause'], kinds: [] }],
-		['source', { fields: ['source'], kinds: [] }],
-		['terminator', { fields: ['terminator'], kinds: [] }]
-	],
-	394: [
 		['expression', { fields: ['expression'], kinds: [] }],
 		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
-	395: [['argument', { fields: ['argument'], kinds: [] }]],
-	397: [
+	394: [['argument', { fields: ['argument'], kinds: [] }]],
+	396: [
 		['left', { fields: ['left'], kinds: [] }],
 		['right', { fields: ['right'], kinds: [] }]
 	],
-	399: [
+	398: [
 		['decorators', { fields: ['decorator'], kinds: [] }],
 		['methodDefinition', { fields: [], kinds: ['method_definition'] }],
 		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
-	400: [
+	399: [
 		['methodSignature', { fields: [], kinds: ['method_signature'] }],
 		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
-	401: [
+	400: [
 		['member', { fields: ['member'], kinds: [] }],
 		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
-	402: [
+	401: [
 		['sign', { fields: ['sign'], kinds: [] }],
 		['readonly', { fields: ['readonly'], kinds: [] }],
 		['name', { fields: ['name'], kinds: [] }],
 		['indexType', { fields: ['index_type'], kinds: [] }],
 		['type', { fields: ['type'], kinds: [] }]
 	],
-	403: [
+	402: [
 		['sign', { fields: ['sign'], kinds: [] }],
 		['readonly', { fields: ['readonly'], kinds: [] }],
 		['mappedTypeClause', { fields: [], kinds: ['mapped_type_clause'] }],
 		['type', { fields: ['type'], kinds: [] }]
 	],
-	404: [
+	403: [
 		['importClause', { fields: [], kinds: ['import_clause'] }],
 		['source', { fields: ['source'], kinds: [] }]
 	],
-	405: [
+	404: [
 		[
 			'expression',
 			{
@@ -904,16 +901,16 @@ export const querySlots: QuerySlots = Object.freeze({
 			}
 		]
 	],
-	407: [
+	406: [
 		['importKind', { fields: ['import_kind'], kinds: [] }],
 		['name', { fields: ['name'], kinds: [] }]
 	],
-	408: [
+	407: [
 		['importKind', { fields: ['import_kind'], kinds: [] }],
 		['name', { fields: ['name'], kinds: [] }],
 		['alias', { fields: ['alias'], kinds: [] }]
 	],
-	409: [
+	408: [
 		[
 			'expression',
 			{
@@ -999,41 +996,42 @@ export const querySlots: QuerySlots = Object.freeze({
 		],
 		['type', { fields: ['type'], kinds: [] }]
 	],
-	410: [['sequenceExpression', { fields: [], kinds: ['sequence_expression'] }]],
-	411: [
+	409: [['sequenceExpression', { fields: [], kinds: ['sequence_expression'] }]],
+	410: [
 		['function', { fields: ['function'], kinds: [] }],
 		['typeArguments', { fields: ['type_arguments'], kinds: [] }],
+		['arguments', { fields: ['arguments'], kinds: [] }]
+	],
+	411: [
+		['function', { fields: ['function'], kinds: [] }],
 		['arguments', { fields: ['arguments'], kinds: [] }]
 	],
 	412: [
 		['function', { fields: ['function'], kinds: [] }],
-		['arguments', { fields: ['arguments'], kinds: [] }]
-	],
-	413: [
-		['function', { fields: ['function'], kinds: [] }],
 		['typeArguments', { fields: ['type_arguments'], kinds: [] }],
 		['arguments', { fields: ['arguments'], kinds: [] }]
 	],
+	413: [['elements', { fields: ['elements'], kinds: [] }]],
 	414: [['elements', { fields: ['elements'], kinds: [] }]],
-	415: [['elements', { fields: ['elements'], kinds: [] }]],
-	416: [
+	415: [
 		['argument', { fields: ['argument'], kinds: [] }],
 		['operator', { fields: ['operator'], kinds: [] }]
 	],
-	417: [
+	416: [
 		['operator', { fields: ['operator'], kinds: [] }],
 		['argument', { fields: ['argument'], kinds: [] }]
 	],
-	418: [['parameter', { fields: ['parameter'], kinds: [] }]],
-	419: [
+	417: [['parameter', { fields: ['parameter'], kinds: [] }]],
+	418: [
 		['extendsClause', { fields: ['extends_clause'], kinds: [] }],
 		['implementsClause', { fields: [], kinds: ['implements_clause'] }]
 	],
-	420: [
+	419: [
 		['identifier', { fields: [], kinds: ['identifier', 'type_keyword'] }],
 		['importClauseGroup', { fields: [], kinds: ['import_clause_group'] }]
 	],
-	421: [
+	420: [
+		['type', { fields: ['type'], kinds: [] }],
 		[
 			'content',
 			{
@@ -1041,14 +1039,13 @@ export const querySlots: QuerySlots = Object.freeze({
 				kinds: [
 					'export_statement_default_from_star_from',
 					'export_statement_default_from_ns_from',
-					'export_statement_default_from_clause_from',
-					'export_clause'
+					'export_statement_default_from_clause_from'
 				]
 			}
 		],
-		['automaticSemicolon', { fields: [], kinds: ['automatic_semicolon', 'semi'] }]
+		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
-	422: [
+	421: [
 		['decorators', { fields: ['decorator'], kinds: [] }],
 		[
 			'content',
@@ -1074,16 +1071,16 @@ export const querySlots: QuerySlots = Object.freeze({
 			}
 		]
 	],
-	423: [['source', { fields: ['source'], kinds: [] }]],
-	424: [
+	422: [['source', { fields: ['source'], kinds: [] }]],
+	423: [
 		['namespaceExport', { fields: [], kinds: ['namespace_export'] }],
 		['source', { fields: ['source'], kinds: [] }]
 	],
-	425: [
+	424: [
 		['exportClause', { fields: [], kinds: ['export_clause'] }],
 		['source', { fields: ['source'], kinds: [] }]
 	],
-	426: [
+	425: [
 		[
 			'content',
 			{
@@ -1108,43 +1105,43 @@ export const querySlots: QuerySlots = Object.freeze({
 			}
 		]
 	],
-	427: [
+	426: [
 		['value', { fields: ['value'], kinds: [] }],
 		['automaticSemicolon', { fields: [], kinds: ['automatic_semicolon', 'semi'] }]
 	],
-	428: [
+	427: [
 		['name', { fields: ['name'], kinds: [] }],
 		['type', { fields: ['type'], kinds: [] }],
 		['value', { fields: ['value'], kinds: [] }]
 	],
-	429: [
+	428: [
 		['name', { fields: ['name'], kinds: [] }],
 		['type', { fields: ['type'], kinds: [] }]
 	],
-	432: [
+	431: [
 		['left', { fields: ['left'], kinds: [] }],
 		['operator', { fields: ['operator'], kinds: [] }],
 		['right', { fields: ['right'], kinds: [] }]
 	],
-	433: [
+	432: [
 		['left', { fields: ['left'], kinds: [] }],
 		['value', { fields: ['value'], kinds: [] }],
 		['operator', { fields: ['operator'], kinds: [] }],
 		['right', { fields: ['right'], kinds: [] }]
 	],
-	434: [
+	433: [
 		['kind', { fields: ['kind'], kinds: [] }],
 		['left', { fields: ['left'], kinds: [] }],
 		['terminator', { fields: ['terminator'], kinds: [] }],
 		['operator', { fields: ['operator'], kinds: [] }],
 		['right', { fields: ['right'], kinds: [] }]
 	],
-	460: [['content', { fields: ['content'], kinds: [] }]],
+	459: [['content', { fields: ['content'], kinds: [] }]],
+	461: [['content', { fields: ['content'], kinds: [] }]],
 	462: [['content', { fields: ['content'], kinds: [] }]],
 	463: [['content', { fields: ['content'], kinds: [] }]],
 	464: [['content', { fields: ['content'], kinds: [] }]],
-	465: [['content', { fields: ['content'], kinds: [] }]],
-	467: [['content', { fields: ['content'], kinds: [] }]]
+	466: [['content', { fields: ['content'], kinds: [] }]]
 });
 
 export const { isNode } = bindRuntime<TypescriptTypeMap>();

@@ -1001,6 +1001,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "dedent",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -3019,6 +3029,20 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "dedent",
+          "named": true
+        },
+        {
+          "type": "indent",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -3941,11 +3965,15 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
           "type": "block",
+          "named": true
+        },
+        {
+          "type": "indent",
           "named": true
         }
       ]
@@ -4814,6 +4842,10 @@
     "named": false
   },
   {
+    "type": "dedent",
+    "named": true
+  },
+  {
     "type": "def",
     "named": false
   },
@@ -4924,6 +4956,10 @@
   {
     "type": "in",
     "named": false
+  },
+  {
+    "type": "indent",
+    "named": true
   },
   {
     "type": "integer_binary",

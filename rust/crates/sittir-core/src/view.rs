@@ -162,11 +162,8 @@ pub struct Presence<T> {
 }
 
 impl<T> Presence<T> {
-    pub fn new(flag: Option<bool>, kind: T) -> Self {
-        Self {
-            present: flag == Some(true),
-            kind,
-        }
+    pub fn new(present: bool, kind: T) -> Self {
+        Self { present, kind }
     }
 }
 
@@ -281,6 +278,17 @@ pub struct ListView<'a, E: Slot> {
     pub head: Option<usize>,
     /// Spacing site read from the resolved options inside the template, after the last item.
     pub tail: Option<usize>,
+    /// The list's slot (its wire key) and the layout holding its unit
+    /// items' sides, each item framed by them (`UnitFrames`).
+    pub units: Option<(&'a str, &'a dyn UnitFrames)>,
+}
+
+/// What frames a node's unit children by their sides
+/// (`layout::TransportLayout::units`).
+pub trait UnitFrames: std::fmt::Debug {
+    /// Writes `body`, the unit at item `item` of the slot `slot`, framed by
+    /// the sides held for it, or bare when none are.
+    fn frame_unit(&self, slot: &str, item: u32, w: &mut dyn RenderSink, body: &mut dyn FnMut(&mut dyn RenderSink) -> RenderResult) -> RenderResult;
 }
 
 impl<E: Slot> ListView<'_, E> {
@@ -309,7 +317,10 @@ impl<E: Slot> Render for ListView<'_, E> {
                 w.text(self.token)?;
                 w.site(self.after);
             }
-            item.write_slot("", "", w)?;
+            match self.units {
+                Some((slot, units)) => units.frame_unit(slot, i as u32, w, &mut |w| item.write_slot("", "", w))?,
+                None => item.write_slot("", "", w)?,
+            }
         }
         if self.trailing {
             w.site(self.before);
@@ -336,7 +347,7 @@ mod presence_tests {
         }
     }
 
-    fn rendered(flag: Option<bool>) -> String {
+    fn rendered(flag: bool) -> String {
         let mut s = String::new();
         let mut w = crate::spacing::SpacingWriter::new(&mut s, crate::spacing::WordMatcher::default_ident());
         let view = View::new(Presence::new(flag, Keyword), "{}");
@@ -347,13 +358,12 @@ mod presence_tests {
 
     #[test]
     fn a_set_flag_renders_the_kind() {
-        assert_eq!(rendered(Some(true)), "mut");
+        assert_eq!(rendered(true), "mut");
     }
 
     #[test]
-    fn an_absent_or_false_flag_renders_nothing() {
-        assert_eq!(rendered(None), "");
-        assert_eq!(rendered(Some(false)), "");
-        assert!(!View::new(Presence::new(Some(false), Keyword), "{}").is_present());
+    fn a_false_flag_renders_nothing() {
+        assert_eq!(rendered(false), "");
+        assert!(!View::new(Presence::new(false, Keyword), "{}").is_present());
     }
 }

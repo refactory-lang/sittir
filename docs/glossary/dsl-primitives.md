@@ -104,8 +104,8 @@ rewritten content is rebuilt in the representation it had
  * around it (the normalizer strips FIELD wrappers around bare STRING nodes).
  * wire() later auto-inlines the helper back into the parse state machine so
  * the parser still sees the original bare token at the call site.
- * Tagging `metadata.fieldSource: 'override'` (debt PR-P1: was the top-level
- * `source: 'override'`, now the opaque metadata bag) records that a
+ * Tagging `metadata.fieldSource: 'override'` (in the opaque metadata bag)
+ * records that a
  * user-authored `field()` call produced this rule, for diagnostics only.
  *
  * @param native - The runtime-injected `field(name, content)` function.
@@ -251,6 +251,16 @@ which is a parenthesized expression and never a tuple; precedence hides the
 overlap from the parser, so nothing reports it, and the model inherits a tuple
 that needs no comma. The declaration states the claim so it can be checked
 (`OtherKindWitness`).
+
+`reauthored('rejects-valid-syntax', witness, body)` is the fourth cause: the
+upstream parser rejects a form the language allows, and the body adds it. The
+witness is the same `OtherKindWitness` shape read the other way round: `text`
+is source upstream's parser reports an error for, `form` the token sequence the
+body must derive, and `kind` the upstream rule that should derive it and does
+not. The gate checks the form against that upstream rule (it must not derive it)
+and a test checks the text against upstream's own parser (it must error).
+TypeScript's `export type * from` is the case: upstream allows `type` only
+before an export clause.
 
 ### `packages/codegen/src/dsl/primitives/rule-cause.ts::OtherKindWitness`
 
@@ -666,4 +676,4 @@ A patch placeholder carrying a replacement regex source for the pattern at the p
 
 ### `packages/codegen/src/dsl/primitives/rule-cause.ts::SemanticGapWitness`
 
-Evidence for `reauthored('semantic-gap', witness, body)`: the upstream parser's kind, accepted text and grammar form, plus the language meaning that differs from the modeled construction. The gate checks that the kind is unchanged, the upstream rule derives the form, and the meaning is stated. Upstream parser tests verify the text/kind; construction regressions verify the semantic correction. This cause covers #550, where `(x)` and `(x,)` share an upstream tuple kind but mean different things in the language. It does not claim to prove language semantics from the grammar.
+Evidence for `reauthored('semantic-gap', witness, body)`: the upstream parser's kind, accepted text and grammar form, plus the language meaning that differs from the modeled construction. The gate checks that the kind is unchanged, the upstream rule derives the form, and the meaning is stated. Upstream parser tests verify the text/kind; construction regressions verify the semantic correction. This cause covers the one-element tuple, where `(x)` and `(x,)` share an upstream tuple kind but mean different things in the language. It does not claim to prove language semantics from the grammar.

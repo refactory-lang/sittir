@@ -2060,8 +2060,13 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "_dedent"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_dedent"
+          },
+          "named": true,
+          "value": "dedent"
         }
       ]
     },
@@ -8633,8 +8638,13 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "_indent"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_indent"
+          },
+          "named": true,
+          "value": "indent"
         },
         {
           "type": "REPEAT",
@@ -8648,8 +8658,13 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "_dedent"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_dedent"
+          },
+          "named": true,
+          "value": "dedent"
         }
       ],
       "annotations": {
@@ -8679,8 +8694,13 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "_indent"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_indent"
+          },
+          "named": true,
+          "value": "indent"
         },
         {
           "type": "SYMBOL",

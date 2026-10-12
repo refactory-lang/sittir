@@ -270,9 +270,6 @@ export function transportArgs(
 	if (ctx.listOwners.has(node.kind)) args.push('min_depth = 2');
 	const layout = node instanceof AbstractAssembledCompound ? layoutTokenIds(node, ctx, slots) : [];
 	if (layout.length > 0) args.push(`layout = [${layout.map((id) => tokenGroup(id, ctx)).join(', ')}]`);
-	if (node instanceof AbstractAssembledCompound) {
-		for (const gap of node.innerGaps) args.push(`gap(${gap.precedingTokens}) = ${gap.key}`);
-	}
 	const item = listItemSlot(node);
 	if (item !== undefined) args.push(`list, item = ${rustFieldIdent(item.storageName)}`);
 	return args.join(', ');

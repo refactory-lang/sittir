@@ -1,0 +1,638 @@
+feature [languages composing it: p python, t typescript, j javascript, r rust]
+
+## arbitrary-precision-integers [ptj] Arbitrary-precision integers: an integer type of no fixed width, and its literals.
+   kind   literal.number.integer.big                     p:integer_decimal_long t:number_bigint_decimal
+   kind   literal.number.integer.big.binary              t:number_bigint_binary
+   kind   literal.number.integer.big.hex                 t:number_bigint_hex
+   kind   literal.number.integer.big.octal               t:number_bigint_octal
+
+## assertions [p] Assertions: a statement that fails when its condition does not hold, `assert`.
+   kind   statement.assert                               p:assert_statement
+
+## async-await [ptjr] Asynchronous functions: a function suspends at `await` until the value it awaits is ready.
+   kind   expression.await                               p:await r:await_expression t:await_expression
+   flag   clause.comprehension.for#async
+   flag   declaration.function#async
+   flag   declaration.function.signature#async
+   flag   declaration.method#async
+   flag   declaration.method.signature#async
+   flag   declaration.method.static#async
+   flag   expression.function#async
+   flag   expression.lambda#async
+   flag   statement.loop.for#async
+   flag   statement.with#async
+
+## async-await/async-blocks [r] Asynchronous blocks: a block expression that evaluates to a future of its value.
+   kind   expression.block.async                         r:async_block
+   flag   expression.block.async#move
+
+## attributes [r] Attributes: annotations on a declaration that are not evaluated.
+   kind   attribute.inner                                r:inner_attribute_item
+   member clause.match.arm.attributes
+   member clause.match.arm.last.attributes
+   member declaration.enum_member.attributes
+   member declaration.field.attributes
+   member declaration.type_parameter.attributes
+   member declaration.type_parameter.lifetime.attributes
+   member declaration.type_parameter.value.attributes
+   member element.struct.field.attributes
+   member expression.collection.tuple.attributes
+   member identifier.metavariable.attributes
+
+## byte-strings [pr] Byte strings: a primitive type of byte sequences, and its literals.
+   kind   literal.string.bytes                           p:string
+
+## characters [r] Characters: a primitive type of single characters, and its literals.
+   kind   literal.char                                   r:char_literal
+   flag   literal.char#byte
+
+## coercive-equality [tj] Coercive equality: `==` and `!=` convert their operands' types before comparing.
+   kind   expression.binary.comparison.loose_equal       t:binary_expression
+   kind   expression.binary.comparison.loose_not_equal   t:binary_expression
+
+## compile-time-evaluation [r] Compile-time evaluation: functions and blocks the compiler evaluates.
+   kind   expression.block.const                         r:const_block
+   flag   declaration.function#const
+   flag   declaration.method#const
+   flag   declaration.method.static#const
+
+## complex-numbers [p] Complex numbers: a numeric type with an imaginary part, its imaginary literals and its patterns.
+   kind   literal.number.integer.imaginary               p:integer_decimal_imaginary
+   kind   pattern.case.complex                           p:complex_pattern
+   member literal.number.float.imaginary
+   member literal.number.float.leading_point.imaginary
+   member literal.number.float.scientific.imaginary
+
+## comprehensions [p] Comprehensions: a collection built by iterating and filtering in one expression.
+   kind   clause.comprehension                           p:comprehension_clauses
+   kind   clause.comprehension.for                       p:for_in_clause
+   kind   clause.comprehension.if                        p:if_clause
+   kind   expression.comprehension                       
+   kind   expression.comprehension.dictionary            p:dictionary_comprehension
+   kind   expression.comprehension.generator             p:generator_expression
+   kind   expression.comprehension.list                  p:list_comprehension
+   kind   expression.comprehension.set                   p:set_comprehension
+
+## computed-keys [tj] Computed keys: a property, field or method named by an expression evaluated at run time.
+   flag   declaration.field#computed
+   flag   declaration.method#computed
+   flag   element.pair#computed
+   flag   pattern.object.pair#computed
+
+## concurrency-syntax [] Concurrency syntax: starting concurrent work, channels and actors, in the language's syntax.
+   (owns no kind, member or flag)
+
+## conditional-expressions [ptj] Conditional expressions: an expression that evaluates one of two by a condition.
+   kind   expression.conditional                         p:conditional_expression t:ternary_expression
+
+## coroutines [ptjr] Coroutines: an expression yields a value to its caller and resumes where it left off.
+   kind   expression.block.gen                           r:gen_block
+   kind   expression.yield                               p:yield r:yield_expression t:yield_expression
+   flag   expression.block.gen#move
+   flag   expression.lambda#static
+
+## coroutines/generators [ptj] Generators: functions that run as coroutines producing a sequence, and delegation to another generator.
+   kind   expression.yield.delegate                      p:yield_from_clause t:yield_expression_delegate
+   flag   declaration.function#generator
+   flag   declaration.method#generator
+   flag   expression.function#generator
+
+## counted-loops [tj] Counted loops: a loop with an initializer, a condition and an update.
+   kind   statement.loop.counted                         t:for_statement
+
+## debugger-statements [tj] Debugger statements: a statement that stops in an attached debugger, `debugger`.
+   kind   statement.debugger                             t:debugger_statement
+
+## decorators [ptj] Decorators: a function applied to a declaration where it is declared.
+   kind   attribute.content.call                         t:decorator_call_expression
+   kind   attribute.content.member                       t:decorator_member_expression
+   kind   attribute.content.parenthesized                t:decorator_parenthesized_expression
+   kind   attribute.decorator                            p:decorator t:decorator
+   member declaration.class.decorators
+   member declaration.field.decorators
+   member declaration.function.decorators
+   member declaration.method.decorators
+   member declaration.parameter.decorators
+   member expression.class.decorators
+
+## default-arguments [ptj] Default arguments: a parameter's value when a call omits it.
+   member declaration.parameter.default
+   member declaration.parameter.default.default
+   member declaration.parameter.typed_default.default
+
+## deferred-execution [] Deferred execution: a statement run when its scope exits.
+   (owns no kind, member or flag)
+
+## destructuring [ptjr] Destructuring: binding the parts of a value by a pattern.
+   kind   pattern.array                                  t:array_pattern
+   kind   pattern.assignment                             t:assignment_pattern
+   kind   pattern.list                                   p:list_pattern
+   kind   pattern.object                                 t:object_pattern
+   kind   pattern.object.assignment                      t:object_assignment_pattern
+   kind   pattern.object.pair                            t:pair_pattern
+   kind   pattern.rest                                   t:rest_pattern
+   kind   pattern.slice                                  r:slice_pattern
+   kind   pattern.splat                                  p:list_splat_pattern
+   kind   pattern.splat.dictionary                       p:dictionary_splat_pattern
+   kind   pattern.tuple                                  p:tuple_pattern r:tuple_pattern
+   kind   pattern.tuple.bare                             p:pattern_list
+   kind   pattern.wildcard                               r:wildcard_pattern
+
+## dynamic-scope [tj] Dynamic scope: an object's properties put in scope, `with`.
+   kind   statement.scope                                t:with_statement
+
+## encapsulation [tj] Encapsulation: a member hidden from code outside its class, flagged where it is declared and where it is read.
+   flag   declaration.field#privateName
+   flag   declaration.method#privateName
+   flag   expression.member#privateName
+
+## enumerations [tr] Enumerations: a type declared by its named constants.
+   kind   declaration.enum                               r:enum_item t:enum_declaration
+   kind   declaration.enum_member                        r:enum_variant t:enum_assignment,enum_body_element_name
+   flag   declaration.enum#const
+
+## enumerations/algebraic-data-types [r] Algebraic data types: a sum type whose variants carry fields.
+   kind   declaration.enum_member.struct                 r:enum_variant
+   kind   declaration.enum_member.tuple                  r:enum_variant
+
+## error-propagation [r] Error propagation: an expression that returns an error to its caller, and a block that stops it there.
+   kind   expression.block.try                           r:try_block
+   kind   expression.try                                 r:try_expression
+
+## exceptions [ptj] Exceptions: a thrown value unwinds to the nearest handler, with try, catch and finally.
+   kind   clause.catch                                   t:catch_clause
+   kind   clause.except                                  p:except_clause
+   kind   clause.finally                                 p:finally_clause t:finally_clause
+   kind   statement.throw                                p:raise_statement t:throw_statement
+   kind   statement.try                                  p:try_statement t:try_statement
+   flag   clause.except#group
+
+## exec-statements [p] Exec statements: running code given as text, as a statement, python 2's `exec`.
+   kind   statement.exec                                 p:exec_statement
+
+## foreign-function-interface [r] Foreign function interface: functions another language defines, declared with the ABI they are called by.
+   kind   declaration.module.foreign                     r:foreign_mod_item,foreign_mod_item_body,foreign_mod_item_semi
+   kind   declaration.parameter.variadic                 r:variadic_parameter
+   kind   modifier.extern                                r:extern_modifier
+   member declaration.function.extern
+   member declaration.method.extern
+   member declaration.method.static.extern
+   flag   declaration.parameter.variadic#mutable
+
+## interface-conformance [t] Nominal conformance: a class declares the interfaces it implements.
+   kind   clause.implements                              t:implements_clause
+   member declaration.class.implements
+   member expression.class.implements
+
+## interfaces [tr] Interfaces: an abstract type declared by the members its implementers provide, a trait among them.
+   kind   clause.extends.type                            t:extends_type_clause
+   kind   declaration.field.signature                    t:property_signature
+   kind   declaration.interface                          t:interface_declaration
+   kind   declaration.interface.trait                    r:trait_item
+
+## labeled-control-flow [tjr] Labeled control flow: labels on loops and blocks, which break and continue name.
+   kind   identifier.label                               r:label t:statement_identifier
+   kind   statement.labeled                              t:labeled_statement
+   member statement.block.label
+   member statement.break.label
+   member statement.continue.label
+   member statement.loop.for.label
+   member statement.loop.label
+   member statement.loop.while.label
+
+## match-expressions [pr] Match expressions: branching on a value by patterns and guards.
+   kind   clause.case.match                              p:case_clause
+   kind   clause.let                                     r:let_condition
+   kind   clause.let.chain                               r:let_chain
+   kind   clause.match                                   
+   kind   clause.match.arm                               r:match_arm
+   kind   clause.match.arm.last                          r:last_match_arm
+   kind   pattern.captured                               r:captured_pattern
+   kind   pattern.case                                   p:case_pattern
+   kind   pattern.case.as                                p:case_as_pattern
+   kind   pattern.case.class                             p:class_pattern
+   kind   pattern.case.dictionary                        p:dict_pattern
+   kind   pattern.case.keyword                           p:keyword_pattern
+   kind   pattern.case.list                              p:case_list_pattern
+   kind   pattern.case.or                                p:union_pattern
+   kind   pattern.case.splat                             p:splat_pattern
+   kind   pattern.case.tuple                             p:case_tuple_pattern
+   kind   pattern.match                                  r:match_pattern
+   kind   pattern.or                                     r:or_pattern
+   kind   statement.match                                p:match_statement r:match_expression
+
+## methods [ptjr] Methods: functions declared as members of a type, called on an instance of it.
+   kind   declaration.method                             p:class_definition r:impl_item_body,trait_item t:method_definition
+   kind   declaration.method.dunder                      p:function_definition
+   kind   declaration.method.signature                   r:trait_item t:method_signature
+   kind   declaration.method.static                      p:decorated_definition r:impl_item_body
+   kind   declaration.parameter.self                     r:self_parameter
+   kind   identifier.self                                r:self t:this
+   flag   declaration.function#default
+   flag   declaration.method#default
+   flag   declaration.method#static
+   flag   declaration.method.signature#static
+   flag   declaration.method.static#default
+   flag   declaration.parameter.self#mutable
+
+## methods/accessors [ptj] Accessors: a property read and written through a getter and a setter.
+   kind   declaration.method.getter                      t:method_definition
+   kind   declaration.method.setter                      t:method_definition
+   kind   declaration.method.signature.abstract.getter   t:abstract_method_signature
+   kind   declaration.method.signature.abstract.setter   t:abstract_method_signature
+   kind   declaration.method.signature.getter            t:method_signature
+   kind   declaration.method.signature.setter            t:method_signature
+   flag   declaration.field#accessor
+
+## methods/classes [ptj] Classes: types declared with their fields and methods, whose instances a constructor makes.
+   kind   declaration.class                              p:class_definition t:abstract_class_declaration,class_declaration
+   kind   declaration.constructor                        p:function_definition t:method_definition
+   kind   expression.call.new                            t:new_expression
+   kind   expression.class                               t:class
+   kind   statement.block.static                         t:class_static_block
+   flag   declaration.field#static
+   flag   declaration.field.signature#static
+
+## methods/classes/abstract-classes [pt] Abstract classes: a class nothing instantiates, and members its subclasses must implement.
+   kind   declaration.method.signature.abstract          t:abstract_method_signature
+   flag   declaration.class#abstract
+   flag   declaration.field#abstract
+   flag   declaration.signature.construct#abstract
+   flag   type.function.constructor#abstract
+
+## methods/classes/explicit-overrides [pt] Explicit overrides: a member marked as overriding the one it replaces.
+   flag   declaration.field#override
+   flag   declaration.field.signature#override
+   flag   declaration.method#override
+   flag   declaration.method.signature#override
+   flag   declaration.method.signature.abstract#override
+   flag   declaration.parameter#override
+
+## methods/classes/multiple-inheritance [p] Multiple inheritance: a class lists any number of base classes.
+   member declaration.class.bases
+
+## methods/classes/single-inheritance [tj] Single inheritance: a class extends at most one superclass.
+   kind   clause.extends                                 t:extends_clause
+   member declaration.class.extends
+   member expression.class.extends
+
+## modules [ptjr] Modules: names imported from other files and exported to them.
+   kind   clause.export                                  t:export_clause
+   kind   clause.export.namespace                        t:namespace_export
+   kind   clause.export.specifier                        t:export_specifier
+   kind   clause.import                                  
+   kind   clause.import.alias                            p:aliased_import t:import_alias
+   kind   clause.import.as                               r:use_as_clause
+   kind   clause.import.attribute                        t:import_attribute
+   kind   clause.import.list                             r:use_list
+   kind   clause.import.list.scoped                      r:scoped_use_list
+   kind   clause.import.names                            t:import_clause
+   kind   clause.import.namespace                        t:namespace_import
+   kind   clause.import.relative                         p:relative_import
+   kind   clause.import.relative.prefix                  p:import_prefix
+   kind   clause.import.require                          t:import_require_clause
+   kind   clause.import.specifier                        t:import_specifier
+   kind   clause.import.wildcard                         p:wildcard_import r:use_wildcard
+   kind   expression.call.import                         t:import
+   kind   statement.export                               t:export_statement,export_statement_default_declaration,export_statement
+   kind   statement.export.all                           t:export_statement_default_from
+   kind   statement.export.default                       t:export_statement_default_declaration
+   kind   statement.import                               p:import_statement r:use_declaration t:import_statement
+   kind   statement.import.crate                         r:extern_crate_declaration
+   kind   statement.import.from                          p:import_from_statement
+   kind   statement.import.future                        p:future_import_statement
+   kind   statement.import.type                          t:import_statement
+   kind   statement.import.typeof                        t:import_statement
+
+## modules/module-declarations [tr] Module declarations: a module declared inside a file.
+   kind   declaration.module                             r:mod_item,mod_item_external,mod_item_inline t:internal_module
+   kind   declaration.module.external                    t:module
+
+## multiway-branch [tj] Multiway branch: a switch on a value to the case it equals.
+   kind   clause.case.default                            t:switch_default
+   kind   clause.case.switch                             t:switch_case
+   kind   statement.switch                               t:switch_statement
+
+## named-arguments [p] Named arguments: an argument passed by its parameter's name.
+   kind   argument.keyword                               p:keyword_argument
+
+## open-type-extension [r] Open type extension: methods added to a type away from its declaration.
+   kind   declaration.extension                          r:impl_item_body,impl_item_semi
+
+## open-type-extension/typeclasses [r] Typeclasses: conformance to an interface declared away from the type.
+   kind   declaration.extension.conformance              r:impl_item_body
+
+## operator-overloading [pr] Operator overloading: operators a type defines for its own values.
+   (owns no kind, member or flag)
+
+## optional-chaining [tj] Optional chaining: an access that yields nothing on a null receiver.
+   flag   expression.subscript#optionalChain
+
+## overloading [t] Overloading: several signatures declared under one name.
+   (owns no kind, member or flag)
+
+## parametric-polymorphism [ptr] Parametric polymorphism: declarations and types take type parameters.
+   kind   clause.default                                 t:default_type
+   kind   declaration.type_parameter                     p:type_parameter r:type_parameter t:type_parameter
+   kind   element.type_argument                          r:type_argument
+   kind   expression.instantiation                       r:generic_function t:instantiation_expression
+   kind   pattern.generic                                r:generic_pattern
+   member declaration.class.typeParameters
+   member declaration.enum.typeParameters
+   member declaration.extension.conformance.typeParameters
+   member declaration.extension.typeParameters
+   member declaration.function.signature.typeParameters
+   member declaration.interface.trait.typeParameters
+   member declaration.interface.typeParameters
+   member declaration.method.signature.abstract.typeParameters
+   member declaration.method.signature.typeParameters
+   member declaration.method.static.typeParameters
+   member declaration.signature.call.typeParameters
+   member declaration.signature.construct.typeParameters
+   member declaration.type_alias.associated.typeParameters
+   member declaration.type_alias.typeParameters
+   member declaration.union.typeParameters
+   member expression.call.member.typeArguments
+   member expression.call.new.typeArguments
+   member expression.call.typeArguments
+   member expression.class.typeParameters
+   member expression.function.typeParameters
+   member type.abstract.typeParameters
+   member type.function.constructor.typeParameters
+   member type.function.typeParameters
+   flag   declaration.type_parameter#const
+
+## parametric-polymorphism/bounded-quantification [ptr] Bounded quantification: bounds a type parameter must satisfy, in its constraint and in where clauses.
+   kind   clause.bounds                                  r:trait_bounds
+   kind   clause.bounds.removed                          r:removed_trait_bound
+   kind   clause.bounds.use                              r:use_bounds
+   kind   clause.constraint                              t:constraint
+   kind   clause.where                                   r:where_clause
+   kind   clause.where.predicate                         r:where_predicate
+   member declaration.enum.whereClause
+   member declaration.extension.conformance.whereClause
+   member declaration.extension.whereClause
+   member declaration.function.signature.whereClause
+   member declaration.function.whereClause
+   member declaration.interface.trait.whereClause
+   member declaration.method.signature.whereClause
+   member declaration.method.static.whereClause
+   member declaration.method.whereClause
+   member declaration.type_alias.associated.whereClause
+   member declaration.type_alias.trailingWhereClause
+   member declaration.type_alias.whereClause
+   member declaration.type_parameter.constraint
+   member declaration.union.whereClause
+   member element.type_argument.constraint
+   member type.constrained.constraint
+
+## parametric-polymorphism/bounded-quantification/higher-rank-polymorphism [r] Higher-rank polymorphism: a bound quantifies over type parameters of its own.
+   kind   clause.bounds.higher_ranked                    r:higher_ranked_trait_bound
+
+## parametric-polymorphism/const-generics [r] Const generics: a type parameter that is a value.
+   kind   declaration.type_parameter.value               r:const_parameter
+
+## parametric-polymorphism/lifetimes [r] Lifetimes: parameters and bounds naming how long a reference lives.
+   kind   clause.lifetimes                               r:for_lifetimes
+   kind   declaration.type_parameter.lifetime            r:lifetime_parameter
+   kind   identifier.lifetime                            r:lifetime
+   member declaration.parameter.self.lifetime
+   member type.function.forLifetimes
+   member type.reference.lifetime
+
+## post-test-loops [tj] Post-test loops: a loop that tests its condition after its body.
+   kind   statement.loop.do_while                        t:do_statement
+
+## print-statements [p] Print statements: printing as a statement, python 2's `print`.
+   kind   clause.print                                   
+   kind   clause.print.chevron                           p:chevron
+   kind   statement.print                                p:print_statement,print_statement_plain
+   kind   statement.print.chevron                        p:print_statement_chevron
+
+## range-expressions [r] Range expressions: a range of values written with its bounds.
+   kind   expression.range                               r:range_expression,range_expression_binary
+   kind   expression.range.exclusive                     r:range_expression_bare,range_expression_binary,range_expression_postfix
+   kind   expression.range.inclusive                     r:range_expression_binary
+   kind   pattern.range                                  r:range_pattern,range_pattern_prefix,range_pattern_with_left
+   kind   pattern.range.exclusive                        r:range_pattern_prefix,range_pattern_with_left
+   kind   pattern.range.inclusive                        r:range_pattern_prefix,range_pattern_with_left
+
+## raw-strings [pr] Raw strings: string literals whose escapes are not processed.
+   kind   literal.string.raw                             p:string r:raw_string_literal
+
+## readonly-members [t] Readonly members: a field or property that is not reassigned once initialized.
+   flag   declaration.field#readonly
+   flag   declaration.field.signature#readonly
+   flag   declaration.method#readonly
+   flag   declaration.method.signature#readonly
+   flag   declaration.parameter#readonly
+
+## references [r] References: a value that refers to a place, taken and followed.
+   kind   expression.reference                           r:reference_expression
+   kind   expression.unary.deref                         r:unary_expression
+   kind   pattern.reference                              r:ref_pattern
+   kind   pattern.reference.value                        r:reference_pattern
+   member declaration.parameter.self.reference
+   flag   declaration.variable.static#byReference
+   flag   expression.lambda#move
+   flag   expression.reference#exclusive
+   flag   expression.reference#raw
+   flag   expression.reference#writable
+   flag   pattern.reference.value#exclusive
+   flag   type.pointer#writable
+   flag   type.reference#exclusive
+
+## regular-expressions [tj] Regular expressions: literals that denote patterns over strings.
+   kind   literal.regex                                  t:regex
+   kind   literal.regex.flags                            t:regex_flags
+   kind   literal.regex.pattern                          t:regex_pattern
+
+## resource-management [ptj] Resource management: a scope that releases what it acquires.
+   kind   clause.with                                    p:with_clause
+   kind   clause.with.item                               p:with_item
+   kind   statement.with                                 p:with_statement
+   flag   expression.assignment#disposable
+
+## scope-declarations [p] Scope declarations: a name bound in an enclosing scope, `global` and `nonlocal`.
+   kind   statement.global                               p:global_statement
+   kind   statement.nonlocal                             p:nonlocal_statement
+
+## slice-expressions [p] Slice expressions: a part of a sequence written with its bounds in a subscript.
+   kind   expression.slice                               p:slice
+
+## string-interpolation [ptj] String interpolation: string literals that embed expressions.
+   kind   expression.call.template                       t:call_expression_template_call
+   kind   expression.interpolation                       p:interpolation t:template_substitution
+   kind   expression.interpolation.conversion            p:type_conversion
+   kind   expression.interpolation.format                p:format_specifier
+   kind   literal.string.f                               p:string
+   kind   literal.template                               t:template_string
+   flag   expression.interpolation#debug
+
+## structs [r] Structs: value types declared by their fields, built and destructured by naming them.
+   kind   declaration.struct                             r:struct_item,struct_item_brace
+   kind   declaration.struct.tuple                       r:struct_item_tuple
+   kind   declaration.struct.unit                        r:struct_item_unit
+   kind   element.struct                                 
+   kind   element.struct.base                            r:base_field_initializer
+   kind   element.struct.field                           r:field_initializer,shorthand_field_initializer
+   kind   expression.collection.struct                   r:struct_expression
+   kind   pattern.struct                                 r:struct_pattern
+   kind   pattern.struct.field                           r:field_pattern
+   kind   pattern.struct.rest                            r:remaining_field_pattern
+   kind   pattern.tuple.struct                           r:tuple_struct_pattern
+   flag   pattern.struct.field#byReference
+   flag   pattern.struct.field#mutable
+
+## syntactic-metaprogramming [r] Syntactic metaprogramming: macros that rewrite the syntax they are given.
+   kind   clause.macro                                   
+   kind   clause.macro.rule                              r:macro_rule
+   kind   declaration.macro                              r:macro_definition
+   kind   element.macro                                  
+   kind   element.macro.fragment                         r:fragment_specifier
+   kind   element.macro.token_binding                    r:token_binding_pattern
+   kind   element.macro.token_repetition                 r:token_repetition
+   kind   element.macro.token_repetition.pattern         r:token_repetition_pattern
+   kind   element.macro.token_tree                       r:token_tree
+   kind   element.macro.token_tree.delimited             r:delim_token_tree
+   kind   element.macro.token_tree.pattern               r:token_tree_pattern
+   kind   expression.call.macro                          r:macro_invocation
+   kind   identifier.metavariable                        r:metavariable
+
+## tuples [pr] Tuples: fixed-length values of mixed elements, and the empty tuple, unit.
+   kind   expression.collection.tuple                    p:tuple r:tuple_expression
+   kind   expression.collection.tuple.bare               p:expression_list
+   kind   expression.unit                                r:unit_expression
+
+## type-aliases [ptr] Type aliases: a second name declared for a type.
+   kind   declaration.type_alias                         p:type_alias_statement r:type_item t:type_alias_declaration
+
+## type-aliases/associated-types [r] Associated types: a type an interface declares as a member, which each implementation binds.
+   kind   declaration.type_alias.associated              r:associated_type
+   kind   element.type_binding                           r:type_binding
+
+## type-annotations [ptr] Type annotations: declarations state the types of their values, written as type expressions.
+   kind   clause.mapped_type                             t:mapped_type_clause
+   kind   element.template                               
+   kind   element.template.substitution                  t:template_type
+   kind   element.tuple                                  
+   kind   element.tuple.member                           t:tuple_parameter
+   kind   element.tuple.member.optional                  t:optional_tuple_parameter
+   kind   expression.cast                                
+   kind   expression.cast.as                             r:type_cast_expression t:as_expression
+   kind   expression.cast.assertion                      t:type_assertion
+   kind   expression.cast.satisfies                      t:satisfies_expression
+   kind   type.abstract                                  r:abstract_type
+   kind   type.array                                     r:array_type t:array_type
+   kind   type.bounded                                   r:bounded_type
+   kind   type.bracketed                                 r:bracketed_type
+   kind   type.conditional                               t:conditional_type
+   kind   type.constrained                               p:constrained_type
+   kind   type.dynamic                                   r:dynamic_type
+   kind   type.existential                               t:existential_type
+   kind   type.function                                  r:function_type t:function_type
+   kind   type.function.constructor                      t:constructor_type
+   kind   type.generic                                   p:generic_type r:generic_type t:generic_type
+   kind   type.generic.turbofish                         r:generic_type_with_turbofish
+   kind   type.index_query                               t:index_type_query
+   kind   type.infer                                     t:infer_type
+   kind   type.intersection                              t:intersection_type
+   kind   type.literal                                   t:literal_type
+   kind   type.lookup                                    t:lookup_type
+   kind   type.maybe                                     t:flow_maybe_type
+   kind   type.named                                     
+   kind   type.named.prelude                             r:type_identifier
+   kind   type.object                                    t:object_type
+   kind   type.optional                                  t:optional_type
+   kind   type.parenthesized                             t:parenthesized_type
+   kind   type.path                                      p:member_type r:scoped_type_identifier t:nested_type_identifier
+   kind   type.path.expression                           r:scoped_type_identifier_in_expression_position
+   kind   type.pointer                                   r:pointer_type
+   kind   type.predicate                                 t:type_predicate
+   kind   type.predicate.asserts                         t:asserts
+   kind   type.primitive                                 r:primitive_type t:predefined_type
+   kind   type.primitive.never                           r:never_type t:predefined_type
+   kind   type.qualified                                 r:qualified_type
+   kind   type.query                                     t:type_query
+   kind   type.readonly                                  t:readonly_type
+   kind   type.reference                                 r:reference_type
+   kind   type.rest                                      t:rest_type
+   kind   type.splat                                     p:splat_type
+   kind   type.template                                  t:template_literal_type
+   kind   type.tuple                                     r:tuple_type t:tuple_type
+   kind   type.union                                     p:union_type t:union_type
+   kind   type.unit                                      r:unit_type
+   member declaration.constant.type
+   member declaration.field.signature.type
+   member declaration.field.type
+   member declaration.function.returnType
+   member declaration.function.signature.returnType
+   member declaration.method.returnType
+   member declaration.method.signature.abstract.returnType
+   member declaration.method.signature.returnType
+   member declaration.method.static.returnType
+   member declaration.parameter.type
+   member declaration.parameter.typed.type
+   member declaration.parameter.typed_default.type
+   member declaration.variable.pattern.type
+   member declaration.variable.static.type
+   member declaration.variable.type
+   member expression.function.returnType
+
+## type-annotations/ambient-declarations [t] Ambient declarations: declaring what exists without defining it.
+   kind   declaration.ambient                            t:ambient_declaration
+   kind   declaration.module_property                    t:ambient_declaration_module
+   flag   declaration.field#declare
+
+## type-annotations/manifest-typing [r] Manifest typing: a type's fields state their types, which nothing infers.
+   (owns no kind, member or flag)
+
+## type-annotations/nullable-types [pt] Nullable types: a type that admits null.
+   (owns no kind, member or flag)
+
+## type-annotations/nullable-types/non-null-assertions [t] Non-null assertions: asserting that a value, or a variable before its assignment, is not null.
+   kind   expression.cast.non_null                       t:non_null_expression
+   flag   declaration.field#definite
+   flag   declaration.variable#definite
+
+## type-annotations/optional-members [t] Optional members: a property, method or parameter that a value or a call may omit.
+   member declaration.field.optionality
+   flag   declaration.field#optional
+   flag   declaration.field.signature#optional
+   flag   declaration.method#optional
+   flag   declaration.method.signature#optional
+   flag   declaration.method.signature.abstract#optional
+   flag   declaration.parameter#optional
+
+## type-annotations/structural-conformance [t] Structural conformance: a type conforms by the members it has, and call, construct and index signatures describe them.
+   kind   declaration.signature                          
+   kind   declaration.signature.call                     t:call_signature
+   kind   declaration.signature.construct                t:construct_signature
+   kind   declaration.signature.index                    t:index_signature
+   kind   declaration.signature.index.mapped             t:index_signature_mapped_type_clause
+   flag   declaration.signature.index#readonly
+
+## unsafe-code [r] Unsafe code: operations the compiler does not check, in the blocks and declarations marked for them.
+   kind   expression.block.unsafe                        r:unsafe_block
+   flag   declaration.extension#unsafe
+   flag   declaration.extension.conformance#unsafe
+   flag   declaration.function#unsafe
+   flag   declaration.interface.trait#unsafe
+   flag   declaration.method#unsafe
+   flag   declaration.method.static#unsafe
+   flag   type.function#unsafe
+
+## untagged-unions [r] Untagged unions: a value type whose fields share one storage.
+   kind   declaration.union                              r:union_item
+
+## visibility [ptr] Visibility: an access level on a declaration.
+   kind   modifier.visibility                            t:accessibility_modifier
+   kind   modifier.visibility.private                    r:visibility_modifier_pub t:accessibility_modifier
+   kind   modifier.visibility.protected                  t:accessibility_modifier
+   kind   modifier.visibility.public                     r:visibility_modifier_pub t:accessibility_modifier
+   kind   modifier.visibility.public.internal            r:visibility_modifier,visibility_modifier_pub
+   kind   modifier.visibility.public.restricted          r:visibility_modifier_pub
+   + 121 owner x level refinements
+
+## visibility/scoped-visibility [r] Scoped visibility: a level restricted to a module the declaration names, `pub(in path)`.
+   member modifier.visibility.public.restricted.scope

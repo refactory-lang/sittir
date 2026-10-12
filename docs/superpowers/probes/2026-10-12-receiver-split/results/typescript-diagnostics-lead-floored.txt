@@ -1,0 +1,7 @@
+[error] dropped-token  formal_parameters_elements.-
+[error] field-optional-delimiter  formal_parameters_elements.item
+[error] rule-reauthored-without-cause  object_type.-
+[error] unclassifiable-shape  binary_expression.-
+[error] unclassifiable-shape  public_field_definition.-
+[error] union-slot-mixed-row  binary_expression.-
+GrammarDiagnosticError: dropped-token: kind 'formal_parameters_elements': "," is neither template text nor a slot, so a parse of it renders without it. Give the token a named wrapper in patches so it becomes a slot

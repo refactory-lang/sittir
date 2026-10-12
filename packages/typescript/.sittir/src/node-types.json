@@ -152,10 +152,6 @@
       {
         "type": "export_statement_namespace_export",
         "named": true
-      },
-      {
-        "type": "export_statement_type_export",
-        "named": true
       }
     ]
   },
@@ -2867,19 +2863,36 @@
   {
     "type": "export_statement_default_from",
     "named": true,
-    "fields": {},
+    "fields": {
+      "terminator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": ";",
+            "named": false
+          },
+          {
+            "type": "automatic_semicolon",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "type",
+            "named": false
+          }
+        ]
+      }
+    },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
-        {
-          "type": "automatic_semicolon",
-          "named": true
-        },
-        {
-          "type": "export_clause",
-          "named": true
-        },
         {
           "type": "export_statement_default_from_clause_from",
           "named": true
@@ -2901,7 +2914,7 @@
     "fields": {
       "source": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "string",
@@ -3003,46 +3016,6 @@
         "types": [
           {
             "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "terminator": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": ";",
-            "named": false
-          },
-          {
-            "type": "automatic_semicolon",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "export_statement_type_export",
-    "named": true,
-    "fields": {
-      "export_clause": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "export_clause",
-            "named": true
-          }
-        ]
-      },
-      "source": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "string",
             "named": true
           }
         ]

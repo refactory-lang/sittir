@@ -181,6 +181,7 @@ pub enum AnyTransport {
     Comma,
     #[kind(kind::COLON)]
     Colon,
+    #[transport(error)]
     Verbatim(VerbatimTransport),
 }
 
@@ -440,6 +441,94 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            AnyTransport::Pattern(t) => t.snapshot_edge(),
+            AnyTransport::Alternation(t) => t.snapshot_edge(),
+            AnyTransport::Term(t) => t.snapshot_edge(),
+            AnyTransport::LookaroundAssertion(t) => t.snapshot_edge(),
+            AnyTransport::LookaheadAssertion(t) => t.snapshot_edge(),
+            AnyTransport::LookbehindAssertion(t) => t.snapshot_edge(),
+            AnyTransport::PatternCharacter(t) => t.snapshot_edge(),
+            AnyTransport::CharacterClass(t) => t.snapshot_edge(),
+            AnyTransport::PosixCharacterClass(t) => t.snapshot_edge(),
+            AnyTransport::PosixClassName(t) => t.snapshot_edge(),
+            AnyTransport::ClassRange(t) => t.snapshot_edge(),
+            AnyTransport::ClassCharacter(t) => t.snapshot_edge(),
+            AnyTransport::AnonymousCapturingGroup(t) => t.snapshot_edge(),
+            AnyTransport::NamedCapturingGroup(t) => t.snapshot_edge(),
+            AnyTransport::NonCapturingGroup(t) => t.snapshot_edge(),
+            AnyTransport::Flags(t) => t.snapshot_edge(),
+            AnyTransport::ZeroOrMore(t) => t.snapshot_edge(),
+            AnyTransport::OneOrMore(t) => t.snapshot_edge(),
+            AnyTransport::Optional(t) => t.snapshot_edge(),
+            AnyTransport::CountQuantifier(t) => t.snapshot_edge(),
+            AnyTransport::BackreferenceEscape(t) => t.snapshot_edge(),
+            AnyTransport::NamedGroupBackreference(t) => t.snapshot_edge(),
+            AnyTransport::DecimalEscape(t) => t.snapshot_edge(),
+            AnyTransport::CharacterClassEscape(t) => t.snapshot_edge(),
+            AnyTransport::UnicodeCharacterEscape(t) => t.snapshot_edge(),
+            AnyTransport::UnicodePropertyValueExpression(t) => t.snapshot_edge(),
+            AnyTransport::UnicodePropertyValue(t) => t.snapshot_edge(),
+            AnyTransport::ControlEscape(t) => t.snapshot_edge(),
+            AnyTransport::ControlLetterEscape(t) => t.snapshot_edge(),
+            AnyTransport::IdentityEscape(t) => t.snapshot_edge(),
+            AnyTransport::GroupName(t) => t.snapshot_edge(),
+            AnyTransport::DecimalDigits(t) => t.snapshot_edge(),
+            AnyTransport::TermGroup(t) => t.snapshot_edge(),
+            AnyTransport::CountQuantifierGroup(t) => t.snapshot_edge(),
+            AnyTransport::CountQuantifierArm(t) => t.snapshot_edge(),
+            AnyTransport::CharacterClassEscapeArm(t) => t.snapshot_edge(),
+            AnyTransport::UnicodePropertyValueExpressionGroup(t) => t.snapshot_edge(),
+            AnyTransport::CharacterClassEscapeText1(t) => t.snapshot_edge(),
+            AnyTransport::CharacterClassEscapeText2(t) => t.snapshot_edge(),
+            AnyTransport::InlineFlagsGroupEnable(t) => t.snapshot_edge(),
+            AnyTransport::InlineFlagsGroupToggle(t) => t.snapshot_edge(),
+            AnyTransport::InlineFlagsGroupDisable(t) => t.snapshot_edge(),
+            AnyTransport::Lazy(t) => t.snapshot_edge(),
+            AnyTransport::UnicodePropertyName(t) => t.snapshot_edge(),
+            AnyTransport::AnyCharacter => None,
+            AnyTransport::StartAssertion => None,
+            AnyTransport::EndAssertion => None,
+            AnyTransport::BoundaryAssertion => None,
+            AnyTransport::NonBoundaryAssertion => None,
+            AnyTransport::Negation => None,
+            AnyTransport::Tight => None,
+            AnyTransport::Newline => None,
+            AnyTransport::Blankline => None,
+            AnyTransport::DoubleBlankline => None,
+            AnyTransport::Caret => None,
+            AnyTransport::LparenQmark => None,
+            AnyTransport::Eq => None,
+            AnyTransport::Bang => None,
+            AnyTransport::Rparen => None,
+            AnyTransport::LparenQmarkLt => None,
+            AnyTransport::Lbrack => None,
+            AnyTransport::Dash => None,
+            AnyTransport::BslashDash => None,
+            AnyTransport::Rbrack => None,
+            AnyTransport::LbrackColon => None,
+            AnyTransport::ColonRbrack => None,
+            AnyTransport::Lparen => None,
+            AnyTransport::LparenQmarkPLt => None,
+            AnyTransport::Gt => None,
+            AnyTransport::LparenQmarkColon => None,
+            AnyTransport::Star => None,
+            AnyTransport::Qmark => None,
+            AnyTransport::Plus => None,
+            AnyTransport::Lbrace => None,
+            AnyTransport::Rbrace => None,
+            AnyTransport::Bslashk => None,
+            AnyTransport::Lt => None,
+            AnyTransport::LparenQmarkPEq => None,
+            AnyTransport::Comma => None,
+            AnyTransport::Colon => None,
+            AnyTransport::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 
@@ -454,6 +543,8 @@ pub enum TriviaTransport {
     DoubleBlankline,
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
+    #[transport(text)]
+    #[kind(kind::ERROR)]
     Text(::sittir_core::trivia::TriviaText),
 }
 
@@ -485,6 +576,15 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
             TriviaTransport::Text(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            TriviaTransport::Newline => None,
+            TriviaTransport::Blankline => None,
+            TriviaTransport::DoubleBlankline => None,
+            TriviaTransport::Verbatim(t) => t.snapshot_edge(),
+            TriviaTransport::Text(t) => t.snapshot_edge(),
+        }
+    }
 }
 
 impl ::sittir_core::render::Render for TriviaTransport {
@@ -496,6 +596,19 @@ impl ::sittir_core::render::Render for TriviaTransport {
             TriviaTransport::Verbatim(t) => t.render(w),
             TriviaTransport::Text(t) => t.render(w),
         }
+    }
+}
+
+impl ::sittir_core::trivia::FromTriviaText for TriviaTransport {
+    fn from_text(text: ::sittir_core::trivia::TriviaText) -> Self {
+        TriviaTransport::Text(text)
+    }
+
+    fn from_layout(kind: ::sittir_core::types::KindId, _text: &str) -> Option<Self> {
+        if kind == kind::_NEWLINE { return Some(TriviaTransport::Newline); }
+        if kind == kind::_BLANKLINE { return Some(TriviaTransport::Blankline); }
+        if kind == kind::_DOUBLE_BLANKLINE { return Some(TriviaTransport::DoubleBlankline); }
+        None
     }
 }
 
@@ -540,6 +653,15 @@ impl ::sittir_core::prepare::Prepare for PatternContentTransportSlot {
             PatternContentTransportSlot::Alternation(t) => t.gap_edges(),
             PatternContentTransportSlot::Term(t) => t.gap_edges(),
         }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            PatternContentTransportSlot::Alternation(t) => t.snapshot_edge(),
+            PatternContentTransportSlot::Term(t) => t.snapshot_edge(),
+        }
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -589,6 +711,15 @@ impl ::sittir_core::prepare::Prepare for LookaroundAssertionContentTransportSlot
             LookaroundAssertionContentTransportSlot::LookbehindAssertion(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            LookaroundAssertionContentTransportSlot::LookaheadAssertion(t) => t.snapshot_edge(),
+            LookaroundAssertionContentTransportSlot::LookbehindAssertion(t) => t.snapshot_edge(),
+        }
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 impl ::sittir_core::view::KindOf for LookaroundAssertionContentTransportSlot {
@@ -624,6 +755,9 @@ impl ::sittir_core::prepare::Prepare for LookaheadAssertionContentTransportSlot 
             LookaheadAssertionContentTransportSlot::Eq => Ok(()),
             LookaheadAssertionContentTransportSlot::Bang => Ok(()),
         }
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -672,6 +806,9 @@ impl ::sittir_core::prepare::Prepare for LookbehindAssertionContentTransportSlot
             LookbehindAssertionContentTransportSlot::Eq => Ok(()),
             LookbehindAssertionContentTransportSlot::Bang => Ok(()),
         }
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -768,6 +905,22 @@ impl ::sittir_core::prepare::Prepare for CharacterClassClassAtomsTransportSlot {
             CharacterClassClassAtomsTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            CharacterClassClassAtomsTransportSlot::ClassCharacter(t) => t.snapshot_edge(),
+            CharacterClassClassAtomsTransportSlot::CharacterClassEscape(t) => t.snapshot_edge(),
+            CharacterClassClassAtomsTransportSlot::ControlEscape(t) => t.snapshot_edge(),
+            CharacterClassClassAtomsTransportSlot::ControlLetterEscape(t) => t.snapshot_edge(),
+            CharacterClassClassAtomsTransportSlot::IdentityEscape(t) => t.snapshot_edge(),
+            CharacterClassClassAtomsTransportSlot::PosixCharacterClass(t) => t.snapshot_edge(),
+            CharacterClassClassAtomsTransportSlot::ClassRange(t) => t.snapshot_edge(),
+            CharacterClassClassAtomsTransportSlot::BslashDash => None,
+            CharacterClassClassAtomsTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 impl ::sittir_core::view::KindOf for CharacterClassClassAtomsTransportSlot {
@@ -845,6 +998,18 @@ impl ::sittir_core::prepare::Prepare for ClassRangeStartTransportSlot {
             ClassRangeStartTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            ClassRangeStartTransportSlot::ClassCharacter(t) => t.snapshot_edge(),
+            ClassRangeStartTransportSlot::CharacterClassEscape(t) => t.snapshot_edge(),
+            ClassRangeStartTransportSlot::ControlEscape(t) => t.snapshot_edge(),
+            ClassRangeStartTransportSlot::Dash => None,
+            ClassRangeStartTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 impl ::sittir_core::view::KindOf for ClassRangeStartTransportSlot {
@@ -892,6 +1057,9 @@ impl ::sittir_core::prepare::Prepare for NamedCapturingGroupContentTransportSlot
             NamedCapturingGroupContentTransportSlot::LparenQmarkLt => Ok(()),
             NamedCapturingGroupContentTransportSlot::LparenQmarkPLt => Ok(()),
         }
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -958,6 +1126,16 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierContentTransportSlot {
             CountQuantifierContentTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            CountQuantifierContentTransportSlot::CountQuantifierArm(t) => t.snapshot_edge(),
+            CountQuantifierContentTransportSlot::DecimalDigits(t) => t.snapshot_edge(),
+            CountQuantifierContentTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 impl ::sittir_core::view::KindOf for CountQuantifierContentTransportSlot {
@@ -1017,6 +1195,17 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeContentTransportSlo
             CharacterClassEscapeContentTransportSlot::UnicodeCharacterEscape(t) => t.gap_edges(),
             CharacterClassEscapeContentTransportSlot::Verbatim(t) => t.gap_edges(),
         }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            CharacterClassEscapeContentTransportSlot::CharacterClassEscapeText1(t) => t.snapshot_edge(),
+            CharacterClassEscapeContentTransportSlot::CharacterClassEscapeArm(t) => t.snapshot_edge(),
+            CharacterClassEscapeContentTransportSlot::UnicodeCharacterEscape(t) => t.snapshot_edge(),
+            CharacterClassEscapeContentTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -1079,6 +1268,17 @@ impl ::sittir_core::prepare::Prepare for TermGroupQuantifierTransportSlot {
             TermGroupQuantifierTransportSlot::Optional(t) => t.gap_edges(),
             TermGroupQuantifierTransportSlot::CountQuantifier(t) => t.gap_edges(),
         }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            TermGroupQuantifierTransportSlot::ZeroOrMore(t) => t.snapshot_edge(),
+            TermGroupQuantifierTransportSlot::OneOrMore(t) => t.snapshot_edge(),
+            TermGroupQuantifierTransportSlot::Optional(t) => t.snapshot_edge(),
+            TermGroupQuantifierTransportSlot::CountQuantifier(t) => t.snapshot_edge(),
+        }
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -1237,6 +1437,36 @@ impl ::sittir_core::prepare::Prepare for TermGroupContentTransportSlot {
             TermGroupContentTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            TermGroupContentTransportSlot::LookaroundAssertion(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::PatternCharacter(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::CharacterClass(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::PosixCharacterClass(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::DecimalEscape(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::CharacterClassEscape(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::ControlEscape(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::ControlLetterEscape(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::IdentityEscape(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::BackreferenceEscape(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::NamedGroupBackreference(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::AnonymousCapturingGroup(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::NamedCapturingGroup(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::NonCapturingGroup(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::InlineFlagsGroupEnable(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::InlineFlagsGroupToggle(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::InlineFlagsGroupDisable(t) => t.snapshot_edge(),
+            TermGroupContentTransportSlot::StartAssertion => None,
+            TermGroupContentTransportSlot::EndAssertion => None,
+            TermGroupContentTransportSlot::BoundaryAssertion => None,
+            TermGroupContentTransportSlot::NonBoundaryAssertion => None,
+            TermGroupContentTransportSlot::AnyCharacter => None,
+            TermGroupContentTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 impl ::sittir_core::view::KindOf for TermGroupContentTransportSlot {
@@ -1337,6 +1567,9 @@ impl ::sittir_core::prepare::Prepare for LazyContentTransportSlot {
             LazyContentTransportSlot::Qmark => Ok(()),
         }
     }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 impl ::sittir_core::view::KindOf for LazyContentTransportSlot {
@@ -1387,9 +1620,11 @@ impl ::sittir_core::render::Render for PatternTransport {
 impl ::sittir_core::prepare::Prepare for PatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let first = [::sittir_core::prepare::EdgeItems::first_item(&self.content)].into_iter().flatten().next();
-        let last = [::sittir_core::prepare::EdgeItems::last_item(&self.content)].into_iter().flatten().next();
-        let flanks = ::sittir_core::prepare::root_flanks(first, last, options::allowed(options::SITE_PATTERN_PATTERN_BEFORE), options::allowed(options::SITE_PATTERN_PATTERN_AFTER), &options::WHITESPACE, ctx);
+        let inner = ::sittir_core::layout::Layout::inner_item(&self.layout);
+        let first = ::sittir_core::prepare::outermost([::sittir_core::prepare::EdgeItems::first_item(&self.content)].into_iter().flatten().next(), inner, ::sittir_core::options::Side::Before);
+        let last = ::sittir_core::prepare::outermost([::sittir_core::prepare::EdgeItems::last_item(&self.content)].into_iter().flatten().next(), inner, ::sittir_core::options::Side::After);
+        let root = ::sittir_core::layout::Layout::snapshot_edge(&self.layout).map(|edge| edge.span);
+        let flanks = ::sittir_core::prepare::root_flanks(first, last, root, options::allowed(options::SITE_PATTERN_PATTERN_BEFORE), options::allowed(options::SITE_PATTERN_PATTERN_AFTER), &options::WHITESPACE, ctx);
         ::sittir_core::prepare::fill_edges(self, flanks);
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
@@ -1403,6 +1638,12 @@ impl ::sittir_core::prepare::Prepare for PatternTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -1412,7 +1653,7 @@ pub struct AlternationTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_terms")]
     #[slot(field = field::TERMS, separator = kind::PIPE)]
-    pub terms: Vec<Option<::sittir_core::SlotValue<TermTransport>>>,
+    pub terms: ::sittir_core::NonEmptyVec<Option<::sittir_core::SlotValue<TermTransport>>>,
     #[wire(key = "_terms_separator_space_before")]
     pub terms_separator_space_before: Option<u16>,
     #[wire(key = "_terms_separator_space_after")]
@@ -1452,6 +1693,12 @@ impl ::sittir_core::prepare::Prepare for AlternationTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -1461,7 +1708,7 @@ pub struct TermTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_term_group")]
     #[slot]
-    pub term_group: Vec<::sittir_core::SlotValue<TermGroupTransport>>,
+    pub term_group: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<TermGroupTransport>>,
     #[wire(key = "_term_group_separator_space")]
     pub term_group_separator_space: Option<u16>,
 }
@@ -1499,6 +1746,12 @@ impl ::sittir_core::prepare::Prepare for TermTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
@@ -1517,6 +1770,9 @@ impl ::sittir_core::view::KindOf for AnyCharacterTransport {
 impl ::sittir_core::prepare::Prepare for AnyCharacterTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -1543,6 +1799,9 @@ impl ::sittir_core::prepare::Prepare for StartAssertionTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 impl ::sittir_core::render::Render for StartAssertionTransport {
@@ -1567,6 +1826,9 @@ impl ::sittir_core::view::KindOf for EndAssertionTransport {
 impl ::sittir_core::prepare::Prepare for EndAssertionTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -1593,6 +1855,9 @@ impl ::sittir_core::prepare::Prepare for BoundaryAssertionTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 impl ::sittir_core::render::Render for BoundaryAssertionTransport {
@@ -1617,6 +1882,9 @@ impl ::sittir_core::view::KindOf for NonBoundaryAssertionTransport {
 impl ::sittir_core::prepare::Prepare for NonBoundaryAssertionTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -1665,6 +1933,12 @@ impl ::sittir_core::prepare::Prepare for LookaroundAssertionTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -1715,6 +1989,12 @@ impl ::sittir_core::prepare::Prepare for LookaheadAssertionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -1764,6 +2044,12 @@ impl ::sittir_core::prepare::Prepare for LookbehindAssertionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -1804,25 +2090,31 @@ impl ::sittir_core::prepare::Prepare for PatternCharacterTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CHARACTER_CLASS, layout = [kind::LBRACK, kind::RBRACK], gap(1) = negation)]
+#[transport(kind = kind::CHARACTER_CLASS, layout = [kind::LBRACK, kind::RBRACK])]
 pub struct CharacterClassTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_negation")]
     #[slot(presence = display(kind::_NEGATION))]
-    pub negation: Option<bool>,
+    pub negation: bool,
     #[wire(key = "_leading")]
     #[slot(field = field::LEADING, presence = display(kind::CLASS_CHARACTER))]
-    pub leading: Option<bool>,
+    pub leading: bool,
     #[wire(key = "_class_atoms")]
     #[slot(field = field::CLASS_ATOMS)]
-    pub class_atoms: Option<Vec<::sittir_core::SlotValue<CharacterClassClassAtomsTransportSlot>>>,
+    pub class_atoms: Vec<::sittir_core::SlotValue<CharacterClassClassAtomsTransportSlot>>,
     #[wire(key = "_trailing")]
     #[slot(field = field::TRAILING, presence = display(kind::CLASS_CHARACTER))]
-    pub trailing: Option<bool>,
+    pub trailing: bool,
 }
 
 impl ::sittir_core::view::KindOf for CharacterClassTransport {
@@ -1860,6 +2152,12 @@ impl ::sittir_core::prepare::Prepare for CharacterClassTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -1906,6 +2204,12 @@ impl ::sittir_core::prepare::Prepare for PosixCharacterClassTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -1945,6 +2249,12 @@ impl ::sittir_core::prepare::Prepare for PosixClassNameTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -1995,6 +2305,12 @@ impl ::sittir_core::prepare::Prepare for ClassRangeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -2034,6 +2350,12 @@ impl ::sittir_core::prepare::Prepare for ClassCharacterTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -2079,6 +2401,12 @@ impl ::sittir_core::prepare::Prepare for AnonymousCapturingGroupTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -2137,6 +2465,12 @@ impl ::sittir_core::prepare::Prepare for NamedCapturingGroupTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -2182,6 +2516,12 @@ impl ::sittir_core::prepare::Prepare for NonCapturingGroupTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -2222,6 +2562,12 @@ impl ::sittir_core::prepare::Prepare for FlagsTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -2231,7 +2577,7 @@ pub struct ZeroOrMoreTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_lazy")]
     #[slot(presence = display(kind::_LAZY))]
-    pub lazy: Option<bool>,
+    pub lazy: bool,
 }
 
 impl ::sittir_core::view::KindOf for ZeroOrMoreTransport {
@@ -2267,6 +2613,12 @@ impl ::sittir_core::prepare::Prepare for ZeroOrMoreTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -2276,7 +2628,7 @@ pub struct OneOrMoreTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_lazy")]
     #[slot(presence = display(kind::_LAZY))]
-    pub lazy: Option<bool>,
+    pub lazy: bool,
 }
 
 impl ::sittir_core::view::KindOf for OneOrMoreTransport {
@@ -2312,6 +2664,12 @@ impl ::sittir_core::prepare::Prepare for OneOrMoreTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -2321,7 +2679,7 @@ pub struct OptionalTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_lazy")]
     #[slot(presence = display(kind::_LAZY))]
-    pub lazy: Option<bool>,
+    pub lazy: bool,
 }
 
 impl ::sittir_core::view::KindOf for OptionalTransport {
@@ -2357,6 +2715,12 @@ impl ::sittir_core::prepare::Prepare for OptionalTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -2369,7 +2733,7 @@ pub struct CountQuantifierTransport {
     pub content: ::sittir_core::SlotValue<CountQuantifierContentTransportSlot>,
     #[wire(key = "_lazy")]
     #[slot(presence = display(kind::_LAZY))]
-    pub lazy: Option<bool>,
+    pub lazy: bool,
 }
 
 impl ::sittir_core::view::KindOf for CountQuantifierTransport {
@@ -2405,6 +2769,12 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -2451,6 +2821,12 @@ impl ::sittir_core::prepare::Prepare for BackreferenceEscapeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -2496,6 +2872,12 @@ impl ::sittir_core::prepare::Prepare for NamedGroupBackreferenceTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -2535,6 +2917,12 @@ impl ::sittir_core::prepare::Prepare for DecimalEscapeTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -2578,6 +2966,12 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -2617,6 +3011,12 @@ impl ::sittir_core::prepare::Prepare for UnicodeCharacterEscapeTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -2667,6 +3067,12 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyValueExpressionTransport
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -2706,6 +3112,12 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyValueTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -2747,6 +3159,12 @@ impl ::sittir_core::prepare::Prepare for ControlEscapeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -2786,6 +3204,12 @@ impl ::sittir_core::prepare::Prepare for ControlLetterEscapeTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -2829,6 +3253,12 @@ impl ::sittir_core::prepare::Prepare for IdentityEscapeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -2869,6 +3299,12 @@ impl ::sittir_core::prepare::Prepare for GroupNameTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -2908,6 +3344,12 @@ impl ::sittir_core::prepare::Prepare for DecimalDigitsTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -2958,6 +3400,12 @@ impl ::sittir_core::prepare::Prepare for TermGroupTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -3002,6 +3450,12 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierGroupTransport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -3052,6 +3506,12 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierArmTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -3101,6 +3561,12 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeArmTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -3146,6 +3612,12 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyValueExpressionGroupTran
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -3185,6 +3657,12 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeText1Transport {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -3226,6 +3704,12 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeText2Transport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
@@ -3244,6 +3728,9 @@ impl ::sittir_core::view::KindOf for NegationTransport {
 impl ::sittir_core::prepare::Prepare for NegationTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -3300,6 +3787,12 @@ impl ::sittir_core::prepare::Prepare for InlineFlagsGroupEnableTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -3353,6 +3846,12 @@ impl ::sittir_core::prepare::Prepare for InlineFlagsGroupToggleTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -3402,6 +3901,12 @@ impl ::sittir_core::prepare::Prepare for InlineFlagsGroupDisableTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
@@ -3420,6 +3925,9 @@ impl ::sittir_core::view::KindOf for TightTransport {
 impl ::sittir_core::prepare::Prepare for TightTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -3446,6 +3954,9 @@ impl ::sittir_core::prepare::Prepare for NewlineTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 impl ::sittir_core::render::Render for NewlineTransport {
@@ -3471,6 +3982,9 @@ impl ::sittir_core::prepare::Prepare for BlanklineTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 impl ::sittir_core::render::Render for BlanklineTransport {
@@ -3495,6 +4009,9 @@ impl ::sittir_core::view::KindOf for DoubleBlanklineTransport {
 impl ::sittir_core::prepare::Prepare for DoubleBlanklineTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -3543,6 +4060,12 @@ impl ::sittir_core::prepare::Prepare for LazyTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
@@ -3584,6 +4107,12 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyNameTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
@@ -3602,6 +4131,9 @@ impl ::sittir_core::view::KindOf for CaretTransport {
 impl ::sittir_core::prepare::Prepare for CaretTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -3628,6 +4160,9 @@ impl ::sittir_core::prepare::Prepare for LparenQmarkTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 impl ::sittir_core::render::Render for LparenQmarkTransport {
@@ -3652,6 +4187,9 @@ impl ::sittir_core::view::KindOf for EqTransport {
 impl ::sittir_core::prepare::Prepare for EqTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -3678,6 +4216,9 @@ impl ::sittir_core::prepare::Prepare for BangTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 impl ::sittir_core::render::Render for BangTransport {
@@ -3702,6 +4243,9 @@ impl ::sittir_core::view::KindOf for RparenTransport {
 impl ::sittir_core::prepare::Prepare for RparenTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -3728,6 +4272,9 @@ impl ::sittir_core::prepare::Prepare for LparenQmarkLtTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 impl ::sittir_core::render::Render for LparenQmarkLtTransport {
@@ -3752,6 +4299,9 @@ impl ::sittir_core::view::KindOf for LbrackTransport {
 impl ::sittir_core::prepare::Prepare for LbrackTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -3778,6 +4328,9 @@ impl ::sittir_core::prepare::Prepare for DashTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 impl ::sittir_core::render::Render for DashTransport {
@@ -3802,6 +4355,9 @@ impl ::sittir_core::view::KindOf for BslashDashTransport {
 impl ::sittir_core::prepare::Prepare for BslashDashTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -3828,6 +4384,9 @@ impl ::sittir_core::prepare::Prepare for RbrackTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 impl ::sittir_core::render::Render for RbrackTransport {
@@ -3852,6 +4411,9 @@ impl ::sittir_core::view::KindOf for LbrackColonTransport {
 impl ::sittir_core::prepare::Prepare for LbrackColonTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -3878,6 +4440,9 @@ impl ::sittir_core::prepare::Prepare for ColonRbrackTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 impl ::sittir_core::render::Render for ColonRbrackTransport {
@@ -3902,6 +4467,9 @@ impl ::sittir_core::view::KindOf for LparenTransport {
 impl ::sittir_core::prepare::Prepare for LparenTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -3928,6 +4496,9 @@ impl ::sittir_core::prepare::Prepare for LparenQmarkPLtTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 impl ::sittir_core::render::Render for LparenQmarkPLtTransport {
@@ -3952,6 +4523,9 @@ impl ::sittir_core::view::KindOf for GtTransport {
 impl ::sittir_core::prepare::Prepare for GtTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -3978,6 +4552,9 @@ impl ::sittir_core::prepare::Prepare for LparenQmarkColonTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 impl ::sittir_core::render::Render for LparenQmarkColonTransport {
@@ -4002,6 +4579,9 @@ impl ::sittir_core::view::KindOf for StarTransport {
 impl ::sittir_core::prepare::Prepare for StarTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -4028,6 +4608,9 @@ impl ::sittir_core::prepare::Prepare for QmarkTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 impl ::sittir_core::render::Render for QmarkTransport {
@@ -4052,6 +4635,9 @@ impl ::sittir_core::view::KindOf for PlusTransport {
 impl ::sittir_core::prepare::Prepare for PlusTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -4078,6 +4664,9 @@ impl ::sittir_core::prepare::Prepare for LbraceTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 impl ::sittir_core::render::Render for LbraceTransport {
@@ -4102,6 +4691,9 @@ impl ::sittir_core::view::KindOf for RbraceTransport {
 impl ::sittir_core::prepare::Prepare for RbraceTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -4128,6 +4720,9 @@ impl ::sittir_core::prepare::Prepare for BslashkTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 impl ::sittir_core::render::Render for BslashkTransport {
@@ -4152,6 +4747,9 @@ impl ::sittir_core::view::KindOf for LtTransport {
 impl ::sittir_core::prepare::Prepare for LtTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -4178,6 +4776,9 @@ impl ::sittir_core::prepare::Prepare for LparenQmarkPEqTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 impl ::sittir_core::render::Render for LparenQmarkPEqTransport {
@@ -4203,6 +4804,9 @@ impl ::sittir_core::prepare::Prepare for CommaTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 impl ::sittir_core::render::Render for CommaTransport {
@@ -4227,6 +4831,9 @@ impl ::sittir_core::view::KindOf for ColonTransport {
 impl ::sittir_core::prepare::Prepare for ColonTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
 }
 
@@ -4260,7 +4867,7 @@ impl ::sittir_core::prepare::SeatTarget for AnyTransport {
 fn render_pattern(node: &PatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     w.edge(::sittir_core::types::KindId(51), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    content.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", 0, w, |w| content.render(w))?;
     w.edge(::sittir_core::types::KindId(51), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
@@ -4276,6 +4883,7 @@ fn render_alternation(node: &AlternationTransport, w: &mut dyn ::sittir_core::re
         trailing: false,
         head: None,
         tail: None,
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_terms"),
     };
     terms.render(w)?;
     Ok(())
@@ -4292,6 +4900,7 @@ fn render_term(node: &TermTransport, w: &mut dyn ::sittir_core::render::RenderSi
         trailing: false,
         head: None,
         tail: None,
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_term_group"),
     };
     term_group.render(w)?;
     Ok(())
@@ -4299,7 +4908,7 @@ fn render_term(node: &TermTransport, w: &mut dyn ::sittir_core::render::RenderSi
 
 fn render_lookaround_assertion(node: &LookaroundAssertionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
-    content.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", 0, w, |w| content.render(w))?;
     Ok(())
 }
 
@@ -4309,8 +4918,8 @@ fn render_lookahead_assertion(node: &LookaheadAssertionTransport, w: &mut dyn ::
     w.edge(::sittir_core::types::KindId(56), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(?")?;
     w.site_at(options::SITE_LOOKAHEAD_ASSERTION_LPAREN_QMARK_AFTER);
-    content.render(w)?;
-    pattern.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", 0, w, |w| content.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_pattern", 0, w, |w| pattern.render(w))?;
     w.site_at(options::SITE_LOOKAHEAD_ASSERTION_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(56), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -4323,8 +4932,8 @@ fn render_lookbehind_assertion(node: &LookbehindAssertionTransport, w: &mut dyn 
     w.edge(::sittir_core::types::KindId(57), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(?<")?;
     w.site_at(options::SITE_LOOKBEHIND_ASSERTION_LPAREN_QMARK_LT_AFTER);
-    content.render(w)?;
-    pattern.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", 0, w, |w| content.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_pattern", 0, w, |w| pattern.render(w))?;
     w.site_at(options::SITE_LOOKBEHIND_ASSERTION_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(57), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -4337,7 +4946,7 @@ fn render_pattern_character(t: &PatternCharacterTransport, w: &mut dyn ::sittir_
 
 fn render_character_class(node: &CharacterClassTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let class_atoms = ListView {
-        items: node.class_atoms.as_deref().unwrap_or(&[]),
+        items: &node.class_atoms,
         template: "{}",
         token: "",
         before: 0,
@@ -4346,6 +4955,7 @@ fn render_character_class(node: &CharacterClassTransport, w: &mut dyn ::sittir_c
         trailing: false,
         head: None,
         tail: None,
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_class_atoms"),
     };
     let leading = View::new(&node.leading, "-");
     let negation = View::new(::sittir_core::view::Presence::new(node.negation, NegationTransport::Negation), "{}");
@@ -4353,7 +4963,7 @@ fn render_character_class(node: &CharacterClassTransport, w: &mut dyn ::sittir_c
     w.edge(::sittir_core::types::KindId(58), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("[")?;
     w.site_at(options::SITE_CHARACTER_CLASS_LBRACK_AFTER);
-    ::sittir_core::trivia::render_inner(node.layout.trivia(), "negation", w)?;
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
     if negation.is_present() {
         w.site_at(options::SITE_CHARACTER_CLASS_CARET_BEFORE);
         negation.render(w)?;
@@ -4381,7 +4991,7 @@ fn render_posix_character_class(node: &PosixCharacterClassTransport, w: &mut dyn
     w.edge(::sittir_core::types::KindId(59), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("[:")?;
     w.site_at(options::SITE_POSIX_CHARACTER_CLASS_LBRACK_COLON_AFTER);
-    posix_class_name.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_posix_class_name", 0, w, |w| posix_class_name.render(w))?;
     w.site_at(options::SITE_POSIX_CHARACTER_CLASS_COLON_RBRACK_BEFORE);
     w.text(":]")?;
     w.edge(::sittir_core::types::KindId(59), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -4396,11 +5006,11 @@ fn render_class_range(node: &ClassRangeTransport, w: &mut dyn ::sittir_core::ren
     let end = &node.end;
     let start = &node.start;
     w.edge(::sittir_core::types::KindId(61), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    start.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_start", 0, w, |w| start.render(w))?;
     w.site_at(options::SITE_CLASS_RANGE_DASH_BEFORE);
     w.text("-")?;
     w.site_at(options::SITE_CLASS_RANGE_DASH_AFTER);
-    end.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_end", 0, w, |w| end.render(w))?;
     w.edge(::sittir_core::types::KindId(61), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
@@ -4415,7 +5025,7 @@ fn render_anonymous_capturing_group(node: &AnonymousCapturingGroupTransport, w: 
     w.edge(::sittir_core::types::KindId(62), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_ANONYMOUS_CAPTURING_GROUP_LPAREN_AFTER);
-    pattern.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_pattern", 0, w, |w| pattern.render(w))?;
     w.site_at(options::SITE_ANONYMOUS_CAPTURING_GROUP_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(62), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -4427,13 +5037,13 @@ fn render_named_capturing_group(node: &NamedCapturingGroupTransport, w: &mut dyn
     let group_name = &node.group_name;
     let pattern = &node.pattern;
     w.edge(::sittir_core::types::KindId(63), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    content.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", 0, w, |w| content.render(w))?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-    group_name.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_group_name", 0, w, |w| group_name.render(w))?;
     w.site_at(options::SITE_NAMED_CAPTURING_GROUP_GT_BEFORE);
     w.text(">")?;
     w.site_at(options::SITE_NAMED_CAPTURING_GROUP_GT_AFTER);
-    pattern.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_pattern", 0, w, |w| pattern.render(w))?;
     w.site_at(options::SITE_NAMED_CAPTURING_GROUP_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(63), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -4445,7 +5055,7 @@ fn render_non_capturing_group(node: &NonCapturingGroupTransport, w: &mut dyn ::s
     w.edge(::sittir_core::types::KindId(64), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(?:")?;
     w.site_at(options::SITE_NON_CAPTURING_GROUP_LPAREN_QMARK_COLON_AFTER);
-    pattern.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_pattern", 0, w, |w| pattern.render(w))?;
     w.site_at(options::SITE_NON_CAPTURING_GROUP_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(64), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -4492,7 +5102,7 @@ fn render_count_quantifier(node: &CountQuantifierTransport, w: &mut dyn ::sittir
     w.edge(::sittir_core::types::KindId(70), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("{")?;
     w.site_at(options::SITE_COUNT_QUANTIFIER_LBRACE_AFTER);
-    content.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", 0, w, |w| content.render(w))?;
     w.site_at(options::SITE_COUNT_QUANTIFIER_RBRACE_BEFORE);
     w.text("}")?;
     w.site_at(options::SITE_COUNT_QUANTIFIER_RBRACE_AFTER);
@@ -4509,7 +5119,7 @@ fn render_backreference_escape(node: &BackreferenceEscapeTransport, w: &mut dyn 
     w.site_at(options::SITE_BACKREFERENCE_ESCAPE_LT_BEFORE);
     w.text("<")?;
     w.site_at(options::SITE_BACKREFERENCE_ESCAPE_LT_AFTER);
-    group_name.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_group_name", 0, w, |w| group_name.render(w))?;
     w.site_at(options::SITE_BACKREFERENCE_ESCAPE_GT_BEFORE);
     w.text(">")?;
     w.edge(::sittir_core::types::KindId(71), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -4521,7 +5131,7 @@ fn render_named_group_backreference(node: &NamedGroupBackreferenceTransport, w: 
     w.edge(::sittir_core::types::KindId(72), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(?P=")?;
     w.site_at(options::SITE_NAMED_GROUP_BACKREFERENCE_LPAREN_QMARK_P_EQ_AFTER);
-    group_name.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_group_name", 0, w, |w| group_name.render(w))?;
     w.site_at(options::SITE_NAMED_GROUP_BACKREFERENCE_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(72), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -4534,7 +5144,7 @@ fn render_decimal_escape(t: &DecimalEscapeTransport, w: &mut dyn ::sittir_core::
 
 fn render_character_class_escape(node: &CharacterClassEscapeTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
-    content.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", 0, w, |w| content.render(w))?;
     Ok(())
 }
 
@@ -4546,8 +5156,8 @@ fn render_unicode_property_value_expression(node: &UnicodePropertyValueExpressio
     let unicode_property_value = &node.unicode_property_value;
     let unicode_property_value_expression_group = View::new(&node.unicode_property_value_expression_group, "{}");
     w.edge(::sittir_core::types::KindId(75), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    unicode_property_value_expression_group.render(w)?;
-    unicode_property_value.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_unicode_property_value_expression_group", 0, w, |w| unicode_property_value_expression_group.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_unicode_property_value", 0, w, |w| unicode_property_value.render(w))?;
     w.edge(::sittir_core::types::KindId(75), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
@@ -4568,7 +5178,7 @@ fn render_identity_escape(node: &IdentityEscapeTransport, w: &mut dyn ::sittir_c
     let content = &node.content;
     w.text("\\")?;
     w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
-    content.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", 0, w, |w| content.render(w))?;
     Ok(())
 }
 
@@ -4584,8 +5194,8 @@ fn render_term_group(node: &TermGroupTransport, w: &mut dyn ::sittir_core::rende
     let content = &node.content;
     let quantifier = View::new(&node.quantifier, "{}");
     w.edge(::sittir_core::types::KindId(77), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    content.render(w)?;
-    quantifier.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", 0, w, |w| content.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_quantifier", 0, w, |w| quantifier.render(w))?;
     w.edge(::sittir_core::types::KindId(77), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
@@ -4595,7 +5205,7 @@ fn render_count_quantifier_group(node: &CountQuantifierGroupTransport, w: &mut d
     w.edge(::sittir_core::types::KindId(78), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text(",")?;
     w.site_at(options::SITE_COUNT_QUANTIFIER_GROUP_COMMA_AFTER);
-    decimal_digits.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_decimal_digits", 0, w, |w| decimal_digits.render(w))?;
     w.edge(::sittir_core::types::KindId(78), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
@@ -4604,8 +5214,8 @@ fn render_count_quantifier_arm(node: &CountQuantifierArmTransport, w: &mut dyn :
     let count_quantifier_group = View::new(&node.count_quantifier_group, "{}");
     let decimal_digits = &node.decimal_digits;
     w.edge(::sittir_core::types::KindId(79), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    decimal_digits.render(w)?;
-    count_quantifier_group.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_decimal_digits", 0, w, |w| decimal_digits.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_count_quantifier_group", 0, w, |w| count_quantifier_group.render(w))?;
     w.edge(::sittir_core::types::KindId(79), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
@@ -4614,11 +5224,11 @@ fn render_character_class_escape_arm(node: &CharacterClassEscapeArmTransport, w:
     let character_class_escape_text2 = &node.character_class_escape_text2;
     let unicode_property_value_expression = &node.unicode_property_value_expression;
     w.edge(::sittir_core::types::KindId(80), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    character_class_escape_text2.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_character_class_escape_text2", 0, w, |w| character_class_escape_text2.render(w))?;
     w.site_at(options::SITE_CHARACTER_CLASS_ESCAPE_ARM_LBRACE_BEFORE);
     w.text("{")?;
     w.site_at(options::SITE_CHARACTER_CLASS_ESCAPE_ARM_LBRACE_AFTER);
-    unicode_property_value_expression.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_unicode_property_value_expression", 0, w, |w| unicode_property_value_expression.render(w))?;
     w.site_at(options::SITE_CHARACTER_CLASS_ESCAPE_ARM_RBRACE_BEFORE);
     w.text("}")?;
     w.edge(::sittir_core::types::KindId(80), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -4628,7 +5238,7 @@ fn render_character_class_escape_arm(node: &CharacterClassEscapeArmTransport, w:
 fn render_unicode_property_value_expression_group(node: &UnicodePropertyValueExpressionGroupTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let unicode_property_name = &node.unicode_property_name;
     w.edge(::sittir_core::types::KindId(81), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    unicode_property_name.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_unicode_property_name", 0, w, |w| unicode_property_name.render(w))?;
     w.site_at(options::SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_EQ_BEFORE);
     w.text("=")?;
     w.edge(::sittir_core::types::KindId(81), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -4649,12 +5259,12 @@ fn render_inline_flags_group_enable(node: &InlineFlagsGroupEnableTransport, w: &
     w.edge(::sittir_core::types::KindId(83), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(?")?;
     w.site_at(options::SITE_INLINE_FLAGS_GROUP_ENABLE_LPAREN_QMARK_AFTER);
-    enabled.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_enabled", 0, w, |w| enabled.render(w))?;
     if pattern.is_present() {
         w.site_at(options::SITE_INLINE_FLAGS_GROUP_ENABLE_COLON_BEFORE);
         w.text(":")?;
         w.site_at(options::SITE_INLINE_FLAGS_GROUP_ENABLE_COLON_AFTER);
-        pattern.render(w)?;
+        ::sittir_core::layout::render_unit(node.layout.as_deref(), "_pattern", 0, w, |w| pattern.render(w))?;
     }
     w.site_at(options::SITE_INLINE_FLAGS_GROUP_ENABLE_RPAREN_BEFORE);
     w.text(")")?;
@@ -4669,16 +5279,16 @@ fn render_inline_flags_group_toggle(node: &InlineFlagsGroupToggleTransport, w: &
     w.edge(::sittir_core::types::KindId(84), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(?")?;
     w.site_at(options::SITE_INLINE_FLAGS_GROUP_TOGGLE_LPAREN_QMARK_AFTER);
-    enabled.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_enabled", 0, w, |w| enabled.render(w))?;
     w.site_at(options::SITE_INLINE_FLAGS_GROUP_TOGGLE_DASH_BEFORE);
     w.text("-")?;
     w.site_at(options::SITE_INLINE_FLAGS_GROUP_TOGGLE_DASH_AFTER);
-    disabled.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_disabled", 0, w, |w| disabled.render(w))?;
     if pattern.is_present() {
         w.site_at(options::SITE_INLINE_FLAGS_GROUP_TOGGLE_COLON_BEFORE);
         w.text(":")?;
         w.site_at(options::SITE_INLINE_FLAGS_GROUP_TOGGLE_COLON_AFTER);
-        pattern.render(w)?;
+        ::sittir_core::layout::render_unit(node.layout.as_deref(), "_pattern", 0, w, |w| pattern.render(w))?;
     }
     w.site_at(options::SITE_INLINE_FLAGS_GROUP_TOGGLE_RPAREN_BEFORE);
     w.text(")")?;
@@ -4695,12 +5305,12 @@ fn render_inline_flags_group_disable(node: &InlineFlagsGroupDisableTransport, w:
     w.site_at(options::SITE_INLINE_FLAGS_GROUP_DISABLE_DASH_BEFORE);
     w.text("-")?;
     w.site_at(options::SITE_INLINE_FLAGS_GROUP_DISABLE_DASH_AFTER);
-    disabled.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_disabled", 0, w, |w| disabled.render(w))?;
     if pattern.is_present() {
         w.site_at(options::SITE_INLINE_FLAGS_GROUP_DISABLE_COLON_BEFORE);
         w.text(":")?;
         w.site_at(options::SITE_INLINE_FLAGS_GROUP_DISABLE_COLON_AFTER);
-        pattern.render(w)?;
+        ::sittir_core::layout::render_unit(node.layout.as_deref(), "_pattern", 0, w, |w| pattern.render(w))?;
     }
     w.site_at(options::SITE_INLINE_FLAGS_GROUP_DISABLE_RPAREN_BEFORE);
     w.text(")")?;
@@ -4716,7 +5326,7 @@ fn render_lazy(node: &LazyTransport, w: &mut dyn ::sittir_core::render::RenderSi
 
 fn render_unicode_property_name(node: &UnicodePropertyNameTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
-    content.render(w)?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", 0, w, |w| content.render(w))?;
     Ok(())
 }
 
@@ -4871,13 +5481,16 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
 )
 .with_literal_merge_pairs(&[(40, 63), (63, 60)]); // "(?" "?<"
 
-/// Render a transport tree to text. Takes the trait rather than
-/// `&AnyTransport` so the root's own `SlotValue` carrier renders through
-/// the SAME single SpacingWriter wrap — a second entry point would be a
-/// second place the root seam policy could drift.
-pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {
+/// Render a transport tree to text. Takes the root's own `SlotValue`
+/// carrier, so the root renders through the SAME single SpacingWriter
+/// wrap — a second entry point would be a second place the root seam
+/// policy could drift. A root of the grammar's root kind renders as a
+/// document.
+pub fn render_transport_dispatch(transport: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {
     let mut s = String::new();
-    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options);
+    let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options);
+    let document = ::sittir_core::view::KindTest::kind_in(transport, &w, kind::ROOT_KINDS);
+    let mut w = w.with_document(document);
     transport.render(&mut w)?;
     w.finish()?;
     Ok(s)
@@ -5120,3 +5733,5 @@ const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueExpressionGroup
 const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueExpressionTransport>() <= 256, "UnicodePropertyValueExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueTransport>() <= 256, "UnicodePropertyValueTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ZeroOrMoreTransport>() <= 256, "ZeroOrMoreTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+
+::sittir_core::grammar_trivia!(TriviaTransport; AnyTransport, PatternContentTransportSlot, LookaroundAssertionContentTransportSlot, LookaheadAssertionContentTransportSlot, LookbehindAssertionContentTransportSlot, CharacterClassClassAtomsTransportSlot, ClassRangeStartTransportSlot, NamedCapturingGroupContentTransportSlot, CountQuantifierContentTransportSlot, CharacterClassEscapeContentTransportSlot, TermGroupQuantifierTransportSlot, TermGroupContentTransportSlot, LazyContentTransportSlot, PatternTransport, AlternationTransport, TermTransport, AnyCharacterTransport, StartAssertionTransport, EndAssertionTransport, BoundaryAssertionTransport, NonBoundaryAssertionTransport, LookaroundAssertionTransport, LookaheadAssertionTransport, LookbehindAssertionTransport, PatternCharacterTransport, CharacterClassTransport, PosixCharacterClassTransport, PosixClassNameTransport, ClassRangeTransport, ClassCharacterTransport, AnonymousCapturingGroupTransport, NamedCapturingGroupTransport, NonCapturingGroupTransport, FlagsTransport, ZeroOrMoreTransport, OneOrMoreTransport, OptionalTransport, CountQuantifierTransport, BackreferenceEscapeTransport, NamedGroupBackreferenceTransport, DecimalEscapeTransport, CharacterClassEscapeTransport, UnicodeCharacterEscapeTransport, UnicodePropertyValueExpressionTransport, UnicodePropertyValueTransport, ControlEscapeTransport, ControlLetterEscapeTransport, IdentityEscapeTransport, GroupNameTransport, DecimalDigitsTransport, TermGroupTransport, CountQuantifierGroupTransport, CountQuantifierArmTransport, CharacterClassEscapeArmTransport, UnicodePropertyValueExpressionGroupTransport, CharacterClassEscapeText1Transport, CharacterClassEscapeText2Transport, NegationTransport, InlineFlagsGroupEnableTransport, InlineFlagsGroupToggleTransport, InlineFlagsGroupDisableTransport, TightTransport, NewlineTransport, BlanklineTransport, DoubleBlanklineTransport, LazyTransport, UnicodePropertyNameTransport, CaretTransport, LparenQmarkTransport, EqTransport, BangTransport, RparenTransport, LparenQmarkLtTransport, LbrackTransport, DashTransport, BslashDashTransport, RbrackTransport, LbrackColonTransport, ColonRbrackTransport, LparenTransport, LparenQmarkPLtTransport, GtTransport, LparenQmarkColonTransport, StarTransport, QmarkTransport, PlusTransport, LbraceTransport, RbraceTransport, BslashkTransport, LtTransport, LparenQmarkPEqTransport, CommaTransport, ColonTransport, TriviaTransport);

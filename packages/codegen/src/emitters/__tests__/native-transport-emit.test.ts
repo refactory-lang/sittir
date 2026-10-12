@@ -513,7 +513,7 @@ describe('native transport emission', () => {
 		expect(emitted.transportRs.contents).toContain('CallExpression(CallExpressionTransport),');
 	});
 
-	it('emits repeated children as Vec transport instead of OneOrMany', () => {
+	it('emits repeated children as a NonEmptyVec transport instead of OneOrMany', () => {
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeRepeatedChildrenNodeMap);
 		const emitted = emitRenderModule(
 			'rust',
@@ -526,17 +526,16 @@ describe('native transport emission', () => {
 		const structBody = emitted.transportRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[wire(key = "_identifier")]\n    #[slot]\n    pub identifier: Vec<::sittir_core::SlotValue<IdentifierTransport>>,'
+			'#[wire(key = "_identifier")]\n    #[slot]\n    pub identifier: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<IdentifierTransport>>,'
 		);
 		expect(structBody).not.toContain('OneOrMany<');
 	});
 
-	it('emits optional repeated unnamed children as Option<Vec<T>> transport (same rule as named fields)', () => {
-		// rustTransportSlotType's `wrap()` applies the same required/multiple
-		// typing rule uniformly to named and unnamed slots — no unnamed-slot
-		// special case that drops the Option wrapper. This matches the sibling
-		// "emits optional repeated named fields as Option<Vec<T>> transport"
-		// case below (same wrap() call, same result shape).
+	it('emits optional repeated unnamed children as a Vec transport, an empty list being [] (same rule as named fields)', () => {
+		// rustTransportSlotType's `wrap()` applies one typing rule to named and
+		// unnamed slots alike: a repeat1 list is a NonEmptyVec, any other list a
+		// Vec, never optional. The sibling optional named-field case below takes
+		// the same `wrap()` call to the same shape.
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeOptionalRepeatedChildrenNodeMap);
 		const emitted = emitRenderModule(
 			'rust',
@@ -549,7 +548,7 @@ describe('native transport emission', () => {
 		const structBody = emitted.transportRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[wire(key = "_identifier")]\n    #[slot]\n    pub identifier: Option<Vec<::sittir_core::SlotValue<IdentifierTransport>>>,'
+			'#[wire(key = "_identifier")]\n    #[slot]\n    pub identifier: Vec<::sittir_core::SlotValue<IdentifierTransport>>,'
 		);
 	});
 
@@ -665,7 +664,7 @@ describe('native transport emission', () => {
 		expect(emitted).not.toContain('Box<AnyTransport>>');
 	});
 
-	it('emits repeated named fields as Vec transport instead of OneOrMany', () => {
+	it('emits repeated named fields as a NonEmptyVec transport instead of OneOrMany', () => {
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeRepeatedFieldNodeMap);
 		const emitted = emitRenderModule(
 			'rust',
@@ -678,12 +677,12 @@ describe('native transport emission', () => {
 		const structBody = emitted.transportRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[wire(key = "_items")]\n    #[slot(field = field::ITEMS)]\n    pub items: Vec<::sittir_core::SlotValue<IdentifierTransport>>,'
+			'#[wire(key = "_items")]\n    #[slot(field = field::ITEMS)]\n    pub items: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<IdentifierTransport>>,'
 		);
 		expect(structBody).not.toContain('OneOrMany<');
 	});
 
-	it('emits optional repeated named fields as Option<Vec<T>> transport', () => {
+	it('emits optional repeated named fields as a Vec transport, an empty list being []', () => {
 		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeOptionalRepeatedFieldNodeMap);
 		const emitted = emitRenderModule(
 			'rust',
@@ -696,7 +695,7 @@ describe('native transport emission', () => {
 		const structBody = emitted.transportRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[wire(key = "_items")]\n    #[slot(field = field::ITEMS)]\n    pub items: Option<Vec<::sittir_core::SlotValue<IdentifierTransport>>>,'
+			'#[wire(key = "_items")]\n    #[slot(field = field::ITEMS)]\n    pub items: Vec<::sittir_core::SlotValue<IdentifierTransport>>,'
 		);
 		expect(structBody).not.toContain('OneOrMany<');
 	});

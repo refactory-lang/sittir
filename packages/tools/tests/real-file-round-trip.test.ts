@@ -39,7 +39,7 @@ const CASES: ReadonlyArray<{
 	// reader collapses to bare text, in a slot with no kind to route it by.
 	{ file: 'packages/tools/tests/emit/__fixtures__/dogfood-rust.rs', grammar: 'rust' },
 	// Function parameters whose pattern collapses to a bare identifier string.
-	{ file: 'packages/common/src/format.ts', grammar: 'typescript' },
+	{ file: 'packages/tools/tests/emit/__fixtures__/dogfood-typescript.ts', grammar: 'typescript' },
 	// Indentation-sensitive: lose the newline between a class and the next
 	// top-level `def` and the `def` becomes a method of the class.
 	{ file: 'tests/format-roundtrip/fixtures/python-4space.py', grammar: 'python' }

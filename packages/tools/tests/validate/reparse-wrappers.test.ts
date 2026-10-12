@@ -21,7 +21,7 @@ describe('the root identity reparse wrapper', () => {
 
 describe('wrapping a rendered split kind', () => {
 	const placements = new Map([['split_kind', { kind: '_expression', display: '_expression', prefix: '(', suffix: ')' }]]);
-	const ctx = { grammar: 'rust', kindToSupertypes: new Map(), adoptedVariantKinds: new Set<string>(), root: undefined, placements };
+	const ctx = { grammar: 'rust', kindToSupertypes: new Map(), adoptedVariantKinds: new Set<string>(), root: undefined, placements, parser: { parse: () => null } };
 
 	it('places a kind with no host of its own inside its placement owner, at the offset after the prefix', async () => {
 		await loadReparseHosts('rust');

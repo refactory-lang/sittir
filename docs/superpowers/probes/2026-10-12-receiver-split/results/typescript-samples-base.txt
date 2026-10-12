@@ -1,0 +1,26 @@
+function f() {}
+  (formal_parameters)
+function f(a, b?) {}
+  (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier))) item: (optional_parameter pattern: (lhs_expression (identifier)))))
+function f(this: Window) {}
+  (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (this) type: (type_annotation type: (type_identifier)))))
+function f(this: Window, a: number,) {}
+  (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (this) type: (type_annotation type: (type_identifier))) item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type)))))
+class C { m(this: C, a) {} get x(this: C) { return 1; } }
+  (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (this) type: (type_annotation type: (type_identifier))) item: (required_parameter pattern: (lhs_expression (identifier)))))
+  (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (this) type: (type_annotation type: (type_identifier)))))
+let g = function (this: Foo) {};
+  (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (this) type: (type_annotation type: (type_identifier)))))
+type F = (this: Foo, a: number) => void;
+  (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (this) type: (type_annotation type: (type_identifier))) item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type)))))
+interface I { (this: I): void; m(this: I): void }
+  (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (this) type: (type_annotation type: (type_identifier)))))
+  (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (this) type: (type_annotation type: (type_identifier)))))
+function f(this?: Foo) {}
+  (formal_parameters elements: (formal_parameters_elements item: (optional_parameter pattern: (this) type: (type_annotation type: (type_identifier)))))
+function f(a, this: Foo) {}
+  (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier))) item: (required_parameter pattern: (this) type: (type_annotation type: (type_identifier)))))
+let h = (this: Foo) => 1;
+  (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (this) type: (type_annotation type: (type_identifier)))))
+function f(readonly) {}
+  (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)))))

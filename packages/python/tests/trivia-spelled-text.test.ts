@@ -11,8 +11,8 @@ const statement = () => ir.expressionStatement(ir.identifier('x'));
 
 describe('trivia given as text, in a grammar with one comment kind', () => {
 	it('takes the text spelled in full or as content, as before', () => {
-		expect(statement().$trivia.trailing('# x').$render()).toBe('x\n# x\n');
-		expect(statement().$trivia.trailing(' x').$render()).toBe('x\n# x\n');
+		expect(statement().$trivia.trailing('# x').$render()).toBe('x # x\n');
+		expect(statement().$trivia.trailing(' x').$render()).toBe('x # x\n');
 	});
 
 	it('has no table of spellings to choose from', () => {

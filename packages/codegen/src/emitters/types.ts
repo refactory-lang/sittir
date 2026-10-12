@@ -106,7 +106,7 @@ import type { RefineKindInfo } from './refine-emit.ts';
 import { layoutKindAliasesOf, hintEmitterOf, type AddressTables, type HintEmitter, type HintRoot } from './options.ts';
 import type { SitePreference } from '../compiler/model/site-preferences.ts';
 import { displayNameOf, displayedKinds, ownsItsDisplay } from '../compiler/model/display-name.ts';
-import { emptyForms, innerGapsKeyed } from '../compiler/model/trivia.ts';
+import { emptyForms } from '../compiler/model/trivia.ts';
 
 type StructuralNode = SlotBearingCompound;
 
@@ -386,12 +386,10 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 	}
 	lines.push('');
 
-	const keyed = innerGapsKeyed(nodeMap);
-	lines.push(...emitGrammarTypeMap(grammar, nodeMap, config.triviaKinds ?? [], keyed));
+	lines.push(...emitGrammarTypeMap(grammar, nodeMap, config.triviaKinds ?? []));
 	for (const [kind, empty] of emptyForms(nodeMap)) {
 		const node = nodeMap.nodes.get(kind)!;
-		const gaps = keyed ? `, ${empty.gaps.map((gap) => JSON.stringify(gap)).join(' | ')}` : '';
-		const innerTrivia = (self: string): string => `readonly $trivia: TriviaSetterOf<${self}> & InnerTrivia<${self}${gaps}>;`;
+		const innerTrivia = (self: string): string => `readonly $trivia: TriviaSetterOf<${self}> & InnerTrivia<${self}>;`;
 		lines.push(
 			...(groupSeatHints(node, nodeMap, kindEntries).length > 0
 				? [`export type ${empty.typeName} = ${node.typeName}.Bound & {`, `  ${innerTrivia(empty.typeName)}`, '};']
@@ -478,7 +476,6 @@ const VOCABULARY_IMPORTS = [
 	'HoldsTree',
 	'TriviaSetter',
 	'GrammarInnerTrivia',
-	'GrammarInnerTriviaAt',
 	'SlotHint',
 	'ListViewHint',
 	'ListSlotHint',
@@ -491,10 +488,11 @@ const VOCABULARY_IMPORTS = [
 	'SupertypeSurface',
 	'WithNode',
 	'BoundWithNode',
-	'QueryFacet'
+	'QueryFacet',
+	'Snapshot'
 ];
 
-function emitGrammarTypeMap(grammar: string, nodeMap: NodeMap, triviaKinds: readonly string[], keyed: boolean): string[] {
+function emitGrammarTypeMap(grammar: string, nodeMap: NodeMap, triviaKinds: readonly string[]): string[] {
 	const map = grammarTypeMapName(grammar);
 	const trivia = `${map}['trivia']`;
 	const empties = [...emptyForms(nodeMap)].flatMap(([kind, empty]) => {
@@ -514,9 +512,7 @@ function emitGrammarTypeMap(grammar: string, nodeMap: NodeMap, triviaKinds: read
 		'',
 		`export type NodeMethodsOf = NodeMethods<${trivia}>;`,
 		`export type TriviaSetterOf<Self> = TriviaSetter<Self, ${trivia}>;`,
-		keyed
-			? `export type InnerTrivia<N, Gap extends string> = GrammarInnerTriviaAt<N, ${trivia}, Gap>;`
-			: `export type InnerTrivia<N> = GrammarInnerTrivia<N, ${trivia}>;`,
+		`export type InnerTrivia<N> = GrammarInnerTrivia<N, ${trivia}>;`,
 		''
 	];
 }
@@ -921,7 +917,10 @@ function emitNodeSurfaceInterfaces(lines: string[], surface: BuiltTypeSurface, i
 			lines.push(
 				`${indent}  readonly $with: ${name.startsWith('Bound') ? 'BoundWithNode' : 'WithNode'}<${self}, BoundByKindId${self === 'this' ? '' : `, ${name}`}>;`
 			);
-		if (withNode && name.startsWith('Parsed')) lines.push(`${indent}  readonly $query: () => QueryFacet<${self}, ParsedByKindId>;`);
+		if (withNode && name.startsWith('Parsed')) {
+			lines.push(`${indent}  readonly $query: () => QueryFacet<${self}, ParsedByKindId>;`);
+			lines.push(`${indent}  readonly $snapshot: () => Snapshot<${surface.mainType}['$type']>;`);
+		}
 		for (const member of surface.members) lines.push(`${indent}${member}`);
 		lines.push(`${indent}}`);
 	};
@@ -971,7 +970,8 @@ function emitInterface(
 		for (const f of slots) {
 			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
 			const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
-			const opt = isRequired(f) ? '' : '?';
+			const opt =
+				isRequired(f) || storageInfo.kind === 'boolean' || (isMultiple(f) && !storageInfo.collapsesMultiplicity) ? '' : '?';
 			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr, kindEntries);
 			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
 				const elemType = hasOptionalElements(f) ? `${storageType} | undefined` : storageType;
@@ -990,7 +990,7 @@ function emitInterface(
 			const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 			const propName = f.propertyName;
 			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr, kindEntries);
-			const opt = isRequired(f) ? '' : '?';
+			const opt = isRequired(f) || storageInfo.kind === 'boolean' ? '' : '?';
 			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
 				const elemType = hasOptionalElements(f) ? `${storageType} | undefined` : storageType;
 				const arrType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `readonly (${elemType})[]`;

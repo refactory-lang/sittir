@@ -23,8 +23,8 @@ struct Ceilings {
 const CEILINGS: &[Ceilings] = &[
     Ceilings { os: "macos", arch: "aarch64", release: true, levels: [23, 39, 71, 263] },
     Ceilings { os: "macos", arch: "aarch64", release: false, levels: [151, 183, 311, 999] },
-    Ceilings { os: "linux", arch: "x86_64", release: true, levels: [55, 63, 95, 271] },
-    Ceilings { os: "linux", arch: "x86_64", release: false, levels: [167, 207, 327, 983] },
+    Ceilings { os: "linux", arch: "x86_64", release: true, levels: [47, 63, 95, 263] },
+    Ceilings { os: "linux", arch: "x86_64", release: false, levels: [167, 199, 311, 911] },
 ];
 
 /// The deepest entry of the rust corpus by parse-tree depth, saved as a probe
@@ -80,7 +80,7 @@ fn read_on_thread(probe: Probe, stack: usize) {
         .stack_size(stack)
         .spawn(move || {
             let tree = parse(&source);
-            let ctx = ReadCtx::new(&source, 1);
+            let ctx = ReadCtx::new(&source, 1, <sittir_rust::render::AnyTransport as sittir_core::read::ReadTransport>::shows);
             RenderRoot::read_root(&mut tree.walk(), &ctx, Depth::All).unwrap();
         })
         .unwrap()

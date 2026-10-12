@@ -331,3 +331,51 @@ let x: false
         (literal_type
           (false))))
     (automatic_semicolon)))
+
+========================
+Type-only star re-export
+========================
+
+export type * from './x.ts';
+
+---
+
+(program
+  (export_statement_default_from
+    (export_statement_default_from_star_from
+      (string_single
+        (string_fragment)))))
+
+=============================
+Type-only namespace re-export
+=============================
+
+export type * as ns from './y.ts';
+
+---
+
+(program
+  (export_statement_default_from
+    (export_statement_default_from_ns_from
+      (namespace_export
+        (identifier))
+      (string_single
+        (string_fragment)))))
+
+=====================================
+Type-only export clause with a source
+=====================================
+
+export type { A } from './z.ts';
+
+---
+
+(program
+  (export_statement_default_from
+    (export_statement_default_from_clause_from
+      (export_clause
+        (export_specifiers
+          (export_specifier
+            (identifier))))
+      (string_single
+        (string_fragment)))))

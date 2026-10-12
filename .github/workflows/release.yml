@@ -65,6 +65,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Install the pinned Rust toolchain
+        uses: ./.github/actions/rust-toolchain
+
       - name: Build
         run: pnpm build
 
@@ -166,8 +169,8 @@ jobs:
           registry-url: "https://registry.npmjs.org"
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Install Rust toolchain (stable, ${{ matrix.target }})
-        uses: dtolnay/rust-toolchain@stable
+      - name: Install Rust toolchain (pinned, ${{ matrix.target }})
+        uses: ./.github/actions/rust-toolchain
         with:
           targets: ${{ matrix.target }}
       # See ci.yml's `napi-build` job for why `napi-rs/setup-node-and-napi@v3`

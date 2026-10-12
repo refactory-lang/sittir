@@ -1687,7 +1687,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  397
+                  396
                 ],
                 "fields": [],
                 "kinds": [
@@ -3911,7 +3911,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  426
+                  425
                 ],
                 "fields": [],
                 "kinds": [
@@ -4056,14 +4056,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  423
+                  422
                 ],
                 "fields": [],
                 "kinds": [
                   "export_statement_default_from_star_from",
                   "export_statement_default_from_ns_from",
-                  "export_statement_default_from_clause_from",
-                  "export_clause"
+                  "export_statement_default_from_clause_from"
                 ]
               }
             }
@@ -4078,22 +4077,6 @@
         }
       ],
       "members": [
-        {
-          "name": "exportClause",
-          "route": "slot",
-          "slot": "content",
-          "except": [
-            "export_statement_default_from_star_from",
-            "export_statement_default_from_ns_from",
-            "export_statement_default_from_clause_from"
-          ],
-          "path": [
-            {
-              "owner": "export_statement_default_from",
-              "slot": "content"
-            }
-          ]
-        },
         {
           "name": "exportClause",
           "route": "nested",
@@ -4275,42 +4258,6 @@
             {
               "owner": "export_statement_namespace_export",
               "slot": "name"
-            }
-          ]
-        }
-      ]
-    },
-    "export_statement_type_export": {
-      "vocab": "statement.export",
-      "read": [
-        {
-          "vocab": "statement.export",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": [
-        {
-          "name": "exportClause",
-          "route": "slot",
-          "slot": "export_clause",
-          "path": [
-            {
-              "owner": "export_statement_type_export",
-              "slot": "export_clause"
-            }
-          ]
-        },
-        {
-          "name": "source",
-          "route": "slot",
-          "slot": "source",
-          "path": [
-            {
-              "owner": "export_statement_type_export",
-              "slot": "source"
             }
           ]
         }
@@ -6471,7 +6418,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  462
+                  461
                 ],
                 "fields": [
                   "name"
@@ -6541,7 +6488,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  462
+                  461
                 ],
                 "fields": [
                   "name"
@@ -6611,7 +6558,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  462
+                  461
                 ],
                 "fields": [
                   "name"
@@ -6655,7 +6602,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  462
+                  461
                 ],
                 "fields": [
                   "name"
@@ -12316,7 +12263,7 @@
       {
         "depth": 2,
         "paths": 111,
-        "kinds": 134,
+        "kinds": 133,
         "refinements": 8,
         "aliases": 99
       },

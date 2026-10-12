@@ -1,13 +1,15 @@
-import type { AnyUntypedNode, ByteSpan, ErrorNode, LineGap, LineGapAddress, LineGaps, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
+import type { AnyUntypedNode, ByteSpan, ErrorNode, NodeTrivia, TransportCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
-import { carryPlacement, carryRead, carrySource, coordinateOf, detachCoordinate, holdsSlots, isRead, isStorageKey, sourceOf, triviaOf, type DerivedSides } from './transport-data.ts';
+import { carryRead, carrySource, coordinateOf, holdsSlots, indexOf, isRead, isStorageKey, PLAIN_KINDS, sideOf, sourceHandleOf, sourceOf, tableAt, toTransportData, treeHandleOf, triviaOf } from './transport-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
-import { hydrateListStorage, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
+import { hydrateStored, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
 import { Delimiter } from './delimiter.ts';
-import { isCoordinate, readNode, type TreeHandle } from './read.ts';
-import { holdsParse } from './tree-token.ts';
+import { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
+import { register, registered, type Role } from './identity.ts';
+import { treeOf } from './tree-token.ts';
 import { spelledForm } from './interior.ts';
+import { snapshotOf } from './snapshot.ts';
 
 export { Delimiter } from './delimiter.ts';
 export { Source };
@@ -52,33 +54,47 @@ export function queryOf(handle: EngineHandle, node: object): object {
 
 /**
  * Runs a rebuild inside the node's own engine and hands the source node's trivia on to the
- * node it returns. Inner entries can only travel to a node that is still empty: once the
- * rebuild gives the node a child, the comment would sit beside it, so the rebuild refuses.
+ * node it returns: a built source's stored sides, and the source identity a parsed source's
+ * sides are read through. Inner comments can only travel to a node that is still empty: once the
+ * rebuild gives the node a child, a comment would sit beside it, so the rebuild refuses. Inner
+ * layout (whitespace, depth members, which cross as bare kinds) spelled the inside of an empty
+ * node, so a node that gains a child drops it.
  */
 export function rebuilt<R>(source: object, handle: EngineHandle | undefined, build: () => R): R {
 	const node = source as AnyUntypedNode;
 	const result = handle === undefined ? build() : inEngine(handle, build);
-	if (isNode(result)) {
-		carryEdit(node, result);
-		const wrappers = handle?.current.trivia.rebuildWrappers;
-		if (wrappers !== undefined) carryRebuiltSlots(node as unknown as Record<string, unknown>, result as unknown as Record<string, unknown>, wrappers);
-	}
-	const trivia = triviaOf(node);
-	if (trivia === undefined || !isNode(result)) return result;
-	if (Object.values(trivia.inner ?? {}).some((entries) => (entries?.length ?? 0) > 0) && !isEmptyNode(result)) {
+	if (!isNode(result)) return result;
+	carryRead(node, result);
+	carrySource(node, result);
+	const wrappers = handle?.current.trivia.rebuildWrappers;
+	if (wrappers !== undefined) carryRebuiltSlots(node as unknown as Record<string, unknown>, result as unknown as Record<string, unknown>, wrappers);
+	const inner = isEmptyNode(result) ? [] : sideOf(node, 'inner');
+	if (inner.some((entry) => typeof entry !== 'number')) {
 		const kind = handle?.current.trivia.kindName(node.$type) ?? String(node.$type);
 		throw new Error(`trivia: ${kind} holds inner comments; move them to leading/trailing on the new child`);
 	}
-	setTriviaData(result, trivia);
+	const trivia = triviaOf(node);
+	if (inner.length > 0) setTriviaData(result, { ...trivia, inner: [] });
+	else if (trivia !== undefined) setTriviaData(result, trivia);
 	return result;
 }
 
 /**
- * Whether no slot of the node holds a value: every `_`-keyed storage entry is
- * absent or an empty list. Only such a node can hold inner trivia, since a
+ * Whether the node has no child with width. Only such a node can hold inner trivia, since a
  * comment beside any child has that child to lead or trail.
+ *
+ * @param node - A built or parsed node.
+ * @returns Whether no child holds sides: a child holds sides when it is named, not an extra or
+ *   `ERROR`, and has width. A parsed node's width is read from its tree, so a zero-width child
+ *   (typescript's automatic semicolon) holds none. A built node's child has the width of its
+ *   rendered text, and every child a built node stores renders text (a stored automatic semicolon
+ *   renders `"\n"`), so a built node is empty when every `_`-keyed storage entry is absent or an
+ *   empty list.
  */
 export function isEmptyNode(node: AnyUntypedNode): boolean {
+	const tree = treeOf(node);
+	const handle = treeHandleOf(node);
+	if (tree?.isEmpty !== undefined && handle !== undefined) return tree.isEmpty(decodeIndex(handle));
 	const record = node as unknown as Record<string, unknown>;
 	for (const key of Object.keys(record)) {
 		if (key.charCodeAt(0) !== 95) continue;
@@ -93,8 +109,10 @@ const scopedBy = (handle: EngineHandle | undefined): Scoped => (handle === undef
 /**
  * The writes of a node's trivia, bound to its engine. An item is an extra kind's node, or a
  * loose string built through `ir.comment`: its full spelling (`'// note'`) or its interior
- * (`' note'`). `inner` and `innerAt` write only to an empty node of a kind with inner gaps,
- * and a write detaches the node's coordinate.
+ * (`' note'`). `inner` writes only to an empty node of a kind with an inner site. A parsed
+ * node's side is written into its tree's trivia table, a built node's into its own data. The table
+ * takes each entry as detached data (`snapshotOf`): it outlives any other tree an entry was read
+ * from, and a snapshot of the tree returns its sides as they are.
  */
 function triviaWriter(target: object, handle: EngineHandle | undefined) {
 	const node = target as AnyUntypedNode;
@@ -102,47 +120,24 @@ function triviaWriter(target: object, handle: EngineHandle | undefined) {
 	const facts: TriviaFacts = handle.current.trivia;
 	const scoped = scopedBy(handle);
 	const kind = (): string => facts.kindName(node.$type) ?? String(node.$type);
-	const refuseUnheld = (): void => {
-		if (!holdsParse(node) || sourceOf(node) === undefined || parents.has(node) || '$errors' in node) return;
-		throw new Error(
-			`trivia: this ${kind()} was reached outside its parent's accessors (through a query), so no parent holds it and a comment written on it would not render; reach it through the accessors from the root instead`
-		);
-	};
-	const entriesOf = (items: readonly unknown[]): readonly TriviaEntry[] =>
-		scoped(() => items.map((item) => triviaEntryOf(item, facts)));
-	const gapsOf = (): readonly string[] => {
-		const gaps = facts.innerGaps[kind()] ?? [];
-		if (gaps.length === 0) throw new Error(`trivia: ${kind()} has no inner gap; attach to a child with leading/trailing`);
-		return gaps;
-	};
-	const writeInner = (inner: NonNullable<NodeTrivia['inner']>): NodeTrivia['inner'] => {
-		const gaps = gapsOf();
-		for (const gap of Object.keys(inner)) {
-			if (!gaps.includes(gap)) throw new Error(`trivia: ${kind()} has no gap '${gap}'`);
-		}
-		if (!isEmptyNode(node)) throw new Error(`trivia: ${kind()} is not empty; attach to a child with leading/trailing`);
-		detachCoordinate(node);
-		return inner;
-	};
-	const store = (trivia: NodeTrivia, side: TriviaSideName): AnyUntypedNode => {
-		markWritten(node, side);
-		setTriviaData(node, trivia);
-		detachAncestors(node);
+	const read = (side: TriviaSideName): readonly TriviaEntry[] => hydratedEntries(sideOf(node, side));
+	const write = (side: TriviaSideName, items: readonly unknown[]): AnyUntypedNode => {
+		const entries = scoped(() => items.map((item) => triviaEntryOf(item, facts)));
+		const at = tableAt(node);
+		if (at === undefined) setTriviaData(node, { ...triviaOf(node), [side]: entries });
+		else at.tree.writeTriviaSide(at.index, side, entries.map((entry) => (typeof entry === 'number' ? entry : toTransportData(snapshotOf(entry) as AnyUntypedNode, PLAIN_KINDS))));
 		return node;
 	};
-	const innerAt = (gap: string, items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] => {
-		if (!gapsOf().includes(gap)) throw new Error(`trivia: ${kind()} has no gap '${gap}'`);
-		if (items.length === 0) return hydratedEntries(triviaOf(node)?.inner?.[gap] ?? []);
-		refuseUnheld();
-		return store({ ...triviaOf(node), inner: writeInner({ ...triviaOf(node)?.inner, [gap]: entriesOf(items) }) }, 'inner');
+	const inner = (items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] => {
+		if (!facts.innerKinds.has(kind())) throw new Error(`trivia: ${kind()} has no inner site; attach to a child with leading/trailing`);
+		if (items.length === 0) return read('inner');
+		if (!isEmptyNode(node)) throw new Error(`trivia: ${kind()} is not empty; attach to a child with leading/trailing`);
+		return write('inner', items);
 	};
 	return {
 		side: (position: 'leading' | 'trailing', items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] =>
-			items.length === 0
-				? hydratedEntries(readTrivia(node, handle.lineGapsOf)?.[position] ?? [])
-				: (refuseUnheld(), store({ ...triviaOf(node), [position]: entriesOf(items) }, position)),
-		inner: (items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] => innerAt(gapsOf()[0]!, items),
-		innerAt
+			items.length === 0 ? read(position) : write(position, items),
+		inner
 	};
 }
 
@@ -151,22 +146,12 @@ function hydratedEntries(entries: readonly TriviaEntry[]): readonly TriviaEntry[
 }
 
 export function hydrateTriviaEntry(entry: unknown): TriviaEntry {
-	if (!isCoordinate(entry)) return entry as TriviaEntry;
-	const node = hydrateListStorage(entry);
-	return (node !== null && typeof node === 'object' ? carryPlacement(entry, node) : node) as TriviaEntry;
+	return (isCoordinate(entry) ? hydrateStored(entry) : entry) as TriviaEntry;
 }
 
-type TriviaSideName = 'leading' | 'trailing' | 'inner';
-
-const writtenSides = new WeakMap<object, Set<TriviaSideName>>();
-const readLineGaps = new WeakMap<object, LineGaps>();
-const composedTrivia = new WeakMap<object, NodeTrivia | undefined>();
-
 /**
- * Hand an edited node what it keeps of the node it was rebuilt from: that
- * the read produced it, where it sits in the source, and which trivia sides
- * were written. Its line gaps then derive from the same source position, and
- * a side the caller rewrote stays written.
+ * Hand an edited node's rebuilt wrapper slots what they keep of the wrappers they replace: that the
+ * read produced them, and where they sit in the source.
  */
 function carryRebuiltSlots(read: Record<string, unknown>, result: Record<string, unknown>, wrappers: ReadonlySet<number>): void {
 	for (const key of Object.keys(result)) {
@@ -178,112 +163,20 @@ function carryRebuiltSlots(read: Record<string, unknown>, result: Record<string,
 		const heldNode = held as Record<string, unknown>;
 		if (typeof freshNode.$type !== 'number' || freshNode.$type !== heldNode.$type || !wrappers.has(freshNode.$type)) continue;
 		if (sourceOf(freshNode) !== undefined || sourceOf(heldNode) === undefined) continue;
-		carryEdit(heldNode, freshNode);
+		carryRead(heldNode, freshNode);
+		carrySource(heldNode, freshNode);
 	}
 }
 
-function carryEdit(from: object, to: object): void {
-	carryRead(from, to);
-	carrySource(from, to);
-	const written = writtenSides.get(from);
-	if (written !== undefined) writtenSides.set(to, new Set(written));
+/** How a query names a read node: the handle its coordinate names it by. */
+export interface NodeAddress {
+	readonly handle: number;
 }
 
-const parents = new WeakMap<object, object>();
-
-/** Record that a wrapped node's accessor handed out `child` from one of its slots. */
-export function adoptChild(parent: object, child: unknown): void {
-	if (typeof child === 'object' && child !== null) parents.set(child, parent);
-}
-
-function detachAncestors(node: object): void {
-	for (let parent = parents.get(node); parent !== undefined; parent = parents.get(parent)) {
-		carrySource(parent, parent);
-		detachCoordinate(parent);
-	}
-}
-
-function markWritten(node: object, side: TriviaSideName): void {
-	const sides = writtenSides.get(node) ?? new Set<TriviaSideName>();
-	sides.add(side);
-	writtenSides.set(node, sides);
-	composedTrivia.delete(node);
-}
-
-function isDerivedSide(node: object, side: 'leading' | 'trailing'): boolean {
-	return writtenSides.get(node)?.has(side) !== true;
-}
-
-/**
- * A read node's trivia as its parse has it: the comment entries the reader
- * gave it, with the line-break whitespace it owns before it and in its
- * closing gap interleaved by position. The line gaps are asked for once, on
- * the first read; a side whose trivia was written holds what was written,
- * and the other side keeps what the read gives it.
- */
-export function readTrivia(target: object, lineGapsOf: ((address: LineGapAddress) => LineGaps) | undefined): NodeTrivia | undefined {
-	const node = target as AnyUntypedNode;
-	const stored = triviaOf(node);
-	const gaps = lineGapsRead(node, lineGapsOf);
-	if (gaps === undefined || (gaps.leading.length === 0 && gaps.trailing.length === 0)) return stored;
-	if (composedTrivia.has(node)) return composedTrivia.get(node);
-	const leading = isDerivedSide(node, 'leading') ? interleaved(stored?.leading, gaps.leading) : stored?.leading;
-	const trailing = isDerivedSide(node, 'trailing') ? interleaved(stored?.trailing, gaps.trailing) : stored?.trailing;
-	const trivia = { ...stored, leading, trailing };
-	composedTrivia.set(node, trivia);
-	return trivia;
-}
-
-/**
- * Which sides of a read node's trivia are derived from its line gaps, and the
- * spans of the siblings beside it in the source (`previous` `null` for its
- * parent's first, `next` `null` for its last); `undefined` when `readTrivia`
- * derives nothing for it.
- */
-export function readDerivedSides(
-	target: object,
-	lineGapsOf: ((address: LineGapAddress) => LineGaps) | undefined
-): DerivedSides | undefined {
-	const gaps = lineGapsRead(target, lineGapsOf);
-	if (gaps === undefined) return undefined;
-	return { previous: gaps.previous, next: gaps.next, leading: isDerivedSide(target, 'leading'), trailing: isDerivedSide(target, 'trailing') };
-}
-
-function lineGapsRead(target: object, lineGapsOf: ((address: LineGapAddress) => LineGaps) | undefined): LineGaps | undefined {
-	const node = target as AnyUntypedNode;
-	const address = lineGapAddressOf(node);
-	if (!isRead(node) || address === undefined || lineGapsOf === undefined) return undefined;
-	const cached = readLineGaps.get(node);
-	if (cached !== undefined) return cached;
-	const gaps = lineGapsOf(address);
-	readLineGaps.set(node, gaps);
-	return gaps;
-}
-
-/** How the line-gap query and a query name a read node: the handle its coordinate names it by; `undefined` for a node no read gave. */
-function lineGapAddressOf(node: AnyUntypedNode): LineGapAddress | undefined {
-	const handle = coordinateOf(node)?.$treeHandle ?? sourceOf(node)?.treeHandle;
-	return handle === undefined ? undefined : { handle };
-}
-
-export type NodeAddress = LineGapAddress;
-
+/** The address a query names `node` by; `undefined` for a node no read gave. */
 export function nodeAddressOf(node: AnyUntypedNode): NodeAddress | undefined {
-	return lineGapAddressOf(node);
-}
-
-/** Comment entries and whitespace runs of one side merged in source order; `undefined` when both are empty. */
-function interleaved(entries: readonly TriviaEntry[] | undefined, gaps: readonly LineGap[]): readonly TriviaEntry[] | undefined {
-	const positioned: { readonly at: number; readonly entry: TriviaEntry }[] = [];
-	let at = -1;
-	for (const entry of entries ?? []) {
-		const start = typeof entry === 'number' ? undefined : coordinateOf(entry as object)?.$span.start;
-		at = start ?? at;
-		positioned.push({ at, entry });
-	}
-	for (const gap of gaps) positioned.push({ at: gap.start, entry: gap.kind });
-	positioned.sort((a, b) => a.at - b.at);
-	return positioned.length === 0 ? undefined : positioned.map(({ entry }) => entry);
+	const handle = sourceHandleOf(node);
+	return handle === undefined ? undefined : { handle };
 }
 
 /** `node.$trivia.leading(...)` and `.trailing(...)`: set the position and return the node, or read it with no items. */
@@ -296,23 +189,13 @@ export function triviaSide(
 	return triviaWriter(node, handle).side(position, items);
 }
 
-/** `node.$trivia.inner(...)`: the first inner gap of a kind that has one. */
+/** `node.$trivia.inner(...)`: the inner side of a kind with an inner site. */
 export function triviaInner(
 	node: object,
 	handle: EngineHandle | undefined,
 	items: readonly unknown[]
 ): AnyUntypedNode | readonly TriviaEntry[] {
 	return triviaWriter(node, handle).inner(items);
-}
-
-/** `node.$trivia.innerAt(gap, ...)`: a named inner gap of a kind that keys its gaps. */
-export function triviaInnerAt(
-	node: object,
-	handle: EngineHandle | undefined,
-	gap: string,
-	items: readonly unknown[]
-): AnyUntypedNode | readonly TriviaEntry[] {
-	return triviaWriter(node, handle).innerAt(gap, items);
 }
 
 /** One trivia item as its entry: a trivia node, a parsed ERROR node or a whitespace kind id as it is, a string by `textEntryOf`. */
@@ -634,8 +517,13 @@ export function describeValue(v: unknown): string {
 	}
 }
 
+/** Whether `v` is a node value a builder takes as one: a node, or a coordinate naming one past a read's depth. */
+export function isNodeValue(v: unknown): v is AnyUntypedNode | TransportCoordinate {
+	return isNode(v) || isCoordinate(v);
+}
+
 export function isNodeOfKind(v: unknown, kind: number): boolean {
-	return isNode(v) && v.$type === kind;
+	return isNodeValue(v) && v.$type === kind;
 }
 
 export function orDefault<V>(value: V | undefined, make: () => NoInfer<V>): V {
@@ -643,7 +531,7 @@ export function orDefault<V>(value: V | undefined, make: () => NoInfer<V>): V {
 }
 
 export function configFieldOr(input: unknown, key: string, orElse: () => unknown): unknown {
-	return input !== null && typeof input === 'object' && !isNode(input) && key in input
+	return input !== null && typeof input === 'object' && !isNodeValue(input) && key in input
 		? (input as Record<string, unknown>)[key]
 		: orElse();
 }
@@ -677,51 +565,104 @@ function setTriviaData(node: AnyUntypedNode, triviaData: NodeTrivia): void {
 	node.$_layout = { ...node.$_layout, trivia: triviaData };
 }
 
-const NO_CHILDREN: readonly never[] = Object.freeze([]);
-
 /** How a hydrate turns a transport into its kind's node: the grammar's `wrapNode`. */
 export type WrapTransport = (data: object, tree: TreeHandle) => unknown;
 
 /**
- * One stored value as an accessor returns it: a coordinate read `depth` levels down (one when absent) and
- * hydrated as the transport it reads as, a transport not yet wrapped wrapped, and anything else (a wrapped
- * node, a kind id such as a unit variant's, a boolean, text) as it is.
+ * One stored value as an accessor returns it: the node the registry holds at its index and `role`, else a
+ * coordinate read `depth` levels down (one when absent) and hydrated as the transport it reads as, a
+ * transport wrapped and registered (`wrapRegistered`), and anything else (a wrapped node, a kind id such as
+ * a unit variant's, a boolean, text) as it is.
  */
-export function hydrateWith(value: unknown, tree: TreeHandle, wrap: WrapTransport, depth?: number): unknown {
+export function hydrateWith(value: unknown, tree: TreeHandle, wrap: WrapTransport, depth?: number, role: Role = 'node'): unknown {
 	if (value === null || typeof value !== 'object' || Array.isArray(value)) return value;
-	if (isCoordinate(value)) return hydrateWith(readNode(tree, value, depth), tree, wrap);
-	return isTypedNode(value) || typeof (value as { readonly $type?: unknown }).$type !== 'number' ? value : wrap(value, tree);
+	if (isCoordinate(value)) {
+		const known = decodeTree(value.$treeHandle) === tree.id ? registered(tree, decodeIndex(value.$treeHandle), role) : undefined;
+		return known ?? hydrateWith(readNode(tree, value, depth), tree, wrap, undefined, role);
+	}
+	if (isTypedNode(value) || typeof (value as { readonly $type?: unknown }).$type !== 'number') return value;
+	return wrapRegistered(value, tree, wrap, role);
 }
 
-/** The value of slot `key` of a wrapped node, hydrated by `hydrateWith`, written back into the slot and adopted by the node. */
-export function hydrateSlotWith(node: object, key: string, tree: TreeHandle, wrap: WrapTransport): unknown {
+/**
+ * The node `value` reads as on `tree`: the wrapper already registered at its index and role, or
+ * `wrap(value, tree)`, registered there. A value that names no index of `tree` is wrapped and not
+ * registered.
+ */
+export function wrapRegistered<T>(value: object, tree: TreeHandle, wrap: (value: object, tree: TreeHandle) => T, role: Role = 'node'): T {
+	const handle = treeHandleOf(value);
+	if (handle === undefined || decodeTree(handle) !== tree.id) return wrap(value, tree);
+	const index = decodeIndex(handle);
+	const known = registered(tree, index, role);
+	if (known !== undefined) return known as T;
+	const wrapper = wrap(value, tree);
+	if (wrapper !== null && typeof wrapper === 'object') register(tree, index, role, wrapper);
+	return wrapper;
+}
+
+/** The role an envelope's content is reached in: `aliasContent` when it shares the envelope's parser node (both stamp one index), else `node`. */
+export function contentRole(envelope: object, content: unknown): Role {
+	if (content === null || typeof content !== 'object') return 'node';
+	const own = indexOf(envelope);
+	return own !== undefined && own === indexOf(content) ? 'aliasContent' : 'node';
+}
+
+/** How one stored value becomes what an accessor returns: `hydrateWith` bound to a parsed node's tree, or `hydrateStored` for a built node. */
+type HydrateOne = (value: unknown) => unknown;
+
+/** The list slots already hydrated: each holds the frozen items an accessor returns. */
+const hydratedLists = new WeakSet<readonly unknown[]>();
+
+/** The value of slot `key` of `node`, hydrated by `hydrateOne` and written back into the slot. */
+function hydrateSlotBy(node: object, key: string, hydrateOne: HydrateOne): unknown {
 	const slots = node as Record<string, unknown>;
-	const child = hydrateWith(slots[key], tree, wrap);
+	const child = hydrateOne(slots[key]);
 	if (child !== slots[key]) slots[key] = child;
-	adoptChild(node, child);
 	return child;
 }
 
-/** `hydrateSlotWith` for a list slot: every item hydrated once, the slot then holding the frozen items. */
-export function hydrateSlotsWith(node: object, key: string, tree: TreeHandle, wrap: WrapTransport): readonly unknown[] {
+/** `hydrateSlotBy` for a list slot: every item hydrated once, the slot then holding the frozen items. */
+function hydrateSlotsBy(node: object, key: string, hydrateOne: HydrateOne): readonly unknown[] {
 	const slots = node as Record<string, unknown>;
 	const stored = slots[key];
-	if (!Array.isArray(stored)) return stored == null ? NO_CHILDREN : [hydrateSlotWith(node, key, tree, wrap)];
-	if (Object.isFrozen(stored)) return stored;
-	const children = Object.freeze(stored.map((entry) => hydrateWith(entry, tree, wrap)));
-	for (const child of children) adoptChild(node, child);
+	if (!Array.isArray(stored)) return [hydrateSlotBy(node, key, hydrateOne)];
+	if (hydratedLists.has(stored)) return stored;
+	const children = Object.freeze(stored.map((entry) => hydrateOne(entry)));
+	hydratedLists.add(children);
 	slots[key] = children;
 	return children;
 }
 
+/** The value of slot `key` of a wrapped node, hydrated by `hydrateWith` in `role` and written back into the slot. */
+export function hydrateSlotWith(node: object, key: string, tree: TreeHandle, wrap: WrapTransport, role: Role = 'node'): unknown {
+	return hydrateSlotBy(node, key, (value) => hydrateWith(value, tree, wrap, undefined, role));
+}
+
+/** `hydrateSlotWith` for a list slot. */
+export function hydrateSlotsWith(node: object, key: string, tree: TreeHandle, wrap: WrapTransport): readonly unknown[] {
+	return hydrateSlotsBy(node, key, (value) => hydrateWith(value, tree, wrap));
+}
+
+/** The value of slot `key` of a built node, hydrated by `hydrateStored`: a coordinate it stores becomes the node every route returns, written back into the slot. */
+export function hydrateStoredSlot(node: object, key: string): unknown {
+	return hydrateSlotBy(node, key, hydrateStored);
+}
+
+/** `hydrateStoredSlot` for a list slot. */
+export function hydrateStoredSlots(node: object, key: string): readonly unknown[] {
+	return hydrateSlotsBy(node, key, hydrateStored);
+}
+
 export { numberText, type NumberBase } from './number.ts';
-export { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle } from './read.ts';
-export { currentHandle, inEngine, hydrateListStorage, type EngineHandle } from './engine-scope.ts';
+export { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
+export type { Role } from './identity.ts';
+export { currentHandle, inEngine, hydrateStored, type EngineHandle } from './engine-scope.ts';
 export { checkDelimited, type DelimitedSpec } from './delimited-check.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toTransportData, toDetachedTransportData, STORED_TRIVIA, carrySource, type SourceGapEvidence, type SourceFlankEvidence, type TransportLayout, type TriviaView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, sourceOf } from './transport-data.ts';
-export { carryTree, treeTokenOf, type TreeToken } from './tree-token.ts';
+export { toTransportData, toDetachedTransportData, PLAIN_KINDS, sideOf, sidesOf, carrySource, type SourceGapEvidence, type SourceFlankEvidence, type TransportLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, sourceOf } from './transport-data.ts';
+export { carryTree, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
+export { snapshotOf } from './snapshot.ts';
 export {
 	projectInterior,
 	lexedConfig,

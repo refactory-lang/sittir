@@ -43,18 +43,18 @@ export function carryTree<T extends object>(from: object, to: T): T {
 }
 
 const trees = new WeakMap<TreeToken, TreeHandle>();
-export function holdsParse(node: object): boolean {
-	const token = treeTokenOf(node);
-	return token !== undefined && trees.has(token);
-}
-
 export function registerTree(token: TreeToken, tree: TreeHandle): void {
 	trees.set(token, tree);
 }
 
 export function treeOf(node: object): TreeHandle | undefined {
 	const token = treeTokenOf(node);
-	return token === undefined ? undefined : trees.get(token);
+	return token === undefined ? undefined : treeOfToken(token);
+}
+
+/** The tree `token` names, while it is registered. */
+export function treeOfToken(token: TreeToken): TreeHandle | undefined {
+	return trees.get(token);
 }
 
 /** Make `node` stop holding its tree. */

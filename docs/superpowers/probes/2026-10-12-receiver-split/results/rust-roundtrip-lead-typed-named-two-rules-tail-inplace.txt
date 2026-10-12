@@ -1,0 +1,30 @@
+fn f() {}
+  rendered: ()
+  text: unchanged; reparse: same tree
+fn f(&self) {}
+  rendered: (&self,)
+  text: changed; reparse: same tree
+fn f(&self,) {}
+  rendered: (&self,)
+  text: unchanged; reparse: same tree
+fn f(&self, a: u8) {}
+  rendered: (&self,)
+  text: changed; reparse: different tree
+  first:  ["parameters", null, [["parameters_elements_receiver", "elements", [["attributed_parameter_receiver", "receiver", [["self_parameter", null, [["self", "self", "self"]]]]], ["parameters_elements_receiver_tail", "elements", [["attributed_parameter", "item", [["parameter", null, [["identifier", "name", "a"], ["primitive_type", "type", null]]]]]]]]]]]
+  second: ["parameters", null, [["parameters_elements_receiver", "elements", [["attributed_parameter_receiver", "receiver", [["self_parameter", null, [["self", "self", "self"]]]]]]]]]
+fn f(&self, a: u8,) {}
+  rendered: (&self,)
+  text: changed; reparse: different tree
+  first:  ["parameters", null, [["parameters_elements_receiver", "elements", [["attributed_parameter_receiver", "receiver", [["self_parameter", null, [["self", "self", "self"]]]]], ["parameters_elements_receiver_tail", "elements", [["attributed_parameter", "item", [["parameter", null, [["identifier", "name", "a"], ["primitive_type", "type", null]]]]]]]]]]]
+  second: ["parameters", null, [["parameters_elements_receiver", "elements", [["attributed_parameter_receiver", "receiver", [["self_parameter", null, [["self", "self", "self"]]]]]]]]]
+fn f(a: u8, b: u16) {}
+  rendered: (a: u8, b: u16)
+  text: unchanged; reparse: same tree
+fn f(self: Box<Self>, a: u8) {}
+  rendered: (self: Box<Self>,)
+  text: changed; reparse: different tree
+  first:  ["parameters", null, [["parameters_elements_receiver", "elements", [["attributed_parameter_receiver", "receiver", [["typed_self_parameter", null, [["self", "name", "self"], ["generic_type", "type", [["type_identifier", "type", "Box"], ["type_arguments", "type_arguments", [["type_arguments_elements", "elements", [["type_argument", "item", [["type_identifier", null, "Self"]]]]]]]]]]]]], ["parameters_elements_receiver_tail", "elements", [["attributed_parameter", "item", [["parameter", null, [["identifier", "name", "a"], ["primitive_type", "type", null]]]]]]]]]]]
+  second: ["parameters", null, [["parameters_elements_receiver", "elements", [["attributed_parameter_receiver", "receiver", [["typed_self_parameter", null, [["self", "name", "self"], ["generic_type", "type", [["type_identifier", "type", "Box"], ["type_arguments", "type_arguments", [["type_arguments_elements", "elements", [["type_argument", "item", [["type_identifier", null, "Self"]]]]]]]]]]]]]]]]]
+fn f(#[cfg(x)] self) {}
+  rendered: (#[cfg(x)] self,)
+  text: changed; reparse: same tree

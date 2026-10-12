@@ -1,6 +1,6 @@
 /**
  * Format roundtrip for the Python fixtures: the native reader records each
- * fixture's inferred format, and an edit with `$with` changes only the slot it replaces.
+ * fixture's inferred render options, and an edit with `$with` changes only the slot it replaces.
  */
 
 import { describe, it, expect } from 'vitest';
@@ -19,7 +19,7 @@ describe('format-roundtrip python fixtures', () => {
 	for (const entry of pyFixtures) {
 		it.todo(`${entry.fixture}: byte-equal roundtrip (Phase 2 — needs slot/indent restoration)`);
 
-		it(`${entry.fixture}: extract_format populates treeHandle.format`, () => {
+		it(`${entry.fixture}: the parse records the indent unit its source infers`, () => {
 			const engine = tryLoadNativeEngine('python');
 			if (!engine) return; // skip — native not built
 
@@ -27,10 +27,9 @@ describe('format-roundtrip python fixtures', () => {
 			const parsed = parseNativeFixture(engine, source);
 
 			if (entry.formatCategory !== 'canonical') {
-				expect(parsed.format).toBeDefined();
-				expect(parsed.format).toHaveProperty('boundary');
+				expect(parsed.options).toHaveProperty(['layout', 'indent']);
 			} else {
-				expect(parsed.format).toBeUndefined();
+				expect(parsed.options).toEqual({});
 			}
 		});
 	}

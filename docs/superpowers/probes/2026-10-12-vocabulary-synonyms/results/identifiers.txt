@@ -1,0 +1,41 @@
+== python
+  dotted_name                                    fields names             identifier.dotted
+  identifier                                     leaf                     identifier
+  words aliased to identifier: async await exec match print type
+== rust
+  crate                                          leaf                     identifier.crate
+  field_identifier                               leaf                     identifier.field
+  identifier                                     leaf                     identifier
+  label                                          fields name              identifier.label
+  lifetime                                       fields name              identifier.lifetime
+  metavariable                                   leaf                     identifier.metavariable
+  primitive_type                                 leaf                     type.primitive
+  scoped_identifier                              fields name,path         identifier.scoped
+  scoped_type_identifier                         fields name,path         type.path
+  scoped_type_identifier_in_expression_position  fields name,path         type.path.expression
+  self                                           leaf                     identifier.self
+  shorthand_field_identifier                     leaf                     identifier.property.shorthand
+  super                                          leaf                     identifier.super
+  type_identifier                                leaf                     identifier.type type.named.prelude
+  words aliased to identifier: bool char default f32 f64 gen i128 i16 i32 i64 i8 isize str u128 u16 u32 u64 u8 union usize
+== typescript
+  computed_property_name                         fields expression        (no claim)
+  enum_body_element_name                         fields name              declaration.enum_member
+  identifier                                     leaf                     identifier
+  import_specifier_name                          fields import_kind,name  (no claim)
+  nested_identifier                              fields object,property   identifier.nested
+  nested_type_identifier                         fields module,name       type.path
+  predefined_type                                leaf                     type.primitive type.primitive.never
+  private_property_identifier                    leaf                     identifier.property
+  property_identifier                            leaf                     identifier.property
+  shorthand_property_identifier                  leaf                     identifier.property.shorthand
+  shorthand_property_identifier_pattern          leaf                     identifier.property.shorthand
+  statement_identifier                           leaf                     identifier.label
+  super                                          leaf                     identifier.super
+  this                                           leaf                     identifier.self
+  type_identifier                                leaf                     identifier.type
+  words aliased to identifier: any async boolean declare export get let module namespace new number object override private protected public readonly set static string symbol type
+  words aliased to property_identifier: any async boolean declare export get let module namespace new number object override private protected public readonly set static string symbol type
+  words aliased to shorthand_property_identifier: any async boolean declare export get let module namespace new number object override private protected public readonly set static string symbol type
+  words aliased to shorthand_property_identifier_pattern: any async boolean declare export get let module namespace new number object override private protected public readonly set static string symbol type
+  words aliased to statement_identifier: any async boolean declare export get let module namespace new number object override private protected public readonly set static string symbol type

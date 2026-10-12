@@ -1164,424 +1164,110 @@ export const parenthesizedExpressionSequence = Object.freeze({
 };
 
 const exportStatementDefaultFrom$starFrom =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF>[0] },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
+	};
 const exportStatementDefaultFrom$starFrom$strict = exportStatementDefaultFrom$starFrom(
 	F.buildExportStatementDefaultFrom,
 	F.buildExportStatementDefaultFromStarFrom
 );
 const exportStatementDefaultFrom$starFrom$coerce = exportStatementDefaultFrom$starFrom(
-	F.buildExportStatementDefaultFrom,
+	C.coerceToExportStatementDefaultFrom,
 	C.coerceToExportStatementDefaultFromStarFrom
 );
 const exportStatementDefaultFrom$nsFrom =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'namespaceExport' || key === 'source') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
+	};
 const exportStatementDefaultFrom$nsFrom$strict = exportStatementDefaultFrom$nsFrom(
 	F.buildExportStatementDefaultFrom,
 	F.buildExportStatementDefaultFromNsFrom
 );
 const exportStatementDefaultFrom$nsFrom$coerce = exportStatementDefaultFrom$nsFrom(
-	F.buildExportStatementDefaultFrom,
+	C.coerceToExportStatementDefaultFrom,
 	C.coerceToExportStatementDefaultFromNsFrom
 );
 const exportStatementDefaultFrom$clauseFrom =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'exportClause' || key === 'source') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
+	};
 const exportStatementDefaultFrom$clauseFrom$strict = exportStatementDefaultFrom$clauseFrom(
 	F.buildExportStatementDefaultFrom,
 	F.buildExportStatementDefaultFromClauseFrom
 );
 const exportStatementDefaultFrom$clauseFrom$coerce = exportStatementDefaultFrom$clauseFrom(
-	F.buildExportStatementDefaultFrom,
-	C.coerceToExportStatementDefaultFromClauseFrom
-);
-const exportStatementDefaultFrom$exportClause =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const exportStatementDefaultFrom$exportClause$strict = exportStatementDefaultFrom$exportClause(
-	F.buildExportStatementDefaultFrom,
-	F.buildExportClause
-);
-const exportStatementDefaultFrom$exportClause$coerce = exportStatementDefaultFrom$exportClause(
-	F.buildExportStatementDefaultFrom,
-	C.coerceToExportClause
-);
-const exportStatementDefaultFrom$automaticSemicolon =
-	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>
-	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(arg as never, _m(options, { automaticSemicolon: value }) as never);
-const exportStatementDefaultFrom$automaticSemicolon$strict = exportStatementDefaultFrom$automaticSemicolon(
-	F.buildExportStatementDefaultFrom,
-	TSKindId.AutomaticSemicolon
-);
-const exportStatementDefaultFrom$automaticSemicolon$coerce = exportStatementDefaultFrom$automaticSemicolon(
 	C.coerceToExportStatementDefaultFrom,
-	TSKindId.AutomaticSemicolon
-);
-const exportStatementDefaultFrom$semi =
-	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>
-	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(arg as never, _m(options, { automaticSemicolon: value }) as never);
-const exportStatementDefaultFrom$semi$strict = exportStatementDefaultFrom$semi(
-	F.buildExportStatementDefaultFrom,
-	TSKindId.Semi
-);
-const exportStatementDefaultFrom$semi$coerce = exportStatementDefaultFrom$semi(
-	C.coerceToExportStatementDefaultFrom,
-	TSKindId.Semi
-);
-const exportStatementDefaultFrom$starFrom$applied: (
-	...args: ArgsOf<typeof F.buildExportStatementDefaultFromStarFrom>
-) => ReturnType<typeof F.buildExportStatementDefaultFrom> = exportStatementDefaultFrom$starFrom(
-	F.buildExportStatementDefaultFrom,
-	F.buildExportStatementDefaultFromStarFrom
-);
-const exportStatementDefaultFrom$starFrom$appliedCoerce: (
-	...args: ArgsOf<typeof C.coerceToExportStatementDefaultFromStarFrom>
-) => ReturnType<typeof F.buildExportStatementDefaultFrom> = exportStatementDefaultFrom$starFrom(
-	F.buildExportStatementDefaultFrom,
-	C.coerceToExportStatementDefaultFromStarFrom
-);
-const exportStatementDefaultFrom$starFrom$automaticSemicolon =
-	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>
-	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(arg as never, _m(options, { automaticSemicolon: value }) as never);
-const exportStatementDefaultFrom$starFrom$automaticSemicolon$strict =
-	exportStatementDefaultFrom$starFrom$automaticSemicolon(
-		exportStatementDefaultFrom$starFrom$applied,
-		TSKindId.AutomaticSemicolon
-	);
-const exportStatementDefaultFrom$starFrom$automaticSemicolon$coerce =
-	exportStatementDefaultFrom$starFrom$automaticSemicolon(
-		exportStatementDefaultFrom$starFrom$appliedCoerce,
-		TSKindId.AutomaticSemicolon
-	);
-const exportStatementDefaultFrom$starFrom$semi =
-	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>
-	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(arg as never, _m(options, { automaticSemicolon: value }) as never);
-const exportStatementDefaultFrom$starFrom$semi$strict = exportStatementDefaultFrom$starFrom$semi(
-	exportStatementDefaultFrom$starFrom$applied,
-	TSKindId.Semi
-);
-const exportStatementDefaultFrom$starFrom$semi$coerce = exportStatementDefaultFrom$starFrom$semi(
-	exportStatementDefaultFrom$starFrom$appliedCoerce,
-	TSKindId.Semi
-);
-const exportStatementDefaultFrom$nsFrom$applied: (
-	...args: ArgsOf<typeof F.buildExportStatementDefaultFromNsFrom>
-) => ReturnType<typeof F.buildExportStatementDefaultFrom> = exportStatementDefaultFrom$nsFrom(
-	F.buildExportStatementDefaultFrom,
-	F.buildExportStatementDefaultFromNsFrom
-);
-const exportStatementDefaultFrom$nsFrom$appliedCoerce: (
-	...args: ArgsOf<typeof C.coerceToExportStatementDefaultFromNsFrom>
-) => ReturnType<typeof F.buildExportStatementDefaultFrom> = exportStatementDefaultFrom$nsFrom(
-	F.buildExportStatementDefaultFrom,
-	C.coerceToExportStatementDefaultFromNsFrom
-);
-const exportStatementDefaultFrom$nsFrom$automaticSemicolon =
-	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>
-	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(arg as never, _m(options, { automaticSemicolon: value }) as never);
-const exportStatementDefaultFrom$nsFrom$automaticSemicolon$strict =
-	exportStatementDefaultFrom$nsFrom$automaticSemicolon(
-		exportStatementDefaultFrom$nsFrom$applied,
-		TSKindId.AutomaticSemicolon
-	);
-const exportStatementDefaultFrom$nsFrom$automaticSemicolon$coerce =
-	exportStatementDefaultFrom$nsFrom$automaticSemicolon(
-		exportStatementDefaultFrom$nsFrom$appliedCoerce,
-		TSKindId.AutomaticSemicolon
-	);
-const exportStatementDefaultFrom$nsFrom$semi =
-	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>
-	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(arg as never, _m(options, { automaticSemicolon: value }) as never);
-const exportStatementDefaultFrom$nsFrom$semi$strict = exportStatementDefaultFrom$nsFrom$semi(
-	exportStatementDefaultFrom$nsFrom$applied,
-	TSKindId.Semi
-);
-const exportStatementDefaultFrom$nsFrom$semi$coerce = exportStatementDefaultFrom$nsFrom$semi(
-	exportStatementDefaultFrom$nsFrom$appliedCoerce,
-	TSKindId.Semi
-);
-const exportStatementDefaultFrom$clauseFrom$applied: (
-	...args: ArgsOf<typeof F.buildExportStatementDefaultFromClauseFrom>
-) => ReturnType<typeof F.buildExportStatementDefaultFrom> = exportStatementDefaultFrom$clauseFrom(
-	F.buildExportStatementDefaultFrom,
-	F.buildExportStatementDefaultFromClauseFrom
-);
-const exportStatementDefaultFrom$clauseFrom$appliedCoerce: (
-	...args: ArgsOf<typeof C.coerceToExportStatementDefaultFromClauseFrom>
-) => ReturnType<typeof F.buildExportStatementDefaultFrom> = exportStatementDefaultFrom$clauseFrom(
-	F.buildExportStatementDefaultFrom,
 	C.coerceToExportStatementDefaultFromClauseFrom
-);
-const exportStatementDefaultFrom$clauseFrom$automaticSemicolon =
-	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>
-	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(arg as never, _m(options, { automaticSemicolon: value }) as never);
-const exportStatementDefaultFrom$clauseFrom$automaticSemicolon$strict =
-	exportStatementDefaultFrom$clauseFrom$automaticSemicolon(
-		exportStatementDefaultFrom$clauseFrom$applied,
-		TSKindId.AutomaticSemicolon
-	);
-const exportStatementDefaultFrom$clauseFrom$automaticSemicolon$coerce =
-	exportStatementDefaultFrom$clauseFrom$automaticSemicolon(
-		exportStatementDefaultFrom$clauseFrom$appliedCoerce,
-		TSKindId.AutomaticSemicolon
-	);
-const exportStatementDefaultFrom$clauseFrom$semi =
-	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>
-	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(arg as never, _m(options, { automaticSemicolon: value }) as never);
-const exportStatementDefaultFrom$clauseFrom$semi$strict = exportStatementDefaultFrom$clauseFrom$semi(
-	exportStatementDefaultFrom$clauseFrom$applied,
-	TSKindId.Semi
-);
-const exportStatementDefaultFrom$clauseFrom$semi$coerce = exportStatementDefaultFrom$clauseFrom$semi(
-	exportStatementDefaultFrom$clauseFrom$appliedCoerce,
-	TSKindId.Semi
-);
-const exportStatementDefaultFrom$exportClause$applied: (
-	...args: ArgsOf<typeof F.buildExportClause>
-) => ReturnType<typeof F.buildExportStatementDefaultFrom> = exportStatementDefaultFrom$exportClause(
-	F.buildExportStatementDefaultFrom,
-	F.buildExportClause
-);
-const exportStatementDefaultFrom$exportClause$appliedCoerce: (
-	...args: ArgsOf<typeof C.coerceToExportClause>
-) => ReturnType<typeof F.buildExportStatementDefaultFrom> = exportStatementDefaultFrom$exportClause(
-	F.buildExportStatementDefaultFrom,
-	C.coerceToExportClause
-);
-const exportStatementDefaultFrom$exportClause$automaticSemicolon =
-	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>
-	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(arg as never, _m(options, { automaticSemicolon: value }) as never);
-const exportStatementDefaultFrom$exportClause$automaticSemicolon$strict =
-	exportStatementDefaultFrom$exportClause$automaticSemicolon(
-		exportStatementDefaultFrom$exportClause$applied,
-		TSKindId.AutomaticSemicolon
-	);
-const exportStatementDefaultFrom$exportClause$automaticSemicolon$coerce =
-	exportStatementDefaultFrom$exportClause$automaticSemicolon(
-		exportStatementDefaultFrom$exportClause$appliedCoerce,
-		TSKindId.AutomaticSemicolon
-	);
-const exportStatementDefaultFrom$exportClause$semi =
-	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>
-	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(arg as never, _m(options, { automaticSemicolon: value }) as never);
-const exportStatementDefaultFrom$exportClause$semi$strict = exportStatementDefaultFrom$exportClause$semi(
-	exportStatementDefaultFrom$exportClause$applied,
-	TSKindId.Semi
-);
-const exportStatementDefaultFrom$exportClause$semi$coerce = exportStatementDefaultFrom$exportClause$semi(
-	exportStatementDefaultFrom$exportClause$appliedCoerce,
-	TSKindId.Semi
 );
 export const exportStatementDefaultFrom = Object.freeze({
 	...B.exportStatementDefaultFrom,
-	starFrom: {
-		...bundle(exportStatementDefaultFrom$starFrom$strict, exportStatementDefaultFrom$starFrom$coerce, {
-			key: 'exportStatementDefaultFrom.starFrom',
-			max: 1
-		}),
-		automaticSemicolon: bundle(
-			exportStatementDefaultFrom$starFrom$automaticSemicolon$strict,
-			exportStatementDefaultFrom$starFrom$automaticSemicolon$coerce,
-			{ key: 'exportStatementDefaultFrom.starFrom.automaticSemicolon', max: 2 }
-		),
-		semi: bundle(exportStatementDefaultFrom$starFrom$semi$strict, exportStatementDefaultFrom$starFrom$semi$coerce, {
-			key: 'exportStatementDefaultFrom.starFrom.semi',
-			max: 2
-		})
-	},
-	nsFrom: {
-		...bundle(exportStatementDefaultFrom$nsFrom$strict, exportStatementDefaultFrom$nsFrom$coerce, {
-			key: 'exportStatementDefaultFrom.nsFrom',
-			max: 1
-		}),
-		automaticSemicolon: bundle(
-			exportStatementDefaultFrom$nsFrom$automaticSemicolon$strict,
-			exportStatementDefaultFrom$nsFrom$automaticSemicolon$coerce,
-			{ key: 'exportStatementDefaultFrom.nsFrom.automaticSemicolon', max: 2 }
-		),
-		semi: bundle(exportStatementDefaultFrom$nsFrom$semi$strict, exportStatementDefaultFrom$nsFrom$semi$coerce, {
-			key: 'exportStatementDefaultFrom.nsFrom.semi',
-			max: 2
-		})
-	},
-	clauseFrom: {
-		...bundle(exportStatementDefaultFrom$clauseFrom$strict, exportStatementDefaultFrom$clauseFrom$coerce, {
-			key: 'exportStatementDefaultFrom.clauseFrom',
-			max: 1
-		}),
-		automaticSemicolon: bundle(
-			exportStatementDefaultFrom$clauseFrom$automaticSemicolon$strict,
-			exportStatementDefaultFrom$clauseFrom$automaticSemicolon$coerce,
-			{ key: 'exportStatementDefaultFrom.clauseFrom.automaticSemicolon', max: 2 }
-		),
-		semi: bundle(exportStatementDefaultFrom$clauseFrom$semi$strict, exportStatementDefaultFrom$clauseFrom$semi$coerce, {
-			key: 'exportStatementDefaultFrom.clauseFrom.semi',
-			max: 2
-		})
-	},
-	exportClause: {
-		...bundle(exportStatementDefaultFrom$exportClause$strict, exportStatementDefaultFrom$exportClause$coerce),
-		automaticSemicolon: bundle(
-			exportStatementDefaultFrom$exportClause$automaticSemicolon$strict,
-			exportStatementDefaultFrom$exportClause$automaticSemicolon$coerce,
-			{ key: 'exportStatementDefaultFrom.exportClause.automaticSemicolon', max: 2 }
-		),
-		semi: bundle(
-			exportStatementDefaultFrom$exportClause$semi$strict,
-			exportStatementDefaultFrom$exportClause$semi$coerce,
-			{ key: 'exportStatementDefaultFrom.exportClause.semi', max: 2 }
-		)
-	},
-	automaticSemicolon: bundle(
-		exportStatementDefaultFrom$automaticSemicolon$strict,
-		exportStatementDefaultFrom$automaticSemicolon$coerce,
-		{ key: 'exportStatementDefaultFrom.automaticSemicolon', max: 2 }
-	),
-	semi: bundle(exportStatementDefaultFrom$semi$strict, exportStatementDefaultFrom$semi$coerce, {
-		key: 'exportStatementDefaultFrom.semi',
+	starFrom: bundle(exportStatementDefaultFrom$starFrom$strict, exportStatementDefaultFrom$starFrom$coerce, {
+		key: 'exportStatementDefaultFrom.starFrom',
+		max: 2
+	}),
+	nsFrom: bundle(exportStatementDefaultFrom$nsFrom$strict, exportStatementDefaultFrom$nsFrom$coerce, {
+		key: 'exportStatementDefaultFrom.nsFrom',
+		max: 2
+	}),
+	clauseFrom: bundle(exportStatementDefaultFrom$clauseFrom$strict, exportStatementDefaultFrom$clauseFrom$coerce, {
+		key: 'exportStatementDefaultFrom.clauseFrom',
 		max: 2
 	})
 }) as unknown as typeof B.exportStatementDefaultFrom & {
 	starFrom: {
 		strict: (
-			...args: ArgsOf<typeof F.buildExportStatementDefaultFromStarFrom>
-		) => ReturnType<typeof F.buildExportStatementDefaultFrom>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToExportStatementDefaultFromStarFrom>
-		) => ReturnType<typeof F.buildExportStatementDefaultFrom>;
-		automaticSemicolon: {
-			strict: (
-				arg: ArgsOf<typeof exportStatementDefaultFrom$starFrom$applied>[0],
-				options?: OptionsArg<typeof exportStatementDefaultFrom$starFrom$applied>
-			) => ReturnType<typeof exportStatementDefaultFrom$starFrom$applied>;
-			coerce: (
-				arg: ArgsOf<typeof exportStatementDefaultFrom$starFrom$appliedCoerce>[0],
-				options?: OptionsArg<typeof exportStatementDefaultFrom$starFrom$appliedCoerce>
-			) => ReturnType<typeof exportStatementDefaultFrom$starFrom$appliedCoerce>;
-		};
-		semi: {
-			strict: (
-				arg: ArgsOf<typeof exportStatementDefaultFrom$starFrom$applied>[0],
-				options?: OptionsArg<typeof exportStatementDefaultFrom$starFrom$applied>
-			) => ReturnType<typeof exportStatementDefaultFrom$starFrom$applied>;
-			coerce: (
-				arg: ArgsOf<typeof exportStatementDefaultFrom$starFrom$appliedCoerce>[0],
-				options?: OptionsArg<typeof exportStatementDefaultFrom$starFrom$appliedCoerce>
-			) => ReturnType<typeof exportStatementDefaultFrom$starFrom$appliedCoerce>;
-		};
-	};
-	nsFrom: {
-		strict: (
-			...args: ArgsOf<typeof F.buildExportStatementDefaultFromNsFrom>
-		) => ReturnType<typeof F.buildExportStatementDefaultFrom>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToExportStatementDefaultFromNsFrom>
-		) => ReturnType<typeof F.buildExportStatementDefaultFrom>;
-		automaticSemicolon: {
-			strict: (
-				arg: ArgsOf<typeof exportStatementDefaultFrom$nsFrom$applied>[0],
-				options?: OptionsArg<typeof exportStatementDefaultFrom$nsFrom$applied>
-			) => ReturnType<typeof exportStatementDefaultFrom$nsFrom$applied>;
-			coerce: (
-				arg: ArgsOf<typeof exportStatementDefaultFrom$nsFrom$appliedCoerce>[0],
-				options?: OptionsArg<typeof exportStatementDefaultFrom$nsFrom$appliedCoerce>
-			) => ReturnType<typeof exportStatementDefaultFrom$nsFrom$appliedCoerce>;
-		};
-		semi: {
-			strict: (
-				arg: ArgsOf<typeof exportStatementDefaultFrom$nsFrom$applied>[0],
-				options?: OptionsArg<typeof exportStatementDefaultFrom$nsFrom$applied>
-			) => ReturnType<typeof exportStatementDefaultFrom$nsFrom$applied>;
-			coerce: (
-				arg: ArgsOf<typeof exportStatementDefaultFrom$nsFrom$appliedCoerce>[0],
-				options?: OptionsArg<typeof exportStatementDefaultFrom$nsFrom$appliedCoerce>
-			) => ReturnType<typeof exportStatementDefaultFrom$nsFrom$appliedCoerce>;
-		};
-	};
-	clauseFrom: {
-		strict: (
-			...args: ArgsOf<typeof F.buildExportStatementDefaultFromClauseFrom>
-		) => ReturnType<typeof F.buildExportStatementDefaultFrom>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToExportStatementDefaultFromClauseFrom>
-		) => ReturnType<typeof F.buildExportStatementDefaultFrom>;
-		automaticSemicolon: {
-			strict: (
-				arg: ArgsOf<typeof exportStatementDefaultFrom$clauseFrom$applied>[0],
-				options?: OptionsArg<typeof exportStatementDefaultFrom$clauseFrom$applied>
-			) => ReturnType<typeof exportStatementDefaultFrom$clauseFrom$applied>;
-			coerce: (
-				arg: ArgsOf<typeof exportStatementDefaultFrom$clauseFrom$appliedCoerce>[0],
-				options?: OptionsArg<typeof exportStatementDefaultFrom$clauseFrom$appliedCoerce>
-			) => ReturnType<typeof exportStatementDefaultFrom$clauseFrom$appliedCoerce>;
-		};
-		semi: {
-			strict: (
-				arg: ArgsOf<typeof exportStatementDefaultFrom$clauseFrom$applied>[0],
-				options?: OptionsArg<typeof exportStatementDefaultFrom$clauseFrom$applied>
-			) => ReturnType<typeof exportStatementDefaultFrom$clauseFrom$applied>;
-			coerce: (
-				arg: ArgsOf<typeof exportStatementDefaultFrom$clauseFrom$appliedCoerce>[0],
-				options?: OptionsArg<typeof exportStatementDefaultFrom$clauseFrom$appliedCoerce>
-			) => ReturnType<typeof exportStatementDefaultFrom$clauseFrom$appliedCoerce>;
-		};
-	};
-	exportClause: {
-		strict: (...args: ArgsOf<typeof F.buildExportClause>) => ReturnType<typeof F.buildExportStatementDefaultFrom>;
-		coerce: (...args: ArgsOf<typeof C.coerceToExportClause>) => ReturnType<typeof F.buildExportStatementDefaultFrom>;
-		automaticSemicolon: {
-			strict: (
-				arg: ArgsOf<typeof exportStatementDefaultFrom$exportClause$applied>[0],
-				options?: OptionsArg<typeof exportStatementDefaultFrom$exportClause$applied>
-			) => ReturnType<typeof exportStatementDefaultFrom$exportClause$applied>;
-			coerce: (
-				arg: ArgsOf<typeof exportStatementDefaultFrom$exportClause$appliedCoerce>[0],
-				options?: OptionsArg<typeof exportStatementDefaultFrom$exportClause$appliedCoerce>
-			) => ReturnType<typeof exportStatementDefaultFrom$exportClause$appliedCoerce>;
-		};
-		semi: {
-			strict: (
-				arg: ArgsOf<typeof exportStatementDefaultFrom$exportClause$applied>[0],
-				options?: OptionsArg<typeof exportStatementDefaultFrom$exportClause$applied>
-			) => ReturnType<typeof exportStatementDefaultFrom$exportClause$applied>;
-			coerce: (
-				arg: ArgsOf<typeof exportStatementDefaultFrom$exportClause$appliedCoerce>[0],
-				options?: OptionsArg<typeof exportStatementDefaultFrom$exportClause$appliedCoerce>
-			) => ReturnType<typeof exportStatementDefaultFrom$exportClause$appliedCoerce>;
-		};
-	};
-	automaticSemicolon: {
-		strict: (
-			arg: ArgsOf<typeof F.buildExportStatementDefaultFrom>[0],
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultFrom>[0], 'content'> & {
+				content: ArgsOf<typeof F.buildExportStatementDefaultFromStarFrom>[0];
+			},
 			options?: OptionsArg<typeof F.buildExportStatementDefaultFrom>
 		) => ReturnType<typeof F.buildExportStatementDefaultFrom>;
 		coerce: (
-			arg: ArgsOf<typeof C.coerceToExportStatementDefaultFrom>[0],
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultFrom>[0], 'content'> & {
+				content: ArgsOf<typeof C.coerceToExportStatementDefaultFromStarFrom>[0];
+			},
 			options?: OptionsArg<typeof C.coerceToExportStatementDefaultFrom>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultFrom>;
 	};
-	semi: {
+	nsFrom: {
 		strict: (
-			arg: ArgsOf<typeof F.buildExportStatementDefaultFrom>[0],
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultFrom>[0], 'content'> &
+				ArgsOf<typeof F.buildExportStatementDefaultFromNsFrom>[0],
 			options?: OptionsArg<typeof F.buildExportStatementDefaultFrom>
 		) => ReturnType<typeof F.buildExportStatementDefaultFrom>;
 		coerce: (
-			arg: ArgsOf<typeof C.coerceToExportStatementDefaultFrom>[0],
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultFrom>[0], 'content'> &
+				ArgsOf<typeof C.coerceToExportStatementDefaultFromNsFrom>[0],
+			options?: OptionsArg<typeof C.coerceToExportStatementDefaultFrom>
+		) => ReturnType<typeof C.coerceToExportStatementDefaultFrom>;
+	};
+	clauseFrom: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildExportStatementDefaultFrom>[0], 'content'> &
+				ArgsOf<typeof F.buildExportStatementDefaultFromClauseFrom>[0],
+			options?: OptionsArg<typeof F.buildExportStatementDefaultFrom>
+		) => ReturnType<typeof F.buildExportStatementDefaultFrom>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToExportStatementDefaultFrom>[0], 'content'> &
+				ArgsOf<typeof C.coerceToExportStatementDefaultFromClauseFrom>[0],
 			options?: OptionsArg<typeof C.coerceToExportStatementDefaultFrom>
 		) => ReturnType<typeof C.coerceToExportStatementDefaultFrom>;
 	};
@@ -7115,12 +6801,10 @@ export const literalType = Object.freeze({
 
 export const exportStatement: {
 	readonly default: typeof exportStatementDefault;
-	readonly typeExport: typeof B.exportStatementTypeExport;
 	readonly equalsExport: typeof B.exportStatementEqualsExport;
 	readonly namespaceExport: typeof B.exportStatementNamespaceExport;
 } = Object.freeze({
 	default: exportStatementDefault,
-	typeExport: B.exportStatementTypeExport,
 	equalsExport: B.exportStatementEqualsExport,
 	namespaceExport: B.exportStatementNamespaceExport
 });

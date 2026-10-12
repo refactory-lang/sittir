@@ -454,8 +454,7 @@ not immediate.
 ```text
 // Falls through to the next seq member when the choice has no
 // string arm (e.g. all-symbol/external-scanner separator position)
-// — matches the pre-PR-S behavior, where `separatorOf`
-// itself returned null for a stringless choice and the loop kept
+// — a stringless choice is no separator, and the loop keeps
 // scanning for a real separator elsewhere in the same seq.
 ```
 
@@ -1700,8 +1699,8 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
  *
  * SSOT for this comparison: both `rulesEqual` below (repeat/repeat1 case) and
  * `normalize.ts`'s own `rulesEqual` (REPEAT case) delegate here instead of
- * `===`, which — post-PR-S — would compare object identity on a freshly
- * allocated wrapper per lift call rather than the separator's actual value.
+ * `===`, which would compare object identity on a freshly allocated
+ * wrapper per lift call rather than the separator's actual value.
  *
  * `rulesEqual(a.value, b.value)` runs on the separator's inner Rule, which is
  * always a terminal/simple rule (a literal string or a small choice/seq of
@@ -1748,8 +1747,8 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
  * whose arms may include non-literal (symbol/external-scanner) members —
  * not just a choice-of-literals. Returns the non-separator content, the FULL
  * detected separator rule (a `StringRule` for the literal case, the whole
- * `ChoiceRule` for a choice-shaped one — no longer narrowed to its first arm,
- * PR-S, and no longer required to contain a string arm at all), and whether
+ * `ChoiceRule` for a choice-shaped one — never narrowed to its first arm,
+ * and not required to contain a string arm at all), and whether
  * the separator was trailing (`seq(X, SEP)`); or `null` when no separator
  * shape is present.
  *
@@ -2397,7 +2396,7 @@ The fused element absorbs the head's id (and, for the separator-choice idiom, th
  * `RuleBase<Phase>['separator']`) so `separatorFactsEqual` accepts the fact
  * at ANY phase view (`RuleBase<'normalize'>.separator`,
  * `RepeatRule<'link'>.separator`, …) without a phase-widening cast at the
- * call site — they all share this identical structural shape post-PR-S.
+ * call site — they all share this identical structural shape.
  */
 ```
 
@@ -4411,8 +4410,8 @@ none of them.
 // `rules` is deliberately AnyRule (both pre-link and post-link callers,
 // see doc comment above); isComplexBody only checks SEQ/CHOICE members +
 // BLANK-arm shape, phase-agnostic in practice — widen the phase view
-// (post-PR-S, RepeatRule<'evaluate'>/<'link'> genuinely diverge in shape,
-// so AnyRule no longer coincidentally structurally matches Rule<'evaluate'>).
+// (RepeatRule<'evaluate'>/<'link'> genuinely diverge in shape, so AnyRule
+// does not structurally match Rule<'evaluate'>).
 ```
 
 ### `packages/codegen/src/dsl/index.ts::module`
@@ -4634,11 +4633,9 @@ the separate-binding form left it unshaped. `P` and `O` infer from the
 // tree-sitter's native `grammar()`, so there `word` is still the raw `$
 // => $.identifier` callback. Resolve the callback form with the same
 // symbol-shaped-proxy trick `extractGrammarSymbolNames` uses, so both paths
-// compile the SAME word regex (PR #111 review finding — previously the
-// CLI path silently fell back to /^\w+$/, letting keyword promotion
-// diverge between parser and IR). ruleToRegexSource in util/word-matcher
-// is dual-case for the same reason. Single source of truth via
-// matchesWordShape; used by pass 3's optional-keyword-prefix below.
+// compile the SAME word regex: a path that fell back to /^\w+$/ would let
+// keyword promotion diverge between parser and IR. Single source of truth
+// via matchesWordShape; used by pass 3's optional-keyword-prefix below.
 ```
 
 #### body
@@ -5671,8 +5668,8 @@ field labels instead of taking the minted `element` field.
 // wrapping it in a mint alias adds a CST wrapper node to every tree it
 // appears in and severs its wrap-time concrete-kind expansion (which
 // keys on `instanceof AssembledSupertype`). Carried on this per-rule ctx
-// bag (§7.7 Principle #14) because it already travels through every
-// applyClauseHoist recursion into the mint site.
+// bag, since cross-node state lives on the phase ctx and this bag already
+// travels through every applyClauseHoist recursion into the mint site.
 ```
 
 ### `packages/codegen/src/dsl/enrich.ts::InlineSeparatedListRun.body`
@@ -6746,11 +6743,9 @@ The one reader of a grammar's declared reserved wordsets. For the named wordset 
 /**
  * Minimal structural shape shared by every catalog-entry type that the kind
  * resolution chain operates on (`GeneratedKindEntry` here, `KindEnumEntry`
- * in emitters/kind-discriminant.ts). PR-K1 (KindId-NodeRefs design,
- * docs/superpowers/specs/2026-07-20-kindid-noderefs-design.md §2.2): there
- * is exactly ONE resolution chain pair in the codebase — the two modules
- * previously carried parallel chains whose step-3 scopes disagreed, and
- * every divergence between them was a latent bug of the #129 class.
+ * in emitters/kind-discriminant.ts). There is exactly ONE resolution chain
+ * pair in the codebase: two chains whose scopes disagree would resolve an
+ * anonymous token and a same-spelled named rule to different kinds.
  */
 ```
 

@@ -135,7 +135,7 @@ import type { IndentOption, KindTypes, LanguageAPI, LanguageHooks } from '@sitti
 import type { TreeHandle } from '@sittir/common/utils';
 import { nativeLanguageEngine, type ParsedRoot } from '@sittir/common/engine';
 import { ir } from './ir.js';
-import { is } from './is.js';
+import { is, isMember, membersOf } from './is.js';
 ${config.portable === true ? "import { portable } from './portable.js';\n" : ''}import { TSKindId, type FixedTextKindId, type TypeKeyOf, type NamespaceMap, type ${grammarTypePrefix(grammar)}Node, type ${grammarTypeMapName(grammar)} } from './types.js';
 import type { IndentChar, Options } from './options.js';
 import { querySlots, triviaFacts } from './utils.js';
@@ -165,6 +165,7 @@ export const hooks: LanguageHooks<${api}> = Object.freeze<LanguageHooks<${api}>>
 	kinds: TSKindId,
 	trivia: ${triviaHook(config)},
 	querySlots,
+	membership: Object.freeze({ isMember, membersOf }),
 	createNative: (options) => nativeLanguageEngine<${api}, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as ${rootTypeName}Root & ParsedRoot, tree as TreeHandle),
 	hydrate: (node, tree) => hydrate(node, tree as TreeHandle)${config.portable === true ? ',\n\tportable' : ''}

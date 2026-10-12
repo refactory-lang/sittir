@@ -3,7 +3,7 @@ import { compileGrammar } from '../../compile.ts';
 import { loadGeneratedIdTables } from '../../generated-metadata.ts';
 import { grammarPackage } from '../../../grammars.ts';
 import { AbstractAssembledCompound } from '../node-map.ts';
-import { defaultTriviaForm, lexicalExtrasRun, lineTerminated, triviaKinds, whitespaceTrivia, whitespaceTriviaKinds } from '../trivia.ts';
+import { defaultTriviaForm, lexicalExtrasRun, lineBreakTerminated, lineTerminated, triviaKinds, whitespaceTrivia, whitespaceTriviaKinds } from '../trivia.ts';
 import { assertWhitespaceAdmitted } from '../../assemble.ts';
 import { collectGrammarDiagnosticsForGrammar } from '../../diagnostics/grammar-diagnostics.ts';
 import { evaluateTempGrammar } from '../../__tests__/_temp-grammar.ts';
@@ -33,7 +33,9 @@ describe('trivia model facts', () => {
 	it('reads the trivia kinds from the grammar extras, through supertypes both ways', async () => {
 		expect([...triviaKinds(await nodeMapOf('rust'))].sort()).toEqual([
 			'_blankline',
+			'_dedent',
 			'_double_blankline',
+			'_indent',
 			'_newline',
 			'_space',
 			'_tab',
@@ -43,7 +45,9 @@ describe('trivia model facts', () => {
 		]);
 		expect([...triviaKinds(await nodeMapOf('python'))].sort()).toEqual([
 			'_blankline',
+			'_dedent',
 			'_double_blankline',
+			'_indent',
 			'_newline',
 			'_space',
 			'_tab',
@@ -54,7 +58,9 @@ describe('trivia model facts', () => {
 		]);
 		expect([...triviaKinds(await nodeMapOf('typescript'))].sort()).toEqual([
 			'_blankline',
+			'_dedent',
 			'_double_blankline',
+			'_indent',
 			'_newline',
 			'_space',
 			'_tab',
@@ -128,6 +134,13 @@ describe('trivia model facts', () => {
 		expect(innerGapsOf(await nodeMapOf('python'), 'comprehension_clauses')).toEqual([]);
 	});
 
+	it('counts a zero-width kind between the slots as a token, as it did when the grammar hid it', async () => {
+		const python = await nodeMapOf('python');
+		expect(innerGapsOf(python, 'match_block_block')).toEqual([{ key: 'alternative', precedingTokens: 1 }]);
+		expect(innerGapsOf(python, 'block')).toEqual([]);
+		expect(innerGapsOf(python, 'suite_block')).toEqual([]);
+	});
+
 	it('gives a tokenless kind a gap only when it is the grammar root, keying its repeat slot', async () => {
 		expect(innerGapsOf(await nodeMapOf('typescript'), 'enum_body_elements')).toEqual([]);
 		expect(innerGapsOf(await nodeMapOf('scm'), 'program')).toEqual([{ key: 'definitions', precedingTokens: 0 }]);
@@ -173,5 +186,12 @@ describe('trivia model facts', () => {
 		const rust = await nodeMapOf('rust');
 		expect(() => assertWhitespaceAdmitted(rust)).not.toThrow();
 		expect(() => assertWhitespaceAdmitted({ ...rust, nodelessExtrasRun: /^(?:\t)+$/ })).toThrow(/lists '_space'/);
+	});
+
+	it('ends a line at the dedent that closes an indentation level, as at the newline token', async () => {
+		const python = await nodeMapOf('python');
+		expect(lineBreakTerminated(python, '_dedent')).toBe(true);
+		expect(lineBreakTerminated(python, 'block')).toBe(true);
+		expect(lineBreakTerminated(python, '_indent')).toBe(false);
 	});
 });

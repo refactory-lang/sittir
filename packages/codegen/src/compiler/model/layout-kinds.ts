@@ -1,7 +1,7 @@
 import type { NodeMap } from '../types.ts';
 import { AssembledLeaf, AssembledPattern, AssembledSupertype, isFixedTextLeaf } from './node-map.ts';
 import { displayNameOf } from './display-name.ts';
-import { DEPTH_KINDS, LAYOUT_SUPERTYPE, type Layout } from '../../dsl/primitives/spacing.ts';
+import { DEDENT_TEXT, DEPTH_KINDS, INDENT_TEXT, LAYOUT_SUPERTYPE, type Layout } from '../../dsl/primitives/spacing.ts';
 import { CharSet, leadingChars, patternDfa, trailingChars } from './pattern-automaton.ts';
 import { INDENT_MEMBERS, NEWLINE_ARMS, NEWLINE_MEMBER, SPACE_MEMBER, TIGHT_MEMBER, canonicalText } from '../../dsl/whitespace.ts';
 
@@ -20,6 +20,19 @@ export function layoutSymbolsOf(nodeMap: Pick<NodeMap, 'nodes'>): ReadonlyMap<st
 
 export function layoutKindsOf(nodeMap: NodeMap): readonly string[] {
 	return [...layoutSymbolsOf(nodeMap).keys()];
+}
+
+export interface DepthMembers {
+	readonly indent?: string;
+	readonly dedent?: string;
+}
+
+export function depthMembersOf(nodeMap: Pick<NodeMap, 'nodes'>): DepthMembers {
+	const find = (role: 'indent' | 'dedent', text: string): string | undefined =>
+		[...nodeMap.nodes].find(([, node]) => node.externalRole === role || (isFixedTextLeaf(node) && node.text === text))?.[0];
+	const indent = find('indent', INDENT_TEXT);
+	const dedent = find('dedent', DEDENT_TEXT);
+	return { ...(indent === undefined ? {} : { indent }), ...(dedent === undefined ? {} : { dedent }) };
 }
 
 export function whitespaceKindsOf(nodeMap: NodeMap): readonly string[] {

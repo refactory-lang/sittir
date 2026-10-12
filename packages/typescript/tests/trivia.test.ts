@@ -16,18 +16,18 @@ describe('$trivia on the typescript surface', () => {
 	it('takes comment builders, and reads loose text as a line comment, leading and trailing', () => {
 		const fn = makeFn('f');
 		fn.$trivia.leading(ts.build.comment.block('* doc '), ts.build.comment.line(' second')).$trivia.trailing('// tail');
-		expect(fn.$render()).toBe('/** doc */\n// second\nfunction f() {}\n// tail\n');
+		expect(fn.$render()).toBe('/** doc */ // second\nfunction f() {} // tail\n');
 	});
 
 	it("writes an own-line trailing entry before the owner's separator, never in place of it", () => {
 		const statement = (name: string) => ts.build.expressionStatement(ts.build.identifier(name));
-		const trailing = (comment: unknown) => ts.build.program({ statements: [statement('a').$trivia.trailing(comment as never), statement('b')] });
+		const trailing = (comment: unknown) => ts.build.program({ statements: [statement('a').$trivia.trailing('\n', comment as never), statement('b')] });
 		expect(trailing(ts.build.comment.block(' c ')).$render()).toBe('a;\n/* c */\nb;\n');
 		expect(trailing(ts.build.comment.line(' c')).$render()).toBe('a;\n// c\nb;\n');
 	});
 
 	it('reads a block comment spelled in full as a block comment', () => {
-		expect(makeFn('f').$trivia.leading('/* x */').$render()).toBe('/* x */\nfunction f() {}');
+		expect(makeFn('f').$trivia.leading('/* x */').$render()).toBe('/* x */ function f() {}');
 	});
 
 	it('leading rest arguments render before the node', () => {

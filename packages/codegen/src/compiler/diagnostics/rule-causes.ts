@@ -42,7 +42,8 @@ export const PROVOKING_CODES: Readonly<Record<RuleCause, readonly string[]>> = {
 	],
 	ambiguity: [],
 	'accepts-other-kind': [],
-	'semantic-gap': []
+	'semantic-gap': [],
+	'rejects-valid-syntax': []
 };
 
 type UpstreamRules = Readonly<Record<string, Rule<'evaluate'>>>;
@@ -66,7 +67,9 @@ export interface RuleCausesInput {
 export function isWitnessVerified(declaration: RuleCauseDeclaration): boolean {
 	return (
 		declaration.kind === 'reauthored' &&
-		(declaration.cause === 'accepts-other-kind' || declaration.cause === 'semantic-gap')
+		(declaration.cause === 'accepts-other-kind' ||
+			declaration.cause === 'semantic-gap' ||
+			declaration.cause === 'rejects-valid-syntax')
 	);
 }
 
@@ -212,6 +215,28 @@ function judgeOtherKindWitness(
 	return undefined;
 }
 
+function judgeRejectedWitness(
+	grammar: string,
+	name: string,
+	witness: OtherKindWitness | undefined,
+	upstreamRules: UpstreamRules
+): GrammarDiagnostic | undefined {
+	const mismatch = (reason: string): GrammarDiagnostic =>
+		blocking(
+			grammar,
+			'rule-cause-mismatch',
+			name,
+			`rules: '${name}' is declared reauthored('rejects-valid-syntax') but ${reason}. The witness must be a form the upstream rule does not derive`,
+			{ cause: 'rejects-valid-syntax', witness }
+		);
+	if (witness === undefined) return mismatch('declares no witness');
+	const body = upstreamRules[witness.kind];
+	if (body === undefined) return mismatch(`upstream declares no rule '${witness.kind}'`);
+	if (derivesForm(upstreamRules, body, witness.form))
+		return mismatch(`upstream '${witness.kind}' already derives the witness form of '${witness.text}'`);
+	return undefined;
+}
+
 function judgeReauthored(
 	grammar: string,
 	enriched: StageDiagnosis,
@@ -242,6 +267,7 @@ function judgeReauthored(
 			{ cause }
 		);
 	}
+	if (cause === 'rejects-valid-syntax') return judgeRejectedWitness(grammar, name, declaration.witness, upstreamRules);
 	if (cause === 'accepts-other-kind' || cause === 'semantic-gap')
 		return judgeOtherKindWitness(grammar, name, declaration.witness, upstreamRules, cause);
 	const provoking = [

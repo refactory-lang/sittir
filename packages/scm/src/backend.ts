@@ -23,7 +23,7 @@ import type {
 } from '@sittir/common/engine';
 import { RENDER_MODULE_HASH } from './hash.js';
 
-const NATIVE_RENDER_TRANSPORT_ABI = 22;
+const NATIVE_RENDER_TRANSPORT_ABI = 25;
 
 /** Which backend is currently serving render/read/splice. */
 export type BackendName = 'native' | 'js';
@@ -54,7 +54,7 @@ export interface NativeEngine extends CoreNativeEngineLike<unknown> {
 }
 
 export interface NativeModule extends NativeModuleLike<unknown, NativeEngine> {
-	SittirEngine: new (options?: { format?: string }) => NativeEngine;
+	SittirEngine: new (options?: { options?: object }) => NativeEngine;
 }
 
 /**

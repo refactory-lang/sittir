@@ -1,6 +1,6 @@
 import { NATIVE_TARGETS, grammarDisplayName, nativeBinaryName, type GrammarName } from '../grammars.ts';
 
-export const NATIVE_RENDER_TRANSPORT_ABI = 22;
+export const NATIVE_RENDER_TRANSPORT_ABI = 25;
 
 export interface NativeCrateFile {
 	readonly path: string;
@@ -199,13 +199,29 @@ impl EngineGrammar for ${v.Name}Grammar {
         render::kind_ids::kind_name_from_id(kind)
     }
 
-    fn sides_at(
-        self,
-        cursor: &mut tree_sitter::TreeCursor<'_>,
-        ctx: &sittir_core::read::ReadCtx<'_>,
-        index: u32,
-    ) -> std::result::Result<sittir_core::read::Sides, sittir_core::read::ReadError> {
-        <AnyTransport as sittir_core::read::ReadTransport>::sides_of(cursor, ctx, index)
+    fn shows(self) -> fn(sittir_core::types::KindId) -> bool {
+        <AnyTransport as sittir_core::read::ReadTransport>::shows
+    }
+
+    type Trivia = render::transport::TriviaTransport;
+
+    fn whitespace(self) -> (&'static sittir_core::render::WhitespaceTable, &'static [u16]) {
+        (&render::options::WHITESPACE, render::options::LAYOUT_KINDS)
+    }
+
+    fn surface_kinds(self) -> sittir_core::trivia_table::SurfaceKinds {
+        render::kind_ids::SURFACE_KINDS
+    }
+
+    fn option_tables(self) -> &'static sittir_core::options::OptionTables {
+        &<render::options::Sites as sittir_core::options::OptionSites>::TABLES
+    }
+
+    fn read_units(self, tree: &tree_sitter::Tree, ctx: &sittir_core::read::ReadCtx<'_>, index: u32) -> Vec<sittir_core::layout::UnitSides<Self::Trivia>> {
+        sittir_core::read::read_at::<AnyTransport>(&mut tree.walk(), ctx, index, sittir_core::read::Depth::ONE)
+            .ok()
+            .and_then(|mut any| sittir_core::read::HasLayout::<Option<Box<sittir_core::layout::TransportLayout<Self::Trivia>>>>::take_layout(&mut any))
+            .map_or_else(Vec::new, |layout| layout.units)
     }
 }
 
@@ -219,9 +235,7 @@ sittir_core::napi_engine!(
     render::options::Options,
     render_transport_parts,
     NATIVE_RENDER_TRANSPORT_ABI,
-    render::options::defaults,
-    render::options::WHITESPACE,
-    render::options::LAYOUT_KINDS
+    render::options::defaults
 );
 `
 		}

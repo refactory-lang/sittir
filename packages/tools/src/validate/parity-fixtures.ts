@@ -29,7 +29,7 @@ import {
 	type RoundTripFixture
 } from './read-render-parse.ts';
 import { load } from '../codegen-surface.ts';
-import { loadBoundNameOf, loadNativeEngine } from './common.ts';
+import { fixtureReplayOf, loadBoundNameOf, loadNativeEngine } from './common.ts';
 import type { AnyUntypedNode } from '@sittir/types';
 
 const { renderModuleFixturesPath, renderModuleLeftOutPath } = await load('renderModulePaths');
@@ -84,13 +84,15 @@ export async function extractParityFixtures(grammar: string): Promise<ExtractRes
 	let roundTripCount = 0;
 	const leftOut = new Map<string, number>();
 
-	const engine = await loadNativeEngine(grammar);
+	// Refuses a stale or debug binary before anything renders.
+	await loadNativeEngine(grammar);
+	const replay = await fixtureReplayOf(grammar);
 	const reproduces = (fx: RenderFixture): boolean => {
 		if (/"\$(handle|parentHandle|treeHandle)"/.test(JSON.stringify(fx.input))) {
 			throw new Error(`parity-fixtures[${grammar}]: a render fixture input still carries a coordinate`);
 		}
 		try {
-			return engine.render(fx.input as AnyUntypedNode).toString() === fx.expectedOutput;
+			return replay(fx.input as AnyUntypedNode, fx.options) === fx.expectedOutput;
 		} catch {
 			return false;
 		}

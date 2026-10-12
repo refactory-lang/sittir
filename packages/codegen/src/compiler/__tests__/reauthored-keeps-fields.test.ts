@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { allGrammars, grammarPackage } from '../../grammars.ts';
 import { evaluatePackage } from '../evaluate-package.ts';
-import { fieldContentsOf, judgeFields, type FieldContents } from '../../__tests__/helpers/reauthored-fields.ts';
+import { contentKeysOf, fieldContentsOf, judgeFields, type FieldContents } from '../../__tests__/helpers/reauthored-fields.ts';
 
 const symbolsOf = (rule: unknown, out = new Set<string>()): Set<string> => {
 	if (Array.isArray(rule)) rule.forEach((r) => symbolsOf(r, out));
@@ -32,7 +32,12 @@ describe('a reauthored rule', () => {
 						pending.push(ref);
 					}
 				}
-				return judgeFields(fieldContentsOf(upstream[name]), kept).dropped.map((field) => `${name}.${field}`);
+				const literalPatched = new Set(
+					(raw.patchSites ?? []).filter((site) => site.form === 'literal').map((site) => site.ownerKind)
+				);
+				const unfielded = new Set<string>();
+				if ([...seen].some((rule) => literalPatched.has(rule))) for (const rule of seen) contentKeysOf(raw.rules[rule], unfielded);
+				return judgeFields(fieldContentsOf(upstream[name]), kept, unfielded).dropped.map((field) => `${name}.${field}`);
 			});
 			expect(dropped).toEqual([]);
 		}, FULL_PIPELINE_TIMEOUT);

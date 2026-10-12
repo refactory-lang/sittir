@@ -157,9 +157,12 @@ export interface IsGuards {
 	>;
 }
 
-// Runtime: kind guards compare numeric TSKindId only.
+// Runtime: every guard tests membership through `isMember`, the test a query's `ofType` uses.
 function _g(id: number): (v: { readonly $type: number } | number) => boolean {
-	return (v) => typeof v !== 'number' && v.$type === id;
+	return (v) => typeof v !== 'number' && isMember(id, v.$type);
+}
+function _mg(kind: number): (v: { readonly $type: number } | number) => boolean {
+	return (v) => isMember(kind, typeof v === 'number' ? v : v.$type);
 }
 function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number) => boolean {
 	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
@@ -174,19 +177,33 @@ const _supertype_listElement_ids = new Set<number>([39, 54]);
 const _supertype_namedNodeGroup_ids = new Set<number>([63, 64]);
 const _supertype_layout_ids = new Set<number>([25, 26, 27, 28, 29, 30, 31, 32]);
 
-const _supertype_namedNode_guard = _vg(_sg(_supertype_namedNode_ids), {
+const _members = new Map<number, ReadonlySet<number>>([
+	[34, _supertype_definition_ids],
+	[48, _supertype_namedNode_ids],
+	[55, _supertype_listElement_ids],
+	[59, _supertype_namedNodeGroup_ids]
+]);
+export function isMember(kind: number, type: number): boolean {
+	return _members.get(kind)?.has(type) ?? type === kind;
+}
+export function membersOf(kind: number): readonly number[] {
+	const members = _members.get(kind);
+	return members === undefined ? [kind] : [...members];
+}
+
+const _supertype_namedNode_guard = _vg(_mg(48), {
 	plain: _g(TSKindId.NamedNodePlain),
 	supertyped: _g(TSKindId.NamedNodeSupertyped)
 });
-const _supertype_listElement_guard = _vg(_sg(_supertype_listElement_ids), {
+const _supertype_listElement_guard = _vg(_mg(55), {
 	capture: _g(TSKindId.Capture),
 	quantifier: _g(TSKindId.ListElementQuantifier)
 });
-const _supertype_namedNodeGroup_guard = _vg(_sg(_supertype_namedNodeGroup_ids), {
+const _supertype_namedNodeGroup_guard = _vg(_mg(59), {
 	children: _g(TSKindId.NamedNodeGroupChildren),
 	anchoredLast: _g(TSKindId.NamedNodeGroupAnchoredLast)
 });
-const _supertype_definition_guard = _vg(_sg(_supertype_definition_ids), {
+const _supertype_definition_guard = _vg(_mg(34), {
 	namedNode: _supertype_namedNode_guard,
 	anonymousNode: _g(TSKindId.AnonymousNode),
 	missingNode: _g(TSKindId.MissingNode),
@@ -219,7 +236,7 @@ export const is = Object.freeze({
 	namedNodeSupertyped: _g(TSKindId.NamedNodeSupertyped),
 	namedNodeGroupChildren: _g(TSKindId.NamedNodeGroupChildren),
 	namedNodeGroupAnchoredLast: _g(TSKindId.NamedNodeGroupAnchoredLast),
-	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
+	kind: (v: { readonly $type: number }, k: number): boolean => isMember(k, v.$type),
 	definition: _supertype_definition_guard,
 	namedNode: _supertype_namedNode_guard,
 	listElement: _supertype_listElement_guard,

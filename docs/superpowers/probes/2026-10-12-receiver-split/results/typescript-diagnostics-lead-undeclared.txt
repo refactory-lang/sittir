@@ -1,0 +1,1 @@
+GrammarDiagnosticError: conflict-resolutions-stale: typescript: the saved resolutions carry the current grammar hash but no longer generate cleanly; tree-sitter reports a conflict on '(' after '(' 'readonly'
