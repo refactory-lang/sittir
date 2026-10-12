@@ -142,6 +142,34 @@ pub struct ErrorRegion {
     pub span: Span,
 }
 
+/// The in-line runs an `ERROR` entry carries before and after its own bytes,
+/// up to the tokens beside it on its line, since a seam cannot be trusted
+/// beside what did not parse. A run that touches a line break stays layout,
+/// and the run between two `ERROR`s is the earlier one's. An empty span is
+/// no run.
+fn error_adjacency(node: &tree_sitter::Node<'_>, source: &str) -> (Span, Span) {
+    let bytes = source.as_bytes();
+    let in_line = |byte: u8| byte == b' ' || byte == b'\t';
+    let (mut start, mut end) = (node.start_byte(), node.end_byte());
+    let mut after = end;
+    while after < bytes.len() && in_line(bytes[after]) {
+        after += 1;
+    }
+    if after > end && after < bytes.len() && !matches!(bytes[after], b'\n' | b'\r') {
+        end = after;
+    }
+    let mut before = start;
+    while before > 0 && in_line(bytes[before - 1]) {
+        before -= 1;
+    }
+    let taken = node.prev_sibling().is_some_and(|prev| prev.is_error() && prev.end_byte() == before);
+    if before < start && before > 0 && !matches!(bytes[before - 1], b'\n' | b'\r') && !taken {
+        start = before;
+    }
+    let own = (node.start_byte(), node.end_byte());
+    (Span { start: start as u32, end: own.0 as u32 }, Span { start: own.1 as u32, end: end as u32 })
+}
+
 /// Every ERROR and MISSING region of `tree`, in source order. The walk enters
 /// only nodes that hold an error, and never an ERROR node: a region nested in
 /// another is part of it.
@@ -712,7 +740,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
                         .and_then(|node| {
                             let coord = ctx.coordinate(&node, at);
                             let (kind, span) = (coord.kind?, coord.span);
-                            Some(SideEntry::Source { entry: entry(SlotValue::Coord(coord)), kind, span })
+                            Some(SideEntry::Source { entry: entry(SlotValue::Coord(coord)), kind, span, adjacent: None })
                         })
                         .into_iter()
                         .collect(),
@@ -720,8 +748,9 @@ impl<G: EngineGrammar> ParsedTree<G> {
                         .map(|node| {
                             let span = Span { start: node.start_byte() as u32, end: node.end_byte() as u32 };
                             let kind = KindId(node.grammar_id());
-                            let text = TriviaText { kind, text: self.source[span.start as usize..span.end as usize].to_owned(), span: None };
-                            SideEntry::Source { entry: entry(SlotValue::Transport(G::Trivia::from_text(text))), kind, span }
+                            let adjacent = Some(error_adjacency(&node, &self.source));
+                            let text = TriviaText::of_source(kind, &self.source, span, adjacent, None);
+                            SideEntry::Source { entry: entry(SlotValue::Transport(G::Trivia::from_text(text))), kind, span, adjacent }
                         })
                         .into_iter()
                         .collect(),
@@ -1347,13 +1376,13 @@ mod tests {
     }
 
     #[test]
-    fn an_error_in_a_side_reads_as_its_kind_and_source_text() {
+    fn an_error_in_a_side_reads_as_its_kind_and_source_text_with_the_runs_beside_it_on_its_line() {
         let (tree, _) = parsed("fn f() {} @@ fn g() {}");
         let sides = (0..tree.tree().root_node().descendant_count() as u32)
             .flat_map(|at| [TriviaSide::Leading, TriviaSide::Trailing, TriviaSide::Inner].map(|side| tree.trivia_side(at, side)))
             .flatten()
             .collect::<Vec<_>>();
-        let text = TriviaText { kind: KindId(u16::MAX), text: "@@".to_owned(), span: None };
+        let text = TriviaText { kind: KindId(u16::MAX), text: "@@".to_owned(), span: None, before: Some(" ".to_owned()), after: Some(" ".to_owned()) };
         assert!(sides.contains(&TriviaEntry::new(SlotValue::Transport(TestTrivia::Text(text)))), "{sides:?}");
     }
 
@@ -1363,7 +1392,7 @@ mod tests {
         let f = index_of_kind(&tree, "function_item", 0);
         let g = index_of_kind(&tree, "function_item", 1);
         let a = index_of_kind(&tree, "expression_statement", 0);
-        let written = vec![TriviaEntry::new(SlotValue::Transport(TestTrivia::Text(TriviaText { kind: KindId(1), text: "// w".to_owned(), span: None })))];
+        let written = vec![TriviaEntry::new(SlotValue::Transport(TestTrivia::Text(TriviaText { kind: KindId(1), text: "// w".to_owned(), span: None, before: None, after: None })))];
         tree.write_trivia_side(a, TriviaSide::Leading, written.clone());
         assert_eq!(tree.trivia_side(a, TriviaSide::Leading), written);
         assert!(tree.edited_within(0, false));

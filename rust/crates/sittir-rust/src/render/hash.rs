@@ -7,4 +7,4 @@
 // (packages/rust/src/backend.ts) compares it against the TS-side copy to
 // detect a native binary built from older generated code.
 
-pub const RENDER_MODULE_HASH: &str = "5c891770f19ee7fe5e1e81bc0c7f73e72a416d505088550101fa77fbe7b1193e";
+pub const RENDER_MODULE_HASH: &str = "f58438d55cd6fc69a9452d59f8020a74e5fc70ddcc2bb2cf48483f166c0e8358";

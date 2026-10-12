@@ -74,6 +74,10 @@ The types a grammar's runtime is generic over: `namespaces` (its `NamespaceMap`)
 
 A trivia entry as input: one of the grammar's trivia kinds or a string. A string is loose input: the runtime builds it into a node through the grammar's `ir.comment` (its full spelling loses the default arm's delimiters; any other text is that arm's interior), so a stored entry is always a node.
 
+### `packages/types/src/core-types.ts::ErrorNode`
+
+An ERROR region read as a value. `$text` is the region's own bytes. As a trivia item it also carries its in-line adjacency as `$before` and `$after`: the source's whitespace on its line between the region and the tokens beside it, absent where it touches a token or where a line break lies between. Its render writes the three verbatim and no seam on either side, because a seam beside what did not parse cannot be trusted. A line break beside it stays a layout entry of its side, and the run between two regions is the earlier one's `$after`. Comments carry neither field.
+
 ### `packages/types/src/core-types.ts::TriviaSetter`
 
 `$trivia` over a grammar's trivia union: called with entries (rest arguments are leading, or one `{ leading, trailing }` object) or through `leading`/`trailing`, it rebuilds the node; called with no arguments, `leading`/`trailing` read the stored entries. With its defaults (`Self = AnyUntypedNode`, `Trivia = any`) it is the loose `$trivia` every `AnyUntypedNode` may carry, so a grammar's narrower setter is assignable to it.

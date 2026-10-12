@@ -1792,7 +1792,7 @@ pub enum TriviaTransport {
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
     #[transport(text)]
-    #[kind(kind::COMMENT)]
+    #[kind(kind::COMMENT, kind::ERROR)]
     Text(::sittir_core::trivia::TriviaText),
 }
 

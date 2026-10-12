@@ -543,6 +543,8 @@ pub enum TriviaTransport {
     DoubleBlankline,
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
+    #[transport(text)]
+    #[kind(kind::ERROR)]
     Text(::sittir_core::trivia::TriviaText),
 }
 
