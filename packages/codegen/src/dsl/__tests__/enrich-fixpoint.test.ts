@@ -89,4 +89,9 @@ describe('enrich is a fixpoint of its own output', () => {
 		const distributed = choice(sym('unary'), prec(choice(alias(S('default'), 'identifier'), alias(S('union'), 'identifier'))));
 		expect(isSupertypeLike(distributed)).toBe(isSupertypeLike(authored));
 	});
+
+	it('reads the whitespace externals it added as its own, not upstream', () => {
+		const out = again(grammarWith({ file: repeat(sym('word')), word: P('[a-z]+') }, { extras: [P('\\s')] }));
+		expect(out).toEqual({ names: [], minted: [] });
+	});
 });

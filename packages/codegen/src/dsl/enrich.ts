@@ -235,7 +235,9 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 	const textTokens = mintInlineTextTokens(mergedRules, { symbol: nativeRuleFn<(name: string) => Rule>('sym'), namingRules: baseRules });
 	Object.assign(mergedRules, textTokens.rules);
 	for (const name of textTokens.mintedNames) ruleOrigins.set(name, { kind: 'text', owners: textTokens.owners[name]! });
-	const whitespace = enrichWhitespace(ctx.externals, ctx.extras, mergedRules);
+	const priorWhitespaceExternals = new Set(getEnrichWhitespace(baseInput).addedExternals);
+	const upstreamExternals = ctx.externals.filter((entry) => !ruleListParts([entry]).names.some((name) => priorWhitespaceExternals.has(name)));
+	const whitespace = enrichWhitespace(upstreamExternals, ctx.extras, mergedRules);
 	for (const { name } of whitespace.collisions) delete mergedRules[name];
 	mergedRules[LAYOUT_SUPERTYPE] = whitespace.rule;
 	ruleOrigins.set(LAYOUT_SUPERTYPE, { kind: 'whitespace' });
@@ -247,7 +249,7 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 	appendGrammarNames(resultGrammar, 'externals', whitespace.addedExternals, (name) => ({ type: SYMBOL, name }));
 	replaceExtras(resultGrammar, tokenFormArms(mergedRules, tokenFormParents));
 	Object.defineProperty(result, ENRICH_WHITESPACE_KEY, {
-		value: { bodies: whitespace.bodies, collisions: whitespace.collisions },
+		value: { bodies: whitespace.bodies, collisions: whitespace.collisions, addedExternals: whitespace.addedExternals },
 		enumerable: false,
 		writable: false,
 		configurable: true
@@ -302,10 +304,10 @@ export function getEnrichMints(grammar: unknown): ReadonlySet<string> {
 
 export const ENRICH_WHITESPACE_KEY = '__enrichedWhitespace__' as const;
 
-export type EnrichWhitespaceSidecar = Pick<EnrichedWhitespace, 'bodies' | 'collisions'>;
+export type EnrichWhitespaceSidecar = Pick<EnrichedWhitespace, 'bodies' | 'collisions' | 'addedExternals'>;
 
 export function getEnrichWhitespace(grammar: unknown): EnrichWhitespaceSidecar {
-	return ((grammar as Record<string, unknown> | null)?.[ENRICH_WHITESPACE_KEY] as EnrichWhitespaceSidecar | undefined) ?? { bodies: {}, collisions: [] };
+	return ((grammar as Record<string, unknown> | null)?.[ENRICH_WHITESPACE_KEY] as EnrichWhitespaceSidecar | undefined) ?? { bodies: {}, collisions: [], addedExternals: [] };
 }
 
 export function getEnrichHiddenSubsequences(grammar: unknown): ReadonlySet<string> {
