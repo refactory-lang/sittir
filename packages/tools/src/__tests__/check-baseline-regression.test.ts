@@ -177,11 +177,11 @@ describe('checkRegression', () => {
 			expect(checkRegression(base, head).ok).toBe(true);
 		});
 
-		it('a declared drop where pass fell fails when a failure was added', () => {
+		it('a declared drop where pass fell fails', () => {
 			const { base, head } = shrunk();
 			head.baselineCounterChange = declaration();
-			head.grammars.python!.validators.builtRenderParse = rt(6, 9, 6);
-			head.totals = { pass: base.totals.pass - 2, fail: 3, total: base.totals.total - 1 };
+			head.grammars.python!.validators.builtRenderParse = rt(7, 9, 7);
+			head.totals = { pass: base.totals.pass - 1, fail: 2, total: base.totals.total - 1 };
 			expectFail(checkRegression(base, head));
 		});
 
@@ -303,29 +303,6 @@ describe('checkRegression', () => {
 		expect(verdict.details.after).toBe(9);
 	});
 
-	it('a pass drop that equals the total drop passes — a kind left, no fixture went red', () => {
-		const base = baseline();
-		base.grammars.typescript!.validators.coverage = vr(202, 202);
-		const head = clone(base);
-		head.grammars.typescript!.validators.coverage = vr(201, 201);
-		head.totals.pass = 149 - 1;
-		head.totals.total = 150 - 1;
-		expect(checkRegression(base, head).ok).toBe(true);
-	});
-
-	it('a pass drop with the total unchanged fails — the lost case is a new failure', () => {
-		const base = baseline();
-		base.grammars.typescript!.validators.coverage = vr(202, 202);
-		const head = clone(base);
-		head.grammars.typescript!.validators.coverage = vr(201, 202);
-		head.totals.pass = 149 - 1;
-		head.totals.fail = 1;
-		const verdict = checkRegression(base, head);
-		expectFail(verdict);
-		expect(verdict.reason).toBe('pass-count-drop');
-		expect(verdict.details.path).toBe('grammars.typescript.validators.coverage.pass');
-	});
-
 	it('coverage pass drop explained by a new supertype — passes (a kind lost its own template path, not a failure)', () => {
 		const base = baseline();
 		base.grammars.typescript!.supertypeKindCount = 5;
@@ -392,6 +369,34 @@ describe('checkRegression', () => {
 		expect(checkRegression(base, head).ok).toBe(true);
 	});
 
+	it('from pass drop larger than the supertype rise — fail (a flattened parent removes one from case, its own)', () => {
+		const base = baseline();
+		base.grammars.rust!.supertypeKindCount = 27;
+		base.grammars.rust!.validators.from = vr(245, 245);
+		const head = clone(base);
+		head.grammars.rust!.supertypeKindCount = 28;
+		head.grammars.rust!.validators.from = vr(243, 243);
+		head.totals.pass = 149 - 2;
+		head.totals.total = 150 - 2;
+		const verdict = checkRegression(base, head);
+		expectFail(verdict);
+		expect(verdict.reason).toBe('pass-count-drop');
+		expect(verdict.details.path).toBe('grammars.rust.validators.from.pass');
+	});
+
+	it('from pass drop with supertypeKindCount unchanged — fail (nothing structural explains it)', () => {
+		const base = baseline();
+		base.grammars.rust!.validators.from = vr(245, 245);
+		const head = clone(base);
+		head.grammars.rust!.validators.from = vr(244, 244);
+		head.totals.pass = 149 - 1;
+		head.totals.total = 150 - 1;
+		const verdict = checkRegression(base, head);
+		expectFail(verdict);
+		expect(verdict.reason).toBe('pass-count-drop');
+		expect(verdict.details.path).toBe('grammars.rust.validators.from.pass');
+	});
+
 	it('coverage and factoryStorage drops explained by hoisted kinds leaving — pass (their cases left with them)', () => {
 		const base = baseline();
 		base.grammars.python!.hoistedKindCount = 40;
@@ -418,6 +423,20 @@ describe('checkRegression', () => {
 		expect(checkRegression(base, head).ok).toBe(true);
 	});
 
+	it('from pass drop larger than the hoisted fall — fail', () => {
+		const base = baseline();
+		base.grammars.python!.hoistedKindCount = 40;
+		base.grammars.python!.validators.from = vr(181, 181);
+		const head = clone(base);
+		head.grammars.python!.hoistedKindCount = 38;
+		head.grammars.python!.validators.from = vr(178, 178);
+		head.totals.pass -= 3;
+		head.totals.total -= 3;
+		const verdict = checkRegression(base, head);
+		expectFail(verdict);
+		expect(verdict.details.path).toBe('grammars.python.validators.from.pass');
+	});
+
 	it('a supertype rise and a hoisted fall of one each explain one departure — passes (a seated kind that became a supertype moves both counts)', () => {
 		const base = baseline();
 		base.grammars.rust!.supertypeKindCount = 27;
@@ -432,6 +451,22 @@ describe('checkRegression', () => {
 		expect(checkRegression(base, head).ok).toBe(true);
 	});
 
+	it('a supertype rise and a hoisted fall of one each do not explain two departures — fail (counts alone cannot tell one kind from two)', () => {
+		const base = baseline();
+		base.grammars.rust!.supertypeKindCount = 27;
+		base.grammars.rust!.hoistedKindCount = 80;
+		base.grammars.rust!.validators.from = vr(245, 245);
+		const head = clone(base);
+		head.grammars.rust!.supertypeKindCount = 28;
+		head.grammars.rust!.hoistedKindCount = 79;
+		head.grammars.rust!.validators.from = vr(243, 243);
+		head.totals.pass -= 2;
+		head.totals.total -= 2;
+		const verdict = checkRegression(base, head);
+		expectFail(verdict);
+		expect(verdict.details.path).toBe('grammars.rust.validators.from.pass');
+	});
+
 	it('hoisted fall alongside a new fail — fail (a kind leaving does not excuse an actual regression)', () => {
 		const base = baseline();
 		base.grammars.python!.hoistedKindCount = 40;
@@ -440,6 +475,19 @@ describe('checkRegression', () => {
 		head.grammars.python!.hoistedKindCount = 38;
 		head.grammars.python!.validators.coverage = vr(144, 147, ['kind_a']);
 		head.totals.pass -= 3;
+		const verdict = checkRegression(base, head);
+		expectFail(verdict);
+		expect(verdict.details.path).toBe('grammars.python.validators.coverage.pass');
+	});
+
+	it('a base that never recorded its hoisted kinds explains no drop — fail (a fall cannot be read from one count)', () => {
+		const base = baseline();
+		base.grammars.python!.validators.coverage = vr(147, 147);
+		const head = clone(base);
+		head.grammars.python!.hoistedKindCount = 38;
+		head.grammars.python!.validators.coverage = vr(145, 145);
+		head.totals.pass -= 2;
+		head.totals.total -= 2;
 		const verdict = checkRegression(base, head);
 		expectFail(verdict);
 		expect(verdict.details.path).toBe('grammars.python.validators.coverage.pass');
