@@ -5,6 +5,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { evaluateSittirGrammar } from '../../compiler/__tests__/_sittir-grammar.ts';
 import { evaluateForDerivation } from '../../transpile/evaluate-for-derivation.ts';
 import { EMPTY_CONFLICT_RESOLUTIONS } from '../conflict-resolutions.ts';
+import { baseNamesOf } from '../bind.ts';
 
 const DSL = JSON.stringify(join(__dirname, '../index.ts'));
 
@@ -52,6 +53,16 @@ const BINDINGS = `bindings: bindings({
 	renames: [rename('let_item', 'binding')]
 })`;
 
+describe('baseNamesOf', () => {
+	it('maps a renamed rule and a clone of it to the base name', () => {
+		expect(baseNamesOf({ binding: 'let_item' }, { binding_x: 'binding' })).toEqual({ binding: 'let_item', binding_x: 'let_item' });
+	});
+
+	it('maps a clone that reuses a renamed rule\'s base name to that name, and leaves it out', () => {
+		expect(baseNamesOf({ value_parameter: 'parameter' }, { parameter: 'value_parameter' })).toEqual({ value_parameter: 'parameter' });
+	});
+});
+
 describe('grammar bindings on sittirGrammar', () => {
 	it('applies its patches at the patch stage and its renames after grammar()', async () => {
 		const raw = await evaluateSittirGrammar(baseModule, 'bindtest', BINDINGS);
@@ -85,10 +96,39 @@ describe('grammar bindings on sittirGrammar', () => {
 		).rejects.toThrow(/alias 'identifier' → 'type'.*already names/);
 	}, 120_000);
 
-	it('derives conflicts from the grammar without its grammar bindings', () => {
+	it('derives the base conflicts from the grammar without its grammar bindings', () => {
 		const bound = evaluateForDerivation(grammarPackageWith(BINDINGS));
 		const unbound = evaluateForDerivation(grammarPackageWith(''));
-		expect(bound.grammarHash).toBe(unbound.grammarHash);
+		expect(bound.base.grammarHash).toBe(unbound.base.grammarHash);
+	}, 120_000);
+
+	it('derives the bound conflicts from the bound grammar, keyed by its own hash and chained to its unbound names', () => {
+		const bound = evaluateForDerivation(grammarPackageWith(BINDINGS));
+		const unbound = evaluateForDerivation(grammarPackageWith(''));
+		expect(unbound.bound.grammarHash).toBe(unbound.base.grammarHash);
+		expect(bound.bound.grammarHash).not.toBe(unbound.bound.grammarHash);
+		expect(bound.bound.baseNames).toEqual({ binding: 'let_item' });
+		expect(bound.bound.sourceEdges).toEqual(bound.base.sourceEdges);
+		expect(bound.base.baseNames).toEqual({});
+	}, 120_000);
+
+	it('applies the bound sets after the bindings, behind the renamed base sets', async () => {
+		const set = (symbols: string[]) => ({
+			resolution: { kind: 'AddConflict' as const, symbols },
+			step: 'default' as const,
+			sourceChains: symbols.map((name) => [name]),
+			conflict: { symbolSequence: [], lookahead: '', interpretations: symbols }
+		});
+		const resolutions = { grammarHash: '', resolutions: [set(['let_item', 'call'])], bound: { grammarHash: '', resolutions: [set(['binding', 'identifier'])] } };
+		const bound = await evaluateSittirGrammar(baseModule, 'bindtest', BINDINGS, resolutions);
+		expect(bound.conflicts).toEqual([
+			['binding', 'call'],
+			['binding', 'identifier']
+		]);
+		expect(bound.derivationRecords?.boundResolutions.map((entry) => entry.resolution.symbols)).toEqual([['binding', 'identifier']]);
+		const unbound = await evaluateSittirGrammar(baseModule, 'bindtest', BINDINGS, resolutions, { unbound: true });
+		expect(unbound.conflicts).toEqual([['let_item', 'call']]);
+		expect(unbound.derivationRecords?.boundResolutions).toEqual([]);
 	}, 120_000);
 
 	it('rewrites the authored options through what each binding patch did', async () => {

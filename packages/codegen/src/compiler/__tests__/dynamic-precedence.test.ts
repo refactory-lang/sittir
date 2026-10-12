@@ -15,7 +15,7 @@ function fixture(
 	return {
 		name: 'g',
 		undeclaredRules,
-		derivationRecords: { upstreamConflicts: [], sourceEdges: {}, resolutions: [], conflictsAuthored: false, ...records }
+		derivationRecords: { upstreamConflicts: [], sourceEdges: {}, resolutions: [], boundResolutions: [], conflictsAuthored: false, ...records }
 	};
 }
 

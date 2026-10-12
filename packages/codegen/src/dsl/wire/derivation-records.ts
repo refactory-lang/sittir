@@ -14,6 +14,7 @@ export interface DerivationRecords {
 	readonly upstreamConflicts: readonly (readonly string[])[];
 	readonly sourceEdges: Readonly<Record<string, string>>;
 	readonly resolutions: readonly ConflictResolutionRecord[];
+	readonly boundResolutions: readonly ConflictResolutionRecord[];
 	readonly conflictsAuthored: boolean;
 	readonly upstreamDynamicPrecedence: Readonly<Record<string, readonly number[]>>;
 	readonly dynamicPrecedence: Readonly<Record<string, readonly number[]>>;
@@ -21,6 +22,7 @@ export interface DerivationRecords {
 
 export interface ConflictConfig {
 	readonly resolutions: readonly ConflictResolutionRecord[];
+	readonly boundResolutions: readonly ConflictResolutionRecord[];
 	readonly conflictsAuthored: boolean;
 }
 
