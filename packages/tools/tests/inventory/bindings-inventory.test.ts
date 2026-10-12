@@ -13,7 +13,7 @@ import {
 	vocabularyMembers
 } from '../../src/inventory/index.ts';
 import { type Derivation, FLAGS_PATH, bindingPatterns, camel, levelMembers } from '@sittir/codegen/bindings';
-import { readVocabulary } from '../../src/inventory/vocabulary.ts';
+import { type Vocabulary, readVocabulary } from '@sittir/codegen/bindings';
 
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
 const CEILING = JSON.parse(
@@ -181,11 +181,11 @@ describe('deriveVocabulary', () => {
 
 describe('the authored vocabulary', () => {
 	it('disagrees with the bindings only where the ceiling records', async () => {
-		expect(vocabularyDisagreements(await deriveVocabulary(), readVocabulary(VOCABULARY_DIR))).toEqual(CEILING.vocabularyDisagreements);
+		expect(vocabularyDisagreements(await deriveVocabulary(), await readVocabulary(VOCABULARY_DIR))).toEqual(CEILING.vocabularyDisagreements);
 	}, 120_000);
 	it('reports a template hole its interface does not declare', async () => {
 		const d = await deriveVocabulary();
-		const vocabulary = readVocabulary(VOCABULARY_DIR);
+		const vocabulary = await readVocabulary(VOCABULARY_DIR);
 		const [path, holes] = [...d.holes].find(([, h]) => h.size > 0) ?? [];
 		const [hole] = holes?.keys() ?? [];
 		expect(hole).toBeDefined();
@@ -198,7 +198,7 @@ describe('the authored vocabulary', () => {
 	}, 120_000);
 	it('needs no declaration for a refinement pinned slot: the read tells it, so it is no member', async () => {
 		const d = await deriveVocabulary();
-		const vocabulary = readVocabulary(VOCABULARY_DIR);
+		const vocabulary = await readVocabulary(VOCABULARY_DIR);
 		const pinned = [...d.refinements].flatMap(([v, r]) => [...r.literals.keys()].map((field) => [v, camel(field)] as const).filter(([, p]) => !d.members.get(v)?.has(p)));
 		expect(pinned.length).toBeGreaterThan(0);
 		const unpinned = {
@@ -216,6 +216,8 @@ describe('the authored vocabulary', () => {
 });
 
 describe('readVocabulary', () => {
+	let vocabulary: Vocabulary;
+	beforeAll(async () => {
 	const dir = mkdtempSync(join(tmpdir(), 'vocabulary-'));
 	mkdirSync(dir, { recursive: true });
 	writeFileSync(
@@ -235,8 +237,9 @@ describe('readVocabulary', () => {
 			''
 		].join('\n')
 	);
-	const vocabulary = readVocabulary(dir);
+	vocabulary = await readVocabulary(dir);
 	rmSync(dir, { recursive: true, force: true });
+	});
 
 	it('keys each interface by its kind, with its parent from a multi-line extends', () => {
 		expect(vocabulary.kinds.get('declaration.function')).toMatchObject({ name: 'Declaration.Function', parent: 'declaration' });

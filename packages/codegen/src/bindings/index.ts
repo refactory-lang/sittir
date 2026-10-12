@@ -8,3 +8,4 @@ export * from './hash.ts';
 export * from './grammar-bindings.ts';
 export * from './module.ts';
 export * from './read.ts';
+export * from './vocabulary.ts';
