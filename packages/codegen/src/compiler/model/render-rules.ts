@@ -691,6 +691,11 @@ function withArmEdgeSeams(
 	if (c.type !== CHOICE || c.members === undefined || isAnyWhitespaceChoice(choice)) return undefined;
 	let changed = false;
 	const members = c.members.map((arm) => {
+		const nested = withArmEdgeSeams(arm, side, kind, config, resolver, seams);
+		if (nested !== undefined) {
+			changed = true;
+			return nested;
+		}
 		const edge = edgeMember(arm, side) ?? arm;
 		if (isAnyWhitespaceChoice(edge)) return arm;
 		if (side === 'first' && isImmediateArm(choice, edge, config)) return arm;

@@ -90322,7 +90322,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "\ntrait T: for<'a> AddAssign<&'a usize> {\n}\n\ntype FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> +'b;\n",
+    "expectedOutput": "\ntrait T: for<'a> AddAssign<&'a usize> {\n}\n\ntype FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> + 'b;\n",
     "options": {
       "sourceFile": {
         "before": 171
@@ -90335,9 +90335,9 @@
     "sourceIn": "\ntrait T: for<'a> AddAssign<&'a usize> {\n}\n\ntype FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> + 'b;\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "\ntrait T: for<'a> AddAssign<&'a usize> {\n}\n\ntype FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> +'b;\n",
+    "expectedSourceOut": "\ntrait T: for<'a> AddAssign<&'a usize> {\n}\n\ntype FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> + 'b;\n",
     "expectedReparseTree": "(source_file statements: (trait_item name: (type_identifier) bounds: (trait_bounds bounds: (higher_ranked_trait_bound type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type)))))))) body: (declaration_list)) statements: (type_item name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) type: (bounded_type left: (dynamic_type trait: (higher_ranked_trait_bound type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type))) item: (type_argument (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type)))))))) right: (lifetime name: (identifier)))))",
-    "wrappedText": "\ntrait T: for<'a> AddAssign<&'a usize> {\n}\n\ntype FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> +'b;\n",
+    "wrappedText": "\ntrait T: for<'a> AddAssign<&'a usize> {\n}\n\ntype FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> + 'b;\n",
     "wrappedOffset": 0
   },
   {
@@ -92464,7 +92464,7 @@
         }
       }
     },
-    "expectedOutput": "type FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> +'b;",
+    "expectedOutput": "type FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> + 'b;",
     "options": {
       "sourceFile": {
         "before": 171
@@ -92477,9 +92477,9 @@
     "sourceIn": "type FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> + 'b;",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> +'b;",
+    "expectedSourceOut": "type FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> + 'b;",
     "expectedReparseTree": "(type_item name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) type: (bounded_type left: (dynamic_type trait: (higher_ranked_trait_bound type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type))) item: (type_argument (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type)))))))) right: (lifetime name: (identifier))))",
-    "wrappedText": "type FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> +'b;",
+    "wrappedText": "type FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> + 'b;",
     "wrappedOffset": 0
   },
   {
@@ -92599,7 +92599,7 @@
         }
       }
     },
-    "expectedOutput": "dyn for<'a> FnLike<&'a isize, &'a isize> +'b",
+    "expectedOutput": "dyn for<'a> FnLike<&'a isize, &'a isize> + 'b",
     "options": {
       "sourceFile": {
         "before": 171
@@ -92612,9 +92612,9 @@
     "sourceIn": "dyn for<'a> FnLike<&'a isize, &'a isize> + 'b",
     "pattern": "bounded_type",
     "edits": [],
-    "expectedSourceOut": "dyn for<'a> FnLike<&'a isize, &'a isize> +'b",
+    "expectedSourceOut": "dyn for<'a> FnLike<&'a isize, &'a isize> + 'b",
     "expectedReparseTree": "(bounded_type left: (dynamic_type trait: (higher_ranked_trait_bound type_parameters: (type_parameters elements: (type_parameters_elements item: (attributed_type_parameter (lifetime_parameter name: (lifetime name: (identifier)))))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type))) item: (type_argument (reference_type lifetime: (lifetime name: (identifier)) type: (primitive_type)))))))) right: (lifetime name: (identifier)))",
-    "wrappedText": "type _X = dyn for<'a> FnLike<&'a isize, &'a isize> +'b;",
+    "wrappedText": "type _X = dyn for<'a> FnLike<&'a isize, &'a isize> + 'b;",
     "wrappedOffset": 10
   },
   {
@@ -221382,7 +221382,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "\ntype a = Box<Something +'a>;\ntype b = Rc<dyn Something>;\ntype c = A<&dyn Fn(&B) -> C>;\n",
+    "expectedOutput": "\ntype a = Box<Something + 'a>;\ntype b = Rc<dyn Something>;\ntype c = A<&dyn Fn(&B) -> C>;\n",
     "options": {
       "sourceFile": {
         "before": 171
@@ -221395,9 +221395,9 @@
     "sourceIn": "\ntype a = Box<Something + 'a>;\ntype b = Rc<dyn Something>;\ntype c = A<&dyn Fn(&B) -> C>;\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "\ntype a = Box<Something +'a>;\ntype b = Rc<dyn Something>;\ntype c = A<&dyn Fn(&B) -> C>;\n",
+    "expectedSourceOut": "\ntype a = Box<Something + 'a>;\ntype b = Rc<dyn Something>;\ntype c = A<&dyn Fn(&B) -> C>;\n",
     "expectedReparseTree": "(source_file statements: (type_item name: (type_identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (bounded_type left: (type_identifier) right: (lifetime name: (identifier)))))))) statements: (type_item name: (type_identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (dynamic_type trait: (type_identifier))))))) statements: (type_item name: (type_identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (reference_type type: (dynamic_type trait: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (reference_type type: (type_identifier))))) return_type: (type_identifier))))))))))",
-    "wrappedText": "\ntype a = Box<Something +'a>;\ntype b = Rc<dyn Something>;\ntype c = A<&dyn Fn(&B) -> C>;\n",
+    "wrappedText": "\ntype a = Box<Something + 'a>;\ntype b = Rc<dyn Something>;\ntype c = A<&dyn Fn(&B) -> C>;\n",
     "wrappedOffset": 0
   },
   {
@@ -221464,7 +221464,7 @@
         }
       }
     },
-    "expectedOutput": "type a = Box<Something +'a>;",
+    "expectedOutput": "type a = Box<Something + 'a>;",
     "options": {
       "sourceFile": {
         "before": 171
@@ -221477,9 +221477,9 @@
     "sourceIn": "type a = Box<Something + 'a>;",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type a = Box<Something +'a>;",
+    "expectedSourceOut": "type a = Box<Something + 'a>;",
     "expectedReparseTree": "(type_item name: (type_identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (bounded_type left: (type_identifier) right: (lifetime name: (identifier))))))))",
-    "wrappedText": "type a = Box<Something +'a>;",
+    "wrappedText": "type a = Box<Something + 'a>;",
     "wrappedOffset": 0
   },
   {
@@ -222054,7 +222054,7 @@
         }
       }
     },
-    "expectedOutput": "Box<Something +'a>",
+    "expectedOutput": "Box<Something + 'a>",
     "options": {
       "sourceFile": {
         "before": 171
@@ -222067,9 +222067,9 @@
     "sourceIn": "Box<Something + 'a>",
     "pattern": "generic_type",
     "edits": [],
-    "expectedSourceOut": "Box<Something +'a>",
+    "expectedSourceOut": "Box<Something + 'a>",
     "expectedReparseTree": "(generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (bounded_type left: (type_identifier) right: (lifetime name: (identifier)))))))",
-    "wrappedText": "type _X = Box<Something +'a>;",
+    "wrappedText": "type _X = Box<Something + 'a>;",
     "wrappedOffset": 10
   },
   {
@@ -222295,7 +222295,7 @@
         }
       }
     },
-    "expectedOutput": "<Something +'a>",
+    "expectedOutput": "<Something + 'a>",
     "options": {
       "sourceFile": {
         "before": 171
@@ -222308,9 +222308,9 @@
     "sourceIn": "<Something + 'a>",
     "pattern": "type_arguments",
     "edits": [],
-    "expectedSourceOut": "<Something +'a>",
+    "expectedSourceOut": "<Something + 'a>",
     "expectedReparseTree": "(type_arguments elements: (type_arguments_elements item: (type_argument (bounded_type left: (type_identifier) right: (lifetime name: (identifier))))))",
-    "wrappedText": "type _X = B<Something +'a>;",
+    "wrappedText": "type _X = B<Something + 'a>;",
     "wrappedOffset": 11
   },
   {
@@ -222513,7 +222513,7 @@
         }
       }
     },
-    "expectedOutput": "Something +'a",
+    "expectedOutput": "Something + 'a",
     "options": {
       "sourceFile": {
         "before": 171
@@ -222526,9 +222526,9 @@
     "sourceIn": "Something + 'a",
     "pattern": "type_arguments_elements",
     "edits": [],
-    "expectedSourceOut": "Something +'a",
+    "expectedSourceOut": "Something + 'a",
     "expectedReparseTree": "(type_arguments_elements item: (type_argument (bounded_type left: (type_identifier) right: (lifetime name: (identifier)))))",
-    "wrappedText": "type _X = B<Something +'a>;",
+    "wrappedText": "type _X = B<Something + 'a>;",
     "wrappedOffset": 12
   },
   {
@@ -222708,7 +222708,7 @@
         }
       }
     },
-    "expectedOutput": "Something +'a",
+    "expectedOutput": "Something + 'a",
     "options": {
       "sourceFile": {
         "before": 171
@@ -222721,9 +222721,9 @@
     "sourceIn": "Something + 'a",
     "pattern": "type_argument",
     "edits": [],
-    "expectedSourceOut": "Something +'a",
+    "expectedSourceOut": "Something + 'a",
     "expectedReparseTree": "(type_argument (bounded_type left: (type_identifier) right: (lifetime name: (identifier))))",
-    "wrappedText": "type _X = B<Something +'a>;",
+    "wrappedText": "type _X = B<Something + 'a>;",
     "wrappedOffset": 12
   },
   {
@@ -222866,7 +222866,7 @@
         }
       }
     },
-    "expectedOutput": "Something +'a",
+    "expectedOutput": "Something + 'a",
     "options": {
       "sourceFile": {
         "before": 171
@@ -222879,9 +222879,9 @@
     "sourceIn": "Something + 'a",
     "pattern": "bounded_type",
     "edits": [],
-    "expectedSourceOut": "Something +'a",
+    "expectedSourceOut": "Something + 'a",
     "expectedReparseTree": "(bounded_type left: (type_identifier) right: (lifetime name: (identifier)))",
-    "wrappedText": "type _X = Something +'a;",
+    "wrappedText": "type _X = Something + 'a;",
     "wrappedOffset": 10
   },
   {

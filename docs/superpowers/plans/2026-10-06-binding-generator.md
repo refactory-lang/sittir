@@ -26,9 +26,9 @@ No stage touches `packages/common/src/transport-data.ts` or the native reader; t
 
 `bindings.scm` is the one source. It reaches codegen two ways, split by whether the parser sees the fact:
 
-- **Parser-aware changes go through a generated module.** The overlay (patches, renames, splits, merges, aliases) changes the grammar tree-sitter compiles, so it is written into a generated, committed `packages/<grammar>/grammar.bindings.ts`, which `grammar.sittir.ts` imports. The module carries a hash of `bindings.scm` and the vocabulary sources it was derived against. Codegen refuses a stale one, comparing bytes with no scm parse, with a diagnostic naming the command that regenerates it. The overlay's derivation is a pure function in `packages/codegen/src/bindings/`, and the inventory is its one writer.
+- **Parser-aware changes go through a generated module.** The grammar bindings (patches, renames, splits, merges, aliases) changes the grammar tree-sitter compiles, so it is written into a generated, committed `packages/<grammar>/grammar.bindings.ts`, which `grammar.sittir.ts` imports. The module carries a hash of `bindings.scm` and the vocabulary sources it was derived against. Codegen refuses a stale one, comparing bytes with no scm parse, with a diagnostic naming the command that regenerates it. Their derivation is a pure function in `packages/codegen/src/bindings/`, and the inventory is its one writer.
 - **Everything else is interpreted directly.** The claims (paths, kinds, refinements, predicates, member routes), the namespaces and the routes are read from `bindings.scm` at codegen time, through a pinned `@sittir/scm`: the generator runs sittir's own scm package from one pinned commit, not the workspace copy, so a change that breaks `@sittir/scm` can never break regenerating the fix. The inventory reads through the same pinned reader, so there is one reader and one derivation.
-- With the overlay on, codegen binds the claims' base names through the node model's stamped provenance (`renamedFrom`); with it off, it reads them as they are.
+- With the grammar bindings on, codegen binds the claims' base names through the node model's stamped provenance (`renamedFrom`); with it off, it reads them as they are.
 - Codegen stays out of the scm engine's bootstrap: regenerating `@sittir/scm` itself uses the pinned copy, never the one being regenerated.
 
 ## The rejected members: the rule
@@ -51,11 +51,11 @@ Stage 4 drives the count to zero for each cause on the side that owns it. Rust i
 
 ## Stage 1: bindings facts reach codegen
 
-- The facts schema and the derivation move into `packages/codegen/src/bindings/`, as pure functions of the facts and the slot model. The scm reader (`readBindings`) runs on the pinned `@sittir/scm`, called by codegen for the claims and by the inventory for the overlay module it writes. Codegen refuses an overlay module whose hash does not match `bindings.scm` and the vocabulary sources, naming the command that regenerates it.
+- The facts schema and the derivation move into `packages/codegen/src/bindings/`, as pure functions of the facts and the slot model. The scm reader (`readBindings`) runs on the pinned `@sittir/scm`, called by codegen for the claims and by the inventory for the grammar bindings module it writes. Codegen refuses a grammar bindings module whose hash does not match `bindings.scm` and the vocabulary sources, naming the command that regenerates it.
 - The facts keep two things they drop today:
   - a predicate claim's predicate (operator, capture, argument), so a read entry can test it and a build entry can pin it;
   - a flag's token text, so a capture named otherwise than its token (`"async" @isAsync`) still has a route.
-- Gate: the inventory's report is byte-identical; `grammar.bindings.ts` (the overlay) is committed for rust, typescript and python; codegen reads the claims through the pinned reader; unit tests pin the two new facts (`#eq? @name "__init__"`, `"async" @isAsync`) and the stale-overlay refusal.
+- Gate: the inventory's report is byte-identical; `grammar.bindings.ts` (the grammar bindings) is committed for rust, typescript and python; codegen reads the claims through the pinned reader; unit tests pin the two new facts (`#eq? @name "__init__"`, `"async" @isAsync`) and the stale-grammar-bindings refusal.
 
 ## Stage 2: one route resolution
 
