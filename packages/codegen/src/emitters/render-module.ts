@@ -1,3 +1,4 @@
+import { ERROR_KIND_ID } from '@sittir/common/error-kind';
 import { depthMembersOf } from '../compiler/model/layout-kinds.ts';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { parseSeamLabel, isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
@@ -2373,10 +2374,13 @@ function renderTriviaTransportSupport(
 	};
 
 	const kindIdByKind = buildKindIdByKind(kindEntries);
-	const textIds = extrasNodes.flatMap((node) => {
-		const id = kindIdByKind.get(node.kind);
-		return id === undefined || !(node instanceof AbstractAssembledCompound) ? [] : [id];
-	});
+	const textIds = [
+		...extrasNodes.flatMap((node) => {
+			const id = kindIdByKind.get(node.kind);
+			return id === undefined || !(node instanceof AbstractAssembledCompound) ? [] : [id];
+		}),
+		...(read.ctx.kindEntries.some((entry) => entry.id === ERROR_KIND_ID) ? [ERROR_KIND_ID] : [])
+	];
 
 	const depthVariants = [
 		{ kind: depthMembers.indent, variant: 'Indent', delta: 1 },
@@ -2397,7 +2401,7 @@ function renderTriviaTransportSupport(
 	for (const { variant, id } of depthVariants) lines.push(`    #[kind(${variantKindArgs([id], false, read.ctx)})]`, `    ${variant},`);
 	lines.push('    #[transport(verbatim)]');
 	lines.push('    Verbatim(VerbatimTransport),');
-	if (textIds.length > 0) lines.push('    #[transport(text)]', `    #[kind(${variantKindArgs(textIds, false, read.ctx)})]`);
+	lines.push('    #[transport(text)]', `    #[kind(${variantKindArgs(textIds, false, read.ctx)})]`);
 	lines.push('    Text(::sittir_core::trivia::TriviaText),');
 	lines.push('}');
 	lines.push('');

@@ -137,7 +137,21 @@ export type ErrorKindId = 65535;
 export interface ErrorNode extends AnyUntypedNode {
 	readonly $type: ErrorKindId;
 	readonly $source: 0 | 1;
+	/** The region's own source text. */
 	readonly $text: string;
+	/**
+	 * As a trivia item: the source's whitespace on the region's line between the
+	 * token before it and the region. It renders verbatim before `$text`, and no
+	 * other spacing is written there. Absent when the region touches that token,
+	 * or when a line break lies between them.
+	 */
+	readonly $before?: string;
+	/**
+	 * As a trivia item: the source's whitespace on the region's line between the
+	 * region and the token after it, rendered verbatim after `$text`. Absent when
+	 * the region touches that token, or when a line break lies between them.
+	 */
+	readonly $after?: string;
 }
 
 /** An item a trivia position holds: one of the grammar's trivia nodes, or an ERROR node read there. */

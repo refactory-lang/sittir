@@ -196,6 +196,12 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     /// The levels the trivia's depth members add to the template's depth
     /// (`layout_depth`); negative where a line sits below it.
     excess: i32,
+    /// Whether the last text was verbatim (`RenderSink::verbatim`): until the
+    /// next text, a seam that does not break the line writes nothing.
+    glued: bool,
+    /// While a trailing run defers (`defer_trailing`), whether its first text
+    /// was verbatim; `None` until it writes any.
+    glued_open: Option<bool>,
 }
 
 /// A trailing run rendered ahead of where it is written: its text, and the
@@ -214,6 +220,9 @@ struct DeferredRun {
     text: String,
     end: Option<(u8, Payload)>,
     line_end: Option<crate::render::LineHold>,
+    /// Whether the run opens and ends with verbatim text
+    /// (`RenderSink::verbatim`), which writes no seam on that side.
+    glued: (bool, bool),
 }
 
 /// The writer's spacing state, set aside while a deferred run renders on its
@@ -271,6 +280,8 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             document: false,
             frames: Vec::new(),
             excess: 0,
+            glued: false,
+            glued_open: None,
         }
     }
 
@@ -448,11 +459,17 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         }
         let mut last = None;
         for run in std::mem::take(&mut self.deferred) {
-            if !self.at_line_start() {
+            if !self.at_line_start() && !run.glued.0 {
                 self.write_text(" ")?;
             }
             self.write_text(&run.text)?;
             last = Some(run);
+        }
+        if last.as_ref().is_some_and(|run| run.glued.1) {
+            if !self.held_breaks() {
+                self.clear_payload();
+            }
+            self.glued = true;
         }
         let Some(next) = next else {
             if let Some(hold) = last.and_then(|run| run.line_end) {
@@ -713,6 +730,9 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         }
         let rank = self.payload_rank(&payload);
         let breaks = if payload.pick == LayoutKinds::LINE_CONTINUATION { payload.cont.contains('\n') } else { payload.pick.breaks() };
+        if self.glued && !breaks {
+            return false;
+        }
         if let Some(current) = self.seam {
             let keeps = match strength.cmp(&self.seam_strength) {
                 std::cmp::Ordering::Less => true,
@@ -739,6 +759,10 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     fn write_chunk(&mut self, s: &str) -> std::fmt::Result {
         if s.is_empty() {
             return Ok(());
+        }
+        self.glued = false;
+        if self.deferring.is_some() {
+            self.glued_open.get_or_insert(false);
         }
         if self.breaks_line(s) {
             self.write_deferred(Some(s))?;
@@ -799,6 +823,18 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
 
     fn swallow_cr(&mut self, on: bool) -> bool {
         std::mem::replace(&mut self.swallow_cr, on)
+    }
+
+    fn verbatim(&mut self, s: &str) -> crate::render::RenderResult {
+        if !self.held_breaks() {
+            self.clear_payload();
+        }
+        if self.deferring.is_some() && !s.is_empty() {
+            self.glued_open.get_or_insert(true);
+        }
+        crate::render::RenderSink::text(self, s)?;
+        self.glued = !s.is_empty();
+        Ok(())
     }
 
     fn leaf_kind(&mut self, kind: crate::types::KindId) {
@@ -1098,14 +1134,16 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         }
         let held = self.hold_context();
         self.deferring = Some(String::new());
+        self.glued_open = None;
         let result = render(self);
         let run = self.deferring.take().unwrap_or_default();
         let end = self.seam.map(|_| (self.seam_strength, self.held_payload()));
         let line_end = self.line_end_held.filter(|_| end.is_some());
+        let glued = (self.glued_open.take() == Some(true), std::mem::take(&mut self.glued));
         self.restore_context(held);
         result?;
         if !run.is_empty() {
-            self.deferred.push(DeferredRun { text: run, end, line_end });
+            self.deferred.push(DeferredRun { text: run, end, line_end, glued });
         }
         Ok(())
     }

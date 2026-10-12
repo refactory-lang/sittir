@@ -97,8 +97,9 @@ impl std::fmt::Debug for ReadCtx<'_> {
 /// One entry of a node's side as a read seats it, with where it came from.
 #[derive(Debug, Clone, PartialEq)]
 pub enum SideEntry<T> {
-    /// An extra or an `ERROR` of the source: its kind and the bytes it spans.
-    Source { entry: TriviaEntry<T>, kind: KindId, span: Span },
+    /// An extra or an `ERROR` of the source: its kind, the bytes it spans and,
+    /// for an `ERROR`, the in-line runs before and after it it carries.
+    Source { entry: TriviaEntry<T>, kind: KindId, span: Span, adjacent: Option<(Span, Span)> },
     /// A layout run of the source.
     Layout(TriviaEntry<T>),
     /// An entry a write gave the side.
@@ -225,8 +226,8 @@ impl<'s> ReadCtx<'s> {
     /// entry as it is.
     fn snapshot_entry<T: crate::trivia::FromTriviaText>(&self, snapshot: &SnapshotCtx<'_>, side: SideEntry<T>) -> TriviaEntry<T> {
         match side {
-            SideEntry::Source { kind, span, .. } => {
-                let text = crate::trivia::TriviaText { kind, text: self.source[span.start as usize..span.end as usize].to_owned(), span: Some(snapshot.span_of(span)) };
+            SideEntry::Source { kind, span, adjacent, .. } => {
+                let text = crate::trivia::TriviaText::of_source(kind, self.source, span, adjacent, Some(snapshot.span_of(span)));
                 TriviaEntry::new(SlotValue::Transport(T::from_text(text)))
             }
             SideEntry::Layout(entry) | SideEntry::Written(entry) => entry,
@@ -1106,10 +1107,10 @@ mod tests {
 
     impl SideLookup for OneOfEach {
         fn side(&self, _: u32, side: TriviaSide, edge_changed: bool) -> Box<dyn std::any::Any> {
-            let text = |text: &str| TriviaEntry::new(SlotValue::Transport(crate::trivia::TriviaText { kind: KindId(7), text: text.into(), span: None }));
+            let text = |text: &str| TriviaEntry::new(SlotValue::Transport(crate::trivia::TriviaText { kind: KindId(7), text: text.into(), span: None, before: None, after: None }));
             let entries: Vec<SideEntry<crate::trivia::TriviaText>> = match side {
                 TriviaSide::Leading if !edge_changed => vec![
-                    SideEntry::Source { entry: TriviaEntry::new(SlotValue::Coord(NodeCoordinate::new(1, 3, 4, Span { start: 4, end: 8 }))), kind: KindId(7), span: Span { start: 4, end: 8 } },
+                    SideEntry::Source { entry: TriviaEntry::new(SlotValue::Coord(NodeCoordinate::new(1, 3, 4, Span { start: 4, end: 8 }))), kind: KindId(7), span: Span { start: 4, end: 8 }, adjacent: None },
                     SideEntry::Layout(text("\n")),
                     SideEntry::Written(text("// w")),
                 ],
@@ -1130,9 +1131,9 @@ mod tests {
         let leading = ctx.layout::<crate::trivia::TriviaText>(3, at, false).trivia.and_then(|trivia| trivia.leading).expect("a seated leading side");
         let texts: Vec<_> = leading.into_iter().map(|entry| entry.value.transport().cloned().expect("a snapshot entry is text")).collect();
         assert_eq!(texts, [
-            crate::trivia::TriviaText { kind: KindId(7), text: "// x".into(), span: Some(PointSpan { start: Point { row: 0, column: 2 }, end: Point { row: 0, column: 6 } }) },
-            crate::trivia::TriviaText { kind: KindId(7), text: "\n".into(), span: None },
-            crate::trivia::TriviaText { kind: KindId(7), text: "// w".into(), span: None },
+            crate::trivia::TriviaText { kind: KindId(7), text: "// x".into(), span: Some(PointSpan { start: Point { row: 0, column: 2 }, end: Point { row: 0, column: 6 } }), before: None, after: None },
+            crate::trivia::TriviaText { kind: KindId(7), text: "\n".into(), span: None, before: None, after: None },
+            crate::trivia::TriviaText { kind: KindId(7), text: "// w".into(), span: None, before: None, after: None },
         ]);
     }
 

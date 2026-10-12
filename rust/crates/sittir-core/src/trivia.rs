@@ -147,10 +147,32 @@ pub struct TriviaText {
     /// In a snapshot, where the entry lies: its span measured from the start
     /// of its owner's holder.
     pub span: Option<crate::points::PointSpan>,
+    /// An `ERROR` region's in-line adjacency: the source's whitespace right
+    /// before and right after it, up to the tokens beside it on its line.
+    /// The region writes it verbatim around itself, in place of any seam. A
+    /// comment has none.
+    pub before: Option<String>,
+    pub after: Option<String>,
+}
+
+impl TriviaText {
+    /// The entry of `kind` spanning `span` of `source`, with the in-line runs
+    /// `adjacent` names before and after it (an `ERROR`'s), and `at` where a
+    /// snapshot places it.
+    pub fn of_source(kind: KindId, source: &str, span: crate::types::Span, adjacent: Option<(crate::types::Span, crate::types::Span)>, at: Option<crate::points::PointSpan>) -> Self {
+        let slice = |run: crate::types::Span| (run.start < run.end).then(|| source[run.start as usize..run.end as usize].to_owned());
+        let (before, after) = adjacent.map_or((None, None), |(before, after)| (slice(before), slice(after)));
+        Self { kind, text: source[span.start as usize..span.end as usize].to_owned(), span: at, before, after }
+    }
 }
 
 impl Render for TriviaText {
     fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
+        if self.kind == KindId::ERROR {
+            let before = self.before.as_deref().unwrap_or_default();
+            let after = self.after.as_deref().unwrap_or_default();
+            return w.verbatim(&[before, self.text.as_str(), after].concat());
+        }
         w.edge(self.kind, Side::Before, None);
         w.text(&self.text)?;
         w.edge(self.kind, Side::After, None);
@@ -498,11 +520,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for TriviaText {
             kind: KindId(kind),
             text: unsafe { crate::boundary::required(env, obj, c"$text", "TriviaText")? },
             span: unsafe { crate::boundary::property(env, obj, c"span")? },
+            before: unsafe { crate::boundary::property(env, obj, c"$before")? },
+            after: unsafe { crate::boundary::property(env, obj, c"$after")? },
         })
     }
 }
 
-/// `{ $type, $text, span? }`.
+/// `{ $type, $text, span?, $before?, $after? }`.
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for TriviaText {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
@@ -512,6 +536,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for TriviaText {
                 present(env, c"$type", Some(val.kind.0))?,
                 present(env, c"$text", Some(val.text))?,
                 present(env, c"span", val.span)?,
+                present(env, c"$before", val.before)?,
+                present(env, c"$after", val.after)?,
             ])
         }
     }

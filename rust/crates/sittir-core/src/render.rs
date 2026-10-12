@@ -199,6 +199,13 @@ pub enum LineHold {
 
 pub trait RenderSink {
     fn text(&mut self, s: &str) -> RenderResult;
+    /// Text that keeps its source adjacency on both sides, an `ERROR`
+    /// region's: no seam that stays on the line is written before or after
+    /// it, so the bytes it carries are the gaps beside it. A pending line
+    /// break still writes.
+    fn verbatim(&mut self, s: &str) -> RenderResult {
+        self.text(s)
+    }
     /// The next text is a leaf whose pattern takes layout text only of the
     /// `LayoutKinds` bits in `leading` before it and `trailing` after it.
     /// The next text is a leaf of `kind`: its edge stamp, when it carries one
