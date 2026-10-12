@@ -73,4 +73,11 @@ describe('enrich is a fixpoint of its own output', () => {
 		const authored = { fieldSites: new Map([['number', [{ path: [1, 0, 0], name: 'integer' }]]]) };
 		expect(again(grammarWith(rules), authored)).toEqual({ names: [], minted: [] });
 	});
+
+	it('names a hidden list from its element, not from the item field it added', () => {
+		const item = choice(sym('expression'), sym('splat'));
+		const elems = seq(item, repeat(seq(S(','), item)), optional(S(',')));
+		const rules = { set: seq(S('{'), sym('_collection_elements'), S('}')), list: seq(S('['), optional(sym('_collection_elements')), S(']')), _collection_elements: elems, expression: P('e'), splat: P('s') };
+		expect(again(grammarWith(rules, { inline: ['_collection_elements'] }))).toEqual({ names: [], minted: [] });
+	});
 });

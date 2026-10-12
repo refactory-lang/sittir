@@ -905,7 +905,8 @@ export function separatedListElementName<P extends PhaseName>(rule: Rule<P>): st
 	const t = (rule as { type?: string }).type;
 	if (typeof t !== 'string') return null;
 	if (isFieldType(t)) {
-		const name = (rule as { name?: unknown }).name;
+		const { name, content, metadata } = rule as { name?: unknown; content?: Rule<P>; metadata?: { fieldSource?: string } };
+		if (metadata?.fieldSource === 'enriched') return content ? separatedListElementName(content) : null;
 		return typeof name === 'string' ? name : null;
 	}
 	if (isSymbolType(t)) {
