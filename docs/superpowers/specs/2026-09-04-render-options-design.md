@@ -134,7 +134,11 @@ engine.render(node, { options, reformat: true });       // canonical: options on
    separators and whose default is the grammar's first arm. A parsed list
    stores its own choice once per occurrence of the slot, only where it
    differs from the options, beside the slot's gap layout; an item added to
-   the list takes it, and `reformat` renders it from the key.
+   the list takes it, and `reformat` renders it from the key. Its spacing is
+   the slot's own separator sites, the kind × slot keys
+   `<slot>_separator_space_before` and `<slot>_separator_space_after`, which
+   apply whichever separator the list uses; the separators' own labels
+   (`comma_…`, `semi_…`) do not reach them.
 5. **Synthesized preferences: array flanks and indentation.** Every kind
    that holds exactly one unseparated array gets two more choices written
    around that array in its render rule, `start` and `end`, whose arms are
