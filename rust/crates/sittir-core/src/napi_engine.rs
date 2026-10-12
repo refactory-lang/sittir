@@ -120,9 +120,6 @@ macro_rules! napi_engine {
         #[::napi_derive::napi]
         pub struct SittirEngine {
             engine: $crate::engine::Engine<$grammar>,
-            /// Newest parse by this engine, for `render` calls that do not
-            /// name a tree.
-            last_tree_id: Option<u32>,
         }
 
         #[::napi_derive::napi]
@@ -152,7 +149,6 @@ macro_rules! napi_engine {
                         table,
                     )
                     .map_err(::napi::Error::from_reason)?,
-                    last_tree_id: None,
                 })
             }
 
@@ -190,21 +186,21 @@ macro_rules! napi_engine {
                     .map_err(::napi::Error::from_reason)
             }
 
-            /// Parse `source` and keep its tree. As JSON `{ treeId, format,
-            /// errors }`: the id `read` and `disposeTree` take, the format the
-            /// parse detected, and its error regions.
+            /// Parse `source` and keep its tree. As JSON `{ treeId, options,
+            /// errors }`: the id `read` and `disposeTree` take, the tree's
+            /// layer of the render options (`ParsedTree::inferred_options`),
+            /// and its error regions.
             #[::napi_derive::napi]
             pub fn parse(&mut self, env: ::napi::Env, source: String) -> ::napi::Result<String> {
                 let tree_id = self.claim_tree_id(&env)?;
                 let parsed = self.engine.parse(source, tree_id).map_err(::napi::Error::from_reason)?;
                 let json = ::serde_json::json!({
                     "treeId": tree_id,
-                    "format": parsed.format(),
+                    "options": parsed.inferred_options(),
                     "errors": parsed.error_regions(),
                 })
                 .to_string();
                 LIVE_TREES.with(|trees| trees.borrow_mut().insert(tree_id, parsed));
-                self.last_tree_id = Some(tree_id);
                 Ok(json)
             }
 
@@ -412,8 +408,10 @@ macro_rules! napi_engine {
 
             /// Render a typed transport object (napi-native, numeric `$type`).
             ///
-            /// `treeId` names the parse whose detected format applies. It is
-            /// optional because factory-built nodes belong to no tree.
+            /// The options a render takes are the call's own over the layer
+            /// of the tree `treeId` names (`ParsedTree::inferred`), over the
+            /// engine's. `treeId` is the tree the node was read from; a built
+            /// node belongs to no tree and renders by the engine's options.
             #[::napi_derive::napi(
                 ts_args_type = "transport: object, treeId?: number | undefined | null, options?: object | undefined | null"
             )]
@@ -423,24 +421,19 @@ macro_rules! napi_engine {
                 tree_id: Option<f64>,
                 options: Option<$options>,
             ) -> ::napi::Result<String> {
-                let named_indent = options.as_ref().is_some_and(|opts| opts.indent.is_some());
-                let resolved = match options {
-                    Some(opts) => opts.resolve(self.engine.options()).map_err(::napi::Error::from_reason)?,
-                    None => self.engine.options().clone(),
-                };
                 // No JavaScript runs while the table is borrowed, so the
                 // borrow cannot be re-entered.
                 LIVE_TREES.with(|trees| {
                     let trees = trees.borrow();
-                    let tree = tree_id.map(|id| id as u32).or(self.last_tree_id).and_then(|id| trees.get(&id));
-                    let documented;
-                    let table = match tree.filter(|_| !named_indent) {
-                        Some(tree) if tree.indent() != resolved.indent => {
-                            documented = $crate::options::ResolvedOptions { indent: tree.indent().to_owned(), ..resolved.clone() };
-                            &documented
-                        }
-                        _ => &resolved,
+                    let base = match tree_id.and_then(|id| trees.get(&(id as u32))) {
+                        Some(tree) => tree.inferred().over(self.engine.options()),
+                        None => self.engine.options().clone(),
                     };
+                    let resolved = match options {
+                        Some(opts) => opts.resolve(&base).map_err(::napi::Error::from_reason)?,
+                        None => base,
+                    };
+                    let table = &resolved;
                     let ctx = $crate::prepare::RenderContext {
                         options: table,
                         sources: &*trees,
@@ -468,12 +461,11 @@ macro_rules! napi_engine {
                 })
             }
 
-            /// Free this engine's own state. The trees it parsed stay in the
-            /// addon's table: they belong to whoever still names them.
+            /// Release the engine. It holds no state of its own past its
+            /// options: the trees it parsed stay in the addon's table, since
+            /// they belong to whoever still names them.
             #[::napi_derive::napi]
-            pub fn dispose(&mut self) {
-                self.last_tree_id = None;
-            }
+            pub fn dispose(&mut self) {}
         }
 
         impl SittirEngine {

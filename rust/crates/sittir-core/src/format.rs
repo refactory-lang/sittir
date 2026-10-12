@@ -1,47 +1,7 @@
-//! Format extractor — `extract_format` produces a consensus `FormatRecord`
-//! from a source string and its tree-sitter parse tree.
-//!
-//! This is a single-pass extractor: one tree walk produces all style samples;
-//! the samples are reduced to consensus values; `None` is returned when the
-//! source is already template-canonical.
+//! The indentation unit a source steps by (`indent_unit`), and the engine's
+//! format record applied to a render (`apply_format`).
 
-use crate::types::{FormatBoundary, FormatRecord, FormatTrivia};
-
-/// Walk `tree` over `source` and return a consensus `FormatRecord`, or
-/// `None` when the source is already template-canonical (its dominant
-/// indentation is `canonical_indent`, or there is none).
-///
-/// Determinism guarantee: identical `source` + identical grammar version →
-/// identical result.
-pub fn extract_format(
-    source: &str,
-    tree: &tree_sitter::Tree,
-    canonical_indent: &str,
-) -> Option<FormatRecord> {
-    // Touch the root node so the tree parameter is exercised.  Phase 2 will
-    // use the cursor to collect per-kind separator and trivia samples.
-    let _root = tree.root_node();
-
-    let indent = detect_indent(source, canonical_indent)?;
-
-    Some(FormatRecord {
-        boundary: Some(FormatBoundary {
-            leading: Some(indent),
-            trailing: None,
-        }),
-        slots: None,
-        literals: None,
-        trivia: None,
-        kinds: None,
-    })
-}
-
-/// Infer `source`'s indentation unit from its indent steps and compare it
-/// with `canonical_indent`, the grammar's declared unit: the inferred unit
-/// (`indent_unit`) when it is not the declared one.
-fn detect_indent(source: &str, canonical_indent: &str) -> Option<String> {
-    indent_unit(source).filter(|unit| unit != canonical_indent)
-}
+use crate::types::{FormatRecord, FormatTrivia};
 
 /// The indentation unit of `source`, from its indent steps.
 ///
@@ -127,98 +87,23 @@ fn apply_trivia(s: &str, format: &FormatRecord) -> String {
 mod tests {
     use super::*;
 
-    fn parse_rust(source: &str) -> tree_sitter::Tree {
-        let mut parser = tree_sitter::Parser::new();
-        let language: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
-        parser.set_language(&language).unwrap();
-        parser.parse(source, None).unwrap()
-    }
-
     #[test]
-    fn extract_format_tab_indent_returns_some() {
-        let source = "fn main() {\n\tprintln!(\"hello\");\n}\n";
-        let tree = parse_rust(source);
-
-        let result = extract_format(source, &tree, "  ");
-        assert!(
-            result.is_some(),
-            "tab-indented source should return Some(FormatRecord)"
-        );
-        let record = result.unwrap();
-        assert!(record.boundary.is_some());
-        let boundary = record.boundary.unwrap();
-        assert_eq!(boundary.leading, Some("\t".to_string()));
-    }
-
-    #[test]
-    fn extract_format_canonical_returns_none() {
-        let source = "fn main() {\n  println!(\"hello\");\n}\n";
-        let tree = parse_rust(source);
-
-        let result = extract_format(source, &tree, "  ");
-        assert!(
-            result.is_none(),
-            "2-space indent source should return None (already canonical)"
-        );
-    }
-
-    #[test]
-    fn extract_format_four_space_returns_some() {
-        let source = "fn main() {\n    println!(\"hello\");\n    let x = 1;\n}\n";
-        let tree = parse_rust(source);
-
-        let result = extract_format(source, &tree, "  ");
-        assert!(
-            result.is_some(),
-            "4-space indent source should return Some(FormatRecord)"
-        );
-        let record = result.unwrap();
-        let boundary = record.boundary.unwrap();
-        assert_eq!(boundary.leading, Some("    ".to_string()));
-    }
-
-    #[test]
-    fn extract_format_declared_unit_is_canonical() {
-        let source = "fn main() {\n    println!(\"hello\");\n    let x = 1;\n}\n";
-        let tree = parse_rust(source);
-
-        assert!(extract_format(source, &tree, "    ").is_none());
+    fn the_unit_is_the_step_a_line_adds_whatever_whitespace_it_is() {
+        assert_eq!(indent_unit("fn main() {\n\tprintln!(\"hello\");\n}\n").as_deref(), Some("\t"));
+        assert_eq!(indent_unit("fn main() {\n  println!(\"hello\");\n}\n").as_deref(), Some("  "));
+        assert_eq!(indent_unit("fn main() {\n    println!(\"hello\");\n    let x = 1;\n}\n").as_deref(), Some("    "));
+        assert_eq!(indent_unit("fn a() {\n   b();\n   c();\n}\n").as_deref(), Some("   "));
     }
 
     #[test]
     fn nesting_depth_never_votes_for_a_wider_unit() {
-        let source = "fn a() {\n  if x {\n    b();\n    c();\n    d();\n  }\n}\n";
-        let tree = parse_rust(source);
-
-        assert!(extract_format(source, &tree, "  ").is_none());
-        let record = extract_format(source, &tree, "    ").expect("a two-space source under a four-space unit");
-        assert_eq!(record.boundary.unwrap().leading, Some("  ".to_string()));
+        assert_eq!(indent_unit("fn a() {\n  if x {\n    b();\n    c();\n    d();\n  }\n}\n").as_deref(), Some("  "));
+        assert_eq!(indent_unit("fn a() {\n    if x {\n        b();\n        c();\n    }\n}\n").as_deref(), Some("    "));
     }
 
     #[test]
-    fn a_nested_four_space_source_is_canonical_under_a_four_space_unit() {
-        let source = "fn a() {\n    if x {\n        b();\n        c();\n    }\n}\n";
-        let tree = parse_rust(source);
-
-        assert!(extract_format(source, &tree, "    ").is_none());
-    }
-
-    #[test]
-    fn any_declared_unit_is_recognised() {
-        let source = "fn a() {\n   b();\n   c();\n}\n";
-        let tree = parse_rust(source);
-
-        assert!(extract_format(source, &tree, "   ").is_none());
-        let record = extract_format(source, &tree, "  ").expect("a three-space source under a two-space unit");
-        assert_eq!(record.boundary.unwrap().leading, Some("   ".to_string()));
-    }
-
-    #[test]
-    fn an_unindented_source_is_canonical() {
-        let source = "fn a() {}\nfn b() {}\n";
-        let tree = parse_rust(source);
-
-        assert!(extract_format(source, &tree, "  ").is_none());
+    fn an_unindented_source_has_no_unit() {
+        assert_eq!(indent_unit("fn a() {}\nfn b() {}\n"), None);
     }
 
     // --- apply_format tests ---

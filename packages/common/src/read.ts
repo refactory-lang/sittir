@@ -1,4 +1,4 @@
-import type { FormatRecord, TransportCoordinate } from '@sittir/types';
+import type { TransportCoordinate } from '@sittir/types';
 import type { TreeQuery } from './query.ts';
 
 /** A side of a node that holds trivia: before its first token, after its last, or, for a node with no named child, between its own tokens. */
@@ -12,8 +12,8 @@ export interface TreeHandle {
 	id?: number;
 	/** The node at descendant `index` read into its transport, `depth` levels down (one when absent, `Infinity` for all); index 0 is the root. A unit variant's transport is its kind id. */
 	read?(index: number, depth?: number): unknown;
-	/** Format record inferred from the source file by the native reader. */
-	format?: FormatRecord;
+	/** The tree's layer of the render options (`NativeParseResult.options`). */
+	options?: Readonly<Record<string, unknown>>;
 	query?: TreeQuery;
 	/** A snapshot of the node at descendant `index`, measured from the byte `holderByte`, or from its own start (`snapshotOf`). */
 	snapshot?(index: number, holderByte?: number): unknown;

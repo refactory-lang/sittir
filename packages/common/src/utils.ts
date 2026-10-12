@@ -1,6 +1,6 @@
 import type { AnyUntypedNode, ByteSpan, ErrorNode, NodeTrivia, TransportCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
-import { carryRead, carrySource, coordinateOf, holdsSlots, indexOf, isRead, isStorageKey, PLAIN_KINDS, sideOf, sourceOf, tableAt, toTransportData, treeHandleOf, triviaOf } from './transport-data.ts';
+import { carryRead, carrySource, coordinateOf, holdsSlots, indexOf, isRead, isStorageKey, PLAIN_KINDS, sideOf, sourceHandleOf, sourceOf, tableAt, toTransportData, treeHandleOf, triviaOf } from './transport-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { hydrateStored, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
@@ -168,7 +168,7 @@ export interface NodeAddress {
 
 /** The address a query names `node` by; `undefined` for a node no read gave. */
 export function nodeAddressOf(node: AnyUntypedNode): NodeAddress | undefined {
-	const handle = coordinateOf(node)?.$treeHandle ?? sourceOf(node)?.treeHandle;
+	const handle = sourceHandleOf(node);
 	return handle === undefined ? undefined : { handle };
 }
 

@@ -86,8 +86,8 @@ export interface AnyUntypedNode {
 	 * omit it by convention (factory output always sets it at runtime). */
 	$named?: boolean;
 	/** Per-node format override. Set by callers to override the tree-level format
-	 *  (ctx.format) for this specific node. Never set by inference — inferred format
-	 *  lives on TreeHandle.format. Absent on all factory and readUntypedNode output. */
+	 *  (ctx.format) for this specific node. Never set by inference — what a source
+	 *  infers lives on TreeHandle.options. Absent on all factory and readUntypedNode output. */
 	$format?: FormatRecord;
 
 	// -------------------------------------------------------------------------
@@ -352,12 +352,12 @@ export interface FormatRecord {
 
 /**
  * Return value of the native (NAPI) `parse` call: the tree it keeps, the
- * format it inferred and its error regions. It reads nothing; the root is
- * read from the tree at index 0.
+ * render options its source infers and its error regions. It reads nothing;
+ * the root is read from the tree at index 0.
  */
 export interface NativeParseResult {
-	/** Format inferred from source layout, if inference succeeded. */
-	readonly format?: FormatRecord;
+	/** The tree's layer of the render options: the ones its source infers where they differ from the engine's (the indent unit, the root's edges), shaped like the grammar's `Options`. */
+	readonly options: Readonly<Record<string, unknown>>;
 	/** The tree this parse produced, released once nothing reads from it. */
 	readonly treeId: number;
 	/** The parse's ERROR and MISSING regions; empty for a clean parse. */
@@ -380,18 +380,6 @@ export interface ErrorRegion {
 
 export interface RenderCallOptions {
 	readonly ignoreFormat?: boolean;
-}
-
-/** A handle to a parsed tree returned by the engine. */
-export interface EngineTreeHandle {
-	readonly format?: FormatRecord;
-	readonly render: (options?: RenderCallOptions) => string;
-}
-
-/** Return value of engine parseAndRead — carries both UntypedNode and inferred format. */
-export interface ParseAndReadResult {
-	readonly untypedNode: AnyUntypedNode;
-	readonly format?: FormatRecord;
 }
 
 /**

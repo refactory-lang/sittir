@@ -213,6 +213,10 @@ impl EngineGrammar for ${v.Name}Grammar {
         render::kind_ids::SURFACE_KINDS
     }
 
+    fn option_tables(self) -> &'static sittir_core::options::OptionTables {
+        &<render::options::Sites as sittir_core::options::OptionSites>::TABLES
+    }
+
     fn read_units(self, tree: &tree_sitter::Tree, ctx: &sittir_core::read::ReadCtx<'_>, index: u32) -> Vec<sittir_core::layout::UnitSides<Self::Trivia>> {
         sittir_core::read::read_at::<AnyTransport>(&mut tree.walk(), ctx, index, sittir_core::read::Depth::ONE)
             .ok()

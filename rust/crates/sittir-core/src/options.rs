@@ -511,3 +511,80 @@ impl<S: OptionSites> ::napi::bindgen_prelude::FromNapiValue for Options<S> {
         Self::read(&obj).map_err(::napi::Error::from_reason)
     }
 }
+
+/// What a parse reads off its source's layout, as render options: the
+/// tree's layer of the precedence, which a render of the tree resolves over
+/// the engine's options and under the call's own. Each entry is one the
+/// source sets apart from the options it was read against: the indentation
+/// unit (`format::indent_unit`), and the arm of each of the root's edges
+/// that the source's whitespace at the file's start and end classifies to.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct InferredOptions {
+    pub indent: Option<String>,
+    pub edges: Vec<(usize, u16)>,
+}
+
+impl InferredOptions {
+    /// The layer `source`, whose root is of `root`, sets apart from `base`.
+    pub fn infer(source: &str, root: crate::types::KindId, base: &ResolvedOptions, tables: &OptionTables, whitespace: &crate::render::WhitespaceTable) -> Self {
+        let indent = crate::format::indent_unit(source).filter(|unit| *unit != base.indent);
+        let (before, after) = base.edge_sites(root);
+        let leading = &source[..source.len() - source.trim_start().len()];
+        let trailing = &source[source.trim_end().len()..];
+        let edges = [(before, leading), (after, trailing)]
+            .into_iter()
+            .filter_map(|(site, ws)| {
+                let site = site?;
+                let arm = crate::classify::classify_whitespace(ws, (tables.allowed)(site), whitespace)?;
+                (arm != base.spacing[site].arm).then_some((site, arm))
+            })
+            .collect();
+        InferredOptions { indent, edges }
+    }
+
+    /// `base` with this layer's entries resolved over it.
+    pub fn over(&self, base: &ResolvedOptions) -> ResolvedOptions {
+        let mut table = base.clone();
+        if let Some(indent) = &self.indent {
+            table.indent = indent.clone();
+        }
+        for &(site, arm) in &self.edges {
+            table.set_arm(site, arm);
+        }
+        table
+    }
+
+    /// The layer as the options object a render takes: `layout.indent`, and
+    /// each edge under its site's address.
+    pub fn to_json(&self, tables: &OptionTables) -> serde_json::Value {
+        let mut root = serde_json::Map::new();
+        if let Some(indent) = &self.indent {
+            root.insert(LAYOUT_KEY.to_owned(), serde_json::json!({ "indent": indent }));
+        }
+        for &(site, arm) in &self.edges {
+            let Some(path) = address_of(tables.addresses, site) else { continue };
+            let mut level = &mut root;
+            for key in &path[..path.len() - 1] {
+                level = level
+                    .entry((*key).to_owned())
+                    .or_insert_with(|| serde_json::Value::Object(serde_json::Map::new()))
+                    .as_object_mut()
+                    .expect("an address branch is an object");
+            }
+            level.insert(path[path.len() - 1].to_owned(), serde_json::json!(arm));
+        }
+        serde_json::Value::Object(root)
+    }
+}
+
+/// The keys that address `site` alone, from the root of `nodes`.
+fn address_of(nodes: &'static [AddressNode], site: usize) -> Option<Vec<&'static str>> {
+    nodes.iter().find_map(|node| match node {
+        AddressNode::Spacing { key, sites: [only] } if only.site == site => Some(vec![*key]),
+        AddressNode::Branch { key, children, .. } => address_of(children, site).map(|mut path| {
+            path.insert(0, *key);
+            path
+        }),
+        _ => None,
+    })
+}

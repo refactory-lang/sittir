@@ -18288,7 +18288,13 @@
       },
       "$errors": []
     },
-    "expectedOutput": "[[:alnum:]]+"
+    "expectedOutput": "\n[[:alnum:]]+\n",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -18296,9 +18302,9 @@
     "sourceIn": "\n[[:alnum:]]+\n",
     "pattern": "pattern",
     "edits": [],
-    "expectedSourceOut": "[[:alnum:]]+",
+    "expectedSourceOut": "\n[[:alnum:]]+\n",
     "expectedReparseTree": "(pattern (term (term_group (character_class class_atoms: (posix_character_class posix_class_name: (posix_class_name))) quantifier: (one_or_more))))",
-    "wrappedText": "[[:alnum:]]+",
+    "wrappedText": "\n[[:alnum:]]+\n",
     "wrappedOffset": 0
   },
   {
@@ -18328,7 +18334,13 @@
         }
       ]
     },
-    "expectedOutput": "[[:alnum:]]+"
+    "expectedOutput": "[[:alnum:]]+",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -18363,7 +18375,13 @@
         "$type": 68
       }
     },
-    "expectedOutput": "[[:alnum:]]+"
+    "expectedOutput": "[[:alnum:]]+",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -18392,7 +18410,13 @@
         }
       ]
     },
-    "expectedOutput": "[[:alnum:]]"
+    "expectedOutput": "[[:alnum:]]",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -18416,7 +18440,13 @@
         "$text": "alnum"
       }
     },
-    "expectedOutput": "[:alnum:]"
+    "expectedOutput": "[:alnum:]",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -18436,7 +18466,13 @@
     "input": {
       "$type": 68
     },
-    "expectedOutput": "+"
+    "expectedOutput": "+",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -18536,7 +18572,13 @@
       },
       "$errors": []
     },
-    "expectedOutput": "H\\u0065e\\u006C\\u{006F}"
+    "expectedOutput": "\nH\\u0065e\\u006C\\u{006F}\n",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -18544,9 +18586,9 @@
     "sourceIn": "\nH\\u0065e\\u006C\\u{006F}\n",
     "pattern": "pattern",
     "edits": [],
-    "expectedSourceOut": "H\\u0065e\\u006C\\u{006F}",
+    "expectedSourceOut": "\nH\\u0065e\\u006C\\u{006F}\n",
     "expectedReparseTree": "(pattern (term (term_group (pattern_character)) (term_group (character_class_escape (unicode_character_escape (unicode_character_escape_text1)))) (term_group (pattern_character)) (term_group (character_class_escape (unicode_character_escape (unicode_character_escape_text1)))) (term_group (character_class_escape (unicode_character_escape (unicode_character_escape_text2))))))",
-    "wrappedText": "H\\u0065e\\u006C\\u{006F}",
+    "wrappedText": "\nH\\u0065e\\u006C\\u{006F}\n",
     "wrappedOffset": 0
   },
   {
@@ -18622,7 +18664,13 @@
         }
       ]
     },
-    "expectedOutput": "H\\u0065e\\u006C\\u{006F}"
+    "expectedOutput": "H\\u0065e\\u006C\\u{006F}",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -18646,7 +18694,13 @@
         "$text": "H"
       }
     },
-    "expectedOutput": "H"
+    "expectedOutput": "H",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -18673,7 +18727,13 @@
         }
       }
     },
-    "expectedOutput": "\\u0065"
+    "expectedOutput": "\\u0065",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -18697,7 +18757,13 @@
         "$text": "e"
       }
     },
-    "expectedOutput": "e"
+    "expectedOutput": "e",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -18724,7 +18790,13 @@
         }
       }
     },
-    "expectedOutput": "\\u006C"
+    "expectedOutput": "\\u006C",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -18751,7 +18823,13 @@
         }
       }
     },
-    "expectedOutput": "\\u{006F}"
+    "expectedOutput": "\\u{006F}",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -18775,7 +18853,13 @@
         "$text": "\\u0065"
       }
     },
-    "expectedOutput": "\\u0065"
+    "expectedOutput": "\\u0065",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -18799,7 +18883,13 @@
         "$text": "\\u006C"
       }
     },
-    "expectedOutput": "\\u006C"
+    "expectedOutput": "\\u006C",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -18823,7 +18913,13 @@
         "$text": "\\u{006F}"
       }
     },
-    "expectedOutput": "\\u{006F}"
+    "expectedOutput": "\\u{006F}",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -18953,7 +19049,13 @@
       },
       "$errors": []
     },
-    "expectedOutput": "\\u0048ow r \\u\\?"
+    "expectedOutput": "\n\\u0048ow r \\u\\?\n",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -18961,9 +19063,9 @@
     "sourceIn": "\n\\u0048ow r \\u\\?\n",
     "pattern": "pattern",
     "edits": [],
-    "expectedSourceOut": "\\u0048ow r \\u\\?",
+    "expectedSourceOut": "\n\\u0048ow r \\u\\?\n",
     "expectedReparseTree": "(pattern (term (term_group (character_class_escape (unicode_character_escape (unicode_character_escape_text1)))) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (identity_escape)) (term_group (identity_escape))))",
-    "wrappedText": "\\u0048ow r \\u\\?",
+    "wrappedText": "\n\\u0048ow r \\u\\?\n",
     "wrappedOffset": 0
   },
   {
@@ -19069,7 +19171,13 @@
         }
       ]
     },
-    "expectedOutput": "\\u0048ow r \\u\\?"
+    "expectedOutput": "\\u0048ow r \\u\\?",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -19096,7 +19204,13 @@
         }
       }
     },
-    "expectedOutput": "\\u0048"
+    "expectedOutput": "\\u0048",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -19120,7 +19234,13 @@
         "$text": "o"
       }
     },
-    "expectedOutput": "o"
+    "expectedOutput": "o",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -19144,7 +19264,13 @@
         "$text": "w"
       }
     },
-    "expectedOutput": "w"
+    "expectedOutput": "w",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -19168,7 +19294,13 @@
         "$text": "r"
       }
     },
-    "expectedOutput": "r"
+    "expectedOutput": "r",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -19192,7 +19324,13 @@
         "_content": "u"
       }
     },
-    "expectedOutput": "\\u"
+    "expectedOutput": "\\u",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -19216,7 +19354,13 @@
         "_content": "?"
       }
     },
-    "expectedOutput": "\\?"
+    "expectedOutput": "\\?",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -19240,7 +19384,13 @@
         "$text": "\\u0048"
       }
     },
-    "expectedOutput": "\\u0048"
+    "expectedOutput": "\\u0048",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -19261,7 +19411,13 @@
       "$type": 37,
       "_content": "u"
     },
-    "expectedOutput": "\\u"
+    "expectedOutput": "\\u",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -19282,7 +19438,13 @@
       "$type": 37,
       "_content": "?"
     },
-    "expectedOutput": "\\?"
+    "expectedOutput": "\\?",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -19370,7 +19532,13 @@
       },
       "$errors": []
     },
-    "expectedOutput": "[\\u005D-\\uFFFF][A-\\uFFFF]"
+    "expectedOutput": "\n[\\u005D-\\uFFFF][A-\\uFFFF]\n",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -19378,9 +19546,9 @@
     "sourceIn": "\n[\\u005D-\\uFFFF][A-\\uFFFF]\n",
     "pattern": "pattern",
     "edits": [],
-    "expectedSourceOut": "[\\u005D-\\uFFFF][A-\\uFFFF]",
+    "expectedSourceOut": "\n[\\u005D-\\uFFFF][A-\\uFFFF]\n",
     "expectedReparseTree": "(pattern (term (term_group (character_class class_atoms: (class_range start: (character_class_escape (unicode_character_escape (unicode_character_escape_text1))) end: (character_class_escape (unicode_character_escape (unicode_character_escape_text1)))))) (term_group (character_class class_atoms: (class_range start: (class_character) end: (character_class_escape (unicode_character_escape (unicode_character_escape_text1))))))))",
-    "wrappedText": "[\\u005D-\\uFFFF][A-\\uFFFF]",
+    "wrappedText": "\n[\\u005D-\\uFFFF][A-\\uFFFF]\n",
     "wrappedOffset": 0
   },
   {
@@ -19444,7 +19612,13 @@
         }
       ]
     },
-    "expectedOutput": "[\\u005D-\\uFFFF][A-\\uFFFF]"
+    "expectedOutput": "[\\u005D-\\uFFFF][A-\\uFFFF]",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -19486,7 +19660,13 @@
         ]
       }
     },
-    "expectedOutput": "[\\u005D-\\uFFFF]"
+    "expectedOutput": "[\\u005D-\\uFFFF]",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -19525,7 +19705,13 @@
         ]
       }
     },
-    "expectedOutput": "[A-\\uFFFF]"
+    "expectedOutput": "[A-\\uFFFF]",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -19564,7 +19750,13 @@
         }
       ]
     },
-    "expectedOutput": "[\\u005D-\\uFFFF]"
+    "expectedOutput": "[\\u005D-\\uFFFF]",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -19600,7 +19792,13 @@
         }
       ]
     },
-    "expectedOutput": "[A-\\uFFFF]"
+    "expectedOutput": "[A-\\uFFFF]",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -19634,7 +19832,13 @@
         }
       }
     },
-    "expectedOutput": "\\u005D-\\uFFFF"
+    "expectedOutput": "\\u005D-\\uFFFF",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -19665,7 +19869,13 @@
         }
       }
     },
-    "expectedOutput": "A-\\uFFFF"
+    "expectedOutput": "A-\\uFFFF",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -19689,7 +19899,13 @@
         "$text": "\\u005D"
       }
     },
-    "expectedOutput": "\\u005D"
+    "expectedOutput": "\\u005D",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -19713,7 +19929,13 @@
         "$text": "\\uFFFF"
       }
     },
-    "expectedOutput": "\\uFFFF"
+    "expectedOutput": "\\uFFFF",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -19737,7 +19959,13 @@
         "$text": "\\uFFFF"
       }
     },
-    "expectedOutput": "\\uFFFF"
+    "expectedOutput": "\\uFFFF",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -19825,7 +20053,13 @@
       },
       "$errors": []
     },
-    "expectedOutput": "\\x0F\\xa8[\\x20-\\x5A\\x5c]"
+    "expectedOutput": "\n\\x0F\\xa8[\\x20-\\x5A\\x5c]\n",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -19833,9 +20067,9 @@
     "sourceIn": "\n\\x0F\\xa8[\\x20-\\x5A\\x5c]\n",
     "pattern": "pattern",
     "edits": [],
-    "expectedSourceOut": "\\x0F\\xa8[\\x20-\\x5A\\x5c]",
+    "expectedSourceOut": "\n\\x0F\\xa8[\\x20-\\x5A\\x5c]\n",
     "expectedReparseTree": "(pattern (term (term_group (control_escape (control_escape_text2))) (term_group (control_escape (control_escape_text2))) (term_group (character_class class_atoms: (class_range start: (control_escape (control_escape_text2)) end: (control_escape (control_escape_text2))) class_atoms: (control_escape (control_escape_text2))))))",
-    "wrappedText": "\\x0F\\xa8[\\x20-\\x5A\\x5c]",
+    "wrappedText": "\n\\x0F\\xa8[\\x20-\\x5A\\x5c]\n",
     "wrappedOffset": 0
   },
   {
@@ -19899,7 +20133,13 @@
         }
       ]
     },
-    "expectedOutput": "\\x0F\\xa8[\\x20-\\x5A\\x5c]"
+    "expectedOutput": "\\x0F\\xa8[\\x20-\\x5A\\x5c]",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -19923,7 +20163,13 @@
         "$text": "\\x0F"
       }
     },
-    "expectedOutput": "\\x0F"
+    "expectedOutput": "\\x0F",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -19947,7 +20193,13 @@
         "$text": "\\xa8"
       }
     },
-    "expectedOutput": "\\xa8"
+    "expectedOutput": "\\xa8",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -19992,7 +20244,13 @@
         ]
       }
     },
-    "expectedOutput": "[\\x20-\\x5A\\x5c]"
+    "expectedOutput": "[\\x20-\\x5A\\x5c]",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -20034,7 +20292,13 @@
         }
       ]
     },
-    "expectedOutput": "[\\x20-\\x5A\\x5c]"
+    "expectedOutput": "[\\x20-\\x5A\\x5c]",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -20062,7 +20326,13 @@
         "$text": "\\x5A"
       }
     },
-    "expectedOutput": "\\x20-\\x5A"
+    "expectedOutput": "\\x20-\\x5A",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -20333,7 +20603,13 @@
       },
       "$errors": []
     },
-    "expectedOutput": "(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)"
+    "expectedOutput": "\n(?aiLmsux)\n(?aiLmsux:\ntest\n)\n(?aiLmsux-imsx:\ntest\n)\n(?-imsx:\ntest\n)\n(?-imsx)\n",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -20341,9 +20617,9 @@
     "sourceIn": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n",
     "pattern": "pattern",
     "edits": [],
-    "expectedSourceOut": "(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)",
+    "expectedSourceOut": "\n(?aiLmsux)\n(?aiLmsux:\ntest\n)\n(?aiLmsux-imsx:\ntest\n)\n(?-imsx:\ntest\n)\n(?-imsx)\n",
     "expectedReparseTree": "(pattern (term (term_group (inline_flags_group_enable enabled: (flags))) (term_group (inline_flags_group_enable enabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)))))) (term_group (inline_flags_group_toggle enabled: (flags) disabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)))))) (term_group (inline_flags_group_disable disabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)))))) (term_group (inline_flags_group_disable disabled: (flags)))))",
-    "wrappedText": "(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)",
+    "wrappedText": "\n(?aiLmsux)\n(?aiLmsux:\ntest\n)\n(?aiLmsux-imsx:\ntest\n)\n(?-imsx:\ntest\n)\n(?-imsx)\n",
     "wrappedOffset": 0
   },
   {
@@ -20401,7 +20677,13 @@
         ]
       }
     },
-    "expectedOutput": "test"
+    "expectedOutput": "\ntest\n",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -20409,9 +20691,9 @@
     "sourceIn": "test",
     "pattern": "pattern",
     "edits": [],
-    "expectedSourceOut": "test",
+    "expectedSourceOut": "\ntest\n",
     "expectedReparseTree": "(pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character))))",
-    "wrappedText": "test",
+    "wrappedText": "\ntest\n",
     "wrappedOffset": 0
   },
   {
@@ -20469,7 +20751,13 @@
         ]
       }
     },
-    "expectedOutput": "test"
+    "expectedOutput": "\ntest\n",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -20477,9 +20765,9 @@
     "sourceIn": "test",
     "pattern": "pattern",
     "edits": [],
-    "expectedSourceOut": "test",
+    "expectedSourceOut": "\ntest\n",
     "expectedReparseTree": "(pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character))))",
-    "wrappedText": "test",
+    "wrappedText": "\ntest\n",
     "wrappedOffset": 0
   },
   {
@@ -20537,7 +20825,13 @@
         ]
       }
     },
-    "expectedOutput": "test"
+    "expectedOutput": "\ntest\n",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -20545,9 +20839,9 @@
     "sourceIn": "test",
     "pattern": "pattern",
     "edits": [],
-    "expectedSourceOut": "test",
+    "expectedSourceOut": "\ntest\n",
     "expectedReparseTree": "(pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character))))",
-    "wrappedText": "test",
+    "wrappedText": "\ntest\n",
     "wrappedOffset": 0
   },
   {
@@ -20794,7 +21088,13 @@
         }
       ]
     },
-    "expectedOutput": "(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)"
+    "expectedOutput": "(?aiLmsux)\n(?aiLmsux:\ntest\n)\n(?aiLmsux-imsx:\ntest\n)\n(?-imsx:\ntest\n)\n(?-imsx)",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -20802,9 +21102,9 @@
     "sourceIn": "(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)",
     "pattern": "term",
     "edits": [],
-    "expectedSourceOut": "(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)",
+    "expectedSourceOut": "(?aiLmsux)\n(?aiLmsux:\ntest\n)\n(?aiLmsux-imsx:\ntest\n)\n(?-imsx:\ntest\n)\n(?-imsx)",
     "expectedReparseTree": "(term (term_group (inline_flags_group_enable enabled: (flags))) (term_group (inline_flags_group_enable enabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)))))) (term_group (inline_flags_group_toggle enabled: (flags) disabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)))))) (term_group (inline_flags_group_disable disabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)))))) (term_group (inline_flags_group_disable disabled: (flags))))",
-    "wrappedText": "(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)",
+    "wrappedText": "(?aiLmsux)\n(?aiLmsux:\ntest\n)\n(?aiLmsux-imsx:\ntest\n)\n(?-imsx:\ntest\n)\n(?-imsx)",
     "wrappedOffset": 0
   },
   {
@@ -20859,7 +21159,13 @@
         }
       ]
     },
-    "expectedOutput": "test"
+    "expectedOutput": "test",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -20924,7 +21230,13 @@
         }
       ]
     },
-    "expectedOutput": "test"
+    "expectedOutput": "test",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -20989,7 +21301,13 @@
         }
       ]
     },
-    "expectedOutput": "test"
+    "expectedOutput": "test",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -21016,7 +21334,13 @@
         }
       }
     },
-    "expectedOutput": "(?aiLmsux)"
+    "expectedOutput": "(?aiLmsux)",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -21094,7 +21418,13 @@
         }
       }
     },
-    "expectedOutput": "(?aiLmsux:test)"
+    "expectedOutput": "(?aiLmsux:\ntest\n)",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -21102,9 +21432,9 @@
     "sourceIn": "(?aiLmsux:test)",
     "pattern": "term_group",
     "edits": [],
-    "expectedSourceOut": "(?aiLmsux:test)",
+    "expectedSourceOut": "(?aiLmsux:\ntest\n)",
     "expectedReparseTree": "(term_group (inline_flags_group_enable enabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character))))))",
-    "wrappedText": "(?aiLmsux:test)",
+    "wrappedText": "(?aiLmsux:\ntest\n)",
     "wrappedOffset": 0
   },
   {
@@ -21118,7 +21448,13 @@
         "$text": "t"
       }
     },
-    "expectedOutput": "t"
+    "expectedOutput": "t",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -21142,7 +21478,13 @@
         "$text": "e"
       }
     },
-    "expectedOutput": "e"
+    "expectedOutput": "e",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -21166,7 +21508,13 @@
         "$text": "s"
       }
     },
-    "expectedOutput": "s"
+    "expectedOutput": "s",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -21190,7 +21538,13 @@
         "$text": "t"
       }
     },
-    "expectedOutput": "t"
+    "expectedOutput": "t",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -21272,7 +21626,13 @@
         }
       }
     },
-    "expectedOutput": "(?aiLmsux-imsx:test)"
+    "expectedOutput": "(?aiLmsux-imsx:\ntest\n)",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -21280,9 +21640,9 @@
     "sourceIn": "(?aiLmsux-imsx:test)",
     "pattern": "term_group",
     "edits": [],
-    "expectedSourceOut": "(?aiLmsux-imsx:test)",
+    "expectedSourceOut": "(?aiLmsux-imsx:\ntest\n)",
     "expectedReparseTree": "(term_group (inline_flags_group_toggle enabled: (flags) disabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character))))))",
-    "wrappedText": "(?aiLmsux-imsx:test)",
+    "wrappedText": "(?aiLmsux-imsx:\ntest\n)",
     "wrappedOffset": 0
   },
   {
@@ -21296,7 +21656,13 @@
         "$text": "t"
       }
     },
-    "expectedOutput": "t"
+    "expectedOutput": "t",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -21320,7 +21686,13 @@
         "$text": "e"
       }
     },
-    "expectedOutput": "e"
+    "expectedOutput": "e",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -21344,7 +21716,13 @@
         "$text": "s"
       }
     },
-    "expectedOutput": "s"
+    "expectedOutput": "s",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -21368,7 +21746,13 @@
         "$text": "t"
       }
     },
-    "expectedOutput": "t"
+    "expectedOutput": "t",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -21446,7 +21830,13 @@
         }
       }
     },
-    "expectedOutput": "(?-imsx:test)"
+    "expectedOutput": "(?-imsx:\ntest\n)",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -21454,9 +21844,9 @@
     "sourceIn": "(?-imsx:test)",
     "pattern": "term_group",
     "edits": [],
-    "expectedSourceOut": "(?-imsx:test)",
+    "expectedSourceOut": "(?-imsx:\ntest\n)",
     "expectedReparseTree": "(term_group (inline_flags_group_disable disabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character))))))",
-    "wrappedText": "(?-imsx:test)",
+    "wrappedText": "(?-imsx:\ntest\n)",
     "wrappedOffset": 0
   },
   {
@@ -21470,7 +21860,13 @@
         "$text": "t"
       }
     },
-    "expectedOutput": "t"
+    "expectedOutput": "t",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -21494,7 +21890,13 @@
         "$text": "e"
       }
     },
-    "expectedOutput": "e"
+    "expectedOutput": "e",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -21518,7 +21920,13 @@
         "$text": "s"
       }
     },
-    "expectedOutput": "s"
+    "expectedOutput": "s",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -21542,7 +21950,13 @@
         "$text": "t"
       }
     },
-    "expectedOutput": "t"
+    "expectedOutput": "t",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -21569,7 +21983,13 @@
         }
       }
     },
-    "expectedOutput": "(?-imsx)"
+    "expectedOutput": "(?-imsx)",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -21593,7 +22013,13 @@
         "$text": "aiLmsux"
       }
     },
-    "expectedOutput": "(?aiLmsux)"
+    "expectedOutput": "(?aiLmsux)",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -21668,7 +22094,13 @@
         }
       }
     },
-    "expectedOutput": "(?aiLmsux:test)"
+    "expectedOutput": "(?aiLmsux:\ntest\n)",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -21676,9 +22108,9 @@
     "sourceIn": "(?aiLmsux:test)",
     "pattern": "inline_flags_group_enable",
     "edits": [],
-    "expectedSourceOut": "(?aiLmsux:test)",
+    "expectedSourceOut": "(?aiLmsux:\ntest\n)",
     "expectedReparseTree": "(inline_flags_group_enable enabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)))))",
-    "wrappedText": "(?aiLmsux:test)",
+    "wrappedText": "(?aiLmsux:\ntest\n)",
     "wrappedOffset": 0
   },
   {
@@ -21747,7 +22179,13 @@
         }
       }
     },
-    "expectedOutput": "(?aiLmsux-imsx:test)"
+    "expectedOutput": "(?aiLmsux-imsx:\ntest\n)",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -21755,9 +22193,9 @@
     "sourceIn": "(?aiLmsux-imsx:test)",
     "pattern": "inline_flags_group_toggle",
     "edits": [],
-    "expectedSourceOut": "(?aiLmsux-imsx:test)",
+    "expectedSourceOut": "(?aiLmsux-imsx:\ntest\n)",
     "expectedReparseTree": "(inline_flags_group_toggle enabled: (flags) disabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)))))",
-    "wrappedText": "(?aiLmsux-imsx:test)",
+    "wrappedText": "(?aiLmsux-imsx:\ntest\n)",
     "wrappedOffset": 0
   },
   {
@@ -21822,7 +22260,13 @@
         }
       }
     },
-    "expectedOutput": "(?-imsx:test)"
+    "expectedOutput": "(?-imsx:\ntest\n)",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",
@@ -21830,9 +22274,9 @@
     "sourceIn": "(?-imsx:test)",
     "pattern": "inline_flags_group_disable",
     "edits": [],
-    "expectedSourceOut": "(?-imsx:test)",
+    "expectedSourceOut": "(?-imsx:\ntest\n)",
     "expectedReparseTree": "(inline_flags_group_disable disabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)))))",
-    "wrappedText": "(?-imsx:test)",
+    "wrappedText": "(?-imsx:\ntest\n)",
     "wrappedOffset": 0
   },
   {
@@ -21846,7 +22290,13 @@
         "$text": "imsx"
       }
     },
-    "expectedOutput": "(?-imsx)"
+    "expectedOutput": "(?-imsx)",
+    "options": {
+      "pattern": {
+        "after": 48,
+        "before": 48
+      }
+    }
   },
   {
     "kind": "roundtrip",

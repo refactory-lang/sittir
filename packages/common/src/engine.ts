@@ -13,8 +13,8 @@ import type {
 	RenderCallOptions,
 	Rendered
 } from '@sittir/types';
-import { readObject, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
-import { holdReadTree, toTransportData, type KindView } from './transport-data.ts';
+import { decodeTree, readObject, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
+import { holdReadTree, sourceHandleOf, toTransportData, type KindView } from './transport-data.ts';
 import { mintTreeToken, registerTree } from './tree-token.ts';
 import type { DescendantBatch } from './query.ts';
 
@@ -318,6 +318,10 @@ export function createNativeEngine<
 			// path, so a caller handing over raw read data cannot slice a
 			// pre-edit span past a rebuilt slot.
 			const transport = (typeof node === 'number' ? node : toTransportData(node, kindView)) as TTransport;
+			// The tree the node was read from, or rebuilt from, is the layer of
+			// options its source inferred; a built node has none.
+			const handle = typeof node === 'number' ? undefined : sourceHandleOf(node);
+			const treeId = handle === undefined ? undefined : decodeTree(handle);
 			// The handle renders lazily, and the transport's coordinates are
 			// numbers: the tokens stayed on `node`. Both closures name `node`,
 			// so the handle holds the trees it will slice for as long as it
@@ -326,12 +330,12 @@ export function createNativeEngine<
 			return createRenderHandle(
 				() => {
 					holdsTrees();
-					return engine.render(transport, undefined, perCall);
+					return engine.render(transport, treeId, perCall);
 				},
 				(path) => {
 					holdsTrees();
 					if (engine.renderToFile) {
-						engine.renderToFile(transport, path, undefined, perCall);
+						engine.renderToFile(transport, path, treeId, perCall);
 						return true;
 					}
 					return false;
@@ -384,7 +388,7 @@ export function createNativeEngine<
 								}
 								return cached;
 							},
-							format: parsed.format,
+							options: parsed.options,
 							snapshot: (index, holderByte) => engine.snapshot(parsed.treeId, index, holderByte),
 							triviaSide: (index, side) => {
 								const entries = engine.triviaSide(parsed.treeId, index, side);

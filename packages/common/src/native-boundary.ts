@@ -67,7 +67,7 @@ function assertNativeFieldValue(value: unknown, path: string): asserts value is 
  * native (napi) render engine:
  *  - `$type` is a finite number (a parser kind id)
  *  - `$source`, when present (a built node), is one of `0 | 1 | 2`, and `$named` a boolean
- *  - `$format` is absent (must be passed separately via TreeHandle.format)
+ *  - `$format` is absent (format crosses as the engine's options, not on a node)
  *  - no function-valued properties (methods like `render()` cannot cross napi)
  *  - a coordinate (`$treeHandle`) names its handle as a finite number and carries its `$span`
  *  - `$_layout`, when present, is an object

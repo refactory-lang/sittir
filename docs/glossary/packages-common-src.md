@@ -381,6 +381,10 @@ Whether a value is a group's config object rather than a node: a non-empty plain
 
 The handle a node's coordinate names it by (`$_layout.at.$treeHandle`), which packs its tree and its descendant index; `undefined` for a node with no coordinate. The fold uses it to decide a node still names its tree and emits it as the coordinate's `$treeHandle`; the generated wrap uses it to recognize a node that arrived as a coordinate.
 
+### `packages/common/src/transport-data.ts::sourceHandleOf`
+
+The handle a node names its tree by: its coordinate's, or, for a node an edit rebuilt, the one its carried source identity names (`sourceOf`). `undefined` for a node no read gave, built or detached. A query addresses a node by it (`nodeAddressOf`), and the native render passes the tree it names, so a parsed tree's inferred options layer under a render of it or of an edit of it, and a built node gets the engine's alone.
+
 ### `packages/common/src/transport-data.ts::KindView`
 
 How the crossing tells kinds apart. `isWrapper`: whether a kind id is one a rebuild constructs around an existing node (`TriviaFacts.rebuildWrappers`), which `evidenceOf` asks before looking through an entry. `isList`: whether a kind id is a list kind, whose one array slot holds its items (`listItemsOf`). Every caller names its view: the engine's render passes the grammar's facts, and data with no such kinds (a test's hand-written nodes, a probe's data) passes `PLAIN_KINDS`, which answers no to both for every kind. There is no default, so no caller can skip the grammar's view by leaving it out.
@@ -486,7 +490,7 @@ How a query names a parsed node to the native side: by the handle its coordinate
 
 ### `packages/common/src/utils.ts::nodeAddressOf`
 
-A node's `NodeAddress`: the handle of its coordinate, or of the source identity an edit carried (`sourceOf`). `undefined` for a node no read gave.
+A node's `NodeAddress`: its `sourceHandleOf`. `undefined` for a node no read gave.
 
 ### `packages/common/src/utils.ts::triviaInner`
 

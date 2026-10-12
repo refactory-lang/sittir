@@ -12,7 +12,7 @@
 //! node by its tree's id and its descendant index, re-resolved through a
 //! cursor on each access — no lifetime-erasure needed.
 
-use crate::format::{apply_format, extract_format};
+use crate::format::apply_format;
 use crate::options::ResolvedOptions;
 use crate::query::{Address, DescendantBatch, Plan, QueryCoordinate};
 use crate::read::{display_id, SideEntry};
@@ -41,6 +41,9 @@ pub trait EngineGrammar: Copy {
     /// The grammar's surface kinds the trivia table's assignment reads
     /// (`TriviaTable::assign`).
     fn surface_kinds(self) -> crate::trivia_table::SurfaceKinds;
+    /// The grammar's option tables: each site's arms and the address an
+    /// options object names it by.
+    fn option_tables(self) -> &'static crate::options::OptionTables;
     /// The sides of the unit children of the node at `index` of `tree`, by
     /// slot and item: the node read one level down by `ctx`
     /// (`TransportLayout::units`). None for a grammar with no transports.
@@ -304,11 +307,9 @@ pub struct ParsedTree<G: EngineGrammar> {
     /// The parsed tree-sitter tree.
     tree: tree_sitter::Tree,
     source: Arc<str>,
-    format: Option<FormatRecord>,
-    /// The source's indentation unit (`format::indent_unit`), else the
-    /// engine's: what a render of this tree indents by unless its options
-    /// name one, and what the trivia table measures run levels in.
-    indent: String,
+    /// What the parse read off the source's layout: the tree's layer of the
+    /// render options (`InferredOptions`).
+    inferred: crate::options::InferredOptions,
     /// The spaces one indentation level spans in the source: the unit's,
     /// else the engine unit's when the source indents by tabs.
     level_width: u32,
@@ -622,14 +623,15 @@ impl<G: EngineGrammar> ParsedTree<G> {
         error_regions(&self.tree)
     }
 
-    /// Access the detected format record (if any).
-    pub fn format(&self) -> Option<&FormatRecord> {
-        self.format.as_ref()
+    /// The tree's layer of the render options: what its source sets apart
+    /// from the engine's (`InferredOptions`).
+    pub fn inferred(&self) -> &crate::options::InferredOptions {
+        &self.inferred
     }
 
-    /// The tree's indentation unit: its source's, else the engine's.
-    pub fn indent(&self) -> &str {
-        &self.indent
+    /// The tree's layer as the options object a render takes.
+    pub fn inferred_options(&self) -> serde_json::Value {
+        self.inferred.to_json(self.grammar.option_tables())
     }
 
     /// Access the source string.
@@ -826,16 +828,17 @@ impl<G: EngineGrammar> Engine<G> {
             let snippet: String = source.chars().take(80).collect();
             format!("parse failed (source: {snippet:?})")
         })?;
-        let indent = crate::format::indent_unit(&source).unwrap_or_else(|| self.options.indent.clone());
+        let (whitespace, _) = self.grammar.whitespace();
+        let root = KindId(tree.root_node().grammar_id());
+        let inferred = crate::options::InferredOptions::infer(&source, root, &self.options, self.grammar.option_tables(), whitespace);
+        let indent = inferred.indent.as_deref().unwrap_or(&self.options.indent);
         let spaces = |unit: &str| unit.chars().filter(|&c| c == ' ').count() as u32;
-        let level_width = [spaces(&indent), spaces(&self.options.indent), 1].into_iter().find(|&width| width > 0).unwrap_or(1);
-        let format = extract_format(&source, &tree, &self.options.indent);
+        let level_width = [spaces(indent), spaces(&self.options.indent), 1].into_iter().find(|&width| width > 0).unwrap_or(1);
         Ok(ParsedTree {
             grammar: self.grammar,
             tree,
             source: Arc::from(source.as_str()),
-            format,
-            indent,
+            inferred,
             level_width,
             tree_id,
             lines: std::sync::OnceLock::new(),
@@ -1034,7 +1037,22 @@ mod tests {
         fn surface_kinds(self) -> crate::trivia_table::SurfaceKinds {
             crate::trivia_table::SurfaceKinds::default()
         }
+
+        fn option_tables(self) -> &'static crate::options::OptionTables {
+            &TEST_TABLES
+        }
     }
+
+    static TEST_TABLES: crate::options::OptionTables = crate::options::OptionTables {
+        addresses: &[],
+        allowed: |_| &[],
+        delimiter_allowed: |_| 0,
+        depth_sites: &[],
+        indent: 0,
+        dedent: 0,
+        indent_chars: " \t",
+        newline_arms: &["\n"],
+    };
 
     /// A trivia type with text and one whitespace member, the break (kind 2).
     #[derive(Debug, Clone, PartialEq)]

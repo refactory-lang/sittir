@@ -70,6 +70,11 @@ export function treeHandleOf(node: object): number | undefined {
 	return coordinateOf(node)?.$treeHandle;
 }
 
+/** The handle a node names its tree by: its own coordinate's, or, for a node rebuilt from a read one, its source's. */
+export function sourceHandleOf(node: object): number | undefined {
+	return coordinateOf(node)?.$treeHandle ?? sourceOf(node)?.treeHandle;
+}
+
 /** The descendant index a read node or a coordinate names itself by, in its tree. */
 export function indexOf(node: object): number | undefined {
 	const handle = treeHandleOf(node);

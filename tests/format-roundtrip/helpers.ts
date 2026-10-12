@@ -2,7 +2,6 @@ import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { FormatRecord } from '@sittir/types';
 import { NATIVE_LOADER, nativeBindingDir } from '../../packages/codegen/src/grammars.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -51,9 +50,9 @@ export function tryLoadNativeEngine(grammar: Grammar): NativeEngine | null {
 	}
 }
 
-export function parseNativeFixture(engine: NativeEngine, source: string): { treeId: number; format?: FormatRecord } {
-	const parsed = JSON.parse(engine.parse(source)) as { treeId: number; format: FormatRecord | null };
-	return parsed.format === null ? { treeId: parsed.treeId } : { treeId: parsed.treeId, format: parsed.format };
+export function parseNativeFixture(engine: NativeEngine, source: string): { treeId: number; options: Readonly<Record<string, unknown>> } {
+	const parsed = JSON.parse(engine.parse(source)) as { treeId: number; options: Readonly<Record<string, unknown>> };
+	return { treeId: parsed.treeId, options: parsed.options };
 }
 
 export function diffPositions(a: string, b: string): { start: number; end: number } | null {

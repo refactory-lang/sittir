@@ -17,7 +17,7 @@ afterAll(() => {
 describe('read trivia layout, rendered detached', () => {
 	it('keeps a same-line line comment on its line and breaks once after it', async () => {
 		const render = await detachedRenderer('rust');
-		expect(render('fn g() { a; // note\n b; }')).toBe('fn g() {\n a; // note\n b;\n}\n');
+		expect(render('fn g() { a; // note\n b; }')).toBe('fn g() {\n a; // note\n b;\n}');
 		expect(render('fn f() {\n    a; // c\n    // d\n}\n')).toBe('fn f() {\n    a; // c\n    // d\n}\n');
 	});
 
@@ -26,20 +26,20 @@ describe('read trivia layout, rendered detached', () => {
 	});
 
 	it('joins a same-line leading block comment with a space', async () => {
-		expect((await detachedRenderer('rust'))('fn f() { /* c */ a; }')).toBe('fn f() {\n    /* c */ a;\n}\n');
+		expect((await detachedRenderer('rust'))('fn f() { /* c */ a; }')).toBe('fn f() {\n    /* c */ a;\n}');
 	});
 
 	it('lays out inner comments by the gap they sit in', async () => {
 		const render = await detachedRenderer('rust');
 		expect(render('fn f() { // TODO\n}\n')).toBe('fn f() {\n    // TODO\n}\n');
-		expect(render('f(/* a */);')).toBe('f(/* a */);\n');
-		expect(render('f(// a\n);')).toBe('f(// a\n);\n');
+		expect(render('f(/* a */);')).toBe('f(/* a */);');
+		expect(render('f(// a\n);')).toBe('f(// a\n);');
 		expect(render('ok! {\n  // one\n  /* two */\n}\n')).toBe('ok!{\n  // one\n  /* two */\n}\n');
 	});
 
 	it('seats a same-line trailing entry after the anonymous tokens between it and its owner', async () => {
 		const render = await detachedRenderer('rust');
-		expect(render('fn f() { x = a + /* x */ b; }')).toBe('fn f() {\n    x = a + /* x */ b;\n}\n');
+		expect(render('fn f() { x = a + /* x */ b; }')).toBe('fn f() {\n    x = a + /* x */ b;\n}');
 	});
 
 	it('seats a leading entry after an anonymous token kept as a source coordinate', async () => {
@@ -54,20 +54,20 @@ describe('read trivia layout, rendered detached', () => {
 		const comment = sidesOf(binary._right)?.leading?.find(isCoordinate);
 		if (comment === undefined) throw new Error('expected the comment as a coordinate');
 		binary._operator = carryTree(comment, { $type: binary._operator, $treeHandle: comment.$treeHandle, $end: comment.$end, $span: { start: at, end: at + 1 } });
-		expect(engine.render(data as never as AnyUntypedNode).toString()).toBe('fn f() {\n    x = a + /* x */ b;\n}\n');
+		expect(engine.render(data as never as AnyUntypedNode).toString()).toBe('fn f() {\n    x = a + /* x */ b;\n}');
 	});
 
 	it('keeps a same-line trailing entry on its owner\'s row, before the separator', async () => {
-		expect((await detachedRenderer('rust'))('fn g() {} /* t */\n\nfn h() {}')).toBe('fn g() {} /* t */\n\nfn h() {}\n');
+		expect((await detachedRenderer('rust'))('fn g() {} /* t */\n\nfn h() {}')).toBe('fn g() {} /* t */\n\nfn h() {}');
 	});
 
 	it('detached read keeps an own-line comment between items in its source layout', async () => {
 		const rust = await detachedRenderer('rust');
-		expect(rust('fn g() {}\n/* t */\n\nfn h() {}')).toBe('fn g() {}\n/* t */\n\nfn h() {}\n');
-		expect(rust('fn g() {}\n// t\n\nfn h() {}')).toBe('fn g() {}\n// t\n\nfn h() {}\n');
+		expect(rust('fn g() {}\n/* t */\n\nfn h() {}')).toBe('fn g() {}\n/* t */\n\nfn h() {}');
+		expect(rust('fn g() {}\n// t\n\nfn h() {}')).toBe('fn g() {}\n// t\n\nfn h() {}');
 		const typescript = await detachedRenderer('typescript');
-		expect(typescript('a;\n/* c */\n\nb;')).toBe('a;\n/* c */\n\nb;\n');
-		expect(typescript('a;\n// c\n\nb;')).toBe('a;\n// c\n\nb;\n');
+		expect(typescript('a;\n/* c */\n\nb;')).toBe('a;\n/* c */\n\nb;');
+		expect(typescript('a;\n// c\n\nb;')).toBe('a;\n// c\n\nb;');
 	});
 
 	it('lays root entries one per line, since the root gap starts a line', async () => {
@@ -85,7 +85,7 @@ describe('built and read trivia render alike', () => {
 		const f = (body: unknown) => ir.functionItem({ name: 'f', parameters: ir.parameters(), body });
 		const pairs: [unknown, string][] = [
 			[f(ir.block().$trivia.inner(todo())), 'fn f() {\n    // TODO\n}\n'],
-			[ir.expressionStatement(ir.callExpression({ function: 'f', arguments: ir.arguments().$trivia.inner(ir.blockComment(' a ')) })), 'f(/* a */);'],
+			[ir.expressionStatement(ir.callExpression({ function: 'f', arguments: ir.arguments().$trivia.inner(ir.blockComment(' a ')) })), 'f(/* a */);\n'],
 			[
 				f(ir.block({ statements: [ir.expressionStatement(ir.identifier('a')).$trivia.trailing('\n', ir.lineComment(' c'))] })),
 				'fn f() {\n    a;\n    // c\n}\n'
