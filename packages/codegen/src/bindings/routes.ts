@@ -506,9 +506,10 @@ function membersOf(
 	const counted = new Set([...paths.values()].flatMap((route) => route.path?.filter((step) => step.owner === kind && step.anchor === 'only').map((step) => step.slot) ?? []));
 	const reached = new Map([...paths].filter(([, route]) => guaranteed.holds(route.path)));
 	const via = new Set([...reached.keys()].flatMap((m) => m.via.flatMap((step) => step.kind ?? [])));
-	const flags = input.bindings.members.flatMap((m) =>
-		m.route === 'rename' && m.flag === true && (m.claims === undefined || m.claims.some((index) => inherited.has(index))) && formsOf(input.model, m.owner).includes(kind) ? [m] : []
+	const captures: readonly Extract<MemberFact, { readonly route: 'rename' }>[] = input.bindings.members.flatMap((m) =>
+		m.route === 'rename' && (m.claims === undefined || m.claims.some((index) => inherited.has(index))) && formsOf(input.model, m.owner).includes(kind) ? [m] : []
 	);
+	const flags = captures.filter((m) => m.flag === true);
 	const flagSlots = new Map(flags.flatMap((m) => {
 		const slot = slotFor(input.model, node.slots, m);
 		if (slot === undefined && formsOf(input.model, m.owner).every((form) => slotFor(input.model, modelNode(input.model, form)?.slots ?? [], m) === undefined)) {
@@ -517,10 +518,7 @@ function membersOf(
 		}
 		return slot === undefined ? [] : [[m, slot] as const];
 	}));
-	const capturesOf = (slot: ModelSlot): readonly Extract<MemberFact, { readonly route: 'rename' }>[] =>
-		input.bindings.members.flatMap((m) =>
-			m.route === 'rename' && (m.claims === undefined || m.claims.some((index) => inherited.has(index))) && slotFor(input.model, node.slots, m) === slot && formsOf(input.model, m.owner).includes(kind) ? [m] : []
-		);
+	const capturesOf = (slot: ModelSlot) => captures.filter((m) => slotFor(input.model, node.slots, m) === slot);
 	const unrouted = (slot: ModelSlot, why: string): void => {
 		const [capture] = capturesOf(slot);
 		if (capture !== undefined) throw new Error(`bindings: ${kind}'s capture @${capture.name} reaches no member: its ${slot.name} slot ${why}; capture a slot a member reads, or mark it @dropped`);
