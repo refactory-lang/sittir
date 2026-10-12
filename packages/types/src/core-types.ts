@@ -302,10 +302,6 @@ export interface ErrorRegion {
 // Engine API surfaces
 // ---------------------------------------------------------------------------
 
-export interface RenderCallOptions {
-	readonly ignoreFormat?: boolean;
-}
-
 /**
  * The data projection of a generated kind interface: `$type` plus its
  * `_<slot>` storage, without the accessor methods that only the wrap

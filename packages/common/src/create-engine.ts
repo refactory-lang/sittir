@@ -15,7 +15,6 @@ import type {
 	Pending,
 	Rendered,
 	RenderArgument,
-	RenderCallOptions,
 	CreateEngineOptions
 } from '@sittir/types';
 import { bindTree, engineOf, inEngine, sameLanguage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
@@ -245,7 +244,7 @@ function assembleEngine<API extends LanguageAPI>(
 		read() {
 			return Promise.reject(unimplementedVerb('read'));
 		},
-		render(node: RenderArgument<API>, renderOptions?: API['options'] & RenderCallOptions) {
+		render(node: RenderArgument<API>, renderOptions?: API['options']) {
 			const target = typeof node === 'function' ? node(build) : node;
 			const stamp = engineOf(target);
 			if (stamp !== undefined && !sameLanguage(stamp, identity)) {

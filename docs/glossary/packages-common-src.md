@@ -264,7 +264,7 @@ The level count a native read takes for a set of parse options: one by default, 
 
 ### `packages/common/src/engine.ts::nativeLanguageEngine`
 
-Adapts one grammar's native engine to the language hooks' native engine shape, the same for every grammar. `render` splits the call's flat options into the native `ignoreFormat` and the render options it resolves over its own, passing none when the call has none. `parseAndRead` returns the native read untouched; the engine that owns the result binds its tree. `buildProfile` is the native build's compile profile.
+Adapts one grammar's native engine to the language hooks' native engine shape, the same for every grammar. `render` passes the call's flat options as the render options the native engine resolves over its own, and none when the call has none or an empty object. `parseAndRead` returns the native read untouched; the engine that owns the result binds its tree. `buildProfile` is the native build's compile profile.
 
 
 ### `packages/common/src/delimiter.ts::Delimiter`

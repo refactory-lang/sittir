@@ -36,7 +36,6 @@ rs.render(node, { layout: { indent: 'x' } });
 void createEngine(rust, { render: { layout: { indent: '\t' }, indnet: '\t' } });
 // @ts-expect-error per-call options take no unknown key either
 rs.render(node, { layout: { indent: '\t' }, indnet: '\t' });
-rs.render(node, { layout: { indent: '\t' }, ignoreFormat: false });
 
 // The descriptor's createEngine takes exactly what createEngine(rust, …) takes.
 const viaDescriptor: Promise<Engine<RustAPI>> = rust.createEngine({ render: { layout: { indent: '\t' } } });

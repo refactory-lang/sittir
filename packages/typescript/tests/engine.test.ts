@@ -48,34 +48,4 @@ describe('engine', () => {
 		expect(typeof native.parseAndRead).toBe('function');
 	});
 
-	it('native engine rejects the ignoreFormat option', async () => {
-		// Mock a native backend
-		vi.doMock('../src/backend.js', () => ({
-			getActiveBackend: () => ({
-				name: 'native',
-				hashMatch: true,
-				native: {
-					SittirEngine: class {
-						render(_node: Record<string, unknown>): string {
-							return 'const x = 1;';
-						}
-						dispose(): void {}
-					}
-				}
-			})
-		}));
-
-		const engine = await createEngine(await descriptor());
-
-		const node = engine.build.identifier('x');
-
-		// ignoreFormat: false or undefined should work
-		expect(() => engine.render(node)).not.toThrow();
-		expect(() => engine.render(node, { ignoreFormat: false })).not.toThrow();
-
-		// ignoreFormat: true should throw with explicit message
-		expect(() => engine.render(node, { ignoreFormat: true })).toThrow(
-			/ignoreFormat option not yet supported by native engine/
-		);
-	});
 });
