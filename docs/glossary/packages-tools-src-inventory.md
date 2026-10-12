@@ -56,6 +56,14 @@ Reads the vocabulary through the feature tool's reader (`readVocabularySource`),
 
 Every kind is keyed by its `$kind` literal and carries its own members (each marked optional or required, and a flag when it is declared with the marker type `Flag`, `read.ts::FLAG`) its parent, the interface its `extends` clause names through `V.`, and the value it is refined by, when it is an owner's refinement (`read.ts::refinesOf`). `members(path)` adds the inherited members, nearest first: at each kind on the line its own, then those of the value it is refined by, along the value's own line. So `declaration.function.public.restricted` has the `scope` that `scoped-visibility` gives `modifier.visibility.public.restricted`. `flags` is every name some kind or stub declares as a flag. An interface with no `$kind` literal and no kind of the same name is not a vocabulary kind (the context's typemap and `Unmapped`).
 
+### `packages/tools/src/inventory/vocabulary.ts::VocabularyKind`
+
+A vocabulary kind as `readVocabulary` reads it: the kind the bindings read (`@sittir/codegen/bindings::VocabularyKind`) with the path of the value it is refined by, when it is an owner's refinement.
+
+### `packages/tools/src/inventory/vocabulary.ts::Vocabulary`
+
+The vocabulary as `readVocabulary` reads it: the bindings' vocabulary (`@sittir/codegen/bindings::Vocabulary`) with every kind a `VocabularyKind`, so `members(path)` can follow what a kind is refined by.
+
 ### `packages/tools/src/inventory/index.ts::BindingsModule`
 
 A grammar's `grammar.bindings.ts` text, with the grammar bindings and the derivation report it was printed from.

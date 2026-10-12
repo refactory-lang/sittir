@@ -259,9 +259,61 @@ The facts with every grammar kind they name (claims and their placements, the ki
 
 A `CaptureSite` with the kind of each of its `down` selectors named by its bound kind.
 
+### `packages/codegen/src/bindings/vocabulary.ts::readVocabulary`
+
+Reads the authored vocabulary structurally, never by matching lines or calling the compiler: each file (a failure names it) is parsed by the pinned build's TypeScript package in the pinned child (`runPinned`, `pinned-vocabulary.ts::vocabularyDeclarationsInProcess`), so a regeneration of `packages/typescript` cannot move how the vocabulary reads. The result is every interface under its namespaces, keyed by its `$kind` literal, with its own members (each marked optional or required, and a flag when its declared type is the marker `Flag`, the vocabulary's declaration of a flag in `utils.ts`; a `boolean` member is data) and its parent, the interface its `extends` clause names through `V.`. `members(path)` adds the inherited members, nearest first. `flags` is every name some kind declares as a flag. An interface with no `$kind` literal is not a vocabulary kind (the context's typemap and `Unmapped`). The reader is syntactic: it resolves no types.
+
+### `packages/codegen/src/bindings/vocabulary.ts::VocabularyDeclaration`
+
+One vocabulary interface as the pinned child reports it: its scoped name, its path, its own members as entries and the scoped name of its parent, if it names one. Plain JSON, so it crosses the process; `readVocabulary` resolves parent names to paths once every file is read.
+
+### `packages/codegen/src/bindings/pinned-vocabulary.ts::vocabularyDeclarationsInProcess`
+
+The vocabulary interfaces one file declares (`VocabularyDeclaration`), read by the pinned build's TypeScript engine through its typed nodes. It runs in the pinned child (`pinned-reader.child.ts::READS`), never in the workspace process, and imports `@sittir/typescript` for types only. A file that does not parse cleanly is refused, never read from what the parser recovered: a recovered tree can turn a member into a different one (the TypeScript grammar does not parse an optional property named `abstract` without `readonly`). Every name it reads is compared as written, so a name spelled with an escape (`Fla\u0067` for `Flag`) is refused rather than read as a different name.
+
+### `packages/codegen/src/bindings/pinned-vocabulary.ts::identifier`
+
+A member's or namespace's name as written, refused unless it is a plain identifier (a keyword such as `static` included): a quoted or computed name would otherwise be read with its quotes or brackets as a different name.
+
+### `packages/codegen/src/bindings/pinned-vocabulary.ts::typescriptReader`
+
+The pinned TypeScript package's kinds and engine, with the pinned build they come from, loaded once per child and shared by every read; a failed load is forgotten so the next read tries again.
+
+### `packages/codegen/src/bindings/pinned-vocabulary.ts::collect`
+
+Walks a file's statements, each read through its wrappers (`unwrap`): a namespace, spelled `namespace` or `module`, adds its name to the scope and is walked in turn, and an interface is declared (`declare`).
+
+### `packages/codegen/src/bindings/pinned-vocabulary.ts::unwrap`
+
+The declaration a statement holds, read through every wrapper the TypeScript grammar puts around one: `export`, `export default` and `declare`, and the expression statement a bare `namespace` parses as. The compiler sees each of these as the declaration itself, so the vocabulary reads the same however a declaration is exported or declared.
+
+### `packages/codegen/src/bindings/pinned-vocabulary.ts::Wrapped`
+
+A statement, or what one of the wrappers `unwrap` reads through holds.
+
+### `packages/codegen/src/bindings/pinned-vocabulary.ts::declare`
+
+Records an interface whose `$kind` is a string literal: its scoped name, its path, its own members and the name of its parent (`vocabularyReference`). A `$kind` of any other literal (a boolean, a number) makes no kind, as no `$kind` does.
+
+### `packages/codegen/src/bindings/pinned-vocabulary.ts::vocabularyReference`
+
+The vocabulary interface a heritage clause names through `V.`: the first `V.`-qualified type name among its descendants (`engine.query`), however the reference is written, so `SubKindOf<V.X<G>>`, `SubKindOf<(V.X<G>)>` and `V.X` all name `X`.
+
+### `packages/codegen/src/bindings/pinned-vocabulary.ts::isNode`
+
+Whether a child is a node rather than an absent child or the kind id that stands for an anonymous token.
+
+### `packages/codegen/src/bindings/hash.ts::isVocabularySource`
+
+Whether a file name is a vocabulary source: a `.ts` file.
+
+### `packages/codegen/src/bindings/hash.ts::vocabularySources`
+
+Every source of the vocabulary (`isVocabularySource`) in the vocabulary directory and its sub-folders (`features/**`), in the order of their paths relative to that directory in posix form. The bindings hash and the generated-output manifest read the vocabulary's files through it, and it holds every file a vocabulary reader reads, so an edit to any of them marks the grammar bindings and the generated output of every bound grammar stale.
+
 ### `packages/codegen/src/bindings/hash.ts::bindingsSourceHash`
 
-The SHA-256 of a `bindings.scm` and every `.ts` source under the vocabulary directory, its sub-folders included (`features/**`), each source keyed by its path relative to that directory in posix form, in path order, over their bytes. An edit to or a move of any vocabulary source marks the grammar bindings stale. Nothing is parsed, so the hash is checked without the scm parser.
+The SHA-256 of a `bindings.scm` and every source of the vocabulary (`vocabularySources`), each source keyed by its path relative to the vocabulary directory in posix form, in that order, over their bytes. An edit to or a move of any vocabulary source marks the grammar bindings stale. Nothing is parsed, so the hash is checked without the scm parser.
 
 ### `packages/codegen/src/bindings/hash.ts::grammarBindingsHash`
 
@@ -446,7 +498,7 @@ The generated flags module: one numeric `enum Flags` with a bit per flag name, i
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::module`
 
-The `bindings.scm` reader, over the pinned `@sittir/scm` build (`loadPinnedScm`). It imports `@sittir/scm` and `@sittir/common` for types only: every value it uses comes from the pinned build, so the facts depend on the pin and not on the workspace's packages.
+The `bindings.scm` reader, over the pinned `@sittir/scm` build (`bootstrap/pinned.ts::loadPinnedBuild`). It imports `@sittir/scm` and `@sittir/common` for types only: every value it uses comes from the pinned build, so the facts depend on the pin and not on the workspace's packages.
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::ready`
 
@@ -769,11 +821,15 @@ The references in a named node's group, its anchored-last `last` included.
 
 ### `packages/codegen/src/bindings/pinned-reader.child.ts::module`
 
-The reader's process. It reads requests from stdin, one JSON `PinnedReaderRequest` per line, answers them in order with the read their mode names, and writes each reply as `PINNED_READER_MARKER` and one JSON `PinnedReaderReply` line on stdout. A `BindingsSyntaxError` is replied as its lines and any other failure as its stack, so one bad file does not stop the reads after it. It exits once stdin closes and the last reply is written.
+The pinned build's process. It reads requests from stdin, one JSON `PinnedReaderRequest` per line, answers them in order with the run their mode names, and writes each reply as `PINNED_READER_MARKER` and one JSON `PinnedReaderReply` line on stdout. A `BindingsSyntaxError` is replied as its lines and any other failure as its stack, so one bad file does not stop the reads after it. It exits once stdin closes and the last reply is written.
 
 ### `packages/codegen/src/bindings/pinned-reader.child.ts::READS`
 
-The read each request mode runs in the child process.
+The run each request mode names in the child process, typed by its row of `PinnedReaderModes`.
+
+### `packages/codegen/src/bindings/pinned-reader.child.ts::run`
+
+Runs one request's mode on its input.
 
 ### `packages/codegen/src/bindings/pinned-reader.child.ts::answer`
 
@@ -785,11 +841,11 @@ The chain of pending answers, so replies leave in request order and the process 
 
 ### `packages/codegen/src/bindings/read.ts::module`
 
-The public face of the pinned reader. The reader runs in a child process because tsx resolves the root `tsconfig.json` paths for every file it loads, inside the bootstrap directory too, so an in-process import of the pinned build would load the workspace's `@sittir/common` beside the pinned one. The child runs under `tsconfig.pinned.json`, which maps no paths. A process starts one child, on its first read, and sends every later read to it, so a run pays the start-up once (`bootstrap/bootstrap.ts::module` records the cost) whatever grammars and modes it reads.
+The public face of the pinned build: codegen's every run of a sittir package on its own inputs goes through it. The runs happen in a child process because tsx resolves the root `tsconfig.json` paths for every file it loads, inside the bootstrap directory too, so an in-process import of the pinned build would load the workspace's `@sittir/common` beside the pinned one. The child runs under `tsconfig.pinned.json`, which maps no paths. A process starts one child, on its first read, and sends every later read to it, so a run pays the start-up once (`bootstrap/bootstrap.ts::module` records the cost) whatever grammars and modes it reads.
 
 ### `packages/codegen/src/bindings/read.ts::PinnedReaderRequest`
 
-One read sent to the child: the id its reply carries, the mode and the `bindings.scm` text.
+One run sent to the child: the id its reply carries, the mode and the mode's input.
 
 ### `packages/codegen/src/bindings/read.ts::PinnedReaderReply`
 
@@ -811,9 +867,21 @@ Resolves the read a reply answers, rethrowing a reply of syntax lines as `Bindin
 
 Marks where the reply starts on the child's stdout, so anything the pinned build prints before it is skipped.
 
-### `packages/codegen/src/bindings/read.ts::readPinned`
+### `packages/codegen/src/bindings/read.ts::runPinned`
 
-Sends one read to the process's child, starting it on the first read, and waits for its reply.
+Sends one run to the process's child, starting it on the first run, and waits for its reply, typed by the mode's row of `PinnedReaderModes`. The reply crosses the process as JSON, so its value is the mode's output by the child's contract, not by a check.
+
+### `packages/codegen/src/bindings/read.ts::PinnedReaderModes`
+
+Every mode the child runs, with its input and its output: one row per run, which `READS` implements in the child and `runPinned` calls in the parent. A mode's input and output are plain JSON values.
+
+### `packages/codegen/src/bindings/read.ts::PinnedInput`
+
+A mode's input (`PinnedReaderModes`).
+
+### `packages/codegen/src/bindings/read.ts::PinnedOutput`
+
+A mode's output (`PinnedReaderModes`).
 
 ### `packages/codegen/src/bindings/read.ts::readBindings`
 
@@ -829,11 +897,11 @@ A `bindings.scm` parsed and rendered back by the pinned engine (`BindingsRoundTr
 
 ### `packages/codegen/src/bindings/read.ts::PinnedReaderMode`
 
-Which read a request asks the child for: the facts, the pattern summaries, or a round trip.
+Which run a request asks the child for: a row of `PinnedReaderModes`.
 
 ### `packages/codegen/src/bindings/read.ts::PendingRead`
 
-A request waiting on its reply: the promise callbacks it settles.
+A request waiting on its reply: its mode, which a failure names, and the promise callbacks it settles.
 
 ### `packages/codegen/src/bindings/read.ts::PinnedReader`
 

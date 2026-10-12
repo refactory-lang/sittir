@@ -1,21 +1,12 @@
+import type { Vocabulary as KindVocabulary, VocabularyKind as Kind, VocabularyMember } from '@sittir/codegen/bindings';
 import { FLAG, isKind, readVocabularySource } from '../vocabulary/read.ts';
 
-export interface VocabularyMember {
-	readonly optional: boolean;
-	readonly flag: boolean;
-}
-
-export interface VocabularyKind {
-	readonly name: string;
-	readonly own: ReadonlyMap<string, VocabularyMember>;
-	readonly parent: string | undefined;
+export interface VocabularyKind extends Kind {
 	readonly refines: string | undefined;
 }
 
-export interface Vocabulary {
+export interface Vocabulary extends KindVocabulary {
 	readonly kinds: ReadonlyMap<string, VocabularyKind>;
-	readonly flags: ReadonlySet<string>;
-	members(path: string): ReadonlyMap<string, VocabularyMember>;
 }
 
 export function readVocabulary(dir: string): Vocabulary {

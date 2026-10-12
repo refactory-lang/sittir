@@ -135,6 +135,49 @@ describe('a hand edit to a generated file', () => {
 	});
 });
 
+describe('bindings.scm as a source', () => {
+	it('changes the source of a grammar when its bindings.scm is deleted', async () => {
+		write('packages/python/bindings.scm', '(module) @module');
+		write(GRAMMAR_SOURCE, 'grammar two');
+		regenerate();
+		commitAll('bound');
+		rmSync(join(repo, 'packages/python/bindings.scm'));
+		expect(verify()).toMatchObject({ ok: false, sourceChanged: true });
+		git('add', '-A');
+		expect(await verifyStaged()).toMatchObject({ ok: false, sourceChanged: true });
+	});
+});
+
+describe('the vocabulary as a source', () => {
+	const VOCABULARY = 'packages/types/src/vocabulary/declaration.ts';
+
+	it('changes the source of a grammar with bindings when a vocabulary file is edited', () => {
+		write('packages/python/bindings.scm', '(module) @module');
+		write(VOCABULARY, 'vocabulary one');
+		regenerate();
+		commitAll('bound');
+		write(VOCABULARY, 'vocabulary two');
+		expect(verify()).toMatchObject({ ok: false, sourceChanged: true });
+	});
+
+	it('leaves the source of a grammar without bindings alone', () => {
+		write(VOCABULARY, 'vocabulary two');
+		expect(verify().ok).toBe(true);
+	});
+
+	it('changes the source of a grammar with bindings when a vocabulary file is deleted', async () => {
+		write('packages/python/bindings.scm', '(module) @module');
+		write(VOCABULARY, 'vocabulary one');
+		write('packages/types/src/vocabulary/statement.ts', 'statement one');
+		regenerate();
+		commitAll('bound');
+		rmSync(join(repo, 'packages/types/src/vocabulary/statement.ts'));
+		expect(verify()).toMatchObject({ ok: false, sourceChanged: true });
+		git('add', '-A');
+		expect(await verifyStaged()).toMatchObject({ ok: false, sourceChanged: true });
+	});
+});
+
 describe('whether the source is the one the generated output came from', () => {
 	it('holds for an uncommitted tree that was just regenerated', () => {
 		write(CODEGEN_SOURCE, 'codegen two');
