@@ -15545,18 +15545,7 @@ export interface PythonTypeMap extends GrammarTypeMap {
 		| { readonly node: MatchBlockBlock; readonly empty: EmptyMatchBlockBlock }
 		| { readonly node: MatchBlockBlock.Bound; readonly empty: EmptyMatchBlockBlock }
 		| { readonly node: MatchBlockBlock.Parsed; readonly empty: EmptyMatchBlockBlock.Parsed };
-	readonly trivia:
-		| Blankline
-		| Comment
-		| Dedent
-		| DoubleBlankline
-		| Indent
-		| LineContinuationNewline
-		| LineContinuationNul
-		| Newline
-		| Space
-		| Tab
-		| Tight;
+	readonly trivia: Comment | Dedent | Indent | Layout | LineContinuation;
 }
 
 export type NodeMethodsOf = NodeMethods<PythonTypeMap['trivia']>;

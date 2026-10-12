@@ -26510,17 +26510,7 @@ export interface RustTypeMap extends GrammarTypeMap {
 		| { readonly node: DelimTokenTreeBrace; readonly empty: EmptyDelimTokenTreeBrace }
 		| { readonly node: DelimTokenTreeBrace.Bound; readonly empty: EmptyDelimTokenTreeBrace }
 		| { readonly node: DelimTokenTreeBrace.Parsed; readonly empty: EmptyDelimTokenTreeBrace.Parsed };
-	readonly trivia:
-		| Blankline
-		| BlockComment
-		| Dedent
-		| DoubleBlankline
-		| Indent
-		| LineComment
-		| Newline
-		| Space
-		| Tab
-		| Tight;
+	readonly trivia: Comment | Layout;
 }
 
 export type NodeMethodsOf = NodeMethods<RustTypeMap['trivia']>;

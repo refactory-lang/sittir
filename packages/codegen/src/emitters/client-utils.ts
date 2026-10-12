@@ -77,9 +77,15 @@ function emitQuerySlots(rows: ReadonlyMap<number, readonly QuerySlotRow[]>): str
 }
 
 export function resolveTriviaTypeNames(triviaKinds: readonly string[], nodeMap: NodeMap): string[] {
+	const covered = new Set(
+		triviaKinds.flatMap((kind) => {
+			const node = nodeMap.nodes.get(kind);
+			return node instanceof AssembledSupertype ? node.subtypeNames : [];
+		})
+	);
 	const names = triviaKinds.flatMap((kind) => {
 		const node = nodeMap.nodes.get(kind);
-		return node === undefined || node instanceof AssembledSupertype ? [] : [node.typeName];
+		return node === undefined || covered.has(kind) ? [] : [node.typeName];
 	});
 	return [...new Set(names)].sort();
 }

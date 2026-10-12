@@ -10168,7 +10168,7 @@ that kind was left alone.
 
 ### `packages/codegen/src/emitters/client-utils.ts::resolveTriviaTypeNames`
 
-The type names a side's entries may be: each trivia kind's own node type (`triviaKinds`), sorted and deduplicated, without the supertypes the trivia closure makes trivia (rust's `_comment`, the `_layout` supertype once every layout member is trivia). A supertype is no node a side can hold, so its name admits nothing its members don't; the admitted set is the concrete members, among them `tight` and the depth members.
+The type names a side's entries may be: each trivia kind's own node type (`triviaKinds`), sorted and deduplicated, a kind that a trivia supertype covers spelled through that supertype (rust's `Comment | Layout`; scm's concrete `Comment`). A supertype is the union of its members, so naming it admits nothing they don't; the admitted set is the concrete members, among them `tight` and the depth members, and the grouping keeps the names a reader knows.
 
 ### `packages/codegen/src/emitters/client-utils.ts::buildTriviaNodeType`
 

@@ -40,10 +40,10 @@ describe('empty forms in the emitted types', () => {
 		expect(types).toContain("export type InnerTrivia<N> = GrammarInnerTrivia<N, RustTypeMap['trivia']>;");
 	});
 
-	it('admits the concrete trivia members only: tight, the depth members, comments and whitespace, and no supertype name', () => {
+	it('names the trivia members through each supertype that covers them', () => {
 		const types = emitTypes({ grammar: 'rust', nodeMap, generatedIdTables, triviaKinds: [...triviaKinds(nodeMap)] });
 		const admitted = types.match(/readonly trivia:([^;]*);/)?.[1]?.split('|').map((name) => name.trim()).filter((name) => name !== '');
-		expect(admitted).toEqual(['Blankline', 'BlockComment', 'Dedent', 'DoubleBlankline', 'Indent', 'LineComment', 'Newline', 'Space', 'Tab', 'Tight']);
+		expect(admitted).toEqual(['Comment', 'Layout']);
 	});
 
 	it('puts the inner side of a kind with two inner gaps at its last', () => {
