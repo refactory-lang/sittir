@@ -96,17 +96,19 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['identifier']
 				| G['type'];
 		};
-		readonly 'clause.case': {
+		readonly 'clause.case.default': {
 			readonly bodies: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+		};
+		readonly 'clause.case.match': {
 			readonly consequence: V.Declaration.TypeAlias<G> | G['statement'];
+		};
+		readonly 'clause.case.switch': {
+			readonly bodies: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
 			readonly value:
 				| V.Declaration.Module<G>
 				| G['expression']
 				| G['identifier']
 				| G['literal'];
-		};
-		readonly 'clause.case.default': {
-			readonly bodies: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
 		};
 		readonly 'clause.catch': {
 			readonly catchClauseGroup: unknown;
@@ -370,12 +372,10 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['expression']
 				| G['identifier']
 				| G['literal'];
-			readonly visibility: V.Modifier.Visibility<G>;
 		};
 		readonly 'declaration.field.signature': {
 			readonly name: G['expression'] | G['literal'] | V.Identifier.Property<G> | string;
 			readonly type: G['identifier'] | G['type'];
-			readonly visibility: V.Modifier.Visibility<G>;
 		};
 		readonly 'declaration.function': {
 			readonly body: V.Declaration.TypeAlias<G> | G['statement'];
@@ -427,7 +427,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly name: G['identifier'] | string;
 		};
 		readonly 'declaration.method': {
-			readonly accessor: string;
 			readonly body: V.Declaration.TypeAlias<G> | G['statement'];
 			readonly name: G['expression'] | G['identifier'] | G['literal'] | string;
 			readonly parameters:
@@ -443,10 +442,8 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Expression.Call.Macro<G>
 				| G['identifier']
 				| G['type'];
-			readonly visibility: V.Modifier.Visibility<G>;
 		};
 		readonly 'declaration.method.signature': {
-			readonly accessor: string;
 			readonly functionModifiers: V.Modifier.Extern<G> | string;
 			readonly name: G['expression'] | G['identifier'] | G['literal'] | string;
 			readonly parameters:
@@ -461,13 +458,10 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Expression.Call.Macro<G>
 				| G['identifier']
 				| G['type'];
-			readonly visibility: V.Modifier.Visibility<G>;
 		};
 		readonly 'declaration.method.signature.abstract': {
-			readonly accessorKind: string;
 			readonly name: G['expression'] | G['literal'] | V.Identifier.Property<G> | string;
 			readonly returnType: G['identifier'] | G['type'];
-			readonly visibility: V.Modifier.Visibility<G>;
 		};
 		readonly 'declaration.method.static': {
 			readonly parameters:
@@ -515,7 +509,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Expression.Call.Macro<G>
 				| G['identifier']
 				| G['type'];
-			readonly visibility: V.Modifier.Visibility<G>;
 		};
 		readonly 'declaration.parameter.default': {
 			readonly default:
@@ -568,15 +561,20 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['clause']
 				| V.Expression.Call.Macro<G>
 				| G['identifier']
+				| G['literal']
+				| V.Statement.Block<G>
 				| G['type'];
 		};
-		readonly 'declaration.type_parameter.const': {
+		readonly 'declaration.type_parameter.value': {
+			readonly default: G['identifier'] | G['literal'] | V.Statement.Block<G>;
 			readonly type:
 				| V.Clause.Bounds.Removed<G>
 				| V.Expression.Call.Macro<G>
 				| G['identifier']
 				| G['type'];
-			readonly value: G['identifier'] | G['literal'] | V.Statement.Block<G>;
+		};
+		readonly 'declaration.union': {
+			readonly body: V.Declaration.Field<G>;
 		};
 		readonly 'declaration.variable': {
 			readonly name: unknown | G['expression'] | G['identifier'] | G['pattern'];
@@ -1606,7 +1604,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['statement'];
 		};
 		readonly 'statement.match': {
-			readonly body: unknown | V.Clause.Case<G> | string;
+			readonly body: unknown | V.Clause.Case.Match<G> | string;
 			readonly subject:
 				| G['expression']
 				| G['identifier']

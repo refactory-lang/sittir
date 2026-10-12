@@ -309,11 +309,11 @@ Whether a file name is a vocabulary source: a `.ts` file.
 
 ### `packages/codegen/src/bindings/hash.ts::vocabularySources`
 
-Every source of the vocabulary (`isVocabularySource`), in name order. The reader, the bindings hash and the generated-output manifest all read the vocabulary through it, so they agree on what the vocabulary is.
+Every source of the vocabulary (`isVocabularySource`) in the vocabulary directory and its sub-folders (`features/**`), in the order of their paths relative to that directory in posix form. The bindings hash and the generated-output manifest read the vocabulary's files through it, and it holds every file a vocabulary reader reads, so an edit to any of them marks the grammar bindings and the generated output of every bound grammar stale.
 
 ### `packages/codegen/src/bindings/hash.ts::bindingsSourceHash`
 
-The SHA-256 of a `bindings.scm` and every source of the vocabulary (`vocabularySources`), each source keyed by its file name in name order, over their bytes. Nothing is parsed, so the hash is checked without the scm parser.
+The SHA-256 of a `bindings.scm` and every source of the vocabulary (`vocabularySources`), each source keyed by its path relative to the vocabulary directory in posix form, in that order, over their bytes. An edit to or a move of any vocabulary source marks the grammar bindings stale. Nothing is parsed, so the hash is checked without the scm parser.
 
 ### `packages/codegen/src/bindings/hash.ts::grammarBindingsHash`
 

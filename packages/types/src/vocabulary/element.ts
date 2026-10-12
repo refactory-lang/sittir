@@ -1,5 +1,5 @@
 import type { GrammarContext } from './context.ts';
-import type { Flag, SubKindOf } from './utils.ts';
+import type { SubKindOf } from './utils.ts';
 import type * as V from './index.ts';
 export interface Element<G extends GrammarContext<G>> {
 	readonly $kind: 'element';
@@ -40,13 +40,6 @@ export namespace Element {
 				// claimed by p
 				readonly $kind: 'element.comparator.comparison.not_equal';
 			}
-			export type Any<G extends GrammarContext<G>> =
-				| V.Element.Comparator.Comparison.Equal<G>
-				| V.Element.Comparator.Comparison.Greater<G>
-				| V.Element.Comparator.Comparison.GreaterEqual<G>
-				| V.Element.Comparator.Comparison.Less<G>
-				| V.Element.Comparator.Comparison.LessEqual<G>
-				| V.Element.Comparator.Comparison.NotEqual<G>;
 		}
 		export interface Identity<G extends GrammarContext<G>> extends SubKindOf<V.Element.Comparator<G>> {
 			readonly $kind: 'element.comparator.identity';
@@ -60,9 +53,6 @@ export namespace Element {
 				// claimed by p
 				readonly $kind: 'element.comparator.identity.is_not';
 			}
-			export type Any<G extends GrammarContext<G>> =
-				| V.Element.Comparator.Identity.Is<G>
-				| V.Element.Comparator.Identity.IsNot<G>;
 		}
 		export interface Membership<G extends GrammarContext<G>> extends SubKindOf<V.Element.Comparator<G>> {
 			readonly $kind: 'element.comparator.membership';
@@ -76,87 +66,11 @@ export namespace Element {
 				// claimed by p
 				readonly $kind: 'element.comparator.membership.not_in';
 			}
-			export type Any<G extends GrammarContext<G>> =
-				| V.Element.Comparator.Membership.In<G>
-				| V.Element.Comparator.Membership.NotIn<G>;
 		}
-		export type Any<G extends GrammarContext<G>> =
-			| V.Element.Comparator<G>
-			| V.Element.Comparator.Comparison.Equal<G>
-			| V.Element.Comparator.Comparison.Greater<G>
-			| V.Element.Comparator.Comparison.GreaterEqual<G>
-			| V.Element.Comparator.Comparison.Less<G>
-			| V.Element.Comparator.Comparison.LessEqual<G>
-			| V.Element.Comparator.Comparison.NotEqual<G>
-			| V.Element.Comparator.Identity.Is<G>
-			| V.Element.Comparator.Identity.IsNot<G>
-			| V.Element.Comparator.Membership.In<G>
-			| V.Element.Comparator.Membership.NotIn<G>;
-	}
-	export interface Macro<G extends GrammarContext<G>> extends SubKindOf<V.Element<G>> {
-		readonly $kind: 'element.macro';
-	}
-	export namespace Macro {
-		export interface Fragment<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro<G>> {
-			// claimed by r
-			readonly $kind: 'element.macro.fragment';
-		}
-		export interface TokenBinding<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro<G>> {
-			// claimed by r
-			readonly $kind: 'element.macro.token_binding';
-			readonly name: V.Identifier.Metavariable<G>;
-			readonly type: V.Element.Macro.Fragment<G>;
-		}
-		export interface TokenRepetition<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro<G>> {
-			// claimed by r
-			readonly $kind: 'element.macro.token_repetition';
-			readonly operator: G['slots']['element.macro.token_repetition']['operator'];
-			readonly tokens?: G['slots']['element.macro.token_repetition']['tokens'][];
-		}
-		export namespace TokenRepetition {
-			export interface Pattern<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro.TokenRepetition<G>> {
-				// claimed by r
-				readonly $kind: 'element.macro.token_repetition.pattern';
-				readonly operator: G['slots']['element.macro.token_repetition.pattern']['operator'];
-				readonly tokenPatterns?: G['slots']['element.macro.token_repetition.pattern']['tokenPatterns'][];
-			}
-			export type Any<G extends GrammarContext<G>> =
-				| V.Element.Macro.TokenRepetition<G>
-				| V.Element.Macro.TokenRepetition.Pattern<G>;
-		}
-		export interface TokenTree<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro<G>> {
-			// claimed by r
-			readonly $kind: 'element.macro.token_tree';
-			readonly tokens?: G['slots']['element.macro.token_tree']['tokens'][];
-		}
-		export namespace TokenTree {
-			export interface Delimited<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro.TokenTree<G>> {
-				// claimed by r
-				readonly $kind: 'element.macro.token_tree.delimited';
-			}
-			export interface Pattern<G extends GrammarContext<G>> extends SubKindOf<V.Element.Macro.TokenTree<G>> {
-				// claimed by r
-				readonly $kind: 'element.macro.token_tree.pattern';
-			}
-			export type Any<G extends GrammarContext<G>> =
-				| V.Element.Macro.TokenTree<G>
-				| V.Element.Macro.TokenTree.Delimited<G>
-				| V.Element.Macro.TokenTree.Pattern<G>;
-		}
-		export type Any<G extends GrammarContext<G>> =
-			| V.Element.Macro.Fragment<G>
-			| V.Element.Macro.TokenBinding<G>
-			| V.Element.Macro.TokenRepetition<G>
-			| V.Element.Macro.TokenRepetition.Pattern<G>
-			| V.Element.Macro.TokenTree<G>
-			| V.Element.Macro.TokenTree.Delimited<G>
-			| V.Element.Macro.TokenTree.Pattern<G>;
 	}
 	export interface Pair<G extends GrammarContext<G>> extends SubKindOf<V.Element<G>> {
 		// claimed by pt
 		readonly $kind: 'element.pair';
-		readonly computed?: Flag;
-		// t only
 		readonly key: G['slots']['element.pair']['key'];
 		readonly value?: G['slots']['element.pair']['value'];
 	}
@@ -176,108 +90,5 @@ export namespace Element {
 			readonly $kind: 'element.splat.parenthesized';
 			readonly content: V.Element.Splat.Any<G>;
 		}
-		export type Any<G extends GrammarContext<G>> =
-			| V.Element.Splat<G>
-			| V.Element.Splat.Dictionary<G>
-			| V.Element.Splat.Parenthesized<G>;
 	}
-	export interface Struct<G extends GrammarContext<G>> extends SubKindOf<V.Element<G>> {
-		readonly $kind: 'element.struct';
-	}
-	export namespace Struct {
-		export interface Base<G extends GrammarContext<G>> extends SubKindOf<V.Element.Struct<G>> {
-			// claimed by r
-			readonly $kind: 'element.struct.base';
-			readonly value: G['slots']['element.struct.base']['value'];
-		}
-		export interface Field<G extends GrammarContext<G>> extends SubKindOf<V.Element.Struct<G>> {
-			// claimed by r
-			readonly $kind: 'element.struct.field';
-			readonly attributes?: G['attribute'][];
-			readonly field: G['identifier'] | V.Literal.Number.Integer<G>;
-			readonly value?: G['slots']['element.struct.field']['value'];
-		}
-		export type Any<G extends GrammarContext<G>> = V.Element.Struct.Base<G> | V.Element.Struct.Field<G>;
-	}
-	export interface Template<G extends GrammarContext<G>> extends SubKindOf<V.Element<G>> {
-		readonly $kind: 'element.template';
-		readonly type: G['slots']['element.template']['type'];
-		// t only
-	}
-	export namespace Template {
-		export interface Substitution<G extends GrammarContext<G>> extends SubKindOf<V.Element.Template<G>> {
-			// claimed by t
-			readonly $kind: 'element.template.substitution';
-			readonly type: G['slots']['element.template.substitution']['type'];
-		}
-		export type Any<G extends GrammarContext<G>> = V.Element.Template.Substitution<G>;
-	}
-	export interface Tuple<G extends GrammarContext<G>> extends SubKindOf<V.Element<G>> {
-		readonly $kind: 'element.tuple';
-		readonly name: G['slots']['element.tuple']['name'];
-		// t only
-		readonly type: G['slots']['element.tuple']['type'];
-		// t only
-	}
-	export namespace Tuple {
-		export interface Member<G extends GrammarContext<G>> extends SubKindOf<V.Element.Tuple<G>> {
-			// claimed by t
-			readonly $kind: 'element.tuple.member';
-			readonly name: G['slots']['element.tuple.member']['name'];
-			readonly type: G['slots']['element.tuple.member']['type'];
-		}
-		export namespace Member {
-			export interface Optional<G extends GrammarContext<G>> extends SubKindOf<V.Element.Tuple.Member<G>> {
-				// claimed by t
-				readonly $kind: 'element.tuple.member.optional';
-				readonly name: G['identifier'];
-				readonly type: G['slots']['element.tuple.member.optional']['type'];
-			}
-			export type Any<G extends GrammarContext<G>> = V.Element.Tuple.Member<G> | V.Element.Tuple.Member.Optional<G>;
-		}
-		export type Any<G extends GrammarContext<G>> = V.Element.Tuple.Member<G> | V.Element.Tuple.Member.Optional<G>;
-	}
-	export interface TypeArgument<G extends GrammarContext<G>> extends SubKindOf<V.Element<G>> {
-		// claimed by r
-		readonly $kind: 'element.type_argument';
-		readonly constraint?: V.Clause.Bounds<G>;
-		readonly content: G['slots']['element.type_argument']['content'];
-	}
-	export interface TypeBinding<G extends GrammarContext<G>> extends SubKindOf<V.Element<G>> {
-		// claimed by r
-		readonly $kind: 'element.type_binding';
-		readonly name: V.Identifier.Type<G>;
-		readonly type: G['slots']['element.type_binding']['type'];
-		readonly typeArguments?: V.Element.TypeArgument<G>[];
-	}
-	export type Any<G extends GrammarContext<G>> =
-		| V.Element.Comparator<G>
-		| V.Element.Comparator.Comparison.Equal<G>
-		| V.Element.Comparator.Comparison.Greater<G>
-		| V.Element.Comparator.Comparison.GreaterEqual<G>
-		| V.Element.Comparator.Comparison.Less<G>
-		| V.Element.Comparator.Comparison.LessEqual<G>
-		| V.Element.Comparator.Comparison.NotEqual<G>
-		| V.Element.Comparator.Identity.Is<G>
-		| V.Element.Comparator.Identity.IsNot<G>
-		| V.Element.Comparator.Membership.In<G>
-		| V.Element.Comparator.Membership.NotIn<G>
-		| V.Element.Macro.Fragment<G>
-		| V.Element.Macro.TokenBinding<G>
-		| V.Element.Macro.TokenRepetition<G>
-		| V.Element.Macro.TokenRepetition.Pattern<G>
-		| V.Element.Macro.TokenTree<G>
-		| V.Element.Macro.TokenTree.Delimited<G>
-		| V.Element.Macro.TokenTree.Pattern<G>
-		| V.Element.Pair<G>
-		| V.Element.Splat<G>
-		| V.Element.Splat.Dictionary<G>
-		| V.Element.Splat.Parenthesized<G>
-		| V.Element.Struct.Base<G>
-		| V.Element.Struct.Field<G>
-		| V.Element.Template.Substitution<G>
-		| V.Element.Tuple.Member<G>
-		| V.Element.Tuple.Member.Optional<G>
-		| V.Element.TypeArgument<G>
-		| V.Element.TypeBinding<G>;
 }

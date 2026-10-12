@@ -46,6 +46,7 @@ const EXPECTED = [
 	'trivia-timing',
 	'uncovered-content',
 	'variant-derivation-probe',
+	'vocabulary-features',
 	'walk'
 ];
 

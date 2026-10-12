@@ -1433,10 +1433,10 @@
       ]
     },
     "case_clause": {
-      "vocab": "clause.case",
+      "vocab": "clause.case.match",
       "read": [
         {
-          "vocab": "clause.case",
+          "vocab": "clause.case.match",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5464,10 +5464,10 @@
       ]
     },
     "pass_statement": {
-      "vocab": "statement.pass",
+      "vocab": "statement.empty",
       "read": [
         {
-          "vocab": "statement.pass",
+          "vocab": "statement.empty",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -6971,6 +6971,29 @@
       }
     },
     "yield_from_clause": {
+      "vocab": "expression.yield.delegate",
+      "read": [
+        {
+          "vocab": "expression.yield.delegate",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "expression",
+          "route": "slot",
+          "slot": "expression",
+          "path": [
+            {
+              "owner": "yield_from_clause",
+              "slot": "expression"
+            }
+          ]
+        }
+      ],
       "container": {
         "kinds": [
           "expression"
@@ -6992,15 +7015,15 @@
       {
         "depth": 2,
         "paths": 75,
-        "kinds": 71,
+        "kinds": 70,
         "refinements": 7,
-        "aliases": 92
+        "aliases": 94
       },
       {
         "depth": 3,
-        "paths": 68,
-        "kinds": 61,
-        "refinements": 50,
+        "paths": 70,
+        "kinds": 63,
+        "refinements": 51,
         "aliases": 53
       },
       {
@@ -7239,6 +7262,14 @@
           "expression.comprehension.list",
           "pattern.case.list",
           "pattern.list"
+        ]
+      },
+      {
+        "under": "",
+        "name": "match",
+        "paths": [
+          "clause.case.match",
+          "statement.match"
         ]
       },
       {

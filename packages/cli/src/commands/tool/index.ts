@@ -45,6 +45,7 @@ import { gapCensus } from './gap-census.ts';
 import { triviaTiming } from './trivia-timing.ts';
 import { uncoveredContent } from './uncovered-content.ts';
 import { variantDerivationProbe } from './variant-derivation-probe.ts';
+import { vocabularyFeatures } from './vocabulary-features.ts';
 import { walk } from './walk.ts';
 
 /** All developer-diagnostic tool CommandModules, registered under `sittir tool`. */
@@ -92,6 +93,7 @@ export const toolModules: readonly CommandModule[] = [
 	triviaTiming,
 	uncoveredContent,
 	variantDerivationProbe,
+	vocabularyFeatures,
 	walk,
 ];
 

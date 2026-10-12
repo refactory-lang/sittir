@@ -596,7 +596,7 @@ The vocabulary directory, relative to the repository root, as the manifest's pat
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::isVocabularyInput`
 
-Whether a repo-relative path is a vocabulary source (`bindings/hash.ts::isVocabularySource`, directly in the vocabulary directory), whether or not it still exists.
+Whether a repo-relative path is a vocabulary source (`bindings/hash.ts::isVocabularySource`) in the vocabulary directory or one of its sub-folders, whether or not it still exists.
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::bindingsInput`
 

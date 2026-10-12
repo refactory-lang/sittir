@@ -5,11 +5,25 @@
  * member only a refinement carries must never be required on the ancestor.
  * Each check is generic over the context, as portable code is: the roles it
  * fills arrive typed by the namespace map. A concrete context, as a grammar
- * declares one, narrows the map and instantiates them.
+ * declares one, narrows the map and instantiates them. A member a feature owns
+ * is gated on the context: a structure that sets one is built over a context
+ * composing the feature, and generic code reads one as its type or undefined,
+ * since a context without the feature lacks the member.
  */
 
-import type { Clause, Declaration, Expression, GrammarContext, Identifier, Statement } from '../src/vocabulary/index.ts';
+import type {
+	Accessors,
+	BoundedQuantification,
+	Clause,
+	Declaration,
+	Expression,
+	GrammarContext,
+	Identifier,
+	ScopedVisibility,
+	Statement
+} from '../src/vocabulary/index.ts';
 import { Flags } from '../src/vocabulary/index.ts';
+import type { Flag } from '../src/vocabulary/utils.ts';
 
 // An ordinary function needs a name and parameters, nothing accessor-shaped.
 export function fn<G extends GrammarContext<G>>(name: G['identifier']): Declaration.Function<G> {
@@ -29,17 +43,54 @@ export function parameterless<G extends GrammarContext<G>>(name: G['identifier']
 	return { $kind: 'declaration.method', name };
 }
 
-// A getter pins the converged accessor member.
-export function getter<G extends GrammarContext<G>>(name: G['identifier']): Declaration.Method.Getter<G> {
-	return { $kind: 'declaration.method.getter', name, parameters: [], accessor: 'get' };
+// A context composing the features whose members the checks below set, and one composing none.
+interface Composed extends GrammarContext<Composed>, Accessors, BoundedQuantification, ScopedVisibility {}
+interface Bare extends GrammarContext<Bare> {}
+
+// A getter is an accessor kind, which `accessors` owns: no member holds `get`.
+export function getter(name: Composed['identifier']): Declaration.Method.Getter<Composed> {
+	return { $kind: 'declaration.method.getter', name, parameters: [] };
 }
-export function notGetter<G extends GrammarContext<G>>(name: G['identifier']): Declaration.Method.Getter<G> {
+export function getterWithAccessor(name: Composed['identifier']): Declaration.Method.Getter<Composed> {
 	return {
-		...getter<G>(name),
-		// @ts-expect-error a getter's accessor is 'get'
-		accessor: 'set'
+		...getter(name),
+		// @ts-expect-error no member holds the accessor kind
+		accessor: 'get'
 	};
 }
+
+// An owner's access level is its refinement kind, and no member holds the level. A deeper level refines it further.
+export function crateFn(name: Composed['identifier']): Declaration.Function.Public.Internal<Composed> {
+	return { $kind: 'declaration.function.public.internal', name, parameters: [] };
+}
+export const anyPublic: Declaration.Function.Public.Any<Composed> = crateFn({ $kind: 'identifier' });
+export function privateFn(name: Composed['identifier']): Declaration.Function.Private<Composed> {
+	return {
+		$kind: 'declaration.function.private',
+		name,
+		parameters: [],
+		// @ts-expect-error no member holds the level
+		visibility: 'private'
+	};
+}
+// The restricted level adds the module it names, and every owner's restricted refinement has it.
+export function superFn(name: Composed['identifier'], scope: Composed['identifier']): Declaration.Function.Public.Restricted<Composed> {
+	return { $kind: 'declaration.function.public.restricted', name, parameters: [], scope };
+}
+// @ts-expect-error a context without scoped visibility has no scope
+export const noScope: Declaration.Function.Public.Restricted<Bare>['scope'] = { $kind: 'identifier' };
+
+// A member the context's features lack is absent: unbounded code reads it as its type or undefined, and a context
+// without the feature refuses a value for it.
+export function asyncOf<G extends GrammarContext<G>>(f: Declaration.Function<G>): Flag | undefined {
+	return f.async;
+}
+declare const asyncFlag: Flag;
+export const bareAsync: Declaration.Function<Bare> = {
+	...fn<Bare>({ $kind: 'identifier' }),
+	// @ts-expect-error a context without async-await has no async
+	async: asyncFlag
+};
 
 // A call carries no operator; a binary expression carries no arguments.
 export function call<G extends GrammarContext<G>>(callee: G['identifier']): Expression.Call<G> {
@@ -73,20 +124,28 @@ export function notEqual<G extends GrammarContext<G>>(left: G['identifier'], rig
 	};
 }
 
+// Equality is strict in every language, typescript's `===` included; its coercing `==` is a comparison of its own.
+export function strictEqual<G extends GrammarContext<G>>(left: G['identifier'], right: G['identifier']): Expression.Binary.Comparison.Equal<G> {
+	return { ...equal<G>(left, right), operator: '===' };
+}
+export function looseEqual<G extends GrammarContext<G>>(left: G['identifier'], right: G['identifier']): Expression.Binary.Comparison.LooseEqual<G> {
+	return {
+		$kind: 'expression.binary.comparison.loose_equal',
+		left,
+		right,
+		// @ts-expect-error a coercing comparison is never strict
+		operator: '==='
+	};
+}
+
 // A trait is an interface with more: a refinement carries its own kind and the members its parent lacks.
-export function trait<G extends GrammarContext<G>>(
-	name: Declaration.Interface.Trait<G>['name'],
-	whereClause: Clause.Where<G>
-): Declaration.Interface.Trait<G> {
+export function trait(name: Declaration.Interface.Trait<Composed>['name'], whereClause: Clause.Where<Composed>): Declaration.Interface.Trait<Composed> {
 	return { $kind: 'declaration.interface.trait', name, body: [], whereClause };
 }
 // A flag is no member: a structure states its flags in `$flags`.
-export function unsafeTrait<G extends GrammarContext<G>>(
-	name: Declaration.Interface.Trait<G>['name'],
-	whereClause: Clause.Where<G>
-): Declaration.Interface.Trait<G> {
+export function unsafeTrait(name: Declaration.Interface.Trait<Composed>['name'], whereClause: Clause.Where<Composed>): Declaration.Interface.Trait<Composed> {
 	return {
-		...trait<G>(name, whereClause),
+		...trait(name, whereClause),
 		// @ts-expect-error a flag is no member
 		unsafe: true
 	};
@@ -109,9 +168,23 @@ export function forIn<G extends GrammarContext<G>>(right: G['identifier'], body:
 	return { $kind: 'statement.loop.for', right, body };
 }
 
+// A switch holds its cases, each naming its value, and its default, which names none; a match case is no clause of a switch.
+export function switchBody<G extends GrammarContext<G>>(value: Clause.Case.Switch<G>['value']): Statement.Switch<G>['body'] {
+	return [{ $kind: 'clause.case.switch', value }, { $kind: 'clause.case.default' }];
+}
+export function matchInSwitch<G extends GrammarContext<G>>(c: Clause.Case.Match<G>): Statement.Switch<G>['body'] {
+	// @ts-expect-error a match case is no clause of a switch
+	return [c];
+}
+
 // Roles read through the namespace map, which types each by its permissive fill.
 export function nameKind<G extends GrammarContext<G>>(f: Declaration.Function<G>): string {
 	return f.name.$kind;
+}
+
+// A level is whole: it holds the kinds a feature adds, for every context.
+export function yields<G extends GrammarContext<G>>(y: Expression.Yield<G>): Expression.Any<G> {
+	return y;
 }
 
 // A grammar's context extends the map over itself and narrows it to what the grammar realizes: here the identifier

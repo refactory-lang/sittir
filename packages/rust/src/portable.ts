@@ -169,25 +169,73 @@ export interface PortableIds {
 		| TSKindId.VariadicParameter
 		| TSKindId.WildcardPattern;
 	'declaration.constant': TSKindId.ConstItem;
+	'declaration.constant.private': TSKindId.ConstItem;
+	'declaration.constant.public': TSKindId.ConstItem;
+	'declaration.constant.public.internal': TSKindId.ConstItem;
+	'declaration.constant.public.restricted': TSKindId.ConstItem;
 	'declaration.enum': TSKindId.EnumItem;
+	'declaration.enum.private': TSKindId.EnumItem;
+	'declaration.enum.public': TSKindId.EnumItem;
+	'declaration.enum.public.internal': TSKindId.EnumItem;
+	'declaration.enum.public.restricted': TSKindId.EnumItem;
 	'declaration.enum_member': TSKindId.EnumVariant;
+	'declaration.enum_member.private': TSKindId.EnumVariant;
+	'declaration.enum_member.public': TSKindId.EnumVariant;
+	'declaration.enum_member.public.internal': TSKindId.EnumVariant;
+	'declaration.enum_member.public.restricted': TSKindId.EnumVariant;
 	'declaration.enum_member.struct': TSKindId.EnumVariant;
+	'declaration.enum_member.struct.private': TSKindId.EnumVariant;
+	'declaration.enum_member.struct.public': TSKindId.EnumVariant;
+	'declaration.enum_member.struct.public.internal': TSKindId.EnumVariant;
+	'declaration.enum_member.struct.public.restricted': TSKindId.EnumVariant;
 	'declaration.enum_member.tuple': TSKindId.EnumVariant;
+	'declaration.enum_member.tuple.private': TSKindId.EnumVariant;
+	'declaration.enum_member.tuple.public': TSKindId.EnumVariant;
+	'declaration.enum_member.tuple.public.internal': TSKindId.EnumVariant;
+	'declaration.enum_member.tuple.public.restricted': TSKindId.EnumVariant;
 	'declaration.extension': TSKindId.ImplItemBody | TSKindId.ImplItemSemi;
 	'declaration.extension.conformance': TSKindId.ImplItemBody;
 	'declaration.field': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
+	'declaration.field.private': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
+	'declaration.field.public': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
+	'declaration.field.public.internal': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
+	'declaration.field.public.restricted': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
 	'declaration.function': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
+	'declaration.function.private': TSKindId.FunctionItem;
+	'declaration.function.public': TSKindId.FunctionItem;
+	'declaration.function.public.internal': TSKindId.FunctionItem;
+	'declaration.function.public.restricted': TSKindId.FunctionItem;
 	'declaration.function.signature': TSKindId.FunctionSignatureItem;
+	'declaration.function.signature.private': TSKindId.FunctionSignatureItem;
+	'declaration.function.signature.public': TSKindId.FunctionSignatureItem;
+	'declaration.function.signature.public.internal': TSKindId.FunctionSignatureItem;
+	'declaration.function.signature.public.restricted': TSKindId.FunctionSignatureItem;
 	'declaration.interface': TSKindId.TraitItem;
 	'declaration.interface.trait': TSKindId.TraitItem;
+	'declaration.interface.trait.private': TSKindId.TraitItem;
+	'declaration.interface.trait.public': TSKindId.TraitItem;
+	'declaration.interface.trait.public.internal': TSKindId.TraitItem;
+	'declaration.interface.trait.public.restricted': TSKindId.TraitItem;
 	'declaration.macro':
 		| TSKindId.MacroDefinition
 		| TSKindId.MacroDefinitionBrace
 		| TSKindId.MacroDefinitionBracket
 		| TSKindId.MacroDefinitionParen;
 	'declaration.method': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
+	'declaration.method.private': TSKindId.FunctionItem;
+	'declaration.method.public': TSKindId.FunctionItem;
+	'declaration.method.public.internal': TSKindId.FunctionItem;
+	'declaration.method.public.restricted': TSKindId.FunctionItem;
 	'declaration.method.signature': TSKindId.FunctionSignatureItem;
+	'declaration.method.signature.private': TSKindId.FunctionSignatureItem;
+	'declaration.method.signature.public': TSKindId.FunctionSignatureItem;
+	'declaration.method.signature.public.internal': TSKindId.FunctionSignatureItem;
+	'declaration.method.signature.public.restricted': TSKindId.FunctionSignatureItem;
 	'declaration.method.static': TSKindId.FunctionItem;
+	'declaration.method.static.private': TSKindId.FunctionItem;
+	'declaration.method.static.public': TSKindId.FunctionItem;
+	'declaration.method.static.public.internal': TSKindId.FunctionItem;
+	'declaration.method.static.public.restricted': TSKindId.FunctionItem;
 	'declaration.module':
 		| TSKindId.ForeignModItem
 		| TSKindId.ForeignModItemBody
@@ -196,6 +244,14 @@ export interface PortableIds {
 		| TSKindId.ModItemExternal
 		| TSKindId.ModItemInline;
 	'declaration.module.foreign': TSKindId.ForeignModItem | TSKindId.ForeignModItemBody | TSKindId.ForeignModItemSemi;
+	'declaration.module.foreign.private': TSKindId.ForeignModItemBody | TSKindId.ForeignModItemSemi;
+	'declaration.module.foreign.public': TSKindId.ForeignModItemBody | TSKindId.ForeignModItemSemi;
+	'declaration.module.foreign.public.internal': TSKindId.ForeignModItemBody | TSKindId.ForeignModItemSemi;
+	'declaration.module.foreign.public.restricted': TSKindId.ForeignModItemBody | TSKindId.ForeignModItemSemi;
+	'declaration.module.private': TSKindId.ModItemExternal | TSKindId.ModItemInline;
+	'declaration.module.public': TSKindId.ModItemExternal | TSKindId.ModItemInline;
+	'declaration.module.public.internal': TSKindId.ModItemExternal | TSKindId.ModItemInline;
+	'declaration.module.public.restricted': TSKindId.ModItemExternal | TSKindId.ModItemInline;
 	'declaration.parameter':
 		| TSKindId.BoolKeyword
 		| TSKindId.CapturedPattern
@@ -262,16 +318,40 @@ export interface PortableIds {
 		| TSKindId.StructItemBrace
 		| TSKindId.StructItemTuple
 		| TSKindId.StructItemUnit;
+	'declaration.struct.private': TSKindId.StructItemBrace;
+	'declaration.struct.public': TSKindId.StructItemBrace;
+	'declaration.struct.public.internal': TSKindId.StructItemBrace;
+	'declaration.struct.public.restricted': TSKindId.StructItemBrace;
 	'declaration.struct.tuple': TSKindId.StructItemTuple;
+	'declaration.struct.tuple.private': TSKindId.StructItemTuple;
+	'declaration.struct.tuple.public': TSKindId.StructItemTuple;
+	'declaration.struct.tuple.public.internal': TSKindId.StructItemTuple;
+	'declaration.struct.tuple.public.restricted': TSKindId.StructItemTuple;
 	'declaration.struct.unit': TSKindId.StructItemUnit;
+	'declaration.struct.unit.private': TSKindId.StructItemUnit;
+	'declaration.struct.unit.public': TSKindId.StructItemUnit;
+	'declaration.struct.unit.public.internal': TSKindId.StructItemUnit;
+	'declaration.struct.unit.public.restricted': TSKindId.StructItemUnit;
 	'declaration.type_alias': TSKindId.AssociatedType | TSKindId.TypeItem;
 	'declaration.type_alias.associated': TSKindId.AssociatedType;
+	'declaration.type_alias.private': TSKindId.TypeItem;
+	'declaration.type_alias.public': TSKindId.TypeItem;
+	'declaration.type_alias.public.internal': TSKindId.TypeItem;
+	'declaration.type_alias.public.restricted': TSKindId.TypeItem;
 	'declaration.type_parameter': TSKindId.ConstParameter | TSKindId.LifetimeParameter | TSKindId.TypeParameter;
-	'declaration.type_parameter.const': TSKindId.ConstParameter;
 	'declaration.type_parameter.lifetime': TSKindId.LifetimeParameter;
+	'declaration.type_parameter.value': TSKindId.ConstParameter;
 	'declaration.union': TSKindId.UnionItem;
+	'declaration.union.private': TSKindId.UnionItem;
+	'declaration.union.public': TSKindId.UnionItem;
+	'declaration.union.public.internal': TSKindId.UnionItem;
+	'declaration.union.public.restricted': TSKindId.UnionItem;
 	'declaration.variable': TSKindId.LetDeclaration | TSKindId.StaticItem;
 	'declaration.variable.static': TSKindId.StaticItem;
+	'declaration.variable.static.private': TSKindId.StaticItem;
+	'declaration.variable.static.public': TSKindId.StaticItem;
+	'declaration.variable.static.public.internal': TSKindId.StaticItem;
+	'declaration.variable.static.public.restricted': TSKindId.StaticItem;
 	element:
 		| TSKindId.BaseFieldInitializer
 		| TSKindId.BlockKeyword
@@ -689,6 +769,14 @@ export interface PortableIds {
 	'statement.if': TSKindId.IfExpression;
 	'statement.import': TSKindId.ExternCrateDeclaration | TSKindId.UseDeclaration;
 	'statement.import.crate': TSKindId.ExternCrateDeclaration;
+	'statement.import.crate.private': TSKindId.ExternCrateDeclaration;
+	'statement.import.crate.public': TSKindId.ExternCrateDeclaration;
+	'statement.import.crate.public.internal': TSKindId.ExternCrateDeclaration;
+	'statement.import.crate.public.restricted': TSKindId.ExternCrateDeclaration;
+	'statement.import.private': TSKindId.UseDeclaration;
+	'statement.import.public': TSKindId.UseDeclaration;
+	'statement.import.public.internal': TSKindId.UseDeclaration;
+	'statement.import.public.restricted': TSKindId.UseDeclaration;
 	'statement.loop': TSKindId.ForExpression | TSKindId.LoopExpression | TSKindId.WhileExpression;
 	'statement.loop.for': TSKindId.ForExpression;
 	'statement.loop.while': TSKindId.WhileExpression;
@@ -898,52 +986,292 @@ export interface PortableKindsAt {
 		readonly variable: PortableKindsAt['declaration.variable'];
 		readonly associated: PortableKindsAt['declaration.type_alias.associated'];
 		readonly conformance: PortableKindsAt['declaration.extension.conformance'];
-		readonly const: PortableKindsAt['declaration.type_parameter.const'];
 		readonly foreign: PortableKindsAt['declaration.module.foreign'];
 		readonly lifetime: PortableKindsAt['declaration.type_parameter.lifetime'];
 		readonly self: PortableKindsAt['declaration.parameter.self'];
 		readonly trait: PortableKindsAt['declaration.interface.trait'];
 		readonly unit: PortableKindsAt['declaration.struct.unit'];
+		readonly value: PortableKindsAt['declaration.type_parameter.value'];
 		readonly variadic: PortableKindsAt['declaration.parameter.variadic'];
 	};
-	'declaration.constant': { readonly $ids: readonly PortableIds['declaration.constant'][] };
-	'declaration.enum': { readonly $ids: readonly PortableIds['declaration.enum'][] };
+	'declaration.constant': {
+		readonly $ids: readonly PortableIds['declaration.constant'][];
+		readonly private: PortableKindsAt['declaration.constant.private'];
+		readonly public: PortableKindsAt['declaration.constant.public'];
+		readonly internal: PortableKindsAt['declaration.constant.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.constant.public.restricted'];
+	};
+	'declaration.constant.private': { readonly $ids: readonly PortableIds['declaration.constant.private'][] };
+	'declaration.constant.public': {
+		readonly $ids: readonly PortableIds['declaration.constant.public'][];
+		readonly internal: PortableKindsAt['declaration.constant.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.constant.public.restricted'];
+	};
+	'declaration.constant.public.internal': {
+		readonly $ids: readonly PortableIds['declaration.constant.public.internal'][];
+	};
+	'declaration.constant.public.restricted': {
+		readonly $ids: readonly PortableIds['declaration.constant.public.restricted'][];
+	};
+	'declaration.enum': {
+		readonly $ids: readonly PortableIds['declaration.enum'][];
+		readonly private: PortableKindsAt['declaration.enum.private'];
+		readonly public: PortableKindsAt['declaration.enum.public'];
+		readonly internal: PortableKindsAt['declaration.enum.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.enum.public.restricted'];
+	};
+	'declaration.enum.private': { readonly $ids: readonly PortableIds['declaration.enum.private'][] };
+	'declaration.enum.public': {
+		readonly $ids: readonly PortableIds['declaration.enum.public'][];
+		readonly internal: PortableKindsAt['declaration.enum.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.enum.public.restricted'];
+	};
+	'declaration.enum.public.internal': { readonly $ids: readonly PortableIds['declaration.enum.public.internal'][] };
+	'declaration.enum.public.restricted': { readonly $ids: readonly PortableIds['declaration.enum.public.restricted'][] };
 	'declaration.enum_member': {
 		readonly $ids: readonly PortableIds['declaration.enum_member'][];
+		readonly private: PortableKindsAt['declaration.enum_member.private'];
+		readonly public: PortableKindsAt['declaration.enum_member.public'];
 		readonly struct: PortableKindsAt['declaration.enum_member.struct'];
 		readonly tuple: PortableKindsAt['declaration.enum_member.tuple'];
 	};
-	'declaration.enum_member.struct': { readonly $ids: readonly PortableIds['declaration.enum_member.struct'][] };
-	'declaration.enum_member.tuple': { readonly $ids: readonly PortableIds['declaration.enum_member.tuple'][] };
+	'declaration.enum_member.private': { readonly $ids: readonly PortableIds['declaration.enum_member.private'][] };
+	'declaration.enum_member.public': {
+		readonly $ids: readonly PortableIds['declaration.enum_member.public'][];
+		readonly internal: PortableKindsAt['declaration.enum_member.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.enum_member.public.restricted'];
+	};
+	'declaration.enum_member.public.internal': {
+		readonly $ids: readonly PortableIds['declaration.enum_member.public.internal'][];
+	};
+	'declaration.enum_member.public.restricted': {
+		readonly $ids: readonly PortableIds['declaration.enum_member.public.restricted'][];
+	};
+	'declaration.enum_member.struct': {
+		readonly $ids: readonly PortableIds['declaration.enum_member.struct'][];
+		readonly private: PortableKindsAt['declaration.enum_member.struct.private'];
+		readonly public: PortableKindsAt['declaration.enum_member.struct.public'];
+		readonly internal: PortableKindsAt['declaration.enum_member.struct.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.enum_member.struct.public.restricted'];
+	};
+	'declaration.enum_member.struct.private': {
+		readonly $ids: readonly PortableIds['declaration.enum_member.struct.private'][];
+	};
+	'declaration.enum_member.struct.public': {
+		readonly $ids: readonly PortableIds['declaration.enum_member.struct.public'][];
+		readonly internal: PortableKindsAt['declaration.enum_member.struct.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.enum_member.struct.public.restricted'];
+	};
+	'declaration.enum_member.struct.public.internal': {
+		readonly $ids: readonly PortableIds['declaration.enum_member.struct.public.internal'][];
+	};
+	'declaration.enum_member.struct.public.restricted': {
+		readonly $ids: readonly PortableIds['declaration.enum_member.struct.public.restricted'][];
+	};
+	'declaration.enum_member.tuple': {
+		readonly $ids: readonly PortableIds['declaration.enum_member.tuple'][];
+		readonly private: PortableKindsAt['declaration.enum_member.tuple.private'];
+		readonly public: PortableKindsAt['declaration.enum_member.tuple.public'];
+		readonly internal: PortableKindsAt['declaration.enum_member.tuple.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.enum_member.tuple.public.restricted'];
+	};
+	'declaration.enum_member.tuple.private': {
+		readonly $ids: readonly PortableIds['declaration.enum_member.tuple.private'][];
+	};
+	'declaration.enum_member.tuple.public': {
+		readonly $ids: readonly PortableIds['declaration.enum_member.tuple.public'][];
+		readonly internal: PortableKindsAt['declaration.enum_member.tuple.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.enum_member.tuple.public.restricted'];
+	};
+	'declaration.enum_member.tuple.public.internal': {
+		readonly $ids: readonly PortableIds['declaration.enum_member.tuple.public.internal'][];
+	};
+	'declaration.enum_member.tuple.public.restricted': {
+		readonly $ids: readonly PortableIds['declaration.enum_member.tuple.public.restricted'][];
+	};
 	'declaration.extension': {
 		readonly $ids: readonly PortableIds['declaration.extension'][];
 		readonly conformance: PortableKindsAt['declaration.extension.conformance'];
 	};
 	'declaration.extension.conformance': { readonly $ids: readonly PortableIds['declaration.extension.conformance'][] };
-	'declaration.field': { readonly $ids: readonly PortableIds['declaration.field'][] };
+	'declaration.field': {
+		readonly $ids: readonly PortableIds['declaration.field'][];
+		readonly private: PortableKindsAt['declaration.field.private'];
+		readonly public: PortableKindsAt['declaration.field.public'];
+		readonly internal: PortableKindsAt['declaration.field.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.field.public.restricted'];
+	};
+	'declaration.field.private': { readonly $ids: readonly PortableIds['declaration.field.private'][] };
+	'declaration.field.public': {
+		readonly $ids: readonly PortableIds['declaration.field.public'][];
+		readonly internal: PortableKindsAt['declaration.field.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.field.public.restricted'];
+	};
+	'declaration.field.public.internal': { readonly $ids: readonly PortableIds['declaration.field.public.internal'][] };
+	'declaration.field.public.restricted': {
+		readonly $ids: readonly PortableIds['declaration.field.public.restricted'][];
+	};
 	'declaration.function': {
 		readonly $ids: readonly PortableIds['declaration.function'][];
+		readonly private: PortableKindsAt['declaration.function.private'];
+		readonly public: PortableKindsAt['declaration.function.public'];
 		readonly signature: PortableKindsAt['declaration.function.signature'];
 	};
-	'declaration.function.signature': { readonly $ids: readonly PortableIds['declaration.function.signature'][] };
+	'declaration.function.private': { readonly $ids: readonly PortableIds['declaration.function.private'][] };
+	'declaration.function.public': {
+		readonly $ids: readonly PortableIds['declaration.function.public'][];
+		readonly internal: PortableKindsAt['declaration.function.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.function.public.restricted'];
+	};
+	'declaration.function.public.internal': {
+		readonly $ids: readonly PortableIds['declaration.function.public.internal'][];
+	};
+	'declaration.function.public.restricted': {
+		readonly $ids: readonly PortableIds['declaration.function.public.restricted'][];
+	};
+	'declaration.function.signature': {
+		readonly $ids: readonly PortableIds['declaration.function.signature'][];
+		readonly private: PortableKindsAt['declaration.function.signature.private'];
+		readonly public: PortableKindsAt['declaration.function.signature.public'];
+		readonly internal: PortableKindsAt['declaration.function.signature.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.function.signature.public.restricted'];
+	};
+	'declaration.function.signature.private': {
+		readonly $ids: readonly PortableIds['declaration.function.signature.private'][];
+	};
+	'declaration.function.signature.public': {
+		readonly $ids: readonly PortableIds['declaration.function.signature.public'][];
+		readonly internal: PortableKindsAt['declaration.function.signature.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.function.signature.public.restricted'];
+	};
+	'declaration.function.signature.public.internal': {
+		readonly $ids: readonly PortableIds['declaration.function.signature.public.internal'][];
+	};
+	'declaration.function.signature.public.restricted': {
+		readonly $ids: readonly PortableIds['declaration.function.signature.public.restricted'][];
+	};
 	'declaration.interface': {
 		readonly $ids: readonly PortableIds['declaration.interface'][];
 		readonly trait: PortableKindsAt['declaration.interface.trait'];
+		readonly internal: PortableKindsAt['declaration.interface.trait.public.internal'];
+		readonly private: PortableKindsAt['declaration.interface.trait.private'];
+		readonly public: PortableKindsAt['declaration.interface.trait.public'];
+		readonly restricted: PortableKindsAt['declaration.interface.trait.public.restricted'];
 	};
-	'declaration.interface.trait': { readonly $ids: readonly PortableIds['declaration.interface.trait'][] };
+	'declaration.interface.trait': {
+		readonly $ids: readonly PortableIds['declaration.interface.trait'][];
+		readonly private: PortableKindsAt['declaration.interface.trait.private'];
+		readonly public: PortableKindsAt['declaration.interface.trait.public'];
+		readonly internal: PortableKindsAt['declaration.interface.trait.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.interface.trait.public.restricted'];
+	};
+	'declaration.interface.trait.private': {
+		readonly $ids: readonly PortableIds['declaration.interface.trait.private'][];
+	};
+	'declaration.interface.trait.public': {
+		readonly $ids: readonly PortableIds['declaration.interface.trait.public'][];
+		readonly internal: PortableKindsAt['declaration.interface.trait.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.interface.trait.public.restricted'];
+	};
+	'declaration.interface.trait.public.internal': {
+		readonly $ids: readonly PortableIds['declaration.interface.trait.public.internal'][];
+	};
+	'declaration.interface.trait.public.restricted': {
+		readonly $ids: readonly PortableIds['declaration.interface.trait.public.restricted'][];
+	};
 	'declaration.macro': { readonly $ids: readonly PortableIds['declaration.macro'][] };
 	'declaration.method': {
 		readonly $ids: readonly PortableIds['declaration.method'][];
+		readonly private: PortableKindsAt['declaration.method.private'];
+		readonly public: PortableKindsAt['declaration.method.public'];
 		readonly signature: PortableKindsAt['declaration.method.signature'];
 		readonly static: PortableKindsAt['declaration.method.static'];
 	};
-	'declaration.method.signature': { readonly $ids: readonly PortableIds['declaration.method.signature'][] };
-	'declaration.method.static': { readonly $ids: readonly PortableIds['declaration.method.static'][] };
+	'declaration.method.private': { readonly $ids: readonly PortableIds['declaration.method.private'][] };
+	'declaration.method.public': {
+		readonly $ids: readonly PortableIds['declaration.method.public'][];
+		readonly internal: PortableKindsAt['declaration.method.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.method.public.restricted'];
+	};
+	'declaration.method.public.internal': { readonly $ids: readonly PortableIds['declaration.method.public.internal'][] };
+	'declaration.method.public.restricted': {
+		readonly $ids: readonly PortableIds['declaration.method.public.restricted'][];
+	};
+	'declaration.method.signature': {
+		readonly $ids: readonly PortableIds['declaration.method.signature'][];
+		readonly private: PortableKindsAt['declaration.method.signature.private'];
+		readonly public: PortableKindsAt['declaration.method.signature.public'];
+		readonly internal: PortableKindsAt['declaration.method.signature.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.method.signature.public.restricted'];
+	};
+	'declaration.method.signature.private': {
+		readonly $ids: readonly PortableIds['declaration.method.signature.private'][];
+	};
+	'declaration.method.signature.public': {
+		readonly $ids: readonly PortableIds['declaration.method.signature.public'][];
+		readonly internal: PortableKindsAt['declaration.method.signature.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.method.signature.public.restricted'];
+	};
+	'declaration.method.signature.public.internal': {
+		readonly $ids: readonly PortableIds['declaration.method.signature.public.internal'][];
+	};
+	'declaration.method.signature.public.restricted': {
+		readonly $ids: readonly PortableIds['declaration.method.signature.public.restricted'][];
+	};
+	'declaration.method.static': {
+		readonly $ids: readonly PortableIds['declaration.method.static'][];
+		readonly private: PortableKindsAt['declaration.method.static.private'];
+		readonly public: PortableKindsAt['declaration.method.static.public'];
+		readonly internal: PortableKindsAt['declaration.method.static.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.method.static.public.restricted'];
+	};
+	'declaration.method.static.private': { readonly $ids: readonly PortableIds['declaration.method.static.private'][] };
+	'declaration.method.static.public': {
+		readonly $ids: readonly PortableIds['declaration.method.static.public'][];
+		readonly internal: PortableKindsAt['declaration.method.static.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.method.static.public.restricted'];
+	};
+	'declaration.method.static.public.internal': {
+		readonly $ids: readonly PortableIds['declaration.method.static.public.internal'][];
+	};
+	'declaration.method.static.public.restricted': {
+		readonly $ids: readonly PortableIds['declaration.method.static.public.restricted'][];
+	};
 	'declaration.module': {
 		readonly $ids: readonly PortableIds['declaration.module'][];
 		readonly foreign: PortableKindsAt['declaration.module.foreign'];
+		readonly private: PortableKindsAt['declaration.module.private'];
+		readonly public: PortableKindsAt['declaration.module.public'];
 	};
-	'declaration.module.foreign': { readonly $ids: readonly PortableIds['declaration.module.foreign'][] };
+	'declaration.module.foreign': {
+		readonly $ids: readonly PortableIds['declaration.module.foreign'][];
+		readonly private: PortableKindsAt['declaration.module.foreign.private'];
+		readonly public: PortableKindsAt['declaration.module.foreign.public'];
+		readonly internal: PortableKindsAt['declaration.module.foreign.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.module.foreign.public.restricted'];
+	};
+	'declaration.module.foreign.private': { readonly $ids: readonly PortableIds['declaration.module.foreign.private'][] };
+	'declaration.module.foreign.public': {
+		readonly $ids: readonly PortableIds['declaration.module.foreign.public'][];
+		readonly internal: PortableKindsAt['declaration.module.foreign.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.module.foreign.public.restricted'];
+	};
+	'declaration.module.foreign.public.internal': {
+		readonly $ids: readonly PortableIds['declaration.module.foreign.public.internal'][];
+	};
+	'declaration.module.foreign.public.restricted': {
+		readonly $ids: readonly PortableIds['declaration.module.foreign.public.restricted'][];
+	};
+	'declaration.module.private': { readonly $ids: readonly PortableIds['declaration.module.private'][] };
+	'declaration.module.public': {
+		readonly $ids: readonly PortableIds['declaration.module.public'][];
+		readonly internal: PortableKindsAt['declaration.module.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.module.public.restricted'];
+	};
+	'declaration.module.public.internal': { readonly $ids: readonly PortableIds['declaration.module.public.internal'][] };
+	'declaration.module.public.restricted': {
+		readonly $ids: readonly PortableIds['declaration.module.public.restricted'][];
+	};
 	'declaration.parameter': {
 		readonly $ids: readonly PortableIds['declaration.parameter'][];
 		readonly self: PortableKindsAt['declaration.parameter.self'];
@@ -953,31 +1281,135 @@ export interface PortableKindsAt {
 	'declaration.parameter.variadic': { readonly $ids: readonly PortableIds['declaration.parameter.variadic'][] };
 	'declaration.struct': {
 		readonly $ids: readonly PortableIds['declaration.struct'][];
+		readonly private: PortableKindsAt['declaration.struct.private'];
+		readonly public: PortableKindsAt['declaration.struct.public'];
 		readonly tuple: PortableKindsAt['declaration.struct.tuple'];
 		readonly unit: PortableKindsAt['declaration.struct.unit'];
 	};
-	'declaration.struct.tuple': { readonly $ids: readonly PortableIds['declaration.struct.tuple'][] };
-	'declaration.struct.unit': { readonly $ids: readonly PortableIds['declaration.struct.unit'][] };
+	'declaration.struct.private': { readonly $ids: readonly PortableIds['declaration.struct.private'][] };
+	'declaration.struct.public': {
+		readonly $ids: readonly PortableIds['declaration.struct.public'][];
+		readonly internal: PortableKindsAt['declaration.struct.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.struct.public.restricted'];
+	};
+	'declaration.struct.public.internal': { readonly $ids: readonly PortableIds['declaration.struct.public.internal'][] };
+	'declaration.struct.public.restricted': {
+		readonly $ids: readonly PortableIds['declaration.struct.public.restricted'][];
+	};
+	'declaration.struct.tuple': {
+		readonly $ids: readonly PortableIds['declaration.struct.tuple'][];
+		readonly private: PortableKindsAt['declaration.struct.tuple.private'];
+		readonly public: PortableKindsAt['declaration.struct.tuple.public'];
+		readonly internal: PortableKindsAt['declaration.struct.tuple.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.struct.tuple.public.restricted'];
+	};
+	'declaration.struct.tuple.private': { readonly $ids: readonly PortableIds['declaration.struct.tuple.private'][] };
+	'declaration.struct.tuple.public': {
+		readonly $ids: readonly PortableIds['declaration.struct.tuple.public'][];
+		readonly internal: PortableKindsAt['declaration.struct.tuple.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.struct.tuple.public.restricted'];
+	};
+	'declaration.struct.tuple.public.internal': {
+		readonly $ids: readonly PortableIds['declaration.struct.tuple.public.internal'][];
+	};
+	'declaration.struct.tuple.public.restricted': {
+		readonly $ids: readonly PortableIds['declaration.struct.tuple.public.restricted'][];
+	};
+	'declaration.struct.unit': {
+		readonly $ids: readonly PortableIds['declaration.struct.unit'][];
+		readonly private: PortableKindsAt['declaration.struct.unit.private'];
+		readonly public: PortableKindsAt['declaration.struct.unit.public'];
+		readonly internal: PortableKindsAt['declaration.struct.unit.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.struct.unit.public.restricted'];
+	};
+	'declaration.struct.unit.private': { readonly $ids: readonly PortableIds['declaration.struct.unit.private'][] };
+	'declaration.struct.unit.public': {
+		readonly $ids: readonly PortableIds['declaration.struct.unit.public'][];
+		readonly internal: PortableKindsAt['declaration.struct.unit.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.struct.unit.public.restricted'];
+	};
+	'declaration.struct.unit.public.internal': {
+		readonly $ids: readonly PortableIds['declaration.struct.unit.public.internal'][];
+	};
+	'declaration.struct.unit.public.restricted': {
+		readonly $ids: readonly PortableIds['declaration.struct.unit.public.restricted'][];
+	};
 	'declaration.type_alias': {
 		readonly $ids: readonly PortableIds['declaration.type_alias'][];
 		readonly associated: PortableKindsAt['declaration.type_alias.associated'];
+		readonly private: PortableKindsAt['declaration.type_alias.private'];
+		readonly public: PortableKindsAt['declaration.type_alias.public'];
+		readonly internal: PortableKindsAt['declaration.type_alias.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.type_alias.public.restricted'];
 	};
 	'declaration.type_alias.associated': { readonly $ids: readonly PortableIds['declaration.type_alias.associated'][] };
+	'declaration.type_alias.private': { readonly $ids: readonly PortableIds['declaration.type_alias.private'][] };
+	'declaration.type_alias.public': {
+		readonly $ids: readonly PortableIds['declaration.type_alias.public'][];
+		readonly internal: PortableKindsAt['declaration.type_alias.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.type_alias.public.restricted'];
+	};
+	'declaration.type_alias.public.internal': {
+		readonly $ids: readonly PortableIds['declaration.type_alias.public.internal'][];
+	};
+	'declaration.type_alias.public.restricted': {
+		readonly $ids: readonly PortableIds['declaration.type_alias.public.restricted'][];
+	};
 	'declaration.type_parameter': {
 		readonly $ids: readonly PortableIds['declaration.type_parameter'][];
-		readonly const: PortableKindsAt['declaration.type_parameter.const'];
 		readonly lifetime: PortableKindsAt['declaration.type_parameter.lifetime'];
+		readonly value: PortableKindsAt['declaration.type_parameter.value'];
 	};
-	'declaration.type_parameter.const': { readonly $ids: readonly PortableIds['declaration.type_parameter.const'][] };
 	'declaration.type_parameter.lifetime': {
 		readonly $ids: readonly PortableIds['declaration.type_parameter.lifetime'][];
 	};
-	'declaration.union': { readonly $ids: readonly PortableIds['declaration.union'][] };
+	'declaration.type_parameter.value': { readonly $ids: readonly PortableIds['declaration.type_parameter.value'][] };
+	'declaration.union': {
+		readonly $ids: readonly PortableIds['declaration.union'][];
+		readonly private: PortableKindsAt['declaration.union.private'];
+		readonly public: PortableKindsAt['declaration.union.public'];
+		readonly internal: PortableKindsAt['declaration.union.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.union.public.restricted'];
+	};
+	'declaration.union.private': { readonly $ids: readonly PortableIds['declaration.union.private'][] };
+	'declaration.union.public': {
+		readonly $ids: readonly PortableIds['declaration.union.public'][];
+		readonly internal: PortableKindsAt['declaration.union.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.union.public.restricted'];
+	};
+	'declaration.union.public.internal': { readonly $ids: readonly PortableIds['declaration.union.public.internal'][] };
+	'declaration.union.public.restricted': {
+		readonly $ids: readonly PortableIds['declaration.union.public.restricted'][];
+	};
 	'declaration.variable': {
 		readonly $ids: readonly PortableIds['declaration.variable'][];
 		readonly static: PortableKindsAt['declaration.variable.static'];
+		readonly internal: PortableKindsAt['declaration.variable.static.public.internal'];
+		readonly private: PortableKindsAt['declaration.variable.static.private'];
+		readonly public: PortableKindsAt['declaration.variable.static.public'];
+		readonly restricted: PortableKindsAt['declaration.variable.static.public.restricted'];
 	};
-	'declaration.variable.static': { readonly $ids: readonly PortableIds['declaration.variable.static'][] };
+	'declaration.variable.static': {
+		readonly $ids: readonly PortableIds['declaration.variable.static'][];
+		readonly private: PortableKindsAt['declaration.variable.static.private'];
+		readonly public: PortableKindsAt['declaration.variable.static.public'];
+		readonly internal: PortableKindsAt['declaration.variable.static.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.variable.static.public.restricted'];
+	};
+	'declaration.variable.static.private': {
+		readonly $ids: readonly PortableIds['declaration.variable.static.private'][];
+	};
+	'declaration.variable.static.public': {
+		readonly $ids: readonly PortableIds['declaration.variable.static.public'][];
+		readonly internal: PortableKindsAt['declaration.variable.static.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.variable.static.public.restricted'];
+	};
+	'declaration.variable.static.public.internal': {
+		readonly $ids: readonly PortableIds['declaration.variable.static.public.internal'][];
+	};
+	'declaration.variable.static.public.restricted': {
+		readonly $ids: readonly PortableIds['declaration.variable.static.public.restricted'][];
+	};
 	element: {
 		readonly $ids: readonly PortableIds['element'][];
 		readonly macro: PortableKindsAt['element.macro'];
@@ -1481,8 +1913,36 @@ export interface PortableKindsAt {
 	'statement.import': {
 		readonly $ids: readonly PortableIds['statement.import'][];
 		readonly crate: PortableKindsAt['statement.import.crate'];
+		readonly private: PortableKindsAt['statement.import.private'];
+		readonly public: PortableKindsAt['statement.import.public'];
 	};
-	'statement.import.crate': { readonly $ids: readonly PortableIds['statement.import.crate'][] };
+	'statement.import.crate': {
+		readonly $ids: readonly PortableIds['statement.import.crate'][];
+		readonly private: PortableKindsAt['statement.import.crate.private'];
+		readonly public: PortableKindsAt['statement.import.crate.public'];
+		readonly internal: PortableKindsAt['statement.import.crate.public.internal'];
+		readonly restricted: PortableKindsAt['statement.import.crate.public.restricted'];
+	};
+	'statement.import.crate.private': { readonly $ids: readonly PortableIds['statement.import.crate.private'][] };
+	'statement.import.crate.public': {
+		readonly $ids: readonly PortableIds['statement.import.crate.public'][];
+		readonly internal: PortableKindsAt['statement.import.crate.public.internal'];
+		readonly restricted: PortableKindsAt['statement.import.crate.public.restricted'];
+	};
+	'statement.import.crate.public.internal': {
+		readonly $ids: readonly PortableIds['statement.import.crate.public.internal'][];
+	};
+	'statement.import.crate.public.restricted': {
+		readonly $ids: readonly PortableIds['statement.import.crate.public.restricted'][];
+	};
+	'statement.import.private': { readonly $ids: readonly PortableIds['statement.import.private'][] };
+	'statement.import.public': {
+		readonly $ids: readonly PortableIds['statement.import.public'][];
+		readonly internal: PortableKindsAt['statement.import.public.internal'];
+		readonly restricted: PortableKindsAt['statement.import.public.restricted'];
+	};
+	'statement.import.public.internal': { readonly $ids: readonly PortableIds['statement.import.public.internal'][] };
+	'statement.import.public.restricted': { readonly $ids: readonly PortableIds['statement.import.public.restricted'][] };
 	'statement.loop': {
 		readonly $ids: readonly PortableIds['statement.loop'][];
 		readonly for: PortableKindsAt['statement.loop.for'];
@@ -1655,46 +2115,236 @@ export interface PortableIsAt {
 		readonly variable: PortableIsAt['declaration.variable'];
 		readonly associated: PortableIsAt['declaration.type_alias.associated'];
 		readonly conformance: PortableIsAt['declaration.extension.conformance'];
-		readonly const: PortableIsAt['declaration.type_parameter.const'];
 		readonly foreign: PortableIsAt['declaration.module.foreign'];
 		readonly lifetime: PortableIsAt['declaration.type_parameter.lifetime'];
 		readonly self: PortableIsAt['declaration.parameter.self'];
 		readonly trait: PortableIsAt['declaration.interface.trait'];
 		readonly unit: PortableIsAt['declaration.struct.unit'];
+		readonly value: PortableIsAt['declaration.type_parameter.value'];
 		readonly variadic: PortableIsAt['declaration.parameter.variadic'];
 	};
-	'declaration.constant': PortableGuard<PortableIds['declaration.constant']> & {};
-	'declaration.enum': PortableGuard<PortableIds['declaration.enum']> & {};
+	'declaration.constant': PortableGuard<PortableIds['declaration.constant']> & {
+		readonly private: PortableIsAt['declaration.constant.private'];
+		readonly public: PortableIsAt['declaration.constant.public'];
+		readonly internal: PortableIsAt['declaration.constant.public.internal'];
+		readonly restricted: PortableIsAt['declaration.constant.public.restricted'];
+	};
+	'declaration.constant.private': PortableGuard<PortableIds['declaration.constant.private']> & {};
+	'declaration.constant.public': PortableGuard<PortableIds['declaration.constant.public']> & {
+		readonly internal: PortableIsAt['declaration.constant.public.internal'];
+		readonly restricted: PortableIsAt['declaration.constant.public.restricted'];
+	};
+	'declaration.constant.public.internal': PortableGuard<PortableIds['declaration.constant.public.internal']> & {};
+	'declaration.constant.public.restricted': PortableGuard<PortableIds['declaration.constant.public.restricted']> & {};
+	'declaration.enum': PortableGuard<PortableIds['declaration.enum']> & {
+		readonly private: PortableIsAt['declaration.enum.private'];
+		readonly public: PortableIsAt['declaration.enum.public'];
+		readonly internal: PortableIsAt['declaration.enum.public.internal'];
+		readonly restricted: PortableIsAt['declaration.enum.public.restricted'];
+	};
+	'declaration.enum.private': PortableGuard<PortableIds['declaration.enum.private']> & {};
+	'declaration.enum.public': PortableGuard<PortableIds['declaration.enum.public']> & {
+		readonly internal: PortableIsAt['declaration.enum.public.internal'];
+		readonly restricted: PortableIsAt['declaration.enum.public.restricted'];
+	};
+	'declaration.enum.public.internal': PortableGuard<PortableIds['declaration.enum.public.internal']> & {};
+	'declaration.enum.public.restricted': PortableGuard<PortableIds['declaration.enum.public.restricted']> & {};
 	'declaration.enum_member': PortableGuard<PortableIds['declaration.enum_member']> & {
+		readonly private: PortableIsAt['declaration.enum_member.private'];
+		readonly public: PortableIsAt['declaration.enum_member.public'];
 		readonly struct: PortableIsAt['declaration.enum_member.struct'];
 		readonly tuple: PortableIsAt['declaration.enum_member.tuple'];
 	};
-	'declaration.enum_member.struct': PortableGuard<PortableIds['declaration.enum_member.struct']> & {};
-	'declaration.enum_member.tuple': PortableGuard<PortableIds['declaration.enum_member.tuple']> & {};
+	'declaration.enum_member.private': PortableGuard<PortableIds['declaration.enum_member.private']> & {};
+	'declaration.enum_member.public': PortableGuard<PortableIds['declaration.enum_member.public']> & {
+		readonly internal: PortableIsAt['declaration.enum_member.public.internal'];
+		readonly restricted: PortableIsAt['declaration.enum_member.public.restricted'];
+	};
+	'declaration.enum_member.public.internal': PortableGuard<PortableIds['declaration.enum_member.public.internal']> & {};
+	'declaration.enum_member.public.restricted': PortableGuard<
+		PortableIds['declaration.enum_member.public.restricted']
+	> & {};
+	'declaration.enum_member.struct': PortableGuard<PortableIds['declaration.enum_member.struct']> & {
+		readonly private: PortableIsAt['declaration.enum_member.struct.private'];
+		readonly public: PortableIsAt['declaration.enum_member.struct.public'];
+		readonly internal: PortableIsAt['declaration.enum_member.struct.public.internal'];
+		readonly restricted: PortableIsAt['declaration.enum_member.struct.public.restricted'];
+	};
+	'declaration.enum_member.struct.private': PortableGuard<PortableIds['declaration.enum_member.struct.private']> & {};
+	'declaration.enum_member.struct.public': PortableGuard<PortableIds['declaration.enum_member.struct.public']> & {
+		readonly internal: PortableIsAt['declaration.enum_member.struct.public.internal'];
+		readonly restricted: PortableIsAt['declaration.enum_member.struct.public.restricted'];
+	};
+	'declaration.enum_member.struct.public.internal': PortableGuard<
+		PortableIds['declaration.enum_member.struct.public.internal']
+	> & {};
+	'declaration.enum_member.struct.public.restricted': PortableGuard<
+		PortableIds['declaration.enum_member.struct.public.restricted']
+	> & {};
+	'declaration.enum_member.tuple': PortableGuard<PortableIds['declaration.enum_member.tuple']> & {
+		readonly private: PortableIsAt['declaration.enum_member.tuple.private'];
+		readonly public: PortableIsAt['declaration.enum_member.tuple.public'];
+		readonly internal: PortableIsAt['declaration.enum_member.tuple.public.internal'];
+		readonly restricted: PortableIsAt['declaration.enum_member.tuple.public.restricted'];
+	};
+	'declaration.enum_member.tuple.private': PortableGuard<PortableIds['declaration.enum_member.tuple.private']> & {};
+	'declaration.enum_member.tuple.public': PortableGuard<PortableIds['declaration.enum_member.tuple.public']> & {
+		readonly internal: PortableIsAt['declaration.enum_member.tuple.public.internal'];
+		readonly restricted: PortableIsAt['declaration.enum_member.tuple.public.restricted'];
+	};
+	'declaration.enum_member.tuple.public.internal': PortableGuard<
+		PortableIds['declaration.enum_member.tuple.public.internal']
+	> & {};
+	'declaration.enum_member.tuple.public.restricted': PortableGuard<
+		PortableIds['declaration.enum_member.tuple.public.restricted']
+	> & {};
 	'declaration.extension': PortableGuard<PortableIds['declaration.extension']> & {
 		readonly conformance: PortableIsAt['declaration.extension.conformance'];
 	};
 	'declaration.extension.conformance': PortableGuard<PortableIds['declaration.extension.conformance']> & {};
-	'declaration.field': PortableGuard<PortableIds['declaration.field']> & {};
+	'declaration.field': PortableGuard<PortableIds['declaration.field']> & {
+		readonly private: PortableIsAt['declaration.field.private'];
+		readonly public: PortableIsAt['declaration.field.public'];
+		readonly internal: PortableIsAt['declaration.field.public.internal'];
+		readonly restricted: PortableIsAt['declaration.field.public.restricted'];
+	};
+	'declaration.field.private': PortableGuard<PortableIds['declaration.field.private']> & {};
+	'declaration.field.public': PortableGuard<PortableIds['declaration.field.public']> & {
+		readonly internal: PortableIsAt['declaration.field.public.internal'];
+		readonly restricted: PortableIsAt['declaration.field.public.restricted'];
+	};
+	'declaration.field.public.internal': PortableGuard<PortableIds['declaration.field.public.internal']> & {};
+	'declaration.field.public.restricted': PortableGuard<PortableIds['declaration.field.public.restricted']> & {};
 	'declaration.function': PortableGuard<PortableIds['declaration.function']> & {
+		readonly private: PortableIsAt['declaration.function.private'];
+		readonly public: PortableIsAt['declaration.function.public'];
 		readonly signature: PortableIsAt['declaration.function.signature'];
 	};
-	'declaration.function.signature': PortableGuard<PortableIds['declaration.function.signature']> & {};
+	'declaration.function.private': PortableGuard<PortableIds['declaration.function.private']> & {};
+	'declaration.function.public': PortableGuard<PortableIds['declaration.function.public']> & {
+		readonly internal: PortableIsAt['declaration.function.public.internal'];
+		readonly restricted: PortableIsAt['declaration.function.public.restricted'];
+	};
+	'declaration.function.public.internal': PortableGuard<PortableIds['declaration.function.public.internal']> & {};
+	'declaration.function.public.restricted': PortableGuard<PortableIds['declaration.function.public.restricted']> & {};
+	'declaration.function.signature': PortableGuard<PortableIds['declaration.function.signature']> & {
+		readonly private: PortableIsAt['declaration.function.signature.private'];
+		readonly public: PortableIsAt['declaration.function.signature.public'];
+		readonly internal: PortableIsAt['declaration.function.signature.public.internal'];
+		readonly restricted: PortableIsAt['declaration.function.signature.public.restricted'];
+	};
+	'declaration.function.signature.private': PortableGuard<PortableIds['declaration.function.signature.private']> & {};
+	'declaration.function.signature.public': PortableGuard<PortableIds['declaration.function.signature.public']> & {
+		readonly internal: PortableIsAt['declaration.function.signature.public.internal'];
+		readonly restricted: PortableIsAt['declaration.function.signature.public.restricted'];
+	};
+	'declaration.function.signature.public.internal': PortableGuard<
+		PortableIds['declaration.function.signature.public.internal']
+	> & {};
+	'declaration.function.signature.public.restricted': PortableGuard<
+		PortableIds['declaration.function.signature.public.restricted']
+	> & {};
 	'declaration.interface': PortableGuard<PortableIds['declaration.interface']> & {
 		readonly trait: PortableIsAt['declaration.interface.trait'];
+		readonly internal: PortableIsAt['declaration.interface.trait.public.internal'];
+		readonly private: PortableIsAt['declaration.interface.trait.private'];
+		readonly public: PortableIsAt['declaration.interface.trait.public'];
+		readonly restricted: PortableIsAt['declaration.interface.trait.public.restricted'];
 	};
-	'declaration.interface.trait': PortableGuard<PortableIds['declaration.interface.trait']> & {};
+	'declaration.interface.trait': PortableGuard<PortableIds['declaration.interface.trait']> & {
+		readonly private: PortableIsAt['declaration.interface.trait.private'];
+		readonly public: PortableIsAt['declaration.interface.trait.public'];
+		readonly internal: PortableIsAt['declaration.interface.trait.public.internal'];
+		readonly restricted: PortableIsAt['declaration.interface.trait.public.restricted'];
+	};
+	'declaration.interface.trait.private': PortableGuard<PortableIds['declaration.interface.trait.private']> & {};
+	'declaration.interface.trait.public': PortableGuard<PortableIds['declaration.interface.trait.public']> & {
+		readonly internal: PortableIsAt['declaration.interface.trait.public.internal'];
+		readonly restricted: PortableIsAt['declaration.interface.trait.public.restricted'];
+	};
+	'declaration.interface.trait.public.internal': PortableGuard<
+		PortableIds['declaration.interface.trait.public.internal']
+	> & {};
+	'declaration.interface.trait.public.restricted': PortableGuard<
+		PortableIds['declaration.interface.trait.public.restricted']
+	> & {};
 	'declaration.macro': PortableGuard<PortableIds['declaration.macro']> & {};
 	'declaration.method': PortableGuard<PortableIds['declaration.method']> & {
+		readonly private: PortableIsAt['declaration.method.private'];
+		readonly public: PortableIsAt['declaration.method.public'];
 		readonly signature: PortableIsAt['declaration.method.signature'];
 		readonly static: PortableIsAt['declaration.method.static'];
 	};
-	'declaration.method.signature': PortableGuard<PortableIds['declaration.method.signature']> & {};
-	'declaration.method.static': PortableGuard<PortableIds['declaration.method.static']> & {};
+	'declaration.method.private': PortableGuard<PortableIds['declaration.method.private']> & {};
+	'declaration.method.public': PortableGuard<PortableIds['declaration.method.public']> & {
+		readonly internal: PortableIsAt['declaration.method.public.internal'];
+		readonly restricted: PortableIsAt['declaration.method.public.restricted'];
+	};
+	'declaration.method.public.internal': PortableGuard<PortableIds['declaration.method.public.internal']> & {};
+	'declaration.method.public.restricted': PortableGuard<PortableIds['declaration.method.public.restricted']> & {};
+	'declaration.method.signature': PortableGuard<PortableIds['declaration.method.signature']> & {
+		readonly private: PortableIsAt['declaration.method.signature.private'];
+		readonly public: PortableIsAt['declaration.method.signature.public'];
+		readonly internal: PortableIsAt['declaration.method.signature.public.internal'];
+		readonly restricted: PortableIsAt['declaration.method.signature.public.restricted'];
+	};
+	'declaration.method.signature.private': PortableGuard<PortableIds['declaration.method.signature.private']> & {};
+	'declaration.method.signature.public': PortableGuard<PortableIds['declaration.method.signature.public']> & {
+		readonly internal: PortableIsAt['declaration.method.signature.public.internal'];
+		readonly restricted: PortableIsAt['declaration.method.signature.public.restricted'];
+	};
+	'declaration.method.signature.public.internal': PortableGuard<
+		PortableIds['declaration.method.signature.public.internal']
+	> & {};
+	'declaration.method.signature.public.restricted': PortableGuard<
+		PortableIds['declaration.method.signature.public.restricted']
+	> & {};
+	'declaration.method.static': PortableGuard<PortableIds['declaration.method.static']> & {
+		readonly private: PortableIsAt['declaration.method.static.private'];
+		readonly public: PortableIsAt['declaration.method.static.public'];
+		readonly internal: PortableIsAt['declaration.method.static.public.internal'];
+		readonly restricted: PortableIsAt['declaration.method.static.public.restricted'];
+	};
+	'declaration.method.static.private': PortableGuard<PortableIds['declaration.method.static.private']> & {};
+	'declaration.method.static.public': PortableGuard<PortableIds['declaration.method.static.public']> & {
+		readonly internal: PortableIsAt['declaration.method.static.public.internal'];
+		readonly restricted: PortableIsAt['declaration.method.static.public.restricted'];
+	};
+	'declaration.method.static.public.internal': PortableGuard<
+		PortableIds['declaration.method.static.public.internal']
+	> & {};
+	'declaration.method.static.public.restricted': PortableGuard<
+		PortableIds['declaration.method.static.public.restricted']
+	> & {};
 	'declaration.module': PortableGuard<PortableIds['declaration.module']> & {
 		readonly foreign: PortableIsAt['declaration.module.foreign'];
+		readonly private: PortableIsAt['declaration.module.private'];
+		readonly public: PortableIsAt['declaration.module.public'];
 	};
-	'declaration.module.foreign': PortableGuard<PortableIds['declaration.module.foreign']> & {};
+	'declaration.module.foreign': PortableGuard<PortableIds['declaration.module.foreign']> & {
+		readonly private: PortableIsAt['declaration.module.foreign.private'];
+		readonly public: PortableIsAt['declaration.module.foreign.public'];
+		readonly internal: PortableIsAt['declaration.module.foreign.public.internal'];
+		readonly restricted: PortableIsAt['declaration.module.foreign.public.restricted'];
+	};
+	'declaration.module.foreign.private': PortableGuard<PortableIds['declaration.module.foreign.private']> & {};
+	'declaration.module.foreign.public': PortableGuard<PortableIds['declaration.module.foreign.public']> & {
+		readonly internal: PortableIsAt['declaration.module.foreign.public.internal'];
+		readonly restricted: PortableIsAt['declaration.module.foreign.public.restricted'];
+	};
+	'declaration.module.foreign.public.internal': PortableGuard<
+		PortableIds['declaration.module.foreign.public.internal']
+	> & {};
+	'declaration.module.foreign.public.restricted': PortableGuard<
+		PortableIds['declaration.module.foreign.public.restricted']
+	> & {};
+	'declaration.module.private': PortableGuard<PortableIds['declaration.module.private']> & {};
+	'declaration.module.public': PortableGuard<PortableIds['declaration.module.public']> & {
+		readonly internal: PortableIsAt['declaration.module.public.internal'];
+		readonly restricted: PortableIsAt['declaration.module.public.restricted'];
+	};
+	'declaration.module.public.internal': PortableGuard<PortableIds['declaration.module.public.internal']> & {};
+	'declaration.module.public.restricted': PortableGuard<PortableIds['declaration.module.public.restricted']> & {};
 	'declaration.parameter': PortableGuard<PortableIds['declaration.parameter']> & {
 		readonly self: PortableIsAt['declaration.parameter.self'];
 		readonly variadic: PortableIsAt['declaration.parameter.variadic'];
@@ -1702,26 +2352,110 @@ export interface PortableIsAt {
 	'declaration.parameter.self': PortableGuard<PortableIds['declaration.parameter.self']> & {};
 	'declaration.parameter.variadic': PortableGuard<PortableIds['declaration.parameter.variadic']> & {};
 	'declaration.struct': PortableGuard<PortableIds['declaration.struct']> & {
+		readonly private: PortableIsAt['declaration.struct.private'];
+		readonly public: PortableIsAt['declaration.struct.public'];
 		readonly tuple: PortableIsAt['declaration.struct.tuple'];
 		readonly unit: PortableIsAt['declaration.struct.unit'];
 	};
-	'declaration.struct.tuple': PortableGuard<PortableIds['declaration.struct.tuple']> & {};
-	'declaration.struct.unit': PortableGuard<PortableIds['declaration.struct.unit']> & {};
+	'declaration.struct.private': PortableGuard<PortableIds['declaration.struct.private']> & {};
+	'declaration.struct.public': PortableGuard<PortableIds['declaration.struct.public']> & {
+		readonly internal: PortableIsAt['declaration.struct.public.internal'];
+		readonly restricted: PortableIsAt['declaration.struct.public.restricted'];
+	};
+	'declaration.struct.public.internal': PortableGuard<PortableIds['declaration.struct.public.internal']> & {};
+	'declaration.struct.public.restricted': PortableGuard<PortableIds['declaration.struct.public.restricted']> & {};
+	'declaration.struct.tuple': PortableGuard<PortableIds['declaration.struct.tuple']> & {
+		readonly private: PortableIsAt['declaration.struct.tuple.private'];
+		readonly public: PortableIsAt['declaration.struct.tuple.public'];
+		readonly internal: PortableIsAt['declaration.struct.tuple.public.internal'];
+		readonly restricted: PortableIsAt['declaration.struct.tuple.public.restricted'];
+	};
+	'declaration.struct.tuple.private': PortableGuard<PortableIds['declaration.struct.tuple.private']> & {};
+	'declaration.struct.tuple.public': PortableGuard<PortableIds['declaration.struct.tuple.public']> & {
+		readonly internal: PortableIsAt['declaration.struct.tuple.public.internal'];
+		readonly restricted: PortableIsAt['declaration.struct.tuple.public.restricted'];
+	};
+	'declaration.struct.tuple.public.internal': PortableGuard<
+		PortableIds['declaration.struct.tuple.public.internal']
+	> & {};
+	'declaration.struct.tuple.public.restricted': PortableGuard<
+		PortableIds['declaration.struct.tuple.public.restricted']
+	> & {};
+	'declaration.struct.unit': PortableGuard<PortableIds['declaration.struct.unit']> & {
+		readonly private: PortableIsAt['declaration.struct.unit.private'];
+		readonly public: PortableIsAt['declaration.struct.unit.public'];
+		readonly internal: PortableIsAt['declaration.struct.unit.public.internal'];
+		readonly restricted: PortableIsAt['declaration.struct.unit.public.restricted'];
+	};
+	'declaration.struct.unit.private': PortableGuard<PortableIds['declaration.struct.unit.private']> & {};
+	'declaration.struct.unit.public': PortableGuard<PortableIds['declaration.struct.unit.public']> & {
+		readonly internal: PortableIsAt['declaration.struct.unit.public.internal'];
+		readonly restricted: PortableIsAt['declaration.struct.unit.public.restricted'];
+	};
+	'declaration.struct.unit.public.internal': PortableGuard<PortableIds['declaration.struct.unit.public.internal']> & {};
+	'declaration.struct.unit.public.restricted': PortableGuard<
+		PortableIds['declaration.struct.unit.public.restricted']
+	> & {};
 	'declaration.type_alias': PortableGuard<PortableIds['declaration.type_alias']> & {
 		readonly associated: PortableIsAt['declaration.type_alias.associated'];
+		readonly private: PortableIsAt['declaration.type_alias.private'];
+		readonly public: PortableIsAt['declaration.type_alias.public'];
+		readonly internal: PortableIsAt['declaration.type_alias.public.internal'];
+		readonly restricted: PortableIsAt['declaration.type_alias.public.restricted'];
 	};
 	'declaration.type_alias.associated': PortableGuard<PortableIds['declaration.type_alias.associated']> & {};
-	'declaration.type_parameter': PortableGuard<PortableIds['declaration.type_parameter']> & {
-		readonly const: PortableIsAt['declaration.type_parameter.const'];
-		readonly lifetime: PortableIsAt['declaration.type_parameter.lifetime'];
+	'declaration.type_alias.private': PortableGuard<PortableIds['declaration.type_alias.private']> & {};
+	'declaration.type_alias.public': PortableGuard<PortableIds['declaration.type_alias.public']> & {
+		readonly internal: PortableIsAt['declaration.type_alias.public.internal'];
+		readonly restricted: PortableIsAt['declaration.type_alias.public.restricted'];
 	};
-	'declaration.type_parameter.const': PortableGuard<PortableIds['declaration.type_parameter.const']> & {};
+	'declaration.type_alias.public.internal': PortableGuard<PortableIds['declaration.type_alias.public.internal']> & {};
+	'declaration.type_alias.public.restricted': PortableGuard<
+		PortableIds['declaration.type_alias.public.restricted']
+	> & {};
+	'declaration.type_parameter': PortableGuard<PortableIds['declaration.type_parameter']> & {
+		readonly lifetime: PortableIsAt['declaration.type_parameter.lifetime'];
+		readonly value: PortableIsAt['declaration.type_parameter.value'];
+	};
 	'declaration.type_parameter.lifetime': PortableGuard<PortableIds['declaration.type_parameter.lifetime']> & {};
-	'declaration.union': PortableGuard<PortableIds['declaration.union']> & {};
+	'declaration.type_parameter.value': PortableGuard<PortableIds['declaration.type_parameter.value']> & {};
+	'declaration.union': PortableGuard<PortableIds['declaration.union']> & {
+		readonly private: PortableIsAt['declaration.union.private'];
+		readonly public: PortableIsAt['declaration.union.public'];
+		readonly internal: PortableIsAt['declaration.union.public.internal'];
+		readonly restricted: PortableIsAt['declaration.union.public.restricted'];
+	};
+	'declaration.union.private': PortableGuard<PortableIds['declaration.union.private']> & {};
+	'declaration.union.public': PortableGuard<PortableIds['declaration.union.public']> & {
+		readonly internal: PortableIsAt['declaration.union.public.internal'];
+		readonly restricted: PortableIsAt['declaration.union.public.restricted'];
+	};
+	'declaration.union.public.internal': PortableGuard<PortableIds['declaration.union.public.internal']> & {};
+	'declaration.union.public.restricted': PortableGuard<PortableIds['declaration.union.public.restricted']> & {};
 	'declaration.variable': PortableGuard<PortableIds['declaration.variable']> & {
 		readonly static: PortableIsAt['declaration.variable.static'];
+		readonly internal: PortableIsAt['declaration.variable.static.public.internal'];
+		readonly private: PortableIsAt['declaration.variable.static.private'];
+		readonly public: PortableIsAt['declaration.variable.static.public'];
+		readonly restricted: PortableIsAt['declaration.variable.static.public.restricted'];
 	};
-	'declaration.variable.static': PortableGuard<PortableIds['declaration.variable.static']> & {};
+	'declaration.variable.static': PortableGuard<PortableIds['declaration.variable.static']> & {
+		readonly private: PortableIsAt['declaration.variable.static.private'];
+		readonly public: PortableIsAt['declaration.variable.static.public'];
+		readonly internal: PortableIsAt['declaration.variable.static.public.internal'];
+		readonly restricted: PortableIsAt['declaration.variable.static.public.restricted'];
+	};
+	'declaration.variable.static.private': PortableGuard<PortableIds['declaration.variable.static.private']> & {};
+	'declaration.variable.static.public': PortableGuard<PortableIds['declaration.variable.static.public']> & {
+		readonly internal: PortableIsAt['declaration.variable.static.public.internal'];
+		readonly restricted: PortableIsAt['declaration.variable.static.public.restricted'];
+	};
+	'declaration.variable.static.public.internal': PortableGuard<
+		PortableIds['declaration.variable.static.public.internal']
+	> & {};
+	'declaration.variable.static.public.restricted': PortableGuard<
+		PortableIds['declaration.variable.static.public.restricted']
+	> & {};
 	element: PortableGuard<PortableIds['element']> & {
 		readonly macro: PortableIsAt['element.macro'];
 		readonly struct: PortableIsAt['element.struct'];
@@ -2159,8 +2893,31 @@ export interface PortableIsAt {
 	'statement.if': PortableGuard<PortableIds['statement.if']> & {};
 	'statement.import': PortableGuard<PortableIds['statement.import']> & {
 		readonly crate: PortableIsAt['statement.import.crate'];
+		readonly private: PortableIsAt['statement.import.private'];
+		readonly public: PortableIsAt['statement.import.public'];
 	};
-	'statement.import.crate': PortableGuard<PortableIds['statement.import.crate']> & {};
+	'statement.import.crate': PortableGuard<PortableIds['statement.import.crate']> & {
+		readonly private: PortableIsAt['statement.import.crate.private'];
+		readonly public: PortableIsAt['statement.import.crate.public'];
+		readonly internal: PortableIsAt['statement.import.crate.public.internal'];
+		readonly restricted: PortableIsAt['statement.import.crate.public.restricted'];
+	};
+	'statement.import.crate.private': PortableGuard<PortableIds['statement.import.crate.private']> & {};
+	'statement.import.crate.public': PortableGuard<PortableIds['statement.import.crate.public']> & {
+		readonly internal: PortableIsAt['statement.import.crate.public.internal'];
+		readonly restricted: PortableIsAt['statement.import.crate.public.restricted'];
+	};
+	'statement.import.crate.public.internal': PortableGuard<PortableIds['statement.import.crate.public.internal']> & {};
+	'statement.import.crate.public.restricted': PortableGuard<
+		PortableIds['statement.import.crate.public.restricted']
+	> & {};
+	'statement.import.private': PortableGuard<PortableIds['statement.import.private']> & {};
+	'statement.import.public': PortableGuard<PortableIds['statement.import.public']> & {
+		readonly internal: PortableIsAt['statement.import.public.internal'];
+		readonly restricted: PortableIsAt['statement.import.public.restricted'];
+	};
+	'statement.import.public.internal': PortableGuard<PortableIds['statement.import.public.internal']> & {};
+	'statement.import.public.restricted': PortableGuard<PortableIds['statement.import.public.restricted']> & {};
 	'statement.loop': PortableGuard<PortableIds['statement.loop']> & {
 		readonly for: PortableIsAt['statement.loop.for'];
 		readonly while: PortableIsAt['statement.loop.while'];
@@ -2256,6 +3013,7 @@ export interface PortableKinds {
 	readonly comparison: PortableKindsAt['expression.binary.comparison'];
 	readonly compound: PortableKindsAt['expression.assignment.compound'];
 	readonly conformance: PortableKindsAt['declaration.extension.conformance'];
+	readonly const: PortableKindsAt['expression.block.const'];
 	readonly constant: PortableKindsAt['declaration.constant'];
 	readonly content: PortableKindsAt['attribute.content'];
 	readonly continue: PortableKindsAt['statement.continue'];
@@ -2284,7 +3042,6 @@ export interface PortableKinds {
 	readonly instantiation: PortableKindsAt['expression.instantiation'];
 	readonly integer: PortableKindsAt['literal.number.integer'];
 	readonly interface: PortableKindsAt['declaration.interface'];
-	readonly internal: PortableKindsAt['modifier.visibility.public.internal'];
 	readonly label: PortableKindsAt['identifier.label'];
 	readonly lambda: PortableKindsAt['expression.lambda'];
 	readonly last: PortableKindsAt['clause.match.arm.last'];
@@ -2313,15 +3070,12 @@ export interface PortableKinds {
 	readonly predicate: PortableKindsAt['clause.where.predicate'];
 	readonly prelude: PortableKindsAt['type.named.prelude'];
 	readonly primitive: PortableKindsAt['type.primitive'];
-	readonly private: PortableKindsAt['modifier.visibility.private'];
 	readonly property: PortableKindsAt['identifier.property'];
-	readonly public: PortableKindsAt['modifier.visibility.public'];
 	readonly qualified: PortableKindsAt['type.qualified'];
 	readonly raw: PortableKindsAt['literal.string.raw'];
 	readonly removed: PortableKindsAt['clause.bounds.removed'];
 	readonly repeat: PortableKindsAt['expression.collection.list.repeat'];
 	readonly rest: PortableKindsAt['pattern.struct.rest'];
-	readonly restricted: PortableKindsAt['modifier.visibility.public.restricted'];
 	readonly return: PortableKindsAt['statement.return'];
 	readonly right: PortableKindsAt['expression.binary.shift.right'];
 	readonly rule: PortableKindsAt['clause.macro.rule'];
@@ -2347,7 +3101,6 @@ export interface PortableKinds {
 	readonly union: PortableKindsAt['declaration.union'];
 	readonly unsafe: PortableKindsAt['expression.block.unsafe'];
 	readonly use: PortableKindsAt['clause.bounds.use'];
-	readonly value: PortableKindsAt['pattern.reference.value'];
 	readonly variable: PortableKindsAt['declaration.variable'];
 	readonly variadic: PortableKindsAt['declaration.parameter.variadic'];
 	readonly visibility: PortableKindsAt['modifier.visibility'];
@@ -2398,6 +3151,7 @@ export interface PortableIs {
 	readonly comparison: PortableIsAt['expression.binary.comparison'];
 	readonly compound: PortableIsAt['expression.assignment.compound'];
 	readonly conformance: PortableIsAt['declaration.extension.conformance'];
+	readonly const: PortableIsAt['expression.block.const'];
 	readonly constant: PortableIsAt['declaration.constant'];
 	readonly content: PortableIsAt['attribute.content'];
 	readonly continue: PortableIsAt['statement.continue'];
@@ -2426,7 +3180,6 @@ export interface PortableIs {
 	readonly instantiation: PortableIsAt['expression.instantiation'];
 	readonly integer: PortableIsAt['literal.number.integer'];
 	readonly interface: PortableIsAt['declaration.interface'];
-	readonly internal: PortableIsAt['modifier.visibility.public.internal'];
 	readonly label: PortableIsAt['identifier.label'];
 	readonly lambda: PortableIsAt['expression.lambda'];
 	readonly last: PortableIsAt['clause.match.arm.last'];
@@ -2455,15 +3208,12 @@ export interface PortableIs {
 	readonly predicate: PortableIsAt['clause.where.predicate'];
 	readonly prelude: PortableIsAt['type.named.prelude'];
 	readonly primitive: PortableIsAt['type.primitive'];
-	readonly private: PortableIsAt['modifier.visibility.private'];
 	readonly property: PortableIsAt['identifier.property'];
-	readonly public: PortableIsAt['modifier.visibility.public'];
 	readonly qualified: PortableIsAt['type.qualified'];
 	readonly raw: PortableIsAt['literal.string.raw'];
 	readonly removed: PortableIsAt['clause.bounds.removed'];
 	readonly repeat: PortableIsAt['expression.collection.list.repeat'];
 	readonly rest: PortableIsAt['pattern.struct.rest'];
-	readonly restricted: PortableIsAt['modifier.visibility.public.restricted'];
 	readonly return: PortableIsAt['statement.return'];
 	readonly right: PortableIsAt['expression.binary.shift.right'];
 	readonly rule: PortableIsAt['clause.macro.rule'];
@@ -2489,7 +3239,6 @@ export interface PortableIs {
 	readonly union: PortableIsAt['declaration.union'];
 	readonly unsafe: PortableIsAt['expression.block.unsafe'];
 	readonly use: PortableIsAt['clause.bounds.use'];
-	readonly value: PortableIsAt['pattern.reference.value'];
 	readonly variable: PortableIsAt['declaration.variable'];
 	readonly variadic: PortableIsAt['declaration.parameter.variadic'];
 	readonly visibility: PortableIsAt['modifier.visibility'];
@@ -2684,17 +3433,59 @@ const table: PortableTable = {
 			exact: false
 		},
 		'declaration.constant': { ids: [TSKindId.ConstItem], exact: true },
+		'declaration.constant.private': { ids: [TSKindId.ConstItem], exact: false },
+		'declaration.constant.public': { ids: [TSKindId.ConstItem], exact: false },
+		'declaration.constant.public.internal': { ids: [TSKindId.ConstItem], exact: false },
+		'declaration.constant.public.restricted': { ids: [TSKindId.ConstItem], exact: false },
 		'declaration.enum': { ids: [TSKindId.EnumItem], exact: true },
+		'declaration.enum.private': { ids: [TSKindId.EnumItem], exact: false },
+		'declaration.enum.public': { ids: [TSKindId.EnumItem], exact: false },
+		'declaration.enum.public.internal': { ids: [TSKindId.EnumItem], exact: false },
+		'declaration.enum.public.restricted': { ids: [TSKindId.EnumItem], exact: false },
 		'declaration.enum_member': { ids: [TSKindId.EnumVariant], exact: true },
+		'declaration.enum_member.private': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.enum_member.public': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.enum_member.public.internal': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.enum_member.public.restricted': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.enum_member.struct': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.enum_member.struct.private': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.enum_member.struct.public': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.enum_member.struct.public.internal': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.enum_member.struct.public.restricted': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.enum_member.tuple': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.enum_member.tuple.private': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.enum_member.tuple.public': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.enum_member.tuple.public.internal': { ids: [TSKindId.EnumVariant], exact: false },
+		'declaration.enum_member.tuple.public.restricted': { ids: [TSKindId.EnumVariant], exact: false },
 		'declaration.extension': { ids: [TSKindId.ImplItemBody, TSKindId.ImplItemSemi], exact: true },
 		'declaration.extension.conformance': { ids: [TSKindId.ImplItemBody], exact: false },
 		'declaration.field': { ids: [TSKindId.AttributedOrderedField, TSKindId.FieldDeclaration], exact: true },
+		'declaration.field.private': { ids: [TSKindId.AttributedOrderedField, TSKindId.FieldDeclaration], exact: false },
+		'declaration.field.public': { ids: [TSKindId.AttributedOrderedField, TSKindId.FieldDeclaration], exact: false },
+		'declaration.field.public.internal': {
+			ids: [TSKindId.AttributedOrderedField, TSKindId.FieldDeclaration],
+			exact: false
+		},
+		'declaration.field.public.restricted': {
+			ids: [TSKindId.AttributedOrderedField, TSKindId.FieldDeclaration],
+			exact: false
+		},
 		'declaration.function': { ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem], exact: false },
+		'declaration.function.private': { ids: [TSKindId.FunctionItem], exact: false },
+		'declaration.function.public': { ids: [TSKindId.FunctionItem], exact: false },
+		'declaration.function.public.internal': { ids: [TSKindId.FunctionItem], exact: false },
+		'declaration.function.public.restricted': { ids: [TSKindId.FunctionItem], exact: false },
 		'declaration.function.signature': { ids: [TSKindId.FunctionSignatureItem], exact: false },
+		'declaration.function.signature.private': { ids: [TSKindId.FunctionSignatureItem], exact: false },
+		'declaration.function.signature.public': { ids: [TSKindId.FunctionSignatureItem], exact: false },
+		'declaration.function.signature.public.internal': { ids: [TSKindId.FunctionSignatureItem], exact: false },
+		'declaration.function.signature.public.restricted': { ids: [TSKindId.FunctionSignatureItem], exact: false },
 		'declaration.interface': { ids: [TSKindId.TraitItem], exact: true },
 		'declaration.interface.trait': { ids: [TSKindId.TraitItem], exact: true },
+		'declaration.interface.trait.private': { ids: [TSKindId.TraitItem], exact: false },
+		'declaration.interface.trait.public': { ids: [TSKindId.TraitItem], exact: false },
+		'declaration.interface.trait.public.internal': { ids: [TSKindId.TraitItem], exact: false },
+		'declaration.interface.trait.public.restricted': { ids: [TSKindId.TraitItem], exact: false },
 		'declaration.macro': {
 			ids: [
 				TSKindId.MacroDefinition,
@@ -2705,8 +3496,20 @@ const table: PortableTable = {
 			exact: true
 		},
 		'declaration.method': { ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem], exact: false },
+		'declaration.method.private': { ids: [TSKindId.FunctionItem], exact: false },
+		'declaration.method.public': { ids: [TSKindId.FunctionItem], exact: false },
+		'declaration.method.public.internal': { ids: [TSKindId.FunctionItem], exact: false },
+		'declaration.method.public.restricted': { ids: [TSKindId.FunctionItem], exact: false },
 		'declaration.method.signature': { ids: [TSKindId.FunctionSignatureItem], exact: false },
+		'declaration.method.signature.private': { ids: [TSKindId.FunctionSignatureItem], exact: false },
+		'declaration.method.signature.public': { ids: [TSKindId.FunctionSignatureItem], exact: false },
+		'declaration.method.signature.public.internal': { ids: [TSKindId.FunctionSignatureItem], exact: false },
+		'declaration.method.signature.public.restricted': { ids: [TSKindId.FunctionSignatureItem], exact: false },
 		'declaration.method.static': { ids: [TSKindId.FunctionItem], exact: false },
+		'declaration.method.static.private': { ids: [TSKindId.FunctionItem], exact: false },
+		'declaration.method.static.public': { ids: [TSKindId.FunctionItem], exact: false },
+		'declaration.method.static.public.internal': { ids: [TSKindId.FunctionItem], exact: false },
+		'declaration.method.static.public.restricted': { ids: [TSKindId.FunctionItem], exact: false },
 		'declaration.module': {
 			ids: [
 				TSKindId.ForeignModItem,
@@ -2722,6 +3525,26 @@ const table: PortableTable = {
 			ids: [TSKindId.ForeignModItem, TSKindId.ForeignModItemBody, TSKindId.ForeignModItemSemi],
 			exact: true
 		},
+		'declaration.module.foreign.private': {
+			ids: [TSKindId.ForeignModItemBody, TSKindId.ForeignModItemSemi],
+			exact: false
+		},
+		'declaration.module.foreign.public': {
+			ids: [TSKindId.ForeignModItemBody, TSKindId.ForeignModItemSemi],
+			exact: false
+		},
+		'declaration.module.foreign.public.internal': {
+			ids: [TSKindId.ForeignModItemBody, TSKindId.ForeignModItemSemi],
+			exact: false
+		},
+		'declaration.module.foreign.public.restricted': {
+			ids: [TSKindId.ForeignModItemBody, TSKindId.ForeignModItemSemi],
+			exact: false
+		},
+		'declaration.module.private': { ids: [TSKindId.ModItemExternal, TSKindId.ModItemInline], exact: false },
+		'declaration.module.public': { ids: [TSKindId.ModItemExternal, TSKindId.ModItemInline], exact: false },
+		'declaration.module.public.internal': { ids: [TSKindId.ModItemExternal, TSKindId.ModItemInline], exact: false },
+		'declaration.module.public.restricted': { ids: [TSKindId.ModItemExternal, TSKindId.ModItemInline], exact: false },
 		'declaration.parameter': {
 			ids: [
 				TSKindId.BoolKeyword,
@@ -2791,19 +3614,43 @@ const table: PortableTable = {
 			ids: [TSKindId.StructItem, TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
 			exact: true
 		},
+		'declaration.struct.private': { ids: [TSKindId.StructItemBrace], exact: false },
+		'declaration.struct.public': { ids: [TSKindId.StructItemBrace], exact: false },
+		'declaration.struct.public.internal': { ids: [TSKindId.StructItemBrace], exact: false },
+		'declaration.struct.public.restricted': { ids: [TSKindId.StructItemBrace], exact: false },
 		'declaration.struct.tuple': { ids: [TSKindId.StructItemTuple], exact: true },
+		'declaration.struct.tuple.private': { ids: [TSKindId.StructItemTuple], exact: false },
+		'declaration.struct.tuple.public': { ids: [TSKindId.StructItemTuple], exact: false },
+		'declaration.struct.tuple.public.internal': { ids: [TSKindId.StructItemTuple], exact: false },
+		'declaration.struct.tuple.public.restricted': { ids: [TSKindId.StructItemTuple], exact: false },
 		'declaration.struct.unit': { ids: [TSKindId.StructItemUnit], exact: true },
+		'declaration.struct.unit.private': { ids: [TSKindId.StructItemUnit], exact: false },
+		'declaration.struct.unit.public': { ids: [TSKindId.StructItemUnit], exact: false },
+		'declaration.struct.unit.public.internal': { ids: [TSKindId.StructItemUnit], exact: false },
+		'declaration.struct.unit.public.restricted': { ids: [TSKindId.StructItemUnit], exact: false },
 		'declaration.type_alias': { ids: [TSKindId.AssociatedType, TSKindId.TypeItem], exact: true },
 		'declaration.type_alias.associated': { ids: [TSKindId.AssociatedType], exact: true },
+		'declaration.type_alias.private': { ids: [TSKindId.TypeItem], exact: false },
+		'declaration.type_alias.public': { ids: [TSKindId.TypeItem], exact: false },
+		'declaration.type_alias.public.internal': { ids: [TSKindId.TypeItem], exact: false },
+		'declaration.type_alias.public.restricted': { ids: [TSKindId.TypeItem], exact: false },
 		'declaration.type_parameter': {
 			ids: [TSKindId.ConstParameter, TSKindId.LifetimeParameter, TSKindId.TypeParameter],
 			exact: true
 		},
-		'declaration.type_parameter.const': { ids: [TSKindId.ConstParameter], exact: true },
 		'declaration.type_parameter.lifetime': { ids: [TSKindId.LifetimeParameter], exact: true },
+		'declaration.type_parameter.value': { ids: [TSKindId.ConstParameter], exact: true },
 		'declaration.union': { ids: [TSKindId.UnionItem], exact: true },
+		'declaration.union.private': { ids: [TSKindId.UnionItem], exact: false },
+		'declaration.union.public': { ids: [TSKindId.UnionItem], exact: false },
+		'declaration.union.public.internal': { ids: [TSKindId.UnionItem], exact: false },
+		'declaration.union.public.restricted': { ids: [TSKindId.UnionItem], exact: false },
 		'declaration.variable': { ids: [TSKindId.LetDeclaration, TSKindId.StaticItem], exact: true },
 		'declaration.variable.static': { ids: [TSKindId.StaticItem], exact: true },
+		'declaration.variable.static.private': { ids: [TSKindId.StaticItem], exact: false },
+		'declaration.variable.static.public': { ids: [TSKindId.StaticItem], exact: false },
+		'declaration.variable.static.public.internal': { ids: [TSKindId.StaticItem], exact: false },
+		'declaration.variable.static.public.restricted': { ids: [TSKindId.StaticItem], exact: false },
 		element: {
 			ids: [
 				TSKindId.BaseFieldInitializer,
@@ -3318,6 +4165,14 @@ const table: PortableTable = {
 		'statement.if': { ids: [TSKindId.IfExpression], exact: true },
 		'statement.import': { ids: [TSKindId.ExternCrateDeclaration, TSKindId.UseDeclaration], exact: true },
 		'statement.import.crate': { ids: [TSKindId.ExternCrateDeclaration], exact: true },
+		'statement.import.crate.private': { ids: [TSKindId.ExternCrateDeclaration], exact: false },
+		'statement.import.crate.public': { ids: [TSKindId.ExternCrateDeclaration], exact: false },
+		'statement.import.crate.public.internal': { ids: [TSKindId.ExternCrateDeclaration], exact: false },
+		'statement.import.crate.public.restricted': { ids: [TSKindId.ExternCrateDeclaration], exact: false },
+		'statement.import.private': { ids: [TSKindId.UseDeclaration], exact: false },
+		'statement.import.public': { ids: [TSKindId.UseDeclaration], exact: false },
+		'statement.import.public.internal': { ids: [TSKindId.UseDeclaration], exact: false },
+		'statement.import.public.restricted': { ids: [TSKindId.UseDeclaration], exact: false },
 		'statement.loop': { ids: [TSKindId.ForExpression, TSKindId.LoopExpression, TSKindId.WhileExpression], exact: true },
 		'statement.loop.for': { ids: [TSKindId.ForExpression], exact: true },
 		'statement.loop.while': { ids: [TSKindId.WhileExpression], exact: true },
@@ -3437,6 +4292,7 @@ const table: PortableTable = {
 		['', 'comparison', 'expression.binary.comparison'],
 		['', 'compound', 'expression.assignment.compound'],
 		['', 'conformance', 'declaration.extension.conformance'],
+		['', 'const', 'expression.block.const'],
 		['', 'constant', 'declaration.constant'],
 		['', 'content', 'attribute.content'],
 		['', 'continue', 'statement.continue'],
@@ -3465,7 +4321,6 @@ const table: PortableTable = {
 		['', 'instantiation', 'expression.instantiation'],
 		['', 'integer', 'literal.number.integer'],
 		['', 'interface', 'declaration.interface'],
-		['', 'internal', 'modifier.visibility.public.internal'],
 		['', 'label', 'identifier.label'],
 		['', 'lambda', 'expression.lambda'],
 		['', 'last', 'clause.match.arm.last'],
@@ -3494,15 +4349,12 @@ const table: PortableTable = {
 		['', 'predicate', 'clause.where.predicate'],
 		['', 'prelude', 'type.named.prelude'],
 		['', 'primitive', 'type.primitive'],
-		['', 'private', 'modifier.visibility.private'],
 		['', 'property', 'identifier.property'],
-		['', 'public', 'modifier.visibility.public'],
 		['', 'qualified', 'type.qualified'],
 		['', 'raw', 'literal.string.raw'],
 		['', 'removed', 'clause.bounds.removed'],
 		['', 'repeat', 'expression.collection.list.repeat'],
 		['', 'rest', 'pattern.struct.rest'],
-		['', 'restricted', 'modifier.visibility.public.restricted'],
 		['', 'return', 'statement.return'],
 		['', 'right', 'expression.binary.shift.right'],
 		['', 'rule', 'clause.macro.rule'],
@@ -3528,7 +4380,6 @@ const table: PortableTable = {
 		['', 'union', 'declaration.union'],
 		['', 'unsafe', 'expression.block.unsafe'],
 		['', 'use', 'clause.bounds.use'],
-		['', 'value', 'pattern.reference.value'],
 		['', 'variable', 'declaration.variable'],
 		['', 'variadic', 'declaration.parameter.variadic'],
 		['', 'visibility', 'modifier.visibility'],
@@ -3554,13 +4405,51 @@ const table: PortableTable = {
 		['comment.line', 'inner', 'comment.line.doc.inner'],
 		['declaration', 'associated', 'declaration.type_alias.associated'],
 		['declaration', 'conformance', 'declaration.extension.conformance'],
-		['declaration', 'const', 'declaration.type_parameter.const'],
 		['declaration', 'foreign', 'declaration.module.foreign'],
 		['declaration', 'lifetime', 'declaration.type_parameter.lifetime'],
 		['declaration', 'self', 'declaration.parameter.self'],
 		['declaration', 'trait', 'declaration.interface.trait'],
 		['declaration', 'unit', 'declaration.struct.unit'],
+		['declaration', 'value', 'declaration.type_parameter.value'],
 		['declaration', 'variadic', 'declaration.parameter.variadic'],
+		['declaration.constant', 'internal', 'declaration.constant.public.internal'],
+		['declaration.constant', 'restricted', 'declaration.constant.public.restricted'],
+		['declaration.enum', 'internal', 'declaration.enum.public.internal'],
+		['declaration.enum', 'restricted', 'declaration.enum.public.restricted'],
+		['declaration.enum_member.struct', 'internal', 'declaration.enum_member.struct.public.internal'],
+		['declaration.enum_member.struct', 'restricted', 'declaration.enum_member.struct.public.restricted'],
+		['declaration.enum_member.tuple', 'internal', 'declaration.enum_member.tuple.public.internal'],
+		['declaration.enum_member.tuple', 'restricted', 'declaration.enum_member.tuple.public.restricted'],
+		['declaration.field', 'internal', 'declaration.field.public.internal'],
+		['declaration.field', 'restricted', 'declaration.field.public.restricted'],
+		['declaration.function.signature', 'internal', 'declaration.function.signature.public.internal'],
+		['declaration.function.signature', 'restricted', 'declaration.function.signature.public.restricted'],
+		['declaration.interface', 'internal', 'declaration.interface.trait.public.internal'],
+		['declaration.interface', 'private', 'declaration.interface.trait.private'],
+		['declaration.interface', 'public', 'declaration.interface.trait.public'],
+		['declaration.interface', 'restricted', 'declaration.interface.trait.public.restricted'],
+		['declaration.interface.trait', 'internal', 'declaration.interface.trait.public.internal'],
+		['declaration.interface.trait', 'restricted', 'declaration.interface.trait.public.restricted'],
+		['declaration.method.signature', 'internal', 'declaration.method.signature.public.internal'],
+		['declaration.method.signature', 'restricted', 'declaration.method.signature.public.restricted'],
+		['declaration.method.static', 'internal', 'declaration.method.static.public.internal'],
+		['declaration.method.static', 'restricted', 'declaration.method.static.public.restricted'],
+		['declaration.module.foreign', 'internal', 'declaration.module.foreign.public.internal'],
+		['declaration.module.foreign', 'restricted', 'declaration.module.foreign.public.restricted'],
+		['declaration.struct.tuple', 'internal', 'declaration.struct.tuple.public.internal'],
+		['declaration.struct.tuple', 'restricted', 'declaration.struct.tuple.public.restricted'],
+		['declaration.struct.unit', 'internal', 'declaration.struct.unit.public.internal'],
+		['declaration.struct.unit', 'restricted', 'declaration.struct.unit.public.restricted'],
+		['declaration.type_alias', 'internal', 'declaration.type_alias.public.internal'],
+		['declaration.type_alias', 'restricted', 'declaration.type_alias.public.restricted'],
+		['declaration.union', 'internal', 'declaration.union.public.internal'],
+		['declaration.union', 'restricted', 'declaration.union.public.restricted'],
+		['declaration.variable', 'internal', 'declaration.variable.static.public.internal'],
+		['declaration.variable', 'private', 'declaration.variable.static.private'],
+		['declaration.variable', 'public', 'declaration.variable.static.public'],
+		['declaration.variable', 'restricted', 'declaration.variable.static.public.restricted'],
+		['declaration.variable.static', 'internal', 'declaration.variable.static.public.internal'],
+		['declaration.variable.static', 'restricted', 'declaration.variable.static.public.restricted'],
 		['element', 'base', 'element.struct.base'],
 		['element', 'delimited', 'element.macro.token_tree.delimited'],
 		['element', 'field', 'element.struct.field'],
@@ -3659,6 +4548,8 @@ const table: PortableTable = {
 		['statement', 'crate', 'statement.import.crate'],
 		['statement', 'for', 'statement.loop.for'],
 		['statement', 'while', 'statement.loop.while'],
+		['statement.import.crate', 'internal', 'statement.import.crate.public.internal'],
+		['statement.import.crate', 'restricted', 'statement.import.crate.public.restricted'],
 		['type', 'expression', 'type.path.expression'],
 		['type', 'never', 'type.primitive.never'],
 		['type', 'prelude', 'type.named.prelude'],
@@ -3677,7 +4568,127 @@ const table: PortableTable = {
 		[TSKindId.AsyncBlock]: [{ path: 'expression.block.async', within: [], test: [] }],
 		[TSKindId.Attribute]: [{ path: 'attribute.content', within: [], test: [] }],
 		[TSKindId.AttributeItem]: [{ path: 'attribute', within: [], test: [] }],
-		[TSKindId.AttributedOrderedField]: [{ path: 'declaration.field', within: [], test: [] }],
+		[TSKindId.AttributedOrderedField]: [
+			{
+				path: 'declaration.field.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: [], kinds: ['visibility_modifier'] } },
+					{
+						up: 0,
+						via: [{ fields: [], kinds: ['visibility_modifier'] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: [], kinds: ['visibility_modifier'] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: [], kinds: ['visibility_modifier'] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [125],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.field.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: [], kinds: ['visibility_modifier'] } },
+					{
+						up: 0,
+						via: [{ fields: [], kinds: ['visibility_modifier'] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: [], kinds: ['visibility_modifier'] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: [], kinds: ['visibility_modifier'] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [127],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.field.public.restricted',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: [], kinds: ['visibility_modifier'] } },
+					{
+						up: 0,
+						via: [{ fields: [], kinds: ['visibility_modifier'] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: [], kinds: ['visibility_modifier'] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [126, 379],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.field.public',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: [], kinds: ['visibility_modifier'] } },
+					{
+						up: 0,
+						via: [{ fields: [], kinds: ['visibility_modifier'] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{
+				path: 'declaration.field.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: [], kinds: ['visibility_modifier'] } },
+					{
+						up: 0,
+						via: [{ fields: [], kinds: ['visibility_modifier'] }],
+						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{ path: 'declaration.field', within: [], test: [] }
+		],
 		[TSKindId.AwaitExpression]: [{ path: 'expression.await', within: [], test: [] }],
 		[TSKindId.BaseFieldInitializer]: [{ path: 'element.struct.base', within: [], test: [] }],
 		[TSKindId.BinaryExpression]: [
@@ -3925,8 +4936,128 @@ const table: PortableTable = {
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'expression.block.const', within: [], test: [] }
 		],
-		[TSKindId.ConstItem]: [{ path: 'declaration.constant', within: [], test: [] }],
-		[TSKindId.ConstParameter]: [{ path: 'declaration.type_parameter.const', within: [], test: [] }],
+		[TSKindId.ConstItem]: [
+			{
+				path: 'declaration.constant.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [125],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.constant.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [127],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.constant.public.restricted',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [126, 379],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.constant.public',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{
+				path: 'declaration.constant.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{ path: 'declaration.constant', within: [], test: [] }
+		],
+		[TSKindId.ConstParameter]: [{ path: 'declaration.type_parameter.value', within: [], test: [] }],
 		[TSKindId.ContinueExpression]: [{ path: 'statement.continue', within: [], test: [] }],
 		[TSKindId.Crate]: [
 			{ path: 'modifier.visibility.public.internal', within: [TSKindId.VisibilityModifier], test: [] },
@@ -3941,8 +5072,492 @@ const table: PortableTable = {
 		[TSKindId.DynamicType]: [{ path: 'type.dynamic', within: [], test: [] }],
 		[TSKindId.ElseClause]: [{ path: 'clause.else', within: [], test: [] }],
 		[TSKindId.EmptyStatement]: [{ path: 'statement.empty', within: [], test: [] }],
-		[TSKindId.EnumItem]: [{ path: 'declaration.enum', within: [], test: [] }],
+		[TSKindId.EnumItem]: [
+			{
+				path: 'declaration.enum.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [125],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.enum.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [127],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.enum.public.restricted',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [126, 379],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.enum.public',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{
+				path: 'declaration.enum.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{ path: 'declaration.enum', within: [], test: [] }
+		],
 		[TSKindId.EnumVariant]: [
+			{
+				path: 'declaration.enum_member.tuple.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [125],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					},
+					{ up: 0, via: [], plan: { op: 'is', types: [203], fields: ['body'], kinds: [] } }
+				]
+			},
+			{
+				path: 'declaration.enum_member.tuple.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [127],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					},
+					{ up: 0, via: [], plan: { op: 'is', types: [203], fields: ['body'], kinds: [] } }
+				]
+			},
+			{
+				path: 'declaration.enum_member.tuple.public.restricted',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [126, 379],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					},
+					{ up: 0, via: [], plan: { op: 'is', types: [203], fields: ['body'], kinds: [] } }
+				]
+			},
+			{
+				path: 'declaration.enum_member.struct.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [125],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					},
+					{ up: 0, via: [], plan: { op: 'is', types: [201], fields: ['body'], kinds: [] } }
+				]
+			},
+			{
+				path: 'declaration.enum_member.struct.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [127],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					},
+					{ up: 0, via: [], plan: { op: 'is', types: [201], fields: ['body'], kinds: [] } }
+				]
+			},
+			{
+				path: 'declaration.enum_member.struct.public.restricted',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [126, 379],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					},
+					{ up: 0, via: [], plan: { op: 'is', types: [201], fields: ['body'], kinds: [] } }
+				]
+			},
+			{
+				path: 'declaration.enum_member.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [125],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.enum_member.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [127],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.enum_member.public.restricted',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [126, 379],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.enum_member.tuple.public',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{ up: 0, via: [], plan: { op: 'is', types: [203], fields: ['body'], kinds: [] } }
+				]
+			},
+			{
+				path: 'declaration.enum_member.tuple.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{ up: 0, via: [], plan: { op: 'is', types: [203], fields: ['body'], kinds: [] } }
+				]
+			},
+			{
+				path: 'declaration.enum_member.struct.public',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{ up: 0, via: [], plan: { op: 'is', types: [201], fields: ['body'], kinds: [] } }
+				]
+			},
+			{
+				path: 'declaration.enum_member.struct.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{ up: 0, via: [], plan: { op: 'is', types: [201], fields: ['body'], kinds: [] } }
+				]
+			},
+			{
+				path: 'declaration.enum_member.public',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{
+				path: 'declaration.enum_member.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
 			{
 				path: 'declaration.enum_member.tuple',
 				within: [],
@@ -3963,7 +5578,127 @@ const table: PortableTable = {
 		[TSKindId.Expr2021Keyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.ExprKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.ExpressionStatement]: [{ path: 'statement.expression', within: [], test: [] }],
-		[TSKindId.ExternCrateDeclaration]: [{ path: 'statement.import.crate', within: [], test: [] }],
+		[TSKindId.ExternCrateDeclaration]: [
+			{
+				path: 'statement.import.crate.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [125],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'statement.import.crate.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [127],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'statement.import.crate.public.restricted',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [126, 379],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'statement.import.crate.public',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{
+				path: 'statement.import.crate.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{ path: 'statement.import.crate', within: [], test: [] }
+		],
 		[TSKindId.ExternModifier]: [{ path: 'modifier.extern', within: [], test: [] }],
 		[TSKindId.F32Keyword]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
@@ -3982,7 +5717,127 @@ const table: PortableTable = {
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'literal.boolean', within: [], test: [] }
 		],
-		[TSKindId.FieldDeclaration]: [{ path: 'declaration.field', within: [], test: [] }],
+		[TSKindId.FieldDeclaration]: [
+			{
+				path: 'declaration.field.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [125],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.field.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [127],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.field.public.restricted',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [126, 379],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.field.public',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{
+				path: 'declaration.field.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{ path: 'declaration.field', within: [], test: [] }
+		],
 		[TSKindId.FieldExpression]: [{ path: 'expression.member', within: [], test: [] }],
 		[TSKindId.FieldIdentifier]: [{ path: 'identifier.field', within: [], test: [] }],
 		[TSKindId.FieldInitializer]: [{ path: 'element.struct.field', within: [], test: [] }],
@@ -3996,9 +5851,471 @@ const table: PortableTable = {
 		[TSKindId.ForExpression]: [{ path: 'statement.loop.for', within: [], test: [] }],
 		[TSKindId.ForLifetimes]: [{ path: 'clause.lifetimes', within: [], test: [] }],
 		[TSKindId.ForeignModItem]: [{ path: 'declaration.module.foreign', within: [], test: [] }],
-		[TSKindId.ForeignModItemBody]: [{ path: 'declaration.module.foreign', within: [], test: [] }],
-		[TSKindId.ForeignModItemSemi]: [{ path: 'declaration.module.foreign', within: [], test: [] }],
+		[TSKindId.ForeignModItemBody]: [
+			{
+				path: 'declaration.module.foreign.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [125],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.module.foreign.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [127],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.module.foreign.public.restricted',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [126, 379],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.module.foreign.public',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{
+				path: 'declaration.module.foreign.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{ path: 'declaration.module.foreign', within: [], test: [] }
+		],
+		[TSKindId.ForeignModItemSemi]: [
+			{
+				path: 'declaration.module.foreign.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [125],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.module.foreign.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [127],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.module.foreign.public.restricted',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [126, 379],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.module.foreign.public',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{
+				path: 'declaration.module.foreign.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{ path: 'declaration.module.foreign', within: [], test: [] }
+		],
 		[TSKindId.FunctionItem]: [
+			{
+				path: 'declaration.method.static.private',
+				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
+				test: [
+					{
+						up: 0,
+						via: [
+							{ fields: ['parameters'], kinds: [] },
+							{ fields: ['elements'], kinds: [] },
+							{ fields: ['item'], kinds: [] }
+						],
+						plan: {
+							op: 'not',
+							of: {
+								op: 'is',
+								types: [231],
+								fields: [],
+								kinds: [
+									'parameter',
+									'self_parameter',
+									'variadic_parameter',
+									'underscore',
+									'type_identifier',
+									'abstract_type',
+									'reference_type',
+									'metavariable',
+									'pointer_type_const',
+									'pointer_type_mut',
+									'generic_type',
+									'scoped_type_identifier',
+									'tuple_type',
+									'unit_type',
+									'array_type',
+									'function_type',
+									'macro_invocation',
+									'never_type',
+									'dynamic_type',
+									'bounded_type',
+									'removed_trait_bound',
+									'primitive_type'
+								]
+							}
+						}
+					},
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [125],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.method.static.public.internal',
+				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
+				test: [
+					{
+						up: 0,
+						via: [
+							{ fields: ['parameters'], kinds: [] },
+							{ fields: ['elements'], kinds: [] },
+							{ fields: ['item'], kinds: [] }
+						],
+						plan: {
+							op: 'not',
+							of: {
+								op: 'is',
+								types: [231],
+								fields: [],
+								kinds: [
+									'parameter',
+									'self_parameter',
+									'variadic_parameter',
+									'underscore',
+									'type_identifier',
+									'abstract_type',
+									'reference_type',
+									'metavariable',
+									'pointer_type_const',
+									'pointer_type_mut',
+									'generic_type',
+									'scoped_type_identifier',
+									'tuple_type',
+									'unit_type',
+									'array_type',
+									'function_type',
+									'macro_invocation',
+									'never_type',
+									'dynamic_type',
+									'bounded_type',
+									'removed_trait_bound',
+									'primitive_type'
+								]
+							}
+						}
+					},
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [127],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.method.static.public.restricted',
+				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
+				test: [
+					{
+						up: 0,
+						via: [
+							{ fields: ['parameters'], kinds: [] },
+							{ fields: ['elements'], kinds: [] },
+							{ fields: ['item'], kinds: [] }
+						],
+						plan: {
+							op: 'not',
+							of: {
+								op: 'is',
+								types: [231],
+								fields: [],
+								kinds: [
+									'parameter',
+									'self_parameter',
+									'variadic_parameter',
+									'underscore',
+									'type_identifier',
+									'abstract_type',
+									'reference_type',
+									'metavariable',
+									'pointer_type_const',
+									'pointer_type_mut',
+									'generic_type',
+									'scoped_type_identifier',
+									'tuple_type',
+									'unit_type',
+									'array_type',
+									'function_type',
+									'macro_invocation',
+									'never_type',
+									'dynamic_type',
+									'bounded_type',
+									'removed_trait_bound',
+									'primitive_type'
+								]
+							}
+						}
+					},
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [126, 379],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
 			{
 				path: 'declaration.method',
 				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
@@ -4048,6 +6365,110 @@ const table: PortableTable = {
 				]
 			},
 			{
+				path: 'declaration.method.static.public',
+				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
+				test: [
+					{
+						up: 0,
+						via: [
+							{ fields: ['parameters'], kinds: [] },
+							{ fields: ['elements'], kinds: [] },
+							{ fields: ['item'], kinds: [] }
+						],
+						plan: {
+							op: 'not',
+							of: {
+								op: 'is',
+								types: [231],
+								fields: [],
+								kinds: [
+									'parameter',
+									'self_parameter',
+									'variadic_parameter',
+									'underscore',
+									'type_identifier',
+									'abstract_type',
+									'reference_type',
+									'metavariable',
+									'pointer_type_const',
+									'pointer_type_mut',
+									'generic_type',
+									'scoped_type_identifier',
+									'tuple_type',
+									'unit_type',
+									'array_type',
+									'function_type',
+									'macro_invocation',
+									'never_type',
+									'dynamic_type',
+									'bounded_type',
+									'removed_trait_bound',
+									'primitive_type'
+								]
+							}
+						}
+					},
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{
+				path: 'declaration.method.static.public.internal',
+				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
+				test: [
+					{
+						up: 0,
+						via: [
+							{ fields: ['parameters'], kinds: [] },
+							{ fields: ['elements'], kinds: [] },
+							{ fields: ['item'], kinds: [] }
+						],
+						plan: {
+							op: 'not',
+							of: {
+								op: 'is',
+								types: [231],
+								fields: [],
+								kinds: [
+									'parameter',
+									'self_parameter',
+									'variadic_parameter',
+									'underscore',
+									'type_identifier',
+									'abstract_type',
+									'reference_type',
+									'metavariable',
+									'pointer_type_const',
+									'pointer_type_mut',
+									'generic_type',
+									'scoped_type_identifier',
+									'tuple_type',
+									'unit_type',
+									'array_type',
+									'function_type',
+									'macro_invocation',
+									'never_type',
+									'dynamic_type',
+									'bounded_type',
+									'removed_trait_bound',
+									'primitive_type'
+								]
+							}
+						}
+					},
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{
 				path: 'declaration.method.static',
 				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
 				test: [
@@ -4093,11 +6514,835 @@ const table: PortableTable = {
 					}
 				]
 			},
+			{
+				path: 'declaration.method.private',
+				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [125],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					},
+					{
+						up: 0,
+						via: [{ fields: ['parameters'], kinds: [] }],
+						plan: { op: 'is', types: [349], fields: ['elements'], kinds: [] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['parameters'], kinds: [] },
+							{ fields: ['elements'], kinds: [] },
+							{ fields: ['item'], kinds: [], anchor: 'first' }
+						],
+						plan: {
+							op: 'is',
+							types: [231],
+							fields: [],
+							kinds: [
+								'parameter',
+								'self_parameter',
+								'variadic_parameter',
+								'underscore',
+								'type_identifier',
+								'abstract_type',
+								'reference_type',
+								'metavariable',
+								'pointer_type_const',
+								'pointer_type_mut',
+								'generic_type',
+								'scoped_type_identifier',
+								'tuple_type',
+								'unit_type',
+								'array_type',
+								'function_type',
+								'macro_invocation',
+								'never_type',
+								'dynamic_type',
+								'bounded_type',
+								'removed_trait_bound',
+								'primitive_type'
+							]
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.method.public.internal',
+				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [127],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					},
+					{
+						up: 0,
+						via: [{ fields: ['parameters'], kinds: [] }],
+						plan: { op: 'is', types: [349], fields: ['elements'], kinds: [] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['parameters'], kinds: [] },
+							{ fields: ['elements'], kinds: [] },
+							{ fields: ['item'], kinds: [], anchor: 'first' }
+						],
+						plan: {
+							op: 'is',
+							types: [231],
+							fields: [],
+							kinds: [
+								'parameter',
+								'self_parameter',
+								'variadic_parameter',
+								'underscore',
+								'type_identifier',
+								'abstract_type',
+								'reference_type',
+								'metavariable',
+								'pointer_type_const',
+								'pointer_type_mut',
+								'generic_type',
+								'scoped_type_identifier',
+								'tuple_type',
+								'unit_type',
+								'array_type',
+								'function_type',
+								'macro_invocation',
+								'never_type',
+								'dynamic_type',
+								'bounded_type',
+								'removed_trait_bound',
+								'primitive_type'
+							]
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.method.public.restricted',
+				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [126, 379],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					},
+					{
+						up: 0,
+						via: [{ fields: ['parameters'], kinds: [] }],
+						plan: { op: 'is', types: [349], fields: ['elements'], kinds: [] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['parameters'], kinds: [] },
+							{ fields: ['elements'], kinds: [] },
+							{ fields: ['item'], kinds: [], anchor: 'first' }
+						],
+						plan: {
+							op: 'is',
+							types: [231],
+							fields: [],
+							kinds: [
+								'parameter',
+								'self_parameter',
+								'variadic_parameter',
+								'underscore',
+								'type_identifier',
+								'abstract_type',
+								'reference_type',
+								'metavariable',
+								'pointer_type_const',
+								'pointer_type_mut',
+								'generic_type',
+								'scoped_type_identifier',
+								'tuple_type',
+								'unit_type',
+								'array_type',
+								'function_type',
+								'macro_invocation',
+								'never_type',
+								'dynamic_type',
+								'bounded_type',
+								'removed_trait_bound',
+								'primitive_type'
+							]
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.method.public',
+				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [{ fields: ['parameters'], kinds: [] }],
+						plan: { op: 'is', types: [349], fields: ['elements'], kinds: [] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['parameters'], kinds: [] },
+							{ fields: ['elements'], kinds: [] },
+							{ fields: ['item'], kinds: [], anchor: 'first' }
+						],
+						plan: {
+							op: 'is',
+							types: [231],
+							fields: [],
+							kinds: [
+								'parameter',
+								'self_parameter',
+								'variadic_parameter',
+								'underscore',
+								'type_identifier',
+								'abstract_type',
+								'reference_type',
+								'metavariable',
+								'pointer_type_const',
+								'pointer_type_mut',
+								'generic_type',
+								'scoped_type_identifier',
+								'tuple_type',
+								'unit_type',
+								'array_type',
+								'function_type',
+								'macro_invocation',
+								'never_type',
+								'dynamic_type',
+								'bounded_type',
+								'removed_trait_bound',
+								'primitive_type'
+							]
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.method.public.internal',
+				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [{ fields: ['parameters'], kinds: [] }],
+						plan: { op: 'is', types: [349], fields: ['elements'], kinds: [] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['parameters'], kinds: [] },
+							{ fields: ['elements'], kinds: [] },
+							{ fields: ['item'], kinds: [], anchor: 'first' }
+						],
+						plan: {
+							op: 'is',
+							types: [231],
+							fields: [],
+							kinds: [
+								'parameter',
+								'self_parameter',
+								'variadic_parameter',
+								'underscore',
+								'type_identifier',
+								'abstract_type',
+								'reference_type',
+								'metavariable',
+								'pointer_type_const',
+								'pointer_type_mut',
+								'generic_type',
+								'scoped_type_identifier',
+								'tuple_type',
+								'unit_type',
+								'array_type',
+								'function_type',
+								'macro_invocation',
+								'never_type',
+								'dynamic_type',
+								'bounded_type',
+								'removed_trait_bound',
+								'primitive_type'
+							]
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.method.private',
+				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [125],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.method.public.internal',
+				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [127],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.method.public.restricted',
+				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [126, 379],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.method.public',
+				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{
+				path: 'declaration.method.public.internal',
+				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
 			{ path: 'declaration.method', within: [TSKindId.DeclarationList, TSKindId.TraitItem], test: [] },
+			{
+				path: 'declaration.function.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [125],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.function.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [127],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.function.public.restricted',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [126, 379],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.function.public',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{
+				path: 'declaration.function.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
 			{ path: 'declaration.function', within: [], test: [] }
 		],
 		[TSKindId.FunctionSignatureItem]: [
+			{
+				path: 'declaration.method.signature.private',
+				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [125],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.method.signature.public.internal',
+				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [127],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.method.signature.public.restricted',
+				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [126, 379],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.method.signature.public',
+				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{
+				path: 'declaration.method.signature.public.internal',
+				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
 			{ path: 'declaration.method.signature', within: [TSKindId.DeclarationList, TSKindId.TraitItem], test: [] },
+			{
+				path: 'declaration.function.signature.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [125],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.function.signature.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [127],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.function.signature.public.restricted',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [126, 379],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.function.signature.public',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{
+				path: 'declaration.function.signature.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
 			{ path: 'declaration.function.signature', within: [], test: [] }
 		],
 		[TSKindId.FunctionType]: [{ path: 'type.function', within: [], test: [] }],
@@ -4242,8 +7487,248 @@ const table: PortableTable = {
 		[TSKindId.MetaKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.Metavariable]: [{ path: 'identifier.metavariable', within: [], test: [] }],
 		[TSKindId.ModItem]: [{ path: 'declaration.module', within: [], test: [] }],
-		[TSKindId.ModItemExternal]: [{ path: 'declaration.module', within: [], test: [] }],
-		[TSKindId.ModItemInline]: [{ path: 'declaration.module', within: [], test: [] }],
+		[TSKindId.ModItemExternal]: [
+			{
+				path: 'declaration.module.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [125],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.module.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [127],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.module.public.restricted',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [126, 379],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.module.public',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{
+				path: 'declaration.module.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{ path: 'declaration.module', within: [], test: [] }
+		],
+		[TSKindId.ModItemInline]: [
+			{
+				path: 'declaration.module.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [125],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.module.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [127],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.module.public.restricted',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [126, 379],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.module.public',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{
+				path: 'declaration.module.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{ path: 'declaration.module', within: [], test: [] }
+		],
 		[TSKindId.MutPattern]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'pattern.mutable', within: [], test: [] }
@@ -4432,7 +7917,127 @@ const table: PortableTable = {
 			{ path: 'pattern.slice', within: [], test: [] }
 		],
 		[TSKindId.SourceFile]: [{ path: 'module', within: [], test: [] }],
-		[TSKindId.StaticItem]: [{ path: 'declaration.variable.static', within: [], test: [] }],
+		[TSKindId.StaticItem]: [
+			{
+				path: 'declaration.variable.static.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [125],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.variable.static.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [127],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.variable.static.public.restricted',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [126, 379],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.variable.static.public',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{
+				path: 'declaration.variable.static.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{ path: 'declaration.variable.static', within: [], test: [] }
+		],
 		[TSKindId.StmtKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.StrKeyword]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
@@ -4445,9 +8050,369 @@ const table: PortableTable = {
 		],
 		[TSKindId.StructExpression]: [{ path: 'expression.collection.struct', within: [], test: [] }],
 		[TSKindId.StructItem]: [{ path: 'declaration.struct', within: [], test: [] }],
-		[TSKindId.StructItemBrace]: [{ path: 'declaration.struct', within: [], test: [] }],
-		[TSKindId.StructItemTuple]: [{ path: 'declaration.struct.tuple', within: [], test: [] }],
-		[TSKindId.StructItemUnit]: [{ path: 'declaration.struct.unit', within: [], test: [] }],
+		[TSKindId.StructItemBrace]: [
+			{
+				path: 'declaration.struct.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [125],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.struct.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [127],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.struct.public.restricted',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [126, 379],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.struct.public',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{
+				path: 'declaration.struct.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{ path: 'declaration.struct', within: [], test: [] }
+		],
+		[TSKindId.StructItemTuple]: [
+			{
+				path: 'declaration.struct.tuple.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [125],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.struct.tuple.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [127],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.struct.tuple.public.restricted',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [126, 379],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.struct.tuple.public',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{
+				path: 'declaration.struct.tuple.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{ path: 'declaration.struct.tuple', within: [], test: [] }
+		],
+		[TSKindId.StructItemUnit]: [
+			{
+				path: 'declaration.struct.unit.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [125],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.struct.unit.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [127],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.struct.unit.public.restricted',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [126, 379],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.struct.unit.public',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{
+				path: 'declaration.struct.unit.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{ path: 'declaration.struct.unit', within: [], test: [] }
+		],
 		[TSKindId.StructPattern]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'pattern.struct', within: [], test: [] }
@@ -4465,7 +8430,127 @@ const table: PortableTable = {
 		[TSKindId.TokenTreePatternBracket]: [{ path: 'element.macro.token_tree.pattern', within: [], test: [] }],
 		[TSKindId.TokenTreePatternParen]: [{ path: 'element.macro.token_tree.pattern', within: [], test: [] }],
 		[TSKindId.TraitBounds]: [{ path: 'clause.bounds', within: [], test: [] }],
-		[TSKindId.TraitItem]: [{ path: 'declaration.interface.trait', within: [], test: [] }],
+		[TSKindId.TraitItem]: [
+			{
+				path: 'declaration.interface.trait.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [125],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.interface.trait.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [127],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.interface.trait.public.restricted',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [126, 379],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.interface.trait.public',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{
+				path: 'declaration.interface.trait.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{ path: 'declaration.interface.trait', within: [], test: [] }
+		],
 		[TSKindId.TrueKeyword]: [
 			{
 				path: 'literal.boolean.true',
@@ -4506,7 +8591,127 @@ const table: PortableTable = {
 			},
 			{ path: 'identifier.type', within: [], test: [] }
 		],
-		[TSKindId.TypeItem]: [{ path: 'declaration.type_alias', within: [], test: [] }],
+		[TSKindId.TypeItem]: [
+			{
+				path: 'declaration.type_alias.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [125],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.type_alias.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [127],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.type_alias.public.restricted',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [126, 379],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.type_alias.public',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{
+				path: 'declaration.type_alias.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{ path: 'declaration.type_alias', within: [], test: [] }
+		],
 		[TSKindId.TypeParameter]: [{ path: 'declaration.type_parameter', within: [], test: [] }],
 		[TSKindId.U128Keyword]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
@@ -4546,14 +8751,254 @@ const table: PortableTable = {
 			},
 			{ path: 'expression.unary', within: [], test: [] }
 		],
-		[TSKindId.UnionItem]: [{ path: 'declaration.union', within: [], test: [] }],
+		[TSKindId.UnionItem]: [
+			{
+				path: 'declaration.union.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [125],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.union.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [127],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.union.public.restricted',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [126, 379],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'declaration.union.public',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{
+				path: 'declaration.union.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{ path: 'declaration.union', within: [], test: [] }
+		],
 		[TSKindId.UnionKeyword]: [{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] }],
 		[TSKindId.UnitExpression]: [{ path: 'expression.unit', within: [], test: [] }],
 		[TSKindId.UnitType]: [{ path: 'type.unit', within: [], test: [] }],
 		[TSKindId.UnsafeBlock]: [{ path: 'expression.block.unsafe', within: [], test: [] }],
 		[TSKindId.UseAsClause]: [{ path: 'clause.import.as', within: [], test: [] }],
 		[TSKindId.UseBounds]: [{ path: 'clause.bounds.use', within: [], test: [] }],
-		[TSKindId.UseDeclaration]: [{ path: 'statement.import', within: [], test: [] }],
+		[TSKindId.UseDeclaration]: [
+			{
+				path: 'statement.import.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [125],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'statement.import.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						],
+						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [127],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'statement.import.public.restricted',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['visibility_modifier'], kinds: [] },
+							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
+							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						],
+						plan: {
+							op: 'is',
+							types: [126, 379],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'statement.import.public',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{
+				path: 'statement.import.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [{ fields: ['visibility_modifier'], kinds: [] }],
+						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+					}
+				]
+			},
+			{ path: 'statement.import', within: [], test: [] }
+		],
 		[TSKindId.UseList]: [{ path: 'clause.import.list', within: [], test: [] }],
 		[TSKindId.UseWildcard]: [{ path: 'clause.import.wildcard', within: [], test: [] }],
 		[TSKindId.UsizeKeyword]: [
@@ -4607,7 +9052,24 @@ const table: PortableTable = {
 						via: [{ fields: [], kinds: ['visibility_modifier_pub_scope'] }],
 						plan: {
 							op: 'is',
-							types: [126, 379],
+							types: [126],
+							fields: [],
+							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
+						}
+					}
+				]
+			},
+			{
+				path: 'modifier.visibility.public.restricted',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] } },
+					{
+						up: 0,
+						via: [{ fields: [], kinds: ['visibility_modifier_pub_scope'] }],
+						plan: {
+							op: 'is',
+							types: [379],
 							fields: [],
 							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
 						}

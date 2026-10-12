@@ -15,13 +15,12 @@ import {
 	grammarBindingsHash,
 	grammarInput,
 	printBindingsModule,
-	readVocabulary,
 	REGENERATE_BINDINGS_COMMAND,
 	resolveRoutes,
-	type Vocabulary,
 	VOCABULARY_DIR
 } from '@sittir/codegen/bindings';
 import { printFlagsModule } from './flags.ts';
+import { type Vocabulary, readVocabulary } from './vocabulary.ts';
 import type { GrammarName } from '@sittir/codegen/grammars';
 import { compileNodeMap, evaluateGrammar, invoke } from '../codegen-surface.ts';
 import { readNodeModelFile } from '../validate/common.ts';
@@ -91,7 +90,7 @@ export async function bindingsModule(grammar: GrammarName): Promise<BindingsModu
 	const { bindings, report } = deriveGrammarBindings({
 		facts: input.bindings,
 		base,
-		vocabMembers: vocabularyMembers(await readVocabulary(VOCABULARY_DIR)),
+		vocabMembers: vocabularyMembers(readVocabulary(VOCABULARY_DIR)),
 		routedMembers: resolveRoutes(input).members
 	});
 	return { text: printBindingsModule(bindings, grammarBindingsHash(grammar)), bindings, report };
@@ -189,7 +188,7 @@ export async function run(opts: BindingsInventoryOptions): Promise<number> {
 	const grammars = opts.grammars ?? bindingGrammars();
 	let code = 0;
 	if (opts.write) {
-		const { flags } = await readVocabulary(VOCABULARY_DIR);
+		const { flags } = readVocabulary(VOCABULARY_DIR);
 		writeFileSync(FLAGS_PATH, await printFlagsModule(flags));
 		process.stdout.write(`vocabulary flags: ${flags.size} written\n`);
 		for (const grammar of grammars) {
@@ -210,7 +209,7 @@ export async function run(opts: BindingsInventoryOptions): Promise<number> {
 	process.stdout.write(`${summarize(d)}\n`);
 	if (opts.members) process.stdout.write(`${membersTable(d)}\n`);
 	if (opts.check) {
-		const vocabulary = await readVocabulary(VOCABULARY_DIR);
+		const vocabulary = readVocabulary(VOCABULARY_DIR);
 		const disagreements = vocabularyDisagreements(d, vocabulary);
 		if (disagreements.length > 0) code = 1;
 		process.stdout.write(

@@ -3,10 +3,11 @@
 import { alias, bindings, field, rename, split } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "153eb5b1c150bc721d10f28e27dcf35fda06d9c720d148831e676bf79d33df6a",
+	hash: "9d24ebd8d91a1d77ffb8f789f38e136dde73a6d72b792b072091b16f638ae8cf",
 	patches: {
 		attribute_item: { "2": field("content") },
 		block_comment: { "1/0/2": alias(sym("block_comment_regular"), sym("text_comment")) },
+		const_parameter: { "4/0/1": field("default") },
 		field_expression: { "0": field("object"), "2": field("property") },
 		field_initializer: { "0/0": field("attributes") },
 		for_expression: { "2": field("left"), "4": field("right") },
@@ -25,6 +26,7 @@ export default bindings({
 		shorthand_field_initializer: { "1": field("field") },
 		slice_pattern: { "1/0": field("patterns") },
 		static_item: { "2/0": field("by_reference") },
+		struct_item_brace: { "4/0/0": field("where_clause") },
 		struct_item_tuple: { "4/1/0": field("where_clause") },
 		trait_item: { "5": field("extends") },
 		try_expression: { "0": field("argument") },
@@ -36,7 +38,6 @@ export default bindings({
 		unary_expression: { "1": field("argument") },
 		use_list: { "1/0": field("use_clauses") },
 		use_wildcard: { "0/0": field("use_wildcard_group") },
-		visibility_modifier_pub: { "1/0": field("scope") },
 		where_clause: { "1/0": field("where_predicates") }
 	},
 	renames: [
@@ -64,7 +65,7 @@ export default bindings({
 		rename("self_parameter", "self_parameter_declaration"),
 		rename("variadic_parameter", "variadic_parameter_declaration"),
 		rename("type_parameter", "type_parameter_declaration"),
-		rename("const_parameter", "const_type_parameter_declaration"),
+		rename("const_parameter", "value_type_parameter_declaration"),
 		rename("lifetime_parameter", "lifetime_type_parameter_declaration"),
 		rename("block", "block_statement"),
 		rename("if_expression", "if_statement"),

@@ -134,7 +134,7 @@ const CODEGEN_SOURCE_DIR = 'packages/codegen/src';
 
 const VOCABULARY_SOURCE_DIR = relative(REPO_ROOT, VOCABULARY_DIR);
 
-const isVocabularyInput = (rel: string): boolean => dirname(rel) === VOCABULARY_SOURCE_DIR && isVocabularySource(rel);
+const isVocabularyInput = (rel: string): boolean => rel.startsWith(`${VOCABULARY_SOURCE_DIR}/`) && isVocabularySource(rel);
 
 const bindingsInput = (grammar: GrammarName): string => `${relative(REPO_ROOT, grammarPackageDir(grammar))}/${BINDINGS_FILE}`;
 

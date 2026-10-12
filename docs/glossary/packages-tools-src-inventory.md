@@ -46,6 +46,24 @@ Each grammar's binding facts (`readBindings`), named by their bound kinds throug
 
 Where the bindings and the authored vocabulary disagree, one line each: a claimed path no vocabulary interface has as its `$kind`, a member the bindings route to a kind whose interface (its own members and its parents') does not declare it, and a template hole its interface does not declare. A refinement's pinned slot needs no declaration: the read tells it, so it is no member, and the bindings claim is the one source of the refinement's spelling. The vocabulary is authored, so a disagreement is fixed on whichever side is wrong: a feature adds the kind or member, or the binding drops it.
 
+### `packages/tools/src/inventory/vocabulary.ts::readVocabulary`
+
+Reads the vocabulary through the feature tool's reader (`readVocabularySource`), so the inventory and the tool see the same declarations. That covers the namespace files' kinds and each feature folder's stubs.
+
+- A stub that declares a `$kind` is a kind of its own.
+- A stub that does not declare one adds its members to the kind with the same qualified name.
+- A member declared more than once is optional when any declaration of it is optional, which is how the augmentation gates it.
+
+Every kind is keyed by its `$kind` literal and carries its own members (each marked optional or required, and a flag when it is declared with the marker type `Flag`, `read.ts::FLAG`) its parent, the interface its `extends` clause names through `V.`, and the value it is refined by, when it is an owner's refinement (`read.ts::refinesOf`). `members(path)` adds the inherited members, nearest first: at each kind on the line its own, then those of the value it is refined by, along the value's own line. So `declaration.function.public.restricted` has the `scope` that `scoped-visibility` gives `modifier.visibility.public.restricted`. `flags` is every name some kind or stub declares as a flag. An interface with no `$kind` literal and no kind of the same name is not a vocabulary kind (the context's typemap and `Unmapped`).
+
+### `packages/tools/src/inventory/vocabulary.ts::VocabularyKind`
+
+A vocabulary kind as `readVocabulary` reads it: the kind the bindings read (`@sittir/codegen/bindings::VocabularyKind`) with the path of the value it is refined by, when it is an owner's refinement.
+
+### `packages/tools/src/inventory/vocabulary.ts::Vocabulary`
+
+The vocabulary as `readVocabulary` reads it: the bindings' vocabulary (`@sittir/codegen/bindings::Vocabulary`) with every kind a `VocabularyKind`, so `members(path)` can follow what a kind is refined by.
+
 ### `packages/tools/src/inventory/index.ts::BindingsModule`
 
 A grammar's `grammar.bindings.ts` text, with the grammar bindings and the derivation report it was printed from.

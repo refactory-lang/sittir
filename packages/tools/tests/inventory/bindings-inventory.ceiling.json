@@ -1,5 +1,6 @@
 {
 	"unmapped": 17,
 	"compiling": ["python", "rust", "typescript"],
-	"vocabularyDisagreements": []
+	"vocabularyDisagreements": [],
+	"unroutedScope": ["declaration.method.public.restricted", "declaration.method.signature.public.restricted"]
 }
