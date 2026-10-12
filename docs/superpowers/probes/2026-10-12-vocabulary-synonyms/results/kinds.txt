@@ -1,0 +1,467 @@
+path [owner] claims per grammar (p, r, t: grammar kinds) {members} #flags
+argument                                         [argument]   {name,value}
+argument.keyword                                 [f:named-arguments] p:keyword_argument  {name,value}
+attribute                                        [attribute]   {content}
+attribute.content                                [attribute] r:attribute  {input,path}
+attribute.content.call                           [f:decorators] t:decorator_call_expression  {arguments,function,typeArguments}
+attribute.content.member                         [f:decorators] t:decorator_member_expression  {object,property}
+attribute.content.parenthesized                  [f:decorators] t:decorator_parenthesized_expression  {expression}
+attribute.decorator                              [f:decorators] p:decorator t:decorator  {content}
+attribute.inner                                  [f:attributes] r:inner_attribute_item  {content}
+clause                                           [clause]   {}
+clause.bounds                                    [f:parametric-polymorphism/bounded-quantification] r:trait_bounds  {bounds}
+clause.bounds.higher_ranked                      [f:parametric-polymorphism/bounded-quantification/higher-rank-polymorphism] r:higher_ranked_trait_bound  {type,typeParameters}
+clause.bounds.removed                            [f:parametric-polymorphism/bounded-quantification] r:removed_trait_bound  {type}
+clause.bounds.use                                [f:parametric-polymorphism/bounded-quantification] r:use_bounds  {bounds}
+clause.case                                      [clause]   {}
+clause.case.default                              [f:multiway-branch] t:switch_default  {bodies}
+clause.case.match                                [f:match-expressions] p:case_clause  {casePatterns,consequence,guard}
+clause.case.switch                               [f:multiway-branch] t:switch_case  {bodies,value}
+clause.catch                                     [f:exceptions] t:catch_clause  {body,catchClauseGroup}
+clause.comprehension                             [f:comprehensions] p:comprehension_clauses  {contents}
+clause.comprehension.for                         [f:comprehensions] p:for_in_clause  {comma,left,rights} #async
+clause.comprehension.if                          [f:comprehensions] p:if_clause  {condition}
+clause.constraint                                [f:parametric-polymorphism/bounded-quantification] t:constraint  {content,type}
+clause.default                                   [f:parametric-polymorphism] t:default_type  {type}
+clause.elif                                      [clause] p:elif_clause  {condition,consequence}
+clause.else                                      [clause] p:else_clause r:else_clause t:else_clause  {body}
+clause.except                                    [f:exceptions] p:except_clause  {alias,exception,suite} #group
+clause.export                                    [f:modules] t:export_clause  {exportSpecifiers}
+clause.export.namespace                          [f:modules] t:namespace_export  {moduleExportName}
+clause.export.specifier                          [f:modules] t:export_specifier  {alias,exportKind,name}
+clause.extends                                   [f:methods/classes/single-inheritance] t:extends_clause  {extendsClauseSingles}
+clause.extends.type                              [f:interfaces] t:extends_type_clause  {types}
+clause.finally                                   [f:exceptions] p:finally_clause t:finally_clause  {block,body}
+clause.implements                                [f:interface-conformance] t:implements_clause  {types}
+clause.import                                    [f:modules]   {}
+clause.import.alias                              [f:modules] p:aliased_import t:import_alias  {alias,name,value}
+clause.import.as                                 [f:modules] r:use_as_clause  {alias,path}
+clause.import.attribute                          [f:modules] t:import_attribute  {attributeKind,object}
+clause.import.list                               [f:modules] r:use_list  {useClauses}
+clause.import.list.scoped                        [f:modules] r:scoped_use_list  {list,path}
+clause.import.names                              [f:modules] t:import_clause  {content,default}
+clause.import.namespace                          [f:modules] t:namespace_import  {name}
+clause.import.relative                           [f:modules] p:relative_import  {name,prefix}
+clause.import.relative.prefix                    [f:modules] p:import_prefix  {}
+clause.import.require                            [f:modules] t:import_require_clause  {name,source}
+clause.import.specifier                          [f:modules] t:import_specifier  {alias,importKind,name}
+clause.import.wildcard                           [f:modules] p:wildcard_import r:use_wildcard  {useWildcardGroup}
+clause.let                                       [f:match-expressions] r:let_condition  {pattern,value}
+clause.let.chain                                 [f:match-expressions] r:let_chain  {left,rights}
+clause.lifetimes                                 [f:parametric-polymorphism/lifetimes] r:for_lifetimes  {lifetimes}
+clause.macro                                     [f:syntactic-metaprogramming]   {left,right}
+clause.macro.rule                                [f:syntactic-metaprogramming] r:macro_rule  {left,right}
+clause.mapped_type                               [f:type-annotations] t:mapped_type_clause  {alias,name,type}
+clause.match                                     [f:match-expressions]   {}
+clause.match.arm                                 [f:match-expressions] r:match_arm  {attributes,pattern,value}
+clause.match.arm.last                            [f:match-expressions] r:last_match_arm  {attributes,comma,pattern,value}
+clause.print                                     [f:print-statements]   {expression}
+clause.print.chevron                             [f:print-statements] p:chevron  {expression}
+clause.where                                     [f:parametric-polymorphism/bounded-quantification] r:where_clause  {wherePredicates}
+clause.where.predicate                           [f:parametric-polymorphism/bounded-quantification] r:where_predicate  {bounds,left}
+clause.with                                      [f:resource-management] p:with_clause  {items}
+clause.with.item                                 [f:resource-management] p:with_item  {value}
+comment                                          [comment] t:comment_block,comment_line,html_comment  {content}
+comment.block                                    [comment] r:block_comment t:comment_block  {content}
+comment.block.doc                                [comment] r:block_comment t:comment_block  {content}
+comment.block.doc.inner                          [comment] r:block_comment  {content}
+comment.line                                     [comment] p:comment r:line_comment t:comment_line  {content}
+comment.line.doc                                 [comment] r:line_comment  {content}
+comment.line.doc.inner                           [comment] r:line_comment  {content}
+comment.text                                     [comment] r:block_comment_regular,doc_comment,line_comment_extra_slashes,line_comm  {}
+declaration                                      [declaration]   {}
+declaration.ambient                              [f:type-annotations/ambient-declarations] t:ambient_declaration  {content}
+declaration.class                                [f:methods/classes] p:class_definition t:abstract_class_declaration,class_declaration  {body,doc,name,extends,bases,decorators,typeParameters,implements} #abstract
+declaration.constant                             [declaration] p:assignment_eq,assignment_type,assignment_typed r:const_item  {name,value,type}
+declaration.constructor                          [f:methods/classes] p:function_definition t:method_definition  {}
+declaration.enum                                 [f:enumerations] r:enum_item t:enum_declaration  {body,name,typeParameters,whereClause} #const
+declaration.enum_member                          [f:enumerations] r:enum_variant t:enum_assignment,enum_body_element_name  {body,name,value,attributes}
+declaration.enum_member.struct                   [f:enumerations/algebraic-data-types] r:enum_variant  {body,name,value}
+declaration.enum_member.tuple                    [f:enumerations/algebraic-data-types] r:enum_variant  {body,name,value}
+declaration.extension                            [f:open-type-extension] r:impl_item_body,impl_item_semi  {implements,receiver,traitClause,type,typeParameters,whereClause} #unsafe
+declaration.extension.conformance                [f:open-type-extension/typeclasses] r:impl_item_body  {implements,receiver,traitClause,type,typeParameters,whereClause} #unsafe
+declaration.field                                [declaration] r:attributed_ordered_field,field_declaration t:public_field_definition  {name,value,decorators,type,optionality,attributes} #readonly,privateName,static,abstract,override,accessor,computed,optional,declare,definite
+declaration.field.signature                      [f:interfaces] t:property_signature  {type,name} #readonly,static,override,optional
+declaration.function                             [declaration] p:function_definition r:function_item t:function_declaration,generator_function_declaration  {body,doc,name,parameters,extern,decorators,whereClause,returnType} #default,async,const,generator,unsafe
+declaration.function.signature                   [declaration] r:function_signature_item t:function_signature  {functionModifiers,name,parameters,typeParameters,whereClause,returnType} #async
+declaration.interface                            [f:interfaces] t:interface_declaration  {typeParameters,body,extends,name}
+declaration.interface.trait                      [f:interfaces] r:trait_item  {typeParameters,whereClause,body,extends,name} #unsafe
+declaration.macro                                [f:syntactic-metaprogramming] r:macro_definition  {name,rules}
+declaration.method                               [f:methods] p:class_definition r:impl_item_body,trait_item t:method_definition  {extern,body,doc,name,parameters,decorators,whereClause,returnType} #readonly,privateName,default,static,override,computed,optional,async,const,generator,unsafe
+declaration.method.dunder                        [f:methods] p:function_definition  {name,stem}
+declaration.method.getter                        [f:methods/accessors] t:method_definition  {}
+declaration.method.setter                        [f:methods/accessors] t:method_definition  {}
+declaration.method.signature                     [f:methods] r:trait_item t:method_signature  {functionModifiers,name,parameters,typeParameters,whereClause,returnType} #readonly,static,override,optional,async
+declaration.method.signature.abstract            [f:methods/classes/abstract-classes] t:abstract_method_signature  {name,parameters,typeParameters,returnType} #override,optional
+declaration.method.signature.abstract.getter     [f:methods/accessors] t:abstract_method_signature  {}
+declaration.method.signature.abstract.setter     [f:methods/accessors] t:abstract_method_signature  {}
+declaration.method.signature.getter              [f:methods/accessors] t:method_signature  {}
+declaration.method.signature.setter              [f:methods/accessors] t:method_signature  {}
+declaration.method.static                        [f:methods] p:decorated_definition r:impl_item_body  {extern,body,name,parameters,typeParameters,whereClause,returnType} #default,async,const,unsafe
+declaration.module                               [f:modules/module-declarations] r:mod_item,mod_item_external,mod_item_inline t:internal_module  {body,name}
+declaration.module.external                      [f:modules/module-declarations] t:module  {body,name}
+declaration.module.foreign                       [f:foreign-function-interface] r:foreign_mod_item,foreign_mod_item_body,foreign_mod_item_semi  {extern}
+declaration.module_property                      [f:type-annotations/ambient-declarations] t:ambient_declaration_module  {name,type}
+declaration.parameter                            [declaration] p:lambda_parameters,parameters r:closure_parameters,parameter t:optional_parameter,required_parameter  {name,decorators,default,type} #mutable,readonly,override,optional
+declaration.parameter.default                    [declaration] p:default_parameter  {name,default}
+declaration.parameter.self                       [f:methods] r:self_parameter  {reference,lifetime} #mutable
+declaration.parameter.typed                      [declaration] p:typed_parameter  {name,type}
+declaration.parameter.typed_default              [declaration] p:typed_default_parameter  {name,default,type}
+declaration.parameter.variadic                   [f:foreign-function-interface] r:variadic_parameter  {pattern} #mutable
+declaration.signature                            [f:type-annotations/structural-conformance]   {}
+declaration.signature.call                       [f:type-annotations/structural-conformance] t:call_signature  {typeParameters,parameters,returnType}
+declaration.signature.construct                  [f:type-annotations/structural-conformance] t:construct_signature  {typeParameters,parameters,type} #abstract
+declaration.signature.index                      [f:type-annotations/structural-conformance] t:index_signature  {indexType,name,sign,type} #readonly
+declaration.signature.index.mapped               [f:type-annotations/structural-conformance] t:index_signature_mapped_type_clause  {mappedTypeClause}
+declaration.struct                               [f:structs] r:struct_item,struct_item_brace  {body,name,typeParameters,whereClause}
+declaration.struct.tuple                         [f:structs] r:struct_item_tuple  {body}
+declaration.struct.unit                          [f:structs] r:struct_item_unit  {}
+declaration.type_alias                           [f:type-aliases] p:type_alias_statement r:type_item t:type_alias_declaration  {typeParameters,trailingWhereClause,whereClause,left,name,right,value}
+declaration.type_alias.associated                [f:type-aliases/associated-types] r:associated_type  {typeParameters,whereClause,bounds,name}
+declaration.type_parameter                       [f:parametric-polymorphism] p:type_parameter r:type_parameter t:type_parameter  {default,name,types,constraint,attributes} #const
+declaration.type_parameter.lifetime              [f:parametric-polymorphism/lifetimes] r:lifetime_parameter  {bounds,name,attributes}
+declaration.type_parameter.value                 [f:parametric-polymorphism/const-generics] r:const_parameter  {default,name,type,attributes}
+declaration.union                                [f:untagged-unions] r:union_item  {typeParameters,whereClause,body,name}
+declaration.variable                             [declaration] p:assignment_eq,assignment_type,assignment_typed r:let_declaration t:lexical_declaration,variable_declarator_definite,variable_declarator_p  {alternative,declarators,name,value,type} #mutable,definite
+declaration.variable.constant                    [declaration] t:lexical_declaration  {declarators}
+declaration.variable.pattern                     [declaration] t:variable_declarator_plain  {name,value,type}
+declaration.variable.reassignable                [declaration] t:lexical_declaration  {declarators}
+declaration.variable.reassignable.function_scoped [declaration] t:variable_declaration  {}
+declaration.variable.static                      [declaration] r:static_item  {name,value,type} #mutable,byReference
+element                                          [element]   {}
+element.comparator                               [element] p:comparison_operator_comparator  {right}
+element.comparator.comparison                    [element]   {}
+element.comparator.comparison.equal              [element] p:comparison_operator_comparator  {}
+element.comparator.comparison.greater            [element] p:comparison_operator_comparator  {}
+element.comparator.comparison.greater_equal      [element] p:comparison_operator_comparator  {}
+element.comparator.comparison.less               [element] p:comparison_operator_comparator  {}
+element.comparator.comparison.less_equal         [element] p:comparison_operator_comparator  {}
+element.comparator.comparison.not_equal          [element] p:comparison_operator_comparator  {}
+element.comparator.identity                      [element]   {}
+element.comparator.identity.is                   [element] p:comparison_operator_comparator  {}
+element.comparator.identity.is_not               [element] p:comparison_operator_comparator  {}
+element.comparator.membership                    [element]   {}
+element.comparator.membership.in                 [element] p:comparison_operator_comparator  {}
+element.comparator.membership.not_in             [element] p:comparison_operator_comparator  {}
+element.macro                                    [f:syntactic-metaprogramming]   {}
+element.macro.fragment                           [f:syntactic-metaprogramming] r:fragment_specifier  {}
+element.macro.token_binding                      [f:syntactic-metaprogramming] r:token_binding_pattern  {name,type}
+element.macro.token_repetition                   [f:syntactic-metaprogramming] r:token_repetition  {operator,tokens}
+element.macro.token_repetition.pattern           [f:syntactic-metaprogramming] r:token_repetition_pattern  {operator,tokenPatterns}
+element.macro.token_tree                         [f:syntactic-metaprogramming] r:token_tree  {tokens}
+element.macro.token_tree.delimited               [f:syntactic-metaprogramming] r:delim_token_tree  {}
+element.macro.token_tree.pattern                 [f:syntactic-metaprogramming] r:token_tree_pattern  {}
+element.pair                                     [element] p:pair t:pair  {key,value} #computed
+element.splat                                    [element] p:list_splat t:spread_element  {expression}
+element.splat.dictionary                         [element] p:dictionary_splat  {expression}
+element.splat.parenthesized                      [element] p:parenthesized_list_splat  {content}
+element.struct                                   [f:structs]   {}
+element.struct.base                              [f:structs] r:base_field_initializer  {value}
+element.struct.field                             [f:structs] r:field_initializer,shorthand_field_initializer  {attributes,field,value}
+element.template                                 [f:type-annotations]   {type}
+element.template.substitution                    [f:type-annotations] t:template_type  {type}
+element.tuple                                    [f:type-annotations]   {name,type}
+element.tuple.member                             [f:type-annotations] t:tuple_parameter  {name,type}
+element.tuple.member.optional                    [f:type-annotations] t:optional_tuple_parameter  {name,type}
+element.type_argument                            [f:parametric-polymorphism] r:type_argument  {content,constraint}
+element.type_binding                             [f:type-aliases/associated-types] r:type_binding  {name,type,typeArguments}
+expression                                       [expression]   {}
+expression.assignment                            [expression] p:named_expression r:assignment_expression t:assignment_expression  {left,right} #disposable
+expression.assignment.compound                   [expression] p:augmented_assignment r:compound_assignment_expr t:augmented_assignment_expression  {left,right}
+expression.assignment.compound.add               [expression] p:augmented_assignment r:compound_assignment_expr t:augmented_assignment_expression  {}
+expression.assignment.compound.and               [expression] t:augmented_assignment_expression  {}
+expression.assignment.compound.bitwise_and       [expression] p:augmented_assignment r:compound_assignment_expr t:augmented_assignment_expression  {}
+expression.assignment.compound.bitwise_or        [expression] p:augmented_assignment r:compound_assignment_expr t:augmented_assignment_expression  {}
+expression.assignment.compound.bitwise_xor       [expression] p:augmented_assignment r:compound_assignment_expr t:augmented_assignment_expression  {}
+expression.assignment.compound.divide            [expression] p:augmented_assignment r:compound_assignment_expr t:augmented_assignment_expression  {}
+expression.assignment.compound.exponent          [expression] p:augmented_assignment t:augmented_assignment_expression  {}
+expression.assignment.compound.floor_divide      [expression] p:augmented_assignment  {}
+expression.assignment.compound.matmul            [expression] p:augmented_assignment  {}
+expression.assignment.compound.modulo            [expression] p:augmented_assignment r:compound_assignment_expr t:augmented_assignment_expression  {}
+expression.assignment.compound.multiply          [expression] p:augmented_assignment r:compound_assignment_expr t:augmented_assignment_expression  {}
+expression.assignment.compound.nullish           [expression] t:augmented_assignment_expression  {}
+expression.assignment.compound.or                [expression] t:augmented_assignment_expression  {}
+expression.assignment.compound.shift_left        [expression] p:augmented_assignment r:compound_assignment_expr t:augmented_assignment_expression  {}
+expression.assignment.compound.shift_right       [expression] p:augmented_assignment r:compound_assignment_expr t:augmented_assignment_expression  {}
+expression.assignment.compound.subtract          [expression] p:augmented_assignment r:compound_assignment_expr t:augmented_assignment_expression  {}
+expression.await                                 [f:async-await] p:await r:await_expression t:await_expression  {expression}
+expression.binary                                [expression] p:binary_operator,comparison_operator r:binary_expression t:binary_expression  {left,operator,right}
+expression.binary.arithmetic                     [expression]   {}
+expression.binary.arithmetic.add                 [expression] p:binary_operator r:binary_expression t:binary_expression  {operator}
+expression.binary.arithmetic.divide              [expression] p:binary_operator r:binary_expression t:binary_expression  {operator}
+expression.binary.arithmetic.exponent            [expression] p:binary_operator t:binary_expression  {operator}
+expression.binary.arithmetic.floor_divide        [expression] p:binary_operator  {operator}
+expression.binary.arithmetic.modulo              [expression] p:binary_operator r:binary_expression t:binary_expression  {operator}
+expression.binary.arithmetic.multiply            [expression] p:binary_operator r:binary_expression t:binary_expression  {operator}
+expression.binary.arithmetic.subtract            [expression] p:binary_operator r:binary_expression t:binary_expression  {operator}
+expression.binary.bitwise                        [expression]   {}
+expression.binary.bitwise.and                    [expression] p:binary_operator r:binary_expression t:binary_expression  {operator}
+expression.binary.bitwise.or                     [expression] p:binary_operator r:binary_expression t:binary_expression  {operator}
+expression.binary.bitwise.xor                    [expression] p:binary_operator r:binary_expression t:binary_expression  {operator}
+expression.binary.comparison                     [expression]   {}
+expression.binary.comparison.chain               [expression] p:comparison_operator  {comparators}
+expression.binary.comparison.equal               [expression] p:comparison_operator r:binary_expression t:binary_expression  {operator}
+expression.binary.comparison.greater             [expression] p:comparison_operator r:binary_expression t:binary_expression  {operator}
+expression.binary.comparison.greater_equal       [expression] p:comparison_operator r:binary_expression t:binary_expression  {operator}
+expression.binary.comparison.less                [expression] p:comparison_operator r:binary_expression t:binary_expression  {operator}
+expression.binary.comparison.less_equal          [expression] p:comparison_operator r:binary_expression t:binary_expression  {operator}
+expression.binary.comparison.loose_equal         [f:coercive-equality] t:binary_expression  {operator}
+expression.binary.comparison.loose_not_equal     [f:coercive-equality] t:binary_expression  {operator}
+expression.binary.comparison.not_equal           [expression] p:comparison_operator r:binary_expression t:binary_expression  {operator}
+expression.binary.identity                       [expression]   {left,operator}
+expression.binary.identity.is                    [expression] p:comparison_operator  {left,operator}
+expression.binary.identity.is_not                [expression] p:comparison_operator  {left,operator}
+expression.binary.logical                        [expression] p:boolean_operator  {left,operator,right}
+expression.binary.logical.and                    [expression] p:boolean_operator r:binary_expression t:binary_expression  {operator}
+expression.binary.logical.or                     [expression] p:boolean_operator r:binary_expression t:binary_expression  {operator}
+expression.binary.matmul                         [expression] p:binary_operator  {operator}
+expression.binary.membership                     [expression]   {left,operator}
+expression.binary.membership.in                  [expression] p:comparison_operator t:binary_expression  {operator}
+expression.binary.membership.instanceof          [expression] t:binary_expression  {operator}
+expression.binary.membership.not_in              [expression] p:comparison_operator  {left,operator}
+expression.binary.nullish                        [expression] t:binary_expression  {operator}
+expression.binary.shift                          [expression]   {}
+expression.binary.shift.left                     [expression] p:binary_operator r:binary_expression t:binary_expression  {operator}
+expression.binary.shift.right                    [expression] p:binary_operator r:binary_expression t:binary_expression  {operator}
+expression.binary.shift.right_unsigned           [expression] t:binary_expression  {operator}
+expression.block                                 [expression]   {body}
+expression.block.async                           [f:async-await/async-blocks] r:async_block  {body} #move
+expression.block.const                           [f:compile-time-evaluation] r:const_block  {body}
+expression.block.gen                             [f:coroutines] r:gen_block  {body} #move
+expression.block.try                             [f:error-propagation] r:try_block  {body}
+expression.block.unsafe                          [f:unsafe-code] r:unsafe_block  {body}
+expression.call                                  [expression] p:call r:call_expression t:call_expression_call  {arguments,function,typeArguments}
+expression.call.import                           [f:modules] t:import  {}
+expression.call.macro                            [f:syntactic-metaprogramming] r:macro_invocation  {arguments,function}
+expression.call.member                           [expression] p:call r:call_expression t:call_expression_member  {function,typeArguments}
+expression.call.new                              [f:methods/classes] t:new_expression  {arguments,function,typeArguments}
+expression.call.path                             [expression] r:call_expression  {arguments,function}
+expression.call.template                         [f:string-interpolation] t:call_expression_template_call  {arguments,function}
+expression.cast                                  [f:type-annotations]   {expression}
+expression.cast.as                               [f:type-annotations] r:type_cast_expression t:as_expression  {expression,type,typeAnnotation,value}
+expression.cast.assertion                        [f:type-annotations] t:type_assertion  {expression,typeArguments}
+expression.cast.non_null                         [f:type-annotations/nullable-types/non-null-assertions] t:non_null_expression  {expression}
+expression.cast.satisfies                        [f:type-annotations] t:satisfies_expression  {expression,typeAnnotation}
+expression.class                                 [f:methods/classes] t:class  {body,name,extends,decorators,typeParameters,implements}
+expression.collection                            [expression]   {}
+expression.collection.dictionary                 [expression] p:dictionary  {elements}
+expression.collection.list                       [expression] p:list r:array_expression t:array  {attributes,elements}
+expression.collection.list.repeat                [expression] r:array_expression_semi  {element,length}
+expression.collection.object                     [expression] t:object  {properties}
+expression.collection.set                        [expression] p:set  {elements}
+expression.collection.struct                     [f:structs] r:struct_expression  {body,name}
+expression.collection.tuple                      [f:tuples] p:tuple r:tuple_expression  {elements,attributes}
+expression.collection.tuple.bare                 [f:tuples] p:expression_list  {}
+expression.comprehension                         [f:comprehensions]   {body,comprehensionClauses}
+expression.comprehension.dictionary              [f:comprehensions] p:dictionary_comprehension  {body,comprehensionClauses}
+expression.comprehension.generator               [f:comprehensions] p:generator_expression  {body,comprehensionClauses}
+expression.comprehension.list                    [f:comprehensions] p:list_comprehension  {body,comprehensionClauses}
+expression.comprehension.set                     [f:comprehensions] p:set_comprehension  {body,comprehensionClauses}
+expression.conditional                           [f:conditional-expressions] p:conditional_expression t:ternary_expression  {alternative,condition,consequence}
+expression.function                              [expression] t:function_expression,generator_function  {body,name,parameters,typeParameters,returnType} #async,generator
+expression.instantiation                         [f:parametric-polymorphism] r:generic_function t:instantiation_expression  {expression,function,typeArguments}
+expression.interpolation                         [f:string-interpolation] p:interpolation t:template_substitution  {expression,formatSpecifier,typeConversion} #debug
+expression.interpolation.conversion              [f:string-interpolation] p:type_conversion  {}
+expression.interpolation.format                  [f:string-interpolation] p:format_specifier  {elements}
+expression.lambda                                [expression] p:lambda,lambda_within_for_in_clause r:closure_expression t:arrow_function  {body,returnType} #move,async,static
+expression.member                                [expression] p:attribute r:field_expression t:member_expression  {object,property} #privateName
+expression.meta                                  [expression] t:meta_property  {}
+expression.parenthesized                         [expression] p:parenthesized_expression r:parenthesized_expression t:parenthesized_expression  {expression,type}
+expression.range                                 [f:range-expressions] r:range_expression,range_expression_binary  {end,start}
+expression.range.exclusive                       [f:range-expressions] r:range_expression_bare,range_expression_binary,range_expression_postfix  {}
+expression.range.inclusive                       [f:range-expressions] r:range_expression_binary  {}
+expression.reference                             [f:references] r:reference_expression  {argument} #exclusive,raw,writable
+expression.sequence                              [expression] t:sequence_expression  {expressions}
+expression.slice                                 [f:slice-expressions] p:slice  {start,step,stop}
+expression.subscript                             [expression] p:subscript r:index_expression t:subscript_expression  {index,object} #optionalChain
+expression.try                                   [f:error-propagation] r:try_expression  {argument}
+expression.unary                                 [expression] p:unary_operator r:unary_expression t:unary_expression  {argument}
+expression.unary.bitwise_not                     [expression] p:unary_operator t:unary_expression  {}
+expression.unary.delete                          [expression] t:unary_expression  {}
+expression.unary.deref                           [f:references] r:unary_expression  {}
+expression.unary.negation                        [expression] p:unary_operator r:unary_expression t:unary_expression  {}
+expression.unary.not                             [expression] p:not_operator r:unary_expression t:unary_expression  {}
+expression.unary.plus                            [expression] p:unary_operator t:unary_expression  {}
+expression.unary.typeof                          [expression] t:unary_expression  {}
+expression.unary.void                            [expression] t:unary_expression  {}
+expression.unit                                  [f:tuples] r:unit_expression  {}
+expression.update                                [expression] t:update_expression_postfix,update_expression_prefix  {argument}
+expression.update.decrement                      [expression] t:update_expression_postfix,update_expression_prefix  {}
+expression.update.increment                      [expression] t:update_expression_postfix,update_expression_prefix  {}
+expression.yield                                 [f:coroutines] p:yield r:yield_expression t:yield_expression  {content,expression}
+expression.yield.delegate                        [f:coroutines/generators] p:yield_from_clause t:yield_expression_delegate  {expression}
+identifier                                       [identifier] p:identifier r:identifier t:identifier  {}
+identifier.crate                                 [identifier] r:crate  {}
+identifier.dotted                                [identifier] p:dotted_name  {names}
+identifier.field                                 [identifier] r:field_identifier  {}
+identifier.label                                 [f:labeled-control-flow] r:label t:statement_identifier  {name}
+identifier.lifetime                              [f:parametric-polymorphism/lifetimes] r:lifetime  {name}
+identifier.metavariable                          [f:syntactic-metaprogramming] r:metavariable  {attributes}
+identifier.nested                                [identifier] t:nested_identifier  {object,property}
+identifier.property                              [identifier] t:private_property_identifier,property_identifier  {}
+identifier.property.shorthand                    [identifier] r:shorthand_field_identifier t:shorthand_property_identifier,shorthand_property_identifier_pattern  {}
+identifier.scoped                                [identifier] r:scoped_identifier  {name,path}
+identifier.self                                  [f:methods] r:self t:this  {}
+identifier.super                                 [identifier] r:super t:super  {}
+identifier.type                                  [identifier] p:type r:type_identifier t:type_identifier  {}
+literal                                          [literal]   {}
+literal.boolean                                  [literal] r:boolean_literal  {}
+literal.boolean.false                            [literal] p:false r:boolean_literal t:false  {}
+literal.boolean.true                             [literal] p:true r:boolean_literal t:true  {}
+literal.char                                     [f:characters] r:char_literal  {content} #byte
+literal.ellipsis                                 [literal] p:ellipsis  {}
+literal.null                                     [literal] p:none t:null  {}
+literal.null.undefined                           [literal] t:undefined  {}
+literal.number                                   [literal] t:number  {}
+literal.number.float                             [literal] p:float_point r:float_literal t:number_float_point  {exponent,fraction,integer,marker,sign,imaginary}
+literal.number.float.leading_point               [literal] p:float_leading_point t:number_float_leading_point  {exponent,fraction,integer,marker,sign,imaginary}
+literal.number.float.scientific                  [literal] p:float_scientific t:number_float_scientific  {exponent,integer,marker,sign,imaginary}
+literal.number.integer                           [literal] p:integer_decimal_plain r:integer_literal_decimal t:number_decimal  {content,suffix}
+literal.number.integer.big                       [f:arbitrary-precision-integers] p:integer_decimal_long t:number_bigint_decimal  {}
+literal.number.integer.big.binary                [f:arbitrary-precision-integers] t:number_bigint_binary  {content}
+literal.number.integer.big.hex                   [f:arbitrary-precision-integers] t:number_bigint_hex  {content}
+literal.number.integer.big.octal                 [f:arbitrary-precision-integers] t:number_bigint_octal  {content}
+literal.number.integer.binary                    [literal] p:integer_binary r:integer_literal_binary t:number_binary  {content,prefix,suffix}
+literal.number.integer.hex                       [literal] p:integer_hex r:integer_literal_hex t:number_hex  {content,prefix,suffix}
+literal.number.integer.imaginary                 [f:complex-numbers] p:integer_decimal_imaginary  {}
+literal.number.integer.octal                     [literal] p:integer_octal r:integer_literal_octal t:number_octal  {content,prefix,suffix}
+literal.number.negative                          [literal] r:negative_literal t:literal_type_negative_number  {value}
+literal.regex                                    [f:regular-expressions] t:regex  {flags,pattern}
+literal.regex.flags                              [f:regular-expressions] t:regex_flags  {}
+literal.regex.pattern                            [f:regular-expressions] t:regex_pattern  {}
+literal.string                                   [literal] p:string r:string_literal t:string  {elements}
+literal.string.bytes                             [f:byte-strings] p:string  {}
+literal.string.concatenated                      [literal] p:concatenated_string  {strings}
+literal.string.escape                            [literal] p:escape_interpolation,escape_sequence r:escape_sequence t:escape_sequence  {content}
+literal.string.f                                 [f:string-interpolation] p:string  {}
+literal.string.raw                               [f:raw-strings] p:string r:raw_string_literal  {content}
+literal.string.text                              [literal] p:string_fragment r:string_content t:string_fragment  {}
+literal.string.triple                            [literal] p:string  {}
+literal.template                                 [f:string-interpolation] t:template_string  {elements}
+modifier                                         [modifier]   {}
+modifier.extern                                  [f:foreign-function-interface] r:extern_modifier  {abi}
+modifier.visibility                              [f:visibility] t:accessibility_modifier  {}
+modifier.visibility.private                      [f:visibility] r:visibility_modifier_pub t:accessibility_modifier  {}
+modifier.visibility.protected                    [f:visibility] t:accessibility_modifier  {}
+modifier.visibility.public                       [f:visibility] r:visibility_modifier_pub t:accessibility_modifier  {}
+modifier.visibility.public.internal              [f:visibility] r:visibility_modifier,visibility_modifier_pub  {}
+modifier.visibility.public.restricted            [f:visibility] r:visibility_modifier_pub  {scope}
+module                                           [module] p:module r:source_file t:program  {statements}
+pattern                                          [pattern]   {}
+pattern.array                                    [f:destructuring] t:array_pattern  {elements}
+pattern.as                                       [pattern] p:as_pattern  {alias,expression}
+pattern.assignment                               [f:destructuring] t:assignment_pattern  {left,right}
+pattern.captured                                 [f:match-expressions] r:captured_pattern  {name,pattern}
+pattern.case                                     [f:match-expressions] p:case_pattern  {content}
+pattern.case.as                                  [f:match-expressions] p:case_as_pattern  {casePattern,identifier}
+pattern.case.class                               [f:match-expressions] p:class_pattern  {arguments,name}
+pattern.case.complex                             [f:complex-numbers] p:complex_pattern  {imaginary,operator,real,sign}
+pattern.case.dictionary                          [f:match-expressions] p:dict_pattern  {elements}
+pattern.case.keyword                             [f:match-expressions] p:keyword_pattern  {name,value}
+pattern.case.list                                [f:match-expressions] p:case_list_pattern  {listPatternCasePatterns}
+pattern.case.or                                  [f:match-expressions] p:union_pattern  {patterns}
+pattern.case.splat                               [f:match-expressions] p:splat_pattern  {name,operator}
+pattern.case.tuple                               [f:match-expressions] p:case_tuple_pattern  {listPatternCasePatterns}
+pattern.generic                                  [f:parametric-polymorphism] r:generic_pattern  {name,typeArguments}
+pattern.list                                     [f:destructuring] p:list_pattern  {elements}
+pattern.match                                    [f:match-expressions] r:match_pattern  {condition,pattern}
+pattern.mutable                                  [pattern] r:mut_pattern  {pattern}
+pattern.object                                   [f:destructuring] t:object_pattern  {properties}
+pattern.object.assignment                        [f:destructuring] t:object_assignment_pattern  {left,right}
+pattern.object.pair                              [f:destructuring] t:pair_pattern  {key,value} #computed
+pattern.or                                       [f:match-expressions] r:or_pattern  {left,right}
+pattern.range                                    [f:range-expressions] r:range_pattern,range_pattern_prefix,range_pattern_with_left  {left,right}
+pattern.range.exclusive                          [f:range-expressions] r:range_pattern_prefix,range_pattern_with_left  {}
+pattern.range.inclusive                          [f:range-expressions] r:range_pattern_prefix,range_pattern_with_left  {}
+pattern.reference                                [f:references] r:ref_pattern  {pattern}
+pattern.reference.value                          [f:references] r:reference_pattern  {pattern} #exclusive
+pattern.rest                                     [f:destructuring] t:rest_pattern  {lhsExpression}
+pattern.slice                                    [f:destructuring] r:slice_pattern  {patterns}
+pattern.splat                                    [f:destructuring] p:list_splat_pattern  {target}
+pattern.splat.dictionary                         [f:destructuring] p:dictionary_splat_pattern  {target}
+pattern.struct                                   [f:structs] r:struct_pattern  {fields,type}
+pattern.struct.field                             [f:structs] r:field_pattern  {name,pattern} #byReference,mutable
+pattern.struct.rest                              [f:structs] r:remaining_field_pattern  {}
+pattern.tuple                                    [f:destructuring] p:tuple_pattern r:tuple_pattern  {elements}
+pattern.tuple.bare                               [f:destructuring] p:pattern_list  {}
+pattern.tuple.struct                             [f:structs] r:tuple_struct_pattern  {patterns,type}
+pattern.wildcard                                 [f:destructuring] r:wildcard_pattern  {}
+statement                                        [statement]   {}
+statement.assert                                 [f:assertions] p:assert_statement  {expressions}
+statement.block                                  [statement] p:block r:block t:statement_block  {statements,trailingExpression,label}
+statement.block.static                           [f:methods/classes] t:class_static_block  {body}
+statement.break                                  [statement] p:break_statement r:break_expression t:break_statement  {expression,label}
+statement.continue                               [statement] p:continue_statement r:continue_expression t:continue_statement  {label}
+statement.debugger                               [f:debugger-statements] t:debugger_statement  {}
+statement.delete                                 [statement] p:delete_statement  {expressions}
+statement.empty                                  [statement] p:pass_statement r:empty_statement t:empty_statement  {}
+statement.exec                                   [f:exec-statements] p:exec_statement  {code,inClauses}
+statement.export                                 [f:modules] t:export_statement,export_statement_default_declaration,export_statement  {declaration,decorators,exportClause,name,source,value}
+statement.export.all                             [f:modules] t:export_statement_default_from  {}
+statement.export.default                         [f:modules] t:export_statement_default_declaration  {}
+statement.expression                             [statement] p:expression_statement r:expression_statement t:expression_statement  {content,expression}
+statement.global                                 [f:scope-declarations] p:global_statement  {names}
+statement.if                                     [statement] p:if_statement r:if_expression t:if_statement  {alternative,alternatives,condition,consequence}
+statement.import                                 [f:modules] p:import_statement r:use_declaration t:import_statement  {argument,fromClause,importAttribute,importClause,names,source}
+statement.import.crate                           [f:modules] r:extern_crate_declaration  {alias,name}
+statement.import.from                            [f:modules] p:import_from_statement  {moduleName}
+statement.import.future                          [f:modules] p:future_import_statement  {content}
+statement.import.type                            [f:modules] t:import_statement  {}
+statement.import.typeof                          [f:modules] t:import_statement  {}
+statement.labeled                                [f:labeled-control-flow] t:labeled_statement  {body,label}
+statement.loop                                   [statement] r:loop_expression  {body,label}
+statement.loop.counted                           [f:counted-loops] t:for_statement  {body,condition,increment,initializer}
+statement.loop.do_while                          [f:post-test-loops] t:do_statement  {body,condition}
+statement.loop.for                               [statement] p:for_statement r:for_expression t:for_in_statement  {alternative,body,forHeader,left,right,label} #async
+statement.loop.while                             [statement] p:while_statement r:while_expression t:while_statement  {alternative,body,condition,label}
+statement.match                                  [f:match-expressions] p:match_statement r:match_expression  {body,subject}
+statement.nonlocal                               [f:scope-declarations] p:nonlocal_statement  {names}
+statement.print                                  [f:print-statements] p:print_statement,print_statement_plain  {content,printArguments}
+statement.print.chevron                          [f:print-statements] p:print_statement_chevron  {chevron}
+statement.return                                 [statement] p:return_statement r:return_expression t:return_statement  {expression}
+statement.scope                                  [f:dynamic-scope] t:with_statement  {body,object}
+statement.switch                                 [f:multiway-branch] t:switch_statement  {body,value}
+statement.throw                                  [f:exceptions] p:raise_statement t:throw_statement  {cause,expression}
+statement.try                                    [f:exceptions] p:try_statement t:try_statement  {alternative,body,finalizer,handlers}
+statement.with                                   [f:resource-management] p:with_statement  {body,withClause} #async
+type                                             [type] p:type  {content}
+type.abstract                                    [f:type-annotations] r:abstract_type  {typeParameters,trait}
+type.array                                       [f:type-annotations] r:array_type t:array_type  {element,length,type}
+type.bounded                                     [f:type-annotations] r:bounded_type  {left,right}
+type.bracketed                                   [f:type-annotations] r:bracketed_type  {type}
+type.conditional                                 [f:type-annotations] t:conditional_type  {alternative,consequence,left,right}
+type.constrained                                 [f:type-annotations] p:constrained_type  {constraint,baseType}
+type.dynamic                                     [f:type-annotations] r:dynamic_type  {trait}
+type.existential                                 [f:type-annotations] t:existential_type  {}
+type.function                                    [f:type-annotations] r:function_type t:function_type  {typeParameters,forLifetimes,extern,parameters,returnType,trait} #unsafe
+type.function.constructor                        [f:type-annotations] t:constructor_type  {typeParameters,parameters,type} #abstract
+type.generic                                     [f:type-annotations] p:generic_type r:generic_type t:generic_type  {name,type,typeArguments,typeParameter}
+type.generic.turbofish                           [f:type-annotations] r:generic_type_with_turbofish  {type,typeArguments}
+type.index_query                                 [f:type-annotations] t:index_type_query  {type}
+type.infer                                       [f:type-annotations] t:infer_type  {name,type}
+type.intersection                                [f:type-annotations] t:intersection_type  {left,right}
+type.literal                                     [f:type-annotations] t:literal_type  {content}
+type.lookup                                      [f:type-annotations] t:lookup_type  {indexType,type}
+type.maybe                                       [f:type-annotations] t:flow_maybe_type  {type}
+type.named                                       [f:type-annotations]   {}
+type.named.prelude                               [f:type-annotations] r:type_identifier  {}
+type.object                                      [f:type-annotations] t:object_type  {closing,members,opening}
+type.optional                                    [f:type-annotations] t:optional_type  {type}
+type.parenthesized                               [f:type-annotations] t:parenthesized_type  {type}
+type.path                                        [f:type-annotations] p:member_type r:scoped_type_identifier t:nested_type_identifier  {baseType,module,name,path}
+type.path.expression                             [f:type-annotations] r:scoped_type_identifier_in_expression_position  {name,path}
+type.pointer                                     [f:type-annotations] r:pointer_type  {type} #writable
+type.predicate                                   [f:type-annotations] t:type_predicate  {name,type}
+type.predicate.asserts                           [f:type-annotations] t:asserts  {value}
+type.primitive                                   [f:type-annotations] r:primitive_type t:predefined_type  {}
+type.primitive.never                             [f:type-annotations] r:never_type t:predefined_type  {}
+type.qualified                                   [f:type-annotations] r:qualified_type  {alias,type}
+type.query                                       [f:type-annotations] t:type_query  {expression}
+type.readonly                                    [f:type-annotations] t:readonly_type  {type}
+type.reference                                   [f:type-annotations] r:reference_type  {lifetime,type} #exclusive
+type.rest                                        [f:type-annotations] t:rest_type  {type}
+type.splat                                       [f:type-annotations] p:splat_type  {name,operator}
+type.template                                    [f:type-annotations] t:template_literal_type  {elements}
+type.tuple                                       [f:type-annotations] r:tuple_type t:tuple_type  {tupleTypeMembers,types}
+type.union                                       [f:type-annotations] p:union_type t:union_type  {left,right}
+type.unit                                        [f:type-annotations] r:unit_type  {}
