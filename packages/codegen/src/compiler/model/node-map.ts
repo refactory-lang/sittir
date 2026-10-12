@@ -1524,11 +1524,12 @@ export function fixedTextOfKind(node: AssembledNodeBase | undefined): string | u
 	return isFixedTextLeaf(assembled) ? assembled.text : undefined;
 }
 
+export function isDepthLeaf(node: AssembledNode): boolean {
+	return isFixedTextLeaf(node) && node.text !== undefined && isDepthText(node.text);
+}
+
 export function kindIdText(node: AssembledNode): string | undefined {
-	if (isFixedTextLeaf(node)) {
-		const text = node.text || undefined;
-		return text !== undefined && isDepthText(text) ? undefined : text;
-	}
+	if (isFixedTextLeaf(node)) return isDepthLeaf(node) ? undefined : node.text || undefined;
 	if (node.modelType === 'pattern') return node.fixedLiteralText || undefined;
 	return undefined;
 }

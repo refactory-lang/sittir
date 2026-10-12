@@ -2481,10 +2481,6 @@
       "modelType": "punctuation",
       "typeName": "Dedent",
       "factoryName": "dedent",
-      "irKey": "dedent",
-      "builderPath": [
-        "dedent"
-      ],
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"﷑\\n\" as const",
@@ -2550,10 +2546,6 @@
       "modelType": "punctuation",
       "typeName": "Indent",
       "factoryName": "indent",
-      "irKey": "indent",
-      "builderPath": [
-        "indent"
-      ],
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"﷐\\n\" as const",

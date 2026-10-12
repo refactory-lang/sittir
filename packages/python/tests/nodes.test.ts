@@ -4798,18 +4798,6 @@ describe('string_end', () => {
 	});
 });
 
-describe('_indent', () => {
-	it('is the kind id', () => {
-		expect(ir.indent).toBe(TSKindId.Indent);
-	});
-});
-
-describe('_dedent', () => {
-	it('is the kind id', () => {
-		expect(ir.dedent).toBe(TSKindId.Dedent);
-	});
-});
-
 describe('_newline', () => {
 	it('is the kind id', () => {
 		expect(ir.newline).toBe(TSKindId.Newline);
