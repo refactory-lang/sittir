@@ -329,11 +329,11 @@ sees no literal there; the slot types as `string` and its guard is the pattern.
 #### body
 
 ```text
-// `parseName` (union-slot design §5) is a SEPARATE routing key from
-// `parseKind` — two degenerate arms of the same kind but different
-// field labels are distinct entries (tree-sitter routes them by field,
-// not by kind), so it must ride in the dedup key too. Always `''` for
-// every pre-PR-1.5 value, so existing dedup behavior is unchanged.
+// `parseName` is a SEPARATE routing key from `parseKind` — two
+// degenerate arms of the same kind but different field labels are
+// distinct entries (tree-sitter routes them by field, not by kind), so
+// it must ride in the dedup key too. A value with no parse name keys
+// it as `''`, and dedups by kind alone.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::prepareKindForPascalCase`
@@ -713,13 +713,12 @@ Distinct from `hidden`, which means "has no factory".
 
 ```text
 /**
- * Project a slot's names from its `values` + `fieldName` — the §2 getter logic
- * as a pure function (PR-B promotes these to `AssembledNonterminal` class
- * getters). PROJECTIONS, not stored fields: `parseNames` is the live set of CST
+ * Project a slot's names from its `values` + `fieldName`, as a pure function.
+ * PROJECTIONS, not stored fields: `parseNames` is the live set of CST
  * kinds tree-sitter emits (per-value `parseKind.name`, underscore RETAINED), so
  * it can't go stale across `mergeSlotsByName`'s value-union. The leading `_` is
  * trimmed ONLY in `storageName` (the TS-facing identity). camelCase projections
- * derive from `storageName` (#3 — never the identity).
+ * derive from `storageName`, never from the identity.
  */
 ```
 
@@ -1318,7 +1317,7 @@ flatten and simplify joins use.
 ```text
 /**
  * Grammar-wide inputs threaded through node-map's slot derivation
- * (Principle #14 / §7.7). Every field is optional because the derivation
+ * (cross-node state lives on the phase ctx). Every field is optional because the derivation
  * entry points accept partial context (test fixtures pass none); per-kind
  * record builders narrow with {@link KindedDeriveCtx}. Recursion-LOCAL
  * traversal state (e.g. `multiplicity` in `deriveValuesForRule`) stays an
@@ -1817,7 +1816,7 @@ member arm reached through an enum reference takes that enum's token seams
 ```text
 // Parser kind id alongside `resolvedKind`, resolved through the LITERAL
 // (anon-scoped) chain at mint — the anon token wins over a same-spelled
-// NAMED rule (#129 class). Same stamped-fact semantics as
+// NAMED rule. Same stamped-fact semantics as
 // `storageKindId`.
 ```
 
@@ -2895,7 +2894,8 @@ The distinct literal texts of a choice's members (`enumLiteralMembersOf`), the o
 #### body
 
 ```text
-// Literal-first chain (#129); literal-carrying SYMBOL members whose
+// Literal-first chain (an anonymous token shadows a same-spelled named
+// rule, so literal discriminants come first); literal-carrying SYMBOL members whose
 // text is a RENDER literal with no anon-token row (aliased fixed-
 // text externals — `automatic_semicolon`'s '\n') resolve through
 // their own KIND entry instead: the parser emits the kind, so its

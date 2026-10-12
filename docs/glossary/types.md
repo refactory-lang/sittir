@@ -338,7 +338,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /**
 	 * Mint-time parser id of `parseKind`. When present, bucket identity
 	 * is the id, not the name — same-spelled parse kinds with different
-	 * parser symbols (#129 class) land in different buckets. Absent for
+	 * parser symbols (an anonymous token and a same-spelled named rule)
+	 * land in different buckets. Absent for
 	 * id-less pipelines (enrich runs pre-parser).
 	 */
 ```
@@ -485,10 +486,9 @@ Where a variant label came from: `'enrich'` (automatic) or `'override'` (authore
  * - `id` is the existing identity tag.
  * - `fieldName` / `multiplicity` / `nonterminal` / `separator` are modifier
  *   attributes populated by enrich passes when a rule was originally wrapped
- *   by `field` / `optional` / `repeat` / `repeat1`. The wrapper continues
- *   to exist until PR3; these attributes are additive and let downstream
- *   consumers (the new template emitter, future consumers) read modifier
- *   facts directly from the inner rule.
+ *   by `field` / `optional` / `repeat` / `repeat1`. They let downstream
+ *   consumers (the template emitter among them) read modifier facts
+ *   directly from the inner rule.
  *
  * Vocabulary matches NodeOrTerminal (node-map.ts:117, 144) so values that
  * flow from rules to slots use identical field names. See
@@ -623,8 +623,7 @@ every phase from link on; both are set by the token-interior pass, not by the DS
 
 ```text
 /**
-	 * Declared structural flag (debt PR-0c / doctrine decision 3's corollary):
-	 * true when this `seq` is a hidden group's body SPLICED directly into a
+	 * Declared structural flag: true when this `seq` is a hidden group's body SPLICED directly into a
 	 * parent at what used to be an opaque `symbol(_x)` ref position
 	 * (`compiler/normalize.ts`'s `materializeInlinedBody`, the fold-inline
 	 * pass). Not provenance — it names a present-tense fact about the tree
@@ -775,8 +774,8 @@ every phase from link on; both are set by the token-interior pass, not by the DS
 
 ```text
 /**
- * A Rule shape produced by `computeSimplifiedRules` after PR2 wires
- * `canonicalizeSeqOfLeaves` and `assertUniversalShape` into the pipeline.
+ * A Rule shape produced by `computeSimplifiedRules`, after
+ * `canonicalizeSeqOfLeaves` and `assertUniversalShape` have run.
  *
  * Structurally a `RenderRule` (wrappers already pushed-down to leaf
  * attributes), additionally satisfying the universal seq-of-leaves
@@ -1325,7 +1324,7 @@ narrowing guard.
  *
  * Layering note (debt): `types/` cannot import from `dsl/` (dsl → types ←
  * compiler is the acyclic dependency shape; see docs/compiler-phase-glossary.md
- * "Rule IR" §R11). But `RuleBase.metadata` (types/rule.ts) needs a TYPE here so
+ * "Rule IR"). But `RuleBase.metadata` (types/rule.ts) needs a TYPE here so
  * every phase-gated Rule shape can carry it, while the real provenance shape and
  * its construct/read accessors must live in `dsl/rule-metadata.ts` (only dsl-side
  * code — enrich, wire, diagnostics — is a sanctioned reader of the real shape).

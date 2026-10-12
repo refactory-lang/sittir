@@ -78,9 +78,9 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```
 
 ```text
-// `loadWebTreeSitter` moved to ./engine-loader.ts (R9: codegen-run infrastructure
-// kept out of the relocatable validator surface). Imported for the internal
-// caller below and re-exported so this module's public surface is unchanged.
+// `loadWebTreeSitter` lives in ./engine-loader.ts: codegen-run infrastructure
+// stays out of the relocatable validator surface. Imported for the internal
+// caller below and re-exported so this module's public surface keeps it.
 ```
 
 ### `packages/tools/src/validate/common.ts::SlotArity`

@@ -4633,11 +4633,9 @@ the separate-binding form left it unshaped. `P` and `O` infer from the
 // tree-sitter's native `grammar()`, so there `word` is still the raw `$
 // => $.identifier` callback. Resolve the callback form with the same
 // symbol-shaped-proxy trick `extractGrammarSymbolNames` uses, so both paths
-// compile the SAME word regex (PR #111 review finding — previously the
-// CLI path silently fell back to /^\w+$/, letting keyword promotion
-// diverge between parser and IR). ruleToRegexSource in util/word-matcher
-// is dual-case for the same reason. Single source of truth via
-// matchesWordShape; used by pass 3's optional-keyword-prefix below.
+// compile the SAME word regex: a path that fell back to /^\w+$/ would let
+// keyword promotion diverge between parser and IR. Single source of truth
+// via matchesWordShape; used by pass 3's optional-keyword-prefix below.
 ```
 
 #### body
@@ -5670,8 +5668,8 @@ field labels instead of taking the minted `element` field.
 // wrapping it in a mint alias adds a CST wrapper node to every tree it
 // appears in and severs its wrap-time concrete-kind expansion (which
 // keys on `instanceof AssembledSupertype`). Carried on this per-rule ctx
-// bag (§7.7 Principle #14) because it already travels through every
-// applyClauseHoist recursion into the mint site.
+// bag, since cross-node state lives on the phase ctx and this bag already
+// travels through every applyClauseHoist recursion into the mint site.
 ```
 
 ### `packages/codegen/src/dsl/enrich.ts::InlineSeparatedListRun.body`
@@ -6745,11 +6743,9 @@ The one reader of a grammar's declared reserved wordsets. For the named wordset 
 /**
  * Minimal structural shape shared by every catalog-entry type that the kind
  * resolution chain operates on (`GeneratedKindEntry` here, `KindEnumEntry`
- * in emitters/kind-discriminant.ts). PR-K1 (KindId-NodeRefs design,
- * docs/superpowers/specs/2026-07-20-kindid-noderefs-design.md §2.2): there
- * is exactly ONE resolution chain pair in the codebase — the two modules
- * previously carried parallel chains whose step-3 scopes disagreed, and
- * every divergence between them was a latent bug of the #129 class.
+ * in emitters/kind-discriminant.ts). There is exactly ONE resolution chain
+ * pair in the codebase: two chains whose scopes disagree would resolve an
+ * anonymous token and a same-spelled named rule to different kinds.
  */
 ```
 
