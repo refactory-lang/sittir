@@ -26,7 +26,7 @@ One guard composed with the language check. A guard with members (a supertype gu
 
 ### `packages/common/src/create-engine.ts::assembleEngine`
 
-Builds one engine from a language's descriptor and loaded hooks: it creates the native engine from the mapped options, an `EngineIdentity` and the handle that shares it with every node the engine stamps, and exposes the hooks' `is` guards and kind ids and a scoped `build`. The node guards (`isNode`, `isParsedNode`, `isFactoryNode`, `isErrorNode`, `isEmptyNode`) are each their free counterpart in `@sittir/common/utils` and a same-language check on the node's stamp: a node of another engine of the language passes, a node of another language does not even when the kind id is valid in both, and a value with no stamp never does. They read only the stamp's language, so they still accept the nodes of a disposed engine. `isEmptyNode` also requires a kind with inner gaps and no content, and narrows through the language's `empty` map. `parse` reads through the native engine, binds the tree to the handle so lazily expanded children are stamped too, and wraps the root, which carries the parse's ERROR and MISSING regions as `$errors` (the native read reports them and the boundary stamps them on the read root); under `errors: 'throw'` it throws `ParseErrors` with that list in place of wrapping a root that has any; `diagnostics.parseAndRead` is the same read and bind without the wrapper, next to the native build's profile. `render` takes a node, or a callback that receives the scoped builders, and renders it through this engine, with this engine's options under the call's. A node stamped with another language is refused, naming both; that is one check on the node, not a walk. A node may hold parts parsed by any engines of the language, alive or disposed: a parsed part crosses as a coordinate that names its tree, and the language's addon holds every live tree, so the render does not depend on which engine parsed what. `dispose` swaps the handle's engine for the identity before releasing the native engine; it releases no tree, since a tree lives as long as a parsed object names it. `types` is type-only and has no run-time value.
+Builds one engine from a language's descriptor and loaded hooks: it creates the native engine from the mapped options, an `EngineIdentity` and the handle that shares it with every node the engine stamps, and exposes the hooks' `is` guards and kind ids and a scoped `build`. The node guards (`isNode`, `isParsedNode`, `isFactoryNode`, `isErrorNode`, `isEmptyNode`) are each their free counterpart in `@sittir/common/utils` and a same-language check on the node's stamp: a node of another engine of the language passes, a node of another language does not even when the kind id is valid in both, and a value with no stamp never does. They read only the stamp's language, so they still accept the nodes of a disposed engine. `isEmptyNode` also requires a kind with an inner side and no content, and narrows through the language's `empty` map. `parse` reads through the native engine, binds the tree to the handle so lazily expanded children are stamped too, and wraps the root, which carries the parse's ERROR and MISSING regions as `$errors` (the native read reports them and the boundary stamps them on the read root); under `errors: 'throw'` it throws `ParseErrors` with that list in place of wrapping a root that has any; `diagnostics.parseAndRead` is the same read and bind without the wrapper, next to the native build's profile. `render` takes a node, or a callback that receives the scoped builders, and renders it through this engine, with this engine's options under the call's. A node stamped with another language is refused, naming both; that is one check on the node, not a walk. A node may hold parts parsed by any engines of the language, alive or disposed: a parsed part crosses as a coordinate that names its tree, and the language's addon holds every live tree, so the render does not depend on which engine parsed what. `dispose` swaps the handle's engine for the identity before releasing the native engine; it releases no tree, since a tree lives as long as a parsed object names it. `types` is type-only and has no run-time value.
 
 The `intercept` option activates build, parse and render middleware. Parse hooks surround the existing read/bind/error/wrap operation, while raw `diagnostics.parseAndRead` remains a direct diagnostic path. Render checks language ownership before invoking its chain, including when a hook short-circuits. File verbs are still unimplemented, so the reserved file hook has no write pipeline to run around.
 
@@ -84,19 +84,55 @@ The engine a value belongs to: what its `$engine()` returns, or for a value with
 
 ### `packages/common/src/engine-scope.ts::bindTree`
 
-Records the engine handle that read a tree, so the wrap layer can find it from the tree alone.
+Records the engine handle that read a tree (`TreeEngineHandle`), so the wrap layer and `hydrateStored` can find it from the tree alone.
 
-### `packages/common/src/engine-scope.ts::hydrateListStorage`
+### `packages/common/src/engine-scope.ts::TreeEngineHandle`
 
-Resolves a list owner's shallow read stub before a factory stores and sizes its list. The stub's tree token selects its reading engine and that engine's grammar-owned `hydrateChild` hook; this retains the existing depth and envelope normalization in one implementation. Non-stubs pass through unchanged. A missing tree binding, disposed reading engine or different calling language leaves the stub unresolved, so the factory's existing read-stub refusal remains effective.
+The handle a parsed tree is bound to: an `EngineHandle` that also carries the engine's generated `hydrate`. Only `createEngine` binds trees, so only its handle needs it; a handle that only scopes factory calls (a validator's, a test's) has none. `hydrateStored` reads it, so a stored coordinate always hydrates and never falls back to the raw value.
+
+### `packages/common/src/engine-scope.ts::hydrateStored`
+
+A coordinate a built node stores, as the node every route returns: the coordinate's tree token selects the engine that read it, and that engine's generated `hydrate` reads and wraps it through the registry, so a built holder, a parsed holder and a query reach one object. Any other value passes through unchanged. A coordinate is refused rather than returned raw: one that holds no token (a copy, `assertHoldsTree`), one whose engine was disposed or whose tree was released (the message names the tree), and one read through an engine of another language. A factory resolves a list owner's read stub through it before sizing the list, the builder accessors through `hydrateStoredSlot` and `hydrateStoredSlots`, and a trivia reader through `hydrateTriviaEntry`.
+
+### `packages/common/src/utils.ts::isNodeValue`
+
+Whether a value is a node or a coordinate (`isNode` or `isCoordinate`): the one test every coercer, `isNodeOfKind` and `configFieldOr` ask, so a coordinate a built node stores is taken as the node it names wherever a node is.
+
+### `packages/common/src/utils.ts::HydrateOne`
+
+How one stored value becomes what an accessor returns: `hydrateWith` bound to a parsed node's tree and wrap, or `hydrateStored` for a built node.
+
+### `packages/common/src/utils.ts::hydratedLists`
+
+The list slots `hydrateSlotsBy` has already written back: each holds the frozen items an accessor returns, so a later call returns it as it is. Membership, not `Object.isFrozen`, marks them, since a built node may store a frozen array that still holds coordinates.
+
+### `packages/common/src/utils.ts::hydrateSlotBy`
+
+The one write-back for a single slot: the slot's value hydrated by `hydrateOne`, written back when it changed. The parsed and built accessors both go through it.
+
+### `packages/common/src/utils.ts::hydrateSlotsBy`
+
+`hydrateSlotBy` for a list slot: every item hydrated once, the slot then holding the frozen items (`hydratedLists`). A slot that holds one element rather than an array goes through `hydrateSlotBy`.
+
+### `packages/common/src/utils.ts::hydrateSlotWith`
+
+A wrapped node's single-slot accessor: `hydrateSlotBy` with `hydrateWith` in `role`.
+
+### `packages/common/src/utils.ts::hydrateSlotsWith`
+
+A wrapped node's list-slot accessor: `hydrateSlotsBy` with `hydrateWith`.
+
+### `packages/common/src/utils.ts::hydrateStoredSlot`
+
+A built node's single-slot accessor: `hydrateSlotBy` with `hydrateStored`, so a coordinate it stores becomes the node every route returns.
+
+### `packages/common/src/utils.ts::hydrateStoredSlots`
+
+A built node's list-slot accessor: `hydrateSlotsBy` with `hydrateStored`.
 
 ### `packages/common/src/tree-token.ts::registerTree`
 
 Records the tree handle a parse made under the tree's token, so anything holding the token reaches the handle (`treeOf`). A weak entry: the handle lives exactly as long as the token, which every node of the tree holds.
-
-### `packages/common/src/tree-token.ts::holdsParse`
-
-Whether a node holds a tree a parse registered (`registerTree`). For such a node holding its coordinate proves nothing below it was rebuilt, so the fold needs no walk. Data whose token no parse registered (hand-assembled data) answers no.
 
 ### `packages/common/src/tree-token.ts::treeOf`
 
@@ -132,7 +168,15 @@ The `slice` step, with its bounds counted as an array counts them: truncated tow
 
 ### `packages/common/src/query.ts::ofTypeStep`
 
-The `ofType` step. Refuses a kind that is not a number, so a kind name passed by mistake fails at the call, not as an empty result.
+The `ofType` step. Refuses a kind that is not a number, so a kind name passed by mistake fails at the call, not as an empty result. It keeps a node whose type is the kind or a member of it (a supertype's member, a polymorph's arm), by the language's `membership`, the test its `is.*` guards make; nothing restamps a node's type to pass it.
+
+### `packages/common/src/query.ts::narrowed`
+
+The types a node can have after one more `ofType` step: every member of its kind for the first step, then those of the earlier steps' types that are members of it. An empty result means no node passes every step.
+
+### `packages/common/src/query.ts::isOfType`
+
+Whether a hydrated node passes an `ofType` step: its `$type` is a member of the step's kind.
 
 ### `packages/common/src/query.ts::whereStep`
 
@@ -152,7 +196,7 @@ The entries of a walk source. The steps `pushdown` takes go into the native walk
 
 ### `packages/common/src/query.ts::pushdown`
 
-The leading run of `ofType` and `where` steps that can go into the native walk. Kinds are intersected, and an empty intersection is `'none'`, which yields nothing without a call. Plans are joined by `and`. A `where` goes native only when every kind its elements can have compiles it to the same plan; the run stops at the first step that cannot.
+The leading run of `ofType` and `where` steps that can go into the native walk. Each `ofType` narrows the types the walk selects (`narrowed`), and an empty set is `'none'`, which yields nothing without a call. Plans are joined by `and`. A `where` goes native only when every kind its elements can have compiles it to the same plan; the run stops at the first step that cannot.
 
 ### `packages/common/src/query.ts::batches`
 
@@ -190,10 +234,6 @@ The plan a `where` callback records for elements of one kind, cached per immutab
 
 What a `where` callback receives: a Proxy whose members are the accessors of a kind, each a slot reference with `eq` and `match` that records the slot's parser routes (fields, and kinds under no field) from the kind's `querySlots` row. Any other key, an assignment and a call are refused. A view whose element kinds are not yet known checks the callback at the `where` call against every accessor of the grammar, recording no routes, so its shape is refused early and each kind's slots when it runs. A pattern crosses as its source; a flag has no native equivalent and is refused rather than dropped.
 
-### `packages/common/src/query.ts::sameOccurrence`
-
-How `includes` compares: the same object, or two parsed nodes of the same tree (the same token) with the same kind and span, which `node_at_span` would resolve to one node. A built node compares by identity only.
-
 ### `packages/common/src/query.ts::holds`
 
 The JavaScript evaluation of a plan over the texts a node's children have along each leaf's routes. It is the oracle the native evaluator is tested against, never an evaluator of its own.
@@ -224,7 +264,7 @@ The level count a native read takes for a set of parse options: one by default, 
 
 ### `packages/common/src/engine.ts::nativeLanguageEngine`
 
-Adapts one grammar's native engine to the language hooks' native engine shape, the same for every grammar. `render` splits the call's flat options into the native `ignoreFormat` and the render options it resolves over its own, passing none when the call has none. `parseAndRead` returns the native read untouched; the engine that owns the result binds its tree. `buildProfile` is the native build's compile profile.
+Adapts one grammar's native engine to the language hooks' native engine shape, the same for every grammar. `render` passes the call's flat options as the render options the native engine resolves over its own, and none when the call has none or an empty object. `parseAndRead` returns the native read untouched; the engine that owns the result binds its tree. `buildProfile` is the native build's compile profile.
 
 
 ### `packages/common/src/delimiter.ts::Delimiter`
@@ -234,14 +274,6 @@ The bitflag encoding of a separated list's optional flanks: the wire's `_delimit
 ### `packages/common/src/source.ts::Source`
 
 Where a node came from, the value of its `$source` stamp: `Ts` for a node read from a tree-sitter parse, `Sg` for the ast-grep read path, `Factory` for a node a builder made. The reader and the factories stamp it once, and an edit keeps it (`$with` and `detachCoordinate` drop only coordinates), so it records the node's origin, not whether it still holds a live tree handle. Rust's `enum Source` in sittir-core is the mirror the native renderer branches on: any non-`Factory` node renders with its tree's format. The object `satisfies` `AnyUntypedNode['$source']`, so the type-level `0 | 1 | 2` union stays the one declaration of the values.
-
-### `packages/common/src/utils.ts::adoptChild`
-
-Records the node a wrapped node's accessor handed `child` out of, the generated wrap's `hydrateSlot` and `hydrateSlots` call it for every child they return. Only a parsed node reached through an accessor has a parent recorded; a root, a built node and a draft have none. The trivia writer refuses a write on a parsed node that still sits at its source position (`sourceOf`), has no parent recorded and is not its tree's root (the root alone carries `$errors`): such a node was reached outside the accessors, through a query, which hands out a node of its own that no parent slot holds, so the render, which walks parent slots, would never reach a comment written on it.
-
-### `packages/common/src/utils.ts::detachAncestors`
-
-Detaches the coordinate of every node above one a trivia writer just changed, following the parents `adoptChild` recorded. Extras are not part of the node they are written on: they sit in the parent's gaps, so a comment written in place changes the text of every ancestor, whose coordinate would otherwise fold to bytes without it. Each ancestor first carries its source identity (`carrySource`), as a rebuilt node does, so it still renders with its source layout from its slots; untouched siblings keep their coordinates and fold.
 
 ### `packages/common/src/utils.ts::isNode`
 
@@ -271,7 +303,7 @@ The runtime a grammar binds, one generic signature per guard over its type map:
 
 ### `packages/common/src/runtime.ts::bindRuntime`
 
-Binds the runtime to a grammar's type map. `isNode` is the shared implementation, retyped by the map; the runtime has no facts of its own, because a node's trivia facts come from its engine. Emptiness is a guard on the engine, which knows the kinds with inner gaps.
+Binds the runtime to a grammar's type map. `isNode` is the shared implementation, retyped by the map; the runtime has no facts of its own, because a node's trivia facts come from its engine. Emptiness is a guard on the engine, which knows the kinds with an inner side.
 
 ### `packages/common/src/runtime.ts::rejectBareText`
 
@@ -319,11 +351,11 @@ The route object it returns is frozen.
 
 ### `packages/common/src/utils.ts::isNodeOfKind`
 
-Whether a value is a node of one kind id. It answers a boolean and never narrows. Narrowing an argument typed as a union that holds a node's `.Bound` beside its storage type filters the members against each other, and that comparison exceeds the checker's depth on deeply nested grammars; a caller that already knows what it will do with a hit casts once instead.
+Whether a value is a node of one kind id, a coordinate of that kind included (`isNodeValue`). It answers a boolean and never narrows. Narrowing an argument typed as a union that holds a node's `.Bound` beside its storage type filters the members against each other, and that comparison exceeds the checker's depth on deeply nested grammars; a caller that already knows what it will do with a hit casts once instead.
 
 ### `packages/common/src/utils.ts::configFieldOr`
 
-The value of the key `key` when the input is a config object (not a node) that carries it, else `orElse()`. The fallback is a thunk so it runs only when no config was given, which keeps a bare-input refusal from firing for a config. It takes and returns `unknown` for the reason `isNodeOfKind` never narrows: the `in` and `!isNode` narrowing it replaces relates the members of a `.Bound`-bearing union.
+The value of the key `key` when the input is a config object (not a node) that carries it, else `orElse()`. The fallback is a thunk so it runs only when no config was given, which keeps a bare-input refusal from firing for a config. It takes and returns `unknown` for the reason `isNodeOfKind` never narrows: the `in` and `!isNode` narrowing it replaces relates the members of a `.Bound`-bearing union. A coordinate is a node value, never a config (`isNodeValue`).
 
 ### `packages/common/src/utils.ts::orDefault`
 
@@ -349,13 +381,31 @@ Whether a value is a group's config object rather than a node: a non-empty plain
 
 The handle a node's coordinate names it by (`$_layout.at.$treeHandle`), which packs its tree and its descendant index; `undefined` for a node with no coordinate. The fold uses it to decide a node still names its tree and emits it as the coordinate's `$treeHandle`; the generated wrap uses it to recognize a node that arrived as a coordinate.
 
-### `packages/common/src/transport-data.ts::foldedCoordinate`
+### `packages/common/src/transport-data.ts::sourceHandleOf`
 
-The coordinate a node crosses to the render as (its span and the tree that span slices) in place of its storage, or `undefined` when it cannot fold; `foldToCoordinate` takes it, so a folded node is known to hold one. A node folds when it names its tree, carries no trivia outside its span, and nothing below it was rebuilt. Read depth plays no part: an untouched node renders its source bytes however it was read. Nor does it cost anything: on a tree a parse registered (`holdsParse`) a node that still holds its coordinate has nothing rebuilt below it, so the check is local, however much of the tree was expanded. That holds because nothing changes a read node's text without detaching its coordinate: every rebuild goes through `markEdited`, and `$with` rebuilds each ancestor up to the edit; a trivia writer, which changes a node in place, detaches every ancestor it was reached through (`detachAncestors`). The walk below (`isUntouchedBelow`) runs only for data no parse registered: hand-assembled test and tool data. That holds because every node a read hands back names its tree: the read's root by its own handle, a stub by its parent's, and a child the read expanded by the tree's tag. An edit detaches the coordinate of the node it rebuilds, so each untouched child below it is then the node that folds, and it must be able to name the tree itself. Below the node that folds a span is the whole requirement, since its bytes carry everything under it. The trivia it is judged by is the trivia it crosses with (`TriviaOf`), so a read node that owns a line-break run outside its span does not fold. A node that cannot fold (it was rebuilt, or it owns leading or trailing trivia) crosses as its stored slots, which the generated wrap keeps in model shape at every level (`storeExpanded`).
+The handle a node names its tree by: its coordinate's, or, for a node an edit rebuilt, the one its carried source identity names (`sourceOf`). `undefined` for a node no read gave, built or detached. A query addresses a node by it (`nodeAddressOf`), and the native render passes the tree it names, so a parsed tree's inferred options layer under a render of it or of an edit of it, and a built node gets the engine's alone.
 
-### `packages/common/src/transport-data.ts::TriviaView`
+### `packages/common/src/transport-data.ts::unitSidesOf`
 
-The trivia a node crosses to the render with, and which of its sides the read derived (`DerivedSides`). The engine's render passes `readTrivia` and `readDerivedSides`, so an untouched child of a rebuilt parent crosses with the whitespace its parse gave it, minus the runs whose neighbour changed (`changedEdges`). Every caller names its view: data with no derived trivia (a test's hand-written nodes, a probe's detached data) passes `STORED_TRIVIA`, where a node crosses with the trivia it stores and nothing is derived. There is no default, so no caller can skip the derived view by leaving it out. The fold decision and the `$_trivia` an unfolded node carries both come from this one view; a node's raw `$_trivia` never crosses beside it. The view also answers `isWrapper`: whether a kind id is one a rebuild constructs around an existing node (`TriviaFacts.rebuildWrappers`), which `evidenceOf` asks before looking through an entry. `STORED_TRIVIA` answers no for every kind, since nothing in its data is judged for source adjacency.
+The sides of a node's unit children, by slot and item (`TransportLayout.units`): the ones it holds, else its live tree's for a parsed node, else those of the node it was rebuilt from (`sourceOf`), carried to the items the rebuild moved them to (`carriedUnitSides`). The render fold and `$snapshot()` both take a node's unit sides from here; the native side imports none, so a node that sends none has none.
+
+### `packages/common/src/transport-data.ts::carriedUnitSides`
+
+A rebuilt node's unit sides, carried from the node it was rebuilt from. A unit variant is stored as its bare kind and has no identity, so each slot's units are aligned with the source node's (`alignedItems`): a unit's sides follow it to the item it moved to, and the sides of a unit the rebuild removed go with it.
+
+### `packages/common/src/transport-data.ts::itemIdentity`
+
+What a slot item is the same item by across a rebuild: a unit by its kind, a read node (or one rebuilt from a read node) by the handle it names (`sourceHandleOf`). A built node has none and matches nothing in the source.
+
+### `packages/common/src/transport-data.ts::alignedItems`
+
+The new position of each source unit a rebuilt slot keeps, in time and memory linear in the two slots. The read nodes both slots hold anchor it, each by the handle it names: a unit is the unit of its kind at the same count in the run of units after its anchor (the last kept node before it, at that node's new place, or the slot's start). A unit no run places pairs, in order, with a unit of its kind nothing placed, so two different units that swapped places both keep their sides. A node needs no alignment, since it frames itself with its own sides.
+
+Identical units align by order within a run: nothing tells two units of one kind apart, so removing or reordering identical units among themselves keeps their sides by position, not by the unit the caller meant. Removing the first of two commented `;` units keeps the first unit's comment on the `;` that remains.
+
+### `packages/common/src/transport-data.ts::KindView`
+
+How the crossing tells kinds apart. `isWrapper`: whether a kind id is one a rebuild constructs around an existing node (`TriviaFacts.rebuildWrappers`), which `evidenceOf` asks before looking through an entry. `isList`: whether a kind id is a list kind, whose one array slot holds its items (`listItemsOf`). Every caller names its view: the engine's render passes the grammar's facts, and data with no such kinds (a test's hand-written nodes, a probe's data) passes `PLAIN_KINDS`, which answers no to both for every kind. There is no default, so no caller can skip the grammar's view by leaving it out.
 
 ### `packages/common/src/transport-data.ts::detachCoordinates`
 
@@ -393,15 +443,11 @@ What a parsed node's `$query` runs: the query facet its engine makes for it. It 
 
 ### `packages/common/src/utils.ts::rebuilt`
 
-What every `$with` setter runs its rebuild through. It runs the rebuild inside the node's own engine (or plainly, when the node has none) and hands the source node's trivia to the node the rebuild returns, together with what it keeps of the source node (`carryEdit`), and gives each fresh node the rebuild minted in a slot the source node held its identity too (`carryRebuiltSlots`). Inner trivia can only travel to a node that is still empty: once the rebuild gives the node a child, the comment would sit beside it, so the call throws and names the kind.
+What every `$with` setter runs its rebuild through. It runs the rebuild inside the node's own engine (or plainly, when the node has none) and hands the node the rebuild returns what it keeps of the source node: that a read produced it (`carryRead`), its source identity (`carrySource`), through which the sides it does not hold are its source's (`sideOf`; the render fills them from the table through `$_layout.sides`), and a built source's stored trivia. It gives each fresh node the rebuild minted in a slot the source node held the same (`carryRebuiltSlots`). Inner comments can only travel to a node that is still empty: once the rebuild gives the node a child, a comment would sit beside it, so the call throws and names the kind. Inner layout alone (whitespace and depth members, which cross as bare kinds) spelled the inside of the empty node, so a node that gains a child takes an empty inner side in its place: `{\n}` takes its first statement as `{}` does.
 
 ### `packages/common/src/utils.ts::triviaSide`
 
-`node.$trivia.leading(...)` and `.trailing(...)`: with items it sets that position, keeps the other and returns the node; with none it returns the entries the position holds. An item is a trivia node, a whitespace kind id, or text, which is a whitespace kind when spelled exactly so and a comment otherwise. It needs the node's engine for the grammar's trivia facts. A read gives the side as `readTrivia` has it, so a read node's line-break whitespace is there beside its comments; a write starts from that same view, so setting one side keeps the other side's derived entries.
-
-### `packages/common/src/utils.ts::readTrivia`
-
-A read node's trivia as its parse has it: the comment entries the reader stored, with the line-break whitespace the node owns interleaved by position (`interleaved`). The whitespace is not in the read output; it is asked of the native line-gap query (`lineGapsOf`) on the node's first trivia read and cached for the node's life, so a parse or wrap that never reads trivia pays nothing for it. What the query returns is already classified to whitespace member kind ids by the grammar's own whitespace classifier, restricted to the members whose text holds a line break, so a gap of spaces on one line yields nothing and the reader's comment ownership decides which node a run belongs to. Only an object a read produced derives (`isRead`): a copy keeps exactly the `$_trivia` it was given, even though it carries the read's address. Writing is per side: a side whose trivia was written (`triviaWriter`'s store marks just that side) holds what was written, while the other side keeps deriving, so it is still subject to the neighbour rule and still votes. A write stores from the node's stored trivia, never from the derived view, so derived runs never become written ones. A node no read gave and a node outside a live engine read their stored trivia only.
+`node.$trivia.leading(...)` and `.trailing(...)`: with items it replaces that side and returns the node; with none it returns the entries the side holds (`sideOf`). An item is a trivia node, a whitespace kind id, or text, which is a whitespace kind when spelled exactly so and a comment otherwise. It needs the node's engine for the grammar's trivia facts. A parsed node's side is its tree's trivia table's, so a read returns the comments and the stored line layout the table assigns it, and a write lands in the table (`triviaWriter`), where any route to the node reads it back and the render frames the node with it. A writer that keeps a side's entries reads them and writes them back with its addition.
 
 ### `packages/common/src/transport-data.ts::holdReadTree`
 
@@ -413,15 +459,11 @@ Carries read provenance from a read object to the object rebuilt from it, which 
 
 ### `packages/common/src/transport-data.ts::changedEdges`
 
-Which edges of a list item face a neighbour other than the one its source had there. A derived whitespace run is the gap between a node and one particular neighbour, so it holds only while that neighbour is still there; otherwise the seat decides the gap. The leading edge changed when the item before it in the rebuilt list is not the sibling its leading runs were measured from (`readDerivedSides`, judged by tree and span through `isSourceSibling`), or, for the list's first item, when the source had such a sibling. The trailing edge changed when the item is no longer last, since only a last item owns a closing gap. Only a derived side can change: a side whose trivia was written keeps what was written. An item with no derived runs has no changed edges. The item is judged by the node that stands for it (`evidenceOf`): a rebuilt wrapper has no runs of its own, so the node it holds is the one measured, and the transport strips the changed sides from that held node as it crosses, not from the wrapper. The render root changes on both edges, because it has no neighbour at all.
-
-### `packages/common/src/transport-data.ts::sourceAdjacent`
-
-Whether a list item still follows the sibling it followed in its source: the item before it in the rebuilt list is that sibling, by tree and span (`isSourceSibling`, against `readDerivedSides`'s `previous`). The neighbour rule (`changedEdges`) and the gap evidence (`sourceGapOf`) both ask this one question, so a gap that keeps its source bytes and a derived run that holds are decided by the same test.
+Which edges of a list item face a neighbour other than the one its source had there. A stored layout run spells the gap between a node and one particular neighbour, so it holds only while that neighbour is still there; otherwise the seam decides the gap (`$_layout.changed`, where the node's sides drop their edge runs). An edge changed when the item beside it in the rebuilt list is not the sibling its source had there (`siblingsOf`, judged by tree and span through `keepsNeighbour`), or when the source had one there and the list has none. An item with no source identity, or whose tree is gone, has no changed edges. The item is judged by the node that stands for it (`evidenceOf`): a rebuilt wrapper has no source of its own, so the node it holds is the one measured, and the changed edges ride on that held node as it crosses, not on the wrapper.
 
 ### `packages/common/src/transport-data.ts::sourceGapOf`
 
-The source range a list item sends as its layout's gap (`$_layout.gap`): from its source predecessor's end to its own source start, in the tree both were read from, when the item is still source-adjacent and no derived line-gap run already spells that gap. A run the item's leading trivia opens with is the gap itself, so the native fill never classifies the same gap twice. Nothing is sent unless the node holding the items carries source identity (`owner`): a list built afresh, or a copy that dropped its identity, keeps none of its source layout, so its gaps and its flanks (`sourceFlankOf`) go canonical together. The first item of a list sends nothing; its gap faces the parent's opener, which is the list's flank, not a list neighbour. It sends the range, `{ $treeHandle, $span }`, as evidence only: the gap is classified, never sliced.
+The source range a list item sends as its layout's gap (`$_layout.gap`): from its source predecessor's end to its own source start, in the tree both were read from, when the item still follows that predecessor (`keepsNeighbour` against `siblingsOf`'s `previous`) and no layout run already spells that gap. A run the item's leading side opens with (`sideOf`) is the gap itself, so the native fill never classifies the same gap twice. Nothing is sent unless the node holding the items carries source identity (`owner`): a list built afresh, or a copy that dropped its identity, keeps none of its source layout, so its gaps and its flanks (`sourceFlankOf`) go canonical together. The first item of a list sends nothing; its gap faces the parent's opener, which is the list's flank, not a list neighbour. It sends the range, `{ $treeHandle, $span }`, as evidence only: the gap is classified, never sliced.
 
 ### `packages/common/src/transport-data.ts::listItemsOf`
 
@@ -429,7 +471,7 @@ The items of a list node: the one array a list kind holds in its slots. Whether 
 
 ### `packages/common/src/transport-data.ts::sourceFlankOf`
 
-A list node's flanks as the transport sends them (`$_layout.flank`): the tree handle and span of its source identity, and which flanks it keeps. The flank before is kept while the list's first item is still the source's first item of this list (its evidence lies inside the list's source span and has no source predecessor, `previous === null`); the flank after while its last item is still the source's last (`next === null`). Nothing for anything that is not a list node with source identity. The native fill classifies the kept flanks from the source, depth included (`fill_source_flanks`).
+A list node's flanks as the transport sends them (`$_layout.flank`): the tree handle and span of its source identity, and which flanks it keeps. The flank before is kept while the list's first item is still the source's first item of this list (its evidence lies inside the list's source span and has no source sibling before it, `siblingsOf`'s `previous === null`); the flank after while its last item is still the source's last (`next === null`). Nothing for anything that is not a list node with source identity. The native fill classifies the kept flanks from the source, depth included (`fill_source_flanks`).
 
 ### `packages/common/src/transport-data.ts::SourceFlankEvidence`
 
@@ -437,73 +479,40 @@ The flank's wire shape (`$_layout.flank`): `$treeHandle`, `$span`, `$before`, `$
 
 ### `packages/common/src/transport-data.ts::toDetachedTransportData`
 
-The transport for data leaving the tree it was read from, such as a render fixture's input. It is the same walk as `toTransportData`: each entry's changed edges, the trivia that crosses, the bearer a rebuilt wrapper's edges pass to, the gaps and the flanks are all judged the same way, so a detached render lays out what a live render of the same data does. The one difference is that no node folds to a coordinate, and trivia coordinates are not asserted to hold their tree, because the caller turns every range into the text it names before the data leaves.
+The transport for data leaving the tree it was read from, such as a render fixture's input. It is the same walk as `toTransportData`: each entry's changed edges, the bearer a rebuilt wrapper's edges pass to, the gaps and the flanks are all judged the same way, so a detached render lays out what a live render of the same data does. The difference is that no node crosses as its coordinate: every node crosses as its storage, with its sides as data (`sidesOf`), and trivia coordinates are not asserted to hold their tree, because the caller turns every range into the text it names before the data leaves.
 
 ### `packages/common/src/transport-data.ts::toTransportValue`
 
-The walk behind `toTransportData` and `toDetachedTransportData`. A node naming the same parser node as its owner (`namesSameNode`) crosses with its stored trivia only. A node that already holds a `gap` or a `flank` in its `$_layout` crosses with them: data a tool detached from its tree keeps the layout evidence the tree would have given, and without its tree nothing else could recompute it. Evidence the walk derives replaces a carried value: the flank the source gives (`sourceFlankOf`), and the gap an owner sets on each element after converting it (`sourceGapOf`).
-
-
-### `packages/common/src/transport-data.ts::crossingTrivia`
-
-A node's trivia as it crosses: without the runs whose neighbour changed (`withoutChangedEdges`), and, for a list node (`listItemsOf`), without the derived whitespace runs at its two ends. Those runs are the list's flanks, which its source flanks spell instead, depth included, so each flank has one source. Comments stay.
-
-### `packages/common/src/transport-data.ts::namesSameNode`
-
-Whether a node names the parser node its owner names, by tree token and tree handle. An alias envelope's content does: the read gives both records the one coordinate. The trivia a node derives from its line gaps (`TriviaView.trivia`) belongs to that parser node, so only the outermost record carries it; `toTransportValue` crosses a node that names its owner's parser node with its stored trivia only. Without that, a rebuilt envelope rendered on its own drops its own derived runs at the root edges while its content still carries a copy of them, writing a line break before the envelope, and the content, holding trivia, cannot fold to its source bytes.
+The walk behind `toTransportData` and `toDetachedTransportData`. A parsed node of a live tree, and a coordinate a slot stores raw, crosses as its coordinate (`coordinateCrossing`) with the edges whose neighbour changed; the render frames it with the sides its tree's table gives it, and reads it into its transport when a write lies in its range. Detached, a raw coordinate crosses plain, and every other node as its storage. A built node crosses as its storage with the trivia it holds, names the node it was rebuilt from for the sides it does not hold (`$_layout.sides`), and names its changed edges (`$_layout.changed`) when it has sides for them to touch. A node that already holds a `gap`, a `flank` or a `span` in its `$_layout` crosses with them: data a tool detached from its tree keeps the layout evidence the tree would have given. Evidence the walk derives replaces a carried value: the flank the source gives (`sourceFlankOf`), and the gap an owner sets on each element after converting it (`sourceGapOf`). A list node's sides drop their runs at both edges (`edgesOf`).
 
 ### `packages/common/src/transport-data.ts::evidenceOf`
 
 The node whose source identity stands for a list entry. A rebuild constructs some wrappers afresh around the one node they hold (an alias envelope, or a kind enrich mints, such as rust's `_attributed_parameter` around each parameter), so the entry itself has no source; the node it holds does. Two conditions, one per fact:
 
-- the entry's kind is one the view says a rebuild mints around one node (`TriviaView.isWrapper`), a classification stamped per grammar, never guessed from slot names;
+- the entry's kind is one the view says a rebuild mints around one node (`KindView.isWrapper`), a classification stamped per grammar, never guessed from slot names;
 - the entry holds exactly one present node in its slots. Slots it leaves empty do not count, so a group whose optional slot is unfilled is still looked through; one holding two nodes is not. Its unslotted children (`$other`) never count.
 
 An entry with its own source identity is its own evidence. Adjacency is judged on these nodes on both sides of a gap.
 
 ### `packages/common/src/transport-data.ts::sourceOf`
 
-Where a node sits in its source: a read node's own tree token, tree handle, span and stamped kind, or, for a node an edit rebuilt, the identity the edit carried forward from the node it replaced. A node the reader addressed by its own handle keeps that handle in its identity, and its line gaps are asked for by the handle, since its span alone may not name a tree node (the grammar root's span covers the whole source). It is evidence of layout only: an edited node never folds and never slices, but it can still be found in its source (line gaps derive for it) and judged adjacent to its neighbours. The identity is kept under a private, non-enumerable symbol, so it never reaches the wire and a spread copy never inherits it; `$span` stays the public fact of a node whose text is its source's.
-
-### `packages/common/src/transport-data.ts::withoutChangedEdges`
-
-Drops the whitespace runs on the changed edges of a node's trivia: on the leading side the runs before its first comment, on the trailing side the runs after its last. Comments always stay with their owner, and so does a run between a comment and its owner, because that run's neighbour is the comment. A node left with no trivia can fold to its coordinate again.
+Where a node sits in its source: a read node's own tree token, tree handle, end, span and stamped kind, or, for a node an edit rebuilt, the identity the edit carried forward from the node it replaced (`carrySource`). It is evidence of layout only: an edited node never slices, but its missing sides are its source's (`sideOf`, `$_layout.sides`) and it can be judged adjacent to its neighbours. The identity is kept under a private, non-enumerable symbol, so it never reaches the wire and a spread copy never inherits it; `$span` stays the public fact of a node whose text is its source's.
 
 ### `packages/common/src/utils.ts::carryRebuiltSlots`
 
-For each storage slot of a rebuilt node whose value the rebuild minted afresh, where the slot held a read node of the same kind before: the fresh node takes what the read one had (`carryEdit`). Only the kinds a rebuild constructs around existing nodes count (`TriviaFacts.rebuildWrappers`), so a list `$with` rebuilds from its items keeps the source position of the list it replaces, and its flanks can be judged (`sourceFlankOf`); a node the caller built and passed in, of another kind or already carrying source, is left as it is.
-
-### `packages/common/src/utils.ts::carryEdit`
-
-What an edited node keeps of the node it was rebuilt from (`rebuilt`, the one place every `$with` setter returns through): that a read produced it (`carryRead`), where it sits in the source (`carrySource`), and which of its trivia sides were written. Its line gaps then derive from the same source position, so an edit whose neighbours are unchanged keeps the gaps its source had around it, and a side the caller rewrote stays written.
-
-### `packages/common/src/utils.ts::readDerivedSides`
-
-Which sides of a read node's trivia are derived from its line gaps (a side stops being derived once it is written), and the spans of the sibling owners beside it, `previous` `null` for its parent's first owner child and `next` `null` for its last; `undefined` when `readTrivia` derives nothing for the node. It comes from the same native query and the same cached derivation as the trivia, so the transport judges a neighbour by the fact the gaps were measured against, not by a second reading of adjacency.
-
-### `packages/common/src/utils.ts::lineGapAddressOf`
-
-How the line-gap query names a read node. A node read on its own carries its handle. A child a deep read expanded has no handle of its own, only its tree's tag, its span and its kind, and the query resolves that coordinate to the outermost node of that kind spanning exactly those bytes. A node with neither was not read and has no gaps to ask for.
+For each storage slot of a rebuilt node whose value the rebuild minted afresh, where the slot held a read node of the same kind before: the fresh node takes that the read produced the old one (`carryRead`) and its source identity (`carrySource`). Only the kinds a rebuild constructs around existing nodes count (`TriviaFacts.rebuildWrappers`), so a list `$with` rebuilds from its items keeps the source position of the list it replaces, and its flanks can be judged (`sourceFlankOf`); a node the caller built and passed in, of another kind or already carrying source, is left as it is.
 
 ### `packages/common/src/utils.ts::NodeAddress`
 
-How a query names a parsed node to the native side: as the line-gap query does (`lineGapAddressOf`), or by the parent handle and child index a stub carries. The native `query::Address` accepts exactly these shapes.
+How a query names a parsed node to the native side: by the handle its coordinate names it by. The native `query::Address` accepts this shape.
 
 ### `packages/common/src/utils.ts::nodeAddressOf`
 
-A node's `NodeAddress`: the parent handle and child index of a stub, which has no handle of its own, else what `lineGapAddressOf` names it by. `undefined` for a node no read gave.
-
-### `packages/common/src/utils.ts::interleaved`
-
-One side's stored comment entries and line-gap runs merged into source order. A comment entry sits at its span's start; an entry with no span (a written kind id or a detached leaf) keeps the position of the entry before it, so it never moves past a neighbour it was written beside. Gaps sit at their own start offsets. The two sources never overlap: a run is cut at every extra it touches.
+A node's `NodeAddress`: its `sourceHandleOf`. `undefined` for a node no read gave.
 
 ### `packages/common/src/utils.ts::triviaInner`
 
-`node.$trivia.inner(...)`: the first inner gap of a kind that has one. It writes only to an empty node (a comment beside any child has that child to lead or trail), refuses a kind with no inner gap, and detaches the node's coordinate, since the coordinate's span already covers the gap the entries sit in.
-
-### `packages/common/src/utils.ts::triviaInnerAt`
-
-`node.$trivia.innerAt(gap, ...)`: a named inner gap, for a grammar that keys its gaps. It refuses a gap the kind does not have and otherwise behaves as `triviaInner`.
+`node.$trivia.inner(...)`: the inner side of a kind that has one (`TriviaFacts.innerKinds`). It writes only to an empty node (`isEmptyNode`: a comment beside any child has that child to lead or trail) and refuses a kind with no inner side. A parsed node's inner side is its tree's table's, as its other sides are.
 
 ### `packages/common/src/utils.ts::LIST_ITEMS`
 
@@ -594,13 +603,21 @@ The key a node keeps the readers of its seated slots under, by accessor name, fo
 
 The host template that reparses a rendered kind: its own, its target kind's, or the best-priority reachable supertype's, with the gated hosts applying only to adopted variants. `applyHost` splices the text into `$r` and reports the offset.
 
+### `packages/common/src/reparse.ts::applyHost`
+
+Splices rendered text into a host template's `$r` hole and reports the hole's offset. When only whitespace precedes the hole on its line, every continuation line of the rendered text is indented to the hole's column, so a multi-line render stays a block of the same indentation in indentation-sensitive grammars. Given a parser for the host language, lines `lineStartsInsideTokens` finds on the unindented text are left where they are. The result also carries `at`, a non-enumerable map from an offset in the rendered text to its offset in the hosted text, which counts the indentation added to the lines before it.
+
+### `packages/common/src/reparse.ts::lineStartsInsideTokens`
+
+The offsets of the lines that begin inside a token spanning lines (a multi-line string or comment), or right after a token that ends in a line break with the next token starting at that very offset (a string's content continuing past an interpolation). Shifting such a line changes the token's content, so hosts leave it alone. One function serves both sides of a host: `applyHost` for rendered text and the derivation's render-form samples for source text.
+
 ### `packages/common/src/delimited-check.ts::checkDelimited`
 
 Refuses a delimited composite whose content would not read back inside its own delimiters. Content free of the spec's excluded characters passes on its own. A delimiter pair a parse has not confirmed is confirmed by parsing the empty composite through the engine in scope, memoized per kind and pair. Anything else is parsed back in its host and must parse with no error, show a node of the kind starting where it was rendered and ending where the text ends, and show the same node arms among its children. Extras are found among the root's inner trivia. With no engine in scope, a varying pair that has not been confirmed, or content that needs the parse, is refused ("needs an engine").
 
 ### `packages/common/src/query.ts::entryOfCoordinate`
 
-A query result the native matcher returned as a coordinate, as a query entry: its kind and handle, and a `hydrate` that reads the node through `readNode` on the result's tree and wraps it under that tree's engine (`inTreeEngine`), so a match is read only when the caller asks for the node.
+A query result the native matcher returned as a coordinate, as a query entry: its kind and handle, and a `hydrate` that resolves the coordinate through `hydrateWith` under that tree's engine (`inTreeEngine`), so a match is read only when the caller asks for the node, and a match the registry already holds is the object its parent's accessor returns. It passes no role: a query yields each parser node once, as its alias envelope where an envelope and its content share one node.
 
 ### `packages/common/src/runtime.ts::coerceBitflagStorage`
 
@@ -610,13 +627,9 @@ A bitflag slot's loose input as the number the slot stores: a number as it is (0
 
 A keyword-presence slot's loose input as what the slot stores: `true` for any present value (a non-empty array included) and `undefined` for absent, `false` or an empty array. The factories call it for every keyword marker slot.
 
-### `packages/common/src/utils.ts::NO_CHILDREN`
-
-The one frozen empty list `hydrateSlotsWith` answers for an absent list slot, so a read of an empty slot writes nothing and allocates nothing.
-
 ### `packages/common/src/utils.ts::hydrateTriviaEntry`
 
-A trivia entry as a reader of trivia gets it: a coordinate entry read and wrapped through the tree it holds (`hydrateListStorage`, which finds the tree by the coordinate's tree token), with the entry's placement facts carried onto the node (`carryPlacement`); any other entry as it is.
+A trivia entry as a reader of trivia gets it: a coordinate entry read and wrapped through the tree it holds (`hydrateStored`, which finds the tree by the coordinate's tree token and refuses a coordinate that lost it); any other entry as it is.
 
 ### `packages/common/src/utils.ts::hydratedEntries`
 
@@ -626,3 +639,66 @@ A trivia side with its coordinate entries hydrated (`hydrateTriviaEntry`); the s
 
 The size of the index field a packed handle holds (`2 ** 32`): the native `encode_handle` multiplies the tree id by it and adds the descendant index, inside a double's exact integer range.
 
+### `packages/common/src/identity.ts::Role`
+
+How a route reaches a parsed node, the second half of its registry key. `aliasContent` is the content of an alias envelope that shares the envelope's parser node, and so its descendant index; every other route, an alias content that is its own parser node included, reaches a node as `node`. The role comes from the route, never from what the registry already holds.
+
+### `packages/common/src/identity.ts::keyOf`
+
+The registry key of an index and a role: twice the index, plus one for `aliasContent`. An index is below 2^32, so the key stays inside a double's exact range.
+
+### `packages/common/src/identity.ts::registered`
+
+The wrapper registered for a node of a tree, by index and role, while it lives: one map per `TreeHandle` object (a tree handle is bound to one engine surface), each entry a `WeakRef`, so the registry never keeps a wrapper, its token or its tree alive. Every route that hydrates (a parent's accessor, a query, the parse root) asks here first, which makes a node one object on its surface.
+
+### `packages/common/src/identity.ts::register`
+
+Records a wrapper for a node of a tree, by index and role, weakly. A finalization registry drops the entry when the wrapper is collected, unless a newer wrapper took the key since; the next route then wraps the node afresh and registers that.
+
+### `packages/common/src/transport-data.ts::indexOf`
+
+The descendant index a read node or a coordinate names itself by: `decodeIndex` of `treeHandleOf`. `undefined` for a node with no coordinate (a built node, a draft).
+
+### `packages/common/src/utils.ts::wrapRegistered`
+
+The one seat that wraps and registers: the wrapper the registry holds at the value's index and role, or the value wrapped and registered there. A value that names no index of `tree` (none at all, or one of another tree) is wrapped and not registered. The registry stores wrappers as `object` because one registry serves every kind; that what is registered at a tree, an index and a role is always the wrapper of one storage kind (measured over every corpus entry of rust, typescript and python, across the nested read, the read at the index and the query yield) is what makes returning it as `T` sound.
+
+### `packages/common/src/utils.ts::contentRole`
+
+The role an alias envelope's content accessor hydrates in: `aliasContent` when the content stamps the envelope's own index (the alias renamed one parser node), `node` when the content is its own parser node, which a query may also reach and which must then be one object. It compares the two values' stamped indexes, so it re-derives nothing the reader did not stamp.
+
+### `packages/common/src/transport-data.ts::sideOf`
+
+The entries of one side of a node, the one source of a node's sides for the `$trivia` surface, the crossing and the tools. A parsed node's side is its live tree's trivia table's at its own index (`tableAt`): the entries a write gave it, else the ones the table assigns it. A built node's side is the one it stores, else the side of the node it was rebuilt from (`sourceOf`), while that tree lives. An alias envelope's content names its envelope's parser node, so both read and write the one side the table keeps for it.
+
+### `packages/common/src/transport-data.ts::sidesOf`
+
+Every non-empty side of a node (`sideOf`), as a `NodeTrivia`; `undefined` when it has none. A detached crossing carries these as data, and the tools read a node's sides through it.
+
+### `packages/common/src/transport-data.ts::tableAt`
+
+The trivia table that answers for a parsed node: its live tree's, at its own index; `undefined` for a built node or one whose tree is gone. `tableOf` is the check both it and a built node's source lookup share: a tree that reads and writes sides, and an index.
+
+### `packages/common/src/transport-data.ts::rootEdges`
+
+The edges a render root crosses with. It renders with no neighbour, so both its edges changed and its sides drop their edge runs, unless it is its tree's root (index 0), whose edges are the document's and whose stored layout is the document's own.
+
+### `packages/common/src/transport-data.ts::siblingsOf`
+
+The siblings that hold sides beside the node a source identity names, as its tree gives them (`TreeHandle.siblings`); `undefined` while the tree is gone.
+
+### `packages/common/src/transport-data.ts::keepsNeighbour`
+
+Whether the neighbour a node has in its holder is the sibling its source had on that side: both absent, the neighbour's evidence (`evidenceOf`) names the same tree and span, or the neighbour is a unit held as its bare kind and the sibling is of that kind. A unit has no identity of its own, and its text is its kind's, so any unit of the sibling's kind spells the same gap.
+
+### `packages/common/src/transport-data.ts::coordinateCrossing`
+
+A coordinate as it crosses: its plain fields (`plainCoordinate`) and, when an edge's neighbour changed, `$_layout.changed`, which the native coordinate decode keeps and the render applies to its sides.
+
+### `packages/common/src/transport-data.ts::edgesOf`
+
+The changed edges a node crosses with: the ones its holder judged, or both for a list node, whose source flanks (`sourceFlankOf`) spell its edges in place of its layout runs, so each flank has one source.
+
+### `packages/common/src/transport-data.ts::PLAIN_KINDS`
+
+The `KindView` of data with no wrapper or list kinds: no for every kind.

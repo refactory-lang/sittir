@@ -11,22 +11,12 @@ export declare class SittirEngine {
    * the gate immune to stale env assumptions.
    */
   get buildProfile(): string
-  /**
-   * The line-break whitespace the read node named by `handle` owns
-   * as trivia. As JSON `{ leading, trailing, previous, next }`:
-   * `leading` and `trailing` are `{ kind, start }` runs in source
-   * order, each classified among the grammar's whitespace members
-   * whose text holds a line break; `previous` and `next` are the
-   * `{ start, end }` spans of the sibling owners before and after the
-   * outermost node spanning exactly the node's bytes, `null` when that
-   * node is its parent's first or last.
-   */
-  lineGapsOf(handle: number): string
   findAndRead(source: string, pattern: string): string
   /**
-   * Parse `source` and keep its tree. As JSON `{ treeId, format,
-   * errors }`: the id `read` and `disposeTree` take, the format the
-   * parse detected, and its error regions.
+   * Parse `source` and keep its tree. As JSON `{ treeId, options,
+   * errors }`: the id `read` and `disposeTree` take, the tree's
+   * layer of the render options (`ParsedTree::inferred_options`),
+   * and its error regions.
    */
   parse(source: string): string
   /**
@@ -39,6 +29,56 @@ export declare class SittirEngine {
    */
   read(treeId: number, index: number, depth?: number | undefined | null): object
   /**
+   * The sides of the unit children of the node at `index` of the
+   * live tree `treeId`, which their slots store as bare kinds: each
+   * `{ slot, item, leading?, trailing?, inner? }`, by its slot's wire
+   * key and its item in that slot. Refuses as `triviaSide` does.
+   */
+  unitSides(treeId: number, index: number): object[]
+  /**
+   * A snapshot of the node at `index` of the live tree `treeId`: the
+   * node read at every depth into plain data with no tree, each
+   * node with its span (`$_layout.span`) from the transport that
+   * holds it and each placed extra with its text, the node itself
+   * measured from the byte `holderByte`, or from its own start when
+   * absent. Refuses as `read` does.
+   */
+  snapshot(treeId: number, index: number, holderByte?: number | undefined | null): object
+  /**
+   * The entries of `side` (`leading`, `trailing` or `inner`) of the
+   * node at `index` of the live tree `treeId`: the ones a write gave
+   * it, else the ones the tree's trivia table assigns it. Refuses a
+   * tree that is not live, an index naming no node of it, and any
+   * other side.
+   */
+  triviaSide(treeId: number, index: number, side: string): object[]
+  /**
+   * Replace `side` of the node at `index` of the live tree `treeId`
+   * with `entries`. Refuses as `triviaSide` does.
+   */
+  writeTriviaSide(treeId: number, index: number, side: string, entries: object[]): void
+  /**
+   * Whether a write replaced a side of a node under the node at
+   * `index` of the live tree `treeId`, its own `inner` included, and
+   * its own leading and trailing too when `ownSides` is set. Refuses
+   * a tree that is not live and an index naming no node of it.
+   */
+  editedWithin(treeId: number, index: number, ownSides: boolean): boolean
+  /**
+   * The siblings that hold sides beside the node at `index` of the
+   * live tree `treeId`, as JSON `{ previous, next }`: the `{ start,
+   * end }` span of each, taken at the outermost node spanning exactly
+   * the node's bytes, `null` when that node starts (ends) its parent.
+   * Refuses a tree that is not live and an index naming no node of it.
+   */
+  siblings(treeId: number, index: number): string
+  /**
+   * Whether the node at `index` of the live tree `treeId` is empty:
+   * no child of it has width. Refuses a tree that is not live and an
+   * index naming no node of it.
+   */
+  isEmpty(treeId: number, index: number): boolean
+  /**
    * One batch of a pre-order walk of the named descendants under
    * the node `from` names (JSON, see `query::Address`), filtered to
    * `kinds` when given and to the `where` plan (JSON, see
@@ -50,6 +90,14 @@ export declare class SittirEngine {
    */
   descendants(from: string, kinds: Array<number> | undefined | null, resume: Array<number> | undefined | null, limit: number, plan?: string | undefined | null, depth?: number | undefined | null): string
   /**
+   * The byte offsets of the lines under the node at `index` of the
+   * live tree `treeId` (its root when absent) that begin inside a
+   * token (`engine::line_starts_inside_tokens`): what anything that
+   * re-indents the tree's text leaves where it is. Refuses a tree
+   * that is not live and an index naming no node of it.
+   */
+  lineStartsInsideTokens(treeId: number, index?: number | undefined | null): Array<number>
+  /**
    * Whether each node `addresses` names (a JSON array of
    * `query::Address`, all in one tree) satisfies the `where` plan
    * (JSON, see `query::PlanSpec`), in order. Refuses a tree that is
@@ -60,14 +108,17 @@ export declare class SittirEngine {
   /**
    * Render a typed transport object (napi-native, numeric `$type`).
    *
-   * `treeId` names the parse whose detected format applies. It is
-   * optional because factory-built nodes belong to no tree.
+   * The options a render takes are the call's own over the layer
+   * of the tree `treeId` names (`ParsedTree::inferred`), over the
+   * engine's. `treeId` is the tree the node was read from; a built
+   * node belongs to no tree and renders by the engine's options.
    */
   render(transport: object, treeId?: number | undefined | null, options?: object | undefined | null): string
   renderToFile(transport: object, path: string, treeId?: number | undefined | null, options?: object | undefined | null): void
   /**
-   * Free this engine's own state. The trees it parsed stay in the
-   * addon's table: they belong to whoever still names them.
+   * Release the engine. It holds no state of its own past its
+   * options: the trees it parsed stay in the addon's table, since
+   * they belong to whoever still names them.
    */
   dispose(): void
 }
@@ -81,7 +132,6 @@ export declare class SittirEngine {
 export declare function disposeTree(treeId: number): void
 
 export interface EngineOptions {
-  format?: string
   /**
    * Resolved once here against the grammar's site table at
    * construction; only the resolved ids are kept. A `render` call

@@ -12,7 +12,7 @@ import {
 } from './node-map.ts';
 import { leadingRegex } from './leaf-pattern.ts';
 import { endsWithLineBreak, patternDfa, requiresNonSpace } from './pattern-automaton.ts';
-import { declaresWhitespace, layoutSymbolsOf } from './layout-kinds.ts';
+import { declaresWhitespace, depthMembersOf, layoutSymbolsOf } from './layout-kinds.ts';
 import { escapeRegexLiteral } from '../../util/word-matcher.ts';
 import { SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { extrasClosure } from '../../dsl/extras.ts';
@@ -143,7 +143,7 @@ export function triviaKinds(nodeMap: NodeMap): ReadonlySet<string> {
 	const cached = triviaKindsByNodeMap.get(nodeMap);
 	if (cached !== undefined) return cached;
 	const kinds = extrasClosure(
-		[...ruleListParts(nodeMap.extras ?? []).names, ...whitespaceTriviaKinds(nodeMap)],
+		[...ruleListParts(nodeMap.extras ?? []).names, ...whitespaceTriviaKinds(nodeMap), ...depthTriviaKinds(nodeMap)],
 		[...nodeMap.nodes].flatMap(([kind, node]) => (node instanceof AssembledSupertype ? [kind] : [])),
 		(kind) => {
 			const node = nodeMap.nodes.get(kind);
@@ -154,6 +154,12 @@ export function triviaKinds(nodeMap: NodeMap): ReadonlySet<string> {
 	);
 	triviaKindsByNodeMap.set(nodeMap, kinds);
 	return kinds;
+}
+
+export function depthTriviaKinds(nodeMap: NodeMap): string[] {
+	if (whitespaceTriviaKinds(nodeMap).length === 0) return [];
+	const { indent, dedent } = depthMembersOf(nodeMap);
+	return [indent, dedent].filter((kind): kind is string => kind !== undefined);
 }
 
 export function lexicalExtrasRun(nodeMap: NodeMap): RegExp | undefined {
@@ -221,7 +227,7 @@ function resolvedLineEnds(nodeMap: NodeMap, kind: string, seen: ReadonlySet<stri
 	const node = nodeMap.nodes.get(kind);
 	if (node === undefined || seen.has(kind)) return ['unknown'];
 	const within = new Set([...seen, kind]);
-	return node.lineEnds.flatMap((end) => (typeof end === 'string' ? [end] : resolvedLineEnds(nodeMap, end.symbol, within)));
+	return node.lineEnds.flatMap((end) => (end === 'dedent' ? ['closed'] : typeof end === 'string' ? [end] : resolvedLineEnds(nodeMap, end.symbol, within)));
 }
 
 function verdict(ends: readonly ResolvedLineEnd[]): boolean | undefined {
@@ -257,7 +263,19 @@ export function stampTriviaInterior(nodeMap: NodeMap): void {
 
 export interface EmptyForm {
 	readonly typeName: string;
-	readonly gaps: readonly string[];
+}
+
+const innerKindsByNodeMap = new WeakMap<NodeMap, ReadonlySet<string>>();
+
+export function innerKinds(nodeMap: NodeMap): ReadonlySet<string> {
+	const cached = innerKindsByNodeMap.get(nodeMap);
+	if (cached !== undefined) return cached;
+	const kinds = new Set<string>();
+	for (const [kind, node] of nodeMap.nodes) {
+		if (node instanceof AbstractAssembledCompound && node.innerSite !== undefined) kinds.add(kind);
+	}
+	innerKindsByNodeMap.set(nodeMap, kinds);
+	return kinds;
 }
 
 const emptyFormsByNodeMap = new WeakMap<NodeMap, ReadonlyMap<string, EmptyForm>>();
@@ -268,19 +286,13 @@ export function emptyForms(nodeMap: NodeMap): ReadonlyMap<string, EmptyForm> {
 	const typeNames = new Set([...nodeMap.nodes.values()].map((node) => node.typeName));
 	const forms = new Map<string, EmptyForm>();
 	for (const [kind, node] of nodeMap.nodes) {
-		if (!(node instanceof AbstractAssembledCompound) || node.factoryName === undefined) continue;
-		const gaps = node.innerGaps.map((gap) => gap.key);
-		if (gaps.length === 0) continue;
+		if (!(node instanceof AbstractAssembledCompound) || node.factoryName === undefined || !innerKinds(nodeMap).has(kind)) continue;
 		const typeName = `Empty${node.typeName}`;
 		if (typeNames.has(typeName)) throw new Error(`trivia: '${kind}' would name its empty form ${typeName}, which a kind already names`);
-		forms.set(kind, { typeName, gaps });
+		forms.set(kind, { typeName });
 	}
 	emptyFormsByNodeMap.set(nodeMap, forms);
 	return forms;
-}
-
-export function innerGapsKeyed(nodeMap: NodeMap): boolean {
-	return [...emptyForms(nodeMap).values()].some((form) => form.gaps.length > 1);
 }
 
 const lineTerminatedKindsByNodeMap = new WeakMap<NodeMap, ReadonlySet<string>>();
@@ -294,16 +306,16 @@ export function lineTerminatedKinds(nodeMap: NodeMap): ReadonlySet<string> {
 }
 
 export function lineBreakTerminated(nodeMap: NodeMap, kind: string): boolean {
-	return endsInNewlineRole(nodeMap, kind, new Set());
+	return endsInLineBreak(nodeMap, kind, new Set());
 }
 
-function endsInNewlineRole(nodeMap: NodeMap, kind: string, seen: ReadonlySet<string>): boolean {
+function endsInLineBreak(nodeMap: NodeMap, kind: string, seen: ReadonlySet<string>): boolean {
 	const node = nodeMap.nodes.get(kind);
 	if (node === undefined || seen.has(kind)) return false;
-	if (node.externalRole === 'newline') return true;
+	if (node.externalRole === 'newline' || node.externalRole === 'dedent') return true;
 	const within = new Set([...seen, kind]);
 	const ends = node.lineEnds;
-	return ends.length > 0 && ends.every((end) => typeof end !== 'string' && endsInNewlineRole(nodeMap, end.symbol, within));
+	return ends.length > 0 && ends.every((end) => end === 'dedent' || (typeof end !== 'string' && endsInLineBreak(nodeMap, end.symbol, within)));
 }
 
 const lineBreakTerminatedKindsByNodeMap = new WeakMap<NodeMap, ReadonlySet<string>>();

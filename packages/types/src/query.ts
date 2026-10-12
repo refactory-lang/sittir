@@ -6,6 +6,14 @@ export interface SlotRoutes {
 	readonly kinds: readonly string[];
 }
 
+/** A language's kind membership: which node types count as a given kind. */
+export interface KindMembership {
+	/** Whether a node whose type is `type` is a `kind`: a member of the supertype `kind`, an arm of the polymorph `kind`, or, for any other kind, `kind` itself. */
+	isMember(kind: number, type: number): boolean;
+	/** Every type a node that is a `kind` can have, the types `isMember` accepts for it. */
+	membersOf(kind: number): readonly number[];
+}
+
 /** Each kind's slots, by kind id: the accessor a node reads a slot through and the slot's parser routes. */
 export type QuerySlots = Readonly<Record<number, readonly (readonly [accessor: string, routes: SlotRoutes])[]>>;
 

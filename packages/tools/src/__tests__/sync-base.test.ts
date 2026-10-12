@@ -19,19 +19,25 @@ const commit = (message: string): void => {
 
 const generatedOutput = 'gen/out.txt';
 const roots = { g: ['gen'], h: ['other'] };
-function target(effect: () => void = () => undefined): SyncBaseTarget & { regenerated: string[] } {
-	const regenerated: string[] = [];
-	return {
+/** A target over grammar `g` (its output follows `src.txt`) and `h`, which fails verification while `stale` holds it. */
+function target(effect: () => void = () => undefined, stale = new Set<string>()): SyncBaseTarget & { regenerated: string[]; calls: number } {
+	const result = {
 		roots,
-		regenerated,
-		verify: (grammar) =>
-			grammar !== 'g' || readFileSync(join(cwd, generatedOutput), 'utf8') === `regenerated from ${readFileSync(join(cwd, 'src.txt'), 'utf8').trim()}`,
-		regenerate(grammar) {
-			regenerated.push(grammar);
-			write(generatedOutput, `regenerated from ${readFileSync(join(cwd, 'src.txt'), 'utf8').trim()}`);
+		regenerated: [] as string[],
+		calls: 0,
+		verify: (grammar: string) =>
+			grammar === 'g'
+				? readFileSync(join(cwd, generatedOutput), 'utf8') === `regenerated from ${readFileSync(join(cwd, 'src.txt'), 'utf8').trim()}`
+				: !stale.has(grammar),
+		regenerate(grammars: readonly string[]) {
+			result.calls++;
+			result.regenerated.push(...grammars);
+			for (const grammar of grammars) stale.delete(grammar);
+			if (grammars.includes('g')) write(generatedOutput, `regenerated from ${readFileSync(join(cwd, 'src.txt'), 'utf8').trim()}`);
 			effect();
 		}
 	};
+	return result;
 }
 
 beforeEach(() => {
@@ -77,6 +83,18 @@ describe('syncBase', () => {
 		expect(t.regenerated).toEqual(['g']);
 		expect(readFileSync(join(cwd, generatedOutput), 'utf8')).toBe('regenerated from v2');
 		expect(git('log', '-1', '--format=%p').trim().split(' ')).toHaveLength(2);
+	});
+
+	it('regenerates every affected grammar in one call, so the workspace is checked once after all of them', () => {
+		git('checkout', '-q', 'main');
+		write('src.txt', 'v2\n');
+		commit('main change');
+		git('checkout', '-q', 'feature');
+		write('other/extra.txt', 'feature only');
+		commit('feature change');
+		const t = target(undefined, new Set(['h']));
+		expect(syncBase({ base: 'main', cwd }, t, () => undefined)).toBe(0);
+		expect([t.regenerated, t.calls]).toEqual([['g', 'h'], 1]);
 	});
 
 	it('commits a clean merge whose grammars all verify without regenerating', () => {

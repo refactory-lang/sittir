@@ -3,7 +3,7 @@ import typescript from '@sittir/typescript';
 
 const engine = await createEngine(typescript);
 
-// The strict typescript dogfood: rebuilds `packages/common/src/format.ts`
+// The strict typescript dogfood: rebuilds `packages/tools/tests/emit/__fixtures__/dogfood-typescript.ts`
 // through `.strict` alone, so each gap is attributed to the layer that owns it. Every call is the strict surface — `.strict` on
 // branch kinds, `.<form>.strict` on a namespaced form, and the bare factory on
 // leaves (leaves have no `.strict`; they are already it).

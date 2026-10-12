@@ -20,7 +20,7 @@ describe('engine render boundary', () => {
 	});
 
 	function mockNativeBackend(
-		SittirEngine: new (options?: { format?: string }) => {
+		SittirEngine: new (options?: { options?: object }) => {
 			render(node: Record<string, unknown>): string;
 		}
 	): void {
@@ -163,31 +163,11 @@ describe('engine render boundary', () => {
 		expect(renderSpy).toHaveBeenCalledWith(invalidNode);
 	});
 
-	it('does not strip per-node format metadata before native render', async () => {
-		const renderSpy = vi.fn((node: Record<string, unknown>) => `ok:${String(node.$type)}`);
+	it('renders through the native engine, which reads raw node data', async () => {
+		const renderSpy = vi.fn((_node: Record<string, unknown>) => 'x');
 		mockNativeBackend(
 			class {
-				render(node: Record<string, unknown>): string {
-					return renderSpy(node);
-				}
-			}
-		);
-
-		const engine = await mockedEngine();
-		const render = (node: unknown): string => engine.render(node as never).toString();
-		const invalidNode = {
-			...identifier,
-			$format: { boundary: { leading: '\t' } }
-		};
-		expect(render(invalidNode)).toBe('ok:1');
-		expect(renderSpy).toHaveBeenCalledWith(invalidNode);
-	});
-
-	it('uses engine-owned format when native render is called without per-call format args', async () => {
-		const renderSpy = vi.fn((_node: Record<string, unknown>) => '\tx');
-		mockNativeBackend(
-			class {
-				constructor(_options?: { format?: string }) {}
+				constructor(_options?: { options?: object }) {}
 				render(node: Record<string, unknown>): string {
 					return renderSpy(node);
 				}
@@ -204,10 +184,10 @@ describe('engine render boundary', () => {
 		const { createEngine } = await import('@sittir/common');
 		const { treeTokenOf } = await import('@sittir/common/utils');
 		const descriptor = (await import('../src/index.ts')).default;
-		const engine = await createEngine(descriptor, { format: { boundary: { leading: '\t' } } });
+		const engine = await createEngine(descriptor);
 		// engine.render() returns a RenderHandle ({ save, print, toString }),
 		// not a raw string, so the text is its toString().
-		expect(engine.render(engine.build.identifier('x')).toString()).toBe('\tx');
+		expect(engine.render(engine.build.identifier('x')).toString()).toBe('x');
 		expect(renderSpy).toHaveBeenCalledTimes(1);
 
 		// The native engine behind the descriptor reads raw node data

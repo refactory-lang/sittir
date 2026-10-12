@@ -86,6 +86,15 @@ pub trait SourceTable {
         None
     }
 
+    /// The byte offsets of the lines under the node a coordinate names that
+    /// begin inside a token (`engine::line_starts_inside_tokens`): a slice
+    /// re-indented to its new column leaves these lines as they are. A table
+    /// of bare sources knows no tokens and answers none.
+    fn line_starts_inside_tokens(&self, coord: &crate::slot::NodeCoordinate) -> Vec<usize> {
+        let _ = coord;
+        Vec::new()
+    }
+
     /// The kind of the last child that is not an extra of the list spanning
     /// `span` in `tree`, the list's own kind being `kind`
     /// (`engine::last_list_child`). A table of bare sources cannot
@@ -105,6 +114,37 @@ pub trait SourceTable {
             f(kind);
         }
     }
+
+    /// The sides of the node a coordinate names, as its tree's trivia table
+    /// and writes give them (`ParsedTree::trivia_side`), or `None` when it has
+    /// none. A table of bare sources knows no sides.
+    fn sides(&self, coord: &crate::slot::NodeCoordinate) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
+        let _ = coord;
+        None
+    }
+
+    /// The bytes the node a coordinate names renders over with its sides: its
+    /// span, widened to the outermost extra or `ERROR` of its leading and
+    /// trailing sides. A layout run is the gap beside them, and a written
+    /// entry has no bytes. A table of bare sources knows no sides and answers
+    /// the span.
+    fn framed_span(&self, coord: &crate::slot::NodeCoordinate) -> crate::types::Span {
+        coord.span
+    }
+
+    /// Whether a write replaced a side of a node in the range of the node a
+    /// coordinate names, its own `inner` included (`ParsedTree::edited_within`).
+    fn edited_within(&self, coord: &crate::slot::NodeCoordinate) -> bool {
+        let _ = coord;
+        false
+    }
+
+    /// The live tree `tree` and the context its reads share. A table of bare
+    /// sources holds no trees.
+    fn read_ctx(&self, tree: u32) -> Option<(&tree_sitter::Tree, crate::read::ReadCtx<'_>)> {
+        let _ = tree;
+        None
+    }
 }
 
 /// Why a coordinate cannot be turned into bytes. Both arms carry the handle:
@@ -122,6 +162,12 @@ pub enum CoordinateError {
         handle: u64,
         detail: String,
     },
+    /// A write lies in the node's range, and reading the node to render it
+    /// from its template failed.
+    Unread {
+        handle: u64,
+        detail: String,
+    },
 }
 
 impl fmt::Display for CoordinateError {
@@ -132,6 +178,7 @@ impl fmt::Display for CoordinateError {
                 "handle {handle} names tree {tree_id}, which is not live in this language's table (never parsed on this thread, or already released)"
             ),
             Self::BadSpan { handle, detail } => write!(f, "handle {handle}: {detail}"),
+            Self::Unread { handle, detail } => write!(f, "handle {handle}: the node holds a write, and its read failed: {detail}"),
         }
     }
 }
@@ -206,6 +253,28 @@ pub trait RenderSink {
     /// sits in would otherwise get. A line continuation carries the source
     /// text it was read with. A sink that knows no strengths writes it as a
     /// whitespace token.
+    /// A node begins, after its leading trivia, read from the source node
+    /// `origin` names (none for a built node). The excess indentation its
+    /// children's trivia opens (`layout_depth`) closes with it.
+    fn open_frame(&mut self, origin: Option<&crate::slot::NodeCoordinate>) {
+        let _ = origin;
+    }
+    /// The node `open_frame` began last ends, restoring the excess
+    /// indentation it began with.
+    fn close_frame(&mut self) {}
+    /// Whether the open frame is `coord`'s node's: an alias envelope rebuilt
+    /// around its read content names one parser node twice, and its sides
+    /// frame the content once.
+    fn in_frame_of(&self, coord: &crate::slot::NodeCoordinate) -> bool {
+        let _ = coord;
+        false
+    }
+    /// A depth member: the lines after it indent `delta` levels more (or
+    /// fewer) than the template's depth, until another changes it or the
+    /// open frame closes.
+    fn layout_depth(&mut self, delta: i32) {
+        let _ = delta;
+    }
     fn trivia_seam(&mut self, gap: crate::layout_kinds::LayoutKinds, text: Option<&str>) {
         let _ = text;
         self.seam(gap);
@@ -225,6 +294,13 @@ pub trait RenderSink {
     fn kind_of(&self, coord: &crate::slot::NodeCoordinate) -> Option<KindId> {
         let _ = coord;
         None
+    }
+    /// The leading and trailing sides of the node a coordinate names, from
+    /// the tree table this writer holds (`SourceTable::sides`), prepared as a
+    /// slot's trivia is; a sink with no table answers none.
+    fn sides(&self, coord: &crate::slot::NodeCoordinate) -> Result<Option<Box<dyn crate::trivia::FramedTrivia>>, CoordinateError> {
+        let _ = coord;
+        Ok(None)
     }
     /// A coordinate's text has just been written: hold the line end of each
     /// kind the text ends in, its own kind first.
@@ -360,6 +436,18 @@ impl Render for String {
     fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
         w.text(self)
     }
+}
+
+/// A unit variant that a list seats: its fixed text between the edges a
+/// list gap stamped on it (its seat, or the source class of the gap), so the
+/// gap after it lands on its own `after` edge. A unit kind has no edge row,
+/// so only a stamped arm writes (`unsited_edge`): a unit spaces against its
+/// neighbours through their seams wherever no list gap reached it.
+pub fn render_edged(kind: KindId, edges: &crate::options::Edges, w: &mut dyn RenderSink, render: fn(&mut dyn RenderSink) -> RenderResult) -> RenderResult {
+    w.unsited_edge(kind, crate::options::Side::Before, edges.before);
+    render(w)?;
+    w.unsited_edge(kind, crate::options::Side::After, edges.after);
+    Ok(())
 }
 
 /// One writer, one render, one `finish`: the shape every root render has.

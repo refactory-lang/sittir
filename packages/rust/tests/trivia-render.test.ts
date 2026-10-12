@@ -19,13 +19,13 @@ describe('built trivia layout', () => {
 	});
 
 	it('breaks once after an own-line trailing line comment', () => {
-		const block = rs.build.block({ statements: [statement('a').$trivia.trailing(rs.build.lineComment(' x')), statement('b')] });
+		const block = rs.build.block({ statements: [statement('a').$trivia.trailing('\n', rs.build.lineComment(' x')), statement('b')] });
 		expect(block.$render()).toBe('{\n    a;\n    // x\n    b;\n}');
 	});
 
 	it("writes an own-line trailing entry before the owner's separator, never in place of it", () => {
 		const fn = (name: string) => rs.build.functionItem({ name, parameters: rs.build.parameters(), body: rs.build.block() });
-		const trailing = (comment: unknown) => rs.build.sourceFile({ statements: [fn('g').$trivia.trailing(comment as never), fn('h')] });
+		const trailing = (comment: unknown) => rs.build.sourceFile({ statements: [fn('g').$trivia.trailing('\n', comment as never), fn('h')] });
 		expect(trailing(rs.build.blockComment(' t ')).$render()).toBe('fn g() {}\n/* t */\n\nfn h() {}\n');
 		expect(trailing(rs.build.lineComment(' t')).$render()).toBe('fn g() {}\n// t\n\nfn h() {}\n');
 	});

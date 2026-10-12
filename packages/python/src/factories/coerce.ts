@@ -11,10 +11,9 @@ import {
 	coerceKindEnumStorage,
 	coerceMixedEnumStorage,
 	configFieldOr,
-	isCoordinate,
-	isNodeOfKind
+	isNodeOfKind,
+	isNodeValue
 } from '@sittir/common/utils';
-import { isNode } from '../utils.js';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
 type _LooseFieldInput = unknown;
@@ -205,6 +204,8 @@ export const _fromMap = {
 	string_fragment: coerceToStringFragment,
 	escape_interpolation: coerceToEscapeInterpolation,
 	string_end: coerceToStringEnd,
+	_indent: coerceToIndent,
+	_dedent: coerceToDedent,
 	_tight: coerceToTight,
 	_space: coerceToSpace,
 	_tab: coerceToTab,
@@ -303,6 +304,8 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	string_fragment: { pattern: /^(?:(?:[\s\S]+))$/u, factory: F.buildStringFragment },
 	escape_interpolation: { pattern: /^(?:(?:\{\{|\}\}))$/u, factory: F.buildEscapeInterpolation },
 	string_end: { pattern: /^(?:(?:\\*["'`]+))$/u, factory: F.buildStringEnd },
+	_indent: { values: ['﷐\n'], factory: () => F.buildIndent },
+	_dedent: { values: ['﷑\n'], factory: () => F.buildDedent },
 	_tight: { values: [''], factory: () => F.buildTight },
 	_space: { values: [' '], factory: () => F.buildSpace },
 	_tab: { values: ['\t'], factory: () => F.buildTab },
@@ -334,6 +337,8 @@ function _buildGuardedText(v: string, kind: string): AnyUntypedNode | number {
 
 const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'_newline',
+	'_indent',
+	'_dedent',
 	'string_start',
 	'string_fragment',
 	'escape_interpolation',
@@ -406,15 +411,14 @@ function _fromOfTag(tag: unknown, candidates: readonly string[]): keyof _FromMap
 }
 
 function _splitTag(v: unknown): { readonly tag: unknown; readonly rest: _LooseFieldInput } | undefined {
-	if (typeof v !== 'object' || v === null || Array.isArray(v) || isNode(v) || isCoordinate(v) || !('$type' in v))
-		return undefined;
+	if (typeof v !== 'object' || v === null || Array.isArray(v) || isNodeValue(v) || !('$type' in v)) return undefined;
 	const { $type, ...rest } = v as Record<string, unknown>;
 	return { tag: $type, rest };
 }
 
 function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInput): ReturnType<_FromMap[K]> {
 	const fn = _fromMap[kind] as (rest: _LooseFieldInput) => ReturnType<_FromMap[K]>;
-	if (!(kind in _leafRegistry) || typeof rest !== 'object' || rest === null || Array.isArray(rest) || isNode(rest))
+	if (!(kind in _leafRegistry) || typeof rest !== 'object' || rest === null || Array.isArray(rest) || isNodeValue(rest))
 		return fn(rest);
 	const text = (rest as { text?: unknown }).text;
 	if (typeof text !== 'string') throw new Error(`the ${kind} tag takes its text: { $type: <kind id>, text: "…" }`);
@@ -477,7 +481,7 @@ const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33,
 	34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62,
 	63, 64, 65, 67, 68, 69, 70, 71, 72, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 107, 108, 109, 110, 111,
-	112, 113, 114, 115, 122, 123, 124, 125, 126, 137, 147, 148, 149, 210, 211, 252, 257, 258, 279
+	112, 113, 114, 115, 116, 117, 122, 123, 124, 125, 126, 137, 147, 148, 149, 210, 211, 252, 257, 258, 279
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	_simple_statements: new Set([
@@ -767,8 +771,7 @@ function _resolveOne<T>(
 	defaultArm?: string
 ): Admit<T> {
 	if (v === undefined || v === null) return v as Admit<T>;
-	const kindId =
-		isNode(v) || isCoordinate(v) ? v.$type : typeof v === 'number' && _KIND_ID_STORED.has(v) ? v : undefined;
+	const kindId = isNodeValue(v) ? v.$type : typeof v === 'number' && _KIND_ID_STORED.has(v) ? v : undefined;
 	if (typeof kindId === 'number') {
 		const kindName = KIND_NAMES.get(kindId);
 		if (
@@ -781,7 +784,7 @@ function _resolveOne<T>(
 		const arms = branchKinds.filter((b) => _BARE_ACCEPTS[b]?.has(kindId) === true);
 		const arm = arms.length <= 1 ? arms[0] : undefined;
 		if (arm !== undefined && _isFromKind(arm)) return _resolveByKind(arm, v) as Admit<T>;
-		if (isNode(v) || isCoordinate(v)) return v as Admit<T>;
+		if (isNodeValue(v)) return v as Admit<T>;
 		if (arms.length > 1) {
 			throw new Error(
 				`_resolveOne: a bare ${kindName ?? kindId} fits more than one arm: [${arms.join(', ')}]; name the arm explicitly`
@@ -816,7 +819,7 @@ function _resolveOne<T>(
 			_fromOfTag(tagged.tag, [...leafKinds, ...branchKinds]),
 			tagged.rest
 		) as _LooseFieldInput;
-		return (isNode(built) ? _resolveOne<T>(built, leafKinds, branchKinds, defaultArm) : built) as Admit<T>;
+		return (isNodeValue(built) ? _resolveOne<T>(built, leafKinds, branchKinds, defaultArm) : built) as Admit<T>;
 	}
 	if (branchKinds.length === 1 && typeof v === 'object' && !Array.isArray(v)) {
 		const bk = branchKinds[0]!;
@@ -877,10 +880,10 @@ function _listElements(
 		typeof head === 'object' &&
 		head !== null &&
 		!Array.isArray(head) &&
-		!isNode(head) &&
+		!isNodeValue(head) &&
 		Object.keys(head).every((k) => optionKeys.includes(k));
 	const elements = (optionsFirst ? input.slice(1) : input).map((e) => {
-		if (typeof e !== 'object' || e === null || Array.isArray(e) || isNode(e)) return e;
+		if (typeof e !== 'object' || e === null || Array.isArray(e) || isNodeValue(e)) return e;
 		const tagged = _splitTag(e);
 		if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, tagKinds), tagged.rest);
 		if (bagKinds === undefined || bagKinds.length === 0) return e;
@@ -891,7 +894,10 @@ function _listElements(
 		return _isFromKind(bagKinds[0]!) ? _resolveByKind(bagKinds[0]!, e) : e;
 	});
 	const resolved = elements.map((e) =>
-		wrapperKind !== undefined && isNode(e) && typeof e.$type === 'number' && KIND_NAMES.get(e.$type) === wrapperKind
+		wrapperKind !== undefined &&
+		isNodeValue(e) &&
+		typeof e.$type === 'number' &&
+		KIND_NAMES.get(e.$type) === wrapperKind
 			? e
 			: resolve([e])[0]
 	);
@@ -900,7 +906,7 @@ function _listElements(
 
 function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): Admit<T> {
 	if (v === undefined || v === null) return v as Admit<T>;
-	if (isNode(v)) return v as Admit<T>;
+	if (isNodeValue(v)) return v as Admit<T>;
 	if (typeof v === 'boolean' || typeof v === 'number' || typeof v === 'bigint') {
 		const scalar = _resolveScalar(v);
 		if (scalar !== undefined) return scalar as Admit<T>;
@@ -1342,7 +1348,7 @@ function _resolveOneBranch<T>(
 		if (kn !== kind && kind in _wrapKindIds)
 			return _resolveOneBranch<T>(_resolveByKind(kn, tagged.rest), kind, altKinds);
 	}
-	if (isNode(v)) {
+	if (isNodeValue(v)) {
 		const wrapId = _wrapKindIds[kind];
 		if (wrapId !== undefined && v.$type !== wrapId) {
 			if (altKinds !== undefined && altKinds.some((k) => k === v.$type)) return v as Admit<T>;
@@ -1387,7 +1393,7 @@ function _resolveBooleanKeyword<T>(v: _LooseFieldInput): T {
 	if (v === undefined || v === null) return v as T;
 	if (v === true || v === false) return v as T;
 	if (typeof v === 'string') return true as T;
-	if (isNode(v)) return v as T;
+	if (isNodeValue(v)) return v as T;
 	if (Array.isArray(v)) return v as T;
 	return v as T;
 }
@@ -1397,7 +1403,7 @@ function _resolveBitflag<T>(v: _LooseFieldInput): T {
 	if (typeof v === 'number') return v as T;
 	if (typeof v === 'string') return v as T;
 	if (Array.isArray(v)) return v as T;
-	if (isNode(v)) return v as T;
+	if (isNodeValue(v)) return v as T;
 	return v as T;
 }
 
@@ -1407,11 +1413,11 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 	}
 }
 
-/** Narrows a coercer input to its config arm. A bare `isNode` check
+/** Narrows a coercer input to its config arm. A bare `isNodeValue` check
  *  cannot: the UntypedNode arm is not a strict subtype of the config arm, so
  *  negative narrowing leaves it in place. */
 function _isLooseConfig<C>(v: C | AnyUntypedNode): v is C {
-	return !isNode(v);
+	return !isNodeValue(v);
 }
 function _requireField<T>(kind: string, slot: string, v: T | undefined | null): T {
 	if (v === undefined || v === null) {
@@ -2108,7 +2114,7 @@ export function coerceToModule(...input: T.Module.LooseArgs): ReturnType<typeof 
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNode(head) || !('statements' in head)) return input;
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('statements' in head)) return input;
 		const v = (head as Record<string, unknown>)['statements'];
 		return Array.isArray(v) ? v : [v];
 	})();
@@ -2363,7 +2369,7 @@ export function coerceToAssertStatement(
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNode(head) || !('expression' in head)) return input;
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('expression' in head)) return input;
 		const v = (head as Record<string, unknown>)['expression'];
 		return Array.isArray(v) ? v : [v];
 	})();
@@ -3088,7 +3094,7 @@ export function coerceToGlobalStatement(
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNode(head) || !('names' in head)) return input;
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('names' in head)) return input;
 		const v = (head as Record<string, unknown>)['names'];
 		return Array.isArray(v) ? v : [v];
 	})();
@@ -3114,7 +3120,7 @@ export function coerceToNonlocalStatement(
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNode(head) || !('names' in head)) return input;
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('names' in head)) return input;
 		const v = (head as Record<string, unknown>)['names'];
 		return Array.isArray(v) ? v : [v];
 	})();
@@ -3358,7 +3364,7 @@ export function coerceToBlock(...input: T.Block.LooseArgs): ReturnType<typeof F.
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNode(head) || !('statements' in head)) return input;
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('statements' in head)) return input;
 		const v = (head as Record<string, unknown>)['statements'];
 		return Array.isArray(v) ? v : [v];
 	})();
@@ -3454,7 +3460,7 @@ export function coerceToDottedName(...input: T.DottedName.LooseArgs): ReturnType
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNode(head) || !('names' in head)) return input;
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('names' in head)) return input;
 		const v = (head as Record<string, unknown>)['names'];
 		return Array.isArray(v) ? v : [v];
 	})();
@@ -3605,7 +3611,7 @@ export function coerceToUnionPattern(...input: T.UnionPattern.LooseArgs): Return
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNode(head) || !('patterns' in head)) return input;
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('patterns' in head)) return input;
 		const v = (head as Record<string, unknown>)['patterns'];
 		return Array.isArray(v) ? v : [v];
 	})();
@@ -5339,7 +5345,7 @@ export function coerceToConcatenatedString(
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNode(head) || !('string' in head)) return input;
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('string' in head)) return input;
 		const v = (head as Record<string, unknown>)['string'];
 		return Array.isArray(v) ? v : [v];
 	})();
@@ -5393,7 +5399,7 @@ export function coerceToStringContent(...input: T.StringContent.LooseArgs): Retu
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNode(head) || !('content' in head)) return input;
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('content' in head)) return input;
 		const v = (head as Record<string, unknown>)['content'];
 		return Array.isArray(v) ? v : [v];
 	})();
@@ -5472,7 +5478,7 @@ export function coerceToFormatSpecifier(
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNode(head) || !('elements' in head)) return input;
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('elements' in head)) return input;
 		const v = (head as Record<string, unknown>)['elements'];
 		return Array.isArray(v) ? v : [v];
 	})();
@@ -5538,7 +5544,7 @@ export function resolveComment_content(value: T.Comment.LooseConfig['content']):
 }
 
 export function coerceToComment(input: T.Comment.Loose): ReturnType<typeof F.buildComment> {
-	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildComment>;
+	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildComment>;
 	return F.buildComment(
 		_requireField(
 			'comment',
@@ -6513,7 +6519,7 @@ export function coerceToComprehensionClauses(
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNode(head) || !('content' in head)) return input;
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('content' in head)) return input;
 		const v = (head as Record<string, unknown>)['content'];
 		return Array.isArray(v) ? v : [v];
 	})();
@@ -6538,7 +6544,7 @@ export function coerceToIntegerHex<const I extends T.IntegerHex.Loose, const O e
 	'prefix',
 	O extends { prefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
 > {
-	if (isNode(input))
+	if (isNodeValue(input))
 		return input as unknown as WithSpelling<
 			ReturnType<typeof F.buildIntegerHex>,
 			'prefix',
@@ -6576,7 +6582,7 @@ export function coerceToIntegerOctal<const I extends T.IntegerOctal.Loose, const
 	'prefix',
 	O extends { prefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
 > {
-	if (isNode(input))
+	if (isNodeValue(input))
 		return input as unknown as WithSpelling<
 			ReturnType<typeof F.buildIntegerOctal>,
 			'prefix',
@@ -6617,7 +6623,7 @@ export function coerceToIntegerBinary<
 	'prefix',
 	O extends { prefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
 > {
-	if (isNode(input))
+	if (isNodeValue(input))
 		return input as unknown as WithSpelling<
 			ReturnType<typeof F.buildIntegerBinary>,
 			'prefix',
@@ -6827,7 +6833,7 @@ export function resolveEscapeSequenceUnicodeFixed_content(
 export function coerceToEscapeSequenceUnicodeFixed(
 	input: T.EscapeSequenceUnicodeFixed.Loose
 ): ReturnType<typeof F.buildEscapeSequenceUnicodeFixed> {
-	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceUnicodeFixed>;
+	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceUnicodeFixed>;
 	return F.buildEscapeSequenceUnicodeFixed(
 		_requireField(
 			'escape_sequence_unicode_fixed',
@@ -6854,7 +6860,7 @@ export function resolveEscapeSequenceUnicodeWide_content(
 export function coerceToEscapeSequenceUnicodeWide(
 	input: T.EscapeSequenceUnicodeWide.Loose
 ): ReturnType<typeof F.buildEscapeSequenceUnicodeWide> {
-	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceUnicodeWide>;
+	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceUnicodeWide>;
 	return F.buildEscapeSequenceUnicodeWide(
 		_requireField(
 			'escape_sequence_unicode_wide',
@@ -6881,7 +6887,7 @@ export function resolveEscapeSequenceHex_content(
 export function coerceToEscapeSequenceHex(
 	input: T.EscapeSequenceHex.Loose
 ): ReturnType<typeof F.buildEscapeSequenceHex> {
-	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceHex>;
+	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceHex>;
 	return F.buildEscapeSequenceHex(
 		_requireField(
 			'escape_sequence_hex',
@@ -6911,7 +6917,7 @@ export function coerceToEscapeSequenceOctal<const I extends T.EscapeSequenceOcta
 export function coerceToEscapeSequenceOctal(
 	input: T.EscapeSequenceOctal.Loose
 ): ReturnType<typeof F.buildEscapeSequenceOctal> {
-	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceOctal>;
+	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceOctal>;
 	const _value = configFieldOr(input, 'content', () =>
 		typeof input === 'string' ? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceOctal_content) : input
 	);
@@ -6933,7 +6939,7 @@ export function resolveEscapeSequenceLineBreak_content(
 export function coerceToEscapeSequenceLineBreak(
 	input: T.EscapeSequenceLineBreak.Loose
 ): ReturnType<typeof F.buildEscapeSequenceLineBreak> {
-	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceLineBreak>;
+	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceLineBreak>;
 	return F.buildEscapeSequenceLineBreak(
 		_requireField(
 			'escape_sequence_line_break',
@@ -6960,7 +6966,7 @@ export function resolveEscapeSequenceSimple_content(
 export function coerceToEscapeSequenceSimple(
 	input: T.EscapeSequenceSimple.Loose
 ): ReturnType<typeof F.buildEscapeSequenceSimple> {
-	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceSimple>;
+	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceSimple>;
 	return F.buildEscapeSequenceSimple(
 		_requireField(
 			'escape_sequence_simple',
@@ -6987,7 +6993,7 @@ export function resolveEscapeSequenceNamed_content(
 export function coerceToEscapeSequenceNamed(
 	input: T.EscapeSequenceNamed.Loose
 ): ReturnType<typeof F.buildEscapeSequenceNamed> {
-	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceNamed>;
+	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceNamed>;
 	return F.buildEscapeSequenceNamed(
 		_requireField(
 			'escape_sequence_named',
@@ -7057,7 +7063,7 @@ export function coerceToExceptClauseExceptionList(
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNode(head) || !('value' in head)) return input;
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('value' in head)) return input;
 		const v = (head as Record<string, unknown>)['value'];
 		return Array.isArray(v) ? v : [v];
 	})();
@@ -7328,7 +7334,7 @@ export function coerceToMatchBlockBlock(
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNode(head) || !('alternative' in head)) return input;
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('alternative' in head)) return input;
 		const v = (head as Record<string, unknown>)['alternative'];
 		return Array.isArray(v) ? v : [v];
 	})();
@@ -7544,6 +7550,14 @@ export function coerceToEscapeInterpolation(
 export function coerceToStringEnd(input: T.StringEnd.Loose): ReturnType<typeof F.buildStringEnd> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildStringEnd>;
 	return F.buildStringEnd(input as Parameters<typeof F.buildStringEnd>[0]);
+}
+
+export function coerceToIndent(_input?: T.Indent.Loose): typeof F.buildIndent {
+	return F.buildIndent;
+}
+
+export function coerceToDedent(_input?: T.Dedent.Loose): typeof F.buildDedent {
+	return F.buildDedent;
 }
 
 export function coerceToTight(_input?: T.Tight.Loose): typeof F.buildTight {

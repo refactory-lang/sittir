@@ -34,7 +34,7 @@ derivation resolves by the slots' terminals, and an alternation's options take
 the alternation's field, captures and quantifier.
 ```
 
-The parse reports no errors of its own. A file is refused with `BindingsSyntaxError` when an ERROR region surfaces as trivia on a node the reader visits, or when a non-blank file parses to no pattern; a malformed pattern the parse absorbs without a trace passes here and is caught by the compile gate (`compileQuery`).
+A file is refused with `BindingsSyntaxError` when its parse root names a region that did not parse (`$errors`, each `ERROR` and `MISSING` region with its span), or when a non-blank file parses to no pattern; a malformed pattern the parse absorbs without a trace passes here and is caught by the compile gate (`compileQuery`).
 
 The scm engine behind it is created by the first read and shared by the rest, so loading the module costs nothing and only a command that reads bindings needs a native scm build; the read is asynchronous for that reason.
 

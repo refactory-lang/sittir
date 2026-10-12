@@ -1,5 +1,5 @@
 import { type SourceSpans, createEngine, sourceSpans } from '@sittir/common';
-import { isErrorNode, spanOf } from '@sittir/common/utils';
+import { spanOf } from '@sittir/common/utils';
 import scm, {
 	type AnonymousNode,
 	type Definition,
@@ -10,7 +10,6 @@ import scm, {
 	type NamedNode,
 	type NamedNodeExpressionArm,
 	type NegatedField,
-	type NodeMethodsOf,
 	type Predicate,
 	type ScmAPI,
 	type String as QueryString
@@ -151,21 +150,17 @@ function lineOf(text: string, spans: SourceSpans, offset: number): number {
 }
 
 
-function unparsed(node: NodeMethodsOf): number[] {
-	const trivia: readonly unknown[] = [...node.$trivia.leading(), ...node.$trivia.trailing()];
-	return trivia.flatMap((item) => {
-		const span = isErrorNode(item) ? spanOf(item) : undefined;
-		return span === undefined ? [] : [span.start];
-	});
-}
-
-async function definitionsOf(text: string): Promise<readonly Definition.Parsed[]> {
-	return (await bindingsEngine()).parse(text, { depth: Infinity }).definitions();
+async function parsedBindings(text: string) {
+	return (await bindingsEngine()).parse(text, { depth: Infinity });
 }
 
 export async function bindingPatterns(text: string): Promise<BindingPattern[]> {
+	return patternsIn(text, await parsedBindings(text));
+}
+
+function patternsIn(text: string, root: Awaited<ReturnType<typeof parsedBindings>>): BindingPattern[] {
 	const spans = sourceSpans(text);
-	return (await definitionsOf(text)).map((definition) => {
+	return root.definitions().map((definition) => {
 		const span = spanOf(definition);
 		if (span === undefined) throw new Error('bindings.scm: a parsed definition carries no span');
 		return { line: lineOf(text, spans, span.start), source: spans.slice(span), definition };
@@ -233,13 +228,12 @@ function selector(v: Visit): SlotSelector {
 	return { field: null, kind: null, after: previous === undefined ? null : selector(previous) };
 }
 
-function expressionsOf(node: PatternNode, errors: number[]): readonly Expression[] {
+function expressionsOf(node: PatternNode): readonly Expression[] {
 	switch (node.$type) {
 		case K.NamedNodePlain:
 		case K.NamedNodeSupertyped: {
 			const group = node.namedNodeGroup();
 			if (group === undefined) return [];
-			errors.push(...unparsed(group));
 			return group.$type === K.NamedNodeGroupChildren
 				? group.namedNodeExpressions()
 				: [...group.namedNodeExpressions(), group.last()];
@@ -251,7 +245,7 @@ function expressionsOf(node: PatternNode, errors: number[]): readonly Expression
 	}
 }
 
-function readPattern(top: PatternNode, errors: number[], inherited: readonly ListElement.Parsed[]): Pattern {
+function readPattern(top: PatternNode, inherited: readonly ListElement.Parsed[]): Pattern {
 	const nodes: Visit[] = [];
 	const predicates: Predicate.Parsed[] = [];
 	const visit = (
@@ -263,8 +257,7 @@ function readPattern(top: PatternNode, errors: number[], inherited: readonly Lis
 	): Visit => {
 		const v: Visit = { node, field, parent, alternative, inherited, children: [] };
 		nodes.push(v);
-		errors.push(...unparsed(node));
-		for (const expression of expressionsOf(node, errors)) place(expression, null, v, false, []);
+		for (const expression of expressionsOf(node)) place(expression, null, v, false, []);
 		return v;
 	};
 	const place = (
@@ -446,12 +439,13 @@ function patternsOf(
 export async function readBindings(text: string): Promise<BindingFacts> {
 	const facts: Facts = { claims: [], members: [], containers: [], templates: [], unclaimed: [] };
 	const errors: number[] = [];
-	const patterns = await bindingPatterns(text);
+	const root = await parsedBindings(text);
+	const patterns = patternsIn(text, root);
+	errors.push(...root.$errors.map((region) => region.span.start));
 	if (patterns.length === 0 && text.trim() !== '') errors.push(0);
 	for (const { definition, ...origin } of patterns) {
-		errors.push(...unparsed(definition));
 		for (const [top, inherited] of patternsOf(definition, []))
-			patternFacts(readPattern(top, errors, inherited), facts, origin);
+			patternFacts(readPattern(top, inherited), facts, origin);
 	}
 	if (errors.length > 0) {
 		const spans = sourceSpans(text);

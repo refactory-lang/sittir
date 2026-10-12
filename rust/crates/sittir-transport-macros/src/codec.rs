@@ -28,8 +28,11 @@ pub struct WireVariant<'a> {
     pub decodes: Vec<Path>,
     pub blank: bool,
     pub verbatim: bool,
+    pub error: bool,
     /// For a `text` variant, the kinds whose objects carrying `$text` it takes.
     pub text: Option<Vec<Path>>,
+    /// A unit that holds its kind's edges: decoded with none set.
+    pub edged: bool,
 }
 
 fn napi() -> TokenStream {
@@ -221,6 +224,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
         let name = variant.name;
         let value = match variant.payload {
             Some(ty) => decoded(name, ty),
+            None if variant.edged => quote!(#ident::#name(::core::default::Default::default())),
             None => quote!(#ident::#name),
         };
         if let Some(i) = variant.index {
@@ -233,11 +237,13 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
         if variant.blank {
             blank = quote!(if id == ::sittir_core::options::BLANK_ARM { return ::core::result::Result::Ok(#ident::#name); });
         }
-        if variant.verbatim {
+        if variant.verbatim || variant.error {
             let ty = variant.payload.ok_or_else(|| syn::Error::new_spanned(name, "a verbatim variant holds its text"))?;
             let value = decoded(name, ty);
             error_arm = quote!(if id == ::sittir_core::types::KindId::ERROR.0 { return ::core::result::Result::Ok(#value); });
-            string_arm = quote!(#napi::ValueType::String => ::core::result::Result::Ok(#value),);
+            if variant.verbatim {
+                string_arm = quote!(#napi::ValueType::String => ::core::result::Result::Ok(#value),);
+            }
         }
         if let Some(ids) = &variant.text {
             let ty = variant.payload.ok_or_else(|| syn::Error::new_spanned(name, "a text variant holds its text"))?;
@@ -253,6 +259,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
         encodes.push(match (variant.payload, variant.blank, &variant.first) {
             (Some(ty), _, _) => quote!(Self::#name(payload) => unsafe { <#ty as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, payload) },),
             (None, true, _) => quote!(Self::#name => unsafe { <u16 as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, ::sittir_core::options::BLANK_ARM) },),
+            (None, false, Some(first)) if variant.edged => quote!(Self::#name(_) => unsafe { <u16 as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, (#first).0) },),
             (None, false, Some(first)) => quote!(Self::#name => unsafe { <u16 as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, (#first).0) },),
             (None, false, None) => return Err(syn::Error::new_spanned(name, "a unit variant names the kind it writes: `#[kind(…)]`")),
         });
@@ -449,6 +456,21 @@ mod tests {
         });
         assert!(has(&out, "Self::AutomaticSemicolon => unsafe { <u16 as ::sittir_core::__napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, (kind::_AUTOMATIC_SEMICOLON).0) },"));
         assert!(has(&out, "Self::Blank => unsafe { <u16 as ::sittir_core::__napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, ::sittir_core::options::BLANK_ARM) },"));
+    }
+
+    #[test]
+    fn an_error_variant_decodes_an_error_object_and_no_bare_text() {
+        let out = expand(parse_quote! {
+            #[transport(choice, codec_only)]
+            pub enum AnyTransport {
+                #[kind(kind::LINE_COMMENT)]
+                LineComment(LineCommentTransport),
+                #[transport(error)]
+                Verbatim(VerbatimTransport),
+            }
+        });
+        assert!(has(&out, "if id == ::sittir_core::types::KindId::ERROR.0 { return ::core::result::Result::Ok(AnyTransport::Verbatim("));
+        assert!(!has(&out, "ValueType::String =>"));
     }
 
     #[test]

@@ -15,15 +15,14 @@ import type {
 	Pending,
 	Rendered,
 	RenderArgument,
-	RenderCallOptions,
 	CreateEngineOptions
 } from '@sittir/types';
-import { bindTree, engineOf, inEngine, sameLanguage, type EngineHandle } from './engine-scope.ts';
+import { bindTree, engineOf, inEngine, sameLanguage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
 import { metricsEnabled, recordFfi } from './metrics.ts';
 import { ParseErrors } from './parse-errors.ts';
 import { queryFacet, type QueryHooks } from './query.ts';
 import { createRenderHandle } from './engine.ts';
-import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode } from './utils.ts';
+import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode, wrapRegistered } from './utils.ts';
 
 type Middleware<Call, Result> = (call: Call, next: () => Result) => Result;
 
@@ -62,10 +61,7 @@ function refuseUnimplemented(options: EngineOptions<LanguageAPI, ApiSurface> | u
 function nativeEngineOptions<API extends LanguageAPI>(
 	options: EngineOptions<API, ApiSurface> | undefined
 ): NativeEngineOptions<API['options']> {
-	return {
-		...(options?.format !== undefined ? { format: options.format } : {}),
-		...(options?.render !== undefined ? { options: options.render } : {})
-	};
+	return options?.render === undefined ? {} : { options: options.render };
 }
 
 function unimplementedVerb(verb: 'read' | 'create' | 'edit' | 'write'): Error {
@@ -172,9 +168,8 @@ function assembleEngine<API extends LanguageAPI>(
 		options: options?.render,
 		trivia: hooks.trivia
 	});
-	const handle: EngineHandle = {
+	const handle: TreeEngineHandle = {
 		current: identity,
-		lineGapsOf: (address) => native.lineGapsOf(address),
 		hydrate: hooks.hydrate
 	};
 	const interceptors = options?.intercept ?? [];
@@ -202,6 +197,7 @@ function assembleEngine<API extends LanguageAPI>(
 	};
 	const queryHooks: QueryHooks = {
 		querySlots: hooks.querySlots,
+		membership: hooks.membership,
 		kindName: (kind) => hooks.trivia.kindName(kind),
 		wrap: hooks.wrap
 	};
@@ -213,8 +209,7 @@ function assembleEngine<API extends LanguageAPI>(
 		types: undefined as unknown as API['types'],
 		diagnostics: {
 			buildProfile: native.buildProfile,
-			parseAndRead: readAndBind,
-			lineGapsOf: (address) => native.lineGapsOf(address)
+			parseAndRead: readAndBind
 		},
 		isNode: (value): value is API['node'] => isNode(value) && inLanguage(value),
 		isParsedNode: (value): value is API['node'] => isParsedNode(value) && inLanguage(value),
@@ -225,7 +220,7 @@ function assembleEngine<API extends LanguageAPI>(
 			return (
 				engine.isNode(node) &&
 				kind !== undefined &&
-				hooks.trivia.innerGaps[kind] !== undefined &&
+				hooks.trivia.innerKinds.has(kind) &&
 				isEmptyUntypedNode(node)
 			);
 		}) as Engine<API>['isEmptyNode'],
@@ -233,7 +228,7 @@ function assembleEngine<API extends LanguageAPI>(
 			const run = (): API['root'] => {
 				const { root, tree } = readAndBind(source, parseOptions);
 				if (parseOptions?.errors === 'throw' && root.$errors.length > 0) throw new ParseErrors(root.$errors);
-				return hooks.wrap(root, tree);
+				return wrapRegistered(root, tree, hooks.wrap);
 			};
 			return parseChain === undefined ? run() : parseChain({ source }, run);
 		},
@@ -249,7 +244,7 @@ function assembleEngine<API extends LanguageAPI>(
 		read() {
 			return Promise.reject(unimplementedVerb('read'));
 		},
-		render(node: RenderArgument<API>, renderOptions?: API['options'] & RenderCallOptions) {
+		render(node: RenderArgument<API>, renderOptions?: API['options']) {
 			const target = typeof node === 'function' ? node(build) : node;
 			const stamp = engineOf(target);
 			if (stamp !== undefined && !sameLanguage(stamp, identity)) {
@@ -277,7 +272,6 @@ function assembleEngine<API extends LanguageAPI>(
 		},
 		dispose() {
 			handle.current = identity;
-			delete handle.lineGapsOf;
 			native.dispose();
 		}
 	};

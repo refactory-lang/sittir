@@ -25,7 +25,7 @@ describe('trivia probes', () => {
 
 	for (const [grammar, cases] of Object.entries(ORPHANS)) {
 		for (const [source, detached] of cases) {
-			it(`${grammar}: ${JSON.stringify(source)} keeps a comment beside a scalar-stored leaf on the enclosing node`, async () => {
+			it(`${grammar}: ${JSON.stringify(source)} keeps a comment beside a scalar-stored leaf, framing the leaf by its sides`, async () => {
 				const rendered = (await detachedRenderer(grammar))(source);
 				expect(rendered).toBe(detached);
 				const { Parser, lang } = await loadLanguageForGrammar(grammar);

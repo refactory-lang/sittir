@@ -1,3 +1,4 @@
+import { depthMembersOf } from '../compiler/model/layout-kinds.ts';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { parseSeamLabel, isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
 import { isFixedTextLeaf, isTerminalNode } from '../compiler/model/node-map.ts';
@@ -21,6 +22,7 @@ import {
 	deriveUnnamedChildrenCardinality,
 	hasOptionalElements,
 	isMultiple,
+	isNonEmpty,
 	isRequired,
 	isNodeRef,
 	isTerminalValue,
@@ -112,6 +114,7 @@ import { readOptionsBlock, type OptionsConfig } from '../dsl/wire/options-block.
 import { addressTablesFor, EMPTY_ADDRESSES, type AddressTables } from './options.ts';
 import {
 	anonTokenNameOfText,
+	depthRegionsOf,
 	tokenNameOfText,
 	whitespaceTextOf,
 	type RenderRules
@@ -640,17 +643,20 @@ function renderTypedDispatch(
 		}`
 	);
 	lines.push('');
-	lines.push(`/// Render a transport tree to text. Takes the trait rather than`);
-	lines.push(`/// \`&AnyTransport\` so the root's own \`SlotValue\` carrier renders through`);
-	lines.push(`/// the SAME single SpacingWriter wrap — a second entry point would be a`);
-	lines.push(`/// second place the root seam policy could drift.`);
+	lines.push(`/// Render a transport tree to text. Takes the root's own \`SlotValue\``);
+	lines.push(`/// carrier, so the root renders through the SAME single SpacingWriter`);
+	lines.push(`/// wrap — a second entry point would be a second place the root seam`);
+	lines.push(`/// policy could drift. A root of the grammar's root kind renders as a`);
+	lines.push(`/// document.`);
 	lines.push(
-		`pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {`
+		`pub fn render_transport_dispatch(transport: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {`
 	);
 	lines.push(`    let mut s = String::new();`);
 	lines.push(
-		`    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options);`
+		`    let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options);`
 	);
+	lines.push(`    let document = ::sittir_core::view::KindTest::kind_in(transport, &w, kind::ROOT_KINDS);`);
+	lines.push(`    let mut w = w.with_document(document);`);
 	lines.push(`    transport.render(&mut w)?;`);
 	lines.push(`    w.finish()?;`);
 	lines.push(`    Ok(s)`);
@@ -664,7 +670,7 @@ function renderTypedDispatch(
 				...payloadNodes.map((node) => ({ variant: rustTransportVariantName(node), payload: true })),
 				...[...fixed.values()].map((literal) => ({
 					variant: literal.variant,
-					payload: false,
+					payload: literal.edged,
 					ids: literal.ownId === undefined ? [] : [literal.ownId]
 				}))
 			],
@@ -682,7 +688,7 @@ function renderTypedDispatch(
 		const variant = rustTransportVariantName(node);
 		lines.push(`            AnyTransport::${variant}(t) => t.render(w),`);
 	}
-	for (const literal of fixed.values()) lines.push(`            AnyTransport::${literal.variant} => ${literal.renderFn}(w),`);
+	for (const literal of fixed.values()) lines.push(`            ${fixedRenderArm(`AnyTransport::${literal.variant}`, literal)}`);
 	lines.push(`            AnyTransport::Verbatim(t) => t.render(w),`);
 	lines.push(`        }`);
 	lines.push(`    }`);
@@ -750,16 +756,8 @@ function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): str
 			const slotCls = slotClassOfShape(transportSlotShapeOf(slot, nodeMap), nodeMap);
 			const writeChild = buildSlotWriteCall(slotCls, 'child');
 			if (isMultiple(slot)) {
-				if (isTransportRequired(slot)) {
-					lines.push(`    for child in node.${slotIdent}.iter() {`);
-				} else {
-					lines.push(`    if let Some(items) = &node.${slotIdent} {`);
-					lines.push(`        for child in items.iter() {`);
-				}
+				lines.push(`    for child in node.${slotIdent}.iter() {`);
 				lines.push(`        ${writeChild}`);
-				if (!isTransportRequired(slot)) {
-					lines.push(`        }`);
-				}
 				lines.push(`    }`);
 			} else if (isTransportRequired(slot)) {
 				lines.push(`    ${buildSlotWriteCall(slotCls, `node.${slotIdent}`)}`);
@@ -904,12 +902,7 @@ function buildTypedTemplateBody(
 			continue;
 		}
 		if (f.view === 'list' || f.multiple) {
-			const itemValue = !f.hasTransportField
-				? 'NO_ITEMS'
-				: f.required
-					? `node.${rIdent}`
-					: `node.${rIdent}.as_deref().unwrap_or(&[])`;
-			const items = f.hasTransportField && f.required ? `&${itemValue}` : itemValue;
+			const items = f.hasTransportField ? `&node.${rIdent}` : 'NO_ITEMS';
 			const fieldSepLiteral = f.separator !== undefined ? JSON.stringify(f.separator) : sepLiteral;
 			const separatedList = node instanceof AssembledList ? node : undefined;
 			const leadingExpr =
@@ -925,7 +918,7 @@ function buildTypedTemplateBody(
 						? 'true'
 						: 'false';
 			const trailingExpr = separatedList?.singleElementNeedsTrailing
-				? `${itemValue}.len() == 1 || ${trailingOption}`
+				? `${f.hasTransportField ? `node.${rIdent}` : 'NO_ITEMS'}.len() == 1 || ${trailingOption}`
 				: trailingOption;
 			const separatorSite = separatedList === undefined ? undefined : separatorSiteOf(plan, separatedList);
 			const fallback =
@@ -951,6 +944,9 @@ function buildTypedTemplateBody(
 			lines.push(`        trailing: ${trailingExpr},`);
 			lines.push(`        head: ${spacing.head ?? 'None'},`);
 			lines.push(`        tail: ${spacing.tail ?? 'None'},`);
+			lines.push(
+				`        units: ${f.hasTransportField ? `::sittir_core::layout::list_units(node.layout.as_deref(), ${JSON.stringify(slotWireKey(f.storageName))})` : 'None'},`
+			);
 			lines.push(`    };`);
 			continue;
 		}
@@ -1008,7 +1004,12 @@ function buildTypedTemplateBody(
 				return `options::SITE_${toScreamingSnakeCase(owner, owner)}_${toScreamingSnakeCase(name, name)}`;
 			},
 			kinds: (names) => rustKindIdSlice(names, nodeMap, kindIdByKind, struct.kind),
-			innerGap: (name) => node instanceof AbstractAssembledCompound && node.innerGaps.some((gap) => gap.key === name)
+			unitSlot: (name) => {
+				const f = struct.fields.find((field) => rustFieldIdent(field.name) === rustFieldIdent(name));
+				if (f === undefined || !f.hasTransportField || f.view === 'list' || f.multiple || shapeByName.get(f.name)?.tag === 'presence') return undefined;
+				return slotWireKey(f.storageName);
+			},
+			innerGap: (name) => node instanceof AbstractAssembledCompound && node.innerSite?.key === name
 		})
 	);
 	return lines;
@@ -1089,6 +1090,7 @@ const EMPTY_PLAN: RenderPlan = {
 	sitePaths: [],
 	delimiterSites: [],
 	depthSites: [],
+	depthRegions: [],
 	indentId: 0,
 	dedentId: 0,
 	whitespaceText: [],
@@ -1116,7 +1118,15 @@ function planRenderOptionsFor(
 		collectSitePreferences({ nodeMap, kindEntries, renderRules: inputs.renderRules, options: inputs.options });
 	const declaredIndent =
 		inputs.options === undefined ? undefined : readOptionsBlock(inputs.options, displayedKinds(nodeMap)).indent;
-	const plan = planRenderOptions(sites, kindEntries, nodeMap, whitespaceTextOf(inputs.visibleExternals, nodeMap), declaredIndent, lang);
+	const plan = planRenderOptions(
+		sites,
+		kindEntries,
+		nodeMap,
+		whitespaceTextOf(inputs.visibleExternals, nodeMap),
+		declaredIndent,
+		lang,
+		depthRegionsOf(inputs.renderRules, nodeMap)
+	);
 	const addresses = inputs.addresses ?? addressTablesFor(nodeMap, kindEntries, sites, inputs.options);
 	return { plan, addresses, kindEntries };
 }
@@ -1181,6 +1191,7 @@ interface ReadPrint {
 	readonly blankChoices: Set<string>;
 	readonly choicePayloads: Set<string>;
 	readonly boxedPayloads: readonly string[];
+	readonly transports: Set<string>;
 }
 
 function readPrintOf(
@@ -1206,6 +1217,7 @@ function readPrintOf(
 			grammar
 		},
 		admitted: new Map(),
+		transports: new Set(),
 		blankChoices: new Set(),
 		choicePayloads: new Set()
 	};
@@ -1214,6 +1226,11 @@ function readPrintOf(
 const TRANSPORT_DERIVE = '#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]';
 const TRANSPORT_DERIVE_UNIT = '#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]';
 const TRANSPORT_DERIVE_ENUM_KIND = '#[derive(Debug, Clone, Copy, PartialEq, Eq, ::sittir_core::Transport)]';
+
+function transportDeclaration(read: ReadPrint, derive: string, args: string, keyword: 'struct' | 'enum', name: string): string[] {
+	read.transports.add(name);
+	return [derive, `#[transport(${args})]`, `pub ${keyword} ${name} {`];
+}
 
 function admit(read: ReadPrint, typeName: string, ids: readonly number[]): void {
 	const known = read.admitted.get(typeName);
@@ -1253,7 +1270,7 @@ function renderTransportSupport(
 
 	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
 	const kidByKind = buildKindIdByKind(kindEntries);
-	const fixed = collectFixedLiterals(projection, nodeMap, kindEntries, kidByKind);
+	const fixed = collectFixedLiterals(projection, nodeMap, kindEntries, kidByKind, plan);
 	const payloadNodes = nodes.filter((node) => !isFixedTextLeaf(node));
 
 	const read = readPrintOf(lang, structs, nodeMap, kindEntries, generatedIdTables, boxedPayloads);
@@ -1288,6 +1305,7 @@ function renderTransportSupport(
 	const choices = shareIdenticalChoices(perSlotEnums, (entry) =>
 		emitPerSlotChildEnum(entry, kidByKind, nodeMap, fixed, kindEntries, plan, read)
 	);
+	for (const name of choices.folded) read.transports.delete(name);
 	const perSlotEnumLines: string[] = choices.emitted.flatMap(({ lines }) => lines);
 	const bodyOf = new Map(structs.map((struct) => [struct.kind, struct.body]));
 	const structLines = nodes.flatMap((node) =>
@@ -1303,10 +1321,11 @@ function renderTransportSupport(
 		plan,
 		kindEntries,
 		usedSupertypeNames,
-		choices.emitted.map(({ entry }) => entry)
+		choices.emitted.map(({ entry }) => entry),
+		fixed
 	);
 
-	return pruneUnreferencedBridges(
+	const rendered = pruneUnreferencedBridges(
 		[
 			...anyTransportLines,
 			'',
@@ -1336,6 +1355,11 @@ function renderTransportSupport(
 			...payloadCeilingAssertions(read.boxedPayloads, read.choicePayloads)
 		].join('\n')
 	);
+	return [rendered, '', grammarTriviaStatement(read.transports)].join('\n');
+}
+
+function grammarTriviaStatement(transports: ReadonlySet<string>): string {
+	return `::sittir_core::grammar_trivia!(TriviaTransport; ${[...transports].join(', ')});`;
 }
 
 function supertypeAdmitsVerbatim(supertypeNode: AssembledSupertype, nodeMap: NodeMap): boolean {
@@ -1456,10 +1480,10 @@ function enumMemberAcceptedIds(node: AssembledEnum): number[] {
 function anyTransportPrepareArms(
 	payloadNodes: readonly AssembledNode[],
 	fixed: FixedLiterals
-): { readonly variant: string; readonly payload: boolean }[] {
+): PrepareArm[] {
 	return [
 		...payloadNodes.map((node) => ({ variant: rustTransportVariantName(node), payload: true })),
-		...[...fixed.values()].map((literal) => ({ variant: literal.variant, payload: false })),
+		...[...fixed.values()].map((literal) => ({ variant: literal.variant, payload: false, edged: literal.edged })),
 		{ variant: 'Verbatim', payload: true }
 	];
 }
@@ -1469,7 +1493,7 @@ function isPrepareFilled(slot: AssembledNonterminal): boolean {
 }
 
 function isTransportRequired(slot: AssembledNonterminal): boolean {
-	return isRequired(slot) && !isPrepareFilled(slot);
+	return isMultiple(slot) ? isNonEmpty(slot) : isRequired(slot) && !isPrepareFilled(slot);
 }
 
 function boxedInEnum(node: AssembledNode, boxedPayloads: readonly string[]): boolean {
@@ -1561,13 +1585,11 @@ function emitSupertypeTransportEnum(
 
 	const claimedBy = claimSupertypeIds(supertypeNode, enumName, shape, selfAliasIds, kindIdByKind, kindEntries, nodeMap);
 
-	lines.push(TRANSPORT_DERIVE);
-	lines.push(`#[transport(choice)]`);
-	lines.push(`pub enum ${enumName} {`);
-	for (const { subNode } of validSubtypes) {
+	lines.push(...transportDeclaration(read, TRANSPORT_DERIVE, 'choice', 'enum', enumName));
+	for (const { subKind, subNode } of validSubtypes) {
 		const variant = rustTypeIdent(subNode.typeName);
 		lines.push(...variantKindLines(enumName, variant, subNode, claimedBy.get(variant) ?? [], read));
-		lines.push(isFixedTextLeaf(subNode) ? `    ${variant},` : `    ${variant}(${choicePayloadType(subNode, read)}),`);
+		lines.push(...(isFixedTextLeaf(subNode) ? fixedVariantLines(fixedLiteralOf(fixed, subKind)) : [`    ${variant}(${choicePayloadType(subNode, read)}),`]));
 	}
 	if (admitsVerbatim) lines.push(`    #[transport(verbatim)]`, `    Verbatim(VerbatimTransport),`);
 	lines.push(`}`);
@@ -1575,9 +1597,10 @@ function emitSupertypeTransportEnum(
 	admit(read, enumName, [...claimedBy.values()].flat());
 	lines.push(
 		...prepareEnumImpl(enumName, [
-			...validSubtypes.map(({ subNode }) => ({
+			...validSubtypes.map(({ subKind, subNode }) => ({
 				variant: rustTypeIdent(subNode.typeName),
-				payload: !isFixedTextLeaf(subNode)
+				payload: !isFixedTextLeaf(subNode),
+				edged: isFixedTextLeaf(subNode) && fixedLiteralOf(fixed, subKind).edged
 			})),
 			...(admitsVerbatim ? [{ variant: 'Verbatim', payload: true }] : [])
 		])
@@ -1589,8 +1612,8 @@ function emitSupertypeTransportEnum(
 			validSubtypes.map(({ subKind, subNode }) => {
 				const variant = rustTypeIdent(subNode.typeName);
 				if (!isFixedTextLeaf(subNode)) return { variant, payload: true };
-				const ownId = fixedLiteralOf(fixed, subKind).ownId;
-				return { variant, payload: false, ids: ownId === undefined ? [] : [ownId] };
+				const { ownId, edged } = fixedLiteralOf(fixed, subKind);
+				return { variant, payload: edged, ids: ownId === undefined ? [] : [ownId] };
 			}),
 			admitsVerbatim
 				? validSubtypes
@@ -1603,11 +1626,12 @@ function emitSupertypeTransportEnum(
 
 	lines.push(`fn ${rustSnakeIdent(supertypeNode.typeName)}_transport_to_any(t: ${enumName}) -> AnyTransport {`);
 	lines.push(`    match t {`);
-	for (const { subNode } of validSubtypes) {
+	for (const { subKind, subNode } of validSubtypes) {
 		const variant = rustTypeIdent(subNode.typeName);
 		const boxed = isBoxed(subNode);
 		if (isFixedTextLeaf(subNode)) {
-			lines.push(`        ${enumName}::${variant} => AnyTransport::${variant},`);
+			const unit = fixedLiteralOf(fixed, subKind);
+			lines.push(`        ${fixedPattern(`${enumName}::${variant}`, unit, 'edges')} => ${fixedPattern(`AnyTransport::${variant}`, unit, 'edges')},`);
 		} else if (subNode instanceof AssembledSupertype) {
 			const subBridgeFn = `${rustSnakeIdent(subNode.typeName)}_transport_to_any`;
 			if (boxed) {
@@ -1650,7 +1674,7 @@ function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: N
 	for (const { subKind, subNode } of validSubtypes) {
 		const variant = rustTypeIdent(subNode.typeName);
 		if (isFixedTextLeaf(subNode)) {
-			lines.push(`        ${enumName}::${variant} => ${fixedLiteralOf(fixed, subKind).renderFn}(w),`);
+			lines.push(`        ${fixedRenderArm(`${enumName}::${variant}`, fixedLiteralOf(fixed, subKind))}`);
 			continue;
 		}
 		const innerExpr = boxedInEnum(subNode, boxedPayloads) ? `inner.as_ref()` : `inner`;
@@ -1958,6 +1982,7 @@ type ChoiceNames = ReadonlyMap<string, string>;
 interface SharedChoices {
 	readonly emitted: readonly { readonly entry: PerSlotChildEnum; readonly lines: readonly string[] }[];
 	readonly names: ChoiceNames;
+	readonly folded: readonly string[];
 }
 
 function choiceKey(typeName: string, fieldName: string): string {
@@ -1971,6 +1996,7 @@ function shareIdenticalChoices(
 	const emitted: { entry: PerSlotChildEnum; lines: readonly string[] }[] = [];
 	const nameByBody = new Map<string, string>();
 	const names = new Map<string, string>();
+	const folded: string[] = [];
 	for (const entry of entries) {
 		const name = perSlotEnumName(entry.typeName, entry.fieldName);
 		const lines = render(entry);
@@ -1979,10 +2005,10 @@ function shareIdenticalChoices(
 		if (shared === undefined) {
 			nameByBody.set(body, name);
 			emitted.push({ entry, lines });
-		}
+		} else folded.push(name);
 		names.set(choiceKey(entry.typeName, entry.fieldName), shared ?? name);
 	}
-	return { emitted, names };
+	return { emitted, names, folded };
 }
 
 function choiceNameOf(choices: ChoiceNames, typeName: string, fieldName: string): string {
@@ -2076,18 +2102,17 @@ function choiceUnitsOf(
 }
 
 function choiceUnitArm(enumName: string, unit: ChoiceUnit): string[] {
-	const call = `${unit.fixed.renderFn}(w)`;
+	const call = fixedRenderCall(unit.fixed);
 	const write = unit.siteImmediate ? `{ w.seam(${TIGHT_KINDS}); ${call} }` : call;
-	return unit.seams === undefined
-		? [`            ${enumName}::${unit.fixed.variant} => ${write},`]
-		: literalSeamedArm(enumName, unit.fixed.variant, write, unit.seams);
+	const pattern = fixedPattern(`${enumName}::${unit.fixed.variant}`, unit.fixed, 'edges');
+	return unit.seams === undefined ? [`            ${pattern} => ${write},`] : literalSeamedArm(pattern, write, unit.seams);
 }
 
-function literalSeamedArm(enumName: string, variant: string, write: string, seams: LiteralArmSeams): string[] {
+function literalSeamedArm(pattern: string, write: string, seams: LiteralArmSeams): string[] {
 	const site = (side: 'before' | 'after'): string[] =>
 		seams[side] === undefined ? [] : [`                w.site_at(options::${seams[side]});`];
 	return [
-		`            ${enumName}::${variant} => {`,
+		`            ${pattern} => {`,
 		...site('before'),
 		`                let written = ${write};`,
 		'                written?;',
@@ -2190,18 +2215,16 @@ function emitPerSlotChildEnum(
 	}
 
 	const altIds = new Map(modelSlot === undefined ? [] : kindEnumAltIdPairs(modelSlot, nodeMap));
-	lines.push(TRANSPORT_DERIVE);
-	lines.push(`#[transport(choice)]`);
-	lines.push(`pub enum ${enumName} {`);
+	lines.push(...transportDeclaration(read, TRANSPORT_DERIVE, 'choice', 'enum', enumName));
 	for (const { node } of nodeKinds) {
 		const variant = rustTypeIdent(node.typeName);
 		lines.push(...variantKindLines(enumName, variant, node, claimedBy.get(variant) ?? [], read));
 		lines.push(`    ${variant}(${choicePayloadType(node, read)}),`);
 	}
-	for (const variant of units.keys()) {
+	for (const [variant, unit] of units) {
 		const claimed = claimedBy.get(variant) ?? [];
 		lines.push(...variantKindLines(enumName, variant, undefined, [...claimed, ...alternatesOf(claimed, altIds)], read));
-		lines.push(`    ${variant},`);
+		lines.push(...fixedVariantLines(unit.fixed));
 	}
 	if (blank) lines.push(`    #[transport(blank)]`, `    ${BLANK_VARIANT},`);
 	if (admitsVerbatim) lines.push(`    #[transport(verbatim)]`, `    Verbatim(VerbatimTransport),`);
@@ -2212,7 +2235,7 @@ function emitPerSlotChildEnum(
 	lines.push(
 		...prepareEnumImpl(enumName, [
 			...nodeKinds.map(({ node }) => ({ variant: rustTypeIdent(node.typeName), payload: true })),
-			...[...units.keys()].map((variant) => ({ variant, payload: false })),
+			...[...units].map(([variant, unit]) => ({ variant, payload: false, edged: unit.fixed.edged })),
 			...(blank ? [{ variant: BLANK_VARIANT, payload: false }] : []),
 			...(admitsVerbatim ? [{ variant: 'Verbatim', payload: true }] : [])
 		])
@@ -2224,7 +2247,7 @@ function emitPerSlotChildEnum(
 				...nodeKinds.map(({ node }) => ({ variant: rustTypeIdent(node.typeName), payload: true })),
 				...[...units.values()].map(({ fixed: unit }) => ({
 					variant: unit.variant,
-					payload: false,
+					payload: unit.edged,
 					ids: unit.ownId === undefined ? [] : [unit.ownId]
 				})),
 				...(blank ? [{ variant: BLANK_VARIANT, payload: false, ids: [] }] : [])
@@ -2290,9 +2313,7 @@ function renderAnyTransport(
 		claimedBy.set(literal.variant, [...(claimedBy.get(literal.variant) ?? []), id]);
 	}
 
-	lines.push(TRANSPORT_DERIVE);
-	lines.push('#[transport(choice)]');
-	lines.push('pub enum AnyTransport {');
+	lines.push(...transportDeclaration(read, TRANSPORT_DERIVE, 'choice', 'enum', 'AnyTransport'));
 	for (const node of payloadNodes) {
 		const variant = rustTransportVariantName(node);
 		lines.push(...variantKindLines('AnyTransport', variant, node, claimedBy.get(variant) ?? [], read));
@@ -2300,8 +2321,9 @@ function renderAnyTransport(
 	}
 	for (const literal of fixed.values()) {
 		lines.push(...variantKindLines('AnyTransport', literal.variant, undefined, claimedBy.get(literal.variant) ?? [], read));
-		lines.push(`    ${literal.variant},`);
+		lines.push(...fixedVariantLines(literal));
 	}
+	lines.push('    #[transport(error)]');
 	lines.push('    Verbatim(VerbatimTransport),');
 	lines.push('}');
 	lines.push('');
@@ -2339,11 +2361,16 @@ function renderTriviaTransportSupport(
 	kindEntries: readonly KindEnumEntry[],
 	read: ReadPrint
 ): string[] {
+	const depthMembers = depthMembersOf(nodeMap);
 	const extrasNodes = [...triviaKinds(nodeMap)]
+		.filter((kind) => kind !== depthMembers.indent && kind !== depthMembers.dedent)
 		.map((kind) => nodeMap.nodes.get(kind))
 		.filter((node): node is AssembledNode => node !== undefined && !(node instanceof AssembledSupertype));
-	const unitOf = (node: AssembledNode): FixedLiteral | undefined =>
-		isFixedTextLeaf(node) ? fixedLiteralOf(fixed, node.kind) : undefined;
+	const unitOf = (node: AssembledNode): FixedLiteral | undefined => {
+		const unit = isFixedTextLeaf(node) ? fixedLiteralOf(fixed, node.kind) : undefined;
+		if (unit?.edged === true) throw new Error(`trivia kind '${node.kind}' is a unit a list seats, but trivia holds no edges`);
+		return unit;
+	};
 
 	const kindIdByKind = buildKindIdByKind(kindEntries);
 	const textIds = extrasNodes.flatMap((node) => {
@@ -2351,16 +2378,23 @@ function renderTriviaTransportSupport(
 		return id === undefined || !(node instanceof AbstractAssembledCompound) ? [] : [id];
 	});
 
+	const depthVariants = [
+		{ kind: depthMembers.indent, variant: 'Indent', delta: 1 },
+		{ kind: depthMembers.dedent, variant: 'Dedent', delta: -1 }
+	].flatMap(({ kind, variant, delta }) => {
+		const id = kind === undefined ? undefined : kindIdByKind.get(kind);
+		return id === undefined ? [] : [{ variant, id, delta }];
+	});
+
 	const lines: string[] = [];
-	lines.push(TRANSPORT_DERIVE);
-	lines.push('#[transport(choice, codec_only)]');
-	lines.push('pub enum TriviaTransport {');
+	lines.push(...transportDeclaration(read, TRANSPORT_DERIVE, 'choice, codec_only', 'enum', 'TriviaTransport'));
 	for (const node of extrasNodes) {
 		const variant = rustTransportVariantName(node);
 		const id = kindIdByKind.get(node.kind);
 		if (id !== undefined) lines.push(`    #[kind(${variantKindArgs([id], false, read.ctx)})]`);
 		lines.push(unitOf(node) === undefined ? `    ${variant}(${rustTransportStructName(node)}),` : `    ${variant},`);
 	}
+	for (const { variant, id } of depthVariants) lines.push(`    #[kind(${variantKindArgs([id], false, read.ctx)})]`, `    ${variant},`);
 	lines.push('    #[transport(verbatim)]');
 	lines.push('    Verbatim(VerbatimTransport),');
 	if (textIds.length > 0) lines.push('    #[transport(text)]', `    #[kind(${variantKindArgs(textIds, false, read.ctx)})]`);
@@ -2370,9 +2404,10 @@ function renderTriviaTransportSupport(
 	lines.push(
 		...prepareEnumImpl('TriviaTransport', [
 			...extrasNodes.map((node) => ({ variant: rustTransportVariantName(node), payload: unitOf(node) === undefined })),
+			...depthVariants.map(({ variant }) => ({ variant, payload: false })),
 			{ variant: 'Verbatim', payload: true },
 			{ variant: 'Text', payload: true }
-		])
+		], false)
 	);
 
 	lines.push('impl ::sittir_core::render::Render for TriviaTransport {');
@@ -2389,6 +2424,7 @@ function renderTriviaTransportSupport(
 				: `            TriviaTransport::${variant} => ${unit.renderFn}(w),`
 		);
 	}
+	for (const { variant, delta } of depthVariants) lines.push(`            TriviaTransport::${variant} => { w.layout_depth(${delta}); Ok(()) }`);
 	lines.push('            TriviaTransport::Verbatim(t) => t.render(w),');
 	lines.push('            TriviaTransport::Text(t) => t.render(w),');
 	lines.push('        }');
@@ -2397,10 +2433,29 @@ function renderTriviaTransportSupport(
 	lines.push('');
 
 	const whitespaceKinds = new Set(whitespaceTriviaKinds(nodeMap));
+	const continuationKinds = new Set(continuationTriviaKinds(nodeMap));
+	const members = extrasNodes.flatMap((node) => {
+		const id = kindIdByKind.get(node.kind);
+		if (id === undefined || !(whitespaceKinds.has(node.kind) || continuationKinds.has(node.kind))) return [];
+		const unit = unitOf(node) ?? (whitespaceKinds.has(node.kind) ? fixedLiteralOf(fixed, node.kind) : undefined);
+		return [{ id, keepsText: unit === undefined, member: unit === undefined ? `TriviaTransport::${rustTransportVariantName(node)}(${rustTransportStructName(node)} { layout: None, text: text.to_owned() })` : `TriviaTransport::${unit.variant}` }];
+	});
+	lines.push(
+		'impl ::sittir_core::trivia::FromTriviaText for TriviaTransport {',
+		'    fn from_text(text: ::sittir_core::trivia::TriviaText) -> Self {',
+		'        TriviaTransport::Text(text)',
+		'    }',
+		'',
+		`    fn from_layout(kind: ::sittir_core::types::KindId, ${members.some((m) => m.keepsText) ? 'text' : '_text'}: &str) -> Option<Self> {`
+	);
+	for (const { id, member } of [...members, ...depthVariants.map(({ variant, id }) => ({ id, member: `TriviaTransport::${variant}` }))]) {
+		lines.push(`        if kind == ${variantKindArgs([id], false, read.ctx)} { return Some(${member}); }`);
+	}
+	lines.push('        None', '    }', '}', '');
+
 	lines.push('impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {');
 	lines.push('    fn seam_gap(&self) -> Option<(::sittir_core::layout_kinds::LayoutKinds, Option<&str>)> {');
 	lines.push('        match self {');
-	const continuationKinds = new Set(continuationTriviaKinds(nodeMap));
 	for (const node of extrasNodes) {
 		if (continuationKinds.has(node.kind)) {
 			const unit = unitOf(node);
@@ -2418,6 +2473,14 @@ function renderTriviaTransportSupport(
 	lines.push('            _ => None,');
 	lines.push('        }');
 	lines.push('    }');
+	if (depthVariants.length > 0) {
+		lines.push('', '    fn depth(&self) -> i32 {', '        match self {');
+		for (const { variant, delta } of depthVariants) lines.push(`            TriviaTransport::${variant} => ${delta},`);
+		lines.push('            _ => 0,', '        }', '    }');
+		lines.push('', '    fn depth_member(delta: i32) -> Option<Self> {', '        match delta.signum() {');
+		for (const { variant, delta } of depthVariants) lines.push(`            ${delta} => Some(TriviaTransport::${variant}),`);
+		lines.push('            _ => None,', '        }', '    }');
+	}
 	lines.push('}');
 	lines.push('');
 
@@ -2430,41 +2493,54 @@ function renderTriviaTransportSupport(
 const PREPARE_MOD = '::sittir_core::prepare';
 const BLANK_VARIANT = 'Blank';
 const PREPARE_SIG = `fn prepare(&mut self, ctx: &${PREPARE_MOD}::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {`;
+const READ_COORDINATE = [
+	`    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {`,
+	`        Some(::sittir_core::read::read_coordinate(tree, ctx, index))`,
+	`    }`
+];
 
-function prepareEnumImpl(
-	enumName: string,
-	arms: readonly { readonly variant: string; readonly payload: boolean }[]
-): string[] {
+interface PrepareArm {
+	readonly variant: string;
+	readonly payload: boolean;
+	readonly edged?: boolean;
+}
+
+function prepareEnumImpl(enumName: string, arms: readonly PrepareArm[], reads = true): string[] {
 	const anyPayload = arms.some((a) => a.payload);
+	const unit = (a: PrepareArm): string => `${enumName}::${a.variant}${a.edged === true ? '(_)' : ''}`;
 	return [
 		`impl ${PREPARE_MOD}::Prepare for ${enumName} {`,
 		`    ${anyPayload ? PREPARE_SIG : PREPARE_SIG.replace('ctx:', '_ctx:')}`,
 		`        match self {`,
-		...arms.map((a) =>
-			a.payload
-				? `            ${enumName}::${a.variant}(t) => t.prepare(ctx),`
-				: `            ${enumName}::${a.variant} => Ok(()),`
-		),
+		...arms.map((a) => (a.payload ? `            ${enumName}::${a.variant}(t) => t.prepare(ctx),` : `            ${unit(a)} => Ok(()),`)),
 		`        }`,
 		`    }`,
-		...(anyPayload
+		...(anyPayload || arms.some((a) => a.edged === true)
 			? [
 					`    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {`,
 					`        match self {`,
-					...arms.map((a) =>
-						a.payload ? `            ${enumName}::${a.variant}(t) => t.source_gap(),` : `            ${enumName}::${a.variant} => None,`
-					),
+					...arms.map((a) => (a.payload ? `            ${enumName}::${a.variant}(t) => t.source_gap(),` : `            ${unit(a)} => None,`)),
 					`        }`,
 					`    }`,
 					`    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {`,
 					`        match self {`,
 					...arms.map((a) =>
-						a.payload ? `            ${enumName}::${a.variant}(t) => t.gap_edges(),` : `            ${enumName}::${a.variant} => None,`
+						a.payload
+							? `            ${enumName}::${a.variant}(t) => t.gap_edges(),`
+							: a.edged === true
+								? `            ${enumName}::${a.variant}(edges) => Some(edges),`
+								: `            ${enumName}::${a.variant} => None,`
 					),
+					`        }`,
+					`    }`,
+					`    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {`,
+					`        match self {`,
+					...arms.map((a) => (a.payload ? `            ${enumName}::${a.variant}(t) => t.snapshot_edge(),` : `            ${unit(a)} => None,`)),
 					`        }`,
 					`    }`
 				]
 			: []),
+		...(reads ? READ_COORDINATE : []),
 		`}`,
 		''
 	];
@@ -2476,6 +2552,7 @@ function inertPrepareImpl(typeName: string): string[] {
 		`    ${PREPARE_SIG.replace('ctx:', '_ctx:')}`,
 		`        Ok(())`,
 		`    }`,
+		...READ_COORDINATE,
 		`}`,
 		''
 	];
@@ -2631,11 +2708,7 @@ function listGapClassification(plan: RenderPlan, node: AssembledNode): string[] 
 			site === undefined ? '&[]' : `options::allowed(options::${site.constName})`;
 		const call = (list: string) =>
 			`::sittir_core::prepare::fill_list_gaps(${list}.${items}, ${JSON.stringify(token)}, ${allowedOf(first)}, ${allowedOf(sites.after)}, &options::WHITESPACE, ctx);`;
-		body.push(
-			isTransportRequired(field)
-				? `        ${call(`self.${ident}`)}`
-				: `        if let Some(gap_items) = self.${ident}.as_mut() { ${call('gap_items')} }`
-		);
+		body.push(`        ${call(`self.${ident}`)}`);
 	}
 	return body;
 }
@@ -2715,13 +2788,13 @@ function seatReachOf(plan: RenderPlan, nodeMap: NodeMap): SeatReach {
 const SEAT_TARGET_SIG =
 	'    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {';
 
-function seatTargetMatchImpl(typeName: string, variants: readonly string[], exhaustive: boolean): string[] {
-	if (variants.length === 0) return [];
+function seatTargetMatchImpl(typeName: string, arms: readonly string[], exhaustive: boolean): string[] {
+	if (arms.length === 0) return [];
 	return [
 		`impl ::sittir_core::prepare::SeatTarget for ${typeName} {`,
 		SEAT_TARGET_SIG,
 		'        match self {',
-		...variants.map((variant) => `            Self::${variant}(t) => t.seat_target(table),`),
+		...arms.map((arm) => `            ${arm}`),
 		...(exhaustive ? [] : ['            #[allow(unreachable_patterns)]', '            _ => None,']),
 		'        }',
 		'    }',
@@ -2730,18 +2803,21 @@ function seatTargetMatchImpl(typeName: string, variants: readonly string[], exha
 	];
 }
 
+function seatArm(variant: string, kind: string, node: AssembledNode, fixed: FixedLiterals): string {
+	return isFixedTextLeaf(node) ? fixedSeatArm(`Self::${variant}`, fixedLiteralOf(fixed, kind)) : `Self::${variant}(t) => t.seat_target(table),`;
+}
+
 function seatTargetStructImpl(
 	node: AssembledNode,
 	nodeMap: NodeMap,
 	plan: RenderPlan,
-	kindEntries: readonly KindEntryLike[]
+	kindEntries: readonly KindEntryLike[],
+	fixed: FixedLiterals
 ): string[] {
 	const reaches = seatReachOf(plan, nodeMap);
 	if (!reaches(node.kind)) return [];
 	const kind = node.display.name;
-	if (isFixedTextLeaf(node)) {
-		throw new Error(`kind '${kind}' is a fixed literal, a unit variant with no edges, but a list seats it`);
-	}
+	if (isFixedTextLeaf(node)) return seatTargetMatchImpl(rustTransportStructName(node), [fixedSeatArm(`Self::${fixedLiteralOf(fixed, node.kind).variant}`, fixedLiteralOf(fixed, node.kind))], true);
 	const body: string[] = [];
 	if (seatedKindsOf(plan).has(kind)) {
 		const id = edgeKindId(kindEntries, kind);
@@ -2780,31 +2856,40 @@ function renderSeatTargets(
 	plan: RenderPlan,
 	kindEntries: readonly KindEntryLike[],
 	usedSupertypeNames: ReadonlySet<string>,
-	perSlotEnums: readonly PerSlotChildEnum[]
+	perSlotEnums: readonly PerSlotChildEnum[],
+	fixed: FixedLiterals
 ): string[] {
 	const reaches = seatReachOf(plan, nodeMap);
 	const lines: string[] = [];
 	for (const node of nodes) {
 		if (node instanceof AssembledEnum || node instanceof AssembledSupertype) continue;
-		lines.push(...seatTargetStructImpl(node, nodeMap, plan, kindEntries));
+		lines.push(...seatTargetStructImpl(node, nodeMap, plan, kindEntries, fixed));
 	}
 	for (const [, node] of nodeMap.nodes) {
 		if (!(node instanceof AssembledSupertype) || !usedSupertypeNames.has(node.typeName)) continue;
 		const enumName = `${rustTypeIdent(node.typeName)}Transport`;
 		if (RESERVED_SUPERTYPE_ENUM_NAMES.has(enumName)) continue;
 		const subtypes = collectEffectiveSupertypeTransportShape(node, nodeMap).subtypes;
-		const reaching = subtypes
-			.filter(({ subKind }) => reaches(subKind))
-			.map(({ subNode }) => rustTypeIdent(subNode.typeName));
+		const reaching = subtypes.filter(({ subKind }) => reaches(subKind)).map(({ subKind, subNode }) => seatArm(rustTypeIdent(subNode.typeName), subKind, subNode, fixed));
 		lines.push(...seatTargetMatchImpl(enumName, reaching, false));
 	}
 	for (const entry of perSlotEnums) {
-		const reaching = expandConcreteTransportKinds(entry.kinds, nodeMap)
-			.filter(({ kind }) => reaches(kind))
-			.map(({ node }) => rustTypeIdent(node.typeName));
+		const nodes = expandConcreteTransportKinds(entry.kinds, nodeMap).filter(({ kind }) => reaches(kind));
+		const variants = new Set(nodes.map(({ node }) => rustTypeIdent(node.typeName)));
+		const literals = new Map(
+			entry.literals
+				.filter(({ kind }) => reaches(kind))
+				.map(({ kind }) => fixedLiteralOf(fixed, kind))
+				.filter((unit) => !variants.has(unit.variant))
+				.map((unit) => [unit.variant, unit])
+		);
+		const reaching = [
+			...nodes.map(({ kind, node }) => seatArm(rustTypeIdent(node.typeName), kind, node, fixed)),
+			...[...literals.values()].map((unit) => fixedSeatArm(`Self::${unit.variant}`, unit))
+		];
 		lines.push(...seatTargetMatchImpl(perSlotEnumName(entry.typeName, entry.fieldName), reaching, false));
 	}
-	const anyReaching = nodes.filter((node) => reaches(node.kind)).map((node) => rustTransportVariantName(node));
+	const anyReaching = nodes.filter((node) => reaches(node.kind)).map((node) => seatArm(rustTransportVariantName(node), node.kind, node, fixed));
 	lines.push(...seatTargetMatchImpl('AnyTransport', anyReaching, false));
 	return lines;
 }
@@ -2833,11 +2918,7 @@ function seatLoops(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMap): str
 		const ident = rustFieldIdent(field.name);
 		const table = `options::${seatTableName(node.display.name, field.name)}`;
 		const items = hasOptionalElements(field) ? 'iter_mut().map(Option::as_mut)' : 'iter_mut().map(Some)';
-		lines.push(
-			isTransportRequired(field)
-				? `        ::sittir_core::prepare::fill_seated_gaps(self.${ident}.${items}, ${table}, ctx);`
-				: `        if let Some(seated_items) = self.${ident}.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.${items}, ${table}, ctx); }`
-		);
+		lines.push(`        ::sittir_core::prepare::fill_seated_gaps(self.${ident}.${items}, ${table}, ctx);`);
 	}
 	return lines;
 }
@@ -2878,9 +2959,11 @@ function rootEdgeStamp(plan: RenderPlan, node: AssembledNode, fillFields: readon
 	const items = (end: 'first' | 'last'): string =>
 		`[${(end === 'first' ? fillFields : [...fillFields].reverse()).map((f) => `::sittir_core::prepare::EdgeItems::${end}_item(&self.${f})`).join(', ')}].into_iter().flatten().next()`;
 	return [
-		`        let first = ${items('first')};`,
-		`        let last = ${items('last')};`,
-		`        let flanks = ::sittir_core::prepare::root_flanks(first, last, ${allowedOf('before')}, ${allowedOf('after')}, &options::WHITESPACE, ctx);`,
+		`        let inner = ::sittir_core::layout::Layout::inner_item(&self.layout);`,
+		`        let first = ::sittir_core::prepare::outermost(${items('first')}, inner, ::sittir_core::options::Side::Before);`,
+		`        let last = ::sittir_core::prepare::outermost(${items('last')}, inner, ::sittir_core::options::Side::After);`,
+		`        let root = ::sittir_core::layout::Layout::snapshot_edge(&self.layout).map(|edge| edge.span);`,
+		`        let flanks = ::sittir_core::prepare::root_flanks(first, last, root, ${allowedOf('before')}, ${allowedOf('after')}, &options::WHITESPACE, ctx);`,
 		`        ::sittir_core::prepare::fill_edges(self, flanks);`
 	];
 }
@@ -2942,6 +3025,10 @@ function prepareStructImpl(
 		`    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {`,
 		`        Some(self.layout.edges_mut())`,
 		`    }`,
+		`    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {`,
+		`        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)`,
+		`    }`,
+		...READ_COORDINATE,
 		`}`,
 		''
 	];
@@ -3051,11 +3138,9 @@ function renderTransportDataStruct(
 	const lines: string[] = [];
 	const fillFields: string[] = [];
 	const ownId = findKindEntry(kindEntries, node.kind)?.id;
-	lines.push(TRANSPORT_DERIVE);
 	const printedSlots = isCompoundOf(node) ? structSlotsOf(node, slotModel, nodeMap) : [];
-	lines.push(`#[transport(${transportArgs(node, ownId, read.ctx, printedSlots.map(({ slot }) => slot))})]`);
 	admit(read, structName, node instanceof AssembledAlias ? [node.aliasTypeId] : ownId === undefined ? [] : [ownId]);
-	lines.push(`pub struct ${structName} {`);
+	lines.push(...transportDeclaration(read, TRANSPORT_DERIVE, transportArgs(node, ownId, read.ctx, printedSlots.map(({ slot }) => slot)), 'struct', structName));
 	if (isCompoundOf(node)) {
 		lines.push(...renderLayoutField());
 		for (const { slot, owner, forceOptional } of printedSlots) {
@@ -3129,6 +3214,7 @@ interface FixedLiteral {
 	readonly acceptedIds: readonly number[];
 	readonly owner: boolean;
 	readonly immediate: boolean;
+	readonly edged: boolean;
 }
 
 type FixedLiterals = ReadonlyMap<string, FixedLiteral>;
@@ -3137,10 +3223,12 @@ function collectFixedLiterals(
 	projection: TransportProjection,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[],
-	kindIdByKind: ReadonlyMap<string, number>
+	kindIdByKind: ReadonlyMap<string, number>,
+	plan: RenderPlan
 ): FixedLiterals {
 	const fixed = new Map<string, FixedLiteral>();
 	const entryOf = (kind: string): KindEnumEntry | undefined => findKindEntry(kindEntries, kind);
+	const seated = seatedKindsOf(plan);
 	for (const node of projection.nodes) {
 		if (!isFixedTextLeaf(node)) continue;
 		fixed.set(node.kind, {
@@ -3156,7 +3244,8 @@ function collectFixedLiterals(
 				])
 			],
 			owner: ownsTrivia(kindEntries, node.kind),
-			immediate: isImmediateLeaf(node)
+			immediate: isImmediateLeaf(node),
+			edged: seated.has(node.display.name)
 		});
 	}
 	for (const literal of projection.literals) {
@@ -3175,7 +3264,8 @@ function collectFixedLiterals(
 			ownId: id,
 			acceptedIds: [...new Set([id, ...(projection.wireIds.get(literal.kind) ?? [])])],
 			owner: ownsTrivia(kindEntries, literal.kind),
-			immediate: isImmediateLeafKind(literal.kind, nodeMap)
+			immediate: isImmediateLeafKind(literal.kind, nodeMap),
+			edged: seated.has(literal.kind)
 		});
 	}
 	const kindByVariant = new Map<string, string>();
@@ -3200,6 +3290,31 @@ function fixedLiteralOf(fixed: FixedLiterals, kind: string, text?: string): Fixe
 		);
 	}
 	return literal;
+}
+
+function fixedVariantLines(fixed: FixedLiteral): string[] {
+	return fixed.edged ? ['    #[transport(edged)]', `    ${fixed.variant}(::sittir_core::options::Edges),`] : [`    ${fixed.variant},`];
+}
+
+function fixedPattern(path: string, fixed: FixedLiteral, bind: string = '_'): string {
+	return fixed.edged ? `${path}(${bind})` : path;
+}
+
+function fixedRenderCall(fixed: FixedLiteral): string {
+	return fixed.edged
+		? `::sittir_core::render::render_edged(::sittir_core::types::KindId(${fixed.ownId}), edges, w, ${fixed.renderFn})`
+		: `${fixed.renderFn}(w)`;
+}
+
+function fixedRenderArm(path: string, fixed: FixedLiteral): string {
+	return `${fixedPattern(path, fixed, 'edges')} => ${fixedRenderCall(fixed)},`;
+}
+
+function fixedSeatArm(path: string, fixed: FixedLiteral): string {
+	if (!fixed.edged || fixed.ownId === undefined) {
+		throw new Error(`kind '${fixed.kind}' is a fixed literal, a unit variant with no edges, but a list seats it`);
+	}
+	return `${path}(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(${fixed.ownId})).map(|site| (edges, site)),`;
 }
 
 function renderFixedLiteralFn(fixed: FixedLiteral): string[] {
@@ -3230,18 +3345,18 @@ function renderFixedLiteralTransport(typeName: string, fixed: FixedLiteral, read
 	const ids = fixedLiteralIds(fixed);
 	admit(read, typeName, ids);
 	return [
-		TRANSPORT_DERIVE_UNIT,
-		'#[transport(choice)]',
-		`pub enum ${typeName} {`,
+		...transportDeclaration(read, TRANSPORT_DERIVE_UNIT, 'choice', 'enum', typeName),
 		...variantKindLines(typeName, fixed.variant, undefined, ids, read),
-		`    ${fixed.variant},`,
+		...fixedVariantLines(fixed),
 		'}',
 		'',
 		...kindOfImplLines(typeName, [], undefined, fixed.ownId === undefined ? [] : [fixed.ownId]),
-		...inertPrepareImpl(typeName),
+		...(fixed.edged ? prepareEnumImpl(typeName, [{ variant: fixed.variant, payload: false, edged: true }]) : inertPrepareImpl(typeName)),
 		`impl ::sittir_core::render::Render for ${typeName} {`,
 		'    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {',
-		`        ${fixed.renderFn}(w)`,
+		...(fixed.edged
+			? ['        match self {', `            ${fixedRenderArm(`Self::${fixed.variant}`, fixed)}`, '        }']
+			: [`        ${fixed.renderFn}(w)`]),
 		'    }',
 		'}',
 		''
@@ -3249,6 +3364,10 @@ function renderFixedLiteralTransport(typeName: string, fixed: FixedLiteral, read
 }
 
 const LAYOUT_FIELD = { wireKey: '$_layout', rustName: 'layout', rustType: 'Option<Box<TransportLayout>>' } as const;
+
+function slotWireKey(storageName: string): string {
+	return `_${storageName}`;
+}
 
 function wireKeyAttr(key: string): string {
 	return `    #[wire(key = ${JSON.stringify(key)})]`;
@@ -3364,7 +3483,7 @@ function renderTransportField(
 ): string[] {
 	const lines: string[] = [];
 	const rustName = rustFieldIdent(field.storageName);
-	lines.push(wireKeyAttr(`_${field.storageName}`));
+	lines.push(wireKeyAttr(slotWireKey(field.storageName)));
 	if (readAttr !== undefined) lines.push(`    ${readAttr}`);
 	const required = forceOptional ? false : isTransportRequired(field);
 	const adjacent = slotVerbatimIsImmediate(field, nodeMap);
@@ -3482,9 +3601,8 @@ function rustTransportSlotType(
 	const wrap = (inner: string): string => {
 		if (multiple) {
 			const element = slotCarrier(inner, adjacent);
-			const vec = optionalElement ? `Vec<Option<${element}>>` : `Vec<${element}>`;
-			if (required) return vec;
-			return `Option<${vec}>`;
+			const items = optionalElement ? `Option<${element}>` : element;
+			return required ? `::sittir_core::NonEmptyVec<${items}>` : `Vec<${items}>`;
 		}
 		const sized = slotCarrier(createsBackEdge ? `Box<${inner}>` : inner, adjacent);
 		return required ? sized : `Option<${sized}>`;
@@ -3779,9 +3897,7 @@ function renderEnumType(node: AssembledEnum, kindEntries: readonly KindEnumEntry
 	const arms = values.map((v) => ({ variant: literalToVariantName(v), ids: [enumMemberId(node, v)] }));
 	const ownId = findKindEntry(kindEntries, node.kind)?.id;
 	if (ownId === undefined) throw new Error(`transport.rs: enum kind '${node.kind}' has no kind id`);
-	lines.push(TRANSPORT_DERIVE_ENUM_KIND);
-	lines.push(`#[transport(${enumKindArgs(ownId, read.ctx)})]`);
-	lines.push(`pub enum ${enumName} {`);
+	lines.push(...transportDeclaration(read, TRANSPORT_DERIVE_ENUM_KIND, enumKindArgs(ownId, read.ctx), 'enum', enumName));
 	for (const arm of arms) {
 		lines.push(`    #[kind(${variantKindArgs(arm.ids, false, read.ctx)})]`);
 		lines.push(`    ${arm.variant},`);

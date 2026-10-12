@@ -418,7 +418,6 @@
       }
     }
   },
-  "innerGapsKeyed": false,
   "spelledTrivia": {
     "reason": "ir.comment is one kind, 'comment'"
   },

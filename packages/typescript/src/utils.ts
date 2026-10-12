@@ -3,13 +3,15 @@
 import type { AnyUntypedNode, QuerySlots, TriviaFacts } from '@sittir/types';
 import { bindRuntime } from '@sittir/common/utils';
 import { KIND_NAMES, type TypescriptTypeMap } from './types.js';
-import { INNER_GAPS } from './consts.js';
+import { INNER_SITES } from './consts.js';
 
 export const triviaFacts = Object.freeze({
 	kindName: (type: AnyUntypedNode['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type),
 	kinds: new Set<string>([
 		'_blankline',
+		'_dedent',
 		'_double_blankline',
+		'_indent',
 		'_newline',
 		'_space',
 		'_tab',
@@ -18,7 +20,7 @@ export const triviaFacts = Object.freeze({
 		'comment_line',
 		'html_comment'
 	]),
-	innerGaps: INNER_GAPS,
+	innerKinds: INNER_SITES,
 	rebuildWrappers: new Set<number>([
 		152, 153, 154, 155, 156, 157, 159, 160, 161, 162, 163, 164, 376, 377, 379, 380, 382, 383, 384, 385, 386, 387, 392,
 		393, 394, 396, 398, 399, 400, 401, 402, 403, 404, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418,

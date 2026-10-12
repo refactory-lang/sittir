@@ -78,10 +78,12 @@ describe('collect-baseline', () => {
 	});
 
 	it('determinism — two runs produce byte-identical serialised output', async () => {
-		const a = await baseline.collectBaseline();
-		const b = await baseline.collectBaseline();
-		const sa = baseline.serialiseBaseline(a);
-		const sb = baseline.serialiseBaseline(b);
+		// Imported here, after the module reset, so the run and the grammar modules it loads share one module graph.
+		const fresh = await import('../scripts/collect-baseline.ts');
+		const a = await fresh.collectBaseline();
+		const b = await fresh.collectBaseline();
+		const sa = fresh.serialiseBaseline(a);
+		const sb = fresh.serialiseBaseline(b);
 		// Surface mismatches as a small diff for pinpoint diagnosis.
 		if (sa !== sb) {
 			const aLines = sa.split('\n');
@@ -205,6 +207,21 @@ describe('collect-baseline', () => {
 		});
 		expect(seen).toEqual(['rust']);
 	});
+
+	it('replays each parity fixture with the options its tree recorded', async () => {
+		const recorded: unknown[] = [];
+		await baseline.collectParityFixtures('python', 'native', async () => (_node, options) => {
+			recorded.push(options);
+			return '';
+		});
+		expect(recorded.some((options) => (options as { layout?: { indent?: string } } | undefined)?.layout?.indent === '  ')).toBe(true);
+	});
+
+	it('reproduces every python parity fixture, indent unit and root edges included', async () => {
+		const fixtures = await baseline.collectParityFixtures('python', 'native');
+		expect(fixtures.failingByKind).toEqual({});
+		expect(fixtures.pass).toBe(fixtures.total);
+	}, 600_000);
 
 	it('parity render exceptions surface with fixture context', async () => {
 		const throwingLoader: baseline.NativeRenderLoader = async () => () => {

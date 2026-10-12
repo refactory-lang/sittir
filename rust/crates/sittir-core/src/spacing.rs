@@ -137,6 +137,15 @@ pub fn seam_rank(text: &str) -> SeamRank {
     }
 }
 
+/// An open node of a render (`RenderSink::open_frame`): the source node it
+/// was read from (tree and descendant index), when it was, and the excess
+/// indentation it began with, which it restores when it closes.
+#[derive(Debug)]
+struct Frame {
+    origin: Option<(u32, u32)>,
+    excess: i32,
+}
+
 /// Streaming writer inserting lexically-required spaces at write seams.
 /// See the module doc. Every whitespace decision reaches the writer as a
 /// `RenderSink` call, never as a character in the text stream.
@@ -149,6 +158,9 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     table: Option<&'a crate::render::WhitespaceTable>,
     indent: &'a str,
     depth: usize,
+    /// The levels the current output line's indentation was paid at: what a
+    /// re-indented slice's continuation lines take.
+    line_depth: usize,
     /// For each open depth level, how many further opens asked for it at the
     /// position it opened (`indent` while armed): depth is one fact per
     /// position, so those merge into it, and their dedents unwind first.
@@ -176,6 +188,14 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     leaf_lexed: bool,
     indent_lazy: bool,
     trailing_accepts: u8,
+    /// Whether the render is a document: its root is a node of the
+    /// grammar's root kind (`with_document`).
+    document: bool,
+    /// The open nodes (`open_frame`).
+    frames: Vec<Frame>,
+    /// The levels the trivia's depth members add to the template's depth
+    /// (`layout_depth`); negative where a line sits below it.
+    excess: i32,
 }
 
 /// A trailing run rendered ahead of where it is written: its text, and the
@@ -223,6 +243,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             table: None,
             indent: "",
             depth: 0,
+            line_depth: 0,
             merged: Vec::new(),
             indent_pending: false,
             indent_armed: false,
@@ -247,7 +268,17 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             leaf_lexed: false,
             indent_lazy: false,
             trailing_accepts: LayoutKinds::ALL.0,
+            document: false,
+            frames: Vec::new(),
+            excess: 0,
         }
+    }
+
+    /// Marks the render as a document, whose end no held line break
+    /// outlasts (`finish`).
+    pub fn with_document(mut self, document: bool) -> Self {
+        self.document = document;
+        self
     }
 
     /// The resolved options [`crate::render::RenderSink::site_at`] and
@@ -285,17 +316,67 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// dedent between the newline and a closing delimiter puts the delimiter
     /// at the outer depth and blank lines carry no trailing spaces.
     fn pay_indent(&mut self, first: char) -> std::fmt::Result {
-        if !self.indent_pending || first == '\n' {
+        if first == '\n' {
+            return Ok(());
+        }
+        if !self.indent_pending {
             return Ok(());
         }
         self.indent_pending = false;
-        for _ in 0..self.depth {
-            self.emit(self.indent)?;
-        }
-        if self.depth > 0 {
-            self.last = self.indent.chars().next_back();
+        self.line_depth = self.levels();
+        let indent = self.indent.repeat(self.line_depth);
+        self.emit(&indent)?;
+        if let Some(last) = indent.chars().next_back() {
+            self.last = Some(last);
         }
         Ok(())
+    }
+
+    /// The levels the next line indents: the template's depth and the
+    /// trivia's excess, never below none.
+    fn levels(&self) -> usize {
+        usize::try_from(self.depth as i64 + i64::from(self.excess)).unwrap_or(0)
+    }
+
+    /// A slice's text moved to the column the writer puts it at: each
+    /// continuation line that starts with the source indentation of the
+    /// slice's first line has that prefix replaced by the indentation the
+    /// writer gives the line the slice starts on, so the slice keeps its
+    /// inner layout wherever it lands. Leading whitespace between tokens is
+    /// layout, not content; a line that starts inside a token
+    /// (`SourceTable::line_starts_inside_tokens`) keeps its bytes, as does a
+    /// blank line.
+    fn reindented<'t>(&self, coord: &crate::slot::NodeCoordinate, text: &'t str, sources: &dyn crate::render::SourceTable) -> std::borrow::Cow<'t, str> {
+        if !text.contains('\n') {
+            return std::borrow::Cow::Borrowed(text);
+        }
+        let Some(source) = sources.source_of(coord.tree) else { return std::borrow::Cow::Borrowed(text) };
+        let start = coord.span.start as usize;
+        let line_start = source[..start].rfind('\n').map_or(0, |at| at + 1);
+        let base = &source[line_start..start];
+        let base = &base[..base.len() - base.trim_start_matches([' ', '\t']).len()];
+        let levels = if self.indent_pending || self.held_breaks() { self.levels() } else { self.line_depth };
+        let target = self.indent.repeat(levels);
+        if base == target {
+            return std::borrow::Cow::Borrowed(text);
+        }
+        let inside = sources.line_starts_inside_tokens(coord);
+        let mut out = String::with_capacity(text.len());
+        let mut at = start;
+        for (index, line) in text.split('\n').enumerate() {
+            if index > 0 {
+                out.push('\n');
+            }
+            let shifted = index > 0 && !line.trim().is_empty() && line.starts_with(base) && inside.binary_search(&at).is_err();
+            if shifted {
+                out.push_str(&target);
+                out.push_str(&line[base.len()..]);
+            } else {
+                out.push_str(line);
+            }
+            at += line.len() + 1;
+        }
+        std::borrow::Cow::Owned(out)
     }
 
     fn at_line_start(&self) -> bool {
@@ -359,8 +440,9 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// would have had the run been written in place, unless `next` opens with
     /// a line break of its own; a run whose text ended its line already wrote
     /// one break of that seam. A line-terminated entry's break is held as
-    /// such.
-    fn write_deferred(&mut self, next: &str) -> std::fmt::Result {
+    /// such. At the render's end (`next` is `None`) nothing follows the
+    /// seam, so only the held break remains.
+    fn write_deferred(&mut self, next: Option<&str>) -> std::fmt::Result {
         if self.deferring.is_some() || self.deferred.is_empty() {
             return Ok(());
         }
@@ -372,6 +454,12 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             self.write_text(&run.text)?;
             last = Some(run);
         }
+        let Some(next) = next else {
+            if let Some(hold) = last.and_then(|run| run.line_end) {
+                crate::render::RenderSink::hold_line_end(self, hold);
+            }
+            return Ok(());
+        };
         if let Some(DeferredRun { end: Some((strength, mut payload)), line_end, .. }) = last {
             if self.at_line_start() && payload.pick.breaks() && payload.cont.is_empty() {
                 payload.pick = payload.pick.without_first_break();
@@ -414,6 +502,9 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         }
         self.emit(s)?;
         self.last = s.chars().next_back();
+        if s.contains('\n') {
+            self.line_depth = 0;
+        }
         if self.last == Some('\n') {
             self.indent_pending = true;
         }
@@ -585,10 +676,11 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// end, which decides its gap outright instead of merging with the node
     /// edges it meets there, and which a later mark never replaces. Only a
     /// line-terminated entry's break still floors it, since without that
-    /// break what follows would read as the entry's text; a break the line
+    /// break what follows would read as the entry's text, and not at a
+    /// document's end (its `After` edge), where nothing follows; a break the line
     /// already ended satisfies one line break of the edge. A line continuation
     /// held at that gap already ends the line, so it stands.
-    fn root_edge(&mut self, arm: u16, strength: u8) {
+    fn root_edge(&mut self, side: crate::options::Side, arm: u16, strength: u8) {
         let Some(table) = self.table else {
             return;
         };
@@ -598,7 +690,8 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         if self.last == Some('\n') && gap.breaks() {
             gap = gap.without_first_break();
         }
-        let floor = self.line_end_held == Some(crate::render::LineHold::Terminated) && self.held_breaks();
+        let end = self.document && side == crate::options::Side::After;
+        let floor = !end && self.line_end_held == Some(crate::render::LineHold::Terminated) && self.held_breaks();
         let continuation_held = self.seam.is_some()
             && self.seam_strength == SEAM_TRIVIA
             && self.seam_pick == LayoutKinds::LINE_CONTINUATION
@@ -648,7 +741,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             return Ok(());
         }
         if self.breaks_line(s) {
-            self.write_deferred(s)?;
+            self.write_deferred(Some(s))?;
         }
         if s.starts_with('\n') && self.seam == Some(1) && !self.seam_is_token {
             self.clear_payload();
@@ -676,15 +769,14 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// render's own flanks, so a seam its after edge marked is written here,
     /// as its before edge is written at the start. A payload a whitespace
     /// token contributed is written out too: the token is part of the node.
-    /// So is the break a line-terminated trivia entry left: without it, what
-    /// follows the render would read as that entry's text. The root render
-    /// calls this once, after the last `write_str`.
+    /// So is the break a line-terminated trivia entry left, except at a
+    /// document's end: the break holds for the text after the entry, and a
+    /// fragment's output may be followed by more, while a document's is not.
+    /// The root render calls this once, after the last `write_str`.
     pub fn finish(&mut self) -> std::fmt::Result {
-        self.write_deferred("")?;
-        if self.seam_is_token
-            || self.seam_is_root
-            || (self.line_end_held == Some(crate::render::LineHold::Terminated) && self.held_breaks())
-        {
+        self.write_deferred(None)?;
+        let held_terminated = self.line_end_held == Some(crate::render::LineHold::Terminated) && self.held_breaks();
+        if self.seam_is_token || self.seam_is_root || (held_terminated && !self.document) {
             self.flush_seam()?;
         }
         self.clear_payload();
@@ -759,7 +851,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
             return;
         };
         if options.kind_has(kind, crate::options::KIND_ROOT) {
-            self.root_edge(seam.arm, seam.strength);
+            self.root_edge(side, seam.arm, seam.strength);
         } else {
             self.seam_arm(seam);
         }
@@ -812,6 +904,15 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         coord.kind.or_else(|| self.sources.and_then(|sources| sources.kind_of(coord)))
     }
 
+    fn sides(&self, coord: &crate::slot::NodeCoordinate) -> Result<Option<Box<dyn crate::trivia::FramedTrivia>>, crate::render::CoordinateError> {
+        let Some(sources) = self.sources else { return Ok(None) };
+        let Some(mut frame) = sources.sides(coord) else { return Ok(None) };
+        if let Some(options) = self.options {
+            frame.prepare(&crate::prepare::RenderContext { options, sources })?;
+        }
+        Ok(Some(frame))
+    }
+
     fn end_lines_after(&mut self, coord: &crate::slot::NodeCoordinate) {
         let sources = self.sources;
         let mut first = true;
@@ -843,12 +944,14 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         let swallowed = sources
             .source_of(coord.tree)
             .is_some_and(|source| source.as_bytes().get(coord.span.end as usize) == Some(&b'\n'));
-        let text = crate::line_endings::to_internal(if swallowed { crate::line_endings::without_swallowed_cr(raw) } else { raw });
+        let raw = if swallowed { crate::line_endings::without_swallowed_cr(raw) } else { raw };
+        let reindented = self.reindented(coord, raw, sources);
+        let text = crate::line_endings::to_internal(&reindented);
         let text = text.as_ref();
         let token = crate::render::RenderSink::kind_of(self, coord)
             .is_some_and(|kind| crate::render::RenderSink::kind_has(self, kind, crate::options::KIND_ANON));
         if !token {
-            self.write_deferred(text)?;
+            self.write_deferred(Some(text))?;
         }
         if let Some(kind) = crate::render::RenderSink::kind_of(self, coord) {
             crate::render::RenderSink::leaf_kind(self, kind);
@@ -856,6 +959,24 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         self.write_chunk(text)?;
         self.end_leaf();
         Ok(())
+    }
+
+    fn open_frame(&mut self, origin: Option<&crate::slot::NodeCoordinate>) {
+        self.frames.push(Frame { origin: origin.map(|origin| (origin.tree, origin.index)), excess: self.excess });
+    }
+
+    fn close_frame(&mut self) {
+        if let Some(frame) = self.frames.pop() {
+            self.excess = frame.excess;
+        }
+    }
+
+    fn in_frame_of(&self, coord: &crate::slot::NodeCoordinate) -> bool {
+        self.frames.last().is_some_and(|frame| frame.origin == Some((coord.tree, coord.index)))
+    }
+
+    fn layout_depth(&mut self, delta: i32) {
+        self.excess += delta;
     }
 
     fn indent(&mut self) {
@@ -990,7 +1111,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     }
 
     fn seat_trailing(&mut self) -> crate::render::RenderResult {
-        self.write_deferred("")?;
+        self.write_deferred(Some(""))?;
         Ok(())
     }
 }
@@ -1689,6 +1810,28 @@ mod strength_tests {
             w.hold_line_end(crate::render::LineHold::Break);
         });
         assert_eq!(excluded, "a");
+    }
+
+    #[test]
+    fn a_documents_end_writes_no_held_line_end() {
+        let mut out = String::new();
+        let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident()).with_table(&TABLE).with_document(true);
+        w.text("// c").unwrap();
+        w.hold_line_end(crate::render::LineHold::Terminated);
+        w.finish().unwrap();
+        assert_eq!(out, "// c");
+    }
+
+    #[test]
+    fn a_documents_leading_line_comment_keeps_its_break_before_the_root() {
+        let mut out = String::new();
+        let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident()).with_table(&TABLE).with_document(true);
+        w.text("// c").unwrap();
+        w.hold_line_end(crate::render::LineHold::Terminated);
+        w.root_edge(crate::options::Side::Before, 1, SEAM_DECLARED);
+        w.text("fn").unwrap();
+        w.finish().unwrap();
+        assert_eq!(out, "// c\nfn");
     }
 
     #[test]

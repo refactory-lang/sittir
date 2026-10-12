@@ -50,10 +50,6 @@ The grammar facts `$trivia` checks against: each kind's name, the gaps an empty 
 
 Every member is `readonly`, `comment` included: the facts belong to the language and are frozen where the language module builds them, so an engine cannot change them for the others. The comment coercer is a per-language fact fixed when `hooks` is built; nothing per engine sets it.
 
-### `packages/types/src/core-types.ts::RenderCallOptions`
-
-The options a single render takes beside the language's render options: `ignoreFormat`. It is the one declaration of that key; the engine's per-call render options, the native engine's render and a parsed tree's render all name it.
-
 ### `packages/types/src/engine-api.ts::ParseOptions`
 
 Read depth is a performance parameter and never a semantic one. Under the default, a child with substructure comes back as a stub, and each hydration is one more crossing into the native reader. `deep` makes one crossing for the whole subtree, and the generated wrap types every slot-holding node of it as it wraps the parent (`storeExpanded`), so the typing a lazy read spreads over first accesses is paid inside the parse. The two modes agree on every result because each node a read hands back names its tree, whichever depth produced it (`canFold`).
@@ -90,10 +86,6 @@ The members every built and wrapped node carries: `$render` and `$trivia` over t
 
 The inner trivia of a node that realizes empty: `inner()` reads its inner entries and `inner(...items)` rebuilds the node with them.
 
-### `packages/types/src/engine-api.ts::GrammarInnerTriviaAt`
-
-`GrammarInnerTrivia` for a grammar where some kind has more than one gap: `innerAt(gap, ...)` reads or rebuilds one named gap.
-
 ### `packages/types/src/engine-api.ts::LanguageAPI`
 
 The type-level shape of one language: its name, builder table, guards, kind ids, the kind-to-node-type map (`types`, type-only), its root and any-node types, the kind ids that render standalone (`fixedTextKindId`: those whose kind alone determines their text), its render options, `empty` (the grammar's map from each kind that can be empty to its empty form), and `indentChar`, the characters an indent unit may be made of (`never` for a grammar with none). `indentChar` names the grammar's own `IndentChar` alias, because the options type cannot carry it: its `indent` key is typed at a plain `string` unit, which `OnlyOf` passes through unchanged. Every engine type is derived from it.
@@ -106,11 +98,11 @@ It carries `fileTypes`, the file types the grammar declares upstream (an empty l
 
 ### `packages/types/src/engine-api.ts::NativeEngineOptions`
 
-The options a language's native engine is created with: the format record and the render options under `options`. It is the native boundary's shape only; `createEngine` maps its own `render` option onto `options`.
+The options a language's native engine is created with: the render options under `options`. It is the native boundary's shape only; `createEngine` maps its own `render` option onto `options`.
 
 ### `packages/types/src/engine-api.ts::LanguageHooks`
 
-What a language's `load()` resolves to: the builder table, guards, kind ids, trivia facts and the render module hash as data, plus `createNative` to create a native engine and `wrap` to turn a read root and its tree into the language's root node.
+What a language's `load()` resolves to: the builder table, guards, kind ids, trivia facts and the render module hash as data, plus `createNative` to create a native engine and `wrap` to turn a read root and its tree into the language's root node. `membership` is the language's one membership test, shared by its `is.*` guards and a query's `ofType`.
 
 The optional `hydrate` hook reuses the grammar's `hydrateChild` for a shallow child read from its own tree. Generated languages supply it so factories can consume parsed list stubs without duplicating the grammar's depth or envelope normalization.
 
@@ -178,7 +170,7 @@ Whether two types are identical, by comparing two generic signatures that differ
 
 ### `packages/types/src/engine-api.ts::EngineOptions`
 
-An engine's options, grouped by concern: the builder surface, the render options, the format record, and the interceptors.
+An engine's options, grouped by concern: the builder surface, the render options, and the interceptors.
 
 ### `packages/types/src/engine-api.ts::Interceptor`
 

@@ -16,6 +16,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 How a slot's values are stored on the built node: `verbatim` (values as given), `boolean`/`bitflag` (keyword presence collapsed), `kindEnum` (every value is a literal arm — the slot stores kind ids), and `mixedEnum` (literal arms store their kind ids beside whole-node arms). Classified once in `emitters/shared.ts::classifyFieldStorageInfo` and cached on the slot; every storage-aware emitter reads the cached classification.
 
+### `packages/codegen/src/compiler/model/node-map.ts::storesNodes`
+
+Whether a slot's storage can hold a node: every storage kind but `boolean`, `bitflag` and `kindEnum`, which hold a flag, a set of flags or a kind id. A slot that stores nodes can store a coordinate past a read's depth, so its readers hydrate (the wraps' `slotAccessorBody`, the builders' `storedAccessor`).
+
 ### `packages/codegen/src/compiler/model/node-map.ts::concreteKindsOf`
 
 A kind expanded to the concrete kinds it can stand for: itself when it is not
@@ -2269,6 +2273,12 @@ Whether the node has entries of its own on the generated surface: a bundle entry
  *  target is never fixed text: its render is its own template. */
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::isDepthLeaf`
+
+Whether a fixed-text leaf's text is a depth mark (`isDepthText`): the `indent` and `dedent` kinds a grammar exposes from its depth externals. Such a kind is readable and tested for on a layout run, but is a layout op, not something a caller builds: `kindIdText` gives it no text (a bare kind id does not render it) and the `ir` plan gives it no key, as the hidden `_indent`/`_dedent` members of the grammars that mint them have none.
+
+Depth-ness has one source: `isDepthText`, keyed by `INDENT_TEXT` and `DEDENT_TEXT`, the two marks the `_indent`/`_dedent` whitespace members carry as their bodies and that `indent()`/`dedent()` bodies in `visibleExternals` stamp. The engine's render body, the whitespace enrichment and `kindIdText` read the same predicate, so a leaf is a depth leaf exactly when it carries a mark that renders as a depth move, whichever grammar minted it.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::kindIdText`
 
 The text a kind renders as when it is given only its kind id, or
@@ -3450,9 +3460,11 @@ Seats are grouped by (kind, slot) and their admitted kinds unioned, because
 more than one render rule can reach the same slot. The admitted kinds come
 from `slotElementKinds`, the same derivation the element enum is emitted
 from, so every seated site has a variant to seat it. A child with no
-trailing edge of its own — a leaf — takes none, and a slot admitting one
-child kind seats that child like any other, so every sibling gap in the
-grammar has an address.
+trailing edge of its own — a pattern leaf — takes none; a fixed-text unit
+the list holds is seated from the edge part `RenderRules.unitEdges` records
+for it (`seatedUnitKinds`).
+A slot admitting one child kind seats that child like any other, so every
+sibling gap in the grammar has an address.
 
 An admitted kind is expanded to what renders in its place before it is
 seated: a supertype to its concrete members, and a polymorph with no trailing
@@ -3711,6 +3723,60 @@ nothing.
 The grammar root always owns its edges, whatever its rule's shape: a root rule that is not a seq (python's `module`, regex's `pattern`) is wrapped in one to hold them. Its edges are the render's own flanks, not seams between neighbours, so their defaults come from `rootEdgeKinds` and the writer writes them at the start and the end of a render instead of dropping them there (`KIND_ROOT` in the grammar's `KIND_FLAGS`). A parsed root keeps its source flanks: rendered untouched, its slice already holds them; rebuilt through `$with`, its prepare classifies the tree bytes before its first and after its last coordinate item into these sites (`rootEdgeStamp`), and an item that was rebuilt leaves the edge to the options and the default.
 
 The after edge of a line-terminated kind (`lineTerminatedKinds`) is the exception to the `space` fallback: its arms are `lineBreakingKinds` and its default is the first of them, so `line_comment_after` is `newline`. A kind with no seq rule, such as python's pattern-leaf `comment` or typescript's lexed `hash_bang_line`, owns no edges; the runtime still breaks after it, from the line-terminated fact itself, which reaches the runtime as `KIND_LINE_TERMINATED` in the grammar's `KIND_FLAGS` table.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::seatedUnitKinds`
+
+The fixed-text kinds (`isFixedTextLeaf`) that a seated list renders as
+elements: typescript's `empty_statement` among statements, `true` and `this`
+among array elements and arguments. A list gap is the earlier element's
+`after` edge, so a unit a list holds gets a seat like a node; without one the
+gap after it had no address, and a built, edited or snapshot list wrote
+nothing after it (`;x;`). The expansion is `seatedElementKinds` over the same
+seats `spacingSitesOf` finds (`seatsOf`), stopping at a kind that owns its
+edges; it runs on the spaced rules, ahead of the seam pass that mints them.
+
+A seated unit gets a seat and nothing else: its rule is not wrapped in edges,
+so it mints no kind-edge site and no edge row, and nothing that spaces it
+outside a list moves. `seamRenderRules` records the part its `after` edge
+would have (`kindEdgeSeam`) in `RenderRules.unitEdges`, and `seatedSites`
+seats it from that part as it seats a node from its edge site. At render the
+unit writes only the arm a list gap stamped on it (`render_edged`).
+
+### `packages/codegen/src/compiler/model/render-rules.ts::kindEdgeSeam`
+
+One edge seam of a kind: the whitespace choice labelled `<kind>_<side>`,
+with the arms and default `edgeSeamArms` gives that side and the edge
+literals the rule opens or closes with. `withKindEdges` wraps a rule in two;
+a seated unit's `after` part comes from one that no rule holds.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::edgeSeamArms`
+
+The arms and default of a kind's edge on one side: the root's edges default
+to `rootEdgeKinds`, a line-terminated kind's after edge admits only line
+breaks and defaults to a newline (`lineBreakingKinds`), and every other edge
+takes the grammar's seam arms.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::seatsOf`
+
+Every seated list of the render rules: a repeat with a spaced separator, as
+(kind, slot, rule id), in the rule walk's post-order. `spacingSitesOf` mints
+the seated sites from them and `seatedUnitKinds` finds the units they hold.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::slotOf`
+
+The slot a repeat's rule id maps to. A spaced separator outside any slot
+fails codegen.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::renderedElementKinds`
+
+What renders in place of an element kind, stopping at a kind `edged`
+answers: a supertype's concrete members, and a polymorph's slot element
+kinds, recursively.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::seatedElementKinds`
+
+The rendered element kinds of each seated list, grouped by (kind, slot) and
+unioned over the rules that reach the slot (`renderedElementKinds`).
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::ownsKindEdges`
 
@@ -3978,6 +4044,38 @@ render function. The generated resolver runs the same walk over a user's
 options (`DEPTH_SITES`) and the writer asserts its depth at the end of a
 render. The walk is flat: sites in different arms of one choice count
 together, which the writer's assertion covers.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::DepthAnchor`
+
+Where a structural indentation region starts or ends in a node: after a literal child with one of the texts (`after`), before one (`before`), or at the node's start or end.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::DepthRegion`
+
+One level of structural indentation a kind's template opens: the kind and the anchors of the stretch of its children it indents.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::DepthMark`
+
+One step of a kind's render rule as `depthRegionsOf` reads it: a depth change, or a literal token (a choice of literals reads as all of their texts).
+
+### `packages/codegen/src/compiler/model/render-rules.ts::depthOf`
+
+The depth change a rule makes on its own: an `INDENT`/`DEDENT` rule, a string of the depth mark's text, or a reference to the grammar's depth pair (`depthMembersOf`).
+
+### `packages/codegen/src/compiler/model/render-rules.ts::depthOfArm`
+
+The depth change a whitespace arm makes when it is a site's default: one level for `indent`, back one for `dedent`.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::literalsOf`
+
+The texts a rule writes as a literal token: a non-blank string, a symbol that carries its literal, or a choice whose every arm is one of those. Undefined for anything else.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::depthMarksOf`
+
+A render rule flattened to its depth marks in order. A flank contributes the depth its default arms make around the slot it flanks, a seam the depth of its default arm, and any other whitespace choice nothing, since its arms are options rather than what the template writes.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::depthRegionsOf`
+
+The structural indentation each kind's template opens, from its render rule: each indent is paired with the dedent that closes it. The stretch opens after the nearest literal before the indent (or at the node's start) and closes before the nearest literal after the dedent (or at the node's end); an indent with no dedent in its own rule runs to the node's end. The depth members' own rules open nothing. The native trivia table counts the regions enclosing a layout run as its structural level, so that only the excess over the template is the run's.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::admitsDepth`
 
@@ -4373,6 +4471,14 @@ The whitespace kinds: `layoutKindsOf` less the depth movers (`DEPTH_KINDS`),
 the members that write a whitespace run. They are what a separator gap
 admits, where moving depth has no meaning.
 
+### `packages/codegen/src/compiler/model/layout-kinds.ts::DepthMembers`
+
+The kinds that move indentation depth by one level, `indent` and `dedent`, each absent where the grammar has none.
+
+### `packages/codegen/src/compiler/model/layout-kinds.ts::depthMembersOf`
+
+The grammar's depth pair, found by the stamped fact, never by spelling: the kind an external's declared role names (`externalRole`, python's scanner tokens) or the fixed-text kind whose text is the depth mark (`INDENT_TEXT`/`DEDENT_TEXT`, the members `enrichWhitespace` mints). The template's structural depth and a layout run's excess both use this one pair.
+
 ### `packages/codegen/src/compiler/model/layout-kinds.ts::RootEdgeKinds`
 
 The default layout kinds of the grammar root's two edges.
@@ -4609,16 +4715,22 @@ The separator token an option declared for this list, stamped once resolution
 has run. A list that chooses its separator per instance and has no stamp is a
 build error naming the arms it admits.
 
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.innerSite`
+
+The gap the kind's one inner side renders at: the last of its `innerGaps`. A node has one inner side, so a kind with several gaps (tree-sitter-go's `expression_switch_statement`, an initializer then a body) renders the side once, at the gap of its body.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.innerGaps`
 
 Where an inner comment can sit in an empty node of this kind: one `InnerGap` per optional or repeat slot, keyed by the slot name, with `precedingTokens` counting the kind's unconditional literal tokens before it in render order.
 
 - A kind has gaps only when its render rule can realise with no slot value (`realizesEmpty` over `slotEmptiness`). A filled required slot, a required choice between slots, or a repeat1 gives every comment a named neighbour, so leading or trailing always holds it.
 - A trivia-interior kind (`triviaInterior`) has no gaps: it is lexically one unit.
+- A literal token is a text rule or a non-slot symbol of a fixed-text kind (`nonterminal: false`). A grammar that exposes a zero-width scanner token as a named kind (python's `indent` / `dedent`) keeps it as that symbol instead of inlining its text, and it counts in `precedingTokens` as the inlined text did, so exposing it does not remove the kind's empty form.
 - A gap whose closing token is immediate is not a gap: tree-sitter lexes no extra before an immediate token. The same holds for the slotless `interior` gap's second token.
 - Tokens under an optional or repeat member, or inside a choice, are conditional and not counted: they are absent from an empty node.
 - A slot is found by its source rule ids, never at the rule root.
 - When several slots share a span, only the first in render order keys it.
+- A kind with several gaps still has one inner side (`innerSite`).
 - A gap before the kind's first token or after its last is not inner: tree-sitter gives an extra outside a node's own tokens to the parent. A kind with no unconditional token is the exception only when it is the grammar root (`grammarRoot`), since only the root can hold an extra there (rust `source_file`, python `module`, typescript `program`). Its one gap is its first repeat slot in render order, or the root's own rule when that is the repeat slot (scm `program`), because `inner` carries the comments of an empty repeat: a comment-only file is a root whose statements are empty. An optional single slot before it (`shebang`, `hash_bang_line`) never owns the gap.
 - A compound with no slots and at least two tokens has the one gap `interior` after its first token.
 
@@ -4636,11 +4748,11 @@ A pattern's reading is exact: `opensLineEnd` decides it from the pattern's autom
 
 ### `packages/codegen/src/compiler/model/node-map.ts::LineEnd`
 
-One way a kind's text can end: `open`, `closed`, `empty`, or the kind named by `symbol`.
+One way a kind's text can end: `open`, `closed`, `dedent` (the dedent marker that closes an indentation level), `empty`, or the kind named by `symbol`.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::ruleLineEnds`
 
-`lineEnds` from the end terminals (`ruleEdgeTerminals`): a literal is `closed`, and a pattern is `open` exactly when `opensLineEnd` holds for it. A pattern the automaton cannot read stops codegen naming the kind and the pattern, so no pattern silently reads `closed`.
+`lineEnds` from the end terminals (`ruleEdgeTerminals`): the dedent marker (`DEDENT_TEXT`) is `dedent`, any other literal is `closed`, and a pattern is `open` exactly when `opensLineEnd` holds for it. A pattern the automaton cannot read stops codegen naming the kind and the pattern, so no pattern silently reads `closed`.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::EdgeTerminal`
 
@@ -4682,6 +4794,12 @@ A sequence's terminals on one edge, given its members ordered from that edge inw
 
 The single predicate for which kinds can be trivia entries: the kinds the grammar lists in `extras`, the whitespace kinds its lexical extras match (`whitespaceTriviaKinds`), every subtype of a supertype listed there, transitively, and every supertype whose members are all trivia (`extrasClosure`, which wire's `extraRuleNames` shares). Memoised per node map. The TriviaEntry type union, the runtime's accepted entry kinds, loose classification and the trivia transport read it. No trivia flag is stored on nodes and no scm role decides it.
 
+The depth members (`depthTriviaKinds`) are trivia kinds too: a layout run read from a parsed tree carries its excess indentation as indent and dedent entries.
+
+### `packages/codegen/src/compiler/model/trivia.ts::depthTriviaKinds`
+
+The grammar's depth pair (`depthMembersOf`) as trivia kinds, when the grammar reads whitespace as trivia at all (`whitespaceTriviaKinds` is not empty): the members a layout run spells its excess indentation with.
+
 ### `packages/codegen/src/compiler/model/trivia.ts::lexicalExtrasRun`
 
 A text made of one or more of the grammar's node-less extras: the `nodelessExtrasRun` link stamped on the node map, over the PATTERN and STRING extras and the SYMBOL extras naming hidden rules. A visible extra such as a comment is a node, never part of the run. Undefined for a grammar with no lexical extra.
@@ -4704,7 +4822,7 @@ Whether a kind's text always ends its line, so the next token must start on a ne
 
 ### `packages/codegen/src/compiler/model/trivia.ts::lineBreakTerminated`
 
-Whether every way a kind's text can end reaches the grammar's declared newline token: the kind is one whose node carries the `newline` role (`AssembledNodeBase.externalRole`), or every one of its `lineEnds` is a symbol that is. A literal, a pattern or an empty end is false. It is a different fact from `lineTerminated`: the token lies outside the span of the kind that ends in it (python's `_simple_statements` ends in `_newline`, and its span stops before the line break), so a source slice of the kind never ends its line. Only python declares a newline role: its `_simple_statements`, `decorator`, `suite_inline` and `suite_empty` hold, and no rust, typescript, scm or regex kind does.
+Whether every way a kind's text can end reaches a line break outside its span: the kind is one whose node carries the `newline` or `dedent` role (`AssembledNodeBase.externalRole`), or every one of its `lineEnds` is the `dedent` marker or a symbol that is. Closing an indentation level always ends the line, so a kind ending in its dedent holds as one ending in the newline token does, whether or not the parse exposes the dedent as a node. Any other literal, a pattern or an empty end is false; `lineTerminated` reads a `dedent` end as `closed`. It is a different fact from `lineTerminated`: the token lies outside the span of the kind that ends in it (python's `_simple_statements` ends in `_newline`, and its span stops before the line break), so a source slice of the kind never ends its line. Only python declares a newline role: its `_simple_statements`, `decorator`, `suite_inline`, `suite_empty` and, through the dedent, `block` and `suite_block` hold. In rust, typescript and scm only the dedent member kind does, and no regex kind does.
 
 ### `packages/codegen/src/compiler/model/trivia.ts::lineBreakTerminatedKinds`
 
@@ -4760,15 +4878,15 @@ The alternatives a kind's text can begin with (`LeadAlternative`): each literal,
 
 ### `packages/codegen/src/compiler/model/trivia.ts::emptyForms`
 
-The kinds a builder can make with nothing in them, keyed by kind: every compound with a factory and at least one inner gap. Having an inner gap already means the kind realizes empty, so no emitter checks emptiness again. Each gets an `Empty<TypeName>` form, and it throws when another kind already names that type. The result is cached per node map because five emitters read it.
+The kinds a builder can make with nothing in them, keyed by kind: every compound with a factory and an inner side (`innerKinds`). Having an inner gap already means the kind realizes empty, so no emitter checks emptiness again. Each gets an `Empty<TypeName>` form, and it throws when another kind already names that type. The result is cached per node map because five emitters read it.
 
-### `packages/codegen/src/compiler/model/trivia.ts::innerGapsKeyed`
+### `packages/codegen/src/compiler/model/trivia.ts::innerKinds`
 
-True when some kind's empty form has more than one inner gap, so a gap has to be named when writing to it. Only then does `InnerTrivia` take a `Gap` parameter and an `innerAt(gap, ...)` method. With one gap per kind, `inner(...)` already says where the entries go.
+The kinds whose template renders an inner side (`innerSite`), cached per node map. The emitted `INNER_SITES` and `emptyForms` read it, so the surface, the facts and the render agree on which kinds take `inner`.
 
 ### `packages/codegen/src/compiler/model/trivia.ts::EmptyForm`
 
-One kind's empty form: the emitted type name (`Empty<TypeName>`) and the keys of its inner gaps, in render order. When some kind has more than one gap (`innerGapsKeyed`), those keys are the `Gap` union of its `InnerTrivia`.
+One kind's empty form: the emitted type name (`Empty<TypeName>`).
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.lexedInterior`
 

@@ -7,7 +7,7 @@
 use crate::options::{EdgeArm, Edged, Edges, ResolvedOptions, Side};
 use crate::types::KindId;
 use crate::render::{CoordinateError, SourceTable};
-use crate::slot::{SeamArm, SlotValue, SourceFlank, SourceGap};
+use crate::slot::{NodeCoordinate, SeamArm, SlotValue, SourceFlank, SourceGap};
 use crate::render::WhitespaceTable;
 
 /// Everything a render reads that is not the transport itself.
@@ -150,66 +150,143 @@ fn line_depth(run: &str) -> usize {
     crate::line_endings::bytes_after_last_break(run)
 }
 
-/// A child position of a root transport, read for the item at either end of
-/// the render: `None` when the position holds nothing, otherwise the item's
-/// coordinate, itself `None` when the item was rebuilt.
-pub trait EdgeItems {
-    fn first_item(&self) -> Option<Option<&crate::NodeCoordinate>>;
-    fn last_item(&self) -> Option<Option<&crate::NodeCoordinate>>;
+/// The item at one end of a root's render, as the root's edge reads it: a
+/// coordinate into its source, framed by its sides (`SourceTable::framed_span`),
+/// bytes of a source (a root's inner entries read from its tree), a snapshot
+/// node's geometry, or an item that was rebuilt and gives the edge nothing.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum EdgeItem<'a> {
+    Coord(&'a crate::NodeCoordinate),
+    Bytes { tree: u32, span: crate::types::Span },
+    Snapshot(SnapshotEdge),
+    Rebuilt,
 }
 
-impl<T, const ADJACENT: bool> EdgeItems for SlotValue<T, ADJACENT> {
-    fn first_item(&self) -> Option<Option<&crate::NodeCoordinate>> {
-        Some(self.coord())
+/// A child position of a root transport, read for the item at either end of
+/// the render: `None` when the position holds nothing, otherwise the item
+/// (`EdgeItem`).
+pub trait EdgeItems {
+    fn first_item(&self) -> Option<EdgeItem<'_>>;
+    fn last_item(&self) -> Option<EdgeItem<'_>>;
+}
+
+impl<T: Prepare, const ADJACENT: bool> EdgeItems for SlotValue<T, ADJACENT> {
+    fn first_item(&self) -> Option<EdgeItem<'_>> {
+        Some(edge_item(self))
     }
-    fn last_item(&self) -> Option<Option<&crate::NodeCoordinate>> {
-        Some(self.coord())
+    fn last_item(&self) -> Option<EdgeItem<'_>> {
+        Some(edge_item(self))
+    }
+}
+
+fn edge_item<T: Prepare, const ADJACENT: bool>(value: &SlotValue<T, ADJACENT>) -> EdgeItem<'_> {
+    match value.coord() {
+        Some(coord) => EdgeItem::Coord(coord),
+        None => value.snapshot_edge().map_or(EdgeItem::Rebuilt, EdgeItem::Snapshot),
     }
 }
 
 impl<X: EdgeItems> EdgeItems for Option<X> {
-    fn first_item(&self) -> Option<Option<&crate::NodeCoordinate>> {
+    fn first_item(&self) -> Option<EdgeItem<'_>> {
         self.as_ref().and_then(X::first_item)
     }
-    fn last_item(&self) -> Option<Option<&crate::NodeCoordinate>> {
+    fn last_item(&self) -> Option<EdgeItem<'_>> {
         self.as_ref().and_then(X::last_item)
     }
 }
 
+/// The first edge item of a list: its first item that has one.
+fn first_edge_item<X: EdgeItems>(items: &[X]) -> Option<EdgeItem<'_>> {
+    items.iter().find_map(X::first_item)
+}
+
+/// The last edge item of a list: its last item that has one.
+fn last_edge_item<X: EdgeItems>(items: &[X]) -> Option<EdgeItem<'_>> {
+    items.iter().rev().find_map(X::last_item)
+}
+
 impl<X: EdgeItems> EdgeItems for Vec<X> {
-    fn first_item(&self) -> Option<Option<&crate::NodeCoordinate>> {
-        self.iter().find_map(X::first_item)
+    fn first_item(&self) -> Option<EdgeItem<'_>> {
+        first_edge_item(self)
     }
-    fn last_item(&self) -> Option<Option<&crate::NodeCoordinate>> {
-        self.iter().rev().find_map(X::last_item)
+    fn last_item(&self) -> Option<EdgeItem<'_>> {
+        last_edge_item(self)
+    }
+}
+
+impl<X: EdgeItems> EdgeItems for crate::NonEmptyVec<X> {
+    fn first_item(&self) -> Option<EdgeItem<'_>> {
+        first_edge_item(self)
+    }
+    fn last_item(&self) -> Option<EdgeItem<'_>> {
+        last_edge_item(self)
+    }
+}
+
+/// The item at one end of a root once its own trivia is counted: the end item
+/// of its children, or its inner trivia (`Layout::inner_item`) when that
+/// lies beyond it on `side` or the root has no children.
+pub fn outermost<'a>(item: Option<EdgeItem<'a>>, inner: Option<EdgeItem<'a>>, side: Side) -> Option<EdgeItem<'a>> {
+    match (item, inner) {
+        (None, inner) => inner,
+        (Some(EdgeItem::Snapshot(edge)), Some(EdgeItem::Snapshot(own))) => {
+            let beyond = match side {
+                Side::Before => own.span.start < edge.span.start,
+                Side::After => own.span.end > edge.span.end,
+            };
+            Some(EdgeItem::Snapshot(if beyond { own } else { edge }))
+        }
+        (item, _) => item,
     }
 }
 
 /// A root transport's edges read from its tree's own flanks: the bytes
 /// before its first item and after its last, when that item is still a
-/// coordinate, classified into the arm the edge site admits exactly as a
-/// list gap is. An edge item that was rebuilt, or bytes that are not whitespace,
-/// leave that side unset for the options and the grammar default.
+/// coordinate (framed by its sides) or its inner entries' source bytes,
+/// classified into the arm the edge site admits exactly as a
+/// list gap is. A snapshot root reads the same gaps from geometry: from its
+/// own start (`root`) to where its first item's render begins, leading trivia
+/// included, and from where its last item's render ends to the root's end.
+/// An edge item that was rebuilt, bytes that are not whitespace, or unplaced
+/// trivia on that side leave that side unset for the options and the grammar
+/// default.
 pub fn root_flanks(
-    first: Option<Option<&crate::NodeCoordinate>>,
-    last: Option<Option<&crate::NodeCoordinate>>,
+    first: Option<EdgeItem<'_>>,
+    last: Option<EdgeItem<'_>>,
+    root: Option<crate::points::PointSpan>,
     allowed_before: &[u16],
     allowed_after: &[u16],
     table: &crate::render::WhitespaceTable,
     ctx: &RenderContext<'_>,
 ) -> Edges {
-    let flank = |coord: Option<&crate::NodeCoordinate>, side: Side, allowed: &[u16]| {
-        let coord = coord?;
-        let source = ctx.sources.source_of(coord.tree)?;
-        let bytes = match side {
-            Side::Before => source.get(..coord.span.start as usize)?,
-            Side::After => source.get(coord.span.end as usize..)?,
+    let flank = |item: Option<EdgeItem<'_>>, side: Side, allowed: &[u16]| {
+        let source_bytes = |tree: u32, span: crate::types::Span| {
+            let source = ctx.sources.source_of(tree)?;
+            let bytes = match side {
+                Side::Before => source.get(..span.start as usize)?,
+                Side::After => source.get(span.end as usize..)?,
+            };
+            Some(std::borrow::Cow::Borrowed(bytes))
         };
-        crate::classify::classify_whitespace(bytes, allowed, table).map(|arm| EdgeArm { arm, strength: None, dedent: None })
+        let text = match item? {
+            EdgeItem::Coord(coord) => source_bytes(coord.tree, ctx.sources.framed_span(coord))?,
+            EdgeItem::Bytes { tree, span } => source_bytes(tree, span)?,
+            EdgeItem::Snapshot(edge) => {
+                let root = root?;
+                let outer = edge.outer(side)?;
+                let gap = match side {
+                    Side::Before => crate::classify::geometry_gap_text(&crate::points::PointSpan::at(root.start), &outer),
+                    Side::After => crate::classify::geometry_gap_text(&outer, &crate::points::PointSpan::at(root.end)),
+                };
+                std::borrow::Cow::Owned(gap)
+            }
+            EdgeItem::Rebuilt => return None,
+        };
+        crate::classify::classify_whitespace(&text, allowed, table).map(|arm| EdgeArm { arm, strength: None, dedent: None })
     };
     Edges {
-        before: flank(first.flatten(), Side::Before, allowed_before),
-        after: flank(last.flatten(), Side::After, allowed_after),
+        before: flank(first, Side::Before, allowed_before),
+        after: flank(last, Side::After, allowed_after),
     }
 }
 
@@ -242,11 +319,27 @@ pub fn seat_site(table: &[u16], kind: KindId) -> Option<usize> {
     }
 }
 
+/// The two sides of the gap between two snapshot items of one list, from
+/// their geometry (`classify::geometry_gap_sides`): `None` unless both are
+/// snapshot nodes in source order with no trivia between them.
+fn geometry_list_gap<T: Prepare, const ADJACENT: bool>(
+    before: &SlotValue<T, ADJACENT>,
+    after: &SlotValue<T, ADJACENT>,
+    token: &str,
+) -> Option<(String, String)> {
+    let (a, b) = (before.snapshot_edge()?, after.snapshot_edge()?);
+    if a.trailing != TriviaReach::Bare || b.leading != TriviaReach::Bare || b.span.start < a.span.end {
+        return None;
+    }
+    Some(crate::classify::geometry_gap_sides(&a.span, &b.span, token))
+}
+
 /// Give every list gap that is still adjacent in the source its source class.
 /// An item carries its gap toward the item before it (`Prepare::source_gap`)
 /// only when the two were adjacent siblings in the source both were read from
-/// and no derived line-gap run already spells that gap. The gap's text splits
-/// at the separator `token`. The side before it classifies among
+/// and no derived line-gap run already spells that gap; two snapshot items
+/// carry none, and their gap comes from their geometry (`geometry_list_gap`).
+/// The gap's text splits at the separator `token`. The side before it classifies among
 /// `allowed_before` onto the earlier item's `after` edge. The side after it
 /// classifies among `allowed_after` onto the later item's `before` edge.
 /// With no token, the whole gap is the before side. Both edges hold at trivia
@@ -267,12 +360,11 @@ pub fn fill_list_gaps<'i, T: Prepare + 'i, const ADJACENT: bool>(
 ) {
     let mut present: Vec<&'i mut SlotValue<T, ADJACENT>> = items.flatten().collect();
     for index in 1..present.len() {
-        let Some((lead, trail)) = present[index]
-            .source_gap()
-            .and_then(|gap| gap.text(ctx.sources))
-            .and_then(|text| single_separator(text, token))
-            .map(|(lead, trail)| (lead.to_owned(), trail.to_owned()))
-        else {
+        let sides = match present[index].source_gap().and_then(|gap| gap.text(ctx.sources)) {
+            Some(text) => single_separator(text, token).map(|(lead, trail)| (lead.to_owned(), trail.to_owned())),
+            None => geometry_list_gap(&*present[index - 1], &*present[index], token),
+        };
+        let Some((lead, trail)) = sides else {
             continue;
         };
         let (lead, trail) = (lead.as_str(), trail.as_str());
@@ -348,8 +440,47 @@ pub fn fill_seated_gaps<'i, T: SeatTarget + 'i, const ADJACENT: bool>(
     }
 }
 
+/// Where a snapshot item lies and how far trivia leads or trails it: what a
+/// root's edges and a list's gaps read in place of source bytes.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SnapshotEdge {
+    pub span: crate::points::PointSpan,
+    pub leading: TriviaReach,
+    pub trailing: TriviaReach,
+}
+
+/// How far a snapshot item's trivia on one side reaches beyond the item.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TriviaReach {
+    /// No trivia on that side.
+    Bare,
+    /// Trivia whose outer end (the first leading entry's start, the last
+    /// trailing entry's end) lies at this point.
+    To(crate::points::Point),
+    /// Trivia whose outer entry has no geometry: it was written, not read.
+    Unplaced,
+}
+
+impl SnapshotEdge {
+    /// What a gap on `side` is measured from: the item's own span when no
+    /// trivia lies on that side, the point its trivia reaches otherwise, and
+    /// `None` when that trivia is unplaced.
+    fn outer(&self, side: Side) -> Option<crate::points::PointSpan> {
+        match if side == Side::Before { self.leading } else { self.trailing } {
+            TriviaReach::Bare => Some(self.span),
+            TriviaReach::To(point) => Some(crate::points::PointSpan::at(point)),
+            TriviaReach::Unplaced => None,
+        }
+    }
+}
+
 pub trait Prepare {
     fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError>;
+
+    /// Where this value lies, when it is a snapshot node (`TransportLayout::span`).
+    fn snapshot_edge(&self) -> Option<SnapshotEdge> {
+        None
+    }
 
     /// The source gap toward the list item before this value, when the wire
     /// says the two are still adjacent in their source (`$_gap`).
@@ -361,18 +492,47 @@ pub trait Prepare {
     fn gap_edges(&mut self) -> Option<&mut Edges> {
         None
     }
+
+    /// The node at descendant `index` of `tree` read one level into this
+    /// type (`read::read_coordinate`), when the type reads; `None` for a
+    /// value no read produces.
+    fn read_coordinate(tree: &tree_sitter::Tree, ctx: &crate::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, crate::read::ReadError>>
+    where
+        Self: Sized,
+    {
+        let _ = (tree, ctx, index);
+        None
+    }
 }
 
 impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
     /// A coordinate is checked here and its slice discarded: the render is
     /// refused before a byte is written rather than part way through, and
-    /// the sink re-resolves at write time against the same table.
+    /// the sink re-resolves at write time against the same table. A
+    /// coordinate whose range holds a write is read one level into its
+    /// transport (`read_coordinate`), which renders from its template, and
+    /// prepared as one. Otherwise it takes its kind's edges: its stamped
+    /// kind's, or, for a display kind with no edge row of its own, its
+    /// grammar kind's, the kind its transport renders by.
     fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
         match self {
             SlotValue::Coord(coord) => {
                 coord.resolve(ctx.sources)?;
+                if let Some(mut transport) = read_edited::<T>(coord, ctx)? {
+                    if let (Some(seated), Some(edges)) = (coord.edges, transport.gap_edges()) {
+                        if seated.before.is_some() {
+                            edges.before = seated.before.map(EdgeArm::from);
+                        }
+                        if seated.after.is_some() {
+                            edges.after = seated.after.map(EdgeArm::from);
+                        }
+                    }
+                    transport.prepare(ctx)?;
+                    *self = SlotValue::Transport(transport);
+                    return Ok(());
+                }
                 let seated = coord.edges;
-                coord.edges = coord.kind_in(ctx.sources).and_then(|kind| ctx.options.edge_arms(kind));
+                coord.edges = [coord.kind, ctx.sources.kind_of(coord)].into_iter().flatten().find_map(|kind| ctx.options.edge_arms(kind));
                 if let Some(seated) = seated {
                     let edges = coord.edges.get_or_insert(crate::slot::CoordinateEdges { before: None, after: None });
                     if seated.before.is_some() {
@@ -391,14 +551,49 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
     fn source_gap(&self) -> Option<&SourceGap> {
         match self {
             SlotValue::Transport(t) => t.source_gap(),
-            SlotValue::Coord(coord) => coord.gap.as_ref(),
+            SlotValue::Coord(coord) => coord.gap(),
+        }
+    }
+
+    fn snapshot_edge(&self) -> Option<SnapshotEdge> {
+        match self {
+            SlotValue::Transport(t) => t.snapshot_edge(),
+            SlotValue::Coord(_) => None,
         }
     }
 }
 
+/// The node a coordinate names, read one level into `T` when a write lies in
+/// its range (`SourceTable::edited_within`), its changed edges carried into
+/// the read (`ReadCtx::with_changed`); `None` when no write lies there, or
+/// when `T` reads nothing.
+fn read_edited<T: Prepare>(coord: &NodeCoordinate, ctx: &RenderContext<'_>) -> Result<Option<T>, CoordinateError> {
+    if !ctx.sources.edited_within(coord) {
+        return Ok(None);
+    }
+    let Some((tree, read)) = ctx.sources.read_ctx(coord.tree) else { return Ok(None) };
+    let read = read.with_changed(coord.index, coord.changed());
+    match T::read_coordinate(tree, &read, coord.index) {
+        None => Ok(None),
+        Some(Ok(transport)) => Ok(Some(transport)),
+        Some(Err(error)) => Err(CoordinateError::Unread { handle: coord.handle(), detail: format!("{error:?}") }),
+    }
+}
+
+/// Prepare every item of a list.
+fn prepare_items<T: Prepare>(items: &mut [T], ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
+    items.iter_mut().try_for_each(|item| item.prepare(ctx))
+}
+
 impl<T: Prepare> Prepare for Vec<T> {
     fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
-        self.iter_mut().try_for_each(|item| item.prepare(ctx))
+        prepare_items(self, ctx)
+    }
+}
+
+impl<T: Prepare> Prepare for crate::NonEmptyVec<T> {
+    fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
+        prepare_items(self, ctx)
     }
 }
 
@@ -414,18 +609,30 @@ impl<T: Prepare> Prepare for Option<T> {
         self.as_ref()?.source_gap()
     }
 
+    fn snapshot_edge(&self) -> Option<SnapshotEdge> {
+        self.as_ref()?.snapshot_edge()
+    }
+
     fn gap_edges(&mut self) -> Option<&mut Edges> {
         self.as_mut()?.gap_edges()
     }
 }
 
-impl<T: Prepare + ?Sized> Prepare for Box<T> {
+impl<T: Prepare> Prepare for Box<T> {
     fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
         (**self).prepare(ctx)
     }
 
+    fn read_coordinate(tree: &tree_sitter::Tree, ctx: &crate::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, crate::read::ReadError>> {
+        T::read_coordinate(tree, ctx, index).map(|read| read.map(Box::new))
+    }
+
     fn source_gap(&self) -> Option<&SourceGap> {
         (**self).source_gap()
+    }
+
+    fn snapshot_edge(&self) -> Option<SnapshotEdge> {
+        (**self).snapshot_edge()
     }
 
     fn gap_edges(&mut self) -> Option<&mut Edges> {
@@ -479,7 +686,7 @@ mod tests {
     };
 
     fn coordinate(start: u32, end: u32) -> NodeCoordinate {
-        NodeCoordinate::new(3, 0, Span { start, end })
+        NodeCoordinate::new(3, 0, 1, Span { start, end })
     }
 
     fn before_flank(first: &NodeCoordinate, source: &str) -> Option<u16> {
@@ -489,7 +696,7 @@ mod tests {
             options: &options,
             sources: &sources,
         };
-        root_flanks(Some(Some(first)), None, &[TIGHT, NEWLINE], &[TIGHT, NEWLINE], &TABLE, &ctx)
+        root_flanks(Some(super::EdgeItem::Coord(first)), None, None, &[TIGHT, NEWLINE], &[TIGHT, NEWLINE], &TABLE, &ctx)
             .before
             .map(|edge| edge.arm)
     }
@@ -514,7 +721,7 @@ mod tests {
         let end = source.len() as u32;
         let first = coordinate(0, 1);
         let second = NodeCoordinate {
-            gap: second_gap,
+            writes: second_gap.map(|gap| Box::new(crate::slot::CoordinateWrites { gap: Some(gap), changed: Default::default() })),
             ..coordinate(end - 1, end)
         };
         let mut items: Vec<SlotValue<String>> = vec![SlotValue::Coord(first), SlotValue::Coord(second)];

@@ -2,7 +2,7 @@
 // another process parsed. Tree ids count from 0 in every process, so it
 // first parses trees of its own until the copy's tree id names one of them:
 // a lookup alone would then answer the copy from the wrong source. Prints
-// one JSON line: what it rendered, or the refusal.
+// one JSON line: what it rendered, from the copy's own data, or a refusal.
 import { createEngine } from '../../src/index.ts';
 import rust from '../../../rust/src/index.ts';
 

@@ -32,7 +32,8 @@ import type {
 	SupertypeSurface,
 	WithNode,
 	BoundWithNode,
-	QueryFacet
+	QueryFacet,
+	Snapshot
 } from '@sittir/types';
 import { Delimiter } from '@sittir/common/utils';
 import type * as T from './types.js';
@@ -61,6 +62,8 @@ export type LeafStringMap = {
 	[TSKindId.KeywordSeparator]: '*';
 	[TSKindId.WildcardPattern]: '_';
 	[TSKindId.LineContinuationNul]: '\\\u0000';
+	[TSKindId.Indent]: '﷐\n';
+	[TSKindId.Dedent]: '﷑\n';
 	[TSKindId.Space]: ' ';
 	[TSKindId.Tab]: '\t';
 	[TSKindId.Newline]: '\n';
@@ -909,8 +912,8 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[113, '>'],
 	[114, '<>'],
 	[115, 'newline'],
-	[116, '_indent'],
-	[117, '_dedent'],
+	[116, 'indent'],
+	[117, 'dedent'],
 	[118, 'string_start'],
 	[119, 'string_fragment'],
 	[120, 'escape_interpolation'],
@@ -1982,6 +1985,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.LtGt;
 		case 'newline':
 			return TSKindId.Newline;
+		case 'indent':
+			return TSKindId.Indent;
+		case 'dedent':
+			return TSKindId.Dedent;
 		case 'simple_statements':
 			return TSKindId.SimpleStatements;
 		case 'simple_pattern':
@@ -2241,7 +2248,7 @@ export enum IntegerDecimalKind {
 // Node types — concrete interfaces
 export interface Module {
 	readonly $type: TSKindId.Module;
-	readonly _statements?: readonly Statement[];
+	readonly _statements: readonly Statement[];
 	readonly __slotHints__?: {
 		readonly statements: SlotHint<T.Statement[], false, true>;
 	};
@@ -2499,7 +2506,7 @@ export interface IfStatement {
 	readonly $type: TSKindId.IfStatement;
 	readonly _condition: Expression;
 	readonly _consequence: Suite;
-	readonly _alternative?: readonly (ElifClause | ElseClause)[];
+	readonly _alternative: readonly (ElifClause | ElseClause)[];
 	readonly __inputHints__?: {
 		readonly condition:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -2648,7 +2655,7 @@ export interface WhileStatement {
 export interface TryStatement {
 	readonly $type: TSKindId.TryStatement;
 	readonly _body: Suite;
-	readonly _except_clauses?: readonly ExceptClause[];
+	readonly _except_clauses: readonly ExceptClause[];
 	readonly _else_clause?: ElseClause;
 	readonly _finally_clause?: FinallyClause;
 	readonly __looseHints__?: {
@@ -2846,7 +2853,7 @@ export interface NonlocalStatement {
 export interface ExecStatement {
 	readonly $type: TSKindId.ExecStatement;
 	readonly _code: String | Identifier;
-	readonly _in_clause?: readonly Expression[];
+	readonly _in_clause: readonly Expression[];
 	readonly __inputHints__?: {
 		readonly in_clause?: readonly (
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
@@ -2993,7 +3000,7 @@ export interface Decorator {
 
 export interface Block {
 	readonly $type: TSKindId.Block;
-	readonly _statements?: readonly Statement[];
+	readonly _statements: readonly Statement[];
 	readonly __slotHints__?: {
 		readonly statements: SlotHint<T.Statement[], false, true>;
 	};
@@ -4394,7 +4401,7 @@ export interface ConcatenatedString {
 export interface String {
 	readonly $type: TSKindId.String;
 	readonly _string_start: StringStart;
-	readonly _content?: readonly (Interpolation | StringContent)[];
+	readonly _content: readonly (Interpolation | StringContent)[];
 	readonly _string_end: StringEnd;
 	readonly __slotHints__?: {
 		readonly stringStart: SlotHint<T.StringStart>;
@@ -4459,7 +4466,7 @@ export interface Interpolation {
 
 export interface FormatSpecifier {
 	readonly $type: TSKindId.FormatSpecifier;
-	readonly _elements?: readonly (FormatSpecifierText | FormatExpression)[];
+	readonly _elements: readonly (FormatSpecifierText | FormatExpression)[];
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<
 			((T.FormatSpecifierText | T.FormatExpression) | T.FormatExpression.Types)[],
@@ -5111,7 +5118,7 @@ export interface WithClauseParen {
 
 export interface MatchBlockBlock {
 	readonly $type: TSKindId.MatchBlockBlock;
-	readonly _alternative?: readonly CaseClause[];
+	readonly _alternative: readonly CaseClause[];
 	readonly __slotHints__?: {
 		readonly alternatives: SlotHint<T.CaseClause[], false, true>;
 	};
@@ -5285,14 +5292,14 @@ export type StringStart = Terminal<TSKindId.StringStart, string>;
 export type StringFragment = Terminal<TSKindId.StringFragment, string>;
 export type EscapeInterpolation = Terminal<TSKindId.EscapeInterpolation, string>;
 export type StringEnd = Terminal<TSKindId.StringEnd, string>;
+export type Indent = TSKindId.Indent;
+export type Dedent = TSKindId.Dedent;
 export type Tight = TSKindId.Tight;
 export type Space = TSKindId.Space;
 export type Tab = TSKindId.Tab;
 export type Newline = TSKindId.Newline;
 export type Blankline = TSKindId.Blankline;
 export type DoubleBlankline = TSKindId.DoubleBlankline;
-export type Indent = Terminal<TSKindId.Indent, string>;
-export type Dedent = Terminal<TSKindId.Dedent, string>;
 export type PrintKeyword = TSKindId.PrintKeyword;
 export type ExecKeyword = TSKindId.ExecKeyword;
 export type AsyncKeyword = TSKindId.AsyncKeyword;
@@ -5793,12 +5800,15 @@ export namespace AssertStatement {
 				readonly conditionalExpression?: { readonly after?: WhitespaceKindId };
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly lambda?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
@@ -5808,6 +5818,7 @@ export namespace AssertStatement {
 				readonly setComprehension?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
@@ -6082,12 +6093,15 @@ export namespace ExecStatement {
 				readonly conditionalExpression?: { readonly after?: WhitespaceKindId };
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly lambda?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
@@ -6097,6 +6111,7 @@ export namespace ExecStatement {
 				readonly setComprehension?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
@@ -6221,12 +6236,15 @@ export namespace ExpressionList {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly lambda?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
@@ -6236,6 +6254,7 @@ export namespace ExpressionList {
 				readonly setComprehension?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
@@ -6275,12 +6294,16 @@ export namespace UnionPattern {
 				readonly complexPattern?: { readonly after?: WhitespaceKindId };
 				readonly concatenatedString?: { readonly after?: WhitespaceKindId };
 				readonly dictPattern?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
 					readonly pipe?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
 				readonly simplePatternNegative?: { readonly after?: WhitespaceKindId };
 				readonly splatPattern?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
+				readonly wildcardPattern?: { readonly after?: WhitespaceKindId };
 			};
 		};
 	}
@@ -6359,7 +6382,9 @@ export namespace ParametersElements {
 				readonly defaultParameter?: { readonly after?: WhitespaceKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly dictionarySplatPattern?: { readonly after?: WhitespaceKindId };
+				readonly keywordSeparator?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
+				readonly positionalSeparator?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -6808,6 +6833,8 @@ export namespace CollectionElements {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly lambda?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
@@ -6815,6 +6842,7 @@ export namespace CollectionElements {
 				readonly listSplat?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedListSplat?: { readonly after?: WhitespaceKindId };
@@ -6825,6 +6853,7 @@ export namespace CollectionElements {
 				readonly setComprehension?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 				readonly yield?: { readonly after?: WhitespaceKindId };
@@ -6854,6 +6883,8 @@ export namespace ForInClause {
 				readonly conditionalExpression?: { readonly after?: WhitespaceKindId };
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly lambda?: { readonly after?: WhitespaceKindId };
 				readonly lambdaWithinForInClause?: { readonly after?: WhitespaceKindId };
@@ -6861,6 +6892,7 @@ export namespace ForInClause {
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
@@ -6870,6 +6902,7 @@ export namespace ForInClause {
 				readonly setComprehension?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
@@ -6963,15 +6996,19 @@ export namespace SimpleStatementsElements {
 				readonly await?: { readonly after?: WhitespaceKindId };
 				readonly binaryOperator?: { readonly after?: WhitespaceKindId };
 				readonly booleanOperator?: { readonly after?: WhitespaceKindId };
+				readonly breakStatement?: { readonly after?: WhitespaceKindId };
 				readonly call?: { readonly after?: WhitespaceKindId };
 				readonly comparisonOperator?: { readonly after?: WhitespaceKindId };
 				readonly concatenatedString?: { readonly after?: WhitespaceKindId };
 				readonly conditionalExpression?: { readonly after?: WhitespaceKindId };
+				readonly continueStatement?: { readonly after?: WhitespaceKindId };
 				readonly deleteStatement?: { readonly after?: WhitespaceKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
 				readonly execStatement?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly futureImportStatement?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly globalStatement?: { readonly after?: WhitespaceKindId };
@@ -6982,9 +7019,11 @@ export namespace SimpleStatementsElements {
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly nonlocalStatement?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
+				readonly passStatement?: { readonly after?: WhitespaceKindId };
 				readonly printStatementChevron?: { readonly after?: WhitespaceKindId };
 				readonly printStatementPlain?: { readonly after?: WhitespaceKindId };
 				readonly raiseStatement?: { readonly after?: WhitespaceKindId };
@@ -6996,6 +7035,7 @@ export namespace SimpleStatementsElements {
 				readonly setComprehension?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly typeAliasStatement?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
@@ -7021,12 +7061,15 @@ export namespace Subjects {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly lambda?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
@@ -7036,6 +7079,7 @@ export namespace Subjects {
 				readonly setComprehension?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
@@ -7088,6 +7132,8 @@ export namespace Types {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly genericType?: { readonly after?: WhitespaceKindId };
 				readonly lambda?: { readonly after?: WhitespaceKindId };
@@ -7096,6 +7142,7 @@ export namespace Types {
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly memberType?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
@@ -7106,6 +7153,7 @@ export namespace Types {
 				readonly splatType?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 				readonly unionType?: { readonly after?: WhitespaceKindId };
@@ -7131,6 +7179,8 @@ export namespace ArgumentListElements {
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
 				readonly dictionarySplat?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly keywordArgument?: { readonly after?: WhitespaceKindId };
 				readonly lambda?: { readonly after?: WhitespaceKindId };
@@ -7139,6 +7189,7 @@ export namespace ArgumentListElements {
 				readonly listSplat?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedListSplat?: { readonly after?: WhitespaceKindId };
@@ -7149,6 +7200,7 @@ export namespace ArgumentListElements {
 				readonly setComprehension?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
@@ -7202,12 +7254,15 @@ export namespace Subscripts {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly lambda?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
@@ -7218,6 +7273,7 @@ export namespace Subscripts {
 				readonly slice?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
@@ -7284,6 +7340,8 @@ export namespace TupleElements {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly lambda?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
@@ -7291,6 +7349,7 @@ export namespace TupleElements {
 				readonly listSplat?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedListSplat?: { readonly after?: WhitespaceKindId };
@@ -7301,6 +7360,7 @@ export namespace TupleElements {
 				readonly setComprehension?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 				readonly yield?: { readonly after?: WhitespaceKindId };
@@ -7357,12 +7417,15 @@ export namespace PrintArguments {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly lambda?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
@@ -7372,6 +7435,7 @@ export namespace PrintArguments {
 				readonly setComprehension?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
@@ -7395,12 +7459,15 @@ export namespace PrintChevronArguments {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly lambda?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
@@ -7410,6 +7477,7 @@ export namespace PrintChevronArguments {
 				readonly setComprehension?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
@@ -7486,12 +7554,15 @@ export namespace ExceptClauseExceptionList {
 				readonly conditionalExpression?: { readonly after?: WhitespaceKindId };
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly lambda?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
@@ -7501,6 +7572,7 @@ export namespace ExceptClauseExceptionList {
 				readonly setComprehension?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
@@ -7555,12 +7627,15 @@ export namespace ExpressionStatementTuple {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly lambda?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
@@ -7570,6 +7645,7 @@ export namespace ExpressionStatementTuple {
 				readonly setComprehension?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
@@ -9965,6 +10041,8 @@ export interface LineContinuationNulNs extends KeywordNs<
 	'\\\u0000',
 	TSKindId.LineContinuationNul
 > {}
+export interface IndentNs extends KeywordNs<TSKindId.Indent, '﷐\n', TSKindId.Indent> {}
+export interface DedentNs extends KeywordNs<TSKindId.Dedent, '﷑\n', TSKindId.Dedent> {}
 export interface TightNs extends KeywordNs<TSKindId.Tight, '', TSKindId.Tight> {}
 export interface SpaceNs extends KeywordNs<TSKindId.Space, ' ', TSKindId.Space> {}
 export interface TabNs extends KeywordNs<TSKindId.Tab, '\t', TSKindId.Tab> {}
@@ -10029,8 +10107,6 @@ export interface EscapeInterpolationNs extends LeafNs<
 	TSKindId.EscapeInterpolation
 > {}
 export interface StringEndNs extends LeafNs<StringEnd, string, StringEnd.Bound, TSKindId.StringEnd> {}
-export interface IndentNs extends LeafNs<Indent, string, Indent.Bound, TSKindId.Indent> {}
-export interface DedentNs extends LeafNs<Dedent, string, Dedent.Bound, TSKindId.Dedent> {}
 
 export interface NamespaceMap {
 	[TSKindId.Module]: ModuleNs;
@@ -10209,6 +10285,8 @@ export interface NamespaceMap {
 	[TSKindId.KeywordSeparator]: KeywordSeparatorNs;
 	[TSKindId.WildcardPattern]: WildcardPatternNs;
 	[TSKindId.LineContinuationNul]: LineContinuationNulNs;
+	[TSKindId.Indent]: IndentNs;
+	[TSKindId.Dedent]: DedentNs;
 	[TSKindId.Tight]: TightNs;
 	[TSKindId.Space]: SpaceNs;
 	[TSKindId.Tab]: TabNs;
@@ -10233,8 +10311,6 @@ export interface NamespaceMap {
 	[TSKindId.StringFragment]: StringFragmentNs;
 	[TSKindId.EscapeInterpolation]: EscapeInterpolationNs;
 	[TSKindId.StringEnd]: StringEndNs;
-	[TSKindId.Indent]: IndentNs;
-	[TSKindId.Dedent]: DedentNs;
 }
 
 export interface BoundByKindId {
@@ -10413,8 +10489,6 @@ export interface BoundByKindId {
 	[TSKindId.StringFragment]: StringFragment.Bound;
 	[TSKindId.EscapeInterpolation]: EscapeInterpolation.Bound;
 	[TSKindId.StringEnd]: StringEnd.Bound;
-	[TSKindId.Indent]: Indent.Bound;
-	[TSKindId.Dedent]: Dedent.Bound;
 }
 
 export interface ParsedByKindId {
@@ -10593,8 +10667,6 @@ export interface ParsedByKindId {
 	[TSKindId.StringFragment]: StringFragment.Parsed;
 	[TSKindId.EscapeInterpolation]: EscapeInterpolation.Parsed;
 	[TSKindId.StringEnd]: StringEnd.Parsed;
-	[TSKindId.Indent]: Indent.Parsed;
-	[TSKindId.Dedent]: Dedent.Parsed;
 }
 
 export type FixedTextKindId =
@@ -10882,6 +10954,8 @@ export interface TypeKeyOf {
 	[TSKindId.KeywordSeparator]: 'keywordSeparator';
 	[TSKindId.WildcardPattern]: 'wildcardPattern';
 	[TSKindId.LineContinuationNul]: 'lineContinuationNul';
+	[TSKindId.Indent]: 'indent';
+	[TSKindId.Dedent]: 'dedent';
 	[TSKindId.Tight]: 'tight';
 	[TSKindId.Space]: 'space';
 	[TSKindId.Tab]: 'tab';
@@ -10906,8 +10980,6 @@ export interface TypeKeyOf {
 	[TSKindId.StringFragment]: 'stringFragment';
 	[TSKindId.EscapeInterpolation]: 'escapeInterpolation';
 	[TSKindId.StringEnd]: 'stringEnd';
-	[TSKindId.Indent]: 'indent';
-	[TSKindId.Dedent]: 'dedent';
 }
 
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
@@ -10929,6 +11001,7 @@ export namespace Module {
 		readonly $type: T.Module['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.Module['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.Module>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Module>;
@@ -10948,6 +11021,7 @@ export namespace SimpleStatements {
 		readonly $type: T.SimpleStatements['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.SimpleStatements['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.SimpleStatements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SimpleStatements>;
@@ -10965,6 +11039,7 @@ export namespace ImportStatement {
 		readonly $type: T.ImportStatement['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ImportStatement['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ImportStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportStatement>;
@@ -10982,6 +11057,7 @@ export namespace RelativeImport {
 		readonly $type: T.RelativeImport['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.RelativeImport['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.RelativeImport>;
 	export type LooseConfig = LooseConfigFor<TSKindId.RelativeImport>;
@@ -10999,6 +11075,7 @@ export namespace FutureImportStatement {
 		readonly $type: T.FutureImportStatement['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.FutureImportStatement['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.FutureImportStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FutureImportStatement>;
@@ -11016,6 +11093,7 @@ export namespace ImportFromStatement {
 		readonly $type: T.ImportFromStatement['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ImportFromStatement['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ImportFromStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportFromStatement>;
@@ -11034,6 +11112,7 @@ export namespace ImportList {
 		readonly $type: T.ImportList['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ImportList['$type']>;
 		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.ImportList>;
@@ -11077,6 +11156,7 @@ export namespace AliasedImport {
 		readonly $type: T.AliasedImport['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.AliasedImport['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.AliasedImport>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AliasedImport>;
@@ -11094,6 +11174,7 @@ export namespace PrintStatement {
 		readonly $type: T.PrintStatement['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.PrintStatement['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.PrintStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PrintStatement>;
@@ -11111,6 +11192,7 @@ export namespace Chevron {
 		readonly $type: T.Chevron['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.Chevron['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.Chevron>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Chevron>;
@@ -11128,6 +11210,7 @@ export namespace AssertStatement {
 		readonly $type: T.AssertStatement['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.AssertStatement['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.AssertStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AssertStatement>;
@@ -11151,6 +11234,7 @@ export namespace ExpressionStatement {
 		readonly $type: T.ExpressionStatement['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ExpressionStatement['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ExpressionStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExpressionStatement>;
@@ -11170,6 +11254,7 @@ export namespace NamedExpression {
 		readonly $type: T.NamedExpression['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.NamedExpression['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.NamedExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NamedExpression>;
@@ -11187,6 +11272,7 @@ export namespace ReturnStatement {
 		readonly $type: T.ReturnStatement['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ReturnStatement['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ReturnStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ReturnStatement>;
@@ -11204,6 +11290,7 @@ export namespace DeleteStatement {
 		readonly $type: T.DeleteStatement['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.DeleteStatement['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.DeleteStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DeleteStatement>;
@@ -11221,6 +11308,7 @@ export namespace RaiseStatement {
 		readonly $type: T.RaiseStatement['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.RaiseStatement['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.RaiseStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.RaiseStatement>;
@@ -11238,6 +11326,7 @@ export namespace IfStatement {
 		readonly $type: T.IfStatement['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.IfStatement['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.IfStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.IfStatement>;
@@ -11255,6 +11344,7 @@ export namespace ElifClause {
 		readonly $type: T.ElifClause['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ElifClause['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ElifClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ElifClause>;
@@ -11272,6 +11362,7 @@ export namespace ElseClause {
 		readonly $type: T.ElseClause['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ElseClause['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ElseClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ElseClause>;
@@ -11289,6 +11380,7 @@ export namespace MatchStatement {
 		readonly $type: T.MatchStatement['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.MatchStatement['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.MatchStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchStatement>;
@@ -11314,6 +11406,7 @@ export namespace MatchBlock {
 		readonly $type: T.MatchBlock['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.MatchBlock['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.MatchBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchBlock>;
@@ -11331,6 +11424,7 @@ export namespace CaseClause {
 		readonly $type: T.CaseClause['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.CaseClause['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.CaseClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CaseClause>;
@@ -11356,6 +11450,7 @@ export namespace ForStatement {
 		readonly $type: T.ForStatement['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ForStatement['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ForStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ForStatement>;
@@ -11373,6 +11468,7 @@ export namespace WhileStatement {
 		readonly $type: T.WhileStatement['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.WhileStatement['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.WhileStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.WhileStatement>;
@@ -11390,6 +11486,7 @@ export namespace TryStatement {
 		readonly $type: T.TryStatement['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.TryStatement['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.TryStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TryStatement>;
@@ -11407,6 +11504,7 @@ export namespace ExceptClause {
 		readonly $type: T.ExceptClause['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ExceptClause['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ExceptClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExceptClause>;
@@ -11424,6 +11522,7 @@ export namespace FinallyClause {
 		readonly $type: T.FinallyClause['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.FinallyClause['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.FinallyClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FinallyClause>;
@@ -11441,6 +11540,7 @@ export namespace WithStatement {
 		readonly $type: T.WithStatement['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.WithStatement['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.WithStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.WithStatement>;
@@ -11458,6 +11558,7 @@ export namespace WithItem {
 		readonly $type: T.WithItem['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.WithItem['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.WithItem>;
 	export type LooseConfig = LooseConfigFor<TSKindId.WithItem>;
@@ -11475,6 +11576,7 @@ export namespace FunctionDefinition {
 		readonly $type: T.FunctionDefinition['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.FunctionDefinition['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.FunctionDefinition>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FunctionDefinition>;
@@ -11492,6 +11594,7 @@ export namespace Parameters {
 		readonly $type: T.Parameters['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.Parameters['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.Parameters>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Parameters>;
@@ -11509,6 +11612,7 @@ export namespace LambdaParameters {
 		readonly $type: T.LambdaParameters['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.LambdaParameters['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.LambdaParameters>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LambdaParameters>;
@@ -11526,6 +11630,7 @@ export namespace ListSplat {
 		readonly $type: T.ListSplat['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ListSplat['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ListSplat>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ListSplat>;
@@ -11543,6 +11648,7 @@ export namespace DictionarySplat {
 		readonly $type: T.DictionarySplat['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.DictionarySplat['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.DictionarySplat>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DictionarySplat>;
@@ -11560,6 +11666,7 @@ export namespace GlobalStatement {
 		readonly $type: T.GlobalStatement['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.GlobalStatement['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.GlobalStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.GlobalStatement>;
@@ -11592,6 +11699,7 @@ export namespace NonlocalStatement {
 		readonly $type: T.NonlocalStatement['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.NonlocalStatement['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.NonlocalStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NonlocalStatement>;
@@ -11624,6 +11732,7 @@ export namespace ExecStatement {
 		readonly $type: T.ExecStatement['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ExecStatement['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ExecStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExecStatement>;
@@ -11641,6 +11750,7 @@ export namespace TypeAliasStatement {
 		readonly $type: T.TypeAliasStatement['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.TypeAliasStatement['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.TypeAliasStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeAliasStatement>;
@@ -11658,6 +11768,7 @@ export namespace ClassDefinition {
 		readonly $type: T.ClassDefinition['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ClassDefinition['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ClassDefinition>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ClassDefinition>;
@@ -11675,6 +11786,7 @@ export namespace TypeParameter {
 		readonly $type: T.TypeParameter['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.TypeParameter['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.TypeParameter>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeParameter>;
@@ -11692,6 +11804,7 @@ export namespace ParenthesizedListSplat {
 		readonly $type: T.ParenthesizedListSplat['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ParenthesizedListSplat['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ParenthesizedListSplat>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ParenthesizedListSplat>;
@@ -11709,6 +11822,7 @@ export namespace ArgumentList {
 		readonly $type: T.ArgumentList['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ArgumentList['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ArgumentList>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ArgumentList>;
@@ -11726,6 +11840,7 @@ export namespace DecoratedDefinition {
 		readonly $type: T.DecoratedDefinition['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.DecoratedDefinition['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.DecoratedDefinition>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DecoratedDefinition>;
@@ -11743,6 +11858,7 @@ export namespace Decorator {
 		readonly $type: T.Decorator['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.Decorator['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.Decorator>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Decorator>;
@@ -11760,6 +11876,7 @@ export namespace Block {
 		readonly $type: T.Block['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.Block['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.Block>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Block>;
@@ -11780,6 +11897,7 @@ export namespace ExpressionList {
 		readonly $type: T.ExpressionList['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ExpressionList['$type']>;
 		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.ExpressionList>;
@@ -11819,6 +11937,7 @@ export namespace DottedName {
 		readonly $type: T.DottedName['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.DottedName['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.DottedName>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DottedName>;
@@ -11851,6 +11970,7 @@ export namespace CasePattern {
 		readonly $type: T.CasePattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.CasePattern['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.CasePattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CasePattern>;
@@ -11868,6 +11988,7 @@ export namespace SimplePattern {
 		readonly $type: T.SimplePattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.SimplePattern['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.SimplePattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SimplePattern>;
@@ -11903,6 +12024,7 @@ export namespace CaseAsPattern {
 		readonly $type: T.CaseAsPattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.CaseAsPattern['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.CaseAsPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CaseAsPattern>;
@@ -11920,6 +12042,7 @@ export namespace UnionPattern {
 		readonly $type: T.UnionPattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.UnionPattern['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.UnionPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UnionPattern>;
@@ -12048,6 +12171,7 @@ export namespace DictPattern {
 		readonly $type: T.DictPattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.DictPattern['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.DictPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DictPattern>;
@@ -12065,6 +12189,7 @@ export namespace KeyValuePattern {
 		readonly $type: T.KeyValuePattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.KeyValuePattern['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.KeyValuePattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.KeyValuePattern>;
@@ -12082,6 +12207,7 @@ export namespace KeywordPattern {
 		readonly $type: T.KeywordPattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.KeywordPattern['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.KeywordPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.KeywordPattern>;
@@ -12099,6 +12225,7 @@ export namespace SplatPattern {
 		readonly $type: T.SplatPattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.SplatPattern['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.SplatPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SplatPattern>;
@@ -12116,6 +12243,7 @@ export namespace ClassPattern {
 		readonly $type: T.ClassPattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ClassPattern['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ClassPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ClassPattern>;
@@ -12143,6 +12271,7 @@ export namespace ComplexPattern {
 		readonly $type: T.ComplexPattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ComplexPattern['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ComplexPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ComplexPattern>;
@@ -12161,6 +12290,7 @@ export namespace ParametersElements {
 		readonly $type: T.ParametersElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ParametersElements['$type']>;
 		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.ParametersElements>;
@@ -12201,6 +12331,7 @@ export namespace Patterns {
 		readonly $type: T.Patterns['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.Patterns['$type']>;
 		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.Patterns>;
@@ -12234,6 +12365,7 @@ export namespace TuplePattern {
 		readonly $type: T.TuplePattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.TuplePattern['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.TuplePattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TuplePattern>;
@@ -12251,6 +12383,7 @@ export namespace ListPattern {
 		readonly $type: T.ListPattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ListPattern['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ListPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ListPattern>;
@@ -12268,6 +12401,7 @@ export namespace DefaultParameter {
 		readonly $type: T.DefaultParameter['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.DefaultParameter['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.DefaultParameter>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DefaultParameter>;
@@ -12285,6 +12419,7 @@ export namespace TypedDefaultParameter {
 		readonly $type: T.TypedDefaultParameter['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.TypedDefaultParameter['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.TypedDefaultParameter>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypedDefaultParameter>;
@@ -12302,6 +12437,7 @@ export namespace ListSplatPattern {
 		readonly $type: T.ListSplatPattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ListSplatPattern['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ListSplatPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ListSplatPattern>;
@@ -12331,6 +12467,7 @@ export namespace DictionarySplatPattern {
 		readonly $type: T.DictionarySplatPattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.DictionarySplatPattern['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.DictionarySplatPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DictionarySplatPattern>;
@@ -12360,6 +12497,7 @@ export namespace AsPattern {
 		readonly $type: T.AsPattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.AsPattern['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.AsPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AsPattern>;
@@ -12377,6 +12515,7 @@ export namespace NotOperator {
 		readonly $type: T.NotOperator['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.NotOperator['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.NotOperator>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NotOperator>;
@@ -12394,6 +12533,7 @@ export namespace BooleanOperator {
 		readonly $type: T.BooleanOperator['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.BooleanOperator['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.BooleanOperator>;
 	export type LooseConfig = LooseConfigFor<TSKindId.BooleanOperator>;
@@ -12411,6 +12551,7 @@ export namespace BinaryOperator {
 		readonly $type: T.BinaryOperator['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.BinaryOperator['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.BinaryOperator>;
 	export type LooseConfig = LooseConfigFor<TSKindId.BinaryOperator>;
@@ -12428,6 +12569,7 @@ export namespace UnaryOperator {
 		readonly $type: T.UnaryOperator['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.UnaryOperator['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.UnaryOperator>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UnaryOperator>;
@@ -12445,6 +12587,7 @@ export namespace ComparisonOperator {
 		readonly $type: T.ComparisonOperator['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ComparisonOperator['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ComparisonOperator>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ComparisonOperator>;
@@ -12488,6 +12631,7 @@ export namespace Lambda {
 		readonly $type: T.Lambda['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.Lambda['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.Lambda>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Lambda>;
@@ -12505,6 +12649,7 @@ export namespace LambdaWithinForInClause {
 		readonly $type: T.LambdaWithinForInClause['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.LambdaWithinForInClause['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.LambdaWithinForInClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LambdaWithinForInClause>;
@@ -12522,6 +12667,7 @@ export namespace AugmentedAssignment {
 		readonly $type: T.AugmentedAssignment['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.AugmentedAssignment['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.AugmentedAssignment>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AugmentedAssignment>;
@@ -12540,6 +12686,7 @@ export namespace PatternList {
 		readonly $type: T.PatternList['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.PatternList['$type']>;
 		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.PatternList>;
@@ -12573,6 +12720,7 @@ export namespace Yield {
 		readonly $type: T.Yield['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.Yield['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.Yield>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Yield>;
@@ -12590,6 +12738,7 @@ export namespace Attribute {
 		readonly $type: T.Attribute['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.Attribute['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.Attribute>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Attribute>;
@@ -12607,6 +12756,7 @@ export namespace Subscript {
 		readonly $type: T.Subscript['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.Subscript['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.Subscript>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Subscript>;
@@ -12633,6 +12783,7 @@ export namespace Slice {
 		readonly $type: T.Slice['$type'];
 		readonly $with: WithNode<Parsed, BoundByKindId, ParsedSurface>;
 		readonly $query: () => QueryFacet<Parsed, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.Slice['$type']>;
 	}
 	export type Parsed = ParsedSurface & FlatShapesOf<ParsedSurface, T.Slice, ParsedByKindId>;
 	export type Loose = LooseFor<TSKindId.Slice>;
@@ -12670,6 +12821,7 @@ export namespace Call {
 		readonly $type: T.Call['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.Call['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.Call>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Call>;
@@ -12687,6 +12839,7 @@ export namespace TypedParameter {
 		readonly $type: T.TypedParameter['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.TypedParameter['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.TypedParameter>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypedParameter>;
@@ -12704,6 +12857,7 @@ export namespace Type {
 		readonly $type: T.Type['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.Type['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.Type>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Type>;
@@ -12723,6 +12877,7 @@ export namespace SplatType {
 		readonly $type: T.SplatType['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.SplatType['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.SplatType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SplatType>;
@@ -12740,6 +12895,7 @@ export namespace GenericType {
 		readonly $type: T.GenericType['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.GenericType['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.GenericType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.GenericType>;
@@ -12757,6 +12913,7 @@ export namespace UnionType {
 		readonly $type: T.UnionType['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.UnionType['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.UnionType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UnionType>;
@@ -12774,6 +12931,7 @@ export namespace ConstrainedType {
 		readonly $type: T.ConstrainedType['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ConstrainedType['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ConstrainedType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ConstrainedType>;
@@ -12791,6 +12949,7 @@ export namespace MemberType {
 		readonly $type: T.MemberType['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.MemberType['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.MemberType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MemberType>;
@@ -12808,6 +12967,7 @@ export namespace KeywordArgument {
 		readonly $type: T.KeywordArgument['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.KeywordArgument['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.KeywordArgument>;
 	export type LooseConfig = LooseConfigFor<TSKindId.KeywordArgument>;
@@ -12825,6 +12985,7 @@ export namespace List {
 		readonly $type: T.List['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.List['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.List>;
 	export type LooseConfig = LooseConfigFor<TSKindId.List>;
@@ -12842,6 +13003,7 @@ export namespace Set {
 		readonly $type: T.Set['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.Set['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.Set>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Set>;
@@ -12859,6 +13021,7 @@ export namespace Tuple {
 		readonly $type: T.Tuple['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.Tuple['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.Tuple>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Tuple>;
@@ -12876,6 +13039,7 @@ export namespace Dictionary {
 		readonly $type: T.Dictionary['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.Dictionary['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.Dictionary>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Dictionary>;
@@ -12893,6 +13057,7 @@ export namespace Pair {
 		readonly $type: T.Pair['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.Pair['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.Pair>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Pair>;
@@ -12910,6 +13075,7 @@ export namespace ListComprehension {
 		readonly $type: T.ListComprehension['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ListComprehension['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ListComprehension>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ListComprehension>;
@@ -12927,6 +13093,7 @@ export namespace DictionaryComprehension {
 		readonly $type: T.DictionaryComprehension['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.DictionaryComprehension['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.DictionaryComprehension>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DictionaryComprehension>;
@@ -12944,6 +13111,7 @@ export namespace SetComprehension {
 		readonly $type: T.SetComprehension['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.SetComprehension['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.SetComprehension>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SetComprehension>;
@@ -12961,6 +13129,7 @@ export namespace GeneratorExpression {
 		readonly $type: T.GeneratorExpression['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.GeneratorExpression['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.GeneratorExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.GeneratorExpression>;
@@ -12978,6 +13147,7 @@ export namespace ParenthesizedExpression {
 		readonly $type: T.ParenthesizedExpression['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ParenthesizedExpression['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ParenthesizedExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ParenthesizedExpression>;
@@ -12996,6 +13166,7 @@ export namespace CollectionElements {
 		readonly $type: T.CollectionElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.CollectionElements['$type']>;
 		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.CollectionElements>;
@@ -13062,6 +13233,7 @@ export namespace ForInClause {
 		readonly $type: T.ForInClause['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ForInClause['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ForInClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ForInClause>;
@@ -13079,6 +13251,7 @@ export namespace IfClause {
 		readonly $type: T.IfClause['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.IfClause['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.IfClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.IfClause>;
@@ -13096,6 +13269,7 @@ export namespace ConditionalExpression {
 		readonly $type: T.ConditionalExpression['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ConditionalExpression['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ConditionalExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ConditionalExpression>;
@@ -13113,6 +13287,7 @@ export namespace ConcatenatedString {
 		readonly $type: T.ConcatenatedString['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ConcatenatedString['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ConcatenatedString>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ConcatenatedString>;
@@ -13136,6 +13311,7 @@ export namespace String {
 		readonly $type: T.String['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.String['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.String>;
 	export type LooseConfig = LooseConfigFor<TSKindId.String>;
@@ -13153,6 +13329,7 @@ export namespace StringContent {
 		readonly $type: T.StringContent['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.StringContent['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.StringContent>;
 	export type LooseConfig = LooseConfigFor<TSKindId.StringContent>;
@@ -13209,6 +13386,7 @@ export namespace Interpolation {
 		readonly $type: T.Interpolation['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.Interpolation['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.Interpolation>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Interpolation>;
@@ -13226,6 +13404,7 @@ export namespace FormatSpecifier {
 		readonly $type: T.FormatSpecifier['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.FormatSpecifier['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.FormatSpecifier>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FormatSpecifier>;
@@ -13270,6 +13449,7 @@ export namespace Await {
 		readonly $type: T.Await['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.Await['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.Await>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Await>;
@@ -13287,6 +13467,7 @@ export namespace Comment {
 		readonly $type: T.Comment['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.Comment['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.Comment>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Comment>;
@@ -13305,6 +13486,7 @@ export namespace SimpleStatementsElements {
 		readonly $type: T.SimpleStatementsElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.SimpleStatementsElements['$type']>;
 		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.SimpleStatementsElements>;
@@ -13349,6 +13531,7 @@ export namespace Subjects {
 		readonly $type: T.Subjects['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.Subjects['$type']>;
 		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.Subjects>;
@@ -13383,6 +13566,7 @@ export namespace CasePatterns {
 		readonly $type: T.CasePatterns['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.CasePatterns['$type']>;
 		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.CasePatterns>;
@@ -13423,6 +13607,7 @@ export namespace WithClauseWithItems {
 		readonly $type: T.WithClauseWithItems['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.WithClauseWithItems['$type']>;
 		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.WithClauseWithItems>;
@@ -13463,6 +13648,7 @@ export namespace Types {
 		readonly $type: T.Types['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.Types['$type']>;
 		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.Types>;
@@ -13497,6 +13683,7 @@ export namespace ArgumentListElements {
 		readonly $type: T.ArgumentListElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ArgumentListElements['$type']>;
 		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.ArgumentListElements>;
@@ -13568,6 +13755,7 @@ export namespace ListPatternCasePatterns {
 		readonly $type: T.ListPatternCasePatterns['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ListPatternCasePatterns['$type']>;
 		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.ListPatternCasePatterns>;
@@ -13612,6 +13800,7 @@ export namespace DictPatternElements {
 		readonly $type: T.DictPatternElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.DictPatternElements['$type']>;
 		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.DictPatternElements>;
@@ -13656,6 +13845,7 @@ export namespace Subscripts {
 		readonly $type: T.Subscripts['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.Subscripts['$type']>;
 		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.Subscripts>;
@@ -13700,6 +13890,7 @@ export namespace DictionaryElements {
 		readonly $type: T.DictionaryElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.DictionaryElements['$type']>;
 		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.DictionaryElements>;
@@ -13743,6 +13934,7 @@ export namespace SliceGroup {
 		readonly $type: T.SliceGroup['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.SliceGroup['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.SliceGroup>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SliceGroup>;
@@ -13761,6 +13953,7 @@ export namespace TuplePatternElements {
 		readonly $type: T.TuplePatternElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.TuplePatternElements['$type']>;
 		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.TuplePatternElements>;
@@ -13801,6 +13994,7 @@ export namespace TupleElements {
 		readonly $type: T.TupleElements['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.TupleElements['$type']>;
 		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.TupleElements>;
@@ -13867,6 +14061,7 @@ export namespace ExceptClauseExceptionAs {
 		readonly $type: T.ExceptClauseExceptionAs['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ExceptClauseExceptionAs['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ExceptClauseExceptionAs>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExceptClauseExceptionAs>;
@@ -13884,6 +14079,7 @@ export namespace CaseTuplePattern {
 		readonly $type: T.CaseTuplePattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.CaseTuplePattern['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.CaseTuplePattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CaseTuplePattern>;
@@ -13901,6 +14097,7 @@ export namespace CaseListPattern {
 		readonly $type: T.CaseListPattern['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.CaseListPattern['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.CaseListPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CaseListPattern>;
@@ -13919,6 +14116,7 @@ export namespace PrintArguments {
 		readonly $type: T.PrintArguments['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.PrintArguments['$type']>;
 		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.PrintArguments>;
@@ -13959,6 +14157,7 @@ export namespace PrintChevronArguments {
 		readonly $type: T.PrintChevronArguments['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.PrintChevronArguments['$type']>;
 		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.PrintChevronArguments>;
@@ -14002,6 +14201,7 @@ export namespace PrintStatementChevron {
 		readonly $type: T.PrintStatementChevron['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.PrintStatementChevron['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.PrintStatementChevron>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PrintStatementChevron>;
@@ -14019,6 +14219,7 @@ export namespace PrintStatementPlain {
 		readonly $type: T.PrintStatementPlain['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.PrintStatementPlain['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.PrintStatementPlain>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PrintStatementPlain>;
@@ -14036,6 +14237,7 @@ export namespace ParenthesizedImportList {
 		readonly $type: T.ParenthesizedImportList['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ParenthesizedImportList['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ParenthesizedImportList>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ParenthesizedImportList>;
@@ -14053,6 +14255,7 @@ export namespace ComprehensionClauses {
 		readonly $type: T.ComprehensionClauses['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ComprehensionClauses['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ComprehensionClauses>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ComprehensionClauses>;
@@ -14082,6 +14285,7 @@ export namespace IntegerHex {
 		readonly $type: T.IntegerHex['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.IntegerHex['$type']>;
 	}
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.IntegerHex>, 'prefix'>
@@ -14107,6 +14311,7 @@ export namespace IntegerOctal {
 		readonly $type: T.IntegerOctal['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.IntegerOctal['$type']>;
 	}
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.IntegerOctal>, 'prefix'>
@@ -14135,6 +14340,7 @@ export namespace IntegerBinary {
 		readonly $type: T.IntegerBinary['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.IntegerBinary['$type']>;
 	}
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.IntegerBinary>, 'prefix'>
@@ -14162,6 +14368,7 @@ export namespace FloatPoint {
 		readonly $type: T.FloatPoint['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.FloatPoint['$type']>;
 	}
 	export type Loose =
 		| LooseFor<TSKindId.FloatPoint>
@@ -14197,6 +14404,7 @@ export namespace FloatLeadingPoint {
 		readonly $type: T.FloatLeadingPoint['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.FloatLeadingPoint['$type']>;
 	}
 	export type Loose =
 		| LooseFor<TSKindId.FloatLeadingPoint>
@@ -14232,6 +14440,7 @@ export namespace FloatScientific {
 		readonly $type: T.FloatScientific['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.FloatScientific['$type']>;
 	}
 	export type Loose =
 		| LooseFor<TSKindId.FloatScientific>
@@ -14258,6 +14467,7 @@ export namespace EscapeSequenceUnicodeFixed {
 		readonly $type: T.EscapeSequenceUnicodeFixed['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.EscapeSequenceUnicodeFixed['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.EscapeSequenceUnicodeFixed>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceUnicodeFixed>;
@@ -14275,6 +14485,7 @@ export namespace EscapeSequenceUnicodeWide {
 		readonly $type: T.EscapeSequenceUnicodeWide['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.EscapeSequenceUnicodeWide['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.EscapeSequenceUnicodeWide>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceUnicodeWide>;
@@ -14292,6 +14503,7 @@ export namespace EscapeSequenceHex {
 		readonly $type: T.EscapeSequenceHex['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.EscapeSequenceHex['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.EscapeSequenceHex>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceHex>;
@@ -14309,6 +14521,7 @@ export namespace EscapeSequenceOctal {
 		readonly $type: T.EscapeSequenceOctal['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.EscapeSequenceOctal['$type']>;
 	}
 	export type Loose =
 		| LooseFor<TSKindId.EscapeSequenceOctal>
@@ -14330,6 +14543,7 @@ export namespace EscapeSequenceLineBreak {
 		readonly $type: T.EscapeSequenceLineBreak['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.EscapeSequenceLineBreak['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.EscapeSequenceLineBreak>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceLineBreak>;
@@ -14347,6 +14561,7 @@ export namespace EscapeSequenceSimple {
 		readonly $type: T.EscapeSequenceSimple['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.EscapeSequenceSimple['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.EscapeSequenceSimple>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceSimple>;
@@ -14364,6 +14579,7 @@ export namespace EscapeSequenceNamed {
 		readonly $type: T.EscapeSequenceNamed['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.EscapeSequenceNamed['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.EscapeSequenceNamed>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceNamed>;
@@ -14381,6 +14597,7 @@ export namespace SimplePatternNegative {
 		readonly $type: T.SimplePatternNegative['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.SimplePatternNegative['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.SimplePatternNegative>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SimplePatternNegative>;
@@ -14398,6 +14615,7 @@ export namespace ExceptClauseExceptionList {
 		readonly $type: T.ExceptClauseExceptionList['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ExceptClauseExceptionList['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ExceptClauseExceptionList>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExceptClauseExceptionList>;
@@ -14421,6 +14639,7 @@ export namespace ExceptClauseException {
 		readonly $type: T.ExceptClauseException['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ExceptClauseException['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ExceptClauseException>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExceptClauseException>;
@@ -14438,6 +14657,7 @@ export namespace AssignmentEq {
 		readonly $type: T.AssignmentEq['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.AssignmentEq['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.AssignmentEq>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AssignmentEq>;
@@ -14455,6 +14675,7 @@ export namespace AssignmentType {
 		readonly $type: T.AssignmentType['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.AssignmentType['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.AssignmentType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AssignmentType>;
@@ -14472,6 +14693,7 @@ export namespace AssignmentTyped {
 		readonly $type: T.AssignmentTyped['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.AssignmentTyped['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.AssignmentTyped>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AssignmentTyped>;
@@ -14490,6 +14712,7 @@ export namespace ExpressionStatementTuple {
 		readonly $type: T.ExpressionStatementTuple['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ExpressionStatementTuple['$type']>;
 		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.ExpressionStatementTuple>;
@@ -14534,6 +14757,7 @@ export namespace WithClauseBare {
 		readonly $type: T.WithClauseBare['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.WithClauseBare['$type']>;
 		readonly _delimiter: Delimiter | undefined;
 	}
 	export type Loose = LooseFor<TSKindId.WithClauseBare>;
@@ -14573,6 +14797,7 @@ export namespace WithClauseParen {
 		readonly $type: T.WithClauseParen['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.WithClauseParen['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.WithClauseParen>;
 	export type LooseConfig = LooseConfigFor<TSKindId.WithClauseParen>;
@@ -14590,6 +14815,7 @@ export namespace MatchBlockBlock {
 		readonly $type: T.MatchBlockBlock['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.MatchBlockBlock['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.MatchBlockBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchBlockBlock>;
@@ -14614,6 +14840,7 @@ export namespace MatchBlockEmpty {
 		readonly $type: T.MatchBlockEmpty['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.MatchBlockEmpty['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.MatchBlockEmpty>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchBlockEmpty>;
@@ -14631,6 +14858,7 @@ export namespace SuiteInline {
 		readonly $type: T.SuiteInline['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.SuiteInline['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.SuiteInline>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SuiteInline>;
@@ -14648,6 +14876,7 @@ export namespace SuiteBlock {
 		readonly $type: T.SuiteBlock['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.SuiteBlock['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.SuiteBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SuiteBlock>;
@@ -14665,6 +14894,7 @@ export namespace SuiteEmpty {
 		readonly $type: T.SuiteEmpty['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.SuiteEmpty['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.SuiteEmpty>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SuiteEmpty>;
@@ -14682,6 +14912,7 @@ export namespace ComparisonOperatorComparator {
 		readonly $type: T.ComparisonOperatorComparator['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.ComparisonOperatorComparator['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.ComparisonOperatorComparator>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ComparisonOperatorComparator>;
@@ -14699,6 +14930,7 @@ export namespace YieldFromClause {
 		readonly $type: T.YieldFromClause['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.YieldFromClause['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.YieldFromClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.YieldFromClause>;
@@ -14717,6 +14949,7 @@ export namespace Names {
 		readonly $type: T.Names['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.Names['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.Names>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Names>;
@@ -14735,6 +14968,7 @@ export namespace AsPatternTarget {
 		readonly $type: T.AsPatternTarget['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.AsPatternTarget['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.AsPatternTarget>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AsPatternTarget>;
@@ -14753,6 +14987,7 @@ export namespace FormatExpression {
 		readonly $type: T.FormatExpression['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.FormatExpression['$type']>;
 	}
 	export type Loose = LooseFor<TSKindId.FormatExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FormatExpression>;
@@ -14889,6 +15124,26 @@ export namespace LineContinuationNul {
 	export type BuildArgs = LineContinuationNulNs['BuildArgs'];
 	export type LooseArgs = LineContinuationNulNs['LooseArgs'];
 	export type Kind = TSKindId.LineContinuationNul;
+}
+export namespace Indent {
+	export type Config = IndentNs['Config'];
+	export type Bound = IndentNs['Bound'];
+	export type Parsed = IndentNs['Bound'];
+	export type Loose = IndentNs['Loose'];
+	export type LooseConfig = IndentNs['LooseConfig'];
+	export type BuildArgs = IndentNs['BuildArgs'];
+	export type LooseArgs = IndentNs['LooseArgs'];
+	export type Kind = TSKindId.Indent;
+}
+export namespace Dedent {
+	export type Config = DedentNs['Config'];
+	export type Bound = DedentNs['Bound'];
+	export type Parsed = DedentNs['Bound'];
+	export type Loose = DedentNs['Loose'];
+	export type LooseConfig = DedentNs['LooseConfig'];
+	export type BuildArgs = DedentNs['BuildArgs'];
+	export type LooseArgs = DedentNs['LooseArgs'];
+	export type Kind = TSKindId.Dedent;
 }
 export namespace Tight {
 	export type Config = TightNs['Config'];
@@ -15250,46 +15505,6 @@ export namespace StringEnd {
 	export type LooseArgs = StringEndNs['LooseArgs'];
 	export type Kind = TSKindId.StringEnd;
 }
-export namespace Indent {
-	export type Config = IndentNs['Config'];
-	export interface Bound extends NodeMethodsOf {
-		readonly $type: TSKindId.Indent;
-		readonly $source?: 0 | 1 | 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export interface Parsed extends HoldsTree {
-		readonly $type: TSKindId.Indent;
-		readonly $source?: 0 | 1 | 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = IndentNs['Loose'];
-	export type LooseConfig = IndentNs['LooseConfig'];
-	export type BuildArgs = IndentNs['BuildArgs'];
-	export type LooseArgs = IndentNs['LooseArgs'];
-	export type Kind = TSKindId.Indent;
-}
-export namespace Dedent {
-	export type Config = DedentNs['Config'];
-	export interface Bound extends NodeMethodsOf {
-		readonly $type: TSKindId.Dedent;
-		readonly $source?: 0 | 1 | 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export interface Parsed extends HoldsTree {
-		readonly $type: TSKindId.Dedent;
-		readonly $source?: 0 | 1 | 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = DedentNs['Loose'];
-	export type LooseConfig = DedentNs['LooseConfig'];
-	export type BuildArgs = DedentNs['BuildArgs'];
-	export type LooseArgs = DedentNs['LooseArgs'];
-	export type Kind = TSKindId.Dedent;
-}
 
 export interface PythonTypeMap extends GrammarTypeMap {
 	readonly namespaces: NamespaceMap;
@@ -15333,7 +15548,9 @@ export interface PythonTypeMap extends GrammarTypeMap {
 	readonly trivia:
 		| Blankline
 		| Comment
+		| Dedent
 		| DoubleBlankline
+		| Indent
 		| LineContinuation
 		| LineContinuationNewline
 		| LineContinuationNul

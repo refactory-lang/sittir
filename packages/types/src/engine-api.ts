@@ -1,36 +1,13 @@
-import type { AnyUntypedNode, ErrorNode, ErrorRegion, FormatRecord, GrammarTriviaEntry, RenderCallOptions, TriviaItem, TriviaSetter } from './core-types.ts';
+import type { AnyUntypedNode, ErrorNode, ErrorRegion, GrammarTriviaEntry, TriviaItem, TriviaSetter } from './core-types.ts';
 import type { IndentOption } from './options.ts';
-import type { Admit } from './node-surface.ts';
-import type { QueryFacet, QuerySlots } from './query.ts';
-
-/** One line-break run a read node owns as trivia: the whitespace member it reads as and the byte its run starts at. */
-export interface LineGap {
-	readonly kind: number;
-	readonly start: number;
-}
-
-/** A read node as the line-gap query names it: its own handle, the `$treeHandle` of its `$_layout.at`. */
-export interface LineGapAddress {
-	readonly handle: number;
-}
-
-/**
- * The line-break runs a read node owns, before it and in its closing gap, each in source order, and the spans of the
- * sibling owners beside it: before and after the outermost node spanning exactly its bytes, so a list item wrapped in
- * an item node reports the items beside it (`null` when that node is its parent's first, or its last). A run holds
- * only while that sibling is still the node's neighbour.
- */
-export interface LineGaps {
-	readonly leading: readonly LineGap[];
-	readonly trailing: readonly LineGap[];
-	readonly previous: { readonly start: number; readonly end: number } | null;
-	readonly next: { readonly start: number; readonly end: number } | null;
-}
+import type { Admit, Snapshot } from './node-surface.ts';
+import type { KindMembership, QueryFacet, QuerySlots } from './query.ts';
 
 export interface TriviaFacts {
 	readonly kindName: (type: AnyUntypedNode['$type']) => string | undefined;
 	readonly kinds: ReadonlySet<string>;
-	readonly innerGaps: { readonly [kind: string]: readonly string[] };
+	/** The kinds whose template renders an inner side, where an empty node of the kind holds its trivia. */
+	readonly innerKinds: ReadonlySet<string>;
 	/**
 	 * Engine plumbing, not for callers: the kind ids of what a rebuild
 	 * constructs around an existing node, the kinds enrich mints (hoisted) and
@@ -102,11 +79,6 @@ export interface GrammarInnerTrivia<N, Trivia> {
 	inner(...items: GrammarTriviaEntry<Trivia>[]): N;
 }
 
-export interface GrammarInnerTriviaAt<N, Trivia, Gap extends string> extends GrammarInnerTrivia<N, Trivia> {
-	innerAt(gap: Gap): readonly TriviaItem<Trivia>[];
-	innerAt(gap: Gap, ...items: GrammarTriviaEntry<Trivia>[]): N;
-}
-
 export interface LanguageAPI {
 	readonly name: string;
 	readonly build: object;
@@ -147,7 +119,6 @@ export interface Language<API extends LanguageAPI> {
 }
 
 export interface NativeEngineOptions<O extends object = Readonly<Record<string, unknown>>> {
-	readonly format?: FormatRecord;
 	readonly options?: O;
 }
 
@@ -159,16 +130,16 @@ export interface LanguageHooks<API extends LanguageAPI> {
 	readonly kinds: API['kinds'];
 	readonly trivia: TriviaFacts;
 	readonly querySlots: QuerySlots;
+	readonly membership: KindMembership;
 	createNative(options?: NativeEngineOptions<API['options']>): NativeLanguageEngine<API>;
 	wrap(root: unknown, tree: unknown): API['root'];
-	hydrate?(node: unknown, tree: unknown): unknown;
+	hydrate(node: unknown, tree: unknown): unknown;
 }
 
 export interface NativeLanguageEngine<API extends LanguageAPI> {
-	render(node: AnyUntypedNode | number, options?: API['options'] & RenderCallOptions): Rendered;
+	render(node: AnyUntypedNode | number, options?: API['options']): Rendered;
 	parseAndRead: EngineDiagnostics<AnyUntypedNode>['parseAndRead'];
 	readonly buildProfile?: EngineDiagnostics['buildProfile'];
-	lineGapsOf: EngineDiagnostics['lineGapsOf'];
 	dispose(): void;
 }
 
@@ -186,12 +157,6 @@ export interface ParsedRoot {
 export interface EngineDiagnostics<TRoot = unknown, TTree extends object = object> {
 	readonly buildProfile: string | undefined;
 	parseAndRead(source: string, options?: ParseOptions): ParsedRead<TRoot & ParsedRoot, TTree>;
-	/**
-	 * The line-break whitespace a read node owns as trivia, on each side in
-	 * source order: the whitespace member each run reads as and the byte its
-	 * run starts at. Asked of the parse that read the node.
-	 */
-	lineGapsOf(address: LineGapAddress): LineGaps;
 }
 
 export interface Rendered extends Disposable {
@@ -244,6 +209,13 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	readonly isFactoryNode: (value: unknown) => value is API['node'];
 	/** Whether `value` is a parsed ERROR node of this engine's language, read in a slot or as a trivia item. */
 	readonly isErrorNode: (value: unknown) => value is ErrorNode;
+	/**
+	 * Whether `node` is this engine's node of a kind with inner gaps and no child of it holds
+	 * sides, so it takes `$trivia.inner`. A child holds sides when it is named, not an extra or
+	 * `ERROR`, and has width: read from the tree for a parsed node, so its zero-width automatic
+	 * semicolon holds none, and from the rendered text for a built one. A child with text (a real
+	 * `;`) holds sides.
+	 */
 	readonly isEmptyNode: <N extends API['empty']['node']>(
 		node: N
 	) => node is N & Extract<API['empty'], { readonly node: N }>['empty'];
@@ -265,7 +237,7 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	 */
 	readonly query: <N extends API['node']>(node: N) => FacetOf<N>;
 	readonly read: (path: string, options?: ParseOptions) => Promise<API['root']>;
-	readonly render: RenderCall<API, Draft<API>> & RenderCall<API, StoredInput<API> | RenderBuilder<API>>;
+	readonly render: RenderCall<API, Draft<API>> & RenderCall<API, StoredInput<API> | RenderBuilder<API> | SnapshotInput<API>>;
 	readonly create: (path: string, fn: (build: API['build']) => API['root']) => Pending;
 	readonly edit: (path: string, fn: (root: API['root']) => API['root']) => Pending;
 	readonly write: (path: string, node: API['root']) => Pending;
@@ -274,7 +246,7 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 
 export type RenderCall<API extends LanguageAPI, Input> = <const R extends API['options'] = API['options']>(
 	node: Input,
-	options?: R & RenderOptionsCheck<API, R, keyof RenderCallOptions> & RenderCallOptions
+	options?: R & RenderOptionsCheck<API, R>
 ) => Rendered;
 
 /**
@@ -291,7 +263,9 @@ type StoredInput<API extends LanguageAPI> = API['node'] | API['fixedTextKindId']
 
 type RenderBuilder<API extends LanguageAPI> = (build: API['build']) => API['node'];
 
-type RenderInput<API extends LanguageAPI> = StoredInput<API> | Draft<API>;
+type SnapshotInput<API extends LanguageAPI> = Snapshot<Extract<API['node']['$type'], number>>;
+
+type RenderInput<API extends LanguageAPI> = StoredInput<API> | Draft<API> | SnapshotInput<API>;
 
 export type RenderArgument<API extends LanguageAPI> = RenderInput<API> | RenderBuilder<API>;
 
@@ -313,7 +287,6 @@ type IsExactly<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends
 export interface EngineOptions<API extends LanguageAPI, M extends ApiSurface = 'default'> {
 	readonly api?: M;
 	readonly render?: API['options'];
-	readonly format?: FormatRecord;
 	readonly intercept?: readonly Interceptor<API>[];
 }
 

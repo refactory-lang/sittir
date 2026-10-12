@@ -349,7 +349,7 @@ pub static EDGE_ROWS: &[u16] = &[
 /// Per kind id, its flags: KIND_ANON (the parser's anonymous token), KIND_LINE_TERMINATED, KIND_LINE_BREAK_TERMINATED, KIND_ROOT.
 pub static KIND_FLAGS: &[u8] = &[
     0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0,
-    0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    4, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 1, 1, 1, 1, 1, 1,
 ];
 
@@ -389,6 +389,10 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("program", &[142, 140, 139, 143, 131, 132, 133, 134, 135, 136, 137, 138]),
     ("quantifier", &[144, 145, 146, 147, 148, 149]),
     ("string", &[150, 151]),
+];
+
+/// Per kind id, the stretches of its children its template indents one level, by their anchors.
+pub static DEPTH_REGIONS: &[::sittir_core::trivia_table::DepthRegion] = &[
 ];
 
 pub fn spacing_text(kind: u16) -> &'static str {
