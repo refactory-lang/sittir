@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, statSync, writeFileSync } from 'node:fs';
 import { basename, join, relative, dirname } from 'node:path';
 import { BINDINGS_FILE, VOCABULARY_DIR } from '../bindings/facts.ts';
-import { isVocabularySource, vocabularySources } from '../bindings/hash.ts';
+import { isVocabularySource, vocabularySources } from '../bindings/vocabulary.ts';
 import { PIN_FILE } from '../bootstrap/bootstrap.ts';
 import { hostBinaryFreshnessFor } from './native-binary-freshness.ts';
 import {
@@ -134,7 +134,7 @@ const CODEGEN_SOURCE_DIR = 'packages/codegen/src';
 
 const VOCABULARY_SOURCE_DIR = relative(REPO_ROOT, VOCABULARY_DIR);
 
-const isVocabularyInput = (rel: string): boolean => rel.startsWith(`${VOCABULARY_SOURCE_DIR}/`) && isVocabularySource(rel);
+const isVocabularyInput = (rel: string): boolean => rel.startsWith(`${VOCABULARY_SOURCE_DIR}/`) && isVocabularySource(rel.slice(VOCABULARY_SOURCE_DIR.length + 1));
 
 const bindingsInput = (grammar: GrammarName): string => `${relative(REPO_ROOT, grammarPackageDir(grammar))}/${BINDINGS_FILE}`;
 
@@ -145,7 +145,7 @@ function grammarSourceInputs(grammar: GrammarName, src: ManifestSource): string[
 	const own = [`${dir}/${GRAMMAR_ENTRY}`, `${dir}/package.json`, bindingsInput(grammar)];
 	if (!isBound(grammar, src)) return own;
 	const vocabularyDir = join(src.root, VOCABULARY_SOURCE_DIR);
-	const vocabulary = existsSync(vocabularyDir) ? vocabularySources(vocabularyDir).map((path) => relative(src.root, path)) : [];
+	const vocabulary = existsSync(vocabularyDir) ? vocabularySources(vocabularyDir).map((name) => `${VOCABULARY_SOURCE_DIR}/${name}`) : [];
 	return [...own, PIN_FILE, ...vocabulary];
 }
 

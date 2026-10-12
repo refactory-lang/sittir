@@ -464,20 +464,28 @@ function memberFact(v: Visit, name: string, top: Visit, topKind: string | null, 
 	if (parent === null || isGroup(parent)) return null;
 	const owner = kindOf(parent);
 	if (owner === null) return null;
-	const direct = parent === top || topKind === null;
-	const claims = claimed.get(direct ? parent : top);
+	const home = claimedHome(parent, top, claimed);
+	const homeKind = home === top ? topKind : kindOf(home);
+	const direct = parent === home || homeKind === null;
+	const claims = claimed.get(direct ? parent : home);
 	const of = claims === undefined ? {} : { claims };
 	if (name === DROPPED) return { route: 'dropped', owner, ...selector(v), ...of };
 	const token = tokenText(v);
 	if (direct) {
 		if (token !== null && v.field === null) return { route: 'presence', owner, name, token, via: [], ...of };
-		return isGroup(v) && v.field === null ? null : { route: 'rename', owner, name, ...selector(v), ...of };
+		return isGroup(v) && v.field === null ? null : { route: 'rename', owner, name, ...selector(v), ...(token === null ? {} : { token }), ...of };
 	}
 	const via: SlotSelector[] = [];
-	for (let cursor: Visit | null = parent; cursor !== null && cursor !== top; cursor = cursor.parent)
+	for (let cursor: Visit | null = parent; cursor !== null && cursor !== home; cursor = cursor.parent)
 		if (kindOf(cursor) !== null) via.push(selector(cursor));
-	if (token !== null) return { route: 'presence', owner: topKind, name, token, via, ...of };
-	return { route: 'nested', owner: topKind, name, parent: owner, multiple: quantified(v), via, ...selector(v), ...of };
+	if (token !== null) return { route: 'presence', owner: homeKind, name, token, via, ...of };
+	return { route: 'nested', owner: homeKind, name, parent: owner, multiple: quantified(v), via, ...selector(v), ...of };
+}
+
+function claimedHome(parent: Visit, top: Visit, claimed: ReadonlyMap<Visit, readonly number[]>): Visit {
+	for (let cursor: Visit | null = parent; cursor !== null && cursor !== top; cursor = cursor.parent)
+		if (claimed.has(cursor)) return cursor;
+	return top;
 }
 
 function containerFact(

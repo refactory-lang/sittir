@@ -55,6 +55,7 @@ export interface ClaimFact {
 	readonly fieldLiterals: Readonly<Record<string, string>>;
 	readonly tokens: readonly string[];
 	readonly children: readonly ChildFact[];
+	readonly flag?: string;
 }
 
 export interface UnclaimedFact {
@@ -65,7 +66,7 @@ export interface UnclaimedFact {
 export type MemberFact = MemberRouteFact & { readonly claims?: readonly number[] };
 
 type MemberRouteFact =
-	| ({ readonly route: 'rename'; readonly owner: string; readonly name: string } & SlotSelector)
+	| ({ readonly route: 'rename'; readonly owner: string; readonly name: string; readonly token?: string; readonly flag?: boolean } & SlotSelector)
 	| ({ readonly route: 'dropped'; readonly owner: string } & SlotSelector)
 	| {
 			readonly route: 'presence';

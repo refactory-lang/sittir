@@ -1,22 +1,13 @@
 import { createHash } from 'node:crypto';
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import { join, sep } from 'node:path';
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import type { GrammarName } from '../grammars.ts';
 import { bindingsPath, VOCABULARY_DIR } from './facts.ts';
-
-export const isVocabularySource = (file: string): boolean => file.endsWith('.ts');
-
-const vocabularyNames = (vocabularyDir: string): readonly string[] =>
-	readdirSync(vocabularyDir, { recursive: true, encoding: 'utf8' })
-		.filter(isVocabularySource)
-		.map((name) => name.split(sep).join('/'))
-		.sort();
-
-export const vocabularySources = (vocabularyDir: string = VOCABULARY_DIR): readonly string[] => vocabularyNames(vocabularyDir).map((name) => join(vocabularyDir, name));
+import { vocabularySources } from './vocabulary.ts';
 
 export function bindingsSourceHash(scmPath: string, vocabularyDir: string): string {
 	const hash = createHash('sha256').update(readFileSync(scmPath));
-	for (const name of vocabularyNames(vocabularyDir)) hash.update(`\0${name}\0`).update(readFileSync(join(vocabularyDir, name)));
+	for (const name of vocabularySources(vocabularyDir)) hash.update(`\0${name}\0`).update(readFileSync(join(vocabularyDir, name)));
 	return hash.digest('hex');
 }
 

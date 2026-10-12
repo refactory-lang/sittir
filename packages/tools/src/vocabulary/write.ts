@@ -1,5 +1,5 @@
 import { type Owned, type Plan, stubAlias } from './plan.ts';
-import { AUGMENTATION, FEATURES, type Feature, type VocabularySource, byCodepoint } from './read.ts';
+import { AUGMENTATION, FEATURES, type Feature, type VocabularySource, byCodepoint } from '@sittir/codegen/bindings';
 
 export const FEATURES_INDEX = `${FEATURES}/index.ts`;
 export const GENERATED_FILES: readonly string[] = [AUGMENTATION, FEATURES_INDEX];

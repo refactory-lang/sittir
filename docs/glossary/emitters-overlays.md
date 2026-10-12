@@ -176,25 +176,13 @@ The tree of every vocabulary path a grammar reads (`NamespaceNode`), segment by 
 
 Every node below a namespace node, each before its own descendants. The alias pass and the portable surface walk the tree with it.
 
-### `packages/codegen/src/emitters/overlays/portable/namespaces.ts::aliasesOf`
-
-The shortcut names under each namespace node. A last segment unique among a node's descendants that are not its direct children becomes an alias for that path (`NamespaceAlias`). A segment two or more descendants share is dropped (`DroppedAlias`, naming every path), and a real child of the same name always wins.
-
 ### `packages/codegen/src/emitters/overlays/portable/namespaces.ts::namespaceSection`
 
-The `namespaces` section of `node-model-portable.json5`. Per depth (`NamespaceLevel`): the paths there, the distinct kinds whose read entries name a path of that depth, the paths refining a path some entry reads (`expression.binary.add` under a read `expression.binary`), and the aliases added one level below the nodes they sit under. Then every dropped alias. A change to the tree shows up in these numbers when the file is reviewed. The dropped list is pinned by a ratchet test, so a new shared segment fails until the bindings tell the paths apart.
+The `namespaces` section of `node-model-portable.json5`. Per depth (`NamespaceLevel`): the paths there, the distinct kinds whose read entries name a path of that depth, and the paths refining a path some entry reads (`expression.binary.add` under a read `expression.binary`). A change to the tree shows up in these numbers when the file is reviewed.
 
 ### `packages/codegen/src/emitters/overlays/portable/namespaces.ts::NamespaceNode`
 
 One level of the portable namespace tree: its dotted path, the kinds read as exactly that path, and its child levels by segment.
-
-### `packages/codegen/src/emitters/overlays/portable/namespaces.ts::NamespaceAlias`
-
-A shortcut name under a level for a deeper path, for a segment no sibling of that level already uses.
-
-### `packages/codegen/src/emitters/overlays/portable/namespaces.ts::DroppedAlias`
-
-A shortcut name that would have stood for more than one deeper path under a level, so none is made; reported with the paths it would have meant.
 
 ### `packages/codegen/src/emitters/overlays/portable/namespaces.ts::MutableNode`
 
@@ -206,7 +194,7 @@ A path one segment deeper, from the root's empty path or a dotted one.
 
 ### `packages/codegen/src/emitters/overlays/portable/namespaces.ts::NamespaceLevel`
 
-The namespace counts at one depth: its paths, the kinds read at them, the refinements among them, and the aliases made at that depth.
+The namespace counts at one depth: its paths, the kinds read at them, and the refinements among them.
 
 ### `packages/codegen/src/emitters/overlays/portable/namespaces.ts::depthOf`
 
@@ -222,7 +210,7 @@ The portable overlay's two emitted files: the routes model (`node-model-portable
 
 ### `packages/codegen/src/emitters/overlays/portable/surface.ts::emitPortableSurface`
 
-`src/portable.ts`: the types and the table of a bound grammar's portable surface. `PortableIds` names, per path, the union of the kind ids read at or under it (`namespaceTree`). `PortableKindsAt` and `PortableIsAt` type each path's `kinds` node and guard, both with their child segments and aliases, each referring to the next path by key, so an alias has the very type of its path. `PortableKinds` and `PortableIs` are the roots. The `PortableTable` holds each path's ids and whether they decide it (`exact`: every read entry of each of its kinds names it or a path under it, and one of each kind's entries is unplaced and untested, so the first match always lands under it), the aliases (`aliasesOf`), each kind id's read entries in read order (placement kinds nearest first, `null` for a wildcard, and the compiled test; kinds the parser shows by one name share one id, so their entries are written once under it and a path's ids are listed once each), and every fixed literal's text. A placement kind without a parser id fails generation with `kindDiscriminantExpr`'s message. The module ends by building the runtime from it (`common/src/portable.ts::portableSurface`).
+`src/portable.ts`: the types and the table of a bound grammar's portable surface. `PortableIds` names, per path, the union of the kind ids read at or under it (`namespaceTree`). `PortableKindsAt` and `PortableIsAt` type each path's `kinds` node and guard, both with their child segments, each referring to the next path by key. A path is reached only by its full path: no segment is linked under a further ancestor. `PortableKinds` and `PortableIs` are the roots. The `PortableTable` holds each path's ids and whether they decide it (`exact`: every read entry of each of its kinds names it or a path under it, and one of each kind's entries is unplaced and untested, so the first match always lands under it), each kind id's read entries in read order (placement kinds nearest first, `null` for a wildcard, and the compiled test; kinds the parser shows by one name share one id, so their entries are written once under it and a path's ids are listed once each), and every fixed literal's text. A placement kind without a parser id fails generation with `kindDiscriminantExpr`'s message. The module ends by building the runtime from it (`common/src/portable.ts::portableSurface`).
 ### `packages/codegen/src/emitters/overlays/portable/surface.ts::PortableSurfaceConfig`
 
 What the portable surface is emitted from: the grammar's routes, the compiled test of each read entry, the kind-id expression of a kind, and the fixed text of each fixed-text kind.

@@ -66,7 +66,6 @@ export interface PortableIds {
 	'declaration.function': TSKindId.FunctionDefinition;
 	'declaration.method': TSKindId.FunctionDefinition;
 	'declaration.method.dunder': TSKindId.FunctionDefinition;
-	'declaration.method.static': TSKindId.FunctionDefinition;
 	'declaration.parameter':
 		| TSKindId.DefaultParameter
 		| TSKindId.Identifier
@@ -438,15 +437,6 @@ export interface PortableKindsAt {
 		readonly import: PortableKindsAt['clause.import'];
 		readonly print: PortableKindsAt['clause.print'];
 		readonly with: PortableKindsAt['clause.with'];
-		readonly alias: PortableKindsAt['clause.import.alias'];
-		readonly chevron: PortableKindsAt['clause.print.chevron'];
-		readonly for: PortableKindsAt['clause.comprehension.for'];
-		readonly if: PortableKindsAt['clause.comprehension.if'];
-		readonly item: PortableKindsAt['clause.with.item'];
-		readonly match: PortableKindsAt['clause.case.match'];
-		readonly prefix: PortableKindsAt['clause.import.relative.prefix'];
-		readonly relative: PortableKindsAt['clause.import.relative'];
-		readonly wildcard: PortableKindsAt['clause.import.wildcard'];
 	};
 	'clause.case': {
 		readonly $ids: readonly PortableIds['clause.case'][];
@@ -469,7 +459,6 @@ export interface PortableKindsAt {
 		readonly alias: PortableKindsAt['clause.import.alias'];
 		readonly relative: PortableKindsAt['clause.import.relative'];
 		readonly wildcard: PortableKindsAt['clause.import.wildcard'];
-		readonly prefix: PortableKindsAt['clause.import.relative.prefix'];
 	};
 	'clause.import.alias': { readonly $ids: readonly PortableIds['clause.import.alias'][] };
 	'clause.import.relative': {
@@ -501,11 +490,6 @@ export interface PortableKindsAt {
 		readonly type_alias: PortableKindsAt['declaration.type_alias'];
 		readonly type_parameter: PortableKindsAt['declaration.type_parameter'];
 		readonly variable: PortableKindsAt['declaration.variable'];
-		readonly default: PortableKindsAt['declaration.parameter.default'];
-		readonly dunder: PortableKindsAt['declaration.method.dunder'];
-		readonly static: PortableKindsAt['declaration.method.static'];
-		readonly typed: PortableKindsAt['declaration.parameter.typed'];
-		readonly typed_default: PortableKindsAt['declaration.parameter.typed_default'];
 	};
 	'declaration.class': { readonly $ids: readonly PortableIds['declaration.class'][] };
 	'declaration.constant': { readonly $ids: readonly PortableIds['declaration.constant'][] };
@@ -514,10 +498,8 @@ export interface PortableKindsAt {
 	'declaration.method': {
 		readonly $ids: readonly PortableIds['declaration.method'][];
 		readonly dunder: PortableKindsAt['declaration.method.dunder'];
-		readonly static: PortableKindsAt['declaration.method.static'];
 	};
 	'declaration.method.dunder': { readonly $ids: readonly PortableIds['declaration.method.dunder'][] };
-	'declaration.method.static': { readonly $ids: readonly PortableIds['declaration.method.static'][] };
 	'declaration.parameter': {
 		readonly $ids: readonly PortableIds['declaration.parameter'][];
 		readonly default: PortableKindsAt['declaration.parameter.default'];
@@ -537,37 +519,12 @@ export interface PortableKindsAt {
 		readonly comparator: PortableKindsAt['element.comparator'];
 		readonly pair: PortableKindsAt['element.pair'];
 		readonly splat: PortableKindsAt['element.splat'];
-		readonly comparison: PortableKindsAt['element.comparator.comparison'];
-		readonly dictionary: PortableKindsAt['element.splat.dictionary'];
-		readonly equal: PortableKindsAt['element.comparator.comparison.equal'];
-		readonly greater: PortableKindsAt['element.comparator.comparison.greater'];
-		readonly greater_equal: PortableKindsAt['element.comparator.comparison.greater_equal'];
-		readonly identity: PortableKindsAt['element.comparator.identity'];
-		readonly in: PortableKindsAt['element.comparator.membership.in'];
-		readonly is: PortableKindsAt['element.comparator.identity.is'];
-		readonly is_not: PortableKindsAt['element.comparator.identity.is_not'];
-		readonly less: PortableKindsAt['element.comparator.comparison.less'];
-		readonly less_equal: PortableKindsAt['element.comparator.comparison.less_equal'];
-		readonly membership: PortableKindsAt['element.comparator.membership'];
-		readonly not_equal: PortableKindsAt['element.comparator.comparison.not_equal'];
-		readonly not_in: PortableKindsAt['element.comparator.membership.not_in'];
-		readonly parenthesized: PortableKindsAt['element.splat.parenthesized'];
 	};
 	'element.comparator': {
 		readonly $ids: readonly PortableIds['element.comparator'][];
 		readonly comparison: PortableKindsAt['element.comparator.comparison'];
 		readonly identity: PortableKindsAt['element.comparator.identity'];
 		readonly membership: PortableKindsAt['element.comparator.membership'];
-		readonly equal: PortableKindsAt['element.comparator.comparison.equal'];
-		readonly greater: PortableKindsAt['element.comparator.comparison.greater'];
-		readonly greater_equal: PortableKindsAt['element.comparator.comparison.greater_equal'];
-		readonly in: PortableKindsAt['element.comparator.membership.in'];
-		readonly is: PortableKindsAt['element.comparator.identity.is'];
-		readonly is_not: PortableKindsAt['element.comparator.identity.is_not'];
-		readonly less: PortableKindsAt['element.comparator.comparison.less'];
-		readonly less_equal: PortableKindsAt['element.comparator.comparison.less_equal'];
-		readonly not_equal: PortableKindsAt['element.comparator.comparison.not_equal'];
-		readonly not_in: PortableKindsAt['element.comparator.membership.not_in'];
 	};
 	'element.comparator.comparison': {
 		readonly $ids: readonly PortableIds['element.comparator.comparison'][];
@@ -635,60 +592,10 @@ export interface PortableKindsAt {
 		readonly subscript: PortableKindsAt['expression.subscript'];
 		readonly unary: PortableKindsAt['expression.unary'];
 		readonly yield: PortableKindsAt['expression.yield'];
-		readonly arithmetic: PortableKindsAt['expression.binary.arithmetic'];
-		readonly bare: PortableKindsAt['expression.collection.tuple.bare'];
-		readonly bitwise: PortableKindsAt['expression.binary.bitwise'];
-		readonly bitwise_and: PortableKindsAt['expression.assignment.compound.bitwise_and'];
-		readonly bitwise_not: PortableKindsAt['expression.unary.bitwise_not'];
-		readonly bitwise_or: PortableKindsAt['expression.assignment.compound.bitwise_or'];
-		readonly bitwise_xor: PortableKindsAt['expression.assignment.compound.bitwise_xor'];
-		readonly chain: PortableKindsAt['expression.binary.comparison.chain'];
-		readonly comparison: PortableKindsAt['expression.binary.comparison'];
-		readonly compound: PortableKindsAt['expression.assignment.compound'];
-		readonly conversion: PortableKindsAt['expression.interpolation.conversion'];
-		readonly delegate: PortableKindsAt['expression.yield.delegate'];
-		readonly equal: PortableKindsAt['expression.binary.comparison.equal'];
-		readonly format: PortableKindsAt['expression.interpolation.format'];
-		readonly generator: PortableKindsAt['expression.comprehension.generator'];
-		readonly greater: PortableKindsAt['expression.binary.comparison.greater'];
-		readonly greater_equal: PortableKindsAt['expression.binary.comparison.greater_equal'];
-		readonly identity: PortableKindsAt['expression.binary.identity'];
-		readonly in: PortableKindsAt['expression.binary.membership.in'];
-		readonly is: PortableKindsAt['expression.binary.identity.is'];
-		readonly is_not: PortableKindsAt['expression.binary.identity.is_not'];
-		readonly left: PortableKindsAt['expression.binary.shift.left'];
-		readonly less: PortableKindsAt['expression.binary.comparison.less'];
-		readonly less_equal: PortableKindsAt['expression.binary.comparison.less_equal'];
-		readonly logical: PortableKindsAt['expression.binary.logical'];
-		readonly membership: PortableKindsAt['expression.binary.membership'];
-		readonly negation: PortableKindsAt['expression.unary.negation'];
-		readonly not: PortableKindsAt['expression.unary.not'];
-		readonly not_equal: PortableKindsAt['expression.binary.comparison.not_equal'];
-		readonly not_in: PortableKindsAt['expression.binary.membership.not_in'];
-		readonly plus: PortableKindsAt['expression.unary.plus'];
-		readonly right: PortableKindsAt['expression.binary.shift.right'];
-		readonly shift: PortableKindsAt['expression.binary.shift'];
-		readonly shift_left: PortableKindsAt['expression.assignment.compound.shift_left'];
-		readonly shift_right: PortableKindsAt['expression.assignment.compound.shift_right'];
-		readonly tuple: PortableKindsAt['expression.collection.tuple'];
-		readonly xor: PortableKindsAt['expression.binary.bitwise.xor'];
 	};
 	'expression.assignment': {
 		readonly $ids: readonly PortableIds['expression.assignment'][];
 		readonly compound: PortableKindsAt['expression.assignment.compound'];
-		readonly add: PortableKindsAt['expression.assignment.compound.add'];
-		readonly bitwise_and: PortableKindsAt['expression.assignment.compound.bitwise_and'];
-		readonly bitwise_or: PortableKindsAt['expression.assignment.compound.bitwise_or'];
-		readonly bitwise_xor: PortableKindsAt['expression.assignment.compound.bitwise_xor'];
-		readonly divide: PortableKindsAt['expression.assignment.compound.divide'];
-		readonly exponent: PortableKindsAt['expression.assignment.compound.exponent'];
-		readonly floor_divide: PortableKindsAt['expression.assignment.compound.floor_divide'];
-		readonly matmul: PortableKindsAt['expression.assignment.compound.matmul'];
-		readonly modulo: PortableKindsAt['expression.assignment.compound.modulo'];
-		readonly multiply: PortableKindsAt['expression.assignment.compound.multiply'];
-		readonly shift_left: PortableKindsAt['expression.assignment.compound.shift_left'];
-		readonly shift_right: PortableKindsAt['expression.assignment.compound.shift_right'];
-		readonly subtract: PortableKindsAt['expression.assignment.compound.subtract'];
 	};
 	'expression.assignment.compound': {
 		readonly $ids: readonly PortableIds['expression.assignment.compound'][];
@@ -754,27 +661,6 @@ export interface PortableKindsAt {
 		readonly matmul: PortableKindsAt['expression.binary.matmul'];
 		readonly membership: PortableKindsAt['expression.binary.membership'];
 		readonly shift: PortableKindsAt['expression.binary.shift'];
-		readonly add: PortableKindsAt['expression.binary.arithmetic.add'];
-		readonly chain: PortableKindsAt['expression.binary.comparison.chain'];
-		readonly divide: PortableKindsAt['expression.binary.arithmetic.divide'];
-		readonly equal: PortableKindsAt['expression.binary.comparison.equal'];
-		readonly exponent: PortableKindsAt['expression.binary.arithmetic.exponent'];
-		readonly floor_divide: PortableKindsAt['expression.binary.arithmetic.floor_divide'];
-		readonly greater: PortableKindsAt['expression.binary.comparison.greater'];
-		readonly greater_equal: PortableKindsAt['expression.binary.comparison.greater_equal'];
-		readonly in: PortableKindsAt['expression.binary.membership.in'];
-		readonly is: PortableKindsAt['expression.binary.identity.is'];
-		readonly is_not: PortableKindsAt['expression.binary.identity.is_not'];
-		readonly left: PortableKindsAt['expression.binary.shift.left'];
-		readonly less: PortableKindsAt['expression.binary.comparison.less'];
-		readonly less_equal: PortableKindsAt['expression.binary.comparison.less_equal'];
-		readonly modulo: PortableKindsAt['expression.binary.arithmetic.modulo'];
-		readonly multiply: PortableKindsAt['expression.binary.arithmetic.multiply'];
-		readonly not_equal: PortableKindsAt['expression.binary.comparison.not_equal'];
-		readonly not_in: PortableKindsAt['expression.binary.membership.not_in'];
-		readonly right: PortableKindsAt['expression.binary.shift.right'];
-		readonly subtract: PortableKindsAt['expression.binary.arithmetic.subtract'];
-		readonly xor: PortableKindsAt['expression.binary.bitwise.xor'];
 	};
 	'expression.binary.arithmetic': {
 		readonly $ids: readonly PortableIds['expression.binary.arithmetic'][];
@@ -881,7 +767,6 @@ export interface PortableKindsAt {
 		readonly list: PortableKindsAt['expression.collection.list'];
 		readonly set: PortableKindsAt['expression.collection.set'];
 		readonly tuple: PortableKindsAt['expression.collection.tuple'];
-		readonly bare: PortableKindsAt['expression.collection.tuple.bare'];
 	};
 	'expression.collection.dictionary': { readonly $ids: readonly PortableIds['expression.collection.dictionary'][] };
 	'expression.collection.list': { readonly $ids: readonly PortableIds['expression.collection.list'][] };
@@ -949,24 +834,6 @@ export interface PortableKindsAt {
 		readonly null: PortableKindsAt['literal.null'];
 		readonly number: PortableKindsAt['literal.number'];
 		readonly string: PortableKindsAt['literal.string'];
-		readonly big: PortableKindsAt['literal.number.integer.big'];
-		readonly binary: PortableKindsAt['literal.number.integer.binary'];
-		readonly bytes: PortableKindsAt['literal.string.bytes'];
-		readonly concatenated: PortableKindsAt['literal.string.concatenated'];
-		readonly escape: PortableKindsAt['literal.string.escape'];
-		readonly f: PortableKindsAt['literal.string.f'];
-		readonly false: PortableKindsAt['literal.boolean.false'];
-		readonly float: PortableKindsAt['literal.number.float'];
-		readonly hex: PortableKindsAt['literal.number.integer.hex'];
-		readonly imaginary: PortableKindsAt['literal.number.integer.imaginary'];
-		readonly integer: PortableKindsAt['literal.number.integer'];
-		readonly leading_point: PortableKindsAt['literal.number.float.leading_point'];
-		readonly octal: PortableKindsAt['literal.number.integer.octal'];
-		readonly raw: PortableKindsAt['literal.string.raw'];
-		readonly scientific: PortableKindsAt['literal.number.float.scientific'];
-		readonly text: PortableKindsAt['literal.string.text'];
-		readonly triple: PortableKindsAt['literal.string.triple'];
-		readonly true: PortableKindsAt['literal.boolean.true'];
 	};
 	'literal.boolean': {
 		readonly $ids: readonly PortableIds['literal.boolean'][];
@@ -981,13 +848,6 @@ export interface PortableKindsAt {
 		readonly $ids: readonly PortableIds['literal.number'][];
 		readonly float: PortableKindsAt['literal.number.float'];
 		readonly integer: PortableKindsAt['literal.number.integer'];
-		readonly big: PortableKindsAt['literal.number.integer.big'];
-		readonly binary: PortableKindsAt['literal.number.integer.binary'];
-		readonly hex: PortableKindsAt['literal.number.integer.hex'];
-		readonly imaginary: PortableKindsAt['literal.number.integer.imaginary'];
-		readonly leading_point: PortableKindsAt['literal.number.float.leading_point'];
-		readonly octal: PortableKindsAt['literal.number.integer.octal'];
-		readonly scientific: PortableKindsAt['literal.number.float.scientific'];
 	};
 	'literal.number.float': {
 		readonly $ids: readonly PortableIds['literal.number.float'][];
@@ -1034,11 +894,6 @@ export interface PortableKindsAt {
 		readonly list: PortableKindsAt['pattern.list'];
 		readonly splat: PortableKindsAt['pattern.splat'];
 		readonly tuple: PortableKindsAt['pattern.tuple'];
-		readonly bare: PortableKindsAt['pattern.tuple.bare'];
-		readonly class: PortableKindsAt['pattern.case.class'];
-		readonly complex: PortableKindsAt['pattern.case.complex'];
-		readonly keyword: PortableKindsAt['pattern.case.keyword'];
-		readonly or: PortableKindsAt['pattern.case.or'];
 	};
 	'pattern.as': { readonly $ids: readonly PortableIds['pattern.as'][] };
 	'pattern.case': {
@@ -1094,11 +949,6 @@ export interface PortableKindsAt {
 		readonly throw: PortableKindsAt['statement.throw'];
 		readonly try: PortableKindsAt['statement.try'];
 		readonly with: PortableKindsAt['statement.with'];
-		readonly chevron: PortableKindsAt['statement.print.chevron'];
-		readonly for: PortableKindsAt['statement.loop.for'];
-		readonly from: PortableKindsAt['statement.import.from'];
-		readonly future: PortableKindsAt['statement.import.future'];
-		readonly while: PortableKindsAt['statement.loop.while'];
 	};
 	'statement.assert': { readonly $ids: readonly PortableIds['statement.assert'][] };
 	'statement.block': { readonly $ids: readonly PortableIds['statement.block'][] };
@@ -1165,15 +1015,6 @@ export interface PortableIsAt {
 		readonly import: PortableIsAt['clause.import'];
 		readonly print: PortableIsAt['clause.print'];
 		readonly with: PortableIsAt['clause.with'];
-		readonly alias: PortableIsAt['clause.import.alias'];
-		readonly chevron: PortableIsAt['clause.print.chevron'];
-		readonly for: PortableIsAt['clause.comprehension.for'];
-		readonly if: PortableIsAt['clause.comprehension.if'];
-		readonly item: PortableIsAt['clause.with.item'];
-		readonly match: PortableIsAt['clause.case.match'];
-		readonly prefix: PortableIsAt['clause.import.relative.prefix'];
-		readonly relative: PortableIsAt['clause.import.relative'];
-		readonly wildcard: PortableIsAt['clause.import.wildcard'];
 	};
 	'clause.case': PortableGuard<PortableIds['clause.case']> & { readonly match: PortableIsAt['clause.case.match'] };
 	'clause.case.match': PortableGuard<PortableIds['clause.case.match']> & {};
@@ -1191,7 +1032,6 @@ export interface PortableIsAt {
 		readonly alias: PortableIsAt['clause.import.alias'];
 		readonly relative: PortableIsAt['clause.import.relative'];
 		readonly wildcard: PortableIsAt['clause.import.wildcard'];
-		readonly prefix: PortableIsAt['clause.import.relative.prefix'];
 	};
 	'clause.import.alias': PortableGuard<PortableIds['clause.import.alias']> & {};
 	'clause.import.relative': PortableGuard<PortableIds['clause.import.relative']> & {
@@ -1217,11 +1057,6 @@ export interface PortableIsAt {
 		readonly type_alias: PortableIsAt['declaration.type_alias'];
 		readonly type_parameter: PortableIsAt['declaration.type_parameter'];
 		readonly variable: PortableIsAt['declaration.variable'];
-		readonly default: PortableIsAt['declaration.parameter.default'];
-		readonly dunder: PortableIsAt['declaration.method.dunder'];
-		readonly static: PortableIsAt['declaration.method.static'];
-		readonly typed: PortableIsAt['declaration.parameter.typed'];
-		readonly typed_default: PortableIsAt['declaration.parameter.typed_default'];
 	};
 	'declaration.class': PortableGuard<PortableIds['declaration.class']> & {};
 	'declaration.constant': PortableGuard<PortableIds['declaration.constant']> & {};
@@ -1229,10 +1064,8 @@ export interface PortableIsAt {
 	'declaration.function': PortableGuard<PortableIds['declaration.function']> & {};
 	'declaration.method': PortableGuard<PortableIds['declaration.method']> & {
 		readonly dunder: PortableIsAt['declaration.method.dunder'];
-		readonly static: PortableIsAt['declaration.method.static'];
 	};
 	'declaration.method.dunder': PortableGuard<PortableIds['declaration.method.dunder']> & {};
-	'declaration.method.static': PortableGuard<PortableIds['declaration.method.static']> & {};
 	'declaration.parameter': PortableGuard<PortableIds['declaration.parameter']> & {
 		readonly default: PortableIsAt['declaration.parameter.default'];
 		readonly typed: PortableIsAt['declaration.parameter.typed'];
@@ -1248,36 +1081,11 @@ export interface PortableIsAt {
 		readonly comparator: PortableIsAt['element.comparator'];
 		readonly pair: PortableIsAt['element.pair'];
 		readonly splat: PortableIsAt['element.splat'];
-		readonly comparison: PortableIsAt['element.comparator.comparison'];
-		readonly dictionary: PortableIsAt['element.splat.dictionary'];
-		readonly equal: PortableIsAt['element.comparator.comparison.equal'];
-		readonly greater: PortableIsAt['element.comparator.comparison.greater'];
-		readonly greater_equal: PortableIsAt['element.comparator.comparison.greater_equal'];
-		readonly identity: PortableIsAt['element.comparator.identity'];
-		readonly in: PortableIsAt['element.comparator.membership.in'];
-		readonly is: PortableIsAt['element.comparator.identity.is'];
-		readonly is_not: PortableIsAt['element.comparator.identity.is_not'];
-		readonly less: PortableIsAt['element.comparator.comparison.less'];
-		readonly less_equal: PortableIsAt['element.comparator.comparison.less_equal'];
-		readonly membership: PortableIsAt['element.comparator.membership'];
-		readonly not_equal: PortableIsAt['element.comparator.comparison.not_equal'];
-		readonly not_in: PortableIsAt['element.comparator.membership.not_in'];
-		readonly parenthesized: PortableIsAt['element.splat.parenthesized'];
 	};
 	'element.comparator': PortableGuard<PortableIds['element.comparator']> & {
 		readonly comparison: PortableIsAt['element.comparator.comparison'];
 		readonly identity: PortableIsAt['element.comparator.identity'];
 		readonly membership: PortableIsAt['element.comparator.membership'];
-		readonly equal: PortableIsAt['element.comparator.comparison.equal'];
-		readonly greater: PortableIsAt['element.comparator.comparison.greater'];
-		readonly greater_equal: PortableIsAt['element.comparator.comparison.greater_equal'];
-		readonly in: PortableIsAt['element.comparator.membership.in'];
-		readonly is: PortableIsAt['element.comparator.identity.is'];
-		readonly is_not: PortableIsAt['element.comparator.identity.is_not'];
-		readonly less: PortableIsAt['element.comparator.comparison.less'];
-		readonly less_equal: PortableIsAt['element.comparator.comparison.less_equal'];
-		readonly not_equal: PortableIsAt['element.comparator.comparison.not_equal'];
-		readonly not_in: PortableIsAt['element.comparator.membership.not_in'];
 	};
 	'element.comparator.comparison': PortableGuard<PortableIds['element.comparator.comparison']> & {
 		readonly equal: PortableIsAt['element.comparator.comparison.equal'];
@@ -1332,59 +1140,9 @@ export interface PortableIsAt {
 		readonly subscript: PortableIsAt['expression.subscript'];
 		readonly unary: PortableIsAt['expression.unary'];
 		readonly yield: PortableIsAt['expression.yield'];
-		readonly arithmetic: PortableIsAt['expression.binary.arithmetic'];
-		readonly bare: PortableIsAt['expression.collection.tuple.bare'];
-		readonly bitwise: PortableIsAt['expression.binary.bitwise'];
-		readonly bitwise_and: PortableIsAt['expression.assignment.compound.bitwise_and'];
-		readonly bitwise_not: PortableIsAt['expression.unary.bitwise_not'];
-		readonly bitwise_or: PortableIsAt['expression.assignment.compound.bitwise_or'];
-		readonly bitwise_xor: PortableIsAt['expression.assignment.compound.bitwise_xor'];
-		readonly chain: PortableIsAt['expression.binary.comparison.chain'];
-		readonly comparison: PortableIsAt['expression.binary.comparison'];
-		readonly compound: PortableIsAt['expression.assignment.compound'];
-		readonly conversion: PortableIsAt['expression.interpolation.conversion'];
-		readonly delegate: PortableIsAt['expression.yield.delegate'];
-		readonly equal: PortableIsAt['expression.binary.comparison.equal'];
-		readonly format: PortableIsAt['expression.interpolation.format'];
-		readonly generator: PortableIsAt['expression.comprehension.generator'];
-		readonly greater: PortableIsAt['expression.binary.comparison.greater'];
-		readonly greater_equal: PortableIsAt['expression.binary.comparison.greater_equal'];
-		readonly identity: PortableIsAt['expression.binary.identity'];
-		readonly in: PortableIsAt['expression.binary.membership.in'];
-		readonly is: PortableIsAt['expression.binary.identity.is'];
-		readonly is_not: PortableIsAt['expression.binary.identity.is_not'];
-		readonly left: PortableIsAt['expression.binary.shift.left'];
-		readonly less: PortableIsAt['expression.binary.comparison.less'];
-		readonly less_equal: PortableIsAt['expression.binary.comparison.less_equal'];
-		readonly logical: PortableIsAt['expression.binary.logical'];
-		readonly membership: PortableIsAt['expression.binary.membership'];
-		readonly negation: PortableIsAt['expression.unary.negation'];
-		readonly not: PortableIsAt['expression.unary.not'];
-		readonly not_equal: PortableIsAt['expression.binary.comparison.not_equal'];
-		readonly not_in: PortableIsAt['expression.binary.membership.not_in'];
-		readonly plus: PortableIsAt['expression.unary.plus'];
-		readonly right: PortableIsAt['expression.binary.shift.right'];
-		readonly shift: PortableIsAt['expression.binary.shift'];
-		readonly shift_left: PortableIsAt['expression.assignment.compound.shift_left'];
-		readonly shift_right: PortableIsAt['expression.assignment.compound.shift_right'];
-		readonly tuple: PortableIsAt['expression.collection.tuple'];
-		readonly xor: PortableIsAt['expression.binary.bitwise.xor'];
 	};
 	'expression.assignment': PortableGuard<PortableIds['expression.assignment']> & {
 		readonly compound: PortableIsAt['expression.assignment.compound'];
-		readonly add: PortableIsAt['expression.assignment.compound.add'];
-		readonly bitwise_and: PortableIsAt['expression.assignment.compound.bitwise_and'];
-		readonly bitwise_or: PortableIsAt['expression.assignment.compound.bitwise_or'];
-		readonly bitwise_xor: PortableIsAt['expression.assignment.compound.bitwise_xor'];
-		readonly divide: PortableIsAt['expression.assignment.compound.divide'];
-		readonly exponent: PortableIsAt['expression.assignment.compound.exponent'];
-		readonly floor_divide: PortableIsAt['expression.assignment.compound.floor_divide'];
-		readonly matmul: PortableIsAt['expression.assignment.compound.matmul'];
-		readonly modulo: PortableIsAt['expression.assignment.compound.modulo'];
-		readonly multiply: PortableIsAt['expression.assignment.compound.multiply'];
-		readonly shift_left: PortableIsAt['expression.assignment.compound.shift_left'];
-		readonly shift_right: PortableIsAt['expression.assignment.compound.shift_right'];
-		readonly subtract: PortableIsAt['expression.assignment.compound.subtract'];
 	};
 	'expression.assignment.compound': PortableGuard<PortableIds['expression.assignment.compound']> & {
 		readonly add: PortableIsAt['expression.assignment.compound.add'];
@@ -1436,27 +1194,6 @@ export interface PortableIsAt {
 		readonly matmul: PortableIsAt['expression.binary.matmul'];
 		readonly membership: PortableIsAt['expression.binary.membership'];
 		readonly shift: PortableIsAt['expression.binary.shift'];
-		readonly add: PortableIsAt['expression.binary.arithmetic.add'];
-		readonly chain: PortableIsAt['expression.binary.comparison.chain'];
-		readonly divide: PortableIsAt['expression.binary.arithmetic.divide'];
-		readonly equal: PortableIsAt['expression.binary.comparison.equal'];
-		readonly exponent: PortableIsAt['expression.binary.arithmetic.exponent'];
-		readonly floor_divide: PortableIsAt['expression.binary.arithmetic.floor_divide'];
-		readonly greater: PortableIsAt['expression.binary.comparison.greater'];
-		readonly greater_equal: PortableIsAt['expression.binary.comparison.greater_equal'];
-		readonly in: PortableIsAt['expression.binary.membership.in'];
-		readonly is: PortableIsAt['expression.binary.identity.is'];
-		readonly is_not: PortableIsAt['expression.binary.identity.is_not'];
-		readonly left: PortableIsAt['expression.binary.shift.left'];
-		readonly less: PortableIsAt['expression.binary.comparison.less'];
-		readonly less_equal: PortableIsAt['expression.binary.comparison.less_equal'];
-		readonly modulo: PortableIsAt['expression.binary.arithmetic.modulo'];
-		readonly multiply: PortableIsAt['expression.binary.arithmetic.multiply'];
-		readonly not_equal: PortableIsAt['expression.binary.comparison.not_equal'];
-		readonly not_in: PortableIsAt['expression.binary.membership.not_in'];
-		readonly right: PortableIsAt['expression.binary.shift.right'];
-		readonly subtract: PortableIsAt['expression.binary.arithmetic.subtract'];
-		readonly xor: PortableIsAt['expression.binary.bitwise.xor'];
 	};
 	'expression.binary.arithmetic': PortableGuard<PortableIds['expression.binary.arithmetic']> & {
 		readonly add: PortableIsAt['expression.binary.arithmetic.add'];
@@ -1536,7 +1273,6 @@ export interface PortableIsAt {
 		readonly list: PortableIsAt['expression.collection.list'];
 		readonly set: PortableIsAt['expression.collection.set'];
 		readonly tuple: PortableIsAt['expression.collection.tuple'];
-		readonly bare: PortableIsAt['expression.collection.tuple.bare'];
 	};
 	'expression.collection.dictionary': PortableGuard<PortableIds['expression.collection.dictionary']> & {};
 	'expression.collection.list': PortableGuard<PortableIds['expression.collection.list']> & {};
@@ -1593,24 +1329,6 @@ export interface PortableIsAt {
 		readonly null: PortableIsAt['literal.null'];
 		readonly number: PortableIsAt['literal.number'];
 		readonly string: PortableIsAt['literal.string'];
-		readonly big: PortableIsAt['literal.number.integer.big'];
-		readonly binary: PortableIsAt['literal.number.integer.binary'];
-		readonly bytes: PortableIsAt['literal.string.bytes'];
-		readonly concatenated: PortableIsAt['literal.string.concatenated'];
-		readonly escape: PortableIsAt['literal.string.escape'];
-		readonly f: PortableIsAt['literal.string.f'];
-		readonly false: PortableIsAt['literal.boolean.false'];
-		readonly float: PortableIsAt['literal.number.float'];
-		readonly hex: PortableIsAt['literal.number.integer.hex'];
-		readonly imaginary: PortableIsAt['literal.number.integer.imaginary'];
-		readonly integer: PortableIsAt['literal.number.integer'];
-		readonly leading_point: PortableIsAt['literal.number.float.leading_point'];
-		readonly octal: PortableIsAt['literal.number.integer.octal'];
-		readonly raw: PortableIsAt['literal.string.raw'];
-		readonly scientific: PortableIsAt['literal.number.float.scientific'];
-		readonly text: PortableIsAt['literal.string.text'];
-		readonly triple: PortableIsAt['literal.string.triple'];
-		readonly true: PortableIsAt['literal.boolean.true'];
 	};
 	'literal.boolean': PortableGuard<PortableIds['literal.boolean']> & {
 		readonly false: PortableIsAt['literal.boolean.false'];
@@ -1623,13 +1341,6 @@ export interface PortableIsAt {
 	'literal.number': PortableGuard<PortableIds['literal.number']> & {
 		readonly float: PortableIsAt['literal.number.float'];
 		readonly integer: PortableIsAt['literal.number.integer'];
-		readonly big: PortableIsAt['literal.number.integer.big'];
-		readonly binary: PortableIsAt['literal.number.integer.binary'];
-		readonly hex: PortableIsAt['literal.number.integer.hex'];
-		readonly imaginary: PortableIsAt['literal.number.integer.imaginary'];
-		readonly leading_point: PortableIsAt['literal.number.float.leading_point'];
-		readonly octal: PortableIsAt['literal.number.integer.octal'];
-		readonly scientific: PortableIsAt['literal.number.float.scientific'];
 	};
 	'literal.number.float': PortableGuard<PortableIds['literal.number.float']> & {
 		readonly leading_point: PortableIsAt['literal.number.float.leading_point'];
@@ -1672,11 +1383,6 @@ export interface PortableIsAt {
 		readonly list: PortableIsAt['pattern.list'];
 		readonly splat: PortableIsAt['pattern.splat'];
 		readonly tuple: PortableIsAt['pattern.tuple'];
-		readonly bare: PortableIsAt['pattern.tuple.bare'];
-		readonly class: PortableIsAt['pattern.case.class'];
-		readonly complex: PortableIsAt['pattern.case.complex'];
-		readonly keyword: PortableIsAt['pattern.case.keyword'];
-		readonly or: PortableIsAt['pattern.case.or'];
 	};
 	'pattern.as': PortableGuard<PortableIds['pattern.as']> & {};
 	'pattern.case': PortableGuard<PortableIds['pattern.case']> & {
@@ -1726,11 +1432,6 @@ export interface PortableIsAt {
 		readonly throw: PortableIsAt['statement.throw'];
 		readonly try: PortableIsAt['statement.try'];
 		readonly with: PortableIsAt['statement.with'];
-		readonly chevron: PortableIsAt['statement.print.chevron'];
-		readonly for: PortableIsAt['statement.loop.for'];
-		readonly from: PortableIsAt['statement.import.from'];
-		readonly future: PortableIsAt['statement.import.future'];
-		readonly while: PortableIsAt['statement.loop.while'];
 	};
 	'statement.assert': PortableGuard<PortableIds['statement.assert']> & {};
 	'statement.block': PortableGuard<PortableIds['statement.block']> & {};
@@ -1792,109 +1493,6 @@ export interface PortableKinds {
 	readonly pattern: PortableKindsAt['pattern'];
 	readonly statement: PortableKindsAt['statement'];
 	readonly type: PortableKindsAt['type'];
-	readonly alias: PortableKindsAt['clause.import.alias'];
-	readonly arithmetic: PortableKindsAt['expression.binary.arithmetic'];
-	readonly assert: PortableKindsAt['statement.assert'];
-	readonly assignment: PortableKindsAt['expression.assignment'];
-	readonly await: PortableKindsAt['expression.await'];
-	readonly big: PortableKindsAt['literal.number.integer.big'];
-	readonly bitwise: PortableKindsAt['expression.binary.bitwise'];
-	readonly bitwise_and: PortableKindsAt['expression.assignment.compound.bitwise_and'];
-	readonly bitwise_not: PortableKindsAt['expression.unary.bitwise_not'];
-	readonly bitwise_or: PortableKindsAt['expression.assignment.compound.bitwise_or'];
-	readonly bitwise_xor: PortableKindsAt['expression.assignment.compound.bitwise_xor'];
-	readonly block: PortableKindsAt['statement.block'];
-	readonly boolean: PortableKindsAt['literal.boolean'];
-	readonly break: PortableKindsAt['statement.break'];
-	readonly bytes: PortableKindsAt['literal.string.bytes'];
-	readonly call: PortableKindsAt['expression.call'];
-	readonly chain: PortableKindsAt['expression.binary.comparison.chain'];
-	readonly collection: PortableKindsAt['expression.collection'];
-	readonly comparator: PortableKindsAt['element.comparator'];
-	readonly complex: PortableKindsAt['pattern.case.complex'];
-	readonly compound: PortableKindsAt['expression.assignment.compound'];
-	readonly concatenated: PortableKindsAt['literal.string.concatenated'];
-	readonly conditional: PortableKindsAt['expression.conditional'];
-	readonly constant: PortableKindsAt['declaration.constant'];
-	readonly constrained: PortableKindsAt['type.constrained'];
-	readonly constructor: PortableKindsAt['declaration.constructor'];
-	readonly continue: PortableKindsAt['statement.continue'];
-	readonly conversion: PortableKindsAt['expression.interpolation.conversion'];
-	readonly decorator: PortableKindsAt['attribute.decorator'];
-	readonly default: PortableKindsAt['declaration.parameter.default'];
-	readonly delegate: PortableKindsAt['expression.yield.delegate'];
-	readonly delete: PortableKindsAt['statement.delete'];
-	readonly dotted: PortableKindsAt['identifier.dotted'];
-	readonly dunder: PortableKindsAt['declaration.method.dunder'];
-	readonly elif: PortableKindsAt['clause.elif'];
-	readonly ellipsis: PortableKindsAt['literal.ellipsis'];
-	readonly else: PortableKindsAt['clause.else'];
-	readonly empty: PortableKindsAt['statement.empty'];
-	readonly escape: PortableKindsAt['literal.string.escape'];
-	readonly except: PortableKindsAt['clause.except'];
-	readonly exec: PortableKindsAt['statement.exec'];
-	readonly f: PortableKindsAt['literal.string.f'];
-	readonly false: PortableKindsAt['literal.boolean.false'];
-	readonly finally: PortableKindsAt['clause.finally'];
-	readonly float: PortableKindsAt['literal.number.float'];
-	readonly format: PortableKindsAt['expression.interpolation.format'];
-	readonly from: PortableKindsAt['statement.import.from'];
-	readonly function: PortableKindsAt['declaration.function'];
-	readonly future: PortableKindsAt['statement.import.future'];
-	readonly generator: PortableKindsAt['expression.comprehension.generator'];
-	readonly generic: PortableKindsAt['type.generic'];
-	readonly global: PortableKindsAt['statement.global'];
-	readonly hex: PortableKindsAt['literal.number.integer.hex'];
-	readonly imaginary: PortableKindsAt['literal.number.integer.imaginary'];
-	readonly integer: PortableKindsAt['literal.number.integer'];
-	readonly interpolation: PortableKindsAt['expression.interpolation'];
-	readonly item: PortableKindsAt['clause.with.item'];
-	readonly lambda: PortableKindsAt['expression.lambda'];
-	readonly leading_point: PortableKindsAt['literal.number.float.leading_point'];
-	readonly left: PortableKindsAt['expression.binary.shift.left'];
-	readonly line: PortableKindsAt['comment.line'];
-	readonly logical: PortableKindsAt['expression.binary.logical'];
-	readonly loop: PortableKindsAt['statement.loop'];
-	readonly method: PortableKindsAt['declaration.method'];
-	readonly negation: PortableKindsAt['expression.unary.negation'];
-	readonly nonlocal: PortableKindsAt['statement.nonlocal'];
-	readonly not: PortableKindsAt['expression.unary.not'];
-	readonly null: PortableKindsAt['literal.null'];
-	readonly number: PortableKindsAt['literal.number'];
-	readonly octal: PortableKindsAt['literal.number.integer.octal'];
-	readonly pair: PortableKindsAt['element.pair'];
-	readonly parameter: PortableKindsAt['declaration.parameter'];
-	readonly path: PortableKindsAt['type.path'];
-	readonly plus: PortableKindsAt['expression.unary.plus'];
-	readonly prefix: PortableKindsAt['clause.import.relative.prefix'];
-	readonly raw: PortableKindsAt['literal.string.raw'];
-	readonly relative: PortableKindsAt['clause.import.relative'];
-	readonly return: PortableKindsAt['statement.return'];
-	readonly right: PortableKindsAt['expression.binary.shift.right'];
-	readonly scientific: PortableKindsAt['literal.number.float.scientific'];
-	readonly shift: PortableKindsAt['expression.binary.shift'];
-	readonly shift_left: PortableKindsAt['expression.assignment.compound.shift_left'];
-	readonly shift_right: PortableKindsAt['expression.assignment.compound.shift_right'];
-	readonly slice: PortableKindsAt['expression.slice'];
-	readonly static: PortableKindsAt['declaration.method.static'];
-	readonly string: PortableKindsAt['literal.string'];
-	readonly subscript: PortableKindsAt['expression.subscript'];
-	readonly text: PortableKindsAt['literal.string.text'];
-	readonly throw: PortableKindsAt['statement.throw'];
-	readonly triple: PortableKindsAt['literal.string.triple'];
-	readonly true: PortableKindsAt['literal.boolean.true'];
-	readonly try: PortableKindsAt['statement.try'];
-	readonly type_alias: PortableKindsAt['declaration.type_alias'];
-	readonly type_parameter: PortableKindsAt['declaration.type_parameter'];
-	readonly typed: PortableKindsAt['declaration.parameter.typed'];
-	readonly typed_default: PortableKindsAt['declaration.parameter.typed_default'];
-	readonly unary: PortableKindsAt['expression.unary'];
-	readonly union: PortableKindsAt['type.union'];
-	readonly variable: PortableKindsAt['declaration.variable'];
-	readonly while: PortableKindsAt['statement.loop.while'];
-	readonly wildcard: PortableKindsAt['clause.import.wildcard'];
-	readonly xor: PortableKindsAt['expression.binary.bitwise.xor'];
-	readonly yield: PortableKindsAt['expression.yield'];
 }
 
 export interface PortableIs {
@@ -1911,109 +1509,6 @@ export interface PortableIs {
 	readonly pattern: PortableIsAt['pattern'];
 	readonly statement: PortableIsAt['statement'];
 	readonly type: PortableIsAt['type'];
-	readonly alias: PortableIsAt['clause.import.alias'];
-	readonly arithmetic: PortableIsAt['expression.binary.arithmetic'];
-	readonly assert: PortableIsAt['statement.assert'];
-	readonly assignment: PortableIsAt['expression.assignment'];
-	readonly await: PortableIsAt['expression.await'];
-	readonly big: PortableIsAt['literal.number.integer.big'];
-	readonly bitwise: PortableIsAt['expression.binary.bitwise'];
-	readonly bitwise_and: PortableIsAt['expression.assignment.compound.bitwise_and'];
-	readonly bitwise_not: PortableIsAt['expression.unary.bitwise_not'];
-	readonly bitwise_or: PortableIsAt['expression.assignment.compound.bitwise_or'];
-	readonly bitwise_xor: PortableIsAt['expression.assignment.compound.bitwise_xor'];
-	readonly block: PortableIsAt['statement.block'];
-	readonly boolean: PortableIsAt['literal.boolean'];
-	readonly break: PortableIsAt['statement.break'];
-	readonly bytes: PortableIsAt['literal.string.bytes'];
-	readonly call: PortableIsAt['expression.call'];
-	readonly chain: PortableIsAt['expression.binary.comparison.chain'];
-	readonly collection: PortableIsAt['expression.collection'];
-	readonly comparator: PortableIsAt['element.comparator'];
-	readonly complex: PortableIsAt['pattern.case.complex'];
-	readonly compound: PortableIsAt['expression.assignment.compound'];
-	readonly concatenated: PortableIsAt['literal.string.concatenated'];
-	readonly conditional: PortableIsAt['expression.conditional'];
-	readonly constant: PortableIsAt['declaration.constant'];
-	readonly constrained: PortableIsAt['type.constrained'];
-	readonly constructor: PortableIsAt['declaration.constructor'];
-	readonly continue: PortableIsAt['statement.continue'];
-	readonly conversion: PortableIsAt['expression.interpolation.conversion'];
-	readonly decorator: PortableIsAt['attribute.decorator'];
-	readonly default: PortableIsAt['declaration.parameter.default'];
-	readonly delegate: PortableIsAt['expression.yield.delegate'];
-	readonly delete: PortableIsAt['statement.delete'];
-	readonly dotted: PortableIsAt['identifier.dotted'];
-	readonly dunder: PortableIsAt['declaration.method.dunder'];
-	readonly elif: PortableIsAt['clause.elif'];
-	readonly ellipsis: PortableIsAt['literal.ellipsis'];
-	readonly else: PortableIsAt['clause.else'];
-	readonly empty: PortableIsAt['statement.empty'];
-	readonly escape: PortableIsAt['literal.string.escape'];
-	readonly except: PortableIsAt['clause.except'];
-	readonly exec: PortableIsAt['statement.exec'];
-	readonly f: PortableIsAt['literal.string.f'];
-	readonly false: PortableIsAt['literal.boolean.false'];
-	readonly finally: PortableIsAt['clause.finally'];
-	readonly float: PortableIsAt['literal.number.float'];
-	readonly format: PortableIsAt['expression.interpolation.format'];
-	readonly from: PortableIsAt['statement.import.from'];
-	readonly function: PortableIsAt['declaration.function'];
-	readonly future: PortableIsAt['statement.import.future'];
-	readonly generator: PortableIsAt['expression.comprehension.generator'];
-	readonly generic: PortableIsAt['type.generic'];
-	readonly global: PortableIsAt['statement.global'];
-	readonly hex: PortableIsAt['literal.number.integer.hex'];
-	readonly imaginary: PortableIsAt['literal.number.integer.imaginary'];
-	readonly integer: PortableIsAt['literal.number.integer'];
-	readonly interpolation: PortableIsAt['expression.interpolation'];
-	readonly item: PortableIsAt['clause.with.item'];
-	readonly lambda: PortableIsAt['expression.lambda'];
-	readonly leading_point: PortableIsAt['literal.number.float.leading_point'];
-	readonly left: PortableIsAt['expression.binary.shift.left'];
-	readonly line: PortableIsAt['comment.line'];
-	readonly logical: PortableIsAt['expression.binary.logical'];
-	readonly loop: PortableIsAt['statement.loop'];
-	readonly method: PortableIsAt['declaration.method'];
-	readonly negation: PortableIsAt['expression.unary.negation'];
-	readonly nonlocal: PortableIsAt['statement.nonlocal'];
-	readonly not: PortableIsAt['expression.unary.not'];
-	readonly null: PortableIsAt['literal.null'];
-	readonly number: PortableIsAt['literal.number'];
-	readonly octal: PortableIsAt['literal.number.integer.octal'];
-	readonly pair: PortableIsAt['element.pair'];
-	readonly parameter: PortableIsAt['declaration.parameter'];
-	readonly path: PortableIsAt['type.path'];
-	readonly plus: PortableIsAt['expression.unary.plus'];
-	readonly prefix: PortableIsAt['clause.import.relative.prefix'];
-	readonly raw: PortableIsAt['literal.string.raw'];
-	readonly relative: PortableIsAt['clause.import.relative'];
-	readonly return: PortableIsAt['statement.return'];
-	readonly right: PortableIsAt['expression.binary.shift.right'];
-	readonly scientific: PortableIsAt['literal.number.float.scientific'];
-	readonly shift: PortableIsAt['expression.binary.shift'];
-	readonly shift_left: PortableIsAt['expression.assignment.compound.shift_left'];
-	readonly shift_right: PortableIsAt['expression.assignment.compound.shift_right'];
-	readonly slice: PortableIsAt['expression.slice'];
-	readonly static: PortableIsAt['declaration.method.static'];
-	readonly string: PortableIsAt['literal.string'];
-	readonly subscript: PortableIsAt['expression.subscript'];
-	readonly text: PortableIsAt['literal.string.text'];
-	readonly throw: PortableIsAt['statement.throw'];
-	readonly triple: PortableIsAt['literal.string.triple'];
-	readonly true: PortableIsAt['literal.boolean.true'];
-	readonly try: PortableIsAt['statement.try'];
-	readonly type_alias: PortableIsAt['declaration.type_alias'];
-	readonly type_parameter: PortableIsAt['declaration.type_parameter'];
-	readonly typed: PortableIsAt['declaration.parameter.typed'];
-	readonly typed_default: PortableIsAt['declaration.parameter.typed_default'];
-	readonly unary: PortableIsAt['expression.unary'];
-	readonly union: PortableIsAt['type.union'];
-	readonly variable: PortableIsAt['declaration.variable'];
-	readonly while: PortableIsAt['statement.loop.while'];
-	readonly wildcard: PortableIsAt['clause.import.wildcard'];
-	readonly xor: PortableIsAt['expression.binary.bitwise.xor'];
-	readonly yield: PortableIsAt['expression.yield'];
 }
 
 const table: PortableTable = {
@@ -2098,7 +1593,6 @@ const table: PortableTable = {
 		'declaration.function': { ids: [TSKindId.FunctionDefinition], exact: false },
 		'declaration.method': { ids: [TSKindId.FunctionDefinition], exact: false },
 		'declaration.method.dunder': { ids: [TSKindId.FunctionDefinition], exact: false },
-		'declaration.method.static': { ids: [TSKindId.FunctionDefinition], exact: false },
 		'declaration.parameter': {
 			ids: [TSKindId.DefaultParameter, TSKindId.Identifier, TSKindId.TypedDefaultParameter, TSKindId.TypedParameter],
 			exact: false
@@ -2513,258 +2007,6 @@ const table: PortableTable = {
 		'type.splat': { ids: [TSKindId.SplatType], exact: true },
 		'type.union': { ids: [TSKindId.UnionType], exact: true }
 	},
-	aliases: [
-		['', 'alias', 'clause.import.alias'],
-		['', 'arithmetic', 'expression.binary.arithmetic'],
-		['', 'assert', 'statement.assert'],
-		['', 'assignment', 'expression.assignment'],
-		['', 'await', 'expression.await'],
-		['', 'big', 'literal.number.integer.big'],
-		['', 'bitwise', 'expression.binary.bitwise'],
-		['', 'bitwise_and', 'expression.assignment.compound.bitwise_and'],
-		['', 'bitwise_not', 'expression.unary.bitwise_not'],
-		['', 'bitwise_or', 'expression.assignment.compound.bitwise_or'],
-		['', 'bitwise_xor', 'expression.assignment.compound.bitwise_xor'],
-		['', 'block', 'statement.block'],
-		['', 'boolean', 'literal.boolean'],
-		['', 'break', 'statement.break'],
-		['', 'bytes', 'literal.string.bytes'],
-		['', 'call', 'expression.call'],
-		['', 'chain', 'expression.binary.comparison.chain'],
-		['', 'collection', 'expression.collection'],
-		['', 'comparator', 'element.comparator'],
-		['', 'complex', 'pattern.case.complex'],
-		['', 'compound', 'expression.assignment.compound'],
-		['', 'concatenated', 'literal.string.concatenated'],
-		['', 'conditional', 'expression.conditional'],
-		['', 'constant', 'declaration.constant'],
-		['', 'constrained', 'type.constrained'],
-		['', 'constructor', 'declaration.constructor'],
-		['', 'continue', 'statement.continue'],
-		['', 'conversion', 'expression.interpolation.conversion'],
-		['', 'decorator', 'attribute.decorator'],
-		['', 'default', 'declaration.parameter.default'],
-		['', 'delegate', 'expression.yield.delegate'],
-		['', 'delete', 'statement.delete'],
-		['', 'dotted', 'identifier.dotted'],
-		['', 'dunder', 'declaration.method.dunder'],
-		['', 'elif', 'clause.elif'],
-		['', 'ellipsis', 'literal.ellipsis'],
-		['', 'else', 'clause.else'],
-		['', 'empty', 'statement.empty'],
-		['', 'escape', 'literal.string.escape'],
-		['', 'except', 'clause.except'],
-		['', 'exec', 'statement.exec'],
-		['', 'f', 'literal.string.f'],
-		['', 'false', 'literal.boolean.false'],
-		['', 'finally', 'clause.finally'],
-		['', 'float', 'literal.number.float'],
-		['', 'format', 'expression.interpolation.format'],
-		['', 'from', 'statement.import.from'],
-		['', 'function', 'declaration.function'],
-		['', 'future', 'statement.import.future'],
-		['', 'generator', 'expression.comprehension.generator'],
-		['', 'generic', 'type.generic'],
-		['', 'global', 'statement.global'],
-		['', 'hex', 'literal.number.integer.hex'],
-		['', 'imaginary', 'literal.number.integer.imaginary'],
-		['', 'integer', 'literal.number.integer'],
-		['', 'interpolation', 'expression.interpolation'],
-		['', 'item', 'clause.with.item'],
-		['', 'lambda', 'expression.lambda'],
-		['', 'leading_point', 'literal.number.float.leading_point'],
-		['', 'left', 'expression.binary.shift.left'],
-		['', 'line', 'comment.line'],
-		['', 'logical', 'expression.binary.logical'],
-		['', 'loop', 'statement.loop'],
-		['', 'method', 'declaration.method'],
-		['', 'negation', 'expression.unary.negation'],
-		['', 'nonlocal', 'statement.nonlocal'],
-		['', 'not', 'expression.unary.not'],
-		['', 'null', 'literal.null'],
-		['', 'number', 'literal.number'],
-		['', 'octal', 'literal.number.integer.octal'],
-		['', 'pair', 'element.pair'],
-		['', 'parameter', 'declaration.parameter'],
-		['', 'path', 'type.path'],
-		['', 'plus', 'expression.unary.plus'],
-		['', 'prefix', 'clause.import.relative.prefix'],
-		['', 'raw', 'literal.string.raw'],
-		['', 'relative', 'clause.import.relative'],
-		['', 'return', 'statement.return'],
-		['', 'right', 'expression.binary.shift.right'],
-		['', 'scientific', 'literal.number.float.scientific'],
-		['', 'shift', 'expression.binary.shift'],
-		['', 'shift_left', 'expression.assignment.compound.shift_left'],
-		['', 'shift_right', 'expression.assignment.compound.shift_right'],
-		['', 'slice', 'expression.slice'],
-		['', 'static', 'declaration.method.static'],
-		['', 'string', 'literal.string'],
-		['', 'subscript', 'expression.subscript'],
-		['', 'text', 'literal.string.text'],
-		['', 'throw', 'statement.throw'],
-		['', 'triple', 'literal.string.triple'],
-		['', 'true', 'literal.boolean.true'],
-		['', 'try', 'statement.try'],
-		['', 'type_alias', 'declaration.type_alias'],
-		['', 'type_parameter', 'declaration.type_parameter'],
-		['', 'typed', 'declaration.parameter.typed'],
-		['', 'typed_default', 'declaration.parameter.typed_default'],
-		['', 'unary', 'expression.unary'],
-		['', 'union', 'type.union'],
-		['', 'variable', 'declaration.variable'],
-		['', 'while', 'statement.loop.while'],
-		['', 'wildcard', 'clause.import.wildcard'],
-		['', 'xor', 'expression.binary.bitwise.xor'],
-		['', 'yield', 'expression.yield'],
-		['clause', 'alias', 'clause.import.alias'],
-		['clause', 'chevron', 'clause.print.chevron'],
-		['clause', 'for', 'clause.comprehension.for'],
-		['clause', 'if', 'clause.comprehension.if'],
-		['clause', 'item', 'clause.with.item'],
-		['clause', 'match', 'clause.case.match'],
-		['clause', 'prefix', 'clause.import.relative.prefix'],
-		['clause', 'relative', 'clause.import.relative'],
-		['clause', 'wildcard', 'clause.import.wildcard'],
-		['clause.import', 'prefix', 'clause.import.relative.prefix'],
-		['declaration', 'default', 'declaration.parameter.default'],
-		['declaration', 'dunder', 'declaration.method.dunder'],
-		['declaration', 'static', 'declaration.method.static'],
-		['declaration', 'typed', 'declaration.parameter.typed'],
-		['declaration', 'typed_default', 'declaration.parameter.typed_default'],
-		['element', 'comparison', 'element.comparator.comparison'],
-		['element', 'dictionary', 'element.splat.dictionary'],
-		['element', 'equal', 'element.comparator.comparison.equal'],
-		['element', 'greater', 'element.comparator.comparison.greater'],
-		['element', 'greater_equal', 'element.comparator.comparison.greater_equal'],
-		['element', 'identity', 'element.comparator.identity'],
-		['element', 'in', 'element.comparator.membership.in'],
-		['element', 'is', 'element.comparator.identity.is'],
-		['element', 'is_not', 'element.comparator.identity.is_not'],
-		['element', 'less', 'element.comparator.comparison.less'],
-		['element', 'less_equal', 'element.comparator.comparison.less_equal'],
-		['element', 'membership', 'element.comparator.membership'],
-		['element', 'not_equal', 'element.comparator.comparison.not_equal'],
-		['element', 'not_in', 'element.comparator.membership.not_in'],
-		['element', 'parenthesized', 'element.splat.parenthesized'],
-		['element.comparator', 'equal', 'element.comparator.comparison.equal'],
-		['element.comparator', 'greater', 'element.comparator.comparison.greater'],
-		['element.comparator', 'greater_equal', 'element.comparator.comparison.greater_equal'],
-		['element.comparator', 'in', 'element.comparator.membership.in'],
-		['element.comparator', 'is', 'element.comparator.identity.is'],
-		['element.comparator', 'is_not', 'element.comparator.identity.is_not'],
-		['element.comparator', 'less', 'element.comparator.comparison.less'],
-		['element.comparator', 'less_equal', 'element.comparator.comparison.less_equal'],
-		['element.comparator', 'not_equal', 'element.comparator.comparison.not_equal'],
-		['element.comparator', 'not_in', 'element.comparator.membership.not_in'],
-		['expression', 'arithmetic', 'expression.binary.arithmetic'],
-		['expression', 'bare', 'expression.collection.tuple.bare'],
-		['expression', 'bitwise', 'expression.binary.bitwise'],
-		['expression', 'bitwise_and', 'expression.assignment.compound.bitwise_and'],
-		['expression', 'bitwise_not', 'expression.unary.bitwise_not'],
-		['expression', 'bitwise_or', 'expression.assignment.compound.bitwise_or'],
-		['expression', 'bitwise_xor', 'expression.assignment.compound.bitwise_xor'],
-		['expression', 'chain', 'expression.binary.comparison.chain'],
-		['expression', 'comparison', 'expression.binary.comparison'],
-		['expression', 'compound', 'expression.assignment.compound'],
-		['expression', 'conversion', 'expression.interpolation.conversion'],
-		['expression', 'delegate', 'expression.yield.delegate'],
-		['expression', 'equal', 'expression.binary.comparison.equal'],
-		['expression', 'format', 'expression.interpolation.format'],
-		['expression', 'generator', 'expression.comprehension.generator'],
-		['expression', 'greater', 'expression.binary.comparison.greater'],
-		['expression', 'greater_equal', 'expression.binary.comparison.greater_equal'],
-		['expression', 'identity', 'expression.binary.identity'],
-		['expression', 'in', 'expression.binary.membership.in'],
-		['expression', 'is', 'expression.binary.identity.is'],
-		['expression', 'is_not', 'expression.binary.identity.is_not'],
-		['expression', 'left', 'expression.binary.shift.left'],
-		['expression', 'less', 'expression.binary.comparison.less'],
-		['expression', 'less_equal', 'expression.binary.comparison.less_equal'],
-		['expression', 'logical', 'expression.binary.logical'],
-		['expression', 'membership', 'expression.binary.membership'],
-		['expression', 'negation', 'expression.unary.negation'],
-		['expression', 'not', 'expression.unary.not'],
-		['expression', 'not_equal', 'expression.binary.comparison.not_equal'],
-		['expression', 'not_in', 'expression.binary.membership.not_in'],
-		['expression', 'plus', 'expression.unary.plus'],
-		['expression', 'right', 'expression.binary.shift.right'],
-		['expression', 'shift', 'expression.binary.shift'],
-		['expression', 'shift_left', 'expression.assignment.compound.shift_left'],
-		['expression', 'shift_right', 'expression.assignment.compound.shift_right'],
-		['expression', 'tuple', 'expression.collection.tuple'],
-		['expression', 'xor', 'expression.binary.bitwise.xor'],
-		['expression.assignment', 'add', 'expression.assignment.compound.add'],
-		['expression.assignment', 'bitwise_and', 'expression.assignment.compound.bitwise_and'],
-		['expression.assignment', 'bitwise_or', 'expression.assignment.compound.bitwise_or'],
-		['expression.assignment', 'bitwise_xor', 'expression.assignment.compound.bitwise_xor'],
-		['expression.assignment', 'divide', 'expression.assignment.compound.divide'],
-		['expression.assignment', 'exponent', 'expression.assignment.compound.exponent'],
-		['expression.assignment', 'floor_divide', 'expression.assignment.compound.floor_divide'],
-		['expression.assignment', 'matmul', 'expression.assignment.compound.matmul'],
-		['expression.assignment', 'modulo', 'expression.assignment.compound.modulo'],
-		['expression.assignment', 'multiply', 'expression.assignment.compound.multiply'],
-		['expression.assignment', 'shift_left', 'expression.assignment.compound.shift_left'],
-		['expression.assignment', 'shift_right', 'expression.assignment.compound.shift_right'],
-		['expression.assignment', 'subtract', 'expression.assignment.compound.subtract'],
-		['expression.binary', 'add', 'expression.binary.arithmetic.add'],
-		['expression.binary', 'chain', 'expression.binary.comparison.chain'],
-		['expression.binary', 'divide', 'expression.binary.arithmetic.divide'],
-		['expression.binary', 'equal', 'expression.binary.comparison.equal'],
-		['expression.binary', 'exponent', 'expression.binary.arithmetic.exponent'],
-		['expression.binary', 'floor_divide', 'expression.binary.arithmetic.floor_divide'],
-		['expression.binary', 'greater', 'expression.binary.comparison.greater'],
-		['expression.binary', 'greater_equal', 'expression.binary.comparison.greater_equal'],
-		['expression.binary', 'in', 'expression.binary.membership.in'],
-		['expression.binary', 'is', 'expression.binary.identity.is'],
-		['expression.binary', 'is_not', 'expression.binary.identity.is_not'],
-		['expression.binary', 'left', 'expression.binary.shift.left'],
-		['expression.binary', 'less', 'expression.binary.comparison.less'],
-		['expression.binary', 'less_equal', 'expression.binary.comparison.less_equal'],
-		['expression.binary', 'modulo', 'expression.binary.arithmetic.modulo'],
-		['expression.binary', 'multiply', 'expression.binary.arithmetic.multiply'],
-		['expression.binary', 'not_equal', 'expression.binary.comparison.not_equal'],
-		['expression.binary', 'not_in', 'expression.binary.membership.not_in'],
-		['expression.binary', 'right', 'expression.binary.shift.right'],
-		['expression.binary', 'subtract', 'expression.binary.arithmetic.subtract'],
-		['expression.binary', 'xor', 'expression.binary.bitwise.xor'],
-		['expression.collection', 'bare', 'expression.collection.tuple.bare'],
-		['literal', 'big', 'literal.number.integer.big'],
-		['literal', 'binary', 'literal.number.integer.binary'],
-		['literal', 'bytes', 'literal.string.bytes'],
-		['literal', 'concatenated', 'literal.string.concatenated'],
-		['literal', 'escape', 'literal.string.escape'],
-		['literal', 'f', 'literal.string.f'],
-		['literal', 'false', 'literal.boolean.false'],
-		['literal', 'float', 'literal.number.float'],
-		['literal', 'hex', 'literal.number.integer.hex'],
-		['literal', 'imaginary', 'literal.number.integer.imaginary'],
-		['literal', 'integer', 'literal.number.integer'],
-		['literal', 'leading_point', 'literal.number.float.leading_point'],
-		['literal', 'octal', 'literal.number.integer.octal'],
-		['literal', 'raw', 'literal.string.raw'],
-		['literal', 'scientific', 'literal.number.float.scientific'],
-		['literal', 'text', 'literal.string.text'],
-		['literal', 'triple', 'literal.string.triple'],
-		['literal', 'true', 'literal.boolean.true'],
-		['literal.number', 'big', 'literal.number.integer.big'],
-		['literal.number', 'binary', 'literal.number.integer.binary'],
-		['literal.number', 'hex', 'literal.number.integer.hex'],
-		['literal.number', 'imaginary', 'literal.number.integer.imaginary'],
-		['literal.number', 'leading_point', 'literal.number.float.leading_point'],
-		['literal.number', 'octal', 'literal.number.integer.octal'],
-		['literal.number', 'scientific', 'literal.number.float.scientific'],
-		['pattern', 'bare', 'pattern.tuple.bare'],
-		['pattern', 'class', 'pattern.case.class'],
-		['pattern', 'complex', 'pattern.case.complex'],
-		['pattern', 'keyword', 'pattern.case.keyword'],
-		['pattern', 'or', 'pattern.case.or'],
-		['statement', 'chevron', 'statement.print.chevron'],
-		['statement', 'for', 'statement.loop.for'],
-		['statement', 'from', 'statement.import.from'],
-		['statement', 'future', 'statement.import.future'],
-		['statement', 'while', 'statement.loop.while']
-	],
 	entries: {
 		[TSKindId.AliasedImport]: [{ path: 'clause.import.alias', within: [], test: [] }],
 		[TSKindId.AsPattern]: [{ path: 'pattern.as', within: [], test: [] }],
@@ -3206,7 +2448,7 @@ const table: PortableTable = {
 		[TSKindId.FormatSpecifier]: [{ path: 'expression.interpolation.format', within: [], test: [] }],
 		[TSKindId.FunctionDefinition]: [
 			{
-				path: 'declaration.method.static',
+				path: 'declaration.method',
 				within: [TSKindId.DecoratedDefinition],
 				test: [
 					{

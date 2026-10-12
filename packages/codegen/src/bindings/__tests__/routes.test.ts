@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { type GrammarInput, type ModelNode, type ModelSlot, derive, readBindings, resolveRoutes } from '../index.ts';
+import { type GrammarInput, type ModelNode, type ModelSlot, type Vocabulary, type VocabularyMember, derive, readBindings, resolveFlags, resolveRoutes } from '../index.ts';
 
 const slot = (name: string, kinds: readonly string[], extra: Partial<ModelSlot> = {}): ModelSlot => ({
 	name,
@@ -409,6 +409,18 @@ describe('resolveRoutes', () => {
 		]);
 	});
 
+	it('refuses a capture on a layout slot: it reaches no member, so it names the capture, its kind, the slot and why', async () => {
+		await expect(grammar('(function_definition (comment) @note) @declaration.function').then(resolveRoutes)).rejects.toThrow(
+			/function_definition's capture @note.*comment slot.*layout/
+		);
+	});
+
+	it('refuses a capture on a slot that holds only text on a kind read as an identifier', async () => {
+		await expect(grammar('(private_name content: _ @content) @identifier.property').then(resolveRoutes)).rejects.toThrow(
+			/private_name's capture @content.*content slot.*only text.*identifier/
+		);
+	});
+
 	it('routes no member through a required slot that can hold only one fixed text', async () => {
 		const routes = resolveRoutes(await grammar('(range) @expression.range'));
 		expect(routes.members.get('range')?.map((r) => r.name)).toEqual(['start']);
@@ -677,6 +689,81 @@ describe('resolveRoutes', () => {
 			await grammar('((function_definition name: (identifier) @name) @declaration.method.dunder (#match? @name "^__(?<stem>.*)__$"))')
 		);
 		expect(routes.readEntries.get('function_definition')?.[0]?.template).toMatchObject({ holes: ['stem'] });
+	});
+});
+
+
+describe('flag captures', () => {
+	const FLAGGED = [
+		node('method', [slot('accessor_kind', [], { required: false, terminals: ['get', 'set', '*'] }), slot('name', ['identifier'])]),
+		node('param', [slot('pattern', ['identifier']), slot('mutable_specifier', ['mutable_specifier'], { required: false })]),
+		node('mutable_specifier', [], { modelType: 'keyword', text: 'mut' }),
+		node('for_in', [slot('await', [], { required: false, terminals: ['await'] }), slot('body', ['block'])]),
+		node('static_item', [slot('ref', [], { required: false, terminals: ['ref', 'mut'] }), slot('name', ['identifier'])])
+	];
+	const member = (flag: boolean): VocabularyMember => ({ optional: true, flag });
+	const vocabulary = (own: Readonly<Record<string, Readonly<Record<string, boolean>>>>): Vocabulary => {
+		const kinds = new Map(Object.entries(own).map(([path, members]) => [path, { name: path, own: new Map(Object.entries(members).map(([n, flag]) => [n, member(flag)])), parent: undefined, refines: undefined }]));
+		return { kinds, flags: new Set(Object.values(own).flatMap((m) => Object.entries(m).flatMap(([n, flag]) => (flag ? [n] : [])))), members: (path) => kinds.get(path)?.own ?? new Map() };
+	};
+	const VOCABULARY = vocabulary({
+		'declaration.method': { generator: true },
+		'declaration.method.getter': {},
+		'declaration.parameter': { mutable: true },
+		'statement.loop.for': { async: true },
+		'declaration.variable': { byReference: true }
+	});
+	const flagged = async (bindings: string): Promise<GrammarInput> => ({
+		grammar: 'g',
+		bindings: resolveFlags(await readBindings(bindings), VOCABULARY),
+		model: new Map([...MODEL, ...FLAGGED].map((n) => [n.kind, n])),
+		textTokens: new Set(),
+		layoutSlots: []
+	});
+	const membersOf = async (bindings: string, kind: string) => resolveRoutes(await flagged(bindings)).members.get(kind);
+
+	it('routes a flag captured on a token in a slot to that token\'s presence, not to the slot', async () => {
+		expect(await membersOf(['(method) @declaration.method', '(method accessor_kind: "*" @generator)'].join('\n'), 'method')).toEqual([
+			{ route: 'slot', name: 'name', slot: expect.objectContaining({ name: 'name' }), path: [{ owner: 'method', slot: 'name' }] },
+			{ route: 'presence', name: 'generator', via: [], token: '*', path: [{ owner: 'method', slot: 'accessor_kind' }] }
+		]);
+	});
+
+	it('routes a flag captured on a node to the presence of its kind, and the slot is no member', async () => {
+		expect(await membersOf(['(param) @declaration.parameter', '(param (mutable_specifier) @mutable)'].join('\n'), 'param')).toEqual([
+			{ route: 'slot', name: 'pattern', slot: expect.objectContaining({ name: 'pattern' }), path: [{ owner: 'param', slot: 'pattern' }] },
+			{ route: 'kind', name: 'mutable', kind: 'mutable_specifier', path: [{ owner: 'param', slot: 'mutable_specifier' }] }
+		]);
+	});
+
+	it('routes a flag captured on a keyword slot to the presence of the one token the slot holds', async () => {
+		expect((await membersOf(['(for_in) @statement.loop.for', '(for_in await: _ @async)'].join('\n'), 'for_in'))?.filter((r) => r.name === 'async')).toEqual([
+			{ route: 'presence', name: 'async', via: [], token: 'await', path: [{ owner: 'for_in', slot: 'await' }] }
+		]);
+	});
+
+	it('refuses a flag captured on a slot that holds more than one token', async () => {
+		await expect(membersOf(['(static_item) @declaration.variable', '(static_item ref: _ @byReference)'].join('\n'), 'static_item')).rejects.toThrow(/static_item.*byReference.*ref.*ref, mut/);
+	});
+
+	it('refuses a flag captured on a field the model does not have, naming the kind, the flag and the field', async () => {
+		await expect(membersOf(['(method) @declaration.method', '(method typo: _ @generator)'].join('\n'), 'method')).rejects.toThrow(/method's flag @generator.*typo/);
+	});
+
+	it('names a pin by the member holding its slot, never by a flag captured in that slot', async () => {
+		const routes = resolveRoutes(
+			await flagged(['(method) @declaration.method', '(method accessor_kind: "*" @generator)', '(method accessor_kind: "get") @declaration.method.getter'].join('\n'))
+		);
+		expect(routes.readEntries.get('method')?.find((e) => e.vocab === 'declaration.method.getter')?.pins).toEqual([{ member: 'accessorKind', slot: 'accessor_kind', text: 'get' }]);
+	});
+
+	it('keeps a capture that is data on its path a member that names its slot', async () => {
+		expect((await membersOf(['(method) @declaration.method', '(method name: (_) @label)'].join('\n'), 'method'))?.find((r) => r.name === 'label')).toMatchObject({ route: 'slot', name: 'label' });
+	});
+
+	it('refuses a name that is a flag on one claimed path and data on another', async () => {
+		const input = async () => resolveFlags(await readBindings(['(param) @declaration.parameter', '(param) @statement.loop.for', '(param (mutable_specifier) @async)'].join('\n')), vocabulary({ 'declaration.parameter': { async: false }, 'statement.loop.for': { async: true } }));
+		await expect(input()).rejects.toThrow(/async.*flag.*data|one name/);
 	});
 });
 

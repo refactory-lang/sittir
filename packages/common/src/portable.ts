@@ -92,7 +92,6 @@ export function portableSurface<Kinds, Is>(table: PortableTable, querySlots: Que
 		const cut = path.lastIndexOf('.');
 		link(cut < 0 ? '' : path.slice(0, cut), path.slice(cut + 1), path);
 	}
-	for (const [under, name, path] of table.aliases) link(under, name, path);
 	for (const node of [...kinds.values(), ...guards.values()]) Object.freeze(node);
 	return Object.freeze({ kinds: kinds.get('') as Kinds, is: guards.get('') as Is });
 }

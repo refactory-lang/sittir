@@ -259,17 +259,100 @@ The facts with every grammar kind they name (claims and their placements, the ki
 
 A `CaptureSite` with the kind of each of its `down` selectors named by its bound kind.
 
+### `packages/codegen/src/bindings/vocabulary.ts::readVocabularySource`
+
+Reads the vocabulary's declarations structurally, never by matching lines or calling the compiler. Each file is parsed in the pinned child by the pinned build's TypeScript package (`runPinned`; `pinned-vocabulary.ts::vocabularyDeclaredInProcess` and `vocabularyFeatureIndexInProcess`), so a regeneration of `packages/typescript` cannot move how the vocabulary reads; a failure names its file. This process lists the files and assembles what the child returns:
+
+- **Base kinds:** the namespace files (every top-level source but the augmentation) give the base kinds, each an interface with a string-literal `$kind`. An interface there without one (the context's typemap, `Unmapped`) is not a kind.
+- **`modules`:** maps each top-level namespace to the file that declares it. That file is the module the augmentation's `declare module` block for the namespace names.
+- **Feature folders:** read whenever `features/` exists (`readFeatures`).
+
 ### `packages/codegen/src/bindings/vocabulary.ts::readVocabulary`
 
-Reads the authored vocabulary structurally, never by matching lines or calling the compiler: each file (a failure names it) is parsed by the pinned build's TypeScript package in the pinned child (`runPinned`, `pinned-vocabulary.ts::vocabularyDeclarationsInProcess`), so a regeneration of `packages/typescript` cannot move how the vocabulary reads. The result is every interface under its namespaces, keyed by its `$kind` literal, with its own members (each marked optional or required, and a flag when its declared type is the marker `Flag`, the vocabulary's declaration of a flag in `utils.ts`; a `boolean` member is data) and its parent, the interface its `extends` clause names through `V.`. `members(path)` adds the inherited members, nearest first. `flags` is every name some kind declares as a flag. An interface with no `$kind` literal is not a vocabulary kind (the context's typemap and `Unmapped`). The reader is syntactic: it resolves no types.
+The vocabulary as the bindings consult it, assembled from `readVocabularySource`:
 
-### `packages/codegen/src/bindings/vocabulary.ts::VocabularyDeclaration`
+- A stub that declares a `$kind` is a kind of its own.
+- A stub that does not declare one adds its members to the kind with the same qualified name.
+- A member declared more than once is optional when any declaration of it is optional, which is how the augmentation gates it.
 
-One vocabulary interface as the pinned child reports it: its scoped name, its path, its own members as entries and the scoped name of its parent, if it names one. Plain JSON, so it crosses the process; `readVocabulary` resolves parent names to paths once every file is read.
+Every kind is keyed by its `$kind` and carries its own members (each optional or required, and a flag when `Member.flag` says so), its parent, and the value it is refined by, when it is an owner's refinement. `members(path)` adds the inherited members, nearest first: at each kind on the line its own, then those of the value it is refined by, along the value's own line. So `declaration.function.public.restricted` has the `scope` that `scoped-visibility` gives `modifier.visibility.public.restricted`. `flags` is every name some kind or stub declares as a flag. An interface with no `$kind` and no kind of the same name is not a vocabulary kind.
 
-### `packages/codegen/src/bindings/pinned-vocabulary.ts::vocabularyDeclarationsInProcess`
+### `packages/codegen/src/bindings/vocabulary.ts::Declared`
 
-The vocabulary interfaces one file declares (`VocabularyDeclaration`), read by the pinned build's TypeScript engine through its typed nodes. It runs in the pinned child (`pinned-reader.child.ts::READS`), never in the workspace process, and imports `@sittir/typescript` for types only. A file that does not parse cleanly is refused, never read from what the parser recovered: a recovered tree can turn a member into a different one (the TypeScript grammar does not parse an optional property named `abstract` without `readonly`). Every name it reads is compared as written, so a name spelled with an escape (`Fla\u0067` for `Flag`) is refused rather than read as a different name.
+One interface as declared, plain JSON so it crosses the pinned child:
+- its qualified name, the namespace path plus the interface name;
+- its `$kind` string, if it has one;
+- its parent, the qualified name its `extends` clause names through `V.`;
+- the value it is refined by, when it is an owner's refinement (`pinned-vocabulary.ts::refinedValue`);
+- its own property members (`Member`).
+
+A declaration with a `$kind` is a kind (`DeclaredKind`, `isKind`). In a feature folder, a declaration without one adds members to the kind with the same qualified name.
+
+### `packages/codegen/src/bindings/vocabulary.ts::Member`
+
+A property member, with facts stamped from its parse tree: its name; whether it is optional; whether it is a flag, its type being the marker `Flag` (`FLAG`; a `boolean` member is data); the `V.`-qualified generic types it references (`references`, which the planner's direct-reference check reads); and its type as written in the source. Two declarations of a member have the same type when that text is equal, so the planner's restatement check is formatting-sensitive: the engine's query facet exposes no anonymous tokens and no structural rendering of a parsed node, so a type cannot yet be compared by its tokens.
+
+### `packages/codegen/src/bindings/vocabulary.ts::FLAG`
+
+The marker type a flag is declared with (`utils.ts::Flag`).
+
+### `packages/codegen/src/bindings/vocabulary.ts::REFINED_BY`
+
+The name of the helper an owner's refinement by a value extends (`utils.ts::RefinedBy`). A heritage clause naming it gives the owner as its first type argument and the value as its second.
+
+### `packages/codegen/src/bindings/vocabulary.ts::byCodepoint`
+
+The order every vocabulary list follows: plain string comparison (`<`, by UTF-16 code unit), independent of locale, so the output is the same on every machine.
+
+### `packages/codegen/src/bindings/vocabulary.ts::Feature`
+
+One feature folder:
+- the marker interface's name;
+- its key, the marker's one member, typed `true`, which a language context declares to compose the feature;
+- the features its marker extends;
+- its folder, relative to `features/`;
+- the declarations in its stub files;
+- the stub files its `index.ts` does not re-export with a star export.
+
+### `packages/codegen/src/bindings/vocabulary.ts::FeatureIndex`
+
+What the pinned child reads from a feature's `index.ts`: its marker (`pinned-vocabulary.ts::markerKey`) and the files its star exports name.
+
+### `packages/codegen/src/bindings/vocabulary.ts::readFeatures`
+
+Every folder under `features/`, depth first and in codepoint order, each one a feature. A folder nested in another holds a feature that must extend the outer folder's feature; the planner checks this.
+
+### `packages/codegen/src/bindings/vocabulary.ts::readFeature`
+
+Reads one feature folder. Its marker is the first interface in `index.ts` that is one; a folder without one is refused. The stub files are every other source in the folder (`vocabularySources`). Nested folders are read separately, as features of their own.
+
+### `packages/codegen/src/bindings/vocabulary.ts::isVocabularySource`
+
+Whether a path relative to the vocabulary directory is a source the reader reads: a top-level `.ts` file other than the generated augmentation, or a `.ts` file in a feature folder. The generated `features/index.ts` is not read.
+
+### `packages/codegen/src/bindings/vocabulary.ts::vocabularySources`
+
+Every vocabulary source (`isVocabularySource`), as posix paths relative to the directory, in codepoint order. The reader, the bindings hash and the generated-output manifest all take the vocabulary from this one list, so the staleness stamp covers exactly what the reader reads.
+
+### `packages/codegen/src/bindings/vocabulary.ts::flagSegment`
+
+Reads a claim path whose last segment is a flag of the path before it as that parent path and the flag: `declaration.method.static` claims `declaration.method` with its flag `static`. The segment is matched in snake case against the camel-case member name. A path whose last segment is a kind, a member that is data, or nothing the parent declares is no flag. A path that names a vocabulary kind and is also a flag of its parent is refused: one name names one thing.
+
+### `packages/codegen/src/bindings/vocabulary.ts::resolveFlags`
+
+The facts with their flags resolved against the vocabulary. Each flag claim (`flagSegment`) claims the parent path with its flag (`ClaimFact.flag`). Each rename capture whose name is a flag at a path its owner's claims carry is marked a flag (`MemberFact`), which routes it as a fact rather than as the slot it captures (`routes.ts::flagRouteOf`). A capture that is a flag at one of those paths and data at another is refused: one name names one thing.
+
+### `packages/codegen/src/bindings/pinned-vocabulary.ts::vocabularyDeclaredInProcess`
+
+The interfaces one file declares (`vocabulary.ts::Declared`), kinds and stubs alike, read by the pinned build's TypeScript engine through its typed nodes. It runs in the pinned child (`pinned-reader.child.ts::READS`), never in the workspace process, and imports `@sittir/typescript` for types only (`parsed`).
+
+### `packages/codegen/src/bindings/pinned-vocabulary.ts::vocabularyFeatureIndexInProcess`
+
+A feature `index.ts`'s marker and the files its star exports name (`vocabulary.ts::FeatureIndex`), read in the pinned child.
+
+### `packages/codegen/src/bindings/pinned-vocabulary.ts::parsed`
+
+A file's statements and the reading helpers over them. A file that does not parse cleanly is refused, never read from what the parser recovered: a recovered tree can turn a member into a different one (the TypeScript grammar does not parse an optional property named `abstract` without `readonly`). Every name is compared as written, so one spelled with an escape (`Flag` for `Flag`) is refused rather than read as a different name.
 
 ### `packages/codegen/src/bindings/pinned-vocabulary.ts::identifier`
 
@@ -281,7 +364,7 @@ The pinned TypeScript package's kinds and engine, with the pinned build they com
 
 ### `packages/codegen/src/bindings/pinned-vocabulary.ts::collect`
 
-Walks a file's statements, each read through its wrappers (`unwrap`): a namespace, spelled `namespace` or `module`, adds its name to the scope and is walked in turn, and an interface is declared (`declare`).
+Walks a file's statements, each read through its wrappers (`unwrap`): a namespace, spelled `namespace` or `module`, adds its name to the scope and is walked in turn, and an interface is declared (`declare`). A module named by a string (`declare module './declaration.ts' { … }`) augments another file and names no namespace, so it is passed over; `augment.ts` is made of such blocks. One that declares a vocabulary kind (an interface with a `$kind`) is refused rather than passed over, since its kind would vanish from the vocabulary.
 
 ### `packages/codegen/src/bindings/pinned-vocabulary.ts::unwrap`
 
@@ -293,27 +376,39 @@ A statement, or what one of the wrappers `unwrap` reads through holds.
 
 ### `packages/codegen/src/bindings/pinned-vocabulary.ts::declare`
 
-Records an interface whose `$kind` is a string literal: its scoped name, its path, its own members and the name of its parent (`vocabularyReference`). A `$kind` of any other literal (a boolean, a number) makes no kind, as no `$kind` does.
+Records an interface: its qualified name, its path when its `$kind` is a string literal (any other literal, a boolean or a number, makes no kind, as no `$kind` does), its parent (`vocabularyReference`), the value it is refined by (`refinedValue`) and its members (`vocabulary.ts::Member`).
 
 ### `packages/codegen/src/bindings/pinned-vocabulary.ts::vocabularyReference`
 
-The vocabulary interface a heritage clause names through `V.`: the first `V.`-qualified type name among its descendants (`engine.query`), however the reference is written, so `SubKindOf<V.X<G>>`, `SubKindOf<(V.X<G>)>` and `V.X` all name `X`.
+The vocabulary interface a heritage clause names through `V.`: the first `V.`-qualified type name among its descendants (`engine.query`), however the reference is written, so `SubKindOf<V.X<G>>`, `SubKindOf<(V.X<G>)>` and `V.X` all name `X`. Given a span, only a name inside it counts.
+
+### `packages/codegen/src/bindings/pinned-vocabulary.ts::refinedValue`
+
+The value an owner's refinement is refined by: the `V.`-qualified name inside the second type argument of a `RefinedBy` heritage type (`vocabularyReference` within that argument's span). `RefinedBy<V.Declaration.Function<G>, V.Modifier.Visibility.Public<G>>` gives `Modifier.Visibility.Public`, and the parent stays the owner, the first reference.
+
+### `packages/codegen/src/bindings/pinned-vocabulary.ts::references`
+
+The `V.`-qualified generic types a member's type annotation references, in source order: the names `V.X<…>` spells, read from the parse tree.
+
+### `packages/codegen/src/bindings/pinned-vocabulary.ts::markerKey`
+
+An interface's marker key: its one property member, typed `true`, named by an identifier or a string. An interface with any other shape is not a marker.
+
+### `packages/codegen/src/bindings/pinned-vocabulary.ts::heritageNames`
+
+The names an interface's `extends` clause gives, each without its type arguments: a marker's parent features.
+
+### `packages/codegen/src/bindings/pinned-vocabulary.ts::exportedFrom`
+
+The file a star export (`export * from './x.ts'`) names, without its quotes.
 
 ### `packages/codegen/src/bindings/pinned-vocabulary.ts::isNode`
 
 Whether a child is a node rather than an absent child or the kind id that stands for an anonymous token.
 
-### `packages/codegen/src/bindings/hash.ts::isVocabularySource`
-
-Whether a file name is a vocabulary source: a `.ts` file.
-
-### `packages/codegen/src/bindings/hash.ts::vocabularySources`
-
-Every source of the vocabulary (`isVocabularySource`) in the vocabulary directory and its sub-folders (`features/**`), in the order of their paths relative to that directory in posix form. The bindings hash and the generated-output manifest read the vocabulary's files through it, and it holds every file a vocabulary reader reads, so an edit to any of them marks the grammar bindings and the generated output of every bound grammar stale.
-
 ### `packages/codegen/src/bindings/hash.ts::bindingsSourceHash`
 
-The SHA-256 of a `bindings.scm` and every source of the vocabulary (`vocabularySources`), each source keyed by its path relative to the vocabulary directory in posix form, in that order, over their bytes. An edit to or a move of any vocabulary source marks the grammar bindings stale. Nothing is parsed, so the hash is checked without the scm parser.
+The SHA-256 of a `bindings.scm` and every vocabulary source the reader reads (`vocabulary.ts::vocabularySources`), each keyed by its path relative to the vocabulary directory in posix form, in path order, over their bytes. An edit to, a move of or a deletion of any of them marks the grammar bindings stale; the generated `augment.ts` and `features/index.ts` are not read, so not hashed. Nothing is parsed, so the hash is checked without the scm parser.
 
 ### `packages/codegen/src/bindings/hash.ts::grammarBindingsHash`
 
@@ -793,7 +888,11 @@ The `ClaimFact` for a claim capture on a visit: its kind (a grouping's first chi
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::memberFact`
 
-The `MemberFact` for a member capture on a visit. A `@dropped` capture drops the slot its selector finds on its parent's kind. On a child of the top (or under a top grouping) it renames the slot its selector finds, or marks an unfielded token's presence. Deeper, it is a nested member of the top kind (or the presence of a token) routed through the selectors of the nodes between. A capture directly under a grouping names no member. The fact carries the claims on its owner's node (the parent for a direct capture, the top for a deeper one) as `claims`.
+The `MemberFact` for a member capture on a visit. The capture belongs to its home: the nearest claimed node above it, or the top when none is claimed in between (`claimedHome`). A `@dropped` capture drops the slot its selector finds on its parent's kind. On a child of the home (or under a top grouping) it renames the slot its selector finds, or marks an unfielded token's presence. Deeper, it is a nested member of the home's kind (or the presence of a token) routed through the selectors of the nodes between. A capture directly under a grouping names no member. The fact carries the claims on its owner's node (the parent for a direct capture, the home for a deeper one) as `claims`.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::claimedHome`
+
+The node a member capture belongs to: walking up from the capture's parent, the first node that carries a claim, or the pattern's top when no node below it does. A capture below a placed claim (`(impl_item_body (declaration_list (function_item … @scope) @declaration.method))`) is a member of the claimed `function_item`, not of the `impl_item_body` the pattern starts at.
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::refuseAnchoredPlacement`
 
@@ -1037,7 +1136,11 @@ A deep member's route on a kind, with the build path back through its `via` step
 
 ### `packages/codegen/src/bindings/routes.ts::membersOf`
 
-A read entry's member routes on its kind, as the entry's `Guaranteed` admits them: one `slot` route per slot of the model node, then the member facts the bindings state for it (`kind`, `presence`, `nested`). A slot routes no member when it is a layout slot, when a claim drops it (`SlotNames` gives it `null`), when the read already tells its value (`toldByRead`, over the values the kind's read entries test on it: their pins, and their child tests on a node directly below: a text test's text, or the text of each fixed-text kind a kinds test names), or when it holds only text on a kind read as an identifier (`facts.ts::isIdentifierPath`, `holdsOnlyText`: an identifier's text is its own value, while a compound identifier's node slots stay members); a slot is also told when the kind's read entries test, one step below it, every kind the node in it can hold (`toldBelow`: rust's visibility levels test `(visibility_modifier (visibility_modifier_pub))` and `(visibility_modifier (crate))`, so the `visibility_modifier` slot is no member), unless a capture the entry inherits names the slot, since a kind leaves its node's content open (`pub(in path)` carries a path), and never over content no claim captures (`toldByRead`); the entry routes the `presence`, `nested` and `kind` members captured by member-only patterns and by the claims it inherits (`inheritedClaims`), never a sibling's or a descendant's; the kinds a deep route reaches through, on every entry (the kind's shape: any claim's `presence` or `nested` route, where the entry guarantees the path), are taken out of their slot, which keeps every other kind it holds and the read then tells as optional, and a slot left with no kind routes nothing; and a slot a member counts through (a step to its only node) is routed only where the entry guarantees it holds more than one (`guaranteedBy`). A leaf alias envelope (`isLeafAlias`) takes no slot routes. A list's item slot is its container content (`containerOf`), a step a path may take but no member, unless the list is a form of a supertype, whose items route as its sibling forms name them (`listFormItems`).
+A read entry's member routes on its kind, as the entry's `Guaranteed` admits them: one `slot` route per slot of the model node, then its flags (`flagRouteOf`), then the member facts the bindings state for it (`kind`, `presence`, `nested`). A slot routes no member when only flag captures hold it, when it is a layout slot, when a claim drops it (`SlotNames` gives it `null`), when the read already tells its value (`toldByRead`, over the values the kind's read entries test on it: their pins, and their child tests on a node directly below: a text test's text, or the text of each fixed-text kind a kinds test names), or when it holds only text on a kind read as an identifier (`facts.ts::isIdentifierPath`, `holdsOnlyText`: an identifier's text is its own value, while a compound identifier's node slots stay members); a slot is also told when the kind's read entries test, one step below it, every kind the node in it can hold (`toldBelow`: rust's visibility levels test `(visibility_modifier (visibility_modifier_pub))` and `(visibility_modifier (crate))`, so the `visibility_modifier` slot is no member), unless a capture the entry inherits names the slot, since a kind leaves its node's content open (`pub(in path)` carries a path), and never over content no claim captures (`toldByRead`); the entry routes the `presence`, `nested` and `kind` members captured by member-only patterns and by the claims it inherits (`inheritedClaims`), never a sibling's or a descendant's; the kinds a deep route reaches through, on every entry (the kind's shape: any claim's `presence` or `nested` route, where the entry guarantees the path), are taken out of their slot, which keeps every other kind it holds and the read then tells as optional, and a slot left with no kind routes nothing; and a slot a member counts through (a step to its only node) is routed only where the entry guarantees it holds more than one (`guaranteedBy`). A flag capture whose selector no form of its owner holds (a field the model does not have) is refused, naming the kind, the flag and the selector. A capture that names a slot routing no member for one of these reasons (layout, only text on an identifier, counted through, the path of a deeper member, told by the read) is refused, naming the capture, the kind, the slot and the reason: a capture reaches a member, a flag or `@dropped`, never nothing. A leaf alias envelope (`isLeafAlias`) takes no slot routes. A list's item slot is its container content (`containerOf`), a step a path may take but no member, unless the list is a form of a supertype, whose items route as its sibling forms name them (`listFormItems`).
+
+### `packages/codegen/src/bindings/routes.ts::flagRouteOf`
+
+A flag capture as a fact route on the slot it captures: the presence of the kind it names (`kind`), the presence of the token it captures (`presence`), or, for a wildcard on a slot that holds one token, that token's presence. A flag never names its slot, so pins and other members keep the slot's own name. A wildcard on a slot that holds more than one token is refused: a flag tests one token.
 
 ### `packages/codegen/src/bindings/routes.ts::holdsOnlyText`
 
@@ -1097,11 +1200,11 @@ Each kind the grammar bindings renamed, mapped to its base kind, from the record
 
 ### `packages/codegen/src/bindings/input.ts::layoutSlots`
 
-The layout slots of a grammar: each slot an options block's `_labels` address names as `owner/field:` (`_` for any owner), and the separator.
+The layout slots of a grammar: each slot an options block's `_labels` address names as `owner/field:` (`_` for any owner). A separated list's separator is no slot of the model, so no slot is layout by its name alone.
 
 ### `packages/codegen/src/bindings/input.ts::grammarInput`
 
-A grammar's `GrammarInput`, or `undefined` when it ships no `bindings.scm`: its facts read by the pinned reader and bound to the record's kind names, the record's slot model, the grammar's minted text tokens, and its layout slots.
+A grammar's `GrammarInput`, or `undefined` when it ships no `bindings.scm`: its facts read by the pinned reader, bound to the record's kind names and with flags resolved against the vocabulary (`vocabulary.ts::resolveFlags`; the authored vocabulary unless one is passed), the record's slot model, the grammar's minted text tokens, and its layout slots.
 
 ### `packages/codegen/src/bindings/input.ts::NodeModelValue`
 
@@ -1253,7 +1356,7 @@ One member of an enum kind as the assembled model stamps it: the member's kind, 
 
 ### `packages/codegen/src/bindings/facts.ts::ClaimFact`
 
-A vocabulary capture on a node: its path, its grammar kind (`_` for a wildcard), the field it sits under in its enclosing node (`null` for none), its predicates, whether it is top-level, the kinds enclosing it nearest first (`within`), the field literals and tokens it pins, and the conditions its pattern states on the nodes below the claimed node (`children`, `ChildFact`). A wildcard claim's kinds are read from its enclosing kind and field (`routes.ts::admittedKinds`).
+A vocabulary capture on a node: its path, its grammar kind (`_` for a wildcard), the field it sits under in its enclosing node (`null` for none), its predicates, whether it is top-level, the kinds enclosing it nearest first (`within`), the field literals and tokens it pins, the conditions its pattern states on the nodes below the claimed node (`children`, `ChildFact`), and the flag of its path it sets when its last segment is one (`flag`, `vocabulary.ts::flagSegment`). A wildcard claim's kinds are read from its enclosing kind and field (`routes.ts::admittedKinds`).
 
 ### `packages/codegen/src/bindings/facts.ts::ChildFact`
 
@@ -1273,7 +1376,7 @@ A kind `bindings.scm` declares unclaimed (`@unclaimed`), with the pattern's `#se
 
 ### `packages/codegen/src/bindings/facts.ts::MemberFact`
 
-A member capture as read. `rename` names the slot its selector finds on the owner. `dropped` marks the slot its selector finds on the owner as no member, from a claim's `@dropped` capture. `presence` marks an unfielded token's presence on the owner, through the steps in `via` when it sits deeper. `kind` is the presence of a node's kind in the slot another member names (a flag). `nested` is a member of the top kind that sits below a child, reached through `via`, in `parent`'s slot the selector finds, repeated when `multiple`. Each `via` step is the selector of a node between, nearest first, so an anchored step keeps its anchor. `claims` lists the claims, by their position in the facts, that the member's owner node carries in its pattern; a member captured in a pattern whose owner carries no claim (a member-only pattern) has none and belongs to every read entry of its owner.
+A member capture as read. `rename` names the slot its selector finds on the owner; it keeps the token it captures, when it captures one, and `resolveFlags` marks it a flag when its name is one, which routes it as a fact instead (`routes.ts::flagRouteOf`). `dropped` marks the slot its selector finds on the owner as no member, from a claim's `@dropped` capture. `presence` marks an unfielded token's presence on the owner, through the steps in `via` when it sits deeper. `kind` is the presence of a node's kind in the slot another member names (a flag). `nested` is a member of the top kind that sits below a child, reached through `via`, in `parent`'s slot the selector finds, repeated when `multiple`. Each `via` step is the selector of a node between, nearest first, so an anchored step keeps its anchor. `claims` lists the claims, by their position in the facts, that the member's owner node carries in its pattern; a member captured in a pattern whose owner carries no claim (a member-only pattern) has none and belongs to every read entry of its owner.
 
 ### `packages/codegen/src/bindings/facts.ts::NamedMemberFact`
 

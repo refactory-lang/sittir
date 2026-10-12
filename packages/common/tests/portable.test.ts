@@ -41,7 +41,6 @@ const TABLE: PortableTable = {
 		'expression.add': { ids: [BINARY], exact: false }
 	},
 	fixedText: { [PLUS]: '+', [TRUE]: 'true', [FALSE]: 'false' },
-	aliases: [['', 'static', 'declaration.method.static']],
 	entries: {
 		[FUNCTION]: [
 			{
@@ -81,9 +80,10 @@ describe('portableSurface kinds', () => {
 		expect(Object.isFrozen(kinds.declaration.method)).toBe(true);
 	});
 
-	it('links an alias to the same node as its path', () => {
-		expect(kinds.static).toBe(kinds.declaration.method.static);
-		expect(is.static).toBe(is.declaration.method.static);
+	it('reaches a path only by its full path: a segment is never linked under a further ancestor', () => {
+		expect('static' in kinds).toBe(false);
+		expect('static' in is).toBe(false);
+		expect('static' in kinds.declaration).toBe(false);
 	});
 });
 
@@ -179,7 +179,6 @@ describe('portableSurface conditions through a list', () => {
 				'method.static': { ids: [METHOD], exact: false }
 			},
 			fixedText: {},
-			aliases: [],
 			entries: {
 				[METHOD]: [
 					{ path: 'method.only', within: [], test: [{ up: 0, via: [PARAMS_STEP, { ...ITEMS, anchor: 'only' }], plan: { op: 'is', types: [PLAIN], ...ELEMENT } }] },

@@ -5,8 +5,8 @@ export namespace Declaration {
 	export interface Extension<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
 		// claimed by r
 		readonly $kind: 'declaration.extension';
+		readonly body: G['slots']['declaration.extension']['body'][];
 		readonly implements?: G['slots']['declaration.extension']['implements'];
-		readonly receiver?: V.Declaration.Parameter.Self<G>;
 		readonly traitClause?: G['slots']['declaration.extension']['traitClause'];
 		readonly type: G['slots']['declaration.extension']['type'];
 	}
