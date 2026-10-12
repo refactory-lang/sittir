@@ -172,7 +172,8 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 		});
 	}
 	const enrichedSymbols = enrichSymbolSource(ctx, { ...enrichedRules, ...ctx.kwRules, ...ctx.clauseGroupRules });
-	Object.assign(enrichedRules, unaliasOverloadedDisplays(enrichedRules, { symbols: enrichedSymbols }));
+	const unaliased = unaliasOverloadedDisplays(enrichedRules, { symbols: enrichedSymbols });
+	for (const [name, rule] of Object.entries(unaliased)) enrichedRules[name] = applyFieldWrapPasses(name, rule, ctx);
 	for (const name of Object.keys(enrichedRules)) {
 		const rule = enrichedRules[name];
 		if (!rule) continue;

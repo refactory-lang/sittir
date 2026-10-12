@@ -124,4 +124,16 @@ describe('enrich is a fixpoint of its own output', () => {
 		expect(JSON.stringify(second.spec)).toBe(before);
 		expect(Object.keys(second).filter((name) => !(name in rules))).toEqual([]);
 	});
+
+	it('wraps a symbol the unalias stage left bare in the first pass', () => {
+		const tree = choice(seq(S('('), repeat(sym('item')), S(')')), seq(S('['), repeat(sym('item')), S(']')));
+		const rules = {
+			invocation: seq(field('macro', sym('name')), S('!'), alias(sym('delim_token_tree'), 'token_tree')),
+			delim_token_tree: tree,
+			token_tree: seq(S('<'), repeat(sym('item')), S('>')),
+			name: P('[a-z]+'),
+			item: P('[0-9]+')
+		};
+		expect(again(grammarWith(rules))).toEqual({ names: [], minted: [] });
+	});
 });
