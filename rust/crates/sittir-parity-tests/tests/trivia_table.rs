@@ -117,9 +117,10 @@ fn a_comment_after_a_separator_leads_the_item_after_it() {
 }
 
 #[test]
-fn a_comment_between_a_trailing_separator_and_the_closer_is_unowned() {
+fn a_comment_between_a_trailing_separator_and_the_closer_trails_the_last_item() {
     let case = Case::new(typescript(), "x = [a, b, // c\n];\n");
-    assert_eq!(case.table.unowned(), [case.at("comment_line", "// c")]);
+    case.holds("identifier", "b", Trailing, "comment_line", "// c");
+    assert!(case.table.unowned().is_empty());
 }
 
 #[test]
@@ -179,9 +180,10 @@ fn a_childless_nodes_comment_is_its_inner() {
 }
 
 #[test]
-fn a_comment_between_two_of_a_for_statements_own_tokens_is_unowned() {
+fn a_comment_between_two_of_a_for_statements_own_tokens_leads_its_next_child() {
     let case = Case::new(typescript(), "for /* c */ (;;) {}\n");
-    assert_eq!(case.table.unowned(), [case.at("comment_block", "/* c */")]);
+    case.holds("empty_statement", ";", Leading, "comment_block", "/* c */");
+    assert!(case.table.unowned().is_empty());
 }
 
 #[test]
@@ -213,7 +215,7 @@ fn a_one_line_block_stores_no_layout() {
 }
 
 #[test]
-fn every_extra_of_the_probe_inputs_lands_in_one_side_or_is_unowned() {
+fn every_extra_of_the_probe_inputs_lands_in_one_side() {
     for name in ["engine.rs", "spacing.rs"] {
         let path = format!("{}/../../../docs/superpowers/probes/2026-10-01-shared-arena/transport/inputs/{name}", env!("CARGO_MANIFEST_DIR"));
         let source: &'static str = Box::leak(std::fs::read_to_string(&path).unwrap_or_else(|e| panic!("{path}: {e}")).into_boxed_str());
