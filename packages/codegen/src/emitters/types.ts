@@ -976,7 +976,8 @@ function emitInterface(
 		for (const f of slots) {
 			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
 			const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
-			const opt = isRequired(f) || (isMultiple(f) && !storageInfo.collapsesMultiplicity) ? '' : '?';
+			const opt =
+				isRequired(f) || storageInfo.kind === 'boolean' || (isMultiple(f) && !storageInfo.collapsesMultiplicity) ? '' : '?';
 			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr, kindEntries);
 			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
 				const elemType = hasOptionalElements(f) ? `${storageType} | undefined` : storageType;
@@ -995,7 +996,7 @@ function emitInterface(
 			const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 			const propName = f.propertyName;
 			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr, kindEntries);
-			const opt = isRequired(f) ? '' : '?';
+			const opt = isRequired(f) || storageInfo.kind === 'boolean' ? '' : '?';
 			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
 				const elemType = hasOptionalElements(f) ? `${storageType} | undefined` : storageType;
 				const arrType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `readonly (${elemType})[]`;

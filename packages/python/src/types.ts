@@ -2600,7 +2600,7 @@ export interface CaseClause {
 
 export interface ForStatement {
 	readonly $type: TSKindId.ForStatement;
-	readonly _async?: boolean;
+	readonly _async: boolean;
 	readonly _left: Pattern | PatternList;
 	readonly _right: Expression | ExpressionList;
 	readonly _body: Suite;
@@ -2622,7 +2622,7 @@ export interface ForStatement {
 		readonly body: SlotHint<T.Suite>;
 		readonly alternative: SlotHint<T.ElseClause, true>;
 	};
-	async(): boolean | undefined;
+	async(): boolean;
 	left(): Pattern | PatternList;
 	right(): Expression | ExpressionList;
 	body(): Suite;
@@ -2676,7 +2676,7 @@ export interface TryStatement {
 
 export interface ExceptClause {
 	readonly $type: TSKindId.ExceptClause;
-	readonly _group?: boolean;
+	readonly _group: boolean;
 	readonly _exception?: ExceptClauseException;
 	readonly _suite: Suite;
 	readonly __inputHints__?: {
@@ -2690,7 +2690,7 @@ export interface ExceptClause {
 		readonly exception: SlotHint<T.ExceptClauseException, true>;
 		readonly suite: SlotHint<T.Suite>;
 	};
-	group(): boolean | undefined;
+	group(): boolean;
 	exception(): ExceptClauseException | undefined;
 	suite(): Suite;
 }
@@ -2706,7 +2706,7 @@ export interface FinallyClause {
 
 export interface WithStatement {
 	readonly $type: TSKindId.WithStatement;
-	readonly _async?: boolean;
+	readonly _async: boolean;
 	readonly _with_clause: WithClause;
 	readonly _body: Suite;
 	readonly __inputHints__?: {
@@ -2717,7 +2717,7 @@ export interface WithStatement {
 		readonly withClause: SlotHint<T.WithClause>;
 		readonly body: SlotHint<T.Suite>;
 	};
-	async(): boolean | undefined;
+	async(): boolean;
 	withClause(): WithClause;
 	body(): Suite;
 }
@@ -2738,7 +2738,7 @@ export interface WithItem {
 
 export interface FunctionDefinition {
 	readonly $type: TSKindId.FunctionDefinition;
-	readonly _async?: boolean;
+	readonly _async: boolean;
 	readonly _name: Identifier;
 	readonly _type_parameters?: TypeParameter;
 	readonly _parameters: Parameters;
@@ -2764,7 +2764,7 @@ export interface FunctionDefinition {
 			readonly parameters: ListSlotHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	async(): boolean | undefined;
+	async(): boolean;
 	name(): Identifier;
 	typeParameters(): TypeParameter | undefined;
 	parameters(): Parameters;
@@ -3389,7 +3389,7 @@ export interface ClassPattern {
 
 export interface ComplexPattern {
 	readonly $type: TSKindId.ComplexPattern;
-	readonly _sign?: boolean;
+	readonly _sign: boolean;
 	readonly _real: Integer | Float;
 	readonly _operator: number;
 	readonly _imaginary: Integer | Float;
@@ -3403,7 +3403,7 @@ export interface ComplexPattern {
 		readonly operator: SlotHint<NonNullable<T.ComplexPattern.Config>['operator']>;
 		readonly imaginary: SlotHint<T.Integer | T.Float>;
 	};
-	sign(): boolean | undefined;
+	sign(): boolean;
 	real(): Integer | Float;
 	operator(): number;
 	imaginary(): Integer | Float;
@@ -4320,10 +4320,10 @@ export interface CollectionElements {
 
 export interface ForInClause {
 	readonly $type: TSKindId.ForInClause;
-	readonly _async?: boolean;
+	readonly _async: boolean;
 	readonly _left: Pattern | PatternList;
 	readonly _right: NonEmptyArray<Expression | LambdaWithinForInClause>;
-	readonly _comma?: boolean;
+	readonly _comma: boolean;
 	readonly __inputHints__?: {
 		readonly async?: BaseBooleanKeyword<'async'>;
 		readonly right: NonEmptyArray<
@@ -4343,10 +4343,10 @@ export interface ForInClause {
 		>;
 		readonly comma: SlotHint<NonNullable<T.ForInClause.Config>['comma'], true>;
 	};
-	async(): boolean | undefined;
+	async(): boolean;
 	left(): Pattern | PatternList;
 	rights(): NonEmptyArray<Expression | LambdaWithinForInClause>;
-	comma(): boolean | undefined;
+	comma(): boolean;
 }
 
 export interface IfClause {
@@ -4437,7 +4437,7 @@ export interface StringContent {
 export interface Interpolation {
 	readonly $type: TSKindId.Interpolation;
 	readonly _expression: Expression | ExpressionList | PatternList | Yield;
-	readonly _debug?: boolean;
+	readonly _debug: boolean;
 	readonly _type_conversion?: TypeConversion;
 	readonly _format_specifier?: FormatSpecifier;
 	readonly __inputHints__?: {
@@ -4459,7 +4459,7 @@ export interface Interpolation {
 		readonly formatSpecifier: SlotHint<T.FormatSpecifier, true>;
 	};
 	expression(): Expression | ExpressionList | PatternList | Yield;
-	debug(): boolean | undefined;
+	debug(): boolean;
 	typeConversion(): TypeConversion | undefined;
 	formatSpecifier(): FormatSpecifier | undefined;
 }
@@ -4976,7 +4976,7 @@ export interface EscapeSequenceNamed {
 
 export interface SimplePatternNegative {
 	readonly $type: TSKindId.SimplePatternNegative;
-	readonly _sign?: boolean;
+	readonly _sign: boolean;
 	readonly _value: Integer | Float;
 	readonly __inputHints__?: {
 		readonly sign?: BaseBooleanKeyword<'-'>;
@@ -4985,7 +4985,7 @@ export interface SimplePatternNegative {
 		readonly sign: SlotHint<NonNullable<T.SimplePatternNegative.Config>['sign'], true>;
 		readonly value: SlotHint<T.Integer | T.Float>;
 	};
-	sign(): boolean | undefined;
+	sign(): boolean;
 	value(): Integer | Float;
 }
 

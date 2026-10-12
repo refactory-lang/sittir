@@ -153,7 +153,7 @@ describe('a rebuilt list gives each parsed item the gap its seat declares', () =
 		const b = second?.content();
 		if (a === undefined || typeof a === 'number' || !rust.is.parameter(a)) throw new Error('expected a parameter');
 		if (b === undefined || typeof b === 'number' || !rust.is.parameter(b)) throw new Error('expected a parameter');
-		const edited = b.$with.type(a.type()) as typeof b;
+		const edited = b.$with.type(a.type()) as unknown as typeof b;
 		expect(parameters.$with.elements(a, edited).$render()).toBe('(a: u8,b: u8)');
 	});
 
@@ -235,7 +235,7 @@ describe('a rebuilt list keeps the flanks its source edge items still stand besi
 		const b = second?.content();
 		if (a === undefined || typeof a === 'number' || !rust.is.parameter(a)) throw new Error('expected a parameter');
 		if (b === undefined || typeof b === 'number' || !rust.is.parameter(b)) throw new Error('expected a parameter');
-		const edited = b.$with.type(a.type()) as typeof b;
+		const edited = b.$with.type(a.type()) as unknown as typeof b;
 		expect(parameters.$with.elements(a, edited).$render()).toBe('(\n    a: u8,\n    b: u8,\n)');
 	});
 });

@@ -3494,7 +3494,7 @@ export interface ForStatement {
 
 export interface ForInStatement {
 	readonly $type: TSKindId.ForInStatement;
-	readonly _await?: boolean;
+	readonly _await: boolean;
 	readonly _for_header: ForHeader;
 	readonly _body: Statement;
 	readonly __inputHints__?: {
@@ -3506,7 +3506,7 @@ export interface ForInStatement {
 		readonly forHeader: SlotHint<T.ForHeader>;
 		readonly body: SlotHint<NonNullable<T.ForInStatement.Config>['body']>;
 	};
-	await(): boolean | undefined;
+	await(): boolean;
 	forHeader(): ForHeader;
 	body(): Statement;
 }
@@ -4546,7 +4546,7 @@ export interface ClassHeritage {
 
 export interface FunctionExpression {
 	readonly $type: TSKindId.FunctionExpression;
-	readonly _async?: boolean;
+	readonly _async: boolean;
 	readonly _name?: Identifier;
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
@@ -4578,7 +4578,7 @@ export interface FunctionExpression {
 			>;
 		};
 	};
-	async(): boolean | undefined;
+	async(): boolean;
 	name(): Identifier | undefined;
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
@@ -4588,7 +4588,7 @@ export interface FunctionExpression {
 
 export interface FunctionDeclaration {
 	readonly $type: TSKindId.FunctionDeclaration;
-	readonly _async?: boolean;
+	readonly _async: boolean;
 	readonly _name: Identifier;
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
@@ -4623,7 +4623,7 @@ export interface FunctionDeclaration {
 			>;
 		};
 	};
-	async(): boolean | undefined;
+	async(): boolean;
 	name(): Identifier;
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
@@ -4634,7 +4634,7 @@ export interface FunctionDeclaration {
 
 export interface GeneratorFunction {
 	readonly $type: TSKindId.GeneratorFunction;
-	readonly _async?: boolean;
+	readonly _async: boolean;
 	readonly _name?: Identifier;
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
@@ -4666,7 +4666,7 @@ export interface GeneratorFunction {
 			>;
 		};
 	};
-	async(): boolean | undefined;
+	async(): boolean;
 	name(): Identifier | undefined;
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
@@ -4676,7 +4676,7 @@ export interface GeneratorFunction {
 
 export interface GeneratorFunctionDeclaration {
 	readonly $type: TSKindId.GeneratorFunctionDeclaration;
-	readonly _async?: boolean;
+	readonly _async: boolean;
 	readonly _name: Identifier;
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
@@ -4711,7 +4711,7 @@ export interface GeneratorFunctionDeclaration {
 			>;
 		};
 	};
-	async(): boolean | undefined;
+	async(): boolean;
 	name(): Identifier;
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
@@ -4722,7 +4722,7 @@ export interface GeneratorFunctionDeclaration {
 
 export interface ArrowFunction {
 	readonly $type: TSKindId.ArrowFunction;
-	readonly _async?: boolean;
+	readonly _async: boolean;
 	readonly _content: ArrowFunctionParameter | CallSignature;
 	readonly _body: Expression | StatementBlock;
 	readonly __inputHints__?: {
@@ -4740,7 +4740,7 @@ export interface ArrowFunction {
 		readonly content: SlotHint<T.ArrowFunctionParameter | T.CallSignature>;
 		readonly body: SlotHint<NonNullable<T.ArrowFunction.Config>['body']>;
 	};
-	async(): boolean | undefined;
+	async(): boolean;
 	content(): ArrowFunctionParameter | CallSignature;
 	body(): Expression | StatementBlock;
 }
@@ -4830,7 +4830,7 @@ export interface MemberExpression {
 export interface SubscriptExpression {
 	readonly $type: TSKindId.SubscriptExpression;
 	readonly _object: Expression | PrimaryExpression;
-	readonly _optional_chain?: boolean;
+	readonly _optional_chain: boolean;
 	readonly _index: Expression | SequenceExpression;
 	readonly __inputHints__?: {
 		readonly object:
@@ -4855,7 +4855,7 @@ export interface SubscriptExpression {
 		readonly index: SlotHint<NonNullable<T.SubscriptExpression.Config>['index']>;
 	};
 	object(): Expression | PrimaryExpression;
-	optionalChain(): boolean | undefined;
+	optionalChain(): boolean;
 	index(): Expression | SequenceExpression;
 }
 
@@ -5017,7 +5017,7 @@ export interface LhsExpression {
 
 export interface AssignmentExpression {
 	readonly $type: TSKindId.AssignmentExpression;
-	readonly _using?: boolean;
+	readonly _using: boolean;
 	readonly _left: ParenthesizedExpression | LhsExpression;
 	readonly _right: Expression;
 	readonly __inputHints__?: {
@@ -5034,7 +5034,7 @@ export interface AssignmentExpression {
 		readonly left: SlotHint<T.ParenthesizedExpression | T.LhsExpression>;
 		readonly right: SlotHint<NonNullable<T.AssignmentExpression.Config>['right']>;
 	};
-	using(): boolean | undefined;
+	using(): boolean;
 	left(): ParenthesizedExpression | LhsExpression;
 	right(): Expression;
 }
@@ -5734,10 +5734,10 @@ export interface RestPattern {
 export interface MethodDefinition {
 	readonly $type: TSKindId.MethodDefinition;
 	readonly _accessibility_modifier?: number;
-	readonly _static?: boolean;
-	readonly _override?: boolean;
-	readonly _readonly?: boolean;
-	readonly _async?: boolean;
+	readonly _static: boolean;
+	readonly _override: boolean;
+	readonly _readonly: boolean;
+	readonly _async: boolean;
 	readonly _accessor_kind?: number;
 	readonly _name:
 		| PropertyIdentifier
@@ -5767,7 +5767,7 @@ export interface MethodDefinition {
 		| String
 		| Number
 		| ComputedPropertyName;
-	readonly _optional?: boolean;
+	readonly _optional: boolean;
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
@@ -5867,10 +5867,10 @@ export interface MethodDefinition {
 		};
 	};
 	accessibilityModifier(): number | undefined;
-	static(): boolean | undefined;
-	override(): boolean | undefined;
-	readonly(): boolean | undefined;
-	async(): boolean | undefined;
+	static(): boolean;
+	override(): boolean;
+	readonly(): boolean;
+	async(): boolean;
 	accessorKind(): number | undefined;
 	name():
 		| PropertyIdentifier
@@ -5900,7 +5900,7 @@ export interface MethodDefinition {
 		| String
 		| Number
 		| ComputedPropertyName;
-	optional(): boolean | undefined;
+	optional(): boolean;
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
 	returnType(): TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
@@ -6173,13 +6173,13 @@ export interface ComputedPropertyName {
 export interface PublicFieldDefinition {
 	readonly $type: TSKindId.PublicFieldDefinition;
 	readonly _decorator: readonly Decorator[];
-	readonly _declare?: boolean;
+	readonly _declare: boolean;
 	readonly _accessibility_modifier?: number;
-	readonly _static?: boolean;
-	readonly _override?: boolean;
-	readonly _readonly?: boolean;
-	readonly _abstract?: boolean;
-	readonly _accessor?: boolean;
+	readonly _static: boolean;
+	readonly _override: boolean;
+	readonly _readonly: boolean;
+	readonly _abstract: boolean;
+	readonly _accessor: boolean;
 	readonly _name:
 		| PropertyIdentifier
 		| TSKindId.DeclareKeyword
@@ -6304,13 +6304,13 @@ export interface PublicFieldDefinition {
 		readonly value: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['value'], true>;
 	};
 	decorators(): readonly Decorator[];
-	declare(): boolean | undefined;
+	declare(): boolean;
 	accessibilityModifier(): number | undefined;
-	static(): boolean | undefined;
-	override(): boolean | undefined;
-	readonly(): boolean | undefined;
-	abstract(): boolean | undefined;
-	accessor(): boolean | undefined;
+	static(): boolean;
+	override(): boolean;
+	readonly(): boolean;
+	abstract(): boolean;
+	accessor(): boolean;
 	name():
 		| PropertyIdentifier
 		| TSKindId.DeclareKeyword
@@ -6364,10 +6364,10 @@ export interface NonNullExpression {
 export interface MethodSignature {
 	readonly $type: TSKindId.MethodSignature;
 	readonly _accessibility_modifier?: number;
-	readonly _static?: boolean;
-	readonly _override?: boolean;
-	readonly _readonly?: boolean;
-	readonly _async?: boolean;
+	readonly _static: boolean;
+	readonly _override: boolean;
+	readonly _readonly: boolean;
+	readonly _async: boolean;
 	readonly _accessor_kind?: number;
 	readonly _name:
 		| PropertyIdentifier
@@ -6397,7 +6397,7 @@ export interface MethodSignature {
 		| String
 		| Number
 		| ComputedPropertyName;
-	readonly _optional?: boolean;
+	readonly _optional: boolean;
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
@@ -6494,10 +6494,10 @@ export interface MethodSignature {
 		};
 	};
 	accessibilityModifier(): number | undefined;
-	static(): boolean | undefined;
-	override(): boolean | undefined;
-	readonly(): boolean | undefined;
-	async(): boolean | undefined;
+	static(): boolean;
+	override(): boolean;
+	readonly(): boolean;
+	async(): boolean;
 	accessorKind(): number | undefined;
 	name():
 		| PropertyIdentifier
@@ -6527,7 +6527,7 @@ export interface MethodSignature {
 		| String
 		| Number
 		| ComputedPropertyName;
-	optional(): boolean | undefined;
+	optional(): boolean;
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
 	returnType(): TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
@@ -6536,7 +6536,7 @@ export interface MethodSignature {
 export interface AbstractMethodSignature {
 	readonly $type: TSKindId.AbstractMethodSignature;
 	readonly _accessibility_modifier?: number;
-	readonly _override?: boolean;
+	readonly _override: boolean;
 	readonly _accessor_kind?: number;
 	readonly _name:
 		| PropertyIdentifier
@@ -6566,7 +6566,7 @@ export interface AbstractMethodSignature {
 		| String
 		| Number
 		| ComputedPropertyName;
-	readonly _optional?: boolean;
+	readonly _optional: boolean;
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
@@ -6660,7 +6660,7 @@ export interface AbstractMethodSignature {
 		};
 	};
 	accessibilityModifier(): number | undefined;
-	override(): boolean | undefined;
+	override(): boolean;
 	accessorKind(): number | undefined;
 	name():
 		| PropertyIdentifier
@@ -6690,7 +6690,7 @@ export interface AbstractMethodSignature {
 		| String
 		| Number
 		| ComputedPropertyName;
-	optional(): boolean | undefined;
+	optional(): boolean;
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
 	returnType(): TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
@@ -6698,7 +6698,7 @@ export interface AbstractMethodSignature {
 
 export interface FunctionSignature {
 	readonly $type: TSKindId.FunctionSignature;
-	readonly _async?: boolean;
+	readonly _async: boolean;
 	readonly _name: Identifier;
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
@@ -6733,7 +6733,7 @@ export interface FunctionSignature {
 			>;
 		};
 	};
-	async(): boolean | undefined;
+	async(): boolean;
 	name(): Identifier;
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
@@ -7140,7 +7140,7 @@ export interface ExtendsTypeClause {
 
 export interface EnumDeclaration {
 	readonly $type: TSKindId.EnumDeclaration;
-	readonly _const?: boolean;
+	readonly _const: boolean;
 	readonly _name: Identifier;
 	readonly _body: EnumBody;
 	readonly __inputHints__?: {
@@ -7157,7 +7157,7 @@ export interface EnumDeclaration {
 			readonly body: ListSlotHint<T.EnumBodyElement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	const(): boolean | undefined;
+	const(): boolean;
 	name(): Identifier;
 	body(): EnumBody;
 }
@@ -7365,8 +7365,8 @@ export interface RequiredParameter {
 	readonly $type: TSKindId.RequiredParameter;
 	readonly _decorator: readonly Decorator[];
 	readonly _accessibility_modifier?: number;
-	readonly _override?: boolean;
-	readonly _readonly?: boolean;
+	readonly _override: boolean;
+	readonly _readonly: boolean;
 	readonly _pattern: Pattern | TSKindId.This;
 	readonly _type?: TypeAnnotation;
 	readonly _value?: Expression;
@@ -7400,8 +7400,8 @@ export interface RequiredParameter {
 	};
 	decorators(): readonly Decorator[];
 	accessibilityModifier(): number | undefined;
-	override(): boolean | undefined;
-	readonly(): boolean | undefined;
+	override(): boolean;
+	readonly(): boolean;
 	pattern(): Pattern | TSKindId.This;
 	type(): TypeAnnotation | undefined;
 	value(): Expression | undefined;
@@ -7411,8 +7411,8 @@ export interface OptionalParameter {
 	readonly $type: TSKindId.OptionalParameter;
 	readonly _decorator: readonly Decorator[];
 	readonly _accessibility_modifier?: number;
-	readonly _override?: boolean;
-	readonly _readonly?: boolean;
+	readonly _override: boolean;
+	readonly _readonly: boolean;
 	readonly _pattern: Pattern | TSKindId.This;
 	readonly _type?: TypeAnnotation;
 	readonly _value?: Expression;
@@ -7446,8 +7446,8 @@ export interface OptionalParameter {
 	};
 	decorators(): readonly Decorator[];
 	accessibilityModifier(): number | undefined;
-	override(): boolean | undefined;
-	readonly(): boolean | undefined;
+	override(): boolean;
+	readonly(): boolean;
 	pattern(): Pattern | TSKindId.This;
 	type(): TypeAnnotation | undefined;
 	value(): Expression | undefined;
@@ -7772,7 +7772,7 @@ export interface RestType {
 
 export interface ConstructorType {
 	readonly $type: TSKindId.ConstructorType;
-	readonly _abstract?: boolean;
+	readonly _abstract: boolean;
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _type: Type;
@@ -7825,7 +7825,7 @@ export interface ConstructorType {
 			>;
 		};
 	};
-	abstract(): boolean | undefined;
+	abstract(): boolean;
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
 	type(): Type;
@@ -8207,7 +8207,7 @@ export interface TypeQuerySubscriptExpression {
 		| TypeQuerySubscriptExpression
 		| TypeQueryMemberExpression
 		| TypeQueryCallExpression;
-	readonly _optional_chain?: boolean;
+	readonly _optional_chain: boolean;
 	readonly _index:
 		| TSKindId.AnyKeyword
 		| TSKindId.NumberKeyword
@@ -8266,7 +8266,7 @@ export interface TypeQuerySubscriptExpression {
 		| TypeQuerySubscriptExpression
 		| TypeQueryMemberExpression
 		| TypeQueryCallExpression;
-	optionalChain(): boolean | undefined;
+	optionalChain(): boolean;
 	index():
 		| TSKindId.AnyKeyword
 		| TSKindId.NumberKeyword
@@ -8760,9 +8760,9 @@ export interface CallSignature {
 export interface PropertySignature {
 	readonly $type: TSKindId.PropertySignature;
 	readonly _accessibility_modifier?: number;
-	readonly _static?: boolean;
-	readonly _override?: boolean;
-	readonly _readonly?: boolean;
+	readonly _static: boolean;
+	readonly _override: boolean;
+	readonly _readonly: boolean;
 	readonly _name:
 		| PropertyIdentifier
 		| TSKindId.DeclareKeyword
@@ -8791,7 +8791,7 @@ export interface PropertySignature {
 		| String
 		| Number
 		| ComputedPropertyName;
-	readonly _optional?: boolean;
+	readonly _optional: boolean;
 	readonly _type?: TypeAnnotation;
 	readonly __inputHints__?: {
 		readonly accessibility_modifier?: KindEnum<
@@ -8869,9 +8869,9 @@ export interface PropertySignature {
 		readonly type: SlotHint<T.TypeAnnotation, true>;
 	};
 	accessibilityModifier(): number | undefined;
-	static(): boolean | undefined;
-	override(): boolean | undefined;
-	readonly(): boolean | undefined;
+	static(): boolean;
+	override(): boolean;
+	readonly(): boolean;
 	name():
 		| PropertyIdentifier
 		| TSKindId.DeclareKeyword
@@ -8900,7 +8900,7 @@ export interface PropertySignature {
 		| String
 		| Number
 		| ComputedPropertyName;
-	optional(): boolean | undefined;
+	optional(): boolean;
 	type(): TypeAnnotation | undefined;
 }
 
@@ -8928,7 +8928,7 @@ export interface TypeParameters {
 
 export interface TypeParameter {
 	readonly $type: TSKindId.TypeParameter;
-	readonly _const?: boolean;
+	readonly _const: boolean;
 	readonly _name: TypeIdentifier;
 	readonly _constraint?: Constraint;
 	readonly _value?: DefaultType;
@@ -8945,7 +8945,7 @@ export interface TypeParameter {
 		readonly constraint: SlotHint<T.Constraint, true>;
 		readonly value: SlotHint<T.DefaultType, true>;
 	};
-	const(): boolean | undefined;
+	const(): boolean;
 	name(): TypeIdentifier;
 	constraint(): Constraint | undefined;
 	value(): DefaultType | undefined;
@@ -9031,7 +9031,7 @@ export interface Constraint {
 
 export interface ConstructSignature {
 	readonly $type: TSKindId.ConstructSignature;
-	readonly _abstract?: boolean;
+	readonly _abstract: boolean;
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _type?: TypeAnnotation;
@@ -9059,7 +9059,7 @@ export interface ConstructSignature {
 			>;
 		};
 	};
-	abstract(): boolean | undefined;
+	abstract(): boolean;
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
 	type(): TypeAnnotation | undefined;
@@ -10029,7 +10029,7 @@ export interface ClassBodyMemberDeclaration {
 export interface IndexSignatureColon {
 	readonly $type: TSKindId.IndexSignatureColon;
 	readonly _sign?: number;
-	readonly _readonly?: boolean;
+	readonly _readonly: boolean;
 	readonly _name:
 		| Identifier
 		| TSKindId.DeclareKeyword
@@ -10144,7 +10144,7 @@ export interface IndexSignatureColon {
 		>;
 	};
 	sign(): number | undefined;
-	readonly(): boolean | undefined;
+	readonly(): boolean;
 	name():
 		| Identifier
 		| TSKindId.DeclareKeyword
@@ -10176,7 +10176,7 @@ export interface IndexSignatureColon {
 export interface IndexSignatureMappedTypeClause {
 	readonly $type: TSKindId.IndexSignatureMappedTypeClause;
 	readonly _sign?: number;
-	readonly _readonly?: boolean;
+	readonly _readonly: boolean;
 	readonly _mapped_type_clause: MappedTypeClause;
 	readonly _type: TypeAnnotation | OmittingTypeAnnotation | AddingTypeAnnotation | OptingTypeAnnotation;
 	readonly __inputHints__?: {
@@ -10192,7 +10192,7 @@ export interface IndexSignatureMappedTypeClause {
 		>;
 	};
 	sign(): number | undefined;
-	readonly(): boolean | undefined;
+	readonly(): boolean;
 	mappedTypeClause(): MappedTypeClause;
 	type(): TypeAnnotation | OmittingTypeAnnotation | AddingTypeAnnotation | OptingTypeAnnotation;
 }
@@ -10624,7 +10624,7 @@ export interface ImportClauseDefaultImport {
 
 export interface ExportStatementDefaultFrom {
 	readonly $type: TSKindId.ExportStatementDefaultFrom;
-	readonly _type?: boolean;
+	readonly _type: boolean;
 	readonly _content:
 		| ExportStatementDefaultFromStarFrom
 		| ExportStatementDefaultFromNsFrom
@@ -10641,7 +10641,7 @@ export interface ExportStatementDefaultFrom {
 		>;
 		readonly terminator: SlotHint<NonNullable<T.ExportStatementDefaultFrom.Options>['terminator']>;
 	};
-	type(): boolean | undefined;
+	type(): boolean;
 	content():
 		| ExportStatementDefaultFromStarFrom
 		| ExportStatementDefaultFromNsFrom

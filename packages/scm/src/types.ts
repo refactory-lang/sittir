@@ -744,7 +744,7 @@ export interface NamedNodeExpressionArm {
 export interface GroupingGroup {
 	readonly $type: TSKindId.GroupingGroup;
 	readonly _group_expression: Definition | GroupExpressionArm;
-	readonly _anchor?: boolean;
+	readonly _anchor: boolean;
 	readonly __inputHints__?: {
 		readonly anchor?: BaseBooleanKeyword<'.'>;
 	};
@@ -753,7 +753,7 @@ export interface GroupingGroup {
 		readonly anchor: SlotHint<NonNullable<T.GroupingGroup.Config>['anchor'], true>;
 	};
 	groupExpression(): Definition | GroupExpressionArm;
-	anchor(): boolean | undefined;
+	anchor(): boolean;
 }
 
 export interface NamedNodePlain {
@@ -794,7 +794,7 @@ export interface NamedNodeSupertyped {
 
 export interface NamedNodeGroupChildren {
 	readonly $type: TSKindId.NamedNodeGroupChildren;
-	readonly _anchor?: boolean;
+	readonly _anchor: boolean;
 	readonly _named_node_expressions: NonEmptyArray<Definition | NegatedField | NamedNodeExpressionArm>;
 	readonly __inputHints__?: {
 		readonly anchor?: BaseBooleanKeyword<'.'>;
@@ -807,13 +807,13 @@ export interface NamedNodeGroupChildren {
 			true
 		>;
 	};
-	anchor(): boolean | undefined;
+	anchor(): boolean;
 	namedNodeExpressions(): NonEmptyArray<Definition | NegatedField | NamedNodeExpressionArm>;
 }
 
 export interface NamedNodeGroupAnchoredLast {
 	readonly $type: TSKindId.NamedNodeGroupAnchoredLast;
-	readonly _anchor?: boolean;
+	readonly _anchor: boolean;
 	readonly _named_node_expressions: readonly (Definition | NegatedField | NamedNodeExpressionArm)[];
 	readonly _last: Definition | NegatedField | NamedNodeExpressionArm;
 	readonly __inputHints__?: {
@@ -824,7 +824,7 @@ export interface NamedNodeGroupAnchoredLast {
 		readonly namedNodeExpressions: SlotHint<(T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[], true, true>;
 		readonly last: SlotHint<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>;
 	};
-	anchor(): boolean | undefined;
+	anchor(): boolean;
 	namedNodeExpressions(): readonly (Definition | NegatedField | NamedNodeExpressionArm)[];
 	last(): Definition | NegatedField | NamedNodeExpressionArm;
 }

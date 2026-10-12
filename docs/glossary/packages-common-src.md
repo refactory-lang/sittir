@@ -625,7 +625,7 @@ A bitflag slot's loose input as the number the slot stores: a number as it is (0
 
 ### `packages/common/src/runtime.ts::coerceBooleanKeywordStorage`
 
-A keyword-presence slot's loose input as what the slot stores: `true` for any present value (a non-empty array included) and `undefined` for absent, `false` or an empty array. The factories call it for every keyword marker slot.
+A keyword-presence slot's loose input as what the slot stores: `true` for any present value (a non-empty array included) and `false` for absent, `false` or an empty array: a presence flag is always a boolean, never `undefined`. The factories call it for every keyword marker slot.
 
 ### `packages/common/src/utils.ts::hydrateTriviaEntry`
 

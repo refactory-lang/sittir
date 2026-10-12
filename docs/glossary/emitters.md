@@ -3889,7 +3889,7 @@ too: its render function takes no node, and its type's `Render` calls it.
 
 The Rust type of a transport slot's field, printed from the slot's
 `transportSlotShapeOf` and its cardinality (`required`, `multiple`,
-`optionalElement`, `adjacent`): presence is `Option<bool>`, text `String`
+`optionalElement`, `adjacent`): presence is `bool`, text `String`
 (or `Option<String>`), and every other shape is its type in the `SlotValue`
 carrier — the kind's transport, the supertype's enum, the slot's choice
 as `choiceNameOf` names it, or `AnyTransport` — wrapped as
@@ -4519,11 +4519,11 @@ The stored value of a caller's input to a slot with a blank arm: `null` is the b
  * `resolveFieldStorageInfo` (the SAME slot-storage classification `wrap.ts`
  * already uses) distinguishes what wrap actually puts on the wire:
  *
- * - `'boolean'` — wrap collapses this to a JS `true`/absent boolean
+ * - `'boolean'` — wrap collapses this to a JS `true`/`false` boolean
  *   (rust `self_parameter.reference` → `&`, `closure_expression.async`
- *   → `async`). The Rust field is an `Option<bool>` carrying presence (the
- *   napi object derive needs the `Option` for an absent key), with `text`
- *   the fixed literal to write when present.
+ *   → `async`). The Rust field is a `bool` carrying presence (a missing
+ *   wire key decodes to `false`), with `text` the fixed literal to write
+ *   when present.
  * - `'verbatim'` — the literal has no stamped catalog kind_id at all. Wrap
  *   sends the literal's raw text on the wire; the Rust field should be a
  *   plain `String`/`Option<String>` (mirroring the slot's own
@@ -13305,9 +13305,9 @@ optional.
 ```
 
 The field's type is `rustTransportSlotType` of the slot's
-`transportSlotShapeOf`. A presence field is `Option<bool>`, not `bool`: the
-wrap omits the key when the keyword is absent rather than sending `false`,
-and the view treats `None` as not present.
+`transportSlotShapeOf`. A presence field is a plain `bool`: `false` is
+absent, a wire object without the key decodes to `false`, and the view
+treats `false` as not present.
 
 ### `packages/codegen/src/emitters/render-module.ts::slotCarrier`
 

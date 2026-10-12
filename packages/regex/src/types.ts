@@ -684,8 +684,8 @@ export interface LookbehindAssertion {
 
 export interface CharacterClass {
 	readonly $type: TSKindId.CharacterClass;
-	readonly _negation?: boolean;
-	readonly _leading?: boolean;
+	readonly _negation: boolean;
+	readonly _leading: boolean;
 	readonly _class_atoms: readonly (
 		| ClassCharacter
 		| TSKindId.BslashDash
@@ -696,7 +696,7 @@ export interface CharacterClass {
 		| PosixCharacterClass
 		| ClassRange
 	)[];
-	readonly _trailing?: boolean;
+	readonly _trailing: boolean;
 	readonly __inputHints__?: {
 		readonly negation?: BaseBooleanKeyword<'^'>;
 		readonly leading?: BaseBooleanKeyword<'-'>;
@@ -722,8 +722,8 @@ export interface CharacterClass {
 		>;
 		readonly trailing: SlotHint<NonNullable<T.CharacterClass.Config>['trailing'], true>;
 	};
-	negation(): boolean | undefined;
-	leading(): boolean | undefined;
+	negation(): boolean;
+	leading(): boolean;
 	classAtoms(): readonly (
 		| ClassCharacter
 		| TSKindId.BslashDash
@@ -734,7 +734,7 @@ export interface CharacterClass {
 		| PosixCharacterClass
 		| ClassRange
 	)[];
-	trailing(): boolean | undefined;
+	trailing(): boolean;
 }
 
 export interface PosixCharacterClass {
@@ -809,44 +809,44 @@ export interface NonCapturingGroup {
 
 export interface ZeroOrMore {
 	readonly $type: TSKindId.ZeroOrMore;
-	readonly _lazy?: boolean;
+	readonly _lazy: boolean;
 	readonly __inputHints__?: {
 		readonly lazy?: BaseBooleanKeyword<'?'>;
 	};
 	readonly __slotHints__?: {
 		readonly lazy: SlotHint<NonNullable<T.ZeroOrMore.Config>['lazy'], true>;
 	};
-	lazy(): boolean | undefined;
+	lazy(): boolean;
 }
 
 export interface OneOrMore {
 	readonly $type: TSKindId.OneOrMore;
-	readonly _lazy?: boolean;
+	readonly _lazy: boolean;
 	readonly __inputHints__?: {
 		readonly lazy?: BaseBooleanKeyword<'?'>;
 	};
 	readonly __slotHints__?: {
 		readonly lazy: SlotHint<NonNullable<T.OneOrMore.Config>['lazy'], true>;
 	};
-	lazy(): boolean | undefined;
+	lazy(): boolean;
 }
 
 export interface Optional {
 	readonly $type: TSKindId.Optional;
-	readonly _lazy?: boolean;
+	readonly _lazy: boolean;
 	readonly __inputHints__?: {
 		readonly lazy?: BaseBooleanKeyword<'?'>;
 	};
 	readonly __slotHints__?: {
 		readonly lazy: SlotHint<NonNullable<T.Optional.Config>['lazy'], true>;
 	};
-	lazy(): boolean | undefined;
+	lazy(): boolean;
 }
 
 export interface CountQuantifier {
 	readonly $type: TSKindId.CountQuantifier;
 	readonly _content: CountQuantifierArm | DecimalDigits;
-	readonly _lazy?: boolean;
+	readonly _lazy: boolean;
 	readonly __inputHints__?: {
 		readonly lazy?: BaseBooleanKeyword<'?'>;
 	};
@@ -855,7 +855,7 @@ export interface CountQuantifier {
 		readonly lazy: SlotHint<NonNullable<T.CountQuantifier.Config>['lazy'], true>;
 	};
 	content(): CountQuantifierArm | DecimalDigits;
-	lazy(): boolean | undefined;
+	lazy(): boolean;
 }
 
 export interface BackreferenceEscape {
