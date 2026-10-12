@@ -3,13 +3,14 @@
 import { bindings, field, rename } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "0b92eeb896937cd75878ba5ea240ce1eb32a0542aa9b9ccd61d28cbfbc7149c6",
+	hash: "8ba89e62cdeb33934d354d18d0e912337e4b9cfc84895f644aba5e265be3b22a",
 	patches: {
 		_number: { "1": field("value") },
 		_parameter_name: { "4": field("name") },
 		abstract_class_declaration: { "1": field("abstract") },
 		abstract_method_signature: { "3/0": field("generator") },
 		assignment_expression: { "0/0": field("disposable") },
+		call_expression_member: { "1": field("optional_chain") },
 		catch_clause: { "1/0": field("catch_clause_group") },
 		decorator: { "1": field("content") },
 		export_clause: { "1/0": field("export_specifiers") },
@@ -21,6 +22,7 @@ export default bindings({
 		generator_function_declaration: { "2": field("generator") },
 		index_signature_mapped_type_clause: { "2": field("mapped_type_clause") },
 		interface_declaration: { "3/0": field("extends") },
+		member_expression: { "1": field("optional_chain"), "1/0/1": field("optional_chain") },
 		method_definition: { "5/0": field("generator") },
 		method_signature: { "5/0": field("generator") },
 		new_expression: { "1": field("function") },
@@ -75,7 +77,6 @@ export default bindings({
 		rename("tuple_parameter", "member_tuple_element"),
 		rename("optional_tuple_parameter", "optional_member_tuple_element"),
 		rename("template_type", "substitution_template_element"),
-		rename("call_expression_member", "member_call_expression"),
 		rename("call_expression_template_call", "template_call_expression"),
 		rename("new_expression", "new_call_expression"),
 		rename("augmented_assignment_expression", "compound_assignment_expression"),

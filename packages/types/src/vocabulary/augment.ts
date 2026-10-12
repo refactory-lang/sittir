@@ -1939,6 +1939,11 @@ declare module './expression.ts' {
 				| V.Expression.Block.Unsafe<G>;
 		}
 		interface Call<G extends GrammarContext<G>> {
+			readonly optionalChain?: gate.In<
+				G,
+				features.OptionalChaining,
+				optionalChaining.Expression.Call<G>['optionalChain']
+			>;
 			readonly typeArguments?: gate.In<
 				G,
 				features.ParametricPolymorphism,
@@ -2067,6 +2072,11 @@ declare module './expression.ts' {
 			readonly static?: gate.In<G, features.Coroutines, coroutines.Expression.Lambda<G>['static']>;
 		}
 		interface Member<G extends GrammarContext<G>> {
+			readonly optionalChain?: gate.In<
+				G,
+				features.OptionalChaining,
+				optionalChaining.Expression.Member<G>['optionalChain']
+			>;
 			readonly privateName?: gate.In<G, features.Encapsulation, encapsulation.Expression.Member<G>['privateName']>;
 		}
 		interface Range<G extends GrammarContext<G>> extends rangeExpressions.Expression.Range<G> {}

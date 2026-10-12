@@ -20,6 +20,7 @@ export namespace Element {
 			// claimed by r
 			readonly $kind: 'element.macro.token_repetition';
 			readonly operator: G['slots']['element.macro.token_repetition']['operator'];
+			readonly separator?: G['slots']['element.macro.token_repetition']['separator'];
 			readonly tokens?: G['slots']['element.macro.token_repetition']['tokens'][];
 		}
 		export namespace TokenRepetition {
@@ -27,6 +28,7 @@ export namespace Element {
 				// claimed by r
 				readonly $kind: 'element.macro.token_repetition.pattern';
 				readonly operator: G['slots']['element.macro.token_repetition.pattern']['operator'];
+				readonly separator?: G['slots']['element.macro.token_repetition.pattern']['separator'];
 				readonly tokenPatterns?: G['slots']['element.macro.token_repetition.pattern']['tokenPatterns'][];
 			}
 		}

@@ -304,7 +304,7 @@ export interface PortableIds {
 		| TSKindId.Import
 		| TSKindId.NewExpression;
 	'expression.call.import': TSKindId.Import;
-	'expression.call.member': TSKindId.CallExpressionMember;
+	'expression.call.member': TSKindId.CallExpressionCall;
 	'expression.call.new': TSKindId.NewExpression;
 	'expression.call.template': TSKindId.CallExpressionTemplateCall;
 	'expression.cast':
@@ -3134,7 +3134,7 @@ const table: PortableTable = {
 			exact: true
 		},
 		'expression.call.import': { ids: [TSKindId.Import], exact: true },
-		'expression.call.member': { ids: [TSKindId.CallExpressionMember], exact: true },
+		'expression.call.member': { ids: [TSKindId.CallExpressionCall], exact: false },
 		'expression.call.new': { ids: [TSKindId.NewExpression], exact: true },
 		'expression.call.template': { ids: [TSKindId.CallExpressionTemplateCall], exact: true },
 		'expression.cast': {
@@ -4117,8 +4117,15 @@ const table: PortableTable = {
 		],
 		[TSKindId.BooleanKeyword]: [{ path: 'type.primitive', within: [], test: [] }],
 		[TSKindId.BreakStatement]: [{ path: 'statement.break', within: [], test: [] }],
-		[TSKindId.CallExpressionCall]: [{ path: 'expression.call', within: [], test: [] }],
-		[TSKindId.CallExpressionMember]: [{ path: 'expression.call.member', within: [], test: [] }],
+		[TSKindId.CallExpressionCall]: [
+			{
+				path: 'expression.call.member',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [256], fields: ['function'], kinds: [] } }]
+			},
+			{ path: 'expression.call', within: [], test: [] }
+		],
+		[TSKindId.CallExpressionMember]: [{ path: 'expression.call', within: [], test: [] }],
 		[TSKindId.CallExpressionTemplateCall]: [{ path: 'expression.call.template', within: [], test: [] }],
 		[TSKindId.CallSignature]: [{ path: 'declaration.signature.call', within: [], test: [] }],
 		[TSKindId.CatchClause]: [{ path: 'clause.catch', within: [], test: [] }],

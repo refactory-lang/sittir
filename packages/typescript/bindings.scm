@@ -195,7 +195,8 @@
 
 ; ── expression ─────────────────────────────────────────────────────────────────
 (call_expression_call) @expression.call
-(call_expression_member) @expression.call.member
+(call_expression_member "?." @optionalChain) @expression.call
+(call_expression_call function: (member_expression) @function) @expression.call.member
 (call_expression_template_call) @expression.call.template
 (new_expression constructor: (_)? @function) @expression.call.new
 (binary_expression) @expression.binary
@@ -258,9 +259,9 @@
 (assignment_expression using: _ @disposable)
 (ternary_expression) @expression.conditional
 (member_expression) @expression.member
-(member_expression (optional_chain) @optional_chain)
+(member_expression (optional_chain) @optionalChain)
 (member_expression property: (private_property_identifier) @property @privateName)
-(subscript_expression (optional_chain) @optional_chain)
+(subscript_expression (optional_chain) @optionalChain)
 (subscript_expression) @expression.subscript
 (arrow_function) @expression.lambda
 (arrow_function (arrow_function_parameter parameter: (_) @parameters))

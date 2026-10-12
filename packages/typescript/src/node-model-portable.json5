@@ -2446,6 +2446,28 @@
       "vocab": "expression.call",
       "read": [
         {
+          "vocab": "expression.call.member",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  256
+                ],
+                "fields": [
+                  "function"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
           "vocab": "expression.call",
           "toplevel": true,
           "within": [],
@@ -2490,10 +2512,10 @@
       ]
     },
     "call_expression_member": {
-      "vocab": "expression.call.member",
+      "vocab": "expression.call",
       "read": [
         {
-          "vocab": "expression.call.member",
+          "vocab": "expression.call",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2533,6 +2555,13 @@
               "slot": "arguments"
             }
           ]
+        },
+        {
+          "name": "optionalChain",
+          "route": "presence",
+          "via": [],
+          "token": "?.",
+          "path": null
         }
       ]
     },
@@ -12287,7 +12316,7 @@
       {
         "depth": 2,
         "paths": 111,
-        "kinds": 133,
+        "kinds": 134,
         "refinements": 8,
         "aliases": 99
       },

@@ -19,6 +19,7 @@ const CEILING: Readonly<Record<string, readonly string[]>> = {
 	typescript: [
 		// flag told by the variant form's own text; the build picks the kind
 		'abstract_class_declaration.abstract',
+		'call_expression_member.optionalChain',
 		'generator_function.generator',
 		'generator_function_declaration.generator',
 		'optional_parameter.optional',

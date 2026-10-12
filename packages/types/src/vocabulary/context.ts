@@ -621,6 +621,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'element.macro.token_repetition': {
 			readonly operator: string;
+			readonly separator: string;
 			readonly tokens:
 				| G['identifier']
 				| G['literal']
@@ -630,6 +631,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'element.macro.token_repetition.pattern': {
 			readonly operator: string;
+			readonly separator: string;
 			readonly tokenPatterns:
 				| G['identifier']
 				| G['literal']
