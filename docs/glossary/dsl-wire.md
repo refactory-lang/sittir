@@ -955,21 +955,21 @@ once counts once.
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext.baseRuleBodies`
 
 The rule bodies of the base `wire()` received (the enriched grammar's
-rules), read-only. The lift overlay falls back to them.
+rules), read-only. A lift with no patched body falls back to them.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext.liftBodies`
 
-The lift overlay: every enrich group-lift body a patch rewrote, by lift
+The patched lift bodies: every enrich group-lift body a patch rewrote, by lift
 name. Patches write here, never into the base, so the upstream grammar and
 its enriched form stay untouched.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireGetLiftBody`
 
-A lift's current body: the overlay's patched body, else the base body.
+A lift's current body: its patched body, else the base body.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireSetLiftBody`
 
-Records a patched lift body in the active wire context's overlay, and credits the lift to the patch sites
+Records a patched lift body in the active wire context's patched lift bodies, and credits the lift to the patch sites
 applying (`recordLiftClaim`).
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireWithLiftScope`

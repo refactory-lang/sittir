@@ -118,7 +118,7 @@ can travel through it (see `descendThroughGroupLiftSymbol`).
  * Travel through an enrich group-lift symbol by LOOKING UP its referenced rule
  * body (not by descending into carried content). Descends into the resolved
  * body without consuming a path segment, patches it, and records the patched
- * body in the active wire context's lift overlay (`wireSetLiftBody`). The
+ * body in the active wire context's patched lift bodies (`wireSetLiftBody`). The
  * lift's own wire rule fn (`passthroughBaseRuleFn`) returns that body, so the
  * hidden group rule reflects the patch in both pipelines. The symbol ref
  * itself is returned unchanged (it still points at the same name).
