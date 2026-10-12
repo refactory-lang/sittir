@@ -1,5 +1,5 @@
-export type * from './expression.ts';
-export type * from './literal.ts';
+export * from './expression.ts';
+export * from './literal.ts';
 
 /** String interpolation: string literals that embed expressions. */
 export interface StringInterpolation {

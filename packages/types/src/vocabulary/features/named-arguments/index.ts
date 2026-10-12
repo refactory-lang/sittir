@@ -1,4 +1,4 @@
-export type * from './argument.ts';
+export * from './argument.ts';
 
 /** Named arguments: an argument passed by its parameter's name. */
 export interface NamedArguments {

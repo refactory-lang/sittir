@@ -1,5 +1,6 @@
 import { execFileSync } from 'node:child_process';
 import { load, type CodegenSurface } from './codegen-surface.ts';
+import { regenerateGrammars } from './regen.ts';
 
 type GrammarName = Parameters<CodegenSurface['generatedManifest']['generatedRootsFor']>[0];
 
@@ -11,7 +12,7 @@ export interface SyncBaseOptions {
 export interface SyncBaseTarget {
 	readonly roots: Readonly<Record<string, readonly string[]>>;
 	verify(grammar: string): boolean;
-	regenerate(grammar: string): void;
+	regenerate(grammars: readonly string[]): void;
 }
 
 const inRoot = (path: string, root: string): boolean => path === root || path.startsWith(`${root}/`);
@@ -77,9 +78,10 @@ export function syncBase(opts: SyncBaseOptions, target: SyncBaseTarget, out: (li
 			affected.add(grammar);
 		}
 	}
-	for (const grammar of [...affected].sort()) {
-		out(`sync-base: regenerating ${grammar}`);
-		target.regenerate(grammar);
+	if (affected.size > 0) {
+		const grammars = [...affected].sort();
+		out(`sync-base: regenerating ${grammars.join(', ')}`);
+		target.regenerate(grammars);
 	}
 
 	const allRoots = Object.values(target.roots).flat();
@@ -108,12 +110,9 @@ export async function repoSyncTarget(): Promise<{ target: SyncBaseTarget; cwd: s
 		target: {
 			roots,
 			verify: (grammar) => manifest.verifyManifestForGrammar(grammar as GrammarName).ok,
-			regenerate(grammar) {
-				execFileSync(
-					'pnpm',
-					['exec', 'tsx', 'packages/cli/src/cli.ts', 'gen', '--grammar', grammar, '--all', '--output', `packages/${grammar}/src`],
-					{ cwd, stdio: 'inherit' }
-				);
+			regenerate(grammars) {
+				const status = regenerateGrammars(grammars, cwd);
+				if (status !== 0) throw new Error(`sync-base: regenerating ${grammars.join(', ')} failed (exit ${status})`);
 			}
 		}
 	};

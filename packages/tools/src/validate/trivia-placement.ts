@@ -1,7 +1,8 @@
 import { assertGrammar, stableGrammars } from '@sittir/codegen/grammars';
-import { loadCorpusEntries, loadKindNameFromId, loadLanguageForGrammar, loadNativeEngine, readNativeTree, type TSNode, type TSTree } from './common.ts';
+import { isCoordinate, type TreeHandle } from '@sittir/common/utils';
+import { loadCorpusEntries, loadLanguageForGrammar, loadNativeEngine, readNativeTree, type TSNode, type TSTree } from './common.ts';
 
-export type TriviaPosition = 'leading' | 'trailing' | `inner:${string}` | 'lost';
+export type TriviaPosition = 'leading' | 'trailing' | 'inner' | 'lost';
 
 export interface TriviaPlacementRow {
 	readonly entry: string;
@@ -18,7 +19,7 @@ export interface TriviaPlacementSummary {
 	readonly extras: number;
 	readonly leading: number;
 	readonly trailing: number;
-	readonly inner: Readonly<Record<string, number>>;
+	readonly inner: number;
 	readonly lost: number;
 }
 
@@ -27,18 +28,8 @@ export interface TriviaPlacementCensus {
 	readonly rows: readonly TriviaPlacementRow[];
 }
 
-interface ReadEntry {
-	readonly $span?: { readonly start: number; readonly end: number };
-}
-
-interface ReadTrivia {
-	readonly leading?: readonly ReadEntry[];
-	readonly trailing?: readonly ReadEntry[];
-	readonly inner?: Readonly<Record<string, readonly ReadEntry[]>>;
-}
-
 interface Placement {
-	readonly owner: number;
+	readonly owner: string;
 	readonly position: Exclude<TriviaPosition, 'lost'>;
 }
 
@@ -49,30 +40,38 @@ interface PlacementReader {
 	readonly place: PlaceSource;
 }
 
-function readPlacements(root: unknown): Map<string, Placement> {
-	const placements = new Map<string, Placement>();
-	const place = (entries: readonly ReadEntry[] | undefined, owner: number, position: Placement['position']): void => {
-		for (const { $span } of entries ?? []) {
-			if ($span !== undefined) placements.set(`${$span.start}:${$span.end}`, { owner, position });
-		}
-	};
-	const visit = (value: unknown): void => {
-		if (Array.isArray(value)) {
-			for (const item of value) visit(item);
-			return;
-		}
-		if (value === null || typeof value !== 'object') return;
-		const node = value as Record<string, unknown>;
-		const trivia = (node.$_layout as { readonly trivia?: ReadTrivia } | undefined)?.trivia;
-		if (trivia !== undefined && typeof node.$type === 'number') {
-			place(trivia.leading, node.$type, 'leading');
-			place(trivia.trailing, node.$type, 'trailing');
-			for (const [key, entries] of Object.entries(trivia.inner ?? {})) place(entries, node.$type, `inner:${key}`);
-		}
-		for (const [key, child] of Object.entries(node)) if (key !== '$_layout') visit(child);
+/** Every node of `root` in preorder, the order a descendant index counts. */
+function descendants(root: TSNode): TSNode[] {
+	const out: TSNode[] = [];
+	const visit = (node: TSNode): void => {
+		out.push(node);
+		for (const child of node.children) visit(child);
 	};
 	visit(root);
-	return placements;
+	return out;
+}
+
+/**
+ * Where the tree's trivia table puts each extra: a coordinate entry by its
+ * span, and a layout member (a line continuation), which the table holds as
+ * its text, by that text in table order.
+ */
+function tablePlacements(tree: TreeHandle, nodes: readonly TSNode[]): { readonly bySpan: Map<string, Placement>; readonly byText: Map<string, Placement[]> } {
+	const bySpan = new Map<string, Placement>();
+	const byText = new Map<string, Placement[]>();
+	nodes.forEach((node, index) => {
+		for (const position of ['leading', 'trailing', 'inner'] as const) {
+			for (const entry of tree.triviaSide?.(index, position) ?? []) {
+				const placement = { owner: node.type, position };
+				if (isCoordinate(entry)) bySpan.set(`${entry.$span.start}:${entry.$span.end}`, placement);
+				else if (typeof entry === 'object' && entry !== null && typeof (entry as { $text?: unknown }).$text === 'string') {
+					const text = (entry as { $text: string }).$text;
+					byText.set(text, [...(byText.get(text) ?? []), placement]);
+				}
+			}
+		}
+	});
+	return { bySpan, byText };
 }
 
 function parsedExtras(node: TSNode): TSNode[] {
@@ -81,22 +80,21 @@ function parsedExtras(node: TSNode): TSNode[] {
 
 async function placementReader(grammar: string): Promise<PlacementReader> {
 	const engine = await loadNativeEngine(grammar);
-	const kindName = (await loadKindNameFromId(grammar))!;
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);
 	return {
 		parse: (source) => parser.parse(source) as TSTree,
 		place: (entry, source, parsed) => {
-			const placements = readPlacements(readNativeTree(engine, source, { depth: Infinity }).root);
+			const { bySpan, byText } = tablePlacements(readNativeTree(engine, source).tree, descendants(parsed.rootNode));
 			return parsedExtras(parsed.rootNode).map((extra) => {
-				const placement = placements.get(`${extra.startIndex}:${extra.endIndex}`);
+				const placement = bySpan.get(`${extra.startIndex}:${extra.endIndex}`) ?? byText.get(extra.text)?.shift();
 				return {
 					entry,
 					kind: extra.type,
 					start: extra.startIndex,
 					end: extra.endIndex,
-					owner: placement === undefined ? undefined : kindName(placement.owner),
+					owner: placement?.owner,
 					position: placement?.position ?? 'lost'
 				};
 			});
@@ -122,8 +120,6 @@ export async function computeTriviaPlacementCensus(grammar: string): Promise<Tri
 		const parsed = parse(entry.source);
 		if (!parsed.rootNode.hasError) rows.push(...place(entry.name, entry.source, parsed));
 	}
-	const inner: Record<string, number> = {};
-	for (const { position } of rows) if (position.startsWith('inner:')) inner[position] = (inner[position] ?? 0) + 1;
 	const count = (position: TriviaPosition): number => rows.filter((row) => row.position === position).length;
 	return {
 		rows,
@@ -133,7 +129,7 @@ export async function computeTriviaPlacementCensus(grammar: string): Promise<Tri
 			extras: rows.length,
 			leading: count('leading'),
 			trailing: count('trailing'),
-			inner,
+			inner: count('inner'),
 			lost: count('lost')
 		}
 	};

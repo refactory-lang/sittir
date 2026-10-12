@@ -19,7 +19,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 		"import type { AnyUntypedNode, QuerySlots, TriviaFacts } from '@sittir/types';",
 		"import { bindRuntime } from '@sittir/common/utils';",
 		`import { KIND_NAMES, type ${map} } from './types.js';`,
-		"import { INNER_GAPS } from './consts.js';",
+		"import { INNER_SITES } from './consts.js';",
 		'',
 		...emitTriviaFacts(whitespaceTrivia(config.nodeMap), config.triviaKinds ?? [], rebuildWrapperKindIds(config.nodeMap), listKindIds(config.nodeMap)),
 		'',
@@ -39,7 +39,7 @@ function emitTriviaFacts(
 	const facts = [
 		"    kindName: (type: AnyUntypedNode['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type)",
 		`    kinds: new Set<string>(${JSON.stringify([...triviaKinds].sort(compareOrdinal))})`,
-		'    innerGaps: INNER_GAPS',
+		'    innerKinds: INNER_SITES',
 		`    rebuildWrappers: new Set<number>(${JSON.stringify(rebuildWrappers)})`,
 		`    listKinds: new Set<number>(${JSON.stringify(listKinds)})`,
 		...(whitespace === undefined

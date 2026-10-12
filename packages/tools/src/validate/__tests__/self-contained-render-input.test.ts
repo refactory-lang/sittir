@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { STORED_TRIVIA } from '@sittir/common/utils';
+import { PLAIN_KINDS } from '@sittir/common/utils';
 import { selfContainedRenderInput } from '../read-render-parse.ts';
 
 const LEAF = 7;
@@ -17,7 +17,7 @@ describe('selfContainedRenderInput', () => {
 			},
 			source,
 			isLeafKind,
-			STORED_TRIVIA
+			PLAIN_KINDS
 		);
 		expect(out).toEqual({
 			$type: COMPOUND,
@@ -26,7 +26,7 @@ describe('selfContainedRenderInput', () => {
 	});
 
 	it('gives a storage-less leaf its bytes and keeps a captured $text as it is', () => {
-		expect(selfContainedRenderInput({ $type: LEAF, $_layout: { at: { $treeHandle: 1, $span: { start: 0, end: 2 }, $type: LEAF } }, $text: 'zz' }, source, isLeafKind, STORED_TRIVIA)).toEqual({
+		expect(selfContainedRenderInput({ $type: LEAF, $_layout: { at: { $treeHandle: 1, $span: { start: 0, end: 2 }, $type: LEAF } }, $text: 'zz' }, source, isLeafKind, PLAIN_KINDS)).toEqual({
 			$type: LEAF,
 			$text: 'zz'
 		});
@@ -34,7 +34,7 @@ describe('selfContainedRenderInput', () => {
 
 	it('keeps a storage-less compound as its identity, never as text', () => {
 		expect(
-			selfContainedRenderInput({ $type: COMPOUND, $_layout: { at: { $treeHandle: 1, $span: { start: 2, end: 4 }, $type: COMPOUND } } }, source, isLeafKind, STORED_TRIVIA)
+			selfContainedRenderInput({ $type: COMPOUND, $_layout: { at: { $treeHandle: 1, $span: { start: 2, end: 4 }, $type: COMPOUND } } }, source, isLeafKind, PLAIN_KINDS)
 		).toEqual({ $type: COMPOUND });
 	});
 
@@ -52,12 +52,12 @@ describe('selfContainedRenderInput', () => {
 			},
 			source,
 			isLeafKind,
-			STORED_TRIVIA
+			PLAIN_KINDS
 		) as { $_layout: { trivia: unknown } };
 		expect(out.$_layout.trivia).toEqual({ leading: [{ $type: 3, $text: '// c' }], trailing: [{ $type: 3, $text: '// d' }] });
 	});
 
-	it('keeps the same-line flag on a text entry and detaches inner entries', () => {
+	it('detaches a trailing entry to its text, with no row stamp, and detaches inner entries', () => {
 		const out = selfContainedRenderInput(
 			{
 				$type: COMPOUND,
@@ -65,17 +65,17 @@ describe('selfContainedRenderInput', () => {
 				$_layout: {
 					trivia: {
 						trailing: [{ $type: 3, $treeHandle: 1, $span: { start: 4, end: 8 }, $sameLine: true, $tokensBetween: 1 }],
-						inner: { x: [{ $type: 3, $treeHandle: 1, $span: { start: 4, end: 8 } }] }
+						inner: [{ $type: 3, $treeHandle: 1, $span: { start: 4, end: 8 } }]
 					}
 				}
 			},
 			source,
 			isLeafKind,
-			STORED_TRIVIA
+			PLAIN_KINDS
 		) as { $_layout: { trivia: unknown } };
 		expect(out.$_layout.trivia).toEqual({
-			trailing: [{ $type: 3, $text: '// c', $sameLine: true, $tokensBetween: 1 }],
-			inner: { x: [{ $type: 3, $text: '// c' }] }
+			trailing: [{ $type: 3, $text: '// c' }],
+			inner: [{ $type: 3, $text: '// c' }]
 		});
 	});
 });

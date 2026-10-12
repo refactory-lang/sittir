@@ -50,10 +50,6 @@ The grammar facts `$trivia` checks against: each kind's name, the gaps an empty 
 
 Every member is `readonly`, `comment` included: the facts belong to the language and are frozen where the language module builds them, so an engine cannot change them for the others. The comment coercer is a per-language fact fixed when `hooks` is built; nothing per engine sets it.
 
-### `packages/types/src/core-types.ts::RenderCallOptions`
-
-The options a single render takes beside the language's render options: `ignoreFormat`. It is the one declaration of that key; the engine's per-call render options, the native engine's render and a parsed tree's render all name it.
-
 ### `packages/types/src/engine-api.ts::ParseOptions`
 
 Read depth is a performance parameter and never a semantic one. Under the default, a child with substructure comes back as a stub, and each hydration is one more crossing into the native reader. `deep` makes one crossing for the whole subtree, and the generated wrap types every slot-holding node of it as it wraps the parent (`storeExpanded`), so the typing a lazy read spreads over first accesses is paid inside the parse. The two modes agree on every result because each node a read hands back names its tree, whichever depth produced it (`canFold`).
@@ -78,6 +74,10 @@ The types a grammar's runtime is generic over: `namespaces` (its `NamespaceMap`)
 
 A trivia entry as input: one of the grammar's trivia kinds or a string. A string is loose input: the runtime builds it into a node through the grammar's `ir.comment` (its full spelling loses the default arm's delimiters; any other text is that arm's interior), so a stored entry is always a node.
 
+### `packages/types/src/core-types.ts::ErrorNode`
+
+An ERROR region read as a value. `$text` is the region's own bytes. As a trivia item it also carries its in-line adjacency as `$before` and `$after`: the source's whitespace on its line between the region and the tokens beside it, absent where it touches a token or where a line break lies between. Its render writes the three verbatim and no seam on either side, because a seam beside what did not parse cannot be trusted. A line break beside it stays a layout entry of its side, and the run between two regions is the earlier one's `$after`. Comments carry neither field.
+
 ### `packages/types/src/core-types.ts::TriviaSetter`
 
 `$trivia` over a grammar's trivia union: called with entries (rest arguments are leading, or one `{ leading, trailing }` object) or through `leading`/`trailing`, it rebuilds the node; called with no arguments, `leading`/`trailing` read the stored entries. With its defaults (`Self = AnyUntypedNode`, `Trivia = any`) it is the loose `$trivia` every `AnyUntypedNode` may carry, so a grammar's narrower setter is assignable to it.
@@ -89,10 +89,6 @@ The members every built and wrapped node carries: `$render` and `$trivia` over t
 ### `packages/types/src/engine-api.ts::GrammarInnerTrivia`
 
 The inner trivia of a node that realizes empty: `inner()` reads its inner entries and `inner(...items)` rebuilds the node with them.
-
-### `packages/types/src/engine-api.ts::GrammarInnerTriviaAt`
-
-`GrammarInnerTrivia` for a grammar where some kind has more than one gap: `innerAt(gap, ...)` reads or rebuilds one named gap.
 
 ### `packages/types/src/engine-api.ts::LanguageAPI`
 
@@ -106,11 +102,11 @@ It carries `fileTypes`, the file types the grammar declares upstream (an empty l
 
 ### `packages/types/src/engine-api.ts::NativeEngineOptions`
 
-The options a language's native engine is created with: the format record and the render options under `options`. It is the native boundary's shape only; `createEngine` maps its own `render` option onto `options`.
+The options a language's native engine is created with: the render options under `options`. It is the native boundary's shape only; `createEngine` maps its own `render` option onto `options`.
 
 ### `packages/types/src/engine-api.ts::LanguageHooks`
 
-What a language's `load()` resolves to: the builder table, guards, kind ids, trivia facts and the render module hash as data, plus `createNative` to create a native engine and `wrap` to turn a read root and its tree into the language's root node.
+What a language's `load()` resolves to: the builder table, guards, kind ids, trivia facts and the render module hash as data, plus `createNative` to create a native engine and `wrap` to turn a read root and its tree into the language's root node. `membership` is the language's one membership test, shared by its `is.*` guards and a query's `ofType`.
 
 The optional `hydrate` hook reuses the grammar's `hydrateChild` for a shallow child read from its own tree. Generated languages supply it so factories can consume parsed list stubs without duplicating the grammar's depth or envelope normalization.
 
@@ -178,7 +174,7 @@ Whether two types are identical, by comparing two generic signatures that differ
 
 ### `packages/types/src/engine-api.ts::EngineOptions`
 
-An engine's options, grouped by concern: the builder surface, the render options, the format record, and the interceptors.
+An engine's options, grouped by concern: the builder surface, the render options, and the interceptors.
 
 ### `packages/types/src/engine-api.ts::Interceptor`
 

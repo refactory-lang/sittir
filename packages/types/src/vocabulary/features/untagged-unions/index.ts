@@ -1,4 +1,4 @@
-export type * from './declaration.ts';
+export * from './declaration.ts';
 
 /** Untagged unions: a value type whose fields share one storage. */
 export interface UntaggedUnions {

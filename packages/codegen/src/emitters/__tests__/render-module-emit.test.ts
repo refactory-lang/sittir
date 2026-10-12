@@ -98,7 +98,7 @@ let _rustOptionsRs: string | undefined;
 
 const _models = new Map<string, ReturnType<typeof buildModel>>();
 
-async function buildModel(grammar: 'rust' | 'typescript' | 'scm') {
+async function buildModel(grammar: 'rust' | 'typescript' | 'scm' | 'python') {
 	const raw = await evaluatePackage(grammarPackage(grammar));
 	const generatedIdTables = await loadGeneratedIdTables(grammar);
 	if (generatedIdTables === undefined) throw new Error(`no generated id tables for ${grammar}`);
@@ -122,7 +122,7 @@ async function buildModel(grammar: 'rust' | 'typescript' | 'scm') {
 	return { raw, nodeMap, kindEntries, generatedIdTables, templates, renderRules };
 }
 
-function modelFor(grammar: 'rust' | 'typescript' | 'scm') {
+function modelFor(grammar: 'rust' | 'typescript' | 'scm' | 'python') {
 	const cached = _models.get(grammar);
 	if (cached !== undefined) return cached;
 	const built = buildModel(grammar);
@@ -130,7 +130,7 @@ function modelFor(grammar: 'rust' | 'typescript' | 'scm') {
 	return built;
 }
 
-async function getTransportRsForGrammar(grammar: 'rust' | 'typescript' | 'scm'): Promise<string> {
+async function getTransportRsForGrammar(grammar: 'rust' | 'typescript' | 'scm' | 'python'): Promise<string> {
 	const { raw, nodeMap, kindEntries, generatedIdTables, templates, renderRules } = await modelFor(grammar);
 	if (grammar === 'rust') _rustKindEntries = kindEntries;
 	const emit = emitRenderModule(
@@ -276,7 +276,7 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 
 	it('a presence slot holding a keyword kind crosses as a boolean and renders the kind', async () => {
 		const src = await getRustTemplatesRs();
-		expect(extractStructBody(src, 'ReferenceTypeTransport')).toContain('pub mutable: Option<bool>,');
+		expect(extractStructBody(src, 'ReferenceTypeTransport')).toContain('pub mutable: bool,');
 		expect(extractFnBody(src, 'render_reference_type')).toContain(
 			'let mutable = View::new(::sittir_core::view::Presence::new(node.mutable, MutableSpecifierTransport::MutableSpecifier), "{}");'
 		);
@@ -461,7 +461,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 			'fn render_function_item(node: &FunctionItemTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {'
 		);
 		expect(transportRs).toContain(
-			"pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {"
+			"pub fn render_transport_dispatch(transport: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {"
 		);
 		expect(transportRs).toContain(
 			'::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources)'
@@ -509,11 +509,12 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		);
 		expect(transportRs).toContain('.get_or_insert(ctx.options.spacing[options::');
 		expect(transportRs).toContain(
-			"pub fn render_transport_dispatch(transport: &dyn ::sittir_core::render::Render, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {"
+			"pub fn render_transport_dispatch(transport: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {"
 		);
 		expect(transportRs).toContain(
 			'::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options)'
 		);
+		expect(transportRs).toContain('let document = ::sittir_core::view::KindTest::kind_in(transport, &w, kind::ROOT_KINDS);');
 	});
 
 	it('admits verbatim text only where a slot admits a pattern kind', async () => {
@@ -537,7 +538,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		expect(cells.filter((c) => c !== 'NO_SITE').length).toBeGreaterThan(0);
 		expect(cells.every((c) => c === 'NO_SITE' || /^\d+$/.test(c))).toBe(true);
 		expect(transportRs).toContain(
-			'if let Some(seated_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_SOURCE_FILE_STATEMENTS, ctx); }'
+			'::sittir_core::prepare::fill_seated_gaps(self.statements.iter_mut().map(Some), options::SEATS_SOURCE_FILE_STATEMENTS, ctx);'
 		);
 		expect(transportRs).not.toContain('let seated_last');
 		expect(transportRs).not.toContain('edges_mut().after.get_or_insert');
@@ -600,10 +601,8 @@ describe('transport read facts', () => {
 		);
 	});
 
-	it('gives a list owner its minimum depth, its tokens and its inner gap', () => {
-		expect(args('ParametersTransport')).toBe(
-			'kind = kind::PARAMETERS, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], gap(1) = elements'
-		);
+	it('gives a list owner its minimum depth and its tokens, and no named inner gap', () => {
+		expect(args('ParametersTransport')).toBe('kind = kind::PARAMETERS, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN]');
 	});
 
 	it('marks a separated list, its item slot, its separator and the flank it leaves optional', () => {
@@ -712,7 +711,7 @@ describe('transport attributes', () => {
 		const src = await getRustTemplatesRs();
 		const typeEnum = src.slice(src.indexOf('pub enum TypeTransport {'));
 		expect(src).toMatch(/#\[transport\(choice\)\]\npub enum TypeTransport \{/);
-		expect(typeEnum).toMatch(/    #\[kind\(kind::NEVER_TYPE[^\]]*\)\]\n    NeverType,/);
+		expect(typeEnum).toMatch(/    #\[kind\(kind::NEVER_TYPE[^\]]*\)\]\n    #\[transport\(edged\)\]\n    NeverType\(::sittir_core::options::Edges\),/);
 		expect(typeEnum).toMatch(/    #\[kind\(kind::_PRIMITIVE_TYPE[^\]]*kind::U8_KEYWORD[^\]]*\)\]\n    PrimitiveType\(PrimitiveTypeEnum\),/);
 		expect(src).toMatch(/#\[transport\(kind = kind::_PRIMITIVE_TYPE, spelled\)\]\npub enum PrimitiveTypeEnum \{\n    #\[kind\(kind::U8_KEYWORD\)\]\n    U8,/);
 	});
@@ -779,12 +778,12 @@ describe('the wire codec facts', () => {
 		expect(extractStructBody(src, 'IdentifierTransport')).toMatch(/    #\[wire\(key = "\$text"\)\]\n    pub text: String,/);
 	});
 
-	it('marks the verbatim arm of a choice that takes bare text, and only there', async () => {
+	it('marks the verbatim arm of a choice that takes bare text, and the root choice its ERROR arm alone', async () => {
 		const src = await getRustTemplatesRs();
 		expect(src).toMatch(/    #\[transport\(verbatim\)\]\n    Verbatim\(VerbatimTransport\),/);
 		const any = src.slice(src.indexOf('pub enum AnyTransport {'));
 		const anyBody = any.slice(0, any.indexOf('\n}'));
-		expect(anyBody).toMatch(/\n    Verbatim\(VerbatimTransport\),/);
+		expect(anyBody).toMatch(/\n    #\[transport\(error\)\]\n    Verbatim\(VerbatimTransport\),/);
 		expect(anyBody).not.toContain('#[transport(verbatim)]');
 	});
 
@@ -841,4 +840,13 @@ describe('the payload ceiling', () => {
 		const [stale] = BOXED_PAYLOADS.rust!;
 		expect(() => payloadCeilingAssertions(BOXED_PAYLOADS.rust!, new Set())).toThrow(`${stale} is pinned in boxed-payloads.ts but no choice holds it`);
 	});
+});
+
+describe('list storage', () => {
+	it('prints a possibly-empty list as a Vec and a repeat1 list as a NonEmptyVec', async () => {
+		const rust = await getTransportRsForGrammar('python');
+		expect(rust).toContain('pub except_clauses: Vec<::sittir_core::SlotValue<ExceptClauseTransport>>');
+		expect(rust).not.toMatch(/Option<Vec</);
+		expect(rust).toContain('pub decorator: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<DecoratorTransport>>');
+	}, 120_000);
 });

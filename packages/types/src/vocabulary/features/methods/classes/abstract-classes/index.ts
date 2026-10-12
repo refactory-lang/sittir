@@ -1,5 +1,5 @@
-export type * from './declaration.ts';
-export type * from './type.ts';
+export * from './declaration.ts';
+export * from './type.ts';
 
 import type { Classes } from '../index.ts';
 

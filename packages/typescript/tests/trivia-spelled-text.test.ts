@@ -11,9 +11,9 @@ const statement = () => ir.expressionStatement(ir.identifier('x'));
 
 describe('trivia given as text', () => {
 	it('builds the kind the text opens as', () => {
-		expect(statement().$trivia.trailing('/* x */').$render()).toBe('x;\n/* x */');
-		expect(statement().$trivia.trailing('// x').$render()).toBe('x;\n// x\n');
-		expect(statement().$trivia.trailing('/** doc */').$render()).toBe('x;\n/** doc */');
+		expect(statement().$trivia.trailing('/* x */').$render()).toBe('x; /* x */');
+		expect(statement().$trivia.trailing('// x').$render()).toBe('x; // x\n');
+		expect(statement().$trivia.trailing('/** doc */').$render()).toBe('x; /** doc */');
 	});
 
 	it('builds the kind\'s node, with the content between its affixes', () => {
@@ -27,12 +27,12 @@ describe('trivia given as text', () => {
 	});
 
 	it('takes any other text as the content of the default comment kind', () => {
-		expect(statement().$trivia.trailing(' x').$render()).toBe('x;\n// x\n');
-		expect(statement().$trivia.trailing('/* unterminated').$render()).toBe('x;\n///* unterminated\n');
+		expect(statement().$trivia.trailing(' x').$render()).toBe('x; // x\n');
+		expect(statement().$trivia.trailing('/* unterminated').$render()).toBe('x; ///* unterminated\n');
 	});
 
 	it('resolves each item of a call on its own', () => {
-		expect(statement().$trivia.trailing('// a', '/* b */', ' c').$render()).toBe('x;\n// a\n/* b */\n// c\n');
-		expect(statement().$trivia.leading('/* b */', ir.comment.line(' n')).$render()).toBe('/* b */\n// n\nx;');
+		expect(statement().$trivia.trailing('// a', '/* b */', ' c').$render()).toBe('x; // a\n/* b */ // c\n');
+		expect(statement().$trivia.leading('/* b */', ir.comment.line(' n')).$render()).toBe('/* b */ // n\nx;');
 	});
 });

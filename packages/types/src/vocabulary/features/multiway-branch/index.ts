@@ -1,5 +1,5 @@
-export type * from './clause.ts';
-export type * from './statement.ts';
+export * from './clause.ts';
+export * from './statement.ts';
 
 /** Multiway branch: a switch on a value to the case it equals. */
 export interface MultiwayBranch {

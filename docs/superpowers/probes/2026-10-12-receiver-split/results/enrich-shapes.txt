@@ -1,0 +1,24 @@
+## two-rules-repeat
+  kept _parameters_elements_receiver
+  minted _layout = {"type":"CHOICE","members":[{"type":"SYMBOL","name":"_tight"}]}
+  visible-group sources: []
+  hidden groups: []
+## two-rules
+  rewrote _parameters_elements_receiver = {"type":"SEQ","members":[{"type":"FIELD","name":"receiver","content":{"type":"SYMBOL","name":"lead"}},{"type":"OPTIONAL","content":{"type":"CHOICE","members":[{"type":"STRING","value":",","annotations":{"variantOf":"_parameters_elements_receiver"}},{"type":"FIELD","name":"items","content":{"type":"SYMBOL","name":"parameters_elements_receiver_items","hidden":false,"inline":false,"metadata":{"symbolSource":"group-lift"}},"metadata":{"fieldSource":"enriched"},"annotations":{"variantOf":"_parameters_elements_receiver"}}]}}]}
+  minted parameters_elements_receiver_items = {"type":"SEQ","members":[{"type":"REPEAT1","content":{"type":"SEQ","members":[{"type":"STRING","value":","},{"type":"FIELD","name":"item","content":{"type":"SYMBOL","name":"rest"}}]}},{"type":"OPTIONAL","content":{"type":"STRING","value":","}}],"annotations":{"hoisted":true}}
+  minted _layout = {"type":"CHOICE","members":[{"type":"SYMBOL","name":"_tight"}]}
+  visible-group sources: ["parameters_elements_receiver_items"]
+  hidden groups: []
+## two-rules-tail
+  rewrote _parameters_elements_receiver = {"type":"SEQ","members":[{"type":"FIELD","name":"receiver","content":{"type":"SYMBOL","name":"lead"}},{"type":"OPTIONAL","content":{"type":"SYMBOL","name":"parameters_elements_receiver_arm","hidden":false,"inline":false,"metadata":{"symbolSource":"group-lift"},"annotations":{"variant":"arm","variantOf":"_parameters_elements_receiver"}}}]}
+  kept _parameters_elements_receiver_tail
+  minted parameters_elements_receiver_arm = {"type":"CHOICE","members":[{"type":"STRING","value":",","annotations":{"variantOf":"parameters_elements_receiver_arm"}},{"type":"FIELD","name":"elements","content":{"type":"ALIAS","named":true,"value":"parameters_elements_receiver_tail","content":{"type":"SYMBOL","name":"_parameters_elements_receiver_tail"}},"annotations":{"variantOf":"parameters_elements_receiver_arm"}}],"annotations":{"hoisted":true}}
+  minted _layout = {"type":"CHOICE","members":[{"type":"SYMBOL","name":"_tight"}]}
+  visible-group sources: ["parameters_elements_receiver_arm"]
+  hidden groups: []
+## two-rules-plain
+  rewrote _parameters_elements_receiver = {"type":"SEQ","members":[{"type":"FIELD","name":"receiver","content":{"type":"SYMBOL","name":"lead"}},{"type":"OPTIONAL","content":{"type":"SYMBOL","name":"parameters_elements_receiver_group","hidden":false,"inline":false,"metadata":{"symbolSource":"group-lift"}}}]}
+  minted parameters_elements_receiver_group = {"type":"SEQ","members":[{"type":"STRING","value":","},{"type":"OPTIONAL","content":{"type":"FIELD","name":"elements","content":{"type":"SYMBOL","name":"parameters_elements"}}}],"annotations":{"hoisted":true}}
+  minted _layout = {"type":"CHOICE","members":[{"type":"SYMBOL","name":"_tight"}]}
+  visible-group sources: ["parameters_elements_receiver_group"]
+  hidden groups: []

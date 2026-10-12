@@ -27,7 +27,7 @@ describe('@sittir/common/utils runtime surface', () => {
 
 	it('renders through the engine in scope', () => {
 		const render = vi.fn(() => 'rendered');
-		const trivia = { kindName: (type: AnyUntypedNode['$type']) => `k${type}`, kinds: new Set(['k1', 'k2', 'k3']), innerGaps: {}, rebuildWrappers: new Set<number>(), listKinds: new Set<number>() };
+		const trivia = { kindName: (type: AnyUntypedNode['$type']) => `k${type}`, kinds: new Set(['k1', 'k2', 'k3']), innerKinds: new Set<string>(), rebuildWrappers: new Set<number>(), listKinds: new Set<number>() };
 		const node = inEngine(liveHandle({ render, trivia }), () => withMethods({ $type: 1, $source: 2, _name: 'x' }));
 
 		expect(node.$render()).toBe('rendered');
@@ -56,8 +56,9 @@ describe('@sittir/common/utils runtime surface', () => {
 		expect(isFactoryNode({ $type: 1 })).toBe(false);
 		expect(hasKind({ kind: 'node' })).toBe(true);
 		expect(hasKind({ kind: 1 })).toBe(false);
-		expect(coerceBooleanKeywordStorage(undefined)).toBeUndefined();
-		expect(coerceBooleanKeywordStorage([])).toBeUndefined();
+		expect(coerceBooleanKeywordStorage(undefined)).toBe(false);
+		expect(coerceBooleanKeywordStorage(false)).toBe(false);
+		expect(coerceBooleanKeywordStorage([])).toBe(false);
 		expect(coerceBooleanKeywordStorage(['x'])).toBe(true);
 		expect(coerceBitflagStorage('a', ['a', 'b'])).toBe(1);
 		expect(coerceBitflagStorage(['a', 'b'], ['a', 'b'])).toBe(3);

@@ -8,7 +8,7 @@ import { LAYOUT_KIND_BITS, leafEdgesOf } from '../compiler/model/layout-kinds.ts
 import { BLANK_ARM, BLANK_KIND_ID, type PreferenceArm, type SitePreference, type SpacingSide } from '../compiler/model/site-preferences.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { displayNameOf } from '../compiler/model/display-name.ts';
-import { admitsDepth, type EdgeArm } from '../compiler/model/render-rules.ts';
+import { admitsDepth, type DepthAnchor, type DepthRegion, type EdgeArm } from '../compiler/model/render-rules.ts';
 import { DEDENT_TEXT, INDENT_TEXT, depthBreakOf, parseSeamLabel, seamLabel } from '../dsl/primitives/spacing.ts';
 import { pathOf } from '../compiler/model/site-addresses.ts';
 import { comparePreferencePaths, formatPreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
@@ -83,11 +83,18 @@ export interface SitePath {
 	readonly index: number;
 }
 
+export interface PlannedDepthRegion {
+	readonly id: number;
+	readonly open: DepthAnchor;
+	readonly close: DepthAnchor;
+}
+
 export interface RenderOptionsPlan {
 	readonly spacingSites: readonly SpacingSite[];
 	readonly sitePaths: readonly SitePath[];
 	readonly delimiterSites: readonly DelimiterSite[];
 	readonly depthSites: readonly DepthSites[];
+	readonly depthRegions: readonly PlannedDepthRegion[];
 	readonly indentId: number;
 	readonly dedentId: number;
 	readonly whitespaceText: readonly { readonly id: number; readonly text: string }[];
@@ -164,7 +171,8 @@ export function planRenderOptions(
 	nodeMap: NodeMap,
 	whitespaceText: ReadonlyMap<string, string>,
 	declaredIndent: string | undefined,
-	grammar: string
+	grammar: string,
+	depthRegions: readonly DepthRegion[] = []
 ): RenderOptionsPlan {
 	const spacing: SpacingSite[] = [];
 	const delimiters: DelimiterSite[] = [];
@@ -257,6 +265,9 @@ export function planRenderOptions(
 			.map(({ path, site, index }) => ({ path: formatPreferencePath(path), segments: path, site, index })),
 		delimiterSites: delimiters,
 		depthSites: [...depthSites].map(([kind, sites]) => ({ kind, sites })).sort((a, b) => byTuple([a.kind], [b.kind])),
+		depthRegions: depthRegions
+			.map((region) => ({ id: idOf(kindEntries, region.kind, `the depth region of ${region.kind}`), open: region.open, close: region.close }))
+			.sort((a, b) => a.id - b.id),
 		indentId: idOfText(INDENT_TEXT),
 		dedentId: idOfText(DEDENT_TEXT),
 		whitespaceText: [...whitespaceText]
@@ -622,6 +633,10 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push('pub static DEPTH_SITES: &[(&str, &[usize])] = &[');
 	for (const d of plan.depthSites) L.push(`    (${q(d.kind)}, &[${d.sites.join(', ')}]),`);
 	L.push('];', '');
+	L.push('/// Per kind id, the stretches of its children its template indents one level, by their anchors.');
+	L.push('pub static DEPTH_REGIONS: &[::sittir_core::trivia_table::DepthRegion] = &[');
+	for (const r of plan.depthRegions) L.push(`    ::sittir_core::trivia_table::DepthRegion { kind: ${r.id}, open: ${depthAnchorRs(r.open)}, close: ${depthAnchorRs(r.close)} },`);
+	L.push('];', '');
 	L.push("pub fn spacing_text(kind: u16) -> &'static str {");
 	L.push('    match kind {');
 	for (const w of plan.whitespaceText) {
@@ -679,4 +694,13 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push('pub type Options = ::sittir_core::options::Options<Sites>;', '');
 	L.push(...resolveTests(plan, addresses, siteIndex, kindEntries));
 	return L.join('\n') + '\n';
+}
+
+function depthAnchorRs(anchor: DepthAnchor): string {
+	const path = '::sittir_core::trivia_table::DepthAnchor';
+	if (anchor === 'start') return `${path}::Start`;
+	if (anchor === 'end') return `${path}::End`;
+	return 'after' in anchor
+		? `${path}::After(&[${anchor.after.map(rustStringLiteral).join(', ')}])`
+		: `${path}::Before(&[${anchor.before.map(rustStringLiteral).join(', ')}])`;
 }

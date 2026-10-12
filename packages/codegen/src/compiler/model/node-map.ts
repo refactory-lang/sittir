@@ -27,7 +27,7 @@ import {
 	transitiveParseKinds
 } from '../../types/rule.ts';
 import { isStringType, realizesEmpty, type EmptinessCtx } from '../../types/runtime-shapes.ts';
-import { isDepthText } from '../../dsl/primitives/spacing.ts';
+import { DEDENT_TEXT, isDepthText } from '../../dsl/primitives/spacing.ts';
 import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
 import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import type { KindProvenance } from '../types.ts';
@@ -49,7 +49,7 @@ import { wordCharAsciiTable } from '../../util/word-matcher.ts';
 const renderRuleWalker = new RuleWalker<RenderRule>();
 const anyRuleWalker = new RuleWalker<AnyRule>();
 
-export type LineEnd = 'open' | 'closed' | 'empty' | { readonly symbol: string };
+export type LineEnd = 'open' | 'closed' | 'dedent' | 'empty' | { readonly symbol: string };
 
 export type EdgeTerminal = { readonly literal: string } | { readonly pattern: string } | 'empty' | { readonly symbol: string };
 
@@ -92,7 +92,7 @@ function seqEdgeTerminals(fromEdge: readonly AnyRule[], ctx: EdgeCtx): EdgeTermi
 function ruleLineEnds(rule: AnyRule, ctx: LineEndCtx): LineEnd[] {
 	return ruleEdgeTerminals(rule, { edge: 'end' }).map((terminal) => {
 		if (terminal === 'empty' || 'symbol' in terminal) return terminal;
-		if ('literal' in terminal) return 'closed';
+		if ('literal' in terminal) return terminal.literal === DEDENT_TEXT ? 'dedent' : 'closed';
 		const opens = opensLineEnd(terminal.pattern);
 		if (opens === undefined) {
 			throw new Error(
@@ -178,6 +178,10 @@ export interface FieldStorageInfo {
 	readonly enumKinds: readonly string[];
 	readonly enumKindsById: ReadonlyMap<string, number>;
 	readonly collapsesMultiplicity: boolean;
+}
+
+export function storesNodes(info: FieldStorageInfo): boolean {
+	return info.kind !== 'boolean' && info.kind !== 'bitflag' && info.kind !== 'kindEnum';
 }
 
 export type KindStorage = 'node' | 'kindId';
@@ -1534,11 +1538,12 @@ export function fixedTextOfKind(node: AssembledNodeBase | undefined): string | u
 	return isFixedTextLeaf(assembled) ? assembled.text : undefined;
 }
 
+export function isDepthLeaf(node: AssembledNode): boolean {
+	return isFixedTextLeaf(node) && node.text !== undefined && isDepthText(node.text);
+}
+
 export function kindIdText(node: AssembledNode): string | undefined {
-	if (isFixedTextLeaf(node)) {
-		const text = node.text || undefined;
-		return text !== undefined && isDepthText(text) ? undefined : text;
-	}
+	if (isFixedTextLeaf(node)) return isDepthLeaf(node) ? undefined : node.text || undefined;
 	if (node.modelType === 'pattern') return node.fixedLiteralText || undefined;
 	return undefined;
 }
@@ -1769,6 +1774,10 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		return this.renderRule.tokenized === true || this.renderRule.lexed === true;
 	}
 
+	get innerSite(): InnerGap | undefined {
+		return this.innerGaps.at(-1);
+	}
+
 	get innerGaps(): readonly InnerGap[] {
 		if (this.triviaInterior) return [];
 		const root = this.renderRule;
@@ -1782,7 +1791,7 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 				occurrences.push({ slot, precedingTokens: immediateTokens.length });
 				return;
 			}
-			if (rule.type === STRING) {
+			if (rule.type === STRING || (rule.type === SYMBOL && rule.nonterminal === false)) {
 				if (!ctx.conditional) immediateTokens.push(rule.immediate === true);
 				return;
 			}

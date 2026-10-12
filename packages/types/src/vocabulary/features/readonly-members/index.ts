@@ -1,4 +1,4 @@
-export type * from './declaration.ts';
+export * from './declaration.ts';
 
 /** Readonly members: a field or property that is not reassigned once initialized. */
 export interface ReadonlyMembers {

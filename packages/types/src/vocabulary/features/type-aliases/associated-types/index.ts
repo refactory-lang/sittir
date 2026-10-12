@@ -1,5 +1,5 @@
-export type * from './declaration.ts';
-export type * from './element.ts';
+export * from './declaration.ts';
+export * from './element.ts';
 
 import type { TypeAliases } from '../index.ts';
 import type { Interfaces } from '../../interfaces/index.ts';

@@ -1,4 +1,4 @@
-export type * from './statement.ts';
+export * from './statement.ts';
 
 /** Exec statements: running code given as text, as a statement, python 2's `exec`. */
 export interface ExecStatements {

@@ -293,9 +293,9 @@ describe('gateOptionalSlotSeams', () => {
 		}).map((line) => line.trim());
 		expect(lines).toEqual([
 			'w.text("{")?;',
-			'if x.is_present() || ::sittir_core::trivia::has_inner(node.layout.trivia(), "x") {',
+			'if x.is_present() || ::sittir_core::trivia::has_inner(node.layout.trivia()) {',
 			'w.site_at(options::SITE_LBRACE_AFTER);',
-			'::sittir_core::trivia::render_inner(node.layout.trivia(), "x", w)?;',
+			'::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;',
 			'x.render(w)?;',
 			'w.site_at(options::SITE_RBRACE_BEFORE);',
 			'}',

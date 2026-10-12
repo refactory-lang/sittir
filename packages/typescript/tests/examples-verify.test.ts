@@ -56,13 +56,13 @@ describe('ir entry ratchet', () => {
 		// Grouped namespaces and `synonym` are objects, not builders — the
 		// ratchet tracks builder exposure, so only callable entries count.
 		const builders = Object.keys(ts.build).filter((k) => typeof (ts.build as Record<string, unknown>)[k] === 'function');
-		expect(builders.length).toBeLessThanOrEqual(214);
+		expect(builders.length).toBeLessThanOrEqual(213);
 	});
 });
 
-// The generated rebuild: `sittir tool emit-factory-source` over format.ts.
-describe('examples/18 generated rebuild (format.ts)', () => {
-	const target = new URL('../../common/src/format.ts', import.meta.url).pathname;
+// The generated rebuild: `sittir tool emit-factory-source` over the dogfood source.
+describe('examples/18 generated rebuild (dogfood-typescript.ts)', () => {
+	const target = new URL('../../tools/tests/emit/__fixtures__/dogfood-typescript.ts', import.meta.url).pathname;
 	it('renders', async () => {
 		expect((await rebuildFormatGenerated()).$render()).toContain('function applyFormat');
 	});
@@ -73,8 +73,8 @@ describe('examples/18 generated rebuild (format.ts)', () => {
 
 // The loose rebuild: the same file through the bundle calls, with every
 // coercion the loose contract admits spelled bare.
-describe('examples/18 loose rebuild (format.ts)', () => {
-	const target = new URL('../../common/src/format.ts', import.meta.url).pathname;
+describe('examples/18 loose rebuild (dogfood-typescript.ts)', () => {
+	const target = new URL('../../tools/tests/emit/__fixtures__/dogfood-typescript.ts', import.meta.url).pathname;
 	it('renders', async () => {
 		expect((await rebuildFormatLoose()).$render()).toContain('function applyFormat');
 	});

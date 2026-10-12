@@ -29,16 +29,11 @@ describe.each([
 		expect(root.$render()).toBe('fn a() {}\nfn b() {\n    // before\n    let x = 1;\n}\n');
 	});
 
-	it('refuses a comment on a node a query reached, and renders it written through the accessors', () => {
+	it('renders a comment written on a node a query reached as one written through the accessors', () => {
 		const root = engine.parse(SOURCE, { depth });
 		const viewed = Array.from(root.$query().$descendants).find((node) => engine.is.letDeclaration(node));
 		if (viewed === undefined || !engine.is.letDeclaration(viewed)) throw new Error('expected a let declaration');
-		expect(() => viewed.$trivia.leading(engine.build.lineComment(' before'))).toThrow(/reached outside its parent's accessors/);
-		const second = root.statements()[1]!;
-		if (!engine.is.functionItem(second)) throw new Error('expected a function');
-		const statement = second.body().statements()[0];
-		if (statement === undefined || !engine.is.letDeclaration(statement)) throw new Error('expected a let declaration');
-		statement.$trivia.leading(engine.build.lineComment(' before'));
+		viewed.$trivia.leading(engine.build.lineComment(' before'));
 		expect(root.$render()).toBe('fn a() {}\nfn b() {\n    // before\n    let x = 1;\n}\n');
 	});
 

@@ -1,0 +1,25 @@
+function f() {}
+  rendered: ()
+  text: unchanged; reparse: same tree
+function f(this: T) {}
+  rendered: (this : T,)
+  text: changed; reparse: same tree
+function f(this: T,) {}
+  rendered: (this : T,)
+  text: changed; reparse: same tree
+function f(this: T, a) {}
+  rendered: (this : T,)
+  text: changed; reparse: different tree
+  first:  ["formal_parameters", null, [["formal_parameters_elements_receiver", "elements", [["this_parameter", "receiver", [["this", "pattern", "this"], ["type_annotation", "type", [["type_identifier", "type", "T"]]]]], ["formal_parameters_elements_receiver_items", "items", [["required_parameter", "item", [["lhs_expression", "pattern", [["identifier", null, "a"]]]]]]]]]]]
+  second: ["formal_parameters", null, [["formal_parameters_elements_receiver", "elements", [["this_parameter", "receiver", [["this", "pattern", "this"], ["type_annotation", "type", [["type_identifier", "type", "T"]]]]]]]]]
+function f(this: T, a,) {}
+  rendered: (this : T,)
+  text: changed; reparse: different tree
+  first:  ["formal_parameters", null, [["formal_parameters_elements_receiver", "elements", [["this_parameter", "receiver", [["this", "pattern", "this"], ["type_annotation", "type", [["type_identifier", "type", "T"]]]]], ["formal_parameters_elements_receiver_items", "items", [["required_parameter", "item", [["lhs_expression", "pattern", [["identifier", null, "a"]]]]]]]]]]]
+  second: ["formal_parameters", null, [["formal_parameters_elements_receiver", "elements", [["this_parameter", "receiver", [["this", "pattern", "this"], ["type_annotation", "type", [["type_identifier", "type", "T"]]]]]]]]]
+function f(a, b) {}
+  rendered: (a, b)
+  text: unchanged; reparse: same tree
+function f(this?: T) {}
+  rendered: (this?: T)
+  text: unchanged; reparse: same tree

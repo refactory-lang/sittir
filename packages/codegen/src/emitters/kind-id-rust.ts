@@ -3,6 +3,9 @@ import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import { collectKindEntries, collectCatalogKinds } from './kind-discriminant.ts';
 import { toScreamingSnakeCase } from '../compiler/model/casing.ts';
 import { ERROR_KIND_ID, ERROR_KIND_NAME } from '@sittir/common/error-kind';
+import { findEntryForKindName } from '../dsl/symbol-table.ts';
+import { depthMembersOf } from '../compiler/model/layout-kinds.ts';
+import { layoutMemberKindIds, listKindIds, rootKindIds, unitKindIds } from './wrap.ts';
 
 export interface EmitKindIdRustConfig {
 	grammar: string;
@@ -59,6 +62,20 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	const errorEntry = entries.find((entry) => entry.id === ERROR_KIND_ID);
 	if (errorEntry === undefined) throw new Error(`kind_ids.rs: ${grammar} has no ${ERROR_KIND_NAME} kind entry`);
 	lines.push(`const _: () = assert!(${kindConstName(errorEntry)}.0 == KindId::ERROR.0);`);
+	lines.push('');
+	lines.push(`/// The surface kinds: list kinds, whose items the surface exposes in their place, unit kinds, which it exposes as a kind id, the extras that are layout members, which it assigns as layout, and the depth members a layout run's excess indentation reads as.`);
+	lines.push(`pub const SURFACE_KINDS: ::sittir_core::trivia_table::SurfaceKinds = ::sittir_core::trivia_table::SurfaceKinds {`);
+	lines.push(`    lists: &[${listKindIds(nodeMap).join(', ')}],`);
+	lines.push(`    units: &[${unitKindIds(nodeMap).join(', ')}],`);
+	lines.push(`    layout: &[${layoutMemberKindIds(nodeMap).join(', ')}],`);
+	const members = depthMembersOf(nodeMap);
+	const [indent, dedent] = [members.indent, members.dedent].map((kind) => (kind === undefined ? 0 : (findEntryForKindName(entries, kind)?.id ?? 0)));
+	lines.push(`    indent: ${indent},`, `    dedent: ${dedent},`);
+	lines.push(`    depth: super::options::DEPTH_REGIONS,`);
+	lines.push(`};`);
+	lines.push('');
+	lines.push(`/// The grammar's root kinds: a render whose root is one of them is a document.`);
+	lines.push(`pub const ROOT_KINDS: &[KindId] = &[${rootKindIds(nodeMap).map((id) => `KindId(${id})`).join(', ')}];`);
 
 	lines.push('');
 	lines.push(`/// Map a \`KindId\` back to its grammar kind string for diagnostics.`);

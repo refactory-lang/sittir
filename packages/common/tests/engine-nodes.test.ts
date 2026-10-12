@@ -15,7 +15,7 @@ interface Options {
 const trivia: TriviaFacts = {
 	...triviaFacts(),
 	kindName: (type) => (type === 3 ? 'group' : type === 9 ? 'comment' : undefined),
-	innerGaps: { group: ['inner'] }
+	innerKinds: new Set(['group'])
 };
 
 const node = (data: Record<string, unknown>): AnyUntypedNode => withMethods(data as unknown as AnyUntypedNode);

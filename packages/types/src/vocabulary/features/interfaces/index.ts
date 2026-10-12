@@ -1,5 +1,5 @@
-export type * from './clause.ts';
-export type * from './declaration.ts';
+export * from './clause.ts';
+export * from './declaration.ts';
 
 /** Interfaces: an abstract type declared by the members its implementers provide, a trait among them. */
 export interface Interfaces {

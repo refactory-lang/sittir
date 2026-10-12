@@ -2422,7 +2422,6 @@
       }
     }
   },
-  "innerGapsKeyed": false,
   "spelledTrivia": {
     "reason": "ir.comment is one kind, 'comment'"
   },
@@ -2480,11 +2479,15 @@
     },
     {
       "kind": "_dedent",
-      "modelType": "pattern",
+      "modelType": "punctuation",
       "typeName": "Dedent",
       "factoryName": "dedent",
       "hidden": false,
-      "oneSurface": true
+      "isParameterless": true,
+      "stampExpression": "\"﷑\\n\" as const",
+      "text": "﷑\n",
+      "oneSurface": true,
+      "factoryShape": "constant"
     },
     {
       "kind": "_double_blankline",
@@ -2541,11 +2544,15 @@
     },
     {
       "kind": "_indent",
-      "modelType": "pattern",
+      "modelType": "punctuation",
       "typeName": "Indent",
       "factoryName": "indent",
       "hidden": false,
-      "oneSurface": true
+      "isParameterless": true,
+      "stampExpression": "\"﷐\\n\" as const",
+      "text": "﷐\n",
+      "oneSurface": true,
+      "factoryShape": "constant"
     },
     {
       "kind": "_is_not",

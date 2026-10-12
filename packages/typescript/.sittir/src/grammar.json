@@ -52,9 +52,6 @@
         {
           "type": "SYMBOL",
           "name": "export_statement_default",
-          "metadata": {
-            "symbolSource": "group-lift"
-          },
           "annotations": {
             "variant": "default",
             "variantOf": "export_statement"
@@ -62,21 +59,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "export_statement_type_export",
-          "metadata": {
-            "symbolSource": "group-lift"
-          },
-          "annotations": {
-            "variant": "type_export",
-            "variantOf": "export_statement"
-          }
-        },
-        {
-          "type": "SYMBOL",
           "name": "export_statement_equals_export",
-          "metadata": {
-            "symbolSource": "group-lift"
-          },
           "annotations": {
             "variant": "equals_export",
             "variantOf": "export_statement"
@@ -85,9 +68,6 @@
         {
           "type": "SYMBOL",
           "name": "export_statement_namespace_export",
-          "metadata": {
-            "symbolSource": "group-lift"
-          },
           "annotations": {
             "variant": "namespace_export",
             "variantOf": "export_statement"
@@ -14036,9 +14016,6 @@
         {
           "type": "SYMBOL",
           "name": "export_statement_default_from",
-          "metadata": {
-            "symbolSource": "group-lift"
-          },
           "annotations": {
             "variant": "from",
             "variantOf": "export_statement_default"
@@ -14099,56 +14076,6 @@
         "hoisted": true
       }
     },
-    "export_statement_type_export": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "export"
-        },
-        {
-          "type": "STRING",
-          "value": "type"
-        },
-        {
-          "type": "FIELD",
-          "name": "export_clause",
-          "content": {
-            "type": "SYMBOL",
-            "name": "export_clause"
-          },
-          "metadata": {
-            "fieldSource": "enriched"
-          }
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "_from_clause"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        },
-        {
-          "type": "FIELD",
-          "name": "terminator",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_semicolon"
-          },
-          "metadata": {
-            "fieldSource": "override"
-          }
-        }
-      ],
-      "annotations": {
-        "hoisted": true
-      }
-    },
     "export_statement_equals_export": {
       "type": "SEQ",
       "members": [
@@ -14168,7 +14095,7 @@
             "name": "expression"
           },
           "metadata": {
-            "fieldSource": "enriched"
+            "fieldSource": "override"
           }
         },
         {
@@ -15525,6 +15452,10 @@
         "hoisted": true
       }
     },
+    "_kw_type": {
+      "type": "STRING",
+      "value": "type"
+    },
     "yield_expression_delegate": {
       "type": "PREC_RIGHT",
       "value": 0,
@@ -16351,6 +16282,25 @@
           "value": "export"
         },
         {
+          "type": "FIELD",
+          "name": "type",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_kw_type"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
+        },
+        {
           "type": "CHOICE",
           "members": [
             {
@@ -16364,9 +16314,6 @@
             {
               "type": "SYMBOL",
               "name": "export_statement_default_from_ns_from",
-              "metadata": {
-                "symbolSource": "group-lift"
-              },
               "annotations": {
                 "variant": "ns_from",
                 "variantOf": "export_statement_default_from"
@@ -16379,20 +16326,19 @@
                 "variant": "clause_from",
                 "variantOf": "export_statement_default_from"
               }
-            },
-            {
-              "type": "SYMBOL",
-              "name": "export_clause",
-              "annotations": {
-                "variant": "export_clause",
-                "variantOf": "export_statement_default_from"
-              }
             }
           ]
         },
         {
-          "type": "SYMBOL",
-          "name": "_semicolon"
+          "type": "FIELD",
+          "name": "terminator",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_semicolon"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ],
       "annotations": {
@@ -16410,6 +16356,9 @@
             "content": {
               "type": "SYMBOL",
               "name": "decorator"
+            },
+            "metadata": {
+              "fieldSource": "override"
             }
           }
         },
@@ -16427,9 +16376,6 @@
             {
               "type": "SYMBOL",
               "name": "export_statement_default_declaration_default_kw",
-              "metadata": {
-                "symbolSource": "group-lift"
-              },
               "annotations": {
                 "variant": "default_kw",
                 "variantOf": "export_statement_default_declaration"
@@ -16482,8 +16428,16 @@
           "name": "export_clause"
         },
         {
-          "type": "SYMBOL",
-          "name": "_from_clause"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_from_clause"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         }
       ],
       "annotations": {
@@ -16507,9 +16461,6 @@
             {
               "type": "SYMBOL",
               "name": "export_statement_default_declaration_default_kw_value",
-              "metadata": {
-                "symbolSource": "group-lift"
-              },
               "annotations": {
                 "variant": "value",
                 "variantOf": "export_statement_default_declaration_default_kw"
@@ -16531,6 +16482,9 @@
           "content": {
             "type": "SYMBOL",
             "name": "expression"
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {
@@ -17865,7 +17819,8 @@
     "_kw_const",
     "_kind",
     "__for_header_operator",
-    "_kw_optional"
+    "_kw_optional",
+    "_kw_type"
   ],
   "supertypes": [
     "statement",
@@ -17881,10 +17836,10 @@
     "_layout",
     "_class_body_member",
     "_enum_body_element",
+    "export_statement",
     "index_signature",
     "import_specifier",
     "parenthesized_expression",
-    "export_statement",
     "call_expression",
     "string",
     "update_expression",

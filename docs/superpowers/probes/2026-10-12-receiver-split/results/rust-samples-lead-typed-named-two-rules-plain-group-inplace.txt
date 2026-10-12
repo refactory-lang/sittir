@@ -1,0 +1,23 @@
+fn f() {}
+  (parameters)
+fn f(a: u8) {}
+  (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (primitive_type)))))
+fn f(&self) {}
+  (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter self: (self)))))
+fn f(&'a mut self, a: u8,) {}
+  (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter lifetime: (lifetime name: (identifier)) mutable: (mutable_specifier) self: (self))) (parameters_elements_receiver_group elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (primitive_type)))))))
+fn f(mut self) {}
+  (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter mutable: (mutable_specifier) self: (self)))))
+fn f(self,) {}
+  (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter self: (self))) (parameters_elements_receiver_group)))
+fn f(#[cfg(x)] self, b: u8) {}
+  (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)))))) (self_parameter self: (self))) (parameters_elements_receiver_group elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (primitive_type)))))))
+fn f(self: Box<Self>, a: u8) {}
+  (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (typed_self_parameter name: (self) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))))) (parameters_elements_receiver_group elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (primitive_type)))))))
+fn f(a: u8, self) {}
+  ERROR (source_file statements: (function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (primitive_type)))) (ERROR (self))) body: (block)))
+  (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (primitive_type)))) (ERROR (self)))
+trait T { fn f(&self); }
+  (parameters elements: (parameters_elements_receiver receiver: (attributed_parameter_receiver (self_parameter self: (self)))))
+type F = fn(u8, u16) -> u8;
+  (parameters elements: (parameters_elements item: (attributed_parameter (primitive_type)) item: (attributed_parameter (primitive_type))))

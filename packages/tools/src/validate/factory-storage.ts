@@ -20,7 +20,7 @@
  *    render defect each fail on their own.
  */
 
-import type { AnyUntypedNode, NodeLayout } from '@sittir/types';
+import type { AnyUntypedNode, NodeTrivia } from '@sittir/types';
 import { sourceOf, spanOf } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { load } from '../codegen-surface.ts';
@@ -45,10 +45,12 @@ import {
 	type ValidatorSkip,
 	loadIrSurface,
 	buildFactoryNodeFromReference,
+	tableSides,
+	type ReadNodeLike,
 	loadScopedFactoryMap,
 	loadNativeEngine
 } from './common.ts';
-import { loadRenderReparseContext, renderReparse, wrapRendered } from './read-render-parse.ts';
+import { hostlessReason, loadRenderReparseContext, renderReparse, wrapRendered } from './read-render-parse.ts';
 import { emptyBuiltRender, type BuiltRenderFailure, type BuiltRenderResult } from './built-render.ts';
 import { sourceSpans } from '@sittir/common';
 
@@ -310,25 +312,28 @@ const SOURCE_KEYS: ReadonlySet<string> = new Set(['$treeHandle', '$span', '$sour
  * `node` with every node under it built through `build` from its leaves up,
  * so none keeps the identity of the read it came from. A node `build` has no
  * factory for is kept as its data, without the keys that name its source.
+ * Each copy carries the sides `sides` gives the read it came from, taken
+ * while that read still names its tree.
  */
 function rebuildChildren(
 	node: Record<string, unknown>,
-	build: (node: Record<string, unknown>) => unknown
+	build: (node: Record<string, unknown>) => unknown,
+	sides: (node: ReadNodeLike, rebuild: (read: unknown) => unknown) => NodeTrivia | undefined
 ): Record<string, unknown> {
 	const rebuild = (value: unknown): unknown => {
 		if (Array.isArray(value)) return value.map(rebuild);
 		if (typeof value !== 'object' || value === null) return value;
-		const data = rebuildChildren(value as Record<string, unknown>, build);
-		return isComparableNode(value) ? (build(data) ?? data) : data;
+		const data = rebuildChildren(value as Record<string, unknown>, build, sides);
+		if (!isComparableNode(value)) return data;
+		return build(data) ?? data;
 	};
-	return Object.fromEntries(
-		Object.entries(node).flatMap(([key, value]): [string, unknown][] => {
-			if (SOURCE_KEYS.has(key)) return [];
-			if (key !== '$_layout') return [[key, rebuild(value)]];
-			const trivia = (value as NodeLayout).trivia;
-			return trivia === undefined ? [] : [[key, { trivia: rebuild(trivia) }]];
-		})
+	const copy = Object.fromEntries(
+		Object.entries(node).flatMap(([key, value]): [string, unknown][] =>
+			SOURCE_KEYS.has(key) || key === '$_layout' ? [] : [[key, rebuild(value)]]
+		)
 	);
+	const trivia = isComparableNode(node) ? sides(node as unknown as ReadNodeLike, rebuild) : undefined;
+	return trivia === undefined ? copy : { ...copy, $_layout: { trivia } };
 }
 
 /** Whether `value` or any node under it carries the identity of a parsed source node. */
@@ -715,7 +720,8 @@ export async function validateFactoryStorage(
 					builtTree = buildFactoryUntypedNode(
 						rebuildChildren(
 							referenceData as unknown as Record<string, unknown>,
-							buildInner
+							buildInner,
+							(read, rebuild) => tableSides(read, handle, rebuild)
 						) as unknown as AnyUntypedNode,
 						kind,
 						node1?.type,
@@ -738,7 +744,7 @@ export async function validateFactoryStorage(
 				const hostless = wrapRendered('', kind, node1?.type ?? kind, renderReparseContext) === null;
 				if (hostless) {
 					render.total--;
-					render.excluded.push({ entry: entry.name, kind, reason: 'no-reparse-wrapper', input: inputSource });
+					render.excluded.push({ entry: entry.name, kind, reason: hostlessReason(kind, node1?.type ?? kind, renderReparseContext), input: inputSource });
 				} else if (builtTree === null) {
 					render.errors.push(renderFailure(buildErrors[0]?.message ?? 'no node built'));
 				} else if (carriesSource(builtTree)) {

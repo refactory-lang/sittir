@@ -1,4 +1,4 @@
-export type * from './expression.ts';
+export * from './expression.ts';
 
 import type { AsyncAwait } from '../index.ts';
 

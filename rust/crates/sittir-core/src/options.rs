@@ -511,3 +511,138 @@ impl<S: OptionSites> ::napi::bindgen_prelude::FromNapiValue for Options<S> {
         Self::read(&obj).map_err(::napi::Error::from_reason)
     }
 }
+
+/// The indentation unit of `source`, from its indent steps.
+///
+/// A step is the leading whitespace a non-blank line adds on top of the
+/// previous non-blank line's (when it extends it). The most frequent step is
+/// the unit, so nesting depth never votes: a two-space file nested four deep
+/// still steps by two spaces. `None` when the source never indents or when
+/// two steps tie; otherwise the unit, whatever whitespace it is made of.
+pub fn indent_unit(source: &str) -> Option<String> {
+    let mut steps: Vec<(&str, usize)> = Vec::new();
+    let mut previous = "";
+    for line in source.lines() {
+        let body = line.trim_start_matches([' ', '\t']);
+        if body.is_empty() {
+            continue;
+        }
+        let leading = &line[..line.len() - body.len()];
+        if leading.len() > previous.len() && leading.starts_with(previous) {
+            let step = &leading[previous.len()..];
+            match steps.iter_mut().find(|(s, _)| *s == step) {
+                Some((_, count)) => *count += 1,
+                None => steps.push((step, 1)),
+            }
+        }
+        previous = leading;
+    }
+    let top = steps.iter().map(|(_, count)| *count).max()?;
+    let mut leaders = steps.iter().filter(|(_, count)| *count == top);
+    let (unit, _) = leaders.next()?;
+    if leaders.next().is_some() {
+        return None;
+    }
+    Some(unit.to_string())
+}
+
+/// What a parse reads off its source's layout, as render options: the
+/// tree's layer of the precedence, which a render of the tree resolves over
+/// the engine's options and under the call's own. Each entry is one the
+/// source sets apart from the options it was read against: the indentation
+/// unit (`indent_unit`), and the arm of each of the root's edges
+/// that the source's whitespace at the file's start and end classifies to.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct InferredOptions {
+    pub indent: Option<String>,
+    pub edges: Vec<(usize, u16)>,
+}
+
+impl InferredOptions {
+    /// The layer `source`, whose root is of `root`, sets apart from `base`.
+    pub fn infer(source: &str, root: crate::types::KindId, base: &ResolvedOptions, tables: &OptionTables, whitespace: &crate::render::WhitespaceTable) -> Self {
+        let indent = indent_unit(source).filter(|unit| *unit != base.indent);
+        let (before, after) = base.edge_sites(root);
+        let leading = &source[..source.len() - source.trim_start().len()];
+        let trailing = &source[source.trim_end().len()..];
+        let edges = [(before, leading), (after, trailing)]
+            .into_iter()
+            .filter_map(|(site, ws)| {
+                let site = site?;
+                let arm = crate::classify::classify_whitespace(ws, (tables.allowed)(site), whitespace)?;
+                (arm != base.spacing[site].arm).then_some((site, arm))
+            })
+            .collect();
+        InferredOptions { indent, edges }
+    }
+
+    /// `base` with this layer's entries resolved over it.
+    pub fn over(&self, base: &ResolvedOptions) -> ResolvedOptions {
+        let mut table = base.clone();
+        if let Some(indent) = &self.indent {
+            table.indent = indent.clone();
+        }
+        for &(site, arm) in &self.edges {
+            table.set_arm(site, arm);
+        }
+        table
+    }
+
+    /// The layer as the options object a render takes: `layout.indent`, and
+    /// each edge under its site's address.
+    pub fn to_json(&self, tables: &OptionTables) -> serde_json::Value {
+        let mut root = serde_json::Map::new();
+        if let Some(indent) = &self.indent {
+            root.insert(LAYOUT_KEY.to_owned(), serde_json::json!({ "indent": indent }));
+        }
+        for &(site, arm) in &self.edges {
+            let Some(path) = address_of(tables.addresses, site) else { continue };
+            let mut level = &mut root;
+            for key in &path[..path.len() - 1] {
+                level = level
+                    .entry((*key).to_owned())
+                    .or_insert_with(|| serde_json::Value::Object(serde_json::Map::new()))
+                    .as_object_mut()
+                    .expect("an address branch is an object");
+            }
+            level.insert(path[path.len() - 1].to_owned(), serde_json::json!(arm));
+        }
+        serde_json::Value::Object(root)
+    }
+}
+
+/// The keys that address `site` alone, from the root of `nodes`.
+fn address_of(nodes: &'static [AddressNode], site: usize) -> Option<Vec<&'static str>> {
+    nodes.iter().find_map(|node| match node {
+        AddressNode::Spacing { key, sites: [only] } if only.site == site => Some(vec![*key]),
+        AddressNode::Branch { key, children, .. } => address_of(children, site).map(|mut path| {
+            path.insert(0, *key);
+            path
+        }),
+        _ => None,
+    })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn the_unit_is_the_step_a_line_adds_whatever_whitespace_it_is() {
+        assert_eq!(indent_unit("fn main() {\n\tprintln!(\"hello\");\n}\n").as_deref(), Some("\t"));
+        assert_eq!(indent_unit("fn main() {\n  println!(\"hello\");\n}\n").as_deref(), Some("  "));
+        assert_eq!(indent_unit("fn main() {\n    println!(\"hello\");\n    let x = 1;\n}\n").as_deref(), Some("    "));
+        assert_eq!(indent_unit("fn a() {\n   b();\n   c();\n}\n").as_deref(), Some("   "));
+    }
+
+    #[test]
+    fn nesting_depth_never_votes_for_a_wider_unit() {
+        assert_eq!(indent_unit("fn a() {\n  if x {\n    b();\n    c();\n    d();\n  }\n}\n").as_deref(), Some("  "));
+        assert_eq!(indent_unit("fn a() {\n    if x {\n        b();\n        c();\n    }\n}\n").as_deref(), Some("    "));
+    }
+
+    #[test]
+    fn an_unindented_source_has_no_unit() {
+        assert_eq!(indent_unit("fn a() {}\nfn b() {}\n"), None);
+    }
+}

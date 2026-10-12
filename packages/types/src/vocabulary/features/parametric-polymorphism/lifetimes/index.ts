@@ -1,7 +1,7 @@
-export type * from './clause.ts';
-export type * from './declaration.ts';
-export type * from './identifier.ts';
-export type * from './type.ts';
+export * from './clause.ts';
+export * from './declaration.ts';
+export * from './identifier.ts';
+export * from './type.ts';
 
 import type { ParametricPolymorphism } from '../index.ts';
 

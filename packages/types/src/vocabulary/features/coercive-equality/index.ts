@@ -1,4 +1,4 @@
-export type * from './expression.ts';
+export * from './expression.ts';
 
 /** Coercive equality: `==` and `!=` convert their operands' types before comparing. */
 export interface CoerciveEquality {

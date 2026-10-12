@@ -26,18 +26,17 @@ describe('a node writes its members in its literal', () => {
 		const body = functionBody(source, 'buildCallExpression');
 		expect(body).toContain('$with: {');
 		expect(body).toMatch(/callee: \(value[^)]*\) =>\s+rebuilt\(node, handle, \(\) => buildCallExpression\(\{ \.\.\.config, callee: value \}/);
-		expect(body).toContain('callee: () => _callee,');
+		expect(body).toContain('callee: () => hydrateStoredSlot(node, "_callee"),');
 		expect(body).not.toMatch(/withMethods|withAccessors|defineProperty/);
 	});
 });
 
 describe('nodeMemberLines', () => {
-	it('adds inner positions only where the kind has them, and innerAt only where gaps are keyed', () => {
-		const text = (inner: boolean, keyed: boolean) => nodeMemberLines({ accessors: [], inner: { inner, keyed } }).join('\n');
-		expect(text(false, false)).not.toContain('inner:');
-		expect(text(true, false)).toContain('inner: (...items: unknown[]) => triviaInner(node, handle, items),');
-		expect(text(true, false)).not.toContain('innerAt');
-		expect(text(true, true)).toContain('innerAt: (gap: string, ...items: unknown[]) => triviaInnerAt(node, handle, gap, items),');
+	it('adds the inner side only where the kind has one, and never a named gap', () => {
+		const text = (inner: boolean) => nodeMemberLines({ accessors: [], inner: { inner } }).join('\n');
+		expect(text(false)).not.toContain('inner:');
+		expect(text(true)).toContain('inner: (...items: unknown[]) => triviaInner(node, handle, items),');
+		expect(text(true)).not.toContain('innerAt');
 	});
 });
 

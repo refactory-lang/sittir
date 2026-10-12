@@ -27,8 +27,7 @@ import { stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
 import { readFileSync } from 'node:fs';
 import type { AnyUntypedNode } from '@sittir/types';
 import type { LanguageAPI, NativeLanguageEngine } from '@sittir/types';
-import { languageByName } from '../languages.ts';
-import { loadCorpusEntries } from '../validate/common.ts';
+import { loadCorpusEntries, nativeLanguageEngineOf } from '../validate/common.ts';
 import { fixturesOutputPath, type ParityFixture } from '../validate/parity-fixtures.ts';
 
 
@@ -82,11 +81,6 @@ export interface BenchResult {
 //   NODE_ENV: 'production' | 'development' (default: 'production')
 export interface BenchOptions {
 	// intentionally empty
-}
-
-async function loadEngine(grammar: GrammarName): Promise<NativeLanguageEngine<LanguageAPI>> {
-	const hooks = await (await languageByName(grammar)).load();
-	return hooks.createNative();
 }
 
 /** The nodes a workload renders: one read root per corpus fixture, or every parity render fixture's input. */
@@ -188,7 +182,7 @@ async function benchGrammar(grammar: GrammarName): Promise<BenchResult[]> {
 	const results: BenchResult[] = [];
 
 	process.stderr.write(`[bench] ${grammar}: loading native engine...\n`);
-	const engine = await loadEngine(grammar);
+	const engine = await nativeLanguageEngineOf(grammar);
 	const render = (node: AnyUntypedNode): string => engine.render(node).toString();
 
 	for (const workload of WORKLOADS) {

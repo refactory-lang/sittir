@@ -1,14 +1,14 @@
 import { describe, expect, it, vi } from 'vitest';
 
-const INJECTED = 'injected trivia view failure';
+const INJECTED = 'injected kind view failure';
 
 vi.mock('../common.ts', async (importOriginal) => {
 	const actual = await importOriginal<typeof import('../common.ts')>();
 	return {
 		...actual,
-		triviaViewOf: (engine: Parameters<typeof actual.triviaViewOf>[0]) => ({
-			...actual.triviaViewOf(engine),
-			trivia: () => {
+		kindViewOf: (engine: Parameters<typeof actual.kindViewOf>[0]) => ({
+			...actual.kindViewOf(engine),
+			isList: () => {
 				throw new Error(INJECTED);
 			}
 		})

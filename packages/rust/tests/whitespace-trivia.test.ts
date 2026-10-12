@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { TransportCoordinate } from '@sittir/types';
 import { createEngine } from '@sittir/common';
-import { isCoordinate, readNode } from '../../common/src/read.ts';
+import { decodeIndex, isCoordinate, readNode, type TreeHandle } from '../../common/src/read.ts';
 import rust from '../src/index.ts';
 
 const rs = await createEngine(rust);
@@ -76,7 +76,8 @@ describe('a read node carries the line breaks before it as whitespace trivia', (
 
 	it('finds every node of a deep read by its coordinate, a zero-width comment content included', () => {
 		const source = '\n//!\n\n/*!*/\n\n//\n\n///\nlet x;\n';
-		const { root, tree } = rs.diagnostics.parseAndRead(source, { depth: Infinity });
+		const { root, tree: read } = rs.diagnostics.parseAndRead(source, { depth: Infinity });
+		const tree: TreeHandle = read;
 		const coordinates: TransportCoordinate[] = [];
 		const visit = (value: unknown): void => {
 			if (Array.isArray(value)) return value.forEach(visit);
@@ -87,14 +88,15 @@ describe('a read node carries the line breaks before it as whitespace trivia', (
 			}
 			const node = value as Record<string, unknown>;
 			for (const key of Object.keys(node)) if (key.startsWith('_')) visit(node[key]);
-			const layout = node.$_layout as { at?: TransportCoordinate; trivia?: { leading?: unknown[]; trailing?: unknown[] } } | undefined;
-			if (layout?.at !== undefined) coordinates.push(layout.at);
-			for (const entry of [...(layout?.trivia?.leading ?? []), ...(layout?.trivia?.trailing ?? [])]) {
-				if (isCoordinate(entry)) visit(readNode(tree, entry, Infinity));
+			const at = (node.$_layout as { at?: TransportCoordinate } | undefined)?.at;
+			if (at === undefined) return;
+			coordinates.push(at);
+			for (const side of ['leading', 'trailing'] as const) {
+				for (const entry of tree.triviaSide?.(decodeIndex(at.$treeHandle), side) ?? []) if (isCoordinate(entry)) visit(readNode(tree, entry, Infinity));
 			}
 		};
 		visit(root);
 		expect(coordinates.some(({ $span }) => $span.start === $span.end)).toBe(true);
-		for (const { $treeHandle } of coordinates) expect(() => rs.diagnostics.lineGapsOf({ handle: $treeHandle })).not.toThrow();
+		for (const { $treeHandle } of coordinates) expect(() => tree.siblings?.(decodeIndex($treeHandle))).not.toThrow();
 	});
 });

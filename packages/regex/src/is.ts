@@ -109,9 +109,12 @@ export interface IsGuards {
 	): v is NarrowTo<T, TSKindId.Tight | TSKindId.Newline | TSKindId.Blankline | TSKindId.DoubleBlankline>;
 }
 
-// Runtime: kind guards compare numeric TSKindId only.
+// Runtime: every guard tests membership through `isMember`, the test a query's `ofType` uses.
 function _g(id: number): (v: { readonly $type: number } | number) => boolean {
-	return (v) => typeof v !== 'number' && v.$type === id;
+	return (v) => typeof v !== 'number' && isMember(id, v.$type);
+}
+function _mg(kind: number): (v: { readonly $type: number } | number) => boolean {
+	return (v) => isMember(kind, typeof v === 'number' ? v : v.$type);
 }
 function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number) => boolean {
 	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
@@ -123,7 +126,16 @@ function _vg<G extends object>(guard: G, variants: object): G {
 const _supertype_inlineFlagsGroup_ids = new Set<number>([83, 84, 85]);
 const _supertype_layout_ids = new Set<number>([47, 48, 49, 50]);
 
-const _supertype_inlineFlagsGroup_guard = _vg(_sg(_supertype_inlineFlagsGroup_ids), {
+const _members = new Map<number, ReadonlySet<number>>([[65, _supertype_inlineFlagsGroup_ids]]);
+export function isMember(kind: number, type: number): boolean {
+	return _members.get(kind)?.has(type) ?? type === kind;
+}
+export function membersOf(kind: number): readonly number[] {
+	const members = _members.get(kind);
+	return members === undefined ? [kind] : [...members];
+}
+
+const _supertype_inlineFlagsGroup_guard = _vg(_mg(65), {
 	enable: _g(TSKindId.InlineFlagsGroupEnable),
 	toggle: _g(TSKindId.InlineFlagsGroupToggle),
 	disable: _g(TSKindId.InlineFlagsGroupDisable)
@@ -156,7 +168,7 @@ export const is = Object.freeze({
 	inlineFlagsGroupDisable: _g(TSKindId.InlineFlagsGroupDisable),
 	lazy: _g(TSKindId.Lazy),
 	unicodePropertyName: _g(TSKindId.UnicodePropertyName),
-	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
+	kind: (v: { readonly $type: number }, k: number): boolean => isMember(k, v.$type),
 	inlineFlagsGroup: _supertype_inlineFlagsGroup_guard,
 	layout: _sg(_supertype_layout_ids)
 }) as unknown as IsGuards;

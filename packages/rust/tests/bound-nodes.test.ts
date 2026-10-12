@@ -127,7 +127,7 @@ describe('the language facts an engine shares', () => {
 			(first.kinds as unknown as Record<string, unknown>).SourceFile = 0;
 		});
 		write(() => {
-			(first.trivia.innerGaps as Record<string, unknown>).block = [];
+			(first.trivia as { innerKinds: unknown }).innerKinds = new Set();
 		});
 		expect(() => {
 			(first.build as Record<string, unknown>).identifier = () => undefined;

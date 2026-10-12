@@ -33,7 +33,7 @@ describe('complex_pattern names its parts', () => {
 	it('reads 1+2j as real 1, imaginary 2j, no sign', () => {
 		const node = readComplexPattern('1+2j');
 		expect(node.$type).toBe(py.kinds.ComplexPattern);
-		expect(node.sign()).toBeUndefined();
+		expect(node.sign()).toBe(false);
 		expect(node.real().$text).toBe('1');
 		expect(node.operator()).toBe(py.kinds.Plus);
 		expect(node.imaginary().$text).toBe('2j');

@@ -92,20 +92,20 @@ export const TOKEN_INTERIORS = {
 	}
 } as const satisfies { readonly [kind: string]: TokenInterior };
 
-/** The gaps an empty node of each kind holds inner trivia in, in render order. */
-export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = Object.freeze({
-	arguments: Object.freeze(['elements']),
-	array: Object.freeze(['elements']),
-	array_pattern: Object.freeze(['elements']),
-	class_body: Object.freeze(['members']),
-	enum_body: Object.freeze(['elements']),
-	export_clause: Object.freeze(['export_specifiers']),
-	formal_parameters: Object.freeze(['elements']),
-	named_imports: Object.freeze(['import_specifiers']),
-	object: Object.freeze(['properties']),
-	object_pattern: Object.freeze(['properties']),
-	program: Object.freeze(['statements']),
-	statement_block: Object.freeze(['statements']),
-	switch_body: Object.freeze(['cases']),
-	tuple_type: Object.freeze(['tuple_type_members'])
-});
+/** The kinds whose template renders an inner side, where an empty node of the kind holds its trivia. */
+export const INNER_SITES: ReadonlySet<string> = new Set<string>([
+	'arguments',
+	'array',
+	'array_pattern',
+	'class_body',
+	'enum_body',
+	'export_clause',
+	'formal_parameters',
+	'named_imports',
+	'object',
+	'object_pattern',
+	'program',
+	'statement_block',
+	'switch_body',
+	'tuple_type'
+]);

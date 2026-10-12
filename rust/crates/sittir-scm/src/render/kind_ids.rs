@@ -81,6 +81,19 @@ pub const NAMED_NODE_GROUP_CHILDREN_REPEAT1: KindId = KindId(70);
 pub const ERROR: KindId = KindId(65535);
 const _: () = assert!(ERROR.0 == KindId::ERROR.0);
 
+/// The surface kinds: list kinds, whose items the surface exposes in their place, unit kinds, which it exposes as a kind id, the extras that are layout members, which it assigns as layout, and the depth members a layout run's excess indentation reads as.
+pub const SURFACE_KINDS: ::sittir_core::trivia_table::SurfaceKinds = ::sittir_core::trivia_table::SurfaceKinds {
+    lists: &[],
+    units: &[2, 3, 4, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28, 29, 30, 31, 32, 60],
+    layout: &[],
+    indent: 31,
+    dedent: 32,
+    depth: super::options::DEPTH_REGIONS,
+};
+
+/// The grammar's root kinds: a render whose root is one of them is a document.
+pub const ROOT_KINDS: &[KindId] = &[KindId(33)];
+
 /// Map a `KindId` back to its grammar kind string for diagnostics.
 /// Returns `"<unknown>"` for ids not in this grammar's symbol table.
 pub fn kind_name_from_id(id: KindId) -> &'static str {

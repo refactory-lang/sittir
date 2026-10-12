@@ -1,0 +1,22 @@
+fn f() {}
+  (parameters)
+fn f(a: u8) {}
+  (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (primitive_type)))))
+fn f(&self) {}
+  (parameters elements: (parameters_elements item: (attributed_parameter (self_parameter self: (self)))))
+fn f(&'a mut self, a: u8,) {}
+  (parameters elements: (parameters_elements item: (attributed_parameter (self_parameter lifetime: (lifetime name: (identifier)) mutable: (mutable_specifier) self: (self))) item: (attributed_parameter (parameter name: (identifier) type: (primitive_type)))))
+fn f(mut self) {}
+  (parameters elements: (parameters_elements item: (attributed_parameter (self_parameter mutable: (mutable_specifier) self: (self)))))
+fn f(self,) {}
+  (parameters elements: (parameters_elements item: (attributed_parameter (self_parameter self: (self)))))
+fn f(#[cfg(x)] self, b: u8) {}
+  (parameters elements: (parameters_elements item: (attributed_parameter (attribute_item attribute: (attribute path: (identifier) input: (attribute_input arguments: (delim_token_tree_paren delim_tokens: (non_special_token (identifier)))))) (self_parameter self: (self))) item: (attributed_parameter (parameter name: (identifier) type: (primitive_type)))))
+fn f(self: Box<Self>, a: u8) {}
+  (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (self) type: (generic_type type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier))))))) item: (attributed_parameter (parameter name: (identifier) type: (primitive_type)))))
+fn f(a: u8, self) {}
+  (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (primitive_type))) item: (attributed_parameter (self_parameter self: (self)))))
+trait T { fn f(&self); }
+  (parameters elements: (parameters_elements item: (attributed_parameter (self_parameter self: (self)))))
+type F = fn(u8, u16) -> u8;
+  (parameters elements: (parameters_elements item: (attributed_parameter (primitive_type)) item: (attributed_parameter (primitive_type))))

@@ -1,6 +1,6 @@
-export type * from './attribute.ts';
-export type * from './declaration.ts';
-export type * from './expression.ts';
+export * from './attribute.ts';
+export * from './declaration.ts';
+export * from './expression.ts';
 
 /** Decorators: a function applied to a declaration where it is declared. */
 export interface Decorators {

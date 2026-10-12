@@ -1,0 +1,5 @@
+[error] rule-reauthored-without-cause  _non_special_token.-
+[error] rule-reauthored-without-cause  _primitive_type.-
+[error] rule-reauthored-without-cause  impl_item.-
+[error] rule-reauthored-without-cause  reference_expression.-
+[error] unclassifiable-shape  _let_chain.-

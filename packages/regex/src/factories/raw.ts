@@ -8,6 +8,8 @@ import {
 	elementsWith,
 	rebuilt,
 	renderText,
+	hydrateStoredSlot,
+	hydrateStoredSlots,
 	triviaSide,
 	triviaInner,
 	describeValue,
@@ -53,7 +55,7 @@ export function buildPattern(value: Admit<T.Alternation | T.Term>): T.Pattern.Bo
 		$with: {
 			content: (value: Admit<T.Alternation | T.Term>) => rebuilt(node, handle, () => buildPattern(value))
 		},
-		content: () => _content,
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -77,7 +79,7 @@ export function buildAlternation(...children: NonEmptyArray<Admit<T.Term>>): T.A
 			terms: (...vs: NonEmptyArray<Admit<T.Term>>) =>
 				rebuilt(node, handle, () => buildAlternation(...restItems('terms', vs)))
 		},
-		terms: () => _terms,
+		terms: () => hydrateStoredSlots(node, '_terms'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -107,7 +109,7 @@ export function buildTerm(...children: NonEmptyArray<Admit<T.TermGroup>>): T.Ter
 					)
 				)
 		},
-		termGroups: () => _term_group,
+		termGroups: () => hydrateStoredSlots(node, '_term_group'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -146,7 +148,7 @@ export function buildLookaroundAssertion(
 			content: (value: Admit<T.LookaheadAssertion | T.LookbehindAssertion>) =>
 				rebuilt(node, handle, () => buildLookaroundAssertion(value))
 		},
-		content: () => _content,
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -178,7 +180,7 @@ export function buildLookaheadAssertion(config: T.LookaheadAssertion.Config): T.
 				rebuilt(node, handle, () => buildLookaheadAssertion({ ...config, pattern: value }))
 		},
 		content: () => _content,
-		pattern: () => _pattern,
+		pattern: () => hydrateStoredSlot(node, '_pattern'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -210,7 +212,7 @@ export function buildLookbehindAssertion(config: T.LookbehindAssertion.Config): 
 				rebuilt(node, handle, () => buildLookbehindAssertion({ ...config, pattern: value }))
 		},
 		content: () => _content,
-		pattern: () => _pattern,
+		pattern: () => hydrateStoredSlot(node, '_pattern'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -277,7 +279,7 @@ export function buildCharacterClass(config: Partial<T.CharacterClass.Config> = {
 		},
 		negation: () => _negation,
 		leading: () => _leading,
-		classAtoms: () => _class_atoms,
+		classAtoms: () => hydrateStoredSlots(node, '_class_atoms'),
 		trailing: () => _trailing,
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -301,7 +303,7 @@ export function buildPosixCharacterClass(value: Admit<T.PosixClassName>): T.Posi
 		$with: {
 			posixClassName: (value: Admit<T.PosixClassName>) => rebuilt(node, handle, () => buildPosixCharacterClass(value))
 		},
-		posixClassName: () => _posix_class_name,
+		posixClassName: () => hydrateStoredSlot(node, '_posix_class_name'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -356,8 +358,8 @@ export function buildClassRange(config: T.ClassRange.Config): T.ClassRange.Bound
 			end: (value: Admit<NonNullable<T.ClassRange.Config>['end']>) =>
 				rebuilt(node, handle, () => buildClassRange({ ...config, end: value }))
 		},
-		start: () => _start,
-		end: () => _end,
+		start: () => hydrateStoredSlot(node, '_start'),
+		end: () => hydrateStoredSlot(node, '_end'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -418,7 +420,7 @@ function _buildAnonymousCapturingGroup(value: Admit<T.Pattern>): T.AnonymousCapt
 		$with: {
 			pattern: (value: Admit<T.Pattern>) => rebuilt(node, handle, () => _buildAnonymousCapturingGroup(value))
 		},
-		pattern: () => _pattern,
+		pattern: () => hydrateStoredSlot(node, '_pattern'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -454,8 +456,8 @@ export function buildNamedCapturingGroup(config: T.NamedCapturingGroup.Config): 
 				rebuilt(node, handle, () => buildNamedCapturingGroup({ ...config, pattern: value }))
 		},
 		content: () => _content,
-		groupName: () => _group_name,
-		pattern: () => _pattern,
+		groupName: () => hydrateStoredSlot(node, '_group_name'),
+		pattern: () => hydrateStoredSlot(node, '_pattern'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -496,7 +498,7 @@ function _buildNonCapturingGroup(value: Admit<T.Pattern>): T.NonCapturingGroup.B
 		$with: {
 			pattern: (value: Admit<T.Pattern>) => rebuilt(node, handle, () => _buildNonCapturingGroup(value))
 		},
-		pattern: () => _pattern,
+		pattern: () => hydrateStoredSlot(node, '_pattern'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -611,7 +613,7 @@ export function buildCountQuantifier(config: T.CountQuantifier.Config): T.CountQ
 			lazy: (value?: Admit<NonNullable<T.CountQuantifier.Config>['lazy']>) =>
 				rebuilt(node, handle, () => buildCountQuantifier({ ...config, lazy: value }))
 		},
-		content: () => _content,
+		content: () => hydrateStoredSlot(node, '_content'),
 		lazy: () => _lazy,
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -634,7 +636,7 @@ export function buildBackreferenceEscape(value: Admit<T.GroupName>): T.Backrefer
 		$with: {
 			groupName: (value: Admit<T.GroupName>) => rebuilt(node, handle, () => buildBackreferenceEscape(value))
 		},
-		groupName: () => _group_name,
+		groupName: () => hydrateStoredSlot(node, '_group_name'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -656,7 +658,7 @@ export function buildNamedGroupBackreference(value: Admit<T.GroupName>): T.Named
 		$with: {
 			groupName: (value: Admit<T.GroupName>) => rebuilt(node, handle, () => buildNamedGroupBackreference(value))
 		},
-		groupName: () => _group_name,
+		groupName: () => hydrateStoredSlot(node, '_group_name'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -705,7 +707,7 @@ export function buildCharacterClassEscape(
 			content: (value: Admit<T.CharacterClassEscapeText1 | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape>) =>
 				rebuilt(node, handle, () => buildCharacterClassEscape(value))
 		},
-		content: () => _content,
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -764,8 +766,8 @@ export function buildUnicodePropertyValueExpression(
 			unicodePropertyValue: (value: Admit<T.UnicodePropertyValue>) =>
 				rebuilt(node, handle, () => buildUnicodePropertyValueExpression({ ...config, unicodePropertyValue: value }))
 		},
-		unicodePropertyValueExpressionGroup: () => _unicode_property_value_expression_group,
-		unicodePropertyValue: () => _unicode_property_value,
+		unicodePropertyValueExpressionGroup: () => hydrateStoredSlot(node, '_unicode_property_value_expression_group'),
+		unicodePropertyValue: () => hydrateStoredSlot(node, '_unicode_property_value'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -852,7 +854,7 @@ export function buildIdentityEscape(input: string, affix: boolean = true): T.Ide
 		$with: {
 			content: (value: Admit<string>) => rebuilt(node, handle, () => buildIdentityEscape(value))
 		},
-		content: () => _content,
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -931,8 +933,8 @@ export function buildTermGroup(config: T.TermGroup.Config): T.TermGroup.Bound {
 			quantifier: (value?: Admit<T.ZeroOrMore | T.OneOrMore | T.Optional | T.CountQuantifier>) =>
 				rebuilt(node, handle, () => buildTermGroup({ ...config, quantifier: value }))
 		},
-		content: () => _content,
-		quantifier: () => _quantifier,
+		content: () => hydrateStoredSlot(node, '_content'),
+		quantifier: () => hydrateStoredSlot(node, '_quantifier'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -954,7 +956,7 @@ export function buildCountQuantifierGroup(value?: Admit<T.DecimalDigits>): T.Cou
 		$with: {
 			decimalDigits: (value?: Admit<T.DecimalDigits>) => rebuilt(node, handle, () => buildCountQuantifierGroup(value))
 		},
-		decimalDigits: () => _decimal_digits,
+		decimalDigits: () => hydrateStoredSlot(node, '_decimal_digits'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -989,8 +991,8 @@ export function buildCountQuantifierArm(config: T.CountQuantifierArm.Config): T.
 			countQuantifierGroup: (value?: Admit<T.CountQuantifierGroup>) =>
 				rebuilt(node, handle, () => buildCountQuantifierArm({ ...config, countQuantifierGroup: value }))
 		},
-		decimalDigits: () => _decimal_digits,
-		countQuantifierGroup: () => _count_quantifier_group,
+		decimalDigits: () => hydrateStoredSlot(node, '_decimal_digits'),
+		countQuantifierGroup: () => hydrateStoredSlot(node, '_count_quantifier_group'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1027,8 +1029,8 @@ export function buildCharacterClassEscapeArm(
 			unicodePropertyValueExpression: (value: Admit<T.UnicodePropertyValueExpression>) =>
 				rebuilt(node, handle, () => buildCharacterClassEscapeArm({ ...config, unicodePropertyValueExpression: value }))
 		},
-		characterClassEscapeText2: () => _character_class_escape_text2,
-		unicodePropertyValueExpression: () => _unicode_property_value_expression,
+		characterClassEscapeText2: () => hydrateStoredSlot(node, '_character_class_escape_text2'),
+		unicodePropertyValueExpression: () => hydrateStoredSlot(node, '_unicode_property_value_expression'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1084,7 +1086,7 @@ function _buildUnicodePropertyValueExpressionGroup(
 			unicodePropertyName: (value: Admit<T.UnicodePropertyName | T.UnicodePropertyName.Types>) =>
 				rebuilt(node, handle, () => _buildUnicodePropertyValueExpressionGroup(value))
 		},
-		unicodePropertyName: () => _unicode_property_name,
+		unicodePropertyName: () => hydrateStoredSlot(node, '_unicode_property_name'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1153,8 +1155,8 @@ export function buildInlineFlagsGroupEnable(config: T.InlineFlagsGroupEnable.Con
 			pattern: (value?: Admit<T.Pattern>) =>
 				rebuilt(node, handle, () => buildInlineFlagsGroupEnable({ ...config, pattern: value }))
 		},
-		enabled: () => _enabled,
-		pattern: () => _pattern,
+		enabled: () => hydrateStoredSlot(node, '_enabled'),
+		pattern: () => hydrateStoredSlot(node, '_pattern'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1185,9 +1187,9 @@ export function buildInlineFlagsGroupToggle(config: T.InlineFlagsGroupToggle.Con
 			pattern: (value?: Admit<T.Pattern>) =>
 				rebuilt(node, handle, () => buildInlineFlagsGroupToggle({ ...config, pattern: value }))
 		},
-		enabled: () => _enabled,
-		disabled: () => _disabled,
-		pattern: () => _pattern,
+		enabled: () => hydrateStoredSlot(node, '_enabled'),
+		disabled: () => hydrateStoredSlot(node, '_disabled'),
+		pattern: () => hydrateStoredSlot(node, '_pattern'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1216,8 +1218,8 @@ export function buildInlineFlagsGroupDisable(
 			pattern: (value?: Admit<T.Pattern>) =>
 				rebuilt(node, handle, () => buildInlineFlagsGroupDisable({ ...config, pattern: value }))
 		},
-		disabled: () => _disabled,
-		pattern: () => _pattern,
+		disabled: () => hydrateStoredSlot(node, '_disabled'),
+		pattern: () => hydrateStoredSlot(node, '_pattern'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1273,7 +1275,7 @@ export function buildUnicodePropertyName(value: Admit<T.UnicodePropertyValue>): 
 		$with: {
 			content: (value: Admit<T.UnicodePropertyValue>) => rebuilt(node, handle, () => buildUnicodePropertyName(value))
 		},
-		content: () => _content,
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),

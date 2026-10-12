@@ -87,31 +87,31 @@ export const TOKEN_INTERIORS = {
 	}
 } as const satisfies { readonly [kind: string]: TokenInterior };
 
-/** The gaps an empty node of each kind holds inner trivia in, in render order. */
-export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = Object.freeze({
-	arguments: Object.freeze(['elements']),
-	array_expression_list: Object.freeze(['attributes']),
-	block: Object.freeze(['statements']),
-	closure_parameters: Object.freeze(['parameters']),
-	declaration_list: Object.freeze(['declarations']),
-	delim_token_tree_brace: Object.freeze(['delim_tokens']),
-	delim_token_tree_bracket: Object.freeze(['delim_tokens']),
-	delim_token_tree_paren: Object.freeze(['delim_tokens']),
-	enum_variant_list: Object.freeze(['elements']),
-	field_declaration_list: Object.freeze(['elements']),
-	field_initializer_list: Object.freeze(['initializers']),
-	match_block: Object.freeze(['match_block_arms']),
-	ordered_field_declaration_list: Object.freeze(['attributes']),
-	parameters: Object.freeze(['elements']),
-	slice_pattern: Object.freeze(['patterns']),
-	source_file: Object.freeze(['statements']),
-	token_tree_brace: Object.freeze(['tokens']),
-	token_tree_bracket: Object.freeze(['tokens']),
-	token_tree_paren: Object.freeze(['tokens']),
-	token_tree_pattern_brace: Object.freeze(['token_patterns']),
-	token_tree_pattern_bracket: Object.freeze(['token_patterns']),
-	token_tree_pattern_paren: Object.freeze(['token_patterns']),
-	tuple_pattern: Object.freeze(['elements']),
-	use_bounds: Object.freeze(['bounds']),
-	use_list: Object.freeze(['use_clauses'])
-});
+/** The kinds whose template renders an inner side, where an empty node of the kind holds its trivia. */
+export const INNER_SITES: ReadonlySet<string> = new Set<string>([
+	'arguments',
+	'array_expression_list',
+	'block',
+	'closure_parameters',
+	'declaration_list',
+	'delim_token_tree_brace',
+	'delim_token_tree_bracket',
+	'delim_token_tree_paren',
+	'enum_variant_list',
+	'field_declaration_list',
+	'field_initializer_list',
+	'match_block',
+	'ordered_field_declaration_list',
+	'parameters',
+	'slice_pattern',
+	'source_file',
+	'token_tree_brace',
+	'token_tree_bracket',
+	'token_tree_paren',
+	'token_tree_pattern_brace',
+	'token_tree_pattern_bracket',
+	'token_tree_pattern_paren',
+	'tuple_pattern',
+	'use_bounds',
+	'use_list'
+]);

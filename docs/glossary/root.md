@@ -266,7 +266,7 @@ either way.
 ```text
 // --- grammar-owned Rust render-module emission --- When `--all` is set for
 // a supported grammar, also emit hash.rs / hash.ts so the native backend
-// and the TS backend can detect template-bundle drift at runtime (FR-020).
+// and the TS backend can detect template-bundle drift at runtime.
 // The hash is computed over the same `.jinja` bodies that were just written
 // above — this keeps the TS-side and Rust-side derivations in lockstep.
 ```
@@ -332,14 +332,14 @@ either way.
 #### body
 
 ```text
-// Write node model (single on-disk metadata source — PR-K folded the
-// former factory-map.json5 sections in here).
+// Write node model (the single on-disk metadata source, factory metadata
+// included).
 ```
 
 #### body
 
 ```text
-// Write suggested overrides log (T042f) next to grammar.sittir.ts at the
+// Write suggested overrides log next to grammar.sittir.ts at the
 // package root. This is a documentation file — not runnable. `undefined`
 // means the emitter has nothing to suggest (emission disabled or empty
 // result) — skip the write, and remove any stale file left by a prior

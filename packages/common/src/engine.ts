@@ -4,27 +4,24 @@ import type {
 	EngineDiagnostics,
 	IndentOption,
 	LanguageAPI,
-	LineGapAddress,
-	LineGaps,
 	NativeEngineOptions,
 	NativeLanguageEngine,
 	NativeParseResult,
 	ParsedRead,
 	ParsedRoot,
 	ParseOptions,
-	RenderCallOptions,
 	Rendered
 } from '@sittir/types';
-import { readObject, type TreeHandle } from './read.ts';
-import { holdReadTree, toTransportData, type TriviaView } from './transport-data.ts';
-import { readDerivedSides, readTrivia } from './utils.ts';
+import { decodeTree, readObject, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
+import { holdReadTree, sourceHandleOf, toTransportData, type KindView } from './transport-data.ts';
 import { mintTreeToken, registerTree } from './tree-token.ts';
+import { forEachTriviaList, type TriviaSides } from './trivia.ts';
 import type { DescendantBatch } from './query.ts';
 
 /** The options object a grammar package types as its `Options`. */
 export type RenderOptionValues = Readonly<Record<string, unknown>>;
 
-export interface RenderOptions<O extends object = RenderOptionValues> extends RenderCallOptions {
+export interface RenderOptions<O extends object = RenderOptionValues> {
 	/** Per-call options, resolved over the engine's own. */
 	readonly options?: O;
 }
@@ -70,8 +67,8 @@ export interface NativeEngineLike<TTransport = unknown> {
 	/**
 	 * Parse `source` and keep its tree.
 	 *
-	 * @returns JSON `{ treeId, format, errors }`: the id {@link read} and `disposeTree` take, the
-	 *   format the parse detected, and the parse's error regions.
+	 * @returns JSON `{ treeId, options, errors }`: the id {@link read} and `disposeTree` take, the
+	 *   tree's layer of the render options (`NativeParseResult.options`), and the parse's error regions.
 	 */
 	parse(source: string): string;
 	/**
@@ -82,7 +79,58 @@ export interface NativeEngineLike<TTransport = unknown> {
 	 *   route for a child, naming the kind, the child and the index.
 	 */
 	read(treeId: number, index: number, depth?: number): TTransport;
-	lineGapsOf(handle: number): string;
+	/**
+	 * A snapshot of the node at descendant `index` of tree `treeId`: the node read at every depth into
+	 * plain data that names no tree, each node with its span (`$_layout.span`) measured from the start of
+	 * the transport that holds it, each placed extra with its text, and the node itself measured from the
+	 * byte `holderByte`, or from its own start when absent.
+	 *
+	 * @throws as {@link read} does.
+	 */
+	snapshot(treeId: number, index: number, holderByte?: number | null): TTransport;
+	/**
+	 * The entries of `side` of the node at descendant `index` of tree `treeId`: the ones a write gave it,
+	 * else the ones the tree's trivia table assigns it. An extra is its coordinate, an `ERROR` its kind
+	 * and source text, and a run of line layout its whitespace member.
+	 *
+	 * @throws when the tree is not live, `index` is past its last node, or `side` is none of the three.
+	 */
+	triviaSide(treeId: number, index: number, side: TriviaSideName): unknown[];
+	/**
+	 * Replaces `side` of the node at descendant `index` of tree `treeId` with `entries`.
+	 *
+	 * @throws as {@link triviaSide} does.
+	 */
+	writeTriviaSide(treeId: number, index: number, side: TriviaSideName, entries: readonly unknown[]): void;
+	/**
+	 * The sides of the unit children of the node at descendant `index` of tree `treeId`, which their
+	 * slots store as bare kinds: each `{ slot, item, leading?, trailing?, inner? }`, by its slot's
+	 * wire key and its item in that slot.
+	 *
+	 * @throws as {@link triviaSide} does.
+	 */
+	unitSides(treeId: number, index: number): unknown[];
+	/**
+	 * Whether a write replaced a side of a node under the node at descendant `index` of tree `treeId`:
+	 * of a descendant or of the node's own `inner`, and of its own leading and trailing too when
+	 * `ownSides` is set.
+	 *
+	 * @throws when the tree is not live or `index` is past its last node.
+	 */
+	editedWithin(treeId: number, index: number, ownSides: boolean): boolean;
+	/**
+	 * Whether the node at descendant `index` of tree `treeId` is empty: no child of it has width.
+	 *
+	 * @throws when the tree is not live or `index` is past its last node.
+	 */
+	isEmpty(treeId: number, index: number): boolean;
+	/**
+	 * The siblings that hold sides beside the node at descendant `index` of tree `treeId`, as JSON
+	 * `Siblings`.
+	 *
+	 * @throws when the tree is not live or `index` is past its last node.
+	 */
+	siblings(treeId: number, index: number): string;
 	descendants(
 		from: string,
 		kinds: number[] | undefined | null,
@@ -103,7 +151,7 @@ export interface NativeModuleLike<
 	TTransport = unknown,
 	TEngine extends NativeEngineLike<TTransport> = NativeEngineLike<TTransport>
 > {
-	SittirEngine: new (options?: { format?: string; options?: object }) => TEngine;
+	SittirEngine: new (options?: { options?: object }) => TEngine;
 	/** Release one parsed tree of this language. Driven by GC — see `treeDisposalRegistry`. An id that names no tree is ignored. */
 	disposeTree(treeId: number): void;
 	/** Trees of this language still held on this thread. Diagnostics only. */
@@ -246,33 +294,23 @@ export function createNativeEngine<
 	}
 
 	try {
-		const nativeOptions = {
-			...(options?.format ? { format: JSON.stringify(options.format) } : {}),
-			...(options?.options ? { options: options.options } : {})
-		};
-		const engine = new status.native.SittirEngine(Object.keys(nativeOptions).length > 0 ? nativeOptions : undefined);
-		const lineGapsOf = (address: LineGapAddress): LineGaps => JSON.parse(engine.lineGapsOf(address.handle)) as LineGaps;
-		const triviaView: TriviaView = {
-			trivia: (record) => readTrivia(record, lineGapsOf),
-			derived: (record) => readDerivedSides(record, lineGapsOf),
+		const engine = new status.native.SittirEngine(options?.options === undefined ? undefined : { options: options.options });
+		const kindView: KindView = {
 			isWrapper: (kindId) => config.rebuildWrappers.has(kindId),
 			isList: (kindId) => config.listKinds.has(kindId)
 		};
 
 		function renderNativeNode(node: AnyUntypedNode | number, opts?: RenderOptions<O>): Rendered {
 			const perCall = opts?.options;
-			if (opts?.ignoreFormat === true) {
-				throw new Error(
-					'ignoreFormat option not yet supported by native engine. ' +
-						'Native is the only backend — omit ignoreFormat (or pass false) ' +
-						'until Task 4 (engine-owned format state) lands.'
-				);
-			}
 			// The projection is the one place a node's storage wins over the
 			// coordinate it read in with: it crosses here, on every render
 			// path, so a caller handing over raw read data cannot slice a
 			// pre-edit span past a rebuilt slot.
-			const transport = (typeof node === 'number' ? node : toTransportData(node, triviaView)) as TTransport;
+			const transport = (typeof node === 'number' ? node : toTransportData(node, kindView)) as TTransport;
+			// The tree the node was read from, or rebuilt from, is the layer of
+			// options its source inferred; a built node has none.
+			const handle = typeof node === 'number' ? undefined : sourceHandleOf(node);
+			const treeId = handle === undefined ? undefined : decodeTree(handle);
 			// The handle renders lazily, and the transport's coordinates are
 			// numbers: the tokens stayed on `node`. Both closures name `node`,
 			// so the handle holds the trees it will slice for as long as it
@@ -281,12 +319,12 @@ export function createNativeEngine<
 			return createRenderHandle(
 				() => {
 					holdsTrees();
-					return engine.render(transport, undefined, perCall);
+					return engine.render(transport, treeId, perCall);
 				},
 				(path) => {
 					holdsTrees();
 					if (engine.renderToFile) {
-						engine.renderToFile(transport, path, undefined, perCall);
+						engine.renderToFile(transport, path, treeId, perCall);
 						return true;
 					}
 					return false;
@@ -306,7 +344,6 @@ export function createNativeEngine<
 
 				diagnostics: {
 					buildProfile: engine.buildProfile,
-					lineGapsOf,
 					parseAndRead(source: string, parseOptions?: ParseOptions) {
 						const parsed = JSON.parse(engine.parse(source)) as NativeParseResult;
 						// Held by `read` below and by every parsed object a read
@@ -340,7 +377,22 @@ export function createNativeEngine<
 								}
 								return cached;
 							},
-							format: parsed.format,
+							options: parsed.options,
+							snapshot: (index, holderByte) => engine.snapshot(parsed.treeId, index, holderByte),
+							triviaSide: (index, side) => {
+								const entries = engine.triviaSide(parsed.treeId, index, side);
+								holdReadTree(entries, liveToken);
+								return entries;
+							},
+							writeTriviaSide: (index, side, entries) => engine.writeTriviaSide(parsed.treeId, index, side, entries),
+							unitSides: (index) => {
+								const units = engine.unitSides(parsed.treeId, index);
+								for (const unit of units) forEachTriviaList(unit as TriviaSides<unknown>, (entries) => holdReadTree(entries, liveToken));
+								return units;
+							},
+							editedWithin: (index, ownSides) => engine.editedWithin(parsed.treeId, index, ownSides),
+							isEmpty: (index) => engine.isEmpty(parsed.treeId, index),
+							siblings: (index) => JSON.parse(engine.siblings(parsed.treeId, index)) as Siblings,
 							query: {
 								descendants: (walk) =>
 									JSON.parse(
@@ -372,18 +424,12 @@ export function nativeLanguageEngine<API extends LanguageAPI, IndentChar extends
 ): NativeLanguageEngine<API> {
 	return {
 		render(node, options) {
-			if (options === undefined) return engine.render(node);
-			const { ignoreFormat, ...perCall } = options;
-			return engine.render(node, {
-				...(ignoreFormat !== undefined ? { ignoreFormat } : {}),
-				...(Object.keys(perCall).length > 0 ? { options: perCall } : {})
-			});
+			return options === undefined || Object.keys(options).length === 0 ? engine.render(node) : engine.render(node, { options });
 		},
 		parseAndRead(source, options) {
 			return engine.diagnostics.parseAndRead(source, options);
 		},
 		buildProfile: engine.diagnostics.buildProfile,
-		lineGapsOf: (handle) => engine.diagnostics.lineGapsOf(handle),
 		dispose() {
 			engine.dispose();
 		}

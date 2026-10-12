@@ -6,6 +6,7 @@ import { describe, it, expect } from 'vitest';
 import type { LineComment } from '../src/types.js';
 import rust from '../src/index.ts';
 import { createEngine } from '@sittir/common';
+import { isCoordinate, sideOf } from '@sittir/common/utils';
 
 const rs = await createEngine(rust);
 const rsNative = (await rust.load()).createNative();
@@ -99,10 +100,9 @@ describe('$trivia integration', () => {
 	it('trailing trivia renders after the node', () => {
 		const fn = makeFn('main');
 		fn.$trivia.trailing(buildLineComment(' bye'));
-		// A line comment is newline-terminated by the spacing model — the
-		// final `\n` is part of the comment's own rendering, so a trailing
-		// comment leaves the output newline-terminated.
-		expect(fn.$render()).toBe('fn main() {}\n// bye\n');
+		// Written with no whitespace, it renders on its owner's line, and a
+		// line comment ends with the break it holds.
+		expect(fn.$render()).toBe('fn main() {} // bye\n');
 	});
 
 	it('loose text renders as the comment it spells, before and after the node', () => {
@@ -124,7 +124,7 @@ describe('$trivia integration', () => {
 	it('multiple leading and trailing entries render in order', () => {
 		const fn = makeFn('main');
 		fn.$trivia.leading(buildLineComment(' top1'), buildLineComment(' top2')).$trivia.trailing(buildLineComment(' bottom'));
-		expect(fn.$render()).toBe('// top1\n// top2\nfn main() {}\n// bottom\n');
+		expect(fn.$render()).toBe('// top1\n// top2\nfn main() {} // bottom\n');
 	});
 
 	type WrappedEntry = { content(): unknown; $render(): string };
@@ -140,17 +140,17 @@ describe('$trivia integration', () => {
 	it('reads each entry with the span the parser gave it, whatever its render adds', () => {
 		const source = '//!\n/*!*/\n//\n///\nlet x;\n';
 		const { root } = rsNative.parseAndRead(source, { depth: Infinity });
-		const statements = (root as unknown as { _statements: unknown })._statements;
-		const statement = (Array.isArray(statements) ? statements[0] : statements) as {
-			$_layout: { trivia: { leading: { $span: { start: number; end: number } }[] } };
-		};
-		expect(statement.$_layout.trivia.leading.map(({ $span }) => source.slice($span.start, $span.end))).toEqual(['//!\n', '/*!*/', '//', '///\n']);
+		const [statement] = (root as unknown as { _statements: object[] })._statements;
+		if (statement === undefined) throw new Error('expected a statement');
+		const spans = sideOf(statement, 'leading').filter(isCoordinate).map(({ $span }) => source.slice($span.start, $span.end));
+		expect(spans).toEqual(['//!\n', '/*!*/', '//', '///\n']);
 	});
 
 	it('wraps the entries of an inner gap', () => {
 		const fn = rs.parse('fn f() {\n    // only\n}\n').statements()[0] as unknown as {
 			body(): { $trivia: { inner(): readonly WrappedEntry[] } };
 		};
-		expect(fn.body().$trivia.inner().map((entry) => entry.$render())).toEqual(['// only\n']);
+		const entries = fn.body().$trivia.inner().filter((entry): entry is WrappedEntry => typeof entry === 'object');
+		expect(entries.map((entry) => entry.$render())).toEqual(['// only\n']);
 	});
 });

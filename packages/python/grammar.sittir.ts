@@ -44,6 +44,10 @@ export default sittirGrammar(base, {
 		role($._newline, 'newline');
 		return prev ?? [];
 	},
+	visibleExternals: (_$) => ({
+		_indent: indent(),
+		_dedent: dedent()
+	}),
 	inline: ($, previous) => [...(previous ?? []), $._except_clause_exception_as_optional1],
 
 	// See docs/python-grammar-sittir-glossary.md::renderAs
@@ -58,8 +62,8 @@ export default sittirGrammar(base, {
 			expression: '_ = ($r)',
 			type: '_: $r = None',
 			pattern: 'for $r in _: pass',
-			simple_statement: '$r',
-			compound_statement: '$r',
+			_simple_statement: '$r',
+			_compound_statement: '$r',
 			expression_statement: '$r',
 			assignment: '$r',
 			function_definition: '$r',

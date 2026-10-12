@@ -461,10 +461,11 @@ export default sittirGrammar(base, {
 			'1/1': variant('sequence')
 		},
 
-		// export_statement: variant() adoption on all four branches.
+		// export_statement: variant() adoption on all three branches.
 		// Path 0 is the JS-inherited `previous` (export default,
-		// export function, export from, …); paths 1/2/3 are
-		// `export type`, `export =`, `export as namespace`. Without
+		// export function, export from, …) with TypeScript's optional
+		// `type` before the from-forms; paths 1/2 are
+		// `export =`, `export as namespace`. Without
 		// labeling path 0, its base-JS branches render without the
 		// `export` prefix (parent template is just `$$$CHILDREN`,
 		// which filters to named children) — the wrapper becomes
@@ -485,9 +486,8 @@ export default sittirGrammar(base, {
 		// opportunity but not a blocking bug.
 		export_statement: {
 			0: variant('default'),
-			1: variant('type_export'),
-			2: variant('equals_export'),
-			3: variant('namespace_export')
+			1: variant('equals_export'),
+			2: variant('namespace_export')
 		},
 
 		call_expression: {
@@ -525,9 +525,11 @@ export default sittirGrammar(base, {
 		// See docs/typescript-grammar-sittir-glossary.md::export_statement_default unfielded declaration arms
 		export_statement_default: {
 			0: variant('from'),
-			'0/1/0': variant('star_from'),
-			'0/1/1': variant('ns_from'),
-			'0/1/2': variant('clause_from'),
+			'0/1': field('type'),
+			'0/2/0': variant('star_from'),
+			'0/2/1': variant('ns_from'),
+			'0/2/2': variant('clause_from'),
+			'0/3': field('terminator'),
 			1: variant('declaration'),
 			'1/2/0': { type: 'SYMBOL', name: 'declaration' },
 			'1/2/1': variant('default_kw'),
@@ -548,7 +550,6 @@ export default sittirGrammar(base, {
 		flow_maybe_type: { 1: field('type') },
 		array_type: { 0: field('type') },
 		export_statement_namespace_export: { 3: field('name'), 4: field('terminator') },
-		export_statement_type_export: { 4: field('terminator') },
 		export_statement_equals_export: { 3: field('terminator') },
 
 		_for_header: {
@@ -601,6 +602,43 @@ export default sittirGrammar(base, {
 					: m
 			)
 		})),
+
+		export_statement: reauthored(
+			'rejects-valid-syntax',
+			{
+				text: "export type * from './x.ts';",
+				form: ['export', 'type', '*', 'from', { symbol: 'string' }, ';'],
+				kind: 'export_statement'
+			},
+			($) =>
+				choice(
+					choice(
+						seq(
+							'export',
+							optional('type'),
+							choice(
+								seq('*', $._from_clause),
+								seq($.namespace_export, $._from_clause),
+								seq($.export_clause, optional($._from_clause))
+							),
+							$._semicolon
+						),
+						seq(
+							repeat(field('decorator', $.decorator)),
+							'export',
+							choice(
+								field('declaration', $.declaration),
+								seq(
+									'default',
+									choice(field('declaration', $.declaration), seq(field('value', $.expression), $._semicolon))
+								)
+							)
+						)
+					),
+					seq('export', '=', field('expression', $.expression), $._semicolon),
+					seq('export', 'as', 'namespace', $.identifier, $._semicolon)
+				)
+		),
 
 		ambient_declaration_global: vocabulary(($) => seq('global', field('body', $.statement_block))),
 		ambient_declaration_module: vocabulary(($) =>

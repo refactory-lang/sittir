@@ -491,7 +491,6 @@ export interface PortableIds {
 		| TSKindId.ExportStatementDefaultFrom
 		| TSKindId.ExportStatementEqualsExport
 		| TSKindId.ExportStatementNamespaceExport
-		| TSKindId.ExportStatementTypeExport
 		| TSKindId.ExpressionStatement
 		| TSKindId.ForInStatement
 		| TSKindId.ForStatement
@@ -517,8 +516,7 @@ export interface PortableIds {
 		| TSKindId.ExportStatementDefaultDeclaration
 		| TSKindId.ExportStatementDefaultFrom
 		| TSKindId.ExportStatementEqualsExport
-		| TSKindId.ExportStatementNamespaceExport
-		| TSKindId.ExportStatementTypeExport;
+		| TSKindId.ExportStatementNamespaceExport;
 	'statement.export.all': TSKindId.ExportStatementDefaultFrom;
 	'statement.export.default': TSKindId.ExportStatementDefaultDeclaration;
 	'statement.expression': TSKindId.ExpressionStatement;
@@ -3378,7 +3376,6 @@ const table: PortableTable = {
 				TSKindId.ExportStatementDefaultFrom,
 				TSKindId.ExportStatementEqualsExport,
 				TSKindId.ExportStatementNamespaceExport,
-				TSKindId.ExportStatementTypeExport,
 				TSKindId.ExpressionStatement,
 				TSKindId.ForInStatement,
 				TSKindId.ForStatement,
@@ -3408,8 +3405,7 @@ const table: PortableTable = {
 				TSKindId.ExportStatementDefaultDeclaration,
 				TSKindId.ExportStatementDefaultFrom,
 				TSKindId.ExportStatementEqualsExport,
-				TSKindId.ExportStatementNamespaceExport,
-				TSKindId.ExportStatementTypeExport
+				TSKindId.ExportStatementNamespaceExport
 			],
 			exact: true
 		},
@@ -3991,7 +3987,7 @@ const table: PortableTable = {
 			{
 				path: 'expression.binary.membership.in',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [397], fields: [], kinds: ['binary_expression_in'] } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [396], fields: [], kinds: ['binary_expression_in'] } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.add',
@@ -4179,7 +4175,7 @@ const table: PortableTable = {
 						via: [],
 						plan: {
 							op: 'is',
-							types: [426],
+							types: [425],
 							fields: [],
 							kinds: [
 								'function_declaration',
@@ -4214,13 +4210,12 @@ const table: PortableTable = {
 						via: [],
 						plan: {
 							op: 'is',
-							types: [423],
+							types: [422],
 							fields: [],
 							kinds: [
 								'export_statement_default_from_star_from',
 								'export_statement_default_from_ns_from',
-								'export_statement_default_from_clause_from',
-								'export_clause'
+								'export_statement_default_from_clause_from'
 							]
 						}
 					}
@@ -4230,7 +4225,6 @@ const table: PortableTable = {
 		],
 		[TSKindId.ExportStatementEqualsExport]: [{ path: 'statement.export', within: [], test: [] }],
 		[TSKindId.ExportStatementNamespaceExport]: [{ path: 'statement.export', within: [], test: [] }],
-		[TSKindId.ExportStatementTypeExport]: [{ path: 'statement.export', within: [], test: [] }],
 		[TSKindId.ExpressionStatement]: [{ path: 'statement.expression', within: [], test: [] }],
 		[TSKindId.ExtendsClause]: [{ path: 'clause.extends', within: [], test: [] }],
 		[TSKindId.ExtendsTypeClause]: [{ path: 'clause.extends.type', within: [], test: [] }],
@@ -4317,7 +4311,7 @@ const table: PortableTable = {
 					},
 					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [462], fields: ['name'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [461], fields: ['name'], kinds: [] } }
 				]
 			},
 			{
@@ -4334,7 +4328,7 @@ const table: PortableTable = {
 					},
 					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [462], fields: ['name'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [461], fields: ['name'], kinds: [] } }
 				]
 			},
 			{
@@ -4351,7 +4345,7 @@ const table: PortableTable = {
 					},
 					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [462], fields: ['name'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [461], fields: ['name'], kinds: [] } }
 				]
 			},
 			{
@@ -4366,7 +4360,7 @@ const table: PortableTable = {
 						],
 						plan: { op: 'eq', text: 'constructor', self: true }
 					},
-					{ up: 0, via: [], plan: { op: 'is', types: [462], fields: ['name'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [461], fields: ['name'], kinds: [] } }
 				]
 			},
 			{

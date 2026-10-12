@@ -1,0 +1,21 @@
+function f() {}
+  rendered: ()
+  text: unchanged; reparse: same tree
+function f(this: T) {}
+  rendered: (this : T)
+  text: changed; reparse: same tree
+function f(this: T,) {}
+  rendered: (this : T)
+  text: changed; reparse: same tree
+function f(this: T, a) {}
+  rendered: (this : T, a)
+  text: changed; reparse: same tree
+function f(this: T, a,) {}
+  rendered: (this : T, a,)
+  text: changed; reparse: same tree
+function f(a, b) {}
+  rendered: (a, b)
+  text: unchanged; reparse: same tree
+function f(this?: T) {}
+  rendered: (this?: T)
+  text: unchanged; reparse: same tree

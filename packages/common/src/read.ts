@@ -1,5 +1,8 @@
-import type { FormatRecord, TransportCoordinate } from '@sittir/types';
+import type { TransportCoordinate } from '@sittir/types';
 import type { TreeQuery } from './query.ts';
+
+/** A side of a node that holds trivia: before its first token, after its last, or, for a node with no named child, between its own tokens. */
+export type TriviaSideName = 'leading' | 'trailing' | 'inner';
 
 /** A parsed tree: the source it was read from, and the read of any node in it. */
 export interface TreeHandle {
@@ -9,9 +12,34 @@ export interface TreeHandle {
 	id?: number;
 	/** The node at descendant `index` read into its transport, `depth` levels down (one when absent, `Infinity` for all); index 0 is the root. A unit variant's transport is its kind id. */
 	read?(index: number, depth?: number): unknown;
-	/** Format record inferred from the source file by the native reader. */
-	format?: FormatRecord;
+	/** The tree's layer of the render options (`NativeParseResult.options`). */
+	options?: Readonly<Record<string, unknown>>;
 	query?: TreeQuery;
+	/** A snapshot of the node at descendant `index`, measured from the byte `holderByte`, or from its own start (`snapshotOf`). */
+	snapshot?(index: number, holderByte?: number): unknown;
+	/** The entries of `side` of the node at descendant `index`: the ones a write gave it, else the ones the tree's trivia table assigns it. */
+	triviaSide?(index: number, side: TriviaSideName): unknown[];
+	/** Replaces `side` of the node at descendant `index` with `entries`. */
+	writeTriviaSide?(index: number, side: TriviaSideName, entries: readonly unknown[]): void;
+	/** The sides of the unit children of the node at descendant `index`, by slot and item (`TransportLayout.units`). */
+	unitSides?(index: number): unknown[];
+	/** Whether a write replaced a side of a node under the node at descendant `index`, its own `inner` included, and its own leading and trailing too when `ownSides` is set. */
+	editedWithin?(index: number, ownSides: boolean): boolean;
+	/** Whether the node at descendant `index` is empty: no child of it has width. */
+	isEmpty?(index: number): boolean;
+	/** The siblings that hold sides beside the node at descendant `index` (`Siblings`). */
+	siblings?(index: number): Siblings;
+}
+
+/**
+ * The siblings that hold sides beside a node in its source and in its own slot (the same field),
+ * taken at the outermost node spanning exactly its bytes (a list item's wrapper holds the item's
+ * neighbours): the item before it, `null` when it is its list's first, and the one after it, `null`
+ * when it is the last. Each is its span and its grammar kind id.
+ */
+export interface Siblings {
+	readonly previous: { readonly start: number; readonly end: number; readonly kind: number } | null;
+	readonly next: { readonly start: number; readonly end: number; readonly kind: number } | null;
 }
 
 const INDEX_RANGE = 2 ** 32;

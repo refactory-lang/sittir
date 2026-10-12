@@ -2,7 +2,7 @@
 //!
 //! Contract surface:
 //!
-//! - [`types`]    — the kind id, spans, provenance and format records.
+//! - [`types`]    — the kind id, spans and provenance.
 //! - [`read`]     — `tree_sitter::Tree` → the grammar's typed transports.
 //! - [`boundary`] — cross-FFI shape helpers: a wire object's properties,
 //!   read by static keys; serde attrs live alongside the structs in `types`.
@@ -13,15 +13,18 @@ pub mod boundary;
 pub mod classify;
 pub mod engine;
 pub mod error_read;
-pub mod format;
 pub mod layout;
 pub mod layout_kinds;
 pub mod line_endings;
 #[cfg(feature = "napi-bindings")]
 pub mod napi_engine;
 pub mod options;
+pub mod points;
+pub mod trivia_table;
 pub mod prepare;
 pub mod query;
+pub mod non_empty;
+pub use non_empty::NonEmptyVec;
 pub mod read;
 pub mod render;
 pub mod slot;
@@ -37,6 +40,18 @@ pub mod view;
 pub use types::KindId;
 // The derive that expands a transport declaration into its typed reader.
 pub use sittir_transport_macros::Transport;
+
+/// States a grammar's trivia type once, for every transport of the grammar:
+/// each listed type's `HasTrivia::Trivia`, the trivia a coordinate of it
+/// carries outside its span.
+#[macro_export]
+macro_rules! grammar_trivia {
+    ($trivia:ty; $($transport:ty),* $(,)?) => {
+        $(impl $crate::trivia::HasTrivia for $transport {
+            type Trivia = $trivia;
+        })*
+    };
+}
 
 #[cfg(feature = "napi-bindings")]
 #[doc(hidden)]
@@ -75,4 +90,4 @@ pub use render::{
 pub use prepare::{Prepare, RenderContext};
 pub use slot::{NodeCoordinate, SlotValue};
 // ParsedTree is the owned parse result.
-pub use engine::{apply_render_format, decode_handle, error_regions, panic_msg, ErrorRegion, ErrorRegionKind, ParsedTree};
+pub use engine::{decode_handle, error_regions, panic_msg, ErrorRegion, ErrorRegionKind, ParsedTree};

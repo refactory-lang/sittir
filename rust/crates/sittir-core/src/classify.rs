@@ -30,3 +30,35 @@ pub fn classify_whitespace(ws: &str, allowed: &[u16], table: &WhitespaceTable) -
         .max_by_key(|(_, rank)| *rank)
         .map(|&(arm, _)| arm)
 }
+
+/// The whitespace two spans in one frame imply for the gap between them, `a`
+/// before `b`: the columns between them when `b` starts on `a`'s last row,
+/// else a break per row crossed and `b`'s column as its indentation. What
+/// geometry cannot give (tabs, trailing spaces, line endings) is left to the
+/// options. Columns count bytes, as a point's do.
+pub fn geometry_gap_text(a: &crate::points::PointSpan, b: &crate::points::PointSpan) -> String {
+    let last = a.last_row();
+    if b.start.row == last {
+        let from = if a.end.row == last { a.end.column } else { 0 };
+        " ".repeat(b.start.column.saturating_sub(from) as usize)
+    } else {
+        let mut gap = "\n".repeat(b.start.row.saturating_sub(last) as usize);
+        gap.push_str(&" ".repeat(b.start.column as usize));
+        gap
+    }
+}
+
+/// A geometric list gap split around its separator `token`, as a source gap
+/// splits at it: the side before the separator and the side after. Geometry
+/// does not place the separator, so it is taken to sit against the earlier
+/// item: on a shared row its columns are the gap's first, and a gap across
+/// rows lies wholly after it. With no token, the whole gap is the side
+/// before.
+pub fn geometry_gap_sides(a: &crate::points::PointSpan, b: &crate::points::PointSpan, token: &str) -> (String, String) {
+    let gap = geometry_gap_text(a, b);
+    if token.is_empty() {
+        return (gap, String::new());
+    }
+    let after = if b.start.row == a.last_row() { gap.get(token.len()..).unwrap_or("").to_owned() } else { gap };
+    (String::new(), after)
+}
