@@ -1,6 +1,6 @@
 # Contextual alias against a split clone
 
-**Question.** The bindings overlay's `split` gives a kind a name of its own where its context is
+**Question.** The grammar bindings' `split` gives a kind a name of its own where its context is
 unique: rust's `function_item` inside an `impl` or a trait is a `method_declaration`. Today the
 split clones the kind's rule. Does a parser `alias()` at the same sites do the same job for less,
 with the ancestors toward the placement still cloned? And for python's method in a class body,
@@ -25,19 +25,19 @@ has ruled they get (below).
   - Two measurement hooks in `render-module.ts`: `SITTIR_SCRATCH_PAYLOADS` dumps the transport
     names and drops stale payload pins, and `SITTIR_SCRATCH_PINS` reads the generated grammar's
     pins from a file.
-  - `SITTIR_SCRATCH_LENIENT_READ_TESTS` in the portable read tests: a claim the overlay leaves
+  - `SITTIR_SCRATCH_LENIENT_READ_TESTS` in the portable read tests: a claim the grammar bindings leave
     unaddressed is a warning, not a failure (gap 4).
   - The validator's same-span locator also matches a node's grammar kind (gap 5).
-  - The overlay's attribute patch on `field_initializer`, moved from `"0/0"` to `"0"` (gap 1).
+  - The grammar bindings' attribute patch on `field_initializer`, moved from `"0/0"` to `"0"` (gap 1).
 - `WT=<worktree> [GRAMMAR=python] run.sh <mode> [out]` configures the mode (`configure.py`),
   regenerates the grammar, and records the parser's defines (`stats.py`), the generated sizes
   (`sizes.py`) and the `validate counts` rows. `results/` holds each mode's output; python's files
   are prefixed `python-`, and python's runs make the read tests lenient.
 
 Modes:
-- `unbound`: the committed grammar without its overlay.
-- `nosplit`: the overlay with no splits. This is the baseline the splits are measured against.
-- `split`: the overlay's splits, each a clone.
+- `unbound`: the committed grammar without its grammar bindings.
+- `nosplit`: the grammar bindings with no splits. This is the baseline the splits are measured against.
+- `split`: the grammar bindings' splits, each a clone.
 - `alias`: the same splits as aliases.
 - `alias-decorated` (python): the alias splits, and a second that reaches a decorated method.
 
@@ -66,7 +66,7 @@ Deltas are against `nosplit`.
 | rows: from, cov, factory-storage, ir-storage, built-render-parse | 244, 207, 1670, 1375, 1878 | +4, +4, +3, +3, +42 | +2, +2, +3, +3, +28 |
 
 Every row passes in every mode (`Pass` equals `Total`); `read-render-parse` is 148 throughout.
-`unbound` has `nosplit`'s states, symbols and rows. The overlay's other parts add fields (80 to
+`unbound` has `nosplit`'s states, symbols and rows. The grammar bindings' other parts add fields (80 to
 90) and production ids (401 to 410), not states.
 
 ### Python
@@ -85,7 +85,7 @@ Every row passes in every mode (`Pass` equals `Total`); `read-render-parse` is 1
 | built-render-parse: pass / AST match | 1284 / 1284 | 1286 / 1284 | same | same |
 | read-render-parse of 116: pass / AST match | 115 / 115 | 115 / 114 | same | same |
 
-The alias changes no failing row. What `nosplit` loses against `unbound` is python's overlay, not
+The alias changes no failing row. What `nosplit` loses against `unbound` is python's grammar bindings, not
 the split: its lambda alias reads as a second `lambda_expression`, which the validator reports as
 `lambda_expression ≠ lambda_expression` in read-render-parse and built-render-parse, and two kinds
 leave the from and cov rows. Python's `split` mode does not generate: the clone takes away the
@@ -127,19 +127,19 @@ The read tests give the same twelve warnings as in `alias`.
    class body is then a kind of its own, as the class body's block is. So the bindings' container
    claim on `decorated_definition` must reach the clone, through its base or a claim of its own,
    to hand the method its decorators and set `static` from `@staticmethod`.
-5. **Five tables do not follow the overlay.** Each is keyed by the base grammar's names or paths,
+5. **Five tables do not follow the grammar bindings.** Each is keyed by the base grammar's names or paths,
    and `run.sh` works around each:
    1. *The attribute patch* (rust). The inventory writes
       `field_initializer: { "0/0": field("attributes") }`, which puts the field inside the
       repeat. Tree-sitter then mints a repeat helper of its own beside the one
       `shorthand_field_initializer`'s `field('attributes', repeat(…))` shares. At `Foo { #[a] #`
       the parser cannot tell the two apart: a reduce/reduce conflict. Fielding the repeat (`"0"`)
-      removes it. No other nested patch in the three overlays lands inside a repeat. The conflict
+      removes it. No other nested patch in the three grammars' bindings lands inside a repeat. The conflict
       driver derives resolutions on the base grammar and requires the bound one to generate with
       them, so it reports this as `conflict-resolutions-stale`, whose advice (find the input the
-      hash does not cover) does not fit a conflict the overlay introduces.
+      hash does not cover) does not fit a conflict the grammar bindings introduce.
    2. *An options label* (rust). `'field_initializer/attribute_item:/separator'` is renamed with
-      its kinds but not re-addressed once the overlay fields the list. It fails with "names no
+      its kinds but not re-addressed once the grammar bindings field the list. It fails with "names no
       site" until it reads `'field_initializer/attributes:/separator'` (`configure.py` swaps it).
    3. *Payload pins.* `BOXED_PAYLOADS` names the base grammar's transports. In rust, twenty go
       stale under the renames, and the bound grammar needs 22 pinned: the twenty renamed
@@ -149,9 +149,9 @@ The read tests give the same twelve warnings as in `alias`.
       are renamed and the clones need none (`pins-bound-python.json`). The decorated method's
       alias needs one more, `MethodDeclarationTransport` (`pins-bound-python-alias-decorated.json`).
    4. *Read tests* (python). The portable emitter tests a claim's predicates along the base
-      grammar's slots. The constant claims compare `left`, which the overlay renames `name`
+      grammar's slots. The constant claims compare `left`, which the grammar bindings rename `name`
       (`assignment_type`, `assignment_typed`, `variable_declaration`), and the static and class
-      method claims reach the decorator by its base kind, `decorator`, which the overlay renames
+      method claims reach the decorator by its base kind, `decorator`, which the grammar bindings rename
       `decorator_attribute`. Codegen refuses all five claims; run leniently, they are the same twelve
       warnings in every mode.
    5. *The validator's locator.* `findNodeBySpanOfKind` finds a read node's CST node by its span
@@ -167,6 +167,6 @@ Use the alias for rust's three splits and for python's method in a class body, d
 the maintainer ruled python's on these numbers holding, and they hold. Give each alias kind its low-level builder
 beside its target's (`build.methodDeclaration` beside `build.functionDeclaration`,
 `function_item`'s and `function_definition`'s bound name), as the maintainer ruled on 2026-10-09.
-Today's codegen gives a `fieldAliasMap` kind no builder, so that is work for the overlay's wiring,
+Today's codegen gives a `fieldAliasMap` kind no builder, so that is work for wiring the grammar bindings,
 with gaps 1 to 5. With it, a built method and a parsed one agree on `$type`, and a role test reads
 `$type` alone.

@@ -10,18 +10,18 @@ import type {
 	ParsedRead,
 	ParsedRoot,
 	ParseOptions,
-	RenderCallOptions,
 	Rendered
 } from '@sittir/types';
 import { decodeTree, readObject, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
 import { holdReadTree, sourceHandleOf, toTransportData, type KindView } from './transport-data.ts';
 import { mintTreeToken, registerTree } from './tree-token.ts';
+import { forEachTriviaList, type TriviaSides } from './trivia.ts';
 import type { DescendantBatch } from './query.ts';
 
 /** The options object a grammar package types as its `Options`. */
 export type RenderOptionValues = Readonly<Record<string, unknown>>;
 
-export interface RenderOptions<O extends object = RenderOptionValues> extends RenderCallOptions {
+export interface RenderOptions<O extends object = RenderOptionValues> {
 	/** Per-call options, resolved over the engine's own. */
 	readonly options?: O;
 }
@@ -302,13 +302,6 @@ export function createNativeEngine<
 
 		function renderNativeNode(node: AnyUntypedNode | number, opts?: RenderOptions<O>): Rendered {
 			const perCall = opts?.options;
-			if (opts?.ignoreFormat === true) {
-				throw new Error(
-					'ignoreFormat option not yet supported by native engine. ' +
-						'Native is the only backend — omit ignoreFormat (or pass false) ' +
-						'until Task 4 (engine-owned format state) lands.'
-				);
-			}
 			// The projection is the one place a node's storage wins over the
 			// coordinate it read in with: it crosses here, on every render
 			// path, so a caller handing over raw read data cannot slice a
@@ -394,7 +387,7 @@ export function createNativeEngine<
 							writeTriviaSide: (index, side, entries) => engine.writeTriviaSide(parsed.treeId, index, side, entries),
 							unitSides: (index) => {
 								const units = engine.unitSides(parsed.treeId, index);
-								holdReadTree(units, liveToken);
+								for (const unit of units) forEachTriviaList(unit as TriviaSides<unknown>, (entries) => holdReadTree(entries, liveToken));
 								return units;
 							},
 							editedWithin: (index, ownSides) => engine.editedWithin(parsed.treeId, index, ownSides),
@@ -431,12 +424,7 @@ export function nativeLanguageEngine<API extends LanguageAPI, IndentChar extends
 ): NativeLanguageEngine<API> {
 	return {
 		render(node, options) {
-			if (options === undefined) return engine.render(node);
-			const { ignoreFormat, ...perCall } = options;
-			return engine.render(node, {
-				...(ignoreFormat !== undefined ? { ignoreFormat } : {}),
-				...(Object.keys(perCall).length > 0 ? { options: perCall } : {})
-			});
+			return options === undefined || Object.keys(options).length === 0 ? engine.render(node) : engine.render(node, { options });
 		},
 		parseAndRead(source, options) {
 			return engine.diagnostics.parseAndRead(source, options);

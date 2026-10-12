@@ -264,7 +264,7 @@ The level count a native read takes for a set of parse options: one by default, 
 
 ### `packages/common/src/engine.ts::nativeLanguageEngine`
 
-Adapts one grammar's native engine to the language hooks' native engine shape, the same for every grammar. `render` splits the call's flat options into the native `ignoreFormat` and the render options it resolves over its own, passing none when the call has none. `parseAndRead` returns the native read untouched; the engine that owns the result binds its tree. `buildProfile` is the native build's compile profile.
+Adapts one grammar's native engine to the language hooks' native engine shape, the same for every grammar. `render` passes the call's flat options as the render options the native engine resolves over its own, and none when the call has none or an empty object. `parseAndRead` returns the native read untouched; the engine that owns the result binds its tree. `buildProfile` is the native build's compile profile.
 
 
 ### `packages/common/src/delimiter.ts::Delimiter`
@@ -385,6 +385,24 @@ The handle a node's coordinate names it by (`$_layout.at.$treeHandle`), which pa
 
 The handle a node names its tree by: its coordinate's, or, for a node an edit rebuilt, the one its carried source identity names (`sourceOf`). `undefined` for a node no read gave, built or detached. A query addresses a node by it (`nodeAddressOf`), and the native render passes the tree it names, so a parsed tree's inferred options layer under a render of it or of an edit of it, and a built node gets the engine's alone.
 
+### `packages/common/src/transport-data.ts::unitSidesOf`
+
+The sides of a node's unit children, by slot and item (`TransportLayout.units`): the ones it holds, else its live tree's for a parsed node, else those of the node it was rebuilt from (`sourceOf`), carried to the items the rebuild moved them to (`carriedUnitSides`). The render fold and `$snapshot()` both take a node's unit sides from here; the native side imports none, so a node that sends none has none.
+
+### `packages/common/src/transport-data.ts::carriedUnitSides`
+
+A rebuilt node's unit sides, carried from the node it was rebuilt from. A unit variant is stored as its bare kind and has no identity, so each slot's units are aligned with the source node's (`alignedItems`): a unit's sides follow it to the item it moved to, and the sides of a unit the rebuild removed go with it.
+
+### `packages/common/src/transport-data.ts::itemIdentity`
+
+What a slot item is the same item by across a rebuild: a unit by its kind, a read node (or one rebuilt from a read node) by the handle it names (`sourceHandleOf`). A built node has none and matches nothing in the source.
+
+### `packages/common/src/transport-data.ts::alignedItems`
+
+The new position of each source unit a rebuilt slot keeps, in time and memory linear in the two slots. The read nodes both slots hold anchor it, each by the handle it names: a unit is the unit of its kind at the same count in the run of units after its anchor (the last kept node before it, at that node's new place, or the slot's start). A unit no run places pairs, in order, with a unit of its kind nothing placed, so two different units that swapped places both keep their sides. A node needs no alignment, since it frames itself with its own sides.
+
+Identical units align by order within a run: nothing tells two units of one kind apart, so removing or reordering identical units among themselves keeps their sides by position, not by the unit the caller meant. Removing the first of two commented `;` units keeps the first unit's comment on the `;` that remains.
+
 ### `packages/common/src/transport-data.ts::KindView`
 
 How the crossing tells kinds apart. `isWrapper`: whether a kind id is one a rebuild constructs around an existing node (`TriviaFacts.rebuildWrappers`), which `evidenceOf` asks before looking through an entry. `isList`: whether a kind id is a list kind, whose one array slot holds its items (`listItemsOf`). Every caller names its view: the engine's render passes the grammar's facts, and data with no such kinds (a test's hand-written nodes, a probe's data) passes `PLAIN_KINDS`, which answers no to both for every kind. There is no default, so no caller can skip the grammar's view by leaving it out.
@@ -425,7 +443,7 @@ What a parsed node's `$query` runs: the query facet its engine makes for it. It 
 
 ### `packages/common/src/utils.ts::rebuilt`
 
-What every `$with` setter runs its rebuild through. It runs the rebuild inside the node's own engine (or plainly, when the node has none) and hands the node the rebuild returns what it keeps of the source node: that a read produced it (`carryRead`), its source identity (`carrySource`), through which the sides it does not hold are its source's (`sideOf`; the render fills them from the table through `$_layout.sides`), and a built source's stored trivia. It gives each fresh node the rebuild minted in a slot the source node held the same (`carryRebuiltSlots`). Inner trivia can only travel to a node that is still empty: once the rebuild gives the node a child, the comment would sit beside it, so the call throws and names the kind.
+What every `$with` setter runs its rebuild through. It runs the rebuild inside the node's own engine (or plainly, when the node has none) and hands the node the rebuild returns what it keeps of the source node: that a read produced it (`carryRead`), its source identity (`carrySource`), through which the sides it does not hold are its source's (`sideOf`; the render fills them from the table through `$_layout.sides`), and a built source's stored trivia. It gives each fresh node the rebuild minted in a slot the source node held the same (`carryRebuiltSlots`). Inner comments can only travel to a node that is still empty: once the rebuild gives the node a child, a comment would sit beside it, so the call throws and names the kind. Inner layout alone (whitespace and depth members, which cross as bare kinds) spelled the inside of the empty node, so a node that gains a child takes an empty inner side in its place: `{\n}` takes its first statement as `{}` does.
 
 ### `packages/common/src/utils.ts::triviaSide`
 

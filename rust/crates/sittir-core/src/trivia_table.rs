@@ -15,8 +15,9 @@
 //! *k*, the rest lead the child starting at token *k + 1*. With no child on
 //! one side, every entry goes to the child on the other; an owner with no
 //! named child takes them as its `inner`; an owner whose named children are
-//! not beside the gap takes none (`unowned`). A zero-width node holds no
-//! side. The child is the owner's own
+//! not beside the gap gives an extra or an `ERROR` to the nearest of them,
+//! leading the next or else trailing the previous, and takes none of its
+//! layout (`unowned`). A zero-width node holds no side. The child is the owner's own
 //! child, so the outermost node ending or starting at the token takes the
 //! side. A list node (the grammar's list kinds) passes an extra or an
 //! `ERROR` to the item ending or starting at the token, where one does and
@@ -302,20 +303,43 @@ impl Nodes {
     /// of its last child that holds trivia, passing through list children
     /// as `side_holder` does, or its `inner` side when no child holds any.
     fn restore_side(&self, owner: u32, kinds: SurfaceKinds) -> (u32, TriviaSide) {
-        let last_holder = |parent: u32, skip_units: bool| {
-            (parent + 1..parent + self.count[parent as usize])
-                .rev()
-                .filter(|&at| self.parent[at as usize] == parent && self.holder[at as usize])
-                .find(|&at| !skip_units || !kinds.units.contains(&self.kind[at as usize]))
-        };
-        let Some(mut child) = last_holder(owner, false) else { return (owner, TriviaSide::Inner) };
+        match self.holders(owner).next_back() {
+            Some(child) => (self.through_lists(child, TriviaSide::Trailing, kinds), TriviaSide::Trailing),
+            None => (owner, TriviaSide::Inner),
+        }
+    }
+
+    /// Where an entry goes when no holder child of `owner` is beside its gap,
+    /// from byte `from` to byte `to`: the leading side of the first holder
+    /// child after the gap, else the trailing side of the last before it,
+    /// passing through list children as `restore_side` does; the owner's
+    /// `inner` side when it has no holder child.
+    fn nearest_side(&self, owner: u32, from: u32, to: u32, kinds: SurfaceKinds) -> (u32, TriviaSide) {
+        let after = self.holders(owner).find(|&child| self.start[child as usize] >= to);
+        let before = || self.holders(owner).rev().find(|&child| self.end[child as usize] <= from);
+        match after.map(|child| (child, TriviaSide::Leading)).or_else(|| before().map(|child| (child, TriviaSide::Trailing))) {
+            Some((child, side)) => (self.through_lists(child, side, kinds), side),
+            None => (owner, TriviaSide::Inner),
+        }
+    }
+
+    /// The children of `parent` that hold trivia, in source order.
+    fn holders(&self, parent: u32) -> impl DoubleEndedIterator<Item = u32> + '_ {
+        (parent + 1..parent + self.count[parent as usize]).filter(move |&at| self.parent[at as usize] == parent && self.holder[at as usize])
+    }
+
+    /// `child`, or, while it is a list node, its first (for a `Leading`
+    /// side) or last item that holds trivia and is not a unit kind.
+    fn through_lists(&self, mut child: u32, side: TriviaSide, kinds: SurfaceKinds) -> u32 {
         while kinds.lists.contains(&self.kind[child as usize]) {
-            match last_holder(child, true) {
+            let mut items = self.holders(child).filter(|&at| !kinds.units.contains(&self.kind[at as usize]));
+            let item = if side == TriviaSide::Leading { items.next() } else { items.next_back() };
+            match item {
                 Some(inner) => child = inner,
                 None => break,
             }
         }
-        (child, TriviaSide::Trailing)
+        child
     }
 
     /// The child of `owner` on `node`'s chain of parents, when it holds trivia.
@@ -367,7 +391,13 @@ impl TriviaTable {
             let before = left.and_then(|left| nodes.side_holder(owner, left.node, through, |child| nodes.end[child as usize] == left.end));
             let after = right.and_then(|right| nodes.side_holder(owner, right.node, through, |child| nodes.start[child as usize] == right.start));
             match (before, after) {
-                (None, None) => Place::Unowned,
+                (None, None) => match through {
+                    Some(kinds) => {
+                        let (node, side) = nodes.nearest_side(owner, left.map_or(0, |left| left.end), right.map_or(u32::MAX, |right| right.start), kinds);
+                        Place::Side(node, side)
+                    }
+                    None => Place::Unowned,
+                },
                 (Some(before), None) => Place::Side(before, TriviaSide::Trailing),
                 (None, Some(after)) => Place::Side(after, TriviaSide::Leading),
                 (Some(before), Some(after)) => {
@@ -442,7 +472,7 @@ impl TriviaTable {
         self.sides.get(&(index, side)).map_or(&[], Vec::as_slice)
     }
 
-    /// The extras and `ERROR`s no side takes: between two of their owner's own
+    /// The layout members no side takes: between two of their owner's own
     /// tokens, with no named child beside them.
     pub fn unowned(&self) -> &[u32] {
         &self.unowned

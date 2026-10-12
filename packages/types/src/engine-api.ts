@@ -1,4 +1,4 @@
-import type { AnyUntypedNode, ErrorNode, ErrorRegion, GrammarTriviaEntry, RenderCallOptions, TriviaItem, TriviaSetter } from './core-types.ts';
+import type { AnyUntypedNode, ErrorNode, ErrorRegion, GrammarTriviaEntry, TriviaItem, TriviaSetter } from './core-types.ts';
 import type { IndentOption } from './options.ts';
 import type { Admit, Snapshot } from './node-surface.ts';
 import type { KindMembership, QueryFacet, QuerySlots } from './query.ts';
@@ -137,7 +137,7 @@ export interface LanguageHooks<API extends LanguageAPI> {
 }
 
 export interface NativeLanguageEngine<API extends LanguageAPI> {
-	render(node: AnyUntypedNode | number, options?: API['options'] & RenderCallOptions): Rendered;
+	render(node: AnyUntypedNode | number, options?: API['options']): Rendered;
 	parseAndRead: EngineDiagnostics<AnyUntypedNode>['parseAndRead'];
 	readonly buildProfile?: EngineDiagnostics['buildProfile'];
 	dispose(): void;
@@ -246,7 +246,7 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 
 export type RenderCall<API extends LanguageAPI, Input> = <const R extends API['options'] = API['options']>(
 	node: Input,
-	options?: R & RenderOptionsCheck<API, R, keyof RenderCallOptions> & RenderCallOptions
+	options?: R & RenderOptionsCheck<API, R>
 ) => Rendered;
 
 /**

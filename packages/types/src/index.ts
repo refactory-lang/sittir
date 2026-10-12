@@ -25,7 +25,6 @@ export type {
 	StringIndexRange,
 	Position,
 	CSTNode,
-	RenderCallOptions,
 	NodeTrivia,
 	TriviaEntry,
 	NativeParseResult,

@@ -412,9 +412,10 @@ impl<G: EngineGrammar> ParsedTree<G> {
     }
 
     /// The sides of the unit children of the node at `index`, by slot and
-    /// item, as a render read seats them (`EngineGrammar::read_units`).
+    /// item, as a render read seats them for a client that stores each unit
+    /// as its bare kind (`EngineGrammar::read_units`, `ReadCtx::inline_units`).
     pub fn unit_sides(&self, index: u32) -> Vec<crate::layout::UnitSides<G::Trivia>> {
-        self.grammar.read_units(&self.tree, &self.seating_ctx(), index)
+        self.grammar.read_units(&self.tree, &self.seating_ctx().inline_units(), index)
     }
 
     /// The `ERROR` node at `index` read as the bytes its coordinate spans, or
@@ -882,11 +883,6 @@ impl<G: EngineGrammar> SourceTable for HashMap<u32, ParsedTree<G>> {
         };
         let trivia = crate::trivia::TransportTrivia { leading: side(TriviaSide::Leading), trailing: side(TriviaSide::Trailing), inner: side(TriviaSide::Inner) };
         (trivia.leading.is_some() || trivia.trailing.is_some() || trivia.inner.is_some()).then(|| Box::new(trivia) as Box<dyn crate::trivia::FramedTrivia>)
-    }
-
-    fn unit_sides(&self, coord: &NodeCoordinate) -> Option<Box<dyn std::any::Any>> {
-        let units = self.get(&coord.tree)?.unit_sides(coord.index);
-        (!units.is_empty()).then(|| Box::new(units) as Box<dyn std::any::Any>)
     }
 
     fn framed_span(&self, coord: &NodeCoordinate) -> Span {

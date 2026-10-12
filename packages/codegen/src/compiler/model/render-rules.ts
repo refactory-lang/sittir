@@ -5,7 +5,7 @@ import { aliasTargetOf, type RenderRule, type Rule, type RuleAnnotations, type R
 import { CHOICE, DEDENT, INDENT, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { RuleWalker } from '../../dsl/rule-walker.ts';
 import { matchesWordShape } from '../../util/word-matcher.ts';
-import { type AssembledNode, AbstractAssembledCompound, AssembledEnum, AssembledKeyword, AssembledPolymorph, concreteKindsOf, isVisiblePunctuationLeaf, startsImmediateWhenPresent, leftmostTerminalImmediate } from './node-map.ts';
+import { type AssembledNode, AbstractAssembledCompound, AssembledEnum, AssembledKeyword, AssembledPolymorph, concreteKindsOf, isFixedTextLeaf, isVisiblePunctuationLeaf, startsImmediateWhenPresent, leftmostTerminalImmediate } from './node-map.ts';
 import { slotElementKinds } from '../../emitters/transport-common.ts';
 import { supertypeMembersByDisplayName } from './supertype-members.ts';
 import { lineTerminatedKinds, triviaKinds } from './trivia.ts';
@@ -74,6 +74,7 @@ export interface RenderRules {
 	readonly rules: Readonly<Record<string, RenderRule>>;
 	readonly declared?: ReadonlyMap<string, DeclaredArm>;
 	readonly edgeArms?: ReadonlyMap<string, EdgeArmDefault>;
+	readonly unitEdges?: ReadonlyMap<string, SpacingPart>;
 }
 
 export interface RenderRulesConfig {
@@ -691,6 +692,11 @@ function withArmEdgeSeams(
 	if (c.type !== CHOICE || c.members === undefined || isAnyWhitespaceChoice(choice)) return undefined;
 	let changed = false;
 	const members = c.members.map((arm) => {
+		const nested = withArmEdgeSeams(arm, side, kind, config, resolver, seams);
+		if (nested !== undefined) {
+			changed = true;
+			return nested;
+		}
 		const edge = edgeMember(arm, side) ?? arm;
 		if (isAnyWhitespaceChoice(edge)) return arm;
 		if (side === 'first' && isImmediateArm(choice, edge, config)) return arm;
@@ -791,6 +797,23 @@ function ownsKindEdges(kind: string, nodeMap: NodeMap): boolean {
 	return kind === display || !nodeMap.nodes.has(display);
 }
 
+function edgeSeamArms(kind: string, side: SeparatorSide, config: RenderRulesConfig, seams: SeamArms): SeamArms {
+	if (config.nodeMap.nodes.get(kind)?.grammarRoot === true) return { ...seams, defaultArm: rootEdgeKinds(config.nodeMap)[side] };
+	if (side !== 'after' || !lineTerminatedKinds(config.nodeMap).has(kind)) return seams;
+	const breaking = lineBreakingKinds(config.nodeMap);
+	return { ...seams, arms: seams.arms.filter((arm) => breaking.arms.includes(arm)), defaultArm: breaking.defaultArm };
+}
+
+function kindEdgeSeam(rule: RenderRule, kind: string, side: SeparatorSide, config: RenderRulesConfig, resolver: DefaultResolver, seams: SeamArms): RenderRule {
+	return seamChoice(
+		kind,
+		seamLabel(displayNameOf(kind, config.nodeMap), side),
+		resolver,
+		edgeSeamArms(kind, side, config, seams),
+		edgeLiteralsOf(rule, side === 'before' ? 'first' : 'last', config)
+	);
+}
+
 function withKindEdges(
 	rule: RenderRule,
 	kind: string,
@@ -800,26 +823,10 @@ function withKindEdges(
 	edgeArms: Map<string, EdgeArmDefault>
 ): RenderRule {
 	const r = bag(rule);
-	const root = config.nodeMap.nodes.get(kind)?.grammarRoot === true ? rootEdgeKinds(config.nodeMap) : undefined;
-	if (root === undefined && (r.type !== SEQ || r.members === undefined)) return rule;
-	const breaking = lineTerminatedKinds(config.nodeMap).has(kind) ? lineBreakingKinds(config.nodeMap) : undefined;
-	const breakingSeams: SeamArms | undefined = breaking && {
-		...seams,
-		arms: seams.arms.filter((arm) => breaking.arms.includes(arm)),
-		defaultArm: breaking.defaultArm
-	};
-	const seamsOf = (side: SeparatorSide): SeamArms => {
-		if (root !== undefined) return { ...seams, defaultArm: root[side] };
-		return side === 'after' && breakingSeams !== undefined ? breakingSeams : seams;
-	};
-	const part = (side: SeparatorSide): RenderRule =>
-		seamChoice(
-			kind,
-			seamLabel(displayNameOf(kind, config.nodeMap), side),
-			resolver,
-			seamsOf(side),
-			edgeLiteralsOf(rule, side === 'before' ? 'first' : 'last', config)
-		);
+	const root = config.nodeMap.nodes.get(kind)?.grammarRoot === true;
+	if (!root && (r.type !== SEQ || r.members === undefined)) return rule;
+	const seamsOf = (side: SeparatorSide): SeamArms => edgeSeamArms(kind, side, config, seams);
+	const part = (side: SeparatorSide): RenderRule => kindEdgeSeam(rule, kind, side, config, resolver, seams);
 	const recordArms = (side: SeparatorSide): void => {
 		if (r.type !== SEQ || r.members === undefined || flanksOf(rule) !== undefined) return;
 		const beside = side === 'before' ? r.members[0] : r.members[r.members.length - 1];
@@ -863,6 +870,8 @@ export function seamRenderRules(
 		const resolver = new DefaultResolver(config.nodeMap, declared);
 		const out: Record<string, RenderRule> = {};
 		const edgeArms = new Map<string, EdgeArmDefault>();
+		const seatedUnits = seatedUnitKinds(spaced.rules, config.nodeMap, (kind) => config.nodeMap.nodes.get(kind)?.grammarRoot === true || ownsKindEdges(kind, config.nodeMap));
+		const unitEdges = new Map<string, SpacingPart>();
 		for (const [kind, rule] of Object.entries(spaced.rules)) {
 			if (inlined.has(kind)) {
 				out[kind] = rule;
@@ -877,9 +886,10 @@ export function seamRenderRules(
 			const seamed = isLexedKind(kind, config.nodeMap) || tokenInterior(kind) ? rule : visit(walker.map(rule, visit));
 			const insideTrivia = tokenInterior(kind) && !triviaKinds(config.nodeMap).has(kind);
 			const grammarRoot = config.nodeMap.nodes.get(kind)?.grammarRoot === true;
+			if (seatedUnits.has(kind)) unitEdges.set(kind, seamPartOf(kindEdgeSeam(seamed, kind, 'after', immediateConfig, resolver, seams)));
 			out[kind] = (ownsKindEdges(kind, config.nodeMap) || grammarRoot) && !insideTrivia ? withKindEdges(seamed, kind, immediateConfig, resolver, seams, edgeArms) : seamed;
 		}
-		return { rules: out, edgeArms };
+		return { rules: out, edgeArms, unitEdges };
 	};
 	const result = build();
 	const sites = spacingSitesOf(result, config.nodeMap);
@@ -933,7 +943,6 @@ export function declaredOptionArms(
 
 export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): RuleSpacingSite[] {
 	const out = new Map<string, RuleSpacingSite>();
-	const seats: Seat[] = [];
 	const add = (kind: string, slot: string, part: SpacingPart, address: string, edgeArm?: EdgeArm, padding: boolean = false): void => {
 		const key = `${kind} ${part.fieldName}`;
 		const prior = out.get(key);
@@ -956,16 +965,10 @@ export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): Rule
 			});
 		}
 	};
-	const slotOf = (kind: string, rule: RenderRule): string => {
-		const id = bag(rule).id;
-		const slot = id === undefined ? undefined : nodeMap.slotByRuleId.get(id)?.name;
-		if (slot === undefined) throw new Error(`render rules: the spaced separator in '${kind}' belongs to no slot`);
-		return slot;
-	};
 	const visit = (kind: string, r: RenderRule): void => {
 		const flanks = flanksOf(r);
 		if (flanks !== undefined) {
-			const slot = slotOf(kind, flanks.inner);
+			const slot = slotOf(kind, flanks.inner, nodeMap);
 			add(kind, slot, flanks.start, flankAddress(displayNameOf(kind, nodeMap), 'start'));
 			visit(kind, flanks.inner);
 			add(kind, slot, flanks.end, flankAddress(displayNameOf(kind, nodeMap), 'end'));
@@ -998,15 +1001,76 @@ export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): Rule
 		if (b.content !== undefined) visit(kind, b.content);
 		const spaced = isRepeated(r) ? spacedSeparatorOf(r) : undefined;
 		if (spaced === undefined) return;
-		const slot = slotOf(kind, r);
+		const slot = slotOf(kind, r, nodeMap);
 		for (const part of [spaced.before, spaced.after]) {
 			if (part !== undefined) add(kind, slot, part, siteKey(slot, part.label));
 		}
-		seats.push({ kind, slot, id: bag(r).id! });
 	};
 	for (const [kind, rule] of Object.entries(renderRules.rules)) visit(kind, rule);
 	const sites = [...out.values()];
-	return [...sites, ...seatedSites(seats, sites, nodeMap, renderRules.declared)];
+	return [...sites, ...seatedSites(seatsOf(renderRules.rules, nodeMap), sites, nodeMap, renderRules.declared, renderRules.unitEdges)];
+}
+
+function slotOf(kind: string, rule: RenderRule, nodeMap: NodeMap): string {
+	const id = bag(rule).id;
+	const slot = id === undefined ? undefined : nodeMap.slotByRuleId.get(id)?.name;
+	if (slot === undefined) throw new Error(`render rules: the spaced separator in '${kind}' belongs to no slot`);
+	return slot;
+}
+
+function seatsOf(rules: Readonly<Record<string, RenderRule>>, nodeMap: NodeMap): Seat[] {
+	const seats: Seat[] = [];
+	const visit = (kind: string, r: RenderRule): void => {
+		const flanks = flanksOf(r);
+		if (flanks !== undefined) {
+			visit(kind, flanks.inner);
+			return;
+		}
+		const b = bag(r);
+		for (const m of b.members ?? []) if (!isSeamChoice(m)) visit(kind, m);
+		if (b.content !== undefined) visit(kind, b.content);
+		if (isRepeated(r) && spacedSeparatorOf(r) !== undefined) seats.push({ kind, slot: slotOf(kind, r, nodeMap), id: bag(r).id! });
+	};
+	for (const [kind, rule] of Object.entries(rules)) visit(kind, rule);
+	return seats;
+}
+
+function renderedElementKinds(kind: string, nodeMap: NodeMap, edged: (kind: string) => boolean, seen: Set<string>): string[] {
+	if (seen.has(kind)) return [];
+	seen.add(kind);
+	if (edged(kind)) return [kind];
+	const node = nodeMap.nodes.get(kind);
+	if (node instanceof AssembledPolymorph) {
+		return node.slots.flatMap((slot) => slotElementKinds(slot, nodeMap)).flatMap((arm) => renderedElementKinds(arm, nodeMap, edged, seen));
+	}
+	return concreteKindsOf(kind, nodeMap).flatMap((concrete) => (concrete === kind ? [kind] : renderedElementKinds(concrete, nodeMap, edged, seen)));
+}
+
+function seatedElementKinds(seats: readonly Seat[], nodeMap: NodeMap, edged: (kind: string) => boolean): Map<string, { kind: string; slot: string; children: Set<string> }> {
+	const admitted = new Map<string, { kind: string; slot: string; children: Set<string> }>();
+	for (const seat of seats) {
+		const slot = nodeMap.slotByRuleId.get(seat.id);
+		if (slot === undefined) continue;
+		const key = `${seat.kind}\u0000${seat.slot}`;
+		const entry = admitted.get(key) ?? { kind: seat.kind, slot: seat.slot, children: new Set<string>() };
+		for (const c of slotElementKinds(slot, nodeMap)) {
+			for (const rendered of renderedElementKinds(c, nodeMap, edged, new Set())) entry.children.add(rendered);
+		}
+		admitted.set(key, entry);
+	}
+	return admitted;
+}
+
+function seatedUnitKinds(rules: Readonly<Record<string, RenderRule>>, nodeMap: NodeMap, ownEdges: (kind: string) => boolean): ReadonlySet<string> {
+	const unit = (kind: string): boolean => {
+		const node = nodeMap.nodes.get(kind);
+		return node !== undefined && isFixedTextLeaf(node);
+	};
+	const out = new Set<string>();
+	for (const seat of seatedElementKinds(seatsOf(rules, nodeMap), nodeMap, (kind) => ownEdges(kind) || unit(kind)).values()) {
+		for (const child of seat.children) if (unit(child)) out.add(child);
+	}
+	return out;
 }
 
 interface Seat {
@@ -1019,37 +1083,19 @@ function seatedSites(
 	seats: readonly Seat[],
 	sites: readonly RuleSpacingSite[],
 	nodeMap: NodeMap,
-	declared: ReadonlyMap<string, DeclaredArm> | undefined
+	declared: ReadonlyMap<string, DeclaredArm> | undefined,
+	unitEdges: ReadonlyMap<string, SpacingPart> | undefined
 ): RuleSpacingSite[] {
-	const edgeOf = new Map<string, RuleSpacingSite>();
+	const edgeOf = new Map<string, Pick<RuleSpacingSite, 'address' | 'label' | 'side' | 'defaultArm' | 'arms'>>();
 	for (const site of sites) {
 		const own = displayNameOf(site.kind, nodeMap);
 		if (site.side === 'seam' && site.address === seamLabel(own, 'after')) edgeOf.set(own, site);
 	}
-	const renderedKinds = (kind: string, seen: Set<string>): string[] => {
-		if (seen.has(kind)) return [];
-		seen.add(kind);
-		if (edgeOf.has(displayNameOf(kind, nodeMap))) return [kind];
-		const node = nodeMap.nodes.get(kind);
-		if (node instanceof AssembledPolymorph) {
-			return node.slots.flatMap((slot) => slotElementKinds(slot, nodeMap)).flatMap((arm) => renderedKinds(arm, seen));
-		}
-		return concreteKindsOf(kind, nodeMap).flatMap((concrete) => (concrete === kind ? [kind] : renderedKinds(concrete, seen)));
-	};
-	const admitted = new Map<string, { kind: string; slot: string; children: Set<string> }>();
-	for (const seat of seats) {
-		const slot = nodeMap.slotByRuleId.get(seat.id);
-		if (slot === undefined) continue;
-		const key = `${seat.kind}\u0000${seat.slot}`;
-		const entry = admitted.get(key) ?? { kind: seat.kind, slot: seat.slot, children: new Set<string>() };
-		for (const c of slotElementKinds(slot, nodeMap)) {
-			for (const rendered of renderedKinds(c, new Set())) entry.children.add(displayNameOf(rendered, nodeMap));
-		}
-		admitted.set(key, entry);
-	}
+	for (const [kind, part] of unitEdges ?? []) edgeOf.set(displayNameOf(kind, nodeMap), { ...part, address: part.fieldName });
+	const admitted = seatedElementKinds(seats, nodeMap, (kind) => edgeOf.has(displayNameOf(kind, nodeMap)));
 	const out: RuleSpacingSite[] = [];
 	for (const seat of admitted.values()) {
-		const children = [...seat.children].sort();
+		const children = [...new Set([...seat.children].map((child) => displayNameOf(child, nodeMap)))].sort();
 		const parent = displayNameOf(seat.kind, nodeMap);
 		for (const child of children) {
 			const edge = edgeOf.get(child);

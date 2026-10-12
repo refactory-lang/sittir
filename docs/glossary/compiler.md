@@ -6733,7 +6733,7 @@ grammar that never ran through `wire()`; then no label is automatic.
 
 ### `packages/codegen/src/compiler/types.ts::KindProvenance`
 
-Where the bindings overlay's kinds came from: `renamedFrom` maps a renamed kind to its base kind, and `splitFrom` maps a split clone to the kind it was cloned from. `bindGrammar` writes both maps onto the evaluated grammar; link carries them under linked names, and every stage after it passes the one object through to the nodes.
+Where the grammar bindings' kinds came from: `renamedFrom` maps a renamed kind to its base kind, and `splitFrom` maps a split clone to the kind it was cloned from. `bindGrammar` writes both maps onto the evaluated grammar; link carries them under linked names, and every stage after it passes the one object through to the nodes.
 
 A `splitFrom` value is the source kind's bound name, never a base name: `bindGrammar` splits after it renames, and link renames the values with the keys. A clone of a renamed kind therefore names the renamed kind (rust `method_declaration` → `function_declaration`), and the base name is one more step through `renamedFrom` (`function_declaration` → `function_item`).
 

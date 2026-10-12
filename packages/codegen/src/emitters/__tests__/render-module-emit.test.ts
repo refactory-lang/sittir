@@ -711,7 +711,7 @@ describe('transport attributes', () => {
 		const src = await getRustTemplatesRs();
 		const typeEnum = src.slice(src.indexOf('pub enum TypeTransport {'));
 		expect(src).toMatch(/#\[transport\(choice\)\]\npub enum TypeTransport \{/);
-		expect(typeEnum).toMatch(/    #\[kind\(kind::NEVER_TYPE[^\]]*\)\]\n    NeverType,/);
+		expect(typeEnum).toMatch(/    #\[kind\(kind::NEVER_TYPE[^\]]*\)\]\n    #\[transport\(edged\)\]\n    NeverType\(::sittir_core::options::Edges\),/);
 		expect(typeEnum).toMatch(/    #\[kind\(kind::_PRIMITIVE_TYPE[^\]]*kind::U8_KEYWORD[^\]]*\)\]\n    PrimitiveType\(PrimitiveTypeEnum\),/);
 		expect(src).toMatch(/#\[transport\(kind = kind::_PRIMITIVE_TYPE, spelled\)\]\npub enum PrimitiveTypeEnum \{\n    #\[kind\(kind::U8_KEYWORD\)\]\n    U8,/);
 	});

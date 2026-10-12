@@ -206,8 +206,116 @@ export function unitSidesOf(node: object): readonly unknown[] | undefined {
 	const index = indexOf(node);
 	if (tree?.unitSides !== undefined && index !== undefined) return tree.unitSides(index);
 	const source = sourceOf(node);
-	if (source === undefined) return undefined;
-	return sourceTree(source)?.unitSides?.(decodeIndex(source.treeHandle));
+	const from = source === undefined ? undefined : sourceTree(source);
+	return source === undefined || from === undefined ? undefined : carriedUnitSides(node as Record<string, unknown>, decodeIndex(source.treeHandle), from);
+}
+
+/** One unit child's sides as a tree gives them (`TransportLayout.units`): its slot's wire key and its item there. */
+interface UnitSidesData {
+	readonly slot: string;
+	readonly item: number;
+}
+
+/**
+ * The sides of a rebuilt node's unit children, carried from the node at `index` of `tree` it was
+ * rebuilt from. Each slot's items are aligned with the source node's (`alignedItems`): a unit's
+ * sides follow it to its new item, and a unit the rebuild removed takes its sides with it.
+ */
+function carriedUnitSides(node: Record<string, unknown>, index: number, tree: TreeHandle): readonly unknown[] | undefined {
+	const units = tree.unitSides?.(index) as readonly UnitSidesData[] | undefined;
+	if (units === undefined || units.length === 0) return units;
+	const read = tree.read?.(index, 1);
+	if (!isRecord(read)) return undefined;
+	const moved = new Map<string, ReadonlyMap<number, number>>();
+	const itemsAt = (holder: Record<string, unknown>, slot: string): readonly unknown[] => {
+		const value = holder[slot];
+		return value === undefined ? [] : Array.isArray(value) ? value : [value];
+	};
+	const carried: unknown[] = [];
+	for (const unit of units) {
+		let aligned = moved.get(unit.slot);
+		if (aligned === undefined) {
+			aligned = alignedItems(itemsAt(read, unit.slot), itemsAt(node, unit.slot));
+			moved.set(unit.slot, aligned);
+		}
+		const item = aligned.get(unit.item);
+		if (item !== undefined && typeof itemsAt(node, unit.slot)[item] === 'number') carried.push({ ...unit, item });
+	}
+	return carried;
+}
+
+/** What an item of a slot is the same item by: a unit by its kind, a read node by the handle it names; a built node is no item of the source. */
+function itemIdentity(item: unknown): string | undefined {
+	if (typeof item === 'number') return `kind:${item}`;
+	const handle = isRecord(item) ? sourceHandleOf(item) : undefined;
+	return handle === undefined ? undefined : `node:${handle}`;
+}
+
+/**
+ * The new position of each unit of `before` that `after` keeps. The read nodes both keep anchor
+ * the alignment, each by the handle it names: a unit is the unit of its kind at the same count in
+ * the run of units that follows its anchor, the last kept node before it, at that node's new
+ * place (the slot's start for a unit before every kept node). A unit no run places pairs, in order,
+ * with a unit of its kind that nothing placed, so two units that crossed keep their place. Linear
+ * in both slots. A node needs no alignment: its sides are its own.
+ */
+function alignedItems(before: readonly unknown[], after: readonly unknown[]): ReadonlyMap<number, number> {
+	const nodeAt = new Map<string, number>();
+	const runs = new Map<number, Map<string, number[]>>();
+	let run = -1;
+	after.forEach((item, j) => {
+		const identity = itemIdentity(item);
+		if (typeof item !== 'number') {
+			if (identity !== undefined) nodeAt.set(identity, j);
+			run = j;
+			return;
+		}
+		if (identity === undefined) return;
+		const kinds = runs.get(run) ?? new Map<string, number[]>();
+		runs.set(run, kinds);
+		const units = kinds.get(identity);
+		if (units === undefined) kinds.set(identity, [j]);
+		else units.push(j);
+	});
+	const aligned = new Map<number, number>();
+	const placed = new Set<number>();
+	let anchor = -1;
+	let counts = new Map<string, number>();
+	before.forEach((item, i) => {
+		const identity = itemIdentity(item);
+		if (typeof item !== 'number') {
+			const kept = identity === undefined ? undefined : nodeAt.get(identity);
+			if (kept !== undefined) {
+				anchor = kept;
+				counts = new Map();
+			}
+			return;
+		}
+		if (identity === undefined) return;
+		const count = counts.get(identity) ?? 0;
+		counts.set(identity, count + 1);
+		const j = runs.get(anchor)?.get(identity)?.[count];
+		if (j === undefined || placed.has(j)) return;
+		aligned.set(i, j);
+		placed.add(j);
+	});
+	const free = new Map<string, { readonly items: number[]; next: number }>();
+	after.forEach((item, j) => {
+		const identity = itemIdentity(item);
+		if (identity === undefined || typeof item !== 'number' || placed.has(j)) return;
+		const open = free.get(identity);
+		if (open === undefined) free.set(identity, { items: [j], next: 0 });
+		else open.items.push(j);
+	});
+	before.forEach((item, i) => {
+		const identity = itemIdentity(item);
+		const open = identity === undefined || typeof item !== 'number' || aligned.has(i) ? undefined : free.get(identity);
+		const j = open?.items[open.next];
+		if (open === undefined || j === undefined) return;
+		aligned.set(i, j);
+		open.next += 1;
+	});
+	return aligned;
 }
 
 /**
@@ -511,7 +619,7 @@ function toTransportValue(value: unknown, view: KindView, changed: ChangedEdges,
 		if (fold) forEachTriviaList(trivia as TriviaSides<unknown>, assertTriviaHoldsTree);
 		setLayout(out, 'trivia', trivia);
 	}
-	const units = fold ? given?.units : sided ? unitSidesOf(value) : undefined;
+	const units = fold || sided ? unitSidesOf(value) : undefined;
 	if (units !== undefined && units.length > 0) setLayout(out, 'units', units);
 	const source = fold ? sourceOf(value) : undefined;
 	if (source !== undefined && sourceTree(source) !== undefined) {

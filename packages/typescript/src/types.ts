@@ -12075,6 +12075,7 @@ export namespace Program {
 				readonly continueStatement?: { readonly after?: LayoutKindId };
 				readonly debuggerStatement?: { readonly after?: LayoutKindId };
 				readonly doStatement?: { readonly after?: LayoutKindId };
+				readonly emptyStatement?: { readonly after?: LayoutKindId };
 				readonly end?: LayoutKindId;
 				readonly enumDeclaration?: { readonly after?: LayoutKindId };
 				readonly exportStatementDefaultDeclaration?: { readonly after?: LayoutKindId };
@@ -12264,6 +12265,7 @@ export namespace StatementBlock {
 				readonly continueStatement?: { readonly after?: LayoutKindId };
 				readonly debuggerStatement?: { readonly after?: LayoutKindId };
 				readonly doStatement?: { readonly after?: LayoutKindId };
+				readonly emptyStatement?: { readonly after?: LayoutKindId };
 				readonly end?: LayoutKindId;
 				readonly enumDeclaration?: { readonly after?: LayoutKindId };
 				readonly exportStatementDefaultDeclaration?: { readonly after?: LayoutKindId };
@@ -12500,6 +12502,7 @@ export namespace SwitchCase {
 				readonly continueStatement?: { readonly after?: LayoutKindId };
 				readonly debuggerStatement?: { readonly after?: LayoutKindId };
 				readonly doStatement?: { readonly after?: LayoutKindId };
+				readonly emptyStatement?: { readonly after?: LayoutKindId };
 				readonly end?: LayoutKindId;
 				readonly enumDeclaration?: { readonly after?: LayoutKindId };
 				readonly exportStatementDefaultDeclaration?: { readonly after?: LayoutKindId };
@@ -12552,6 +12555,7 @@ export namespace SwitchDefault {
 				readonly continueStatement?: { readonly after?: LayoutKindId };
 				readonly debuggerStatement?: { readonly after?: LayoutKindId };
 				readonly doStatement?: { readonly after?: LayoutKindId };
+				readonly emptyStatement?: { readonly after?: LayoutKindId };
 				readonly end?: LayoutKindId;
 				readonly enumDeclaration?: { readonly after?: LayoutKindId };
 				readonly exportStatementDefaultDeclaration?: { readonly after?: LayoutKindId };
@@ -12700,13 +12704,17 @@ export namespace Array {
 				readonly callExpressionTemplateCall?: { readonly after?: LayoutKindId };
 				readonly class?: { readonly after?: LayoutKindId };
 				readonly end?: LayoutKindId;
+				readonly false?: { readonly after?: LayoutKindId };
 				readonly functionExpression?: { readonly after?: LayoutKindId };
 				readonly generatorFunction?: { readonly after?: LayoutKindId };
 				readonly instantiationExpression?: { readonly after?: LayoutKindId };
 				readonly internalModule?: { readonly after?: LayoutKindId };
 				readonly memberExpression?: { readonly after?: LayoutKindId };
+				readonly metaPropertyImportMeta?: { readonly after?: LayoutKindId };
+				readonly metaPropertyNewTarget?: { readonly after?: LayoutKindId };
 				readonly newExpression?: { readonly after?: LayoutKindId };
 				readonly nonNullExpression?: { readonly after?: LayoutKindId };
+				readonly null?: { readonly after?: LayoutKindId };
 				readonly object?: { readonly after?: LayoutKindId };
 				readonly parenthesizedExpressionSequence?: { readonly after?: LayoutKindId };
 				readonly parenthesizedExpressionTyped?: { readonly after?: LayoutKindId };
@@ -12720,10 +12728,14 @@ export namespace Array {
 				readonly stringDouble?: { readonly after?: LayoutKindId };
 				readonly stringSingle?: { readonly after?: LayoutKindId };
 				readonly subscriptExpression?: { readonly after?: LayoutKindId };
+				readonly super?: { readonly after?: LayoutKindId };
 				readonly templateString?: { readonly after?: LayoutKindId };
 				readonly ternaryExpression?: { readonly after?: LayoutKindId };
+				readonly this?: { readonly after?: LayoutKindId };
+				readonly true?: { readonly after?: LayoutKindId };
 				readonly typeAssertion?: { readonly after?: LayoutKindId };
 				readonly unaryExpression?: { readonly after?: LayoutKindId };
+				readonly undefined?: { readonly after?: LayoutKindId };
 				readonly updateExpressionPostfix?: { readonly after?: LayoutKindId };
 				readonly updateExpressionPrefix?: { readonly after?: LayoutKindId };
 				readonly yieldExpression?: { readonly after?: LayoutKindId };
@@ -12983,13 +12995,17 @@ export namespace SequenceExpression {
 				readonly callExpressionTemplateCall?: { readonly after?: LayoutKindId };
 				readonly class?: { readonly after?: LayoutKindId };
 				readonly end?: LayoutKindId;
+				readonly false?: { readonly after?: LayoutKindId };
 				readonly functionExpression?: { readonly after?: LayoutKindId };
 				readonly generatorFunction?: { readonly after?: LayoutKindId };
 				readonly instantiationExpression?: { readonly after?: LayoutKindId };
 				readonly internalModule?: { readonly after?: LayoutKindId };
 				readonly memberExpression?: { readonly after?: LayoutKindId };
+				readonly metaPropertyImportMeta?: { readonly after?: LayoutKindId };
+				readonly metaPropertyNewTarget?: { readonly after?: LayoutKindId };
 				readonly newExpression?: { readonly after?: LayoutKindId };
 				readonly nonNullExpression?: { readonly after?: LayoutKindId };
+				readonly null?: { readonly after?: LayoutKindId };
 				readonly object?: { readonly after?: LayoutKindId };
 				readonly parenthesizedExpressionSequence?: { readonly after?: LayoutKindId };
 				readonly parenthesizedExpressionTyped?: { readonly after?: LayoutKindId };
@@ -13002,10 +13018,14 @@ export namespace SequenceExpression {
 				readonly stringDouble?: { readonly after?: LayoutKindId };
 				readonly stringSingle?: { readonly after?: LayoutKindId };
 				readonly subscriptExpression?: { readonly after?: LayoutKindId };
+				readonly super?: { readonly after?: LayoutKindId };
 				readonly templateString?: { readonly after?: LayoutKindId };
 				readonly ternaryExpression?: { readonly after?: LayoutKindId };
+				readonly this?: { readonly after?: LayoutKindId };
+				readonly true?: { readonly after?: LayoutKindId };
 				readonly typeAssertion?: { readonly after?: LayoutKindId };
 				readonly unaryExpression?: { readonly after?: LayoutKindId };
+				readonly undefined?: { readonly after?: LayoutKindId };
 				readonly updateExpressionPostfix?: { readonly after?: LayoutKindId };
 				readonly updateExpressionPrefix?: { readonly after?: LayoutKindId };
 				readonly yieldExpression?: { readonly after?: LayoutKindId };
@@ -13053,13 +13073,17 @@ export namespace Arguments {
 				readonly callExpressionTemplateCall?: { readonly after?: LayoutKindId };
 				readonly class?: { readonly after?: LayoutKindId };
 				readonly end?: LayoutKindId;
+				readonly false?: { readonly after?: LayoutKindId };
 				readonly functionExpression?: { readonly after?: LayoutKindId };
 				readonly generatorFunction?: { readonly after?: LayoutKindId };
 				readonly instantiationExpression?: { readonly after?: LayoutKindId };
 				readonly internalModule?: { readonly after?: LayoutKindId };
 				readonly memberExpression?: { readonly after?: LayoutKindId };
+				readonly metaPropertyImportMeta?: { readonly after?: LayoutKindId };
+				readonly metaPropertyNewTarget?: { readonly after?: LayoutKindId };
 				readonly newExpression?: { readonly after?: LayoutKindId };
 				readonly nonNullExpression?: { readonly after?: LayoutKindId };
+				readonly null?: { readonly after?: LayoutKindId };
 				readonly object?: { readonly after?: LayoutKindId };
 				readonly parenthesizedExpressionSequence?: { readonly after?: LayoutKindId };
 				readonly parenthesizedExpressionTyped?: { readonly after?: LayoutKindId };
@@ -13073,10 +13097,14 @@ export namespace Arguments {
 				readonly stringDouble?: { readonly after?: LayoutKindId };
 				readonly stringSingle?: { readonly after?: LayoutKindId };
 				readonly subscriptExpression?: { readonly after?: LayoutKindId };
+				readonly super?: { readonly after?: LayoutKindId };
 				readonly templateString?: { readonly after?: LayoutKindId };
 				readonly ternaryExpression?: { readonly after?: LayoutKindId };
+				readonly this?: { readonly after?: LayoutKindId };
+				readonly true?: { readonly after?: LayoutKindId };
 				readonly typeAssertion?: { readonly after?: LayoutKindId };
 				readonly unaryExpression?: { readonly after?: LayoutKindId };
+				readonly undefined?: { readonly after?: LayoutKindId };
 				readonly updateExpressionPostfix?: { readonly after?: LayoutKindId };
 				readonly updateExpressionPrefix?: { readonly after?: LayoutKindId };
 				readonly yieldExpression?: { readonly after?: LayoutKindId };
@@ -13124,6 +13152,7 @@ export namespace ClassBody {
 				readonly classBodyMemberMethod?: { readonly after?: LayoutKindId };
 				readonly classBodyMemberMethodSig?: { readonly after?: LayoutKindId };
 				readonly classStaticBlock?: { readonly after?: LayoutKindId };
+				readonly emptyMember?: { readonly after?: LayoutKindId };
 				readonly end?: LayoutKindId;
 				readonly separator?: WhitespaceKindId;
 				readonly start?: LayoutKindId;
@@ -13278,6 +13307,7 @@ export namespace FunctionSignature {
 			readonly asyncKeyword?: { readonly after?: LayoutKindId };
 			readonly before?: LayoutKindId;
 			readonly functionKeyword?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+			readonly semi?: { readonly before?: LayoutKindId };
 			readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.FunctionSignatureAutomaticSemicolon;
 		};
 	}
@@ -13375,6 +13405,8 @@ export namespace ImplementsClause {
 				readonly conditionalType?: { readonly after?: LayoutKindId };
 				readonly constructorType?: { readonly after?: LayoutKindId };
 				readonly end?: LayoutKindId;
+				readonly existentialType?: { readonly after?: LayoutKindId };
+				readonly false?: { readonly after?: LayoutKindId };
 				readonly flowMaybeType?: { readonly after?: LayoutKindId };
 				readonly functionType?: { readonly after?: LayoutKindId };
 				readonly genericType?: { readonly after?: LayoutKindId };
@@ -13384,6 +13416,7 @@ export namespace ImplementsClause {
 				readonly literalTypeNegativeNumber?: { readonly after?: LayoutKindId };
 				readonly lookupType?: { readonly after?: LayoutKindId };
 				readonly nestedTypeIdentifier?: { readonly after?: LayoutKindId };
+				readonly null?: { readonly after?: LayoutKindId };
 				readonly objectType?: { readonly after?: LayoutKindId };
 				readonly parenthesizedType?: { readonly after?: LayoutKindId };
 				readonly readonlyType?: { readonly after?: LayoutKindId };
@@ -13394,10 +13427,13 @@ export namespace ImplementsClause {
 				readonly stringDouble?: { readonly after?: LayoutKindId };
 				readonly stringSingle?: { readonly after?: LayoutKindId };
 				readonly templateLiteralType?: { readonly after?: LayoutKindId };
+				readonly this?: { readonly after?: LayoutKindId };
+				readonly true?: { readonly after?: LayoutKindId };
 				readonly tupleType?: { readonly after?: LayoutKindId };
 				readonly typeQuery?: { readonly after?: LayoutKindId };
 				readonly typeQueryCallExpressionInTypeAnnotation?: { readonly after?: LayoutKindId };
 				readonly typeQueryMemberExpressionInTypeAnnotation?: { readonly after?: LayoutKindId };
+				readonly undefined?: { readonly after?: LayoutKindId };
 				readonly unionType?: { readonly after?: LayoutKindId };
 			};
 		};
@@ -14118,6 +14154,8 @@ export namespace Types {
 				readonly constructorType?: { readonly after?: LayoutKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly end?: LayoutKindId;
+				readonly existentialType?: { readonly after?: LayoutKindId };
+				readonly false?: { readonly after?: LayoutKindId };
 				readonly flowMaybeType?: { readonly after?: LayoutKindId };
 				readonly functionType?: { readonly after?: LayoutKindId };
 				readonly genericType?: { readonly after?: LayoutKindId };
@@ -14127,6 +14165,7 @@ export namespace Types {
 				readonly literalTypeNegativeNumber?: { readonly after?: LayoutKindId };
 				readonly lookupType?: { readonly after?: LayoutKindId };
 				readonly nestedTypeIdentifier?: { readonly after?: LayoutKindId };
+				readonly null?: { readonly after?: LayoutKindId };
 				readonly objectType?: { readonly after?: LayoutKindId };
 				readonly parenthesizedType?: { readonly after?: LayoutKindId };
 				readonly readonlyType?: { readonly after?: LayoutKindId };
@@ -14137,10 +14176,13 @@ export namespace Types {
 				readonly stringDouble?: { readonly after?: LayoutKindId };
 				readonly stringSingle?: { readonly after?: LayoutKindId };
 				readonly templateLiteralType?: { readonly after?: LayoutKindId };
+				readonly this?: { readonly after?: LayoutKindId };
+				readonly true?: { readonly after?: LayoutKindId };
 				readonly tupleType?: { readonly after?: LayoutKindId };
 				readonly typeQuery?: { readonly after?: LayoutKindId };
 				readonly typeQueryCallExpressionInTypeAnnotation?: { readonly after?: LayoutKindId };
 				readonly typeQueryMemberExpressionInTypeAnnotation?: { readonly after?: LayoutKindId };
+				readonly undefined?: { readonly after?: LayoutKindId };
 				readonly unionType?: { readonly after?: LayoutKindId };
 			};
 		};
@@ -14176,6 +14218,8 @@ export namespace TupleTypeMembers {
 				readonly constructorType?: { readonly after?: LayoutKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly end?: LayoutKindId;
+				readonly existentialType?: { readonly after?: LayoutKindId };
+				readonly false?: { readonly after?: LayoutKindId };
 				readonly flowMaybeType?: { readonly after?: LayoutKindId };
 				readonly functionType?: { readonly after?: LayoutKindId };
 				readonly genericType?: { readonly after?: LayoutKindId };
@@ -14185,6 +14229,7 @@ export namespace TupleTypeMembers {
 				readonly literalTypeNegativeNumber?: { readonly after?: LayoutKindId };
 				readonly lookupType?: { readonly after?: LayoutKindId };
 				readonly nestedTypeIdentifier?: { readonly after?: LayoutKindId };
+				readonly null?: { readonly after?: LayoutKindId };
 				readonly objectType?: { readonly after?: LayoutKindId };
 				readonly optionalTupleParameter?: { readonly after?: LayoutKindId };
 				readonly optionalType?: { readonly after?: LayoutKindId };
@@ -14198,11 +14243,14 @@ export namespace TupleTypeMembers {
 				readonly stringDouble?: { readonly after?: LayoutKindId };
 				readonly stringSingle?: { readonly after?: LayoutKindId };
 				readonly templateLiteralType?: { readonly after?: LayoutKindId };
+				readonly this?: { readonly after?: LayoutKindId };
+				readonly true?: { readonly after?: LayoutKindId };
 				readonly tupleParameter?: { readonly after?: LayoutKindId };
 				readonly tupleType?: { readonly after?: LayoutKindId };
 				readonly typeQuery?: { readonly after?: LayoutKindId };
 				readonly typeQueryCallExpressionInTypeAnnotation?: { readonly after?: LayoutKindId };
 				readonly typeQueryMemberExpressionInTypeAnnotation?: { readonly after?: LayoutKindId };
+				readonly undefined?: { readonly after?: LayoutKindId };
 				readonly unionType?: { readonly after?: LayoutKindId };
 			};
 		};
@@ -14380,6 +14428,7 @@ export namespace ClassBodyMemberDeclaration {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
 			readonly comma?: { readonly before?: LayoutKindId };
+			readonly semi?: { readonly before?: LayoutKindId };
 			readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.Comma;
 		};
 	}

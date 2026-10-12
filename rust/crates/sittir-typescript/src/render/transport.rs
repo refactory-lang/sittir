@@ -494,33 +494,44 @@ pub enum AnyTransport {
     #[kind(kind::IMPORT)]
     Import,
     #[kind(kind::EMPTY_STATEMENT)]
-    EmptyStatement,
+    #[transport(edged)]
+    EmptyStatement(::sittir_core::options::Edges),
     #[kind(kind::OPTIONAL_CHAIN)]
     OptionalChain,
     #[kind(kind::THIS)]
-    This,
+    #[transport(edged)]
+    This(::sittir_core::options::Edges),
     #[kind(kind::SUPER)]
-    Super,
+    #[transport(edged)]
+    Super(::sittir_core::options::Edges),
     #[kind(kind::TRUE)]
-    True,
+    #[transport(edged)]
+    True(::sittir_core::options::Edges),
     #[kind(kind::FALSE)]
-    False,
+    #[transport(edged)]
+    False(::sittir_core::options::Edges),
     #[kind(kind::NULL)]
-    Null,
+    #[transport(edged)]
+    Null(::sittir_core::options::Edges),
     #[kind(kind::UNDEFINED)]
-    Undefined,
+    #[transport(edged)]
+    Undefined(::sittir_core::options::Edges),
     #[kind(kind::OVERRIDE_MODIFIER)]
     OverrideModifier,
     #[kind(kind::EXISTENTIAL_TYPE)]
-    ExistentialType,
+    #[transport(edged)]
+    ExistentialType(::sittir_core::options::Edges),
     #[kind(kind::_EMPTY_MEMBER)]
-    EmptyMember,
+    #[transport(edged)]
+    EmptyMember(::sittir_core::options::Edges),
     #[kind(kind::_OPTIONAL_CHAIN_MARKER)]
     OptionalChainMarker,
     #[kind(kind::META_PROPERTY_NEW_TARGET)]
-    MetaPropertyNewTarget,
+    #[transport(edged)]
+    MetaPropertyNewTarget(::sittir_core::options::Edges),
     #[kind(kind::META_PROPERTY_IMPORT_META)]
-    MetaPropertyImportMeta,
+    #[transport(edged)]
+    MetaPropertyImportMeta(::sittir_core::options::Edges),
     #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
     #[kind(kind::_FUNCTION_SIGNATURE_AUTOMATIC_SEMICOLON)]
@@ -1066,20 +1077,20 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::TypeIdentifier(t) => t.prepare(ctx),
             AnyTransport::InterfaceBody(t) => t.prepare(ctx),
             AnyTransport::Import => Ok(()),
-            AnyTransport::EmptyStatement => Ok(()),
+            AnyTransport::EmptyStatement(_) => Ok(()),
             AnyTransport::OptionalChain => Ok(()),
-            AnyTransport::This => Ok(()),
-            AnyTransport::Super => Ok(()),
-            AnyTransport::True => Ok(()),
-            AnyTransport::False => Ok(()),
-            AnyTransport::Null => Ok(()),
-            AnyTransport::Undefined => Ok(()),
+            AnyTransport::This(_) => Ok(()),
+            AnyTransport::Super(_) => Ok(()),
+            AnyTransport::True(_) => Ok(()),
+            AnyTransport::False(_) => Ok(()),
+            AnyTransport::Null(_) => Ok(()),
+            AnyTransport::Undefined(_) => Ok(()),
             AnyTransport::OverrideModifier => Ok(()),
-            AnyTransport::ExistentialType => Ok(()),
-            AnyTransport::EmptyMember => Ok(()),
+            AnyTransport::ExistentialType(_) => Ok(()),
+            AnyTransport::EmptyMember(_) => Ok(()),
             AnyTransport::OptionalChainMarker => Ok(()),
-            AnyTransport::MetaPropertyNewTarget => Ok(()),
-            AnyTransport::MetaPropertyImportMeta => Ok(()),
+            AnyTransport::MetaPropertyNewTarget(_) => Ok(()),
+            AnyTransport::MetaPropertyImportMeta(_) => Ok(()),
             AnyTransport::AutomaticSemicolon => Ok(()),
             AnyTransport::FunctionSignatureAutomaticSemicolon => Ok(()),
             AnyTransport::Tight => Ok(()),
@@ -1472,20 +1483,20 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::TypeIdentifier(t) => t.source_gap(),
             AnyTransport::InterfaceBody(t) => t.source_gap(),
             AnyTransport::Import => None,
-            AnyTransport::EmptyStatement => None,
+            AnyTransport::EmptyStatement(_) => None,
             AnyTransport::OptionalChain => None,
-            AnyTransport::This => None,
-            AnyTransport::Super => None,
-            AnyTransport::True => None,
-            AnyTransport::False => None,
-            AnyTransport::Null => None,
-            AnyTransport::Undefined => None,
+            AnyTransport::This(_) => None,
+            AnyTransport::Super(_) => None,
+            AnyTransport::True(_) => None,
+            AnyTransport::False(_) => None,
+            AnyTransport::Null(_) => None,
+            AnyTransport::Undefined(_) => None,
             AnyTransport::OverrideModifier => None,
-            AnyTransport::ExistentialType => None,
-            AnyTransport::EmptyMember => None,
+            AnyTransport::ExistentialType(_) => None,
+            AnyTransport::EmptyMember(_) => None,
             AnyTransport::OptionalChainMarker => None,
-            AnyTransport::MetaPropertyNewTarget => None,
-            AnyTransport::MetaPropertyImportMeta => None,
+            AnyTransport::MetaPropertyNewTarget(_) => None,
+            AnyTransport::MetaPropertyImportMeta(_) => None,
             AnyTransport::AutomaticSemicolon => None,
             AnyTransport::FunctionSignatureAutomaticSemicolon => None,
             AnyTransport::Tight => None,
@@ -1878,20 +1889,20 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::TypeIdentifier(t) => t.gap_edges(),
             AnyTransport::InterfaceBody(t) => t.gap_edges(),
             AnyTransport::Import => None,
-            AnyTransport::EmptyStatement => None,
+            AnyTransport::EmptyStatement(edges) => Some(edges),
             AnyTransport::OptionalChain => None,
-            AnyTransport::This => None,
-            AnyTransport::Super => None,
-            AnyTransport::True => None,
-            AnyTransport::False => None,
-            AnyTransport::Null => None,
-            AnyTransport::Undefined => None,
+            AnyTransport::This(edges) => Some(edges),
+            AnyTransport::Super(edges) => Some(edges),
+            AnyTransport::True(edges) => Some(edges),
+            AnyTransport::False(edges) => Some(edges),
+            AnyTransport::Null(edges) => Some(edges),
+            AnyTransport::Undefined(edges) => Some(edges),
             AnyTransport::OverrideModifier => None,
-            AnyTransport::ExistentialType => None,
-            AnyTransport::EmptyMember => None,
+            AnyTransport::ExistentialType(edges) => Some(edges),
+            AnyTransport::EmptyMember(edges) => Some(edges),
             AnyTransport::OptionalChainMarker => None,
-            AnyTransport::MetaPropertyNewTarget => None,
-            AnyTransport::MetaPropertyImportMeta => None,
+            AnyTransport::MetaPropertyNewTarget(edges) => Some(edges),
+            AnyTransport::MetaPropertyImportMeta(edges) => Some(edges),
             AnyTransport::AutomaticSemicolon => None,
             AnyTransport::FunctionSignatureAutomaticSemicolon => None,
             AnyTransport::Tight => None,
@@ -2284,20 +2295,20 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::TypeIdentifier(t) => t.snapshot_edge(),
             AnyTransport::InterfaceBody(t) => t.snapshot_edge(),
             AnyTransport::Import => None,
-            AnyTransport::EmptyStatement => None,
+            AnyTransport::EmptyStatement(_) => None,
             AnyTransport::OptionalChain => None,
-            AnyTransport::This => None,
-            AnyTransport::Super => None,
-            AnyTransport::True => None,
-            AnyTransport::False => None,
-            AnyTransport::Null => None,
-            AnyTransport::Undefined => None,
+            AnyTransport::This(_) => None,
+            AnyTransport::Super(_) => None,
+            AnyTransport::True(_) => None,
+            AnyTransport::False(_) => None,
+            AnyTransport::Null(_) => None,
+            AnyTransport::Undefined(_) => None,
             AnyTransport::OverrideModifier => None,
-            AnyTransport::ExistentialType => None,
-            AnyTransport::EmptyMember => None,
+            AnyTransport::ExistentialType(_) => None,
+            AnyTransport::EmptyMember(_) => None,
             AnyTransport::OptionalChainMarker => None,
-            AnyTransport::MetaPropertyNewTarget => None,
-            AnyTransport::MetaPropertyImportMeta => None,
+            AnyTransport::MetaPropertyNewTarget(_) => None,
+            AnyTransport::MetaPropertyImportMeta(_) => None,
             AnyTransport::AutomaticSemicolon => None,
             AnyTransport::FunctionSignatureAutomaticSemicolon => None,
             AnyTransport::Tight => None,
@@ -2951,7 +2962,8 @@ pub enum StatementTransport {
     #[kind(kind::THROW_STATEMENT)]
     ThrowStatement(ThrowStatementTransport),
     #[kind(kind::EMPTY_STATEMENT)]
-    EmptyStatement,
+    #[transport(edged)]
+    EmptyStatement(::sittir_core::options::Edges),
     #[kind(kind::LABELED_STATEMENT)]
     LabeledStatement(LabeledStatementTransport),
 }
@@ -2977,7 +2989,7 @@ impl ::sittir_core::prepare::Prepare for StatementTransport {
             StatementTransport::ContinueStatement(t) => t.prepare(ctx),
             StatementTransport::ReturnStatement(t) => t.prepare(ctx),
             StatementTransport::ThrowStatement(t) => t.prepare(ctx),
-            StatementTransport::EmptyStatement => Ok(()),
+            StatementTransport::EmptyStatement(_) => Ok(()),
             StatementTransport::LabeledStatement(t) => t.prepare(ctx),
         }
     }
@@ -3001,7 +3013,7 @@ impl ::sittir_core::prepare::Prepare for StatementTransport {
             StatementTransport::ContinueStatement(t) => t.source_gap(),
             StatementTransport::ReturnStatement(t) => t.source_gap(),
             StatementTransport::ThrowStatement(t) => t.source_gap(),
-            StatementTransport::EmptyStatement => None,
+            StatementTransport::EmptyStatement(_) => None,
             StatementTransport::LabeledStatement(t) => t.source_gap(),
         }
     }
@@ -3025,7 +3037,7 @@ impl ::sittir_core::prepare::Prepare for StatementTransport {
             StatementTransport::ContinueStatement(t) => t.gap_edges(),
             StatementTransport::ReturnStatement(t) => t.gap_edges(),
             StatementTransport::ThrowStatement(t) => t.gap_edges(),
-            StatementTransport::EmptyStatement => None,
+            StatementTransport::EmptyStatement(edges) => Some(edges),
             StatementTransport::LabeledStatement(t) => t.gap_edges(),
         }
     }
@@ -3049,7 +3061,7 @@ impl ::sittir_core::prepare::Prepare for StatementTransport {
             StatementTransport::ContinueStatement(t) => t.snapshot_edge(),
             StatementTransport::ReturnStatement(t) => t.snapshot_edge(),
             StatementTransport::ThrowStatement(t) => t.snapshot_edge(),
-            StatementTransport::EmptyStatement => None,
+            StatementTransport::EmptyStatement(_) => None,
             StatementTransport::LabeledStatement(t) => t.snapshot_edge(),
         }
     }
@@ -3079,7 +3091,7 @@ impl ::sittir_core::view::KindOf for StatementTransport {
             Self::ContinueStatement(inner) => inner.kind_in(kinds),
             Self::ReturnStatement(inner) => inner.kind_in(kinds),
             Self::ThrowStatement(inner) => inner.kind_in(kinds),
-            Self::EmptyStatement => [::sittir_core::types::KindId(224)].iter().any(|k| kinds.contains(k)),
+            Self::EmptyStatement(_) => [::sittir_core::types::KindId(224)].iter().any(|k| kinds.contains(k)),
             Self::LabeledStatement(inner) => inner.kind_in(kinds),
         }
     }
@@ -3429,7 +3441,8 @@ pub enum PrimaryExpressionTransport {
     #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED, kind::PARENTHESIZED_EXPRESSION_SEQUENCE, kind::PARENTHESIZED_EXPRESSION)]
     ParenthesizedExpression(ParenthesizedExpressionTransport),
     #[kind(kind::UNDEFINED)]
-    Undefined,
+    #[transport(edged)]
+    Undefined(::sittir_core::options::Edges),
     #[kind(kind::IDENTIFIER)]
     Identifier(IdentifierTransport),
     #[kind(kind::DECLARE_KEYWORD)]
@@ -3477,9 +3490,11 @@ pub enum PrimaryExpressionTransport {
     #[kind(kind::LET_KEYWORD)]
     LetKeyword,
     #[kind(kind::THIS)]
-    This,
+    #[transport(edged)]
+    This(::sittir_core::options::Edges),
     #[kind(kind::SUPER)]
-    Super,
+    #[transport(edged)]
+    Super(::sittir_core::options::Edges),
     #[kind(kind::NUMBER_HEX, kind::NUMBER_FLOAT_POINT, kind::NUMBER_FLOAT_LEADING_POINT, kind::NUMBER_FLOAT_SCIENTIFIC, kind::NUMBER_DECIMAL, kind::NUMBER_BINARY, kind::NUMBER_OCTAL, kind::NUMBER_BIGINT_HEX, kind::NUMBER_BIGINT_BINARY, kind::NUMBER_BIGINT_OCTAL, kind::NUMBER_BIGINT_DECIMAL, kind::NUMBER, kind::NUMBER_BIGINT)]
     Number(NumberTransport),
     #[kind(kind::STRING_DOUBLE, kind::STRING_SINGLE, kind::STRING)]
@@ -3489,11 +3504,14 @@ pub enum PrimaryExpressionTransport {
     #[kind(kind::REGEX)]
     Regex(RegexTransport),
     #[kind(kind::TRUE)]
-    True,
+    #[transport(edged)]
+    True(::sittir_core::options::Edges),
     #[kind(kind::FALSE)]
-    False,
+    #[transport(edged)]
+    False(::sittir_core::options::Edges),
     #[kind(kind::NULL)]
-    Null,
+    #[transport(edged)]
+    Null(::sittir_core::options::Edges),
     #[kind(kind::OBJECT)]
     Object(ObjectTransport),
     #[kind(kind::ARRAY)]
@@ -3522,7 +3540,7 @@ impl ::sittir_core::prepare::Prepare for PrimaryExpressionTransport {
             PrimaryExpressionTransport::SubscriptExpression(t) => t.prepare(ctx),
             PrimaryExpressionTransport::MemberExpression(t) => t.prepare(ctx),
             PrimaryExpressionTransport::ParenthesizedExpression(t) => t.prepare(ctx),
-            PrimaryExpressionTransport::Undefined => Ok(()),
+            PrimaryExpressionTransport::Undefined(_) => Ok(()),
             PrimaryExpressionTransport::Identifier(t) => t.prepare(ctx),
             PrimaryExpressionTransport::DeclareKeyword => Ok(()),
             PrimaryExpressionTransport::NamespaceKeyword => Ok(()),
@@ -3546,15 +3564,15 @@ impl ::sittir_core::prepare::Prepare for PrimaryExpressionTransport {
             PrimaryExpressionTransport::AsyncKeyword => Ok(()),
             PrimaryExpressionTransport::StaticKeyword => Ok(()),
             PrimaryExpressionTransport::LetKeyword => Ok(()),
-            PrimaryExpressionTransport::This => Ok(()),
-            PrimaryExpressionTransport::Super => Ok(()),
+            PrimaryExpressionTransport::This(_) => Ok(()),
+            PrimaryExpressionTransport::Super(_) => Ok(()),
             PrimaryExpressionTransport::Number(t) => t.prepare(ctx),
             PrimaryExpressionTransport::String(t) => t.prepare(ctx),
             PrimaryExpressionTransport::TemplateString(t) => t.prepare(ctx),
             PrimaryExpressionTransport::Regex(t) => t.prepare(ctx),
-            PrimaryExpressionTransport::True => Ok(()),
-            PrimaryExpressionTransport::False => Ok(()),
-            PrimaryExpressionTransport::Null => Ok(()),
+            PrimaryExpressionTransport::True(_) => Ok(()),
+            PrimaryExpressionTransport::False(_) => Ok(()),
+            PrimaryExpressionTransport::Null(_) => Ok(()),
             PrimaryExpressionTransport::Object(t) => t.prepare(ctx),
             PrimaryExpressionTransport::Array(t) => t.prepare(ctx),
             PrimaryExpressionTransport::FunctionExpression(t) => t.prepare(ctx),
@@ -3572,7 +3590,7 @@ impl ::sittir_core::prepare::Prepare for PrimaryExpressionTransport {
             PrimaryExpressionTransport::SubscriptExpression(t) => t.source_gap(),
             PrimaryExpressionTransport::MemberExpression(t) => t.source_gap(),
             PrimaryExpressionTransport::ParenthesizedExpression(t) => t.source_gap(),
-            PrimaryExpressionTransport::Undefined => None,
+            PrimaryExpressionTransport::Undefined(_) => None,
             PrimaryExpressionTransport::Identifier(t) => t.source_gap(),
             PrimaryExpressionTransport::DeclareKeyword => None,
             PrimaryExpressionTransport::NamespaceKeyword => None,
@@ -3596,15 +3614,15 @@ impl ::sittir_core::prepare::Prepare for PrimaryExpressionTransport {
             PrimaryExpressionTransport::AsyncKeyword => None,
             PrimaryExpressionTransport::StaticKeyword => None,
             PrimaryExpressionTransport::LetKeyword => None,
-            PrimaryExpressionTransport::This => None,
-            PrimaryExpressionTransport::Super => None,
+            PrimaryExpressionTransport::This(_) => None,
+            PrimaryExpressionTransport::Super(_) => None,
             PrimaryExpressionTransport::Number(t) => t.source_gap(),
             PrimaryExpressionTransport::String(t) => t.source_gap(),
             PrimaryExpressionTransport::TemplateString(t) => t.source_gap(),
             PrimaryExpressionTransport::Regex(t) => t.source_gap(),
-            PrimaryExpressionTransport::True => None,
-            PrimaryExpressionTransport::False => None,
-            PrimaryExpressionTransport::Null => None,
+            PrimaryExpressionTransport::True(_) => None,
+            PrimaryExpressionTransport::False(_) => None,
+            PrimaryExpressionTransport::Null(_) => None,
             PrimaryExpressionTransport::Object(t) => t.source_gap(),
             PrimaryExpressionTransport::Array(t) => t.source_gap(),
             PrimaryExpressionTransport::FunctionExpression(t) => t.source_gap(),
@@ -3622,7 +3640,7 @@ impl ::sittir_core::prepare::Prepare for PrimaryExpressionTransport {
             PrimaryExpressionTransport::SubscriptExpression(t) => t.gap_edges(),
             PrimaryExpressionTransport::MemberExpression(t) => t.gap_edges(),
             PrimaryExpressionTransport::ParenthesizedExpression(t) => t.gap_edges(),
-            PrimaryExpressionTransport::Undefined => None,
+            PrimaryExpressionTransport::Undefined(edges) => Some(edges),
             PrimaryExpressionTransport::Identifier(t) => t.gap_edges(),
             PrimaryExpressionTransport::DeclareKeyword => None,
             PrimaryExpressionTransport::NamespaceKeyword => None,
@@ -3646,15 +3664,15 @@ impl ::sittir_core::prepare::Prepare for PrimaryExpressionTransport {
             PrimaryExpressionTransport::AsyncKeyword => None,
             PrimaryExpressionTransport::StaticKeyword => None,
             PrimaryExpressionTransport::LetKeyword => None,
-            PrimaryExpressionTransport::This => None,
-            PrimaryExpressionTransport::Super => None,
+            PrimaryExpressionTransport::This(edges) => Some(edges),
+            PrimaryExpressionTransport::Super(edges) => Some(edges),
             PrimaryExpressionTransport::Number(t) => t.gap_edges(),
             PrimaryExpressionTransport::String(t) => t.gap_edges(),
             PrimaryExpressionTransport::TemplateString(t) => t.gap_edges(),
             PrimaryExpressionTransport::Regex(t) => t.gap_edges(),
-            PrimaryExpressionTransport::True => None,
-            PrimaryExpressionTransport::False => None,
-            PrimaryExpressionTransport::Null => None,
+            PrimaryExpressionTransport::True(edges) => Some(edges),
+            PrimaryExpressionTransport::False(edges) => Some(edges),
+            PrimaryExpressionTransport::Null(edges) => Some(edges),
             PrimaryExpressionTransport::Object(t) => t.gap_edges(),
             PrimaryExpressionTransport::Array(t) => t.gap_edges(),
             PrimaryExpressionTransport::FunctionExpression(t) => t.gap_edges(),
@@ -3672,7 +3690,7 @@ impl ::sittir_core::prepare::Prepare for PrimaryExpressionTransport {
             PrimaryExpressionTransport::SubscriptExpression(t) => t.snapshot_edge(),
             PrimaryExpressionTransport::MemberExpression(t) => t.snapshot_edge(),
             PrimaryExpressionTransport::ParenthesizedExpression(t) => t.snapshot_edge(),
-            PrimaryExpressionTransport::Undefined => None,
+            PrimaryExpressionTransport::Undefined(_) => None,
             PrimaryExpressionTransport::Identifier(t) => t.snapshot_edge(),
             PrimaryExpressionTransport::DeclareKeyword => None,
             PrimaryExpressionTransport::NamespaceKeyword => None,
@@ -3696,15 +3714,15 @@ impl ::sittir_core::prepare::Prepare for PrimaryExpressionTransport {
             PrimaryExpressionTransport::AsyncKeyword => None,
             PrimaryExpressionTransport::StaticKeyword => None,
             PrimaryExpressionTransport::LetKeyword => None,
-            PrimaryExpressionTransport::This => None,
-            PrimaryExpressionTransport::Super => None,
+            PrimaryExpressionTransport::This(_) => None,
+            PrimaryExpressionTransport::Super(_) => None,
             PrimaryExpressionTransport::Number(t) => t.snapshot_edge(),
             PrimaryExpressionTransport::String(t) => t.snapshot_edge(),
             PrimaryExpressionTransport::TemplateString(t) => t.snapshot_edge(),
             PrimaryExpressionTransport::Regex(t) => t.snapshot_edge(),
-            PrimaryExpressionTransport::True => None,
-            PrimaryExpressionTransport::False => None,
-            PrimaryExpressionTransport::Null => None,
+            PrimaryExpressionTransport::True(_) => None,
+            PrimaryExpressionTransport::False(_) => None,
+            PrimaryExpressionTransport::Null(_) => None,
             PrimaryExpressionTransport::Object(t) => t.snapshot_edge(),
             PrimaryExpressionTransport::Array(t) => t.snapshot_edge(),
             PrimaryExpressionTransport::FunctionExpression(t) => t.snapshot_edge(),
@@ -3728,7 +3746,7 @@ impl ::sittir_core::view::KindOf for PrimaryExpressionTransport {
             Self::SubscriptExpression(inner) => inner.kind_in(kinds),
             Self::MemberExpression(inner) => inner.kind_in(kinds),
             Self::ParenthesizedExpression(inner) => inner.kind_in(kinds),
-            Self::Undefined => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
+            Self::Undefined(_) => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
             Self::Identifier(inner) => inner.kind_in(kinds),
             Self::DeclareKeyword => [::sittir_core::types::KindId(30)].iter().any(|k| kinds.contains(k)),
             Self::NamespaceKeyword => [::sittir_core::types::KindId(31)].iter().any(|k| kinds.contains(k)),
@@ -3752,15 +3770,15 @@ impl ::sittir_core::view::KindOf for PrimaryExpressionTransport {
             Self::AsyncKeyword => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
             Self::StaticKeyword => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
             Self::LetKeyword => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
-            Self::This => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
-            Self::Super => [::sittir_core::types::KindId(120)].iter().any(|k| kinds.contains(k)),
+            Self::This(_) => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(120)].iter().any(|k| kinds.contains(k)),
             Self::Number(inner) => inner.kind_in(kinds),
             Self::String(inner) => inner.kind_in(kinds),
             Self::TemplateString(inner) => inner.kind_in(kinds),
             Self::Regex(inner) => inner.kind_in(kinds),
-            Self::True => [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k)),
-            Self::False => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
-            Self::Null => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
+            Self::True(_) => [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k)),
+            Self::False(_) => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
+            Self::Null(_) => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
             Self::Object(inner) => inner.kind_in(kinds),
             Self::Array(inner) => inner.kind_in(kinds),
             Self::FunctionExpression(inner) => inner.kind_in(kinds),
@@ -3780,7 +3798,7 @@ fn primary_expression_transport_to_any(t: PrimaryExpressionTransport) -> AnyTran
         PrimaryExpressionTransport::SubscriptExpression(inner) => AnyTransport::SubscriptExpression(inner),
         PrimaryExpressionTransport::MemberExpression(inner) => AnyTransport::MemberExpression(inner),
         PrimaryExpressionTransport::ParenthesizedExpression(inner) => parenthesized_expression_transport_to_any(inner),
-        PrimaryExpressionTransport::Undefined => AnyTransport::Undefined,
+        PrimaryExpressionTransport::Undefined(edges) => AnyTransport::Undefined(edges),
         PrimaryExpressionTransport::Identifier(inner) => AnyTransport::Identifier(inner),
         PrimaryExpressionTransport::DeclareKeyword => AnyTransport::DeclareKeyword,
         PrimaryExpressionTransport::NamespaceKeyword => AnyTransport::NamespaceKeyword,
@@ -3804,15 +3822,15 @@ fn primary_expression_transport_to_any(t: PrimaryExpressionTransport) -> AnyTran
         PrimaryExpressionTransport::AsyncKeyword => AnyTransport::AsyncKeyword,
         PrimaryExpressionTransport::StaticKeyword => AnyTransport::StaticKeyword,
         PrimaryExpressionTransport::LetKeyword => AnyTransport::LetKeyword,
-        PrimaryExpressionTransport::This => AnyTransport::This,
-        PrimaryExpressionTransport::Super => AnyTransport::Super,
+        PrimaryExpressionTransport::This(edges) => AnyTransport::This(edges),
+        PrimaryExpressionTransport::Super(edges) => AnyTransport::Super(edges),
         PrimaryExpressionTransport::Number(inner) => number_transport_to_any(inner),
         PrimaryExpressionTransport::String(inner) => string_transport_to_any(inner),
         PrimaryExpressionTransport::TemplateString(inner) => AnyTransport::TemplateString(inner),
         PrimaryExpressionTransport::Regex(inner) => AnyTransport::Regex(inner),
-        PrimaryExpressionTransport::True => AnyTransport::True,
-        PrimaryExpressionTransport::False => AnyTransport::False,
-        PrimaryExpressionTransport::Null => AnyTransport::Null,
+        PrimaryExpressionTransport::True(edges) => AnyTransport::True(edges),
+        PrimaryExpressionTransport::False(edges) => AnyTransport::False(edges),
+        PrimaryExpressionTransport::Null(edges) => AnyTransport::Null(edges),
         PrimaryExpressionTransport::Object(inner) => AnyTransport::Object(inner),
         PrimaryExpressionTransport::Array(inner) => AnyTransport::Array(inner),
         PrimaryExpressionTransport::FunctionExpression(inner) => AnyTransport::FunctionExpression(inner),
@@ -4144,16 +4162,36 @@ impl ::sittir_core::render::Render for NumberTransport {
 #[transport(choice)]
 pub enum MetaPropertyTransport {
     #[kind(kind::META_PROPERTY_NEW_TARGET)]
-    MetaPropertyNewTarget,
+    #[transport(edged)]
+    MetaPropertyNewTarget(::sittir_core::options::Edges),
     #[kind(kind::META_PROPERTY_IMPORT_META)]
-    MetaPropertyImportMeta,
+    #[transport(edged)]
+    MetaPropertyImportMeta(::sittir_core::options::Edges),
 }
 
 impl ::sittir_core::prepare::Prepare for MetaPropertyTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            MetaPropertyTransport::MetaPropertyNewTarget => Ok(()),
-            MetaPropertyTransport::MetaPropertyImportMeta => Ok(()),
+            MetaPropertyTransport::MetaPropertyNewTarget(_) => Ok(()),
+            MetaPropertyTransport::MetaPropertyImportMeta(_) => Ok(()),
+        }
+    }
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        match self {
+            MetaPropertyTransport::MetaPropertyNewTarget(_) => None,
+            MetaPropertyTransport::MetaPropertyImportMeta(_) => None,
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            MetaPropertyTransport::MetaPropertyNewTarget(edges) => Some(edges),
+            MetaPropertyTransport::MetaPropertyImportMeta(edges) => Some(edges),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            MetaPropertyTransport::MetaPropertyNewTarget(_) => None,
+            MetaPropertyTransport::MetaPropertyImportMeta(_) => None,
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -4164,16 +4202,16 @@ impl ::sittir_core::prepare::Prepare for MetaPropertyTransport {
 impl ::sittir_core::view::KindOf for MetaPropertyTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::MetaPropertyNewTarget => [::sittir_core::types::KindId(430)].iter().any(|k| kinds.contains(k)),
-            Self::MetaPropertyImportMeta => [::sittir_core::types::KindId(431)].iter().any(|k| kinds.contains(k)),
+            Self::MetaPropertyNewTarget(_) => [::sittir_core::types::KindId(430)].iter().any(|k| kinds.contains(k)),
+            Self::MetaPropertyImportMeta(_) => [::sittir_core::types::KindId(431)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
 
 fn meta_property_transport_to_any(t: MetaPropertyTransport) -> AnyTransport {
     match t {
-        MetaPropertyTransport::MetaPropertyNewTarget => AnyTransport::MetaPropertyNewTarget,
-        MetaPropertyTransport::MetaPropertyImportMeta => AnyTransport::MetaPropertyImportMeta,
+        MetaPropertyTransport::MetaPropertyNewTarget(edges) => AnyTransport::MetaPropertyNewTarget(edges),
+        MetaPropertyTransport::MetaPropertyImportMeta(edges) => AnyTransport::MetaPropertyImportMeta(edges),
     }
 }
 
@@ -4352,9 +4390,11 @@ pub enum PrimaryTypeTransport {
     #[kind(kind::INDEX_TYPE_QUERY)]
     IndexTypeQuery(IndexTypeQueryTransport),
     #[kind(kind::THIS, kind::_THIS_TYPE)]
-    This,
+    #[transport(edged)]
+    This(::sittir_core::options::Edges),
     #[kind(kind::EXISTENTIAL_TYPE)]
-    ExistentialType,
+    #[transport(edged)]
+    ExistentialType(::sittir_core::options::Edges),
     #[kind(kind::LITERAL_TYPE)]
     LiteralType(LiteralTypeTransport),
     #[kind(kind::LOOKUP_TYPE)]
@@ -4383,8 +4423,8 @@ impl ::sittir_core::prepare::Prepare for PrimaryTypeTransport {
             PrimaryTypeTransport::FlowMaybeType(t) => t.prepare(ctx),
             PrimaryTypeTransport::TypeQuery(t) => t.prepare(ctx),
             PrimaryTypeTransport::IndexTypeQuery(t) => t.prepare(ctx),
-            PrimaryTypeTransport::This => Ok(()),
-            PrimaryTypeTransport::ExistentialType => Ok(()),
+            PrimaryTypeTransport::This(_) => Ok(()),
+            PrimaryTypeTransport::ExistentialType(_) => Ok(()),
             PrimaryTypeTransport::LiteralType(t) => t.prepare(ctx),
             PrimaryTypeTransport::LookupType(t) => t.prepare(ctx),
             PrimaryTypeTransport::ConditionalType(t) => t.prepare(ctx),
@@ -4406,8 +4446,8 @@ impl ::sittir_core::prepare::Prepare for PrimaryTypeTransport {
             PrimaryTypeTransport::FlowMaybeType(t) => t.source_gap(),
             PrimaryTypeTransport::TypeQuery(t) => t.source_gap(),
             PrimaryTypeTransport::IndexTypeQuery(t) => t.source_gap(),
-            PrimaryTypeTransport::This => None,
-            PrimaryTypeTransport::ExistentialType => None,
+            PrimaryTypeTransport::This(_) => None,
+            PrimaryTypeTransport::ExistentialType(_) => None,
             PrimaryTypeTransport::LiteralType(t) => t.source_gap(),
             PrimaryTypeTransport::LookupType(t) => t.source_gap(),
             PrimaryTypeTransport::ConditionalType(t) => t.source_gap(),
@@ -4429,8 +4469,8 @@ impl ::sittir_core::prepare::Prepare for PrimaryTypeTransport {
             PrimaryTypeTransport::FlowMaybeType(t) => t.gap_edges(),
             PrimaryTypeTransport::TypeQuery(t) => t.gap_edges(),
             PrimaryTypeTransport::IndexTypeQuery(t) => t.gap_edges(),
-            PrimaryTypeTransport::This => None,
-            PrimaryTypeTransport::ExistentialType => None,
+            PrimaryTypeTransport::This(edges) => Some(edges),
+            PrimaryTypeTransport::ExistentialType(edges) => Some(edges),
             PrimaryTypeTransport::LiteralType(t) => t.gap_edges(),
             PrimaryTypeTransport::LookupType(t) => t.gap_edges(),
             PrimaryTypeTransport::ConditionalType(t) => t.gap_edges(),
@@ -4452,8 +4492,8 @@ impl ::sittir_core::prepare::Prepare for PrimaryTypeTransport {
             PrimaryTypeTransport::FlowMaybeType(t) => t.snapshot_edge(),
             PrimaryTypeTransport::TypeQuery(t) => t.snapshot_edge(),
             PrimaryTypeTransport::IndexTypeQuery(t) => t.snapshot_edge(),
-            PrimaryTypeTransport::This => None,
-            PrimaryTypeTransport::ExistentialType => None,
+            PrimaryTypeTransport::This(_) => None,
+            PrimaryTypeTransport::ExistentialType(_) => None,
             PrimaryTypeTransport::LiteralType(t) => t.snapshot_edge(),
             PrimaryTypeTransport::LookupType(t) => t.snapshot_edge(),
             PrimaryTypeTransport::ConditionalType(t) => t.snapshot_edge(),
@@ -4481,8 +4521,8 @@ impl ::sittir_core::view::KindOf for PrimaryTypeTransport {
             Self::FlowMaybeType(inner) => inner.kind_in(kinds),
             Self::TypeQuery(inner) => inner.kind_in(kinds),
             Self::IndexTypeQuery(inner) => inner.kind_in(kinds),
-            Self::This => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
-            Self::ExistentialType => [::sittir_core::types::KindId(356)].iter().any(|k| kinds.contains(k)),
+            Self::This(_) => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
+            Self::ExistentialType(_) => [::sittir_core::types::KindId(356)].iter().any(|k| kinds.contains(k)),
             Self::LiteralType(inner) => inner.kind_in(kinds),
             Self::LookupType(inner) => inner.kind_in(kinds),
             Self::ConditionalType(inner) => inner.kind_in(kinds),
@@ -4506,8 +4546,8 @@ fn primary_type_transport_to_any(t: PrimaryTypeTransport) -> AnyTransport {
         PrimaryTypeTransport::FlowMaybeType(inner) => AnyTransport::FlowMaybeType(inner),
         PrimaryTypeTransport::TypeQuery(inner) => AnyTransport::TypeQuery(inner),
         PrimaryTypeTransport::IndexTypeQuery(inner) => AnyTransport::IndexTypeQuery(inner),
-        PrimaryTypeTransport::This => AnyTransport::This,
-        PrimaryTypeTransport::ExistentialType => AnyTransport::ExistentialType,
+        PrimaryTypeTransport::This(edges) => AnyTransport::This(edges),
+        PrimaryTypeTransport::ExistentialType(edges) => AnyTransport::ExistentialType(edges),
         PrimaryTypeTransport::LiteralType(inner) => AnyTransport::LiteralType(inner),
         PrimaryTypeTransport::LookupType(inner) => AnyTransport::LookupType(inner),
         PrimaryTypeTransport::ConditionalType(inner) => AnyTransport::ConditionalType(inner),
@@ -4535,7 +4575,8 @@ pub enum ClassBodyMemberTransport {
     #[kind(kind::CLASS_BODY_MEMBER_DECLARATION)]
     ClassBodyMemberDeclaration(ClassBodyMemberDeclarationTransport),
     #[kind(kind::_EMPTY_MEMBER)]
-    EmptyMember,
+    #[transport(edged)]
+    EmptyMember(::sittir_core::options::Edges),
 }
 
 impl ::sittir_core::prepare::Prepare for ClassBodyMemberTransport {
@@ -4545,7 +4586,7 @@ impl ::sittir_core::prepare::Prepare for ClassBodyMemberTransport {
             ClassBodyMemberTransport::ClassBodyMemberMethodSig(t) => t.prepare(ctx),
             ClassBodyMemberTransport::ClassStaticBlock(t) => t.prepare(ctx),
             ClassBodyMemberTransport::ClassBodyMemberDeclaration(t) => t.prepare(ctx),
-            ClassBodyMemberTransport::EmptyMember => Ok(()),
+            ClassBodyMemberTransport::EmptyMember(_) => Ok(()),
         }
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -4554,7 +4595,7 @@ impl ::sittir_core::prepare::Prepare for ClassBodyMemberTransport {
             ClassBodyMemberTransport::ClassBodyMemberMethodSig(t) => t.source_gap(),
             ClassBodyMemberTransport::ClassStaticBlock(t) => t.source_gap(),
             ClassBodyMemberTransport::ClassBodyMemberDeclaration(t) => t.source_gap(),
-            ClassBodyMemberTransport::EmptyMember => None,
+            ClassBodyMemberTransport::EmptyMember(_) => None,
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -4563,7 +4604,7 @@ impl ::sittir_core::prepare::Prepare for ClassBodyMemberTransport {
             ClassBodyMemberTransport::ClassBodyMemberMethodSig(t) => t.gap_edges(),
             ClassBodyMemberTransport::ClassStaticBlock(t) => t.gap_edges(),
             ClassBodyMemberTransport::ClassBodyMemberDeclaration(t) => t.gap_edges(),
-            ClassBodyMemberTransport::EmptyMember => None,
+            ClassBodyMemberTransport::EmptyMember(edges) => Some(edges),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -4572,7 +4613,7 @@ impl ::sittir_core::prepare::Prepare for ClassBodyMemberTransport {
             ClassBodyMemberTransport::ClassBodyMemberMethodSig(t) => t.snapshot_edge(),
             ClassBodyMemberTransport::ClassStaticBlock(t) => t.snapshot_edge(),
             ClassBodyMemberTransport::ClassBodyMemberDeclaration(t) => t.snapshot_edge(),
-            ClassBodyMemberTransport::EmptyMember => None,
+            ClassBodyMemberTransport::EmptyMember(_) => None,
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -4587,7 +4628,7 @@ impl ::sittir_core::view::KindOf for ClassBodyMemberTransport {
             Self::ClassBodyMemberMethodSig(inner) => inner.kind_in(kinds),
             Self::ClassStaticBlock(inner) => inner.kind_in(kinds),
             Self::ClassBodyMemberDeclaration(inner) => inner.kind_in(kinds),
-            Self::EmptyMember => [::sittir_core::types::KindId(398)].iter().any(|k| kinds.contains(k)),
+            Self::EmptyMember(_) => [::sittir_core::types::KindId(398)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -5291,7 +5332,8 @@ pub enum ExpressionStatementExpressionTransportSlot {
     #[kind(kind::SEQUENCE_EXPRESSION)]
     SequenceExpression(SequenceExpressionTransport),
     #[kind(kind::UNDEFINED)]
-    Undefined,
+    #[transport(edged)]
+    Undefined(::sittir_core::options::Edges),
     #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
     #[kind(kind::NAMESPACE_KEYWORD)]
@@ -5337,19 +5379,26 @@ pub enum ExpressionStatementExpressionTransportSlot {
     #[kind(kind::LET_KEYWORD)]
     LetKeyword,
     #[kind(kind::THIS)]
-    This,
+    #[transport(edged)]
+    This(::sittir_core::options::Edges),
     #[kind(kind::SUPER)]
-    Super,
+    #[transport(edged)]
+    Super(::sittir_core::options::Edges),
     #[kind(kind::TRUE)]
-    True,
+    #[transport(edged)]
+    True(::sittir_core::options::Edges),
     #[kind(kind::FALSE)]
-    False,
+    #[transport(edged)]
+    False(::sittir_core::options::Edges),
     #[kind(kind::NULL)]
-    Null,
+    #[transport(edged)]
+    Null(::sittir_core::options::Edges),
     #[kind(kind::META_PROPERTY_NEW_TARGET)]
-    MetaPropertyNewTarget,
+    #[transport(edged)]
+    MetaPropertyNewTarget(::sittir_core::options::Edges),
     #[kind(kind::META_PROPERTY_IMPORT_META)]
-    MetaPropertyImportMeta,
+    #[transport(edged)]
+    MetaPropertyImportMeta(::sittir_core::options::Edges),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -5403,7 +5452,7 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementExpressionTransportS
             ExpressionStatementExpressionTransportSlot::NewExpression(t) => t.prepare(ctx),
             ExpressionStatementExpressionTransportSlot::YieldExpression(t) => t.prepare(ctx),
             ExpressionStatementExpressionTransportSlot::SequenceExpression(t) => t.prepare(ctx),
-            ExpressionStatementExpressionTransportSlot::Undefined => Ok(()),
+            ExpressionStatementExpressionTransportSlot::Undefined(_) => Ok(()),
             ExpressionStatementExpressionTransportSlot::DeclareKeyword => Ok(()),
             ExpressionStatementExpressionTransportSlot::NamespaceKeyword => Ok(()),
             ExpressionStatementExpressionTransportSlot::TypeKeyword => Ok(()),
@@ -5426,13 +5475,13 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementExpressionTransportS
             ExpressionStatementExpressionTransportSlot::AsyncKeyword => Ok(()),
             ExpressionStatementExpressionTransportSlot::StaticKeyword => Ok(()),
             ExpressionStatementExpressionTransportSlot::LetKeyword => Ok(()),
-            ExpressionStatementExpressionTransportSlot::This => Ok(()),
-            ExpressionStatementExpressionTransportSlot::Super => Ok(()),
-            ExpressionStatementExpressionTransportSlot::True => Ok(()),
-            ExpressionStatementExpressionTransportSlot::False => Ok(()),
-            ExpressionStatementExpressionTransportSlot::Null => Ok(()),
-            ExpressionStatementExpressionTransportSlot::MetaPropertyNewTarget => Ok(()),
-            ExpressionStatementExpressionTransportSlot::MetaPropertyImportMeta => Ok(()),
+            ExpressionStatementExpressionTransportSlot::This(_) => Ok(()),
+            ExpressionStatementExpressionTransportSlot::Super(_) => Ok(()),
+            ExpressionStatementExpressionTransportSlot::True(_) => Ok(()),
+            ExpressionStatementExpressionTransportSlot::False(_) => Ok(()),
+            ExpressionStatementExpressionTransportSlot::Null(_) => Ok(()),
+            ExpressionStatementExpressionTransportSlot::MetaPropertyNewTarget(_) => Ok(()),
+            ExpressionStatementExpressionTransportSlot::MetaPropertyImportMeta(_) => Ok(()),
             ExpressionStatementExpressionTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -5484,7 +5533,7 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementExpressionTransportS
             ExpressionStatementExpressionTransportSlot::NewExpression(t) => t.source_gap(),
             ExpressionStatementExpressionTransportSlot::YieldExpression(t) => t.source_gap(),
             ExpressionStatementExpressionTransportSlot::SequenceExpression(t) => t.source_gap(),
-            ExpressionStatementExpressionTransportSlot::Undefined => None,
+            ExpressionStatementExpressionTransportSlot::Undefined(_) => None,
             ExpressionStatementExpressionTransportSlot::DeclareKeyword => None,
             ExpressionStatementExpressionTransportSlot::NamespaceKeyword => None,
             ExpressionStatementExpressionTransportSlot::TypeKeyword => None,
@@ -5507,13 +5556,13 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementExpressionTransportS
             ExpressionStatementExpressionTransportSlot::AsyncKeyword => None,
             ExpressionStatementExpressionTransportSlot::StaticKeyword => None,
             ExpressionStatementExpressionTransportSlot::LetKeyword => None,
-            ExpressionStatementExpressionTransportSlot::This => None,
-            ExpressionStatementExpressionTransportSlot::Super => None,
-            ExpressionStatementExpressionTransportSlot::True => None,
-            ExpressionStatementExpressionTransportSlot::False => None,
-            ExpressionStatementExpressionTransportSlot::Null => None,
-            ExpressionStatementExpressionTransportSlot::MetaPropertyNewTarget => None,
-            ExpressionStatementExpressionTransportSlot::MetaPropertyImportMeta => None,
+            ExpressionStatementExpressionTransportSlot::This(_) => None,
+            ExpressionStatementExpressionTransportSlot::Super(_) => None,
+            ExpressionStatementExpressionTransportSlot::True(_) => None,
+            ExpressionStatementExpressionTransportSlot::False(_) => None,
+            ExpressionStatementExpressionTransportSlot::Null(_) => None,
+            ExpressionStatementExpressionTransportSlot::MetaPropertyNewTarget(_) => None,
+            ExpressionStatementExpressionTransportSlot::MetaPropertyImportMeta(_) => None,
             ExpressionStatementExpressionTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
@@ -5565,7 +5614,7 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementExpressionTransportS
             ExpressionStatementExpressionTransportSlot::NewExpression(t) => t.gap_edges(),
             ExpressionStatementExpressionTransportSlot::YieldExpression(t) => t.gap_edges(),
             ExpressionStatementExpressionTransportSlot::SequenceExpression(t) => t.gap_edges(),
-            ExpressionStatementExpressionTransportSlot::Undefined => None,
+            ExpressionStatementExpressionTransportSlot::Undefined(edges) => Some(edges),
             ExpressionStatementExpressionTransportSlot::DeclareKeyword => None,
             ExpressionStatementExpressionTransportSlot::NamespaceKeyword => None,
             ExpressionStatementExpressionTransportSlot::TypeKeyword => None,
@@ -5588,13 +5637,13 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementExpressionTransportS
             ExpressionStatementExpressionTransportSlot::AsyncKeyword => None,
             ExpressionStatementExpressionTransportSlot::StaticKeyword => None,
             ExpressionStatementExpressionTransportSlot::LetKeyword => None,
-            ExpressionStatementExpressionTransportSlot::This => None,
-            ExpressionStatementExpressionTransportSlot::Super => None,
-            ExpressionStatementExpressionTransportSlot::True => None,
-            ExpressionStatementExpressionTransportSlot::False => None,
-            ExpressionStatementExpressionTransportSlot::Null => None,
-            ExpressionStatementExpressionTransportSlot::MetaPropertyNewTarget => None,
-            ExpressionStatementExpressionTransportSlot::MetaPropertyImportMeta => None,
+            ExpressionStatementExpressionTransportSlot::This(edges) => Some(edges),
+            ExpressionStatementExpressionTransportSlot::Super(edges) => Some(edges),
+            ExpressionStatementExpressionTransportSlot::True(edges) => Some(edges),
+            ExpressionStatementExpressionTransportSlot::False(edges) => Some(edges),
+            ExpressionStatementExpressionTransportSlot::Null(edges) => Some(edges),
+            ExpressionStatementExpressionTransportSlot::MetaPropertyNewTarget(edges) => Some(edges),
+            ExpressionStatementExpressionTransportSlot::MetaPropertyImportMeta(edges) => Some(edges),
             ExpressionStatementExpressionTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -5646,7 +5695,7 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementExpressionTransportS
             ExpressionStatementExpressionTransportSlot::NewExpression(t) => t.snapshot_edge(),
             ExpressionStatementExpressionTransportSlot::YieldExpression(t) => t.snapshot_edge(),
             ExpressionStatementExpressionTransportSlot::SequenceExpression(t) => t.snapshot_edge(),
-            ExpressionStatementExpressionTransportSlot::Undefined => None,
+            ExpressionStatementExpressionTransportSlot::Undefined(_) => None,
             ExpressionStatementExpressionTransportSlot::DeclareKeyword => None,
             ExpressionStatementExpressionTransportSlot::NamespaceKeyword => None,
             ExpressionStatementExpressionTransportSlot::TypeKeyword => None,
@@ -5669,13 +5718,13 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementExpressionTransportS
             ExpressionStatementExpressionTransportSlot::AsyncKeyword => None,
             ExpressionStatementExpressionTransportSlot::StaticKeyword => None,
             ExpressionStatementExpressionTransportSlot::LetKeyword => None,
-            ExpressionStatementExpressionTransportSlot::This => None,
-            ExpressionStatementExpressionTransportSlot::Super => None,
-            ExpressionStatementExpressionTransportSlot::True => None,
-            ExpressionStatementExpressionTransportSlot::False => None,
-            ExpressionStatementExpressionTransportSlot::Null => None,
-            ExpressionStatementExpressionTransportSlot::MetaPropertyNewTarget => None,
-            ExpressionStatementExpressionTransportSlot::MetaPropertyImportMeta => None,
+            ExpressionStatementExpressionTransportSlot::This(_) => None,
+            ExpressionStatementExpressionTransportSlot::Super(_) => None,
+            ExpressionStatementExpressionTransportSlot::True(_) => None,
+            ExpressionStatementExpressionTransportSlot::False(_) => None,
+            ExpressionStatementExpressionTransportSlot::Null(_) => None,
+            ExpressionStatementExpressionTransportSlot::MetaPropertyNewTarget(_) => None,
+            ExpressionStatementExpressionTransportSlot::MetaPropertyImportMeta(_) => None,
             ExpressionStatementExpressionTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
@@ -5733,7 +5782,7 @@ impl ::sittir_core::view::KindOf for ExpressionStatementExpressionTransportSlot 
             Self::NewExpression(inner) => inner.kind_in(kinds),
             Self::YieldExpression(inner) => inner.kind_in(kinds),
             Self::SequenceExpression(inner) => inner.kind_in(kinds),
-            Self::Undefined => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
+            Self::Undefined(_) => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
             Self::DeclareKeyword => [::sittir_core::types::KindId(30)].iter().any(|k| kinds.contains(k)),
             Self::NamespaceKeyword => [::sittir_core::types::KindId(31)].iter().any(|k| kinds.contains(k)),
             Self::TypeKeyword => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
@@ -5756,13 +5805,13 @@ impl ::sittir_core::view::KindOf for ExpressionStatementExpressionTransportSlot 
             Self::AsyncKeyword => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
             Self::StaticKeyword => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
             Self::LetKeyword => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
-            Self::This => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
-            Self::Super => [::sittir_core::types::KindId(120)].iter().any(|k| kinds.contains(k)),
-            Self::True => [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k)),
-            Self::False => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
-            Self::Null => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
-            Self::MetaPropertyNewTarget => [::sittir_core::types::KindId(430)].iter().any(|k| kinds.contains(k)),
-            Self::MetaPropertyImportMeta => [::sittir_core::types::KindId(431)].iter().any(|k| kinds.contains(k)),
+            Self::This(_) => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(120)].iter().any(|k| kinds.contains(k)),
+            Self::True(_) => [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k)),
+            Self::False(_) => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
+            Self::Null(_) => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
+            Self::MetaPropertyNewTarget(_) => [::sittir_core::types::KindId(430)].iter().any(|k| kinds.contains(k)),
+            Self::MetaPropertyImportMeta(_) => [::sittir_core::types::KindId(431)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(158)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -5817,7 +5866,7 @@ impl ::sittir_core::render::Render for ExpressionStatementExpressionTransportSlo
             ExpressionStatementExpressionTransportSlot::NewExpression(inner) => inner.render(w),
             ExpressionStatementExpressionTransportSlot::YieldExpression(inner) => inner.render(w),
             ExpressionStatementExpressionTransportSlot::SequenceExpression(inner) => inner.render(w),
-            ExpressionStatementExpressionTransportSlot::Undefined => render_undefined(w),
+            ExpressionStatementExpressionTransportSlot::Undefined(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(124), edges, w, render_undefined),
             ExpressionStatementExpressionTransportSlot::DeclareKeyword => render_declare_keyword(w),
             ExpressionStatementExpressionTransportSlot::NamespaceKeyword => render_namespace_keyword(w),
             ExpressionStatementExpressionTransportSlot::TypeKeyword => render_type_keyword(w),
@@ -5840,13 +5889,13 @@ impl ::sittir_core::render::Render for ExpressionStatementExpressionTransportSlo
             ExpressionStatementExpressionTransportSlot::AsyncKeyword => render_async_keyword(w),
             ExpressionStatementExpressionTransportSlot::StaticKeyword => render_static_keyword(w),
             ExpressionStatementExpressionTransportSlot::LetKeyword => render_let_keyword(w),
-            ExpressionStatementExpressionTransportSlot::This => render_this(w),
-            ExpressionStatementExpressionTransportSlot::Super => render_super(w),
-            ExpressionStatementExpressionTransportSlot::True => render_true(w),
-            ExpressionStatementExpressionTransportSlot::False => render_false(w),
-            ExpressionStatementExpressionTransportSlot::Null => render_null(w),
-            ExpressionStatementExpressionTransportSlot::MetaPropertyNewTarget => render_meta_property_new_target(w),
-            ExpressionStatementExpressionTransportSlot::MetaPropertyImportMeta => render_meta_property_import_meta(w),
+            ExpressionStatementExpressionTransportSlot::This(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(119), edges, w, render_this),
+            ExpressionStatementExpressionTransportSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(120), edges, w, render_super),
+            ExpressionStatementExpressionTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(121), edges, w, render_true),
+            ExpressionStatementExpressionTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(122), edges, w, render_false),
+            ExpressionStatementExpressionTransportSlot::Null(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(123), edges, w, render_null),
+            ExpressionStatementExpressionTransportSlot::MetaPropertyNewTarget(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(430), edges, w, render_meta_property_new_target),
+            ExpressionStatementExpressionTransportSlot::MetaPropertyImportMeta(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(431), edges, w, render_meta_property_import_meta),
             ExpressionStatementExpressionTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -6172,7 +6221,8 @@ pub enum ForStatementInitializerTransportSlot {
     #[kind(kind::SEQUENCE_EXPRESSION)]
     SequenceExpression(SequenceExpressionTransport),
     #[kind(kind::UNDEFINED)]
-    Undefined,
+    #[transport(edged)]
+    Undefined(::sittir_core::options::Edges),
     #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
     #[kind(kind::NAMESPACE_KEYWORD)]
@@ -6218,21 +6268,29 @@ pub enum ForStatementInitializerTransportSlot {
     #[kind(kind::LET_KEYWORD)]
     LetKeyword,
     #[kind(kind::THIS)]
-    This,
+    #[transport(edged)]
+    This(::sittir_core::options::Edges),
     #[kind(kind::SUPER)]
-    Super,
+    #[transport(edged)]
+    Super(::sittir_core::options::Edges),
     #[kind(kind::TRUE)]
-    True,
+    #[transport(edged)]
+    True(::sittir_core::options::Edges),
     #[kind(kind::FALSE)]
-    False,
+    #[transport(edged)]
+    False(::sittir_core::options::Edges),
     #[kind(kind::NULL)]
-    Null,
+    #[transport(edged)]
+    Null(::sittir_core::options::Edges),
     #[kind(kind::META_PROPERTY_NEW_TARGET)]
-    MetaPropertyNewTarget,
+    #[transport(edged)]
+    MetaPropertyNewTarget(::sittir_core::options::Edges),
     #[kind(kind::META_PROPERTY_IMPORT_META)]
-    MetaPropertyImportMeta,
+    #[transport(edged)]
+    MetaPropertyImportMeta(::sittir_core::options::Edges),
     #[kind(kind::EMPTY_STATEMENT, kind::SEMI)]
-    EmptyStatement,
+    #[transport(edged)]
+    EmptyStatement(::sittir_core::options::Edges),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -6288,7 +6346,7 @@ impl ::sittir_core::prepare::Prepare for ForStatementInitializerTransportSlot {
             ForStatementInitializerTransportSlot::NewExpression(t) => t.prepare(ctx),
             ForStatementInitializerTransportSlot::YieldExpression(t) => t.prepare(ctx),
             ForStatementInitializerTransportSlot::SequenceExpression(t) => t.prepare(ctx),
-            ForStatementInitializerTransportSlot::Undefined => Ok(()),
+            ForStatementInitializerTransportSlot::Undefined(_) => Ok(()),
             ForStatementInitializerTransportSlot::DeclareKeyword => Ok(()),
             ForStatementInitializerTransportSlot::NamespaceKeyword => Ok(()),
             ForStatementInitializerTransportSlot::TypeKeyword => Ok(()),
@@ -6311,14 +6369,14 @@ impl ::sittir_core::prepare::Prepare for ForStatementInitializerTransportSlot {
             ForStatementInitializerTransportSlot::AsyncKeyword => Ok(()),
             ForStatementInitializerTransportSlot::StaticKeyword => Ok(()),
             ForStatementInitializerTransportSlot::LetKeyword => Ok(()),
-            ForStatementInitializerTransportSlot::This => Ok(()),
-            ForStatementInitializerTransportSlot::Super => Ok(()),
-            ForStatementInitializerTransportSlot::True => Ok(()),
-            ForStatementInitializerTransportSlot::False => Ok(()),
-            ForStatementInitializerTransportSlot::Null => Ok(()),
-            ForStatementInitializerTransportSlot::MetaPropertyNewTarget => Ok(()),
-            ForStatementInitializerTransportSlot::MetaPropertyImportMeta => Ok(()),
-            ForStatementInitializerTransportSlot::EmptyStatement => Ok(()),
+            ForStatementInitializerTransportSlot::This(_) => Ok(()),
+            ForStatementInitializerTransportSlot::Super(_) => Ok(()),
+            ForStatementInitializerTransportSlot::True(_) => Ok(()),
+            ForStatementInitializerTransportSlot::False(_) => Ok(()),
+            ForStatementInitializerTransportSlot::Null(_) => Ok(()),
+            ForStatementInitializerTransportSlot::MetaPropertyNewTarget(_) => Ok(()),
+            ForStatementInitializerTransportSlot::MetaPropertyImportMeta(_) => Ok(()),
+            ForStatementInitializerTransportSlot::EmptyStatement(_) => Ok(()),
             ForStatementInitializerTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -6372,7 +6430,7 @@ impl ::sittir_core::prepare::Prepare for ForStatementInitializerTransportSlot {
             ForStatementInitializerTransportSlot::NewExpression(t) => t.source_gap(),
             ForStatementInitializerTransportSlot::YieldExpression(t) => t.source_gap(),
             ForStatementInitializerTransportSlot::SequenceExpression(t) => t.source_gap(),
-            ForStatementInitializerTransportSlot::Undefined => None,
+            ForStatementInitializerTransportSlot::Undefined(_) => None,
             ForStatementInitializerTransportSlot::DeclareKeyword => None,
             ForStatementInitializerTransportSlot::NamespaceKeyword => None,
             ForStatementInitializerTransportSlot::TypeKeyword => None,
@@ -6395,14 +6453,14 @@ impl ::sittir_core::prepare::Prepare for ForStatementInitializerTransportSlot {
             ForStatementInitializerTransportSlot::AsyncKeyword => None,
             ForStatementInitializerTransportSlot::StaticKeyword => None,
             ForStatementInitializerTransportSlot::LetKeyword => None,
-            ForStatementInitializerTransportSlot::This => None,
-            ForStatementInitializerTransportSlot::Super => None,
-            ForStatementInitializerTransportSlot::True => None,
-            ForStatementInitializerTransportSlot::False => None,
-            ForStatementInitializerTransportSlot::Null => None,
-            ForStatementInitializerTransportSlot::MetaPropertyNewTarget => None,
-            ForStatementInitializerTransportSlot::MetaPropertyImportMeta => None,
-            ForStatementInitializerTransportSlot::EmptyStatement => None,
+            ForStatementInitializerTransportSlot::This(_) => None,
+            ForStatementInitializerTransportSlot::Super(_) => None,
+            ForStatementInitializerTransportSlot::True(_) => None,
+            ForStatementInitializerTransportSlot::False(_) => None,
+            ForStatementInitializerTransportSlot::Null(_) => None,
+            ForStatementInitializerTransportSlot::MetaPropertyNewTarget(_) => None,
+            ForStatementInitializerTransportSlot::MetaPropertyImportMeta(_) => None,
+            ForStatementInitializerTransportSlot::EmptyStatement(_) => None,
             ForStatementInitializerTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
@@ -6456,7 +6514,7 @@ impl ::sittir_core::prepare::Prepare for ForStatementInitializerTransportSlot {
             ForStatementInitializerTransportSlot::NewExpression(t) => t.gap_edges(),
             ForStatementInitializerTransportSlot::YieldExpression(t) => t.gap_edges(),
             ForStatementInitializerTransportSlot::SequenceExpression(t) => t.gap_edges(),
-            ForStatementInitializerTransportSlot::Undefined => None,
+            ForStatementInitializerTransportSlot::Undefined(edges) => Some(edges),
             ForStatementInitializerTransportSlot::DeclareKeyword => None,
             ForStatementInitializerTransportSlot::NamespaceKeyword => None,
             ForStatementInitializerTransportSlot::TypeKeyword => None,
@@ -6479,14 +6537,14 @@ impl ::sittir_core::prepare::Prepare for ForStatementInitializerTransportSlot {
             ForStatementInitializerTransportSlot::AsyncKeyword => None,
             ForStatementInitializerTransportSlot::StaticKeyword => None,
             ForStatementInitializerTransportSlot::LetKeyword => None,
-            ForStatementInitializerTransportSlot::This => None,
-            ForStatementInitializerTransportSlot::Super => None,
-            ForStatementInitializerTransportSlot::True => None,
-            ForStatementInitializerTransportSlot::False => None,
-            ForStatementInitializerTransportSlot::Null => None,
-            ForStatementInitializerTransportSlot::MetaPropertyNewTarget => None,
-            ForStatementInitializerTransportSlot::MetaPropertyImportMeta => None,
-            ForStatementInitializerTransportSlot::EmptyStatement => None,
+            ForStatementInitializerTransportSlot::This(edges) => Some(edges),
+            ForStatementInitializerTransportSlot::Super(edges) => Some(edges),
+            ForStatementInitializerTransportSlot::True(edges) => Some(edges),
+            ForStatementInitializerTransportSlot::False(edges) => Some(edges),
+            ForStatementInitializerTransportSlot::Null(edges) => Some(edges),
+            ForStatementInitializerTransportSlot::MetaPropertyNewTarget(edges) => Some(edges),
+            ForStatementInitializerTransportSlot::MetaPropertyImportMeta(edges) => Some(edges),
+            ForStatementInitializerTransportSlot::EmptyStatement(edges) => Some(edges),
             ForStatementInitializerTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -6540,7 +6598,7 @@ impl ::sittir_core::prepare::Prepare for ForStatementInitializerTransportSlot {
             ForStatementInitializerTransportSlot::NewExpression(t) => t.snapshot_edge(),
             ForStatementInitializerTransportSlot::YieldExpression(t) => t.snapshot_edge(),
             ForStatementInitializerTransportSlot::SequenceExpression(t) => t.snapshot_edge(),
-            ForStatementInitializerTransportSlot::Undefined => None,
+            ForStatementInitializerTransportSlot::Undefined(_) => None,
             ForStatementInitializerTransportSlot::DeclareKeyword => None,
             ForStatementInitializerTransportSlot::NamespaceKeyword => None,
             ForStatementInitializerTransportSlot::TypeKeyword => None,
@@ -6563,14 +6621,14 @@ impl ::sittir_core::prepare::Prepare for ForStatementInitializerTransportSlot {
             ForStatementInitializerTransportSlot::AsyncKeyword => None,
             ForStatementInitializerTransportSlot::StaticKeyword => None,
             ForStatementInitializerTransportSlot::LetKeyword => None,
-            ForStatementInitializerTransportSlot::This => None,
-            ForStatementInitializerTransportSlot::Super => None,
-            ForStatementInitializerTransportSlot::True => None,
-            ForStatementInitializerTransportSlot::False => None,
-            ForStatementInitializerTransportSlot::Null => None,
-            ForStatementInitializerTransportSlot::MetaPropertyNewTarget => None,
-            ForStatementInitializerTransportSlot::MetaPropertyImportMeta => None,
-            ForStatementInitializerTransportSlot::EmptyStatement => None,
+            ForStatementInitializerTransportSlot::This(_) => None,
+            ForStatementInitializerTransportSlot::Super(_) => None,
+            ForStatementInitializerTransportSlot::True(_) => None,
+            ForStatementInitializerTransportSlot::False(_) => None,
+            ForStatementInitializerTransportSlot::Null(_) => None,
+            ForStatementInitializerTransportSlot::MetaPropertyNewTarget(_) => None,
+            ForStatementInitializerTransportSlot::MetaPropertyImportMeta(_) => None,
+            ForStatementInitializerTransportSlot::EmptyStatement(_) => None,
             ForStatementInitializerTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
@@ -6630,7 +6688,7 @@ impl ::sittir_core::view::KindOf for ForStatementInitializerTransportSlot {
             Self::NewExpression(inner) => inner.kind_in(kinds),
             Self::YieldExpression(inner) => inner.kind_in(kinds),
             Self::SequenceExpression(inner) => inner.kind_in(kinds),
-            Self::Undefined => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
+            Self::Undefined(_) => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
             Self::DeclareKeyword => [::sittir_core::types::KindId(30)].iter().any(|k| kinds.contains(k)),
             Self::NamespaceKeyword => [::sittir_core::types::KindId(31)].iter().any(|k| kinds.contains(k)),
             Self::TypeKeyword => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
@@ -6653,14 +6711,14 @@ impl ::sittir_core::view::KindOf for ForStatementInitializerTransportSlot {
             Self::AsyncKeyword => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
             Self::StaticKeyword => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
             Self::LetKeyword => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
-            Self::This => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
-            Self::Super => [::sittir_core::types::KindId(120)].iter().any(|k| kinds.contains(k)),
-            Self::True => [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k)),
-            Self::False => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
-            Self::Null => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
-            Self::MetaPropertyNewTarget => [::sittir_core::types::KindId(430)].iter().any(|k| kinds.contains(k)),
-            Self::MetaPropertyImportMeta => [::sittir_core::types::KindId(431)].iter().any(|k| kinds.contains(k)),
-            Self::EmptyStatement => [::sittir_core::types::KindId(224)].iter().any(|k| kinds.contains(k)),
+            Self::This(_) => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(120)].iter().any(|k| kinds.contains(k)),
+            Self::True(_) => [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k)),
+            Self::False(_) => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
+            Self::Null(_) => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
+            Self::MetaPropertyNewTarget(_) => [::sittir_core::types::KindId(430)].iter().any(|k| kinds.contains(k)),
+            Self::MetaPropertyImportMeta(_) => [::sittir_core::types::KindId(431)].iter().any(|k| kinds.contains(k)),
+            Self::EmptyStatement(_) => [::sittir_core::types::KindId(224)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(158)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -6717,7 +6775,7 @@ impl ::sittir_core::render::Render for ForStatementInitializerTransportSlot {
             ForStatementInitializerTransportSlot::NewExpression(inner) => inner.render(w),
             ForStatementInitializerTransportSlot::YieldExpression(inner) => inner.render(w),
             ForStatementInitializerTransportSlot::SequenceExpression(inner) => inner.render(w),
-            ForStatementInitializerTransportSlot::Undefined => render_undefined(w),
+            ForStatementInitializerTransportSlot::Undefined(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(124), edges, w, render_undefined),
             ForStatementInitializerTransportSlot::DeclareKeyword => render_declare_keyword(w),
             ForStatementInitializerTransportSlot::NamespaceKeyword => render_namespace_keyword(w),
             ForStatementInitializerTransportSlot::TypeKeyword => render_type_keyword(w),
@@ -6740,16 +6798,16 @@ impl ::sittir_core::render::Render for ForStatementInitializerTransportSlot {
             ForStatementInitializerTransportSlot::AsyncKeyword => render_async_keyword(w),
             ForStatementInitializerTransportSlot::StaticKeyword => render_static_keyword(w),
             ForStatementInitializerTransportSlot::LetKeyword => render_let_keyword(w),
-            ForStatementInitializerTransportSlot::This => render_this(w),
-            ForStatementInitializerTransportSlot::Super => render_super(w),
-            ForStatementInitializerTransportSlot::True => render_true(w),
-            ForStatementInitializerTransportSlot::False => render_false(w),
-            ForStatementInitializerTransportSlot::Null => render_null(w),
-            ForStatementInitializerTransportSlot::MetaPropertyNewTarget => render_meta_property_new_target(w),
-            ForStatementInitializerTransportSlot::MetaPropertyImportMeta => render_meta_property_import_meta(w),
-            ForStatementInitializerTransportSlot::EmptyStatement => {
+            ForStatementInitializerTransportSlot::This(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(119), edges, w, render_this),
+            ForStatementInitializerTransportSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(120), edges, w, render_super),
+            ForStatementInitializerTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(121), edges, w, render_true),
+            ForStatementInitializerTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(122), edges, w, render_false),
+            ForStatementInitializerTransportSlot::Null(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(123), edges, w, render_null),
+            ForStatementInitializerTransportSlot::MetaPropertyNewTarget(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(430), edges, w, render_meta_property_new_target),
+            ForStatementInitializerTransportSlot::MetaPropertyImportMeta(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(431), edges, w, render_meta_property_import_meta),
+            ForStatementInitializerTransportSlot::EmptyStatement(edges) => {
                 w.site_at(options::SITE_FOR_STATEMENT_SEMI_BEFORE);
-                let written = render_empty_statement(w);
+                let written = ::sittir_core::render::render_edged(::sittir_core::types::KindId(224), edges, w, render_empty_statement);
                 written?;
                 w.site_at(options::SITE_FOR_STATEMENT_SEMI_AFTER);
                 Ok(())
@@ -6855,7 +6913,8 @@ pub enum ForStatementConditionTransportSlot {
     #[kind(kind::SEQUENCE_EXPRESSION)]
     SequenceExpression(SequenceExpressionTransport),
     #[kind(kind::UNDEFINED)]
-    Undefined,
+    #[transport(edged)]
+    Undefined(::sittir_core::options::Edges),
     #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
     #[kind(kind::NAMESPACE_KEYWORD)]
@@ -6901,21 +6960,29 @@ pub enum ForStatementConditionTransportSlot {
     #[kind(kind::LET_KEYWORD)]
     LetKeyword,
     #[kind(kind::THIS)]
-    This,
+    #[transport(edged)]
+    This(::sittir_core::options::Edges),
     #[kind(kind::SUPER)]
-    Super,
+    #[transport(edged)]
+    Super(::sittir_core::options::Edges),
     #[kind(kind::TRUE)]
-    True,
+    #[transport(edged)]
+    True(::sittir_core::options::Edges),
     #[kind(kind::FALSE)]
-    False,
+    #[transport(edged)]
+    False(::sittir_core::options::Edges),
     #[kind(kind::NULL)]
-    Null,
+    #[transport(edged)]
+    Null(::sittir_core::options::Edges),
     #[kind(kind::META_PROPERTY_NEW_TARGET)]
-    MetaPropertyNewTarget,
+    #[transport(edged)]
+    MetaPropertyNewTarget(::sittir_core::options::Edges),
     #[kind(kind::META_PROPERTY_IMPORT_META)]
-    MetaPropertyImportMeta,
+    #[transport(edged)]
+    MetaPropertyImportMeta(::sittir_core::options::Edges),
     #[kind(kind::EMPTY_STATEMENT, kind::SEMI)]
-    EmptyStatement,
+    #[transport(edged)]
+    EmptyStatement(::sittir_core::options::Edges),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -6969,7 +7036,7 @@ impl ::sittir_core::prepare::Prepare for ForStatementConditionTransportSlot {
             ForStatementConditionTransportSlot::NewExpression(t) => t.prepare(ctx),
             ForStatementConditionTransportSlot::YieldExpression(t) => t.prepare(ctx),
             ForStatementConditionTransportSlot::SequenceExpression(t) => t.prepare(ctx),
-            ForStatementConditionTransportSlot::Undefined => Ok(()),
+            ForStatementConditionTransportSlot::Undefined(_) => Ok(()),
             ForStatementConditionTransportSlot::DeclareKeyword => Ok(()),
             ForStatementConditionTransportSlot::NamespaceKeyword => Ok(()),
             ForStatementConditionTransportSlot::TypeKeyword => Ok(()),
@@ -6992,14 +7059,14 @@ impl ::sittir_core::prepare::Prepare for ForStatementConditionTransportSlot {
             ForStatementConditionTransportSlot::AsyncKeyword => Ok(()),
             ForStatementConditionTransportSlot::StaticKeyword => Ok(()),
             ForStatementConditionTransportSlot::LetKeyword => Ok(()),
-            ForStatementConditionTransportSlot::This => Ok(()),
-            ForStatementConditionTransportSlot::Super => Ok(()),
-            ForStatementConditionTransportSlot::True => Ok(()),
-            ForStatementConditionTransportSlot::False => Ok(()),
-            ForStatementConditionTransportSlot::Null => Ok(()),
-            ForStatementConditionTransportSlot::MetaPropertyNewTarget => Ok(()),
-            ForStatementConditionTransportSlot::MetaPropertyImportMeta => Ok(()),
-            ForStatementConditionTransportSlot::EmptyStatement => Ok(()),
+            ForStatementConditionTransportSlot::This(_) => Ok(()),
+            ForStatementConditionTransportSlot::Super(_) => Ok(()),
+            ForStatementConditionTransportSlot::True(_) => Ok(()),
+            ForStatementConditionTransportSlot::False(_) => Ok(()),
+            ForStatementConditionTransportSlot::Null(_) => Ok(()),
+            ForStatementConditionTransportSlot::MetaPropertyNewTarget(_) => Ok(()),
+            ForStatementConditionTransportSlot::MetaPropertyImportMeta(_) => Ok(()),
+            ForStatementConditionTransportSlot::EmptyStatement(_) => Ok(()),
             ForStatementConditionTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -7051,7 +7118,7 @@ impl ::sittir_core::prepare::Prepare for ForStatementConditionTransportSlot {
             ForStatementConditionTransportSlot::NewExpression(t) => t.source_gap(),
             ForStatementConditionTransportSlot::YieldExpression(t) => t.source_gap(),
             ForStatementConditionTransportSlot::SequenceExpression(t) => t.source_gap(),
-            ForStatementConditionTransportSlot::Undefined => None,
+            ForStatementConditionTransportSlot::Undefined(_) => None,
             ForStatementConditionTransportSlot::DeclareKeyword => None,
             ForStatementConditionTransportSlot::NamespaceKeyword => None,
             ForStatementConditionTransportSlot::TypeKeyword => None,
@@ -7074,14 +7141,14 @@ impl ::sittir_core::prepare::Prepare for ForStatementConditionTransportSlot {
             ForStatementConditionTransportSlot::AsyncKeyword => None,
             ForStatementConditionTransportSlot::StaticKeyword => None,
             ForStatementConditionTransportSlot::LetKeyword => None,
-            ForStatementConditionTransportSlot::This => None,
-            ForStatementConditionTransportSlot::Super => None,
-            ForStatementConditionTransportSlot::True => None,
-            ForStatementConditionTransportSlot::False => None,
-            ForStatementConditionTransportSlot::Null => None,
-            ForStatementConditionTransportSlot::MetaPropertyNewTarget => None,
-            ForStatementConditionTransportSlot::MetaPropertyImportMeta => None,
-            ForStatementConditionTransportSlot::EmptyStatement => None,
+            ForStatementConditionTransportSlot::This(_) => None,
+            ForStatementConditionTransportSlot::Super(_) => None,
+            ForStatementConditionTransportSlot::True(_) => None,
+            ForStatementConditionTransportSlot::False(_) => None,
+            ForStatementConditionTransportSlot::Null(_) => None,
+            ForStatementConditionTransportSlot::MetaPropertyNewTarget(_) => None,
+            ForStatementConditionTransportSlot::MetaPropertyImportMeta(_) => None,
+            ForStatementConditionTransportSlot::EmptyStatement(_) => None,
             ForStatementConditionTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
@@ -7133,7 +7200,7 @@ impl ::sittir_core::prepare::Prepare for ForStatementConditionTransportSlot {
             ForStatementConditionTransportSlot::NewExpression(t) => t.gap_edges(),
             ForStatementConditionTransportSlot::YieldExpression(t) => t.gap_edges(),
             ForStatementConditionTransportSlot::SequenceExpression(t) => t.gap_edges(),
-            ForStatementConditionTransportSlot::Undefined => None,
+            ForStatementConditionTransportSlot::Undefined(edges) => Some(edges),
             ForStatementConditionTransportSlot::DeclareKeyword => None,
             ForStatementConditionTransportSlot::NamespaceKeyword => None,
             ForStatementConditionTransportSlot::TypeKeyword => None,
@@ -7156,14 +7223,14 @@ impl ::sittir_core::prepare::Prepare for ForStatementConditionTransportSlot {
             ForStatementConditionTransportSlot::AsyncKeyword => None,
             ForStatementConditionTransportSlot::StaticKeyword => None,
             ForStatementConditionTransportSlot::LetKeyword => None,
-            ForStatementConditionTransportSlot::This => None,
-            ForStatementConditionTransportSlot::Super => None,
-            ForStatementConditionTransportSlot::True => None,
-            ForStatementConditionTransportSlot::False => None,
-            ForStatementConditionTransportSlot::Null => None,
-            ForStatementConditionTransportSlot::MetaPropertyNewTarget => None,
-            ForStatementConditionTransportSlot::MetaPropertyImportMeta => None,
-            ForStatementConditionTransportSlot::EmptyStatement => None,
+            ForStatementConditionTransportSlot::This(edges) => Some(edges),
+            ForStatementConditionTransportSlot::Super(edges) => Some(edges),
+            ForStatementConditionTransportSlot::True(edges) => Some(edges),
+            ForStatementConditionTransportSlot::False(edges) => Some(edges),
+            ForStatementConditionTransportSlot::Null(edges) => Some(edges),
+            ForStatementConditionTransportSlot::MetaPropertyNewTarget(edges) => Some(edges),
+            ForStatementConditionTransportSlot::MetaPropertyImportMeta(edges) => Some(edges),
+            ForStatementConditionTransportSlot::EmptyStatement(edges) => Some(edges),
             ForStatementConditionTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -7215,7 +7282,7 @@ impl ::sittir_core::prepare::Prepare for ForStatementConditionTransportSlot {
             ForStatementConditionTransportSlot::NewExpression(t) => t.snapshot_edge(),
             ForStatementConditionTransportSlot::YieldExpression(t) => t.snapshot_edge(),
             ForStatementConditionTransportSlot::SequenceExpression(t) => t.snapshot_edge(),
-            ForStatementConditionTransportSlot::Undefined => None,
+            ForStatementConditionTransportSlot::Undefined(_) => None,
             ForStatementConditionTransportSlot::DeclareKeyword => None,
             ForStatementConditionTransportSlot::NamespaceKeyword => None,
             ForStatementConditionTransportSlot::TypeKeyword => None,
@@ -7238,14 +7305,14 @@ impl ::sittir_core::prepare::Prepare for ForStatementConditionTransportSlot {
             ForStatementConditionTransportSlot::AsyncKeyword => None,
             ForStatementConditionTransportSlot::StaticKeyword => None,
             ForStatementConditionTransportSlot::LetKeyword => None,
-            ForStatementConditionTransportSlot::This => None,
-            ForStatementConditionTransportSlot::Super => None,
-            ForStatementConditionTransportSlot::True => None,
-            ForStatementConditionTransportSlot::False => None,
-            ForStatementConditionTransportSlot::Null => None,
-            ForStatementConditionTransportSlot::MetaPropertyNewTarget => None,
-            ForStatementConditionTransportSlot::MetaPropertyImportMeta => None,
-            ForStatementConditionTransportSlot::EmptyStatement => None,
+            ForStatementConditionTransportSlot::This(_) => None,
+            ForStatementConditionTransportSlot::Super(_) => None,
+            ForStatementConditionTransportSlot::True(_) => None,
+            ForStatementConditionTransportSlot::False(_) => None,
+            ForStatementConditionTransportSlot::Null(_) => None,
+            ForStatementConditionTransportSlot::MetaPropertyNewTarget(_) => None,
+            ForStatementConditionTransportSlot::MetaPropertyImportMeta(_) => None,
+            ForStatementConditionTransportSlot::EmptyStatement(_) => None,
             ForStatementConditionTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
@@ -7303,7 +7370,7 @@ impl ::sittir_core::view::KindOf for ForStatementConditionTransportSlot {
             Self::NewExpression(inner) => inner.kind_in(kinds),
             Self::YieldExpression(inner) => inner.kind_in(kinds),
             Self::SequenceExpression(inner) => inner.kind_in(kinds),
-            Self::Undefined => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
+            Self::Undefined(_) => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
             Self::DeclareKeyword => [::sittir_core::types::KindId(30)].iter().any(|k| kinds.contains(k)),
             Self::NamespaceKeyword => [::sittir_core::types::KindId(31)].iter().any(|k| kinds.contains(k)),
             Self::TypeKeyword => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
@@ -7326,14 +7393,14 @@ impl ::sittir_core::view::KindOf for ForStatementConditionTransportSlot {
             Self::AsyncKeyword => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
             Self::StaticKeyword => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
             Self::LetKeyword => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
-            Self::This => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
-            Self::Super => [::sittir_core::types::KindId(120)].iter().any(|k| kinds.contains(k)),
-            Self::True => [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k)),
-            Self::False => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
-            Self::Null => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
-            Self::MetaPropertyNewTarget => [::sittir_core::types::KindId(430)].iter().any(|k| kinds.contains(k)),
-            Self::MetaPropertyImportMeta => [::sittir_core::types::KindId(431)].iter().any(|k| kinds.contains(k)),
-            Self::EmptyStatement => [::sittir_core::types::KindId(224)].iter().any(|k| kinds.contains(k)),
+            Self::This(_) => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(120)].iter().any(|k| kinds.contains(k)),
+            Self::True(_) => [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k)),
+            Self::False(_) => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
+            Self::Null(_) => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
+            Self::MetaPropertyNewTarget(_) => [::sittir_core::types::KindId(430)].iter().any(|k| kinds.contains(k)),
+            Self::MetaPropertyImportMeta(_) => [::sittir_core::types::KindId(431)].iter().any(|k| kinds.contains(k)),
+            Self::EmptyStatement(_) => [::sittir_core::types::KindId(224)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(158)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -7388,7 +7455,7 @@ impl ::sittir_core::render::Render for ForStatementConditionTransportSlot {
             ForStatementConditionTransportSlot::NewExpression(inner) => inner.render(w),
             ForStatementConditionTransportSlot::YieldExpression(inner) => inner.render(w),
             ForStatementConditionTransportSlot::SequenceExpression(inner) => inner.render(w),
-            ForStatementConditionTransportSlot::Undefined => render_undefined(w),
+            ForStatementConditionTransportSlot::Undefined(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(124), edges, w, render_undefined),
             ForStatementConditionTransportSlot::DeclareKeyword => render_declare_keyword(w),
             ForStatementConditionTransportSlot::NamespaceKeyword => render_namespace_keyword(w),
             ForStatementConditionTransportSlot::TypeKeyword => render_type_keyword(w),
@@ -7411,16 +7478,16 @@ impl ::sittir_core::render::Render for ForStatementConditionTransportSlot {
             ForStatementConditionTransportSlot::AsyncKeyword => render_async_keyword(w),
             ForStatementConditionTransportSlot::StaticKeyword => render_static_keyword(w),
             ForStatementConditionTransportSlot::LetKeyword => render_let_keyword(w),
-            ForStatementConditionTransportSlot::This => render_this(w),
-            ForStatementConditionTransportSlot::Super => render_super(w),
-            ForStatementConditionTransportSlot::True => render_true(w),
-            ForStatementConditionTransportSlot::False => render_false(w),
-            ForStatementConditionTransportSlot::Null => render_null(w),
-            ForStatementConditionTransportSlot::MetaPropertyNewTarget => render_meta_property_new_target(w),
-            ForStatementConditionTransportSlot::MetaPropertyImportMeta => render_meta_property_import_meta(w),
-            ForStatementConditionTransportSlot::EmptyStatement => {
+            ForStatementConditionTransportSlot::This(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(119), edges, w, render_this),
+            ForStatementConditionTransportSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(120), edges, w, render_super),
+            ForStatementConditionTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(121), edges, w, render_true),
+            ForStatementConditionTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(122), edges, w, render_false),
+            ForStatementConditionTransportSlot::Null(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(123), edges, w, render_null),
+            ForStatementConditionTransportSlot::MetaPropertyNewTarget(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(430), edges, w, render_meta_property_new_target),
+            ForStatementConditionTransportSlot::MetaPropertyImportMeta(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(431), edges, w, render_meta_property_import_meta),
+            ForStatementConditionTransportSlot::EmptyStatement(edges) => {
                 w.site_at(options::SITE_FOR_STATEMENT_SEMI_BEFORE);
-                let written = render_empty_statement(w);
+                let written = ::sittir_core::render::render_edged(::sittir_core::types::KindId(224), edges, w, render_empty_statement);
                 written?;
                 w.site_at(options::SITE_FOR_STATEMENT_SEMI_AFTER);
                 Ok(())
@@ -8077,7 +8144,8 @@ pub enum YieldExpressionExpressionTransportSlot {
     #[kind(kind::YIELD_EXPRESSION)]
     YieldExpression(YieldExpressionTransport),
     #[kind(kind::UNDEFINED)]
-    Undefined,
+    #[transport(edged)]
+    Undefined(::sittir_core::options::Edges),
     #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
     #[kind(kind::NAMESPACE_KEYWORD)]
@@ -8123,19 +8191,26 @@ pub enum YieldExpressionExpressionTransportSlot {
     #[kind(kind::LET_KEYWORD)]
     LetKeyword,
     #[kind(kind::THIS)]
-    This,
+    #[transport(edged)]
+    This(::sittir_core::options::Edges),
     #[kind(kind::SUPER)]
-    Super,
+    #[transport(edged)]
+    Super(::sittir_core::options::Edges),
     #[kind(kind::TRUE)]
-    True,
+    #[transport(edged)]
+    True(::sittir_core::options::Edges),
     #[kind(kind::FALSE)]
-    False,
+    #[transport(edged)]
+    False(::sittir_core::options::Edges),
     #[kind(kind::NULL)]
-    Null,
+    #[transport(edged)]
+    Null(::sittir_core::options::Edges),
     #[kind(kind::META_PROPERTY_NEW_TARGET)]
-    MetaPropertyNewTarget,
+    #[transport(edged)]
+    MetaPropertyNewTarget(::sittir_core::options::Edges),
     #[kind(kind::META_PROPERTY_IMPORT_META)]
-    MetaPropertyImportMeta,
+    #[transport(edged)]
+    MetaPropertyImportMeta(::sittir_core::options::Edges),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -8189,7 +8264,7 @@ impl ::sittir_core::prepare::Prepare for YieldExpressionExpressionTransportSlot 
             YieldExpressionExpressionTransportSlot::UpdateExpressionPrefix(t) => t.prepare(ctx),
             YieldExpressionExpressionTransportSlot::NewExpression(t) => t.prepare(ctx),
             YieldExpressionExpressionTransportSlot::YieldExpression(t) => t.prepare(ctx),
-            YieldExpressionExpressionTransportSlot::Undefined => Ok(()),
+            YieldExpressionExpressionTransportSlot::Undefined(_) => Ok(()),
             YieldExpressionExpressionTransportSlot::DeclareKeyword => Ok(()),
             YieldExpressionExpressionTransportSlot::NamespaceKeyword => Ok(()),
             YieldExpressionExpressionTransportSlot::TypeKeyword => Ok(()),
@@ -8212,13 +8287,13 @@ impl ::sittir_core::prepare::Prepare for YieldExpressionExpressionTransportSlot 
             YieldExpressionExpressionTransportSlot::AsyncKeyword => Ok(()),
             YieldExpressionExpressionTransportSlot::StaticKeyword => Ok(()),
             YieldExpressionExpressionTransportSlot::LetKeyword => Ok(()),
-            YieldExpressionExpressionTransportSlot::This => Ok(()),
-            YieldExpressionExpressionTransportSlot::Super => Ok(()),
-            YieldExpressionExpressionTransportSlot::True => Ok(()),
-            YieldExpressionExpressionTransportSlot::False => Ok(()),
-            YieldExpressionExpressionTransportSlot::Null => Ok(()),
-            YieldExpressionExpressionTransportSlot::MetaPropertyNewTarget => Ok(()),
-            YieldExpressionExpressionTransportSlot::MetaPropertyImportMeta => Ok(()),
+            YieldExpressionExpressionTransportSlot::This(_) => Ok(()),
+            YieldExpressionExpressionTransportSlot::Super(_) => Ok(()),
+            YieldExpressionExpressionTransportSlot::True(_) => Ok(()),
+            YieldExpressionExpressionTransportSlot::False(_) => Ok(()),
+            YieldExpressionExpressionTransportSlot::Null(_) => Ok(()),
+            YieldExpressionExpressionTransportSlot::MetaPropertyNewTarget(_) => Ok(()),
+            YieldExpressionExpressionTransportSlot::MetaPropertyImportMeta(_) => Ok(()),
             YieldExpressionExpressionTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -8270,7 +8345,7 @@ impl ::sittir_core::prepare::Prepare for YieldExpressionExpressionTransportSlot 
             YieldExpressionExpressionTransportSlot::UpdateExpressionPrefix(t) => t.source_gap(),
             YieldExpressionExpressionTransportSlot::NewExpression(t) => t.source_gap(),
             YieldExpressionExpressionTransportSlot::YieldExpression(t) => t.source_gap(),
-            YieldExpressionExpressionTransportSlot::Undefined => None,
+            YieldExpressionExpressionTransportSlot::Undefined(_) => None,
             YieldExpressionExpressionTransportSlot::DeclareKeyword => None,
             YieldExpressionExpressionTransportSlot::NamespaceKeyword => None,
             YieldExpressionExpressionTransportSlot::TypeKeyword => None,
@@ -8293,13 +8368,13 @@ impl ::sittir_core::prepare::Prepare for YieldExpressionExpressionTransportSlot 
             YieldExpressionExpressionTransportSlot::AsyncKeyword => None,
             YieldExpressionExpressionTransportSlot::StaticKeyword => None,
             YieldExpressionExpressionTransportSlot::LetKeyword => None,
-            YieldExpressionExpressionTransportSlot::This => None,
-            YieldExpressionExpressionTransportSlot::Super => None,
-            YieldExpressionExpressionTransportSlot::True => None,
-            YieldExpressionExpressionTransportSlot::False => None,
-            YieldExpressionExpressionTransportSlot::Null => None,
-            YieldExpressionExpressionTransportSlot::MetaPropertyNewTarget => None,
-            YieldExpressionExpressionTransportSlot::MetaPropertyImportMeta => None,
+            YieldExpressionExpressionTransportSlot::This(_) => None,
+            YieldExpressionExpressionTransportSlot::Super(_) => None,
+            YieldExpressionExpressionTransportSlot::True(_) => None,
+            YieldExpressionExpressionTransportSlot::False(_) => None,
+            YieldExpressionExpressionTransportSlot::Null(_) => None,
+            YieldExpressionExpressionTransportSlot::MetaPropertyNewTarget(_) => None,
+            YieldExpressionExpressionTransportSlot::MetaPropertyImportMeta(_) => None,
             YieldExpressionExpressionTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
@@ -8351,7 +8426,7 @@ impl ::sittir_core::prepare::Prepare for YieldExpressionExpressionTransportSlot 
             YieldExpressionExpressionTransportSlot::UpdateExpressionPrefix(t) => t.gap_edges(),
             YieldExpressionExpressionTransportSlot::NewExpression(t) => t.gap_edges(),
             YieldExpressionExpressionTransportSlot::YieldExpression(t) => t.gap_edges(),
-            YieldExpressionExpressionTransportSlot::Undefined => None,
+            YieldExpressionExpressionTransportSlot::Undefined(edges) => Some(edges),
             YieldExpressionExpressionTransportSlot::DeclareKeyword => None,
             YieldExpressionExpressionTransportSlot::NamespaceKeyword => None,
             YieldExpressionExpressionTransportSlot::TypeKeyword => None,
@@ -8374,13 +8449,13 @@ impl ::sittir_core::prepare::Prepare for YieldExpressionExpressionTransportSlot 
             YieldExpressionExpressionTransportSlot::AsyncKeyword => None,
             YieldExpressionExpressionTransportSlot::StaticKeyword => None,
             YieldExpressionExpressionTransportSlot::LetKeyword => None,
-            YieldExpressionExpressionTransportSlot::This => None,
-            YieldExpressionExpressionTransportSlot::Super => None,
-            YieldExpressionExpressionTransportSlot::True => None,
-            YieldExpressionExpressionTransportSlot::False => None,
-            YieldExpressionExpressionTransportSlot::Null => None,
-            YieldExpressionExpressionTransportSlot::MetaPropertyNewTarget => None,
-            YieldExpressionExpressionTransportSlot::MetaPropertyImportMeta => None,
+            YieldExpressionExpressionTransportSlot::This(edges) => Some(edges),
+            YieldExpressionExpressionTransportSlot::Super(edges) => Some(edges),
+            YieldExpressionExpressionTransportSlot::True(edges) => Some(edges),
+            YieldExpressionExpressionTransportSlot::False(edges) => Some(edges),
+            YieldExpressionExpressionTransportSlot::Null(edges) => Some(edges),
+            YieldExpressionExpressionTransportSlot::MetaPropertyNewTarget(edges) => Some(edges),
+            YieldExpressionExpressionTransportSlot::MetaPropertyImportMeta(edges) => Some(edges),
             YieldExpressionExpressionTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -8432,7 +8507,7 @@ impl ::sittir_core::prepare::Prepare for YieldExpressionExpressionTransportSlot 
             YieldExpressionExpressionTransportSlot::UpdateExpressionPrefix(t) => t.snapshot_edge(),
             YieldExpressionExpressionTransportSlot::NewExpression(t) => t.snapshot_edge(),
             YieldExpressionExpressionTransportSlot::YieldExpression(t) => t.snapshot_edge(),
-            YieldExpressionExpressionTransportSlot::Undefined => None,
+            YieldExpressionExpressionTransportSlot::Undefined(_) => None,
             YieldExpressionExpressionTransportSlot::DeclareKeyword => None,
             YieldExpressionExpressionTransportSlot::NamespaceKeyword => None,
             YieldExpressionExpressionTransportSlot::TypeKeyword => None,
@@ -8455,13 +8530,13 @@ impl ::sittir_core::prepare::Prepare for YieldExpressionExpressionTransportSlot 
             YieldExpressionExpressionTransportSlot::AsyncKeyword => None,
             YieldExpressionExpressionTransportSlot::StaticKeyword => None,
             YieldExpressionExpressionTransportSlot::LetKeyword => None,
-            YieldExpressionExpressionTransportSlot::This => None,
-            YieldExpressionExpressionTransportSlot::Super => None,
-            YieldExpressionExpressionTransportSlot::True => None,
-            YieldExpressionExpressionTransportSlot::False => None,
-            YieldExpressionExpressionTransportSlot::Null => None,
-            YieldExpressionExpressionTransportSlot::MetaPropertyNewTarget => None,
-            YieldExpressionExpressionTransportSlot::MetaPropertyImportMeta => None,
+            YieldExpressionExpressionTransportSlot::This(_) => None,
+            YieldExpressionExpressionTransportSlot::Super(_) => None,
+            YieldExpressionExpressionTransportSlot::True(_) => None,
+            YieldExpressionExpressionTransportSlot::False(_) => None,
+            YieldExpressionExpressionTransportSlot::Null(_) => None,
+            YieldExpressionExpressionTransportSlot::MetaPropertyNewTarget(_) => None,
+            YieldExpressionExpressionTransportSlot::MetaPropertyImportMeta(_) => None,
             YieldExpressionExpressionTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
@@ -8519,7 +8594,7 @@ impl ::sittir_core::view::KindOf for YieldExpressionExpressionTransportSlot {
             Self::UpdateExpressionPrefix(inner) => inner.kind_in(kinds),
             Self::NewExpression(inner) => inner.kind_in(kinds),
             Self::YieldExpression(inner) => inner.kind_in(kinds),
-            Self::Undefined => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
+            Self::Undefined(_) => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
             Self::DeclareKeyword => [::sittir_core::types::KindId(30)].iter().any(|k| kinds.contains(k)),
             Self::NamespaceKeyword => [::sittir_core::types::KindId(31)].iter().any(|k| kinds.contains(k)),
             Self::TypeKeyword => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
@@ -8542,13 +8617,13 @@ impl ::sittir_core::view::KindOf for YieldExpressionExpressionTransportSlot {
             Self::AsyncKeyword => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
             Self::StaticKeyword => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
             Self::LetKeyword => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
-            Self::This => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
-            Self::Super => [::sittir_core::types::KindId(120)].iter().any(|k| kinds.contains(k)),
-            Self::True => [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k)),
-            Self::False => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
-            Self::Null => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
-            Self::MetaPropertyNewTarget => [::sittir_core::types::KindId(430)].iter().any(|k| kinds.contains(k)),
-            Self::MetaPropertyImportMeta => [::sittir_core::types::KindId(431)].iter().any(|k| kinds.contains(k)),
+            Self::This(_) => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(120)].iter().any(|k| kinds.contains(k)),
+            Self::True(_) => [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k)),
+            Self::False(_) => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
+            Self::Null(_) => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
+            Self::MetaPropertyNewTarget(_) => [::sittir_core::types::KindId(430)].iter().any(|k| kinds.contains(k)),
+            Self::MetaPropertyImportMeta(_) => [::sittir_core::types::KindId(431)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(158)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -8603,7 +8678,7 @@ impl ::sittir_core::render::Render for YieldExpressionExpressionTransportSlot {
             YieldExpressionExpressionTransportSlot::UpdateExpressionPrefix(inner) => inner.render(w),
             YieldExpressionExpressionTransportSlot::NewExpression(inner) => inner.render(w),
             YieldExpressionExpressionTransportSlot::YieldExpression(inner) => inner.render(w),
-            YieldExpressionExpressionTransportSlot::Undefined => render_undefined(w),
+            YieldExpressionExpressionTransportSlot::Undefined(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(124), edges, w, render_undefined),
             YieldExpressionExpressionTransportSlot::DeclareKeyword => render_declare_keyword(w),
             YieldExpressionExpressionTransportSlot::NamespaceKeyword => render_namespace_keyword(w),
             YieldExpressionExpressionTransportSlot::TypeKeyword => render_type_keyword(w),
@@ -8626,13 +8701,13 @@ impl ::sittir_core::render::Render for YieldExpressionExpressionTransportSlot {
             YieldExpressionExpressionTransportSlot::AsyncKeyword => render_async_keyword(w),
             YieldExpressionExpressionTransportSlot::StaticKeyword => render_static_keyword(w),
             YieldExpressionExpressionTransportSlot::LetKeyword => render_let_keyword(w),
-            YieldExpressionExpressionTransportSlot::This => render_this(w),
-            YieldExpressionExpressionTransportSlot::Super => render_super(w),
-            YieldExpressionExpressionTransportSlot::True => render_true(w),
-            YieldExpressionExpressionTransportSlot::False => render_false(w),
-            YieldExpressionExpressionTransportSlot::Null => render_null(w),
-            YieldExpressionExpressionTransportSlot::MetaPropertyNewTarget => render_meta_property_new_target(w),
-            YieldExpressionExpressionTransportSlot::MetaPropertyImportMeta => render_meta_property_import_meta(w),
+            YieldExpressionExpressionTransportSlot::This(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(119), edges, w, render_this),
+            YieldExpressionExpressionTransportSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(120), edges, w, render_super),
+            YieldExpressionExpressionTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(121), edges, w, render_true),
+            YieldExpressionExpressionTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(122), edges, w, render_false),
+            YieldExpressionExpressionTransportSlot::Null(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(123), edges, w, render_null),
+            YieldExpressionExpressionTransportSlot::MetaPropertyNewTarget(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(430), edges, w, render_meta_property_new_target),
+            YieldExpressionExpressionTransportSlot::MetaPropertyImportMeta(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(431), edges, w, render_meta_property_import_meta),
             YieldExpressionExpressionTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -9473,7 +9548,8 @@ pub enum ArrayElementsTransportSlot {
     #[kind(kind::SPREAD_ELEMENT)]
     SpreadElement(SpreadElementTransport),
     #[kind(kind::UNDEFINED)]
-    Undefined,
+    #[transport(edged)]
+    Undefined(::sittir_core::options::Edges),
     #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
     #[kind(kind::NAMESPACE_KEYWORD)]
@@ -9519,19 +9595,26 @@ pub enum ArrayElementsTransportSlot {
     #[kind(kind::LET_KEYWORD)]
     LetKeyword,
     #[kind(kind::THIS)]
-    This,
+    #[transport(edged)]
+    This(::sittir_core::options::Edges),
     #[kind(kind::SUPER)]
-    Super,
+    #[transport(edged)]
+    Super(::sittir_core::options::Edges),
     #[kind(kind::TRUE)]
-    True,
+    #[transport(edged)]
+    True(::sittir_core::options::Edges),
     #[kind(kind::FALSE)]
-    False,
+    #[transport(edged)]
+    False(::sittir_core::options::Edges),
     #[kind(kind::NULL)]
-    Null,
+    #[transport(edged)]
+    Null(::sittir_core::options::Edges),
     #[kind(kind::META_PROPERTY_NEW_TARGET)]
-    MetaPropertyNewTarget,
+    #[transport(edged)]
+    MetaPropertyNewTarget(::sittir_core::options::Edges),
     #[kind(kind::META_PROPERTY_IMPORT_META)]
-    MetaPropertyImportMeta,
+    #[transport(edged)]
+    MetaPropertyImportMeta(::sittir_core::options::Edges),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -9585,7 +9668,7 @@ impl ::sittir_core::prepare::Prepare for ArrayElementsTransportSlot {
             ArrayElementsTransportSlot::NewExpression(t) => t.prepare(ctx),
             ArrayElementsTransportSlot::YieldExpression(t) => t.prepare(ctx),
             ArrayElementsTransportSlot::SpreadElement(t) => t.prepare(ctx),
-            ArrayElementsTransportSlot::Undefined => Ok(()),
+            ArrayElementsTransportSlot::Undefined(_) => Ok(()),
             ArrayElementsTransportSlot::DeclareKeyword => Ok(()),
             ArrayElementsTransportSlot::NamespaceKeyword => Ok(()),
             ArrayElementsTransportSlot::TypeKeyword => Ok(()),
@@ -9608,13 +9691,13 @@ impl ::sittir_core::prepare::Prepare for ArrayElementsTransportSlot {
             ArrayElementsTransportSlot::AsyncKeyword => Ok(()),
             ArrayElementsTransportSlot::StaticKeyword => Ok(()),
             ArrayElementsTransportSlot::LetKeyword => Ok(()),
-            ArrayElementsTransportSlot::This => Ok(()),
-            ArrayElementsTransportSlot::Super => Ok(()),
-            ArrayElementsTransportSlot::True => Ok(()),
-            ArrayElementsTransportSlot::False => Ok(()),
-            ArrayElementsTransportSlot::Null => Ok(()),
-            ArrayElementsTransportSlot::MetaPropertyNewTarget => Ok(()),
-            ArrayElementsTransportSlot::MetaPropertyImportMeta => Ok(()),
+            ArrayElementsTransportSlot::This(_) => Ok(()),
+            ArrayElementsTransportSlot::Super(_) => Ok(()),
+            ArrayElementsTransportSlot::True(_) => Ok(()),
+            ArrayElementsTransportSlot::False(_) => Ok(()),
+            ArrayElementsTransportSlot::Null(_) => Ok(()),
+            ArrayElementsTransportSlot::MetaPropertyNewTarget(_) => Ok(()),
+            ArrayElementsTransportSlot::MetaPropertyImportMeta(_) => Ok(()),
             ArrayElementsTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -9666,7 +9749,7 @@ impl ::sittir_core::prepare::Prepare for ArrayElementsTransportSlot {
             ArrayElementsTransportSlot::NewExpression(t) => t.source_gap(),
             ArrayElementsTransportSlot::YieldExpression(t) => t.source_gap(),
             ArrayElementsTransportSlot::SpreadElement(t) => t.source_gap(),
-            ArrayElementsTransportSlot::Undefined => None,
+            ArrayElementsTransportSlot::Undefined(_) => None,
             ArrayElementsTransportSlot::DeclareKeyword => None,
             ArrayElementsTransportSlot::NamespaceKeyword => None,
             ArrayElementsTransportSlot::TypeKeyword => None,
@@ -9689,13 +9772,13 @@ impl ::sittir_core::prepare::Prepare for ArrayElementsTransportSlot {
             ArrayElementsTransportSlot::AsyncKeyword => None,
             ArrayElementsTransportSlot::StaticKeyword => None,
             ArrayElementsTransportSlot::LetKeyword => None,
-            ArrayElementsTransportSlot::This => None,
-            ArrayElementsTransportSlot::Super => None,
-            ArrayElementsTransportSlot::True => None,
-            ArrayElementsTransportSlot::False => None,
-            ArrayElementsTransportSlot::Null => None,
-            ArrayElementsTransportSlot::MetaPropertyNewTarget => None,
-            ArrayElementsTransportSlot::MetaPropertyImportMeta => None,
+            ArrayElementsTransportSlot::This(_) => None,
+            ArrayElementsTransportSlot::Super(_) => None,
+            ArrayElementsTransportSlot::True(_) => None,
+            ArrayElementsTransportSlot::False(_) => None,
+            ArrayElementsTransportSlot::Null(_) => None,
+            ArrayElementsTransportSlot::MetaPropertyNewTarget(_) => None,
+            ArrayElementsTransportSlot::MetaPropertyImportMeta(_) => None,
             ArrayElementsTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
@@ -9747,7 +9830,7 @@ impl ::sittir_core::prepare::Prepare for ArrayElementsTransportSlot {
             ArrayElementsTransportSlot::NewExpression(t) => t.gap_edges(),
             ArrayElementsTransportSlot::YieldExpression(t) => t.gap_edges(),
             ArrayElementsTransportSlot::SpreadElement(t) => t.gap_edges(),
-            ArrayElementsTransportSlot::Undefined => None,
+            ArrayElementsTransportSlot::Undefined(edges) => Some(edges),
             ArrayElementsTransportSlot::DeclareKeyword => None,
             ArrayElementsTransportSlot::NamespaceKeyword => None,
             ArrayElementsTransportSlot::TypeKeyword => None,
@@ -9770,13 +9853,13 @@ impl ::sittir_core::prepare::Prepare for ArrayElementsTransportSlot {
             ArrayElementsTransportSlot::AsyncKeyword => None,
             ArrayElementsTransportSlot::StaticKeyword => None,
             ArrayElementsTransportSlot::LetKeyword => None,
-            ArrayElementsTransportSlot::This => None,
-            ArrayElementsTransportSlot::Super => None,
-            ArrayElementsTransportSlot::True => None,
-            ArrayElementsTransportSlot::False => None,
-            ArrayElementsTransportSlot::Null => None,
-            ArrayElementsTransportSlot::MetaPropertyNewTarget => None,
-            ArrayElementsTransportSlot::MetaPropertyImportMeta => None,
+            ArrayElementsTransportSlot::This(edges) => Some(edges),
+            ArrayElementsTransportSlot::Super(edges) => Some(edges),
+            ArrayElementsTransportSlot::True(edges) => Some(edges),
+            ArrayElementsTransportSlot::False(edges) => Some(edges),
+            ArrayElementsTransportSlot::Null(edges) => Some(edges),
+            ArrayElementsTransportSlot::MetaPropertyNewTarget(edges) => Some(edges),
+            ArrayElementsTransportSlot::MetaPropertyImportMeta(edges) => Some(edges),
             ArrayElementsTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -9828,7 +9911,7 @@ impl ::sittir_core::prepare::Prepare for ArrayElementsTransportSlot {
             ArrayElementsTransportSlot::NewExpression(t) => t.snapshot_edge(),
             ArrayElementsTransportSlot::YieldExpression(t) => t.snapshot_edge(),
             ArrayElementsTransportSlot::SpreadElement(t) => t.snapshot_edge(),
-            ArrayElementsTransportSlot::Undefined => None,
+            ArrayElementsTransportSlot::Undefined(_) => None,
             ArrayElementsTransportSlot::DeclareKeyword => None,
             ArrayElementsTransportSlot::NamespaceKeyword => None,
             ArrayElementsTransportSlot::TypeKeyword => None,
@@ -9851,13 +9934,13 @@ impl ::sittir_core::prepare::Prepare for ArrayElementsTransportSlot {
             ArrayElementsTransportSlot::AsyncKeyword => None,
             ArrayElementsTransportSlot::StaticKeyword => None,
             ArrayElementsTransportSlot::LetKeyword => None,
-            ArrayElementsTransportSlot::This => None,
-            ArrayElementsTransportSlot::Super => None,
-            ArrayElementsTransportSlot::True => None,
-            ArrayElementsTransportSlot::False => None,
-            ArrayElementsTransportSlot::Null => None,
-            ArrayElementsTransportSlot::MetaPropertyNewTarget => None,
-            ArrayElementsTransportSlot::MetaPropertyImportMeta => None,
+            ArrayElementsTransportSlot::This(_) => None,
+            ArrayElementsTransportSlot::Super(_) => None,
+            ArrayElementsTransportSlot::True(_) => None,
+            ArrayElementsTransportSlot::False(_) => None,
+            ArrayElementsTransportSlot::Null(_) => None,
+            ArrayElementsTransportSlot::MetaPropertyNewTarget(_) => None,
+            ArrayElementsTransportSlot::MetaPropertyImportMeta(_) => None,
             ArrayElementsTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
@@ -9915,7 +9998,7 @@ impl ::sittir_core::view::KindOf for ArrayElementsTransportSlot {
             Self::NewExpression(inner) => inner.kind_in(kinds),
             Self::YieldExpression(inner) => inner.kind_in(kinds),
             Self::SpreadElement(inner) => inner.kind_in(kinds),
-            Self::Undefined => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
+            Self::Undefined(_) => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
             Self::DeclareKeyword => [::sittir_core::types::KindId(30)].iter().any(|k| kinds.contains(k)),
             Self::NamespaceKeyword => [::sittir_core::types::KindId(31)].iter().any(|k| kinds.contains(k)),
             Self::TypeKeyword => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
@@ -9938,13 +10021,13 @@ impl ::sittir_core::view::KindOf for ArrayElementsTransportSlot {
             Self::AsyncKeyword => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
             Self::StaticKeyword => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
             Self::LetKeyword => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
-            Self::This => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
-            Self::Super => [::sittir_core::types::KindId(120)].iter().any(|k| kinds.contains(k)),
-            Self::True => [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k)),
-            Self::False => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
-            Self::Null => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
-            Self::MetaPropertyNewTarget => [::sittir_core::types::KindId(430)].iter().any(|k| kinds.contains(k)),
-            Self::MetaPropertyImportMeta => [::sittir_core::types::KindId(431)].iter().any(|k| kinds.contains(k)),
+            Self::This(_) => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(120)].iter().any(|k| kinds.contains(k)),
+            Self::True(_) => [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k)),
+            Self::False(_) => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
+            Self::Null(_) => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
+            Self::MetaPropertyNewTarget(_) => [::sittir_core::types::KindId(430)].iter().any(|k| kinds.contains(k)),
+            Self::MetaPropertyImportMeta(_) => [::sittir_core::types::KindId(431)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(158)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -9999,7 +10082,7 @@ impl ::sittir_core::render::Render for ArrayElementsTransportSlot {
             ArrayElementsTransportSlot::NewExpression(inner) => inner.render(w),
             ArrayElementsTransportSlot::YieldExpression(inner) => inner.render(w),
             ArrayElementsTransportSlot::SpreadElement(inner) => inner.render(w),
-            ArrayElementsTransportSlot::Undefined => render_undefined(w),
+            ArrayElementsTransportSlot::Undefined(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(124), edges, w, render_undefined),
             ArrayElementsTransportSlot::DeclareKeyword => render_declare_keyword(w),
             ArrayElementsTransportSlot::NamespaceKeyword => render_namespace_keyword(w),
             ArrayElementsTransportSlot::TypeKeyword => render_type_keyword(w),
@@ -10022,13 +10105,13 @@ impl ::sittir_core::render::Render for ArrayElementsTransportSlot {
             ArrayElementsTransportSlot::AsyncKeyword => render_async_keyword(w),
             ArrayElementsTransportSlot::StaticKeyword => render_static_keyword(w),
             ArrayElementsTransportSlot::LetKeyword => render_let_keyword(w),
-            ArrayElementsTransportSlot::This => render_this(w),
-            ArrayElementsTransportSlot::Super => render_super(w),
-            ArrayElementsTransportSlot::True => render_true(w),
-            ArrayElementsTransportSlot::False => render_false(w),
-            ArrayElementsTransportSlot::Null => render_null(w),
-            ArrayElementsTransportSlot::MetaPropertyNewTarget => render_meta_property_new_target(w),
-            ArrayElementsTransportSlot::MetaPropertyImportMeta => render_meta_property_import_meta(w),
+            ArrayElementsTransportSlot::This(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(119), edges, w, render_this),
+            ArrayElementsTransportSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(120), edges, w, render_super),
+            ArrayElementsTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(121), edges, w, render_true),
+            ArrayElementsTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(122), edges, w, render_false),
+            ArrayElementsTransportSlot::Null(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(123), edges, w, render_null),
+            ArrayElementsTransportSlot::MetaPropertyNewTarget(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(430), edges, w, render_meta_property_new_target),
+            ArrayElementsTransportSlot::MetaPropertyImportMeta(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(431), edges, w, render_meta_property_import_meta),
             ArrayElementsTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -10382,7 +10465,8 @@ pub enum ArrowFunctionBodyTransportSlot {
     #[kind(kind::STATEMENT_BLOCK)]
     StatementBlock(StatementBlockTransport),
     #[kind(kind::UNDEFINED)]
-    Undefined,
+    #[transport(edged)]
+    Undefined(::sittir_core::options::Edges),
     #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
     #[kind(kind::NAMESPACE_KEYWORD)]
@@ -10428,19 +10512,26 @@ pub enum ArrowFunctionBodyTransportSlot {
     #[kind(kind::LET_KEYWORD)]
     LetKeyword,
     #[kind(kind::THIS)]
-    This,
+    #[transport(edged)]
+    This(::sittir_core::options::Edges),
     #[kind(kind::SUPER)]
-    Super,
+    #[transport(edged)]
+    Super(::sittir_core::options::Edges),
     #[kind(kind::TRUE)]
-    True,
+    #[transport(edged)]
+    True(::sittir_core::options::Edges),
     #[kind(kind::FALSE)]
-    False,
+    #[transport(edged)]
+    False(::sittir_core::options::Edges),
     #[kind(kind::NULL)]
-    Null,
+    #[transport(edged)]
+    Null(::sittir_core::options::Edges),
     #[kind(kind::META_PROPERTY_NEW_TARGET)]
-    MetaPropertyNewTarget,
+    #[transport(edged)]
+    MetaPropertyNewTarget(::sittir_core::options::Edges),
     #[kind(kind::META_PROPERTY_IMPORT_META)]
-    MetaPropertyImportMeta,
+    #[transport(edged)]
+    MetaPropertyImportMeta(::sittir_core::options::Edges),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -10494,7 +10585,7 @@ impl ::sittir_core::prepare::Prepare for ArrowFunctionBodyTransportSlot {
             ArrowFunctionBodyTransportSlot::NewExpression(t) => t.prepare(ctx),
             ArrowFunctionBodyTransportSlot::YieldExpression(t) => t.prepare(ctx),
             ArrowFunctionBodyTransportSlot::StatementBlock(t) => t.prepare(ctx),
-            ArrowFunctionBodyTransportSlot::Undefined => Ok(()),
+            ArrowFunctionBodyTransportSlot::Undefined(_) => Ok(()),
             ArrowFunctionBodyTransportSlot::DeclareKeyword => Ok(()),
             ArrowFunctionBodyTransportSlot::NamespaceKeyword => Ok(()),
             ArrowFunctionBodyTransportSlot::TypeKeyword => Ok(()),
@@ -10517,13 +10608,13 @@ impl ::sittir_core::prepare::Prepare for ArrowFunctionBodyTransportSlot {
             ArrowFunctionBodyTransportSlot::AsyncKeyword => Ok(()),
             ArrowFunctionBodyTransportSlot::StaticKeyword => Ok(()),
             ArrowFunctionBodyTransportSlot::LetKeyword => Ok(()),
-            ArrowFunctionBodyTransportSlot::This => Ok(()),
-            ArrowFunctionBodyTransportSlot::Super => Ok(()),
-            ArrowFunctionBodyTransportSlot::True => Ok(()),
-            ArrowFunctionBodyTransportSlot::False => Ok(()),
-            ArrowFunctionBodyTransportSlot::Null => Ok(()),
-            ArrowFunctionBodyTransportSlot::MetaPropertyNewTarget => Ok(()),
-            ArrowFunctionBodyTransportSlot::MetaPropertyImportMeta => Ok(()),
+            ArrowFunctionBodyTransportSlot::This(_) => Ok(()),
+            ArrowFunctionBodyTransportSlot::Super(_) => Ok(()),
+            ArrowFunctionBodyTransportSlot::True(_) => Ok(()),
+            ArrowFunctionBodyTransportSlot::False(_) => Ok(()),
+            ArrowFunctionBodyTransportSlot::Null(_) => Ok(()),
+            ArrowFunctionBodyTransportSlot::MetaPropertyNewTarget(_) => Ok(()),
+            ArrowFunctionBodyTransportSlot::MetaPropertyImportMeta(_) => Ok(()),
             ArrowFunctionBodyTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -10575,7 +10666,7 @@ impl ::sittir_core::prepare::Prepare for ArrowFunctionBodyTransportSlot {
             ArrowFunctionBodyTransportSlot::NewExpression(t) => t.source_gap(),
             ArrowFunctionBodyTransportSlot::YieldExpression(t) => t.source_gap(),
             ArrowFunctionBodyTransportSlot::StatementBlock(t) => t.source_gap(),
-            ArrowFunctionBodyTransportSlot::Undefined => None,
+            ArrowFunctionBodyTransportSlot::Undefined(_) => None,
             ArrowFunctionBodyTransportSlot::DeclareKeyword => None,
             ArrowFunctionBodyTransportSlot::NamespaceKeyword => None,
             ArrowFunctionBodyTransportSlot::TypeKeyword => None,
@@ -10598,13 +10689,13 @@ impl ::sittir_core::prepare::Prepare for ArrowFunctionBodyTransportSlot {
             ArrowFunctionBodyTransportSlot::AsyncKeyword => None,
             ArrowFunctionBodyTransportSlot::StaticKeyword => None,
             ArrowFunctionBodyTransportSlot::LetKeyword => None,
-            ArrowFunctionBodyTransportSlot::This => None,
-            ArrowFunctionBodyTransportSlot::Super => None,
-            ArrowFunctionBodyTransportSlot::True => None,
-            ArrowFunctionBodyTransportSlot::False => None,
-            ArrowFunctionBodyTransportSlot::Null => None,
-            ArrowFunctionBodyTransportSlot::MetaPropertyNewTarget => None,
-            ArrowFunctionBodyTransportSlot::MetaPropertyImportMeta => None,
+            ArrowFunctionBodyTransportSlot::This(_) => None,
+            ArrowFunctionBodyTransportSlot::Super(_) => None,
+            ArrowFunctionBodyTransportSlot::True(_) => None,
+            ArrowFunctionBodyTransportSlot::False(_) => None,
+            ArrowFunctionBodyTransportSlot::Null(_) => None,
+            ArrowFunctionBodyTransportSlot::MetaPropertyNewTarget(_) => None,
+            ArrowFunctionBodyTransportSlot::MetaPropertyImportMeta(_) => None,
             ArrowFunctionBodyTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
@@ -10656,7 +10747,7 @@ impl ::sittir_core::prepare::Prepare for ArrowFunctionBodyTransportSlot {
             ArrowFunctionBodyTransportSlot::NewExpression(t) => t.gap_edges(),
             ArrowFunctionBodyTransportSlot::YieldExpression(t) => t.gap_edges(),
             ArrowFunctionBodyTransportSlot::StatementBlock(t) => t.gap_edges(),
-            ArrowFunctionBodyTransportSlot::Undefined => None,
+            ArrowFunctionBodyTransportSlot::Undefined(edges) => Some(edges),
             ArrowFunctionBodyTransportSlot::DeclareKeyword => None,
             ArrowFunctionBodyTransportSlot::NamespaceKeyword => None,
             ArrowFunctionBodyTransportSlot::TypeKeyword => None,
@@ -10679,13 +10770,13 @@ impl ::sittir_core::prepare::Prepare for ArrowFunctionBodyTransportSlot {
             ArrowFunctionBodyTransportSlot::AsyncKeyword => None,
             ArrowFunctionBodyTransportSlot::StaticKeyword => None,
             ArrowFunctionBodyTransportSlot::LetKeyword => None,
-            ArrowFunctionBodyTransportSlot::This => None,
-            ArrowFunctionBodyTransportSlot::Super => None,
-            ArrowFunctionBodyTransportSlot::True => None,
-            ArrowFunctionBodyTransportSlot::False => None,
-            ArrowFunctionBodyTransportSlot::Null => None,
-            ArrowFunctionBodyTransportSlot::MetaPropertyNewTarget => None,
-            ArrowFunctionBodyTransportSlot::MetaPropertyImportMeta => None,
+            ArrowFunctionBodyTransportSlot::This(edges) => Some(edges),
+            ArrowFunctionBodyTransportSlot::Super(edges) => Some(edges),
+            ArrowFunctionBodyTransportSlot::True(edges) => Some(edges),
+            ArrowFunctionBodyTransportSlot::False(edges) => Some(edges),
+            ArrowFunctionBodyTransportSlot::Null(edges) => Some(edges),
+            ArrowFunctionBodyTransportSlot::MetaPropertyNewTarget(edges) => Some(edges),
+            ArrowFunctionBodyTransportSlot::MetaPropertyImportMeta(edges) => Some(edges),
             ArrowFunctionBodyTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -10737,7 +10828,7 @@ impl ::sittir_core::prepare::Prepare for ArrowFunctionBodyTransportSlot {
             ArrowFunctionBodyTransportSlot::NewExpression(t) => t.snapshot_edge(),
             ArrowFunctionBodyTransportSlot::YieldExpression(t) => t.snapshot_edge(),
             ArrowFunctionBodyTransportSlot::StatementBlock(t) => t.snapshot_edge(),
-            ArrowFunctionBodyTransportSlot::Undefined => None,
+            ArrowFunctionBodyTransportSlot::Undefined(_) => None,
             ArrowFunctionBodyTransportSlot::DeclareKeyword => None,
             ArrowFunctionBodyTransportSlot::NamespaceKeyword => None,
             ArrowFunctionBodyTransportSlot::TypeKeyword => None,
@@ -10760,13 +10851,13 @@ impl ::sittir_core::prepare::Prepare for ArrowFunctionBodyTransportSlot {
             ArrowFunctionBodyTransportSlot::AsyncKeyword => None,
             ArrowFunctionBodyTransportSlot::StaticKeyword => None,
             ArrowFunctionBodyTransportSlot::LetKeyword => None,
-            ArrowFunctionBodyTransportSlot::This => None,
-            ArrowFunctionBodyTransportSlot::Super => None,
-            ArrowFunctionBodyTransportSlot::True => None,
-            ArrowFunctionBodyTransportSlot::False => None,
-            ArrowFunctionBodyTransportSlot::Null => None,
-            ArrowFunctionBodyTransportSlot::MetaPropertyNewTarget => None,
-            ArrowFunctionBodyTransportSlot::MetaPropertyImportMeta => None,
+            ArrowFunctionBodyTransportSlot::This(_) => None,
+            ArrowFunctionBodyTransportSlot::Super(_) => None,
+            ArrowFunctionBodyTransportSlot::True(_) => None,
+            ArrowFunctionBodyTransportSlot::False(_) => None,
+            ArrowFunctionBodyTransportSlot::Null(_) => None,
+            ArrowFunctionBodyTransportSlot::MetaPropertyNewTarget(_) => None,
+            ArrowFunctionBodyTransportSlot::MetaPropertyImportMeta(_) => None,
             ArrowFunctionBodyTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
@@ -10824,7 +10915,7 @@ impl ::sittir_core::view::KindOf for ArrowFunctionBodyTransportSlot {
             Self::NewExpression(inner) => inner.kind_in(kinds),
             Self::YieldExpression(inner) => inner.kind_in(kinds),
             Self::StatementBlock(inner) => inner.kind_in(kinds),
-            Self::Undefined => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
+            Self::Undefined(_) => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
             Self::DeclareKeyword => [::sittir_core::types::KindId(30)].iter().any(|k| kinds.contains(k)),
             Self::NamespaceKeyword => [::sittir_core::types::KindId(31)].iter().any(|k| kinds.contains(k)),
             Self::TypeKeyword => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
@@ -10847,13 +10938,13 @@ impl ::sittir_core::view::KindOf for ArrowFunctionBodyTransportSlot {
             Self::AsyncKeyword => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
             Self::StaticKeyword => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
             Self::LetKeyword => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
-            Self::This => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
-            Self::Super => [::sittir_core::types::KindId(120)].iter().any(|k| kinds.contains(k)),
-            Self::True => [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k)),
-            Self::False => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
-            Self::Null => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
-            Self::MetaPropertyNewTarget => [::sittir_core::types::KindId(430)].iter().any(|k| kinds.contains(k)),
-            Self::MetaPropertyImportMeta => [::sittir_core::types::KindId(431)].iter().any(|k| kinds.contains(k)),
+            Self::This(_) => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(120)].iter().any(|k| kinds.contains(k)),
+            Self::True(_) => [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k)),
+            Self::False(_) => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
+            Self::Null(_) => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
+            Self::MetaPropertyNewTarget(_) => [::sittir_core::types::KindId(430)].iter().any(|k| kinds.contains(k)),
+            Self::MetaPropertyImportMeta(_) => [::sittir_core::types::KindId(431)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(158)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -10908,7 +10999,7 @@ impl ::sittir_core::render::Render for ArrowFunctionBodyTransportSlot {
             ArrowFunctionBodyTransportSlot::NewExpression(inner) => inner.render(w),
             ArrowFunctionBodyTransportSlot::YieldExpression(inner) => inner.render(w),
             ArrowFunctionBodyTransportSlot::StatementBlock(inner) => inner.render(w),
-            ArrowFunctionBodyTransportSlot::Undefined => render_undefined(w),
+            ArrowFunctionBodyTransportSlot::Undefined(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(124), edges, w, render_undefined),
             ArrowFunctionBodyTransportSlot::DeclareKeyword => render_declare_keyword(w),
             ArrowFunctionBodyTransportSlot::NamespaceKeyword => render_namespace_keyword(w),
             ArrowFunctionBodyTransportSlot::TypeKeyword => render_type_keyword(w),
@@ -10931,13 +11022,13 @@ impl ::sittir_core::render::Render for ArrowFunctionBodyTransportSlot {
             ArrowFunctionBodyTransportSlot::AsyncKeyword => render_async_keyword(w),
             ArrowFunctionBodyTransportSlot::StaticKeyword => render_static_keyword(w),
             ArrowFunctionBodyTransportSlot::LetKeyword => render_let_keyword(w),
-            ArrowFunctionBodyTransportSlot::This => render_this(w),
-            ArrowFunctionBodyTransportSlot::Super => render_super(w),
-            ArrowFunctionBodyTransportSlot::True => render_true(w),
-            ArrowFunctionBodyTransportSlot::False => render_false(w),
-            ArrowFunctionBodyTransportSlot::Null => render_null(w),
-            ArrowFunctionBodyTransportSlot::MetaPropertyNewTarget => render_meta_property_new_target(w),
-            ArrowFunctionBodyTransportSlot::MetaPropertyImportMeta => render_meta_property_import_meta(w),
+            ArrowFunctionBodyTransportSlot::This(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(119), edges, w, render_this),
+            ArrowFunctionBodyTransportSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(120), edges, w, render_super),
+            ArrowFunctionBodyTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(121), edges, w, render_true),
+            ArrowFunctionBodyTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(122), edges, w, render_false),
+            ArrowFunctionBodyTransportSlot::Null(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(123), edges, w, render_null),
+            ArrowFunctionBodyTransportSlot::MetaPropertyNewTarget(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(430), edges, w, render_meta_property_new_target),
+            ArrowFunctionBodyTransportSlot::MetaPropertyImportMeta(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(431), edges, w, render_meta_property_import_meta),
             ArrowFunctionBodyTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -11094,7 +11185,8 @@ pub enum MemberExpressionObjectTransportSlot {
     #[kind(kind::YIELD_EXPRESSION)]
     YieldExpression(YieldExpressionTransport),
     #[kind(kind::UNDEFINED)]
-    Undefined,
+    #[transport(edged)]
+    Undefined(::sittir_core::options::Edges),
     #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
     #[kind(kind::NAMESPACE_KEYWORD)]
@@ -11140,19 +11232,26 @@ pub enum MemberExpressionObjectTransportSlot {
     #[kind(kind::LET_KEYWORD)]
     LetKeyword,
     #[kind(kind::THIS)]
-    This,
+    #[transport(edged)]
+    This(::sittir_core::options::Edges),
     #[kind(kind::SUPER)]
-    Super,
+    #[transport(edged)]
+    Super(::sittir_core::options::Edges),
     #[kind(kind::TRUE)]
-    True,
+    #[transport(edged)]
+    True(::sittir_core::options::Edges),
     #[kind(kind::FALSE)]
-    False,
+    #[transport(edged)]
+    False(::sittir_core::options::Edges),
     #[kind(kind::NULL)]
-    Null,
+    #[transport(edged)]
+    Null(::sittir_core::options::Edges),
     #[kind(kind::META_PROPERTY_NEW_TARGET)]
-    MetaPropertyNewTarget,
+    #[transport(edged)]
+    MetaPropertyNewTarget(::sittir_core::options::Edges),
     #[kind(kind::META_PROPERTY_IMPORT_META)]
-    MetaPropertyImportMeta,
+    #[transport(edged)]
+    MetaPropertyImportMeta(::sittir_core::options::Edges),
     #[kind(kind::IMPORT, kind::IMPORT_KEYWORD)]
     Import,
     #[transport(verbatim)]
@@ -11207,7 +11306,7 @@ impl ::sittir_core::prepare::Prepare for MemberExpressionObjectTransportSlot {
             MemberExpressionObjectTransportSlot::UpdateExpressionPrefix(t) => t.prepare(ctx),
             MemberExpressionObjectTransportSlot::NewExpression(t) => t.prepare(ctx),
             MemberExpressionObjectTransportSlot::YieldExpression(t) => t.prepare(ctx),
-            MemberExpressionObjectTransportSlot::Undefined => Ok(()),
+            MemberExpressionObjectTransportSlot::Undefined(_) => Ok(()),
             MemberExpressionObjectTransportSlot::DeclareKeyword => Ok(()),
             MemberExpressionObjectTransportSlot::NamespaceKeyword => Ok(()),
             MemberExpressionObjectTransportSlot::TypeKeyword => Ok(()),
@@ -11230,13 +11329,13 @@ impl ::sittir_core::prepare::Prepare for MemberExpressionObjectTransportSlot {
             MemberExpressionObjectTransportSlot::AsyncKeyword => Ok(()),
             MemberExpressionObjectTransportSlot::StaticKeyword => Ok(()),
             MemberExpressionObjectTransportSlot::LetKeyword => Ok(()),
-            MemberExpressionObjectTransportSlot::This => Ok(()),
-            MemberExpressionObjectTransportSlot::Super => Ok(()),
-            MemberExpressionObjectTransportSlot::True => Ok(()),
-            MemberExpressionObjectTransportSlot::False => Ok(()),
-            MemberExpressionObjectTransportSlot::Null => Ok(()),
-            MemberExpressionObjectTransportSlot::MetaPropertyNewTarget => Ok(()),
-            MemberExpressionObjectTransportSlot::MetaPropertyImportMeta => Ok(()),
+            MemberExpressionObjectTransportSlot::This(_) => Ok(()),
+            MemberExpressionObjectTransportSlot::Super(_) => Ok(()),
+            MemberExpressionObjectTransportSlot::True(_) => Ok(()),
+            MemberExpressionObjectTransportSlot::False(_) => Ok(()),
+            MemberExpressionObjectTransportSlot::Null(_) => Ok(()),
+            MemberExpressionObjectTransportSlot::MetaPropertyNewTarget(_) => Ok(()),
+            MemberExpressionObjectTransportSlot::MetaPropertyImportMeta(_) => Ok(()),
             MemberExpressionObjectTransportSlot::Import => Ok(()),
             MemberExpressionObjectTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
@@ -11288,7 +11387,7 @@ impl ::sittir_core::prepare::Prepare for MemberExpressionObjectTransportSlot {
             MemberExpressionObjectTransportSlot::UpdateExpressionPrefix(t) => t.source_gap(),
             MemberExpressionObjectTransportSlot::NewExpression(t) => t.source_gap(),
             MemberExpressionObjectTransportSlot::YieldExpression(t) => t.source_gap(),
-            MemberExpressionObjectTransportSlot::Undefined => None,
+            MemberExpressionObjectTransportSlot::Undefined(_) => None,
             MemberExpressionObjectTransportSlot::DeclareKeyword => None,
             MemberExpressionObjectTransportSlot::NamespaceKeyword => None,
             MemberExpressionObjectTransportSlot::TypeKeyword => None,
@@ -11311,13 +11410,13 @@ impl ::sittir_core::prepare::Prepare for MemberExpressionObjectTransportSlot {
             MemberExpressionObjectTransportSlot::AsyncKeyword => None,
             MemberExpressionObjectTransportSlot::StaticKeyword => None,
             MemberExpressionObjectTransportSlot::LetKeyword => None,
-            MemberExpressionObjectTransportSlot::This => None,
-            MemberExpressionObjectTransportSlot::Super => None,
-            MemberExpressionObjectTransportSlot::True => None,
-            MemberExpressionObjectTransportSlot::False => None,
-            MemberExpressionObjectTransportSlot::Null => None,
-            MemberExpressionObjectTransportSlot::MetaPropertyNewTarget => None,
-            MemberExpressionObjectTransportSlot::MetaPropertyImportMeta => None,
+            MemberExpressionObjectTransportSlot::This(_) => None,
+            MemberExpressionObjectTransportSlot::Super(_) => None,
+            MemberExpressionObjectTransportSlot::True(_) => None,
+            MemberExpressionObjectTransportSlot::False(_) => None,
+            MemberExpressionObjectTransportSlot::Null(_) => None,
+            MemberExpressionObjectTransportSlot::MetaPropertyNewTarget(_) => None,
+            MemberExpressionObjectTransportSlot::MetaPropertyImportMeta(_) => None,
             MemberExpressionObjectTransportSlot::Import => None,
             MemberExpressionObjectTransportSlot::Verbatim(t) => t.source_gap(),
         }
@@ -11369,7 +11468,7 @@ impl ::sittir_core::prepare::Prepare for MemberExpressionObjectTransportSlot {
             MemberExpressionObjectTransportSlot::UpdateExpressionPrefix(t) => t.gap_edges(),
             MemberExpressionObjectTransportSlot::NewExpression(t) => t.gap_edges(),
             MemberExpressionObjectTransportSlot::YieldExpression(t) => t.gap_edges(),
-            MemberExpressionObjectTransportSlot::Undefined => None,
+            MemberExpressionObjectTransportSlot::Undefined(edges) => Some(edges),
             MemberExpressionObjectTransportSlot::DeclareKeyword => None,
             MemberExpressionObjectTransportSlot::NamespaceKeyword => None,
             MemberExpressionObjectTransportSlot::TypeKeyword => None,
@@ -11392,13 +11491,13 @@ impl ::sittir_core::prepare::Prepare for MemberExpressionObjectTransportSlot {
             MemberExpressionObjectTransportSlot::AsyncKeyword => None,
             MemberExpressionObjectTransportSlot::StaticKeyword => None,
             MemberExpressionObjectTransportSlot::LetKeyword => None,
-            MemberExpressionObjectTransportSlot::This => None,
-            MemberExpressionObjectTransportSlot::Super => None,
-            MemberExpressionObjectTransportSlot::True => None,
-            MemberExpressionObjectTransportSlot::False => None,
-            MemberExpressionObjectTransportSlot::Null => None,
-            MemberExpressionObjectTransportSlot::MetaPropertyNewTarget => None,
-            MemberExpressionObjectTransportSlot::MetaPropertyImportMeta => None,
+            MemberExpressionObjectTransportSlot::This(edges) => Some(edges),
+            MemberExpressionObjectTransportSlot::Super(edges) => Some(edges),
+            MemberExpressionObjectTransportSlot::True(edges) => Some(edges),
+            MemberExpressionObjectTransportSlot::False(edges) => Some(edges),
+            MemberExpressionObjectTransportSlot::Null(edges) => Some(edges),
+            MemberExpressionObjectTransportSlot::MetaPropertyNewTarget(edges) => Some(edges),
+            MemberExpressionObjectTransportSlot::MetaPropertyImportMeta(edges) => Some(edges),
             MemberExpressionObjectTransportSlot::Import => None,
             MemberExpressionObjectTransportSlot::Verbatim(t) => t.gap_edges(),
         }
@@ -11450,7 +11549,7 @@ impl ::sittir_core::prepare::Prepare for MemberExpressionObjectTransportSlot {
             MemberExpressionObjectTransportSlot::UpdateExpressionPrefix(t) => t.snapshot_edge(),
             MemberExpressionObjectTransportSlot::NewExpression(t) => t.snapshot_edge(),
             MemberExpressionObjectTransportSlot::YieldExpression(t) => t.snapshot_edge(),
-            MemberExpressionObjectTransportSlot::Undefined => None,
+            MemberExpressionObjectTransportSlot::Undefined(_) => None,
             MemberExpressionObjectTransportSlot::DeclareKeyword => None,
             MemberExpressionObjectTransportSlot::NamespaceKeyword => None,
             MemberExpressionObjectTransportSlot::TypeKeyword => None,
@@ -11473,13 +11572,13 @@ impl ::sittir_core::prepare::Prepare for MemberExpressionObjectTransportSlot {
             MemberExpressionObjectTransportSlot::AsyncKeyword => None,
             MemberExpressionObjectTransportSlot::StaticKeyword => None,
             MemberExpressionObjectTransportSlot::LetKeyword => None,
-            MemberExpressionObjectTransportSlot::This => None,
-            MemberExpressionObjectTransportSlot::Super => None,
-            MemberExpressionObjectTransportSlot::True => None,
-            MemberExpressionObjectTransportSlot::False => None,
-            MemberExpressionObjectTransportSlot::Null => None,
-            MemberExpressionObjectTransportSlot::MetaPropertyNewTarget => None,
-            MemberExpressionObjectTransportSlot::MetaPropertyImportMeta => None,
+            MemberExpressionObjectTransportSlot::This(_) => None,
+            MemberExpressionObjectTransportSlot::Super(_) => None,
+            MemberExpressionObjectTransportSlot::True(_) => None,
+            MemberExpressionObjectTransportSlot::False(_) => None,
+            MemberExpressionObjectTransportSlot::Null(_) => None,
+            MemberExpressionObjectTransportSlot::MetaPropertyNewTarget(_) => None,
+            MemberExpressionObjectTransportSlot::MetaPropertyImportMeta(_) => None,
             MemberExpressionObjectTransportSlot::Import => None,
             MemberExpressionObjectTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
@@ -11537,7 +11636,7 @@ impl ::sittir_core::view::KindOf for MemberExpressionObjectTransportSlot {
             Self::UpdateExpressionPrefix(inner) => inner.kind_in(kinds),
             Self::NewExpression(inner) => inner.kind_in(kinds),
             Self::YieldExpression(inner) => inner.kind_in(kinds),
-            Self::Undefined => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
+            Self::Undefined(_) => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
             Self::DeclareKeyword => [::sittir_core::types::KindId(30)].iter().any(|k| kinds.contains(k)),
             Self::NamespaceKeyword => [::sittir_core::types::KindId(31)].iter().any(|k| kinds.contains(k)),
             Self::TypeKeyword => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
@@ -11560,13 +11659,13 @@ impl ::sittir_core::view::KindOf for MemberExpressionObjectTransportSlot {
             Self::AsyncKeyword => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
             Self::StaticKeyword => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
             Self::LetKeyword => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
-            Self::This => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
-            Self::Super => [::sittir_core::types::KindId(120)].iter().any(|k| kinds.contains(k)),
-            Self::True => [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k)),
-            Self::False => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
-            Self::Null => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
-            Self::MetaPropertyNewTarget => [::sittir_core::types::KindId(430)].iter().any(|k| kinds.contains(k)),
-            Self::MetaPropertyImportMeta => [::sittir_core::types::KindId(431)].iter().any(|k| kinds.contains(k)),
+            Self::This(_) => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(120)].iter().any(|k| kinds.contains(k)),
+            Self::True(_) => [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k)),
+            Self::False(_) => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
+            Self::Null(_) => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
+            Self::MetaPropertyNewTarget(_) => [::sittir_core::types::KindId(430)].iter().any(|k| kinds.contains(k)),
+            Self::MetaPropertyImportMeta(_) => [::sittir_core::types::KindId(431)].iter().any(|k| kinds.contains(k)),
             Self::Import => [::sittir_core::types::KindId(195)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(158)].iter().any(|k| kinds.contains(k)),
         }
@@ -11621,7 +11720,7 @@ impl ::sittir_core::render::Render for MemberExpressionObjectTransportSlot {
             MemberExpressionObjectTransportSlot::UpdateExpressionPrefix(inner) => inner.render(w),
             MemberExpressionObjectTransportSlot::NewExpression(inner) => inner.render(w),
             MemberExpressionObjectTransportSlot::YieldExpression(inner) => inner.render(w),
-            MemberExpressionObjectTransportSlot::Undefined => render_undefined(w),
+            MemberExpressionObjectTransportSlot::Undefined(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(124), edges, w, render_undefined),
             MemberExpressionObjectTransportSlot::DeclareKeyword => render_declare_keyword(w),
             MemberExpressionObjectTransportSlot::NamespaceKeyword => render_namespace_keyword(w),
             MemberExpressionObjectTransportSlot::TypeKeyword => render_type_keyword(w),
@@ -11644,13 +11743,13 @@ impl ::sittir_core::render::Render for MemberExpressionObjectTransportSlot {
             MemberExpressionObjectTransportSlot::AsyncKeyword => render_async_keyword(w),
             MemberExpressionObjectTransportSlot::StaticKeyword => render_static_keyword(w),
             MemberExpressionObjectTransportSlot::LetKeyword => render_let_keyword(w),
-            MemberExpressionObjectTransportSlot::This => render_this(w),
-            MemberExpressionObjectTransportSlot::Super => render_super(w),
-            MemberExpressionObjectTransportSlot::True => render_true(w),
-            MemberExpressionObjectTransportSlot::False => render_false(w),
-            MemberExpressionObjectTransportSlot::Null => render_null(w),
-            MemberExpressionObjectTransportSlot::MetaPropertyNewTarget => render_meta_property_new_target(w),
-            MemberExpressionObjectTransportSlot::MetaPropertyImportMeta => render_meta_property_import_meta(w),
+            MemberExpressionObjectTransportSlot::This(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(119), edges, w, render_this),
+            MemberExpressionObjectTransportSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(120), edges, w, render_super),
+            MemberExpressionObjectTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(121), edges, w, render_true),
+            MemberExpressionObjectTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(122), edges, w, render_false),
+            MemberExpressionObjectTransportSlot::Null(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(123), edges, w, render_null),
+            MemberExpressionObjectTransportSlot::MetaPropertyNewTarget(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(430), edges, w, render_meta_property_new_target),
+            MemberExpressionObjectTransportSlot::MetaPropertyImportMeta(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(431), edges, w, render_meta_property_import_meta),
             MemberExpressionObjectTransportSlot::Import => render_import(w),
             MemberExpressionObjectTransportSlot::Verbatim(inner) => inner.render(w),
         }
@@ -11859,7 +11958,8 @@ pub enum SubscriptExpressionObjectTransportSlot {
     #[kind(kind::YIELD_EXPRESSION)]
     YieldExpression(YieldExpressionTransport),
     #[kind(kind::UNDEFINED)]
-    Undefined,
+    #[transport(edged)]
+    Undefined(::sittir_core::options::Edges),
     #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
     #[kind(kind::NAMESPACE_KEYWORD)]
@@ -11905,19 +12005,26 @@ pub enum SubscriptExpressionObjectTransportSlot {
     #[kind(kind::LET_KEYWORD)]
     LetKeyword,
     #[kind(kind::THIS)]
-    This,
+    #[transport(edged)]
+    This(::sittir_core::options::Edges),
     #[kind(kind::SUPER)]
-    Super,
+    #[transport(edged)]
+    Super(::sittir_core::options::Edges),
     #[kind(kind::TRUE)]
-    True,
+    #[transport(edged)]
+    True(::sittir_core::options::Edges),
     #[kind(kind::FALSE)]
-    False,
+    #[transport(edged)]
+    False(::sittir_core::options::Edges),
     #[kind(kind::NULL)]
-    Null,
+    #[transport(edged)]
+    Null(::sittir_core::options::Edges),
     #[kind(kind::META_PROPERTY_NEW_TARGET)]
-    MetaPropertyNewTarget,
+    #[transport(edged)]
+    MetaPropertyNewTarget(::sittir_core::options::Edges),
     #[kind(kind::META_PROPERTY_IMPORT_META)]
-    MetaPropertyImportMeta,
+    #[transport(edged)]
+    MetaPropertyImportMeta(::sittir_core::options::Edges),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -11970,7 +12077,7 @@ impl ::sittir_core::prepare::Prepare for SubscriptExpressionObjectTransportSlot 
             SubscriptExpressionObjectTransportSlot::UpdateExpressionPrefix(t) => t.prepare(ctx),
             SubscriptExpressionObjectTransportSlot::NewExpression(t) => t.prepare(ctx),
             SubscriptExpressionObjectTransportSlot::YieldExpression(t) => t.prepare(ctx),
-            SubscriptExpressionObjectTransportSlot::Undefined => Ok(()),
+            SubscriptExpressionObjectTransportSlot::Undefined(_) => Ok(()),
             SubscriptExpressionObjectTransportSlot::DeclareKeyword => Ok(()),
             SubscriptExpressionObjectTransportSlot::NamespaceKeyword => Ok(()),
             SubscriptExpressionObjectTransportSlot::TypeKeyword => Ok(()),
@@ -11993,13 +12100,13 @@ impl ::sittir_core::prepare::Prepare for SubscriptExpressionObjectTransportSlot 
             SubscriptExpressionObjectTransportSlot::AsyncKeyword => Ok(()),
             SubscriptExpressionObjectTransportSlot::StaticKeyword => Ok(()),
             SubscriptExpressionObjectTransportSlot::LetKeyword => Ok(()),
-            SubscriptExpressionObjectTransportSlot::This => Ok(()),
-            SubscriptExpressionObjectTransportSlot::Super => Ok(()),
-            SubscriptExpressionObjectTransportSlot::True => Ok(()),
-            SubscriptExpressionObjectTransportSlot::False => Ok(()),
-            SubscriptExpressionObjectTransportSlot::Null => Ok(()),
-            SubscriptExpressionObjectTransportSlot::MetaPropertyNewTarget => Ok(()),
-            SubscriptExpressionObjectTransportSlot::MetaPropertyImportMeta => Ok(()),
+            SubscriptExpressionObjectTransportSlot::This(_) => Ok(()),
+            SubscriptExpressionObjectTransportSlot::Super(_) => Ok(()),
+            SubscriptExpressionObjectTransportSlot::True(_) => Ok(()),
+            SubscriptExpressionObjectTransportSlot::False(_) => Ok(()),
+            SubscriptExpressionObjectTransportSlot::Null(_) => Ok(()),
+            SubscriptExpressionObjectTransportSlot::MetaPropertyNewTarget(_) => Ok(()),
+            SubscriptExpressionObjectTransportSlot::MetaPropertyImportMeta(_) => Ok(()),
             SubscriptExpressionObjectTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -12050,7 +12157,7 @@ impl ::sittir_core::prepare::Prepare for SubscriptExpressionObjectTransportSlot 
             SubscriptExpressionObjectTransportSlot::UpdateExpressionPrefix(t) => t.source_gap(),
             SubscriptExpressionObjectTransportSlot::NewExpression(t) => t.source_gap(),
             SubscriptExpressionObjectTransportSlot::YieldExpression(t) => t.source_gap(),
-            SubscriptExpressionObjectTransportSlot::Undefined => None,
+            SubscriptExpressionObjectTransportSlot::Undefined(_) => None,
             SubscriptExpressionObjectTransportSlot::DeclareKeyword => None,
             SubscriptExpressionObjectTransportSlot::NamespaceKeyword => None,
             SubscriptExpressionObjectTransportSlot::TypeKeyword => None,
@@ -12073,13 +12180,13 @@ impl ::sittir_core::prepare::Prepare for SubscriptExpressionObjectTransportSlot 
             SubscriptExpressionObjectTransportSlot::AsyncKeyword => None,
             SubscriptExpressionObjectTransportSlot::StaticKeyword => None,
             SubscriptExpressionObjectTransportSlot::LetKeyword => None,
-            SubscriptExpressionObjectTransportSlot::This => None,
-            SubscriptExpressionObjectTransportSlot::Super => None,
-            SubscriptExpressionObjectTransportSlot::True => None,
-            SubscriptExpressionObjectTransportSlot::False => None,
-            SubscriptExpressionObjectTransportSlot::Null => None,
-            SubscriptExpressionObjectTransportSlot::MetaPropertyNewTarget => None,
-            SubscriptExpressionObjectTransportSlot::MetaPropertyImportMeta => None,
+            SubscriptExpressionObjectTransportSlot::This(_) => None,
+            SubscriptExpressionObjectTransportSlot::Super(_) => None,
+            SubscriptExpressionObjectTransportSlot::True(_) => None,
+            SubscriptExpressionObjectTransportSlot::False(_) => None,
+            SubscriptExpressionObjectTransportSlot::Null(_) => None,
+            SubscriptExpressionObjectTransportSlot::MetaPropertyNewTarget(_) => None,
+            SubscriptExpressionObjectTransportSlot::MetaPropertyImportMeta(_) => None,
             SubscriptExpressionObjectTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
@@ -12130,7 +12237,7 @@ impl ::sittir_core::prepare::Prepare for SubscriptExpressionObjectTransportSlot 
             SubscriptExpressionObjectTransportSlot::UpdateExpressionPrefix(t) => t.gap_edges(),
             SubscriptExpressionObjectTransportSlot::NewExpression(t) => t.gap_edges(),
             SubscriptExpressionObjectTransportSlot::YieldExpression(t) => t.gap_edges(),
-            SubscriptExpressionObjectTransportSlot::Undefined => None,
+            SubscriptExpressionObjectTransportSlot::Undefined(edges) => Some(edges),
             SubscriptExpressionObjectTransportSlot::DeclareKeyword => None,
             SubscriptExpressionObjectTransportSlot::NamespaceKeyword => None,
             SubscriptExpressionObjectTransportSlot::TypeKeyword => None,
@@ -12153,13 +12260,13 @@ impl ::sittir_core::prepare::Prepare for SubscriptExpressionObjectTransportSlot 
             SubscriptExpressionObjectTransportSlot::AsyncKeyword => None,
             SubscriptExpressionObjectTransportSlot::StaticKeyword => None,
             SubscriptExpressionObjectTransportSlot::LetKeyword => None,
-            SubscriptExpressionObjectTransportSlot::This => None,
-            SubscriptExpressionObjectTransportSlot::Super => None,
-            SubscriptExpressionObjectTransportSlot::True => None,
-            SubscriptExpressionObjectTransportSlot::False => None,
-            SubscriptExpressionObjectTransportSlot::Null => None,
-            SubscriptExpressionObjectTransportSlot::MetaPropertyNewTarget => None,
-            SubscriptExpressionObjectTransportSlot::MetaPropertyImportMeta => None,
+            SubscriptExpressionObjectTransportSlot::This(edges) => Some(edges),
+            SubscriptExpressionObjectTransportSlot::Super(edges) => Some(edges),
+            SubscriptExpressionObjectTransportSlot::True(edges) => Some(edges),
+            SubscriptExpressionObjectTransportSlot::False(edges) => Some(edges),
+            SubscriptExpressionObjectTransportSlot::Null(edges) => Some(edges),
+            SubscriptExpressionObjectTransportSlot::MetaPropertyNewTarget(edges) => Some(edges),
+            SubscriptExpressionObjectTransportSlot::MetaPropertyImportMeta(edges) => Some(edges),
             SubscriptExpressionObjectTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -12210,7 +12317,7 @@ impl ::sittir_core::prepare::Prepare for SubscriptExpressionObjectTransportSlot 
             SubscriptExpressionObjectTransportSlot::UpdateExpressionPrefix(t) => t.snapshot_edge(),
             SubscriptExpressionObjectTransportSlot::NewExpression(t) => t.snapshot_edge(),
             SubscriptExpressionObjectTransportSlot::YieldExpression(t) => t.snapshot_edge(),
-            SubscriptExpressionObjectTransportSlot::Undefined => None,
+            SubscriptExpressionObjectTransportSlot::Undefined(_) => None,
             SubscriptExpressionObjectTransportSlot::DeclareKeyword => None,
             SubscriptExpressionObjectTransportSlot::NamespaceKeyword => None,
             SubscriptExpressionObjectTransportSlot::TypeKeyword => None,
@@ -12233,13 +12340,13 @@ impl ::sittir_core::prepare::Prepare for SubscriptExpressionObjectTransportSlot 
             SubscriptExpressionObjectTransportSlot::AsyncKeyword => None,
             SubscriptExpressionObjectTransportSlot::StaticKeyword => None,
             SubscriptExpressionObjectTransportSlot::LetKeyword => None,
-            SubscriptExpressionObjectTransportSlot::This => None,
-            SubscriptExpressionObjectTransportSlot::Super => None,
-            SubscriptExpressionObjectTransportSlot::True => None,
-            SubscriptExpressionObjectTransportSlot::False => None,
-            SubscriptExpressionObjectTransportSlot::Null => None,
-            SubscriptExpressionObjectTransportSlot::MetaPropertyNewTarget => None,
-            SubscriptExpressionObjectTransportSlot::MetaPropertyImportMeta => None,
+            SubscriptExpressionObjectTransportSlot::This(_) => None,
+            SubscriptExpressionObjectTransportSlot::Super(_) => None,
+            SubscriptExpressionObjectTransportSlot::True(_) => None,
+            SubscriptExpressionObjectTransportSlot::False(_) => None,
+            SubscriptExpressionObjectTransportSlot::Null(_) => None,
+            SubscriptExpressionObjectTransportSlot::MetaPropertyNewTarget(_) => None,
+            SubscriptExpressionObjectTransportSlot::MetaPropertyImportMeta(_) => None,
             SubscriptExpressionObjectTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
@@ -12296,7 +12403,7 @@ impl ::sittir_core::view::KindOf for SubscriptExpressionObjectTransportSlot {
             Self::UpdateExpressionPrefix(inner) => inner.kind_in(kinds),
             Self::NewExpression(inner) => inner.kind_in(kinds),
             Self::YieldExpression(inner) => inner.kind_in(kinds),
-            Self::Undefined => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
+            Self::Undefined(_) => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
             Self::DeclareKeyword => [::sittir_core::types::KindId(30)].iter().any(|k| kinds.contains(k)),
             Self::NamespaceKeyword => [::sittir_core::types::KindId(31)].iter().any(|k| kinds.contains(k)),
             Self::TypeKeyword => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
@@ -12319,13 +12426,13 @@ impl ::sittir_core::view::KindOf for SubscriptExpressionObjectTransportSlot {
             Self::AsyncKeyword => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
             Self::StaticKeyword => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
             Self::LetKeyword => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
-            Self::This => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
-            Self::Super => [::sittir_core::types::KindId(120)].iter().any(|k| kinds.contains(k)),
-            Self::True => [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k)),
-            Self::False => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
-            Self::Null => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
-            Self::MetaPropertyNewTarget => [::sittir_core::types::KindId(430)].iter().any(|k| kinds.contains(k)),
-            Self::MetaPropertyImportMeta => [::sittir_core::types::KindId(431)].iter().any(|k| kinds.contains(k)),
+            Self::This(_) => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(120)].iter().any(|k| kinds.contains(k)),
+            Self::True(_) => [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k)),
+            Self::False(_) => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
+            Self::Null(_) => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
+            Self::MetaPropertyNewTarget(_) => [::sittir_core::types::KindId(430)].iter().any(|k| kinds.contains(k)),
+            Self::MetaPropertyImportMeta(_) => [::sittir_core::types::KindId(431)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(158)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -12379,7 +12486,7 @@ impl ::sittir_core::render::Render for SubscriptExpressionObjectTransportSlot {
             SubscriptExpressionObjectTransportSlot::UpdateExpressionPrefix(inner) => inner.render(w),
             SubscriptExpressionObjectTransportSlot::NewExpression(inner) => inner.render(w),
             SubscriptExpressionObjectTransportSlot::YieldExpression(inner) => inner.render(w),
-            SubscriptExpressionObjectTransportSlot::Undefined => render_undefined(w),
+            SubscriptExpressionObjectTransportSlot::Undefined(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(124), edges, w, render_undefined),
             SubscriptExpressionObjectTransportSlot::DeclareKeyword => render_declare_keyword(w),
             SubscriptExpressionObjectTransportSlot::NamespaceKeyword => render_namespace_keyword(w),
             SubscriptExpressionObjectTransportSlot::TypeKeyword => render_type_keyword(w),
@@ -12402,13 +12509,13 @@ impl ::sittir_core::render::Render for SubscriptExpressionObjectTransportSlot {
             SubscriptExpressionObjectTransportSlot::AsyncKeyword => render_async_keyword(w),
             SubscriptExpressionObjectTransportSlot::StaticKeyword => render_static_keyword(w),
             SubscriptExpressionObjectTransportSlot::LetKeyword => render_let_keyword(w),
-            SubscriptExpressionObjectTransportSlot::This => render_this(w),
-            SubscriptExpressionObjectTransportSlot::Super => render_super(w),
-            SubscriptExpressionObjectTransportSlot::True => render_true(w),
-            SubscriptExpressionObjectTransportSlot::False => render_false(w),
-            SubscriptExpressionObjectTransportSlot::Null => render_null(w),
-            SubscriptExpressionObjectTransportSlot::MetaPropertyNewTarget => render_meta_property_new_target(w),
-            SubscriptExpressionObjectTransportSlot::MetaPropertyImportMeta => render_meta_property_import_meta(w),
+            SubscriptExpressionObjectTransportSlot::This(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(119), edges, w, render_this),
+            SubscriptExpressionObjectTransportSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(120), edges, w, render_super),
+            SubscriptExpressionObjectTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(121), edges, w, render_true),
+            SubscriptExpressionObjectTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(122), edges, w, render_false),
+            SubscriptExpressionObjectTransportSlot::Null(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(123), edges, w, render_null),
+            SubscriptExpressionObjectTransportSlot::MetaPropertyNewTarget(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(430), edges, w, render_meta_property_new_target),
+            SubscriptExpressionObjectTransportSlot::MetaPropertyImportMeta(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(431), edges, w, render_meta_property_import_meta),
             SubscriptExpressionObjectTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -12430,7 +12537,8 @@ pub enum LhsExpressionContentTransportSlot {
     #[kind(kind::NON_NULL_EXPRESSION)]
     NonNullExpression(NonNullExpressionTransport),
     #[kind(kind::UNDEFINED)]
-    Undefined,
+    #[transport(edged)]
+    Undefined(::sittir_core::options::Edges),
     #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
     #[kind(kind::NAMESPACE_KEYWORD)]
@@ -12488,7 +12596,7 @@ impl ::sittir_core::prepare::Prepare for LhsExpressionContentTransportSlot {
             LhsExpressionContentTransportSlot::ObjectPattern(t) => t.prepare(ctx),
             LhsExpressionContentTransportSlot::ArrayPattern(t) => t.prepare(ctx),
             LhsExpressionContentTransportSlot::NonNullExpression(t) => t.prepare(ctx),
-            LhsExpressionContentTransportSlot::Undefined => Ok(()),
+            LhsExpressionContentTransportSlot::Undefined(_) => Ok(()),
             LhsExpressionContentTransportSlot::DeclareKeyword => Ok(()),
             LhsExpressionContentTransportSlot::NamespaceKeyword => Ok(()),
             LhsExpressionContentTransportSlot::TypeKeyword => Ok(()),
@@ -12522,7 +12630,7 @@ impl ::sittir_core::prepare::Prepare for LhsExpressionContentTransportSlot {
             LhsExpressionContentTransportSlot::ObjectPattern(t) => t.source_gap(),
             LhsExpressionContentTransportSlot::ArrayPattern(t) => t.source_gap(),
             LhsExpressionContentTransportSlot::NonNullExpression(t) => t.source_gap(),
-            LhsExpressionContentTransportSlot::Undefined => None,
+            LhsExpressionContentTransportSlot::Undefined(_) => None,
             LhsExpressionContentTransportSlot::DeclareKeyword => None,
             LhsExpressionContentTransportSlot::NamespaceKeyword => None,
             LhsExpressionContentTransportSlot::TypeKeyword => None,
@@ -12556,7 +12664,7 @@ impl ::sittir_core::prepare::Prepare for LhsExpressionContentTransportSlot {
             LhsExpressionContentTransportSlot::ObjectPattern(t) => t.gap_edges(),
             LhsExpressionContentTransportSlot::ArrayPattern(t) => t.gap_edges(),
             LhsExpressionContentTransportSlot::NonNullExpression(t) => t.gap_edges(),
-            LhsExpressionContentTransportSlot::Undefined => None,
+            LhsExpressionContentTransportSlot::Undefined(edges) => Some(edges),
             LhsExpressionContentTransportSlot::DeclareKeyword => None,
             LhsExpressionContentTransportSlot::NamespaceKeyword => None,
             LhsExpressionContentTransportSlot::TypeKeyword => None,
@@ -12590,7 +12698,7 @@ impl ::sittir_core::prepare::Prepare for LhsExpressionContentTransportSlot {
             LhsExpressionContentTransportSlot::ObjectPattern(t) => t.snapshot_edge(),
             LhsExpressionContentTransportSlot::ArrayPattern(t) => t.snapshot_edge(),
             LhsExpressionContentTransportSlot::NonNullExpression(t) => t.snapshot_edge(),
-            LhsExpressionContentTransportSlot::Undefined => None,
+            LhsExpressionContentTransportSlot::Undefined(_) => None,
             LhsExpressionContentTransportSlot::DeclareKeyword => None,
             LhsExpressionContentTransportSlot::NamespaceKeyword => None,
             LhsExpressionContentTransportSlot::TypeKeyword => None,
@@ -12630,7 +12738,7 @@ impl ::sittir_core::view::KindOf for LhsExpressionContentTransportSlot {
             Self::ObjectPattern(inner) => inner.kind_in(kinds),
             Self::ArrayPattern(inner) => inner.kind_in(kinds),
             Self::NonNullExpression(inner) => inner.kind_in(kinds),
-            Self::Undefined => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
+            Self::Undefined(_) => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
             Self::DeclareKeyword => [::sittir_core::types::KindId(30)].iter().any(|k| kinds.contains(k)),
             Self::NamespaceKeyword => [::sittir_core::types::KindId(31)].iter().any(|k| kinds.contains(k)),
             Self::TypeKeyword => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
@@ -12667,7 +12775,7 @@ impl ::sittir_core::render::Render for LhsExpressionContentTransportSlot {
             LhsExpressionContentTransportSlot::ObjectPattern(inner) => inner.render(w),
             LhsExpressionContentTransportSlot::ArrayPattern(inner) => inner.render(w),
             LhsExpressionContentTransportSlot::NonNullExpression(inner) => inner.render(w),
-            LhsExpressionContentTransportSlot::Undefined => render_undefined(w),
+            LhsExpressionContentTransportSlot::Undefined(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(124), edges, w, render_undefined),
             LhsExpressionContentTransportSlot::DeclareKeyword => render_declare_keyword(w),
             LhsExpressionContentTransportSlot::NamespaceKeyword => render_namespace_keyword(w),
             LhsExpressionContentTransportSlot::TypeKeyword => render_type_keyword(w),
@@ -14078,7 +14186,12 @@ impl ::sittir_core::render::Render for FunctionSignatureTerminatorTransportSlot 
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             FunctionSignatureTerminatorTransportSlot::AutomaticSemicolon => render_automatic_semicolon(w),
-            FunctionSignatureTerminatorTransportSlot::Semi => render_semi(w),
+            FunctionSignatureTerminatorTransportSlot::Semi => {
+                w.site_at(options::SITE_FUNCTION_SIGNATURE_SEMI_BEFORE);
+                let written = render_semi(w);
+                written?;
+                Ok(())
+            }
             FunctionSignatureTerminatorTransportSlot::FunctionSignatureAutomaticSemicolon => render_function_signature_automatic_semicolon(w),
         }
     }
@@ -14207,9 +14320,11 @@ pub enum AsExpressionTypeAnnotationTransportSlot {
     #[kind(kind::_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION)]
     TypeQueryCallExpressionInTypeAnnotation(TypeQueryCallExpressionInTypeAnnotationTransport),
     #[kind(kind::THIS)]
-    This,
+    #[transport(edged)]
+    This(::sittir_core::options::Edges),
     #[kind(kind::EXISTENTIAL_TYPE)]
-    ExistentialType,
+    #[transport(edged)]
+    ExistentialType(::sittir_core::options::Edges),
     #[kind(kind::CONST_KEYWORD)]
     ConstKeyword,
 }
@@ -14240,8 +14355,8 @@ impl ::sittir_core::prepare::Prepare for AsExpressionTypeAnnotationTransportSlot
             AsExpressionTypeAnnotationTransportSlot::InferType(t) => t.prepare(ctx),
             AsExpressionTypeAnnotationTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(t) => t.prepare(ctx),
             AsExpressionTypeAnnotationTransportSlot::TypeQueryCallExpressionInTypeAnnotation(t) => t.prepare(ctx),
-            AsExpressionTypeAnnotationTransportSlot::This => Ok(()),
-            AsExpressionTypeAnnotationTransportSlot::ExistentialType => Ok(()),
+            AsExpressionTypeAnnotationTransportSlot::This(_) => Ok(()),
+            AsExpressionTypeAnnotationTransportSlot::ExistentialType(_) => Ok(()),
             AsExpressionTypeAnnotationTransportSlot::ConstKeyword => Ok(()),
         }
     }
@@ -14270,8 +14385,8 @@ impl ::sittir_core::prepare::Prepare for AsExpressionTypeAnnotationTransportSlot
             AsExpressionTypeAnnotationTransportSlot::InferType(t) => t.source_gap(),
             AsExpressionTypeAnnotationTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(t) => t.source_gap(),
             AsExpressionTypeAnnotationTransportSlot::TypeQueryCallExpressionInTypeAnnotation(t) => t.source_gap(),
-            AsExpressionTypeAnnotationTransportSlot::This => None,
-            AsExpressionTypeAnnotationTransportSlot::ExistentialType => None,
+            AsExpressionTypeAnnotationTransportSlot::This(_) => None,
+            AsExpressionTypeAnnotationTransportSlot::ExistentialType(_) => None,
             AsExpressionTypeAnnotationTransportSlot::ConstKeyword => None,
         }
     }
@@ -14300,8 +14415,8 @@ impl ::sittir_core::prepare::Prepare for AsExpressionTypeAnnotationTransportSlot
             AsExpressionTypeAnnotationTransportSlot::InferType(t) => t.gap_edges(),
             AsExpressionTypeAnnotationTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(t) => t.gap_edges(),
             AsExpressionTypeAnnotationTransportSlot::TypeQueryCallExpressionInTypeAnnotation(t) => t.gap_edges(),
-            AsExpressionTypeAnnotationTransportSlot::This => None,
-            AsExpressionTypeAnnotationTransportSlot::ExistentialType => None,
+            AsExpressionTypeAnnotationTransportSlot::This(edges) => Some(edges),
+            AsExpressionTypeAnnotationTransportSlot::ExistentialType(edges) => Some(edges),
             AsExpressionTypeAnnotationTransportSlot::ConstKeyword => None,
         }
     }
@@ -14330,8 +14445,8 @@ impl ::sittir_core::prepare::Prepare for AsExpressionTypeAnnotationTransportSlot
             AsExpressionTypeAnnotationTransportSlot::InferType(t) => t.snapshot_edge(),
             AsExpressionTypeAnnotationTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(t) => t.snapshot_edge(),
             AsExpressionTypeAnnotationTransportSlot::TypeQueryCallExpressionInTypeAnnotation(t) => t.snapshot_edge(),
-            AsExpressionTypeAnnotationTransportSlot::This => None,
-            AsExpressionTypeAnnotationTransportSlot::ExistentialType => None,
+            AsExpressionTypeAnnotationTransportSlot::This(_) => None,
+            AsExpressionTypeAnnotationTransportSlot::ExistentialType(_) => None,
             AsExpressionTypeAnnotationTransportSlot::ConstKeyword => None,
         }
     }
@@ -14366,8 +14481,8 @@ impl ::sittir_core::view::KindOf for AsExpressionTypeAnnotationTransportSlot {
             Self::InferType(inner) => inner.kind_in(kinds),
             Self::TypeQueryMemberExpressionInTypeAnnotation(inner) => inner.kind_in(kinds),
             Self::TypeQueryCallExpressionInTypeAnnotation(inner) => inner.kind_in(kinds),
-            Self::This => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
-            Self::ExistentialType => [::sittir_core::types::KindId(356)].iter().any(|k| kinds.contains(k)),
+            Self::This(_) => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
+            Self::ExistentialType(_) => [::sittir_core::types::KindId(356)].iter().any(|k| kinds.contains(k)),
             Self::ConstKeyword => [::sittir_core::types::KindId(128)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -14399,8 +14514,8 @@ impl ::sittir_core::render::Render for AsExpressionTypeAnnotationTransportSlot {
             AsExpressionTypeAnnotationTransportSlot::InferType(inner) => inner.render(w),
             AsExpressionTypeAnnotationTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(inner) => inner.render(w),
             AsExpressionTypeAnnotationTransportSlot::TypeQueryCallExpressionInTypeAnnotation(inner) => inner.render(w),
-            AsExpressionTypeAnnotationTransportSlot::This => render_this(w),
-            AsExpressionTypeAnnotationTransportSlot::ExistentialType => render_existential_type(w),
+            AsExpressionTypeAnnotationTransportSlot::This(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(119), edges, w, render_this),
+            AsExpressionTypeAnnotationTransportSlot::ExistentialType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(356), edges, w, render_existential_type),
             AsExpressionTypeAnnotationTransportSlot::ConstKeyword => {
                 w.site_at(options::SITE_AS_EXPRESSION_CONST_KEYWORD_BEFORE);
                 let written = render_const_keyword(w);
@@ -14822,7 +14937,8 @@ pub enum RequiredParameterPatternTransportSlot {
     #[kind(kind::REST_PATTERN)]
     RestPattern(RestPatternTransport),
     #[kind(kind::THIS)]
-    This,
+    #[transport(edged)]
+    This(::sittir_core::options::Edges),
 }
 
 impl ::sittir_core::prepare::Prepare for RequiredParameterPatternTransportSlot {
@@ -14830,28 +14946,28 @@ impl ::sittir_core::prepare::Prepare for RequiredParameterPatternTransportSlot {
         match self {
             RequiredParameterPatternTransportSlot::LhsExpression(t) => t.prepare(ctx),
             RequiredParameterPatternTransportSlot::RestPattern(t) => t.prepare(ctx),
-            RequiredParameterPatternTransportSlot::This => Ok(()),
+            RequiredParameterPatternTransportSlot::This(_) => Ok(()),
         }
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
         match self {
             RequiredParameterPatternTransportSlot::LhsExpression(t) => t.source_gap(),
             RequiredParameterPatternTransportSlot::RestPattern(t) => t.source_gap(),
-            RequiredParameterPatternTransportSlot::This => None,
+            RequiredParameterPatternTransportSlot::This(_) => None,
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             RequiredParameterPatternTransportSlot::LhsExpression(t) => t.gap_edges(),
             RequiredParameterPatternTransportSlot::RestPattern(t) => t.gap_edges(),
-            RequiredParameterPatternTransportSlot::This => None,
+            RequiredParameterPatternTransportSlot::This(edges) => Some(edges),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
             RequiredParameterPatternTransportSlot::LhsExpression(t) => t.snapshot_edge(),
             RequiredParameterPatternTransportSlot::RestPattern(t) => t.snapshot_edge(),
-            RequiredParameterPatternTransportSlot::This => None,
+            RequiredParameterPatternTransportSlot::This(_) => None,
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -14864,7 +14980,7 @@ impl ::sittir_core::view::KindOf for RequiredParameterPatternTransportSlot {
         match self {
             Self::LhsExpression(inner) => inner.kind_in(kinds),
             Self::RestPattern(inner) => inner.kind_in(kinds),
-            Self::This => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
+            Self::This(_) => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -14874,7 +14990,7 @@ impl ::sittir_core::render::Render for RequiredParameterPatternTransportSlot {
         match self {
             RequiredParameterPatternTransportSlot::LhsExpression(inner) => inner.render(w),
             RequiredParameterPatternTransportSlot::RestPattern(inner) => inner.render(w),
-            RequiredParameterPatternTransportSlot::This => render_this(w),
+            RequiredParameterPatternTransportSlot::This(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(119), edges, w, render_this),
         }
     }
 }
@@ -15009,7 +15125,8 @@ pub enum AssertsValueTransportSlot {
     #[kind(kind::IDENTIFIER, kind::DECLARE_KEYWORD, kind::NAMESPACE_KEYWORD, kind::TYPE_KEYWORD, kind::PUBLIC_KEYWORD, kind::PRIVATE_KEYWORD, kind::PROTECTED_KEYWORD, kind::OVERRIDE_KEYWORD, kind::READONLY_KEYWORD, kind::MODULE_KEYWORD, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::EXPORT_KEYWORD, kind::OBJECT_KEYWORD, kind::NEW_KEYWORD, kind::GET_KEYWORD, kind::SET_KEYWORD, kind::ASYNC_KEYWORD, kind::STATIC_KEYWORD, kind::LET_KEYWORD)]
     Identifier(IdentifierTransport),
     #[kind(kind::THIS)]
-    This,
+    #[transport(edged)]
+    This(::sittir_core::options::Edges),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -15019,7 +15136,7 @@ impl ::sittir_core::prepare::Prepare for AssertsValueTransportSlot {
         match self {
             AssertsValueTransportSlot::TypePredicate(t) => t.prepare(ctx),
             AssertsValueTransportSlot::Identifier(t) => t.prepare(ctx),
-            AssertsValueTransportSlot::This => Ok(()),
+            AssertsValueTransportSlot::This(_) => Ok(()),
             AssertsValueTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -15027,7 +15144,7 @@ impl ::sittir_core::prepare::Prepare for AssertsValueTransportSlot {
         match self {
             AssertsValueTransportSlot::TypePredicate(t) => t.source_gap(),
             AssertsValueTransportSlot::Identifier(t) => t.source_gap(),
-            AssertsValueTransportSlot::This => None,
+            AssertsValueTransportSlot::This(_) => None,
             AssertsValueTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
@@ -15035,7 +15152,7 @@ impl ::sittir_core::prepare::Prepare for AssertsValueTransportSlot {
         match self {
             AssertsValueTransportSlot::TypePredicate(t) => t.gap_edges(),
             AssertsValueTransportSlot::Identifier(t) => t.gap_edges(),
-            AssertsValueTransportSlot::This => None,
+            AssertsValueTransportSlot::This(edges) => Some(edges),
             AssertsValueTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -15043,7 +15160,7 @@ impl ::sittir_core::prepare::Prepare for AssertsValueTransportSlot {
         match self {
             AssertsValueTransportSlot::TypePredicate(t) => t.snapshot_edge(),
             AssertsValueTransportSlot::Identifier(t) => t.snapshot_edge(),
-            AssertsValueTransportSlot::This => None,
+            AssertsValueTransportSlot::This(_) => None,
             AssertsValueTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
@@ -15057,7 +15174,7 @@ impl ::sittir_core::view::KindOf for AssertsValueTransportSlot {
         match self {
             Self::TypePredicate(inner) => inner.kind_in(kinds),
             Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::This => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
+            Self::This(_) => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -15068,7 +15185,7 @@ impl ::sittir_core::render::Render for AssertsValueTransportSlot {
         match self {
             AssertsValueTransportSlot::TypePredicate(inner) => inner.render(w),
             AssertsValueTransportSlot::Identifier(inner) => inner.render(w),
-            AssertsValueTransportSlot::This => render_this(w),
+            AssertsValueTransportSlot::This(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(119), edges, w, render_this),
             AssertsValueTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -15179,9 +15296,11 @@ pub enum TemplateTypeTypeTransportSlot {
     #[kind(kind::INFER_TYPE)]
     InferType(InferTypeTransport),
     #[kind(kind::THIS)]
-    This,
+    #[transport(edged)]
+    This(::sittir_core::options::Edges),
     #[kind(kind::EXISTENTIAL_TYPE)]
-    ExistentialType,
+    #[transport(edged)]
+    ExistentialType(::sittir_core::options::Edges),
 }
 
 impl ::sittir_core::prepare::Prepare for TemplateTypeTypeTransportSlot {
@@ -15205,8 +15324,8 @@ impl ::sittir_core::prepare::Prepare for TemplateTypeTypeTransportSlot {
             TemplateTypeTypeTransportSlot::IntersectionType(t) => t.prepare(ctx),
             TemplateTypeTypeTransportSlot::UnionType(t) => t.prepare(ctx),
             TemplateTypeTypeTransportSlot::InferType(t) => t.prepare(ctx),
-            TemplateTypeTypeTransportSlot::This => Ok(()),
-            TemplateTypeTypeTransportSlot::ExistentialType => Ok(()),
+            TemplateTypeTypeTransportSlot::This(_) => Ok(()),
+            TemplateTypeTypeTransportSlot::ExistentialType(_) => Ok(()),
         }
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -15229,8 +15348,8 @@ impl ::sittir_core::prepare::Prepare for TemplateTypeTypeTransportSlot {
             TemplateTypeTypeTransportSlot::IntersectionType(t) => t.source_gap(),
             TemplateTypeTypeTransportSlot::UnionType(t) => t.source_gap(),
             TemplateTypeTypeTransportSlot::InferType(t) => t.source_gap(),
-            TemplateTypeTypeTransportSlot::This => None,
-            TemplateTypeTypeTransportSlot::ExistentialType => None,
+            TemplateTypeTypeTransportSlot::This(_) => None,
+            TemplateTypeTypeTransportSlot::ExistentialType(_) => None,
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -15253,8 +15372,8 @@ impl ::sittir_core::prepare::Prepare for TemplateTypeTypeTransportSlot {
             TemplateTypeTypeTransportSlot::IntersectionType(t) => t.gap_edges(),
             TemplateTypeTypeTransportSlot::UnionType(t) => t.gap_edges(),
             TemplateTypeTypeTransportSlot::InferType(t) => t.gap_edges(),
-            TemplateTypeTypeTransportSlot::This => None,
-            TemplateTypeTypeTransportSlot::ExistentialType => None,
+            TemplateTypeTypeTransportSlot::This(edges) => Some(edges),
+            TemplateTypeTypeTransportSlot::ExistentialType(edges) => Some(edges),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -15277,8 +15396,8 @@ impl ::sittir_core::prepare::Prepare for TemplateTypeTypeTransportSlot {
             TemplateTypeTypeTransportSlot::IntersectionType(t) => t.snapshot_edge(),
             TemplateTypeTypeTransportSlot::UnionType(t) => t.snapshot_edge(),
             TemplateTypeTypeTransportSlot::InferType(t) => t.snapshot_edge(),
-            TemplateTypeTypeTransportSlot::This => None,
-            TemplateTypeTypeTransportSlot::ExistentialType => None,
+            TemplateTypeTypeTransportSlot::This(_) => None,
+            TemplateTypeTypeTransportSlot::ExistentialType(_) => None,
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -15307,8 +15426,8 @@ impl ::sittir_core::view::KindOf for TemplateTypeTypeTransportSlot {
             Self::IntersectionType(inner) => inner.kind_in(kinds),
             Self::UnionType(inner) => inner.kind_in(kinds),
             Self::InferType(inner) => inner.kind_in(kinds),
-            Self::This => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
-            Self::ExistentialType => [::sittir_core::types::KindId(356)].iter().any(|k| kinds.contains(k)),
+            Self::This(_) => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
+            Self::ExistentialType(_) => [::sittir_core::types::KindId(356)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -15334,8 +15453,8 @@ impl ::sittir_core::render::Render for TemplateTypeTypeTransportSlot {
             TemplateTypeTypeTransportSlot::IntersectionType(inner) => inner.render(w),
             TemplateTypeTypeTransportSlot::UnionType(inner) => inner.render(w),
             TemplateTypeTypeTransportSlot::InferType(inner) => inner.render(w),
-            TemplateTypeTypeTransportSlot::This => render_this(w),
-            TemplateTypeTypeTransportSlot::ExistentialType => render_existential_type(w),
+            TemplateTypeTypeTransportSlot::This(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(119), edges, w, render_this),
+            TemplateTypeTypeTransportSlot::ExistentialType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(356), edges, w, render_existential_type),
         }
     }
 }
@@ -15470,7 +15589,8 @@ pub enum TypePredicateNameTransportSlot {
     #[kind(kind::PREDEFINED_TYPE, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::UNIQUE, kind::VOID_KEYWORD, kind::UNKNOWN_KEYWORD, kind::NEVER_KEYWORD, kind::OBJECT_KEYWORD)]
     PredefinedType(PredefinedTypeEnum),
     #[kind(kind::THIS)]
-    This,
+    #[transport(edged)]
+    This(::sittir_core::options::Edges),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -15480,7 +15600,7 @@ impl ::sittir_core::prepare::Prepare for TypePredicateNameTransportSlot {
         match self {
             TypePredicateNameTransportSlot::Identifier(t) => t.prepare(ctx),
             TypePredicateNameTransportSlot::PredefinedType(t) => t.prepare(ctx),
-            TypePredicateNameTransportSlot::This => Ok(()),
+            TypePredicateNameTransportSlot::This(_) => Ok(()),
             TypePredicateNameTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -15488,7 +15608,7 @@ impl ::sittir_core::prepare::Prepare for TypePredicateNameTransportSlot {
         match self {
             TypePredicateNameTransportSlot::Identifier(t) => t.source_gap(),
             TypePredicateNameTransportSlot::PredefinedType(t) => t.source_gap(),
-            TypePredicateNameTransportSlot::This => None,
+            TypePredicateNameTransportSlot::This(_) => None,
             TypePredicateNameTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
@@ -15496,7 +15616,7 @@ impl ::sittir_core::prepare::Prepare for TypePredicateNameTransportSlot {
         match self {
             TypePredicateNameTransportSlot::Identifier(t) => t.gap_edges(),
             TypePredicateNameTransportSlot::PredefinedType(t) => t.gap_edges(),
-            TypePredicateNameTransportSlot::This => None,
+            TypePredicateNameTransportSlot::This(edges) => Some(edges),
             TypePredicateNameTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -15504,7 +15624,7 @@ impl ::sittir_core::prepare::Prepare for TypePredicateNameTransportSlot {
         match self {
             TypePredicateNameTransportSlot::Identifier(t) => t.snapshot_edge(),
             TypePredicateNameTransportSlot::PredefinedType(t) => t.snapshot_edge(),
-            TypePredicateNameTransportSlot::This => None,
+            TypePredicateNameTransportSlot::This(_) => None,
             TypePredicateNameTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
@@ -15518,7 +15638,7 @@ impl ::sittir_core::view::KindOf for TypePredicateNameTransportSlot {
         match self {
             Self::Identifier(inner) => inner.kind_in(kinds),
             Self::PredefinedType(inner) => inner.kind_in(kinds),
-            Self::This => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
+            Self::This(_) => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -15529,7 +15649,7 @@ impl ::sittir_core::render::Render for TypePredicateNameTransportSlot {
         match self {
             TypePredicateNameTransportSlot::Identifier(inner) => inner.render(w),
             TypePredicateNameTransportSlot::PredefinedType(inner) => inner.render(w),
-            TypePredicateNameTransportSlot::This => render_this(w),
+            TypePredicateNameTransportSlot::This(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(119), edges, w, render_this),
             TypePredicateNameTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -15547,7 +15667,8 @@ pub enum TypeQueryMemberExpressionObjectTransportSlot {
     #[kind(kind::_TYPE_QUERY_CALL_EXPRESSION)]
     TypeQueryCallExpression(TypeQueryCallExpressionTransport),
     #[kind(kind::THIS)]
-    This,
+    #[transport(edged)]
+    This(::sittir_core::options::Edges),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -15559,7 +15680,7 @@ impl ::sittir_core::prepare::Prepare for TypeQueryMemberExpressionObjectTranspor
             TypeQueryMemberExpressionObjectTransportSlot::TypeQuerySubscriptExpression(t) => t.prepare(ctx),
             TypeQueryMemberExpressionObjectTransportSlot::TypeQueryMemberExpression(t) => t.prepare(ctx),
             TypeQueryMemberExpressionObjectTransportSlot::TypeQueryCallExpression(t) => t.prepare(ctx),
-            TypeQueryMemberExpressionObjectTransportSlot::This => Ok(()),
+            TypeQueryMemberExpressionObjectTransportSlot::This(_) => Ok(()),
             TypeQueryMemberExpressionObjectTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -15569,7 +15690,7 @@ impl ::sittir_core::prepare::Prepare for TypeQueryMemberExpressionObjectTranspor
             TypeQueryMemberExpressionObjectTransportSlot::TypeQuerySubscriptExpression(t) => t.source_gap(),
             TypeQueryMemberExpressionObjectTransportSlot::TypeQueryMemberExpression(t) => t.source_gap(),
             TypeQueryMemberExpressionObjectTransportSlot::TypeQueryCallExpression(t) => t.source_gap(),
-            TypeQueryMemberExpressionObjectTransportSlot::This => None,
+            TypeQueryMemberExpressionObjectTransportSlot::This(_) => None,
             TypeQueryMemberExpressionObjectTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
@@ -15579,7 +15700,7 @@ impl ::sittir_core::prepare::Prepare for TypeQueryMemberExpressionObjectTranspor
             TypeQueryMemberExpressionObjectTransportSlot::TypeQuerySubscriptExpression(t) => t.gap_edges(),
             TypeQueryMemberExpressionObjectTransportSlot::TypeQueryMemberExpression(t) => t.gap_edges(),
             TypeQueryMemberExpressionObjectTransportSlot::TypeQueryCallExpression(t) => t.gap_edges(),
-            TypeQueryMemberExpressionObjectTransportSlot::This => None,
+            TypeQueryMemberExpressionObjectTransportSlot::This(edges) => Some(edges),
             TypeQueryMemberExpressionObjectTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -15589,7 +15710,7 @@ impl ::sittir_core::prepare::Prepare for TypeQueryMemberExpressionObjectTranspor
             TypeQueryMemberExpressionObjectTransportSlot::TypeQuerySubscriptExpression(t) => t.snapshot_edge(),
             TypeQueryMemberExpressionObjectTransportSlot::TypeQueryMemberExpression(t) => t.snapshot_edge(),
             TypeQueryMemberExpressionObjectTransportSlot::TypeQueryCallExpression(t) => t.snapshot_edge(),
-            TypeQueryMemberExpressionObjectTransportSlot::This => None,
+            TypeQueryMemberExpressionObjectTransportSlot::This(_) => None,
             TypeQueryMemberExpressionObjectTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
@@ -15605,7 +15726,7 @@ impl ::sittir_core::view::KindOf for TypeQueryMemberExpressionObjectTransportSlo
             Self::TypeQuerySubscriptExpression(inner) => inner.kind_in(kinds),
             Self::TypeQueryMemberExpression(inner) => inner.kind_in(kinds),
             Self::TypeQueryCallExpression(inner) => inner.kind_in(kinds),
-            Self::This => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
+            Self::This(_) => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -15618,7 +15739,7 @@ impl ::sittir_core::render::Render for TypeQueryMemberExpressionObjectTransportS
             TypeQueryMemberExpressionObjectTransportSlot::TypeQuerySubscriptExpression(inner) => inner.render(w),
             TypeQueryMemberExpressionObjectTransportSlot::TypeQueryMemberExpression(inner) => inner.render(w),
             TypeQueryMemberExpressionObjectTransportSlot::TypeQueryCallExpression(inner) => inner.render(w),
-            TypeQueryMemberExpressionObjectTransportSlot::This => render_this(w),
+            TypeQueryMemberExpressionObjectTransportSlot::This(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(119), edges, w, render_this),
             TypeQueryMemberExpressionObjectTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -15931,7 +16052,8 @@ pub enum TypeQueryExpressionTransportSlot {
     #[kind(kind::IDENTIFIER, kind::DECLARE_KEYWORD, kind::NAMESPACE_KEYWORD, kind::TYPE_KEYWORD, kind::PUBLIC_KEYWORD, kind::PRIVATE_KEYWORD, kind::PROTECTED_KEYWORD, kind::OVERRIDE_KEYWORD, kind::READONLY_KEYWORD, kind::MODULE_KEYWORD, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::EXPORT_KEYWORD, kind::OBJECT_KEYWORD, kind::NEW_KEYWORD, kind::GET_KEYWORD, kind::SET_KEYWORD, kind::ASYNC_KEYWORD, kind::STATIC_KEYWORD, kind::LET_KEYWORD)]
     Identifier(IdentifierTransport),
     #[kind(kind::THIS)]
-    This,
+    #[transport(edged)]
+    This(::sittir_core::options::Edges),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -15944,7 +16066,7 @@ impl ::sittir_core::prepare::Prepare for TypeQueryExpressionTransportSlot {
             TypeQueryExpressionTransportSlot::TypeQueryCallExpression(t) => t.prepare(ctx),
             TypeQueryExpressionTransportSlot::TypeQueryInstantiationExpression(t) => t.prepare(ctx),
             TypeQueryExpressionTransportSlot::Identifier(t) => t.prepare(ctx),
-            TypeQueryExpressionTransportSlot::This => Ok(()),
+            TypeQueryExpressionTransportSlot::This(_) => Ok(()),
             TypeQueryExpressionTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -15955,7 +16077,7 @@ impl ::sittir_core::prepare::Prepare for TypeQueryExpressionTransportSlot {
             TypeQueryExpressionTransportSlot::TypeQueryCallExpression(t) => t.source_gap(),
             TypeQueryExpressionTransportSlot::TypeQueryInstantiationExpression(t) => t.source_gap(),
             TypeQueryExpressionTransportSlot::Identifier(t) => t.source_gap(),
-            TypeQueryExpressionTransportSlot::This => None,
+            TypeQueryExpressionTransportSlot::This(_) => None,
             TypeQueryExpressionTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
@@ -15966,7 +16088,7 @@ impl ::sittir_core::prepare::Prepare for TypeQueryExpressionTransportSlot {
             TypeQueryExpressionTransportSlot::TypeQueryCallExpression(t) => t.gap_edges(),
             TypeQueryExpressionTransportSlot::TypeQueryInstantiationExpression(t) => t.gap_edges(),
             TypeQueryExpressionTransportSlot::Identifier(t) => t.gap_edges(),
-            TypeQueryExpressionTransportSlot::This => None,
+            TypeQueryExpressionTransportSlot::This(edges) => Some(edges),
             TypeQueryExpressionTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -15977,7 +16099,7 @@ impl ::sittir_core::prepare::Prepare for TypeQueryExpressionTransportSlot {
             TypeQueryExpressionTransportSlot::TypeQueryCallExpression(t) => t.snapshot_edge(),
             TypeQueryExpressionTransportSlot::TypeQueryInstantiationExpression(t) => t.snapshot_edge(),
             TypeQueryExpressionTransportSlot::Identifier(t) => t.snapshot_edge(),
-            TypeQueryExpressionTransportSlot::This => None,
+            TypeQueryExpressionTransportSlot::This(_) => None,
             TypeQueryExpressionTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
@@ -15994,7 +16116,7 @@ impl ::sittir_core::view::KindOf for TypeQueryExpressionTransportSlot {
             Self::TypeQueryCallExpression(inner) => inner.kind_in(kinds),
             Self::TypeQueryInstantiationExpression(inner) => inner.kind_in(kinds),
             Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::This => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
+            Self::This(_) => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -16008,7 +16130,7 @@ impl ::sittir_core::render::Render for TypeQueryExpressionTransportSlot {
             TypeQueryExpressionTransportSlot::TypeQueryCallExpression(inner) => inner.render(w),
             TypeQueryExpressionTransportSlot::TypeQueryInstantiationExpression(inner) => inner.render(w),
             TypeQueryExpressionTransportSlot::Identifier(inner) => inner.render(w),
-            TypeQueryExpressionTransportSlot::This => render_this(w),
+            TypeQueryExpressionTransportSlot::This(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(119), edges, w, render_this),
             TypeQueryExpressionTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -16046,13 +16168,17 @@ pub enum LiteralTypeContentTransportSlot {
     #[kind(kind::STRING_SINGLE)]
     StringSingle(StringSingleTransport),
     #[kind(kind::TRUE)]
-    True,
+    #[transport(edged)]
+    True(::sittir_core::options::Edges),
     #[kind(kind::FALSE)]
-    False,
+    #[transport(edged)]
+    False(::sittir_core::options::Edges),
     #[kind(kind::NULL)]
-    Null,
+    #[transport(edged)]
+    Null(::sittir_core::options::Edges),
     #[kind(kind::UNDEFINED)]
-    Undefined,
+    #[transport(edged)]
+    Undefined(::sittir_core::options::Edges),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -16074,10 +16200,10 @@ impl ::sittir_core::prepare::Prepare for LiteralTypeContentTransportSlot {
             LiteralTypeContentTransportSlot::NumberBigintDecimal(t) => t.prepare(ctx),
             LiteralTypeContentTransportSlot::StringDouble(t) => t.prepare(ctx),
             LiteralTypeContentTransportSlot::StringSingle(t) => t.prepare(ctx),
-            LiteralTypeContentTransportSlot::True => Ok(()),
-            LiteralTypeContentTransportSlot::False => Ok(()),
-            LiteralTypeContentTransportSlot::Null => Ok(()),
-            LiteralTypeContentTransportSlot::Undefined => Ok(()),
+            LiteralTypeContentTransportSlot::True(_) => Ok(()),
+            LiteralTypeContentTransportSlot::False(_) => Ok(()),
+            LiteralTypeContentTransportSlot::Null(_) => Ok(()),
+            LiteralTypeContentTransportSlot::Undefined(_) => Ok(()),
             LiteralTypeContentTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -16097,10 +16223,10 @@ impl ::sittir_core::prepare::Prepare for LiteralTypeContentTransportSlot {
             LiteralTypeContentTransportSlot::NumberBigintDecimal(t) => t.source_gap(),
             LiteralTypeContentTransportSlot::StringDouble(t) => t.source_gap(),
             LiteralTypeContentTransportSlot::StringSingle(t) => t.source_gap(),
-            LiteralTypeContentTransportSlot::True => None,
-            LiteralTypeContentTransportSlot::False => None,
-            LiteralTypeContentTransportSlot::Null => None,
-            LiteralTypeContentTransportSlot::Undefined => None,
+            LiteralTypeContentTransportSlot::True(_) => None,
+            LiteralTypeContentTransportSlot::False(_) => None,
+            LiteralTypeContentTransportSlot::Null(_) => None,
+            LiteralTypeContentTransportSlot::Undefined(_) => None,
             LiteralTypeContentTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
@@ -16120,10 +16246,10 @@ impl ::sittir_core::prepare::Prepare for LiteralTypeContentTransportSlot {
             LiteralTypeContentTransportSlot::NumberBigintDecimal(t) => t.gap_edges(),
             LiteralTypeContentTransportSlot::StringDouble(t) => t.gap_edges(),
             LiteralTypeContentTransportSlot::StringSingle(t) => t.gap_edges(),
-            LiteralTypeContentTransportSlot::True => None,
-            LiteralTypeContentTransportSlot::False => None,
-            LiteralTypeContentTransportSlot::Null => None,
-            LiteralTypeContentTransportSlot::Undefined => None,
+            LiteralTypeContentTransportSlot::True(edges) => Some(edges),
+            LiteralTypeContentTransportSlot::False(edges) => Some(edges),
+            LiteralTypeContentTransportSlot::Null(edges) => Some(edges),
+            LiteralTypeContentTransportSlot::Undefined(edges) => Some(edges),
             LiteralTypeContentTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -16143,10 +16269,10 @@ impl ::sittir_core::prepare::Prepare for LiteralTypeContentTransportSlot {
             LiteralTypeContentTransportSlot::NumberBigintDecimal(t) => t.snapshot_edge(),
             LiteralTypeContentTransportSlot::StringDouble(t) => t.snapshot_edge(),
             LiteralTypeContentTransportSlot::StringSingle(t) => t.snapshot_edge(),
-            LiteralTypeContentTransportSlot::True => None,
-            LiteralTypeContentTransportSlot::False => None,
-            LiteralTypeContentTransportSlot::Null => None,
-            LiteralTypeContentTransportSlot::Undefined => None,
+            LiteralTypeContentTransportSlot::True(_) => None,
+            LiteralTypeContentTransportSlot::False(_) => None,
+            LiteralTypeContentTransportSlot::Null(_) => None,
+            LiteralTypeContentTransportSlot::Undefined(_) => None,
             LiteralTypeContentTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
@@ -16172,10 +16298,10 @@ impl ::sittir_core::view::KindOf for LiteralTypeContentTransportSlot {
             Self::NumberBigintDecimal(inner) => inner.kind_in(kinds),
             Self::StringDouble(inner) => inner.kind_in(kinds),
             Self::StringSingle(inner) => inner.kind_in(kinds),
-            Self::True => [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k)),
-            Self::False => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
-            Self::Null => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
-            Self::Undefined => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
+            Self::True(_) => [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k)),
+            Self::False(_) => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
+            Self::Null(_) => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
+            Self::Undefined(_) => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(158)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -16198,10 +16324,10 @@ impl ::sittir_core::render::Render for LiteralTypeContentTransportSlot {
             LiteralTypeContentTransportSlot::NumberBigintDecimal(inner) => inner.render(w),
             LiteralTypeContentTransportSlot::StringDouble(inner) => inner.render(w),
             LiteralTypeContentTransportSlot::StringSingle(inner) => inner.render(w),
-            LiteralTypeContentTransportSlot::True => render_true(w),
-            LiteralTypeContentTransportSlot::False => render_false(w),
-            LiteralTypeContentTransportSlot::Null => render_null(w),
-            LiteralTypeContentTransportSlot::Undefined => render_undefined(w),
+            LiteralTypeContentTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(121), edges, w, render_true),
+            LiteralTypeContentTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(122), edges, w, render_false),
+            LiteralTypeContentTransportSlot::Null(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(123), edges, w, render_null),
+            LiteralTypeContentTransportSlot::Undefined(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(124), edges, w, render_undefined),
             LiteralTypeContentTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -16410,9 +16536,11 @@ pub enum FunctionTypeReturnTypeTransportSlot {
     #[kind(kind::TYPE_PREDICATE)]
     TypePredicate(TypePredicateTransport),
     #[kind(kind::THIS)]
-    This,
+    #[transport(edged)]
+    This(::sittir_core::options::Edges),
     #[kind(kind::EXISTENTIAL_TYPE)]
-    ExistentialType,
+    #[transport(edged)]
+    ExistentialType(::sittir_core::options::Edges),
 }
 
 impl ::sittir_core::prepare::Prepare for FunctionTypeReturnTypeTransportSlot {
@@ -16443,8 +16571,8 @@ impl ::sittir_core::prepare::Prepare for FunctionTypeReturnTypeTransportSlot {
             FunctionTypeReturnTypeTransportSlot::TypeQueryCallExpressionInTypeAnnotation(t) => t.prepare(ctx),
             FunctionTypeReturnTypeTransportSlot::Asserts(t) => t.prepare(ctx),
             FunctionTypeReturnTypeTransportSlot::TypePredicate(t) => t.prepare(ctx),
-            FunctionTypeReturnTypeTransportSlot::This => Ok(()),
-            FunctionTypeReturnTypeTransportSlot::ExistentialType => Ok(()),
+            FunctionTypeReturnTypeTransportSlot::This(_) => Ok(()),
+            FunctionTypeReturnTypeTransportSlot::ExistentialType(_) => Ok(()),
         }
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -16474,8 +16602,8 @@ impl ::sittir_core::prepare::Prepare for FunctionTypeReturnTypeTransportSlot {
             FunctionTypeReturnTypeTransportSlot::TypeQueryCallExpressionInTypeAnnotation(t) => t.source_gap(),
             FunctionTypeReturnTypeTransportSlot::Asserts(t) => t.source_gap(),
             FunctionTypeReturnTypeTransportSlot::TypePredicate(t) => t.source_gap(),
-            FunctionTypeReturnTypeTransportSlot::This => None,
-            FunctionTypeReturnTypeTransportSlot::ExistentialType => None,
+            FunctionTypeReturnTypeTransportSlot::This(_) => None,
+            FunctionTypeReturnTypeTransportSlot::ExistentialType(_) => None,
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -16505,8 +16633,8 @@ impl ::sittir_core::prepare::Prepare for FunctionTypeReturnTypeTransportSlot {
             FunctionTypeReturnTypeTransportSlot::TypeQueryCallExpressionInTypeAnnotation(t) => t.gap_edges(),
             FunctionTypeReturnTypeTransportSlot::Asserts(t) => t.gap_edges(),
             FunctionTypeReturnTypeTransportSlot::TypePredicate(t) => t.gap_edges(),
-            FunctionTypeReturnTypeTransportSlot::This => None,
-            FunctionTypeReturnTypeTransportSlot::ExistentialType => None,
+            FunctionTypeReturnTypeTransportSlot::This(edges) => Some(edges),
+            FunctionTypeReturnTypeTransportSlot::ExistentialType(edges) => Some(edges),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -16536,8 +16664,8 @@ impl ::sittir_core::prepare::Prepare for FunctionTypeReturnTypeTransportSlot {
             FunctionTypeReturnTypeTransportSlot::TypeQueryCallExpressionInTypeAnnotation(t) => t.snapshot_edge(),
             FunctionTypeReturnTypeTransportSlot::Asserts(t) => t.snapshot_edge(),
             FunctionTypeReturnTypeTransportSlot::TypePredicate(t) => t.snapshot_edge(),
-            FunctionTypeReturnTypeTransportSlot::This => None,
-            FunctionTypeReturnTypeTransportSlot::ExistentialType => None,
+            FunctionTypeReturnTypeTransportSlot::This(_) => None,
+            FunctionTypeReturnTypeTransportSlot::ExistentialType(_) => None,
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -16573,8 +16701,8 @@ impl ::sittir_core::view::KindOf for FunctionTypeReturnTypeTransportSlot {
             Self::TypeQueryCallExpressionInTypeAnnotation(inner) => inner.kind_in(kinds),
             Self::Asserts(inner) => inner.kind_in(kinds),
             Self::TypePredicate(inner) => inner.kind_in(kinds),
-            Self::This => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
-            Self::ExistentialType => [::sittir_core::types::KindId(356)].iter().any(|k| kinds.contains(k)),
+            Self::This(_) => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
+            Self::ExistentialType(_) => [::sittir_core::types::KindId(356)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -16607,8 +16735,8 @@ impl ::sittir_core::render::Render for FunctionTypeReturnTypeTransportSlot {
             FunctionTypeReturnTypeTransportSlot::TypeQueryCallExpressionInTypeAnnotation(inner) => inner.render(w),
             FunctionTypeReturnTypeTransportSlot::Asserts(inner) => inner.render(w),
             FunctionTypeReturnTypeTransportSlot::TypePredicate(inner) => inner.render(w),
-            FunctionTypeReturnTypeTransportSlot::This => render_this(w),
-            FunctionTypeReturnTypeTransportSlot::ExistentialType => render_existential_type(w),
+            FunctionTypeReturnTypeTransportSlot::This(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(119), edges, w, render_this),
+            FunctionTypeReturnTypeTransportSlot::ExistentialType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(356), edges, w, render_existential_type),
         }
     }
 }
@@ -16728,9 +16856,11 @@ pub enum TupleTypeMembersItemTransportSlot {
     #[kind(kind::_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION)]
     TypeQueryCallExpressionInTypeAnnotation(TypeQueryCallExpressionInTypeAnnotationTransport),
     #[kind(kind::THIS)]
-    This,
+    #[transport(edged)]
+    This(::sittir_core::options::Edges),
     #[kind(kind::EXISTENTIAL_TYPE)]
-    ExistentialType,
+    #[transport(edged)]
+    ExistentialType(::sittir_core::options::Edges),
 }
 
 impl ::sittir_core::prepare::Prepare for TupleTypeMembersItemTransportSlot {
@@ -16763,8 +16893,8 @@ impl ::sittir_core::prepare::Prepare for TupleTypeMembersItemTransportSlot {
             TupleTypeMembersItemTransportSlot::InferType(t) => t.prepare(ctx),
             TupleTypeMembersItemTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(t) => t.prepare(ctx),
             TupleTypeMembersItemTransportSlot::TypeQueryCallExpressionInTypeAnnotation(t) => t.prepare(ctx),
-            TupleTypeMembersItemTransportSlot::This => Ok(()),
-            TupleTypeMembersItemTransportSlot::ExistentialType => Ok(()),
+            TupleTypeMembersItemTransportSlot::This(_) => Ok(()),
+            TupleTypeMembersItemTransportSlot::ExistentialType(_) => Ok(()),
         }
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -16796,8 +16926,8 @@ impl ::sittir_core::prepare::Prepare for TupleTypeMembersItemTransportSlot {
             TupleTypeMembersItemTransportSlot::InferType(t) => t.source_gap(),
             TupleTypeMembersItemTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(t) => t.source_gap(),
             TupleTypeMembersItemTransportSlot::TypeQueryCallExpressionInTypeAnnotation(t) => t.source_gap(),
-            TupleTypeMembersItemTransportSlot::This => None,
-            TupleTypeMembersItemTransportSlot::ExistentialType => None,
+            TupleTypeMembersItemTransportSlot::This(_) => None,
+            TupleTypeMembersItemTransportSlot::ExistentialType(_) => None,
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -16829,8 +16959,8 @@ impl ::sittir_core::prepare::Prepare for TupleTypeMembersItemTransportSlot {
             TupleTypeMembersItemTransportSlot::InferType(t) => t.gap_edges(),
             TupleTypeMembersItemTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(t) => t.gap_edges(),
             TupleTypeMembersItemTransportSlot::TypeQueryCallExpressionInTypeAnnotation(t) => t.gap_edges(),
-            TupleTypeMembersItemTransportSlot::This => None,
-            TupleTypeMembersItemTransportSlot::ExistentialType => None,
+            TupleTypeMembersItemTransportSlot::This(edges) => Some(edges),
+            TupleTypeMembersItemTransportSlot::ExistentialType(edges) => Some(edges),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -16862,8 +16992,8 @@ impl ::sittir_core::prepare::Prepare for TupleTypeMembersItemTransportSlot {
             TupleTypeMembersItemTransportSlot::InferType(t) => t.snapshot_edge(),
             TupleTypeMembersItemTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(t) => t.snapshot_edge(),
             TupleTypeMembersItemTransportSlot::TypeQueryCallExpressionInTypeAnnotation(t) => t.snapshot_edge(),
-            TupleTypeMembersItemTransportSlot::This => None,
-            TupleTypeMembersItemTransportSlot::ExistentialType => None,
+            TupleTypeMembersItemTransportSlot::This(_) => None,
+            TupleTypeMembersItemTransportSlot::ExistentialType(_) => None,
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -16901,8 +17031,8 @@ impl ::sittir_core::view::KindOf for TupleTypeMembersItemTransportSlot {
             Self::InferType(inner) => inner.kind_in(kinds),
             Self::TypeQueryMemberExpressionInTypeAnnotation(inner) => inner.kind_in(kinds),
             Self::TypeQueryCallExpressionInTypeAnnotation(inner) => inner.kind_in(kinds),
-            Self::This => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
-            Self::ExistentialType => [::sittir_core::types::KindId(356)].iter().any(|k| kinds.contains(k)),
+            Self::This(_) => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
+            Self::ExistentialType(_) => [::sittir_core::types::KindId(356)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -16937,8 +17067,8 @@ impl ::sittir_core::render::Render for TupleTypeMembersItemTransportSlot {
             TupleTypeMembersItemTransportSlot::InferType(inner) => inner.render(w),
             TupleTypeMembersItemTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(inner) => inner.render(w),
             TupleTypeMembersItemTransportSlot::TypeQueryCallExpressionInTypeAnnotation(inner) => inner.render(w),
-            TupleTypeMembersItemTransportSlot::This => render_this(w),
-            TupleTypeMembersItemTransportSlot::ExistentialType => render_existential_type(w),
+            TupleTypeMembersItemTransportSlot::This(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(119), edges, w, render_this),
+            TupleTypeMembersItemTransportSlot::ExistentialType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(356), edges, w, render_existential_type),
         }
     }
 }
@@ -17528,7 +17658,8 @@ pub enum BinaryExpressionInLeftTransportSlot {
     #[kind(kind::PRIVATE_PROPERTY_IDENTIFIER)]
     PrivatePropertyIdentifier(PrivatePropertyIdentifierTransport),
     #[kind(kind::UNDEFINED)]
-    Undefined,
+    #[transport(edged)]
+    Undefined(::sittir_core::options::Edges),
     #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
     #[kind(kind::NAMESPACE_KEYWORD)]
@@ -17574,19 +17705,26 @@ pub enum BinaryExpressionInLeftTransportSlot {
     #[kind(kind::LET_KEYWORD)]
     LetKeyword,
     #[kind(kind::THIS)]
-    This,
+    #[transport(edged)]
+    This(::sittir_core::options::Edges),
     #[kind(kind::SUPER)]
-    Super,
+    #[transport(edged)]
+    Super(::sittir_core::options::Edges),
     #[kind(kind::TRUE)]
-    True,
+    #[transport(edged)]
+    True(::sittir_core::options::Edges),
     #[kind(kind::FALSE)]
-    False,
+    #[transport(edged)]
+    False(::sittir_core::options::Edges),
     #[kind(kind::NULL)]
-    Null,
+    #[transport(edged)]
+    Null(::sittir_core::options::Edges),
     #[kind(kind::META_PROPERTY_NEW_TARGET)]
-    MetaPropertyNewTarget,
+    #[transport(edged)]
+    MetaPropertyNewTarget(::sittir_core::options::Edges),
     #[kind(kind::META_PROPERTY_IMPORT_META)]
-    MetaPropertyImportMeta,
+    #[transport(edged)]
+    MetaPropertyImportMeta(::sittir_core::options::Edges),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -17640,7 +17778,7 @@ impl ::sittir_core::prepare::Prepare for BinaryExpressionInLeftTransportSlot {
             BinaryExpressionInLeftTransportSlot::NewExpression(t) => t.prepare(ctx),
             BinaryExpressionInLeftTransportSlot::YieldExpression(t) => t.prepare(ctx),
             BinaryExpressionInLeftTransportSlot::PrivatePropertyIdentifier(t) => t.prepare(ctx),
-            BinaryExpressionInLeftTransportSlot::Undefined => Ok(()),
+            BinaryExpressionInLeftTransportSlot::Undefined(_) => Ok(()),
             BinaryExpressionInLeftTransportSlot::DeclareKeyword => Ok(()),
             BinaryExpressionInLeftTransportSlot::NamespaceKeyword => Ok(()),
             BinaryExpressionInLeftTransportSlot::TypeKeyword => Ok(()),
@@ -17663,13 +17801,13 @@ impl ::sittir_core::prepare::Prepare for BinaryExpressionInLeftTransportSlot {
             BinaryExpressionInLeftTransportSlot::AsyncKeyword => Ok(()),
             BinaryExpressionInLeftTransportSlot::StaticKeyword => Ok(()),
             BinaryExpressionInLeftTransportSlot::LetKeyword => Ok(()),
-            BinaryExpressionInLeftTransportSlot::This => Ok(()),
-            BinaryExpressionInLeftTransportSlot::Super => Ok(()),
-            BinaryExpressionInLeftTransportSlot::True => Ok(()),
-            BinaryExpressionInLeftTransportSlot::False => Ok(()),
-            BinaryExpressionInLeftTransportSlot::Null => Ok(()),
-            BinaryExpressionInLeftTransportSlot::MetaPropertyNewTarget => Ok(()),
-            BinaryExpressionInLeftTransportSlot::MetaPropertyImportMeta => Ok(()),
+            BinaryExpressionInLeftTransportSlot::This(_) => Ok(()),
+            BinaryExpressionInLeftTransportSlot::Super(_) => Ok(()),
+            BinaryExpressionInLeftTransportSlot::True(_) => Ok(()),
+            BinaryExpressionInLeftTransportSlot::False(_) => Ok(()),
+            BinaryExpressionInLeftTransportSlot::Null(_) => Ok(()),
+            BinaryExpressionInLeftTransportSlot::MetaPropertyNewTarget(_) => Ok(()),
+            BinaryExpressionInLeftTransportSlot::MetaPropertyImportMeta(_) => Ok(()),
             BinaryExpressionInLeftTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -17721,7 +17859,7 @@ impl ::sittir_core::prepare::Prepare for BinaryExpressionInLeftTransportSlot {
             BinaryExpressionInLeftTransportSlot::NewExpression(t) => t.source_gap(),
             BinaryExpressionInLeftTransportSlot::YieldExpression(t) => t.source_gap(),
             BinaryExpressionInLeftTransportSlot::PrivatePropertyIdentifier(t) => t.source_gap(),
-            BinaryExpressionInLeftTransportSlot::Undefined => None,
+            BinaryExpressionInLeftTransportSlot::Undefined(_) => None,
             BinaryExpressionInLeftTransportSlot::DeclareKeyword => None,
             BinaryExpressionInLeftTransportSlot::NamespaceKeyword => None,
             BinaryExpressionInLeftTransportSlot::TypeKeyword => None,
@@ -17744,13 +17882,13 @@ impl ::sittir_core::prepare::Prepare for BinaryExpressionInLeftTransportSlot {
             BinaryExpressionInLeftTransportSlot::AsyncKeyword => None,
             BinaryExpressionInLeftTransportSlot::StaticKeyword => None,
             BinaryExpressionInLeftTransportSlot::LetKeyword => None,
-            BinaryExpressionInLeftTransportSlot::This => None,
-            BinaryExpressionInLeftTransportSlot::Super => None,
-            BinaryExpressionInLeftTransportSlot::True => None,
-            BinaryExpressionInLeftTransportSlot::False => None,
-            BinaryExpressionInLeftTransportSlot::Null => None,
-            BinaryExpressionInLeftTransportSlot::MetaPropertyNewTarget => None,
-            BinaryExpressionInLeftTransportSlot::MetaPropertyImportMeta => None,
+            BinaryExpressionInLeftTransportSlot::This(_) => None,
+            BinaryExpressionInLeftTransportSlot::Super(_) => None,
+            BinaryExpressionInLeftTransportSlot::True(_) => None,
+            BinaryExpressionInLeftTransportSlot::False(_) => None,
+            BinaryExpressionInLeftTransportSlot::Null(_) => None,
+            BinaryExpressionInLeftTransportSlot::MetaPropertyNewTarget(_) => None,
+            BinaryExpressionInLeftTransportSlot::MetaPropertyImportMeta(_) => None,
             BinaryExpressionInLeftTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
@@ -17802,7 +17940,7 @@ impl ::sittir_core::prepare::Prepare for BinaryExpressionInLeftTransportSlot {
             BinaryExpressionInLeftTransportSlot::NewExpression(t) => t.gap_edges(),
             BinaryExpressionInLeftTransportSlot::YieldExpression(t) => t.gap_edges(),
             BinaryExpressionInLeftTransportSlot::PrivatePropertyIdentifier(t) => t.gap_edges(),
-            BinaryExpressionInLeftTransportSlot::Undefined => None,
+            BinaryExpressionInLeftTransportSlot::Undefined(edges) => Some(edges),
             BinaryExpressionInLeftTransportSlot::DeclareKeyword => None,
             BinaryExpressionInLeftTransportSlot::NamespaceKeyword => None,
             BinaryExpressionInLeftTransportSlot::TypeKeyword => None,
@@ -17825,13 +17963,13 @@ impl ::sittir_core::prepare::Prepare for BinaryExpressionInLeftTransportSlot {
             BinaryExpressionInLeftTransportSlot::AsyncKeyword => None,
             BinaryExpressionInLeftTransportSlot::StaticKeyword => None,
             BinaryExpressionInLeftTransportSlot::LetKeyword => None,
-            BinaryExpressionInLeftTransportSlot::This => None,
-            BinaryExpressionInLeftTransportSlot::Super => None,
-            BinaryExpressionInLeftTransportSlot::True => None,
-            BinaryExpressionInLeftTransportSlot::False => None,
-            BinaryExpressionInLeftTransportSlot::Null => None,
-            BinaryExpressionInLeftTransportSlot::MetaPropertyNewTarget => None,
-            BinaryExpressionInLeftTransportSlot::MetaPropertyImportMeta => None,
+            BinaryExpressionInLeftTransportSlot::This(edges) => Some(edges),
+            BinaryExpressionInLeftTransportSlot::Super(edges) => Some(edges),
+            BinaryExpressionInLeftTransportSlot::True(edges) => Some(edges),
+            BinaryExpressionInLeftTransportSlot::False(edges) => Some(edges),
+            BinaryExpressionInLeftTransportSlot::Null(edges) => Some(edges),
+            BinaryExpressionInLeftTransportSlot::MetaPropertyNewTarget(edges) => Some(edges),
+            BinaryExpressionInLeftTransportSlot::MetaPropertyImportMeta(edges) => Some(edges),
             BinaryExpressionInLeftTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -17883,7 +18021,7 @@ impl ::sittir_core::prepare::Prepare for BinaryExpressionInLeftTransportSlot {
             BinaryExpressionInLeftTransportSlot::NewExpression(t) => t.snapshot_edge(),
             BinaryExpressionInLeftTransportSlot::YieldExpression(t) => t.snapshot_edge(),
             BinaryExpressionInLeftTransportSlot::PrivatePropertyIdentifier(t) => t.snapshot_edge(),
-            BinaryExpressionInLeftTransportSlot::Undefined => None,
+            BinaryExpressionInLeftTransportSlot::Undefined(_) => None,
             BinaryExpressionInLeftTransportSlot::DeclareKeyword => None,
             BinaryExpressionInLeftTransportSlot::NamespaceKeyword => None,
             BinaryExpressionInLeftTransportSlot::TypeKeyword => None,
@@ -17906,13 +18044,13 @@ impl ::sittir_core::prepare::Prepare for BinaryExpressionInLeftTransportSlot {
             BinaryExpressionInLeftTransportSlot::AsyncKeyword => None,
             BinaryExpressionInLeftTransportSlot::StaticKeyword => None,
             BinaryExpressionInLeftTransportSlot::LetKeyword => None,
-            BinaryExpressionInLeftTransportSlot::This => None,
-            BinaryExpressionInLeftTransportSlot::Super => None,
-            BinaryExpressionInLeftTransportSlot::True => None,
-            BinaryExpressionInLeftTransportSlot::False => None,
-            BinaryExpressionInLeftTransportSlot::Null => None,
-            BinaryExpressionInLeftTransportSlot::MetaPropertyNewTarget => None,
-            BinaryExpressionInLeftTransportSlot::MetaPropertyImportMeta => None,
+            BinaryExpressionInLeftTransportSlot::This(_) => None,
+            BinaryExpressionInLeftTransportSlot::Super(_) => None,
+            BinaryExpressionInLeftTransportSlot::True(_) => None,
+            BinaryExpressionInLeftTransportSlot::False(_) => None,
+            BinaryExpressionInLeftTransportSlot::Null(_) => None,
+            BinaryExpressionInLeftTransportSlot::MetaPropertyNewTarget(_) => None,
+            BinaryExpressionInLeftTransportSlot::MetaPropertyImportMeta(_) => None,
             BinaryExpressionInLeftTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
@@ -17970,7 +18108,7 @@ impl ::sittir_core::view::KindOf for BinaryExpressionInLeftTransportSlot {
             Self::NewExpression(inner) => inner.kind_in(kinds),
             Self::YieldExpression(inner) => inner.kind_in(kinds),
             Self::PrivatePropertyIdentifier(inner) => inner.kind_in(kinds),
-            Self::Undefined => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
+            Self::Undefined(_) => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
             Self::DeclareKeyword => [::sittir_core::types::KindId(30)].iter().any(|k| kinds.contains(k)),
             Self::NamespaceKeyword => [::sittir_core::types::KindId(31)].iter().any(|k| kinds.contains(k)),
             Self::TypeKeyword => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
@@ -17993,13 +18131,13 @@ impl ::sittir_core::view::KindOf for BinaryExpressionInLeftTransportSlot {
             Self::AsyncKeyword => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
             Self::StaticKeyword => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
             Self::LetKeyword => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
-            Self::This => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
-            Self::Super => [::sittir_core::types::KindId(120)].iter().any(|k| kinds.contains(k)),
-            Self::True => [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k)),
-            Self::False => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
-            Self::Null => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
-            Self::MetaPropertyNewTarget => [::sittir_core::types::KindId(430)].iter().any(|k| kinds.contains(k)),
-            Self::MetaPropertyImportMeta => [::sittir_core::types::KindId(431)].iter().any(|k| kinds.contains(k)),
+            Self::This(_) => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(120)].iter().any(|k| kinds.contains(k)),
+            Self::True(_) => [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k)),
+            Self::False(_) => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
+            Self::Null(_) => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
+            Self::MetaPropertyNewTarget(_) => [::sittir_core::types::KindId(430)].iter().any(|k| kinds.contains(k)),
+            Self::MetaPropertyImportMeta(_) => [::sittir_core::types::KindId(431)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(158)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -18054,7 +18192,7 @@ impl ::sittir_core::render::Render for BinaryExpressionInLeftTransportSlot {
             BinaryExpressionInLeftTransportSlot::NewExpression(inner) => inner.render(w),
             BinaryExpressionInLeftTransportSlot::YieldExpression(inner) => inner.render(w),
             BinaryExpressionInLeftTransportSlot::PrivatePropertyIdentifier(inner) => inner.render(w),
-            BinaryExpressionInLeftTransportSlot::Undefined => render_undefined(w),
+            BinaryExpressionInLeftTransportSlot::Undefined(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(124), edges, w, render_undefined),
             BinaryExpressionInLeftTransportSlot::DeclareKeyword => render_declare_keyword(w),
             BinaryExpressionInLeftTransportSlot::NamespaceKeyword => render_namespace_keyword(w),
             BinaryExpressionInLeftTransportSlot::TypeKeyword => render_type_keyword(w),
@@ -18077,13 +18215,13 @@ impl ::sittir_core::render::Render for BinaryExpressionInLeftTransportSlot {
             BinaryExpressionInLeftTransportSlot::AsyncKeyword => render_async_keyword(w),
             BinaryExpressionInLeftTransportSlot::StaticKeyword => render_static_keyword(w),
             BinaryExpressionInLeftTransportSlot::LetKeyword => render_let_keyword(w),
-            BinaryExpressionInLeftTransportSlot::This => render_this(w),
-            BinaryExpressionInLeftTransportSlot::Super => render_super(w),
-            BinaryExpressionInLeftTransportSlot::True => render_true(w),
-            BinaryExpressionInLeftTransportSlot::False => render_false(w),
-            BinaryExpressionInLeftTransportSlot::Null => render_null(w),
-            BinaryExpressionInLeftTransportSlot::MetaPropertyNewTarget => render_meta_property_new_target(w),
-            BinaryExpressionInLeftTransportSlot::MetaPropertyImportMeta => render_meta_property_import_meta(w),
+            BinaryExpressionInLeftTransportSlot::This(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(119), edges, w, render_this),
+            BinaryExpressionInLeftTransportSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(120), edges, w, render_super),
+            BinaryExpressionInLeftTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(121), edges, w, render_true),
+            BinaryExpressionInLeftTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(122), edges, w, render_false),
+            BinaryExpressionInLeftTransportSlot::Null(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(123), edges, w, render_null),
+            BinaryExpressionInLeftTransportSlot::MetaPropertyNewTarget(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(430), edges, w, render_meta_property_new_target),
+            BinaryExpressionInLeftTransportSlot::MetaPropertyImportMeta(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(431), edges, w, render_meta_property_import_meta),
             BinaryExpressionInLeftTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -18301,7 +18439,12 @@ impl ::sittir_core::render::Render for ClassBodyMemberDeclarationTerminatorTrans
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             ClassBodyMemberDeclarationTerminatorTransportSlot::AutomaticSemicolon => render_automatic_semicolon(w),
-            ClassBodyMemberDeclarationTerminatorTransportSlot::Semi => render_semi(w),
+            ClassBodyMemberDeclarationTerminatorTransportSlot::Semi => {
+                w.site_at(options::SITE_CLASS_BODY_MEMBER_DECLARATION_SEMI_BEFORE);
+                let written = render_semi(w);
+                written?;
+                Ok(())
+            }
             ClassBodyMemberDeclarationTerminatorTransportSlot::Comma => {
                 w.site_at(options::SITE_CLASS_BODY_MEMBER_DECLARATION_COMMA_BEFORE);
                 let written = render_comma(w);
@@ -19047,7 +19190,8 @@ pub enum CallExpressionTemplateCallFunctionTransportSlot {
     #[kind(kind::NEW_EXPRESSION)]
     NewExpression(NewExpressionTransport),
     #[kind(kind::UNDEFINED)]
-    Undefined,
+    #[transport(edged)]
+    Undefined(::sittir_core::options::Edges),
     #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
     #[kind(kind::NAMESPACE_KEYWORD)]
@@ -19093,19 +19237,26 @@ pub enum CallExpressionTemplateCallFunctionTransportSlot {
     #[kind(kind::LET_KEYWORD)]
     LetKeyword,
     #[kind(kind::THIS)]
-    This,
+    #[transport(edged)]
+    This(::sittir_core::options::Edges),
     #[kind(kind::SUPER)]
-    Super,
+    #[transport(edged)]
+    Super(::sittir_core::options::Edges),
     #[kind(kind::TRUE)]
-    True,
+    #[transport(edged)]
+    True(::sittir_core::options::Edges),
     #[kind(kind::FALSE)]
-    False,
+    #[transport(edged)]
+    False(::sittir_core::options::Edges),
     #[kind(kind::NULL)]
-    Null,
+    #[transport(edged)]
+    Null(::sittir_core::options::Edges),
     #[kind(kind::META_PROPERTY_NEW_TARGET)]
-    MetaPropertyNewTarget,
+    #[transport(edged)]
+    MetaPropertyNewTarget(::sittir_core::options::Edges),
     #[kind(kind::META_PROPERTY_IMPORT_META)]
-    MetaPropertyImportMeta,
+    #[transport(edged)]
+    MetaPropertyImportMeta(::sittir_core::options::Edges),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -19144,7 +19295,7 @@ impl ::sittir_core::prepare::Prepare for CallExpressionTemplateCallFunctionTrans
             CallExpressionTemplateCallFunctionTransportSlot::CallExpressionMember(t) => t.prepare(ctx),
             CallExpressionTemplateCallFunctionTransportSlot::NonNullExpression(t) => t.prepare(ctx),
             CallExpressionTemplateCallFunctionTransportSlot::NewExpression(t) => t.prepare(ctx),
-            CallExpressionTemplateCallFunctionTransportSlot::Undefined => Ok(()),
+            CallExpressionTemplateCallFunctionTransportSlot::Undefined(_) => Ok(()),
             CallExpressionTemplateCallFunctionTransportSlot::DeclareKeyword => Ok(()),
             CallExpressionTemplateCallFunctionTransportSlot::NamespaceKeyword => Ok(()),
             CallExpressionTemplateCallFunctionTransportSlot::TypeKeyword => Ok(()),
@@ -19167,13 +19318,13 @@ impl ::sittir_core::prepare::Prepare for CallExpressionTemplateCallFunctionTrans
             CallExpressionTemplateCallFunctionTransportSlot::AsyncKeyword => Ok(()),
             CallExpressionTemplateCallFunctionTransportSlot::StaticKeyword => Ok(()),
             CallExpressionTemplateCallFunctionTransportSlot::LetKeyword => Ok(()),
-            CallExpressionTemplateCallFunctionTransportSlot::This => Ok(()),
-            CallExpressionTemplateCallFunctionTransportSlot::Super => Ok(()),
-            CallExpressionTemplateCallFunctionTransportSlot::True => Ok(()),
-            CallExpressionTemplateCallFunctionTransportSlot::False => Ok(()),
-            CallExpressionTemplateCallFunctionTransportSlot::Null => Ok(()),
-            CallExpressionTemplateCallFunctionTransportSlot::MetaPropertyNewTarget => Ok(()),
-            CallExpressionTemplateCallFunctionTransportSlot::MetaPropertyImportMeta => Ok(()),
+            CallExpressionTemplateCallFunctionTransportSlot::This(_) => Ok(()),
+            CallExpressionTemplateCallFunctionTransportSlot::Super(_) => Ok(()),
+            CallExpressionTemplateCallFunctionTransportSlot::True(_) => Ok(()),
+            CallExpressionTemplateCallFunctionTransportSlot::False(_) => Ok(()),
+            CallExpressionTemplateCallFunctionTransportSlot::Null(_) => Ok(()),
+            CallExpressionTemplateCallFunctionTransportSlot::MetaPropertyNewTarget(_) => Ok(()),
+            CallExpressionTemplateCallFunctionTransportSlot::MetaPropertyImportMeta(_) => Ok(()),
             CallExpressionTemplateCallFunctionTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -19210,7 +19361,7 @@ impl ::sittir_core::prepare::Prepare for CallExpressionTemplateCallFunctionTrans
             CallExpressionTemplateCallFunctionTransportSlot::CallExpressionMember(t) => t.source_gap(),
             CallExpressionTemplateCallFunctionTransportSlot::NonNullExpression(t) => t.source_gap(),
             CallExpressionTemplateCallFunctionTransportSlot::NewExpression(t) => t.source_gap(),
-            CallExpressionTemplateCallFunctionTransportSlot::Undefined => None,
+            CallExpressionTemplateCallFunctionTransportSlot::Undefined(_) => None,
             CallExpressionTemplateCallFunctionTransportSlot::DeclareKeyword => None,
             CallExpressionTemplateCallFunctionTransportSlot::NamespaceKeyword => None,
             CallExpressionTemplateCallFunctionTransportSlot::TypeKeyword => None,
@@ -19233,13 +19384,13 @@ impl ::sittir_core::prepare::Prepare for CallExpressionTemplateCallFunctionTrans
             CallExpressionTemplateCallFunctionTransportSlot::AsyncKeyword => None,
             CallExpressionTemplateCallFunctionTransportSlot::StaticKeyword => None,
             CallExpressionTemplateCallFunctionTransportSlot::LetKeyword => None,
-            CallExpressionTemplateCallFunctionTransportSlot::This => None,
-            CallExpressionTemplateCallFunctionTransportSlot::Super => None,
-            CallExpressionTemplateCallFunctionTransportSlot::True => None,
-            CallExpressionTemplateCallFunctionTransportSlot::False => None,
-            CallExpressionTemplateCallFunctionTransportSlot::Null => None,
-            CallExpressionTemplateCallFunctionTransportSlot::MetaPropertyNewTarget => None,
-            CallExpressionTemplateCallFunctionTransportSlot::MetaPropertyImportMeta => None,
+            CallExpressionTemplateCallFunctionTransportSlot::This(_) => None,
+            CallExpressionTemplateCallFunctionTransportSlot::Super(_) => None,
+            CallExpressionTemplateCallFunctionTransportSlot::True(_) => None,
+            CallExpressionTemplateCallFunctionTransportSlot::False(_) => None,
+            CallExpressionTemplateCallFunctionTransportSlot::Null(_) => None,
+            CallExpressionTemplateCallFunctionTransportSlot::MetaPropertyNewTarget(_) => None,
+            CallExpressionTemplateCallFunctionTransportSlot::MetaPropertyImportMeta(_) => None,
             CallExpressionTemplateCallFunctionTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
@@ -19276,7 +19427,7 @@ impl ::sittir_core::prepare::Prepare for CallExpressionTemplateCallFunctionTrans
             CallExpressionTemplateCallFunctionTransportSlot::CallExpressionMember(t) => t.gap_edges(),
             CallExpressionTemplateCallFunctionTransportSlot::NonNullExpression(t) => t.gap_edges(),
             CallExpressionTemplateCallFunctionTransportSlot::NewExpression(t) => t.gap_edges(),
-            CallExpressionTemplateCallFunctionTransportSlot::Undefined => None,
+            CallExpressionTemplateCallFunctionTransportSlot::Undefined(edges) => Some(edges),
             CallExpressionTemplateCallFunctionTransportSlot::DeclareKeyword => None,
             CallExpressionTemplateCallFunctionTransportSlot::NamespaceKeyword => None,
             CallExpressionTemplateCallFunctionTransportSlot::TypeKeyword => None,
@@ -19299,13 +19450,13 @@ impl ::sittir_core::prepare::Prepare for CallExpressionTemplateCallFunctionTrans
             CallExpressionTemplateCallFunctionTransportSlot::AsyncKeyword => None,
             CallExpressionTemplateCallFunctionTransportSlot::StaticKeyword => None,
             CallExpressionTemplateCallFunctionTransportSlot::LetKeyword => None,
-            CallExpressionTemplateCallFunctionTransportSlot::This => None,
-            CallExpressionTemplateCallFunctionTransportSlot::Super => None,
-            CallExpressionTemplateCallFunctionTransportSlot::True => None,
-            CallExpressionTemplateCallFunctionTransportSlot::False => None,
-            CallExpressionTemplateCallFunctionTransportSlot::Null => None,
-            CallExpressionTemplateCallFunctionTransportSlot::MetaPropertyNewTarget => None,
-            CallExpressionTemplateCallFunctionTransportSlot::MetaPropertyImportMeta => None,
+            CallExpressionTemplateCallFunctionTransportSlot::This(edges) => Some(edges),
+            CallExpressionTemplateCallFunctionTransportSlot::Super(edges) => Some(edges),
+            CallExpressionTemplateCallFunctionTransportSlot::True(edges) => Some(edges),
+            CallExpressionTemplateCallFunctionTransportSlot::False(edges) => Some(edges),
+            CallExpressionTemplateCallFunctionTransportSlot::Null(edges) => Some(edges),
+            CallExpressionTemplateCallFunctionTransportSlot::MetaPropertyNewTarget(edges) => Some(edges),
+            CallExpressionTemplateCallFunctionTransportSlot::MetaPropertyImportMeta(edges) => Some(edges),
             CallExpressionTemplateCallFunctionTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -19342,7 +19493,7 @@ impl ::sittir_core::prepare::Prepare for CallExpressionTemplateCallFunctionTrans
             CallExpressionTemplateCallFunctionTransportSlot::CallExpressionMember(t) => t.snapshot_edge(),
             CallExpressionTemplateCallFunctionTransportSlot::NonNullExpression(t) => t.snapshot_edge(),
             CallExpressionTemplateCallFunctionTransportSlot::NewExpression(t) => t.snapshot_edge(),
-            CallExpressionTemplateCallFunctionTransportSlot::Undefined => None,
+            CallExpressionTemplateCallFunctionTransportSlot::Undefined(_) => None,
             CallExpressionTemplateCallFunctionTransportSlot::DeclareKeyword => None,
             CallExpressionTemplateCallFunctionTransportSlot::NamespaceKeyword => None,
             CallExpressionTemplateCallFunctionTransportSlot::TypeKeyword => None,
@@ -19365,13 +19516,13 @@ impl ::sittir_core::prepare::Prepare for CallExpressionTemplateCallFunctionTrans
             CallExpressionTemplateCallFunctionTransportSlot::AsyncKeyword => None,
             CallExpressionTemplateCallFunctionTransportSlot::StaticKeyword => None,
             CallExpressionTemplateCallFunctionTransportSlot::LetKeyword => None,
-            CallExpressionTemplateCallFunctionTransportSlot::This => None,
-            CallExpressionTemplateCallFunctionTransportSlot::Super => None,
-            CallExpressionTemplateCallFunctionTransportSlot::True => None,
-            CallExpressionTemplateCallFunctionTransportSlot::False => None,
-            CallExpressionTemplateCallFunctionTransportSlot::Null => None,
-            CallExpressionTemplateCallFunctionTransportSlot::MetaPropertyNewTarget => None,
-            CallExpressionTemplateCallFunctionTransportSlot::MetaPropertyImportMeta => None,
+            CallExpressionTemplateCallFunctionTransportSlot::This(_) => None,
+            CallExpressionTemplateCallFunctionTransportSlot::Super(_) => None,
+            CallExpressionTemplateCallFunctionTransportSlot::True(_) => None,
+            CallExpressionTemplateCallFunctionTransportSlot::False(_) => None,
+            CallExpressionTemplateCallFunctionTransportSlot::Null(_) => None,
+            CallExpressionTemplateCallFunctionTransportSlot::MetaPropertyNewTarget(_) => None,
+            CallExpressionTemplateCallFunctionTransportSlot::MetaPropertyImportMeta(_) => None,
             CallExpressionTemplateCallFunctionTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
@@ -19414,7 +19565,7 @@ impl ::sittir_core::view::KindOf for CallExpressionTemplateCallFunctionTransport
             Self::CallExpressionMember(inner) => inner.kind_in(kinds),
             Self::NonNullExpression(inner) => inner.kind_in(kinds),
             Self::NewExpression(inner) => inner.kind_in(kinds),
-            Self::Undefined => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
+            Self::Undefined(_) => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
             Self::DeclareKeyword => [::sittir_core::types::KindId(30)].iter().any(|k| kinds.contains(k)),
             Self::NamespaceKeyword => [::sittir_core::types::KindId(31)].iter().any(|k| kinds.contains(k)),
             Self::TypeKeyword => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
@@ -19437,13 +19588,13 @@ impl ::sittir_core::view::KindOf for CallExpressionTemplateCallFunctionTransport
             Self::AsyncKeyword => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
             Self::StaticKeyword => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
             Self::LetKeyword => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
-            Self::This => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
-            Self::Super => [::sittir_core::types::KindId(120)].iter().any(|k| kinds.contains(k)),
-            Self::True => [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k)),
-            Self::False => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
-            Self::Null => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
-            Self::MetaPropertyNewTarget => [::sittir_core::types::KindId(430)].iter().any(|k| kinds.contains(k)),
-            Self::MetaPropertyImportMeta => [::sittir_core::types::KindId(431)].iter().any(|k| kinds.contains(k)),
+            Self::This(_) => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(120)].iter().any(|k| kinds.contains(k)),
+            Self::True(_) => [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k)),
+            Self::False(_) => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
+            Self::Null(_) => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
+            Self::MetaPropertyNewTarget(_) => [::sittir_core::types::KindId(430)].iter().any(|k| kinds.contains(k)),
+            Self::MetaPropertyImportMeta(_) => [::sittir_core::types::KindId(431)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(158)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -19483,7 +19634,7 @@ impl ::sittir_core::render::Render for CallExpressionTemplateCallFunctionTranspo
             CallExpressionTemplateCallFunctionTransportSlot::CallExpressionMember(inner) => inner.render(w),
             CallExpressionTemplateCallFunctionTransportSlot::NonNullExpression(inner) => inner.render(w),
             CallExpressionTemplateCallFunctionTransportSlot::NewExpression(inner) => inner.render(w),
-            CallExpressionTemplateCallFunctionTransportSlot::Undefined => render_undefined(w),
+            CallExpressionTemplateCallFunctionTransportSlot::Undefined(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(124), edges, w, render_undefined),
             CallExpressionTemplateCallFunctionTransportSlot::DeclareKeyword => render_declare_keyword(w),
             CallExpressionTemplateCallFunctionTransportSlot::NamespaceKeyword => render_namespace_keyword(w),
             CallExpressionTemplateCallFunctionTransportSlot::TypeKeyword => render_type_keyword(w),
@@ -19506,13 +19657,13 @@ impl ::sittir_core::render::Render for CallExpressionTemplateCallFunctionTranspo
             CallExpressionTemplateCallFunctionTransportSlot::AsyncKeyword => render_async_keyword(w),
             CallExpressionTemplateCallFunctionTransportSlot::StaticKeyword => render_static_keyword(w),
             CallExpressionTemplateCallFunctionTransportSlot::LetKeyword => render_let_keyword(w),
-            CallExpressionTemplateCallFunctionTransportSlot::This => render_this(w),
-            CallExpressionTemplateCallFunctionTransportSlot::Super => render_super(w),
-            CallExpressionTemplateCallFunctionTransportSlot::True => render_true(w),
-            CallExpressionTemplateCallFunctionTransportSlot::False => render_false(w),
-            CallExpressionTemplateCallFunctionTransportSlot::Null => render_null(w),
-            CallExpressionTemplateCallFunctionTransportSlot::MetaPropertyNewTarget => render_meta_property_new_target(w),
-            CallExpressionTemplateCallFunctionTransportSlot::MetaPropertyImportMeta => render_meta_property_import_meta(w),
+            CallExpressionTemplateCallFunctionTransportSlot::This(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(119), edges, w, render_this),
+            CallExpressionTemplateCallFunctionTransportSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(120), edges, w, render_super),
+            CallExpressionTemplateCallFunctionTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(121), edges, w, render_true),
+            CallExpressionTemplateCallFunctionTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(122), edges, w, render_false),
+            CallExpressionTemplateCallFunctionTransportSlot::Null(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(123), edges, w, render_null),
+            CallExpressionTemplateCallFunctionTransportSlot::MetaPropertyNewTarget(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(430), edges, w, render_meta_property_new_target),
+            CallExpressionTemplateCallFunctionTransportSlot::MetaPropertyImportMeta(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(431), edges, w, render_meta_property_import_meta),
             CallExpressionTemplateCallFunctionTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -22063,7 +22214,8 @@ impl ::sittir_core::prepare::Prepare for ThrowStatementTransport {
 #[transport(choice)]
 pub enum EmptyStatementTransport {
     #[kind(kind::EMPTY_STATEMENT)]
-    EmptyStatement,
+    #[transport(edged)]
+    EmptyStatement(::sittir_core::options::Edges),
 }
 
 impl ::sittir_core::view::KindOf for EmptyStatementTransport {
@@ -22074,7 +22226,24 @@ impl ::sittir_core::view::KindOf for EmptyStatementTransport {
 
 impl ::sittir_core::prepare::Prepare for EmptyStatementTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
+        match self {
+            EmptyStatementTransport::EmptyStatement(_) => Ok(()),
+        }
+    }
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        match self {
+            EmptyStatementTransport::EmptyStatement(_) => None,
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            EmptyStatementTransport::EmptyStatement(edges) => Some(edges),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            EmptyStatementTransport::EmptyStatement(_) => None,
+        }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -22083,7 +22252,9 @@ impl ::sittir_core::prepare::Prepare for EmptyStatementTransport {
 
 impl ::sittir_core::render::Render for EmptyStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_empty_statement(w)
+        match self {
+            Self::EmptyStatement(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(224), edges, w, render_empty_statement),
+        }
     }
 }
 
@@ -24619,7 +24790,8 @@ impl ::sittir_core::prepare::Prepare for PrivatePropertyIdentifierTransport {
 #[transport(choice)]
 pub enum ThisTransport {
     #[kind(kind::THIS)]
-    This,
+    #[transport(edged)]
+    This(::sittir_core::options::Edges),
 }
 
 impl ::sittir_core::view::KindOf for ThisTransport {
@@ -24630,7 +24802,24 @@ impl ::sittir_core::view::KindOf for ThisTransport {
 
 impl ::sittir_core::prepare::Prepare for ThisTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
+        match self {
+            ThisTransport::This(_) => Ok(()),
+        }
+    }
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        match self {
+            ThisTransport::This(_) => None,
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            ThisTransport::This(edges) => Some(edges),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            ThisTransport::This(_) => None,
+        }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -24639,7 +24828,9 @@ impl ::sittir_core::prepare::Prepare for ThisTransport {
 
 impl ::sittir_core::render::Render for ThisTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_this(w)
+        match self {
+            Self::This(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(119), edges, w, render_this),
+        }
     }
 }
 
@@ -24647,7 +24838,8 @@ impl ::sittir_core::render::Render for ThisTransport {
 #[transport(choice)]
 pub enum SuperTransport {
     #[kind(kind::SUPER)]
-    Super,
+    #[transport(edged)]
+    Super(::sittir_core::options::Edges),
 }
 
 impl ::sittir_core::view::KindOf for SuperTransport {
@@ -24658,7 +24850,24 @@ impl ::sittir_core::view::KindOf for SuperTransport {
 
 impl ::sittir_core::prepare::Prepare for SuperTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
+        match self {
+            SuperTransport::Super(_) => Ok(()),
+        }
+    }
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        match self {
+            SuperTransport::Super(_) => None,
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            SuperTransport::Super(edges) => Some(edges),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            SuperTransport::Super(_) => None,
+        }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -24667,7 +24876,9 @@ impl ::sittir_core::prepare::Prepare for SuperTransport {
 
 impl ::sittir_core::render::Render for SuperTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_super(w)
+        match self {
+            Self::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(120), edges, w, render_super),
+        }
     }
 }
 
@@ -24675,7 +24886,8 @@ impl ::sittir_core::render::Render for SuperTransport {
 #[transport(choice)]
 pub enum TrueTransport {
     #[kind(kind::TRUE)]
-    True,
+    #[transport(edged)]
+    True(::sittir_core::options::Edges),
 }
 
 impl ::sittir_core::view::KindOf for TrueTransport {
@@ -24686,7 +24898,24 @@ impl ::sittir_core::view::KindOf for TrueTransport {
 
 impl ::sittir_core::prepare::Prepare for TrueTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
+        match self {
+            TrueTransport::True(_) => Ok(()),
+        }
+    }
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        match self {
+            TrueTransport::True(_) => None,
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            TrueTransport::True(edges) => Some(edges),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            TrueTransport::True(_) => None,
+        }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -24695,7 +24924,9 @@ impl ::sittir_core::prepare::Prepare for TrueTransport {
 
 impl ::sittir_core::render::Render for TrueTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_true(w)
+        match self {
+            Self::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(121), edges, w, render_true),
+        }
     }
 }
 
@@ -24703,7 +24934,8 @@ impl ::sittir_core::render::Render for TrueTransport {
 #[transport(choice)]
 pub enum FalseTransport {
     #[kind(kind::FALSE)]
-    False,
+    #[transport(edged)]
+    False(::sittir_core::options::Edges),
 }
 
 impl ::sittir_core::view::KindOf for FalseTransport {
@@ -24714,7 +24946,24 @@ impl ::sittir_core::view::KindOf for FalseTransport {
 
 impl ::sittir_core::prepare::Prepare for FalseTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
+        match self {
+            FalseTransport::False(_) => Ok(()),
+        }
+    }
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        match self {
+            FalseTransport::False(_) => None,
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            FalseTransport::False(edges) => Some(edges),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            FalseTransport::False(_) => None,
+        }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -24723,7 +24972,9 @@ impl ::sittir_core::prepare::Prepare for FalseTransport {
 
 impl ::sittir_core::render::Render for FalseTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_false(w)
+        match self {
+            Self::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(122), edges, w, render_false),
+        }
     }
 }
 
@@ -24731,7 +24982,8 @@ impl ::sittir_core::render::Render for FalseTransport {
 #[transport(choice)]
 pub enum NullTransport {
     #[kind(kind::NULL)]
-    Null,
+    #[transport(edged)]
+    Null(::sittir_core::options::Edges),
 }
 
 impl ::sittir_core::view::KindOf for NullTransport {
@@ -24742,7 +24994,24 @@ impl ::sittir_core::view::KindOf for NullTransport {
 
 impl ::sittir_core::prepare::Prepare for NullTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
+        match self {
+            NullTransport::Null(_) => Ok(()),
+        }
+    }
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        match self {
+            NullTransport::Null(_) => None,
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            NullTransport::Null(edges) => Some(edges),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            NullTransport::Null(_) => None,
+        }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -24751,7 +25020,9 @@ impl ::sittir_core::prepare::Prepare for NullTransport {
 
 impl ::sittir_core::render::Render for NullTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_null(w)
+        match self {
+            Self::Null(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(123), edges, w, render_null),
+        }
     }
 }
 
@@ -24759,7 +25030,8 @@ impl ::sittir_core::render::Render for NullTransport {
 #[transport(choice)]
 pub enum UndefinedTransport {
     #[kind(kind::UNDEFINED)]
-    Undefined,
+    #[transport(edged)]
+    Undefined(::sittir_core::options::Edges),
 }
 
 impl ::sittir_core::view::KindOf for UndefinedTransport {
@@ -24770,7 +25042,24 @@ impl ::sittir_core::view::KindOf for UndefinedTransport {
 
 impl ::sittir_core::prepare::Prepare for UndefinedTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
+        match self {
+            UndefinedTransport::Undefined(_) => Ok(()),
+        }
+    }
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        match self {
+            UndefinedTransport::Undefined(_) => None,
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            UndefinedTransport::Undefined(edges) => Some(edges),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            UndefinedTransport::Undefined(_) => None,
+        }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -24779,7 +25068,9 @@ impl ::sittir_core::prepare::Prepare for UndefinedTransport {
 
 impl ::sittir_core::render::Render for UndefinedTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_undefined(w)
+        match self {
+            Self::Undefined(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(124), edges, w, render_undefined),
+        }
     }
 }
 
@@ -28864,7 +29155,8 @@ impl ::sittir_core::prepare::Prepare for LiteralTypeTransport {
 #[transport(choice)]
 pub enum ExistentialTypeTransport {
     #[kind(kind::EXISTENTIAL_TYPE)]
-    ExistentialType,
+    #[transport(edged)]
+    ExistentialType(::sittir_core::options::Edges),
 }
 
 impl ::sittir_core::view::KindOf for ExistentialTypeTransport {
@@ -28875,7 +29167,24 @@ impl ::sittir_core::view::KindOf for ExistentialTypeTransport {
 
 impl ::sittir_core::prepare::Prepare for ExistentialTypeTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
+        match self {
+            ExistentialTypeTransport::ExistentialType(_) => Ok(()),
+        }
+    }
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        match self {
+            ExistentialTypeTransport::ExistentialType(_) => None,
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            ExistentialTypeTransport::ExistentialType(edges) => Some(edges),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            ExistentialTypeTransport::ExistentialType(_) => None,
+        }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -28884,7 +29193,9 @@ impl ::sittir_core::prepare::Prepare for ExistentialTypeTransport {
 
 impl ::sittir_core::render::Render for ExistentialTypeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_existential_type(w)
+        match self {
+            Self::ExistentialType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(356), edges, w, render_existential_type),
+        }
     }
 }
 
@@ -31651,7 +31962,8 @@ impl ::sittir_core::prepare::Prepare for BinaryExpressionInTransport {
 #[transport(choice)]
 pub enum EmptyMemberTransport {
     #[kind(kind::_EMPTY_MEMBER)]
-    EmptyMember,
+    #[transport(edged)]
+    EmptyMember(::sittir_core::options::Edges),
 }
 
 impl ::sittir_core::view::KindOf for EmptyMemberTransport {
@@ -31662,7 +31974,24 @@ impl ::sittir_core::view::KindOf for EmptyMemberTransport {
 
 impl ::sittir_core::prepare::Prepare for EmptyMemberTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
+        match self {
+            EmptyMemberTransport::EmptyMember(_) => Ok(()),
+        }
+    }
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        match self {
+            EmptyMemberTransport::EmptyMember(_) => None,
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            EmptyMemberTransport::EmptyMember(edges) => Some(edges),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            EmptyMemberTransport::EmptyMember(_) => None,
+        }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -31671,7 +32000,9 @@ impl ::sittir_core::prepare::Prepare for EmptyMemberTransport {
 
 impl ::sittir_core::render::Render for EmptyMemberTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_empty_member(w)
+        match self {
+            Self::EmptyMember(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(398), edges, w, render_empty_member),
+        }
     }
 }
 
@@ -33386,7 +33717,8 @@ impl ::sittir_core::prepare::Prepare for VariableDeclaratorDefiniteTransport {
 #[transport(choice)]
 pub enum MetaPropertyNewTargetTransport {
     #[kind(kind::META_PROPERTY_NEW_TARGET)]
-    MetaPropertyNewTarget,
+    #[transport(edged)]
+    MetaPropertyNewTarget(::sittir_core::options::Edges),
 }
 
 impl ::sittir_core::view::KindOf for MetaPropertyNewTargetTransport {
@@ -33397,7 +33729,24 @@ impl ::sittir_core::view::KindOf for MetaPropertyNewTargetTransport {
 
 impl ::sittir_core::prepare::Prepare for MetaPropertyNewTargetTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
+        match self {
+            MetaPropertyNewTargetTransport::MetaPropertyNewTarget(_) => Ok(()),
+        }
+    }
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        match self {
+            MetaPropertyNewTargetTransport::MetaPropertyNewTarget(_) => None,
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            MetaPropertyNewTargetTransport::MetaPropertyNewTarget(edges) => Some(edges),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            MetaPropertyNewTargetTransport::MetaPropertyNewTarget(_) => None,
+        }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -33406,7 +33755,9 @@ impl ::sittir_core::prepare::Prepare for MetaPropertyNewTargetTransport {
 
 impl ::sittir_core::render::Render for MetaPropertyNewTargetTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_meta_property_new_target(w)
+        match self {
+            Self::MetaPropertyNewTarget(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(430), edges, w, render_meta_property_new_target),
+        }
     }
 }
 
@@ -33414,7 +33765,8 @@ impl ::sittir_core::render::Render for MetaPropertyNewTargetTransport {
 #[transport(choice)]
 pub enum MetaPropertyImportMetaTransport {
     #[kind(kind::META_PROPERTY_IMPORT_META)]
-    MetaPropertyImportMeta,
+    #[transport(edged)]
+    MetaPropertyImportMeta(::sittir_core::options::Edges),
 }
 
 impl ::sittir_core::view::KindOf for MetaPropertyImportMetaTransport {
@@ -33425,7 +33777,24 @@ impl ::sittir_core::view::KindOf for MetaPropertyImportMetaTransport {
 
 impl ::sittir_core::prepare::Prepare for MetaPropertyImportMetaTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
+        match self {
+            MetaPropertyImportMetaTransport::MetaPropertyImportMeta(_) => Ok(()),
+        }
+    }
+    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
+        match self {
+            MetaPropertyImportMetaTransport::MetaPropertyImportMeta(_) => None,
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            MetaPropertyImportMetaTransport::MetaPropertyImportMeta(edges) => Some(edges),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            MetaPropertyImportMetaTransport::MetaPropertyImportMeta(_) => None,
+        }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -33434,7 +33803,9 @@ impl ::sittir_core::prepare::Prepare for MetaPropertyImportMetaTransport {
 
 impl ::sittir_core::render::Render for MetaPropertyImportMetaTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_meta_property_import_meta(w)
+        match self {
+            Self::MetaPropertyImportMeta(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(431), edges, w, render_meta_property_import_meta),
+        }
     }
 }
 
@@ -38542,6 +38913,14 @@ impl ::sittir_core::prepare::SeatTarget for ThrowStatementTransport {
     }
 }
 
+impl ::sittir_core::prepare::SeatTarget for EmptyStatementTransport {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match self {
+            Self::EmptyStatement(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(224)).map(|site| (edges, site)),
+        }
+    }
+}
+
 impl ::sittir_core::prepare::SeatTarget for LabeledStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(225)) {
@@ -38776,6 +39155,54 @@ impl ::sittir_core::prepare::SeatTarget for RegexTransport {
             return Some((self.layout.edges_mut(), site));
         }
         None
+    }
+}
+
+impl ::sittir_core::prepare::SeatTarget for ThisTransport {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match self {
+            Self::This(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(119)).map(|site| (edges, site)),
+        }
+    }
+}
+
+impl ::sittir_core::prepare::SeatTarget for SuperTransport {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match self {
+            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(120)).map(|site| (edges, site)),
+        }
+    }
+}
+
+impl ::sittir_core::prepare::SeatTarget for TrueTransport {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match self {
+            Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(121)).map(|site| (edges, site)),
+        }
+    }
+}
+
+impl ::sittir_core::prepare::SeatTarget for FalseTransport {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match self {
+            Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(122)).map(|site| (edges, site)),
+        }
+    }
+}
+
+impl ::sittir_core::prepare::SeatTarget for NullTransport {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match self {
+            Self::Null(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(123)).map(|site| (edges, site)),
+        }
+    }
+}
+
+impl ::sittir_core::prepare::SeatTarget for UndefinedTransport {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match self {
+            Self::Undefined(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(124)).map(|site| (edges, site)),
+        }
     }
 }
 
@@ -39154,6 +39581,14 @@ impl ::sittir_core::prepare::SeatTarget for LiteralTypeTransport {
     }
 }
 
+impl ::sittir_core::prepare::SeatTarget for ExistentialTypeTransport {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match self {
+            Self::ExistentialType(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(356)).map(|site| (edges, site)),
+        }
+    }
+}
+
 impl ::sittir_core::prepare::SeatTarget for FlowMaybeTypeTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(357)) {
@@ -39304,6 +39739,14 @@ impl ::sittir_core::prepare::SeatTarget for LiteralTypeNegativeNumberTransport {
             return Some((self.layout.edges_mut(), site));
         }
         None
+    }
+}
+
+impl ::sittir_core::prepare::SeatTarget for EmptyMemberTransport {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match self {
+            Self::EmptyMember(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(398)).map(|site| (edges, site)),
+        }
     }
 }
 
@@ -39496,6 +39939,22 @@ impl ::sittir_core::prepare::SeatTarget for VariableDeclaratorDefiniteTransport 
     }
 }
 
+impl ::sittir_core::prepare::SeatTarget for MetaPropertyNewTargetTransport {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match self {
+            Self::MetaPropertyNewTarget(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(430)).map(|site| (edges, site)),
+        }
+    }
+}
+
+impl ::sittir_core::prepare::SeatTarget for MetaPropertyImportMetaTransport {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match self {
+            Self::MetaPropertyImportMeta(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(431)).map(|site| (edges, site)),
+        }
+    }
+}
+
 impl ::sittir_core::prepare::SeatTarget for ExportStatementTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
@@ -39564,6 +40023,7 @@ impl ::sittir_core::prepare::SeatTarget for StatementTransport {
             Self::ContinueStatement(t) => t.seat_target(table),
             Self::ReturnStatement(t) => t.seat_target(table),
             Self::ThrowStatement(t) => t.seat_target(table),
+            Self::EmptyStatement(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(224)).map(|site| (edges, site)),
             Self::LabeledStatement(t) => t.seat_target(table),
             #[allow(unreachable_patterns)]
             _ => None,
@@ -39622,15 +40082,22 @@ impl ::sittir_core::prepare::SeatTarget for PrimaryExpressionTransport {
             Self::SubscriptExpression(t) => t.seat_target(table),
             Self::MemberExpression(t) => t.seat_target(table),
             Self::ParenthesizedExpression(t) => t.seat_target(table),
+            Self::Undefined(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(124)).map(|site| (edges, site)),
+            Self::This(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(119)).map(|site| (edges, site)),
+            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(120)).map(|site| (edges, site)),
             Self::String(t) => t.seat_target(table),
             Self::TemplateString(t) => t.seat_target(table),
             Self::Regex(t) => t.seat_target(table),
+            Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(121)).map(|site| (edges, site)),
+            Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(122)).map(|site| (edges, site)),
+            Self::Null(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(123)).map(|site| (edges, site)),
             Self::Object(t) => t.seat_target(table),
             Self::Array(t) => t.seat_target(table),
             Self::FunctionExpression(t) => t.seat_target(table),
             Self::ArrowFunction(t) => t.seat_target(table),
             Self::GeneratorFunction(t) => t.seat_target(table),
             Self::Class(t) => t.seat_target(table),
+            Self::MetaProperty(t) => t.seat_target(table),
             Self::CallExpression(t) => t.seat_target(table),
             Self::NonNullExpression(t) => t.seat_target(table),
             #[allow(unreachable_patterns)]
@@ -39667,6 +40134,17 @@ impl ::sittir_core::prepare::SeatTarget for StringTransport {
         match self {
             Self::StringDouble(t) => t.seat_target(table),
             Self::StringSingle(t) => t.seat_target(table),
+            #[allow(unreachable_patterns)]
+            _ => None,
+        }
+    }
+}
+
+impl ::sittir_core::prepare::SeatTarget for MetaPropertyTransport {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match self {
+            Self::MetaPropertyNewTarget(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(430)).map(|site| (edges, site)),
+            Self::MetaPropertyImportMeta(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(431)).map(|site| (edges, site)),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -39711,6 +40189,8 @@ impl ::sittir_core::prepare::SeatTarget for PrimaryTypeTransport {
             Self::FlowMaybeType(t) => t.seat_target(table),
             Self::TypeQuery(t) => t.seat_target(table),
             Self::IndexTypeQuery(t) => t.seat_target(table),
+            Self::This(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(119)).map(|site| (edges, site)),
+            Self::ExistentialType(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(356)).map(|site| (edges, site)),
             Self::LiteralType(t) => t.seat_target(table),
             Self::LookupType(t) => t.seat_target(table),
             Self::ConditionalType(t) => t.seat_target(table),
@@ -39730,6 +40210,7 @@ impl ::sittir_core::prepare::SeatTarget for ClassBodyMemberTransport {
             Self::ClassBodyMemberMethodSig(t) => t.seat_target(table),
             Self::ClassStaticBlock(t) => t.seat_target(table),
             Self::ClassBodyMemberDeclaration(t) => t.seat_target(table),
+            Self::EmptyMember(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(398)).map(|site| (edges, site)),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -39791,16 +40272,24 @@ impl ::sittir_core::prepare::SeatTarget for ExpressionStatementExpressionTranspo
             Self::MemberExpression(t) => t.seat_target(table),
             Self::ParenthesizedExpressionTyped(t) => t.seat_target(table),
             Self::ParenthesizedExpressionSequence(t) => t.seat_target(table),
+            Self::Undefined(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(124)).map(|site| (edges, site)),
+            Self::This(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(119)).map(|site| (edges, site)),
+            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(120)).map(|site| (edges, site)),
             Self::StringDouble(t) => t.seat_target(table),
             Self::StringSingle(t) => t.seat_target(table),
             Self::TemplateString(t) => t.seat_target(table),
             Self::Regex(t) => t.seat_target(table),
+            Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(121)).map(|site| (edges, site)),
+            Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(122)).map(|site| (edges, site)),
+            Self::Null(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(123)).map(|site| (edges, site)),
             Self::Object(t) => t.seat_target(table),
             Self::Array(t) => t.seat_target(table),
             Self::FunctionExpression(t) => t.seat_target(table),
             Self::ArrowFunction(t) => t.seat_target(table),
             Self::GeneratorFunction(t) => t.seat_target(table),
             Self::Class(t) => t.seat_target(table),
+            Self::MetaPropertyNewTarget(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(430)).map(|site| (edges, site)),
+            Self::MetaPropertyImportMeta(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(431)).map(|site| (edges, site)),
             Self::CallExpressionCall(t) => t.seat_target(table),
             Self::CallExpressionTemplateCall(t) => t.seat_target(table),
             Self::CallExpressionMember(t) => t.seat_target(table),
@@ -39834,16 +40323,24 @@ impl ::sittir_core::prepare::SeatTarget for ForStatementInitializerTransportSlot
             Self::MemberExpression(t) => t.seat_target(table),
             Self::ParenthesizedExpressionTyped(t) => t.seat_target(table),
             Self::ParenthesizedExpressionSequence(t) => t.seat_target(table),
+            Self::Undefined(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(124)).map(|site| (edges, site)),
+            Self::This(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(119)).map(|site| (edges, site)),
+            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(120)).map(|site| (edges, site)),
             Self::StringDouble(t) => t.seat_target(table),
             Self::StringSingle(t) => t.seat_target(table),
             Self::TemplateString(t) => t.seat_target(table),
             Self::Regex(t) => t.seat_target(table),
+            Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(121)).map(|site| (edges, site)),
+            Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(122)).map(|site| (edges, site)),
+            Self::Null(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(123)).map(|site| (edges, site)),
             Self::Object(t) => t.seat_target(table),
             Self::Array(t) => t.seat_target(table),
             Self::FunctionExpression(t) => t.seat_target(table),
             Self::ArrowFunction(t) => t.seat_target(table),
             Self::GeneratorFunction(t) => t.seat_target(table),
             Self::Class(t) => t.seat_target(table),
+            Self::MetaPropertyNewTarget(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(430)).map(|site| (edges, site)),
+            Self::MetaPropertyImportMeta(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(431)).map(|site| (edges, site)),
             Self::CallExpressionCall(t) => t.seat_target(table),
             Self::CallExpressionTemplateCall(t) => t.seat_target(table),
             Self::CallExpressionMember(t) => t.seat_target(table),
@@ -39857,6 +40354,7 @@ impl ::sittir_core::prepare::SeatTarget for ForStatementInitializerTransportSlot
             Self::UpdateExpressionPrefix(t) => t.seat_target(table),
             Self::NewExpression(t) => t.seat_target(table),
             Self::YieldExpression(t) => t.seat_target(table),
+            Self::EmptyStatement(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(224)).map(|site| (edges, site)),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -39875,16 +40373,24 @@ impl ::sittir_core::prepare::SeatTarget for ForStatementConditionTransportSlot {
             Self::MemberExpression(t) => t.seat_target(table),
             Self::ParenthesizedExpressionTyped(t) => t.seat_target(table),
             Self::ParenthesizedExpressionSequence(t) => t.seat_target(table),
+            Self::Undefined(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(124)).map(|site| (edges, site)),
+            Self::This(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(119)).map(|site| (edges, site)),
+            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(120)).map(|site| (edges, site)),
             Self::StringDouble(t) => t.seat_target(table),
             Self::StringSingle(t) => t.seat_target(table),
             Self::TemplateString(t) => t.seat_target(table),
             Self::Regex(t) => t.seat_target(table),
+            Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(121)).map(|site| (edges, site)),
+            Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(122)).map(|site| (edges, site)),
+            Self::Null(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(123)).map(|site| (edges, site)),
             Self::Object(t) => t.seat_target(table),
             Self::Array(t) => t.seat_target(table),
             Self::FunctionExpression(t) => t.seat_target(table),
             Self::ArrowFunction(t) => t.seat_target(table),
             Self::GeneratorFunction(t) => t.seat_target(table),
             Self::Class(t) => t.seat_target(table),
+            Self::MetaPropertyNewTarget(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(430)).map(|site| (edges, site)),
+            Self::MetaPropertyImportMeta(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(431)).map(|site| (edges, site)),
             Self::CallExpressionCall(t) => t.seat_target(table),
             Self::CallExpressionTemplateCall(t) => t.seat_target(table),
             Self::CallExpressionMember(t) => t.seat_target(table),
@@ -39898,6 +40404,7 @@ impl ::sittir_core::prepare::SeatTarget for ForStatementConditionTransportSlot {
             Self::UpdateExpressionPrefix(t) => t.seat_target(table),
             Self::NewExpression(t) => t.seat_target(table),
             Self::YieldExpression(t) => t.seat_target(table),
+            Self::EmptyStatement(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(224)).map(|site| (edges, site)),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -39927,16 +40434,24 @@ impl ::sittir_core::prepare::SeatTarget for YieldExpressionExpressionTransportSl
             Self::MemberExpression(t) => t.seat_target(table),
             Self::ParenthesizedExpressionTyped(t) => t.seat_target(table),
             Self::ParenthesizedExpressionSequence(t) => t.seat_target(table),
+            Self::Undefined(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(124)).map(|site| (edges, site)),
+            Self::This(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(119)).map(|site| (edges, site)),
+            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(120)).map(|site| (edges, site)),
             Self::StringDouble(t) => t.seat_target(table),
             Self::StringSingle(t) => t.seat_target(table),
             Self::TemplateString(t) => t.seat_target(table),
             Self::Regex(t) => t.seat_target(table),
+            Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(121)).map(|site| (edges, site)),
+            Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(122)).map(|site| (edges, site)),
+            Self::Null(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(123)).map(|site| (edges, site)),
             Self::Object(t) => t.seat_target(table),
             Self::Array(t) => t.seat_target(table),
             Self::FunctionExpression(t) => t.seat_target(table),
             Self::ArrowFunction(t) => t.seat_target(table),
             Self::GeneratorFunction(t) => t.seat_target(table),
             Self::Class(t) => t.seat_target(table),
+            Self::MetaPropertyNewTarget(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(430)).map(|site| (edges, site)),
+            Self::MetaPropertyImportMeta(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(431)).map(|site| (edges, site)),
             Self::CallExpressionCall(t) => t.seat_target(table),
             Self::CallExpressionTemplateCall(t) => t.seat_target(table),
             Self::CallExpressionMember(t) => t.seat_target(table),
@@ -39992,16 +40507,24 @@ impl ::sittir_core::prepare::SeatTarget for ArrayElementsTransportSlot {
             Self::MemberExpression(t) => t.seat_target(table),
             Self::ParenthesizedExpressionTyped(t) => t.seat_target(table),
             Self::ParenthesizedExpressionSequence(t) => t.seat_target(table),
+            Self::Undefined(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(124)).map(|site| (edges, site)),
+            Self::This(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(119)).map(|site| (edges, site)),
+            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(120)).map(|site| (edges, site)),
             Self::StringDouble(t) => t.seat_target(table),
             Self::StringSingle(t) => t.seat_target(table),
             Self::TemplateString(t) => t.seat_target(table),
             Self::Regex(t) => t.seat_target(table),
+            Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(121)).map(|site| (edges, site)),
+            Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(122)).map(|site| (edges, site)),
+            Self::Null(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(123)).map(|site| (edges, site)),
             Self::Object(t) => t.seat_target(table),
             Self::Array(t) => t.seat_target(table),
             Self::FunctionExpression(t) => t.seat_target(table),
             Self::ArrowFunction(t) => t.seat_target(table),
             Self::GeneratorFunction(t) => t.seat_target(table),
             Self::Class(t) => t.seat_target(table),
+            Self::MetaPropertyNewTarget(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(430)).map(|site| (edges, site)),
+            Self::MetaPropertyImportMeta(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(431)).map(|site| (edges, site)),
             Self::CallExpressionCall(t) => t.seat_target(table),
             Self::CallExpressionTemplateCall(t) => t.seat_target(table),
             Self::CallExpressionMember(t) => t.seat_target(table),
@@ -40045,16 +40568,24 @@ impl ::sittir_core::prepare::SeatTarget for ArrowFunctionBodyTransportSlot {
             Self::MemberExpression(t) => t.seat_target(table),
             Self::ParenthesizedExpressionTyped(t) => t.seat_target(table),
             Self::ParenthesizedExpressionSequence(t) => t.seat_target(table),
+            Self::Undefined(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(124)).map(|site| (edges, site)),
+            Self::This(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(119)).map(|site| (edges, site)),
+            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(120)).map(|site| (edges, site)),
             Self::StringDouble(t) => t.seat_target(table),
             Self::StringSingle(t) => t.seat_target(table),
             Self::TemplateString(t) => t.seat_target(table),
             Self::Regex(t) => t.seat_target(table),
+            Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(121)).map(|site| (edges, site)),
+            Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(122)).map(|site| (edges, site)),
+            Self::Null(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(123)).map(|site| (edges, site)),
             Self::Object(t) => t.seat_target(table),
             Self::Array(t) => t.seat_target(table),
             Self::FunctionExpression(t) => t.seat_target(table),
             Self::ArrowFunction(t) => t.seat_target(table),
             Self::GeneratorFunction(t) => t.seat_target(table),
             Self::Class(t) => t.seat_target(table),
+            Self::MetaPropertyNewTarget(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(430)).map(|site| (edges, site)),
+            Self::MetaPropertyImportMeta(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(431)).map(|site| (edges, site)),
             Self::CallExpressionCall(t) => t.seat_target(table),
             Self::CallExpressionTemplateCall(t) => t.seat_target(table),
             Self::CallExpressionMember(t) => t.seat_target(table),
@@ -40097,16 +40628,24 @@ impl ::sittir_core::prepare::SeatTarget for MemberExpressionObjectTransportSlot 
             Self::MemberExpression(t) => t.seat_target(table),
             Self::ParenthesizedExpressionTyped(t) => t.seat_target(table),
             Self::ParenthesizedExpressionSequence(t) => t.seat_target(table),
+            Self::Undefined(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(124)).map(|site| (edges, site)),
+            Self::This(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(119)).map(|site| (edges, site)),
+            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(120)).map(|site| (edges, site)),
             Self::StringDouble(t) => t.seat_target(table),
             Self::StringSingle(t) => t.seat_target(table),
             Self::TemplateString(t) => t.seat_target(table),
             Self::Regex(t) => t.seat_target(table),
+            Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(121)).map(|site| (edges, site)),
+            Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(122)).map(|site| (edges, site)),
+            Self::Null(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(123)).map(|site| (edges, site)),
             Self::Object(t) => t.seat_target(table),
             Self::Array(t) => t.seat_target(table),
             Self::FunctionExpression(t) => t.seat_target(table),
             Self::ArrowFunction(t) => t.seat_target(table),
             Self::GeneratorFunction(t) => t.seat_target(table),
             Self::Class(t) => t.seat_target(table),
+            Self::MetaPropertyNewTarget(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(430)).map(|site| (edges, site)),
+            Self::MetaPropertyImportMeta(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(431)).map(|site| (edges, site)),
             Self::CallExpressionCall(t) => t.seat_target(table),
             Self::CallExpressionTemplateCall(t) => t.seat_target(table),
             Self::CallExpressionMember(t) => t.seat_target(table),
@@ -40138,16 +40677,24 @@ impl ::sittir_core::prepare::SeatTarget for SubscriptExpressionObjectTransportSl
             Self::MemberExpression(t) => t.seat_target(table),
             Self::ParenthesizedExpressionTyped(t) => t.seat_target(table),
             Self::ParenthesizedExpressionSequence(t) => t.seat_target(table),
+            Self::Undefined(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(124)).map(|site| (edges, site)),
+            Self::This(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(119)).map(|site| (edges, site)),
+            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(120)).map(|site| (edges, site)),
             Self::StringDouble(t) => t.seat_target(table),
             Self::StringSingle(t) => t.seat_target(table),
             Self::TemplateString(t) => t.seat_target(table),
             Self::Regex(t) => t.seat_target(table),
+            Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(121)).map(|site| (edges, site)),
+            Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(122)).map(|site| (edges, site)),
+            Self::Null(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(123)).map(|site| (edges, site)),
             Self::Object(t) => t.seat_target(table),
             Self::Array(t) => t.seat_target(table),
             Self::FunctionExpression(t) => t.seat_target(table),
             Self::ArrowFunction(t) => t.seat_target(table),
             Self::GeneratorFunction(t) => t.seat_target(table),
             Self::Class(t) => t.seat_target(table),
+            Self::MetaPropertyNewTarget(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(430)).map(|site| (edges, site)),
+            Self::MetaPropertyImportMeta(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(431)).map(|site| (edges, site)),
             Self::CallExpressionCall(t) => t.seat_target(table),
             Self::CallExpressionTemplateCall(t) => t.seat_target(table),
             Self::CallExpressionMember(t) => t.seat_target(table),
@@ -40173,6 +40720,7 @@ impl ::sittir_core::prepare::SeatTarget for LhsExpressionContentTransportSlot {
             Self::MemberExpression(t) => t.seat_target(table),
             Self::SubscriptExpression(t) => t.seat_target(table),
             Self::NonNullExpression(t) => t.seat_target(table),
+            Self::Undefined(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(124)).map(|site| (edges, site)),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -40227,6 +40775,8 @@ impl ::sittir_core::prepare::SeatTarget for AsExpressionTypeAnnotationTransportS
             Self::FlowMaybeType(t) => t.seat_target(table),
             Self::TypeQuery(t) => t.seat_target(table),
             Self::IndexTypeQuery(t) => t.seat_target(table),
+            Self::This(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(119)).map(|site| (edges, site)),
+            Self::ExistentialType(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(356)).map(|site| (edges, site)),
             Self::LiteralType(t) => t.seat_target(table),
             Self::LookupType(t) => t.seat_target(table),
             Self::ConditionalType(t) => t.seat_target(table),
@@ -40294,6 +40844,7 @@ impl ::sittir_core::prepare::SeatTarget for RequiredParameterPatternTransportSlo
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::RestPattern(t) => t.seat_target(table),
+            Self::This(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(119)).map(|site| (edges, site)),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -40315,6 +40866,16 @@ impl ::sittir_core::prepare::SeatTarget for TypeQueryCallExpressionInTypeAnnotat
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::TypeQueryMemberExpressionInTypeAnnotation(t) => t.seat_target(table),
+            #[allow(unreachable_patterns)]
+            _ => None,
+        }
+    }
+}
+
+impl ::sittir_core::prepare::SeatTarget for AssertsValueTransportSlot {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match self {
+            Self::This(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(119)).map(|site| (edges, site)),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -40343,6 +40904,8 @@ impl ::sittir_core::prepare::SeatTarget for TemplateTypeTypeTransportSlot {
             Self::FlowMaybeType(t) => t.seat_target(table),
             Self::TypeQuery(t) => t.seat_target(table),
             Self::IndexTypeQuery(t) => t.seat_target(table),
+            Self::This(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(119)).map(|site| (edges, site)),
+            Self::ExistentialType(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(356)).map(|site| (edges, site)),
             Self::LiteralType(t) => t.seat_target(table),
             Self::LookupType(t) => t.seat_target(table),
             Self::ConditionalType(t) => t.seat_target(table),
@@ -40366,11 +40929,41 @@ impl ::sittir_core::prepare::SeatTarget for GenericTypeNameTransportSlot {
     }
 }
 
+impl ::sittir_core::prepare::SeatTarget for TypePredicateNameTransportSlot {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match self {
+            Self::This(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(119)).map(|site| (edges, site)),
+            #[allow(unreachable_patterns)]
+            _ => None,
+        }
+    }
+}
+
+impl ::sittir_core::prepare::SeatTarget for TypeQueryMemberExpressionObjectTransportSlot {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match self {
+            Self::This(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(119)).map(|site| (edges, site)),
+            #[allow(unreachable_patterns)]
+            _ => None,
+        }
+    }
+}
+
 impl ::sittir_core::prepare::SeatTarget for TypeQuerySubscriptExpressionIndexTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::StringDouble(t) => t.seat_target(table),
             Self::StringSingle(t) => t.seat_target(table),
+            #[allow(unreachable_patterns)]
+            _ => None,
+        }
+    }
+}
+
+impl ::sittir_core::prepare::SeatTarget for TypeQueryExpressionTransportSlot {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match self {
+            Self::This(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(119)).map(|site| (edges, site)),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -40383,6 +40976,10 @@ impl ::sittir_core::prepare::SeatTarget for LiteralTypeContentTransportSlot {
             Self::LiteralTypeNegativeNumber(t) => t.seat_target(table),
             Self::StringDouble(t) => t.seat_target(table),
             Self::StringSingle(t) => t.seat_target(table),
+            Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(121)).map(|site| (edges, site)),
+            Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(122)).map(|site| (edges, site)),
+            Self::Null(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(123)).map(|site| (edges, site)),
+            Self::Undefined(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(124)).map(|site| (edges, site)),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -40401,6 +40998,8 @@ impl ::sittir_core::prepare::SeatTarget for FunctionTypeReturnTypeTransportSlot 
             Self::FlowMaybeType(t) => t.seat_target(table),
             Self::TypeQuery(t) => t.seat_target(table),
             Self::IndexTypeQuery(t) => t.seat_target(table),
+            Self::This(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(119)).map(|site| (edges, site)),
+            Self::ExistentialType(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(356)).map(|site| (edges, site)),
             Self::LiteralType(t) => t.seat_target(table),
             Self::LookupType(t) => t.seat_target(table),
             Self::ConditionalType(t) => t.seat_target(table),
@@ -40446,6 +41045,8 @@ impl ::sittir_core::prepare::SeatTarget for TupleTypeMembersItemTransportSlot {
             Self::FlowMaybeType(t) => t.seat_target(table),
             Self::TypeQuery(t) => t.seat_target(table),
             Self::IndexTypeQuery(t) => t.seat_target(table),
+            Self::This(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(119)).map(|site| (edges, site)),
+            Self::ExistentialType(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(356)).map(|site| (edges, site)),
             Self::LiteralType(t) => t.seat_target(table),
             Self::LookupType(t) => t.seat_target(table),
             Self::ConditionalType(t) => t.seat_target(table),
@@ -40496,16 +41097,24 @@ impl ::sittir_core::prepare::SeatTarget for BinaryExpressionInLeftTransportSlot 
             Self::MemberExpression(t) => t.seat_target(table),
             Self::ParenthesizedExpressionTyped(t) => t.seat_target(table),
             Self::ParenthesizedExpressionSequence(t) => t.seat_target(table),
+            Self::Undefined(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(124)).map(|site| (edges, site)),
+            Self::This(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(119)).map(|site| (edges, site)),
+            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(120)).map(|site| (edges, site)),
             Self::StringDouble(t) => t.seat_target(table),
             Self::StringSingle(t) => t.seat_target(table),
             Self::TemplateString(t) => t.seat_target(table),
             Self::Regex(t) => t.seat_target(table),
+            Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(121)).map(|site| (edges, site)),
+            Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(122)).map(|site| (edges, site)),
+            Self::Null(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(123)).map(|site| (edges, site)),
             Self::Object(t) => t.seat_target(table),
             Self::Array(t) => t.seat_target(table),
             Self::FunctionExpression(t) => t.seat_target(table),
             Self::ArrowFunction(t) => t.seat_target(table),
             Self::GeneratorFunction(t) => t.seat_target(table),
             Self::Class(t) => t.seat_target(table),
+            Self::MetaPropertyNewTarget(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(430)).map(|site| (edges, site)),
+            Self::MetaPropertyImportMeta(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(431)).map(|site| (edges, site)),
             Self::CallExpressionCall(t) => t.seat_target(table),
             Self::CallExpressionTemplateCall(t) => t.seat_target(table),
             Self::CallExpressionMember(t) => t.seat_target(table),
@@ -40555,16 +41164,24 @@ impl ::sittir_core::prepare::SeatTarget for CallExpressionTemplateCallFunctionTr
             Self::MemberExpression(t) => t.seat_target(table),
             Self::ParenthesizedExpressionTyped(t) => t.seat_target(table),
             Self::ParenthesizedExpressionSequence(t) => t.seat_target(table),
+            Self::Undefined(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(124)).map(|site| (edges, site)),
+            Self::This(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(119)).map(|site| (edges, site)),
+            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(120)).map(|site| (edges, site)),
             Self::StringDouble(t) => t.seat_target(table),
             Self::StringSingle(t) => t.seat_target(table),
             Self::TemplateString(t) => t.seat_target(table),
             Self::Regex(t) => t.seat_target(table),
+            Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(121)).map(|site| (edges, site)),
+            Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(122)).map(|site| (edges, site)),
+            Self::Null(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(123)).map(|site| (edges, site)),
             Self::Object(t) => t.seat_target(table),
             Self::Array(t) => t.seat_target(table),
             Self::FunctionExpression(t) => t.seat_target(table),
             Self::ArrowFunction(t) => t.seat_target(table),
             Self::GeneratorFunction(t) => t.seat_target(table),
             Self::Class(t) => t.seat_target(table),
+            Self::MetaPropertyNewTarget(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(430)).map(|site| (edges, site)),
+            Self::MetaPropertyImportMeta(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(431)).map(|site| (edges, site)),
             Self::CallExpressionCall(t) => t.seat_target(table),
             Self::CallExpressionTemplateCall(t) => t.seat_target(table),
             Self::CallExpressionMember(t) => t.seat_target(table),
@@ -40657,6 +41274,7 @@ impl ::sittir_core::prepare::SeatTarget for AnyTransport {
             Self::DebuggerStatement(t) => t.seat_target(table),
             Self::ReturnStatement(t) => t.seat_target(table),
             Self::ThrowStatement(t) => t.seat_target(table),
+            Self::EmptyStatement(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(224)).map(|site| (edges, site)),
             Self::LabeledStatement(t) => t.seat_target(table),
             Self::SwitchCase(t) => t.seat_target(table),
             Self::SwitchDefault(t) => t.seat_target(table),
@@ -40683,6 +41301,12 @@ impl ::sittir_core::prepare::SeatTarget for AnyTransport {
             Self::UnaryExpression(t) => t.seat_target(table),
             Self::TemplateString(t) => t.seat_target(table),
             Self::Regex(t) => t.seat_target(table),
+            Self::This(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(119)).map(|site| (edges, site)),
+            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(120)).map(|site| (edges, site)),
+            Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(121)).map(|site| (edges, site)),
+            Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(122)).map(|site| (edges, site)),
+            Self::Null(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(123)).map(|site| (edges, site)),
+            Self::Undefined(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(124)).map(|site| (edges, site)),
             Self::Decorator(t) => t.seat_target(table),
             Self::ClassStaticBlock(t) => t.seat_target(table),
             Self::RestPattern(t) => t.seat_target(table),
@@ -40724,6 +41348,7 @@ impl ::sittir_core::prepare::SeatTarget for AnyTransport {
             Self::IndexTypeQuery(t) => t.seat_target(table),
             Self::LookupType(t) => t.seat_target(table),
             Self::LiteralType(t) => t.seat_target(table),
+            Self::ExistentialType(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(356)).map(|site| (edges, site)),
             Self::FlowMaybeType(t) => t.seat_target(table),
             Self::ParenthesizedType(t) => t.seat_target(table),
             Self::ObjectType(t) => t.seat_target(table),
@@ -40741,6 +41366,7 @@ impl ::sittir_core::prepare::SeatTarget for AnyTransport {
             Self::ExportStatementTypeExport(t) => t.seat_target(table),
             Self::ExportStatementEqualsExport(t) => t.seat_target(table),
             Self::LiteralTypeNegativeNumber(t) => t.seat_target(table),
+            Self::EmptyMember(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(398)).map(|site| (edges, site)),
             Self::ClassBodyMemberMethod(t) => t.seat_target(table),
             Self::ClassBodyMemberMethodSig(t) => t.seat_target(table),
             Self::ClassBodyMemberDeclaration(t) => t.seat_target(table),
@@ -40762,6 +41388,8 @@ impl ::sittir_core::prepare::SeatTarget for AnyTransport {
             Self::ExportStatementDefaultDeclarationDefaultKw(t) => t.seat_target(table),
             Self::VariableDeclaratorPlain(t) => t.seat_target(table),
             Self::VariableDeclaratorDefinite(t) => t.seat_target(table),
+            Self::MetaPropertyNewTarget(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(430)).map(|site| (edges, site)),
+            Self::MetaPropertyImportMeta(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(431)).map(|site| (edges, site)),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -45083,7 +45711,7 @@ fn render_statement(t: &StatementTransport, w: &mut dyn ::sittir_core::render::R
         StatementTransport::ContinueStatement(inner) => inner.render(w),
         StatementTransport::ReturnStatement(inner) => inner.render(w),
         StatementTransport::ThrowStatement(inner) => inner.render(w),
-        StatementTransport::EmptyStatement => render_empty_statement(w),
+        StatementTransport::EmptyStatement(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(224), edges, w, render_empty_statement),
         StatementTransport::LabeledStatement(inner) => inner.render(w),
     }
 }
@@ -45136,7 +45764,7 @@ fn render_primary_expression(t: &PrimaryExpressionTransport, w: &mut dyn ::sitti
         PrimaryExpressionTransport::SubscriptExpression(inner) => inner.render(w),
         PrimaryExpressionTransport::MemberExpression(inner) => inner.render(w),
         PrimaryExpressionTransport::ParenthesizedExpression(inner) => inner.render(w),
-        PrimaryExpressionTransport::Undefined => render_undefined(w),
+        PrimaryExpressionTransport::Undefined(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(124), edges, w, render_undefined),
         PrimaryExpressionTransport::Identifier(inner) => inner.render(w),
         PrimaryExpressionTransport::DeclareKeyword => render_declare_keyword(w),
         PrimaryExpressionTransport::NamespaceKeyword => render_namespace_keyword(w),
@@ -45160,15 +45788,15 @@ fn render_primary_expression(t: &PrimaryExpressionTransport, w: &mut dyn ::sitti
         PrimaryExpressionTransport::AsyncKeyword => render_async_keyword(w),
         PrimaryExpressionTransport::StaticKeyword => render_static_keyword(w),
         PrimaryExpressionTransport::LetKeyword => render_let_keyword(w),
-        PrimaryExpressionTransport::This => render_this(w),
-        PrimaryExpressionTransport::Super => render_super(w),
+        PrimaryExpressionTransport::This(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(119), edges, w, render_this),
+        PrimaryExpressionTransport::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(120), edges, w, render_super),
         PrimaryExpressionTransport::Number(inner) => inner.render(w),
         PrimaryExpressionTransport::String(inner) => inner.render(w),
         PrimaryExpressionTransport::TemplateString(inner) => inner.render(w),
         PrimaryExpressionTransport::Regex(inner) => inner.render(w),
-        PrimaryExpressionTransport::True => render_true(w),
-        PrimaryExpressionTransport::False => render_false(w),
-        PrimaryExpressionTransport::Null => render_null(w),
+        PrimaryExpressionTransport::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(121), edges, w, render_true),
+        PrimaryExpressionTransport::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(122), edges, w, render_false),
+        PrimaryExpressionTransport::Null(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(123), edges, w, render_null),
         PrimaryExpressionTransport::Object(inner) => inner.render(w),
         PrimaryExpressionTransport::Array(inner) => inner.render(w),
         PrimaryExpressionTransport::FunctionExpression(inner) => inner.as_ref().render(w),
@@ -45220,8 +45848,8 @@ fn render_number(t: &NumberTransport, w: &mut dyn ::sittir_core::render::RenderS
 
 fn render_meta_property(t: &MetaPropertyTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
-        MetaPropertyTransport::MetaPropertyNewTarget => render_meta_property_new_target(w),
-        MetaPropertyTransport::MetaPropertyImportMeta => render_meta_property_import_meta(w),
+        MetaPropertyTransport::MetaPropertyNewTarget(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(430), edges, w, render_meta_property_new_target),
+        MetaPropertyTransport::MetaPropertyImportMeta(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(431), edges, w, render_meta_property_import_meta),
     }
 }
 
@@ -45257,8 +45885,8 @@ fn render_primary_type(t: &PrimaryTypeTransport, w: &mut dyn ::sittir_core::rend
         PrimaryTypeTransport::FlowMaybeType(inner) => inner.render(w),
         PrimaryTypeTransport::TypeQuery(inner) => inner.render(w),
         PrimaryTypeTransport::IndexTypeQuery(inner) => inner.render(w),
-        PrimaryTypeTransport::This => render_this(w),
-        PrimaryTypeTransport::ExistentialType => render_existential_type(w),
+        PrimaryTypeTransport::This(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(119), edges, w, render_this),
+        PrimaryTypeTransport::ExistentialType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(356), edges, w, render_existential_type),
         PrimaryTypeTransport::LiteralType(inner) => inner.render(w),
         PrimaryTypeTransport::LookupType(inner) => inner.render(w),
         PrimaryTypeTransport::ConditionalType(inner) => inner.render(w),
@@ -45274,7 +45902,7 @@ fn render_class_body_member(t: &ClassBodyMemberTransport, w: &mut dyn ::sittir_c
         ClassBodyMemberTransport::ClassBodyMemberMethodSig(inner) => inner.as_ref().render(w),
         ClassBodyMemberTransport::ClassStaticBlock(inner) => inner.render(w),
         ClassBodyMemberTransport::ClassBodyMemberDeclaration(inner) => inner.render(w),
-        ClassBodyMemberTransport::EmptyMember => render_empty_member(w),
+        ClassBodyMemberTransport::EmptyMember(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(398), edges, w, render_empty_member),
     }
 }
 
@@ -45562,20 +46190,20 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::TypeIdentifier(inner) => inner.kind_in(kinds),
             Self::InterfaceBody(inner) => inner.kind_in(kinds),
             Self::Import => [::sittir_core::types::KindId(195)].iter().any(|k| kinds.contains(k)),
-            Self::EmptyStatement => [::sittir_core::types::KindId(224)].iter().any(|k| kinds.contains(k)),
+            Self::EmptyStatement(_) => [::sittir_core::types::KindId(224)].iter().any(|k| kinds.contains(k)),
             Self::OptionalChain => [::sittir_core::types::KindId(252)].iter().any(|k| kinds.contains(k)),
-            Self::This => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
-            Self::Super => [::sittir_core::types::KindId(120)].iter().any(|k| kinds.contains(k)),
-            Self::True => [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k)),
-            Self::False => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
-            Self::Null => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
-            Self::Undefined => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
+            Self::This(_) => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(120)].iter().any(|k| kinds.contains(k)),
+            Self::True(_) => [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k)),
+            Self::False(_) => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
+            Self::Null(_) => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
+            Self::Undefined(_) => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
             Self::OverrideModifier => [::sittir_core::types::KindId(319)].iter().any(|k| kinds.contains(k)),
-            Self::ExistentialType => [::sittir_core::types::KindId(356)].iter().any(|k| kinds.contains(k)),
-            Self::EmptyMember => [::sittir_core::types::KindId(398)].iter().any(|k| kinds.contains(k)),
+            Self::ExistentialType(_) => [::sittir_core::types::KindId(356)].iter().any(|k| kinds.contains(k)),
+            Self::EmptyMember(_) => [::sittir_core::types::KindId(398)].iter().any(|k| kinds.contains(k)),
             Self::OptionalChainMarker => [::sittir_core::types::KindId(406)].iter().any(|k| kinds.contains(k)),
-            Self::MetaPropertyNewTarget => [::sittir_core::types::KindId(430)].iter().any(|k| kinds.contains(k)),
-            Self::MetaPropertyImportMeta => [::sittir_core::types::KindId(431)].iter().any(|k| kinds.contains(k)),
+            Self::MetaPropertyNewTarget(_) => [::sittir_core::types::KindId(430)].iter().any(|k| kinds.contains(k)),
+            Self::MetaPropertyImportMeta(_) => [::sittir_core::types::KindId(431)].iter().any(|k| kinds.contains(k)),
             Self::AutomaticSemicolon => [::sittir_core::types::KindId(173)].iter().any(|k| kinds.contains(k)),
             Self::FunctionSignatureAutomaticSemicolon => [::sittir_core::types::KindId(178)].iter().any(|k| kinds.contains(k)),
             Self::Tight => [::sittir_core::types::KindId(180)].iter().any(|k| kinds.contains(k)),
@@ -45971,20 +46599,20 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::TypeIdentifier(t) => t.render(w),
             AnyTransport::InterfaceBody(t) => t.render(w),
             AnyTransport::Import => render_import(w),
-            AnyTransport::EmptyStatement => render_empty_statement(w),
+            AnyTransport::EmptyStatement(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(224), edges, w, render_empty_statement),
             AnyTransport::OptionalChain => render_optional_chain(w),
-            AnyTransport::This => render_this(w),
-            AnyTransport::Super => render_super(w),
-            AnyTransport::True => render_true(w),
-            AnyTransport::False => render_false(w),
-            AnyTransport::Null => render_null(w),
-            AnyTransport::Undefined => render_undefined(w),
+            AnyTransport::This(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(119), edges, w, render_this),
+            AnyTransport::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(120), edges, w, render_super),
+            AnyTransport::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(121), edges, w, render_true),
+            AnyTransport::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(122), edges, w, render_false),
+            AnyTransport::Null(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(123), edges, w, render_null),
+            AnyTransport::Undefined(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(124), edges, w, render_undefined),
             AnyTransport::OverrideModifier => render_override_modifier(w),
-            AnyTransport::ExistentialType => render_existential_type(w),
-            AnyTransport::EmptyMember => render_empty_member(w),
+            AnyTransport::ExistentialType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(356), edges, w, render_existential_type),
+            AnyTransport::EmptyMember(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(398), edges, w, render_empty_member),
             AnyTransport::OptionalChainMarker => render_optional_chain_marker(w),
-            AnyTransport::MetaPropertyNewTarget => render_meta_property_new_target(w),
-            AnyTransport::MetaPropertyImportMeta => render_meta_property_import_meta(w),
+            AnyTransport::MetaPropertyNewTarget(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(430), edges, w, render_meta_property_new_target),
+            AnyTransport::MetaPropertyImportMeta(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(431), edges, w, render_meta_property_import_meta),
             AnyTransport::AutomaticSemicolon => render_automatic_semicolon(w),
             AnyTransport::FunctionSignatureAutomaticSemicolon => render_function_signature_automatic_semicolon(w),
             AnyTransport::Tight => render_tight(w),

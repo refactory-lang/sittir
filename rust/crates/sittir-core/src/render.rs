@@ -123,14 +123,6 @@ pub trait SourceTable {
         None
     }
 
-    /// The sides of the unit children of `coord`'s node, a
-    /// `Vec<layout::UnitSides<T>>` of its grammar's trivia type, as its tree
-    /// gives them (`ParsedTree::unit_sides`).
-    fn unit_sides(&self, coord: &crate::slot::NodeCoordinate) -> Option<Box<dyn std::any::Any>> {
-        let _ = coord;
-        None
-    }
-
     /// The bytes the node a coordinate names renders over with its sides: its
     /// span, widened to the outermost extra or `ERROR` of its leading and
     /// trailing sides. A layout run is the gap beside them, and a written
@@ -444,6 +436,18 @@ impl Render for String {
     fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
         w.text(self)
     }
+}
+
+/// A unit variant that a list seats: its fixed text between the edges a
+/// list gap stamped on it (its seat, or the source class of the gap), so the
+/// gap after it lands on its own `after` edge. A unit kind has no edge row,
+/// so only a stamped arm writes (`unsited_edge`): a unit spaces against its
+/// neighbours through their seams wherever no list gap reached it.
+pub fn render_edged(kind: KindId, edges: &crate::options::Edges, w: &mut dyn RenderSink, render: fn(&mut dyn RenderSink) -> RenderResult) -> RenderResult {
+    w.unsited_edge(kind, crate::options::Side::Before, edges.before);
+    render(w)?;
+    w.unsited_edge(kind, crate::options::Side::After, edges.after);
+    Ok(())
 }
 
 /// One writer, one render, one `finish`: the shape every root render has.

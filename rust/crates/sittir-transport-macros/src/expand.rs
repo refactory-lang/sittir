@@ -36,10 +36,14 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
     let mut all_units = true;
     for (at, variant) in data.variants.iter().enumerate() {
         let name = &variant.ident;
+        let form = attrs::kind_attrs(&variant.attrs)?;
         let payload = match &variant.fields {
-            Fields::Unnamed(fields) if fields.unnamed.len() == 1 => Some(&fields.unnamed[0].ty),
+            Fields::Unnamed(fields) if fields.unnamed.len() == 1 && !form.edged => Some(&fields.unnamed[0].ty),
+            Fields::Unnamed(fields) if fields.unnamed.len() == 1 => None,
+            _ if form.edged => return Err(syn::Error::new_spanned(variant, "an edged variant holds its edges")),
             _ => None,
         };
+        let unit = |owner: TokenStream| if form.edged { quote!(#owner::#name(::core::default::Default::default())) } else { quote!(#owner::#name) };
         let unread = |payload| codec::WireVariant {
             name,
             payload,
@@ -50,8 +54,8 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
             verbatim: false,
             error: false,
             text: None,
+            edged: form.edged,
         };
-        let form = attrs::kind_attrs(&variant.attrs)?;
         if form.blank {
             if !matches!(variant.fields, Fields::Unit) {
                 return Err(syn::Error::new_spanned(variant, "a blank variant is a unit"));
@@ -82,7 +86,8 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
         };
         if payload.is_none() {
             let claims = kinds.kinds.iter().chain(&kinds.shown);
-            builds.push(quote!(if [#(#claims),*].iter().any(|k| k.0 == id) { return ::core::option::Option::Some(Self::#name); }));
+            let built = unit(quote!(Self));
+            builds.push(quote!(if [#(#claims),*].iter().any(|k| k.0 == id) { return ::core::option::Option::Some(#built); }));
         }
         let i = at as u16;
         wire.push(codec::WireVariant {
@@ -110,7 +115,8 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
             by_folded.push(quote!(if [#(#folded),*].contains(&grammar) { return ::core::option::Option::Some(#i); }));
         }
         match &variant.fields {
-            Fields::Unit => {
+            fields if form.edged || matches!(fields, Fields::Unit) => {
+                let unit = unit(quote!(#ident));
                 scalars.push(quote!(::core::option::Option::Some(#i) => true,));
                 let (read_fn, boxed_fn) = (format_ident!("__read_{}", i), format_ident!("__read_boxed_{}", i));
                 variant_fns.push(quote! {
@@ -120,7 +126,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                         _ctx: &__rt::ReadCtx<'_>,
                         _depth: __rt::Depth,
                     ) -> ::core::result::Result<#ident, __rt::ReadError> {
-                        ::core::result::Result::Ok(#ident::#name)
+                        ::core::result::Result::Ok(#unit)
                     }
                     #[inline(never)]
                     fn #boxed_fn(
@@ -128,7 +134,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                         _ctx: &__rt::ReadCtx<'_>,
                         _depth: __rt::Depth,
                     ) -> ::core::result::Result<::std::boxed::Box<#ident>, __rt::ReadError> {
-                        ::core::result::Result::Ok(::std::boxed::Box::new(#ident::#name))
+                        ::core::result::Result::Ok(::std::boxed::Box::new(#unit))
                     }
                 });
                 read_table[at] = quote!(#read_fn);
@@ -796,10 +802,31 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                 ::core::result::Result::Err(__rt::ReadError::Unrouted { kind: __KIND, child: child.grammar, index: child.index })
             }
         },
-        read: quote! {
+        read: {
+            let unit_slots = if idxs.is_empty() {
+                quote!()
+            } else {
+                quote!(let mut __unit_slots: ::std::vec::Vec<u16> = ::std::vec::Vec::new();)
+            };
+            let unit_positions = if idxs.is_empty() {
+                quote!()
+            } else {
+                quote! {
+                    let mut __unit_slot = __unit_slots.into_iter();
+                    __units.retain_mut(|__unit| {
+                        let __position = match __unit_slot.next() {
+                            #(::core::option::Option::Some(#idxs) => <#tys as __rt::ReadSlot>::position(&#accs, __unit.item),)*
+                            _ => ::core::option::Option::Some(__unit.item),
+                        };
+                        __position.map(|__item| __unit.item = __item).is_some()
+                    });
+                }
+            };
+            quote! {
             #pass
             #(let mut #accs = <#tys as __rt::ReadSlot>::start();)*
             let mut __units = ::std::vec::Vec::new();
+            #unit_slots
             let mut __items = [0u32; #slot_count];
             if cursor.goto_first_child() {
                 let mut i = 0usize;
@@ -807,6 +834,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                     match routes[i] {
                         #(__rt::Route::Slot { slot: #idxs, scalar } => {
                             let __child = __rt::index_of(cursor);
+                            let __arrival = <#tys as __rt::ReadSlot>::arrival(&#accs, __items[#idxs as usize]);
                             <#tys as __rt::ReadSlot>::take(
                                 &mut #accs,
                                 cursor,
@@ -815,8 +843,9 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                                 __rt::SlotSite { kind: __KIND, slot: #labels, index },
                             )?;
                             if scalar {
-                                if let ::core::option::Option::Some(trivia) = ctx.unit_sides(__child) {
-                                    __units.push(::sittir_core::layout::UnitSides { slot: ::std::string::String::from(#keys), item: __items[#idxs as usize], trivia });
+                                if let ::core::option::Option::Some(trivia) = ctx.unit_sides(__child, depth) {
+                                    __units.push(::sittir_core::layout::UnitSides { slot: ::std::string::String::from(#keys), item: __arrival, trivia });
+                                    __unit_slots.push(#idxs);
                                 }
                             }
                             __items[#idxs as usize] += 1;
@@ -831,7 +860,9 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                 }
                 cursor.goto_parent();
             }
+            #unit_positions
             ::core::result::Result::Ok(Self { #(#inits)* })
+            }
         },
     })
 }
@@ -958,6 +989,36 @@ mod tests {
                 }
             }"
         ));
+    }
+
+    #[test]
+    fn an_edged_unit_builds_and_reads_from_its_kind_id_with_no_edge_set() {
+        let out = expand(parse_quote! {
+            #[transport(choice)]
+            pub enum Statement {
+                #[kind(kind::EMPTY_STATEMENT)]
+                #[transport(edged)]
+                EmptyStatement(::sittir_core::options::Edges),
+            }
+        });
+        assert!(has(
+            &out,
+            "if [kind::EMPTY_STATEMENT].iter().any(|k| k.0 == id) { return ::core::option::Option::Some(Self::EmptyStatement(::core::default::Default::default())); }"
+        ));
+        assert!(has(&out, "::core::result::Result::Ok(Statement::EmptyStatement(::core::default::Default::default()))"));
+    }
+
+    #[test]
+    fn an_edged_variant_holds_its_edges() {
+        let input: syn::DeriveInput = parse_quote! {
+            #[transport(choice)]
+            pub enum Statement {
+                #[kind(kind::EMPTY_STATEMENT)]
+                #[transport(edged)]
+                EmptyStatement,
+            }
+        };
+        assert!(super::derive(&input).is_err());
     }
 
     #[test]

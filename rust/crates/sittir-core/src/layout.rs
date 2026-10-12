@@ -45,7 +45,9 @@ pub struct TransportLayout<T> {
     /// The sides of the node's unit children (`$_layout.units`), which a
     /// slot stores as a bare kind and so carry no layout of their own: each
     /// by its slot and its item in that slot (`UnitSides`). A read that seats
-    /// sides fills it; the render frames each unit by them (`render_unit`).
+    /// sides fills it for each unit it reads inline; a rebuilt node's are the
+    /// ones JavaScript carries from the node it was rebuilt from, at the items
+    /// they moved to. The render frames each unit by them (`render_unit`).
     pub units: Vec<UnitSides<T>>,
 }
 
@@ -280,13 +282,6 @@ impl<T: Prepare + TriviaSeam + 'static> Prepare for TransportLayout<T> {
                 own.leading = own.leading.take().or(source.leading);
                 own.trailing = own.trailing.take().or(source.trailing);
                 own.inner = own.inner.take().or(source.inner);
-            }
-        }
-        if self.units.is_empty() {
-            if let Some(units) = self.sides.as_ref().and_then(|coord| ctx.sources.unit_sides(coord)) {
-                if let Ok(units) = units.downcast::<Vec<UnitSides<T>>>() {
-                    self.units = *units;
-                }
             }
         }
         let changed = std::mem::take(&mut self.changed);

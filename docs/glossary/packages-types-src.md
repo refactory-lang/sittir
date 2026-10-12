@@ -50,10 +50,6 @@ The grammar facts `$trivia` checks against: each kind's name, the gaps an empty 
 
 Every member is `readonly`, `comment` included: the facts belong to the language and are frozen where the language module builds them, so an engine cannot change them for the others. The comment coercer is a per-language fact fixed when `hooks` is built; nothing per engine sets it.
 
-### `packages/types/src/core-types.ts::RenderCallOptions`
-
-The options a single render takes beside the language's render options: `ignoreFormat`. It is the one declaration of that key; the engine's per-call render options, the native engine's render and a parsed tree's render all name it.
-
 ### `packages/types/src/engine-api.ts::ParseOptions`
 
 Read depth is a performance parameter and never a semantic one. Under the default, a child with substructure comes back as a stub, and each hydration is one more crossing into the native reader. `deep` makes one crossing for the whole subtree, and the generated wrap types every slot-holding node of it as it wraps the parent (`storeExpanded`), so the typing a lazy read spreads over first accesses is paid inside the parse. The two modes agree on every result because each node a read hands back names its tree, whichever depth produced it (`canFold`).

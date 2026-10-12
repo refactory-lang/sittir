@@ -341,9 +341,14 @@ every struct and enum impl asks it.
 ### `packages/codegen/src/emitters/render-module.ts::seatTargetMatchImpl`
 
 `impl SeatTarget` for an enum (a supertype transport enum, a per-slot child
-enum, `AnyTransport`): each reaching variant delegates to its payload, and a
-non-exhaustive list falls through to `None`. An enum with no reaching
-variant gets no impl.
+enum, `AnyTransport`, a fixed literal's own type): one arm per reaching
+variant (`seatArm`), and a non-exhaustive list falls through to `None`. An
+enum with no reaching variant gets no impl.
+
+### `packages/codegen/src/emitters/render-module.ts::seatArm`
+
+The seat arm of one reaching variant: a payload delegates to its own
+`seat_target`, and an edged unit answers its seat itself (`fixedSeatArm`).
 
 ### `packages/codegen/src/emitters/render-module.ts::seatTargetStructImpl`
 
@@ -353,15 +358,17 @@ its own base `edges` with the site; a polymorph wrapper that is not itself
 seated descends into its content slot. A wrapper keeps its own edges: the
 descent is a separate trait, not an `Edged` delegation, so filling a seat
 never overwrites the wrapper's own kind edges. A seated kind with no kind id
-fails at codegen, and so does a seated fixed-literal kind: it is a unit
-variant with no edges to answer.
+fails at codegen. A seated fixed-literal kind answers through its own type's
+one arm (`fixedSeatArm`).
 
 ### `packages/codegen/src/emitters/render-module.ts::renderSeatTargets`
 
 Every `SeatTarget` impl for one render module, in one pass: struct impls for
 the reaching nodes, then match impls for the used supertype enums, the
 per-slot child enums and `AnyTransport`, each listing only the variants that
-reach.
+reach. A per-slot enum's variants are its node kinds and the literal units
+its slot stores (`choiceUnitsOf`), one arm per variant, so a wrapper that
+descends into its content slot finds an arm for whichever reaches.
 
 ### `packages/codegen/src/emitters/shared.ts::emitsPlainBuiltAlias`
 
@@ -3550,7 +3557,7 @@ arm can write only one set.
 ### `packages/codegen/src/emitters/render-module.ts::choiceUnitArm`
 
 The render arm of a unit: a call to its kind's render function
-(`renderFixedLiteralFn`), after `w.adjacent()` when the site is immediate,
+(`fixedRenderCall`), after `w.adjacent()` when the site is immediate,
 and between the owner's seam sites when it has any (`literalSeamedArm`).
 
 ### `packages/codegen/src/emitters/render-module.ts::emitPerSlotChildEnum`
@@ -3737,7 +3744,34 @@ choice, `TriviaTransport`, and the kind's own type); `renderFn` is the one
 function that writes it; `text` its spelling; `ownId` the kind's id;
 `acceptedIds` every id the parser issues for it
 (`resolveAcceptedTransportIds`); `owner` whether it is a named kind, which
-owns trivia; `immediate` whether the grammar forbids whitespace before it.
+owns trivia; `immediate` whether the grammar forbids whitespace before it;
+`edged` whether a list seats the kind (`seatedUnitKinds`): its variant then
+holds the `Edges` a list gap stamps on it.
+
+### `packages/codegen/src/emitters/render-module.ts::fixedVariantLines`
+
+A fixed literal's variant declaration: `<Variant>,`, or, edged,
+`#[transport(edged)] <Variant>(Edges)`, which the derive decodes and reads
+from the bare kind id with no edge set and writes back as that id.
+
+### `packages/codegen/src/emitters/render-module.ts::fixedPattern`
+
+A fixed literal's match pattern, binding its edges when it is edged.
+
+### `packages/codegen/src/emitters/render-module.ts::fixedRenderCall`
+
+How an arm writes a fixed literal: its render function, or, edged, that
+function between its kind's two edges (`sittir_core::render::render_edged`),
+the way a node's render writes its own.
+
+### `packages/codegen/src/emitters/render-module.ts::fixedRenderArm`
+
+A fixed literal's render arm: `fixedPattern` to `fixedRenderCall`.
+
+### `packages/codegen/src/emitters/render-module.ts::fixedSeatArm`
+
+An edged unit's seat arm: its seat by its own kind id (`seat_site`) on the
+edges it holds. A list that seats a unit with no edges fails codegen.
 
 ### `packages/codegen/src/emitters/render-module.ts::FixedLiterals`
 
@@ -3791,9 +3825,9 @@ here.
 
 The fixed literal's own type, the one a slot typed by the kind holds: the
 one-variant enum `<Kind>Transport { <Variant> }`. Its `KindOf` answers its
-own id, its `Prepare` is inert, it renders through `renderFixedLiteralFn`'s
-function, and the derive decodes it from the ids its `#[kind]` line claims
-(`fixedLiteralIds`).
+own id, its `Prepare` is inert (an edged one answers its `gap_edges`), it
+renders through `fixedRenderCall`, and the derive decodes it from the ids its
+`#[kind]` line claims (`fixedLiteralIds`).
 
 ### `packages/codegen/src/emitters/render-module.ts::enumMemberId`
 
@@ -14342,12 +14376,19 @@ The structural indentation regions come from the same render rules (`depthRegion
 A `Prepare` impl for a generated enum: payload variants delegate to the
 payload's `prepare(ctx)`, unit variants (literals) are `Ok(())`. The match
 is the tail expression, so the impl's result is whichever arm ran. An enum
-with payloads also delegates `source_gap`, `gap_edges` and `snapshot_edge`,
+with payloads or edged units (`PrepareArm.edged`) also delegates `source_gap`,
+`gap_edges` and `snapshot_edge`, an edged unit answering `gap_edges` with
+the edges it holds and nothing else,
 so a list's gap fill reaches the gap, the edges and the geometry of
 whichever kind the item is. An enum the reader reads into also reads a
 coordinate (`READ_COORDINATE`), `AnyTransport` among them: a render root is
 a coordinate of it, read when a write lies in its range. `TriviaTransport`,
 which no read produces, passes `reads` false.
+
+### `packages/codegen/src/emitters/render-module.ts::PrepareArm`
+
+One variant of a generated enum as `prepareEnumImpl` sees it: whether it
+holds a transport payload, and whether it is an edged unit.
 
 ### `packages/codegen/src/emitters/render-module.ts::READ_COORDINATE`
 

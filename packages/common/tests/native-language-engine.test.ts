@@ -32,17 +32,12 @@ describe('nativeLanguageEngine', () => {
 		expect(calls.render).toEqual([undefined]);
 	});
 
-	it('splits flat per-call options into the native render options', () => {
+	it('passes flat per-call options as the native render options, and none for an empty object', () => {
 		const { engine, calls } = fakeSittirEngine();
 		const native = nativeLanguageEngine<never>(engine);
-		native.render({ $type: 7 }, { indent: '\t', ignoreFormat: false } as never);
 		native.render({ $type: 7 }, { indent: '\t' } as never);
-		native.render({ $type: 7 }, { ignoreFormat: false } as never);
-		expect(calls.render).toEqual([
-			{ ignoreFormat: false, options: { indent: '\t' } },
-			{ options: { indent: '\t' } },
-			{ ignoreFormat: false }
-		]);
+		native.render({ $type: 7 }, {} as never);
+		expect(calls.render).toEqual([{ options: { indent: '\t' } }, undefined]);
 	});
 
 	it('disposes through the native engine', () => {

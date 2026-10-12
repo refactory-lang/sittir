@@ -76,6 +76,10 @@ pub struct ReadCtx<'s> {
     /// The node, by index, whose neighbours changed on the edges given, so
     /// its sides there drop their layout runs (`trivia::without_edge_runs`).
     pub changed: Option<(u32, ChangedEdges)>,
+    /// Set on a read whose client stores a unit variant as its bare kind
+    /// (`ReadCtx::inline_units`): past the depth, a child with no named
+    /// child is read inline although the read seats sides.
+    pub inline_units: bool,
 }
 
 impl std::fmt::Debug for ReadCtx<'_> {
@@ -85,6 +89,7 @@ impl std::fmt::Debug for ReadCtx<'_> {
             .field("snapshot", &self.snapshot.is_some())
             .field("sides", &self.sides.is_some())
             .field("changed", &self.changed)
+            .field("inline_units", &self.inline_units)
             .finish_non_exhaustive()
     }
 }
@@ -154,7 +159,7 @@ pub enum Origin {
 
 impl<'s> ReadCtx<'s> {
     pub fn new(source: &'s str, tree_id: u32, shows: fn(KindId) -> bool) -> Self {
-        Self { source, tree_id, shows, snapshot: None, sides: None, changed: None }
+        Self { source, tree_id, shows, snapshot: None, sides: None, changed: None, inline_units: false }
     }
 
     /// This context, reading a snapshot measured as `snapshot` measures.
@@ -165,6 +170,21 @@ impl<'s> ReadCtx<'s> {
     /// This context, seating each node's sides from `sides`.
     pub fn with_sides(self, sides: &'s dyn SideLookup) -> Self {
         Self { sides: Some(sides), ..self }
+    }
+
+    /// This context, reading a unit variant inline past the depth, as a
+    /// client that stores it as its bare kind holds it.
+    pub fn inline_units(self) -> Self {
+        Self { inline_units: true, ..self }
+    }
+
+    /// Whether a child with no named child, read at `depth` under a node,
+    /// is read inline (its transport, a unit variant's bare kind) rather than
+    /// kept a coordinate: within the depth, on a read that seats no sides,
+    /// and on one that reads units inline. A coordinate frames itself with
+    /// its sides; an inline unit has no layout, so its holder frames it.
+    pub fn reads_leaf_inline(&self, depth: Depth) -> bool {
+        depth.below().is_some() || self.sides.is_none() || self.inline_units
     }
 
     /// This context, with the neighbours of the node at `index` changed on
@@ -245,10 +265,14 @@ impl<'s> ReadCtx<'s> {
         layout
     }
 
-    /// The sides of the unit child at `index`, which its slot stores as a
-    /// bare kind, as this context seats them: `None` when the context seats
-    /// none or the unit has none.
-    pub fn unit_sides<T: crate::trivia::FromTriviaText + 'static>(&self, index: u32) -> Option<TransportTrivia<T>> {
+    /// The sides of the unit child at `index`, read at `depth` under its
+    /// holder, which its slot stores as a bare kind, as this context seats
+    /// them: `None` when the context seats none, when the read keeps the unit
+    /// a coordinate (`reads_leaf_inline`), or when the unit has none.
+    pub fn unit_sides<T: crate::trivia::FromTriviaText + 'static>(&self, index: u32, depth: Depth) -> Option<TransportTrivia<T>> {
+        if !self.reads_leaf_inline(depth) {
+            return None;
+        }
         let leading = self.side(index, TriviaSide::Leading);
         let trailing = self.side(index, TriviaSide::Trailing);
         let inner = self.side(index, TriviaSide::Inner);
@@ -616,11 +640,10 @@ pub fn envelope_layout<T: crate::trivia::FromTriviaText + 'static>(
 }
 
 /// The value of the child at the cursor in a slot: read into its transport
-/// within the depth, else its coordinate. Past the depth, a read that seats
-/// no sides reads a child with no named child (a leaf, a unit variant)
-/// inline; a read that seats them keeps every such child a coordinate, whose
-/// holder frames it with its sides, since a unit variant has no layout to
-/// hold them.
+/// within the depth, else its coordinate. Past the depth, a child with no
+/// named child (a leaf, a unit variant) is read inline where the context
+/// reads leaves inline (`ReadCtx::reads_leaf_inline`), and is otherwise a
+/// coordinate that frames itself with its sides.
 pub fn read_value<T: ReadTransport, const A: bool>(
     cursor: &mut TreeCursor<'_>,
     ctx: &ReadCtx<'_>,
@@ -628,7 +651,7 @@ pub fn read_value<T: ReadTransport, const A: bool>(
 ) -> Result<SlotValue<T, A>, ReadError> {
     match depth.below() {
         Some(below) => Ok(SlotValue::Transport(T::read(cursor, ctx, below)?)),
-        None if ctx.sides.is_none() && cursor.node().named_child_count() == 0 => Ok(SlotValue::Transport(T::read(cursor, ctx, Depth::ONE)?)),
+        None if ctx.reads_leaf_inline(depth) && cursor.node().named_child_count() == 0 => Ok(SlotValue::Transport(T::read(cursor, ctx, Depth::ONE)?)),
         None => Ok(SlotValue::Coord(ctx.coordinate(&cursor.node(), index_of(cursor)))),
     }
 }
@@ -652,6 +675,18 @@ pub trait ReadSlot: Sized {
     /// A separator between the slot's children.
     fn separator(acc: &mut Self::Acc, tagged: bool) {
         let _ = (acc, tagged);
+    }
+    /// Where the next child taken arrives, `taken` children having been
+    /// taken: its item in the finished slot unless `position` moves it.
+    fn arrival(acc: &Self::Acc, taken: u32) -> u32 {
+        let _ = acc;
+        taken
+    }
+    /// The item in the finished slot of the child that arrived at
+    /// `arrival`; `None` when finishing drops it.
+    fn position(acc: &Self::Acc, arrival: u32) -> Option<u32> {
+        let _ = acc;
+        Some(arrival)
     }
     fn finish(acc: Self::Acc, at: SlotSite) -> Result<Self, ReadError>;
 }
@@ -765,6 +800,24 @@ impl<V> Elided<V> {
             self.items.push(None);
         }
     }
+    /// Where the next item pushed arrives: after every item and hole so far.
+    pub fn arrival(&self) -> u32 {
+        self.items.len() as u32
+    }
+
+    /// The position in `positions` of the item that arrived at `arrival`:
+    /// its own index when no separator made a hole, else its segment's,
+    /// when it is the segment's first item; `None` for a later one.
+    pub fn position(&self, arrival: u32) -> Option<u32> {
+        if self.items.iter().all(Option::is_some) {
+            return Some(arrival);
+        }
+        let before = self.items.get(..arrival as usize)?;
+        let segment = before.iter().filter(|item| item.is_none()).count() as u32;
+        let first = before.last().is_none_or(Option::is_none);
+        first.then_some(segment)
+    }
+
     pub fn positions(self) -> Vec<Option<V>> {
         if self.items.iter().all(Option::is_some) {
             return self.items;
@@ -799,6 +852,12 @@ impl<T: ReadTransport, const A: bool> ReadSlot for Vec<Option<SlotValue<T, A>>> 
     fn separator(acc: &mut Self::Acc, tagged: bool) {
         acc.separator(tagged);
     }
+    fn arrival(acc: &Self::Acc, _: u32) -> u32 {
+        acc.arrival()
+    }
+    fn position(acc: &Self::Acc, arrival: u32) -> Option<u32> {
+        acc.position(arrival)
+    }
     /// An empty list is `[]`.
     fn finish(acc: Self::Acc, _at: SlotSite) -> Result<Self, ReadError> {
         Ok(acc.positions())
@@ -817,6 +876,12 @@ impl<T: ReadTransport, const A: bool> ReadSlot for crate::NonEmptyVec<Option<Slo
     }
     fn separator(acc: &mut Self::Acc, tagged: bool) {
         acc.separator(tagged);
+    }
+    fn arrival(acc: &Self::Acc, _: u32) -> u32 {
+        acc.arrival()
+    }
+    fn position(acc: &Self::Acc, arrival: u32) -> Option<u32> {
+        acc.position(arrival)
     }
     fn finish(acc: Self::Acc, at: SlotSite) -> Result<Self, ReadError> {
         Self::try_from(acc.positions()).map_err(|crate::non_empty::EmptyList| missing(at))

@@ -143,6 +143,7 @@ export default sittirGrammar(base, {
 		removed_trait_bound: { '"?"/after': preference('tight') },
 		type_parameters: { before: preference('tight') },
 		lifetime: { after: preference('space') },
+		bounded_type: { '"+"/after': preference('space') },
 		trait_bounds: { before: preference('tight') },
 		pointer_type_const: { '"*"/after': preference('tight') },
 		pointer_type_mut: { '"*"/after': preference('tight') },

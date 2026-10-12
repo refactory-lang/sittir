@@ -5800,12 +5800,15 @@ export namespace AssertStatement {
 				readonly conditionalExpression?: { readonly after?: WhitespaceKindId };
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly lambda?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
@@ -5815,6 +5818,7 @@ export namespace AssertStatement {
 				readonly setComprehension?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
@@ -6089,12 +6093,15 @@ export namespace ExecStatement {
 				readonly conditionalExpression?: { readonly after?: WhitespaceKindId };
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly lambda?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
@@ -6104,6 +6111,7 @@ export namespace ExecStatement {
 				readonly setComprehension?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
@@ -6228,12 +6236,15 @@ export namespace ExpressionList {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly lambda?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
@@ -6243,6 +6254,7 @@ export namespace ExpressionList {
 				readonly setComprehension?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
@@ -6282,12 +6294,16 @@ export namespace UnionPattern {
 				readonly complexPattern?: { readonly after?: WhitespaceKindId };
 				readonly concatenatedString?: { readonly after?: WhitespaceKindId };
 				readonly dictPattern?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
 					readonly pipe?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
 				readonly simplePatternNegative?: { readonly after?: WhitespaceKindId };
 				readonly splatPattern?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
+				readonly wildcardPattern?: { readonly after?: WhitespaceKindId };
 			};
 		};
 	}
@@ -6366,7 +6382,9 @@ export namespace ParametersElements {
 				readonly defaultParameter?: { readonly after?: WhitespaceKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly dictionarySplatPattern?: { readonly after?: WhitespaceKindId };
+				readonly keywordSeparator?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
+				readonly positionalSeparator?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -6815,6 +6833,8 @@ export namespace CollectionElements {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly lambda?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
@@ -6822,6 +6842,7 @@ export namespace CollectionElements {
 				readonly listSplat?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedListSplat?: { readonly after?: WhitespaceKindId };
@@ -6832,6 +6853,7 @@ export namespace CollectionElements {
 				readonly setComprehension?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 				readonly yield?: { readonly after?: WhitespaceKindId };
@@ -6861,6 +6883,8 @@ export namespace ForInClause {
 				readonly conditionalExpression?: { readonly after?: WhitespaceKindId };
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly lambda?: { readonly after?: WhitespaceKindId };
 				readonly lambdaWithinForInClause?: { readonly after?: WhitespaceKindId };
@@ -6868,6 +6892,7 @@ export namespace ForInClause {
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
@@ -6877,6 +6902,7 @@ export namespace ForInClause {
 				readonly setComprehension?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
@@ -6970,15 +6996,19 @@ export namespace SimpleStatementsElements {
 				readonly await?: { readonly after?: WhitespaceKindId };
 				readonly binaryOperator?: { readonly after?: WhitespaceKindId };
 				readonly booleanOperator?: { readonly after?: WhitespaceKindId };
+				readonly breakStatement?: { readonly after?: WhitespaceKindId };
 				readonly call?: { readonly after?: WhitespaceKindId };
 				readonly comparisonOperator?: { readonly after?: WhitespaceKindId };
 				readonly concatenatedString?: { readonly after?: WhitespaceKindId };
 				readonly conditionalExpression?: { readonly after?: WhitespaceKindId };
+				readonly continueStatement?: { readonly after?: WhitespaceKindId };
 				readonly deleteStatement?: { readonly after?: WhitespaceKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
 				readonly execStatement?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly futureImportStatement?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly globalStatement?: { readonly after?: WhitespaceKindId };
@@ -6989,9 +7019,11 @@ export namespace SimpleStatementsElements {
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly nonlocalStatement?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
+				readonly passStatement?: { readonly after?: WhitespaceKindId };
 				readonly printStatementChevron?: { readonly after?: WhitespaceKindId };
 				readonly printStatementPlain?: { readonly after?: WhitespaceKindId };
 				readonly raiseStatement?: { readonly after?: WhitespaceKindId };
@@ -7003,6 +7035,7 @@ export namespace SimpleStatementsElements {
 				readonly setComprehension?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly typeAliasStatement?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
@@ -7028,12 +7061,15 @@ export namespace Subjects {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly lambda?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
@@ -7043,6 +7079,7 @@ export namespace Subjects {
 				readonly setComprehension?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
@@ -7095,6 +7132,8 @@ export namespace Types {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly genericType?: { readonly after?: WhitespaceKindId };
 				readonly lambda?: { readonly after?: WhitespaceKindId };
@@ -7103,6 +7142,7 @@ export namespace Types {
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly memberType?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
@@ -7113,6 +7153,7 @@ export namespace Types {
 				readonly splatType?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 				readonly unionType?: { readonly after?: WhitespaceKindId };
@@ -7138,6 +7179,8 @@ export namespace ArgumentListElements {
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
 				readonly dictionarySplat?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly keywordArgument?: { readonly after?: WhitespaceKindId };
 				readonly lambda?: { readonly after?: WhitespaceKindId };
@@ -7146,6 +7189,7 @@ export namespace ArgumentListElements {
 				readonly listSplat?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedListSplat?: { readonly after?: WhitespaceKindId };
@@ -7156,6 +7200,7 @@ export namespace ArgumentListElements {
 				readonly setComprehension?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
@@ -7209,12 +7254,15 @@ export namespace Subscripts {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly lambda?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
@@ -7225,6 +7273,7 @@ export namespace Subscripts {
 				readonly slice?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
@@ -7291,6 +7340,8 @@ export namespace TupleElements {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly lambda?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
@@ -7298,6 +7349,7 @@ export namespace TupleElements {
 				readonly listSplat?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedListSplat?: { readonly after?: WhitespaceKindId };
@@ -7308,6 +7360,7 @@ export namespace TupleElements {
 				readonly setComprehension?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 				readonly yield?: { readonly after?: WhitespaceKindId };
@@ -7364,12 +7417,15 @@ export namespace PrintArguments {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly lambda?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
@@ -7379,6 +7435,7 @@ export namespace PrintArguments {
 				readonly setComprehension?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
@@ -7402,12 +7459,15 @@ export namespace PrintChevronArguments {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly lambda?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
@@ -7417,6 +7477,7 @@ export namespace PrintChevronArguments {
 				readonly setComprehension?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
@@ -7493,12 +7554,15 @@ export namespace ExceptClauseExceptionList {
 				readonly conditionalExpression?: { readonly after?: WhitespaceKindId };
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly lambda?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
@@ -7508,6 +7572,7 @@ export namespace ExceptClauseExceptionList {
 				readonly setComprehension?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
@@ -7562,12 +7627,15 @@ export namespace ExpressionStatementTuple {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly dictionary?: { readonly after?: WhitespaceKindId };
 				readonly dictionaryComprehension?: { readonly after?: WhitespaceKindId };
+				readonly ellipsis?: { readonly after?: WhitespaceKindId };
+				readonly false?: { readonly after?: WhitespaceKindId };
 				readonly generatorExpression?: { readonly after?: WhitespaceKindId };
 				readonly lambda?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
 				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
+				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
@@ -7577,6 +7645,7 @@ export namespace ExpressionStatementTuple {
 				readonly setComprehension?: { readonly after?: WhitespaceKindId };
 				readonly string?: { readonly after?: WhitespaceKindId };
 				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
 			};
