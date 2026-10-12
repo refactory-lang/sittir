@@ -116,6 +116,7 @@ export interface EnrichAuthoredConfig {
 	readonly fieldSites?: ReadonlyMap<string, readonly AuthoredFieldSite[]>;
 }
 
+
 export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthoredConfig = {}): EnrichedGrammar<B> {
 	const base = baseInput as unknown as GrammarResult;
 	if (!base || typeof base !== 'object') {
@@ -1241,7 +1242,16 @@ function isBareShapeTarget(member: Rule, target: SymbolTarget): boolean {
 	return target.symbolRule === member;
 }
 
+function isHoistedBody(rule: unknown): boolean {
+	return (rule as { annotations?: { hoisted?: boolean } } | null | undefined)?.annotations?.hoisted === true;
+}
+
+function isGroupLiftRef(rule: unknown): boolean {
+	return (rule as { metadata?: { symbolSource?: string } } | null | undefined)?.metadata?.symbolSource === 'group-lift';
+}
+
 function detectSymbolTarget(member: Rule): SymbolTarget | null {
+	if (isGroupLiftRef(member)) return null;
 	if (isSymbolType(member.type) && typeof (member as { name?: unknown }).name === 'string') {
 		const name = (member as { name: string }).name;
 		return {
@@ -1253,6 +1263,7 @@ function detectSymbolTarget(member: Rule): SymbolTarget | null {
 	const inner = optionalContentOf(member);
 	if (inner === undefined) return null;
 	const innerN = normalizeMember(inner);
+	if (isGroupLiftRef(inner) || isGroupLiftRef(innerN)) return null;
 	if (isSymbolType(innerN.type) && typeof innerN.name === 'string') {
 		return {
 			name: innerN.name,
@@ -1265,6 +1276,7 @@ function detectSymbolTarget(member: Rule): SymbolTarget | null {
 	let symIdx = -1;
 	for (let i = 0; i < seqMembers.length; i++) {
 		const sn = normalizeMember(seqMembers[i]!);
+		if (isGroupLiftRef(seqMembers[i]) || isGroupLiftRef(sn)) return null;
 		if (isSymbolType(sn.type) && typeof sn.name === 'string') {
 			if (symIdx !== -1) return null;
 			symIdx = i;
@@ -1334,6 +1346,7 @@ function applySymbolToField(ruleName: string, rule: Rule, ctx: EnrichCtx): Rule 
 		precStack.push(cursor);
 		cursor = (cursor as unknown as { content: Rule }).content;
 	}
+	if (isHoistedBody(rule) || isHoistedBody(cursor)) return rule;
 	if (!isSeqType(cursor.type)) {
 		return tryPromoteInRepeatSeq(ruleName, rule, cursor, precStack, supertypeNames, symbols);
 	}
