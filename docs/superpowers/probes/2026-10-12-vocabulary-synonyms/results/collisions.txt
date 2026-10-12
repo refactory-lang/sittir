@@ -1,4 +1,4 @@
-587 kinds; 63 renames and 1 additions give 556 kinds
+587 kinds; 62 renames and 1 additions give 557 kinds
 
 == argument
   named            keyword                          at argument.named (1)
@@ -16,7 +16,6 @@
   extension        impl                             at declaration.extension (1)
   field            property                         at declaration.field (1)
   foreign          extern                           at declaration.module.foreign (1)
-  interface        trait protocol                   at declaration.interface (1)
   internal         crate                            at declaration.constant.public.internal, declaration.enum.public.internal, declaration.enum_member.public.internal, declaration.enum_member.struct.public.internal … (20)
   module           namespace mod                    at declaration.module (1)
   receiver         self this                        at declaration.parameter.receiver (1)
@@ -81,5 +80,5 @@
   for      typescript's three-part loop (statement.loop.counted) and every language's for-each (statement.loop.for)
   static   a member with no receiver (the static flag); rust's static item, a declaration.constant
 
-119 synonym positions checked; 0 collisions
+117 synonym positions checked; 0 collisions
   note expression: `try` is a synonym of `propagate` and the canonical segment of expression.block.try
