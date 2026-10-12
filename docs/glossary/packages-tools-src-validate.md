@@ -186,6 +186,14 @@ The kind view a validator crosses data through (`KindView`), built from the engi
 
 The render function of a grammar's cached native engine, `(node) => string`: what the validators and exercise tools render node data with, and, because it is the engine that read the tree, the one that can resolve its coordinates.
 
+### `packages/tools/src/validate/common.ts::fixtureReplayOf`
+
+How a render fixture is replayed away from its tree: the grammar's own native engine renders the fixture's input with the options the fixture recorded (`RenderFixture.options`, the tree's inferred layer). The fixture capture's reproducibility check (`extractParityFixtures`) and the baseline's parity collection (`collectParityFixtures`) both replay through it, so a fixture counts as reproducible by the one test that later scores it. A replay that dropped the recorded options would render at the engine's indent unit and root edges, not the tree's.
+
+### `packages/tools/src/validate/common.ts::FixtureReplay`
+
+A fixture replay: input and recorded options in, the rendered text out.
+
 ### `packages/tools/src/validate/common.ts::readNativeTree`
 
 Parses `source` in the engine and returns the raw `{ root, tree }` its diagnostics give, the tree typed as the reader's `TreeHandle`. The engine binds the tree, so nodes wrapped over it stamp the engine. The one place the diagnostics' opaque tree is read as a handle.

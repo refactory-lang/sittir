@@ -155,6 +155,13 @@ export async function nativeLanguageEngineOf(grammar: string): Promise<NativeLan
 	return (await (await languageByName(grammar)).load()).createNative();
 }
 
+export type FixtureReplay = (input: AnyUntypedNode, options?: object) => string;
+
+export async function fixtureReplayOf(grammar: string): Promise<FixtureReplay> {
+	const native = await nativeLanguageEngineOf(grammar);
+	return (input, options) => native.render(input, options).toString();
+}
+
 export function kindViewOf(engine: NativeEngine): KindView {
 	return {
 		isWrapper: (kindId) => engine.trivia.rebuildWrappers.has(kindId),
