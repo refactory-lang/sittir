@@ -1,0 +1,12 @@
+[error] dropped-token  parameters_elements_receiver.-
+[error] rule-reauthored-without-cause  _non_special_token.-
+[error] rule-reauthored-without-cause  _primitive_type.-
+[error] rule-reauthored-without-cause  impl_item.-
+[error] rule-reauthored-without-cause  reference_expression.-
+[error] unclassifiable-shape  _let_chain.-
+[scratch] portable: cannot test function_item as declaration.method: no slot of attributed_parameter holds {"field":null,"kind":"self_parameter","after":null,"anchor":null}; no slot of attributed_parameter holds {"field":null,"kind":"self_parameter","after":null,"anchor":null}
+[scratch] portable: cannot test function_item as declaration.method.private: no slot of attributed_parameter holds {"field":null,"kind":"self_parameter","after":null,"anchor":null}
+[scratch] portable: cannot test function_item as declaration.method.public.internal: no slot of attributed_parameter holds {"field":null,"kind":"self_parameter","after":null,"anchor":null}
+[scratch] portable: cannot test function_item as declaration.method.public.restricted: no slot of attributed_parameter holds {"field":null,"kind":"self_parameter","after":null,"anchor":null}
+[scratch] portable: cannot test function_item as declaration.method.public: no slot of attributed_parameter holds {"field":null,"kind":"self_parameter","after":null,"anchor":null}
+GrammarDiagnosticError: dropped-token: kind 'parameters_elements_receiver': "," is neither template text nor a slot, so a parse of it renders without it. Give the token a named wrapper in patches so it becomes a slot

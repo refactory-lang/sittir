@@ -1,0 +1,20 @@
+  fromPass=248    fromTotal=248    fromTrivia=0
+  covPass=210    covTotal=211
+  read-render-parsePass=148    read-render-parseTotal=148    read-render-parseAstMatchPass=140    read-render-parseTrivia=0
+  read-render-parse-shallowPass=148    read-render-parse-shallowTotal=148    read-render-parse-shallowAstMatchPass=148    read-render-parse-shallowTrivia=0
+  factory-storagePass=1679    factory-storageTotal=1679    factory-storageAstMatchPass=1679
+  ir-storagePass=1380    ir-storageTotal=1380    ir-storageAstMatchPass=1380
+  built-render-parsePass=1876    built-render-parseTotal=1876    built-render-parseAstMatchPass=1826
+  read-render-parse-ast-mismatch first failures (5 of 11):
+    "Functions with precise capture syntax (parameters)" — parameters[1].parameters_elements_receiver: childCount 1 ≠ 2 [attributed_parameter_receiver] vs [attributed_parameter_receiver,","]
+    "Functions with empty precise capture syntax (parameters)" — parameters[1].parameters_elements_receiver: childCount 1 ≠ 2 [attributed_parameter_receiver] vs [attributed_parameter_receiver,","]
+    "Functions with custom types for self (parameters)" — parameters[1].parameters_elements_receiver: childCount 1 ≠ 2 [attributed_parameter_receiver] vs [attributed_parameter_receiver,","]
+    "Inherent Impls (parameters)" — parameters[1].parameters_elements_receiver: childCount 1 ≠ 2 [attributed_parameter_receiver] vs [attributed_parameter_receiver,","]
+    "Inherent Impls (parameters)" — parameters[1].parameters_elements_receiver: childCount 1 ≠ 2 [attributed_parameter_receiver] vs [attributed_parameter_receiver,","]
+  built-render-parse first failures (5 of 50):
+    "Functions with precise capture syntax (factory: function_item)" — function_item[3].parameters[1].parameters_elements_receiver: childCount 1 ≠ 2 [attributed_parameter_receiver] vs [attributed_parameter_receiver,","]
+    "Functions with precise capture syntax (factory: parameters)" — parameters[1].parameters_elements_receiver: childCount 1 ≠ 2 [attributed_parameter_receiver] vs [attributed_parameter_receiver,","]
+    "Functions with empty precise capture syntax (factory: function_item)" — function_item[2].parameters[1].parameters_elements_receiver: childCount 1 ≠ 2 [attributed_parameter_receiver] vs [attributed_parameter_receiver,","]
+    "Functions with empty precise capture syntax (factory: parameters)" — parameters[1].parameters_elements_receiver: childCount 1 ≠ 2 [attributed_parameter_receiver] vs [attributed_parameter_receiver,","]
+    "Generic functions (factory: function_item)" — function_item[4].parameters[1].parameters_elements_receiver[1]: named flag true ≠ false
+✗ S-class ratchet: rust S5 has 1 report entry (ceiling 0) — new S5 debt; fix the source, never raise the ceiling (<worktree>/packages/tools/sclass-ceilings.json)
