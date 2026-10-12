@@ -57,7 +57,7 @@ const engine = createEngine({
 
 engine.ir.expressionStatement({ expression });          // builds the `semi` form
 engine.render(node);                                    // stamps, else options
-engine.render(node, { options, reformat: true });       // per-call override
+engine.render(node, { options, reformat: true });       // canonical: options only
 ```
 
 ### Preferences
@@ -230,10 +230,13 @@ of preference; `engine.ir` is the factory applied to the engine's options
 over them. Two engines with different options coexist; nothing is global.
 Strict factories are untouched: a strict call names its form.
 
-A parsed node carries its form as its kind and its enum slots as literal
-kinds, so it is never re-formed by options, and `reformat` does not touch
-this tier: changing a parsed statement's terminator is a transform, not
-formatting.
+A parsed node carries its form as its kind, so no option re-forms it,
+`reformat` included: making a parsed statement a different statement kind
+is a transform, not formatting. The choices a preference governs are not
+structure. A delimiter or a separator is a preference stored with the
+layout, and an optional token, such as a leading `|` or a trailing comma,
+is a preference arm, so `reformat` drops each choice the source made and
+renders it from the options, as it renders the layout (Precedence).
 
 ### Read side
 
@@ -301,7 +304,7 @@ has entered.
 For any slot the render tier owns:
 
 ```
-per-call options with reformat  >  the occurrence's stamp  >  per-call options  >  the tree's inferred table  >  engine options  >  grammar default
+the occurrence's stamp  >  per-call options  >  the tree's inferred table  >  engine options  >  grammar default
 ```
 
 and within one options object, for a given site:
@@ -318,9 +321,20 @@ spacing with the caller passing nothing; engine options and the grammar's
 defaults answer only where the tree gives no evidence. A render through the
 engine has no tree and skips that step.
 
+`reformat` makes a canonical render:
+
+```
+per-call options  >  engine options  >  grammar default
+```
+
+It drops every choice the source stored: the occurrence's stamps, the
+preference choices a parsed node holds (Construction tier), the layout its
+tree stores, and the tree's inferred table. Each is rendered from the
+options instead.
+
 This inverts one existing behaviour: the engine-level format record used to
 outrank a tree's inferred format. Under this design the node's own stamps
-outrank engine options, and only an explicit `reformat` overrides them.
+outrank engine options, and only an explicit `reformat` drops them.
 
 ## Engine and boundary API
 
@@ -331,6 +345,8 @@ outrank engine options, and only an explicit `reformat` overrides them.
 - `render(node, { options?, reformat? })` on engines and tree handles; a
   handle's render fills from its tree's inferred table after per-call
   options and before engine options, and never needs the client to pass it.
+  Under `reformat` it skips the table, as it skips every stored choice
+  (Precedence).
 - `tree.inferOptions()` — the `Options` a parsed tree's bytes evidence:
   per key, the majority of the stamps its lists carry, absent where the tree
   holds no list of that site. An inference, never a declaration: a caller
@@ -364,7 +380,9 @@ outrank engine options, and only an explicit `reformat` overrides them.
   before `space`, and a default naming no preference, no site or no
   whitespace arm fails naming the key.
 - **Behaviour**: a built node takes engine options; a parsed node keeps its
-  stamps; `reformat` rewrites whitespace and never a parsed form;
+  stamps; `reformat` renders the layout and every preference choice from the
+  options, a parsed list's delimiter and separator, a leading `|` and a
+  trailing comma included, and never changes a parsed form;
   `engine.ir` picks the configured form while module `ir` picks the
   grammar's default; per-call options without `reformat` fill only unstamped
   slots; `tree.inferOptions()` on a parsed tree names the spacing its lists
