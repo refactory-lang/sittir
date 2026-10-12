@@ -6,9 +6,9 @@
  * Each check is generic over the context, as portable code is: the roles it
  * fills arrive typed by the namespace map. A concrete context, as a grammar
  * declares one, narrows the map and instantiates them. A member a feature owns
- * is gated on the context, so a structure that sets one is built over a
- * context composing the feature, and generic code reads one when the feature
- * bounds the context.
+ * is gated on the context: a structure that sets one is built over a context
+ * composing the feature, and generic code reads one as its type or undefined,
+ * since a context without the feature lacks the member.
  */
 
 import type {
@@ -23,6 +23,7 @@ import type {
 	Statement
 } from '../src/vocabulary/index.ts';
 import { Flags } from '../src/vocabulary/index.ts';
+import type { Flag } from '../src/vocabulary/utils.ts';
 
 // An ordinary function needs a name and parameters, nothing accessor-shaped.
 export function fn<G extends GrammarContext<G>>(name: G['identifier']): Declaration.Function<G> {
@@ -78,6 +79,18 @@ export function superFn(name: Composed['identifier'], scope: Composed['identifie
 }
 // @ts-expect-error a context without scoped visibility has no scope
 export const noScope: Declaration.Function.Public.Restricted<Bare>['scope'] = { $kind: 'identifier' };
+
+// A member the context's features lack is absent: unbounded code reads it as its type or undefined, and a context
+// without the feature refuses a value for it.
+export function asyncOf<G extends GrammarContext<G>>(f: Declaration.Function<G>): Flag | undefined {
+	return f.async;
+}
+declare const asyncFlag: Flag;
+export const bareAsync: Declaration.Function<Bare> = {
+	...fn<Bare>({ $kind: 'identifier' }),
+	// @ts-expect-error a context without async-await has no async
+	async: asyncFlag
+};
 
 // A call carries no operator; a binary expression carries no arguments.
 export function call<G extends GrammarContext<G>>(callee: G['identifier']): Expression.Call<G> {

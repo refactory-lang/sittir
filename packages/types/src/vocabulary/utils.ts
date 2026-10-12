@@ -11,16 +11,13 @@ export type SubKindOf<T extends { readonly $kind: string }> = {
 export type RefinedBy<Owner extends { readonly $kind: string }, Value extends { readonly $kind: string }> = SubKindOf<Owner> &
 	Omit<Value, '$kind'>;
 
-/** A gated member where the context lacks the feature `F` that owns it. */
-export interface Absent<F> {
-	readonly absent: F;
-}
-
 /**
- * `T` where the context `G` has the feature `F`, else `Otherwise`. Over a union of contexts it is the union of each
- * context's, so a union of contexts is a supertype of each of them, member by member.
+ * `T` where the context `G` has the feature `F`, else `never`: a member the context's features lack is absent, so a
+ * language without the feature refuses it, and a node from such a language conforms wherever the member is present.
+ * Over a union of contexts it is the union of each context's, so a union of contexts is a supertype of each of them,
+ * member by member.
  */
-export type In<G extends GrammarContext<G>, F, T, Otherwise = Absent<F>> = G extends F ? T : Otherwise;
+export type In<G extends GrammarContext<G>, F, T> = G extends F ? T : never;
 
 declare const flag: unique symbol;
 
