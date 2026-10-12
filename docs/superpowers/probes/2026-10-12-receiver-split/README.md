@@ -18,24 +18,29 @@ and `(a, b)` render and round-trip?
   separator, and every field that held the list holds a choice of the plain list and the
   receiver form:
   `seq(field('receiver', LEAD), optional(seq(',', optional(field('elements', <list>)))))`.
-  - sittir's model accepts it in both grammars as is. Every validation row passes, and the rows
-    gain the new kinds.
-  - Every case reparses to the same tree. Two cases change text: a lone comma after the receiver
-    is dropped (`(&self,)` renders `(&self)`), and typescript's `this: T` renders `this : T`.
-  - Rust costs 17 parse states (+0.48%), 29 KB of `parser.c` (+0.42%) and no conflict.
-    Typescript costs 45 states (+0.62%), 136 KB (+1.22%) and the container form's four conflict
+  - enrich lifts the receiver form's `,` and the list after it into a group, `<receiver
+    form>_group`, which holds the list. The edit runs after enrich, so its output has to pass
+    through enrich's group synthesis (question 22). With the group, sittir's model accepts the
+    shape in both grammars as is, and every validation row passes.
+  - Every case round-trips byte for byte, `(&self,)` included, except that typescript's `this: T`
+    renders `this : T`. Without the group, a lone comma after the receiver is dropped.
+  - Rust costs 18 parse states (+0.51%), 30 KB of `parser.c` (+0.43%) and no conflict.
+    Typescript costs 46 states (+0.64%), 137 KB (+1.23%) and the container form's four conflict
     sets.
 - The other shapes fail:
   - the literal reading, a receiver followed by items that each carry a leading `,`, is refused
-    in both grammars (`dropped-token`);
-  - folding that run into an optional is refused too (`field-optional-delimiter`);
-  - lifting the run into a kind of its own is accepted, but the template drops the run.
+    in both grammars (`dropped-token`). enrich does not break it: its run can match nothing, and
+    enrich never lifts such a run into a kind of its own;
+  - with its run made non-empty and left unbroken, it is refused too
+    (`field-optional-delimiter`). enrich breaks that run into a list with a leading separator,
+    which the model accepts, but the receiver form's template then keeps only the lone `,` beside
+    the list and drops the list. Lifting the run by hand fails the same way.
 - The container form has no rows, because the model refuses it.
 - `@receiver` captures the list item, because the split narrows the item: the `receiver` field
   sits where an item would. Rust's item is the `attributed_parameter` wrapper, whose element is
   the `self_parameter`, so no route addresses a position.
-- Questions 13, 14, 15, 17 and 18 are ruled. Open: 16 and 19, restated against the plain shape,
-  and 20, the names the edit mints when no claim names them.
+- Questions 13 to 15 and 17 to 21 are ruled. Open: 16, the shape of the two rules, and 22, how
+  the edit's output meets enrich's group synthesis.
 
 ## The edit
 
@@ -46,7 +51,9 @@ narrowed to everything else. The edit emits two rules:
 - the plain list: the list rule itself, every item narrowed to `REST`;
 - the receiver form, `seq(field(field, LEAD), optional(seq(SEP, optional(field(F, <list>)))))`,
   minted as `_<list>_<field>` and aliased `<list>_<field>`, where `F` is the field that holds the
-  list in its owners.
+  list in its owners. enrich's group synthesis lifts its optional into a group,
+  `<list>_<field>_group` = `seq(SEP, optional(field(F, <list>)))`, so the receiver form is
+  `seq(field(field, LEAD), optional(<list>_<field>_group))` (question 22).
 
 Every field that held the list then holds a choice of the plain list and the receiver form. So
 the parser accepts the receiver only first, and the plain list never holds it.
@@ -58,7 +65,9 @@ Setup lists every form the probe measured.
 `match(kind, within?, as?)` admits one kind of the item:
 - `within` restricts it further, to an unfielded child (an array of matches) or to one field (a
   one-key record of matches), and nests;
-- `as` names the lead's variant, a parser alias. Without it the variant keeps the kind's name.
+- `as` names the lead's variant, a parser alias. Without it a visible variant is named
+  `<kind>_<field>`, and a hidden one keeps its kind's name (question 20); the prototype keeps the
+  kind's name in both cases.
 
 A match tree is its claim's pattern: `(required_parameter pattern: (this))` is
 `match('required_parameter', { pattern: [match('this')] })`.
@@ -96,8 +105,10 @@ What each mode mints:
   `pattern`, which `optional_parameter` shares. The rest narrows `required_parameter` in place.
 - The two rules add the receiver form: `_parameters_elements_receiver`, aliased
   `parameters_elements_receiver`, in rust; `_formal_parameters_elements_receiver`, aliased
-  `formal_parameters_elements_receiver`, in typescript. The plain list keeps its name. The tail
-  shape also mints `_<list>_receiver_tail`, aliased `<list>_receiver_tail`.
+  `formal_parameters_elements_receiver`, in typescript. The plain list keeps its name. The plain
+  shape's group is `parameters_elements_receiver_group` and
+  `formal_parameters_elements_receiver_group`. The tail shape also mints `_<list>_receiver_tail`,
+  aliased `<list>_receiver_tail`, and the items shape `<list>_receiver_items`.
 
 **The verb.** `bindGrammar` applies `leadGrammar(grammar, leads)` after the renames and before
 the splits. Entries name the grammar's own kinds, which the renames map, as a split's do. The
@@ -150,12 +161,13 @@ grammar through Node, and sittir's codegen evaluated it.
 - A capture that descends through a slot replaces that slot's member. So `@receiver` alone would
   drop the owner's `parameters`, and every owner captures the rest as the list's items. In the
   bound tree `item` holds only the rest, so `receiver` and `parameters` are sibling slots.
-- Under the two rules the bound tree holds the receiver in the receiver form:
-  `(parameters elements: (parameters_elements_receiver receiver: … elements: (parameters_elements …)))`.
+- Under the two rules the bound tree holds the receiver in the receiver form, and the rest in its
+  group:
+  `(parameters elements: (parameters_elements_receiver receiver: … (parameters_elements_receiver_group elements: (parameters_elements …))))`.
   The receiver claim still anchors the grammar's own list, which the derivation reads into the
   lead, and the stamped route reaches `receiver` through the receiver form's arm of
-  `parameters.elements`. The rest sits at two paths, `parameters.elements` and
-  `parameters.elements.elements` (question 19).
+  `parameters.elements`. The rest sits at two paths: `parameters.elements`, and
+  `parameters.elements` then the group's `elements` (question 19).
 
 ## Setup
 
@@ -170,7 +182,8 @@ grammar through Node, and sittir's codegen evaluated it.
   - exports the two builders from `dsl-authoring.ts`;
   - has six measurement hooks, each an environment variable:
     - `SITTIR_SCRATCH_LEAD_FORM` picks the form: `container` (the default), `two-rules-repeat`,
-      `two-rules`, `two-rules-tail` or `two-rules-plain`;
+      `two-rules`, `two-rules-tail`, `two-rules-plain`, `two-rules-plain-group` or
+      `two-rules-items`;
     - `SITTIR_SCRATCH_LEAD_REST_IN_PLACE` narrows the rest's shared visible kinds in place;
     - `SITTIR_SCRATCH_LEAD_CONFLICTS` names a JSON list of conflict sets, which `leadGrammar`
       appends to the grammar's conflicts;
@@ -201,6 +214,9 @@ grammar through Node, and sittir's codegen evaluated it.
 - `roundtrip.py <worktree> <grammar>` reads each case's parameter list with the worktree's
   `probe-kind` and renders it. It then splices the render into the source and parses that again.
   It compares named nodes, fields and leaf text, so it does not see a dropped anonymous token.
+- `enrich-shapes.mts` runs the worktree's `enrich()` on a toy grammar holding each form's
+  receiver form, and prints the rules it rewrites and mints (`results/enrich-shapes.txt`). The edit
+  runs after enrich, so this is the only run that passes a receiver form through enrich.
 - `results/` holds each run's output as `<grammar>-<what>-<label>`. The label is the mode, then
   the form, then `-inplace`, `-floored` or `-undeclared`.
 
@@ -226,7 +242,15 @@ the receiver form. The receiver form is:
 - `two-rules-tail`: the same, with the run lifted into a kind of its own,
   `field(F, <list>_receiver_tail)`;
 - `two-rules-plain`: `seq(field(receiver, LEAD), optional(seq(SEP, optional(field(F, <list>)))))`,
-  the plain list itself after the separator.
+  the plain list itself after the separator;
+- `two-rules-plain-group`: the plain shape as enrich leaves it. The receiver form is
+  `seq(field(receiver, LEAD), optional(<form>_group))`, and `<form>_group` is
+  `seq(SEP, optional(field(F, <list>)))`, stamped `hoisted` and referenced as a group lift;
+- `two-rules-items`: the `two-rules` shape as enrich leaves it. The run is a list kind of its own,
+  `<form>_items` = `seq(repeat1(seq(SEP, field(item, REST))), optional(SEP))`, held in a field
+  `items` beside the lone `SEP`, and both arms are marked as forms of the receiver form.
+
+The last two emit what `enrich-shapes.mts` shows enrich minting for those shapes.
 
 Rust's two-rules runs use `lead-typed-named` with `INPLACE`. The repeat form was also run first as
 `lead-typed`, without either (`*-lead-typed-two-rules-repeat.*`).
@@ -283,86 +307,106 @@ With them, tree-sitter warns that three of the 60 resolutions' sets are unnecess
 
 ### Two rules: rust
 
-| | base | repeat | `two-rules` | tail | plain |
-| --- | --- | --- | --- | --- | --- |
-| `STATE_COUNT` | 3531 | +18 (+0.51%) | +18 (+0.51%) | +19 (+0.54%) | +17 (+0.48%) |
-| `LARGE_STATE_COUNT` | 1040 | +6 | +6 | +6 | +5 |
-| `SYMBOL_COUNT` / `ALIAS_COUNT` | 465 / 4 | +3 / 0 | +3 / 0 | +4 / 0 | +3 / 0 |
-| `FIELD_COUNT` | 80 | +1 | +1 | +1 | +1 |
-| `PRODUCTION_ID_COUNT` | 417 | +5 | +5 | +6 | +5 |
-| rules | 318 | +3 | +3 | +4 | +3 |
-| named kinds | 287 | +3 | +3 | +4 | +3 |
-| `parser.c` bytes | 7,061,448 | +35,168 (+0.50%) | +35,168 (+0.50%) | +36,134 (+0.51%) | +29,435 (+0.42%) |
-| conflicts | 7 resolutions | the same 7 | the same 7 | the same 7 | the same 7 |
-| codegen | accepts | refuses: `dropped-token` | refuses: `field-optional-delimiter` | accepts | accepts |
-| native binding bytes | 7,490,336 | | | +98,816 (+1.32%) | +49,472 (+0.66%) |
-| generated source bytes | 7,307,125 | | | +41,349 (+0.57%) | +9,023 (+0.12%) |
+| | base | repeat | `two-rules` | tail | items | plain | plain + group |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `STATE_COUNT` | 3531 | +18 (+0.51%) | +18 (+0.51%) | +19 (+0.54%) | +19 (+0.54%) | +17 (+0.48%) | +18 (+0.51%) |
+| `LARGE_STATE_COUNT` | 1040 | +6 | +6 | +6 | +6 | +5 | +5 |
+| `SYMBOL_COUNT` / `ALIAS_COUNT` | 465 / 4 | +3 / 0 | +3 / 0 | +4 / 0 | +4 / 0 | +3 / 0 | +4 / 0 |
+| `FIELD_COUNT` | 80 | +1 | +1 | +1 | +2 | +1 | +1 |
+| `PRODUCTION_ID_COUNT` | 417 | +5 | +5 | +6 | +6 | +5 | +4 |
+| rules | 318 | +3 | +3 | +4 | +4 | +3 | +4 |
+| named kinds | 287 | +3 | +3 | +4 | +4 | +3 | +4 |
+| `parser.c` bytes | 7,061,448 | +35,168 (+0.50%) | +35,168 (+0.50%) | +36,134 (+0.51%) | +36,136 (+0.51%) | +29,435 (+0.42%) | +30,064 (+0.43%) |
+| conflicts | 7 resolutions | the same 7 | the same 7 | the same 7 | the same 7 | the same 7 | the same 7 |
+| codegen | accepts | refuses: `dropped-token` | refuses: `field-optional-delimiter` | accepts | accepts | accepts | accepts |
+| native binding bytes | 7,490,336 | | | +98,816 (+1.32%) | +98,816 (+1.32%) | +49,472 (+0.66%) | +65,920 (+0.88%) |
+| generated source bytes | 7,307,125 | | | +41,349 (+0.57%) | +43,496 (+0.60%) | +9,023 (+0.12%) | +26,573 (+0.36%) |
 
 The first `repeat` run, unnamed and cloning the rest (`lead-typed`), costs +24 states and
 +38,397 bytes, and stops earlier, in `options.rs` (finding 10).
 
 ### Two rules: typescript
 
-| | base | repeat | `two-rules` | tail | plain |
-| --- | --- | --- | --- | --- | --- |
-| `STATE_COUNT` | 7244 | +46 (+0.64%) | +46 (+0.64%) | +47 (+0.65%) | +45 (+0.62%) |
-| `LARGE_STATE_COUNT` | 1192 | +17 | +17 | +17 | +16 |
-| `SYMBOL_COUNT` / `ALIAS_COUNT` | 460 / 8 | +4 / 0 | +4 / 0 | +5 / 0 | +4 / 0 |
-| `FIELD_COUNT` | 78 | +1 | +1 | +1 | +1 |
-| `PRODUCTION_ID_COUNT` | 1561 | +3 | +3 | +4 | +3 |
-| rules | 316 | +4 | +4 | +5 | +4 |
-| named kinds | 270 | +2 | +2 | +3 | +2 |
-| `parser.c` bytes | 11,121,244 | +142,679 (+1.28%) | +142,679 (+1.28%) | +143,558 (+1.29%) | +136,156 (+1.22%) |
-| conflicts | 60 resolutions | the 60 and the four sets | the same | the same | the same |
-| codegen | accepts | refuses: `dropped-token` | refuses: `field-optional-delimiter` | accepts | accepts |
-| native binding bytes | 8,212,272 | | | +98,928 (+1.20%) | +82,400 (+1.00%) |
-| generated source bytes | 7,275,206 | | | +71,973 (+0.99%) | +45,497 (+0.63%) |
+| | base | repeat | `two-rules` | tail | items | plain | plain + group |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `STATE_COUNT` | 7244 | +46 (+0.64%) | +46 (+0.64%) | +47 (+0.65%) | +47 (+0.65%) | +45 (+0.62%) | +46 (+0.64%) |
+| `LARGE_STATE_COUNT` | 1192 | +17 | +17 | +17 | +17 | +16 | +16 |
+| `SYMBOL_COUNT` / `ALIAS_COUNT` | 460 / 8 | +4 / 0 | +4 / 0 | +5 / 0 | +5 / 0 | +4 / 0 | +5 / 0 |
+| `FIELD_COUNT` | 78 | +1 | +1 | +1 | +2 | +1 | +1 |
+| `PRODUCTION_ID_COUNT` | 1561 | +3 | +3 | +4 | +4 | +3 | +2 |
+| rules | 316 | +4 | +4 | +5 | +5 | +4 | +5 |
+| named kinds | 270 | +2 | +2 | +3 | +3 | +2 | +3 |
+| `parser.c` bytes | 11,121,244 | +142,679 (+1.28%) | +142,679 (+1.28%) | +143,558 (+1.29%) | +143,558 (+1.29%) | +136,156 (+1.22%) | +136,992 (+1.23%) |
+| conflicts | 60 resolutions | the 60 and the four sets | the same | the same | the same | the same | the same |
+| codegen | accepts | refuses: `dropped-token` | refuses: `field-optional-delimiter` | accepts | accepts | accepts | accepts |
+| native binding bytes | 8,212,272 | | | +98,928 (+1.20%) | +98,928 (+1.20%) | +82,400 (+1.00%) | +98,848 (+1.20%) |
+| generated source bytes | 7,275,206 | | | +71,973 (+0.99%) | +74,290 (+1.02%) | +45,497 (+0.63%) | +62,339 (+0.86%) |
 
 Every form needs the container form's four sets, and with them tree-sitter warns about the same
 three unnecessary ones (`typescript-conflicts-lead-two-rules*.txt`).
 
 ### Two rules: rows
 
-| row | rust base | rust plain | rust tail | typescript base | typescript plain | typescript tail |
-| --- | --- | --- | --- | --- | --- | --- |
-| from | 244 | 247 | 248 | 186 | 188 | 189 |
-| cov | 207/207 | 210/210 | 210/211 | 202/202 | 204/204 | 204/205 |
-| read-render-parse (AST match) | 148/148 | 148/148 | 140/148 | 113/116 | 113/116 | 113/116 |
-| read-render-parse shallow | 148/148 | 148/148 | 148/148 | 113/116 | 113/116 | 113/116 |
-| factory-storage | 1670 | 1678 | 1679 | 1303 | 1307 | 1308 |
-| ir-storage | 1375 | 1379 | 1380 | 1153 | 1157 | 1158 |
-| built-render-parse (AST match) | 1878/1878 | 1876/1876 | 1826/1876 | 1798/1798 | 1798/1798 | 1798/1798 |
-| S-class ratchet | holds | holds | S5: 1 entry | holds | holds | S5: 1 entry |
+Rust:
 
-Every plain row passes. The tail's failures are in `*-rows-*-two-rules-tail*.txt`.
+| row | base | plain | plain + group | tail | items |
+| --- | --- | --- | --- | --- | --- |
+| from | 244 | 247 | 248 | 248 | 248 |
+| cov | 207/207 | 210/210 | 211/211 | 210/211 | 210/211 |
+| read-render-parse (AST match) | 148/148 | 148/148 | 148/148 | 140/148 | 140/148 |
+| read-render-parse shallow | 148/148 | 148/148 | 148/148 | 148/148 | 148/148 |
+| factory-storage | 1670 | 1678 | 1681 | 1679 | 1679 |
+| ir-storage | 1375 | 1379 | 1379 | 1380 | 1380 |
+| built-render-parse (AST match) | 1878/1878 | 1876/1876 | 1876/1876 | 1826/1876 | 1826/1876 |
+| S-class ratchet | holds | holds | holds | S5: 1 entry | S5: 1 entry |
+
+Typescript:
+
+| row | base | plain | plain + group | tail | items |
+| --- | --- | --- | --- | --- | --- |
+| from | 186 | 188 | 189 | 189 | 189 |
+| cov | 202/202 | 204/204 | 205/205 | 204/205 | 204/205 |
+| read-render-parse (AST match) | 113/116 | 113/116 | 113/116 | 113/116 | 113/116 |
+| read-render-parse shallow | 113/116 | 113/116 | 113/116 | 113/116 | 113/116 |
+| factory-storage | 1303 | 1307 | 1308 | 1308 | 1308 |
+| ir-storage | 1153 | 1157 | 1157 | 1158 | 1158 |
+| built-render-parse (AST match) | 1798/1798 | 1798/1798 | 1798/1798 | 1798/1798 | 1798/1798 |
+| S-class ratchet | holds | holds | holds | S5: 1 entry | S5: 1 entry |
+
+Every row of both plain shapes passes. The tail's and the items' failures are in
+`*-rows-*-two-rules-tail*.txt` and `*-rows-*-two-rules-items*.txt`.
 
 ### Two rules: round-trips
 
-The plain shape (`*-roundtrip-*-two-rules-plain*.txt`). "Same tree" means the same named nodes,
-fields and leaf text.
+`*-roundtrip-*-two-rules-plain*.txt`. "Same tree" means the same named nodes, fields and leaf text,
+and every case below reparses to the same tree.
 
-| source list | rendered | text | tree |
-| --- | --- | --- | --- |
-| `fn f()` | `()` | unchanged | same |
-| `fn f(&self)` | `(&self)` | unchanged | same |
-| `fn f(&self,)` | `(&self)` | changed | same |
-| `fn f(&self, a: u8)` | `(&self, a: u8)` | unchanged | same |
-| `fn f(&self, a: u8,)` | `(&self, a: u8,)` | unchanged | same |
-| `fn f(a: u8, b: u16)` | `(a: u8, b: u16)` | unchanged | same |
-| `fn f(self: Box<Self>, a: u8)` | `(self: Box<Self>, a: u8)` | unchanged | same |
-| `fn f(#[cfg(x)] self)` | `(#[cfg(x)] self)` | unchanged | same |
-| `function f()` | `()` | unchanged | same |
-| `function f(this: T)` | `(this : T)` | changed | same |
-| `function f(this: T,)` | `(this : T)` | changed | same |
-| `function f(this: T, a)` | `(this : T, a)` | changed | same |
-| `function f(this: T, a,)` | `(this : T, a,)` | changed | same |
-| `function f(a, b)` | `(a, b)` | unchanged | same |
-| `function f(this?: T)` | `(this?: T)` | unchanged | same |
+| source list | plain | plain + group |
+| --- | --- | --- |
+| `fn f()` | `()` | `()` |
+| `fn f(&self)` | `(&self)` | `(&self)` |
+| `fn f(&self,)` | `(&self)`, changed | `(&self,)` |
+| `fn f(&self, a: u8)` | `(&self, a: u8)` | `(&self, a: u8)` |
+| `fn f(&self, a: u8,)` | `(&self, a: u8,)` | `(&self, a: u8,)` |
+| `fn f(a: u8, b: u16)` | `(a: u8, b: u16)` | `(a: u8, b: u16)` |
+| `fn f(self: Box<Self>, a: u8)` | `(self: Box<Self>, a: u8)` | `(self: Box<Self>, a: u8)` |
+| `fn f(#[cfg(x)] self)` | `(#[cfg(x)] self)` | `(#[cfg(x)] self)` |
+| `function f()` | `()` | `()` |
+| `function f(this: T)` | `(this : T)`, changed | `(this : T)`, changed |
+| `function f(this: T,)` | `(this : T)`, changed | `(this : T,)`, changed |
+| `function f(this: T, a)` | `(this : T, a)`, changed | `(this : T, a)`, changed |
+| `function f(this: T, a,)` | `(this : T, a,)`, changed | `(this : T, a,)`, changed |
+| `function f(a, b)` | `(a, b)` | `(a, b)` |
+| `function f(this?: T)` | `(this?: T)` | `(this?: T)` |
+
+With the group, rust's text is unchanged in every case, and typescript's changes only by the space
+before `:` (finding 13).
 
 Rust's tail shape (`rust-roundtrip-lead-typed-named-two-rules-tail-inplace.txt`) renders
 `(&self)`, `(&self,)`, `(&self, a: u8)` and `(&self, a: u8,)` all as `(&self,)`, and
 `(self: Box<Self>, a: u8)` as `(self: Box<Self>,)`. The cases with a rest reparse to a different
-tree.
+tree. The items shape renders the same in both grammars
+(`*-roundtrip-*-two-rules-items*.txt`).
 
 ### Samples
 
@@ -376,6 +420,9 @@ Rust (`rust-samples-*.txt`):
   a `self_parameter` or a `typed_self_parameter`, and its `elements` hold the plain
   `parameters_elements`. A list without one is the plain list, as in `fn f(a: u8)` and a function
   type's `fn(u8, u16)`.
+- With the group (`lead-typed-named-two-rules-plain-group-inplace`), the `,` and the plain list
+  sit in a `parameters_elements_receiver_group` after the receiver, and `fn f(self,)` keeps an
+  empty group, which holds the `,`.
 - Every lead mode and form: `fn f(a: u8, self)` no longer parses.
 
 Typescript (`typescript-samples-*.txt`):
@@ -454,7 +501,8 @@ Typescript (`typescript-samples-*.txt`):
    `accessibility_modifier`, `override`, `readonly` and the default `value`, because the match
    narrows only `pattern`. The grammar admits them on `this`, as it admits `async` on a getter.
 9. **Of the two rules' shapes, only the plain one passes.** Each shape is a receiver form beside
-   the plain list. They differ in what follows the receiver.
+   the plain list. They differ in what follows the receiver. The edit runs after enrich, so each
+   shape reaches the model as the edit writes it; finding 16 is what enrich makes of each.
    - `two-rules-repeat` is refused in both grammars with `dropped-token` on the receiver form:
      its `,` "is neither template text nor a slot". A repeated separator and item read as a list
      only behind a head of the same field.
@@ -469,6 +517,10 @@ Typescript (`typescript-samples-*.txt`):
    - `two-rules-plain` is accepted, and every row passes. The rest is the plain list itself, so
      the list keeps its own separator and trailing separator. The receiver form adds one `,` of
      its own: `$receiver if(elements: "," $elements)`.
+   - `two-rules-items`, the `two-rules` shape as enrich breaks it, is accepted but fails as the
+     tail does: its template keeps only the lone `,` arm.
+   - `two-rules-plain-group`, the plain shape as enrich groups it, is accepted, every row passes,
+     and every case round-trips byte for byte in rust.
 10. **A visible variant needs a name of its own.** A variant aliased back to its kind's name
     gives that kind a second site, and the render options refuse an address that names two sites.
     - Unnamed, rust's repeat form stopped in `options.rs`: "address 'attributed_parameter/after'
@@ -486,15 +538,21 @@ Typescript (`typescript-samples-*.txt`):
     - So the rest narrows `parameter` itself (`INPLACE`). Its `name` loses `self`, and
       `|self: u8|` stops parsing, which rustc rejects anyway.
     - Typescript's shared rule, `_parameter_name`, is hidden, so the rest clones it.
-12. **A lone comma after the receiver is dropped.** In the plain shape the receiver form's
-    template prints `,` only with `elements`: `if(elements: "," if(elements: $elements))`.
-    - The optional that holds the `,` has no slot but the optional `elements`, so nothing records
-      a `,` without the rest. `(&self,)` renders `(&self)`, which reparses to the same named tree
-      without the `,` token.
-    - No base rule of rust, typescript or python has an optional whose only slot is itself
-      optional, and codegen accepts the shape without a diagnostic.
-    - No corpus sample has the case, so the rows do not see it. A sample would fail
-      read-render-parse, which compares tokens too.
+12. **Without enrich's group, a lone comma after the receiver is dropped.** The edit runs after
+    enrich, so in the plain shape the model meets the receiver form's
+    `optional(seq(',', optional(field('elements', <list>))))` as the edit wrote it.
+    - Its template prints `,` only with `elements`: `if(elements: "," if(elements: $elements))`.
+      The optional that holds the `,` has no slot but the optional `elements`, so nothing records
+      a `,` without the rest, and `(&self,)` renders `(&self)`, the same named tree without the
+      `,` token.
+    - enrich lifts every optional of that shape into a group (finding 16), so no base rule of
+      rust, typescript or python reaches the model in it. Codegen accepts the unlifted shape
+      without a diagnostic.
+    - With the group (`two-rules-plain-group`) the `,` survives. The receiver form tests the group,
+      `$receiver if(<group>: $<group>)`, and the group prints its `,` unconditionally,
+      `"," if(elements: $elements)`, so `(&self,)` renders `(&self,)`.
+    - No corpus sample has the case, so the rows do not see the difference. A sample would fail
+      read-render-parse without the group, since it compares tokens too.
 13. **A narrowed keyword slot renders a space after it.** `this_parameter`'s `pattern` admits only
     `this`, so its template writes `this` as text between two seams
     (`~pattern_before 'this' ~pattern_after`). `required_parameter` has the slot `$pattern` and no
@@ -519,8 +577,30 @@ Typescript (`typescript-samples-*.txt`):
       `ParenthesizedExpressionTypedTransport`, `SatisfiesExpressionTransport` and
       `VariableDeclaratorDefiniteTransport`.
 
-    `<grammar>-<mode>-pins.json` is each grammar's `BOXED_PAYLOADS` without them. The edit's
-    implementation unpins them in `boxed-payloads.ts`.
+    `<grammar>-<mode>-pins.json` is each grammar's `BOXED_PAYLOADS` without them, and the group
+    and items shapes build with the same pins. The edit's implementation unpins them in
+    `boxed-payloads.ts`.
+16. **What enrich makes of each receiver form** (`enrich-shapes.mts`, `results/enrich-shapes.txt`).
+    No grammar run passes a receiver form through enrich, so this runs enrich on each directly.
+    - The plain shape: the optional after the receiver is inline-unsafe, since its one slot is
+      itself optional. So enrich mints a visible group, `<form>_group` =
+      `seq(',', optional(field('elements', <list>)))`, stamped `hoisted`, and the receiver form
+      becomes `seq(field('receiver', LEAD), optional(<form>_group))`. The group seats on the
+      receiver form as an optional slot of its own, which the model gives the `forwarded` seat,
+      and the list stays inside it as `elements`.
+    - The literal shape (`two-rules-repeat`) comes out unchanged. Its run, `repeat(seq(',', item))`
+      then `optional(',')`, matches the empty string, and enrich never lifts an empty-matching body
+      into a kind, since tree-sitter refuses a named rule that matches nothing. A separator and
+      one item make a single slot, so enrich mints no group of a comma and an item either. The
+      model then meets the `,` inside a bare repeat: `dropped-token`.
+    - With its run made non-empty (`two-rules`), enrich lifts the run into a list with a leading
+      separator, `<form>_items` = `seq(repeat1(seq(',', field('item', REST))), optional(','))`. The
+      list sits in a field `items` beside the lone `,`, and both arms are marked as forms of the
+      receiver form. Measured as `two-rules-items`, codegen accepts it, but the receiver form's
+      template keeps only the `,` arm, as the tail's does: `(&self, a: u8)` renders `(&self,)`.
+    - So with enrich's break, the literal shape still needs a choice between a lone `,` and the
+      list of comma-led items, which the template cannot hold. The plain shape has no such choice:
+      its `,` is the group's text, and the group holds the plain list.
 
 ## Proposal
 
@@ -528,15 +608,17 @@ Typescript (`typescript-samples-*.txt`):
    by `bindGrammar` between the renames and the splits, with variants named by the variant
    convention and recorded in `leadFrom`. It emits the plain shape: the plain list narrowed to
    the rest, and the receiver form `<list>_<field>`, which holds the receiver and then the plain
-   list. Every field that held the list holds a choice of the two (question 16).
+   list. Every field that held the list holds a choice of the two (question 16). Its output
+   passes through enrich's group synthesis, which lifts the receiver form's `,` and the list after
+   it into the group `<list>_<field>_group` (question 22).
 2. A visible variant is never aliased to its kind's own name. It takes `as`, which its
    classifying claim gives (question 18), or else `<kind>_<field>` (question 20). The rest
    narrows a shared visible kind in place, and clones a shared hidden rule.
 3. Each receiver claim anchors the list's first element and captures the item as `@receiver`,
    and every owner captures the rest as `@parameters` (question 19). The derivation emits one
    `lead` per list from the anchored pattern, and the fact it records carries the lead's field.
-4. No model work: the model accepts the plain shape as is. The dropped lone comma (finding 12) is
-   recorded, not fixed.
+4. No model work: the model accepts the plain shape and its group as is, and the group keeps a
+   lone comma (finding 12).
 5. The conflict driver derives the bound grammar's sets (question 14).
 6. The edit's implementation unpins the transports the bound grammar moves under the payload
    ceiling (finding 15).
@@ -549,36 +631,44 @@ Typescript (`typescript-samples-*.txt`):
 15. **Rust's typed `self`.** Ruled: the receiver also admits `self: Box<Self>`, as a variant of
     its own.
 16. **The shape of the two rules.**
-    - (a) The plain shape: the receiver form holds the receiver, then the plain list after its
-      separator. The model accepts it as is in both grammars, every row passes, and every case
-      reparses to the same tree. It drops a lone comma after the receiver (finding 12).
-      Recommended: no model work, and the list keeps its own separator.
-    - (b) The container form, with a list kind that gains a lead slot: one named element before
-      the items, joined to them by the list's own separator. It would keep a lone comma, but it
-      needs the model work, and the probe could not measure it.
-
-    The literal two rules, a receiver followed by items that each carry a leading `,`, are
-    refused (finding 9). They would need the separator as a slot every build fills.
+    - (a) The plain shape, through enrich's group synthesis: the receiver form holds the
+      receiver, then an optional group holding the `,` and the plain list. The model accepts it as
+      is in both grammars, every row passes, and every case round-trips byte for byte,
+      `(&self,)` included (rust +18 states and +30 KB; typescript +46 and +137 KB). Recommended:
+      no model work, the list keeps its own separator, and the group is what enrich makes of the
+      shape anyway (finding 16).
+    - (b) The literal shape, a receiver followed by items that each carry a leading `,`. enrich
+      cannot break it, since its run can match nothing, so it stays refused (`dropped-token`).
+      Made non-empty, enrich breaks it into a list with a leading separator, and the receiver
+      form's template then drops that list (findings 9 and 16).
+    - (c) The container form, with a list kind that gains a lead slot: one named element before
+      the items, joined to them by the list's own separator. It needs the model work, and the
+      probe could not measure it.
 17. **The edit's names.** Ruled: `lead` for the edit and `leads` for its entries, and `match` for
     the restriction.
 18. **Where `bindings.scm` names a variant.** Ruled: once, on the claim that classifies the
     narrowed pattern, joined to the lead's match tree by structural equality.
-19. **How an owner keeps the rest of its list as `parameters`.** Under the two rules, `@receiver`
-    still descends through the owner's `parameters` slot, so the rule that a deeper capture
-    replaces the slot's member still drops `parameters`. And the rest now sits at two paths:
-    `parameters.elements` when the list has no receiver, `parameters.elements.elements` when it
-    has one.
-    - (a) Every owner captures the rest as now, against the grammar's own list:
-      `(parameters (parameters_elements item: (_) @parameters))`. The derivation maps that
-      capture to both paths, as it maps the receiver claim to the lead. `receiver` and
-      `parameters` stay sibling slots. Recommended, and provisionally ruled.
-    - (b) Relax the rule, so a slot that a deeper capture descends through keeps its member. That
-      changes how routes resolve, which needs its own ruling.
-
-    The probe runs the interim claims, so it measures neither route.
-20. **The names the edit mints when no claim names them.**
-    - (a) The variant convention for every visible name: the receiver form is `<list>_<field>`
-      (`parameters_elements_receiver`, `formal_parameters_elements_receiver`), and a lead variant
-      is `<kind>_<field>` (`attributed_parameter_receiver`). A visible variant never keeps its
-      kind's name (finding 10). Recommended: no visible name needs an author, and none collides.
-    - (b) An author names each one, and the edit refuses a visible variant without a name.
+19. **How an owner keeps the rest of its list as `parameters`.** Ruled: every owner captures the
+    rest as now, against the grammar's own list,
+    `(parameters (parameters_elements item: (_) @parameters))`, and the derivation maps that
+    capture to both paths the rest takes, as it maps the receiver claim to the lead. `receiver`
+    and `parameters` stay sibling slots. With the group, the second path runs through it:
+    `parameters.elements`, then the group, then its `elements`. The probe runs the interim
+    claims, so it measures neither route.
+20. **The names the edit mints when no claim names them.** Ruled: the variant convention. The
+    receiver form is `<list>_<field>` (`parameters_elements_receiver`,
+    `formal_parameters_elements_receiver`), a visible variant is `<kind>_<field>`
+    (`attributed_parameter_receiver`), and a claim's name overrides it (`this_parameter`,
+    `typed_self_parameter`). A visible variant never keeps its kind's name (finding 10). The group
+    takes enrich's name for it, `<list>_<field>_group`.
+21. **Typescript's type-only export** (`export type {A} from`, `export type * from`). Ruled: a
+    refinement, `statement.export.type`, mirroring `statement.import.type`. The vocabulary pass
+    may rename the segment.
+22. **How the edit's output meets enrich's group synthesis.** The edit runs in `bindGrammar`,
+    after enrich (question 13), and the probe's `two-rules-plain-group` writes enrich's group by
+    hand.
+    - (a) `bindGrammar` runs enrich's group synthesis over the rules the edit mints, so one pass
+      decides the groups of every rule, authored or bound. Recommended: a later change to the
+      synthesis reaches the receiver form too.
+    - (b) The edit mints the group itself, as the probe does. That restates enrich's decision in
+      a second place.

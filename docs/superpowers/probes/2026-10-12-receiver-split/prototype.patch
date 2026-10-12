@@ -1,5 +1,5 @@
 diff --git a/packages/codegen/src/dsl/bind.ts b/packages/codegen/src/dsl/bind.ts
-index 269d09789..e2be7bc10 100644
+index 269d09789..e8762f0c0 100644
 --- a/packages/codegen/src/dsl/bind.ts
 +++ b/packages/codegen/src/dsl/bind.ts
 @@ -3,6 +3,8 @@ import { isPrecWrapper } from '../types/runtime-shapes.ts';
@@ -66,7 +66,7 @@ index 269d09789..e2be7bc10 100644
  export type GrammarRecord = Record<string, unknown>;
  
  const LIST_FIELDS = ['supertypes', 'inline', 'factoryInline', 'textTokens', 'protectedRuleNames', 'undeclaredRules'];
-@@ -502,6 +541,297 @@ export function splitGrammar(grammar: GrammarRecord, splits: readonly Split[]):
+@@ -502,6 +541,316 @@ export function splitGrammar(grammar: GrammarRecord, splits: readonly Split[]):
  	return out;
  }
  
@@ -319,7 +319,7 @@ index 269d09789..e2be7bc10 100644
 +			rules[container] = rewrap(rules[container], { ...body, members: [rewrap(first, leading), ...(replaceItems(others, l.item, shape.content, rest) as unknown[])] });
 +			continue;
 +		}
-+		if (!['two-rules', 'two-rules-repeat', 'two-rules-tail', 'two-rules-plain'].includes(form)) throw new Error(`bind: SITTIR_SCRATCH_LEAD_FORM '${form}' is no lead form`);
++		if (!['two-rules', 'two-rules-repeat', 'two-rules-tail', 'two-rules-plain', 'two-rules-plain-group', 'two-rules-items'].includes(form)) throw new Error(`bind: SITTIR_SCRATCH_LEAD_FORM '${form}' is no lead form`);
 +		rules[container] = replaceItems(rules[container], l.item, shape.content, rest);
 +		const sep = shape.separator;
 +		const receiver: GrammarRecord = { ...firstField, name: l.field, content: head };
@@ -327,6 +327,12 @@ index 269d09789..e2be7bc10 100644
 +		const run: GrammarRecord = { type: 'REPEAT1', content: step };
 +		const runTrailed: GrammarRecord = shape.trailing ? { type: 'SEQ', members: [run, shape.optional(sep)] } : run;
 +		const alias = (name: string, value: string): GrammarRecord => ({ type: 'ALIAS', named: true, value, content: { type: 'SYMBOL', name } });
++		const groupLift = (name: string, groupBody: GrammarRecord): GrammarRecord => {
++			rules[name] = { ...groupBody, annotations: { hoisted: true } };
++			leadFrom[name] = container;
++			return { type: 'SYMBOL', name, metadata: { symbolSource: 'group-lift' } };
++		};
++		const armOf = { variantOf: `_${undisplayedKindAddress(container)}_${l.field}` };
 +		let ledRef: GrammarRecord | undefined;
 +		const receiverForm = (listField: GrammarRecord): GrammarRecord => {
 +			if (ledRef !== undefined) return ledRef;
@@ -337,7 +343,20 @@ index 269d09789..e2be7bc10 100644
 +						? [receiver, shape.optional(shape.trailing ? { type: 'CHOICE', members: [sep, runTrailed] } : run)]
 +						: form === 'two-rules-tail'
 +							? [receiver, shape.optional({ type: 'CHOICE', members: [sep, { ...listField, content: alias(mint(container, { keep: true, suffix: `${l.field}_tail` }, runTrailed), `${container}_${l.field}_tail`) }] })]
-+							: [receiver, shape.optional({ type: 'SEQ', members: [sep, shape.optional(listField)] })];
++							: form === 'two-rules-plain-group'
++								? [receiver, shape.optional(groupLift(`${container}_${l.field}_group`, { type: 'SEQ', members: [sep, shape.optional(listField)] }))]
++								: form === 'two-rules-items'
++									? [
++											receiver,
++											shape.optional({
++												type: 'CHOICE',
++												members: [
++													{ ...(sep as GrammarRecord), annotations: armOf },
++													{ type: 'FIELD', name: 'items', content: groupLift(`${container}_${l.field}_items`, runTrailed), metadata: { fieldSource: 'enriched' }, annotations: armOf }
++												]
++											})
++										]
++									: [receiver, shape.optional({ type: 'SEQ', members: [sep, shape.optional(listField)] })];
 +			ledRef = alias(mint(container, { keep: true, suffix: l.field }, { type: 'SEQ', members }), `${container}_${l.field}`);
 +			return ledRef;
 +		};
@@ -364,7 +383,7 @@ index 269d09789..e2be7bc10 100644
  export function aliasTargetIssue(grammar: GrammarRecord, from: string, to: string): string | undefined {
  	const rules = isRecord(grammar.rules) ? grammar.rules : {};
  	if (from.startsWith('_') !== to.startsWith('_')) return 'flips hiddenness';
-@@ -542,8 +872,9 @@ export function bindGrammar(grammar: GrammarRecord, grammarBindings: Bindings, e
+@@ -542,8 +891,9 @@ export function bindGrammar(grammar: GrammarRecord, grammarBindings: Bindings, e
  	const renames = Object.fromEntries((grammarBindings.renames ?? []).map((r) => [r.from, r.to]));
  	const renamed = renameGrammar(rewriteBindingOptions(grammar, effects), renames);
  	const boundName = (name: string): string => mappedName(renames, name);
