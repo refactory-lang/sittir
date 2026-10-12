@@ -366,10 +366,18 @@ describe('checkRegression', () => {
 			expect(verdict.details.path).toBe('grammars.typescript.validators.from.pass');
 		});
 
-		it('a factoryStorage drop (astMatchPass too) passes when kinds left, whatever the count of cases per kind', () => {
+		it('a factoryStorage drop (astMatchPass too) passes when it is within the average cases of the kinds that left', () => {
 			const { base, head } = dropping('factoryStorage', [1390, 1390], [1368, 1368]);
 			head.grammars.typescript!.kindCount = 295;
 			expect(checkRegression(base, head).ok).toBe(true);
+		});
+
+		it('a factoryStorage drop beyond the cases of the kinds that left fails', () => {
+			const { base, head } = dropping('factoryStorage', [1390, 1390], [1100, 1100]);
+			head.grammars.typescript!.kindCount = 299;
+			const verdict = checkRegression(base, head);
+			expectFail(verdict);
+			expect(verdict.details.path).toBe('grammars.typescript.validators.factoryStorage.pass');
 		});
 
 		it('a roundtrip total counts corpus rows: a kind leaving does not explain its drop', () => {

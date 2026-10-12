@@ -22,7 +22,7 @@
  *      kinds that left the grammar explain (the fall in the stamped
  *      `kindCount`): `coverage` and `from` may shrink by one per departed
  *      kind, `factoryStorage` and `builtRenderParse` (several cases per
- *      kind) by any amount once a kind left, and `roundtrip` (corpus rows)
+ *      kind) by the base's average cases per kind for each, and `roundtrip` (corpus rows)
  *      only through a declared counter change. The
  *      aggregate `totals.pass`/`totals.fail`/`totals.total` relationship
  *      is rule 2/3's job, not re-checked here.
@@ -447,16 +447,17 @@ function validateBaselineShape(b: unknown, label: string): RegressionVerdict | n
  * The validators whose total is tied to the grammar's kinds, each with the
  * largest total drop a given number of departed kinds explains. `coverage`
  * and `from` have one case per kind. `factoryStorage` and `builtRenderParse`
- * have several per kind, so any departed kind may explain a shrink and the
- * count cannot bound it. `roundtrip` counts corpus rows, which no kind
- * leaving explains: its total may shrink only through a declared counter
- * change.
+ * have several, so a departed kind explains the base's average cases per
+ * kind (`casesPerKind`, rounded up) and no more: losing the cases of kinds
+ * that still exist is not explained by an unrelated kind leaving. `roundtrip`
+ * counts corpus rows, which no kind leaving explains: its total may shrink
+ * only through a declared counter change.
  */
-const KIND_DENOMINATED_TOTAL: Partial<Record<ValidatorName, (departedKinds: number) => number>> = {
+const KIND_DENOMINATED_TOTAL: Partial<Record<ValidatorName, (departedKinds: number, casesPerKind: number) => number>> = {
 	coverage: (departedKinds) => departedKinds,
 	from: (departedKinds) => departedKinds,
-	factoryStorage: () => Infinity,
-	builtRenderParse: () => Infinity
+	factoryStorage: (departedKinds, casesPerKind) => departedKinds * casesPerKind,
+	builtRenderParse: (departedKinds, casesPerKind) => departedKinds * casesPerKind
 };
 
 /**
@@ -491,7 +492,8 @@ function dropIsExplained(
 	const largestExplainedDrop = KIND_DENOMINATED_TOTAL[vName];
 	if (largestExplainedDrop === undefined) return false;
 	const departed = departedKindCount(baseGrammar, headGrammar);
-	return departed > 0 && totalDrop <= largestExplainedDrop(departed);
+	if (departed <= 0 || baseGrammar.kindCount === undefined) return false;
+	return totalDrop <= largestExplainedDrop(departed, Math.ceil(b.total / baseGrammar.kindCount));
 }
 
 function passCountFail(path: string, before: number, after: number): RegressionVerdict {

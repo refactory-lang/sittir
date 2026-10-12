@@ -58,7 +58,7 @@ Whether a drop in one validator's `pass` (or `astMatchPass`) is no regression: i
 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::KIND_DENOMINATED_TOTAL`
 
-The validators whose total is tied to the grammar's kinds, each with the largest total drop a given departed count explains: `coverage` and `from` one per kind; `factoryStorage` and `builtRenderParse` have several cases per kind, so any departed kind may explain a shrink and the count cannot bound it. `roundtrip` counts corpus rows and is absent: no kind leaving explains its drop, which a declared counter change covers.
+The validators whose total is tied to the grammar's kinds, each with the largest total drop a given departed count explains: `coverage` and `from` one per kind; `factoryStorage` and `builtRenderParse` have several cases per kind, so a departed kind explains the base's average cases per kind (`total / kindCount`, rounded up) and no more: the cases of kinds that still exist are not explained by an unrelated kind leaving. `roundtrip` counts corpus rows and is absent: no kind leaving explains its drop, which a declared counter change covers.
 
 ### `packages/tools/src/scripts/collect-baseline.ts::GrammarEntry.kindCount`
 
