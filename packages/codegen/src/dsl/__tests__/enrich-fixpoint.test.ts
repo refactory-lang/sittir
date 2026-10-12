@@ -35,4 +35,11 @@ describe('enrich is a fixpoint of its own output', () => {
 		const out = again(grammarWith({ use_wildcard: seq(optional(seq(optional(sym('path')), S('::'))), S('*')), path: P('[a-z]+') }));
 		expect(out).toEqual({ names: [], minted: [] });
 	});
+
+	it('leaves a visible-group alias undistributed', () => {
+		const pair = choice(seq(field('left', sym('left')), S(','), field('right', sym('right'))), seq(field('left', sym('right')), S(';'), field('right', sym('left'))));
+		const rules = { parent: seq(S('x'), choice(sym('_pair'), sym('other'))), _pair: pair, left: P('l'), right: P('r'), other: P('o') };
+		const out = again(grammarWith(rules, { inline: ['_pair'] }));
+		expect(out).toEqual({ names: [], minted: [] });
+	});
 });
