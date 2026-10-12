@@ -1219,10 +1219,9 @@ The grammar's `GrammarTypeMap`: `namespaces` is its `NamespaceMap`, `empty` pair
 #### body
 
 ```text
-// `kindIdFromName` was a runtime kind-id resolver from before PR-K3d baked
-// kind ids into generated from.ts statically (`kindIdExpr: TSKindId.<member>`
-// above) — no call site references it anymore, so importing it here is
-// dead weight that trips no-unused-vars.
+// Kind ids are baked into generated from.ts statically (`kindIdExpr:
+// TSKindId.<member>` above), so no call site needs the runtime
+// `kindIdFromName` resolver, and importing it would trip no-unused-vars.
 // `DELIMITER_IMPORT` is emitted unconditionally and PRUNED in finalize() when
 // the body never references `Delimiter` — whether any coercer carries a
 // delimiter guard depends on per-kind emission decisions made after this
@@ -2909,9 +2908,9 @@ Surface`
  * Classify a slot for emit purposes — same as `classifySlot` but also:
  * - resolves `concrete` using the assembled typeName (PascalCase)
  * - downgrades `concrete` to `heterogeneous` when the single kind maps to a
- *   multi node (no transport struct) or polymorph (no ToNapiValue in Phase 1)
+ *   multi node (no transport struct) or polymorph (no ToNapiValue)
  * - classifies multi-kind slots as `supertype` when they match an assembled
- *   supertype's subtypes (Phase 2)
+ *   supertype's subtypes
  *
  * @param kinds - the kind set for this slot
  * @param nodeMap - for modelType lookup + supertype map construction
@@ -4184,7 +4183,7 @@ machines.
  * multiple possible values, or the referenced kind is not a single-
  * literal terminal.
  *
- * @remarks Phase 1: omit auto-stamp-eligible fields from Config input and
+ * @remarks Omit auto-stamp-eligible fields from Config input and
  * stamp the constant directly in factory output. The field stays in the
  * `$fields` block of the concrete TypeScript interface so UntypedNode output
  * shape is unchanged and round-trips with readUntypedNode remain identical.
@@ -5566,26 +5565,10 @@ mark instead of referencing the slot.
 // above), and hidden-helper choice arms (cross-arm relaxed to optional
 // → still skipped below); both documented false-positive classes
 // remain covered by the structural skips.
-// (debt PR-P1, item 4) REMOVED a former provenance-reading skip here:
-// `(slot.source as string) === 'link' || 'group-lift'`. Per the
-// doctrine, a compiler decision may not key on rule/slot provenance —
-// this had to become either a structural check or a proven-redundant
-// deletion. Verified EMPIRICALLY (not just by static reasoning) before
-// deleting: generated `node-model.json5` for all three grammars at the
-// pre-PR-P1 baseline (rust/typescript/python) has exactly ONE slot
-// anywhere with `source: 'link'` or `'group-lift'` — typescript's
-// `binary_expression.operator` (the exact case this comment used to
-// cite) — and its `values[]` are ALL terminals (zero node-refs), i.e.
-// `kindsOf(slot).length === 0`, which is ALREADY skipped by the check
-// directly above. So the condition never once changed this function's
-// outcome on any of the three grammars: it is provably redundant, not
-// merely theoretically so. Deleting it is a genuine dead-condition
-// removal — there is no structural fact to convert it to because it
-// never selected anything the prior check hadn't already excluded.
-// (Root cause: link-synthesized operator literals become terminal
-// `.value` entries with no node-ref, per `deriveValuesForRule`'s
-// SYMBOL case in node-map.ts — `kindsOf` is the exact structural
-// signal this check was informally approximating via provenance.)
+// A slot whose values are all terminals (link-synthesized operator
+// literals, such as typescript's `binary_expression.operator`) has
+// `kindsOf(slot).length === 0` and is skipped by the check directly
+// above: a compiler decision never keys on rule/slot provenance.
 // Skip slots where no value is required (all are optional/array). These
 // arise from `mergeChoiceArmSlots` cross-arm relaxation: a slot present
 // in only some choice arms gets its values' multiplicities relaxed from
@@ -6301,7 +6284,7 @@ nodes and names the variants; `slotElementKinds` reads the kinds alone.
  * kinds alias `Terminal<kind, string>`, the one shared leaf-node shape
  * from `@sittir/types`.
  *
- * T073: a terminal is skipped when ALL of the following are true:
+ * A terminal is skipped when ALL of the following are true:
  * - It has no factory binding (`rawFactoryName` is absent) — downstream
  *   `factories.ts` would not import the type.
  * - It does not appear in any structural field/child content union.
@@ -6401,8 +6384,7 @@ nodes and names the variants; `slotElementKinds` reads the kinds alone.
 #### body
 
 ```text
-// Supertype Config/Loose unions dropped (US7 landing):
-// consumers reach supertype Config via `T.Supertype` and map it
+// No supertype Config/Loose unions: consumers reach supertype Config via `T.Supertype` and map it
 // through generic helpers rather than a flat alias.
 ```
 
@@ -6626,8 +6608,8 @@ A kind with a construction surface narrows `BuildArgs` and `LooseArgs` (typed `r
 #### body
 
 ```text
-// Phase 2: indentation at interface body level (2 spaces) since fields are
-// now declared directly on the interface, not inside $fields: {}.
+// Indentation at interface body level (2 spaces): fields are declared
+// directly on the interface, not inside $fields: {}.
 ```
 
 ### `packages/codegen/src/emitters/types.ts::_fieldTypeParts`
@@ -7091,7 +7073,7 @@ enrich-stamped (`VariantChild.definedBy`); one hand-declared arm (a
 ```text
 /**
 	 * Repeat-list separator surfaced when the assembled rule was a
-	 * `repeat` / `repeat1` (the former-container shape, Phase 1d.vii).
+	 * `repeat` / `repeat1` (the former-container shape).
 	 * Field-carrying branches don't surface this — the repeat separator
 	 * is reachable via the per-value metadata on the relevant
 	 * `AssembledNonterminal` slot.
@@ -7672,8 +7654,7 @@ seat the child into a config or tuple take the value arguments only.
 ```text
 /**
  * Per-supertype transport enum names that collide with pre-existing
- * generated items and must be skipped during Phase 2 supertype-enum
- * emission.  The `_literal` supertype has `typeName = 'Literal'` which
+ * generated items and must be skipped during supertype-enum emission.  The `_literal` supertype has `typeName = 'Literal'` which
  * would produce `pub enum LiteralTransport`.  Keep reserved so the
  * supertype enum is not emitted; slots fall back to `Box<AnyTransport>`
  * (`heterogeneous`).
@@ -8104,8 +8085,7 @@ A supertype guard is generic over its input and narrows through the shared `Narr
 #### body
 
 ```text
-// Phase 2: factory/wrap nodes use `_<name>` storage keys (de-hoisted
-// surface). Any top-level `_*` key indicates a branch node with named fields.
+// Factory/wrap nodes use `_<name>` storage keys (de-hoisted surface). Any top-level `_*` key indicates a branch node with named fields.
 // Leaf nodes have `$text` instead.
 ```
 
@@ -8658,8 +8638,8 @@ The inventory is the set of literals a parser token spells: a literal counts onl
 
 ```text
 /**
- * emitters/refine-emit.ts — shared helpers for that change
- * phase 2 per-form factory + Config emission.
+ * emitters/refine-emit.ts — shared helpers for per-form factory + Config
+ * emission.
  *
  * Both types.ts and factories.ts need the same naming scheme for
  * per-form types (`InterfaceBodyCurly`), fluent-case short names,
@@ -8875,7 +8855,7 @@ The types module of `emitTypesModules`, for callers that need only the public su
 #### body
 
 ```text
-// ConfigMap / LooseMap dropped (US7 landing) — consumers use
+// No ConfigMap / LooseMap — consumers use
 // `NamespaceMap[K]['Config']` / `['Loose']` or the generic accessors
 // `ConfigFor<K>` / `LooseFor<K>`, emitted below.
 ```
@@ -9516,7 +9496,7 @@ For a lexed kind the top rule is recorded on the context (`lexedTop`) so `emitRu
 #### body
 
 ```text
-// SpacingWriter follow-on (2026-07-24 spec): seq members concatenate
+// Seq members concatenate
 // with NO compile-time boundary spaces — the render-time
 // SpacingWriter inserts a space exactly where a word-class char
 // would collide with a word-class char across write seams. This

@@ -1302,9 +1302,8 @@ The classification left after every structural check: an all-text subtree is `'p
 ```text
 // buildSlot's `rule` param is AnyRule but is, at runtime, always the
 // post-wrapper-deletion (link-derived) shape deriveValuesForRule expects —
-// same phase-widening read as isSlotNode above (post-PR-S, RepeatRule's
-// per-phase shapes genuinely diverge, so this is now an explicit cast
-// rather than a structural coincidence).
+// same phase-widening read as isSlotNode above (RepeatRule's per-phase
+// shapes genuinely diverge, so this is an explicit cast).
 ```
 
 #### body
@@ -1333,7 +1332,7 @@ The classification left after every structural check: an all-text subtree is `'p
 
 ```text
 // `sep` is always the nested {value, trailing?, leading?} object (or
-// undefined) post-PR-S — no more string/array shapes to type-dispatch on.
+// undefined) — no string/array shapes to type-dispatch on.
 // OR with `findRepeatFlag`'s full-tree walk as a fallback for shapes `sep`
 // (own separator ?? inheritedSeparator ?? nested-arm scan) didn't reach.
 // `isSeparatedListShape` (assemble.ts) only routes a rule to
@@ -2866,8 +2865,8 @@ renders with, not the fallback an unstamped list reports.
 #### body
 
 ```text
-// Diagnostics accumulator for the Assemble→Project gate. PR-H: threaded
-// into phase contexts so pipeline diagnostics flow here.
+// Diagnostics accumulator for the Assemble→Project gate, threaded into
+// phase contexts so pipeline diagnostics flow here.
 ```
 
 #### body
@@ -2972,9 +2971,8 @@ renders with, not the fallback an unstamped list reports.
 #### body
 
 ```text
-// Assemble→Project gate. Inert until PR-L: nothing emits `fail`, so the
-// sink is empty and this never throws. Threading real diagnostics into
-// `diagnostics` is PR-H's job (phase contexts).
+// Assemble→Project gate. Nothing emits `fail` yet, so the sink is empty
+// and this never throws.
 ```
 
 #### body
@@ -4411,8 +4409,8 @@ Why one group lift cannot apply, or `undefined` when it can. A path the resolver
 #### body
 
 ```text
-// ENUM case removed — isEnumChoiceRule guard in CHOICE arm handles this. PR-P Task
-// 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
+// Enum-shaped choices are handled by the isEnumChoiceRule guard in the CHOICE
+// arm; there is no TERMINAL rule type.
 ```
 
 ```text
@@ -5746,7 +5744,7 @@ The names of the rules this evaluation added itself, filled as each is injected.
 ### `packages/codegen/src/compiler/evaluate.ts::FieldEnumSweepState`
 
 ```text
-/** Pass-local state for one synthesizeFieldEnumRules sweep (CW6: explicit param, not ctx). */
+/** Pass-local state for one synthesizeFieldEnumRules sweep (an explicit param, not ctx). */
 ```
 
 ### `packages/codegen/src/compiler/evaluate.ts::newRules`
@@ -6026,10 +6024,7 @@ parser.c's `#define TOKEN_COUNT`: symbol ids below it are the parser's tokens (t
  * the name is free for the phase-internal context below, matching the
  * NormalizeCtx/SimplifyCtx/AssembleCtx convention).
  *
- * Folds the former positional `include?` + `generatedIdTables?` args into a
- * single `(raw, ctx?)` shape (CW5). The old 3-arg positional form is gone —
- * every real caller either omitted both or used it positionally, and the
- * one that did (generate.ts) is updated alongside this.
+ * Takes `include` and `generatedIdTables` on an optional ctx: `(raw, ctx?)`.
  */
 ```
 
@@ -6129,14 +6124,10 @@ parser.c's `#define TOKEN_COUNT`: symbol ids below it are the parser's tokens (t
 /**
  * Result of classifying a hidden (or grammar-declared-supertype) rule.
  *
- * (debt PR-P1, item 3) Replaces the former stamp-then-reread pattern: the
- * classifiers used to stamp a top-level `source` / `metadata.source` tag onto
- * the returned rule, and the caller (`classifyAndLogHiddenRules`) re-read that
- * stamp off the rule to decide whether to log a derivation + mutate the rule
- * map. Per decision 3's corollary, that "stamp then re-inspect the rule"
- * pattern must become direct return-value dataflow: the classifier now
- * returns its classification ALONGSIDE the rule, and the caller
- * reads ONLY the return value — never re-reads a tag off `rule`.
+ * The classifier returns its classification ALONGSIDE the rule, and the
+ * caller (`classifyAndLogHiddenRules`) reads ONLY the return value to decide
+ * whether to log a derivation and mutate the rule map — it never re-reads a
+ * tag off `rule`: a compiler decision does not key on a stamp it re-inspects.
  */
 ```
 
@@ -8128,8 +8119,8 @@ property, and a call that mixes the two shapes throws.
 ```text
 // raw.rules is Rule<'evaluate'> (pre-link); resolveRule's own job IS the
 // evaluate→link transition, so it structurally handles both phases —
-// widen the phase view (post-PR-S, RepeatRule<'evaluate'>/<'link'> genuinely
-// diverge in shape, so this is now an explicit cast, not a coincidence).
+// widen the phase view (RepeatRule<'evaluate'>/<'link'> genuinely diverge in
+// shape, so this is an explicit cast).
 ```
 
 #### body
@@ -8187,8 +8178,8 @@ property, and a call that mixes the two shapes throws.
 // group lifts operate on already-stamped rule bodies.
 // raw.renderAs is Rule<'evaluate'> (pre-link, override-authored literal
 // bodies); stampStaticRenderAs only reads STRING-shaped bodies, so the
-// phase view is a widen-only cast (post-PR-S, RepeatRule's per-phase
-// shapes genuinely diverge, so this is now explicit, not a coincidence).
+// phase view is a widen-only cast (RepeatRule's per-phase shapes genuinely
+// diverge, so it is explicit).
 ```
 
 #### body
@@ -8414,7 +8405,7 @@ parser rule; only the sittir-side rule the model reads changes.
 ```text
 // rawRules (ctx.rules) is Rule<'evaluate'> (RAW view);
 // extractTopLevelNamedAliasContent only walks OPTIONAL/ALIAS/SEQ/CHOICE
-// shapes present in both phases — widen the phase view (post-PR-S cast).
+// shapes present in both phases — widen the phase view.
 ```
 
 #### body
@@ -8601,7 +8592,7 @@ whose choice holds none of the children's own members (typescript's
 
 ```text
 // Already classified (e.g., enum from Evaluate)
-// PR-P: ENUM type retired — isEnumChoiceRule detects enum-shaped ChoiceRules.
+// isEnumChoiceRule detects enum-shaped ChoiceRules; there is no ENUM rule type.
 ```
 
 #### body

@@ -676,10 +676,9 @@ One export of a grammar's generated wrap module, loaded through the typed intern
 
 ```text
 /**
- * The validator-facing factory metadata, formerly read from `factory-map.json5`.
- * PR-K folds all five sections into `node-model.json5` (emitted from the single
- * `buildFactoryMap` derivation) and the validators read them here — there is no
- * validator-side re-derivation.
+ * The validator-facing factory metadata: five sections of `node-model.json5`
+ * (emitted from the single `buildFactoryMap` derivation), which the validators
+ * read here — there is no validator-side re-derivation.
  */
 ```
 

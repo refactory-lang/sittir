@@ -1787,17 +1787,16 @@ built it, the same object the upstream diagnostic stage reads.
 // getEnrichHiddenSubsequences reads the hidden-subsequence origins from the rule-origin
 // map that enrich() attaches to the grammar result.
 //
-// (Auto-group-synthesis — `applyAutoGroups` — was retired physically in
-// auto-group-visibility Chunk 3 / PR-M φ2 Phase B. Enrich now hoists every
-// `optional(seq)` (both the bare form and tree-sitter's `choice(seq, blank())`
-// desugaring, per `optionalSeqBodyOf`): inline-SAFE into a hidden
-// `_<parent>_optional<N>` symbol, inline-UNSAFE into a visible content-alias
+// Groups are not synthesized here: enrich hoists every `optional(seq)`
+// (both the bare form and tree-sitter's `choice(seq, blank())` desugaring,
+// per `optionalSeqBodyOf`): inline-SAFE into a hidden `_<parent>_optional<N>`
+// symbol, inline-UNSAFE into a visible content-alias
 // `alias(<content>, $._<parent>_group<N>)` that link's `mintContentAliasKinds`
 // registers as a real IR kind. `repeat`/`repeat1` are NOT hoisted — the hoist
 // only descends through them transparently to reach a nested `optional(seq)`;
-// a bare `repeat(seq)` with no `optional` wrapper is untouched. The old
-// wire-time pass ran BEFORE link and pre-consumed the very inline-unsafe seqs
-// link must see as inline content.)
+// a bare `repeat(seq)` with no `optional` wrapper is untouched. A wire-time
+// pass would run BEFORE link and pre-consume the very inline-unsafe seqs link
+// must see as inline content.
 ```
 
 #### body
