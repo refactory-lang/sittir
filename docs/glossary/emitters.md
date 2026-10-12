@@ -307,6 +307,15 @@ The one slot a polymorph wrapper holds its content in, or `undefined` for a
 node that is not a polymorph wrapper (supertypes are excluded: they reach a
 seat through their subtypes, not a slot).
 
+### `packages/codegen/src/emitters/render-module.ts::seatWrappersOf`
+
+Each polymorph wrapper's seat passage, the rows of `SEAT_WRAPPERS`: its kind
+id and the field id of its content slot (`wrapperSlotOf`), 0 for an
+unfielded content slot. A coordinate of a wrapper kind seats through the node
+it holds there, as a wrapper transport seats through its content
+(`sittir_core::prepare::coord_seat`). A fielded content slot with no field id
+fails at codegen.
+
 ### `packages/codegen/src/emitters/render-module.ts::slotElementsReach`
 
 Whether any element kind a slot admits reaches a seat, classified the way
@@ -324,10 +333,13 @@ kinds whose own base `after` edge a seat table fills.
 `seatReachOf`'s memo, keyed weakly by the render plan so a plan's reach set
 is computed once and dropped with the plan.
 
-### `packages/codegen/src/emitters/render-module.ts::SEAT_TARGET_SIG`
+### `packages/codegen/src/emitters/render-module.ts::seatTargetSig`
 
 The emitted `seat_target` signature line, shared by the struct and enum
-impls so the two cannot drift from the core trait.
+impls so the two cannot drift from the core trait. It names the render
+context `ctx` where the impl reads it (a delegating arm, a wrapper's
+descent) and `_ctx` where it does not (an impl of fixed-literal arms only, a
+seated kind that wraps nothing).
 
 ### `packages/codegen/src/emitters/render-module.ts::seatReachOf`
 
@@ -355,7 +367,12 @@ The seat arm of one reaching variant: a payload delegates to its own
 `impl SeatTarget` for one transport struct that reaches a seat. A seated
 kind looks itself up in the table by its kind id (`seat_site`) and answers
 its own base `edges` with the site; a polymorph wrapper that is not itself
-seated descends into its content slot. A wrapper keeps its own edges: the
+seated descends into its content slot: into a transport through its own
+`seat_target`, and into a coordinate through `sittir_core::prepare::coord_seat`,
+which answers the wrapper's own `edges` with the site the coordinate's node
+seats at, its kind's or that of the node it holds through the wrappers it is
+(`SEAT_WRAPPERS`). So a wrapper read with its content past the depth seats as
+it does read whole. A wrapper keeps its own edges: the
 descent is a separate trait, not an `Edged` delegation, so filling a seat
 never overwrites the wrapper's own kind edges. A seated kind with no kind id
 fails at codegen. A seated fixed-literal kind answers through its own type's
@@ -3004,7 +3021,9 @@ same single `SpacingWriter` wrap; a second entry point would be a second
 place the root seam policy could drift. It takes the render context and
 builds the writer from it: `.with_table(&options::WHITESPACE)` so
 `w.site(...)` resolves against this grammar's whitespace vocabulary,
-`.with_indent(&ctx.options.indent)`, and `.with_sources(ctx.sources)` so a
+`.with_indent(&ctx.options.indent)`, `.with_recording(ctx.recording)` so a
+recording render (a parsed tree's layout baseline) records the line breaks it
+writes, and `.with_sources(ctx.sources)` so a
 `Coord` slot slices its bytes from the tree the engine still holds. It wraps
 the output `String` once, never per level, and calls
 `transport.render(&mut w)`.
@@ -14049,6 +14068,11 @@ grouping whether a slot has seats.
 
 `indent` is the grammar's declared indent unit (`indentUnitOf`), empty for a grammar whose whitespace admits no indent characters. `renderOptionsRs` writes it into the generated `defaults()` as `indent: "<unit>".to_string()`, so the unit is the grammar's and core has no default of its own; an empty unit emits no line and `defaults()` keeps core's empty unit.
 
+### `packages/codegen/src/emitters/render-options-rs.ts::SeatWrapper`
+
+One `SEAT_WRAPPERS` row: a wrapper's kind id and its content field, 0 for
+unfielded content (`seatWrappersOf`).
+
 ### `packages/codegen/src/emitters/render-options-rs.ts::DepthSites`
 
 A kind and the indices of its sites that admit `indent` or `dedent`, in
@@ -14100,6 +14124,8 @@ A site's blank arm is the blank id (`armIdOf`) in its allowed ids and as its def
 
 `depthRegions` are the kinds' structural indentation regions (`depthRegionsOf`), resolved to kind ids and sorted by them; a region on a kind with no id is a build error.
 
+`seatWrappers` are the wrappers' seat passages (`seatWrappersOf`), sorted by kind id.
+
 ### `packages/codegen/src/emitters/render-options-rs.ts::renderOptionsRs`
 
 Source text of a render crate's `options.rs`: the site constants,
@@ -14108,7 +14134,7 @@ kind-indexed `EDGE_ROWS`, one dense `SEATS_*` table per seated slot
 (`seatTablesOf`), `DEPTH_SITES`, `spacing_text`, `defaults()`, the address
 trie `ADDRESSES` (`emitAddressTrie`), a `Sites` marker implementing
 `sittir_core::options::OptionSites` over those tables, and
-`pub type Options = sittir_core::options::Options<Sites>`. `KIND_FLAGS` (`kindFlagsOf`, through `denseFlags`) sits beside `EDGE_ROWS`, and `defaults()` hands it to the resolved options as `kind_flags`. No per-grammar
+`pub type Options = sittir_core::options::Options<Sites>`. `KIND_FLAGS` (`kindFlagsOf`, through `denseFlags`) sits beside `EDGE_ROWS`, and `defaults()` hands it to the resolved options as `kind_flags`. `SEAT_WRAPPERS` (per kind id, the field a wrapper's seat passes through, `NO_SITE` for any other kind) follows the seat tables, and `defaults()` hands it over as `seat_wrappers`. No per-grammar
 struct, deserializer or resolver is emitted: reading a JS object through the
 trie and resolving it over a base table live once in core, and this file only
 supplies the tables. `defaults()` builds `spacing` through
@@ -14988,7 +15014,7 @@ The rest parameter of a spreading kind is typed from the slot's own cardinality,
 
 ### `packages/codegen/src/emitters/native-crate.ts::nativeCrateFiles`
 
-The scaffold of a grammar's native crate (`rust/crates/sittir-<name>`): `Cargo.toml`, `build.rs` (compiles the generated `.sittir/src/parser.c` and a C `scanner.c` as C11; a C++ `scanner.cc`, which transpile also copies, compiles in its own C++ build so `parser.c` never goes through the C++ compiler), the napi `package.json` (private: the crate is never published; its `build` scripts run `scripts/build-native.mts`, which writes the loader, typings and binary into the grammar package's `native/` directory), and `src/lib.rs` (the `LanguageFn`, the `EngineGrammar` impl over the generated render module, whose `shows` is the generated `AnyTransport`'s set of display ids it claims a node by, so every coordinate stamps the display id at an alias envelope and the grammar id elsewhere, whose `Trivia` is the generated `TriviaTransport`, whose `whitespace` is the render options' whitespace table and layout kinds, whose `surface_kinds` is `kind_ids.rs`'s `SURFACE_KINDS`, whose `option_tables` is the render options' site tables (the addresses a parse's inferred options are written at), and whose `read_units` reads a node one level down as the generated `AnyTransport` and takes the sides of its unit children from its layout, and `sittir_core::napi_engine!`). `runCodegenInternal` writes these files on every `gen --all`, like the render module beside them, so a crate exists only alongside generated code it can compile and never lags its generator. No grammar edits its crate. A scanner that shares a header outside the generated sources (typescript's `scanner.c` includes `common/scanner.h`) needs no special case: `build.rs` follows each scanner source's quoted `#include`s at build time and has cargo rebuild when any of them changes. A new crate (no `Cargo.toml` yet) also triggers `pnpm install`. Pinned by a test: every grammar's crate files match the emitter.
+The scaffold of a grammar's native crate (`rust/crates/sittir-<name>`): `Cargo.toml`, `build.rs` (compiles the generated `.sittir/src/parser.c` and a C `scanner.c` as C11; a C++ `scanner.cc`, which transpile also copies, compiles in its own C++ build so `parser.c` never goes through the C++ compiler), the napi `package.json` (private: the crate is never published; its `build` scripts run `scripts/build-native.mts`, which writes the loader, typings and binary into the grammar package's `native/` directory), and `src/lib.rs` (the `LanguageFn`, the `EngineGrammar` impl over the generated render module, whose `shows` is the generated `AnyTransport`'s set of display ids it claims a node by, so every coordinate stamps the display id at an alias envelope and the grammar id elsewhere, whose `Trivia` is the generated `TriviaTransport`, whose `whitespace` is the render options' whitespace table and layout kinds, whose `surface_kinds` is `kind_ids.rs`'s `SURFACE_KINDS`, whose `option_tables` is the render options' site tables (the addresses a parse's inferred options are written at), whose `read_units` reads a node one level down as the generated `AnyTransport` and takes the sides of its unit children from its layout, and whose `render_read` reads a node `depth` levels down as `AnyTransport` and renders it through `render_transport_parts`, answering the text (the records a parsed tree's layout baseline is read from), and `sittir_core::napi_engine!`). `runCodegenInternal` writes these files on every `gen --all`, like the render module beside them, so a crate exists only alongside generated code it can compile and never lags its generator. No grammar edits its crate. A scanner that shares a header outside the generated sources (typescript's `scanner.c` includes `common/scanner.h`) needs no special case: `build.rs` follows each scanner source's quoted `#include`s at build time and has cargo rebuild when any of them changes. A new crate (no `Cargo.toml` yet) also triggers `pnpm install`. Pinned by a test: every grammar's crate files match the emitter.
 
 ### `packages/codegen/src/emitters/native-crate.ts::NativeCrateFile`
 

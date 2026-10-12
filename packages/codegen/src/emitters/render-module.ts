@@ -106,6 +106,7 @@ import {
 	planRenderOptions,
 	renderOptionsRs,
 	type RenderOptionsPlan,
+	type SeatWrapper,
 	type SpacingSite,
 	type DelimiterSite
 } from './render-options-rs.ts';
@@ -654,7 +655,7 @@ function renderTypedDispatch(
 	);
 	lines.push(`    let mut s = String::new();`);
 	lines.push(
-		`    let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options);`
+		`    let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options).with_recording(ctx.recording);`
 	);
 	lines.push(`    let document = ::sittir_core::view::KindTest::kind_in(transport, &w, kind::ROOT_KINDS);`);
 	lines.push(`    let mut w = w.with_document(document);`);
@@ -1097,6 +1098,7 @@ const EMPTY_PLAN: RenderPlan = {
 	whitespaceText: [],
 	kindFlags: [],
 			leafEdges: [],
+			seatWrappers: [],
 			gaps: [],
 	indentChars: [],
 	indent: '',
@@ -1126,7 +1128,8 @@ function planRenderOptionsFor(
 		whitespaceTextOf(inputs.visibleExternals, nodeMap),
 		declaredIndent,
 		lang,
-		depthRegionsOf(inputs.renderRules, nodeMap)
+		depthRegionsOf(inputs.renderRules, nodeMap),
+		seatWrappersOf(nodeMap, kindEntries, generatedIdTables)
 	);
 	const addresses = inputs.addresses ?? addressTablesFor(nodeMap, kindEntries, sites, inputs.options);
 	return { plan, addresses, kindEntries };
@@ -2747,6 +2750,19 @@ function wrapperSlotOf(node: AssembledNode): AssembledNonterminal | undefined {
 	return slot?.name === undefined ? undefined : slot;
 }
 
+function seatWrappersOf(nodeMap: NodeMap, kindEntries: readonly KindEntryLike[], tables: GeneratedIdTables): SeatWrapper[] {
+	const fields = new Map(generatedFieldIds(tables).map(({ name, id }) => [name, id]));
+	return [...nodeMap.nodes.values()].flatMap((node) => {
+		const slot = wrapperSlotOf(node);
+		const id = slot === undefined ? undefined : edgeKindId(kindEntries, node.display.name);
+		if (slot === undefined || id === undefined) return [];
+		if (slot.isUnnamed) return [{ id, field: 0 }];
+		const field = fields.get(slot.name!);
+		if (field === undefined) throw new Error(`the wrapper '${node.display.name}' holds its content in '${slot.name}', which has no field id`);
+		return [{ id, field }];
+	});
+}
+
 function slotElementsReach(slot: AssembledNonterminal, nodeMap: NodeMap, reaches: SeatReach): boolean {
 	const kinds = kindsOf(slot);
 	const cls = classifySlotForEmit(kinds, nodeMap);
@@ -2789,14 +2805,16 @@ function seatReachOf(plan: RenderPlan, nodeMap: NodeMap): SeatReach {
 	return has;
 }
 
-const SEAT_TARGET_SIG =
-	'    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {';
+function seatTargetSig(usesCtx: boolean): string {
+	const ctx = usesCtx ? 'ctx' : '_ctx';
+	return `    fn seat_target(&mut self, table: &[u16], ${ctx}: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {`;
+}
 
 function seatTargetMatchImpl(typeName: string, arms: readonly string[], exhaustive: boolean): string[] {
 	if (arms.length === 0) return [];
 	return [
 		`impl ::sittir_core::prepare::SeatTarget for ${typeName} {`,
-		SEAT_TARGET_SIG,
+		seatTargetSig(arms.some((arm) => arm.includes('ctx'))),
 		'        match self {',
 		...arms.map((arm) => `            ${arm}`),
 		...(exhaustive ? [] : ['            #[allow(unreachable_patterns)]', '            _ => None,']),
@@ -2808,7 +2826,7 @@ function seatTargetMatchImpl(typeName: string, arms: readonly string[], exhausti
 }
 
 function seatArm(variant: string, kind: string, node: AssembledNode, fixed: FixedLiterals): string {
-	return isFixedTextLeaf(node) ? fixedSeatArm(`Self::${variant}`, fixedLiteralOf(fixed, kind)) : `Self::${variant}(t) => t.seat_target(table),`;
+	return isFixedTextLeaf(node) ? fixedSeatArm(`Self::${variant}`, fixedLiteralOf(fixed, kind)) : `Self::${variant}(t) => t.seat_target(table, ctx),`;
 }
 
 function seatTargetStructImpl(
@@ -2833,19 +2851,26 @@ function seatTargetStructImpl(
 		);
 	}
 	const wrapper = wrapperSlotOf(node);
-	if (wrapper !== undefined && slotElementsReach(wrapper, nodeMap, reaches)) {
-		const held = isTransportRequired(wrapper)
-			? '::sittir_core::SlotValue::Transport(inner)'
-			: 'Some(::sittir_core::SlotValue::Transport(inner))';
+	const wraps = wrapper !== undefined && slotElementsReach(wrapper, nodeMap, reaches);
+	if (wraps) {
+		const field = `self.${rustFieldIdent(wrapper.name!)}`;
+		const held = isTransportRequired(wrapper) ? `&mut ${field}` : `${field}.as_mut()`;
+		const content = isTransportRequired(wrapper) ? 'Some(content)' : 'content';
 		body.push(
-			`        if let ${held} = &mut self.${rustFieldIdent(wrapper.name!)} {`,
-			'            return inner.seat_target(table);',
+			`        match ${content === 'content' ? held : `Some(${held})`} {`,
+			'            Some(::sittir_core::SlotValue::Transport(inner)) => return inner.seat_target(table, ctx),',
+			'            Some(::sittir_core::SlotValue::Coord(coord)) => {',
+			'                if let Some(site) = ::sittir_core::prepare::coord_seat(coord, table, ctx) {',
+			'                    return Some((self.layout.edges_mut(), site));',
+			'                }',
+			'            }',
+			'            None => {}',
 			'        }'
 		);
 	}
 	return [
 		`impl ::sittir_core::prepare::SeatTarget for ${rustTransportStructName(node)} {`,
-		SEAT_TARGET_SIG,
+		seatTargetSig(wraps),
 		...body,
 		'        None',
 		'    }',

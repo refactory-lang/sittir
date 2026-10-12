@@ -35546,7 +35546,7 @@ impl ::sittir_core::render::Render for MacroRulesBangTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for EmptyStatementTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::EmptyStatement(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(178)).map(|site| (edges, site)),
         }
@@ -35554,16 +35554,22 @@ impl ::sittir_core::prepare::SeatTarget for EmptyStatementTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ExpressionStatementTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let ::sittir_core::SlotValue::Transport(inner) = &mut self.content {
-            return inner.seat_target(table);
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match Some(&mut self.content) {
+            Some(::sittir_core::SlotValue::Transport(inner)) => return inner.seat_target(table, ctx),
+            Some(::sittir_core::SlotValue::Coord(coord)) => {
+                if let Some(site) = ::sittir_core::prepare::coord_seat(coord, table, ctx) {
+                    return Some((self.layout.edges_mut(), site));
+                }
+            }
+            None => {}
         }
         None
     }
 }
 
 impl ::sittir_core::prepare::SeatTarget for MacroRuleTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(181)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35572,7 +35578,7 @@ impl ::sittir_core::prepare::SeatTarget for MacroRuleTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TokenBindingPatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(184)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35581,7 +35587,7 @@ impl ::sittir_core::prepare::SeatTarget for TokenBindingPatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TokenRepetitionPatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(185)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35590,7 +35596,7 @@ impl ::sittir_core::prepare::SeatTarget for TokenRepetitionPatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TokenRepetitionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(188)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35599,16 +35605,22 @@ impl ::sittir_core::prepare::SeatTarget for TokenRepetitionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for NonSpecialTokenTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let ::sittir_core::SlotValue::Transport(inner) = &mut self.content {
-            return inner.seat_target(table);
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match Some(&mut self.content) {
+            Some(::sittir_core::SlotValue::Transport(inner)) => return inner.seat_target(table, ctx),
+            Some(::sittir_core::SlotValue::Coord(coord)) => {
+                if let Some(site) = ::sittir_core::prepare::coord_seat(coord, table, ctx) {
+                    return Some((self.layout.edges_mut(), site));
+                }
+            }
+            None => {}
         }
         None
     }
 }
 
 impl ::sittir_core::prepare::SeatTarget for AttributeItemTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(190)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35617,7 +35629,7 @@ impl ::sittir_core::prepare::SeatTarget for AttributeItemTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for InnerAttributeItemTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(191)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35626,7 +35638,7 @@ impl ::sittir_core::prepare::SeatTarget for InnerAttributeItemTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for UnionItemTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(197)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35635,7 +35647,7 @@ impl ::sittir_core::prepare::SeatTarget for UnionItemTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for EnumItemTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(198)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35644,7 +35656,7 @@ impl ::sittir_core::prepare::SeatTarget for EnumItemTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ExternCrateDeclarationTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(204)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35653,7 +35665,7 @@ impl ::sittir_core::prepare::SeatTarget for ExternCrateDeclarationTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ConstItemTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(205)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35662,7 +35674,7 @@ impl ::sittir_core::prepare::SeatTarget for ConstItemTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for StaticItemTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(206)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35671,7 +35683,7 @@ impl ::sittir_core::prepare::SeatTarget for StaticItemTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TypeItemTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(207)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35680,7 +35692,7 @@ impl ::sittir_core::prepare::SeatTarget for TypeItemTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for FunctionItemTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(208)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35689,7 +35701,7 @@ impl ::sittir_core::prepare::SeatTarget for FunctionItemTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for FunctionSignatureItemTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(209)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35698,7 +35710,7 @@ impl ::sittir_core::prepare::SeatTarget for FunctionSignatureItemTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for WherePredicateTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(212)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35707,7 +35719,7 @@ impl ::sittir_core::prepare::SeatTarget for WherePredicateTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TraitItemTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(214)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35716,7 +35728,7 @@ impl ::sittir_core::prepare::SeatTarget for TraitItemTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for AssociatedTypeTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(215)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35725,7 +35737,7 @@ impl ::sittir_core::prepare::SeatTarget for AssociatedTypeTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for HigherRankedTraitBoundTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(217)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35734,7 +35746,7 @@ impl ::sittir_core::prepare::SeatTarget for HigherRankedTraitBoundTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for RemovedTraitBoundTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(218)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35743,7 +35755,7 @@ impl ::sittir_core::prepare::SeatTarget for RemovedTraitBoundTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for LetDeclarationTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(223)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35752,7 +35764,7 @@ impl ::sittir_core::prepare::SeatTarget for LetDeclarationTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for UseDeclarationTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(224)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35761,7 +35773,7 @@ impl ::sittir_core::prepare::SeatTarget for UseDeclarationTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ScopedUseListTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(226)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35770,7 +35782,7 @@ impl ::sittir_core::prepare::SeatTarget for ScopedUseListTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for UseListTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(227)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35779,7 +35791,7 @@ impl ::sittir_core::prepare::SeatTarget for UseListTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for UseAsClauseTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(228)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35788,7 +35800,7 @@ impl ::sittir_core::prepare::SeatTarget for UseAsClauseTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for UseWildcardTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(229)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35797,7 +35809,7 @@ impl ::sittir_core::prepare::SeatTarget for UseWildcardTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ParameterTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(233)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35806,7 +35818,7 @@ impl ::sittir_core::prepare::SeatTarget for ParameterTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ExternModifierTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(234)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35815,16 +35827,22 @@ impl ::sittir_core::prepare::SeatTarget for ExternModifierTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for VisibilityModifierTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let ::sittir_core::SlotValue::Transport(inner) = &mut self.content {
-            return inner.seat_target(table);
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match Some(&mut self.content) {
+            Some(::sittir_core::SlotValue::Transport(inner)) => return inner.seat_target(table, ctx),
+            Some(::sittir_core::SlotValue::Coord(coord)) => {
+                if let Some(site) = ::sittir_core::prepare::coord_seat(coord, table, ctx) {
+                    return Some((self.layout.edges_mut(), site));
+                }
+            }
+            None => {}
         }
         None
     }
 }
 
 impl ::sittir_core::prepare::SeatTarget for LifetimeTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(239)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35833,7 +35851,7 @@ impl ::sittir_core::prepare::SeatTarget for LifetimeTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ArrayTypeTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(240)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35842,7 +35860,7 @@ impl ::sittir_core::prepare::SeatTarget for ArrayTypeTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for FunctionTypeTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(242)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35851,7 +35869,7 @@ impl ::sittir_core::prepare::SeatTarget for FunctionTypeTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TupleTypeTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(243)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35860,7 +35878,7 @@ impl ::sittir_core::prepare::SeatTarget for TupleTypeTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for UnitTypeTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::UnitType(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(244)).map(|site| (edges, site)),
         }
@@ -35868,7 +35886,7 @@ impl ::sittir_core::prepare::SeatTarget for UnitTypeTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for GenericFunctionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(245)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35877,7 +35895,7 @@ impl ::sittir_core::prepare::SeatTarget for GenericFunctionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for GenericTypeTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(246)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35886,7 +35904,7 @@ impl ::sittir_core::prepare::SeatTarget for GenericTypeTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for BoundedTypeTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(248)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35895,7 +35913,7 @@ impl ::sittir_core::prepare::SeatTarget for BoundedTypeTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ReferenceTypeTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(252)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35904,7 +35922,7 @@ impl ::sittir_core::prepare::SeatTarget for ReferenceTypeTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for NeverTypeTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::NeverType(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(254)).map(|site| (edges, site)),
         }
@@ -35912,7 +35930,7 @@ impl ::sittir_core::prepare::SeatTarget for NeverTypeTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for AbstractTypeTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(255)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35921,7 +35939,7 @@ impl ::sittir_core::prepare::SeatTarget for AbstractTypeTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for DynamicTypeTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(256)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35930,7 +35948,7 @@ impl ::sittir_core::prepare::SeatTarget for DynamicTypeTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for MacroInvocationTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(259)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35939,7 +35957,7 @@ impl ::sittir_core::prepare::SeatTarget for MacroInvocationTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ScopedIdentifierTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(263)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35948,7 +35966,7 @@ impl ::sittir_core::prepare::SeatTarget for ScopedIdentifierTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ScopedTypeIdentifierTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(265)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35957,7 +35975,7 @@ impl ::sittir_core::prepare::SeatTarget for ScopedTypeIdentifierTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for UnaryExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(267)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35966,7 +35984,7 @@ impl ::sittir_core::prepare::SeatTarget for UnaryExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TryExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(268)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35975,7 +35993,7 @@ impl ::sittir_core::prepare::SeatTarget for TryExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for BinaryExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(270)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35984,7 +36002,7 @@ impl ::sittir_core::prepare::SeatTarget for BinaryExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for AssignmentExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(271)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -35993,7 +36011,7 @@ impl ::sittir_core::prepare::SeatTarget for AssignmentExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for CompoundAssignmentExprTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(272)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36002,7 +36020,7 @@ impl ::sittir_core::prepare::SeatTarget for CompoundAssignmentExprTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TypeCastExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(273)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36011,7 +36029,7 @@ impl ::sittir_core::prepare::SeatTarget for TypeCastExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ReturnExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(274)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36020,7 +36038,7 @@ impl ::sittir_core::prepare::SeatTarget for ReturnExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for YieldExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(275)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36029,7 +36047,7 @@ impl ::sittir_core::prepare::SeatTarget for YieldExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for CallExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(276)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36038,7 +36056,7 @@ impl ::sittir_core::prepare::SeatTarget for CallExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ParenthesizedExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(279)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36047,7 +36065,7 @@ impl ::sittir_core::prepare::SeatTarget for ParenthesizedExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TupleExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(280)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36056,7 +36074,7 @@ impl ::sittir_core::prepare::SeatTarget for TupleExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for UnitExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::UnitExpression(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(281)).map(|site| (edges, site)),
         }
@@ -36064,7 +36082,7 @@ impl ::sittir_core::prepare::SeatTarget for UnitExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for StructExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(282)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36073,7 +36091,7 @@ impl ::sittir_core::prepare::SeatTarget for StructExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ShorthandFieldInitializerTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(284)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36082,7 +36100,7 @@ impl ::sittir_core::prepare::SeatTarget for ShorthandFieldInitializerTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for FieldInitializerTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(285)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36091,7 +36109,7 @@ impl ::sittir_core::prepare::SeatTarget for FieldInitializerTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for BaseFieldInitializerTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(286)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36100,7 +36118,7 @@ impl ::sittir_core::prepare::SeatTarget for BaseFieldInitializerTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for IfExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(287)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36109,7 +36127,7 @@ impl ::sittir_core::prepare::SeatTarget for IfExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for LetConditionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(288)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36118,7 +36136,7 @@ impl ::sittir_core::prepare::SeatTarget for LetConditionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for MatchExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(292)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36127,7 +36145,7 @@ impl ::sittir_core::prepare::SeatTarget for MatchExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for WhileExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(297)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36136,7 +36154,7 @@ impl ::sittir_core::prepare::SeatTarget for WhileExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for LoopExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(298)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36145,7 +36163,7 @@ impl ::sittir_core::prepare::SeatTarget for LoopExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ForExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(299)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36154,7 +36172,7 @@ impl ::sittir_core::prepare::SeatTarget for ForExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ConstBlockTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(300)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36163,7 +36181,7 @@ impl ::sittir_core::prepare::SeatTarget for ConstBlockTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for BreakExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(304)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36172,7 +36190,7 @@ impl ::sittir_core::prepare::SeatTarget for BreakExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ContinueExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(305)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36181,7 +36199,7 @@ impl ::sittir_core::prepare::SeatTarget for ContinueExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for IndexExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(306)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36190,7 +36208,7 @@ impl ::sittir_core::prepare::SeatTarget for IndexExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for AwaitExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(307)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36199,7 +36217,7 @@ impl ::sittir_core::prepare::SeatTarget for AwaitExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for FieldExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(308)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36208,7 +36226,7 @@ impl ::sittir_core::prepare::SeatTarget for FieldExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for UnsafeBlockTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(309)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36217,7 +36235,7 @@ impl ::sittir_core::prepare::SeatTarget for UnsafeBlockTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for AsyncBlockTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(310)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36226,7 +36244,7 @@ impl ::sittir_core::prepare::SeatTarget for AsyncBlockTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for GenBlockTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(311)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36235,7 +36253,7 @@ impl ::sittir_core::prepare::SeatTarget for GenBlockTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TryBlockTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(312)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36244,7 +36262,7 @@ impl ::sittir_core::prepare::SeatTarget for TryBlockTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for BlockTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(313)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36253,7 +36271,7 @@ impl ::sittir_core::prepare::SeatTarget for BlockTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for GenericPatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(315)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36262,7 +36280,7 @@ impl ::sittir_core::prepare::SeatTarget for GenericPatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TuplePatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(316)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36271,7 +36289,7 @@ impl ::sittir_core::prepare::SeatTarget for TuplePatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for SlicePatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(317)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36280,7 +36298,7 @@ impl ::sittir_core::prepare::SeatTarget for SlicePatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TupleStructPatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(318)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36289,7 +36307,7 @@ impl ::sittir_core::prepare::SeatTarget for TupleStructPatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for StructPatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(319)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36298,7 +36316,7 @@ impl ::sittir_core::prepare::SeatTarget for StructPatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for RemainingFieldPatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::RemainingFieldPattern(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(321)).map(|site| (edges, site)),
         }
@@ -36306,7 +36324,7 @@ impl ::sittir_core::prepare::SeatTarget for RemainingFieldPatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for MutPatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(322)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36315,7 +36333,7 @@ impl ::sittir_core::prepare::SeatTarget for MutPatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for RefPatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(324)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36324,7 +36342,7 @@ impl ::sittir_core::prepare::SeatTarget for RefPatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for CapturedPatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(325)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36333,7 +36351,7 @@ impl ::sittir_core::prepare::SeatTarget for CapturedPatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ReferencePatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(326)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36342,7 +36360,7 @@ impl ::sittir_core::prepare::SeatTarget for ReferencePatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for NegativeLiteralTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(330)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36351,7 +36369,7 @@ impl ::sittir_core::prepare::SeatTarget for NegativeLiteralTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for StringLiteralTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(332)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36360,7 +36378,7 @@ impl ::sittir_core::prepare::SeatTarget for StringLiteralTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for RawStringLiteralTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(333)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36369,7 +36387,7 @@ impl ::sittir_core::prepare::SeatTarget for RawStringLiteralTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for Self_Transport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
         }
@@ -36377,7 +36395,7 @@ impl ::sittir_core::prepare::SeatTarget for Self_Transport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for SuperTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
         }
@@ -36385,7 +36403,7 @@ impl ::sittir_core::prepare::SeatTarget for SuperTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for CrateTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(127)).map(|site| (edges, site)),
         }
@@ -36393,7 +36411,7 @@ impl ::sittir_core::prepare::SeatTarget for CrateTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ArrayExpressionSemiTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(366)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36402,7 +36420,7 @@ impl ::sittir_core::prepare::SeatTarget for ArrayExpressionSemiTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ArrayExpressionListTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(367)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36411,16 +36429,22 @@ impl ::sittir_core::prepare::SeatTarget for ArrayExpressionListTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for AttributeInputTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let Some(::sittir_core::SlotValue::Transport(inner)) = &mut self.value {
-            return inner.seat_target(table);
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match self.value.as_mut() {
+            Some(::sittir_core::SlotValue::Transport(inner)) => return inner.seat_target(table, ctx),
+            Some(::sittir_core::SlotValue::Coord(coord)) => {
+                if let Some(site) = ::sittir_core::prepare::coord_seat(coord, table, ctx) {
+                    return Some((self.layout.edges_mut(), site));
+                }
+            }
+            None => {}
         }
         None
     }
 }
 
 impl ::sittir_core::prepare::SeatTarget for ClosureExpressionBlockTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(369)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36429,7 +36453,7 @@ impl ::sittir_core::prepare::SeatTarget for ClosureExpressionBlockTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ClosureExpressionExprTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(370)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36438,7 +36462,7 @@ impl ::sittir_core::prepare::SeatTarget for ClosureExpressionExprTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ReferenceExpressionRawConstTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(371)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36447,7 +36471,7 @@ impl ::sittir_core::prepare::SeatTarget for ReferenceExpressionRawConstTransport
 }
 
 impl ::sittir_core::prepare::SeatTarget for ReferenceExpressionRawMutTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(372)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36456,7 +36480,7 @@ impl ::sittir_core::prepare::SeatTarget for ReferenceExpressionRawMutTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ReferenceExpressionMutTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(373)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36465,7 +36489,7 @@ impl ::sittir_core::prepare::SeatTarget for ReferenceExpressionMutTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ReferenceExpressionBareTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(374)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36474,7 +36498,7 @@ impl ::sittir_core::prepare::SeatTarget for ReferenceExpressionBareTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ImplItemBodyTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(377)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36483,7 +36507,7 @@ impl ::sittir_core::prepare::SeatTarget for ImplItemBodyTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ImplItemSemiTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(378)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36492,25 +36516,37 @@ impl ::sittir_core::prepare::SeatTarget for ImplItemSemiTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for VisibilityModifierPubScopeInPathTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let ::sittir_core::SlotValue::Transport(inner) = &mut self.path {
-            return inner.seat_target(table);
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match Some(&mut self.path) {
+            Some(::sittir_core::SlotValue::Transport(inner)) => return inner.seat_target(table, ctx),
+            Some(::sittir_core::SlotValue::Coord(coord)) => {
+                if let Some(site) = ::sittir_core::prepare::coord_seat(coord, table, ctx) {
+                    return Some((self.layout.edges_mut(), site));
+                }
+            }
+            None => {}
         }
         None
     }
 }
 
 impl ::sittir_core::prepare::SeatTarget for VisibilityModifierPubScopeTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let ::sittir_core::SlotValue::Transport(inner) = &mut self.content {
-            return inner.seat_target(table);
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match Some(&mut self.content) {
+            Some(::sittir_core::SlotValue::Transport(inner)) => return inner.seat_target(table, ctx),
+            Some(::sittir_core::SlotValue::Coord(coord)) => {
+                if let Some(site) = ::sittir_core::prepare::coord_seat(coord, table, ctx) {
+                    return Some((self.layout.edges_mut(), site));
+                }
+            }
+            None => {}
         }
         None
     }
 }
 
 impl ::sittir_core::prepare::SeatTarget for ModItemExternalTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(384)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36519,7 +36555,7 @@ impl ::sittir_core::prepare::SeatTarget for ModItemExternalTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ModItemInlineTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(385)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36528,7 +36564,7 @@ impl ::sittir_core::prepare::SeatTarget for ModItemInlineTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for OrPatternBinaryTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(386)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36537,7 +36573,7 @@ impl ::sittir_core::prepare::SeatTarget for OrPatternBinaryTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for OrPatternPrefixTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(387)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36546,7 +36582,7 @@ impl ::sittir_core::prepare::SeatTarget for OrPatternPrefixTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for PointerTypeConstTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(388)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36555,7 +36591,7 @@ impl ::sittir_core::prepare::SeatTarget for PointerTypeConstTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for PointerTypeMutTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(389)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36564,7 +36600,7 @@ impl ::sittir_core::prepare::SeatTarget for PointerTypeMutTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for RangeExpressionBinaryTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(390)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36573,7 +36609,7 @@ impl ::sittir_core::prepare::SeatTarget for RangeExpressionBinaryTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for RangeExpressionPostfixTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(391)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36582,7 +36618,7 @@ impl ::sittir_core::prepare::SeatTarget for RangeExpressionPostfixTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for RangeExpressionPrefixTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(392)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36591,7 +36627,7 @@ impl ::sittir_core::prepare::SeatTarget for RangeExpressionPrefixTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ExpressionStatementWithSemiTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(394)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36600,7 +36636,7 @@ impl ::sittir_core::prepare::SeatTarget for ExpressionStatementWithSemiTransport
 }
 
 impl ::sittir_core::prepare::SeatTarget for ForeignModItemSemiTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(395)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36609,7 +36645,7 @@ impl ::sittir_core::prepare::SeatTarget for ForeignModItemSemiTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ForeignModItemBodyTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(396)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36618,7 +36654,7 @@ impl ::sittir_core::prepare::SeatTarget for ForeignModItemBodyTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for MatchArmWithCommaTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(397)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36627,7 +36663,7 @@ impl ::sittir_core::prepare::SeatTarget for MatchArmWithCommaTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for MatchArmBlockEndingTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(398)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36636,7 +36672,7 @@ impl ::sittir_core::prepare::SeatTarget for MatchArmBlockEndingTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TokenTreePatternParenTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(405)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36645,7 +36681,7 @@ impl ::sittir_core::prepare::SeatTarget for TokenTreePatternParenTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TokenTreePatternBracketTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(406)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36654,7 +36690,7 @@ impl ::sittir_core::prepare::SeatTarget for TokenTreePatternBracketTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TokenTreePatternBraceTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(407)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36663,7 +36699,7 @@ impl ::sittir_core::prepare::SeatTarget for TokenTreePatternBraceTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TokenTreeParenTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(408)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36672,7 +36708,7 @@ impl ::sittir_core::prepare::SeatTarget for TokenTreeParenTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TokenTreeBracketTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(409)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36681,7 +36717,7 @@ impl ::sittir_core::prepare::SeatTarget for TokenTreeBracketTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TokenTreeBraceTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(410)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36690,7 +36726,7 @@ impl ::sittir_core::prepare::SeatTarget for TokenTreeBraceTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for DelimTokenTreeParenTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(411)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36699,7 +36735,7 @@ impl ::sittir_core::prepare::SeatTarget for DelimTokenTreeParenTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for DelimTokenTreeBracketTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(412)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36708,7 +36744,7 @@ impl ::sittir_core::prepare::SeatTarget for DelimTokenTreeBracketTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for DelimTokenTreeBraceTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(413)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36717,7 +36753,7 @@ impl ::sittir_core::prepare::SeatTarget for DelimTokenTreeBraceTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for FieldPatternShorthandTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(414)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36726,7 +36762,7 @@ impl ::sittir_core::prepare::SeatTarget for FieldPatternShorthandTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for FieldPatternNamedTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(415)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36735,7 +36771,7 @@ impl ::sittir_core::prepare::SeatTarget for FieldPatternNamedTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for MacroDefinitionParenTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(416)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36744,7 +36780,7 @@ impl ::sittir_core::prepare::SeatTarget for MacroDefinitionParenTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for MacroDefinitionBracketTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(417)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36753,7 +36789,7 @@ impl ::sittir_core::prepare::SeatTarget for MacroDefinitionBracketTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for MacroDefinitionBraceTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(418)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36762,7 +36798,7 @@ impl ::sittir_core::prepare::SeatTarget for MacroDefinitionBraceTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for RangePatternPrefixTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(419)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36771,7 +36807,7 @@ impl ::sittir_core::prepare::SeatTarget for RangePatternPrefixTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for RangePatternWithLeftTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(422)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36780,7 +36816,7 @@ impl ::sittir_core::prepare::SeatTarget for RangePatternWithLeftTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for StructItemBraceTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(423)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36789,7 +36825,7 @@ impl ::sittir_core::prepare::SeatTarget for StructItemBraceTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for StructItemTupleTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(424)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36798,7 +36834,7 @@ impl ::sittir_core::prepare::SeatTarget for StructItemTupleTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for StructItemUnitTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(425)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36807,7 +36843,7 @@ impl ::sittir_core::prepare::SeatTarget for StructItemUnitTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for WildcardPatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::WildcardPattern(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(426)).map(|site| (edges, site)),
         }
@@ -36815,7 +36851,7 @@ impl ::sittir_core::prepare::SeatTarget for WildcardPatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for AttributedFieldDeclarationTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(427)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36824,7 +36860,7 @@ impl ::sittir_core::prepare::SeatTarget for AttributedFieldDeclarationTransport 
 }
 
 impl ::sittir_core::prepare::SeatTarget for AttributedEnumVariantTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(428)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36833,7 +36869,7 @@ impl ::sittir_core::prepare::SeatTarget for AttributedEnumVariantTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for AttributedParameterTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(429)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36842,7 +36878,7 @@ impl ::sittir_core::prepare::SeatTarget for AttributedParameterTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for AttributedTypeParameterTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(430)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36851,7 +36887,7 @@ impl ::sittir_core::prepare::SeatTarget for AttributedTypeParameterTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for AttributedArgumentTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(431)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36860,7 +36896,7 @@ impl ::sittir_core::prepare::SeatTarget for AttributedArgumentTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for AttributedOrderedFieldTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(432)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36869,7 +36905,7 @@ impl ::sittir_core::prepare::SeatTarget for AttributedOrderedFieldTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TypeArgumentTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(433)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -36878,31 +36914,31 @@ impl ::sittir_core::prepare::SeatTarget for TypeArgumentTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for StatementTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ExpressionStatement(t) => t.seat_target(table),
-            Self::DeclarationStatement(t) => t.seat_target(table),
-            Self::ConstItem(t) => t.seat_target(table),
-            Self::MacroInvocation(t) => t.seat_target(table),
-            Self::MacroDefinition(t) => t.seat_target(table),
+            Self::ExpressionStatement(t) => t.seat_target(table, ctx),
+            Self::DeclarationStatement(t) => t.seat_target(table, ctx),
+            Self::ConstItem(t) => t.seat_target(table, ctx),
+            Self::MacroInvocation(t) => t.seat_target(table, ctx),
+            Self::MacroDefinition(t) => t.seat_target(table, ctx),
             Self::EmptyStatement(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(178)).map(|site| (edges, site)),
-            Self::AttributeItem(t) => t.seat_target(table),
-            Self::InnerAttributeItem(t) => t.seat_target(table),
-            Self::ModItem(t) => t.seat_target(table),
-            Self::ForeignModItem(t) => t.seat_target(table),
-            Self::StructItem(t) => t.seat_target(table),
-            Self::UnionItem(t) => t.seat_target(table),
-            Self::EnumItem(t) => t.seat_target(table),
-            Self::TypeItem(t) => t.seat_target(table),
-            Self::FunctionItem(t) => t.seat_target(table),
-            Self::FunctionSignatureItem(t) => t.seat_target(table),
-            Self::ImplItem(t) => t.seat_target(table),
-            Self::TraitItem(t) => t.seat_target(table),
-            Self::AssociatedType(t) => t.seat_target(table),
-            Self::LetDeclaration(t) => t.seat_target(table),
-            Self::UseDeclaration(t) => t.seat_target(table),
-            Self::ExternCrateDeclaration(t) => t.seat_target(table),
-            Self::StaticItem(t) => t.seat_target(table),
+            Self::AttributeItem(t) => t.seat_target(table, ctx),
+            Self::InnerAttributeItem(t) => t.seat_target(table, ctx),
+            Self::ModItem(t) => t.seat_target(table, ctx),
+            Self::ForeignModItem(t) => t.seat_target(table, ctx),
+            Self::StructItem(t) => t.seat_target(table, ctx),
+            Self::UnionItem(t) => t.seat_target(table, ctx),
+            Self::EnumItem(t) => t.seat_target(table, ctx),
+            Self::TypeItem(t) => t.seat_target(table, ctx),
+            Self::FunctionItem(t) => t.seat_target(table, ctx),
+            Self::FunctionSignatureItem(t) => t.seat_target(table, ctx),
+            Self::ImplItem(t) => t.seat_target(table, ctx),
+            Self::TraitItem(t) => t.seat_target(table, ctx),
+            Self::AssociatedType(t) => t.seat_target(table, ctx),
+            Self::LetDeclaration(t) => t.seat_target(table, ctx),
+            Self::UseDeclaration(t) => t.seat_target(table, ctx),
+            Self::ExternCrateDeclaration(t) => t.seat_target(table, ctx),
+            Self::StaticItem(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -36910,29 +36946,29 @@ impl ::sittir_core::prepare::SeatTarget for StatementTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for DeclarationStatementTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ConstItem(t) => t.seat_target(table),
-            Self::MacroInvocation(t) => t.seat_target(table),
-            Self::MacroDefinition(t) => t.seat_target(table),
+            Self::ConstItem(t) => t.seat_target(table, ctx),
+            Self::MacroInvocation(t) => t.seat_target(table, ctx),
+            Self::MacroDefinition(t) => t.seat_target(table, ctx),
             Self::EmptyStatement(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(178)).map(|site| (edges, site)),
-            Self::AttributeItem(t) => t.seat_target(table),
-            Self::InnerAttributeItem(t) => t.seat_target(table),
-            Self::ModItem(t) => t.seat_target(table),
-            Self::ForeignModItem(t) => t.seat_target(table),
-            Self::StructItem(t) => t.seat_target(table),
-            Self::UnionItem(t) => t.seat_target(table),
-            Self::EnumItem(t) => t.seat_target(table),
-            Self::TypeItem(t) => t.seat_target(table),
-            Self::FunctionItem(t) => t.seat_target(table),
-            Self::FunctionSignatureItem(t) => t.seat_target(table),
-            Self::ImplItem(t) => t.seat_target(table),
-            Self::TraitItem(t) => t.seat_target(table),
-            Self::AssociatedType(t) => t.seat_target(table),
-            Self::LetDeclaration(t) => t.seat_target(table),
-            Self::UseDeclaration(t) => t.seat_target(table),
-            Self::ExternCrateDeclaration(t) => t.seat_target(table),
-            Self::StaticItem(t) => t.seat_target(table),
+            Self::AttributeItem(t) => t.seat_target(table, ctx),
+            Self::InnerAttributeItem(t) => t.seat_target(table, ctx),
+            Self::ModItem(t) => t.seat_target(table, ctx),
+            Self::ForeignModItem(t) => t.seat_target(table, ctx),
+            Self::StructItem(t) => t.seat_target(table, ctx),
+            Self::UnionItem(t) => t.seat_target(table, ctx),
+            Self::EnumItem(t) => t.seat_target(table, ctx),
+            Self::TypeItem(t) => t.seat_target(table, ctx),
+            Self::FunctionItem(t) => t.seat_target(table, ctx),
+            Self::FunctionSignatureItem(t) => t.seat_target(table, ctx),
+            Self::ImplItem(t) => t.seat_target(table, ctx),
+            Self::TraitItem(t) => t.seat_target(table, ctx),
+            Self::AssociatedType(t) => t.seat_target(table, ctx),
+            Self::LetDeclaration(t) => t.seat_target(table, ctx),
+            Self::UseDeclaration(t) => t.seat_target(table, ctx),
+            Self::ExternCrateDeclaration(t) => t.seat_target(table, ctx),
+            Self::StaticItem(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -36940,11 +36976,11 @@ impl ::sittir_core::prepare::SeatTarget for DeclarationStatementTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for MacroDefinitionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::MacroDefinitionParen(t) => t.seat_target(table),
-            Self::MacroDefinitionBracket(t) => t.seat_target(table),
-            Self::MacroDefinitionBrace(t) => t.seat_target(table),
+            Self::MacroDefinitionParen(t) => t.seat_target(table, ctx),
+            Self::MacroDefinitionBracket(t) => t.seat_target(table, ctx),
+            Self::MacroDefinitionBrace(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -36952,11 +36988,11 @@ impl ::sittir_core::prepare::SeatTarget for MacroDefinitionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TokenTreePatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::TokenTreePatternParen(t) => t.seat_target(table),
-            Self::TokenTreePatternBracket(t) => t.seat_target(table),
-            Self::TokenTreePatternBrace(t) => t.seat_target(table),
+            Self::TokenTreePatternParen(t) => t.seat_target(table, ctx),
+            Self::TokenTreePatternBracket(t) => t.seat_target(table, ctx),
+            Self::TokenTreePatternBrace(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -36964,11 +37000,11 @@ impl ::sittir_core::prepare::SeatTarget for TokenTreePatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TokenTreeTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::TokenTreeParen(t) => t.seat_target(table),
-            Self::TokenTreeBracket(t) => t.seat_target(table),
-            Self::TokenTreeBrace(t) => t.seat_target(table),
+            Self::TokenTreeParen(t) => t.seat_target(table, ctx),
+            Self::TokenTreeBracket(t) => t.seat_target(table, ctx),
+            Self::TokenTreeBrace(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -36976,10 +37012,10 @@ impl ::sittir_core::prepare::SeatTarget for TokenTreeTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ModItemTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ModItemExternal(t) => t.seat_target(table),
-            Self::ModItemInline(t) => t.seat_target(table),
+            Self::ModItemExternal(t) => t.seat_target(table, ctx),
+            Self::ModItemInline(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -36987,10 +37023,10 @@ impl ::sittir_core::prepare::SeatTarget for ModItemTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ForeignModItemTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ForeignModItemSemi(t) => t.seat_target(table),
-            Self::ForeignModItemBody(t) => t.seat_target(table),
+            Self::ForeignModItemSemi(t) => t.seat_target(table, ctx),
+            Self::ForeignModItemBody(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -36998,11 +37034,11 @@ impl ::sittir_core::prepare::SeatTarget for ForeignModItemTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for StructItemTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::StructItemBrace(t) => t.seat_target(table),
-            Self::StructItemTuple(t) => t.seat_target(table),
-            Self::StructItemUnit(t) => t.seat_target(table),
+            Self::StructItemBrace(t) => t.seat_target(table, ctx),
+            Self::StructItemTuple(t) => t.seat_target(table, ctx),
+            Self::StructItemUnit(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37010,10 +37046,10 @@ impl ::sittir_core::prepare::SeatTarget for StructItemTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ImplItemTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ImplItemBody(t) => t.seat_target(table),
-            Self::ImplItemSemi(t) => t.seat_target(table),
+            Self::ImplItemBody(t) => t.seat_target(table, ctx),
+            Self::ImplItemSemi(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37021,22 +37057,22 @@ impl ::sittir_core::prepare::SeatTarget for ImplItemTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TypeTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::AbstractType(t) => t.seat_target(table),
-            Self::ReferenceType(t) => t.seat_target(table),
-            Self::PointerType(t) => t.seat_target(table),
-            Self::GenericType(t) => t.seat_target(table),
-            Self::ScopedTypeIdentifier(t) => t.seat_target(table),
-            Self::TupleType(t) => t.seat_target(table),
+            Self::AbstractType(t) => t.seat_target(table, ctx),
+            Self::ReferenceType(t) => t.seat_target(table, ctx),
+            Self::PointerType(t) => t.seat_target(table, ctx),
+            Self::GenericType(t) => t.seat_target(table, ctx),
+            Self::ScopedTypeIdentifier(t) => t.seat_target(table, ctx),
+            Self::TupleType(t) => t.seat_target(table, ctx),
             Self::UnitType(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(244)).map(|site| (edges, site)),
-            Self::ArrayType(t) => t.seat_target(table),
-            Self::FunctionType(t) => t.seat_target(table),
-            Self::MacroInvocation(t) => t.seat_target(table),
+            Self::ArrayType(t) => t.seat_target(table, ctx),
+            Self::FunctionType(t) => t.seat_target(table, ctx),
+            Self::MacroInvocation(t) => t.seat_target(table, ctx),
             Self::NeverType(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(254)).map(|site| (edges, site)),
-            Self::DynamicType(t) => t.seat_target(table),
-            Self::BoundedType(t) => t.seat_target(table),
-            Self::RemovedTraitBound(t) => t.seat_target(table),
+            Self::DynamicType(t) => t.seat_target(table, ctx),
+            Self::BoundedType(t) => t.seat_target(table, ctx),
+            Self::RemovedTraitBound(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37044,10 +37080,10 @@ impl ::sittir_core::prepare::SeatTarget for TypeTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for PointerTypeTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::PointerTypeConst(t) => t.seat_target(table),
-            Self::PointerTypeMut(t) => t.seat_target(table),
+            Self::PointerTypeConst(t) => t.seat_target(table, ctx),
+            Self::PointerTypeMut(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37055,47 +37091,47 @@ impl ::sittir_core::prepare::SeatTarget for PointerTypeTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::UnaryExpression(t) => t.seat_target(table),
-            Self::ReferenceExpression(t) => t.seat_target(table),
-            Self::TryExpression(t) => t.seat_target(table),
-            Self::BinaryExpression(t) => t.seat_target(table),
-            Self::AssignmentExpression(t) => t.seat_target(table),
-            Self::CompoundAssignmentExpr(t) => t.seat_target(table),
-            Self::TypeCastExpression(t) => t.seat_target(table),
-            Self::CallExpression(t) => t.seat_target(table),
-            Self::ReturnExpression(t) => t.seat_target(table),
-            Self::YieldExpression(t) => t.seat_target(table),
-            Self::StringLiteral(t) => t.seat_target(table),
-            Self::RawStringLiteral(t) => t.seat_target(table),
+            Self::UnaryExpression(t) => t.seat_target(table, ctx),
+            Self::ReferenceExpression(t) => t.seat_target(table, ctx),
+            Self::TryExpression(t) => t.seat_target(table, ctx),
+            Self::BinaryExpression(t) => t.seat_target(table, ctx),
+            Self::AssignmentExpression(t) => t.seat_target(table, ctx),
+            Self::CompoundAssignmentExpr(t) => t.seat_target(table, ctx),
+            Self::TypeCastExpression(t) => t.seat_target(table, ctx),
+            Self::CallExpression(t) => t.seat_target(table, ctx),
+            Self::ReturnExpression(t) => t.seat_target(table, ctx),
+            Self::YieldExpression(t) => t.seat_target(table, ctx),
+            Self::StringLiteral(t) => t.seat_target(table, ctx),
+            Self::RawStringLiteral(t) => t.seat_target(table, ctx),
             Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
-            Self::ScopedIdentifier(t) => t.seat_target(table),
-            Self::GenericFunction(t) => t.seat_target(table),
-            Self::AwaitExpression(t) => t.seat_target(table),
-            Self::FieldExpression(t) => t.seat_target(table),
-            Self::ArrayExpression(t) => t.seat_target(table),
-            Self::TupleExpression(t) => t.seat_target(table),
-            Self::MacroInvocation(t) => t.seat_target(table),
+            Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
+            Self::GenericFunction(t) => t.seat_target(table, ctx),
+            Self::AwaitExpression(t) => t.seat_target(table, ctx),
+            Self::FieldExpression(t) => t.seat_target(table, ctx),
+            Self::ArrayExpression(t) => t.seat_target(table, ctx),
+            Self::TupleExpression(t) => t.seat_target(table, ctx),
+            Self::MacroInvocation(t) => t.seat_target(table, ctx),
             Self::UnitExpression(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(281)).map(|site| (edges, site)),
-            Self::BreakExpression(t) => t.seat_target(table),
-            Self::ContinueExpression(t) => t.seat_target(table),
-            Self::IndexExpression(t) => t.seat_target(table),
-            Self::ClosureExpression(t) => t.seat_target(table),
-            Self::ParenthesizedExpression(t) => t.seat_target(table),
-            Self::StructExpression(t) => t.seat_target(table),
-            Self::UnsafeBlock(t) => t.seat_target(table),
-            Self::AsyncBlock(t) => t.seat_target(table),
-            Self::GenBlock(t) => t.seat_target(table),
-            Self::TryBlock(t) => t.seat_target(table),
-            Self::Block(t) => t.seat_target(table),
-            Self::IfExpression(t) => t.seat_target(table),
-            Self::MatchExpression(t) => t.seat_target(table),
-            Self::WhileExpression(t) => t.seat_target(table),
-            Self::LoopExpression(t) => t.seat_target(table),
-            Self::ForExpression(t) => t.seat_target(table),
-            Self::ConstBlock(t) => t.seat_target(table),
-            Self::RangeExpression(t) => t.seat_target(table),
+            Self::BreakExpression(t) => t.seat_target(table, ctx),
+            Self::ContinueExpression(t) => t.seat_target(table, ctx),
+            Self::IndexExpression(t) => t.seat_target(table, ctx),
+            Self::ClosureExpression(t) => t.seat_target(table, ctx),
+            Self::ParenthesizedExpression(t) => t.seat_target(table, ctx),
+            Self::StructExpression(t) => t.seat_target(table, ctx),
+            Self::UnsafeBlock(t) => t.seat_target(table, ctx),
+            Self::AsyncBlock(t) => t.seat_target(table, ctx),
+            Self::GenBlock(t) => t.seat_target(table, ctx),
+            Self::TryBlock(t) => t.seat_target(table, ctx),
+            Self::Block(t) => t.seat_target(table, ctx),
+            Self::IfExpression(t) => t.seat_target(table, ctx),
+            Self::MatchExpression(t) => t.seat_target(table, ctx),
+            Self::WhileExpression(t) => t.seat_target(table, ctx),
+            Self::LoopExpression(t) => t.seat_target(table, ctx),
+            Self::ForExpression(t) => t.seat_target(table, ctx),
+            Self::ConstBlock(t) => t.seat_target(table, ctx),
+            Self::RangeExpression(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37103,11 +37139,11 @@ impl ::sittir_core::prepare::SeatTarget for ExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for DelimTokenTreeTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::DelimTokenTreeParen(t) => t.seat_target(table),
-            Self::DelimTokenTreeBracket(t) => t.seat_target(table),
-            Self::DelimTokenTreeBrace(t) => t.seat_target(table),
+            Self::DelimTokenTreeParen(t) => t.seat_target(table, ctx),
+            Self::DelimTokenTreeBracket(t) => t.seat_target(table, ctx),
+            Self::DelimTokenTreeBrace(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37115,11 +37151,11 @@ impl ::sittir_core::prepare::SeatTarget for DelimTokenTreeTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for RangeExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::RangeExpressionBinary(t) => t.seat_target(table),
-            Self::RangeExpressionPostfix(t) => t.seat_target(table),
-            Self::RangeExpressionPrefix(t) => t.seat_target(table),
+            Self::RangeExpressionBinary(t) => t.seat_target(table, ctx),
+            Self::RangeExpressionPostfix(t) => t.seat_target(table, ctx),
+            Self::RangeExpressionPrefix(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37127,12 +37163,12 @@ impl ::sittir_core::prepare::SeatTarget for RangeExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ReferenceExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ReferenceExpressionRawConst(t) => t.seat_target(table),
-            Self::ReferenceExpressionRawMut(t) => t.seat_target(table),
-            Self::ReferenceExpressionMut(t) => t.seat_target(table),
-            Self::ReferenceExpressionBare(t) => t.seat_target(table),
+            Self::ReferenceExpressionRawConst(t) => t.seat_target(table, ctx),
+            Self::ReferenceExpressionRawMut(t) => t.seat_target(table, ctx),
+            Self::ReferenceExpressionMut(t) => t.seat_target(table, ctx),
+            Self::ReferenceExpressionBare(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37140,10 +37176,10 @@ impl ::sittir_core::prepare::SeatTarget for ReferenceExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ArrayExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ArrayExpressionSemi(t) => t.seat_target(table),
-            Self::ArrayExpressionList(t) => t.seat_target(table),
+            Self::ArrayExpressionSemi(t) => t.seat_target(table, ctx),
+            Self::ArrayExpressionList(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37151,10 +37187,10 @@ impl ::sittir_core::prepare::SeatTarget for ArrayExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for MatchArmTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::MatchArmWithComma(t) => t.seat_target(table),
-            Self::MatchArmBlockEnding(t) => t.seat_target(table),
+            Self::MatchArmWithComma(t) => t.seat_target(table, ctx),
+            Self::MatchArmBlockEnding(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37162,10 +37198,10 @@ impl ::sittir_core::prepare::SeatTarget for MatchArmTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ClosureExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ClosureExpressionBlock(t) => t.seat_target(table),
-            Self::ClosureExpressionExpr(t) => t.seat_target(table),
+            Self::ClosureExpressionBlock(t) => t.seat_target(table, ctx),
+            Self::ClosureExpressionExpr(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37173,24 +37209,24 @@ impl ::sittir_core::prepare::SeatTarget for ClosureExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for PatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::LiteralPattern(t) => t.seat_target(table),
-            Self::ScopedIdentifier(t) => t.seat_target(table),
-            Self::GenericPattern(t) => t.seat_target(table),
-            Self::TuplePattern(t) => t.seat_target(table),
-            Self::TupleStructPattern(t) => t.seat_target(table),
-            Self::StructPattern(t) => t.seat_target(table),
-            Self::RefPattern(t) => t.seat_target(table),
-            Self::SlicePattern(t) => t.seat_target(table),
-            Self::CapturedPattern(t) => t.seat_target(table),
-            Self::ReferencePattern(t) => t.seat_target(table),
+            Self::LiteralPattern(t) => t.seat_target(table, ctx),
+            Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
+            Self::GenericPattern(t) => t.seat_target(table, ctx),
+            Self::TuplePattern(t) => t.seat_target(table, ctx),
+            Self::TupleStructPattern(t) => t.seat_target(table, ctx),
+            Self::StructPattern(t) => t.seat_target(table, ctx),
+            Self::RefPattern(t) => t.seat_target(table, ctx),
+            Self::SlicePattern(t) => t.seat_target(table, ctx),
+            Self::CapturedPattern(t) => t.seat_target(table, ctx),
+            Self::ReferencePattern(t) => t.seat_target(table, ctx),
             Self::RemainingFieldPattern(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(321)).map(|site| (edges, site)),
-            Self::MutPattern(t) => t.seat_target(table),
-            Self::RangePattern(t) => t.seat_target(table),
-            Self::OrPattern(t) => t.seat_target(table),
-            Self::ConstBlock(t) => t.seat_target(table),
-            Self::MacroInvocation(t) => t.seat_target(table),
+            Self::MutPattern(t) => t.seat_target(table, ctx),
+            Self::RangePattern(t) => t.seat_target(table, ctx),
+            Self::OrPattern(t) => t.seat_target(table, ctx),
+            Self::ConstBlock(t) => t.seat_target(table, ctx),
+            Self::MacroInvocation(t) => t.seat_target(table, ctx),
             Self::WildcardPattern(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(426)).map(|site| (edges, site)),
             #[allow(unreachable_patterns)]
             _ => None,
@@ -37199,10 +37235,10 @@ impl ::sittir_core::prepare::SeatTarget for PatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for RangePatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::RangePatternWithLeft(t) => t.seat_target(table),
-            Self::RangePatternPrefix(t) => t.seat_target(table),
+            Self::RangePatternWithLeft(t) => t.seat_target(table, ctx),
+            Self::RangePatternPrefix(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37210,10 +37246,10 @@ impl ::sittir_core::prepare::SeatTarget for RangePatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for OrPatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::OrPatternBinary(t) => t.seat_target(table),
-            Self::OrPatternPrefix(t) => t.seat_target(table),
+            Self::OrPatternBinary(t) => t.seat_target(table, ctx),
+            Self::OrPatternPrefix(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37221,11 +37257,11 @@ impl ::sittir_core::prepare::SeatTarget for OrPatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for LiteralPatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::StringLiteral(t) => t.seat_target(table),
-            Self::RawStringLiteral(t) => t.seat_target(table),
-            Self::NegativeLiteral(t) => t.seat_target(table),
+            Self::StringLiteral(t) => t.seat_target(table, ctx),
+            Self::RawStringLiteral(t) => t.seat_target(table, ctx),
+            Self::NegativeLiteral(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37233,20 +37269,20 @@ impl ::sittir_core::prepare::SeatTarget for LiteralPatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ExpressionStatementContentTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ExpressionStatementWithSemi(t) => t.seat_target(table),
-            Self::UnsafeBlock(t) => t.seat_target(table),
-            Self::AsyncBlock(t) => t.seat_target(table),
-            Self::GenBlock(t) => t.seat_target(table),
-            Self::TryBlock(t) => t.seat_target(table),
-            Self::Block(t) => t.seat_target(table),
-            Self::IfExpression(t) => t.seat_target(table),
-            Self::MatchExpression(t) => t.seat_target(table),
-            Self::WhileExpression(t) => t.seat_target(table),
-            Self::LoopExpression(t) => t.seat_target(table),
-            Self::ForExpression(t) => t.seat_target(table),
-            Self::ConstBlock(t) => t.seat_target(table),
+            Self::ExpressionStatementWithSemi(t) => t.seat_target(table, ctx),
+            Self::UnsafeBlock(t) => t.seat_target(table, ctx),
+            Self::AsyncBlock(t) => t.seat_target(table, ctx),
+            Self::GenBlock(t) => t.seat_target(table, ctx),
+            Self::TryBlock(t) => t.seat_target(table, ctx),
+            Self::Block(t) => t.seat_target(table, ctx),
+            Self::IfExpression(t) => t.seat_target(table, ctx),
+            Self::MatchExpression(t) => t.seat_target(table, ctx),
+            Self::WhileExpression(t) => t.seat_target(table, ctx),
+            Self::LoopExpression(t) => t.seat_target(table, ctx),
+            Self::ForExpression(t) => t.seat_target(table, ctx),
+            Self::ConstBlock(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37254,14 +37290,14 @@ impl ::sittir_core::prepare::SeatTarget for ExpressionStatementContentTransportS
 }
 
 impl ::sittir_core::prepare::SeatTarget for TokenRepetitionPatternTokenPatternsTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::TokenTreePatternParen(t) => t.seat_target(table),
-            Self::TokenTreePatternBracket(t) => t.seat_target(table),
-            Self::TokenTreePatternBrace(t) => t.seat_target(table),
-            Self::TokenRepetitionPattern(t) => t.seat_target(table),
-            Self::TokenBindingPattern(t) => t.seat_target(table),
-            Self::NonSpecialToken(t) => t.seat_target(table),
+            Self::TokenTreePatternParen(t) => t.seat_target(table, ctx),
+            Self::TokenTreePatternBracket(t) => t.seat_target(table, ctx),
+            Self::TokenTreePatternBrace(t) => t.seat_target(table, ctx),
+            Self::TokenRepetitionPattern(t) => t.seat_target(table, ctx),
+            Self::TokenBindingPattern(t) => t.seat_target(table, ctx),
+            Self::NonSpecialToken(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37269,13 +37305,13 @@ impl ::sittir_core::prepare::SeatTarget for TokenRepetitionPatternTokenPatternsT
 }
 
 impl ::sittir_core::prepare::SeatTarget for TokenRepetitionTokensTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::TokenTreeParen(t) => t.seat_target(table),
-            Self::TokenTreeBracket(t) => t.seat_target(table),
-            Self::TokenTreeBrace(t) => t.seat_target(table),
-            Self::TokenRepetition(t) => t.seat_target(table),
-            Self::NonSpecialToken(t) => t.seat_target(table),
+            Self::TokenTreeParen(t) => t.seat_target(table, ctx),
+            Self::TokenTreeBracket(t) => t.seat_target(table, ctx),
+            Self::TokenTreeBrace(t) => t.seat_target(table, ctx),
+            Self::TokenRepetition(t) => t.seat_target(table, ctx),
+            Self::NonSpecialToken(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37283,10 +37319,10 @@ impl ::sittir_core::prepare::SeatTarget for TokenRepetitionTokensTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for NonSpecialTokenContentTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::StringLiteral(t) => t.seat_target(table),
-            Self::RawStringLiteral(t) => t.seat_target(table),
+            Self::StringLiteral(t) => t.seat_target(table, ctx),
+            Self::RawStringLiteral(t) => t.seat_target(table, ctx),
             Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
             Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
             Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(127)).map(|site| (edges, site)),
@@ -37297,9 +37333,9 @@ impl ::sittir_core::prepare::SeatTarget for NonSpecialTokenContentTransportSlot 
 }
 
 impl ::sittir_core::prepare::SeatTarget for AttributePathTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ScopedIdentifier(t) => t.seat_target(table),
+            Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
             Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
             Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
             Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(127)).map(|site| (edges, site)),
@@ -37310,9 +37346,9 @@ impl ::sittir_core::prepare::SeatTarget for AttributePathTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for FunctionModifiersModifierTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ExternModifier(t) => t.seat_target(table),
+            Self::ExternModifier(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37320,17 +37356,17 @@ impl ::sittir_core::prepare::SeatTarget for FunctionModifiersModifierTransportSl
 }
 
 impl ::sittir_core::prepare::SeatTarget for WherePredicateLeftTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::Lifetime(t) => t.seat_target(table),
-            Self::ScopedTypeIdentifier(t) => t.seat_target(table),
-            Self::GenericType(t) => t.seat_target(table),
-            Self::ReferenceType(t) => t.seat_target(table),
-            Self::PointerTypeConst(t) => t.seat_target(table),
-            Self::PointerTypeMut(t) => t.seat_target(table),
-            Self::TupleType(t) => t.seat_target(table),
-            Self::ArrayType(t) => t.seat_target(table),
-            Self::HigherRankedTraitBound(t) => t.seat_target(table),
+            Self::Lifetime(t) => t.seat_target(table, ctx),
+            Self::ScopedTypeIdentifier(t) => t.seat_target(table, ctx),
+            Self::GenericType(t) => t.seat_target(table, ctx),
+            Self::ReferenceType(t) => t.seat_target(table, ctx),
+            Self::PointerTypeConst(t) => t.seat_target(table, ctx),
+            Self::PointerTypeMut(t) => t.seat_target(table, ctx),
+            Self::TupleType(t) => t.seat_target(table, ctx),
+            Self::ArrayType(t) => t.seat_target(table, ctx),
+            Self::HigherRankedTraitBound(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37338,25 +37374,25 @@ impl ::sittir_core::prepare::SeatTarget for WherePredicateLeftTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TraitBoundsBoundsTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::AbstractType(t) => t.seat_target(table),
-            Self::ReferenceType(t) => t.seat_target(table),
-            Self::PointerTypeConst(t) => t.seat_target(table),
-            Self::PointerTypeMut(t) => t.seat_target(table),
-            Self::GenericType(t) => t.seat_target(table),
-            Self::ScopedTypeIdentifier(t) => t.seat_target(table),
-            Self::TupleType(t) => t.seat_target(table),
+            Self::AbstractType(t) => t.seat_target(table, ctx),
+            Self::ReferenceType(t) => t.seat_target(table, ctx),
+            Self::PointerTypeConst(t) => t.seat_target(table, ctx),
+            Self::PointerTypeMut(t) => t.seat_target(table, ctx),
+            Self::GenericType(t) => t.seat_target(table, ctx),
+            Self::ScopedTypeIdentifier(t) => t.seat_target(table, ctx),
+            Self::TupleType(t) => t.seat_target(table, ctx),
             Self::UnitType(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(244)).map(|site| (edges, site)),
-            Self::ArrayType(t) => t.seat_target(table),
-            Self::FunctionType(t) => t.seat_target(table),
-            Self::MacroInvocation(t) => t.seat_target(table),
+            Self::ArrayType(t) => t.seat_target(table, ctx),
+            Self::FunctionType(t) => t.seat_target(table, ctx),
+            Self::MacroInvocation(t) => t.seat_target(table, ctx),
             Self::NeverType(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(254)).map(|site| (edges, site)),
-            Self::DynamicType(t) => t.seat_target(table),
-            Self::BoundedType(t) => t.seat_target(table),
-            Self::RemovedTraitBound(t) => t.seat_target(table),
-            Self::Lifetime(t) => t.seat_target(table),
-            Self::HigherRankedTraitBound(t) => t.seat_target(table),
+            Self::DynamicType(t) => t.seat_target(table, ctx),
+            Self::BoundedType(t) => t.seat_target(table, ctx),
+            Self::RemovedTraitBound(t) => t.seat_target(table, ctx),
+            Self::Lifetime(t) => t.seat_target(table, ctx),
+            Self::HigherRankedTraitBound(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37364,12 +37400,12 @@ impl ::sittir_core::prepare::SeatTarget for TraitBoundsBoundsTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ConstParameterValueTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::Block(t) => t.seat_target(table),
-            Self::StringLiteral(t) => t.seat_target(table),
-            Self::RawStringLiteral(t) => t.seat_target(table),
-            Self::NegativeLiteral(t) => t.seat_target(table),
+            Self::Block(t) => t.seat_target(table, ctx),
+            Self::StringLiteral(t) => t.seat_target(table, ctx),
+            Self::RawStringLiteral(t) => t.seat_target(table, ctx),
+            Self::NegativeLiteral(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37377,13 +37413,13 @@ impl ::sittir_core::prepare::SeatTarget for ConstParameterValueTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for UseDeclarationArgumentTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ScopedIdentifier(t) => t.seat_target(table),
-            Self::UseAsClause(t) => t.seat_target(table),
-            Self::UseList(t) => t.seat_target(table),
-            Self::ScopedUseList(t) => t.seat_target(table),
-            Self::UseWildcard(t) => t.seat_target(table),
+            Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
+            Self::UseAsClause(t) => t.seat_target(table, ctx),
+            Self::UseList(t) => t.seat_target(table, ctx),
+            Self::ScopedUseList(t) => t.seat_target(table, ctx),
+            Self::UseWildcard(t) => t.seat_target(table, ctx),
             Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
             Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
             Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(127)).map(|site| (edges, site)),
@@ -37394,28 +37430,28 @@ impl ::sittir_core::prepare::SeatTarget for UseDeclarationArgumentTransportSlot 
 }
 
 impl ::sittir_core::prepare::SeatTarget for ParameterNameTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::StringLiteral(t) => t.seat_target(table),
-            Self::RawStringLiteral(t) => t.seat_target(table),
-            Self::NegativeLiteral(t) => t.seat_target(table),
-            Self::ScopedIdentifier(t) => t.seat_target(table),
-            Self::GenericPattern(t) => t.seat_target(table),
-            Self::TuplePattern(t) => t.seat_target(table),
-            Self::TupleStructPattern(t) => t.seat_target(table),
-            Self::StructPattern(t) => t.seat_target(table),
-            Self::RefPattern(t) => t.seat_target(table),
-            Self::SlicePattern(t) => t.seat_target(table),
-            Self::CapturedPattern(t) => t.seat_target(table),
-            Self::ReferencePattern(t) => t.seat_target(table),
+            Self::StringLiteral(t) => t.seat_target(table, ctx),
+            Self::RawStringLiteral(t) => t.seat_target(table, ctx),
+            Self::NegativeLiteral(t) => t.seat_target(table, ctx),
+            Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
+            Self::GenericPattern(t) => t.seat_target(table, ctx),
+            Self::TuplePattern(t) => t.seat_target(table, ctx),
+            Self::TupleStructPattern(t) => t.seat_target(table, ctx),
+            Self::StructPattern(t) => t.seat_target(table, ctx),
+            Self::RefPattern(t) => t.seat_target(table, ctx),
+            Self::SlicePattern(t) => t.seat_target(table, ctx),
+            Self::CapturedPattern(t) => t.seat_target(table, ctx),
+            Self::ReferencePattern(t) => t.seat_target(table, ctx),
             Self::RemainingFieldPattern(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(321)).map(|site| (edges, site)),
-            Self::MutPattern(t) => t.seat_target(table),
-            Self::RangePatternWithLeft(t) => t.seat_target(table),
-            Self::RangePatternPrefix(t) => t.seat_target(table),
-            Self::OrPatternBinary(t) => t.seat_target(table),
-            Self::OrPatternPrefix(t) => t.seat_target(table),
-            Self::ConstBlock(t) => t.seat_target(table),
-            Self::MacroInvocation(t) => t.seat_target(table),
+            Self::MutPattern(t) => t.seat_target(table, ctx),
+            Self::RangePatternWithLeft(t) => t.seat_target(table, ctx),
+            Self::RangePatternPrefix(t) => t.seat_target(table, ctx),
+            Self::OrPatternBinary(t) => t.seat_target(table, ctx),
+            Self::OrPatternPrefix(t) => t.seat_target(table, ctx),
+            Self::ConstBlock(t) => t.seat_target(table, ctx),
+            Self::MacroInvocation(t) => t.seat_target(table, ctx),
             Self::WildcardPattern(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(426)).map(|site| (edges, site)),
             Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
             #[allow(unreachable_patterns)]
@@ -37425,7 +37461,7 @@ impl ::sittir_core::prepare::SeatTarget for ParameterNameTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for VisibilityModifierContentTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(127)).map(|site| (edges, site)),
             #[allow(unreachable_patterns)]
@@ -37435,23 +37471,23 @@ impl ::sittir_core::prepare::SeatTarget for VisibilityModifierContentTransportSl
 }
 
 impl ::sittir_core::prepare::SeatTarget for BracketedTypeTypeTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::AbstractType(t) => t.seat_target(table),
-            Self::ReferenceType(t) => t.seat_target(table),
-            Self::PointerTypeConst(t) => t.seat_target(table),
-            Self::PointerTypeMut(t) => t.seat_target(table),
-            Self::GenericType(t) => t.seat_target(table),
-            Self::ScopedTypeIdentifier(t) => t.seat_target(table),
-            Self::TupleType(t) => t.seat_target(table),
+            Self::AbstractType(t) => t.seat_target(table, ctx),
+            Self::ReferenceType(t) => t.seat_target(table, ctx),
+            Self::PointerTypeConst(t) => t.seat_target(table, ctx),
+            Self::PointerTypeMut(t) => t.seat_target(table, ctx),
+            Self::GenericType(t) => t.seat_target(table, ctx),
+            Self::ScopedTypeIdentifier(t) => t.seat_target(table, ctx),
+            Self::TupleType(t) => t.seat_target(table, ctx),
             Self::UnitType(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(244)).map(|site| (edges, site)),
-            Self::ArrayType(t) => t.seat_target(table),
-            Self::FunctionType(t) => t.seat_target(table),
-            Self::MacroInvocation(t) => t.seat_target(table),
+            Self::ArrayType(t) => t.seat_target(table, ctx),
+            Self::FunctionType(t) => t.seat_target(table, ctx),
+            Self::MacroInvocation(t) => t.seat_target(table, ctx),
             Self::NeverType(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(254)).map(|site| (edges, site)),
-            Self::DynamicType(t) => t.seat_target(table),
-            Self::BoundedType(t) => t.seat_target(table),
-            Self::RemovedTraitBound(t) => t.seat_target(table),
+            Self::DynamicType(t) => t.seat_target(table, ctx),
+            Self::BoundedType(t) => t.seat_target(table, ctx),
+            Self::RemovedTraitBound(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37459,10 +37495,10 @@ impl ::sittir_core::prepare::SeatTarget for BracketedTypeTypeTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for GenericFunctionFunctionTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ScopedIdentifier(t) => t.seat_target(table),
-            Self::FieldExpression(t) => t.seat_target(table),
+            Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
+            Self::FieldExpression(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37470,9 +37506,9 @@ impl ::sittir_core::prepare::SeatTarget for GenericFunctionFunctionTransportSlot
 }
 
 impl ::sittir_core::prepare::SeatTarget for GenericTypeTypeTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ScopedTypeIdentifier(t) => t.seat_target(table),
+            Self::ScopedTypeIdentifier(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37480,9 +37516,9 @@ impl ::sittir_core::prepare::SeatTarget for GenericTypeTypeTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for GenericTypeWithTurbofishTypeTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ScopedIdentifier(t) => t.seat_target(table),
+            Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37490,24 +37526,24 @@ impl ::sittir_core::prepare::SeatTarget for GenericTypeWithTurbofishTypeTranspor
 }
 
 impl ::sittir_core::prepare::SeatTarget for BoundedTypeLeftTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::Lifetime(t) => t.seat_target(table),
-            Self::AbstractType(t) => t.seat_target(table),
-            Self::ReferenceType(t) => t.seat_target(table),
-            Self::PointerTypeConst(t) => t.seat_target(table),
-            Self::PointerTypeMut(t) => t.seat_target(table),
-            Self::GenericType(t) => t.seat_target(table),
-            Self::ScopedTypeIdentifier(t) => t.seat_target(table),
-            Self::TupleType(t) => t.seat_target(table),
+            Self::Lifetime(t) => t.seat_target(table, ctx),
+            Self::AbstractType(t) => t.seat_target(table, ctx),
+            Self::ReferenceType(t) => t.seat_target(table, ctx),
+            Self::PointerTypeConst(t) => t.seat_target(table, ctx),
+            Self::PointerTypeMut(t) => t.seat_target(table, ctx),
+            Self::GenericType(t) => t.seat_target(table, ctx),
+            Self::ScopedTypeIdentifier(t) => t.seat_target(table, ctx),
+            Self::TupleType(t) => t.seat_target(table, ctx),
             Self::UnitType(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(244)).map(|site| (edges, site)),
-            Self::ArrayType(t) => t.seat_target(table),
-            Self::FunctionType(t) => t.seat_target(table),
-            Self::MacroInvocation(t) => t.seat_target(table),
+            Self::ArrayType(t) => t.seat_target(table, ctx),
+            Self::FunctionType(t) => t.seat_target(table, ctx),
+            Self::MacroInvocation(t) => t.seat_target(table, ctx),
             Self::NeverType(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(254)).map(|site| (edges, site)),
-            Self::DynamicType(t) => t.seat_target(table),
-            Self::BoundedType(t) => t.seat_target(table),
-            Self::RemovedTraitBound(t) => t.seat_target(table),
+            Self::DynamicType(t) => t.seat_target(table, ctx),
+            Self::BoundedType(t) => t.seat_target(table, ctx),
+            Self::RemovedTraitBound(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37515,14 +37551,14 @@ impl ::sittir_core::prepare::SeatTarget for BoundedTypeLeftTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for AbstractTypeTraitTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ScopedTypeIdentifier(t) => t.seat_target(table),
-            Self::RemovedTraitBound(t) => t.seat_target(table),
-            Self::GenericType(t) => t.seat_target(table),
-            Self::FunctionType(t) => t.seat_target(table),
-            Self::TupleType(t) => t.seat_target(table),
-            Self::BoundedType(t) => t.seat_target(table),
+            Self::ScopedTypeIdentifier(t) => t.seat_target(table, ctx),
+            Self::RemovedTraitBound(t) => t.seat_target(table, ctx),
+            Self::GenericType(t) => t.seat_target(table, ctx),
+            Self::FunctionType(t) => t.seat_target(table, ctx),
+            Self::TupleType(t) => t.seat_target(table, ctx),
+            Self::BoundedType(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37530,13 +37566,13 @@ impl ::sittir_core::prepare::SeatTarget for AbstractTypeTraitTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for DynamicTypeTraitTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::HigherRankedTraitBound(t) => t.seat_target(table),
-            Self::ScopedTypeIdentifier(t) => t.seat_target(table),
-            Self::GenericType(t) => t.seat_target(table),
-            Self::FunctionType(t) => t.seat_target(table),
-            Self::TupleType(t) => t.seat_target(table),
+            Self::HigherRankedTraitBound(t) => t.seat_target(table, ctx),
+            Self::ScopedTypeIdentifier(t) => t.seat_target(table, ctx),
+            Self::GenericType(t) => t.seat_target(table, ctx),
+            Self::FunctionType(t) => t.seat_target(table, ctx),
+            Self::TupleType(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37544,9 +37580,9 @@ impl ::sittir_core::prepare::SeatTarget for DynamicTypeTraitTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for MacroInvocationMacroTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ScopedIdentifier(t) => t.seat_target(table),
+            Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37554,9 +37590,9 @@ impl ::sittir_core::prepare::SeatTarget for MacroInvocationMacroTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ScopedIdentifierPathTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ScopedIdentifier(t) => t.seat_target(table),
+            Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
             Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
             Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
             Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(127)).map(|site| (edges, site)),
@@ -37567,7 +37603,7 @@ impl ::sittir_core::prepare::SeatTarget for ScopedIdentifierPathTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ScopedIdentifierNameTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
             #[allow(unreachable_patterns)]
@@ -37577,9 +37613,9 @@ impl ::sittir_core::prepare::SeatTarget for ScopedIdentifierNameTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ScopedTypeIdentifierInExpressionPositionPathTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ScopedIdentifier(t) => t.seat_target(table),
+            Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
             Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
             Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
             Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(127)).map(|site| (edges, site)),
@@ -37590,10 +37626,10 @@ impl ::sittir_core::prepare::SeatTarget for ScopedTypeIdentifierInExpressionPosi
 }
 
 impl ::sittir_core::prepare::SeatTarget for ScopedTypeIdentifierPathTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ScopedIdentifier(t) => t.seat_target(table),
-            Self::GenericType(t) => t.seat_target(table),
+            Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
+            Self::GenericType(t) => t.seat_target(table, ctx),
             Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
             Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
             Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(127)).map(|site| (edges, site)),
@@ -37604,49 +37640,49 @@ impl ::sittir_core::prepare::SeatTarget for ScopedTypeIdentifierPathTransportSlo
 }
 
 impl ::sittir_core::prepare::SeatTarget for CallExpressionFunctionTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::UnaryExpression(t) => t.seat_target(table),
-            Self::ReferenceExpressionRawConst(t) => t.seat_target(table),
-            Self::ReferenceExpressionRawMut(t) => t.seat_target(table),
-            Self::ReferenceExpressionMut(t) => t.seat_target(table),
-            Self::ReferenceExpressionBare(t) => t.seat_target(table),
-            Self::TryExpression(t) => t.seat_target(table),
-            Self::BinaryExpression(t) => t.seat_target(table),
-            Self::AssignmentExpression(t) => t.seat_target(table),
-            Self::CompoundAssignmentExpr(t) => t.seat_target(table),
-            Self::TypeCastExpression(t) => t.seat_target(table),
-            Self::CallExpression(t) => t.seat_target(table),
-            Self::ReturnExpression(t) => t.seat_target(table),
-            Self::YieldExpression(t) => t.seat_target(table),
-            Self::StringLiteral(t) => t.seat_target(table),
-            Self::RawStringLiteral(t) => t.seat_target(table),
-            Self::ScopedIdentifier(t) => t.seat_target(table),
-            Self::GenericFunction(t) => t.seat_target(table),
-            Self::AwaitExpression(t) => t.seat_target(table),
-            Self::FieldExpression(t) => t.seat_target(table),
-            Self::ArrayExpressionSemi(t) => t.seat_target(table),
-            Self::ArrayExpressionList(t) => t.seat_target(table),
-            Self::TupleExpression(t) => t.seat_target(table),
-            Self::MacroInvocation(t) => t.seat_target(table),
-            Self::BreakExpression(t) => t.seat_target(table),
-            Self::ContinueExpression(t) => t.seat_target(table),
-            Self::IndexExpression(t) => t.seat_target(table),
-            Self::ClosureExpressionBlock(t) => t.seat_target(table),
-            Self::ClosureExpressionExpr(t) => t.seat_target(table),
-            Self::ParenthesizedExpression(t) => t.seat_target(table),
-            Self::StructExpression(t) => t.seat_target(table),
-            Self::UnsafeBlock(t) => t.seat_target(table),
-            Self::AsyncBlock(t) => t.seat_target(table),
-            Self::GenBlock(t) => t.seat_target(table),
-            Self::TryBlock(t) => t.seat_target(table),
-            Self::Block(t) => t.seat_target(table),
-            Self::IfExpression(t) => t.seat_target(table),
-            Self::MatchExpression(t) => t.seat_target(table),
-            Self::WhileExpression(t) => t.seat_target(table),
-            Self::LoopExpression(t) => t.seat_target(table),
-            Self::ForExpression(t) => t.seat_target(table),
-            Self::ConstBlock(t) => t.seat_target(table),
+            Self::UnaryExpression(t) => t.seat_target(table, ctx),
+            Self::ReferenceExpressionRawConst(t) => t.seat_target(table, ctx),
+            Self::ReferenceExpressionRawMut(t) => t.seat_target(table, ctx),
+            Self::ReferenceExpressionMut(t) => t.seat_target(table, ctx),
+            Self::ReferenceExpressionBare(t) => t.seat_target(table, ctx),
+            Self::TryExpression(t) => t.seat_target(table, ctx),
+            Self::BinaryExpression(t) => t.seat_target(table, ctx),
+            Self::AssignmentExpression(t) => t.seat_target(table, ctx),
+            Self::CompoundAssignmentExpr(t) => t.seat_target(table, ctx),
+            Self::TypeCastExpression(t) => t.seat_target(table, ctx),
+            Self::CallExpression(t) => t.seat_target(table, ctx),
+            Self::ReturnExpression(t) => t.seat_target(table, ctx),
+            Self::YieldExpression(t) => t.seat_target(table, ctx),
+            Self::StringLiteral(t) => t.seat_target(table, ctx),
+            Self::RawStringLiteral(t) => t.seat_target(table, ctx),
+            Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
+            Self::GenericFunction(t) => t.seat_target(table, ctx),
+            Self::AwaitExpression(t) => t.seat_target(table, ctx),
+            Self::FieldExpression(t) => t.seat_target(table, ctx),
+            Self::ArrayExpressionSemi(t) => t.seat_target(table, ctx),
+            Self::ArrayExpressionList(t) => t.seat_target(table, ctx),
+            Self::TupleExpression(t) => t.seat_target(table, ctx),
+            Self::MacroInvocation(t) => t.seat_target(table, ctx),
+            Self::BreakExpression(t) => t.seat_target(table, ctx),
+            Self::ContinueExpression(t) => t.seat_target(table, ctx),
+            Self::IndexExpression(t) => t.seat_target(table, ctx),
+            Self::ClosureExpressionBlock(t) => t.seat_target(table, ctx),
+            Self::ClosureExpressionExpr(t) => t.seat_target(table, ctx),
+            Self::ParenthesizedExpression(t) => t.seat_target(table, ctx),
+            Self::StructExpression(t) => t.seat_target(table, ctx),
+            Self::UnsafeBlock(t) => t.seat_target(table, ctx),
+            Self::AsyncBlock(t) => t.seat_target(table, ctx),
+            Self::GenBlock(t) => t.seat_target(table, ctx),
+            Self::TryBlock(t) => t.seat_target(table, ctx),
+            Self::Block(t) => t.seat_target(table, ctx),
+            Self::IfExpression(t) => t.seat_target(table, ctx),
+            Self::MatchExpression(t) => t.seat_target(table, ctx),
+            Self::WhileExpression(t) => t.seat_target(table, ctx),
+            Self::LoopExpression(t) => t.seat_target(table, ctx),
+            Self::ForExpression(t) => t.seat_target(table, ctx),
+            Self::ConstBlock(t) => t.seat_target(table, ctx),
             Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
             Self::UnitExpression(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(281)).map(|site| (edges, site)),
             #[allow(unreachable_patterns)]
@@ -37656,55 +37692,55 @@ impl ::sittir_core::prepare::SeatTarget for CallExpressionFunctionTransportSlot 
 }
 
 impl ::sittir_core::prepare::SeatTarget for IfExpressionConditionTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::UnaryExpression(t) => t.seat_target(table),
-            Self::ReferenceExpressionRawConst(t) => t.seat_target(table),
-            Self::ReferenceExpressionRawMut(t) => t.seat_target(table),
-            Self::ReferenceExpressionMut(t) => t.seat_target(table),
-            Self::ReferenceExpressionBare(t) => t.seat_target(table),
-            Self::TryExpression(t) => t.seat_target(table),
-            Self::BinaryExpression(t) => t.seat_target(table),
-            Self::AssignmentExpression(t) => t.seat_target(table),
-            Self::CompoundAssignmentExpr(t) => t.seat_target(table),
-            Self::TypeCastExpression(t) => t.seat_target(table),
-            Self::CallExpression(t) => t.seat_target(table),
-            Self::ReturnExpression(t) => t.seat_target(table),
-            Self::YieldExpression(t) => t.seat_target(table),
-            Self::StringLiteral(t) => t.seat_target(table),
-            Self::RawStringLiteral(t) => t.seat_target(table),
+            Self::UnaryExpression(t) => t.seat_target(table, ctx),
+            Self::ReferenceExpressionRawConst(t) => t.seat_target(table, ctx),
+            Self::ReferenceExpressionRawMut(t) => t.seat_target(table, ctx),
+            Self::ReferenceExpressionMut(t) => t.seat_target(table, ctx),
+            Self::ReferenceExpressionBare(t) => t.seat_target(table, ctx),
+            Self::TryExpression(t) => t.seat_target(table, ctx),
+            Self::BinaryExpression(t) => t.seat_target(table, ctx),
+            Self::AssignmentExpression(t) => t.seat_target(table, ctx),
+            Self::CompoundAssignmentExpr(t) => t.seat_target(table, ctx),
+            Self::TypeCastExpression(t) => t.seat_target(table, ctx),
+            Self::CallExpression(t) => t.seat_target(table, ctx),
+            Self::ReturnExpression(t) => t.seat_target(table, ctx),
+            Self::YieldExpression(t) => t.seat_target(table, ctx),
+            Self::StringLiteral(t) => t.seat_target(table, ctx),
+            Self::RawStringLiteral(t) => t.seat_target(table, ctx),
             Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
-            Self::ScopedIdentifier(t) => t.seat_target(table),
-            Self::GenericFunction(t) => t.seat_target(table),
-            Self::AwaitExpression(t) => t.seat_target(table),
-            Self::FieldExpression(t) => t.seat_target(table),
-            Self::ArrayExpressionSemi(t) => t.seat_target(table),
-            Self::ArrayExpressionList(t) => t.seat_target(table),
-            Self::TupleExpression(t) => t.seat_target(table),
-            Self::MacroInvocation(t) => t.seat_target(table),
+            Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
+            Self::GenericFunction(t) => t.seat_target(table, ctx),
+            Self::AwaitExpression(t) => t.seat_target(table, ctx),
+            Self::FieldExpression(t) => t.seat_target(table, ctx),
+            Self::ArrayExpressionSemi(t) => t.seat_target(table, ctx),
+            Self::ArrayExpressionList(t) => t.seat_target(table, ctx),
+            Self::TupleExpression(t) => t.seat_target(table, ctx),
+            Self::MacroInvocation(t) => t.seat_target(table, ctx),
             Self::UnitExpression(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(281)).map(|site| (edges, site)),
-            Self::BreakExpression(t) => t.seat_target(table),
-            Self::ContinueExpression(t) => t.seat_target(table),
-            Self::IndexExpression(t) => t.seat_target(table),
-            Self::ClosureExpressionBlock(t) => t.seat_target(table),
-            Self::ClosureExpressionExpr(t) => t.seat_target(table),
-            Self::ParenthesizedExpression(t) => t.seat_target(table),
-            Self::StructExpression(t) => t.seat_target(table),
-            Self::UnsafeBlock(t) => t.seat_target(table),
-            Self::AsyncBlock(t) => t.seat_target(table),
-            Self::GenBlock(t) => t.seat_target(table),
-            Self::TryBlock(t) => t.seat_target(table),
-            Self::Block(t) => t.seat_target(table),
-            Self::IfExpression(t) => t.seat_target(table),
-            Self::MatchExpression(t) => t.seat_target(table),
-            Self::WhileExpression(t) => t.seat_target(table),
-            Self::LoopExpression(t) => t.seat_target(table),
-            Self::ForExpression(t) => t.seat_target(table),
-            Self::ConstBlock(t) => t.seat_target(table),
-            Self::RangeExpressionBinary(t) => t.seat_target(table),
-            Self::RangeExpressionPostfix(t) => t.seat_target(table),
-            Self::RangeExpressionPrefix(t) => t.seat_target(table),
-            Self::LetCondition(t) => t.seat_target(table),
+            Self::BreakExpression(t) => t.seat_target(table, ctx),
+            Self::ContinueExpression(t) => t.seat_target(table, ctx),
+            Self::IndexExpression(t) => t.seat_target(table, ctx),
+            Self::ClosureExpressionBlock(t) => t.seat_target(table, ctx),
+            Self::ClosureExpressionExpr(t) => t.seat_target(table, ctx),
+            Self::ParenthesizedExpression(t) => t.seat_target(table, ctx),
+            Self::StructExpression(t) => t.seat_target(table, ctx),
+            Self::UnsafeBlock(t) => t.seat_target(table, ctx),
+            Self::AsyncBlock(t) => t.seat_target(table, ctx),
+            Self::GenBlock(t) => t.seat_target(table, ctx),
+            Self::TryBlock(t) => t.seat_target(table, ctx),
+            Self::Block(t) => t.seat_target(table, ctx),
+            Self::IfExpression(t) => t.seat_target(table, ctx),
+            Self::MatchExpression(t) => t.seat_target(table, ctx),
+            Self::WhileExpression(t) => t.seat_target(table, ctx),
+            Self::LoopExpression(t) => t.seat_target(table, ctx),
+            Self::ForExpression(t) => t.seat_target(table, ctx),
+            Self::ConstBlock(t) => t.seat_target(table, ctx),
+            Self::RangeExpressionBinary(t) => t.seat_target(table, ctx),
+            Self::RangeExpressionPostfix(t) => t.seat_target(table, ctx),
+            Self::RangeExpressionPrefix(t) => t.seat_target(table, ctx),
+            Self::LetCondition(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37712,55 +37748,55 @@ impl ::sittir_core::prepare::SeatTarget for IfExpressionConditionTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for LetChainLeftTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::LetCondition(t) => t.seat_target(table),
-            Self::UnaryExpression(t) => t.seat_target(table),
-            Self::ReferenceExpressionRawConst(t) => t.seat_target(table),
-            Self::ReferenceExpressionRawMut(t) => t.seat_target(table),
-            Self::ReferenceExpressionMut(t) => t.seat_target(table),
-            Self::ReferenceExpressionBare(t) => t.seat_target(table),
-            Self::TryExpression(t) => t.seat_target(table),
-            Self::BinaryExpression(t) => t.seat_target(table),
-            Self::AssignmentExpression(t) => t.seat_target(table),
-            Self::CompoundAssignmentExpr(t) => t.seat_target(table),
-            Self::TypeCastExpression(t) => t.seat_target(table),
-            Self::CallExpression(t) => t.seat_target(table),
-            Self::ReturnExpression(t) => t.seat_target(table),
-            Self::YieldExpression(t) => t.seat_target(table),
-            Self::StringLiteral(t) => t.seat_target(table),
-            Self::RawStringLiteral(t) => t.seat_target(table),
+            Self::LetCondition(t) => t.seat_target(table, ctx),
+            Self::UnaryExpression(t) => t.seat_target(table, ctx),
+            Self::ReferenceExpressionRawConst(t) => t.seat_target(table, ctx),
+            Self::ReferenceExpressionRawMut(t) => t.seat_target(table, ctx),
+            Self::ReferenceExpressionMut(t) => t.seat_target(table, ctx),
+            Self::ReferenceExpressionBare(t) => t.seat_target(table, ctx),
+            Self::TryExpression(t) => t.seat_target(table, ctx),
+            Self::BinaryExpression(t) => t.seat_target(table, ctx),
+            Self::AssignmentExpression(t) => t.seat_target(table, ctx),
+            Self::CompoundAssignmentExpr(t) => t.seat_target(table, ctx),
+            Self::TypeCastExpression(t) => t.seat_target(table, ctx),
+            Self::CallExpression(t) => t.seat_target(table, ctx),
+            Self::ReturnExpression(t) => t.seat_target(table, ctx),
+            Self::YieldExpression(t) => t.seat_target(table, ctx),
+            Self::StringLiteral(t) => t.seat_target(table, ctx),
+            Self::RawStringLiteral(t) => t.seat_target(table, ctx),
             Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
-            Self::ScopedIdentifier(t) => t.seat_target(table),
-            Self::GenericFunction(t) => t.seat_target(table),
-            Self::AwaitExpression(t) => t.seat_target(table),
-            Self::FieldExpression(t) => t.seat_target(table),
-            Self::ArrayExpressionSemi(t) => t.seat_target(table),
-            Self::ArrayExpressionList(t) => t.seat_target(table),
-            Self::TupleExpression(t) => t.seat_target(table),
-            Self::MacroInvocation(t) => t.seat_target(table),
+            Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
+            Self::GenericFunction(t) => t.seat_target(table, ctx),
+            Self::AwaitExpression(t) => t.seat_target(table, ctx),
+            Self::FieldExpression(t) => t.seat_target(table, ctx),
+            Self::ArrayExpressionSemi(t) => t.seat_target(table, ctx),
+            Self::ArrayExpressionList(t) => t.seat_target(table, ctx),
+            Self::TupleExpression(t) => t.seat_target(table, ctx),
+            Self::MacroInvocation(t) => t.seat_target(table, ctx),
             Self::UnitExpression(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(281)).map(|site| (edges, site)),
-            Self::BreakExpression(t) => t.seat_target(table),
-            Self::ContinueExpression(t) => t.seat_target(table),
-            Self::IndexExpression(t) => t.seat_target(table),
-            Self::ClosureExpressionBlock(t) => t.seat_target(table),
-            Self::ClosureExpressionExpr(t) => t.seat_target(table),
-            Self::ParenthesizedExpression(t) => t.seat_target(table),
-            Self::StructExpression(t) => t.seat_target(table),
-            Self::UnsafeBlock(t) => t.seat_target(table),
-            Self::AsyncBlock(t) => t.seat_target(table),
-            Self::GenBlock(t) => t.seat_target(table),
-            Self::TryBlock(t) => t.seat_target(table),
-            Self::Block(t) => t.seat_target(table),
-            Self::IfExpression(t) => t.seat_target(table),
-            Self::MatchExpression(t) => t.seat_target(table),
-            Self::WhileExpression(t) => t.seat_target(table),
-            Self::LoopExpression(t) => t.seat_target(table),
-            Self::ForExpression(t) => t.seat_target(table),
-            Self::ConstBlock(t) => t.seat_target(table),
-            Self::RangeExpressionBinary(t) => t.seat_target(table),
-            Self::RangeExpressionPostfix(t) => t.seat_target(table),
-            Self::RangeExpressionPrefix(t) => t.seat_target(table),
+            Self::BreakExpression(t) => t.seat_target(table, ctx),
+            Self::ContinueExpression(t) => t.seat_target(table, ctx),
+            Self::IndexExpression(t) => t.seat_target(table, ctx),
+            Self::ClosureExpressionBlock(t) => t.seat_target(table, ctx),
+            Self::ClosureExpressionExpr(t) => t.seat_target(table, ctx),
+            Self::ParenthesizedExpression(t) => t.seat_target(table, ctx),
+            Self::StructExpression(t) => t.seat_target(table, ctx),
+            Self::UnsafeBlock(t) => t.seat_target(table, ctx),
+            Self::AsyncBlock(t) => t.seat_target(table, ctx),
+            Self::GenBlock(t) => t.seat_target(table, ctx),
+            Self::TryBlock(t) => t.seat_target(table, ctx),
+            Self::Block(t) => t.seat_target(table, ctx),
+            Self::IfExpression(t) => t.seat_target(table, ctx),
+            Self::MatchExpression(t) => t.seat_target(table, ctx),
+            Self::WhileExpression(t) => t.seat_target(table, ctx),
+            Self::LoopExpression(t) => t.seat_target(table, ctx),
+            Self::ForExpression(t) => t.seat_target(table, ctx),
+            Self::ConstBlock(t) => t.seat_target(table, ctx),
+            Self::RangeExpressionBinary(t) => t.seat_target(table, ctx),
+            Self::RangeExpressionPostfix(t) => t.seat_target(table, ctx),
+            Self::RangeExpressionPrefix(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37768,55 +37804,55 @@ impl ::sittir_core::prepare::SeatTarget for LetChainLeftTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for LetChainRightTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::LetCondition(t) => t.seat_target(table),
-            Self::UnaryExpression(t) => t.seat_target(table),
-            Self::ReferenceExpressionRawConst(t) => t.seat_target(table),
-            Self::ReferenceExpressionRawMut(t) => t.seat_target(table),
-            Self::ReferenceExpressionMut(t) => t.seat_target(table),
-            Self::ReferenceExpressionBare(t) => t.seat_target(table),
-            Self::TryExpression(t) => t.seat_target(table),
-            Self::BinaryExpression(t) => t.seat_target(table),
-            Self::AssignmentExpression(t) => t.seat_target(table),
-            Self::CompoundAssignmentExpr(t) => t.seat_target(table),
-            Self::TypeCastExpression(t) => t.seat_target(table),
-            Self::CallExpression(t) => t.seat_target(table),
-            Self::ReturnExpression(t) => t.seat_target(table),
-            Self::YieldExpression(t) => t.seat_target(table),
-            Self::StringLiteral(t) => t.seat_target(table),
-            Self::RawStringLiteral(t) => t.seat_target(table),
+            Self::LetCondition(t) => t.seat_target(table, ctx),
+            Self::UnaryExpression(t) => t.seat_target(table, ctx),
+            Self::ReferenceExpressionRawConst(t) => t.seat_target(table, ctx),
+            Self::ReferenceExpressionRawMut(t) => t.seat_target(table, ctx),
+            Self::ReferenceExpressionMut(t) => t.seat_target(table, ctx),
+            Self::ReferenceExpressionBare(t) => t.seat_target(table, ctx),
+            Self::TryExpression(t) => t.seat_target(table, ctx),
+            Self::BinaryExpression(t) => t.seat_target(table, ctx),
+            Self::AssignmentExpression(t) => t.seat_target(table, ctx),
+            Self::CompoundAssignmentExpr(t) => t.seat_target(table, ctx),
+            Self::TypeCastExpression(t) => t.seat_target(table, ctx),
+            Self::CallExpression(t) => t.seat_target(table, ctx),
+            Self::ReturnExpression(t) => t.seat_target(table, ctx),
+            Self::YieldExpression(t) => t.seat_target(table, ctx),
+            Self::StringLiteral(t) => t.seat_target(table, ctx),
+            Self::RawStringLiteral(t) => t.seat_target(table, ctx),
             Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
-            Self::ScopedIdentifier(t) => t.seat_target(table),
-            Self::GenericFunction(t) => t.seat_target(table),
-            Self::AwaitExpression(t) => t.seat_target(table),
-            Self::FieldExpression(t) => t.seat_target(table),
-            Self::ArrayExpressionSemi(t) => t.seat_target(table),
-            Self::ArrayExpressionList(t) => t.seat_target(table),
-            Self::TupleExpression(t) => t.seat_target(table),
-            Self::MacroInvocation(t) => t.seat_target(table),
+            Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
+            Self::GenericFunction(t) => t.seat_target(table, ctx),
+            Self::AwaitExpression(t) => t.seat_target(table, ctx),
+            Self::FieldExpression(t) => t.seat_target(table, ctx),
+            Self::ArrayExpressionSemi(t) => t.seat_target(table, ctx),
+            Self::ArrayExpressionList(t) => t.seat_target(table, ctx),
+            Self::TupleExpression(t) => t.seat_target(table, ctx),
+            Self::MacroInvocation(t) => t.seat_target(table, ctx),
             Self::UnitExpression(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(281)).map(|site| (edges, site)),
-            Self::BreakExpression(t) => t.seat_target(table),
-            Self::ContinueExpression(t) => t.seat_target(table),
-            Self::IndexExpression(t) => t.seat_target(table),
-            Self::ClosureExpressionBlock(t) => t.seat_target(table),
-            Self::ClosureExpressionExpr(t) => t.seat_target(table),
-            Self::ParenthesizedExpression(t) => t.seat_target(table),
-            Self::StructExpression(t) => t.seat_target(table),
-            Self::UnsafeBlock(t) => t.seat_target(table),
-            Self::AsyncBlock(t) => t.seat_target(table),
-            Self::GenBlock(t) => t.seat_target(table),
-            Self::TryBlock(t) => t.seat_target(table),
-            Self::Block(t) => t.seat_target(table),
-            Self::IfExpression(t) => t.seat_target(table),
-            Self::MatchExpression(t) => t.seat_target(table),
-            Self::WhileExpression(t) => t.seat_target(table),
-            Self::LoopExpression(t) => t.seat_target(table),
-            Self::ForExpression(t) => t.seat_target(table),
-            Self::ConstBlock(t) => t.seat_target(table),
-            Self::RangeExpressionBinary(t) => t.seat_target(table),
-            Self::RangeExpressionPostfix(t) => t.seat_target(table),
-            Self::RangeExpressionPrefix(t) => t.seat_target(table),
+            Self::BreakExpression(t) => t.seat_target(table, ctx),
+            Self::ContinueExpression(t) => t.seat_target(table, ctx),
+            Self::IndexExpression(t) => t.seat_target(table, ctx),
+            Self::ClosureExpressionBlock(t) => t.seat_target(table, ctx),
+            Self::ClosureExpressionExpr(t) => t.seat_target(table, ctx),
+            Self::ParenthesizedExpression(t) => t.seat_target(table, ctx),
+            Self::StructExpression(t) => t.seat_target(table, ctx),
+            Self::UnsafeBlock(t) => t.seat_target(table, ctx),
+            Self::AsyncBlock(t) => t.seat_target(table, ctx),
+            Self::GenBlock(t) => t.seat_target(table, ctx),
+            Self::TryBlock(t) => t.seat_target(table, ctx),
+            Self::Block(t) => t.seat_target(table, ctx),
+            Self::IfExpression(t) => t.seat_target(table, ctx),
+            Self::MatchExpression(t) => t.seat_target(table, ctx),
+            Self::WhileExpression(t) => t.seat_target(table, ctx),
+            Self::LoopExpression(t) => t.seat_target(table, ctx),
+            Self::ForExpression(t) => t.seat_target(table, ctx),
+            Self::ConstBlock(t) => t.seat_target(table, ctx),
+            Self::RangeExpressionBinary(t) => t.seat_target(table, ctx),
+            Self::RangeExpressionPostfix(t) => t.seat_target(table, ctx),
+            Self::RangeExpressionPrefix(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37824,10 +37860,10 @@ impl ::sittir_core::prepare::SeatTarget for LetChainRightTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ElseClauseBodyTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::Block(t) => t.seat_target(table),
-            Self::IfExpression(t) => t.seat_target(table),
+            Self::Block(t) => t.seat_target(table, ctx),
+            Self::IfExpression(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37835,10 +37871,10 @@ impl ::sittir_core::prepare::SeatTarget for ElseClauseBodyTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for LastMatchArmAttributesTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::AttributeItem(t) => t.seat_target(table),
-            Self::InnerAttributeItem(t) => t.seat_target(table),
+            Self::AttributeItem(t) => t.seat_target(table, ctx),
+            Self::InnerAttributeItem(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37846,30 +37882,30 @@ impl ::sittir_core::prepare::SeatTarget for LastMatchArmAttributesTransportSlot 
 }
 
 impl ::sittir_core::prepare::SeatTarget for ClosureParametersParametersTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::StringLiteral(t) => t.seat_target(table),
-            Self::RawStringLiteral(t) => t.seat_target(table),
-            Self::NegativeLiteral(t) => t.seat_target(table),
-            Self::ScopedIdentifier(t) => t.seat_target(table),
-            Self::GenericPattern(t) => t.seat_target(table),
-            Self::TuplePattern(t) => t.seat_target(table),
-            Self::TupleStructPattern(t) => t.seat_target(table),
-            Self::StructPattern(t) => t.seat_target(table),
-            Self::RefPattern(t) => t.seat_target(table),
-            Self::SlicePattern(t) => t.seat_target(table),
-            Self::CapturedPattern(t) => t.seat_target(table),
-            Self::ReferencePattern(t) => t.seat_target(table),
+            Self::StringLiteral(t) => t.seat_target(table, ctx),
+            Self::RawStringLiteral(t) => t.seat_target(table, ctx),
+            Self::NegativeLiteral(t) => t.seat_target(table, ctx),
+            Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
+            Self::GenericPattern(t) => t.seat_target(table, ctx),
+            Self::TuplePattern(t) => t.seat_target(table, ctx),
+            Self::TupleStructPattern(t) => t.seat_target(table, ctx),
+            Self::StructPattern(t) => t.seat_target(table, ctx),
+            Self::RefPattern(t) => t.seat_target(table, ctx),
+            Self::SlicePattern(t) => t.seat_target(table, ctx),
+            Self::CapturedPattern(t) => t.seat_target(table, ctx),
+            Self::ReferencePattern(t) => t.seat_target(table, ctx),
             Self::RemainingFieldPattern(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(321)).map(|site| (edges, site)),
-            Self::MutPattern(t) => t.seat_target(table),
-            Self::RangePatternWithLeft(t) => t.seat_target(table),
-            Self::RangePatternPrefix(t) => t.seat_target(table),
-            Self::OrPatternBinary(t) => t.seat_target(table),
-            Self::OrPatternPrefix(t) => t.seat_target(table),
-            Self::ConstBlock(t) => t.seat_target(table),
-            Self::MacroInvocation(t) => t.seat_target(table),
+            Self::MutPattern(t) => t.seat_target(table, ctx),
+            Self::RangePatternWithLeft(t) => t.seat_target(table, ctx),
+            Self::RangePatternPrefix(t) => t.seat_target(table, ctx),
+            Self::OrPatternBinary(t) => t.seat_target(table, ctx),
+            Self::OrPatternPrefix(t) => t.seat_target(table, ctx),
+            Self::ConstBlock(t) => t.seat_target(table, ctx),
+            Self::MacroInvocation(t) => t.seat_target(table, ctx),
             Self::WildcardPattern(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(426)).map(|site| (edges, site)),
-            Self::Parameter(t) => t.seat_target(table),
+            Self::Parameter(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37877,9 +37913,9 @@ impl ::sittir_core::prepare::SeatTarget for ClosureParametersParametersTransport
 }
 
 impl ::sittir_core::prepare::SeatTarget for GenericPatternNameTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ScopedIdentifier(t) => t.seat_target(table),
+            Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37887,9 +37923,9 @@ impl ::sittir_core::prepare::SeatTarget for GenericPatternNameTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TupleStructPatternTypeTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ScopedIdentifier(t) => t.seat_target(table),
+            Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37897,9 +37933,9 @@ impl ::sittir_core::prepare::SeatTarget for TupleStructPatternTypeTransportSlot 
 }
 
 impl ::sittir_core::prepare::SeatTarget for StructPatternTypeTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ScopedTypeIdentifier(t) => t.seat_target(table),
+            Self::ScopedTypeIdentifier(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37907,9 +37943,9 @@ impl ::sittir_core::prepare::SeatTarget for StructPatternTypeTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for UseBoundsElementsItemTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::Lifetime(t) => t.seat_target(table),
+            Self::Lifetime(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37917,11 +37953,11 @@ impl ::sittir_core::prepare::SeatTarget for UseBoundsElementsItemTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for FieldInitializerListElementsItemTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ShorthandFieldInitializer(t) => t.seat_target(table),
-            Self::FieldInitializer(t) => t.seat_target(table),
-            Self::BaseFieldInitializer(t) => t.seat_target(table),
+            Self::ShorthandFieldInitializer(t) => t.seat_target(table, ctx),
+            Self::FieldInitializer(t) => t.seat_target(table, ctx),
+            Self::BaseFieldInitializer(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37929,31 +37965,31 @@ impl ::sittir_core::prepare::SeatTarget for FieldInitializerListElementsItemTran
 }
 
 impl ::sittir_core::prepare::SeatTarget for TuplePatternElementsItemTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::StringLiteral(t) => t.seat_target(table),
-            Self::RawStringLiteral(t) => t.seat_target(table),
-            Self::NegativeLiteral(t) => t.seat_target(table),
-            Self::ScopedIdentifier(t) => t.seat_target(table),
-            Self::GenericPattern(t) => t.seat_target(table),
-            Self::TuplePattern(t) => t.seat_target(table),
-            Self::TupleStructPattern(t) => t.seat_target(table),
-            Self::StructPattern(t) => t.seat_target(table),
-            Self::RefPattern(t) => t.seat_target(table),
-            Self::SlicePattern(t) => t.seat_target(table),
-            Self::CapturedPattern(t) => t.seat_target(table),
-            Self::ReferencePattern(t) => t.seat_target(table),
+            Self::StringLiteral(t) => t.seat_target(table, ctx),
+            Self::RawStringLiteral(t) => t.seat_target(table, ctx),
+            Self::NegativeLiteral(t) => t.seat_target(table, ctx),
+            Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
+            Self::GenericPattern(t) => t.seat_target(table, ctx),
+            Self::TuplePattern(t) => t.seat_target(table, ctx),
+            Self::TupleStructPattern(t) => t.seat_target(table, ctx),
+            Self::StructPattern(t) => t.seat_target(table, ctx),
+            Self::RefPattern(t) => t.seat_target(table, ctx),
+            Self::SlicePattern(t) => t.seat_target(table, ctx),
+            Self::CapturedPattern(t) => t.seat_target(table, ctx),
+            Self::ReferencePattern(t) => t.seat_target(table, ctx),
             Self::RemainingFieldPattern(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(321)).map(|site| (edges, site)),
-            Self::MutPattern(t) => t.seat_target(table),
-            Self::RangePatternWithLeft(t) => t.seat_target(table),
-            Self::RangePatternPrefix(t) => t.seat_target(table),
-            Self::OrPatternBinary(t) => t.seat_target(table),
-            Self::OrPatternPrefix(t) => t.seat_target(table),
-            Self::ConstBlock(t) => t.seat_target(table),
-            Self::MacroInvocation(t) => t.seat_target(table),
+            Self::MutPattern(t) => t.seat_target(table, ctx),
+            Self::RangePatternWithLeft(t) => t.seat_target(table, ctx),
+            Self::RangePatternPrefix(t) => t.seat_target(table, ctx),
+            Self::OrPatternBinary(t) => t.seat_target(table, ctx),
+            Self::OrPatternPrefix(t) => t.seat_target(table, ctx),
+            Self::ConstBlock(t) => t.seat_target(table, ctx),
+            Self::MacroInvocation(t) => t.seat_target(table, ctx),
             Self::WildcardPattern(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(426)).map(|site| (edges, site)),
-            Self::ClosureExpressionBlock(t) => t.seat_target(table),
-            Self::ClosureExpressionExpr(t) => t.seat_target(table),
+            Self::ClosureExpressionBlock(t) => t.seat_target(table, ctx),
+            Self::ClosureExpressionExpr(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -37961,10 +37997,10 @@ impl ::sittir_core::prepare::SeatTarget for TuplePatternElementsItemTransportSlo
 }
 
 impl ::sittir_core::prepare::SeatTarget for StructPatternElementsItemTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::FieldPatternShorthand(t) => t.seat_target(table),
-            Self::FieldPatternNamed(t) => t.seat_target(table),
+            Self::FieldPatternShorthand(t) => t.seat_target(table, ctx),
+            Self::FieldPatternNamed(t) => t.seat_target(table, ctx),
             Self::RemainingFieldPattern(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(321)).map(|site| (edges, site)),
             #[allow(unreachable_patterns)]
             _ => None,
@@ -37973,54 +38009,54 @@ impl ::sittir_core::prepare::SeatTarget for StructPatternElementsItemTransportSl
 }
 
 impl ::sittir_core::prepare::SeatTarget for ClosureExpressionExprBodyTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::UnaryExpression(t) => t.seat_target(table),
-            Self::ReferenceExpressionRawConst(t) => t.seat_target(table),
-            Self::ReferenceExpressionRawMut(t) => t.seat_target(table),
-            Self::ReferenceExpressionMut(t) => t.seat_target(table),
-            Self::ReferenceExpressionBare(t) => t.seat_target(table),
-            Self::TryExpression(t) => t.seat_target(table),
-            Self::BinaryExpression(t) => t.seat_target(table),
-            Self::AssignmentExpression(t) => t.seat_target(table),
-            Self::CompoundAssignmentExpr(t) => t.seat_target(table),
-            Self::TypeCastExpression(t) => t.seat_target(table),
-            Self::CallExpression(t) => t.seat_target(table),
-            Self::ReturnExpression(t) => t.seat_target(table),
-            Self::YieldExpression(t) => t.seat_target(table),
-            Self::StringLiteral(t) => t.seat_target(table),
-            Self::RawStringLiteral(t) => t.seat_target(table),
+            Self::UnaryExpression(t) => t.seat_target(table, ctx),
+            Self::ReferenceExpressionRawConst(t) => t.seat_target(table, ctx),
+            Self::ReferenceExpressionRawMut(t) => t.seat_target(table, ctx),
+            Self::ReferenceExpressionMut(t) => t.seat_target(table, ctx),
+            Self::ReferenceExpressionBare(t) => t.seat_target(table, ctx),
+            Self::TryExpression(t) => t.seat_target(table, ctx),
+            Self::BinaryExpression(t) => t.seat_target(table, ctx),
+            Self::AssignmentExpression(t) => t.seat_target(table, ctx),
+            Self::CompoundAssignmentExpr(t) => t.seat_target(table, ctx),
+            Self::TypeCastExpression(t) => t.seat_target(table, ctx),
+            Self::CallExpression(t) => t.seat_target(table, ctx),
+            Self::ReturnExpression(t) => t.seat_target(table, ctx),
+            Self::YieldExpression(t) => t.seat_target(table, ctx),
+            Self::StringLiteral(t) => t.seat_target(table, ctx),
+            Self::RawStringLiteral(t) => t.seat_target(table, ctx),
             Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
-            Self::ScopedIdentifier(t) => t.seat_target(table),
-            Self::GenericFunction(t) => t.seat_target(table),
-            Self::AwaitExpression(t) => t.seat_target(table),
-            Self::FieldExpression(t) => t.seat_target(table),
-            Self::ArrayExpressionSemi(t) => t.seat_target(table),
-            Self::ArrayExpressionList(t) => t.seat_target(table),
-            Self::TupleExpression(t) => t.seat_target(table),
-            Self::MacroInvocation(t) => t.seat_target(table),
+            Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
+            Self::GenericFunction(t) => t.seat_target(table, ctx),
+            Self::AwaitExpression(t) => t.seat_target(table, ctx),
+            Self::FieldExpression(t) => t.seat_target(table, ctx),
+            Self::ArrayExpressionSemi(t) => t.seat_target(table, ctx),
+            Self::ArrayExpressionList(t) => t.seat_target(table, ctx),
+            Self::TupleExpression(t) => t.seat_target(table, ctx),
+            Self::MacroInvocation(t) => t.seat_target(table, ctx),
             Self::UnitExpression(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(281)).map(|site| (edges, site)),
-            Self::BreakExpression(t) => t.seat_target(table),
-            Self::ContinueExpression(t) => t.seat_target(table),
-            Self::IndexExpression(t) => t.seat_target(table),
-            Self::ClosureExpressionBlock(t) => t.seat_target(table),
-            Self::ClosureExpressionExpr(t) => t.seat_target(table),
-            Self::ParenthesizedExpression(t) => t.seat_target(table),
-            Self::StructExpression(t) => t.seat_target(table),
-            Self::UnsafeBlock(t) => t.seat_target(table),
-            Self::AsyncBlock(t) => t.seat_target(table),
-            Self::GenBlock(t) => t.seat_target(table),
-            Self::TryBlock(t) => t.seat_target(table),
-            Self::Block(t) => t.seat_target(table),
-            Self::IfExpression(t) => t.seat_target(table),
-            Self::MatchExpression(t) => t.seat_target(table),
-            Self::WhileExpression(t) => t.seat_target(table),
-            Self::LoopExpression(t) => t.seat_target(table),
-            Self::ForExpression(t) => t.seat_target(table),
-            Self::ConstBlock(t) => t.seat_target(table),
-            Self::RangeExpressionBinary(t) => t.seat_target(table),
-            Self::RangeExpressionPostfix(t) => t.seat_target(table),
-            Self::RangeExpressionPrefix(t) => t.seat_target(table),
+            Self::BreakExpression(t) => t.seat_target(table, ctx),
+            Self::ContinueExpression(t) => t.seat_target(table, ctx),
+            Self::IndexExpression(t) => t.seat_target(table, ctx),
+            Self::ClosureExpressionBlock(t) => t.seat_target(table, ctx),
+            Self::ClosureExpressionExpr(t) => t.seat_target(table, ctx),
+            Self::ParenthesizedExpression(t) => t.seat_target(table, ctx),
+            Self::StructExpression(t) => t.seat_target(table, ctx),
+            Self::UnsafeBlock(t) => t.seat_target(table, ctx),
+            Self::AsyncBlock(t) => t.seat_target(table, ctx),
+            Self::GenBlock(t) => t.seat_target(table, ctx),
+            Self::TryBlock(t) => t.seat_target(table, ctx),
+            Self::Block(t) => t.seat_target(table, ctx),
+            Self::IfExpression(t) => t.seat_target(table, ctx),
+            Self::MatchExpression(t) => t.seat_target(table, ctx),
+            Self::WhileExpression(t) => t.seat_target(table, ctx),
+            Self::LoopExpression(t) => t.seat_target(table, ctx),
+            Self::ForExpression(t) => t.seat_target(table, ctx),
+            Self::ConstBlock(t) => t.seat_target(table, ctx),
+            Self::RangeExpressionBinary(t) => t.seat_target(table, ctx),
+            Self::RangeExpressionPostfix(t) => t.seat_target(table, ctx),
+            Self::RangeExpressionPrefix(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -38028,10 +38064,10 @@ impl ::sittir_core::prepare::SeatTarget for ClosureExpressionExprBodyTransportSl
 }
 
 impl ::sittir_core::prepare::SeatTarget for ImplItemPositiveClauseTraitTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ScopedTypeIdentifier(t) => t.seat_target(table),
-            Self::GenericType(t) => t.seat_target(table),
+            Self::ScopedTypeIdentifier(t) => t.seat_target(table, ctx),
+            Self::GenericType(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -38039,9 +38075,9 @@ impl ::sittir_core::prepare::SeatTarget for ImplItemPositiveClauseTraitTransport
 }
 
 impl ::sittir_core::prepare::SeatTarget for VisibilityModifierPubScopeContentTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::VisibilityModifierPubScopeInPath(t) => t.seat_target(table),
+            Self::VisibilityModifierPubScopeInPath(t) => t.seat_target(table, ctx),
             Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
             Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
             Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(127)).map(|site| (edges, site)),
@@ -38052,19 +38088,19 @@ impl ::sittir_core::prepare::SeatTarget for VisibilityModifierPubScopeContentTra
 }
 
 impl ::sittir_core::prepare::SeatTarget for MatchArmBlockEndingValueTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::UnsafeBlock(t) => t.seat_target(table),
-            Self::AsyncBlock(t) => t.seat_target(table),
-            Self::GenBlock(t) => t.seat_target(table),
-            Self::TryBlock(t) => t.seat_target(table),
-            Self::Block(t) => t.seat_target(table),
-            Self::IfExpression(t) => t.seat_target(table),
-            Self::MatchExpression(t) => t.seat_target(table),
-            Self::WhileExpression(t) => t.seat_target(table),
-            Self::LoopExpression(t) => t.seat_target(table),
-            Self::ForExpression(t) => t.seat_target(table),
-            Self::ConstBlock(t) => t.seat_target(table),
+            Self::UnsafeBlock(t) => t.seat_target(table, ctx),
+            Self::AsyncBlock(t) => t.seat_target(table, ctx),
+            Self::GenBlock(t) => t.seat_target(table, ctx),
+            Self::TryBlock(t) => t.seat_target(table, ctx),
+            Self::Block(t) => t.seat_target(table, ctx),
+            Self::IfExpression(t) => t.seat_target(table, ctx),
+            Self::MatchExpression(t) => t.seat_target(table, ctx),
+            Self::WhileExpression(t) => t.seat_target(table, ctx),
+            Self::LoopExpression(t) => t.seat_target(table, ctx),
+            Self::ForExpression(t) => t.seat_target(table, ctx),
+            Self::ConstBlock(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -38072,12 +38108,12 @@ impl ::sittir_core::prepare::SeatTarget for MatchArmBlockEndingValueTransportSlo
 }
 
 impl ::sittir_core::prepare::SeatTarget for DelimTokenTreeParenDelimTokensTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::NonSpecialToken(t) => t.seat_target(table),
-            Self::DelimTokenTreeParen(t) => t.seat_target(table),
-            Self::DelimTokenTreeBracket(t) => t.seat_target(table),
-            Self::DelimTokenTreeBrace(t) => t.seat_target(table),
+            Self::NonSpecialToken(t) => t.seat_target(table, ctx),
+            Self::DelimTokenTreeParen(t) => t.seat_target(table, ctx),
+            Self::DelimTokenTreeBracket(t) => t.seat_target(table, ctx),
+            Self::DelimTokenTreeBrace(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -38085,12 +38121,12 @@ impl ::sittir_core::prepare::SeatTarget for DelimTokenTreeParenDelimTokensTransp
 }
 
 impl ::sittir_core::prepare::SeatTarget for RangePatternPrefixRightTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::StringLiteral(t) => t.seat_target(table),
-            Self::RawStringLiteral(t) => t.seat_target(table),
-            Self::NegativeLiteral(t) => t.seat_target(table),
-            Self::ScopedIdentifier(t) => t.seat_target(table),
+            Self::StringLiteral(t) => t.seat_target(table, ctx),
+            Self::RawStringLiteral(t) => t.seat_target(table, ctx),
+            Self::NegativeLiteral(t) => t.seat_target(table, ctx),
+            Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
             Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
             Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
             Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(127)).map(|site| (edges, site)),
@@ -38101,24 +38137,24 @@ impl ::sittir_core::prepare::SeatTarget for RangePatternPrefixRightTransportSlot
 }
 
 impl ::sittir_core::prepare::SeatTarget for AttributedParameterContentTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::Parameter(t) => t.seat_target(table),
-            Self::AbstractType(t) => t.seat_target(table),
-            Self::ReferenceType(t) => t.seat_target(table),
-            Self::PointerTypeConst(t) => t.seat_target(table),
-            Self::PointerTypeMut(t) => t.seat_target(table),
-            Self::GenericType(t) => t.seat_target(table),
-            Self::ScopedTypeIdentifier(t) => t.seat_target(table),
-            Self::TupleType(t) => t.seat_target(table),
+            Self::Parameter(t) => t.seat_target(table, ctx),
+            Self::AbstractType(t) => t.seat_target(table, ctx),
+            Self::ReferenceType(t) => t.seat_target(table, ctx),
+            Self::PointerTypeConst(t) => t.seat_target(table, ctx),
+            Self::PointerTypeMut(t) => t.seat_target(table, ctx),
+            Self::GenericType(t) => t.seat_target(table, ctx),
+            Self::ScopedTypeIdentifier(t) => t.seat_target(table, ctx),
+            Self::TupleType(t) => t.seat_target(table, ctx),
             Self::UnitType(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(244)).map(|site| (edges, site)),
-            Self::ArrayType(t) => t.seat_target(table),
-            Self::FunctionType(t) => t.seat_target(table),
-            Self::MacroInvocation(t) => t.seat_target(table),
+            Self::ArrayType(t) => t.seat_target(table, ctx),
+            Self::FunctionType(t) => t.seat_target(table, ctx),
+            Self::MacroInvocation(t) => t.seat_target(table, ctx),
             Self::NeverType(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(254)).map(|site| (edges, site)),
-            Self::DynamicType(t) => t.seat_target(table),
-            Self::BoundedType(t) => t.seat_target(table),
-            Self::RemovedTraitBound(t) => t.seat_target(table),
+            Self::DynamicType(t) => t.seat_target(table, ctx),
+            Self::BoundedType(t) => t.seat_target(table, ctx),
+            Self::RemovedTraitBound(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -38126,27 +38162,27 @@ impl ::sittir_core::prepare::SeatTarget for AttributedParameterContentTransportS
 }
 
 impl ::sittir_core::prepare::SeatTarget for TypeArgumentContentTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::AbstractType(t) => t.seat_target(table),
-            Self::ReferenceType(t) => t.seat_target(table),
-            Self::PointerTypeConst(t) => t.seat_target(table),
-            Self::PointerTypeMut(t) => t.seat_target(table),
-            Self::GenericType(t) => t.seat_target(table),
-            Self::ScopedTypeIdentifier(t) => t.seat_target(table),
-            Self::TupleType(t) => t.seat_target(table),
+            Self::AbstractType(t) => t.seat_target(table, ctx),
+            Self::ReferenceType(t) => t.seat_target(table, ctx),
+            Self::PointerTypeConst(t) => t.seat_target(table, ctx),
+            Self::PointerTypeMut(t) => t.seat_target(table, ctx),
+            Self::GenericType(t) => t.seat_target(table, ctx),
+            Self::ScopedTypeIdentifier(t) => t.seat_target(table, ctx),
+            Self::TupleType(t) => t.seat_target(table, ctx),
             Self::UnitType(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(244)).map(|site| (edges, site)),
-            Self::ArrayType(t) => t.seat_target(table),
-            Self::FunctionType(t) => t.seat_target(table),
-            Self::MacroInvocation(t) => t.seat_target(table),
+            Self::ArrayType(t) => t.seat_target(table, ctx),
+            Self::FunctionType(t) => t.seat_target(table, ctx),
+            Self::MacroInvocation(t) => t.seat_target(table, ctx),
             Self::NeverType(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(254)).map(|site| (edges, site)),
-            Self::DynamicType(t) => t.seat_target(table),
-            Self::BoundedType(t) => t.seat_target(table),
-            Self::RemovedTraitBound(t) => t.seat_target(table),
-            Self::Lifetime(t) => t.seat_target(table),
-            Self::StringLiteral(t) => t.seat_target(table),
-            Self::RawStringLiteral(t) => t.seat_target(table),
-            Self::Block(t) => t.seat_target(table),
+            Self::DynamicType(t) => t.seat_target(table, ctx),
+            Self::BoundedType(t) => t.seat_target(table, ctx),
+            Self::RemovedTraitBound(t) => t.seat_target(table, ctx),
+            Self::Lifetime(t) => t.seat_target(table, ctx),
+            Self::StringLiteral(t) => t.seat_target(table, ctx),
+            Self::RawStringLiteral(t) => t.seat_target(table, ctx),
+            Self::Block(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -38154,157 +38190,157 @@ impl ::sittir_core::prepare::SeatTarget for TypeArgumentContentTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for AnyTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::EmptyStatement(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(178)).map(|site| (edges, site)),
-            Self::ExpressionStatement(t) => t.seat_target(table),
-            Self::MacroRule(t) => t.seat_target(table),
-            Self::TokenBindingPattern(t) => t.seat_target(table),
-            Self::TokenRepetitionPattern(t) => t.seat_target(table),
-            Self::TokenRepetition(t) => t.seat_target(table),
-            Self::NonSpecialToken(t) => t.seat_target(table),
-            Self::AttributeItem(t) => t.seat_target(table),
-            Self::InnerAttributeItem(t) => t.seat_target(table),
-            Self::UnionItem(t) => t.seat_target(table),
-            Self::EnumItem(t) => t.seat_target(table),
-            Self::ExternCrateDeclaration(t) => t.seat_target(table),
-            Self::ConstItem(t) => t.seat_target(table),
-            Self::StaticItem(t) => t.seat_target(table),
-            Self::TypeItem(t) => t.seat_target(table),
-            Self::FunctionItem(t) => t.seat_target(table),
-            Self::FunctionSignatureItem(t) => t.seat_target(table),
-            Self::WherePredicate(t) => t.seat_target(table),
-            Self::TraitItem(t) => t.seat_target(table),
-            Self::AssociatedType(t) => t.seat_target(table),
-            Self::HigherRankedTraitBound(t) => t.seat_target(table),
-            Self::RemovedTraitBound(t) => t.seat_target(table),
-            Self::LetDeclaration(t) => t.seat_target(table),
-            Self::UseDeclaration(t) => t.seat_target(table),
-            Self::ScopedUseList(t) => t.seat_target(table),
-            Self::UseList(t) => t.seat_target(table),
-            Self::UseAsClause(t) => t.seat_target(table),
-            Self::UseWildcard(t) => t.seat_target(table),
-            Self::Parameter(t) => t.seat_target(table),
-            Self::ExternModifier(t) => t.seat_target(table),
-            Self::VisibilityModifier(t) => t.seat_target(table),
-            Self::Lifetime(t) => t.seat_target(table),
-            Self::ArrayType(t) => t.seat_target(table),
-            Self::FunctionType(t) => t.seat_target(table),
-            Self::TupleType(t) => t.seat_target(table),
+            Self::ExpressionStatement(t) => t.seat_target(table, ctx),
+            Self::MacroRule(t) => t.seat_target(table, ctx),
+            Self::TokenBindingPattern(t) => t.seat_target(table, ctx),
+            Self::TokenRepetitionPattern(t) => t.seat_target(table, ctx),
+            Self::TokenRepetition(t) => t.seat_target(table, ctx),
+            Self::NonSpecialToken(t) => t.seat_target(table, ctx),
+            Self::AttributeItem(t) => t.seat_target(table, ctx),
+            Self::InnerAttributeItem(t) => t.seat_target(table, ctx),
+            Self::UnionItem(t) => t.seat_target(table, ctx),
+            Self::EnumItem(t) => t.seat_target(table, ctx),
+            Self::ExternCrateDeclaration(t) => t.seat_target(table, ctx),
+            Self::ConstItem(t) => t.seat_target(table, ctx),
+            Self::StaticItem(t) => t.seat_target(table, ctx),
+            Self::TypeItem(t) => t.seat_target(table, ctx),
+            Self::FunctionItem(t) => t.seat_target(table, ctx),
+            Self::FunctionSignatureItem(t) => t.seat_target(table, ctx),
+            Self::WherePredicate(t) => t.seat_target(table, ctx),
+            Self::TraitItem(t) => t.seat_target(table, ctx),
+            Self::AssociatedType(t) => t.seat_target(table, ctx),
+            Self::HigherRankedTraitBound(t) => t.seat_target(table, ctx),
+            Self::RemovedTraitBound(t) => t.seat_target(table, ctx),
+            Self::LetDeclaration(t) => t.seat_target(table, ctx),
+            Self::UseDeclaration(t) => t.seat_target(table, ctx),
+            Self::ScopedUseList(t) => t.seat_target(table, ctx),
+            Self::UseList(t) => t.seat_target(table, ctx),
+            Self::UseAsClause(t) => t.seat_target(table, ctx),
+            Self::UseWildcard(t) => t.seat_target(table, ctx),
+            Self::Parameter(t) => t.seat_target(table, ctx),
+            Self::ExternModifier(t) => t.seat_target(table, ctx),
+            Self::VisibilityModifier(t) => t.seat_target(table, ctx),
+            Self::Lifetime(t) => t.seat_target(table, ctx),
+            Self::ArrayType(t) => t.seat_target(table, ctx),
+            Self::FunctionType(t) => t.seat_target(table, ctx),
+            Self::TupleType(t) => t.seat_target(table, ctx),
             Self::UnitType(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(244)).map(|site| (edges, site)),
-            Self::GenericFunction(t) => t.seat_target(table),
-            Self::GenericType(t) => t.seat_target(table),
-            Self::BoundedType(t) => t.seat_target(table),
-            Self::ReferenceType(t) => t.seat_target(table),
+            Self::GenericFunction(t) => t.seat_target(table, ctx),
+            Self::GenericType(t) => t.seat_target(table, ctx),
+            Self::BoundedType(t) => t.seat_target(table, ctx),
+            Self::ReferenceType(t) => t.seat_target(table, ctx),
             Self::NeverType(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(254)).map(|site| (edges, site)),
-            Self::AbstractType(t) => t.seat_target(table),
-            Self::DynamicType(t) => t.seat_target(table),
-            Self::MacroInvocation(t) => t.seat_target(table),
-            Self::ScopedIdentifier(t) => t.seat_target(table),
-            Self::ScopedTypeIdentifier(t) => t.seat_target(table),
-            Self::UnaryExpression(t) => t.seat_target(table),
-            Self::TryExpression(t) => t.seat_target(table),
-            Self::BinaryExpression(t) => t.seat_target(table),
-            Self::AssignmentExpression(t) => t.seat_target(table),
-            Self::CompoundAssignmentExpr(t) => t.seat_target(table),
-            Self::TypeCastExpression(t) => t.seat_target(table),
-            Self::ReturnExpression(t) => t.seat_target(table),
-            Self::YieldExpression(t) => t.seat_target(table),
-            Self::CallExpression(t) => t.seat_target(table),
-            Self::ParenthesizedExpression(t) => t.seat_target(table),
-            Self::TupleExpression(t) => t.seat_target(table),
+            Self::AbstractType(t) => t.seat_target(table, ctx),
+            Self::DynamicType(t) => t.seat_target(table, ctx),
+            Self::MacroInvocation(t) => t.seat_target(table, ctx),
+            Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
+            Self::ScopedTypeIdentifier(t) => t.seat_target(table, ctx),
+            Self::UnaryExpression(t) => t.seat_target(table, ctx),
+            Self::TryExpression(t) => t.seat_target(table, ctx),
+            Self::BinaryExpression(t) => t.seat_target(table, ctx),
+            Self::AssignmentExpression(t) => t.seat_target(table, ctx),
+            Self::CompoundAssignmentExpr(t) => t.seat_target(table, ctx),
+            Self::TypeCastExpression(t) => t.seat_target(table, ctx),
+            Self::ReturnExpression(t) => t.seat_target(table, ctx),
+            Self::YieldExpression(t) => t.seat_target(table, ctx),
+            Self::CallExpression(t) => t.seat_target(table, ctx),
+            Self::ParenthesizedExpression(t) => t.seat_target(table, ctx),
+            Self::TupleExpression(t) => t.seat_target(table, ctx),
             Self::UnitExpression(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(281)).map(|site| (edges, site)),
-            Self::StructExpression(t) => t.seat_target(table),
-            Self::ShorthandFieldInitializer(t) => t.seat_target(table),
-            Self::FieldInitializer(t) => t.seat_target(table),
-            Self::BaseFieldInitializer(t) => t.seat_target(table),
-            Self::IfExpression(t) => t.seat_target(table),
-            Self::LetCondition(t) => t.seat_target(table),
-            Self::MatchExpression(t) => t.seat_target(table),
-            Self::WhileExpression(t) => t.seat_target(table),
-            Self::LoopExpression(t) => t.seat_target(table),
-            Self::ForExpression(t) => t.seat_target(table),
-            Self::ConstBlock(t) => t.seat_target(table),
-            Self::BreakExpression(t) => t.seat_target(table),
-            Self::ContinueExpression(t) => t.seat_target(table),
-            Self::IndexExpression(t) => t.seat_target(table),
-            Self::AwaitExpression(t) => t.seat_target(table),
-            Self::FieldExpression(t) => t.seat_target(table),
-            Self::UnsafeBlock(t) => t.seat_target(table),
-            Self::AsyncBlock(t) => t.seat_target(table),
-            Self::GenBlock(t) => t.seat_target(table),
-            Self::TryBlock(t) => t.seat_target(table),
-            Self::Block(t) => t.seat_target(table),
-            Self::GenericPattern(t) => t.seat_target(table),
-            Self::TuplePattern(t) => t.seat_target(table),
-            Self::SlicePattern(t) => t.seat_target(table),
-            Self::TupleStructPattern(t) => t.seat_target(table),
-            Self::StructPattern(t) => t.seat_target(table),
+            Self::StructExpression(t) => t.seat_target(table, ctx),
+            Self::ShorthandFieldInitializer(t) => t.seat_target(table, ctx),
+            Self::FieldInitializer(t) => t.seat_target(table, ctx),
+            Self::BaseFieldInitializer(t) => t.seat_target(table, ctx),
+            Self::IfExpression(t) => t.seat_target(table, ctx),
+            Self::LetCondition(t) => t.seat_target(table, ctx),
+            Self::MatchExpression(t) => t.seat_target(table, ctx),
+            Self::WhileExpression(t) => t.seat_target(table, ctx),
+            Self::LoopExpression(t) => t.seat_target(table, ctx),
+            Self::ForExpression(t) => t.seat_target(table, ctx),
+            Self::ConstBlock(t) => t.seat_target(table, ctx),
+            Self::BreakExpression(t) => t.seat_target(table, ctx),
+            Self::ContinueExpression(t) => t.seat_target(table, ctx),
+            Self::IndexExpression(t) => t.seat_target(table, ctx),
+            Self::AwaitExpression(t) => t.seat_target(table, ctx),
+            Self::FieldExpression(t) => t.seat_target(table, ctx),
+            Self::UnsafeBlock(t) => t.seat_target(table, ctx),
+            Self::AsyncBlock(t) => t.seat_target(table, ctx),
+            Self::GenBlock(t) => t.seat_target(table, ctx),
+            Self::TryBlock(t) => t.seat_target(table, ctx),
+            Self::Block(t) => t.seat_target(table, ctx),
+            Self::GenericPattern(t) => t.seat_target(table, ctx),
+            Self::TuplePattern(t) => t.seat_target(table, ctx),
+            Self::SlicePattern(t) => t.seat_target(table, ctx),
+            Self::TupleStructPattern(t) => t.seat_target(table, ctx),
+            Self::StructPattern(t) => t.seat_target(table, ctx),
             Self::RemainingFieldPattern(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(321)).map(|site| (edges, site)),
-            Self::MutPattern(t) => t.seat_target(table),
-            Self::RefPattern(t) => t.seat_target(table),
-            Self::CapturedPattern(t) => t.seat_target(table),
-            Self::ReferencePattern(t) => t.seat_target(table),
-            Self::NegativeLiteral(t) => t.seat_target(table),
-            Self::StringLiteral(t) => t.seat_target(table),
-            Self::RawStringLiteral(t) => t.seat_target(table),
+            Self::MutPattern(t) => t.seat_target(table, ctx),
+            Self::RefPattern(t) => t.seat_target(table, ctx),
+            Self::CapturedPattern(t) => t.seat_target(table, ctx),
+            Self::ReferencePattern(t) => t.seat_target(table, ctx),
+            Self::NegativeLiteral(t) => t.seat_target(table, ctx),
+            Self::StringLiteral(t) => t.seat_target(table, ctx),
+            Self::RawStringLiteral(t) => t.seat_target(table, ctx),
             Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
             Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
             Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(127)).map(|site| (edges, site)),
-            Self::ArrayExpressionSemi(t) => t.seat_target(table),
-            Self::ArrayExpressionList(t) => t.seat_target(table),
-            Self::AttributeInput(t) => t.seat_target(table),
-            Self::ClosureExpressionBlock(t) => t.seat_target(table),
-            Self::ClosureExpressionExpr(t) => t.seat_target(table),
-            Self::ReferenceExpressionRawConst(t) => t.seat_target(table),
-            Self::ReferenceExpressionRawMut(t) => t.seat_target(table),
-            Self::ReferenceExpressionMut(t) => t.seat_target(table),
-            Self::ReferenceExpressionBare(t) => t.seat_target(table),
-            Self::ImplItemBody(t) => t.seat_target(table),
-            Self::ImplItemSemi(t) => t.seat_target(table),
-            Self::VisibilityModifierPubScopeInPath(t) => t.seat_target(table),
-            Self::VisibilityModifierPubScope(t) => t.seat_target(table),
-            Self::ModItemExternal(t) => t.seat_target(table),
-            Self::ModItemInline(t) => t.seat_target(table),
-            Self::OrPatternBinary(t) => t.seat_target(table),
-            Self::OrPatternPrefix(t) => t.seat_target(table),
-            Self::PointerTypeConst(t) => t.seat_target(table),
-            Self::PointerTypeMut(t) => t.seat_target(table),
-            Self::RangeExpressionBinary(t) => t.seat_target(table),
-            Self::RangeExpressionPostfix(t) => t.seat_target(table),
-            Self::RangeExpressionPrefix(t) => t.seat_target(table),
-            Self::ExpressionStatementWithSemi(t) => t.seat_target(table),
-            Self::ForeignModItemSemi(t) => t.seat_target(table),
-            Self::ForeignModItemBody(t) => t.seat_target(table),
-            Self::MatchArmWithComma(t) => t.seat_target(table),
-            Self::MatchArmBlockEnding(t) => t.seat_target(table),
-            Self::TokenTreePatternParen(t) => t.seat_target(table),
-            Self::TokenTreePatternBracket(t) => t.seat_target(table),
-            Self::TokenTreePatternBrace(t) => t.seat_target(table),
-            Self::TokenTreeParen(t) => t.seat_target(table),
-            Self::TokenTreeBracket(t) => t.seat_target(table),
-            Self::TokenTreeBrace(t) => t.seat_target(table),
-            Self::DelimTokenTreeParen(t) => t.seat_target(table),
-            Self::DelimTokenTreeBracket(t) => t.seat_target(table),
-            Self::DelimTokenTreeBrace(t) => t.seat_target(table),
-            Self::FieldPatternShorthand(t) => t.seat_target(table),
-            Self::FieldPatternNamed(t) => t.seat_target(table),
-            Self::MacroDefinitionParen(t) => t.seat_target(table),
-            Self::MacroDefinitionBracket(t) => t.seat_target(table),
-            Self::MacroDefinitionBrace(t) => t.seat_target(table),
-            Self::RangePatternPrefix(t) => t.seat_target(table),
-            Self::RangePatternWithLeft(t) => t.seat_target(table),
-            Self::StructItemBrace(t) => t.seat_target(table),
-            Self::StructItemTuple(t) => t.seat_target(table),
-            Self::StructItemUnit(t) => t.seat_target(table),
+            Self::ArrayExpressionSemi(t) => t.seat_target(table, ctx),
+            Self::ArrayExpressionList(t) => t.seat_target(table, ctx),
+            Self::AttributeInput(t) => t.seat_target(table, ctx),
+            Self::ClosureExpressionBlock(t) => t.seat_target(table, ctx),
+            Self::ClosureExpressionExpr(t) => t.seat_target(table, ctx),
+            Self::ReferenceExpressionRawConst(t) => t.seat_target(table, ctx),
+            Self::ReferenceExpressionRawMut(t) => t.seat_target(table, ctx),
+            Self::ReferenceExpressionMut(t) => t.seat_target(table, ctx),
+            Self::ReferenceExpressionBare(t) => t.seat_target(table, ctx),
+            Self::ImplItemBody(t) => t.seat_target(table, ctx),
+            Self::ImplItemSemi(t) => t.seat_target(table, ctx),
+            Self::VisibilityModifierPubScopeInPath(t) => t.seat_target(table, ctx),
+            Self::VisibilityModifierPubScope(t) => t.seat_target(table, ctx),
+            Self::ModItemExternal(t) => t.seat_target(table, ctx),
+            Self::ModItemInline(t) => t.seat_target(table, ctx),
+            Self::OrPatternBinary(t) => t.seat_target(table, ctx),
+            Self::OrPatternPrefix(t) => t.seat_target(table, ctx),
+            Self::PointerTypeConst(t) => t.seat_target(table, ctx),
+            Self::PointerTypeMut(t) => t.seat_target(table, ctx),
+            Self::RangeExpressionBinary(t) => t.seat_target(table, ctx),
+            Self::RangeExpressionPostfix(t) => t.seat_target(table, ctx),
+            Self::RangeExpressionPrefix(t) => t.seat_target(table, ctx),
+            Self::ExpressionStatementWithSemi(t) => t.seat_target(table, ctx),
+            Self::ForeignModItemSemi(t) => t.seat_target(table, ctx),
+            Self::ForeignModItemBody(t) => t.seat_target(table, ctx),
+            Self::MatchArmWithComma(t) => t.seat_target(table, ctx),
+            Self::MatchArmBlockEnding(t) => t.seat_target(table, ctx),
+            Self::TokenTreePatternParen(t) => t.seat_target(table, ctx),
+            Self::TokenTreePatternBracket(t) => t.seat_target(table, ctx),
+            Self::TokenTreePatternBrace(t) => t.seat_target(table, ctx),
+            Self::TokenTreeParen(t) => t.seat_target(table, ctx),
+            Self::TokenTreeBracket(t) => t.seat_target(table, ctx),
+            Self::TokenTreeBrace(t) => t.seat_target(table, ctx),
+            Self::DelimTokenTreeParen(t) => t.seat_target(table, ctx),
+            Self::DelimTokenTreeBracket(t) => t.seat_target(table, ctx),
+            Self::DelimTokenTreeBrace(t) => t.seat_target(table, ctx),
+            Self::FieldPatternShorthand(t) => t.seat_target(table, ctx),
+            Self::FieldPatternNamed(t) => t.seat_target(table, ctx),
+            Self::MacroDefinitionParen(t) => t.seat_target(table, ctx),
+            Self::MacroDefinitionBracket(t) => t.seat_target(table, ctx),
+            Self::MacroDefinitionBrace(t) => t.seat_target(table, ctx),
+            Self::RangePatternPrefix(t) => t.seat_target(table, ctx),
+            Self::RangePatternWithLeft(t) => t.seat_target(table, ctx),
+            Self::StructItemBrace(t) => t.seat_target(table, ctx),
+            Self::StructItemTuple(t) => t.seat_target(table, ctx),
+            Self::StructItemUnit(t) => t.seat_target(table, ctx),
             Self::WildcardPattern(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(426)).map(|site| (edges, site)),
-            Self::AttributedFieldDeclaration(t) => t.seat_target(table),
-            Self::AttributedEnumVariant(t) => t.seat_target(table),
-            Self::AttributedParameter(t) => t.seat_target(table),
-            Self::AttributedTypeParameter(t) => t.seat_target(table),
-            Self::AttributedArgument(t) => t.seat_target(table),
-            Self::AttributedOrderedField(t) => t.seat_target(table),
-            Self::TypeArgument(t) => t.seat_target(table),
+            Self::AttributedFieldDeclaration(t) => t.seat_target(table, ctx),
+            Self::AttributedEnumVariant(t) => t.seat_target(table, ctx),
+            Self::AttributedParameter(t) => t.seat_target(table, ctx),
+            Self::AttributedTypeParameter(t) => t.seat_target(table, ctx),
+            Self::AttributedArgument(t) => t.seat_target(table, ctx),
+            Self::AttributedOrderedField(t) => t.seat_target(table, ctx),
+            Self::TypeArgument(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -42953,7 +42989,7 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
 /// document.
 pub fn render_transport_dispatch(transport: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {
     let mut s = String::new();
-    let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options);
+    let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options).with_recording(ctx.recording);
     let document = ::sittir_core::view::KindTest::kind_in(transport, &w, kind::ROOT_KINDS);
     let mut w = w.with_document(document);
     transport.render(&mut w)?;

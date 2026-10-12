@@ -44,6 +44,10 @@ pub struct ResolvedOptions {
     pub sites: &'static [SiteSpec],
     /// Per kind id, the kind's flags (`KIND_ANON`, `KIND_LINE_TERMINATED`, `KIND_LINE_BREAK_TERMINATED`, `KIND_ROOT`).
     pub kind_flags: &'static [u8],
+    /// Per kind id of a wrapper, the field its seat passes through to the
+    /// node it holds, 0 for its unfielded content; `NO_SITE` for any other
+    /// kind (`prepare::fill_seated_gaps`).
+    pub seat_wrappers: &'static [u16],
 }
 
 /// The parser's anonymous kind: a token, never an owner of trivia.
@@ -141,6 +145,7 @@ impl Default for ResolvedOptions {
             edge_rows: &[],
             sites: &[],
             kind_flags: &[],
+            seat_wrappers: &[],
         }
     }
 }

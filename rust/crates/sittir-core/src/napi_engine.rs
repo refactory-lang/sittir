@@ -322,6 +322,22 @@ macro_rules! napi_engine {
                 with_live_node(tree_id, index, |parsed, index| Ok(parsed.is_empty(index)))
             }
 
+            /// Every run of whitespace a side of the live tree `treeId` takes
+            /// (`TriviaTable::runs`), each with the line breaks the options in
+            /// effect at read time write there (`ParsedTree::baseline_breaks`),
+            /// absent where nothing the record wrote is anchored: read from
+            /// each run's region, or from the record of the whole tree when
+            /// `whole`. A diagnostic: the assignment reads the same breaks.
+            /// Refuses a tree that is not live and a record whose read or
+            /// render refused.
+            #[::napi_derive::napi]
+            pub fn layout_baseline(&self, tree_id: f64, whole: Option<bool>) -> ::napi::Result<Vec<$crate::napi_engine::BaselineRun>> {
+                with_live_node(tree_id, 0.0, |parsed, _| {
+                    let runs = parsed.baseline_runs(whole.unwrap_or(false)).map_err(::napi::Error::from_reason)?;
+                    Ok(runs.into_iter().map(|(run, breaks)| $crate::napi_engine::BaselineRun::new(run, breaks)).collect())
+                })
+            }
+
             /// One batch of a pre-order walk of the named descendants under
             /// the node `from` names (JSON, see `query::Address`), filtered to
             /// `kinds` when given and to the `where` plan (JSON, see
@@ -425,6 +441,7 @@ macro_rules! napi_engine {
                     let ctx = $crate::prepare::RenderContext {
                         options: table,
                         sources: &*trees,
+                        recording: None,
                     };
                     let (_, canonical) = $render_parts(transport, &ctx).map_err(|e| {
                         ::napi::Error::from_reason(format!("render_transport failed: {e}"))
@@ -546,6 +563,33 @@ pub fn depth_from_wire(depth: Option<f64>) -> napi::Result<crate::read::Depth> {
         )));
     }
     Ok(crate::read::Depth::Levels(std::num::NonZeroU32::new(levels as u32).expect("levels >= 1")))
+}
+
+/// A run of whitespace a side takes, with the line breaks the tree's
+/// baseline writes there (`SittirEngine::layout_baseline`).
+#[napi_derive::napi(object)]
+pub struct BaselineRun {
+    pub start: u32,
+    pub end: u32,
+    pub index: u32,
+    pub side: String,
+    pub breaks: Option<u32>,
+}
+
+impl BaselineRun {
+    pub fn new(run: crate::trivia_table::LayoutRun, breaks: Option<u32>) -> Self {
+        Self { start: run.start, end: run.end, index: run.node, side: trivia_side_to_wire(run.side).to_owned(), breaks }
+    }
+}
+
+/// A trivia side's wire name (`trivia_side_from_wire`).
+pub fn trivia_side_to_wire(side: crate::trivia_table::TriviaSide) -> &'static str {
+    use crate::trivia_table::TriviaSide;
+    match side {
+        TriviaSide::Leading => "leading",
+        TriviaSide::Trailing => "trailing",
+        TriviaSide::Inner => "inner",
+    }
 }
 
 /// A trivia side from its wire name: `leading`, `trailing` or `inner`.

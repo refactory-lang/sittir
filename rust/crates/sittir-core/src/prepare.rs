@@ -14,6 +14,9 @@ use crate::render::WhitespaceTable;
 pub struct RenderContext<'a> {
     pub options: &'a ResolvedOptions,
     pub sources: &'a dyn SourceTable,
+    /// Where a recording render writes the line breaks it writes at each
+    /// gap (`SpacingWriter::with_recording`); `None` on any other render.
+    pub recording: Option<&'a std::cell::RefCell<crate::baseline::Baseline>>,
 }
 
 /// Fill a transport's unset base edges from its kind's edge row; an edge the wire already set keeps its arm.
@@ -302,13 +305,22 @@ pub fn fill_edges<T: Edged + ?Sized>(t: &mut T, edges: Edges) {
 /// has a seat in `table`, or, for a wrapper that is not itself seated, the
 /// seated node it holds. Answers the base edges to fill and the site to read.
 pub trait SeatTarget {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut Edges, usize)>;
+    fn seat_target(&mut self, table: &[u16], ctx: &RenderContext<'_>) -> Option<(&mut Edges, usize)>;
 }
 
 impl<T: SeatTarget + ?Sized> SeatTarget for Box<T> {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut Edges, usize)> {
-        (**self).seat_target(table)
+    fn seat_target(&mut self, table: &[u16], ctx: &RenderContext<'_>) -> Option<(&mut Edges, usize)> {
+        (**self).seat_target(table, ctx)
     }
+}
+
+/// The seated site in `table` of the node a coordinate names: its own
+/// kind's, else that of the node it holds through the wrappers it is
+/// (`SourceTable::seat_through`), as a wrapper transport seats through its
+/// content.
+pub fn coord_seat(coord: &crate::slot::NodeCoordinate, table: &[u16], ctx: &RenderContext<'_>) -> Option<usize> {
+    let seat = |kind| seat_site(table, kind);
+    coord.kind_in(ctx.sources).and_then(seat).or_else(|| ctx.sources.seat_through(coord, ctx.options.seat_wrappers, &seat))
 }
 
 /// The seated site of `kind` in a per-slot table indexed by kind id.
@@ -426,12 +438,12 @@ pub fn fill_seated_gaps<'i, T: SeatTarget + 'i, const ADJACENT: bool>(
     for item in present.into_iter().take(last) {
         match item {
             SlotValue::Transport(t) => {
-                if let Some((edges, site)) = t.seat_target(table) {
+                if let Some((edges, site)) = t.seat_target(table, ctx) {
                     edges.after.get_or_insert(EdgeArm::from(ctx.options.spacing[site]));
                 }
             }
             SlotValue::Coord(coord) => {
-                if let Some(site) = coord.kind_in(ctx.sources).and_then(|kind| seat_site(table, kind)) {
+                if let Some(site) = coord_seat(coord, table, ctx) {
                     let edges = coord.edges.get_or_insert(crate::slot::CoordinateEdges { before: None, after: None });
                     edges.after.get_or_insert(ctx.options.spacing[site]);
                 }
@@ -695,6 +707,7 @@ mod tests {
         let ctx = RenderContext {
             options: &options,
             sources: &sources,
+            recording: None,
         };
         root_flanks(Some(super::EdgeItem::Coord(first)), None, None, &[TIGHT, NEWLINE], &[TIGHT, NEWLINE], &TABLE, &ctx)
             .before
@@ -717,6 +730,7 @@ mod tests {
         let ctx = RenderContext {
             options: &options,
             sources: &sources,
+            recording: None,
         };
         let end = source.len() as u32;
         let first = coordinate(0, 1);
@@ -794,7 +808,7 @@ mod tests {
             sites: &SITES,
             ..ResolvedOptions::default()
         };
-        let ctx = RenderContext { options: &options, sources: &sources };
+        let ctx = RenderContext { options: &options, sources: &sources, recording: None };
         let flank = SourceFlank {
             source: from,
             span,
@@ -893,7 +907,7 @@ mod tests {
         use crate::slot::SourceFlank;
         let sources = ListTrees(last);
         let options = ResolvedOptions::default();
-        let ctx = RenderContext { options: &options, sources: &sources };
+        let ctx = RenderContext { options: &options, sources: &sources, recording: None };
         let flank = SourceFlank {
             source: crate::slot::FlankSource::Tree(3),
             span: Span { start: 2, end: 7 },

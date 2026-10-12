@@ -30,7 +30,7 @@ pub fn display_id(node: &Node<'_>) -> KindId {
 }
 
 /// How many levels a read expands below the node it starts at.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Depth {
     Levels(NonZeroU32),
     All,

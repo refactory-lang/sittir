@@ -357,9 +357,29 @@ impl Nodes {
 }
 
 /// Where the assignment puts an entry of a gap.
+#[derive(Clone, Copy)]
 enum Place {
     Side(u32, TriviaSide),
     Unowned,
+}
+
+/// A run of whitespace between two tokens or entries that a side takes,
+/// with or without a line break, and empty where they touch: its bytes, the
+/// side, its owner (`Assigned::Layout`), and whether it carries the layout
+/// written between the tokens around it. The file's two edges are none.
+///
+/// Gaps that only a zero-width token parts (an automatic semicolon, a
+/// dedent) are one gap to a render, which writes nothing for the token: the
+/// layout written there lands in one of their runs, the first that holds
+/// whitespace, else the last, and each other run `carries` none.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct LayoutRun {
+    pub start: u32,
+    pub end: u32,
+    pub node: u32,
+    pub side: TriviaSide,
+    pub owner: u32,
+    pub carries: bool,
 }
 
 /// The trivia of a parsed tree, assigned once to its nodes' sides.
@@ -367,6 +387,7 @@ enum Place {
 pub struct TriviaTable {
     sides: BTreeMap<(u32, TriviaSide), Vec<Assigned>>,
     unowned: Vec<u32>,
+    runs: Vec<LayoutRun>,
 }
 
 impl TriviaTable {
@@ -410,6 +431,7 @@ impl TriviaTable {
             }
         };
         let mut next = entries.iter().peekable();
+        let mut parted = Parted::default();
         for k in 0..=tokens.len() {
             let left = k.checked_sub(1).map(|k| &tokens[k]);
             let right = tokens.get(k);
@@ -420,12 +442,20 @@ impl TriviaTable {
             let mut at = from;
             let mut led = None;
             let mut run = |at: u32, until: u32, led: Option<u32>, table: &mut TriviaTable, excess: &mut Excess| {
-                let Some(text) = source.get(at as usize..until as usize).filter(|text| text.contains('\n')) else { return };
+                let Some(text) = source.get(at as usize..until as usize) else { return };
                 let place = led.map_or_else(|| place(left, right, false, None), |node| Place::Side(node, TriviaSide::Leading));
                 let owner = match place {
                     Place::Side(node, TriviaSide::Inner) => node,
                     Place::Side(_, _) | Place::Unowned => owner_of(left, right),
                 };
+                if let Place::Side(node, side) = place {
+                    if at != 0 && until as usize != source.len() {
+                        table.runs.push(LayoutRun { start: at, end: until, node, side, owner, carries: true });
+                    }
+                }
+                if !text.contains('\n') {
+                    return;
+                }
                 let reach = structure.excess(&nodes, right.map_or(0, |right| right.node), until, text.rsplit('\n').next().unwrap_or_default());
                 let depth = excess.change(owner, nodes.end[owner as usize], reach, || nodes.restore_side(owner, kinds));
                 table.push(place, Assigned::Layout { start: at, end: until, owner, depth });
@@ -451,6 +481,7 @@ impl TriviaTable {
                 at = end;
             }
             run(at, to, led, &mut table, &mut excess);
+            parted.gap(&mut table.runs, right.is_some_and(|right| right.start == right.end));
         }
         excess.close_until(u32::MAX, &mut table);
         table
@@ -476,6 +507,43 @@ impl TriviaTable {
     /// tokens, with no named child beside them.
     pub fn unowned(&self) -> &[u32] {
         &self.unowned
+    }
+
+    /// Every run of whitespace a side takes, in source order (`LayoutRun`).
+    pub fn runs(&self) -> &[LayoutRun] {
+        &self.runs
+    }
+}
+
+/// The runs of the gaps zero-width tokens part, as the assignment walks them
+/// (`LayoutRun::carries`): where they begin among the table's runs, and how
+/// many gaps they span.
+#[derive(Default)]
+struct Parted {
+    from: usize,
+    gaps: usize,
+}
+
+impl Parted {
+    /// One gap's runs were placed, the last of `runs`; `parted` when the
+    /// token after the gap is zero-width, so the next gap's runs join them.
+    /// Once a gap ends at a token with width, the group's runs settle: when
+    /// it spans more than one gap and holds one run per gap, all but its
+    /// first run holding whitespace (else its last) carry none.
+    fn gap(&mut self, runs: &mut [LayoutRun], parted: bool) {
+        self.gaps += 1;
+        if parted {
+            return;
+        }
+        let group = &mut runs[self.from..];
+        if self.gaps > 1 && group.len() == self.gaps {
+            let carrier = group.iter().position(|run| run.start < run.end).unwrap_or(group.len() - 1);
+            for (at, run) in group.iter_mut().enumerate() {
+                run.carries = at == carrier;
+            }
+        }
+        self.from = runs.len();
+        self.gaps = 0;
     }
 }
 

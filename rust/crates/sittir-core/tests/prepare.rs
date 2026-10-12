@@ -39,7 +39,7 @@ fn arms(ids: &[u16]) -> Vec<SeamArm> {
 }
 
 fn ctx<'a>(options: &'a ResolvedOptions, sources: &'a Sources) -> RenderContext<'a> {
-    RenderContext { options, sources }
+    RenderContext { options, sources, recording: None }
 }
 
 #[test]
@@ -297,7 +297,7 @@ struct Seatable {
     edges: Edges,
 }
 impl SeatTarget for Seatable {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &RenderContext<'_>) -> Option<(&mut Edges, usize)> {
         seat_site(table, KindId(self.kind)).map(|site| (&mut self.edges, site))
     }
 }
@@ -307,11 +307,11 @@ struct Wrapper {
     content: Seatable,
 }
 impl SeatTarget for Wrapper {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &RenderContext<'_>) -> Option<(&mut Edges, usize)> {
         if let Some(site) = seat_site(table, KindId(9)) {
             return Some((&mut self.edges, site));
         }
-        self.content.seat_target(table)
+        self.content.seat_target(table, ctx)
     }
 }
 

@@ -63,6 +63,19 @@ function depthOf(options: ParseOptions | undefined): number {
 	return options?.depth ?? 1;
 }
 
+/**
+ * A run of whitespace between two tokens or entries that a side takes, by its bytes, the node and
+ * side that take it, and the line breaks the tree's baseline writes there, absent where nothing the
+ * baseline wrote is anchored.
+ */
+export interface BaselineRun {
+	readonly start: number;
+	readonly end: number;
+	readonly index: number;
+	readonly side: TriviaSideName;
+	readonly breaks?: number;
+}
+
 export interface NativeEngineLike<TTransport = unknown> {
 	/**
 	 * Parse `source` and keep its tree.
@@ -131,6 +144,14 @@ export interface NativeEngineLike<TTransport = unknown> {
 	 * @throws when the tree is not live or `index` is past its last node.
 	 */
 	siblings(treeId: number, index: number): string;
+	/**
+	 * Every run of whitespace a side of tree `treeId` takes, each with the line breaks the options in
+	 * effect when the tree was read write at that gap: read from the record of the run's region, or
+	 * from the record of the whole tree when `whole`. A diagnostic.
+	 *
+	 * @throws when the tree is not live, or a record's read or render refused.
+	 */
+	layoutBaseline(treeId: number, whole?: boolean): BaselineRun[];
 	descendants(
 		from: string,
 		kinds: number[] | undefined | null,

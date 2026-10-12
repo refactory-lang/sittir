@@ -568,6 +568,7 @@ mod tests {
             slot.prepare(&RenderContext {
                 options,
                 sources: &sources,
+                recording: None,
             })
             .unwrap();
             let mut out = String::new();

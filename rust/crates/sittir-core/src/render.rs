@@ -139,6 +139,15 @@ pub trait SourceTable {
         false
     }
 
+    /// The seat of the node a coordinate names, through the wrappers it is
+    /// (`ResolvedOptions::seat_wrappers`): for each node held by the one
+    /// before it, from the coordinate's own, the first that `seat` gives a
+    /// site. A table of bare sources knows no nodes and answers none.
+    fn seat_through(&self, coord: &crate::slot::NodeCoordinate, wrappers: &[u16], seat: &dyn Fn(KindId) -> Option<usize>) -> Option<usize> {
+        let _ = (coord, wrappers, seat);
+        None
+    }
+
     /// The live tree `tree` and the context its reads share. A table of bare
     /// sources holds no trees.
     fn read_ctx(&self, tree: u32) -> Option<(&tree_sitter::Tree, crate::read::ReadCtx<'_>)> {
