@@ -145,6 +145,25 @@ Census the rule shapes that reach each Assembled* constructor, grouped by modelT
 pnpm exec tsx packages/cli/src/cli.ts tool assemble-shape-census [options]
 ```
 
+### `tool ast-diff`
+
+Compare the tree-sitter parse trees of two files with the validator's AST comparison
+
+**Arguments**
+
+- `a` (required) — First file
+- `b` (required) — Second file
+
+**Options**
+
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool ast-diff <a> <b> [options]
+```
+
 ### `tool bench`
 
 Native render benchmark over the corpus

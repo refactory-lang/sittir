@@ -16,6 +16,7 @@ export {
 export { run as probeKind, type ProbeKindOptions } from './probe/kind.ts';
 export { run as probeStages, type ProbeStagesOptions } from './probe/stages.ts';
 export { run as variantDerivationProbe, type VariantDerivationProbeOptions } from './probe/variant-derivation.ts';
+export { run as astDiff, type AstDiffOptions } from './probe/ast-diff.ts';
 export { run as probeParity, type ProbeParityOptions } from './probe/parity.ts';
 export { run as probeValidate, type ProbeValidateOptions } from './probe/validate.ts';
 export { run as profile, type ProfileOptions } from './profile/failures.ts';

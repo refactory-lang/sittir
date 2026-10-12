@@ -71,7 +71,7 @@ derivation summary always prints (kinds, prefixes, members, refinements,
 unmapped references, cycles, container captures with no direct target,
 container slots left uncaptured);
 `--members` prints member names and kinds per shared kind. `--write` first
-writes the vocabulary's flags module (`printFlagsModule`), which the bindings
+writes the vocabulary's flags module (`printFlagsModule`, built as nodes with `@sittir/typescript`'s factories and rendered by its engine), which the bindings
 hash covers, then each grammar's `grammar.bindings.ts` (`bindingsModule`), and
 prints its convergence (`grammarBindingsSummary`). `--check` also
 reports where the bindings and the authored vocabulary disagree
@@ -83,4 +83,10 @@ a stale flags module is a non-zero exit.
 
 ### `packages/tools/src/inventory/index.ts::flagsCurrent`
 
-Whether the committed flags module is the one the vocabulary's `Flag` declarations imply (`printFlagsModule`); a missing module is not current.
+Whether the committed flags module is the one the vocabulary's `Flag` declarations imply (`printFlagsModule`); a missing module is not current. The check is async because the module is rendered by the engine.
+
+### `packages/tools/src/inventory/flags.ts::printFlagsModule`
+
+The flags module as text, asked of the pinned build's child (`runPinned('flagsModule', flagMembers(names))`): an `enum Flags` whose members come from `flagMembers`, each `Name = 1 << bit`, under the generated-file header comment. The module is built as nodes with the factories of the pinned `@sittir/typescript` and rendered by its engine with a tab indent, so the bytes are the engine's (`flagsModuleInProcess`). The writer therefore needs the pinned build: it is the first place sittir writes its own TypeScript with itself, and a missing build fails the write rather than falling back to a template. It is async, as `flagsCurrent` is.
+
+The enum body is built as `enumBody.strict(enumBodyElements.strict({ delimiter: Delimiter.None }, first, ...rest))`, with the empty list taking the zero-argument `enumBody.strict()`. Both spellings are workarounds that stand until the strict surface keeps the `(options, ...elements)` overload on `enumBody` and accepts an empty variadic list (issue 779): the surface today hides the overload and requires a non-empty array, though `enum E {}` is valid TypeScript.
