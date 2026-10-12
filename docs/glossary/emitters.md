@@ -3511,6 +3511,21 @@ fill — share the first one's declaration and name, in node order. A choice
 whose arms write its owner's seam sites differs from another owner's and
 stays its own.
 
+Choices with the same variants that stay their own differ in one of three
+facts:
+
+- **The owner's seam sites** a literal arm writes. The fifteen typescript
+  statement `terminator` choices are one such set: each `;` arm writes its
+  own owner's sites.
+- **The kind ids a variant claims.** Rust `if_expression`'s `condition`
+  claims `_LET_CHAIN` and `LET_CHAIN` for its `LetChain` arm, and
+  `let_chain`'s `left` claims `_LET_CHAIN` only.
+- **The order of the arms**, which is the grammar's: typescript
+  `assignment_expression`'s `left` and `for_header`'s `left` list
+  `_lhs_expression` and the parenthesized expressions in opposite orders.
+  The claims are disjoint, so the order decides nothing, but the generated
+  choice follows the grammar rather than a canonical order.
+
 ### `packages/codegen/src/emitters/render-module.ts::choiceNameOf`
 
 The choice a union-shaped slot's field is typed by. A slot with no collected
