@@ -79,6 +79,7 @@ interface Visit {
 	readonly alternation: Expression | null;
 	readonly inherited: readonly ListElement.Parsed[];
 	readonly children: Visit[];
+	readonly negated: NegatedField.Parsed[];
 }
 
 interface Anchored {
@@ -276,7 +277,7 @@ function readPattern(top: PatternNode, inherited: readonly ListElement.Parsed[],
 		alternation: Expression | null,
 		inherited: readonly ListElement.Parsed[]
 	): Visit => {
-		const v: Visit = { node, field, anchor, adjacent, parent, alternation, inherited, children: [] };
+		const v: Visit = { node, field, anchor, adjacent, parent, alternation, inherited, children: [], negated: [] };
 		nodes.push(v);
 		for (const { expression, anchor, adjacent } of expressionsOf(node, origin)) place(expression, null, anchor, adjacent, v, null, []);
 		refuseLooseAnchors(v, origin);
@@ -313,6 +314,7 @@ function readPattern(top: PatternNode, inherited: readonly ListElement.Parsed[],
 			case K.MissingNode:
 				if (anchor !== null || adjacent) refuse(origin, 'an anchor pins a child node; a predicate, negated field or missing node is none');
 				if (expression.$type === K.Predicate) predicates.push(expression);
+				if (expression.$type === K.NegatedField) parent.negated.push(expression);
 				return;
 		}
 	};
@@ -384,11 +386,6 @@ const capturesMember = (v: Visit): boolean => captures(v).some((name) => !isPath
 
 const leadsList = (v: Visit): boolean => v.anchor === 'first' && capturesMember(v);
 
-function inMatchTree(v: Visit): boolean {
-	for (let cursor: Visit | null = v; cursor !== null; cursor = cursor.parent) if (leadsList(cursor)) return true;
-	return false;
-}
-
 const within = (v: Visit, root: Visit): boolean => {
 	for (let cursor: Visit | null = v; cursor !== null; cursor = cursor.parent) if (cursor === root) return true;
 	return false;
@@ -403,6 +400,7 @@ function matchOf(root: Visit, nodes: readonly Visit[], predicates: readonly Omit
 	if (tested !== undefined) return { refused: predicateReason(tested.operator) };
 	const read = (v: Visit): MatchRead => {
 		if (v.children.some((child) => mayBeAbsent(child) || quantified(child))) return { refused: 'a quantifier' };
+		if (v.negated.length > 0) return { refused: 'a negated field' };
 		if (tokenText(v) !== null) return { refused: 'a text test' };
 		const kind = kindOf(v);
 		if (kind === WILDCARD) return { refused: 'a wildcard' };
@@ -416,6 +414,7 @@ function matchOf(root: Visit, nodes: readonly Visit[], predicates: readonly Omit
 		if (restrictions.length > 1) return { refused: 'a second restriction on one kind' };
 		const [options] = restrictions;
 		if (options === undefined) return { match: { kind } };
+		if (options.some((option) => option.field !== options[0]!.field)) return { refused: 'an alternation over two fields' };
 		const admits: LeadMatch[] = [];
 		for (const option of options) {
 			const arm = read(option);
@@ -449,8 +448,7 @@ function childFacts(claim: Visit, origin: PatternOrigin): ChildFact[] {
 				if (seen.has(child.alternation)) continue;
 				seen.add(child.alternation);
 				const options = holder.children.filter((c) => c.alternation === child.alternation);
-				const named = options.map(namedKind);
-				const kinds = inMatchTree(holder) ? named : options.map((option, i) => (option.children.length === 0 ? named[i]! : null));
+				const kinds = options.map((option) => (option.children.length === 0 ? namedKind(option) : null));
 				if (kinds.some((kind) => kind === null))
 					refuse(origin, 'an alternation below the claimed node tests only named nodes with nothing below them');
 				out.push({ subject: at(child), kinds: kinds as string[], captured: options.some(capturesMember) });

@@ -60,13 +60,35 @@ describe('deriveLeads', () => {
 		expect(result.diagnostics).toEqual([]);
 	});
 
-	it('refuses claims on one list whose match trees disagree, naming both lines', async () => {
+	it('unions the admits of claims on one list whose root kind and field agree', async () => {
+		const typed = '(function_item (parameters (parameters_elements . (attributed_parameter (parameter name: (self))) @receiver))) @declaration.method';
+		expect(await derived(`${RECEIVER}\n${typed}`)).toEqual({
+			leads: [lead('parameters_elements', 'item', 'receiver', match('attributed_parameter', [match('self_parameter'), match('parameter', { name: [match('self')] })]))],
+			diagnostics: []
+		});
+	});
+
+	it('refuses claims on one list that anchor different kinds, naming both lines', async () => {
 		const other = '(function_item (parameters (parameters_elements . (required_parameter pattern: (this)) @receiver))) @declaration.function';
 		const result = await derived(`${RECEIVER}\n${other}`);
 		expect(result.leads).toEqual([]);
 		expect(result.diagnostics).toMatchObject([
-			{ scope: 'grammar', code: 'lead-refused', grammar: 'leadtest', canProceed: false, details: { file: FILE, lines: [1, 2], list: 'parameters_elements' } }
+			{
+				scope: 'grammar',
+				code: 'lead-refused',
+				grammar: 'leadtest',
+				canProceed: false,
+				details: { file: FILE, lines: [1, 2], list: 'parameters_elements', reason: 'the claims anchor different kinds: attributed_parameter, required_parameter' }
+			}
 		]);
+	});
+
+	it('refuses claims on one list that restrict one kind on different fields', async () => {
+		const pattern = '(function_item (parameters (parameters_elements . (required_parameter pattern: (this)) @receiver))) @declaration.method';
+		const typed = '(function_item (parameters (parameters_elements . (required_parameter type: (identifier)) @receiver))) @declaration.method';
+		const result = await derived(`${pattern}\n${typed}`);
+		expect(result.leads).toEqual([]);
+		expect(result.diagnostics).toMatchObject([{ code: 'lead-refused', details: { lines: [1, 2], reason: 'the claims restrict required_parameter on different fields: pattern, type' } }]);
 	});
 
 	it('refuses claims on one list that capture two lead fields', async () => {
@@ -93,9 +115,9 @@ describe('deriveLeads', () => {
 		expect(result.leads).toEqual([lead('parameters_elements', 'item', 'receiver', match('required_parameter', { pattern: [match('this')] }, 'this_parameter'))]);
 	});
 
-	it('names each arm of an alternation by its own classifying claim, and leaves an arm without one unnamed', async () => {
+	it('names each admit of a union by its own classifying claim, and leaves one without a claim unnamed', async () => {
 		const result = await derived(
-			'(function_item (parameters (parameters_elements . (attributed_parameter [(self_parameter) (parameter name: (self))]) @receiver))) @declaration.method\n(parameter name: (self)) @parameter.self.typed'
+			`${RECEIVER}\n(function_item (parameters (parameters_elements . (attributed_parameter (parameter name: (self))) @receiver))) @declaration.method\n(parameter name: (self)) @parameter.self.typed`
 		);
 		expect(result.leads).toEqual([
 			lead('parameters_elements', 'item', 'receiver', match('attributed_parameter', [match('self_parameter'), match('parameter', { name: [match('self')] }, 'typed_self_parameter')]))

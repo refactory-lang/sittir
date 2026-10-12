@@ -694,7 +694,7 @@ A pattern node's node children in order, through its groupings: no token, no alt
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::childFacts`
 
-The `ChildFact`s a claim's pattern states below the claimed node, walked in pattern order. Each node walked, the claimed one included, first states its `siblingsOf` in order when it has more than one or one is anchored. A node that may be absent, leads to a presence capture or places another claim states nothing. An alternation's options give one fact listing their kinds, and each option must be a named node with nothing below it, except inside a match tree (`inMatchTree`): there an option may carry tests, which the match tree reads (`matchOf`) and the facts here do not, so a route never reads an arm's test as a test of every arm. A token under a field gives a text fact; a token with no field gives a token fact at the node holding it, whose slot the routes resolve (a token directly under the claimed node is a claim token instead). A named child gives a kinds fact and is walked into; a wildcard gives a presence fact unless it captures a member, whose own route then stands for it.
+The `ChildFact`s a claim's pattern states below the claimed node, walked in pattern order. Each node walked, the claimed one included, first states its `siblingsOf` in order when it has more than one or one is anchored. A node that may be absent, leads to a presence capture or places another claim states nothing. An alternation's options give one fact listing their kinds, and each option must be a named node with nothing below it. An option with tests below it is refused everywhere: a read test is a conjunction over slots, so no route could say one arm's test without saying it of every arm. A token under a field gives a text fact; a token with no field gives a token fact at the node holding it, whose slot the routes resolve (a token directly under the claimed node is a claim token instead). A named child gives a kinds fact and is walked into; a wildcard gives a presence fact unless it captures a member, whose own route then stands for it.
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::roundTripBindingsInProcess`
 
@@ -1464,10 +1464,6 @@ A lead match with its tree's kinds bound; a refusal names no kind.
 
 A node anchored first that captures a member: the capture a lead may be derived from, whose pattern below it is a match tree.
 
-### `packages/codegen/src/bindings/pinned-reader.ts::inMatchTree`
-
-Whether a node is at or below a `leadsList` node: where a match tree reads the pattern, so an alternation's options may carry tests.
-
 ### `packages/codegen/src/bindings/pinned-reader.ts::within`
 
 Whether a node is at or below another.
@@ -1478,7 +1474,7 @@ The refusal a predicate on a node of a match tree gives: `match` states kinds as
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::matchOf`
 
-Reads a node's pattern as a `match` tree: its kind, and the one restriction its tests state, a field (or no field) and the kinds it admits, each read in turn. An alternation gives one restriction admitting each option; any other child is a restriction of its own. It refuses what `match` cannot say: a predicate on any node of the tree (`predicateReason`), a quantified child, a token (a text test), a wildcard, a grouping, and a second restriction on one kind. The one reading of a pattern as a match tree, for a member's lead match and a claim's own.
+Reads a node's pattern as a `match` tree: its kind, and the one restriction its tests state, a field (or no field) and the kinds it admits, each read in turn. An alternation (of options with nothing below them, as `childFacts` requires) gives one restriction admitting each option; any other child is a restriction of its own. A kind narrowed two ways is written as one claim per way, which the derivation unions (`leads.ts::unionMatch`). It refuses what `match` cannot say: a predicate on any node of the tree (`predicateReason`), a quantified child, a negated field, a token (a text test), a wildcard, a grouping, a second restriction on one kind, and an alternation whose options sit under different fields. The one reading of a pattern as a match tree, for a member's lead match and a claim's own.
 
 ### `packages/codegen/src/bindings/leads.ts::LeadDerivation`
 
@@ -1496,13 +1492,17 @@ A match tree with its variants named, or the reason they cannot be.
 
 A match tree's structural identity: its kinds, fields and admits in order, without `as`. Two trees with one key say one restriction.
 
+### `packages/codegen/src/bindings/leads.ts::unionMatch`
+
+The union of two claims' match trees: one kind, restricted on one field (or neither restricted), admitting what either admits, an admit of one kind on both sides unioned in turn. So rust's receiver, `self_parameter` or a `parameter` named `self`, is two claims, each with an exact route, whose union is the lead's tree. Two different kinds, or one kind restricted on different fields (or restricted on one side only), do not union and are refused.
+
 ### `packages/codegen/src/bindings/leads.ts::nameVariants`
 
-Names each node of a match tree that narrows its kind (one with a restriction) by the claim that classifies the same pattern: a top-level, unplaced claim whose own `match` has the node's key. The name is that claim's path's bound kind name (`names.ts::boundKindName`), so `(required_parameter pattern: (this)) @parameter.this` names the variant `this_parameter`. Each arm of an alternation joins its own claim. A node no claim classifies keeps no `as`, and the edit gives it the variant convention's name. Two claims that classify one node with different paths are refused. A node that narrows nothing is no variant and needs no name.
+Names each node of a match tree that narrows its kind (one with a restriction) by the claim that classifies the same pattern: a top-level, unplaced claim whose own `match` has the node's key. The name is that claim's path's bound kind name (`names.ts::boundKindName`), so `(required_parameter pattern: (this)) @parameter.this` names the variant `this_parameter`. Each admit of a restriction joins its own claim. A node no claim classifies keeps no `as`, and the edit gives it the variant convention's name. Two claims that classify one node with different paths are refused. A node that narrows nothing is no variant and needs no name.
 
 ### `packages/codegen/src/bindings/leads.ts::deriveLeads`
 
-The leads of a grammar's facts against its grammar evaluated without its bindings. A capture on the first item of a separated list (`leadMatch` on a member whose list, the parent of the captured node, is a head-form list whose element is a field, `rule-patterns.ts::separatedListBodyInfo`) contributes to that list's lead; a capture anchored first anywhere else derives nothing and stays what it was. The captures on one list derive one `lead`: the list, its item field, the captured name as the lead's field, and the match tree with its variants named (`nameVariants`). They must agree on both the field and the tree (`matchKey`). Each refusal is a blocking `lead-refused` grammar diagnostic naming the `bindings.scm` file and the claim lines: a match tree `match` cannot say (`matchOf`'s reason), captures that disagree, and a variant two claims name. A capture deeper in the item than the item itself stays a position (no `leadMatch`), and `match` cannot say several top-level admits, so a lead derived here admits one tree.
+The leads of a grammar's facts against its grammar evaluated without its bindings. A capture on the first item of a separated list (`leadMatch` on a member whose list, the parent of the captured node, is a head-form list whose element is a field, `rule-patterns.ts::separatedListBodyInfo`) contributes to that list's lead; a capture anchored first anywhere else derives nothing and stays what it was. The captures on one list derive one `lead`: the list, its item field, the captured name as the lead's field, and the union of their match trees (`unionMatch`) with its variants named (`nameVariants`). They must capture one field, and their trees must union. Each refusal is a blocking `lead-refused` grammar diagnostic naming the `bindings.scm` file and the claim lines: a match tree `match` cannot say (`matchOf`'s reason), captures of two fields, trees that do not union, and a variant two claims name. A capture deeper in the item than the item itself stays a position (no `leadMatch`), and `match` cannot say several top-level admits, so a lead derived here admits one tree.
 
 
 ### `packages/codegen/src/bindings/module.ts::matchCall`

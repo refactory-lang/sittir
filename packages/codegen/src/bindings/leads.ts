@@ -22,6 +22,25 @@ interface LeadClaim {
 
 type Named = { readonly match: LeadMatch } | { readonly refused: string };
 
+function unionMatch(left: LeadMatch, right: LeadMatch): Named {
+	if (left.kind !== right.kind) return { refused: `the claims anchor different kinds: ${left.kind}, ${right.kind}` };
+	if (left.within === undefined && right.within === undefined) return { match: left };
+	if (left.within?.field !== right.within?.field || left.within === undefined || right.within === undefined)
+		return { refused: `the claims restrict ${left.kind} on different fields: ${[left.within?.field, right.within?.field].map((f) => f ?? '(none)').join(', ')}` };
+	const admits = [...left.within.admits];
+	for (const admit of right.within.admits) {
+		const at = admits.findIndex((a) => a.kind === admit.kind);
+		if (at < 0) {
+			admits.push(admit);
+			continue;
+		}
+		const merged = unionMatch(admits[at]!, admit);
+		if ('refused' in merged) return merged;
+		admits[at] = merged.match;
+	}
+	return { match: { kind: left.kind, within: { field: left.within.field, admits } } };
+}
+
 const matchKey = (match: LeadMatch): string =>
 	JSON.stringify([match.kind, match.within?.field ?? null, (match.within?.admits ?? []).map(matchKey)]);
 
@@ -82,11 +101,9 @@ export function deriveLeads(input: { readonly file: string; readonly base: RawGr
 			refuse(list, lines, `the claims capture two lead fields: ${fields.map((f) => `@${f}`).join(', ')}`);
 			continue;
 		}
-		if (claims.some((c) => matchKey(c.match) !== matchKey(first.match))) {
-			refuse(list, lines, 'the claims anchor different match trees');
-			continue;
-		}
-		const named = nameVariants(first.match, facts.claims);
+		let union: Named = { match: first.match };
+		for (const claim of claims.slice(1)) if ('match' in union) union = unionMatch(union.match, claim.match);
+		const named = 'match' in union ? nameVariants(union.match, facts.claims) : union;
 		if ('refused' in named) {
 			refuse(list, lines, named.refused);
 			continue;

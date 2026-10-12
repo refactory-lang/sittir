@@ -441,20 +441,9 @@ describe('readBindings: the match tree of an anchored capture', () => {
 			match: { kind: 'required_parameter', within: { field: 'pattern', admits: [{ kind: 'this' }] } }
 		});
 	});
-	it('reads an alternation whose arms carry tests into one admit per arm, below a captured anchored node', async () => {
+	it('refuses an alternation with tested arms below a captured anchored node, as everywhere', async () => {
 		const text = '(function_item (parameters (parameters_elements . (attributed_parameter [(self_parameter) (parameter name: (self))]) @receiver))) @declaration.method';
-		expect((await memberNamed(text, 'receiver'))?.leadMatch).toEqual({
-			line: 1,
-			match: {
-				kind: 'attributed_parameter',
-				within: { field: null, admits: [{ kind: 'self_parameter' }, { kind: 'parameter', within: { field: 'name', admits: [{ kind: 'self' }] } }] }
-			}
-		});
-	});
-	it('keeps refusing an alternation with tested arms anywhere a match tree does not read it', async () => {
-		await expect(readBindings('(function_item (parameters (parameters_elements (attributed_parameter [(self_parameter) (parameter name: (self))])))) @declaration.method')).rejects.toThrow(
-			/alternation below the claimed node tests only named nodes/
-		);
+		await expect(readBindings(text)).rejects.toThrow(/alternation below the claimed node tests only named nodes/);
 	});
 	it('reads no match for a capture that is not anchored first', async () => {
 		expect((await memberNamed('(function_item (parameters (parameters_elements (attributed_parameter) @receiver))) @declaration.method', 'receiver'))?.leadMatch).toBeUndefined();
@@ -467,6 +456,16 @@ describe('readBindings: the match tree of an anchored capture', () => {
 	])('refuses %s in the match tree, with the claim line', async (reason, item) => {
 		const text = `(function_item (parameters (parameters_elements . ${item} @receiver))) @declaration.method`;
 		expect((await memberNamed(text, 'receiver'))?.leadMatch).toEqual({ line: 1, refused: reason });
+	});
+	it('refuses a negated field in the match tree, so a claim with one joins no variant', async () => {
+		const text = '(function_item (parameters (parameters_elements . (required_parameter pattern: (this) !type) @receiver))) @declaration.method\n(required_parameter pattern: (this) !type) @parameter.untyped';
+		const facts = await readBindings(text);
+		expect(facts.members.find((m) => m.route !== 'dropped' && m.name === 'receiver')?.leadMatch).toEqual({ line: 1, refused: 'a negated field' });
+		expect(facts.claims[1]?.match).toBeUndefined();
+	});
+	it('refuses an alternation whose options sit under different fields', async () => {
+		const text = '(function_item (parameters (parameters_elements . (required_parameter [pattern: (this) type: (identifier)]) @receiver))) @declaration.method';
+		expect((await memberNamed(text, 'receiver'))?.leadMatch).toEqual({ line: 1, refused: 'an alternation over two fields' });
 	});
 	it('refuses a negated kind predicate on a node of the match tree', async () => {
 		const text = '((function_item (parameters (parameters_elements . (attributed_parameter (_) @_p) @receiver))) @declaration.method (#not-kind-eq? @_p "self_parameter"))';
