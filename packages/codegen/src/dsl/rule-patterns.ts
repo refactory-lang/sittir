@@ -488,7 +488,12 @@ export function isSupertypeLike(body: unknown): boolean {
 		if (typeof coreType !== 'string') return false;
 		if (isSymbolType(coreType) || isStringType(coreType)) return true;
 		if (typeEq(coreType, 'ALIAS')) return c.named === true;
-		return false;
+		if (!isChoiceType(coreType)) return false;
+		const arms = c.members;
+		return Array.isArray(arms) && arms.length > 0 && arms.every((arm) => {
+			const armCore = unwrapPrec(arm) as Record<string, unknown> | null;
+			return typeof armCore?.type === 'string' && typeEq(armCore.type, 'ALIAS') && armCore.named === true;
+		});
 	});
 }
 

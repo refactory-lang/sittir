@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { enrich } from '../enrich.ts';
+import { isSupertypeLike } from '../rule-patterns.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 
 const S = (value: string) => ({ type: 'STRING', value });
@@ -79,5 +80,13 @@ describe('enrich is a fixpoint of its own output', () => {
 		const elems = seq(item, repeat(seq(S(','), item)), optional(S(',')));
 		const rules = { set: seq(S('{'), sym('_collection_elements'), S('}')), list: seq(S('['), optional(sym('_collection_elements')), S(']')), _collection_elements: elems, expression: P('e'), splat: P('s') };
 		expect(again(grammarWith(rules, { inline: ['_collection_elements'] }))).toEqual({ names: [], minted: [] });
+	});
+
+	it('reads a choice as a supertype whether or not its alias over a choice was distributed', () => {
+		const names = choice(S('default'), S('union'));
+		const prec = (content: unknown) => ({ type: 'PREC_LEFT', value: 0, content });
+		const authored = choice(sym('unary'), prec(alias(names, 'identifier')));
+		const distributed = choice(sym('unary'), prec(choice(alias(S('default'), 'identifier'), alias(S('union'), 'identifier'))));
+		expect(isSupertypeLike(distributed)).toBe(isSupertypeLike(authored));
 	});
 });
