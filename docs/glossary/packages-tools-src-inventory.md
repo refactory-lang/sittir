@@ -46,14 +46,6 @@ Each grammar's binding facts (`readBindings`), named by their bound kinds throug
 
 Where the bindings and the authored vocabulary disagree, one line each: a claimed path no vocabulary interface has as its `$kind`, a member the bindings route to a kind whose interface (its own members and its parents') does not declare it, and a template hole its interface does not declare. A refinement's pinned slot needs no declaration: the read tells it, so it is no member, and the bindings claim is the one source of the refinement's spelling. The vocabulary is authored, so a disagreement is fixed on whichever side is wrong: a feature adds the kind or member, or the binding drops it.
 
-### `packages/tools/src/inventory/vocabulary.ts::readVocabulary`
-
-Reads the authored vocabulary structurally, with the TypeScript parser, never by matching lines: every interface under its namespaces, keyed by its `$kind` literal, with its own members (each marked optional or required, and a flag when it is declared with the marker type `Flag`) and its parent, the interface its `extends` clause names through `V.`. `members(path)` adds the inherited members, nearest first. `flags` is every name some kind declares as a flag. An interface with no `$kind` literal is not a vocabulary kind (the context's typemap and `Unmapped`).
-
-### `packages/tools/src/inventory/vocabulary.ts::isFlag`
-
-Whether a member's declared type is the marker `Flag`, the vocabulary's declaration of a flag (`utils.ts::Flag`). A `boolean` member is data.
-
 ### `packages/tools/src/inventory/index.ts::BindingsModule`
 
 A grammar's `grammar.bindings.ts` text, with the grammar bindings and the derivation report it was printed from.

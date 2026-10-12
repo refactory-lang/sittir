@@ -441,7 +441,7 @@ Host binaries are checked for staleness only in a checkout, and in that checkout
 
 The source inputs and generated files that keep the tree from equalling a trusted commit; empty when it equals one. The trusted commits are HEAD and, while a merge is in progress, MERGE_HEAD (`trustedCommits`): each has passed, or will have to pass, the CI check that regenerates and compares. Source inputs and generated roots must equal the same commit. Source from one parent with output from the other is a combination no check has seen, and it does not pass. A commit being rebased or cherry-picked is deliberately not trusted: its source lands on a different base, which is a new combination and needs a regenerate.
 
-The comparison is git's (`git diff --name-only --no-renames <commit>`, with `--cached` for an index snapshot, plus untracked files in a checkout; without `--no-renames` a source input renamed into a test directory would be reported only under its new path and go unseen), filtered to the paths that matter: the source inputs the source hash reads (`isCodegenSourceInput` and the grammar's entry and `package.json`) and the generated roots, less the files that land on their own cadence (`landsOnItsOwnCadence`). Editing a codegen test therefore never fails verification. When the tree equals neither commit, the paths returned are the differences from HEAD.
+The comparison is git's (`git diff --name-only --no-renames <commit>`, with `--cached` for an index snapshot, plus untracked files in a checkout; without `--no-renames` a source input renamed into a test directory would be reported only under its new path and go unseen), filtered to the paths that matter: the source inputs the source hash reads (`isCodegenSourceInput` and `grammarSourceInputs`), any vocabulary source for a grammar with bindings (`isVocabularyInput`, compared by its directory, so a deleted vocabulary file is a difference although the hash no longer lists it), and the generated roots, less the files that land on their own cadence (`landsOnItsOwnCadence`). Editing a codegen test therefore never fails verification. When the tree equals neither commit, the paths returned are the differences from HEAD.
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::isCodegenSourceInput`
 
@@ -588,8 +588,24 @@ Materializes the files of the index under the given pathspecs into a scratch dir
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::grammarSourceInputs`
 
-The per-grammar files a generation depends on besides the codegen source: `grammar.sittir.ts` and `package.json`, and for a grammar that ships a `bindings.scm` that file and `bootstrap.json`, since `node-model-portable.json5` is read from `bindings.scm` through the pinned reader. A grammar with no `bindings.scm` does not depend on the pin, so bumping it leaves that grammar fresh.
+The per-grammar files a generation depends on besides the codegen source: `grammar.sittir.ts`, `package.json` and the `bindings.scm` path, whether or not the file exists, so deleting it is a difference to the trusted commit; and for a grammar that ships a `bindings.scm`, `bootstrap.json` and every source of the vocabulary (`bindings/hash.ts::vocabularySources`), since `node-model-portable.json5` is read from `bindings.scm` through the pinned reader and its routes against the vocabulary. A grammar with no `bindings.scm` depends on neither the pin nor the vocabulary, so changing them leaves that grammar fresh. A tree with no vocabulary directory hashes none, as an absent input is not hashed.
+
+### `packages/codegen/src/scripts/generated-manifest.ts::VOCABULARY_SOURCE_DIR`
+
+The vocabulary directory, relative to the repository root, as the manifest's paths are.
+
+### `packages/codegen/src/scripts/generated-manifest.ts::isVocabularyInput`
+
+Whether a repo-relative path is a vocabulary source (`bindings/hash.ts::isVocabularySource`, directly in the vocabulary directory), whether or not it still exists.
+
+### `packages/codegen/src/scripts/generated-manifest.ts::bindingsInput`
+
+A grammar's `bindings.scm`, relative to the repository root.
+
+### `packages/codegen/src/scripts/generated-manifest.ts::isBound`
+
+Whether a grammar ships a `bindings.scm` in the source being verified, which makes the pin and the vocabulary its inputs.
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::stagedInputPathspecs`
 
-The paths the pre-commit check snapshots from the index before it verifies: the codegen source, `bootstrap.json`, and every grammar's package and native crate. It covers every path `grammarSourceInputs` and `generatedRootsFor` can name, so a staged snapshot hashes the same inputs a working-tree check does; a source input left out of it reads as absent and fails a just-regenerated grammar as changed.
+The paths the pre-commit check snapshots from the index before it verifies: the codegen source, `bootstrap.json`, the vocabulary, and every grammar's package and native crate. It covers every path `grammarSourceInputs` and `generatedRootsFor` can name, so a staged snapshot hashes the same inputs a working-tree check does; a source input left out of it reads as absent and fails a just-regenerated grammar as changed.

@@ -1,8 +1,9 @@
 name: Bootstrap the pinned build
 description: >
-  Builds the commit bootstrap.json pins (the @sittir/scm reader codegen reads
-  bindings.scm with) into scratchpad/bootstrap/<sha>, restoring it from a
-  cache keyed by that commit. Bumping the pin changes the key.
+  Builds the commit bootstrap.json pins (the @sittir/scm and @sittir/typescript
+  codegen reads bindings.scm and the vocabulary with) into
+  scratchpad/bootstrap/<sha>, restoring it from a cache keyed by that commit
+  and the bootstrap recipe. Bumping the pin or changing the recipe changes the key.
 runs:
   using: composite
   steps:
@@ -16,7 +17,7 @@ runs:
         path: |
           scratchpad/bootstrap/${{ steps.pin.outputs.sha }}
           !scratchpad/bootstrap/${{ steps.pin.outputs.sha }}/target
-        key: sittir-bootstrap-${{ runner.os }}-${{ runner.arch }}-${{ steps.pin.outputs.sha }}
+        key: sittir-bootstrap-${{ runner.os }}-${{ runner.arch }}-${{ steps.pin.outputs.sha }}-${{ hashFiles('packages/codegen/src/bootstrap/bootstrap.ts') }}
     - name: Fetch the pinned commit
       shell: bash
       run: |

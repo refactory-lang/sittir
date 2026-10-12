@@ -16,7 +16,7 @@ import type {
 	ScmAPI,
 	String as QueryString
 } from '@sittir/scm';
-import { loadPinnedScm, type PinnedScm } from '../scm/pinned.ts';
+import { loadPinnedBuild, type PinnedBuild } from '../bootstrap/pinned.ts';
 import {
 	type Anchor,
 	type BindingFacts,
@@ -38,19 +38,19 @@ import {
 	WILDCARD
 } from './facts.ts';
 
-type Kinds = Awaited<ReturnType<PinnedScm['scm']['default']['load']>>['kinds'];
+type Kinds = Awaited<ReturnType<PinnedBuild['scm']['default']['load']>>['kinds'];
 type Engine = LanguageEngine<ScmAPI>;
 
 let K: Kinds;
 let engine: Engine;
-let sourceSpans: PinnedScm['common']['sourceSpans'];
-let isErrorNode: PinnedScm['utils']['isErrorNode'];
-let spanOf: PinnedScm['utils']['spanOf'];
+let sourceSpans: PinnedBuild['common']['sourceSpans'];
+let isErrorNode: PinnedBuild['utils']['isErrorNode'];
+let spanOf: PinnedBuild['utils']['spanOf'];
 let loaded: Promise<void> | undefined;
 
 function ready(): Promise<void> {
 	loaded ??= (async () => {
-		const pinned = await loadPinnedScm();
+		const pinned = await loadPinnedBuild();
 		K = (await pinned.scm.default.load()).kinds;
 		engine = await pinned.common.createEngine(pinned.scm.default);
 		({ sourceSpans } = pinned.common);
