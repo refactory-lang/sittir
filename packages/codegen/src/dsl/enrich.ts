@@ -1,5 +1,5 @@
 import { withAnnotations, withHoistedAnnotation } from './annotations.ts';
-import { EnrichCtx, enrichSymbolSource, type EnrichRuleOrigin } from './enrich-ctx.ts';
+import { EnrichCtx, enrichSymbolSource, isMintOrigin, type EnrichRuleOrigin } from './enrich-ctx.ts';
 import type { Rule, AnyRule } from '../types/rule.ts';
 import {
 	distributeInlineAliasChoices,
@@ -296,7 +296,7 @@ export function getTextTokens(grammar: unknown): readonly string[] {
 }
 
 export function getEnrichMints(grammar: unknown): ReadonlySet<string> {
-	return enrichRuleNamesOf(grammar, (origin) => origin.kind !== 'promoted-group');
+	return enrichRuleNamesOf(grammar, isMintOrigin);
 }
 
 export const ENRICH_WHITESPACE_KEY = '__enrichedWhitespace__' as const;
@@ -2273,7 +2273,7 @@ function mintStructuredChoiceArm(
 		const name = (arm as { name?: string }).name;
 		if (typeof name !== 'string' || !name.startsWith('_')) return null;
 		if (counter.supertypeNames?.has(name)) return null;
-		if (Object.hasOwn(clauseGroupRules, name)) return null;
+		if (Object.hasOwn(clauseGroupRules, name) || ctx.isPriorMint(name)) return null;
 		const body = rulesBag[name];
 		if (!body || matchesEmpty(body) || isInlineSafe(body, ctx.sourceSymbols)) return null;
 		if (isSupertypeLike(body) || coveredByAuthoredGroup(body, ctx)) return null;

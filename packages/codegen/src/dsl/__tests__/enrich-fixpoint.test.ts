@@ -53,4 +53,9 @@ describe('enrich is a fixpoint of its own output', () => {
 		const out = again(grammarWith({ string_content: repeat1(choice(P('[^"\\\\]+'), sym('escape'))), escape: P('\\\\.') }));
 		expect(out).toEqual({ names: [], minted: [] });
 	});
+
+	it('does not promote a minted keyword rule to a visible group', () => {
+		const out = again(grammarWith({ modifiers: repeat1(choice(S('async'), S('const'), sym('extern_modifier'))), extern_modifier: seq(S('extern'), P('"[a-z]+"')) }));
+		expect(out).toEqual({ names: [], minted: [] });
+	});
 });
