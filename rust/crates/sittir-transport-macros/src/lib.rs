@@ -8,8 +8,9 @@
 mod attrs;
 mod codec;
 mod expand;
+mod record;
 
-#[proc_macro_derive(Transport, attributes(transport, slot, kind, flank, separator_kind, wire))]
+#[proc_macro_derive(Transport, attributes(transport, slot, kind, flank, separator_kind, wire, record))]
 pub fn derive_transport(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let input = syn::parse_macro_input!(input as syn::DeriveInput);
     expand::derive(&input).unwrap_or_else(syn::Error::into_compile_error).into()

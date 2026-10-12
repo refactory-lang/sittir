@@ -335,6 +335,7 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 		await writeFile(emit.transportRs.path, emit.transportRs.contents);
 		await writeFile(emit.optionsRs.path, emit.optionsRs.contents);
 		await writeFile(emit.libRs.path, emit.libRs.contents);
+		await writeFile(emit.recordsTs.path, emit.recordsTs.contents);
 		if (result.kindIds) {
 			const kindIdsPath = `${renderModuleSrcDir(grammar)}/kind_ids.rs`;
 			await writeFile(kindIdsPath, result.kindIds);
@@ -351,6 +352,7 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 		console.log(`    ${emit.transportRs.path}`);
 		console.log(`    ${emit.optionsRs.path}`);
 		console.log(`    ${emit.libRs.path}`);
+		console.log(`    ${emit.recordsTs.path}`);
 
 		if (buildNative !== false) {
 			const nativeCrate = nativeCrateRelDir(grammar);

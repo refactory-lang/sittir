@@ -61,6 +61,7 @@ import { interiorOf } from './interior.ts';
 import { ENVELOPE_PINS, assertEnvelopeExtrasPinned, type EnvelopeClaims, type EnvelopePin } from './envelope-claims.ts';
 import { BOXED_PAYLOADS, PAYLOAD_CEILING_BYTES } from './boxed-payloads.ts';
 import { getTransportProjection } from './transport-projection-cache.ts';
+import { CELL_WORDS, RECORD_HEADER_WORDS, recordAttr, recordLayoutOf, slotRecordForm, type RecordField, type RecordLayout } from './record-layout.ts';
 import {
 	RESERVED_SUPERTYPE_ENUM_NAMES,
 	RUST_KEYWORDS,
@@ -146,6 +147,7 @@ export interface RustRenderModuleEmit {
 	transportRs: { path: string; contents: string };
 	optionsRs: { path: string; contents: string };
 	libRs: { path: string; contents: string };
+	recordsTs: { path: string; contents: string };
 }
 
 export interface RenderModuleBundle {
@@ -1144,6 +1146,7 @@ export function emitRenderModule(
 		structs.push(emitStruct(kind, nodeMap.nodes.get(kind), templates.bodies.get(kind)!, nodeMap));
 	}
 	const meta = collectMetaData(nodeMap);
+	const support = renderTransportSupport(lang, nodeMap, structs, meta, generatedIdTables, plan, inputs.boxedPayloads ?? [], inputs.envelopePins);
 
 	const transportRs =
 		[
@@ -1156,7 +1159,7 @@ export function emitRenderModule(
 			'use super::{field_ids as field, kind_ids as kind};',
 			'use ::sittir_core::VerbatimTransport;',
 			'',
-			renderTransportSupport(lang, nodeMap, structs, meta, generatedIdTables, plan, inputs.boxedPayloads ?? [], inputs.envelopePins)
+			support.text
 		].join('\n') + '\n';
 	const optionsRs = renderOptionsRs(plan, addresses, optionsKindEntries);
 	const { hashRs, hashTs } = emitHashFiles(lang, [
@@ -1178,8 +1181,33 @@ export function emitRenderModule(
 		libRs: {
 			path: `${renderModuleSrcDir(lang)}/mod.rs`,
 			contents: libRsContents(lang)
+		},
+		recordsTs: {
+			path: `packages/${lang}/src/records.ts`,
+			contents: recordsTs(lang, support.records)
 		}
 	};
+}
+
+function recordsTs(lang: GrammarName, records: ReadonlyMap<string, RecordLayout>): string {
+	const entries = [...records].map(([name, layout]) => {
+		const places = layout.places.map((place) => {
+			const at = 'bit' in place ? `word: ${place.word}, bit: ${place.bit}` : `word: ${place.word}, width: ${place.width}${place.run === undefined ? '' : `, run: ${place.run}`}`;
+			return ` ${place.field}: { ${at} },`;
+		});
+		return `\t${name}: {${[` words: ${layout.words},`, ...places].join('')} },`;
+	});
+	return `// @generated from packages/${lang}/node-model.json5 — do not hand-edit.
+// Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar ${lang} --all --output packages/${lang}/src
+//
+// Each transport's record layout, as ${renderModuleSrcDir(lang)}/transport.rs stamps it.
+
+export const RECORD_HEADER_WORDS = ${RECORD_HEADER_WORDS};
+
+export const records = {
+${entries.join('\n')}
+} as const;
+`;
 }
 
 interface ReadPrint {
@@ -1192,6 +1220,7 @@ interface ReadPrint {
 	readonly choicePayloads: Set<string>;
 	readonly boxedPayloads: readonly string[];
 	readonly transports: Set<string>;
+	readonly records: Map<string, RecordLayout>;
 }
 
 function readPrintOf(
@@ -1219,7 +1248,8 @@ function readPrintOf(
 		admitted: new Map(),
 		transports: new Set(),
 		blankChoices: new Set(),
-		choicePayloads: new Set()
+		choicePayloads: new Set(),
+		records: new Map()
 	};
 }
 
@@ -1264,7 +1294,7 @@ function renderTransportSupport(
 	plan: RenderPlan,
 	boxedPayloads: readonly string[],
 	envelopePins: Readonly<Record<string, EnvelopePin>> | undefined
-): string {
+): { readonly text: string; readonly records: ReadonlyMap<string, RecordLayout> } {
 	const projection = getTransportProjection(nodeMap);
 	const nodes = projection.nodes;
 
@@ -1355,7 +1385,7 @@ function renderTransportSupport(
 			...payloadCeilingAssertions(read.boxedPayloads, read.choicePayloads)
 		].join('\n')
 	);
-	return [rendered, '', grammarTriviaStatement(read.transports)].join('\n');
+	return { text: [rendered, '', grammarTriviaStatement(read.transports)].join('\n'), records: read.records };
 }
 
 function grammarTriviaStatement(transports: ReadonlySet<string>): string {
@@ -3140,50 +3170,47 @@ function renderTransportDataStruct(
 	const ownId = findKindEntry(kindEntries, node.kind)?.id;
 	const printedSlots = isCompoundOf(node) ? structSlotsOf(node, slotModel, nodeMap) : [];
 	admit(read, structName, node instanceof AssembledAlias ? [node.aliasTypeId] : ownId === undefined ? [] : [ownId]);
-	lines.push(...transportDeclaration(read, TRANSPORT_DERIVE, transportArgs(node, ownId, read.ctx, printedSlots.map(({ slot }) => slot)), 'struct', structName));
+	const fields: StructField[] = [];
 	if (isCompoundOf(node)) {
-		lines.push(...renderLayoutField());
+		fields.push({ lines: renderLayoutField() });
 		for (const { slot, owner, forceOptional } of printedSlots) {
-			lines.push(
-				...renderTransportField(
-					slot,
-					owner.kind,
-					owner.typeName,
-					nodeMap,
-					choices,
-					slotReadAttr(slot, owner, node, nodeMap, read),
-					forceOptional
-				)
-			);
-			fillFields.push(rustFieldIdent(slot.storageName));
+			const field = rustFieldIdent(slot.storageName);
+			fields.push({
+				lines: renderTransportField(slot, owner.kind, owner.typeName, nodeMap, choices, slotReadAttr(slot, owner, node, nodeMap, read), forceOptional),
+				record: { field, form: slotRecordForm(transportSlotShapeOf(slot, nodeMap), isMultiple(slot)) }
+			});
+			fillFields.push(field);
 		}
-		{
-			if (node instanceof AssembledList) {
-				if (node.leadingDelimiter === 'optional' || node.trailingDelimiter === 'optional') {
-					lines.push(
-						wireKeyAttr('_delimiter'),
-						`    #[flank(${flankArgs(node)})]`,
-						'    pub delimiter: Option<u8>,'
-					);
-				}
-				if (node.separatorRule !== undefined) {
-					lines.push(
-						wireKeyAttr('_separator'),
-						`    #[separator_kind(${separatorKindArgs(node, read.ctx)})]`,
-						'    pub separator_kind: Option<u16>,'
-					);
-				}
+		if (node instanceof AssembledList) {
+			if (node.leadingDelimiter === 'optional' || node.trailingDelimiter === 'optional') {
+				fields.push({
+					lines: [wireKeyAttr('_delimiter'), `    #[flank(${flankArgs(node)})]`, '    pub delimiter: Option<u8>,'],
+					record: { field: 'delimiter', form: { tag: 'cell', width: CELL_WORDS.scalar } }
+				});
 			}
-			for (const site of synthesizedSpacingSites(plan, node)) {
-				if (!carriesPerNodeValue(site)) continue;
-				lines.push(
-					wireKeyAttr(site.wireKey),
-					`    pub ${rustFieldIdent(site.fieldIdent)}: Option<u16>,`
-				);
+			if (node.separatorRule !== undefined) {
+				fields.push({
+					lines: [wireKeyAttr('_separator'), `    #[separator_kind(${separatorKindArgs(node, read.ctx)})]`, '    pub separator_kind: Option<u16>,'],
+					record: { field: 'separator_kind', form: { tag: 'cell', width: CELL_WORDS.scalar } }
+				});
 			}
+		}
+		for (const site of synthesizedSpacingSites(plan, node)) {
+			if (!carriesPerNodeValue(site)) continue;
+			fields.push({ lines: [wireKeyAttr(site.wireKey), `    pub ${rustFieldIdent(site.fieldIdent)}: Option<u16>,`] });
 		}
 	} else if (isTerminalNode(node)) {
-		lines.push(...renderLeafTransportPlainFields());
+		fields.push({ lines: renderLayoutField() });
+		fields.push({ lines: renderLeafTextField(), record: { field: 'text', form: { tag: 'cell', width: CELL_WORDS.text } } });
+	}
+	const layout = recordLayoutOf(fields.flatMap(({ record }) => (record === undefined ? [] : [record])));
+	read.records.set(structName, layout);
+	const declaration = transportDeclaration(read, TRANSPORT_DERIVE, transportArgs(node, ownId, read.ctx, printedSlots.map(({ slot }) => slot)), 'struct', structName);
+	lines.push(...declaration.slice(0, -1), `#[record(words = ${layout.words})]`, ...declaration.slice(-1));
+	const placeOf = new Map(layout.places.map((place) => [place.field, place]));
+	for (const field of fields) {
+		const place = field.record === undefined ? undefined : placeOf.get(field.record.field);
+		lines.push(...(place === undefined ? [] : [`    ${recordAttr(place)}`]), ...field.lines);
 	}
 	lines.push('}');
 	lines.push('');
@@ -3377,8 +3404,13 @@ function renderLayoutField(): string[] {
 	return [wireKeyAttr(LAYOUT_FIELD.wireKey), `    pub ${LAYOUT_FIELD.rustName}: ${LAYOUT_FIELD.rustType},`];
 }
 
-function renderLeafTransportPlainFields(): string[] {
-	return [...renderLayoutField(), wireKeyAttr('$text'), '    pub text: String,'];
+function renderLeafTextField(): string[] {
+	return [wireKeyAttr('$text'), '    pub text: String,'];
+}
+
+interface StructField {
+	readonly lines: readonly string[];
+	readonly record?: RecordField;
 }
 
 interface StructSlot {

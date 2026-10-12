@@ -26,6 +26,7 @@ pub mod query;
 pub mod non_empty;
 pub use non_empty::NonEmptyVec;
 pub mod read;
+pub mod record;
 pub mod render;
 pub mod slot;
 pub mod spacing;

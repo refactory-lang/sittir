@@ -10,7 +10,11 @@ use syn::{Data, DataEnum, DataStruct, DeriveInput, Fields, GenericArgument, Iden
 pub fn derive(input: &DeriveInput) -> syn::Result<TokenStream> {
     let attrs = attrs::kind_attrs(&input.attrs)?;
     match &input.data {
-        Data::Struct(data) => structure(&input.ident, &attrs, data),
+        Data::Struct(data) => {
+            let body = structure(&input.ident, &attrs, data)?;
+            let record = crate::record::checks(&input.ident, &input.attrs, data)?;
+            Ok(quote!(#body #record))
+        }
         Data::Enum(data) if attrs.choice => choice(&input.ident, &attrs, data),
         Data::Enum(data) => members(&input.ident, &attrs, data),
         Data::Union(_) => Err(syn::Error::new_spanned(&input.ident, "a transport is a struct or an enum")),

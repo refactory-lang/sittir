@@ -1457,9 +1457,11 @@ impl ::sittir_core::render::Render for NamedNodeSupertypedNameTransportSlot {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::PROGRAM)]
+#[record(words = 4)]
 pub struct ProgramTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
+    #[record(word = 2, width = 2, run = 5)]
     #[wire(key = "_definitions")]
     #[slot(field = field::DEFINITIONS)]
     pub definitions: Vec<::sittir_core::SlotValue<DefinitionTransport>>,
@@ -1519,9 +1521,11 @@ impl ::sittir_core::prepare::Prepare for ProgramTransport {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::ESCAPE_SEQUENCE, interior = "^\\\\(?<content>(?:.))$")]
+#[record(words = 6)]
 pub struct EscapeSequenceTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
+    #[record(word = 2, width = 4)]
     #[wire(key = "_content")]
     #[slot(capture = "content")]
     pub content: String,
@@ -1607,9 +1611,11 @@ impl ::sittir_core::render::Render for QuantifierEnum {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::IDENTIFIER, text)]
+#[record(words = 6)]
 pub struct IdentifierTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
+    #[record(word = 2, width = 4)]
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -1653,9 +1659,11 @@ impl ::sittir_core::prepare::Prepare for IdentifierTransport {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::_IMMEDIATE_IDENTIFIER, text)]
+#[record(words = 6)]
 pub struct ImmediateIdentifierTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
+    #[record(word = 2, width = 4)]
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -1699,9 +1707,11 @@ impl ::sittir_core::prepare::Prepare for ImmediateIdentifierTransport {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::CAPTURE, layout = [kind::AT])]
+#[record(words = 7)]
 pub struct CaptureTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
+    #[record(word = 2, width = 5)]
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<ImmediateIdentifierTransport, true>,
@@ -1750,9 +1760,11 @@ impl ::sittir_core::prepare::Prepare for CaptureTransport {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::STRING, layout = [kind::DQUOTE | kind::DQUOTE2])]
+#[record(words = 7)]
 pub struct StringTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
+    #[record(word = 2, width = 5)]
     #[wire(key = "_string_content")]
     #[slot(field = field::STRING_CONTENT)]
     pub string_content: Option<::sittir_core::SlotValue<StringContentTransport>>,
@@ -1801,9 +1813,11 @@ impl ::sittir_core::prepare::Prepare for StringTransport {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::_IMMEDIATE_STRING, layout = [kind::DQUOTE | kind::DQUOTE2])]
+#[record(words = 7)]
 pub struct ImmediateStringTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
+    #[record(word = 2, width = 5)]
     #[wire(key = "_string_content")]
     #[slot]
     pub string_content: Option<::sittir_core::SlotValue<StringContentTransport>>,
@@ -1852,9 +1866,11 @@ impl ::sittir_core::prepare::Prepare for ImmediateStringTransport {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::STRING_CONTENT)]
+#[record(words = 4)]
 pub struct StringContentTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
+    #[record(word = 2, width = 2, run = 5)]
     #[wire(key = "_content")]
     #[slot]
     pub content: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<StringContentContentTransportSlot, true>>,
@@ -1900,9 +1916,11 @@ impl ::sittir_core::prepare::Prepare for StringContentTransport {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::PARAMETERS)]
+#[record(words = 4)]
 pub struct ParametersTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
+    #[record(word = 2, width = 2, run = 5)]
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
     pub elements: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ParametersElementsTransportSlot>>,
@@ -1956,9 +1974,11 @@ impl ::sittir_core::prepare::Prepare for ParametersTransport {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::COMMENT, interior = "^;(?<content>(?:.*))$")]
+#[record(words = 6)]
 pub struct CommentTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
+    #[record(word = 2, width = 4)]
     #[wire(key = "_content")]
     #[slot(capture = "content")]
     pub content: String,
@@ -2004,12 +2024,15 @@ impl ::sittir_core::prepare::Prepare for CommentTransport {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::LIST, layout = [kind::LBRACK, kind::RBRACK])]
+#[record(words = 6)]
 pub struct ListTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
+    #[record(word = 2, width = 2, run = 5)]
     #[wire(key = "_definitions")]
     #[slot(field = field::DEFINITIONS)]
     pub definitions: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<DefinitionTransport>>,
+    #[record(word = 4, width = 2, run = 5)]
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
     pub elements: Vec<::sittir_core::SlotValue<ListElementTransport>>,
@@ -2069,12 +2092,15 @@ impl ::sittir_core::prepare::Prepare for ListTransport {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::GROUPING, layout = [kind::LPAREN, kind::RPAREN])]
+#[record(words = 6)]
 pub struct GroupingTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
+    #[record(word = 2, width = 2, run = 5)]
     #[wire(key = "_grouping_group")]
     #[slot]
     pub grouping_group: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<GroupingGroupTransport>>,
+    #[record(word = 4, width = 2, run = 5)]
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
     pub elements: Vec<::sittir_core::SlotValue<ListElementTransport>>,
@@ -2134,12 +2160,15 @@ impl ::sittir_core::prepare::Prepare for GroupingTransport {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::MISSING_NODE, layout = [kind::LPAREN, kind::MISSING_KEYWORD, kind::RPAREN])]
+#[record(words = 9)]
 pub struct MissingNodeTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
+    #[record(word = 2, width = 5)]
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: Option<::sittir_core::SlotValue<MissingNodeNameTransportSlot>>,
+    #[record(word = 7, width = 2, run = 5)]
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
     pub elements: Vec<::sittir_core::SlotValue<ListElementTransport>>,
@@ -2194,12 +2223,15 @@ impl ::sittir_core::prepare::Prepare for MissingNodeTransport {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::ANONYMOUS_NODE)]
+#[record(words = 9)]
 pub struct AnonymousNodeTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
+    #[record(word = 2, width = 5)]
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<AnonymousNodeNameTransportSlot>,
+    #[record(word = 7, width = 2, run = 5)]
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
     pub elements: Vec<::sittir_core::SlotValue<ListElementTransport>>,
@@ -2254,12 +2286,15 @@ impl ::sittir_core::prepare::Prepare for AnonymousNodeTransport {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::FIELD_DEFINITION)]
+#[record(words = 12)]
 pub struct FieldDefinitionTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
+    #[record(word = 2, width = 5)]
     #[wire(key = "_name")]
     #[slot(field = field::NAME, separator = kind::COLON)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
+    #[record(word = 7, width = 5)]
     #[wire(key = "_definition")]
     #[slot(field = field::DEFINITION)]
     pub definition: ::sittir_core::SlotValue<Box<DefinitionTransport>>,
@@ -2309,9 +2344,11 @@ impl ::sittir_core::prepare::Prepare for FieldDefinitionTransport {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::NEGATED_FIELD, layout = [kind::BANG | kind::BANG2])]
+#[record(words = 7)]
 pub struct NegatedFieldTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
+    #[record(word = 2, width = 5)]
     #[wire(key = "_identifier")]
     #[slot(field = field::IDENTIFIER)]
     pub identifier: ::sittir_core::SlotValue<IdentifierTransport>,
@@ -2360,18 +2397,23 @@ impl ::sittir_core::prepare::Prepare for NegatedFieldTransport {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::PREDICATE, layout = [kind::LPAREN, kind::RPAREN])]
+#[record(words = 22)]
 pub struct PredicateTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
+    #[record(word = 2, width = 5)]
     #[wire(key = "_prefix")]
     #[slot(field = field::PREFIX)]
     pub prefix: ::sittir_core::SlotValue<PredicatePrefixTransportSlot>,
+    #[record(word = 7, width = 5)]
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<ImmediateIdentifierTransport, true>,
+    #[record(word = 12, width = 5)]
     #[wire(key = "_type")]
     #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<PredicateTypeEnum, true>,
+    #[record(word = 17, width = 5)]
     #[wire(key = "_parameters")]
     #[slot(field = field::PARAMETERS)]
     pub parameters: Option<::sittir_core::SlotValue<ParametersTransport>>,
@@ -2459,9 +2501,11 @@ impl ::sittir_core::render::Render for PredicateTypeEnum {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::LIST_ELEMENT_QUANTIFIER)]
+#[record(words = 7)]
 pub struct ListElementQuantifierTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
+    #[record(word = 2, width = 5)]
     #[wire(key = "_quantifier")]
     #[slot(field = field::QUANTIFIER)]
     pub quantifier: ::sittir_core::SlotValue<QuantifierEnum>,
@@ -2507,12 +2551,15 @@ impl ::sittir_core::prepare::Prepare for ListElementQuantifierTransport {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::GROUP_EXPRESSION_ARM, layout = [kind::DOT])]
+#[record(words = 12)]
 pub struct GroupExpressionArmTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
+    #[record(word = 2, width = 5)]
     #[wire(key = "_left")]
     #[slot(field = field::LEFT)]
     pub left: ::sittir_core::SlotValue<Box<GroupExpressionArmLeftTransportSlot>>,
+    #[record(word = 7, width = 5)]
     #[wire(key = "_right")]
     #[slot(field = field::RIGHT)]
     pub right: ::sittir_core::SlotValue<Box<GroupExpressionArmLeftTransportSlot>>,
@@ -2562,12 +2609,15 @@ impl ::sittir_core::prepare::Prepare for GroupExpressionArmTransport {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::NAMED_NODE_EXPRESSION_ARM, layout = [kind::DOT])]
+#[record(words = 12)]
 pub struct NamedNodeExpressionArmTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
+    #[record(word = 2, width = 5)]
     #[wire(key = "_left")]
     #[slot(field = field::LEFT)]
     pub left: ::sittir_core::SlotValue<Box<NamedNodeExpressionArmLeftTransportSlot>>,
+    #[record(word = 7, width = 5)]
     #[wire(key = "_right")]
     #[slot(field = field::RIGHT)]
     pub right: ::sittir_core::SlotValue<Box<NamedNodeExpressionArmLeftTransportSlot>>,
@@ -2617,12 +2667,15 @@ impl ::sittir_core::prepare::Prepare for NamedNodeExpressionArmTransport {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::GROUPING_GROUP)]
+#[record(words = 8)]
 pub struct GroupingGroupTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
+    #[record(word = 3, width = 5)]
     #[wire(key = "_group_expression")]
     #[slot]
     pub group_expression: ::sittir_core::SlotValue<GroupExpressionArmLeftTransportSlot>,
+    #[record(word = 2, bit = 0)]
     #[wire(key = "_anchor")]
     #[slot(presence = display(kind::_ANCHOR))]
     pub anchor: bool,
@@ -2672,9 +2725,11 @@ impl ::sittir_core::prepare::Prepare for GroupingGroupTransport {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::STRING_CONTENT_TEXT, text)]
+#[record(words = 6)]
 pub struct StringContentTextTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
+    #[record(word = 2, width = 4)]
     #[wire(key = "$text")]
     pub text: String,
 }
@@ -2746,15 +2801,19 @@ impl ::sittir_core::render::Render for AnchorTransport {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::NAMED_NODE_PLAIN, layout = [kind::LPAREN, kind::RPAREN])]
+#[record(words = 14)]
 pub struct NamedNodePlainTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
+    #[record(word = 2, width = 5)]
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<NamedNodePlainNameTransportSlot>,
+    #[record(word = 7, width = 5)]
     #[wire(key = "_named_node_group")]
     #[slot]
     pub named_node_group: Option<::sittir_core::SlotValue<Box<NamedNodeGroupTransport>>>,
+    #[record(word = 12, width = 2, run = 5)]
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
     pub elements: Vec<::sittir_core::SlotValue<ListElementTransport>>,
@@ -2810,18 +2869,23 @@ impl ::sittir_core::prepare::Prepare for NamedNodePlainTransport {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::NAMED_NODE_SUPERTYPED, layout = [kind::LPAREN, kind::SLASH, kind::RPAREN])]
+#[record(words = 19)]
 pub struct NamedNodeSupertypedTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
+    #[record(word = 2, width = 5)]
     #[wire(key = "_supertype")]
     #[slot(field = field::SUPERTYPE)]
     pub supertype: ::sittir_core::SlotValue<IdentifierTransport>,
+    #[record(word = 7, width = 5)]
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<NamedNodeSupertypedNameTransportSlot, true>,
+    #[record(word = 12, width = 5)]
     #[wire(key = "_named_node_group")]
     #[slot]
     pub named_node_group: Option<::sittir_core::SlotValue<Box<NamedNodeGroupTransport>>>,
+    #[record(word = 17, width = 2, run = 5)]
     #[wire(key = "_elements")]
     #[slot(field = field::ELEMENTS)]
     pub elements: Vec<::sittir_core::SlotValue<ListElementTransport>>,
@@ -2878,12 +2942,15 @@ impl ::sittir_core::prepare::Prepare for NamedNodeSupertypedTransport {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::NAMED_NODE_GROUP_CHILDREN)]
+#[record(words = 5)]
 pub struct NamedNodeGroupChildrenTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
+    #[record(word = 2, bit = 0)]
     #[wire(key = "_anchor")]
     #[slot(presence = display(kind::_ANCHOR))]
     pub anchor: bool,
+    #[record(word = 3, width = 2, run = 5)]
     #[wire(key = "_named_node_expressions")]
     #[slot(field = field::NAMED_NODE_EXPRESSIONS)]
     pub named_node_expressions: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<NamedNodeExpressionArmLeftTransportSlot>>,
@@ -2938,15 +3005,19 @@ impl ::sittir_core::prepare::Prepare for NamedNodeGroupChildrenTransport {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(kind = kind::NAMED_NODE_GROUP_ANCHORED_LAST, layout = [kind::DOT])]
+#[record(words = 10)]
 pub struct NamedNodeGroupAnchoredLastTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
+    #[record(word = 2, bit = 0)]
     #[wire(key = "_anchor")]
     #[slot(presence = display(kind::_ANCHOR))]
     pub anchor: bool,
+    #[record(word = 3, width = 2, run = 5)]
     #[wire(key = "_named_node_expressions")]
     #[slot(field = field::NAMED_NODE_EXPRESSIONS)]
     pub named_node_expressions: Vec<::sittir_core::SlotValue<NamedNodeExpressionArmLeftTransportSlot>>,
+    #[record(word = 5, width = 5)]
     #[wire(key = "_last")]
     #[slot(field = field::LAST)]
     pub last: ::sittir_core::SlotValue<Box<NamedNodeExpressionArmLeftTransportSlot>>,
