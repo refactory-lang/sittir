@@ -23,6 +23,7 @@ const CEILING = JSON.parse(
 	readonly unmapped: number;
 	readonly compiling: readonly string[];
 	readonly vocabularyDisagreements: readonly string[];
+	readonly unroutedScope: readonly string[];
 };
 
 describe('bindingIssues', () => {
@@ -187,6 +188,12 @@ describe('deriveVocabulary', () => {
 describe('the authored vocabulary', () => {
 	it('disagrees with the bindings only where the ceiling records', async () => {
 		expect(vocabularyDisagreements(await deriveVocabulary(), readVocabulary(VOCABULARY_DIR))).toEqual(CEILING.vocabularyDisagreements);
+	}, 120_000);
+	it('has its scope routed wherever it declares one, but where the ceiling records', async () => {
+		const d = await deriveVocabulary();
+		const vocabulary = readVocabulary(VOCABULARY_DIR);
+		const unrouted = [...d.members].filter(([path, members]) => vocabulary.members(path).has('scope') && !members.has('scope')).map(([path]) => path);
+		expect(unrouted.sort()).toEqual(CEILING.unroutedScope);
 	}, 120_000);
 	it('reports a template hole its interface does not declare', async () => {
 		const d = await deriveVocabulary();

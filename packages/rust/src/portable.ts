@@ -5278,14 +5278,6 @@ const table: PortableTable = {
 						up: 0,
 						via: [
 							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
 							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
 							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
 						],
@@ -5378,14 +5370,6 @@ const table: PortableTable = {
 						up: 0,
 						via: [{ fields: ['visibility_modifier'], kinds: [] }],
 						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
 					},
 					{
 						up: 0,

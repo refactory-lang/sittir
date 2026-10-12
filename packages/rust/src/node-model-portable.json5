@@ -4349,34 +4349,6 @@
                     "crate",
                     "visibility_modifier_pub"
                   ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  380
-                ],
-                "fields": [],
-                "kinds": [
-                  "visibility_modifier_pub_scope"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
                 },
                 {
                   "fields": [],
@@ -4701,34 +4673,6 @@
                 "kinds": [
                   "crate",
                   "visibility_modifier_pub"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  380
-                ],
-                "fields": [],
-                "kinds": [
-                  "visibility_modifier_pub_scope"
                 ]
               }
             },
@@ -5489,6 +5433,76 @@
             {
               "owner": "enum_variant",
               "slot": "value"
+            }
+          ]
+        },
+        {
+          "name": "scope",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "visibility_modifier_pub",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "visibility_modifier",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "visibility_modifier_pub",
+          "slot": "visibility_modifier_pub_scope",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "enum_variant",
+              "slot": "visibility_modifier"
+            },
+            {
+              "owner": "visibility_modifier",
+              "slot": "content"
+            },
+            {
+              "owner": "visibility_modifier_pub",
+              "slot": "visibility_modifier_pub_scope"
+            }
+          ]
+        },
+        {
+          "name": "scope",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "visibility_modifier_pub",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "visibility_modifier",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "visibility_modifier_pub",
+          "slot": "visibility_modifier_pub_scope",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "enum_variant",
+              "slot": "visibility_modifier"
+            },
+            {
+              "owner": "visibility_modifier",
+              "slot": "content"
+            },
+            {
+              "owner": "visibility_modifier_pub",
+              "slot": "visibility_modifier_pub_scope"
             }
           ]
         },

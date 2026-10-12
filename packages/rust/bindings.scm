@@ -91,13 +91,13 @@
 (enum_variant (visibility_modifier (visibility_modifier_pub)) body: (ordered_field_declaration_list)) @declaration.enum_member.tuple.public
 (enum_variant (visibility_modifier (crate)) body: (ordered_field_declaration_list)) @declaration.enum_member.tuple.public.internal
 (enum_variant (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate)))) body: (ordered_field_declaration_list)) @declaration.enum_member.tuple.public.internal
-(enum_variant (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]))) body: (ordered_field_declaration_list)) @declaration.enum_member.tuple.public.restricted
+(enum_variant (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope)) body: (ordered_field_declaration_list)) @declaration.enum_member.tuple.public.restricted
 (enum_variant body: (field_declaration_list)) @declaration.enum_member.struct
 (enum_variant (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self)))) body: (field_declaration_list)) @declaration.enum_member.struct.private
 (enum_variant (visibility_modifier (visibility_modifier_pub)) body: (field_declaration_list)) @declaration.enum_member.struct.public
 (enum_variant (visibility_modifier (crate)) body: (field_declaration_list)) @declaration.enum_member.struct.public.internal
 (enum_variant (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate)))) body: (field_declaration_list)) @declaration.enum_member.struct.public.internal
-(enum_variant (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]))) body: (field_declaration_list)) @declaration.enum_member.struct.public.restricted
+(enum_variant (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope)) body: (field_declaration_list)) @declaration.enum_member.struct.public.restricted
 (attributed_enum_variant (attribute_item)* @attributes (_) @element)
 (union_item) @declaration.union
 (union_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.union.private
