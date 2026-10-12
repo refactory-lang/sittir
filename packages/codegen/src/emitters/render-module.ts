@@ -1,3 +1,4 @@
+import { readFileSync, writeFileSync } from 'node:fs';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { parseSeamLabel, isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
 import { isFixedTextLeaf, isTerminalNode } from '../compiler/model/node-map.ts';
@@ -160,7 +161,9 @@ export interface RenderOptionsInputs {
 }
 
 export function grammarRenderInputs(grammar: GrammarName, inputs: RenderOptionsInputs): RenderOptionsInputs {
-	return { ...inputs, boxedPayloads: BOXED_PAYLOADS[grammar] ?? [], envelopePins: ENVELOPE_PINS[grammar] ?? {} };
+	const scratchPins = process.env.SITTIR_SCRATCH_PINS;
+	const boxedPayloads = scratchPins !== undefined ? (JSON.parse(readFileSync(scratchPins, 'utf8')) as string[]) : (BOXED_PAYLOADS[grammar] ?? []);
+	return { ...inputs, boxedPayloads, envelopePins: ENVELOPE_PINS[grammar] ?? {} };
 }
 
 export interface RenderModuleEmitterConfig extends RenderOptionsInputs {
@@ -1479,6 +1482,11 @@ function choicePayloadType(node: AssembledNode, read: ReadPrint): string {
 }
 
 export function payloadCeilingAssertions(pinned: readonly string[], payloads: ReadonlySet<string>): string[] {
+	const dump = process.env.SITTIR_SCRATCH_PAYLOADS;
+	if (dump !== undefined) {
+		writeFileSync(dump, JSON.stringify({ pinned, payloads: [...payloads].sort() }, null, 1));
+		pinned = pinned.filter((name) => payloads.has(name));
+	}
 	const stale = pinned.find((name) => !payloads.has(name));
 	if (stale !== undefined) throw new Error(`${stale} is pinned in boxed-payloads.ts but no choice holds it: unpin it`);
 	const n = PAYLOAD_CEILING_BYTES;

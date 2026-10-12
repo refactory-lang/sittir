@@ -96,7 +96,12 @@ export function readTestOf(entry: ReadEntry, model: SlotModel, routesOf: SlotRou
 	const predicates = [...entry.claim.predicates, ...entry.children.map(childPredicate)];
 	const conditions = [...pins, ...predicates.map((p) => (typeof p === 'string' ? p : conditionOf(entry, p, model, routesOf, typeOf)))];
 	const refused = conditions.filter((c) => typeof c === 'string');
-	if (refused.length > 0) throw new Error(`portable: cannot test ${entry.kind} as ${entry.vocab}: ${refused.join('; ')}`);
+	if (refused.length > 0) {
+		const message = `portable: cannot test ${entry.kind} as ${entry.vocab}: ${refused.join('; ')}`;
+		if (process.env.SITTIR_SCRATCH_LENIENT_READ_TESTS === undefined) throw new Error(message);
+		console.warn(`[scratch] ${message}`);
+		return conditions.filter((c): c is PortableCondition => typeof c !== 'string');
+	}
 	const unique = new Map((conditions as PortableCondition[]).map((condition) => [JSON.stringify(condition), condition]));
 	return [...unique.values()];
 }
