@@ -35,19 +35,19 @@ export const PROBES: Record<string, readonly Probe[]> = {
 
 export const ORPHANS: Record<string, readonly (readonly [string, string])[]> = {
 	typescript: [
-		['x = (/* c */ this);', 'x = (/* c */ this);\n'],
-		['x = (/* c */ undefined);', 'x = (/* c */ undefined);\n'],
-		['x = (/* c */ true);', 'x = (/* c */ true);\n'],
-		['x = (/* c */ null);', 'x = (/* c */ null);\n'],
-		['class A extends B { m() { (/* c */ super).m(); } }', 'class A extends B {\n  m() {\n    (/* c */ super).m();\n  }\n}\n'],
-		['for (/* c */;;) {}', 'for (/* c */ ;;) {}\n'],
-		['x = (// c\n this);', 'x = (// c\n this);\n'],
-		['x = (this /* c */);', 'x = (this /* c */);\n']
+		['x = (/* c */ this);', 'x = (/* c */ this);'],
+		['x = (/* c */ undefined);', 'x = (/* c */ undefined);'],
+		['x = (/* c */ true);', 'x = (/* c */ true);'],
+		['x = (/* c */ null);', 'x = (/* c */ null);'],
+		['class A extends B { m() { (/* c */ super).m(); } }', 'class A extends B {\n  m() {\n    (/* c */ super).m();\n  }\n}'],
+		['for (/* c */;;) {}', 'for (/* c */ ;;) {}'],
+		['x = (// c\n this);', 'x = (// c\n this);'],
+		['x = (this /* c */);', 'x = (this /* c */);']
 	],
 	rust: [
-		['fn f() { (/* c */ self); }', 'fn f() {\n    (/* c */ self);\n}\n'],
-		['fn f() { (self /* c */); }', 'fn f() {\n    (self /* c */);\n}\n'],
-		['fn f() { (// c\n self); }', 'fn f() {\n (// c\n self);\n}\n']
+		['fn f() { (/* c */ self); }', 'fn f() {\n    (/* c */ self);\n}'],
+		['fn f() { (self /* c */); }', 'fn f() {\n    (self /* c */);\n}'],
+		['fn f() { (// c\n self); }', 'fn f() {\n (// c\n self);\n}']
 	],
 	python: [
 		['x = (  # c\n    True)\n', 'x = (# c\n    True)\n'],

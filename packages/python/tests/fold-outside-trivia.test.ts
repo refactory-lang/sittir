@@ -40,7 +40,7 @@ describe("a folded slice keeps its inner layout at the column it lands on", () =
 		const block = blockOf(engine.parse(SOURCE));
 		const inner = engine.build.ifStatement({ condition: engine.build.identifier('y'), consequence: block });
 		const outer = engine.build.ifStatement({ condition: engine.build.identifier('x'), consequence: engine.build.block(inner) });
-		expect(outer.$render()).toBe('if x:\n  if y:\n    b\n      # four\n    c');
+		expect(outer.$render()).toBe('if x:\n    if y:\n        b\n          # four\n        c');
 	});
 
 	it('a line that starts inside a string keeps its bytes', () => {

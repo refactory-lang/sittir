@@ -13,8 +13,8 @@ import type {
 	RenderCallOptions,
 	Rendered
 } from '@sittir/types';
-import { readObject, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
-import { holdReadTree, toTransportData, type KindView } from './transport-data.ts';
+import { decodeTree, readObject, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
+import { holdReadTree, sourceHandleOf, toTransportData, type KindView } from './transport-data.ts';
 import { mintTreeToken, registerTree } from './tree-token.ts';
 import type { DescendantBatch } from './query.ts';
 
@@ -67,8 +67,8 @@ export interface NativeEngineLike<TTransport = unknown> {
 	/**
 	 * Parse `source` and keep its tree.
 	 *
-	 * @returns JSON `{ treeId, format, errors }`: the id {@link read} and `disposeTree` take, the
-	 *   format the parse detected, and the parse's error regions.
+	 * @returns JSON `{ treeId, options, errors }`: the id {@link read} and `disposeTree` take, the
+	 *   tree's layer of the render options (`NativeParseResult.options`), and the parse's error regions.
 	 */
 	parse(source: string): string;
 	/**
@@ -151,7 +151,7 @@ export interface NativeModuleLike<
 	TTransport = unknown,
 	TEngine extends NativeEngineLike<TTransport> = NativeEngineLike<TTransport>
 > {
-	SittirEngine: new (options?: { format?: string; options?: object }) => TEngine;
+	SittirEngine: new (options?: { options?: object }) => TEngine;
 	/** Release one parsed tree of this language. Driven by GC — see `treeDisposalRegistry`. An id that names no tree is ignored. */
 	disposeTree(treeId: number): void;
 	/** Trees of this language still held on this thread. Diagnostics only. */
@@ -294,11 +294,7 @@ export function createNativeEngine<
 	}
 
 	try {
-		const nativeOptions = {
-			...(options?.format ? { format: JSON.stringify(options.format) } : {}),
-			...(options?.options ? { options: options.options } : {})
-		};
-		const engine = new status.native.SittirEngine(Object.keys(nativeOptions).length > 0 ? nativeOptions : undefined);
+		const engine = new status.native.SittirEngine(options?.options === undefined ? undefined : { options: options.options });
 		const kindView: KindView = {
 			isWrapper: (kindId) => config.rebuildWrappers.has(kindId),
 			isList: (kindId) => config.listKinds.has(kindId)
@@ -318,6 +314,10 @@ export function createNativeEngine<
 			// path, so a caller handing over raw read data cannot slice a
 			// pre-edit span past a rebuilt slot.
 			const transport = (typeof node === 'number' ? node : toTransportData(node, kindView)) as TTransport;
+			// The tree the node was read from, or rebuilt from, is the layer of
+			// options its source inferred; a built node has none.
+			const handle = typeof node === 'number' ? undefined : sourceHandleOf(node);
+			const treeId = handle === undefined ? undefined : decodeTree(handle);
 			// The handle renders lazily, and the transport's coordinates are
 			// numbers: the tokens stayed on `node`. Both closures name `node`,
 			// so the handle holds the trees it will slice for as long as it
@@ -326,12 +326,12 @@ export function createNativeEngine<
 			return createRenderHandle(
 				() => {
 					holdsTrees();
-					return engine.render(transport, undefined, perCall);
+					return engine.render(transport, treeId, perCall);
 				},
 				(path) => {
 					holdsTrees();
 					if (engine.renderToFile) {
-						engine.renderToFile(transport, path, undefined, perCall);
+						engine.renderToFile(transport, path, treeId, perCall);
 						return true;
 					}
 					return false;
@@ -384,7 +384,7 @@ export function createNativeEngine<
 								}
 								return cached;
 							},
-							format: parsed.format,
+							options: parsed.options,
 							snapshot: (index, holderByte) => engine.snapshot(parsed.treeId, index, holderByte),
 							triviaSide: (index, side) => {
 								const entries = engine.triviaSide(parsed.treeId, index, side);

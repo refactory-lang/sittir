@@ -2,7 +2,7 @@
 //!
 //! Contract surface:
 //!
-//! - [`types`]    — the kind id, spans, provenance and format records.
+//! - [`types`]    — the kind id, spans and provenance.
 //! - [`read`]     — `tree_sitter::Tree` → the grammar's typed transports.
 //! - [`boundary`] — cross-FFI shape helpers: a wire object's properties,
 //!   read by static keys; serde attrs live alongside the structs in `types`.
@@ -13,7 +13,6 @@ pub mod boundary;
 pub mod classify;
 pub mod engine;
 pub mod error_read;
-pub mod format;
 pub mod layout;
 pub mod layout_kinds;
 pub mod line_endings;
@@ -91,4 +90,4 @@ pub use render::{
 pub use prepare::{Prepare, RenderContext};
 pub use slot::{NodeCoordinate, SlotValue};
 // ParsedTree is the owned parse result.
-pub use engine::{apply_render_format, decode_handle, error_regions, panic_msg, ErrorRegion, ErrorRegionKind, ParsedTree};
+pub use engine::{decode_handle, error_regions, panic_msg, ErrorRegion, ErrorRegionKind, ParsedTree};

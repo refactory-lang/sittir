@@ -1,4 +1,4 @@
-import type { AnyUntypedNode, ErrorNode, ErrorRegion, FormatRecord, GrammarTriviaEntry, RenderCallOptions, TriviaItem, TriviaSetter } from './core-types.ts';
+import type { AnyUntypedNode, ErrorNode, ErrorRegion, GrammarTriviaEntry, RenderCallOptions, TriviaItem, TriviaSetter } from './core-types.ts';
 import type { IndentOption } from './options.ts';
 import type { Admit, Snapshot } from './node-surface.ts';
 import type { KindMembership, QueryFacet, QuerySlots } from './query.ts';
@@ -119,7 +119,6 @@ export interface Language<API extends LanguageAPI> {
 }
 
 export interface NativeEngineOptions<O extends object = Readonly<Record<string, unknown>>> {
-	readonly format?: FormatRecord;
 	readonly options?: O;
 }
 
@@ -288,7 +287,6 @@ type IsExactly<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends
 export interface EngineOptions<API extends LanguageAPI, M extends ApiSurface = 'default'> {
 	readonly api?: M;
 	readonly render?: API['options'];
-	readonly format?: FormatRecord;
 	readonly intercept?: readonly Interceptor<API>[];
 }
 

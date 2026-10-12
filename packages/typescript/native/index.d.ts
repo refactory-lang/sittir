@@ -13,9 +13,10 @@ export declare class SittirEngine {
   get buildProfile(): string
   findAndRead(source: string, pattern: string): string
   /**
-   * Parse `source` and keep its tree. As JSON `{ treeId, format,
-   * errors }`: the id `read` and `disposeTree` take, the format the
-   * parse detected, and its error regions.
+   * Parse `source` and keep its tree. As JSON `{ treeId, options,
+   * errors }`: the id `read` and `disposeTree` take, the tree's
+   * layer of the render options (`ParsedTree::inferred_options`),
+   * and its error regions.
    */
   parse(source: string): string
   /**
@@ -107,14 +108,17 @@ export declare class SittirEngine {
   /**
    * Render a typed transport object (napi-native, numeric `$type`).
    *
-   * `treeId` names the parse whose detected format applies. It is
-   * optional because factory-built nodes belong to no tree.
+   * The options a render takes are the call's own over the layer
+   * of the tree `treeId` names (`ParsedTree::inferred`), over the
+   * engine's. `treeId` is the tree the node was read from; a built
+   * node belongs to no tree and renders by the engine's options.
    */
   render(transport: object, treeId?: number | undefined | null, options?: object | undefined | null): string
   renderToFile(transport: object, path: string, treeId?: number | undefined | null, options?: object | undefined | null): void
   /**
-   * Free this engine's own state. The trees it parsed stay in the
-   * addon's table: they belong to whoever still names them.
+   * Release the engine. It holds no state of its own past its
+   * options: the trees it parsed stay in the addon's table, since
+   * they belong to whoever still names them.
    */
   dispose(): void
 }
@@ -128,7 +132,6 @@ export declare class SittirEngine {
 export declare function disposeTree(treeId: number): void
 
 export interface EngineOptions {
-  format?: string
   /**
    * Resolved once here against the grammar's site table at
    * construction; only the resolved ids are kept. A `render` call

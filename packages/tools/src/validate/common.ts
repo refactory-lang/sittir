@@ -39,7 +39,7 @@ import {
 } from '@sittir/common/utils';
 import type * as TS from 'web-tree-sitter';
 
-import type { AnyUntypedNode, Engine, LanguageAPI, NodeLayout, NodeTrivia, ParseOptions, TransportCoordinate, TriviaEntry } from '@sittir/types';
+import type { AnyUntypedNode, Engine, LanguageAPI, NativeLanguageEngine, NodeLayout, NodeTrivia, ParseOptions, TransportCoordinate, TriviaEntry } from '@sittir/types';
 import type { TriviaSides } from '@sittir/common';
 import type { TreeHandle } from '@sittir/common/utils';
 import { load } from '../codegen-surface.ts';
@@ -144,6 +144,16 @@ export function loadCorpusEntries(grammar: string): CorpusEntry[] {
 export { loadWebTreeSitter };
 
 export type NativeEngine = Engine<LanguageAPI>;
+
+/**
+ * The grammar's own native engine, under the grammar-generic `Engine`. It takes
+ * render options untyped, so a tool can hand a tree's inferred layer
+ * (`TreeHandle.options`) to a render of data detached from that tree; the
+ * generic `Engine` types render options as `never`.
+ */
+export async function nativeLanguageEngineOf(grammar: string): Promise<NativeLanguageEngine<LanguageAPI>> {
+	return (await (await languageByName(grammar)).load()).createNative();
+}
 
 export function kindViewOf(engine: NativeEngine): KindView {
 	return {
