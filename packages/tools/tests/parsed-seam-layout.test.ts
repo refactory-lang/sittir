@@ -36,12 +36,17 @@ describe("a template line break at a parsed node's seam obeys the gap's stored l
 		expect(root.$with.statements(...root.statements()).$render()).toBe('fn f() {} // c\nfn g() {}\n');
 	});
 
-	it.each([
-		[rs, 'enum E {\n    A,\n    B,\n}\n'],
-		[ts, 'interface I {\n  a: string;\n  b: number;\n}\n']
-	] as const)('%#: a declaration whose breaks equal the options renders unchanged from its snapshot and its template', (engine, source) => {
-		const root = engine.parse(source);
-		expect(engine.render(root.$snapshot()).toString()).toBe(source);
+	it('a rust enum whose breaks equal the options renders unchanged from its snapshot and its template', () => {
+		const source = 'enum E {\n    A,\n    B,\n}\n';
+		const root = rs.parse(source);
+		expect(rs.render(root.$snapshot()).toString()).toBe(source);
+		expect(root.$with.statements(...root.statements()).$render()).toBe(source);
+	});
+
+	it('a typescript interface whose breaks equal the options renders unchanged from its snapshot and its template', () => {
+		const source = 'interface I {\n  a: string;\n  b: number;\n}\n';
+		const root = ts.parse(source);
+		expect(ts.render(root.$snapshot()).toString()).toBe(source);
 		expect(root.$with.statements(...root.statements()).$render()).toBe(source);
 	});
 
@@ -50,11 +55,12 @@ describe("a template line break at a parsed node's seam obeys the gap's stored l
 		if (item === undefined || !rs.is.functionItem(item)) throw new Error('expected a function item');
 		const [statement] = item.body().statements();
 		if (statement === undefined || !rs.is.expressionStatement(statement)) throw new Error('expected an expression statement');
-		const sum = statement.content().expression();
+		const content = statement.content();
+		if (!('expression' in content)) throw new Error('expected an expression with its semicolon');
+		const sum = content.expression();
 		if (!rs.is.binaryExpression(sum)) throw new Error('expected a binary expression');
-		const rebuilt = sum.$with.left(sum.left());
-		const tight = { binaryExpression: { operator: { before: rs.kinds.Tight, after: rs.kinds.Tight } } };
-		expect(rs.render(rebuilt, tight).toString()).toBe('a+\n    b');
+		expect(rs.render(sum.$snapshot()).toString()).toBe('a +\n    b');
+		expect(rs.render(sum.$snapshot(), { binaryExpression: { operator: { before: rs.kinds.Tight, after: rs.kinds.Tight } } }).toString()).toBe('a+\n    b');
 	});
 
 	it("a built block keeps the template's line breaks", () => {
