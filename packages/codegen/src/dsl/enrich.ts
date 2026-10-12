@@ -2567,6 +2567,7 @@ function collectFieldEnumOccurrences(rules: Record<string, Rule>): FieldEnumOccu
 function walkFieldEnums(rule: Rule, rules: Record<string, Rule>, parentKind: string, out: FieldEnumOccurrence[]): void {
 	switch (rule.type as string) {
 		case 'FIELD': {
+			if (isOverrideField(rule)) return;
 			const fieldRule = rule as unknown as { name: string; content: Rule };
 			const enumContent = peelRepeatWrapper(fieldRule.content);
 			const members = resolveToEnumMembers(enumContent, rules);
@@ -2752,6 +2753,7 @@ function rewriteFieldEnums(rule: Rule, parentKind: string, sweep: FieldEnumSweep
 
 	switch (rule.type as string) {
 		case 'FIELD': {
+			if (isOverrideField(rule)) return rule;
 			const fieldRule = rule as unknown as { name: string; content: Rule; metadata?: unknown };
 			const synthesized = conflictingSites.has(fieldEnumSiteKey(parentKind, fieldRule.name))
 				? null

@@ -113,4 +113,15 @@ describe('enrich is a fixpoint of its own output', () => {
 		const before = JSON.stringify(rules.param);
 		expect(JSON.stringify(rulesOf(enrich(first as never, {})).param)).toBe(before);
 	});
+
+	it('does not extract an enum from an override field', () => {
+		const first = enrich(structuredClone(grammarWith({ spec: seq(S('x'), sym('name')), name: P('[a-z]+') })) as never, {});
+		const rules = rulesOf(first);
+		const kind = { ...field('kind', choice(S('type'), S('typeof'))), metadata: { fieldSource: 'override' } };
+		rules.spec = seq(kind, S('x'), { ...field('name', sym('name')), metadata: { fieldSource: 'enriched' } });
+		const before = JSON.stringify(rules.spec);
+		const second = rulesOf(enrich(first as never, {}));
+		expect(JSON.stringify(second.spec)).toBe(before);
+		expect(Object.keys(second).filter((name) => !(name in rules))).toEqual([]);
+	});
 });
