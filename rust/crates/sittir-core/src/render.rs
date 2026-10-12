@@ -438,6 +438,18 @@ impl Render for String {
     }
 }
 
+/// A unit variant that a list seats: its fixed text between the edges a
+/// list gap stamped on it (its seat, or the source class of the gap), so the
+/// gap after it lands on its own `after` edge. A unit kind has no edge row,
+/// so only a stamped arm writes (`unsited_edge`): a unit spaces against its
+/// neighbours through their seams wherever no list gap reached it.
+pub fn render_edged(kind: KindId, edges: &crate::options::Edges, w: &mut dyn RenderSink, render: fn(&mut dyn RenderSink) -> RenderResult) -> RenderResult {
+    w.unsited_edge(kind, crate::options::Side::Before, edges.before);
+    render(w)?;
+    w.unsited_edge(kind, crate::options::Side::After, edges.after);
+    Ok(())
+}
+
 /// One writer, one render, one `finish`: the shape every root render has.
 pub fn render_to_string(
     value: &dyn Render,

@@ -32,6 +32,9 @@ pub struct KindAttrs {
     pub error: bool,
     /// On a choice: the wire codec alone, with no typed reader.
     pub codec_only: bool,
+    /// On a variant: a unit that holds its kind's edges, read and decoded
+    /// with none set and written as its kind id.
+    pub edged: bool,
 }
 
 /// `#[slot]` or `#[slot(…)]` on a field.
@@ -150,6 +153,7 @@ pub fn kind_attrs(attrs: &[Attribute]) -> syn::Result<KindAttrs> {
                 "verbatim" => out.verbatim = true,
                 "error" => out.error = true,
                 "codec_only" => out.codec_only = true,
+                "edged" => out.edged = true,
                 _ => return Err(meta.error("unknown `transport` attribute")),
             }
             Ok(())

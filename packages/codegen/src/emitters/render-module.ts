@@ -670,7 +670,7 @@ function renderTypedDispatch(
 				...payloadNodes.map((node) => ({ variant: rustTransportVariantName(node), payload: true })),
 				...[...fixed.values()].map((literal) => ({
 					variant: literal.variant,
-					payload: false,
+					payload: literal.edged,
 					ids: literal.ownId === undefined ? [] : [literal.ownId]
 				}))
 			],
@@ -688,7 +688,7 @@ function renderTypedDispatch(
 		const variant = rustTransportVariantName(node);
 		lines.push(`            AnyTransport::${variant}(t) => t.render(w),`);
 	}
-	for (const literal of fixed.values()) lines.push(`            AnyTransport::${literal.variant} => ${literal.renderFn}(w),`);
+	for (const literal of fixed.values()) lines.push(`            ${fixedRenderArm(`AnyTransport::${literal.variant}`, literal)}`);
 	lines.push(`            AnyTransport::Verbatim(t) => t.render(w),`);
 	lines.push(`        }`);
 	lines.push(`    }`);
@@ -1270,7 +1270,7 @@ function renderTransportSupport(
 
 	const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
 	const kidByKind = buildKindIdByKind(kindEntries);
-	const fixed = collectFixedLiterals(projection, nodeMap, kindEntries, kidByKind);
+	const fixed = collectFixedLiterals(projection, nodeMap, kindEntries, kidByKind, plan);
 	const payloadNodes = nodes.filter((node) => !isFixedTextLeaf(node));
 
 	const read = readPrintOf(lang, structs, nodeMap, kindEntries, generatedIdTables, boxedPayloads);
@@ -1321,7 +1321,8 @@ function renderTransportSupport(
 		plan,
 		kindEntries,
 		usedSupertypeNames,
-		choices.emitted.map(({ entry }) => entry)
+		choices.emitted.map(({ entry }) => entry),
+		fixed
 	);
 
 	const rendered = pruneUnreferencedBridges(
@@ -1479,10 +1480,10 @@ function enumMemberAcceptedIds(node: AssembledEnum): number[] {
 function anyTransportPrepareArms(
 	payloadNodes: readonly AssembledNode[],
 	fixed: FixedLiterals
-): { readonly variant: string; readonly payload: boolean }[] {
+): PrepareArm[] {
 	return [
 		...payloadNodes.map((node) => ({ variant: rustTransportVariantName(node), payload: true })),
-		...[...fixed.values()].map((literal) => ({ variant: literal.variant, payload: false })),
+		...[...fixed.values()].map((literal) => ({ variant: literal.variant, payload: false, edged: literal.edged })),
 		{ variant: 'Verbatim', payload: true }
 	];
 }
@@ -1585,10 +1586,10 @@ function emitSupertypeTransportEnum(
 	const claimedBy = claimSupertypeIds(supertypeNode, enumName, shape, selfAliasIds, kindIdByKind, kindEntries, nodeMap);
 
 	lines.push(...transportDeclaration(read, TRANSPORT_DERIVE, 'choice', 'enum', enumName));
-	for (const { subNode } of validSubtypes) {
+	for (const { subKind, subNode } of validSubtypes) {
 		const variant = rustTypeIdent(subNode.typeName);
 		lines.push(...variantKindLines(enumName, variant, subNode, claimedBy.get(variant) ?? [], read));
-		lines.push(isFixedTextLeaf(subNode) ? `    ${variant},` : `    ${variant}(${choicePayloadType(subNode, read)}),`);
+		lines.push(...(isFixedTextLeaf(subNode) ? fixedVariantLines(fixedLiteralOf(fixed, subKind)) : [`    ${variant}(${choicePayloadType(subNode, read)}),`]));
 	}
 	if (admitsVerbatim) lines.push(`    #[transport(verbatim)]`, `    Verbatim(VerbatimTransport),`);
 	lines.push(`}`);
@@ -1596,9 +1597,10 @@ function emitSupertypeTransportEnum(
 	admit(read, enumName, [...claimedBy.values()].flat());
 	lines.push(
 		...prepareEnumImpl(enumName, [
-			...validSubtypes.map(({ subNode }) => ({
+			...validSubtypes.map(({ subKind, subNode }) => ({
 				variant: rustTypeIdent(subNode.typeName),
-				payload: !isFixedTextLeaf(subNode)
+				payload: !isFixedTextLeaf(subNode),
+				edged: isFixedTextLeaf(subNode) && fixedLiteralOf(fixed, subKind).edged
 			})),
 			...(admitsVerbatim ? [{ variant: 'Verbatim', payload: true }] : [])
 		])
@@ -1610,8 +1612,8 @@ function emitSupertypeTransportEnum(
 			validSubtypes.map(({ subKind, subNode }) => {
 				const variant = rustTypeIdent(subNode.typeName);
 				if (!isFixedTextLeaf(subNode)) return { variant, payload: true };
-				const ownId = fixedLiteralOf(fixed, subKind).ownId;
-				return { variant, payload: false, ids: ownId === undefined ? [] : [ownId] };
+				const { ownId, edged } = fixedLiteralOf(fixed, subKind);
+				return { variant, payload: edged, ids: ownId === undefined ? [] : [ownId] };
 			}),
 			admitsVerbatim
 				? validSubtypes
@@ -1624,11 +1626,12 @@ function emitSupertypeTransportEnum(
 
 	lines.push(`fn ${rustSnakeIdent(supertypeNode.typeName)}_transport_to_any(t: ${enumName}) -> AnyTransport {`);
 	lines.push(`    match t {`);
-	for (const { subNode } of validSubtypes) {
+	for (const { subKind, subNode } of validSubtypes) {
 		const variant = rustTypeIdent(subNode.typeName);
 		const boxed = isBoxed(subNode);
 		if (isFixedTextLeaf(subNode)) {
-			lines.push(`        ${enumName}::${variant} => AnyTransport::${variant},`);
+			const unit = fixedLiteralOf(fixed, subKind);
+			lines.push(`        ${fixedPattern(`${enumName}::${variant}`, unit, 'edges')} => ${fixedPattern(`AnyTransport::${variant}`, unit, 'edges')},`);
 		} else if (subNode instanceof AssembledSupertype) {
 			const subBridgeFn = `${rustSnakeIdent(subNode.typeName)}_transport_to_any`;
 			if (boxed) {
@@ -1671,7 +1674,7 @@ function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: N
 	for (const { subKind, subNode } of validSubtypes) {
 		const variant = rustTypeIdent(subNode.typeName);
 		if (isFixedTextLeaf(subNode)) {
-			lines.push(`        ${enumName}::${variant} => ${fixedLiteralOf(fixed, subKind).renderFn}(w),`);
+			lines.push(`        ${fixedRenderArm(`${enumName}::${variant}`, fixedLiteralOf(fixed, subKind))}`);
 			continue;
 		}
 		const innerExpr = boxedInEnum(subNode, boxedPayloads) ? `inner.as_ref()` : `inner`;
@@ -2099,18 +2102,17 @@ function choiceUnitsOf(
 }
 
 function choiceUnitArm(enumName: string, unit: ChoiceUnit): string[] {
-	const call = `${unit.fixed.renderFn}(w)`;
+	const call = fixedRenderCall(unit.fixed);
 	const write = unit.siteImmediate ? `{ w.seam(${TIGHT_KINDS}); ${call} }` : call;
-	return unit.seams === undefined
-		? [`            ${enumName}::${unit.fixed.variant} => ${write},`]
-		: literalSeamedArm(enumName, unit.fixed.variant, write, unit.seams);
+	const pattern = fixedPattern(`${enumName}::${unit.fixed.variant}`, unit.fixed, 'edges');
+	return unit.seams === undefined ? [`            ${pattern} => ${write},`] : literalSeamedArm(pattern, write, unit.seams);
 }
 
-function literalSeamedArm(enumName: string, variant: string, write: string, seams: LiteralArmSeams): string[] {
+function literalSeamedArm(pattern: string, write: string, seams: LiteralArmSeams): string[] {
 	const site = (side: 'before' | 'after'): string[] =>
 		seams[side] === undefined ? [] : [`                w.site_at(options::${seams[side]});`];
 	return [
-		`            ${enumName}::${variant} => {`,
+		`            ${pattern} => {`,
 		...site('before'),
 		`                let written = ${write};`,
 		'                written?;',
@@ -2219,10 +2221,10 @@ function emitPerSlotChildEnum(
 		lines.push(...variantKindLines(enumName, variant, node, claimedBy.get(variant) ?? [], read));
 		lines.push(`    ${variant}(${choicePayloadType(node, read)}),`);
 	}
-	for (const variant of units.keys()) {
+	for (const [variant, unit] of units) {
 		const claimed = claimedBy.get(variant) ?? [];
 		lines.push(...variantKindLines(enumName, variant, undefined, [...claimed, ...alternatesOf(claimed, altIds)], read));
-		lines.push(`    ${variant},`);
+		lines.push(...fixedVariantLines(unit.fixed));
 	}
 	if (blank) lines.push(`    #[transport(blank)]`, `    ${BLANK_VARIANT},`);
 	if (admitsVerbatim) lines.push(`    #[transport(verbatim)]`, `    Verbatim(VerbatimTransport),`);
@@ -2233,7 +2235,7 @@ function emitPerSlotChildEnum(
 	lines.push(
 		...prepareEnumImpl(enumName, [
 			...nodeKinds.map(({ node }) => ({ variant: rustTypeIdent(node.typeName), payload: true })),
-			...[...units.keys()].map((variant) => ({ variant, payload: false })),
+			...[...units].map(([variant, unit]) => ({ variant, payload: false, edged: unit.fixed.edged })),
 			...(blank ? [{ variant: BLANK_VARIANT, payload: false }] : []),
 			...(admitsVerbatim ? [{ variant: 'Verbatim', payload: true }] : [])
 		])
@@ -2245,7 +2247,7 @@ function emitPerSlotChildEnum(
 				...nodeKinds.map(({ node }) => ({ variant: rustTypeIdent(node.typeName), payload: true })),
 				...[...units.values()].map(({ fixed: unit }) => ({
 					variant: unit.variant,
-					payload: false,
+					payload: unit.edged,
 					ids: unit.ownId === undefined ? [] : [unit.ownId]
 				})),
 				...(blank ? [{ variant: BLANK_VARIANT, payload: false, ids: [] }] : [])
@@ -2319,7 +2321,7 @@ function renderAnyTransport(
 	}
 	for (const literal of fixed.values()) {
 		lines.push(...variantKindLines('AnyTransport', literal.variant, undefined, claimedBy.get(literal.variant) ?? [], read));
-		lines.push(`    ${literal.variant},`);
+		lines.push(...fixedVariantLines(literal));
 	}
 	lines.push('    #[transport(error)]');
 	lines.push('    Verbatim(VerbatimTransport),');
@@ -2364,8 +2366,11 @@ function renderTriviaTransportSupport(
 		.filter((kind) => kind !== depthMembers.indent && kind !== depthMembers.dedent)
 		.map((kind) => nodeMap.nodes.get(kind))
 		.filter((node): node is AssembledNode => node !== undefined && !(node instanceof AssembledSupertype));
-	const unitOf = (node: AssembledNode): FixedLiteral | undefined =>
-		isFixedTextLeaf(node) ? fixedLiteralOf(fixed, node.kind) : undefined;
+	const unitOf = (node: AssembledNode): FixedLiteral | undefined => {
+		const unit = isFixedTextLeaf(node) ? fixedLiteralOf(fixed, node.kind) : undefined;
+		if (unit?.edged === true) throw new Error(`trivia kind '${node.kind}' is a unit a list seats, but trivia holds no edges`);
+		return unit;
+	};
 
 	const kindIdByKind = buildKindIdByKind(kindEntries);
 	const textIds = extrasNodes.flatMap((node) => {
@@ -2494,44 +2499,43 @@ const READ_COORDINATE = [
 	`    }`
 ];
 
-function prepareEnumImpl(
-	enumName: string,
-	arms: readonly { readonly variant: string; readonly payload: boolean }[],
-	reads = true
-): string[] {
+interface PrepareArm {
+	readonly variant: string;
+	readonly payload: boolean;
+	readonly edged?: boolean;
+}
+
+function prepareEnumImpl(enumName: string, arms: readonly PrepareArm[], reads = true): string[] {
 	const anyPayload = arms.some((a) => a.payload);
+	const unit = (a: PrepareArm): string => `${enumName}::${a.variant}${a.edged === true ? '(_)' : ''}`;
 	return [
 		`impl ${PREPARE_MOD}::Prepare for ${enumName} {`,
 		`    ${anyPayload ? PREPARE_SIG : PREPARE_SIG.replace('ctx:', '_ctx:')}`,
 		`        match self {`,
-		...arms.map((a) =>
-			a.payload
-				? `            ${enumName}::${a.variant}(t) => t.prepare(ctx),`
-				: `            ${enumName}::${a.variant} => Ok(()),`
-		),
+		...arms.map((a) => (a.payload ? `            ${enumName}::${a.variant}(t) => t.prepare(ctx),` : `            ${unit(a)} => Ok(()),`)),
 		`        }`,
 		`    }`,
-		...(anyPayload
+		...(anyPayload || arms.some((a) => a.edged === true)
 			? [
 					`    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {`,
 					`        match self {`,
-					...arms.map((a) =>
-						a.payload ? `            ${enumName}::${a.variant}(t) => t.source_gap(),` : `            ${enumName}::${a.variant} => None,`
-					),
+					...arms.map((a) => (a.payload ? `            ${enumName}::${a.variant}(t) => t.source_gap(),` : `            ${unit(a)} => None,`)),
 					`        }`,
 					`    }`,
 					`    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {`,
 					`        match self {`,
 					...arms.map((a) =>
-						a.payload ? `            ${enumName}::${a.variant}(t) => t.gap_edges(),` : `            ${enumName}::${a.variant} => None,`
+						a.payload
+							? `            ${enumName}::${a.variant}(t) => t.gap_edges(),`
+							: a.edged === true
+								? `            ${enumName}::${a.variant}(edges) => Some(edges),`
+								: `            ${enumName}::${a.variant} => None,`
 					),
 					`        }`,
 					`    }`,
 					`    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {`,
 					`        match self {`,
-					...arms.map((a) =>
-						a.payload ? `            ${enumName}::${a.variant}(t) => t.snapshot_edge(),` : `            ${enumName}::${a.variant} => None,`
-					),
+					...arms.map((a) => (a.payload ? `            ${enumName}::${a.variant}(t) => t.snapshot_edge(),` : `            ${unit(a)} => None,`)),
 					`        }`,
 					`    }`
 				]
@@ -2784,13 +2788,13 @@ function seatReachOf(plan: RenderPlan, nodeMap: NodeMap): SeatReach {
 const SEAT_TARGET_SIG =
 	'    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {';
 
-function seatTargetMatchImpl(typeName: string, variants: readonly string[], exhaustive: boolean): string[] {
-	if (variants.length === 0) return [];
+function seatTargetMatchImpl(typeName: string, arms: readonly string[], exhaustive: boolean): string[] {
+	if (arms.length === 0) return [];
 	return [
 		`impl ::sittir_core::prepare::SeatTarget for ${typeName} {`,
 		SEAT_TARGET_SIG,
 		'        match self {',
-		...variants.map((variant) => `            Self::${variant}(t) => t.seat_target(table),`),
+		...arms.map((arm) => `            ${arm}`),
 		...(exhaustive ? [] : ['            #[allow(unreachable_patterns)]', '            _ => None,']),
 		'        }',
 		'    }',
@@ -2799,18 +2803,21 @@ function seatTargetMatchImpl(typeName: string, variants: readonly string[], exha
 	];
 }
 
+function seatArm(variant: string, kind: string, node: AssembledNode, fixed: FixedLiterals): string {
+	return isFixedTextLeaf(node) ? fixedSeatArm(`Self::${variant}`, fixedLiteralOf(fixed, kind)) : `Self::${variant}(t) => t.seat_target(table),`;
+}
+
 function seatTargetStructImpl(
 	node: AssembledNode,
 	nodeMap: NodeMap,
 	plan: RenderPlan,
-	kindEntries: readonly KindEntryLike[]
+	kindEntries: readonly KindEntryLike[],
+	fixed: FixedLiterals
 ): string[] {
 	const reaches = seatReachOf(plan, nodeMap);
 	if (!reaches(node.kind)) return [];
 	const kind = node.display.name;
-	if (isFixedTextLeaf(node)) {
-		throw new Error(`kind '${kind}' is a fixed literal, a unit variant with no edges, but a list seats it`);
-	}
+	if (isFixedTextLeaf(node)) return seatTargetMatchImpl(rustTransportStructName(node), [fixedSeatArm(`Self::${fixedLiteralOf(fixed, node.kind).variant}`, fixedLiteralOf(fixed, node.kind))], true);
 	const body: string[] = [];
 	if (seatedKindsOf(plan).has(kind)) {
 		const id = edgeKindId(kindEntries, kind);
@@ -2849,31 +2856,40 @@ function renderSeatTargets(
 	plan: RenderPlan,
 	kindEntries: readonly KindEntryLike[],
 	usedSupertypeNames: ReadonlySet<string>,
-	perSlotEnums: readonly PerSlotChildEnum[]
+	perSlotEnums: readonly PerSlotChildEnum[],
+	fixed: FixedLiterals
 ): string[] {
 	const reaches = seatReachOf(plan, nodeMap);
 	const lines: string[] = [];
 	for (const node of nodes) {
 		if (node instanceof AssembledEnum || node instanceof AssembledSupertype) continue;
-		lines.push(...seatTargetStructImpl(node, nodeMap, plan, kindEntries));
+		lines.push(...seatTargetStructImpl(node, nodeMap, plan, kindEntries, fixed));
 	}
 	for (const [, node] of nodeMap.nodes) {
 		if (!(node instanceof AssembledSupertype) || !usedSupertypeNames.has(node.typeName)) continue;
 		const enumName = `${rustTypeIdent(node.typeName)}Transport`;
 		if (RESERVED_SUPERTYPE_ENUM_NAMES.has(enumName)) continue;
 		const subtypes = collectEffectiveSupertypeTransportShape(node, nodeMap).subtypes;
-		const reaching = subtypes
-			.filter(({ subKind }) => reaches(subKind))
-			.map(({ subNode }) => rustTypeIdent(subNode.typeName));
+		const reaching = subtypes.filter(({ subKind }) => reaches(subKind)).map(({ subKind, subNode }) => seatArm(rustTypeIdent(subNode.typeName), subKind, subNode, fixed));
 		lines.push(...seatTargetMatchImpl(enumName, reaching, false));
 	}
 	for (const entry of perSlotEnums) {
-		const reaching = expandConcreteTransportKinds(entry.kinds, nodeMap)
-			.filter(({ kind }) => reaches(kind))
-			.map(({ node }) => rustTypeIdent(node.typeName));
+		const nodes = expandConcreteTransportKinds(entry.kinds, nodeMap).filter(({ kind }) => reaches(kind));
+		const variants = new Set(nodes.map(({ node }) => rustTypeIdent(node.typeName)));
+		const literals = new Map(
+			entry.literals
+				.filter(({ kind }) => reaches(kind))
+				.map(({ kind }) => fixedLiteralOf(fixed, kind))
+				.filter((unit) => !variants.has(unit.variant))
+				.map((unit) => [unit.variant, unit])
+		);
+		const reaching = [
+			...nodes.map(({ kind, node }) => seatArm(rustTypeIdent(node.typeName), kind, node, fixed)),
+			...[...literals.values()].map((unit) => fixedSeatArm(`Self::${unit.variant}`, unit))
+		];
 		lines.push(...seatTargetMatchImpl(perSlotEnumName(entry.typeName, entry.fieldName), reaching, false));
 	}
-	const anyReaching = nodes.filter((node) => reaches(node.kind)).map((node) => rustTransportVariantName(node));
+	const anyReaching = nodes.filter((node) => reaches(node.kind)).map((node) => seatArm(rustTransportVariantName(node), node.kind, node, fixed));
 	lines.push(...seatTargetMatchImpl('AnyTransport', anyReaching, false));
 	return lines;
 }
@@ -3198,6 +3214,7 @@ interface FixedLiteral {
 	readonly acceptedIds: readonly number[];
 	readonly owner: boolean;
 	readonly immediate: boolean;
+	readonly edged: boolean;
 }
 
 type FixedLiterals = ReadonlyMap<string, FixedLiteral>;
@@ -3206,10 +3223,12 @@ function collectFixedLiterals(
 	projection: TransportProjection,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[],
-	kindIdByKind: ReadonlyMap<string, number>
+	kindIdByKind: ReadonlyMap<string, number>,
+	plan: RenderPlan
 ): FixedLiterals {
 	const fixed = new Map<string, FixedLiteral>();
 	const entryOf = (kind: string): KindEnumEntry | undefined => findKindEntry(kindEntries, kind);
+	const seated = seatedKindsOf(plan);
 	for (const node of projection.nodes) {
 		if (!isFixedTextLeaf(node)) continue;
 		fixed.set(node.kind, {
@@ -3225,7 +3244,8 @@ function collectFixedLiterals(
 				])
 			],
 			owner: ownsTrivia(kindEntries, node.kind),
-			immediate: isImmediateLeaf(node)
+			immediate: isImmediateLeaf(node),
+			edged: seated.has(node.display.name)
 		});
 	}
 	for (const literal of projection.literals) {
@@ -3244,7 +3264,8 @@ function collectFixedLiterals(
 			ownId: id,
 			acceptedIds: [...new Set([id, ...(projection.wireIds.get(literal.kind) ?? [])])],
 			owner: ownsTrivia(kindEntries, literal.kind),
-			immediate: isImmediateLeafKind(literal.kind, nodeMap)
+			immediate: isImmediateLeafKind(literal.kind, nodeMap),
+			edged: seated.has(literal.kind)
 		});
 	}
 	const kindByVariant = new Map<string, string>();
@@ -3269,6 +3290,31 @@ function fixedLiteralOf(fixed: FixedLiterals, kind: string, text?: string): Fixe
 		);
 	}
 	return literal;
+}
+
+function fixedVariantLines(fixed: FixedLiteral): string[] {
+	return fixed.edged ? ['    #[transport(edged)]', `    ${fixed.variant}(::sittir_core::options::Edges),`] : [`    ${fixed.variant},`];
+}
+
+function fixedPattern(path: string, fixed: FixedLiteral, bind: string = '_'): string {
+	return fixed.edged ? `${path}(${bind})` : path;
+}
+
+function fixedRenderCall(fixed: FixedLiteral): string {
+	return fixed.edged
+		? `::sittir_core::render::render_edged(::sittir_core::types::KindId(${fixed.ownId}), edges, w, ${fixed.renderFn})`
+		: `${fixed.renderFn}(w)`;
+}
+
+function fixedRenderArm(path: string, fixed: FixedLiteral): string {
+	return `${fixedPattern(path, fixed, 'edges')} => ${fixedRenderCall(fixed)},`;
+}
+
+function fixedSeatArm(path: string, fixed: FixedLiteral): string {
+	if (!fixed.edged || fixed.ownId === undefined) {
+		throw new Error(`kind '${fixed.kind}' is a fixed literal, a unit variant with no edges, but a list seats it`);
+	}
+	return `${path}(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(${fixed.ownId})).map(|site| (edges, site)),`;
 }
 
 function renderFixedLiteralFn(fixed: FixedLiteral): string[] {
@@ -3301,14 +3347,16 @@ function renderFixedLiteralTransport(typeName: string, fixed: FixedLiteral, read
 	return [
 		...transportDeclaration(read, TRANSPORT_DERIVE_UNIT, 'choice', 'enum', typeName),
 		...variantKindLines(typeName, fixed.variant, undefined, ids, read),
-		`    ${fixed.variant},`,
+		...fixedVariantLines(fixed),
 		'}',
 		'',
 		...kindOfImplLines(typeName, [], undefined, fixed.ownId === undefined ? [] : [fixed.ownId]),
-		...inertPrepareImpl(typeName),
+		...(fixed.edged ? prepareEnumImpl(typeName, [{ variant: fixed.variant, payload: false, edged: true }]) : inertPrepareImpl(typeName)),
 		`impl ::sittir_core::render::Render for ${typeName} {`,
 		'    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {',
-		`        ${fixed.renderFn}(w)`,
+		...(fixed.edged
+			? ['        match self {', `            ${fixedRenderArm(`Self::${fixed.variant}`, fixed)}`, '        }']
+			: [`        ${fixed.renderFn}(w)`]),
 		'    }',
 		'}',
 		''

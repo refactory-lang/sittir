@@ -3455,9 +3455,11 @@ Seats are grouped by (kind, slot) and their admitted kinds unioned, because
 more than one render rule can reach the same slot. The admitted kinds come
 from `slotElementKinds`, the same derivation the element enum is emitted
 from, so every seated site has a variant to seat it. A child with no
-trailing edge of its own — a leaf — takes none, and a slot admitting one
-child kind seats that child like any other, so every sibling gap in the
-grammar has an address.
+trailing edge of its own — a pattern leaf — takes none; a fixed-text unit
+the list holds is seated from the edge part `RenderRules.unitEdges` records
+for it (`seatedUnitKinds`).
+A slot admitting one child kind seats that child like any other, so every
+sibling gap in the grammar has an address.
 
 An admitted kind is expanded to what renders in its place before it is
 seated: a supertype to its concrete members, and a polymorph with no trailing
@@ -3716,6 +3718,60 @@ nothing.
 The grammar root always owns its edges, whatever its rule's shape: a root rule that is not a seq (python's `module`, regex's `pattern`) is wrapped in one to hold them. Its edges are the render's own flanks, not seams between neighbours, so their defaults come from `rootEdgeKinds` and the writer writes them at the start and the end of a render instead of dropping them there (`KIND_ROOT` in the grammar's `KIND_FLAGS`). A parsed root keeps its source flanks: rendered untouched, its slice already holds them; rebuilt through `$with`, its prepare classifies the tree bytes before its first and after its last coordinate item into these sites (`rootEdgeStamp`), and an item that was rebuilt leaves the edge to the options and the default.
 
 The after edge of a line-terminated kind (`lineTerminatedKinds`) is the exception to the `space` fallback: its arms are `lineBreakingKinds` and its default is the first of them, so `line_comment_after` is `newline`. A kind with no seq rule, such as python's pattern-leaf `comment` or typescript's lexed `hash_bang_line`, owns no edges; the runtime still breaks after it, from the line-terminated fact itself, which reaches the runtime as `KIND_LINE_TERMINATED` in the grammar's `KIND_FLAGS` table.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::seatedUnitKinds`
+
+The fixed-text kinds (`isFixedTextLeaf`) that a seated list renders as
+elements: typescript's `empty_statement` among statements, `true` and `this`
+among array elements and arguments. A list gap is the earlier element's
+`after` edge, so a unit a list holds gets a seat like a node; without one the
+gap after it had no address, and a built, edited or snapshot list wrote
+nothing after it (`;x;`). The expansion is `seatedElementKinds` over the same
+seats `spacingSitesOf` finds (`seatsOf`), stopping at a kind that owns its
+edges; it runs on the spaced rules, ahead of the seam pass that mints them.
+
+A seated unit gets a seat and nothing else: its rule is not wrapped in edges,
+so it mints no kind-edge site and no edge row, and nothing that spaces it
+outside a list moves. `seamRenderRules` records the part its `after` edge
+would have (`kindEdgeSeam`) in `RenderRules.unitEdges`, and `seatedSites`
+seats it from that part as it seats a node from its edge site. At render the
+unit writes only the arm a list gap stamped on it (`render_edged`).
+
+### `packages/codegen/src/compiler/model/render-rules.ts::kindEdgeSeam`
+
+One edge seam of a kind: the whitespace choice labelled `<kind>_<side>`,
+with the arms and default `edgeSeamArms` gives that side and the edge
+literals the rule opens or closes with. `withKindEdges` wraps a rule in two;
+a seated unit's `after` part comes from one that no rule holds.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::edgeSeamArms`
+
+The arms and default of a kind's edge on one side: the root's edges default
+to `rootEdgeKinds`, a line-terminated kind's after edge admits only line
+breaks and defaults to a newline (`lineBreakingKinds`), and every other edge
+takes the grammar's seam arms.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::seatsOf`
+
+Every seated list of the render rules: a repeat with a spaced separator, as
+(kind, slot, rule id), in the rule walk's post-order. `spacingSitesOf` mints
+the seated sites from them and `seatedUnitKinds` finds the units they hold.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::slotOf`
+
+The slot a repeat's rule id maps to. A spaced separator outside any slot
+fails codegen.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::renderedElementKinds`
+
+What renders in place of an element kind, stopping at a kind `edged`
+answers: a supertype's concrete members, and a polymorph's slot element
+kinds, recursively.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::seatedElementKinds`
+
+The rendered element kinds of each seated list, grouped by (kind, slot) and
+unioned over the rules that reach the slot (`renderedElementKinds`).
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::ownsKindEdges`
 

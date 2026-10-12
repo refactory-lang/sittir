@@ -12498,6 +12498,7 @@ export namespace SourceFile {
 				readonly block?: { readonly after?: LayoutKindId };
 				readonly constBlock?: { readonly after?: LayoutKindId };
 				readonly constItem?: { readonly after?: LayoutKindId };
+				readonly emptyStatement?: { readonly after?: LayoutKindId };
 				readonly end?: LayoutKindId;
 				readonly enumItem?: { readonly after?: LayoutKindId };
 				readonly expressionStatementWithSemi?: { readonly after?: LayoutKindId };
@@ -12573,11 +12574,14 @@ export namespace TokenRepetitionPattern {
 			readonly rparen?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 			readonly star?: { readonly after?: LayoutKindId };
 			readonly tokenPatterns?: {
+				readonly crate?: { readonly after?: LayoutKindId };
 				readonly end?: LayoutKindId;
 				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
+				readonly self?: { readonly after?: LayoutKindId };
 				readonly separator?: WhitespaceKindId;
 				readonly start?: LayoutKindId;
 				readonly stringLiteral?: { readonly after?: LayoutKindId };
+				readonly super?: { readonly after?: LayoutKindId };
 				readonly tokenBindingPattern?: { readonly after?: LayoutKindId };
 				readonly tokenRepetitionPattern?: { readonly after?: LayoutKindId };
 				readonly tokenTreePatternBrace?: { readonly after?: LayoutKindId };
@@ -12601,11 +12605,14 @@ export namespace TokenRepetition {
 			readonly rparen?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 			readonly star?: { readonly after?: LayoutKindId };
 			readonly tokens?: {
+				readonly crate?: { readonly after?: LayoutKindId };
 				readonly end?: LayoutKindId;
 				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
+				readonly self?: { readonly after?: LayoutKindId };
 				readonly separator?: WhitespaceKindId;
 				readonly start?: LayoutKindId;
 				readonly stringLiteral?: { readonly after?: LayoutKindId };
+				readonly super?: { readonly after?: LayoutKindId };
 				readonly tokenRepetition?: { readonly after?: LayoutKindId };
 				readonly tokenTreeBrace?: { readonly after?: LayoutKindId };
 				readonly tokenTreeBracket?: { readonly after?: LayoutKindId };
@@ -12655,6 +12662,7 @@ export namespace DeclarationList {
 				readonly associatedType?: { readonly after?: LayoutKindId };
 				readonly attributeItem?: { readonly after?: LayoutKindId };
 				readonly constItem?: { readonly after?: LayoutKindId };
+				readonly emptyStatement?: { readonly after?: LayoutKindId };
 				readonly end?: LayoutKindId;
 				readonly enumItem?: { readonly after?: LayoutKindId };
 				readonly externCrateDeclaration?: { readonly after?: LayoutKindId };
@@ -12907,6 +12915,7 @@ export namespace TraitBounds {
 				readonly higherRankedTraitBound?: { readonly after?: LayoutKindId };
 				readonly lifetime?: { readonly after?: LayoutKindId };
 				readonly macroInvocation?: { readonly after?: LayoutKindId };
+				readonly neverType?: { readonly after?: LayoutKindId };
 				readonly pointerTypeConst?: { readonly after?: LayoutKindId };
 				readonly pointerTypeMut?: { readonly after?: LayoutKindId };
 				readonly referenceType?: { readonly after?: LayoutKindId };
@@ -12917,6 +12926,7 @@ export namespace TraitBounds {
 				};
 				readonly start?: LayoutKindId;
 				readonly tupleType?: { readonly after?: LayoutKindId };
+				readonly unitType?: { readonly after?: LayoutKindId };
 			};
 			readonly colon?: { readonly after?: LayoutKindId };
 		};
@@ -13569,6 +13579,7 @@ export namespace LetChain {
 				readonly referenceExpressionRawMut?: { readonly after?: LayoutKindId };
 				readonly returnExpression?: { readonly after?: LayoutKindId };
 				readonly scopedIdentifier?: { readonly after?: LayoutKindId };
+				readonly self?: { readonly after?: LayoutKindId };
 				readonly separator?: {
 					readonly ampAmp?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -13579,6 +13590,7 @@ export namespace LetChain {
 				readonly tupleExpression?: { readonly after?: LayoutKindId };
 				readonly typeCastExpression?: { readonly after?: LayoutKindId };
 				readonly unaryExpression?: { readonly after?: LayoutKindId };
+				readonly unitExpression?: { readonly after?: LayoutKindId };
 				readonly unsafeBlock?: { readonly after?: LayoutKindId };
 				readonly whileExpression?: { readonly after?: LayoutKindId };
 				readonly yieldExpression?: { readonly after?: LayoutKindId };
@@ -13711,6 +13723,7 @@ export namespace ClosureParameters {
 				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
 				readonly refPattern?: { readonly after?: LayoutKindId };
 				readonly referencePattern?: { readonly after?: LayoutKindId };
+				readonly remainingFieldPattern?: { readonly after?: LayoutKindId };
 				readonly scopedIdentifier?: { readonly after?: LayoutKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
@@ -13721,6 +13734,7 @@ export namespace ClosureParameters {
 				readonly structPattern?: { readonly after?: LayoutKindId };
 				readonly tuplePattern?: { readonly after?: LayoutKindId };
 				readonly tupleStructPattern?: { readonly after?: LayoutKindId };
+				readonly wildcardPattern?: { readonly after?: LayoutKindId };
 			};
 			readonly pipe?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 		};
@@ -13846,6 +13860,7 @@ export namespace Block {
 				readonly block?: { readonly after?: LayoutKindId };
 				readonly constBlock?: { readonly after?: LayoutKindId };
 				readonly constItem?: { readonly after?: LayoutKindId };
+				readonly emptyStatement?: { readonly after?: LayoutKindId };
 				readonly end?: LayoutKindId;
 				readonly enumItem?: { readonly after?: LayoutKindId };
 				readonly expressionStatementWithSemi?: { readonly after?: LayoutKindId };
@@ -14133,14 +14148,17 @@ export namespace UseClauses {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
 			readonly item?: {
+				readonly crate?: { readonly after?: LayoutKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly end?: LayoutKindId;
 				readonly scopedIdentifier?: { readonly after?: LayoutKindId };
 				readonly scopedUseList?: { readonly after?: LayoutKindId };
+				readonly self?: { readonly after?: LayoutKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
 				readonly start?: LayoutKindId;
+				readonly super?: { readonly after?: LayoutKindId };
 				readonly useAsClause?: { readonly after?: LayoutKindId };
 				readonly useList?: { readonly after?: LayoutKindId };
 				readonly useWildcard?: { readonly after?: LayoutKindId };
@@ -14200,6 +14218,7 @@ export namespace Types {
 				readonly functionType?: { readonly after?: LayoutKindId };
 				readonly genericType?: { readonly after?: LayoutKindId };
 				readonly macroInvocation?: { readonly after?: LayoutKindId };
+				readonly neverType?: { readonly after?: LayoutKindId };
 				readonly pointerTypeConst?: { readonly after?: LayoutKindId };
 				readonly pointerTypeMut?: { readonly after?: LayoutKindId };
 				readonly referenceType?: { readonly after?: LayoutKindId };
@@ -14210,6 +14229,7 @@ export namespace Types {
 				};
 				readonly start?: LayoutKindId;
 				readonly tupleType?: { readonly after?: LayoutKindId };
+				readonly unitType?: { readonly after?: LayoutKindId };
 			};
 		};
 	}
@@ -14311,6 +14331,7 @@ export namespace Expressions {
 				readonly referenceExpressionRawMut?: { readonly after?: LayoutKindId };
 				readonly returnExpression?: { readonly after?: LayoutKindId };
 				readonly scopedIdentifier?: { readonly after?: LayoutKindId };
+				readonly self?: { readonly after?: LayoutKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -14322,6 +14343,7 @@ export namespace Expressions {
 				readonly tupleExpression?: { readonly after?: LayoutKindId };
 				readonly typeCastExpression?: { readonly after?: LayoutKindId };
 				readonly unaryExpression?: { readonly after?: LayoutKindId };
+				readonly unitExpression?: { readonly after?: LayoutKindId };
 				readonly unsafeBlock?: { readonly after?: LayoutKindId };
 				readonly whileExpression?: { readonly after?: LayoutKindId };
 				readonly yieldExpression?: { readonly after?: LayoutKindId };
@@ -14373,6 +14395,7 @@ export namespace TuplePatternElements {
 				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
 				readonly refPattern?: { readonly after?: LayoutKindId };
 				readonly referencePattern?: { readonly after?: LayoutKindId };
+				readonly remainingFieldPattern?: { readonly after?: LayoutKindId };
 				readonly scopedIdentifier?: { readonly after?: LayoutKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
@@ -14383,6 +14406,7 @@ export namespace TuplePatternElements {
 				readonly structPattern?: { readonly after?: LayoutKindId };
 				readonly tuplePattern?: { readonly after?: LayoutKindId };
 				readonly tupleStructPattern?: { readonly after?: LayoutKindId };
+				readonly wildcardPattern?: { readonly after?: LayoutKindId };
 			};
 		};
 	}
@@ -14409,6 +14433,7 @@ export namespace Patterns {
 				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
 				readonly refPattern?: { readonly after?: LayoutKindId };
 				readonly referencePattern?: { readonly after?: LayoutKindId };
+				readonly remainingFieldPattern?: { readonly after?: LayoutKindId };
 				readonly scopedIdentifier?: { readonly after?: LayoutKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
@@ -14419,6 +14444,7 @@ export namespace Patterns {
 				readonly structPattern?: { readonly after?: LayoutKindId };
 				readonly tuplePattern?: { readonly after?: LayoutKindId };
 				readonly tupleStructPattern?: { readonly after?: LayoutKindId };
+				readonly wildcardPattern?: { readonly after?: LayoutKindId };
 			};
 		};
 	}
@@ -14434,6 +14460,7 @@ export namespace StructPatternElements {
 				readonly end?: LayoutKindId;
 				readonly fieldPatternNamed?: { readonly after?: LayoutKindId };
 				readonly fieldPatternShorthand?: { readonly after?: LayoutKindId };
+				readonly remainingFieldPattern?: { readonly after?: LayoutKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -14809,11 +14836,14 @@ export namespace TokenTreePatternParen {
 			readonly lparen?: { readonly after?: LayoutKindId };
 			readonly rparen?: { readonly before?: LayoutKindId };
 			readonly tokenPatterns?: {
+				readonly crate?: { readonly after?: LayoutKindId };
 				readonly end?: LayoutKindId;
 				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
+				readonly self?: { readonly after?: LayoutKindId };
 				readonly separator?: WhitespaceKindId;
 				readonly start?: LayoutKindId;
 				readonly stringLiteral?: { readonly after?: LayoutKindId };
+				readonly super?: { readonly after?: LayoutKindId };
 				readonly tokenBindingPattern?: { readonly after?: LayoutKindId };
 				readonly tokenRepetitionPattern?: { readonly after?: LayoutKindId };
 				readonly tokenTreePatternBrace?: { readonly after?: LayoutKindId };
@@ -14832,11 +14862,14 @@ export namespace TokenTreePatternBracket {
 			readonly lbrack?: { readonly after?: LayoutKindId };
 			readonly rbrack?: { readonly before?: LayoutKindId };
 			readonly tokenPatterns?: {
+				readonly crate?: { readonly after?: LayoutKindId };
 				readonly end?: LayoutKindId;
 				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
+				readonly self?: { readonly after?: LayoutKindId };
 				readonly separator?: WhitespaceKindId;
 				readonly start?: LayoutKindId;
 				readonly stringLiteral?: { readonly after?: LayoutKindId };
+				readonly super?: { readonly after?: LayoutKindId };
 				readonly tokenBindingPattern?: { readonly after?: LayoutKindId };
 				readonly tokenRepetitionPattern?: { readonly after?: LayoutKindId };
 				readonly tokenTreePatternBrace?: { readonly after?: LayoutKindId };
@@ -14855,11 +14888,14 @@ export namespace TokenTreePatternBrace {
 			readonly lbrace?: { readonly after?: LayoutKindId };
 			readonly rbrace?: { readonly before?: LayoutKindId };
 			readonly tokenPatterns?: {
+				readonly crate?: { readonly after?: LayoutKindId };
 				readonly end?: LayoutKindId;
 				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
+				readonly self?: { readonly after?: LayoutKindId };
 				readonly separator?: WhitespaceKindId;
 				readonly start?: LayoutKindId;
 				readonly stringLiteral?: { readonly after?: LayoutKindId };
+				readonly super?: { readonly after?: LayoutKindId };
 				readonly tokenBindingPattern?: { readonly after?: LayoutKindId };
 				readonly tokenRepetitionPattern?: { readonly after?: LayoutKindId };
 				readonly tokenTreePatternBrace?: { readonly after?: LayoutKindId };
@@ -14878,11 +14914,14 @@ export namespace TokenTreeParen {
 			readonly lparen?: { readonly after?: LayoutKindId };
 			readonly rparen?: { readonly before?: LayoutKindId };
 			readonly tokens?: {
+				readonly crate?: { readonly after?: LayoutKindId };
 				readonly end?: LayoutKindId;
 				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
+				readonly self?: { readonly after?: LayoutKindId };
 				readonly separator?: WhitespaceKindId;
 				readonly start?: LayoutKindId;
 				readonly stringLiteral?: { readonly after?: LayoutKindId };
+				readonly super?: { readonly after?: LayoutKindId };
 				readonly tokenRepetition?: { readonly after?: LayoutKindId };
 				readonly tokenTreeBrace?: { readonly after?: LayoutKindId };
 				readonly tokenTreeBracket?: { readonly after?: LayoutKindId };
@@ -14900,11 +14939,14 @@ export namespace TokenTreeBracket {
 			readonly lbrack?: { readonly after?: LayoutKindId };
 			readonly rbrack?: { readonly before?: LayoutKindId };
 			readonly tokens?: {
+				readonly crate?: { readonly after?: LayoutKindId };
 				readonly end?: LayoutKindId;
 				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
+				readonly self?: { readonly after?: LayoutKindId };
 				readonly separator?: WhitespaceKindId;
 				readonly start?: LayoutKindId;
 				readonly stringLiteral?: { readonly after?: LayoutKindId };
+				readonly super?: { readonly after?: LayoutKindId };
 				readonly tokenRepetition?: { readonly after?: LayoutKindId };
 				readonly tokenTreeBrace?: { readonly after?: LayoutKindId };
 				readonly tokenTreeBracket?: { readonly after?: LayoutKindId };
@@ -14922,11 +14964,14 @@ export namespace TokenTreeBrace {
 			readonly lbrace?: { readonly after?: LayoutKindId };
 			readonly rbrace?: { readonly before?: LayoutKindId };
 			readonly tokens?: {
+				readonly crate?: { readonly after?: LayoutKindId };
 				readonly end?: LayoutKindId;
 				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
+				readonly self?: { readonly after?: LayoutKindId };
 				readonly separator?: WhitespaceKindId;
 				readonly start?: LayoutKindId;
 				readonly stringLiteral?: { readonly after?: LayoutKindId };
+				readonly super?: { readonly after?: LayoutKindId };
 				readonly tokenRepetition?: { readonly after?: LayoutKindId };
 				readonly tokenTreeBrace?: { readonly after?: LayoutKindId };
 				readonly tokenTreeBracket?: { readonly after?: LayoutKindId };
@@ -14942,14 +14987,17 @@ export namespace DelimTokenTreeParen {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
 			readonly delimTokens?: {
+				readonly crate?: { readonly after?: LayoutKindId };
 				readonly delimTokenTreeBrace?: { readonly after?: LayoutKindId };
 				readonly delimTokenTreeBracket?: { readonly after?: LayoutKindId };
 				readonly delimTokenTreeParen?: { readonly after?: LayoutKindId };
 				readonly end?: LayoutKindId;
 				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
+				readonly self?: { readonly after?: LayoutKindId };
 				readonly separator?: WhitespaceKindId;
 				readonly start?: LayoutKindId;
 				readonly stringLiteral?: { readonly after?: LayoutKindId };
+				readonly super?: { readonly after?: LayoutKindId };
 			};
 			readonly lparen?: { readonly after?: LayoutKindId };
 			readonly rparen?: { readonly before?: LayoutKindId };
@@ -14963,14 +15011,17 @@ export namespace DelimTokenTreeBracket {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
 			readonly delimTokens?: {
+				readonly crate?: { readonly after?: LayoutKindId };
 				readonly delimTokenTreeBrace?: { readonly after?: LayoutKindId };
 				readonly delimTokenTreeBracket?: { readonly after?: LayoutKindId };
 				readonly delimTokenTreeParen?: { readonly after?: LayoutKindId };
 				readonly end?: LayoutKindId;
 				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
+				readonly self?: { readonly after?: LayoutKindId };
 				readonly separator?: WhitespaceKindId;
 				readonly start?: LayoutKindId;
 				readonly stringLiteral?: { readonly after?: LayoutKindId };
+				readonly super?: { readonly after?: LayoutKindId };
 			};
 			readonly lbrack?: { readonly after?: LayoutKindId };
 			readonly rbrack?: { readonly before?: LayoutKindId };
@@ -14984,14 +15035,17 @@ export namespace DelimTokenTreeBrace {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
 			readonly delimTokens?: {
+				readonly crate?: { readonly after?: LayoutKindId };
 				readonly delimTokenTreeBrace?: { readonly after?: LayoutKindId };
 				readonly delimTokenTreeBracket?: { readonly after?: LayoutKindId };
 				readonly delimTokenTreeParen?: { readonly after?: LayoutKindId };
 				readonly end?: LayoutKindId;
 				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
+				readonly self?: { readonly after?: LayoutKindId };
 				readonly separator?: WhitespaceKindId;
 				readonly start?: LayoutKindId;
 				readonly stringLiteral?: { readonly after?: LayoutKindId };
+				readonly super?: { readonly after?: LayoutKindId };
 			};
 			readonly lbrace?: { readonly after?: LayoutKindId };
 			readonly rbrace?: { readonly before?: LayoutKindId };
