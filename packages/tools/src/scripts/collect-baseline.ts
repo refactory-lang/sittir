@@ -38,7 +38,7 @@ import { combineBuiltRender } from '../validate/built-render.ts';
 import { validateFrom } from '../validate/from.ts';
 import { validateReadRenderParse } from '../validate/read-render-parse.ts';
 import { validateTemplateCoverage } from '../validate/template-coverage.ts';
-import { loadNativeRender, readNodeModelFile } from '../validate/common.ts';
+import { fixtureReplayOf, type FixtureReplay, readNodeModelFile } from '../validate/common.ts';
 import { hoistedKindCount, type CensusModel } from '../census/hoisted.ts';
 import { load } from '../codegen-surface.ts';
 import { REPO_ROOT, stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
@@ -173,6 +173,7 @@ interface RenderFixture {
 	readonly grammar: string;
 	readonly input: { readonly $type: number; readonly [k: string]: unknown };
 	readonly expectedOutput: string;
+	readonly options?: object;
 }
 
 interface ParityFixtureLike {
@@ -187,12 +188,12 @@ function loadRenderFixtures(grammar: GrammarName): RenderFixture[] {
 }
 
 /** Resolves the render function a parity collection scores fixtures with; tests inject a stub. */
-export type NativeRenderLoader = (grammar: GrammarName) => Promise<(node: AnyUntypedNode) => string>;
+export type NativeRenderLoader = (grammar: GrammarName) => Promise<FixtureReplay>;
 
 export async function collectParityFixtures(
 	grammar: GrammarName,
 	backend: Backend,
-	loadRender: NativeRenderLoader = loadNativeRender
+	loadRender: NativeRenderLoader = fixtureReplayOf
 ): Promise<ParityFixtures> {
 	const fixtures = loadRenderFixtures(grammar);
 	const render = await loadRender(grammar);
@@ -206,7 +207,7 @@ export async function collectParityFixtures(
 	fixtures.forEach((fx, idx) => {
 		let actual: string;
 		try {
-			actual = render(fx.input as AnyUntypedNode);
+			actual = render(fx.input as AnyUntypedNode, fx.options);
 		} catch (error) {
 			const message = error instanceof Error ? error.message : String(error);
 			// The deprecated JS/Nunjucks backend (createRenderer) resolves a

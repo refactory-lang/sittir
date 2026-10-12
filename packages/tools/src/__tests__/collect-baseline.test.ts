@@ -208,6 +208,21 @@ describe('collect-baseline', () => {
 		expect(seen).toEqual(['rust']);
 	});
 
+	it('replays each parity fixture with the options its tree recorded', async () => {
+		const recorded: unknown[] = [];
+		await baseline.collectParityFixtures('python', 'native', async () => (_node, options) => {
+			recorded.push(options);
+			return '';
+		});
+		expect(recorded.some((options) => (options as { layout?: { indent?: string } } | undefined)?.layout?.indent === '  ')).toBe(true);
+	});
+
+	it('reproduces every python parity fixture, indent unit and root edges included', async () => {
+		const fixtures = await baseline.collectParityFixtures('python', 'native');
+		expect(fixtures.failingByKind).toEqual({});
+		expect(fixtures.pass).toBe(fixtures.total);
+	}, 600_000);
+
 	it('parity render exceptions surface with fixture context', async () => {
 		const throwingLoader: baseline.NativeRenderLoader = async () => () => {
 			throw new Error('boom');
