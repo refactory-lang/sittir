@@ -12,7 +12,7 @@ export const records = {
 	LookaroundAssertionTransport: { words: 7, content: { word: 2, width: 5 } },
 	LookaheadAssertionTransport: { words: 12, content: { word: 2, width: 5 }, pattern: { word: 7, width: 5 } },
 	LookbehindAssertionTransport: { words: 12, content: { word: 2, width: 5 }, pattern: { word: 7, width: 5 } },
-	PatternCharacterTransport: { words: 6, text: { word: 2, width: 4 } },
+	PatternCharacterTransport: { words: 2 },
 	CharacterClassTransport: {
 		words: 5,
 		negation: { word: 2, bit: 0 },
@@ -21,9 +21,9 @@ export const records = {
 		trailing: { word: 2, bit: 2 }
 	},
 	PosixCharacterClassTransport: { words: 7, posix_class_name: { word: 2, width: 5 } },
-	PosixClassNameTransport: { words: 6, text: { word: 2, width: 4 } },
+	PosixClassNameTransport: { words: 2 },
 	ClassRangeTransport: { words: 12, start: { word: 2, width: 5 }, end: { word: 7, width: 5 } },
-	ClassCharacterTransport: { words: 6, text: { word: 2, width: 4 } },
+	ClassCharacterTransport: { words: 2 },
 	AnonymousCapturingGroupTransport: { words: 7, pattern: { word: 2, width: 5 } },
 	NamedCapturingGroupTransport: {
 		words: 17,
@@ -32,27 +32,27 @@ export const records = {
 		pattern: { word: 12, width: 5 }
 	},
 	NonCapturingGroupTransport: { words: 7, pattern: { word: 2, width: 5 } },
-	FlagsTransport: { words: 6, text: { word: 2, width: 4 } },
+	FlagsTransport: { words: 2 },
 	ZeroOrMoreTransport: { words: 3, lazy: { word: 2, bit: 0 } },
 	OneOrMoreTransport: { words: 3, lazy: { word: 2, bit: 0 } },
 	OptionalTransport: { words: 3, lazy: { word: 2, bit: 0 } },
 	CountQuantifierTransport: { words: 8, content: { word: 3, width: 5 }, lazy: { word: 2, bit: 0 } },
 	BackreferenceEscapeTransport: { words: 7, group_name: { word: 2, width: 5 } },
 	NamedGroupBackreferenceTransport: { words: 7, group_name: { word: 2, width: 5 } },
-	DecimalEscapeTransport: { words: 6, text: { word: 2, width: 4 } },
+	DecimalEscapeTransport: { words: 2 },
 	CharacterClassEscapeTransport: { words: 7, content: { word: 2, width: 5 } },
-	UnicodeCharacterEscapeTransport: { words: 6, text: { word: 2, width: 4 } },
+	UnicodeCharacterEscapeTransport: { words: 2 },
 	UnicodePropertyValueExpressionTransport: {
 		words: 12,
 		unicode_property_value_expression_group: { word: 2, width: 5 },
 		unicode_property_value: { word: 7, width: 5 }
 	},
-	UnicodePropertyValueTransport: { words: 6, text: { word: 2, width: 4 } },
-	ControlEscapeTransport: { words: 6, text: { word: 2, width: 4 } },
-	ControlLetterEscapeTransport: { words: 6, text: { word: 2, width: 4 } },
+	UnicodePropertyValueTransport: { words: 2 },
+	ControlEscapeTransport: { words: 2 },
+	ControlLetterEscapeTransport: { words: 2 },
 	IdentityEscapeTransport: { words: 6, content: { word: 2, width: 4 } },
-	GroupNameTransport: { words: 6, text: { word: 2, width: 4 } },
-	DecimalDigitsTransport: { words: 6, text: { word: 2, width: 4 } },
+	GroupNameTransport: { words: 2 },
+	DecimalDigitsTransport: { words: 2 },
 	TermGroupTransport: { words: 12, content: { word: 2, width: 5 }, quantifier: { word: 7, width: 5 } },
 	CountQuantifierGroupTransport: { words: 7, decimal_digits: { word: 2, width: 5 } },
 	CountQuantifierArmTransport: {
@@ -66,8 +66,8 @@ export const records = {
 		unicode_property_value_expression: { word: 7, width: 5 }
 	},
 	UnicodePropertyValueExpressionGroupTransport: { words: 7, unicode_property_name: { word: 2, width: 5 } },
-	CharacterClassEscapeText1Transport: { words: 6, text: { word: 2, width: 4 } },
-	CharacterClassEscapeText2Transport: { words: 6, text: { word: 2, width: 4 } },
+	CharacterClassEscapeText1Transport: { words: 2 },
+	CharacterClassEscapeText2Transport: { words: 2 },
 	InlineFlagsGroupEnableTransport: { words: 12, enabled: { word: 2, width: 5 }, pattern: { word: 7, width: 5 } },
 	InlineFlagsGroupToggleTransport: {
 		words: 17,

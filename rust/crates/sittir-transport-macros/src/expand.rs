@@ -10,11 +10,7 @@ use syn::{Data, DataEnum, DataStruct, DeriveInput, Fields, GenericArgument, Iden
 pub fn derive(input: &DeriveInput) -> syn::Result<TokenStream> {
     let attrs = attrs::kind_attrs(&input.attrs)?;
     match &input.data {
-        Data::Struct(data) => {
-            let body = structure(&input.ident, &attrs, data)?;
-            let record = crate::record::checks(&input.ident, &input.attrs, data)?;
-            Ok(quote!(#body #record))
-        }
+        Data::Struct(data) => structure(&input.ident, &attrs, data),
         Data::Enum(data) if attrs.choice => choice(&input.ident, &attrs, data),
         Data::Enum(data) => members(&input.ident, &attrs, data),
         Data::Union(_) => Err(syn::Error::new_spanned(&input.ident, "a transport is a struct or an enum")),
@@ -451,6 +447,14 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
         .as_ref()
         .ok_or_else(|| syn::Error::new_spanned(ident, "`#[transport(kind = …)]` names the struct's kind"))?;
     let fields = fields_of(ident, data)?;
+    let stamped: Vec<_> = fields
+        .iter()
+        .filter_map(|field| match &field.role {
+            Role::Slot(slot) => Some((field.ident, field.ty, &slot.cell)),
+            _ => None,
+        })
+        .collect();
+    let record = crate::record::checks(ident, attrs.words, &stamped)?;
     let folded = &attrs.folded;
     let admits = if attrs.display { quote!(display == #kind) } else { quote!(grammar == #kind #(|| grammar == #folded)*) };
     let layout: Vec<&Path> = attrs.layout.iter().flatten().collect();
@@ -516,6 +520,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
             #has_layout
             #codec
         };
+        #record
     })
 }
 

@@ -4,7 +4,7 @@ export const RECORD_HEADER_WORDS = 2;
 
 export const PRESENCE_BITS_PER_WORD = 32;
 
-export const CELL_WORDS = { node: 5, text: 4, list: 2, scalar: 1 } as const;
+export const CELL_WORDS = { node: 5, text: 4, list: 2 } as const;
 
 export type RecordForm = { readonly tag: 'bit' } | { readonly tag: 'cell'; readonly width: number; readonly run?: number };
 
@@ -44,8 +44,8 @@ export function recordLayoutOf(fields: readonly RecordField[]): RecordLayout {
 	return { words: nextWord, places };
 }
 
-export function recordAttr(place: RecordPlace): string {
-	if ('bit' in place) return `#[record(word = ${place.word}, bit = ${place.bit})]`;
+export function recordArgs(place: RecordPlace): string {
+	if ('bit' in place) return `word = ${place.word}, bit = ${place.bit}`;
 	const run = place.run === undefined ? '' : `, run = ${place.run}`;
-	return `#[record(word = ${place.word}, width = ${place.width}${run})]`;
+	return `word = ${place.word}, width = ${place.width}${run}`;
 }

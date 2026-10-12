@@ -1,7 +1,8 @@
-//! What a record's cell must hold for each field type: the check behind the
-//! layout codegen stamps on a transport (`#[record(…)]`). Codegen is the one
-//! source of every word, width and bit; the derive asserts, per field, that
-//! the field's type fits the cell stamped for it, and computes nothing else.
+//! What a record's cell must hold for each slot type: the check behind the
+//! layout codegen stamps on a transport's slots (`#[slot(word = …, …)]`).
+//! Codegen is the one source of every word, width and bit; the derive
+//! asserts, per slot, that the slot's type fits the cell stamped for it, and
+//! computes nothing else.
 //!
 //! A field one word short of its type does not build:
 //!
@@ -35,22 +36,13 @@ impl RecordCell for String {
     const WIDTH: u32 = 4;
 }
 
-/// A structural scalar, stored as its value plus one, 0 when absent.
-impl RecordCell for u8 {
-    const WIDTH: u32 = 1;
-}
-
-impl RecordCell for u16 {
-    const WIDTH: u32 = 1;
-}
-
 /// A child: tag, kind, then a coordinate's index and byte span, a child
 /// record's address, or nothing for a unit.
 impl<T, const ADJACENT: bool> RecordCell for SlotValue<T, ADJACENT> {
     const WIDTH: u32 = 5;
 }
 
-/// Absent is tag 0 of the inner cell, or 0 for a scalar.
+/// Absent is tag 0 of the inner cell.
 impl<T: RecordCell> RecordCell for Option<T> {
     const WIDTH: u32 = T::WIDTH;
     const PRESENCE: bool = T::PRESENCE;
@@ -95,12 +87,10 @@ mod tests {
     }
 
     #[test]
-    fn text_takes_four_words_and_a_structural_scalar_one() {
+    fn text_takes_four_words() {
         assert!(fits_cell::<String>(4, 0));
         assert!(fits_cell::<Option<String>>(4, 0));
         assert!(!fits_cell::<String>(3, 0));
-        assert!(fits_cell::<Option<u8>>(1, 0));
-        assert!(fits_cell::<Option<u16>>(1, 0));
     }
 
     #[test]

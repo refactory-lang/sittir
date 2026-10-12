@@ -1,43 +1,16 @@
-//! `#[record(…)]`: the record layout codegen stamps on a transport struct and
-//! its fields. The derive checks it and computes none of it: the stamped cells
-//! stay inside the record's words and never overlap, and each field's type
-//! fits its cell (`sittir_core::record`), asserted at compile time.
+//! The record layout codegen stamps on a transport: `words` on
+//! `#[transport(…)]`, and `word` with `width` (and `run`) or `bit` on each
+//! slot's `#[slot(…)]`, beside the slot's read facts. The derive checks it and
+//! computes none of it: the stamped cells stay inside the record's words and
+//! never overlap, and each slot's type fits its cell (`sittir_core::record`),
+//! asserted at compile time.
 
+use crate::attrs::CellStamp;
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{Attribute, DataStruct, Fields, Ident, LitInt};
+use syn::{Ident, Type};
 
-/// A field's stamp: a cell of `width` words at `word`, with `run` words an
-/// item for a list, or one presence `bit` in the presence word `word`.
-#[derive(Default)]
-struct Stamp {
-    words: Option<u32>,
-    word: Option<u32>,
-    width: Option<u32>,
-    run: Option<u32>,
-    bit: Option<u32>,
-}
-
-fn stamp(attrs: &[Attribute]) -> syn::Result<Option<(Stamp, &Attribute)>> {
-    let Some(attr) = attrs.iter().find(|a| a.path().is_ident("record")) else { return Ok(None) };
-    let mut out = Stamp::default();
-    attr.parse_nested_meta(|meta| {
-        let value: u32 = meta.value()?.parse::<LitInt>()?.base10_parse()?;
-        let slot = match meta.path.get_ident().map(Ident::to_string).as_deref() {
-            Some("words") => &mut out.words,
-            Some("word") => &mut out.word,
-            Some("width") => &mut out.width,
-            Some("run") => &mut out.run,
-            Some("bit") => &mut out.bit,
-            _ => return Err(meta.error("`record` takes `words`, `word`, `width`, `run` or `bit`")),
-        };
-        *slot = Some(value);
-        Ok(())
-    })?;
-    Ok(Some((out, attr)))
-}
-
-/// What a checked field occupies: words `[start, end)`, or one bit of a word.
+/// What a checked slot occupies: words `[start, end)`, or one bit of a word.
 enum Place {
     Cell { start: u32, end: u32 },
     Bit { word: u32, bit: u32 },
@@ -53,19 +26,21 @@ impl Place {
     }
 }
 
-pub fn checks(owner: &Ident, attrs: &[Attribute], data: &DataStruct) -> syn::Result<TokenStream> {
-    let Fields::Named(named) = &data.fields else { return Ok(TokenStream::new()) };
-    let words = stamp(attrs)?.and_then(|(stamp, _)| stamp.words);
+/// The checks for `owner`'s stamped slots: each slot with a stamp, its type
+/// and the stamp, against the struct's `words`.
+pub fn checks(owner: &Ident, words: Option<u32>, slots: &[(&Ident, &Type, &CellStamp)]) -> syn::Result<TokenStream> {
     let mut placed: Vec<(&Ident, Place)> = Vec::new();
     let mut asserts = Vec::new();
-    for field in &named.named {
-        let Some((stamp, attr)) = stamp(&field.attrs)? else { continue };
-        let ident = field.ident.as_ref().expect("a named field");
-        let ty = &field.ty;
-        let Some(words) = words else {
-            return Err(syn::Error::new_spanned(attr, format!("`{ident}` has a record cell, so `{owner}` states its words: `#[record(words = …)]`")));
+    for &(ident, ty, stamp) in slots {
+        let Some(word) = stamp.word else {
+            if stamp.width.is_some() || stamp.run.is_some() || stamp.bit.is_some() {
+                return Err(syn::Error::new_spanned(ident, format!("`{ident}`'s record cell states its `word`")));
+            }
+            continue;
         };
-        let word = stamp.word.ok_or_else(|| syn::Error::new_spanned(attr, format!("`{ident}`'s record cell states its `word`")))?;
+        let Some(words) = words else {
+            return Err(syn::Error::new_spanned(ident, format!("`{ident}` has a record cell, so `{owner}` states its words: `#[transport(words = …)]`")));
+        };
         let place = match (stamp.bit, stamp.width) {
             (Some(bit), None) if bit < 32 => {
                 let message = format!("{owner}.{ident}: a stamped bit holds only a presence");
@@ -78,17 +53,17 @@ pub fn checks(owner: &Ident, attrs: &[Attribute], data: &DataStruct) -> syn::Res
                 asserts.push(quote!(const _: () = assert!(::sittir_core::record::fits_cell::<#ty>(#width, #run), #message);));
                 Place::Cell { start: word, end: word + width }
             }
-            _ => return Err(syn::Error::new_spanned(attr, format!("`{ident}` is stamped a `width` or a `bit` below 32, not both"))),
+            _ => return Err(syn::Error::new_spanned(ident, format!("`{ident}` is stamped a `width` or a `bit` below 32, not both"))),
         };
         let last = match place {
             Place::Cell { end, .. } => end,
             Place::Bit { word, .. } => word + 1,
         };
         if last > words {
-            return Err(syn::Error::new_spanned(attr, format!("`{ident}` ends at word {last}, past `{owner}`'s {words} words")));
+            return Err(syn::Error::new_spanned(ident, format!("`{ident}` ends at word {last}, past `{owner}`'s {words} words")));
         }
         if let Some((other, _)) = placed.iter().find(|(_, earlier)| earlier.meets(&place)) {
-            return Err(syn::Error::new_spanned(attr, format!("`{ident}`'s record cell overlaps `{other}`'s")));
+            return Err(syn::Error::new_spanned(ident, format!("`{ident}`'s record cell overlaps `{other}`'s")));
         }
         placed.push((ident, place));
     }
@@ -97,11 +72,19 @@ pub fn checks(owner: &Ident, attrs: &[Attribute], data: &DataStruct) -> syn::Res
 
 #[cfg(test)]
 mod tests {
-    use syn::{parse_quote, Data, DeriveInput};
+    use syn::{parse_quote, Data, DeriveInput, Fields};
 
     fn checks(input: DeriveInput) -> syn::Result<String> {
         let Data::Struct(data) = &input.data else { panic!("a struct") };
-        super::checks(&input.ident, &input.attrs, data).map(|out| out.to_string().split_whitespace().collect())
+        let Fields::Named(named) = &data.fields else { panic!("named fields") };
+        let words = crate::attrs::kind_attrs(&input.attrs)?.words;
+        let slots = named
+            .named
+            .iter()
+            .map(|field| Ok(crate::attrs::slot_attrs(&field.attrs)?.map(|slot| (field.ident.clone().expect("named"), field.ty.clone(), slot.cell))))
+            .collect::<syn::Result<Vec<_>>>()?;
+        let stamped: Vec<_> = slots.iter().flatten().map(|(ident, ty, cell)| (ident, ty, cell)).collect();
+        super::checks(&input.ident, words, &stamped).map(|out| out.to_string().split_whitespace().collect())
     }
 
     fn has(out: &str, part: &str) -> bool {
@@ -111,14 +94,14 @@ mod tests {
     #[test]
     fn each_stamped_field_asserts_its_type_fits_its_cell() {
         let out = checks(parse_quote! {
-            #[record(words = 10)]
+            #[transport(words = 10)]
             pub struct LetDeclarationTransport {
                 pub layout: Option<Box<TransportLayout>>,
-                #[record(word = 2, bit = 0)]
+                #[slot(word = 2, bit = 0)]
                 pub mutable: bool,
-                #[record(word = 3, width = 5)]
+                #[slot(word = 3, width = 5)]
                 pub pattern: SlotValue<PatternTransport>,
-                #[record(word = 8, width = 2, run = 5)]
+                #[slot(word = 8, width = 2, run = 5)]
                 pub items: Vec<SlotValue<ItemTransport>>,
             }
         })
@@ -146,11 +129,11 @@ mod tests {
     #[test]
     fn two_cells_sharing_a_word_are_refused_naming_the_later_field() {
         let message = refusal(parse_quote! {
-            #[record(words = 10)]
+            #[transport(words = 10)]
             pub struct S {
-                #[record(word = 2, width = 5)]
+                #[slot(word = 2, width = 5)]
                 pub a: SlotValue<A>,
-                #[record(word = 6, width = 4)]
+                #[slot(word = 6, width = 4)]
                 pub b: String,
             }
         });
@@ -160,9 +143,9 @@ mod tests {
     #[test]
     fn a_cell_past_the_record_s_words_is_refused() {
         let message = refusal(parse_quote! {
-            #[record(words = 6)]
+            #[transport(words = 6)]
             pub struct S {
-                #[record(word = 2, width = 5)]
+                #[slot(word = 2, width = 5)]
                 pub a: SlotValue<A>,
             }
         });
@@ -172,21 +155,21 @@ mod tests {
     #[test]
     fn a_bit_shared_or_inside_a_cell_is_refused() {
         let shared = refusal(parse_quote! {
-            #[record(words = 4)]
+            #[transport(words = 4)]
             pub struct S {
-                #[record(word = 2, bit = 3)]
+                #[slot(word = 2, bit = 3)]
                 pub a: bool,
-                #[record(word = 2, bit = 3)]
+                #[slot(word = 2, bit = 3)]
                 pub b: bool,
             }
         });
         assert!(shared.contains("`b`"), "{shared}");
         let inside = refusal(parse_quote! {
-            #[record(words = 8)]
+            #[transport(words = 8)]
             pub struct S {
-                #[record(word = 2, width = 5)]
+                #[slot(word = 2, width = 5)]
                 pub a: SlotValue<A>,
-                #[record(word = 3, bit = 0)]
+                #[slot(word = 3, bit = 0)]
                 pub b: bool,
             }
         });
@@ -197,7 +180,7 @@ mod tests {
     fn a_stamped_field_needs_the_struct_s_words() {
         let message = refusal(parse_quote! {
             pub struct S {
-                #[record(word = 2, width = 5)]
+                #[slot(word = 2, width = 5)]
                 pub a: SlotValue<A>,
             }
         });

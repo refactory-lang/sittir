@@ -8,8 +8,8 @@ export const RECORD_HEADER_WORDS = 2;
 export const records = {
 	ProgramTransport: { words: 4, definitions: { word: 2, width: 2, run: 5 } },
 	EscapeSequenceTransport: { words: 6, content: { word: 2, width: 4 } },
-	IdentifierTransport: { words: 6, text: { word: 2, width: 4 } },
-	ImmediateIdentifierTransport: { words: 6, text: { word: 2, width: 4 } },
+	IdentifierTransport: { words: 2 },
+	ImmediateIdentifierTransport: { words: 2 },
 	CaptureTransport: { words: 7, name: { word: 2, width: 5 } },
 	StringTransport: { words: 7, string_content: { word: 2, width: 5 } },
 	ImmediateStringTransport: { words: 7, string_content: { word: 2, width: 5 } },
@@ -37,7 +37,7 @@ export const records = {
 	GroupExpressionArmTransport: { words: 12, left: { word: 2, width: 5 }, right: { word: 7, width: 5 } },
 	NamedNodeExpressionArmTransport: { words: 12, left: { word: 2, width: 5 }, right: { word: 7, width: 5 } },
 	GroupingGroupTransport: { words: 8, group_expression: { word: 3, width: 5 }, anchor: { word: 2, bit: 0 } },
-	StringContentTextTransport: { words: 6, text: { word: 2, width: 4 } },
+	StringContentTextTransport: { words: 2 },
 	NamedNodePlainTransport: {
 		words: 14,
 		name: { word: 2, width: 5 },

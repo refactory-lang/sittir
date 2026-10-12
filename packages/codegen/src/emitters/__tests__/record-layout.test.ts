@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CELL_WORDS, RECORD_HEADER_WORDS, recordAttr, recordLayoutOf } from '../record-layout.ts';
+import { CELL_WORDS, RECORD_HEADER_WORDS, recordArgs, recordLayoutOf } from '../record-layout.ts';
 
 describe('recordLayoutOf', () => {
 	it('places the presence bits in words after the header, then each cell in field order', () => {
@@ -31,10 +31,10 @@ describe('recordLayoutOf', () => {
 	});
 });
 
-describe('recordAttr', () => {
-	it('spells a cell, a list cell and a bit as the derive reads them', () => {
-		expect(recordAttr({ field: 'a', word: 3, width: 5 })).toBe('#[record(word = 3, width = 5)]');
-		expect(recordAttr({ field: 'a', word: 8, width: 2, run: 5 })).toBe('#[record(word = 8, width = 2, run = 5)]');
-		expect(recordAttr({ field: 'a', word: 2, bit: 7 })).toBe('#[record(word = 2, bit = 7)]');
+describe('recordArgs', () => {
+	it('spells a cell, a list cell and a bit as the derive reads them on a slot', () => {
+		expect(recordArgs({ field: 'a', word: 3, width: 5 })).toBe('word = 3, width = 5');
+		expect(recordArgs({ field: 'a', word: 8, width: 2, run: 5 })).toBe('word = 8, width = 2, run = 5');
+		expect(recordArgs({ field: 'a', word: 2, bit: 7 })).toBe('word = 2, bit = 7');
 	});
 });

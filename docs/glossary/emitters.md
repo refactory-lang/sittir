@@ -13164,13 +13164,14 @@ keeps that id on the `Identifier` member, where a read identifier belongs.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderTransportDataStruct`
 
-Emits a kind's transport struct. Its fields are gathered first
-(`StructField`), each with the record form it needs when it holds a record
-cell; the struct's record layout (`recordLayoutOf`) is computed once from
-them, kept on `ReadPrint.records` for `records.ts`, and stamped as
-`#[record(words = …)]` on the struct and `#[record(…)]` (`recordAttr`) on each
-field it places. A spacing site's per-node value is layout, not structure,
-and takes no cell.
+Emits a kind's transport struct. The struct's record layout
+(`recordLayoutOf`) is computed once from its slots, kept on
+`ReadPrint.records` for `records.ts`, and stamped as `words = …` on
+`#[transport(…)]` and each slot's place on its `#[slot(…)]` (`slotAttr`). A
+leaf's record is its header alone: its text lives in the cell that holds the
+leaf. The fields that are not slots (a list's `delimiter` and
+`separator_kind`, a spacing site's per-node value) are layout and take no
+cell.
 
 #### body
 
@@ -15338,9 +15339,9 @@ The ids a fixed-literal transport takes: its accepted ids, or its own id. The de
 
 The slots a struct has fields for, in order: the slot model's named and unnamed slots in the node's own slot order, then the named slots of each hidden helper node an unnamed slot hoists, all optional. The field order is the order the read writes the transport's keys, so a read transport's keys follow the model's slots. The printer and the check that follows it walk the same list.
 
-### `packages/codegen/src/emitters/render-module.ts::slotReadAttr`
+### `packages/codegen/src/emitters/render-module.ts::slotAttr`
 
-The `#[slot]` attribute of one field: a capture for each slot of a token interior, else the routes, presence keyword, separators and scalar mark `slotArgs` computes. An alias envelope's content has none: it is not a parser field, and the derive's envelope mode names it by `content = …`.
+The `#[slot]` attribute of one slot, its one attribute: its read facts, then its record place (`recordArgs`). The read facts are a capture for each slot of a token interior, else the routes, presence keyword, separators and scalar mark `slotArgs` computes. An alias envelope's content has no read facts, only its place: it is not a parser field but the aliased node itself, which the derive's envelope mode reads as the slot `content = …` names.
 
 ### `packages/codegen/src/emitters/render-module.ts::readsItsSlots`
 
@@ -15378,12 +15379,6 @@ Writes the grammar's `reparseHosts` block as the generated `reparse-hosts.ts`: t
 
 Builds an isolated assembled list whose repeated element choice includes the list itself. The emitted modules are compiled with TypeScript 6 and 7 to pin own-kind built and parsed inputs, recursive loose configurations, setters, and namespace argument-row resolution without changing a language grammar.
 
-### `packages/codegen/src/emitters/render-module.ts::StructField`
-
-One field a transport struct declares: its lines (wire key, read attribute,
-declaration) and, when it holds a record cell, the field's name and form
-(`RecordField`). Its `#[record(…)]` attribute is its first line.
-
 ### `packages/codegen/src/emitters/render-module.ts::recordsTs`
 
 `records.ts` for a grammar: `RECORD_HEADER_WORDS` and `records`, each struct's
@@ -15402,37 +15397,35 @@ A presence word holds 32 presence bits, one word of the `u32` arena.
 
 ### `packages/codegen/src/emitters/record-layout.ts::CELL_WORDS`
 
-The cell widths, one per form a field holds:
+The cell widths, one per form a slot holds:
 
 - `node`, 5: anything carried in a `SlotValue`, whose arms may all be units,
   since `SlotValue::Coord` holds an untouched parsed child (tag, kind, index,
   byte start and end);
 - `text`, 4: a leaf's text (tag, kind, and a byte span, or a string-table
   offset and length);
-- `list`, 2: a run's offset and length, its items in cells of their own width;
-- `scalar`, 1: a structural `Option<u8>` or `Option<u16>`, its value plus one,
-  0 when absent.
+- `list`, 2: a run's offset and length, its items in cells of their own width.
 
-The derive checks each against the field's type (`sittir_core::record`).
+The derive checks each against the slot's type (`sittir_core::record`).
 
 ### `packages/codegen/src/emitters/record-layout.ts::RecordForm`
 
-What a field needs in its record: a presence `bit`, or a `cell` of `width`
+What a slot needs in its record: a presence `bit`, or a `cell` of `width`
 words, with a `run` of words per item for a list.
 
 ### `packages/codegen/src/emitters/record-layout.ts::RecordField`
 
-A field that holds part of its struct's record, by Rust field name, with its
+A slot that holds part of its struct's record, by Rust field name, with its
 form.
 
 ### `packages/codegen/src/emitters/record-layout.ts::RecordPlace`
 
-Where a field sits in its record: a `bit` of presence word `word`, or a cell of
+Where a slot sits in its record: a `bit` of presence word `word`, or a cell of
 `width` words at `word` (with its `run`).
 
 ### `packages/codegen/src/emitters/record-layout.ts::RecordLayout`
 
-A struct's record: its `words` and each placed field.
+A struct's record: its `words` and each placed slot.
 
 ### `packages/codegen/src/emitters/record-layout.ts::slotRecordForm`
 
@@ -15443,22 +15436,23 @@ list holds a list cell with runs of that width.
 ### `packages/codegen/src/emitters/record-layout.ts::recordLayoutOf`
 
 The one derivation of a struct's record layout. The presence bits fill words
-from `RECORD_HEADER_WORDS`, 32 to a word, and each cell follows in field
+from `RECORD_HEADER_WORDS`, 32 to a word, and each cell follows in slot
 order. Codegen is the single source of every word, width and bit: Rust reads
-them from `#[record(…)]`, JavaScript from `records.ts`, and neither computes
-one.
+them from each slot's `#[slot(…)]` and the struct's `#[transport(words = …)]`,
+JavaScript from `records.ts`, and neither computes one. A slot's one
+attribute holds its read facts and its layout together.
 
-A record holds structure, and its side record holds layout. A field that
-states what the source or the builder made goes in the record at a stamped
-word: a slot, a leaf's text, a list's `delimiter` and `separator_kind` (which
-token the list used, read from parsed nodes too), an alias envelope's
-`content`. A field that states how to print, a spacing site's per-node value
-in the render-options precedence, goes in the side record beside `edges`,
-`gap` and `flank`, and takes no cell here. A field added later lands by the
-same split.
+A record holds structure, and its side record holds layout. Every record
+cell is a slot: a node, a list, text, a presence bit, and an alias
+envelope's `content`, the envelope's one slot. A field that states how to
+print goes in the side record beside `edges`, `gap` and `flank` and takes no
+cell here: a spacing site's per-node value, and a preference the tree
+records, such as the separator or delimiter a list's occurrence used
+(`delimiter`, `separator_kind`). A leaf holds no cell of its own: its text is
+in the cell that holds it. A field added later lands by the same split.
 
-### `packages/codegen/src/emitters/record-layout.ts::recordAttr`
+### `packages/codegen/src/emitters/record-layout.ts::recordArgs`
 
-A field's `#[record(…)]` attribute, spelled as the derive reads it:
+A slot's place, spelled as the derive reads it inside the slot's `#[slot(…)]`:
 `word` and `width` (and `run`) for a cell, `word` and `bit` for a presence.
 

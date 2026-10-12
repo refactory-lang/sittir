@@ -62,7 +62,7 @@ import { interiorOf } from './interior.ts';
 import { ENVELOPE_PINS, assertEnvelopeExtrasPinned, type EnvelopeClaims, type EnvelopePin } from './envelope-claims.ts';
 import { BOXED_PAYLOADS, PAYLOAD_CEILING_BYTES } from './boxed-payloads.ts';
 import { getTransportProjection } from './transport-projection-cache.ts';
-import { CELL_WORDS, RECORD_HEADER_WORDS, recordAttr, recordLayoutOf, slotRecordForm, type RecordField, type RecordLayout } from './record-layout.ts';
+import { RECORD_HEADER_WORDS, recordArgs, recordLayoutOf, slotRecordForm, type RecordLayout, type RecordPlace } from './record-layout.ts';
 import {
 	RESERVED_SUPERTYPE_ENUM_NAMES,
 	RUST_KEYWORDS,
@@ -3174,47 +3174,35 @@ function renderTransportDataStruct(
 	const ownId = findKindEntry(kindEntries, node.kind)?.id;
 	const printedSlots = isCompoundOf(node) ? structSlotsOf(node, slotModel, nodeMap) : [];
 	admit(read, structName, node instanceof AssembledAlias ? [node.aliasTypeId] : ownId === undefined ? [] : [ownId]);
-	const fields: StructField[] = [];
+	const layout = recordLayoutOf(
+		isCompoundOf(node)
+			? printedSlots.map(({ slot }) => ({ field: rustFieldIdent(slot.storageName), form: slotRecordForm(transportSlotShapeOf(slot, nodeMap), isMultiple(slot)) }))
+			: []
+	);
+	read.records.set(structName, layout);
+	const placeOf = new Map(layout.places.map((place) => [place.field, place]));
+	lines.push(...transportDeclaration(read, TRANSPORT_DERIVE, `${transportArgs(node, ownId, read.ctx, printedSlots.map(({ slot }) => slot))}, words = ${layout.words}`, 'struct', structName));
 	if (isCompoundOf(node)) {
-		fields.push({ lines: renderLayoutField() });
+		lines.push(...renderLayoutField());
 		for (const { slot, owner, forceOptional } of printedSlots) {
 			const field = rustFieldIdent(slot.storageName);
-			fields.push({
-				lines: renderTransportField(slot, owner.kind, owner.typeName, nodeMap, choices, slotReadAttr(slot, owner, node, nodeMap, read), forceOptional),
-				record: { field, form: slotRecordForm(transportSlotShapeOf(slot, nodeMap), isMultiple(slot)) }
-			});
+			lines.push(...renderTransportField(slot, owner.kind, owner.typeName, nodeMap, choices, slotAttr(slot, owner, node, nodeMap, read, placeOf.get(field)), forceOptional));
 			fillFields.push(field);
 		}
 		if (node instanceof AssembledList) {
 			if (node.leadingDelimiter === 'optional' || node.trailingDelimiter === 'optional') {
-				fields.push({
-					lines: [wireKeyAttr('_delimiter'), `    #[flank(${flankArgs(node)})]`, '    pub delimiter: Option<u8>,'],
-					record: { field: 'delimiter', form: { tag: 'cell', width: CELL_WORDS.scalar } }
-				});
+				lines.push(wireKeyAttr('_delimiter'), `    #[flank(${flankArgs(node)})]`, '    pub delimiter: Option<u8>,');
 			}
 			if (node.separatorRule !== undefined) {
-				fields.push({
-					lines: [wireKeyAttr('_separator'), `    #[separator_kind(${separatorKindArgs(node, read.ctx)})]`, '    pub separator_kind: Option<u16>,'],
-					record: { field: 'separator_kind', form: { tag: 'cell', width: CELL_WORDS.scalar } }
-				});
+				lines.push(wireKeyAttr('_separator'), `    #[separator_kind(${separatorKindArgs(node, read.ctx)})]`, '    pub separator_kind: Option<u16>,');
 			}
 		}
 		for (const site of synthesizedSpacingSites(plan, node)) {
 			if (!carriesPerNodeValue(site)) continue;
-			fields.push({ lines: [wireKeyAttr(site.wireKey), `    pub ${rustFieldIdent(site.fieldIdent)}: Option<u16>,`] });
+			lines.push(wireKeyAttr(site.wireKey), `    pub ${rustFieldIdent(site.fieldIdent)}: Option<u16>,`);
 		}
 	} else if (isTerminalNode(node)) {
-		fields.push({ lines: renderLayoutField() });
-		fields.push({ lines: renderLeafTextField(), record: { field: 'text', form: { tag: 'cell', width: CELL_WORDS.text } } });
-	}
-	const layout = recordLayoutOf(fields.flatMap(({ record }) => (record === undefined ? [] : [record])));
-	read.records.set(structName, layout);
-	const declaration = transportDeclaration(read, TRANSPORT_DERIVE, transportArgs(node, ownId, read.ctx, printedSlots.map(({ slot }) => slot)), 'struct', structName);
-	lines.push(...declaration.slice(0, -1), `#[record(words = ${layout.words})]`, ...declaration.slice(-1));
-	const placeOf = new Map(layout.places.map((place) => [place.field, place]));
-	for (const field of fields) {
-		const place = field.record === undefined ? undefined : placeOf.get(field.record.field);
-		lines.push(...(place === undefined ? [] : [`    ${recordAttr(place)}`]), ...field.lines);
+		lines.push(...renderLayoutField(), ...renderLeafTextField());
 	}
 	lines.push('}');
 	lines.push('');
@@ -3412,10 +3400,6 @@ function renderLeafTextField(): string[] {
 	return [wireKeyAttr('$text'), '    pub text: String,'];
 }
 
-interface StructField {
-	readonly lines: readonly string[];
-	readonly record?: RecordField;
-}
 
 interface StructSlot {
 	readonly slot: AssembledNonterminal;
@@ -3448,10 +3432,9 @@ function structSlotsOf(node: AssembledNode, slotModel: RenderSlotModel, nodeMap:
 	return out;
 }
 
-function slotReadAttr(slot: AssembledNonterminal, owner: AssembledNode, node: AssembledNode, nodeMap: NodeMap, read: ReadPrint): string | undefined {
-	if (node instanceof AssembledAlias) return undefined;
-	if (interiorOf(node) !== undefined) return `#[slot(${captureArgs(slot)})]`;
-	const args = slotArgs(slot, owner, transportSlotShapeOf(slot, nodeMap), read.ctx);
+function slotAttr(slot: AssembledNonterminal, owner: AssembledNode, node: AssembledNode, nodeMap: NodeMap, read: ReadPrint, place: RecordPlace | undefined): string {
+	const facts = node instanceof AssembledAlias ? '' : interiorOf(node) !== undefined ? captureArgs(slot) : slotArgs(slot, owner, transportSlotShapeOf(slot, nodeMap), read.ctx);
+	const args = [facts, place === undefined ? '' : recordArgs(place)].filter((part) => part !== '').join(', ');
 	return args === '' ? '#[slot]' : `#[slot(${args})]`;
 }
 
