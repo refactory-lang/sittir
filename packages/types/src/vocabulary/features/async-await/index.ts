@@ -1,7 +1,7 @@
-export * from './clause.ts';
-export * from './declaration.ts';
-export * from './expression.ts';
-export * from './statement.ts';
+export type * from './clause.ts';
+export type * from './declaration.ts';
+export type * from './expression.ts';
+export type * from './statement.ts';
 
 /** Asynchronous functions: a function suspends at `await` until the value it awaits is ready. */
 export interface AsyncAwait {

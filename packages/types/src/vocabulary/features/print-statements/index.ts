@@ -1,5 +1,5 @@
-export * from './clause.ts';
-export * from './statement.ts';
+export type * from './clause.ts';
+export type * from './statement.ts';
 
 /** Print statements: printing as a statement, python 2's `print`. */
 export interface PrintStatements {

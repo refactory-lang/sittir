@@ -1,4 +1,4 @@
-export * from './clause.ts';
+export type * from './clause.ts';
 
 import type { BoundedQuantification } from '../index.ts';
 

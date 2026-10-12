@@ -1,6 +1,6 @@
-export * from './clause.ts';
-export * from './declaration.ts';
-export * from './expression.ts';
+export type * from './clause.ts';
+export type * from './declaration.ts';
+export type * from './expression.ts';
 
 import type { Classes } from '../index.ts';
 

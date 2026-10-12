@@ -1,6 +1,6 @@
-export * from './clause.ts';
-export * from './declaration.ts';
-export * from './expression.ts';
+export type * from './clause.ts';
+export type * from './declaration.ts';
+export type * from './expression.ts';
 
 /** Nominal conformance: a class declares the interfaces it implements. */
 export interface InterfaceConformance {

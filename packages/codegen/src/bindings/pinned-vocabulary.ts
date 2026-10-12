@@ -112,7 +112,7 @@ function declare(declaration: InterfaceDeclaration.Parsed, scope: readonly strin
 			if (isNode(literal) && (literal.$type === K.StringSingle || literal.$type === K.StringDouble)) path = text(literal).slice(1, -1);
 			continue;
 		}
-		own.push([name, { optional: member.optional() !== undefined, flag: type?.$type === K.TypeIdentifier && text(type) === 'Flag' }]);
+		own.push([name, { optional: member.optional(), flag: type?.$type === K.TypeIdentifier && text(type) === 'Flag' }]);
 	}
 	if (path === undefined) return;
 	const heritage = declaration.extendsTypeClause();

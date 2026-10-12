@@ -1,6 +1,6 @@
-export * from './clause.ts';
-export * from './expression.ts';
-export * from './statement.ts';
+export type * from './clause.ts';
+export type * from './expression.ts';
+export type * from './statement.ts';
 
 /** Modules: names imported from other files and exported to them. */
 export interface Modules {

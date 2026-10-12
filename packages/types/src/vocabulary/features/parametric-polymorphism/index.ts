@@ -1,9 +1,9 @@
-export * from './clause.ts';
-export * from './declaration.ts';
-export * from './element.ts';
-export * from './expression.ts';
-export * from './pattern.ts';
-export * from './type.ts';
+export type * from './clause.ts';
+export type * from './declaration.ts';
+export type * from './element.ts';
+export type * from './expression.ts';
+export type * from './pattern.ts';
+export type * from './type.ts';
 
 /** Parametric polymorphism: declarations and types take type parameters. */
 export interface ParametricPolymorphism {

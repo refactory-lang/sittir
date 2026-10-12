@@ -1,4 +1,4 @@
-export * from './literal.ts';
+export type * from './literal.ts';
 
 /** Arbitrary-precision integers: an integer type of no fixed width, and its literals. */
 export interface ArbitraryPrecisionIntegers {

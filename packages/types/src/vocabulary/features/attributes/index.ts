@@ -1,9 +1,9 @@
-export * from './attribute.ts';
-export * from './clause.ts';
-export * from './declaration.ts';
-export * from './element.ts';
-export * from './expression.ts';
-export * from './identifier.ts';
+export type * from './attribute.ts';
+export type * from './clause.ts';
+export type * from './declaration.ts';
+export type * from './element.ts';
+export type * from './expression.ts';
+export type * from './identifier.ts';
 
 /** Attributes: annotations on a declaration that are not evaluated. */
 export interface Attributes {

@@ -1,5 +1,5 @@
-export * from './identifier.ts';
-export * from './statement.ts';
+export type * from './identifier.ts';
+export type * from './statement.ts';
 
 /** Labeled control flow: labels on loops and blocks, which break and continue name. */
 export interface LabeledControlFlow {

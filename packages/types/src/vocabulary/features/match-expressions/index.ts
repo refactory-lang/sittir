@@ -1,6 +1,6 @@
-export * from './clause.ts';
-export * from './pattern.ts';
-export * from './statement.ts';
+export type * from './clause.ts';
+export type * from './pattern.ts';
+export type * from './statement.ts';
 
 /** Match expressions: branching on a value by patterns and guards. */
 export interface MatchExpressions {

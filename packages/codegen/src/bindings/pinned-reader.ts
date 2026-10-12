@@ -11,7 +11,6 @@ import type {
 	NamedNodeExpressionArm,
 	NamedNodeGroup,
 	NegatedField,
-	NodeMethodsOf,
 	Predicate,
 	ScmAPI,
 	String as QueryString
@@ -44,7 +43,6 @@ type Engine = LanguageEngine<ScmAPI>;
 let K: Kinds;
 let engine: Engine;
 let sourceSpans: PinnedBuild['common']['sourceSpans'];
-let isErrorNode: PinnedBuild['utils']['isErrorNode'];
 let spanOf: PinnedBuild['utils']['spanOf'];
 let loaded: Promise<void> | undefined;
 
@@ -54,7 +52,7 @@ function ready(): Promise<void> {
 		K = (await pinned.scm.default.load()).kinds;
 		engine = await pinned.common.createEngine(pinned.scm.default);
 		({ sourceSpans } = pinned.common);
-		({ isErrorNode, spanOf } = pinned.utils);
+		({ spanOf } = pinned.utils);
 	})();
 	loaded.catch(() => {
 		loaded = undefined;
@@ -114,27 +112,22 @@ function lineOf(text: string, spans: SourceSpans, offset: number): number {
 }
 
 
-function unparsed(node: NodeMethodsOf): number[] {
-	const trivia: readonly unknown[] = [...node.$trivia.leading(), ...node.$trivia.trailing()];
-	return trivia.flatMap((item) => {
-		const span = isErrorNode(item) ? spanOf(item) : undefined;
-		return span === undefined ? [] : [span.start];
-	});
-}
-
-async function definitionsOf(text: string): Promise<readonly Definition.Parsed[]> {
+async function parsedBindings(text: string): Promise<ReturnType<Engine['parse']>> {
 	await ready();
-	return engine.parse(text, { depth: Infinity }).definitions();
+	return engine.parse(text, { depth: Infinity });
 }
 
-async function parsedPatterns(text: string): Promise<ParsedPattern[]> {
-	const definitions = await definitionsOf(text);
+function patternsIn(text: string, root: ReturnType<Engine['parse']>): ParsedPattern[] {
 	const spans = sourceSpans(text);
-	return definitions.map((definition) => {
+	return root.definitions().map((definition) => {
 		const span = spanOf(definition);
 		if (span === undefined) throw new Error('bindings.scm: a parsed definition carries no span');
 		return { line: lineOf(text, spans, span.start), source: spans.slice(span), definition };
 	});
+}
+
+async function parsedPatterns(text: string): Promise<ParsedPattern[]> {
+	return patternsIn(text, await parsedBindings(text));
 }
 
 function captures(v: Visit): string[] {
@@ -238,13 +231,12 @@ function joinedOf(expression: Expression): readonly Joined[] {
 	return [...joinedOf(expression.left()), ...(first ? [{ ...first, adjacent: true }, ...rest] : [])];
 }
 
-function expressionsOf(node: PatternNode, errors: number[], origin: PatternOrigin): readonly Anchored[] {
+function expressionsOf(node: PatternNode, origin: PatternOrigin): readonly Anchored[] {
 	switch (node.$type) {
 		case K.NamedNodePlain:
 		case K.NamedNodeSupertyped: {
 			const group = node.namedNodeGroup();
 			if (group === undefined) return [];
-			errors.push(...unparsed(group));
 			const expressions = (
 				group.$type === K.NamedNodeGroupChildren ? group.namedNodeExpressions() : [...group.namedNodeExpressions(), group.last()]
 			).flatMap(joinedOf);
@@ -269,7 +261,7 @@ function refuseLooseAnchors(parent: Visit, origin: PatternOrigin): void {
 	}
 }
 
-function readPattern(top: PatternNode, errors: number[], inherited: readonly ListElement.Parsed[], origin: PatternOrigin): Pattern {
+function readPattern(top: PatternNode, inherited: readonly ListElement.Parsed[], origin: PatternOrigin): Pattern {
 	const nodes: Visit[] = [];
 	const predicates: Predicate.Parsed[] = [];
 	const visit = (
@@ -283,8 +275,7 @@ function readPattern(top: PatternNode, errors: number[], inherited: readonly Lis
 	): Visit => {
 		const v: Visit = { node, field, anchor, adjacent, parent, alternation, inherited, children: [] };
 		nodes.push(v);
-		errors.push(...unparsed(node));
-		for (const { expression, anchor, adjacent } of expressionsOf(node, errors, origin)) place(expression, null, anchor, adjacent, v, null, []);
+		for (const { expression, anchor, adjacent } of expressionsOf(node, origin)) place(expression, null, anchor, adjacent, v, null, []);
 		refuseLooseAnchors(v, origin);
 		return v;
 	};
@@ -607,13 +598,13 @@ function patternsOf(
 
 export async function readBindingsInProcess(text: string): Promise<BindingFacts> {
 	const facts: Facts = { claims: [], members: [], containers: [], templates: [], unclaimed: [] };
-	const errors: number[] = [];
-	const patterns = await parsedPatterns(text);
+	const root = await parsedBindings(text);
+	const patterns = patternsIn(text, root);
+	const errors = root.$errors.map((region) => region.span.start);
 	if (patterns.length === 0 && text.trim() !== '') errors.push(0);
 	for (const { definition, ...origin } of patterns) {
-		errors.push(...unparsed(definition));
 		for (const [top, inherited] of patternsOf(definition, []))
-			patternFacts(readPattern(top, errors, inherited, origin), facts, origin);
+			patternFacts(readPattern(top, inherited, origin), facts, origin);
 	}
 	if (errors.length > 0) {
 		const spans = sourceSpans(text);

@@ -1,4 +1,4 @@
-export * from './literal.ts';
+export type * from './literal.ts';
 
 /** Raw strings: string literals whose escapes are not processed. */
 export interface RawStrings {

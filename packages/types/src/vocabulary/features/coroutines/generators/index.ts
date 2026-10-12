@@ -1,5 +1,5 @@
-export * from './declaration.ts';
-export * from './expression.ts';
+export type * from './declaration.ts';
+export type * from './expression.ts';
 
 import type { Coroutines } from '../index.ts';
 

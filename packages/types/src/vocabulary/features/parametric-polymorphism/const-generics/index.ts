@@ -1,4 +1,4 @@
-export * from './declaration.ts';
+export type * from './declaration.ts';
 
 import type { ParametricPolymorphism } from '../index.ts';
 

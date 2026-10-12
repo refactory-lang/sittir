@@ -1,4 +1,4 @@
-export * from './modifier.ts';
+export type * from './modifier.ts';
 
 import type { Visibility } from '../index.ts';
 

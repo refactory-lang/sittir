@@ -541,7 +541,7 @@ derivation resolves by the slots' terminals, and an alternation's options take
 the alternation's field, captures and quantifier.
 ```
 
-The parse reports no errors of its own. A file is refused with `BindingsSyntaxError` when an ERROR region surfaces as trivia on a node the reader visits, or when a non-blank file parses to no pattern; a malformed pattern the parse absorbs without a trace passes here and is caught by the compile gate (`compileQuery`).
+A file is refused with `BindingsSyntaxError`, naming the lines, when its parse root names a region that did not parse (`$errors`, each `ERROR` and `MISSING` region with its span), or when a non-blank file parses to no pattern; a malformed pattern the parse absorbs without a trace passes here and is caught by the compile gate (`compileQuery`).
 
 The scm engine behind it is the pinned build's (`ready`), created by the first read and shared by the rest. The module runs only in the reader's own process (`pinned-reader.child.ts`); codegen and the inventory read through `read.ts`.
 
@@ -557,7 +557,7 @@ A node's member captures with the first naming its whole slot when a flag follow
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::parsedPatterns`
 
-Each top-level definition with the line it starts on and its source text, sliced by the node's byte span. Spans count UTF-8 bytes and the bindings files carry multibyte comment rules, so slicing and line numbers go through `sourceSpans`. `readBindingsInProcess` reads the file through it, so a container's facts record the line and text given here, and `bindingPatternsInProcess` summarizes each one for the inventory's issue check.
+`patternsIn` over the file's parse (`parsedBindings`). `readBindingsInProcess` reads the patterns of the same parse, so a container's facts record the line and text given here, and `bindingPatternsInProcess` summarizes each one for the inventory's issue check.
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::bindingPatternsInProcess`
 
@@ -671,13 +671,13 @@ A query string's value, with escape sequences resolved to the characters they st
 
 The 1-based line a byte offset falls on, counted over the string index the span helper converts it to.
 
-### `packages/codegen/src/bindings/pinned-reader.ts::unparsed`
+### `packages/codegen/src/bindings/pinned-reader.ts::parsedBindings`
 
-The start offsets of the ERROR regions a node carries as trivia: where the parse absorbed text it could not read.
+The file parsed to full depth by the pinned engine: the root whose `$errors` name the regions that did not parse, and whose definitions are the file's patterns.
 
-### `packages/codegen/src/bindings/pinned-reader.ts::definitionsOf`
+### `packages/codegen/src/bindings/pinned-reader.ts::patternsIn`
 
-The file's top-level definitions, parsed to full depth by the pinned engine.
+Each top-level definition of a parsed root with the line it starts on and its source text, sliced by the node's byte span through `sourceSpans` (spans count UTF-8 bytes, and the bindings files carry multibyte comment rules).
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::captures`
 
@@ -773,7 +773,7 @@ A named node group's expression as the sequence of sibling expressions it stands
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::expressionsOf`
 
-The expressions a pattern node holds, each with its anchor (`anchorAt`) and whether an anchor joins it to the one before: a named node's group (with the anchored-last variant's `last` appended, its arms flattened by `joinedOf`), a grouping's group expressions, and none for a token. A grouping's anchors sit between siblings and are refused (`SIBLING_ANCHOR`). The ERROR regions on the group are recorded as it goes.
+The expressions a pattern node holds, each with its anchor (`anchorAt`) and whether an anchor joins it to the one before: a named node's group (with the anchored-last variant's `last` appended, its arms flattened by `joinedOf`), a grouping's group expressions, and none for a token. A grouping's anchors sit between siblings and are refused (`SIBLING_ANCHOR`).
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::readPattern`
 
