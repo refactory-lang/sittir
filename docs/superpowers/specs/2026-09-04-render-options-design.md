@@ -128,8 +128,13 @@ engine.render(node, { options, reformat: true });       // canonical: options on
    is `immediate` or tokenized, or whose elements are external scanner
    tokens, admits no extras between them — string and template fragments —
    and its separator is left alone. These are stamped facts on the rule,
-   not heuristics. A separator the grammar chooses per instance keeps its
-   kind-id match and gets no spacing preference.
+   not heuristics. A separator the grammar lets each list choose, such as
+   the `,` or `;` between a typescript object type's members, is a
+   preference on its list slot: a kind × slot key whose arms are the
+   separators and whose default is the grammar's first arm. A parsed list
+   stores its own choice once per occurrence of the slot, only where it
+   differs from the options, beside the slot's gap layout; an item added to
+   the list takes it, and `reformat` renders it from the key.
 5. **Synthesized preferences: array flanks and indentation.** Every kind
    that holds exactly one unseparated array gets two more choices written
    around that array in its render rule, `start` and `end`, whose arms are
@@ -234,9 +239,12 @@ A parsed node carries its form as its kind, so no option re-forms it,
 `reformat` included: making a parsed statement a different statement kind
 is a transform, not formatting. The choices a preference governs are not
 structure. A delimiter or a separator is a preference stored with the
-layout, and an optional token, such as a leading `|` or a trailing comma,
-is a preference arm, so `reformat` drops each choice the source made and
-renders it from the options, as it renders the layout (Precedence).
+layout; an optional token, such as a leading `|` or a trailing comma, is a
+preference arm; and a statement terminator with a preference key
+(`statement_terminator`) is a preference, while a terminator that is its
+own kind's form is structure. `reformat` drops each preference choice the
+source made and renders it from the options, as it renders the layout
+(Precedence).
 
 ### Read side
 
