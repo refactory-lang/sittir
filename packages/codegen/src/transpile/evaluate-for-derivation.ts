@@ -4,13 +4,19 @@ import { createRequire } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { packageEntryPath } from '../compiler/resolve-grammar.ts';
 import type { EvaluatedGrammar } from '../compiler/types.ts';
+import { baseNamesOf } from '../dsl/bind.ts';
 import type { GrammarPackage } from '../grammars.ts';
 import type { UpstreamContext } from './derive-conflicts.ts';
 import { treeSitterCliVersion } from './tree-sitter-cli.ts';
 
-export interface DerivationInputs extends UpstreamContext {
+export interface GrammarDerivationInputs extends UpstreamContext {
 	readonly grammarHash: string;
 	readonly ruleCount: number;
+}
+
+export interface DerivationInputs {
+	readonly base: GrammarDerivationInputs;
+	readonly bound: GrammarDerivationInputs;
 }
 
 export const DERIVATION_INPUTS_MARKER = '\u0000sittir-derivation-inputs\u0000';
@@ -40,14 +46,15 @@ export function grammarHash(evaluated: object, treeSitterVersion: string): strin
 	return createHash('sha256').update(JSON.stringify(canonical({ grammar, treeSitterVersion }))).digest('hex');
 }
 
-export function derivationInputsOf(evaluated: EvaluatedGrammar): DerivationInputs {
+export function derivationInputsOf(evaluated: EvaluatedGrammar): GrammarDerivationInputs {
 	const records = evaluated.derivationRecords;
 	if (records === undefined) throw new Error('evaluated grammar carries no derivation records: it was not built by sittirGrammar');
 	return {
 		grammarHash: grammarHash(evaluated, treeSitterCliVersion()),
 		ruleCount: Object.keys(evaluated.rules).length,
 		upstreamConflicts: records.upstreamConflicts,
-		sourceEdges: records.sourceEdges
+		sourceEdges: records.sourceEdges,
+		baseNames: baseNamesOf(evaluated.renamedFrom, evaluated.splitFrom)
 	};
 }
 

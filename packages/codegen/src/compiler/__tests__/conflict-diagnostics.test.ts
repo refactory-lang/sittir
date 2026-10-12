@@ -1,6 +1,6 @@
 import { createRequire } from 'node:module';
 import { beforeAll, describe, expect, it } from 'vitest';
-import type { ConflictResolutionsFile } from '../../dsl/conflict-resolutions.ts';
+import { EMPTY_CONFLICT_RESOLUTIONS, type ConflictResolutionsFile } from '../../dsl/conflict-resolutions.ts';
 import type { ConflictReport } from '../../transpile/conflict-summary.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { diagnoseGrammar } from '../compile.ts';
@@ -65,6 +65,7 @@ describe('conflicts authored in a sittir grammar', () => {
 
 	it('reach the collected diagnostics through diagnoseGrammar', async () => {
 		const resolutions: ConflictResolutionsFile = {
+			...EMPTY_CONFLICT_RESOLUTIONS,
 			grammarHash: 'fixture',
 			resolutions: [
 				{
@@ -77,6 +78,48 @@ describe('conflicts authored in a sittir grammar', () => {
 		};
 		const diagnosis = diagnoseGrammar({ grammar: 'go', evaluated: await evaluateSittirGrammar(go, 'go', '', resolutions) });
 		expect(diagnosis.grammarDiagnostics.filter((record) => record.code === 'conflict-resolution')).toHaveLength(1);
+	});
+});
+
+describe('bound conflict records', () => {
+	const entry = (symbols: string[], sourceChains: string[][] = symbols.map((name) => [name])) => ({
+		resolution: { kind: 'AddConflict', symbols },
+		step: 'default',
+		sourceChains,
+		conflict: { symbolSequence: [], lookahead: '', interpretations: symbols }
+	});
+	const fixture = (boundResolutions: ReturnType<typeof entry>[]): Pick<RawGrammar, 'name' | 'derivationRecords' | 'renamedFrom'> => ({
+		name: 'g',
+		renamedFrom: { binding: 'let_item' },
+		derivationRecords: {
+			upstreamConflicts: [['parameter', 'identifier']],
+			sourceEdges: {},
+			resolutions: [entry(['let_item', 'call'])],
+			boundResolutions,
+			conflictsAuthored: false,
+			upstreamDynamicPrecedence: {},
+			dynamicPrecedence: {}
+		}
+	});
+
+	it('records one conflict-resolution per bound set, beside the base ones', () => {
+		const records = conflictRecords(fixture([entry(['this_parameter', 'identifier'])])).filter((record) => record.code === 'conflict-resolution');
+		expect(records.map((record) => record.details?.resolution)).toEqual([
+			{ kind: 'AddConflict', symbols: ['let_item', 'call'] },
+			{ kind: 'AddConflict', symbols: ['this_parameter', 'identifier'] }
+		]);
+	});
+
+	it('counts a bound set whose chain reaches an upstream set as needing it', () => {
+		const records = conflictRecords(fixture([entry(['this_parameter', 'identifier'], [['this_parameter', 'parameter'], ['identifier']])]));
+		expect(records.map((record) => record.code)).not.toContain('conflict-unnecessary-upstream');
+	});
+
+	it('names a bound set that a base set, renamed, already declares', () => {
+		const records = conflictRecords(fixture([entry(['call', 'binding']), entry(['this_parameter', 'identifier'])]));
+		const unnecessary = records.filter((record) => record.code === 'conflict-unnecessary-bound');
+		expect(unnecessary.map((record) => record.details?.symbols)).toEqual([['call', 'binding']]);
+		expect(unnecessary[0]).toMatchObject({ severity: 'info', canProceed: true });
 	});
 });
 

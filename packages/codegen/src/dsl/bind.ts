@@ -583,6 +583,19 @@ export function bindGrammar(grammar: GrammarRecord, grammarBindings: Bindings, e
 	);
 }
 
+export function baseNamesOf(
+	renamedFrom: Readonly<Record<string, string>> | undefined,
+	splitFrom: Readonly<Record<string, string>> | undefined
+): Record<string, string> {
+	const names = new Set([...Object.keys(renamedFrom ?? {}), ...Object.keys(splitFrom ?? {})]);
+	return Object.fromEntries(
+		[...names].flatMap((name) => {
+			const base = mappedName(renamedFrom, mappedName(splitFrom, name));
+			return base === name ? [] : [[name, base]];
+		})
+	);
+}
+
 export function boundNameOf(renamedFrom: Readonly<Record<string, string>> | undefined): (name: string) => string {
 	const bound = new Map(Object.entries(renamedFrom ?? {}).map(([to, from]) => [from, to]));
 	return (name) => bound.get(name) ?? name;

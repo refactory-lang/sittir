@@ -4607,10 +4607,11 @@ then `blankDeadEnrichMints`, which blanks the rules enrich
 added that the wired grammar never reaches, `attachDerivationRecords`,
 which records the upstream conflicts and each reshaped rule's upstream source
 for the conflict loop, and the imported resolutions and whether the config
-authors `conflicts` for the diagnostics, and last `applyConflictResolutions`, which sets the
-grammar's conflicts to the derived resolutions the config passes as
+authors `conflicts` for the diagnostics, then `applyConflictResolutions`, which sets the
+grammar's conflicts to the base resolutions the config passes as
 `resolutions` (each grammar imports its own `.sittir/resolutions.json`).
-Its grammar bindings (`bindings`) are applied after that (`bindGrammar`).
+Its grammar bindings (`bindings`) are applied after that (`bindGrammar`), and
+last `applyBoundConflictResolutions` appends the bound section's sets.
 Every `grammar.sittir.ts` and the bootstrap template call it as
 `export default sittirGrammar(base, { … })`.
 
@@ -4826,7 +4827,7 @@ a stamp made there would be lost. The stamp is the declaration link collects
 `hoistedKinds` from; enrich is one of its minting routes.
 
 
-A config may carry grammar bindings as `bindings` (`bind.ts::Bindings`). `checkBindingPatches` checks its alias patches against the enriched grammar, `withBindingPatches` joins its patch sets to wire's patch stage (base names, enriched paths), and after `applyConflictResolutions` the result's grammar goes through `bindGrammar` with the effects wire recorded (`wire.ts::wireBindingEffects`). Resolutions therefore stay in base names, and `bindGrammar`'s renames carry them along. Under an unbound evaluation (`UNBOUND_ENV`) the grammar bindings are skipped.
+A config may carry grammar bindings as `bindings` (`bind.ts::Bindings`). `checkBindingPatches` checks its alias patches against the enriched grammar, `withBindingPatches` joins its patch sets to wire's patch stage (base names, enriched paths), and after `applyConflictResolutions` the result's grammar goes through `bindGrammar` with the effects wire recorded (`wire.ts::wireBindingEffects`). The base resolutions therefore stay in base names, and `bindGrammar`'s renames carry them along. The bound sets, in bound names, are appended to the bound grammar after `bindGrammar`, with or without bindings, and the derivation records carry them as `boundResolutions`. Under an unbound evaluation (`UNBOUND_ENV`) the grammar bindings and the bound sets are both skipped, and the records carry no bound resolutions.
 
 ### `packages/codegen/src/dsl/enrich.ts::applyFieldWrapPasses`
 
@@ -7034,7 +7035,11 @@ One entry of `resolutions.json` as the derivation writes it: the AddConflict set
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::ConflictResolutionsFile`
 
-The shape of `.sittir/resolutions.json`. `grammarHash` is the hash of the evaluated grammar the resolutions were derived for, computed without its conflicts (`transpile/evaluate-for-derivation.ts::grammarHash`). It is the verified stamp: written only once the set has generated cleanly, so a file with a matching hash always held a set that built.
+The shape of `.sittir/resolutions.json`: two `ResolutionSection`s. The top-level one holds the base sets, derived against the grammar without its bindings and named in base names. `bound` holds the sets only the bound grammar needs, derived against the bound grammar and named in bound names. One store keeps both, so a grammar imports one file and the driver writes through one writer.
+
+### `packages/codegen/src/dsl/conflict-resolutions.ts::ResolutionSection`
+
+One derived resolution list and its stamp. `grammarHash` is the hash of the evaluated grammar the list was derived for, computed without its conflicts (`transpile/evaluate-for-derivation.ts::grammarHash`): the base grammar's for the base section, the bound grammar's for `bound`. It is the verified stamp: written only once the list has generated cleanly, so a section with a matching hash always held a list that built.
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::UNVERIFIED_GRAMMAR_HASH`
 
@@ -7042,7 +7047,7 @@ The hash of a resolution set no clean `generate` has confirmed: the seed, and ev
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::ConflictResolutionsInput`
 
-The resolutions a grammar passes to `sittirGrammar`: `ConflictResolutionRecord`s, so the JSON a grammar imports satisfies it as TypeScript infers it (string literals widen, so the file does not type as `ConflictResolutionsFile`).
+The resolutions a grammar passes to `sittirGrammar`, the base list and the `bound` section's list: `ConflictResolutionRecord`s, so the JSON a grammar imports satisfies it as TypeScript infers it (string literals widen, so the file does not type as `ConflictResolutionsFile`).
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::CONFLICT_RESOLUTIONS_FILE`
 
@@ -7050,11 +7055,15 @@ The file name under a package's `.sittir/` that holds the derived resolutions, a
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::EMPTY_CONFLICT_RESOLUTIONS`
 
-The resolutions of a grammar nothing has been derived for, carrying `UNVERIFIED_GRAMMAR_HASH`: the seed a new package's first bundle imports, and the starting point of every derivation.
+The resolutions of a grammar nothing has been derived for, both sections empty and carrying `UNVERIFIED_GRAMMAR_HASH`: the seed a new package's first bundle imports, and the starting point of every derivation.
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::applyConflictResolutions`
 
-Sets the grammar's final `conflicts` to the resolution sets, replacing whatever `grammar()` produced. Upstream's declared conflicts and anything an author wrote never reach the final list; every conflict the grammar keeps was derived. It runs last in `sittirGrammar`, so both runtimes see the same list.
+Sets the grammar's `conflicts` to the base resolution sets, replacing whatever `grammar()` produced. Upstream's declared conflicts and anything an author wrote never reach the final list; every conflict the grammar keeps was derived. It runs in `sittirGrammar` before `bindGrammar`, so the sets are in base names and the renames carry them; both runtimes see the same list.
+
+### `packages/codegen/src/dsl/conflict-resolutions.ts::applyBoundConflictResolutions`
+
+Appends the `bound` section's sets to the bound grammar's `conflicts`, after the renamed base sets. It runs after `bindGrammar`, so the sets name bound rules: a split clone, or a rule under its renamed name. A split clone gets its sets this way, by derivation on the bound grammar, and never by copying its origin's sets: a set that names a rule and its clone together, or a clone beside a rule its origin never met, exists only in the bound grammar's tables, so only generating the bound grammar finds it.
 
 
 ### `packages/codegen/src/dsl/enrich.ts::applyElidedListField`
@@ -7458,6 +7467,10 @@ The grammar with each placement split applied. The split kind is minted under it
 ### `packages/codegen/src/dsl/bind.ts::patchAliases`
 
 Every named alias of a symbol in a patch set, as `{ from, to }`, for `checkBindingPatches`.
+
+### `packages/codegen/src/dsl/bind.ts::baseNamesOf`
+
+The base name each bound name stands for, from the bound grammar's `renamedFrom` and `splitFrom` stamps: a clone resolves to its origin, then a renamed origin to its base name. Only names whose base name differs are kept, so a clone that reuses the very name a rename freed maps to nothing. The conflict derivation chains a bound name's sources through it (`transpile/derive-conflicts.ts::sourceChainOf`).
 
 ### `packages/codegen/src/dsl/bind.ts::boundNameOf`
 

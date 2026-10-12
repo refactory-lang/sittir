@@ -2,7 +2,7 @@ import { attachTextTokens, enrich, getEnrichTextTokens, type EnrichedGrammar, ty
 import { authoredFieldSites, authoredGroupBodies, wire, wireBindingEffects, type OptionsCheck, type PatchesCheck, type PatchesConfig, type WireConfig, type WiredOpts } from './wire/wire.ts';
 import { blankDeadEnrichMints, getDeadEnrichMints } from './wire/dead-mints.ts';
 import { attachDerivationRecords } from './wire/derivation-records.ts';
-import { applyConflictResolutions, type ConflictResolutionsInput } from './conflict-resolutions.ts';
+import { applyBoundConflictResolutions, applyConflictResolutions, type ConflictResolutionsInput } from './conflict-resolutions.ts';
 import type { OptionsConfig } from './wire/options-block.ts';
 import type { GrammarJson } from '../grammar-shapes/grammar-json.ts';
 import { bindGrammar, checkBindingPatches, markBindingSet, type Bindings } from './bind.ts';
@@ -31,7 +31,8 @@ export function sittirGrammar<B extends GrammarJson, const P = PatchesConfig<Enr
 	}
 ): GrammarResult {
 	const { resolutions, bindings: grammarBindings, ...wireConfig } = config;
-	const bindings = unboundRequested() ? undefined : grammarBindings;
+	const unbound = unboundRequested();
+	const bindings = unbound ? undefined : grammarBindings;
 	const enriched = enrich(base, { groupBodies: authoredGroupBodies(wireConfig.groups), extras: wireConfig.extras, fieldSites: authoredFieldSites(wireConfig.patches) });
 	const grammar = (globalThis as unknown as { grammar: GrammarFn }).grammar;
 	if (bindings?.patches !== undefined) checkBindingPatches(enriched, bindings.patches);
@@ -43,9 +44,13 @@ export function sittirGrammar<B extends GrammarJson, const P = PatchesConfig<Enr
 	attachTextTokens(result.grammar, [...getEnrichTextTokens(enriched).keys()].filter((name) => !dead.has(name)));
 	attachDerivationRecords(result.grammar, base, opts, {
 		resolutions: resolutions.resolutions,
+		boundResolutions: unbound ? [] : resolutions.bound.resolutions,
 		conflictsAuthored: wireConfig.conflicts !== undefined
 	});
 	applyConflictResolutions(result.grammar, resolutions);
-	if (bindings === undefined) return result;
-	return { ...result, grammar: bindGrammar(result.grammar as unknown as Record<string, unknown>, bindings, wireBindingEffects(opts)) } as GrammarResult;
+	if (unbound) return result;
+	const grammarRecord = result.grammar as unknown as Record<string, unknown>;
+	const bound = bindings === undefined ? grammarRecord : bindGrammar(grammarRecord, bindings, wireBindingEffects(opts));
+	applyBoundConflictResolutions(bound, resolutions);
+	return { ...result, grammar: bound } as GrammarResult;
 }
