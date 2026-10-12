@@ -54,10 +54,9 @@ export function hoistedCensus(model: CensusModel): HoistedCensus {
 	};
 }
 
-/** Every hoisted kind of the model, list kinds included. */
-export function hoistedKindCount(model: CensusModel): number {
-	const nodes = Array.isArray(model.nodes) ? model.nodes : Object.values(model.nodes);
-	return nodes.filter((n) => n.seated === true).length;
+/** Every kind of the model. */
+export function kindCount(model: CensusModel): number {
+	return (Array.isArray(model.nodes) ? model.nodes : Object.values(model.nodes)).length;
 }
 
 export interface HoistedCensusOptions {
