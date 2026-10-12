@@ -48,27 +48,13 @@ Merges the base ref into the current branch and resolves the one conflict class 
 
 The repository's `SyncBaseTarget`: every registered grammar's generated roots (stable or not: regex and scm are verified too) and a `verify` that is `verifyManifestForGrammar(...).ok` and a `regenerate` that runs `gen --grammar <name> --all` in a fresh process, the way `pnpm run regen:all` does.
 
-### `packages/tools/src/scripts/check-baseline-regression.ts::departureExplainsDrop`
+### `packages/tools/src/scripts/check-baseline-regression.ts::failuresDidNotRise`
 
-Whether a pass-count drop of one validator is a kind leaving and not a failure. It holds when at least one kind left the grammar's direct-render set (`departedKindCount`), the validator's own fail count (`total - pass`) did not rise, and the drop is within the validator's bound in `DEPARTURE_EXPLAINED_DROP`.
-
-### `packages/tools/src/scripts/check-baseline-regression.ts::departedKindCount`
-
-A lower bound on how many kinds left a grammar's direct-render set between the base and head baselines: the larger of the rise in `supertypeKindCount` (a kind that became a supertype has no template and no raw builder of its own) and the fall in `hoistedKindCount` (a seated kind that is no longer minted takes its cases with it). Each term counts only in its own direction, so a fall in supertypes or a rise in hoisted kinds adds nothing.
-
-The terms are not summed. `hoistedKindCount` counts seated kinds, and a parser supertype is never seated, so one seated kind that becomes a supertype raises the first count and lowers the second. Counts alone cannot tell that one kind from two kinds leaving separately, so the bound takes the smaller reading and a larger drop stays unexplained.
-
-The two counts are read differently when the base lacks them. A base without `supertypeKindCount` reads as 0, because only the rise matters. A fall cannot be read from one count, so a base without `hoistedKindCount` contributes nothing and the drop stays unexplained: the fact has to be in the base baseline before a change can lean on it.
-
-Both counts are checked by `validateBaselineShape` before any arithmetic: each is a non-negative integer or absent, on the base and on the head. A count of another type would make the departed count `NaN`, and every comparison against `NaN` is false, which would let a drop of any size through.
+Whether a drop in one validator's `pass` (or `astMatchPass`) is no new failure: the validator's fail count (`total - metric`) did not rise. A kind that leaves the grammar takes its cases from the total and the pass count together, so the fail count stays where it was and the drop passes; a case that went red leaves the total unchanged and raises the fail count by the drop, so it fails. This is the one rule for a pass-count drop: the verdict ratchets failures, and pass where the total is unchanged. The recorded `hoistedKindCount` and `supertypeKindCount` are no longer read by the verdict; `validateBaselineShape` still checks each is a non-negative integer or absent.
 
 ### `packages/tools/src/scripts/check-baseline-regression.ts::baseValidators`
 
 The validators a base baseline is checked and compared on: those it records. A validator a change adds has no base to regress from, so the base may lack it, as it may lack a grammar new to head. Head is always checked for every validator.
-
-### `packages/tools/src/scripts/check-baseline-regression.ts::DEPARTURE_EXPLAINED_DROP`
-
-The validators whose pass count may fall when kinds leave the direct-render set, each with the largest drop a given `departedKindCount` explains. `coverage`, `factoryStorage` and `builtRenderParse` are unbounded: a departed kind has no template and no raw builder, and one kind can remove several cases there. `from` is bounded by the count: a departed kind removes exactly one `from` case, its own, so a larger drop is not explained by it. A validator not listed (`roundtrip`) is never exempt.
 
 ### `packages/tools/src/scripts/collect-baseline.ts::GrammarEntry.hoistedKindCount`
 

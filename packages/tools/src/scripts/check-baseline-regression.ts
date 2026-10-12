@@ -15,16 +15,11 @@
  *      factoryStorage,builtRenderParse}.pass`, `validators.{roundtrip,
  *      factoryStorage,builtRenderParse}.astMatchPass`, `parityFixtures.pass`,
  *      per grammar, for each validator the base records (a validator the
- *      change adds has no base). This is what
- *      actually guards regressions; rule 2 below is a coarser tripwire on
- *      top of it. `coverage`/`factoryStorage`/`builtRenderParse`/`from` are exempt
- *      from this floor when the drop is explained by kinds leaving that
- *      grammar's direct-render set (`supertypeKindCount` rising: a kind
- *      losing its own render/factory path by becoming a supertype; or
- *      `hoistedKindCount` falling: a hoisted kind leaving the grammar)
- *      AND that validator's own fail count did not rise; a `from` drop
- *      may be no larger than the number that left — see
- *      `departureExplainsDrop`. The
+ *      change adds has no base). A drop that leaves the validator's fail
+ *      count (`total - pass`) from rising is no new failure: a kind that
+ *      leaves the grammar takes its cases from the total and the pass
+ *      count together. This is what actually guards regressions; rule 2
+ *      below is a coarser tripwire on top of it. The
  *      aggregate `totals.pass`/`totals.fail`/`totals.total` relationship
  *      is rule 2/3's job, not re-checked here.
  *   2. Total drop — `totals.total` decreased AND `totals.fail` changed
@@ -445,62 +440,18 @@ function validateBaselineShape(b: unknown, label: string): RegressionVerdict | n
 // ---------------------------------------------------------------------------
 
 /**
- * `coverage`, `factoryStorage` and `builtRenderParse` are validators whose
- * denominator is tied to how many kinds have their own direct render
- * path: `validate-template-coverage`'s own `subtypes.length > 0` guard
- * skips a supertype (no template of its own to check), and a supertype
- * likewise has no raw builder for `factoryStorage` or `builtRenderParse` to exercise. A kind
- * crossing into that guard, or a hoisted kind leaving the grammar,
- * shrinks the denominator without touching the pass RATE — it isn't a
- * new failure.
- */
-const DEPARTURE_EXPLAINED_DROP: Partial<Record<ValidatorName, (departedKinds: number) => number>> = {
-	coverage: () => Infinity,
-	factoryStorage: () => Infinity,
-	builtRenderParse: () => Infinity,
-	from: (departedKinds) => departedKinds
-};
-
-/**
- * How many kinds left the grammar's direct-render set between two
- * baselines, at least: the larger of the rise in `supertypeKindCount`
- * and the fall in `hoistedKindCount`. A seated kind that becomes a
- * supertype moves both counts, so they are not summed. A base file
- * committed before `supertypeKindCount` existed reads as 0 — only the
- * rise matters. A fall cannot be read that way, so a base without
- * `hoistedKindCount` contributes nothing.
- */
-function departedKindCount(baseGrammar: GrammarEntry, headGrammar: GrammarEntry): number {
-	const supertypeRise = (headGrammar.supertypeKindCount ?? 0) - (baseGrammar.supertypeKindCount ?? 0);
-	const hoistedFall =
-		baseGrammar.hoistedKindCount === undefined || headGrammar.hoistedKindCount === undefined
-			? 0
-			: baseGrammar.hoistedKindCount - headGrammar.hoistedKindCount;
-	return Math.max(supertypeRise, hoistedFall, 0);
-}
-
-/**
  * Whether a drop in one metric (`pass` or, for a roundtrip validator,
- * `astMatchPass`) of `vName` for this grammar is explained by kinds
- * leaving the direct-render set rather than a new failure: at least one
- * kind left (`departedKindCount`), AND the validator's own fail count
- * (`total - metric`) did not rise — the drop is fully accounted for by
- * fewer cases needing that path, not by any of them going red.
+ * `astMatchPass`) of a validator is no new failure: its fail count
+ * (`total - metric`) did not rise. A kind that leaves the grammar takes its
+ * cases from the total and the pass count together, so the fail count stays
+ * where it was; a case that went red leaves the total and raises the fail
+ * count by the drop. The verdict ratchets failures, and pass where the
+ * total is unchanged (there a drop is the same number of new failures).
  */
-function departureExplainsDrop(
-	baseGrammar: GrammarEntry,
-	headGrammar: GrammarEntry,
-	vName: ValidatorName,
-	metric: 'pass' | 'astMatchPass'
-): boolean {
-	const largestExplainedDrop = DEPARTURE_EXPLAINED_DROP[vName];
-	if (largestExplainedDrop === undefined) return false;
-	const departed = departedKindCount(baseGrammar, headGrammar);
-	if (departed <= 0) return false;
-	const b = baseGrammar.validators[vName] as RoundtripResult;
-	const h = headGrammar.validators[vName] as RoundtripResult;
-	if (b[metric] - h[metric] > largestExplainedDrop(departed)) return false;
-	return h.total - h[metric] <= b.total - b[metric];
+function failuresDidNotRise(b: ValidatorResult, h: ValidatorResult, metric: 'pass' | 'astMatchPass'): boolean {
+	const before = b as RoundtripResult;
+	const after = h as RoundtripResult;
+	return after.total - after[metric] <= before.total - before[metric];
 }
 
 function passCountFail(path: string, before: number, after: number): RegressionVerdict {
@@ -553,14 +504,14 @@ function checkPassCounts(base: BackendBaseline, head: BackendBaseline): Regressi
 			const b = baseGrammar.validators[vName] as ValidatorResult;
 			const h = headGrammar.validators[vName] as ValidatorResult;
 			const path = `grammars.${g}.validators.${vName}.pass`;
-			if (h.pass < b.pass && !departureExplainsDrop(baseGrammar, headGrammar, vName, 'pass')) {
+			if (h.pass < b.pass && !failuresDidNotRise(b, h, 'pass')) {
 				return passCountFail(path, b.pass, h.pass);
 			}
 			if (ROUNDTRIP_VALIDATORS.includes(vName)) {
 				const br = b as RoundtripResult;
 				const hr = h as RoundtripResult;
 				const astPath = `grammars.${g}.validators.${vName}.astMatchPass`;
-				if (hr.astMatchPass < br.astMatchPass && !departureExplainsDrop(baseGrammar, headGrammar, vName, 'astMatchPass')) {
+				if (hr.astMatchPass < br.astMatchPass && !failuresDidNotRise(br, hr, 'astMatchPass')) {
 					return passCountFail(astPath, br.astMatchPass, hr.astMatchPass);
 				}
 			}
