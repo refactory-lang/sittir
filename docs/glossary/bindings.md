@@ -271,6 +271,10 @@ One vocabulary interface as the pinned child reports it: its scoped name, its pa
 
 The vocabulary interfaces one file declares (`VocabularyDeclaration`), read by the pinned build's TypeScript engine through its typed nodes. It runs in the pinned child (`pinned-reader.child.ts::READS`), never in the workspace process, and imports `@sittir/typescript` for types only. A file that does not parse cleanly is refused, never read from what the parser recovered: a recovered tree can turn a member into a different one (the TypeScript grammar does not parse an optional property named `abstract` without `readonly`). Every name it reads is compared as written, so a name spelled with an escape (`Fla\u0067` for `Flag`) is refused rather than read as a different name.
 
+### `packages/codegen/src/bindings/pinned-vocabulary.ts::identifier`
+
+A member's or namespace's name as written, refused unless it is a plain identifier (a keyword such as `static` included): a quoted or computed name would otherwise be read with its quotes or brackets as a different name.
+
 ### `packages/codegen/src/bindings/pinned-vocabulary.ts::typescriptReader`
 
 The pinned TypeScript package's kinds and engine, with the pinned build they come from, loaded once per child and shared by every read; a failed load is forgotten so the next read tries again.

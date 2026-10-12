@@ -79,4 +79,19 @@ describe('readVocabulary', () => {
 	it('refuses a file that does not parse cleanly rather than reading what the parser recovered', async () => {
 		await expect(vocabularyIn("interface Declaration<G> { $kind: 'declaration'; abstract?: Flag; accessor?: Flag; }")).rejects.toThrow(/declaration\.ts: .*parse/is);
 	});
+
+	it('reads a member named by a keyword like any other', async () => {
+		const vocabulary = await vocabularyIn('export interface Declaration<G> {', "\treadonly $kind: 'declaration';", '\treadonly static?: Flag;', '\treadonly type: string;', '}');
+		expect([...vocabulary.members('declaration')]).toEqual([
+			['static', { optional: true, flag: true }],
+			['type', { optional: false, flag: false }]
+		]);
+	});
+
+	it('refuses a member or namespace not named by a plain identifier', async () => {
+		const declaration = (member: string) => ['export interface Declaration<G> {', "\treadonly $kind: 'declaration';", `\t${member}`, '}'];
+		await expect(vocabularyIn(...declaration("readonly 'async'?: Flag;"))).rejects.toThrow(/'async'.*identifier/);
+		await expect(vocabularyIn(...declaration('readonly [key]?: Flag;'))).rejects.toThrow(/\[key\].*identifier/);
+		await expect(vocabularyIn("declare module 'quoted' { interface Inner<G> { readonly $kind: 'inner'; } }")).rejects.toThrow(/'quoted'.*identifier/);
+	});
 });

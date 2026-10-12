@@ -39,6 +39,12 @@ interface Source {
 	readonly text: (item: object | number) => string;
 }
 
+function identifier(name: { readonly $type: number } | number, kinds: readonly number[], source: Source): string {
+	const spelled = source.text(name);
+	if (typeof name !== 'number' && !kinds.includes(name.$type)) throw new Error(`vocabulary: ${spelled} is not a plain identifier; name members and namespaces by identifiers`);
+	return spelled;
+}
+
 export async function vocabularyDeclarationsInProcess(code: string): Promise<VocabularyDeclaration[]> {
 	const { K, engine, pinned } = await typescriptReader();
 	const slice = pinned.common.spanSlicer(code);
@@ -80,12 +86,12 @@ function unwrap(node: Wrapped, K: Kinds): Exclude<Wrapped, number | undefined> |
 }
 
 function collect(statements: readonly Statement[], scope: readonly string[], out: VocabularyDeclaration[], source: Source): void {
-	const { K, text } = source;
+	const { K } = source;
 	for (const statement of statements) {
 		const node = unwrap(statement, K);
 		if (node === undefined) continue;
 		if (node.$type === K.InternalModule || node.$type === K.Module) {
-			collect(node.body()?.statements() ?? [], [...scope, text(node.name())], out, source);
+			collect(node.body()?.statements() ?? [], [...scope, identifier(node.name(), [K.Identifier, K.NestedIdentifier], source)], out, source);
 			continue;
 		}
 		if (node.$type === K.InterfaceDeclaration) declare(node, scope, out, source);
@@ -98,7 +104,7 @@ function declare(declaration: InterfaceDeclaration.Parsed, scope: readonly strin
 	const own: [string, VocabularyMember][] = [];
 	for (const member of declaration.body().content()?.members() ?? []) {
 		if (member.$type !== K.PropertySignature) continue;
-		const name = text(member.name());
+		const name = identifier(member.name(), [K.PropertyIdentifier], source);
 		const annotation = member.type()?.type();
 		const type = isNode(annotation) ? annotation : undefined;
 		if (name === '$kind') {
