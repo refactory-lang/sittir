@@ -136,15 +136,15 @@ grammar through Node, and sittir's codegen evaluated it before refusing the list
   - the parser's defines and the fields of the parameter kinds (`stats.py`);
   - each sample's parameter list as the generated parser reads it (`samples.mts`). It needs only
     the parser, so it runs when codegen refuses;
-  - codegen's blocking diagnostics;
+  - from the gen log, which the repository ignores (`*.log`), codegen's blocking diagnostics with
+    the error the run stopped on, and the conflict lines (`extract.py`);
   - when codegen accepts, the generated sizes and the `validate counts` rows.
 - `run.sh` declares the mode's conflict sets (`<grammar>-<mode>-conflicts.json`) through the
   hook, unless `CONFLICTS` is empty. `ALLOW` passes one blocking diagnostic to
   `gen --allow-diagnostic`.
 - `conflicts.py` found typescript's four sets. It runs `tree-sitter generate`, adding the set each
   conflict report suggests, until the grammar generates.
-- `results/` holds each run's output as `<grammar>-<what>-<mode>`. In the logs, the worktree's
-  path reads `<worktree>`.
+- `results/` holds each run's output as `<grammar>-<what>-<mode>`.
 
 Modes:
 - `base`: the committed grammar.
@@ -203,7 +203,8 @@ The four sets (`typescript-lead-conflicts.json`):
 - `_parameter_name_receiver`, `primary_expression`, `primary_type`.
 
 With them, tree-sitter warns that three of the 60 resolutions' sets are unnecessary:
-`_parameter_name` with `primary_expression`, with `primary_type`, and with both.
+`_parameter_name` with `primary_expression`, with `primary_type`, and with both
+(`typescript-conflicts-lead.txt`).
 
 ### Samples
 
@@ -248,13 +249,13 @@ Typescript (`typescript-samples-*.txt`):
      - in typescript, `dropped-token`: the compound's template has no place for `,`, so a parsed
        list renders without its commas;
      - in rust, `options.rs` throws: the address `attributed_parameter/after` names two sites, the
-       receiver's and the item's.
+       receiver's and the item's (`rust-diagnostics-lead-floored.txt`).
    - The prototype first split at the owner, `parameters`. Codegen refused that as
      `unclassifiable-shape`: a choice with structured arms. That run is not kept.
 
    So no validation row can be measured until the model has the shape (question 16).
 4. **The conflict driver cannot derive the split's conflicts.** Without its four sets, typescript
-   stops with `conflict-resolutions-stale` (`typescript-gen-lead-undeclared.log`): "the saved
+   stops with `conflict-resolutions-stale` (`typescript-diagnostics-lead-undeclared.txt`): "the saved
    resolutions carry the current grammar hash but no longer generate cleanly; tree-sitter reports
    a conflict on '(' after '(' 'readonly'". Three facts give that:
    - the driver derives on the unbound grammar, and only checks the bound one;
