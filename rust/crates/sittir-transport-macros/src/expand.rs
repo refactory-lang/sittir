@@ -796,10 +796,31 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                 ::core::result::Result::Err(__rt::ReadError::Unrouted { kind: __KIND, child: child.grammar, index: child.index })
             }
         },
-        read: quote! {
+        read: {
+            let unit_slots = if idxs.is_empty() {
+                quote!()
+            } else {
+                quote!(let mut __unit_slots: ::std::vec::Vec<u16> = ::std::vec::Vec::new();)
+            };
+            let unit_positions = if idxs.is_empty() {
+                quote!()
+            } else {
+                quote! {
+                    let mut __unit_slot = __unit_slots.into_iter();
+                    __units.retain_mut(|__unit| {
+                        let __position = match __unit_slot.next() {
+                            #(::core::option::Option::Some(#idxs) => <#tys as __rt::ReadSlot>::position(&#accs, __unit.item),)*
+                            _ => ::core::option::Option::Some(__unit.item),
+                        };
+                        __position.map(|__item| __unit.item = __item).is_some()
+                    });
+                }
+            };
+            quote! {
             #pass
             #(let mut #accs = <#tys as __rt::ReadSlot>::start();)*
             let mut __units = ::std::vec::Vec::new();
+            #unit_slots
             let mut __items = [0u32; #slot_count];
             if cursor.goto_first_child() {
                 let mut i = 0usize;
@@ -807,6 +828,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                     match routes[i] {
                         #(__rt::Route::Slot { slot: #idxs, scalar } => {
                             let __child = __rt::index_of(cursor);
+                            let __arrival = <#tys as __rt::ReadSlot>::arrival(&#accs, __items[#idxs as usize]);
                             <#tys as __rt::ReadSlot>::take(
                                 &mut #accs,
                                 cursor,
@@ -816,7 +838,8 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                             )?;
                             if scalar {
                                 if let ::core::option::Option::Some(trivia) = ctx.unit_sides(__child, depth) {
-                                    __units.push(::sittir_core::layout::UnitSides { slot: ::std::string::String::from(#keys), item: __items[#idxs as usize], trivia });
+                                    __units.push(::sittir_core::layout::UnitSides { slot: ::std::string::String::from(#keys), item: __arrival, trivia });
+                                    __unit_slots.push(#idxs);
                                 }
                             }
                             __items[#idxs as usize] += 1;
@@ -831,7 +854,9 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                 }
                 cursor.goto_parent();
             }
+            #unit_positions
             ::core::result::Result::Ok(Self { #(#inits)* })
+            }
         },
     })
 }

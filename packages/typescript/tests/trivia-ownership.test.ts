@@ -55,3 +55,32 @@ describe("a unit child's comment renders once and follows the unit through a lis
 		expect(root.$with.statements(...[...statements].reverse()).$render()).toBe('// B\ndebugger;\n// A\n;\n');
 	});
 });
+
+describe('unit items keep their own comments in an array', () => {
+	function arrayOf(source: string) {
+		const root = ts.parse(source);
+		const [statement] = root.statements();
+		if (statement === undefined || typeof statement === 'number' || !ts.is.expressionStatement(statement)) throw new Error('expected an expression statement');
+		const array = statement.expression();
+		if (!ts.is.array(array)) throw new Error('expected an array');
+		return { root, array };
+	}
+
+	it('swaps two different units with their comments', () => {
+		const { array } = arrayOf('[/* A */ true, /* B */ false];\n');
+		const elements = array.elements().filter((element) => element !== undefined);
+		expect(array.$with.elements(...elements.reverse()).$render()).toBe('[/* B */ false, /* A */ true]');
+	});
+
+	it('counts the holes of a sparse array, at its start and between items', () => {
+		for (const [source, rebuilt] of [
+			['[, /* A */ null, /* B */ true];\n', '[, /* A */ null, /* B */ true]'],
+			['[/* A */ null, , /* B */ true];\n', '[/* A */ null,, /* B */ true]']
+		] as const) {
+			const { root, array } = arrayOf(source);
+			// `elements()` reads a hole as `undefined`, which `$with.elements` takes at runtime but not in its type.
+			expect(array.$with.elements(...(array.elements() as never[])).$render()).toBe(rebuilt);
+			expect(ts.render(root.$snapshot()).toString()).toBe(`${rebuilt};\n`);
+		}
+	});
+});

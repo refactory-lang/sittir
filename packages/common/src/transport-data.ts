@@ -253,8 +253,10 @@ function itemIdentity(item: unknown): string | undefined {
 
 /**
  * The new position of each item of `before` that `after` keeps: the common subsequence of their
- * identities (`itemIdentity`) that keeps the most units, and of those the most nodes. A unit's
- * sides need the alignment, since a unit has no identity of its own; a node's sides are its own.
+ * identities (`itemIdentity`) that keeps the most units, and of those the most nodes; then each
+ * unit it leaves out pairs, in order, with a left-out unit of its kind in `after`, so units that
+ * crossed keep their place. A unit's sides need the alignment, since a unit has no identity of
+ * its own; a node's sides are its own.
  */
 function alignedItems(before: readonly unknown[], after: readonly unknown[]): ReadonlyMap<number, number> {
 	const from = before.map(itemIdentity);
@@ -291,6 +293,19 @@ function alignedItems(before: readonly unknown[], after: readonly unknown[]): Re
 		} else if (length(i + 1, j) >= length(i, j + 1)) i += 1;
 		else j += 1;
 	}
+	const placed = new Set(aligned.values());
+	const free = new Map<string, number[]>();
+	to.forEach((identity, j) => {
+		if (identity === undefined || typeof after[j] !== 'number' || placed.has(j)) return;
+		const open = free.get(identity);
+		if (open === undefined) free.set(identity, [j]);
+		else open.push(j);
+	});
+	from.forEach((identity, i) => {
+		if (identity === undefined || typeof before[i] !== 'number' || aligned.has(i)) return;
+		const j = free.get(identity)?.shift();
+		if (j !== undefined) aligned.set(i, j);
+	});
 	return aligned;
 }
 

@@ -399,7 +399,7 @@ What a slot item is the same item by across a rebuild: a unit by its kind, a rea
 
 ### `packages/common/src/transport-data.ts::alignedItems`
 
-The new position of each source item a rebuilt slot keeps: a common subsequence of the two slots' identities, trimmed of their common prefix and suffix first, that keeps the most units and, of those, the most nodes. Units weigh more than every node together because only a unit needs the alignment to keep its sides; a node frames itself with its own. Two items swapped keep the unit's sides on the unit.
+The new position of each source item a rebuilt slot keeps: a common subsequence of the two slots' identities, trimmed of their common prefix and suffix first, that keeps the most units and, of those, the most nodes. Units weigh more than every node together because only a unit needs the alignment to keep its sides; a node frames itself with its own. A common subsequence keeps order, so of two units that crossed it keeps one; each unit it left out then pairs, in order, with a left-out unit of its kind among the new items, and two different units that swapped places both keep their sides.
 
 ### `packages/common/src/transport-data.ts::KindView`
 

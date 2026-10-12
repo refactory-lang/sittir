@@ -676,6 +676,18 @@ pub trait ReadSlot: Sized {
     fn separator(acc: &mut Self::Acc, tagged: bool) {
         let _ = (acc, tagged);
     }
+    /// Where the next child taken arrives, `taken` children having been
+    /// taken: its item in the finished slot unless `position` moves it.
+    fn arrival(acc: &Self::Acc, taken: u32) -> u32 {
+        let _ = acc;
+        taken
+    }
+    /// The item in the finished slot of the child that arrived at
+    /// `arrival`; `None` when finishing drops it.
+    fn position(acc: &Self::Acc, arrival: u32) -> Option<u32> {
+        let _ = acc;
+        Some(arrival)
+    }
     fn finish(acc: Self::Acc, at: SlotSite) -> Result<Self, ReadError>;
 }
 
@@ -788,6 +800,24 @@ impl<V> Elided<V> {
             self.items.push(None);
         }
     }
+    /// Where the next item pushed arrives: after every item and hole so far.
+    pub fn arrival(&self) -> u32 {
+        self.items.len() as u32
+    }
+
+    /// The position in `positions` of the item that arrived at `arrival`:
+    /// its own index when no separator made a hole, else its segment's,
+    /// when it is the segment's first item; `None` for a later one.
+    pub fn position(&self, arrival: u32) -> Option<u32> {
+        if self.items.iter().all(Option::is_some) {
+            return Some(arrival);
+        }
+        let before = self.items.get(..arrival as usize)?;
+        let segment = before.iter().filter(|item| item.is_none()).count() as u32;
+        let first = before.last().is_none_or(Option::is_none);
+        first.then_some(segment)
+    }
+
     pub fn positions(self) -> Vec<Option<V>> {
         if self.items.iter().all(Option::is_some) {
             return self.items;
@@ -822,6 +852,12 @@ impl<T: ReadTransport, const A: bool> ReadSlot for Vec<Option<SlotValue<T, A>>> 
     fn separator(acc: &mut Self::Acc, tagged: bool) {
         acc.separator(tagged);
     }
+    fn arrival(acc: &Self::Acc, _: u32) -> u32 {
+        acc.arrival()
+    }
+    fn position(acc: &Self::Acc, arrival: u32) -> Option<u32> {
+        acc.position(arrival)
+    }
     /// An empty list is `[]`.
     fn finish(acc: Self::Acc, _at: SlotSite) -> Result<Self, ReadError> {
         Ok(acc.positions())
@@ -840,6 +876,12 @@ impl<T: ReadTransport, const A: bool> ReadSlot for crate::NonEmptyVec<Option<Slo
     }
     fn separator(acc: &mut Self::Acc, tagged: bool) {
         acc.separator(tagged);
+    }
+    fn arrival(acc: &Self::Acc, _: u32) -> u32 {
+        acc.arrival()
+    }
+    fn position(acc: &Self::Acc, arrival: u32) -> Option<u32> {
+        acc.position(arrival)
     }
     fn finish(acc: Self::Acc, at: SlotSite) -> Result<Self, ReadError> {
         Self::try_from(acc.positions()).map_err(|crate::non_empty::EmptyList| missing(at))
