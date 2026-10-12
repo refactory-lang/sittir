@@ -39,9 +39,8 @@ parents.
 ```text
 /**
 	 * `grammar.normalizedRules` — the wrapper-deleted `RenderRule` view. The
-	 * hidden-body/subtype-resolution family's map source (see class doc
-	 * comment's PR-137 follow-on-4 correction for why `rules`/`SimplifiedRule`
-	 * is NOT safe here: simplify's independent structural canonicalization —
+	 * hidden-body/subtype-resolution family's map source (see the class doc
+	 * comment for why `rules`/`SimplifiedRule` is NOT safe here: simplify's independent structural canonicalization —
 	 * beyond wrapper-deletion — can unmask an intentionally opaque SEQ shape
 	 * into a dispatchable one, corrupting the family's "unresolvable → keep
 	 * the hidden name" fallback for polymorph-variant-adopted arms). Modifier
@@ -148,8 +147,8 @@ Stamps each external's declared structural-whitespace role (`externalRoles`) on 
 
 ```text
 // `rules[kind]` (SimplifiedGrammar's phase product) and `normalizedRules[kind]`
-// are both pre-computed by normalize — alias-body kinds are now also
-// snapshotted there (PR2 Task 3.B-prereq-alias).
+// are both pre-computed by normalize — alias-body kinds are snapshotted
+// there too.
 ```
 
 #### body
@@ -235,9 +234,8 @@ Stamps each external's declared structural-whitespace role (`externalRoles`) on 
 #### body
 
 ```text
-// SUPERTYPE-parent EXCEPTION (Task 1: now reads the DECLARED fact, not
-// the wire channel — see the research doc's "V2 OUTCOME" section and
-// `RuleBase.variantArms`'s doc comment, types/rule.ts): a
+// SUPERTYPE-parent EXCEPTION (it reads the DECLARED fact, not the wire
+// channel — see `RuleBase.variantArms`'s doc comment, types/rule.ts): a
 // SUPERTYPE-classified parent (python's `_simple_pattern` / its
 // `negative` arm) has NO reproduction in
 // `deriveStructuralVariantChildren` — link's `classifyHiddenChoiceRule`
@@ -623,7 +621,7 @@ Every node also gets the key it resolved to as its `typeKey`: the key the engine
 // (`resolveHiddenSubtypes`'s `resolved.length === 0` branch) is what
 // correctly preserves such a kind's OWN name as its subtype/alias-
 // member entry, instead of flattening it into its inner leaf types.
-// This was the exact PR-137 follow-on-4 finding: on `ctx.rules`
+// On `ctx.rules`
 // (SimplifiedRule), `simplifySeqRule`'s anonymous-literal stripping +
 // single-member-seq collapse turns this same SEQ into a bare
 // `CHOICE(integer, float)` — a shape the CHOICE case above DOES
@@ -701,9 +699,10 @@ Every node also gets the key it resolved to as its `typeKey`: the key the engine
  *       supertype: a whitespace kind is chosen through an options address,
  *       never authored, so it has no IR builder, coercion or factory entry.
  *
- * Per principle #14, `userFacing` is cross-node state (whether THIS hidden
- * kind appears in ANOTHER node's slot, or in the `polymorphVariants` list),
- * so it MUST be a `(node, ctx)` pass — never a getter-with-arg. Emitters read
+ * `userFacing` is cross-node state (whether THIS hidden kind appears in
+ * ANOTHER node's slot, or in the `polymorphVariants` list), and cross-node
+ * state lives on the phase ctx, so it MUST be a `(node, ctx)` pass — never a
+ * getter-with-arg. Emitters read
  * the populated `node.userFacing` field; no read-site changes needed.
  *
  * @param node - The node to mark; `node.userFacing` is written in place.
@@ -1303,9 +1302,8 @@ The classification left after every structural check: an all-text subtree is `'p
 ```text
 // buildSlot's `rule` param is AnyRule but is, at runtime, always the
 // post-wrapper-deletion (link-derived) shape deriveValuesForRule expects —
-// same phase-widening read as isSlotNode above (post-PR-S, RepeatRule's
-// per-phase shapes genuinely diverge, so this is now an explicit cast
-// rather than a structural coincidence).
+// same phase-widening read as isSlotNode above (RepeatRule's per-phase
+// shapes genuinely diverge, so this is an explicit cast).
 ```
 
 #### body
@@ -1334,7 +1332,7 @@ The classification left after every structural check: an all-text subtree is `'p
 
 ```text
 // `sep` is always the nested {value, trailing?, leading?} object (or
-// undefined) post-PR-S — no more string/array shapes to type-dispatch on.
+// undefined) — no string/array shapes to type-dispatch on.
 // OR with `findRepeatFlag`'s full-tree walk as a fallback for shapes `sep`
 // (own separator ?? inheritedSeparator ?? nested-arm scan) didn't reach.
 // `isSeparatedListShape` (assemble.ts) only routes a rule to
@@ -2867,8 +2865,8 @@ renders with, not the fallback an unstamped list reports.
 #### body
 
 ```text
-// Diagnostics accumulator for the Assemble→Project gate. PR-H: threaded
-// into phase contexts so pipeline diagnostics flow here.
+// Diagnostics accumulator for the Assemble→Project gate, threaded into
+// phase contexts so pipeline diagnostics flow here.
 ```
 
 #### body
@@ -2973,9 +2971,8 @@ renders with, not the fallback an unstamped list reports.
 #### body
 
 ```text
-// Assemble→Project gate. Inert until PR-L: nothing emits `fail`, so the
-// sink is empty and this never throws. Threading real diagnostics into
-// `diagnostics` is PR-H's job (phase contexts).
+// Assemble→Project gate. Nothing emits `fail` yet, so the sink is empty
+// and this never throws.
 ```
 
 #### body
@@ -4362,8 +4359,8 @@ Why one group lift cannot apply, or `undefined` when it can. A path the resolver
 
 ```text
 // Work on a shallow copy — we mutate entries and delete keys.
-// ctx is currently unused-but-uniform: it is threaded so the
-// future trace wrapper (#14) can intercept all normalize passes.
+// ctx is currently unused-but-uniform: it is threaded so a trace
+// wrapper can intercept all normalize passes.
 ```
 
 ### `packages/codegen/src/compiler/normalize.ts::iterateInliningToFixedPoint`
@@ -4406,16 +4403,14 @@ Why one group lift cannot apply, or `undefined` when it can. A path the resolver
  *
  * Skips rules that already have a classification wrapper (enum, supertype,
  * group) — those are structural but Assemble has dedicated classifiers.
- * PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
- * (Formerly exported from `link.ts`; moved here since this is its only caller.)
  */
 ```
 
 #### body
 
 ```text
-// ENUM case removed — isEnumChoiceRule guard in CHOICE arm handles this. PR-P Task
-// 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
+// Enum-shaped choices are handled by the isEnumChoiceRule guard in the CHOICE
+// arm; there is no TERMINAL rule type.
 ```
 
 ```text
@@ -4487,10 +4482,10 @@ Why one group lift cannot apply, or `undefined` when it can. A path the resolver
 #### body
 
 ```text
-// rule.type === ENUM replaced with isEnumChoiceRule. PR-P Task 2: rule.type === TERMINAL
-// replaced with isTerminalShape — TerminalRule deleted; terminal-shape rules now classify
-// by shape at Assemble, but must still be preserved during normalize so they remain
-// top-level kinds for Assemble to dispatch on.
+// Enum choices are recognized by isEnumChoiceRule and terminal shapes by
+// isTerminalShape: terminal-shape rules classify by shape at Assemble, but must
+// be preserved during normalize so they remain top-level kinds for Assemble to
+// dispatch on.
 ```
 
 ### `packages/codegen/src/compiler/normalize.ts::spliceHiddenRuleIntoSingleParent`
@@ -4901,7 +4896,7 @@ The shell declares no file types (`NO_FILE_TYPES`) and no name: it stands in for
 #### body
 
 ```text
-// Soundness guard (#171): merging unions each position INDEPENDENTLY,
+// Soundness guard: merging unions each position INDEPENDENTLY,
 // which is only sound when at most one position actually varies across
 // branches. Two or more co-varying positions are correlated by branch
 // construction (e.g. a string rule's opening/contents/closing arms) —
@@ -4981,7 +4976,7 @@ The shell declares no file types (`NO_FILE_TYPES`) and no name: it stands in for
 ```text
 /**
  * Recurse into every descendant exactly ONCE via `ctx.walker.map` (RuleWalker's
- * canonical `members`/`content`/`separator.value` child-edge relation, R12) —
+ * canonical `members`/`content`/`separator.value` child-edge relation) —
  * bottom-up over every child edge, INCLUDING a rule's `.separator.value` (a
  * real Rule) — then dispatch on the fully child-simplified root.
  *
@@ -5090,8 +5085,7 @@ The shell declares no file types (`NO_FILE_TYPES`) and no name: it stands in for
 /**
  * Compute the derivation-only simplified view of every rule in the map.
  *
- * Relocated from normalize.ts as part of PR1 — all simplification logic lives
- * in simplify.ts. Input type widened to RenderRule: flattenRules in
+ * All simplification logic lives in simplify.ts. Input type widened to RenderRule: flattenRules in
  * normalize.ts produces a wrapper-less map, and simplify operates on that.
  *
  * @param normalizedRules - Wrapper-less rule map (output of flattenRules).
@@ -5121,10 +5115,8 @@ The shell declares no file types (`NO_FILE_TYPES`) and no name: it stands in for
 #### body
 
 ```text
-// Gate universal-shape assertion behind an env var so we can ramp
-// without breaking existing kinds that still violate the invariant.
-// Tasks 3.B-derive-rewrite / 3.B3 / 3.B4 enable it for testing;
-// Task 3.B6 flips the default once all kinds pass.
+// Gate the universal-shape assertion behind an env var: some kinds still
+// violate the invariant, so it is off by default.
 ```
 
 #### body
@@ -5478,45 +5470,29 @@ collector parameter.
 
 ```text
 /**
- * Phase context for the Assemble phase (S2, `BaseCtx<'simplify'>` — Assemble
- * READS `Grammar<'simplify'>` = {@link SimplifiedGrammar}; see
- * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md §2). The
- * grammar container itself now lives on `ctx.grammar` — `assemble()`'s former
- * `(normalized, ctx)` two-param signature folds into just `(ctx)` (§2: "the
- * whole input container moves INTO the ctx").
+ * Phase context for the Assemble phase (`BaseCtx<'simplify'>` — Assemble
+ * READS `Grammar<'simplify'>` = {@link SimplifiedGrammar}). The grammar
+ * container lives on `ctx.grammar`, so `assemble()` takes just `(ctx)`.
  *
- * Absorbs the former `SubtypeCtx` (`topLevelAliasBodies` — R4 / #14; `seen`
- * cycle-guards and the per-call subtypeSet stay explicit pass-local params,
- * CW6). The hidden-body/subtype-resolution family (`resolveHiddenSubtypes` /
- * `includeAliasMemberKinds` / `isAliasMemberKind` / `isCompatibleSubtypeMember`
- * / `resolveHiddenRuleContent`) migrated OFF `linkRules` onto `normalizedRules`
- * (2026-07-05, PR-137 follow-on-3): the wrapper shapes that switch used to
- * pattern-match (REPEAT/REPEAT1/OPTIONAL/ALIAS/TOKEN) don't exist post-
- * wrapper-deletion — their meaning is stamped as leaf attributes
- * (`multiplicity`/`aliasedTo`/`aliasedToId`/`fieldName`) — so the family now
- * checks those attributes BEFORE dispatching on `rule.type`. See each
+ * Holds `topLevelAliasBodies`; the `seen` cycle-guards and the per-call
+ * subtypeSet stay explicit pass-local params. The hidden-body/subtype-resolution
+ * family (`resolveHiddenSubtypes` / `includeAliasMemberKinds` /
+ * `isAliasMemberKind` / `isCompatibleSubtypeMember` / `resolveHiddenRuleContent`)
+ * reads `normalizedRules`: the wrapper shapes (REPEAT/REPEAT1/OPTIONAL/ALIAS/TOKEN)
+ * don't exist after wrapper deletion — their meaning is stamped as leaf
+ * attributes (`multiplicity`/`aliasedTo`/`aliasedToId`/`fieldName`) — so the
+ * family checks those attributes BEFORE dispatching on `rule.type`. See each
  * function's doc comment for its specific translation.
  *
- * follow-on-4 (same day) re-examined that choice: follow-on-3's own
- * justification ("wrapper shapes don't exist here") is EQUALLY true of
- * `ctx.rules` (`SimplifiedRule` — also wrapper-free, `SimplifiedGrammar`'s own
- * phase product, the map `assemble()`'s input container is actually named for) —
- * so it never actually established why `normalizedRules` beat `rules`. Migrating
- * the family to `ctx.rules` was tried and EMPIRICALLY REJECTED: it changes real
- * output. Across all 3 grammars' hidden supertype/alias-mint chains, exactly one
- * diverges — python's `_simple_pattern` supertype loses its
+ * The family reads `normalizedRules`, not `ctx.rules` (`SimplifiedRule`): on
+ * `ctx.rules`, python's `_simple_pattern` supertype would lose its
  * `_simple_pattern_negative` subtype entry (the polymorph-variant-adopted
- * `-1`/`-1.0` match-pattern arm, `grammar.sittir.ts`'s `_simple_pattern: { '11':
- * 'negative' }`) and gains bogus `integer`/`float` entries instead — verified
- * via `pnpm exec tsx packages/cli/src/cli.ts gen --grammar python …`: the regen
- * diff shows `node-model.json5`'s `_simple_pattern.subtypes` changing, cascading
- * into `types.ts`'s `SimplePattern` union (dropping `SimplePatternNegative`) and
- * `transport.rs`'s dispatch table (deleting the kind_id-250 arm entirely) — a
- * real runtime dispatch break for `-1` literal match patterns, not a cosmetic
- * difference. rust (16 supertypes) and typescript (26 supertypes) showed zero
- * divergence; python showed this one.
+ * `-1`/`-1.0` match-pattern arm) and gain bogus `integer`/`float` entries,
+ * dropping `SimplePatternNegative` from `types.ts` and its arm from
+ * `transport.rs`'s dispatch table — a runtime dispatch break for `-1` literal
+ * match patterns.
  *
- * Root cause: `_simple_pattern_negative`'s body is `SEQ[OPTIONAL('-'),
+ * Why: `_simple_pattern_negative`'s body is `SEQ[OPTIONAL('-'),
  * CHOICE(integer, float)]`. On `normalizedRules` (wrapper-deletion only) this
  * stays a top-level SEQ — a shape `resolveHiddenRuleContent`'s switch has NO
  * case for, so it falls to `default: []` (opaque), and the caller's "opaque →
@@ -5596,8 +5572,8 @@ collector parameter.
 ```text
 /**
  * Per-node context for {@link markUserFacing} — carries the two cross-node
- * sets pre-computed once before the per-node loop (M3 / spec §7.7 / principle
- * #14: cross-node state lives on ctx, not a getter-with-arg).
+ * sets pre-computed once before the per-node loop (cross-node state lives on
+ * ctx, not a getter-with-arg).
  *
  * @internal — not exported; used only by the post-pass driver inside assemble().
  */
@@ -5662,10 +5638,10 @@ collector parameter.
 
 ```text
 /**
- * The evaluate-phase ctx (§7.7 / Principle #14). Constructed ONCE per
+ * The evaluate-phase ctx, where cross-node state lives. Constructed ONCE per
  * grammarFn invocation; every field is always available there, so all are
  * required. Pass-LOCAL derived state (externalSet, the field-enum sweep
- * maps, pattern candidates) stays in explicit parameters per CW6.
+ * maps, pattern candidates) stays in explicit parameters.
  */
 ```
 
@@ -5768,7 +5744,7 @@ The names of the rules this evaluation added itself, filled as each is injected.
 ### `packages/codegen/src/compiler/evaluate.ts::FieldEnumSweepState`
 
 ```text
-/** Pass-local state for one synthesizeFieldEnumRules sweep (CW6: explicit param, not ctx). */
+/** Pass-local state for one synthesizeFieldEnumRules sweep (an explicit param, not ctx). */
 ```
 
 ### `packages/codegen/src/compiler/evaluate.ts::newRules`
@@ -6048,10 +6024,7 @@ parser.c's `#define TOKEN_COUNT`: symbol ids below it are the parser's tokens (t
  * the name is free for the phase-internal context below, matching the
  * NormalizeCtx/SimplifyCtx/AssembleCtx convention).
  *
- * Folds the former positional `include?` + `generatedIdTables?` args into a
- * single `(raw, ctx?)` shape (CW5). The old 3-arg positional form is gone —
- * every real caller either omitted both or used it positionally, and the
- * one that did (generate.ts) is updated alongside this.
+ * Takes `include` and `generatedIdTables` on an optional ctx: `(raw, ctx?)`.
  */
 ```
 
@@ -6070,8 +6043,7 @@ parser.c's `#define TOKEN_COUNT`: symbol ids below it are the parser's tokens (t
 	 * warning) land in THIS sink — the same instance `generate.ts` threads
 	 * through `NormalizeCtx`/`AssembleCtx.from`/`assertCompilation` — so they
 	 * are visible to callers reading the sink after the pipeline runs.
-	 * Defaults to a fresh, throwaway `DiagnosticSink` (pre-PR-S task 5
-	 * behavior) for callers (mostly tests) that only care about the returned
+	 * Defaults to a fresh, throwaway `DiagnosticSink` for callers (mostly tests) that only care about the returned
 	 * `LinkedGrammar` and never asked for diagnostics.
 	 */
 ```
@@ -6080,29 +6052,24 @@ parser.c's `#define TOKEN_COUNT`: symbol ids below it are the parser's tokens (t
 
 ```text
 /**
- * Phase context for the Link phase (S2, `BaseCtx<'evaluate'>` — Link READS
- * `Grammar<'evaluate'>` = {@link RawGrammar}; see
- * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md §2). Was
- * `BaseCtx<Rule<'link'>>` — a mislabel: the ctx was always constructed from
- * `raw.rules` (`Rule<'evaluate'>`-shaped), never the `Rule<'link'>`
- * resolve-loop accumulator (PR #136's finding, closed here —
- * `ctx.rules`/`ctx.grammar.rules` is now honestly the RAW pre-resolve view).
+ * Phase context for the Link phase (`BaseCtx<'evaluate'>` — Link READS
+ * `Grammar<'evaluate'>` = {@link RawGrammar}). `ctx.rules`/`ctx.grammar.rules`
+ * is the RAW pre-resolve view (`Rule<'evaluate'>`-shaped), never the
+ * `Rule<'link'>` resolve-loop accumulator.
  *
- * Merges the former `ResolveCtx` (rule-resolution walk: `rules` — inherited
- * from `BaseCtx`, was `allRules` — `supertypes`, `externalRoles`) and
- * `HiddenClassifyCtx` (hidden-rule classification cluster: `inline`,
- * `derivations`, `applyPromotedRules`, `hiddenNamedArmChoices`)
- * — both were R4 / #14 pass-constant/pass-shared state for the same `link()`
- * call, just threaded as two separate bags. `currentName`/per-rule `name`
- * stay explicit trailing params (CW6), as in `resolveRule(rule, ctx, name)`.
+ * Holds the rule-resolution walk's state (`rules`, inherited from `BaseCtx`,
+ * `supertypes`, `externalRoles`) and the hidden-rule classification cluster
+ * (`inline`, `derivations`, `applyPromotedRules`, `hiddenNamedArmChoices`):
+ * pass-constant and pass-shared state for one `link()` call.
+ * `currentName`/per-rule `name` stay explicit trailing params, as in
+ * `resolveRule(rule, ctx, name)`.
  *
  * `externalRoles` and `derivations` are write-through accumulators mutated
  * during the resolve/classify walks (role-lookup memoization and the
  * promoted-rules log, respectively) — kept as plain mutable fields rather
  * than wrapped in methods, mirroring `AssembleCtx.nodes`' getter tradeoff.
  *
- * S3 raw-vs-accumulator audit (per
- * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md §3): every
+ * Every
  * `ctx.rules` / `ctx.grammar.rules` read site inside this file was checked
  * against what it factually needs. All FOUR consult the RAW pre-resolve view
  * (correctly — none needed the post-resolve accumulator, which is already
@@ -6157,14 +6124,10 @@ parser.c's `#define TOKEN_COUNT`: symbol ids below it are the parser's tokens (t
 /**
  * Result of classifying a hidden (or grammar-declared-supertype) rule.
  *
- * (debt PR-P1, item 3) Replaces the former stamp-then-reread pattern: the
- * classifiers used to stamp a top-level `source` / `metadata.source` tag onto
- * the returned rule, and the caller (`classifyAndLogHiddenRules`) re-read that
- * stamp off the rule to decide whether to log a derivation + mutate the rule
- * map. Per decision 3's corollary, that "stamp then re-inspect the rule"
- * pattern must become direct return-value dataflow: the classifier now
- * returns its classification ALONGSIDE the rule, and the caller
- * reads ONLY the return value — never re-reads a tag off `rule`.
+ * The classifier returns its classification ALONGSIDE the rule, and the
+ * caller (`classifyAndLogHiddenRules`) reads ONLY the return value to decide
+ * whether to log a derivation and mutate the rule map — it never re-reads a
+ * tag off `rule`: a compiler decision does not key on a stamp it re-inspects.
  */
 ```
 
@@ -6820,10 +6783,9 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
 	 * on RuleBase. Structural rules (seq / choice / variant / group /
 	 * polymorph) are preserved and recursed into.
 	 *
-	 * The new template emitter (PR1) reads from `normalizedRules` instead of
-	 * `rules` so it never has to look through a wrapper to get modifier
-	 * metadata. Task 2.A3 switches `computeSimplifiedRules` to use this
-	 * map as input.
+	 * The template emitter reads from `normalizedRules`, not `rules`, so it
+	 * never has to look through a wrapper to get modifier metadata;
+	 * `computeSimplifiedRules` takes this map as input.
 	 */
 ```
 
@@ -7658,19 +7620,17 @@ carried through a side channel.
  * phase-specific inputs and — only where a phase genuinely accumulates — a
  * mutation API as methods (never a bare mutable field handed to every caller).
  *
- * Per docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md §2: `P`
- * is the ONE phase parameter driving grammar/rules/walker/builder together —
- * replacing the former `BaseCtx<R extends AnyRule>` which let the stored
- * `rules` map and its declared rule-view type disagree (the exact
- * disagreement PR #136 found in LinkCtx: `BaseCtx<Rule<'link'>>` holding
- * `raw.rules`, which is actually `Rule<'evaluate'>`-shaped).
+ * `P` is the ONE phase parameter driving grammar/rules/walker/builder
+ * together, so the stored `rules` map and its declared rule-view type cannot
+ * disagree (a ctx typed for `Rule<'link'>` while holding `raw.rules`, which is
+ * `Rule<'evaluate'>`-shaped).
  *
  * Discipline:
  *   - Immutable inputs are `readonly` (+ `ReadonlyMap`/`ReadonlySet`/`readonly[]`).
  *   - A function that must NOT mutate takes a `Readonly<XCtx>` / narrowed view;
  *     the caller still passes the one ctx object.
  *   - Pass-local state (seen sets, per-rule `name`) stays an explicit trailing
- *     parameter — NOT on the ctx (Principle #14 / CW6).
+ *     parameter — NOT on the ctx.
  *
  * Layering: this lives in `compiler/` (phase-pipeline concern). The `builder`
  * field is typed from `dsl/` (`RuleBuilder`) — `compiler → dsl`, the allowed
@@ -8159,8 +8119,8 @@ property, and a call that mixes the two shapes throws.
 ```text
 // raw.rules is Rule<'evaluate'> (pre-link); resolveRule's own job IS the
 // evaluate→link transition, so it structurally handles both phases —
-// widen the phase view (post-PR-S, RepeatRule<'evaluate'>/<'link'> genuinely
-// diverge in shape, so this is now an explicit cast, not a coincidence).
+// widen the phase view (RepeatRule<'evaluate'>/<'link'> genuinely diverge in
+// shape, so this is an explicit cast).
 ```
 
 #### body
@@ -8218,8 +8178,8 @@ property, and a call that mixes the two shapes throws.
 // group lifts operate on already-stamped rule bodies.
 // raw.renderAs is Rule<'evaluate'> (pre-link, override-authored literal
 // bodies); stampStaticRenderAs only reads STRING-shaped bodies, so the
-// phase view is a widen-only cast (post-PR-S, RepeatRule's per-phase
-// shapes genuinely diverge, so this is now explicit, not a coincidence).
+// phase view is a widen-only cast (RepeatRule's per-phase shapes genuinely
+// diverge, so it is explicit).
 ```
 
 #### body
@@ -8263,7 +8223,7 @@ property, and a call that mixes the two shapes throws.
 ```text
 // Lift separated lists in the synth group body — this runs after
 // the main lift loop, so an un-lifted commaSep1 inside a synth
-// group would otherwise escape #62's separator centralization.
+// group would otherwise escape the link pass's separator lifting.
 ```
 
 #### body
@@ -8308,11 +8268,9 @@ property, and a call that mixes the two shapes throws.
 
 ```text
 // Apply wire-produced variant alias push-down (ambient scaffolding into
-// variant children). R12/decision-7 V2 Task 2: `applyOverridePolymorphs`
-// discovers its own (parent, children) pairs structurally from `rules`
-// now (`deriveStructuralVariantChildren`) instead of the deleted wire
-// metadata channel — see that function's own comment for the byte-gate
-// verification this re-keying was checked against.
+// variant children). `applyOverridePolymorphs` discovers its own
+// (parent, children) pairs structurally from `rules`
+// (`deriveStructuralVariantChildren`).
 ```
 
 #### body
@@ -8447,7 +8405,7 @@ parser rule; only the sittir-side rule the model reads changes.
 ```text
 // rawRules (ctx.rules) is Rule<'evaluate'> (RAW view);
 // extractTopLevelNamedAliasContent only walks OPTIONAL/ALIAS/SEQ/CHOICE
-// shapes present in both phases — widen the phase view (post-PR-S cast).
+// shapes present in both phases — widen the phase view.
 ```
 
 #### body
@@ -8634,7 +8592,7 @@ whose choice holds none of the children's own members (typescript's
 
 ```text
 // Already classified (e.g., enum from Evaluate)
-// PR-P: ENUM type retired — isEnumChoiceRule detects enum-shaped ChoiceRules.
+// isEnumChoiceRule detects enum-shaped ChoiceRules; there is no ENUM rule type.
 ```
 
 #### body
@@ -9845,8 +9803,8 @@ A literal that is itself the slot: a STRING or PATTERN carrying both `nontermina
 
 ```text
 // Alias-body kinds: thread the alias-target bodies through the same pipeline
-// so normalizedRules / simplifiedRules cover them too. Eliminates the
-// assemble.ts simplifyRule(assemblyRule) fallback (PR1's TODO PR2).
+// so normalizedRules / simplifiedRules cover them too, and assemble.ts
+// needs no simplifyRule(assemblyRule) fallback.
 // When a kind already has its own entry in normalizedRules, carry that
 // entry's `hidden`/`kind` facts onto the alias-body replacement
 // (`dsl/rule-attrs.ts::withKindFacts`) rather than overwriting them —

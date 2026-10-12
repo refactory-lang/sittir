@@ -100,12 +100,11 @@ Materialises `wordCharClass` over the 128 ASCII code points; it owns no regex pr
  * anything outside the supported text-terminal shapes.
  *
  * This walker runs in BOTH the sittir pipeline and the tree-sitter CLI path
- * (where enrich() sees the native DSL objects), but both now agree on
- * UPPERCASE discriminants (`'PATTERN'`, `'TOKEN'`, `'IMMEDIATE_TOKEN'`, …) —
- * no case normalization needed. (Previously the CLI path silently fell back
- * to `/^\w+$/` while the sittir path used the real grammar word rule,
- * letting keyword-promotion diverge between parser and IR — PR #111 review
- * finding; the dual-case boundary that caused that is now dissolved.)
+ * (where enrich() sees the native DSL objects), and both use UPPERCASE
+ * discriminants (`'PATTERN'`, `'TOKEN'`, `'IMMEDIATE_TOKEN'`, …), so no case
+ * normalization is needed. Both paths compile the grammar's own word rule:
+ * a path that fell back to `/^\w+$/` would let keyword promotion diverge
+ * between parser and IR.
  */
 ```
 

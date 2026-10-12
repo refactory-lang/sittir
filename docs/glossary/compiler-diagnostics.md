@@ -615,7 +615,7 @@ list, makes the list kind a member of its own element union, which the
 widening types cannot express without a cycle. The hidden list rule is the
 hand-written entry that avoids it, and it goes when that cycle is solved.
 
-The Python-only #550 comma-required tuple correction adds the named vocabulary
+The Python-only correction that a one-element tuple needs its comma adds the named vocabulary
 rule `_tuple_pattern_elements`. It keeps parentheses on the container and commas
 on an independent list, avoiding recursive self-kind coercion and incorrect
 separator capture. This follows the existing Python `_tuple_elements` case.

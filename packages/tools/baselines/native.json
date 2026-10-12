@@ -3,7 +3,6 @@
     "commit": "61f2a5d",
     "grammars": {
         "python": {
-            "hoistedKindCount": 45,
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
@@ -11,7 +10,6 @@
                 "pass": 1395,
                 "total": 1395
             },
-            "supertypeKindCount": 15,
             "validators": {
                 "builtRenderParse": {
                     "astMatchPass": 1246,
@@ -46,10 +44,10 @@
                     "pass": 115,
                     "total": 116
                 }
-            }
+            },
+            "kindCount": 307
         },
         "regex": {
-            "hoistedKindCount": 7,
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
@@ -57,7 +55,6 @@
                 "pass": 54,
                 "total": 54
             },
-            "supertypeKindCount": 1,
             "validators": {
                 "builtRenderParse": {
                     "astMatchPass": 74,
@@ -92,10 +89,10 @@
                     "pass": 37,
                     "total": 37
                 }
-            }
+            },
+            "kindCount": 84
         },
         "rust": {
-            "hoistedKindCount": 98,
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
@@ -108,7 +105,6 @@
                 "pass": 2036,
                 "total": 2036
             },
-            "supertypeKindCount": 28,
             "validators": {
                 "builtRenderParse": {
                     "astMatchPass": 1733,
@@ -143,10 +139,10 @@
                     "pass": 148,
                     "total": 148
                 }
-            }
+            },
+            "kindCount": 438
         },
         "scm": {
-            "hoistedKindCount": 5,
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
@@ -154,7 +150,6 @@
                 "pass": 19,
                 "total": 19
             },
-            "supertypeKindCount": 4,
             "validators": {
                 "builtRenderParse": {
                     "astMatchPass": 38,
@@ -189,10 +184,10 @@
                     "pass": 19,
                     "total": 19
                 }
-            }
+            },
+            "kindCount": 61
         },
         "typescript": {
-            "hoistedKindCount": 60,
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
@@ -200,7 +195,6 @@
                 "pass": 2079,
                 "total": 2079
             },
-            "supertypeKindCount": 22,
             "validators": {
                 "builtRenderParse": {
                     "astMatchPass": 1691,
@@ -235,7 +229,8 @@
                     "pass": 113,
                     "total": 115
                 }
-            }
+            },
+            "kindCount": 434
         }
     },
     "totals": {

@@ -204,7 +204,7 @@ The fields-side walk over the simplified rule, as `computeSimplifiedRules` produ
  * Extract a separator string from a `RuleBase<'normalize'>['separator']`
  * value (the stamped leaf form `flattenRules` produces — this
  * function only ever sees post-Normalize separators, never the `link`-phase
- * `RepeatRule.separator` — which, post-PR-S, shares this same nested shape).
+ * `RepeatRule.separator` — which shares this same nested shape).
  * Returns undefined when the separator is absent, non-literal, or empty.
  */
 ```
@@ -329,11 +329,11 @@ sees no literal there; the slot types as `string` and its guard is the pattern.
 #### body
 
 ```text
-// `parseName` (union-slot design §5) is a SEPARATE routing key from
-// `parseKind` — two degenerate arms of the same kind but different
-// field labels are distinct entries (tree-sitter routes them by field,
-// not by kind), so it must ride in the dedup key too. Always `''` for
-// every pre-PR-1.5 value, so existing dedup behavior is unchanged.
+// `parseName` is a SEPARATE routing key from `parseKind` — two
+// degenerate arms of the same kind but different field labels are
+// distinct entries (tree-sitter routes them by field, not by kind), so
+// it must ride in the dedup key too. A value with no parse name keys
+// it as `''`, and dedups by kind alone.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::prepareKindForPascalCase`
@@ -502,8 +502,7 @@ A required slot that holds fixed text (`holdsFixedText`) needs no argument: its 
 /**
 	 * (debt: source-homonym resolution, decision 6) Blind opaque passthrough
 	 * of the owning rule's `RuleMetadata` bag — mirrors
-	 * `AssembledNonterminal.ruleMetadata` (PR-P1's established carry
-	 * pattern). Never read/branched on here or by any compiler consumer;
+	 * `AssembledNonterminal.ruleMetadata`. Never read/branched on here or by any compiler consumer;
 	 * only a dsl-sanctioned reader (`dsl/rule-metadata.ts`'s
 	 * `readRuleMetadata`, from enrich/wire/diagnostics code) may open it —
 	 * e.g. node-model serialization or validator diagnostics surfacing a
@@ -713,13 +712,12 @@ Distinct from `hidden`, which means "has no factory".
 
 ```text
 /**
- * Project a slot's names from its `values` + `fieldName` — the §2 getter logic
- * as a pure function (PR-B promotes these to `AssembledNonterminal` class
- * getters). PROJECTIONS, not stored fields: `parseNames` is the live set of CST
+ * Project a slot's names from its `values` + `fieldName`, as a pure function.
+ * PROJECTIONS, not stored fields: `parseNames` is the live set of CST
  * kinds tree-sitter emits (per-value `parseKind.name`, underscore RETAINED), so
  * it can't go stale across `mergeSlotsByName`'s value-union. The leading `_` is
  * trimmed ONLY in `storageName` (the TS-facing identity). camelCase projections
- * derive from `storageName` (#3 — never the identity).
+ * derive from `storageName`, never from the identity.
  */
 ```
 
@@ -1318,11 +1316,11 @@ flatten and simplify joins use.
 ```text
 /**
  * Grammar-wide inputs threaded through node-map's slot derivation
- * (Principle #14 / §7.7). Every field is optional because the derivation
+ * (cross-node state lives on the phase ctx). Every field is optional because the derivation
  * entry points accept partial context (test fixtures pass none); per-kind
  * record builders narrow with {@link KindedDeriveCtx}. Recursion-LOCAL
  * traversal state (e.g. `multiplicity` in `deriveValuesForRule`) stays an
- * explicit parameter per CW6 — never ctx.
+ * explicit parameter — never ctx.
  */
 ```
 
@@ -1449,7 +1447,7 @@ literals are lexeme fragments and take no kind.
 
 ```text
 /**
-	 * (debt PR-P1, item 4) Blind passthrough of the owning rule's opaque
+	 * Blind passthrough of the owning rule's opaque
 	 * `RuleMetadata` bag (`types/rule.ts`'s `RuleBase.metadata`). Collect-slots
 	 * copies this WITHOUT reading it — never branch on it here. Only a
 	 * dsl-sanctioned reader (`dsl/rule-metadata.ts`'s `readRuleMetadata`, from
@@ -1716,7 +1714,7 @@ reads it back out after `assemble()` runs), so its owner is
 
 ```text
 // Parser kind id of the storage/render kind (`node`'s name), stamped at
-// mint through the shared name chain (KindId-NodeRefs design §2.1/PR-K2).
+// mint through the shared name chain.
 // Absent for id-less targets by design: enrich-synthesized markers,
 // IR-only enum kinds, tree-sitter-erased hidden supertypes. Ids are
 // stamped FACTS, never identity — node identity stays the name, and
@@ -1817,7 +1815,7 @@ member arm reached through an enum reference takes that enum's token seams
 ```text
 // Parser kind id alongside `resolvedKind`, resolved through the LITERAL
 // (anon-scoped) chain at mint — the anon token wins over a same-spelled
-// NAMED rule (#129 class). Same stamped-fact semantics as
+// NAMED rule. Same stamped-fact semantics as
 // `storageKindId`.
 ```
 
@@ -2222,7 +2220,7 @@ Whether the node has entries of its own on the generated surface: a bundle entry
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal.ruleMetadata`
 
 ```text
-/** (debt PR-P1) Blind passthrough of the owning rule's opaque
+/** Blind passthrough of the owning rule's opaque
 	 *  `RuleMetadata` — see {@link AssembledNonterminalInit.ruleMetadata}. */
 ```
 
@@ -2895,7 +2893,8 @@ The distinct literal texts of a choice's members (`enumLiteralMembersOf`), the o
 #### body
 
 ```text
-// Literal-first chain (#129); literal-carrying SYMBOL members whose
+// Literal-first chain (an anonymous token shadows a same-spelled named
+// rule, so literal discriminants come first); literal-carrying SYMBOL members whose
 // text is a RENDER literal with no anon-token row (aliased fixed-
 // text externals — `automatic_semicolon`'s '\n') resolve through
 // their own KIND entry instead: the parser emits the kind, so its

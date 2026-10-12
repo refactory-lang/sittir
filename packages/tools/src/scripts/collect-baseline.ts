@@ -39,12 +39,11 @@ import { validateFrom } from '../validate/from.ts';
 import { validateReadRenderParse } from '../validate/read-render-parse.ts';
 import { validateTemplateCoverage } from '../validate/template-coverage.ts';
 import { loadNativeRender, readNodeModelFile } from '../validate/common.ts';
-import { hoistedKindCount, type CensusModel } from '../census/hoisted.ts';
+import { kindCount, type CensusModel } from '../census/hoisted.ts';
 import { load } from '../codegen-surface.ts';
 import { REPO_ROOT, stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
 
 const { renderModuleFixturesPath, renderModuleLeftOutPath } = await load('renderModulePaths');
-const { loadRawEntries } = await load('nodeTypesLoader');
 
 // ---------------------------------------------------------------------------
 // Schema types — see contracts/baseline-json.md
@@ -93,26 +92,14 @@ export interface GrammarEntry {
 	};
 	parityFixtures: ParityFixtures;
 	/**
-	 * Named kinds with `subtypes` in `node-types.json` — supertypes with no
-	 * direct render/factory path of their own. A structural fact of the
-	 * grammar, known from `node-types.json` alone with no corpus run: the
-	 * regression checker uses a RISE here to explain a same-grammar drop in
-	 * `coverage`/`factoryStorage` (a kind losing its own case by becoming
-	 * one, not a new failure). Optional because a baseline committed before
-	 * this field existed won't have it; an absent BASE count reads as 0 (a
-	 * baseline that never recorded the fact reads the same as one taken
-	 * before this feature existed — the gate only cares whether the count
-	 * rose, not by how much, so the true pre-existing count doesn't matter).
+	 * Every kind of the grammar's node model, one stamped count. The
+	 * regression checker reads a FALL here as the number of kinds that left
+	 * the grammar: a kind-denominated validator's total may shrink by no
+	 * more than that. Optional because a baseline committed before this
+	 * field existed has none; a missing count on either side explains no
+	 * drop.
 	 */
-	supertypeKindCount?: number;
-	/**
-	 * Hoisted kinds of the grammar's node model, list kinds included. The
-	 * regression checker uses a FALL here the way it uses a rise in
-	 * `supertypeKindCount`: a hoisted kind that leaves takes its own cases
-	 * with it. A fall needs both counts, so a base that never recorded the
-	 * fact explains no drop.
-	 */
-	hoistedKindCount?: number;
+	kindCount?: number;
 }
 
 export interface CounterPair {
@@ -371,14 +358,10 @@ function computeTotals(grammars: BackendBaseline['grammars']): BackendBaseline['
 	return { pass, fail: total - pass, total };
 }
 
-function computeSupertypeKindCount(grammar: GrammarName): number {
-	return loadRawEntries(grammar).filter((e) => e.named && (e.subtypes?.length ?? 0) > 0).length;
-}
-
-function computeHoistedKindCount(grammar: GrammarName): number {
+function computeKindCount(grammar: GrammarName): number {
 	const raw = readNodeModelFile(grammar);
 	if (raw === undefined) throw new Error(`collect-baseline: no node-model.json5 for grammar '${grammar}'`);
-	return hoistedKindCount(JSON.parse(raw) as CensusModel);
+	return kindCount(JSON.parse(raw) as CensusModel);
 }
 
 async function collectGrammarEntry(grammar: GrammarName, backend: Backend): Promise<GrammarEntry> {
@@ -389,8 +372,7 @@ async function collectGrammarEntry(grammar: GrammarName, backend: Backend): Prom
 	return {
 		validators,
 		parityFixtures,
-		supertypeKindCount: computeSupertypeKindCount(grammar),
-		hoistedKindCount: computeHoistedKindCount(grammar)
+		kindCount: computeKindCount(grammar)
 	};
 }
 

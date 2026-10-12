@@ -1415,7 +1415,7 @@ Wire never applies authored conflict sets: it hands `grammar()` no `conflicts`, 
 	 * Per-kind known-failing declarations for the generated `nodes.test.ts`
 	 * suite (`emitters/test.ts`). Each entry maps a kind name to a short
 	 * reason string — REQUIRED to reference the tracking issue (e.g.
-	 * `'#130 — factory returns wrong $type'`). Listed kinds are emitted as
+	 * `'#<issue> — factory returns wrong $type'`). Listed kinds are emitted as
 	 * `describe.skip` with the reason inline, so `pnpm test` stays green
 	 * without masking new regressions in other kinds. Remove the entry when
 	 * the underlying defect is fixed; the next regen re-enables the tests.
@@ -1423,7 +1423,7 @@ Wire never applies authored conflict sets: it hands `grammar()` no `conflicts`, 
 	 * you haven't investigated.
 	 *
 	 * @example
-	 *   expectTestFailures: { mod_item: '#128 — lenient from-coercion wraps alternate branch' }
+	 *   expectTestFailures: { mod_item: '#<issue> — lenient from-coercion wraps alternate branch' }
 	 */
 ```
 
@@ -1721,9 +1721,9 @@ built it, the same object the upstream diagnostic stage reads.
 // `outRules` holds rule-authoring FUNCTIONS (tree-sitter invokes each with
 // `$`/`previous` to produce the rule body at grammar-compile time), not
 // `Rule<'evaluate'>` data nodes — see the SittirRuleFn "LOOSE-INTERNAL /
-// NARROW-PUBLIC" note above. The R12 sweep over-annotated this as
-// `Record<string, Rule<'evaluate'>>`, which doesn't structurally overlap
-// with the function-map shape `cfg.rules` actually has.
+// NARROW-PUBLIC" note above. It is not a `Record<string, Rule<'evaluate'>>`,
+// which doesn't structurally overlap with the function-map shape
+// `cfg.rules` actually has.
 ```
 
 #### body
@@ -1787,17 +1787,16 @@ built it, the same object the upstream diagnostic stage reads.
 // getEnrichHiddenSubsequences reads the hidden-subsequence origins from the rule-origin
 // map that enrich() attaches to the grammar result.
 //
-// (Auto-group-synthesis — `applyAutoGroups` — was retired physically in
-// auto-group-visibility Chunk 3 / PR-M φ2 Phase B. Enrich now hoists every
-// `optional(seq)` (both the bare form and tree-sitter's `choice(seq, blank())`
-// desugaring, per `optionalSeqBodyOf`): inline-SAFE into a hidden
-// `_<parent>_optional<N>` symbol, inline-UNSAFE into a visible content-alias
+// Groups are not synthesized here: enrich hoists every `optional(seq)`
+// (both the bare form and tree-sitter's `choice(seq, blank())` desugaring,
+// per `optionalSeqBodyOf`): inline-SAFE into a hidden `_<parent>_optional<N>`
+// symbol, inline-UNSAFE into a visible content-alias
 // `alias(<content>, $._<parent>_group<N>)` that link's `mintContentAliasKinds`
 // registers as a real IR kind. `repeat`/`repeat1` are NOT hoisted — the hoist
 // only descends through them transparently to reach a nested `optional(seq)`;
-// a bare `repeat(seq)` with no `optional` wrapper is untouched. The old
-// wire-time pass ran BEFORE link and pre-consumed the very inline-unsafe seqs
-// link must see as inline content.)
+// a bare `repeat(seq)` with no `optional` wrapper is untouched. A wire-time
+// pass would run BEFORE link and pre-consume the very inline-unsafe seqs link
+// must see as inline content.
 ```
 
 #### body
@@ -1810,7 +1809,7 @@ built it, the same object the upstream diagnostic stage reads.
 #### body
 
 ```text
-// PR 3 (2026-07-21 union-slot design): a visible-aliased clause-hoist
+// A visible-aliased clause-hoist
 // mint (the inline-UNSAFE category — excluded from `syntheticInline`
 // above precisely because we WANT it to stay a distinguishable kind,
 // not get inlined away) can share a structural prefix with its own
