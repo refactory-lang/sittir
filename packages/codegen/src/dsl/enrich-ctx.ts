@@ -109,7 +109,7 @@ export class EnrichCtx implements EnrichCtxFields {
 			clauseGroupRules: {},
 			clauseDedupeMap: {},
 			groupDedupeMap: {},
-			ruleOrigins: new Map(),
+			ruleOrigins: new Map(init.priorOrigins),
 			isTextToken: (name) => init.priorOrigins.get(name)?.kind === 'text',
 			isPriorMint: (name) => {
 				const origin = init.priorOrigins.get(name);

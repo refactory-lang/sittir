@@ -58,4 +58,11 @@ describe('enrich is a fixpoint of its own output', () => {
 		const out = again(grammarWith({ modifiers: repeat1(choice(S('async'), S('const'), sym('extern_modifier'))), extern_modifier: seq(S('extern'), P('"[a-z]+"')) }));
 		expect(out).toEqual({ names: [], minted: [] });
 	});
+
+	it('keeps the authored slot of an element supertype it minted', () => {
+		const body = seq(S('{'), repeat(choice(sym('method'), sym('prop'), seq(sym('decorator'), sym('method')))), S('}'));
+		const rules = { class_body: body, method: P('m'), prop: P('p'), decorator: P('d') };
+		const authored = { fieldSites: new Map([['class_body', [{ path: [1], name: 'members' }]]]) };
+		expect(again(grammarWith(rules), authored)).toEqual({ names: [], minted: [] });
+	});
 });

@@ -1102,7 +1102,7 @@ function applyRepeatUnionFieldPromotion(ruleName: string, rule: Rule, ctx: Enric
 			let inner: Rule = n.content;
 			while (isPrecWrapper(inner as { type: string })) inner = (inner as unknown as { content: Rule }).content;
 			const sym = inner as unknown as { type: string; name?: unknown };
-			if (sym.type === 'SYMBOL' && typeof sym.name === 'string' && sym.name.startsWith('_')) {
+			if (sym.type === 'SYMBOL' && typeof sym.name === 'string' && sym.name.startsWith('_') && !ctx.isPriorMint(sym.name)) {
 				const target = rulesBag[sym.name];
 				if (target !== undefined && isChoiceType((target as { type: string }).type)) {
 					const fieldName = mintedBySymbol.get(sym.name) ?? pluralizeFieldName(sym.name.replace(/^_+/, ''));
