@@ -409,7 +409,8 @@ impl<T: Render + TriviaSeam> TransportTrivia<T> {
 
     /// Trailing entries, after the owner renders, in source order. The run
     /// before the first breaking layout entry shares the owner's line and is
-    /// seated right after the owner. The rest render after it, each layout
+    /// seated right after the owner; when it is layout alone it writes no
+    /// text to seat, and merges into the gap after the owner. The rest render after it, each layout
     /// entry taking the place of the join at its gap and an entry with none
     /// joining the one before it on its line; the seam the owner left (its
     /// after edge) is written after them.
@@ -417,7 +418,9 @@ impl<T: Render + TriviaSeam> TransportTrivia<T> {
         let trailing = self.trailing.as_deref().unwrap_or(&[]);
         let own = trailing.iter().position(TriviaEntry::breaks).unwrap_or(trailing.len());
         let (same_line, own_line) = trailing.split_at(own);
-        if !same_line.is_empty() {
+        if same_line.iter().all(TriviaEntry::is_layout) {
+            render_joined(same_line, LayoutKinds::SPACE, w)?;
+        } else {
             defer_run(same_line, w)?;
             w.seat_trailing()?;
         }

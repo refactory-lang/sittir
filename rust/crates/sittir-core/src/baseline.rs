@@ -22,13 +22,12 @@
 
 use std::cell::RefCell;
 use std::collections::HashMap;
-use std::hash::{Hash, Hasher};
 
-/// One thing a frame wrote directly: a text, by a hash of its text, or a
-/// node inside it, rendered in a frame of its own or as a slice of its
+/// One thing a frame wrote directly: a text, by its text, or a node inside
+/// it, rendered in a frame of its own or as a slice of its
 /// source, by its index; with the line breaks written before it and by its
 /// end.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Item {
     pub what: Written,
     pub before: u32,
@@ -36,29 +35,18 @@ pub struct Item {
 }
 
 /// What an item is (`Item`).
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Written {
-    Text(u64),
+    Text(Box<str>),
     Node(u32),
 }
 
 impl Written {
-    /// A text's item key: its text without whitespace, so a template literal
-    /// that writes several tokens at once (`()`, `not in`) is the key of
-    /// those tokens' texts (`Written::texts`).
+    /// A text's item: its text without whitespace, so a template literal
+    /// that writes several tokens at once (`()`, `not in`) spells those
+    /// tokens' texts one after another.
     pub fn text(text: &str) -> Self {
-        Self::texts([text])
-    }
-
-    /// The key of the texts `parts` written one after another.
-    pub fn texts<'t>(parts: impl IntoIterator<Item = &'t str>) -> Self {
-        let mut hasher = std::collections::hash_map::DefaultHasher::new();
-        for part in parts {
-            for c in part.chars().filter(|c| !c.is_whitespace()) {
-                c.hash(&mut hasher);
-            }
-        }
-        Written::Text(hasher.finish())
+        Written::Text(text.chars().filter(|c| !c.is_whitespace()).collect())
     }
 }
 

@@ -22,31 +22,31 @@ export function rebuildSpliceGenerated() {
 			name: rs.build.identifier("SpliceError"),
 			body: rs.build.enumVariantList.strict(rs.build.enumVariant.strict({
 				name: rs.build.identifier("InvalidRange"),
-				body: rs.build.fieldDeclarationList.strict({ delimiter: Delimiter.None }, rs.build.fieldDeclaration.strict({
+				body: rs.build.fieldDeclarationList.strict(rs.build.fieldDeclarationListElements.strict({ delimiter: Delimiter.None }, rs.build.fieldDeclaration.strict({
 					name: rs.build.identifier("start"),
 					type: rs.kinds.U32Keyword,
 				}), rs.build.fieldDeclaration.strict({
 					name: rs.build.identifier("end"),
 					type: rs.kinds.U32Keyword,
-				})),
+				})).$trivia.leading(rs.kinds.Space).$trivia.trailing(rs.kinds.Space)),
 			}).$trivia.leading(rs.build.lineComment.docOuter.strict(rs.build.docComment(" `end_pos < start_pos` — the edit range is reversed.\n"))), rs.build.enumVariant.strict({
 				name: rs.build.identifier("OutOfBounds"),
-				body: rs.build.fieldDeclarationList.strict({ delimiter: Delimiter.None }, rs.build.fieldDeclaration.strict({
+				body: rs.build.fieldDeclarationList.strict(rs.build.fieldDeclarationListElements.strict({ delimiter: Delimiter.None }, rs.build.fieldDeclaration.strict({
 					name: rs.build.identifier("end"),
 					type: rs.kinds.U32Keyword,
 				}), rs.build.fieldDeclaration.strict({
 					name: rs.build.identifier("source_len"),
 					type: rs.kinds.UsizeKeyword,
-				})),
+				})).$trivia.leading(rs.kinds.Space).$trivia.trailing(rs.kinds.Space)),
 			}).$trivia.leading(rs.build.lineComment.docOuter.strict(rs.build.docComment(" `end_pos > source.len()` — edit reaches past end of source.\n"))), rs.build.enumVariant.strict({
 				name: rs.build.identifier("NonCharBoundary"),
-				body: rs.build.fieldDeclarationList.strict({ delimiter: Delimiter.None }, rs.build.fieldDeclaration.strict({
+				body: rs.build.fieldDeclarationList.strict(rs.build.fieldDeclarationListElements.strict({ delimiter: Delimiter.None }, rs.build.fieldDeclaration.strict({
 					name: rs.build.identifier("start"),
 					type: rs.kinds.U32Keyword,
 				}), rs.build.fieldDeclaration.strict({
 					name: rs.build.identifier("end"),
 					type: rs.kinds.U32Keyword,
-				})),
+				})).$trivia.leading(rs.kinds.Space).$trivia.trailing(rs.kinds.Space)),
 			}).$trivia.leading(rs.build.lineComment.docOuter.strict(rs.build.docComment(" `start_pos` or `end_pos` isn't a UTF-8 char boundary.\n")))),
 		}), rs.build.implItemBody.positiveClause.strict({
 			traitClause: rs.build.scopedTypeIdentifier.strict({
@@ -154,7 +154,7 @@ export function rebuildSpliceGenerated() {
 					}))],
 				}),
 			})),
-		}).$trivia.leading(rs.kinds.Blankline), rs.build.implItemBody.positiveClause.strict({
+		}), rs.build.implItemBody.positiveClause.strict({
 			traitClause: rs.build.scopedTypeIdentifier.strict({
 				path: rs.build.scopedIdentifier.strict({
 					path: rs.build.identifier("std"),
@@ -164,7 +164,7 @@ export function rebuildSpliceGenerated() {
 			}),
 			type: rs.build.identifier("SpliceError"),
 			body: rs.build.declarationList.strict(),
-		}).$trivia.leading(rs.kinds.Blankline), rs.build.functionItem.strict({
+		}), rs.build.functionItem.strict({
 			visibilityModifier: rs.build.visibilityModifier.pub.strict(),
 			name: rs.build.identifier("apply_edits"),
 			parameters: rs.build.parameters.strict(rs.build.parameter.strict({
@@ -194,7 +194,7 @@ export function rebuildSpliceGenerated() {
 						}),
 						arguments: rs.build.arguments.strict(),
 					}),
-				}).$trivia.leading(rs.kinds.Newline, rs.build.lineComment.strict(rs.build.lineCommentRegular(" Pre-validate every edit up-front so we fail atomically (no")), rs.kinds.Newline, rs.build.lineComment.strict(rs.build.lineCommentRegular(" partial application).")), rs.kinds.Newline), rs.build.expressionStatement.strict(rs.build.forExpression.strict({
+				}).$trivia.leading(rs.build.lineComment.strict(rs.build.lineCommentRegular(" Pre-validate every edit up-front so we fail atomically (no")), rs.build.lineComment.strict(rs.build.lineCommentRegular(" partial application)."))), rs.build.expressionStatement.strict(rs.build.forExpression.strict({
 					pattern: rs.build.identifier("e"),
 					value: rs.build.referenceExpressionBare.strict(rs.build.identifier("edits")),
 					body: rs.build.block.strict({
@@ -372,7 +372,7 @@ export function rebuildSpliceGenerated() {
 							}),
 						}),
 					})),
-				})).$trivia.leading(rs.kinds.Blankline, rs.build.lineComment.strict(rs.build.lineCommentRegular(" Sort descending by start_pos. Ties broken by end_pos descending —")), rs.kinds.Newline, rs.build.lineComment.strict(rs.build.lineCommentRegular(" with identical start positions, the longer replacement applies")), rs.kinds.Newline, rs.build.lineComment.strict(rs.build.lineCommentRegular(" first so the shorter doesn't overwrite its tail. (Tie-breaking is")), rs.kinds.Newline, rs.build.lineComment.strict(rs.build.lineCommentRegular(" documented consumer-visible behavior; overlap detection is still")), rs.kinds.Newline, rs.build.lineComment.strict(rs.build.lineCommentRegular(" theirs.)")), rs.kinds.Newline), rs.build.letDeclaration.strict({
+				})).$trivia.leading(rs.kinds.Blankline, rs.build.lineComment.strict(rs.build.lineCommentRegular(" Sort descending by start_pos. Ties broken by end_pos descending —")), rs.build.lineComment.strict(rs.build.lineCommentRegular(" with identical start positions, the longer replacement applies")), rs.build.lineComment.strict(rs.build.lineCommentRegular(" first so the shorter doesn't overwrite its tail. (Tie-breaking is")), rs.build.lineComment.strict(rs.build.lineCommentRegular(" documented consumer-visible behavior; overlap detection is still")), rs.build.lineComment.strict(rs.build.lineCommentRegular(" theirs.)"))), rs.build.letDeclaration.strict({
 					mutable: true,
 					pattern: rs.build.identifier("buf"),
 					value: rs.build.callExpression.strict({
@@ -425,6 +425,6 @@ export function rebuildSpliceGenerated() {
 					arguments: rs.build.arguments.strict(rs.build.identifier("buf")),
 				}),
 			}),
-		}).$trivia.leading(rs.kinds.Blankline, rs.build.lineComment.docOuter.strict(rs.build.docComment(" Apply a batch of edits to a source string, returning the modified\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" source. See module docs for the sort-descending strategy and the\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" consumer-owned overlap contract.\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment("\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" # Errors\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment("\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" - [`SpliceError::InvalidRange`] if any edit has `end_pos < start_pos`.\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" - [`SpliceError::OutOfBounds`] if any edit's `end_pos` exceeds\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment("   `source.len()` (bytes).\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" - [`SpliceError::NonCharBoundary`] if any edit's start or end is\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment("   not a UTF-8 character boundary of the source.\n")))],
+		}).$trivia.leading(rs.build.lineComment.docOuter.strict(rs.build.docComment(" Apply a batch of edits to a source string, returning the modified\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" source. See module docs for the sort-descending strategy and the\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" consumer-owned overlap contract.\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment("\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" # Errors\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment("\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" - [`SpliceError::InvalidRange`] if any edit has `end_pos < start_pos`.\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" - [`SpliceError::OutOfBounds`] if any edit's `end_pos` exceeds\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment("   `source.len()` (bytes).\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" - [`SpliceError::NonCharBoundary`] if any edit's start or end is\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment("   not a UTF-8 character boundary of the source.\n")))],
 	});
 }

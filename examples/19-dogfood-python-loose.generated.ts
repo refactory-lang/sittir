@@ -81,5 +81,5 @@ export function rebuildPython4spaceLoose() {
 				consequence: py.build.suiteBlock(py.build.simpleStatements(py.build.returnStatement("user"))),
 			})),
 		}), py.build.simpleStatements(py.build.returnStatement(py.kinds.None))),
-	}).$trivia.leading(py.kinds.DoubleBlankline));
+	}));
 }

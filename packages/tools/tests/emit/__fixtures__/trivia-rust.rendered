@@ -1,6 +1,5 @@
 /* a */
-fn f() {
-    // TODO
+fn f() { // TODO
 }
 
 fn g() {} /* t */

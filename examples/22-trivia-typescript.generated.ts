@@ -14,6 +14,6 @@ export function rebuildTriviaTypescriptGenerated() {
 				name: ts.build.identifier("x"),
 				value: ts.build.number.decimal("1"),
 			})],
-		}).$trivia.trailing(ts.build.commentLine(" c"), ts.kinds.Newline)],
+		}).$trivia.trailing(ts.build.commentLine(" c"))],
 	});
 }

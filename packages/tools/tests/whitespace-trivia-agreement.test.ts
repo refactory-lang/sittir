@@ -7,14 +7,15 @@ import type { Engine, LanguageAPI } from '@sittir/types';
  * The text a loose trivia string is read by (`triviaFacts.whitespace`) and the
  * classifier a read's line gaps go through name the same member for every
  * line-break member's own text. Each case reads a source whose only gap before
- * its second item is that text. Space and tab members are never asked: the
- * query classifies only runs that hold a line break.
+ * its second item is that text, at a gap the read-time options keep on one
+ * line, so the read stores each as a deviation. Space and tab members are never
+ * asked: the query classifies only runs that hold a line break.
  */
 const cases: readonly { readonly grammar: string; readonly source: (gap: string) => string }[] = [
-	{ grammar: 'rust', source: (gap) => `fn a() {}${gap}fn b() {}\n` },
-	{ grammar: 'typescript', source: (gap) => `a;${gap}b;\n` },
+	{ grammar: 'rust', source: (gap) => `const X: u8 = a +${gap}f();\n` },
+	{ grammar: 'typescript', source: (gap) => `a +${gap}f();\n` },
 	{ grammar: 'python', source: (gap) => `x = [f(),${gap}g()]\n` },
-	{ grammar: 'scm', source: (gap) => `(a)${gap}(b)\n` },
+	{ grammar: 'scm', source: (gap) => `(a${gap}(b))\n` },
 	{ grammar: 'regex', source: (gap) => `a${gap}b` }
 ];
 

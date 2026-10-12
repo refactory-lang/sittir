@@ -48,6 +48,18 @@ fn whitespace_classifies_by_seam_rank_and_never_to_a_depth_arm() {
 }
 
 #[test]
+fn a_run_spelled_as_an_arm_is_that_arm_before_any_other_of_its_rank() {
+    const TAB: u16 = 173;
+    fn with_tab(kind: u16) -> &'static str {
+        if kind == TAB { "\t" } else { text_of(kind) }
+    }
+    let table = WhitespaceTable { text_of: with_tab, ..TABLE };
+    assert_eq!(classify_whitespace("\t", &[TIGHT, SPACE, TAB], &table), Some(TAB));
+    assert_eq!(classify_whitespace(" ", &[TIGHT, SPACE, TAB], &table), Some(SPACE));
+    assert_eq!(classify_whitespace("  \t", &[TIGHT, SPACE, TAB], &table), Some(SPACE));
+}
+
+#[test]
 fn text_that_is_not_whitespace_has_no_class() {
     assert_eq!(classify_whitespace("b", ALL, &TABLE), None);
     assert_eq!(classify_whitespace(" x ", ALL, &TABLE), None);

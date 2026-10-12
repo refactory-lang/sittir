@@ -14,6 +14,6 @@ export function rebuildTriviaTypescriptLoose() {
 				name: "x",
 				value: "1",
 			})],
-		}).$trivia.trailing(ts.build.commentLine(" c"), ts.kinds.Newline)],
+		}).$trivia.trailing(ts.build.commentLine(" c"))],
 	});
 }

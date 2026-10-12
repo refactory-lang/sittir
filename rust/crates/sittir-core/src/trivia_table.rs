@@ -50,13 +50,14 @@ pub struct Token {
 }
 
 /// An entry the assignment gives a side: an extra or an `ERROR` by its
-/// descendant index; a run of whitespace holding a line break by its bytes,
-/// the descendant index of its owner (the smallest node holding the tokens
+/// descendant index; a run of whitespace between two tokens or entries, with
+/// or without a line break, by its place among the table's runs
+/// (`TriviaTable::runs`), its bytes, the descendant index of its owner (the smallest node holding the tokens
 /// on both sides of the run's gap, or the node itself for its `inner` side)
 /// and the signed number of depth members it carries (`depth`); an extra
 /// that is a layout member (`SurfaceKinds::layout`) by its descendant index;
-/// or the depth members that restore an owner's excess at its end
-/// (`Depth`). A run after an entry placed on a node's leading side is on
+/// or depth members alone: those that restore an owner's excess at its end,
+/// or those of a run at the file's edge, which stores no layout (`Depth`). A run after an entry placed on a node's leading side is on
 /// that side too: it spells the gap from the entry to its owner.
 ///
 /// A run's excess is how far its last line's indentation reaches past the
@@ -73,7 +74,7 @@ pub struct Token {
 pub enum Assigned {
     Extra(u32),
     Error(u32),
-    Layout { start: u32, end: u32, owner: u32, depth: i32 },
+    Layout { run: u32, start: u32, end: u32, owner: u32, depth: i32 },
     Member(u32),
     Depth(i32),
 }
@@ -448,17 +449,22 @@ impl TriviaTable {
                     Place::Side(node, TriviaSide::Inner) => node,
                     Place::Side(_, _) | Place::Unowned => owner_of(left, right),
                 };
-                if let Place::Side(node, side) = place {
-                    if at != 0 && until as usize != source.len() {
+                let edge = at == 0 || until as usize == source.len();
+                let depth = if text.contains('\n') {
+                    let reach = structure.excess(&nodes, right.map_or(0, |right| right.node), until, text.rsplit('\n').next().unwrap_or_default());
+                    excess.change(owner, nodes.end[owner as usize], reach, || nodes.restore_side(owner, kinds))
+                } else {
+                    0
+                };
+                match place {
+                    Place::Side(node, side) if !edge => {
+                        let run = table.runs.len() as u32;
                         table.runs.push(LayoutRun { start: at, end: until, node, side, owner, carries: true });
+                        table.push(place, Assigned::Layout { run, start: at, end: until, owner, depth });
                     }
+                    _ if depth != 0 => table.push(place, Assigned::Depth(depth)),
+                    _ => {}
                 }
-                if !text.contains('\n') {
-                    return;
-                }
-                let reach = structure.excess(&nodes, right.map_or(0, |right| right.node), until, text.rsplit('\n').next().unwrap_or_default());
-                let depth = excess.change(owner, nodes.end[owner as usize], reach, || nodes.restore_side(owner, kinds));
-                table.push(place, Assigned::Layout { start: at, end: until, owner, depth });
             };
             while let Some(&&index) = next.peek() {
                 let (start, end) = (nodes.start[index as usize], nodes.end[index as usize]);

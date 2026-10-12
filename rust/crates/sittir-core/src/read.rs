@@ -123,23 +123,25 @@ pub trait SideLookup {
     fn side(&self, index: u32, side: TriviaSide, edge_changed: bool) -> Box<dyn std::any::Any>;
 }
 
-/// What a snapshot read measures with: the source's lines, and the start of
-/// the transport the read is inside, from which each point it writes is
-/// measured. The holder moves as the read enters and leaves a transport
+/// What a snapshot read measures with: the source's lines, the descendant
+/// index of the node it snapshots, and the start of the transport the read
+/// is inside, from which each point it writes is measured. The holder moves as the read enters and leaves a transport
 /// (`ReadCtx::hold`, `Placement::into_layout`), and the holders it replaced
 /// wait here, so a recursive read frame holds no context of its own.
 #[derive(Debug)]
 pub struct SnapshotCtx<'s> {
     pub lines: &'s crate::points::LineTable,
+    root: u32,
     holder: std::cell::Cell<crate::points::Point>,
     replaced: std::cell::RefCell<Vec<crate::points::Point>>,
 }
 
 impl<'s> SnapshotCtx<'s> {
-    /// Measuring from the byte `holder`, or from the source's start when absent.
-    pub fn new(lines: &'s crate::points::LineTable, holder: Option<u32>) -> Self {
+    /// A snapshot of the node at `root`, measuring from the byte `holder`,
+    /// or from the source's start when absent.
+    pub fn new(lines: &'s crate::points::LineTable, holder: Option<u32>, root: u32) -> Self {
         let holder = holder.and_then(|byte| lines.point(byte as usize)).unwrap_or(crate::points::Point::ZERO);
-        Self { lines, holder: std::cell::Cell::new(holder), replaced: std::cell::RefCell::default() }
+        Self { lines, root, holder: std::cell::Cell::new(holder), replaced: std::cell::RefCell::default() }
     }
 
     /// `span`'s two ends as points measured from the holder's start.
@@ -196,9 +198,9 @@ impl<'s> ReadCtx<'s> {
 
     /// The entries of `side` of the node at `index`, as this context seats
     /// them: on a live read as they are; in a snapshot an extra or an `ERROR`
-    /// as its text measured from the holder, and the layout runs between the
-    /// side's entries and its owner, without the runs at the side's outer
-    /// edges (the snapshot's spans carry the gap to a neighbour). `None` when
+    /// as its text measured from the holder, and the layout runs as they
+    /// are, but on the snapshot's own node, whose outer edges face
+    /// neighbours outside it, without the runs at those edges. `None` when
     /// the context looks up no sides or the side is empty.
     fn side<T: crate::trivia::FromTriviaText + 'static>(&self, index: u32, side: TriviaSide) -> Option<Vec<TriviaEntry<T>>> {
         let lookup = self.sides?;
@@ -208,12 +210,8 @@ impl<'s> ReadCtx<'s> {
             None => entries.into_iter().map(SideEntry::into_entry).collect(),
             Some(snapshot) => {
                 let mut entries = entries;
-                let outer: &[TriviaSide] = match side {
-                    TriviaSide::Inner => &[TriviaSide::Leading, TriviaSide::Trailing],
-                    _ => std::slice::from_ref(&side),
-                };
-                for &edge in outer {
-                    crate::trivia::without_edge_runs(&mut entries, edge, |entry| matches!(entry, SideEntry::Layout(_)));
+                if index == snapshot.root && side != TriviaSide::Inner {
+                    crate::trivia::without_edge_runs(&mut entries, side, |entry| matches!(entry, SideEntry::Layout(_)));
                 }
                 entries.into_iter().map(|side| self.snapshot_entry(snapshot, side)).collect()
             }
@@ -1080,7 +1078,7 @@ mod tests {
         parser.set_language(&tree_sitter_rust::LANGUAGE.into()).unwrap();
         let tree = parser.parse(source, None).unwrap();
         let lines = LineTable::new(source);
-        let measure = SnapshotCtx::new(&lines, None);
+        let measure = SnapshotCtx::new(&lines, None, 0);
         let ctx = ReadCtx::new(source, 1, |_| false).snapshot(&measure);
         let root = tree.walk();
         let item_span = Origin::Snapshot(PointSpan { start: Point { row: 2, column: 0 }, end: Point { row: 4, column: 1 } });
@@ -1120,12 +1118,43 @@ mod tests {
         }
     }
 
+    /// A lookup that gives every node a leading side of one layout run and
+    /// one written entry: a run at the side's outer edge.
+    struct EdgeRun;
+
+    impl SideLookup for EdgeRun {
+        fn side(&self, _: u32, side: TriviaSide, _: bool) -> Box<dyn std::any::Any> {
+            let text = |text: &str| TriviaEntry::new(SlotValue::Transport(crate::trivia::TriviaText { kind: KindId(7), text: text.into(), span: None, before: None, after: None }));
+            let entries: Vec<SideEntry<crate::trivia::TriviaText>> = match side {
+                TriviaSide::Leading => vec![SideEntry::Layout(text(" ")), SideEntry::Written(text("// w"))],
+                _ => Vec::new(),
+            };
+            Box::new(entries)
+        }
+    }
+
+    #[test]
+    fn a_snapshot_keeps_the_runs_at_a_sides_outer_edge_but_its_own_nodes() {
+        use crate::points::{LineTable, Point, PointSpan};
+        let source = "a b";
+        let lines = LineTable::new(source);
+        let at = Origin::Snapshot(PointSpan { start: Point::ZERO, end: Point::ZERO });
+        let leading = |root: u32| {
+            let measure = SnapshotCtx::new(&lines, None, root);
+            let ctx = ReadCtx::new(source, 1, |_| false).snapshot(&measure).with_sides(&EdgeRun);
+            let side = ctx.layout::<crate::trivia::TriviaText>(3, at.clone(), false).trivia.and_then(|trivia| trivia.leading).expect("a seated leading side");
+            side.into_iter().map(|entry| entry.value.transport().map(|text| text.text.to_string()).expect("a snapshot entry is text")).collect::<Vec<_>>()
+        };
+        assert_eq!(leading(0), [" ", "// w"], "a node inside the snapshot keeps the run its neighbour faces");
+        assert_eq!(leading(3), ["// w"], "the snapshot's own node drops the run toward a neighbour outside it");
+    }
+
     #[test]
     fn a_snapshot_seats_an_extra_as_its_text_measured_from_the_context_holder_and_keeps_the_runs_inside_a_side() {
         use crate::points::{LineTable, Point, PointSpan};
         let source = "a\n  // x\nb";
         let lines = LineTable::new(source);
-        let measure = SnapshotCtx::new(&lines, Some(2));
+        let measure = SnapshotCtx::new(&lines, Some(2), 0);
         let ctx = ReadCtx::new(source, 1, |_| false).snapshot(&measure).with_sides(&OneOfEach);
         let at = Origin::Snapshot(PointSpan { start: Point::ZERO, end: Point::ZERO });
         let leading = ctx.layout::<crate::trivia::TriviaText>(3, at, false).trivia.and_then(|trivia| trivia.leading).expect("a seated leading side");

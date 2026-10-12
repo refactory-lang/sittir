@@ -415,15 +415,19 @@ mod tests {
 
     /// A trivia entry that writes its text and then its after edge, as a
     /// comment kind's template does: a line comment's edge breaks the line,
-    /// a block comment's is a space. `"\n"` is a layout entry, a line
-    /// break. The render protocol is under test, not any grammar's comment
-    /// template.
+    /// a block comment's is a space. `"\n"` and `" "` are layout entries, a
+    /// line break and a space. The render protocol is under test, not any
+    /// grammar's comment template.
     #[derive(Debug, Clone, PartialEq)]
     struct MockTrivia(String);
 
     impl crate::trivia::TriviaSeam for MockTrivia {
         fn seam_gap(&self) -> Option<(crate::layout_kinds::LayoutKinds, Option<&str>)> {
-            (self.0 == "\n").then_some((crate::layout_kinds::LayoutKinds::NEWLINE, None))
+            match self.0.as_str() {
+                "\n" => Some((crate::layout_kinds::LayoutKinds::NEWLINE, None)),
+                " " => Some((crate::layout_kinds::LayoutKinds::SPACE, None)),
+                _ => None,
+            }
         }
     }
 
@@ -519,6 +523,20 @@ mod tests {
         framed.render(&mut w).unwrap();
         w.finish().unwrap();
         assert_eq!(out, render(&owner("CONTENT", &["// top"], &["// bottom"], false)));
+    }
+
+    #[test]
+    fn a_trailing_side_of_whitespace_alone_holds_its_gap_against_a_template_break() {
+        let owner = MockTransport {
+            text: "x;",
+            layout: Some(Box::new(TransportLayout { trivia: Some(TransportTrivia { leading: None, trailing: Some(vec![entry(" ")]), inner: None }), ..Default::default() })),
+        };
+        let out = render_with(|w| {
+            owner.render(w)?;
+            w.seam(crate::layout_kinds::LayoutKinds::NEWLINE);
+            w.text("}")
+        });
+        assert_eq!(out, "x; }");
     }
 
     #[test]

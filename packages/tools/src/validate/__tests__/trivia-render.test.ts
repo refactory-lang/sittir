@@ -17,7 +17,7 @@ afterAll(() => {
 describe('read trivia layout, rendered detached', () => {
 	it('keeps a same-line line comment on its line and breaks once after it', async () => {
 		const render = await detachedRenderer('rust');
-		expect(render('fn g() { a; // note\n b; }')).toBe('fn g() {\n a; // note\n b;\n}');
+		expect(render('fn g() { a; // note\n b; }')).toBe('fn g() { a; // note\n b; }');
 		expect(render('fn f() {\n    a; // c\n    // d\n}\n')).toBe('fn f() {\n    a; // c\n    // d\n}\n');
 	});
 
@@ -26,12 +26,12 @@ describe('read trivia layout, rendered detached', () => {
 	});
 
 	it('joins a same-line leading block comment with a space', async () => {
-		expect((await detachedRenderer('rust'))('fn f() { /* c */ a; }')).toBe('fn f() {\n    /* c */ a;\n}');
+		expect((await detachedRenderer('rust'))('fn f() { /* c */ a; }')).toBe('fn f() { /* c */ a; }');
 	});
 
 	it('lays out inner comments by the gap they sit in', async () => {
 		const render = await detachedRenderer('rust');
-		expect(render('fn f() { // TODO\n}\n')).toBe('fn f() {\n    // TODO\n}\n');
+		expect(render('fn f() { // TODO\n}\n')).toBe('fn f() { // TODO\n}\n');
 		expect(render('f(/* a */);')).toBe('f(/* a */);');
 		expect(render('f(// a\n);')).toBe('f(// a\n);');
 		expect(render('ok! {\n  // one\n  /* two */\n}\n')).toBe('ok!{\n  // one\n  /* two */\n}\n');
@@ -39,7 +39,7 @@ describe('read trivia layout, rendered detached', () => {
 
 	it('seats a same-line trailing entry after the anonymous tokens between it and its owner', async () => {
 		const render = await detachedRenderer('rust');
-		expect(render('fn f() { x = a + /* x */ b; }')).toBe('fn f() {\n    x = a + /* x */ b;\n}');
+		expect(render('fn f() { x = a + /* x */ b; }')).toBe('fn f() { x = a + /* x */ b; }');
 	});
 
 	it('seats a leading entry after an anonymous token kept as a source coordinate', async () => {
@@ -54,7 +54,7 @@ describe('read trivia layout, rendered detached', () => {
 		const comment = sidesOf(binary._right)?.leading?.find(isCoordinate);
 		if (comment === undefined) throw new Error('expected the comment as a coordinate');
 		binary._operator = carryTree(comment, { $type: binary._operator, $treeHandle: comment.$treeHandle, $end: comment.$end, $span: { start: at, end: at + 1 } });
-		expect(engine.render(data as never as AnyUntypedNode).toString()).toBe('fn f() {\n    x = a + /* x */ b;\n}');
+		expect(engine.render(data as never as AnyUntypedNode).toString()).toBe(source);
 	});
 
 	it('keeps a same-line trailing entry on its owner\'s row, before the separator', async () => {
