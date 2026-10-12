@@ -62,7 +62,7 @@ export interface NativeEngine extends CoreNativeEngineLike<unknown> {
 }
 
 export interface NativeModule extends NativeModuleLike<unknown, NativeEngine> {
-	SittirEngine: new (options?: { format?: string }) => NativeEngine;
+	SittirEngine: new (options?: { options?: object }) => NativeEngine;
 }
 
 /**

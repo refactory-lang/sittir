@@ -8,11 +8,10 @@
 //! ## Engine / ParsedTree split
 //!
 //! `Engine<G>` is stateless (parser + grammar config). Parsing returns a
-//! `ParsedTree<G>` that owns the tree, source and format. A handle names a
+//! `ParsedTree<G>` that owns the tree, its source and what the source infers. A handle names a
 //! node by its tree's id and its descendant index, re-resolved through a
 //! cursor on each access — no lifetime-erasure needed.
 
-use crate::format::apply_format;
 use crate::options::ResolvedOptions;
 use crate::query::{Address, DescendantBatch, Plan, QueryCoordinate};
 use crate::read::{display_id, SideEntry};
@@ -21,7 +20,7 @@ use crate::render::SourceTable;
 use crate::slot::{NodeCoordinate, SlotValue};
 use crate::trivia::{FromTriviaText, TriviaEntry, TriviaText};
 use crate::trivia_table::{Assigned, TriviaSide, TriviaTable};
-use crate::types::{FormatRecord, KindId};
+use crate::types::KindId;
 use std::collections::HashMap;
 use std::sync::Arc;
 
@@ -775,32 +774,26 @@ impl<G: EngineGrammar> crate::read::SideLookup for ParsedTree<G> {
 
 // ─── Engine ──────────────────────────────────────────────────────────────────
 
-/// Stateless native engine — parser + grammar config + engine-level format.
+/// Stateless native engine — parser + grammar config + render options.
 ///
-/// The engine owns the parser (which is mutable for `parse` calls) and an
-/// optional engine-wide format override. Parsing returns a [`ParsedTree`]
-/// that owns all tree-dependent state.
+/// The engine owns the parser (which is mutable for `parse` calls) and its
+/// resolved render options. Parsing returns a [`ParsedTree`] that owns all
+/// tree-dependent state.
 pub struct Engine<G: EngineGrammar> {
     grammar: G,
     parser: tree_sitter::Parser,
-    engine_format: Option<FormatRecord>,
     /// The render options resolved once at construction; a render call may
     /// resolve another table over this one.
     options: ResolvedOptions,
 }
 
 impl<G: EngineGrammar> Engine<G> {
-    pub fn new(
-        grammar: G,
-        engine_format: Option<FormatRecord>,
-        options: ResolvedOptions,
-    ) -> Result<Self, String> {
+    pub fn new(grammar: G, options: ResolvedOptions) -> Result<Self, String> {
         let mut parser = tree_sitter::Parser::new();
         grammar.configure_parser(&mut parser)?;
         Ok(Self {
             grammar,
             parser,
-            engine_format,
             options,
         })
     }
@@ -811,11 +804,6 @@ impl<G: EngineGrammar> Engine<G> {
 
     pub fn render_module_hash(&self) -> &'static str {
         self.grammar.render_module_hash()
-    }
-
-    /// Access the engine-level format override (if any).
-    pub fn engine_format(&self) -> Option<&FormatRecord> {
-        self.engine_format.as_ref()
     }
 
     /// Parse source and return an owned `ParsedTree` tagged with `tree_id`.
@@ -851,19 +839,6 @@ impl<G: EngineGrammar> Engine<G> {
         Err("find_and_read not yet implemented — ast-grep-core integration pending".to_string())
     }
 
-}
-
-/// Apply format to a pre-rendered canonical string: the engine-wide format,
-/// when one is set, then `newline`, the spelling every line break of the
-/// result takes. The format record applies first, to the internal spelling
-/// its offsets index; the result is spelled last. A parsed tree's own layout
-/// renders through its trivia and indentation unit, never a format record.
-pub fn apply_render_format(canonical: String, engine_format: Option<&FormatRecord>, newline: &str) -> String {
-    let formatted = match engine_format {
-        Some(format) => apply_format(&canonical, format),
-        None => canonical,
-    };
-    crate::line_endings::spell(formatted, newline)
 }
 
 pub fn panic_msg(payload: Box<dyn std::any::Any + Send>, fallback: &str) -> String {
@@ -962,7 +937,6 @@ impl<G: EngineGrammar> SourceTable for HashMap<u32, ParsedTree<G>> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::types::{FormatBoundary, FormatRecord};
 
     #[test]
     fn counter_exhaustion_does_not_wrap_or_reuse_an_id() {
@@ -1134,7 +1108,7 @@ mod tests {
     }
 
     fn parsed(source: &str) -> (ParsedTree<TestGrammar>, u64) {
-        let mut engine = Engine::new(TestGrammar, None, ResolvedOptions::default()).expect("engine");
+        let mut engine = Engine::new(TestGrammar, ResolvedOptions::default()).expect("engine");
         let tree = engine.parse(source.to_string(), 1).expect("parse");
         (tree, encode_handle(1, 0))
     }
@@ -1336,30 +1310,6 @@ mod tests {
     fn a_pattern_the_native_matcher_cannot_compile_is_refused() {
         let spec = serde_json::from_str(r#"{ "op": "match", "fields": ["name"], "kinds": [], "pattern": "(a)\\1" }"#).expect("plan json");
         assert!(Plan::compile(spec).is_err());
-    }
-
-    fn format_record(prefix: &str, suffix: &str) -> FormatRecord {
-        FormatRecord {
-            boundary: Some(FormatBoundary {
-                leading: Some(prefix.to_string()),
-                trailing: Some(suffix.to_string()),
-            }),
-            slots: None,
-            literals: None,
-            trivia: None,
-            kinds: None,
-        }
-    }
-
-    #[test]
-    fn the_engine_format_wraps_any_render() {
-        let engine_format = format_record("<<", ">>");
-        assert_eq!(apply_render_format("rendered:1".to_string(), Some(&engine_format), "\n"), "<<rendered:1>>");
-    }
-
-    #[test]
-    fn the_result_is_spelled_with_the_requested_line_ending() {
-        assert_eq!(apply_render_format("a\nb".to_string(), None, "\r\n"), "a\r\nb");
     }
 
     fn index_of_kind(tree: &ParsedTree<TestGrammar>, kind: &str, nth: usize) -> u32 {

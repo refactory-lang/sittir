@@ -512,11 +512,45 @@ impl<S: OptionSites> ::napi::bindgen_prelude::FromNapiValue for Options<S> {
     }
 }
 
+/// The indentation unit of `source`, from its indent steps.
+///
+/// A step is the leading whitespace a non-blank line adds on top of the
+/// previous non-blank line's (when it extends it). The most frequent step is
+/// the unit, so nesting depth never votes: a two-space file nested four deep
+/// still steps by two spaces. `None` when the source never indents or when
+/// two steps tie; otherwise the unit, whatever whitespace it is made of.
+pub fn indent_unit(source: &str) -> Option<String> {
+    let mut steps: Vec<(&str, usize)> = Vec::new();
+    let mut previous = "";
+    for line in source.lines() {
+        let body = line.trim_start_matches([' ', '\t']);
+        if body.is_empty() {
+            continue;
+        }
+        let leading = &line[..line.len() - body.len()];
+        if leading.len() > previous.len() && leading.starts_with(previous) {
+            let step = &leading[previous.len()..];
+            match steps.iter_mut().find(|(s, _)| *s == step) {
+                Some((_, count)) => *count += 1,
+                None => steps.push((step, 1)),
+            }
+        }
+        previous = leading;
+    }
+    let top = steps.iter().map(|(_, count)| *count).max()?;
+    let mut leaders = steps.iter().filter(|(_, count)| *count == top);
+    let (unit, _) = leaders.next()?;
+    if leaders.next().is_some() {
+        return None;
+    }
+    Some(unit.to_string())
+}
+
 /// What a parse reads off its source's layout, as render options: the
 /// tree's layer of the precedence, which a render of the tree resolves over
 /// the engine's options and under the call's own. Each entry is one the
 /// source sets apart from the options it was read against: the indentation
-/// unit (`format::indent_unit`), and the arm of each of the root's edges
+/// unit (`indent_unit`), and the arm of each of the root's edges
 /// that the source's whitespace at the file's start and end classifies to.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct InferredOptions {
@@ -527,7 +561,7 @@ pub struct InferredOptions {
 impl InferredOptions {
     /// The layer `source`, whose root is of `root`, sets apart from `base`.
     pub fn infer(source: &str, root: crate::types::KindId, base: &ResolvedOptions, tables: &OptionTables, whitespace: &crate::render::WhitespaceTable) -> Self {
-        let indent = crate::format::indent_unit(source).filter(|unit| *unit != base.indent);
+        let indent = indent_unit(source).filter(|unit| *unit != base.indent);
         let (before, after) = base.edge_sites(root);
         let leading = &source[..source.len() - source.trim_start().len()];
         let trailing = &source[source.trim_end().len()..];
@@ -587,4 +621,28 @@ fn address_of(nodes: &'static [AddressNode], site: usize) -> Option<Vec<&'static
         }),
         _ => None,
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn the_unit_is_the_step_a_line_adds_whatever_whitespace_it_is() {
+        assert_eq!(indent_unit("fn main() {\n\tprintln!(\"hello\");\n}\n").as_deref(), Some("\t"));
+        assert_eq!(indent_unit("fn main() {\n  println!(\"hello\");\n}\n").as_deref(), Some("  "));
+        assert_eq!(indent_unit("fn main() {\n    println!(\"hello\");\n    let x = 1;\n}\n").as_deref(), Some("    "));
+        assert_eq!(indent_unit("fn a() {\n   b();\n   c();\n}\n").as_deref(), Some("   "));
+    }
+
+    #[test]
+    fn nesting_depth_never_votes_for_a_wider_unit() {
+        assert_eq!(indent_unit("fn a() {\n  if x {\n    b();\n    c();\n    d();\n  }\n}\n").as_deref(), Some("  "));
+        assert_eq!(indent_unit("fn a() {\n    if x {\n        b();\n        c();\n    }\n}\n").as_deref(), Some("    "));
+    }
+
+    #[test]
+    fn an_unindented_source_has_no_unit() {
+        assert_eq!(indent_unit("fn a() {}\nfn b() {}\n"), None);
+    }
 }

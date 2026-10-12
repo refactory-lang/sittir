@@ -45,7 +45,6 @@ macro_rules! napi_engine {
     ($grammar:ty, $render_root:ty, $any:ty, $options:ty, $render_parts:path, $abi:expr, $defaults:path) => {
         #[::napi_derive::napi(object, object_to_js = false)]
         pub struct EngineOptions {
-            pub format: Option<String>,
             /// Resolved once here against the grammar's site table at
             /// construction; only the resolved ids are kept. A `render` call
             /// carrying its own options resolves again, per call, over the
@@ -126,17 +125,7 @@ macro_rules! napi_engine {
         impl SittirEngine {
             #[::napi_derive::napi(constructor)]
             pub fn new(options: Option<EngineOptions>) -> ::napi::Result<Self> {
-                let (format_json, opts) = match options {
-                    Some(opts) => (opts.format, opts.options),
-                    None => (None, None),
-                };
-                let format = format_json
-                    .map(|json| ::serde_json::from_str(&json))
-                    .transpose()
-                    .map_err(|e| {
-                        ::napi::Error::from_reason(format!("parse engine format failed: {e}"))
-                    })?;
-                let table = match opts {
+                let table = match options.and_then(|opts| opts.options) {
                     Some(opts) => {
                         opts.resolve(&$defaults()).map_err(::napi::Error::from_reason)?
                     }
@@ -145,7 +134,6 @@ macro_rules! napi_engine {
                 Ok(Self {
                     engine: $crate::engine::Engine::new(
                         <$grammar as ::std::default::Default>::default(),
-                        format,
                         table,
                     )
                     .map_err(::napi::Error::from_reason)?,
@@ -441,7 +429,7 @@ macro_rules! napi_engine {
                     let (_, canonical) = $render_parts(transport, &ctx).map_err(|e| {
                         ::napi::Error::from_reason(format!("render_transport failed: {e}"))
                     })?;
-                    Ok($crate::apply_render_format(canonical, self.engine.engine_format(), &table.newline))
+                    Ok($crate::line_endings::spell(canonical, &table.newline))
                 })
             }
 

@@ -52,7 +52,6 @@ const TRANSPORT_METADATA = new Set([
 	'$span',
 	'$treeHandle',
 	'$end',
-	'$format',
 	'$_trivia',
 	'$slotOrder'
 ]);

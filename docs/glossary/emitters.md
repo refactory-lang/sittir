@@ -14492,8 +14492,8 @@ rule 2, the seat or the list site. The comment itself still renders as the
 trivia its owner carries. The third: a list's flanks keep their source class
 with its depth (the indent arm after the opener, the dedent arm before the
 closer, where the source lines show the depth change), but the depth unit is
-the render's, from the format record or the options, never the source's
-columns. A list indented two spaces in a source rendered with four-space
+the render's, from its options (`layout.indent`, the tree's inferred unit
+over the engine's), never the source's columns. A list indented two spaces in a source rendered with four-space
 indentation renders with four.
 
 A list's flanks follow rule 1 like its item gaps: the gap between the opener

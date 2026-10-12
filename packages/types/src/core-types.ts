@@ -85,10 +85,6 @@ export interface AnyUntypedNode {
 	 * Optional at the type level because generated kind interfaces
 	 * omit it by convention (factory output always sets it at runtime). */
 	$named?: boolean;
-	/** Per-node format override. Set by callers to override the tree-level format
-	 *  (ctx.format) for this specific node. Never set by inference — what a source
-	 *  infers lives on TreeHandle.options. Absent on all factory and readUntypedNode output. */
-	$format?: FormatRecord;
 
 	// -------------------------------------------------------------------------
 	// $-prefixed methods — present on factory/wrap output only.
@@ -263,78 +259,6 @@ export interface CSTNode {
 	startPosition: Position;
 	endPosition: Position;
 	fieldName?: string;
-}
-
-// ---------------------------------------------------------------------------
-// Format record — residual source-text metadata
-// ---------------------------------------------------------------------------
-
-/** Leading/trailing bytes around the canonical body of a node's span. */
-export interface FormatBoundary {
-	/** Bytes before the canonical body — indent, preceding blank lines. */
-	leading?: string;
-	/** Bytes after the canonical body — trailing newline, blank lines. */
-	trailing?: string;
-}
-
-/**
- * Per-position separator/optional-token override.
- * Key: field name (raw snake_case) or child-array index as string.
- *
- * Discriminated union: `absent: true` marks the slot as omitted in source
- * (e.g. a trailing semicolon that was absent). When absent, `sep` and
- * `trailingPresent` are meaningless and excluded by the type. JSON-wire
- * compatible with the Rust `FormatSlot` struct (all fields skip-serialize-if-none).
- */
-export type FormatSlot =
-	| { readonly absent: true }
-	| { readonly absent?: false; sep?: string; trailingPresent?: boolean };
-
-/**
- * Literal-spelling override for a leaf node.
- * Key: field name or "$text" for the node's own text.
- */
-export interface FormatLiteral {
-	/** Exact source spelling — overrides `$text` at render time. */
-	raw: string;
-}
-
-/** A single trivia item (comment or blank line) with position in the span. */
-export interface FormatTrivia {
-	/**
-	 * Byte offset within the enclosing node's span (relative to span start).
-	 *
-	 * @remarks
-	 * Must be non-negative. Mirrors Rust's `u32` offset field — the TS
-	 * `number` type does not enforce this at the type level. `rebaseTrivia`
-	 * clamps shifted offsets to `Math.max(0, n)` to guard against negative
-	 * values produced by large deletions.
-	 */
-	offset: number;
-	/** Verbatim text of the comment or blank-line sequence. */
-	text: string;
-}
-
-/**
- * Per-kind format record: a {@link FormatRecord} without recursive `kinds`.
- * Used for entries inside `FormatRecord.kinds` — nesting `kinds` inside
- * `kinds` is not supported by the render path (resolves only one level deep).
- */
-export type KindFormatRecord = Omit<FormatRecord, 'kinds'>;
-
-/** Residual format metadata for a tree or a specific node kind. */
-export interface FormatRecord {
-	boundary?: FormatBoundary;
-	slots?: Record<string, FormatSlot>;
-	literals?: Record<string, FormatLiteral>;
-	trivia?: FormatTrivia[];
-	/**
-	 * Per-kind format overrides. Key is the raw node kind (e.g. "function_item").
-	 * Render lookup: node.$format ?? kinds[node.$type] ?? parent FormatRecord.
-	 * Entries here use {@link KindFormatRecord} — nesting is not supported
-	 * and the render path resolves only one level deep.
-	 */
-	kinds?: Record<string, KindFormatRecord>;
 }
 
 // ---------------------------------------------------------------------------

@@ -67,8 +67,8 @@ export interface NativeEngineLike<TTransport = unknown> {
 	/**
 	 * Parse `source` and keep its tree.
 	 *
-	 * @returns JSON `{ treeId, format, errors }`: the id {@link read} and `disposeTree` take, the
-	 *   format the parse detected, and the parse's error regions.
+	 * @returns JSON `{ treeId, options, errors }`: the id {@link read} and `disposeTree` take, the
+	 *   tree's layer of the render options (`NativeParseResult.options`), and the parse's error regions.
 	 */
 	parse(source: string): string;
 	/**
@@ -151,7 +151,7 @@ export interface NativeModuleLike<
 	TTransport = unknown,
 	TEngine extends NativeEngineLike<TTransport> = NativeEngineLike<TTransport>
 > {
-	SittirEngine: new (options?: { format?: string; options?: object }) => TEngine;
+	SittirEngine: new (options?: { options?: object }) => TEngine;
 	/** Release one parsed tree of this language. Driven by GC — see `treeDisposalRegistry`. An id that names no tree is ignored. */
 	disposeTree(treeId: number): void;
 	/** Trees of this language still held on this thread. Diagnostics only. */
@@ -294,11 +294,7 @@ export function createNativeEngine<
 	}
 
 	try {
-		const nativeOptions = {
-			...(options?.format ? { format: JSON.stringify(options.format) } : {}),
-			...(options?.options ? { options: options.options } : {})
-		};
-		const engine = new status.native.SittirEngine(Object.keys(nativeOptions).length > 0 ? nativeOptions : undefined);
+		const engine = new status.native.SittirEngine(options?.options === undefined ? undefined : { options: options.options });
 		const kindView: KindView = {
 			isWrapper: (kindId) => config.rebuildWrappers.has(kindId),
 			isList: (kindId) => config.listKinds.has(kindId)

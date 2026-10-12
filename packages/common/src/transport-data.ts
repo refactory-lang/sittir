@@ -492,7 +492,6 @@ function toTransportValue(value: unknown, view: KindView, changed: ChangedEdges,
 	if (at !== undefined && (isCoordinate(value) || (fold && treeOf(value) !== undefined))) {
 		if (fold) assertHoldsTree(value);
 		const out = fold ? coordinateCrossing(at, edges) : plainCoordinate(at);
-		if (value.$format !== undefined) out.$format = value.$format;
 		return out;
 	}
 	const out: Record<string, unknown> = {};

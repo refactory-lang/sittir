@@ -102,7 +102,7 @@ It carries `fileTypes`, the file types the grammar declares upstream (an empty l
 
 ### `packages/types/src/engine-api.ts::NativeEngineOptions`
 
-The options a language's native engine is created with: the format record and the render options under `options`. It is the native boundary's shape only; `createEngine` maps its own `render` option onto `options`.
+The options a language's native engine is created with: the render options under `options`. It is the native boundary's shape only; `createEngine` maps its own `render` option onto `options`.
 
 ### `packages/types/src/engine-api.ts::LanguageHooks`
 
@@ -174,7 +174,7 @@ Whether two types are identical, by comparing two generic signatures that differ
 
 ### `packages/types/src/engine-api.ts::EngineOptions`
 
-An engine's options, grouped by concern: the builder surface, the render options, the format record, and the interceptors.
+An engine's options, grouped by concern: the builder surface, the render options, and the interceptors.
 
 ### `packages/types/src/engine-api.ts::Interceptor`
 

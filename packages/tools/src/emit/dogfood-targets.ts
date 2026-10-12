@@ -31,7 +31,7 @@ export const DOGFOOD_TARGETS: readonly DogfoodTarget[] = [
 	},
 	{
 		grammar: 'typescript',
-		source: 'packages/common/src/format.ts',
+		source: 'packages/tools/tests/emit/__fixtures__/dogfood-typescript.ts',
 		stem: '18-dogfood-typescript',
 		name: 'Format',
 		surfaces: ['strict', 'loose'],

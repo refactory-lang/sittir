@@ -132,7 +132,6 @@ export declare class SittirEngine {
 export declare function disposeTree(treeId: number): void
 
 export interface EngineOptions {
-  format?: string
   /**
    * Resolved once here against the grammar's site table at
    * construction; only the resolved ids are kept. A `render` call
