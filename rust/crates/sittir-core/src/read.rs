@@ -889,10 +889,10 @@ impl<T: ReadTransport, const A: bool> ReadSlot for crate::NonEmptyVec<Option<Slo
     }
 }
 
-/// A presence slot: `true` when its keyword is among the children, absent
+/// A presence slot: `true` when its keyword is among the children, `false`
 /// otherwise. The keyword stays an owner of trivia, as today's model indexes
 /// have no entry for presence slots.
-impl ReadSlot for Option<bool> {
+impl ReadSlot for bool {
     type Acc = bool;
     fn start() -> bool {
         false
@@ -914,7 +914,7 @@ impl ReadSlot for Option<bool> {
         Ok(())
     }
     fn finish(acc: bool, _: SlotSite) -> Result<Self, ReadError> {
-        Ok(acc.then_some(true))
+        Ok(acc)
     }
 }
 
@@ -994,10 +994,10 @@ impl FromCapture for Option<String> {
     }
 }
 
-/// A flag: present when its group matched.
-impl FromCapture for Option<bool> {
+/// A flag: `true` when its group matched.
+impl FromCapture for bool {
     fn from_capture(capture: Option<&str>, _: SlotSite) -> Result<Self, ReadError> {
-        Ok(capture.map(|_| true))
+        Ok(capture.is_some())
     }
 }
 
@@ -1297,8 +1297,8 @@ mod tests {
     }
 
     #[test]
-    fn a_presence_slot_reads_true_or_absent() {
-        assert_eq!(<Option<bool> as ReadSlot>::finish(true, site()), Ok(Some(true)));
-        assert_eq!(<Option<bool> as ReadSlot>::finish(false, site()), Ok(None));
+    fn a_presence_slot_reads_true_or_false() {
+        assert_eq!(<bool as ReadSlot>::finish(true, site()), Ok(true));
+        assert_eq!(<bool as ReadSlot>::finish(false, site()), Ok(false));
     }
 }

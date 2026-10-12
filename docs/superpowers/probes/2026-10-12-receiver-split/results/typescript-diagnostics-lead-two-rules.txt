@@ -1,0 +1,6 @@
+[error] field-optional-delimiter  formal_parameters_elements_receiver.item
+[error] rule-reauthored-without-cause  object_type.-
+[error] unclassifiable-shape  binary_expression.-
+[error] unclassifiable-shape  public_field_definition.-
+[error] union-slot-mixed-row  binary_expression.-
+GrammarDiagnosticError: field-optional-delimiter: kind 'formal_parameters_elements_receiver': field 'item' carries an optional trailing delimiter, which a field factory cannot control; only a list kind models an optional delimiter.

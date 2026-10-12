@@ -4535,8 +4535,8 @@ export interface ConstItem {
 export interface StaticItem {
 	readonly $type: TSKindId.StaticItem;
 	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _ref?: boolean;
-	readonly _mutable?: boolean;
+	readonly _ref: boolean;
+	readonly _mutable: boolean;
 	readonly _name: Identifier;
 	readonly _type: Type;
 	readonly _value?: Expression;
@@ -4600,8 +4600,8 @@ export interface StaticItem {
 		readonly value: SlotHint<NonNullable<T.StaticItem.Config>['value'], true>;
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
-	ref(): boolean | undefined;
-	mutable(): boolean | undefined;
+	ref(): boolean;
+	mutable(): boolean;
 	name(): Identifier;
 	type(): Type;
 	value(): Expression | undefined;
@@ -5048,7 +5048,7 @@ export interface WherePredicate {
 export interface TraitItem {
 	readonly $type: TSKindId.TraitItem;
 	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _unsafe?: boolean;
+	readonly _unsafe: boolean;
 	readonly _name: TypeIdentifier;
 	readonly _type_parameters?: TypeParameters;
 	readonly _bounds?: TraitBounds;
@@ -5083,7 +5083,7 @@ export interface TraitItem {
 		};
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
-	unsafe(): boolean | undefined;
+	unsafe(): boolean;
 	name(): TypeIdentifier;
 	typeParameters(): TypeParameters | undefined;
 	bounds(): TraitBounds | undefined;
@@ -5460,7 +5460,7 @@ export interface LifetimeParameter {
 
 export interface LetDeclaration {
 	readonly $type: TSKindId.LetDeclaration;
-	readonly _mutable?: boolean;
+	readonly _mutable: boolean;
 	readonly _pattern: Pattern;
 	readonly _type?: Type;
 	readonly _value?: Expression;
@@ -5527,7 +5527,7 @@ export interface LetDeclaration {
 		readonly value: SlotHint<NonNullable<T.LetDeclaration.Config>['value'], true>;
 		readonly alternative: SlotHint<T.Block, true>;
 	};
-	mutable(): boolean | undefined;
+	mutable(): boolean;
 	pattern(): Pattern;
 	type(): Type | undefined;
 	value(): Expression | undefined;
@@ -6172,9 +6172,9 @@ export interface Parameters {
 
 export interface SelfParameter {
 	readonly $type: TSKindId.SelfParameter;
-	readonly _reference?: boolean;
+	readonly _reference: boolean;
 	readonly _lifetime?: Lifetime;
-	readonly _mutable?: boolean;
+	readonly _mutable: boolean;
 	readonly __inputHints__?: {
 		readonly reference?: BaseBooleanKeyword<'&'>;
 		readonly mutable?: BaseBooleanKeyword<'mut'>;
@@ -6187,14 +6187,14 @@ export interface SelfParameter {
 		readonly lifetime: SlotHint<T.Lifetime, true>;
 		readonly mutable: SlotHint<NonNullable<T.SelfParameter.Config>['mutable'], true>;
 	};
-	reference(): boolean | undefined;
+	reference(): boolean;
 	lifetime(): Lifetime | undefined;
-	mutable(): boolean | undefined;
+	mutable(): boolean;
 }
 
 export interface VariadicParameter {
 	readonly $type: TSKindId.VariadicParameter;
-	readonly _mutable?: boolean;
+	readonly _mutable: boolean;
 	readonly _pattern?: Pattern;
 	readonly __inputHints__?: {
 		readonly mutable?: BaseBooleanKeyword<'mut'>;
@@ -6212,13 +6212,13 @@ export interface VariadicParameter {
 		readonly mutable: SlotHint<NonNullable<T.VariadicParameter.Config>['mutable'], true>;
 		readonly pattern: SlotHint<NonNullable<T.VariadicParameter.Config>['pattern'], true>;
 	};
-	mutable(): boolean | undefined;
+	mutable(): boolean;
 	pattern(): Pattern | undefined;
 }
 
 export interface Parameter {
 	readonly $type: TSKindId.Parameter;
-	readonly _mutable?: boolean;
+	readonly _mutable: boolean;
 	readonly _name: Pattern | TSKindId.Self;
 	readonly _type: Type;
 	readonly __inputHints__?: {
@@ -6278,7 +6278,7 @@ export interface Parameter {
 		readonly name: SlotHint<NonNullable<T.Parameter.Config>['name']>;
 		readonly type: SlotHint<NonNullable<T.Parameter.Config>['type']>;
 	};
-	mutable(): boolean | undefined;
+	mutable(): boolean;
 	name(): Pattern | TSKindId.Self;
 	type(): Type;
 }
@@ -6923,7 +6923,7 @@ export interface TypeBinding {
 export interface ReferenceType {
 	readonly $type: TSKindId.ReferenceType;
 	readonly _lifetime?: Lifetime;
-	readonly _mutable?: boolean;
+	readonly _mutable: boolean;
 	readonly _type: Type;
 	readonly __inputHints__?: {
 		readonly mutable?: BaseBooleanKeyword<'mut'>;
@@ -6977,7 +6977,7 @@ export interface ReferenceType {
 		readonly type: SlotHint<NonNullable<T.ReferenceType.Config>['type']>;
 	};
 	lifetime(): Lifetime | undefined;
-	mutable(): boolean | undefined;
+	mutable(): boolean;
 	type(): Type;
 }
 
@@ -8174,7 +8174,7 @@ export interface LastMatchArm {
 	readonly _attributes: readonly (AttributeItem | InnerAttributeItem)[];
 	readonly _pattern: MatchPattern;
 	readonly _value: Expression;
-	readonly _comma?: boolean;
+	readonly _comma: boolean;
 	readonly __inputHints__?: {
 		readonly value:
 			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
@@ -8197,7 +8197,7 @@ export interface LastMatchArm {
 	attributes(): readonly (AttributeItem | InnerAttributeItem)[];
 	pattern(): MatchPattern;
 	value(): Expression;
-	comma(): boolean | undefined;
+	comma(): boolean;
 }
 
 export interface MatchPattern {
@@ -8413,7 +8413,7 @@ export interface UnsafeBlock {
 
 export interface AsyncBlock {
 	readonly $type: TSKindId.AsyncBlock;
-	readonly _move?: boolean;
+	readonly _move: boolean;
 	readonly _body: Block;
 	readonly __inputHints__?: {
 		readonly move?: BaseBooleanKeyword<'move'>;
@@ -8422,13 +8422,13 @@ export interface AsyncBlock {
 		readonly move: SlotHint<NonNullable<T.AsyncBlock.Config>['move'], true>;
 		readonly body: SlotHint<T.Block>;
 	};
-	move(): boolean | undefined;
+	move(): boolean;
 	body(): Block;
 }
 
 export interface GenBlock {
 	readonly $type: TSKindId.GenBlock;
-	readonly _move?: boolean;
+	readonly _move: boolean;
 	readonly _body: Block;
 	readonly __inputHints__?: {
 		readonly move?: BaseBooleanKeyword<'move'>;
@@ -8437,7 +8437,7 @@ export interface GenBlock {
 		readonly move: SlotHint<NonNullable<T.GenBlock.Config>['move'], true>;
 		readonly body: SlotHint<T.Block>;
 	};
-	move(): boolean | undefined;
+	move(): boolean;
 	body(): Block;
 }
 
@@ -8626,7 +8626,7 @@ export interface CapturedPattern {
 
 export interface ReferencePattern {
 	readonly $type: TSKindId.ReferencePattern;
-	readonly _mutable?: boolean;
+	readonly _mutable: boolean;
 	readonly _pattern: Pattern;
 	readonly __inputHints__?: {
 		readonly mutable?: BaseBooleanKeyword<'mut'>;
@@ -8644,7 +8644,7 @@ export interface ReferencePattern {
 		readonly mutable: SlotHint<NonNullable<T.ReferencePattern.Config>['mutable'], true>;
 		readonly pattern: SlotHint<NonNullable<T.ReferencePattern.Config>['pattern']>;
 	};
-	mutable(): boolean | undefined;
+	mutable(): boolean;
 	pattern(): Pattern;
 }
 
@@ -9499,7 +9499,7 @@ export interface IntegerLiteralOctal {
 
 export interface CharLiteralPlain {
 	readonly $type: TSKindId.CharLiteralPlain;
-	readonly _b?: boolean;
+	readonly _b: boolean;
 	readonly _content: string;
 	readonly __inputHints__?: {
 		readonly b?: BaseBooleanKeyword<'b'>;
@@ -9508,13 +9508,13 @@ export interface CharLiteralPlain {
 		readonly b: SlotHint<NonNullable<T.CharLiteralPlain.Config>['b'], true>;
 		readonly content: SlotHint<string>;
 	};
-	b(): boolean | undefined;
+	b(): boolean;
 	content(): string;
 }
 
 export interface CharLiteralEscapedSimple {
 	readonly $type: TSKindId.CharLiteralEscapedSimple;
-	readonly _b?: boolean;
+	readonly _b: boolean;
 	readonly _content: string;
 	readonly __inputHints__?: {
 		readonly b?: BaseBooleanKeyword<'b'>;
@@ -9523,13 +9523,13 @@ export interface CharLiteralEscapedSimple {
 		readonly b: SlotHint<NonNullable<T.CharLiteralEscapedSimple.Config>['b'], true>;
 		readonly content: SlotHint<string>;
 	};
-	b(): boolean | undefined;
+	b(): boolean;
 	content(): string;
 }
 
 export interface CharLiteralEscapedUnicodeFixed {
 	readonly $type: TSKindId.CharLiteralEscapedUnicodeFixed;
-	readonly _b?: boolean;
+	readonly _b: boolean;
 	readonly _content: string;
 	readonly __inputHints__?: {
 		readonly b?: BaseBooleanKeyword<'b'>;
@@ -9538,13 +9538,13 @@ export interface CharLiteralEscapedUnicodeFixed {
 		readonly b: SlotHint<NonNullable<T.CharLiteralEscapedUnicodeFixed.Config>['b'], true>;
 		readonly content: SlotHint<string>;
 	};
-	b(): boolean | undefined;
+	b(): boolean;
 	content(): string;
 }
 
 export interface CharLiteralEscapedUnicodeBraced {
 	readonly $type: TSKindId.CharLiteralEscapedUnicodeBraced;
-	readonly _b?: boolean;
+	readonly _b: boolean;
 	readonly _content: string;
 	readonly __inputHints__?: {
 		readonly b?: BaseBooleanKeyword<'b'>;
@@ -9553,13 +9553,13 @@ export interface CharLiteralEscapedUnicodeBraced {
 		readonly b: SlotHint<NonNullable<T.CharLiteralEscapedUnicodeBraced.Config>['b'], true>;
 		readonly content: SlotHint<string>;
 	};
-	b(): boolean | undefined;
+	b(): boolean;
 	content(): string;
 }
 
 export interface CharLiteralEscapedHex {
 	readonly $type: TSKindId.CharLiteralEscapedHex;
-	readonly _b?: boolean;
+	readonly _b: boolean;
 	readonly _content: string;
 	readonly __inputHints__?: {
 		readonly b?: BaseBooleanKeyword<'b'>;
@@ -9568,7 +9568,7 @@ export interface CharLiteralEscapedHex {
 		readonly b: SlotHint<NonNullable<T.CharLiteralEscapedHex.Config>['b'], true>;
 		readonly content: SlotHint<string>;
 	};
-	b(): boolean | undefined;
+	b(): boolean;
 	content(): string;
 }
 
@@ -9672,9 +9672,9 @@ export interface AttributeInput {
 
 export interface ClosureExpressionBlock {
 	readonly $type: TSKindId.ClosureExpressionBlock;
-	readonly _static?: boolean;
-	readonly _async?: boolean;
-	readonly _move?: boolean;
+	readonly _static: boolean;
+	readonly _async: boolean;
+	readonly _move: boolean;
 	readonly _parameters: ClosureParameters;
 	readonly _return_type?: Type;
 	readonly _body: Block;
@@ -9734,9 +9734,9 @@ export interface ClosureExpressionBlock {
 		readonly returnType: SlotHint<NonNullable<T.ClosureExpressionBlock.Config>['returnType'], true>;
 		readonly body: SlotHint<T.Block>;
 	};
-	static(): boolean | undefined;
-	async(): boolean | undefined;
-	move(): boolean | undefined;
+	static(): boolean;
+	async(): boolean;
+	move(): boolean;
 	parameters(): ClosureParameters;
 	returnType(): Type | undefined;
 	body(): Block;
@@ -9744,9 +9744,9 @@ export interface ClosureExpressionBlock {
 
 export interface ClosureExpressionExpr {
 	readonly $type: TSKindId.ClosureExpressionExpr;
-	readonly _static?: boolean;
-	readonly _async?: boolean;
-	readonly _move?: boolean;
+	readonly _static: boolean;
+	readonly _async: boolean;
+	readonly _move: boolean;
 	readonly _parameters: ClosureParameters;
 	readonly _body: Expression | TSKindId.Underscore;
 	readonly __inputHints__?: {
@@ -9770,9 +9770,9 @@ export interface ClosureExpressionExpr {
 		readonly parameters: SlotHint<T.ClosureParameters>;
 		readonly body: SlotHint<NonNullable<T.ClosureExpressionExpr.Config>['body']>;
 	};
-	static(): boolean | undefined;
-	async(): boolean | undefined;
-	move(): boolean | undefined;
+	static(): boolean;
+	async(): boolean;
+	move(): boolean;
 	parameters(): ClosureParameters;
 	body(): Expression | TSKindId.Underscore;
 }
@@ -9853,7 +9853,7 @@ export interface ImplItemNegativeClause {
 
 export interface ImplItemBody {
 	readonly $type: TSKindId.ImplItemBody;
-	readonly _unsafe?: boolean;
+	readonly _unsafe: boolean;
 	readonly _type_parameters?: TypeParameters;
 	readonly _trait_clause?: ImplItemPositiveClause | ImplItemNegativeClause;
 	readonly _type: Type;
@@ -9924,7 +9924,7 @@ export interface ImplItemBody {
 			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	unsafe(): boolean | undefined;
+	unsafe(): boolean;
 	typeParameters(): TypeParameters | undefined;
 	traitClause(): ImplItemPositiveClause | ImplItemNegativeClause | undefined;
 	type(): Type;
@@ -9934,7 +9934,7 @@ export interface ImplItemBody {
 
 export interface ImplItemSemi {
 	readonly $type: TSKindId.ImplItemSemi;
-	readonly _unsafe?: boolean;
+	readonly _unsafe: boolean;
 	readonly _type_parameters?: TypeParameters;
 	readonly _trait_clause?: ImplItemPositiveClause | ImplItemNegativeClause;
 	readonly _type: Type;
@@ -10002,7 +10002,7 @@ export interface ImplItemSemi {
 			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	unsafe(): boolean | undefined;
+	unsafe(): boolean;
 	typeParameters(): TypeParameters | undefined;
 	traitClause(): ImplItemPositiveClause | ImplItemNegativeClause | undefined;
 	type(): Type;
@@ -10759,8 +10759,8 @@ export interface DelimTokenTreeBrace {
 
 export interface FieldPatternShorthand {
 	readonly $type: TSKindId.FieldPatternShorthand;
-	readonly _ref?: boolean;
-	readonly _mutable?: boolean;
+	readonly _ref: boolean;
+	readonly _mutable: boolean;
 	readonly _name: ShorthandFieldIdentifier;
 	readonly __inputHints__?: {
 		readonly ref?: BaseBooleanKeyword<'ref'>;
@@ -10775,15 +10775,15 @@ export interface FieldPatternShorthand {
 		readonly mutable: SlotHint<NonNullable<T.FieldPatternShorthand.Config>['mutable'], true>;
 		readonly name: SlotHint<T.ShorthandFieldIdentifier | T.ShorthandFieldIdentifier.Types>;
 	};
-	ref(): boolean | undefined;
-	mutable(): boolean | undefined;
+	ref(): boolean;
+	mutable(): boolean;
 	name(): ShorthandFieldIdentifier;
 }
 
 export interface FieldPatternNamed {
 	readonly $type: TSKindId.FieldPatternNamed;
-	readonly _ref?: boolean;
-	readonly _mutable?: boolean;
+	readonly _ref: boolean;
+	readonly _mutable: boolean;
 	readonly _name: FieldIdentifier;
 	readonly _pattern: Pattern;
 	readonly __inputHints__?: {
@@ -10806,8 +10806,8 @@ export interface FieldPatternNamed {
 		readonly name: SlotHint<T.FieldIdentifier | T.FieldIdentifier.Types>;
 		readonly pattern: SlotHint<NonNullable<T.FieldPatternNamed.Config>['pattern']>;
 	};
-	ref(): boolean | undefined;
-	mutable(): boolean | undefined;
+	ref(): boolean;
+	mutable(): boolean;
 	name(): FieldIdentifier;
 	pattern(): Pattern;
 }

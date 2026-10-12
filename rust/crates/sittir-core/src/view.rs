@@ -162,11 +162,8 @@ pub struct Presence<T> {
 }
 
 impl<T> Presence<T> {
-    pub fn new(flag: Option<bool>, kind: T) -> Self {
-        Self {
-            present: flag == Some(true),
-            kind,
-        }
+    pub fn new(present: bool, kind: T) -> Self {
+        Self { present, kind }
     }
 }
 
@@ -350,7 +347,7 @@ mod presence_tests {
         }
     }
 
-    fn rendered(flag: Option<bool>) -> String {
+    fn rendered(flag: bool) -> String {
         let mut s = String::new();
         let mut w = crate::spacing::SpacingWriter::new(&mut s, crate::spacing::WordMatcher::default_ident());
         let view = View::new(Presence::new(flag, Keyword), "{}");
@@ -361,13 +358,12 @@ mod presence_tests {
 
     #[test]
     fn a_set_flag_renders_the_kind() {
-        assert_eq!(rendered(Some(true)), "mut");
+        assert_eq!(rendered(true), "mut");
     }
 
     #[test]
-    fn an_absent_or_false_flag_renders_nothing() {
-        assert_eq!(rendered(None), "");
-        assert_eq!(rendered(Some(false)), "");
-        assert!(!View::new(Presence::new(Some(false), Keyword), "{}").is_present());
+    fn a_false_flag_renders_nothing() {
+        assert_eq!(rendered(false), "");
+        assert!(!View::new(Presence::new(false, Keyword), "{}").is_present());
     }
 }

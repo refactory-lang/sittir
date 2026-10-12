@@ -2105,16 +2105,16 @@ pub struct CharacterClassTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_negation")]
     #[slot(presence = display(kind::_NEGATION))]
-    pub negation: Option<bool>,
+    pub negation: bool,
     #[wire(key = "_leading")]
     #[slot(field = field::LEADING, presence = display(kind::CLASS_CHARACTER))]
-    pub leading: Option<bool>,
+    pub leading: bool,
     #[wire(key = "_class_atoms")]
     #[slot(field = field::CLASS_ATOMS)]
     pub class_atoms: Vec<::sittir_core::SlotValue<CharacterClassClassAtomsTransportSlot>>,
     #[wire(key = "_trailing")]
     #[slot(field = field::TRAILING, presence = display(kind::CLASS_CHARACTER))]
-    pub trailing: Option<bool>,
+    pub trailing: bool,
 }
 
 impl ::sittir_core::view::KindOf for CharacterClassTransport {
@@ -2577,7 +2577,7 @@ pub struct ZeroOrMoreTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_lazy")]
     #[slot(presence = display(kind::_LAZY))]
-    pub lazy: Option<bool>,
+    pub lazy: bool,
 }
 
 impl ::sittir_core::view::KindOf for ZeroOrMoreTransport {
@@ -2628,7 +2628,7 @@ pub struct OneOrMoreTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_lazy")]
     #[slot(presence = display(kind::_LAZY))]
-    pub lazy: Option<bool>,
+    pub lazy: bool,
 }
 
 impl ::sittir_core::view::KindOf for OneOrMoreTransport {
@@ -2679,7 +2679,7 @@ pub struct OptionalTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_lazy")]
     #[slot(presence = display(kind::_LAZY))]
-    pub lazy: Option<bool>,
+    pub lazy: bool,
 }
 
 impl ::sittir_core::view::KindOf for OptionalTransport {
@@ -2733,7 +2733,7 @@ pub struct CountQuantifierTransport {
     pub content: ::sittir_core::SlotValue<CountQuantifierContentTransportSlot>,
     #[wire(key = "_lazy")]
     #[slot(presence = display(kind::_LAZY))]
-    pub lazy: Option<bool>,
+    pub lazy: bool,
 }
 
 impl ::sittir_core::view::KindOf for CountQuantifierTransport {

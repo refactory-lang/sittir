@@ -122,9 +122,9 @@ export function coerceKindEnumStorage<T = unknown>(
 	return value as T;
 }
 
-export function coerceBooleanKeywordStorage(value: unknown): true | undefined {
-	if (value === undefined || value === null || value === false) return undefined;
-	if (Array.isArray(value)) return value.length > 0 ? true : undefined;
+export function coerceBooleanKeywordStorage(value: unknown): boolean {
+	if (value === undefined || value === null || value === false) return false;
+	if (Array.isArray(value)) return value.length > 0;
 	return true;
 }
 

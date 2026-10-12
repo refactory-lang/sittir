@@ -115,15 +115,15 @@ fn braces_are_escaped_as_in_write() {
     let slot = Some(node("b"));
     assert_eq!(rt(&View::new(&slot, "{{{}}}")), "{b}");
     assert_eq!(rt(&View::new(&slot, "{{}}{}")), "{}b");
-    assert_eq!(rt(&View::new(&Some(true), "{{}}")), "{}");
+    assert_eq!(rt(&View::new(&true, "{{}}")), "{}");
 }
 
 #[test]
 fn presence_follows_the_slot_shape() {
     assert!(View::new(&Some(node("x")), "{}").is_present());
     assert!(!View::new(&None::<SlotValue<Word>>, "{}").is_present());
-    assert!(!View::new(&Some(false), "kw").is_present());
-    assert!(View::new(&Some(true), "kw").is_present());
+    assert!(!View::new(&false, "kw").is_present());
+    assert!(View::new(&true, "kw").is_present());
     let items = [node("a")];
     assert!(list(&items, TIGHT, "", TIGHT, false, false).is_present());
     assert!(!list(&[], TIGHT, "", TIGHT, false, false).is_present());

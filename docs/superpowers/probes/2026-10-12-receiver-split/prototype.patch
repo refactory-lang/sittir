@@ -1,5 +1,5 @@
 diff --git a/packages/codegen/src/dsl/bind.ts b/packages/codegen/src/dsl/bind.ts
-index 269d09789..0440cf51f 100644
+index 269d09789..e8762f0c0 100644
 --- a/packages/codegen/src/dsl/bind.ts
 +++ b/packages/codegen/src/dsl/bind.ts
 @@ -3,6 +3,8 @@ import { isPrecWrapper } from '../types/runtime-shapes.ts';
@@ -66,7 +66,7 @@ index 269d09789..0440cf51f 100644
  export type GrammarRecord = Record<string, unknown>;
  
  const LIST_FIELDS = ['supertypes', 'inline', 'factoryInline', 'textTokens', 'protectedRuleNames', 'undeclaredRules'];
-@@ -502,6 +541,247 @@ export function splitGrammar(grammar: GrammarRecord, splits: readonly Split[]):
+@@ -502,6 +541,316 @@ export function splitGrammar(grammar: GrammarRecord, splits: readonly Split[]):
  	return out;
  }
  
@@ -152,7 +152,7 @@ index 269d09789..0440cf51f 100644
 +			return as === kind ? ref : { type: 'ALIAS', named: true, value: as, content: { type: 'SYMBOL', name } };
 +		}
 +		if (body === state.rules[name]) return side.keep && as !== kind ? { type: 'ALIAS', named: true, value: as, content: { type: 'SYMBOL', name } } : ref;
-+		if (!side.keep && exclusiveTo(state, name, exclusive)) {
++		if (!side.keep && (exclusiveTo(state, name, exclusive) || process.env.SITTIR_SCRATCH_LEAD_REST_IN_PLACE === '1')) {
 +			state.rules[name] = body;
 +			return ref;
 +		}
@@ -262,6 +262,19 @@ index 269d09789..0440cf51f 100644
 +	return listTarget(rule.members, list) ?? listTarget(rule.content, list);
 +}
 +
++function rewriteListRefs(rule: unknown, list: string, replace: (field: GrammarRecord) => GrammarRecord): unknown {
++	if (Array.isArray(rule)) {
++		const out = rule.map((r) => rewriteListRefs(r, list, replace));
++		return out.every((r, i) => r === rule[i]) ? rule : out;
++	}
++	if (!isRecord(rule)) return rule;
++	if (rule.type === 'FIELD' && refRule(rule.content) === list) return replace(rule);
++	const members = rule.members === undefined ? undefined : rewriteListRefs(rule.members, list, replace);
++	const content = rule.content === undefined ? undefined : rewriteListRefs(rule.content, list, replace);
++	if (members === rule.members && content === rule.content) return rule;
++	return { ...rule, ...(members === undefined ? {} : { members }), ...(content === undefined ? {} : { content }) };
++}
++
 +export function leadGrammar(grammar: GrammarRecord, leads: readonly Lead[]): GrammarRecord {
 +	if (leads.length === 0) return grammar;
 +	const rules: GrammarRecord = { ...(isRecord(grammar.rules) ? grammar.rules : {}) };
@@ -294,14 +307,70 @@ index 269d09789..0440cf51f 100644
 +		const body = unprecedenced(rules[container]) as GrammarRecord;
 +		const [first, ...others] = body.members as GrammarRecord[];
 +		const firstField = unprecedenced(first) as GrammarRecord;
-+		const leading: GrammarRecord = {
-+			type: 'CHOICE',
-+			members: [
-+				{ ...firstField, name: l.field, content: head },
-+				{ ...firstField, content: rest }
-+			]
++		const form = process.env.SITTIR_SCRATCH_LEAD_FORM ?? 'container';
++		if (form === 'container') {
++			const leading: GrammarRecord = {
++				type: 'CHOICE',
++				members: [
++					{ ...firstField, name: l.field, content: head },
++					{ ...firstField, content: rest }
++				]
++			};
++			rules[container] = rewrap(rules[container], { ...body, members: [rewrap(first, leading), ...(replaceItems(others, l.item, shape.content, rest) as unknown[])] });
++			continue;
++		}
++		if (!['two-rules', 'two-rules-repeat', 'two-rules-tail', 'two-rules-plain', 'two-rules-plain-group', 'two-rules-items'].includes(form)) throw new Error(`bind: SITTIR_SCRATCH_LEAD_FORM '${form}' is no lead form`);
++		rules[container] = replaceItems(rules[container], l.item, shape.content, rest);
++		const sep = shape.separator;
++		const receiver: GrammarRecord = { ...firstField, name: l.field, content: head };
++		const step: GrammarRecord = { type: 'SEQ', members: [sep, { ...firstField, content: rest }] };
++		const run: GrammarRecord = { type: 'REPEAT1', content: step };
++		const runTrailed: GrammarRecord = shape.trailing ? { type: 'SEQ', members: [run, shape.optional(sep)] } : run;
++		const alias = (name: string, value: string): GrammarRecord => ({ type: 'ALIAS', named: true, value, content: { type: 'SYMBOL', name } });
++		const groupLift = (name: string, groupBody: GrammarRecord): GrammarRecord => {
++			rules[name] = { ...groupBody, annotations: { hoisted: true } };
++			leadFrom[name] = container;
++			return { type: 'SYMBOL', name, metadata: { symbolSource: 'group-lift' } };
 +		};
-+		rules[container] = rewrap(rules[container], { ...body, members: [rewrap(first, leading), ...(replaceItems(others, l.item, shape.content, rest) as unknown[])] });
++		const armOf = { variantOf: `_${undisplayedKindAddress(container)}_${l.field}` };
++		let ledRef: GrammarRecord | undefined;
++		const receiverForm = (listField: GrammarRecord): GrammarRecord => {
++			if (ledRef !== undefined) return ledRef;
++			const members =
++				form === 'two-rules-repeat'
++					? [receiver, { type: 'REPEAT', content: step }, ...(shape.trailing ? [shape.optional(sep)] : [])]
++					: form === 'two-rules'
++						? [receiver, shape.optional(shape.trailing ? { type: 'CHOICE', members: [sep, runTrailed] } : run)]
++						: form === 'two-rules-tail'
++							? [receiver, shape.optional({ type: 'CHOICE', members: [sep, { ...listField, content: alias(mint(container, { keep: true, suffix: `${l.field}_tail` }, runTrailed), `${container}_${l.field}_tail`) }] })]
++							: form === 'two-rules-plain-group'
++								? [receiver, shape.optional(groupLift(`${container}_${l.field}_group`, { type: 'SEQ', members: [sep, shape.optional(listField)] }))]
++								: form === 'two-rules-items'
++									? [
++											receiver,
++											shape.optional({
++												type: 'CHOICE',
++												members: [
++													{ ...(sep as GrammarRecord), annotations: armOf },
++													{ type: 'FIELD', name: 'items', content: groupLift(`${container}_${l.field}_items`, runTrailed), metadata: { fieldSource: 'enriched' }, annotations: armOf }
++												]
++											})
++										]
++									: [receiver, shape.optional({ type: 'SEQ', members: [sep, shape.optional(listField)] })];
++			ledRef = alias(mint(container, { keep: true, suffix: l.field }, { type: 'SEQ', members }), `${container}_${l.field}`);
++			return ledRef;
++		};
++		const led = `_${undisplayedKindAddress(container)}_${l.field}`;
++		let edited = 0;
++		for (const [name, ruleBody] of Object.entries(rules)) {
++			if (name === container || name === led || leadFrom[name] === container) continue;
++			const next = rewriteListRefs(ruleBody, container, (field) => ({ ...field, content: { type: 'CHOICE', members: [field.content, receiverForm(field)] } }));
++			if (next !== ruleBody) {
++				rules[name] = next;
++				edited++;
++			}
++		}
++		if (edited === 0) throw new Error(`bind: lead '${container}' sits in no field of another rule`);
 +	}
 +	const out: GrammarRecord = { ...grammar, rules, supertypes: supertypeList, inline };
 +	const scratchConflicts = process.env.SITTIR_SCRATCH_LEAD_CONFLICTS;
@@ -314,7 +383,7 @@ index 269d09789..0440cf51f 100644
  export function aliasTargetIssue(grammar: GrammarRecord, from: string, to: string): string | undefined {
  	const rules = isRecord(grammar.rules) ? grammar.rules : {};
  	if (from.startsWith('_') !== to.startsWith('_')) return 'flips hiddenness';
-@@ -542,8 +822,9 @@ export function bindGrammar(grammar: GrammarRecord, grammarBindings: Bindings, e
+@@ -542,8 +891,9 @@ export function bindGrammar(grammar: GrammarRecord, grammarBindings: Bindings, e
  	const renames = Object.fromEntries((grammarBindings.renames ?? []).map((r) => [r.from, r.to]));
  	const renamed = renameGrammar(rewriteBindingOptions(grammar, effects), renames);
  	const boundName = (name: string): string => mappedName(renames, name);
@@ -338,3 +407,53 @@ index de63d05a7..c1aa3acd8 100644
  export { reauthored, vocabulary } from './primitives/rule-cause.ts';
  export type { RuleCause, RuleCauseDeclaration } from './primitives/rule-cause.ts';
  export type { WireConfig, WiredOpts } from './wire/wire.ts';
+diff --git a/packages/codegen/src/emitters/overlays/portable/read-tests.ts b/packages/codegen/src/emitters/overlays/portable/read-tests.ts
+index 1ddc134f3..25965b276 100644
+--- a/packages/codegen/src/emitters/overlays/portable/read-tests.ts
++++ b/packages/codegen/src/emitters/overlays/portable/read-tests.ts
+@@ -96,7 +96,12 @@ export function readTestOf(entry: ReadEntry, model: SlotModel, routesOf: SlotRou
+ 	const predicates = [...entry.claim.predicates, ...entry.children.map(childPredicate)];
+ 	const conditions = [...pins, ...predicates.map((p) => (typeof p === 'string' ? p : conditionOf(entry, p, model, routesOf, typeOf)))];
+ 	const refused = conditions.filter((c) => typeof c === 'string');
+-	if (refused.length > 0) throw new Error(`portable: cannot test ${entry.kind} as ${entry.vocab}: ${refused.join('; ')}`);
++	if (refused.length > 0) {
++		const message = `portable: cannot test ${entry.kind} as ${entry.vocab}: ${refused.join('; ')}`;
++		if (process.env.SITTIR_SCRATCH_LENIENT_READ_TESTS === undefined) throw new Error(message);
++		console.warn(`[scratch] ${message}`);
++		return conditions.filter((c): c is PortableCondition => typeof c !== 'string');
++	}
+ 	const unique = new Map((conditions as PortableCondition[]).map((condition) => [JSON.stringify(condition), condition]));
+ 	return [...unique.values()];
+ }
+diff --git a/packages/codegen/src/emitters/render-module.ts b/packages/codegen/src/emitters/render-module.ts
+index 01388825e..f765911ef 100644
+--- a/packages/codegen/src/emitters/render-module.ts
++++ b/packages/codegen/src/emitters/render-module.ts
+@@ -1,3 +1,4 @@
++import { readFileSync, writeFileSync } from 'node:fs';
+ import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
+ import { parseSeamLabel, isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
+ import { isFixedTextLeaf, isTerminalNode } from '../compiler/model/node-map.ts';
+@@ -160,7 +161,9 @@ export interface RenderOptionsInputs {
+ }
+ 
+ export function grammarRenderInputs(grammar: GrammarName, inputs: RenderOptionsInputs): RenderOptionsInputs {
+-	return { ...inputs, boxedPayloads: BOXED_PAYLOADS[grammar] ?? [], envelopePins: ENVELOPE_PINS[grammar] ?? {} };
++	const scratchPins = process.env.SITTIR_SCRATCH_PINS;
++	const boxedPayloads = scratchPins !== undefined ? (JSON.parse(readFileSync(scratchPins, 'utf8')) as string[]) : (BOXED_PAYLOADS[grammar] ?? []);
++	return { ...inputs, boxedPayloads, envelopePins: ENVELOPE_PINS[grammar] ?? {} };
+ }
+ 
+ export interface RenderModuleEmitterConfig extends RenderOptionsInputs {
+@@ -1479,6 +1482,11 @@ function choicePayloadType(node: AssembledNode, read: ReadPrint): string {
+ }
+ 
+ export function payloadCeilingAssertions(pinned: readonly string[], payloads: ReadonlySet<string>): string[] {
++	const dump = process.env.SITTIR_SCRATCH_PAYLOADS;
++	if (dump !== undefined) {
++		writeFileSync(dump, JSON.stringify({ pinned, payloads: [...payloads].sort() }, null, 1));
++		pinned = pinned.filter((name) => payloads.has(name));
++	}
+ 	const stale = pinned.find((name) => !payloads.has(name));
+ 	if (stale !== undefined) throw new Error(`${stale} is pinned in boxed-payloads.ts but no choice holds it: unpin it`);
+ 	const n = PAYLOAD_CEILING_BYTES;

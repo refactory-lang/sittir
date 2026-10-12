@@ -48,6 +48,10 @@ fn is_option(ty: &Type) -> bool {
     crate::expand::last_segment(ty).as_deref() == Some("Option")
 }
 
+fn is_flag(ty: &Type) -> bool {
+    crate::expand::last_segment(ty).as_deref() == Some("bool")
+}
+
 fn gated(items: TokenStream) -> TokenStream {
     quote!(::sittir_core::napi_codec! { #items })
 }
@@ -74,7 +78,13 @@ fn field_reads(owner: &str, fields: &[&WireField<'_>]) -> syn::Result<Vec<TokenS
         .iter()
         .map(|field| {
             let (ident, key) = (field.ident, c_key(field.key)?);
-            let read = if is_option(field.ty) { quote!(optional) } else { quote!(required) };
+            let read = if is_option(field.ty) {
+                quote!(optional)
+            } else if is_flag(field.ty) {
+                quote!(flag)
+            } else {
+                quote!(required)
+            };
             Ok(quote!(#ident: unsafe { ::sittir_core::boundary::#read(env, obj, #key, #owner)? },))
         })
         .collect()

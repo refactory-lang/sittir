@@ -12299,7 +12299,7 @@ pub struct ForStatementTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_async")]
     #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD)]
-    pub async_: Option<bool>,
+    pub async_: bool,
     #[wire(key = "_left")]
     #[slot(field = field::LEFT)]
     pub left: ::sittir_core::SlotValue<ForStatementLeftTransportSlot>,
@@ -12493,7 +12493,7 @@ pub struct ExceptClauseTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_group")]
     #[slot(field = field::GROUP, presence = kind::STAR | kind::STAR2)]
-    pub group: Option<bool>,
+    pub group: bool,
     #[wire(key = "_exception")]
     #[slot(field = field::EXCEPTION)]
     pub exception: Option<::sittir_core::SlotValue<ExceptClauseExceptionTransport>>,
@@ -12603,7 +12603,7 @@ pub struct WithStatementTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_async")]
     #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD)]
-    pub async_: Option<bool>,
+    pub async_: bool,
     #[wire(key = "_with_clause")]
     #[slot(field = field::WITH_CLAUSE)]
     pub with_clause: ::sittir_core::SlotValue<WithClauseTransport>,
@@ -12710,7 +12710,7 @@ pub struct FunctionDefinitionTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_async")]
     #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD)]
-    pub async_: Option<bool>,
+    pub async_: bool,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
@@ -14197,7 +14197,7 @@ pub struct ComplexPatternTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_sign")]
     #[slot(field = field::SIGN, presence = kind::DASH)]
-    pub sign: Option<bool>,
+    pub sign: bool,
     #[wire(key = "_real")]
     #[slot(field = field::REAL)]
     pub real: ::sittir_core::SlotValue<ComplexPatternRealTransportSlot>,
@@ -16624,7 +16624,7 @@ pub struct ForInClauseTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_async")]
     #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD)]
-    pub async_: Option<bool>,
+    pub async_: bool,
     #[wire(key = "_left")]
     #[slot(field = field::LEFT)]
     pub left: ::sittir_core::SlotValue<ForStatementLeftTransportSlot>,
@@ -16633,7 +16633,7 @@ pub struct ForInClauseTransport {
     pub right: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<LambdaWithinForInClauseBodyTransportSlot>>,
     #[wire(key = "_comma")]
     #[slot(field = field::COMMA, presence = kind::COMMA)]
-    pub comma: Option<bool>,
+    pub comma: bool,
     #[wire(key = "_right_separator_space_before")]
     pub right_separator_space_before: Option<u16>,
     #[wire(key = "_right_separator_space_after")]
@@ -16971,7 +16971,7 @@ pub struct InterpolationTransport {
     pub expression: ::sittir_core::SlotValue<InterpolationExpressionTransportSlot>,
     #[wire(key = "_debug")]
     #[slot(field = field::DEBUG, presence = kind::EQ)]
-    pub debug: Option<bool>,
+    pub debug: bool,
     #[wire(key = "_type_conversion")]
     #[slot(field = field::TYPE_CONVERSION)]
     pub type_conversion: Option<::sittir_core::SlotValue<TypeConversionTransport>>,
@@ -19798,7 +19798,7 @@ pub struct SimplePatternNegativeTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_sign")]
     #[slot(field = field::SIGN, presence = kind::DASH)]
-    pub sign: Option<bool>,
+    pub sign: bool,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE)]
     pub value: ::sittir_core::SlotValue<ComplexPatternRealTransportSlot>,

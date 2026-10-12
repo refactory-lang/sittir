@@ -949,6 +949,21 @@ mod tests {
     }
 
     #[test]
+    fn a_presence_flag_decodes_a_missing_key_as_false() {
+        let out = expand(parse_quote! {
+            #[transport(kind = kind::STATIC_ITEM)]
+            pub struct StaticItemTransport {
+                #[wire(key = "$_layout")]
+                pub layout: Option<Box<TransportLayout>>,
+                #[wire(key = "_mutable")]
+                #[slot(field = field::MUTABLE, presence = kind::MUT)]
+                pub mutable: bool,
+            }
+        });
+        assert!(has(&out, "mutable: unsafe { ::sittir_core::boundary::flag(env, obj, c\"_mutable\", \"StaticItemTransport\")? },"));
+    }
+
+    #[test]
     fn a_struct_refuses_a_node_its_kind_does_not_admit_before_it_reads() {
         let out = expand(parse_quote! {
             #[transport(kind = kind::PAIR)]

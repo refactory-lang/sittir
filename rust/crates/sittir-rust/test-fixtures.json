@@ -53,6 +53,7 @@
             "_statements": [
               {
                 "$type": 223,
+                "_mutable": false,
                 "_pattern": {
                   "$type": 1,
                   "$text": "x"
@@ -178,6 +179,7 @@
         "_statements": [
           {
             "$type": 223,
+            "_mutable": false,
             "_pattern": {
               "$type": 1,
               "$text": "x"
@@ -365,6 +367,7 @@
       "_statements": [
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": {
             "$type": 1,
             "$text": "x"
@@ -416,6 +419,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": {
         "$type": 1,
         "$text": "x"
@@ -1545,6 +1549,7 @@
           "$type": 179,
           "_content": {
             "$type": 310,
+            "_move": false,
             "_body": {
               "$type": 313,
               "_statements": []
@@ -1562,11 +1567,13 @@
           "$type": 179,
           "_content": {
             "$type": 310,
+            "_move": false,
             "_body": {
               "$type": 313,
               "_statements": [
                 {
                   "$type": 223,
+                  "_mutable": false,
                   "_pattern": {
                     "$type": 1,
                     "$text": "x"
@@ -1637,6 +1644,7 @@
       "$type": 179,
       "_content": {
         "$type": 310,
+        "_move": false,
         "_body": {
           "$type": 313,
           "_statements": []
@@ -1669,11 +1677,13 @@
       "$type": 179,
       "_content": {
         "$type": 310,
+        "_move": false,
         "_body": {
           "$type": 313,
           "_statements": [
             {
               "$type": 223,
+              "_mutable": false,
               "_pattern": {
                 "$type": 1,
                 "$text": "x"
@@ -1744,6 +1754,7 @@
     "pattern": "async_block",
     "input": {
       "$type": 310,
+      "_move": false,
       "_body": {
         "$type": 313,
         "_statements": []
@@ -1773,11 +1784,13 @@
     "pattern": "async_block",
     "input": {
       "$type": 310,
+      "_move": false,
       "_body": {
         "$type": 313,
         "_statements": [
           {
             "$type": 223,
+            "_mutable": false,
             "_pattern": {
               "$type": 1,
               "$text": "x"
@@ -1873,6 +1886,7 @@
       "_statements": [
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": {
             "$type": 1,
             "$text": "x"
@@ -1934,6 +1948,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": {
         "$type": 1,
         "$text": "x"
@@ -1996,10 +2011,13 @@
       "_statements": [
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": 426,
           "_value": {
             "$type": 370,
+            "_static": false,
             "_async": true,
+            "_move": false,
             "_parameters": {
               "$type": 302,
               "_parameters": []
@@ -2044,10 +2062,13 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": 426,
       "_value": {
         "$type": 370,
+        "_static": false,
         "_async": true,
+        "_move": false,
         "_parameters": {
           "$type": 302,
           "_parameters": []
@@ -2079,7 +2100,9 @@
     "pattern": "closure_expression_expr",
     "input": {
       "$type": 370,
+      "_static": false,
       "_async": true,
+      "_move": false,
       "_parameters": {
         "$type": 302,
         "_parameters": []
@@ -2139,12 +2162,14 @@
       "_statements": [
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": {
             "$type": 1,
             "$text": "a"
           },
           "_value": {
             "$type": 370,
+            "_static": false,
             "_async": true,
             "_move": true,
             "_parameters": {
@@ -2198,12 +2223,14 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": {
         "$type": 1,
         "$text": "a"
       },
       "_value": {
         "$type": 370,
+        "_static": false,
         "_async": true,
         "_move": true,
         "_parameters": {
@@ -2244,6 +2271,7 @@
     "pattern": "closure_expression_expr",
     "input": {
       "$type": 370,
+      "_static": false,
       "_async": true,
       "_move": true,
       "_parameters": {
@@ -2505,6 +2533,7 @@
           "$type": 179,
           "_content": {
             "$type": 311,
+            "_move": false,
             "_body": {
               "$type": 313,
               "_statements": []
@@ -2522,11 +2551,13 @@
           "$type": 179,
           "_content": {
             "$type": 311,
+            "_move": false,
             "_body": {
               "$type": 313,
               "_statements": [
                 {
                   "$type": 223,
+                  "_mutable": false,
                   "_pattern": {
                     "$type": 1,
                     "$text": "x"
@@ -2551,6 +2582,7 @@
           "$type": 179,
           "_content": {
             "$type": 311,
+            "_move": false,
             "_body": {
               "$type": 313,
               "_statements": [
@@ -2625,6 +2657,7 @@
       "$type": 179,
       "_content": {
         "$type": 311,
+        "_move": false,
         "_body": {
           "$type": 313,
           "_statements": []
@@ -2657,11 +2690,13 @@
       "$type": 179,
       "_content": {
         "$type": 311,
+        "_move": false,
         "_body": {
           "$type": 313,
           "_statements": [
             {
               "$type": 223,
+              "_mutable": false,
               "_pattern": {
                 "$type": 1,
                 "$text": "x"
@@ -2701,6 +2736,7 @@
       "$type": 179,
       "_content": {
         "$type": 311,
+        "_move": false,
         "_body": {
           "$type": 313,
           "_statements": [
@@ -2807,6 +2843,7 @@
     "pattern": "gen_block",
     "input": {
       "$type": 311,
+      "_move": false,
       "_body": {
         "$type": 313,
         "_statements": []
@@ -2836,11 +2873,13 @@
     "pattern": "gen_block",
     "input": {
       "$type": 311,
+      "_move": false,
       "_body": {
         "$type": 313,
         "_statements": [
           {
             "$type": 223,
+            "_mutable": false,
             "_pattern": {
               "$type": 1,
               "$text": "x"
@@ -2877,6 +2916,7 @@
     "pattern": "gen_block",
     "input": {
       "$type": 311,
+      "_move": false,
       "_body": {
         "$type": 313,
         "_statements": [
@@ -2976,6 +3016,7 @@
       "_statements": [
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": {
             "$type": 1,
             "$text": "x"
@@ -3074,6 +3115,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": {
         "$type": 1,
         "$text": "x"
@@ -4032,6 +4074,7 @@
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 1,
                       "$text": "x"
@@ -4043,6 +4086,7 @@
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 1,
                       "$text": "y"
@@ -4130,12 +4174,14 @@
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 1,
                       "$text": "slice"
                     },
                     "_type": {
                       "$type": 252,
+                      "_mutable": false,
                       "_type": 73
                     }
                   }
@@ -4459,6 +4505,7 @@
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 1,
                       "$text": "x"
@@ -4598,6 +4645,7 @@
                   },
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 1,
                       "$text": "x"
@@ -4619,6 +4667,7 @@
                   },
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 1,
                       "$text": "x"
@@ -4672,7 +4721,9 @@
                 {
                   "$type": 429,
                   "_content": {
-                    "$type": 231
+                    "$type": 231,
+                    "_reference": false,
+                    "_mutable": false
                   }
                 }
               ],
@@ -4765,6 +4816,7 @@
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 1,
                       "$text": "bar"
@@ -4987,6 +5039,7 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 1,
                   "$text": "x"
@@ -4998,6 +5051,7 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 1,
                   "$text": "y"
@@ -5100,12 +5154,14 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 1,
                   "$text": "slice"
                 },
                 "_type": {
                   "$type": 252,
+                  "_mutable": false,
                   "_type": 73
                 }
               }
@@ -5489,6 +5545,7 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 1,
                   "$text": "x"
@@ -5643,6 +5700,7 @@
               },
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 1,
                   "$text": "x"
@@ -5664,6 +5722,7 @@
               },
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 1,
                   "$text": "x"
@@ -5732,7 +5791,9 @@
             {
               "$type": 429,
               "_content": {
-                "$type": 231
+                "$type": 231,
+                "_reference": false,
+                "_mutable": false
               }
             }
           ],
@@ -5840,6 +5901,7 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 1,
                   "$text": "bar"
@@ -6032,6 +6094,7 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 1,
                 "$text": "x"
@@ -6043,6 +6106,7 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 1,
                 "$text": "y"
@@ -6101,12 +6165,14 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 1,
                 "$text": "slice"
               },
               "_type": {
                 "$type": 252,
+                "_mutable": false,
                 "_type": 73
               }
             }
@@ -6232,6 +6298,7 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 1,
                 "$text": "x"
@@ -6400,6 +6467,7 @@
             },
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 1,
                 "$text": "x"
@@ -6421,6 +6489,7 @@
             },
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 1,
                 "$text": "x"
@@ -6478,7 +6547,9 @@
           {
             "$type": 429,
             "_content": {
-              "$type": 231
+              "$type": 231,
+              "_reference": false,
+              "_mutable": false
             }
           }
         ],
@@ -6527,6 +6598,7 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 1,
                 "$text": "bar"
@@ -7211,6 +7283,7 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 1,
               "$text": "x"
@@ -7222,6 +7295,7 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 1,
               "$text": "y"
@@ -7277,12 +7351,14 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 1,
               "$text": "slice"
             },
             "_type": {
               "$type": 252,
+              "_mutable": false,
               "_type": 73
             }
           }
@@ -7330,6 +7406,7 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 1,
               "$text": "x"
@@ -7470,6 +7547,7 @@
           },
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 1,
               "$text": "x"
@@ -7491,6 +7569,7 @@
           },
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 1,
               "$text": "x"
@@ -7545,7 +7624,9 @@
         {
           "$type": 429,
           "_content": {
-            "$type": 231
+            "$type": 231,
+            "_reference": false,
+            "_mutable": false
           }
         }
       ],
@@ -7591,6 +7672,7 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 1,
               "$text": "bar"
@@ -7747,6 +7829,7 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 1,
           "$text": "x"
@@ -7780,6 +7863,7 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 1,
           "$text": "y"
@@ -7813,12 +7897,14 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 1,
           "$text": "slice"
         },
         "_type": {
           "$type": 252,
+          "_mutable": false,
           "_type": 73
         }
       }
@@ -7849,6 +7935,7 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 1,
           "$text": "x"
@@ -7972,6 +8059,7 @@
       },
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 1,
           "$text": "x"
@@ -8015,6 +8103,7 @@
       },
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 1,
           "$text": "x"
@@ -8047,7 +8136,9 @@
     "input": {
       "$type": 429,
       "_content": {
-        "$type": 231
+        "$type": 231,
+        "_reference": false,
+        "_mutable": false
       }
     },
     "expectedOutput": "self",
@@ -8076,6 +8167,7 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 1,
           "$text": "bar"
@@ -8216,6 +8308,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "x"
@@ -8246,6 +8339,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "y"
@@ -8276,12 +8370,14 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "slice"
       },
       "_type": {
         "$type": 252,
+        "_mutable": false,
         "_type": 73
       }
     },
@@ -8309,6 +8405,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "x"
@@ -8419,6 +8516,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "x"
@@ -8449,6 +8547,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "x"
@@ -8479,6 +8578,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "bar"
@@ -9344,6 +9444,7 @@
     "pattern": "reference_type",
     "input": {
       "$type": 252,
+      "_mutable": false,
       "_type": 73
     },
     "expectedOutput": "&str",
@@ -11903,7 +12004,9 @@
     "grammar": "rust",
     "pattern": "self_parameter",
     "input": {
-      "$type": 231
+      "$type": 231,
+      "_reference": false,
+      "_mutable": false
     },
     "expectedOutput": "self",
     "options": {
@@ -12392,6 +12495,7 @@
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 1,
                       "$text": "a"
@@ -12541,6 +12645,7 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 1,
                   "$text": "a"
@@ -12671,6 +12776,7 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 1,
                 "$text": "a"
@@ -12731,6 +12837,7 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 1,
               "$text": "a"
@@ -12787,6 +12894,7 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 1,
           "$text": "a"
@@ -12827,6 +12935,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "a"
@@ -13500,6 +13609,7 @@
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 1,
                       "$text": "x"
@@ -13630,6 +13740,7 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 1,
                   "$text": "x"
@@ -13942,6 +14053,7 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 1,
                 "$text": "x"
@@ -14012,6 +14124,7 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 1,
               "$text": "x"
@@ -14078,6 +14191,7 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 1,
           "$text": "x"
@@ -14128,6 +14242,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "x"
@@ -14363,7 +14478,8 @@
                   "$type": 429,
                   "_content": {
                     "$type": 231,
-                    "_reference": true
+                    "_reference": true,
+                    "_mutable": false
                   }
                 }
               ],
@@ -14566,7 +14682,8 @@
               "$type": 429,
               "_content": {
                 "$type": 231,
-                "_reference": true
+                "_reference": true,
+                "_mutable": false
               }
             }
           ],
@@ -15009,7 +15126,8 @@
             "$type": 429,
             "_content": {
               "$type": 231,
-              "_reference": true
+              "_reference": true,
+              "_mutable": false
             }
           }
         ],
@@ -15056,7 +15174,8 @@
           "$type": 429,
           "_content": {
             "$type": 231,
-            "_reference": true
+            "_reference": true,
+            "_mutable": false
           }
         }
       ],
@@ -15099,7 +15218,8 @@
       "$type": 429,
       "_content": {
         "$type": 231,
-        "_reference": true
+        "_reference": true,
+        "_mutable": false
       }
     },
     "expectedOutput": "&self",
@@ -15126,7 +15246,8 @@
     "pattern": "self_parameter",
     "input": {
       "$type": 231,
-      "_reference": true
+      "_reference": true,
+      "_mutable": false
     },
     "expectedOutput": "&self",
     "options": {
@@ -15777,7 +15898,8 @@
                   "$type": 429,
                   "_content": {
                     "$type": 231,
-                    "_reference": true
+                    "_reference": true,
+                    "_mutable": false
                   }
                 }
               ],
@@ -15910,7 +16032,8 @@
               "$type": 429,
               "_content": {
                 "$type": 231,
-                "_reference": true
+                "_reference": true,
+                "_mutable": false
               }
             }
           ],
@@ -16024,7 +16147,8 @@
             "$type": 429,
             "_content": {
               "$type": 231,
-              "_reference": true
+              "_reference": true,
+              "_mutable": false
             }
           }
         ],
@@ -16071,7 +16195,8 @@
           "$type": 429,
           "_content": {
             "$type": 231,
-            "_reference": true
+            "_reference": true,
+            "_mutable": false
           }
         }
       ],
@@ -16114,7 +16239,8 @@
       "$type": 429,
       "_content": {
         "$type": 231,
-        "_reference": true
+        "_reference": true,
+        "_mutable": false
       }
     },
     "expectedOutput": "&self",
@@ -16141,7 +16267,8 @@
     "pattern": "self_parameter",
     "input": {
       "$type": 231,
-      "_reference": true
+      "_reference": true,
+      "_mutable": false
     },
     "expectedOutput": "&self",
     "options": {
@@ -16907,7 +17034,8 @@
                 {
                   "$type": 429,
                   "_content": {
-                    "$type": 232
+                    "$type": 232,
+                    "_mutable": false
                   },
                   "$_layout": {
                     "trivia": {
@@ -17001,6 +17129,7 @@
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 1,
                       "$text": "fmt"
@@ -17272,7 +17401,8 @@
             {
               "$type": 429,
               "_content": {
-                "$type": 232
+                "$type": 232,
+                "_mutable": false
               },
               "$_layout": {
                 "trivia": {
@@ -17381,6 +17511,7 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 1,
                   "$text": "fmt"
@@ -17929,7 +18060,8 @@
           {
             "$type": 429,
             "_content": {
-              "$type": 232
+              "$type": 232,
+              "_mutable": false
             },
             "$_layout": {
               "trivia": {
@@ -17999,6 +18131,7 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 1,
                 "$text": "fmt"
@@ -18243,7 +18376,8 @@
         {
           "$type": 429,
           "_content": {
-            "$type": 232
+            "$type": 232,
+            "_mutable": false
           },
           "$_layout": {
             "trivia": {
@@ -18296,6 +18430,7 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 1,
               "$text": "fmt"
@@ -18396,7 +18531,8 @@
     "input": {
       "$type": 429,
       "_content": {
-        "$type": 232
+        "$type": 232,
+        "_mutable": false
       }
     },
     "expectedOutput": "...",
@@ -18425,6 +18561,7 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 1,
           "$text": "fmt"
@@ -18578,7 +18715,8 @@
     "grammar": "rust",
     "pattern": "variadic_parameter",
     "input": {
-      "$type": 232
+      "$type": 232,
+      "_mutable": false
     },
     "expectedOutput": "...",
     "options": {
@@ -18687,6 +18825,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "fmt"
@@ -21729,6 +21868,7 @@
       "_statements": [
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": {
             "$type": 1,
             "$text": "x"
@@ -21743,6 +21883,7 @@
         },
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": {
             "$type": 1,
             "$text": "x"
@@ -21761,6 +21902,7 @@
         },
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": {
             "$type": 1,
             "$text": "x"
@@ -21776,6 +21918,7 @@
         },
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": {
             "$type": 1,
             "$text": "x"
@@ -21814,6 +21957,7 @@
         },
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": {
             "$type": 1,
             "$text": "y"
@@ -21830,6 +21974,7 @@
         },
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": 72,
           "_type": 72,
           "_value": 118,
@@ -21843,6 +21988,7 @@
         },
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": 62,
           "_type": 73,
           "_value": {
@@ -21891,6 +22037,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": {
         "$type": 1,
         "$text": "x"
@@ -21920,6 +22067,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": {
         "$type": 1,
         "$text": "x"
@@ -21953,6 +22101,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": {
         "$type": 1,
         "$text": "x"
@@ -21983,6 +22132,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": {
         "$type": 1,
         "$text": "x"
@@ -22051,6 +22201,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": {
         "$type": 1,
         "$text": "y"
@@ -22082,6 +22233,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": 72,
       "_type": 72,
       "_value": 118
@@ -22110,6 +22262,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": 62,
       "_type": 73,
       "_value": {
@@ -22256,6 +22409,7 @@
       "_statements": [
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": {
             "$type": 319,
             "_type": {
@@ -22277,6 +22431,8 @@
               "_item": [
                 {
                   "$type": 414,
+                  "_ref": false,
+                  "_mutable": false,
                   "_name": {
                     "$type": 467,
                     "_content": {
@@ -22287,6 +22443,8 @@
                 },
                 {
                   "$type": 414,
+                  "_ref": false,
+                  "_mutable": false,
                   "_name": {
                     "$type": 467,
                     "_content": {
@@ -22425,6 +22583,7 @@
         },
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": {
             "$type": 318,
             "_type": {
@@ -22462,6 +22621,7 @@
             "_statements": [
               {
                 "$type": 223,
+                "_mutable": false,
                 "_pattern": {
                   "$type": 1,
                   "$text": "None"
@@ -22584,6 +22744,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": {
         "$type": 319,
         "_type": {
@@ -22605,6 +22766,8 @@
           "_item": [
             {
               "$type": 414,
+              "_ref": false,
+              "_mutable": false,
               "_name": {
                 "$type": 467,
                 "_content": {
@@ -22615,6 +22778,8 @@
             },
             {
               "$type": 414,
+              "_ref": false,
+              "_mutable": false,
               "_name": {
                 "$type": 467,
                 "_content": {
@@ -22768,6 +22933,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": {
         "$type": 318,
         "_type": {
@@ -22805,6 +22971,7 @@
         "_statements": [
           {
             "$type": 223,
+            "_mutable": false,
             "_pattern": {
               "$type": 1,
               "$text": "None"
@@ -22914,6 +23081,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": {
         "$type": 1,
         "$text": "None"
@@ -23013,6 +23181,8 @@
         "_item": [
           {
             "$type": 414,
+            "_ref": false,
+            "_mutable": false,
             "_name": {
               "$type": 467,
               "_content": {
@@ -23023,6 +23193,8 @@
           },
           {
             "$type": 414,
+            "_ref": false,
+            "_mutable": false,
             "_name": {
               "$type": 467,
               "_content": {
@@ -23159,6 +23331,8 @@
       "_item": [
         {
           "$type": 414,
+          "_ref": false,
+          "_mutable": false,
           "_name": {
             "$type": 467,
             "_content": {
@@ -23169,6 +23343,8 @@
         },
         {
           "$type": 414,
+          "_ref": false,
+          "_mutable": false,
           "_name": {
             "$type": 467,
             "_content": {
@@ -23222,6 +23398,8 @@
     "pattern": "field_pattern_shorthand",
     "input": {
       "$type": 414,
+      "_ref": false,
+      "_mutable": false,
       "_name": {
         "$type": 467,
         "_content": {
@@ -23254,6 +23432,8 @@
     "pattern": "field_pattern_shorthand",
     "input": {
       "$type": 414,
+      "_ref": false,
+      "_mutable": false,
       "_name": {
         "$type": 467,
         "_content": {
@@ -23891,6 +24071,7 @@
       "_statements": [
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": {
             "$type": 1,
             "$text": "None"
@@ -24542,6 +24723,7 @@
       "_statements": [
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": {
             "$type": 1,
             "$text": "a"
@@ -24630,6 +24812,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": {
         "$type": 1,
         "$text": "a"
@@ -24899,6 +25082,7 @@
       "_statements": [
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": 51,
           "_value": {
             "$type": 141,
@@ -24914,6 +25098,7 @@
         },
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": 32,
           "_value": {
             "$type": 141,
@@ -24957,6 +25142,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": 51,
       "_value": {
         "$type": 141,
@@ -24987,6 +25173,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": 32,
       "_value": {
         "$type": 141,
@@ -38091,6 +38278,7 @@
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 1,
                       "$text": "old_range"
@@ -38140,6 +38328,7 @@
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 1,
                       "$text": "new_text"
@@ -38401,6 +38590,7 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 1,
                   "$text": "old_range"
@@ -38450,6 +38640,7 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 1,
                   "$text": "new_text"
@@ -39831,6 +40022,7 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 1,
                 "$text": "old_range"
@@ -39880,6 +40072,7 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 1,
                 "$text": "new_text"
@@ -39975,6 +40168,7 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 1,
               "$text": "old_range"
@@ -40024,6 +40218,7 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 1,
               "$text": "new_text"
@@ -40112,6 +40307,7 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 1,
           "$text": "old_range"
@@ -40178,6 +40374,7 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 1,
           "$text": "new_text"
@@ -40242,6 +40439,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "old_range"
@@ -40305,6 +40503,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "new_text"
@@ -40853,6 +41052,7 @@
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 317,
                       "_patterns": {
@@ -40938,8 +41138,10 @@
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 326,
+                      "_mutable": false,
                       "_pattern": {
                         "$type": 1,
                         "$text": "x"
@@ -40947,6 +41149,7 @@
                     },
                     "_type": {
                       "$type": 252,
+                      "_mutable": false,
                       "_type": {
                         "$type": 468,
                         "_content": {
@@ -40999,6 +41202,7 @@
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 316,
                       "_elements": {
@@ -41143,6 +41347,7 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 317,
                   "_patterns": {
@@ -41243,8 +41448,10 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 326,
+                  "_mutable": false,
                   "_pattern": {
                     "$type": 1,
                     "$text": "x"
@@ -41252,6 +41459,7 @@
                 },
                 "_type": {
                   "$type": 252,
+                  "_mutable": false,
                   "_type": {
                     "$type": 468,
                     "_content": {
@@ -41319,6 +41527,7 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 316,
                   "_elements": {
@@ -41444,6 +41653,7 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 317,
                 "_patterns": {
@@ -41533,8 +41743,10 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 326,
+                "_mutable": false,
                 "_pattern": {
                   "$type": 1,
                   "$text": "x"
@@ -41542,6 +41754,7 @@
               },
               "_type": {
                 "$type": 252,
+                "_mutable": false,
                 "_type": {
                   "$type": 468,
                   "_content": {
@@ -41598,6 +41811,7 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 316,
                 "_elements": {
@@ -41716,6 +41930,7 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 317,
               "_patterns": {
@@ -41802,8 +42017,10 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 326,
+              "_mutable": false,
               "_pattern": {
                 "$type": 1,
                 "$text": "x"
@@ -41811,6 +42028,7 @@
             },
             "_type": {
               "$type": 252,
+              "_mutable": false,
               "_type": {
                 "$type": 468,
                 "_content": {
@@ -41864,6 +42082,7 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 316,
               "_elements": {
@@ -41978,6 +42197,7 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 317,
           "_patterns": {
@@ -42047,8 +42267,10 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 326,
+          "_mutable": false,
           "_pattern": {
             "$type": 1,
             "$text": "x"
@@ -42056,6 +42278,7 @@
         },
         "_type": {
           "$type": 252,
+          "_mutable": false,
           "_type": {
             "$type": 468,
             "_content": {
@@ -42092,6 +42315,7 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 316,
           "_elements": {
@@ -42190,6 +42414,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 317,
         "_patterns": {
@@ -42256,8 +42481,10 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 326,
+        "_mutable": false,
         "_pattern": {
           "$type": 1,
           "$text": "x"
@@ -42265,6 +42492,7 @@
       },
       "_type": {
         "$type": 252,
+        "_mutable": false,
         "_type": {
           "$type": 468,
           "_content": {
@@ -42298,6 +42526,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 316,
         "_elements": {
@@ -42636,6 +42865,7 @@
     "pattern": "reference_pattern",
     "input": {
       "$type": 326,
+      "_mutable": false,
       "_pattern": {
         "$type": 1,
         "$text": "x"
@@ -42665,6 +42895,7 @@
     "pattern": "reference_type",
     "input": {
       "$type": 252,
+      "_mutable": false,
       "_type": {
         "$type": 468,
         "_content": {
@@ -43013,6 +43244,7 @@
       "_statements": [
         {
           "$type": 214,
+          "_unsafe": false,
           "_name": {
             "$type": 468,
             "_content": {
@@ -43038,6 +43270,7 @@
                         "$type": 429,
                         "_content": {
                           "$type": 233,
+                          "_mutable": false,
                           "_name": 125,
                           "_type": {
                             "$type": 246,
@@ -43147,6 +43380,7 @@
     "pattern": "trait_item",
     "input": {
       "$type": 214,
+      "_unsafe": false,
       "_name": {
         "$type": 468,
         "_content": {
@@ -43172,6 +43406,7 @@
                     "$type": 429,
                     "_content": {
                       "$type": 233,
+                      "_mutable": false,
                       "_name": 125,
                       "_type": {
                         "$type": 246,
@@ -43371,6 +43606,7 @@
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": 125,
                     "_type": {
                       "$type": 246,
@@ -43479,6 +43715,7 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": 125,
                 "_type": {
                   "$type": 246,
@@ -43569,6 +43806,7 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": 125,
               "_type": {
                 "$type": 246,
@@ -43656,6 +43894,7 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": 125,
             "_type": {
               "$type": 246,
@@ -43739,6 +43978,7 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": 125,
         "_type": {
           "$type": 246,
@@ -43806,6 +44046,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": 125,
       "_type": {
         "$type": 246,
@@ -44089,6 +44330,7 @@
         },
         {
           "$type": 214,
+          "_unsafe": false,
           "_name": {
             "$type": 468,
             "_content": {
@@ -44247,6 +44489,7 @@
     "pattern": "trait_item",
     "input": {
       "$type": 214,
+      "_unsafe": false,
       "_name": {
         "$type": 468,
         "_content": {
@@ -44379,6 +44622,8 @@
       "_statements": [
         {
           "$type": 206,
+          "_ref": false,
+          "_mutable": false,
           "_name": {
             "$type": 1,
             "$text": "N"
@@ -44398,6 +44643,7 @@
         },
         {
           "$type": 206,
+          "_ref": false,
           "_mutable": true,
           "_name": {
             "$type": 1,
@@ -44454,6 +44700,8 @@
     "pattern": "static_item",
     "input": {
       "$type": 206,
+      "_ref": false,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "N"
@@ -44488,6 +44736,7 @@
     "pattern": "static_item",
     "input": {
       "$type": 206,
+      "_ref": false,
       "_mutable": true,
       "_name": {
         "$type": 1,
@@ -44657,6 +44906,7 @@
         {
           "$type": 206,
           "_ref": true,
+          "_mutable": false,
           "_name": {
             "$type": 1,
             "$text": "ONE"
@@ -44705,6 +44955,7 @@
     "input": {
       "$type": 206,
       "_ref": true,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "ONE"
@@ -63692,6 +63943,7 @@
               },
               {
                 "$type": 223,
+                "_mutable": false,
                 "_pattern": {
                   "$type": 1,
                   "$text": "z"
@@ -63772,6 +64024,7 @@
               },
               {
                 "$type": 223,
+                "_mutable": false,
                 "_pattern": {
                   "$type": 1,
                   "$text": "t"
@@ -64023,6 +64276,7 @@
           },
           {
             "$type": 223,
+            "_mutable": false,
             "_pattern": {
               "$type": 1,
               "$text": "z"
@@ -64103,6 +64357,7 @@
           },
           {
             "$type": 223,
+            "_mutable": false,
             "_pattern": {
               "$type": 1,
               "$text": "t"
@@ -64357,6 +64612,7 @@
         },
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": {
             "$type": 1,
             "$text": "z"
@@ -64437,6 +64693,7 @@
         },
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": {
             "$type": 1,
             "$text": "t"
@@ -66037,6 +66294,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": {
         "$type": 1,
         "$text": "z"
@@ -66132,6 +66390,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": {
         "$type": 1,
         "$text": "t"
@@ -66599,6 +66858,7 @@
       "_statements": [
         {
           "$type": 377,
+          "_unsafe": false,
           "_type": {
             "$type": 468,
             "_content": {
@@ -66642,7 +66902,9 @@
                       {
                         "$type": 429,
                         "_content": {
-                          "$type": 231
+                          "$type": 231,
+                          "_reference": false,
+                          "_mutable": false
                         }
                       }
                     ],
@@ -66687,6 +66949,7 @@
                         "$type": 429,
                         "_content": {
                           "$type": 231,
+                          "_reference": false,
                           "_mutable": true
                         }
                       }
@@ -66732,7 +66995,8 @@
                         "$type": 429,
                         "_content": {
                           "$type": 231,
-                          "_reference": true
+                          "_reference": true,
+                          "_mutable": false
                         }
                       }
                     ],
@@ -66830,6 +67094,7 @@
         },
         {
           "$type": 377,
+          "_unsafe": false,
           "_type": {
             "$type": 246,
             "_type": {
@@ -66923,6 +67188,7 @@
     "pattern": "impl_item_body",
     "input": {
       "$type": 377,
+      "_unsafe": false,
       "_type": {
         "$type": 468,
         "_content": {
@@ -66966,7 +67232,9 @@
                   {
                     "$type": 429,
                     "_content": {
-                      "$type": 231
+                      "$type": 231,
+                      "_reference": false,
+                      "_mutable": false
                     }
                   }
                 ],
@@ -67011,6 +67279,7 @@
                     "$type": 429,
                     "_content": {
                       "$type": 231,
+                      "_reference": false,
                       "_mutable": true
                     }
                   }
@@ -67056,7 +67325,8 @@
                     "$type": 429,
                     "_content": {
                       "$type": 231,
-                      "_reference": true
+                      "_reference": true,
+                      "_mutable": false
                     }
                   }
                 ],
@@ -67172,6 +67442,7 @@
     "pattern": "impl_item_body",
     "input": {
       "$type": 377,
+      "_unsafe": false,
       "_type": {
         "$type": 246,
         "_type": {
@@ -67350,7 +67621,9 @@
                 {
                   "$type": 429,
                   "_content": {
-                    "$type": 231
+                    "$type": 231,
+                    "_reference": false,
+                    "_mutable": false
                   }
                 }
               ],
@@ -67395,6 +67668,7 @@
                   "$type": 429,
                   "_content": {
                     "$type": 231,
+                    "_reference": false,
                     "_mutable": true
                   }
                 }
@@ -67440,7 +67714,8 @@
                   "$type": 429,
                   "_content": {
                     "$type": 231,
-                    "_reference": true
+                    "_reference": true,
+                    "_mutable": false
                   }
                 }
               ],
@@ -67662,7 +67937,9 @@
             {
               "$type": 429,
               "_content": {
-                "$type": 231
+                "$type": 231,
+                "_reference": false,
+                "_mutable": false
               }
             }
           ],
@@ -67725,6 +68002,7 @@
               "$type": 429,
               "_content": {
                 "$type": 231,
+                "_reference": false,
                 "_mutable": true
               }
             }
@@ -67788,7 +68066,8 @@
               "$type": 429,
               "_content": {
                 "$type": 231,
-                "_reference": true
+                "_reference": true,
+                "_mutable": false
               }
             }
           ],
@@ -67915,7 +68194,9 @@
           {
             "$type": 429,
             "_content": {
-              "$type": 231
+              "$type": 231,
+              "_reference": false,
+              "_mutable": false
             }
           }
         ],
@@ -67967,6 +68248,7 @@
             "$type": 429,
             "_content": {
               "$type": 231,
+              "_reference": false,
               "_mutable": true
             }
           }
@@ -68019,7 +68301,8 @@
             "$type": 429,
             "_content": {
               "$type": 231,
-              "_reference": true
+              "_reference": true,
+              "_mutable": false
             }
           }
         ],
@@ -68128,7 +68411,9 @@
         {
           "$type": 429,
           "_content": {
-            "$type": 231
+            "$type": 231,
+            "_reference": false,
+            "_mutable": false
           }
         }
       ],
@@ -68177,6 +68462,7 @@
           "$type": 429,
           "_content": {
             "$type": 231,
+            "_reference": false,
             "_mutable": true
           }
         }
@@ -68226,7 +68512,8 @@
           "$type": 429,
           "_content": {
             "$type": 231,
-            "_reference": true
+            "_reference": true,
+            "_mutable": false
           }
         }
       ],
@@ -68328,7 +68615,9 @@
     "input": {
       "$type": 429,
       "_content": {
-        "$type": 231
+        "$type": 231,
+        "_reference": false,
+        "_mutable": false
       }
     },
     "expectedOutput": "self",
@@ -68360,6 +68649,7 @@
       "$type": 429,
       "_content": {
         "$type": 231,
+        "_reference": false,
         "_mutable": true
       }
     },
@@ -68392,7 +68682,8 @@
       "$type": 429,
       "_content": {
         "$type": 231,
-        "_reference": true
+        "_reference": true,
+        "_mutable": false
       }
     },
     "expectedOutput": "&self",
@@ -68461,7 +68752,9 @@
     "grammar": "rust",
     "pattern": "self_parameter",
     "input": {
-      "$type": 231
+      "$type": 231,
+      "_reference": false,
+      "_mutable": false
     },
     "expectedOutput": "self",
     "options": {
@@ -68490,6 +68783,7 @@
     "pattern": "self_parameter",
     "input": {
       "$type": 231,
+      "_reference": false,
       "_mutable": true
     },
     "expectedOutput": "mut self",
@@ -68519,7 +68813,8 @@
     "pattern": "self_parameter",
     "input": {
       "$type": 231,
-      "_reference": true
+      "_reference": true,
+      "_mutable": false
     },
     "expectedOutput": "&self",
     "options": {
@@ -69051,6 +69346,7 @@
       "_statements": [
         {
           "$type": 377,
+          "_unsafe": false,
           "_type_parameters": {
             "$type": 219,
             "_elements": {
@@ -69170,6 +69466,7 @@
         },
         {
           "$type": 377,
+          "_unsafe": false,
           "_trait_clause": {
             "$type": 375,
             "_trait": {
@@ -69226,7 +69523,8 @@
                         "$type": 429,
                         "_content": {
                           "$type": 231,
-                          "_reference": true
+                          "_reference": true,
+                          "_mutable": false
                         }
                       }
                     ],
@@ -69309,6 +69607,7 @@
     "pattern": "impl_item_body",
     "input": {
       "$type": 377,
+      "_unsafe": false,
       "_type_parameters": {
         "$type": 219,
         "_elements": {
@@ -69443,6 +69742,7 @@
     "pattern": "impl_item_body",
     "input": {
       "$type": 377,
+      "_unsafe": false,
       "_trait_clause": {
         "$type": 375,
         "_trait": {
@@ -69499,7 +69799,8 @@
                     "$type": 429,
                     "_content": {
                       "$type": 231,
-                      "_reference": true
+                      "_reference": true,
+                      "_mutable": false
                     }
                   }
                 ],
@@ -70487,7 +70788,8 @@
                   "$type": 429,
                   "_content": {
                     "$type": 231,
-                    "_reference": true
+                    "_reference": true,
+                    "_mutable": false
                   }
                 }
               ],
@@ -70569,7 +70871,8 @@
               "$type": 429,
               "_content": {
                 "$type": 231,
-                "_reference": true
+                "_reference": true,
+                "_mutable": false
               }
             }
           ],
@@ -70633,7 +70936,8 @@
             "$type": 429,
             "_content": {
               "$type": 231,
-              "_reference": true
+              "_reference": true,
+              "_mutable": false
             }
           }
         ],
@@ -70680,7 +70984,8 @@
           "$type": 429,
           "_content": {
             "$type": 231,
-            "_reference": true
+            "_reference": true,
+            "_mutable": false
           }
         }
       ],
@@ -70723,7 +71028,8 @@
       "$type": 429,
       "_content": {
         "$type": 231,
-        "_reference": true
+        "_reference": true,
+        "_mutable": false
       }
     },
     "expectedOutput": "&self",
@@ -70750,7 +71056,8 @@
     "pattern": "self_parameter",
     "input": {
       "$type": 231,
-      "_reference": true
+      "_reference": true,
+      "_mutable": false
     },
     "expectedOutput": "&self",
     "options": {
@@ -71042,6 +71349,7 @@
       "_statements": [
         {
           "$type": 377,
+          "_unsafe": false,
           "_trait_clause": {
             "$type": 376,
             "_trait": {
@@ -71101,6 +71409,7 @@
     "pattern": "impl_item_body",
     "input": {
       "$type": 377,
+      "_unsafe": false,
       "_trait_clause": {
         "$type": 376,
         "_trait": {
@@ -72188,6 +72497,7 @@
       "_statements": [
         {
           "$type": 378,
+          "_unsafe": false,
           "_type_parameters": {
             "$type": 219,
             "_elements": {
@@ -72306,6 +72616,7 @@
         },
         {
           "$type": 378,
+          "_unsafe": false,
           "_type_parameters": {
             "$type": 219,
             "_elements": {
@@ -72452,6 +72763,7 @@
     "pattern": "impl_item_semi",
     "input": {
       "$type": 378,
+      "_unsafe": false,
       "_type_parameters": {
         "$type": 219,
         "_elements": {
@@ -72585,6 +72897,7 @@
     "pattern": "impl_item_semi",
     "input": {
       "$type": 378,
+      "_unsafe": false,
       "_type_parameters": {
         "$type": 219,
         "_elements": {
@@ -74161,6 +74474,7 @@
       "_statements": [
         {
           "$type": 377,
+          "_unsafe": false,
           "_type": {
             "$type": 468,
             "_content": {
@@ -74285,6 +74599,7 @@
     "pattern": "impl_item_body",
     "input": {
       "$type": 377,
+      "_unsafe": false,
       "_type": {
         "$type": 468,
         "_content": {
@@ -74983,6 +75298,7 @@
               "$type": 381
             }
           },
+          "_unsafe": false,
           "_name": {
             "$type": 468,
             "_content": {
@@ -75051,7 +75367,8 @@
                         "$type": 429,
                         "_content": {
                           "$type": 231,
-                          "_reference": true
+                          "_reference": true,
+                          "_mutable": false
                         }
                       }
                     ],
@@ -75162,6 +75479,7 @@
           "$type": 381
         }
       },
+      "_unsafe": false,
       "_name": {
         "$type": 468,
         "_content": {
@@ -75230,7 +75548,8 @@
                     "$type": 429,
                     "_content": {
                       "$type": 231,
-                      "_reference": true
+                      "_reference": true,
+                      "_mutable": false
                     }
                   }
                 ],
@@ -75717,7 +76036,8 @@
                   "$type": 429,
                   "_content": {
                     "$type": 231,
-                    "_reference": true
+                    "_reference": true,
+                    "_mutable": false
                   }
                 }
               ],
@@ -75825,7 +76145,8 @@
               "$type": 429,
               "_content": {
                 "$type": 231,
-                "_reference": true
+                "_reference": true,
+                "_mutable": false
               }
             }
           ],
@@ -75889,7 +76210,8 @@
             "$type": 429,
             "_content": {
               "$type": 231,
-              "_reference": true
+              "_reference": true,
+              "_mutable": false
             }
           }
         ],
@@ -75936,7 +76258,8 @@
           "$type": 429,
           "_content": {
             "$type": 231,
-            "_reference": true
+            "_reference": true,
+            "_mutable": false
           }
         }
       ],
@@ -75979,7 +76302,8 @@
       "$type": 429,
       "_content": {
         "$type": 231,
-        "_reference": true
+        "_reference": true,
+        "_mutable": false
       }
     },
     "expectedOutput": "&self",
@@ -76006,7 +76330,8 @@
     "pattern": "self_parameter",
     "input": {
       "$type": 231,
-      "_reference": true
+      "_reference": true,
+      "_mutable": false
     },
     "expectedOutput": "&self",
     "options": {
@@ -76035,6 +76360,7 @@
       "_statements": [
         {
           "$type": 214,
+          "_unsafe": false,
           "_name": {
             "$type": 468,
             "_content": {
@@ -76117,13 +76443,16 @@
                       {
                         "$type": 429,
                         "_content": {
-                          "$type": 231
+                          "$type": 231,
+                          "_reference": false,
+                          "_mutable": false
                         }
                       },
                       {
                         "$type": 429,
                         "_content": {
                           "$type": 233,
+                          "_mutable": false,
                           "_name": {
                             "$type": 1,
                             "$text": "rhs"
@@ -76222,6 +76551,7 @@
     "pattern": "trait_item",
     "input": {
       "$type": 214,
+      "_unsafe": false,
       "_name": {
         "$type": 468,
         "_content": {
@@ -76304,13 +76634,16 @@
                   {
                     "$type": 429,
                     "_content": {
-                      "$type": 231
+                      "$type": 231,
+                      "_reference": false,
+                      "_mutable": false
                     }
                   },
                   {
                     "$type": 429,
                     "_content": {
                       "$type": 233,
+                      "_mutable": false,
                       "_name": {
                         "$type": 1,
                         "$text": "rhs"
@@ -76807,13 +77140,16 @@
                 {
                   "$type": 429,
                   "_content": {
-                    "$type": 231
+                    "$type": 231,
+                    "_reference": false,
+                    "_mutable": false
                   }
                 },
                 {
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 1,
                       "$text": "rhs"
@@ -76942,13 +77278,16 @@
             {
               "$type": 429,
               "_content": {
-                "$type": 231
+                "$type": 231,
+                "_reference": false,
+                "_mutable": false
               }
             },
             {
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 1,
                   "$text": "rhs"
@@ -77027,13 +77366,16 @@
           {
             "$type": 429,
             "_content": {
-              "$type": 231
+              "$type": 231,
+              "_reference": false,
+              "_mutable": false
             }
           },
           {
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 1,
                 "$text": "rhs"
@@ -77095,13 +77437,16 @@
         {
           "$type": 429,
           "_content": {
-            "$type": 231
+            "$type": 231,
+            "_reference": false,
+            "_mutable": false
           }
         },
         {
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 1,
               "$text": "rhs"
@@ -77159,7 +77504,9 @@
     "input": {
       "$type": 429,
       "_content": {
-        "$type": 231
+        "$type": 231,
+        "_reference": false,
+        "_mutable": false
       }
     },
     "expectedOutput": "self",
@@ -77188,6 +77535,7 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 1,
           "$text": "rhs"
@@ -77224,7 +77572,9 @@
     "grammar": "rust",
     "pattern": "self_parameter",
     "input": {
-      "$type": 231
+      "$type": 231,
+      "_reference": false,
+      "_mutable": false
     },
     "expectedOutput": "self",
     "options": {
@@ -77250,6 +77600,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "rhs"
@@ -77325,6 +77676,7 @@
       "_statements": [
         {
           "$type": 214,
+          "_unsafe": false,
           "_name": {
             "$type": 468,
             "_content": {
@@ -77415,12 +77767,14 @@
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 1,
                       "$text": "this"
                     },
                     "_type": {
                       "$type": 252,
+                      "_mutable": false,
                       "_type": {
                         "$type": 255,
                         "_trait": {
@@ -77441,12 +77795,14 @@
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 1,
                       "$text": "that"
                     },
                     "_type": {
                       "$type": 252,
+                      "_mutable": false,
                       "_type": {
                         "$type": 243,
                         "_types": {
@@ -77555,6 +77911,7 @@
     "pattern": "trait_item",
     "input": {
       "$type": 214,
+      "_unsafe": false,
       "_name": {
         "$type": 468,
         "_content": {
@@ -78241,12 +78598,14 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 1,
                   "$text": "this"
                 },
                 "_type": {
                   "$type": 252,
+                  "_mutable": false,
                   "_type": {
                     "$type": 255,
                     "_trait": {
@@ -78267,12 +78626,14 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 1,
                   "$text": "that"
                 },
                 "_type": {
                   "$type": 252,
+                  "_mutable": false,
                   "_type": {
                     "$type": 243,
                     "_types": {
@@ -78375,12 +78736,14 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 1,
                 "$text": "this"
               },
               "_type": {
                 "$type": 252,
+                "_mutable": false,
                 "_type": {
                   "$type": 255,
                   "_trait": {
@@ -78401,12 +78764,14 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 1,
                 "$text": "that"
               },
               "_type": {
                 "$type": 252,
+                "_mutable": false,
                 "_type": {
                   "$type": 243,
                   "_types": {
@@ -78502,12 +78867,14 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 1,
               "$text": "this"
             },
             "_type": {
               "$type": 252,
+              "_mutable": false,
               "_type": {
                 "$type": 255,
                 "_trait": {
@@ -78528,12 +78895,14 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 1,
               "$text": "that"
             },
             "_type": {
               "$type": 252,
+              "_mutable": false,
               "_type": {
                 "$type": 243,
                 "_types": {
@@ -78625,12 +78994,14 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 1,
           "$text": "this"
         },
         "_type": {
           "$type": 252,
+          "_mutable": false,
           "_type": {
             "$type": 255,
             "_trait": {
@@ -78673,12 +79044,14 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 1,
           "$text": "that"
         },
         "_type": {
           "$type": 252,
+          "_mutable": false,
           "_type": {
             "$type": 243,
             "_types": {
@@ -78749,12 +79122,14 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "this"
       },
       "_type": {
         "$type": 252,
+        "_mutable": false,
         "_type": {
           "$type": 255,
           "_trait": {
@@ -78794,12 +79169,14 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "that"
       },
       "_type": {
         "$type": 252,
+        "_mutable": false,
         "_type": {
           "$type": 243,
           "_types": {
@@ -78869,6 +79246,7 @@
     "pattern": "reference_type",
     "input": {
       "$type": 252,
+      "_mutable": false,
       "_type": {
         "$type": 255,
         "_trait": {
@@ -78907,6 +79285,7 @@
     "pattern": "reference_type",
     "input": {
       "$type": 252,
+      "_mutable": false,
       "_type": {
         "$type": 243,
         "_types": {
@@ -79243,6 +79622,7 @@
       "_statements": [
         {
           "$type": 377,
+          "_unsafe": false,
           "_type_parameters": {
             "$type": 219,
             "_elements": {
@@ -79393,6 +79773,7 @@
     "pattern": "impl_item_body",
     "input": {
       "$type": 377,
+      "_unsafe": false,
       "_type_parameters": {
         "$type": 219,
         "_elements": {
@@ -80532,6 +80913,7 @@
               "$type": 381
             }
           },
+          "_unsafe": false,
           "_name": {
             "$type": 468,
             "_content": {
@@ -80611,7 +80993,8 @@
                         "$type": 429,
                         "_content": {
                           "$type": 231,
-                          "_reference": true
+                          "_reference": true,
+                          "_mutable": false
                         }
                       }
                     ],
@@ -80686,6 +81069,7 @@
           "$type": 381
         }
       },
+      "_unsafe": false,
       "_name": {
         "$type": 468,
         "_content": {
@@ -80765,7 +81149,8 @@
                     "$type": 429,
                     "_content": {
                       "$type": 231,
-                      "_reference": true
+                      "_reference": true,
+                      "_mutable": false
                     }
                   }
                 ],
@@ -81082,7 +81467,8 @@
                   "$type": 429,
                   "_content": {
                     "$type": 231,
-                    "_reference": true
+                    "_reference": true,
+                    "_mutable": false
                   }
                 }
               ],
@@ -81209,7 +81595,8 @@
               "$type": 429,
               "_content": {
                 "$type": 231,
-                "_reference": true
+                "_reference": true,
+                "_mutable": false
               }
             }
           ],
@@ -81259,7 +81646,8 @@
             "$type": 429,
             "_content": {
               "$type": 231,
-              "_reference": true
+              "_reference": true,
+              "_mutable": false
             }
           }
         ],
@@ -81306,7 +81694,8 @@
           "$type": 429,
           "_content": {
             "$type": 231,
-            "_reference": true
+            "_reference": true,
+            "_mutable": false
           }
         }
       ],
@@ -81349,7 +81738,8 @@
       "$type": 429,
       "_content": {
         "$type": 231,
-        "_reference": true
+        "_reference": true,
+        "_mutable": false
       }
     },
     "expectedOutput": "&self",
@@ -81376,7 +81766,8 @@
     "pattern": "self_parameter",
     "input": {
       "$type": 231,
-      "_reference": true
+      "_reference": true,
+      "_mutable": false
     },
     "expectedOutput": "&self",
     "options": {
@@ -81411,6 +81802,7 @@
               "$type": 381
             }
           },
+          "_unsafe": false,
           "_name": {
             "$type": 468,
             "_content": {
@@ -81523,6 +81915,7 @@
           "$type": 381
         }
       },
+      "_unsafe": false,
       "_name": {
         "$type": 468,
         "_content": {
@@ -82031,6 +82424,7 @@
       "_statements": [
         {
           "$type": 377,
+          "_unsafe": false,
           "_trait_clause": {
             "$type": 375,
             "_trait": {
@@ -82160,6 +82554,7 @@
     "pattern": "impl_item_body",
     "input": {
       "$type": 377,
+      "_unsafe": false,
       "_trait_clause": {
         "$type": 375,
         "_trait": {
@@ -82871,6 +83266,7 @@
               "$type": 381
             }
           },
+          "_unsafe": false,
           "_name": {
             "$type": 468,
             "_content": {
@@ -83033,6 +83429,7 @@
         },
         {
           "$type": 377,
+          "_unsafe": false,
           "_trait_clause": {
             "$type": 375,
             "_trait": {
@@ -83598,6 +83995,7 @@
           "$type": 381
         }
       },
+      "_unsafe": false,
       "_name": {
         "$type": 468,
         "_content": {
@@ -88730,6 +89128,7 @@
     "pattern": "impl_item_body",
     "input": {
       "$type": 377,
+      "_unsafe": false,
       "_trait_clause": {
         "$type": 375,
         "_trait": {
@@ -90040,6 +90439,7 @@
       "_statements": [
         {
           "$type": 214,
+          "_unsafe": false,
           "_name": {
             "$type": 468,
             "_content": {
@@ -90111,6 +90511,7 @@
                                 "$text": "a"
                               }
                             },
+                            "_mutable": false,
                             "_type": 69
                           }
                         }
@@ -90260,6 +90661,7 @@
                                 "$text": "a"
                               }
                             },
+                            "_mutable": false,
                             "_type": 68
                           }
                         },
@@ -90274,6 +90676,7 @@
                                 "$text": "a"
                               }
                             },
+                            "_mutable": false,
                             "_type": 68
                           },
                           "$_layout": {
@@ -90346,6 +90749,7 @@
     "pattern": "trait_item",
     "input": {
       "$type": 214,
+      "_unsafe": false,
       "_name": {
         "$type": 468,
         "_content": {
@@ -90417,6 +90821,7 @@
                             "$text": "a"
                           }
                         },
+                        "_mutable": false,
                         "_type": 69
                       }
                     }
@@ -90653,6 +91058,7 @@
                           "$text": "a"
                         }
                       },
+                      "_mutable": false,
                       "_type": 69
                     }
                   }
@@ -90758,6 +91164,7 @@
                       "$text": "a"
                     }
                   },
+                  "_mutable": false,
                   "_type": 69
                 }
               }
@@ -90861,6 +91268,7 @@
                       "$text": "a"
                     }
                   },
+                  "_mutable": false,
                   "_type": 68
                 }
               },
@@ -90875,6 +91283,7 @@
                       "$text": "a"
                     }
                   },
+                  "_mutable": false,
                   "_type": 68
                 },
                 "$_layout": {
@@ -91681,6 +92090,7 @@
                     "$text": "a"
                   }
                 },
+                "_mutable": false,
                 "_type": 69
               }
             }
@@ -91747,6 +92157,7 @@
                     "$text": "a"
                   }
                 },
+                "_mutable": false,
                 "_type": 68
               }
             },
@@ -91761,6 +92172,7 @@
                     "$text": "a"
                   }
                 },
+                "_mutable": false,
                 "_type": 68
               },
               "$_layout": {
@@ -91823,6 +92235,7 @@
                   "$text": "a"
                 }
               },
+              "_mutable": false,
               "_type": 69
             }
           }
@@ -91879,6 +92292,7 @@
                   "$text": "a"
                 }
               },
+              "_mutable": false,
               "_type": 68
             }
           },
@@ -91893,6 +92307,7 @@
                   "$text": "a"
                 }
               },
+              "_mutable": false,
               "_type": 68
             },
             "$_layout": {
@@ -91952,6 +92367,7 @@
                 "$text": "a"
               }
             },
+            "_mutable": false,
             "_type": 69
           }
         }
@@ -92005,6 +92421,7 @@
                 "$text": "a"
               }
             },
+            "_mutable": false,
             "_type": 68
           }
         },
@@ -92019,6 +92436,7 @@
                 "$text": "a"
               }
             },
+            "_mutable": false,
             "_type": 68
           },
           "$_layout": {
@@ -92074,6 +92492,7 @@
             "$text": "a"
           }
         },
+        "_mutable": false,
         "_type": 69
       }
     },
@@ -92110,6 +92529,7 @@
             "$text": "a"
           }
         },
+        "_mutable": false,
         "_type": 68
       }
     },
@@ -92146,6 +92566,7 @@
             "$text": "a"
           }
         },
+        "_mutable": false,
         "_type": 68
       }
     },
@@ -92180,6 +92601,7 @@
           "$text": "a"
         }
       },
+      "_mutable": false,
       "_type": 69
     },
     "expectedOutput": "&'a usize",
@@ -92213,6 +92635,7 @@
           "$text": "a"
         }
       },
+      "_mutable": false,
       "_type": 68
     },
     "expectedOutput": "&'a isize",
@@ -92246,6 +92669,7 @@
           "$text": "a"
         }
       },
+      "_mutable": false,
       "_type": 68
     },
     "expectedOutput": "&'a isize",
@@ -92415,6 +92839,7 @@
                             "$text": "a"
                           }
                         },
+                        "_mutable": false,
                         "_type": 68
                       }
                     },
@@ -92429,6 +92854,7 @@
                             "$text": "a"
                           }
                         },
+                        "_mutable": false,
                         "_type": 68
                       },
                       "$_layout": {
@@ -92551,6 +92977,7 @@
                           "$text": "a"
                         }
                       },
+                      "_mutable": false,
                       "_type": 68
                     }
                   },
@@ -92565,6 +92992,7 @@
                           "$text": "a"
                         }
                       },
+                      "_mutable": false,
                       "_type": 68
                     },
                     "$_layout": {
@@ -92684,6 +93112,7 @@
                         "$text": "a"
                       }
                     },
+                    "_mutable": false,
                     "_type": 68
                   }
                 },
@@ -92698,6 +93127,7 @@
                         "$text": "a"
                       }
                     },
+                    "_mutable": false,
                     "_type": 68
                   },
                   "$_layout": {
@@ -93941,6 +94371,7 @@
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": 73,
                     "_type": {
                       "$type": 388,
@@ -93996,6 +94427,7 @@
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": 72,
                     "_type": 72
                   }
@@ -94070,6 +94502,7 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": 73,
                 "_type": {
                   "$type": 388,
@@ -94140,6 +94573,7 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": 72,
                 "_type": 72
               }
@@ -94195,6 +94629,7 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": 73,
               "_type": {
                 "$type": 388,
@@ -94254,6 +94689,7 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": 72,
               "_type": 72
             }
@@ -94302,6 +94738,7 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": 73,
             "_type": {
               "$type": 388,
@@ -94358,6 +94795,7 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": 72,
             "_type": 72
           }
@@ -94402,6 +94840,7 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": 73,
         "_type": {
           "$type": 388,
@@ -94441,6 +94880,7 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": 72,
         "_type": 72
       }
@@ -94469,6 +94909,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": 73,
       "_type": {
         "$type": 388,
@@ -94505,6 +94946,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": 72,
       "_type": 72
     },
@@ -94695,13 +95137,15 @@
                   "$type": 429,
                   "_content": {
                     "$type": 231,
-                    "_reference": true
+                    "_reference": true,
+                    "_mutable": false
                   }
                 },
                 {
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 1,
                       "$text": "it"
@@ -94778,6 +95222,7 @@
                                 "$type": 429,
                                 "_content": {
                                   "$type": 252,
+                                  "_mutable": false,
                                   "_type": {
                                     "$type": 468,
                                     "_content": {
@@ -94866,6 +95311,7 @@
         },
         {
           "$type": 377,
+          "_unsafe": false,
           "_type_parameters": {
             "$type": 219,
             "_elements": {
@@ -95071,6 +95517,7 @@
         },
         {
           "$type": 377,
+          "_unsafe": false,
           "_type_parameters": {
             "$type": 219,
             "_elements": {
@@ -95325,6 +95772,7 @@
         },
         {
           "$type": 377,
+          "_unsafe": false,
           "_type_parameters": {
             "$type": 219,
             "_elements": {
@@ -95401,6 +95849,7 @@
                         "$text": "a"
                       }
                     },
+                    "_mutable": false,
                     "_type": {
                       "$type": 468,
                       "_content": {
@@ -95468,6 +95917,7 @@
         },
         {
           "$type": 377,
+          "_unsafe": false,
           "_type_parameters": {
             "$type": 219,
             "_elements": {
@@ -95652,6 +96102,7 @@
         },
         {
           "$type": 377,
+          "_unsafe": false,
           "_type_parameters": {
             "$type": 219,
             "_elements": {
@@ -95920,6 +96371,7 @@
               "$type": 381
             }
           },
+          "_unsafe": false,
           "_name": {
             "$type": 468,
             "_content": {
@@ -96217,6 +96669,7 @@
         },
         {
           "$type": 377,
+          "_unsafe": false,
           "_type_parameters": {
             "$type": 219,
             "_elements": {
@@ -96447,13 +96900,15 @@
               "$type": 429,
               "_content": {
                 "$type": 231,
-                "_reference": true
+                "_reference": true,
+                "_mutable": false
               }
             },
             {
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 1,
                   "$text": "it"
@@ -96530,6 +96985,7 @@
                             "$type": 429,
                             "_content": {
                               "$type": 252,
+                              "_mutable": false,
                               "_type": {
                                 "$type": 468,
                                 "_content": {
@@ -100422,13 +100878,15 @@
             "$type": 429,
             "_content": {
               "$type": 231,
-              "_reference": true
+              "_reference": true,
+              "_mutable": false
             }
           },
           {
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 1,
                 "$text": "it"
@@ -100497,6 +100955,7 @@
             "$type": 429,
             "_content": {
               "$type": 252,
+              "_mutable": false,
               "_type": {
                 "$type": 468,
                 "_content": {
@@ -100575,13 +101034,15 @@
           "$type": 429,
           "_content": {
             "$type": 231,
-            "_reference": true
+            "_reference": true,
+            "_mutable": false
           }
         },
         {
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 1,
               "$text": "it"
@@ -100647,6 +101108,7 @@
           "$type": 429,
           "_content": {
             "$type": 252,
+            "_mutable": false,
             "_type": {
               "$type": 468,
               "_content": {
@@ -100696,7 +101158,8 @@
       "$type": 429,
       "_content": {
         "$type": 231,
-        "_reference": true
+        "_reference": true,
+        "_mutable": false
       }
     },
     "expectedOutput": "&self",
@@ -100725,6 +101188,7 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 1,
           "$text": "it"
@@ -100768,6 +101232,7 @@
       "$type": 429,
       "_content": {
         "$type": 252,
+        "_mutable": false,
         "_type": {
           "$type": 468,
           "_content": {
@@ -100801,7 +101266,8 @@
     "pattern": "self_parameter",
     "input": {
       "$type": 231,
-      "_reference": true
+      "_reference": true,
+      "_mutable": false
     },
     "expectedOutput": "&self",
     "options": {
@@ -100827,6 +101293,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "it"
@@ -100900,6 +101367,7 @@
     "pattern": "reference_type",
     "input": {
       "$type": 252,
+      "_mutable": false,
       "_type": {
         "$type": 468,
         "_content": {
@@ -100939,6 +101407,7 @@
           "$text": "a"
         }
       },
+      "_mutable": false,
       "_type": {
         "$type": 468,
         "_content": {
@@ -101007,6 +101476,7 @@
                           "$type": 429,
                           "_content": {
                             "$type": 252,
+                            "_mutable": false,
                             "_type": {
                               "$type": 468,
                               "_content": {
@@ -101312,6 +101782,7 @@
                   "$text": "a"
                 }
               },
+              "_mutable": false,
               "_type": {
                 "$type": 468,
                 "_content": {
@@ -101981,6 +102452,7 @@
                         "$type": 429,
                         "_content": {
                           "$type": 252,
+                          "_mutable": false,
                           "_type": {
                             "$type": 468,
                             "_content": {
@@ -102277,6 +102749,7 @@
                 "$text": "a"
               }
             },
+            "_mutable": false,
             "_type": {
               "$type": 468,
               "_content": {
@@ -102927,6 +103400,7 @@
                     "$type": 429,
                     "_content": {
                       "$type": 252,
+                      "_mutable": false,
                       "_type": {
                         "$type": 468,
                         "_content": {
@@ -103198,6 +103672,7 @@
             "$text": "a"
           }
         },
+        "_mutable": false,
         "_type": {
           "$type": 468,
           "_content": {
@@ -103757,6 +104232,7 @@
                   "$type": 429,
                   "_content": {
                     "$type": 252,
+                    "_mutable": false,
                     "_type": {
                       "$type": 468,
                       "_content": {
@@ -104365,6 +104841,7 @@
               "$type": 429,
               "_content": {
                 "$type": 252,
+                "_mutable": false,
                 "_type": {
                   "$type": 468,
                   "_content": {
@@ -104539,6 +105016,7 @@
     "pattern": "impl_item_body",
     "input": {
       "$type": 377,
+      "_unsafe": false,
       "_type_parameters": {
         "$type": 219,
         "_elements": {
@@ -104759,6 +105237,7 @@
     "pattern": "impl_item_body",
     "input": {
       "$type": 377,
+      "_unsafe": false,
       "_type_parameters": {
         "$type": 219,
         "_elements": {
@@ -105028,6 +105507,7 @@
     "pattern": "impl_item_body",
     "input": {
       "$type": 377,
+      "_unsafe": false,
       "_type_parameters": {
         "$type": 219,
         "_elements": {
@@ -105104,6 +105584,7 @@
                     "$text": "a"
                   }
                 },
+                "_mutable": false,
                 "_type": {
                   "$type": 468,
                   "_content": {
@@ -105186,6 +105667,7 @@
     "pattern": "impl_item_body",
     "input": {
       "$type": 377,
+      "_unsafe": false,
       "_type_parameters": {
         "$type": 219,
         "_elements": {
@@ -105385,6 +105867,7 @@
     "pattern": "impl_item_body",
     "input": {
       "$type": 377,
+      "_unsafe": false,
       "_type_parameters": {
         "$type": 219,
         "_elements": {
@@ -105662,6 +106145,7 @@
     "pattern": "impl_item_body",
     "input": {
       "$type": 377,
+      "_unsafe": false,
       "_type_parameters": {
         "$type": 219,
         "_elements": {
@@ -108895,6 +109379,7 @@
           "$type": 381
         }
       },
+      "_unsafe": false,
       "_name": {
         "$type": 468,
         "_content": {
@@ -109138,6 +109623,7 @@
                         "$type": 429,
                         "_content": {
                           "$type": 233,
+                          "_mutable": false,
                           "_name": {
                             "$type": 1,
                             "$text": "mod_"
@@ -109286,6 +109772,7 @@
                     "$type": 429,
                     "_content": {
                       "$type": 233,
+                      "_mutable": false,
                       "_name": {
                         "$type": 1,
                         "$text": "mod_"
@@ -109615,6 +110102,7 @@
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 1,
                       "$text": "mod_"
@@ -109734,6 +110222,7 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 1,
                   "$text": "mod_"
@@ -109800,6 +110289,7 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 1,
                 "$text": "mod_"
@@ -109863,6 +110353,7 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 1,
               "$text": "mod_"
@@ -109922,6 +110413,7 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 1,
           "$text": "mod_"
@@ -109965,6 +110457,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "mod_"
@@ -111864,6 +112357,7 @@
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 1,
                       "$text": "val"
@@ -112088,6 +112582,7 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 1,
                   "$text": "val"
@@ -112552,6 +113047,7 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 1,
                 "$text": "val"
@@ -112609,6 +113105,7 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 1,
               "$text": "val"
@@ -112662,6 +113159,7 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 1,
           "$text": "val"
@@ -112699,6 +113197,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "val"
@@ -121434,6 +121933,7 @@
         },
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": {
             "$type": 1,
             "$text": "character"
@@ -121456,6 +121956,7 @@
         },
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": {
             "$type": 1,
             "$text": "size"
@@ -121778,6 +122279,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": {
         "$type": 1,
         "$text": "character"
@@ -121815,6 +122317,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": {
         "$type": 1,
         "$text": "size"
@@ -126628,6 +127131,7 @@
         },
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": {
             "$type": 316,
             "_elements": {
@@ -127229,6 +127733,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": {
         "$type": 316,
         "_elements": {
@@ -127571,6 +128076,7 @@
         },
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": {
             "$type": 1,
             "$text": "a"
@@ -127656,6 +128162,7 @@
         },
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": {
             "$type": 1,
             "$text": "u"
@@ -127771,6 +128278,7 @@
         },
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": {
             "$type": 1,
             "$text": "i"
@@ -129946,6 +130454,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": {
         "$type": 1,
         "$text": "a"
@@ -130046,6 +130555,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": {
         "$type": 1,
         "$text": "u"
@@ -130176,6 +130686,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": {
         "$type": 1,
         "$text": "i"
@@ -130747,6 +131258,7 @@
       "_statements": [
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": {
             "$type": 1,
             "$text": "u"
@@ -130845,6 +131357,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": {
         "$type": 1,
         "$text": "u"
@@ -131399,6 +131912,7 @@
         },
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": {
             "$type": 1,
             "$text": "y"
@@ -133081,6 +133595,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": {
         "$type": 1,
         "$text": "y"
@@ -134332,6 +134847,9 @@
                   },
                   "_value": {
                     "$type": 370,
+                    "_static": false,
+                    "_async": false,
+                    "_move": false,
                     "_parameters": {
                       "$type": 302,
                       "_parameters": []
@@ -134384,6 +134902,9 @@
                   },
                   "_value": {
                     "$type": 370,
+                    "_static": false,
+                    "_async": false,
+                    "_move": false,
                     "_parameters": {
                       "$type": 302,
                       "_parameters": []
@@ -134697,6 +135218,9 @@
               },
               "_value": {
                 "$type": 370,
+                "_static": false,
+                "_async": false,
+                "_move": false,
                 "_parameters": {
                   "$type": 302,
                   "_parameters": []
@@ -134764,6 +135288,9 @@
               },
               "_value": {
                 "$type": 370,
+                "_static": false,
+                "_async": false,
+                "_move": false,
                 "_parameters": {
                   "$type": 302,
                   "_parameters": []
@@ -135056,6 +135583,9 @@
             },
             "_value": {
               "$type": 370,
+              "_static": false,
+              "_async": false,
+              "_move": false,
               "_parameters": {
                 "$type": 302,
                 "_parameters": []
@@ -135120,6 +135650,9 @@
             },
             "_value": {
               "$type": 370,
+              "_static": false,
+              "_async": false,
+              "_move": false,
               "_parameters": {
                 "$type": 302,
                 "_parameters": []
@@ -135382,6 +135915,9 @@
       },
       "_value": {
         "$type": 370,
+        "_static": false,
+        "_async": false,
+        "_move": false,
         "_parameters": {
           "$type": 302,
           "_parameters": []
@@ -135430,6 +135966,9 @@
       },
       "_value": {
         "$type": 370,
+        "_static": false,
+        "_async": false,
+        "_move": false,
         "_parameters": {
           "$type": 302,
           "_parameters": []
@@ -136041,6 +136580,9 @@
           },
           "_value": {
             "$type": 370,
+            "_static": false,
+            "_async": false,
+            "_move": false,
             "_parameters": {
               "$type": 302,
               "_parameters": []
@@ -136098,6 +136640,9 @@
           },
           "_value": {
             "$type": 370,
+            "_static": false,
+            "_async": false,
+            "_move": false,
             "_parameters": {
               "$type": 302,
               "_parameters": []
@@ -136261,6 +136806,9 @@
     "pattern": "closure_expression_expr",
     "input": {
       "$type": 370,
+      "_static": false,
+      "_async": false,
+      "_move": false,
       "_parameters": {
         "$type": 302,
         "_parameters": []
@@ -136302,6 +136850,9 @@
     "pattern": "closure_expression_expr",
     "input": {
       "$type": 370,
+      "_static": false,
+      "_async": false,
+      "_move": false,
       "_parameters": {
         "$type": 302,
         "_parameters": []
@@ -137329,6 +137880,7 @@
         },
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": {
             "$type": 1,
             "$text": "msg"
@@ -141971,6 +142523,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": {
         "$type": 1,
         "$text": "msg"
@@ -154810,6 +155363,9 @@
                       "_attribute_item": [],
                       "_expression": {
                         "$type": 370,
+                        "_static": false,
+                        "_async": false,
+                        "_move": false,
                         "_parameters": {
                           "$type": 302,
                           "_parameters": [
@@ -154950,6 +155506,8 @@
                       "_attribute_item": [],
                       "_expression": {
                         "$type": 370,
+                        "_static": false,
+                        "_async": false,
                         "_move": true,
                         "_parameters": {
                           "$type": 302,
@@ -155108,6 +155666,9 @@
                       "_attribute_item": [],
                       "_expression": {
                         "$type": 369,
+                        "_static": false,
+                        "_async": false,
+                        "_move": false,
                         "_parameters": {
                           "$type": 302,
                           "_parameters": []
@@ -155212,6 +155773,9 @@
                   "_attribute_item": [],
                   "_expression": {
                     "$type": 370,
+                    "_static": false,
+                    "_async": false,
+                    "_move": false,
                     "_parameters": {
                       "$type": 302,
                       "_parameters": [
@@ -155367,6 +155931,8 @@
                   "_attribute_item": [],
                   "_expression": {
                     "$type": 370,
+                    "_static": false,
+                    "_async": false,
                     "_move": true,
                     "_parameters": {
                       "$type": 302,
@@ -155603,6 +156169,9 @@
                   "_attribute_item": [],
                   "_expression": {
                     "$type": 369,
+                    "_static": false,
+                    "_async": false,
+                    "_move": false,
                     "_parameters": {
                       "$type": 302,
                       "_parameters": []
@@ -155692,6 +156261,9 @@
                 "_attribute_item": [],
                 "_expression": {
                   "$type": 370,
+                  "_static": false,
+                  "_async": false,
+                  "_move": false,
                   "_parameters": {
                     "$type": 302,
                     "_parameters": [
@@ -155844,6 +156416,8 @@
                 "_attribute_item": [],
                 "_expression": {
                   "$type": 370,
+                  "_static": false,
+                  "_async": false,
                   "_move": true,
                   "_parameters": {
                     "$type": 302,
@@ -156074,6 +156648,9 @@
                 "_attribute_item": [],
                 "_expression": {
                   "$type": 369,
+                  "_static": false,
+                  "_async": false,
+                  "_move": false,
                   "_parameters": {
                     "$type": 302,
                     "_parameters": []
@@ -156160,6 +156737,9 @@
               "_attribute_item": [],
               "_expression": {
                 "$type": 370,
+                "_static": false,
+                "_async": false,
+                "_move": false,
                 "_parameters": {
                   "$type": 302,
                   "_parameters": [
@@ -156376,6 +156956,8 @@
               "_attribute_item": [],
               "_expression": {
                 "$type": 370,
+                "_static": false,
+                "_async": false,
                 "_move": true,
                 "_parameters": {
                   "$type": 302,
@@ -156657,6 +157239,9 @@
               "_attribute_item": [],
               "_expression": {
                 "$type": 369,
+                "_static": false,
+                "_async": false,
+                "_move": false,
                 "_parameters": {
                   "$type": 302,
                   "_parameters": []
@@ -156921,6 +157506,9 @@
             "_attribute_item": [],
             "_expression": {
               "$type": 370,
+              "_static": false,
+              "_async": false,
+              "_move": false,
               "_parameters": {
                 "$type": 302,
                 "_parameters": [
@@ -157103,6 +157691,8 @@
             "_attribute_item": [],
             "_expression": {
               "$type": 370,
+              "_static": false,
+              "_async": false,
               "_move": true,
               "_parameters": {
                 "$type": 302,
@@ -157363,6 +157953,9 @@
             "_attribute_item": [],
             "_expression": {
               "$type": 369,
+              "_static": false,
+              "_async": false,
+              "_move": false,
               "_parameters": {
                 "$type": 302,
                 "_parameters": []
@@ -157429,6 +158022,9 @@
           "_attribute_item": [],
           "_expression": {
             "$type": 370,
+            "_static": false,
+            "_async": false,
+            "_move": false,
             "_parameters": {
               "$type": 302,
               "_parameters": [
@@ -157605,6 +158201,8 @@
           "_attribute_item": [],
           "_expression": {
             "$type": 370,
+            "_static": false,
+            "_async": false,
             "_move": true,
             "_parameters": {
               "$type": 302,
@@ -157856,6 +158454,9 @@
           "_attribute_item": [],
           "_expression": {
             "$type": 369,
+            "_static": false,
+            "_async": false,
+            "_move": false,
             "_parameters": {
               "$type": 302,
               "_parameters": []
@@ -157918,6 +158519,9 @@
       "_attribute_item": [],
       "_expression": {
         "$type": 370,
+        "_static": false,
+        "_async": false,
+        "_move": false,
         "_parameters": {
           "$type": 302,
           "_parameters": [
@@ -158060,6 +158664,8 @@
       "_attribute_item": [],
       "_expression": {
         "$type": 370,
+        "_static": false,
+        "_async": false,
         "_move": true,
         "_parameters": {
           "$type": 302,
@@ -158260,6 +158866,9 @@
       "_attribute_item": [],
       "_expression": {
         "$type": 369,
+        "_static": false,
+        "_async": false,
+        "_move": false,
         "_parameters": {
           "$type": 302,
           "_parameters": []
@@ -158305,6 +158914,9 @@
     "pattern": "closure_expression_expr",
     "input": {
       "$type": 370,
+      "_static": false,
+      "_async": false,
+      "_move": false,
       "_parameters": {
         "$type": 302,
         "_parameters": [
@@ -158413,6 +159025,8 @@
     "pattern": "closure_expression_expr",
     "input": {
       "$type": 370,
+      "_static": false,
+      "_async": false,
       "_move": true,
       "_parameters": {
         "$type": 302,
@@ -158955,6 +159569,9 @@
     "pattern": "closure_expression_block",
     "input": {
       "$type": 369,
+      "_static": false,
+      "_async": false,
+      "_move": false,
       "_parameters": {
         "$type": 302,
         "_parameters": []
@@ -159059,11 +159676,15 @@
                       "_attribute_item": [],
                       "_expression": {
                         "$type": 370,
+                        "_static": false,
+                        "_async": false,
+                        "_move": false,
                         "_parameters": {
                           "$type": 302,
                           "_parameters": [
                             {
                               "$type": 233,
+                              "_mutable": false,
                               "_name": {
                                 "$type": 1,
                                 "$text": "b"
@@ -159202,11 +159823,15 @@
                   "_attribute_item": [],
                   "_expression": {
                     "$type": 370,
+                    "_static": false,
+                    "_async": false,
+                    "_move": false,
                     "_parameters": {
                       "$type": 302,
                       "_parameters": [
                         {
                           "$type": 233,
+                          "_mutable": false,
                           "_name": {
                             "$type": 1,
                             "$text": "b"
@@ -159330,11 +159955,15 @@
                 "_attribute_item": [],
                 "_expression": {
                   "$type": 370,
+                  "_static": false,
+                  "_async": false,
+                  "_move": false,
                   "_parameters": {
                     "$type": 302,
                     "_parameters": [
                       {
                         "$type": 233,
+                        "_mutable": false,
                         "_name": {
                           "$type": 1,
                           "$text": "b"
@@ -159455,11 +160084,15 @@
               "_attribute_item": [],
               "_expression": {
                 "$type": 370,
+                "_static": false,
+                "_async": false,
+                "_move": false,
                 "_parameters": {
                   "$type": 302,
                   "_parameters": [
                     {
                       "$type": 233,
+                      "_mutable": false,
                       "_name": {
                         "$type": 1,
                         "$text": "b"
@@ -159760,11 +160393,15 @@
             "_attribute_item": [],
             "_expression": {
               "$type": 370,
+              "_static": false,
+              "_async": false,
+              "_move": false,
               "_parameters": {
                 "$type": 302,
                 "_parameters": [
                   {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 1,
                       "$text": "b"
@@ -159915,11 +160552,15 @@
           "_attribute_item": [],
           "_expression": {
             "$type": 370,
+            "_static": false,
+            "_async": false,
+            "_move": false,
             "_parameters": {
               "$type": 302,
               "_parameters": [
                 {
                   "$type": 233,
+                  "_mutable": false,
                   "_name": {
                     "$type": 1,
                     "$text": "b"
@@ -160063,11 +160704,15 @@
       "_attribute_item": [],
       "_expression": {
         "$type": 370,
+        "_static": false,
+        "_async": false,
+        "_move": false,
         "_parameters": {
           "$type": 302,
           "_parameters": [
             {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 1,
                 "$text": "b"
@@ -160177,11 +160822,15 @@
     "pattern": "closure_expression_expr",
     "input": {
       "$type": 370,
+      "_static": false,
+      "_async": false,
+      "_move": false,
       "_parameters": {
         "$type": 302,
         "_parameters": [
           {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 1,
               "$text": "b"
@@ -160263,6 +160912,7 @@
       "_parameters": [
         {
           "$type": 233,
+          "_mutable": false,
           "_name": {
             "$type": 1,
             "$text": "b"
@@ -160295,6 +160945,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "b"
@@ -160332,6 +160983,8 @@
             "$type": 394,
             "_expression": {
               "$type": 370,
+              "_static": false,
+              "_async": false,
               "_move": true,
               "_parameters": {
                 "$type": 302,
@@ -160483,6 +161136,8 @@
         "$type": 394,
         "_expression": {
           "$type": 370,
+          "_static": false,
+          "_async": false,
           "_move": true,
           "_parameters": {
             "$type": 302,
@@ -160818,6 +161473,8 @@
       "$type": 394,
       "_expression": {
         "$type": 370,
+        "_static": false,
+        "_async": false,
         "_move": true,
         "_parameters": {
           "$type": 302,
@@ -161048,6 +161705,8 @@
     "pattern": "closure_expression_expr",
     "input": {
       "$type": 370,
+      "_static": false,
+      "_async": false,
       "_move": true,
       "_parameters": {
         "$type": 302,
@@ -162063,6 +162722,7 @@
         },
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": {
             "$type": 1,
             "$text": "three_ranges"
@@ -163806,6 +164466,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": {
         "$type": 1,
         "$text": "three_ranges"
@@ -169103,6 +169764,7 @@
             "$type": 394,
             "_expression": {
               "$type": 145,
+              "_b": false,
               "_content": "a"
             }
           },
@@ -169120,6 +169782,7 @@
             "$type": 394,
             "_expression": {
               "$type": 147,
+              "_b": false,
               "_content": "\\'"
             }
           },
@@ -169137,6 +169800,7 @@
             "$type": 394,
             "_expression": {
               "$type": 147,
+              "_b": false,
               "_content": "\\0"
             }
           },
@@ -169172,6 +169836,7 @@
             "$type": 394,
             "_expression": {
               "$type": 147,
+              "_b": false,
               "_content": "\\t"
             }
           },
@@ -169189,6 +169854,7 @@
             "$type": 394,
             "_expression": {
               "$type": 150,
+              "_b": false,
               "_content": "\\xff"
             }
           },
@@ -169206,6 +169872,7 @@
             "$type": 394,
             "_expression": {
               "$type": 147,
+              "_b": false,
               "_content": "\\\\"
             }
           },
@@ -169251,6 +169918,7 @@
         "$type": 394,
         "_expression": {
           "$type": 145,
+          "_b": false,
           "_content": "a"
         }
       }
@@ -169283,6 +169951,7 @@
         "$type": 394,
         "_expression": {
           "$type": 147,
+          "_b": false,
           "_content": "\\'"
         }
       }
@@ -169315,6 +169984,7 @@
         "$type": 394,
         "_expression": {
           "$type": 147,
+          "_b": false,
           "_content": "\\0"
         }
       }
@@ -169380,6 +170050,7 @@
         "$type": 394,
         "_expression": {
           "$type": 147,
+          "_b": false,
           "_content": "\\t"
         }
       }
@@ -169412,6 +170083,7 @@
         "$type": 394,
         "_expression": {
           "$type": 150,
+          "_b": false,
           "_content": "\\xff"
         }
       }
@@ -169444,6 +170116,7 @@
         "$type": 394,
         "_expression": {
           "$type": 147,
+          "_b": false,
           "_content": "\\\\"
         }
       }
@@ -169474,6 +170147,7 @@
       "$type": 394,
       "_expression": {
         "$type": 145,
+        "_b": false,
         "_content": "a"
       }
     },
@@ -169503,6 +170177,7 @@
       "$type": 394,
       "_expression": {
         "$type": 147,
+        "_b": false,
         "_content": "\\'"
       }
     },
@@ -169532,6 +170207,7 @@
       "$type": 394,
       "_expression": {
         "$type": 147,
+        "_b": false,
         "_content": "\\0"
       }
     },
@@ -169591,6 +170267,7 @@
       "$type": 394,
       "_expression": {
         "$type": 147,
+        "_b": false,
         "_content": "\\t"
       }
     },
@@ -169620,6 +170297,7 @@
       "$type": 394,
       "_expression": {
         "$type": 150,
+        "_b": false,
         "_content": "\\xff"
       }
     },
@@ -169649,6 +170327,7 @@
       "$type": 394,
       "_expression": {
         "$type": 147,
+        "_b": false,
         "_content": "\\\\"
       }
     },
@@ -169676,6 +170355,7 @@
     "pattern": "char_literal_plain",
     "input": {
       "$type": 145,
+      "_b": false,
       "_content": "a"
     },
     "expectedOutput": "'a'",
@@ -169729,6 +170409,7 @@
     "pattern": "char_literal_escaped_simple",
     "input": {
       "$type": 147,
+      "_b": false,
       "_content": "\\'"
     },
     "expectedOutput": "'\\''",
@@ -169755,6 +170436,7 @@
     "pattern": "char_literal_escaped_simple",
     "input": {
       "$type": 147,
+      "_b": false,
       "_content": "\\0"
     },
     "expectedOutput": "'\\0'",
@@ -169781,6 +170463,7 @@
     "pattern": "char_literal_escaped_simple",
     "input": {
       "$type": 147,
+      "_b": false,
       "_content": "\\t"
     },
     "expectedOutput": "'\\t'",
@@ -169807,6 +170490,7 @@
     "pattern": "char_literal_escaped_simple",
     "input": {
       "$type": 147,
+      "_b": false,
       "_content": "\\\\"
     },
     "expectedOutput": "'\\\\'",
@@ -169833,6 +170517,7 @@
     "pattern": "char_literal_escaped_hex",
     "input": {
       "$type": 150,
+      "_b": false,
       "_content": "\\xff"
     },
     "expectedOutput": "'\\xff'",
@@ -171278,6 +171963,7 @@
                     "$type": 189,
                     "_content": {
                       "$type": 145,
+                      "_b": false,
                       "_content": "a"
                     }
                   },
@@ -171294,6 +171980,7 @@
                     "$type": 189,
                     "_content": {
                       "$type": 145,
+                      "_b": false,
                       "_content": "z"
                     },
                     "$_layout": {
@@ -171331,6 +172018,7 @@
                     "$type": 189,
                     "_content": {
                       "$type": 149,
+                      "_b": false,
                       "_content": "\\u{0}"
                     }
                   },
@@ -171347,6 +172035,7 @@
                     "$type": 189,
                     "_content": {
                       "$type": 149,
+                      "_b": false,
                       "_content": "\\u{2}"
                     },
                     "$_layout": {
@@ -172019,6 +172708,7 @@
                 "$type": 189,
                 "_content": {
                   "$type": 145,
+                  "_b": false,
                   "_content": "a"
                 }
               },
@@ -172035,6 +172725,7 @@
                 "$type": 189,
                 "_content": {
                   "$type": 145,
+                  "_b": false,
                   "_content": "z"
                 },
                 "$_layout": {
@@ -172087,6 +172778,7 @@
                 "$type": 189,
                 "_content": {
                   "$type": 149,
+                  "_b": false,
                   "_content": "\\u{0}"
                 }
               },
@@ -172103,6 +172795,7 @@
                 "$type": 189,
                 "_content": {
                   "$type": 149,
+                  "_b": false,
                   "_content": "\\u{2}"
                 },
                 "$_layout": {
@@ -172818,6 +173511,7 @@
               "$type": 189,
               "_content": {
                 "$type": 145,
+                "_b": false,
                 "_content": "a"
               }
             },
@@ -172834,6 +173528,7 @@
               "$type": 189,
               "_content": {
                 "$type": 145,
+                "_b": false,
                 "_content": "z"
               },
               "$_layout": {
@@ -172883,6 +173578,7 @@
               "$type": 189,
               "_content": {
                 "$type": 149,
+                "_b": false,
                 "_content": "\\u{0}"
               }
             },
@@ -172899,6 +173595,7 @@
               "$type": 189,
               "_content": {
                 "$type": 149,
+                "_b": false,
                 "_content": "\\u{2}"
               },
               "$_layout": {
@@ -173578,6 +174275,7 @@
             "$type": 189,
             "_content": {
               "$type": 145,
+              "_b": false,
               "_content": "a"
             }
           },
@@ -173594,6 +174292,7 @@
             "$type": 189,
             "_content": {
               "$type": 145,
+              "_b": false,
               "_content": "z"
             },
             "$_layout": {
@@ -173640,6 +174339,7 @@
             "$type": 189,
             "_content": {
               "$type": 149,
+              "_b": false,
               "_content": "\\u{0}"
             }
           },
@@ -173656,6 +174356,7 @@
             "$type": 189,
             "_content": {
               "$type": 149,
+              "_b": false,
               "_content": "\\u{2}"
             },
             "$_layout": {
@@ -174329,6 +175030,7 @@
           "$type": 189,
           "_content": {
             "$type": 145,
+            "_b": false,
             "_content": "a"
           }
         },
@@ -174345,6 +175047,7 @@
           "$type": 189,
           "_content": {
             "$type": 145,
+            "_b": false,
             "_content": "z"
           },
           "$_layout": {
@@ -174384,6 +175087,7 @@
           "$type": 189,
           "_content": {
             "$type": 149,
+            "_b": false,
             "_content": "\\u{0}"
           }
         },
@@ -174400,6 +175104,7 @@
           "$type": 189,
           "_content": {
             "$type": 149,
+            "_b": false,
             "_content": "\\u{2}"
           },
           "$_layout": {
@@ -175269,6 +175974,7 @@
       "$type": 189,
       "_content": {
         "$type": 145,
+        "_b": false,
         "_content": "a"
       }
     },
@@ -175324,6 +176030,7 @@
       "$type": 189,
       "_content": {
         "$type": 145,
+        "_b": false,
         "_content": "z"
       }
     },
@@ -175353,6 +176060,7 @@
       "$type": 189,
       "_content": {
         "$type": 149,
+        "_b": false,
         "_content": "\\u{0}"
       }
     },
@@ -175408,6 +176116,7 @@
       "$type": 189,
       "_content": {
         "$type": 149,
+        "_b": false,
         "_content": "\\u{2}"
       }
     },
@@ -175800,6 +176509,7 @@
     "pattern": "char_literal_plain",
     "input": {
       "$type": 145,
+      "_b": false,
       "_content": "a"
     },
     "expectedOutput": "'a'",
@@ -175826,6 +176536,7 @@
     "pattern": "char_literal_plain",
     "input": {
       "$type": 145,
+      "_b": false,
       "_content": "z"
     },
     "expectedOutput": "'z'",
@@ -175852,6 +176563,7 @@
     "pattern": "char_literal_escaped_unicode_braced",
     "input": {
       "$type": 149,
+      "_b": false,
       "_content": "\\u{0}"
     },
     "expectedOutput": "'\\u{0}'",
@@ -175878,6 +176590,7 @@
     "pattern": "char_literal_escaped_unicode_braced",
     "input": {
       "$type": 149,
+      "_b": false,
       "_content": "\\u{2}"
     },
     "expectedOutput": "'\\u{2}'",
@@ -181900,6 +182613,7 @@
                       }
                     ]
                   },
+                  "_comma": false,
                   "$_layout": {
                     "trivia": {
                       "leading": [
@@ -182055,6 +182769,7 @@
                   }
                 ]
               },
+              "_comma": false,
               "$_layout": {
                 "trivia": {
                   "leading": [
@@ -182195,6 +182910,7 @@
                 }
               ]
             },
+            "_comma": false,
             "$_layout": {
               "trivia": {
                 "leading": [
@@ -182328,6 +183044,7 @@
               }
             ]
           },
+          "_comma": false,
           "$_layout": {
             "trivia": {
               "leading": [
@@ -182458,6 +183175,7 @@
             }
           ]
         },
+        "_comma": false,
         "$_layout": {
           "trivia": {
             "leading": [
@@ -182909,7 +183627,8 @@
             "$text": "none"
           }
         ]
-      }
+      },
+      "_comma": false
     },
     "expectedOutput": "std::None() => \"none\"",
     "options": {
@@ -184372,6 +185091,8 @@
                           "_item": [
                             {
                               "$type": 414,
+                              "_ref": false,
+                              "_mutable": false,
                               "_name": {
                                 "$type": 467,
                                 "_content": {
@@ -184382,6 +185103,8 @@
                             },
                             {
                               "$type": 414,
+                              "_ref": false,
+                              "_mutable": false,
                               "_name": {
                                 "$type": 467,
                                 "_content": {
@@ -184487,6 +185210,8 @@
                         "_item": [
                           {
                             "$type": 415,
+                            "_ref": false,
+                            "_mutable": false,
                             "_name": {
                               "$type": 465,
                               "_content": {
@@ -184501,6 +185226,8 @@
                           },
                           {
                             "$type": 415,
+                            "_ref": false,
+                            "_mutable": false,
                             "_name": {
                               "$type": 465,
                               "_content": {
@@ -184832,6 +185559,8 @@
                       "_item": [
                         {
                           "$type": 414,
+                          "_ref": false,
+                          "_mutable": false,
                           "_name": {
                             "$type": 467,
                             "_content": {
@@ -184842,6 +185571,8 @@
                         },
                         {
                           "$type": 414,
+                          "_ref": false,
+                          "_mutable": false,
                           "_name": {
                             "$type": 467,
                             "_content": {
@@ -184947,6 +185678,8 @@
                     "_item": [
                       {
                         "$type": 415,
+                        "_ref": false,
+                        "_mutable": false,
                         "_name": {
                           "$type": 465,
                           "_content": {
@@ -184961,6 +185694,8 @@
                       },
                       {
                         "$type": 415,
+                        "_ref": false,
+                        "_mutable": false,
                         "_name": {
                           "$type": 465,
                           "_content": {
@@ -185295,6 +186030,8 @@
                     "_item": [
                       {
                         "$type": 414,
+                        "_ref": false,
+                        "_mutable": false,
                         "_name": {
                           "$type": 467,
                           "_content": {
@@ -185305,6 +186042,8 @@
                       },
                       {
                         "$type": 414,
+                        "_ref": false,
+                        "_mutable": false,
                         "_name": {
                           "$type": 467,
                           "_content": {
@@ -185410,6 +186149,8 @@
                   "_item": [
                     {
                       "$type": 415,
+                      "_ref": false,
+                      "_mutable": false,
                       "_name": {
                         "$type": 465,
                         "_content": {
@@ -185424,6 +186165,8 @@
                     },
                     {
                       "$type": 415,
+                      "_ref": false,
+                      "_mutable": false,
                       "_name": {
                         "$type": 465,
                         "_content": {
@@ -185748,6 +186491,8 @@
                   "_item": [
                     {
                       "$type": 414,
+                      "_ref": false,
+                      "_mutable": false,
                       "_name": {
                         "$type": 467,
                         "_content": {
@@ -185758,6 +186503,8 @@
                     },
                     {
                       "$type": 414,
+                      "_ref": false,
+                      "_mutable": false,
                       "_name": {
                         "$type": 467,
                         "_content": {
@@ -185863,6 +186610,8 @@
                 "_item": [
                   {
                     "$type": 415,
+                    "_ref": false,
+                    "_mutable": false,
                     "_name": {
                       "$type": 465,
                       "_content": {
@@ -185877,6 +186626,8 @@
                   },
                   {
                     "$type": 415,
+                    "_ref": false,
+                    "_mutable": false,
                     "_name": {
                       "$type": 465,
                       "_content": {
@@ -186191,6 +186942,8 @@
                 "_item": [
                   {
                     "$type": 414,
+                    "_ref": false,
+                    "_mutable": false,
                     "_name": {
                       "$type": 467,
                       "_content": {
@@ -186201,6 +186954,8 @@
                   },
                   {
                     "$type": 414,
+                    "_ref": false,
+                    "_mutable": false,
                     "_name": {
                       "$type": 467,
                       "_content": {
@@ -186306,6 +187061,8 @@
               "_item": [
                 {
                   "$type": 415,
+                  "_ref": false,
+                  "_mutable": false,
                   "_name": {
                     "$type": 465,
                     "_content": {
@@ -186320,6 +187077,8 @@
                 },
                 {
                   "$type": 415,
+                  "_ref": false,
+                  "_mutable": false,
                   "_name": {
                     "$type": 465,
                     "_content": {
@@ -186607,6 +187366,8 @@
             "_item": [
               {
                 "$type": 414,
+                "_ref": false,
+                "_mutable": false,
                 "_name": {
                   "$type": 467,
                   "_content": {
@@ -186617,6 +187378,8 @@
               },
               {
                 "$type": 414,
+                "_ref": false,
+                "_mutable": false,
                 "_name": {
                   "$type": 467,
                   "_content": {
@@ -186743,6 +187506,8 @@
           "_item": [
             {
               "$type": 414,
+              "_ref": false,
+              "_mutable": false,
               "_name": {
                 "$type": 467,
                 "_content": {
@@ -186753,6 +187518,8 @@
             },
             {
               "$type": 414,
+              "_ref": false,
+              "_mutable": false,
               "_name": {
                 "$type": 467,
                 "_content": {
@@ -186835,6 +187602,8 @@
           "_item": [
             {
               "$type": 415,
+              "_ref": false,
+              "_mutable": false,
               "_name": {
                 "$type": 465,
                 "_content": {
@@ -186849,6 +187618,8 @@
             },
             {
               "$type": 415,
+              "_ref": false,
+              "_mutable": false,
               "_name": {
                 "$type": 465,
                 "_content": {
@@ -187041,6 +187812,8 @@
         "_item": [
           {
             "$type": 414,
+            "_ref": false,
+            "_mutable": false,
             "_name": {
               "$type": 467,
               "_content": {
@@ -187051,6 +187824,8 @@
           },
           {
             "$type": 414,
+            "_ref": false,
+            "_mutable": false,
             "_name": {
               "$type": 467,
               "_content": {
@@ -187118,6 +187893,8 @@
         "_item": [
           {
             "$type": 415,
+            "_ref": false,
+            "_mutable": false,
             "_name": {
               "$type": 465,
               "_content": {
@@ -187132,6 +187909,8 @@
           },
           {
             "$type": 415,
+            "_ref": false,
+            "_mutable": false,
             "_name": {
               "$type": 465,
               "_content": {
@@ -187287,6 +188066,8 @@
       "_item": [
         {
           "$type": 414,
+          "_ref": false,
+          "_mutable": false,
           "_name": {
             "$type": 467,
             "_content": {
@@ -187297,6 +188078,8 @@
         },
         {
           "$type": 414,
+          "_ref": false,
+          "_mutable": false,
           "_name": {
             "$type": 467,
             "_content": {
@@ -187354,6 +188137,8 @@
       "_item": [
         {
           "$type": 415,
+          "_ref": false,
+          "_mutable": false,
           "_name": {
             "$type": 465,
             "_content": {
@@ -187368,6 +188153,8 @@
         },
         {
           "$type": 415,
+          "_ref": false,
+          "_mutable": false,
           "_name": {
             "$type": 465,
             "_content": {
@@ -187423,6 +188210,8 @@
     "pattern": "field_pattern_shorthand",
     "input": {
       "$type": 414,
+      "_ref": false,
+      "_mutable": false,
       "_name": {
         "$type": 467,
         "_content": {
@@ -187458,6 +188247,8 @@
     "pattern": "field_pattern_shorthand",
     "input": {
       "$type": 414,
+      "_ref": false,
+      "_mutable": false,
       "_name": {
         "$type": 467,
         "_content": {
@@ -188018,6 +188809,8 @@
             "_item": [
               {
                 "$type": 415,
+                "_ref": false,
+                "_mutable": false,
                 "_name": {
                   "$type": 465,
                   "_content": {
@@ -188032,6 +188825,8 @@
               },
               {
                 "$type": 415,
+                "_ref": false,
+                "_mutable": false,
                 "_name": {
                   "$type": 465,
                   "_content": {
@@ -188290,6 +189085,8 @@
     "pattern": "field_pattern_named",
     "input": {
       "$type": 415,
+      "_ref": false,
+      "_mutable": false,
       "_name": {
         "$type": 465,
         "_content": {
@@ -188329,6 +189126,8 @@
     "pattern": "field_pattern_named",
     "input": {
       "$type": 415,
+      "_ref": false,
+      "_mutable": false,
       "_name": {
         "$type": 465,
         "_content": {
@@ -189252,6 +190051,8 @@
                         "_item": [
                           {
                             "$type": 415,
+                            "_ref": false,
+                            "_mutable": false,
                             "_name": {
                               "$type": 465,
                               "_content": {
@@ -189285,6 +190086,7 @@
                     "$type": 1,
                     "$text": "g"
                   },
+                  "_comma": false,
                   "$_layout": {
                     "trivia": {
                       "leading": [
@@ -189453,6 +190255,8 @@
                     "_item": [
                       {
                         "$type": 415,
+                        "_ref": false,
+                        "_mutable": false,
                         "_name": {
                           "$type": 465,
                           "_content": {
@@ -189486,6 +190290,7 @@
                 "$type": 1,
                 "$text": "g"
               },
+              "_comma": false,
               "$_layout": {
                 "trivia": {
                   "leading": [
@@ -189639,6 +190444,8 @@
                   "_item": [
                     {
                       "$type": 415,
+                      "_ref": false,
+                      "_mutable": false,
                       "_name": {
                         "$type": 465,
                         "_content": {
@@ -189672,6 +190479,7 @@
               "$type": 1,
               "$text": "g"
             },
+            "_comma": false,
             "$_layout": {
               "trivia": {
                 "leading": [
@@ -189818,6 +190626,8 @@
                 "_item": [
                   {
                     "$type": 415,
+                    "_ref": false,
+                    "_mutable": false,
                     "_name": {
                       "$type": 465,
                       "_content": {
@@ -189851,6 +190661,7 @@
             "$type": 1,
             "$text": "g"
           },
+          "_comma": false,
           "$_layout": {
             "trivia": {
               "leading": [
@@ -189994,6 +190805,8 @@
               "_item": [
                 {
                   "$type": 415,
+                  "_ref": false,
+                  "_mutable": false,
                   "_name": {
                     "$type": 465,
                     "_content": {
@@ -190027,6 +190840,7 @@
           "$type": 1,
           "$text": "g"
         },
+        "_comma": false,
         "$_layout": {
           "trivia": {
             "leading": [
@@ -190290,6 +191104,8 @@
           "_item": [
             {
               "$type": 415,
+              "_ref": false,
+              "_mutable": false,
               "_name": {
                 "$type": 465,
                 "_content": {
@@ -190538,6 +191354,8 @@
             "_item": [
               {
                 "$type": 415,
+                "_ref": false,
+                "_mutable": false,
                 "_name": {
                   "$type": 465,
                   "_content": {
@@ -190570,7 +191388,8 @@
       "_value": {
         "$type": 1,
         "$text": "g"
-      }
+      },
+      "_comma": false
     },
     "expectedOutput": "D::E {f: g, .. } => g",
     "options": {
@@ -190618,6 +191437,8 @@
         "_item": [
           {
             "$type": 415,
+            "_ref": false,
+            "_mutable": false,
             "_name": {
               "$type": 465,
               "_content": {
@@ -190747,6 +191568,8 @@
       "_item": [
         {
           "$type": 415,
+          "_ref": false,
+          "_mutable": false,
           "_name": {
             "$type": 465,
             "_content": {
@@ -190801,6 +191624,8 @@
     "pattern": "field_pattern_named",
     "input": {
       "$type": 415,
+      "_ref": false,
+      "_mutable": false,
       "_name": {
         "$type": 465,
         "_content": {
@@ -191197,6 +192022,7 @@
                     "$type": 1,
                     "$text": "a"
                   },
+                  "_comma": false,
                   "$_layout": {
                     "trivia": {
                       "leading": [
@@ -191703,6 +192529,7 @@
                 "$type": 1,
                 "$text": "a"
               },
+              "_comma": false,
               "$_layout": {
                 "trivia": {
                   "leading": [
@@ -192212,6 +193039,7 @@
               "$type": 1,
               "$text": "a"
             },
+            "_comma": false,
             "$_layout": {
               "trivia": {
                 "leading": [
@@ -192711,6 +193539,7 @@
             "$type": 1,
             "$text": "a"
           },
+          "_comma": false,
           "$_layout": {
             "trivia": {
               "leading": [
@@ -193200,6 +194029,7 @@
           "$type": 1,
           "$text": "a"
         },
+        "_comma": false,
         "$_layout": {
           "trivia": {
             "leading": [
@@ -195705,7 +196535,8 @@
       "_value": {
         "$type": 1,
         "$text": "a"
-      }
+      },
+      "_comma": false
     },
     "expectedOutput": "a @..=5 => a",
     "options": {
@@ -196197,6 +197028,7 @@
         },
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": {
             "$type": 386,
             "_left": {
@@ -196349,6 +197181,7 @@
         },
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": {
             "$type": 386,
             "_left": {
@@ -196496,6 +197329,9 @@
             "$type": 394,
             "_expression": {
               "$type": 370,
+              "_static": false,
+              "_async": false,
+              "_move": false,
               "_parameters": {
                 "$type": 302,
                 "_parameters": [
@@ -196602,6 +197438,7 @@
         },
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": {
             "$type": 324,
             "_pattern": {
@@ -196676,6 +197513,7 @@
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 316,
                       "_elements": {
@@ -197354,6 +198192,9 @@
         "$type": 394,
         "_expression": {
           "$type": 370,
+          "_static": false,
+          "_async": false,
+          "_move": false,
           "_parameters": {
             "$type": 302,
             "_parameters": [
@@ -199987,6 +200828,9 @@
       "$type": 394,
       "_expression": {
         "$type": 370,
+        "_static": false,
+        "_async": false,
+        "_move": false,
         "_parameters": {
           "$type": 302,
           "_parameters": [
@@ -201069,6 +201913,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": {
         "$type": 386,
         "_left": {
@@ -201201,6 +202046,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": {
         "$type": 386,
         "_left": {
@@ -201320,6 +202166,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": {
         "$type": 324,
         "_pattern": {
@@ -201690,6 +202537,9 @@
     "pattern": "closure_expression_expr",
     "input": {
       "$type": 370,
+      "_static": false,
+      "_async": false,
+      "_move": false,
       "_parameters": {
         "$type": 302,
         "_parameters": [
@@ -202498,6 +203348,7 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 316,
                   "_elements": {
@@ -202590,6 +203441,7 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 316,
                 "_elements": {
@@ -202675,6 +203527,7 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 316,
               "_elements": {
@@ -202756,6 +203609,7 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 316,
           "_elements": {
@@ -202821,6 +203675,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 316,
         "_elements": {
@@ -203097,6 +203952,7 @@
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 1,
                       "$text": "x"
@@ -203246,6 +204102,7 @@
                           "$type": 313,
                           "_statements": []
                         },
+                        "_comma": false,
                         "$_layout": {
                           "trivia": {
                             "leading": [
@@ -203303,6 +204160,7 @@
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 1,
                       "$text": "x"
@@ -203440,6 +204298,7 @@
                           "$type": 313,
                           "_statements": []
                         },
+                        "_comma": false,
                         "$_layout": {
                           "trivia": {
                             "leading": [
@@ -203525,6 +204384,7 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 1,
                   "$text": "x"
@@ -203674,6 +204534,7 @@
                       "$type": 313,
                       "_statements": []
                     },
+                    "_comma": false,
                     "$_layout": {
                       "trivia": {
                         "leading": [
@@ -203746,6 +204607,7 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 1,
                   "$text": "x"
@@ -203883,6 +204745,7 @@
                       "$type": 313,
                       "_statements": []
                     },
+                    "_comma": false,
                     "$_layout": {
                       "trivia": {
                         "leading": [
@@ -203949,6 +204812,7 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 1,
                 "$text": "x"
@@ -204002,6 +204866,7 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 1,
                 "$text": "x"
@@ -204053,6 +204918,7 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 1,
               "$text": "x"
@@ -204103,6 +204969,7 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 1,
               "$text": "x"
@@ -204150,6 +205017,7 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 1,
           "$text": "x"
@@ -204183,6 +205051,7 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 1,
           "$text": "x"
@@ -204214,6 +205083,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "x"
@@ -204244,6 +205114,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "x"
@@ -204399,6 +205270,7 @@
                     "$type": 313,
                     "_statements": []
                   },
+                  "_comma": false,
                   "$_layout": {
                     "trivia": {
                       "leading": [
@@ -204596,6 +205468,7 @@
                     "$type": 313,
                     "_statements": []
                   },
+                  "_comma": false,
                   "$_layout": {
                     "trivia": {
                       "leading": [
@@ -205510,6 +206383,7 @@
                 "$type": 313,
                 "_statements": []
               },
+              "_comma": false,
               "$_layout": {
                 "trivia": {
                   "leading": [
@@ -205666,6 +206540,7 @@
                 "$type": 313,
                 "_statements": []
               },
+              "_comma": false,
               "$_layout": {
                 "trivia": {
                   "leading": [
@@ -205772,6 +206647,7 @@
               "$type": 313,
               "_statements": []
             },
+            "_comma": false,
             "$_layout": {
               "trivia": {
                 "leading": [
@@ -205925,6 +206801,7 @@
               "$type": 313,
               "_statements": []
             },
+            "_comma": false,
             "$_layout": {
               "trivia": {
                 "leading": [
@@ -206024,6 +206901,7 @@
             "$type": 313,
             "_statements": []
           },
+          "_comma": false,
           "$_layout": {
             "trivia": {
               "leading": [
@@ -206170,6 +207048,7 @@
             "$type": 313,
             "_statements": []
           },
+          "_comma": false,
           "$_layout": {
             "trivia": {
               "leading": [
@@ -206266,6 +207145,7 @@
           "$type": 313,
           "_statements": []
         },
+        "_comma": false,
         "$_layout": {
           "trivia": {
             "leading": [
@@ -206399,6 +207279,7 @@
           "$type": 313,
           "_statements": []
         },
+        "_comma": false,
         "$_layout": {
           "trivia": {
             "leading": [
@@ -207100,7 +207981,8 @@
       "_value": {
         "$type": 313,
         "_statements": []
-      }
+      },
+      "_comma": false
     },
     "expectedOutput": "_ => {}",
     "options": {
@@ -207134,7 +208016,8 @@
       "_value": {
         "$type": 313,
         "_statements": []
-      }
+      },
+      "_comma": false
     },
     "expectedOutput": "_ => {}",
     "options": {
@@ -208613,6 +209496,7 @@
       "_statements": [
         {
           "$type": 223,
+          "_mutable": false,
           "_pattern": {
             "$type": 1,
             "$text": "x"
@@ -208688,6 +209572,7 @@
     "pattern": "let_declaration",
     "input": {
       "$type": 223,
+      "_mutable": false,
       "_pattern": {
         "$type": 1,
         "$text": "x"
@@ -210040,6 +210925,7 @@
           },
           "_type": {
             "$type": 252,
+            "_mutable": false,
             "_type": {
               "$type": 468,
               "_content": {
@@ -210074,6 +210960,7 @@
                 "$text": "a"
               }
             },
+            "_mutable": false,
             "_type": 73
           },
           "$_layout": {
@@ -210152,6 +211039,7 @@
       },
       "_type": {
         "$type": 252,
+        "_mutable": false,
         "_type": {
           "$type": 468,
           "_content": {
@@ -210201,6 +211089,7 @@
             "$text": "a"
           }
         },
+        "_mutable": false,
         "_type": 73
       }
     },
@@ -210388,6 +211277,7 @@
     "pattern": "reference_type",
     "input": {
       "$type": 252,
+      "_mutable": false,
       "_type": {
         "$type": 468,
         "_content": {
@@ -210427,6 +211317,7 @@
           "$text": "a"
         }
       },
+      "_mutable": false,
       "_type": 73
     },
     "expectedOutput": "&'a str",
@@ -214327,6 +215218,7 @@
           },
           "_type": {
             "$type": 252,
+            "_mutable": false,
             "_type": {
               "$type": 240,
               "_element": {
@@ -214431,6 +215323,7 @@
       },
       "_type": {
         "$type": 252,
+        "_mutable": false,
         "_type": {
           "$type": 240,
           "_element": {
@@ -214677,6 +215570,7 @@
     "pattern": "reference_type",
     "input": {
       "$type": 252,
+      "_mutable": false,
       "_type": {
         "$type": 240,
         "_element": {
@@ -214728,6 +215622,7 @@
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 1,
                       "$text": "value"
@@ -214739,6 +215634,7 @@
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 1,
                       "$text": "f"
@@ -214823,6 +215719,7 @@
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 1,
                       "$text": "value"
@@ -214834,6 +215731,7 @@
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 1,
                       "$text": "f"
@@ -214964,6 +215862,7 @@
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 1,
                       "$text": "value"
@@ -214975,12 +215874,14 @@
                   "$type": 429,
                   "_content": {
                     "$type": 233,
+                    "_mutable": false,
                     "_name": {
                       "$type": 1,
                       "$text": "f"
                     },
                     "_type": {
                       "$type": 252,
+                      "_mutable": false,
                       "_type": {
                         "$type": 242,
                         "_content": {
@@ -215162,6 +216063,7 @@
                     "$type": 429,
                     "_content": {
                       "$type": 233,
+                      "_mutable": false,
                       "_name": {
                         "$type": 1,
                         "$text": "x"
@@ -215175,6 +216077,7 @@
                             "$text": "a"
                           }
                         },
+                        "_mutable": false,
                         "_type": {
                           "$type": 468,
                           "_content": {
@@ -215189,6 +216092,7 @@
                     "$type": 429,
                     "_content": {
                       "$type": 233,
+                      "_mutable": false,
                       "_name": {
                         "$type": 1,
                         "$text": "y"
@@ -215340,6 +216244,7 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 1,
                   "$text": "value"
@@ -215351,6 +216256,7 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 1,
                   "$text": "f"
@@ -215450,6 +216356,7 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 1,
                   "$text": "value"
@@ -215461,6 +216368,7 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 1,
                   "$text": "f"
@@ -215606,6 +216514,7 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 1,
                   "$text": "value"
@@ -215617,12 +216526,14 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 1,
                   "$text": "f"
                 },
                 "_type": {
                   "$type": 252,
+                  "_mutable": false,
                   "_type": {
                     "$type": 242,
                     "_content": {
@@ -215766,6 +216677,7 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 1,
                 "$text": "value"
@@ -215777,6 +216689,7 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 1,
                 "$text": "f"
@@ -215910,6 +216823,7 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 1,
                 "$text": "value"
@@ -215921,6 +216835,7 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 1,
                 "$text": "f"
@@ -216055,6 +216970,7 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 1,
                 "$text": "value"
@@ -216066,12 +216982,14 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 1,
                 "$text": "f"
               },
               "_type": {
                 "$type": 252,
+                "_mutable": false,
                 "_type": {
                   "$type": 242,
                   "_content": {
@@ -216210,6 +217128,7 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 1,
                 "$text": "x"
@@ -216223,6 +217142,7 @@
                     "$text": "a"
                   }
                 },
+                "_mutable": false,
                 "_type": {
                   "$type": 468,
                   "_content": {
@@ -216237,6 +217157,7 @@
             "$type": 429,
             "_content": {
               "$type": 233,
+              "_mutable": false,
               "_name": {
                 "$type": 1,
                 "$text": "y"
@@ -216358,6 +217279,7 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 1,
               "$text": "value"
@@ -216369,6 +217291,7 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 1,
               "$text": "f"
@@ -216496,6 +217419,7 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 1,
               "$text": "value"
@@ -216507,6 +217431,7 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 1,
               "$text": "f"
@@ -216635,6 +217560,7 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 1,
               "$text": "value"
@@ -216646,12 +217572,14 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 1,
               "$text": "f"
             },
             "_type": {
               "$type": 252,
+              "_mutable": false,
               "_type": {
                 "$type": 242,
                 "_content": {
@@ -216784,6 +217712,7 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 1,
               "$text": "x"
@@ -216797,6 +217726,7 @@
                   "$text": "a"
                 }
               },
+              "_mutable": false,
               "_type": {
                 "$type": 468,
                 "_content": {
@@ -216811,6 +217741,7 @@
           "$type": 429,
           "_content": {
             "$type": 233,
+            "_mutable": false,
             "_name": {
               "$type": 1,
               "$text": "y"
@@ -216928,6 +217859,7 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 1,
           "$text": "value"
@@ -216961,6 +217893,7 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 1,
           "$text": "f"
@@ -217049,6 +217982,7 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 1,
           "$text": "value"
@@ -217082,6 +218016,7 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 1,
           "$text": "f"
@@ -217171,6 +218106,7 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 1,
           "$text": "value"
@@ -217204,12 +218140,14 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 1,
           "$text": "f"
         },
         "_type": {
           "$type": 252,
+          "_mutable": false,
           "_type": {
             "$type": 242,
             "_content": {
@@ -217303,6 +218241,7 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 1,
           "$text": "x"
@@ -217316,6 +218255,7 @@
               "$text": "a"
             }
           },
+          "_mutable": false,
           "_type": {
             "$type": 468,
             "_content": {
@@ -217352,6 +218292,7 @@
       "$type": 429,
       "_content": {
         "$type": 233,
+        "_mutable": false,
         "_name": {
           "$type": 1,
           "$text": "y"
@@ -217448,6 +218389,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "value"
@@ -217478,6 +218420,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "f"
@@ -217537,6 +218480,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "value"
@@ -217567,6 +218511,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "f"
@@ -217627,6 +218572,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "value"
@@ -217657,12 +218603,14 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "f"
       },
       "_type": {
         "$type": 252,
+        "_mutable": false,
         "_type": {
           "$type": 242,
           "_content": {
@@ -217727,6 +218675,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "x"
@@ -217740,6 +218689,7 @@
             "$text": "a"
           }
         },
+        "_mutable": false,
         "_type": {
           "$type": 468,
           "_content": {
@@ -217773,6 +218723,7 @@
     "pattern": "parameter",
     "input": {
       "$type": 233,
+      "_mutable": false,
       "_name": {
         "$type": 1,
         "$text": "y"
@@ -218084,6 +219035,7 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 1,
                   "$text": "x"
@@ -218097,6 +219049,7 @@
                       "$text": "a"
                     }
                   },
+                  "_mutable": false,
                   "_type": {
                     "$type": 468,
                     "_content": {
@@ -218111,6 +219064,7 @@
               "$type": 429,
               "_content": {
                 "$type": 233,
+                "_mutable": false,
                 "_name": {
                   "$type": 1,
                   "$text": "y"
@@ -218846,6 +219800,7 @@
     "pattern": "reference_type",
     "input": {
       "$type": 252,
+      "_mutable": false,
       "_type": {
         "$type": 242,
         "_content": {
@@ -218916,6 +219871,7 @@
           "$text": "a"
         }
       },
+      "_mutable": false,
       "_type": {
         "$type": 468,
         "_content": {
@@ -219273,6 +220229,7 @@
                 "$type": 429,
                 "_content": {
                   "$type": 233,
+                  "_mutable": false,
                   "_name": {
                     "$type": 1,
                     "$text": "x"
@@ -219286,6 +220243,7 @@
                         "$text": "a"
                       }
                     },
+                    "_mutable": false,
                     "_type": {
                       "$type": 468,
                       "_content": {
@@ -219300,6 +220258,7 @@
                 "$type": 429,
                 "_content": {
                   "$type": 233,
+                  "_mutable": false,
                   "_name": {
                     "$type": 1,
                     "$text": "y"
@@ -221294,6 +222253,7 @@
                     "$type": 433,
                     "_content": {
                       "$type": 252,
+                      "_mutable": false,
                       "_type": {
                         "$type": 256,
                         "_trait": {
@@ -221317,6 +222277,7 @@
                                   "$type": 429,
                                   "_content": {
                                     "$type": 252,
+                                    "_mutable": false,
                                     "_type": {
                                       "$type": 468,
                                       "_content": {
@@ -221588,6 +222549,7 @@
                 "$type": 433,
                 "_content": {
                   "$type": 252,
+                  "_mutable": false,
                   "_type": {
                     "$type": 256,
                     "_trait": {
@@ -221611,6 +222573,7 @@
                               "$type": 429,
                               "_content": {
                                 "$type": 252,
+                                "_mutable": false,
                                 "_type": {
                                   "$type": 468,
                                   "_content": {
@@ -222159,6 +223122,7 @@
               "$type": 433,
               "_content": {
                 "$type": 252,
+                "_mutable": false,
                 "_type": {
                   "$type": 256,
                   "_trait": {
@@ -222182,6 +223146,7 @@
                             "$type": 429,
                             "_content": {
                               "$type": 252,
+                              "_mutable": false,
                               "_type": {
                                 "$type": 468,
                                 "_content": {
@@ -222381,6 +223346,7 @@
             "$type": 433,
             "_content": {
               "$type": 252,
+              "_mutable": false,
               "_type": {
                 "$type": 256,
                 "_trait": {
@@ -222404,6 +223370,7 @@
                           "$type": 429,
                           "_content": {
                             "$type": 252,
+                            "_mutable": false,
                             "_type": {
                               "$type": 468,
                               "_content": {
@@ -222594,6 +223561,7 @@
           "$type": 433,
           "_content": {
             "$type": 252,
+            "_mutable": false,
             "_type": {
               "$type": 256,
               "_trait": {
@@ -222617,6 +223585,7 @@
                         "$type": 429,
                         "_content": {
                           "$type": 252,
+                          "_mutable": false,
                           "_type": {
                             "$type": 468,
                             "_content": {
@@ -222769,6 +223738,7 @@
       "$type": 433,
       "_content": {
         "$type": 252,
+        "_mutable": false,
         "_type": {
           "$type": 256,
           "_trait": {
@@ -222792,6 +223762,7 @@
                     "$type": 429,
                     "_content": {
                       "$type": 252,
+                      "_mutable": false,
                       "_type": {
                         "$type": 468,
                         "_content": {
@@ -222972,6 +223943,7 @@
                 "$type": 429,
                 "_content": {
                   "$type": 252,
+                  "_mutable": false,
                   "_type": {
                     "$type": 468,
                     "_content": {
@@ -223029,6 +224001,7 @@
     "pattern": "reference_type",
     "input": {
       "$type": 252,
+      "_mutable": false,
       "_type": {
         "$type": 256,
         "_trait": {
@@ -223052,6 +224025,7 @@
                   "$type": 429,
                   "_content": {
                     "$type": 252,
+                    "_mutable": false,
                     "_type": {
                       "$type": 468,
                       "_content": {
@@ -223110,6 +224084,7 @@
     "pattern": "reference_type",
     "input": {
       "$type": 252,
+      "_mutable": false,
       "_type": {
         "$type": 468,
         "_content": {
@@ -223161,6 +224136,7 @@
               "$type": 429,
               "_content": {
                 "$type": 252,
+                "_mutable": false,
                 "_type": {
                   "$type": 468,
                   "_content": {
@@ -223256,6 +224232,7 @@
             "$type": 429,
             "_content": {
               "$type": 252,
+              "_mutable": false,
               "_type": {
                 "$type": 468,
                 "_content": {
@@ -223309,6 +224286,7 @@
           "$type": 429,
           "_content": {
             "$type": 252,
+            "_mutable": false,
             "_type": {
               "$type": 468,
               "_content": {
@@ -223358,6 +224336,7 @@
       "$type": 429,
       "_content": {
         "$type": 252,
+        "_mutable": false,
         "_type": {
           "$type": 468,
           "_content": {
