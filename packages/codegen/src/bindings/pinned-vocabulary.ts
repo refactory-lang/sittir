@@ -45,7 +45,9 @@ export async function vocabularyDeclarationsInProcess(code: string): Promise<Voc
 	const text = (item: object | number): string => {
 		if (typeof item === 'number') return String(engine.render(item));
 		const span = pinned.utils.spanOf(item);
-		return span === undefined ? '' : slice(span);
+		const spelled = span === undefined ? '' : slice(span);
+		if (spelled.includes('\\')) throw new Error(`vocabulary: ${spelled} spells a name with an escape; spell it plainly, as the reader compares names as written`);
+		return spelled;
 	};
 	const declared: VocabularyDeclaration[] = [];
 	collect(engine.parse(code, { depth: Infinity }).statements(), [], declared, { K, engine, text });

@@ -55,4 +55,11 @@ describe('readVocabulary', () => {
 			['bare.inner', 'Bare.Inner']
 		]);
 	});
+
+	it('refuses a name spelled with an escape, which a syntactic reader would read as a different name', async () => {
+		await expect(vocabularyIn('export interface Declaration<G> {', "\treadonly $kind: 'declaration';", '\treadonly accessor?: Fla\\u0067;', '}')).rejects.toThrow(
+			/Fla\\u0067.*escape/
+		);
+		await expect(vocabularyIn('export interface Declaration<G> {', "\treadonly $kind: 'decl\\u0061ration';", '}')).rejects.toThrow(/escape/);
+	});
 });

@@ -269,7 +269,7 @@ One vocabulary interface as the pinned child reports it: its scoped name, its pa
 
 ### `packages/codegen/src/bindings/pinned-vocabulary.ts::vocabularyDeclarationsInProcess`
 
-The vocabulary interfaces one file declares (`VocabularyDeclaration`), read by the pinned build's TypeScript engine through its typed nodes. It runs in the pinned child (`pinned-reader.child.ts::READS`), never in the workspace process, and imports `@sittir/typescript` for types only.
+The vocabulary interfaces one file declares (`VocabularyDeclaration`), read by the pinned build's TypeScript engine through its typed nodes. It runs in the pinned child (`pinned-reader.child.ts::READS`), never in the workspace process, and imports `@sittir/typescript` for types only. Every name it reads is compared as written, so a name spelled with an escape (`Fla\u0067` for `Flag`) is refused rather than read as a different name.
 
 ### `packages/codegen/src/bindings/pinned-vocabulary.ts::typescriptReader`
 
