@@ -50,7 +50,8 @@ split by themselves, with no group from enrich?
   `,`, and enrich's synthesis decides it, so a group minted by the bindings restates enrich.
 - Every question is ruled. The lead stays in `bindGrammar`, and the whole of enrich runs again
   over every rule a grammar-bindings edit newly creates; a renamed rule does not pass again
-  (question 22).
+  (question 22). That second pass gives the plain shape the group's rows, but enrich is not yet
+  a fixpoint, so it waits until enrich is one (finding 19).
 
 ## The edit
 
@@ -657,6 +658,17 @@ Typescript (`typescript-samples-*.txt`):
       an origin's patches to its clones through `leadFrom`.
     - A lead in enrich is in the grammar the conflict driver derives on, so the driver derives the
       lead's sets as it derives any rule's (finding 4).
+19. **A second enrich pass gives the group's rows, but enrich is not a fixpoint.** Implement
+    measured question 22's ruling on `proto/receiver-split`'s prototype (branch
+    `proto/q22-reenrich`): the plain shape, with the whole of enrich run again over the rules the
+    lead creates, as its `leadFrom` stamp names them.
+    - The rows equal `two-rules-plain-group`'s in rust and typescript.
+    - The second pass needs no field sites before wire: it runs after the patches, so the clones
+      already hold the fields the patches give their origins.
+    - enrich is not a fixpoint over its own output. A second pass over its pre-wire output throws
+      in rust, mints arms again in typescript and a group again in python. Wire's patches also
+      add content the first pass never saw.
+    - So the second pass waits until enrich is a fixpoint (question 22).
 
 ## Proposal
 
@@ -713,13 +725,14 @@ Typescript (`typescript-samples-*.txt`):
     runs again, whole, over every rule a grammar-bindings edit newly creates, "pretty much splits
     and merges, but may include others". A renamed rule does not pass again. The lead stays in
     `bindGrammar`, after the patches (question 13 holds). The probe's `two-rules-plain-group`
-    writes the group by hand; under the ruling, enrich's second pass mints it. The checks the
-    ruling leaves, with implement:
-    - which rules are newly created: a fact each edit stamps on what it mints (`splitFrom`,
-      `leadFrom`), never a comparison of rule names, and which current and planned edits create
-      rules;
-    - that a second pass over a created rule, which may carry enrich's output copied from its
-      origin, mints nothing twice and wraps nothing again, or what it must skip;
-    - whether the second pass needs the patches' field sites for a clone of a patched rule;
-    - the plain shape with the second pass: rust and typescript rows, `(&self)` and `(&self,)`
-      round-trips, and parser and size deltas against `two-rules-plain-group`.
+    writes the group by hand; under the ruling, enrich's second pass mints it.
+    - Measured (finding 19): the second pass gives the plain shape `two-rules-plain-group`'s
+      rows in rust and typescript, and needs no field sites before wire. enrich is not a
+      fixpoint over its own output.
+    - Status: the maintainer ruled that enrich becomes a fixpoint first, in its own change to
+      master, which implement plans. The second pass over a bindings edit's rules comes after it,
+      in stage 2, with no narrower pass in the meantime.
+    - Left for stage 2, after the fixpoint: which current and planned edits create rules, by the
+      stamp each puts on what it mints (`splitFrom`, `leadFrom`), never a comparison of rule
+      names; and the plain shape's `(&self)` and `(&self,)` round-trips and parser and size
+      deltas against `two-rules-plain-group`.
