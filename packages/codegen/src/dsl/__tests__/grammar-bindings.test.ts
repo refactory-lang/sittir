@@ -85,10 +85,38 @@ describe('grammar bindings on sittirGrammar', () => {
 		).rejects.toThrow(/alias 'identifier' → 'type'.*already names/);
 	}, 120_000);
 
-	it('derives conflicts from the grammar without its grammar bindings', () => {
+	it('derives the base conflicts from the grammar without its grammar bindings', () => {
 		const bound = evaluateForDerivation(grammarPackageWith(BINDINGS));
 		const unbound = evaluateForDerivation(grammarPackageWith(''));
-		expect(bound.grammarHash).toBe(unbound.grammarHash);
+		expect(bound.base.grammarHash).toBe(unbound.base.grammarHash);
+	}, 120_000);
+
+	it('derives the bound conflicts from the bound grammar, keyed by its own hash and chained to its unbound names', () => {
+		const bound = evaluateForDerivation(grammarPackageWith(BINDINGS));
+		const unbound = evaluateForDerivation(grammarPackageWith(''));
+		expect(unbound.bound.grammarHash).toBe(unbound.base.grammarHash);
+		expect(bound.bound.grammarHash).not.toBe(unbound.bound.grammarHash);
+		expect(bound.bound.sourceEdges).toMatchObject({ binding: 'let_item' });
+		expect(bound.base.sourceEdges).not.toHaveProperty('binding');
+	}, 120_000);
+
+	it('applies the bound sets after the bindings, behind the renamed base sets', async () => {
+		const set = (symbols: string[]) => ({
+			resolution: { kind: 'AddConflict' as const, symbols },
+			step: 'default' as const,
+			sourceChains: symbols.map((name) => [name]),
+			conflict: { symbolSequence: [], lookahead: '', interpretations: symbols }
+		});
+		const resolutions = { grammarHash: '', resolutions: [set(['let_item', 'call'])], bound: { grammarHash: '', resolutions: [set(['binding', 'identifier'])] } };
+		const bound = await evaluateSittirGrammar(baseModule, 'bindtest', BINDINGS, resolutions);
+		expect(bound.conflicts).toEqual([
+			['binding', 'call'],
+			['binding', 'identifier']
+		]);
+		expect(bound.derivationRecords?.boundResolutions.map((entry) => entry.resolution.symbols)).toEqual([['binding', 'identifier']]);
+		const unbound = await evaluateSittirGrammar(baseModule, 'bindtest', BINDINGS, resolutions, { unbound: true });
+		expect(unbound.conflicts).toEqual([['let_item', 'call']]);
+		expect(unbound.derivationRecords?.boundResolutions).toEqual([]);
 	}, 120_000);
 
 	it('rewrites the authored options through what each binding patch did', async () => {

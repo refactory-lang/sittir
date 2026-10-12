@@ -321,7 +321,7 @@ The `prec.dynamic` values in each rule's body, wherever the wrapper sits, for th
 
 ### `packages/codegen/src/dsl/wire/derivation-records.ts::ConflictConfig`
 
-What the config says about conflicts: the resolutions the grammar imported, and whether it authors a `conflicts` block, which is never applied (`compiler/diagnostics/conflicts.ts::conflictRecords` blocks on it).
+What the config says about conflicts: the resolutions the grammar imported (`resolutions`, the base sets, and `boundResolutions`, the bound sets the bound grammar carries, empty under an unbound evaluation), and whether it authors a `conflicts` block, which is never applied (`compiler/diagnostics/conflicts.ts::conflictRecords` blocks on it).
 
 ### `packages/codegen/src/dsl/wire/derivation-records.ts::variantEdgesOf`
 

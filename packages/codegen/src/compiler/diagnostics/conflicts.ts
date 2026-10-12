@@ -1,4 +1,5 @@
 import { sameConflictSet, upstreamSourcesOf } from '../../dsl/conflict-resolutions.ts';
+import { boundNameOf } from '../../dsl/bind.ts';
 import type { ConflictReport } from '../../transpile/conflict-summary.ts';
 import type { DerivationResult, FailedGenerate } from '../../transpile/derive-conflicts.ts';
 import type { GrammarDiagnostic } from '../../types/diagnostics.ts';
@@ -6,10 +7,11 @@ import type { RawGrammar } from '../types.ts';
 
 type UnresolvableReason = Extract<DerivationResult, { kind: 'unresolvable' }>['reason'];
 
-export function conflictRecords(raw: Pick<RawGrammar, 'name' | 'derivationRecords'>): GrammarDiagnostic[] {
+export function conflictRecords(raw: Pick<RawGrammar, 'name' | 'derivationRecords' | 'renamedFrom'>): GrammarDiagnostic[] {
 	const records = raw.derivationRecords;
 	if (records === undefined) return [];
-	const resolutionRecords: GrammarDiagnostic[] = records.resolutions.map(({ resolution, step, sourceChains, conflict }) => ({
+	const derived = [...records.resolutions, ...records.boundResolutions];
+	const resolutionRecords: GrammarDiagnostic[] = derived.map(({ resolution, step, sourceChains, conflict }) => ({
 		scope: 'grammar',
 		code: 'conflict-resolution',
 		severity: 'info',
@@ -18,7 +20,7 @@ export function conflictRecords(raw: Pick<RawGrammar, 'name' | 'derivationRecord
 		canProceed: true,
 		details: { resolution, step, sourceChains, conflict }
 	}));
-	const derivedSources = records.resolutions.map((entry) => upstreamSourcesOf(entry.sourceChains));
+	const derivedSources = derived.map((entry) => upstreamSourcesOf(entry.sourceChains));
 	const unnecessaryRecords: GrammarDiagnostic[] = records.upstreamConflicts
 		.filter((declared) => !derivedSources.some((sources) => sameConflictSet(declared, sources)))
 		.map((symbols) => ({
@@ -27,6 +29,20 @@ export function conflictRecords(raw: Pick<RawGrammar, 'name' | 'derivationRecord
 			severity: 'info',
 			grammar: raw.name,
 			message: `upstream declares the conflict ${symbols.join(', ')}, which the reshaped grammar never reports`,
+			canProceed: true,
+			details: { symbols }
+		}));
+	const boundName = boundNameOf(raw.renamedFrom);
+	const baseSets = records.resolutions.map((entry) => entry.resolution.symbols.map(boundName));
+	const coveredRecords: GrammarDiagnostic[] = records.boundResolutions
+		.map((entry) => entry.resolution.symbols)
+		.filter((symbols) => baseSets.some((set) => sameConflictSet(set, symbols)))
+		.map((symbols) => ({
+			scope: 'grammar',
+			code: 'conflict-unnecessary-bound',
+			severity: 'info',
+			grammar: raw.name,
+			message: `the bound conflict ${symbols.join(', ')} repeats a base conflict, which the bindings already carry`,
 			canProceed: true,
 			details: { symbols }
 		}));
@@ -44,7 +60,7 @@ export function conflictRecords(raw: Pick<RawGrammar, 'name' | 'derivationRecord
 				}
 			]
 		: [];
-	return [...resolutionRecords, ...unnecessaryRecords, ...authoredRecords];
+	return [...resolutionRecords, ...unnecessaryRecords, ...coveredRecords, ...authoredRecords];
 }
 
 export function conflictUnresolvableRecord(grammar: string, reason: UnresolvableReason, report: ConflictReport): GrammarDiagnostic {

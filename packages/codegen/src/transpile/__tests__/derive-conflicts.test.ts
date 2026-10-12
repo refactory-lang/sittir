@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { sourceChain, type ConflictResolutionsFile, type DerivedResolution } from '../../dsl/conflict-resolutions.ts';
+import { sourceChain, type DerivedResolution, type ResolutionSection } from '../../dsl/conflict-resolutions.ts';
 import {
 	chooseResolution,
 	deriveConflictResolutions,
@@ -156,7 +156,7 @@ describe('deriveConflictResolutions', () => {
 describe('reuseOrDeriveConflictResolutions', () => {
 	const staleEntry = chooseResolution(reportFor('stale', 'x'), identity);
 	if (staleEntry.kind !== 'chosen') throw new Error('fixture offers AddConflict');
-	const saved: ConflictResolutionsFile = { grammarHash: 'h1', resolutions: [staleEntry.resolution] };
+	const saved: ResolutionSection = { grammarHash: 'h1', resolutions: [staleEntry.resolution] };
 
 	function recordingGenerate(conflicts: readonly ConflictReport[]) {
 		const calls: (readonly (readonly string[])[])[] = [];

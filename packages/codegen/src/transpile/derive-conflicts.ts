@@ -2,8 +2,8 @@ import {
 	sameConflictSet,
 	sourceChain,
 	upstreamSourcesOf,
-	type ConflictResolutionsFile,
-	type DerivedResolution
+	type DerivedResolution,
+	type ResolutionSection
 } from '../dsl/conflict-resolutions.ts';
 import { conflictKey, type ConflictReport, type GenerateOutcome } from './conflict-summary.ts';
 
@@ -83,7 +83,7 @@ export async function deriveConflictResolutions(input: DerivationInput): Promise
 
 export async function reuseOrDeriveConflictResolutions(
 	input: DerivationInput & {
-		readonly saved: ConflictResolutionsFile;
+		readonly saved: ResolutionSection;
 		readonly grammarHash: string;
 		readonly generateSaved: () => Promise<GenerateOutcome>;
 	}

@@ -742,8 +742,9 @@ Why a conflict derivation stopped without converging, as `transpile/derive-confl
 
 The evaluate-time conflict records of a grammar built by `sittirGrammar`, from its derivation records:
 
-- one informational `conflict-resolution` per resolution the grammar imported, with the resolution, the policy step, the source chains and the conflict it settled, so every conflict a grammar declares has a reviewable reason;
-- one informational `conflict-unnecessary-upstream` per conflict set upstream declared that no resolution's upstream sources (`dsl/conflict-resolutions.ts::upstreamSourcesOf`) equal: the reshaped grammar never reports it;
+- one informational `conflict-resolution` per resolution the grammar imported, base then bound, with the resolution, the policy step, the source chains and the conflict it settled, so every conflict a grammar declares has a reviewable reason;
+- one informational `conflict-unnecessary-upstream` per conflict set upstream declared that no resolution's upstream sources (`dsl/conflict-resolutions.ts::upstreamSourcesOf`) equal, base or bound: the reshaped grammar never reports it;
+- one informational `conflict-unnecessary-bound` per bound set that a base set, under its bound names (`dsl/bind.ts::boundNameOf` over the grammar's `renamedFrom`), already declares: the bound grammar carries that set already, so the bound derivation should never have needed it;
 - a blocking `conflict-authored` when the config has a `conflicts` block. Every conflict is derived, so an authored list is never applied; blocking it keeps a grammar from carrying a list that silently does nothing.
 
 A grammar without derivation records has none.
