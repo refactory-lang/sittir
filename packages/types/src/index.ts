@@ -770,9 +770,9 @@ type ConfigFieldValue<T, K extends keyof FieldsOf<T>> =
 /** @internal — `undefined` for a key an input may omit (`RequiredKeys`), never for one it must supply. */
 type UndefinedIfOptional<F, K extends keyof F> = K extends RequiredKeys<F> ? never : undefined;
 
-/** Keys an input of T must supply: required ones, less a list that may be empty, which an input omits and the builder stores as `[]`. */
+/** Keys an input of T must supply: required ones, less a list that may be empty, which an input omits and the builder stores as `[]`, and a presence flag, which an input omits and the builder stores as `false`. */
 type RequiredKeys<T> = {
-	[K in keyof T]-?: {} extends Pick<T, K> ? never : readonly [] extends T[K] ? never : K;
+	[K in keyof T]-?: {} extends Pick<T, K> ? never : readonly [] extends T[K] ? never : boolean extends T[K] ? never : K;
 }[keyof T];
 
 /**

@@ -28,8 +28,9 @@ export const requiredOpUndefined: RequiredConfig = { op: undefined, flags: 'a', 
 // @ts-expect-error a required bitflag key rejects undefined.
 export const requiredFlagsUndefined: RequiredConfig = { op: 1, flags: undefined, async: true };
 
-// @ts-expect-error a required boolean-keyword key rejects undefined.
 export const requiredAsyncUndefined: RequiredConfig = { op: 1, flags: 'a', async: undefined };
+
+export const requiredAsyncOmitted: RequiredConfig = { op: 1, flags: 'a' };
 
 // @ts-expect-error a required kind-enum key cannot be omitted.
 export const requiredOpOmitted: RequiredConfig = { flags: 'a', async: true };

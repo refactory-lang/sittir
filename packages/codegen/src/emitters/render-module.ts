@@ -3581,7 +3581,7 @@ function rustTransportSlotType(
 ): string {
 	const { required, multiple, optionalElement, adjacent } = cardinality;
 	const shape = transportSlotShapeOf(slot, nodeMap);
-	if (shape.tag === 'presence') return 'Option<bool>';
+	if (shape.tag === 'presence') return 'bool';
 	if (shape.tag === 'text') return required ? 'String' : 'Option<String>';
 
 	const scc = nodeMap.scc;

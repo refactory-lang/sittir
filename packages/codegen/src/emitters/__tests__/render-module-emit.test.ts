@@ -276,7 +276,7 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 
 	it('a presence slot holding a keyword kind crosses as a boolean and renders the kind', async () => {
 		const src = await getRustTemplatesRs();
-		expect(extractStructBody(src, 'ReferenceTypeTransport')).toContain('pub mutable: Option<bool>,');
+		expect(extractStructBody(src, 'ReferenceTypeTransport')).toContain('pub mutable: bool,');
 		expect(extractFnBody(src, 'render_reference_type')).toContain(
 			'let mutable = View::new(::sittir_core::view::Presence::new(node.mutable, MutableSpecifierTransport::MutableSpecifier), "{}");'
 		);

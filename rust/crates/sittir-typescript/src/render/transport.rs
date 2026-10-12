@@ -21579,7 +21579,7 @@ pub struct ForInStatementTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_await")]
     #[slot(field = field::AWAIT, presence = kind::AWAIT_KEYWORD)]
-    pub await_: Option<bool>,
+    pub await_: bool,
     #[wire(key = "_for_header")]
     #[slot]
     pub for_header: ::sittir_core::SlotValue<ForHeaderTransport>,
@@ -23173,7 +23173,7 @@ pub struct FunctionExpressionTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_async")]
     #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD)]
-    pub async_: Option<bool>,
+    pub async_: bool,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: Option<::sittir_core::SlotValue<IdentifierTransport>>,
@@ -23244,7 +23244,7 @@ pub struct FunctionDeclarationTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_async")]
     #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD)]
-    pub async_: Option<bool>,
+    pub async_: bool,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
@@ -23320,7 +23320,7 @@ pub struct GeneratorFunctionTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_async")]
     #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD)]
-    pub async_: Option<bool>,
+    pub async_: bool,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: Option<::sittir_core::SlotValue<IdentifierTransport>>,
@@ -23391,7 +23391,7 @@ pub struct GeneratorFunctionDeclarationTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_async")]
     #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD)]
-    pub async_: Option<bool>,
+    pub async_: bool,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
@@ -23467,7 +23467,7 @@ pub struct ArrowFunctionTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_async")]
     #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD)]
-    pub async_: Option<bool>,
+    pub async_: bool,
     #[wire(key = "_content")]
     #[slot]
     pub content: ::sittir_core::SlotValue<ArrowFunctionContentTransportSlot>,
@@ -23726,7 +23726,7 @@ pub struct SubscriptExpressionTransport {
     pub object: ::sittir_core::SlotValue<Box<SubscriptExpressionObjectTransportSlot>>,
     #[wire(key = "_optional_chain")]
     #[slot(field = field::OPTIONAL_CHAIN, presence = kind::OPTIONAL_CHAIN)]
-    pub optional_chain: Option<bool>,
+    pub optional_chain: bool,
     #[wire(key = "_index")]
     #[slot(field = field::INDEX)]
     pub index: ::sittir_core::SlotValue<Box<ExpressionStatementExpressionTransportSlot>>,
@@ -23830,7 +23830,7 @@ pub struct AssignmentExpressionTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_using")]
     #[slot(field = field::USING, presence = kind::USING_KEYWORD)]
-    pub using: Option<bool>,
+    pub using: bool,
     #[wire(key = "_left")]
     #[slot(field = field::LEFT)]
     pub left: ::sittir_core::SlotValue<Box<AssignmentExpressionLeftTransportSlot>>,
@@ -25448,16 +25448,16 @@ pub struct MethodDefinitionTransport {
     pub accessibility_modifier: Option<::sittir_core::SlotValue<AccessibilityModifierEnum>>,
     #[wire(key = "_static")]
     #[slot(field = field::STATIC, presence = kind::STATIC_KEYWORD)]
-    pub static_: Option<bool>,
+    pub static_: bool,
     #[wire(key = "_override")]
     #[slot(field = field::OVERRIDE, presence = kind::OVERRIDE_MODIFIER)]
-    pub override_: Option<bool>,
+    pub override_: bool,
     #[wire(key = "_readonly")]
     #[slot(field = field::READONLY, presence = kind::READONLY_KEYWORD)]
-    pub readonly: Option<bool>,
+    pub readonly: bool,
     #[wire(key = "_async")]
     #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD)]
-    pub async_: Option<bool>,
+    pub async_: bool,
     #[wire(key = "_accessor_kind")]
     #[slot(field = field::ACCESSOR_KIND)]
     pub accessor_kind: Option<::sittir_core::SlotValue<MethodDefinitionAccessorKindTransportSlot>>,
@@ -25466,7 +25466,7 @@ pub struct MethodDefinitionTransport {
     pub name: ::sittir_core::SlotValue<MethodDefinitionNameTransportSlot>,
     #[wire(key = "_optional")]
     #[slot(field = field::OPTIONAL, presence = kind::QMARK | kind::_TERNARY_QMARK)]
-    pub optional: Option<bool>,
+    pub optional: bool,
     #[wire(key = "_type_parameters")]
     #[slot(field = field::TYPE_PARAMETERS)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
@@ -25704,25 +25704,25 @@ pub struct PublicFieldDefinitionTransport {
     pub decorator: Vec<::sittir_core::SlotValue<DecoratorTransport>>,
     #[wire(key = "_declare")]
     #[slot(field = field::DECLARE, presence = kind::DECLARE_KEYWORD)]
-    pub declare: Option<bool>,
+    pub declare: bool,
     #[wire(key = "_accessibility_modifier")]
     #[slot(field = field::ACCESSIBILITY_MODIFIER)]
     pub accessibility_modifier: Option<::sittir_core::SlotValue<AccessibilityModifierEnum>>,
     #[wire(key = "_static")]
     #[slot(field = field::STATIC, presence = kind::STATIC_KEYWORD)]
-    pub static_: Option<bool>,
+    pub static_: bool,
     #[wire(key = "_override")]
     #[slot(field = field::OVERRIDE, presence = kind::OVERRIDE_MODIFIER)]
-    pub override_: Option<bool>,
+    pub override_: bool,
     #[wire(key = "_readonly")]
     #[slot(field = field::READONLY, presence = kind::READONLY_KEYWORD)]
-    pub readonly: Option<bool>,
+    pub readonly: bool,
     #[wire(key = "_abstract")]
     #[slot(field = field::ABSTRACT, presence = kind::ABSTRACT_KEYWORD)]
-    pub abstract_: Option<bool>,
+    pub abstract_: bool,
     #[wire(key = "_accessor")]
     #[slot(field = field::ACCESSOR, presence = kind::ACCESSOR_KEYWORD)]
-    pub accessor: Option<bool>,
+    pub accessor: bool,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<MethodDefinitionNameTransportSlot>,
@@ -25855,16 +25855,16 @@ pub struct MethodSignatureTransport {
     pub accessibility_modifier: Option<::sittir_core::SlotValue<AccessibilityModifierEnum>>,
     #[wire(key = "_static")]
     #[slot(field = field::STATIC, presence = kind::STATIC_KEYWORD)]
-    pub static_: Option<bool>,
+    pub static_: bool,
     #[wire(key = "_override")]
     #[slot(field = field::OVERRIDE, presence = kind::OVERRIDE_MODIFIER)]
-    pub override_: Option<bool>,
+    pub override_: bool,
     #[wire(key = "_readonly")]
     #[slot(field = field::READONLY, presence = kind::READONLY_KEYWORD)]
-    pub readonly: Option<bool>,
+    pub readonly: bool,
     #[wire(key = "_async")]
     #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD)]
-    pub async_: Option<bool>,
+    pub async_: bool,
     #[wire(key = "_accessor_kind")]
     #[slot(field = field::ACCESSOR_KIND)]
     pub accessor_kind: Option<::sittir_core::SlotValue<MethodDefinitionAccessorKindTransportSlot>>,
@@ -25873,7 +25873,7 @@ pub struct MethodSignatureTransport {
     pub name: ::sittir_core::SlotValue<MethodDefinitionNameTransportSlot>,
     #[wire(key = "_optional")]
     #[slot(field = field::OPTIONAL, presence = kind::QMARK | kind::_TERNARY_QMARK)]
-    pub optional: Option<bool>,
+    pub optional: bool,
     #[wire(key = "_type_parameters")]
     #[slot(field = field::TYPE_PARAMETERS)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
@@ -25946,7 +25946,7 @@ pub struct AbstractMethodSignatureTransport {
     pub accessibility_modifier: Option<::sittir_core::SlotValue<AccessibilityModifierEnum>>,
     #[wire(key = "_override")]
     #[slot(field = field::OVERRIDE, presence = kind::OVERRIDE_MODIFIER)]
-    pub override_: Option<bool>,
+    pub override_: bool,
     #[wire(key = "_accessor_kind")]
     #[slot(field = field::ACCESSOR_KIND)]
     pub accessor_kind: Option<::sittir_core::SlotValue<MethodDefinitionAccessorKindTransportSlot>>,
@@ -25955,7 +25955,7 @@ pub struct AbstractMethodSignatureTransport {
     pub name: ::sittir_core::SlotValue<MethodDefinitionNameTransportSlot>,
     #[wire(key = "_optional")]
     #[slot(field = field::OPTIONAL, presence = kind::QMARK | kind::_TERNARY_QMARK)]
-    pub optional: Option<bool>,
+    pub optional: bool,
     #[wire(key = "_type_parameters")]
     #[slot(field = field::TYPE_PARAMETERS)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
@@ -26022,7 +26022,7 @@ pub struct FunctionSignatureTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_async")]
     #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD)]
-    pub async_: Option<bool>,
+    pub async_: bool,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
@@ -27063,7 +27063,7 @@ pub struct EnumDeclarationTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_const")]
     #[slot(field = field::CONST, presence = kind::CONST_KEYWORD)]
-    pub const_: Option<bool>,
+    pub const_: bool,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
@@ -27366,10 +27366,10 @@ pub struct RequiredParameterTransport {
     pub accessibility_modifier: Option<::sittir_core::SlotValue<AccessibilityModifierEnum>>,
     #[wire(key = "_override")]
     #[slot(field = field::OVERRIDE, presence = kind::OVERRIDE_MODIFIER)]
-    pub override_: Option<bool>,
+    pub override_: bool,
     #[wire(key = "_readonly")]
     #[slot(field = field::READONLY, presence = kind::READONLY_KEYWORD)]
-    pub readonly: Option<bool>,
+    pub readonly: bool,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN)]
     pub pattern: ::sittir_core::SlotValue<RequiredParameterPatternTransportSlot>,
@@ -27446,10 +27446,10 @@ pub struct OptionalParameterTransport {
     pub accessibility_modifier: Option<::sittir_core::SlotValue<AccessibilityModifierEnum>>,
     #[wire(key = "_override")]
     #[slot(field = field::OVERRIDE, presence = kind::OVERRIDE_MODIFIER)]
-    pub override_: Option<bool>,
+    pub override_: bool,
     #[wire(key = "_readonly")]
     #[slot(field = field::READONLY, presence = kind::READONLY_KEYWORD)]
-    pub readonly: Option<bool>,
+    pub readonly: bool,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN)]
     pub pattern: ::sittir_core::SlotValue<RequiredParameterPatternTransportSlot>,
@@ -28148,7 +28148,7 @@ pub struct ConstructorTypeTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_abstract")]
     #[slot(field = field::ABSTRACT, presence = kind::ABSTRACT_KEYWORD)]
-    pub abstract_: Option<bool>,
+    pub abstract_: bool,
     #[wire(key = "_type_parameters")]
     #[slot(field = field::TYPE_PARAMETERS)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
@@ -28654,7 +28654,7 @@ pub struct TypeQuerySubscriptExpressionTransport {
     pub object: ::sittir_core::SlotValue<Box<TypeQueryMemberExpressionObjectTransportSlot>>,
     #[wire(key = "_optional_chain")]
     #[slot(field = field::OPTIONAL_CHAIN, presence = display(kind::_OPTIONAL_CHAIN_MARKER))]
-    pub optional_chain: Option<bool>,
+    pub optional_chain: bool,
     #[wire(key = "_index")]
     #[slot(field = field::INDEX)]
     pub index: ::sittir_core::SlotValue<TypeQuerySubscriptExpressionIndexTransportSlot>,
@@ -29478,19 +29478,19 @@ pub struct PropertySignatureTransport {
     pub accessibility_modifier: Option<::sittir_core::SlotValue<AccessibilityModifierEnum>>,
     #[wire(key = "_static")]
     #[slot(field = field::STATIC, presence = kind::STATIC_KEYWORD)]
-    pub static_: Option<bool>,
+    pub static_: bool,
     #[wire(key = "_override")]
     #[slot(field = field::OVERRIDE, presence = kind::OVERRIDE_MODIFIER)]
-    pub override_: Option<bool>,
+    pub override_: bool,
     #[wire(key = "_readonly")]
     #[slot(field = field::READONLY, presence = kind::READONLY_KEYWORD)]
-    pub readonly: Option<bool>,
+    pub readonly: bool,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<MethodDefinitionNameTransportSlot>,
     #[wire(key = "_optional")]
     #[slot(field = field::OPTIONAL, presence = kind::QMARK | kind::_TERNARY_QMARK)]
-    pub optional: Option<bool>,
+    pub optional: bool,
     #[wire(key = "_type")]
     #[slot(field = field::TYPE)]
     pub type_: Option<::sittir_core::SlotValue<TypeAnnotationTransport>>,
@@ -29601,7 +29601,7 @@ pub struct TypeParameterTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_const")]
     #[slot(field = field::CONST, presence = kind::CONST_KEYWORD)]
-    pub const_: Option<bool>,
+    pub const_: bool,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<TypeIdentifierTransport>,
@@ -29774,7 +29774,7 @@ pub struct ConstructSignatureTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_abstract")]
     #[slot(field = field::ABSTRACT, presence = kind::ABSTRACT_KEYWORD)]
-    pub abstract_: Option<bool>,
+    pub abstract_: bool,
     #[wire(key = "_type_parameters")]
     #[slot(field = field::TYPE_PARAMETERS)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
@@ -32058,7 +32058,7 @@ pub struct IndexSignatureColonTransport {
     pub sign: Option<::sittir_core::SlotValue<IndexSignatureColonSignTransportSlot>>,
     #[wire(key = "_readonly")]
     #[slot(field = field::READONLY, presence = kind::READONLY_KEYWORD)]
-    pub readonly: Option<bool>,
+    pub readonly: bool,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<IndexSignatureColonNameTransportSlot>,
@@ -32125,7 +32125,7 @@ pub struct IndexSignatureMappedTypeClauseTransport {
     pub sign: Option<::sittir_core::SlotValue<IndexSignatureColonSignTransportSlot>>,
     #[wire(key = "_readonly")]
     #[slot(field = field::READONLY, presence = kind::READONLY_KEYWORD)]
-    pub readonly: Option<bool>,
+    pub readonly: bool,
     #[wire(key = "_mapped_type_clause")]
     #[slot]
     pub mapped_type_clause: ::sittir_core::SlotValue<MappedTypeClauseTransport>,
@@ -33090,7 +33090,7 @@ pub struct ExportStatementDefaultFromTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_type")]
     #[slot(field = field::TYPE, presence = kind::TYPE_KEYWORD)]
-    pub type_: Option<bool>,
+    pub type_: bool,
     #[wire(key = "_content")]
     #[slot]
     pub content: ::sittir_core::SlotValue<ExportStatementDefaultFromContentTransportSlot>,

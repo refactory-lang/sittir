@@ -53,6 +53,21 @@ pub unsafe fn optional<V: ::napi::bindgen_prelude::FromNapiValue>(
     unsafe { ::napi::bindgen_prelude::from_raw_optional_field(env, raw, owner, key_name(key)) }
 }
 
+/// A presence flag: `undefined` is `false`, and every other value goes to
+/// `bool`'s decoder.
+///
+/// # Safety
+/// `obj` must be a live object in `env`.
+#[cfg(feature = "napi-bindings")]
+pub unsafe fn flag(
+    env: ::napi::sys::napi_env,
+    obj: ::napi::sys::napi_value,
+    key: &'static ::std::ffi::CStr,
+    owner: &'static str,
+) -> ::napi::Result<bool> {
+    Ok(unsafe { optional::<bool>(env, obj, key, owner)? }.unwrap_or(false))
+}
+
 /// The object a struct decodes from, taken as napi's object derive takes it.
 ///
 /// # Safety

@@ -18426,10 +18426,10 @@ pub struct StaticItemTransport {
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierTransport>>,
     #[wire(key = "_ref")]
     #[slot(field = field::REF, presence = kind::REF_KEYWORD)]
-    pub ref_: Option<bool>,
+    pub ref_: bool,
     #[wire(key = "_mutable")]
     #[slot(field = field::MUTABLE, presence = kind::MUTABLE_SPECIFIER)]
-    pub mutable: Option<bool>,
+    pub mutable: bool,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
@@ -18884,7 +18884,7 @@ pub struct TraitItemTransport {
     pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierTransport>>,
     #[wire(key = "_unsafe")]
     #[slot(field = field::UNSAFE, presence = kind::UNSAFE_KEYWORD)]
-    pub unsafe_: Option<bool>,
+    pub unsafe_: bool,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<TypeIdentifierTransport>,
@@ -19408,7 +19408,7 @@ pub struct LetDeclarationTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_mutable")]
     #[slot(field = field::MUTABLE, presence = kind::MUTABLE_SPECIFIER)]
-    pub mutable: Option<bool>,
+    pub mutable: bool,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN)]
     pub pattern: ::sittir_core::SlotValue<PatternTransport>,
@@ -19793,13 +19793,13 @@ pub struct SelfParameterTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_reference")]
     #[slot(field = field::REFERENCE, presence = kind::AMP)]
-    pub reference: Option<bool>,
+    pub reference: bool,
     #[wire(key = "_lifetime")]
     #[slot(field = field::LIFETIME)]
     pub lifetime: Option<::sittir_core::SlotValue<LifetimeTransport>>,
     #[wire(key = "_mutable")]
     #[slot(field = field::MUTABLE, presence = kind::MUTABLE_SPECIFIER)]
-    pub mutable: Option<bool>,
+    pub mutable: bool,
 }
 
 impl ::sittir_core::view::KindOf for SelfParameterTransport {
@@ -19852,7 +19852,7 @@ pub struct VariadicParameterTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_mutable")]
     #[slot(field = field::MUTABLE, presence = kind::MUTABLE_SPECIFIER)]
-    pub mutable: Option<bool>,
+    pub mutable: bool,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN)]
     pub pattern: Option<::sittir_core::SlotValue<PatternTransport>>,
@@ -19907,7 +19907,7 @@ pub struct ParameterTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_mutable")]
     #[slot(field = field::MUTABLE, presence = kind::MUTABLE_SPECIFIER)]
-    pub mutable: Option<bool>,
+    pub mutable: bool,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<ParameterNameTransportSlot>,
@@ -20874,7 +20874,7 @@ pub struct ReferenceTypeTransport {
     pub lifetime: Option<::sittir_core::SlotValue<LifetimeTransport>>,
     #[wire(key = "_mutable")]
     #[slot(field = field::MUTABLE, presence = kind::MUTABLE_SPECIFIER)]
-    pub mutable: Option<bool>,
+    pub mutable: bool,
     #[wire(key = "_type")]
     #[slot(field = field::TYPE)]
     pub type_: ::sittir_core::SlotValue<Box<TypeTransport>>,
@@ -22658,7 +22658,7 @@ pub struct LastMatchArmTransport {
     pub value: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[wire(key = "_comma")]
     #[slot(field = field::COMMA, presence = kind::COMMA)]
-    pub comma: Option<bool>,
+    pub comma: bool,
     #[wire(key = "_attributes_separator_space")]
     pub attributes_separator_space: Option<u16>,
 }
@@ -23428,7 +23428,7 @@ pub struct AsyncBlockTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_move")]
     #[slot(field = field::MOVE, presence = kind::MOVE_KEYWORD)]
-    pub move_: Option<bool>,
+    pub move_: bool,
     #[wire(key = "_body")]
     #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<Box<BlockTransport>>,
@@ -23483,7 +23483,7 @@ pub struct GenBlockTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_move")]
     #[slot(field = field::MOVE, presence = kind::MOVE_KEYWORD)]
-    pub move_: Option<bool>,
+    pub move_: bool,
     #[wire(key = "_body")]
     #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<Box<BlockTransport>>,
@@ -24125,7 +24125,7 @@ pub struct ReferencePatternTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_mutable")]
     #[slot(field = field::MUTABLE, presence = kind::MUTABLE_SPECIFIER)]
-    pub mutable: Option<bool>,
+    pub mutable: bool,
     #[wire(key = "_pattern")]
     #[slot(field = field::PATTERN)]
     pub pattern: ::sittir_core::SlotValue<Box<PatternTransport>>,
@@ -26810,7 +26810,7 @@ pub struct CharLiteralPlainTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_b")]
     #[slot(capture = "b")]
-    pub b: Option<bool>,
+    pub b: bool,
     #[wire(key = "_content")]
     #[slot(capture = "content")]
     pub content: String,
@@ -26908,7 +26908,7 @@ pub struct CharLiteralEscapedSimpleTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_b")]
     #[slot(capture = "b")]
-    pub b: Option<bool>,
+    pub b: bool,
     #[wire(key = "_content")]
     #[slot(capture = "content")]
     pub content: String,
@@ -26960,7 +26960,7 @@ pub struct CharLiteralEscapedUnicodeFixedTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_b")]
     #[slot(capture = "b")]
-    pub b: Option<bool>,
+    pub b: bool,
     #[wire(key = "_content")]
     #[slot(capture = "content")]
     pub content: String,
@@ -27012,7 +27012,7 @@ pub struct CharLiteralEscapedUnicodeBracedTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_b")]
     #[slot(capture = "b")]
-    pub b: Option<bool>,
+    pub b: bool,
     #[wire(key = "_content")]
     #[slot(capture = "content")]
     pub content: String,
@@ -27064,7 +27064,7 @@ pub struct CharLiteralEscapedHexTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_b")]
     #[slot(capture = "b")]
-    pub b: Option<bool>,
+    pub b: bool,
     #[wire(key = "_content")]
     #[slot(capture = "content")]
     pub content: String,
@@ -27484,13 +27484,13 @@ pub struct ClosureExpressionBlockTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_static")]
     #[slot(field = field::STATIC, presence = kind::STATIC_KEYWORD)]
-    pub static_: Option<bool>,
+    pub static_: bool,
     #[wire(key = "_async")]
     #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD)]
-    pub async_: Option<bool>,
+    pub async_: bool,
     #[wire(key = "_move")]
     #[slot(field = field::MOVE, presence = kind::MOVE_KEYWORD)]
-    pub move_: Option<bool>,
+    pub move_: bool,
     #[wire(key = "_parameters")]
     #[slot(field = field::PARAMETERS)]
     pub parameters: ::sittir_core::SlotValue<ClosureParametersTransport>,
@@ -27555,13 +27555,13 @@ pub struct ClosureExpressionExprTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_static")]
     #[slot(field = field::STATIC, presence = kind::STATIC_KEYWORD)]
-    pub static_: Option<bool>,
+    pub static_: bool,
     #[wire(key = "_async")]
     #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD)]
-    pub async_: Option<bool>,
+    pub async_: bool,
     #[wire(key = "_move")]
     #[slot(field = field::MOVE, presence = kind::MOVE_KEYWORD)]
-    pub move_: Option<bool>,
+    pub move_: bool,
     #[wire(key = "_parameters")]
     #[slot(field = field::PARAMETERS)]
     pub parameters: ::sittir_core::SlotValue<ClosureParametersTransport>,
@@ -27928,7 +27928,7 @@ pub struct ImplItemBodyTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_unsafe")]
     #[slot(field = field::UNSAFE, presence = kind::UNSAFE_KEYWORD)]
-    pub unsafe_: Option<bool>,
+    pub unsafe_: bool,
     #[wire(key = "_type_parameters")]
     #[slot(field = field::TYPE_PARAMETERS)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
@@ -27999,7 +27999,7 @@ pub struct ImplItemSemiTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_unsafe")]
     #[slot(field = field::UNSAFE, presence = kind::UNSAFE_KEYWORD)]
-    pub unsafe_: Option<bool>,
+    pub unsafe_: bool,
     #[wire(key = "_type_parameters")]
     #[slot(field = field::TYPE_PARAMETERS)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParametersTransport>>,
@@ -29976,10 +29976,10 @@ pub struct FieldPatternShorthandTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_ref")]
     #[slot(field = field::REF, presence = kind::REF_KEYWORD)]
-    pub ref_: Option<bool>,
+    pub ref_: bool,
     #[wire(key = "_mutable")]
     #[slot(field = field::MUTABLE, presence = kind::MUTABLE_SPECIFIER)]
-    pub mutable: Option<bool>,
+    pub mutable: bool,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<ShorthandFieldIdentifierTransport>,
@@ -30035,10 +30035,10 @@ pub struct FieldPatternNamedTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_ref")]
     #[slot(field = field::REF, presence = kind::REF_KEYWORD)]
-    pub ref_: Option<bool>,
+    pub ref_: bool,
     #[wire(key = "_mutable")]
     #[slot(field = field::MUTABLE, presence = kind::MUTABLE_SPECIFIER)]
-    pub mutable: Option<bool>,
+    pub mutable: bool,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
     pub name: ::sittir_core::SlotValue<FieldIdentifierTransport>,

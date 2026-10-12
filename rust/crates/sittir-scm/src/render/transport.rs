@@ -2625,7 +2625,7 @@ pub struct GroupingGroupTransport {
     pub group_expression: ::sittir_core::SlotValue<GroupExpressionArmLeftTransportSlot>,
     #[wire(key = "_anchor")]
     #[slot(presence = display(kind::_ANCHOR))]
-    pub anchor: Option<bool>,
+    pub anchor: bool,
 }
 
 impl ::sittir_core::view::KindOf for GroupingGroupTransport {
@@ -2883,7 +2883,7 @@ pub struct NamedNodeGroupChildrenTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_anchor")]
     #[slot(presence = display(kind::_ANCHOR))]
-    pub anchor: Option<bool>,
+    pub anchor: bool,
     #[wire(key = "_named_node_expressions")]
     #[slot(field = field::NAMED_NODE_EXPRESSIONS)]
     pub named_node_expressions: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<NamedNodeExpressionArmLeftTransportSlot>>,
@@ -2943,7 +2943,7 @@ pub struct NamedNodeGroupAnchoredLastTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_anchor")]
     #[slot(presence = display(kind::_ANCHOR))]
-    pub anchor: Option<bool>,
+    pub anchor: bool,
     #[wire(key = "_named_node_expressions")]
     #[slot(field = field::NAMED_NODE_EXPRESSIONS)]
     pub named_node_expressions: Vec<::sittir_core::SlotValue<NamedNodeExpressionArmLeftTransportSlot>>,
