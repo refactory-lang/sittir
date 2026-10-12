@@ -12,7 +12,7 @@
 
 ## Scope and sequencing
 
-`feat/typed-reader` carries the shared arena's steps 1 and 2: the typed reader (`docs/superpowers/plans/2026-10-05-typed-reader.md`, 1a to 1c-ii) and relative coordinates (`docs/superpowers/plans/2026-10-06-relative-coordinates.md`). This plan is step 3 with both trivia tables, a feature of its own on `feat/arena` that starts after that one lands. Its stages are detailed against the code when each starts: 3a below, 3b still an outline.
+`feat/typed-reader` carries the shared arena's steps 1 and 2: the typed reader (`docs/superpowers/plans/2026-10-05-typed-reader.md`, 1a to 1c-ii) and relative coordinates (`docs/superpowers/plans/2026-10-06-relative-coordinates.md`). This plan is step 3 with both trivia tables, a feature of its own on `feat/arena` that starts after that one lands. Its stages are detailed against the code when each starts: 3a and 3b's gate (3b-i) below, 3b past the gate (3b-ii) still an outline.
 
 | PR, on `feat/arena` | Lands | Gate |
 | --- | --- | --- |
@@ -443,20 +443,223 @@ Commit the probes and the README. Open the PR into `feat/typed-reader` with its 
 
 ---
 
-## Outline: 3b, the record wire and built nodes' trivia
+## 3b, the record wire and built nodes' trivia
 
-Detailed against master after 3a lands.
+Detailed against master `591b07885`, where 3a has merged (the trivia table, depth members, inferred options, the format record retired). 3b has two halves, split by the gate on the record step:
 
-**The record wire** (shared-arena ruling 6.3). 3b is detailed only past the gate on the record step: records must match or beat napi objects on read time, both one node per call and every match in one call, and on retained heap per node, as well as beating them on render decode. The object wire's numbers are re-taken in the engine beside the records'. The first thing the step attacks is the view's construction. In the like-for-like re-take a node over a record holds about 1.9 KB more than an object. Every form carries the same member closures, so the gap follows how V8 builds the view's literal, not the closures as such (the shared-arena spec's § The wire). At that step the derive's object codec gives way to records, and a parsed node's literal holds a reference to its record (the shared-arena spec's ruling 4).
-**Decisions the record step settles, beside the gate.**
-- **The name of the typed model.** The structs are now the native typed model of a node: the read's target and the render's input, with the wire codec a detail. "Transport" names only the wire. The name is decided once, at the record step, when it is settled whether the structs stay structs or become views over arena records (then `…Record`, `…Data` or another name). Nothing is renamed before then. The blast radius:
-  - the `#[transport]` attribute, `ReadTransport`, `TransportLayout` and the `sittir-transport-macros` crate;
-  - the codegen emitters, every generated `…Transport`, and the glossary and specs.
-- **One source for a record's layout.** Codegen computes the layout once from the model: each slot's word offset and width, and each kind's word count. It stamps them into the Rust struct's attributes (`words = …`, `word = …`, as the shared-arena spec draws them) and into the generated TypeScript accessors as literal offsets. The derive expands the record's read and write code from the stamped attributes, and checks rather than derives: a field whose type does not fit its stamped words is a compile error. There is no runtime layout table and no second derivation in TypeScript.
-- **A choice declared once for its content** (the shared-arena spec's transport declaration) is not implemented yet. The generated crates declare 38 choices more than once (rust 3, typescript 32, python 3), and a layout stamped per choice would stamp each duplicate. Codegen declares each choice once before the layout is stamped.
-- **String storage.** An outline item for the record-step design to settle; it is not a ruling on the mechanics.
-  - Parsed leaf text has no pool. A record stores the span, and reading the text slices it from the source the engine already holds, as an untouched node renders today.
-  - Built or edited leaf text goes in a per-arena string table, append-only and deduplicated, that records reference by index. A record stays fixed-size, and a repeated name (`self`, `x`) is stored once.
-  - JS-side interning of `$text` strings only if the record step's gate measurements (read time, retained heap) show that napi string creation is the cost.
-- **Built nodes' trivia.** A built node's trivia moves from the node into its record, by side, as the trivia-table spec's § 7.1 rules, and travels with it when it is placed. A write to a built node's side lands in its record whether or not it has a holder. A built holder keeps nothing for its children, and a parsed node placed in a built holder keeps its sides in its tree's table. The render then reads trivia from native storage only.
-  - **Retires:** built-node trivia on the node (`$_layout.trivia`, `setTriviaData`, the trivia writer's client store), and `TransportLayout::trivia`, `TransportTrivia` and `TriviaEntry` with their napi decode: the render prints each side from the record or the table.
+- **3b-i, the gate.** It is detailed below, in Tasks 6 to 10. The record wire is built beside today's object wire, in one build, and measured against it. 3b-i ends with the gate's verdict, which goes to the maintainer.
+- **3b-ii, past the gate.** The cutover to records only, eager built records, built nodes' trivia in records, and the name of the typed model. It stays an outline until the maintainer rules on the verdict, and is detailed against the code then.
+
+**Branch.** `feat/records`, cut from master. Each task is a commit series. 3b-i's PR opens with the verdict in its body. If a gate row fails, the branch stops for the maintainer's review: nothing is reverted and nothing merges. Master is merged in when it moves, never rebased.
+
+**Order.** Keyword presence as a plain `bool` lands in master first, as its own PR, and `feat/records` is cut after it, because Task 7 stamps each presence slot as one bit. Then Task 6 → Task 7 → Task 8 → Task 9 → Task 10. Task 6 needs no engine change, and it can stop the step on its own. If no form of the view holds the heap the gate asks for, Tasks 7 to 10 wait for the maintainer.
+
+### Prior art reused
+
+Each record prototype and measuring tool the arena steps already hold, with its disposition for 3b. 3a's own uses are listed under 3a.
+
+1. **The Rust arena-record prototype**, `docs/superpowers/probes/2026-10-01-shared-arena/2026-10-01/arena-proto/` (`src/main.rs`), with `encode-proto.mts` and the V8 construction probes beside it (`literal-members.mjs`, `all-in-literal.mjs`, `view-proto.mjs`, `const-vs-proto.mjs`, `with-methods.mjs`).
+   - **Superseded:** its read side, a whole-tree image written at parse. The shared-arena spec withdrew the image, and the typed reader reads lazily into transports.
+   - **Measured against:** its generic encoder (`encode-proto.mts`, 51 / 45 / 56 ns a slot value over the parity fixtures). This is the "fields encoded at render" form that Task 10 times beside eager built records (item 5).
+   - **Reused by Task 6:** the construction probes' method (one literal form against another, the same members, heap and time per node).
+2. **The typed-transport and derive prototype**, `…/transport/proto/` (`probe/`, `slot-derive/`, `synthetic/`).
+   - **Reused:** the record cell (`rt.rs`: a five-word cell of tag, kind and three payload words; a list as an offset and length into a run outside the record) is the starting layout that Task 7 states as codegen facts. The probe's three forms with identical members, checked slot by slot before timing, are Task 6's harness.
+   - **Superseded:** the probe's macro (`slot-derive`). The real derive (`sittir-transport-macros`) already expands the reader, the refusal and the object codec from the generated declarations, and Task 8 adds the record codec to it.
+   - **Measured against:** the probe's numbers, the spec's § The wire table. Task 10 re-takes them in the engine.
+   - **Reused unchanged:** `synthetic/` and `time-synthetic.sh`, the compile-cost probe re-run for Verification 12 at the cutover.
+3. **The measuring tools**, re-taken unchanged so the numbers compare like for like:
+   - `…/transport/measure-heap.mts` (fixed populations);
+   - `measure-proto.mts` (the three forms, checked before timing);
+   - `measure-layout.mts` with `layout-rounds.sh` and `layout-report.py` (rounds rotating checkouts, paired per round);
+   - `function-item-heap.mts` and `measure-rebuilt.mts`;
+   - `timing/idle.sh`, which gates every timed run.
+
+   A script that needs a new mode gets it as a flag, so the old mode still runs unchanged at the old commit. The inputs are `transport/inputs/` (`engine.rs`, `spacing.rs`, `create-engine.ts`).
+4. **The uncommitted shared-arena spec revision** from the retired `wt-arena-transport` worktree, kept at `scratchpad/backup/wt-arena-transport-spec.patch`. **Superseded.** Master's spec already says what the revision added:
+   - each choice declared once for its content;
+   - a unit variant as a fixed literal stored as its kind id;
+   - the attributes stating only what the types cannot, with the macro computing none;
+   - the kind-enum and scalar-trivia rows of the projection-facts table.
+
+   It differs from master in two places, and both are superseded. A keyword's presence is a plain `bool` (the maintainer, 2026-10-12, which replaces master's `Option<bool>` before 3b starts), not an `Option` of the one-literal choice. Inner gaps are no longer an attribute: 3a's ruling 9 removed the named inner gaps, and `inner` is a childless node's side. Nothing in the patch is folded into the spec.
+5. **The record-layout ruling** (the maintainer, 2026-10-10). Codegen is the single source of each slot's word offset and width, stamped into the Rust attributes (`words = …`, `word = …`) and into the generated TypeScript accessors as literal offsets. The derive checks fit and derives nothing, and there is no runtime layout table. This is Task 7.
+6. **The eager-built-records option** (the relative-coordinates spec's ruling 6 and its § The record wire, which supersede the shared-arena spec's ruling 5). Built nodes are written into records as they are built, their members read and write the records directly, and the object encoder is retired. Task 10 measures it against fields encoded at render (item 1):
+   - build cost per node and heap per built node;
+   - render decode;
+   - buffer growth, and whether compaction is needed;
+   - an in-place setter against a copying one on a child two parents share;
+   - reclaiming records nothing names.
+
+   3b-ii's outline holds the semantics the maintainer then rules on.
+7. **The typed model's name** (`…Record`, `…Data` or another). Decided in 3b-ii, once it is settled whether the structs stay structs or become views over records. Nothing is renamed in 3b-i.
+8. **The review probes of 3a's last rounds** (`scratchpad/backup/wt-arena.scratch-r15.tgz` and `wt-arena-base.scratch-r15.tgz`).
+   - **Kept:** one is a measuring tool, now `docs/superpowers/probes/2026-10-11-unit-alignment/reversal-cost.mts`: a rebuilt list's unit alignment, time and heap against list length.
+   - **Dropped:** the other sixteen are behavior repros, each now pinned by a committed test (`trivia-ownership.test.ts`, `unit-edges.test.ts`, `written-trivia.test.ts`, `root-edges.test.ts`).
+
+### Corrections found while detailing
+
+- **The duplicate choices moved.** The census (`transport-types-census.py`) on master counts choices whose variant sets repeat another's:
+  - rust: 250 choices over 239 variant sets;
+  - typescript: 302 over 265;
+  - python: 169 over 159.
+
+  That is 11, 37 and 10 duplicates, against the outline's 3, 32 and 3. No two generated bodies are identical once names are normalized, so the duplicates differ in a name or an attribute. Task 7 states which differences are facts (a blank arm, a `display` claim) and which are naming. It declares each content once before stamping a layout.
+- **Match-all in the engine is not one call.** `$descendants` returns a JSON batch of coordinates (`engine.descendants`), and each match is then read by its own `engine.read` (`packages/common/src/engine.ts`, `tree.query.descendants` and `readAt`). The probe's "every match in one call" has no engine counterpart on the object wire. Task 8 adds one for both wires (ruling 2).
+- **A transport's `$_layout` is wire too.** `TransportLayout` crosses with every node: `edges`, `gap`, `flank`, `at`, `span`, `sides`, `changed`, `units`, and, on built nodes, `trivia`. The probe had none of it. The record layout must place it, which Task 7 does as a side record.
+- **Built-node trivia today** is written by `setTriviaData` (`packages/common/src/utils.ts`, from `rebuilt` and the trivia writer `write`). It crosses as `TransportLayout::trivia` (`TransportTrivia`, `TriviaEntry`). 3b-ii moves it into records.
+- **The shared-arena spec's § What the JavaScript wrap keeps** still says a built node holds fields encoded at render (its ruling 5). The ruling's own note records the supersession, and 3b-ii updates the section when the maintainer rules on the eager option.
+
+### Rulings (the maintainer, 2026-10-12)
+
+1. **String storage.** A record stays fixed-size, so text lives outside it.
+   1. **Parsed leaf text: UTF-16 offsets in the record.** The record stores the leaf's byte span, which the native render slices from the source as it does today, and its UTF-16 offsets (two more words). The reader converts byte offsets through a per-tree index of the source's non-ASCII positions, which is empty for an ASCII source. JavaScript's `$text` slices the source string it already holds (`tree.source`): no native call, no decode, and the string shares the source's storage.
+   2. **Built and edited leaf text: a per-arena string table.** UTF-8 is written once into the arena's byte buffer (`TextEncoder.encodeInto`), deduplicated by a `Map` from string to offset. Records reference it by offset and length, and the native render reads it in place. A built node's `$text` stays the builder's string.
+   3. **No JavaScript-side interning of `$text`.** Ruling 1.1 creates no napi strings, so there is nothing to intern unless Task 10's numbers show otherwise.
+
+   Task 10 still times the alternatives as reference rows: for parsed text, a native call on first access cached on the wrapper, and `TextDecoder` over the source's UTF-8 bytes shared as an `ArrayBuffer`; for built text, a JavaScript array of strings that records index, crossing at each render. The designs are the ones above.
+2. **The match-all row: both wires get a batch read** (`read_many(tree, indexes, depth, wire)`). The object wire returns an array of transports, and the record wire one buffer range. The gate row compares those, as the probe did, and today's path (coordinates, then a read each) is timed beside them.
+3. **Built-node storage: both are measured.** Eager built records (prior art 6), on a generated builder for rust `function_item` and its slot kinds, beside today's built objects encoded at render by the 2026-10-01 encoder (prior art 1). The rows are build time and heap per built node, render decode, and the native call per slot value over the parity fixtures.
+4. **A failed gate row stays unmerged** on `feat/records`, with the verdict, for the maintainer. Nothing is reverted.
+
+### Interfaces
+
+Shared by Tasks 7 to 10. These are proposals that Task 7 fixes as codegen facts. Each width is stamped, never computed by the derive.
+
+- **The arena.** One per tree, for parsed records, plus one per engine, for built records (ruling 3).
+  - An arena is a list of fixed-size chunks of `u32` words. No record straddles a chunk, and a chunk never moves, so a view held across a later read still reads its record.
+  - Each chunk crosses to JavaScript once, as an external `ArrayBuffer` over native memory, finalized with its arena.
+  - A record's address is (chunk, word): one `f64`-safe number, `chunk * 2^20 + word`.
+- **A record.** Word 0 is the kind's grammar id and word 1 the side record's address (0 for none). Next come the kind's presence words, if it has presence slots, and then each other slot's cell at its stamped `word`.
+  - A parsed record's side record carries `at` (tree, index, end) and the layout facts the reader stamps. A built record's carries `edges`, `gap`, `flank`, `sides`, `changed` and `units`, and, from 3b-ii, its trivia.
+  - The record names its tree once, on the arena, so a parsed cell names no tree.
+- **A cell.** Its width is stamped per slot by codegen, from the widest form the slot admits: six words for a parsed leaf (tag, kind, byte start and end, UTF-16 start and end, by ruling 1.1), and five for a coordinate, as the probe's cell. Tags:
+  - 0, absent;
+  - 1, a coordinate (kind, index, start, end);
+  - 2, a parsed leaf (kind, byte span, UTF-16 offsets);
+  - 3, a child record (kind, address);
+  - 4, a unit (kind);
+  - 5, a built leaf (kind, string-table offset and length, by ruling 1.2).
+
+  A presence slot has no cell. Under the maintainer's 2026-10-12 ruling, a keyword presence is a plain `bool`, false when absent. So it is one bit, at a stamped `bit` in one of the record's presence words: set when the keyword is present, clear otherwise. Presence has no absent state to encode.
+
+  A list cell is (offset, length) into a run of cells in the same chunk, or in a continuation chunk named by the run's first word.
+- **The derive.** It gains a record writer and a record reader per declaration, from the stamped attributes. Both check fit: a field whose type does not fit its stamped words is a compile error naming the field and the widths. The object codec stays until 3b-ii.
+- **The napi surface, beside today's.**
+  - `read_record(tree, index, depth) -> address`;
+  - `read_many(tree, indexes, depth, wire)` (ruling 2);
+  - `render_record(address, tree, options) -> string`;
+  - `chunk(arena, n) -> ArrayBuffer`.
+
+  The existing `read` and `render` are unchanged.
+
+**Terms.** A *record* is a kind's fixed words in an arena. A *cell* is one slot's words within it. A *view* is the parsed node's literal over a record: its members, and the record's address in place of the transport's fields. The *object wire* is today's napi objects.
+
+**Gates for every task.**
+- Untouched renders and every render fixture, dogfood render and byte-exact read case are unchanged. The object wire is the only wire the public engine uses until 3b-ii.
+- Validation rows are unchanged, compared by number (`validate:history`).
+- `cargo test --workspace --no-default-features`, clippy (`--workspace --all-targets --no-default-features -D warnings`), the full vitest suite, type-check, lint and `scripts/comment-slop-check.sh --working`.
+
+**Review Focus (3b-i).**
+1. **Malformed words** (the shared-arena spec's Verification 10). Arbitrary words in a chunk are refused or rendered, and none reads outside its chunk or aborts. Test: Task 8, a fuzzed decode over every kind.
+2. **A view held across arena growth.** A node read before a later read adds a chunk still reads its own record, and two views of one record read the same cells. Test: Task 9.
+3. **Text offsets in a non-ASCII or CRLF source.** A leaf after a multi-byte character, and one after a `\r\n`, reads the same `$text` on both wires. Test: Task 9, in python, rust and typescript.
+4. **A disposed tree.** A view whose tree was disposed is refused with the tree named, never read as stale words (Verification 6). Test: Task 9.
+5. **Read parity.** For every corpus node, the record read decodes to the transport the object wire reads: units, blank arms (id 0), presence bits (an absent keyword reads `false`), alias envelopes, token interiors and list owners included. Test: Task 8, over every corpus entry of the five grammars.
+
+### Task 6: The view's construction, in the probe
+
+**Files:** in `docs/superpowers/probes/2026-10-01-shared-arena/transport/`, a `--view <form>` flag on `measure-proto.mts`, and its README's results.
+
+The heap row is the gate's hardest: a view over a record held 6 871 B a node against the objects' 4 949 B with the same members. With fewer members, as first committed, it held 3 702 B. Members are closures in the node's literal (the standing rulings: no class or prototype), so the forms differ only in how the literal is built. The probe gets the engine's member set from master's generated wrap:
+- an accessor per slot;
+- a `$with` object with a setter per slot;
+- `$render`;
+- `$trivia` with `leading` and `trailing`;
+- `$query`, `$snapshot` and `$engine`.
+
+It measures each form on both inputs, three rounds alternating, idle-gated. Each form gets the heap per node and the one-node-per-call and batch read times. The forms:
+- the view as the probe has it now;
+- accessors as methods instead of getters (a getter in a literal allocates an accessor pair per property per instance);
+- the record's address as one number in place of a buffer and offset;
+- `$with` and `$trivia` built with the node's literal, against built on first access by a method that caches them on the node (the closures stay in a literal, as the rulings require);
+- keys in one fixed order across kinds, so views of one kind share a hidden class.
+
+**Done when:** a form holds no more heap per node than the object form, with the same members, and reads no slower. If none does, the step stops here: the table and the closest form go to the maintainer.
+
+### Task 7: One source for a record's layout
+
+**Files:**
+- Modify: `packages/codegen/src/emitters/render-module.ts` (the transport declarations' attributes) and `packages/codegen/src/emitters/transport-projection.ts`, plus a new model pass beside them for the layout.
+- Generated: `rust/crates/sittir-*/src/render/transport.rs`, and a per-grammar `records.ts` of accessor offsets in `packages/<lang>/src/`.
+
+**Steps.**
+1. Each choice is declared once for its content (Corrections). A duplicate that differs only in its name becomes one declaration. One that differs in a fact keeps its own and is listed in the glossary entry with the fact.
+2. A model pass computes once, per kind, each slot's `word` and cell width, each presence slot's `bit` and the kind's `words`. Per list slot, it computes the run's cell width.
+3. The emitters stamp the results: `words = …` on `#[transport]`, `word = …` on `#[slot]` (`bit = …` on a presence slot), and the same numbers as literal offsets in `records.ts`.
+4. The derive parses the attributes and checks them: each slot's type fits its width, a presence slot is a `bool` with a `bit`, no two slots share a word or a bit, and the last slot ends within `words`. Each check is a compile error naming the field. The derive emits nothing else from them yet.
+
+**Gate:** generated outputs change only in the new attributes, the deduplicated choices and the new `records.ts`. Every render, fixture and validation row is unchanged. A test proves the derive's fit check refuses a field one word short.
+
+### Task 8: The record codec in the derive, beside the object codec
+
+**Files:**
+- Modify: `rust/crates/sittir-transport-macros/src/{codec.rs,expand.rs,attrs.rs}`; in `rust/crates/sittir-core/src/`, a new `arena.rs` and the napi methods in `napi_engine.rs`.
+- Test: macro tests, `rust/crates/sittir-core/tests/`, and `sittir-parity-tests`.
+
+**Steps.**
+1. Write `arena.rs` (Interfaces): chunks, addresses, the side record, the string table of ruling 1.2, and the per-tree non-ASCII index of ruling 1.1.
+2. The derive expands, per declaration:
+   - a record writer (transport → records, children before parents);
+   - a record reader (records → transport), which bounds-checks every word it reads and refuses any malformed cell;
+   - the cell writer and reader per choice.
+3. Add the napi methods beside today's (Interfaces). `read_many` takes a `wire` argument (ruling 2).
+4. Tests:
+   - each kind's macro expansion;
+   - read parity over every corpus entry of the five grammars: `decode(read_record(i))` equals `read(i)`;
+   - the fuzzed decode (Review Focus 1);
+   - a render of `render_record` equal to `render` for every parity fixture.
+
+### Task 9: JavaScript over records
+
+**Files:**
+- Modify: `packages/codegen/src/emitters/wrap.ts`, which emits a record-backed wrap per kind beside today's, in the form Task 6 chose.
+- Modify: `packages/common/src/engine.ts`: an internal switch, never part of the public API, that picks the wire for the measurement scripts.
+- Generated: `packages/<lang>/src/wrap.ts`.
+
+**Steps.**
+1. Each accessor reads its cell through the stamped offsets in `records.ts` and hydrates a coordinate cell as today's accessor does.
+2. `$text` slices `tree.source` by the record's UTF-16 offsets (ruling 1.1). A built leaf keeps the builder's string.
+3. The record-backed wraps are tested against today's: every corpus node's accessors, kinds and `$text` are equal on both wires (Review Focus 3). A view held across arena growth (Review Focus 2) and a disposed tree's view (Review Focus 4) are pinned.
+4. For ruling 3, a generated eager builder for rust `function_item` and its slot kinds writes records as it builds. It is measurement code, in the probe folder, not in the grammar package.
+
+### Task 10: The gate, measured in the engine
+
+**Files:** create `docs/superpowers/probes/2026-10-12-record-wire/` with its `README.md`, and flags on the transport scripts (prior art 3).
+
+**The like-for-like set.** Both wires are in one build and measured in one sitting, rounds alternating, each run gated by `timing/idle.sh`, in copies outside any watched tree. The inputs are `transport/inputs/`. Rows:
+- **read, one node per call,** crossing and members: rust `function_item` on `engine.rs` and `spacing.rs`, plus typescript's statements on `create-engine.ts`;
+- **read, every match in one call:** the same matches through `read_many`, with today's coordinates-then-reads path beside them (ruling 2);
+- **retained heap per node,** members attached (`function-item-heap.mts`'s population, both wires);
+- **render decode per node:** native decode of a transport from napi objects (`FromNapiValue`) against from records, timed natively in a measure-only build feature that the published build never enables;
+- **the rebuilt render's native call per slot value** over the parity fixtures (`measure-rebuilt.mts`, `layout-rounds.sh`);
+- **`$text` by the ruled design, with the alternatives as reference rows** (ruling 1): time per access, and heap per leaf over a whole-tree walk;
+- **built nodes, eager records and encoded at render** (ruling 3): build time and heap per node, decode, buffer growth over 10 000 builds, and the in-place against copying setter on a shared child.
+
+**The verdict.** Each gate row, records against objects, is marked met or not met with its numbers. The README states the verdict. The branch's PR opens with it, and brainstorm takes it to the maintainer. A row that is not met stops the step with the branch intact.
+
+## Outline: 3b-ii, past the gate
+
+Detailed against master once the maintainer rules on Task 10's verdict.
+
+- **The cutover.** Records become the only wire.
+  - A parsed node's literal holds its record's address (the shared-arena spec's ruling 4).
+  - The render functions read through a view over the record, expanded by the derive from the same declaration, and no record is decoded into a struct. Prepare resolves into side arrays keyed by record address, never into records.
+  - The derive's object codec, the `#[napi(object)]` attributes and every `FromNapiValue` and `ToNapiValue` impl go, along with `toTransportData` and the napi decode of `SlotValue`.
+  - Verification 12 (each crate's compile time, peak memory, binary size and `transport.rs` lines) and Verification 13 (type-check time) are re-taken before and after.
+- **Eager built records,** if the maintainer takes them (prior art 6). Builders append records, children before parents. Members read and write records. `$with` appends a record naming the unchanged children. The two semantics the relative-coordinates spec leaves to this step:
+  - a setter on a child two parents share writes in place or appends a copy;
+  - records nothing names are reclaimed by chunk generation or compaction.
+- **Built nodes' trivia in records** (the trivia-table spec's § 7.1).
+  - A built node's sides move from the node into its side record and travel with it. A write to a built node's side lands in its record, held or not. A built holder keeps nothing for its children. A parsed node placed in a built holder keeps its sides in its tree's table. The render reads trivia from native storage only.
+  - **Retires:** `$_layout.trivia`, `setTriviaData` and the trivia writer's client store; `TransportLayout::trivia`, `TransportTrivia` and `TriviaEntry` with their napi decode.
+- **The typed model's name** (prior art 7). Once the structs are views over records or stay structs, they are renamed across the attribute, `ReadTransport`, `TransportLayout`, the macro crate, the emitters, every generated `…Transport`, and the glossary and specs, in one commit series with no other change.
