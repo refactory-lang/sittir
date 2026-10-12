@@ -17,14 +17,13 @@
  *      per grammar, for each validator the base records (a validator the
  *      change adds has no base). This is what
  *      actually guards regressions; rule 2 below is a coarser tripwire on
- *      top of it. `coverage`/`factoryStorage`/`builtRenderParse`/`from` are exempt
- *      from this floor when the drop is explained by kinds leaving that
- *      grammar's direct-render set (`supertypeKindCount` rising: a kind
- *      losing its own render/factory path by becoming a supertype; or
- *      `hoistedKindCount` falling: a hoisted kind leaving the grammar)
- *      AND that validator's own fail count did not rise; a `from` drop
- *      may be no larger than the number that left — see
- *      `departureExplainsDrop`. The
+ *      top of it. A drop is a regression when the validator's fail count
+ *      (`total - pass`) rises, or when its total fell by more than the
+ *      kinds that left the grammar explain (the fall in the stamped
+ *      `kindCount`): `coverage` and `from` may shrink by one per departed
+ *      kind, `factoryStorage` and `builtRenderParse` (several cases per
+ *      kind) by the base's average cases per kind for each, and `roundtrip` (corpus rows)
+ *      only through a declared counter change. The
  *      aggregate `totals.pass`/`totals.fail`/`totals.total` relationship
  *      is rule 2/3's job, not re-checked here.
  *   2. Total drop — `totals.total` decreased AND `totals.fail` changed
@@ -371,7 +370,7 @@ function validateBaselineShape(b: unknown, label: string): RegressionVerdict | n
 				details: { path: gPath, after: ge }
 			};
 		}
-		for (const key of ['hoistedKindCount', 'supertypeKindCount'] as const) {
+		for (const key of ['kindCount'] as const) {
 			const count = (ge as Record<string, unknown>)[key];
 			if (count !== undefined && !(typeof count === 'number' && Number.isInteger(count) && count >= 0)) {
 				return {
@@ -445,62 +444,56 @@ function validateBaselineShape(b: unknown, label: string): RegressionVerdict | n
 // ---------------------------------------------------------------------------
 
 /**
- * `coverage`, `factoryStorage` and `builtRenderParse` are validators whose
- * denominator is tied to how many kinds have their own direct render
- * path: `validate-template-coverage`'s own `subtypes.length > 0` guard
- * skips a supertype (no template of its own to check), and a supertype
- * likewise has no raw builder for `factoryStorage` or `builtRenderParse` to exercise. A kind
- * crossing into that guard, or a hoisted kind leaving the grammar,
- * shrinks the denominator without touching the pass RATE — it isn't a
- * new failure.
+ * The validators whose total is tied to the grammar's kinds, each with the
+ * largest total drop a given number of departed kinds explains. `coverage`
+ * and `from` have one case per kind. `factoryStorage` and `builtRenderParse`
+ * have several, so a departed kind explains the base's average cases per
+ * kind (`casesPerKind`, rounded up) and no more: losing the cases of kinds
+ * that still exist is not explained by an unrelated kind leaving. `roundtrip`
+ * counts corpus rows, which no kind leaving explains: its total may shrink
+ * only through a declared counter change.
  */
-const DEPARTURE_EXPLAINED_DROP: Partial<Record<ValidatorName, (departedKinds: number) => number>> = {
-	coverage: () => Infinity,
-	factoryStorage: () => Infinity,
-	builtRenderParse: () => Infinity,
-	from: (departedKinds) => departedKinds
+const KIND_DENOMINATED_TOTAL: Partial<Record<ValidatorName, (departedKinds: number, casesPerKind: number) => number>> = {
+	coverage: (departedKinds) => departedKinds,
+	from: (departedKinds) => departedKinds,
+	factoryStorage: (departedKinds, casesPerKind) => departedKinds * casesPerKind,
+	builtRenderParse: (departedKinds, casesPerKind) => departedKinds * casesPerKind
 };
 
 /**
- * How many kinds left the grammar's direct-render set between two
- * baselines, at least: the larger of the rise in `supertypeKindCount`
- * and the fall in `hoistedKindCount`. A seated kind that becomes a
- * supertype moves both counts, so they are not summed. A base file
- * committed before `supertypeKindCount` existed reads as 0 — only the
- * rise matters. A fall cannot be read that way, so a base without
- * `hoistedKindCount` contributes nothing.
+ * How many kinds left the grammar between the two baselines: the fall in
+ * its stamped `kindCount`. A baseline that never recorded the count, on
+ * either side, explains nothing.
  */
 function departedKindCount(baseGrammar: GrammarEntry, headGrammar: GrammarEntry): number {
-	const supertypeRise = (headGrammar.supertypeKindCount ?? 0) - (baseGrammar.supertypeKindCount ?? 0);
-	const hoistedFall =
-		baseGrammar.hoistedKindCount === undefined || headGrammar.hoistedKindCount === undefined
-			? 0
-			: baseGrammar.hoistedKindCount - headGrammar.hoistedKindCount;
-	return Math.max(supertypeRise, hoistedFall, 0);
+	if (baseGrammar.kindCount === undefined || headGrammar.kindCount === undefined) return 0;
+	return Math.max(baseGrammar.kindCount - headGrammar.kindCount, 0);
 }
 
 /**
  * Whether a drop in one metric (`pass` or, for a roundtrip validator,
- * `astMatchPass`) of `vName` for this grammar is explained by kinds
- * leaving the direct-render set rather than a new failure: at least one
- * kind left (`departedKindCount`), AND the validator's own fail count
- * (`total - metric`) did not rise — the drop is fully accounted for by
- * fewer cases needing that path, not by any of them going red.
+ * `astMatchPass`) of `vName` is no new failure: the validator's fail count
+ * (`total - metric`) did not rise, and its total fell by no more than the
+ * kinds that left the grammar explain. A deleted corpus case or a lost
+ * coverage row for a kind that still exists leaves the fail count alone and
+ * the total smaller, so the departure bound is what stops it passing.
  */
-function departureExplainsDrop(
+function dropIsExplained(
 	baseGrammar: GrammarEntry,
 	headGrammar: GrammarEntry,
 	vName: ValidatorName,
 	metric: 'pass' | 'astMatchPass'
 ): boolean {
-	const largestExplainedDrop = DEPARTURE_EXPLAINED_DROP[vName];
-	if (largestExplainedDrop === undefined) return false;
-	const departed = departedKindCount(baseGrammar, headGrammar);
-	if (departed <= 0) return false;
 	const b = baseGrammar.validators[vName] as RoundtripResult;
 	const h = headGrammar.validators[vName] as RoundtripResult;
-	if (b[metric] - h[metric] > largestExplainedDrop(departed)) return false;
-	return h.total - h[metric] <= b.total - b[metric];
+	if (h.total - h[metric] > b.total - b[metric]) return false;
+	const totalDrop = Math.max(b.total - h.total, 0);
+	if (totalDrop === 0) return true;
+	const largestExplainedDrop = KIND_DENOMINATED_TOTAL[vName];
+	if (largestExplainedDrop === undefined) return false;
+	const departed = departedKindCount(baseGrammar, headGrammar);
+	if (departed <= 0 || baseGrammar.kindCount === undefined) return false;
+	return totalDrop <= largestExplainedDrop(departed, Math.ceil(b.total / baseGrammar.kindCount));
 }
 
 function passCountFail(path: string, before: number, after: number): RegressionVerdict {
@@ -553,14 +546,14 @@ function checkPassCounts(base: BackendBaseline, head: BackendBaseline): Regressi
 			const b = baseGrammar.validators[vName] as ValidatorResult;
 			const h = headGrammar.validators[vName] as ValidatorResult;
 			const path = `grammars.${g}.validators.${vName}.pass`;
-			if (h.pass < b.pass && !departureExplainsDrop(baseGrammar, headGrammar, vName, 'pass')) {
+			if (h.pass < b.pass && !dropIsExplained(baseGrammar, headGrammar, vName, 'pass')) {
 				return passCountFail(path, b.pass, h.pass);
 			}
 			if (ROUNDTRIP_VALIDATORS.includes(vName)) {
 				const br = b as RoundtripResult;
 				const hr = h as RoundtripResult;
 				const astPath = `grammars.${g}.validators.${vName}.astMatchPass`;
-				if (hr.astMatchPass < br.astMatchPass && !departureExplainsDrop(baseGrammar, headGrammar, vName, 'astMatchPass')) {
+				if (hr.astMatchPass < br.astMatchPass && !dropIsExplained(baseGrammar, headGrammar, vName, 'astMatchPass')) {
 					return passCountFail(astPath, br.astMatchPass, hr.astMatchPass);
 				}
 			}
