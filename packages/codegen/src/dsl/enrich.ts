@@ -139,7 +139,8 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 		extras: effectiveExtras(base, hasWrapper, authored.extras),
 		word: extractWordName(grammarMeta?.word),
 		wordMatcher: compileWordMatcher(extractWordName(grammarMeta?.word), rulesBag),
-		authoredGroupBodies: authored.groupBodies ?? []
+		authoredGroupBodies: authored.groupBodies ?? [],
+		priorOrigins: getEnrichRuleOrigins(baseInput)
 	});
 	const { kwRules, clauseGroupRules, ruleOrigins } = ctx;
 	const enrichedRules: Record<string, Rule> = {};
@@ -579,7 +580,7 @@ function applyChoiceArmFieldWrap(ruleName: string, rule: Rule, ctx: EnrichCtx): 
 		let armChanged = false;
 		const newSeqMembers = seqMembers.map((m, i) => {
 			if (separatedListTail(seqMembers, i, ctx.sourceSymbols)) return m;
-			const t = detectSymbolTarget(m);
+			const t = detectSymbolTarget(m, ctx.isTextToken);
 			if (!t) return m;
 			if (!isBareShapeTarget(m, t)) return m;
 			let fieldName = t.name;
@@ -623,7 +624,7 @@ function collectAllFieldNamesDeep(rule: Rule, into: Set<string>): void {
 	});
 }
 
-function isAllArmsNodeShaped(choiceRule: Rule): boolean {
+function isAllArmsNodeShaped(choiceRule: Rule, isTextToken: TextTokenTest): boolean {
 	const members = (choiceRule as unknown as { members: readonly Rule[] }).members;
 	return members.every((arm) => {
 		let cursor = arm;
@@ -631,7 +632,8 @@ function isAllArmsNodeShaped(choiceRule: Rule): boolean {
 			cursor = (cursor as unknown as { content: Rule }).content;
 		}
 		const t = (cursor as { type: string }).type;
-		return t === 'SYMBOL' || t === 'ALIAS';
+		if (t === 'SYMBOL') return !isTextToken((cursor as unknown as { name: string }).name);
+		return t === 'ALIAS';
 	});
 }
 
@@ -655,7 +657,12 @@ function literalArmNameHint(text: string): string {
 	return LITERAL_ARM_NAMES[text] ?? text.replace(/[^\w]+/g, '');
 }
 
-function promoteLiteralChoiceArms(choiceRule: Rule, mergedRules: Record<string, Rule>, ruleOrigins: Map<string, EnrichRuleOrigin>): Rule | null {
+function promoteLiteralChoiceArms(
+	choiceRule: Rule,
+	mergedRules: Record<string, Rule>,
+	ruleOrigins: Map<string, EnrichRuleOrigin>,
+	isTextToken: TextTokenTest
+): Rule | null {
 	const members = (choiceRule as unknown as { members: readonly Rule[] }).members;
 	let changed = false;
 	let declined = false;
@@ -667,6 +674,10 @@ function promoteLiteralChoiceArms(choiceRule: Rule, mergedRules: Record<string, 
 			cursor = (cursor as unknown as { content: Rule }).content;
 		}
 		const t = (cursor as { type: string }).type;
+		if (t === 'SYMBOL' && isTextToken((cursor as unknown as { name: string }).name)) {
+			declined = true;
+			return arm;
+		}
 		if (!isStringType(t) && t !== 'PATTERN') return arm;
 		const text = (cursor as unknown as { value: string }).value;
 		const nameHint = literalArmNameHint(text);
@@ -692,7 +703,7 @@ function pluralizeFieldName(name: string): string {
 	return name + 's';
 }
 
-function isHiddenPureUnionRule(name: string, mergedRules: Record<string, Rule>): boolean {
+function isHiddenPureUnionRule(name: string, mergedRules: Record<string, Rule>, isTextToken: TextTokenTest): boolean {
 	if (!name.startsWith('_')) return false;
 	const target = mergedRules[name];
 	if (!target) return false;
@@ -700,15 +711,16 @@ function isHiddenPureUnionRule(name: string, mergedRules: Record<string, Rule>):
 	while (isPrecWrapper(core as { type: string })) {
 		core = (core as unknown as { content: Rule }).content;
 	}
-	return isChoiceType((core as { type: string }).type) && isAllArmsNodeShaped(core);
+	return isChoiceType((core as { type: string }).type) && isAllArmsNodeShaped(core, isTextToken);
 }
 
 function isEligibleFieldReferent(
 	name: string,
 	mergedRules: Record<string, Rule>,
-	supertypeNames: ReadonlySet<string>
+	supertypeNames: ReadonlySet<string>,
+	isTextToken: TextTokenTest
 ): boolean {
-	return supertypeNames.has(name) || isHiddenPureUnionRule(name, mergedRules);
+	return supertypeNames.has(name) || isHiddenPureUnionRule(name, mergedRules, isTextToken);
 }
 
 function sameElementShape(a: Rule, b: Rule): boolean {
@@ -868,7 +880,7 @@ function applyNodeChoiceFieldWrap(ruleName: string, rule: Rule, mergedRules: Rec
 		if (isFieldType((r as { type: string }).type) || isLexedBoundary(r)) return;
 		if (isSymbolType((r as { type: string }).type)) {
 			const name = (r as unknown as { name: string }).name;
-			if (isEligibleFieldReferent(name, mergedRules, supertypeNames)) {
+			if (isEligibleFieldReferent(name, mergedRules, supertypeNames, ctx.isTextToken)) {
 				refCounts.set(name, (refCounts.get(name) ?? 0) + 1);
 			}
 			return;
@@ -912,7 +924,7 @@ function applyNodeChoiceFieldWrap(ruleName: string, rule: Rule, mergedRules: Rec
 			}
 			if (isSymbolType((inner as { type: string }).type)) {
 				const refName = (inner as unknown as { name: string }).name;
-				if (isEligibleFieldReferent(refName, mergedRules, supertypeNames) && refCounts.get(refName) === 1) {
+				if (isEligibleFieldReferent(refName, mergedRules, supertypeNames, ctx.isTextToken) && refCounts.get(refName) === 1) {
 					changed = true;
 					const fieldName = pluralizeFieldName(refName.replace(/^_/, ''));
 					return makeField(reserve(fieldName, scope), rebuildRepeat(inner));
@@ -921,13 +933,13 @@ function applyNodeChoiceFieldWrap(ruleName: string, rule: Rule, mergedRules: Rec
 			let visitedInner = visit(inner, true, scope);
 			if (
 				isChoiceType((visitedInner as { type: string }).type) &&
-				!isAllArmsNodeShaped(visitedInner) &&
+				!isAllArmsNodeShaped(visitedInner, ctx.isTextToken) &&
 				isAllArmsNodeOrLiteralShaped(visitedInner)
 			) {
-				const promoted = promoteLiteralChoiceArms(visitedInner, mergedRules, ctx.ruleOrigins);
+				const promoted = promoteLiteralChoiceArms(visitedInner, mergedRules, ctx.ruleOrigins, ctx.isTextToken);
 				if (promoted) visitedInner = promoted;
 			}
-			if (isChoiceType((visitedInner as { type: string }).type) && isAllArmsNodeShaped(visitedInner)) {
+			if (isChoiceType((visitedInner as { type: string }).type) && isAllArmsNodeShaped(visitedInner, ctx.isTextToken)) {
 				changed = true;
 				return makeField(reserve(elementSlotName(visitedInner, 'repeat', ctx.ruleOrigins), scope), rebuildRepeat(visitedInner));
 			}
@@ -1238,6 +1250,8 @@ interface SymbolTarget {
 	wrap(fieldNode: Rule): Rule;
 }
 
+type TextTokenTest = (name: string) => boolean;
+
 function isBareShapeTarget(member: Rule, target: SymbolTarget): boolean {
 	return target.symbolRule === member;
 }
@@ -1250,10 +1264,11 @@ function isGroupLiftRef(rule: unknown): boolean {
 	return (rule as { metadata?: { symbolSource?: string } } | null | undefined)?.metadata?.symbolSource === 'group-lift';
 }
 
-function detectSymbolTarget(member: Rule): SymbolTarget | null {
+function detectSymbolTarget(member: Rule, isTextToken: TextTokenTest): SymbolTarget | null {
 	if (isGroupLiftRef(member)) return null;
 	if (isSymbolType(member.type) && typeof (member as { name?: unknown }).name === 'string') {
 		const name = (member as { name: string }).name;
+		if (isTextToken(name)) return null;
 		return {
 			name,
 			symbolRule: member,
@@ -1265,6 +1280,7 @@ function detectSymbolTarget(member: Rule): SymbolTarget | null {
 	const innerN = normalizeMember(inner);
 	if (isGroupLiftRef(inner) || isGroupLiftRef(innerN)) return null;
 	if (isSymbolType(innerN.type) && typeof innerN.name === 'string') {
+		if (isTextToken(innerN.name)) return null;
 		return {
 			name: innerN.name,
 			symbolRule: inner,
@@ -1278,6 +1294,7 @@ function detectSymbolTarget(member: Rule): SymbolTarget | null {
 		const sn = normalizeMember(seqMembers[i]!);
 		if (isGroupLiftRef(seqMembers[i]) || isGroupLiftRef(sn)) return null;
 		if (isSymbolType(sn.type) && typeof sn.name === 'string') {
+			if (isTextToken(sn.name)) continue;
 			if (symIdx !== -1) return null;
 			symIdx = i;
 		} else if (!isStringType(sn.type) && sn.type !== 'PATTERN') {
@@ -1338,7 +1355,7 @@ function countSymbolsInRepeat(
 }
 
 function applySymbolToField(ruleName: string, rule: Rule, ctx: EnrichCtx): Rule {
-	const { supertypeNames, sourceSymbols: symbols } = ctx;
+	const { supertypeNames, sourceSymbols: symbols, isTextToken } = ctx;
 	if (ruleName.startsWith('_')) return rule;
 	const precStack: Rule[] = [];
 	let cursor: Rule = rule;
@@ -1348,12 +1365,12 @@ function applySymbolToField(ruleName: string, rule: Rule, ctx: EnrichCtx): Rule 
 	}
 	if (isHoistedBody(rule) || isHoistedBody(cursor)) return rule;
 	if (!isSeqType(cursor.type)) {
-		return tryPromoteInRepeatSeq(ruleName, rule, cursor, precStack, supertypeNames, symbols);
+		return tryPromoteInRepeatSeq(ruleName, rule, cursor, precStack, supertypeNames, symbols, isTextToken);
 	}
 	const members = (cursor as unknown as { members: Rule[] }).members;
 	const directKindCounts = new Map<string, number>();
 	const targetByIdx: Array<SymbolTarget | null> = members.map((m) => {
-		const t = detectSymbolTarget(m);
+		const t = detectSymbolTarget(m, isTextToken);
 		if (!t) return null;
 		if (t.name.startsWith('_') && !isBareShapeTarget(m, t)) return null;
 		return t;
@@ -1398,7 +1415,7 @@ function applySymbolToField(ruleName: string, rule: Rule, ctx: EnrichCtx): Rule 
 	for (const [k, v] of nestedRepeatCounts) {
 		combinedKindCounts.set(k, (combinedKindCounts.get(k) ?? 0) + v);
 	}
-	const finalMembers = promoteInsideRepeatMembers(ruleName, newMembers, supertypeNames, symbols, existing, combinedKindCounts);
+	const finalMembers = promoteInsideRepeatMembers(ruleName, newMembers, supertypeNames, symbols, isTextToken, existing, combinedKindCounts);
 	if (finalMembers === newMembers && !changed) return rule;
 	let result: Rule = { ...cursor, members: finalMembers } as Rule;
 	for (let i = precStack.length - 1; i >= 0; i--) {
@@ -1412,12 +1429,13 @@ function promoteInsideRepeatMembers(
 	members: Rule[],
 	supertypeNames: ReadonlySet<string>,
 	symbols: SymbolSource,
+	isTextToken: TextTokenTest,
 	existing: Set<string>,
 	outerKindCounts: Map<string, number>
 ): Rule[] {
 	let anyRepeatChanged = false;
 	const result = members.map((m) => {
-		const rebuilt = tryPromoteInRepeatMember(ruleName, m, supertypeNames, symbols, existing, outerKindCounts);
+		const rebuilt = tryPromoteInRepeatMember(ruleName, m, supertypeNames, symbols, isTextToken, existing, outerKindCounts);
 		if (rebuilt === null) return m;
 		anyRepeatChanged = true;
 		return rebuilt;
@@ -1431,6 +1449,7 @@ function tryPromoteInRepeatMember(
 	member: Rule,
 	supertypeNames: ReadonlySet<string>,
 	symbols: SymbolSource,
+	isTextToken: TextTokenTest,
 	existing: Set<string>,
 	outerKindCounts: Map<string, number>
 ): Rule | null {
@@ -1452,7 +1471,7 @@ function tryPromoteInRepeatMember(
 
 	const innerMembers = (inner as unknown as { members: Rule[] }).members;
 	const innerTargets: Array<SymbolTarget | null> = innerMembers.map((m) => {
-		const t = detectSymbolTarget(m);
+		const t = detectSymbolTarget(m, isTextToken);
 		if (!t) return null;
 		if (t.name.startsWith('_') && !isBareShapeTarget(m, t)) return null;
 		return t;
@@ -1519,7 +1538,8 @@ function tryPromoteInRepeatSeq(
 	cursor: Rule,
 	outerPrecStack: Rule[],
 	supertypeNames: ReadonlySet<string>,
-	symbols: SymbolSource
+	symbols: SymbolSource,
+	isTextToken: TextTokenTest
 ): Rule {
 	if (!isRepeatType(cursor.type)) return rule;
 	let inner = (cursor as unknown as { content: Rule }).content;
@@ -1532,7 +1552,7 @@ function tryPromoteInRepeatSeq(
 	const members = (inner as unknown as { members: Rule[] }).members;
 	const directKindCounts = new Map<string, number>();
 	const targetByIdx: Array<SymbolTarget | null> = members.map((m) => {
-		const t = detectSymbolTarget(m);
+		const t = detectSymbolTarget(m, isTextToken);
 		if (!t) return null;
 		if (t.name.startsWith('_') && !isBareShapeTarget(m, t)) return null;
 		return t;

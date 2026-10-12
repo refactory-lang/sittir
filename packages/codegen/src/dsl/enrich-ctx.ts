@@ -12,6 +12,7 @@ export interface EnrichCtxInit {
 	readonly word: string | null;
 	readonly wordMatcher: RegExp | undefined;
 	readonly authoredGroupBodies: readonly RuntimeRule[];
+	readonly priorOrigins: ReadonlyMap<string, EnrichRuleOrigin>;
 }
 
 export function enrichSymbolSource(init: EnrichCtxInit, rules: Readonly<Record<string, Rule>>): SymbolSource {
@@ -50,6 +51,7 @@ interface EnrichCtxFields extends EnrichCtxInit {
 	readonly clauseDedupeMap: Record<string, string>;
 	readonly groupDedupeMap: Record<string, string>;
 	readonly ruleOrigins: Map<string, EnrichRuleOrigin>;
+	readonly isTextToken: (name: string) => boolean;
 	readonly hoist: ClauseHoistState | undefined;
 }
 
@@ -68,6 +70,8 @@ export class EnrichCtx implements EnrichCtxFields {
 	readonly clauseDedupeMap: Record<string, string>;
 	readonly groupDedupeMap: Record<string, string>;
 	readonly ruleOrigins: Map<string, EnrichRuleOrigin>;
+	readonly priorOrigins: ReadonlyMap<string, EnrichRuleOrigin>;
+	readonly isTextToken: (name: string) => boolean;
 	readonly hoist: ClauseHoistState | undefined;
 
 	private constructor(fields: EnrichCtxFields) {
@@ -85,6 +89,8 @@ export class EnrichCtx implements EnrichCtxFields {
 		this.clauseDedupeMap = fields.clauseDedupeMap;
 		this.groupDedupeMap = fields.groupDedupeMap;
 		this.ruleOrigins = fields.ruleOrigins;
+		this.priorOrigins = fields.priorOrigins;
+		this.isTextToken = fields.isTextToken;
 		this.hoist = fields.hoist;
 	}
 
@@ -97,6 +103,7 @@ export class EnrichCtx implements EnrichCtxFields {
 			clauseDedupeMap: {},
 			groupDedupeMap: {},
 			ruleOrigins: new Map(),
+			isTextToken: (name) => init.priorOrigins.get(name)?.kind === 'text',
 			hoist: undefined
 		});
 	}

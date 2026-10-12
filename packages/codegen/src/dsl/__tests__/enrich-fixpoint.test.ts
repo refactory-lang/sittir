@@ -42,4 +42,15 @@ describe('enrich is a fixpoint of its own output', () => {
 		const out = again(grammarWith(rules, { inline: ['_pair'] }));
 		expect(out).toEqual({ names: [], minted: [] });
 	});
+
+	it('does not field-wrap the symbol of a minted text token', () => {
+		const rep = seq(S('$'), S('('), repeat(sym('item')), S(')'), optional(P('[^+*?]+')), choice(S('+'), S('*'), S('?')));
+		const out = again(grammarWith({ rep, item: P('x') }));
+		expect(out).toEqual({ names: [], minted: [] });
+	});
+
+	it('does not list-wrap a repeat over a minted text token', () => {
+		const out = again(grammarWith({ string_content: repeat1(choice(P('[^"\\\\]+'), sym('escape'))), escape: P('\\\\.') }));
+		expect(out).toEqual({ names: [], minted: [] });
+	});
 });
