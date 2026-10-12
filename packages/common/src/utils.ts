@@ -55,8 +55,10 @@ export function queryOf(handle: EngineHandle, node: object): object {
 /**
  * Runs a rebuild inside the node's own engine and hands the source node's trivia on to the
  * node it returns: a built source's stored sides, and the source identity a parsed source's
- * sides are read through. Inner entries can only travel to a node that is still empty: once the
- * rebuild gives the node a child, the comment would sit beside it, so the rebuild refuses.
+ * sides are read through. Inner comments can only travel to a node that is still empty: once the
+ * rebuild gives the node a child, a comment would sit beside it, so the rebuild refuses. Inner
+ * layout (whitespace, depth members, which cross as bare kinds) spelled the inside of an empty
+ * node, so a node that gains a child drops it.
  */
 export function rebuilt<R>(source: object, handle: EngineHandle | undefined, build: () => R): R {
 	const node = source as AnyUntypedNode;
@@ -66,12 +68,14 @@ export function rebuilt<R>(source: object, handle: EngineHandle | undefined, bui
 	carrySource(node, result);
 	const wrappers = handle?.current.trivia.rebuildWrappers;
 	if (wrappers !== undefined) carryRebuiltSlots(node as unknown as Record<string, unknown>, result as unknown as Record<string, unknown>, wrappers);
-	if (!isEmptyNode(result) && sideOf(node, 'inner').length > 0) {
+	const inner = isEmptyNode(result) ? [] : sideOf(node, 'inner');
+	if (inner.some((entry) => typeof entry !== 'number')) {
 		const kind = handle?.current.trivia.kindName(node.$type) ?? String(node.$type);
 		throw new Error(`trivia: ${kind} holds inner comments; move them to leading/trailing on the new child`);
 	}
 	const trivia = triviaOf(node);
-	if (trivia !== undefined) setTriviaData(result, trivia);
+	if (inner.length > 0) setTriviaData(result, { ...trivia, inner: [] });
+	else if (trivia !== undefined) setTriviaData(result, trivia);
 	return result;
 }
 

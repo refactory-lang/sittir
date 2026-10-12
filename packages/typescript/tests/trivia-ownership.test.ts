@@ -84,3 +84,39 @@ describe('unit items keep their own comments in an array', () => {
 		}
 	});
 });
+
+describe('a large list edit aligns its units in linear time and memory', () => {
+	it('carries a unit comment through the reversal of thousands of statements', () => {
+		const count = 2000;
+		const root = ts.parse(`// A\n;\n${Array.from({ length: count }, (_, i) => `x${i}();`).join('\n')}\n`);
+		const reversed = root.$with.statements(...[...root.statements()].reverse()).$render();
+		expect(reversed.startsWith(`x${count - 1}();\n`)).toBe(true);
+		expect(reversed.endsWith('x0();\n// A\n;\n')).toBe(true);
+	});
+});
+
+describe('an empty container whose inside is only layout takes its first child', () => {
+	function bodyOf(source: string) {
+		const [fn] = ts.parse(source).statements();
+		if (fn === undefined || typeof fn === 'number' || !ts.is.functionDeclaration(fn)) throw new Error('expected a function');
+		return { fn, body: fn.body() };
+	}
+	const x = () => ts.build.expressionStatement(ts.build.identifier('x'));
+
+	it('drops the layout of an empty block written across lines', () => {
+		for (const source of ['function f() {\n}\n', 'function f() {\n\n}\n']) {
+			const { fn, body } = bodyOf(source);
+			expect(fn.$with.body(body.$with.statements(x())).$render()).toBe('function f() {\n  x;\n}\n');
+		}
+	});
+
+	it('still refuses a block whose inside holds a comment', () => {
+		const { body } = bodyOf('function f() {\n  // c\n}\n');
+		expect(() => body.$with.statements(x())).toThrow(/holds inner comments/);
+	});
+
+	it('gives a program of blank lines its first statement', () => {
+		expect(ts.parse('\n').$with.statements(x()).$render()).toBe('\nx;\n');
+	});
+});
+

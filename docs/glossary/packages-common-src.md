@@ -391,7 +391,7 @@ The sides of a node's unit children, by slot and item (`TransportLayout.units`):
 
 ### `packages/common/src/transport-data.ts::carriedUnitSides`
 
-A rebuilt node's unit sides, carried from the node it was rebuilt from. A unit variant is stored as its bare kind and has no identity, so each slot's items are aligned with the source node's (`alignedItems`): a unit's sides follow it to the item it moved to, and the sides of a unit the rebuild removed go with it.
+A rebuilt node's unit sides, carried from the node it was rebuilt from. A unit variant is stored as its bare kind and has no identity, so each slot's units are aligned with the source node's (`alignedItems`): a unit's sides follow it to the item it moved to, and the sides of a unit the rebuild removed go with it.
 
 ### `packages/common/src/transport-data.ts::itemIdentity`
 
@@ -399,7 +399,7 @@ What a slot item is the same item by across a rebuild: a unit by its kind, a rea
 
 ### `packages/common/src/transport-data.ts::alignedItems`
 
-The new position of each source item a rebuilt slot keeps: a common subsequence of the two slots' identities, trimmed of their common prefix and suffix first, that keeps the most units and, of those, the most nodes. Units weigh more than every node together because only a unit needs the alignment to keep its sides; a node frames itself with its own. A common subsequence keeps order, so of two units that crossed it keeps one; each unit it left out then pairs, in order, with a left-out unit of its kind among the new items, and two different units that swapped places both keep their sides.
+The new position of each source unit a rebuilt slot keeps, in time and memory linear in the two slots. The read nodes both slots hold anchor it, each by the handle it names: a unit is the unit of its kind at the same count in the run of units after its anchor (the last kept node before it, at that node's new place, or the slot's start). A unit no run places pairs, in order, with a unit of its kind nothing placed, so two different units that swapped places both keep their sides. A node needs no alignment, since it frames itself with its own sides.
 
 ### `packages/common/src/transport-data.ts::KindView`
 
@@ -441,7 +441,7 @@ What a parsed node's `$query` runs: the query facet its engine makes for it. It 
 
 ### `packages/common/src/utils.ts::rebuilt`
 
-What every `$with` setter runs its rebuild through. It runs the rebuild inside the node's own engine (or plainly, when the node has none) and hands the node the rebuild returns what it keeps of the source node: that a read produced it (`carryRead`), its source identity (`carrySource`), through which the sides it does not hold are its source's (`sideOf`; the render fills them from the table through `$_layout.sides`), and a built source's stored trivia. It gives each fresh node the rebuild minted in a slot the source node held the same (`carryRebuiltSlots`). Inner trivia can only travel to a node that is still empty: once the rebuild gives the node a child, the comment would sit beside it, so the call throws and names the kind.
+What every `$with` setter runs its rebuild through. It runs the rebuild inside the node's own engine (or plainly, when the node has none) and hands the node the rebuild returns what it keeps of the source node: that a read produced it (`carryRead`), its source identity (`carrySource`), through which the sides it does not hold are its source's (`sideOf`; the render fills them from the table through `$_layout.sides`), and a built source's stored trivia. It gives each fresh node the rebuild minted in a slot the source node held the same (`carryRebuiltSlots`). Inner comments can only travel to a node that is still empty: once the rebuild gives the node a child, a comment would sit beside it, so the call throws and names the kind. Inner layout alone (whitespace and depth members, which cross as bare kinds) spelled the inside of the empty node, so a node that gains a child takes an empty inner side in its place: `{\n}` takes its first statement as `{}` does.
 
 ### `packages/common/src/utils.ts::triviaSide`
 

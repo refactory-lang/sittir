@@ -252,59 +252,68 @@ function itemIdentity(item: unknown): string | undefined {
 }
 
 /**
- * The new position of each item of `before` that `after` keeps: the common subsequence of their
- * identities (`itemIdentity`) that keeps the most units, and of those the most nodes; then each
- * unit it leaves out pairs, in order, with a left-out unit of its kind in `after`, so units that
- * crossed keep their place. A unit's sides need the alignment, since a unit has no identity of
- * its own; a node's sides are its own.
+ * The new position of each unit of `before` that `after` keeps. The read nodes both keep anchor
+ * the alignment, each by the handle it names: a unit is the unit of its kind at the same count in
+ * the run of units that follows its anchor, the last kept node before it, at that node's new
+ * place (the slot's start for a unit before every kept node). A unit no run places pairs, in order,
+ * with a unit of its kind that nothing placed, so two units that crossed keep their place. Linear
+ * in both slots. A node needs no alignment: its sides are its own.
  */
 function alignedItems(before: readonly unknown[], after: readonly unknown[]): ReadonlyMap<number, number> {
-	const from = before.map(itemIdentity);
-	const to = after.map(itemIdentity);
-	const same = (i: number, j: number): boolean => from[i] !== undefined && from[i] === to[j];
-	const unitWeight = Math.min(before.length, after.length) + 1;
-	const weight = (i: number): number => (typeof before[i] === 'number' ? unitWeight : 1);
-	const aligned = new Map<number, number>();
-	let head = 0;
-	while (head < from.length && head < to.length && same(head, head)) {
-		aligned.set(head, head);
-		head += 1;
-	}
-	let tail = 0;
-	while (tail < from.length - head && tail < to.length - head && same(from.length - 1 - tail, to.length - 1 - tail)) {
-		aligned.set(from.length - 1 - tail, to.length - 1 - tail);
-		tail += 1;
-	}
-	const rows = from.length - head - tail;
-	const columns = to.length - head - tail;
-	const width = columns + 1;
-	const lengths = new Float64Array((rows + 1) * width);
-	const length = (i: number, j: number): number => lengths[i * width + j] ?? 0;
-	for (let i = rows - 1; i >= 0; i -= 1) {
-		for (let j = columns - 1; j >= 0; j -= 1) {
-			lengths[i * width + j] = Math.max(same(head + i, head + j) ? length(i + 1, j + 1) + weight(head + i) : 0, length(i + 1, j), length(i, j + 1));
+	const nodeAt = new Map<string, number>();
+	const runs = new Map<number, Map<string, number[]>>();
+	let run = -1;
+	after.forEach((item, j) => {
+		const identity = itemIdentity(item);
+		if (typeof item !== 'number') {
+			if (identity !== undefined) nodeAt.set(identity, j);
+			run = j;
+			return;
 		}
-	}
-	for (let i = 0, j = 0; i < rows && j < columns; ) {
-		if (same(head + i, head + j) && length(i, j) === length(i + 1, j + 1) + weight(head + i)) {
-			aligned.set(head + i, head + j);
-			i += 1;
-			j += 1;
-		} else if (length(i + 1, j) >= length(i, j + 1)) i += 1;
-		else j += 1;
-	}
-	const placed = new Set(aligned.values());
-	const free = new Map<string, number[]>();
-	to.forEach((identity, j) => {
-		if (identity === undefined || typeof after[j] !== 'number' || placed.has(j)) return;
-		const open = free.get(identity);
-		if (open === undefined) free.set(identity, [j]);
-		else open.push(j);
+		if (identity === undefined) return;
+		const kinds = runs.get(run) ?? new Map<string, number[]>();
+		runs.set(run, kinds);
+		const units = kinds.get(identity);
+		if (units === undefined) kinds.set(identity, [j]);
+		else units.push(j);
 	});
-	from.forEach((identity, i) => {
-		if (identity === undefined || typeof before[i] !== 'number' || aligned.has(i)) return;
-		const j = free.get(identity)?.shift();
-		if (j !== undefined) aligned.set(i, j);
+	const aligned = new Map<number, number>();
+	const placed = new Set<number>();
+	let anchor = -1;
+	let counts = new Map<string, number>();
+	before.forEach((item, i) => {
+		const identity = itemIdentity(item);
+		if (typeof item !== 'number') {
+			const kept = identity === undefined ? undefined : nodeAt.get(identity);
+			if (kept !== undefined) {
+				anchor = kept;
+				counts = new Map();
+			}
+			return;
+		}
+		if (identity === undefined) return;
+		const count = counts.get(identity) ?? 0;
+		counts.set(identity, count + 1);
+		const j = runs.get(anchor)?.get(identity)?.[count];
+		if (j === undefined || placed.has(j)) return;
+		aligned.set(i, j);
+		placed.add(j);
+	});
+	const free = new Map<string, { readonly items: number[]; next: number }>();
+	after.forEach((item, j) => {
+		const identity = itemIdentity(item);
+		if (identity === undefined || typeof item !== 'number' || placed.has(j)) return;
+		const open = free.get(identity);
+		if (open === undefined) free.set(identity, { items: [j], next: 0 });
+		else open.items.push(j);
+	});
+	before.forEach((item, i) => {
+		const identity = itemIdentity(item);
+		const open = identity === undefined || typeof item !== 'number' || aligned.has(i) ? undefined : free.get(identity);
+		const j = open?.items[open.next];
+		if (open === undefined || j === undefined) return;
+		aligned.set(i, j);
+		open.next += 1;
 	});
 	return aligned;
 }
