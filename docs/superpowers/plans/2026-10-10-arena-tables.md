@@ -585,7 +585,7 @@ Shared by Tasks 7 to 10. These are proposals that Task 7 fixes as codegen facts.
 
 ### Task 6: The view's construction, in the probe
 
-**Files:** in `docs/superpowers/probes/2026-10-01-shared-arena/transport/`, a `--view <form>` flag on `measure-proto.mts`, and its README's results.
+**Files:** in `docs/superpowers/probes/2026-10-01-shared-arena/transport/`, a `--views` mode on `measure-proto.mts`, and its README's results.
 
 The heap row is the gate's hardest: a view over a record held 6 871 B a node against the objects' 4 949 B with the same members. With fewer members, as first committed, it held 3 702 B. Members are closures in the node's literal (the standing rulings: no class or prototype), so the forms differ only in how the literal is built. The probe gets the engine's member set from master's generated wrap:
 - an accessor per slot;
