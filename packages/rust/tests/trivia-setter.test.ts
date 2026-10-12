@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import type { ir } from '../src/ir.ts';
+import type { Blankline, BlockComment, Dedent, DoubleBlankline, Indent, LineComment, Newline, RustTypeMap, Space, Tab, Tight } from '../src/types.ts';
 import rust from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
@@ -102,6 +103,10 @@ describe('loose trivia strings build ir.comment', () => {
 		const spelled = rs.build.identifier('a').$trivia.leading('\n\n');
 		expect(built.$trivia.leading()).toEqual([rs.kinds.Blankline]);
 		expect(spelled.$trivia.leading()).toEqual([rs.kinds.Blankline]);
+	});
+
+	it('types a side as its concrete members: tight, the depth members, comments and whitespace', () => {
+		expectTypeOf<RustTypeMap['trivia']>().toEqualTypeOf<Blankline | BlockComment | Dedent | DoubleBlankline | Indent | LineComment | Newline | Space | Tab | Tight>();
 	});
 
 	it('takes the tight member, which no extra spells, as the entry of a gap held tight', () => {

@@ -26513,11 +26513,9 @@ export interface RustTypeMap extends GrammarTypeMap {
 	readonly trivia:
 		| Blankline
 		| BlockComment
-		| Comment
 		| Dedent
 		| DoubleBlankline
 		| Indent
-		| Layout
 		| LineComment
 		| Newline
 		| Space

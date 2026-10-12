@@ -15551,8 +15551,6 @@ export interface PythonTypeMap extends GrammarTypeMap {
 		| Dedent
 		| DoubleBlankline
 		| Indent
-		| Layout
-		| LineContinuation
 		| LineContinuationNewline
 		| LineContinuationNul
 		| Newline

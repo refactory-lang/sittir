@@ -10166,6 +10166,10 @@ that kind was left alone.
 // present slot).
 ```
 
+### `packages/codegen/src/emitters/client-utils.ts::resolveTriviaTypeNames`
+
+The type names a side's entries may be: each trivia kind's own node type (`triviaKinds`), sorted and deduplicated, without the supertypes the trivia closure makes trivia (rust's `_comment`, the `_layout` supertype once every layout member is trivia). A supertype is no node a side can hold, so its name admits nothing its members don't; the admitted set is the concrete members, among them `tight` and the depth members.
+
 ### `packages/codegen/src/emitters/client-utils.ts::buildTriviaNodeType`
 
 The union of the grammar's trivia kind types, `AnyUntypedNode` when it has none: what a stored trivia entry is, and so what the `$trivia` getters return. It is the `trivia` member of the grammar's type map (`emitGrammarTypeMap`).

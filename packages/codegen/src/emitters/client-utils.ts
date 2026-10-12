@@ -1,7 +1,7 @@
 import type { NodeMap } from '../compiler/types.ts';
 import { whitespaceTrivia, type WhitespaceTrivia } from '../compiler/model/trivia.ts';
 import { compareOrdinal, wireRoutesOf, type WireRoutes } from './shared.ts';
-import type { AssembledNonterminal } from '../compiler/model/node-map.ts';
+import { AssembledSupertype, type AssembledNonterminal } from '../compiler/model/node-map.ts';
 import { grammarTypeMapName } from './engine.ts';
 import { listKindIds, rebuildWrapperKindIds } from './wrap.ts';
 
@@ -77,9 +77,10 @@ function emitQuerySlots(rows: ReadonlyMap<number, readonly QuerySlotRow[]>): str
 }
 
 export function resolveTriviaTypeNames(triviaKinds: readonly string[], nodeMap: NodeMap): string[] {
-	const names = triviaKinds
-		.map((kind) => nodeMap.nodes.get(kind)?.typeName)
-		.filter((name): name is string => name !== undefined);
+	const names = triviaKinds.flatMap((kind) => {
+		const node = nodeMap.nodes.get(kind);
+		return node === undefined || node instanceof AssembledSupertype ? [] : [node.typeName];
+	});
 	return [...new Set(names)].sort();
 }
 
