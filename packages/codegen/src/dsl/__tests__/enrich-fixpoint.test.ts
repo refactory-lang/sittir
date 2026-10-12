@@ -103,4 +103,14 @@ describe('enrich is a fixpoint of its own output', () => {
 		rules._layout = decorated;
 		expect(rulesOf(enrich(first as never, {}))._layout).toEqual(decorated);
 	});
+
+	it('leaves the content of an override field alone', () => {
+		const first = enrich(structuredClone(grammarWith({ param: seq(S('x'), sym('self')), self: P('s'), lifetime: P("'[a-z]+") })) as never, {});
+		const rules = rulesOf(first);
+		rules._kw_reference = seq(S('&'), S('!'));
+		const reference = { ...field('reference', optional(sym('_kw_reference'))), metadata: { fieldSource: 'override' } };
+		rules.param = seq(reference, S('x'), { ...field('self', sym('self')), metadata: { fieldSource: 'enriched' } });
+		const before = JSON.stringify(rules.param);
+		expect(JSON.stringify(rulesOf(enrich(first as never, {})).param)).toBe(before);
+	});
 });

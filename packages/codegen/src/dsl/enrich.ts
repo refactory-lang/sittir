@@ -1296,6 +1296,10 @@ function isHoistedBody(rule: unknown): boolean {
 	return (rule as { annotations?: { hoisted?: boolean } } | null | undefined)?.annotations?.hoisted === true;
 }
 
+function isOverrideField(rule: unknown): boolean {
+	return (rule as { metadata?: { fieldSource?: string } } | null | undefined)?.metadata?.fieldSource === 'override';
+}
+
 function isGroupLiftRef(rule: unknown): boolean {
 	return (rule as { metadata?: { symbolSource?: string } } | null | undefined)?.metadata?.symbolSource === 'group-lift';
 }
@@ -2051,7 +2055,7 @@ function applyClauseHoist(
 
 	if (isFieldType(rule.type)) {
 		const content = (rule as unknown as { content?: Rule }).content;
-		if (!content) return rule;
+		if (!content || isOverrideField(rule)) return rule;
 		const newContent = applyClauseHoist(
 			parentKind,
 			content,
