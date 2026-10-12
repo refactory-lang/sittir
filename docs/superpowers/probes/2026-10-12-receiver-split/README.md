@@ -50,8 +50,8 @@ split by themselves, with no group from enrich?
   `,`, and enrich's synthesis decides it, so a group minted by the bindings restates enrich.
 - Every question is ruled. The lead stays in `bindGrammar`, and the whole of enrich runs again
   over every rule a grammar-bindings edit newly creates; a renamed rule does not pass again
-  (question 22). That second pass gives the plain shape the group's rows, but enrich is not yet
-  a fixpoint, so it waits until enrich is one (finding 19).
+  (question 22). That second pass gives the plain shape the group's rows, parser and
+  round-trips, but enrich is not yet a fixpoint, so it waits until enrich is one (finding 19).
 
 ## The edit
 
@@ -662,9 +662,24 @@ Typescript (`typescript-samples-*.txt`):
     measured question 22's ruling on `proto/receiver-split`'s prototype (branch
     `proto/q22-reenrich`): the plain shape, with the whole of enrich run again over the rules the
     lead creates, as its `leadFrom` stamp names them.
-    - The rows equal `two-rules-plain-group`'s in rust and typescript.
+    - The rows equal `two-rules-plain-group`'s: rust read-render-parse 148/148 and
+      built-render-parse 1876/1876, typescript 113/116 and 1798/1798.
+    - So does the parser: rust 3549 states (+18), 469 symbols (+4) and 7,091,512 bytes of
+      `parser.c` (+30,064, +0.43%); typescript 7290 states (+46), 465 symbols (+5) and
+      11,258,236 bytes (+136,992, +1.23%). The generated sources differ from
+      `two-rules-plain-group`'s only in rust's `node-model.json5`, by 309 bytes: the variant
+      stamps on the clone's arms. Typescript's are the same.
+    - Every rust case round-trips unchanged to the same tree, `(&self)` and `(&self,)` included,
+      and typescript's round-trips are `two-rules-plain-group`'s.
     - The second pass needs no field sites before wire: it runs after the patches, so the clones
       already hold the fields the patches give their origins.
+    - Which edits create rules, by the stamp each puts on what it mints: `leadGrammar` mints the
+      variants, the receiver form and its lifts (`leadFrom`), and `splitGrammar` mints clones and
+      container clones (`splitFrom`). A rule narrowed in place is not new and carries no stamp.
+      `renameGrammar` (`renamedFrom`), the options rewrite and the patches create none, and the
+      field renames and wraps edit in place, outside `bindGrammar`. A merge carries no stamp
+      yet, and would need one (`mergedFrom`). No committed grammar passes a split on this base,
+      so a split's second pass is unmeasured.
     - enrich is not a fixpoint over its own output. A second pass over its pre-wire output throws
       in rust, mints arms again in typescript and a group again in python. Wire's patches also
       add content the first pass never saw.
@@ -727,12 +742,11 @@ Typescript (`typescript-samples-*.txt`):
     `bindGrammar`, after the patches (question 13 holds). The probe's `two-rules-plain-group`
     writes the group by hand; under the ruling, enrich's second pass mints it.
     - Measured (finding 19): the second pass gives the plain shape `two-rules-plain-group`'s
-      rows in rust and typescript, and needs no field sites before wire. enrich is not a
-      fixpoint over its own output.
+      rows, parser and round-trips in rust and typescript, and needs no field sites before wire.
+      enrich is not a fixpoint over its own output.
     - Status: the maintainer ruled that enrich becomes a fixpoint first, in its own change to
       master, which implement plans. The second pass over a bindings edit's rules comes after it,
       in stage 2, with no narrower pass in the meantime.
-    - Left for stage 2, after the fixpoint: which current and planned edits create rules, by the
-      stamp each puts on what it mints (`splitFrom`, `leadFrom`), never a comparison of rule
-      names; and the plain shape's `(&self)` and `(&self,)` round-trips and parser and size
-      deltas against `two-rules-plain-group`.
+    - Left for stage 2, after the fixpoint: a stamp for merges, and a split's second pass, which
+      no committed grammar exercises on this base. The second pass selects rules by stamp, never
+      by a comparison of rule names.
