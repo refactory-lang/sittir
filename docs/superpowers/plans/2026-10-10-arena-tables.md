@@ -603,6 +603,13 @@ It measures each form on both inputs, three rounds alternating, idle-gated. Each
 
 **Done when:** a form holds no more heap per node than the object form, with the same members, and reads no slower. If none does, the step stops here: the table and the closest form go to the maintainer.
 
+**Result (done; the maintainer, 2026-10-12).** The view's extra heap came from accessors written as arrows that closed over its buffers. The view is V2: accessors as methods over one own number, the record's address. It holds less than the object form (5 185 / 5 174 B against 5 637 / 5 578 B a node), reads faster in both rows, and keeps every node in fast mode. It needs no ruling or API change.
+
+Building `$with` and `$trivia` lazily is revisited later. The measurements are the reference, in the transport README's "The view's construction" and "One form per process":
+- getters per node (V3) leave every node in dictionary mode;
+- methods (V4, an API change) hold 2 046 – 2 057 B untouched;
+- getters on one prototype per kind (V5, which the rulings exclude today) hold 1 918 – 1 929 B and keep fast mode.
+
 ### Task 7: One source for a record's layout
 
 **Files:**
@@ -639,7 +646,7 @@ It measures each form on both inputs, three rounds alternating, idle-gated. Each
 ### Task 9: JavaScript over records
 
 **Files:**
-- Modify: `packages/codegen/src/emitters/wrap.ts`, which emits a record-backed wrap per kind beside today's, in the form Task 6 chose.
+- Modify: `packages/codegen/src/emitters/wrap.ts`, which emits a record-backed wrap per kind beside today's, in Task 6's form, V2 (accessors as methods over the record's address).
 - Modify: `packages/common/src/engine.ts`: an internal switch, never part of the public API, that picks the wire for the measurement scripts; and the tree handle's source bytes (`bytes()`, `text(span)`) in place of `source`.
 - Modify: `packages/common/src/read.ts` (`TreeHandle`) and `packages/tools/src/validate/common.ts` (`readNodeText`).
 - Generated: `packages/<lang>/src/wrap.ts`.
