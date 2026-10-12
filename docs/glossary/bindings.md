@@ -261,7 +261,7 @@ A `CaptureSite` with the kind of each of its `down` selectors named by its bound
 
 ### `packages/codegen/src/bindings/vocabulary.ts::readVocabulary`
 
-Reads the authored vocabulary structurally, never by matching lines or calling the compiler: each file is parsed by the pinned build's TypeScript package in the pinned child (`runPinned`, `pinned-vocabulary.ts::vocabularyDeclarationsInProcess`), so a regeneration of `packages/typescript` cannot move how the vocabulary reads. The result is every interface under its namespaces, keyed by its `$kind` literal, with its own members (each marked optional or required, and a flag when its declared type is the marker `Flag`, the vocabulary's declaration of a flag in `utils.ts`; a `boolean` member is data) and its parent, the interface its `extends` clause names through `V.`. `members(path)` adds the inherited members, nearest first. `flags` is every name some kind declares as a flag. An interface with no `$kind` literal is not a vocabulary kind (the context's typemap and `Unmapped`). The reader is syntactic: it resolves no types.
+Reads the authored vocabulary structurally, never by matching lines or calling the compiler: each file (a failure names it) is parsed by the pinned build's TypeScript package in the pinned child (`runPinned`, `pinned-vocabulary.ts::vocabularyDeclarationsInProcess`), so a regeneration of `packages/typescript` cannot move how the vocabulary reads. The result is every interface under its namespaces, keyed by its `$kind` literal, with its own members (each marked optional or required, and a flag when its declared type is the marker `Flag`, the vocabulary's declaration of a flag in `utils.ts`; a `boolean` member is data) and its parent, the interface its `extends` clause names through `V.`. `members(path)` adds the inherited members, nearest first. `flags` is every name some kind declares as a flag. An interface with no `$kind` literal is not a vocabulary kind (the context's typemap and `Unmapped`). The reader is syntactic: it resolves no types.
 
 ### `packages/codegen/src/bindings/vocabulary.ts::VocabularyDeclaration`
 
@@ -269,7 +269,7 @@ One vocabulary interface as the pinned child reports it: its scoped name, its pa
 
 ### `packages/codegen/src/bindings/pinned-vocabulary.ts::vocabularyDeclarationsInProcess`
 
-The vocabulary interfaces one file declares (`VocabularyDeclaration`), read by the pinned build's TypeScript engine through its typed nodes. It runs in the pinned child (`pinned-reader.child.ts::READS`), never in the workspace process, and imports `@sittir/typescript` for types only. Every name it reads is compared as written, so a name spelled with an escape (`Fla\u0067` for `Flag`) is refused rather than read as a different name.
+The vocabulary interfaces one file declares (`VocabularyDeclaration`), read by the pinned build's TypeScript engine through its typed nodes. It runs in the pinned child (`pinned-reader.child.ts::READS`), never in the workspace process, and imports `@sittir/typescript` for types only. A file that does not parse cleanly is refused, never read from what the parser recovered: a recovered tree can turn a member into a different one (the TypeScript grammar does not parse an optional property named `abstract` without `readonly`). Every name it reads is compared as written, so a name spelled with an escape (`Fla\u0067` for `Flag`) is refused rather than read as a different name.
 
 ### `packages/codegen/src/bindings/pinned-vocabulary.ts::typescriptReader`
 
@@ -277,7 +277,7 @@ The pinned TypeScript package's kinds and engine, with the pinned build they com
 
 ### `packages/codegen/src/bindings/pinned-vocabulary.ts::collect`
 
-Walks a file's statements, each read through its wrappers (`unwrap`): a namespace adds its name to the scope and is walked in turn, and an interface is declared (`declare`).
+Walks a file's statements, each read through its wrappers (`unwrap`): a namespace, spelled `namespace` or `module`, adds its name to the scope and is walked in turn, and an interface is declared (`declare`).
 
 ### `packages/codegen/src/bindings/pinned-vocabulary.ts::unwrap`
 

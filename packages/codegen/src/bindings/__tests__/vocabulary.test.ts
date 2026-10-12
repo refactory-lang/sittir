@@ -62,4 +62,21 @@ describe('readVocabulary', () => {
 		);
 		await expect(vocabularyIn('export interface Declaration<G> {', "\treadonly $kind: 'decl\\u0061ration';", '}')).rejects.toThrow(/escape/);
 	});
+
+	it('reads a module-keyword namespace as a namespace', async () => {
+		const vocabulary = await vocabularyIn(
+			"module Plain { interface Inner<G> { readonly $kind: 'plain.inner'; } }",
+			"export module Exported { export interface Inner<G> { readonly $kind: 'exported.inner'; } }",
+			"declare module Declared { interface Inner<G> { readonly $kind: 'declared.inner'; } }"
+		);
+		expect([...vocabulary.kinds].map(([path, kind]) => [path, kind.name])).toEqual([
+			['plain.inner', 'Plain.Inner'],
+			['exported.inner', 'Exported.Inner'],
+			['declared.inner', 'Declared.Inner']
+		]);
+	});
+
+	it('refuses a file that does not parse cleanly rather than reading what the parser recovered', async () => {
+		await expect(vocabularyIn("interface Declaration<G> { $kind: 'declaration'; abstract?: Flag; accessor?: Flag; }")).rejects.toThrow(/declaration\.ts: .*parse/is);
+	});
 });

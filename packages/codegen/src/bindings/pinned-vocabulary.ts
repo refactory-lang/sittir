@@ -50,7 +50,7 @@ export async function vocabularyDeclarationsInProcess(code: string): Promise<Voc
 		return spelled;
 	};
 	const declared: VocabularyDeclaration[] = [];
-	collect(engine.parse(code, { depth: Infinity }).statements(), [], declared, { K, engine, text });
+	collect(engine.parse(code, { depth: Infinity, errors: 'throw' }).statements(), [], declared, { K, engine, text });
 	return declared;
 }
 
@@ -84,7 +84,7 @@ function collect(statements: readonly Statement[], scope: readonly string[], out
 	for (const statement of statements) {
 		const node = unwrap(statement, K);
 		if (node === undefined) continue;
-		if (node.$type === K.InternalModule) {
+		if (node.$type === K.InternalModule || node.$type === K.Module) {
 			collect(node.body()?.statements() ?? [], [...scope, text(node.name())], out, source);
 			continue;
 		}

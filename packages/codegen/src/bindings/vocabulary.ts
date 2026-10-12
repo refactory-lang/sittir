@@ -27,7 +27,15 @@ export interface VocabularyDeclaration {
 }
 
 export async function readVocabulary(dir: string): Promise<Vocabulary> {
-	const declared = (await Promise.all(vocabularySources(dir).map((path) => runPinned('vocabulary', readFileSync(path, 'utf8'))))).flat();
+	const declared = (
+		await Promise.all(
+			vocabularySources(dir).map((path) =>
+				runPinned('vocabulary', readFileSync(path, 'utf8')).catch((error: unknown) => {
+					throw new Error(`reading the vocabulary file ${path}: ${error instanceof Error ? error.message : String(error)}`);
+				})
+			)
+		)
+	).flat();
 	const pathByName = new Map(declared.map((d) => [d.name, d.path]));
 	const kinds = new Map<string, VocabularyKind>(
 		declared.map((d) => [d.path, { name: d.name, own: new Map(d.own), parent: d.parentName === undefined ? undefined : pathByName.get(d.parentName) }])
