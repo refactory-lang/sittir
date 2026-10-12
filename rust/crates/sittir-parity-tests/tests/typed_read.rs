@@ -120,7 +120,7 @@ impl SideLookup for Table<'_> {
         let source = |at: u32| {
             let node = sittir_core::engine::node_at_index(self.tree, at)?;
             let coord = ctx.coordinate(&node, at);
-            Some(SideEntry::Source { kind: coord.kind?, span: coord.span, entry: sittir_core::trivia::TriviaEntry::new(SlotValue::Coord(coord)) })
+            Some(SideEntry::Source { kind: coord.kind?, span: coord.span, adjacent: None, entry: sittir_core::trivia::TriviaEntry::new(SlotValue::Coord(coord)) })
         };
         let mut entries: Vec<SideEntry<()>> = self
             .table

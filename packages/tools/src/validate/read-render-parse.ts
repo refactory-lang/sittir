@@ -512,7 +512,8 @@ export function flankWindow(
  * its own bytes as `$text` (sliced from `source` when the reader captured
  * none); a storage-less compound keeps only its identity and rebuilds from
  * its empty slots, and a storage-less trivia entry becomes its text with the
- * kind the reader stamped on it, `{ $type, $text }`. The layout evidence a list
+ * kind the reader stamped on it, `{ $type, $text }`, an ERROR's in-line
+ * adjacency (`$before`, `$after`) kept beside it. The layout evidence a list
  * keeps from its source travels as text, in the node's `$_layout`: each kept
  * list gap as its bytes (`gap: { $text }`), and kept flanks as a window of the
  * source (`flank: { $text, $span }`, `flankWindow`).
@@ -537,7 +538,12 @@ export function selfContainedRenderInput(
 			const record = entry as Record<string, unknown>;
 			const text = textOf(record);
 			if (text === undefined) return walk(entry);
-			return { ...(typeof record.$type === 'number' ? { $type: record.$type } : {}), $text: text };
+			return {
+				...(typeof record.$type === 'number' ? { $type: record.$type } : {}),
+				$text: text,
+				...(typeof record.$before === 'string' ? { $before: record.$before } : {}),
+				...(typeof record.$after === 'string' ? { $after: record.$after } : {})
+			};
 		});
 	const layoutOf = (layout: TransportLayout): Record<string, unknown> => ({
 		...(layout.trivia === undefined ? {} : { trivia: mapTriviaEntries(layout.trivia as TriviaSides<unknown>, walkTrivia) }),

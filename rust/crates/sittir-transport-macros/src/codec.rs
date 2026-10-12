@@ -301,8 +301,8 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
                     #napi::ValueType::Object => {
                         let id: u16 = unsafe { ::sittir_core::boundary::property(env, napi_val, c"$type")? }
                             .ok_or_else(|| #napi::Error::from_reason(#missing))?;
-                        #error_arm
                         #text_arm
+                        #error_arm
                         unsafe { __decode_id(env, napi_val, id) }
                     }
                     #string_arm
