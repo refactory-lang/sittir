@@ -11,13 +11,13 @@ const ts = await createEngine(typescript);
 const rs = await createEngine(rust);
 
 describe('an ERROR region keeps the source bytes beside it wherever its owner renders from its template', () => {
-	it.each(['x = a ?b\n', 'x = a?b\n', 'x = a ? b\n'])('python %j snapshots to its source', (source) => {
+	it.each(['x = a ?b\n', 'x = a?b\n', 'x = a ? b\n', 'x = 1abc\n'])('python %j snapshots to its source', (source) => {
 		const root = py.parse(source);
 		expect(root.$errors.length).toBeGreaterThan(0);
 		expect(py.render(root.$snapshot()).toString()).toBe(source);
 	});
 
-	it.each(['let x = 1 + ;\n', 'let x = 1 +;\n', 'let x = a @@ b;\n'])('typescript %j snapshots to its source', (source) => {
+	it.each(['let x = 1 + ;\n', 'let x = 1 +;\n', 'let x = a @@ b;\n', 'let x = 1abc;\n'])('typescript %j snapshots to its source', (source) => {
 		const root = ts.parse(source);
 		expect(root.$errors.length).toBeGreaterThan(0);
 		expect(ts.render(root.$snapshot()).toString()).toBe(source);

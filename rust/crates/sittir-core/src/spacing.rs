@@ -202,6 +202,10 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     /// While a trailing run defers (`defer_trailing`), whether its first text
     /// was verbatim; `None` until it writes any.
     glued_open: Option<bool>,
+    /// Whether the next text meets the text before it as the source had
+    /// them, with no word-collision space, because one of the two is
+    /// verbatim; the next non-empty `write_text` takes it.
+    tight: bool,
 }
 
 /// A trailing run rendered ahead of where it is written: its text, and the
@@ -282,6 +286,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             excess: 0,
             glued: false,
             glued_open: None,
+            tight: false,
         }
     }
 
@@ -459,7 +464,9 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         }
         let mut last = None;
         for run in std::mem::take(&mut self.deferred) {
-            if !self.at_line_start() && !run.glued.0 {
+            if run.glued.0 {
+                self.tight = true;
+            } else if !self.at_line_start() {
                 self.write_text(" ")?;
             }
             self.write_text(&run.text)?;
@@ -501,7 +508,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         let Some(first) = s.chars().next() else {
             return Ok(()); // empty write: context untouched (mark survives too)
         };
-        let adjacent = !self.word_space_allowed();
+        let adjacent = std::mem::take(&mut self.tight) || !self.word_space_allowed();
         self.indent_armed = false;
         self.pay_indent(first)?;
         if let Some(last) = self.last {
@@ -760,7 +767,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         if s.is_empty() {
             return Ok(());
         }
-        self.glued = false;
+        self.tight |= std::mem::take(&mut self.glued);
         if self.deferring.is_some() {
             self.glued_open.get_or_insert(false);
         }
@@ -829,8 +836,11 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         if !self.held_breaks() {
             self.clear_payload();
         }
-        if self.deferring.is_some() && !s.is_empty() {
-            self.glued_open.get_or_insert(true);
+        if !s.is_empty() {
+            self.tight = true;
+            if self.deferring.is_some() {
+                self.glued_open.get_or_insert(true);
+            }
         }
         crate::render::RenderSink::text(self, s)?;
         self.glued = !s.is_empty();
