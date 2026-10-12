@@ -2275,6 +2275,12 @@ Whether the node has entries of its own on the generated surface: a bundle entry
  *  target is never fixed text: its render is its own template. */
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::isDepthLeaf`
+
+Whether a fixed-text leaf's text is a depth mark (`isDepthText`): the `indent` and `dedent` kinds a grammar exposes from its depth externals. Such a kind is readable and tested for on a layout run, but is a layout op, not something a caller builds: `kindIdText` gives it no text (a bare kind id does not render it) and the `ir` plan gives it no key, as the hidden `_indent`/`_dedent` members of the grammars that mint them have none.
+
+Depth-ness has one source: `isDepthText`, keyed by `INDENT_TEXT` and `DEDENT_TEXT`, the two marks the `_indent`/`_dedent` whitespace members carry as their bodies and that `indent()`/`dedent()` bodies in `visibleExternals` stamp. The engine's render body, the whitespace enrichment and `kindIdText` read the same predicate, so a leaf is a depth leaf exactly when it carries a mark that renders as a depth move, whichever grammar minted it.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::kindIdText`
 
 The text a kind renders as when it is given only its kind id, or
@@ -4720,6 +4726,7 @@ Where an inner comment can sit in an empty node of this kind: one `InnerGap` per
 
 - A kind has gaps only when its render rule can realise with no slot value (`realizesEmpty` over `slotEmptiness`). A filled required slot, a required choice between slots, or a repeat1 gives every comment a named neighbour, so leading or trailing always holds it.
 - A trivia-interior kind (`triviaInterior`) has no gaps: it is lexically one unit.
+- A literal token is a text rule or a non-slot symbol of a fixed-text kind (`nonterminal: false`). A grammar that exposes a zero-width scanner token as a named kind (python's `indent` / `dedent`) keeps it as that symbol instead of inlining its text, and it counts in `precedingTokens` as the inlined text did, so exposing it does not remove the kind's empty form.
 - A gap whose closing token is immediate is not a gap: tree-sitter lexes no extra before an immediate token. The same holds for the slotless `interior` gap's second token.
 - Tokens under an optional or repeat member, or inside a choice, are conditional and not counted: they are absent from an empty node.
 - A slot is found by its source rule ids, never at the rule root.

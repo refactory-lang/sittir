@@ -7154,6 +7154,10 @@ export function buildStringEnd(text: string): T.StringEnd.Bound {
 	return node as unknown as T.StringEnd.Bound;
 }
 
+export const buildIndent: TSKindId.Indent = TSKindId.Indent;
+
+export const buildDedent: TSKindId.Dedent = TSKindId.Dedent;
+
 export const buildTight: TSKindId.Tight = TSKindId.Tight;
 
 export const buildSpace: TSKindId.Space = TSKindId.Space;
@@ -7165,42 +7169,6 @@ export const buildNewline: TSKindId.Newline = TSKindId.Newline;
 export const buildBlankline: TSKindId.Blankline = TSKindId.Blankline;
 
 export const buildDoubleBlankline: TSKindId.DoubleBlankline = TSKindId.DoubleBlankline;
-
-export function buildIndent(text: string): T.Indent.Bound {
-	if (text.length === 0) throw new Error(`_indent: text must be non-empty`);
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.Indent as const,
-		$source: 2 as const,
-		$named: true as const,
-		$text: text,
-		$render: () => renderText(handle, node),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
-	};
-	return node as unknown as T.Indent.Bound;
-}
-
-export function buildDedent(text: string): T.Dedent.Bound {
-	if (text.length === 0) throw new Error(`_dedent: text must be non-empty`);
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.Dedent as const,
-		$source: 2 as const,
-		$named: true as const,
-		$text: text,
-		$render: () => renderText(handle, node),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
-	};
-	return node as unknown as T.Dedent.Bound;
-}
 
 export function buildNames(value: Admit<T.ImportList>): T.Names.Bound {
 	const _content = rejectBareText(value, 'Names.content', 'a built ImportList');
@@ -7465,14 +7433,14 @@ export type FluentKindMap = {
 	string_fragment: T.StringFragment;
 	escape_interpolation: T.EscapeInterpolation;
 	string_end: T.StringEnd;
+	_indent: T.Indent;
+	_dedent: T.Dedent;
 	_tight: T.Tight;
 	_space: T.Space;
 	_tab: T.Tab;
 	_newline: T.Newline;
 	_blankline: T.Blankline;
 	_double_blankline: T.DoubleBlankline;
-	_indent: T.Indent;
-	_dedent: T.Dedent;
 	names: T.Names.Bound;
 	as_pattern_target: T.AsPatternTarget.Bound;
 	format_expression: T.FormatExpression.Bound;
@@ -7664,14 +7632,14 @@ export const _factoryMap = {
 	string_fragment: buildStringFragment,
 	escape_interpolation: buildEscapeInterpolation,
 	string_end: buildStringEnd,
+	_indent: buildIndent,
+	_dedent: buildDedent,
 	_tight: buildTight,
 	_space: buildSpace,
 	_tab: buildTab,
 	_newline: buildNewline,
 	_blankline: buildBlankline,
 	_double_blankline: buildDoubleBlankline,
-	_indent: buildIndent,
-	_dedent: buildDedent,
 	names: buildNames,
 	as_pattern_target: buildAsPatternTarget,
 	format_expression: buildFormatExpression

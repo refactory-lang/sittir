@@ -5,7 +5,7 @@ import { languageByName } from '../src/languages.ts';
 const cases: Record<string, { readonly renders: Record<string, string>; readonly refuses: readonly string[] }> = {
 	rust: { renders: { FnKeyword: 'fn', Semi: ';', Indent: '', Tight: '' }, refuses: ['Identifier'] },
 	typescript: { renders: { FunctionKeyword: 'function', Semi: ';', Indent: '', Tight: '' }, refuses: ['Identifier'] },
-	python: { renders: { DefKeyword: 'def', Comma: ',', PassStatement: 'pass', Tight: '' }, refuses: ['Identifier', 'Indent'] },
+	python: { renders: { DefKeyword: 'def', Comma: ',', PassStatement: 'pass', Tight: '', Indent: '' }, refuses: ['Identifier'] },
 	scm: { renders: { Lparen: '(', Star: '*', Indent: '', Tight: '' }, refuses: ['Identifier'] },
 	regex: { renders: { Star: '*', Newline: '\n', Tight: '' }, refuses: ['PatternCharacter'] }
 };

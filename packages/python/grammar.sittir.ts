@@ -44,6 +44,10 @@ export default sittirGrammar(base, {
 		role($._newline, 'newline');
 		return prev ?? [];
 	},
+	visibleExternals: (_$) => ({
+		_indent: indent(),
+		_dedent: dedent()
+	}),
 	inline: ($, previous) => [...(previous ?? []), $._except_clause_exception_as_optional1],
 
 	// See docs/python-grammar-sittir-glossary.md::renderAs

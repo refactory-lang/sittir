@@ -3889,6 +3889,36 @@
     "source": "validator",
     "grammar": "python",
     "backend": "native",
+    "kind": "indent",
+    "count": 1,
+    "entries": [
+      "Await expressions"
+    ],
+    "stage": "from-excluded",
+    "code": "from-excluded",
+    "severity": "info",
+    "message": "no-from-function",
+    "label": "indent"
+  },
+  {
+    "source": "validator",
+    "grammar": "python",
+    "backend": "native",
+    "kind": "dedent",
+    "count": 1,
+    "entries": [
+      "Await expressions"
+    ],
+    "stage": "from-excluded",
+    "code": "from-excluded",
+    "severity": "info",
+    "message": "no-from-function",
+    "label": "dedent"
+  },
+  {
+    "source": "validator",
+    "grammar": "python",
+    "backend": "native",
     "count": 1,
     "entries": [
       "Print used as an identifier"

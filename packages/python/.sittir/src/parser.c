@@ -477,8 +477,8 @@ static const char * const ts_symbol_names[] = {
   [anon_sym_GT] = ">",
   [anon_sym_LT_GT] = "<>",
   [sym__newline] = "newline",
-  [sym__indent] = "_indent",
-  [sym__dedent] = "_dedent",
+  [sym__indent] = "indent",
+  [sym__dedent] = "dedent",
   [sym_string_start] = "string_start",
   [sym__string_content] = "string_fragment",
   [sym_escape_interpolation] = "escape_interpolation",
@@ -1510,11 +1510,11 @@ static const TSSymbolMetadata ts_symbol_metadata[] = {
     .named = true,
   },
   [sym__indent] = {
-    .visible = false,
+    .visible = true,
     .named = true,
   },
   [sym__dedent] = {
-    .visible = false,
+    .visible = true,
     .named = true,
   },
   [sym_string_start] = {

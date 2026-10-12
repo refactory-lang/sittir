@@ -62,6 +62,8 @@ export type LeafStringMap = {
 	[TSKindId.KeywordSeparator]: '*';
 	[TSKindId.WildcardPattern]: '_';
 	[TSKindId.LineContinuationNul]: '\\\u0000';
+	[TSKindId.Indent]: '﷐\n';
+	[TSKindId.Dedent]: '﷑\n';
 	[TSKindId.Space]: ' ';
 	[TSKindId.Tab]: '\t';
 	[TSKindId.Newline]: '\n';
@@ -910,8 +912,8 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[113, '>'],
 	[114, '<>'],
 	[115, 'newline'],
-	[116, '_indent'],
-	[117, '_dedent'],
+	[116, 'indent'],
+	[117, 'dedent'],
 	[118, 'string_start'],
 	[119, 'string_fragment'],
 	[120, 'escape_interpolation'],
@@ -1983,6 +1985,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.LtGt;
 		case 'newline':
 			return TSKindId.Newline;
+		case 'indent':
+			return TSKindId.Indent;
+		case 'dedent':
+			return TSKindId.Dedent;
 		case 'simple_statements':
 			return TSKindId.SimpleStatements;
 		case 'simple_pattern':
@@ -5286,14 +5292,14 @@ export type StringStart = Terminal<TSKindId.StringStart, string>;
 export type StringFragment = Terminal<TSKindId.StringFragment, string>;
 export type EscapeInterpolation = Terminal<TSKindId.EscapeInterpolation, string>;
 export type StringEnd = Terminal<TSKindId.StringEnd, string>;
+export type Indent = TSKindId.Indent;
+export type Dedent = TSKindId.Dedent;
 export type Tight = TSKindId.Tight;
 export type Space = TSKindId.Space;
 export type Tab = TSKindId.Tab;
 export type Newline = TSKindId.Newline;
 export type Blankline = TSKindId.Blankline;
 export type DoubleBlankline = TSKindId.DoubleBlankline;
-export type Indent = Terminal<TSKindId.Indent, string>;
-export type Dedent = Terminal<TSKindId.Dedent, string>;
 export type PrintKeyword = TSKindId.PrintKeyword;
 export type ExecKeyword = TSKindId.ExecKeyword;
 export type AsyncKeyword = TSKindId.AsyncKeyword;
@@ -10035,6 +10041,8 @@ export interface LineContinuationNulNs extends KeywordNs<
 	'\\\u0000',
 	TSKindId.LineContinuationNul
 > {}
+export interface IndentNs extends KeywordNs<TSKindId.Indent, '﷐\n', TSKindId.Indent> {}
+export interface DedentNs extends KeywordNs<TSKindId.Dedent, '﷑\n', TSKindId.Dedent> {}
 export interface TightNs extends KeywordNs<TSKindId.Tight, '', TSKindId.Tight> {}
 export interface SpaceNs extends KeywordNs<TSKindId.Space, ' ', TSKindId.Space> {}
 export interface TabNs extends KeywordNs<TSKindId.Tab, '\t', TSKindId.Tab> {}
@@ -10099,8 +10107,6 @@ export interface EscapeInterpolationNs extends LeafNs<
 	TSKindId.EscapeInterpolation
 > {}
 export interface StringEndNs extends LeafNs<StringEnd, string, StringEnd.Bound, TSKindId.StringEnd> {}
-export interface IndentNs extends LeafNs<Indent, string, Indent.Bound, TSKindId.Indent> {}
-export interface DedentNs extends LeafNs<Dedent, string, Dedent.Bound, TSKindId.Dedent> {}
 
 export interface NamespaceMap {
 	[TSKindId.Module]: ModuleNs;
@@ -10279,6 +10285,8 @@ export interface NamespaceMap {
 	[TSKindId.KeywordSeparator]: KeywordSeparatorNs;
 	[TSKindId.WildcardPattern]: WildcardPatternNs;
 	[TSKindId.LineContinuationNul]: LineContinuationNulNs;
+	[TSKindId.Indent]: IndentNs;
+	[TSKindId.Dedent]: DedentNs;
 	[TSKindId.Tight]: TightNs;
 	[TSKindId.Space]: SpaceNs;
 	[TSKindId.Tab]: TabNs;
@@ -10303,8 +10311,6 @@ export interface NamespaceMap {
 	[TSKindId.StringFragment]: StringFragmentNs;
 	[TSKindId.EscapeInterpolation]: EscapeInterpolationNs;
 	[TSKindId.StringEnd]: StringEndNs;
-	[TSKindId.Indent]: IndentNs;
-	[TSKindId.Dedent]: DedentNs;
 }
 
 export interface BoundByKindId {
@@ -10483,8 +10489,6 @@ export interface BoundByKindId {
 	[TSKindId.StringFragment]: StringFragment.Bound;
 	[TSKindId.EscapeInterpolation]: EscapeInterpolation.Bound;
 	[TSKindId.StringEnd]: StringEnd.Bound;
-	[TSKindId.Indent]: Indent.Bound;
-	[TSKindId.Dedent]: Dedent.Bound;
 }
 
 export interface ParsedByKindId {
@@ -10663,8 +10667,6 @@ export interface ParsedByKindId {
 	[TSKindId.StringFragment]: StringFragment.Parsed;
 	[TSKindId.EscapeInterpolation]: EscapeInterpolation.Parsed;
 	[TSKindId.StringEnd]: StringEnd.Parsed;
-	[TSKindId.Indent]: Indent.Parsed;
-	[TSKindId.Dedent]: Dedent.Parsed;
 }
 
 export type FixedTextKindId =
@@ -10952,6 +10954,8 @@ export interface TypeKeyOf {
 	[TSKindId.KeywordSeparator]: 'keywordSeparator';
 	[TSKindId.WildcardPattern]: 'wildcardPattern';
 	[TSKindId.LineContinuationNul]: 'lineContinuationNul';
+	[TSKindId.Indent]: 'indent';
+	[TSKindId.Dedent]: 'dedent';
 	[TSKindId.Tight]: 'tight';
 	[TSKindId.Space]: 'space';
 	[TSKindId.Tab]: 'tab';
@@ -10976,8 +10980,6 @@ export interface TypeKeyOf {
 	[TSKindId.StringFragment]: 'stringFragment';
 	[TSKindId.EscapeInterpolation]: 'escapeInterpolation';
 	[TSKindId.StringEnd]: 'stringEnd';
-	[TSKindId.Indent]: 'indent';
-	[TSKindId.Dedent]: 'dedent';
 }
 
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
@@ -15123,6 +15125,26 @@ export namespace LineContinuationNul {
 	export type LooseArgs = LineContinuationNulNs['LooseArgs'];
 	export type Kind = TSKindId.LineContinuationNul;
 }
+export namespace Indent {
+	export type Config = IndentNs['Config'];
+	export type Bound = IndentNs['Bound'];
+	export type Parsed = IndentNs['Bound'];
+	export type Loose = IndentNs['Loose'];
+	export type LooseConfig = IndentNs['LooseConfig'];
+	export type BuildArgs = IndentNs['BuildArgs'];
+	export type LooseArgs = IndentNs['LooseArgs'];
+	export type Kind = TSKindId.Indent;
+}
+export namespace Dedent {
+	export type Config = DedentNs['Config'];
+	export type Bound = DedentNs['Bound'];
+	export type Parsed = DedentNs['Bound'];
+	export type Loose = DedentNs['Loose'];
+	export type LooseConfig = DedentNs['LooseConfig'];
+	export type BuildArgs = DedentNs['BuildArgs'];
+	export type LooseArgs = DedentNs['LooseArgs'];
+	export type Kind = TSKindId.Dedent;
+}
 export namespace Tight {
 	export type Config = TightNs['Config'];
 	export type Bound = TightNs['Bound'];
@@ -15482,46 +15504,6 @@ export namespace StringEnd {
 	export type BuildArgs = StringEndNs['BuildArgs'];
 	export type LooseArgs = StringEndNs['LooseArgs'];
 	export type Kind = TSKindId.StringEnd;
-}
-export namespace Indent {
-	export type Config = IndentNs['Config'];
-	export interface Bound extends NodeMethodsOf {
-		readonly $type: TSKindId.Indent;
-		readonly $source?: 0 | 1 | 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export interface Parsed extends HoldsTree {
-		readonly $type: TSKindId.Indent;
-		readonly $source?: 0 | 1 | 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = IndentNs['Loose'];
-	export type LooseConfig = IndentNs['LooseConfig'];
-	export type BuildArgs = IndentNs['BuildArgs'];
-	export type LooseArgs = IndentNs['LooseArgs'];
-	export type Kind = TSKindId.Indent;
-}
-export namespace Dedent {
-	export type Config = DedentNs['Config'];
-	export interface Bound extends NodeMethodsOf {
-		readonly $type: TSKindId.Dedent;
-		readonly $source?: 0 | 1 | 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export interface Parsed extends HoldsTree {
-		readonly $type: TSKindId.Dedent;
-		readonly $source?: 0 | 1 | 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = DedentNs['Loose'];
-	export type LooseConfig = DedentNs['LooseConfig'];
-	export type BuildArgs = DedentNs['BuildArgs'];
-	export type LooseArgs = DedentNs['LooseArgs'];
-	export type Kind = TSKindId.Dedent;
 }
 
 export interface PythonTypeMap extends GrammarTypeMap {
