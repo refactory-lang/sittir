@@ -2381,12 +2381,34 @@
 			"field": "export_keyword_after"
 		},
 		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type",
+					"body": [
+						{
+							"kind": "seam",
+							"field": "type_before"
+						},
+						{
+							"kind": "slot",
+							"name": "type"
+						},
+						{
+							"kind": "seam",
+							"field": "type_after"
+						}
+					]
+				}
+			]
+		},
+		{
 			"kind": "slot",
 			"name": "content"
 		},
 		{
 			"kind": "slot",
-			"name": "automatic_semicolon"
+			"name": "terminator"
 		},
 		{
 			"kind": "seam",
@@ -2403,20 +2425,40 @@
 			"name": "export_clause"
 		},
 		{
-			"kind": "seam",
-			"field": "from_keyword_before"
-		},
-		{
-			"kind": "text",
-			"text": "from"
-		},
-		{
-			"kind": "seam",
-			"field": "from_keyword_after"
-		},
-		{
-			"kind": "slot",
-			"name": "source"
+			"kind": "if",
+			"arms": [
+				{
+					"test": "source",
+					"body": [
+						{
+							"kind": "seam",
+							"field": "from_keyword_before"
+						},
+						{
+							"kind": "text",
+							"text": "from"
+						},
+						{
+							"kind": "seam",
+							"field": "from_keyword_after"
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "source",
+									"body": [
+										{
+											"kind": "slot",
+											"name": "source"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
 		},
 		{
 			"kind": "seam",
@@ -2573,80 +2615,6 @@
 		{
 			"kind": "seam",
 			"field": "export_statement_namespace_export_after"
-		}
-	],
-	"export_statement_type_export": [
-		{
-			"kind": "seam",
-			"field": "export_statement_type_export_before"
-		},
-		{
-			"kind": "text",
-			"text": "export"
-		},
-		{
-			"kind": "seam",
-			"field": "export_keyword_after"
-		},
-		{
-			"kind": "seam",
-			"field": "type_keyword_before"
-		},
-		{
-			"kind": "text",
-			"text": "type"
-		},
-		{
-			"kind": "seam",
-			"field": "type_keyword_after"
-		},
-		{
-			"kind": "slot",
-			"name": "export_clause"
-		},
-		{
-			"kind": "if",
-			"arms": [
-				{
-					"test": "source",
-					"body": [
-						{
-							"kind": "seam",
-							"field": "from_keyword_before"
-						},
-						{
-							"kind": "text",
-							"text": "from"
-						},
-						{
-							"kind": "seam",
-							"field": "from_keyword_after"
-						},
-						{
-							"kind": "if",
-							"arms": [
-								{
-									"test": "source",
-									"body": [
-										{
-											"kind": "slot",
-											"name": "source"
-										}
-									]
-								}
-							]
-						}
-					]
-				}
-			]
-		},
-		{
-			"kind": "slot",
-			"name": "terminator"
-		},
-		{
-			"kind": "seam",
-			"field": "export_statement_type_export_after"
 		}
 	],
 	"expression_statement": [

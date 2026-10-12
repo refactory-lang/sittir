@@ -1,4 +1,4 @@
-export type RuleCause = 'alias-shape' | 'ambiguity' | 'accepts-other-kind' | 'semantic-gap';
+export type RuleCause = 'alias-shape' | 'ambiguity' | 'accepts-other-kind' | 'semantic-gap' | 'rejects-valid-syntax';
 
 export type WitnessFormItem = string | { readonly symbol: string };
 
@@ -34,7 +34,12 @@ export function reauthored<F extends (...args: never[]) => unknown>(
 	body: F
 ): F;
 export function reauthored<F extends (...args: never[]) => unknown>(
-	cause: Exclude<RuleCause, 'accepts-other-kind' | 'semantic-gap'>,
+	cause: 'rejects-valid-syntax',
+	witness: OtherKindWitness,
+	body: F
+): F;
+export function reauthored<F extends (...args: never[]) => unknown>(
+	cause: Exclude<RuleCause, 'accepts-other-kind' | 'semantic-gap' | 'rejects-valid-syntax'>,
 	body: F
 ): F;
 export function reauthored<F extends (...args: never[]) => unknown>(

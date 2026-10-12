@@ -26056,10 +26056,27 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "kind": "export_clause",
-    "count": 3,
+    "kind": "export_statement_default_from_clause_from",
+    "count": 4,
     "entries": [
-      "Type-only Export"
+      "Type-only Export",
+      "Type-only export clause with a source"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "export_statement_default_from_clause_from"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "export_clause",
+    "count": 4,
+    "entries": [
+      "Type-only Export",
+      "Type-only export clause with a source"
     ],
     "stage": "read-render-parse-excluded",
     "code": "read-render-parse-excluded",
@@ -26072,9 +26089,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "export_specifiers",
-    "count": 3,
+    "count": 4,
     "entries": [
-      "Type-only Export"
+      "Type-only Export",
+      "Type-only export clause with a source"
     ],
     "stage": "read-render-parse-excluded",
     "code": "read-render-parse-excluded",
@@ -26087,9 +26105,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "export_specifier",
-    "count": 5,
+    "count": 6,
     "entries": [
-      "Type-only Export"
+      "Type-only Export",
+      "Type-only export clause with a source"
     ],
     "stage": "read-render-parse-excluded",
     "code": "read-render-parse-excluded",
@@ -26361,6 +26380,51 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "template_substitution"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "export_statement_default_from_star_from",
+    "count": 1,
+    "entries": [
+      "Type-only star re-export"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "export_statement_default_from_star_from"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "export_statement_default_from_ns_from",
+    "count": 1,
+    "entries": [
+      "Type-only namespace re-export"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "export_statement_default_from_ns_from"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "namespace_export",
+    "count": 1,
+    "entries": [
+      "Type-only namespace re-export"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "namespace_export"
   },
   {
     "source": "validator",
@@ -27539,10 +27603,27 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "kind": "export_clause",
-    "count": 3,
+    "kind": "export_statement_default_from_clause_from",
+    "count": 4,
     "entries": [
-      "Type-only Export"
+      "Type-only Export",
+      "Type-only export clause with a source"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "export_statement_default_from_clause_from"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "export_clause",
+    "count": 4,
+    "entries": [
+      "Type-only Export",
+      "Type-only export clause with a source"
     ],
     "stage": "read-render-parse-shallow-excluded",
     "code": "read-render-parse-shallow-excluded",
@@ -27555,9 +27636,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "export_specifiers",
-    "count": 3,
+    "count": 4,
     "entries": [
-      "Type-only Export"
+      "Type-only Export",
+      "Type-only export clause with a source"
     ],
     "stage": "read-render-parse-shallow-excluded",
     "code": "read-render-parse-shallow-excluded",
@@ -27570,9 +27652,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "export_specifier",
-    "count": 5,
+    "count": 6,
     "entries": [
-      "Type-only Export"
+      "Type-only Export",
+      "Type-only export clause with a source"
     ],
     "stage": "read-render-parse-shallow-excluded",
     "code": "read-render-parse-shallow-excluded",
@@ -27844,6 +27927,51 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "template_substitution"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "export_statement_default_from_star_from",
+    "count": 1,
+    "entries": [
+      "Type-only star re-export"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "export_statement_default_from_star_from"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "export_statement_default_from_ns_from",
+    "count": 1,
+    "entries": [
+      "Type-only namespace re-export"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "export_statement_default_from_ns_from"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "namespace_export",
+    "count": 1,
+    "entries": [
+      "Type-only namespace re-export"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "namespace_export"
   },
   {
     "source": "validator",
@@ -29023,10 +29151,27 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "kind": "factory: export_clause",
-    "count": 1,
+    "kind": "factory: export_statement_default_from_clause_from",
+    "count": 2,
     "entries": [
-      "Type-only Export"
+      "Type-only Export",
+      "Type-only export clause with a source"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "factory: export_statement_default_from_clause_from"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "factory: export_clause",
+    "count": 2,
+    "entries": [
+      "Type-only Export",
+      "Type-only export clause with a source"
     ],
     "stage": "built-render-parse-excluded",
     "code": "built-render-parse-excluded",
@@ -29039,9 +29184,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "factory: export_specifiers",
-    "count": 1,
+    "count": 2,
     "entries": [
-      "Type-only Export"
+      "Type-only Export",
+      "Type-only export clause with a source"
     ],
     "stage": "built-render-parse-excluded",
     "code": "built-render-parse-excluded",
@@ -29054,9 +29200,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "factory: export_specifier",
-    "count": 1,
+    "count": 2,
     "entries": [
-      "Type-only Export"
+      "Type-only Export",
+      "Type-only export clause with a source"
     ],
     "stage": "built-render-parse-excluded",
     "code": "built-render-parse-excluded",
@@ -29328,6 +29475,51 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "factory: template_substitution"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "factory: export_statement_default_from_star_from",
+    "count": 1,
+    "entries": [
+      "Type-only star re-export"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "factory: export_statement_default_from_star_from"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "factory: export_statement_default_from_ns_from",
+    "count": 1,
+    "entries": [
+      "Type-only namespace re-export"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "factory: export_statement_default_from_ns_from"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "factory: namespace_export",
+    "count": 1,
+    "entries": [
+      "Type-only namespace re-export"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "factory: namespace_export"
   },
   {
     "source": "validator",
@@ -30273,9 +30465,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "ir: export_clause",
-    "count": 1,
+    "count": 2,
     "entries": [
-      "Type-only Export"
+      "Type-only Export",
+      "Type-only export clause with a source"
     ],
     "stage": "built-render-parse-excluded",
     "code": "built-render-parse-excluded",
@@ -30288,9 +30481,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "ir: export_specifiers",
-    "count": 1,
+    "count": 2,
     "entries": [
-      "Type-only Export"
+      "Type-only Export",
+      "Type-only export clause with a source"
     ],
     "stage": "built-render-parse-excluded",
     "code": "built-render-parse-excluded",
@@ -30303,9 +30497,10 @@
     "grammar": "typescript",
     "backend": "native",
     "kind": "ir: export_specifier",
-    "count": 1,
+    "count": 2,
     "entries": [
-      "Type-only Export"
+      "Type-only Export",
+      "Type-only export clause with a source"
     ],
     "stage": "built-render-parse-excluded",
     "code": "built-render-parse-excluded",
@@ -30562,5 +30757,20 @@
     "severity": "info",
     "message": "no-reparse-wrapper",
     "label": "ir: template_substitution"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "ir: namespace_export",
+    "count": 1,
+    "entries": [
+      "Type-only namespace re-export"
+    ],
+    "stage": "built-render-parse-excluded",
+    "code": "built-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "ir: namespace_export"
   }
 ]

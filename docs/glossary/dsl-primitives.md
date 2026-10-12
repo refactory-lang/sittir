@@ -252,6 +252,16 @@ overlap from the parser, so nothing reports it, and the model inherits a tuple
 that needs no comma. The declaration states the claim so it can be checked
 (`OtherKindWitness`).
 
+`reauthored('rejects-valid-syntax', witness, body)` is the fourth cause: the
+upstream parser rejects a form the language allows, and the body adds it. The
+witness is the same `OtherKindWitness` shape read the other way round: `text`
+is source upstream's parser reports an error for, `form` the token sequence the
+body must derive, and `kind` the upstream rule that should derive it and does
+not. The gate checks the form against that upstream rule (it must not derive it)
+and a test checks the text against upstream's own parser (it must error).
+TypeScript's `export type * from` is the case: upstream allows `type` only
+before an export clause.
+
 ### `packages/codegen/src/dsl/primitives/rule-cause.ts::OtherKindWitness`
 
 The evidence for `'accepts-other-kind'`: `text`, source the upstream parser

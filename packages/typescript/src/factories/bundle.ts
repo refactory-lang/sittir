@@ -427,10 +427,6 @@ export const exportStatementNamespaceExport = bundle(
 	C.coerceToExportStatementNamespaceExport,
 	{ key: 'exportStatementNamespaceExport', max: 2 }
 );
-export const exportStatementTypeExport = bundle(F.buildExportStatementTypeExport, C.coerceToExportStatementTypeExport, {
-	key: 'exportStatementTypeExport',
-	max: 2
-});
 export const exportStatementEqualsExport = bundle(
 	F.buildExportStatementEqualsExport,
 	C.coerceToExportStatementEqualsExport,
