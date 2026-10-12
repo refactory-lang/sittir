@@ -25,10 +25,9 @@ export interface PortablePath {
 	readonly exact: boolean;
 }
 
-/** A bound grammar's portable classification: each path's kind ids, the alias links, each kind's read entries in the order they are tried, and the text of each fixed-literal kind id. */
+/** A bound grammar's portable classification: each path's kind ids, each kind's read entries in the order they are tried, and the text of each fixed-literal kind id. */
 export interface PortableTable {
 	readonly paths: Readonly<Record<string, PortablePath>>;
-	readonly aliases: readonly (readonly [under: string, name: string, path: string])[];
 	readonly entries: Readonly<Record<number, readonly PortableReadEntry[]>>;
 	readonly fixedText: Readonly<Record<number, string>>;
 }

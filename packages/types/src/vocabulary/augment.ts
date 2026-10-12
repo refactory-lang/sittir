@@ -37,6 +37,7 @@ import type * as errorPropagation from './features/error-propagation/index.ts';
 import type * as exceptions from './features/exceptions/index.ts';
 import type * as execStatements from './features/exec-statements/index.ts';
 import type * as explicitOverrides from './features/methods/classes/explicit-overrides/index.ts';
+import type * as explicitReceivers from './features/explicit-receivers/index.ts';
 import type * as foreignFunctionInterface from './features/foreign-function-interface/index.ts';
 import type * as generators from './features/coroutines/generators/index.ts';
 import type * as higherRankPolymorphism from './features/parametric-polymorphism/bounded-quantification/higher-rank-polymorphism/index.ts';
@@ -597,6 +598,7 @@ declare module './declaration.ts' {
 				foreignFunctionInterface.Declaration.Function<G>['extern']
 			>;
 			readonly generator?: gate.In<G, features.Generators, generators.Declaration.Function<G>['generator']>;
+			readonly receiver?: gate.In<G, features.ExplicitReceivers, explicitReceivers.Declaration.Function<G>['receiver']>;
 			readonly returnType?: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Function<G>['returnType']>;
 			readonly typeParameters?: gate.In<
 				G,
@@ -737,6 +739,7 @@ declare module './declaration.ts' {
 			readonly override?: gate.In<G, features.ExplicitOverrides, explicitOverrides.Declaration.Method<G>['override']>;
 			readonly privateName?: gate.In<G, features.Encapsulation, encapsulation.Declaration.Method<G>['privateName']>;
 			readonly readonly?: gate.In<G, features.ReadonlyMembers, readonlyMembers.Declaration.Method<G>['readonly']>;
+			readonly receiver?: gate.In<G, features.ExplicitReceivers, explicitReceivers.Declaration.Method<G>['receiver']>;
 			readonly returnType?: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Method<G>['returnType']>;
 			readonly typeParameters?: gate.In<
 				G,
@@ -962,55 +965,6 @@ declare module './declaration.ts' {
 					| V.Declaration.Method.Signature.Setter.Protected<G>
 					| V.Declaration.Method.Signature.Setter.Public<G>;
 			}
-			interface Static<G extends GrammarContext<G>> extends methods.Declaration.Method.Static<G> {
-				readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Declaration.Method.Static<G>['async']>;
-				readonly const?: gate.In<
-					G,
-					features.CompileTimeEvaluation,
-					compileTimeEvaluation.Declaration.Method.Static<G>['const']
-				>;
-				readonly extern?: gate.In<
-					G,
-					features.ForeignFunctionInterface,
-					foreignFunctionInterface.Declaration.Method.Static<G>['extern']
-				>;
-				readonly returnType?: gate.In<
-					G,
-					features.TypeAnnotations,
-					typeAnnotations.Declaration.Method.Static<G>['returnType']
-				>;
-				readonly typeParameters?: gate.In<
-					G,
-					features.ParametricPolymorphism,
-					parametricPolymorphism.Declaration.Method.Static<G>['typeParameters']
-				>;
-				readonly unsafe?: gate.In<G, features.UnsafeCode, unsafeCode.Declaration.Method.Static<G>['unsafe']>;
-				readonly whereClause?: gate.In<
-					G,
-					features.BoundedQuantification,
-					boundedQuantification.Declaration.Method.Static<G>['whereClause']
-				>;
-			}
-			namespace Static {
-				interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Method.Static.Private<G> {}
-				interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Method.Static.Public<G> {}
-				namespace Public {
-					interface Internal<G extends GrammarContext<G>> extends visibility.Declaration.Method.Static.Public
-						.Internal<G> {}
-					interface Restricted<G extends GrammarContext<G>> extends visibility.Declaration.Method.Static.Public
-						.Restricted<G> {}
-					type Any<G extends GrammarContext<G>> =
-						| V.Declaration.Method.Static.Public<G>
-						| V.Declaration.Method.Static.Public.Internal<G>
-						| V.Declaration.Method.Static.Public.Restricted<G>;
-				}
-				type Any<G extends GrammarContext<G>> =
-					| V.Declaration.Method.Static<G>
-					| V.Declaration.Method.Static.Private<G>
-					| V.Declaration.Method.Static.Public<G>
-					| V.Declaration.Method.Static.Public.Internal<G>
-					| V.Declaration.Method.Static.Public.Restricted<G>;
-			}
 			type Any<G extends GrammarContext<G>> =
 				| V.Declaration.Method<G>
 				| V.Declaration.Method.Dunder<G>
@@ -1052,12 +1006,7 @@ declare module './declaration.ts' {
 				| V.Declaration.Method.Signature.Setter<G>
 				| V.Declaration.Method.Signature.Setter.Private<G>
 				| V.Declaration.Method.Signature.Setter.Protected<G>
-				| V.Declaration.Method.Signature.Setter.Public<G>
-				| V.Declaration.Method.Static<G>
-				| V.Declaration.Method.Static.Private<G>
-				| V.Declaration.Method.Static.Public<G>
-				| V.Declaration.Method.Static.Public.Internal<G>
-				| V.Declaration.Method.Static.Public.Restricted<G>;
+				| V.Declaration.Method.Signature.Setter.Public<G>;
 		}
 		interface Module<G extends GrammarContext<G>> extends moduleDeclarations.Declaration.Module<G> {}
 		namespace Module {
@@ -1130,7 +1079,7 @@ declare module './declaration.ts' {
 			interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Parameter.Private<G> {}
 			interface Protected<G extends GrammarContext<G>> extends visibility.Declaration.Parameter.Protected<G> {}
 			interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Parameter.Public<G> {}
-			interface Self<G extends GrammarContext<G>> extends methods.Declaration.Parameter.Self<G> {
+			interface Self<G extends GrammarContext<G>> extends explicitReceivers.Declaration.Parameter.Self<G> {
 				readonly lifetime?: gate.In<G, features.Lifetimes, lifetimes.Declaration.Parameter.Self<G>['lifetime']>;
 				readonly reference?: gate.In<G, features.References, references.Declaration.Parameter.Self<G>['reference']>;
 			}
@@ -1165,6 +1114,11 @@ declare module './declaration.ts' {
 		interface Signature<G extends GrammarContext<G>> extends structuralConformance.Declaration.Signature<G> {}
 		namespace Signature {
 			interface Call<G extends GrammarContext<G>> extends structuralConformance.Declaration.Signature.Call<G> {
+				readonly receiver?: gate.In<
+					G,
+					features.ExplicitReceivers,
+					explicitReceivers.Declaration.Signature.Call<G>['receiver']
+				>;
 				readonly typeParameters?: gate.In<
 					G,
 					features.ParametricPolymorphism,
@@ -1533,11 +1487,6 @@ declare module './declaration.ts' {
 			| V.Declaration.Method.Signature.Setter.Private<G>
 			| V.Declaration.Method.Signature.Setter.Protected<G>
 			| V.Declaration.Method.Signature.Setter.Public<G>
-			| V.Declaration.Method.Static<G>
-			| V.Declaration.Method.Static.Private<G>
-			| V.Declaration.Method.Static.Public<G>
-			| V.Declaration.Method.Static.Public.Internal<G>
-			| V.Declaration.Method.Static.Public.Restricted<G>
 			| V.Declaration.Module<G>
 			| V.Declaration.Module.External<G>
 			| V.Declaration.Module.Foreign<G>
@@ -1939,6 +1888,11 @@ declare module './expression.ts' {
 				| V.Expression.Block.Unsafe<G>;
 		}
 		interface Call<G extends GrammarContext<G>> {
+			readonly optionalChain?: gate.In<
+				G,
+				features.OptionalChaining,
+				optionalChaining.Expression.Call<G>['optionalChain']
+			>;
 			readonly typeArguments?: gate.In<
 				G,
 				features.ParametricPolymorphism,
@@ -2043,6 +1997,7 @@ declare module './expression.ts' {
 		interface Function<G extends GrammarContext<G>> {
 			readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Expression.Function<G>['async']>;
 			readonly generator?: gate.In<G, features.Generators, generators.Expression.Function<G>['generator']>;
+			readonly receiver?: gate.In<G, features.ExplicitReceivers, explicitReceivers.Expression.Function<G>['receiver']>;
 			readonly returnType?: gate.In<G, features.TypeAnnotations, typeAnnotations.Expression.Function<G>['returnType']>;
 			readonly typeParameters?: gate.In<
 				G,
@@ -2067,6 +2022,11 @@ declare module './expression.ts' {
 			readonly static?: gate.In<G, features.Coroutines, coroutines.Expression.Lambda<G>['static']>;
 		}
 		interface Member<G extends GrammarContext<G>> {
+			readonly optionalChain?: gate.In<
+				G,
+				features.OptionalChaining,
+				optionalChaining.Expression.Member<G>['optionalChain']
+			>;
 			readonly privateName?: gate.In<G, features.Encapsulation, encapsulation.Expression.Member<G>['privateName']>;
 		}
 		interface Range<G extends GrammarContext<G>> extends rangeExpressions.Expression.Range<G> {}
@@ -2774,6 +2734,7 @@ declare module './type.ts' {
 		interface Existential<G extends GrammarContext<G>> extends typeAnnotations.Type.Existential<G> {}
 		interface Function<G extends GrammarContext<G>> extends typeAnnotations.Type.Function<G> {
 			readonly forLifetimes?: gate.In<G, features.Lifetimes, lifetimes.Type.Function<G>['forLifetimes']>;
+			readonly receiver?: gate.In<G, features.ExplicitReceivers, explicitReceivers.Type.Function<G>['receiver']>;
 			readonly typeParameters?: gate.In<
 				G,
 				features.ParametricPolymorphism,

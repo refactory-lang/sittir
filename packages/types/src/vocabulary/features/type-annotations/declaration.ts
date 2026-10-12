@@ -32,10 +32,6 @@ export namespace Declaration {
 				readonly returnType?: G['slots']['declaration.method.signature.abstract']['returnType'];
 			}
 		}
-		export interface Static<G extends GrammarContext<G>> {
-			readonly returnType?: G['slots']['declaration.method.static']['returnType'];
-			// r only
-		}
 	}
 	export interface Parameter<G extends GrammarContext<G>> {
 		readonly type?: G['slots']['declaration.parameter']['type'];

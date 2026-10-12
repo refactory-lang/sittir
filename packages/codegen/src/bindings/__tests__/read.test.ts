@@ -346,12 +346,35 @@ describe('readBindings', () => {
 			'(impl_item_body (declaration_list (function_item (parameters (parameters_elements . (attributed_parameter (self_parameter) @receiver)))) @declaration.method))'
 		);
 		expect(claims.map((c) => [c.vocab, c.within])).toEqual([['declaration.method', ['declaration_list', 'impl_item_body']]]);
+		expect(members.map((m) => [m.route, m.owner])).toEqual([['nested', 'function_item']]);
 		expect(members.flatMap((m) => (m.route === 'nested' ? m.via.map((step) => [step.kind, step.anchor]) : []))).toEqual([
 			['attributed_parameter', 'first'],
 			['parameters_elements', null],
-			['parameters', null],
-			['function_item', null],
-			['declaration_list', null]
+			['parameters', null]
+		]);
+	});
+
+	it('owns a capture below a placed claim by the claimed node, not by the pattern\'s top', async () => {
+		const { members } = await readBindings(
+			'(impl_item_body (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.method.public.restricted))'
+		);
+		expect(members).toEqual([
+			{
+				route: 'nested',
+				owner: 'function_item',
+				name: 'scope',
+				parent: 'visibility_modifier_pub',
+				multiple: false,
+				via: [
+					{ field: null, kind: 'visibility_modifier_pub', after: null, anchor: null },
+					{ field: null, kind: 'visibility_modifier', after: null, anchor: null }
+				],
+				field: null,
+				kind: 'visibility_modifier_pub_scope',
+				after: null,
+				anchor: null,
+				claims: [0]
+			}
 		]);
 	});
 

@@ -1,11 +1,11 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { boundNameOf } from '../dsl/bind.ts';
-import { SEPARATOR_LABEL } from '../dsl/primitives/spacing.ts';
 import { parsePreferencePath } from '../dsl/primitives/preference-path.ts';
 import { type OptionsConfig, readOptionsBlock } from '../dsl/wire/options-block.ts';
-import { bindFacts, bindingsPath, type EnumMember, type ModelNode, type SlotModel } from './facts.ts';
+import { bindFacts, bindingsPath, type EnumMember, type ModelNode, type SlotModel, VOCABULARY_DIR } from './facts.ts';
 import { readBindings } from './read.ts';
 import type { GrammarInput, LayoutSlot } from './routes.ts';
+import { type Vocabulary, readVocabulary, resolveFlags } from './vocabulary.ts';
 
 export interface NodeModelValue {
 	readonly kind?: string;
@@ -87,13 +87,12 @@ export function renamedFromOf(record: NodeModelRecord): Record<string, string> {
 }
 
 export function layoutSlots(options: OptionsConfig, kinds: ReadonlySet<string>): LayoutSlot[] {
-	const optionSites = readOptionsBlock(options, kinds).labels.flatMap(({ address }): LayoutSlot[] => {
+	return readOptionsBlock(options, kinds).labels.flatMap(({ address }): LayoutSlot[] => {
 		const [owner, slot, ...rest] = parsePreferencePath(address);
 		if (rest.length > 0 || slot?.kind !== 'fieldName') return [];
 		if (owner?.kind === 'wildcard') return [{ kind: null, slot: slot.name }];
 		return owner?.kind === 'name' ? [{ kind: owner.name, slot: slot.name }] : [];
 	});
-	return [...optionSites, { kind: null, slot: SEPARATOR_LABEL }];
 }
 
 export interface EvaluatedGrammarFacts {
@@ -105,13 +104,14 @@ export async function grammarInput(
 	grammar: string,
 	raw: EvaluatedGrammarFacts,
 	record: NodeModelRecord,
-	scmPath: string = bindingsPath(grammar)
+	scmPath: string = bindingsPath(grammar),
+	vocabulary?: Vocabulary
 ): Promise<GrammarInput | undefined> {
 	if (!existsSync(scmPath)) return undefined;
 	const model = slotModelOf(record);
 	return {
 		grammar,
-		bindings: bindFacts(await readBindings(readFileSync(scmPath, 'utf8')), boundNameOf(renamedFromOf(record))),
+		bindings: resolveFlags(bindFacts(await readBindings(readFileSync(scmPath, 'utf8')), boundNameOf(renamedFromOf(record))), vocabulary ?? (await readVocabulary(VOCABULARY_DIR))),
 		model,
 		textTokens: new Set(raw.textTokens ?? []),
 		layoutSlots: layoutSlots(raw.options ?? {}, new Set(model.keys()))

@@ -1,7 +1,7 @@
 import type { PortableCondition } from '@sittir/types';
 import { WILDCARD } from '../../../bindings/facts.ts';
 import type { GrammarRoutes, ReadEntry } from '../../../bindings/routes.ts';
-import { aliasesOf, descendants, namespaceTree, type NamespaceNode } from './namespaces.ts';
+import { descendants, namespaceTree, type NamespaceNode } from './namespaces.ts';
 
 export interface PortableSurfaceConfig {
 	readonly routes: GrammarRoutes;
@@ -14,16 +14,11 @@ const q = (text: string): string => JSON.stringify(text);
 
 export function emitPortableSurface({ routes, readTest, kindIdOf, fixedText }: PortableSurfaceConfig): string {
 	const root = namespaceTree(routes.readEntries);
-	const { aliases } = aliasesOf(root);
 	const nodes = descendants(root);
 	const byPath = new Map([root, ...nodes].map((n) => [n.path, n]));
 	const braces = (parts: readonly string[]): string => (parts.length === 0 ? '{}' : `{ ${parts.join('; ')} }`);
 	const members = (under: string, at: string): string[] =>
-		[
-			...[...byPath.get(under)!.children].map(([name, child]) => [name, child.path] as const),
-			...aliases.filter((a) => a.under === under).map((a) => [a.name, a.path] as const)
-		]
-			.map(([name, path]) => `readonly ${q(name)}: ${at}[${q(path)}]`);
+		[...byPath.get(under)!.children].map(([name, child]) => `readonly ${q(name)}: ${at}[${q(child.path)}]`);
 	const under = (path: string, vocab: string): boolean => vocab === path || vocab.startsWith(`${path}.`);
 	const exact = (n: NamespaceNode): boolean =>
 		n.kinds.every((kind) => {
@@ -73,7 +68,6 @@ export function emitPortableSurface({ routes, readTest, kindIdOf, fixedText }: P
 		'\tpaths: {',
 		...nodes.map((n) => `\t\t${q(n.path)}: { ids: [${idsOf(n.kinds).join(', ')}], exact: ${exact(n)} },`),
 		'\t},',
-		`\taliases: [${aliases.map((a) => `[${q(a.under)}, ${q(a.name)}, ${q(a.path)}]`).join(', ')}],`,
 		'\tentries: {',
 		...[...recordsById].map(([id, records]) => `\t\t[${id}]: [${records.join(', ')}],`),
 		'\t},',

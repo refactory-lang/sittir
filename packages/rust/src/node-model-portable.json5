@@ -6961,17 +6961,6 @@
       ],
       "members": [
         {
-          "name": "byReference",
-          "route": "slot",
-          "slot": "ref",
-          "path": [
-            {
-              "owner": "field_pattern_named",
-              "slot": "ref"
-            }
-          ]
-        },
-        {
           "name": "mutable",
           "route": "slot",
           "slot": "mutable",
@@ -7003,6 +6992,18 @@
               "slot": "pattern"
             }
           ]
+        },
+        {
+          "name": "byReference",
+          "route": "presence",
+          "via": [],
+          "token": "ref",
+          "path": [
+            {
+              "owner": "field_pattern_named",
+              "slot": "ref"
+            }
+          ]
         }
       ]
     },
@@ -7018,17 +7019,6 @@
         }
       ],
       "members": [
-        {
-          "name": "byReference",
-          "route": "slot",
-          "slot": "ref",
-          "path": [
-            {
-              "owner": "field_pattern_shorthand",
-              "slot": "ref"
-            }
-          ]
-        },
         {
           "name": "mutable",
           "route": "slot",
@@ -7048,6 +7038,18 @@
             {
               "owner": "field_pattern_shorthand",
               "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "byReference",
+          "route": "presence",
+          "via": [],
+          "token": "ref",
+          "path": [
+            {
+              "owner": "field_pattern_shorthand",
+              "slot": "ref"
             }
           ]
         }
@@ -8089,514 +8091,6 @@
       "vocab": "declaration.function",
       "read": [
         {
-          "vocab": "declaration.method.static.private",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "impl_item_body"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "parameters"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "elements"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "item"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "not",
-                "of": {
-                  "op": "is",
-                  "types": [
-                    231
-                  ],
-                  "fields": [],
-                  "kinds": [
-                    "parameter",
-                    "self_parameter",
-                    "variadic_parameter",
-                    "underscore",
-                    "type_identifier",
-                    "abstract_type",
-                    "reference_type",
-                    "metavariable",
-                    "pointer_type_const",
-                    "pointer_type_mut",
-                    "generic_type",
-                    "scoped_type_identifier",
-                    "tuple_type",
-                    "unit_type",
-                    "array_type",
-                    "function_type",
-                    "macro_invocation",
-                    "never_type",
-                    "dynamic_type",
-                    "bounded_type",
-                    "removed_trait_bound",
-                    "primitive_type"
-                  ]
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "fields": [
-                  "visibility_modifier"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "fields": [],
-                "kinds": [
-                  "crate",
-                  "visibility_modifier_pub"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  380
-                ],
-                "fields": [],
-                "kinds": [
-                  "visibility_modifier_pub_scope"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "visibility_modifier_pub_scope"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  125
-                ],
-                "fields": [],
-                "kinds": [
-                  "self",
-                  "super",
-                  "crate",
-                  "visibility_modifier_pub_scope_in_path"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method.static.public.internal",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "impl_item_body"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "parameters"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "elements"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "item"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "not",
-                "of": {
-                  "op": "is",
-                  "types": [
-                    231
-                  ],
-                  "fields": [],
-                  "kinds": [
-                    "parameter",
-                    "self_parameter",
-                    "variadic_parameter",
-                    "underscore",
-                    "type_identifier",
-                    "abstract_type",
-                    "reference_type",
-                    "metavariable",
-                    "pointer_type_const",
-                    "pointer_type_mut",
-                    "generic_type",
-                    "scoped_type_identifier",
-                    "tuple_type",
-                    "unit_type",
-                    "array_type",
-                    "function_type",
-                    "macro_invocation",
-                    "never_type",
-                    "dynamic_type",
-                    "bounded_type",
-                    "removed_trait_bound",
-                    "primitive_type"
-                  ]
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "fields": [
-                  "visibility_modifier"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "fields": [],
-                "kinds": [
-                  "crate",
-                  "visibility_modifier_pub"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  380
-                ],
-                "fields": [],
-                "kinds": [
-                  "visibility_modifier_pub_scope"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "visibility_modifier_pub_scope"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  127
-                ],
-                "fields": [],
-                "kinds": [
-                  "self",
-                  "super",
-                  "crate",
-                  "visibility_modifier_pub_scope_in_path"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method.static.public.restricted",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "impl_item_body"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "parameters"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "elements"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "item"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "not",
-                "of": {
-                  "op": "is",
-                  "types": [
-                    231
-                  ],
-                  "fields": [],
-                  "kinds": [
-                    "parameter",
-                    "self_parameter",
-                    "variadic_parameter",
-                    "underscore",
-                    "type_identifier",
-                    "abstract_type",
-                    "reference_type",
-                    "metavariable",
-                    "pointer_type_const",
-                    "pointer_type_mut",
-                    "generic_type",
-                    "scoped_type_identifier",
-                    "tuple_type",
-                    "unit_type",
-                    "array_type",
-                    "function_type",
-                    "macro_invocation",
-                    "never_type",
-                    "dynamic_type",
-                    "bounded_type",
-                    "removed_trait_bound",
-                    "primitive_type"
-                  ]
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "fields": [
-                  "visibility_modifier"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "fields": [],
-                "kinds": [
-                  "crate",
-                  "visibility_modifier_pub"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  380
-                ],
-                "fields": [],
-                "kinds": [
-                  "visibility_modifier_pub_scope"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "visibility_modifier_pub_scope"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  126,
-                  379
-                ],
-                "fields": [],
-                "kinds": [
-                  "self",
-                  "super",
-                  "crate",
-                  "visibility_modifier_pub_scope_in_path"
-                ]
-              }
-            }
-          ]
-        },
-        {
           "vocab": "declaration.method",
           "toplevel": false,
           "within": [
@@ -8684,215 +8178,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.static.public",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "impl_item_body"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "parameters"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "elements"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "item"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "not",
-                "of": {
-                  "op": "is",
-                  "types": [
-                    231
-                  ],
-                  "fields": [],
-                  "kinds": [
-                    "parameter",
-                    "self_parameter",
-                    "variadic_parameter",
-                    "underscore",
-                    "type_identifier",
-                    "abstract_type",
-                    "reference_type",
-                    "metavariable",
-                    "pointer_type_const",
-                    "pointer_type_mut",
-                    "generic_type",
-                    "scoped_type_identifier",
-                    "tuple_type",
-                    "unit_type",
-                    "array_type",
-                    "function_type",
-                    "macro_invocation",
-                    "never_type",
-                    "dynamic_type",
-                    "bounded_type",
-                    "removed_trait_bound",
-                    "primitive_type"
-                  ]
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "fields": [
-                  "visibility_modifier"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "fields": [],
-                "kinds": [
-                  "crate",
-                  "visibility_modifier_pub"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method.static.public.internal",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "impl_item_body"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "parameters"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "elements"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "item"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "not",
-                "of": {
-                  "op": "is",
-                  "types": [
-                    231
-                  ],
-                  "fields": [],
-                  "kinds": [
-                    "parameter",
-                    "self_parameter",
-                    "variadic_parameter",
-                    "underscore",
-                    "type_identifier",
-                    "abstract_type",
-                    "reference_type",
-                    "metavariable",
-                    "pointer_type_const",
-                    "pointer_type_mut",
-                    "generic_type",
-                    "scoped_type_identifier",
-                    "tuple_type",
-                    "unit_type",
-                    "array_type",
-                    "function_type",
-                    "macro_invocation",
-                    "never_type",
-                    "dynamic_type",
-                    "bounded_type",
-                    "removed_trait_bound",
-                    "primitive_type"
-                  ]
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "fields": [
-                  "visibility_modifier"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  127
-                ],
-                "fields": [],
-                "kinds": [
-                  "crate",
-                  "visibility_modifier_pub"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method.static",
+          "vocab": "declaration.method",
           "toplevel": false,
           "within": [
             "declaration_list",
@@ -9068,82 +8354,6 @@
                   "visibility_modifier_pub_scope_in_path"
                 ]
               }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "parameters"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  349
-                ],
-                "fields": [
-                  "elements"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "parameters"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "elements"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "item"
-                  ],
-                  "kinds": [],
-                  "anchor": "first"
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  231
-                ],
-                "fields": [],
-                "kinds": [
-                  "parameter",
-                  "self_parameter",
-                  "variadic_parameter",
-                  "underscore",
-                  "type_identifier",
-                  "abstract_type",
-                  "reference_type",
-                  "metavariable",
-                  "pointer_type_const",
-                  "pointer_type_mut",
-                  "generic_type",
-                  "scoped_type_identifier",
-                  "tuple_type",
-                  "unit_type",
-                  "array_type",
-                  "function_type",
-                  "macro_invocation",
-                  "never_type",
-                  "dynamic_type",
-                  "bounded_type",
-                  "removed_trait_bound",
-                  "primitive_type"
-                ]
-              }
             }
           ]
         },
@@ -9256,82 +8466,6 @@
                   "visibility_modifier_pub_scope_in_path"
                 ]
               }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "parameters"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  349
-                ],
-                "fields": [
-                  "elements"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "parameters"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "elements"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "item"
-                  ],
-                  "kinds": [],
-                  "anchor": "first"
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  231
-                ],
-                "fields": [],
-                "kinds": [
-                  "parameter",
-                  "self_parameter",
-                  "variadic_parameter",
-                  "underscore",
-                  "type_identifier",
-                  "abstract_type",
-                  "reference_type",
-                  "metavariable",
-                  "pointer_type_const",
-                  "pointer_type_mut",
-                  "generic_type",
-                  "scoped_type_identifier",
-                  "tuple_type",
-                  "unit_type",
-                  "array_type",
-                  "function_type",
-                  "macro_invocation",
-                  "never_type",
-                  "dynamic_type",
-                  "bounded_type",
-                  "removed_trait_bound",
-                  "primitive_type"
-                ]
-              }
             }
           ]
         },
@@ -9341,6 +8475,91 @@
           "within": [
             "declaration_list",
             "impl_item_body"
+          ],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "fields": [
+                  "visibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [
+                    "visibility_modifier"
+                  ],
+                  "kinds": []
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "fields": [],
+                "kinds": [
+                  "crate",
+                  "visibility_modifier_pub"
+                ]
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [
+                    "visibility_modifier"
+                  ],
+                  "kinds": []
+                },
+                {
+                  "fields": [],
+                  "kinds": [
+                    "crate",
+                    "visibility_modifier_pub"
+                  ]
+                },
+                {
+                  "fields": [],
+                  "kinds": [
+                    "visibility_modifier_pub_scope"
+                  ]
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  126,
+                  379
+                ],
+                "fields": [],
+                "kinds": [
+                  "self",
+                  "super",
+                  "crate",
+                  "visibility_modifier_pub_scope_in_path"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.private",
+          "toplevel": false,
+          "within": [
+            "declaration_list",
+            "trait_item"
           ],
           "pins": [],
           "test": [
@@ -9434,8 +8653,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  126,
-                  379
+                  125
                 ],
                 "fields": [],
                 "kinds": [
@@ -9445,24 +8663,28 @@
                   "visibility_modifier_pub_scope_in_path"
                 ]
               }
-            },
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.public.internal",
+          "toplevel": false,
+          "within": [
+            "declaration_list",
+            "trait_item"
+          ],
+          "pins": [],
+          "test": [
             {
               "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "parameters"
-                  ],
-                  "kinds": []
-                }
-              ],
+              "via": [],
               "plan": {
                 "op": "is",
                 "types": [
-                  349
+                  235
                 ],
                 "fields": [
-                  "elements"
+                  "visibility_modifier"
                 ],
                 "kinds": []
               }
@@ -9472,53 +8694,170 @@
               "via": [
                 {
                   "fields": [
-                    "parameters"
+                    "visibility_modifier"
                   ],
                   "kinds": []
-                },
-                {
-                  "fields": [
-                    "elements"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "item"
-                  ],
-                  "kinds": [],
-                  "anchor": "first"
                 }
               ],
               "plan": {
                 "op": "is",
                 "types": [
-                  231
+                  381
                 ],
                 "fields": [],
                 "kinds": [
-                  "parameter",
-                  "self_parameter",
-                  "variadic_parameter",
-                  "underscore",
-                  "type_identifier",
-                  "abstract_type",
-                  "reference_type",
-                  "metavariable",
-                  "pointer_type_const",
-                  "pointer_type_mut",
-                  "generic_type",
-                  "scoped_type_identifier",
-                  "tuple_type",
-                  "unit_type",
-                  "array_type",
-                  "function_type",
-                  "macro_invocation",
-                  "never_type",
-                  "dynamic_type",
-                  "bounded_type",
-                  "removed_trait_bound",
-                  "primitive_type"
+                  "crate",
+                  "visibility_modifier_pub"
+                ]
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [
+                    "visibility_modifier"
+                  ],
+                  "kinds": []
+                },
+                {
+                  "fields": [],
+                  "kinds": [
+                    "crate",
+                    "visibility_modifier_pub"
+                  ]
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "fields": [],
+                "kinds": [
+                  "visibility_modifier_pub_scope"
+                ]
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [
+                    "visibility_modifier"
+                  ],
+                  "kinds": []
+                },
+                {
+                  "fields": [],
+                  "kinds": [
+                    "crate",
+                    "visibility_modifier_pub"
+                  ]
+                },
+                {
+                  "fields": [],
+                  "kinds": [
+                    "visibility_modifier_pub_scope"
+                  ]
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  127
+                ],
+                "fields": [],
+                "kinds": [
+                  "self",
+                  "super",
+                  "crate",
+                  "visibility_modifier_pub_scope_in_path"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.public.restricted",
+          "toplevel": false,
+          "within": [
+            "declaration_list",
+            "trait_item"
+          ],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "fields": [
+                  "visibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [
+                    "visibility_modifier"
+                  ],
+                  "kinds": []
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "fields": [],
+                "kinds": [
+                  "crate",
+                  "visibility_modifier_pub"
+                ]
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "fields": [
+                    "visibility_modifier"
+                  ],
+                  "kinds": []
+                },
+                {
+                  "fields": [],
+                  "kinds": [
+                    "crate",
+                    "visibility_modifier_pub"
+                  ]
+                },
+                {
+                  "fields": [],
+                  "kinds": [
+                    "visibility_modifier_pub_scope"
+                  ]
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  126,
+                  379
+                ],
+                "fields": [],
+                "kinds": [
+                  "self",
+                  "super",
+                  "crate",
+                  "visibility_modifier_pub_scope_in_path"
                 ]
               }
             }
@@ -9568,82 +8907,6 @@
                   "visibility_modifier_pub"
                 ]
               }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "parameters"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  349
-                ],
-                "fields": [
-                  "elements"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "parameters"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "elements"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "item"
-                  ],
-                  "kinds": [],
-                  "anchor": "first"
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  231
-                ],
-                "fields": [],
-                "kinds": [
-                  "parameter",
-                  "self_parameter",
-                  "variadic_parameter",
-                  "underscore",
-                  "type_identifier",
-                  "abstract_type",
-                  "reference_type",
-                  "metavariable",
-                  "pointer_type_const",
-                  "pointer_type_mut",
-                  "generic_type",
-                  "scoped_type_identifier",
-                  "tuple_type",
-                  "unit_type",
-                  "array_type",
-                  "function_type",
-                  "macro_invocation",
-                  "never_type",
-                  "dynamic_type",
-                  "bounded_type",
-                  "removed_trait_bound",
-                  "primitive_type"
-                ]
-              }
             }
           ]
         },
@@ -9689,419 +8952,6 @@
                 "kinds": [
                   "crate",
                   "visibility_modifier_pub"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "parameters"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  349
-                ],
-                "fields": [
-                  "elements"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "parameters"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "elements"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [
-                    "item"
-                  ],
-                  "kinds": [],
-                  "anchor": "first"
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  231
-                ],
-                "fields": [],
-                "kinds": [
-                  "parameter",
-                  "self_parameter",
-                  "variadic_parameter",
-                  "underscore",
-                  "type_identifier",
-                  "abstract_type",
-                  "reference_type",
-                  "metavariable",
-                  "pointer_type_const",
-                  "pointer_type_mut",
-                  "generic_type",
-                  "scoped_type_identifier",
-                  "tuple_type",
-                  "unit_type",
-                  "array_type",
-                  "function_type",
-                  "macro_invocation",
-                  "never_type",
-                  "dynamic_type",
-                  "bounded_type",
-                  "removed_trait_bound",
-                  "primitive_type"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method.private",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "trait_item"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "fields": [
-                  "visibility_modifier"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "fields": [],
-                "kinds": [
-                  "crate",
-                  "visibility_modifier_pub"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  380
-                ],
-                "fields": [],
-                "kinds": [
-                  "visibility_modifier_pub_scope"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "visibility_modifier_pub_scope"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  125
-                ],
-                "fields": [],
-                "kinds": [
-                  "self",
-                  "super",
-                  "crate",
-                  "visibility_modifier_pub_scope_in_path"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method.public.internal",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "trait_item"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "fields": [
-                  "visibility_modifier"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "fields": [],
-                "kinds": [
-                  "crate",
-                  "visibility_modifier_pub"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  380
-                ],
-                "fields": [],
-                "kinds": [
-                  "visibility_modifier_pub_scope"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "visibility_modifier_pub_scope"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  127
-                ],
-                "fields": [],
-                "kinds": [
-                  "self",
-                  "super",
-                  "crate",
-                  "visibility_modifier_pub_scope_in_path"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method.public.restricted",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "trait_item"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "fields": [
-                  "visibility_modifier"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "fields": [],
-                "kinds": [
-                  "crate",
-                  "visibility_modifier_pub"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  380
-                ],
-                "fields": [],
-                "kinds": [
-                  "visibility_modifier_pub_scope"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "visibility_modifier_pub_scope"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  126,
-                  379
-                ],
-                "fields": [],
-                "kinds": [
-                  "self",
-                  "super",
-                  "crate",
-                  "visibility_modifier_pub_scope_in_path"
                 ]
               }
             }
@@ -10825,6 +9675,76 @@
               "slot": "visibility_modifier_pub_scope"
             }
           ]
+        },
+        {
+          "name": "scope",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "visibility_modifier_pub",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "visibility_modifier",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "visibility_modifier_pub",
+          "slot": "visibility_modifier_pub_scope",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "function_item",
+              "slot": "visibility_modifier"
+            },
+            {
+              "owner": "visibility_modifier",
+              "slot": "content"
+            },
+            {
+              "owner": "visibility_modifier_pub",
+              "slot": "visibility_modifier_pub_scope"
+            }
+          ]
+        },
+        {
+          "name": "scope",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "visibility_modifier_pub",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "visibility_modifier",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "visibility_modifier_pub",
+          "slot": "visibility_modifier_pub_scope",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "function_item",
+              "slot": "visibility_modifier"
+            },
+            {
+              "owner": "visibility_modifier",
+              "slot": "content"
+            },
+            {
+              "owner": "visibility_modifier_pub",
+              "slot": "visibility_modifier_pub_scope"
+            }
+          ]
         }
       ]
     },
@@ -11111,34 +10031,6 @@
                 "kinds": [
                   "crate",
                   "visibility_modifier_pub"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  380
-                ],
-                "fields": [],
-                "kinds": [
-                  "visibility_modifier_pub_scope"
                 ]
               }
             },
@@ -11746,6 +10638,41 @@
             {
               "owner": "function_signature_item",
               "slot": "where_clause"
+            }
+          ]
+        },
+        {
+          "name": "scope",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "visibility_modifier_pub",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "visibility_modifier",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "visibility_modifier_pub",
+          "slot": "visibility_modifier_pub_scope",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "function_signature_item",
+              "slot": "visibility_modifier"
+            },
+            {
+              "owner": "visibility_modifier",
+              "slot": "content"
+            },
+            {
+              "owner": "visibility_modifier_pub",
+              "slot": "visibility_modifier_pub_scope"
             }
           ]
         },
@@ -12457,44 +11384,15 @@
           ]
         },
         {
-          "name": "receiver",
-          "route": "nested",
-          "via": [
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
             {
-              "field": null,
-              "kind": "attributed_parameter",
-              "after": null,
-              "anchor": "first"
-            },
-            {
-              "field": null,
-              "kind": "parameters_elements",
-              "after": null,
-              "anchor": null
-            },
-            {
-              "field": null,
-              "kind": "parameters",
-              "after": null,
-              "anchor": null
-            },
-            {
-              "field": null,
-              "kind": "function_item",
-              "after": null,
-              "anchor": null
-            },
-            {
-              "field": null,
-              "kind": "declaration_list",
-              "after": null,
-              "anchor": null
+              "owner": "impl_item_body",
+              "slot": "body"
             }
-          ],
-          "parent": "attributed_parameter",
-          "slot": "content",
-          "multiple": false,
-          "path": null
+          ]
         },
         {
           "name": "implements",
@@ -14945,17 +13843,6 @@
       ],
       "members": [
         {
-          "name": "mutable",
-          "route": "slot",
-          "slot": "mutable",
-          "path": [
-            {
-              "owner": "parameter",
-              "slot": "mutable"
-            }
-          ]
-        },
-        {
           "name": "name",
           "route": "slot",
           "slot": "name",
@@ -14974,6 +13861,17 @@
             {
               "owner": "parameter",
               "slot": "type"
+            }
+          ]
+        },
+        {
+          "name": "mutable",
+          "route": "kind",
+          "kind": "mutable_specifier",
+          "path": [
+            {
+              "owner": "parameter",
+              "slot": "mutable"
             }
           ]
         }
@@ -15984,17 +14882,6 @@
       ],
       "members": [
         {
-          "name": "exclusive",
-          "route": "slot",
-          "slot": "mutable",
-          "path": [
-            {
-              "owner": "reference_pattern",
-              "slot": "mutable"
-            }
-          ]
-        },
-        {
           "name": "pattern",
           "route": "slot",
           "slot": "pattern",
@@ -16002,6 +14889,17 @@
             {
               "owner": "reference_pattern",
               "slot": "pattern"
+            }
+          ]
+        },
+        {
+          "name": "exclusive",
+          "route": "kind",
+          "kind": "mutable_specifier",
+          "path": [
+            {
+              "owner": "reference_pattern",
+              "slot": "mutable"
             }
           ]
         }
@@ -16031,17 +14929,6 @@
           ]
         },
         {
-          "name": "exclusive",
-          "route": "slot",
-          "slot": "mutable",
-          "path": [
-            {
-              "owner": "reference_type",
-              "slot": "mutable"
-            }
-          ]
-        },
-        {
           "name": "type",
           "route": "slot",
           "slot": "type",
@@ -16049,6 +14936,17 @@
             {
               "owner": "reference_type",
               "slot": "type"
+            }
+          ]
+        },
+        {
+          "name": "exclusive",
+          "route": "kind",
+          "kind": "mutable_specifier",
+          "path": [
+            {
+              "owner": "reference_type",
+              "slot": "mutable"
             }
           ]
         }
@@ -16342,8 +15240,8 @@
         },
         {
           "name": "mutable",
-          "route": "slot",
-          "slot": "mutable",
+          "route": "kind",
+          "kind": "mutable_specifier",
           "path": [
             {
               "owner": "self_parameter",
@@ -16876,17 +15774,6 @@
       ],
       "members": [
         {
-          "name": "byReference",
-          "route": "slot",
-          "slot": "ref",
-          "path": [
-            {
-              "owner": "static_item",
-              "slot": "ref"
-            }
-          ]
-        },
-        {
           "name": "mutable",
           "route": "slot",
           "slot": "mutable",
@@ -16927,6 +15814,18 @@
             {
               "owner": "static_item",
               "slot": "value"
+            }
+          ]
+        },
+        {
+          "name": "byReference",
+          "route": "presence",
+          "via": [],
+          "token": "ref",
+          "path": [
+            {
+              "owner": "static_item",
+              "slot": "ref"
             }
           ]
         },
@@ -18647,6 +17546,17 @@
           ]
         },
         {
+          "name": "separator",
+          "route": "slot",
+          "slot": "separator",
+          "path": [
+            {
+              "owner": "token_repetition",
+              "slot": "separator"
+            }
+          ]
+        },
+        {
           "name": "operator",
           "route": "slot",
           "slot": "operator",
@@ -18679,6 +17589,17 @@
             {
               "owner": "token_repetition_pattern",
               "slot": "token_patterns"
+            }
+          ]
+        },
+        {
+          "name": "separator",
+          "route": "slot",
+          "slot": "separator",
+          "path": [
+            {
+              "owner": "token_repetition_pattern",
+              "slot": "separator"
             }
           ]
         },
@@ -22463,841 +21384,31 @@
         "depth": 1,
         "paths": 13,
         "kinds": 3,
-        "refinements": 0,
-        "aliases": 122
+        "refinements": 0
       },
       {
         "depth": 2,
         "paths": 103,
         "kinds": 154,
-        "refinements": 12,
-        "aliases": 92
+        "refinements": 12
       },
       {
         "depth": 3,
-        "paths": 103,
+        "paths": 102,
         "kinds": 113,
-        "refinements": 75,
-        "aliases": 53
+        "refinements": 74
       },
       {
         "depth": 4,
-        "paths": 85,
+        "paths": 83,
         "kinds": 41,
-        "refinements": 67,
-        "aliases": 22
+        "refinements": 65
       },
       {
         "depth": 5,
-        "paths": 22,
-        "kinds": 10,
-        "refinements": 22,
-        "aliases": 0
-      }
-    ],
-    "dropped": [
-      {
-        "under": "",
-        "name": "add",
-        "paths": [
-          "expression.assignment.compound.add",
-          "expression.binary.arithmetic.add"
-        ]
-      },
-      {
-        "under": "",
-        "name": "and",
-        "paths": [
-          "expression.binary.bitwise.and",
-          "expression.binary.logical.and"
-        ]
-      },
-      {
-        "under": "",
-        "name": "as",
-        "paths": [
-          "clause.import.as",
-          "expression.cast.as"
-        ]
-      },
-      {
-        "under": "",
-        "name": "binary",
-        "paths": [
-          "expression.binary",
-          "literal.number.integer.binary"
-        ]
-      },
-      {
-        "under": "",
-        "name": "block",
-        "paths": [
-          "comment.block",
-          "expression.block",
-          "statement.block"
-        ]
-      },
-      {
-        "under": "",
-        "name": "crate",
-        "paths": [
-          "identifier.crate",
-          "statement.import.crate"
-        ]
-      },
-      {
-        "under": "",
-        "name": "divide",
-        "paths": [
-          "expression.assignment.compound.divide",
-          "expression.binary.arithmetic.divide"
-        ]
-      },
-      {
-        "under": "",
-        "name": "doc",
-        "paths": [
-          "comment.block.doc",
-          "comment.line.doc"
-        ]
-      },
-      {
-        "under": "",
-        "name": "exclusive",
-        "paths": [
-          "expression.range.exclusive",
-          "pattern.range.exclusive"
-        ]
-      },
-      {
-        "under": "",
-        "name": "field",
-        "paths": [
-          "declaration.field",
-          "element.struct.field",
-          "identifier.field",
-          "pattern.struct.field"
-        ]
-      },
-      {
-        "under": "",
-        "name": "function",
-        "paths": [
-          "declaration.function",
-          "type.function"
-        ]
-      },
-      {
-        "under": "",
-        "name": "generic",
-        "paths": [
-          "pattern.generic",
-          "type.generic"
-        ]
-      },
-      {
-        "under": "",
-        "name": "import",
-        "paths": [
-          "clause.import",
-          "statement.import"
-        ]
-      },
-      {
-        "under": "",
-        "name": "inclusive",
-        "paths": [
-          "expression.range.inclusive",
-          "pattern.range.inclusive"
-        ]
-      },
-      {
-        "under": "",
-        "name": "inner",
-        "paths": [
-          "attribute.inner",
-          "comment.block.doc.inner",
-          "comment.line.doc.inner"
-        ]
-      },
-      {
-        "under": "",
-        "name": "internal",
-        "paths": [
-          "declaration.constant.public.internal",
-          "declaration.enum.public.internal",
-          "declaration.enum_member.public.internal",
-          "declaration.enum_member.struct.public.internal",
-          "declaration.enum_member.tuple.public.internal",
-          "declaration.field.public.internal",
-          "declaration.function.public.internal",
-          "declaration.function.signature.public.internal",
-          "declaration.interface.trait.public.internal",
-          "declaration.method.public.internal",
-          "declaration.method.signature.public.internal",
-          "declaration.method.static.public.internal",
-          "declaration.module.foreign.public.internal",
-          "declaration.module.public.internal",
-          "declaration.struct.public.internal",
-          "declaration.struct.tuple.public.internal",
-          "declaration.struct.unit.public.internal",
-          "declaration.type_alias.public.internal",
-          "declaration.union.public.internal",
-          "declaration.variable.static.public.internal",
-          "modifier.visibility.public.internal",
-          "statement.import.crate.public.internal",
-          "statement.import.public.internal"
-        ]
-      },
-      {
-        "under": "",
-        "name": "lifetime",
-        "paths": [
-          "declaration.type_parameter.lifetime",
-          "identifier.lifetime"
-        ]
-      },
-      {
-        "under": "",
-        "name": "list",
-        "paths": [
-          "clause.import.list",
-          "expression.collection.list"
-        ]
-      },
-      {
-        "under": "",
-        "name": "macro",
-        "paths": [
-          "clause.macro",
-          "declaration.macro",
-          "element.macro",
-          "expression.call.macro"
-        ]
-      },
-      {
-        "under": "",
-        "name": "match",
-        "paths": [
-          "clause.match",
-          "pattern.match",
-          "statement.match"
-        ]
-      },
-      {
-        "under": "",
-        "name": "member",
-        "paths": [
-          "expression.call.member",
-          "expression.member"
-        ]
-      },
-      {
-        "under": "",
-        "name": "modulo",
-        "paths": [
-          "expression.assignment.compound.modulo",
-          "expression.binary.arithmetic.modulo"
-        ]
-      },
-      {
-        "under": "",
-        "name": "multiply",
-        "paths": [
-          "expression.assignment.compound.multiply",
-          "expression.binary.arithmetic.multiply"
-        ]
-      },
-      {
-        "under": "",
-        "name": "or",
-        "paths": [
-          "expression.binary.bitwise.or",
-          "expression.binary.logical.or",
-          "pattern.or"
-        ]
-      },
-      {
-        "under": "",
-        "name": "path",
-        "paths": [
-          "expression.call.path",
-          "type.path"
-        ]
-      },
-      {
-        "under": "",
-        "name": "private",
-        "paths": [
-          "declaration.constant.private",
-          "declaration.enum.private",
-          "declaration.enum_member.private",
-          "declaration.enum_member.struct.private",
-          "declaration.enum_member.tuple.private",
-          "declaration.field.private",
-          "declaration.function.private",
-          "declaration.function.signature.private",
-          "declaration.interface.trait.private",
-          "declaration.method.private",
-          "declaration.method.signature.private",
-          "declaration.method.static.private",
-          "declaration.module.foreign.private",
-          "declaration.module.private",
-          "declaration.struct.private",
-          "declaration.struct.tuple.private",
-          "declaration.struct.unit.private",
-          "declaration.type_alias.private",
-          "declaration.union.private",
-          "declaration.variable.static.private",
-          "modifier.visibility.private",
-          "statement.import.crate.private",
-          "statement.import.private"
-        ]
-      },
-      {
-        "under": "",
-        "name": "public",
-        "paths": [
-          "declaration.constant.public",
-          "declaration.enum.public",
-          "declaration.enum_member.public",
-          "declaration.enum_member.struct.public",
-          "declaration.enum_member.tuple.public",
-          "declaration.field.public",
-          "declaration.function.public",
-          "declaration.function.signature.public",
-          "declaration.interface.trait.public",
-          "declaration.method.public",
-          "declaration.method.signature.public",
-          "declaration.method.static.public",
-          "declaration.module.foreign.public",
-          "declaration.module.public",
-          "declaration.struct.public",
-          "declaration.struct.tuple.public",
-          "declaration.struct.unit.public",
-          "declaration.type_alias.public",
-          "declaration.union.public",
-          "declaration.variable.static.public",
-          "modifier.visibility.public",
-          "statement.import.crate.public",
-          "statement.import.public"
-        ]
-      },
-      {
-        "under": "",
-        "name": "range",
-        "paths": [
-          "expression.range",
-          "pattern.range"
-        ]
-      },
-      {
-        "under": "",
-        "name": "reference",
-        "paths": [
-          "expression.reference",
-          "pattern.reference",
-          "type.reference"
-        ]
-      },
-      {
-        "under": "",
-        "name": "restricted",
-        "paths": [
-          "declaration.constant.public.restricted",
-          "declaration.enum.public.restricted",
-          "declaration.enum_member.public.restricted",
-          "declaration.enum_member.struct.public.restricted",
-          "declaration.enum_member.tuple.public.restricted",
-          "declaration.field.public.restricted",
-          "declaration.function.public.restricted",
-          "declaration.function.signature.public.restricted",
-          "declaration.interface.trait.public.restricted",
-          "declaration.method.public.restricted",
-          "declaration.method.signature.public.restricted",
-          "declaration.method.static.public.restricted",
-          "declaration.module.foreign.public.restricted",
-          "declaration.module.public.restricted",
-          "declaration.struct.public.restricted",
-          "declaration.struct.tuple.public.restricted",
-          "declaration.struct.unit.public.restricted",
-          "declaration.type_alias.public.restricted",
-          "declaration.union.public.restricted",
-          "declaration.variable.static.public.restricted",
-          "modifier.visibility.public.restricted",
-          "statement.import.crate.public.restricted",
-          "statement.import.public.restricted"
-        ]
-      },
-      {
-        "under": "",
-        "name": "scoped",
-        "paths": [
-          "clause.import.list.scoped",
-          "identifier.scoped"
-        ]
-      },
-      {
-        "under": "",
-        "name": "self",
-        "paths": [
-          "declaration.parameter.self",
-          "identifier.self"
-        ]
-      },
-      {
-        "under": "",
-        "name": "signature",
-        "paths": [
-          "declaration.function.signature",
-          "declaration.method.signature"
-        ]
-      },
-      {
-        "under": "",
-        "name": "static",
-        "paths": [
-          "declaration.method.static",
-          "declaration.variable.static"
-        ]
-      },
-      {
-        "under": "",
-        "name": "struct",
-        "paths": [
-          "declaration.enum_member.struct",
-          "declaration.struct",
-          "element.struct",
-          "expression.collection.struct",
-          "pattern.struct",
-          "pattern.tuple.struct"
-        ]
-      },
-      {
-        "under": "",
-        "name": "subtract",
-        "paths": [
-          "expression.assignment.compound.subtract",
-          "expression.binary.arithmetic.subtract"
-        ]
-      },
-      {
-        "under": "",
-        "name": "text",
-        "paths": [
-          "comment.text",
-          "literal.string.text"
-        ]
-      },
-      {
-        "under": "",
-        "name": "try",
-        "paths": [
-          "expression.block.try",
-          "expression.try"
-        ]
-      },
-      {
-        "under": "",
-        "name": "tuple",
-        "paths": [
-          "declaration.enum_member.tuple",
-          "declaration.struct.tuple",
-          "expression.collection.tuple",
-          "pattern.tuple",
-          "type.tuple"
-        ]
-      },
-      {
-        "under": "",
-        "name": "unit",
-        "paths": [
-          "declaration.struct.unit",
-          "expression.unit",
-          "type.unit"
-        ]
-      },
-      {
-        "under": "",
-        "name": "value",
-        "paths": [
-          "declaration.type_parameter.value",
-          "pattern.reference.value"
-        ]
-      },
-      {
-        "under": "",
-        "name": "wildcard",
-        "paths": [
-          "clause.import.wildcard",
-          "pattern.wildcard"
-        ]
-      },
-      {
-        "under": "comment",
-        "name": "doc",
-        "paths": [
-          "comment.block.doc",
-          "comment.line.doc"
-        ]
-      },
-      {
-        "under": "comment",
-        "name": "inner",
-        "paths": [
-          "comment.block.doc.inner",
-          "comment.line.doc.inner"
-        ]
-      },
-      {
-        "under": "declaration",
-        "name": "internal",
-        "paths": [
-          "declaration.constant.public.internal",
-          "declaration.enum.public.internal",
-          "declaration.enum_member.public.internal",
-          "declaration.enum_member.struct.public.internal",
-          "declaration.enum_member.tuple.public.internal",
-          "declaration.field.public.internal",
-          "declaration.function.public.internal",
-          "declaration.function.signature.public.internal",
-          "declaration.interface.trait.public.internal",
-          "declaration.method.public.internal",
-          "declaration.method.signature.public.internal",
-          "declaration.method.static.public.internal",
-          "declaration.module.foreign.public.internal",
-          "declaration.module.public.internal",
-          "declaration.struct.public.internal",
-          "declaration.struct.tuple.public.internal",
-          "declaration.struct.unit.public.internal",
-          "declaration.type_alias.public.internal",
-          "declaration.union.public.internal",
-          "declaration.variable.static.public.internal"
-        ]
-      },
-      {
-        "under": "declaration",
-        "name": "private",
-        "paths": [
-          "declaration.constant.private",
-          "declaration.enum.private",
-          "declaration.enum_member.private",
-          "declaration.enum_member.struct.private",
-          "declaration.enum_member.tuple.private",
-          "declaration.field.private",
-          "declaration.function.private",
-          "declaration.function.signature.private",
-          "declaration.interface.trait.private",
-          "declaration.method.private",
-          "declaration.method.signature.private",
-          "declaration.method.static.private",
-          "declaration.module.foreign.private",
-          "declaration.module.private",
-          "declaration.struct.private",
-          "declaration.struct.tuple.private",
-          "declaration.struct.unit.private",
-          "declaration.type_alias.private",
-          "declaration.union.private",
-          "declaration.variable.static.private"
-        ]
-      },
-      {
-        "under": "declaration",
-        "name": "public",
-        "paths": [
-          "declaration.constant.public",
-          "declaration.enum.public",
-          "declaration.enum_member.public",
-          "declaration.enum_member.struct.public",
-          "declaration.enum_member.tuple.public",
-          "declaration.field.public",
-          "declaration.function.public",
-          "declaration.function.signature.public",
-          "declaration.interface.trait.public",
-          "declaration.method.public",
-          "declaration.method.signature.public",
-          "declaration.method.static.public",
-          "declaration.module.foreign.public",
-          "declaration.module.public",
-          "declaration.struct.public",
-          "declaration.struct.tuple.public",
-          "declaration.struct.unit.public",
-          "declaration.type_alias.public",
-          "declaration.union.public",
-          "declaration.variable.static.public"
-        ]
-      },
-      {
-        "under": "declaration",
-        "name": "restricted",
-        "paths": [
-          "declaration.constant.public.restricted",
-          "declaration.enum.public.restricted",
-          "declaration.enum_member.public.restricted",
-          "declaration.enum_member.struct.public.restricted",
-          "declaration.enum_member.tuple.public.restricted",
-          "declaration.field.public.restricted",
-          "declaration.function.public.restricted",
-          "declaration.function.signature.public.restricted",
-          "declaration.interface.trait.public.restricted",
-          "declaration.method.public.restricted",
-          "declaration.method.signature.public.restricted",
-          "declaration.method.static.public.restricted",
-          "declaration.module.foreign.public.restricted",
-          "declaration.module.public.restricted",
-          "declaration.struct.public.restricted",
-          "declaration.struct.tuple.public.restricted",
-          "declaration.struct.unit.public.restricted",
-          "declaration.type_alias.public.restricted",
-          "declaration.union.public.restricted",
-          "declaration.variable.static.public.restricted"
-        ]
-      },
-      {
-        "under": "declaration",
-        "name": "signature",
-        "paths": [
-          "declaration.function.signature",
-          "declaration.method.signature"
-        ]
-      },
-      {
-        "under": "declaration",
-        "name": "static",
-        "paths": [
-          "declaration.method.static",
-          "declaration.variable.static"
-        ]
-      },
-      {
-        "under": "declaration",
-        "name": "tuple",
-        "paths": [
-          "declaration.enum_member.tuple",
-          "declaration.struct.tuple"
-        ]
-      },
-      {
-        "under": "declaration.enum_member",
-        "name": "internal",
-        "paths": [
-          "declaration.enum_member.public.internal",
-          "declaration.enum_member.struct.public.internal",
-          "declaration.enum_member.tuple.public.internal"
-        ]
-      },
-      {
-        "under": "declaration.enum_member",
-        "name": "restricted",
-        "paths": [
-          "declaration.enum_member.public.restricted",
-          "declaration.enum_member.struct.public.restricted",
-          "declaration.enum_member.tuple.public.restricted"
-        ]
-      },
-      {
-        "under": "declaration.function",
-        "name": "internal",
-        "paths": [
-          "declaration.function.public.internal",
-          "declaration.function.signature.public.internal"
-        ]
-      },
-      {
-        "under": "declaration.function",
-        "name": "restricted",
-        "paths": [
-          "declaration.function.public.restricted",
-          "declaration.function.signature.public.restricted"
-        ]
-      },
-      {
-        "under": "declaration.method",
-        "name": "internal",
-        "paths": [
-          "declaration.method.public.internal",
-          "declaration.method.signature.public.internal",
-          "declaration.method.static.public.internal"
-        ]
-      },
-      {
-        "under": "declaration.method",
-        "name": "restricted",
-        "paths": [
-          "declaration.method.public.restricted",
-          "declaration.method.signature.public.restricted",
-          "declaration.method.static.public.restricted"
-        ]
-      },
-      {
-        "under": "declaration.module",
-        "name": "internal",
-        "paths": [
-          "declaration.module.foreign.public.internal",
-          "declaration.module.public.internal"
-        ]
-      },
-      {
-        "under": "declaration.module",
-        "name": "restricted",
-        "paths": [
-          "declaration.module.foreign.public.restricted",
-          "declaration.module.public.restricted"
-        ]
-      },
-      {
-        "under": "declaration.struct",
-        "name": "internal",
-        "paths": [
-          "declaration.struct.public.internal",
-          "declaration.struct.tuple.public.internal",
-          "declaration.struct.unit.public.internal"
-        ]
-      },
-      {
-        "under": "declaration.struct",
-        "name": "restricted",
-        "paths": [
-          "declaration.struct.public.restricted",
-          "declaration.struct.tuple.public.restricted",
-          "declaration.struct.unit.public.restricted"
-        ]
-      },
-      {
-        "under": "element",
-        "name": "pattern",
-        "paths": [
-          "element.macro.token_repetition.pattern",
-          "element.macro.token_tree.pattern"
-        ]
-      },
-      {
-        "under": "element.macro",
-        "name": "pattern",
-        "paths": [
-          "element.macro.token_repetition.pattern",
-          "element.macro.token_tree.pattern"
-        ]
-      },
-      {
-        "under": "expression",
-        "name": "add",
-        "paths": [
-          "expression.assignment.compound.add",
-          "expression.binary.arithmetic.add"
-        ]
-      },
-      {
-        "under": "expression",
-        "name": "and",
-        "paths": [
-          "expression.binary.bitwise.and",
-          "expression.binary.logical.and"
-        ]
-      },
-      {
-        "under": "expression",
-        "name": "divide",
-        "paths": [
-          "expression.assignment.compound.divide",
-          "expression.binary.arithmetic.divide"
-        ]
-      },
-      {
-        "under": "expression",
-        "name": "modulo",
-        "paths": [
-          "expression.assignment.compound.modulo",
-          "expression.binary.arithmetic.modulo"
-        ]
-      },
-      {
-        "under": "expression",
-        "name": "multiply",
-        "paths": [
-          "expression.assignment.compound.multiply",
-          "expression.binary.arithmetic.multiply"
-        ]
-      },
-      {
-        "under": "expression",
-        "name": "or",
-        "paths": [
-          "expression.binary.bitwise.or",
-          "expression.binary.logical.or"
-        ]
-      },
-      {
-        "under": "expression",
-        "name": "subtract",
-        "paths": [
-          "expression.assignment.compound.subtract",
-          "expression.binary.arithmetic.subtract"
-        ]
-      },
-      {
-        "under": "expression.binary",
-        "name": "and",
-        "paths": [
-          "expression.binary.bitwise.and",
-          "expression.binary.logical.and"
-        ]
-      },
-      {
-        "under": "expression.binary",
-        "name": "or",
-        "paths": [
-          "expression.binary.bitwise.or",
-          "expression.binary.logical.or"
-        ]
-      },
-      {
-        "under": "statement",
-        "name": "internal",
-        "paths": [
-          "statement.import.crate.public.internal",
-          "statement.import.public.internal"
-        ]
-      },
-      {
-        "under": "statement",
-        "name": "private",
-        "paths": [
-          "statement.import.crate.private",
-          "statement.import.private"
-        ]
-      },
-      {
-        "under": "statement",
-        "name": "public",
-        "paths": [
-          "statement.import.crate.public",
-          "statement.import.public"
-        ]
-      },
-      {
-        "under": "statement",
-        "name": "restricted",
-        "paths": [
-          "statement.import.crate.public.restricted",
-          "statement.import.public.restricted"
-        ]
-      },
-      {
-        "under": "statement.import",
-        "name": "internal",
-        "paths": [
-          "statement.import.crate.public.internal",
-          "statement.import.public.internal"
-        ]
-      },
-      {
-        "under": "statement.import",
-        "name": "restricted",
-        "paths": [
-          "statement.import.crate.public.restricted",
-          "statement.import.public.restricted"
-        ]
+        "paths": 20,
+        "kinds": 9,
+        "refinements": 20
       }
     ]
   }

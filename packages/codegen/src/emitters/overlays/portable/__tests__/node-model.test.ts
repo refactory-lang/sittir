@@ -47,10 +47,9 @@ describe('emitPortableNodeModel', () => {
 		expect(model.kinds.wrapper).toEqual({ container: { kinds: ['alpha'], terminals: [], list: false } });
 		expect(model.namespaces).toEqual({
 			levels: [
-				{ depth: 1, paths: 1, kinds: 0, refinements: 0, aliases: 3 },
-				{ depth: 2, paths: 3, kinds: 2, refinements: 0, aliases: 0 }
-			],
-			dropped: []
+				{ depth: 1, paths: 1, kinds: 0, refinements: 0 },
+				{ depth: 2, paths: 3, kinds: 2, refinements: 0 }
+			]
 		});
 		expect(text.endsWith('}\n')).toBe(true);
 	});

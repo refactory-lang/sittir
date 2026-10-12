@@ -10,75 +10,10 @@ The tool reads both and plans which feature owns which kind and member. It then 
 - `augment.ts` merges each feature's kinds and gated members into the base namespaces and declares every level's `Any`.
 - `features/index.ts` exports every marker.
 
-`--write` writes them. `--check` reports a planning issue or a generated file that differs from what the folders generate; the tool's test holds the same check at a ceiling of none. The bindings inventory reads the vocabulary through the same reader.
+`--write` writes them. `--check` reports a planning issue or a generated file that differs from what the folders generate; the tool's test holds the same check at a ceiling of none. The tool, the bindings inventory and codegen read the vocabulary through one reader, `codegen/src/bindings/vocabulary.ts::readVocabularySource`.
 
 ---
 
-### `packages/tools/src/vocabulary/read.ts::readVocabularySource`
-
-Reads the vocabulary's declarations with the TypeScript parser, never by matching lines.
-
-- **Base kinds:** the namespace files (every top-level `.ts` except the augmentation) give the base kinds, each an interface with a `$kind` literal. An interface there without one (the context's typemap, `Unmapped`) is not a kind.
-- **`modules`:** maps each top-level namespace to the file that declares it. That file is the module the augmentation's `declare module` block for the namespace names.
-- **Feature folders:** read whenever `features/` exists.
-
-### `packages/tools/src/vocabulary/read.ts::Declared`
-
-One interface as declared:
-- its qualified name, the namespace path plus the interface name;
-- its `$kind` literal, if it has one;
-- its parent, the qualified name its `extends` clause names through `V.`;
-- the value it is refined by, when it is an owner's refinement (`refinesOf`);
-- its own property members.
-
-A declaration with a `$kind` is a kind (`DeclaredKind`, `isKind`). In a feature folder, a declaration without one adds members to the kind with the same qualified name.
-
-### `packages/tools/src/vocabulary/read.ts::Member`
-
-A property member: its name, whether it is optional, and its type printed without comments. Two declarations of a member have the same type when the printed types are equal. The planner's restatement check compares them this way.
-
-### `packages/tools/src/vocabulary/read.ts::FLAG`
-
-The marker type a flag is declared with (`utils.ts::Flag`), as a member's printed type: a member typed `Flag` is a flag, and a `boolean` member is data. The inventory's reader marks each member by it.
-
-### `packages/tools/src/vocabulary/read.ts::byCodepoint`
-
-The order every generated list follows: plain string comparison (`<`, by UTF-16 code unit), independent of locale, so the output is the same on every machine.
-
-### `packages/tools/src/vocabulary/read.ts::Feature`
-
-One feature folder:
-- the marker interface's name;
-- its key, the marker's one member, typed `true`, which a language context declares to compose the feature;
-- the features its marker extends;
-- its folder, relative to `features/`;
-- the declarations in its stub files;
-- the stub files its `index.ts` does not re-export with `export type * from './x.ts'`.
-
-### `packages/tools/src/vocabulary/read.ts::readFeatures`
-
-Every folder under `features/`, depth first and in codepoint order, each one a feature. A folder nested in another holds a feature that must extend the outer folder's feature; `plan` checks this.
-
-### `packages/tools/src/vocabulary/read.ts::readFeature`
-
-Reads one feature folder. The marker is the first interface in `index.ts` that `markerKey` accepts; a folder without one is refused. The stub files are every other `.ts` file in the folder. Nested folders are read separately, as features of their own.
-
-### `packages/tools/src/vocabulary/read.ts::markerKey`
-
-An interface's marker key: its one property member, typed `true`, named by an identifier or a string. An interface with any other shape is not a marker.
-
-### `packages/tools/src/vocabulary/read.ts::parentOf`
-
-An interface's parent: the first `V.`-qualified type reference in its heritage clauses, at any depth (`vocabularyReference`). For example, `SubKindOf<V.Declaration<G>>` names `Declaration`.
-
-
-### `packages/tools/src/vocabulary/read.ts::REFINED_BY`
-
-The name of the helper an owner's refinement by a value extends (`utils.ts::RefinedBy`). A heritage clause naming it gives the owner as its first type argument and the value as its second.
-
-### `packages/tools/src/vocabulary/read.ts::refinesOf`
-
-The value an owner's refinement is refined by: the `V.`-qualified reference in the second type argument of a `RefinedBy` heritage clause (`vocabularyReference`). `RefinedBy<V.Declaration.Function<G>, V.Modifier.Visibility.Public<G>>` gives `Modifier.Visibility.Public`, and the parent (`parentOf`) stays the owner, the first reference.
 ### `packages/tools/src/vocabulary/plan.ts::plan`
 
 The planner. It works in five parts.
@@ -90,6 +25,7 @@ The planner. It works in five parts.
 - a parent that is not a kind;
 - a parent that is not a level above the kind (a prefix of its path);
 - a value the kind is refined by that is not a kind, such as a level's `Any`, which would leave the value's members off the kind;
+- a path segment that the path before it declares as a flag (`flagSegments`);
 - a base kind under a kind a feature adds.
 
 A feature kind under another feature's kind is only a note, when its own feature does not extend that feature.
@@ -118,6 +54,10 @@ These are issues:
 Every other declaration must restate the owner: required, gated, with the same printed type as the owner's optional declaration, and from a feature that extends the owner's feature. This is how a feature that needs a member requires it. Each restating feature is recorded against the kind in `restated`.
 
 A gated owner is recorded in `owned`. A kind's own declaration is not, since the kind already carries it.
+
+### `packages/tools/src/vocabulary/plan.ts::flagSegments`
+
+The path segments that name a flag of the path before them. The flags of a prefix are the ones declared along the inheritance line of its nearest kind. A claim resolves each segment of its path to a kind or to a flag of the kind before it, so a segment that could be both has no single reading: `declaration.method.static` cannot be a kind while `static` is a flag of `declaration.method`. Each segment is reported once, at the path it ends (`declaration.method.static: static is a flag of declaration.method`), however many kinds lie below it.
 
 ### `packages/tools/src/vocabulary/plan.ts::directReferences`
 

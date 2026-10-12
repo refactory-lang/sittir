@@ -40,29 +40,11 @@ nothing from the generated `types.ts`.
 
 ### `packages/tools/src/inventory/index.ts::loadInputs`
 
-Each grammar's binding facts (`readBindings`), named by their bound kinds through the node model's stamped `renamedFrom` (`bindFacts` over `loadBoundNameOf`, the identity with the grammar bindings off), slot model, the text tokens its evaluation minted (`RawGrammar.textTokens`), and its layout slots. A minted text kind is the same fact as the inline token it replaced, so `derive` reads it as that token's text (`text:<pattern>`), not as an unmapped kind. The layout slots are every address in the grammar options' bindings block that names an owner and a field (`readOptionsBlock`, parsed by `parsePreferencePath`; the owner `_` stands for any kind), plus the separator slot of every separated list (`SEPARATOR_LABEL`), the name the compiler gives it.
+Each grammar's binding facts (`readBindings`), named by their bound kinds through the node model's stamped `renamedFrom` (`bindFacts` over `loadBoundNameOf`, the identity with the grammar bindings off), slot model, the text tokens its evaluation minted (`RawGrammar.textTokens`), and its layout slots. A minted text kind is the same fact as the inline token it replaced, so `derive` reads it as that token's text (`text:<pattern>`), not as an unmapped kind. The layout slots are every address in the grammar options' bindings block that names an owner and a field (`readOptionsBlock`, parsed by `parsePreferencePath`; the owner `_` stands for any kind). A separated list's separator is no slot of the model, so no slot is layout by its name alone: a branch's slot named `separator` (typescript's `member_expression`, rust's `token_repetition`) is a member like any other.
 
 ### `packages/tools/src/inventory/index.ts::vocabularyDisagreements`
 
 Where the bindings and the authored vocabulary disagree, one line each: a claimed path no vocabulary interface has as its `$kind`, a member the bindings route to a kind whose interface (its own members and its parents') does not declare it, and a template hole its interface does not declare. A refinement's pinned slot needs no declaration: the read tells it, so it is no member, and the bindings claim is the one source of the refinement's spelling. The vocabulary is authored, so a disagreement is fixed on whichever side is wrong: a feature adds the kind or member, or the binding drops it.
-
-### `packages/tools/src/inventory/vocabulary.ts::readVocabulary`
-
-Reads the vocabulary through the feature tool's reader (`readVocabularySource`), so the inventory and the tool see the same declarations. That covers the namespace files' kinds and each feature folder's stubs.
-
-- A stub that declares a `$kind` is a kind of its own.
-- A stub that does not declare one adds its members to the kind with the same qualified name.
-- A member declared more than once is optional when any declaration of it is optional, which is how the augmentation gates it.
-
-Every kind is keyed by its `$kind` literal and carries its own members (each marked optional or required, and a flag when it is declared with the marker type `Flag`, `read.ts::FLAG`) its parent, the interface its `extends` clause names through `V.`, and the value it is refined by, when it is an owner's refinement (`read.ts::refinesOf`). `members(path)` adds the inherited members, nearest first: at each kind on the line its own, then those of the value it is refined by, along the value's own line. So `declaration.function.public.restricted` has the `scope` that `scoped-visibility` gives `modifier.visibility.public.restricted`. `flags` is every name some kind or stub declares as a flag. An interface with no `$kind` literal and no kind of the same name is not a vocabulary kind (the context's typemap and `Unmapped`).
-
-### `packages/tools/src/inventory/vocabulary.ts::VocabularyKind`
-
-A vocabulary kind as `readVocabulary` reads it: the kind the bindings read (`@sittir/codegen/bindings::VocabularyKind`) with the path of the value it is refined by, when it is an owner's refinement.
-
-### `packages/tools/src/inventory/vocabulary.ts::Vocabulary`
-
-The vocabulary as `readVocabulary` reads it: the bindings' vocabulary (`@sittir/codegen/bindings::Vocabulary`) with every kind a `VocabularyKind`, so `members(path)` can follow what a kind is refined by.
 
 ### `packages/tools/src/inventory/index.ts::BindingsModule`
 
@@ -107,4 +89,4 @@ Whether the committed flags module is the one the vocabulary's `Flag` declaratio
 
 The flags module as text, asked of the pinned build's child (`runPinned('flagsModule', flagMembers(names))`): an `enum Flags` whose members come from `flagMembers`, each `Name = 1 << bit`, under the generated-file header comment. The module is built as nodes with the factories of the pinned `@sittir/typescript` and rendered by its engine with a tab indent, so the bytes are the engine's (`flagsModuleInProcess`). The writer therefore needs the pinned build: it is the first place sittir writes its own TypeScript with itself, and a missing build fails the write rather than falling back to a template. It is async, as `flagsCurrent` is.
 
-The enum body is built as `enumBody.strict(enumBodyElements.strict({ delimiter: Delimiter.None }, first, ...rest))`, with the empty list taking the zero-argument `enumBody.strict()`. Both spellings are workarounds that stand until the strict surface keeps the `(options, ...elements)` overload on `enumBody` and accepts an empty variadic list (issue 779): the surface today hides the overload and requires a non-empty array, though `enum E {}` is valid TypeScript.
+The enum body is built as `enumBody.strict(enumBodyElements.strict({ delimiter: Delimiter.None }, first, ...rest))`, with the empty list taking the zero-argument `enumBody.strict()`. The strict `enumBody` surface drops the `(options, ...elements)` overload and requires a non-empty variadic list, though `enum E {}` is valid TypeScript, so the writer goes through `enumBodyElements.strict` until the strict surface carries both.

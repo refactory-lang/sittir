@@ -28,19 +28,14 @@
 (trait_item (declaration_list (function_signature_item (visibility_modifier (visibility_modifier_pub))) @declaration.method.signature.public))
 (trait_item (declaration_list (function_signature_item (visibility_modifier (crate))) @declaration.method.signature.public.internal))
 (trait_item (declaration_list (function_signature_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.method.signature.public.internal))
-(trait_item (declaration_list (function_signature_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)])))) @declaration.method.signature.public.restricted))
-(impl_item_body (declaration_list (function_item (parameters (parameters_elements . (attributed_parameter (self_parameter) @receiver)))) @declaration.method) (#kind-eq? @receiver "self_parameter"))
-(impl_item_body (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self)))) (parameters (parameters_elements . (attributed_parameter (self_parameter))))) @declaration.method.private))
-(impl_item_body (declaration_list (function_item (visibility_modifier (visibility_modifier_pub)) (parameters (parameters_elements . (attributed_parameter (self_parameter))))) @declaration.method.public))
-(impl_item_body (declaration_list (function_item (visibility_modifier (crate)) (parameters (parameters_elements . (attributed_parameter (self_parameter))))) @declaration.method.public.internal))
-(impl_item_body (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate)))) (parameters (parameters_elements . (attributed_parameter (self_parameter))))) @declaration.method.public.internal))
-(impl_item_body (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]))) (parameters (parameters_elements . (attributed_parameter (self_parameter))))) @declaration.method.public.restricted))
+(trait_item (declaration_list (function_signature_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.method.signature.public.restricted))
+(impl_item_body (declaration_list (function_item (parameters (parameters_elements . (attributed_parameter (self_parameter) @_receiver)))) @declaration.method) (#kind-eq? @_receiver "self_parameter"))
+(impl_item_body (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.method.private))
+(impl_item_body (declaration_list (function_item (visibility_modifier (visibility_modifier_pub))) @declaration.method.public))
+(impl_item_body (declaration_list (function_item (visibility_modifier (crate))) @declaration.method.public.internal))
+(impl_item_body (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.method.public.internal))
+(impl_item_body (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.method.public.restricted))
 (impl_item_body (declaration_list (function_item (parameters (parameters_elements (attributed_parameter (attribute_item)? (_) @_p)*)?)) @declaration.method.static) (#not-kind-eq? @_p "self_parameter"))
-(impl_item_body (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self)))) (parameters (parameters_elements (attributed_parameter (attribute_item)? (_) @_p)*)?)) @declaration.method.static.private) (#not-kind-eq? @_p "self_parameter"))
-(impl_item_body (declaration_list (function_item (visibility_modifier (visibility_modifier_pub)) (parameters (parameters_elements (attributed_parameter (attribute_item)? (_) @_p)*)?)) @declaration.method.static.public) (#not-kind-eq? @_p "self_parameter"))
-(impl_item_body (declaration_list (function_item (visibility_modifier (crate)) (parameters (parameters_elements (attributed_parameter (attribute_item)? (_) @_p)*)?)) @declaration.method.static.public.internal) (#not-kind-eq? @_p "self_parameter"))
-(impl_item_body (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate)))) (parameters (parameters_elements (attributed_parameter (attribute_item)? (_) @_p)*)?)) @declaration.method.static.public.internal) (#not-kind-eq? @_p "self_parameter"))
-(impl_item_body (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]))) (parameters (parameters_elements (attributed_parameter (attribute_item)? (_) @_p)*)?)) @declaration.method.static.public.restricted) (#not-kind-eq? @_p "self_parameter"))
 (impl_item_body) @declaration.extension
 (impl_item_semi) @declaration.extension
 (impl_item_body trait_clause: (_ trait: (_) @implements)) @declaration.extension.conformance
@@ -54,7 +49,7 @@
 (trait_item (declaration_list (function_item (visibility_modifier (visibility_modifier_pub))) @declaration.method.public))
 (trait_item (declaration_list (function_item (visibility_modifier (crate))) @declaration.method.public.internal))
 (trait_item (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.method.public.internal))
-(trait_item (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)])))) @declaration.method.public.restricted))
+(trait_item (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.method.public.restricted))
 (struct_item) @declaration.struct
 (struct_item_brace) @declaration.struct
 (struct_item_brace (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.struct.private

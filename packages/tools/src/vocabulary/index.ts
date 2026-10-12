@@ -2,8 +2,7 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { formatSource } from '@sittir/codegen/run-codegen';
 import { type Plan, plan } from './plan.ts';
-import { VOCABULARY_DIR } from '@sittir/codegen/bindings';
-import { AUGMENTATION, readVocabularySource } from './read.ts';
+import { AUGMENTATION, VOCABULARY_DIR, readVocabularySource } from '@sittir/codegen/bindings';
 import { augmentation, FEATURES_INDEX, featuresIndex } from './write.ts';
 
 export interface VocabularyFeaturesOptions {
@@ -18,7 +17,7 @@ export interface Generated {
 }
 
 export async function generate(dir: string = VOCABULARY_DIR): Promise<Generated> {
-	const source = readVocabularySource(dir);
+	const source = await readVocabularySource(dir);
 	const p = plan(source);
 	const files = new Map<string, string>();
 	if (p.issues.length > 0) return { plan: p, files };

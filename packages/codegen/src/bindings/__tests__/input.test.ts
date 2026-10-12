@@ -44,15 +44,14 @@ describe('renamedFromOf', () => {
 });
 
 describe('layoutSlots', () => {
-	it('names the slots an options block addresses, by owner or any, and the separator', () => {
+	it('names the slots an options block addresses, by owner or any, and no slot by its name alone', () => {
 		const options = {
 			gap: { before: preference('space') },
 			_labels: { '_/attributes:': 'gap/before', 'binary/operator:': 'gap/before', 'block/"{"/after': 'gap/before' }
 		};
 		expect(layoutSlots(options, new Set(['binary', 'block']))).toEqual([
 			{ kind: null, slot: 'attributes' },
-			{ kind: 'binary', slot: 'operator' },
-			{ kind: null, slot: 'separator' }
+			{ kind: 'binary', slot: 'operator' }
 		]);
 	});
 });

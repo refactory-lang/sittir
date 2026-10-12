@@ -35,6 +35,7 @@ export type { ErrorPropagation } from './error-propagation/index.ts';
 export type { Exceptions } from './exceptions/index.ts';
 export type { ExecStatements } from './exec-statements/index.ts';
 export type { ExplicitOverrides } from './methods/classes/explicit-overrides/index.ts';
+export type { ExplicitReceivers } from './explicit-receivers/index.ts';
 export type { ForeignFunctionInterface } from './foreign-function-interface/index.ts';
 export type { Generators } from './coroutines/generators/index.ts';
 export type { HigherRankPolymorphism } from './parametric-polymorphism/bounded-quantification/higher-rank-polymorphism/index.ts';

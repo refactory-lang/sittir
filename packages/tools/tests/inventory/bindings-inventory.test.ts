@@ -13,8 +13,8 @@ import {
 	vocabularyMembers
 } from '../../src/inventory/index.ts';
 import { type Derivation, FLAGS_PATH, bindingPatterns, camel, levelMembers } from '@sittir/codegen/bindings';
+import { type Vocabulary, readVocabulary } from '@sittir/codegen/bindings';
 import { GENERATED_FILES } from '../../src/vocabulary/write.ts';
-import { readVocabulary } from '../../src/inventory/vocabulary.ts';
 
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
 const CEILING = JSON.parse(
@@ -177,9 +177,9 @@ describe('deriveVocabulary', () => {
 		expect(exception?.multiple).toBe(true);
 		expect(exception?.scalar).toBe(true);
 	});
-	it('never makes a layout slot a member: an options-block address, a separator, or a slot of unclaimed kinds', () => {
+	it('never makes a layout slot a member: an options-block address or a slot of unclaimed kinds', () => {
 		for (const [v, members] of d.members) {
-			for (const name of ['terminator', 'automaticSemicolon', 'separator', 'stringStart', 'stringEnd', 'stringOpen'])
+			for (const name of ['terminator', 'automaticSemicolon', 'stringStart', 'stringEnd', 'stringOpen'])
 				expect(members.has(name), `${v}.${name}`).toBe(false);
 		}
 	});
@@ -187,17 +187,17 @@ describe('deriveVocabulary', () => {
 
 describe('the authored vocabulary', () => {
 	it('disagrees with the bindings only where the ceiling records', async () => {
-		expect(vocabularyDisagreements(await deriveVocabulary(), readVocabulary(VOCABULARY_DIR))).toEqual(CEILING.vocabularyDisagreements);
+		expect(vocabularyDisagreements(await deriveVocabulary(), await readVocabulary(VOCABULARY_DIR))).toEqual(CEILING.vocabularyDisagreements);
 	}, 120_000);
 	it('has its scope routed wherever it declares one, but where the ceiling records', async () => {
 		const d = await deriveVocabulary();
-		const vocabulary = readVocabulary(VOCABULARY_DIR);
+		const vocabulary = await readVocabulary(VOCABULARY_DIR);
 		const unrouted = [...d.members].filter(([path, members]) => vocabulary.members(path).has('scope') && !members.has('scope')).map(([path]) => path);
 		expect(unrouted.sort()).toEqual(CEILING.unroutedScope);
 	}, 120_000);
 	it('reports a template hole its interface does not declare', async () => {
 		const d = await deriveVocabulary();
-		const vocabulary = readVocabulary(VOCABULARY_DIR);
+		const vocabulary = await readVocabulary(VOCABULARY_DIR);
 		const [path, holes] = [...d.holes].find(([, h]) => h.size > 0) ?? [];
 		const [hole] = holes?.keys() ?? [];
 		expect(hole).toBeDefined();
@@ -210,7 +210,7 @@ describe('the authored vocabulary', () => {
 	}, 120_000);
 	it('needs no declaration for a refinement pinned slot: the read tells it, so it is no member', async () => {
 		const d = await deriveVocabulary();
-		const vocabulary = readVocabulary(VOCABULARY_DIR);
+		const vocabulary = await readVocabulary(VOCABULARY_DIR);
 		const pinned = [...d.refinements].flatMap(([v, r]) => [...r.literals.keys()].map((field) => [v, camel(field)] as const).filter(([, p]) => !d.members.get(v)?.has(p)));
 		expect(pinned.length).toBeGreaterThan(0);
 		const unpinned = {
@@ -231,6 +231,8 @@ describe('the authored vocabulary', () => {
 });
 
 describe('readVocabulary', () => {
+	let vocabulary: Vocabulary;
+	beforeAll(async () => {
 	const dir = mkdtempSync(join(tmpdir(), 'vocabulary-'));
 	mkdirSync(dir, { recursive: true });
 	writeFileSync(
@@ -250,8 +252,9 @@ describe('readVocabulary', () => {
 			''
 		].join('\n')
 	);
-	const vocabulary = readVocabulary(dir);
+	vocabulary = await readVocabulary(dir);
 	rmSync(dir, { recursive: true, force: true });
+	});
 
 	it('keys each interface by its kind, with its parent from a multi-line extends', () => {
 		expect(vocabulary.kinds.get('declaration.function')).toMatchObject({ name: 'Declaration.Function', parent: 'declaration' });
@@ -301,8 +304,11 @@ describe('readVocabulary over feature folders', () => {
 		'\t}',
 		'}'
 	]);
-	const vocabulary = readVocabulary(dir);
-	rmSync(dir, { recursive: true, force: true });
+	let vocabulary: Vocabulary;
+	beforeAll(async () => {
+		vocabulary = await readVocabulary(dir);
+		rmSync(dir, { recursive: true, force: true });
+	});
 
 	it('holds the kinds a feature adds, under their parents', () => {
 		expect(vocabulary.kinds.get('declaration.function.lambda')).toMatchObject({ name: 'Declaration.Function.Lambda', parent: 'declaration.function' });
@@ -367,8 +373,11 @@ describe('readVocabulary over an owner refined by a value', () => {
 		'\t}',
 		'}'
 	]);
-	const vocabulary = readVocabulary(dir);
-	rmSync(dir, { recursive: true, force: true });
+	let vocabulary: Vocabulary;
+	beforeAll(async () => {
+		vocabulary = await readVocabulary(dir);
+		rmSync(dir, { recursive: true, force: true });
+	});
 
 	it('keeps the owner as the parent and records the value the kind is refined by', () => {
 		expect(vocabulary.kinds.get('declaration.public.restricted')).toMatchObject({ parent: 'declaration.public', refines: 'modifier.public.restricted' });

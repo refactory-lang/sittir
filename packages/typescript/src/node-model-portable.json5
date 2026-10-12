@@ -196,7 +196,7 @@
           "within": [],
           "pins": [
             {
-              "member": "generator",
+              "member": "accessorKind",
               "slot": "accessor_kind",
               "text": "get"
             }
@@ -248,7 +248,7 @@
           "within": [],
           "pins": [
             {
-              "member": "generator",
+              "member": "accessorKind",
               "slot": "accessor_kind",
               "text": "get"
             }
@@ -300,7 +300,7 @@
           "within": [],
           "pins": [
             {
-              "member": "generator",
+              "member": "accessorKind",
               "slot": "accessor_kind",
               "text": "get"
             }
@@ -352,7 +352,7 @@
           "within": [],
           "pins": [
             {
-              "member": "generator",
+              "member": "accessorKind",
               "slot": "accessor_kind",
               "text": "set"
             }
@@ -404,7 +404,7 @@
           "within": [],
           "pins": [
             {
-              "member": "generator",
+              "member": "accessorKind",
               "slot": "accessor_kind",
               "text": "set"
             }
@@ -456,7 +456,7 @@
           "within": [],
           "pins": [
             {
-              "member": "generator",
+              "member": "accessorKind",
               "slot": "accessor_kind",
               "text": "set"
             }
@@ -610,7 +610,7 @@
           "within": [],
           "pins": [
             {
-              "member": "generator",
+              "member": "accessorKind",
               "slot": "accessor_kind",
               "text": "get"
             }
@@ -636,7 +636,7 @@
           "within": [],
           "pins": [
             {
-              "member": "generator",
+              "member": "accessorKind",
               "slot": "accessor_kind",
               "text": "set"
             }
@@ -673,17 +673,6 @@
             {
               "owner": "abstract_method_signature",
               "slot": "override"
-            }
-          ]
-        },
-        {
-          "name": "generator",
-          "route": "slot",
-          "slot": "accessor_kind",
-          "path": [
-            {
-              "owner": "abstract_method_signature",
-              "slot": "accessor_kind"
             }
           ]
         },
@@ -739,6 +728,18 @@
             {
               "owner": "abstract_method_signature",
               "slot": "return_type"
+            }
+          ]
+        },
+        {
+          "name": "generator",
+          "route": "presence",
+          "via": [],
+          "token": "*",
+          "path": [
+            {
+              "owner": "abstract_method_signature",
+              "slot": "accessor_kind"
             }
           ]
         },
@@ -1144,17 +1145,6 @@
       ],
       "members": [
         {
-          "name": "disposable",
-          "route": "slot",
-          "slot": "using",
-          "path": [
-            {
-              "owner": "assignment_expression",
-              "slot": "using"
-            }
-          ]
-        },
-        {
           "name": "left",
           "route": "slot",
           "slot": "left",
@@ -1173,6 +1163,18 @@
             {
               "owner": "assignment_expression",
               "slot": "right"
+            }
+          ]
+        },
+        {
+          "name": "disposable",
+          "route": "presence",
+          "via": [],
+          "token": "using",
+          "path": [
+            {
+              "owner": "assignment_expression",
+              "slot": "using"
             }
           ]
         }
@@ -2446,6 +2448,28 @@
       "vocab": "expression.call",
       "read": [
         {
+          "vocab": "expression.call.member",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  256
+                ],
+                "fields": [
+                  "function"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
           "vocab": "expression.call",
           "toplevel": true,
           "within": [],
@@ -2490,10 +2514,10 @@
       ]
     },
     "call_expression_member": {
-      "vocab": "expression.call.member",
+      "vocab": "expression.call",
       "read": [
         {
-          "vocab": "expression.call.member",
+          "vocab": "expression.call",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2533,6 +2557,13 @@
               "slot": "arguments"
             }
           ]
+        },
+        {
+          "name": "optionalChain",
+          "route": "presence",
+          "via": [],
+          "token": "?.",
+          "path": null
         }
       ]
     },
@@ -4415,17 +4446,6 @@
       ],
       "members": [
         {
-          "name": "async",
-          "route": "slot",
-          "slot": "await",
-          "path": [
-            {
-              "owner": "for_in_statement",
-              "slot": "await"
-            }
-          ]
-        },
-        {
           "name": "forHeader",
           "route": "slot",
           "slot": "for_header",
@@ -4444,6 +4464,18 @@
             {
               "owner": "for_in_statement",
               "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "async",
+          "route": "presence",
+          "via": [],
+          "token": "await",
+          "path": [
+            {
+              "owner": "for_in_statement",
+              "slot": "await"
             }
           ]
         }
@@ -6275,6 +6307,17 @@
           ]
         },
         {
+          "name": "optionalChain",
+          "route": "kind",
+          "kind": "optional_chain",
+          "path": [
+            {
+              "owner": "member_expression",
+              "slot": "separator"
+            }
+          ]
+        },
+        {
           "name": "privateName",
           "route": "kind",
           "kind": "private_property_identifier",
@@ -6589,7 +6632,7 @@
           "within": [],
           "pins": [
             {
-              "member": "generator",
+              "member": "accessorKind",
               "slot": "accessor_kind",
               "text": "get"
             }
@@ -6641,7 +6684,7 @@
           "within": [],
           "pins": [
             {
-              "member": "generator",
+              "member": "accessorKind",
               "slot": "accessor_kind",
               "text": "get"
             }
@@ -6693,7 +6736,7 @@
           "within": [],
           "pins": [
             {
-              "member": "generator",
+              "member": "accessorKind",
               "slot": "accessor_kind",
               "text": "get"
             }
@@ -6745,7 +6788,7 @@
           "within": [],
           "pins": [
             {
-              "member": "generator",
+              "member": "accessorKind",
               "slot": "accessor_kind",
               "text": "set"
             }
@@ -6797,7 +6840,7 @@
           "within": [],
           "pins": [
             {
-              "member": "generator",
+              "member": "accessorKind",
               "slot": "accessor_kind",
               "text": "set"
             }
@@ -6849,7 +6892,7 @@
           "within": [],
           "pins": [
             {
-              "member": "generator",
+              "member": "accessorKind",
               "slot": "accessor_kind",
               "text": "set"
             }
@@ -7003,7 +7046,7 @@
           "within": [],
           "pins": [
             {
-              "member": "generator",
+              "member": "accessorKind",
               "slot": "accessor_kind",
               "text": "get"
             }
@@ -7029,7 +7072,7 @@
           "within": [],
           "pins": [
             {
-              "member": "generator",
+              "member": "accessorKind",
               "slot": "accessor_kind",
               "text": "set"
             }
@@ -7103,17 +7146,6 @@
           ]
         },
         {
-          "name": "generator",
-          "route": "slot",
-          "slot": "accessor_kind",
-          "path": [
-            {
-              "owner": "method_definition",
-              "slot": "accessor_kind"
-            }
-          ]
-        },
-        {
           "name": "name",
           "route": "slot",
           "slot": "name",
@@ -7180,6 +7212,18 @@
           ]
         },
         {
+          "name": "generator",
+          "route": "presence",
+          "via": [],
+          "token": "*",
+          "path": [
+            {
+              "owner": "method_definition",
+              "slot": "accessor_kind"
+            }
+          ]
+        },
+        {
           "name": "optional",
           "route": "presence",
           "via": [],
@@ -7224,7 +7268,7 @@
           "within": [],
           "pins": [
             {
-              "member": "generator",
+              "member": "accessorKind",
               "slot": "accessor_kind",
               "text": "get"
             }
@@ -7276,7 +7320,7 @@
           "within": [],
           "pins": [
             {
-              "member": "generator",
+              "member": "accessorKind",
               "slot": "accessor_kind",
               "text": "get"
             }
@@ -7328,7 +7372,7 @@
           "within": [],
           "pins": [
             {
-              "member": "generator",
+              "member": "accessorKind",
               "slot": "accessor_kind",
               "text": "get"
             }
@@ -7380,7 +7424,7 @@
           "within": [],
           "pins": [
             {
-              "member": "generator",
+              "member": "accessorKind",
               "slot": "accessor_kind",
               "text": "set"
             }
@@ -7432,7 +7476,7 @@
           "within": [],
           "pins": [
             {
-              "member": "generator",
+              "member": "accessorKind",
               "slot": "accessor_kind",
               "text": "set"
             }
@@ -7484,7 +7528,7 @@
           "within": [],
           "pins": [
             {
-              "member": "generator",
+              "member": "accessorKind",
               "slot": "accessor_kind",
               "text": "set"
             }
@@ -7638,7 +7682,7 @@
           "within": [],
           "pins": [
             {
-              "member": "generator",
+              "member": "accessorKind",
               "slot": "accessor_kind",
               "text": "get"
             }
@@ -7664,7 +7708,7 @@
           "within": [],
           "pins": [
             {
-              "member": "generator",
+              "member": "accessorKind",
               "slot": "accessor_kind",
               "text": "set"
             }
@@ -7738,17 +7782,6 @@
           ]
         },
         {
-          "name": "generator",
-          "route": "slot",
-          "slot": "accessor_kind",
-          "path": [
-            {
-              "owner": "method_signature",
-              "slot": "accessor_kind"
-            }
-          ]
-        },
-        {
           "name": "name",
           "route": "slot",
           "slot": "name",
@@ -7800,6 +7833,18 @@
             {
               "owner": "method_signature",
               "slot": "return_type"
+            }
+          ]
+        },
+        {
+          "name": "generator",
+          "route": "presence",
+          "via": [],
+          "token": "*",
+          "path": [
+            {
+              "owner": "method_signature",
+              "slot": "accessor_kind"
             }
           ]
         },
@@ -10689,17 +10734,6 @@
           ]
         },
         {
-          "name": "optionalChain",
-          "route": "slot",
-          "slot": "optional_chain",
-          "path": [
-            {
-              "owner": "subscript_expression",
-              "slot": "optional_chain"
-            }
-          ]
-        },
-        {
           "name": "index",
           "route": "slot",
           "slot": "index",
@@ -10707,6 +10741,17 @@
             {
               "owner": "subscript_expression",
               "slot": "index"
+            }
+          ]
+        },
+        {
+          "name": "optionalChain",
+          "route": "kind",
+          "kind": "optional_chain",
+          "path": [
+            {
+              "owner": "subscript_expression",
+              "slot": "optional_chain"
             }
           ]
         }
@@ -12228,656 +12273,37 @@
         "depth": 1,
         "paths": 13,
         "kinds": 5,
-        "refinements": 0,
-        "aliases": 146
+        "refinements": 0
       },
       {
         "depth": 2,
         "paths": 111,
-        "kinds": 132,
-        "refinements": 8,
-        "aliases": 99
+        "kinds": 133,
+        "refinements": 8
       },
       {
         "depth": 3,
         "paths": 97,
         "kinds": 80,
-        "refinements": 69,
-        "aliases": 42
+        "refinements": 69
       },
       {
         "depth": 4,
         "paths": 63,
         "kinds": 15,
-        "refinements": 39,
-        "aliases": 0
+        "refinements": 39
       },
       {
         "depth": 5,
         "paths": 14,
         "kinds": 5,
-        "refinements": 14,
-        "aliases": 0
+        "refinements": 14
       },
       {
         "depth": 6,
         "paths": 6,
         "kinds": 1,
-        "refinements": 6,
-        "aliases": 0
-      }
-    ],
-    "dropped": [
-      {
-        "under": "",
-        "name": "add",
-        "paths": [
-          "expression.assignment.compound.add",
-          "expression.binary.arithmetic.add"
-        ]
-      },
-      {
-        "under": "",
-        "name": "and",
-        "paths": [
-          "expression.assignment.compound.and",
-          "expression.binary.bitwise.and",
-          "expression.binary.logical.and"
-        ]
-      },
-      {
-        "under": "",
-        "name": "array",
-        "paths": [
-          "pattern.array",
-          "type.array"
-        ]
-      },
-      {
-        "under": "",
-        "name": "assignment",
-        "paths": [
-          "expression.assignment",
-          "pattern.assignment",
-          "pattern.object.assignment"
-        ]
-      },
-      {
-        "under": "",
-        "name": "binary",
-        "paths": [
-          "expression.binary",
-          "literal.number.integer.big.binary",
-          "literal.number.integer.binary"
-        ]
-      },
-      {
-        "under": "",
-        "name": "block",
-        "paths": [
-          "comment.block",
-          "statement.block"
-        ]
-      },
-      {
-        "under": "",
-        "name": "call",
-        "paths": [
-          "attribute.content.call",
-          "declaration.signature.call",
-          "expression.call"
-        ]
-      },
-      {
-        "under": "",
-        "name": "class",
-        "paths": [
-          "declaration.class",
-          "expression.class"
-        ]
-      },
-      {
-        "under": "",
-        "name": "conditional",
-        "paths": [
-          "expression.conditional",
-          "type.conditional"
-        ]
-      },
-      {
-        "under": "",
-        "name": "constructor",
-        "paths": [
-          "declaration.constructor",
-          "type.function.constructor"
-        ]
-      },
-      {
-        "under": "",
-        "name": "default",
-        "paths": [
-          "clause.case.default",
-          "clause.default",
-          "statement.export.default"
-        ]
-      },
-      {
-        "under": "",
-        "name": "divide",
-        "paths": [
-          "expression.assignment.compound.divide",
-          "expression.binary.arithmetic.divide"
-        ]
-      },
-      {
-        "under": "",
-        "name": "exponent",
-        "paths": [
-          "expression.assignment.compound.exponent",
-          "expression.binary.arithmetic.exponent"
-        ]
-      },
-      {
-        "under": "",
-        "name": "export",
-        "paths": [
-          "clause.export",
-          "statement.export"
-        ]
-      },
-      {
-        "under": "",
-        "name": "function",
-        "paths": [
-          "declaration.function",
-          "expression.function",
-          "type.function"
-        ]
-      },
-      {
-        "under": "",
-        "name": "getter",
-        "paths": [
-          "declaration.method.getter",
-          "declaration.method.signature.abstract.getter",
-          "declaration.method.signature.getter"
-        ]
-      },
-      {
-        "under": "",
-        "name": "hex",
-        "paths": [
-          "literal.number.integer.big.hex",
-          "literal.number.integer.hex"
-        ]
-      },
-      {
-        "under": "",
-        "name": "import",
-        "paths": [
-          "clause.import",
-          "expression.call.import",
-          "statement.import"
-        ]
-      },
-      {
-        "under": "",
-        "name": "member",
-        "paths": [
-          "attribute.content.member",
-          "element.tuple.member",
-          "expression.call.member",
-          "expression.member"
-        ]
-      },
-      {
-        "under": "",
-        "name": "modulo",
-        "paths": [
-          "expression.assignment.compound.modulo",
-          "expression.binary.arithmetic.modulo"
-        ]
-      },
-      {
-        "under": "",
-        "name": "multiply",
-        "paths": [
-          "expression.assignment.compound.multiply",
-          "expression.binary.arithmetic.multiply"
-        ]
-      },
-      {
-        "under": "",
-        "name": "namespace",
-        "paths": [
-          "clause.export.namespace",
-          "clause.import.namespace"
-        ]
-      },
-      {
-        "under": "",
-        "name": "nullish",
-        "paths": [
-          "expression.assignment.compound.nullish",
-          "expression.binary.nullish"
-        ]
-      },
-      {
-        "under": "",
-        "name": "object",
-        "paths": [
-          "expression.collection.object",
-          "pattern.object",
-          "type.object"
-        ]
-      },
-      {
-        "under": "",
-        "name": "octal",
-        "paths": [
-          "literal.number.integer.big.octal",
-          "literal.number.integer.octal"
-        ]
-      },
-      {
-        "under": "",
-        "name": "optional",
-        "paths": [
-          "element.tuple.member.optional",
-          "type.optional"
-        ]
-      },
-      {
-        "under": "",
-        "name": "or",
-        "paths": [
-          "expression.assignment.compound.or",
-          "expression.binary.bitwise.or",
-          "expression.binary.logical.or"
-        ]
-      },
-      {
-        "under": "",
-        "name": "pair",
-        "paths": [
-          "element.pair",
-          "pattern.object.pair"
-        ]
-      },
-      {
-        "under": "",
-        "name": "parenthesized",
-        "paths": [
-          "attribute.content.parenthesized",
-          "expression.parenthesized",
-          "type.parenthesized"
-        ]
-      },
-      {
-        "under": "",
-        "name": "private",
-        "paths": [
-          "declaration.constructor.private",
-          "declaration.field.private",
-          "declaration.field.signature.private",
-          "declaration.method.getter.private",
-          "declaration.method.private",
-          "declaration.method.setter.private",
-          "declaration.method.signature.abstract.getter.private",
-          "declaration.method.signature.abstract.private",
-          "declaration.method.signature.abstract.setter.private",
-          "declaration.method.signature.getter.private",
-          "declaration.method.signature.private",
-          "declaration.method.signature.setter.private",
-          "declaration.parameter.private",
-          "modifier.visibility.private"
-        ]
-      },
-      {
-        "under": "",
-        "name": "protected",
-        "paths": [
-          "declaration.constructor.protected",
-          "declaration.field.protected",
-          "declaration.field.signature.protected",
-          "declaration.method.getter.protected",
-          "declaration.method.protected",
-          "declaration.method.setter.protected",
-          "declaration.method.signature.abstract.getter.protected",
-          "declaration.method.signature.abstract.protected",
-          "declaration.method.signature.abstract.setter.protected",
-          "declaration.method.signature.getter.protected",
-          "declaration.method.signature.protected",
-          "declaration.method.signature.setter.protected",
-          "declaration.parameter.protected",
-          "modifier.visibility.protected"
-        ]
-      },
-      {
-        "under": "",
-        "name": "public",
-        "paths": [
-          "declaration.constructor.public",
-          "declaration.field.public",
-          "declaration.field.signature.public",
-          "declaration.method.getter.public",
-          "declaration.method.public",
-          "declaration.method.setter.public",
-          "declaration.method.signature.abstract.getter.public",
-          "declaration.method.signature.abstract.public",
-          "declaration.method.signature.abstract.setter.public",
-          "declaration.method.signature.getter.public",
-          "declaration.method.signature.public",
-          "declaration.method.signature.setter.public",
-          "declaration.parameter.public",
-          "modifier.visibility.public"
-        ]
-      },
-      {
-        "under": "",
-        "name": "rest",
-        "paths": [
-          "pattern.rest",
-          "type.rest"
-        ]
-      },
-      {
-        "under": "",
-        "name": "setter",
-        "paths": [
-          "declaration.method.setter",
-          "declaration.method.signature.abstract.setter",
-          "declaration.method.signature.setter"
-        ]
-      },
-      {
-        "under": "",
-        "name": "signature",
-        "paths": [
-          "declaration.field.signature",
-          "declaration.function.signature",
-          "declaration.method.signature",
-          "declaration.signature"
-        ]
-      },
-      {
-        "under": "",
-        "name": "specifier",
-        "paths": [
-          "clause.export.specifier",
-          "clause.import.specifier"
-        ]
-      },
-      {
-        "under": "",
-        "name": "subtract",
-        "paths": [
-          "expression.assignment.compound.subtract",
-          "expression.binary.arithmetic.subtract"
-        ]
-      },
-      {
-        "under": "",
-        "name": "switch",
-        "paths": [
-          "clause.case.switch",
-          "statement.switch"
-        ]
-      },
-      {
-        "under": "",
-        "name": "template",
-        "paths": [
-          "element.template",
-          "expression.call.template",
-          "literal.template",
-          "type.template"
-        ]
-      },
-      {
-        "under": "",
-        "name": "tuple",
-        "paths": [
-          "element.tuple",
-          "type.tuple"
-        ]
-      },
-      {
-        "under": "",
-        "name": "typeof",
-        "paths": [
-          "expression.unary.typeof",
-          "statement.import.typeof"
-        ]
-      },
-      {
-        "under": "clause",
-        "name": "namespace",
-        "paths": [
-          "clause.export.namespace",
-          "clause.import.namespace"
-        ]
-      },
-      {
-        "under": "clause",
-        "name": "specifier",
-        "paths": [
-          "clause.export.specifier",
-          "clause.import.specifier"
-        ]
-      },
-      {
-        "under": "declaration",
-        "name": "getter",
-        "paths": [
-          "declaration.method.getter",
-          "declaration.method.signature.abstract.getter",
-          "declaration.method.signature.getter"
-        ]
-      },
-      {
-        "under": "declaration",
-        "name": "private",
-        "paths": [
-          "declaration.constructor.private",
-          "declaration.field.private",
-          "declaration.field.signature.private",
-          "declaration.method.getter.private",
-          "declaration.method.private",
-          "declaration.method.setter.private",
-          "declaration.method.signature.abstract.getter.private",
-          "declaration.method.signature.abstract.private",
-          "declaration.method.signature.abstract.setter.private",
-          "declaration.method.signature.getter.private",
-          "declaration.method.signature.private",
-          "declaration.method.signature.setter.private",
-          "declaration.parameter.private"
-        ]
-      },
-      {
-        "under": "declaration",
-        "name": "protected",
-        "paths": [
-          "declaration.constructor.protected",
-          "declaration.field.protected",
-          "declaration.field.signature.protected",
-          "declaration.method.getter.protected",
-          "declaration.method.protected",
-          "declaration.method.setter.protected",
-          "declaration.method.signature.abstract.getter.protected",
-          "declaration.method.signature.abstract.protected",
-          "declaration.method.signature.abstract.setter.protected",
-          "declaration.method.signature.getter.protected",
-          "declaration.method.signature.protected",
-          "declaration.method.signature.setter.protected",
-          "declaration.parameter.protected"
-        ]
-      },
-      {
-        "under": "declaration",
-        "name": "public",
-        "paths": [
-          "declaration.constructor.public",
-          "declaration.field.public",
-          "declaration.field.signature.public",
-          "declaration.method.getter.public",
-          "declaration.method.public",
-          "declaration.method.setter.public",
-          "declaration.method.signature.abstract.getter.public",
-          "declaration.method.signature.abstract.public",
-          "declaration.method.signature.abstract.setter.public",
-          "declaration.method.signature.getter.public",
-          "declaration.method.signature.public",
-          "declaration.method.signature.setter.public",
-          "declaration.parameter.public"
-        ]
-      },
-      {
-        "under": "declaration",
-        "name": "setter",
-        "paths": [
-          "declaration.method.setter",
-          "declaration.method.signature.abstract.setter",
-          "declaration.method.signature.setter"
-        ]
-      },
-      {
-        "under": "expression",
-        "name": "add",
-        "paths": [
-          "expression.assignment.compound.add",
-          "expression.binary.arithmetic.add"
-        ]
-      },
-      {
-        "under": "expression",
-        "name": "and",
-        "paths": [
-          "expression.assignment.compound.and",
-          "expression.binary.bitwise.and",
-          "expression.binary.logical.and"
-        ]
-      },
-      {
-        "under": "expression",
-        "name": "divide",
-        "paths": [
-          "expression.assignment.compound.divide",
-          "expression.binary.arithmetic.divide"
-        ]
-      },
-      {
-        "under": "expression",
-        "name": "exponent",
-        "paths": [
-          "expression.assignment.compound.exponent",
-          "expression.binary.arithmetic.exponent"
-        ]
-      },
-      {
-        "under": "expression",
-        "name": "modulo",
-        "paths": [
-          "expression.assignment.compound.modulo",
-          "expression.binary.arithmetic.modulo"
-        ]
-      },
-      {
-        "under": "expression",
-        "name": "multiply",
-        "paths": [
-          "expression.assignment.compound.multiply",
-          "expression.binary.arithmetic.multiply"
-        ]
-      },
-      {
-        "under": "expression",
-        "name": "nullish",
-        "paths": [
-          "expression.assignment.compound.nullish",
-          "expression.binary.nullish"
-        ]
-      },
-      {
-        "under": "expression",
-        "name": "or",
-        "paths": [
-          "expression.assignment.compound.or",
-          "expression.binary.bitwise.or",
-          "expression.binary.logical.or"
-        ]
-      },
-      {
-        "under": "expression",
-        "name": "subtract",
-        "paths": [
-          "expression.assignment.compound.subtract",
-          "expression.binary.arithmetic.subtract"
-        ]
-      },
-      {
-        "under": "expression.binary",
-        "name": "and",
-        "paths": [
-          "expression.binary.bitwise.and",
-          "expression.binary.logical.and"
-        ]
-      },
-      {
-        "under": "expression.binary",
-        "name": "or",
-        "paths": [
-          "expression.binary.bitwise.or",
-          "expression.binary.logical.or"
-        ]
-      },
-      {
-        "under": "literal",
-        "name": "binary",
-        "paths": [
-          "literal.number.integer.big.binary",
-          "literal.number.integer.binary"
-        ]
-      },
-      {
-        "under": "literal",
-        "name": "hex",
-        "paths": [
-          "literal.number.integer.big.hex",
-          "literal.number.integer.hex"
-        ]
-      },
-      {
-        "under": "literal",
-        "name": "octal",
-        "paths": [
-          "literal.number.integer.big.octal",
-          "literal.number.integer.octal"
-        ]
-      },
-      {
-        "under": "literal.number",
-        "name": "binary",
-        "paths": [
-          "literal.number.integer.big.binary",
-          "literal.number.integer.binary"
-        ]
-      },
-      {
-        "under": "literal.number",
-        "name": "hex",
-        "paths": [
-          "literal.number.integer.big.hex",
-          "literal.number.integer.hex"
-        ]
-      },
-      {
-        "under": "literal.number",
-        "name": "octal",
-        "paths": [
-          "literal.number.integer.big.octal",
-          "literal.number.integer.octal"
-        ]
+        "refinements": 6
       }
     ]
   }

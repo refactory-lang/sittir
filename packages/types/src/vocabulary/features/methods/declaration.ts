@@ -35,25 +35,5 @@ export namespace Declaration {
 			readonly static?: Flag;
 			// t only
 		}
-		export interface Static<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Method<G>> {
-			// claimed by pr
-			readonly $kind: 'declaration.method.static';
-			readonly body: V.Statement.Block<G>;
-			// r only
-			readonly default?: Flag;
-			// r only
-			readonly name: G['identifier'];
-			// r only
-			readonly parameters: G['slots']['declaration.method.static']['parameters'][];
-			// r only
-		}
-	}
-	export namespace Parameter {
-		export interface Self<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Parameter<G>> {
-			// claimed by pr
-			readonly $kind: 'declaration.parameter.self';
-			readonly mutable?: Flag;
-			// r only
-		}
 	}
 }

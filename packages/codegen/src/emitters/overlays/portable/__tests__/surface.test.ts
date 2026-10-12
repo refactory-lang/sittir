@@ -61,23 +61,22 @@ describe('emitPortableSurface', () => {
 		expect(text).toContain('\t"expression.binary.add": TSKindId.Binary;');
 	});
 
-	it('types a kinds node and a guard per path, each holding its child segments and the aliases under it', async () => {
+	it('types a kinds node and a guard per path, each holding only its child segments', async () => {
 		const text = await emit(SCM);
 		expect(text).toContain(
-			'\t"expression": { readonly $ids: readonly PortableIds["expression"][]; readonly "assignment": PortableKindsAt["expression.assignment"]; readonly "binary": PortableKindsAt["expression.binary"]; readonly "call": PortableKindsAt["expression.call"]; readonly "nested": PortableKindsAt["expression.call.nested"] };'
+			'\t"expression": { readonly $ids: readonly PortableIds["expression"][]; readonly "assignment": PortableKindsAt["expression.assignment"]; readonly "binary": PortableKindsAt["expression.binary"]; readonly "call": PortableKindsAt["expression.call"] };'
 		);
 		expect(text).toContain('\t"expression.call": PortableGuard<PortableIds["expression.call"]> & { readonly "nested": PortableIsAt["expression.call.nested"] };');
-		expect(text).toContain('export interface PortableIs { readonly "expression": PortableIsAt["expression"];');
+		expect(text).toContain('export interface PortableIs { readonly "expression": PortableIsAt["expression"] }');
 	});
 
-	it('writes the table: paths, aliases, entries in read order with placements nearest first, and fixed texts', async () => {
+	it('writes the table: paths, entries in read order with placements nearest first, and fixed texts', async () => {
 		const text = await emit(SCM);
 		expect(text).toContain('\t\t"expression.binary": { ids: [TSKindId.Binary], exact: true },');
 		expect(text).toContain('\t\t"expression.binary.add": { ids: [TSKindId.Binary], exact: false },');
 		expect(text).toContain('\t\t"expression.call": { ids: [TSKindId.Call], exact: true },');
 		expect(text).toContain('\t\t"expression.call.nested": { ids: [TSKindId.Call], exact: false },');
-		expect(text).toContain('["expression", "nested", "expression.call.nested"]');
-		expect(text).not.toContain('"add", "expression.');
+		expect(text).not.toContain('aliases');
 		expect(text).toContain(
 			'\t\t[TSKindId.Binary]: [{ path: "expression.binary.add", within: [], test: [{"up":0,"via":[],"plan":{"op":"eq","text":"+","fields":["operator"],"kinds":[]}}] }, { path: "expression.binary", within: [], test: [] }],'
 		);

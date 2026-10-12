@@ -342,6 +342,11 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['statement'];
 		};
 		readonly 'declaration.extension': {
+			readonly body:
+				| G['attribute']
+				| G['declaration']
+				| V.Expression.Call.Macro<G>
+				| G['statement'];
 			readonly implements: unknown;
 			readonly traitClause: unknown;
 			readonly type:
@@ -351,6 +356,11 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['type'];
 		};
 		readonly 'declaration.extension.conformance': {
+			readonly body:
+				| G['attribute']
+				| G['declaration']
+				| V.Expression.Call.Macro<G>
+				| G['statement'];
 			readonly implements: unknown;
 			readonly traitClause: unknown;
 			readonly type:
@@ -462,20 +472,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		readonly 'declaration.method.signature.abstract': {
 			readonly name: G['expression'] | G['literal'] | V.Identifier.Property<G> | string;
 			readonly returnType: G['identifier'] | G['type'];
-		};
-		readonly 'declaration.method.static': {
-			readonly parameters:
-				| V.Clause.Bounds.Removed<G>
-				| V.Expression.Call.Macro<G>
-				| G['identifier']
-				| V.Declaration.Parameter.Any<G>
-				| string
-				| G['type'];
-			readonly returnType:
-				| V.Clause.Bounds.Removed<G>
-				| V.Expression.Call.Macro<G>
-				| G['identifier']
-				| G['type'];
 		};
 		readonly 'declaration.module': {
 			readonly body:
@@ -621,6 +617,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'element.macro.token_repetition': {
 			readonly operator: string;
+			readonly separator: string;
 			readonly tokens:
 				| G['identifier']
 				| G['literal']
@@ -630,6 +627,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'element.macro.token_repetition.pattern': {
 			readonly operator: string;
+			readonly separator: string;
 			readonly tokenPatterns:
 				| G['identifier']
 				| G['literal']

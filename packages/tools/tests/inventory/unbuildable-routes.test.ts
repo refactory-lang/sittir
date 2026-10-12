@@ -11,7 +11,6 @@ const CEILING: Readonly<Record<string, readonly string[]>> = {
 	],
 	rust: [
 		'impl_item_body.implements',
-		'impl_item_body.receiver',
 		// flag told by the variant form's own text; the build picks the kind
 		'reference_expression_raw_const.raw',
 		'reference_expression_raw_mut.raw'
@@ -19,6 +18,7 @@ const CEILING: Readonly<Record<string, readonly string[]>> = {
 	typescript: [
 		// flag told by the variant form's own text; the build picks the kind
 		'abstract_class_declaration.abstract',
+		'call_expression_member.optionalChain',
 		'generator_function.generator',
 		'generator_function_declaration.generator',
 		'optional_parameter.optional',

@@ -2,7 +2,7 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { readVocabulary } from '../index.ts';
+import { type BindingFacts, type ClaimFact, type Vocabulary, flagSegment, readVocabulary, resolveFlags } from '../index.ts';
 
 const vocabularyIn = async (...lines: readonly string[]) => {
 	const dir = mkdtempSync(join(tmpdir(), 'vocabulary-'));
@@ -88,11 +88,24 @@ describe('readVocabulary', () => {
 		]);
 	});
 
-	it('refuses a member or namespace not named by a plain identifier', async () => {
+	it('refuses a member not named by a plain identifier', async () => {
 		const declaration = (member: string) => ['export interface Declaration<G> {', "\treadonly $kind: 'declaration';", `\t${member}`, '}'];
 		await expect(vocabularyIn(...declaration("readonly 'async'?: Flag;"))).rejects.toThrow(/'async'.*identifier/);
 		await expect(vocabularyIn(...declaration('readonly [key]?: Flag;'))).rejects.toThrow(/\[key\].*identifier/);
-		await expect(vocabularyIn("declare module 'quoted' { interface Inner<G> { readonly $kind: 'inner'; } }")).rejects.toThrow(/'quoted'.*identifier/);
+	});
+
+	it('reads past a module augmentation named by a string: it augments another file and names no namespace', async () => {
+		const vocabulary = await vocabularyIn(
+			"export interface Declaration<G> { readonly $kind: 'declaration'; }",
+			"declare module './other.ts' { interface Inner<G> extends Declaration<G> {} }"
+		);
+		expect([...vocabulary.kinds.keys()]).toEqual(['declaration']);
+	});
+
+	it('refuses a vocabulary kind declared inside a module augmentation named by a string, rather than dropping it', async () => {
+		await expect(
+			vocabularyIn("export interface Declaration<G> { readonly $kind: 'declaration'; }", "declare module './other.ts' { interface Inner<G> { readonly $kind: 'inner'; } }")
+		).rejects.toThrow(/inner.*'\.\/other\.ts'/);
 	});
 
 	it('reads an interface as a kind only when its $kind is a string literal', async () => {
@@ -103,5 +116,83 @@ describe('readVocabulary', () => {
 		);
 		expect([...vocabulary.kinds.keys()]).toEqual(['declaration']);
 		expect([...vocabulary.flags]).toEqual(['static']);
+	});
+});
+
+const vocabularyOf = async (...extra: readonly string[]): Promise<Vocabulary> => {
+	const dir = mkdtempSync(join(tmpdir(), 'vocabulary-'));
+	writeFileSync(
+		join(dir, 'declaration.ts'),
+		[
+			'export interface Declaration<G> {',
+			"\treadonly $kind: 'declaration';",
+			'}',
+			'export namespace Declaration {',
+			'\texport interface Method<G> extends SubKindOf<V.Declaration<G>> {',
+			"\t\treadonly $kind: 'declaration.method';",
+			'\t\treadonly name: string;',
+			'\t\treadonly static?: Flag;',
+			'\t\treadonly privateName?: Flag;',
+			'\t\treadonly body?: string;',
+			'\t}',
+			...extra,
+			'}',
+			''
+		].join('\n')
+	);
+	try {
+		return await readVocabulary(dir);
+	} finally {
+		rmSync(dir, { recursive: true, force: true });
+	}
+};
+
+const claim = (vocab: string): ClaimFact => ({
+	vocab,
+	kind: 'function_definition',
+	field: null,
+	predicates: [],
+	toplevel: true,
+	within: [],
+	fieldLiterals: {},
+	tokens: [],
+	children: []
+});
+
+describe('flagSegment', () => {
+	it('reads a claim path whose last segment is a Flag of its parent path as the parent and the flag', async () => {
+		const vocabulary = await vocabularyOf();
+		expect(flagSegment(vocabulary, 'declaration.method.static')).toEqual({ parent: 'declaration.method', flag: 'static' });
+		expect(flagSegment(vocabulary, 'declaration.method.private_name')).toEqual({ parent: 'declaration.method', flag: 'privateName' });
+	});
+
+	it('reads no flag where the last segment is a kind, a member that is data, or names nothing', async () => {
+		const vocabulary = await vocabularyOf();
+		expect(flagSegment(vocabulary, 'declaration.method')).toBeUndefined();
+		expect(flagSegment(vocabulary, 'declaration.method.body')).toBeUndefined();
+		expect(flagSegment(vocabulary, 'declaration.method.getter')).toBeUndefined();
+		expect(flagSegment(vocabulary, 'declaration')).toBeUndefined();
+	});
+
+	it('refuses a path that is both a vocabulary kind and a Flag of its parent: one name names one thing', async () => {
+		const vocabulary = await vocabularyOf(
+			'\texport namespace Method {',
+			'\t\texport interface Static<G> extends SubKindOf<V.Declaration.Method<G>> {',
+			"\t\t\treadonly $kind: 'declaration.method.static';",
+			'\t\t}',
+			'\t}'
+		);
+		expect(() => flagSegment(vocabulary, 'declaration.method.static')).toThrow(/declaration\.method\.static.*kind.*declaration\.method.*static/);
+	});
+});
+
+describe('resolveFlags', () => {
+	it('claims a flag segment\'s parent path with the flag, and leaves every other claim as it is', async () => {
+		const facts: BindingFacts = { claims: [claim('declaration.method.static'), claim('declaration.method')], members: [], containers: [], templates: [], unclaimed: [] };
+		const resolved = resolveFlags(facts, await vocabularyOf());
+		expect(resolved.claims.map((c) => [c.vocab, c.flag])).toEqual([
+			['declaration.method', 'static'],
+			['declaration.method', undefined]
+		]);
 	});
 });

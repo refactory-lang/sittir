@@ -9,10 +9,4 @@ export namespace Declaration {
 		readonly const?: Flag;
 		// rt only
 	}
-	export namespace Method {
-		export interface Static<G extends GrammarContext<G>> {
-			readonly const?: Flag;
-			// r only
-		}
-	}
 }

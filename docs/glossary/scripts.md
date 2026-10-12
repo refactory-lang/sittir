@@ -588,7 +588,7 @@ Materializes the files of the index under the given pathspecs into a scratch dir
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::grammarSourceInputs`
 
-The per-grammar files a generation depends on besides the codegen source: `grammar.sittir.ts`, `package.json` and the `bindings.scm` path, whether or not the file exists, so deleting it is a difference to the trusted commit; and for a grammar that ships a `bindings.scm`, `bootstrap.json` and every source of the vocabulary (`bindings/hash.ts::vocabularySources`), since `node-model-portable.json5` is read from `bindings.scm` through the pinned reader and its routes against the vocabulary. A grammar with no `bindings.scm` depends on neither the pin nor the vocabulary, so changing them leaves that grammar fresh. A tree with no vocabulary directory hashes none, as an absent input is not hashed.
+The per-grammar files a generation depends on besides the codegen source: `grammar.sittir.ts`, `package.json` and the `bindings.scm` path, whether or not the file exists, so deleting it is a difference to the trusted commit; and for a grammar that ships a `bindings.scm`, `bootstrap.json` and every source of the vocabulary (`bindings/vocabulary.ts::vocabularySources`), since `node-model-portable.json5` is read from `bindings.scm` through the pinned reader and its routes against the vocabulary. A grammar with no `bindings.scm` depends on neither the pin nor the vocabulary, so changing them leaves that grammar fresh. A tree with no vocabulary directory hashes none, as an absent input is not hashed.
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::VOCABULARY_SOURCE_DIR`
 
@@ -596,7 +596,7 @@ The vocabulary directory, relative to the repository root, as the manifest's pat
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::isVocabularyInput`
 
-Whether a repo-relative path is a vocabulary source (`bindings/hash.ts::isVocabularySource`) in the vocabulary directory or one of its sub-folders, whether or not it still exists.
+Whether a repo-relative path is a vocabulary source (`bindings/vocabulary.ts::isVocabularySource`, its path relative to the vocabulary directory) in the vocabulary directory or one of its sub-folders, whether or not it still exists.
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::bindingsInput`
 
