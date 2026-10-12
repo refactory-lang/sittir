@@ -509,17 +509,33 @@ Each record prototype and measuring tool the arena steps already hold, with its 
 - **Built-node trivia today** is written by `setTriviaData` (`packages/common/src/utils.ts`, from `rebuilt` and the trivia writer `write`). It crosses as `TransportLayout::trivia` (`TransportTrivia`, `TriviaEntry`). 3b-ii moves it into records.
 - **The shared-arena spec's § What the JavaScript wrap keeps** still says a built node holds fields encoded at render (its ruling 5). The ruling's own note records the supersession, and 3b-ii updates the section when the maintainer rules on the eager option.
 
-### Rulings (the maintainer, 2026-10-12)
+### Rulings (the maintainer, 2026-10-12; ruling 1.1 revised the same day)
 
 1. **String storage.** A record stays fixed-size, so text lives outside it.
-   1. **Parsed leaf text: UTF-16 offsets in the record.** The record stores the leaf's byte span, which the native render slices from the source as it does today, and its UTF-16 offsets (two more words). The reader converts byte offsets through a per-tree index of the source's non-ASCII positions, which is empty for an ASCII source. JavaScript's `$text` slices the source string it already holds (`tree.source`): no native call, no decode, and the string shares the source's storage.
+   1. **Parsed leaf text: decoded from the tree's one copy of the source** (revised from UTF-16 offsets, which relied on a second copy of the source in JavaScript).
+      - There is one copy of the source: the tree's native UTF-8 bytes. They cross to JavaScript as an external `ArrayBuffer` over native memory, finalized with the tree, so no copy is made.
+      - The buffer is created lazily, on the first `$text` or source-bytes access, never at parse. A caller who reads only structure (kinds, slots, queries, edits, render) never makes it.
+      - The record stores the leaf's byte span only: no UTF-16 words and no non-ASCII index. The native render slices the span as it does today, and `$text` decodes it with `TextDecoder` on access.
+      - Whether a wrapper caches the decoded string is a Task 10 row (decode time against retained heap), not a default.
+      - `TreeHandle.source`, the JavaScript copy, goes (§ The source copy, below). A kept `$text` then holds only its own characters, never the whole file behind a sliced string.
    2. **Built and edited leaf text: a per-arena string table.** UTF-8 is written once into the arena's byte buffer (`TextEncoder.encodeInto`), deduplicated by a `Map` from string to offset. Records reference it by offset and length, and the native render reads it in place. A built node's `$text` stays the builder's string.
    3. **No JavaScript-side interning of `$text`.** Ruling 1.1 creates no napi strings, so there is nothing to intern unless Task 10's numbers show otherwise.
 
-   Task 10 still times the alternatives as reference rows: for parsed text, a native call on first access cached on the wrapper, and `TextDecoder` over the source's UTF-8 bytes shared as an `ArrayBuffer`; for built text, a JavaScript array of strings that records index, crossing at each render. The designs are the ones above.
+   Task 10 still times the alternatives as reference rows: for parsed text, UTF-16 offsets slicing a JavaScript copy of the source, and a native call on first access cached on the wrapper; for built text, a JavaScript array of strings that records index, crossing at each render. The designs are the ones above.
 2. **The match-all row: both wires get a batch read** (`read_many(tree, indexes, depth, wire)`). The object wire returns an array of transports, and the record wire one buffer range. The gate row compares those, as the probe did, and today's path (coordinates, then a read each) is timed beside them.
 3. **Built-node storage: both are measured.** Eager built records (prior art 6), on a generated builder for rust `function_item` and its slot kinds, beside today's built objects encoded at render by the 2026-10-01 encoder (prior art 1). The rows are build time and heap per built node, render decode, and the native call per slot value over the parity fixtures.
 4. **A failed gate row stays unmerged** on `feat/records`, with the verdict, for the maintainer. Nothing is reverted.
+
+### The source copy
+
+Ruling 1.1 removes the tree handle's JavaScript copy of the source. A census on master (the property renamed and the workspace type-checked, then a text search for untyped reads) finds one writer and one reader:
+
+| site | use | where it moves |
+| --- | --- | --- |
+| `packages/common/src/engine.ts`, `parseAndRead`'s tree handle | writes `source` | drops it, and adds `bytes()` and `text(span)` over the tree's native bytes (Interfaces) |
+| `packages/tools/src/validate/common.ts`, `readNodeText` | slices `tree.source` by a node's span when the node has no `$text` | reads `tree.text(span)` |
+
+Nothing else reads it. The span helpers (`sourceSpans`, `spanSlicer`, `sliceSpan` in `packages/common/src/span.ts`) and their callers slice a string the caller holds itself: a corpus entry's source in the validators (`from.ts`, `factory-storage.ts`, `read-render-parse.ts`, `gap-census.ts`), an inventory file (`inventory/bindings.ts`) or a probe's input (`probe/kind.ts`). The same goes for the host-template reparse (`reparse.ts`), which reparses rendered text. None of these is the tree's copy, so they stay. The removal is small enough for Task 9.
 
 ### Interfaces
 
@@ -529,13 +545,14 @@ Shared by Tasks 7 to 10. These are proposals that Task 7 fixes as codegen facts.
   - An arena is a list of fixed-size chunks of `u32` words. No record straddles a chunk, and a chunk never moves, so a view held across a later read still reads its record.
   - Each chunk crosses to JavaScript once, as an external `ArrayBuffer` over native memory, finalized with its arena.
   - A record's address is (chunk, word): one `f64`-safe number, `chunk * 2^20 + word`.
+- **The source bytes** (ruling 1.1). A tree's UTF-8 source, held natively, crosses to JavaScript as one external `ArrayBuffer` over that memory, finalized with the tree. It is made on the first `$text` or source-bytes access (`TreeHandle.bytes()`), never at parse, and never copied. `TreeHandle.text(span)` decodes a byte span from it.
 - **A record.** Word 0 is the kind's grammar id and word 1 the side record's address (0 for none). Next come the kind's presence words, if it has presence slots, and then each other slot's cell at its stamped `word`.
   - A parsed record's side record carries `at` (tree, index, end) and the layout facts the reader stamps. A built record's carries `edges`, `gap`, `flank`, `sides`, `changed` and `units`, and, from 3b-ii, its trivia.
   - The record names its tree once, on the arena, so a parsed cell names no tree.
-- **A cell.** Its width is stamped per slot by codegen, from the widest form the slot admits: six words for a parsed leaf (tag, kind, byte start and end, UTF-16 start and end, by ruling 1.1), and five for a coordinate, as the probe's cell. Tags:
+- **A cell.** Its width is stamped per slot by codegen, from the widest form the slot admits: five for a coordinate, as the probe's cell (tag, kind, index, start, end), and four for a parsed leaf (tag, kind, byte start and end, by ruling 1.1) or a built leaf. Tags:
   - 0, absent;
   - 1, a coordinate (kind, index, start, end);
-  - 2, a parsed leaf (kind, byte span, UTF-16 offsets);
+  - 2, a parsed leaf (kind, byte span);
   - 3, a child record (kind, address);
   - 4, a unit (kind);
   - 5, a built leaf (kind, string-table offset and length, by ruling 1.2).
@@ -607,7 +624,7 @@ It measures each form on both inputs, three rounds alternating, idle-gated. Each
 - Test: macro tests, `rust/crates/sittir-core/tests/`, and `sittir-parity-tests`.
 
 **Steps.**
-1. Write `arena.rs` (Interfaces): chunks, addresses, the side record, the string table of ruling 1.2, and the per-tree non-ASCII index of ruling 1.1.
+1. Write `arena.rs` (Interfaces): chunks, addresses, the side record, the string table of ruling 1.2, and the tree's lazily made source buffer of ruling 1.1.
 2. The derive expands, per declaration:
    - a record writer (transport → records, children before parents);
    - a record reader (records → transport), which bounds-checks every word it reads and refuses any malformed cell;
@@ -623,14 +640,16 @@ It measures each form on both inputs, three rounds alternating, idle-gated. Each
 
 **Files:**
 - Modify: `packages/codegen/src/emitters/wrap.ts`, which emits a record-backed wrap per kind beside today's, in the form Task 6 chose.
-- Modify: `packages/common/src/engine.ts`: an internal switch, never part of the public API, that picks the wire for the measurement scripts.
+- Modify: `packages/common/src/engine.ts`: an internal switch, never part of the public API, that picks the wire for the measurement scripts; and the tree handle's source bytes (`bytes()`, `text(span)`) in place of `source`.
+- Modify: `packages/common/src/read.ts` (`TreeHandle`) and `packages/tools/src/validate/common.ts` (`readNodeText`).
 - Generated: `packages/<lang>/src/wrap.ts`.
 
 **Steps.**
 1. Each accessor reads its cell through the stamped offsets in `records.ts` and hydrates a coordinate cell as today's accessor does.
-2. `$text` slices `tree.source` by the record's UTF-16 offsets (ruling 1.1). A built leaf keeps the builder's string.
-3. The record-backed wraps are tested against today's: every corpus node's accessors, kinds and `$text` are equal on both wires (Review Focus 3). A view held across arena growth (Review Focus 2) and a disposed tree's view (Review Focus 4) are pinned.
-4. For ruling 3, a generated eager builder for rust `function_item` and its slot kinds writes records as it builds. It is measurement code, in the probe folder, not in the grammar package.
+2. `$text` decodes the record's byte span from the tree's source bytes (ruling 1.1). A built leaf keeps the builder's string.
+3. The source copy goes (§ The source copy): `TreeHandle.source` is removed, `bytes()` and `text(span)` are added, and its one reader moves to them.
+4. The record-backed wraps are tested against today's: every corpus node's accessors, kinds and `$text` are equal on both wires (Review Focus 3). A view held across arena growth (Review Focus 2) and a disposed tree's view (Review Focus 4) are pinned.
+5. For ruling 3, a generated eager builder for rust `function_item` and its slot kinds writes records as it builds. It is measurement code, in the probe folder, not in the grammar package.
 
 ### Task 10: The gate, measured in the engine
 
@@ -642,7 +661,8 @@ It measures each form on both inputs, three rounds alternating, idle-gated. Each
 - **retained heap per node,** members attached (`function-item-heap.mts`'s population, both wires);
 - **render decode per node:** native decode of a transport from napi objects (`FromNapiValue`) against from records, timed natively in a measure-only build feature that the published build never enables;
 - **the rebuilt render's native call per slot value** over the parity fixtures (`measure-rebuilt.mts`, `layout-rounds.sh`);
-- **`$text` by the ruled design, with the alternatives as reference rows** (ruling 1): time per access, and heap per leaf over a whole-tree walk;
+- **`$text` by the ruled design, with the alternatives as reference rows** (ruling 1): time per access, and heap per leaf over a whole-tree walk, with and without a decoded string cached on the wrapper;
+- **heap per tree with and without a text access:** a parse read for structure only (no `$text`, so no source buffer) against the same parse after one `$text`, beside today's tree with its JavaScript source copy;
 - **built nodes, eager records and encoded at render** (ruling 3): build time and heap per node, decode, buffer growth over 10 000 builds, and the in-place against copying setter on a shared child.
 
 **The verdict.** Each gate row, records against objects, is marked met or not met with its numbers. The README states the verdict. The branch's PR opens with it, and brainstorm takes it to the maintainer. A row that is not met stops the step with the branch intact.
@@ -662,4 +682,5 @@ Detailed against master once the maintainer rules on Task 10's verdict.
 - **Built nodes' trivia in records** (the trivia-table spec's § 7.1).
   - A built node's sides move from the node into its side record and travel with it. A write to a built node's side lands in its record, held or not. A built holder keeps nothing for its children. A parsed node placed in a built holder keeps its sides in its tree's table. The render reads trivia from native storage only.
   - **Retires:** `$_layout.trivia`, `setTriviaData` and the trivia writer's client store; `TransportLayout::trivia`, `TransportTrivia` and `TriviaEntry` with their napi decode.
+- **A native file-based parse** (the maintainer, 2026-10-12). `parseFile(path)`, only for grammars that declare file types: native code reads the file, JavaScript gets records, and text decodes lazily from the shared source bytes, so the source never exists as a JavaScript string. Its API shape (the name, options, errors for an unreadable file, and encoding and BOM handling) is designed here and goes to the maintainer before code.
 - **The typed model's name** (prior art 7). Once the structs are views over records or stay structs, they are renamed across the attribute, `ReadTransport`, `TransportLayout`, the macro crate, the emitters, every generated `…Transport`, and the glossary and specs, in one commit series with no other change.
