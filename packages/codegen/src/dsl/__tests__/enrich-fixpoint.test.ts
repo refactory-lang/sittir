@@ -94,4 +94,13 @@ describe('enrich is a fixpoint of its own output', () => {
 		const out = again(grammarWith({ file: repeat(sym('word')), word: P('[a-z]+') }, { extras: [P('\\s')] }));
 		expect(out).toEqual({ names: [], minted: [] });
 	});
+
+	it('keeps the layout supertype body a later stage decorated', () => {
+		const first = enrich(structuredClone(grammarWith({ file: repeat(sym('word')), word: P('[a-z]+') }, { extras: [P('\\s')] })) as never, {});
+		const rules = rulesOf(first);
+		const members = (rules._layout as { members: { name: string }[] }).members;
+		const decorated = { type: 'CHOICE', members: members.map((m) => alias(m, m.name.slice(1))) };
+		rules._layout = decorated;
+		expect(rulesOf(enrich(first as never, {}))._layout).toEqual(decorated);
+	});
 });

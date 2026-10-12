@@ -143,6 +143,8 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 		priorOrigins: getEnrichRuleOrigins(baseInput)
 	});
 	const { kwRules, clauseGroupRules, ruleOrigins } = ctx;
+	const priorLayout = ctx.priorOrigins.get(LAYOUT_SUPERTYPE)?.kind === 'whitespace' ? rulesBag[LAYOUT_SUPERTYPE] : undefined;
+	if (priorLayout !== undefined) delete rulesBag[LAYOUT_SUPERTYPE];
 	const enrichedRules: Record<string, Rule> = {};
 	for (const name of Object.keys(rulesBag)) {
 		const rule = rulesBag[name];
@@ -239,7 +241,7 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 	const upstreamExternals = ctx.externals.filter((entry) => !ruleListParts([entry]).names.some((name) => priorWhitespaceExternals.has(name)));
 	const whitespace = enrichWhitespace(upstreamExternals, ctx.extras, mergedRules);
 	for (const { name } of whitespace.collisions) delete mergedRules[name];
-	mergedRules[LAYOUT_SUPERTYPE] = whitespace.rule;
+	mergedRules[LAYOUT_SUPERTYPE] = priorLayout ?? whitespace.rule;
 	ruleOrigins.set(LAYOUT_SUPERTYPE, { kind: 'whitespace' });
 	const result: unknown = hasWrapper
 		? { ...base, grammar: { ...base.grammar, rules: mergedRules } }
