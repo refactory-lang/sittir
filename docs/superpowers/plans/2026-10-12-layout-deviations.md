@@ -1,6 +1,6 @@
 # Line Layout as Deviations from the Read-Time Options: Plan
 
-**Goal:** a parsed tree stores, as layout entries in its trivia table, only the gaps whose source line layout differs from what the options in effect at read time render there. A gap with no entry renders as the options say. A stored deviation is the occurrence's stamp: it beats per-call options, and only `reformat` drops it. List gaps move to the same entries, and their stamps retire.
+**Goal:** a parsed tree stores, as layout entries in its trivia table, only the gaps whose source line layout differs from what the options in effect at read time render there. A gap with no entry renders as the options say. A stored deviation is the occurrence's stamp: it beats per-call options, and only `reformat` drops it. A list slot's gaps and separator are stored once per slot occurrence, and the list gap stamps retire.
 
 **Spec:** `docs/superpowers/specs/2026-10-09-trivia-table-design.md` (§ 1 Layout, ruling 11 as restated below).
 
@@ -13,6 +13,10 @@
 - List gaps migrate to deviation entries, and their stamps retire.
 - The fixture generator's detached input keeps the layout, so a moved render fixture replays from it.
 - The writer is the one source of what the options render (the maintainer, ruling on the baseline). The read never re-implements the seam law: the baseline is a render.
+- The baseline is computed per region, on demand, and cached on the tree. A region is computed when it is first rendered from templates; an untouched region, rendered as a source slice, is never deep-read on any path.
+- A list's gap deviations are recorded at the slot level, not on each item: one entry per list-slot occurrence, rendering its existing and inserted gaps alike. A slot whose gaps match the baseline stores nothing. An item moved into another list takes the target slot's entry.
+- A separator the grammar chooses per instance (typescript object type members, `,` or `;`) is a preference of the list slot (kind × slot), with the grammar's first arm as its default. A parsed occurrence's source choice is stored with the slot's entry, only where it differs from the options. Inserted items take it, and `reformat` drops it.
+- `reformat` (per call, `reformat: true`) drops every stored source choice, both layout deviations and preference choices, and renders from the options. It lands next, in its own plan. This plan relies on it only in saying that a stored choice is dropped by `reformat` alone.
 
 ## What exists today
 
@@ -25,22 +29,49 @@
 
 The seam the options write at a gap is not one site's arm. The writer coalesces several marks there: the left kind's after edge, the template's site or fixed seam, a depth move, the right kind's before edge, a seat or a flank, all under the seam law. So the baseline is a render, never a table the read would have to merge again.
 
-**The baseline render.** Once per tree, lazily, the engine renders the tree from its templates under the read-time options, the inferred layer over the engine's options, fixed at that moment. It does so in a recording mode of the spacing writer.
-- **Depth:** the tree is read to full depth, so every node renders from its template and none as a source slice.
-- **Trivia:** the render includes the tree's non-layout trivia, comments and `ERROR` entries with their `$before`/`$after`, because a line comment forces a break that would otherwise show as a false deviation. It excludes the layout entries, which are what is being derived.
-- **What it records:** at each text it writes, the line breaks written since the text before.
+**The recording render.** The engine renders a region of the tree from its templates under the read-time options (the inferred layer over the engine's options, fixed at parse), in a recording mode of the spacing writer (`baseline::Recorder`).
+- **Trivia:** the render includes the region's non-layout trivia, comments and `ERROR` entries with their `$before`/`$after`, because a line comment forces a break that would otherwise show as a false deviation. It leaves out layout entries, which are what is being derived, and every write.
+- **What it records:** the line breaks written between each two texts, anchored to the source as described under Keying.
 
-**When it runs.** At the first need for layout entries: the trivia table's assignment, a snapshot, or a render of an edited node. Never for an untouched render, which is a source slice, or for a structure-only read.
+### Regions
 
-**Keying.** The trivia table addresses a layout run by its bytes (`Assigned::Layout { start, end }`). Every run lies beside a named child or a trivia entry, since a side belongs to a child or an entry. In the baseline render, each named node's frame (`open_frame`, its origin) and each comment or `ERROR` entry carries its source span. So the breaks the render wrote in a gap are keyed by the source end byte of the frame or entry the gap follows and the source start byte of the one it precedes. A run `(start, end)` reads its baseline under either key.
-- **An empty node's inner run** (`[⏎]`, an owner with no named child): keyed by the owner's frame, as the breaks written inside a frame that opened no child frame.
-- **A run between two trivia entries:** keyed by the entries' spans, like any other run.
+**A region is one node's own gaps.** Every gap a side takes has an owner, the smallest node holding the tokens on both sides of it (`Assigned::Layout::owner`). The gap's region is the nearest node at or above its owner that renders in a frame of its own: a node with a transport. Hidden nodes and unit kinds render inside their parent's frame, so their gaps are their parent's. Every gap therefore lies in exactly one region.
+
+**Computing a region.** The engine reads the region's node one level down, its transport children as coordinates, and renders it. Each child renders as a source slice that meets its neighbours as a rendered node does (`CoordinateEdges`), so the gaps between the node's own items are written exactly as the template writes them, and nothing inside a child is deep-read. A full-depth render of a subtree records every region in it at once. A snapshot and `reformat` render whole subtrees, so they compute their regions that way, one render per subtree.
+
+**When a region is computed.** When the assignment's layout filter needs it: the first time a gap of that region renders from templates. That is a rebuilt node's own gaps (an edited node, and each rebuilt ancestor around it, whose gaps hold the edited node's edges), or a snapshotted or reformatted subtree. An untouched node renders as a source slice and computes nothing. A structure-only read computes nothing.
+
+**The cache.** Each computed region's record is kept on the tree by its node's index, and no region is computed twice. Nothing invalidates it: the record is a function of the read-time tree and the read-time options, and an edit changes neither. An edit changes which gaps render from templates, never what the read-time options render at a source gap. A write to a side changes that side's entries, never the deviation stored at a gap the write did not touch.
+
+**One region alone and inside its subtree agree.** A test over every corpus entry of the five grammars computes each region alone and again inside a full-depth render of the whole tree, and requires the two records to give every gap the same breaks.
+
+### Keying
+
+The trivia table addresses a run by its bytes (`Assigned::Layout { start, end }`). The recorder keys what it writes in two ways.
+- **Anchors.** A node's frame (`open_frame`, its origin's span) and a slice of source text (a child coordinate, a comment) open at their start byte and close at their end byte. An opening resolves at the next text written: the breaks written after the text before it and before that text. A closing resolves the same way at the next text after it. A run from `start` to `end` reads the breaks written between what closes at `start` and what opens at `end`, either one standing in when only one is anchored. A trailing run the writer renders ahead of where it lands (`defer_trailing`) keeps its anchors local and places them where it is written.
+- **Items.** A run beside text that no frame or slice holds has no anchor: a literal of the owner's template, a unit kind (`i32`, `True`), a presence keyword (`mut`), or a zero-width hidden token (an automatic semicolon, a python newline). Such a run reads its region's frame instead. The recorder keeps, for each frame, the items written directly in it, each with the breaks before it and by its end: each text by its text with whitespace removed, and each child frame or slice by its node's index. The engine lists the node's source items the same way: each rendered child by its index, each token with width by its text, and the children of any other child in its place. Extras and `ERROR`s are trivia and no item. The two lists are aligned in order. A child matches the next item of its index. A token matches the next text that equals it, or that equals it joined with up to three tokens after it, since a template literal can write several tokens at once (`()`, `not in`, `unique symbol`). The run reads the breaks between the items beside it, with the frame's open or close standing in where no item lies on a side.
 - **The file's edges:** never keyed and never stored. They stay in the inferred layer.
-- **A run neither key reaches:** an error from the assignment, never a silent choice. A test over every corpus entry of the five grammars keeps the count of such runs at zero.
+- **A run neither way reaches:** an error from the assignment, never a silent choice. The corpus test over the five grammars (every region computed) keeps the count of such runs at zero.
 
-**The deviation test.** A run deviates when its source line breaks differ from the baseline's breaks at its key. Indentation is measured as today: only an excess over the template's depth is stored, as depth members, in the inferred indentation unit (`DEPTH_REGIONS`). A deviating run is stored as `Assigned::Layout` of its source class (`classify_whitespace`), now including an in-line class (space, tab or tight) where the baseline breaks. A run that matches stores nothing.
+### The deviation test
 
-**Where.** `TriviaTable::assign` runs as today, then filters its layout runs against the baseline, held in a once-per-tree cell beside the table. The baseline render reads the table's non-layout entries, so the two phases do not loop.
+A run deviates when its source line breaks differ from the baseline's breaks at its key. Indentation is measured as today: only an excess over the template's depth is stored, as depth members, in the inferred indentation unit (`DEPTH_REGIONS`). A deviating run is stored as `Assigned::Layout` of its source class (`classify_whitespace`), now including an in-line class (space, tab or tight) where the baseline breaks. A run that matches stores nothing. A list slot's separator gaps are measured per slot instead (below).
+
+**Where.** `TriviaTable::assign` places every run as today, the in-line and empty ones included (`TriviaTable::runs`). The layout filter runs per region on demand: the first time a region's gaps are rendered, its runs are compared with its record and its deviations written to the table. A region's record reads the table's non-layout entries only, so the two never loop.
+
+## List slots
+
+**The slot entry.** A list-slot occurrence is a parsed node and one of its list slots (kind × slot, the owner's index and the slot's field). Its separator gaps each have two sides, before the separator and after it, each of one layout class: a line class (break, blank line) or an in-line class (space, tab, tight). For each side, the occurrence's class is the class most of its gaps have on that side. The occurrence stores one slot entry, `{ before, after, separator }`, holding only the sides whose class differs from the baseline's class at that slot's separator gaps, and the separator only where its choice differs from the slot's separator preference. A slot that matches stores nothing.
+
+**No majority.** When two or more classes tie on a side, the slot takes the baseline's class if it is among them, else the class of the occurrence's first gap. So a tie never stores an entry the options already give, and the choice is fixed by the source.
+
+**Outliers.** A gap whose class on a side differs from the slot's class on that side (its entry, else the baseline's) keeps a per-gap entry for that side, on the item after it, as any deviating gap does. A per-gap entry beats the slot entry. So a hand-made break in an otherwise one-line list keeps its break, and an insert next to it takes the slot's class.
+
+**Mixed separators.** The same rule: the occurrence's separator is the one most of its gaps use, ties going to the slot's preference if it is among them, else to the first gap's. A gap whose separator differs keeps it as a per-gap choice on the item after it.
+
+**Where it lives.** The slot entry is a fact of the trivia table, keyed by the owner's index and the slot's field, and reaches the render as the owner's layout does: a read node through its sides, a rebuilt node through `$_layout.sides` (the node it was rebuilt from). The render applies it to every separator gap of the slot, existing and inserted, at trivia strength. A per-gap entry on an item's side beats it there. An item moved into another list loses its per-gap entries at its changed edges (`changed`), so it takes the target slot's entry.
+
+**The separator preference.** Codegen gives each list slot whose separator the grammar chooses per instance a preference key (kind × slot), its default the grammar's first arm, in the options tables beside the slot's other sites. The slot entry's separator overrides it for that occurrence.
 
 ## How the inferred layer and the deviations stay consistent
 
@@ -51,28 +82,38 @@ The seam the options write at a gap is not one site's arm. The writer coalesces 
 ## The data shape
 
 - **Trivia table:** `Assigned::Layout { start, end, depth, owner }` is unchanged in form. It is now written only for a deviating gap, and may hold a run with no line break. `engine.rs::assigned_side` turns it into a whitespace member as today (`from_layout`), extended to the in-line kinds: the grammar's `_space`/`_tab` members, and a tight deviation as the gap's zero-width member, if the grammar has one, else a stated refusal in codegen.
-- **Retired:** `SourceGap` (`$_layout.gap`, `CoordinateWrites::gap`), `SourceFlank` (`$_layout.flank`), `fill_list_gaps`/`set_gap_edge`/`single_separator`/`geometry_list_gap`, and the list's "flanks spell its edges" assignment rule. A list's gaps and flanks become entries on its items' sides like any other gap. JavaScript stops writing `gap` on rebuilt lists' items: a moved item's sides already carry their entries, and `changed` drops them at a changed edge.
-- **The writer:** the stored-gap flag goes. A deviation entry is trivia, which merges at `SEAM_TRIVIA` and beats the template's seam: an in-line entry beats a template break. A held line end stays a floor, but a weaker mark no longer widens a floor that a stored entry holds (`spacing.rs`, below). The whitespace-token exemption is not needed.
+- **Slot entries:** `{ owner, field, before, after, separator }` per list-slot occurrence that differs (above), beside the side entries in the trivia table.
+- **Retired:** `SourceGap` (`$_layout.gap`, `CoordinateWrites::gap`), `SourceFlank` (`$_layout.flank`), `fill_list_gaps`/`set_gap_edge`/`single_separator`/`geometry_list_gap`, and the list's "flanks spell its edges" assignment rule. A list's flanks become gaps of its owner's region like any other, and its separator gaps are measured per slot. JavaScript stops writing `gap` on rebuilt lists' items.
+- **The writer:** the stored-gap flag goes. A deviation entry is trivia, which merges at `SEAM_TRIVIA` and beats the template's seam: an in-line entry beats a template break. A held line end stays a floor, but a weaker mark no longer widens a floor that a stored entry holds (`spacing.rs`, below). The whitespace-token exemption is not needed. At a list slot's separator gap, the order is: a per-gap entry, else the slot entry's class for that side, else the options.
 - **Snapshots and detached fixtures:** both carry the entries as trivia (`walkTrivia` keeps them), so a detached render fixture replays from its layout. `selfContainedRenderInput` also keeps the facts a render still reads from `$_layout`, with no tree reference: today it drops `at`, `sides` and `span`. The plan checks, per kind, that a detached replay equals the tree render (the fixture gate does this for the whole corpus).
 
 ## Files
 
-- `rust/crates/sittir-core/src/trivia_table.rs`: the deviation filter after `assign`, the in-line class, the list rule retired.
+- `rust/crates/sittir-core/src/baseline.rs` (new): the recorder and a region's record.
+- `rust/crates/sittir-core/src/trivia_table.rs`: every run placed (`runs`), the per-region layout filter, slot entries, the in-line class, the list rule retired.
 - `rust/crates/sittir-core/src/options.rs`: one `classify_whitespace` use. `InferredOptions` gives the assignment its baseline.
-- `rust/crates/sittir-core/src/engine.rs`: the once-per-tree baseline render and its cell; `assigned_side` takes the in-line kinds.
+- `rust/crates/sittir-core/src/engine.rs`: the region records and their cache, the item alignment; `assigned_side` takes the in-line kinds. The grammar hook that reads and renders a region (`EngineGrammar::render_read`), emitted by `packages/codegen/src/emitters/native-crate.ts`.
+- `packages/codegen/src/emitters/render-options-rs.ts`: the separator preference key per list slot. Glossary: `docs/glossary/emitters.md`.
 - `rust/crates/sittir-core/src/prepare.rs`, `slot.rs`, `layout.rs`: `fill_list_gaps` and the `gap`/`flank` facts retired.
-- `rust/crates/sittir-core/src/spacing.rs`: the recording mode (breaks per gap, keyed by the frame and entry spans on either side). The stored-gap work is dropped. One change: a held line end is widened only by a mark at least as strong as the layout that holds the gap, so a stored single break after a line comment is not widened by the template's blank line (`// c⏎fn g() {}`). Today any wider break widens the floor whatever its strength.
+- `rust/crates/sittir-core/src/spacing.rs`: the recording mode (`with_recording`, its anchors and items). The stored-gap work is dropped. One change: a held line end is widened only by a mark at least as strong as the layout that holds the gap, so a stored single break after a line comment is not widened by the template's blank line (`// c⏎fn g() {}`). Today any wider break widens the floor whatever its strength.
 - `packages/common/src/*`: JavaScript stops writing `$_layout.gap` and `flank`.
 - `packages/tools/src/validate/read-render-parse.ts`: `selfContainedRenderInput`.
 - Spec: § 1 Layout and ruling 11, restated as above.
 
 ## Tasks
 
-1. **The baseline render**, red first. Engine tests: the recorded breaks per key for rust `fn f() {\n    x;\n}` (a break at each depth site), `fn f() { x; }` (the same breaks: the baseline is the options', not the source's), and `fn f() {} // c\nfn g() {}` (the comment's line end and the seat's blank line). An empty list's inner key. The corpus test: zero unkeyed runs in all five grammars. The baseline is not computed for an untouched render or a structure-only read.
+1. **The region record**, red first. Tests through the native engine's diagnostic (`layoutBaseline`, each run with its baseline breaks): rust `fn f() {\n    x;\n}` (a break at each depth site), `fn f() { x; }` (the same breaks: the baseline is the options', not the source's), `fn f() {} // c\nfn g() {}` (the comment's line end and the seat's blank line), and an empty block's inner run. The corpus test: zero unkeyed runs in all five grammars. The consistency test: each region alone equals the same region inside the full-depth render. No region is computed for an untouched render or a structure-only read, and none twice.
 2. **Deviations stored**, red first with the four cases: rust `fn f() { x; }` and `fn f() {} // c\nfn g() {}`, typescript `if (a) { b; }`, each in snapshot and template render, plus a built block keeping the template's breaks. Also: an enum or interface whose breaks equal the options stores nothing at its flanks and renders unchanged, and a per-call option changes a gap with no entry but not a deviating one.
-3. **List gaps migrate**, in this PR, as their own commit series after task 2. The list gap and flank stamps retire, so line layout has one store when the PR lands. Red first: a rebuilt list whose items moved keeps each item's own layout. Gate: no fixture moves in this task.
+3. **List slots**, in this PR, as their own commit series after task 2. The list gap and flank stamps retire, so line layout has one store when the PR lands. Red first, each in a snapshot and with an inserted item:
+   - `[1,2,3]` where the options say `, `: one slot entry; an insert renders `[1,2,4,3]`.
+   - `a,⏎b` against `a⏎, b`: the same break count on different sides of the separator, two different slot entries.
+   - a list with one hand-made break among one-line gaps: the outlier keeps its break, the insert takes the slot's class.
+   - a tie between two classes, with and without the baseline's class among them.
+   - a typescript object type with `;` separators: the slot entry's separator, taken by an insert; one with mixed separators.
+   - an item moved into another list takes the target's slot entry.
+   Gate: no fixture moves in this task except those the slot entries bring to their source.
 4. **Detached input.** Red first: a fixture's detached input replays to the tree render for the moved kinds.
-5. **Gates:** fixtures, validation, the suite, cargo and clippy, and two rows over the corpora: the baseline render's cost per tree (time and peak memory, against a plain render of the same tree) and the count of stored deviations per grammar (expected small).
+5. **Gates:** fixtures, validation, the suite, cargo and clippy, and two rows over the corpora: a region's cost against its size (time and peak memory per region, by its node's byte length and item count, against a plain render of the same node), and the count of stored deviations and slot entries per grammar (expected small).
 
 ## Expected fixture movement
 
@@ -86,8 +127,10 @@ The gate lists every moved fixture with its before and after, checks that each n
 ## Review Focus
 
 1. A layout run the baseline cannot key: an assignment error, held at zero by the corpus test.
-2. A source indented with a unit other than the engine's: depth deviations are counted in the inferred unit, and no gap stores a deviation for the unit alone.
-6. A line comment beside a gap: the baseline includes it, so its forced break is not a deviation.
-3. A line comment trailing a gap whose deviation is in-line: the comment's held line end still breaks the line.
-4. A rebuilt list (moved, removed, inserted items): each kept item keeps its own deviations, and a changed edge drops them.
-5. A detached fixture of every moved kind replays to its tree render.
+2. A template literal that writes several tokens at once, or a token the template leaves out: the item alignment matches the rest and leaves only that item unwritten.
+3. A source indented with a unit other than the engine's: depth deviations are counted in the inferred unit, and no gap stores a deviation for the unit alone.
+4. A line comment beside a gap: the record includes it, so its forced break is not a deviation.
+5. A line comment trailing a gap whose deviation is in-line: the comment's held line end still breaks the line.
+6. A rebuilt list (moved, removed, inserted items): kept items keep their per-gap outliers, a changed edge drops them, and every other gap takes the slot entry.
+7. A region computed alone and inside its subtree give the same breaks; the corpus test holds it.
+8. A detached fixture of every moved kind replays to its tree render.
