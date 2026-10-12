@@ -8349,56 +8349,6 @@ export function buildExportStatementNamespaceExport(
 	return node as unknown as T.ExportStatementNamespaceExport.Bound;
 }
 
-export function buildExportStatementTypeExport(
-	config: Partial<T.ExportStatementTypeExport.Config> = {},
-	options?: T.ExportStatementTypeExport.Options
-): T.ExportStatementTypeExport.Bound {
-	const _export_clause = rejectBareText(
-		orDefault(config.exportClause, () => buildExportClause()),
-		'ExportStatementTypeExport.exportClause',
-		'a built ExportClause'
-	);
-	const _source = rejectBareText(config.source, 'ExportStatementTypeExport.source', 'a built String');
-	const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementTypeExport['_terminator']>>(
-		options?.terminator,
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.ExportStatementTypeExport as const,
-		$source: 2 as const,
-		$named: true as const,
-		_export_clause,
-		_source,
-		_terminator,
-		$with: {
-			exportClause: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.ExportClause as const, optional: false, make: buildExportClause },
-						(value: Admit<T.ExportClause>) =>
-							buildExportStatementTypeExport({ ...config, exportClause: value }, options)
-					)
-				),
-			source: (value?: Admit<T.String>) =>
-				rebuilt(node, handle, () => buildExportStatementTypeExport({ ...config, source: value }, options)),
-			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-				rebuilt(node, handle, () => buildExportStatementTypeExport(config, { ...options, terminator: spelling }))
-		},
-		exportClause: () => _export_clause,
-		source: () => _source,
-		terminator: () => _terminator,
-		$render: () => renderText(handle, node),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
-	};
-	return node as unknown as T.ExportStatementTypeExport.Bound;
-}
-
 export function buildExportStatementEqualsExport(
 	value: Admit<T.Expression>,
 	options?: T.ExportStatementEqualsExport.Options
@@ -10003,21 +9953,19 @@ export function buildImportClauseDefaultImport(
 }
 
 export function buildExportStatementDefaultFrom(
-	value: Admit<
-		| T.ExportStatementDefaultFromStarFrom
-		| T.ExportStatementDefaultFromNsFrom
-		| T.ExportStatementDefaultFromClauseFrom
-		| T.ExportClause
-	>,
+	config: T.ExportStatementDefaultFrom.Config,
 	options?: T.ExportStatementDefaultFrom.Options
 ): T.ExportStatementDefaultFrom.Bound {
-	const _content = rejectBareText(
-		value,
-		'ExportStatementDefaultFrom.content',
-		'a built ExportStatementDefaultFromStarFrom / ExportStatementDefaultFromNsFrom / ExportStatementDefaultFromClauseFrom / ExportClause'
+	const _type = coerceBooleanKeywordStorage(
+		rejectBareText(config.type, 'ExportStatementDefaultFrom.type', 'a boolean')
 	);
-	const _automatic_semicolon = coerceKindEnumStorage<NonNullable<T.ExportStatementDefaultFrom['_automatic_semicolon']>>(
-		options?.automaticSemicolon,
+	const _content = rejectBareText(
+		config.content,
+		'ExportStatementDefaultFrom.content',
+		'a built ExportStatementDefaultFromStarFrom / ExportStatementDefaultFromNsFrom / ExportStatementDefaultFromClauseFrom'
+	);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementDefaultFrom['_terminator']>>(
+		options?.terminator,
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 	const handle = currentHandle();
@@ -10025,24 +9973,25 @@ export function buildExportStatementDefaultFrom(
 		$type: TSKindId.ExportStatementDefaultFrom as const,
 		$source: 2 as const,
 		$named: true as const,
+		_type,
 		_content,
-		_automatic_semicolon,
+		_terminator,
 		$with: {
+			type: (value?: Admit<NonNullable<T.ExportStatementDefaultFrom.Config>['type']>) =>
+				rebuilt(node, handle, () => buildExportStatementDefaultFrom({ ...config, type: value }, options)),
 			content: (
 				value: Admit<
 					| T.ExportStatementDefaultFromStarFrom
 					| T.ExportStatementDefaultFromNsFrom
 					| T.ExportStatementDefaultFromClauseFrom
-					| T.ExportClause
 				>
-			) => rebuilt(node, handle, () => buildExportStatementDefaultFrom(value, options)),
-			automaticSemicolon: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-				rebuilt(node, handle, () =>
-					buildExportStatementDefaultFrom(value, { ...options, automaticSemicolon: spelling })
-				)
+			) => rebuilt(node, handle, () => buildExportStatementDefaultFrom({ ...config, content: value }, options)),
+			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () => buildExportStatementDefaultFrom(config, { ...options, terminator: spelling }))
 		},
+		type: () => _type,
 		content: () => _content,
-		automaticSemicolon: () => _automatic_semicolon,
+		terminator: () => _terminator,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -10152,7 +10101,7 @@ export function buildExportStatementDefaultFromNsFrom(
 }
 
 export function buildExportStatementDefaultFromClauseFrom(
-	config: T.ExportStatementDefaultFromClauseFrom.Config
+	config: Partial<T.ExportStatementDefaultFromClauseFrom.Config> = {}
 ): T.ExportStatementDefaultFromClauseFrom.Bound {
 	const _export_clause = rejectBareText(
 		orDefault(config.exportClause, () => buildExportClause()),
@@ -10177,7 +10126,7 @@ export function buildExportStatementDefaultFromClauseFrom(
 							buildExportStatementDefaultFromClauseFrom({ ...config, exportClause: value })
 					)
 				),
-			source: (value: Admit<T.String>) =>
+			source: (value?: Admit<T.String>) =>
 				rebuilt(node, handle, () => buildExportStatementDefaultFromClauseFrom({ ...config, source: value }))
 		},
 		exportClause: () => _export_clause,
@@ -11262,7 +11211,6 @@ export type FluentKindMap = {
 	ambient_declaration_module: T.AmbientDeclarationModule.Bound;
 	object_type_content: T.ObjectTypeContent.Bound;
 	export_statement_namespace_export: T.ExportStatementNamespaceExport.Bound;
-	export_statement_type_export: T.ExportStatementTypeExport.Bound;
 	export_statement_equals_export: T.ExportStatementEqualsExport.Bound;
 	comment_line: T.CommentLine.Bound;
 	comment_block: T.CommentBlock.Bound;
@@ -11523,7 +11471,6 @@ export const _factoryMap = {
 	ambient_declaration_module: buildAmbientDeclarationModule,
 	object_type_content: buildObjectTypeContent,
 	export_statement_namespace_export: buildExportStatementNamespaceExport,
-	export_statement_type_export: buildExportStatementTypeExport,
 	export_statement_equals_export: buildExportStatementEqualsExport,
 	comment_line: buildCommentLine,
 	comment_block: buildCommentBlock,

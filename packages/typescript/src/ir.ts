@@ -418,7 +418,6 @@ export const ir: {
 	readonly ambientDeclarationModule: typeof F.ambientDeclarationModule;
 	readonly objectTypeContent: typeof F.objectTypeContent;
 	readonly exportStatementNamespaceExport: typeof F.exportStatementNamespaceExport;
-	readonly exportStatementTypeExport: typeof F.exportStatementTypeExport;
 	readonly exportStatementEqualsExport: typeof F.exportStatementEqualsExport;
 	readonly numberHex: typeof F.numberHex;
 	readonly numberFloatPoint: typeof F.numberFloatPoint;
@@ -672,7 +671,6 @@ export const ir: {
 	ambientDeclarationModule: F.ambientDeclarationModule,
 	objectTypeContent: F.objectTypeContent,
 	exportStatementNamespaceExport: F.exportStatementNamespaceExport,
-	exportStatementTypeExport: F.exportStatementTypeExport,
 	exportStatementEqualsExport: F.exportStatementEqualsExport,
 	numberHex: F.numberHex,
 	numberFloatPoint: F.numberFloatPoint,

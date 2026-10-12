@@ -582,10 +582,19 @@ The upstream grammar's rules as evaluated before any sittir change: the raw
 stage. The witness of an `'accepts-other-kind'` rewrite is judged against these,
 never against the rewritten rules.
 
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::judgeRejectedWitness`
+
+Judges a rule declared `reauthored('rejects-valid-syntax', witness, body)`. The
+claim is that the upstream rule named by the witness's `kind` does not derive the
+witness `form`, the form of a source text upstream's parser rejects. A missing
+witness, a `kind` upstream does not declare, or an upstream rule that already
+derives the form is a `rule-cause-mismatch`. The rule being reauthored must still
+be an upstream rule, which `judgeReauthored` checks first.
+
 ### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::isWitnessVerified`
 
 Whether a rule's declaration is one the gate verifies by witness: today,
-`reauthored('accepts-other-kind', …)` and `reauthored('semantic-gap', …)`. The latter additionally requires the witness kind to equal the unchanged upstream parser kind and a nonempty language meaning; semantic construction regressions provide evidence beyond the grammar-form check. The hand-written rule ratchet
+`reauthored('accepts-other-kind', …)`, `reauthored('semantic-gap', …)` and `reauthored('rejects-valid-syntax', …)`. The second additionally requires the witness kind to equal the unchanged upstream parser kind and a nonempty language meaning; semantic construction regressions provide evidence beyond the grammar-form check. The hand-written rule ratchet
 reads it to tell a verified correction from debt.
 
 ### `packages/codegen/src/__tests__/hand-rule-ratchet.test.ts::CEILINGS`

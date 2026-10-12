@@ -314,9 +314,6 @@ export const objectTypeContent: Hoisted<typeof O.objectTypeContent> = hoistAs<ty
 export const exportStatementNamespaceExport: Hoisted<typeof O.exportStatementNamespaceExport> = hoistAs<
 	typeof O.exportStatementNamespaceExport
 >(O.exportStatementNamespaceExport);
-export const exportStatementTypeExport: Hoisted<typeof O.exportStatementTypeExport> = hoistAs<
-	typeof O.exportStatementTypeExport
->(O.exportStatementTypeExport);
 export const exportStatementEqualsExport: Hoisted<typeof O.exportStatementEqualsExport> = hoistAs<
 	typeof O.exportStatementEqualsExport
 >(O.exportStatementEqualsExport);

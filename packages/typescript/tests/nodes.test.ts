@@ -4606,25 +4606,6 @@ describe('export_statement_namespace_export', () => {
 	});
 });
 
-describe('export_statement_type_export', () => {
-	it('factory produces correct type', () => {
-		const node = ir.exportStatementTypeExport(
-			{ exportClause: { $type: TSKindId.ExportClause, $text: 'test', $source: 2, $named: true } as any },
-			{ terminator: TSKindId.AutomaticSemicolon }
-		);
-		expect(node.$type).toBe(TSKindId.ExportStatementTypeExport);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.exportStatementTypeExport(
-			{ exportClause: { $type: TSKindId.ExportClause, $text: 'test', $source: 2, $named: true } as any },
-			{ terminator: TSKindId.AutomaticSemicolon }
-		);
-		const rendered = node.$render!();
-		expect(rendered.length).toBeGreaterThan(0);
-	});
-});
-
 describe('export_statement_equals_export', () => {
 	it('factory produces correct type', () => {
 		const node = ir.exportStatementEqualsExport(
@@ -5677,13 +5658,15 @@ describe('export_statement_default_from', () => {
 	it('factory produces correct type', () => {
 		const node = ir.exportStatementDefaultFrom(
 			{
-				$type: TSKindId.ExportStatementDefaultFromStarFrom,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_source: { $type: TSKindId.StringDouble, $text: 'test', $source: 2, $named: true } as any
-			} as any,
-			{ automaticSemicolon: TSKindId.AutomaticSemicolon }
+				content: {
+					$type: TSKindId.ExportStatementDefaultFromStarFrom,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_source: { $type: TSKindId.StringDouble, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			},
+			{ terminator: TSKindId.AutomaticSemicolon }
 		);
 		expect(node.$type).toBe(TSKindId.ExportStatementDefaultFrom);
 		expect(node.$source).toBe(2);
@@ -5691,13 +5674,15 @@ describe('export_statement_default_from', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.exportStatementDefaultFrom(
 			{
-				$type: TSKindId.ExportStatementDefaultFromStarFrom,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_source: { $type: TSKindId.StringDouble, $text: 'test', $source: 2, $named: true } as any
-			} as any,
-			{ automaticSemicolon: TSKindId.AutomaticSemicolon }
+				content: {
+					$type: TSKindId.ExportStatementDefaultFromStarFrom,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_source: { $type: TSKindId.StringDouble, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			},
+			{ terminator: TSKindId.AutomaticSemicolon }
 		);
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -5707,8 +5692,8 @@ describe('export_statement_default_from', () => {
 describe('export_statement_default_from sub-factories', () => {
 	it('starFrom builds the parent', () => {
 		const node = ir.exportStatementDefaultFrom
-			.starFrom({ $type: TSKindId.StringDouble, $text: 'test', $source: 2, $named: true } as any)
-			.$with.automaticSemicolon(TSKindId.AutomaticSemicolon);
+			.starFrom({ content: { $type: TSKindId.StringDouble, $text: 'test', $source: 2, $named: true } as any })
+			.$with.terminator(TSKindId.AutomaticSemicolon);
 		expect(node.$type).toBe(TSKindId.ExportStatementDefaultFrom);
 		expect((node as any).content()?.$type).toBe(TSKindId.ExportStatementDefaultFromStarFrom);
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -5725,68 +5710,17 @@ describe('export_statement_default_from sub-factories', () => {
 				} as any,
 				source: { $type: TSKindId.StringDouble, $text: 'test', $source: 2, $named: true } as any
 			})
-			.$with.automaticSemicolon(TSKindId.AutomaticSemicolon);
+			.$with.terminator(TSKindId.AutomaticSemicolon);
 		expect(node.$type).toBe(TSKindId.ExportStatementDefaultFrom);
 		expect((node as any).content()?.$type).toBe(TSKindId.ExportStatementDefaultFromNsFrom);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('clauseFrom builds the parent', () => {
 		const node = ir.exportStatementDefaultFrom
-			.clauseFrom({
-				exportClause: { $type: TSKindId.ExportClause, $text: 'test', $source: 2, $named: true } as any,
-				source: { $type: TSKindId.StringDouble, $text: 'test', $source: 2, $named: true } as any
-			})
-			.$with.automaticSemicolon(TSKindId.AutomaticSemicolon);
+			.clauseFrom({ exportClause: { $type: TSKindId.ExportClause, $text: 'test', $source: 2, $named: true } as any })
+			.$with.terminator(TSKindId.AutomaticSemicolon);
 		expect(node.$type).toBe(TSKindId.ExportStatementDefaultFrom);
 		expect((node as any).content()?.$type).toBe(TSKindId.ExportStatementDefaultFromClauseFrom);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('exportClause builds the parent', () => {
-		const node = ir.exportStatementDefaultFrom
-			.exportClause({
-				$type: TSKindId.ExportSpecifiers,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_item: [
-					{
-						$type: TSKindId.ExportSpecifier,
-						$text: 'test',
-						$source: 2,
-						$named: true,
-						_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-					} as any
-				]
-			} as any)
-			.$with.automaticSemicolon(TSKindId.AutomaticSemicolon);
-		expect(node.$type).toBe(TSKindId.ExportStatementDefaultFrom);
-		expect((node as any).content()?.$type).toBe(TSKindId.ExportClause);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('automaticSemicolon builds the parent', () => {
-		const node = ir.exportStatementDefaultFrom.automaticSemicolon({
-			$type: TSKindId.ExportStatementDefaultFromStarFrom,
-			$text: 'test',
-			$source: 2,
-			$named: true,
-			_source: { $type: TSKindId.StringDouble, $text: 'test', $source: 2, $named: true } as any
-		} as any);
-		expect(node.$type).toBe(TSKindId.ExportStatementDefaultFrom);
-		const seated = (node as any).automaticSemicolon();
-		expect(seated?.$text ?? seated).toBe(TSKindId.AutomaticSemicolon);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('semi builds the parent', () => {
-		const node = ir.exportStatementDefaultFrom.semi({
-			$type: TSKindId.ExportStatementDefaultFromStarFrom,
-			$text: 'test',
-			$source: 2,
-			$named: true,
-			_source: { $type: TSKindId.StringDouble, $text: 'test', $source: 2, $named: true } as any
-		} as any);
-		expect(node.$type).toBe(TSKindId.ExportStatementDefaultFrom);
-		const seated = (node as any).automaticSemicolon();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Semi);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });

@@ -164,7 +164,6 @@ export interface SubBuilderRowKind {
 	'exportStatement.default.from': TSKindId.ExportStatementDefaultFrom;
 	'exportStatement.equalsExport': TSKindId.ExportStatementEqualsExport;
 	'exportStatement.namespaceExport': TSKindId.ExportStatementNamespaceExport;
-	'exportStatement.typeExport': TSKindId.ExportStatementTypeExport;
 	'exportStatementDefault.declaration': TSKindId.ExportStatementDefaultDeclaration;
 	'exportStatementDefault.from': TSKindId.ExportStatementDefaultFrom;
 	'forHeader.letConstKind': TSKindId.ForHeaderLetConstKind;
@@ -223,7 +222,6 @@ export interface SubBuilderRowKind {
 	'statement.export.default.from': TSKindId.ExportStatementDefaultFrom;
 	'statement.export.equalsExport': TSKindId.ExportStatementEqualsExport;
 	'statement.export.namespaceExport': TSKindId.ExportStatementNamespaceExport;
-	'statement.export.typeExport': TSKindId.ExportStatementTypeExport;
 	'statement.expression': TSKindId.ExpressionStatement;
 	'statement.for': TSKindId.ForStatement;
 	'statement.forIn': TSKindId.ForInStatement;

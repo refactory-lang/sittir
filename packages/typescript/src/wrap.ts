@@ -6221,49 +6221,6 @@ export function wrapExportStatementNamespaceExport(
 	return node as unknown as T.ExportStatementNamespaceExport.Parsed;
 }
 
-export function wrapExportStatementTypeExport(
-	data: T.ExportStatementTypeExport,
-	tree: TreeHandle
-): T.ExportStatementTypeExport.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.ExportStatementTypeExport as const,
-		exportClause() {
-			return hydrateSlot<T.ExportClause>(this, '_export_clause', tree);
-		},
-		source() {
-			return hydrateSlot<T.String | undefined>(this, '_source', tree);
-		},
-		terminator() {
-			return this._terminator;
-		},
-		$with: {
-			exportClause: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.ExportClause as const, optional: false, make: RAW.buildExportClause },
-						(v: NonNullable<T.ExportStatementTypeExport['_export_clause']>) =>
-							wrapExportStatementTypeExport({ ...$edited(data), _export_clause: v }, tree)
-					)
-				),
-			source: (v: NonNullable<T.ExportStatementTypeExport['_source']>) =>
-				rebuilt(node, handle, () => wrapExportStatementTypeExport({ ...$edited(data), _source: v }, tree)),
-			terminator: (v: NonNullable<T.ExportStatementTypeExport['_terminator']>) =>
-				rebuilt(node, handle, () => wrapExportStatementTypeExport({ ...$edited(data), _terminator: v }, tree))
-		},
-		$render: () => renderText(handle, node),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$engine: handle && (() => handle.current)
-	};
-	return node as unknown as T.ExportStatementTypeExport.Parsed;
-}
-
 export function wrapExportStatementEqualsExport(
 	data: T.ExportStatementEqualsExport,
 	tree: TreeHandle
@@ -7444,22 +7401,26 @@ export function wrapExportStatementDefaultFrom(
 	const node = {
 		...data,
 		$type: TSKindId.ExportStatementDefaultFrom as const,
+		type() {
+			return this._type;
+		},
 		content() {
 			return hydrateSlot<
 				| T.ExportStatementDefaultFromStarFrom
 				| T.ExportStatementDefaultFromNsFrom
 				| T.ExportStatementDefaultFromClauseFrom
-				| T.ExportClause
 			>(this, '_content', tree);
 		},
-		automaticSemicolon() {
-			return this._automatic_semicolon;
+		terminator() {
+			return this._terminator;
 		},
 		$with: {
+			type: (v: NonNullable<T.ExportStatementDefaultFrom['_type']>) =>
+				rebuilt(node, handle, () => wrapExportStatementDefaultFrom({ ...$edited(data), _type: v }, tree)),
 			content: (v: NonNullable<T.ExportStatementDefaultFrom['_content']>) =>
 				rebuilt(node, handle, () => wrapExportStatementDefaultFrom({ ...$edited(data), _content: v }, tree)),
-			automaticSemicolon: (v: NonNullable<T.ExportStatementDefaultFrom['_automatic_semicolon']>) =>
-				rebuilt(node, handle, () => wrapExportStatementDefaultFrom({ ...$edited(data), _automatic_semicolon: v }, tree))
+			terminator: (v: NonNullable<T.ExportStatementDefaultFrom['_terminator']>) =>
+				rebuilt(node, handle, () => wrapExportStatementDefaultFrom({ ...$edited(data), _terminator: v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -7576,7 +7537,7 @@ export function wrapExportStatementDefaultFromClauseFrom(
 			return hydrateSlot<T.ExportClause>(this, '_export_clause', tree);
 		},
 		source() {
-			return hydrateSlot<T.String>(this, '_source', tree);
+			return hydrateSlot<T.String | undefined>(this, '_source', tree);
 		},
 		$with: {
 			exportClause: (...args: unknown[]) =>
@@ -8280,8 +8241,6 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.ObjectTypeContent]: (d, t) => wrapObjectTypeContent(d as unknown as T.ObjectTypeContent, t),
 	[TSKindId.ExportStatementNamespaceExport]: (d, t) =>
 		wrapExportStatementNamespaceExport(d as unknown as T.ExportStatementNamespaceExport, t),
-	[TSKindId.ExportStatementTypeExport]: (d, t) =>
-		wrapExportStatementTypeExport(d as unknown as T.ExportStatementTypeExport, t),
 	[TSKindId.ExportStatementEqualsExport]: (d, t) =>
 		wrapExportStatementEqualsExport(d as unknown as T.ExportStatementEqualsExport, t),
 	[TSKindId.CommentLine]: (d, t) => wrapCommentLine(d as unknown as T.CommentLine, t),
