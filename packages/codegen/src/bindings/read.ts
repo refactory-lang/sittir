@@ -3,6 +3,7 @@ import { createRequire } from 'node:module';
 import type { Socket } from 'node:net';
 import { createInterface } from 'node:readline';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import type { FlagMember } from './flags.ts';
 import { type BindingFacts, type BindingPattern, type BindingsRoundTrip, BindingsSyntaxError } from './facts.ts';
 import type { VocabularyDeclaration } from './vocabulary.ts';
 
@@ -12,6 +13,7 @@ export interface PinnedReaderModes {
 	readonly facts: { readonly input: string; readonly output: BindingFacts };
 	readonly patterns: { readonly input: string; readonly output: BindingPattern[] };
 	readonly roundTrip: { readonly input: string; readonly output: BindingsRoundTrip };
+	readonly flagsModule: { readonly input: readonly FlagMember[]; readonly output: string };
 	readonly vocabulary: { readonly input: string; readonly output: VocabularyDeclaration[] };
 }
 
