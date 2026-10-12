@@ -9,6 +9,7 @@ import { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type 
 import { register, registered, type Role } from './identity.ts';
 import { treeOf } from './tree-token.ts';
 import { spelledForm } from './interior.ts';
+import { snapshotOf } from './snapshot.ts';
 
 export { Delimiter } from './delimiter.ts';
 export { Source };
@@ -105,7 +106,9 @@ const scopedBy = (handle: EngineHandle | undefined): Scoped => (handle === undef
  * The writes of a node's trivia, bound to its engine. An item is an extra kind's node, or a
  * loose string built through `ir.comment`: its full spelling (`'// note'`) or its interior
  * (`' note'`). `inner` writes only to an empty node of a kind with an inner site. A parsed
- * node's side is written into its tree's trivia table, a built node's into its own data.
+ * node's side is written into its tree's trivia table, a built node's into its own data. The table
+ * takes each entry as detached data (`snapshotOf`): it outlives any other tree an entry was read
+ * from, and a snapshot of the tree returns its sides as they are.
  */
 function triviaWriter(target: object, handle: EngineHandle | undefined) {
 	const node = target as AnyUntypedNode;
@@ -118,7 +121,7 @@ function triviaWriter(target: object, handle: EngineHandle | undefined) {
 		const entries = scoped(() => items.map((item) => triviaEntryOf(item, facts)));
 		const at = tableAt(node);
 		if (at === undefined) setTriviaData(node, { ...triviaOf(node), [side]: entries });
-		else at.tree.writeTriviaSide(at.index, side, entries.map((entry) => (typeof entry === 'number' ? entry : toTransportData(entry as AnyUntypedNode, PLAIN_KINDS))));
+		else at.tree.writeTriviaSide(at.index, side, entries.map((entry) => (typeof entry === 'number' ? entry : toTransportData(snapshotOf(entry) as AnyUntypedNode, PLAIN_KINDS))));
 		return node;
 	};
 	const inner = (items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] => {
