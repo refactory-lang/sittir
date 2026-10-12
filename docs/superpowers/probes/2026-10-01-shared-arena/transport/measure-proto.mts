@@ -464,6 +464,113 @@ function measureViews(): void {
 		return node;
 	}
 
+	// V4: V2 with `$with` and `$trivia` as methods that build their object on first call and keep
+	// it in a field the literal declares. Calling them is an API change.
+	function viewMethods(r: number): any {
+		const node: any = {
+			$type: wordsOf(r)[r % WORD],
+			_r: r,
+			_with: undefined,
+			_trivia: undefined,
+			visibilityModifier() {
+				return slotOf(this._r, 1);
+			},
+			functionModifiers() {
+				return slotOf(this._r, 6);
+			},
+			name() {
+				return slotOf(this._r, 11);
+			},
+			typeParameters() {
+				return slotOf(this._r, 16);
+			},
+			parameters() {
+				return slotOf(this._r, 21);
+			},
+			returnType() {
+				return slotOf(this._r, 26);
+			},
+			whereClause() {
+				return slotOf(this._r, 31);
+			},
+			body() {
+				return slotOf(this._r, 36);
+			},
+			$with() {
+				return (this._with ??= lazyWith(this._r));
+			},
+			$trivia() {
+				return (this._trivia ??= lazyTrivia(this._r));
+			},
+			$render: () => node,
+			$query: () => node,
+			$snapshot: () => node,
+			$engine: () => undefined
+		};
+		return node;
+	}
+	const lazyWith = (r: number) => ({
+		visibilityModifier: (v: unknown) => draftOf(r, 'visibility_modifier', v),
+		functionModifiers: (v: unknown) => draftOf(r, 'function_modifiers', v),
+		name: (v: unknown) => draftOf(r, 'name', v),
+		typeParameters: (v: unknown) => draftOf(r, 'type_parameters', v),
+		parameters: (v: unknown) => draftOf(r, 'parameters', v),
+		returnType: (v: unknown) => draftOf(r, 'return_type', v),
+		whereClause: (v: unknown) => draftOf(r, 'where_clause', v),
+		body: (v: unknown) => draftOf(r, 'body', v)
+	});
+	const lazyTrivia = (r: number) => ({ leading: () => coordsAt(wordsOf(r), (r % WORD) + 41), trailing: () => [] });
+	// V5: V2 with `$with` and `$trivia` as getters on one prototype for the kind, building their
+	// object on first access into a field the literal declares.
+	const FUNCTION_ITEM_LAZY = {
+		get $with() {
+			const self = this as any;
+			return (self._with ??= lazyWith(self._r));
+		},
+		get $trivia() {
+			const self = this as any;
+			return (self._trivia ??= lazyTrivia(self._r));
+		}
+	};
+	function viewShared(r: number): any {
+		const node: any = {
+			__proto__: FUNCTION_ITEM_LAZY,
+			$type: wordsOf(r)[r % WORD],
+			_r: r,
+			_with: undefined,
+			_trivia: undefined,
+			visibilityModifier() {
+				return slotOf(this._r, 1);
+			},
+			functionModifiers() {
+				return slotOf(this._r, 6);
+			},
+			name() {
+				return slotOf(this._r, 11);
+			},
+			typeParameters() {
+				return slotOf(this._r, 16);
+			},
+			parameters() {
+				return slotOf(this._r, 21);
+			},
+			returnType() {
+				return slotOf(this._r, 26);
+			},
+			whereClause() {
+				return slotOf(this._r, 31);
+			},
+			body() {
+				return slotOf(this._r, 36);
+			},
+			$render: () => node,
+			$query: () => node,
+			$snapshot: () => node,
+			$engine: () => undefined
+		};
+		return node;
+	}
+
 	type Batch = { words: Uint32Array; text: Uint8Array; count: number };
 	const addressed = (w: Batch, make: (r: number) => any) => {
 		const base = arenas.push({ words: w.words, text: w.text }) - 1;
@@ -476,26 +583,72 @@ function measureViews(): void {
 		['V0 view, arrows', () => p.allWords(), (w: Batch) => Array.from({ length: w.count }, (_, i) => viewArrows(w.words, w.text, w.words[1 + i]!)), (r) => { const w = p.oneWords(r) as Batch; return viewArrows(w.words, w.text, w.words[1]!); }],
 		['V1 view, fields', () => p.allWords(), (w: Batch) => Array.from({ length: w.count }, (_, i) => viewFields(w.words, w.text, w.words[1 + i]!)), (r) => { const w = p.oneWords(r) as Batch; return viewFields(w.words, w.text, w.words[1]!); }],
 		['V2 view, address', () => p.allWords(), (w: Batch) => addressed(w, viewAddress), (r) => addressed(p.oneWords(r) as Batch, viewAddress)[0]],
-		['V3 view, lazy', () => p.allWords(), (w: Batch) => addressed(w, viewLazy), (r) => addressed(p.oneWords(r) as Batch, viewLazy)[0]]
+		['V3 view, lazy', () => p.allWords(), (w: Batch) => addressed(w, viewLazy), (r) => addressed(p.oneWords(r) as Batch, viewLazy)[0]],
+		['V4 view, lazy methods', () => p.allWords(), (w: Batch) => addressed(w, viewMethods), (r) => addressed(p.oneWords(r) as Batch, viewMethods)[0]],
+		['V5 view, lazy prototype', () => p.allWords(), (w: Batch) => addressed(w, viewShared), (r) => addressed(p.oneWords(r) as Batch, viewShared)[0]]
 	];
 
+	const withOf = (node: any) => (typeof node.$with === 'function' ? node.$with() : node.$with);
+	const triviaOf = (node: any) => (typeof node.$trivia === 'function' ? node.$trivia() : node.$trivia);
+	const gc = (globalThis as { gc?: () => void }).gc;
+	if (!gc) throw new Error('--views needs --expose-gc');
+	const only = process.argv.find((arg) => arg.startsWith('--form='))?.slice('--form='.length);
+	if (only !== undefined) {
+		const form = FORMS.find(([label]) => label.split(' ')[0] === only);
+		if (form === undefined) throw new Error(`--form=${only} names no form: ${FORMS.map(([label]) => label.split(' ')[0]).join(', ')}`);
+		measureForm(form);
+		return;
+	}
+
 	// Every form exposes the same members and reads the same through them, before timing.
-	const viewMembers = (node: any) => JSON.stringify([ACCESSORS.filter((a) => typeof node[a] === 'function'), Object.keys(node.$with).sort(), Object.keys(node.$trivia).sort(), ['$render', '$query', '$snapshot', '$engine'].filter((m) => typeof node[m] === 'function')]);
-	const viewReads = (node: any) => JSON.stringify(normal({ $type: node.$type, leading: node.$trivia.leading(), ...Object.fromEntries(ACCESSORS.map((a) => [a, node[a]()])) }));
+	const viewMembers = (node: any) => JSON.stringify([ACCESSORS.filter((a) => typeof node[a] === 'function'), Object.keys(withOf(node)).sort(), Object.keys(triviaOf(node)).sort(), ['$render', '$query', '$snapshot', '$engine'].filter((m) => typeof node[m] === 'function')]);
+	const viewReads = (node: any) => JSON.stringify(normal({ $type: node.$type, leading: triviaOf(node).leading(), ...Object.fromEntries(ACCESSORS.map((a) => [a, node[a]()])) }));
 	const built = FORMS.map(([, cross, attachAll]) => attachAll(cross()));
 	for (let i = 0; i < N; i++) {
 		const [o, ...vs] = built.map((nodes) => nodes[i]);
 		for (const [k, v] of vs.entries()) {
 			if (viewMembers(o) !== viewMembers(v)) throw new Error(`${FORMS[k + 1]![0]}: members differ at node ${i}`);
 			if (viewReads(o) !== viewReads(v)) throw new Error(`${FORMS[k + 1]![0]}: reads differ at node ${i}`);
-			const draft = v.$with[SETTERS[2]](o._name);
+			const draft = withOf(v)[SETTERS[2]](o._name);
 			if (viewReads(draft) !== viewReads(o.$with[SETTERS[2]](o._name))) throw new Error(`${FORMS[k + 1]![0]}: a $with draft differs at node ${i}`);
 		}
 	}
 	console.log(`views agree with the object form: members, every slot, leading trivia and a $with draft of all ${N} nodes`);
 
-	const gc = (globalThis as { gc?: () => void }).gc;
-	if (!gc) throw new Error('--views needs --expose-gc');
+	// One form alone in this process (`--form=<V…|objects>`), so no other form's shapes exist:
+	// the read times, the heap, and how many nodes keep fast properties (`%HasFastProperties`,
+	// which needs --allow-natives-syntax) over 200 batches held, before and after every accessor,
+	// `$with` and `$trivia` is reached. One JSON line.
+	function measureForm([label, cross, attachAll, one]: (typeof FORMS)[number]): void {
+		const hasFast = new Function('node', 'return %HasFastProperties(node)') as (node: unknown) => boolean;
+		const batch = (time(200, () => attachAll(cross())).ms * 1e6) / N;
+		arenas.length = 0;
+		const oneNs = (time(100, () => rows.map(one)).ms * 1e6) / N;
+		arenas.length = 0;
+		gc!();
+		gc!();
+		const before = process.memoryUsage().heapUsed;
+		const held: any[][] = [];
+		for (let i = 0; i < 200; i++) held.push(attachAll(cross()));
+		gc!();
+		gc!();
+		const heap = (process.memoryUsage().heapUsed - before) / (200 * N);
+		const nodes = held.flat();
+		const fast = nodes.filter(hasFast).length;
+		const reach = () => {
+			for (const node of nodes) {
+				for (const accessor of ACCESSORS) node[accessor]();
+				triviaOf(node).leading();
+				withOf(node);
+			}
+		};
+		const readMany = (time(5, reach, 1).ms * 1e6) / nodes.length;
+		const fastAfter = nodes.filter(hasFast).length;
+		gc!();
+		gc!();
+		const heapReached = (process.memoryUsage().heapUsed - before) / (200 * N);
+		console.log(JSON.stringify({ form: label, input: sourcePath.split('/').slice(-1)[0], batchNs: batch, oneNs, heap, fast, nodes: nodes.length, readManyNs: readMany, fastAfter, heapReached }));
+	}
 	const COPIES = 200;
 	const heldBy = (make: () => unknown[]) => {
 		gc();

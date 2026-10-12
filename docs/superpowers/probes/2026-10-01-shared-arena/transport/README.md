@@ -26,7 +26,8 @@ the same input bytes and adds the probe. Release native build, Apple M4 Pro, Nod
 | `generated-tables-census.py` | Counts every generated table the spec's Appendix B classifies, per grammar, in the checkout it is given (or the current directory): wrap projection against member lines, the route and set tables, `consts.ts` and `utils.ts` tables, `kind_ids.rs`'s constants and read tables, option sites, the node model, fixtures and the JS-only surface. Uses `transport-census.py` for `transport.rs`. |
 | `proto/slot-derive/` | The probe's proc macro: `#[transport(kind = "…", layout = […], wire = "words\|napi\|json\|all")]` on a struct whose fields carry `#[slot(field = "…")]`, `#[slot(kinds = […], tokens = […])]` or `#[trivia]`. Expands mechanically into the struct with a `kind_id` (`$type`) and storage keys `_<field>`, a one-level `TreeCursor` reader (tree → transport, children with structure as coordinates, leaves inline, anonymous tokens as kind ids, the kind's layout tokens skipped, and any other child no route takes refused with the node's kind, the child's kind and its row), the arena record writer and reader, and the napi object and serde forms the `wire` names. |
 | `proto/probe/` | A napi addon declaring rust `function_item` (eight slots, as `FunctionItemTransport` holds them) and `function_modifiers` through the macro. It compiles sittir's generated rust parser directly from the checkout. `Probe` reads them in batch and one node per call, in each wire form, decodes each form back (the render direction), and times the native read alone. `rt.rs` is the runtime the expansion calls: `Slot`, `Coord`, `Leaf`, route resolution, the refusal, the child reader, the arena encoding. |
-| `measure-proto.mts` | Runs the probe against today's engine on the same nodes. With `--views` it instead compares how a view's literal is built (below, "The view's construction"): it checks every form against the object form, then times it and stops before today's engine. First it checks that the three wire forms, with the members a wrap would still attach, read the same: every slot, the trivia and the member set of every node; and that a read with the `body` route removed is refused. Then it times the native read alone, each wire form with its members, today's `$query().$descendants.ofType` read split into walk / read / wrap, retained heap (today's from one root parsed outside the measured window), and decode per form. |
+| `measure-proto.mts` | Runs the probe against today's engine on the same nodes. With `--views` it instead compares how a view's literal is built (below, "The view's construction"): it checks every form against the object form, then times it and stops before today's engine. With `--views --form=<objects|V0…V5>` it measures one form alone in its process, so no other form's shapes exist, and prints one JSON line, including how many nodes keep fast properties (`%HasFastProperties`, which needs `--allow-natives-syntax`). First it checks that the three wire forms, with the members a wrap would still attach, read the same: every slot, the trivia and the member set of every node; and that a read with the `body` route removed is refused. Then it times the native read alone, each wire form with its members, today's `$query().$descendants.ofType` read split into walk / read / wrap, retained heap (today's from one root parsed outside the measured window), and decode per form. |
+| `views-rounds.sh`, `views-report.py` | Rounds of `measure-proto.mts --views --form=…`, one form per process, the order reversing each round and each run idle-gated; the report gives each form's medians per input. |
 | `proto/synthetic/`, `proto/gen_synthetic.py`, `proto/time-synthetic.sh` | Compile-cost probe: 395 kinds with 696 slots between them (rust's `transport.rs` shape), built under seven expansions with sccache off. |
 
 ## Commands
@@ -56,6 +57,7 @@ cp Cargo.lock $T/proto/                                                         
 (cd $T/proto && CARGO_TARGET_DIR=$PWD/target cargo build --release --offline -p transport-probe)
 pnpm exec tsx --expose-gc $T/measure-proto.mts $T/inputs/engine.rs                  # also spacing.rs
 ROUNDS=3 pnpm exec tsx --expose-gc $T/measure-proto.mts --views $T/inputs/engine.rs   # the view's construction; also spacing.rs
+$T/views-rounds.sh 3 node_modules/.bin/tsx > runs.jsonl && python3 $T/views-report.py runs.jsonl   # one form per process
 $T/proto/time-synthetic.sh                                                        # writes proto/synthetic/src/kinds.rs per expansion
 
 # the real crate's build, with and without its napi code (sccache off)
@@ -316,4 +318,35 @@ The "every match" rows include the whole-tree walk, about 6 µs a match.
 - **Building `$with` and `$trivia` on first access (V3) halves the heap** against the object form. They are getters in the literal, so their closures are still written in it; whether that form is admissible is the maintainer's call. V1 and V2 already meet the gate's heap row without it.
 
 V0's row reproduces the spec's 6 871 / 6 861 B against 4 949 / 4 907 B. Both are a few hundred bytes higher here, because the member set now includes `$snapshot`.
+
+#### One form per process: shapes, and reads over many nodes
+
+A getter written per node (in the literal, or by `defineProperty`) goes into the node's shape, so no two nodes share a map and they drop to dictionary mode. Each form was measured alone in its own process (`views-rounds.sh`, three rounds, idle-gated) over 200 batches held: 7 400 nodes on `engine.rs` and 19 800 on `spacing.rs`. Two more forms were added:
+
+- **V4:** `$with()` and `$trivia()` as methods that build their object on first call into a field the literal declares. Calling them is an API change.
+- **V5:** `$with` and `$trivia` as getters on one prototype for the kind, which build into fields the literal declares.
+
+Each node's accessors were then reached, along with its `$with` and its leading trivia ("after reaching").
+
+| input | form | every match | one per call | heap | fast nodes | read after many | fast after reaching | heap after reaching |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| engine.rs | objects | 11.45 µs | 4.60 µs | 5 637 B | 7400 / 7400 | 0.10 µs | 7400 / 7400 | 5 652 B |
+| engine.rs | V0, arrows | 9.27 µs | 5.08 µs | 7 543 B | 7400 / 7400 | 0.27 µs | 7400 / 7400 | 7 567 B |
+| engine.rs | V1, fields | 8.24 µs | 3.99 µs | 5 200 B | 7400 / 7400 | 0.29 µs | 7400 / 7400 | 5 224 B |
+| engine.rs | V2, address | 8.14 µs | 4.03 µs | 5 185 B | 7400 / 7400 | 0.37 µs | 7400 / 7400 | 5 213 B |
+| engine.rs | V3, lazy getters per node | 7.38 µs | 3.10 µs | 2 801 B | 0 / 7400 | 0.51 µs | 0 / 7400 | 6 077 B |
+| engine.rs | V4, lazy methods | 7.27 µs | 2.80 µs | 2 057 B | 7400 / 7400 | 0.54 µs | 7400 / 7400 | 5 417 B |
+| engine.rs | V5, lazy prototype | 7.33 µs | 3.00 µs | 1 929 B | 7400 / 7400 | 0.46 µs | 7400 / 7400 | 5 290 B |
+| spacing.rs | objects | 12.86 µs | 4.45 µs | 5 578 B | 19800 / 19800 | 0.18 µs | 19800 / 19800 | 5 588 B |
+| spacing.rs | V0, arrows | 10.15 µs | 5.14 µs | 7 534 B | 19800 / 19800 | 0.31 µs | 19800 / 19800 | 7 548 B |
+| spacing.rs | V1, fields | 9.06 µs | 4.08 µs | 5 190 B | 19800 / 19800 | 0.26 µs | 19800 / 19800 | 5 204 B |
+| spacing.rs | V2, address | 9.04 µs | 4.49 µs | 5 174 B | 19800 / 19800 | 0.34 µs | 19800 / 19800 | 5 190 B |
+| spacing.rs | V3, lazy getters per node | 8.24 µs | 3.08 µs | 2 790 B | 0 / 19800 | 0.42 µs | 0 / 19800 | 6 054 B |
+| spacing.rs | V4, lazy methods | 7.82 µs | 2.76 µs | 2 046 B | 19800 / 19800 | 0.44 µs | 19800 / 19800 | 5 391 B |
+| spacing.rs | V5, lazy prototype | 8.11 µs | 3.18 µs | 1 918 B | 19800 / 19800 | 0.38 µs | 19800 / 19800 | 5 263 B |
+
+- **V3 is never in fast mode.** All of its nodes are dictionary-mode, before and after reaching them. Its reads over many nodes are among the slowest of the views, and once `$with` and `$trivia` are reached it holds the most heap of the lazy forms. Its untouched heap win does not survive use.
+- **V5 keeps every node fast and holds the least heap untouched** (1 918 – 1 929 B). After reaching, it holds 5.3 KB, slightly above V2: the lazily built `$with` and `$trivia` objects, plus the two fields that hold them.
+- **V4 is close to V5** (2 046 – 2 057 B untouched, 5.4 KB after reaching), at the cost of `$with` and `$trivia` becoming calls.
+- **"Read after many" is per node, every accessor plus `$with` and the leading trivia.** It is lowest for objects, whose slots are stored values. A view decodes each slot from its record on every access, which is the cost the record wire's own rows weigh.
 
