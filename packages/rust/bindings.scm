@@ -2,8 +2,8 @@
 ; How `sittir tool bindings-inventory` reads a pattern: docs/glossary/packages-tools-src-inventory.md
 ; (`readBindings` for the captures, `derive` for the members a claim takes from its slots).
 
-; ── module ─────────────────────────────────────────────────────────────────────
-(source_file) @module
+; ── file ───────────────────────────────────────────────────────────────────────
+(source_file) @file
 
 ; ── declaration ────────────────────────────────────────────────────────────────
 (function_item) @declaration.function
@@ -145,14 +145,14 @@
 (const_item (visibility_modifier (crate))) @declaration.constant.public.internal
 (const_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.constant.public.internal
 (const_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.constant.public.restricted
-(static_item) @declaration.variable.static
-(static_item ref: _ @byReference)
-(static_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.variable.static.private
-(static_item (visibility_modifier (visibility_modifier_pub))) @declaration.variable.static.public
-(static_item (visibility_modifier (crate))) @declaration.variable.static.public.internal
-(static_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.variable.static.public.internal
-(static_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.variable.static.public.restricted
 (let_declaration pattern: (_) @name) @declaration.variable
+(static_item) @declaration.variable
+(static_item ref: _ @byReference)
+(static_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.variable.private
+(static_item (visibility_modifier (visibility_modifier_pub))) @declaration.variable.public
+(static_item (visibility_modifier (crate))) @declaration.variable.public.internal
+(static_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.variable.public.internal
+(static_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.variable.public.restricted
 (field_declaration) @declaration.field
 (field_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.field.private
 (field_declaration (visibility_modifier (visibility_modifier_pub))) @declaration.field.public

@@ -1357,6 +1357,7 @@ declare module './declaration.ts' {
 				| V.Declaration.Union.Public.Restricted<G>;
 		}
 		interface Variable<G extends GrammarContext<G>> {
+			readonly byReference?: gate.In<G, features.References, references.Declaration.Variable<G>['byReference']>;
 			readonly definite?: gate.In<G, features.NonNullAssertions, nonNullAssertions.Declaration.Variable<G>['definite']>;
 			readonly type?: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Variable<G>['type']>;
 		}
@@ -1364,50 +1365,32 @@ declare module './declaration.ts' {
 			interface Pattern<G extends GrammarContext<G>> {
 				readonly type?: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Variable.Pattern<G>['type']>;
 			}
+			interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Variable.Private<G> {}
+			interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Variable.Public<G> {}
+			namespace Public {
+				interface Internal<G extends GrammarContext<G>> extends visibility.Declaration.Variable.Public.Internal<G> {}
+				interface Restricted<G extends GrammarContext<G>> extends visibility.Declaration.Variable.Public
+					.Restricted<G> {}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.Variable.Public<G>
+					| V.Declaration.Variable.Public.Internal<G>
+					| V.Declaration.Variable.Public.Restricted<G>;
+			}
 			namespace Reassignable {
 				type Any<G extends GrammarContext<G>> =
 					| V.Declaration.Variable.Reassignable<G>
 					| V.Declaration.Variable.Reassignable.FunctionScoped<G>;
 			}
-			interface Static<G extends GrammarContext<G>> {
-				readonly byReference?: gate.In<
-					G,
-					features.References,
-					references.Declaration.Variable.Static<G>['byReference']
-				>;
-				readonly type: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Variable.Static<G>['type']>;
-			}
-			namespace Static {
-				interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Variable.Static.Private<G> {}
-				interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Variable.Static.Public<G> {}
-				namespace Public {
-					interface Internal<G extends GrammarContext<G>> extends visibility.Declaration.Variable.Static.Public
-						.Internal<G> {}
-					interface Restricted<G extends GrammarContext<G>> extends visibility.Declaration.Variable.Static.Public
-						.Restricted<G> {}
-					type Any<G extends GrammarContext<G>> =
-						| V.Declaration.Variable.Static.Public<G>
-						| V.Declaration.Variable.Static.Public.Internal<G>
-						| V.Declaration.Variable.Static.Public.Restricted<G>;
-				}
-				type Any<G extends GrammarContext<G>> =
-					| V.Declaration.Variable.Static<G>
-					| V.Declaration.Variable.Static.Private<G>
-					| V.Declaration.Variable.Static.Public<G>
-					| V.Declaration.Variable.Static.Public.Internal<G>
-					| V.Declaration.Variable.Static.Public.Restricted<G>;
-			}
 			type Any<G extends GrammarContext<G>> =
 				| V.Declaration.Variable<G>
 				| V.Declaration.Variable.Constant<G>
 				| V.Declaration.Variable.Pattern<G>
+				| V.Declaration.Variable.Private<G>
+				| V.Declaration.Variable.Public<G>
+				| V.Declaration.Variable.Public.Internal<G>
+				| V.Declaration.Variable.Public.Restricted<G>
 				| V.Declaration.Variable.Reassignable<G>
-				| V.Declaration.Variable.Reassignable.FunctionScoped<G>
-				| V.Declaration.Variable.Static<G>
-				| V.Declaration.Variable.Static.Private<G>
-				| V.Declaration.Variable.Static.Public<G>
-				| V.Declaration.Variable.Static.Public.Internal<G>
-				| V.Declaration.Variable.Static.Public.Restricted<G>;
+				| V.Declaration.Variable.Reassignable.FunctionScoped<G>;
 		}
 		type Any<G extends GrammarContext<G>> =
 			| V.Declaration<G>
@@ -1570,13 +1553,12 @@ declare module './declaration.ts' {
 			| V.Declaration.Variable<G>
 			| V.Declaration.Variable.Constant<G>
 			| V.Declaration.Variable.Pattern<G>
+			| V.Declaration.Variable.Private<G>
+			| V.Declaration.Variable.Public<G>
+			| V.Declaration.Variable.Public.Internal<G>
+			| V.Declaration.Variable.Public.Restricted<G>
 			| V.Declaration.Variable.Reassignable<G>
-			| V.Declaration.Variable.Reassignable.FunctionScoped<G>
-			| V.Declaration.Variable.Static<G>
-			| V.Declaration.Variable.Static.Private<G>
-			| V.Declaration.Variable.Static.Public<G>
-			| V.Declaration.Variable.Static.Public.Internal<G>
-			| V.Declaration.Variable.Static.Public.Restricted<G>;
+			| V.Declaration.Variable.Reassignable.FunctionScoped<G>;
 	}
 }
 
@@ -2228,6 +2210,12 @@ declare module './expression.ts' {
 	}
 }
 
+declare module './file.ts' {
+	namespace File {
+		type Any<G extends GrammarContext<G>> = V.File<G>;
+	}
+}
+
 declare module './identifier.ts' {
 	namespace Identifier {
 		interface Label<G extends GrammarContext<G>> extends labeledControlFlow.Identifier.Label<G> {}
@@ -2437,12 +2425,6 @@ declare module './modifier.ts' {
 			| V.Modifier.Visibility.Public<G>
 			| V.Modifier.Visibility.Public.Internal<G>
 			| V.Modifier.Visibility.Public.Restricted<G>;
-	}
-}
-
-declare module './module.ts' {
-	namespace Module {
-		type Any<G extends GrammarContext<G>> = V.Module<G>;
 	}
 }
 
