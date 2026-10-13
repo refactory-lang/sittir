@@ -3820,6 +3820,32 @@
       "vocab": "clause.export.specifier",
       "read": [
         {
+          "vocab": "clause.export.specifier.typeof",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "exportKind",
+              "slot": "export_kind",
+              "text": "typeof"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "typeof",
+                "fields": [
+                  "export_kind"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
           "vocab": "clause.export.specifier",
           "toplevel": true,
           "within": [],
@@ -3828,17 +3854,6 @@
         }
       ],
       "members": [
-        {
-          "name": "exportKind",
-          "route": "slot",
-          "slot": "export_kind",
-          "path": [
-            {
-              "owner": "export_specifier",
-              "slot": "export_kind"
-            }
-          ]
-        },
         {
           "name": "name",
           "route": "slot",
@@ -3858,6 +3873,18 @@
             {
               "owner": "export_specifier",
               "slot": "alias"
+            }
+          ]
+        },
+        {
+          "name": "typeOnly",
+          "route": "presence",
+          "via": [],
+          "token": "type",
+          "path": [
+            {
+              "owner": "export_specifier",
+              "slot": "export_kind"
             }
           ]
         }
@@ -5394,6 +5421,32 @@
       "vocab": "clause.import.specifier",
       "read": [
         {
+          "vocab": "clause.import.specifier.typeof",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "importKind",
+              "slot": "import_kind",
+              "text": "typeof"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "typeof",
+                "fields": [
+                  "import_kind"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
           "vocab": "clause.import.specifier",
           "toplevel": true,
           "within": [],
@@ -5402,17 +5455,6 @@
         }
       ],
       "members": [
-        {
-          "name": "importKind",
-          "route": "slot",
-          "slot": "import_kind",
-          "path": [
-            {
-              "owner": "import_specifier_as",
-              "slot": "import_kind"
-            }
-          ]
-        },
         {
           "name": "name",
           "route": "slot",
@@ -5434,12 +5476,50 @@
               "slot": "alias"
             }
           ]
+        },
+        {
+          "name": "typeOnly",
+          "route": "presence",
+          "via": [],
+          "token": "type",
+          "path": [
+            {
+              "owner": "import_specifier_as",
+              "slot": "import_kind"
+            }
+          ]
         }
       ]
     },
     "import_specifier_name": {
       "vocab": "clause.import.specifier",
       "read": [
+        {
+          "vocab": "clause.import.specifier.typeof",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "importKind",
+              "slot": "import_kind",
+              "text": "typeof"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "typeof",
+                "fields": [
+                  "import_kind"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
         {
           "vocab": "clause.import.specifier",
           "toplevel": true,
@@ -5450,17 +5530,6 @@
       ],
       "members": [
         {
-          "name": "importKind",
-          "route": "slot",
-          "slot": "import_kind",
-          "path": [
-            {
-              "owner": "import_specifier_name",
-              "slot": "import_kind"
-            }
-          ]
-        },
-        {
           "name": "name",
           "route": "slot",
           "slot": "name",
@@ -5468,6 +5537,18 @@
             {
               "owner": "import_specifier_name",
               "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "typeOnly",
+          "route": "presence",
+          "via": [],
+          "token": "type",
+          "path": [
+            {
+              "owner": "import_specifier_name",
+              "slot": "import_kind"
             }
           ]
         }
@@ -12275,9 +12356,9 @@
       },
       {
         "depth": 4,
-        "paths": 63,
-        "kinds": 15,
-        "refinements": 39
+        "paths": 65,
+        "kinds": 18,
+        "refinements": 41
       },
       {
         "depth": 5,
