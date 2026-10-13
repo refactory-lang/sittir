@@ -1584,7 +1584,7 @@
           ]
         },
         {
-          "vocab": "expression.assignment.compound.nullish",
+          "vocab": "expression.assignment.compound.coalesce",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -2272,7 +2272,7 @@
           ]
         },
         {
-          "vocab": "expression.binary.nullish",
+          "vocab": "expression.binary.coalesce",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -4461,10 +4461,10 @@
       }
     },
     "for_in_statement": {
-      "vocab": "statement.loop.for",
+      "vocab": "statement.loop.for_each",
       "read": [
         {
-          "vocab": "statement.loop.for",
+          "vocab": "statement.loop.for_each",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -8152,10 +8152,10 @@
       "members": []
     },
     "new_expression": {
-      "vocab": "expression.call.new",
+      "vocab": "expression.call.construct",
       "read": [
         {
-          "vocab": "expression.call.new",
+          "vocab": "expression.call.construct",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -10573,10 +10573,10 @@
       }
     },
     "spread_element": {
-      "vocab": "element.splat",
+      "vocab": "element.spread",
       "read": [
         {
-          "vocab": "element.splat",
+          "vocab": "element.spread",
           "toplevel": true,
           "within": [],
           "pins": [],

@@ -3,9 +3,9 @@ import type { Flag, SubKindOf } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Expression {
 	export namespace Block {
-		export interface Gen<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Block<G>> {
+		export interface Generator<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Block<G>> {
 			// claimed by r
-			readonly $kind: 'expression.block.gen';
+			readonly $kind: 'expression.block.generator';
 			readonly body: V.Statement.Block<G>;
 			readonly move?: Flag;
 		}

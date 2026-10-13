@@ -133,12 +133,12 @@
 (foreign_mod_item_semi (visibility_modifier (crate))) @declaration.module.foreign.public.internal
 (foreign_mod_item_semi (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.module.foreign.public.internal
 (foreign_mod_item_semi (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.module.foreign.public.restricted
-(extern_crate_declaration) @statement.import.crate
-(extern_crate_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @statement.import.crate.private
-(extern_crate_declaration (visibility_modifier (visibility_modifier_pub))) @statement.import.crate.public
-(extern_crate_declaration (visibility_modifier (crate))) @statement.import.crate.public.internal
-(extern_crate_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @statement.import.crate.public.internal
-(extern_crate_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @statement.import.crate.public.restricted
+(extern_crate_declaration) @statement.import.package
+(extern_crate_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @statement.import.package.private
+(extern_crate_declaration (visibility_modifier (visibility_modifier_pub))) @statement.import.package.public
+(extern_crate_declaration (visibility_modifier (crate))) @statement.import.package.public.internal
+(extern_crate_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @statement.import.package.public.internal
+(extern_crate_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @statement.import.package.public.restricted
 (const_item) @declaration.constant
 (const_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.constant.private
 (const_item (visibility_modifier (visibility_modifier_pub))) @declaration.constant.public
@@ -184,7 +184,7 @@
 (if_expression) @statement.if
 (loop_expression) @statement.loop
 (while_expression) @statement.loop.while
-(for_expression pattern: (_) @left value: (_) @right) @statement.loop.for
+(for_expression pattern: (_) @left value: (_) @right) @statement.loop.for_each
 (return_expression (_)? @expression) @statement.return
 (match_expression value: (_) @subject) @statement.match
 (use_declaration) @statement.import
@@ -239,7 +239,7 @@
 ; ── expression ─────────────────────────────────────────────────────────────────
 (call_expression) @expression.call
 (call_expression function: (field_expression) @function) @expression.call.member
-(call_expression function: (scoped_identifier) @function) @expression.call.path
+(call_expression function: (scoped_identifier) @function) @expression.call.qualified
 (macro_invocation macro: (_) @function arguments: (delim_token_tree) @arguments) @expression.call.macro
 (binary_expression) @expression.binary
 (binary_expression operator: "+") @expression.binary.arithmetic.add
@@ -269,7 +269,7 @@
 (reference_expression_raw_const "raw" @raw)
 (reference_expression_raw_mut "raw" @raw)
 (reference_expression_raw_mut (mutable_specifier) @writable)
-(try_expression (_) @argument) @expression.try
+(try_expression (_) @argument) @expression.propagate
 (compound_assignment_expr) @expression.assignment.compound
 (compound_assignment_expr operator: "+=") @expression.assignment.compound.add
 (compound_assignment_expr operator: "-=") @expression.assignment.compound.subtract
@@ -306,7 +306,7 @@
 (async_block) @expression.block.async
 (const_block) @expression.block.const
 (try_block) @expression.block.try
-(gen_block) @expression.block.gen
+(gen_block) @expression.block.generator
 (generic_function) @expression.instantiation
 (scoped_identifier) @identifier.scoped
 
@@ -366,7 +366,7 @@
 ; ── literal ────────────────────────────────────────────────────────────────────
 (string_literal) @literal.string
 (raw_string_literal string_content: (string_content) @content) @literal.string.raw
-(char_literal) @literal.char
+(char_literal) @literal.character
 (escape_sequence) @literal.string.escape
 (string_content) @literal.string.text
 (integer_literal_decimal) @literal.number.integer

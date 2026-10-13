@@ -154,8 +154,8 @@ describe('deriveVocabulary', () => {
 	});
 	it('renames the slot a positional wildcard capture stands at', () => {
 		expect([...(d.members.get('expression.unary')?.keys() ?? [])].sort()).toEqual(['argument']);
-		expect(d.members.get('expression.try')?.has('argument')).toBe(true);
-		expect(d.members.get('expression.try')?.has('value')).toBe(false);
+		expect(d.members.get('expression.propagate')?.has('argument')).toBe(true);
+		expect(d.members.get('expression.propagate')?.has('value')).toBe(false);
 	});
 	it('resolves a declared container, a list and an envelope to the kinds their element admits', () => {
 		const parameters = d.members.get('declaration.function')?.get('parameters')?.kinds ?? new Set();

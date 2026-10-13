@@ -98,13 +98,13 @@ describe('readTestOf', () => {
 		expect(
 			await testsOf(
 				[
-					'((function_definition name: (identifier) @name) @declaration.method.dunder (#match? @name "^__(?<stem>.*)__$"))',
+					'((function_definition name: (identifier) @name) @declaration.method.special (#match? @name "^__(?<stem>.*)__$"))',
 					'(binary operator: "+") @expression.binary.add'
 				].join('\n'),
 				'function_definition'
 			)
 		).toEqual([
-			['declaration.method.dunder', [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', fields: ['name'], kinds: [] } }]]
+			['declaration.method.special', [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', fields: ['name'], kinds: [] } }]]
 		]);
 		expect(await testsOf('(binary operator: "+") @expression.binary.add', 'binary')).toEqual([
 			['expression.binary.add', [{ up: 0, via: [], plan: { op: 'eq', text: '+', fields: ['operator'], kinds: [] } }]]
