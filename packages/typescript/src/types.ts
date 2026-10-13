@@ -3495,7 +3495,7 @@ export interface ForStatement {
 export interface ForInStatement {
 	readonly $type: TSKindId.ForInStatement;
 	readonly _await: boolean;
-	readonly _for_header: ForHeader;
+	readonly _header: ForHeader;
 	readonly _body: Statement;
 	readonly __inputHints__?: {
 		readonly await?: BaseBooleanKeyword<'await'>;
@@ -3503,11 +3503,11 @@ export interface ForInStatement {
 	};
 	readonly __slotHints__?: {
 		readonly await: SlotHint<NonNullable<T.ForInStatement.Config>['await'], true>;
-		readonly forHeader: SlotHint<T.ForHeader>;
+		readonly header: SlotHint<T.ForHeader>;
 		readonly body: SlotHint<NonNullable<T.ForInStatement.Config>['body']>;
 	};
 	await(): boolean;
-	forHeader(): ForHeader;
+	header(): ForHeader;
 	body(): Statement;
 }
 

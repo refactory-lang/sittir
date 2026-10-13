@@ -3151,9 +3151,9 @@ export function resolveForInStatement_await(
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolveForInStatement_forHeader(
-	value: T.ForInStatement.LooseConfig['forHeader']
-): Admit<T.ForInStatement['_for_header']> {
+export function resolveForInStatement_header(
+	value: T.ForInStatement.LooseConfig['header']
+): Admit<T.ForInStatement['_header']> {
 	return _resolveOne<T.ForHeader>(value, _K2, _super_for_header);
 }
 
@@ -3171,7 +3171,7 @@ export function coerceToForInStatement(input: T.ForInStatement.Loose): ReturnTyp
 		return input as unknown as ReturnType<typeof F.buildForInStatement>;
 	return F.buildForInStatement({
 		await: resolveForInStatement_await(input.await),
-		forHeader: _requireField('for_in_statement', 'forHeader', resolveForInStatement_forHeader(input.forHeader)),
+		header: _requireField('for_in_statement', 'header', resolveForInStatement_header(input.header)),
 		body: _requireField('for_in_statement', 'body', resolveForInStatement_body(input.body))
 	});
 }

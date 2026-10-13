@@ -845,7 +845,7 @@ export function buildForStatement(config: T.ForStatement.Config): T.ForStatement
 
 export function buildForInStatement(config: T.ForInStatement.Config): T.ForInStatement.Bound {
 	const _await = coerceBooleanKeywordStorage(rejectBareText(config.await, 'ForInStatement.await', 'a boolean'));
-	const _for_header = rejectBareText(config.forHeader, 'ForInStatement.forHeader', 'a built ForHeader');
+	const _header = rejectBareText(config.header, 'ForInStatement.header', 'a built ForHeader');
 	const _body = rejectBareText(
 		kindIdStorage<NonNullable<T.ForInStatement['_body']>>(config.body),
 		'ForInStatement.body',
@@ -857,18 +857,18 @@ export function buildForInStatement(config: T.ForInStatement.Config): T.ForInSta
 		$source: 2 as const,
 		$named: true as const,
 		_await,
-		_for_header,
+		_header,
 		_body,
 		$with: {
 			await: (value?: Admit<NonNullable<T.ForInStatement.Config>['await']>) =>
 				rebuilt(node, handle, () => buildForInStatement({ ...config, await: value })),
-			forHeader: (value: Admit<T.ForHeader>) =>
-				rebuilt(node, handle, () => buildForInStatement({ ...config, forHeader: value })),
+			header: (value: Admit<T.ForHeader>) =>
+				rebuilt(node, handle, () => buildForInStatement({ ...config, header: value })),
 			body: (value: Admit<NonNullable<T.ForInStatement.Config>['body']>) =>
 				rebuilt(node, handle, () => buildForInStatement({ ...config, body: value }))
 		},
 		await: () => _await,
-		forHeader: () => hydrateStoredSlot(node, '_for_header'),
+		header: () => hydrateStoredSlot(node, '_header'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		$trivia: {

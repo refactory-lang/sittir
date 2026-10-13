@@ -4551,13 +4551,13 @@
       ],
       "members": [
         {
-          "name": "forHeader",
+          "name": "header",
           "route": "slot",
-          "slot": "for_header",
+          "slot": "header",
           "path": [
             {
               "owner": "for_in_statement",
-              "slot": "for_header"
+              "slot": "header"
             }
           ]
         },

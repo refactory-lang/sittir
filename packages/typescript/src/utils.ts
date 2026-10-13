@@ -136,7 +136,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	213: [
 		['await', { fields: ['await'], kinds: [] }, 'await'],
-		['forHeader', { fields: [], kinds: ['for_header_lhs', 'for_header_var_kind', 'for_header_let_const_kind'] }],
+		['header', { fields: ['header'], kinds: [] }],
 		['body', { fields: ['body'], kinds: [] }]
 	],
 	215: [

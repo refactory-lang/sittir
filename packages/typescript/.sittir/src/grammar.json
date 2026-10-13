@@ -1244,8 +1244,15 @@
           ]
         },
         {
-          "type": "SYMBOL",
-          "name": "_for_header"
+          "type": "FIELD",
+          "name": "header",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_for_header"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "FIELD",

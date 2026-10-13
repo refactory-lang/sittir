@@ -21508,9 +21508,9 @@ pub struct ForInStatementTransport {
     #[wire(key = "_await")]
     #[slot(field = field::AWAIT, presence = kind::AWAIT_KEYWORD)]
     pub await_: bool,
-    #[wire(key = "_for_header")]
-    #[slot]
-    pub for_header: ::sittir_core::SlotValue<ForHeaderTransport>,
+    #[wire(key = "_header")]
+    #[slot(field = field::HEADER)]
+    pub header: ::sittir_core::SlotValue<ForHeaderTransport>,
     #[wire(key = "_body")]
     #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<Box<StatementTransport>>,
@@ -21539,7 +21539,7 @@ impl ::sittir_core::prepare::Prepare for ForInStatementTransport {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.await_.prepare(ctx)?;
-        self.for_header.prepare(ctx)?;
+        self.header.prepare(ctx)?;
         self.body.prepare(ctx)?;
         Ok(())
     }
@@ -41165,7 +41165,7 @@ fn render_for_statement(node: &ForStatementTransport, w: &mut dyn ::sittir_core:
 fn render_for_in_statement(node: &ForInStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let await_ = View::new(&node.await_, "await");
     let body = &node.body;
-    let for_header = &node.for_header;
+    let header = &node.header;
     w.edge(::sittir_core::types::KindId(213), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("for")?;
     w.site_at(options::SITE_FOR_IN_STATEMENT_FOR_KEYWORD_AFTER);
@@ -41174,7 +41174,7 @@ fn render_for_in_statement(node: &ForInStatementTransport, w: &mut dyn ::sittir_
         await_.render(w)?;
         w.site_at(options::SITE_FOR_IN_STATEMENT_AWAIT_AFTER);
     }
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_for_header", 0, w, |w| for_header.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_header", 0, w, |w| header.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", 0, w, |w| body.render(w))?;
     w.edge(::sittir_core::types::KindId(213), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
