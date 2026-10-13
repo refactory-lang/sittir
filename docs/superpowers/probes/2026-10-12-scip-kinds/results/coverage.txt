@@ -1,0 +1,161 @@
+85 SCIP kinds: 36 none, 23 kind, 10 name, 9 family, 5 flag, 2 owner
+kind: one vocabulary kind; family: one of SCIP's analogous kinds, which the vocabulary holds as one kind; flag: a kind with a flag set; owner: a kind under an owner kind; name: the same word for a different fact; none: a fact no vocabulary kind holds
+
+== kind (23)
+  AssociatedType       declaration.type_alias.associated
+  Class                declaration.class
+  Constant             declaration.constant
+  Constructor          declaration.constructor, declaration.signature.construct  (a constructor, or a construct signature)
+  Enum                 declaration.enum
+  EnumMember           declaration.enum_member
+  Extension            declaration.extension  (Dart's extension; rust's inherent impl is the vocabulary's)
+  Field                declaration.field, declaration.field.signature
+  File                 module  (the vocabulary's root kind is a source file)
+  Function             declaration.function, declaration.function.signature
+  Getter               declaration.method.getter, declaration.method.signature.getter
+  Interface            declaration.interface
+  Macro                declaration.macro
+  Method               declaration.method, declaration.method.signature
+  Module               declaration.module
+  Parameter            declaration.parameter
+  Setter               declaration.method.setter, declaration.method.signature.setter
+  Struct               declaration.struct
+  Trait                declaration.interface.trait
+  TypeAlias            declaration.type_alias
+  TypeParameter        declaration.type_parameter
+  Union                declaration.union
+  Variable             declaration.variable
+
+== family (9)
+  AbstractMethod       declaration.method.signature.abstract, declaration.method.signature  (a method with no body: the abstract signature, or a signature in an interface)
+  MethodReceiver       declaration.parameter.receiver  (Go's receiver, which has no conventional name)
+  MethodSpecification  declaration.method.signature  (Go's interface method)
+  Namespace            declaration.module  (typescript's namespace is declaration.module, whose synonym namespace is)
+  Property             declaration.field  (property is a synonym of field)
+  Protocol             declaration.interface  (Swift's protocol; the bindings spec places it as declaration.interface.protocol, which no grammar claims yet)
+  PureVirtualMethod    declaration.method.signature.abstract  (C++'s abstract method)
+  SelfParameter        declaration.parameter.receiver, identifier.receiver  (self is a synonym of receiver)
+  ThisParameter        declaration.parameter.receiver, identifier.receiver  (this is a synonym of receiver)
+
+== flag (5)
+  StaticDataMember     declaration.field#static  (C++'s static field)
+  StaticField          declaration.field#static
+  StaticMethod         declaration.method#static
+  StaticProperty       declaration.field#static
+  StaticVariable       declaration.variable#static  (C's static variable; rust's static item is ruled a declaration.constant)
+
+== owner (2)
+  ProtocolMethod       declaration.method.signature  (a signature in a protocol)
+  TraitMethod          declaration.method, declaration.method.signature  (a method or a signature in a trait)
+
+== name (10)
+  Array                expression.collection.list  (a data file's array symbol, not a list literal)
+  Attribute            attribute  (a C++ attribute's symbol; the attribute level holds applications, not declarations)
+  Boolean              literal.boolean, type.primitive.boolean  (a data file's boolean symbol)
+  Key                  element.pair  (a data file's key symbol)
+  Modifier             modifier  (solidity's function modifier, a declaration; the modifier level holds keywords)
+  Null                 literal.null  (a data file's null symbol)
+  Number               literal.number  (a data file's number symbol)
+  Object               expression.collection.map  (a data file's object symbol)
+  String               literal.string, type.primitive.string  (a data file's string symbol)
+  Value                element.pair  (a data file's value symbol)
+
+== none (36)
+  Accessor             -  (ruby's attr_accessor)
+  Assertion            -  (alloy)
+  Axiom                -  (lean)
+  Concept              -  (C++20's concept, a named bound; the nearest fact is a bound, clause.bounds)
+  Contract             -  (solidity)
+  DataFamily           -  (haskell)
+  Delegate             -  (C#, F#)
+  Error                -  (solidity)
+  Event                -  (C#)
+  Fact                 -  (alloy)
+  Grammar              -  (raku)
+  Instance             -  (purescript, lean: a typeclass instance, which rust's trait impl, declaration.extension.conformance, also is)
+  Lang                 -  (racket)
+  Lemma                -  (lean)
+  Library              -  (solidity)
+  Message              -  (protobuf)
+  MethodAlias          -  (ruby)
+  Mixin                -  (dart)
+  Operator             -  (an operator declared as a symbol (Swift, Haskell, C++); python spells operators as special methods)
+  Package              -  (no grammar declares a package; statement.import.package imports one)
+  PackageObject        -  (scala)
+  ParameterLabel       -  (swift's argument label)
+  Pattern              -  (haskell's pattern synonym)
+  Predicate            -  (alloy)
+  Quasiquoter          -  (haskell)
+  Signature            -  (alloy's struct-like signature; the vocabulary's signatures are declarations without a body, which SCIP gives the declaration's own kind)
+  SingletonClass       -  (ruby)
+  SingletonMethod      -  (ruby, analogous to StaticMethod)
+  StaticEvent          -  (C#)
+  Subscript            -  (swift's subscript declaration; the nearest fact is typescript's index signature, declaration.signature.index)
+  Tactic               -  (lean)
+  Theorem              -  (lean)
+  Type                 -  (OCaml's type definition)
+  TypeClass            -  (haskell, purescript, analogous to Trait)
+  TypeClassMethod      -  (haskell, purescript)
+  TypeFamily           -  (haskell)
+
+== declaration kinds: 52 of 58 reached by a SCIP kind
+  declaration.ambient                              (none)
+  declaration.class                                Class
+  declaration.constant                             Constant
+  declaration.constructor                          Constructor
+  declaration.enum                                 Enum
+  declaration.enum_member                          EnumMember
+  declaration.enum_member.struct                   EnumMember through declaration.enum_member
+  declaration.enum_member.tuple                    EnumMember through declaration.enum_member
+  declaration.extension                            Extension
+  declaration.extension.conformance                Extension through declaration.extension
+  declaration.field                                Field, Property, StaticDataMember (#static), StaticField (#static), StaticProperty (#static)
+  declaration.field.signature                      Field
+  declaration.function                             Function
+  declaration.function.signature                   Function
+  declaration.interface                            Interface, Protocol
+  declaration.interface.trait                      Trait
+  declaration.macro                                Macro
+  declaration.method                               Method, StaticMethod (#static), TraitMethod
+  declaration.method.getter                        Getter
+  declaration.method.setter                        Setter
+  declaration.method.signature                     AbstractMethod, Method, MethodSpecification, ProtocolMethod, TraitMethod
+  declaration.method.signature.abstract            AbstractMethod, PureVirtualMethod
+  declaration.method.signature.abstract.getter     AbstractMethod, PureVirtualMethod through declaration.method.signature.abstract
+  declaration.method.signature.abstract.setter     AbstractMethod, PureVirtualMethod through declaration.method.signature.abstract
+  declaration.method.signature.getter              Getter
+  declaration.method.signature.setter              Setter
+  declaration.method.special                       Method, StaticMethod (#static), TraitMethod through declaration.method
+  declaration.method.static                        Method, StaticMethod (#static), TraitMethod through declaration.method
+  declaration.module                               Module, Namespace
+  declaration.module.external                      Module, Namespace through declaration.module
+  declaration.module.foreign                       Module, Namespace through declaration.module
+  declaration.module_property                      (none)
+  declaration.parameter                            Parameter
+  declaration.parameter.default                    Parameter through declaration.parameter
+  declaration.parameter.receiver                   MethodReceiver, SelfParameter, ThisParameter
+  declaration.parameter.typed                      Parameter through declaration.parameter
+  declaration.parameter.typed_default              Parameter through declaration.parameter
+  declaration.parameter.variadic                   Parameter through declaration.parameter
+  declaration.signature                            (none)
+  declaration.signature.call                       (none)
+  declaration.signature.construct                  Constructor
+  declaration.signature.index                      (none)
+  declaration.signature.index.mapped               (none)
+  declaration.struct                               Struct
+  declaration.struct.tuple                         Struct through declaration.struct
+  declaration.struct.unit                          Struct through declaration.struct
+  declaration.type_alias                           TypeAlias
+  declaration.type_alias.associated                AssociatedType
+  declaration.type_parameter                       TypeParameter
+  declaration.type_parameter.lifetime              TypeParameter through declaration.type_parameter
+  declaration.type_parameter.value                 TypeParameter through declaration.type_parameter
+  declaration.union                                Union
+  declaration.variable                             StaticVariable (#static), Variable
+  declaration.variable.constant                    StaticVariable (#static), Variable through declaration.variable
+  declaration.variable.pattern                     StaticVariable (#static), Variable through declaration.variable
+  declaration.variable.reassignable                StaticVariable (#static), Variable through declaration.variable
+  declaration.variable.reassignable.function_scoped StaticVariable (#static), Variable through declaration.variable
+  declaration.variable.static                      StaticVariable (#static), Variable through declaration.variable
+
+== mapped paths the ruled vocabulary lacks (0)
