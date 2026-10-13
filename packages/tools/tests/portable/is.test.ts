@@ -170,6 +170,24 @@ describe('portable is: rust', async () => {
 		for (const [fn, context] of [a!, z!]) expect(at('declaration.method.static')(fn, context)).toBe(true);
 	});
 
+	it('reads a static item as a variable, and a visible one by its crossing', () => {
+		const SOURCE = 'static A: u8 = 1;\npub static B: u8 = 2;\npub(crate) static C: u8 = 3;\nfn f() { let d = 4; }\n';
+		const statics = [0, 1, 2].map((nth) => find(SOURCE, 'static_item', undefined, nth));
+		const [local, lc] = find(SOURCE, 'let_declaration');
+		expect(statics.map(([n, c]) => at('declaration.variable')(n, c))).toEqual([true, true, true]);
+		expect(statics.map(([n, c]) => at('declaration.variable.public')(n, c))).toEqual([false, true, true]);
+		expect(statics.map(([n, c]) => at('declaration.variable.public.internal')(n, c))).toEqual([false, false, true]);
+		expect(at('declaration.variable')(local, lc)).toBe(true);
+		expect(at('declaration.variable.public')(local, lc)).toBe(false);
+	});
+
+	it.skip('reads a static item\'s `mut` and `ref` as its flags (pending: `mutable` and `byReference` are flags of declaration.variable, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
+		const SOURCE = 'static A: u8 = 1;\nstatic mut B: u8 = 2;\nstatic ref C: u8 = 3;\n';
+		const statics = [0, 1, 2].map((nth) => find(SOURCE, 'static_item', undefined, nth));
+		expect(statics.map(([n, c]) => at('declaration.variable.mutable')(n, c))).toEqual([false, true, false]);
+		expect(statics.map(([n, c]) => at('declaration.variable.byReference')(n, c))).toEqual([false, false, true]);
+	});
+
 	it('reads every kind a closure\'s parameters admit as a parameter, through the wildcard claim', () => {
 		const SOURCE = 'fn f() { let g = |a, mut b| a; }\n';
 		const [a, ac] = find(SOURCE, 'identifier', 'a');
@@ -307,6 +325,19 @@ describe('portable is: typescript', async () => {
 		expect(at('statement.import.typeOnly')(plain, pc)).toBe(false);
 	});
 
+	it('reads a type-only export as an export, an export of all one included', () => {
+		const SOURCE = 'export type { A } from "a";\nexport type * from "b";\nexport { C } from "c";\n';
+		const froms = [0, 1, 2].map((nth) => find(SOURCE, 'export_statement_default_from', undefined, nth));
+		expect(froms.map(([n, c]) => at('statement.export')(n, c))).toEqual([true, true, true]);
+		expect(froms.map(([n, c]) => at('statement.export.all')(n, c))).toEqual([false, true, false]);
+	});
+
+	it.skip('reads a type-only export by its keyword (pending: `typeOnly` is a flag of statement.export, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
+		const SOURCE = 'export type { A } from "a";\nexport type * from "b";\nexport { C } from "c";\n';
+		const froms = [0, 1, 2].map((nth) => find(SOURCE, 'export_statement_default_from', undefined, nth));
+		expect(froms.map(([n, c]) => at('statement.export.typeOnly')(n, c))).toEqual([true, true, false]);
+	});
+
 	it('pins a typeof specifier by its keyword, and reads a type-only specifier as a specifier', () => {
 		const SOURCE = 'import { type A, typeof B, C, type D as E, typeof F as G, H as I } from "a";\nexport { type J, typeof K, L } from "b";\n';
 		for (const form of ['import_specifier_name', 'import_specifier_as']) {
@@ -365,10 +396,37 @@ describe('portable is: typescript', async () => {
 	});
 });
 
+describe('portable is: the root of a file', () => {
+	for (const [name, source, root] of [
+		['python', 'import os\n', 'module'],
+		['rust', 'mod m {}\n', 'source_file'],
+		['typescript', 'module M {}\n', 'program']
+	] as const) {
+		it(`${name}: reads the root as a file`, async () => {
+			const { at, find } = await surfaces(name);
+			const [file] = find(source, root);
+			expect(at('file')(file)).toBe(true);
+		});
+	}
+	for (const [name, source, declared, root] of [
+		['rust', 'mod m {}\n', 'mod_item_inline', 'source_file'],
+		['typescript', 'module M {}\n', 'module', 'program']
+	] as const) {
+		it(`${name}: tells a module declared in a file from the file`, async () => {
+			const { at, find } = await surfaces(name);
+			const [module, context] = find(source, declared);
+			const [file] = find(source, root);
+			expect(at('declaration.module')(module, context)).toBe(true);
+			expect(at('file')(module, context)).toBe(false);
+			expect(at('declaration.module')(file)).toBe(false);
+		});
+	}
+});
+
 describe('portable is agrees with one classification', () => {
 	const SOURCES = {
 		python: 'import os\nclass A(B):\n    @staticmethod\n    def s(x: int = 1) -> str:\n        return f"{x}" + b"y".decode()\nwhile x > 0:\n    x -= 1\n',
-		rust: 'use std::io;\nstruct S { a: u8 }\nfn f(x: &mut S) -> Option<u8> { let y = x.a + 1; if y > 2 { return Some(y); } let g = |a, mut b| a; None }\n',
+		rust: 'use std::io;\npub static Z: u8 = 0;\nstruct S { a: u8 }\nfn f(x: &mut S) -> Option<u8> { let y = x.a + 1; if y > 2 { return Some(y); } let g = |a, mut b| a; None }\n',
 		typescript: 'import { a } from "b";\nenum E { A, B = 1 }\nclass C extends D implements I { constructor() { super(); } m(): void { const x = a?.b ?? 1; } }\n// c\n'
 	} as const;
 	for (const name of Object.keys(SOURCES) as (keyof typeof SOURCES)[]) {

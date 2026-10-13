@@ -29,7 +29,7 @@ const CEILING = JSON.parse(
 describe('bindingIssues', () => {
 	const text = [
 		'; comment (nope)',
-		'(module) @module',
+		'(module) @file',
 		'(no_such_kind) @a',
 		'(function_definition no_such_field: (identifier))',
 		'(identifier) @identifier'
@@ -69,7 +69,7 @@ describe('deriveVocabulary', () => {
 	it('claims every namespace the spec names and derives no inclusion cycle', () => {
 		const tops = new Set([...d.allvocab].map((v) => v.split('.')[0]));
 		for (const ns of [
-			'module',
+			'file',
 			'declaration',
 			'statement',
 			'clause',

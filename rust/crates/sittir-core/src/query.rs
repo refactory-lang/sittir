@@ -87,6 +87,10 @@ pub enum PlanSpec {
         routes: Routes,
         pattern: String,
     },
+    Present {
+        #[serde(flatten)]
+        routes: Routes,
+    },
     Not { of: Box<PlanSpec> },
     And { of: Vec<PlanSpec> },
     Or { of: Vec<PlanSpec> },
@@ -96,6 +100,7 @@ pub enum PlanSpec {
 pub enum Plan {
     Eq { routes: Routes, text: String },
     Match { routes: Routes, pattern: regex::Regex },
+    Present { routes: Routes },
     Not(Box<Plan>),
     And(Vec<Plan>),
     Or(Vec<Plan>),
@@ -111,6 +116,7 @@ impl Plan {
                 routes,
                 pattern: regex::Regex::new(&pattern).map_err(|e| e.to_string())?,
             },
+            PlanSpec::Present { routes } => Plan::Present { routes },
             PlanSpec::Not { of } => Plan::Not(Box::new(Plan::compile(*of)?)),
             PlanSpec::And { of } => Plan::And(of.into_iter().map(Plan::compile).collect::<Result<_, _>>()?),
             PlanSpec::Or { of } => Plan::Or(of.into_iter().map(Plan::compile).collect::<Result<_, _>>()?),
@@ -118,11 +124,13 @@ impl Plan {
     }
 
     /// Whether `node` satisfies the condition: a comparison holds when some
-    /// child the slot's routes admit has the text or matches.
+    /// child the slot's routes admit has the text or matches, and a presence
+    /// leaf holds when some child the slot's routes admit exists.
     pub fn holds(&self, node: &tree_sitter::Node<'_>, source: &str) -> bool {
         match self {
             Plan::Eq { routes, text } => any_value(node, source, routes, |value| value == text),
             Plan::Match { routes, pattern } => any_value(node, source, routes, |value| pattern.is_match(value)),
+            Plan::Present { routes } => any_value(node, source, routes, |_| true),
             Plan::Not(of) => !of.holds(node, source),
             Plan::And(of) => of.iter().all(|p| p.holds(node, source)),
             Plan::Or(of) => of.iter().any(|p| p.holds(node, source)),
@@ -138,4 +146,25 @@ fn any_value(node: &tree_sitter::Node<'_>, source: &str, routes: &Routes, test: 
             !child.is_extra() && routes.admits(node.field_name_for_child(i), &child) && source.get(child.byte_range()).is_some_and(&test)
         })
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn a_presence_leaf_holds_when_a_child_the_routes_admit_exists() {
+        let language: tree_sitter::Language = tree_sitter_python::LANGUAGE.into();
+        let mut parser = tree_sitter::Parser::new();
+        parser.set_language(&language).unwrap();
+        let source = "async def a():\n    pass\ndef b():\n    pass\n";
+        let tree = parser.parse(source, None).unwrap();
+        let defs: Vec<_> = (0..2).map(|i| tree.root_node().named_child(i).unwrap()).collect();
+        let present: PlanSpec = serde_json::from_str(r#"{"op":"present","fields":[],"kinds":["async"]}"#).unwrap();
+        let present = Plan::compile(present).unwrap();
+        assert!(present.holds(&defs[0], source));
+        assert!(!present.holds(&defs[1], source));
+        let absent = Plan::Not(Box::new(present));
+        assert!(absent.holds(&defs[1], source));
+    }
 }

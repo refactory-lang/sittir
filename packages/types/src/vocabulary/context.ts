@@ -12,10 +12,10 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 	readonly declaration: V.Declaration.Any<G>;
 	readonly element: V.Element.Any<G>;
 	readonly expression: V.Expression.Any<G>;
+	readonly file: V.File.Any<G>;
 	readonly identifier: V.Identifier.Any<G>;
 	readonly literal: V.Literal.Any<G>;
 	readonly modifier: V.Modifier.Any<G>;
-	readonly module: V.Module.Any<G>;
 	readonly pattern: V.Pattern.Any<G>;
 	readonly statement: V.Statement.Any<G>;
 	readonly type: V.Type.Any<G>;
@@ -593,18 +593,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['expression']
 				| G['identifier']
 				| G['literal'];
-		};
-		readonly 'declaration.variable.static': {
-			readonly type:
-				| V.Clause.Bounds.Removed<G>
-				| V.Expression.Call.Macro<G>
-				| G['identifier']
-				| G['type'];
-			readonly value:
-				| G['expression']
-				| G['identifier']
-				| G['literal']
-				| G['statement'];
 		};
 		readonly 'element.comparator': {
 			readonly right:
@@ -1217,6 +1205,14 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['identifier']
 				| G['literal'];
 		};
+		readonly file: {
+			readonly statements:
+				| G['attribute']
+				| V.Clause.Import.Alias<G>
+				| G['declaration']
+				| V.Expression.Call.Macro<G>
+				| G['statement'];
+		};
 		readonly 'identifier.scoped': {
 			readonly path: G['identifier'] | string | G['type'];
 		};
@@ -1290,14 +1286,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'literal.template': {
 			readonly elements: unknown | V.Expression.Interpolation<G> | V.Literal.String.Escape<G>;
-		};
-		readonly module: {
-			readonly statements:
-				| G['attribute']
-				| V.Clause.Import.Alias<G>
-				| G['declaration']
-				| V.Expression.Call.Macro<G>
-				| G['statement'];
 		};
 		readonly 'pattern.array': {
 			readonly elements:

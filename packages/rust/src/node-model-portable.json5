@@ -15349,10 +15349,10 @@
       }
     },
     "source_file": {
-      "vocab": "module",
+      "vocab": "file",
       "read": [
         {
-          "vocab": "module",
+          "vocab": "file",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -15374,10 +15374,10 @@
       ]
     },
     "static_item": {
-      "vocab": "declaration.variable.static",
+      "vocab": "declaration.variable",
       "read": [
         {
-          "vocab": "declaration.variable.static.private",
+          "vocab": "declaration.variable.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -15486,7 +15486,7 @@
           ]
         },
         {
-          "vocab": "declaration.variable.static.public.internal",
+          "vocab": "declaration.variable.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -15595,7 +15595,7 @@
           ]
         },
         {
-          "vocab": "declaration.variable.static.public.restricted",
+          "vocab": "declaration.variable.public.restricted",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -15677,7 +15677,7 @@
           ]
         },
         {
-          "vocab": "declaration.variable.static.public",
+          "vocab": "declaration.variable.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -15721,7 +15721,7 @@
           ]
         },
         {
-          "vocab": "declaration.variable.static.public.internal",
+          "vocab": "declaration.variable.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -15765,7 +15765,7 @@
           ]
         },
         {
-          "vocab": "declaration.variable.static",
+          "vocab": "declaration.variable",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -21389,14 +21389,14 @@
       {
         "depth": 2,
         "paths": 103,
-        "kinds": 154,
+        "kinds": 155,
         "refinements": 12
       },
       {
         "depth": 3,
-        "paths": 102,
+        "paths": 103,
         "kinds": 113,
-        "refinements": 74
+        "refinements": 75
       },
       {
         "depth": 4,
@@ -21406,9 +21406,9 @@
       },
       {
         "depth": 5,
-        "paths": 20,
-        "kinds": 9,
-        "refinements": 20
+        "paths": 18,
+        "kinds": 8,
+        "refinements": 18
       }
     ]
   }

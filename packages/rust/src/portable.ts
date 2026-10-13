@@ -342,11 +342,10 @@ export interface PortableIds {
 	'declaration.union.public.internal': TSKindId.UnionItem;
 	'declaration.union.public.restricted': TSKindId.UnionItem;
 	'declaration.variable': TSKindId.LetDeclaration | TSKindId.StaticItem;
-	'declaration.variable.static': TSKindId.StaticItem;
-	'declaration.variable.static.private': TSKindId.StaticItem;
-	'declaration.variable.static.public': TSKindId.StaticItem;
-	'declaration.variable.static.public.internal': TSKindId.StaticItem;
-	'declaration.variable.static.public.restricted': TSKindId.StaticItem;
+	'declaration.variable.private': TSKindId.StaticItem;
+	'declaration.variable.public': TSKindId.StaticItem;
+	'declaration.variable.public.internal': TSKindId.StaticItem;
+	'declaration.variable.public.restricted': TSKindId.StaticItem;
 	element:
 		| TSKindId.BaseFieldInitializer
 		| TSKindId.BlockKeyword
@@ -594,6 +593,7 @@ export interface PortableIds {
 	'expression.unary.not': TSKindId.UnaryExpression;
 	'expression.unit': TSKindId.UnitExpression;
 	'expression.yield': TSKindId.YieldExpression;
+	file: TSKindId.SourceFile;
 	identifier:
 		| TSKindId.Crate
 		| TSKindId.FieldIdentifier
@@ -697,7 +697,6 @@ export interface PortableIds {
 	'modifier.visibility.public': TSKindId.Crate | TSKindId.VisibilityModifierPub;
 	'modifier.visibility.public.internal': TSKindId.Crate | TSKindId.VisibilityModifierPub;
 	'modifier.visibility.public.restricted': TSKindId.VisibilityModifierPub;
-	module: TSKindId.SourceFile;
 	pattern:
 		| TSKindId.CapturedPattern
 		| TSKindId.FieldPattern
@@ -1303,26 +1302,20 @@ export interface PortableKindsAt {
 	};
 	'declaration.variable': {
 		readonly $ids: readonly PortableIds['declaration.variable'][];
-		readonly static: PortableKindsAt['declaration.variable.static'];
+		readonly private: PortableKindsAt['declaration.variable.private'];
+		readonly public: PortableKindsAt['declaration.variable.public'];
 	};
-	'declaration.variable.static': {
-		readonly $ids: readonly PortableIds['declaration.variable.static'][];
-		readonly private: PortableKindsAt['declaration.variable.static.private'];
-		readonly public: PortableKindsAt['declaration.variable.static.public'];
+	'declaration.variable.private': { readonly $ids: readonly PortableIds['declaration.variable.private'][] };
+	'declaration.variable.public': {
+		readonly $ids: readonly PortableIds['declaration.variable.public'][];
+		readonly internal: PortableKindsAt['declaration.variable.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.variable.public.restricted'];
 	};
-	'declaration.variable.static.private': {
-		readonly $ids: readonly PortableIds['declaration.variable.static.private'][];
+	'declaration.variable.public.internal': {
+		readonly $ids: readonly PortableIds['declaration.variable.public.internal'][];
 	};
-	'declaration.variable.static.public': {
-		readonly $ids: readonly PortableIds['declaration.variable.static.public'][];
-		readonly internal: PortableKindsAt['declaration.variable.static.public.internal'];
-		readonly restricted: PortableKindsAt['declaration.variable.static.public.restricted'];
-	};
-	'declaration.variable.static.public.internal': {
-		readonly $ids: readonly PortableIds['declaration.variable.static.public.internal'][];
-	};
-	'declaration.variable.static.public.restricted': {
-		readonly $ids: readonly PortableIds['declaration.variable.static.public.restricted'][];
+	'declaration.variable.public.restricted': {
+		readonly $ids: readonly PortableIds['declaration.variable.public.restricted'][];
 	};
 	element: {
 		readonly $ids: readonly PortableIds['element'][];
@@ -1570,6 +1563,7 @@ export interface PortableKindsAt {
 	'expression.unary.not': { readonly $ids: readonly PortableIds['expression.unary.not'][] };
 	'expression.unit': { readonly $ids: readonly PortableIds['expression.unit'][] };
 	'expression.yield': { readonly $ids: readonly PortableIds['expression.yield'][] };
+	file: { readonly $ids: readonly PortableIds['file'][] };
 	identifier: {
 		readonly $ids: readonly PortableIds['identifier'][];
 		readonly crate: PortableKindsAt['identifier.crate'];
@@ -1661,7 +1655,6 @@ export interface PortableKindsAt {
 	'modifier.visibility.public.restricted': {
 		readonly $ids: readonly PortableIds['modifier.visibility.public.restricted'][];
 	};
-	module: { readonly $ids: readonly PortableIds['module'][] };
 	pattern: {
 		readonly $ids: readonly PortableIds['pattern'][];
 		readonly captured: PortableKindsAt['pattern.captured'];
@@ -2164,23 +2157,16 @@ export interface PortableIsAt {
 	'declaration.union.public.internal': PortableGuard<PortableIds['declaration.union.public.internal']> & {};
 	'declaration.union.public.restricted': PortableGuard<PortableIds['declaration.union.public.restricted']> & {};
 	'declaration.variable': PortableGuard<PortableIds['declaration.variable']> & {
-		readonly static: PortableIsAt['declaration.variable.static'];
+		readonly private: PortableIsAt['declaration.variable.private'];
+		readonly public: PortableIsAt['declaration.variable.public'];
 	};
-	'declaration.variable.static': PortableGuard<PortableIds['declaration.variable.static']> & {
-		readonly private: PortableIsAt['declaration.variable.static.private'];
-		readonly public: PortableIsAt['declaration.variable.static.public'];
+	'declaration.variable.private': PortableGuard<PortableIds['declaration.variable.private']> & {};
+	'declaration.variable.public': PortableGuard<PortableIds['declaration.variable.public']> & {
+		readonly internal: PortableIsAt['declaration.variable.public.internal'];
+		readonly restricted: PortableIsAt['declaration.variable.public.restricted'];
 	};
-	'declaration.variable.static.private': PortableGuard<PortableIds['declaration.variable.static.private']> & {};
-	'declaration.variable.static.public': PortableGuard<PortableIds['declaration.variable.static.public']> & {
-		readonly internal: PortableIsAt['declaration.variable.static.public.internal'];
-		readonly restricted: PortableIsAt['declaration.variable.static.public.restricted'];
-	};
-	'declaration.variable.static.public.internal': PortableGuard<
-		PortableIds['declaration.variable.static.public.internal']
-	> & {};
-	'declaration.variable.static.public.restricted': PortableGuard<
-		PortableIds['declaration.variable.static.public.restricted']
-	> & {};
+	'declaration.variable.public.internal': PortableGuard<PortableIds['declaration.variable.public.internal']> & {};
+	'declaration.variable.public.restricted': PortableGuard<PortableIds['declaration.variable.public.restricted']> & {};
 	element: PortableGuard<PortableIds['element']> & {
 		readonly macro: PortableIsAt['element.macro'];
 		readonly struct: PortableIsAt['element.struct'];
@@ -2382,6 +2368,7 @@ export interface PortableIsAt {
 	'expression.unary.not': PortableGuard<PortableIds['expression.unary.not']> & {};
 	'expression.unit': PortableGuard<PortableIds['expression.unit']> & {};
 	'expression.yield': PortableGuard<PortableIds['expression.yield']> & {};
+	file: PortableGuard<PortableIds['file']> & {};
 	identifier: PortableGuard<PortableIds['identifier']> & {
 		readonly crate: PortableIsAt['identifier.crate'];
 		readonly field: PortableIsAt['identifier.field'];
@@ -2459,7 +2446,6 @@ export interface PortableIsAt {
 	};
 	'modifier.visibility.public.internal': PortableGuard<PortableIds['modifier.visibility.public.internal']> & {};
 	'modifier.visibility.public.restricted': PortableGuard<PortableIds['modifier.visibility.public.restricted']> & {};
-	module: PortableGuard<PortableIds['module']> & {};
 	pattern: PortableGuard<PortableIds['pattern']> & {
 		readonly captured: PortableIsAt['pattern.captured'];
 		readonly generic: PortableIsAt['pattern.generic'];
@@ -2602,10 +2588,10 @@ export interface PortableKinds {
 	readonly declaration: PortableKindsAt['declaration'];
 	readonly element: PortableKindsAt['element'];
 	readonly expression: PortableKindsAt['expression'];
+	readonly file: PortableKindsAt['file'];
 	readonly identifier: PortableKindsAt['identifier'];
 	readonly literal: PortableKindsAt['literal'];
 	readonly modifier: PortableKindsAt['modifier'];
-	readonly module: PortableKindsAt['module'];
 	readonly pattern: PortableKindsAt['pattern'];
 	readonly statement: PortableKindsAt['statement'];
 	readonly type: PortableKindsAt['type'];
@@ -2618,10 +2604,10 @@ export interface PortableIs {
 	readonly declaration: PortableIsAt['declaration'];
 	readonly element: PortableIsAt['element'];
 	readonly expression: PortableIsAt['expression'];
+	readonly file: PortableIsAt['file'];
 	readonly identifier: PortableIsAt['identifier'];
 	readonly literal: PortableIsAt['literal'];
 	readonly modifier: PortableIsAt['modifier'];
-	readonly module: PortableIsAt['module'];
 	readonly pattern: PortableIsAt['pattern'];
 	readonly statement: PortableIsAt['statement'];
 	readonly type: PortableIsAt['type'];
@@ -3020,11 +3006,10 @@ const table: PortableTable = {
 		'declaration.union.public.internal': { ids: [TSKindId.UnionItem], exact: false },
 		'declaration.union.public.restricted': { ids: [TSKindId.UnionItem], exact: false },
 		'declaration.variable': { ids: [TSKindId.LetDeclaration, TSKindId.StaticItem], exact: true },
-		'declaration.variable.static': { ids: [TSKindId.StaticItem], exact: true },
-		'declaration.variable.static.private': { ids: [TSKindId.StaticItem], exact: false },
-		'declaration.variable.static.public': { ids: [TSKindId.StaticItem], exact: false },
-		'declaration.variable.static.public.internal': { ids: [TSKindId.StaticItem], exact: false },
-		'declaration.variable.static.public.restricted': { ids: [TSKindId.StaticItem], exact: false },
+		'declaration.variable.private': { ids: [TSKindId.StaticItem], exact: false },
+		'declaration.variable.public': { ids: [TSKindId.StaticItem], exact: false },
+		'declaration.variable.public.internal': { ids: [TSKindId.StaticItem], exact: false },
+		'declaration.variable.public.restricted': { ids: [TSKindId.StaticItem], exact: false },
 		element: {
 			ids: [
 				TSKindId.BaseFieldInitializer,
@@ -3323,6 +3308,7 @@ const table: PortableTable = {
 		'expression.unary.not': { ids: [TSKindId.UnaryExpression], exact: false },
 		'expression.unit': { ids: [TSKindId.UnitExpression], exact: true },
 		'expression.yield': { ids: [TSKindId.YieldExpression], exact: true },
+		file: { ids: [TSKindId.SourceFile], exact: true },
 		identifier: {
 			ids: [
 				TSKindId.Crate,
@@ -3454,7 +3440,6 @@ const table: PortableTable = {
 		'modifier.visibility.public': { ids: [TSKindId.Crate, TSKindId.VisibilityModifierPub], exact: false },
 		'modifier.visibility.public.internal': { ids: [TSKindId.Crate, TSKindId.VisibilityModifierPub], exact: false },
 		'modifier.visibility.public.restricted': { ids: [TSKindId.VisibilityModifierPub], exact: false },
-		module: { ids: [TSKindId.SourceFile], exact: true },
 		pattern: {
 			ids: [
 				TSKindId.CapturedPattern,
@@ -6439,10 +6424,10 @@ const table: PortableTable = {
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'pattern.slice', within: [], test: [] }
 		],
-		[TSKindId.SourceFile]: [{ path: 'module', within: [], test: [] }],
+		[TSKindId.SourceFile]: [{ path: 'file', within: [], test: [] }],
 		[TSKindId.StaticItem]: [
 			{
-				path: 'declaration.variable.static.private',
+				path: 'declaration.variable.private',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
@@ -6476,7 +6461,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.variable.static.public.internal',
+				path: 'declaration.variable.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
@@ -6510,7 +6495,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.variable.static.public.restricted',
+				path: 'declaration.variable.public.restricted',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
@@ -6536,7 +6521,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.variable.static.public',
+				path: 'declaration.variable.public',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
@@ -6548,7 +6533,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.variable.static.public.internal',
+				path: 'declaration.variable.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
@@ -6559,7 +6544,7 @@ const table: PortableTable = {
 					}
 				]
 			},
-			{ path: 'declaration.variable.static', within: [], test: [] }
+			{ path: 'declaration.variable', within: [], test: [] }
 		],
 		[TSKindId.StmtKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.StrKeyword]: [
