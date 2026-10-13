@@ -280,6 +280,15 @@ describe('portable is: typescript', async () => {
 		expect(at('literal.number')(hex, context)).toBe(true);
 	});
 
+	it('reads a method by its visibility keyword, which the reader holds as the modifier\'s member kind', () => {
+		const SOURCE = 'class C { private a() {} protected b() {} public c() {} d() {} }\n';
+		const methods = [0, 1, 2, 3].map((n) => find(SOURCE, 'method_definition', undefined, n));
+		expect(methods.map(([n, c]) => at('declaration.method.private')(n, c))).toEqual([true, false, false, false]);
+		expect(methods.map(([n, c]) => at('declaration.method.protected')(n, c))).toEqual([false, true, false, false]);
+		expect(methods.map(([n, c]) => at('declaration.method.public')(n, c))).toEqual([false, false, true, false]);
+		expect(methods.map(([n, c]) => at('declaration.method')(n, c))).toEqual([true, true, true, true]);
+	});
+
 	it('reads a mapped index signature by its form', () => {
 		const SOURCE = 'type M = { [K in keyof T]: T[K] };\ninterface I { [k: string]: number }\n';
 		const [mapped, mc] = find(SOURCE, 'index_signature_mapped_type_clause');

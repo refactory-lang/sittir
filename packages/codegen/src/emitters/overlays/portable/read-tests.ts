@@ -47,7 +47,9 @@ type PlanOn = (subject: QuerySubject) => QueryPlan<QuerySubject>;
 
 const comparesText = (predicate: PredicateFact): boolean => predicate.operator === 'eq' || predicate.operator === 'match';
 
-function comparisonOf(predicate: PredicateFact, typeOf: TypeOf): PlanOn | string {
+const readAs = (model: SlotModel, kind: string): readonly string[] => [kind, ...(model.get(kind)?.enumMembers ?? []).map((member) => member.kind)];
+
+function comparisonOf(predicate: PredicateFact, model: SlotModel, typeOf: TypeOf): PlanOn | string {
 	const { operator } = predicate;
 	if (operator !== 'eq' && operator !== 'match' && operator !== 'kind-eq' && operator !== 'not-kind-eq') return `operator ${operator}`;
 	const texts = predicate.arguments.flatMap((a) => ('text' in a ? [a.text] : []));
@@ -57,14 +59,16 @@ function comparisonOf(predicate: PredicateFact, typeOf: TypeOf): PlanOn | string
 	const [text] = texts as [string];
 	if (operator === 'eq') return (subject) => ({ op: 'eq', text, ...subject });
 	if (operator === 'match') return (subject) => ({ op: 'match', pattern: text, ...subject });
-	const types = texts.flatMap((kind) => typeOf(kind) ?? []);
-	if (types.length < texts.length) return `${operator} names ${texts.filter((kind) => typeOf(kind) === undefined).join(', ')}, which has no type`;
+	const kinds = [...new Set(texts.flatMap((kind) => readAs(model, kind)))];
+	const untyped = kinds.filter((kind) => typeOf(kind) === undefined);
+	if (untyped.length > 0) return `${operator} names ${untyped.join(', ')}, which has no type`;
+	const types = kinds.flatMap((kind) => typeOf(kind) ?? []);
 	const is: PlanOn = (subject) => ({ op: 'is', types, ...subject });
 	return operator === 'kind-eq' ? is : (subject) => ({ op: 'not', of: is(subject) });
 }
 
 function conditionOf(entry: ReadEntry, predicate: PredicateFact, model: SlotModel, routesOf: SlotRoutesOf, typeOf: TypeOf): PortableCondition | string {
-	const planOn = comparisonOf(predicate, typeOf);
+	const planOn = comparisonOf(predicate, model, typeOf);
 	if (typeof planOn === 'string' || predicate.subject === null) return planOn as string;
 	const reached = stepsOf(entry, predicate.subject, model, routesOf);
 	if (typeof reached === 'string') return reached;

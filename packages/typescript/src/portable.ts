@@ -2955,7 +2955,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -2964,7 +2968,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -2973,7 +2981,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -2982,7 +2994,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -2991,7 +3007,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3000,7 +3020,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3008,7 +3032,11 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.abstract.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3016,7 +3044,11 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.abstract.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3024,7 +3056,11 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.abstract.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3479,7 +3515,11 @@ const table: PortableTable = {
 						],
 						plan: { op: 'eq', text: 'constructor', self: true }
 					},
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } },
 					{ up: 0, via: [], plan: { op: 'is', types: [461], fields: ['name'], kinds: [] } }
 				]
@@ -3496,7 +3536,11 @@ const table: PortableTable = {
 						],
 						plan: { op: 'eq', text: 'constructor', self: true }
 					},
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } },
 					{ up: 0, via: [], plan: { op: 'is', types: [461], fields: ['name'], kinds: [] } }
 				]
@@ -3513,7 +3557,11 @@ const table: PortableTable = {
 						],
 						plan: { op: 'eq', text: 'constructor', self: true }
 					},
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } },
 					{ up: 0, via: [], plan: { op: 'is', types: [461], fields: ['name'], kinds: [] } }
 				]
@@ -3538,7 +3586,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3547,7 +3599,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3556,7 +3612,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3565,7 +3625,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3574,7 +3638,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3583,7 +3651,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3591,7 +3663,11 @@ const table: PortableTable = {
 				path: 'declaration.method.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3599,7 +3675,11 @@ const table: PortableTable = {
 				path: 'declaration.method.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3607,7 +3687,11 @@ const table: PortableTable = {
 				path: 'declaration.method.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3629,7 +3713,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3638,7 +3726,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3647,7 +3739,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3656,7 +3752,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3665,7 +3765,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3674,7 +3778,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3682,7 +3790,11 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3690,7 +3802,11 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3698,7 +3814,11 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3754,7 +3874,11 @@ const table: PortableTable = {
 				path: 'declaration.parameter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: [], kinds: ['accessibility_modifier'] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: [], kinds: ['accessibility_modifier'] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: [], kinds: ['accessibility_modifier'] } }
 				]
 			},
@@ -3762,7 +3886,11 @@ const table: PortableTable = {
 				path: 'declaration.parameter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: [], kinds: ['accessibility_modifier'] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: [], kinds: ['accessibility_modifier'] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: [], kinds: ['accessibility_modifier'] } }
 				]
 			},
@@ -3770,7 +3898,11 @@ const table: PortableTable = {
 				path: 'declaration.parameter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: [], kinds: ['accessibility_modifier'] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: [], kinds: ['accessibility_modifier'] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: [], kinds: ['accessibility_modifier'] } }
 				]
 			},
@@ -3796,7 +3928,11 @@ const table: PortableTable = {
 				path: 'declaration.field.signature.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3804,7 +3940,11 @@ const table: PortableTable = {
 				path: 'declaration.field.signature.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3812,7 +3952,11 @@ const table: PortableTable = {
 				path: 'declaration.field.signature.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3827,7 +3971,11 @@ const table: PortableTable = {
 				path: 'declaration.field.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3835,7 +3983,11 @@ const table: PortableTable = {
 				path: 'declaration.field.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3843,7 +3995,11 @@ const table: PortableTable = {
 				path: 'declaration.field.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3862,7 +4018,11 @@ const table: PortableTable = {
 				path: 'declaration.parameter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: [], kinds: ['accessibility_modifier'] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: [], kinds: ['accessibility_modifier'] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: [], kinds: ['accessibility_modifier'] } }
 				]
 			},
@@ -3870,7 +4030,11 @@ const table: PortableTable = {
 				path: 'declaration.parameter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: [], kinds: ['accessibility_modifier'] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: [], kinds: ['accessibility_modifier'] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: [], kinds: ['accessibility_modifier'] } }
 				]
 			},
@@ -3878,7 +4042,11 @@ const table: PortableTable = {
 				path: 'declaration.parameter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: [], kinds: ['accessibility_modifier'] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: [], kinds: ['accessibility_modifier'] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: [], kinds: ['accessibility_modifier'] } }
 				]
 			},
