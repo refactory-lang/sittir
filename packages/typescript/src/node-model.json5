@@ -2116,7 +2116,7 @@
       }
     },
     "extends_clause": {
-      "extends_clause_single": {
+      "types": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -13175,9 +13175,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "extends_clause_single",
-          "propertyName": "extendsClauseSingles",
-          "paramName": "extendsClauseSingles",
+          "name": "types",
+          "propertyName": "types",
+          "paramName": "types",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -13197,7 +13197,7 @@
       ],
       "factoryShape": "spread",
       "factoryFields": [
-        "extends_clause_single"
+        "types"
       ]
     },
     {

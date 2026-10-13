@@ -6916,11 +6916,11 @@ export interface ImportRequireClause {
 
 export interface ExtendsClause {
 	readonly $type: TSKindId.ExtendsClause;
-	readonly _extends_clause_single: NonEmptyArray<ExtendsClauseSingle>;
+	readonly _types: NonEmptyArray<ExtendsClauseSingle>;
 	readonly __slotHints__?: {
-		readonly extendsClauseSingles: SlotHint<NonEmptyArray<T.ExtendsClauseSingle>, false, true>;
+		readonly types: SlotHint<NonEmptyArray<T.ExtendsClauseSingle>, false, true>;
 	};
-	extendsClauseSingles(): NonEmptyArray<ExtendsClauseSingle>;
+	types(): NonEmptyArray<ExtendsClauseSingle>;
 }
 
 export interface ExtendsClauseSingle {
@@ -13332,7 +13332,8 @@ export namespace ExtendsClause {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
-			readonly extendsClauseSingle?: {
+			readonly extendsKeyword?: { readonly after?: LayoutKindId };
+			readonly types?: {
 				readonly end?: LayoutKindId;
 				readonly extendsClauseSingle?: { readonly after?: LayoutKindId };
 				readonly separator?: {
@@ -13340,7 +13341,6 @@ export namespace ExtendsClause {
 				};
 				readonly start?: LayoutKindId;
 			};
-			readonly extendsKeyword?: { readonly after?: LayoutKindId };
 		};
 	}
 }

@@ -1333,7 +1333,7 @@ describe('class_heritage', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_extends_clause_single: [
+				_types: [
 					{
 						$type: TSKindId.ExtendsClauseSingle,
 						$text: 'test',
@@ -1365,7 +1365,7 @@ describe('class_heritage', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_extends_clause_single: [
+				_types: [
 					{
 						$type: TSKindId.ExtendsClauseSingle,
 						$text: 'test',
@@ -1398,7 +1398,7 @@ describe('class_heritage sub-factories', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_extends_clause_single: [
+				_types: [
 					{
 						$type: TSKindId.ExtendsClauseSingle,
 						$text: 'test',

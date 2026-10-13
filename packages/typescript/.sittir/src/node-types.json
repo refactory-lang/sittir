@@ -3073,16 +3073,17 @@
   {
     "type": "extends_clause",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "extends_clause_single",
-          "named": true
-        }
-      ]
+    "fields": {
+      "types": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "extends_clause_single",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {

@@ -9775,13 +9775,20 @@
           "type": "SEQ",
           "members": [
             {
-              "type": "ALIAS",
+              "type": "FIELD",
+              "name": "types",
               "content": {
-                "type": "SYMBOL",
-                "name": "_extends_clause_single"
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_extends_clause_single"
+                },
+                "named": true,
+                "value": "extends_clause_single"
               },
-              "named": true,
-              "value": "extends_clause_single"
+              "metadata": {
+                "fieldSource": "override"
+              }
             },
             {
               "type": "REPEAT",
@@ -9793,13 +9800,20 @@
                     "value": ","
                   },
                   {
-                    "type": "ALIAS",
+                    "type": "FIELD",
+                    "name": "types",
                     "content": {
-                      "type": "SYMBOL",
-                      "name": "_extends_clause_single"
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "_extends_clause_single"
+                      },
+                      "named": true,
+                      "value": "extends_clause_single"
                     },
-                    "named": true,
-                    "value": "extends_clause_single"
+                    "metadata": {
+                      "fieldSource": "override"
+                    }
                   }
                 ]
               }

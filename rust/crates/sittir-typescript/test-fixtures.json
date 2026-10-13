@@ -40608,7 +40608,7 @@
               "$type": 418,
               "_extends_clause": {
                 "$type": 302,
-                "_extends_clause_single": [
+                "_types": [
                   {
                     "$type": 303,
                     "_value": {
@@ -40895,7 +40895,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "\nclass Foo<Bar> extends Baz {\n  bar = 5; static one(a) {\n    return a;\n  }; two(b) {\n    return b;\n  } three(c) {\n    return c;\n  }\n}\n",
-    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body members: (class_body_member_declaration member: (public_field_definition name: (property_identifier) value: (number_decimal))) members: (class_body_member_method (method_definition name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier))))) body: (statement_block statements: (return_statement expression: (identifier))))) members: (class_body_member_method (method_definition name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier))))) body: (statement_block statements: (return_statement expression: (identifier))))) members: (class_body_member_method (method_definition name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier))))) body: (statement_block statements: (return_statement expression: (identifier)) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (identifier))))) body: (class_body members: (class_body_member_declaration member: (public_field_definition name: (property_identifier) value: (number_decimal))) members: (class_body_member_method (method_definition name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier))))) body: (statement_block statements: (return_statement expression: (identifier))))) members: (class_body_member_method (method_definition name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier))))) body: (statement_block statements: (return_statement expression: (identifier))))) members: (class_body_member_method (method_definition name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier))))) body: (statement_block statements: (return_statement expression: (identifier)) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon)))",
     "wrappedText": "\nclass Foo<Bar> extends Baz {\n  bar = 5; static one(a) {\n    return a;\n  }; two(b) {\n    return b;\n  } three(c) {\n    return c;\n  }\n}\n",
     "wrappedOffset": 0
   },
@@ -40950,7 +40950,7 @@
           "$type": 418,
           "_extends_clause": {
             "$type": 302,
-            "_extends_clause_single": [
+            "_types": [
               {
                 "$type": 303,
                 "_value": {
@@ -41224,7 +41224,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class Foo<Bar> extends Baz {\n  bar = 5; static one(a) {\n    return a;\n  }; two(b) {\n    return b;\n  } three(c) {\n    return c;\n  }\n}\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body members: (class_body_member_declaration member: (public_field_definition name: (property_identifier) value: (number_decimal))) members: (class_body_member_method (method_definition name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier))))) body: (statement_block statements: (return_statement expression: (identifier))))) members: (class_body_member_method (method_definition name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier))))) body: (statement_block statements: (return_statement expression: (identifier))))) members: (class_body_member_method (method_definition name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier))))) body: (statement_block statements: (return_statement expression: (identifier)) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)))) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (identifier))))) body: (class_body members: (class_body_member_declaration member: (public_field_definition name: (property_identifier) value: (number_decimal))) members: (class_body_member_method (method_definition name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier))))) body: (statement_block statements: (return_statement expression: (identifier))))) members: (class_body_member_method (method_definition name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier))))) body: (statement_block statements: (return_statement expression: (identifier))))) members: (class_body_member_method (method_definition name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier))))) body: (statement_block statements: (return_statement expression: (identifier)) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))",
     "wrappedText": "class Foo<Bar> extends Baz {\n  bar = 5; static one(a) {\n    return a;\n  }; two(b) {\n    return b;\n  } three(c) {\n    return c;\n  }\n}\n",
     "wrappedOffset": 0
   },
@@ -41432,7 +41432,7 @@
         "$type": 418,
         "_extends_clause": {
           "$type": 302,
-          "_extends_clause_single": [
+          "_types": [
             {
               "$type": 303,
               "_value": {
@@ -41458,7 +41458,7 @@
     "pattern": "class_heritage",
     "edits": [],
     "expectedSourceOut": "extends Baz",
-    "expectedReparseTree": "(class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier)))))",
+    "expectedReparseTree": "(class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (identifier)))))",
     "wrappedText": "class D extends Baz {}",
     "wrappedOffset": 8
   },
@@ -41470,7 +41470,7 @@
       "$type": 418,
       "_extends_clause": {
         "$type": 302,
-        "_extends_clause_single": [
+        "_types": [
           {
             "$type": 303,
             "_value": {
@@ -41495,7 +41495,7 @@
     "pattern": "class_heritage_extends_clause",
     "edits": [],
     "expectedSourceOut": "extends Baz",
-    "expectedReparseTree": "(class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))",
+    "expectedReparseTree": "(class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (identifier))))",
     "wrappedText": "class D extends Baz {}",
     "wrappedOffset": 8
   },
@@ -41505,7 +41505,7 @@
     "pattern": "extends_clause",
     "input": {
       "$type": 302,
-      "_extends_clause_single": [
+      "_types": [
         {
           "$type": 303,
           "_value": {
@@ -41529,7 +41529,7 @@
     "pattern": "extends_clause",
     "edits": [],
     "expectedSourceOut": "extends Baz",
-    "expectedReparseTree": "(extends_clause (extends_clause_single value: (identifier)))",
+    "expectedReparseTree": "(extends_clause types: (extends_clause_single value: (identifier)))",
     "wrappedText": "class D extends Baz {}",
     "wrappedOffset": 8
   },
@@ -50297,7 +50297,7 @@
               "$type": 418,
               "_extends_clause": {
                 "$type": 302,
-                "_extends_clause_single": [
+                "_types": [
                   {
                     "$type": 303,
                     "_value": {
@@ -50397,7 +50397,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "\nclass A<\n  B,\n  C,\n> {}\n\nclass D extends A<\n  X,\n  Y,\n> {}\n",
-    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon)) statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))) body: (class_body) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon)) statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))) body: (class_body) terminator: (automatic_semicolon)))",
     "wrappedText": "\nclass A<\n  B,\n  C,\n> {}\n\nclass D extends A<\n  X,\n  Y,\n> {}\n",
     "wrappedOffset": 0
   },
@@ -50522,7 +50522,7 @@
           "$type": 418,
           "_extends_clause": {
             "$type": 302,
-            "_extends_clause_single": [
+            "_types": [
               {
                 "$type": 303,
                 "_value": {
@@ -50609,7 +50609,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class D extends A<\n  X,\n  Y,\n> {}\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))) body: (class_body) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))) body: (class_body) terminator: (automatic_semicolon))",
     "wrappedText": "class D extends A<\n  X,\n  Y,\n> {}\n",
     "wrappedOffset": 0
   },
@@ -51079,7 +51079,7 @@
         "$type": 418,
         "_extends_clause": {
           "$type": 302,
-          "_extends_clause_single": [
+          "_types": [
             {
               "$type": 303,
               "_value": {
@@ -51160,7 +51160,7 @@
     "pattern": "class_heritage",
     "edits": [],
     "expectedSourceOut": "extends A<\n  X,\n  Y,\n>",
-    "expectedReparseTree": "(class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))",
+    "expectedReparseTree": "(class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))",
     "wrappedText": "class D extends A<\n  X,\n  Y,\n> {}",
     "wrappedOffset": 8
   },
@@ -51172,7 +51172,7 @@
       "$type": 418,
       "_extends_clause": {
         "$type": 302,
-        "_extends_clause_single": [
+        "_types": [
           {
             "$type": 303,
             "_value": {
@@ -51252,7 +51252,7 @@
     "pattern": "class_heritage_extends_clause",
     "edits": [],
     "expectedSourceOut": "extends A<\n  X,\n  Y,\n>",
-    "expectedReparseTree": "(class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))",
+    "expectedReparseTree": "(class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))",
     "wrappedText": "class D extends A<\n  X,\n  Y,\n> {}",
     "wrappedOffset": 8
   },
@@ -51262,7 +51262,7 @@
     "pattern": "extends_clause",
     "input": {
       "$type": 302,
-      "_extends_clause_single": [
+      "_types": [
         {
           "$type": 303,
           "_value": {
@@ -51341,7 +51341,7 @@
     "pattern": "extends_clause",
     "edits": [],
     "expectedSourceOut": "extends A<\n  X,\n  Y,\n>",
-    "expectedReparseTree": "(extends_clause (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))",
+    "expectedReparseTree": "(extends_clause types: (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))",
     "wrappedText": "class D extends A<\n  X,\n  Y,\n> {}",
     "wrappedOffset": 8
   },
@@ -51589,7 +51589,7 @@
               "$type": 418,
               "_extends_clause": {
                 "$type": 302,
-                "_extends_clause_single": [
+                "_types": [
                   {
                     "$type": 303,
                     "_value": {
@@ -51684,7 +51684,7 @@
                 "$type": 418,
                 "_extends_clause": {
                   "$type": 302,
-                  "_extends_clause_single": [
+                  "_types": [
                     {
                       "$type": 303,
                       "_value": {
@@ -51777,7 +51777,7 @@
               "$type": 418,
               "_extends_clause": {
                 "$type": 302,
-                "_extends_clause_single": [
+                "_types": [
                   {
                     "$type": 303,
                     "_value": {
@@ -51899,7 +51899,7 @@
                 "$type": 418,
                 "_extends_clause": {
                   "$type": 302,
-                  "_extends_clause_single": [
+                  "_types": [
                     {
                       "$type": 303,
                       "_value": {
@@ -52022,7 +52022,7 @@
                 "$type": 418,
                 "_extends_clause": {
                   "$type": 302,
-                  "_extends_clause_single": [
+                  "_types": [
                     {
                       "$type": 303,
                       "_value": {
@@ -52119,7 +52119,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "\nclass A extends B<C>(D) implements C {}\nexport class A extends B<C>(D) implements C {}\n\nclass A extends B<C>(D)<E> implements C {}\nexport class A extends B<C>(D)<E> implements C {}\n\nexport class A extends B<C, D> implements C {}\n",
-    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon)) statements: (export_statement_default_declaration (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon))) statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))) type_arguments: (type_arguments (types item: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon)) statements: (export_statement_default_declaration (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))) type_arguments: (type_arguments (types item: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon))) statements: (export_statement_default_declaration (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon))))",
+    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon)) statements: (export_statement_default_declaration (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon))) statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))) type_arguments: (type_arguments (types item: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon)) statements: (export_statement_default_declaration (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))) type_arguments: (type_arguments (types item: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon))) statements: (export_statement_default_declaration (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon))))",
     "wrappedText": "\nclass A extends B<C>(D) implements C {}\nexport class A extends B<C>(D) implements C {}\n\nclass A extends B<C>(D)<E> implements C {}\nexport class A extends B<C>(D)<E> implements C {}\n\nexport class A extends B<C, D> implements C {}\n",
     "wrappedOffset": 0
   },
@@ -52143,7 +52143,7 @@
           "$type": 418,
           "_extends_clause": {
             "$type": 302,
-            "_extends_clause_single": [
+            "_types": [
               {
                 "$type": 303,
                 "_value": {
@@ -52226,7 +52226,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class A extends B<C>(D) implements C {}\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon))",
     "wrappedText": "class A extends B<C>(D) implements C {}\n",
     "wrappedOffset": 0
   },
@@ -52250,7 +52250,7 @@
           "$type": 418,
           "_extends_clause": {
             "$type": 302,
-            "_extends_clause_single": [
+            "_types": [
               {
                 "$type": 303,
                 "_value": {
@@ -52333,7 +52333,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class A extends B<C>(D) implements C {}\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon))",
     "wrappedText": "class A extends B<C>(D) implements C {}\n",
     "wrappedOffset": 0
   },
@@ -52357,7 +52357,7 @@
           "$type": 418,
           "_extends_clause": {
             "$type": 302,
-            "_extends_clause_single": [
+            "_types": [
               {
                 "$type": 303,
                 "_value": {
@@ -52467,7 +52467,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class A extends B<C>(D)<E> implements C {}\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))) type_arguments: (type_arguments (types item: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))) type_arguments: (type_arguments (types item: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon))",
     "wrappedText": "class A extends B<C>(D)<E> implements C {}\n",
     "wrappedOffset": 0
   },
@@ -52491,7 +52491,7 @@
           "$type": 418,
           "_extends_clause": {
             "$type": 302,
-            "_extends_clause_single": [
+            "_types": [
               {
                 "$type": 303,
                 "_value": {
@@ -52601,7 +52601,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class A extends B<C>(D)<E> implements C {}\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))) type_arguments: (type_arguments (types item: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))) type_arguments: (type_arguments (types item: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon))",
     "wrappedText": "class A extends B<C>(D)<E> implements C {}\n",
     "wrappedOffset": 0
   },
@@ -52625,7 +52625,7 @@
           "$type": 418,
           "_extends_clause": {
             "$type": 302,
-            "_extends_clause_single": [
+            "_types": [
               {
                 "$type": 303,
                 "_value": {
@@ -52708,7 +52708,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class A extends B<C, D> implements C {}\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon))",
     "wrappedText": "class A extends B<C, D> implements C {}\n",
     "wrappedOffset": 0
   },
@@ -53244,7 +53244,7 @@
         "$type": 418,
         "_extends_clause": {
           "$type": 302,
-          "_extends_clause_single": [
+          "_types": [
             {
               "$type": 303,
               "_value": {
@@ -53321,7 +53321,7 @@
     "pattern": "class_heritage",
     "edits": [],
     "expectedSourceOut": "extends B<C>(D) implements C",
-    "expectedReparseTree": "(class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))))) (implements_clause type: (type_identifier))))",
+    "expectedReparseTree": "(class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))))) (implements_clause type: (type_identifier))))",
     "wrappedText": "class D extends B<C>(D) implements C {}",
     "wrappedOffset": 8
   },
@@ -53335,7 +53335,7 @@
         "$type": 418,
         "_extends_clause": {
           "$type": 302,
-          "_extends_clause_single": [
+          "_types": [
             {
               "$type": 303,
               "_value": {
@@ -53412,7 +53412,7 @@
     "pattern": "class_heritage",
     "edits": [],
     "expectedSourceOut": "extends B<C>(D) implements C",
-    "expectedReparseTree": "(class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))))) (implements_clause type: (type_identifier))))",
+    "expectedReparseTree": "(class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))))) (implements_clause type: (type_identifier))))",
     "wrappedText": "class D extends B<C>(D) implements C {}",
     "wrappedOffset": 8
   },
@@ -53426,7 +53426,7 @@
         "$type": 418,
         "_extends_clause": {
           "$type": 302,
-          "_extends_clause_single": [
+          "_types": [
             {
               "$type": 303,
               "_value": {
@@ -53530,7 +53530,7 @@
     "pattern": "class_heritage",
     "edits": [],
     "expectedSourceOut": "extends B<C>(D)<E> implements C",
-    "expectedReparseTree": "(class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))) type_arguments: (type_arguments (types item: (type_identifier))))) (implements_clause type: (type_identifier))))",
+    "expectedReparseTree": "(class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))) type_arguments: (type_arguments (types item: (type_identifier))))) (implements_clause type: (type_identifier))))",
     "wrappedText": "class D extends B<C>(D)<E> implements C {}",
     "wrappedOffset": 8
   },
@@ -53544,7 +53544,7 @@
         "$type": 418,
         "_extends_clause": {
           "$type": 302,
-          "_extends_clause_single": [
+          "_types": [
             {
               "$type": 303,
               "_value": {
@@ -53648,7 +53648,7 @@
     "pattern": "class_heritage",
     "edits": [],
     "expectedSourceOut": "extends B<C>(D)<E> implements C",
-    "expectedReparseTree": "(class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))) type_arguments: (type_arguments (types item: (type_identifier))))) (implements_clause type: (type_identifier))))",
+    "expectedReparseTree": "(class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))) type_arguments: (type_arguments (types item: (type_identifier))))) (implements_clause type: (type_identifier))))",
     "wrappedText": "class D extends B<C>(D)<E> implements C {}",
     "wrappedOffset": 8
   },
@@ -53662,7 +53662,7 @@
         "$type": 418,
         "_extends_clause": {
           "$type": 302,
-          "_extends_clause_single": [
+          "_types": [
             {
               "$type": 303,
               "_value": {
@@ -53739,7 +53739,7 @@
     "pattern": "class_heritage",
     "edits": [],
     "expectedSourceOut": "extends B<C, D> implements C",
-    "expectedReparseTree": "(class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))) (implements_clause type: (type_identifier))))",
+    "expectedReparseTree": "(class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))) (implements_clause type: (type_identifier))))",
     "wrappedText": "class D extends B<C, D> implements C {}",
     "wrappedOffset": 8
   },
@@ -53751,7 +53751,7 @@
       "$type": 418,
       "_extends_clause": {
         "$type": 302,
-        "_extends_clause_single": [
+        "_types": [
           {
             "$type": 303,
             "_value": {
@@ -53827,7 +53827,7 @@
     "pattern": "class_heritage_extends_clause",
     "edits": [],
     "expectedSourceOut": "extends B<C>(D) implements C",
-    "expectedReparseTree": "(class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))))) (implements_clause type: (type_identifier)))",
+    "expectedReparseTree": "(class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))))) (implements_clause type: (type_identifier)))",
     "wrappedText": "class D extends B<C>(D) implements C {}",
     "wrappedOffset": 8
   },
@@ -53839,7 +53839,7 @@
       "$type": 418,
       "_extends_clause": {
         "$type": 302,
-        "_extends_clause_single": [
+        "_types": [
           {
             "$type": 303,
             "_value": {
@@ -53915,7 +53915,7 @@
     "pattern": "class_heritage_extends_clause",
     "edits": [],
     "expectedSourceOut": "extends B<C>(D) implements C",
-    "expectedReparseTree": "(class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))))) (implements_clause type: (type_identifier)))",
+    "expectedReparseTree": "(class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))))) (implements_clause type: (type_identifier)))",
     "wrappedText": "class D extends B<C>(D) implements C {}",
     "wrappedOffset": 8
   },
@@ -53927,7 +53927,7 @@
       "$type": 418,
       "_extends_clause": {
         "$type": 302,
-        "_extends_clause_single": [
+        "_types": [
           {
             "$type": 303,
             "_value": {
@@ -54030,7 +54030,7 @@
     "pattern": "class_heritage_extends_clause",
     "edits": [],
     "expectedSourceOut": "extends B<C>(D)<E> implements C",
-    "expectedReparseTree": "(class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))) type_arguments: (type_arguments (types item: (type_identifier))))) (implements_clause type: (type_identifier)))",
+    "expectedReparseTree": "(class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))) type_arguments: (type_arguments (types item: (type_identifier))))) (implements_clause type: (type_identifier)))",
     "wrappedText": "class D extends B<C>(D)<E> implements C {}",
     "wrappedOffset": 8
   },
@@ -54042,7 +54042,7 @@
       "$type": 418,
       "_extends_clause": {
         "$type": 302,
-        "_extends_clause_single": [
+        "_types": [
           {
             "$type": 303,
             "_value": {
@@ -54145,7 +54145,7 @@
     "pattern": "class_heritage_extends_clause",
     "edits": [],
     "expectedSourceOut": "extends B<C>(D)<E> implements C",
-    "expectedReparseTree": "(class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))) type_arguments: (type_arguments (types item: (type_identifier))))) (implements_clause type: (type_identifier)))",
+    "expectedReparseTree": "(class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))) type_arguments: (type_arguments (types item: (type_identifier))))) (implements_clause type: (type_identifier)))",
     "wrappedText": "class D extends B<C>(D)<E> implements C {}",
     "wrappedOffset": 8
   },
@@ -54157,7 +54157,7 @@
       "$type": 418,
       "_extends_clause": {
         "$type": 302,
-        "_extends_clause_single": [
+        "_types": [
           {
             "$type": 303,
             "_value": {
@@ -54233,7 +54233,7 @@
     "pattern": "class_heritage_extends_clause",
     "edits": [],
     "expectedSourceOut": "extends B<C, D> implements C",
-    "expectedReparseTree": "(class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))) (implements_clause type: (type_identifier)))",
+    "expectedReparseTree": "(class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))) (implements_clause type: (type_identifier)))",
     "wrappedText": "class D extends B<C, D> implements C {}",
     "wrappedOffset": 8
   },
@@ -54243,7 +54243,7 @@
     "pattern": "extends_clause",
     "input": {
       "$type": 302,
-      "_extends_clause_single": [
+      "_types": [
         {
           "$type": 303,
           "_value": {
@@ -54306,7 +54306,7 @@
     "pattern": "extends_clause",
     "edits": [],
     "expectedSourceOut": "extends B<C>(D)",
-    "expectedReparseTree": "(extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier)))))",
+    "expectedReparseTree": "(extends_clause types: (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier)))))",
     "wrappedText": "class D extends B<C>(D) {}",
     "wrappedOffset": 8
   },
@@ -54316,7 +54316,7 @@
     "pattern": "extends_clause",
     "input": {
       "$type": 302,
-      "_extends_clause_single": [
+      "_types": [
         {
           "$type": 303,
           "_value": {
@@ -54379,7 +54379,7 @@
     "pattern": "extends_clause",
     "edits": [],
     "expectedSourceOut": "extends B<C>(D)",
-    "expectedReparseTree": "(extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier)))))",
+    "expectedReparseTree": "(extends_clause types: (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier)))))",
     "wrappedText": "class D extends B<C>(D) {}",
     "wrappedOffset": 8
   },
@@ -54389,7 +54389,7 @@
     "pattern": "extends_clause",
     "input": {
       "$type": 302,
-      "_extends_clause_single": [
+      "_types": [
         {
           "$type": 303,
           "_value": {
@@ -54479,7 +54479,7 @@
     "pattern": "extends_clause",
     "edits": [],
     "expectedSourceOut": "extends B<C>(D)<E>",
-    "expectedReparseTree": "(extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))) type_arguments: (type_arguments (types item: (type_identifier)))))",
+    "expectedReparseTree": "(extends_clause types: (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))) type_arguments: (type_arguments (types item: (type_identifier)))))",
     "wrappedText": "class D extends B<C>(D)<E> {}",
     "wrappedOffset": 8
   },
@@ -54489,7 +54489,7 @@
     "pattern": "extends_clause",
     "input": {
       "$type": 302,
-      "_extends_clause_single": [
+      "_types": [
         {
           "$type": 303,
           "_value": {
@@ -54579,7 +54579,7 @@
     "pattern": "extends_clause",
     "edits": [],
     "expectedSourceOut": "extends B<C>(D)<E>",
-    "expectedReparseTree": "(extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))) type_arguments: (type_arguments (types item: (type_identifier)))))",
+    "expectedReparseTree": "(extends_clause types: (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))) type_arguments: (type_arguments (types item: (type_identifier)))))",
     "wrappedText": "class D extends B<C>(D)<E> {}",
     "wrappedOffset": 8
   },
@@ -54589,7 +54589,7 @@
     "pattern": "extends_clause",
     "input": {
       "$type": 302,
-      "_extends_clause_single": [
+      "_types": [
         {
           "$type": 303,
           "_value": {
@@ -54652,7 +54652,7 @@
     "pattern": "extends_clause",
     "edits": [],
     "expectedSourceOut": "extends B<C, D>",
-    "expectedReparseTree": "(extends_clause (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))",
+    "expectedReparseTree": "(extends_clause types: (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))",
     "wrappedText": "class D extends B<C, D> {}",
     "wrappedOffset": 8
   },
@@ -56446,7 +56446,7 @@
             "$type": 418,
             "_extends_clause": {
               "$type": 302,
-              "_extends_clause_single": [
+              "_types": [
                 {
                   "$type": 303,
                   "_value": {
@@ -56530,7 +56530,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export class A extends B<C>(D) implements C {}\n",
-    "expectedReparseTree": "(export_statement_default_declaration (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(export_statement_default_declaration (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon)))",
     "wrappedText": "export class A extends B<C>(D) implements C {}\n",
     "wrappedOffset": 0
   },
@@ -56557,7 +56557,7 @@
             "$type": 418,
             "_extends_clause": {
               "$type": 302,
-              "_extends_clause_single": [
+              "_types": [
                 {
                   "$type": 303,
                   "_value": {
@@ -56668,7 +56668,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export class A extends B<C>(D)<E> implements C {}\n",
-    "expectedReparseTree": "(export_statement_default_declaration (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))) type_arguments: (type_arguments (types item: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(export_statement_default_declaration (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (type_identifier))) arguments: (arguments elements: (identifier))) type_arguments: (type_arguments (types item: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon)))",
     "wrappedText": "export class A extends B<C>(D)<E> implements C {}\n",
     "wrappedOffset": 0
   },
@@ -56695,7 +56695,7 @@
             "$type": 418,
             "_extends_clause": {
               "$type": 302,
-              "_extends_clause_single": [
+              "_types": [
                 {
                   "$type": 303,
                   "_value": {
@@ -56779,7 +56779,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export class A extends B<C, D> implements C {}\n",
-    "expectedReparseTree": "(export_statement_default_declaration (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(export_statement_default_declaration (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon)))",
     "wrappedText": "export class A extends B<C, D> implements C {}\n",
     "wrappedOffset": 0
   },
@@ -57368,7 +57368,7 @@
               "$type": 418,
               "_extends_clause": {
                 "$type": 302,
-                "_extends_clause_single": [
+                "_types": [
                   {
                     "$type": 303,
                     "_value": {
@@ -57452,7 +57452,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "\nabstract class Foo {\n  abstract baz(): void;\n}\n\nclass Bar extends Foo {\n  override baz() {}\n}\n",
-    "expectedReparseTree": "(program statements: (abstract_class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))))) statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body members: (class_body_member_method (method_definition override: (override_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (abstract_class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))))) statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (identifier))))) body: (class_body members: (class_body_member_method (method_definition override: (override_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon)))",
     "wrappedText": "\nabstract class Foo {\n  abstract baz(): void;\n}\n\nclass Bar extends Foo {\n  override baz() {}\n}\n",
     "wrappedOffset": 0
   },
@@ -57950,7 +57950,7 @@
           "$type": 418,
           "_extends_clause": {
             "$type": 302,
-            "_extends_clause_single": [
+            "_types": [
               {
                 "$type": 303,
                 "_value": {
@@ -58021,7 +58021,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class Bar extends Foo {\n  override baz() {}\n}\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body members: (class_body_member_method (method_definition override: (override_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (identifier))))) body: (class_body members: (class_body_member_method (method_definition override: (override_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))",
     "wrappedText": "class Bar extends Foo {\n  override baz() {}\n}\n",
     "wrappedOffset": 0
   },
@@ -58035,7 +58035,7 @@
         "$type": 418,
         "_extends_clause": {
           "$type": 302,
-          "_extends_clause_single": [
+          "_types": [
             {
               "$type": 303,
               "_value": {
@@ -58061,7 +58061,7 @@
     "pattern": "class_heritage",
     "edits": [],
     "expectedSourceOut": "extends Foo",
-    "expectedReparseTree": "(class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier)))))",
+    "expectedReparseTree": "(class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (identifier)))))",
     "wrappedText": "class D extends Foo {}",
     "wrappedOffset": 8
   },
@@ -58073,7 +58073,7 @@
       "$type": 418,
       "_extends_clause": {
         "$type": 302,
-        "_extends_clause_single": [
+        "_types": [
           {
             "$type": 303,
             "_value": {
@@ -58098,7 +58098,7 @@
     "pattern": "class_heritage_extends_clause",
     "edits": [],
     "expectedSourceOut": "extends Foo",
-    "expectedReparseTree": "(class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))",
+    "expectedReparseTree": "(class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (identifier))))",
     "wrappedText": "class D extends Foo {}",
     "wrappedOffset": 8
   },
@@ -58108,7 +58108,7 @@
     "pattern": "extends_clause",
     "input": {
       "$type": 302,
-      "_extends_clause_single": [
+      "_types": [
         {
           "$type": 303,
           "_value": {
@@ -58132,7 +58132,7 @@
     "pattern": "extends_clause",
     "edits": [],
     "expectedSourceOut": "extends Foo",
-    "expectedReparseTree": "(extends_clause (extends_clause_single value: (identifier)))",
+    "expectedReparseTree": "(extends_clause types: (extends_clause_single value: (identifier)))",
     "wrappedText": "class D extends Foo {}",
     "wrappedOffset": 8
   },
@@ -79493,7 +79493,7 @@
               "$type": 418,
               "_extends_clause": {
                 "$type": 302,
-                "_extends_clause_single": [
+                "_types": [
                   {
                     "$type": 303,
                     "_value": {
@@ -79763,7 +79763,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "\nclass A extends B {\n    constructor(x: number, y: number) {\n        super(x);\n    }\n    public toString() {\n        return super.toString() + \" y=\" + this.y;\n    }\n}\n",
-    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body members: (class_body_member_method (method_definition name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (expression_statement expression: (call_expression_call function: (super) arguments: (arguments elements: (identifier)))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon)) members: (class_body_member_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block statements: (return_statement expression: (binary_expression left: (binary_expression left: (call_expression_call function: (member_expression object: (super) property: (property_identifier)) arguments: (arguments)) right: (string_double elements: (string_fragment))) right: (member_expression object: (this) property: (property_identifier)))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (identifier))))) body: (class_body members: (class_body_member_method (method_definition name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (expression_statement expression: (call_expression_call function: (super) arguments: (arguments elements: (identifier)))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon)) members: (class_body_member_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block statements: (return_statement expression: (binary_expression left: (binary_expression left: (call_expression_call function: (member_expression object: (super) property: (property_identifier)) arguments: (arguments)) right: (string_double elements: (string_fragment))) right: (member_expression object: (this) property: (property_identifier)))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon)))",
     "wrappedText": "\nclass A extends B {\n    constructor(x: number, y: number) {\n        super(x);\n    }\n    public toString() {\n        return super.toString() + \" y=\" + this.y;\n    }\n}\n",
     "wrappedOffset": 0
   },
@@ -79787,7 +79787,7 @@
           "$type": 418,
           "_extends_clause": {
             "$type": 302,
-            "_extends_clause_single": [
+            "_types": [
               {
                 "$type": 303,
                 "_value": {
@@ -80044,7 +80044,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class A extends B {\n    constructor(x: number, y: number) {\n        super(x);\n    }\n    public toString() {\n        return super.toString() + \" y=\" + this.y;\n    }\n}\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body members: (class_body_member_method (method_definition name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (expression_statement expression: (call_expression_call function: (super) arguments: (arguments elements: (identifier)))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon)) members: (class_body_member_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block statements: (return_statement expression: (binary_expression left: (binary_expression left: (call_expression_call function: (member_expression object: (super) property: (property_identifier)) arguments: (arguments)) right: (string_double elements: (string_fragment))) right: (member_expression object: (this) property: (property_identifier)))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (identifier))))) body: (class_body members: (class_body_member_method (method_definition name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (expression_statement expression: (call_expression_call function: (super) arguments: (arguments elements: (identifier)))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon)) members: (class_body_member_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block statements: (return_statement expression: (binary_expression left: (binary_expression left: (call_expression_call function: (member_expression object: (super) property: (property_identifier)) arguments: (arguments)) right: (string_double elements: (string_fragment))) right: (member_expression object: (this) property: (property_identifier)))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))",
     "wrappedText": "class A extends B {\n    constructor(x: number, y: number) {\n        super(x);\n    }\n    public toString() {\n        return super.toString() + \" y=\" + this.y;\n    }\n}\n",
     "wrappedOffset": 0
   },
@@ -80090,7 +80090,7 @@
         "$type": 418,
         "_extends_clause": {
           "$type": 302,
-          "_extends_clause_single": [
+          "_types": [
             {
               "$type": 303,
               "_value": {
@@ -80119,7 +80119,7 @@
     "pattern": "class_heritage",
     "edits": [],
     "expectedSourceOut": "extends B",
-    "expectedReparseTree": "(class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier)))))",
+    "expectedReparseTree": "(class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (identifier)))))",
     "wrappedText": "class D extends B {}",
     "wrappedOffset": 8
   },
@@ -80131,7 +80131,7 @@
       "$type": 418,
       "_extends_clause": {
         "$type": 302,
-        "_extends_clause_single": [
+        "_types": [
           {
             "$type": 303,
             "_value": {
@@ -80159,7 +80159,7 @@
     "pattern": "class_heritage_extends_clause",
     "edits": [],
     "expectedSourceOut": "extends B",
-    "expectedReparseTree": "(class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))",
+    "expectedReparseTree": "(class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (identifier))))",
     "wrappedText": "class D extends B {}",
     "wrappedOffset": 8
   },
@@ -80169,7 +80169,7 @@
     "pattern": "extends_clause",
     "input": {
       "$type": 302,
-      "_extends_clause_single": [
+      "_types": [
         {
           "$type": 303,
           "_value": {
@@ -80196,7 +80196,7 @@
     "pattern": "extends_clause",
     "edits": [],
     "expectedSourceOut": "extends B",
-    "expectedReparseTree": "(extends_clause (extends_clause_single value: (identifier)))",
+    "expectedReparseTree": "(extends_clause types: (extends_clause_single value: (identifier)))",
     "wrappedText": "class D extends B {}",
     "wrappedOffset": 8
   },
@@ -109940,7 +109940,7 @@
               "$type": 418,
               "_extends_clause": {
                 "$type": 302,
-                "_extends_clause_single": [
+                "_types": [
                   {
                     "$type": 303,
                     "_value": {
@@ -110036,7 +110036,7 @@
               "$type": 418,
               "_extends_clause": {
                 "$type": 302,
-                "_extends_clause_single": [
+                "_types": [
                   {
                     "$type": 303,
                     "_value": {
@@ -110139,7 +110139,7 @@
               "$type": 418,
               "_extends_clause": {
                 "$type": 302,
-                "_extends_clause_single": [
+                "_types": [
                   {
                     "$type": 303,
                     "_value": {
@@ -110223,7 +110223,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "\nclass A<\n  B,\n  C,\n> {}\n\nclass D extends A<\n  X,\n  Y,\n> {}\n\nclass E extends funThatEvalsToClass()<\n  X,\n  Y,\n> {}\n\nclass F extends G, H<T> {}\n",
-    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon)) statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))) body: (class_body) terminator: (automatic_semicolon)) statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) arguments: (arguments)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))) body: (class_body) terminator: (automatic_semicolon)) statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier)) (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier))))))) body: (class_body) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) body: (class_body) terminator: (automatic_semicolon)) statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))) body: (class_body) terminator: (automatic_semicolon)) statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (call_expression_call function: (identifier) arguments: (arguments)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))) body: (class_body) terminator: (automatic_semicolon)) statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (identifier)) types: (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier))))))) body: (class_body) terminator: (automatic_semicolon)))",
     "wrappedText": "\nclass A<\n  B,\n  C,\n> {}\n\nclass D extends A<\n  X,\n  Y,\n> {}\n\nclass E extends funThatEvalsToClass()<\n  X,\n  Y,\n> {}\n\nclass F extends G, H<T> {}\n",
     "wrappedOffset": 0
   },
@@ -110348,7 +110348,7 @@
           "$type": 418,
           "_extends_clause": {
             "$type": 302,
-            "_extends_clause_single": [
+            "_types": [
               {
                 "$type": 303,
                 "_value": {
@@ -110435,7 +110435,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class D extends A<\n  X,\n  Y,\n> {}\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))) body: (class_body) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))) body: (class_body) terminator: (automatic_semicolon))",
     "wrappedText": "class D extends A<\n  X,\n  Y,\n> {}\n",
     "wrappedOffset": 0
   },
@@ -110459,7 +110459,7 @@
           "$type": 418,
           "_extends_clause": {
             "$type": 302,
-            "_extends_clause_single": [
+            "_types": [
               {
                 "$type": 303,
                 "_value": {
@@ -110553,7 +110553,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class E extends funThatEvalsToClass()<\n  X,\n  Y,\n> {}\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) arguments: (arguments)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))) body: (class_body) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (call_expression_call function: (identifier) arguments: (arguments)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))) body: (class_body) terminator: (automatic_semicolon))",
     "wrappedText": "class E extends funThatEvalsToClass()<\n  X,\n  Y,\n> {}\n",
     "wrappedOffset": 0
   },
@@ -110577,7 +110577,7 @@
           "$type": 418,
           "_extends_clause": {
             "$type": 302,
-            "_extends_clause_single": [
+            "_types": [
               {
                 "$type": 303,
                 "_value": {
@@ -110648,7 +110648,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class F extends G, H<T> {}\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier)) (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier))))))) body: (class_body) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (identifier)) types: (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier))))))) body: (class_body) terminator: (automatic_semicolon))",
     "wrappedText": "class F extends G, H<T> {}\n",
     "wrappedOffset": 0
   },
@@ -111326,7 +111326,7 @@
         "$type": 418,
         "_extends_clause": {
           "$type": 302,
-          "_extends_clause_single": [
+          "_types": [
             {
               "$type": 303,
               "_value": {
@@ -111407,7 +111407,7 @@
     "pattern": "class_heritage",
     "edits": [],
     "expectedSourceOut": "extends A<\n  X,\n  Y,\n>",
-    "expectedReparseTree": "(class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))",
+    "expectedReparseTree": "(class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))",
     "wrappedText": "class D extends A<\n  X,\n  Y,\n> {}",
     "wrappedOffset": 8
   },
@@ -111421,7 +111421,7 @@
         "$type": 418,
         "_extends_clause": {
           "$type": 302,
-          "_extends_clause_single": [
+          "_types": [
             {
               "$type": 303,
               "_value": {
@@ -111509,7 +111509,7 @@
     "pattern": "class_heritage",
     "edits": [],
     "expectedSourceOut": "extends funThatEvalsToClass()<\n  X,\n  Y,\n>",
-    "expectedReparseTree": "(class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) arguments: (arguments)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))",
+    "expectedReparseTree": "(class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (call_expression_call function: (identifier) arguments: (arguments)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))",
     "wrappedText": "class D extends funThatEvalsToClass()<\n  X,\n  Y,\n> {}",
     "wrappedOffset": 8
   },
@@ -111523,7 +111523,7 @@
         "$type": 418,
         "_extends_clause": {
           "$type": 302,
-          "_extends_clause_single": [
+          "_types": [
             {
               "$type": 303,
               "_value": {
@@ -111588,7 +111588,7 @@
     "pattern": "class_heritage",
     "edits": [],
     "expectedSourceOut": "extends G, H<T>",
-    "expectedReparseTree": "(class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier)) (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier)))))))",
+    "expectedReparseTree": "(class_heritage (class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (identifier)) types: (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier)))))))",
     "wrappedText": "class D extends G, H<T> {}",
     "wrappedOffset": 8
   },
@@ -111600,7 +111600,7 @@
       "$type": 418,
       "_extends_clause": {
         "$type": 302,
-        "_extends_clause_single": [
+        "_types": [
           {
             "$type": 303,
             "_value": {
@@ -111680,7 +111680,7 @@
     "pattern": "class_heritage_extends_clause",
     "edits": [],
     "expectedSourceOut": "extends A<\n  X,\n  Y,\n>",
-    "expectedReparseTree": "(class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))",
+    "expectedReparseTree": "(class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))",
     "wrappedText": "class D extends A<\n  X,\n  Y,\n> {}",
     "wrappedOffset": 8
   },
@@ -111692,7 +111692,7 @@
       "$type": 418,
       "_extends_clause": {
         "$type": 302,
-        "_extends_clause_single": [
+        "_types": [
           {
             "$type": 303,
             "_value": {
@@ -111779,7 +111779,7 @@
     "pattern": "class_heritage_extends_clause",
     "edits": [],
     "expectedSourceOut": "extends funThatEvalsToClass()<\n  X,\n  Y,\n>",
-    "expectedReparseTree": "(class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression_call function: (identifier) arguments: (arguments)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))",
+    "expectedReparseTree": "(class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (call_expression_call function: (identifier) arguments: (arguments)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))",
     "wrappedText": "class D extends funThatEvalsToClass()<\n  X,\n  Y,\n> {}",
     "wrappedOffset": 8
   },
@@ -111791,7 +111791,7 @@
       "$type": 418,
       "_extends_clause": {
         "$type": 302,
-        "_extends_clause_single": [
+        "_types": [
           {
             "$type": 303,
             "_value": {
@@ -111855,7 +111855,7 @@
     "pattern": "class_heritage_extends_clause",
     "edits": [],
     "expectedSourceOut": "extends G, H<T>",
-    "expectedReparseTree": "(class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier)) (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier))))))",
+    "expectedReparseTree": "(class_heritage_extends_clause extends_clause: (extends_clause types: (extends_clause_single value: (identifier)) types: (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier))))))",
     "wrappedText": "class D extends G, H<T> {}",
     "wrappedOffset": 8
   },
@@ -111865,7 +111865,7 @@
     "pattern": "extends_clause",
     "input": {
       "$type": 302,
-      "_extends_clause_single": [
+      "_types": [
         {
           "$type": 303,
           "_value": {
@@ -111944,7 +111944,7 @@
     "pattern": "extends_clause",
     "edits": [],
     "expectedSourceOut": "extends A<\n  X,\n  Y,\n>",
-    "expectedReparseTree": "(extends_clause (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))",
+    "expectedReparseTree": "(extends_clause types: (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))",
     "wrappedText": "class D extends A<\n  X,\n  Y,\n> {}",
     "wrappedOffset": 8
   },
@@ -111954,7 +111954,7 @@
     "pattern": "extends_clause",
     "input": {
       "$type": 302,
-      "_extends_clause_single": [
+      "_types": [
         {
           "$type": 303,
           "_value": {
@@ -112040,7 +112040,7 @@
     "pattern": "extends_clause",
     "edits": [],
     "expectedSourceOut": "extends funThatEvalsToClass()<\n  X,\n  Y,\n>",
-    "expectedReparseTree": "(extends_clause (extends_clause_single value: (call_expression_call function: (identifier) arguments: (arguments)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))",
+    "expectedReparseTree": "(extends_clause types: (extends_clause_single value: (call_expression_call function: (identifier) arguments: (arguments)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))",
     "wrappedText": "class D extends funThatEvalsToClass()<\n  X,\n  Y,\n> {}",
     "wrappedOffset": 8
   },
@@ -112050,7 +112050,7 @@
     "pattern": "extends_clause",
     "input": {
       "$type": 302,
-      "_extends_clause_single": [
+      "_types": [
         {
           "$type": 303,
           "_value": {
@@ -112113,7 +112113,7 @@
     "pattern": "extends_clause",
     "edits": [],
     "expectedSourceOut": "extends G, H<T>",
-    "expectedReparseTree": "(extends_clause (extends_clause_single value: (identifier)) (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier)))))",
+    "expectedReparseTree": "(extends_clause types: (extends_clause_single value: (identifier)) types: (extends_clause_single value: (identifier) type_arguments: (type_arguments (types item: (type_identifier)))))",
     "wrappedText": "class D extends G, H<T> {}",
     "wrappedOffset": 8
   },

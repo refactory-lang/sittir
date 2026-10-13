@@ -513,7 +513,10 @@ export default sittirGrammar(base, {
 
 		class_heritage: { '0': variant('extends_clause'), '1': variant('implements_clause') },
 
-		extends_clause: { '1/0': alias('extends_clause_single'), '1/1/0/1': alias('extends_clause_single') },
+		extends_clause: [
+			{ '1/0': alias('extends_clause_single'), '1/1/0/1': alias('extends_clause_single') },
+			{ '1/0': field('types'), '1/1/0/1': field('types') }
+		],
 
 		import_clause: {
 			'0': variant('namespace_import'),
