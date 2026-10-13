@@ -45,10 +45,12 @@ beforeAll(async () => {
 		`export default grammar({
 	name: 'leadedits',
 	rules: {
-		source_file: $ => repeat(choice($.function_item, $.closure, $.lambda, $.macro_item, $.macro_elements, $.table, $._table_rows_receiver)),
+		source_file: $ => repeat(choice($.function_item, $.method_item, $.closure, $.lambda, $.macro_item, $.macro_elements, $.table, $._table_rows_receiver)),
 		function_item: $ => seq('fn', $.parameters),
 		parameters: $ => seq('(', optional(field('elements', $.parameters_elements)), ')'),
 		parameters_elements: $ => seq(field('item', $.attributed_parameter), repeat(seq(',', field('item', $.attributed_parameter))), optional(',')),
+		method_item: $ => seq('method', '(', optional(field('elements', $.method_elements)), ')'),
+		method_elements: $ => seq(field('item', $.attributed_parameter), repeat(seq(',', field('item', $.attributed_parameter)))),
 		closure: $ => seq('|', optional(field('params', $.closure_elements)), '|'),
 		lambda: $ => seq('\\\\', optional(field('args', $.closure_elements)), '->'),
 		closure_elements: $ => seq(field('item', $.attributed_parameter), repeat(seq(',', field('item', $.attributed_parameter)))),
@@ -223,6 +225,19 @@ describe('deriveLeads refuses a lead its edit cannot make', () => {
 		const diagnostics = await refusal('(table (table_rows . (row (attribute)) @receiver)) @declaration.function');
 		expect(diagnostics).toMatchObject([
 			{ code: 'lead-refused', details: { lines: [1], list: 'table_rows', reason: "'table_rows' mints '_table_rows_receiver', which the grammar already names" } }
+		]);
+	});
+	it('refuses a lead whose edit conflicts with a lead on another list, checked in the order the edit applies them', async () => {
+		const result = deriveLeads({
+			file: FILE,
+			base: edits,
+			facts: await readBindings(
+				'(function_item (parameters (parameters_elements . (attributed_parameter (parameter name: (self))) @receiver))) @declaration.method\n(method_item (method_elements . (attributed_parameter (parameter name: (identifier))) @receiver)) @declaration.method'
+			)
+		});
+		expect(result.leads.map((l) => l.list)).toEqual(['method_elements']);
+		expect(result.diagnostics).toMatchObject([
+			{ code: 'lead-refused', details: { lines: [1], list: 'parameters_elements', reason: "'parameter' narrows two ways to '_parameter_receiver'" } }
 		]);
 	});
 });

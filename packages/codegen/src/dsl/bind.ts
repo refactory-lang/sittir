@@ -595,6 +595,11 @@ function refKind(ref: unknown): string | undefined {
 
 const aliasOf = (name: string, value: string): GrammarRecord => ({ type: 'ALIAS', content: { type: 'SYMBOL', name }, named: true, value });
 
+function renamedKind(ref: unknown, value: string): unknown {
+	const node = unprecedenced(ref);
+	return rewrap(ref, isRecord(node) && node.type === 'ALIAS' ? { ...node, value } : { type: 'ALIAS', content: node, named: true, value });
+}
+
 const exclusiveTo = (edit: LeadEdit, name: string, exclusive: boolean): boolean => exclusive && (edit.sites.get(name) ?? 0) <= 1;
 
 const isDescended = (edit: LeadEdit, name: string): boolean => isParserHiddenName(name) && !edit.supertypes.has(name) && name in edit.rules;
@@ -606,8 +611,9 @@ function narrowRef(edit: LeadEdit, ref: unknown, admits: readonly LeadMatch[], s
 		if (matches.length > 1) throw new LeadRefusal(`it admits '${kind}' twice`);
 		const [admitted] = matches;
 		if (admitted === undefined) return side.lead ? undefined : ref;
-		const name = refRule(ref)!;
-		if (admitted.within === undefined) return side.lead ? (admitted.as === undefined ? ref : aliasOf(name, admitted.as)) : undefined;
+		if (admitted.within === undefined) return side.lead ? (admitted.as === undefined ? ref : renamedKind(ref, admitted.as)) : undefined;
+		const name = refRule(ref);
+		if (name === undefined) throw new LeadRefusal(`'${kind}' has no rule to narrow`);
 		const inPlace = !side.lead && (!isParserHiddenName(name) || exclusiveTo(edit, name, exclusive));
 		const body = narrowWithin(edit, kind, edit.rules[name], admitted.within, side, inPlace);
 		if (side.lead) return aliasOf(edit.mint(name, side, body), admitted.as ?? `${kind}_${side.suffix}`);
@@ -648,20 +654,24 @@ function narrowWithin(edit: LeadEdit, kind: string, body: unknown, within: LeadW
 		within.field === null
 			? node.type === 'CHOICE' && Array.isArray(node.members) && node.members.some((arm) => admitted.has(refKind(arm) ?? ''))
 			: node.type === 'FIELD' && node.name === within.field;
-	const holds = (node: unknown, seen: Set<string> = new Set()): boolean => {
-		if (Array.isArray(node)) return node.some((n) => holds(n, seen));
-		if (!isRecord(node)) return false;
-		if (isTarget(node)) return true;
-		if (OPAQUE_RULES.has(node.type) || node.type === 'ALIAS') return false;
+	const positionsIn = (node: unknown, path: readonly string[] = [], repeated = false): boolean[] => {
+		if (Array.isArray(node)) return node.flatMap((n) => positionsIn(n, path, repeated));
+		if (!isRecord(node)) return [];
+		if (isTarget(node)) return [repeated];
+		if (OPAQUE_RULES.has(node.type) || node.type === 'ALIAS') return [];
 		if (node.type === 'SYMBOL') {
 			const name = node.name as string;
-			if (!isDescended(edit, name) || seen.has(name)) return false;
-			seen.add(name);
-			return holds(edit.rules[name], seen);
+			if (!isDescended(edit, name) || path.includes(name)) return [];
+			return positionsIn(edit.rules[name], [...path, name], repeated);
 		}
-		return holds(node.members, seen) || holds(node.content, seen);
+		const under = repeated || node.type === 'REPEAT' || node.type === 'REPEAT1';
+		return [...positionsIn(node.members, path, under), ...positionsIn(node.content, path, under)];
 	};
-	if (!holds(body)) throw new LeadRefusal(`the restriction of ${position} names no position in '${kind}'`);
+	const holds = (node: unknown): boolean => positionsIn(node).length > 0;
+	const found = positionsIn(body);
+	if (found.length === 0) throw new LeadRefusal(`the restriction of ${position} names no position in '${kind}'`);
+	if (found.length > 1) throw new LeadRefusal(`the restriction of ${position} names ${found.length} positions in '${kind}'`);
+	if (found[0] === true) throw new LeadRefusal(`the restriction of ${position} sits under a repeat in '${kind}'`);
 	const visit = (node: unknown): unknown => {
 		if (Array.isArray(node)) {
 			const out = node.map(visit);
@@ -675,6 +685,12 @@ function narrowWithin(edit: LeadEdit, kind: string, body: unknown, within: LeadW
 			return narrowed === node.content ? node : { ...node, content: narrowed };
 		}
 		if (OPAQUE_RULES.has(node.type) || node.type === 'ALIAS') return node;
+		if (side.lead) {
+			const optional = optionalContentOf(node as { readonly type: string });
+			if (optional !== undefined && holds(optional)) return visit(optional);
+			const arm = node.type === 'CHOICE' && Array.isArray(node.members) ? node.members.find(holds) : undefined;
+			if (arm !== undefined) return visit(arm);
+		}
 		if (node.type === 'SYMBOL') {
 			const name = node.name as string;
 			if (!holds(node)) return node;
@@ -812,9 +828,9 @@ export function leadGrammar(grammar: GrammarRecord, leads: readonly Lead[]): Gra
 	return out;
 }
 
-export function leadIssue(grammar: GrammarRecord, lead: Lead): string | undefined {
+export function leadIssue(grammar: GrammarRecord, leads: readonly Lead[]): string | undefined {
 	try {
-		leadGrammar(grammar, [lead]);
+		leadGrammar(grammar, leads);
 		return undefined;
 	} catch (error) {
 		if (error instanceof LeadRefusal) return error.reason;

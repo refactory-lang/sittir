@@ -38,6 +38,10 @@ The visible kind a reference is in the parse tree: a named alias's value, or a s
 
 A named alias of the symbol `name` to `value`.
 
+### `packages/codegen/src/dsl/bind.ts::renamedKind`
+
+A reference renamed to `value` in the parse tree: an alias takes the new value over the same content, and any other reference is aliased. Precedence wrappers stay outside.
+
 ### `packages/codegen/src/dsl/bind.ts::exclusiveTo`
 
 Whether the rest side may narrow `name` in place: only when every rule above it on the path is edited in place (`exclusive`) and `name` has at most one reference site (`referenceSites`). Otherwise another site still holds the original (another kind, another position of the same kind, or a variant the lead side minted), and the rest side clones it.
@@ -50,7 +54,8 @@ Whether the narrowing walks into a referenced rule: a hidden rule the grammar de
 
 Narrows one reference to one side of a lead, or returns `undefined` when nothing of it is left on that side.
 - A visible kind the lead does not admit stays on the rest side and leaves the lead side. A kind it admits twice is refused.
-- A kind admitted with no restriction moves to the lead side whole, aliased to `as` when the match gives one, and leaves the rest side.
+- A kind admitted with no restriction moves to the lead side whole, renamed to `as` when the match gives one (`renamedKind`), and leaves the rest side.
+- A kind admitted with a restriction must have a rule to narrow; an alias of a literal is refused.
 - A kind admitted with a restriction is narrowed by `narrowWithin` on both sides. The lead side always mints its narrowing, `_<rule>_<field>`, aliased to `as`, or else to `<kind>_<field>`, so a visible variant never takes its kind's own name. The rest side narrows a visible kind in place, wherever else it is used, and a hidden rule in place only when `exclusiveTo` allows; otherwise it mints `_<rule>_<item>` and keeps the alias to the kind.
 - A choice narrows each arm and keeps the arms left in their order; one arm left stands alone.
 - A hidden rule (`isDescended`) narrows its body. A body that narrows to one reference is that reference; any other narrowed body is narrowed in place or minted, as above.
@@ -58,7 +63,7 @@ Narrows one reference to one side of a lead, or returns `undefined` when nothing
 
 ### `packages/codegen/src/dsl/bind.ts::narrowWithin`
 
-Narrows a kind's body to a match's restriction. The restriction's position is the field it names, or for an unfielded child each choice holding an admitted kind, found in the body or in a hidden rule it descends into; a restriction with no position in the kind is refused. Each position is narrowed by `narrowRef`, and a position left empty is refused. A hidden rule on the way is narrowed in place or minted, by the same rule as `narrowRef`'s.
+Narrows a kind's body to a match's restriction. The restriction's position is the field it names, or for an unfielded child a choice holding an admitted kind, found in the body or in a hidden rule it descends into. The kind must hold exactly one such position, outside any repeat: a lead and a rest cannot split a position the kind holds more than once (twice in its body, under a repeat, or through a recursive hidden rule, which shows as two), so those are refused, as is a restriction with no position. The position is narrowed by `narrowRef`, and a position left empty is refused. On the lead side, an alternative that does not hold the position goes, and an optional holding it becomes required, since a claim that tests the position needs it present; the rest side keeps every alternative. A hidden rule on the way is narrowed in place or minted, by the same rule as `narrowRef`'s.
 
 ### `packages/codegen/src/dsl/bind.ts::optionalSpelling`
 
@@ -96,7 +101,7 @@ Each rule a lead mints is stamped with its origin in `leadFrom`, as `splitFrom` 
 
 ### `packages/codegen/src/dsl/bind.ts::leadIssue`
 
-Why `leadGrammar` would refuse one lead on the grammar, or `undefined` when it would make it: the one check the derivation and the edit share.
+Why `leadGrammar` would refuse the last of `leads`, applied in order, or `undefined` when it would make them all: the one check the derivation and the edit share. The derivation passes the leads it has accepted before the one it checks, so a lead that conflicts with an earlier one (two narrowings minting one variant) is refused too.
 
 # `packages/codegen/src/dsl` — Function Glossary
 

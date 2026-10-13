@@ -10,6 +10,7 @@ const choice = (...members: unknown[]) => ({ type: 'CHOICE', members });
 const blankChoice = (content: unknown) => choice(content, BLANK);
 const optional = (content: unknown) => ({ type: 'OPTIONAL', content });
 const repeat = (content: unknown) => ({ type: 'REPEAT', content });
+const repeat1 = (content: unknown) => ({ type: 'REPEAT1', content });
 const alias = (content: unknown, value: string) => ({ type: 'ALIAS', content, named: true, value });
 
 const separatedList = (item: unknown, opt: (content: unknown) => unknown = blankChoice) =>
@@ -189,6 +190,42 @@ describe('leadGrammar', () => {
 		expect(rules._parameter_receiver).toEqual(seq(str('x:'), field('name', sym('self'))));
 	});
 
+	it('keeps on the lead side only the alternatives that hold the restricted position, and leaves the rest every alternative', () => {
+		const rules = rulesOf(leadGrammar(named(choice(seq(field('name', sym('_name')), str(':')), str('...'))), [NAMED_LEAD]));
+		expect(rules._parameter_receiver).toEqual(seq(field('name', sym('self')), str(':')));
+		expect(rules.parameter).toEqual(choice(seq(field('name', sym('_name')), str(':')), str('...')));
+		expect(rules._name).toEqual(choice(sym('identifier'), sym('other')));
+		const optionalName = rulesOf(leadGrammar(named(seq(blankChoice(field('name', sym('_name'))), str(':'))), [NAMED_LEAD]));
+		expect(optionalName._parameter_receiver).toEqual(seq(field('name', sym('self')), str(':')));
+		expect(optionalName.parameter).toEqual(seq(blankChoice(field('name', sym('_name'))), str(':')));
+	});
+
+	it('refuses a restriction whose position a kind holds more than once, since no lead and rest split it', () => {
+		const twice = named(seq(field('name', sym('_name')), str(':'), field('name', sym('_name'))));
+		expect(leadIssue(twice, [NAMED_LEAD])).toBe("the restriction of field 'name' names 2 positions in 'parameter'");
+		const repeated = named(repeat1(field('name', sym('_name'))));
+		expect(leadIssue(repeated, [NAMED_LEAD])).toBe("the restriction of field 'name' sits under a repeat in 'parameter'");
+	});
+
+	it('refuses a restriction a recursive hidden rule repeats, and passes one beside a recursive rule that does not hold it', () => {
+		const recursive = { ...named(sym('_names')), rules: { ...rulesOf(named(sym('_names'))), _names: seq(field('name', sym('_name')), blankChoice(seq(str(','), sym('_names')))) } };
+		expect(leadIssue(recursive, [NAMED_LEAD])).toBe("the restriction of field 'name' names 2 positions in 'parameter'");
+		const beside = {
+			...named(seq(field('name', sym('_name')), str(':'), sym('_type'))),
+			rules: { ...rulesOf(named(seq(field('name', sym('_name')), str(':'), sym('_type')))), _type: choice(sym('identifier'), seq(str('['), sym('_type'), str(']'))) }
+		};
+		expect(leadIssue(beside, [NAMED_LEAD])).toBeUndefined();
+	});
+
+	it('renames an admitted alias of a literal by its as, and refuses a restriction of a kind with no rule', () => {
+		const literal = { ...named(seq(field('name', sym('_name')), str(':'))), rules: { ...rulesOf(named(seq(field('name', sym('_name')), str(':')))), params: separatedList(choice(alias(str('&self'), 'self_parameter'), sym('parameter'))) } };
+		const renamed = rulesOf(leadGrammar(literal, [lead('params', 'item', 'receiver', match('self_parameter', undefined, 'receiver_parameter'))]));
+		expect(renamed._params_receiver).toEqual(
+			seq(field('receiver', alias(str('&self'), 'receiver_parameter')), blankChoice(seq(str(','), blankChoice(field('parameters', sym('params'))))))
+		);
+		expect(leadIssue(literal, [lead('params', 'item', 'receiver', match('self_parameter', { name: [match('self')] }))])).toBe("'self_parameter' has no rule to narrow");
+	});
+
 	it('leaves a grammar with no leads as it is', () => {
 		const grammar = rust();
 		expect(leadGrammar(grammar, [])).toBe(grammar);
@@ -198,7 +235,7 @@ describe('leadGrammar', () => {
 		const unfielded = { ...rust(), rules: { ...rulesOf(rust()), parameters: seq(str('('), sym('parameters_elements'), str(')')) } };
 		expect(() => leadGrammar(unfielded, [RUST_LEAD])).toThrow(new LeadRefusal("'parameters' holds the list other than as a field's content", RUST_LEAD));
 		expect(() => leadGrammar(unfielded, [RUST_LEAD])).toThrow("bind: lead 'parameters_elements.receiver': 'parameters' holds the list other than as a field's content");
-		expect(leadIssue(unfielded, RUST_LEAD)).toBe("'parameters' holds the list other than as a field's content");
-		expect(leadIssue(rust(), RUST_LEAD)).toBeUndefined();
+		expect(leadIssue(unfielded, [RUST_LEAD])).toBe("'parameters' holds the list other than as a field's content");
+		expect(leadIssue(rust(), [RUST_LEAD])).toBeUndefined();
 	});
 });

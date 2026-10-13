@@ -107,7 +107,7 @@ export function deriveLeads(input: { readonly file: string; readonly base: RawGr
 			continue;
 		}
 		const derived = lead(list, first.item, first.field, named.match);
-		const issue = leadIssue(base as unknown as GrammarRecord, derived);
+		const issue = leadIssue(base as unknown as GrammarRecord, [...leads, derived]);
 		if (issue === undefined) leads.push(derived);
 		else refuse(list, lines, issue);
 	}
