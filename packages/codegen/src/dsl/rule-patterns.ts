@@ -1157,6 +1157,11 @@ export function separatedListBodyInfo<P extends PhaseName>(body: Rule<P>, symbol
 	};
 }
 
+export function fieldedHeadListOf<P extends PhaseName>(rule: Rule<P>, symbols: SymbolSource): (SeparatedListBodyInfo<P> & { readonly elementName: string }) | null {
+	const info = separatedListBodyInfo(unwrapPrec(rule) as Rule<P>, symbols);
+	return info?.form === 'head' && isFieldType(info.element.type) && info.elementName !== null ? { ...info, elementName: info.elementName } : null;
+}
+
 export function armLeadingSymbolName<P extends PhaseName>(
 	rule: Rule<P>,
 	rulesBag: Record<string, Rule<P>>,
