@@ -184,7 +184,7 @@ export function seedAutomaticVariants(grammar: unknown): AutomaticVariants {
 	const enriched = getEnrichAutomaticVariants(grammar);
 	return enriched === undefined
 		? { keys: new Set(), supertypeOwners: new Set() }
-		: { keys: new Set(enriched.keys), supertypeOwners: enriched.supertypeOwners };
+		: { keys: new Set(enriched.keys), supertypeOwners: new Set(enriched.supertypeOwners) };
 }
 
 export function withoutAutomaticVariants(rule: unknown, automatic: AutomaticVariants): unknown {

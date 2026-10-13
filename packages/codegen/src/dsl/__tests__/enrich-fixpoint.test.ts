@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { enrich } from '../enrich.ts';
+import { getEnrichAutomaticVariants, withoutAutomaticVariants } from '../automatic-variants.ts';
 import { isSupertypeLike } from '../rule-patterns.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 
@@ -135,5 +136,18 @@ describe('enrich is a fixpoint of its own output', () => {
 			item: P('[0-9]+')
 		};
 		expect(again(grammarWith(rules))).toEqual({ names: [], minted: [] });
+	});
+
+	it('carries the automatic-label provenance through a second pass', () => {
+		const grammar = grammarWith({ source: choice(sym('word'), sym('num')), word: P('[a-z]+'), num: P('[0-9]+') });
+		const first = enrich(structuredClone(grammar) as never, {});
+		const second = enrich(first as never, {});
+		const firstKeys = getEnrichAutomaticVariants(first)!;
+		const secondKeys = getEnrichAutomaticVariants(second)!;
+		expect(firstKeys.keys.size).toBeGreaterThan(0);
+		expect([...secondKeys.keys].sort()).toEqual([...firstKeys.keys].sort());
+		expect(JSON.stringify(withoutAutomaticVariants(rulesOf(second).source, secondKeys))).toBe(
+			JSON.stringify(withoutAutomaticVariants(rulesOf(first).source, firstKeys))
+		);
 	});
 });

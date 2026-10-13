@@ -87,7 +87,7 @@ import { enrichWhitespace, type EnrichedWhitespace } from './whitespace.ts';
 import { LAYOUT_SUPERTYPE } from './primitives/spacing.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 import { distributeLeafEnum, distributeTokenForms, factorSharedOptional } from './transform/token-forms.ts';
-import { ENRICH_AUTOMATIC_VARIANTS_KEY, isSupertypeOwner, stampAutomaticVariants } from './automatic-variants.ts';
+import { ENRICH_AUTOMATIC_VARIANTS_KEY, isSupertypeOwner, seedAutomaticVariants, stampAutomaticVariants } from './automatic-variants.ts';
 import { armNameOf, undisplayedKindAddress } from './arm-names.ts';
 
 export interface GrammarResult {
@@ -230,7 +230,7 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 	}
 	synthesizeFieldEnumRules(mergedRules, ruleOrigins);
 	const elementSupertypes = [...ruleOrigins].flatMap(([name, origin]) => (origin.kind === 'element-supertype' && name in mergedRules ? [name] : []));
-	const automaticVariants = stampAutomaticVariants(mergedRules, new Set([...supertypeNames, ...elementSupertypes]), inlineNames, new Set(elementSupertypes), ctx.sourceSymbols);
+	const automaticVariants = stampAutomaticVariants(mergedRules, new Set([...supertypeNames, ...elementSupertypes]), inlineNames, new Set(elementSupertypes), ctx.sourceSymbols, seedAutomaticVariants(baseInput));
 	const textTokens = mintInlineTextTokens(mergedRules, { symbol: nativeRuleFn<(name: string) => Rule>('sym'), namingRules: baseRules });
 	Object.assign(mergedRules, textTokens.rules);
 	for (const name of textTokens.mintedNames) ruleOrigins.set(name, { kind: 'text', owners: textTokens.owners[name]! });

@@ -2745,6 +2745,8 @@ result as `ENRICH_AUTOMATIC_VARIANTS_KEY`.
 
 With `into`, the labels go onto an existing record instead of a fresh one, and `owners` limits the run to the rules named. `grammar()` uses both to label what wire created or changed with this same function, so a kind a patch authors after enrich ran carries the labels enrich would have given it. A supertype owner joins `into` only when stamping it added a label.
 
+`enrich` passes a `seedAutomaticVariants` copy of its input's record as `into`, so a grammar that was already enriched keeps the provenance of its earlier labels: stamping an already-labelled arm adds no key, and without the seed the second pass's record would be empty while the labels stay on the rules.
+
 ### `packages/codegen/src/dsl/automatic-variants.ts::getEnrichAutomaticVariants`
 
 The record on an enriched grammar, or `undefined` when the grammar carries
@@ -2754,9 +2756,9 @@ an error, never read as empty.
 
 ### `packages/codegen/src/dsl/automatic-variants.ts::seedAutomaticVariants`
 
-The record a wire context starts from, built once when the context is: a
-copy of the base's record (its own `keys` set, so wire's edits never reach
-enrich's), or a new empty record when the base never went through `enrich`,
+The record a wire context or an `enrich` pass starts from, built once when it is: a
+copy of the base's record (its own `keys` and `supertypeOwners` sets, so later edits never reach
+the input's), or a new empty record when the base never went through `enrich`,
 since then no label is automatic.
 
 ### `packages/codegen/src/dsl/automatic-variants.ts::withoutAutomaticVariants`
