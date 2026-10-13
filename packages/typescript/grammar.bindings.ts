@@ -3,7 +3,7 @@
 import { bindings, field, rename } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "a7bbccb2865f15960603db19ee4b344824bd8e7a8cd39a12599259af90c664c4",
+	hash: "1947afbb73753a835daca5cbf9fdbaee1385522300f99789f04927411b0a777b",
 	patches: {
 		_number: { "1": field("value") },
 		_parameter_name: { "4": field("name") },
@@ -59,7 +59,7 @@ export default bindings({
 		rename("index_signature_mapped_type_clause", "mapped_index_signature_declaration"),
 		rename("statement_block", "block_statement"),
 		rename("for_statement", "counted_loop_statement"),
-		rename("for_in_statement", "for_loop_statement"),
+		rename("for_in_statement", "for_each_loop_statement"),
 		rename("while_statement", "while_loop_statement"),
 		rename("do_statement", "do_while_loop_statement"),
 		rename("with_statement", "scope_statement"),
@@ -76,13 +76,12 @@ export default bindings({
 		rename("export_specifier", "specifier_export_clause"),
 		rename("constraint", "constraint_clause"),
 		rename("default_type", "default_clause"),
-		rename("spread_element", "splat_element"),
 		rename("pair", "pair_element"),
 		rename("tuple_parameter", "member_tuple_element"),
 		rename("optional_tuple_parameter", "optional_member_tuple_element"),
 		rename("template_type", "substitution_template_element"),
 		rename("call_expression_template_call", "template_call_expression"),
-		rename("new_expression", "new_call_expression"),
+		rename("new_expression", "construct_call_expression"),
 		rename("augmented_assignment_expression", "compound_assignment_expression"),
 		rename("ternary_expression", "conditional_expression"),
 		rename("arrow_function", "lambda_expression"),

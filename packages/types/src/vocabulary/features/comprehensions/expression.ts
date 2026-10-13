@@ -10,12 +10,6 @@ export namespace Expression {
 		// p only
 	}
 	export namespace Comprehension {
-		export interface Dictionary<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Comprehension<G>> {
-			// claimed by p
-			readonly $kind: 'expression.comprehension.dictionary';
-			readonly body: V.Element.Pair<G>;
-			readonly clauses: V.Clause.Comprehension<G>;
-		}
 		export interface Generator<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Comprehension<G>> {
 			// claimed by p
 			readonly $kind: 'expression.comprehension.generator';
@@ -26,6 +20,12 @@ export namespace Expression {
 			// claimed by p
 			readonly $kind: 'expression.comprehension.list';
 			readonly body: G['slots']['expression.comprehension.list']['body'];
+			readonly clauses: V.Clause.Comprehension<G>;
+		}
+		export interface Map<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Comprehension<G>> {
+			// claimed by p
+			readonly $kind: 'expression.comprehension.map';
+			readonly body: V.Element.Pair<G>;
 			readonly clauses: V.Clause.Comprehension<G>;
 		}
 		export interface Set<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Comprehension<G>> {

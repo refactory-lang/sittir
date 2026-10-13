@@ -3,23 +3,23 @@ import type { RefinedBy } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Statement {
 	export namespace Import {
-		export namespace Crate {
-			export interface Private<G extends GrammarContext<G>> extends RefinedBy<V.Statement.Import.Crate<G>, V.Modifier.Visibility.Private<G>> {
+		export namespace Package {
+			export interface Private<G extends GrammarContext<G>> extends RefinedBy<V.Statement.Import.Package<G>, V.Modifier.Visibility.Private<G>> {
 				// claimed by r
-				readonly $kind: 'statement.import.crate.private';
+				readonly $kind: 'statement.import.package.private';
 			}
-			export interface Public<G extends GrammarContext<G>> extends RefinedBy<V.Statement.Import.Crate<G>, V.Modifier.Visibility.Public<G>> {
+			export interface Public<G extends GrammarContext<G>> extends RefinedBy<V.Statement.Import.Package<G>, V.Modifier.Visibility.Public<G>> {
 				// claimed by r
-				readonly $kind: 'statement.import.crate.public';
+				readonly $kind: 'statement.import.package.public';
 			}
 			export namespace Public {
-				export interface Internal<G extends GrammarContext<G>> extends RefinedBy<V.Statement.Import.Crate.Public<G>, V.Modifier.Visibility.Public.Internal<G>> {
+				export interface Internal<G extends GrammarContext<G>> extends RefinedBy<V.Statement.Import.Package.Public<G>, V.Modifier.Visibility.Public.Internal<G>> {
 					// claimed by r
-					readonly $kind: 'statement.import.crate.public.internal';
+					readonly $kind: 'statement.import.package.public.internal';
 				}
-				export interface Restricted<G extends GrammarContext<G>> extends RefinedBy<V.Statement.Import.Crate.Public<G>, V.Modifier.Visibility.Public.Restricted<G>> {
+				export interface Restricted<G extends GrammarContext<G>> extends RefinedBy<V.Statement.Import.Package.Public<G>, V.Modifier.Visibility.Public.Restricted<G>> {
 					// claimed by r
-					readonly $kind: 'statement.import.crate.public.restricted';
+					readonly $kind: 'statement.import.package.public.restricted';
 				}
 			}
 		}

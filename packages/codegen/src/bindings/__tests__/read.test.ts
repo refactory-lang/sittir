@@ -255,10 +255,10 @@ describe('readBindings', () => {
 
 	it('reads a template regex as its literal runs and named holes', async () => {
 		const { templates } = await readBindings(
-			'((function_definition name: (identifier) @name) @declaration.method.dunder (#match? @name "^__(?<stem>.*)__$"))'
+			'((function_definition name: (identifier) @name) @declaration.method.special (#match? @name "^__(?<stem>.*)__$"))'
 		);
 		expect(templates).toEqual([
-			{ vocabs: ['declaration.method.dunder'], target: 'name', template: '__${string}__', holes: ['stem'] }
+			{ vocabs: ['declaration.method.special'], target: 'name', template: '__${string}__', holes: ['stem'] }
 		]);
 	});
 

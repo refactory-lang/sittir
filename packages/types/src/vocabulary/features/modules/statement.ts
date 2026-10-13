@@ -39,12 +39,6 @@ export namespace Statement {
 		// t only
 	}
 	export namespace Import {
-		export interface Crate<G extends GrammarContext<G>> extends SubKindOf<V.Statement.Import<G>> {
-			// claimed by r
-			readonly $kind: 'statement.import.crate';
-			readonly alias?: G['identifier'];
-			readonly name: G['identifier'];
-		}
 		export interface From<G extends GrammarContext<G>> extends SubKindOf<V.Statement.Import<G>> {
 			// claimed by p
 			readonly $kind: 'statement.import.from';
@@ -58,6 +52,12 @@ export namespace Statement {
 			// claimed by p
 			readonly $kind: 'statement.import.future';
 			readonly content: (V.Clause.Import.Alias<G> | V.Identifier.Dotted<G>)[];
+		}
+		export interface Package<G extends GrammarContext<G>> extends SubKindOf<V.Statement.Import<G>> {
+			// claimed by r
+			readonly $kind: 'statement.import.package';
+			readonly alias?: G['identifier'];
+			readonly name: G['identifier'];
 		}
 		export interface Typeof<G extends GrammarContext<G>> extends SubKindOf<V.Statement.Import<G>> {
 			// claimed by t

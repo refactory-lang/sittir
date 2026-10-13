@@ -457,3 +457,48 @@ describe('portable is agrees with one classification', () => {
 		});
 	}
 });
+
+describe('portable is: each kind under its neutral name', () => {
+	const NEUTRAL = {
+		python: [
+			['f(*a)\n', 'list_splat', 'element.spread'],
+			['f(**a)\n', 'dictionary_splat', 'element.spread.map'],
+			['with a as b:\n    pass\n', 'with_statement', 'statement.resource'],
+			['with a as b:\n    pass\n', 'with_clause_bare', 'clause.resource'],
+			['with a as b:\n    pass\n', 'with_item', 'clause.resource.item'],
+			['if a:\n    pass\nelif b:\n    pass\n', 'elif_clause', 'clause.else_if'],
+			['f(k=1)\n', 'keyword_argument', 'argument.named'],
+			['a @ b\n', 'binary_operator', 'expression.binary.matrix_multiply'],
+			['a @= b\n', 'augmented_assignment', 'expression.assignment.compound.matrix_multiply'],
+			['{k: v for k in x}\n', 'dictionary_comprehension', 'expression.comprehension.map'],
+			['{1: 2}\n', 'dictionary', 'expression.collection.map'],
+			['"""x"""\n', 'string', 'literal.string.multiline'],
+			['for x in y:\n    pass\n', 'for_statement', 'statement.loop.for_each'],
+			['class A:\n    def __add__(self, o): pass\n', 'function_definition', 'declaration.method.special']
+		],
+		rust: [
+			['extern crate foo;\n', 'extern_crate_declaration', 'statement.import.package'],
+			['fn f() { for x in y {} }\n', 'for_expression', 'statement.loop.for_each'],
+			['fn f() { a::b(); }\n', 'call_expression', 'expression.call.qualified'],
+			['fn f() -> Option<u8> { x?; None }\n', 'try_expression', 'expression.propagate'],
+			["fn f() { let c = 'a'; }\n", 'char_literal_plain', 'literal.character'],
+			['fn f() { let g = gen { yield 1; }; }\n', 'gen_block', 'expression.block.generator']
+		],
+		typescript: [
+			['for (const x of y) {}\n', 'for_in_statement', 'statement.loop.for_each'],
+			['f(...a);\n', 'spread_element', 'element.spread'],
+			['new A();\n', 'new_expression', 'expression.call.construct'],
+			['a ?? b;\n', 'binary_expression', 'expression.binary.coalesce'],
+			['a ??= b;\n', 'augmented_assignment_expression', 'expression.assignment.compound.coalesce']
+		]
+	} as const;
+	for (const name of Object.keys(NEUTRAL) as (keyof typeof NEUTRAL)[]) {
+		it(`${name}: reads each renamed kind by its neutral path`, async () => {
+			const { at, find } = await surfaces(name);
+			for (const [source, kind, path] of NEUTRAL[name]) {
+				const [node, context] = find(source, kind);
+				expect(at(path)(node, context), `${kind} as ${path}`).toBe(true);
+			}
+		});
+	}
+});

@@ -20,11 +20,6 @@ export namespace Declaration {
 		// t only
 	}
 	export namespace Method {
-		export interface Dunder<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Method<G>> {
-			readonly $kind: 'declaration.method.dunder';
-			readonly name: `__${string}__`;
-			readonly stem: string;
-		}
 		export interface Signature<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Method<G>> {
 			// claimed by rt
 			readonly $kind: 'declaration.method.signature';
@@ -34,6 +29,11 @@ export namespace Declaration {
 			readonly parameters: G['slots']['declaration.method.signature']['parameters'][];
 			readonly static?: Flag;
 			// t only
+		}
+		export interface Special<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Method<G>> {
+			readonly $kind: 'declaration.method.special';
+			readonly name: `__${string}__`;
+			readonly stem: string;
 		}
 	}
 }

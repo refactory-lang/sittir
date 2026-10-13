@@ -1871,7 +1871,7 @@
           ]
         },
         {
-          "vocab": "expression.call.path",
+          "vocab": "expression.call.qualified",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -1993,10 +1993,10 @@
       "members": []
     },
     "char_literal": {
-      "vocab": "literal.char",
+      "vocab": "literal.character",
       "read": [
         {
-          "vocab": "literal.char",
+          "vocab": "literal.character",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2006,7 +2006,7 @@
       "members": []
     },
     "char_literal_empty": {
-      "vocab": "literal.char",
+      "vocab": "literal.character",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -2018,7 +2018,7 @@
           "test": []
         },
         {
-          "vocab": "literal.char",
+          "vocab": "literal.character",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2028,10 +2028,10 @@
       "members": []
     },
     "char_literal_escaped": {
-      "vocab": "literal.char",
+      "vocab": "literal.character",
       "read": [
         {
-          "vocab": "literal.char",
+          "vocab": "literal.character",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2041,7 +2041,7 @@
       "members": []
     },
     "char_literal_escaped_hex": {
-      "vocab": "literal.char",
+      "vocab": "literal.character",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -2053,7 +2053,7 @@
           "test": []
         },
         {
-          "vocab": "literal.char",
+          "vocab": "literal.character",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2086,7 +2086,7 @@
       ]
     },
     "char_literal_escaped_simple": {
-      "vocab": "literal.char",
+      "vocab": "literal.character",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -2098,7 +2098,7 @@
           "test": []
         },
         {
-          "vocab": "literal.char",
+          "vocab": "literal.character",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2131,7 +2131,7 @@
       ]
     },
     "char_literal_escaped_unicode_braced": {
-      "vocab": "literal.char",
+      "vocab": "literal.character",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -2143,7 +2143,7 @@
           "test": []
         },
         {
-          "vocab": "literal.char",
+          "vocab": "literal.character",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2176,7 +2176,7 @@
       ]
     },
     "char_literal_escaped_unicode_fixed": {
-      "vocab": "literal.char",
+      "vocab": "literal.character",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -2188,7 +2188,7 @@
           "test": []
         },
         {
-          "vocab": "literal.char",
+          "vocab": "literal.character",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2221,7 +2221,7 @@
       ]
     },
     "char_literal_plain": {
-      "vocab": "literal.char",
+      "vocab": "literal.character",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -2233,7 +2233,7 @@
           "test": []
         },
         {
-          "vocab": "literal.char",
+          "vocab": "literal.character",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5762,10 +5762,10 @@
       }
     },
     "extern_crate_declaration": {
-      "vocab": "statement.import.crate",
+      "vocab": "statement.import.package",
       "read": [
         {
-          "vocab": "statement.import.crate.private",
+          "vocab": "statement.import.package.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5874,7 +5874,7 @@
           ]
         },
         {
-          "vocab": "statement.import.crate.public.internal",
+          "vocab": "statement.import.package.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5983,7 +5983,7 @@
           ]
         },
         {
-          "vocab": "statement.import.crate.public.restricted",
+          "vocab": "statement.import.package.public.restricted",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -6065,7 +6065,7 @@
           ]
         },
         {
-          "vocab": "statement.import.crate.public",
+          "vocab": "statement.import.package.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -6109,7 +6109,7 @@
           ]
         },
         {
-          "vocab": "statement.import.crate.public.internal",
+          "vocab": "statement.import.package.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -6153,7 +6153,7 @@
           ]
         },
         {
-          "vocab": "statement.import.crate",
+          "vocab": "statement.import.package",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -7078,10 +7078,10 @@
       "members": []
     },
     "for_expression": {
-      "vocab": "statement.loop.for",
+      "vocab": "statement.loop.for_each",
       "read": [
         {
-          "vocab": "statement.loop.for",
+          "vocab": "statement.loop.for_each",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -10863,10 +10863,10 @@
       }
     },
     "gen_block": {
-      "vocab": "expression.block.gen",
+      "vocab": "expression.block.generator",
       "read": [
         {
-          "vocab": "expression.block.gen",
+          "vocab": "expression.block.generator",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -18464,10 +18464,10 @@
       }
     },
     "try_expression": {
-      "vocab": "expression.try",
+      "vocab": "expression.propagate",
       "read": [
         {
-          "vocab": "expression.try",
+          "vocab": "expression.propagate",
           "toplevel": true,
           "within": [],
           "pins": [],
