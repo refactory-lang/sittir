@@ -89,7 +89,7 @@
   ["type.primitive.character", "ID7"],
   ["type.primitive.string", "ID7"],
   ["type.primitive.void", "ID7"],
-  ["type.primitive.any", "ID7"],
+  ["type.primitive.unchecked", "ID7"],
   ["type.primitive.unknown", "ID7"],
   ["type.primitive.symbol", "ID7"],
   ["type.primitive.object", "ID7"],

@@ -424,7 +424,6 @@ type.pointer                                     <- type.pointer  r:pointer_type
 type.predicate                                   <- type.predicate  t:type_predicate
 type.predicate.asserts                           <- type.predicate.asserts  t:asserts
 type.primitive                                   <- type.primitive  r:primitive_type t:predefined_type
-type.primitive.any                               <- none
 type.primitive.boolean                           <- none
 type.primitive.character                         <- none
 type.primitive.floating                          <- none
@@ -441,6 +440,7 @@ type.primitive.never                             <- type.primitive.never  r:neve
 type.primitive.object                            <- none
 type.primitive.string                            <- none
 type.primitive.symbol                            <- none
+type.primitive.unchecked                         <- none
 type.primitive.unknown                           <- none
 type.primitive.void                              <- none
 type.qualified                                   <- type.qualified  r:qualified_type

@@ -218,7 +218,7 @@ The bindings spec's feature table records the first five as markers that a compo
 | `character` | `char` | | char |
 | `string` | `str` | `string` | str |
 | `never` | `!` (`never_type`) | `never` | |
-| `void`, `any`, `unknown`, `object` | | each keyword | |
+| `void`, `unchecked`, `unknown`, `object` | | each keyword; `unchecked` is `any` | `unchecked`: any |
 | `symbol` | | `symbol`, `unique symbol` | |
 
 Two yes/no facts are flags, as a yes/no fact always is: `unsigned` on the integral kinds, which rust's `u8` … `usize` set, and `unique` on `symbol`.
@@ -314,5 +314,5 @@ The maintainer ruled each question on 2026-10-12. Where a ruling went beyond the
 - **ID4.** Rust's path roots. *Ruled (a):* `super` and `crate` claim `identifier`, and `self` at the path sites is aliased into a kind that claims `identifier`, so that `self` everywhere else is the receiver. Like the `crate` alias, it needs no clones.
 - **ID5.** The receiver: typescript's `this` and rust's `self` become `identifier.receiver`, with synonyms `self` and `this`. *Ruled: agree.*
 - **ID6.** Typescript's `super` keeps `identifier.super`, the base-class reference, with synonym `base`. *Ruled: agree.*
-- **ID7.** Rust's `label`, `lifetime` and `metavariable` stay, and so does `type.primitive`. *Ruled: agree,* with `type.primitive` a supertype that has a refinement for each primitive, the numeric ones under two levels with numeric names (§3).
+- **ID7.** Rust's `label`, `lifetime` and `metavariable` stay, and so does `type.primitive`. *Ruled: agree,* with `type.primitive` a supertype that has a refinement for each primitive, the numeric ones under two levels with numeric names (§3). Typescript's `any` is `type.primitive.unchecked`, with synonym `any`, since the vocabulary's union of each namespace's kinds already takes the name `Any` (the maintainer, 2026-10-13).
 - **ID8.** `type.named` and `type.named.prelude` go (finding 6). *Ruled: agree.*
