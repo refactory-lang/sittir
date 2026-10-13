@@ -208,9 +208,9 @@
 (escape_interpolation) @literal.string.escape
 (string_fragment) @literal.string.text
 (concatenated_string) @literal.string.concatenated
-((string (string_start) @_p) @literal.string.interpolated (#match? @_p "^[fF]"))
-((string (string_start) @_p) @literal.string.bytes (#match? @_p "^[bB]"))
-((string (string_start) @_p) @literal.string.raw (#match? @_p "^[rR]"))
+((string (string_start) @_p) @literal.string.interpolated (#match? @_p "^[a-zA-Z]*[fFtT]"))
+((string (string_start) @_p) @literal.string.bytes (#match? @_p "^[a-zA-Z]*[bB]"))
+((string (string_start) @_p) @literal.string.raw (#match? @_p "^[a-zA-Z]*[rR]"))
 ((string (string_start) @_p) @literal.string.triple (#match? @_p "\"\"\"|'''"))
 (integer_decimal_plain) @literal.number.integer
 (integer_decimal_long) @literal.number.integer.big

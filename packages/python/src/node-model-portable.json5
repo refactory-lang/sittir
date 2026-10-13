@@ -5948,7 +5948,7 @@
               "via": [],
               "plan": {
                 "op": "match",
-                "pattern": "^[fF]",
+                "pattern": "^[a-zA-Z]*[fFtT]",
                 "fields": [
                   "string_start"
                 ],
@@ -5968,7 +5968,7 @@
               "via": [],
               "plan": {
                 "op": "match",
-                "pattern": "^[bB]",
+                "pattern": "^[a-zA-Z]*[bB]",
                 "fields": [
                   "string_start"
                 ],
@@ -5988,7 +5988,7 @@
               "via": [],
               "plan": {
                 "op": "match",
-                "pattern": "^[rR]",
+                "pattern": "^[a-zA-Z]*[rR]",
                 "fields": [
                   "string_start"
                 ],

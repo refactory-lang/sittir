@@ -2534,17 +2534,23 @@ const table: PortableTable = {
 			{
 				path: 'literal.string.interpolated',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^[fF]', fields: ['string_start'], kinds: [] } }]
+				test: [
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[fFtT]', fields: ['string_start'], kinds: [] } }
+				]
 			},
 			{
 				path: 'literal.string.bytes',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^[bB]', fields: ['string_start'], kinds: [] } }]
+				test: [
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[bB]', fields: ['string_start'], kinds: [] } }
+				]
 			},
 			{
 				path: 'literal.string.raw',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^[rR]', fields: ['string_start'], kinds: [] } }]
+				test: [
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[rR]', fields: ['string_start'], kinds: [] } }
+				]
 			},
 			{
 				path: 'literal.string.triple',

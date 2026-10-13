@@ -112,8 +112,8 @@ describe('readTestOf', () => {
 	});
 
 	it('compares a hidden capture under the claimed node through the slot that holds it', async () => {
-		expect(await testsOf('((string (string_start) @_p) @literal.string.interpolated (#match? @_p "^[fF]"))', 'string')).toEqual([
-			['literal.string.interpolated', [{ up: 0, via: [], plan: { op: 'match', pattern: '^[fF]', fields: [], kinds: ['string_start'] } }]]
+		expect(await testsOf('((string (string_start) @_p) @literal.string.interpolated (#match? @_p "^[a-zA-Z]*[fFtT]"))', 'string')).toEqual([
+			['literal.string.interpolated', [{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[fFtT]', fields: [], kinds: ['string_start'] } }]]
 		]);
 	});
 
