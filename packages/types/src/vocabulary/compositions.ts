@@ -73,6 +73,7 @@ import type {
 	TypeAliases,
 	TypeAnnotations,
 	Typeclasses,
+	TypeOnlyImports,
 	UnsafeCode,
 	UntaggedUnions,
 	Visibility,
@@ -192,4 +193,5 @@ export interface TypeScriptFeatures
 		AbstractClasses,
 		ExplicitOverrides,
 		Overloading,
-		ModuleDeclarations {}
+		ModuleDeclarations,
+		TypeOnlyImports {}

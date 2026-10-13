@@ -78,6 +78,7 @@ export type { SyntacticMetaprogramming } from './syntactic-metaprogramming/index
 export type { Tuples } from './tuples/index.ts';
 export type { TypeAliases } from './type-aliases/index.ts';
 export type { TypeAnnotations } from './type-annotations/index.ts';
+export type { TypeOnlyImports } from './modules/type-only-imports/index.ts';
 export type { Typeclasses } from './open-type-extension/typeclasses/index.ts';
 export type { UnsafeCode } from './unsafe-code/index.ts';
 export type { UntaggedUnions } from './untagged-unions/index.ts';

@@ -59,10 +59,6 @@ export namespace Statement {
 			readonly $kind: 'statement.import.future';
 			readonly content: (V.Clause.Import.Alias<G> | V.Identifier.Dotted<G>)[];
 		}
-		export interface Type<G extends GrammarContext<G>> extends SubKindOf<V.Statement.Import<G>> {
-			// claimed by t
-			readonly $kind: 'statement.import.type';
-		}
 		export interface Typeof<G extends GrammarContext<G>> extends SubKindOf<V.Statement.Import<G>> {
 			// claimed by t
 			readonly $kind: 'statement.import.typeof';

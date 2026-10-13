@@ -5486,32 +5486,6 @@
       "vocab": "statement.import",
       "read": [
         {
-          "vocab": "statement.import.type",
-          "toplevel": true,
-          "within": [],
-          "pins": [
-            {
-              "member": "importClause",
-              "slot": "import_clause",
-              "text": "type"
-            }
-          ],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "type",
-                "fields": [
-                  "import_clause"
-                ],
-                "kinds": []
-              }
-            }
-          ]
-        },
-        {
           "vocab": "statement.import.typeof",
           "toplevel": true,
           "within": [],
@@ -5568,6 +5542,18 @@
             {
               "owner": "import_statement",
               "slot": "import_attribute"
+            }
+          ]
+        },
+        {
+          "name": "typeOnly",
+          "route": "presence",
+          "via": [],
+          "token": "type",
+          "path": [
+            {
+              "owner": "import_statement",
+              "slot": "import_clause"
             }
           ]
         },
@@ -12283,9 +12269,9 @@
       },
       {
         "depth": 3,
-        "paths": 97,
+        "paths": 96,
         "kinds": 80,
-        "refinements": 69
+        "refinements": 68
       },
       {
         "depth": 4,
