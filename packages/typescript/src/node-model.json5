@@ -161,7 +161,8 @@
     "arrow_function": {
       "definedBy": "override",
       "childKind": {
-        "arrow_function_parameter": "parameter"
+        "arrow_function_parameter": "parameter",
+        "call_signature": "call_signature"
       }
     },
     "_lhs_expression": {
@@ -222,12 +223,14 @@
     "export_statement_default_declaration": {
       "definedBy": "override",
       "childKind": {
+        "declaration": "declaration",
         "export_statement_default_declaration_default_kw": "default_kw"
       }
     },
     "export_statement_default_declaration_default_kw": {
       "definedBy": "override",
       "childKind": {
+        "declaration": "declaration",
         "export_statement_default_declaration_default_kw_value": "value"
       }
     }
@@ -2113,7 +2116,7 @@
       }
     },
     "extends_clause": {
-      "extends_clause_single": {
+      "types": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -13172,9 +13175,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "extends_clause_single",
-          "propertyName": "extendsClauseSingles",
-          "paramName": "extendsClauseSingles",
+          "name": "types",
+          "propertyName": "types",
+          "paramName": "types",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -13194,7 +13197,7 @@
       ],
       "factoryShape": "spread",
       "factoryFields": [
-        "extends_clause_single"
+        "types"
       ]
     },
     {

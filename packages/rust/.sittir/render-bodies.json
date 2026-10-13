@@ -4682,7 +4682,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "match_arm"
+			"name": "arms"
 		},
 		{
 			"kind": "slot",

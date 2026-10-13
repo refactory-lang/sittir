@@ -4682,22 +4682,18 @@ export function buildImportRequireClause(config: T.ImportRequireClause.Config): 
 
 export function buildExtendsClause(...children: NonEmptyArray<Admit<T.ExtendsClauseSingle>>): T.ExtendsClause.Bound {
 	_assertNonEmpty(children, 'extends_clause.children');
-	const _extends_clause_single = rejectBareText(
-		children,
-		'ExtendsClause.extendsClauseSingle',
-		'a built ExtendsClauseSingle'
-	);
+	const _types = rejectBareText(children, 'ExtendsClause.types', 'a built ExtendsClauseSingle');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExtendsClause as const,
 		$source: 2 as const,
 		$named: true as const,
-		_extends_clause_single,
+		_types,
 		$with: {
-			extendsClauseSingles: (...vs: NonEmptyArray<Admit<T.ExtendsClauseSingle>>) =>
-				rebuilt(node, handle, () => buildExtendsClause(...restItems('extendsClauseSingles', vs)))
+			types: (...vs: NonEmptyArray<Admit<T.ExtendsClauseSingle>>) =>
+				rebuilt(node, handle, () => buildExtendsClause(...restItems('types', vs)))
 		},
-		extendsClauseSingles: () => hydrateStoredSlots(node, '_extends_clause_single'),
+		types: () => hydrateStoredSlots(node, '_types'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),

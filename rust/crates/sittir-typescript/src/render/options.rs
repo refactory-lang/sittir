@@ -426,11 +426,11 @@ pub const SITE_EXPRESSION_STATEMENT_TERMINATOR: usize = 417;
 pub const SITE_EXPRESSION_STATEMENT_SEMI_BEFORE: usize = 418;
 pub const SITE_EXPRESSION_STATEMENT_EXPRESSION_STATEMENT_BEFORE: usize = 419;
 pub const SITE_EXPRESSION_STATEMENT_EXPRESSION_STATEMENT_AFTER: usize = 420;
-pub const SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_EXTENDS_CLAUSE_SINGLE_AFTER: usize = 421;
-pub const SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_END: usize = 422;
-pub const SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_START: usize = 423;
-pub const SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_SEPARATOR_SPACE_BEFORE: usize = 424;
-pub const SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_SEPARATOR_SPACE_AFTER: usize = 425;
+pub const SITE_EXTENDS_CLAUSE_TYPES_EXTENDS_CLAUSE_SINGLE_AFTER: usize = 421;
+pub const SITE_EXTENDS_CLAUSE_TYPES_END: usize = 422;
+pub const SITE_EXTENDS_CLAUSE_TYPES_START: usize = 423;
+pub const SITE_EXTENDS_CLAUSE_TYPES_SEPARATOR_SPACE_BEFORE: usize = 424;
+pub const SITE_EXTENDS_CLAUSE_TYPES_SEPARATOR_SPACE_AFTER: usize = 425;
 pub const SITE_EXTENDS_CLAUSE_EXTENDS_KEYWORD_AFTER: usize = 426;
 pub const SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_BEFORE: usize = 427;
 pub const SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_AFTER: usize = 428;
@@ -1863,11 +1863,11 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("expression_statement", "semi_before", "semi_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("expression_statement", "expression_statement_before", "expression_statement_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("expression_statement", "expression_statement_after", "expression_statement_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("extends_clause", "extends_clause_single_extends_clause_single_after", "extends_clause_single_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("extends_clause", "types_extends_clause_single_after", "extends_clause_single_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("extends_clause", "extends_clause_end", "extends_clause_end", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("extends_clause", "extends_clause_start", "extends_clause_start", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("extends_clause", "extends_clause_single_separator_space_before", "comma_separator_space_before", &[180, 181, 182, 183, 184, 185]),
-    ("extends_clause", "extends_clause_single_separator_space_after", "comma_separator_space_after", &[180, 181, 182, 183, 184, 185]),
+    ("extends_clause", "types_separator_space_before", "comma_separator_space_before", &[180, 181, 182, 183, 184, 185]),
+    ("extends_clause", "types_separator_space_after", "comma_separator_space_after", &[180, 181, 182, 183, 184, 185]),
     ("extends_clause", "extends_keyword_after", "extends_keyword_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("extends_clause", "extends_clause_before", "extends_clause_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("extends_clause", "extends_clause_after", "extends_clause_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
@@ -5078,7 +5078,7 @@ pub static SEATS_EXPORT_STATEMENT_DEFAULT_DECLARATION_DECORATOR: &[u16] = &[
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE: &[u16] = &[
+pub static SEATS_EXTENDS_CLAUSE_TYPES: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
@@ -6731,21 +6731,21 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ::sittir_core::options::AddressNode::Branch { key: "extendsClause", path: "(extends_clause)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_AFTER, path: "(extends_clause)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_BEFORE, path: "(extends_clause)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "extendsClauseSingle", path: "(extends_clause)/extends_clause_single:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_END, path: "(extends_clause)/extends_clause_single:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "extendsClauseSingle", path: "(extends_clause)/extends_clause_single:/(extends_clause_single)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_EXTENDS_CLAUSE_SINGLE_AFTER, path: "(extends_clause)/extends_clause_single:/(extends_clause_single)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(extends_clause)/extends_clause_single:/separator", children: &[
-                ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(extends_clause)/extends_clause_single:/separator/\",\"", children: &[
-                    ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_SEPARATOR_SPACE_AFTER, path: "(extends_clause)/extends_clause_single:/separator/\",\"/after" }] },
-                    ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_SEPARATOR_SPACE_BEFORE, path: "(extends_clause)/extends_clause_single:/separator/\",\"/before" }] },
-                ] },
-            ] },
-            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_START, path: "(extends_clause)/extends_clause_single:/start" }] },
-        ] },
         ::sittir_core::options::AddressNode::Branch { key: "extendsKeyword", path: "(extends_clause)/\"extends\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXTENDS_CLAUSE_EXTENDS_KEYWORD_AFTER, path: "(extends_clause)/\"extends\"/after" }] },
+        ] },
+        ::sittir_core::options::AddressNode::Branch { key: "types", path: "(extends_clause)/types:", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_EXTENDS_CLAUSE_TYPES_END, path: "(extends_clause)/types:/end" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "extendsClauseSingle", path: "(extends_clause)/types:/(extends_clause_single)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXTENDS_CLAUSE_TYPES_EXTENDS_CLAUSE_SINGLE_AFTER, path: "(extends_clause)/types:/(extends_clause_single)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(extends_clause)/types:/separator", children: &[
+                ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(extends_clause)/types:/separator/\",\"", children: &[
+                    ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXTENDS_CLAUSE_TYPES_SEPARATOR_SPACE_AFTER, path: "(extends_clause)/types:/separator/\",\"/after" }] },
+                    ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_EXTENDS_CLAUSE_TYPES_SEPARATOR_SPACE_BEFORE, path: "(extends_clause)/types:/separator/\",\"/before" }] },
+                ] },
+            ] },
+            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_EXTENDS_CLAUSE_TYPES_START, path: "(extends_clause)/types:/start" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "extendsClauseSingle", path: "(extends_clause_single)", children: &[

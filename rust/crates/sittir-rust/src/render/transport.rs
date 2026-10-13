@@ -30735,14 +30735,14 @@ impl ::sittir_core::prepare::Prepare for TypeArgumentTransport {
 pub struct MatchBlockArmsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_match_arm")]
-    #[slot]
-    pub match_arm: Vec<::sittir_core::SlotValue<MatchArmTransport>>,
+    #[wire(key = "_arms")]
+    #[slot(field = field::ARMS)]
+    pub arms: Vec<::sittir_core::SlotValue<MatchArmTransport>>,
     #[wire(key = "_last_arm")]
     #[slot(field = field::LAST_ARM)]
     pub last_arm: ::sittir_core::SlotValue<Box<LastMatchArmTransport>>,
-    #[wire(key = "_match_arm_separator_space")]
-    pub match_arm_separator_space: Option<u16>,
+    #[wire(key = "_arms_separator_space")]
+    pub arms_separator_space: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for MatchBlockArmsTransport {
@@ -30767,10 +30767,10 @@ impl ::sittir_core::prepare::Prepare for MatchBlockArmsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        ::sittir_core::prepare::fill_slot_gaps(self.match_arm.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_match_arm"));
-        self.match_arm_separator_space.get_or_insert(ctx.options.spacing[options::SITE_MATCH_BLOCK_ARMS_MATCH_ARM_SEPARATOR_SPACE].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.match_arm.iter_mut().map(Some), options::SEATS_MATCH_BLOCK_ARMS_MATCH_ARM, ctx);
-        self.match_arm.prepare(ctx)?;
+        ::sittir_core::prepare::fill_slot_gaps(self.arms.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_arms"));
+        self.arms_separator_space.get_or_insert(ctx.options.spacing[options::SITE_MATCH_BLOCK_ARMS_ARMS_SEPARATOR_SPACE].arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.arms.iter_mut().map(Some), options::SEATS_MATCH_BLOCK_ARMS_ARMS, ctx);
+        self.arms.prepare(ctx)?;
         self.last_arm.prepare(ctx)?;
         Ok(())
     }
@@ -41602,22 +41602,22 @@ fn render_type_argument(node: &TypeArgumentTransport, w: &mut dyn ::sittir_core:
 }
 
 fn render_match_block_arms(node: &MatchBlockArmsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let last_arm = &node.last_arm;
-    let match_arm = ListView {
-        items: &node.match_arm,
+    let arms = ListView {
+        items: &node.arms,
         template: "{}",
         token: "",
         separators: None,
         before: 0,
-        after: node.match_arm_separator_space.unwrap_or(0),
+        after: node.arms_separator_space.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: Some(options::SITE_MATCH_BLOCK_ARMS_MATCH_ARM_START),
-        tail: Some(options::SITE_MATCH_BLOCK_ARMS_MATCH_ARM_END),
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_match_arm"),
+        head: Some(options::SITE_MATCH_BLOCK_ARMS_ARMS_START),
+        tail: Some(options::SITE_MATCH_BLOCK_ARMS_ARMS_END),
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_arms"),
     };
+    let last_arm = &node.last_arm;
     w.edge(::sittir_core::types::KindId(434), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    match_arm.render(w)?;
+    arms.render(w)?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_last_arm", 0, w, |w| last_arm.render(w))?;
     w.edge(::sittir_core::types::KindId(434), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())

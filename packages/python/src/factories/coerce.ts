@@ -5001,9 +5001,9 @@ export function resolveListComprehension_body(
 	);
 }
 
-export function resolveListComprehension_comprehensionClauses(
-	value: T.ListComprehension.LooseConfig['comprehensionClauses']
-): Admit<T.ListComprehension['_comprehension_clauses']> {
+export function resolveListComprehension_clauses(
+	value: T.ListComprehension.LooseConfig['clauses']
+): Admit<T.ListComprehension['_clauses']> {
 	return _resolveOneBranch<T.ComprehensionClauses>(value, 'comprehension_clauses');
 }
 
@@ -5014,11 +5014,7 @@ export function coerceToListComprehension(
 		return input as unknown as ReturnType<typeof F.buildListComprehension>;
 	return F.buildListComprehension({
 		body: _requireField('list_comprehension', 'body', resolveListComprehension_body(input.body)),
-		comprehensionClauses: _requireField(
-			'list_comprehension',
-			'comprehensionClauses',
-			resolveListComprehension_comprehensionClauses(input.comprehensionClauses)
-		)
+		clauses: _requireField('list_comprehension', 'clauses', resolveListComprehension_clauses(input.clauses))
 	});
 }
 
@@ -5028,9 +5024,9 @@ export function resolveDictionaryComprehension_body(
 	return _resolveOneBranch<T.Pair>(value, 'pair');
 }
 
-export function resolveDictionaryComprehension_comprehensionClauses(
-	value: T.DictionaryComprehension.LooseConfig['comprehensionClauses']
-): Admit<T.DictionaryComprehension['_comprehension_clauses']> {
+export function resolveDictionaryComprehension_clauses(
+	value: T.DictionaryComprehension.LooseConfig['clauses']
+): Admit<T.DictionaryComprehension['_clauses']> {
 	return _resolveOneBranch<T.ComprehensionClauses>(value, 'comprehension_clauses');
 }
 
@@ -5041,11 +5037,7 @@ export function coerceToDictionaryComprehension(
 		return input as unknown as ReturnType<typeof F.buildDictionaryComprehension>;
 	return F.buildDictionaryComprehension({
 		body: _requireField('dictionary_comprehension', 'body', resolveDictionaryComprehension_body(input.body)),
-		comprehensionClauses: _requireField(
-			'dictionary_comprehension',
-			'comprehensionClauses',
-			resolveDictionaryComprehension_comprehensionClauses(input.comprehensionClauses)
-		)
+		clauses: _requireField('dictionary_comprehension', 'clauses', resolveDictionaryComprehension_clauses(input.clauses))
 	});
 }
 
@@ -5058,9 +5050,9 @@ export function resolveSetComprehension_body(
 	);
 }
 
-export function resolveSetComprehension_comprehensionClauses(
-	value: T.SetComprehension.LooseConfig['comprehensionClauses']
-): Admit<T.SetComprehension['_comprehension_clauses']> {
+export function resolveSetComprehension_clauses(
+	value: T.SetComprehension.LooseConfig['clauses']
+): Admit<T.SetComprehension['_clauses']> {
 	return _resolveOneBranch<T.ComprehensionClauses>(value, 'comprehension_clauses');
 }
 
@@ -5069,11 +5061,7 @@ export function coerceToSetComprehension(input: T.SetComprehension.Loose): Retur
 		return input as unknown as ReturnType<typeof F.buildSetComprehension>;
 	return F.buildSetComprehension({
 		body: _requireField('set_comprehension', 'body', resolveSetComprehension_body(input.body)),
-		comprehensionClauses: _requireField(
-			'set_comprehension',
-			'comprehensionClauses',
-			resolveSetComprehension_comprehensionClauses(input.comprehensionClauses)
-		)
+		clauses: _requireField('set_comprehension', 'clauses', resolveSetComprehension_clauses(input.clauses))
 	});
 }
 
@@ -5086,9 +5074,9 @@ export function resolveGeneratorExpression_body(
 	);
 }
 
-export function resolveGeneratorExpression_comprehensionClauses(
-	value: T.GeneratorExpression.LooseConfig['comprehensionClauses']
-): Admit<T.GeneratorExpression['_comprehension_clauses']> {
+export function resolveGeneratorExpression_clauses(
+	value: T.GeneratorExpression.LooseConfig['clauses']
+): Admit<T.GeneratorExpression['_clauses']> {
 	return _resolveOneBranch<T.ComprehensionClauses>(value, 'comprehension_clauses');
 }
 
@@ -5099,11 +5087,7 @@ export function coerceToGeneratorExpression(
 		return input as unknown as ReturnType<typeof F.buildGeneratorExpression>;
 	return F.buildGeneratorExpression({
 		body: _requireField('generator_expression', 'body', resolveGeneratorExpression_body(input.body)),
-		comprehensionClauses: _requireField(
-			'generator_expression',
-			'comprehensionClauses',
-			resolveGeneratorExpression_comprehensionClauses(input.comprehensionClauses)
-		)
+		clauses: _requireField('generator_expression', 'clauses', resolveGeneratorExpression_clauses(input.clauses))
 	});
 }
 
@@ -5380,7 +5364,7 @@ export function coerceToString(input: T.String.Loose): ReturnType<typeof F.build
 export function coerceToStringContent(...input: T.StringContent.LooseArgs): ReturnType<typeof F.buildStringContent> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.StringContent)) {
 		const data = input[0];
-		const stored = (data as unknown as { _content?: unknown })._content;
+		const stored = (data as unknown as { _elements?: unknown })._elements;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildStringContent(
 			...(coerceMixedEnumStorage(
@@ -5399,8 +5383,8 @@ export function coerceToStringContent(...input: T.StringContent.LooseArgs): Retu
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('content' in head)) return input;
-		const v = (head as Record<string, unknown>)['content'];
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('elements' in head)) return input;
+		const v = (head as Record<string, unknown>)['elements'];
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildStringContent(
@@ -6198,9 +6182,9 @@ export function coerceToExceptClauseExceptionAs(
 	});
 }
 
-export function resolveCaseTuplePattern_listPatternCasePatterns(
-	value: T.CaseTuplePattern.LooseConfig['listPatternCasePatterns']
-): Admit<T.CaseTuplePattern['_list_pattern_case_patterns']> {
+export function resolveCaseTuplePattern_elements(
+	value: T.CaseTuplePattern.LooseConfig['elements']
+): Admit<T.CaseTuplePattern['_elements']> {
 	return _resolveOneBranch<T.ListPatternCasePatterns>(value, 'list_pattern_case_patterns', undefined, true);
 }
 
@@ -6219,7 +6203,7 @@ export function coerceToCaseTuplePattern(...args: unknown[]): ReturnType<typeof 
 		return input as unknown as ReturnType<typeof F.buildCaseTuplePattern>;
 	return F.buildCaseTuplePattern(
 		_resolveOneBranch<T.ListPatternCasePatterns>(
-			configFieldOr(input, 'listPatternCasePatterns', () => input),
+			configFieldOr(input, 'elements', () => input),
 			'list_pattern_case_patterns',
 			undefined,
 			true
@@ -6227,9 +6211,9 @@ export function coerceToCaseTuplePattern(...args: unknown[]): ReturnType<typeof 
 	);
 }
 
-export function resolveCaseListPattern_listPatternCasePatterns(
-	value: T.CaseListPattern.LooseConfig['listPatternCasePatterns']
-): Admit<T.CaseListPattern['_list_pattern_case_patterns']> {
+export function resolveCaseListPattern_elements(
+	value: T.CaseListPattern.LooseConfig['elements']
+): Admit<T.CaseListPattern['_elements']> {
 	return _resolveOneBranch<T.ListPatternCasePatterns>(value, 'list_pattern_case_patterns', undefined, true);
 }
 
@@ -6248,7 +6232,7 @@ export function coerceToCaseListPattern(...args: unknown[]): ReturnType<typeof F
 		return input as unknown as ReturnType<typeof F.buildCaseListPattern>;
 	return F.buildCaseListPattern(
 		_resolveOneBranch<T.ListPatternCasePatterns>(
-			configFieldOr(input, 'listPatternCasePatterns', () => input),
+			configFieldOr(input, 'elements', () => input),
 			'list_pattern_case_patterns',
 			undefined,
 			true

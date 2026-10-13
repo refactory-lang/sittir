@@ -1059,7 +1059,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['traitBounds', { fields: [], kinds: ['trait_bounds'] }]
 	],
 	434: [
-		['matchArms', { fields: [], kinds: ['match_arm_with_comma', 'match_arm_block_ending'] }],
+		['arms', { fields: ['arms'], kinds: [] }],
 		['lastArm', { fields: ['last_arm'], kinds: [] }]
 	],
 	465: [['content', { fields: ['content'], kinds: [] }]],

@@ -38,7 +38,8 @@ const FORMS: Record<string, { form: Rule; extra?: Record<string, Rule> }> = {
 		form: seq(receiver, optional(choice(str(','), field('elements', alias(sym('_parameters_elements_receiver_tail'), 'parameters_elements_receiver_tail'))))),
 		extra: { _parameters_elements_receiver_tail: run }
 	},
-	'two-rules-plain': { form: seq(receiver, optional(seq(str(','), optional(field('elements', sym('parameters_elements')))))) }
+	'two-rules-plain': { form: seq(receiver, optional(seq(str(','), optional(field('elements', sym('parameters_elements')))))) },
+	'two-arms': { form: choice(seq(receiver, optional(str(','))), seq(receiver, str(','), field('elements', sym('parameters_elements')))) }
 };
 
 for (const [name, { form, extra }] of Object.entries(FORMS)) {

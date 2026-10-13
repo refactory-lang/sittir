@@ -495,7 +495,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['name', { fields: ['name'], kinds: [] }],
 		['source', { fields: ['source'], kinds: [] }]
 	],
-	302: [['extendsClauseSingles', { fields: [], kinds: ['extends_clause_single'] }]],
+	302: [['types', { fields: ['types'], kinds: [] }]],
 	303: [
 		['value', { fields: ['value'], kinds: [] }],
 		['typeArguments', { fields: ['type_arguments'], kinds: [] }]

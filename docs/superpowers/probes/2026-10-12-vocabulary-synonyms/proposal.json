@@ -2,8 +2,7 @@
  "renames": [
   ["declaration.parameter.self", "declaration.parameter.receiver", "NT1"],
   ["identifier.self", "identifier.receiver", "ID5"],
-  ["clause.catch", "clause.handler", "NT2 NO2"],
-  ["clause.except", "clause.handler", "NT2 NO2"],
+  ["clause.except", "clause.catch", "NT2 NO2"],
   ["expression.collection.dictionary", "expression.collection.map", "NT3"],
   ["expression.comprehension.dictionary", "expression.comprehension.map", "NT3"],
   ["element.splat.dictionary", "element.spread.map", "NT3 NT8"],
@@ -61,15 +60,48 @@
   ["type.path", "identifier.qualified", "ID2"],
   ["identifier.crate", "identifier", "ID4"],
   ["type.named.prelude", null, "ID8"],
-  ["type.named", null, "ID8"]
+  ["type.named", null, "ID8"],
+  ["statement.loop.for", "statement.loop.for_each", "NT13"],
+  ["pattern.match", null, "NO7"],
+  ["pattern.tuple.struct", "pattern.struct", "NO9"],
+  ["statement.import.type", null, "typeOnly"],
+  ["module", "file", "SK4"],
+  ["declaration.variable.static", "declaration.variable", "SK2"],
+  ["declaration.method.getter", "declaration.property.getter", "SK5"],
+  ["declaration.method.setter", "declaration.property.setter", "SK5"],
+  ["declaration.method.signature.getter", "declaration.property.signature.getter", "SK5"],
+  ["declaration.method.signature.setter", "declaration.property.signature.setter", "SK5"],
+  ["declaration.method.signature.abstract.getter", "declaration.property.signature.abstract.getter", "SK5"],
+  ["declaration.method.signature.abstract.setter", "declaration.property.signature.abstract.setter", "SK5"]
  ],
  "adds": [
-  ["statement.import.alias", "NO11"]
+  ["statement.import.alias", "NO11"],
+  ["type.rest.map", "NO5"],
+  ["type.primitive.integral.int8", "ID7"],
+  ["type.primitive.integral.int16", "ID7"],
+  ["type.primitive.integral.int32", "ID7"],
+  ["type.primitive.integral.int64", "ID7"],
+  ["type.primitive.integral.int128", "ID7"],
+  ["type.primitive.integral.size", "ID7"],
+  ["type.primitive.floating.float32", "ID7"],
+  ["type.primitive.floating.float64", "ID7"],
+  ["type.primitive.boolean", "ID7"],
+  ["type.primitive.character", "ID7"],
+  ["type.primitive.string", "ID7"],
+  ["type.primitive.void", "ID7"],
+  ["type.primitive.unchecked", "ID7"],
+  ["type.primitive.unknown", "ID7"],
+  ["type.primitive.symbol", "ID7"],
+  ["type.primitive.object", "ID7"],
+  ["declaration.property", "SK6"],
+  ["declaration.property.private", "SK6"],
+  ["declaration.property.protected", "SK6"],
+  ["declaration.property.public", "SK6"]
  ],
  "levels": {
   "argument": {"named": ["keyword"]},
   "clause": {
-   "handler": ["catch", "except", "rescue"],
+   "catch": ["except", "rescue"],
    "else_if": ["elif", "elsif", "elseif"],
    "finally": ["ensure"],
    "resource": ["using"],
@@ -79,16 +111,16 @@
   },
   "declaration": {
    "receiver": ["self", "this"],
-   "module": ["namespace", "mod"],
+   "module": ["mod"],
    "struct": ["record"],
    "type_alias": ["typedef", "typealias"],
    "enum_member": ["variant", "enumerator"],
-   "field": ["property"],
    "constructor": ["initializer", "init"],
    "extension": ["impl"],
    "special": ["dunder", "magic"],
    "foreign": ["extern"],
-   "internal": ["crate"]
+   "internal": ["crate"],
+   "index": ["indexer"]
   },
   "element": {"spread": ["splat", "unpack"], "map": ["dictionary", "dict"]},
   "expression": {
@@ -135,18 +167,26 @@
   "type": {
    "rest": ["splat", "unpack"],
    "nullable": ["maybe"],
-   "reference": ["borrow"]
+   "reference": ["borrow"],
+   "boolean": ["bool"],
+   "character": ["char"],
+   "string": ["str"],
+   "int8": ["byte"],
+   "int16": ["short"],
+   "float64": ["double"]
   }
  },
  "flags": {},
  "excluded": {
   "with": "python's resource statement; typescript's (javascript's) dynamic scope, statement.scope",
   "super": "typescript's base-class reference; rust's parent module in a path",
-  "self": "rust's receiver; rust's current module at a path's root",
   "as": "rust's numeric conversion; typescript's type assertion",
   "is": "python's identity test; the type test of C#, Kotlin and Swift",
   "mut": "rust's binding mutability (mutable); a reference's exclusivity (exclusive)",
-  "for": "typescript's three-part loop (statement.loop.counted) and every language's for-each (statement.loop.for)",
-  "static": "a member with no receiver (the static flag); rust's static item, a declaration.constant"
+  "for": "typescript's three-part loop (statement.loop.counted) and every language's for-each (statement.loop.for_each)",
+  "static": "a member with no receiver (the static flag); rust's static item, a declaration.variable",
+  "int": "32 bits in C, Java and C#; pointer-sized in Go and Swift",
+  "long": "64 bits in Java and C#; platform-sized in C",
+  "float": "32 bits in C, Java, C# and Swift; a double in python"
  }
 }

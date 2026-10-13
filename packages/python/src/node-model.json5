@@ -132,6 +132,13 @@
         "parenthesized_import_list": "parenthesized_import_list"
       }
     },
+    "print_statement": {
+      "definedBy": "enrich",
+      "childKind": {
+        "print_statement_chevron": "chevron",
+        "print_statement_plain": "plain"
+      }
+    },
     "expression_statement": {
       "definedBy": "override",
       "childKind": {
@@ -166,7 +173,21 @@
     "_simple_pattern": {
       "definedBy": "override",
       "childKind": {
-        "simple_pattern_negative": "negative"
+        "class_pattern": "class_pattern",
+        "splat_pattern": "splat_pattern",
+        "union_pattern": "union_pattern",
+        "case_list_pattern": "case_list_pattern",
+        "case_tuple_pattern": "case_tuple_pattern",
+        "dict_pattern": "dict_pattern",
+        "string": "string",
+        "concatenated_string": "concatenated_string",
+        "true": "true",
+        "false": "false",
+        "none": "none",
+        "simple_pattern_negative": "negative",
+        "complex_pattern": "complex_pattern",
+        "dotted_name": "dotted_name",
+        "wildcard_pattern": "wildcard_pattern"
       }
     },
     "yield": {
@@ -184,6 +205,12 @@
         "union_type": "union_type",
         "constrained_type": "constrained_type",
         "member_type": "member_type"
+      }
+    },
+    "print_statement_chevron": {
+      "definedBy": "override",
+      "childKind": {
+        "print_chevron_arguments": "print_chevron_arguments"
       }
     },
     "except_clause_exception": {
@@ -1541,7 +1568,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "comprehension_clauses": {
+      "clauses": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1557,7 +1584,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "comprehension_clauses": {
+      "clauses": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1573,7 +1600,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "comprehension_clauses": {
+      "clauses": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1589,7 +1616,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "comprehension_clauses": {
+      "clauses": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1710,7 +1737,7 @@
       }
     },
     "string_content": {
-      "content": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1909,7 +1936,7 @@
       }
     },
     "case_tuple_pattern": {
-      "list_pattern_case_patterns": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1918,7 +1945,7 @@
       }
     },
     "case_list_pattern": {
-      "list_pattern_case_patterns": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -4876,9 +4903,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "list_pattern_case_patterns",
-          "propertyName": "listPatternCasePatterns",
-          "paramName": "listPatternCasePatterns",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -4899,7 +4926,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "list_pattern_case_patterns",
       "factoryFields": [
-        "list_pattern_case_patterns"
+        "elements"
       ],
       "bareAccepts": [
         "_simple_pattern",
@@ -5064,9 +5091,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "list_pattern_case_patterns",
-          "propertyName": "listPatternCasePatterns",
-          "paramName": "listPatternCasePatterns",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -5087,7 +5114,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "list_pattern_case_patterns",
       "factoryFields": [
-        "list_pattern_case_patterns"
+        "elements"
       ],
       "bareAccepts": [
         "_simple_pattern",
@@ -6735,9 +6762,9 @@
           ]
         },
         {
-          "name": "comprehension_clauses",
-          "propertyName": "comprehensionClauses",
-          "paramName": "comprehensionClauses",
+          "name": "clauses",
+          "propertyName": "clauses",
+          "paramName": "clauses",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -6758,7 +6785,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "body",
-        "comprehension_clauses"
+        "clauses"
       ]
     },
     {
@@ -9851,9 +9878,9 @@
           ]
         },
         {
-          "name": "comprehension_clauses",
-          "propertyName": "comprehensionClauses",
-          "paramName": "comprehensionClauses",
+          "name": "clauses",
+          "propertyName": "clauses",
+          "paramName": "clauses",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -9874,7 +9901,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "body",
-        "comprehension_clauses"
+        "clauses"
       ]
     },
     {
@@ -11946,9 +11973,9 @@
           ]
         },
         {
-          "name": "comprehension_clauses",
-          "propertyName": "comprehensionClauses",
-          "paramName": "comprehensionClauses",
+          "name": "clauses",
+          "propertyName": "clauses",
+          "paramName": "clauses",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -11969,7 +11996,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "body",
-        "comprehension_clauses"
+        "clauses"
       ]
     },
     {
@@ -14600,9 +14627,9 @@
           ]
         },
         {
-          "name": "comprehension_clauses",
-          "propertyName": "comprehensionClauses",
-          "paramName": "comprehensionClauses",
+          "name": "clauses",
+          "propertyName": "clauses",
+          "paramName": "clauses",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -14623,7 +14650,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "body",
-        "comprehension_clauses"
+        "clauses"
       ]
     },
     {
@@ -15291,9 +15318,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -15334,7 +15361,7 @@
       ],
       "factoryShape": "spread",
       "factoryFields": [
-        "content"
+        "elements"
       ]
     },
     {

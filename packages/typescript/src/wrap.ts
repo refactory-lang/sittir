@@ -3661,14 +3661,12 @@ export function wrapExtendsClause(data: T.ExtendsClause, tree: TreeHandle): T.Ex
 	const node = {
 		...data,
 		$type: TSKindId.ExtendsClause as const,
-		extendsClauseSingles() {
-			return hydrateSlots<T.ExtendsClauseSingle>(this, '_extends_clause_single', tree);
+		types() {
+			return hydrateSlots<T.ExtendsClauseSingle>(this, '_types', tree);
 		},
 		$with: {
-			extendsClauseSingles: (...v: NonEmptyArray<NonNullable<T.ExtendsClause['_extends_clause_single']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapExtendsClause({ ...$edited(data), _extends_clause_single: restItems('extendsClauseSingles', v) }, tree)
-				)
+			types: (...v: NonEmptyArray<NonNullable<T.ExtendsClause['_types']>[number]>) =>
+				rebuilt(node, handle, () => wrapExtendsClause({ ...$edited(data), _types: restItems('types', v) }, tree))
 		},
 		$render: () => renderText(handle, node),
 		$trivia: {

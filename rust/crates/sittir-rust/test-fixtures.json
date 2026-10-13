@@ -43957,7 +43957,7 @@
               "$type": 293,
               "_match_block_arms": {
                 "$type": 434,
-                "_match_arm": [],
+                "_arms": [],
                 "_last_arm": {
                   "$type": 295,
                   "_attributes": [
@@ -45304,7 +45304,7 @@
           "$type": 293,
           "_match_block_arms": {
             "$type": 434,
-            "_match_arm": [],
+            "_arms": [],
             "_last_arm": {
               "$type": 295,
               "_attributes": [
@@ -45503,7 +45503,7 @@
         "$type": 293,
         "_match_block_arms": {
           "$type": 434,
-          "_match_arm": [],
+          "_arms": [],
           "_last_arm": {
             "$type": 295,
             "_attributes": [
@@ -45695,7 +45695,7 @@
       "$type": 293,
       "_match_block_arms": {
         "$type": 434,
-        "_match_arm": [],
+        "_arms": [],
         "_last_arm": {
           "$type": 295,
           "_attributes": [
@@ -45884,7 +45884,7 @@
     "pattern": "match_block_arms",
     "input": {
       "$type": 434,
-      "_match_arm": [],
+      "_arms": [],
       "_last_arm": {
         "$type": 295,
         "_attributes": [
@@ -119696,7 +119696,7 @@
               "$type": 293,
               "_match_block_arms": {
                 "$type": 434,
-                "_match_arm": [
+                "_arms": [
                   {
                     "$type": 398,
                     "_attributes": [],
@@ -119941,7 +119941,7 @@
               "$type": 293,
               "_match_block_arms": {
                 "$type": 434,
-                "_match_arm": [
+                "_arms": [
                   {
                     "$type": 397,
                     "_attributes": [],
@@ -120202,7 +120202,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "\nmatch x {\n    1 => { \"one\" }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n\n    #[attr1]\n    3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}\n\nlet msg = match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 =>\n    if a {\n        \"200 (but this is not very stylish)\"\n    }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};\n",
-    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_block_ending pattern: (match_pattern pattern: (integer_literal_decimal)) value: (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content)))) (match_arm_with_comma pattern: (match_pattern pattern: (integer_literal_decimal)) value: (string_literal string_open: (string_open) elements: (string_content))) (match_arm_with_comma pattern: (match_pattern pattern: (negative_literal value: (integer_literal_decimal))) value: (integer_literal_decimal)) (match_arm_with_comma pattern: (match_pattern pattern: (negative_literal value: (float_literal))) value: (integer_literal_decimal)) (match_arm_with_comma attributes: (attribute_item attribute: (attribute path: (identifier))) pattern: (match_pattern pattern: (integer_literal_decimal)) value: (string_literal string_open: (string_open) elements: (string_content))) (match_arm_with_comma pattern: (match_pattern pattern: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (integer_literal_decimal))))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (string_literal string_open: (string_open) elements: (string_content))))))) statements: (let_declaration pattern: (identifier) value: (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (or_pattern_binary left: (integer_literal_decimal) right: (integer_literal_decimal)) right: (integer_literal_decimal))) value: (string_literal string_open: (string_open) elements: (string_content))) (match_arm_with_comma pattern: (match_pattern pattern: (identifier) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (string_literal string_open: (string_open) elements: (string_content))) (match_arm_block_ending pattern: (match_pattern pattern: (identifier) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (if_expression condition: (identifier) consequence: (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content))))) (match_arm_with_comma pattern: (match_pattern pattern: (identifier) condition: (let_chain left: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier))) value: (identifier)) right: (identifier) right: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier))) value: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (string_literal string_open: (string_open) elements: (string_content))))))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_block_ending pattern: (match_pattern pattern: (integer_literal_decimal)) value: (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content)))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (integer_literal_decimal)) value: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (negative_literal value: (integer_literal_decimal))) value: (integer_literal_decimal)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (negative_literal value: (float_literal))) value: (integer_literal_decimal)) arms: (match_arm_with_comma attributes: (attribute_item attribute: (attribute path: (identifier))) pattern: (match_pattern pattern: (integer_literal_decimal)) value: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (integer_literal_decimal))))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (string_literal string_open: (string_open) elements: (string_content))))))) statements: (let_declaration pattern: (identifier) value: (match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (or_pattern_binary left: (integer_literal_decimal) right: (integer_literal_decimal)) right: (integer_literal_decimal))) value: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (identifier) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_block_ending pattern: (match_pattern pattern: (identifier) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (if_expression condition: (identifier) consequence: (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content))))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (identifier) condition: (let_chain left: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier))) value: (identifier)) right: (identifier) right: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier))) value: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (string_literal string_open: (string_open) elements: (string_content))))))))",
     "wrappedText": "\nmatch x {\n    1 => { \"one\" }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n\n    #[attr1]\n    3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}\n\nlet msg = match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 =>\n    if a {\n        \"200 (but this is not very stylish)\"\n    }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};\n",
     "wrappedOffset": 0
   },
@@ -120222,7 +120222,7 @@
           "$type": 293,
           "_match_block_arms": {
             "$type": 434,
-            "_match_arm": [
+            "_arms": [
               {
                 "$type": 398,
                 "_attributes": [],
@@ -120464,7 +120464,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "match x {\n    1 => { \"one\" }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n\n    #[attr1]\n    3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}",
-    "expectedReparseTree": "(expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_block_ending pattern: (match_pattern pattern: (integer_literal_decimal)) value: (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content)))) (match_arm_with_comma pattern: (match_pattern pattern: (integer_literal_decimal)) value: (string_literal string_open: (string_open) elements: (string_content))) (match_arm_with_comma pattern: (match_pattern pattern: (negative_literal value: (integer_literal_decimal))) value: (integer_literal_decimal)) (match_arm_with_comma pattern: (match_pattern pattern: (negative_literal value: (float_literal))) value: (integer_literal_decimal)) (match_arm_with_comma attributes: (attribute_item attribute: (attribute path: (identifier))) pattern: (match_pattern pattern: (integer_literal_decimal)) value: (string_literal string_open: (string_open) elements: (string_content))) (match_arm_with_comma pattern: (match_pattern pattern: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (integer_literal_decimal))))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (string_literal string_open: (string_open) elements: (string_content)))))))",
+    "expectedReparseTree": "(expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_block_ending pattern: (match_pattern pattern: (integer_literal_decimal)) value: (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content)))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (integer_literal_decimal)) value: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (negative_literal value: (integer_literal_decimal))) value: (integer_literal_decimal)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (negative_literal value: (float_literal))) value: (integer_literal_decimal)) arms: (match_arm_with_comma attributes: (attribute_item attribute: (attribute path: (identifier))) pattern: (match_pattern pattern: (integer_literal_decimal)) value: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (integer_literal_decimal))))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (string_literal string_open: (string_open) elements: (string_content)))))))",
     "wrappedText": "match x {\n    1 => { \"one\" }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n\n    #[attr1]\n    3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}\n",
     "wrappedOffset": 0
   },
@@ -120482,7 +120482,7 @@
         "$type": 293,
         "_match_block_arms": {
           "$type": 434,
-          "_match_arm": [
+          "_arms": [
             {
               "$type": 398,
               "_attributes": [],
@@ -120723,7 +120723,7 @@
     "pattern": "match_expression",
     "edits": [],
     "expectedSourceOut": "match x {\n    1 => { \"one\" }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n\n    #[attr1]\n    3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}",
-    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_block_ending pattern: (match_pattern pattern: (integer_literal_decimal)) value: (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content)))) (match_arm_with_comma pattern: (match_pattern pattern: (integer_literal_decimal)) value: (string_literal string_open: (string_open) elements: (string_content))) (match_arm_with_comma pattern: (match_pattern pattern: (negative_literal value: (integer_literal_decimal))) value: (integer_literal_decimal)) (match_arm_with_comma pattern: (match_pattern pattern: (negative_literal value: (float_literal))) value: (integer_literal_decimal)) (match_arm_with_comma attributes: (attribute_item attribute: (attribute path: (identifier))) pattern: (match_pattern pattern: (integer_literal_decimal)) value: (string_literal string_open: (string_open) elements: (string_content))) (match_arm_with_comma pattern: (match_pattern pattern: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (integer_literal_decimal))))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (string_literal string_open: (string_open) elements: (string_content))))))",
+    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_block_ending pattern: (match_pattern pattern: (integer_literal_decimal)) value: (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content)))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (integer_literal_decimal)) value: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (negative_literal value: (integer_literal_decimal))) value: (integer_literal_decimal)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (negative_literal value: (float_literal))) value: (integer_literal_decimal)) arms: (match_arm_with_comma attributes: (attribute_item attribute: (attribute path: (identifier))) pattern: (match_pattern pattern: (integer_literal_decimal)) value: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (integer_literal_decimal))))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (string_literal string_open: (string_open) elements: (string_content))))))",
     "wrappedText": "fn _f() { let _ = match x {\n    1 => { \"one\" }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n\n    #[attr1]\n    3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}; }",
     "wrappedOffset": 18
   },
@@ -120741,7 +120741,7 @@
         "$type": 293,
         "_match_block_arms": {
           "$type": 434,
-          "_match_arm": [
+          "_arms": [
             {
               "$type": 397,
               "_attributes": [],
@@ -120991,7 +120991,7 @@
     "pattern": "match_expression",
     "edits": [],
     "expectedSourceOut": "match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 =>\n    if a {\n        \"200 (but this is not very stylish)\"\n    }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n}",
-    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (or_pattern_binary left: (integer_literal_decimal) right: (integer_literal_decimal)) right: (integer_literal_decimal))) value: (string_literal string_open: (string_open) elements: (string_content))) (match_arm_with_comma pattern: (match_pattern pattern: (identifier) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (string_literal string_open: (string_open) elements: (string_content))) (match_arm_block_ending pattern: (match_pattern pattern: (identifier) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (if_expression condition: (identifier) consequence: (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content))))) (match_arm_with_comma pattern: (match_pattern pattern: (identifier) condition: (let_chain left: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier))) value: (identifier)) right: (identifier) right: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier))) value: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (string_literal string_open: (string_open) elements: (string_content))))))",
+    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (or_pattern_binary left: (integer_literal_decimal) right: (integer_literal_decimal)) right: (integer_literal_decimal))) value: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (identifier) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_block_ending pattern: (match_pattern pattern: (identifier) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (if_expression condition: (identifier) consequence: (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content))))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (identifier) condition: (let_chain left: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier))) value: (identifier)) right: (identifier) right: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier))) value: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (string_literal string_open: (string_open) elements: (string_content))))))",
     "wrappedText": "fn _f() { let _ = match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 =>\n    if a {\n        \"200 (but this is not very stylish)\"\n    }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n}; }",
     "wrappedOffset": 18
   },
@@ -121003,7 +121003,7 @@
       "$type": 293,
       "_match_block_arms": {
         "$type": 434,
-        "_match_arm": [
+        "_arms": [
           {
             "$type": 398,
             "_attributes": [],
@@ -121243,7 +121243,7 @@
     "pattern": "match_block",
     "edits": [],
     "expectedSourceOut": "{\n    1 => { \"one\" }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n\n    #[attr1]\n    3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}",
-    "expectedReparseTree": "(match_block (match_block_arms (match_arm_block_ending pattern: (match_pattern pattern: (integer_literal_decimal)) value: (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content)))) (match_arm_with_comma pattern: (match_pattern pattern: (integer_literal_decimal)) value: (string_literal string_open: (string_open) elements: (string_content))) (match_arm_with_comma pattern: (match_pattern pattern: (negative_literal value: (integer_literal_decimal))) value: (integer_literal_decimal)) (match_arm_with_comma pattern: (match_pattern pattern: (negative_literal value: (float_literal))) value: (integer_literal_decimal)) (match_arm_with_comma attributes: (attribute_item attribute: (attribute path: (identifier))) pattern: (match_pattern pattern: (integer_literal_decimal)) value: (string_literal string_open: (string_open) elements: (string_content))) (match_arm_with_comma pattern: (match_pattern pattern: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (integer_literal_decimal))))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (string_literal string_open: (string_open) elements: (string_content)))))",
+    "expectedReparseTree": "(match_block (match_block_arms arms: (match_arm_block_ending pattern: (match_pattern pattern: (integer_literal_decimal)) value: (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content)))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (integer_literal_decimal)) value: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (negative_literal value: (integer_literal_decimal))) value: (integer_literal_decimal)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (negative_literal value: (float_literal))) value: (integer_literal_decimal)) arms: (match_arm_with_comma attributes: (attribute_item attribute: (attribute path: (identifier))) pattern: (match_pattern pattern: (integer_literal_decimal)) value: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (integer_literal_decimal))))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (string_literal string_open: (string_open) elements: (string_content)))))",
     "wrappedText": "fn _f() { let _ = match x {\n    1 => { \"one\" }\n    2 => \"two\",\n    -1 => 1,\n    -3.14 => 3,\n\n    #[attr1]\n    3 => \"three\",\n    macro!(4) => \"four\",\n    _ => \"something else\",\n}; }",
     "wrappedOffset": 26
   },
@@ -121255,7 +121255,7 @@
       "$type": 293,
       "_match_block_arms": {
         "$type": 434,
-        "_match_arm": [
+        "_arms": [
           {
             "$type": 397,
             "_attributes": [],
@@ -121504,7 +121504,7 @@
     "pattern": "match_block",
     "edits": [],
     "expectedSourceOut": "{\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 =>\n    if a {\n        \"200 (but this is not very stylish)\"\n    }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n}",
-    "expectedReparseTree": "(match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (or_pattern_binary left: (integer_literal_decimal) right: (integer_literal_decimal)) right: (integer_literal_decimal))) value: (string_literal string_open: (string_open) elements: (string_content))) (match_arm_with_comma pattern: (match_pattern pattern: (identifier) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (string_literal string_open: (string_open) elements: (string_content))) (match_arm_block_ending pattern: (match_pattern pattern: (identifier) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (if_expression condition: (identifier) consequence: (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content))))) (match_arm_with_comma pattern: (match_pattern pattern: (identifier) condition: (let_chain left: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier))) value: (identifier)) right: (identifier) right: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier))) value: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (string_literal string_open: (string_open) elements: (string_content)))))",
+    "expectedReparseTree": "(match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (or_pattern_binary left: (integer_literal_decimal) right: (integer_literal_decimal)) right: (integer_literal_decimal))) value: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (identifier) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_block_ending pattern: (match_pattern pattern: (identifier) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (if_expression condition: (identifier) consequence: (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content))))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (identifier) condition: (let_chain left: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier))) value: (identifier)) right: (identifier) right: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier))) value: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (string_literal string_open: (string_open) elements: (string_content)))))",
     "wrappedText": "fn _f() { let _ = match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 =>\n    if a {\n        \"200 (but this is not very stylish)\"\n    }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n}; }",
     "wrappedOffset": 26
   },
@@ -121514,7 +121514,7 @@
     "pattern": "match_block_arms",
     "input": {
       "$type": 434,
-      "_match_arm": [
+      "_arms": [
         {
           "$type": 398,
           "_attributes": [],
@@ -121753,7 +121753,7 @@
     "pattern": "match_block_arms",
     "edits": [],
     "expectedSourceOut": "1 => { \"one\" }\n2 => \"two\",\n-1 => 1,\n-3.14 => 3,\n\n#[attr1]\n3 => \"three\",\nmacro!(4) => \"four\",\n_ => \"something else\",",
-    "expectedReparseTree": "(match_block_arms (match_arm_block_ending pattern: (match_pattern pattern: (integer_literal_decimal)) value: (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content)))) (match_arm_with_comma pattern: (match_pattern pattern: (integer_literal_decimal)) value: (string_literal string_open: (string_open) elements: (string_content))) (match_arm_with_comma pattern: (match_pattern pattern: (negative_literal value: (integer_literal_decimal))) value: (integer_literal_decimal)) (match_arm_with_comma pattern: (match_pattern pattern: (negative_literal value: (float_literal))) value: (integer_literal_decimal)) (match_arm_with_comma attributes: (attribute_item attribute: (attribute path: (identifier))) pattern: (match_pattern pattern: (integer_literal_decimal)) value: (string_literal string_open: (string_open) elements: (string_content))) (match_arm_with_comma pattern: (match_pattern pattern: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (integer_literal_decimal))))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (string_literal string_open: (string_open) elements: (string_content))))",
+    "expectedReparseTree": "(match_block_arms arms: (match_arm_block_ending pattern: (match_pattern pattern: (integer_literal_decimal)) value: (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content)))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (integer_literal_decimal)) value: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (negative_literal value: (integer_literal_decimal))) value: (integer_literal_decimal)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (negative_literal value: (float_literal))) value: (integer_literal_decimal)) arms: (match_arm_with_comma attributes: (attribute_item attribute: (attribute path: (identifier))) pattern: (match_pattern pattern: (integer_literal_decimal)) value: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (integer_literal_decimal))))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (string_literal string_open: (string_open) elements: (string_content))))",
     "wrappedText": "fn _f() { let _ = match x {\n  1 => { \"one\" }\n  2 => \"two\",\n  -1 => 1,\n  -3.14 => 3,\n  \n  #[attr1]\n  3 => \"three\",\n  macro!(4) => \"four\",\n  _ => \"something else\",\n}; }",
     "wrappedOffset": 30
   },
@@ -121763,7 +121763,7 @@
     "pattern": "match_block_arms",
     "input": {
       "$type": 434,
-      "_match_arm": [
+      "_arms": [
         {
           "$type": 397,
           "_attributes": [],
@@ -122011,7 +122011,7 @@
     "pattern": "match_block_arms",
     "edits": [],
     "expectedSourceOut": "0 | 1 | 10 => \"one of zero, one, or ten\",\ny if y < 20 => \"less than 20, but not zero, one, or ten\",\ny if y == 200 =>\nif a {\n    \"200 (but this is not very stylish)\"\n}\ny if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n_ => \"something else\",",
-    "expectedReparseTree": "(match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (or_pattern_binary left: (integer_literal_decimal) right: (integer_literal_decimal)) right: (integer_literal_decimal))) value: (string_literal string_open: (string_open) elements: (string_content))) (match_arm_with_comma pattern: (match_pattern pattern: (identifier) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (string_literal string_open: (string_open) elements: (string_content))) (match_arm_block_ending pattern: (match_pattern pattern: (identifier) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (if_expression condition: (identifier) consequence: (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content))))) (match_arm_with_comma pattern: (match_pattern pattern: (identifier) condition: (let_chain left: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier))) value: (identifier)) right: (identifier) right: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier))) value: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (string_literal string_open: (string_open) elements: (string_content))))",
+    "expectedReparseTree": "(match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (or_pattern_binary left: (integer_literal_decimal) right: (integer_literal_decimal)) right: (integer_literal_decimal))) value: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (identifier) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_block_ending pattern: (match_pattern pattern: (identifier) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (if_expression condition: (identifier) consequence: (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content))))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (identifier) condition: (let_chain left: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier))) value: (identifier)) right: (identifier) right: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier))) value: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (string_literal string_open: (string_open) elements: (string_content))))",
     "wrappedText": "fn _f() { let _ = match x {\n  0 | 1 | 10 => \"one of zero, one, or ten\",\n  y if y < 20 => \"less than 20, but not zero, one, or ten\",\n  y if y == 200 =>\n  if a {\n      \"200 (but this is not very stylish)\"\n  }\n  y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n  _ => \"something else\",\n}; }",
     "wrappedOffset": 30
   },
@@ -124205,7 +124205,7 @@
           "$type": 293,
           "_match_block_arms": {
             "$type": 434,
-            "_match_arm": [
+            "_arms": [
               {
                 "$type": 397,
                 "_attributes": [],
@@ -124456,7 +124456,7 @@
     "pattern": "let_declaration",
     "edits": [],
     "expectedSourceOut": "let msg = match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 =>\n    if a {\n        \"200 (but this is not very stylish)\"\n    }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};",
-    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (or_pattern_binary left: (integer_literal_decimal) right: (integer_literal_decimal)) right: (integer_literal_decimal))) value: (string_literal string_open: (string_open) elements: (string_content))) (match_arm_with_comma pattern: (match_pattern pattern: (identifier) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (string_literal string_open: (string_open) elements: (string_content))) (match_arm_block_ending pattern: (match_pattern pattern: (identifier) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (if_expression condition: (identifier) consequence: (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content))))) (match_arm_with_comma pattern: (match_pattern pattern: (identifier) condition: (let_chain left: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier))) value: (identifier)) right: (identifier) right: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier))) value: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (string_literal string_open: (string_open) elements: (string_content)))))))",
+    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (or_pattern_binary left: (integer_literal_decimal) right: (integer_literal_decimal)) right: (integer_literal_decimal))) value: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (identifier) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (string_literal string_open: (string_open) elements: (string_content))) arms: (match_arm_block_ending pattern: (match_pattern pattern: (identifier) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (if_expression condition: (identifier) consequence: (block trailing_expression: (string_literal string_open: (string_open) elements: (string_content))))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (identifier) condition: (let_chain left: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier))) value: (identifier)) right: (identifier) right: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier))) value: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (string_literal string_open: (string_open) elements: (string_content)))))))",
     "wrappedText": "let msg = match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 =>\n    if a {\n        \"200 (but this is not very stylish)\"\n    }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};",
     "wrappedOffset": 0
   },
@@ -160516,7 +160516,7 @@
               "$type": 293,
               "_match_block_arms": {
                 "$type": 434,
-                "_match_arm": [
+                "_arms": [
                   {
                     "$type": 397,
                     "_attributes": [],
@@ -160614,7 +160614,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "\nmatch x {\n  Some(x) => \"some\",\n  std::None() => \"none\"\n}\n",
-    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (identifier) name: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content))))))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (identifier) name: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content))))))))",
     "wrappedText": "\nmatch x {\n  Some(x) => \"some\",\n  std::None() => \"none\"\n}\n",
     "wrappedOffset": 0
   },
@@ -160634,7 +160634,7 @@
           "$type": 293,
           "_match_block_arms": {
             "$type": 434,
-            "_match_arm": [
+            "_arms": [
               {
                 "$type": 397,
                 "_attributes": [],
@@ -160729,7 +160729,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "match x {\n  Some(x) => \"some\",\n  std::None() => \"none\"\n}",
-    "expectedReparseTree": "(expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (identifier) name: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content)))))))",
+    "expectedReparseTree": "(expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (identifier) name: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content)))))))",
     "wrappedText": "match x {\n  Some(x) => \"some\",\n  std::None() => \"none\"\n}\n",
     "wrappedOffset": 0
   },
@@ -160747,7 +160747,7 @@
         "$type": 293,
         "_match_block_arms": {
           "$type": 434,
-          "_match_arm": [
+          "_arms": [
             {
               "$type": 397,
               "_attributes": [],
@@ -160841,7 +160841,7 @@
     "pattern": "match_expression",
     "edits": [],
     "expectedSourceOut": "match x {\n  Some(x) => \"some\",\n  std::None() => \"none\"\n}",
-    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (identifier) name: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content))))))",
+    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (identifier) name: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content))))))",
     "wrappedText": "fn _f() { let _ = match x {\n  Some(x) => \"some\",\n  std::None() => \"none\"\n}; }",
     "wrappedOffset": 18
   },
@@ -160853,7 +160853,7 @@
       "$type": 293,
       "_match_block_arms": {
         "$type": 434,
-        "_match_arm": [
+        "_arms": [
           {
             "$type": 397,
             "_attributes": [],
@@ -160946,7 +160946,7 @@
     "pattern": "match_block",
     "edits": [],
     "expectedSourceOut": "{\n  Some(x) => \"some\",\n  std::None() => \"none\"\n}",
-    "expectedReparseTree": "(match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (identifier) name: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content)))))",
+    "expectedReparseTree": "(match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (identifier) name: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content)))))",
     "wrappedText": "fn _f() { let _ = match x {\n  Some(x) => \"some\",\n  std::None() => \"none\"\n}; }",
     "wrappedOffset": 26
   },
@@ -160956,7 +160956,7 @@
     "pattern": "match_block_arms",
     "input": {
       "$type": 434,
-      "_match_arm": [
+      "_arms": [
         {
           "$type": 397,
           "_attributes": [],
@@ -161048,7 +161048,7 @@
     "pattern": "match_block_arms",
     "edits": [],
     "expectedSourceOut": "Some(x) => \"some\",\nstd::None() => \"none\"",
-    "expectedReparseTree": "(match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (identifier) name: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content))))",
+    "expectedReparseTree": "(match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content))) last_arm: (last_match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (identifier) name: (identifier)))) value: (string_literal string_open: (string_open) elements: (string_content))))",
     "wrappedText": "fn _f() { let _ = match x {\n  Some(x) => \"some\",\n  std::None() => \"none\"\n}; }",
     "wrappedOffset": 30
   },
@@ -161508,7 +161508,7 @@
               "$type": 293,
               "_match_block_arms": {
                 "$type": 434,
-                "_match_arm": [
+                "_arms": [
                   {
                     "$type": 397,
                     "_attributes": [],
@@ -161613,7 +161613,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "\nmatch x {\n  A(ref x) => x.0,\n  ref mut y => y,\n  &mut z => z,\n}\n",
-    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (ref_pattern pattern: (identifier))))) value: (field_expression value: (identifier) field: (integer_literal_decimal))) (match_arm_with_comma pattern: (match_pattern pattern: (ref_pattern pattern: (mut_pattern mutable_specifier: (mutable_specifier) pattern: (identifier)))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (reference_pattern mutable: (mutable_specifier) pattern: (identifier))) value: (identifier)))))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (ref_pattern pattern: (identifier))))) value: (field_expression value: (identifier) field: (integer_literal_decimal))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (ref_pattern pattern: (mut_pattern mutable_specifier: (mutable_specifier) pattern: (identifier)))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (reference_pattern mutable: (mutable_specifier) pattern: (identifier))) value: (identifier)))))))",
     "wrappedText": "\nmatch x {\n  A(ref x) => x.0,\n  ref mut y => y,\n  &mut z => z,\n}\n",
     "wrappedOffset": 0
   },
@@ -161633,7 +161633,7 @@
           "$type": 293,
           "_match_block_arms": {
             "$type": 434,
-            "_match_arm": [
+            "_arms": [
               {
                 "$type": 397,
                 "_attributes": [],
@@ -161735,7 +161735,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "match x {\n  A(ref x) => x.0,\n  ref mut y => y,\n  &mut z => z,\n}",
-    "expectedReparseTree": "(expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (ref_pattern pattern: (identifier))))) value: (field_expression value: (identifier) field: (integer_literal_decimal))) (match_arm_with_comma pattern: (match_pattern pattern: (ref_pattern pattern: (mut_pattern mutable_specifier: (mutable_specifier) pattern: (identifier)))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (reference_pattern mutable: (mutable_specifier) pattern: (identifier))) value: (identifier))))))",
+    "expectedReparseTree": "(expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (ref_pattern pattern: (identifier))))) value: (field_expression value: (identifier) field: (integer_literal_decimal))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (ref_pattern pattern: (mut_pattern mutable_specifier: (mutable_specifier) pattern: (identifier)))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (reference_pattern mutable: (mutable_specifier) pattern: (identifier))) value: (identifier))))))",
     "wrappedText": "match x {\n  A(ref x) => x.0,\n  ref mut y => y,\n  &mut z => z,\n}\n",
     "wrappedOffset": 0
   },
@@ -161753,7 +161753,7 @@
         "$type": 293,
         "_match_block_arms": {
           "$type": 434,
-          "_match_arm": [
+          "_arms": [
             {
               "$type": 397,
               "_attributes": [],
@@ -161854,7 +161854,7 @@
     "pattern": "match_expression",
     "edits": [],
     "expectedSourceOut": "match x {\n  A(ref x) => x.0,\n  ref mut y => y,\n  &mut z => z,\n}",
-    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (ref_pattern pattern: (identifier))))) value: (field_expression value: (identifier) field: (integer_literal_decimal))) (match_arm_with_comma pattern: (match_pattern pattern: (ref_pattern pattern: (mut_pattern mutable_specifier: (mutable_specifier) pattern: (identifier)))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (reference_pattern mutable: (mutable_specifier) pattern: (identifier))) value: (identifier)))))",
+    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (ref_pattern pattern: (identifier))))) value: (field_expression value: (identifier) field: (integer_literal_decimal))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (ref_pattern pattern: (mut_pattern mutable_specifier: (mutable_specifier) pattern: (identifier)))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (reference_pattern mutable: (mutable_specifier) pattern: (identifier))) value: (identifier)))))",
     "wrappedText": "fn _f() { let _ = match x {\n  A(ref x) => x.0,\n  ref mut y => y,\n  &mut z => z,\n}; }",
     "wrappedOffset": 18
   },
@@ -161866,7 +161866,7 @@
       "$type": 293,
       "_match_block_arms": {
         "$type": 434,
-        "_match_arm": [
+        "_arms": [
           {
             "$type": 397,
             "_attributes": [],
@@ -161966,7 +161966,7 @@
     "pattern": "match_block",
     "edits": [],
     "expectedSourceOut": "{\n  A(ref x) => x.0,\n  ref mut y => y,\n  &mut z => z,\n}",
-    "expectedReparseTree": "(match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (ref_pattern pattern: (identifier))))) value: (field_expression value: (identifier) field: (integer_literal_decimal))) (match_arm_with_comma pattern: (match_pattern pattern: (ref_pattern pattern: (mut_pattern mutable_specifier: (mutable_specifier) pattern: (identifier)))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (reference_pattern mutable: (mutable_specifier) pattern: (identifier))) value: (identifier))))",
+    "expectedReparseTree": "(match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (ref_pattern pattern: (identifier))))) value: (field_expression value: (identifier) field: (integer_literal_decimal))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (ref_pattern pattern: (mut_pattern mutable_specifier: (mutable_specifier) pattern: (identifier)))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (reference_pattern mutable: (mutable_specifier) pattern: (identifier))) value: (identifier))))",
     "wrappedText": "fn _f() { let _ = match x {\n  A(ref x) => x.0,\n  ref mut y => y,\n  &mut z => z,\n}; }",
     "wrappedOffset": 26
   },
@@ -161976,7 +161976,7 @@
     "pattern": "match_block_arms",
     "input": {
       "$type": 434,
-      "_match_arm": [
+      "_arms": [
         {
           "$type": 397,
           "_attributes": [],
@@ -162075,7 +162075,7 @@
     "pattern": "match_block_arms",
     "edits": [],
     "expectedSourceOut": "A(ref x) => x.0,\nref mut y => y,\n&mut z => z,",
-    "expectedReparseTree": "(match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (ref_pattern pattern: (identifier))))) value: (field_expression value: (identifier) field: (integer_literal_decimal))) (match_arm_with_comma pattern: (match_pattern pattern: (ref_pattern pattern: (mut_pattern mutable_specifier: (mutable_specifier) pattern: (identifier)))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (reference_pattern mutable: (mutable_specifier) pattern: (identifier))) value: (identifier)))",
+    "expectedReparseTree": "(match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (ref_pattern pattern: (identifier))))) value: (field_expression value: (identifier) field: (integer_literal_decimal))) arms: (match_arm_with_comma pattern: (match_pattern pattern: (ref_pattern pattern: (mut_pattern mutable_specifier: (mutable_specifier) pattern: (identifier)))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (reference_pattern mutable: (mutable_specifier) pattern: (identifier))) value: (identifier)))",
     "wrappedText": "fn _f() { let _ = match x {\n  A(ref x) => x.0,\n  ref mut y => y,\n  &mut z => z,\n}; }",
     "wrappedOffset": 30
   },
@@ -162654,7 +162654,7 @@
               "$type": 293,
               "_match_block_arms": {
                 "$type": 434,
-                "_match_arm": [
+                "_arms": [
                   {
                     "$type": 397,
                     "_attributes": [],
@@ -162872,7 +162872,7 @@
               "$type": 293,
               "_match_block_arms": {
                 "$type": 434,
-                "_match_arm": [],
+                "_arms": [],
                 "_last_arm": {
                   "$type": 295,
                   "_attributes": [],
@@ -163005,7 +163005,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "\nmatch x {\n  Person{name, age} if age < 5 => (\"toddler\", name),\n  Person{name: adult_name, age: _} => (\"adult\", adult_name),\n}\n\nmatch y {\n  Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),\n}\n",
-    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements item: (field_pattern_shorthand name: (shorthand_field_identifier)) item: (field_pattern_shorthand name: (shorthand_field_identifier)))) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (tuple_expression (expressions item: (string_literal string_open: (string_open) elements: (string_content)) item: (identifier)))) last_arm: (last_match_arm pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements item: (field_pattern_named name: (field_identifier) pattern: (identifier)) item: (field_pattern_named name: (field_identifier) pattern: (wildcard_pattern))))) value: (tuple_expression (expressions item: (string_literal string_open: (string_open) elements: (string_content)) item: (identifier)))))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms last_arm: (last_match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (identifier) name: (identifier)) (patterns item: (wildcard_pattern) item: (tuple_struct_pattern type: (generic_type_with_turbofish type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (primitive_type))))) (patterns item: (identifier)))))) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements item: (field_pattern_shorthand name: (shorthand_field_identifier)) item: (field_pattern_shorthand name: (shorthand_field_identifier)))) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (tuple_expression (expressions item: (string_literal string_open: (string_open) elements: (string_content)) item: (identifier)))) last_arm: (last_match_arm pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements item: (field_pattern_named name: (field_identifier) pattern: (identifier)) item: (field_pattern_named name: (field_identifier) pattern: (wildcard_pattern))))) value: (tuple_expression (expressions item: (string_literal string_open: (string_open) elements: (string_content)) item: (identifier)))))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms last_arm: (last_match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (identifier) name: (identifier)) (patterns item: (wildcard_pattern) item: (tuple_struct_pattern type: (generic_type_with_turbofish type: (type_identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (primitive_type))))) (patterns item: (identifier)))))) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))))))))",
     "wrappedText": "\nmatch x {\n  Person{name, age} if age < 5 => (\"toddler\", name),\n  Person{name: adult_name, age: _} => (\"adult\", adult_name),\n}\n\nmatch y {\n  Bar::T1(_, Some::<isize>(x)) => println!(\"{x}\"),\n}\n",
     "wrappedOffset": 0
   },
@@ -163025,7 +163025,7 @@
           "$type": 293,
           "_match_block_arms": {
             "$type": 434,
-            "_match_arm": [
+            "_arms": [
               {
                 "$type": 397,
                 "_attributes": [],
@@ -163248,7 +163248,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "match x {\n  Person{name, age} if age < 5 => (\"toddler\", name),\n  Person{name: adult_name, age: _} => (\"adult\", adult_name),\n}",
-    "expectedReparseTree": "(expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements item: (field_pattern_shorthand name: (shorthand_field_identifier)) item: (field_pattern_shorthand name: (shorthand_field_identifier)))) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (tuple_expression (expressions item: (string_literal string_open: (string_open) elements: (string_content)) item: (identifier)))) last_arm: (last_match_arm pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements item: (field_pattern_named name: (field_identifier) pattern: (identifier)) item: (field_pattern_named name: (field_identifier) pattern: (wildcard_pattern))))) value: (tuple_expression (expressions item: (string_literal string_open: (string_open) elements: (string_content)) item: (identifier))))))))",
+    "expectedReparseTree": "(expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements item: (field_pattern_shorthand name: (shorthand_field_identifier)) item: (field_pattern_shorthand name: (shorthand_field_identifier)))) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (tuple_expression (expressions item: (string_literal string_open: (string_open) elements: (string_content)) item: (identifier)))) last_arm: (last_match_arm pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements item: (field_pattern_named name: (field_identifier) pattern: (identifier)) item: (field_pattern_named name: (field_identifier) pattern: (wildcard_pattern))))) value: (tuple_expression (expressions item: (string_literal string_open: (string_open) elements: (string_content)) item: (identifier))))))))",
     "wrappedText": "match x {\n  Person{name, age} if age < 5 => (\"toddler\", name),\n  Person{name: adult_name, age: _} => (\"adult\", adult_name),\n}\n",
     "wrappedOffset": 0
   },
@@ -163268,7 +163268,7 @@
           "$type": 293,
           "_match_block_arms": {
             "$type": 434,
-            "_match_arm": [],
+            "_arms": [],
             "_last_arm": {
               "$type": 295,
               "_attributes": [],
@@ -163409,7 +163409,7 @@
         "$type": 293,
         "_match_block_arms": {
           "$type": 434,
-          "_match_arm": [
+          "_arms": [
             {
               "$type": 397,
               "_attributes": [],
@@ -163631,7 +163631,7 @@
     "pattern": "match_expression",
     "edits": [],
     "expectedSourceOut": "match x {\n  Person{name, age} if age < 5 => (\"toddler\", name),\n  Person{name: adult_name, age: _} => (\"adult\", adult_name),\n}",
-    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements item: (field_pattern_shorthand name: (shorthand_field_identifier)) item: (field_pattern_shorthand name: (shorthand_field_identifier)))) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (tuple_expression (expressions item: (string_literal string_open: (string_open) elements: (string_content)) item: (identifier)))) last_arm: (last_match_arm pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements item: (field_pattern_named name: (field_identifier) pattern: (identifier)) item: (field_pattern_named name: (field_identifier) pattern: (wildcard_pattern))))) value: (tuple_expression (expressions item: (string_literal string_open: (string_open) elements: (string_content)) item: (identifier)))))))",
+    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements item: (field_pattern_shorthand name: (shorthand_field_identifier)) item: (field_pattern_shorthand name: (shorthand_field_identifier)))) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (tuple_expression (expressions item: (string_literal string_open: (string_open) elements: (string_content)) item: (identifier)))) last_arm: (last_match_arm pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements item: (field_pattern_named name: (field_identifier) pattern: (identifier)) item: (field_pattern_named name: (field_identifier) pattern: (wildcard_pattern))))) value: (tuple_expression (expressions item: (string_literal string_open: (string_open) elements: (string_content)) item: (identifier)))))))",
     "wrappedText": "fn _f() { let _ = match x {\n  Person{name, age} if age < 5 => (\"toddler\", name),\n  Person{name: adult_name, age: _} => (\"adult\", adult_name),\n}; }",
     "wrappedOffset": 18
   },
@@ -163649,7 +163649,7 @@
         "$type": 293,
         "_match_block_arms": {
           "$type": 434,
-          "_match_arm": [],
+          "_arms": [],
           "_last_arm": {
             "$type": 295,
             "_attributes": [],
@@ -163783,7 +163783,7 @@
       "$type": 293,
       "_match_block_arms": {
         "$type": 434,
-        "_match_arm": [
+        "_arms": [
           {
             "$type": 397,
             "_attributes": [],
@@ -164004,7 +164004,7 @@
     "pattern": "match_block",
     "edits": [],
     "expectedSourceOut": "{\n  Person{name, age} if age < 5 => (\"toddler\", name),\n  Person{name: adult_name, age: _} => (\"adult\", adult_name),\n}",
-    "expectedReparseTree": "(match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements item: (field_pattern_shorthand name: (shorthand_field_identifier)) item: (field_pattern_shorthand name: (shorthand_field_identifier)))) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (tuple_expression (expressions item: (string_literal string_open: (string_open) elements: (string_content)) item: (identifier)))) last_arm: (last_match_arm pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements item: (field_pattern_named name: (field_identifier) pattern: (identifier)) item: (field_pattern_named name: (field_identifier) pattern: (wildcard_pattern))))) value: (tuple_expression (expressions item: (string_literal string_open: (string_open) elements: (string_content)) item: (identifier))))))",
+    "expectedReparseTree": "(match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements item: (field_pattern_shorthand name: (shorthand_field_identifier)) item: (field_pattern_shorthand name: (shorthand_field_identifier)))) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (tuple_expression (expressions item: (string_literal string_open: (string_open) elements: (string_content)) item: (identifier)))) last_arm: (last_match_arm pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements item: (field_pattern_named name: (field_identifier) pattern: (identifier)) item: (field_pattern_named name: (field_identifier) pattern: (wildcard_pattern))))) value: (tuple_expression (expressions item: (string_literal string_open: (string_open) elements: (string_content)) item: (identifier))))))",
     "wrappedText": "fn _f() { let _ = match x {\n  Person{name, age} if age < 5 => (\"toddler\", name),\n  Person{name: adult_name, age: _} => (\"adult\", adult_name),\n}; }",
     "wrappedOffset": 26
   },
@@ -164016,7 +164016,7 @@
       "$type": 293,
       "_match_block_arms": {
         "$type": 434,
-        "_match_arm": [],
+        "_arms": [],
         "_last_arm": {
           "$type": 295,
           "_attributes": [],
@@ -164147,7 +164147,7 @@
     "pattern": "match_block_arms",
     "input": {
       "$type": 434,
-      "_match_arm": [
+      "_arms": [
         {
           "$type": 397,
           "_attributes": [],
@@ -164367,7 +164367,7 @@
     "pattern": "match_block_arms",
     "edits": [],
     "expectedSourceOut": "Person{name, age} if age < 5 => (\"toddler\", name),\nPerson{name: adult_name, age: _} => (\"adult\", adult_name),",
-    "expectedReparseTree": "(match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements item: (field_pattern_shorthand name: (shorthand_field_identifier)) item: (field_pattern_shorthand name: (shorthand_field_identifier)))) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (tuple_expression (expressions item: (string_literal string_open: (string_open) elements: (string_content)) item: (identifier)))) last_arm: (last_match_arm pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements item: (field_pattern_named name: (field_identifier) pattern: (identifier)) item: (field_pattern_named name: (field_identifier) pattern: (wildcard_pattern))))) value: (tuple_expression (expressions item: (string_literal string_open: (string_open) elements: (string_content)) item: (identifier)))))",
+    "expectedReparseTree": "(match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements item: (field_pattern_shorthand name: (shorthand_field_identifier)) item: (field_pattern_shorthand name: (shorthand_field_identifier)))) condition: (binary_expression left: (identifier) right: (integer_literal_decimal))) value: (tuple_expression (expressions item: (string_literal string_open: (string_open) elements: (string_content)) item: (identifier)))) last_arm: (last_match_arm pattern: (match_pattern pattern: (struct_pattern type: (type_identifier) fields: (struct_pattern_elements item: (field_pattern_named name: (field_identifier) pattern: (identifier)) item: (field_pattern_named name: (field_identifier) pattern: (wildcard_pattern))))) value: (tuple_expression (expressions item: (string_literal string_open: (string_open) elements: (string_content)) item: (identifier)))))",
     "wrappedText": "fn _f() { let _ = match x {\n  Person{name, age} if age < 5 => (\"toddler\", name),\n  Person{name: adult_name, age: _} => (\"adult\", adult_name),\n}; }",
     "wrappedOffset": 30
   },
@@ -164377,7 +164377,7 @@
     "pattern": "match_block_arms",
     "input": {
       "$type": 434,
-      "_match_arm": [],
+      "_arms": [],
       "_last_arm": {
         "$type": 295,
         "_attributes": [],
@@ -166827,7 +166827,7 @@
               "$type": 293,
               "_match_block_arms": {
                 "$type": 434,
-                "_match_arm": [
+                "_arms": [
                   {
                     "$type": 397,
                     "_attributes": [],
@@ -166986,7 +166986,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "\nmatch x {\n  (a, ..) => a,\n  B(..) => c,\n  D::E{f: g, ..} => g\n}\n",
-    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (tuple_pattern elements: (tuple_pattern_elements item: (identifier) item: (remaining_field_pattern)))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (remaining_field_pattern)))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (struct_pattern type: (scoped_type_identifier path: (identifier) name: (type_identifier)) fields: (struct_pattern_elements item: (field_pattern_named name: (field_identifier) pattern: (identifier)) item: (remaining_field_pattern)))) value: (identifier)))))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (tuple_pattern elements: (tuple_pattern_elements item: (identifier) item: (remaining_field_pattern)))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (remaining_field_pattern)))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (struct_pattern type: (scoped_type_identifier path: (identifier) name: (type_identifier)) fields: (struct_pattern_elements item: (field_pattern_named name: (field_identifier) pattern: (identifier)) item: (remaining_field_pattern)))) value: (identifier)))))))",
     "wrappedText": "\nmatch x {\n  (a, ..) => a,\n  B(..) => c,\n  D::E{f: g, ..} => g\n}\n",
     "wrappedOffset": 0
   },
@@ -167006,7 +167006,7 @@
           "$type": 293,
           "_match_block_arms": {
             "$type": 434,
-            "_match_arm": [
+            "_arms": [
               {
                 "$type": 397,
                 "_attributes": [],
@@ -167162,7 +167162,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "match x {\n  (a, ..) => a,\n  B(..) => c,\n  D::E{f: g, ..} => g\n}",
-    "expectedReparseTree": "(expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (tuple_pattern elements: (tuple_pattern_elements item: (identifier) item: (remaining_field_pattern)))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (remaining_field_pattern)))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (struct_pattern type: (scoped_type_identifier path: (identifier) name: (type_identifier)) fields: (struct_pattern_elements item: (field_pattern_named name: (field_identifier) pattern: (identifier)) item: (remaining_field_pattern)))) value: (identifier))))))",
+    "expectedReparseTree": "(expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (tuple_pattern elements: (tuple_pattern_elements item: (identifier) item: (remaining_field_pattern)))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (remaining_field_pattern)))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (struct_pattern type: (scoped_type_identifier path: (identifier) name: (type_identifier)) fields: (struct_pattern_elements item: (field_pattern_named name: (field_identifier) pattern: (identifier)) item: (remaining_field_pattern)))) value: (identifier))))))",
     "wrappedText": "match x {\n  (a, ..) => a,\n  B(..) => c,\n  D::E{f: g, ..} => g\n}\n",
     "wrappedOffset": 0
   },
@@ -167180,7 +167180,7 @@
         "$type": 293,
         "_match_block_arms": {
           "$type": 434,
-          "_match_arm": [
+          "_arms": [
             {
               "$type": 397,
               "_attributes": [],
@@ -167335,7 +167335,7 @@
     "pattern": "match_expression",
     "edits": [],
     "expectedSourceOut": "match x {\n  (a, ..) => a,\n  B(..) => c,\n  D::E{f: g, ..} => g\n}",
-    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (tuple_pattern elements: (tuple_pattern_elements item: (identifier) item: (remaining_field_pattern)))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (remaining_field_pattern)))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (struct_pattern type: (scoped_type_identifier path: (identifier) name: (type_identifier)) fields: (struct_pattern_elements item: (field_pattern_named name: (field_identifier) pattern: (identifier)) item: (remaining_field_pattern)))) value: (identifier)))))",
+    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (tuple_pattern elements: (tuple_pattern_elements item: (identifier) item: (remaining_field_pattern)))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (remaining_field_pattern)))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (struct_pattern type: (scoped_type_identifier path: (identifier) name: (type_identifier)) fields: (struct_pattern_elements item: (field_pattern_named name: (field_identifier) pattern: (identifier)) item: (remaining_field_pattern)))) value: (identifier)))))",
     "wrappedText": "fn _f() { let _ = match x {\n  (a, ..) => a,\n  B(..) => c,\n  D::E{f: g, ..} => g\n}; }",
     "wrappedOffset": 18
   },
@@ -167347,7 +167347,7 @@
       "$type": 293,
       "_match_block_arms": {
         "$type": 434,
-        "_match_arm": [
+        "_arms": [
           {
             "$type": 397,
             "_attributes": [],
@@ -167501,7 +167501,7 @@
     "pattern": "match_block",
     "edits": [],
     "expectedSourceOut": "{\n  (a, ..) => a,\n  B(..) => c,\n  D::E{f: g, ..} => g\n}",
-    "expectedReparseTree": "(match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (tuple_pattern elements: (tuple_pattern_elements item: (identifier) item: (remaining_field_pattern)))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (remaining_field_pattern)))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (struct_pattern type: (scoped_type_identifier path: (identifier) name: (type_identifier)) fields: (struct_pattern_elements item: (field_pattern_named name: (field_identifier) pattern: (identifier)) item: (remaining_field_pattern)))) value: (identifier))))",
+    "expectedReparseTree": "(match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (tuple_pattern elements: (tuple_pattern_elements item: (identifier) item: (remaining_field_pattern)))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (remaining_field_pattern)))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (struct_pattern type: (scoped_type_identifier path: (identifier) name: (type_identifier)) fields: (struct_pattern_elements item: (field_pattern_named name: (field_identifier) pattern: (identifier)) item: (remaining_field_pattern)))) value: (identifier))))",
     "wrappedText": "fn _f() { let _ = match x {\n  (a, ..) => a,\n  B(..) => c,\n  D::E{f: g, ..} => g\n}; }",
     "wrappedOffset": 26
   },
@@ -167511,7 +167511,7 @@
     "pattern": "match_block_arms",
     "input": {
       "$type": 434,
-      "_match_arm": [
+      "_arms": [
         {
           "$type": 397,
           "_attributes": [],
@@ -167664,7 +167664,7 @@
     "pattern": "match_block_arms",
     "edits": [],
     "expectedSourceOut": "(a, ..) => a,\nB(..) => c,\nD::E{f: g, ..} => g",
-    "expectedReparseTree": "(match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (tuple_pattern elements: (tuple_pattern_elements item: (identifier) item: (remaining_field_pattern)))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (remaining_field_pattern)))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (struct_pattern type: (scoped_type_identifier path: (identifier) name: (type_identifier)) fields: (struct_pattern_elements item: (field_pattern_named name: (field_identifier) pattern: (identifier)) item: (remaining_field_pattern)))) value: (identifier)))",
+    "expectedReparseTree": "(match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (tuple_pattern elements: (tuple_pattern_elements item: (identifier) item: (remaining_field_pattern)))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (remaining_field_pattern)))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (struct_pattern type: (scoped_type_identifier path: (identifier) name: (type_identifier)) fields: (struct_pattern_elements item: (field_pattern_named name: (field_identifier) pattern: (identifier)) item: (remaining_field_pattern)))) value: (identifier)))",
     "wrappedText": "fn _f() { let _ = match x {\n  (a, ..) => a,\n  B(..) => c,\n  D::E{f: g, ..} => g\n}; }",
     "wrappedOffset": 30
   },
@@ -168528,7 +168528,7 @@
               "$type": 293,
               "_match_block_arms": {
                 "$type": 434,
-                "_match_arm": [
+                "_arms": [
                   {
                     "$type": 397,
                     "_attributes": [],
@@ -168840,7 +168840,7 @@
               "$type": 293,
               "_match_block_arms": {
                 "$type": 434,
-                "_match_arm": [
+                "_arms": [
                   {
                     "$type": 397,
                     "_attributes": [],
@@ -168953,7 +168953,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "\nmatch x {\n  a @ A(_) | b @ B(..) => a,\n  a @ 1 ... 5 => a,\n  Some(1 ... 5) => a,\n  a @ b...c => a,\n  a @ b..=c => a,\n  d.. => a,\n  ..d => d,\n  a @ ..=5 => a\n}\n\nmatch name {\n  | \"IPV6_FLOWINFO\"\n  | \"IPV6_FLOWLABEL_MGR\"\n  | \"IPV6_FLOWINFO_SEND\" => true,\n  _ => false,\n}\n",
-    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns item: (wildcard_pattern)))) right: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns item: (remaining_field_pattern)))))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal))))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal)))))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_bare))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (range_pattern_prefix right: (identifier))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_prefix right: (integer_literal_decimal)))) value: (identifier)))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (or_pattern_binary left: (or_pattern_prefix right: (string_literal string_open: (string_open) elements: (string_content))) right: (string_literal string_open: (string_open) elements: (string_content))) right: (string_literal string_open: (string_open) elements: (string_content)))) value: (boolean_literal)) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (boolean_literal)))))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns item: (wildcard_pattern)))) right: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns item: (remaining_field_pattern)))))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal))))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal)))))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_bare))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (range_pattern_prefix right: (identifier))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_prefix right: (integer_literal_decimal)))) value: (identifier)))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (or_pattern_binary left: (or_pattern_prefix right: (string_literal string_open: (string_open) elements: (string_content))) right: (string_literal string_open: (string_open) elements: (string_content))) right: (string_literal string_open: (string_open) elements: (string_content)))) value: (boolean_literal)) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (boolean_literal)))))))",
     "wrappedText": "\nmatch x {\n  a @ A(_) | b @ B(..) => a,\n  a @ 1 ... 5 => a,\n  Some(1 ... 5) => a,\n  a @ b...c => a,\n  a @ b..=c => a,\n  d.. => a,\n  ..d => d,\n  a @ ..=5 => a\n}\n\nmatch name {\n  | \"IPV6_FLOWINFO\"\n  | \"IPV6_FLOWLABEL_MGR\"\n  | \"IPV6_FLOWINFO_SEND\" => true,\n  _ => false,\n}\n",
     "wrappedOffset": 0
   },
@@ -168973,7 +168973,7 @@
           "$type": 293,
           "_match_block_arms": {
             "$type": 434,
-            "_match_arm": [
+            "_arms": [
               {
                 "$type": 397,
                 "_attributes": [],
@@ -169290,7 +169290,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "match x {\n  a @ A(_) | b @ B(..) => a,\n  a @ 1 ... 5 => a,\n  Some(1 ... 5) => a,\n  a @ b...c => a,\n  a @ b..=c => a,\n  d.. => a,\n  ..d => d,\n  a @ ..=5 => a\n}",
-    "expectedReparseTree": "(expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns item: (wildcard_pattern)))) right: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns item: (remaining_field_pattern)))))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal))))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal)))))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_bare))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (range_pattern_prefix right: (identifier))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_prefix right: (integer_literal_decimal)))) value: (identifier))))))",
+    "expectedReparseTree": "(expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns item: (wildcard_pattern)))) right: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns item: (remaining_field_pattern)))))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal))))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal)))))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_bare))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (range_pattern_prefix right: (identifier))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_prefix right: (integer_literal_decimal)))) value: (identifier))))))",
     "wrappedText": "match x {\n  a @ A(_) | b @ B(..) => a,\n  a @ 1 ... 5 => a,\n  Some(1 ... 5) => a,\n  a @ b...c => a,\n  a @ b..=c => a,\n  d.. => a,\n  ..d => d,\n  a @ ..=5 => a\n}\n",
     "wrappedOffset": 0
   },
@@ -169310,7 +169310,7 @@
           "$type": 293,
           "_match_block_arms": {
             "$type": 434,
-            "_match_arm": [
+            "_arms": [
               {
                 "$type": 397,
                 "_attributes": [],
@@ -169413,7 +169413,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "match name {\n  | \"IPV6_FLOWINFO\"\n  | \"IPV6_FLOWLABEL_MGR\"\n  | \"IPV6_FLOWINFO_SEND\" => true,\n  _ => false,\n}",
-    "expectedReparseTree": "(expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (or_pattern_binary left: (or_pattern_prefix right: (string_literal string_open: (string_open) elements: (string_content))) right: (string_literal string_open: (string_open) elements: (string_content))) right: (string_literal string_open: (string_open) elements: (string_content)))) value: (boolean_literal)) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (boolean_literal))))))",
+    "expectedReparseTree": "(expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (or_pattern_binary left: (or_pattern_prefix right: (string_literal string_open: (string_open) elements: (string_content))) right: (string_literal string_open: (string_open) elements: (string_content))) right: (string_literal string_open: (string_open) elements: (string_content)))) value: (boolean_literal)) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (boolean_literal))))))",
     "wrappedText": "match name {\n  | \"IPV6_FLOWINFO\"\n  | \"IPV6_FLOWLABEL_MGR\"\n  | \"IPV6_FLOWINFO_SEND\" => true,\n  _ => false,\n}\n",
     "wrappedOffset": 0
   },
@@ -169431,7 +169431,7 @@
         "$type": 293,
         "_match_block_arms": {
           "$type": 434,
-          "_match_arm": [
+          "_arms": [
             {
               "$type": 397,
               "_attributes": [],
@@ -169747,7 +169747,7 @@
     "pattern": "match_expression",
     "edits": [],
     "expectedSourceOut": "match x {\n  a @ A(_) | b @ B(..) => a,\n  a @ 1 ... 5 => a,\n  Some(1 ... 5) => a,\n  a @ b...c => a,\n  a @ b..=c => a,\n  d.. => a,\n  ..d => d,\n  a @ ..=5 => a\n}",
-    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns item: (wildcard_pattern)))) right: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns item: (remaining_field_pattern)))))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal))))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal)))))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_bare))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (range_pattern_prefix right: (identifier))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_prefix right: (integer_literal_decimal)))) value: (identifier)))))",
+    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns item: (wildcard_pattern)))) right: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns item: (remaining_field_pattern)))))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal))))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal)))))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_bare))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (range_pattern_prefix right: (identifier))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_prefix right: (integer_literal_decimal)))) value: (identifier)))))",
     "wrappedText": "fn _f() { let _ = match x {\n  a @ A(_) | b @ B(..) => a,\n  a @ 1 ... 5 => a,\n  Some(1 ... 5) => a,\n  a @ b...c => a,\n  a @ b..=c => a,\n  d.. => a,\n  ..d => d,\n  a @ ..=5 => a\n}; }",
     "wrappedOffset": 18
   },
@@ -169765,7 +169765,7 @@
         "$type": 293,
         "_match_block_arms": {
           "$type": 434,
-          "_match_arm": [
+          "_arms": [
             {
               "$type": 397,
               "_attributes": [],
@@ -169867,7 +169867,7 @@
     "pattern": "match_expression",
     "edits": [],
     "expectedSourceOut": "match name {\n  | \"IPV6_FLOWINFO\"\n  | \"IPV6_FLOWLABEL_MGR\"\n  | \"IPV6_FLOWINFO_SEND\" => true,\n  _ => false,\n}",
-    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (or_pattern_binary left: (or_pattern_prefix right: (string_literal string_open: (string_open) elements: (string_content))) right: (string_literal string_open: (string_open) elements: (string_content))) right: (string_literal string_open: (string_open) elements: (string_content)))) value: (boolean_literal)) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (boolean_literal)))))",
+    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (or_pattern_binary left: (or_pattern_prefix right: (string_literal string_open: (string_open) elements: (string_content))) right: (string_literal string_open: (string_open) elements: (string_content))) right: (string_literal string_open: (string_open) elements: (string_content)))) value: (boolean_literal)) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (boolean_literal)))))",
     "wrappedText": "fn _f() { let _ = match name {\n  | \"IPV6_FLOWINFO\"\n  | \"IPV6_FLOWLABEL_MGR\"\n  | \"IPV6_FLOWINFO_SEND\" => true,\n  _ => false,\n}; }",
     "wrappedOffset": 18
   },
@@ -169879,7 +169879,7 @@
       "$type": 293,
       "_match_block_arms": {
         "$type": 434,
-        "_match_arm": [
+        "_arms": [
           {
             "$type": 397,
             "_attributes": [],
@@ -170194,7 +170194,7 @@
     "pattern": "match_block",
     "edits": [],
     "expectedSourceOut": "{\n  a @ A(_) | b @ B(..) => a,\n  a @ 1 ... 5 => a,\n  Some(1 ... 5) => a,\n  a @ b...c => a,\n  a @ b..=c => a,\n  d.. => a,\n  ..d => d,\n  a @ ..=5 => a\n}",
-    "expectedReparseTree": "(match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns item: (wildcard_pattern)))) right: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns item: (remaining_field_pattern)))))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal))))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal)))))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_bare))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (range_pattern_prefix right: (identifier))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_prefix right: (integer_literal_decimal)))) value: (identifier))))",
+    "expectedReparseTree": "(match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns item: (wildcard_pattern)))) right: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns item: (remaining_field_pattern)))))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal))))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal)))))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_bare))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (range_pattern_prefix right: (identifier))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_prefix right: (integer_literal_decimal)))) value: (identifier))))",
     "wrappedText": "fn _f() { let _ = match x {\n  a @ A(_) | b @ B(..) => a,\n  a @ 1 ... 5 => a,\n  Some(1 ... 5) => a,\n  a @ b...c => a,\n  a @ b..=c => a,\n  d.. => a,\n  ..d => d,\n  a @ ..=5 => a\n}; }",
     "wrappedOffset": 26
   },
@@ -170206,7 +170206,7 @@
       "$type": 293,
       "_match_block_arms": {
         "$type": 434,
-        "_match_arm": [
+        "_arms": [
           {
             "$type": 397,
             "_attributes": [],
@@ -170307,7 +170307,7 @@
     "pattern": "match_block",
     "edits": [],
     "expectedSourceOut": "{\n  | \"IPV6_FLOWINFO\"\n  | \"IPV6_FLOWLABEL_MGR\"\n  | \"IPV6_FLOWINFO_SEND\" => true,\n  _ => false,\n}",
-    "expectedReparseTree": "(match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (or_pattern_binary left: (or_pattern_prefix right: (string_literal string_open: (string_open) elements: (string_content))) right: (string_literal string_open: (string_open) elements: (string_content))) right: (string_literal string_open: (string_open) elements: (string_content)))) value: (boolean_literal)) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (boolean_literal))))",
+    "expectedReparseTree": "(match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (or_pattern_binary left: (or_pattern_prefix right: (string_literal string_open: (string_open) elements: (string_content))) right: (string_literal string_open: (string_open) elements: (string_content))) right: (string_literal string_open: (string_open) elements: (string_content)))) value: (boolean_literal)) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (boolean_literal))))",
     "wrappedText": "fn _f() { let _ = match x {\n  | \"IPV6_FLOWINFO\"\n  | \"IPV6_FLOWLABEL_MGR\"\n  | \"IPV6_FLOWINFO_SEND\" => true,\n  _ => false,\n}; }",
     "wrappedOffset": 26
   },
@@ -170317,7 +170317,7 @@
     "pattern": "match_block_arms",
     "input": {
       "$type": 434,
-      "_match_arm": [
+      "_arms": [
         {
           "$type": 397,
           "_attributes": [],
@@ -170631,7 +170631,7 @@
     "pattern": "match_block_arms",
     "edits": [],
     "expectedSourceOut": "a @ A(_) | b @ B(..) => a,\na @ 1 ... 5 => a,\nSome(1 ... 5) => a,\na @ b...c => a,\na @ b..=c => a,\nd.. => a,\n..d => d,\na @ ..=5 => a",
-    "expectedReparseTree": "(match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns item: (wildcard_pattern)))) right: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns item: (remaining_field_pattern)))))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal))))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal)))))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_bare))) value: (identifier)) (match_arm_with_comma pattern: (match_pattern pattern: (range_pattern_prefix right: (identifier))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_prefix right: (integer_literal_decimal)))) value: (identifier)))",
+    "expectedReparseTree": "(match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns item: (wildcard_pattern)))) right: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) (patterns item: (remaining_field_pattern)))))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal))))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (patterns item: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal)))))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_bare))) value: (identifier)) arms: (match_arm_with_comma pattern: (match_pattern pattern: (range_pattern_prefix right: (identifier))) value: (identifier)) last_arm: (last_match_arm pattern: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_prefix right: (integer_literal_decimal)))) value: (identifier)))",
     "wrappedText": "fn _f() { let _ = match x {\n  a @ A(_) | b @ B(..) => a,\n  a @ 1 ... 5 => a,\n  Some(1 ... 5) => a,\n  a @ b...c => a,\n  a @ b..=c => a,\n  d.. => a,\n  ..d => d,\n  a @ ..=5 => a\n}; }",
     "wrappedOffset": 30
   },
@@ -170641,7 +170641,7 @@
     "pattern": "match_block_arms",
     "input": {
       "$type": 434,
-      "_match_arm": [
+      "_arms": [
         {
           "$type": 397,
           "_attributes": [],
@@ -170741,7 +170741,7 @@
     "pattern": "match_block_arms",
     "edits": [],
     "expectedSourceOut": "| \"IPV6_FLOWINFO\"\n| \"IPV6_FLOWLABEL_MGR\"\n| \"IPV6_FLOWINFO_SEND\" => true,\n_ => false,",
-    "expectedReparseTree": "(match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (or_pattern_binary left: (or_pattern_prefix right: (string_literal string_open: (string_open) elements: (string_content))) right: (string_literal string_open: (string_open) elements: (string_content))) right: (string_literal string_open: (string_open) elements: (string_content)))) value: (boolean_literal)) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (boolean_literal)))",
+    "expectedReparseTree": "(match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (or_pattern_binary left: (or_pattern_binary left: (or_pattern_prefix right: (string_literal string_open: (string_open) elements: (string_content))) right: (string_literal string_open: (string_open) elements: (string_content))) right: (string_literal string_open: (string_open) elements: (string_content)))) value: (boolean_literal)) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (boolean_literal)))",
     "wrappedText": "fn _f() { let _ = match x {\n  | \"IPV6_FLOWINFO\"\n  | \"IPV6_FLOWLABEL_MGR\"\n  | \"IPV6_FLOWINFO_SEND\" => true,\n  _ => false,\n}; }",
     "wrappedOffset": 30
   },
@@ -179302,7 +179302,7 @@
                     "$type": 293,
                     "_match_block_arms": {
                       "$type": 434,
-                      "_match_arm": [
+                      "_arms": [
                         {
                           "$type": 397,
                           "_attributes": [],
@@ -179405,7 +179405,7 @@
                     "$type": 293,
                     "_match_block_arms": {
                       "$type": 434,
-                      "_match_arm": [
+                      "_arms": [
                         {
                           "$type": 397,
                           "_attributes": [],
@@ -179530,7 +179530,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "\nfn foo(x: i32) {\n    const CUBE: i32 = 3.pow(3);\n    match x {\n        CUBE => println!(\"three cubed\"),\n        _ => {}\n    }\n}\n\nfn foo(x: i32) {\n    match x {\n        const { 3.pow(3) } => println!(\"three cubed\"),\n        _ => {}\n    }\n}\n",
-    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) body: (block statements: (const_item name: (identifier) type: (primitive_type) value: (call_expression function: (field_expression value: (integer_literal_decimal) field: (field_identifier)) arguments: (arguments elements: (arguments_elements item: (attributed_argument (integer_literal_decimal)))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (identifier)) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))))))) statements: (function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) body: (block statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal_decimal) field: (field_identifier)) arguments: (arguments elements: (arguments_elements item: (attributed_argument (integer_literal_decimal)))))))) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))))))))",
+    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) body: (block statements: (const_item name: (identifier) type: (primitive_type) value: (call_expression function: (field_expression value: (integer_literal_decimal) field: (field_identifier)) arguments: (arguments elements: (arguments_elements item: (attributed_argument (integer_literal_decimal)))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (identifier)) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))))))) statements: (function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) body: (block statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal_decimal) field: (field_identifier)) arguments: (arguments elements: (arguments_elements item: (attributed_argument (integer_literal_decimal)))))))) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))))))))",
     "wrappedText": "\nfn foo(x: i32) {\n    const CUBE: i32 = 3.pow(3);\n    match x {\n        CUBE => println!(\"three cubed\"),\n        _ => {}\n    }\n}\n\nfn foo(x: i32) {\n    match x {\n        const { 3.pow(3) } => println!(\"three cubed\"),\n        _ => {}\n    }\n}\n",
     "wrappedOffset": 0
   },
@@ -179622,7 +179622,7 @@
                 "$type": 293,
                 "_match_block_arms": {
                   "$type": 434,
-                  "_match_arm": [
+                  "_arms": [
                     {
                       "$type": 397,
                       "_attributes": [],
@@ -179697,7 +179697,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo(x: i32) {\n    const CUBE: i32 = 3.pow(3);\n    match x {\n        CUBE => println!(\"three cubed\"),\n        _ => {}\n    }\n}",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) body: (block statements: (const_item name: (identifier) type: (primitive_type) value: (call_expression function: (field_expression value: (integer_literal_decimal) field: (field_identifier)) arguments: (arguments elements: (arguments_elements item: (attributed_argument (integer_literal_decimal)))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (identifier)) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block))))))))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) body: (block statements: (const_item name: (identifier) type: (primitive_type) value: (call_expression function: (field_expression value: (integer_literal_decimal) field: (field_identifier)) arguments: (arguments elements: (arguments_elements item: (attributed_argument (integer_literal_decimal)))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (identifier)) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block))))))))",
     "wrappedText": "fn foo(x: i32) {\n    const CUBE: i32 = 3.pow(3);\n    match x {\n        CUBE => println!(\"three cubed\"),\n        _ => {}\n    }\n}",
     "wrappedOffset": 0
   },
@@ -179747,7 +179747,7 @@
                 "$type": 293,
                 "_match_block_arms": {
                   "$type": 434,
-                  "_match_arm": [
+                  "_arms": [
                     {
                       "$type": 397,
                       "_attributes": [],
@@ -179869,7 +179869,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo(x: i32) {\n    match x {\n        const { 3.pow(3) } => println!(\"three cubed\"),\n        _ => {}\n    }\n}",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) body: (block statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal_decimal) field: (field_identifier)) arguments: (arguments elements: (arguments_elements item: (attributed_argument (integer_literal_decimal)))))))) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block))))))))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters elements: (parameters_elements item: (attributed_parameter (parameter name: (identifier) type: (primitive_type))))) body: (block statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal_decimal) field: (field_identifier)) arguments: (arguments elements: (arguments_elements item: (attributed_argument (integer_literal_decimal)))))))) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block))))))))",
     "wrappedText": "fn foo(x: i32) {\n    match x {\n        const { 3.pow(3) } => println!(\"three cubed\"),\n        _ => {}\n    }\n}",
     "wrappedOffset": 0
   },
@@ -180230,7 +180230,7 @@
               "$type": 293,
               "_match_block_arms": {
                 "$type": 434,
-                "_match_arm": [
+                "_arms": [
                   {
                     "$type": 397,
                     "_attributes": [],
@@ -180304,7 +180304,7 @@
     "pattern": "block",
     "edits": [],
     "expectedSourceOut": "{\n    const CUBE: i32 = 3.pow(3);\n    match x {\n        CUBE => println!(\"three cubed\"),\n        _ => {}\n    }\n}",
-    "expectedReparseTree": "(block statements: (const_item name: (identifier) type: (primitive_type) value: (call_expression function: (field_expression value: (integer_literal_decimal) field: (field_identifier)) arguments: (arguments elements: (arguments_elements item: (attributed_argument (integer_literal_decimal)))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (identifier)) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))))))",
+    "expectedReparseTree": "(block statements: (const_item name: (identifier) type: (primitive_type) value: (call_expression function: (field_expression value: (integer_literal_decimal) field: (field_identifier)) arguments: (arguments elements: (arguments_elements item: (attributed_argument (integer_literal_decimal)))))) statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (identifier)) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))))))",
     "wrappedText": "fn _f() { let _ = {\n    const CUBE: i32 = 3.pow(3);\n    match x {\n        CUBE => println!(\"three cubed\"),\n        _ => {}\n    }\n}; }",
     "wrappedOffset": 18
   },
@@ -180353,7 +180353,7 @@
               "$type": 293,
               "_match_block_arms": {
                 "$type": 434,
-                "_match_arm": [
+                "_arms": [
                   {
                     "$type": 397,
                     "_attributes": [],
@@ -180474,7 +180474,7 @@
     "pattern": "block",
     "edits": [],
     "expectedSourceOut": "{\n    match x {\n        const { 3.pow(3) } => println!(\"three cubed\"),\n        _ => {}\n    }\n}",
-    "expectedReparseTree": "(block statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal_decimal) field: (field_identifier)) arguments: (arguments elements: (arguments_elements item: (attributed_argument (integer_literal_decimal)))))))) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))))))",
+    "expectedReparseTree": "(block statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal_decimal) field: (field_identifier)) arguments: (arguments elements: (arguments_elements item: (attributed_argument (integer_literal_decimal)))))))) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))))))",
     "wrappedText": "fn _f() { let _ = {\n    match x {\n        const { 3.pow(3) } => println!(\"three cubed\"),\n        _ => {}\n    }\n}; }",
     "wrappedOffset": 18
   },
@@ -181210,7 +181210,7 @@
           "$type": 293,
           "_match_block_arms": {
             "$type": 434,
-            "_match_arm": [
+            "_arms": [
               {
                 "$type": 397,
                 "_attributes": [],
@@ -181282,7 +181282,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "match x {\n    CUBE => println!(\"three cubed\"),\n    _ => {}\n}",
-    "expectedReparseTree": "(expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (identifier)) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block))))))",
+    "expectedReparseTree": "(expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (identifier)) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block))))))",
     "wrappedText": "match x {\n    CUBE => println!(\"three cubed\"),\n    _ => {}\n}\n",
     "wrappedOffset": 0
   },
@@ -181302,7 +181302,7 @@
           "$type": 293,
           "_match_block_arms": {
             "$type": 434,
-            "_match_arm": [
+            "_arms": [
               {
                 "$type": 397,
                 "_attributes": [],
@@ -181421,7 +181421,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "match x {\n    const { 3.pow(3) } => println!(\"three cubed\"),\n    _ => {}\n}",
-    "expectedReparseTree": "(expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal_decimal) field: (field_identifier)) arguments: (arguments elements: (arguments_elements item: (attributed_argument (integer_literal_decimal)))))))) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block))))))",
+    "expectedReparseTree": "(expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal_decimal) field: (field_identifier)) arguments: (arguments elements: (arguments_elements item: (attributed_argument (integer_literal_decimal)))))))) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block))))))",
     "wrappedText": "match x {\n    const { 3.pow(3) } => println!(\"three cubed\"),\n    _ => {}\n}\n",
     "wrappedOffset": 0
   },
@@ -181439,7 +181439,7 @@
         "$type": 293,
         "_match_block_arms": {
           "$type": 434,
-          "_match_arm": [
+          "_arms": [
             {
               "$type": 397,
               "_attributes": [],
@@ -181510,7 +181510,7 @@
     "pattern": "match_expression",
     "edits": [],
     "expectedSourceOut": "match x {\n    CUBE => println!(\"three cubed\"),\n    _ => {}\n}",
-    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (identifier)) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))))",
+    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (identifier)) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))))",
     "wrappedText": "fn _f() { let _ = match x {\n    CUBE => println!(\"three cubed\"),\n    _ => {}\n}; }",
     "wrappedOffset": 18
   },
@@ -181528,7 +181528,7 @@
         "$type": 293,
         "_match_block_arms": {
           "$type": 434,
-          "_match_arm": [
+          "_arms": [
             {
               "$type": 397,
               "_attributes": [],
@@ -181646,7 +181646,7 @@
     "pattern": "match_expression",
     "edits": [],
     "expectedSourceOut": "match x {\n    const { 3.pow(3) } => println!(\"three cubed\"),\n    _ => {}\n}",
-    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal_decimal) field: (field_identifier)) arguments: (arguments elements: (arguments_elements item: (attributed_argument (integer_literal_decimal)))))))) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))))",
+    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal_decimal) field: (field_identifier)) arguments: (arguments elements: (arguments_elements item: (attributed_argument (integer_literal_decimal)))))))) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))))",
     "wrappedText": "fn _f() { let _ = match x {\n    const { 3.pow(3) } => println!(\"three cubed\"),\n    _ => {}\n}; }",
     "wrappedOffset": 18
   },
@@ -181658,7 +181658,7 @@
       "$type": 293,
       "_match_block_arms": {
         "$type": 434,
-        "_match_arm": [
+        "_arms": [
           {
             "$type": 397,
             "_attributes": [],
@@ -181728,7 +181728,7 @@
     "pattern": "match_block",
     "edits": [],
     "expectedSourceOut": "{\n    CUBE => println!(\"three cubed\"),\n    _ => {}\n}",
-    "expectedReparseTree": "(match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (identifier)) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block))))",
+    "expectedReparseTree": "(match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (identifier)) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block))))",
     "wrappedText": "fn _f() { let _ = match x {\n    CUBE => println!(\"three cubed\"),\n    _ => {}\n}; }",
     "wrappedOffset": 26
   },
@@ -181740,7 +181740,7 @@
       "$type": 293,
       "_match_block_arms": {
         "$type": 434,
-        "_match_arm": [
+        "_arms": [
           {
             "$type": 397,
             "_attributes": [],
@@ -181857,7 +181857,7 @@
     "pattern": "match_block",
     "edits": [],
     "expectedSourceOut": "{\n    const { 3.pow(3) } => println!(\"three cubed\"),\n    _ => {}\n}",
-    "expectedReparseTree": "(match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal_decimal) field: (field_identifier)) arguments: (arguments elements: (arguments_elements item: (attributed_argument (integer_literal_decimal)))))))) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block))))",
+    "expectedReparseTree": "(match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal_decimal) field: (field_identifier)) arguments: (arguments elements: (arguments_elements item: (attributed_argument (integer_literal_decimal)))))))) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block))))",
     "wrappedText": "fn _f() { let _ = match x {\n    const { 3.pow(3) } => println!(\"three cubed\"),\n    _ => {}\n}; }",
     "wrappedOffset": 26
   },
@@ -181867,7 +181867,7 @@
     "pattern": "match_block_arms",
     "input": {
       "$type": 434,
-      "_match_arm": [
+      "_arms": [
         {
           "$type": 397,
           "_attributes": [],
@@ -181936,7 +181936,7 @@
     "pattern": "match_block_arms",
     "edits": [],
     "expectedSourceOut": "CUBE => println!(\"three cubed\"),\n_ => {}",
-    "expectedReparseTree": "(match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (identifier)) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))",
+    "expectedReparseTree": "(match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (identifier)) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))",
     "wrappedText": "fn _f() { let _ = match x {\n  CUBE => println!(\"three cubed\"),\n  _ => {}\n}; }",
     "wrappedOffset": 30
   },
@@ -181946,7 +181946,7 @@
     "pattern": "match_block_arms",
     "input": {
       "$type": 434,
-      "_match_arm": [
+      "_arms": [
         {
           "$type": 397,
           "_attributes": [],
@@ -182062,7 +182062,7 @@
     "pattern": "match_block_arms",
     "edits": [],
     "expectedSourceOut": "const { 3.pow(3) } => println!(\"three cubed\"),\n_ => {}",
-    "expectedReparseTree": "(match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal_decimal) field: (field_identifier)) arguments: (arguments elements: (arguments_elements item: (attributed_argument (integer_literal_decimal)))))))) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))",
+    "expectedReparseTree": "(match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal_decimal) field: (field_identifier)) arguments: (arguments elements: (arguments_elements item: (attributed_argument (integer_literal_decimal)))))))) value: (macro_invocation macro: (identifier) arguments: (delim_token_tree_paren delim_tokens: (non_special_token (string_literal string_open: (string_open) elements: (string_content)))))) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (block)))",
     "wrappedText": "fn _f() { let _ = match x {\n  const { 3.pow(3) } => println!(\"three cubed\"),\n  _ => {}\n}; }",
     "wrappedOffset": 30
   },
@@ -182886,7 +182886,7 @@
               "$type": 293,
               "_match_block_arms": {
                 "$type": 434,
-                "_match_arm": [
+                "_arms": [
                   {
                     "$type": 397,
                     "_attributes": [],
@@ -182959,7 +182959,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "\nmatch y {\n    None::<T> => 17,\n    _ => 42,\n}\n",
-    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (generic_pattern name: (identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier)))))) value: (integer_literal_decimal)) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (integer_literal_decimal)))))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (generic_pattern name: (identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier)))))) value: (integer_literal_decimal)) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (integer_literal_decimal)))))))",
     "wrappedText": "\nmatch y {\n    None::<T> => 17,\n    _ => 42,\n}\n",
     "wrappedOffset": 0
   },
@@ -182979,7 +182979,7 @@
           "$type": 293,
           "_match_block_arms": {
             "$type": 434,
-            "_match_arm": [
+            "_arms": [
               {
                 "$type": 397,
                 "_attributes": [],
@@ -183049,7 +183049,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "match y {\n    None::<T> => 17,\n    _ => 42,\n}",
-    "expectedReparseTree": "(expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (generic_pattern name: (identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier)))))) value: (integer_literal_decimal)) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (integer_literal_decimal))))))",
+    "expectedReparseTree": "(expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (generic_pattern name: (identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier)))))) value: (integer_literal_decimal)) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (integer_literal_decimal))))))",
     "wrappedText": "match y {\n    None::<T> => 17,\n    _ => 42,\n}\n",
     "wrappedOffset": 0
   },
@@ -183067,7 +183067,7 @@
         "$type": 293,
         "_match_block_arms": {
           "$type": 434,
-          "_match_arm": [
+          "_arms": [
             {
               "$type": 397,
               "_attributes": [],
@@ -183136,7 +183136,7 @@
     "pattern": "match_expression",
     "edits": [],
     "expectedSourceOut": "match y {\n    None::<T> => 17,\n    _ => 42,\n}",
-    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (generic_pattern name: (identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier)))))) value: (integer_literal_decimal)) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (integer_literal_decimal)))))",
+    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (generic_pattern name: (identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier)))))) value: (integer_literal_decimal)) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (integer_literal_decimal)))))",
     "wrappedText": "fn _f() { let _ = match y {\n    None::<T> => 17,\n    _ => 42,\n}; }",
     "wrappedOffset": 18
   },
@@ -183148,7 +183148,7 @@
       "$type": 293,
       "_match_block_arms": {
         "$type": 434,
-        "_match_arm": [
+        "_arms": [
           {
             "$type": 397,
             "_attributes": [],
@@ -183216,7 +183216,7 @@
     "pattern": "match_block",
     "edits": [],
     "expectedSourceOut": "{\n    None::<T> => 17,\n    _ => 42,\n}",
-    "expectedReparseTree": "(match_block (match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (generic_pattern name: (identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier)))))) value: (integer_literal_decimal)) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (integer_literal_decimal))))",
+    "expectedReparseTree": "(match_block (match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (generic_pattern name: (identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier)))))) value: (integer_literal_decimal)) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (integer_literal_decimal))))",
     "wrappedText": "fn _f() { let _ = match x {\n    None::<T> => 17,\n    _ => 42,\n}; }",
     "wrappedOffset": 26
   },
@@ -183226,7 +183226,7 @@
     "pattern": "match_block_arms",
     "input": {
       "$type": 434,
-      "_match_arm": [
+      "_arms": [
         {
           "$type": 397,
           "_attributes": [],
@@ -183293,7 +183293,7 @@
     "pattern": "match_block_arms",
     "edits": [],
     "expectedSourceOut": "None::<T> => 17,\n_ => 42,",
-    "expectedReparseTree": "(match_block_arms (match_arm_with_comma pattern: (match_pattern pattern: (generic_pattern name: (identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier)))))) value: (integer_literal_decimal)) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (integer_literal_decimal)))",
+    "expectedReparseTree": "(match_block_arms arms: (match_arm_with_comma pattern: (match_pattern pattern: (generic_pattern name: (identifier) type_arguments: (type_arguments elements: (type_arguments_elements item: (type_argument (type_identifier)))))) value: (integer_literal_decimal)) last_arm: (last_match_arm pattern: (match_pattern pattern: (wildcard_pattern)) value: (integer_literal_decimal)))",
     "wrappedText": "fn _f() { let _ = match x {\n  None::<T> => 17,\n  _ => 42,\n}; }",
     "wrappedOffset": 30
   },

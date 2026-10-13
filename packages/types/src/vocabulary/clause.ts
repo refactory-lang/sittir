@@ -141,7 +141,7 @@ export namespace Clause {
 	export interface Extends<G extends GrammarContext<G>> extends SubKindOf<V.Clause<G>> {
 		// claimed by t
 		readonly $kind: 'clause.extends';
-		readonly extendsClauseSingles?: G['slots']['clause.extends']['extendsClauseSingles'][];
+		readonly types?: G['slots']['clause.extends']['types'][];
 	}
 	export namespace Extends {
 		export interface Type<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Extends<G>> {

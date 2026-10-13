@@ -26262,13 +26262,13 @@ impl ::sittir_core::prepare::Prepare for ImportRequireClauseTransport {
 pub struct ExtendsClauseTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_extends_clause_single")]
-    #[slot(separator = kind::COMMA)]
-    pub extends_clause_single: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExtendsClauseSingleTransport>>,
-    #[wire(key = "_extends_clause_single_separator_space_before")]
-    pub extends_clause_single_separator_space_before: Option<u16>,
-    #[wire(key = "_extends_clause_single_separator_space_after")]
-    pub extends_clause_single_separator_space_after: Option<u16>,
+    #[wire(key = "_types")]
+    #[slot(field = field::TYPES, separator = kind::COMMA)]
+    pub types: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExtendsClauseSingleTransport>>,
+    #[wire(key = "_types_separator_space_before")]
+    pub types_separator_space_before: Option<u16>,
+    #[wire(key = "_types_separator_space_after")]
+    pub types_separator_space_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ExtendsClauseTransport {
@@ -26293,11 +26293,11 @@ impl ::sittir_core::prepare::Prepare for ExtendsClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        ::sittir_core::prepare::fill_slot_gaps(self.extends_clause_single.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_extends_clause_single"));
-        self.extends_clause_single_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_SEPARATOR_SPACE_BEFORE].arm);
-        self.extends_clause_single_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.extends_clause_single.iter_mut().map(Some), options::SEATS_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE, ctx);
-        self.extends_clause_single.prepare(ctx)?;
+        ::sittir_core::prepare::fill_slot_gaps(self.types.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_types"));
+        self.types_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_EXTENDS_CLAUSE_TYPES_SEPARATOR_SPACE_BEFORE].arm);
+        self.types_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_EXTENDS_CLAUSE_TYPES_SEPARATOR_SPACE_AFTER].arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.types.iter_mut().map(Some), options::SEATS_EXTENDS_CLAUSE_TYPES, ctx);
+        self.types.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -42573,23 +42573,23 @@ fn render_import_require_clause(node: &ImportRequireClauseTransport, w: &mut dyn
 }
 
 fn render_extends_clause(node: &ExtendsClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let extends_clause_single = ListView {
-        items: &node.extends_clause_single,
+    let types = ListView {
+        items: &node.types,
         template: "{}",
         token: ",",
         separators: None,
-        before: node.extends_clause_single_separator_space_before.unwrap_or(0),
-        after: node.extends_clause_single_separator_space_after.unwrap_or(0),
+        before: node.types_separator_space_before.unwrap_or(0),
+        after: node.types_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: Some(options::SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_START),
-        tail: Some(options::SITE_EXTENDS_CLAUSE_EXTENDS_CLAUSE_SINGLE_END),
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_extends_clause_single"),
+        head: Some(options::SITE_EXTENDS_CLAUSE_TYPES_START),
+        tail: Some(options::SITE_EXTENDS_CLAUSE_TYPES_END),
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_types"),
     };
     w.edge(::sittir_core::types::KindId(302), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("extends")?;
     w.site_at(options::SITE_EXTENDS_CLAUSE_EXTENDS_KEYWORD_AFTER);
-    extends_clause_single.render(w)?;
+    types.render(w)?;
     w.edge(::sittir_core::types::KindId(302), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }

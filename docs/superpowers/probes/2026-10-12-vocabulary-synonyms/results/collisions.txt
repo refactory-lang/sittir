@@ -1,23 +1,23 @@
-587 kinds; 62 renames and 1 additions give 557 kinds
+587 kinds; 73 renames and 22 additions give 578 kinds
 
 == argument
   named            keyword                          at argument.named (1)
 == clause
   bounds           constraint                       at clause.bounds (1)
   case             arm                              at clause.case (1)
+  catch            except rescue                    at clause.catch (1)
   else_if          elif elsif elseif                at clause.else_if (1)
   finally          ensure                           at clause.finally (1)
-  handler          catch except rescue              at clause.handler (1)
   resource         using                            at clause.resource (1)
   wildcard         glob                             at clause.import.wildcard (1)
 == declaration
   constructor      initializer init                 at declaration.constructor (1)
   enum_member      variant enumerator               at declaration.enum_member (1)
   extension        impl                             at declaration.extension (1)
-  field            property                         at declaration.field (1)
   foreign          extern                           at declaration.module.foreign (1)
+  index            indexer                          at declaration.signature.index (1)
   internal         crate                            at declaration.constant.public.internal, declaration.enum.public.internal, declaration.enum_member.public.internal, declaration.enum_member.struct.public.internal … (20)
-  module           namespace mod                    at declaration.module (1)
+  module           mod                              at declaration.module (1)
   receiver         self this                        at declaration.parameter.receiver (1)
   special          dunder magic                     at declaration.method.special (1)
   struct           record                           at declaration.enum_member.struct, declaration.struct (2)
@@ -55,7 +55,7 @@
   list             array slice                      at pattern.list (1)
   map              dictionary dict                  at pattern.map, pattern.rest.map (2)
   rest             splat unpack                     at pattern.rest, pattern.struct.rest (2)
-  struct           record                           at pattern.struct, pattern.tuple.struct (2)
+  struct           record                           at pattern.struct (1)
 == statement
   empty            pass                             at statement.empty (1)
   import           use                              at statement.import (1)
@@ -63,9 +63,15 @@
   resource         using                            at statement.resource (1)
   throw            raise                            at statement.throw (1)
 == type
+  boolean          bool                             at type.primitive.boolean (1)
+  character        char                             at type.primitive.character (1)
+  float64          double                           at type.primitive.floating.float64 (1)
+  int16            short                            at type.primitive.integral.int16 (1)
+  int8             byte                             at type.primitive.integral.int8 (1)
   nullable         maybe                            at type.nullable (1)
   reference        borrow                           at type.reference (1)
   rest             splat unpack                     at type.rest (1)
+  string           str                              at type.primitive.string (1)
 
 == flags
   (no flag synonyms proposed)
@@ -73,12 +79,14 @@
 == excluded (a word two languages use for different facts is a synonym of neither)
   with     python's resource statement; typescript's (javascript's) dynamic scope, statement.scope
   super    typescript's base-class reference; rust's parent module in a path
-  self     rust's receiver; rust's current module at a path's root
   as       rust's numeric conversion; typescript's type assertion
   is       python's identity test; the type test of C#, Kotlin and Swift
   mut      rust's binding mutability (mutable); a reference's exclusivity (exclusive)
-  for      typescript's three-part loop (statement.loop.counted) and every language's for-each (statement.loop.for)
-  static   a member with no receiver (the static flag); rust's static item, a declaration.constant
+  for      typescript's three-part loop (statement.loop.counted) and every language's for-each (statement.loop.for_each)
+  static   a member with no receiver (the static flag); rust's static item, a declaration.variable
+  int      32 bits in C, Java and C#; pointer-sized in Go and Swift
+  long     64 bits in Java and C#; platform-sized in C
+  float    32 bits in C, Java, C# and Swift; a double in python
 
-117 synonym positions checked; 0 collisions
+120 synonym positions checked; 0 collisions
   note expression: `try` is a synonym of `propagate` and the canonical segment of expression.block.try

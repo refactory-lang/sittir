@@ -8967,7 +8967,7 @@ impl ::sittir_core::render::Render for StringContentTransportSlot {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
-pub enum StringContentContentTransportSlot {
+pub enum StringContentElementsTransportSlot {
     #[kind(kind::ESCAPE_INTERPOLATION)]
     EscapeInterpolation(EscapeInterpolationTransport),
     #[kind(kind::ESCAPE_SEQUENCE_UNICODE_FIXED)]
@@ -8992,65 +8992,65 @@ pub enum StringContentContentTransportSlot {
     Verbatim(VerbatimTransport),
 }
 
-impl ::sittir_core::prepare::Prepare for StringContentContentTransportSlot {
+impl ::sittir_core::prepare::Prepare for StringContentElementsTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            StringContentContentTransportSlot::EscapeInterpolation(t) => t.prepare(ctx),
-            StringContentContentTransportSlot::EscapeSequenceUnicodeFixed(t) => t.prepare(ctx),
-            StringContentContentTransportSlot::EscapeSequenceUnicodeWide(t) => t.prepare(ctx),
-            StringContentContentTransportSlot::EscapeSequenceHex(t) => t.prepare(ctx),
-            StringContentContentTransportSlot::EscapeSequenceOctal(t) => t.prepare(ctx),
-            StringContentContentTransportSlot::EscapeSequenceLineBreak(t) => t.prepare(ctx),
-            StringContentContentTransportSlot::EscapeSequenceSimple(t) => t.prepare(ctx),
-            StringContentContentTransportSlot::EscapeSequenceNamed(t) => t.prepare(ctx),
-            StringContentContentTransportSlot::StringFragment(t) => t.prepare(ctx),
-            StringContentContentTransportSlot::NotEscapeSequence => Ok(()),
-            StringContentContentTransportSlot::Verbatim(t) => t.prepare(ctx),
+            StringContentElementsTransportSlot::EscapeInterpolation(t) => t.prepare(ctx),
+            StringContentElementsTransportSlot::EscapeSequenceUnicodeFixed(t) => t.prepare(ctx),
+            StringContentElementsTransportSlot::EscapeSequenceUnicodeWide(t) => t.prepare(ctx),
+            StringContentElementsTransportSlot::EscapeSequenceHex(t) => t.prepare(ctx),
+            StringContentElementsTransportSlot::EscapeSequenceOctal(t) => t.prepare(ctx),
+            StringContentElementsTransportSlot::EscapeSequenceLineBreak(t) => t.prepare(ctx),
+            StringContentElementsTransportSlot::EscapeSequenceSimple(t) => t.prepare(ctx),
+            StringContentElementsTransportSlot::EscapeSequenceNamed(t) => t.prepare(ctx),
+            StringContentElementsTransportSlot::StringFragment(t) => t.prepare(ctx),
+            StringContentElementsTransportSlot::NotEscapeSequence => Ok(()),
+            StringContentElementsTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            StringContentContentTransportSlot::EscapeInterpolation(t) => t.gap_edges(),
-            StringContentContentTransportSlot::EscapeSequenceUnicodeFixed(t) => t.gap_edges(),
-            StringContentContentTransportSlot::EscapeSequenceUnicodeWide(t) => t.gap_edges(),
-            StringContentContentTransportSlot::EscapeSequenceHex(t) => t.gap_edges(),
-            StringContentContentTransportSlot::EscapeSequenceOctal(t) => t.gap_edges(),
-            StringContentContentTransportSlot::EscapeSequenceLineBreak(t) => t.gap_edges(),
-            StringContentContentTransportSlot::EscapeSequenceSimple(t) => t.gap_edges(),
-            StringContentContentTransportSlot::EscapeSequenceNamed(t) => t.gap_edges(),
-            StringContentContentTransportSlot::StringFragment(t) => t.gap_edges(),
-            StringContentContentTransportSlot::NotEscapeSequence => None,
-            StringContentContentTransportSlot::Verbatim(t) => t.gap_edges(),
+            StringContentElementsTransportSlot::EscapeInterpolation(t) => t.gap_edges(),
+            StringContentElementsTransportSlot::EscapeSequenceUnicodeFixed(t) => t.gap_edges(),
+            StringContentElementsTransportSlot::EscapeSequenceUnicodeWide(t) => t.gap_edges(),
+            StringContentElementsTransportSlot::EscapeSequenceHex(t) => t.gap_edges(),
+            StringContentElementsTransportSlot::EscapeSequenceOctal(t) => t.gap_edges(),
+            StringContentElementsTransportSlot::EscapeSequenceLineBreak(t) => t.gap_edges(),
+            StringContentElementsTransportSlot::EscapeSequenceSimple(t) => t.gap_edges(),
+            StringContentElementsTransportSlot::EscapeSequenceNamed(t) => t.gap_edges(),
+            StringContentElementsTransportSlot::StringFragment(t) => t.gap_edges(),
+            StringContentElementsTransportSlot::NotEscapeSequence => None,
+            StringContentElementsTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            StringContentContentTransportSlot::EscapeInterpolation(t) => t.snapshot_edge(),
-            StringContentContentTransportSlot::EscapeSequenceUnicodeFixed(t) => t.snapshot_edge(),
-            StringContentContentTransportSlot::EscapeSequenceUnicodeWide(t) => t.snapshot_edge(),
-            StringContentContentTransportSlot::EscapeSequenceHex(t) => t.snapshot_edge(),
-            StringContentContentTransportSlot::EscapeSequenceOctal(t) => t.snapshot_edge(),
-            StringContentContentTransportSlot::EscapeSequenceLineBreak(t) => t.snapshot_edge(),
-            StringContentContentTransportSlot::EscapeSequenceSimple(t) => t.snapshot_edge(),
-            StringContentContentTransportSlot::EscapeSequenceNamed(t) => t.snapshot_edge(),
-            StringContentContentTransportSlot::StringFragment(t) => t.snapshot_edge(),
-            StringContentContentTransportSlot::NotEscapeSequence => None,
-            StringContentContentTransportSlot::Verbatim(t) => t.snapshot_edge(),
+            StringContentElementsTransportSlot::EscapeInterpolation(t) => t.snapshot_edge(),
+            StringContentElementsTransportSlot::EscapeSequenceUnicodeFixed(t) => t.snapshot_edge(),
+            StringContentElementsTransportSlot::EscapeSequenceUnicodeWide(t) => t.snapshot_edge(),
+            StringContentElementsTransportSlot::EscapeSequenceHex(t) => t.snapshot_edge(),
+            StringContentElementsTransportSlot::EscapeSequenceOctal(t) => t.snapshot_edge(),
+            StringContentElementsTransportSlot::EscapeSequenceLineBreak(t) => t.snapshot_edge(),
+            StringContentElementsTransportSlot::EscapeSequenceSimple(t) => t.snapshot_edge(),
+            StringContentElementsTransportSlot::EscapeSequenceNamed(t) => t.snapshot_edge(),
+            StringContentElementsTransportSlot::StringFragment(t) => t.snapshot_edge(),
+            StringContentElementsTransportSlot::NotEscapeSequence => None,
+            StringContentElementsTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
         match self {
-            StringContentContentTransportSlot::EscapeInterpolation(t) => t.source_separator(ctx),
-            StringContentContentTransportSlot::EscapeSequenceUnicodeFixed(t) => t.source_separator(ctx),
-            StringContentContentTransportSlot::EscapeSequenceUnicodeWide(t) => t.source_separator(ctx),
-            StringContentContentTransportSlot::EscapeSequenceHex(t) => t.source_separator(ctx),
-            StringContentContentTransportSlot::EscapeSequenceOctal(t) => t.source_separator(ctx),
-            StringContentContentTransportSlot::EscapeSequenceLineBreak(t) => t.source_separator(ctx),
-            StringContentContentTransportSlot::EscapeSequenceSimple(t) => t.source_separator(ctx),
-            StringContentContentTransportSlot::EscapeSequenceNamed(t) => t.source_separator(ctx),
-            StringContentContentTransportSlot::StringFragment(t) => t.source_separator(ctx),
-            StringContentContentTransportSlot::NotEscapeSequence => None,
-            StringContentContentTransportSlot::Verbatim(t) => t.source_separator(ctx),
+            StringContentElementsTransportSlot::EscapeInterpolation(t) => t.source_separator(ctx),
+            StringContentElementsTransportSlot::EscapeSequenceUnicodeFixed(t) => t.source_separator(ctx),
+            StringContentElementsTransportSlot::EscapeSequenceUnicodeWide(t) => t.source_separator(ctx),
+            StringContentElementsTransportSlot::EscapeSequenceHex(t) => t.source_separator(ctx),
+            StringContentElementsTransportSlot::EscapeSequenceOctal(t) => t.source_separator(ctx),
+            StringContentElementsTransportSlot::EscapeSequenceLineBreak(t) => t.source_separator(ctx),
+            StringContentElementsTransportSlot::EscapeSequenceSimple(t) => t.source_separator(ctx),
+            StringContentElementsTransportSlot::EscapeSequenceNamed(t) => t.source_separator(ctx),
+            StringContentElementsTransportSlot::StringFragment(t) => t.source_separator(ctx),
+            StringContentElementsTransportSlot::NotEscapeSequence => None,
+            StringContentElementsTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -9058,7 +9058,7 @@ impl ::sittir_core::prepare::Prepare for StringContentContentTransportSlot {
     }
 }
 
-impl ::sittir_core::view::KindOf for StringContentContentTransportSlot {
+impl ::sittir_core::view::KindOf for StringContentElementsTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::EscapeInterpolation(inner) => inner.kind_in(kinds),
@@ -9076,20 +9076,20 @@ impl ::sittir_core::view::KindOf for StringContentContentTransportSlot {
     }
 }
 
-impl ::sittir_core::render::Render for StringContentContentTransportSlot {
+impl ::sittir_core::render::Render for StringContentElementsTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            StringContentContentTransportSlot::EscapeInterpolation(inner) => inner.render(w),
-            StringContentContentTransportSlot::EscapeSequenceUnicodeFixed(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
-            StringContentContentTransportSlot::EscapeSequenceUnicodeWide(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
-            StringContentContentTransportSlot::EscapeSequenceHex(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
-            StringContentContentTransportSlot::EscapeSequenceOctal(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
-            StringContentContentTransportSlot::EscapeSequenceLineBreak(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
-            StringContentContentTransportSlot::EscapeSequenceSimple(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
-            StringContentContentTransportSlot::EscapeSequenceNamed(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
-            StringContentContentTransportSlot::StringFragment(inner) => inner.render(w),
-            StringContentContentTransportSlot::NotEscapeSequence => render_not_escape_sequence(w),
-            StringContentContentTransportSlot::Verbatim(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            StringContentElementsTransportSlot::EscapeInterpolation(inner) => inner.render(w),
+            StringContentElementsTransportSlot::EscapeSequenceUnicodeFixed(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            StringContentElementsTransportSlot::EscapeSequenceUnicodeWide(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            StringContentElementsTransportSlot::EscapeSequenceHex(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            StringContentElementsTransportSlot::EscapeSequenceOctal(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            StringContentElementsTransportSlot::EscapeSequenceLineBreak(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            StringContentElementsTransportSlot::EscapeSequenceSimple(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            StringContentElementsTransportSlot::EscapeSequenceNamed(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            StringContentElementsTransportSlot::StringFragment(inner) => inner.render(w),
+            StringContentElementsTransportSlot::NotEscapeSequence => render_not_escape_sequence(w),
+            StringContentElementsTransportSlot::Verbatim(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
         }
     }
 }
@@ -16141,9 +16141,9 @@ pub struct ListComprehensionTransport {
     #[wire(key = "_body")]
     #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[wire(key = "_comprehension_clauses")]
-    #[slot]
-    pub comprehension_clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
+    #[wire(key = "_clauses")]
+    #[slot(field = field::CLAUSES)]
+    pub clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
 }
 
 impl ::sittir_core::view::KindOf for ListComprehensionTransport {
@@ -16169,7 +16169,7 @@ impl ::sittir_core::prepare::Prepare for ListComprehensionTransport {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
-        self.comprehension_clauses.prepare(ctx)?;
+        self.clauses.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -16194,9 +16194,9 @@ pub struct DictionaryComprehensionTransport {
     #[wire(key = "_body")]
     #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<Box<PairTransport>>,
-    #[wire(key = "_comprehension_clauses")]
-    #[slot]
-    pub comprehension_clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
+    #[wire(key = "_clauses")]
+    #[slot(field = field::CLAUSES)]
+    pub clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
 }
 
 impl ::sittir_core::view::KindOf for DictionaryComprehensionTransport {
@@ -16222,7 +16222,7 @@ impl ::sittir_core::prepare::Prepare for DictionaryComprehensionTransport {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
-        self.comprehension_clauses.prepare(ctx)?;
+        self.clauses.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -16247,9 +16247,9 @@ pub struct SetComprehensionTransport {
     #[wire(key = "_body")]
     #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[wire(key = "_comprehension_clauses")]
-    #[slot]
-    pub comprehension_clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
+    #[wire(key = "_clauses")]
+    #[slot(field = field::CLAUSES)]
+    pub clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
 }
 
 impl ::sittir_core::view::KindOf for SetComprehensionTransport {
@@ -16275,7 +16275,7 @@ impl ::sittir_core::prepare::Prepare for SetComprehensionTransport {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
-        self.comprehension_clauses.prepare(ctx)?;
+        self.clauses.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -16300,9 +16300,9 @@ pub struct GeneratorExpressionTransport {
     #[wire(key = "_body")]
     #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[wire(key = "_comprehension_clauses")]
-    #[slot]
-    pub comprehension_clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
+    #[wire(key = "_clauses")]
+    #[slot(field = field::CLAUSES)]
+    pub clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
 }
 
 impl ::sittir_core::view::KindOf for GeneratorExpressionTransport {
@@ -16328,7 +16328,7 @@ impl ::sittir_core::prepare::Prepare for GeneratorExpressionTransport {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
-        self.comprehension_clauses.prepare(ctx)?;
+        self.clauses.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -16746,9 +16746,9 @@ impl ::sittir_core::prepare::Prepare for StringTransport {
 pub struct StringContentTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_content")]
-    #[slot]
-    pub content: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<StringContentContentTransportSlot, true>>,
+    #[wire(key = "_elements")]
+    #[slot(field = field::ELEMENTS)]
+    pub elements: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<StringContentElementsTransportSlot, true>>,
 }
 
 impl ::sittir_core::view::KindOf for StringContentTransport {
@@ -16772,8 +16772,8 @@ impl ::sittir_core::render::Render for StringContentTransport {
 impl ::sittir_core::prepare::Prepare for StringContentTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        ::sittir_core::prepare::fill_slot_gaps(self.content.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_content"));
-        self.content.prepare(ctx)?;
+        ::sittir_core::prepare::fill_slot_gaps(self.elements.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_elements"));
+        self.elements.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -18230,9 +18230,9 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionAsTransport {
 pub struct CaseTuplePatternTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_list_pattern_case_patterns")]
-    #[slot]
-    pub list_pattern_case_patterns: Option<::sittir_core::SlotValue<ListPatternCasePatternsTransport>>,
+    #[wire(key = "_elements")]
+    #[slot(field = field::ELEMENTS)]
+    pub elements: Option<::sittir_core::SlotValue<ListPatternCasePatternsTransport>>,
 }
 
 impl ::sittir_core::view::KindOf for CaseTuplePatternTransport {
@@ -18257,7 +18257,7 @@ impl ::sittir_core::prepare::Prepare for CaseTuplePatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.list_pattern_case_patterns.prepare(ctx)?;
+        self.elements.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -18279,9 +18279,9 @@ impl ::sittir_core::prepare::Prepare for CaseTuplePatternTransport {
 pub struct CaseListPatternTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_list_pattern_case_patterns")]
-    #[slot]
-    pub list_pattern_case_patterns: Option<::sittir_core::SlotValue<ListPatternCasePatternsTransport>>,
+    #[wire(key = "_elements")]
+    #[slot(field = field::ELEMENTS)]
+    pub elements: Option<::sittir_core::SlotValue<ListPatternCasePatternsTransport>>,
 }
 
 impl ::sittir_core::view::KindOf for CaseListPatternTransport {
@@ -18306,7 +18306,7 @@ impl ::sittir_core::prepare::Prepare for CaseListPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.list_pattern_case_patterns.prepare(ctx)?;
+        self.elements.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -18449,7 +18449,7 @@ pub struct PrintStatementChevronTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_chevron")]
-    #[slot]
+    #[slot(field = field::CHEVRON)]
     pub chevron: ::sittir_core::SlotValue<ChevronTransport>,
     #[wire(key = "_print_chevron_arguments")]
     #[slot]
@@ -26663,12 +26663,12 @@ fn render_pair(node: &PairTransport, w: &mut dyn ::sittir_core::render::RenderSi
 
 fn render_list_comprehension(node: &ListComprehensionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
-    let comprehension_clauses = &node.comprehension_clauses;
+    let clauses = &node.clauses;
     w.edge(::sittir_core::types::KindId(237), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("[")?;
     w.site_at(options::SITE_LIST_COMPREHENSION_LBRACK_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", 0, w, |w| body.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_comprehension_clauses", 0, w, |w| comprehension_clauses.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_clauses", 0, w, |w| clauses.render(w))?;
     w.site_at(options::SITE_LIST_COMPREHENSION_RBRACK_BEFORE);
     w.text("]")?;
     w.edge(::sittir_core::types::KindId(237), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -26677,12 +26677,12 @@ fn render_list_comprehension(node: &ListComprehensionTransport, w: &mut dyn ::si
 
 fn render_dictionary_comprehension(node: &DictionaryComprehensionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
-    let comprehension_clauses = &node.comprehension_clauses;
+    let clauses = &node.clauses;
     w.edge(::sittir_core::types::KindId(238), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("{")?;
     w.site_at(options::SITE_DICTIONARY_COMPREHENSION_LBRACE_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", 0, w, |w| body.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_comprehension_clauses", 0, w, |w| comprehension_clauses.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_clauses", 0, w, |w| clauses.render(w))?;
     w.site_at(options::SITE_DICTIONARY_COMPREHENSION_RBRACE_BEFORE);
     w.text("}")?;
     w.edge(::sittir_core::types::KindId(238), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -26691,12 +26691,12 @@ fn render_dictionary_comprehension(node: &DictionaryComprehensionTransport, w: &
 
 fn render_set_comprehension(node: &SetComprehensionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
-    let comprehension_clauses = &node.comprehension_clauses;
+    let clauses = &node.clauses;
     w.edge(::sittir_core::types::KindId(239), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("{")?;
     w.site_at(options::SITE_SET_COMPREHENSION_LBRACE_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", 0, w, |w| body.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_comprehension_clauses", 0, w, |w| comprehension_clauses.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_clauses", 0, w, |w| clauses.render(w))?;
     w.site_at(options::SITE_SET_COMPREHENSION_RBRACE_BEFORE);
     w.text("}")?;
     w.edge(::sittir_core::types::KindId(239), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -26705,12 +26705,12 @@ fn render_set_comprehension(node: &SetComprehensionTransport, w: &mut dyn ::sitt
 
 fn render_generator_expression(node: &GeneratorExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
-    let comprehension_clauses = &node.comprehension_clauses;
+    let clauses = &node.clauses;
     w.edge(::sittir_core::types::KindId(240), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_GENERATOR_EXPRESSION_LPAREN_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", 0, w, |w| body.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_comprehension_clauses", 0, w, |w| comprehension_clauses.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_clauses", 0, w, |w| clauses.render(w))?;
     w.site_at(options::SITE_GENERATOR_EXPRESSION_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(240), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -26858,8 +26858,8 @@ fn render_string(node: &StringTransport, w: &mut dyn ::sittir_core::render::Rend
 }
 
 fn render_string_content(node: &StringContentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = ListView {
-        items: &node.content,
+    let elements = ListView {
+        items: &node.elements,
         template: "{}",
         token: "",
         separators: None,
@@ -26869,9 +26869,9 @@ fn render_string_content(node: &StringContentTransport, w: &mut dyn ::sittir_cor
         trailing: false,
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_content"),
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_elements"),
     };
-    content.render(w)?;
+    elements.render(w)?;
     Ok(())
 }
 
@@ -27192,12 +27192,12 @@ fn render_except_clause_exception_as(node: &ExceptClauseExceptionAsTransport, w:
 }
 
 fn render_case_tuple_pattern(node: &CaseTuplePatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let list_pattern_case_patterns = View::new(&node.list_pattern_case_patterns, "{}");
+    let elements = View::new(&node.elements, "{}");
     w.edge(::sittir_core::types::KindId(273), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_CASE_TUPLE_PATTERN_LPAREN_AFTER);
     ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_list_pattern_case_patterns", 0, w, |w| list_pattern_case_patterns.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_elements", 0, w, |w| elements.render(w))?;
     w.site_at(options::SITE_CASE_TUPLE_PATTERN_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(273), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -27205,12 +27205,12 @@ fn render_case_tuple_pattern(node: &CaseTuplePatternTransport, w: &mut dyn ::sit
 }
 
 fn render_case_list_pattern(node: &CaseListPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let list_pattern_case_patterns = View::new(&node.list_pattern_case_patterns, "{}");
+    let elements = View::new(&node.elements, "{}");
     w.edge(::sittir_core::types::KindId(274), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("[")?;
     w.site_at(options::SITE_CASE_LIST_PATTERN_LBRACK_AFTER);
     ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_list_pattern_case_patterns", 0, w, |w| list_pattern_case_patterns.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_elements", 0, w, |w| elements.render(w))?;
     w.site_at(options::SITE_CASE_LIST_PATTERN_RBRACK_BEFORE);
     w.text("]")?;
     w.edge(::sittir_core::types::KindId(274), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -29148,4 +29148,4 @@ const _: () = assert!(::core::mem::size_of::<WithStatementTransport>() <= 256, "
 const _: () = assert!(::core::mem::size_of::<YieldFromClauseTransport>() <= 256, "YieldFromClauseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<YieldTransport>() <= 256, "YieldTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 
-::sittir_core::grammar_trivia!(TriviaTransport; AnyTransport, StatementTransport, SimpleStatementTransport, CompoundStatementTransport, WithClauseTransport, SuiteTransport, ParameterTransport, PatternTransport, ExpressionTransport, PrimaryExpressionTransport, IntegerTransport, FloatTransport, IntegerDecimalTransport, FutureImportStatementContentTransportSlot, ImportFromStatementModuleNameTransportSlot, ImportFromStatementContentTransportSlot, ImportListNameTransportSlot, PrintStatementContentTransportSlot, ExpressionStatementContentTransportSlot, NamedExpressionNameTransportSlot, ReturnStatementExpressionsTransportSlot, IfStatementAlternativeTransportSlot, MatchBlockContentTransportSlot, ForStatementLeftTransportSlot, ExecStatementCodeTransportSlot, ParenthesizedListSplatContentTransportSlot, DecoratedDefinitionDefinitionTransportSlot, CasePatternContentTransportSlot, SimplePatternContentTransportSlot, SplatPatternOperatorTransportSlot, SplatPatternNameTransportSlot, ComplexPatternRealTransportSlot, ComplexPatternOperatorTransportSlot, DefaultParameterNameTransportSlot, ListSplatPatternTargetTransportSlot, BooleanOperatorOperatorTransportSlot, BinaryOperatorOperatorTransportSlot, UnaryOperatorOperatorTransportSlot, LambdaWithinForInClauseBodyTransportSlot, AugmentedAssignmentOperatorTransportSlot, AugmentedAssignmentRightTransportSlot, YieldContentTransportSlot, CallArgumentsTransportSlot, TypedParameterNameTransportSlot, TypeContentTransportSlot, SplatTypeOperatorTransportSlot, GenericTypeNameTransportSlot, ParenthesizedExpressionExpressionTransportSlot, CollectionElementsItemTransportSlot, StringContentTransportSlot, StringContentContentTransportSlot, InterpolationExpressionTransportSlot, FormatSpecifierElementsTransportSlot, ArgumentListElementsItemTransportSlot, DictPatternElementsItemTransportSlot, SubscriptsSubscriptTransportSlot, DictionaryElementsItemTransportSlot, PrintStatementChevronPrintChevronArgumentsTransportSlot, ComprehensionClausesContentTransportSlot, ExceptClauseExceptionContentTransportSlot, ComparisonOperatorComparatorOperatorsTransportSlot, ModuleTransport, SimpleStatementsTransport, ImportStatementTransport, ImportPrefixTransport, RelativeImportTransport, FutureImportStatementTransport, ImportFromStatementTransport, ImportListTransport, AliasedImportTransport, WildcardImportTransport, PrintStatementTransport, ChevronTransport, AssertStatementTransport, ExpressionStatementTransport, NamedExpressionTransport, ReturnStatementTransport, DeleteStatementTransport, RaiseStatementTransport, PassStatementTransport, BreakStatementTransport, ContinueStatementTransport, IfStatementTransport, ElifClauseTransport, ElseClauseTransport, MatchStatementTransport, MatchBlockTransport, CaseClauseTransport, ForStatementTransport, WhileStatementTransport, TryStatementTransport, ExceptClauseTransport, FinallyClauseTransport, WithStatementTransport, WithItemTransport, FunctionDefinitionTransport, ParametersTransport, LambdaParametersTransport, ListSplatTransport, DictionarySplatTransport, GlobalStatementTransport, NonlocalStatementTransport, ExecStatementTransport, TypeAliasStatementTransport, ClassDefinitionTransport, TypeParameterTransport, ParenthesizedListSplatTransport, ArgumentListTransport, DecoratedDefinitionTransport, DecoratorTransport, BlockTransport, ExpressionListTransport, DottedNameTransport, CasePatternTransport, SimplePatternTransport, CaseAsPatternTransport, UnionPatternTransport, DictPatternTransport, KeyValuePatternTransport, KeywordPatternTransport, SplatPatternTransport, ClassPatternTransport, ComplexPatternTransport, ParametersElementsTransport, PatternsTransport, TuplePatternTransport, ListPatternTransport, DefaultParameterTransport, TypedDefaultParameterTransport, ListSplatPatternTransport, DictionarySplatPatternTransport, AsPatternTransport, NotOperatorTransport, BooleanOperatorTransport, BinaryOperatorTransport, UnaryOperatorTransport, ComparisonOperatorTransport, LambdaTransport, LambdaWithinForInClauseTransport, AugmentedAssignmentTransport, PatternListTransport, YieldTransport, AttributeTransport, SubscriptTransport, SliceTransport, EllipsisTransport, CallTransport, TypedParameterTransport, TypeTransport, SplatTypeTransport, GenericTypeTransport, UnionTypeTransport, ConstrainedTypeTransport, MemberTypeTransport, KeywordArgumentTransport, ListTransport, SetTransport, TupleTransport, DictionaryTransport, PairTransport, ListComprehensionTransport, DictionaryComprehensionTransport, SetComprehensionTransport, GeneratorExpressionTransport, ParenthesizedExpressionTransport, CollectionElementsTransport, ForInClauseTransport, IfClauseTransport, ConditionalExpressionTransport, ConcatenatedStringTransport, StringTransport, StringContentTransport, InterpolationTransport, NotEscapeSequenceTransport, FormatSpecifierTransport, TypeConversionTransport, IdentifierTransport, TrueTransport, FalseTransport, NoneTransport, AwaitTransport, CommentTransport, PositionalSeparatorTransport, KeywordSeparatorTransport, SimpleStatementsElementsTransport, SubjectsTransport, CasePatternsTransport, WithClauseWithItemsTransport, TypesTransport, ArgumentListElementsTransport, ListPatternCasePatternsTransport, DictPatternElementsTransport, SubscriptsTransport, DictionaryElementsTransport, SliceGroupTransport, FormatSpecifierTextTransport, TuplePatternElementsTransport, TupleElementsTransport, ExceptClauseExceptionAsTransport, CaseTuplePatternTransport, CaseListPatternTransport, PrintArgumentsTransport, PrintChevronArgumentsTransport, PrintStatementChevronTransport, PrintStatementPlainTransport, WildcardPatternTransport, ParenthesizedImportListTransport, ComprehensionClausesTransport, IntegerHexTransport, IntegerOctalTransport, IntegerBinaryTransport, IntegerDecimalLongTransport, IntegerDecimalImaginaryTransport, IntegerDecimalPlainTransport, FloatPointTransport, FloatLeadingPointTransport, FloatScientificTransport, EscapeSequenceUnicodeFixedTransport, EscapeSequenceUnicodeWideTransport, EscapeSequenceHexTransport, EscapeSequenceOctalTransport, EscapeSequenceLineBreakTransport, EscapeSequenceSimpleTransport, EscapeSequenceNamedTransport, LineContinuationNewlineTransport, LineContinuationNulTransport, SimplePatternNegativeTransport, ExceptClauseExceptionListTransport, ExceptClauseExceptionTransport, AssignmentEqTransport, AssignmentTypeTransport, AssignmentTypedTransport, ExpressionStatementTupleTransport, WithClauseBareTransport, WithClauseParenTransport, MatchBlockBlockTransport, MatchBlockEmptyTransport, SuiteInlineTransport, SuiteBlockTransport, SuiteEmptyTransport, ComparisonOperatorComparatorTransport, YieldFromClauseTransport, StringStartTransport, StringFragmentTransport, EscapeInterpolationTransport, StringEndTransport, IndentTransport, DedentTransport, TightTransport, SpaceTransport, TabTransport, NewlineTransport, BlanklineTransport, DoubleBlanklineTransport, NamesTransport, AsPatternTargetTransport, FormatExpressionTransport, ImportKeywordTransport, DotTransport, FromKeywordTransport, FutureUKeywordTransport, AsKeywordTransport, StarTransport, GtGtTransport, AssertKeywordTransport, PrintKeywordTransport, ExecKeywordTransport, AsyncKeywordTransport, AwaitKeywordTransport, TypeKeywordTransport, MatchKeywordTransport, ColonEqTransport, ReturnKeywordTransport, DelKeywordTransport, RaiseKeywordTransport, PassKeywordTransport, BreakKeywordTransport, ContinueKeywordTransport, IfKeywordTransport, ColonTransport, ElifKeywordTransport, ElseKeywordTransport, CaseKeywordTransport, ForKeywordTransport, InKeywordTransport, WhileKeywordTransport, TryKeywordTransport, ExceptKeywordTransport, FinallyKeywordTransport, WithKeywordTransport, DefKeywordTransport, DashGtTransport, LparenTransport, RparenTransport, StarStarTransport, GlobalKeywordTransport, NonlocalKeywordTransport, EqTransport, ClassKeywordTransport, LbrackTransport, RbrackTransport, AtTransport, LbraceTransport, RbraceTransport, UnderscoreTransport, DashTransport, PlusTransport, NotKeywordTransport, AndKeywordTransport, OrKeywordTransport, SlashTransport, PercentTransport, SlashSlashTransport, PipeTransport, AmpTransport, CaretTransport, LtLtTransport, TildeTransport, LambdaKeywordTransport, PlusEqTransport, DashEqTransport, StarEqTransport, SlashEqTransport, AtEqTransport, SlashSlashEqTransport, PercentEqTransport, StarStarEqTransport, GtGtEqTransport, LtLtEqTransport, AmpEqTransport, CaretEqTransport, PipeEqTransport, YieldKeywordTransport, CommaTransport, BslashTransport, LtTransport, LtEqTransport, EqEqTransport, BangEqTransport, GtEqTransport, GtTransport, LtGtTransport, NotInTransport, IsKeywordTransport, IsNotTransport, TriviaTransport);
+::sittir_core::grammar_trivia!(TriviaTransport; AnyTransport, StatementTransport, SimpleStatementTransport, CompoundStatementTransport, WithClauseTransport, SuiteTransport, ParameterTransport, PatternTransport, ExpressionTransport, PrimaryExpressionTransport, IntegerTransport, FloatTransport, IntegerDecimalTransport, FutureImportStatementContentTransportSlot, ImportFromStatementModuleNameTransportSlot, ImportFromStatementContentTransportSlot, ImportListNameTransportSlot, PrintStatementContentTransportSlot, ExpressionStatementContentTransportSlot, NamedExpressionNameTransportSlot, ReturnStatementExpressionsTransportSlot, IfStatementAlternativeTransportSlot, MatchBlockContentTransportSlot, ForStatementLeftTransportSlot, ExecStatementCodeTransportSlot, ParenthesizedListSplatContentTransportSlot, DecoratedDefinitionDefinitionTransportSlot, CasePatternContentTransportSlot, SimplePatternContentTransportSlot, SplatPatternOperatorTransportSlot, SplatPatternNameTransportSlot, ComplexPatternRealTransportSlot, ComplexPatternOperatorTransportSlot, DefaultParameterNameTransportSlot, ListSplatPatternTargetTransportSlot, BooleanOperatorOperatorTransportSlot, BinaryOperatorOperatorTransportSlot, UnaryOperatorOperatorTransportSlot, LambdaWithinForInClauseBodyTransportSlot, AugmentedAssignmentOperatorTransportSlot, AugmentedAssignmentRightTransportSlot, YieldContentTransportSlot, CallArgumentsTransportSlot, TypedParameterNameTransportSlot, TypeContentTransportSlot, SplatTypeOperatorTransportSlot, GenericTypeNameTransportSlot, ParenthesizedExpressionExpressionTransportSlot, CollectionElementsItemTransportSlot, StringContentTransportSlot, StringContentElementsTransportSlot, InterpolationExpressionTransportSlot, FormatSpecifierElementsTransportSlot, ArgumentListElementsItemTransportSlot, DictPatternElementsItemTransportSlot, SubscriptsSubscriptTransportSlot, DictionaryElementsItemTransportSlot, PrintStatementChevronPrintChevronArgumentsTransportSlot, ComprehensionClausesContentTransportSlot, ExceptClauseExceptionContentTransportSlot, ComparisonOperatorComparatorOperatorsTransportSlot, ModuleTransport, SimpleStatementsTransport, ImportStatementTransport, ImportPrefixTransport, RelativeImportTransport, FutureImportStatementTransport, ImportFromStatementTransport, ImportListTransport, AliasedImportTransport, WildcardImportTransport, PrintStatementTransport, ChevronTransport, AssertStatementTransport, ExpressionStatementTransport, NamedExpressionTransport, ReturnStatementTransport, DeleteStatementTransport, RaiseStatementTransport, PassStatementTransport, BreakStatementTransport, ContinueStatementTransport, IfStatementTransport, ElifClauseTransport, ElseClauseTransport, MatchStatementTransport, MatchBlockTransport, CaseClauseTransport, ForStatementTransport, WhileStatementTransport, TryStatementTransport, ExceptClauseTransport, FinallyClauseTransport, WithStatementTransport, WithItemTransport, FunctionDefinitionTransport, ParametersTransport, LambdaParametersTransport, ListSplatTransport, DictionarySplatTransport, GlobalStatementTransport, NonlocalStatementTransport, ExecStatementTransport, TypeAliasStatementTransport, ClassDefinitionTransport, TypeParameterTransport, ParenthesizedListSplatTransport, ArgumentListTransport, DecoratedDefinitionTransport, DecoratorTransport, BlockTransport, ExpressionListTransport, DottedNameTransport, CasePatternTransport, SimplePatternTransport, CaseAsPatternTransport, UnionPatternTransport, DictPatternTransport, KeyValuePatternTransport, KeywordPatternTransport, SplatPatternTransport, ClassPatternTransport, ComplexPatternTransport, ParametersElementsTransport, PatternsTransport, TuplePatternTransport, ListPatternTransport, DefaultParameterTransport, TypedDefaultParameterTransport, ListSplatPatternTransport, DictionarySplatPatternTransport, AsPatternTransport, NotOperatorTransport, BooleanOperatorTransport, BinaryOperatorTransport, UnaryOperatorTransport, ComparisonOperatorTransport, LambdaTransport, LambdaWithinForInClauseTransport, AugmentedAssignmentTransport, PatternListTransport, YieldTransport, AttributeTransport, SubscriptTransport, SliceTransport, EllipsisTransport, CallTransport, TypedParameterTransport, TypeTransport, SplatTypeTransport, GenericTypeTransport, UnionTypeTransport, ConstrainedTypeTransport, MemberTypeTransport, KeywordArgumentTransport, ListTransport, SetTransport, TupleTransport, DictionaryTransport, PairTransport, ListComprehensionTransport, DictionaryComprehensionTransport, SetComprehensionTransport, GeneratorExpressionTransport, ParenthesizedExpressionTransport, CollectionElementsTransport, ForInClauseTransport, IfClauseTransport, ConditionalExpressionTransport, ConcatenatedStringTransport, StringTransport, StringContentTransport, InterpolationTransport, NotEscapeSequenceTransport, FormatSpecifierTransport, TypeConversionTransport, IdentifierTransport, TrueTransport, FalseTransport, NoneTransport, AwaitTransport, CommentTransport, PositionalSeparatorTransport, KeywordSeparatorTransport, SimpleStatementsElementsTransport, SubjectsTransport, CasePatternsTransport, WithClauseWithItemsTransport, TypesTransport, ArgumentListElementsTransport, ListPatternCasePatternsTransport, DictPatternElementsTransport, SubscriptsTransport, DictionaryElementsTransport, SliceGroupTransport, FormatSpecifierTextTransport, TuplePatternElementsTransport, TupleElementsTransport, ExceptClauseExceptionAsTransport, CaseTuplePatternTransport, CaseListPatternTransport, PrintArgumentsTransport, PrintChevronArgumentsTransport, PrintStatementChevronTransport, PrintStatementPlainTransport, WildcardPatternTransport, ParenthesizedImportListTransport, ComprehensionClausesTransport, IntegerHexTransport, IntegerOctalTransport, IntegerBinaryTransport, IntegerDecimalLongTransport, IntegerDecimalImaginaryTransport, IntegerDecimalPlainTransport, FloatPointTransport, FloatLeadingPointTransport, FloatScientificTransport, EscapeSequenceUnicodeFixedTransport, EscapeSequenceUnicodeWideTransport, EscapeSequenceHexTransport, EscapeSequenceOctalTransport, EscapeSequenceLineBreakTransport, EscapeSequenceSimpleTransport, EscapeSequenceNamedTransport, LineContinuationNewlineTransport, LineContinuationNulTransport, SimplePatternNegativeTransport, ExceptClauseExceptionListTransport, ExceptClauseExceptionTransport, AssignmentEqTransport, AssignmentTypeTransport, AssignmentTypedTransport, ExpressionStatementTupleTransport, WithClauseBareTransport, WithClauseParenTransport, MatchBlockBlockTransport, MatchBlockEmptyTransport, SuiteInlineTransport, SuiteBlockTransport, SuiteEmptyTransport, ComparisonOperatorComparatorTransport, YieldFromClauseTransport, StringStartTransport, StringFragmentTransport, EscapeInterpolationTransport, StringEndTransport, IndentTransport, DedentTransport, TightTransport, SpaceTransport, TabTransport, NewlineTransport, BlanklineTransport, DoubleBlanklineTransport, NamesTransport, AsPatternTargetTransport, FormatExpressionTransport, ImportKeywordTransport, DotTransport, FromKeywordTransport, FutureUKeywordTransport, AsKeywordTransport, StarTransport, GtGtTransport, AssertKeywordTransport, PrintKeywordTransport, ExecKeywordTransport, AsyncKeywordTransport, AwaitKeywordTransport, TypeKeywordTransport, MatchKeywordTransport, ColonEqTransport, ReturnKeywordTransport, DelKeywordTransport, RaiseKeywordTransport, PassKeywordTransport, BreakKeywordTransport, ContinueKeywordTransport, IfKeywordTransport, ColonTransport, ElifKeywordTransport, ElseKeywordTransport, CaseKeywordTransport, ForKeywordTransport, InKeywordTransport, WhileKeywordTransport, TryKeywordTransport, ExceptKeywordTransport, FinallyKeywordTransport, WithKeywordTransport, DefKeywordTransport, DashGtTransport, LparenTransport, RparenTransport, StarStarTransport, GlobalKeywordTransport, NonlocalKeywordTransport, EqTransport, ClassKeywordTransport, LbrackTransport, RbrackTransport, AtTransport, LbraceTransport, RbraceTransport, UnderscoreTransport, DashTransport, PlusTransport, NotKeywordTransport, AndKeywordTransport, OrKeywordTransport, SlashTransport, PercentTransport, SlashSlashTransport, PipeTransport, AmpTransport, CaretTransport, LtLtTransport, TildeTransport, LambdaKeywordTransport, PlusEqTransport, DashEqTransport, StarEqTransport, SlashEqTransport, AtEqTransport, SlashSlashEqTransport, PercentEqTransport, StarStarEqTransport, GtGtEqTransport, LtLtEqTransport, AmpEqTransport, CaretEqTransport, PipeEqTransport, YieldKeywordTransport, CommaTransport, BslashTransport, LtTransport, LtEqTransport, EqEqTransport, BangEqTransport, GtEqTransport, GtTransport, LtGtTransport, NotInTransport, IsKeywordTransport, IsNotTransport, TriviaTransport);

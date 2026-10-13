@@ -69,7 +69,7 @@ export namespace Pattern {
 		export interface List<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Case<G>> {
 			// claimed by p
 			readonly $kind: 'pattern.case.list';
-			readonly listPatternCasePatterns?: V.Pattern.Case<G>[];
+			readonly elements?: V.Pattern.Case<G>[];
 		}
 		export interface Or<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Case<G>> {
 			// claimed by p
@@ -85,7 +85,7 @@ export namespace Pattern {
 		export interface Tuple<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Case<G>> {
 			// claimed by p
 			readonly $kind: 'pattern.case.tuple';
-			readonly listPatternCasePatterns?: V.Pattern.Case<G>[];
+			readonly elements?: V.Pattern.Case<G>[];
 		}
 		export type Any<G extends GrammarContext<G>> =
 			| V.Pattern.Case<G>
