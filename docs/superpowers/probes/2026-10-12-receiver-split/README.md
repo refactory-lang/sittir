@@ -50,7 +50,8 @@ split by themselves, with no group from enrich?
   `,`, and enrich's synthesis decides it, so a group minted by the bindings restates enrich.
 - Every question is ruled. The lead stays in `bindGrammar`, and the whole of enrich runs again
   over every rule a grammar-bindings edit newly creates; a renamed rule does not pass again
-  (question 22).
+  (question 22). That second pass gives the plain shape the group's rows, parser and
+  round-trips, but enrich is not yet a fixpoint, so it waits until enrich is one (finding 19).
 
 ## The edit
 
@@ -140,8 +141,9 @@ grammar through Node, and sittir's codegen evaluated it.
 **The claims.** The derivation (`bindings-inventory`) reads each receiver claim into a `lead`:
 
 ```scheme
-; the receiver, in each of rust's three method claims
+; the receiver, in each of rust's three method claims: one claim for each shape it admits
 (parameters (parameters_elements . (attributed_parameter (self_parameter)) @receiver))
+(parameters (parameters_elements . (attributed_parameter (parameter name: (self))) @receiver))
 ; the receiver, in each of typescript's ten function-like owners' claims
 (formal_parameters (formal_parameters_elements . (required_parameter pattern: (this)) @receiver))
 ; the rest, in every owner's claim, function and method alike (question 19)
@@ -153,18 +155,21 @@ grammar through Node, and sittir's codegen evaluated it.
   the item stays a position: python's `@doc` claims are anchored first, but capture the string
   inside the item, so they derive no lead.
 - The claim's child tests under the capture give the match tree, a kind and a field per step.
-  An alternation inside the anchored kind gives several matches, each named through its own
-  classifying claim (question 18); an arm with none keeps its kind's name. The derivation
-  refuses what `match` cannot say: a negated kind (`#not-kind-eq?`), a text test, a wildcard, a
-  quantifier, or a second restricted field on one kind. The interim claim's `#kind-eq?` goes.
+  A route's tests are a conjunction, so a route cannot say an alternation: one claim testing
+  `[(self_parameter) (parameter name: (self))]` would read weaker than it says. So each shape
+  the receiver admits is a claim of its own, with an exact route, and rust's typed `self` is a
+  second claim beside `self_parameter`'s (questions 15 and 18). The reader keeps refusing a
+  tested alternation. The derivation also refuses what `match` cannot say: a negated kind
+  (`#not-kind-eq?`), a text test, a wildcard, a quantifier, or a second restricted field on one
+  kind. The interim claim's `#kind-eq?` goes.
 - The reader refuses an alternation as the anchored node itself (`. [(a) (b)] @receiver`: an
   anchor next to an alternation ties no one node). So a lead's several top-level admits, which
   `lead` takes, are out of reach of `bindings.scm` today; reaching them is a change to the
   reader, not to the derivation.
-- The claims on one list derive one `lead`, keyed by the list. Their match trees must be
-  structurally equal, and their one capture name is the lead's field. A disagreement is
-  refused, naming both lines. The entries print with the renames and splits, `leads` sorted by
-  list.
+- The claims on one list derive one `lead`, keyed by the list. Their match trees must agree on
+  the root kind and on the capture's field, which is the lead's field, and the lead admits the
+  union of their admits. A disagreeing root kind or field is refused, naming both lines. The
+  entries print with the renames and splits, `leads` sorted by list.
 - The derived fact carries the lead's field, and routes resolve `receiver` to it directly, never
   by kind. In the container form's bound list, `receiver` and `item` both admit
   `attributed_parameter`, so a kind selector anchored first would fall back to the optional-slot
@@ -657,6 +662,32 @@ Typescript (`typescript-samples-*.txt`):
       an origin's patches to its clones through `leadFrom`.
     - A lead in enrich is in the grammar the conflict driver derives on, so the driver derives the
       lead's sets as it derives any rule's (finding 4).
+19. **A second enrich pass gives the group's rows, but enrich is not a fixpoint.** Implement
+    measured question 22's ruling on `proto/receiver-split`'s prototype (branch
+    `proto/q22-reenrich`): the plain shape, with the whole of enrich run again over the rules the
+    lead creates, as its `leadFrom` stamp names them.
+    - The rows equal `two-rules-plain-group`'s: rust read-render-parse 148/148 and
+      built-render-parse 1876/1876, typescript 113/116 and 1798/1798.
+    - So does the parser: rust 3549 states (+18), 469 symbols (+4) and 7,091,512 bytes of
+      `parser.c` (+30,064, +0.43%); typescript 7290 states (+46), 465 symbols (+5) and
+      11,258,236 bytes (+136,992, +1.23%). The generated sources differ from
+      `two-rules-plain-group`'s only in rust's `node-model.json5`, by 309 bytes: the variant
+      stamps on the clone's arms. Typescript's are the same.
+    - Every rust case round-trips unchanged to the same tree, `(&self)` and `(&self,)` included,
+      and typescript's round-trips are `two-rules-plain-group`'s.
+    - The second pass needs no field sites before wire: it runs after the patches, so the clones
+      already hold the fields the patches give their origins.
+    - Which edits create rules, by the stamp each puts on what it mints: `leadGrammar` mints the
+      variants, the receiver form and its lifts (`leadFrom`), and `splitGrammar` mints clones and
+      container clones (`splitFrom`). A rule narrowed in place is not new and carries no stamp.
+      `renameGrammar` (`renamedFrom`), the options rewrite and the patches create none, and the
+      field renames and wraps edit in place, outside `bindGrammar`. A merge carries no stamp
+      yet, and would need one (`mergedFrom`). No committed grammar passes a split on this base,
+      so a split's second pass is unmeasured.
+    - enrich is not a fixpoint over its own output. A second pass over its pre-wire output throws
+      in rust, mints arms again in typescript and a group again in python. Wire's patches also
+      add content the first pass never saw.
+    - So the second pass waits until enrich is a fixpoint (question 22).
 
 ## Proposal
 
@@ -672,7 +703,8 @@ Typescript (`typescript-samples-*.txt`):
    narrows a shared visible kind in place, and clones a shared hidden rule.
 3. Each receiver claim anchors the list's first element and captures the item as `@receiver`,
    and every owner captures the rest as `@parameters` (question 19). The derivation emits one
-   `lead` per list from the anchored pattern, and the fact it records carries the lead's field.
+   `lead` per list, admitting the union of its claims' anchored patterns, and the fact it
+   records carries the lead's field.
 4. No model work: the model accepts the plain shape and its group as is, and the group keeps a
    lone comma (finding 12).
 5. The conflict driver derives the bound grammar's sets (question 14).
@@ -685,14 +717,17 @@ Typescript (`typescript-samples-*.txt`):
 14. **The split's conflicts.** Ruled: the driver also derives on the bound grammar, keyed by the
     bound grammar's own hash (finding 4).
 15. **Rust's typed `self`.** Ruled: the receiver also admits `self: Box<Self>`, as a variant of
-    its own.
+    its own. It is written as a claim of its own, `parameter name: (self)`, beside
+    `self_parameter`'s, and each has an exact route.
 16. **The shape of the two rules.** Ruled: the plain shape, through enrich's group synthesis.
     The receiver form holds the receiver, then an optional group holding the `,` and the plain
     list.
 17. **The edit's names.** Ruled: `lead` for the edit and `leads` for its entries, and `match` for
     the restriction.
 18. **Where `bindings.scm` names a variant.** Ruled: once, on the claim that classifies the
-    narrowed pattern, joined to the lead's match tree by structural equality.
+    narrowed pattern. A list's claims need not be structurally equal: the derivation unions
+    their admits when their root kind and field agree, and refuses a disagreeing root kind or
+    field.
 19. **How an owner keeps the rest of its list as `parameters`.** Ruled: every owner captures the
     rest as now, against the grammar's own list,
     `(parameters (parameters_elements item: (_) @parameters))`, and the derivation maps that
@@ -707,19 +742,21 @@ Typescript (`typescript-samples-*.txt`):
     `typed_self_parameter`). A visible variant never keeps its kind's name (finding 10). The group
     takes enrich's name for it, `<list>_<field>_group`.
 21. **Typescript's type-only export** (`export type {A} from`, `export type * from`). Ruled: a
-    refinement, `statement.export.type`, mirroring `statement.import.type`. The vocabulary pass
-    may rename the segment.
+    flag, `typeOnly`, on `statement.export` and on `statement.import`, where it replaces the
+    `statement.import.type` refinement. A refinement could not hold it: `export type * from` is
+    one node with the `type` keyword and the `*`, so it would be `statement.export.all` and a
+    type refinement at once. Flow's `import typeof` stays `statement.import.typeof`.
 22. **How the edit's output meets enrich's group synthesis.** Ruled by the maintainer: enrich
     runs again, whole, over every rule a grammar-bindings edit newly creates, "pretty much splits
     and merges, but may include others". A renamed rule does not pass again. The lead stays in
     `bindGrammar`, after the patches (question 13 holds). The probe's `two-rules-plain-group`
-    writes the group by hand; under the ruling, enrich's second pass mints it. The checks the
-    ruling leaves, with implement:
-    - which rules are newly created: a fact each edit stamps on what it mints (`splitFrom`,
-      `leadFrom`), never a comparison of rule names, and which current and planned edits create
-      rules;
-    - that a second pass over a created rule, which may carry enrich's output copied from its
-      origin, mints nothing twice and wraps nothing again, or what it must skip;
-    - whether the second pass needs the patches' field sites for a clone of a patched rule;
-    - the plain shape with the second pass: rust and typescript rows, `(&self)` and `(&self,)`
-      round-trips, and parser and size deltas against `two-rules-plain-group`.
+    writes the group by hand; under the ruling, enrich's second pass mints it.
+    - Measured (finding 19): the second pass gives the plain shape `two-rules-plain-group`'s
+      rows, parser and round-trips in rust and typescript, and needs no field sites before wire.
+      enrich is not a fixpoint over its own output.
+    - Status: the maintainer ruled that enrich becomes a fixpoint first, in its own change to
+      master, which implement plans. The second pass over a bindings edit's rules comes after it,
+      in stage 2, with no narrower pass in the meantime.
+    - Left for stage 2, after the fixpoint: a stamp for merges, and a split's second pass, which
+      no committed grammar exercises on this base. The second pass selects rules by stamp, never
+      by a comparison of rule names.
