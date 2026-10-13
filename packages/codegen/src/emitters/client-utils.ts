@@ -1,6 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
 import { whitespaceTrivia, type WhitespaceTrivia } from '../compiler/model/trivia.ts';
-import { compareOrdinal, wireRoutesOf, type WireRoutes } from './shared.ts';
+import { compareOrdinal, keywordPresenceValue, wireRoutesOf, type WireRoutes } from './shared.ts';
 import type { AssembledNonterminal } from '../compiler/model/node-map.ts';
 import { grammarTypeMapName } from './engine.ts';
 import { listKindIds, rebuildWrapperKindIds } from './wrap.ts';
@@ -51,7 +51,7 @@ function emitTriviaFacts(
 	return ['export const triviaFacts = Object.freeze({', facts.join(',\n'), '} satisfies TriviaFacts);'];
 }
 
-type QuerySlotRow = readonly [accessor: string, routes: WireRoutes];
+type QuerySlotRow = readonly [accessor: string, routes: WireRoutes, keyword?: string];
 
 export function queryRoutesOf(slot: AssembledNonterminal, nodeMap: NodeMap): WireRoutes {
 	return slot.fieldName === undefined ? wireRoutesOf(slot, nodeMap) : { fields: [slot.fieldName], kinds: [] };
@@ -61,7 +61,10 @@ export function querySlotRows(nodeMap: NodeMap): ReadonlyMap<number, readonly Qu
 	const rows = new Map<number, readonly QuerySlotRow[]>();
 	for (const node of nodeMap.nodes.values()) {
 		if (node.kindId === undefined || node.slots.length === 0) continue;
-		const row = node.slots.map((slot): QuerySlotRow => [slot.propertyName, queryRoutesOf(slot, nodeMap)]);
+		const row = node.slots.map((slot): QuerySlotRow => {
+			const keyword = keywordPresenceValue(slot, nodeMap);
+			return keyword === undefined ? [slot.propertyName, queryRoutesOf(slot, nodeMap)] : [slot.propertyName, queryRoutesOf(slot, nodeMap), keyword];
+		});
 		const claimed = rows.get(node.kindId);
 		if (claimed !== undefined && JSON.stringify(claimed) !== JSON.stringify(row)) {
 			throw new Error(`client-utils: kind id ${node.kindId} ('${node.kind}') has two slot tables`);

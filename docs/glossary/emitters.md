@@ -10185,7 +10185,7 @@ How the parser delivers a slot's children: a named slot by its field alone, and 
 
 ### `packages/codegen/src/emitters/client-utils.ts::querySlotRows`
 
-Each kind's slots, by stamped kind id: the accessor a node reads the slot through (`propertyName`) and the slot's parser routes (`queryRoutesOf`). A query condition compiles on the client to these routes, so the native evaluator knows no slot names. A kind with no slots has no row. Two nodes stamped with one kind id must agree on the row, and the emitter throws when they do not.
+Each kind's slots, by stamped kind id: the accessor a node reads the slot through (`propertyName`), the slot's parser routes (`queryRoutesOf`), and, for a slot that holds one keyword's presence (`shared.ts::keywordPresenceValue`), that keyword. A reader of the slot value `true` takes it as that keyword's text, which is what the parser holds there. A query condition compiles on the client to these routes, so the native evaluator knows no slot names. A kind with no slots has no row. Two nodes stamped with one kind id must agree on the row, and the emitter throws when they do not.
 
 ### `packages/codegen/src/emitters/client-utils.ts::emitQuerySlots`
 

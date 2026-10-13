@@ -27,6 +27,12 @@ describe('holds', () => {
 		expect(holds({ op: 'not', of: { op: 'is', types: [3], ...NAME } }, texts, types)).toBe(true);
 	});
 
+	it('holds a presence leaf when the slot has a child to read, and its negation when it has none', () => {
+		expect(holds({ op: 'present', ...NAME }, texts)).toBe(true);
+		expect(holds({ op: 'present', fields: ['async'], kinds: [] }, texts)).toBe(false);
+		expect(holds({ op: 'not', of: { op: 'present', fields: ['async'], kinds: [] } }, texts)).toBe(true);
+	});
+
 	it('refuses an `is` plan when the caller reads no node types', () => {
 		expect(() => holds({ op: 'is', types: [1], ...NAME }, texts)).toThrow(/is/);
 	});
