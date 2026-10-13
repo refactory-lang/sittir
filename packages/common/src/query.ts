@@ -105,7 +105,7 @@ function slotsOf(table: QuerySlots, kind: number): ReadonlyMap<string, SlotRoute
 	let byKind = slotTables.get(table);
 	if (byKind === undefined) slotTables.set(table, (byKind = new Map()));
 	let slots = byKind.get(kind);
-	if (slots === undefined) byKind.set(kind, (slots = table[kind] === undefined ? NO_SLOTS : new Map(table[kind])));
+	if (slots === undefined) byKind.set(kind, (slots = table[kind] === undefined ? NO_SLOTS : new Map(table[kind].map(([accessor, routes]) => [accessor, routes]))));
 	return slots;
 }
 
@@ -572,6 +572,8 @@ export function holds(plan: QueryPlan, texts: (routes: SlotRoutes) => readonly s
 			const pattern = new RegExp(plan.pattern, 'u');
 			return texts(plan).some((text) => pattern.test(text));
 		}
+		case 'present':
+			return texts(plan).length > 0;
 		case 'not':
 			return !holds(plan.of, texts);
 		case 'and':

@@ -10199,7 +10199,7 @@ How the parser delivers a slot's children: a named slot by its field alone, and 
 
 ### `packages/codegen/src/emitters/client-utils.ts::querySlotRows`
 
-Each kind's slots, by stamped kind id: the accessor a node reads the slot through (`propertyName`) and the slot's parser routes (`queryRoutesOf`). A query condition compiles on the client to these routes, so the native evaluator knows no slot names. A kind with no slots has no row. Two nodes stamped with one kind id must agree on the row, and the emitter throws when they do not.
+Each kind's slots, by stamped kind id: the accessor a node reads the slot through (`propertyName`), the slot's parser routes (`queryRoutesOf`), and, for a slot that holds a keyword's presence, that keyword (`keywordPresenceValue`). The keyword is the one fact that tells a boolean slot from a text slot: the recorder gives such a slot a member with only `eq(boolean)`, and a portable read reads its `true` as the keyword's text, the source text the native walk reads. A query condition compiles on the client to these routes, so the native evaluator knows no slot names. A kind with no slots has no row. Two nodes stamped with one kind id must agree on the row, and the emitter throws when they do not.
 
 ### `packages/codegen/src/emitters/client-utils.ts::emitQuerySlots`
 

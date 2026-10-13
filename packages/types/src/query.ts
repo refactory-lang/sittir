@@ -14,13 +14,17 @@ export interface KindMembership {
 	membersOf(kind: number): readonly number[];
 }
 
-/** Each kind's slots, by kind id: the accessor a node reads a slot through and the slot's parser routes. */
-export type QuerySlots = Readonly<Record<number, readonly (readonly [accessor: string, routes: SlotRoutes])[]>>;
+/** One slot of a kind: the accessor a node reads it through, its parser routes, and the keyword when the slot holds that keyword's presence. */
+export type QuerySlotEntry = readonly [accessor: string, routes: SlotRoutes, keyword?: string];
+
+/** Each kind's slots, by kind id. */
+export type QuerySlots = Readonly<Record<number, readonly QuerySlotEntry[]>>;
 
 /** A `where` condition as the native walk evaluates it, each slot compiled to its parser routes. */
 export type QueryPlan =
 	| ({ readonly op: 'eq'; readonly text: string } & SlotRoutes)
 	| ({ readonly op: 'match'; readonly pattern: string } & SlotRoutes)
+	| ({ readonly op: 'present' } & SlotRoutes)
 	| { readonly op: 'not'; readonly of: QueryPlan }
 	| { readonly op: 'and' | 'or'; readonly of: readonly QueryPlan[] };
 
