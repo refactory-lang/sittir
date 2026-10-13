@@ -188,7 +188,7 @@ function slotGuardKey(kind: string, slot: string): string {
 	return `${kind}\0${slot}`;
 }
 
-function leafReDeclaration(kind: string, node: AssembledNode): { constName: string; literal: string } | undefined {
+export function leafReDeclaration(kind: string, node: AssembledNode): { constName: string; literal: string } | undefined {
 	if (node.surfaceHidden && isFixedTextLeaf(node)) return undefined;
 	if (node.modelType !== 'pattern') return undefined;
 	const literal = anchoredLeafRegexLiteral(kind, node.textPattern);
@@ -295,16 +295,22 @@ function buildLeafReConsts(
 		lines.push(`type ${typeName} = (typeof ${listName})[number];`);
 		lines.push(`const ${constName}: ReadonlySet<string> = new Set(${listName});`);
 	}
+	const declared = new Map<string, string>();
+	const declare = (constName: string, literal: string): void => {
+		const first = declared.get(literal);
+		if (first === undefined) declared.set(literal, constName);
+		lines.push(`export const ${constName} = ${first ?? literal};`);
+	};
 	for (const [kind, node] of nodeMap.nodes) {
 		const declaration = leafReDeclaration(kind, node);
 		if (declaration === undefined) continue;
 		leafReConsts.set(kind, declaration.constName);
-		lines.push(`const ${declaration.constName} = ${declaration.literal};`);
+		declare(declaration.constName, declaration.literal);
 	}
 	for (const [kind, node] of nodeMap.nodes) {
 		for (const { slot, literal, constName } of interiorSlotGuards(kind, node)) {
 			leafReConsts.set(slotGuardKey(kind, slot), constName);
-			lines.push(`export const ${constName} = ${literal};`);
+			declare(constName, literal);
 		}
 	}
 	return leafReConsts;

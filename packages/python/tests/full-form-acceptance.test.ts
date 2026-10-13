@@ -39,6 +39,6 @@ describe('builders and their kind spelled in full', () => {
 	});
 
 	it('leaves a kind whose affix is separated from its content to its bare content', () => {
-		expect(() => py.build.globalStatement('global x')).toThrow(/is not a identifier/);
+		expect(() => py.build.globalStatement('global x')).toThrow(/^identifier: text does not match pattern/);
 	});
 });
