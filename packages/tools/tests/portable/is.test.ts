@@ -325,6 +325,19 @@ describe('portable is: typescript', async () => {
 		expect(at('statement.import.typeOnly')(plain, pc)).toBe(false);
 	});
 
+	it('reads a type-only export as an export, an export of all one included', () => {
+		const SOURCE = 'export type { A } from "a";\nexport type * from "b";\nexport { C } from "c";\n';
+		const froms = [0, 1, 2].map((nth) => find(SOURCE, 'export_statement_default_from', undefined, nth));
+		expect(froms.map(([n, c]) => at('statement.export')(n, c))).toEqual([true, true, true]);
+		expect(froms.map(([n, c]) => at('statement.export.all')(n, c))).toEqual([false, true, false]);
+	});
+
+	it.skip('reads a type-only export by its keyword (pending: `typeOnly` is a flag of statement.export, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
+		const SOURCE = 'export type { A } from "a";\nexport type * from "b";\nexport { C } from "c";\n';
+		const froms = [0, 1, 2].map((nth) => find(SOURCE, 'export_statement_default_from', undefined, nth));
+		expect(froms.map(([n, c]) => at('statement.export.typeOnly')(n, c))).toEqual([true, true, false]);
+	});
+
 	it('pins a typeof specifier by its keyword, and reads a type-only specifier as a specifier', () => {
 		const SOURCE = 'import { type A, typeof B, C, type D as E, typeof F as G, H as I } from "a";\nexport { type J, typeof K, L } from "b";\n';
 		for (const form of ['import_specifier_name', 'import_specifier_as']) {
