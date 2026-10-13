@@ -11,7 +11,7 @@ export function rebuildPython4spaceLoose() {
 	}))), py.build.simpleStatements(py.build.importFromStatement({
 		moduleName: py.build.dottedName("typing"),
 		content: py.build.importList(py.build.dottedName("Optional")),
-	})).$trivia.leading(py.kinds.Blankline), py.build.classDefinition({
+	})), py.build.classDefinition({
 		name: "User",
 		body: py.build.suiteBlock(py.build.functionDefinition({
 			name: "__init__",
@@ -50,8 +50,8 @@ export function rebuildPython4spaceLoose() {
 				}), py.build.stringContent("!")],
 				stringEnd: "\"",
 			})))),
-		}).$trivia.leading(py.kinds.Blankline)),
-	}).$trivia.leading(py.kinds.DoubleBlankline), py.build.functionDefinition({
+		})),
+	}), py.build.functionDefinition({
 		name: "find_user",
 		parameters: [py.build.typedParameter({
 			name: "users",

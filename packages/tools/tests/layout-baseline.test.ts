@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { BaselineRun } from '@sittir/common/engine';
 import { loadCorpusEntries } from '../src/validate/common.ts';
-import { layoutRunsOf, runLayoutRuns } from '../src/validate/layout-runs.ts';
+import { layoutRunsOf, runLayoutRuns, storedLayoutOf } from '../src/validate/layout-runs.ts';
 
 const grammars = ['rust', 'typescript', 'python', 'regex', 'scm'] as const;
 
@@ -55,18 +55,41 @@ describe('every run a side takes has a baseline, and every region renders', () =
 	}
 });
 
-describe("a region's record gives the breaks the whole tree's record gives", () => {
+describe("a region's record writes what the whole tree's record writes", () => {
 	for (const grammar of grammars) {
 		it(`in every ${grammar} corpus entry`, async () => {
 			const runsOf = await layoutRunsOf(grammar);
 			const differ = loadCorpusEntries(grammar).flatMap(({ name, source }) => {
 				const whole = runsOf(source, true);
+				const written = (run: BaselineRun | undefined) => `${run?.breaks}/${run?.spaces}/${run?.tabs}`;
 				return runsOf(source)
-					.map((run, at) => ({ run, whole: whole[at]?.breaks }))
-					.filter(({ run, whole }) => run.breaks !== whole)
-					.map(({ run, whole }) => `${name}: ${run.side} of ${run.index} at ${run.start}..${run.end} region ${run.breaks} whole ${whole} ${JSON.stringify(source.slice(Math.max(0, run.start - 12), run.end + 12))}`);
+					.map((run, at) => ({ run, region: written(run), whole: written(whole[at]) }))
+					.filter(({ region, whole }) => region !== whole)
+					.map(({ run, region, whole }) => `${name}: ${run.side} of ${run.index} at ${run.start}..${run.end} region ${region} whole ${whole} ${JSON.stringify(source.slice(Math.max(0, run.start - 12), run.end + 12))}`);
 			});
 			expect(differ).toEqual([]);
 		});
 	}
+});
+
+describe('a parsed tree stores only the layout its read-time options do not render', () => {
+	it('stores nothing for a rust block the options break as its source does', async () => {
+		const storedOf = await storedLayoutOf('rust');
+		expect(storedOf('fn f() {\n    x;\n}\n')).toEqual({ deviations: 0, slots: 0, separators: 0 });
+	});
+
+	it('stores each run of a rust block its source keeps on one line', async () => {
+		const storedOf = await storedLayoutOf('rust');
+		expect(storedOf('fn f() { x; }\n')).toEqual({ deviations: 2, slots: 0, separators: 0 });
+	});
+
+	it("stores a list slot's class where its gaps break apart from the options", async () => {
+		const storedOf = await storedLayoutOf('rust');
+		expect(storedOf('fn f(a: u8,\n    b: u8,\n    c: u8) {}\n')).toMatchObject({ slots: 1, separators: 0 });
+	});
+
+	it('stores the separator of an item whose gap holds another than its slot renders', async () => {
+		const storedOf = await storedLayoutOf('typescript');
+		expect(storedOf('type T = { a: 1; b: 2; c: 3, d: 4 };\n')).toMatchObject({ separators: 1 });
+	});
 });

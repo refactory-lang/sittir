@@ -1,4 +1,4 @@
-import type { BaselineRun, NativeEngineLike } from '@sittir/common/engine';
+import type { BaselineRun, NativeEngineLike, StoredLayout } from '@sittir/common/engine';
 import { loadCorpusEntries } from './common.ts';
 
 /** A run of a corpus entry that no region's record reaches: at render it keeps its source class. */
@@ -19,6 +19,8 @@ export interface LayoutRefusal {
 
 export interface LayoutRunsResult {
 	readonly total: number;
+	/** What every entry stores of its layout apart from its read-time options, summed. */
+	readonly stored: StoredLayout;
 	readonly unreached: readonly LayoutRunMiss[];
 	readonly refused: readonly LayoutRefusal[];
 }
@@ -35,24 +37,38 @@ async function nativeBackendOf(grammar: string): Promise<Required<NativeBackend>
 	return status.native;
 }
 
-/** Every layout run of `source` with the breaks the read-time options write there, from each run's region or from the whole tree when `whole`. */
-export async function layoutRunsOf(grammar: string): Promise<(source: string, whole?: boolean) => BaselineRun[]> {
+/** A function parsing a source with `grammar`'s native engine and handing its tree id to `use`, disposing the tree after. */
+async function withTreeOf(grammar: string): Promise<<T>(source: string, use: (engine: NativeEngineLike, treeId: number) => T) => T> {
 	const native = await nativeBackendOf(grammar);
 	const engine = new native.SittirEngine();
-	return (source, whole = false) => {
+	return (source, use) => {
 		const { treeId } = JSON.parse(engine.parse(source)) as { treeId: number };
 		try {
-			return engine.layoutBaseline(treeId, whole);
+			return use(engine, treeId);
 		} finally {
 			native.disposeTree(treeId);
 		}
 	};
 }
 
+/** Every layout run of `source` with the breaks the read-time options write there, from each run's region or from the whole tree when `whole`. */
+export async function layoutRunsOf(grammar: string): Promise<(source: string, whole?: boolean) => BaselineRun[]> {
+	const withTree = await withTreeOf(grammar);
+	return (source, whole = false) => withTree(source, (engine, treeId) => engine.layoutBaseline(treeId, whole));
+}
+
+/** What `source` stores of its layout apart from its read-time options (`NativeEngineLike.storedLayout`). */
+export async function storedLayoutOf(grammar: string): Promise<(source: string) => StoredLayout> {
+	const withTree = await withTreeOf(grammar);
+	return (source) => withTree(source, (engine, treeId) => engine.storedLayout(treeId));
+}
+
 /** The layout runs of every corpus entry of `grammar`: how many, which no record reaches, and the entries whose region render was refused. */
 export async function runLayoutRuns(grammar: string): Promise<LayoutRunsResult> {
 	const runsOf = await layoutRunsOf(grammar);
+	const storedOf = await storedLayoutOf(grammar);
 	let total = 0;
+	const stored = { deviations: 0, slots: 0, separators: 0 };
 	const unreached: LayoutRunMiss[] = [];
 	const refused: LayoutRefusal[] = [];
 	for (const { name, source } of loadCorpusEntries(grammar)) {
@@ -64,10 +80,14 @@ export async function runLayoutRuns(grammar: string): Promise<LayoutRunsResult> 
 			continue;
 		}
 		total += runs.length;
+		const { deviations, slots, separators } = storedOf(source);
+		stored.deviations += deviations;
+		stored.slots += slots;
+		stored.separators += separators;
 		for (const { side, index, start, end, breaks } of runs) {
 			if (breaks !== undefined) continue;
 			unreached.push({ entry: name, side, index, start, end, context: source.slice(Math.max(0, start - 12), end + 12) });
 		}
 	}
-	return { total, unreached, refused };
+	return { total, stored, unreached, refused };
 }

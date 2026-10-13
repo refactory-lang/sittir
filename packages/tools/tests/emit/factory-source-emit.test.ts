@@ -34,7 +34,7 @@ describe('emitFactorySourceText (real rust grammar)', () => {
 
 	it('prints an empty owner of inner trivia through its no-argument form', async () => {
 		const source = await emitFactorySourceText('rust', 'fn f() { // TODO\n}\n', 'rebuild');
-		expect(source).toContain('rs.build.block.strict().$trivia.inner(rs.kinds.Space, rs.build.lineComment.strict(rs.build.lineCommentRegular(" TODO")))');
+		expect(source).toContain('rs.build.block.strict().$trivia.inner(rs.build.lineComment.strict(rs.build.lineCommentRegular(" TODO")))');
 	});
 
 	it('prints a leading comment through its kind builder', async () => {

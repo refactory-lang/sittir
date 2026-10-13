@@ -11,6 +11,7 @@ export const triviaFacts = Object.freeze({
 	innerKinds: INNER_SITES,
 	rebuildWrappers: new Set<number>([77, 78, 79, 80, 81, 83, 84, 85, 89, 90]),
 	listKinds: new Set<number>([]),
+	layout: new Set<number>([47, 48, 49, 50]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:\r?\n))+)$/u,
 		kindIdByText: Object.freeze({ '': 47, '\n': 48, '\n\n': 49, '\n\n\n': 50 })

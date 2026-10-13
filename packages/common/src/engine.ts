@@ -68,12 +68,20 @@ function depthOf(options: ParseOptions | undefined): number {
  * side that take it, and the line breaks the tree's baseline writes there, absent where nothing the
  * baseline wrote is anchored.
  */
+export interface StoredLayout {
+	readonly deviations: number;
+	readonly slots: number;
+	readonly separators: number;
+}
+
 export interface BaselineRun {
 	readonly start: number;
 	readonly end: number;
 	readonly index: number;
 	readonly side: TriviaSideName;
 	readonly breaks?: number;
+	readonly spaces?: number;
+	readonly tabs?: number;
 }
 
 export interface NativeEngineLike<TTransport = unknown> {
@@ -124,6 +132,20 @@ export interface NativeEngineLike<TTransport = unknown> {
 	 */
 	unitSides(treeId: number, index: number): unknown[];
 	/**
+	 * The stored layout of each list slot of the node at descendant `index` of tree `treeId` that
+	 * stores any: each `{ slot, before?, after?, separator? }`, by its slot's wire key.
+	 *
+	 * @throws as {@link triviaSide} does.
+	 */
+	slotLayouts(treeId: number, index: number): unknown[];
+	/**
+	 * The separator before the node at descendant `index` of tree `treeId` as an item of its parent's
+	 * list slot, as a grammar id, where its source spells another than the one the slot renders.
+	 *
+	 * @throws as {@link triviaSide} does.
+	 */
+	separatorBefore(treeId: number, index: number): number | null;
+	/**
 	 * Whether a write replaced a side of a node under the node at descendant `index` of tree `treeId`:
 	 * of a descendant or of the node's own `inner`, and of its own leading and trailing too when
 	 * `ownSides` is set.
@@ -152,6 +174,14 @@ export interface NativeEngineLike<TTransport = unknown> {
 	 * @throws when the tree is not live, or a record's read or render refused.
 	 */
 	layoutBaseline(treeId: number, whole?: boolean): BaselineRun[];
+	/**
+	 * How much of its layout tree `treeId` stores apart from the options in effect when it was read:
+	 * the runs of whitespace a side stores, the list slots that store a layout, and the items that
+	 * store their own separator. A diagnostic.
+	 *
+	 * @throws when the tree is not live.
+	 */
+	storedLayout(treeId: number): StoredLayout;
 	descendants(
 		from: string,
 		kinds: number[] | undefined | null,
@@ -317,8 +347,7 @@ export function createNativeEngine<
 	try {
 		const engine = new status.native.SittirEngine(options?.options === undefined ? undefined : { options: options.options });
 		const kindView: KindView = {
-			isWrapper: (kindId) => config.rebuildWrappers.has(kindId),
-			isList: (kindId) => config.listKinds.has(kindId)
+			isWrapper: (kindId) => config.rebuildWrappers.has(kindId)
 		};
 
 		function renderNativeNode(node: AnyUntypedNode | number, opts?: RenderOptions<O>): Rendered {
@@ -411,6 +440,8 @@ export function createNativeEngine<
 								for (const unit of units) forEachTriviaList(unit as TriviaSides<unknown>, (entries) => holdReadTree(entries, liveToken));
 								return units;
 							},
+							slotLayouts: (index) => engine.slotLayouts(parsed.treeId, index),
+							separatorBefore: (index) => engine.separatorBefore(parsed.treeId, index) ?? undefined,
 							editedWithin: (index, ownSides) => engine.editedWithin(parsed.treeId, index, ownSides),
 							isEmpty: (index) => engine.isEmpty(parsed.treeId, index),
 							siblings: (index) => JSON.parse(engine.siblings(parsed.treeId, index)) as Siblings,

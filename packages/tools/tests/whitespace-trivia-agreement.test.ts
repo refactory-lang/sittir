@@ -14,7 +14,7 @@ import type { Engine, LanguageAPI } from '@sittir/types';
 const cases: readonly { readonly grammar: string; readonly source: (gap: string) => string }[] = [
 	{ grammar: 'rust', source: (gap) => `const X: u8 = a +${gap}f();\n` },
 	{ grammar: 'typescript', source: (gap) => `a +${gap}f();\n` },
-	{ grammar: 'python', source: (gap) => `x = [f(),${gap}g()]\n` },
+	{ grammar: 'python', source: (gap) => `x = (a +${gap}f())\n` },
 	{ grammar: 'scm', source: (gap) => `(a${gap}(b))\n` },
 	{ grammar: 'regex', source: (gap) => `a${gap}b` }
 ];

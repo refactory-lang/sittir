@@ -17,11 +17,8 @@
  *   verification, with no committed regression test at the time — these
  *   `rendered` assertions close that gap.
  * - Reconstruction (`emitSeparatedListFrom`): `from()` on an already-wrapped
- *   separatedList node used to silently reset `_separator`/
- *   `_delimiter` to the factory's defaults (comma, no
- *   flanks) instead of preserving the original instance's own facts —
- *   found via external code review, fixed by threading them through as
- *   factory options on the self-UntypedNode-unwrap path.
+ *   separatedList node keeps the instance's own `_delimiter`, threaded
+ *   through as a factory option, rather than the factory's default.
  */
 import { describe, expect, it } from 'vitest';
 import { probeTrace } from '../../src/probe/kind.ts';
@@ -64,15 +61,16 @@ describe('separatedList render — real typescript grammar integration (nontermi
 		expect(rendered).not.toContain(',');
 	});
 
-	it('preserves a comma separator on round-trip', async () => {
+	it('renders a layout-free copy of a comma list with the options separator between its members', async () => {
 		const trace = await probeTrace('typescript', 'type Foo = { a: string, b: number };', {
 			kind: 'object_type_content',
 			engine: 'native'
 		});
 
+		// The probe's copy holds no layout, so the separator is the options' (a source's own choice
+		// is its list slot's stored layout, which a read through the engine keeps).
 		const rendered = trace.trace.native?.deep?.rendered ?? '';
-		expect(rendered).toContain(',');
-		expect(rendered).not.toContain(';');
+		expect(rendered).toMatch(/a: string;\s*b: number/);
 	});
 
 	it('recovers from a mixed comma/semicolon separator without dropping content', async () => {
@@ -95,16 +93,14 @@ describe('separatedList from() reconstruction — preserves original separator f
 			engine: 'native'
 		});
 
-		const wrapped = trace.trace.native?.deep?.untypedNode as { _delimiter?: number; _separator?: number };
+		const wrapped = trace.trace.native?.deep?.untypedNode as { _delimiter?: number };
 		expect(((wrapped._delimiter ?? 0) & 2) !== 0).toBe(true);
-		expect(wrapped._separator).toBeDefined();
 
 		const { _fromMap } = await requireGrammarModule('typescript', 'factories/coerce.ts');
 		const coerce = _fromMap.object_type_content;
 		if (coerce === undefined) throw new Error('Missing object_type_content coercion');
 		const reconstructed = coerce(wrapped);
 		expect((((reconstructed as unknown as { _delimiter?: number })._delimiter ?? 0) & 2) !== 0).toBe(true);
-		expect((reconstructed as unknown as { _separator: number })._separator).toBe(wrapped._separator);
 		const rendered = (await loadNativeEngine('typescript')).render(reconstructed as never).toString();
 		expect(rendered).toContain(';');
 		expect(rendered).not.toContain(',');

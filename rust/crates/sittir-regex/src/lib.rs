@@ -80,6 +80,10 @@ impl EngineGrammar for RegexGrammar {
             .map_err(|refusal| refusal.describe(&|kind| self.kind_name(kind)))?;
         render_transport_parts(sittir_core::SlotValue::Transport(node), render).map(|(_, text)| text).map_err(|error| error.to_string())
     }
+
+    fn slot_routes(self, tree: &tree_sitter::Tree, index: u32) -> Option<sittir_core::read::Routed> {
+        sittir_core::read::routes_at::<AnyTransport>(&mut tree.walk(), index)
+    }
 }
 
 // The engine class itself — parse, read, render, edits, and the live-tree

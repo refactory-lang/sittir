@@ -338,7 +338,7 @@ describe('render options on transports', () => {
 			'self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);'
 		);
 		expect(listFill).toMatch(
-			/self\.delimiter\.get_or_insert\(::sittir_core::prepare::source_trailing_delimiter\(flank\.as_ref\(\), ::sittir_core::types::KindId\(\d+\), &\[\d+\], ctx\.options\.delimiter\[options::DELIM_FORMAL_PARAMETERS_ELEMENTS_ITEM\], ctx\)\);/
+			/self\.delimiter\.get_or_insert\(::sittir_core::prepare::source_trailing_delimiter\(self\.layout\.as_deref\(\), ::sittir_core::types::KindId\(\d+\), &\[\d+\], ctx\.options\.delimiter\[options::DELIM_FORMAL_PARAMETERS_ELEMENTS_ITEM\], ctx\)\);/
 		);
 		const ownerImpl = src.slice(src.indexOf('impl ::sittir_core::prepare::Prepare for FormalParametersTransport {'));
 		const ownerFill = ownerImpl.slice(0, ownerImpl.indexOf('\n}\n'));
@@ -435,18 +435,19 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		expect(body).toContain('\n    #[transport(verbatim)]\n    Verbatim(VerbatimTransport),');
 	});
 
-	it('gives each source-adjacent list gap its source class before the list site and the seats fill it', async () => {
+	it("gives a list slot's gaps its stored layout before the list site and the seats fill them", async () => {
 		const transportRs = await getRustTemplatesRs();
 		const from = transportRs.indexOf('impl ::sittir_core::prepare::Prepare for ArgumentsElementsTransport {');
 		expect(from).toBeGreaterThan(-1);
 		const body = transportRs.slice(from, transportRs.indexOf('\n}\n', from));
 		expect(body).toContain(
-			'::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_ARGUMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ARGUMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);'
+			'::sittir_core::prepare::fill_slot_gaps(self.item.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_item"));'
 		);
-		// The source class is set first: the list site and the seats fill only the gaps it left unset.
-		expect(body.indexOf('fill_list_gaps')).toBeLessThan(body.indexOf('.get_or_insert(ctx.options.spacing['));
-		expect(body.indexOf('fill_list_gaps')).toBeLessThan(body.indexOf('fill_seated_gaps'));
-		expect(body).toContain('fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {');
+		// The stored layout is set first: the list site and the seats fill only the gaps it left unset.
+		expect(body.indexOf('fill_slot_gaps')).toBeLessThan(body.indexOf('.get_or_insert(ctx.options.spacing['));
+		expect(body.indexOf('fill_slot_gaps')).toBeLessThan(body.indexOf('fill_seated_gaps'));
+		expect(transportRs).not.toContain('fill_list_gaps');
+		expect(transportRs).not.toContain('fn source_gap(');
 		expect(transportRs).not.toContain('classify_list_gaps');
 		expect(transportRs).not.toContain('leading_seam');
 		expect(transportRs).not.toMatch(/let separated_\w+ = \{/);

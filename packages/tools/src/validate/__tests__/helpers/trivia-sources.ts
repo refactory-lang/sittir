@@ -40,7 +40,7 @@ export const ORPHANS: Record<string, readonly (readonly [string, string])[]> = {
 		['x = (/* c */ true);', 'x = (/* c */ true);'],
 		['x = (/* c */ null);', 'x = (/* c */ null);'],
 		['class A extends B { m() { (/* c */ super).m(); } }', 'class A extends B { m() { (/* c */ super).m(); } }'],
-		['for (/* c */;;) {}', 'for (/* c */ ;;) {}'],
+		['for (/* c */;;) {}', 'for (/* c */;;) {}'],
 		['x = (// c\n this);', 'x = (// c\n this);'],
 		['x = (this /* c */);', 'x = (this /* c */);']
 	],
@@ -50,8 +50,8 @@ export const ORPHANS: Record<string, readonly (readonly [string, string])[]> = {
 		['fn f() { (// c\n self); }', 'fn f() { (// c\n self); }']
 	],
 	python: [
-		['x = (  # c\n    True)\n', 'x = (# c\n    True)\n'],
-		['x = (  # c\n    True) + 1\n', 'x = (# c\n    True) + 1\n'],
-		['a = 1; x = (  # c\n    True)\n', 'a = 1; x = (# c\n    True)\n']
+		['x = (  # c\n    True)\n', 'x = ( # c\n    True)\n'],
+		['x = (  # c\n    True) + 1\n', 'x = ( # c\n    True) + 1\n'],
+		['a = 1; x = (  # c\n    True)\n', 'a = 1; x = ( # c\n    True)\n']
 	]
 };

@@ -190,64 +190,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            AnyTransport::Program(t) => t.source_gap(),
-            AnyTransport::EscapeSequence(t) => t.source_gap(),
-            AnyTransport::Quantifier(t) => t.source_gap(),
-            AnyTransport::Identifier(t) => t.source_gap(),
-            AnyTransport::ImmediateIdentifier(t) => t.source_gap(),
-            AnyTransport::Capture(t) => t.source_gap(),
-            AnyTransport::String(t) => t.source_gap(),
-            AnyTransport::ImmediateString(t) => t.source_gap(),
-            AnyTransport::StringContent(t) => t.source_gap(),
-            AnyTransport::Parameters(t) => t.source_gap(),
-            AnyTransport::Comment(t) => t.source_gap(),
-            AnyTransport::List(t) => t.source_gap(),
-            AnyTransport::Grouping(t) => t.source_gap(),
-            AnyTransport::MissingNode(t) => t.source_gap(),
-            AnyTransport::AnonymousNode(t) => t.source_gap(),
-            AnyTransport::FieldDefinition(t) => t.source_gap(),
-            AnyTransport::NegatedField(t) => t.source_gap(),
-            AnyTransport::Predicate(t) => t.source_gap(),
-            AnyTransport::PredicateType(t) => t.source_gap(),
-            AnyTransport::ListElementQuantifier(t) => t.source_gap(),
-            AnyTransport::GroupExpressionArm(t) => t.source_gap(),
-            AnyTransport::NamedNodeExpressionArm(t) => t.source_gap(),
-            AnyTransport::GroupingGroup(t) => t.source_gap(),
-            AnyTransport::StringContentText(t) => t.source_gap(),
-            AnyTransport::NamedNodePlain(t) => t.source_gap(),
-            AnyTransport::NamedNodeSupertyped(t) => t.source_gap(),
-            AnyTransport::NamedNodeGroupChildren(t) => t.source_gap(),
-            AnyTransport::NamedNodeGroupAnchoredLast(t) => t.source_gap(),
-            AnyTransport::Anchor => None,
-            AnyTransport::Tight => None,
-            AnyTransport::Space => None,
-            AnyTransport::Tab => None,
-            AnyTransport::Newline => None,
-            AnyTransport::Blankline => None,
-            AnyTransport::DoubleBlankline => None,
-            AnyTransport::Indent => None,
-            AnyTransport::Dedent => None,
-            AnyTransport::Star => None,
-            AnyTransport::Plus => None,
-            AnyTransport::Qmark => None,
-            AnyTransport::At => None,
-            AnyTransport::Dquote => None,
-            AnyTransport::Lbrack => None,
-            AnyTransport::Rbrack => None,
-            AnyTransport::Lparen => None,
-            AnyTransport::Rparen => None,
-            AnyTransport::MissingKeyword => None,
-            AnyTransport::Underscore => None,
-            AnyTransport::Colon => None,
-            AnyTransport::Bang => None,
-            AnyTransport::Pound => None,
-            AnyTransport::Dot => None,
-            AnyTransport::Slash => None,
-            AnyTransport::Verbatim(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             AnyTransport::Program(t) => t.gap_edges(),
@@ -364,6 +306,64 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Verbatim(t) => t.snapshot_edge(),
         }
     }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            AnyTransport::Program(t) => t.source_separator(ctx),
+            AnyTransport::EscapeSequence(t) => t.source_separator(ctx),
+            AnyTransport::Quantifier(t) => t.source_separator(ctx),
+            AnyTransport::Identifier(t) => t.source_separator(ctx),
+            AnyTransport::ImmediateIdentifier(t) => t.source_separator(ctx),
+            AnyTransport::Capture(t) => t.source_separator(ctx),
+            AnyTransport::String(t) => t.source_separator(ctx),
+            AnyTransport::ImmediateString(t) => t.source_separator(ctx),
+            AnyTransport::StringContent(t) => t.source_separator(ctx),
+            AnyTransport::Parameters(t) => t.source_separator(ctx),
+            AnyTransport::Comment(t) => t.source_separator(ctx),
+            AnyTransport::List(t) => t.source_separator(ctx),
+            AnyTransport::Grouping(t) => t.source_separator(ctx),
+            AnyTransport::MissingNode(t) => t.source_separator(ctx),
+            AnyTransport::AnonymousNode(t) => t.source_separator(ctx),
+            AnyTransport::FieldDefinition(t) => t.source_separator(ctx),
+            AnyTransport::NegatedField(t) => t.source_separator(ctx),
+            AnyTransport::Predicate(t) => t.source_separator(ctx),
+            AnyTransport::PredicateType(t) => t.source_separator(ctx),
+            AnyTransport::ListElementQuantifier(t) => t.source_separator(ctx),
+            AnyTransport::GroupExpressionArm(t) => t.source_separator(ctx),
+            AnyTransport::NamedNodeExpressionArm(t) => t.source_separator(ctx),
+            AnyTransport::GroupingGroup(t) => t.source_separator(ctx),
+            AnyTransport::StringContentText(t) => t.source_separator(ctx),
+            AnyTransport::NamedNodePlain(t) => t.source_separator(ctx),
+            AnyTransport::NamedNodeSupertyped(t) => t.source_separator(ctx),
+            AnyTransport::NamedNodeGroupChildren(t) => t.source_separator(ctx),
+            AnyTransport::NamedNodeGroupAnchoredLast(t) => t.source_separator(ctx),
+            AnyTransport::Anchor => None,
+            AnyTransport::Tight => None,
+            AnyTransport::Space => None,
+            AnyTransport::Tab => None,
+            AnyTransport::Newline => None,
+            AnyTransport::Blankline => None,
+            AnyTransport::DoubleBlankline => None,
+            AnyTransport::Indent => None,
+            AnyTransport::Dedent => None,
+            AnyTransport::Star => None,
+            AnyTransport::Plus => None,
+            AnyTransport::Qmark => None,
+            AnyTransport::At => None,
+            AnyTransport::Dquote => None,
+            AnyTransport::Lbrack => None,
+            AnyTransport::Rbrack => None,
+            AnyTransport::Lparen => None,
+            AnyTransport::Rparen => None,
+            AnyTransport::MissingKeyword => None,
+            AnyTransport::Underscore => None,
+            AnyTransport::Colon => None,
+            AnyTransport::Bang => None,
+            AnyTransport::Pound => None,
+            AnyTransport::Dot => None,
+            AnyTransport::Slash => None,
+            AnyTransport::Verbatim(t) => t.source_separator(ctx),
+        }
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -414,21 +414,6 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
             TriviaTransport::Text(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            TriviaTransport::Comment(t) => t.source_gap(),
-            TriviaTransport::Tight => None,
-            TriviaTransport::Space => None,
-            TriviaTransport::Tab => None,
-            TriviaTransport::Newline => None,
-            TriviaTransport::Blankline => None,
-            TriviaTransport::DoubleBlankline => None,
-            TriviaTransport::Indent => None,
-            TriviaTransport::Dedent => None,
-            TriviaTransport::Verbatim(t) => t.source_gap(),
-            TriviaTransport::Text(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             TriviaTransport::Comment(t) => t.gap_edges(),
@@ -459,6 +444,21 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
             TriviaTransport::Text(t) => t.snapshot_edge(),
         }
     }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            TriviaTransport::Comment(t) => t.source_separator(ctx),
+            TriviaTransport::Tight => None,
+            TriviaTransport::Space => None,
+            TriviaTransport::Tab => None,
+            TriviaTransport::Newline => None,
+            TriviaTransport::Blankline => None,
+            TriviaTransport::DoubleBlankline => None,
+            TriviaTransport::Indent => None,
+            TriviaTransport::Dedent => None,
+            TriviaTransport::Verbatim(t) => t.source_separator(ctx),
+            TriviaTransport::Text(t) => t.source_separator(ctx),
+        }
+    }
 }
 
 impl ::sittir_core::render::Render for TriviaTransport {
@@ -484,15 +484,15 @@ impl ::sittir_core::trivia::FromTriviaText for TriviaTransport {
         TriviaTransport::Text(text)
     }
 
-    fn from_layout(kind: ::sittir_core::types::KindId, _text: &str) -> Option<Self> {
-        if kind == kind::_TIGHT { return Some(TriviaTransport::Tight); }
-        if kind == kind::_SPACE { return Some(TriviaTransport::Space); }
-        if kind == kind::_TAB { return Some(TriviaTransport::Tab); }
-        if kind == kind::_NEWLINE { return Some(TriviaTransport::Newline); }
-        if kind == kind::_BLANKLINE { return Some(TriviaTransport::Blankline); }
-        if kind == kind::_DOUBLE_BLANKLINE { return Some(TriviaTransport::DoubleBlankline); }
-        if kind == kind::_INDENT { return Some(TriviaTransport::Indent); }
-        if kind == kind::_DEDENT { return Some(TriviaTransport::Dedent); }
+    fn from_layout(text: ::sittir_core::trivia::TriviaText) -> Option<Self> {
+        if text.kind == kind::_TIGHT { return Some(TriviaTransport::Tight); }
+        if text.kind == kind::_SPACE { return Some(TriviaTransport::Space); }
+        if text.kind == kind::_TAB { return Some(TriviaTransport::Tab); }
+        if text.kind == kind::_NEWLINE { return Some(TriviaTransport::Newline); }
+        if text.kind == kind::_BLANKLINE { return Some(TriviaTransport::Blankline); }
+        if text.kind == kind::_DOUBLE_BLANKLINE { return Some(TriviaTransport::DoubleBlankline); }
+        if text.kind == kind::_INDENT { return Some(TriviaTransport::Indent); }
+        if text.kind == kind::_DEDENT { return Some(TriviaTransport::Dedent); }
         None
     }
 }
@@ -561,17 +561,6 @@ impl ::sittir_core::prepare::Prepare for DefinitionTransport {
             DefinitionTransport::FieldDefinition(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            DefinitionTransport::NamedNode(t) => t.source_gap(),
-            DefinitionTransport::AnonymousNode(t) => t.source_gap(),
-            DefinitionTransport::MissingNode(t) => t.source_gap(),
-            DefinitionTransport::Grouping(t) => t.source_gap(),
-            DefinitionTransport::Predicate(t) => t.source_gap(),
-            DefinitionTransport::List(t) => t.source_gap(),
-            DefinitionTransport::FieldDefinition(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             DefinitionTransport::NamedNode(t) => t.gap_edges(),
@@ -592,6 +581,17 @@ impl ::sittir_core::prepare::Prepare for DefinitionTransport {
             DefinitionTransport::Predicate(t) => t.snapshot_edge(),
             DefinitionTransport::List(t) => t.snapshot_edge(),
             DefinitionTransport::FieldDefinition(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            DefinitionTransport::NamedNode(t) => t.source_separator(ctx),
+            DefinitionTransport::AnonymousNode(t) => t.source_separator(ctx),
+            DefinitionTransport::MissingNode(t) => t.source_separator(ctx),
+            DefinitionTransport::Grouping(t) => t.source_separator(ctx),
+            DefinitionTransport::Predicate(t) => t.source_separator(ctx),
+            DefinitionTransport::List(t) => t.source_separator(ctx),
+            DefinitionTransport::FieldDefinition(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -635,12 +635,6 @@ impl ::sittir_core::prepare::Prepare for NamedNodeTransport {
             NamedNodeTransport::NamedNodeSupertyped(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            NamedNodeTransport::NamedNodePlain(t) => t.source_gap(),
-            NamedNodeTransport::NamedNodeSupertyped(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             NamedNodeTransport::NamedNodePlain(t) => t.gap_edges(),
@@ -651,6 +645,12 @@ impl ::sittir_core::prepare::Prepare for NamedNodeTransport {
         match self {
             NamedNodeTransport::NamedNodePlain(t) => t.snapshot_edge(),
             NamedNodeTransport::NamedNodeSupertyped(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            NamedNodeTransport::NamedNodePlain(t) => t.source_separator(ctx),
+            NamedNodeTransport::NamedNodeSupertyped(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -696,12 +696,6 @@ impl ::sittir_core::prepare::Prepare for ListElementTransport {
             ListElementTransport::ListElementQuantifier(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            ListElementTransport::Capture(t) => t.source_gap(),
-            ListElementTransport::ListElementQuantifier(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             ListElementTransport::Capture(t) => t.gap_edges(),
@@ -712,6 +706,12 @@ impl ::sittir_core::prepare::Prepare for ListElementTransport {
         match self {
             ListElementTransport::Capture(t) => t.snapshot_edge(),
             ListElementTransport::ListElementQuantifier(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            ListElementTransport::Capture(t) => t.source_separator(ctx),
+            ListElementTransport::ListElementQuantifier(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -750,12 +750,6 @@ impl ::sittir_core::prepare::Prepare for NamedNodeGroupTransport {
             NamedNodeGroupTransport::NamedNodeGroupAnchoredLast(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            NamedNodeGroupTransport::NamedNodeGroupChildren(t) => t.source_gap(),
-            NamedNodeGroupTransport::NamedNodeGroupAnchoredLast(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             NamedNodeGroupTransport::NamedNodeGroupChildren(t) => t.gap_edges(),
@@ -766,6 +760,12 @@ impl ::sittir_core::prepare::Prepare for NamedNodeGroupTransport {
         match self {
             NamedNodeGroupTransport::NamedNodeGroupChildren(t) => t.snapshot_edge(),
             NamedNodeGroupTransport::NamedNodeGroupAnchoredLast(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            NamedNodeGroupTransport::NamedNodeGroupChildren(t) => t.source_separator(ctx),
+            NamedNodeGroupTransport::NamedNodeGroupAnchoredLast(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -808,13 +808,6 @@ impl ::sittir_core::prepare::Prepare for StringContentContentTransportSlot {
             StringContentContentTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            StringContentContentTransportSlot::StringContentText(t) => t.source_gap(),
-            StringContentContentTransportSlot::EscapeSequence(t) => t.source_gap(),
-            StringContentContentTransportSlot::Verbatim(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             StringContentContentTransportSlot::StringContentText(t) => t.gap_edges(),
@@ -827,6 +820,13 @@ impl ::sittir_core::prepare::Prepare for StringContentContentTransportSlot {
             StringContentContentTransportSlot::StringContentText(t) => t.snapshot_edge(),
             StringContentContentTransportSlot::EscapeSequence(t) => t.snapshot_edge(),
             StringContentContentTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            StringContentContentTransportSlot::StringContentText(t) => t.source_separator(ctx),
+            StringContentContentTransportSlot::EscapeSequence(t) => t.source_separator(ctx),
+            StringContentContentTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -876,14 +876,6 @@ impl ::sittir_core::prepare::Prepare for ParametersElementsTransportSlot {
             ParametersElementsTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            ParametersElementsTransportSlot::Capture(t) => t.source_gap(),
-            ParametersElementsTransportSlot::String(t) => t.source_gap(),
-            ParametersElementsTransportSlot::Identifier(t) => t.source_gap(),
-            ParametersElementsTransportSlot::Verbatim(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             ParametersElementsTransportSlot::Capture(t) => t.gap_edges(),
@@ -898,6 +890,14 @@ impl ::sittir_core::prepare::Prepare for ParametersElementsTransportSlot {
             ParametersElementsTransportSlot::String(t) => t.snapshot_edge(),
             ParametersElementsTransportSlot::Identifier(t) => t.snapshot_edge(),
             ParametersElementsTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            ParametersElementsTransportSlot::Capture(t) => t.source_separator(ctx),
+            ParametersElementsTransportSlot::String(t) => t.source_separator(ctx),
+            ParametersElementsTransportSlot::Identifier(t) => t.source_separator(ctx),
+            ParametersElementsTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -946,13 +946,6 @@ impl ::sittir_core::prepare::Prepare for MissingNodeNameTransportSlot {
             MissingNodeNameTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            MissingNodeNameTransportSlot::Identifier(t) => t.source_gap(),
-            MissingNodeNameTransportSlot::String(t) => t.source_gap(),
-            MissingNodeNameTransportSlot::Verbatim(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             MissingNodeNameTransportSlot::Identifier(t) => t.gap_edges(),
@@ -965,6 +958,13 @@ impl ::sittir_core::prepare::Prepare for MissingNodeNameTransportSlot {
             MissingNodeNameTransportSlot::Identifier(t) => t.snapshot_edge(),
             MissingNodeNameTransportSlot::String(t) => t.snapshot_edge(),
             MissingNodeNameTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            MissingNodeNameTransportSlot::Identifier(t) => t.source_separator(ctx),
+            MissingNodeNameTransportSlot::String(t) => t.source_separator(ctx),
+            MissingNodeNameTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -1008,12 +1008,6 @@ impl ::sittir_core::prepare::Prepare for AnonymousNodeNameTransportSlot {
             AnonymousNodeNameTransportSlot::Underscore => Ok(()),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            AnonymousNodeNameTransportSlot::String(t) => t.source_gap(),
-            AnonymousNodeNameTransportSlot::Underscore => None,
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             AnonymousNodeNameTransportSlot::String(t) => t.gap_edges(),
@@ -1023,6 +1017,12 @@ impl ::sittir_core::prepare::Prepare for AnonymousNodeNameTransportSlot {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
             AnonymousNodeNameTransportSlot::String(t) => t.snapshot_edge(),
+            AnonymousNodeNameTransportSlot::Underscore => None,
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            AnonymousNodeNameTransportSlot::String(t) => t.source_separator(ctx),
             AnonymousNodeNameTransportSlot::Underscore => None,
         }
     }
@@ -1130,19 +1130,6 @@ impl ::sittir_core::prepare::Prepare for GroupExpressionArmLeftTransportSlot {
             GroupExpressionArmLeftTransportSlot::GroupExpressionArm(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            GroupExpressionArmLeftTransportSlot::NamedNodePlain(t) => t.source_gap(),
-            GroupExpressionArmLeftTransportSlot::NamedNodeSupertyped(t) => t.source_gap(),
-            GroupExpressionArmLeftTransportSlot::AnonymousNode(t) => t.source_gap(),
-            GroupExpressionArmLeftTransportSlot::MissingNode(t) => t.source_gap(),
-            GroupExpressionArmLeftTransportSlot::Grouping(t) => t.source_gap(),
-            GroupExpressionArmLeftTransportSlot::Predicate(t) => t.source_gap(),
-            GroupExpressionArmLeftTransportSlot::List(t) => t.source_gap(),
-            GroupExpressionArmLeftTransportSlot::FieldDefinition(t) => t.source_gap(),
-            GroupExpressionArmLeftTransportSlot::GroupExpressionArm(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             GroupExpressionArmLeftTransportSlot::NamedNodePlain(t) => t.gap_edges(),
@@ -1167,6 +1154,19 @@ impl ::sittir_core::prepare::Prepare for GroupExpressionArmLeftTransportSlot {
             GroupExpressionArmLeftTransportSlot::List(t) => t.snapshot_edge(),
             GroupExpressionArmLeftTransportSlot::FieldDefinition(t) => t.snapshot_edge(),
             GroupExpressionArmLeftTransportSlot::GroupExpressionArm(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            GroupExpressionArmLeftTransportSlot::NamedNodePlain(t) => t.source_separator(ctx),
+            GroupExpressionArmLeftTransportSlot::NamedNodeSupertyped(t) => t.source_separator(ctx),
+            GroupExpressionArmLeftTransportSlot::AnonymousNode(t) => t.source_separator(ctx),
+            GroupExpressionArmLeftTransportSlot::MissingNode(t) => t.source_separator(ctx),
+            GroupExpressionArmLeftTransportSlot::Grouping(t) => t.source_separator(ctx),
+            GroupExpressionArmLeftTransportSlot::Predicate(t) => t.source_separator(ctx),
+            GroupExpressionArmLeftTransportSlot::List(t) => t.source_separator(ctx),
+            GroupExpressionArmLeftTransportSlot::FieldDefinition(t) => t.source_separator(ctx),
+            GroupExpressionArmLeftTransportSlot::GroupExpressionArm(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -1246,20 +1246,6 @@ impl ::sittir_core::prepare::Prepare for NamedNodeExpressionArmLeftTransportSlot
             NamedNodeExpressionArmLeftTransportSlot::NamedNodeExpressionArm(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            NamedNodeExpressionArmLeftTransportSlot::NamedNodePlain(t) => t.source_gap(),
-            NamedNodeExpressionArmLeftTransportSlot::NamedNodeSupertyped(t) => t.source_gap(),
-            NamedNodeExpressionArmLeftTransportSlot::AnonymousNode(t) => t.source_gap(),
-            NamedNodeExpressionArmLeftTransportSlot::MissingNode(t) => t.source_gap(),
-            NamedNodeExpressionArmLeftTransportSlot::Grouping(t) => t.source_gap(),
-            NamedNodeExpressionArmLeftTransportSlot::Predicate(t) => t.source_gap(),
-            NamedNodeExpressionArmLeftTransportSlot::List(t) => t.source_gap(),
-            NamedNodeExpressionArmLeftTransportSlot::FieldDefinition(t) => t.source_gap(),
-            NamedNodeExpressionArmLeftTransportSlot::NegatedField(t) => t.source_gap(),
-            NamedNodeExpressionArmLeftTransportSlot::NamedNodeExpressionArm(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             NamedNodeExpressionArmLeftTransportSlot::NamedNodePlain(t) => t.gap_edges(),
@@ -1286,6 +1272,20 @@ impl ::sittir_core::prepare::Prepare for NamedNodeExpressionArmLeftTransportSlot
             NamedNodeExpressionArmLeftTransportSlot::FieldDefinition(t) => t.snapshot_edge(),
             NamedNodeExpressionArmLeftTransportSlot::NegatedField(t) => t.snapshot_edge(),
             NamedNodeExpressionArmLeftTransportSlot::NamedNodeExpressionArm(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            NamedNodeExpressionArmLeftTransportSlot::NamedNodePlain(t) => t.source_separator(ctx),
+            NamedNodeExpressionArmLeftTransportSlot::NamedNodeSupertyped(t) => t.source_separator(ctx),
+            NamedNodeExpressionArmLeftTransportSlot::AnonymousNode(t) => t.source_separator(ctx),
+            NamedNodeExpressionArmLeftTransportSlot::MissingNode(t) => t.source_separator(ctx),
+            NamedNodeExpressionArmLeftTransportSlot::Grouping(t) => t.source_separator(ctx),
+            NamedNodeExpressionArmLeftTransportSlot::Predicate(t) => t.source_separator(ctx),
+            NamedNodeExpressionArmLeftTransportSlot::List(t) => t.source_separator(ctx),
+            NamedNodeExpressionArmLeftTransportSlot::FieldDefinition(t) => t.source_separator(ctx),
+            NamedNodeExpressionArmLeftTransportSlot::NegatedField(t) => t.source_separator(ctx),
+            NamedNodeExpressionArmLeftTransportSlot::NamedNodeExpressionArm(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -1346,13 +1346,6 @@ impl ::sittir_core::prepare::Prepare for NamedNodePlainNameTransportSlot {
             NamedNodePlainNameTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            NamedNodePlainNameTransportSlot::Identifier(t) => t.source_gap(),
-            NamedNodePlainNameTransportSlot::Underscore => None,
-            NamedNodePlainNameTransportSlot::Verbatim(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             NamedNodePlainNameTransportSlot::Identifier(t) => t.gap_edges(),
@@ -1365,6 +1358,13 @@ impl ::sittir_core::prepare::Prepare for NamedNodePlainNameTransportSlot {
             NamedNodePlainNameTransportSlot::Identifier(t) => t.snapshot_edge(),
             NamedNodePlainNameTransportSlot::Underscore => None,
             NamedNodePlainNameTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            NamedNodePlainNameTransportSlot::Identifier(t) => t.source_separator(ctx),
+            NamedNodePlainNameTransportSlot::Underscore => None,
+            NamedNodePlainNameTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -1417,13 +1417,6 @@ impl ::sittir_core::prepare::Prepare for NamedNodeSupertypedNameTransportSlot {
             NamedNodeSupertypedNameTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            NamedNodeSupertypedNameTransportSlot::ImmediateIdentifier(t) => t.source_gap(),
-            NamedNodeSupertypedNameTransportSlot::ImmediateString(t) => t.source_gap(),
-            NamedNodeSupertypedNameTransportSlot::Verbatim(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             NamedNodeSupertypedNameTransportSlot::ImmediateIdentifier(t) => t.gap_edges(),
@@ -1436,6 +1429,13 @@ impl ::sittir_core::prepare::Prepare for NamedNodeSupertypedNameTransportSlot {
             NamedNodeSupertypedNameTransportSlot::ImmediateIdentifier(t) => t.snapshot_edge(),
             NamedNodeSupertypedNameTransportSlot::ImmediateString(t) => t.snapshot_edge(),
             NamedNodeSupertypedNameTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            NamedNodeSupertypedNameTransportSlot::ImmediateIdentifier(t) => t.source_separator(ctx),
+            NamedNodeSupertypedNameTransportSlot::ImmediateString(t) => t.source_separator(ctx),
+            NamedNodeSupertypedNameTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -1503,20 +1503,18 @@ impl ::sittir_core::prepare::Prepare for ProgramTransport {
         let root = ::sittir_core::layout::Layout::snapshot_edge(&self.layout).map(|edge| edge.span);
         let flanks = ::sittir_core::prepare::root_flanks(first, last, root, options::allowed(options::SITE_PROGRAM_PROGRAM_BEFORE), options::allowed(options::SITE_PROGRAM_PROGRAM_AFTER), &options::WHITESPACE, ctx);
         ::sittir_core::prepare::fill_edges(self, flanks);
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        ::sittir_core::prepare::fill_list_gaps(self.definitions.iter_mut().map(Some), "", options::allowed(options::SITE_PROGRAM_DEFINITIONS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.definitions.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_definitions"));
         self.definitions_separator_space.get_or_insert(ctx.options.spacing[options::SITE_PROGRAM_DEFINITIONS_SEPARATOR_SPACE].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.definitions.iter_mut().map(Some), options::SEATS_PROGRAM_DEFINITIONS, ctx);
         self.definitions.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -1560,11 +1558,11 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -1646,11 +1644,11 @@ impl ::sittir_core::prepare::Prepare for IdentifierTransport {
         self.layout.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -1692,11 +1690,11 @@ impl ::sittir_core::prepare::Prepare for ImmediateIdentifierTransport {
         self.layout.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -1737,17 +1735,15 @@ impl ::sittir_core::render::Render for CaptureTransport {
 impl ::sittir_core::prepare::Prepare for CaptureTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -1788,17 +1784,15 @@ impl ::sittir_core::render::Render for StringTransport {
 impl ::sittir_core::prepare::Prepare for StringTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.string_content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -1839,17 +1833,15 @@ impl ::sittir_core::render::Render for ImmediateStringTransport {
 impl ::sittir_core::prepare::Prepare for ImmediateStringTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.string_content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -1890,14 +1882,15 @@ impl ::sittir_core::render::Render for StringContentTransport {
 impl ::sittir_core::prepare::Prepare for StringContentTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
+        ::sittir_core::prepare::fill_slot_gaps(self.content.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_content"));
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -1940,20 +1933,18 @@ impl ::sittir_core::render::Render for ParametersTransport {
 impl ::sittir_core::prepare::Prepare for ParametersTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        ::sittir_core::prepare::fill_list_gaps(self.elements.iter_mut().map(Some), "", options::allowed(options::SITE_PARAMETERS_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.elements.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_elements"));
         self.elements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_ELEMENTS_SEPARATOR_SPACE].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.elements.iter_mut().map(Some), options::SEATS_PARAMETERS_ELEMENTS, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -1997,11 +1988,11 @@ impl ::sittir_core::prepare::Prepare for CommentTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -2049,11 +2040,9 @@ impl ::sittir_core::render::Render for ListTransport {
 impl ::sittir_core::prepare::Prepare for ListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        ::sittir_core::prepare::fill_list_gaps(self.definitions.iter_mut().map(Some), "", options::allowed(options::SITE_LIST_DEFINITIONS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
-        ::sittir_core::prepare::fill_list_gaps(self.elements.iter_mut().map(Some), "", options::allowed(options::SITE_LIST_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.definitions.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_definitions"));
+        ::sittir_core::prepare::fill_slot_gaps(self.elements.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_elements"));
         self.definitions_separator_space.get_or_insert(ctx.options.spacing[options::SITE_LIST_DEFINITIONS_SEPARATOR_SPACE].arm);
         self.elements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_LIST_ELEMENTS_SEPARATOR_SPACE].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.definitions.iter_mut().map(Some), options::SEATS_LIST_DEFINITIONS, ctx);
@@ -2062,11 +2051,11 @@ impl ::sittir_core::prepare::Prepare for ListTransport {
         self.elements.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -2114,11 +2103,9 @@ impl ::sittir_core::render::Render for GroupingTransport {
 impl ::sittir_core::prepare::Prepare for GroupingTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        ::sittir_core::prepare::fill_list_gaps(self.elements.iter_mut().map(Some), "", options::allowed(options::SITE_GROUPING_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
-        ::sittir_core::prepare::fill_list_gaps(self.grouping_group.iter_mut().map(Some), "", options::allowed(options::SITE_GROUPING_GROUPING_GROUP_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.elements.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_elements"));
+        ::sittir_core::prepare::fill_slot_gaps(self.grouping_group.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_grouping_group"));
         self.elements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_GROUPING_ELEMENTS_SEPARATOR_SPACE].arm);
         self.grouping_group_separator_space.get_or_insert(ctx.options.spacing[options::SITE_GROUPING_GROUPING_GROUP_SEPARATOR_SPACE].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.elements.iter_mut().map(Some), options::SEATS_GROUPING_ELEMENTS, ctx);
@@ -2127,11 +2114,11 @@ impl ::sittir_core::prepare::Prepare for GroupingTransport {
         self.elements.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -2177,21 +2164,19 @@ impl ::sittir_core::render::Render for MissingNodeTransport {
 impl ::sittir_core::prepare::Prepare for MissingNodeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        ::sittir_core::prepare::fill_list_gaps(self.elements.iter_mut().map(Some), "", options::allowed(options::SITE_MISSING_NODE_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.elements.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_elements"));
         self.elements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_MISSING_NODE_ELEMENTS_SEPARATOR_SPACE].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.elements.iter_mut().map(Some), options::SEATS_MISSING_NODE_ELEMENTS, ctx);
         self.name.prepare(ctx)?;
         self.elements.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -2237,21 +2222,19 @@ impl ::sittir_core::render::Render for AnonymousNodeTransport {
 impl ::sittir_core::prepare::Prepare for AnonymousNodeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        ::sittir_core::prepare::fill_list_gaps(self.elements.iter_mut().map(Some), "", options::allowed(options::SITE_ANONYMOUS_NODE_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.elements.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_elements"));
         self.elements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_ANONYMOUS_NODE_ELEMENTS_SEPARATOR_SPACE].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.elements.iter_mut().map(Some), options::SEATS_ANONYMOUS_NODE_ELEMENTS, ctx);
         self.name.prepare(ctx)?;
         self.elements.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -2295,18 +2278,16 @@ impl ::sittir_core::render::Render for FieldDefinitionTransport {
 impl ::sittir_core::prepare::Prepare for FieldDefinitionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.definition.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -2347,17 +2328,15 @@ impl ::sittir_core::render::Render for NegatedFieldTransport {
 impl ::sittir_core::prepare::Prepare for NegatedFieldTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.identifier.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -2407,8 +2386,6 @@ impl ::sittir_core::render::Render for PredicateTransport {
 impl ::sittir_core::prepare::Prepare for PredicateTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.prefix.prepare(ctx)?;
         self.name.prepare(ctx)?;
@@ -2416,11 +2393,11 @@ impl ::sittir_core::prepare::Prepare for PredicateTransport {
         self.parameters.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -2500,11 +2477,11 @@ impl ::sittir_core::prepare::Prepare for ListElementQuantifierTransport {
         self.quantifier.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -2548,18 +2525,16 @@ impl ::sittir_core::render::Render for GroupExpressionArmTransport {
 impl ::sittir_core::prepare::Prepare for GroupExpressionArmTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
         self.right.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -2603,18 +2578,16 @@ impl ::sittir_core::render::Render for NamedNodeExpressionArmTransport {
 impl ::sittir_core::prepare::Prepare for NamedNodeExpressionArmTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
         self.right.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -2658,18 +2631,16 @@ impl ::sittir_core::render::Render for GroupingGroupTransport {
 impl ::sittir_core::prepare::Prepare for GroupingGroupTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.group_expression.prepare(ctx)?;
         self.anchor.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -2711,11 +2682,11 @@ impl ::sittir_core::prepare::Prepare for StringContentTextTransport {
         self.layout.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -2792,10 +2763,8 @@ impl ::sittir_core::render::Render for NamedNodePlainTransport {
 impl ::sittir_core::prepare::Prepare for NamedNodePlainTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        ::sittir_core::prepare::fill_list_gaps(self.elements.iter_mut().map(Some), "", options::allowed(options::SITE_NAMED_NODE_PLAIN_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.elements.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_elements"));
         self.elements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_NAMED_NODE_PLAIN_ELEMENTS_SEPARATOR_SPACE].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.elements.iter_mut().map(Some), options::SEATS_NAMED_NODE_PLAIN_ELEMENTS, ctx);
         self.name.prepare(ctx)?;
@@ -2803,11 +2772,11 @@ impl ::sittir_core::prepare::Prepare for NamedNodePlainTransport {
         self.elements.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -2859,10 +2828,8 @@ impl ::sittir_core::render::Render for NamedNodeSupertypedTransport {
 impl ::sittir_core::prepare::Prepare for NamedNodeSupertypedTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        ::sittir_core::prepare::fill_list_gaps(self.elements.iter_mut().map(Some), "", options::allowed(options::SITE_NAMED_NODE_SUPERTYPED_ELEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.elements.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_elements"));
         self.elements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_NAMED_NODE_SUPERTYPED_ELEMENTS_SEPARATOR_SPACE].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.elements.iter_mut().map(Some), options::SEATS_NAMED_NODE_SUPERTYPED_ELEMENTS, ctx);
         self.supertype.prepare(ctx)?;
@@ -2871,11 +2838,11 @@ impl ::sittir_core::prepare::Prepare for NamedNodeSupertypedTransport {
         self.elements.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -2921,21 +2888,19 @@ impl ::sittir_core::render::Render for NamedNodeGroupChildrenTransport {
 impl ::sittir_core::prepare::Prepare for NamedNodeGroupChildrenTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        ::sittir_core::prepare::fill_list_gaps(self.named_node_expressions.iter_mut().map(Some), "", options::allowed(options::SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.named_node_expressions.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_named_node_expressions"));
         self.named_node_expressions_separator_space.get_or_insert(ctx.options.spacing[options::SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_SEPARATOR_SPACE].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.named_node_expressions.iter_mut().map(Some), options::SEATS_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS, ctx);
         self.anchor.prepare(ctx)?;
         self.named_node_expressions.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -2984,10 +2949,8 @@ impl ::sittir_core::render::Render for NamedNodeGroupAnchoredLastTransport {
 impl ::sittir_core::prepare::Prepare for NamedNodeGroupAnchoredLastTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        ::sittir_core::prepare::fill_list_gaps(self.named_node_expressions.iter_mut().map(Some), "", options::allowed(options::SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.named_node_expressions.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_named_node_expressions"));
         self.named_node_expressions_separator_space.get_or_insert(ctx.options.spacing[options::SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_SEPARATOR_SPACE].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.named_node_expressions.iter_mut().map(Some), options::SEATS_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS, ctx);
         self.anchor.prepare(ctx)?;
@@ -2995,11 +2958,11 @@ impl ::sittir_core::prepare::Prepare for NamedNodeGroupAnchoredLastTransport {
         self.last.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -3931,6 +3894,7 @@ fn render_program(node: &ProgramTransport, w: &mut dyn ::sittir_core::render::Re
         items: &node.definitions,
         template: "{}",
         token: "",
+        separators: None,
         before: 0,
         after: node.definitions_separator_space.unwrap_or(0),
         leading: false,
@@ -4001,6 +3965,7 @@ fn render_string_content(node: &StringContentTransport, w: &mut dyn ::sittir_cor
         items: &node.content,
         template: "{}",
         token: "",
+        separators: None,
         before: 0,
         after: 0,
         leading: false,
@@ -4018,6 +3983,7 @@ fn render_parameters(node: &ParametersTransport, w: &mut dyn ::sittir_core::rend
         items: &node.elements,
         template: "{}",
         token: "",
+        separators: None,
         before: 0,
         after: node.elements_separator_space.unwrap_or(0),
         leading: false,
@@ -4045,6 +4011,7 @@ fn render_list(node: &ListTransport, w: &mut dyn ::sittir_core::render::RenderSi
         items: &node.definitions,
         template: "{}",
         token: "",
+        separators: None,
         before: 0,
         after: node.definitions_separator_space.unwrap_or(0),
         leading: false,
@@ -4057,6 +4024,7 @@ fn render_list(node: &ListTransport, w: &mut dyn ::sittir_core::render::RenderSi
         items: &node.elements,
         template: "{}",
         token: "",
+        separators: None,
         before: 0,
         after: node.elements_separator_space.unwrap_or(0),
         leading: false,
@@ -4082,6 +4050,7 @@ fn render_grouping(node: &GroupingTransport, w: &mut dyn ::sittir_core::render::
         items: &node.elements,
         template: "{}",
         token: "",
+        separators: None,
         before: 0,
         after: node.elements_separator_space.unwrap_or(0),
         leading: false,
@@ -4094,6 +4063,7 @@ fn render_grouping(node: &GroupingTransport, w: &mut dyn ::sittir_core::render::
         items: &node.grouping_group,
         template: "{}",
         token: "",
+        separators: None,
         before: 0,
         after: node.grouping_group_separator_space.unwrap_or(0),
         leading: false,
@@ -4119,6 +4089,7 @@ fn render_missing_node(node: &MissingNodeTransport, w: &mut dyn ::sittir_core::r
         items: &node.elements,
         template: "{}",
         token: "",
+        separators: None,
         before: 0,
         after: node.elements_separator_space.unwrap_or(0),
         leading: false,
@@ -4149,6 +4120,7 @@ fn render_anonymous_node(node: &AnonymousNodeTransport, w: &mut dyn ::sittir_cor
         items: &node.elements,
         template: "{}",
         token: "",
+        separators: None,
         before: 0,
         after: node.elements_separator_space.unwrap_or(0),
         leading: false,
@@ -4268,6 +4240,7 @@ fn render_named_node_plain(node: &NamedNodePlainTransport, w: &mut dyn ::sittir_
         items: &node.elements,
         template: "{}",
         token: "",
+        separators: None,
         before: 0,
         after: node.elements_separator_space.unwrap_or(0),
         leading: false,
@@ -4296,6 +4269,7 @@ fn render_named_node_supertyped(node: &NamedNodeSupertypedTransport, w: &mut dyn
         items: &node.elements,
         template: "{}",
         token: "",
+        separators: None,
         before: 0,
         after: node.elements_separator_space.unwrap_or(0),
         leading: false,
@@ -4329,6 +4303,7 @@ fn render_named_node_group_children(node: &NamedNodeGroupChildrenTransport, w: &
         items: &node.named_node_expressions,
         template: "{}",
         token: "",
+        separators: None,
         before: 0,
         after: node.named_node_expressions_separator_space.unwrap_or(0),
         leading: false,
@@ -4354,6 +4329,7 @@ fn render_named_node_group_anchored_last(node: &NamedNodeGroupAnchoredLastTransp
         items: &node.named_node_expressions,
         template: "{}",
         token: "",
+        separators: None,
         before: 0,
         after: node.named_node_expressions_separator_space.unwrap_or(0),
         leading: false,

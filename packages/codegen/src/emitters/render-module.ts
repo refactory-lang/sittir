@@ -837,24 +837,19 @@ function renderTypedBranchFn(
 	];
 }
 
-function buildSeparatorKindMatchLines(
+function separatorTextFn(
 	candidateKindNames: readonly string[],
 	fallbackSeparator: string,
 	kindIdByKind: ReadonlyMap<string, number>
-): string[] | undefined {
+): string | undefined {
 	const arms: string[] = [];
 	for (const name of candidateKindNames) {
 		const id = kindIdByKind.get(name);
 		if (id === undefined) continue;
-		arms.push(`Some(${id}) => ${JSON.stringify(name)},`);
+		arms.push(`${id} => ${JSON.stringify(name)}`);
 	}
 	if (arms.length === 0) return undefined;
-	return [
-		`token: match node.separator_kind {`,
-		...arms.map((arm) => `    ${arm}`),
-		`    _ => ${fallbackSeparator},`,
-		`},`
-	];
+	return `|kind| match kind { ${[...arms, `_ => ${fallbackSeparator}`].join(', ')} }`;
 }
 
 function buildTypedTemplateBody(
@@ -925,20 +920,24 @@ function buildTypedTemplateBody(
 			const separatorSite = separatedList === undefined ? undefined : separatorSiteOf(plan, separatedList);
 			const fallback =
 				separatorSite?.defaultText === undefined ? fieldSepLiteral : JSON.stringify(separatorSite.defaultText);
-			const separatorMatchLines =
+			const separatorText =
 				separatedList?.separatorRule !== undefined
-					? buildSeparatorKindMatchLines(separatedList.separatorCandidateKindNames, fallback, kindIdByKind)
+					? separatorTextFn(separatedList.separatorCandidateKindNames, fallback, kindIdByKind)
 					: undefined;
+			const wireKey = JSON.stringify(slotWireKey(f.storageName));
 			const spacing = spacingFieldExprs(plan, node, f.name);
 			const spaced = (site: string | undefined): string => (site === undefined ? '0' : `${site}.unwrap_or(0)`);
 			bound.add(ident);
+			if (separatorText !== undefined) lines.push(`    let ${ident}_separator: fn(u16) -> &'static str = ${separatorText};`);
 			lines.push(`    let ${ident} = ListView {`);
 			lines.push(`        items: ${items},`);
 			lines.push(`        template: ${template},`);
-			if (separatorMatchLines !== undefined) {
-				lines.push(...separatorMatchLines.map((l) => `        ${l}`));
+			if (separatorText !== undefined) {
+				lines.push(`        token: node.separator_kind.map_or(${fallback}, ${ident}_separator),`);
+				lines.push(`        separators: Some((::sittir_core::layout::slot_tokens(node.layout.as_deref(), ${wireKey}), ${ident}_separator)),`);
 			} else {
 				lines.push(`        token: ${fieldSepLiteral},`);
+				lines.push(`        separators: None,`);
 			}
 			lines.push(`        before: ${spaced(spacing.before)},`);
 			lines.push(`        after: ${spaced(spacing.after)},`);
@@ -947,7 +946,7 @@ function buildTypedTemplateBody(
 			lines.push(`        head: ${spacing.head ?? 'None'},`);
 			lines.push(`        tail: ${spacing.tail ?? 'None'},`);
 			lines.push(
-				`        units: ${f.hasTransportField ? `::sittir_core::layout::list_units(node.layout.as_deref(), ${JSON.stringify(slotWireKey(f.storageName))})` : 'None'},`
+				`        units: ${f.hasTransportField ? `::sittir_core::layout::list_units(node.layout.as_deref(), ${wireKey})` : 'None'},`
 			);
 			lines.push(`    };`);
 			continue;
@@ -2393,19 +2392,24 @@ function renderTriviaTransportSupport(
 		return id === undefined ? [] : [{ variant, id, delta }];
 	});
 
+	const whitespaceKinds = new Set(whitespaceTriviaKinds(nodeMap));
+	const continuationKinds = new Set(continuationTriviaKinds(nodeMap));
+	const payloadOf = (node: AssembledNode): string =>
+		continuationKinds.has(node.kind) ? TRIVIA_TEXT : rustTransportStructName(node);
+
 	const lines: string[] = [];
 	lines.push(...transportDeclaration(read, TRANSPORT_DERIVE, 'choice, codec_only', 'enum', 'TriviaTransport'));
 	for (const node of extrasNodes) {
 		const variant = rustTransportVariantName(node);
 		const id = kindIdByKind.get(node.kind);
 		if (id !== undefined) lines.push(`    #[kind(${variantKindArgs([id], false, read.ctx)})]`);
-		lines.push(unitOf(node) === undefined ? `    ${variant}(${rustTransportStructName(node)}),` : `    ${variant},`);
+		lines.push(unitOf(node) === undefined ? `    ${variant}(${payloadOf(node)}),` : `    ${variant},`);
 	}
 	for (const { variant, id } of depthVariants) lines.push(`    #[kind(${variantKindArgs([id], false, read.ctx)})]`, `    ${variant},`);
 	lines.push('    #[transport(verbatim)]');
 	lines.push('    Verbatim(VerbatimTransport),');
 	lines.push('    #[transport(text)]', `    #[kind(${variantKindArgs(textIds, false, read.ctx)})]`);
-	lines.push('    Text(::sittir_core::trivia::TriviaText),');
+	lines.push(`    Text(${TRIVIA_TEXT}),`);
 	lines.push('}');
 	lines.push('');
 	lines.push(
@@ -2439,24 +2443,23 @@ function renderTriviaTransportSupport(
 	lines.push('}');
 	lines.push('');
 
-	const whitespaceKinds = new Set(whitespaceTriviaKinds(nodeMap));
-	const continuationKinds = new Set(continuationTriviaKinds(nodeMap));
 	const members = extrasNodes.flatMap((node) => {
 		const id = kindIdByKind.get(node.kind);
 		if (id === undefined || !(whitespaceKinds.has(node.kind) || continuationKinds.has(node.kind))) return [];
 		const unit = unitOf(node) ?? (whitespaceKinds.has(node.kind) ? fixedLiteralOf(fixed, node.kind) : undefined);
-		return [{ id, keepsText: unit === undefined, member: unit === undefined ? `TriviaTransport::${rustTransportVariantName(node)}(${rustTransportStructName(node)} { layout: None, text: text.to_owned() })` : `TriviaTransport::${unit.variant}` }];
+		return [{ id, member: unit === undefined ? `TriviaTransport::${rustTransportVariantName(node)}(text)` : `TriviaTransport::${unit.variant}` }];
 	});
+	const layoutMembers = [...members, ...depthVariants.map(({ variant, id }) => ({ id, member: `TriviaTransport::${variant}` }))];
 	lines.push(
 		'impl ::sittir_core::trivia::FromTriviaText for TriviaTransport {',
-		'    fn from_text(text: ::sittir_core::trivia::TriviaText) -> Self {',
+		`    fn from_text(text: ${TRIVIA_TEXT}) -> Self {`,
 		'        TriviaTransport::Text(text)',
 		'    }',
 		'',
-		`    fn from_layout(kind: ::sittir_core::types::KindId, ${members.some((m) => m.keepsText) ? 'text' : '_text'}: &str) -> Option<Self> {`
+		`    fn from_layout(${layoutMembers.length > 0 ? 'text' : '_text'}: ${TRIVIA_TEXT}) -> Option<Self> {`
 	);
-	for (const { id, member } of [...members, ...depthVariants.map(({ variant, id }) => ({ id, member: `TriviaTransport::${variant}` }))]) {
-		lines.push(`        if kind == ${variantKindArgs([id], false, read.ctx)} { return Some(${member}); }`);
+	for (const { id, member } of layoutMembers) {
+		lines.push(`        if text.kind == ${variantKindArgs([id], false, read.ctx)} { return Some(${member}); }`);
 	}
 	lines.push('        None', '    }', '}', '');
 
@@ -2468,7 +2471,7 @@ function renderTriviaTransportSupport(
 			const unit = unitOf(node);
 			lines.push(
 				unit === undefined
-					? `            TriviaTransport::${rustTransportVariantName(node)}(t) => Some((${CONTINUATION_KINDS}, Some(&t.text))),`
+					? `            TriviaTransport::${rustTransportVariantName(node)}(t) if !t.verbatim() => Some((${CONTINUATION_KINDS}, Some(&t.text))),`
 					: `            TriviaTransport::${unit.variant} => Some((${CONTINUATION_KINDS}, Some(${rustStringLiteral(unit.text)}))),`
 			);
 			continue;
@@ -2498,6 +2501,7 @@ function renderTriviaTransportSupport(
 }
 
 const PREPARE_MOD = '::sittir_core::prepare';
+const TRIVIA_TEXT = '::sittir_core::trivia::TriviaText';
 const BLANK_VARIANT = 'Blank';
 const PREPARE_SIG = `fn prepare(&mut self, ctx: &${PREPARE_MOD}::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {`;
 const READ_COORDINATE = [
@@ -2524,11 +2528,6 @@ function prepareEnumImpl(enumName: string, arms: readonly PrepareArm[], reads = 
 		`    }`,
 		...(anyPayload || arms.some((a) => a.edged === true)
 			? [
-					`    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {`,
-					`        match self {`,
-					...arms.map((a) => (a.payload ? `            ${enumName}::${a.variant}(t) => t.source_gap(),` : `            ${unit(a)} => None,`)),
-					`        }`,
-					`    }`,
 					`    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {`,
 					`        match self {`,
 					...arms.map((a) =>
@@ -2543,6 +2542,11 @@ function prepareEnumImpl(enumName: string, arms: readonly PrepareArm[], reads = 
 					`    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {`,
 					`        match self {`,
 					...arms.map((a) => (a.payload ? `            ${enumName}::${a.variant}(t) => t.snapshot_edge(),` : `            ${unit(a)} => None,`)),
+					`        }`,
+					`    }`,
+					`    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {`,
+					`        match self {`,
+					...arms.map((a) => (a.payload ? `            ${enumName}::${a.variant}(t) => t.source_separator(ctx),` : `            ${unit(a)} => None,`)),
 					`        }`,
 					`    }`
 				]
@@ -2683,41 +2687,32 @@ function separatorSiteOf(plan: RenderPlan, node: AssembledNode): SpacingSite | u
 	return plan.spacingSites.find((site) => site.kind === kind && site.role === 'separator');
 }
 
-function listGapSitesOf(
-	plan: RenderPlan,
-	node: AssembledNode,
-	slot: string
-): { readonly before?: SpacingSite; readonly after?: SpacingSite; readonly gap?: SpacingSite } {
-	const kind = node.display.name;
-	const of = (side: SpacingSide) =>
-		plan.spacingSites.find((s) => s.kind === kind && s.slot === slot && s.side === side && s.seat === undefined);
-	return { before: of('before'), after: of('after'), gap: of('gap') };
+function slotItems(field: AssembledNonterminal, mutable: boolean): string {
+	const [iter, present] = mutable ? ['iter_mut', 'Option::as_mut'] : ['iter', 'Option::as_ref'];
+	return `self.${rustFieldIdent(field.storageName)}.${iter}().map(${hasOptionalElements(field) ? present : 'Some'})`;
 }
 
-function listGapTokenOf(field: AssembledNonterminal): string | undefined {
-	const texts = slotSeparatorTexts(field, false);
-	return texts.length === 1 ? texts[0] : undefined;
-}
-
-function listGapClassification(plan: RenderPlan, node: AssembledNode): string[] {
-	const body: string[] = [];
+function slotGapFills(node: AssembledNode): string[] {
 	const slotModel = renderSlotModelOf(node);
-	for (const field of [...slotModel.named, ...slotModel.unnamed]) {
-		if (!isMultiple(field)) continue;
-		const sites = listGapSitesOf(plan, node, field.name);
-		const first = sites.gap ?? sites.before;
-		if (first === undefined && sites.after === undefined) continue;
-		const token = sites.gap !== undefined ? '' : listGapTokenOf(field);
-		if (token === undefined) continue;
-		const ident = rustFieldIdent(field.storageName);
-		const items = hasOptionalElements(field) ? 'iter_mut().map(Option::as_mut)' : 'iter_mut().map(Some)';
-		const allowedOf = (site: SpacingSite | undefined) =>
-			site === undefined ? '&[]' : `options::allowed(options::${site.constName})`;
-		const call = (list: string) =>
-			`::sittir_core::prepare::fill_list_gaps(${list}.${items}, ${JSON.stringify(token)}, ${allowedOf(first)}, ${allowedOf(sites.after)}, &options::WHITESPACE, ctx);`;
-		body.push(`        ${call(`self.${ident}`)}`);
-	}
-	return body;
+	return [...slotModel.named, ...slotModel.unnamed].filter(isMultiple).map((field) => {
+		const slot = `::sittir_core::layout::Layout::slot(&self.layout, ${JSON.stringify(slotWireKey(field.storageName))})`;
+		return `        ::sittir_core::prepare::fill_slot_gaps(${slotItems(field, true)}, ${slot});`;
+	});
+}
+
+function listItemField(node: AssembledList): AssembledNonterminal {
+	const slotModel = renderSlotModelOf(node);
+	const field = [...slotModel.named, ...slotModel.unnamed].find(isMultiple);
+	if (field === undefined) throw new Error(`list '${node.kind}' has no multiple slot to hold its items`);
+	return field;
+}
+
+function listItemWireKey(node: AssembledList): string {
+	return slotWireKey(listItemField(node).storageName);
+}
+
+function listItemsExpr(node: AssembledList): string {
+	return slotItems(listItemField(node), false);
 }
 
 function spacingFieldExprs(
@@ -3012,15 +3007,8 @@ function prepareStructImpl(
 		body.push(...rootEdgeStamp(plan, node, fillFields));
 		const delim = node instanceof AssembledList ? delimiterSiteOf(plan, node) : undefined;
 		const trailing = delim !== undefined && node instanceof AssembledList ? sourceTrailingSeparator(node, kindEntries) : undefined;
-		const edged = kindEdgeSidesOf(plan, node).size > 0;
-		if (edged || trailing !== undefined) body.push('        let flank = self.layout.take_flank();');
-		if (edged) {
-			body.push(
-				'        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);',
-				'        ::sittir_core::prepare::prepare_edges(self, ctx);'
-			);
-		}
-		body.push(...listGapClassification(plan, node));
+		if (kindEdgeSidesOf(plan, node).size > 0) body.push('        ::sittir_core::prepare::prepare_edges(self, ctx);');
+		body.push(...slotGapFills(node));
 		for (const site of synthesizedSpacingSites(plan, node)) {
 			if (!carriesPerNodeValue(site)) continue;
 			body.push(
@@ -3033,12 +3021,19 @@ function prepareStructImpl(
 			const value =
 				trailing === undefined
 					? fallback
-					: `::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), ::sittir_core::types::KindId(${trailing.kind}), &[${trailing.separators.join(', ')}], ${fallback}, ctx)`;
+					: `::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(${trailing.kind}), &[${trailing.separators.join(', ')}], ${fallback}, ctx)`;
 			body.push(`        self.delimiter.get_or_insert(${value});`);
 		}
 		const sep = node instanceof AssembledList ? separatorSiteOf(plan, node) : undefined;
-		if (sep !== undefined)
-			body.push(`        self.separator_kind.get_or_insert(ctx.options.spacing[options::${sep.constName}].arm);`);
+		if (sep !== undefined && node instanceof AssembledList) {
+			body.push(
+				`        if let Some(kind) = ::sittir_core::layout::Layout::slot(&self.layout, ${JSON.stringify(listItemWireKey(node))}).and_then(|slot| slot.separator).and_then(Self::separator_kind_of) {`,
+				'            self.separator_kind.get_or_insert(kind);',
+				'        }',
+				`        self.separator_kind.get_or_insert(ctx.options.spacing[options::${sep.constName}].arm);`,
+				`        ::sittir_core::prepare::fill_slot_separators(&mut self.layout, ${JSON.stringify(listItemWireKey(node))}, ${listItemsExpr(node)}, Self::separator_kind_of, ctx);`
+			);
+		}
 		body.push(...optionDefaultFills(plan, node, choices));
 		for (const f of fillFields) body.push(`        self.${f}.prepare(ctx)?;`);
 	}
@@ -3048,11 +3043,11 @@ function prepareStructImpl(
 		...body,
 		`        Ok(())`,
 		`    }`,
-		`    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {`,
-		`        self.layout.gap()`,
-		`    }`,
 		`    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {`,
 		`        Some(self.layout.edges_mut())`,
+		`    }`,
+		`    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {`,
+		`        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)`,
 		`    }`,
 		`    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {`,
 		`        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)`,

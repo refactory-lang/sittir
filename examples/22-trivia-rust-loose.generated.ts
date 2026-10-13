@@ -8,8 +8,8 @@ export function rebuildTriviaRustLoose() {
 		statements: [rs.build.functionItem({
 			name: "f",
 			parameters: rs.build.parameters(),
-			body: rs.build.block().$trivia.inner(rs.kinds.Space, rs.build.lineComment(" TODO")),
-		}).$trivia.leading(rs.build.blockComment(" a "), rs.kinds.Newline), rs.build.functionItem({
+			body: rs.build.block().$trivia.inner(rs.build.lineComment(" TODO")),
+		}).$trivia.leading(rs.build.blockComment(" a ")), rs.build.functionItem({
 			name: "g",
 			parameters: rs.build.parameters(),
 			body: rs.build.block(),

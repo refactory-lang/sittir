@@ -123,6 +123,22 @@ pub trait SourceTable {
         None
     }
 
+    /// The stored layout of each list slot of the node a coordinate names
+    /// (`layout::SlotLayout`), as its tree measures it; none for a table of
+    /// bare sources.
+    fn slot_layouts(&self, coord: &crate::slot::NodeCoordinate) -> Vec<crate::layout::SlotLayout> {
+        let _ = coord;
+        Vec::new()
+    }
+
+    /// The separator before the node a coordinate names as an item of its
+    /// parent's list slot, where it is not the one the slot renders
+    /// (`ParsedTree::separator_before`); none for a table of bare sources.
+    fn separator_before(&self, coord: &crate::slot::NodeCoordinate) -> Option<u16> {
+        let _ = coord;
+        None
+    }
+
     /// The bytes the node a coordinate names renders over with its sides: its
     /// span, widened to the outermost extra or `ERROR` of its leading and
     /// trailing sides. A layout run is the gap beside them, and a written

@@ -184,6 +184,10 @@ function continuesLine(nodeMap: NodeMap, kind: string): boolean {
 	return dfa !== undefined && requiresNonSpace(dfa) && endsWithLineBreak(dfa);
 }
 
+export function layoutTriviaKinds(nodeMap: NodeMap): string[] {
+	return [...new Set([...whitespaceTriviaKinds(nodeMap), ...depthTriviaKinds(nodeMap), ...continuationTriviaKinds(nodeMap)])];
+}
+
 export function continuationTriviaKinds(nodeMap: NodeMap): string[] {
 	const kinds = triviaKinds(nodeMap);
 	const direct = [...kinds].filter((kind) => continuesLine(nodeMap, kind));

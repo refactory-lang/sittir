@@ -25,7 +25,6 @@ import {
 	toDetachedTransportData,
 	treeOf,
 	type KindView,
-	type SourceFlankEvidence,
 	type TransportLayout
 } from '@sittir/common/utils';
 import { deriveRuleKinds } from './render-bodies.ts';
@@ -241,13 +240,25 @@ function extrasDiff(a: TSNode, b: TSNode): string | null {
 	return `extras[${index}]: ${show(aExtras[index])} ≠ ${show(bExtras[index])}`;
 }
 
+/**
+ * What an AST compare accepts as semantically neutral, and the cases it
+ * accepted: a list separator that is another of the separators its list may
+ * hold (a list whose separator is chosen per instance, `listSeparators`),
+ * which a node built without its source takes from the options.
+ */
+export interface AstTolerance {
+	readonly listSeparators: Readonly<Record<string, readonly string[]>>;
+	readonly tolerated: string[];
+}
+
 export function astStructuralDiff(
 	a: TSNode,
 	b: TSNode,
 	path: string = '',
-	variantChildKinds?: ReadonlyMap<string, ReadonlySet<string>>
+	variantChildKinds?: ReadonlyMap<string, ReadonlySet<string>>,
+	tolerance?: AstTolerance
 ): string | null {
-	const structural = structuralDiff(a, b, path, variantChildKinds);
+	const structural = structuralDiff(a, b, path, variantChildKinds, tolerance);
 	return structural ?? (path === '' ? extrasDiff(a, b) : null);
 }
 
@@ -255,7 +266,8 @@ function structuralDiff(
 	a: TSNode,
 	b: TSNode,
 	path: string = '',
-	variantChildKinds?: ReadonlyMap<string, ReadonlySet<string>>
+	variantChildKinds?: ReadonlyMap<string, ReadonlySet<string>>,
+	tolerance?: AstTolerance
 ): string | null {
 	if (a.grammarId !== b.grammarId) {
 		return `${path || 'root'}: grammar type ${a.grammarType} ≠ ${b.grammarType}`;
@@ -322,12 +334,17 @@ function structuralDiff(
 		if (!ac.isNamed) {
 			// Anonymous token — compare text directly.
 			if (ac.text !== bc.text) {
+				const separators = tolerance?.listSeparators[a.type];
+				if (separators?.includes(ac.text) && separators.includes(bc.text)) {
+					tolerance?.tolerated.push(`${path || a.type}[${i}]: separator ${JSON.stringify(ac.text)} ≠ ${JSON.stringify(bc.text)}`);
+					continue;
+				}
 				return `${path || a.type}[${i}]: anon ${JSON.stringify(ac.text)} ≠ ${JSON.stringify(bc.text)}`;
 			}
 			continue;
 		}
 		// Named child — recurse.
-		const sub = structuralDiff(ac, bc, `${path || a.type}[${i}].${ac.type}`, variantChildKinds);
+		const sub = structuralDiff(ac, bc, `${path || a.type}[${i}].${ac.type}`, variantChildKinds, tolerance);
 		if (sub) return sub;
 	}
 	return null;
@@ -477,32 +494,6 @@ function commonPrefixLength(a: string, b: string): number {
 }
 
 /**
- * A list's kept flanks as text: the source from the start of the line its
- * opener sits on through its closer, with the list's span counted from the
- * window's start. That is every byte the native flank classifier reads: the
- * whitespace on both sides of the list, the opener's line for the depth the
- * list opens at, and the list's own last line for the depth it closes at.
- */
-export function flankWindow(
-	source: Buffer,
-	flank: SourceFlankEvidence
-): { readonly $text: string; readonly $span: { readonly start: number; readonly end: number }; readonly $before: boolean; readonly $after: boolean } {
-	const head = source.subarray(0, flank.$span.start).toString('utf8');
-	const opened = head.trimEnd();
-	const from = Buffer.byteLength(opened.slice(0, opened.lastIndexOf('\n') + 1), 'utf8');
-	const tail = source.subarray(flank.$span.end).toString('utf8');
-	const closer = tail.trimStart();
-	const through = closer.length === 0 ? tail : tail.slice(0, tail.length - closer.length + String.fromCodePoint(closer.codePointAt(0)!).length);
-	const to = flank.$span.end + Buffer.byteLength(through, 'utf8');
-	return {
-		$text: source.subarray(from, to).toString('utf8'),
-		$span: { start: flank.$span.start - from, end: flank.$span.end - from },
-		$before: flank.$before,
-		$after: flank.$after
-	};
-}
-
-/**
  * A render fixture's input, detached from the engine that read it: the
  * transport the render itself sends, unfolded (`toDetachedTransportData`,
  * through `view`, the view the render read), with everything that names a tree turned into the
@@ -513,10 +504,8 @@ export function flankWindow(
  * none); a storage-less compound keeps only its identity and rebuilds from
  * its empty slots, and a storage-less trivia entry becomes its text with the
  * kind the reader stamped on it, `{ $type, $text }`, an ERROR's in-line
- * adjacency (`$before`, `$after`) kept beside it. The layout evidence a list
- * keeps from its source travels as text, in the node's `$_layout`: each kept
- * list gap as its bytes (`gap: { $text }`), and kept flanks as a window of the
- * source (`flank: { $text, $span }`, `flankWindow`).
+ * adjacency (`$before`, `$after`) kept beside it. A node's list slots'
+ * stored layout (`$_layout.slots`) names no tree and travels as it is.
  */
 export function selfContainedRenderInput(
 	data: unknown,
@@ -525,7 +514,6 @@ export function selfContainedRenderInput(
 	view: KindView
 ): unknown {
 	const slice = spanSlicer(source);
-	const bytes = Buffer.from(source, 'utf8');
 	const textOf = (record: Record<string, unknown>): string | undefined => {
 		if (typeof record.$text === 'string') return record.$text;
 		const span = spanOf(record);
@@ -547,8 +535,8 @@ export function selfContainedRenderInput(
 		});
 	const layoutOf = (layout: TransportLayout): Record<string, unknown> => ({
 		...(layout.trivia === undefined ? {} : { trivia: mapTriviaEntries(layout.trivia as TriviaSides<unknown>, walkTrivia) }),
-		...(layout.gap === undefined ? {} : { gap: { $text: slice(layout.gap.$span) } }),
-		...(layout.flank === undefined ? {} : { flank: flankWindow(bytes, layout.flank) }),
+		...(layout.slots === undefined ? {} : { slots: layout.slots }),
+		...(layout.separator === undefined ? {} : { separator: layout.separator }),
 		...(layout.changed === undefined ? {} : { changed: layout.changed }),
 		...(layout.units === undefined ? {} : { units: layout.units.map((unit) => ({ ...(unit as object), ...mapTriviaEntries(unit as TriviaSides<unknown>, walkTrivia) })) })
 	});
@@ -773,6 +761,7 @@ export function renderReparse(
 	source: TSNode | null,
 	treeRoot: boolean,
 	ctx: RenderReparseContext,
+	tolerance?: AstTolerance,
 	dumpLabel?: string
 ): RenderReparseOutcome {
 	data = candidateData(data, ctx.triviaOf);
@@ -818,7 +807,7 @@ export function renderReparse(
 		rendered,
 		wrapped,
 		reparsed,
-		astDiff: source ? astStructuralDiff(source, reparsed, '', ctx.variantChildKinds) : null
+		astDiff: source ? astStructuralDiff(source, reparsed, '', ctx.variantChildKinds, tolerance) : null
 	};
 }
 
@@ -1106,6 +1095,7 @@ export async function validateReadRenderParse(
 							node1ForAst,
 							treeRoot,
 							renderReparseContext,
+							undefined,
 							process.env['SITTIR_VALIDATOR_DUMP_RENDER'] && entry.name === process.env['SITTIR_VALIDATOR_DUMP_RENDER']
 								? `mode=${recursive ? 'deep' : 'shallow'} entry=${entry.name} kind=${String(kind)}`
 								: undefined

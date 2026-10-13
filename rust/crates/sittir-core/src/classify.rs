@@ -51,18 +51,3 @@ pub fn geometry_gap_text(a: &crate::points::PointSpan, b: &crate::points::PointS
         gap
     }
 }
-
-/// A geometric list gap split around its separator `token`, as a source gap
-/// splits at it: the side before the separator and the side after. Geometry
-/// does not place the separator, so it is taken to sit against the earlier
-/// item: on a shared row its columns are the gap's first, and a gap across
-/// rows lies wholly after it. With no token, the whole gap is the side
-/// before.
-pub fn geometry_gap_sides(a: &crate::points::PointSpan, b: &crate::points::PointSpan, token: &str) -> (String, String) {
-    let gap = geometry_gap_text(a, b);
-    if token.is_empty() {
-        return (gap, String::new());
-    }
-    let after = if b.start.row == a.last_row() { gap.get(token.len()..).unwrap_or("").to_owned() } else { gap };
-    (String::new(), after)
-}

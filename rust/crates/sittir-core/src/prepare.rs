@@ -1,14 +1,13 @@
 //! The walk a render makes over every slot before writing a byte: it checks
-//! each coordinate against the tree it names, gives each list gap that is
-//! still adjacent in the source its source class, and fills every unset
-//! spacing and flank field from the resolved options. The context is an argument at every level;
+//! each coordinate against the tree it names, gives each list slot's gaps
+//! the layout its source stores, and fills every unset spacing and flank
+//! field from the resolved options. The context is an argument at every level;
 //! nothing ambient carries the trees or the table.
 
 use crate::options::{EdgeArm, Edged, Edges, ResolvedOptions, Side};
 use crate::types::KindId;
 use crate::render::{CoordinateError, SourceTable};
-use crate::slot::{NodeCoordinate, SeamArm, SlotValue, SourceFlank, SourceGap};
-use crate::render::WhitespaceTable;
+use crate::slot::{NodeCoordinate, SeamArm, SlotValue};
 
 /// Everything a render reads that is not the transport itself.
 pub struct RenderContext<'a> {
@@ -54,103 +53,17 @@ impl<X: ArmOf> ArmOf for Option<X> {
     }
 }
 
-/// Give a list node's kept flanks their source class, before its edge row
-/// fills what is left: the whitespace between the opener and the list, and
-/// between the list and the closer, in the source the list was read from
-/// (`SourceFlank`). Each side classifies among the arms its edge site admits,
-/// at trivia strength. A flank alone of all gaps may classify to a depth arm:
-/// the side before is the indent arm when the line after the opener is deeper
-/// than the opener's line, and the side after is the dedent arm when the
-/// closer's line is shallower than the line the list ends on. The depth unit
-/// is the render's own, never the source's columns. Depth opens and closes as
-/// a pair: a list whose kept flank before opens it closes it after, even
-/// where its flank after is no longer the source's, and a flank after never
-/// closes a depth the flank before did not open.
-pub fn fill_source_flanks<T: Edged + ?Sized>(
-    t: &mut T,
-    flank: Option<&SourceFlank>,
-    allowed: fn(usize) -> &'static [u16],
-    table: &WhitespaceTable,
-    ctx: &RenderContext<'_>,
-) {
-    let Some(flank) = flank.filter(|flank| flank.before || flank.after) else { return };
-    let Some(source) = flank.source(ctx.sources) else { return };
-    let (start, end) = (flank.span.start as usize, flank.span.end as usize);
-    let (Some(head), Some(tail)) = (source.get(..start), source.get(end..)) else { return };
-    let (before_site, after_site) = ctx.options.edge_sites(t.kind_id());
-    let before_ws = &head[head.trim_end().len()..];
-    let after_ws = &tail[..tail.len() - tail.trim_start().len()];
-    let opens = crate::line_endings::logical_breaks(before_ws) > 0 && line_depth(before_ws) > indent_width(line_of(head, head.len() - before_ws.len()));
-    let closes = crate::line_endings::logical_breaks(after_ws) > 0 && line_depth(after_ws) < indent_width(line_of(source, end.saturating_sub(1)));
-    let before = before_site.filter(|_| flank.before).and_then(|site| {
-        let arms = allowed(site);
-        if opens && arms.contains(&table.indent) {
-            Some(table.indent)
-        } else {
-            crate::classify::classify_whitespace(before_ws, arms, table)
-        }
-    });
-    let opened = before == Some(table.indent);
-    let after = after_site.and_then(|site| {
-        let arms = allowed(site);
-        let classified = || crate::classify::classify_whitespace(after_ws, arms, table);
-        if opened && arms.contains(&table.dedent) {
-            if closes || !flank.after {
-                Some((table.dedent, false))
-            } else {
-                Some((classified().unwrap_or(0), true))
-            }
-        } else if flank.after {
-            classified().map(|arm| (arm, false))
-        } else {
-            None
-        }
-    });
-    let seam = |arm: u16, dedent: bool| EdgeArm::from(SeamArm { arm, strength: crate::spacing::SEAM_TRIVIA, dedent });
-    let edges = t.edges_mut();
-    if let Some(arm) = before {
-        edges.before.get_or_insert(seam(arm, false));
-    }
-    if let Some((arm, dedent)) = after {
-        edges.after.get_or_insert(seam(arm, dedent));
-    }
-}
-
-/// A rebuilt list's delimiter flags with its trailing flag as its source
-/// spells it. While the flank after is kept, the list's last item is still the
-/// source's last, so the trailing flag (2) is set iff the source list's last
-/// child that is not an extra is one of its `separators`
-/// (`SourceTable::last_list_child_kind`, the list's own kind being `kind`).
-/// Without that flank, for a flank that carries a source window instead of
-/// naming its tree, or when the table cannot answer, the flags are
-/// `default`, the options table's. The leading flag is always `default`'s.
-pub fn source_trailing_delimiter(
-    flank: Option<&SourceFlank>,
-    kind: KindId,
-    separators: &[u16],
-    default: u8,
-    ctx: &RenderContext<'_>,
-) -> u8 {
-    let Some(flank) = flank.filter(|flank| flank.after) else { return default };
-    let crate::slot::FlankSource::Tree(tree) = flank.source else { return default };
-    let Some(last) = ctx.sources.last_list_child_kind(tree, flank.span, kind) else { return default };
+/// A rebuilt list's delimiter flags with its trailing flag as the list it
+/// was rebuilt from (`TransportLayout::sides`) spells it, as a read list's
+/// are its own: the trailing flag (2) is set iff that list's last child that
+/// is not an extra is one of its `separators` (`SourceTable::last_list_child_kind`,
+/// the list's own kind being `kind`). A list rebuilt from none, or a table
+/// that cannot answer, takes `default`, the options table's. The leading
+/// flag is always `default`'s.
+pub fn source_trailing_delimiter<T>(layout: Option<&crate::layout::TransportLayout<T>>, kind: KindId, separators: &[u16], default: u8, ctx: &RenderContext<'_>) -> u8 {
+    let Some(source) = layout.and_then(|layout| layout.sides.as_ref()) else { return default };
+    let Some(last) = ctx.sources.last_list_child_kind(source.tree, source.span, kind) else { return default };
     (default & !2) | if separators.contains(&last.0) { 2 } else { 0 }
-}
-
-/// The line of `text` that byte `at` sits on.
-fn line_of(text: &str, at: usize) -> &str {
-    let (start, end) = crate::line_endings::line_bounds(text, at);
-    &text[start..end]
-}
-
-/// How far a line is indented: the whitespace it starts with.
-fn indent_width(line: &str) -> usize {
-    line.len() - line.trim_start().len()
-}
-
-/// How far the last line of a whitespace run is indented: what follows its last break.
-fn line_depth(run: &str) -> usize {
-    crate::line_endings::bytes_after_last_break(run)
 }
 
 /// The item at one end of a root's render, as the root's edge reads it: a
@@ -331,78 +244,49 @@ pub fn seat_site(table: &[u16], kind: KindId) -> Option<usize> {
     }
 }
 
-/// The two sides of the gap between two snapshot items of one list, from
-/// their geometry (`classify::geometry_gap_sides`): `None` unless both are
-/// snapshot nodes in source order with no trivia between them.
-fn geometry_list_gap<T: Prepare, const ADJACENT: bool>(
-    before: &SlotValue<T, ADJACENT>,
-    after: &SlotValue<T, ADJACENT>,
-    token: &str,
-) -> Option<(String, String)> {
-    let (a, b) = (before.snapshot_edge()?, after.snapshot_edge()?);
-    if a.trailing != TriviaReach::Bare || b.leading != TriviaReach::Bare || b.span.start < a.span.end {
-        return None;
-    }
-    Some(crate::classify::geometry_gap_sides(&a.span, &b.span, token))
-}
-
-/// Give every list gap that is still adjacent in the source its source class.
-/// An item carries its gap toward the item before it (`Prepare::source_gap`)
-/// only when the two were adjacent siblings in the source both were read from
-/// and no derived line-gap run already spells that gap; two snapshot items
-/// carry none, and their gap comes from their geometry (`geometry_list_gap`).
-/// The gap's text splits at the separator `token`. The side before it classifies among
-/// `allowed_before` onto the earlier item's `after` edge. The side after it
-/// classifies among `allowed_after` onto the later item's `before` edge.
-/// With no token, the whole gap is the before side. Both edges hold at trivia
-/// strength, the strength of a source fact, so neither the list's site nor a
-/// seat replaces them.
-///
-/// Two limits. A same-line run no whitespace member spells exactly takes the
-/// nearest member below it. A gap holding text other than whitespace and one
-/// separator, a comment among them, is not a gap the classes can spell: it is
-/// left unset and falls to the seat or the list site.
-pub fn fill_list_gaps<'i, T: Prepare + 'i, const ADJACENT: bool>(
+/// Give every gap between two present items of a list slot the classes its
+/// stored layout holds (`layout::SlotLayout`): the side before the
+/// separator onto the earlier item's `after` edge, the side after it onto
+/// the later item's `before` edge, at slot strength (`SEAM_SLOT`), so no
+/// option replaces them and a gap's own layout entry does. An edge already
+/// set keeps its arm. An absent item renders nothing, so it neither takes a
+/// gap nor parts two.
+pub fn fill_slot_gaps<'i, T: Prepare + 'i, const ADJACENT: bool>(
     items: impl Iterator<Item = Option<&'i mut SlotValue<T, ADJACENT>>>,
-    token: &str,
-    allowed_before: &[u16],
-    allowed_after: &[u16],
-    table: &WhitespaceTable,
-    ctx: &RenderContext<'_>,
+    slot: Option<&crate::layout::SlotLayout>,
 ) {
+    let Some(slot) = slot.filter(|slot| slot.before.is_some() || slot.after.is_some()) else { return };
     let mut present: Vec<&'i mut SlotValue<T, ADJACENT>> = items.flatten().collect();
     for index in 1..present.len() {
-        let sides = match present[index].source_gap().and_then(|gap| gap.text(ctx.sources)) {
-            Some(text) => single_separator(text, token).map(|(lead, trail)| (lead.to_owned(), trail.to_owned())),
-            None => geometry_list_gap(&*present[index - 1], &*present[index], token),
-        };
-        let Some((lead, trail)) = sides else {
-            continue;
-        };
-        let (lead, trail) = (lead.as_str(), trail.as_str());
-        if let Some(arm) = crate::classify::classify_whitespace(lead, allowed_before, table) {
+        if let Some(arm) = slot.before {
             set_gap_edge(present[index - 1], Side::After, arm);
         }
-        if !token.is_empty() {
-            if let Some(arm) = crate::classify::classify_whitespace(trail, allowed_after, table) {
-                set_gap_edge(present[index], Side::Before, arm);
-            }
+        if let Some(arm) = slot.after {
+            set_gap_edge(present[index], Side::Before, arm);
         }
     }
 }
 
-/// The text before and after the one separator a gap between adjacent items
-/// holds; the whole gap before it when there is no separator to split at.
-fn single_separator<'g>(gap: &'g str, token: &str) -> Option<(&'g str, &'g str)> {
-    if token.is_empty() {
-        return Some((gap, ""));
+/// Give a list slot each item's own separator where its source spells
+/// another than the slot's (`Prepare::source_separator`), as the candidate
+/// kind `kind_of` maps it to (the list's `separator_kind_of`), on the slot's
+/// entry by the item's place (`layout::SlotLayout::tokens`). The first item
+/// has no separator before it; nothing is stored when no item has one.
+pub fn fill_slot_separators<'i, T: Prepare + 'i, L, const ADJACENT: bool>(
+    layout: &mut Option<Box<crate::layout::TransportLayout<L>>>,
+    slot: &str,
+    items: impl Iterator<Item = Option<&'i SlotValue<T, ADJACENT>>>,
+    kind_of: fn(u16) -> Option<u16>,
+    ctx: &RenderContext<'_>,
+) {
+    let tokens: Vec<Option<u16>> = items.enumerate().map(|(at, item)| item.filter(|_| at > 0)?.source_separator(ctx).and_then(kind_of)).collect();
+    if tokens.iter().any(Option::is_some) {
+        crate::layout::slot_entry(layout, slot).tokens = tokens;
     }
-    let at = gap.find(token)?;
-    (gap.rfind(token)? == at).then(|| (&gap[..at], &gap[at + token.len()..]))
 }
 
 fn set_gap_edge<T: Prepare, const ADJACENT: bool>(item: &mut SlotValue<T, ADJACENT>, side: Side, arm: u16) {
-    let seam = SeamArm { arm, strength: crate::spacing::SEAM_TRIVIA, dedent: false };
+    let seam = SeamArm { arm, strength: crate::spacing::SEAM_SLOT, dedent: false };
     match item {
         SlotValue::Coord(coord) => {
             let edges = coord.edges.get_or_insert(crate::slot::CoordinateEdges { before: None, after: None });
@@ -425,7 +309,7 @@ fn set_gap_edge<T: Prepare, const ADJACENT: bool>(item: &mut SlotValue<T, ADJACE
 /// Fill the gap after every present element but the last present one from
 /// the slot's seat table: a seated element's base `after` edge takes its
 /// seat's resolved arm and strength unless something already set it, the wire
-/// or the gap's source class (`fill_list_gaps`, which runs first). An absent
+/// or the slot's stored layout (`fill_slot_gaps`, which runs first). An absent
 /// element renders nothing, so it neither takes a gap nor counts as the
 /// sibling that makes the gap before it.
 pub fn fill_seated_gaps<'i, T: SeatTarget + 'i, const ADJACENT: bool>(
@@ -494,14 +378,16 @@ pub trait Prepare {
         None
     }
 
-    /// The source gap toward the list item before this value, when the wire
-    /// says the two are still adjacent in their source (`$_gap`).
-    fn source_gap(&self) -> Option<&SourceGap> {
+    /// The base edges a list gap beside this value is written on: its own.
+    fn gap_edges(&mut self) -> Option<&mut Edges> {
         None
     }
 
-    /// The base edges a list gap beside this value is written on: its own.
-    fn gap_edges(&mut self) -> Option<&mut Edges> {
+    /// The separator this value's source spells before it as a list item,
+    /// as a grammar id, where it is not the one its slot renders
+    /// (`layout::source_separator`).
+    fn source_separator(&self, ctx: &RenderContext<'_>) -> Option<u16> {
+        let _ = ctx;
         None
     }
 
@@ -560,17 +446,20 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
         }
     }
 
-    fn source_gap(&self) -> Option<&SourceGap> {
-        match self {
-            SlotValue::Transport(t) => t.source_gap(),
-            SlotValue::Coord(coord) => coord.gap(),
-        }
-    }
-
     fn snapshot_edge(&self) -> Option<SnapshotEdge> {
         match self {
             SlotValue::Transport(t) => t.snapshot_edge(),
             SlotValue::Coord(_) => None,
+        }
+    }
+
+    /// A coordinate's is its source's, while its neighbour before is still
+    /// its source's.
+    fn source_separator(&self, ctx: &RenderContext<'_>) -> Option<u16> {
+        match self {
+            SlotValue::Transport(t) => t.source_separator(ctx),
+            SlotValue::Coord(coord) if coord.writes.as_ref().is_some_and(|writes| writes.changed.leading) => None,
+            SlotValue::Coord(coord) => ctx.sources.separator_before(coord),
         }
     }
 }
@@ -617,16 +506,16 @@ impl<T: Prepare> Prepare for Option<T> {
         }
     }
 
-    fn source_gap(&self) -> Option<&SourceGap> {
-        self.as_ref()?.source_gap()
-    }
-
     fn snapshot_edge(&self) -> Option<SnapshotEdge> {
         self.as_ref()?.snapshot_edge()
     }
 
     fn gap_edges(&mut self) -> Option<&mut Edges> {
         self.as_mut()?.gap_edges()
+    }
+
+    fn source_separator(&self, ctx: &RenderContext<'_>) -> Option<u16> {
+        self.as_ref()?.source_separator(ctx)
     }
 }
 
@@ -639,16 +528,16 @@ impl<T: Prepare> Prepare for Box<T> {
         T::read_coordinate(tree, ctx, index).map(|read| read.map(Box::new))
     }
 
-    fn source_gap(&self) -> Option<&SourceGap> {
-        (**self).source_gap()
-    }
-
     fn snapshot_edge(&self) -> Option<SnapshotEdge> {
         (**self).snapshot_edge()
     }
 
     fn gap_edges(&mut self) -> Option<&mut Edges> {
         (**self).gap_edges()
+    }
+
+    fn source_separator(&self, ctx: &RenderContext<'_>) -> Option<u16> {
+        (**self).source_separator(ctx)
     }
 }
 
@@ -663,8 +552,7 @@ inert!(String, bool, u8, u16);
 
 #[cfg(test)]
 mod tests {
-    use super::{fill_list_gaps, root_flanks};
-    use crate::slot::{SlotValue, SourceGap};
+    use super::root_flanks;
     use crate::options::ResolvedOptions;
     use crate::render::{SourceTable, WhitespaceTable};
     use crate::RenderContext;
@@ -719,175 +607,6 @@ mod tests {
         assert_eq!(before_flank(&coordinate(1, 4), "\n#!\n"), Some(NEWLINE));
     }
 
-    fn after_and_before(source: &str, second_gap: Option<(u32, u32)>) -> (Option<u16>, Option<u16>) {
-        let gap = second_gap.map(|(start, end)| SourceGap::Range { tree: 3, span: Span { start, end } });
-        filled(source, gap)
-    }
-
-    fn filled(source: &str, second_gap: Option<SourceGap>) -> (Option<u16>, Option<u16>) {
-        let sources = Sources(HashMap::from([(3, Arc::from(source))]));
-        let options = ResolvedOptions::default();
-        let ctx = RenderContext {
-            options: &options,
-            sources: &sources,
-            recording: None,
-        };
-        let end = source.len() as u32;
-        let first = coordinate(0, 1);
-        let second = NodeCoordinate {
-            writes: second_gap.map(|gap| Box::new(crate::slot::CoordinateWrites { gap: Some(gap), changed: Default::default() })),
-            ..coordinate(end - 1, end)
-        };
-        let mut items: Vec<SlotValue<String>> = vec![SlotValue::Coord(first), SlotValue::Coord(second)];
-        fill_list_gaps(items.iter_mut().map(Some), ",", &[TIGHT, NEWLINE], &[TIGHT, NEWLINE], &TABLE, &ctx);
-        let edge = |item: &SlotValue<String>, after: bool| match item {
-            SlotValue::Coord(coord) => coord.edges.and_then(|edges| if after { edges.after } else { edges.before }).map(|seam| seam.arm),
-            SlotValue::Transport(_) => None,
-        };
-        (edge(&items[0], true), edge(&items[1], false))
-    }
-
-    #[test]
-    fn a_source_adjacent_gap_splits_at_its_separator_onto_both_neighbours() {
-        assert_eq!(after_and_before("a,\nb", Some((1, 3))), (Some(TIGHT), Some(NEWLINE)));
-    }
-
-    #[test]
-    fn a_gap_holding_more_than_one_separator_is_left_to_the_seat() {
-        assert_eq!(after_and_before("a,x,b", Some((1, 4))), (None, None));
-    }
-
-    #[test]
-    fn an_item_that_carries_no_source_gap_is_left_to_the_seat() {
-        assert_eq!(after_and_before("a,\nb", None), (None, None));
-    }
-
-    const INDENT: u16 = 7;
-    const DEDENT: u16 = 8;
-
-    struct List(crate::options::Edges);
-    impl crate::options::Edged for List {
-        fn kind_id(&self) -> crate::types::KindId {
-            crate::types::KindId(0)
-        }
-        fn edges(&self) -> &crate::options::Edges {
-            &self.0
-        }
-        fn edges_mut(&mut self) -> &mut crate::options::Edges {
-            &mut self.0
-        }
-    }
-
-    fn every_arm(_: usize) -> &'static [u16] {
-        &[TIGHT, NEWLINE, INDENT, DEDENT]
-    }
-
-    /// The flank arms a list spanning `list` in `source` takes, with the flanks the transport kept.
-    fn flanks(source: &str, list: &str, before: bool, after: bool) -> (Option<u16>, Option<u16>) {
-        let start = source.find(list).unwrap() as u32;
-        let span = Span { start, end: start + list.len() as u32 };
-        flanks_from(source, crate::slot::FlankSource::Tree(3), span, before, after)
-    }
-
-    fn flanks_from(source: &str, from: crate::slot::FlankSource, span: Span, before: bool, after: bool) -> (Option<u16>, Option<u16>) {
-        let edges = flank_edges(source, from, span, before, after);
-        (edges.before.map(|edge| edge.arm), edges.after.map(|edge| edge.arm))
-    }
-
-    fn flank_edges(source: &str, from: crate::slot::FlankSource, span: Span, before: bool, after: bool) -> crate::options::Edges {
-        use crate::options::{EdgeSite, SiteSpec};
-        use crate::slot::SourceFlank;
-        static EDGES: [EdgeSite; 1] = [EdgeSite { before: 0, after: 1, before_arms: &[], after_arms: &[] }];
-        static EDGE_ROWS: [u16; 1] = [0];
-        static SITES: [SiteSpec; 2] = [SiteSpec { default_arm: TIGHT, strength: 2 }, SiteSpec { default_arm: TIGHT, strength: 2 }];
-        let sources = Sources(HashMap::from([(3, Arc::from(source))]));
-        let options = ResolvedOptions {
-            spacing: ResolvedOptions::default_spacing(&SITES),
-            edges: &EDGES,
-            edge_rows: &EDGE_ROWS,
-            sites: &SITES,
-            ..ResolvedOptions::default()
-        };
-        let ctx = RenderContext { options: &options, sources: &sources, recording: None };
-        let flank = SourceFlank {
-            source: from,
-            span,
-            before,
-            after,
-        };
-        let mut node = List(crate::options::Edges::NONE);
-        super::fill_source_flanks(&mut node, Some(&flank), every_arm, &TABLE, &ctx);
-        node.0
-    }
-
-    const BROKEN: &str = "f(\n    a,\n    b,\n)";
-
-    #[test]
-    fn a_kept_list_opens_a_depth_after_its_opener_and_closes_it_before_its_closer() {
-        assert_eq!(flanks(BROKEN, "a,\n    b,", true, true), (Some(INDENT), Some(DEDENT)));
-    }
-
-    #[test]
-    fn a_depth_the_flank_before_opened_closes_although_the_flank_after_is_not_kept() {
-        assert_eq!(flanks(BROKEN, "a,\n    b,", true, false), (Some(INDENT), Some(DEDENT)));
-    }
-
-    #[test]
-    fn a_flank_after_never_closes_a_depth_the_flank_before_did_not_open() {
-        assert_eq!(flanks(BROKEN, "a,\n    b,", false, true), (None, Some(NEWLINE)));
-    }
-
-    #[test]
-    fn a_flank_reads_the_same_whatever_spells_its_breaks() {
-        for ending in ["\r\n", "\r"] {
-            let source = BROKEN.replace('\n', ending);
-            let list = "a,\n    b,".replace('\n', ending);
-            assert_eq!(flanks(&source, &list, true, true), (Some(INDENT), Some(DEDENT)), "{ending:?}");
-            assert_eq!(flanks(&source, &list, false, true), (None, Some(NEWLINE)), "{ending:?}");
-            let nested = "g(\n    a,\n    b)".replace('\n', ending);
-            let start = nested.find('a').unwrap() as u32;
-            let span = Span { start, end: nested.find(')').unwrap() as u32 };
-            let edges = flank_edges(&nested, crate::slot::FlankSource::Tree(3), span, true, true);
-            assert_eq!(edges.before.map(|edge| edge.arm), Some(INDENT), "{ending:?}");
-            assert_eq!(edges.after.map(|edge| (edge.arm, edge.dedent)), Some((TIGHT, Some(true))), "{ending:?}");
-        }
-    }
-
-    #[test]
-    fn a_same_line_list_keeps_its_tight_flanks() {
-        assert_eq!(flanks("f(a, b)", "a, b", true, true), (Some(TIGHT), Some(TIGHT)));
-    }
-
-    #[test]
-    fn a_detached_window_from_the_openers_line_to_the_closer_classifies_as_its_tree_does() {
-        let source = "fn g() {\n    f(\n        a,\n        b\n    );\n}\n";
-        let list = "a,\n        b";
-        let start = source.find(list).unwrap();
-        let window_start = source[..start].trim_end().rfind('\n').map_or(0, |i| i + 1);
-        let closer = start + list.len() + source[start + list.len()..].find(')').unwrap();
-        let window = &source[window_start..=closer];
-        let relative = Span { start: (start - window_start) as u32, end: (start - window_start + list.len()) as u32 };
-        assert_eq!(
-            flanks_from("", crate::slot::FlankSource::Text(window.to_string()), relative, true, true),
-            flanks(source, list, true, true)
-        );
-        assert_eq!(flanks(source, list, true, true), (Some(INDENT), Some(DEDENT)));
-    }
-
-    #[test]
-    fn a_depth_the_flank_before_opened_closes_beside_a_closer_on_the_last_items_line() {
-        let source = "g(\n    a,\n    b)";
-        let start = source.find('a').unwrap() as u32;
-        let span = Span { start, end: source.find(')').unwrap() as u32 };
-        let edges = flank_edges(source, crate::slot::FlankSource::Tree(3), span, true, true);
-        assert_eq!(edges.before.map(|edge| edge.arm), Some(INDENT));
-        assert_eq!(edges.after.map(|edge| (edge.arm, edge.dedent)), Some((TIGHT, Some(true))));
-    }
-
-    #[test]
-    fn a_list_whose_flanks_were_not_kept_takes_none() {
-        assert_eq!(flanks(BROKEN, "a,\n    b,", false, false), (None, None));
-    }
     const COMMA: u16 = 9;
     const ITEM: u16 = 4;
 
@@ -902,35 +621,28 @@ mod tests {
         }
     }
 
-    /// The delimiter a list whose source ends in a child of kind `last` takes over the options default `default`.
-    fn trailing(last: Option<u16>, after: bool, default: u8) -> u8 {
-        use crate::slot::SourceFlank;
+    /// The delimiter a list rebuilt from one whose source ends in a child of kind `last` (rebuilt from none when not `rebuilt`) takes over the options default `default`.
+    fn trailing(last: Option<u16>, rebuilt: bool, default: u8) -> u8 {
         let sources = ListTrees(last);
         let options = ResolvedOptions::default();
         let ctx = RenderContext { options: &options, sources: &sources, recording: None };
-        let flank = SourceFlank {
-            source: crate::slot::FlankSource::Tree(3),
-            span: Span { start: 2, end: 7 },
-            before: false,
-            after,
-        };
-        super::source_trailing_delimiter(Some(&flank), crate::types::KindId(1), &[COMMA], default, &ctx)
+        let layout = crate::layout::TransportLayout::<String> { sides: rebuilt.then(|| coordinate(2, 7)), ..Default::default() };
+        super::source_trailing_delimiter(Some(&layout), crate::types::KindId(1), &[COMMA], default, &ctx)
     }
 
     #[test]
-    fn a_kept_flank_after_keeps_the_source_trailing_separator() {
+    fn a_rebuilt_list_keeps_its_sources_trailing_separator() {
         assert_eq!(trailing(Some(COMMA), true, 0), 2);
     }
 
     #[test]
-    fn a_kept_flank_after_with_no_source_separator_clears_a_trailing_default() {
+    fn a_rebuilt_list_whose_source_has_no_trailing_separator_clears_a_trailing_default() {
         assert_eq!(trailing(Some(ITEM), true, 2), 0);
     }
 
     #[test]
-    fn a_flank_after_not_kept_or_a_table_with_no_tree_takes_the_options_default() {
+    fn a_list_rebuilt_from_none_or_a_table_with_no_tree_takes_the_options_default() {
         assert_eq!(trailing(Some(COMMA), false, 0), 0);
-        assert_eq!(trailing(Some(ITEM), false, 2), 2);
         assert_eq!(trailing(None, true, 2), 2);
     }
 

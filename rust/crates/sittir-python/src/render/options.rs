@@ -2589,7 +2589,7 @@ pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[
     ::sittir_core::options::SiteSpec { default_arm: 122, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 122, strength: 2 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 123, strength: 2 },
@@ -2615,7 +2615,7 @@ pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[
     ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 123, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 122, strength: 2 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 123, strength: 2 },
@@ -5539,7 +5539,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "gap", path: "gap", children: &[
-        ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE, path: "(block)/statements:/separator" }, ::sittir_core::options::SiteRef { site: SITE_COMPARISON_OPERATOR_COMPARATORS_SEPARATOR_SPACE, path: "(comparison_operator)/comparators:/separator" }, ::sittir_core::options::SiteRef { site: SITE_CONCATENATED_STRING_STRING_SEPARATOR_SPACE, path: "(concatenated_string)/string:/separator" }, ::sittir_core::options::SiteRef { site: SITE_DECORATED_DEFINITION_DECORATOR_SEPARATOR_SPACE, path: "(decorated_definition)/decorator:/separator" }, ::sittir_core::options::SiteRef { site: SITE_IF_STATEMENT_ALTERNATIVE_SEPARATOR_SPACE, path: "(if_statement)/alternative:/separator" }, ::sittir_core::options::SiteRef { site: SITE_MATCH_BLOCK_BLOCK_ALTERNATIVE_SEPARATOR_SPACE, path: "(match_block_block)/alternative:/separator" }, ::sittir_core::options::SiteRef { site: SITE_TRY_STATEMENT_EXCEPT_CLAUSES_SEPARATOR_SPACE, path: "(try_statement)/except_clauses:/separator" }] },
+        ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE, path: "(block)/statements:/separator" }, ::sittir_core::options::SiteRef { site: SITE_DECORATED_DEFINITION_DECORATOR_SEPARATOR_SPACE, path: "(decorated_definition)/decorator:/separator" }, ::sittir_core::options::SiteRef { site: SITE_IF_STATEMENT_ALTERNATIVE_SEPARATOR_SPACE, path: "(if_statement)/alternative:/separator" }, ::sittir_core::options::SiteRef { site: SITE_MATCH_BLOCK_BLOCK_ALTERNATIVE_SEPARATOR_SPACE, path: "(match_block_block)/alternative:/separator" }, ::sittir_core::options::SiteRef { site: SITE_TRY_STATEMENT_EXCEPT_CLAUSES_SEPARATOR_SPACE, path: "(try_statement)/except_clauses:/separator" }] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "generatorExpression", path: "(generator_expression)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_GENERATOR_EXPRESSION_GENERATOR_EXPRESSION_AFTER, path: "(generator_expression)/after" }] },

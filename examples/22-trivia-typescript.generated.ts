@@ -8,7 +8,7 @@ export function rebuildTriviaTypescriptGenerated() {
 		statements: [ts.build.expressionStatement.strict(ts.build.callExpressionCall.strict({
 			function: ts.build.identifier("f"),
 			arguments: ts.build.arguments.strict().$trivia.inner(ts.build.commentBlock(" b ")),
-		})).$trivia.leading(ts.build.commentBlock(" a "), ts.kinds.Newline), ts.build.lexicalDeclaration.strict({
+		})).$trivia.leading(ts.build.commentBlock(" a ")), ts.build.lexicalDeclaration.strict({
 			kind: ts.kinds.LetKeyword,
 			declarators: [ts.build.variableDeclaratorPlain.strict({
 				name: ts.build.identifier("x"),

@@ -118,14 +118,16 @@ pub type SeamRank = usize;
 
 /// How firmly a mark holds its gap against the mark meeting it there. A
 /// whitespace trivia entry beats everything: it replaces the gap's default.
-/// A declared arm (a grammar row, or a value set on the node) beats one the
-/// kind edge took from its edge token's face (cascade), which beats the bare
-/// fallback; rank decides only between marks of one strength. Depth marks
-/// stay above the whole scale.
+/// A list slot's stored layout (`layout::SlotLayout`) beats every option
+/// and yields only to a gap's own entry. A declared arm (a grammar row, or a
+/// value set on the node) beats one the kind edge took from its edge token's
+/// face (cascade), which beats the bare fallback; rank decides only between
+/// marks of one strength. Depth marks stay above the whole scale.
 pub const SEAM_FALLBACK: u8 = 0;
 pub const SEAM_CASCADE: u8 = 1;
 pub const SEAM_DECLARED: u8 = 2;
-pub const SEAM_TRIVIA: u8 = 3;
+pub const SEAM_SLOT: u8 = 3;
+pub const SEAM_TRIVIA: u8 = 4;
 
 /// The rank of a seam's text: empty 2, no break 1, otherwise 2 plus the number
 /// of logical breaks (`\r\n` counts once).

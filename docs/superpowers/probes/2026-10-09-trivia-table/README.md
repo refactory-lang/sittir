@@ -88,3 +88,25 @@ At `feat/arena` with Task 2's native table.
 Every corpus entry lands in a side; none is unowned. **The native table agrees** (Task 2): the census reads every node's sides through `triviaSide` and finds each extra on the node and side the assignment gives it, and each `ERROR` on its side (`native≠` 0 in every grammar).
 
 **Where the table and the reader's placement differ.** Nine python comments, each after a `case …:` colon on the case's line (`case Color.RED:  # c`). The colon is the case clause's own token, so no child ends at it, and the comment leads the clause's `suite_block`; the reader seats it as the trailing of `case_patterns` and holds it past the colon (`tokens_between`). The table's side renders after the colon by its position. Every other corpus extra sits where the reader seats it. Five python comments lie after a block's last statement, before its dedent: the edge token on their right is the block's own, so they trail the last statement, inside the block. Whitespace between two children is never a token: python's `_newline` text is a gap's line break, equal to its seam's default.
+
+## `baseline-cost.mts`: what the read-time baseline costs a tree
+
+Over every corpus entry, the cost of computing what a tree stores of its layout (`storedLayout`, which renders the baseline records the deviation test reads) against a plain render of the same tree from its templates (read to full depth, rendered under its options). Each mode runs in a child process of its own, so its peak resident size is its own; the `parse` mode only parses and is the floor. Each mode reports its fastest of five passes.
+
+```sh
+SITTIR_BACKEND=native ./node_modules/.bin/tsx docs/superpowers/probes/2026-10-09-trivia-table/baseline-cost.mts 5
+```
+
+### Results
+
+On the layout-deviations branch, with the machine fully loaded by other work, so CPU time (user+sys, in parentheses) is the figure to read; wall time is shown as measured.
+
+| grammar | entries | parse ms | plain ms | baseline ms | baseline ÷ plain (CPU) | parse MB | plain MB | baseline MB |
+|---|---|---|---|---|---|---|---|---|
+| rust | 148 | 4.8 (5) | 492.0 (199) | 118.8 (35) | 0.18 | 155 | 270 | 150 |
+| typescript | 118 | 3.5 (4) | 277.5 (146) | 134.6 (40) | 0.27 | 153 | 274 | 169 |
+| python | 116 | 3.6 (4) | 512.2 (162) | 107.2 (43) | 0.27 | 143 | 294 | 154 |
+| scm | 19 | 0.4 (0) | 59.2 (16) | 4.4 (4) | 0.25 | 123 | 134 | 121 |
+| regex | 37 | 0.5 (1) | 9.8 (11) | 1.9 (2) | 0.18 | 137 | 131 | 118 |
+
+**The baseline costs a fifth to a quarter of a plain render of the same tree**, and its peak memory stays at or below the plain render's: the region records render only what each run needs (`region_depth`), and each record is kept and shared by the runs it answers.

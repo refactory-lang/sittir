@@ -17,11 +17,17 @@ export interface TriviaFacts {
 	readonly rebuildWrappers: ReadonlySet<number>;
 	/**
 	 * Engine plumbing, not for callers: the kind ids of the grammar's list
-	 * kinds, the nodes whose one array slot holds a list's items. Only these
-	 * have list flanks; a construct that holds an array between its own
-	 * delimiters, such as a string, does not.
+	 * kinds, the nodes whose one array slot holds a list's items. A rebuilt
+	 * list of one of these stands for the list it replaces; a construct that
+	 * holds an array between its own delimiters, such as a string, is not one.
 	 */
 	readonly listKinds: ReadonlySet<number>;
+	/**
+	 * The kind ids of the trivia members that spell layout rather than
+	 * content: the whitespace members, the depth members and the line
+	 * continuations. Comments are content and are not among them.
+	 */
+	readonly layout: ReadonlySet<number>;
 	readonly whitespace?: { readonly run: RegExp; readonly kindIdByText: { readonly [text: string]: number } };
 	readonly comment?: ((text: string) => AnyUntypedNode) | undefined;
 	readonly spelled?: readonly SpelledTrivia[];

@@ -5442,6 +5442,13 @@ A compound can be built with no argument when every config slot (the slots no re
 
 A list that must hold at least one element is never built with no argument, whatever its element slot's multiplicity says; otherwise the compound rule applies.
 
+### `packages/codegen/src/compiler/model/trivia.ts::layoutTriviaKinds`
+
+The trivia kinds that spell layout rather than content: the whitespace
+members (`whitespaceTriviaKinds`), the depth members (`depthTriviaKinds`)
+and the line continuations (`continuationTriviaKinds`). A comment is
+content and is never one.
+
 ### `packages/codegen/src/compiler/model/trivia.ts::continuationTriviaKinds`
 
 The trivia kinds that are a line continuation. A kind is one when its default arm is a pattern whose every text ends at a line break (`endsWithLineBreak`) and cannot be all space (`requiresNonSpace`), and then every arm of that kind is one: python's `line_continuation` is layout in both arms, `newline` (`\` then a line break) and `nul` (`\` then NUL). Both facts are read off the pattern's automaton, so no kind name or text is matched. Whitespace trivia is merged into its gap as a seam; a continuation is the same kind of fact (layout the source carried between two tokens) with a backslash in it, so the render module answers its text as a seam too; the writer then extends the held trivia seam with it (several continuations in a row, or one after a space entry, keep all of their text), and a root edge leaves a held continuation standing since it already ends the line. Without that, an own-line trailing entry was joined by a line break written before its backslash, which ended the statement.

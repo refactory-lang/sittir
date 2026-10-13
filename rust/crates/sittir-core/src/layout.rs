@@ -1,19 +1,18 @@
 //! `TransportLayout` — what a transport carries beside its slots.
 //!
-//! A node's layout is the trivia it owns, its base edges, the evidence a
-//! rebuilt node keeps of the source it was read from (the gap toward the list
-//! item before it and, for a list, its source flanks) and, for a read node,
-//! its own coordinate. The wire sends it as
-//! `$_layout`, absent when the node has none. The edges never cross: the
-//! prepare walk fills them. The gap and the flanks cross toward the native
-//! side only: JavaScript writes them, and a read never does. A transport stores it boxed in an `Option`, so it
-//! costs a payload one pointer, and reads it through `Layout`, so an absent
-//! layout reads as an empty one.
+//! A node's layout is the trivia it owns, its base edges, its list slots'
+//! stored layout, where it came from (a read node's coordinate, a snapshot
+//! node's span, the node a rebuilt node was rebuilt from) and the edges
+//! whose neighbour a rebuild changed. The wire sends it as `$_layout`,
+//! absent when the node has none. The edges never cross: the prepare walk
+//! fills them. A transport stores it boxed in an `Option`, so it costs a
+//! payload one pointer, and reads it through `Layout`, so an absent layout
+//! reads as an empty one.
 
 use crate::options::{Edges, Side};
 use crate::prepare::{Prepare, RenderContext};
 use crate::render::{CoordinateError, Render, RenderResult, RenderSink};
-use crate::slot::{NodeCoordinate, SourceFlank, SourceGap};
+use crate::slot::NodeCoordinate;
 use crate::trivia::{Framing, TransportTrivia, TriviaSeam};
 use crate::types::KindId;
 
@@ -21,8 +20,6 @@ use crate::types::KindId;
 pub struct TransportLayout<T> {
     pub trivia: Option<TransportTrivia<T>>,
     pub edges: Option<Edges>,
-    pub gap: Option<SourceGap>,
-    pub flank: Option<SourceFlank>,
     /// Where a read node came from: its own coordinate. The reader writes it
     /// for every transport it reads; a built node has none. No bytes render
     /// from it: JavaScript crosses an untouched node as this coordinate, and an
@@ -49,6 +46,93 @@ pub struct TransportLayout<T> {
     /// ones JavaScript carries from the node it was rebuilt from, at the items
     /// they moved to. The render frames each unit by them (`render_unit`).
     pub units: Vec<UnitSides<T>>,
+    /// The layout of each of the node's list slots whose separator gaps the
+    /// source spells apart from the options (`$_layout.slots`,
+    /// `SlotLayout`). A read writes it; a rebuilt node takes the slots of the
+    /// node it was rebuilt from (`sides`) at prepare.
+    pub slots: Vec<SlotLayout>,
+    /// The separator before the node as an item of a list slot, as a grammar
+    /// id, where its source spells another than the one the slot renders
+    /// (`$_layout.separator`, `ParsedTree::separator_before`). A read writes
+    /// it; a node without a tree carries it as data.
+    pub separator: Option<u16>,
+}
+
+/// A list slot's layout: the class its separator gaps take before and after
+/// the separator, and its separator token, each only where its occurrence's
+/// source takes one apart from the options in effect when it was read. Every
+/// separator gap of the slot, existing or inserted, renders it, below a
+/// gap's own layout entry (`prepare::fill_slot_gaps`).
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct SlotLayout {
+    /// The slot's wire key.
+    pub slot: String,
+    pub before: Option<u16>,
+    pub after: Option<u16>,
+    pub separator: Option<u16>,
+    /// The separator before each item, by its place in the slot, as a
+    /// candidate kind of the list's separator, where its source spells
+    /// another than the slot's (`prepare::fill_slot_separators`). The prepare
+    /// walk fills it; it never crosses.
+    pub tokens: Vec<Option<u16>>,
+}
+
+impl SlotLayout {
+    /// Whether the layout stores anything.
+    pub fn is_empty(&self) -> bool {
+        self.before.is_none() && self.after.is_none() && self.separator.is_none()
+    }
+}
+
+/// How much of a parsed tree's layout it stores apart from the options in
+/// effect when it was read (`ParsedTree::stored_layout`).
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct StoredLayout {
+    /// The runs of whitespace a side stores as a member.
+    pub deviations: u32,
+    /// The list slots that store a layout (`SlotLayout`).
+    pub slots: u32,
+    /// The items that store their own separator (`TransportLayout::separator`).
+    pub separators: u32,
+}
+
+/// The layout `layout` holds for the list slot `slot`.
+pub fn slot_layout<'a, T>(layout: Option<&'a TransportLayout<T>>, slot: &str) -> Option<&'a SlotLayout> {
+    layout?.slots.iter().find(|entry| entry.slot == slot)
+}
+
+/// The entry for the list slot `slot` in `layout`, made with the layout when
+/// either is absent.
+pub fn slot_entry<'a, T>(layout: &'a mut Option<Box<TransportLayout<T>>>, slot: &str) -> &'a mut SlotLayout {
+    let slots = &mut layout.get_or_insert_with(Default::default).slots;
+    let at = match slots.iter().position(|entry| entry.slot == slot) {
+        Some(at) => at,
+        None => {
+            slots.push(SlotLayout { slot: slot.to_string(), ..SlotLayout::default() });
+            slots.len() - 1
+        }
+    };
+    &mut slots[at]
+}
+
+/// Each item's own separator in the list slot `slot`, by its place
+/// (`SlotLayout::tokens`); empty where none differs from the slot's.
+pub fn slot_tokens<'a, T>(layout: Option<&'a TransportLayout<T>>, slot: &str) -> &'a [Option<u16>] {
+    slot_layout(layout, slot).map_or(&[], |entry| &entry.tokens)
+}
+
+/// The separator a node's source spells before it as a list item where it
+/// is not the slot's: the one it carries (`TransportLayout::separator`), else,
+/// while its neighbour before is still its source's, the one its source
+/// stores (its own coordinate, or the node it was rebuilt from).
+pub fn source_separator<T>(layout: Option<&TransportLayout<T>>, ctx: &RenderContext<'_>) -> Option<u16> {
+    let layout = layout?;
+    layout.separator.or_else(|| {
+        if layout.changed.leading {
+            return None;
+        }
+        ctx.sources.separator_before(layout.at.as_ref().or(layout.sides.as_ref())?)
+    })
 }
 
 /// The sides of one unit child, by the slot that holds it (its wire key) and
@@ -98,13 +182,13 @@ impl<T> Default for TransportLayout<T> {
         Self {
             trivia: None,
             edges: None,
-            gap: None,
-            flank: None,
             at: None,
             span: None,
             sides: None,
             changed: crate::slot::ChangedEdges { leading: false, trailing: false },
             units: Vec::new(),
+            slots: Vec::new(),
+            separator: None,
         }
     }
 }
@@ -125,10 +209,8 @@ pub trait Layout {
     fn trivia(&self) -> Option<&TransportTrivia<Self::Trivia>>;
     fn edges(&self) -> &Edges;
     fn edges_mut(&mut self) -> &mut Edges;
-    /// The gap toward the list item before this node, when the wire says the
-    /// two are still adjacent in their source.
-    fn gap(&self) -> Option<&SourceGap>;
-    fn take_flank(&mut self) -> Option<SourceFlank>;
+    /// The stored layout of the node's list slot `slot` (`SlotLayout`).
+    fn slot(&self, slot: &str) -> Option<&SlotLayout>;
     /// Where a snapshot node lies, and how far its leading and trailing
     /// trivia reach (`TransportLayout::span`).
     fn snapshot_edge(&self) -> Option<crate::prepare::SnapshotEdge>;
@@ -158,12 +240,8 @@ impl<T: Prepare + TriviaSeam> Layout for Option<Box<TransportLayout<T>>> {
             .get_or_insert_with(Default::default)
     }
 
-    fn gap(&self) -> Option<&SourceGap> {
-        self.as_ref()?.gap.as_ref()
-    }
-
-    fn take_flank(&mut self) -> Option<SourceFlank> {
-        self.as_mut()?.flank.take()
+    fn slot(&self, slot: &str) -> Option<&SlotLayout> {
+        slot_layout(self.as_deref(), slot)
     }
 
     fn snapshot_edge(&self) -> Option<crate::prepare::SnapshotEdge> {
@@ -284,6 +362,11 @@ impl<T: Prepare + TriviaSeam + 'static> Prepare for TransportLayout<T> {
                 own.inner = own.inner.take().or(source.inner);
             }
         }
+        if self.slots.is_empty() {
+            if let Some(coord) = self.sides.as_ref() {
+                self.slots = ctx.sources.slot_layouts(coord);
+            }
+        }
         let changed = std::mem::take(&mut self.changed);
         if let Some(trivia) = self.trivia.as_mut() {
             use crate::trivia_table::TriviaSide;
@@ -333,8 +416,6 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
             Ok(Self {
                 trivia: property(env, napi_val, c"trivia")?,
                 edges: None,
-                gap: property(env, napi_val, c"gap")?,
-                flank: property(env, napi_val, c"flank")?,
                 at: match property::<::napi::bindgen_prelude::Object>(env, napi_val, c"at")? {
                     Some(at) => Some(
                         crate::slot::coordinate_from_napi(env, ::napi::JsValue::raw(&at))?
@@ -352,6 +433,8 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
                     None => None,
                 },
                 units: property(env, napi_val, c"units")?.unwrap_or_default(),
+                slots: property(env, napi_val, c"slots")?.unwrap_or_default(),
+                separator: property(env, napi_val, c"separator")?,
             })
         }
     }
@@ -390,9 +473,57 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
 }
 
 #[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for SlotLayout {
+    /// `{ slot, before?, after?, separator? }`.
+    unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
+        use crate::boundary::property;
+        unsafe {
+            Ok(Self {
+                slot: property(env, napi_val, c"slot")?.ok_or_else(|| ::napi::Error::from_reason("a slot's layout names its slot"))?,
+                before: property(env, napi_val, c"before")?,
+                after: property(env, napi_val, c"after")?,
+                separator: property(env, napi_val, c"separator")?,
+                tokens: Vec::new(),
+            })
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for SlotLayout {
+    /// `{ slot, before?, after?, separator? }`, each class only when present.
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        use crate::boundary::{object_with_present, present};
+        unsafe {
+            object_with_present(env, &[
+                present(env, c"slot", Some(val.slot))?,
+                present(env, c"before", val.before)?,
+                present(env, c"after", val.after)?,
+                present(env, c"separator", val.separator)?,
+            ])
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for StoredLayout {
+    /// `{ deviations, slots, separators }`.
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        use crate::boundary::{object_with_present, present};
+        unsafe {
+            object_with_present(env, &[
+                present(env, c"deviations", Some(val.deviations))?,
+                present(env, c"slots", Some(val.slots))?,
+                present(env, c"separators", Some(val.separators))?,
+            ])
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
 impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for TransportLayout<T> {
-    /// `{ trivia?, at?, span?, units? }`, each only when present: what a read writes.
-    /// The edges, the gap and the flanks never cross back.
+    /// `{ trivia?, at?, span?, units?, slots?, separator? }`, each only when present: what a read writes.
+    /// The edges never cross back.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         use crate::boundary::{object_with_present, present, present_with};
         unsafe {
@@ -401,6 +532,8 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
                 present_with(c"at", val.at, |at| crate::slot::coordinate_to_napi(env, at))?,
                 present(env, c"span", val.span)?,
                 present(env, c"units", (!val.units.is_empty()).then_some(val.units))?,
+                present(env, c"slots", (!val.slots.is_empty()).then_some(val.slots))?,
+                present(env, c"separator", val.separator)?,
             ])
         }
     }

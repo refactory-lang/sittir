@@ -29,6 +29,7 @@ export const triviaFacts = Object.freeze({
 		419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 431, 432, 433, 459, 461, 462, 463, 464, 466
 	]),
 	listKinds: new Set<number>([376, 377, 379, 382, 383, 384, 385, 390]),
+	layout: new Set<number>([180, 181, 182, 183, 184, 185, 186, 187]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:[\s\p{Zs}\uFEFF\u2028\u2029\u2060\u200B]))+)$/u,
 		kindIdByText: Object.freeze({ '': 180, ' ': 181, '\t': 182, '\n': 183, '\n\n': 184, '\n\n\n': 185 })

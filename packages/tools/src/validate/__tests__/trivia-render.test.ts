@@ -1,7 +1,7 @@
 import { afterAll, describe, expect, it } from 'vitest';
 import type { AnyUntypedNode } from '@sittir/types';
 import { carryTree, isCoordinate, sidesOf } from '@sittir/common/utils';
-import { loadNativeEngine, readNodeOf, materializeDetached, readNativeTree } from '../common.ts';
+import { loadNativeEngine, readNodeOf, materializeDetached, readNativeTree, nativeLanguageEngineOf } from '../common.ts';
 import { detachedRenderer } from './helpers/detached-renderer.ts';
 import { createEngine } from '@sittir/common';
 import { languageByName } from '../../languages.ts';
@@ -34,7 +34,7 @@ describe('read trivia layout, rendered detached', () => {
 		expect(render('fn f() { // TODO\n}\n')).toBe('fn f() { // TODO\n}\n');
 		expect(render('f(/* a */);')).toBe('f(/* a */);');
 		expect(render('f(// a\n);')).toBe('f(// a\n);');
-		expect(render('ok! {\n  // one\n  /* two */\n}\n')).toBe('ok!{\n  // one\n  /* two */\n}\n');
+		expect(render('ok! {\n  // one\n  /* two */\n}\n')).toBe('ok! {\n  // one\n  /* two */\n}\n');
 	});
 
 	it('seats a same-line trailing entry after the anonymous tokens between it and its owner', async () => {
@@ -74,6 +74,44 @@ describe('read trivia layout, rendered detached', () => {
 		const render = await detachedRenderer('rust');
 		expect(render('/* a */\n/* Comment */\n')).toBe('/* a */\n/* Comment */\n');
 		expect(render('/* a */\n// ---\n')).toBe('/* a */\n// ---\n');
+	});
+});
+
+describe('in-line spacing the options do not write is a deviation, rendered detached', () => {
+	it('keeps the spaces inside a rust use list the options write tight', async () => {
+		const source = 'use three::{ dot::{one, four} };\n';
+		expect((await detachedRenderer('rust'))(source)).toBe(source);
+	});
+
+	it('keeps the spaces inside typescript type parameters and formal parameters', async () => {
+		const source = 'let x: new < T1, T2 > ( p1, p2 ) => R;\n';
+		expect((await detachedRenderer('typescript'))(source)).toBe(source);
+	});
+
+	it('keeps a python line continuation with the source runs on either side of it', async () => {
+		const render = await detachedRenderer('python');
+		const source = 'x = 1 + \\\n    2\n';
+		expect(render(source)).toBe(source);
+	});
+
+	it('keeps a python line continuation inside brackets, where it is redundant', async () => {
+		const render = await detachedRenderer('python');
+		const source = 'x = (1 + \\\n     2)\n';
+		expect(render(source)).toBe(source);
+	});
+
+	it('keeps the layout of a token tree item whose neighbour is a bare token, read live', async () => {
+		const engine = await loadNativeEngine('rust');
+		const readNode = (await readNodeOf('rust'))!;
+		const native = await nativeLanguageEngineOf('rust');
+		const source = "foo!($/';()*()+.);\n";
+		const { tree } = readNativeTree(engine, source);
+		expect(native.render(materializeDetached(readNode(tree)) as AnyUntypedNode, tree.options).toString()).toBe(source);
+	});
+
+	it('keeps a rust token tree tight where its source is', async () => {
+		const source = "foo(#[bar(some tokens are special in other contexts: $/';()*()+.)] x);\n";
+		expect((await detachedRenderer('rust'))(source)).toBe(source);
 	});
 });
 

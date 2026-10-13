@@ -88,8 +88,8 @@ impl SiteSpec {
 pub struct EdgeArm {
     pub arm: u16,
     pub strength: Option<u8>,
-    /// Close a depth before the arm (`SeamArm::dedent`). Only the native
-    /// flank fill sets it; the wire never sends it.
+    /// Close a depth before the arm (`SeamArm::dedent`). The wire never
+    /// sends it.
     pub dedent: Option<bool>,
 }
 

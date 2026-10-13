@@ -147,15 +147,29 @@ pub struct TriviaText {
     /// In a snapshot, where the entry lies: its span measured from the start
     /// of its owner's holder.
     pub span: Option<crate::points::PointSpan>,
-    /// An `ERROR` region's in-line adjacency: the source's whitespace right
+    /// The in-line adjacency of an entry the source fixes in place (an
+    /// `ERROR` region, a line continuation): the source's whitespace right
     /// before and right after it, up to the tokens beside it on its line.
-    /// The region writes it verbatim around itself, in place of any seam. A
+    /// The entry writes it verbatim around itself, in place of any seam. A
     /// comment has none.
     pub before: Option<String>,
     pub after: Option<String>,
 }
 
 impl TriviaText {
+    /// The entry of `kind` with `text` and nothing else: no place in a
+    /// snapshot and no adjacency.
+    pub fn of(kind: KindId, text: &str) -> Self {
+        Self { kind, text: text.to_owned(), span: None, before: None, after: None }
+    }
+
+    /// Whether the entry writes itself verbatim with its adjacency, in place
+    /// of any seam: an `ERROR` always, any other entry when it carries an
+    /// adjacency.
+    pub fn verbatim(&self) -> bool {
+        self.kind == KindId::ERROR || self.before.is_some() || self.after.is_some()
+    }
+
     /// The entry of `kind` spanning `span` of `source`, with the in-line runs
     /// `adjacent` names before and after it (an `ERROR`'s), and `at` where a
     /// snapshot places it.
@@ -168,7 +182,7 @@ impl TriviaText {
 
 impl Render for TriviaText {
     fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
-        if self.kind == KindId::ERROR {
+        if self.verbatim() {
             let before = self.before.as_deref().unwrap_or_default();
             let after = self.after.as_deref().unwrap_or_default();
             return w.verbatim(before, &self.text, after);
@@ -223,21 +237,22 @@ impl<T: HasTrivia> HasTrivia for Box<T> {
 
 /// A grammar's trivia type built from what a read finds: an extra's text and
 /// kind (the variant that takes a `TriviaText`), or a layout member by its
-/// kind id and the text it spans (its variant). Codegen implements it once
-/// per grammar.
+/// kind and the text it spans (its variant). Codegen implements it once per
+/// grammar.
 pub trait FromTriviaText: Sized {
     fn from_text(text: TriviaText) -> Self;
-    /// The layout member of `kind` spanning `text`, or `None` when `kind` is
-    /// none of the grammar's layout members. A whitespace member is a unit,
-    /// whatever its text; a member that carries text keeps it.
-    fn from_layout(kind: KindId, text: &str) -> Option<Self>;
+    /// The layout member `text` reads as, by its kind, or `None` when its
+    /// kind is none of the grammar's layout members. A whitespace member is
+    /// a unit, whatever its text; a member that carries text (a line
+    /// continuation) keeps it, with its adjacency.
+    fn from_layout(text: TriviaText) -> Option<Self>;
 }
 
 /// A transport family that keeps no trivia drops what a read finds.
 impl FromTriviaText for () {
     fn from_text(_: TriviaText) -> Self {}
 
-    fn from_layout(_: KindId, _: &str) -> Option<Self> {
+    fn from_layout(_: TriviaText) -> Option<Self> {
         Some(())
     }
 }
@@ -248,7 +263,7 @@ impl FromTriviaText for TriviaText {
         text
     }
 
-    fn from_layout(_: KindId, _: &str) -> Option<Self> {
+    fn from_layout(_: TriviaText) -> Option<Self> {
         None
     }
 }
@@ -258,8 +273,8 @@ impl<T: FromTriviaText> FromTriviaText for Box<T> {
         Box::new(T::from_text(text))
     }
 
-    fn from_layout(kind: KindId, text: &str) -> Option<Self> {
-        T::from_layout(kind, text).map(Box::new)
+    fn from_layout(text: TriviaText) -> Option<Self> {
+        T::from_layout(text).map(Box::new)
     }
 }
 

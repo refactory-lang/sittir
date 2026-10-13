@@ -74,9 +74,13 @@ The types a grammar's runtime is generic over: `namespaces` (its `NamespaceMap`)
 
 A trivia entry as input: one of the grammar's trivia kinds or a string. A string is loose input: the runtime builds it into a node through the grammar's `ir.comment` (its full spelling loses the default arm's delimiters; any other text is that arm's interior), so a stored entry is always a node.
 
+### `packages/types/src/core-types.ts::TriviaFlanks`
+
+The in-line adjacency of a trivia item the source fixes in place, as a read finds it: `$before` and `$after`, the source's whitespace on the item's line between it and the tokens beside it, absent where it touches a token or where a line break lies between. An item with either renders verbatim with them and no seam on either side (`TriviaText::verbatim`). Two items carry it: an `ErrorNode`, and a line continuation, whose own line ends inside it so the next line's alignment is its `$after`. A built continuation has neither and takes the spacing the options give its gap. Comments carry neither field.
+
 ### `packages/types/src/core-types.ts::ErrorNode`
 
-An ERROR region read as a value. `$text` is the region's own bytes. As a trivia item it also carries its in-line adjacency as `$before` and `$after`: the source's whitespace on its line between the region and the tokens beside it, absent where it touches a token or where a line break lies between. Its render writes the three verbatim and no seam on either side, because a seam beside what did not parse cannot be trusted. A line break beside it stays a layout entry of its side, and the run between two regions is the earlier one's `$after`. Comments carry neither field.
+An ERROR region read as a value. `$text` is the region's own bytes. As a trivia item it also carries its in-line adjacency (`TriviaFlanks`). Its render writes the three verbatim and no seam on either side, because a seam beside what did not parse cannot be trusted. A line break beside it stays a layout entry of its side, and the run between two regions is the earlier one's `$after`.
 
 ### `packages/types/src/core-types.ts::TriviaSetter`
 

@@ -30,6 +30,7 @@ export const triviaFacts = Object.freeze({
 	listKinds: new Set<number>([
 		135, 180, 192, 193, 217, 242, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 270, 271, 275, 276, 289, 290
 	]),
+	layout: new Set<number>([106, 107, 115, 116, 117, 122, 123, 124, 125, 126]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:[\s\f\uFEFF\u2060\u200B]|\r?\n))+)$/u,
 		kindIdByText: Object.freeze({ '': 122, ' ': 123, '\t': 124, '\n': 115, '\n\n': 125, '\n\n\n': 126 })

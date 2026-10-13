@@ -121,6 +121,18 @@ pub trait SideLookup {
     /// `Vec<SideEntry<T>>` of the grammar's trivia type, without the layout
     /// runs at that edge when `edge_changed`.
     fn side(&self, index: u32, side: TriviaSide, edge_changed: bool) -> Box<dyn std::any::Any>;
+    /// The stored layout of each list slot of the node at `index`
+    /// (`layout::SlotLayout`); none where the lookup measures none.
+    fn slots(&self, index: u32) -> Vec<crate::layout::SlotLayout> {
+        let _ = index;
+        Vec::new()
+    }
+    /// The separator before the node at `index` as an item of its parent's
+    /// list slot, where it is not the one the slot renders.
+    fn separator(&self, index: u32) -> Option<u16> {
+        let _ = index;
+        None
+    }
 }
 
 /// What a snapshot read measures with: the source's lines, the descendant
@@ -247,6 +259,8 @@ impl<'s> ReadCtx<'s> {
         let seated = leading.is_some() || trailing.is_some() || inner.is_some();
         Box::new(TransportLayout {
             trivia: seated.then_some(TransportTrivia { leading, trailing, inner }),
+            slots: self.sides.map_or_else(Vec::new, |lookup| lookup.slots(index)),
+            separator: self.sides.and_then(|lookup| lookup.separator(index)),
             ..placed_at(at)
         })
     }
@@ -555,6 +569,30 @@ pub trait ReadTransport: Sized {
     fn read_boxed(cursor: &mut TreeCursor<'_>, ctx: &ReadCtx<'_>, depth: Depth) -> Result<Box<Self>, ReadError> {
         Self::read(cursor, ctx, depth).map(Box::new)
     }
+    /// The children of the node the cursor is on as its read routes them
+    /// (`Routed`); `None` for a node this transport reads without routing
+    /// its children, or one it does not admit. The cursor ends where it
+    /// started.
+    fn routes(cursor: &mut TreeCursor<'_>) -> Option<Routed> {
+        let _ = cursor;
+        None
+    }
+}
+
+/// A node's children as its read routes them: each child (`survey`), the
+/// route it takes (`Route`), and the wire key of each slot by its number.
+#[derive(Debug, Clone)]
+pub struct Routed {
+    pub children: Vec<Child>,
+    pub routes: Vec<Route>,
+    pub keys: &'static [&'static str],
+}
+
+/// The routes of the node at `index` read as `T` (`ReadTransport::routes`).
+/// The cursor was created at the tree's root.
+pub fn routes_at<T: ReadTransport>(cursor: &mut TreeCursor<'_>, index: u32) -> Option<Routed> {
+    cursor.goto_descendant(index as usize);
+    T::routes(cursor)
 }
 
 impl<T: ReadTransport> ReadTransport for Box<T> {
@@ -572,6 +610,9 @@ impl<T: ReadTransport> ReadTransport for Box<T> {
     }
     fn read(cursor: &mut TreeCursor<'_>, ctx: &ReadCtx<'_>, depth: Depth) -> Result<Self, ReadError> {
         T::read_boxed(cursor, ctx, depth)
+    }
+    fn routes(cursor: &mut TreeCursor<'_>) -> Option<Routed> {
+        T::routes(cursor)
     }
 }
 
@@ -1043,20 +1084,6 @@ pub fn delimiter(list: &Node<'_>, children: &[Child], routes: &[Route], items: u
         bits |= TRAILING;
     }
     bits
-}
-
-/// A list's separator kind: the kind of the first anonymous unfielded child
-/// that is one of `candidates`. Each candidate is a token's kind followed by
-/// the raw symbols the grammar folds into it; a child is that token when its
-/// grammar id is any of them, and the kind is what the list stores. A kind
-/// with a declared default falls back to it at its call site.
-pub fn separator_kind(children: &[Child], routes: &[Route], candidates: &[&[KindId]]) -> Option<u16> {
-    children.iter().zip(routes).find_map(|(child, route)| {
-        if child.named || child.field.is_some() || matches!(route, Route::Slot { .. }) {
-            return None;
-        }
-        candidates.iter().find(|token| token.contains(&child.grammar)).and_then(|token| token.first()).map(|kind| kind.0)
-    })
 }
 
 /// Read the node at `index` into `T`. The cursor was created at the tree's

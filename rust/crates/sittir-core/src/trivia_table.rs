@@ -22,11 +22,13 @@
 //! side. A list node (the grammar's list kinds) passes an extra or an
 //! `ERROR` to the item ending or starting at the token, where one does and
 //! the surface exposes it as a node (not a unit kind): the surface exposes a
-//! list's items, not the list. A layout run stays on the list, whose source
-//! flanks spell its edges. A run of whitespace holding a line break is a layout entry, placed
-//! as an entry ending on its last row is: it leads the child after it, or
-//! trails the child before it when none follows. A run on one line is no
-//! entry.
+//! list's items, not the list. A layout run stays on the list, whose own
+//! sides spell its edges. A run of whitespace is a layout entry, placed as an
+//! entry ending on its last row is: it leads the child after it, or trails
+//! the child before it when none follows. A side read turns it into a member
+//! only where it deviates from what the read-time options write there, or,
+//! in a gap of a list slot, from the class the slot stores
+//! (`ParsedTree::deviation`, `list_slots`).
 
 use std::collections::BTreeMap;
 

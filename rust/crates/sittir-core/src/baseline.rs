@@ -1,6 +1,7 @@
 //! What a parsed tree's read-time options render at each gap of its source:
-//! the line breaks a render of the whole tree from its templates writes
-//! there (`Baseline`), recorded by the writer as it renders (`Recorder`).
+//! the whitespace a render of the whole tree from its templates writes
+//! there, counted as line breaks, spaces and tabs (`Tally`, `Baseline`),
+//! recorded by the writer as it renders (`Recorder`).
 //!
 //! The writer anchors what it writes to the source by what it renders from:
 //! a node's frame (`RenderSink::open_frame`, its origin's span) and a slice
@@ -9,7 +10,8 @@
 //! breaks written after the text before it and before that text; one with
 //! no text before it in the render has nothing on that side. An anchor
 //! closing at a byte resolves at the next text after it the same way, from
-//! the breaks written when it closed. A gap of the source from `start` to
+//! the count when it closed. The whitespace between two counts is the
+//! difference of each of its tallies. A gap of the source from `start` to
 //! `end` reads the breaks written between what closes at `start` and what
 //! opens at `end`, either one standing in for the other when only one is
 //! anchored (`Baseline::between`).
@@ -30,15 +32,56 @@
 use std::cell::RefCell;
 use std::collections::HashMap;
 
+/// The whitespace a render has written so far: its line breaks, spaces and
+/// tabs. A gap's whitespace is the tally at its end less the tally at its
+/// start (`since`).
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct Tally {
+    pub breaks: u32,
+    pub spaces: u32,
+    pub tabs: u32,
+}
+
+impl Tally {
+    /// The tally of `s`.
+    pub fn of(s: &str) -> Self {
+        s.chars().fold(Self::default(), |tally, c| match c {
+            '\n' => Self { breaks: tally.breaks + 1, ..tally },
+            ' ' => Self { spaces: tally.spaces + 1, ..tally },
+            '\t' => Self { tabs: tally.tabs + 1, ..tally },
+            _ => tally,
+        })
+    }
+
+    /// What was written from `from` to this tally.
+    pub fn since(self, from: Self) -> Self {
+        Self { breaks: self.breaks.saturating_sub(from.breaks), spaces: self.spaces.saturating_sub(from.spaces), tabs: self.tabs.saturating_sub(from.tabs) }
+    }
+
+    fn plus(self, other: Self) -> Self {
+        Self { breaks: self.breaks + other.breaks, spaces: self.spaces + other.spaces, tabs: self.tabs + other.tabs }
+    }
+
+    /// The whitespace a gap of this tally writes, as a layout class reads it:
+    /// its line breaks alone when it breaks the line, its spaces and tabs
+    /// otherwise.
+    pub fn spelling(self) -> String {
+        if self.breaks > 0 {
+            "\n".repeat(self.breaks as usize)
+        } else {
+            format!("{}{}", " ".repeat(self.spaces as usize), "\t".repeat(self.tabs as usize))
+        }
+    }
+}
+
 /// One thing a frame wrote directly: a text, by its text, or a node inside
 /// it, rendered in a frame of its own or as a slice of its
-/// source, by its index; with the line breaks written before it and by its
-/// end.
+/// source, by its index; with the tally written before it and by its end.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Item {
     pub what: Written,
-    pub before: u32,
-    pub after: u32,
+    pub before: Tally,
+    pub after: Tally,
 }
 
 /// What an item is (`Item`).
@@ -57,34 +100,34 @@ impl Written {
     }
 }
 
-/// What a node's frame wrote: the line breaks written before its first text
-/// and by its close, and its items in order.
+/// What a node's frame wrote: the tally written before its first text and
+/// by its close, and its items in order.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct FrameItems {
-    pub open: u32,
-    pub close: u32,
+    pub open: Tally,
+    pub close: Tally,
     pub items: Vec<Item>,
 }
 
-/// The line breaks a recording render wrote, by the source bytes of what it
-/// wrote around them, and each node's frame by its index.
+/// The whitespace a recording render wrote, by the source bytes of what it
+/// wrote around it, and each node's frame by its index.
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct Baseline {
-    opens: HashMap<u32, (Option<u32>, u32)>,
-    closes: HashMap<u32, (u32, u32)>,
+    opens: HashMap<u32, (Option<Tally>, Tally)>,
+    closes: HashMap<u32, (Tally, Tally)>,
     frames: HashMap<u32, FrameItems>,
 }
 
 impl Baseline {
-    /// The line breaks written in the source gap from byte `start` to byte
+    /// The whitespace written in the source gap from byte `start` to byte
     /// `end`, or `None` when nothing the render wrote is anchored at either,
     /// or the render wrote nothing before it.
-    pub fn between(&self, start: u32, end: u32) -> Option<u32> {
+    pub fn between(&self, start: u32, end: u32) -> Option<Tally> {
         let close = self.closes.get(&start);
         let open = self.opens.get(&end);
         let from = close.map(|close| close.0).or_else(|| open?.0)?;
         let to = open.map(|open| open.1).or_else(|| close.map(|close| close.1))?;
-        Some(to.saturating_sub(from))
+        Some(to.since(from))
     }
 
     /// The frame the node at descendant `index` rendered in, when it did.
@@ -99,58 +142,74 @@ impl Baseline {
 struct OpenFrame {
     index: Option<u32>,
     end: Option<u32>,
-    open: Option<u32>,
+    open: Option<Tally>,
     items: Vec<Item>,
 }
 
 /// The counts of a trailing run the writer renders ahead of where it is
-/// written (`RenderSink::defer_trailing`): breaks counted from the run's
-/// start, and its anchors, resolved within the run or still waiting.
+/// written (`RenderSink::defer_trailing`): its tally from the run's start,
+/// and its anchors, resolved within the run or still waiting.
 #[derive(Debug, Default)]
 struct Run {
-    written: u32,
-    ended: u32,
-    last_end: Option<u32>,
+    written: Tally,
+    ended: Tally,
+    last_end: Option<Tally>,
     opens: Vec<u32>,
-    closes: Vec<(u32, u32)>,
-    resolved_opens: Vec<(u32, (Option<u32>, u32))>,
-    resolved_closes: Vec<(u32, (u32, u32))>,
+    closes: Vec<(u32, Tally)>,
+    resolved_opens: Vec<(u32, (Option<Tally>, Tally))>,
+    resolved_closes: Vec<(u32, (Tally, Tally))>,
 }
 
-/// The writer's side of a recording render: the breaks written so far, the
+/// The writer's side of a recording render: the tally written so far, the
 /// anchors waiting for the next text, and the open frames.
 #[derive(Debug)]
 pub struct Recorder<'a> {
     baseline: &'a RefCell<Baseline>,
-    written: u32,
-    ended: u32,
-    last_end: Option<u32>,
+    written: Tally,
+    ended: Tally,
+    last_end: Option<Tally>,
     opens: Vec<u32>,
-    closes: Vec<(u32, u32)>,
+    closes: Vec<(u32, Tally)>,
     frames: Vec<OpenFrame>,
     deferring: Option<Run>,
     held: Vec<Run>,
     counting: bool,
-    text_before: u32,
+    text_before: Tally,
+    /// The first byte the run written last opens and the tally ended before
+    /// it, until the next text (`wrote_run`).
+    before_run: Option<(u32, Tally)>,
 }
 
 impl<'a> Recorder<'a> {
     pub fn new(baseline: &'a RefCell<Baseline>) -> Self {
-        Self { baseline, written: 0, ended: 0, last_end: None, opens: Vec::new(), closes: Vec::new(), frames: Vec::new(), deferring: None, held: Vec::new(), counting: true, text_before: 0 }
+        Self {
+            baseline,
+            written: Tally::default(),
+            ended: Tally::default(),
+            last_end: None,
+            opens: Vec::new(),
+            closes: Vec::new(),
+            frames: Vec::new(),
+            deferring: None,
+            held: Vec::new(),
+            counting: true,
+            text_before: Tally::default(),
+            before_run: None,
+        }
     }
 
     /// Text reached the output, or the run being deferred.
     pub fn emitted(&mut self, s: &str) {
-        let breaks = s.matches('\n').count() as u32;
+        let tally = Tally::of(s);
         match self.deferring.as_mut() {
-            Some(run) => run.written += breaks,
-            None => self.written += breaks,
+            Some(run) => run.written = run.written.plus(tally),
+            None => self.written = self.written.plus(tally),
         }
     }
 
-    /// The line breaks `s` ends with.
-    fn tail_of(s: &str) -> u32 {
-        s[s.trim_end().len()..].matches('\n').count() as u32
+    /// The whitespace `s` ends with.
+    fn tail_of(s: &str) -> Tally {
+        Tally::of(&s[s.trim_end().len()..])
     }
 
     /// A node's frame opened, from the node at `origin` when it was read
@@ -194,7 +253,10 @@ impl<'a> Recorder<'a> {
     pub fn close(&mut self, end: u32) {
         match self.deferring.as_mut() {
             Some(run) => run.closes.push((end, run.ended)),
-            None => self.closes.push((end, self.ended)),
+            None => {
+                let at = self.before_run.filter(|&(first, _)| end <= first).map_or(self.ended, |(_, ended)| ended);
+                self.closes.push((end, at));
+            }
         }
     }
 
@@ -226,6 +288,7 @@ impl<'a> Recorder<'a> {
             baseline.closes.insert(end, (at, now));
         }
         drop(baseline);
+        self.before_run = None;
         self.text_before = now;
         for frame in self.frames.iter_mut().rev().take_while(|frame| frame.open.is_none()) {
             frame.open = Some(now);
@@ -246,11 +309,11 @@ impl<'a> Recorder<'a> {
         let tail = Self::tail_of(s);
         match self.deferring.as_mut() {
             Some(run) => {
-                run.ended = run.written.saturating_sub(tail);
+                run.ended = run.written.since(tail);
                 run.last_end = Some(run.ended);
             }
             None => {
-                self.ended = self.written.saturating_sub(tail);
+                self.ended = self.written.since(tail);
                 self.last_end = Some(self.ended);
                 if self.counting {
                     if let Some(item) = self.frames.iter_mut().rev().find(|frame| frame.index.is_some()).and_then(|frame| frame.items.last_mut()) {
@@ -287,31 +350,85 @@ impl<'a> Recorder<'a> {
     }
 
     /// The next held run was just written where the output stood: its
-    /// anchors count from the breaks written before it, and what closed
-    /// before it closes at its first text.
+    /// anchors count from the breaks written before it, an anchor opening
+    /// before its first text counting from the end of the text before the
+    /// run, and what closed before it closes at its first text. Until the next text, a source
+    /// text closing at or before the first byte the run opens (a frame
+    /// around the node whose trailing run it is) closed before the run
+    /// (`close`).
     pub fn wrote_run(&mut self) {
         if self.held.is_empty() {
             return;
         }
         let run = self.held.remove(0);
-        let base = self.written.saturating_sub(run.written);
-        let before = self.last_end.map(|_| base);
+        let base = self.written.since(run.written);
+        let before = self.last_end;
+        let first = run.resolved_opens.iter().map(|&(start, _)| start).chain(run.opens.iter().copied()).min();
+        self.before_run = first.map(|first| (first, self.ended));
         let mut baseline = self.baseline.borrow_mut();
         for (end, at) in self.closes.drain(..) {
             baseline.closes.insert(end, (at, base));
         }
         for (start, (prev, now)) in run.resolved_opens {
-            baseline.opens.entry(start).or_insert((prev.map(|prev| base + prev).or(before), base + now));
+            baseline.opens.entry(start).or_insert((prev.map(|prev| base.plus(prev)).or(before), base.plus(now)));
         }
         for (end, (at, now)) in run.resolved_closes {
-            baseline.closes.insert(end, (base + at, base + now));
+            baseline.closes.insert(end, (base.plus(at), base.plus(now)));
         }
         drop(baseline);
         self.opens.extend(run.opens);
-        self.closes.extend(run.closes.into_iter().map(|(end, at)| (end, base + at)));
-        self.last_end = run.last_end.map(|end| base + end).or(self.last_end);
+        self.closes.extend(run.closes.into_iter().map(|(end, at)| (end, base.plus(at))));
+        self.last_end = run.last_end.map(|end| base.plus(end)).or(self.last_end);
         if let Some(end) = run.last_end {
-            self.ended = base + end;
+            self.ended = base.plus(end);
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn text(recorder: &mut Recorder<'_>, s: &str) {
+        recorder.before_text(s);
+        recorder.emitted(s);
+        recorder.after_text(s);
+    }
+
+    #[test]
+    fn a_frame_closing_after_its_node_trailing_run_was_written_closes_before_the_run() {
+        let baseline = RefCell::new(Baseline::default());
+        let mut recorder = Recorder::new(&baseline);
+        recorder.open(14);
+        text(&mut recorder, "b");
+        recorder.close(15);
+        recorder.start_run();
+        recorder.open(16);
+        text(&mut recorder, "# c");
+        recorder.close(19);
+        recorder.end_run(true);
+        recorder.emitted(" ");
+        recorder.emitted("# c");
+        recorder.wrote_run();
+        recorder.close(15);
+        recorder.open(20);
+        text(&mut recorder, "x");
+        assert_eq!(baseline.borrow().between(15, 16), Some(Tally { spaces: 1, ..Tally::default() }));
+    }
+
+    #[test]
+    fn a_trailing_run_after_text_with_no_anchor_measures_from_that_text() {
+        let baseline = RefCell::new(Baseline::default());
+        let mut recorder = Recorder::new(&baseline);
+        text(&mut recorder, "this");
+        recorder.start_run();
+        recorder.open(10);
+        text(&mut recorder, "/* c */");
+        recorder.close(17);
+        recorder.end_run(true);
+        recorder.emitted(" ");
+        recorder.emitted("/* c */");
+        recorder.wrote_run();
+        assert_eq!(baseline.borrow().between(9, 10), Some(Tally { spaces: 1, ..Tally::default() }));
     }
 }

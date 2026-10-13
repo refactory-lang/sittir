@@ -118,8 +118,9 @@ export function formatGrammarCounts(counts: GrammarCounts): string {
 		`  read-render-parse-shallowPass=${readRenderParseShallow.pass}    read-render-parse-shallowTotal=${readRenderParseShallow.total}    read-render-parse-shallowAstMatchPass=${readRenderParseShallow.astMatchPass}    read-render-parse-shallowTrivia=${readRenderParseShallow.trivia.length}`,
 		`  factory-storagePass=${factoryStorage.pass}    factory-storageTotal=${factoryStorage.total}    factory-storageAstMatchPass=${factoryStorage.astMatchPass}`,
 		`  ir-storagePass=${irStorage.pass}    ir-storageTotal=${irStorage.total}    ir-storageAstMatchPass=${irStorage.astMatchPass}`,
-		`  built-render-parsePass=${builtRenderParse.pass}    built-render-parseTotal=${builtRenderParse.total}    built-render-parseAstMatchPass=${builtRenderParse.astMatchPass}`,
-		`  layout-runsTotal=${layoutRuns.total}    layout-runsUnreached=${layoutRuns.unreached.length}    layout-runsRefused=${layoutRuns.refused.length}`
+		`  built-render-parsePass=${builtRenderParse.pass}    built-render-parseTotal=${builtRenderParse.total}    built-render-parseAstMatchPass=${builtRenderParse.astMatchPass}    built-render-parseSeparatorTolerated=${builtRenderParse.separatorTolerated}`,
+		`  layout-runsTotal=${layoutRuns.total}    layout-runsUnreached=${layoutRuns.unreached.length}    layout-runsRefused=${layoutRuns.refused.length}`,
+		`  layout-storedDeviations=${layoutRuns.stored.deviations}    layout-storedSlots=${layoutRuns.stored.slots}    layout-storedSeparators=${layoutRuns.stored.separators}`
 	];
 	const rtFails = formatFirstFailures(
 		'read-render-parse',
@@ -217,12 +218,16 @@ export function toValidationRun(counts: GrammarCounts): ValidationRun {
 		builtRenderParsePass: builtRenderParse.pass,
 		builtRenderParseTotal: builtRenderParse.total,
 		builtRenderParseAstMatchPass: builtRenderParse.astMatchPass,
+		builtRenderParseSeparatorTolerated: builtRenderParse.separatorTolerated,
 		fromTrivia: from.trivia.length,
 		readRenderParseTrivia: readRenderParse.trivia.length,
 		readRenderParseShallowTrivia: readRenderParseShallow.trivia.length,
 		layoutRunsTotal: layoutRuns.total,
 		layoutRunsUnreached: layoutRuns.unreached.length,
-		layoutRunsRefused: layoutRuns.refused.length
+		layoutRunsRefused: layoutRuns.refused.length,
+		layoutStoredDeviations: layoutRuns.stored.deviations,
+		layoutStoredSlots: layoutRuns.stored.slots,
+		layoutStoredSeparators: layoutRuns.stored.separators
 	};
 }
 

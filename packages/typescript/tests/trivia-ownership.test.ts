@@ -18,9 +18,9 @@ function leadLastStatementOfFirstBody(root: ReturnType<typeof ts.parse>): void {
 describe('a comment between two of its owner tokens, with no named child beside it, goes to the nearest child', () => {
 	it('keeps it through an edit inside its owner and through a snapshot', () => {
 		const root = ts.parse('for /* keep */ (;;) { x(); }\n');
-		expect(ts.render(root.$snapshot()).toString()).toBe('for (/* keep */ ;;) { x(); }\n');
+		expect(ts.render(root.$snapshot()).toString()).toBe('for (/* keep */;;) { x(); }\n');
 		leadLastStatementOfFirstBody(root);
-		expect(root.$render()).toBe('for (/* keep */ ;;) {\n  // lead\n  x(); }\n');
+		expect(root.$render()).toBe('for (/* keep */;;) {\n  // lead\n  x(); }\n');
 	});
 
 	it('trails the last item of a list when it sits after the trailing separator', () => {
