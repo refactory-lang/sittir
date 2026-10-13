@@ -27,13 +27,13 @@ docs/superpowers/probes/2026-10-12-vocabulary-synonyms/run.sh [commit]   # defau
   - `results/kinds.txt`: every kind except the owner × level refinements, with its owner, its claims per grammar, its members and its flags.
   - `results/identifiers.txt`: each grammar's identifier-like kinds, the paths that claim them, and the words the grammar aliases to an identifier kind.
   - `results/collisions.txt`: applies the proposal's renames to the 587 kinds, then checks every synonym against the collision rule at every position its canonical segment has.
-- **`proposal.json`** holds the ruled proposal. It has 65 renames: 24 to neutral terms, 27 that collapse name-only kinds, 13 that collapse identifiers, and one that removes `statement.import.type`, since a type-only import or export is the `typeOnly` flag. It adds 18 kinds: the primitive types' 16 refinements, the rest type's `**` form, and typescript's import-equals statement. It gives 61 canonical segments 88 synonyms. Its flag table is empty, and it excludes ten words. Each rename carries the question that decides it. The members merged kinds take are in §2, not in the file.
+- **`proposal.json`** holds the ruled proposal. It has 67 renames: 24 to neutral terms, 27 that collapse name-only kinds, 13 that collapse identifiers, one that removes `statement.import.type`, since a type-only import or export is the `typeOnly` flag, and two from the SCIP census (`../2026-10-12-scip-kinds/`): the root level `module` becomes `file`, and rust's static item is a `declaration.variable`. It adds 18 kinds: the primitive types' 16 refinements, the rest type's `**` form, and typescript's import-equals statement. It gives 61 canonical segments 87 synonyms. Its flag table is empty, and it excludes ten words. Each rename carries the question that decides it. The members merged kinds take are in §2, not in the file.
 
 ## Answer
 
 1. **Neutral terms.**
    - Eighteen facts rename to a neutral term (§1).
-   - The table passes the collision rule: 121 synonym positions were checked, with no collision (§4).
+   - The table passes the collision rule: 120 synonym positions were checked, with no collision (§4).
    - No flag needs a synonym. Every flag name is either neutral or the only language's word for the flag. Flags can still take synonyms; that needs three more checks (§4).
 2. **Name-only.**
    - No feature is a name and nothing else.
@@ -84,7 +84,7 @@ A segment takes the term no language owns when such a term exists. Each language
 | --- | --- |
 | `argument` | `named`: keyword |
 | `clause` | `catch`: except, rescue · `else_if`: elif, elsif, elseif · `finally`: ensure · `resource`: using · `wildcard`: glob · `bounds`: constraint · `case`: arm |
-| `declaration` | `receiver`: self, this · `module`: namespace, mod · `struct`: record · `type_alias`: typedef, typealias · `enum_member`: variant, enumerator · `field`: property · `constructor`: initializer, init · `extension`: impl · `special`: dunder, magic · `foreign`: extern · `internal`: crate |
+| `declaration` | `receiver`: self, this · `module`: mod · `struct`: record · `type_alias`: typedef, typealias · `enum_member`: variant, enumerator · `constructor`: initializer, init · `extension`: impl · `special`: dunder, magic · `foreign`: extern · `internal`: crate · `index`: indexer |
 | `element` | `spread`: splat, unpack · `map`: dictionary, dict |
 | `expression` | `coalesce`: nullish · `generator`: gen · `construct`: new · `propagate`: try · `lambda`: closure, arrow · `member`: attribute, field, property · `subscript`: index · `conditional`: ternary · `reference`: borrow · `list`: array · `compound`: augmented · `map`: dictionary, dict · `matrix_multiply`: matmul · `qualified`: path, scoped |
 | `identifier` | `qualified`: dotted, nested, scoped, path · `receiver`: self, this · `super`: base |
@@ -237,7 +237,7 @@ A flag's synonym is rejected when it is equal to any of these:
 
 These three checks are the ones flags need beyond the segment checks.
 
-**Result.** 121 synonym positions were checked, with no collision. There is one note: `try` is a synonym of `propagate` at the `expression` level, and also the canonical segment of `expression.block.try`. That is legal, because canonical names resolve first at each position.
+**Result.** 120 synonym positions were checked, with no collision. There is one note: `try` is a synonym of `propagate` at the `expression` level, and also the canonical segment of `expression.block.try`. That is legal, because canonical names resolve first at each position.
 
 ## Findings
 

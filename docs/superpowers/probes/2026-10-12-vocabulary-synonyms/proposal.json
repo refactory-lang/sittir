@@ -64,7 +64,9 @@
   ["statement.loop.for", "statement.loop.for_each", "NT13"],
   ["pattern.match", null, "NO7"],
   ["pattern.tuple.struct", "pattern.struct", "NO9"],
-  ["statement.import.type", null, "typeOnly"]
+  ["statement.import.type", null, "typeOnly"],
+  ["module", "file", "SK4"],
+  ["declaration.variable.static", "declaration.variable", "SK2"]
  ],
  "adds": [
   ["statement.import.alias", "NO11"],
@@ -99,16 +101,16 @@
   },
   "declaration": {
    "receiver": ["self", "this"],
-   "module": ["namespace", "mod"],
+   "module": ["mod"],
    "struct": ["record"],
    "type_alias": ["typedef", "typealias"],
    "enum_member": ["variant", "enumerator"],
-   "field": ["property"],
    "constructor": ["initializer", "init"],
    "extension": ["impl"],
    "special": ["dunder", "magic"],
    "foreign": ["extern"],
-   "internal": ["crate"]
+   "internal": ["crate"],
+   "index": ["indexer"]
   },
   "element": {"spread": ["splat", "unpack"], "map": ["dictionary", "dict"]},
   "expression": {

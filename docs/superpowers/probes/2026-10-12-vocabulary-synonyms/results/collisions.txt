@@ -1,4 +1,4 @@
-587 kinds; 65 renames and 18 additions give 573 kinds
+587 kinds; 67 renames and 18 additions give 572 kinds
 
 == argument
   named            keyword                          at argument.named (1)
@@ -14,10 +14,10 @@
   constructor      initializer init                 at declaration.constructor (1)
   enum_member      variant enumerator               at declaration.enum_member (1)
   extension        impl                             at declaration.extension (1)
-  field            property                         at declaration.field (1)
   foreign          extern                           at declaration.module.foreign (1)
+  index            indexer                          at declaration.signature.index (1)
   internal         crate                            at declaration.constant.public.internal, declaration.enum.public.internal, declaration.enum_member.public.internal, declaration.enum_member.struct.public.internal … (20)
-  module           namespace mod                    at declaration.module (1)
+  module           mod                              at declaration.module (1)
   receiver         self this                        at declaration.parameter.receiver (1)
   special          dunder magic                     at declaration.method.special (1)
   struct           record                           at declaration.enum_member.struct, declaration.struct (2)
@@ -88,5 +88,5 @@
   long     64 bits in Java and C#; platform-sized in C
   float    32 bits in C, Java, C# and Swift; a double in python
 
-121 synonym positions checked; 0 collisions
+120 synonym positions checked; 0 collisions
   note expression: `try` is a synonym of `propagate` and the canonical segment of expression.block.try

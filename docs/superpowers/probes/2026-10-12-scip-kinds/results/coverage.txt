@@ -1,4 +1,4 @@
-85 SCIP kinds: 36 none, 23 kind, 10 name, 9 family, 5 flag, 2 owner
+85 SCIP kinds: 35 none, 23 kind, 11 family, 10 name, 4 flag, 2 owner
 kind: one vocabulary kind; family: one of SCIP's analogous kinds, which the vocabulary holds as one kind; flag: a kind with a flag set; owner: a kind under an owner kind; name: the same word for a different fact; none: a fact no vocabulary kind holds
 
 == kind (23)
@@ -10,7 +10,7 @@ kind: one vocabulary kind; family: one of SCIP's analogous kinds, which the voca
   EnumMember           declaration.enum_member
   Extension            declaration.extension  (Dart's extension; rust's inherent impl is the vocabulary's)
   Field                declaration.field, declaration.field.signature
-  File                 module  (the vocabulary's root kind is a source file)
+  File                 file  (the vocabulary's root kind, a source file)
   Function             declaration.function, declaration.function.signature
   Getter               declaration.method.getter, declaration.method.signature.getter
   Interface            declaration.interface
@@ -26,23 +26,24 @@ kind: one vocabulary kind; family: one of SCIP's analogous kinds, which the voca
   Union                declaration.union
   Variable             declaration.variable
 
-== family (9)
+== family (11)
   AbstractMethod       declaration.method.signature.abstract, declaration.method.signature  (a method with no body: the abstract signature, or a signature in an interface)
   MethodReceiver       declaration.parameter.receiver  (Go's receiver, which has no conventional name)
   MethodSpecification  declaration.method.signature  (Go's interface method)
-  Namespace            declaration.module  (typescript's namespace is declaration.module, whose synonym namespace is)
-  Property             declaration.field  (property is a synonym of field)
+  Namespace            declaration.module  (typescript's namespace is declaration.module; namespace is no synonym, so it stays free for the C++ and C# namespace)
+  Property             declaration.field  (typescript's property is a field; property is no synonym, so it stays free for C#'s property, which has accessors)
   Protocol             declaration.interface  (Swift's protocol; the bindings spec places it as declaration.interface.protocol, which no grammar claims yet)
   PureVirtualMethod    declaration.method.signature.abstract  (C++'s abstract method)
   SelfParameter        declaration.parameter.receiver, identifier.receiver  (self is a synonym of receiver)
+  StaticVariable       declaration.variable  (C's static variable, and rust's static item, a declaration.variable)
+  Subscript            declaration.signature.index  (Swift's subscript declaration, which typescript's index signature and C#'s indexer also declare; index takes the synonym indexer)
   ThisParameter        declaration.parameter.receiver, identifier.receiver  (this is a synonym of receiver)
 
-== flag (5)
+== flag (4)
   StaticDataMember     declaration.field#static  (C++'s static field)
   StaticField          declaration.field#static
   StaticMethod         declaration.method#static
   StaticProperty       declaration.field#static
-  StaticVariable       declaration.variable#static  (C's static variable; rust's static item is ruled a declaration.constant)
 
 == owner (2)
   ProtocolMethod       declaration.method.signature  (a signature in a protocol)
@@ -60,7 +61,7 @@ kind: one vocabulary kind; family: one of SCIP's analogous kinds, which the voca
   String               literal.string, type.primitive.string  (a data file's string symbol)
   Value                element.pair  (a data file's value symbol)
 
-== none (36)
+== none (35)
   Accessor             -  (ruby's attr_accessor)
   Assertion            -  (alloy)
   Axiom                -  (lean)
@@ -90,7 +91,6 @@ kind: one vocabulary kind; family: one of SCIP's analogous kinds, which the voca
   SingletonClass       -  (ruby)
   SingletonMethod      -  (ruby, analogous to StaticMethod)
   StaticEvent          -  (C#)
-  Subscript            -  (swift's subscript declaration; the nearest fact is typescript's index signature, declaration.signature.index)
   Tactic               -  (lean)
   Theorem              -  (lean)
   Type                 -  (OCaml's type definition)
@@ -98,7 +98,7 @@ kind: one vocabulary kind; family: one of SCIP's analogous kinds, which the voca
   TypeClassMethod      -  (haskell, purescript)
   TypeFamily           -  (haskell)
 
-== declaration kinds: 52 of 58 reached by a SCIP kind
+== declaration kinds: 53 of 57 reached by a SCIP kind
   declaration.ambient                              (none)
   declaration.class                                Class
   declaration.constant                             Constant
@@ -140,8 +140,8 @@ kind: one vocabulary kind; family: one of SCIP's analogous kinds, which the voca
   declaration.signature                            (none)
   declaration.signature.call                       (none)
   declaration.signature.construct                  Constructor
-  declaration.signature.index                      (none)
-  declaration.signature.index.mapped               (none)
+  declaration.signature.index                      Subscript
+  declaration.signature.index.mapped               Subscript through declaration.signature.index
   declaration.struct                               Struct
   declaration.struct.tuple                         Struct through declaration.struct
   declaration.struct.unit                          Struct through declaration.struct
@@ -151,11 +151,10 @@ kind: one vocabulary kind; family: one of SCIP's analogous kinds, which the voca
   declaration.type_parameter.lifetime              TypeParameter through declaration.type_parameter
   declaration.type_parameter.value                 TypeParameter through declaration.type_parameter
   declaration.union                                Union
-  declaration.variable                             StaticVariable (#static), Variable
-  declaration.variable.constant                    StaticVariable (#static), Variable through declaration.variable
-  declaration.variable.pattern                     StaticVariable (#static), Variable through declaration.variable
-  declaration.variable.reassignable                StaticVariable (#static), Variable through declaration.variable
-  declaration.variable.reassignable.function_scoped StaticVariable (#static), Variable through declaration.variable
-  declaration.variable.static                      StaticVariable (#static), Variable through declaration.variable
+  declaration.variable                             StaticVariable, Variable
+  declaration.variable.constant                    StaticVariable, Variable through declaration.variable
+  declaration.variable.pattern                     StaticVariable, Variable through declaration.variable
+  declaration.variable.reassignable                StaticVariable, Variable through declaration.variable
+  declaration.variable.reassignable.function_scoped StaticVariable, Variable through declaration.variable
 
 == mapped paths the ruled vocabulary lacks (0)

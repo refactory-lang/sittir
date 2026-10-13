@@ -27,7 +27,7 @@ One file per grammar package, `packages/<grammar>/bindings.scm`, written in tree
 
 ### 2.1 Form
 
-- **Sixteen sections in a fixed order,** identical in every file, an empty section left visible where a grammar has nothing: `module`, `declaration`, `statement`, `clause`, `argument`, `element`, `expression`, `pattern`, `type`, `literal`, `identifier`, `modifier`, `attribute`, `comment`, `keyword / punctuation`, `unclaimed`.
+- **Sixteen sections in a fixed order,** identical in every file, an empty section left visible where a grammar has nothing: `file`, `declaration`, `statement`, `clause`, `argument`, `element`, `expression`, `pattern`, `type`, `literal`, `identifier`, `modifier`, `attribute`, `comment`, `keyword / punctuation`, `unclaimed`.
 - **One claim per line,** the parent before its refinements, refinements in the order of the vocabulary.
 - **Kind claims** are dotted captures on nodes: `(binary_expression) @expression.binary`. A single-segment capture alone on a pattern's top node claims the namespace's root kind: `(identifier) @identifier`.
 - **A text piece is a kind.** A node that carries only text is claimed as a kind of its own: a string's text between its escapes and interpolations is `literal.string.text` (`(string_fragment) @literal.string.text`), a comment's text after its marker is `comment.text`, and a regex's pattern and flags are `literal.regex.pattern` and `literal.regex.flags`. Like `literal.string.escape`, each extends the kind it sits in, so a text piece also reads as that kind, and the slot that holds it is a member of its parent typed by its kind.
@@ -72,13 +72,13 @@ One file per grammar package, `packages/<grammar>/bindings.scm`, written in tree
 
 ### 3.1 Namespaces
 
-Fourteen top-level namespaces. Eleven are semantic: `module`, `declaration`, `statement`, `expression`, `pattern`, `type`, `literal`, `identifier`, `modifier`, `attribute`, `comment`. Three are role namespaces, for pieces that belong to a construct without being one:
+Fourteen top-level namespaces. Eleven are semantic: `file`, `declaration`, `statement`, `expression`, `pattern`, `type`, `literal`, `identifier`, `modifier`, `attribute`, `comment`. Three are role namespaces, for pieces that belong to a construct without being one:
 
 - `clause`: pieces of a statement or declaration: `else`, `catch`, `where`, a type annotation, a trait bound, a match arm, import and export specifiers;
 - `argument`: pieces of a call that are not expressions, such as python's keyword argument;
 - `element`: pieces of a composite expression that are not expressions: a pair, a spread, a struct field initializer, a JSX attribute, a token tree.
 
-Keyword and punctuation classes are not namespaces (§2.1). The root of a file is `module`, the namespace's root kind, claimed by python's `module`, typescript's `program` and rust's `source_file`; a module declared inside a file (`mod`, `namespace`) is `declaration.module`.
+Keyword and punctuation classes are not namespaces (§2.1). The root of a file is `file`, the namespace's root kind, claimed by python's `module`, typescript's `program` and rust's `source_file`; a module declared inside a file (`mod`, `namespace`) is `declaration.module`. A file is the neutral term: a C or C++ file is no module.
 
 Placement is **semantic namespace first, language qualifier as the refinement**: a macro invocation is `expression.call.macro`, a JSX element `expression.jsx.element`, a `where` clause `clause.where`. A language-specific leaf is assignable to its shared parent, so cross-language reading sees rust's macro invocations as calls; only cross-language building fails, at the leaf the target lacks.
 
@@ -117,7 +117,7 @@ A fact the vocabulary states about a kind takes one of three forms: a refinement
     - A method's `static` is one flag in every language: python's `@staticmethod`, typescript's `static` and rust's associated function with no receiver, neither `self` nor a typed `self: Box<Self>`, set it. A python `@classmethod` is a plain `declaration.method`, and no fact holds a method's binding to its class.
     - `async` names every async form: a function, a closure, typescript's `for await` and `await using`, and python's `async for` and `async with`.
     - Rust's function modifiers decompose alike on a function and on a signature: the flags `async`, `const`, `unsafe` and `default`, and `extern`, a member holding the `modifier.extern` that names the ABI.
-  - **A binding's facts are flags** of variables, parameters and patterns: `mutable` (typescript's `let` and `var`, rust's `mut`), `functionScoped` (typescript's `var`), `byReference` (rust's `ref`), and `disposable` (typescript's `using`), with `async` beside it for `await using`. A typescript `const` is a variable without `mutable`. Rust's `const` and `static` items and python's upper-case names, constants by convention, are a kind of their own, `declaration.constant`: a `static mut` item has `mutable` set, and lazy_static's `static ref` has `byReference` set.
+  - **A binding's facts are flags** of variables, parameters and patterns: `mutable` (typescript's `let` and `var`, rust's `mut`), `functionScoped` (typescript's `var`), `byReference` (rust's `ref`), and `disposable` (typescript's `using`), with `async` beside it for `await using`. A typescript `const` is a variable without `mutable`. Rust's `const` items, which are inlined, and python's upper-case names, constants by convention, are a kind of their own, `declaration.constant`. Rust's `static` item is storage with an address, a `declaration.variable`: `static mut` sets `mutable`, and lazy_static's `static ref` sets `byReference`.
     - `mutable` is the binding's mutability, everywhere. A reference's is `exclusive`: `&mut T`, `&mut x` and `&mut pat` set it on `type.reference`, `expression.reference` and `pattern.reference`, and the receiver's `.reference.exclusive` names it. `ref mut x` sets `byReference` and `exclusive` (§9). A raw pointer's is `writable`: `*mut T` sets it on `type.pointer`, and `&raw mut x` on `expression.reference`, a raw borrow, which has `raw` set. Raw pointers alias, so neither is `exclusive`.
   - **What changes eligibility is a refinement kind.**
     - A rust block's `try`, `async`, `gen`, `const` and `unsafe` are refinements of `expression.block`: each wraps a body block, fifteen slots admit only a plain block, and a const block is a pattern as well. `move` is a flag of the async and gen blocks, so `async move { }` is `expression.block.async` with `move` set.

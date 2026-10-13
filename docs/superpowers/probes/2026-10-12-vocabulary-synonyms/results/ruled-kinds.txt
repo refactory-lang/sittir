@@ -116,12 +116,11 @@ declaration.type_parameter                       <- declaration.type_parameter  
 declaration.type_parameter.lifetime              <- declaration.type_parameter.lifetime  r:lifetime_parameter
 declaration.type_parameter.value                 <- declaration.type_parameter.value  r:const_parameter
 declaration.union                                <- declaration.union  r:union_item
-declaration.variable                             <- declaration.variable  p:assignment_eq,assignment_type,assignment_typed r:let_declaration t:lexical_declaration,variable_declarator_definite,variable_declarator_p
+declaration.variable                             <- declaration.variable, declaration.variable.static  p:assignment_eq,assignment_type,assignment_typed r:let_declaration t:lexical_declaration,variable_declarator_definite,variable_declarator_p r:static_item
 declaration.variable.constant                    <- declaration.variable.constant  t:lexical_declaration
 declaration.variable.pattern                     <- declaration.variable.pattern  t:variable_declarator_plain
 declaration.variable.reassignable                <- declaration.variable.reassignable  t:lexical_declaration
 declaration.variable.reassignable.function_scoped <- declaration.variable.reassignable.function_scoped  t:variable_declaration
-declaration.variable.static                      <- declaration.variable.static  r:static_item
 element                                          <- element
 element.comparator                               <- element.comparator  p:comparison_operator_comparator
 element.comparator.comparison                    <- element.comparator.comparison
@@ -284,6 +283,7 @@ expression.update.decrement                      <- expression.update.decrement 
 expression.update.increment                      <- expression.update.increment  t:update_expression_postfix,update_expression_prefix
 expression.yield                                 <- expression.yield  p:yield r:yield_expression t:yield_expression
 expression.yield.delegate                        <- expression.yield.delegate  p:yield_from_clause t:yield_expression_delegate
+file                                             <- module  p:module r:source_file t:program
 identifier                                       <- identifier, identifier.crate, identifier.field, identifier.property, identifier.property.shorthand, identifier.type  p:identifier r:identifier t:identifier p:type r:type_identifier t:type_identifier r:crate r:field_identifier r:shorthand_field_identifier t:shorthand_property_identifier,shorthand_property_identifier_pattern t:private_property_identifier,property_identifier
 identifier.label                                 <- identifier.label  r:label t:statement_identifier
 identifier.lifetime                              <- identifier.lifetime  r:lifetime
@@ -332,7 +332,6 @@ modifier.visibility.protected                    <- modifier.visibility.protecte
 modifier.visibility.public                       <- modifier.visibility.public  r:visibility_modifier_pub t:accessibility_modifier
 modifier.visibility.public.internal              <- modifier.visibility.public.internal  r:visibility_modifier,visibility_modifier_pub
 modifier.visibility.public.restricted            <- modifier.visibility.public.restricted  r:visibility_modifier_pub
-module                                           <- module  p:module r:source_file t:program
 pattern                                          <- pattern
 pattern.as                                       <- pattern.captured, pattern.case.as  p:case_as_pattern r:captured_pattern
 pattern.assignment                               <- pattern.assignment  t:assignment_pattern
