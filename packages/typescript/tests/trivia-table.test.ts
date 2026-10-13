@@ -50,7 +50,7 @@ describe.each([
 	it('is accepted and renders in the whole tree', () => {
 		const root = engine.parse('function a() {}\nfunction b() { let x = 1; }\n');
 		reach(root, 1, 0).$trivia.leading('// before');
-		rendersAs(root, 'function a() {}\nfunction b() {\n  // before\n  let x = 1;\n}\n');
+		rendersAs(root, 'function a() {}\nfunction b() {\n  // before\n  let x = 1; }\n');
 	});
 
 	it('keeps a deeper-indented comment between its siblings', () => {

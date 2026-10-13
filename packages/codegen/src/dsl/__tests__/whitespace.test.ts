@@ -86,7 +86,8 @@ describe('enrich mints the layout supertype', () => {
 		expect(out.externals).toEqual([sym('_newline'), sym('_tight'), sym('_blankline'), sym('_double_blankline')]);
 		expect(getEnrichWhitespace(out)).toEqual({
 			bodies: { _tight: S(''), _newline: S('\n'), _blankline: S('\n\n'), _double_blankline: S('\n\n\n') },
-			collisions: []
+			collisions: [],
+			addedExternals: ['_tight', '_blankline', '_double_blankline']
 		});
 	});
 

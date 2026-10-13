@@ -8,12 +8,12 @@ export function rebuildTriviaRustGenerated() {
 		statements: [rs.build.functionItem.strict({
 			name: rs.build.identifier("f"),
 			parameters: rs.build.parameters.strict(),
-			body: rs.build.block.strict().$trivia.inner(rs.build.lineComment.strict(rs.build.lineCommentRegular(" TODO")), rs.kinds.Newline),
-		}).$trivia.leading(rs.build.blockComment.strict(rs.build.blockCommentRegular(" a ")), rs.kinds.Newline), rs.build.functionItem.strict({
+			body: rs.build.block.strict().$trivia.inner(rs.build.lineComment.strict(rs.build.lineCommentRegular(" TODO"))),
+		}).$trivia.leading(rs.build.blockComment.strict(rs.build.blockCommentRegular(" a "))), rs.build.functionItem.strict({
 			name: rs.build.identifier("g"),
 			parameters: rs.build.parameters.strict(),
 			body: rs.build.block.strict({}),
-		}).$trivia.leading(rs.kinds.Blankline).$trivia.trailing(rs.build.blockComment.strict(rs.build.blockCommentRegular(" t "))), rs.build.functionItem.strict({
+		}).$trivia.trailing(rs.build.blockComment.strict(rs.build.blockCommentRegular(" t "))), rs.build.functionItem.strict({
 			name: rs.build.identifier("h"),
 			parameters: rs.build.parameters.strict(),
 			body: rs.build.block.strict({
@@ -22,6 +22,6 @@ export function rebuildTriviaRustGenerated() {
 					arguments: rs.build.arguments.strict().$trivia.inner(rs.build.blockComment.strict(rs.build.blockCommentRegular(" a "))),
 				}))],
 			}),
-		}).$trivia.leading(rs.kinds.Blankline)],
+		})],
 	});
 }

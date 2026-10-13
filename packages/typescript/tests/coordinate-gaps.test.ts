@@ -26,7 +26,7 @@ describe('gaps between coordinates', () => {
 		expect(ts.render(rebuilt).toString()).toBe(rebuilt.$render());
 	});
 
-	it('spells the gaps around a replaced argument canonically and keeps the untouched pairs tight', () => {
+	it('spells the gaps around a replaced argument with the class its list slot takes', () => {
 		const statement = ts.parse('f(a,b,c);\n').statements()[0]!;
 		if (!ts.is.expressionStatement(statement)) throw new Error('expected an expression statement');
 		const call = statement.expression();
@@ -35,8 +35,8 @@ describe('gaps between coordinates', () => {
 		if (!ts.is.arguments(args)) throw new Error('expected arguments');
 		const [a, b, c] = args.elements();
 		const rebuilt = args.$with.elements(a!, ts.build.identifier('x'), c!);
-		expect(rebuilt.$render()).toBe('(a, x, c)');
-		expect(ts.render(rebuilt).toString()).toBe('(a, x, c)');
+		expect(rebuilt.$render()).toBe('(a,x,c)');
+		expect(ts.render(rebuilt).toString()).toBe('(a,x,c)');
 		expect(args.$with.elements(a!, b!, c!).$render()).toBe('(a,b,c)');
 	});
 

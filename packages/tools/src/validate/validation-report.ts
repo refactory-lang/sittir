@@ -93,9 +93,14 @@ export type ValidationReportEntry = DiagnosticEntryBase & {
  * marker population/representation, S3 separator possession, S4 slot
  * arity, S5 template projection, S6 factory extras, S7 zero-width-token
  * divergence, S8 validator/report artifacts. `trivia` holds the losses of
- * extras the native read drops (kept out of the validator totals).
+ * extras the native read drops (kept out of the validator totals). `layout`
+ * holds the layout runs no region's record reaches and the entries whose
+ * region render was refused: each keeps its source class at render, and the
+ * class's ceiling is zero.
  */
-export type SClass = 'S1' | 'S2' | 'S3' | 'S4' | 'S5' | 'S6' | 'S7' | 'S8' | 'trivia';
+export const S_CLASSES = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8', 'trivia', 'layout'] as const;
+
+export type SClass = (typeof S_CLASSES)[number];
 
 /** Codes that determine their S-class unambiguously, independent of message text. */
 const DIRECT_CODE_TO_S_CLASS: Readonly<Record<string, SClass>> = {
@@ -105,7 +110,9 @@ const DIRECT_CODE_TO_S_CLASS: Readonly<Record<string, SClass>> = {
 	'union-slot-mixed-row': 'S4',
 	'union-slot-routed-repeated': 'S4',
 	'accessor-throw': 'S4',
-	'coverage-missing-field': 'S5'
+	'coverage-missing-field': 'S5',
+	'layout-unreached': 'layout',
+	'layout-refused': 'layout'
 };
 
 /**
@@ -183,8 +190,6 @@ export function writeValidationReport(entries: readonly ValidationReportEntry[],
  * cleared class is a violation without anyone having to enumerate zeros.
  */
 export type SClassCeilings = Readonly<Record<string, Readonly<Partial<Record<SClass, number>>>>>;
-
-const S_CLASSES: readonly SClass[] = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8', 'trivia'];
 
 /** Count classified report entries per grammar per S-class. Unclassified entries are outside the taxonomy and not counted. */
 export function countSClassEntries(

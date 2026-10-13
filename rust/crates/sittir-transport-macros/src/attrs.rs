@@ -70,10 +70,9 @@ pub struct FlankAttrs {
     pub trailing: Option<u16>,
 }
 
-/// `#[separator_kind(candidates = […], default = …)]`.
+/// `#[separator_kind(candidates = […])]`.
 pub struct SeparatorKindAttrs {
     pub candidates: Vec<TokenGroup>,
-    pub default: Option<Path>,
 }
 
 fn key(path: &Path) -> String {
@@ -226,11 +225,10 @@ pub fn flank_attrs(attrs: &[Attribute]) -> syn::Result<Option<FlankAttrs>> {
 
 pub fn separator_kind_attrs(attrs: &[Attribute]) -> syn::Result<Option<SeparatorKindAttrs>> {
     let Some(attr) = attrs.iter().find(|a| a.path().is_ident("separator_kind")) else { return Ok(None) };
-    let mut out = SeparatorKindAttrs { candidates: Vec::new(), default: None };
+    let mut out = SeparatorKindAttrs { candidates: Vec::new() };
     attr.parse_nested_meta(|meta| {
         match key(&meta.path).as_str() {
             "candidates" => out.candidates = token_groups(meta.value()?)?,
-            "default" => out.default = Some(meta.value()?.parse()?),
             _ => return Err(meta.error("unknown `separator_kind` attribute")),
         }
         Ok(())

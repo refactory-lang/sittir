@@ -1492,13 +1492,13 @@
       ],
       "members": [
         {
-          "name": "listPatternCasePatterns",
+          "name": "elements",
           "route": "slot",
-          "slot": "list_pattern_case_patterns",
+          "slot": "elements",
           "path": [
             {
               "owner": "case_list_pattern",
-              "slot": "list_pattern_case_patterns"
+              "slot": "elements"
             }
           ]
         }
@@ -1567,13 +1567,13 @@
       ],
       "members": [
         {
-          "name": "listPatternCasePatterns",
+          "name": "elements",
           "route": "slot",
-          "slot": "list_pattern_case_patterns",
+          "slot": "elements",
           "path": [
             {
               "owner": "case_tuple_pattern",
-              "slot": "list_pattern_case_patterns"
+              "slot": "elements"
             }
           ]
         }
@@ -2936,13 +2936,13 @@
           ]
         },
         {
-          "name": "comprehensionClauses",
+          "name": "clauses",
           "route": "slot",
-          "slot": "comprehension_clauses",
+          "slot": "clauses",
           "path": [
             {
               "owner": "dictionary_comprehension",
-              "slot": "comprehension_clauses"
+              "slot": "clauses"
             }
           ]
         }
@@ -4266,13 +4266,13 @@
           ]
         },
         {
-          "name": "comprehensionClauses",
+          "name": "clauses",
           "route": "slot",
-          "slot": "comprehension_clauses",
+          "slot": "clauses",
           "path": [
             {
               "owner": "generator_expression",
-              "slot": "comprehension_clauses"
+              "slot": "clauses"
             }
           ]
         }
@@ -4972,13 +4972,13 @@
           ]
         },
         {
-          "name": "comprehensionClauses",
+          "name": "clauses",
           "route": "slot",
-          "slot": "comprehension_clauses",
+          "slot": "clauses",
           "path": [
             {
               "owner": "list_comprehension",
-              "slot": "comprehension_clauses"
+              "slot": "clauses"
             }
           ]
         }
@@ -5785,13 +5785,13 @@
           ]
         },
         {
-          "name": "comprehensionClauses",
+          "name": "clauses",
           "route": "slot",
-          "slot": "comprehension_clauses",
+          "slot": "clauses",
           "path": [
             {
               "owner": "set_comprehension",
-              "slot": "comprehension_clauses"
+              "slot": "clauses"
             }
           ]
         }

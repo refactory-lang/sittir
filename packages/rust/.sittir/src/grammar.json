@@ -14553,10 +14553,17 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "arms",
           "content": {
-            "type": "SYMBOL",
-            "name": "match_arm"
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "match_arm"
+            }
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {

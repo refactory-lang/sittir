@@ -194,9 +194,9 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 
 		expect(emitted).toContain('leading: node.delimiter.map(|d| d & 1 != 0).unwrap_or(false),');
 		expect(emitted).toContain('trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),');
-		expect(emitted).toContain('token: match node.separator_kind {');
-		expect(emitted).toContain('Some(3) => ",",');
-		expect(emitted).toContain('Some(4) => ";",');
+		expect(emitted).toMatch(/let member_separator: fn\(u16\) -> &'static str = \|kind\| match kind \{ 3 => ",", 4 => ";", _ => [^}]+ \};/);
+		expect(emitted).toContain('token: node.separator_kind.map_or(');
+		expect(emitted).toContain('separators: Some((::sittir_core::layout::slot_tokens(node.layout.as_deref(), "_member"), member_separator)),');
 	});
 
 	it('fills separator_kind from the declared separator site and falls back to the declared token', () => {
@@ -220,7 +220,7 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 		}).transportRs.contents;
 
 		expect(emitted).toContain('self.separator_kind.get_or_insert(ctx.options.spacing[options::SITE_MEMBER_LIST_MEMBER_SEPARATOR].arm);');
-		expect(emitted).toContain('_ => ";",');
+		expect(emitted).toContain('_ => ";" };');
 	});
 
 	it('hardcodes leading: true for a mandatory leading flank while trailing still reads the wire-captured optional flank', () => {

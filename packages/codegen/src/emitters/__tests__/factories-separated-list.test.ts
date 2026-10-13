@@ -126,7 +126,8 @@ describe('factories emitter — separatedList', () => {
 		expect(emitted).toContain('_separator');
 		expect(emitted).toContain('_delimiter');
 		expect(emitted).toContain('const _delimiter = options.delimiter;');
-		expect(emitted).toContain('const _separator = options.separator ?? TSKindId.Semi;');
+		expect(emitted).toContain('const _separator = options.separator;');
+		expect(emitted).not.toContain('options.separator ??');
 		expect(emitted).toContain('separator: (v: TSKindId.Comma | TSKindId.Semi) =>');
 		expect(emitted).not.toContain('Record<string, number>');
 	});

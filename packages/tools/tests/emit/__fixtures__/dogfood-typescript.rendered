@@ -1,5 +1,4 @@
 import type { FormatRecord, FormatTrivia } from '@sittir/types';
-
 /**
  * Apply a {@link FormatRecord} to a canonical render string.
  *
@@ -16,18 +15,14 @@ import type { FormatRecord, FormatTrivia } from '@sittir/types';
  * 2. Prepend `boundary.leading` and append `boundary.trailing`.
  * 3. `slots` and `literals` adjustments are reserved for future phases;
  *    if present they are noted but do not alter the output in Phase 1.
- */
-export function applyFormat(canonicalRender: string, format: FormatRecord): string {
+ */ export function applyFormat(canonicalRender: string, format: FormatRecord): string {
 	let result = canonicalRender;
-
 	result = applyTrivia(result, format);
 	result = applyBoundary(result, format);
-
 	return result;
 }
 
-/** Prepend/append boundary whitespace. */
-function applyBoundary(s: string, format: FormatRecord): string {
+/** Prepend/append boundary whitespace. */ function applyBoundary(s: string, format: FormatRecord): string {
 	const { boundary } = format;
 	if (!boundary) return s;
 	const leading = boundary.leading ?? '';
@@ -39,11 +34,9 @@ function applyBoundary(s: string, format: FormatRecord): string {
  * Insert trivia items at their recorded byte offsets.
  * Items are applied in descending offset order so earlier offsets
  * are not invalidated.
- */
-function applyTrivia(s: string, format: FormatRecord): string {
+ */ function applyTrivia(s: string, format: FormatRecord): string {
 	const { trivia } = format;
 	if (!trivia || trivia.length === 0) return s;
-
 	const sorted = [...trivia].sort((a, b) => b.offset - a.offset);
 	let result = s;
 	for (const item of sorted) {
@@ -68,17 +61,13 @@ function applyTrivia(s: string, format: FormatRecord): string {
  * @remarks
  * RebaseTrivia is the single derivation for trivia offset adjustment
  * after any edit. Callers must not adjust offsets manually.
- */
-export function rebaseTrivia(format: FormatRecord, editStart: number, delta: number): FormatRecord {
+ */ export function rebaseTrivia(format: FormatRecord, editStart: number, delta: number): FormatRecord {
 	const trivia = rebaseTriviaItems(format.trivia, editStart, delta);
 	const kinds = rebaseKinds(format.kinds, editStart, delta);
-	return {
-		...format, ...(trivia !== undefined && { trivia }), ...(kinds !== undefined && { kinds })
-	};
+	return { ...format, ...(trivia !== undefined && { trivia }), ...(kinds !== undefined && { kinds }) };
 }
 
-/** Rebase a trivia array, returning the adjusted array or undefined if absent. */
-function rebaseTriviaItems(trivia: readonly FormatTrivia[] | undefined, editStart: number, delta: number): FormatTrivia[] | undefined {
+/** Rebase a trivia array, returning the adjusted array or undefined if absent. */ function rebaseTriviaItems(trivia: readonly FormatTrivia[] | undefined, editStart: number, delta: number): FormatTrivia[] | undefined {
 	if (!trivia) return undefined;
 	return trivia.map((item) => {
 		if (item.offset < editStart) return item;
@@ -89,8 +78,7 @@ function rebaseTriviaItems(trivia: readonly FormatTrivia[] | undefined, editStar
 	});
 }
 
-/** Recursively rebase all sub-records in `kinds`. */
-function rebaseKinds(kinds: Record<string, FormatRecord> | undefined, editStart: number, delta: number): Record<string, FormatRecord> | undefined {
+/** Recursively rebase all sub-records in `kinds`. */ function rebaseKinds(kinds: Record<string, FormatRecord> | undefined, editStart: number, delta: number): Record<string, FormatRecord> | undefined {
 	if (!kinds) return undefined;
 	const result: Record<string, FormatRecord> = {};
 	for (const [key, sub] of Object.entries(kinds)) {

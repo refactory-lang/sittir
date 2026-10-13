@@ -38,7 +38,7 @@ export function newKeySetterClearsWithNoArgument(arm: T.LastMatchArm.Parsed): st
 
 export function flattenedListSeatReadsItsAccessors(block: T.MatchBlock.Parsed): void {
 	if (block._match_block_arms === undefined) return;
-	block.matchArms();
+	block.arms();
 	block.lastArm();
 }
 
@@ -72,8 +72,8 @@ export function anOptionalSeatNarrowsOnItsStoredProperty(block: T.MatchBlock.Bou
 }
 
 export function aFlattenedFieldNarrowsItsSiblings(block: T.MatchBlock.Parsed): void {
-	if (block.matchArms !== undefined) {
-		block.matchArms();
+	if (block.arms !== undefined) {
+		block.arms();
 		block.lastArm();
 	} else {
 		expectTrue<Equals<typeof block.lastArm, undefined>>();

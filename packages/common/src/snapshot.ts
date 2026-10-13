@@ -1,6 +1,6 @@
 import type { Snapshot } from '@sittir/types';
 import { decodeIndex, type TreeHandle } from './read.ts';
-import { coordinateOf, isDataKey, isStorageKey, sidesOf, unitSidesOf } from './transport-data.ts';
+import { coordinateOf, isDataKey, isStorageKey, separatorOf, sidesOf, slotsOf, unitSidesOf } from './transport-data.ts';
 import { treeOf } from './tree-token.ts';
 import { mapTriviaEntries, type TriviaSides } from './trivia.ts';
 
@@ -50,9 +50,13 @@ function copyOf(value: Record<string, unknown>): Record<string, unknown> {
 	const snapshotted = (sides: TriviaSides<unknown>): TriviaSides<unknown> => mapTriviaEntries(sides, (entries) => entries.map((entry) => snapshotIn(entry, undefined, undefined)));
 	const sides = sidesOf(value);
 	const units = unitSidesOf(value)?.map((unit) => ({ ...(unit as object), ...snapshotted(unit as TriviaSides<unknown>) }));
+	const slots = slotsOf(value);
+	const separator = separatorOf(value);
 	const layout = {
 		...(sides === undefined ? {} : { trivia: snapshotted(sides as TriviaSides<unknown>) }),
-		...(units === undefined || units.length === 0 ? {} : { units })
+		...(units === undefined || units.length === 0 ? {} : { units }),
+		...(slots === undefined || slots.length === 0 ? {} : { slots }),
+		...(separator === undefined ? {} : { separator })
 	};
 	if (Object.keys(layout).length > 0) out.$_layout = layout;
 	return out;

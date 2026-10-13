@@ -7204,7 +7204,7 @@ export function coerceToImportRequireClause(
 export function coerceToExtendsClause(...input: T.ExtendsClause.LooseArgs): ReturnType<typeof F.buildExtendsClause> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ExtendsClause)) {
 		const data = input[0];
-		const stored = (data as unknown as { _extends_clause_single?: unknown })._extends_clause_single;
+		const stored = (data as unknown as { _types?: unknown })._types;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildExtendsClause(
 			...(_resolveManyBranch<T.ExtendsClauseSingle>(children, 'extends_clause_single') as unknown as Parameters<
@@ -7216,9 +7216,8 @@ export function coerceToExtendsClause(...input: T.ExtendsClause.LooseArgs): Retu
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('extendsClauseSingle' in head))
-			return input;
-		const v = (head as Record<string, unknown>)['extendsClauseSingle'];
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('types' in head)) return input;
+		const v = (head as Record<string, unknown>)['types'];
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildExtendsClause(

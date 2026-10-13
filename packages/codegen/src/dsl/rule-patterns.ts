@@ -488,7 +488,12 @@ export function isSupertypeLike(body: unknown): boolean {
 		if (typeof coreType !== 'string') return false;
 		if (isSymbolType(coreType) || isStringType(coreType)) return true;
 		if (typeEq(coreType, 'ALIAS')) return c.named === true;
-		return false;
+		if (!isChoiceType(coreType)) return false;
+		const arms = c.members;
+		return Array.isArray(arms) && arms.length > 0 && arms.every((arm) => {
+			const armCore = unwrapPrec(arm) as Record<string, unknown> | null;
+			return typeof armCore?.type === 'string' && typeEq(armCore.type, 'ALIAS') && armCore.named === true;
+		});
 	});
 }
 
@@ -905,7 +910,8 @@ export function separatedListElementName<P extends PhaseName>(rule: Rule<P>): st
 	const t = (rule as { type?: string }).type;
 	if (typeof t !== 'string') return null;
 	if (isFieldType(t)) {
-		const name = (rule as { name?: unknown }).name;
+		const { name, content, metadata } = rule as { name?: unknown; content?: Rule<P>; metadata?: { fieldSource?: string } };
+		if (metadata?.fieldSource === 'enriched') return content ? separatedListElementName(content) : null;
 		return typeof name === 'string' ? name : null;
 	}
 	if (isSymbolType(t)) {
@@ -1160,6 +1166,14 @@ export function separatedListBodyInfo<P extends PhaseName>(body: Rule<P>, symbol
 export function fieldedHeadListOf<P extends PhaseName>(rule: Rule<P>, symbols: SymbolSource): (SeparatedListBodyInfo<P> & { readonly elementName: string }) | null {
 	const info = separatedListBodyInfo(unwrapPrec(rule) as Rule<P>, symbols);
 	return info?.form === 'head' && isFieldType(info.element.type) && info.elementName !== null ? { ...info, elementName: info.elementName } : null;
+}
+
+export function flattenedListBody<R>(body: R, symbols: SymbolSource): R {
+	if (!isSeqType((body as { type?: string }).type)) return body;
+	const info = separatedListBodyInfo(body as unknown as Rule<'normalize'>, symbols);
+	if (info === null || !info.flankCarrying || info.form !== 'head') return body;
+	const members = (body as unknown as { members: unknown[] }).members;
+	return info.flatMembers === members ? body : ({ ...(body as object), members: info.flatMembers } as R);
 }
 
 export function armLeadingSymbolName<P extends PhaseName>(

@@ -1,7 +1,7 @@
 /**
- * Measures: what a parsed tree's trivia table stores when whitespace is layout only. A seam's
- * source layout is stored where it differs from the seam's default; spaces within a line derive
- * from the defaults.
+ * Measures: what a parsed tree's trivia table stores when it stores whitespace by class. A seam's
+ * source layout is stored where it differs from the seam's default, a line class or an in-line one;
+ * an in-line run of the default's class derives from the defaults.
  *
  * For each source, the gaps between its tokens are compared with those of its default render: the
  * source's snapshot with every `span` removed, so every gap renders with its seam default. Both
@@ -16,8 +16,9 @@
  *   (b) the default breaks where the source does not;
  *   (c) both break, with a different count of blank lines;
  *   (d) both break alike, with a different indentation;
- *   (e) neither breaks, and the in-line run differs.
- * Classes (a)-(d) are stored, one layout entry each; (e) is derived.
+ *   (e) neither breaks, and the in-line class differs: tight (no space), tabs, or a space (any other run);
+ *   (f) neither breaks, the in-line class is the same, and the run differs (a wider space).
+ * Classes (a)-(e) are stored, one layout entry each; (f) is derived.
  *
  * Sources: every corpus entry of the five grammars, and the shared-arena inputs
  * (`docs/superpowers/probes/2026-10-01-shared-arena/transport/inputs/`).
@@ -25,8 +26,8 @@
  *   SITTIR_BACKEND=native ./node_modules/.bin/tsx docs/superpowers/probes/2026-10-09-trivia-table/whitespace.mts [out.json]
  * Prints: per source set, the gaps of each class, entries and entry bytes stored under the rule and
  *   with every whitespace run stored, and the empty gaps under each; and the same with the source's
- *   line layout stored (every run that holds a break, whatever its default), as a parsed tree's
- *   table stores it. Writes examples to out.json.
+ *   line layout stored (every run that holds a break, whatever its default), as an earlier ruling
+ *   stored it. Writes examples to out.json.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { walk, type Walk } from './walk.mts';
@@ -37,7 +38,7 @@ const { languageByName } = await import(`${ROOT}packages/tools/src/languages.ts`
 const { createEngine, snapshotOf } = await import(`${ROOT}packages/common/src/index.ts`);
 
 type Gap = { comments: string[]; runs: string[] };
-const CLASSES = ['a', 'b', 'c', 'd', 'e'] as const;
+const CLASSES = ['a', 'b', 'c', 'd', 'e', 'f'] as const;
 type Class = (typeof CLASSES)[number];
 
 const INPUTS = `${ROOT}docs/superpowers/probes/2026-10-01-shared-arena/transport/inputs`;
@@ -75,6 +76,7 @@ function gaps(source: string, walk: Walk): Gap[] {
 
 const breaks = (run: string): number => run.split('\n').length - 1;
 const indent = (run: string): string => run.slice(run.lastIndexOf('\n') + 1);
+const inline = (run: string): string => (run === '' ? 'tight' : /^\t+$/.test(run) ? 'tab' : 'space');
 
 function classOf(source: string, fallback: string): Class | undefined {
 	const [s, d] = [breaks(source), breaks(fallback)];
@@ -82,7 +84,8 @@ function classOf(source: string, fallback: string): Class | undefined {
 	if (s === 0 && d > 0) return 'b';
 	if (s > 0 && s !== d) return 'c';
 	if (s > 0) return indent(source) === indent(fallback) ? undefined : 'd';
-	return source === fallback ? undefined : 'e';
+	if (source === fallback) return undefined;
+	return inline(source) === inline(fallback) ? 'f' : 'e';
 }
 
 function stripSpans(value: unknown): unknown {
@@ -114,7 +117,7 @@ const tally = (): Tally => ({
 	failed: 0,
 	gaps: 0,
 	commentMoved: 0,
-	classes: { a: 0, b: 0, c: 0, d: 0, e: 0 },
+	classes: { a: 0, b: 0, c: 0, d: 0, e: 0, f: 0 },
 	ruleEntries: 0,
 	ruleBytes: 0,
 	allEntries: 0,
@@ -160,7 +163,7 @@ async function measure(set: string, grammar: string, name: string, source: strin
 		return;
 	}
 	const [sg, dg] = [gaps(source, srcWalk!), gaps(fallback, defWalk!)];
-	examples[set] ??= { a: [], b: [], c: [], d: [], e: [] };
+	examples[set] ??= { a: [], b: [], c: [], d: [], e: [], f: [] };
 	for (let i = 0; i < sg.length; i++) {
 		const [s, d] = [sg[i]!, dg[i]!];
 		into.gaps++;
@@ -182,7 +185,7 @@ async function measure(set: string, grammar: string, name: string, source: strin
 			const found = classOf(run, d.runs[k]!);
 			if (found === undefined) return;
 			into.classes[found]++;
-			if (found !== 'e') {
+			if (found !== 'f') {
 				held++;
 				into.ruleBytes += run.length;
 				const kept = examples[set]![found];
@@ -191,8 +194,8 @@ async function measure(set: string, grammar: string, name: string, source: strin
 					const after = src[i]?.text ?? '<end>';
 					kept.push({ entry: name, source: run, fallback: d.runs[k]!, around: `${before} | ${after}` });
 				}
-			} else if (examples[set]!.e.length < 3) {
-				examples[set]!.e.push({ entry: name, source: run, fallback: d.runs[k]!, around: `${src[i - 1]?.text ?? '<start>'} | ${src[i]?.text ?? '<end>'}` });
+			} else if (examples[set]!.f.length < 3) {
+				examples[set]!.f.push({ entry: name, source: run, fallback: d.runs[k]!, around: `${src[i - 1]?.text ?? '<start>'} | ${src[i]?.text ?? '<end>'}` });
 			}
 		});
 		into.ruleEntries += held;
