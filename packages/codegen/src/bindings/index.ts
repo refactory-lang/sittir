@@ -6,6 +6,7 @@ export * from './routes.ts';
 export * from './input.ts';
 export * from './hash.ts';
 export * from './grammar-bindings.ts';
+export * from './leads.ts';
 export * from './module.ts';
 export * from './read.ts';
 export * from './vocabulary.ts';

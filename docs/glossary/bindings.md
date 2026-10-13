@@ -253,7 +253,7 @@ A slot selector, the selectors chained after it, and the neighbours its anchors 
 
 ### `packages/codegen/src/bindings/facts.ts::bindFacts`
 
-The facts with every grammar kind they name (claims and their placements, the kind arguments of `KIND_PREDICATE_OPERATORS` predicates, the selectors of every predicate's and child condition's site, the kinds a child condition names and the selectors of a sibling order, member owners, paths and selectors, containers and their captures, unclaimed kinds) named by its bound kind. The facts are read and written in base names; with the grammar bindings on, a consumer binds them through the node model's stamped `renamedFrom` (`boundNameOf`). A wildcard claim stays a wildcard, and templates name no kinds.
+The facts with every grammar kind they name (claims and their placements, the kind arguments of `KIND_PREDICATE_OPERATORS` predicates, the selectors of every predicate's and child condition's site, the kinds a child condition names and the selectors of a sibling order, member owners, paths and selectors, the kinds of a claim's match and a member's lead match, containers and their captures, unclaimed kinds) named by its bound kind. The facts are read and written in base names; with the grammar bindings on, a consumer binds them through the node model's stamped `renamedFrom` (`boundNameOf`). A wildcard claim stays a wildcard, and templates name no kinds.
 
 ### `packages/codegen/src/bindings/facts.ts::bindSite`
 
@@ -436,7 +436,7 @@ An `GrammarBindingsEdit` at a patch path of its rule, in the patch stage's path 
 
 ### `packages/codegen/src/bindings/grammar-bindings.ts::GrammarBindings`
 
-The derived grammar bindings: per rule, its patch sets (field edits first, then alias edits); the kind renames; and the splits. `printBindingsModule` prints it as the `Bindings` the grammar applies.
+The derived grammar bindings: per rule, its patch sets (field edits first, then alias edits); the kind renames; the leads (`leads.ts::deriveLeads`); and the splits. `printBindingsModule` prints it as the `Bindings` the grammar applies.
 
 ### `packages/codegen/src/bindings/grammar-bindings.ts::GrammarBindingsResidue`
 
@@ -448,11 +448,11 @@ What the derivation realized and left: the claim and member totals, the aliases,
 
 ### `packages/codegen/src/bindings/grammar-bindings.ts::GrammarBindingsInput`
 
-The derivation's inputs: its binding facts in base names, its grammar evaluated without its grammar bindings, each vocabulary path's members, the ones its interface declares and the ones it inherits (a member an interface inherits is its member), and each claimed kind's member routes as `resolveRoutes` gives them over the model of the grammar compiled without its grammar bindings (`routedMembers`).
+The derivation's inputs: the `bindings.scm` path its diagnostics name (`file`), its binding facts in base names, its grammar evaluated without its grammar bindings, each vocabulary path's members, the ones its interface declares and the ones it inherits (a member an interface inherits is its member), and each claimed kind's member routes as `resolveRoutes` gives them over the model of the grammar compiled without its grammar bindings (`routedMembers`).
 
-### `packages/codegen/src/bindings/grammar-bindings.ts::boundKindName`
+### `packages/codegen/src/bindings/names.ts::boundKindName`
 
-The bound name of a vocabulary path: its segments reversed, subkind first, keeping hiddenness (`declaration.function` is `function_declaration`; a hidden kind's is `_function_declaration`). The one place the naming lives.
+The bound name of a vocabulary path: its segments reversed, subkind first, keeping hiddenness (`declaration.function` is `function_declaration`; a hidden kind's is `_function_declaration`). The one place the naming lives. Callers pass the base rule name's hiddenness by tree-sitter's own convention (`rule-patterns.ts::isParserHiddenName`): a bound name keeps the rule's hiddenness, so the rename never flips it. Parse-tree visibility is a different fact: the catalog stamps every supertype hidden, visible rule name or not.
 
 ### `packages/codegen/src/bindings/grammar-bindings.ts::memberFieldName`
 
@@ -523,6 +523,8 @@ batch narrows until it agrees with itself.
 Everything not turned into a grammar change is residue, with its cause.
 ```
 
+Leads: `deriveLeads` derives them from the same facts against the same grammar, and its `lead-refused` records come back beside the bindings as `diagnostics`, which the writer gates on.
+
 ### `packages/codegen/src/bindings/grammar-bindings.ts::sameShapeAs`
 
 The kinds one path names that the grammar bindings may merge under the path's name: the path's first kind and every further kind that supplies the same member names, where neither is read as a kind (a flag's kind). A kind's members are its routed members (`GrammarBindingsInput.routedMembers`): its captures, renamed, and every other non-layout slot by its property name, so a slot no claim captures still tells two kinds apart (python's `assignment_typed` carries a `type` that `assignment_eq` lacks). A form restricted to a context is a legitimate merge: python's `lambda_within_for_in_clause` supplies `lambda`'s `parameters` and `body`, and differs only in what its body admits. It is the other face of injectivity: two kinds share a vocabulary leaf only where a holder's flag or a member's absence tells them apart, and a kind told apart that way keeps its own grammar kind so the reader and the builder can tell it. Containment is no distinction: a container member admitting both kinds does not keep them apart.
@@ -553,7 +555,7 @@ A grammar's `grammar.bindings.ts`, beside its `grammar.sittir.ts`.
 
 ### `packages/codegen/src/bindings/module.ts::printBindingsModule`
 
-The generated `grammar.bindings.ts`: its default export is the grammar bindings with the hash of the sources it was derived from (`bindings({ hash, patches, renames, splits })`), and nothing else; codegen reads the facts from `bindings.scm` through the pinned reader, never from the module. It imports only the authoring helpers it calls, and is erasable syntax only, since tree-sitter's run of the grammar evaluates it too. `grammar.sittir.ts` passes them as `bindings` only while the grammar bindings are on.
+The generated `grammar.bindings.ts`: its default export is the grammar bindings with the hash of the sources it was derived from (`bindings({ hash, patches, renames, leads, splits })`, the leads sorted by list and each written as `lead(…)` over its `match(…)` tree, `matchCall`), and nothing else; codegen reads the facts from `bindings.scm` through the pinned reader, never from the module. It imports only the authoring helpers it calls, and is erasable syntax only, since tree-sitter's run of the grammar evaluates it too. `grammar.sittir.ts` passes them as `bindings` only while the grammar bindings are on.
 
 ### `packages/codegen/src/bindings/module.ts::loadBindingsModule`
 
@@ -692,7 +694,7 @@ A pattern node's node children in order, through its groupings: no token, no alt
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::childFacts`
 
-The `ChildFact`s a claim's pattern states below the claimed node, walked in pattern order. Each node walked, the claimed one included, first states its `siblingsOf` in order when it has more than one or one is anchored. A node that may be absent, leads to a presence capture or places another claim states nothing. An alternation's options give one fact listing their kinds, and each option must be a named node with nothing below it. A token under a field gives a text fact; a token with no field gives a token fact at the node holding it, whose slot the routes resolve (a token directly under the claimed node is a claim token instead). A named child gives a kinds fact and is walked into; a wildcard gives a presence fact unless it captures a member, whose own route then stands for it.
+The `ChildFact`s a claim's pattern states below the claimed node, walked in pattern order. Each node walked, the claimed one included, first states its `siblingsOf` in order when it has more than one or one is anchored. A node that may be absent, leads to a presence capture or places another claim states nothing. An alternation's options give one fact listing their kinds, and each option must be a named node with nothing below it. An option with tests below it is refused everywhere: a read test is a conjunction over slots, so no route could say one arm's test without saying it of every arm. A token under a field gives a text fact; a token with no field gives a token fact at the node holding it, whose slot the routes resolve (a token directly under the claimed node is a claim token instead). A named child gives a kinds fact and is walked into; a wildcard gives a presence fact unless it captures a member, whose own route then stands for it.
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::roundTripBindingsInProcess`
 
@@ -884,11 +886,11 @@ A `#match?` predicate as a template, when its regex is anchored at both ends and
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::claimFact`
 
-The `ClaimFact` for a claim capture on a visit: its kind (a grouping's first child's), field, the pattern's predicates placed for this claim (`captureSite`), whether it is at the top, the kinds enclosing it (nearest first), its field literals (the literal a field pins, outside a grouping) and its unfielded uncaptured tokens. An alternative's tokens are not pins.
+The `ClaimFact` for a claim capture on a visit: its kind (a grouping's first child's), field, the pattern's predicates placed for this claim (`captureSite`), whether it is at the top, the kinds enclosing it (nearest first), its field literals (the literal a field pins, outside a grouping) and its unfielded uncaptured tokens. An alternative's tokens are not pins. A claimed node with tests below it carries its `match` when `matchOf` reads one that restricts it.
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::memberFact`
 
-The `MemberFact` for a member capture on a visit. The capture belongs to its home: the nearest claimed node above it, or the top when none is claimed in between (`claimedHome`). A `@dropped` capture drops the slot its selector finds on its parent's kind. On a child of the home (or under a top grouping) it renames the slot its selector finds, or marks an unfielded token's presence. Deeper, it is a nested member of the home's kind (or the presence of a token) routed through the selectors of the nodes between. A capture directly under a grouping names no member. The fact carries the claims on its owner's node (the parent for a direct capture, the home for a deeper one) as `claims`.
+The `MemberFact` for a member capture on a visit. The capture belongs to its home: the nearest claimed node above it, or the top when none is claimed in between (`claimedHome`). A `@dropped` capture drops the slot its selector finds on its parent's kind. On a child of the home (or under a top grouping) it renames the slot its selector finds, or marks an unfielded token's presence. Deeper, it is a nested member of the home's kind (or the presence of a token) routed through the selectors of the nodes between. A capture directly under a grouping names no member. The fact carries the claims on its owner's node (the parent for a direct capture, the home for a deeper one) as `claims`, and, for a capture on a node anchored first, the lead match its caller read (`leadMatch`).
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::claimedHome`
 
@@ -1356,7 +1358,7 @@ One member of an enum kind as the assembled model stamps it: the member's kind, 
 
 ### `packages/codegen/src/bindings/facts.ts::ClaimFact`
 
-A vocabulary capture on a node: its path, its grammar kind (`_` for a wildcard), the field it sits under in its enclosing node (`null` for none), its predicates, whether it is top-level, the kinds enclosing it nearest first (`within`), the field literals and tokens it pins, the conditions its pattern states on the nodes below the claimed node (`children`, `ChildFact`), and the flag of its path it sets when its last segment is one (`flag`, `vocabulary.ts::flagSegment`). A wildcard claim's kinds are read from its enclosing kind and field (`routes.ts::admittedKinds`).
+A vocabulary capture on a node: its path, its grammar kind (`_` for a wildcard), the field it sits under in its enclosing node (`null` for none), its predicates, whether it is top-level, the kinds enclosing it nearest first (`within`), the field literals and tokens it pins, the conditions its pattern states on the nodes below the claimed node (`children`, `ChildFact`), the flag of its path it sets when its last segment is one (`flag`, `vocabulary.ts::flagSegment`), and, when its pattern restricts the claimed node in a way `match` can say, that restriction as a match tree (`match`, `pinned-reader.ts::matchOf`): the fact the lead derivation joins a narrowed kind to, to name its variant. A wildcard claim's kinds are read from its enclosing kind and field (`routes.ts::admittedKinds`).
 
 ### `packages/codegen/src/bindings/facts.ts::ChildFact`
 
@@ -1376,7 +1378,7 @@ A kind `bindings.scm` declares unclaimed (`@unclaimed`), with the pattern's `#se
 
 ### `packages/codegen/src/bindings/facts.ts::MemberFact`
 
-A member capture as read. `rename` names the slot its selector finds on the owner; it keeps the token it captures, when it captures one, and `resolveFlags` marks it a flag when its name is one, which routes it as a fact instead (`routes.ts::flagRouteOf`). `dropped` marks the slot its selector finds on the owner as no member, from a claim's `@dropped` capture. `presence` marks an unfielded token's presence on the owner, through the steps in `via` when it sits deeper. `kind` is the presence of a node's kind in the slot another member names (a flag). `nested` is a member of the top kind that sits below a child, reached through `via`, in `parent`'s slot the selector finds, repeated when `multiple`. Each `via` step is the selector of a node between, nearest first, so an anchored step keeps its anchor. `claims` lists the claims, by their position in the facts, that the member's owner node carries in its pattern; a member captured in a pattern whose owner carries no claim (a member-only pattern) has none and belongs to every read entry of its owner.
+A member capture as read. `rename` names the slot its selector finds on the owner; it keeps the token it captures, when it captures one, and `resolveFlags` marks it a flag when its name is one, which routes it as a fact instead (`routes.ts::flagRouteOf`). `dropped` marks the slot its selector finds on the owner as no member, from a claim's `@dropped` capture. `presence` marks an unfielded token's presence on the owner, through the steps in `via` when it sits deeper. `kind` is the presence of a node's kind in the slot another member names (a flag). `nested` is a member of the top kind that sits below a child, reached through `via`, in `parent`'s slot the selector finds, repeated when `multiple`. Each `via` step is the selector of a node between, nearest first, so an anchored step keeps its anchor. `claims` lists the claims, by their position in the facts, that the member's owner node carries in its pattern; a member captured in a pattern whose owner carries no claim (a member-only pattern) has none and belongs to every read entry of its owner. A capture on a node anchored first carries `leadMatch`: the claim's line and either the match tree its pattern states below the node or the reason `match` cannot say it (`LeadMatchFact`).
 
 ### `packages/codegen/src/bindings/facts.ts::NamedMemberFact`
 
@@ -1437,3 +1439,72 @@ The name of a grammar package's bindings file. The bindings path, compile, gener
 ### `packages/codegen/src/bindings/derive.ts::wildcardUnrouted`
 
 Every required member of a path that a kind reached by a wildcard claim of that path has no route for, one line per claimed kind and path: the kinds a claimed node is read as share its line. A read through such an entry still owes the path's interface, so each line is a conformance gap the build stage closes; the ratchet test in the tools inventory pins the list until then.
+
+### `packages/codegen/src/bindings/facts.ts::MatchRead`
+
+What reading a pattern as a `match` tree gives: the tree (`dsl/bind.ts::LeadMatch`, with no `as`, which only the derivation adds), or the reason the pattern says something `match` cannot.
+
+### `packages/codegen/src/bindings/facts.ts::LeadMatchFact`
+
+A `MatchRead` with the line of the `bindings.scm` pattern it was read from, which a `lead-refused` record names.
+
+### `packages/codegen/src/bindings/facts.ts::bindMatch`
+
+A match tree with every kind it names bound, its `as` kept.
+
+### `packages/codegen/src/bindings/facts.ts::bindMember`
+
+A member fact with its owner, selector, `via` steps and parent bound; `bindFacts` binds its lead match beside it.
+
+### `packages/codegen/src/bindings/facts.ts::bindLeadMatch`
+
+A lead match with its tree's kinds bound; a refusal names no kind.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::leadsList`
+
+A node anchored first that captures a member: the capture a lead may be derived from, whose pattern below it is a match tree.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::within`
+
+Whether a node is at or below another.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::predicateReason`
+
+The refusal a predicate on a node of a match tree gives: `match` states kinds as nodes, so it says no negated kind (`#not-kind-eq?`), no kind predicate, and no text test.
+
+### `packages/codegen/src/bindings/pinned-reader.ts::matchOf`
+
+Reads a node's pattern as a `match` tree: its kind, and the one restriction its tests state, a field (or no field) and the kinds it admits, each read in turn. An alternation (of options with nothing below them, as `childFacts` requires) gives one restriction admitting each option; any other child is a restriction of its own. A kind narrowed two ways is written as one claim per way, which the derivation unions (`leads.ts::unionMatch`). It refuses what `match` cannot say: a predicate on any node of the tree (`predicateReason`), a quantified child, a negated field, a token (a text test), a wildcard, a grouping, a second restriction on one kind, and an alternation whose options sit under different fields. The one reading of a pattern as a match tree, for a member's lead match and a claim's own.
+
+### `packages/codegen/src/bindings/leads.ts::LeadDerivation`
+
+What the lead derivation gives: the leads, sorted by list, and the `lead-refused` records for every claim it could not turn into one.
+
+### `packages/codegen/src/bindings/leads.ts::LeadClaim`
+
+One capture's contribution to a list's lead: the list's item field, the captured name (the lead's field), the claim's line and its match tree.
+
+### `packages/codegen/src/bindings/leads.ts::Named`
+
+A match tree with its variants named, or the reason they cannot be.
+
+### `packages/codegen/src/bindings/leads.ts::matchKey`
+
+A match tree's structural identity: its kinds, fields and admits in order, without `as`. Two trees with one key say one restriction.
+
+### `packages/codegen/src/bindings/leads.ts::unionMatch`
+
+The union of two claims' match trees: one kind, restricted on one field (or neither restricted), admitting what either admits, an admit of one kind on both sides unioned in turn. So rust's receiver, `self_parameter` or a `parameter` named `self`, is two claims, each with an exact route, whose union is the lead's tree. Two different kinds, or one kind restricted on different fields (or restricted on one side only), do not union and are refused.
+
+### `packages/codegen/src/bindings/leads.ts::nameVariants`
+
+Names each node of a match tree that narrows its kind (one with a restriction) by the claim that classifies the same pattern: a top-level, unplaced claim whose own `match` has the node's key. The name is that claim's path's bound kind name (`names.ts::boundKindName`), hidden when the narrowed kind's rule name is (`isParserHiddenName`), so `(required_parameter pattern: (this)) @parameter.this` names the variant `this_parameter`. Each admit of a restriction joins its own claim. A node no claim classifies keeps no `as`, and the edit gives it the variant convention's name. Two claims that classify one node with different paths are refused. A node that narrows nothing is no variant and needs no name.
+
+### `packages/codegen/src/bindings/leads.ts::deriveLeads`
+
+The leads of a grammar's facts against its grammar evaluated without its bindings. A capture on the first item of a separated list (`leadMatch` on a member whose list, the parent of the captured node, is a head-form list whose element is a field, `rule-patterns.ts::separatedListBodyInfo`) contributes to that list's lead; a capture anchored first anywhere else derives nothing and stays what it was. The captures on one list derive one `lead`: the list, its item field, the captured name as the lead's field, and the union of their match trees (`unionMatch`) with its variants named (`nameVariants`). They must capture one field, and their trees must union. Each refusal is a blocking `lead-refused` grammar diagnostic naming the `bindings.scm` file and the claim lines: a match tree `match` cannot say (`matchOf`'s reason), captures of two fields, trees that do not union, and a variant two claims name. A capture deeper in the item than the item itself stays a position (no `leadMatch`), and `match` cannot say several top-level admits, so a lead derived here admits one tree.
+
+
+### `packages/codegen/src/bindings/module.ts::matchCall`
+
+A `LeadMatch` as the `match(…)` call that builds it: an unfielded restriction as an array, a fielded one as a one-key record, and the variant name last (after an explicit `undefined` when the match restricts nothing).

@@ -147,6 +147,7 @@ export default bindings({
 		rename("inner_attribute_item", "inner_attribute"),
 		rename("attribute", "content_attribute")
 	],
+	leads: [],
 	splits: [
 		split("function_signature_item", "signature_method_declaration", { within: ["declaration_list", "trait_item"], containers: [{ name: "trait_interface_declaration_body", field: "body" }] }),
 		split("function_item", "method_declaration", { within: ["declaration_list", "trait_item"], containers: [{ name: "trait_interface_declaration_body", field: "body" }] })

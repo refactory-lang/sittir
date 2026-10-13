@@ -134,5 +134,6 @@ export default bindings({
 		rename("accessibility_modifier", "visibility_modifier"),
 		rename("decorator", "decorator_attribute")
 	],
+	leads: [],
 	splits: []
 });
