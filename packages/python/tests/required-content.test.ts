@@ -21,7 +21,7 @@ describe('required repeated content', () => {
 
 	it('rejects a comprehension without its required clauses', () => {
 		expect(() => Reflect.apply(py.build.listComprehension, undefined, [{ body: 'x' }])).toThrow(
-			/comprehensionClauses|content/
+			/clauses|content/
 		);
 	});
 
@@ -29,7 +29,7 @@ describe('required repeated content', () => {
 		const clause = py.build.forInClause({ left: 'x', right: ['xs'] });
 		const clauses = py.build.comprehensionClauses(clause);
 		expect(clauses.$render().toString()).toBe('for x in xs');
-		expect(py.build.listComprehension({ body: 'x', comprehensionClauses: clauses }).$render().toString()).toBe(
+		expect(py.build.listComprehension({ body: 'x', clauses }).$render().toString()).toBe(
 			'[x for x in xs]'
 		);
 	});

@@ -59,7 +59,7 @@ export function rebuildKeywordOpenersPythonGenerated() {
 			left: py.build.identifier("w"),
 			right: py.build.listComprehension.strict({
 				body: py.build.identifier("i"),
-				comprehensionClauses: py.build.comprehensionClauses.strict(py.build.forInClause.strict({
+				clauses: py.build.comprehensionClauses.strict(py.build.forInClause.strict({
 					left: py.build.identifier("i"),
 					right: [py.build.parenthesizedExpression.strict(py.build.identifier("a"))],
 				}), py.build.ifClause.strict(py.build.parenthesizedExpression.strict(py.build.identifier("i")))),
