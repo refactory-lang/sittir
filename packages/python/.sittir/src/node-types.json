@@ -3426,15 +3426,22 @@
   {
     "type": "print_statement_chevron",
     "named": true,
-    "fields": {},
+    "fields": {
+      "chevron": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "chevron",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
-      "multiple": true,
-      "required": true,
+      "multiple": false,
+      "required": false,
       "types": [
-        {
-          "type": "chevron",
-          "named": true
-        },
         {
           "type": "print_chevron_arguments",
           "named": true

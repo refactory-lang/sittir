@@ -241904,7 +241904,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "\nprint >> a\nprint >> a , \"b\", \"c\"\n",
-    "expectedReparseTree": "(module statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_chevron (chevron expression: (identifier))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_chevron (chevron expression: (identifier)) (print_chevron_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)) item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))) (newline)))",
+    "expectedReparseTree": "(module statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_chevron chevron: (chevron expression: (identifier))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_chevron chevron: (chevron expression: (identifier)) (print_chevron_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)) item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))) (newline)))",
     "wrappedText": "\nprint >> a\nprint >> a , \"b\", \"c\"\n",
     "wrappedOffset": 0
   },
@@ -241959,7 +241959,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "print >> a\n",
-    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_chevron (chevron expression: (identifier))))) (newline))",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_chevron chevron: (chevron expression: (identifier))))) (newline))",
     "wrappedText": "print >> a\n\n",
     "wrappedOffset": 0
   },
@@ -242080,7 +242080,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "print >> a , \"b\", \"c\"\n",
-    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_chevron (chevron expression: (identifier)) (print_chevron_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)) item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))) (newline))",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (print_statement (print_statement_chevron chevron: (chevron expression: (identifier)) (print_chevron_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)) item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))) (newline))",
     "wrappedText": "print >> a , \"b\", \"c\"\n\n",
     "wrappedOffset": 0
   },
@@ -242132,7 +242132,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "print >> a",
-    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_chevron (chevron expression: (identifier)))))",
+    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_chevron chevron: (chevron expression: (identifier)))))",
     "wrappedText": "print >> a\n",
     "wrappedOffset": 0
   },
@@ -242250,7 +242250,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "print >> a , \"b\", \"c\"",
-    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_chevron (chevron expression: (identifier)) (print_chevron_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)) item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))))",
+    "expectedReparseTree": "(simple_statements_elements item: (print_statement (print_statement_chevron chevron: (chevron expression: (identifier)) (print_chevron_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)) item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))))",
     "wrappedText": "print >> a , \"b\", \"c\"\n",
     "wrappedOffset": 0
   },
@@ -242285,7 +242285,7 @@
     "pattern": "print_statement",
     "edits": [],
     "expectedSourceOut": "print >> a",
-    "expectedReparseTree": "(print_statement (print_statement_chevron (chevron expression: (identifier))))",
+    "expectedReparseTree": "(print_statement (print_statement_chevron chevron: (chevron expression: (identifier))))",
     "wrappedText": "print >> a",
     "wrappedOffset": 0
   },
@@ -242386,7 +242386,7 @@
     "pattern": "print_statement",
     "edits": [],
     "expectedSourceOut": "print >> a , \"b\", \"c\"",
-    "expectedReparseTree": "(print_statement (print_statement_chevron (chevron expression: (identifier)) (print_chevron_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)) item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))",
+    "expectedReparseTree": "(print_statement (print_statement_chevron chevron: (chevron expression: (identifier)) (print_chevron_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)) item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)))))",
     "wrappedText": "print >> a , \"b\", \"c\"",
     "wrappedOffset": 0
   },
@@ -242418,7 +242418,7 @@
     "pattern": "print_statement_chevron",
     "edits": [],
     "expectedSourceOut": "print >> a",
-    "expectedReparseTree": "(print_statement_chevron (chevron expression: (identifier)))",
+    "expectedReparseTree": "(print_statement_chevron chevron: (chevron expression: (identifier)))",
     "wrappedText": "print >> a",
     "wrappedOffset": 0
   },
@@ -242516,7 +242516,7 @@
     "pattern": "print_statement_chevron",
     "edits": [],
     "expectedSourceOut": "print >> a , \"b\", \"c\"",
-    "expectedReparseTree": "(print_statement_chevron (chevron expression: (identifier)) (print_chevron_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)) item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))",
+    "expectedReparseTree": "(print_statement_chevron chevron: (chevron expression: (identifier)) (print_chevron_arguments item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)) item: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end))))",
     "wrappedText": "print >> a , \"b\", \"c\"",
     "wrappedOffset": 0
   },

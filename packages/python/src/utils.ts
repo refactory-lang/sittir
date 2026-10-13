@@ -815,7 +815,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	275: [['items', { fields: ['item'], kinds: [] }]],
 	276: [['items', { fields: ['item'], kinds: [] }]],
 	277: [
-		['chevron', { fields: [], kinds: ['chevron'] }],
+		['chevron', { fields: ['chevron'], kinds: [] }],
 		['printChevronArguments', { fields: [], kinds: ['print_chevron_arguments', 'comma'] }]
 	],
 	278: [['printArguments', { fields: [], kinds: ['print_arguments'] }]],

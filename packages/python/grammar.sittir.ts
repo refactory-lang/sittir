@@ -441,7 +441,7 @@ export default sittirGrammar(base, {
 			seq(repeat1(seq(',', field('item', $.expression))), optional(','))
 		),
 		print_statement_chevron: vocabulary(($) =>
-			seq('print', $.chevron, optional(choice(alias($._print_chevron_arguments, $.print_chevron_arguments), ',')))
+			seq('print', field('chevron', $.chevron), optional(choice(alias($._print_chevron_arguments, $.print_chevron_arguments), ',')))
 		),
 		print_statement_plain: vocabulary(($) => seq('print', alias($._print_arguments, $.print_arguments))),
 		print_statement: reauthored('alias-shape', ($) =>

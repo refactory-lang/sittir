@@ -7375,8 +7375,15 @@
           "value": "print"
         },
         {
-          "type": "SYMBOL",
-          "name": "chevron"
+          "type": "FIELD",
+          "name": "chevron",
+          "content": {
+            "type": "SYMBOL",
+            "name": "chevron"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "CHOICE",

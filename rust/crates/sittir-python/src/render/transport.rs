@@ -18647,7 +18647,7 @@ pub struct PrintStatementChevronTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_chevron")]
-    #[slot]
+    #[slot(field = field::CHEVRON)]
     pub chevron: ::sittir_core::SlotValue<ChevronTransport>,
     #[wire(key = "_print_chevron_arguments")]
     #[slot]
