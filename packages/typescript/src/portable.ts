@@ -522,7 +522,6 @@ export interface PortableIds {
 	'statement.expression': TSKindId.ExpressionStatement;
 	'statement.if': TSKindId.IfStatement;
 	'statement.import': TSKindId.ImportStatement;
-	'statement.import.type': TSKindId.ImportStatement;
 	'statement.import.typeof': TSKindId.ImportStatement;
 	'statement.labeled': TSKindId.LabeledStatement;
 	'statement.loop': TSKindId.DoStatement | TSKindId.ForInStatement | TSKindId.ForStatement | TSKindId.WhileStatement;
@@ -1363,10 +1362,8 @@ export interface PortableKindsAt {
 	'statement.if': { readonly $ids: readonly PortableIds['statement.if'][] };
 	'statement.import': {
 		readonly $ids: readonly PortableIds['statement.import'][];
-		readonly type: PortableKindsAt['statement.import.type'];
 		readonly typeof: PortableKindsAt['statement.import.typeof'];
 	};
-	'statement.import.type': { readonly $ids: readonly PortableIds['statement.import.type'][] };
 	'statement.import.typeof': { readonly $ids: readonly PortableIds['statement.import.typeof'][] };
 	'statement.labeled': { readonly $ids: readonly PortableIds['statement.labeled'][] };
 	'statement.loop': {
@@ -2089,10 +2086,8 @@ export interface PortableIsAt {
 	'statement.expression': PortableGuard<PortableIds['statement.expression']> & {};
 	'statement.if': PortableGuard<PortableIds['statement.if']> & {};
 	'statement.import': PortableGuard<PortableIds['statement.import']> & {
-		readonly type: PortableIsAt['statement.import.type'];
 		readonly typeof: PortableIsAt['statement.import.typeof'];
 	};
-	'statement.import.type': PortableGuard<PortableIds['statement.import.type']> & {};
 	'statement.import.typeof': PortableGuard<PortableIds['statement.import.typeof']> & {};
 	'statement.labeled': PortableGuard<PortableIds['statement.labeled']> & {};
 	'statement.loop': PortableGuard<PortableIds['statement.loop']> & {
@@ -2838,7 +2833,6 @@ const table: PortableTable = {
 		'statement.expression': { ids: [TSKindId.ExpressionStatement], exact: true },
 		'statement.if': { ids: [TSKindId.IfStatement], exact: true },
 		'statement.import': { ids: [TSKindId.ImportStatement], exact: true },
-		'statement.import.type': { ids: [TSKindId.ImportStatement], exact: false },
 		'statement.import.typeof': { ids: [TSKindId.ImportStatement], exact: false },
 		'statement.labeled': { ids: [TSKindId.LabeledStatement], exact: true },
 		'statement.loop': {
@@ -3395,11 +3389,6 @@ const table: PortableTable = {
 		[TSKindId.ImportSpecifierAs]: [{ path: 'clause.import.specifier', within: [], test: [] }],
 		[TSKindId.ImportSpecifierName]: [{ path: 'clause.import.specifier', within: [], test: [] }],
 		[TSKindId.ImportStatement]: [
-			{
-				path: 'statement.import.type',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'type', fields: ['import_clause'], kinds: [] } }]
-			},
 			{
 				path: 'statement.import.typeof',
 				within: [],
