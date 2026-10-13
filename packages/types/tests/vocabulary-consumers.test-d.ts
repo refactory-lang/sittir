@@ -47,11 +47,11 @@ export function parameterless<G extends GrammarContext<G>>(name: G['identifier']
 interface Composed extends GrammarContext<Composed>, Accessors, BoundedQuantification, ScopedVisibility {}
 interface Bare extends GrammarContext<Bare> {}
 
-// A getter is an accessor kind, which `accessors` owns: no member holds `get`.
-export function getter(name: Composed['identifier']): Declaration.Method.Getter<Composed> {
-	return { $kind: 'declaration.method.getter', name, parameters: [] };
+// A getter is a property's accessor kind, which `accessors` owns: no member holds `get`.
+export function getter(name: Declaration.Property.Getter<Composed>['name']): Declaration.Property.Getter<Composed> {
+	return { $kind: 'declaration.property.getter', name, parameters: [], body: { $kind: 'statement.block' } };
 }
-export function getterWithAccessor(name: Composed['identifier']): Declaration.Method.Getter<Composed> {
+export function getterWithAccessor(name: Declaration.Property.Getter<Composed>['name']): Declaration.Property.Getter<Composed> {
 	return {
 		...getter(name),
 		// @ts-expect-error no member holds the accessor kind

@@ -217,20 +217,6 @@ export namespace Declaration {
 		}
 	}
 	export namespace Method {
-		export namespace Getter {
-			export interface Private<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Getter<G>, V.Modifier.Visibility.Private<G>> {
-				// claimed by t
-				readonly $kind: 'declaration.method.getter.private';
-			}
-			export interface Protected<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Getter<G>, V.Modifier.Visibility.Protected<G>> {
-				// claimed by t
-				readonly $kind: 'declaration.method.getter.protected';
-			}
-			export interface Public<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Getter<G>, V.Modifier.Visibility.Public<G>> {
-				// claimed by t
-				readonly $kind: 'declaration.method.getter.public';
-			}
-		}
 		export interface Private<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method<G>, V.Modifier.Visibility.Private<G>> {
 			// claimed by rt
 			readonly $kind: 'declaration.method.private';
@@ -253,36 +239,8 @@ export namespace Declaration {
 				readonly $kind: 'declaration.method.public.restricted';
 			}
 		}
-		export namespace Setter {
-			export interface Private<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Setter<G>, V.Modifier.Visibility.Private<G>> {
-				// claimed by t
-				readonly $kind: 'declaration.method.setter.private';
-			}
-			export interface Protected<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Setter<G>, V.Modifier.Visibility.Protected<G>> {
-				// claimed by t
-				readonly $kind: 'declaration.method.setter.protected';
-			}
-			export interface Public<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Setter<G>, V.Modifier.Visibility.Public<G>> {
-				// claimed by t
-				readonly $kind: 'declaration.method.setter.public';
-			}
-		}
 		export namespace Signature {
 			export namespace Abstract {
-				export namespace Getter {
-					export interface Private<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Signature.Abstract.Getter<G>, V.Modifier.Visibility.Private<G>> {
-						// claimed by t
-						readonly $kind: 'declaration.method.signature.abstract.getter.private';
-					}
-					export interface Protected<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Signature.Abstract.Getter<G>, V.Modifier.Visibility.Protected<G>> {
-						// claimed by t
-						readonly $kind: 'declaration.method.signature.abstract.getter.protected';
-					}
-					export interface Public<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Signature.Abstract.Getter<G>, V.Modifier.Visibility.Public<G>> {
-						// claimed by t
-						readonly $kind: 'declaration.method.signature.abstract.getter.public';
-					}
-				}
 				export interface Private<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Signature.Abstract<G>, V.Modifier.Visibility.Private<G>> {
 					// claimed by t
 					readonly $kind: 'declaration.method.signature.abstract.private';
@@ -294,34 +252,6 @@ export namespace Declaration {
 				export interface Public<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Signature.Abstract<G>, V.Modifier.Visibility.Public<G>> {
 					// claimed by t
 					readonly $kind: 'declaration.method.signature.abstract.public';
-				}
-				export namespace Setter {
-					export interface Private<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Signature.Abstract.Setter<G>, V.Modifier.Visibility.Private<G>> {
-						// claimed by t
-						readonly $kind: 'declaration.method.signature.abstract.setter.private';
-					}
-					export interface Protected<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Signature.Abstract.Setter<G>, V.Modifier.Visibility.Protected<G>> {
-						// claimed by t
-						readonly $kind: 'declaration.method.signature.abstract.setter.protected';
-					}
-					export interface Public<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Signature.Abstract.Setter<G>, V.Modifier.Visibility.Public<G>> {
-						// claimed by t
-						readonly $kind: 'declaration.method.signature.abstract.setter.public';
-					}
-				}
-			}
-			export namespace Getter {
-				export interface Private<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Signature.Getter<G>, V.Modifier.Visibility.Private<G>> {
-					// claimed by t
-					readonly $kind: 'declaration.method.signature.getter.private';
-				}
-				export interface Protected<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Signature.Getter<G>, V.Modifier.Visibility.Protected<G>> {
-					// claimed by t
-					readonly $kind: 'declaration.method.signature.getter.protected';
-				}
-				export interface Public<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Signature.Getter<G>, V.Modifier.Visibility.Public<G>> {
-					// claimed by t
-					readonly $kind: 'declaration.method.signature.getter.public';
 				}
 			}
 			export interface Private<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Signature<G>, V.Modifier.Visibility.Private<G>> {
@@ -344,20 +274,6 @@ export namespace Declaration {
 				export interface Restricted<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Signature.Public<G>, V.Modifier.Visibility.Public.Restricted<G>> {
 					// claimed by r
 					readonly $kind: 'declaration.method.signature.public.restricted';
-				}
-			}
-			export namespace Setter {
-				export interface Private<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Signature.Setter<G>, V.Modifier.Visibility.Private<G>> {
-					// claimed by t
-					readonly $kind: 'declaration.method.signature.setter.private';
-				}
-				export interface Protected<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Signature.Setter<G>, V.Modifier.Visibility.Protected<G>> {
-					// claimed by t
-					readonly $kind: 'declaration.method.signature.setter.protected';
-				}
-				export interface Public<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Method.Signature.Setter<G>, V.Modifier.Visibility.Public<G>> {
-					// claimed by t
-					readonly $kind: 'declaration.method.signature.setter.public';
 				}
 			}
 		}
@@ -414,6 +330,108 @@ export namespace Declaration {
 		export interface Public<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Parameter<G>, V.Modifier.Visibility.Public<G>> {
 			// claimed by t
 			readonly $kind: 'declaration.parameter.public';
+		}
+	}
+	export namespace Property {
+		export namespace Getter {
+			export interface Private<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Property.Getter<G>, V.Modifier.Visibility.Private<G>> {
+				// claimed by t
+				readonly $kind: 'declaration.property.getter.private';
+			}
+			export interface Protected<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Property.Getter<G>, V.Modifier.Visibility.Protected<G>> {
+				// claimed by t
+				readonly $kind: 'declaration.property.getter.protected';
+			}
+			export interface Public<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Property.Getter<G>, V.Modifier.Visibility.Public<G>> {
+				// claimed by t
+				readonly $kind: 'declaration.property.getter.public';
+			}
+		}
+		export interface Private<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Property<G>, V.Modifier.Visibility.Private<G>> {
+			// claimed by t
+			readonly $kind: 'declaration.property.private';
+		}
+		export interface Protected<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Property<G>, V.Modifier.Visibility.Protected<G>> {
+			// claimed by t
+			readonly $kind: 'declaration.property.protected';
+		}
+		export interface Public<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Property<G>, V.Modifier.Visibility.Public<G>> {
+			// claimed by t
+			readonly $kind: 'declaration.property.public';
+		}
+		export namespace Setter {
+			export interface Private<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Property.Setter<G>, V.Modifier.Visibility.Private<G>> {
+				// claimed by t
+				readonly $kind: 'declaration.property.setter.private';
+			}
+			export interface Protected<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Property.Setter<G>, V.Modifier.Visibility.Protected<G>> {
+				// claimed by t
+				readonly $kind: 'declaration.property.setter.protected';
+			}
+			export interface Public<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Property.Setter<G>, V.Modifier.Visibility.Public<G>> {
+				// claimed by t
+				readonly $kind: 'declaration.property.setter.public';
+			}
+		}
+		export namespace Signature {
+			export namespace Abstract {
+				export namespace Getter {
+					export interface Private<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Property.Signature.Abstract.Getter<G>, V.Modifier.Visibility.Private<G>> {
+						// claimed by t
+						readonly $kind: 'declaration.property.signature.abstract.getter.private';
+					}
+					export interface Protected<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Property.Signature.Abstract.Getter<G>, V.Modifier.Visibility.Protected<G>> {
+						// claimed by t
+						readonly $kind: 'declaration.property.signature.abstract.getter.protected';
+					}
+					export interface Public<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Property.Signature.Abstract.Getter<G>, V.Modifier.Visibility.Public<G>> {
+						// claimed by t
+						readonly $kind: 'declaration.property.signature.abstract.getter.public';
+					}
+				}
+				export namespace Setter {
+					export interface Private<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Property.Signature.Abstract.Setter<G>, V.Modifier.Visibility.Private<G>> {
+						// claimed by t
+						readonly $kind: 'declaration.property.signature.abstract.setter.private';
+					}
+					export interface Protected<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Property.Signature.Abstract.Setter<G>, V.Modifier.Visibility.Protected<G>> {
+						// claimed by t
+						readonly $kind: 'declaration.property.signature.abstract.setter.protected';
+					}
+					export interface Public<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Property.Signature.Abstract.Setter<G>, V.Modifier.Visibility.Public<G>> {
+						// claimed by t
+						readonly $kind: 'declaration.property.signature.abstract.setter.public';
+					}
+				}
+			}
+			export namespace Getter {
+				export interface Private<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Property.Signature.Getter<G>, V.Modifier.Visibility.Private<G>> {
+					// claimed by t
+					readonly $kind: 'declaration.property.signature.getter.private';
+				}
+				export interface Protected<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Property.Signature.Getter<G>, V.Modifier.Visibility.Protected<G>> {
+					// claimed by t
+					readonly $kind: 'declaration.property.signature.getter.protected';
+				}
+				export interface Public<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Property.Signature.Getter<G>, V.Modifier.Visibility.Public<G>> {
+					// claimed by t
+					readonly $kind: 'declaration.property.signature.getter.public';
+				}
+			}
+			export namespace Setter {
+				export interface Private<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Property.Signature.Setter<G>, V.Modifier.Visibility.Private<G>> {
+					// claimed by t
+					readonly $kind: 'declaration.property.signature.setter.private';
+				}
+				export interface Protected<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Property.Signature.Setter<G>, V.Modifier.Visibility.Protected<G>> {
+					// claimed by t
+					readonly $kind: 'declaration.property.signature.setter.protected';
+				}
+				export interface Public<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Property.Signature.Setter<G>, V.Modifier.Visibility.Public<G>> {
+					// claimed by t
+					readonly $kind: 'declaration.property.signature.setter.public';
+				}
+			}
 		}
 	}
 	export namespace Struct {
