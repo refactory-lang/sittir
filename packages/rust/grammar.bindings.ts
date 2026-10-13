@@ -3,7 +3,7 @@
 import { alias, bindings, field, rename, split } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "790401cc97e80ef76d22fe625dd6917572dec29af4a947b9b8ae28425ed9011c",
+	hash: "d442a6df63022f31eb0d7c885206c6f5af0b08cfa08b813e6593f1bedfcd2062",
 	patches: {
 		attribute_item: { "2": field("content") },
 		block_comment: { "1/0/2": alias(sym("block_comment_regular"), sym("text_comment")) },
@@ -61,7 +61,7 @@ export default bindings({
 		rename("let_declaration", "variable_declaration"),
 		rename("macro_definition", "macro_declaration"),
 		rename("parameter", "parameter_declaration"),
-		rename("self_parameter", "self_parameter_declaration"),
+		rename("self_parameter", "receiver_parameter_declaration"),
 		rename("variadic_parameter", "variadic_parameter_declaration"),
 		rename("type_parameter", "type_parameter_declaration"),
 		rename("const_parameter", "value_type_parameter_declaration"),
@@ -140,7 +140,7 @@ export default bindings({
 		rename("metavariable", "metavariable_identifier"),
 		rename("lifetime", "lifetime_identifier"),
 		rename("label", "label_identifier"),
-		rename("self", "self_identifier"),
+		rename("self", "receiver_identifier"),
 		rename("super", "super_identifier"),
 		rename("crate", "crate_identifier"),
 		rename("visibility_modifier_pub", "public_visibility_modifier"),

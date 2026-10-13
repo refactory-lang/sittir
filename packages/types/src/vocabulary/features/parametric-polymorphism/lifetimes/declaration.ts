@@ -3,7 +3,7 @@ import type { SubKindOf } from '../../../utils.ts';
 import type * as V from '../../../index.ts';
 export namespace Declaration {
 	export namespace Parameter {
-		export interface Self<G extends GrammarContext<G>> {
+		export interface Receiver<G extends GrammarContext<G>> {
 			readonly lifetime?: V.Identifier.Lifetime<G>;
 			// r only
 		}

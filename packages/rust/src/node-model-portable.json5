@@ -15192,10 +15192,10 @@
       ]
     },
     "self": {
-      "vocab": "identifier.self",
+      "vocab": "identifier.receiver",
       "read": [
         {
-          "vocab": "identifier.self",
+          "vocab": "identifier.receiver",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -15205,10 +15205,10 @@
       "members": []
     },
     "self_parameter": {
-      "vocab": "declaration.parameter.self",
+      "vocab": "declaration.parameter.receiver",
       "read": [
         {
-          "vocab": "declaration.parameter.self",
+          "vocab": "declaration.parameter.receiver",
           "toplevel": true,
           "within": [],
           "pins": [],

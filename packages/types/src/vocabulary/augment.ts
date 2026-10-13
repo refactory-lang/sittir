@@ -1105,9 +1105,9 @@ declare module './declaration.ts' {
 			interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Parameter.Private<G> {}
 			interface Protected<G extends GrammarContext<G>> extends visibility.Declaration.Parameter.Protected<G> {}
 			interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Parameter.Public<G> {}
-			interface Self<G extends GrammarContext<G>> extends explicitReceivers.Declaration.Parameter.Self<G> {
-				readonly lifetime?: gate.In<G, features.Lifetimes, lifetimes.Declaration.Parameter.Self<G>['lifetime']>;
-				readonly reference?: gate.In<G, features.References, references.Declaration.Parameter.Self<G>['reference']>;
+			interface Receiver<G extends GrammarContext<G>> extends explicitReceivers.Declaration.Parameter.Receiver<G> {
+				readonly lifetime?: gate.In<G, features.Lifetimes, lifetimes.Declaration.Parameter.Receiver<G>['lifetime']>;
+				readonly reference?: gate.In<G, features.References, references.Declaration.Parameter.Receiver<G>['reference']>;
 			}
 			interface Typed<G extends GrammarContext<G>> {
 				readonly type: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Parameter.Typed<G>['type']>;
@@ -1132,7 +1132,7 @@ declare module './declaration.ts' {
 				| V.Declaration.Parameter.Private<G>
 				| V.Declaration.Parameter.Protected<G>
 				| V.Declaration.Parameter.Public<G>
-				| V.Declaration.Parameter.Self<G>
+				| V.Declaration.Parameter.Receiver<G>
 				| V.Declaration.Parameter.Typed<G>
 				| V.Declaration.Parameter.TypedDefault<G>
 				| V.Declaration.Parameter.Variadic<G>;
@@ -1513,7 +1513,7 @@ declare module './declaration.ts' {
 			| V.Declaration.Parameter.Private<G>
 			| V.Declaration.Parameter.Protected<G>
 			| V.Declaration.Parameter.Public<G>
-			| V.Declaration.Parameter.Self<G>
+			| V.Declaration.Parameter.Receiver<G>
 			| V.Declaration.Parameter.Typed<G>
 			| V.Declaration.Parameter.TypedDefault<G>
 			| V.Declaration.Parameter.Variadic<G>
@@ -2227,7 +2227,7 @@ declare module './identifier.ts' {
 		namespace Property {
 			type Any<G extends GrammarContext<G>> = V.Identifier.Property<G> | V.Identifier.Property.Shorthand<G>;
 		}
-		interface Self<G extends GrammarContext<G>> extends methods.Identifier.Self<G> {}
+		interface Receiver<G extends GrammarContext<G>> extends methods.Identifier.Receiver<G> {}
 		type Any<G extends GrammarContext<G>> =
 			| V.Identifier<G>
 			| V.Identifier.Crate<G>
@@ -2239,8 +2239,8 @@ declare module './identifier.ts' {
 			| V.Identifier.Nested<G>
 			| V.Identifier.Property<G>
 			| V.Identifier.Property.Shorthand<G>
+			| V.Identifier.Receiver<G>
 			| V.Identifier.Scoped<G>
-			| V.Identifier.Self<G>
 			| V.Identifier.Super<G>
 			| V.Identifier.Type<G>;
 	}

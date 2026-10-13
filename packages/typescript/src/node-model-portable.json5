@@ -11267,10 +11267,10 @@
       ]
     },
     "this": {
-      "vocab": "identifier.self",
+      "vocab": "identifier.receiver",
       "read": [
         {
-          "vocab": "identifier.self",
+          "vocab": "identifier.receiver",
           "toplevel": true,
           "within": [],
           "pins": [],

@@ -368,7 +368,7 @@ export interface PortableIds {
 		| TSKindId.ShorthandPropertyIdentifier
 		| TSKindId.ShorthandPropertyIdentifierPattern;
 	'identifier.property.shorthand': TSKindId.ShorthandPropertyIdentifier | TSKindId.ShorthandPropertyIdentifierPattern;
-	'identifier.self': TSKindId.This;
+	'identifier.receiver': TSKindId.This;
 	'identifier.super': TSKindId.Super;
 	'identifier.type': TSKindId.TypeIdentifier;
 	literal:
@@ -1221,7 +1221,7 @@ export interface PortableKindsAt {
 		readonly label: PortableKindsAt['identifier.label'];
 		readonly nested: PortableKindsAt['identifier.nested'];
 		readonly property: PortableKindsAt['identifier.property'];
-		readonly self: PortableKindsAt['identifier.self'];
+		readonly receiver: PortableKindsAt['identifier.receiver'];
 		readonly super: PortableKindsAt['identifier.super'];
 		readonly type: PortableKindsAt['identifier.type'];
 	};
@@ -1232,7 +1232,7 @@ export interface PortableKindsAt {
 		readonly shorthand: PortableKindsAt['identifier.property.shorthand'];
 	};
 	'identifier.property.shorthand': { readonly $ids: readonly PortableIds['identifier.property.shorthand'][] };
-	'identifier.self': { readonly $ids: readonly PortableIds['identifier.self'][] };
+	'identifier.receiver': { readonly $ids: readonly PortableIds['identifier.receiver'][] };
 	'identifier.super': { readonly $ids: readonly PortableIds['identifier.super'][] };
 	'identifier.type': { readonly $ids: readonly PortableIds['identifier.type'][] };
 	literal: {
@@ -1971,7 +1971,7 @@ export interface PortableIsAt {
 		readonly label: PortableIsAt['identifier.label'];
 		readonly nested: PortableIsAt['identifier.nested'];
 		readonly property: PortableIsAt['identifier.property'];
-		readonly self: PortableIsAt['identifier.self'];
+		readonly receiver: PortableIsAt['identifier.receiver'];
 		readonly super: PortableIsAt['identifier.super'];
 		readonly type: PortableIsAt['identifier.type'];
 	};
@@ -1981,7 +1981,7 @@ export interface PortableIsAt {
 		readonly shorthand: PortableIsAt['identifier.property.shorthand'];
 	};
 	'identifier.property.shorthand': PortableGuard<PortableIds['identifier.property.shorthand']> & {};
-	'identifier.self': PortableGuard<PortableIds['identifier.self']> & {};
+	'identifier.receiver': PortableGuard<PortableIds['identifier.receiver']> & {};
 	'identifier.super': PortableGuard<PortableIds['identifier.super']> & {};
 	'identifier.type': PortableGuard<PortableIds['identifier.type']> & {};
 	literal: PortableGuard<PortableIds['literal']> & {
@@ -2655,7 +2655,7 @@ const table: PortableTable = {
 			ids: [TSKindId.ShorthandPropertyIdentifier, TSKindId.ShorthandPropertyIdentifierPattern],
 			exact: true
 		},
-		'identifier.self': { ids: [TSKindId.This], exact: true },
+		'identifier.receiver': { ids: [TSKindId.This], exact: true },
 		'identifier.super': { ids: [TSKindId.Super], exact: true },
 		'identifier.type': { ids: [TSKindId.TypeIdentifier], exact: true },
 		literal: {
@@ -4080,7 +4080,7 @@ const table: PortableTable = {
 		[TSKindId.TemplateSubstitution]: [{ path: 'expression.interpolation', within: [], test: [] }],
 		[TSKindId.TemplateType]: [{ path: 'element.template.substitution', within: [], test: [] }],
 		[TSKindId.TernaryExpression]: [{ path: 'expression.conditional', within: [], test: [] }],
-		[TSKindId.This]: [{ path: 'identifier.self', within: [], test: [] }],
+		[TSKindId.This]: [{ path: 'identifier.receiver', within: [], test: [] }],
 		[TSKindId.ThrowStatement]: [{ path: 'statement.throw', within: [], test: [] }],
 		[TSKindId.True]: [{ path: 'literal.boolean.true', within: [], test: [] }],
 		[TSKindId.TryStatement]: [{ path: 'statement.try', within: [], test: [] }],

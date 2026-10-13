@@ -169,7 +169,7 @@
 (macro_definition name: (_) (_)? @rules) @declaration.macro
 (parameter name: (_) @name) @declaration.parameter
 (parameter (mutable_specifier) @mutable)
-(self_parameter) @declaration.parameter.self
+(self_parameter) @declaration.parameter.receiver
 (self_parameter (mutable_specifier) @mutable)
 (variadic_parameter) @declaration.parameter.variadic
 (closure_parameters (_) @declaration.parameter)
@@ -387,7 +387,7 @@
 (metavariable) @identifier.metavariable
 (lifetime) @identifier.lifetime
 (label) @identifier.label
-(self) @identifier.self
+(self) @identifier.receiver
 (super) @identifier.super
 (crate) @identifier.crate
 

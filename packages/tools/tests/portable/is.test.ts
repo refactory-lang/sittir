@@ -164,6 +164,14 @@ describe('portable is: rust', async () => {
 		}
 	});
 
+	it('reads a self parameter and the self it names by the receiver kinds', () => {
+		const SOURCE = 'impl A { fn f(&self) -> u8 { self.x } }\n';
+		const [parameter, parameterContext] = find(SOURCE, 'self_parameter');
+		const [receiver, receiverContext] = find(SOURCE, 'self', undefined, 1);
+		expect(at('declaration.parameter.receiver')(parameter, parameterContext)).toBe(true);
+		expect(at('identifier.receiver')(receiver, receiverContext)).toBe(true);
+	});
+
 	it('reads a kind-id leaf in the asking engine\'s language, on the low-level surface too', () => {
 		const [wildcard] = find('fn f(x: u8) { match x { _ => 1 } }\n', 'wildcard_pattern');
 		expect(typeof wildcard).toBe('number');
@@ -318,6 +326,11 @@ describe('portable is: typescript', async () => {
 	it('reads a maybe type as a nullable type', () => {
 		const [maybe, context] = find('let a: ?string;\n', 'flow_maybe_type');
 		expect(at('type.nullable')(maybe, context)).toBe(true);
+	});
+
+	it('reads this as the receiver', () => {
+		const [receiver, context] = find('class A { f() { return this; } }\n', 'this');
+		expect(at('identifier.receiver')(receiver, context)).toBe(true);
 	});
 
 	it('keeps each path whose last segment a function owns', () => {

@@ -371,7 +371,7 @@
 (nested_identifier) @identifier.nested
 (nested_type_identifier) @type.path
 (statement_identifier) @identifier.label
-(this) @identifier.self
+(this) @identifier.receiver
 (super) @identifier.super
 
 

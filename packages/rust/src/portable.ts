@@ -306,7 +306,7 @@ export interface PortableIds {
 		| TSKindId.UsizeKeyword
 		| TSKindId.VariadicParameter
 		| TSKindId.WildcardPattern;
-	'declaration.parameter.self': TSKindId.SelfParameter;
+	'declaration.parameter.receiver': TSKindId.SelfParameter;
 	'declaration.parameter.variadic': TSKindId.VariadicParameter;
 	'declaration.struct':
 		| TSKindId.StructItem
@@ -613,8 +613,8 @@ export interface PortableIds {
 	'identifier.metavariable': TSKindId.Metavariable;
 	'identifier.property': TSKindId.ShorthandFieldIdentifier;
 	'identifier.property.shorthand': TSKindId.ShorthandFieldIdentifier;
+	'identifier.receiver': TSKindId.Self;
 	'identifier.scoped': TSKindId.ScopedIdentifier;
-	'identifier.self': TSKindId.Self;
 	'identifier.super': TSKindId.Super;
 	'identifier.type': TSKindId.TypeIdentifier;
 	literal:
@@ -1201,10 +1201,10 @@ export interface PortableKindsAt {
 	};
 	'declaration.parameter': {
 		readonly $ids: readonly PortableIds['declaration.parameter'][];
-		readonly self: PortableKindsAt['declaration.parameter.self'];
+		readonly receiver: PortableKindsAt['declaration.parameter.receiver'];
 		readonly variadic: PortableKindsAt['declaration.parameter.variadic'];
 	};
-	'declaration.parameter.self': { readonly $ids: readonly PortableIds['declaration.parameter.self'][] };
+	'declaration.parameter.receiver': { readonly $ids: readonly PortableIds['declaration.parameter.receiver'][] };
 	'declaration.parameter.variadic': { readonly $ids: readonly PortableIds['declaration.parameter.variadic'][] };
 	'declaration.struct': {
 		readonly $ids: readonly PortableIds['declaration.struct'][];
@@ -1572,8 +1572,8 @@ export interface PortableKindsAt {
 		readonly lifetime: PortableKindsAt['identifier.lifetime'];
 		readonly metavariable: PortableKindsAt['identifier.metavariable'];
 		readonly property: PortableKindsAt['identifier.property'];
+		readonly receiver: PortableKindsAt['identifier.receiver'];
 		readonly scoped: PortableKindsAt['identifier.scoped'];
-		readonly self: PortableKindsAt['identifier.self'];
 		readonly super: PortableKindsAt['identifier.super'];
 		readonly type: PortableKindsAt['identifier.type'];
 	};
@@ -1587,8 +1587,8 @@ export interface PortableKindsAt {
 		readonly shorthand: PortableKindsAt['identifier.property.shorthand'];
 	};
 	'identifier.property.shorthand': { readonly $ids: readonly PortableIds['identifier.property.shorthand'][] };
+	'identifier.receiver': { readonly $ids: readonly PortableIds['identifier.receiver'][] };
 	'identifier.scoped': { readonly $ids: readonly PortableIds['identifier.scoped'][] };
-	'identifier.self': { readonly $ids: readonly PortableIds['identifier.self'][] };
 	'identifier.super': { readonly $ids: readonly PortableIds['identifier.super'][] };
 	'identifier.type': { readonly $ids: readonly PortableIds['identifier.type'][] };
 	literal: {
@@ -2078,10 +2078,10 @@ export interface PortableIsAt {
 	'declaration.module.public.internal': PortableGuard<PortableIds['declaration.module.public.internal']> & {};
 	'declaration.module.public.restricted': PortableGuard<PortableIds['declaration.module.public.restricted']> & {};
 	'declaration.parameter': PortableGuard<PortableIds['declaration.parameter']> & {
-		readonly self: PortableIsAt['declaration.parameter.self'];
+		readonly receiver: PortableIsAt['declaration.parameter.receiver'];
 		readonly variadic: PortableIsAt['declaration.parameter.variadic'];
 	};
-	'declaration.parameter.self': PortableGuard<PortableIds['declaration.parameter.self']> & {};
+	'declaration.parameter.receiver': PortableGuard<PortableIds['declaration.parameter.receiver']> & {};
 	'declaration.parameter.variadic': PortableGuard<PortableIds['declaration.parameter.variadic']> & {};
 	'declaration.struct': PortableGuard<PortableIds['declaration.struct']> & {
 		readonly private: PortableIsAt['declaration.struct.private'];
@@ -2376,8 +2376,8 @@ export interface PortableIsAt {
 		readonly lifetime: PortableIsAt['identifier.lifetime'];
 		readonly metavariable: PortableIsAt['identifier.metavariable'];
 		readonly property: PortableIsAt['identifier.property'];
+		readonly receiver: PortableIsAt['identifier.receiver'];
 		readonly scoped: PortableIsAt['identifier.scoped'];
-		readonly self: PortableIsAt['identifier.self'];
 		readonly super: PortableIsAt['identifier.super'];
 		readonly type: PortableIsAt['identifier.type'];
 	};
@@ -2390,8 +2390,8 @@ export interface PortableIsAt {
 		readonly shorthand: PortableIsAt['identifier.property.shorthand'];
 	};
 	'identifier.property.shorthand': PortableGuard<PortableIds['identifier.property.shorthand']> & {};
+	'identifier.receiver': PortableGuard<PortableIds['identifier.receiver']> & {};
 	'identifier.scoped': PortableGuard<PortableIds['identifier.scoped']> & {};
-	'identifier.self': PortableGuard<PortableIds['identifier.self']> & {};
 	'identifier.super': PortableGuard<PortableIds['identifier.super']> & {};
 	'identifier.type': PortableGuard<PortableIds['identifier.type']> & {};
 	literal: PortableGuard<PortableIds['literal']> & {
@@ -2968,7 +2968,7 @@ const table: PortableTable = {
 			],
 			exact: false
 		},
-		'declaration.parameter.self': { ids: [TSKindId.SelfParameter], exact: true },
+		'declaration.parameter.receiver': { ids: [TSKindId.SelfParameter], exact: true },
 		'declaration.parameter.variadic': { ids: [TSKindId.VariadicParameter], exact: true },
 		'declaration.struct': {
 			ids: [TSKindId.StructItem, TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
@@ -3332,8 +3332,8 @@ const table: PortableTable = {
 		'identifier.metavariable': { ids: [TSKindId.Metavariable], exact: true },
 		'identifier.property': { ids: [TSKindId.ShorthandFieldIdentifier], exact: true },
 		'identifier.property.shorthand': { ids: [TSKindId.ShorthandFieldIdentifier], exact: true },
+		'identifier.receiver': { ids: [TSKindId.Self], exact: true },
 		'identifier.scoped': { ids: [TSKindId.ScopedIdentifier], exact: false },
-		'identifier.self': { ids: [TSKindId.Self], exact: true },
 		'identifier.super': { ids: [TSKindId.Super], exact: true },
 		'identifier.type': { ids: [TSKindId.TypeIdentifier], exact: false },
 		literal: {
@@ -6416,8 +6416,8 @@ const table: PortableTable = {
 		[TSKindId.ScopedTypeIdentifier]: [{ path: 'type.path', within: [], test: [] }],
 		[TSKindId.ScopedTypeIdentifierInExpressionPosition]: [{ path: 'type.path.expression', within: [], test: [] }],
 		[TSKindId.ScopedUseList]: [{ path: 'clause.import.list.scoped', within: [], test: [] }],
-		[TSKindId.Self]: [{ path: 'identifier.self', within: [], test: [] }],
-		[TSKindId.SelfParameter]: [{ path: 'declaration.parameter.self', within: [], test: [] }],
+		[TSKindId.Self]: [{ path: 'identifier.receiver', within: [], test: [] }],
+		[TSKindId.SelfParameter]: [{ path: 'declaration.parameter.receiver', within: [], test: [] }],
 		[TSKindId.ShorthandFieldIdentifier]: [{ path: 'identifier.property.shorthand', within: [], test: [] }],
 		[TSKindId.ShorthandFieldInitializer]: [{ path: 'element.struct.field', within: [], test: [] }],
 		[TSKindId.SlicePattern]: [
