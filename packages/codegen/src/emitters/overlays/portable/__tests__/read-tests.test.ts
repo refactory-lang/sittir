@@ -45,6 +45,7 @@ const MODEL = new Map(
 		node('annotated', [slot('type', ['type_identifier', 'identifier'])]),
 		node('cmp', [slot('left', ['identifier']), slot('ops', ['cmp_op'], { multiple: true })]),
 		node('cmp_op', [slot('operators', [], { terminals: ['==', '<'] }), slot('right', ['identifier'])]),
+		node('field_def', [slot('accessor', [], { required: false, storage: 'boolean', terminals: ['accessor'] }), slot('name', ['identifier'])]),
 		node('member', [slot('modifier', ['modifier'], { required: false })]),
 		{ ...node('modifier'), modelType: 'enum', enumMembers: [{ kind: 'private_keyword', text: 'private' }, { kind: 'public_keyword', text: 'public' }] }
 	].map((n) => [n.kind, n])
@@ -63,15 +64,20 @@ const ROUTES: Readonly<Record<string, SlotRoutes>> = {
 	'annotated.type': { fields: ['type'], kinds: [] },
 	'cmp.ops': { fields: [], kinds: ['cmp_op'] },
 	'cmp_op.operators': { fields: ['operators'], kinds: [] },
+	'field_def.accessor': { fields: ['accessor'], kinds: [] },
 	'member.modifier': { fields: ['modifier'], kinds: [] }
 };
+
+const PRESENCE: Readonly<Record<string, string>> = { 'field_def.accessor': 'accessor' };
+
+const presenceKeywordOf = (owner: string, name: string): string | undefined => PRESENCE[`${owner}.${name}`];
 
 const TYPES: Readonly<Record<string, number>> = { param: 30, self: 31, plain: 32, type_identifier: 33, cmp_op: 34, modifier: 35, private_keyword: 36, public_keyword: 37 };
 
 const testsOf = async (bindings: string, kind: string) => {
 	const input: GrammarInput = { grammar: 'g', bindings: await readBindings(bindings), model: MODEL, textTokens: new Set(), layoutSlots: [] };
 	const entries = resolveRoutes(input).readEntries.get(kind) ?? [];
-	return entries.map((entry) => [entry.vocab, readTestOf(entry, MODEL, (owner, name) => ROUTES[`${owner}.${name}`], (kind) => TYPES[kind])]);
+	return entries.map((entry) => [entry.vocab, readTestOf(entry, MODEL, (owner, name) => ROUTES[`${owner}.${name}`], presenceKeywordOf, (kind) => TYPES[kind])]);
 };
 
 describe('readTestOf', () => {
@@ -189,7 +195,7 @@ describe('readTestOf', () => {
 		const model = new Map([...MODEL, ['opt', node('opt', [slot('element', ['self', 'plain'], { required: false })])]]);
 		const input: GrammarInput = { grammar: 'g', bindings: await readBindings('(opt (self) @receiver) @declaration.parameter.self'), model, textTokens: new Set(), layoutSlots: [] };
 		const [entry] = resolveRoutes(input).readEntries.get('opt') ?? [];
-		expect(readTestOf(entry!, model, (owner, name) => (owner === 'opt' ? ROUTES['param.element'] : ROUTES[`${owner}.${name}`]), (kind) => TYPES[kind])).toEqual([
+		expect(readTestOf(entry!, model, (owner, name) => (owner === 'opt' ? ROUTES['param.element'] : ROUTES[`${owner}.${name}`]), presenceKeywordOf, (kind) => TYPES[kind])).toEqual([
 			{ up: 0, via: [], plan: { op: 'not', of: { op: 'is', types: [32], ...ROUTES['param.element'] } } }
 		]);
 	});
@@ -204,6 +210,18 @@ describe('readTestOf', () => {
 				]
 			]
 		]);
+	});
+
+	it('tests a pin on a boolean slot by the keyword\'s presence, since the slot holds true, not the keyword\'s text', async () => {
+		expect(await testsOf('(field_def accessor: "accessor") @declaration.property', 'field_def')).toEqual([
+			['declaration.property', [{ up: 0, via: [], plan: { op: 'present', ...ROUTES['field_def.accessor'] } }]]
+		]);
+	});
+
+	it('refuses a pin on a boolean slot whose text is not the slot\'s keyword, which no node could hold', async () => {
+		await expect(testsOf('(field_def accessor: "readonly") @declaration.property', 'field_def')).rejects.toThrow(
+			/declaration\.property.*accessor.*keyword 'accessor'/
+		);
 	});
 
 	it('refuses a type test that names a kind with no type', async () => {

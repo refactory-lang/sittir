@@ -4134,6 +4134,18 @@
       ],
       "members": [
         {
+          "name": "typeOnly",
+          "route": "presence",
+          "via": [],
+          "token": "type",
+          "path": [
+            {
+              "owner": "export_statement_default_from",
+              "slot": "type"
+            }
+          ]
+        },
+        {
           "name": "exportClause",
           "route": "nested",
           "via": [
