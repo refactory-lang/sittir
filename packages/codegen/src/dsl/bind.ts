@@ -813,10 +813,10 @@ interface ItemPositions {
 
 const NO_POSITIONS: ItemPositions = { counts: new Map(), holders: new Map() };
 
-function itemPositions(item: unknown, rules: GrammarRecord, supertypes: ReadonlySet<string>, reach: ReadonlySet<string>): ItemPositions {
+function itemPositions(item: unknown, rules: GrammarRecord, reach: ReadonlySet<string>): ItemPositions {
 	const counts = new Map<string, number>();
 	const holders = new Map<string, Set<string>>();
-	const expands = (name: string): boolean => name in rules && (reach.has(name) || (isParserHiddenName(name) && !supertypes.has(name)));
+	const expands = (name: string): boolean => name in rules && (reach.has(name) || isParserHiddenName(name));
 	const walk = (node: unknown, path: readonly string[], holder: string): void => {
 		if (Array.isArray(node)) for (const n of node) walk(n, path, holder);
 		else if (isRecord(node)) {
@@ -870,7 +870,7 @@ export function leadGrammar(grammar: GrammarRecord, leads: readonly Lead[]): Gra
 		const reach = new Set<string>();
 		const head = narrowRef({ rules, supertypes: stop, sites: new Map(), positions: NO_POSITIONS, heldBy, reach, mint }, element.content, admits, { lead: true, suffix: field }, false);
 		if (head === undefined) throw new LeadRefusal('it admits no item of the list');
-		const positions = itemPositions(element.content, rules, stop, reach);
+		const positions = itemPositions(element.content, rules, reach);
 		const rest = narrowRef({ rules, supertypes: stop, sites: referenceSites(rules, list, [element.content, shape.separatorRule]), positions, heldBy, reach, mint }, element.content, admits, { lead: false, suffix: item }, true);
 		if (rest === undefined) throw new LeadRefusal('it leaves the list no item');
 		if (rest !== element.content) rules[list] = replaceItems(rules[list], item, element.content, rest);
