@@ -846,7 +846,32 @@ export interface PortableIds {
 		| TSKindId.U64Keyword
 		| TSKindId.U8Keyword
 		| TSKindId.UsizeKeyword;
+	'type.primitive.boolean': TSKindId.BoolKeyword;
+	'type.primitive.character': TSKindId.CharKeyword;
+	'type.primitive.floating': TSKindId.F32Keyword | TSKindId.F64Keyword;
+	'type.primitive.floating.float32': TSKindId.F32Keyword;
+	'type.primitive.floating.float64': TSKindId.F64Keyword;
+	'type.primitive.integral':
+		| TSKindId.I128Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.U128Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.U8Keyword
+		| TSKindId.UsizeKeyword;
+	'type.primitive.integral.int128': TSKindId.I128Keyword | TSKindId.U128Keyword;
+	'type.primitive.integral.int16': TSKindId.I16Keyword | TSKindId.U16Keyword;
+	'type.primitive.integral.int32': TSKindId.I32Keyword | TSKindId.U32Keyword;
+	'type.primitive.integral.int64': TSKindId.I64Keyword | TSKindId.U64Keyword;
+	'type.primitive.integral.int8': TSKindId.I8Keyword | TSKindId.U8Keyword;
+	'type.primitive.integral.size': TSKindId.IsizeKeyword | TSKindId.UsizeKeyword;
 	'type.primitive.never': TSKindId.NeverType;
+	'type.primitive.string': TSKindId.StrKeyword;
 	'type.qualified': TSKindId.QualifiedType;
 	'type.reference': TSKindId.ReferenceType;
 	'type.tuple': TSKindId.TupleType;
@@ -1808,9 +1833,39 @@ export interface PortableKindsAt {
 	'type.pointer': { readonly $ids: readonly PortableIds['type.pointer'][] };
 	'type.primitive': {
 		readonly $ids: readonly PortableIds['type.primitive'][];
+		readonly boolean: PortableKindsAt['type.primitive.boolean'];
+		readonly character: PortableKindsAt['type.primitive.character'];
+		readonly floating: PortableKindsAt['type.primitive.floating'];
+		readonly integral: PortableKindsAt['type.primitive.integral'];
 		readonly never: PortableKindsAt['type.primitive.never'];
+		readonly string: PortableKindsAt['type.primitive.string'];
 	};
+	'type.primitive.boolean': { readonly $ids: readonly PortableIds['type.primitive.boolean'][] };
+	'type.primitive.character': { readonly $ids: readonly PortableIds['type.primitive.character'][] };
+	'type.primitive.floating': {
+		readonly $ids: readonly PortableIds['type.primitive.floating'][];
+		readonly float32: PortableKindsAt['type.primitive.floating.float32'];
+		readonly float64: PortableKindsAt['type.primitive.floating.float64'];
+	};
+	'type.primitive.floating.float32': { readonly $ids: readonly PortableIds['type.primitive.floating.float32'][] };
+	'type.primitive.floating.float64': { readonly $ids: readonly PortableIds['type.primitive.floating.float64'][] };
+	'type.primitive.integral': {
+		readonly $ids: readonly PortableIds['type.primitive.integral'][];
+		readonly int128: PortableKindsAt['type.primitive.integral.int128'];
+		readonly int16: PortableKindsAt['type.primitive.integral.int16'];
+		readonly int32: PortableKindsAt['type.primitive.integral.int32'];
+		readonly int64: PortableKindsAt['type.primitive.integral.int64'];
+		readonly int8: PortableKindsAt['type.primitive.integral.int8'];
+		readonly size: PortableKindsAt['type.primitive.integral.size'];
+	};
+	'type.primitive.integral.int128': { readonly $ids: readonly PortableIds['type.primitive.integral.int128'][] };
+	'type.primitive.integral.int16': { readonly $ids: readonly PortableIds['type.primitive.integral.int16'][] };
+	'type.primitive.integral.int32': { readonly $ids: readonly PortableIds['type.primitive.integral.int32'][] };
+	'type.primitive.integral.int64': { readonly $ids: readonly PortableIds['type.primitive.integral.int64'][] };
+	'type.primitive.integral.int8': { readonly $ids: readonly PortableIds['type.primitive.integral.int8'][] };
+	'type.primitive.integral.size': { readonly $ids: readonly PortableIds['type.primitive.integral.size'][] };
 	'type.primitive.never': { readonly $ids: readonly PortableIds['type.primitive.never'][] };
+	'type.primitive.string': { readonly $ids: readonly PortableIds['type.primitive.string'][] };
 	'type.qualified': { readonly $ids: readonly PortableIds['type.qualified'][] };
 	'type.reference': { readonly $ids: readonly PortableIds['type.reference'][] };
 	'type.tuple': { readonly $ids: readonly PortableIds['type.tuple'][] };
@@ -2584,9 +2639,37 @@ export interface PortableIsAt {
 	'type.path.expression': PortableGuard<PortableIds['type.path.expression']> & {};
 	'type.pointer': PortableGuard<PortableIds['type.pointer']> & {};
 	'type.primitive': PortableGuard<PortableIds['type.primitive']> & {
+		readonly boolean: PortableIsAt['type.primitive.boolean'];
+		readonly character: PortableIsAt['type.primitive.character'];
+		readonly floating: PortableIsAt['type.primitive.floating'];
+		readonly integral: PortableIsAt['type.primitive.integral'];
 		readonly never: PortableIsAt['type.primitive.never'];
+		readonly string: PortableIsAt['type.primitive.string'];
 	};
+	'type.primitive.boolean': PortableGuard<PortableIds['type.primitive.boolean']> & {};
+	'type.primitive.character': PortableGuard<PortableIds['type.primitive.character']> & {};
+	'type.primitive.floating': PortableGuard<PortableIds['type.primitive.floating']> & {
+		readonly float32: PortableIsAt['type.primitive.floating.float32'];
+		readonly float64: PortableIsAt['type.primitive.floating.float64'];
+	};
+	'type.primitive.floating.float32': PortableGuard<PortableIds['type.primitive.floating.float32']> & {};
+	'type.primitive.floating.float64': PortableGuard<PortableIds['type.primitive.floating.float64']> & {};
+	'type.primitive.integral': PortableGuard<PortableIds['type.primitive.integral']> & {
+		readonly int128: PortableIsAt['type.primitive.integral.int128'];
+		readonly int16: PortableIsAt['type.primitive.integral.int16'];
+		readonly int32: PortableIsAt['type.primitive.integral.int32'];
+		readonly int64: PortableIsAt['type.primitive.integral.int64'];
+		readonly int8: PortableIsAt['type.primitive.integral.int8'];
+		readonly size: PortableIsAt['type.primitive.integral.size'];
+	};
+	'type.primitive.integral.int128': PortableGuard<PortableIds['type.primitive.integral.int128']> & {};
+	'type.primitive.integral.int16': PortableGuard<PortableIds['type.primitive.integral.int16']> & {};
+	'type.primitive.integral.int32': PortableGuard<PortableIds['type.primitive.integral.int32']> & {};
+	'type.primitive.integral.int64': PortableGuard<PortableIds['type.primitive.integral.int64']> & {};
+	'type.primitive.integral.int8': PortableGuard<PortableIds['type.primitive.integral.int8']> & {};
+	'type.primitive.integral.size': PortableGuard<PortableIds['type.primitive.integral.size']> & {};
 	'type.primitive.never': PortableGuard<PortableIds['type.primitive.never']> & {};
+	'type.primitive.string': PortableGuard<PortableIds['type.primitive.string']> & {};
 	'type.qualified': PortableGuard<PortableIds['type.qualified']> & {};
 	'type.reference': PortableGuard<PortableIds['type.reference']> & {};
 	'type.tuple': PortableGuard<PortableIds['type.tuple']> & {};
@@ -3630,7 +3713,36 @@ const table: PortableTable = {
 			],
 			exact: false
 		},
+		'type.primitive.boolean': { ids: [TSKindId.BoolKeyword], exact: false },
+		'type.primitive.character': { ids: [TSKindId.CharKeyword], exact: false },
+		'type.primitive.floating': { ids: [TSKindId.F32Keyword, TSKindId.F64Keyword], exact: false },
+		'type.primitive.floating.float32': { ids: [TSKindId.F32Keyword], exact: false },
+		'type.primitive.floating.float64': { ids: [TSKindId.F64Keyword], exact: false },
+		'type.primitive.integral': {
+			ids: [
+				TSKindId.I128Keyword,
+				TSKindId.I16Keyword,
+				TSKindId.I32Keyword,
+				TSKindId.I64Keyword,
+				TSKindId.I8Keyword,
+				TSKindId.IsizeKeyword,
+				TSKindId.U128Keyword,
+				TSKindId.U16Keyword,
+				TSKindId.U32Keyword,
+				TSKindId.U64Keyword,
+				TSKindId.U8Keyword,
+				TSKindId.UsizeKeyword
+			],
+			exact: false
+		},
+		'type.primitive.integral.int128': { ids: [TSKindId.I128Keyword, TSKindId.U128Keyword], exact: false },
+		'type.primitive.integral.int16': { ids: [TSKindId.I16Keyword, TSKindId.U16Keyword], exact: false },
+		'type.primitive.integral.int32': { ids: [TSKindId.I32Keyword, TSKindId.U32Keyword], exact: false },
+		'type.primitive.integral.int64': { ids: [TSKindId.I64Keyword, TSKindId.U64Keyword], exact: false },
+		'type.primitive.integral.int8': { ids: [TSKindId.I8Keyword, TSKindId.U8Keyword], exact: false },
+		'type.primitive.integral.size': { ids: [TSKindId.IsizeKeyword, TSKindId.UsizeKeyword], exact: false },
 		'type.primitive.never': { ids: [TSKindId.NeverType], exact: true },
+		'type.primitive.string': { ids: [TSKindId.StrKeyword], exact: false },
 		'type.qualified': { ids: [TSKindId.QualifiedType], exact: true },
 		'type.reference': { ids: [TSKindId.ReferenceType], exact: true },
 		'type.tuple': { ids: [TSKindId.TupleType], exact: true },
@@ -3904,6 +4016,11 @@ const table: PortableTable = {
 		[TSKindId.BlockCommentRegular]: [{ path: 'comment.text', within: [], test: [] }],
 		[TSKindId.BlockKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.BoolKeyword]: [
+			{
+				path: 'type.primitive.boolean',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'bool', self: true } }]
+			},
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
@@ -3928,6 +4045,11 @@ const table: PortableTable = {
 			{ path: 'pattern.captured', within: [], test: [] }
 		],
 		[TSKindId.CharKeyword]: [
+			{
+				path: 'type.primitive.character',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'char', self: true } }]
+			},
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
@@ -4782,10 +4904,20 @@ const table: PortableTable = {
 		],
 		[TSKindId.ExternModifier]: [{ path: 'modifier.extern', within: [], test: [] }],
 		[TSKindId.F32Keyword]: [
+			{
+				path: 'type.primitive.floating.float32',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'f32', self: true } }]
+			},
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
 		[TSKindId.F64Keyword]: [
+			{
+				path: 'type.primitive.floating.float64',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'f64', self: true } }]
+			},
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
@@ -5878,22 +6010,47 @@ const table: PortableTable = {
 		[TSKindId.GenericTypeWithTurbofish]: [{ path: 'type.generic.turbofish', within: [], test: [] }],
 		[TSKindId.HigherRankedTraitBound]: [{ path: 'clause.bounds.higher_ranked', within: [], test: [] }],
 		[TSKindId.I128Keyword]: [
+			{
+				path: 'type.primitive.integral.int128',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'i128', self: true } }]
+			},
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
 		[TSKindId.I16Keyword]: [
+			{
+				path: 'type.primitive.integral.int16',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'i16', self: true } }]
+			},
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
 		[TSKindId.I32Keyword]: [
+			{
+				path: 'type.primitive.integral.int32',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'i32', self: true } }]
+			},
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
 		[TSKindId.I64Keyword]: [
+			{
+				path: 'type.primitive.integral.int64',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'i64', self: true } }]
+			},
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
 		[TSKindId.I8Keyword]: [
+			{
+				path: 'type.primitive.integral.int8',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'i8', self: true } }]
+			},
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
@@ -5931,6 +6088,11 @@ const table: PortableTable = {
 			{ path: 'literal.number.integer.octal', within: [], test: [] }
 		],
 		[TSKindId.IsizeKeyword]: [
+			{
+				path: 'type.primitive.integral.size',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'isize', self: true } }]
+			},
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
@@ -6561,6 +6723,11 @@ const table: PortableTable = {
 		],
 		[TSKindId.StmtKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.StrKeyword]: [
+			{
+				path: 'type.primitive.string',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'str', self: true } }]
+			},
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
@@ -7235,22 +7402,47 @@ const table: PortableTable = {
 		],
 		[TSKindId.TypeParameter]: [{ path: 'declaration.type_parameter', within: [], test: [] }],
 		[TSKindId.U128Keyword]: [
+			{
+				path: 'type.primitive.integral.int128',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'u128', self: true } }]
+			},
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
 		[TSKindId.U16Keyword]: [
+			{
+				path: 'type.primitive.integral.int16',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'u16', self: true } }]
+			},
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
 		[TSKindId.U32Keyword]: [
+			{
+				path: 'type.primitive.integral.int32',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'u32', self: true } }]
+			},
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
 		[TSKindId.U64Keyword]: [
+			{
+				path: 'type.primitive.integral.int64',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'u64', self: true } }]
+			},
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
 		[TSKindId.U8Keyword]: [
+			{
+				path: 'type.primitive.integral.int8',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'u8', self: true } }]
+			},
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
@@ -7523,6 +7715,11 @@ const table: PortableTable = {
 		[TSKindId.UseList]: [{ path: 'clause.import.list', within: [], test: [] }],
 		[TSKindId.UseWildcard]: [{ path: 'clause.import.wildcard', within: [], test: [] }],
 		[TSKindId.UsizeKeyword]: [
+			{
+				path: 'type.primitive.integral.size',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'usize', self: true } }]
+			},
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],

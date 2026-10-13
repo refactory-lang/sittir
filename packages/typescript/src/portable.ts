@@ -600,7 +600,26 @@ export interface PortableIds {
 		| TSKindId.Unique
 		| TSKindId.UnknownKeyword
 		| TSKindId.VoidKeyword;
+	'type.primitive.boolean': TSKindId.BooleanKeyword;
+	'type.primitive.floating': TSKindId.NumberKeyword;
+	'type.primitive.floating.float64': TSKindId.NumberKeyword;
 	'type.primitive.never': TSKindId.NeverKeyword;
+	'type.primitive.object': TSKindId.ObjectKeyword;
+	'type.primitive.string': TSKindId.StringKeyword;
+	'type.primitive.symbol':
+		| TSKindId.AnyKeyword
+		| TSKindId.BooleanKeyword
+		| TSKindId.NeverKeyword
+		| TSKindId.NumberKeyword
+		| TSKindId.ObjectKeyword
+		| TSKindId.StringKeyword
+		| TSKindId.SymbolKeyword
+		| TSKindId.Unique
+		| TSKindId.UnknownKeyword
+		| TSKindId.VoidKeyword;
+	'type.primitive.unchecked': TSKindId.AnyKeyword;
+	'type.primitive.unknown': TSKindId.UnknownKeyword;
+	'type.primitive.void': TSKindId.VoidKeyword;
 	'type.query': TSKindId.TypeQuery;
 	'type.readonly': TSKindId.ReadonlyType;
 	'type.rest': TSKindId.RestType;
@@ -1444,9 +1463,29 @@ export interface PortableKindsAt {
 	'type.predicate.asserts': { readonly $ids: readonly PortableIds['type.predicate.asserts'][] };
 	'type.primitive': {
 		readonly $ids: readonly PortableIds['type.primitive'][];
+		readonly boolean: PortableKindsAt['type.primitive.boolean'];
+		readonly floating: PortableKindsAt['type.primitive.floating'];
 		readonly never: PortableKindsAt['type.primitive.never'];
+		readonly object: PortableKindsAt['type.primitive.object'];
+		readonly string: PortableKindsAt['type.primitive.string'];
+		readonly symbol: PortableKindsAt['type.primitive.symbol'];
+		readonly unchecked: PortableKindsAt['type.primitive.unchecked'];
+		readonly unknown: PortableKindsAt['type.primitive.unknown'];
+		readonly void: PortableKindsAt['type.primitive.void'];
 	};
+	'type.primitive.boolean': { readonly $ids: readonly PortableIds['type.primitive.boolean'][] };
+	'type.primitive.floating': {
+		readonly $ids: readonly PortableIds['type.primitive.floating'][];
+		readonly float64: PortableKindsAt['type.primitive.floating.float64'];
+	};
+	'type.primitive.floating.float64': { readonly $ids: readonly PortableIds['type.primitive.floating.float64'][] };
 	'type.primitive.never': { readonly $ids: readonly PortableIds['type.primitive.never'][] };
+	'type.primitive.object': { readonly $ids: readonly PortableIds['type.primitive.object'][] };
+	'type.primitive.string': { readonly $ids: readonly PortableIds['type.primitive.string'][] };
+	'type.primitive.symbol': { readonly $ids: readonly PortableIds['type.primitive.symbol'][] };
+	'type.primitive.unchecked': { readonly $ids: readonly PortableIds['type.primitive.unchecked'][] };
+	'type.primitive.unknown': { readonly $ids: readonly PortableIds['type.primitive.unknown'][] };
+	'type.primitive.void': { readonly $ids: readonly PortableIds['type.primitive.void'][] };
 	'type.query': { readonly $ids: readonly PortableIds['type.query'][] };
 	'type.readonly': { readonly $ids: readonly PortableIds['type.readonly'][] };
 	'type.rest': { readonly $ids: readonly PortableIds['type.rest'][] };
@@ -2169,9 +2208,28 @@ export interface PortableIsAt {
 	};
 	'type.predicate.asserts': PortableGuard<PortableIds['type.predicate.asserts']> & {};
 	'type.primitive': PortableGuard<PortableIds['type.primitive']> & {
+		readonly boolean: PortableIsAt['type.primitive.boolean'];
+		readonly floating: PortableIsAt['type.primitive.floating'];
 		readonly never: PortableIsAt['type.primitive.never'];
+		readonly object: PortableIsAt['type.primitive.object'];
+		readonly string: PortableIsAt['type.primitive.string'];
+		readonly symbol: PortableIsAt['type.primitive.symbol'];
+		readonly unchecked: PortableIsAt['type.primitive.unchecked'];
+		readonly unknown: PortableIsAt['type.primitive.unknown'];
+		readonly void: PortableIsAt['type.primitive.void'];
 	};
+	'type.primitive.boolean': PortableGuard<PortableIds['type.primitive.boolean']> & {};
+	'type.primitive.floating': PortableGuard<PortableIds['type.primitive.floating']> & {
+		readonly float64: PortableIsAt['type.primitive.floating.float64'];
+	};
+	'type.primitive.floating.float64': PortableGuard<PortableIds['type.primitive.floating.float64']> & {};
 	'type.primitive.never': PortableGuard<PortableIds['type.primitive.never']> & {};
+	'type.primitive.object': PortableGuard<PortableIds['type.primitive.object']> & {};
+	'type.primitive.string': PortableGuard<PortableIds['type.primitive.string']> & {};
+	'type.primitive.symbol': PortableGuard<PortableIds['type.primitive.symbol']> & {};
+	'type.primitive.unchecked': PortableGuard<PortableIds['type.primitive.unchecked']> & {};
+	'type.primitive.unknown': PortableGuard<PortableIds['type.primitive.unknown']> & {};
+	'type.primitive.void': PortableGuard<PortableIds['type.primitive.void']> & {};
 	'type.query': PortableGuard<PortableIds['type.query']> & {};
 	'type.readonly': PortableGuard<PortableIds['type.readonly']> & {};
 	'type.rest': PortableGuard<PortableIds['type.rest']> & {};
@@ -2938,7 +2996,30 @@ const table: PortableTable = {
 			],
 			exact: true
 		},
+		'type.primitive.boolean': { ids: [TSKindId.BooleanKeyword], exact: false },
+		'type.primitive.floating': { ids: [TSKindId.NumberKeyword], exact: false },
+		'type.primitive.floating.float64': { ids: [TSKindId.NumberKeyword], exact: false },
 		'type.primitive.never': { ids: [TSKindId.NeverKeyword], exact: false },
+		'type.primitive.object': { ids: [TSKindId.ObjectKeyword], exact: false },
+		'type.primitive.string': { ids: [TSKindId.StringKeyword], exact: false },
+		'type.primitive.symbol': {
+			ids: [
+				TSKindId.AnyKeyword,
+				TSKindId.BooleanKeyword,
+				TSKindId.NeverKeyword,
+				TSKindId.NumberKeyword,
+				TSKindId.ObjectKeyword,
+				TSKindId.StringKeyword,
+				TSKindId.SymbolKeyword,
+				TSKindId.Unique,
+				TSKindId.UnknownKeyword,
+				TSKindId.VoidKeyword
+			],
+			exact: false
+		},
+		'type.primitive.unchecked': { ids: [TSKindId.AnyKeyword], exact: false },
+		'type.primitive.unknown': { ids: [TSKindId.UnknownKeyword], exact: false },
+		'type.primitive.void': { ids: [TSKindId.VoidKeyword], exact: false },
 		'type.query': { ids: [TSKindId.TypeQuery], exact: true },
 		'type.readonly': { ids: [TSKindId.ReadonlyType], exact: true },
 		'type.rest': { ids: [TSKindId.RestType], exact: true },
@@ -3042,7 +3123,19 @@ const table: PortableTable = {
 		],
 		[TSKindId.AmbientDeclaration]: [{ path: 'declaration.ambient', within: [], test: [] }],
 		[TSKindId.AmbientDeclarationModule]: [{ path: 'declaration.module_property', within: [], test: [] }],
-		[TSKindId.AnyKeyword]: [{ path: 'type.primitive', within: [], test: [] }],
+		[TSKindId.AnyKeyword]: [
+			{
+				path: 'type.primitive.unchecked',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'any', self: true } }]
+			},
+			{
+				path: 'type.primitive.symbol',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^unique', self: true } }]
+			},
+			{ path: 'type.primitive', within: [], test: [] }
+		],
 		[TSKindId.Array]: [{ path: 'expression.collection.list', within: [], test: [] }],
 		[TSKindId.ArrayPattern]: [{ path: 'pattern.array', within: [], test: [] }],
 		[TSKindId.ArrayType]: [{ path: 'type.array', within: [], test: [] }],
@@ -3258,7 +3351,19 @@ const table: PortableTable = {
 			},
 			{ path: 'expression.binary', within: [], test: [] }
 		],
-		[TSKindId.BooleanKeyword]: [{ path: 'type.primitive', within: [], test: [] }],
+		[TSKindId.BooleanKeyword]: [
+			{
+				path: 'type.primitive.boolean',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'boolean', self: true } }]
+			},
+			{
+				path: 'type.primitive.symbol',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^unique', self: true } }]
+			},
+			{ path: 'type.primitive', within: [], test: [] }
+		],
 		[TSKindId.BreakStatement]: [{ path: 'statement.break', within: [], test: [] }],
 		[TSKindId.CallExpressionCall]: [
 			{
@@ -3721,6 +3826,11 @@ const table: PortableTable = {
 		[TSKindId.NestedTypeIdentifier]: [{ path: 'type.path', within: [], test: [] }],
 		[TSKindId.NeverKeyword]: [
 			{
+				path: 'type.primitive.symbol',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^unique', self: true } }]
+			},
+			{
 				path: 'type.primitive.never',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'never', self: true } }]
@@ -3742,11 +3852,35 @@ const table: PortableTable = {
 		[TSKindId.NumberFloatPoint]: [{ path: 'literal.number.float', within: [], test: [] }],
 		[TSKindId.NumberFloatScientific]: [{ path: 'literal.number.float.scientific', within: [], test: [] }],
 		[TSKindId.NumberHex]: [{ path: 'literal.number.integer.hex', within: [], test: [] }],
-		[TSKindId.NumberKeyword]: [{ path: 'type.primitive', within: [], test: [] }],
+		[TSKindId.NumberKeyword]: [
+			{
+				path: 'type.primitive.floating.float64',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'number', self: true } }]
+			},
+			{
+				path: 'type.primitive.symbol',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^unique', self: true } }]
+			},
+			{ path: 'type.primitive', within: [], test: [] }
+		],
 		[TSKindId.NumberOctal]: [{ path: 'literal.number.integer.octal', within: [], test: [] }],
 		[TSKindId.Object]: [{ path: 'expression.collection.object', within: [], test: [] }],
 		[TSKindId.ObjectAssignmentPattern]: [{ path: 'pattern.object.assignment', within: [], test: [] }],
-		[TSKindId.ObjectKeyword]: [{ path: 'type.primitive', within: [], test: [] }],
+		[TSKindId.ObjectKeyword]: [
+			{
+				path: 'type.primitive.symbol',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^unique', self: true } }]
+			},
+			{
+				path: 'type.primitive.object',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'object', self: true } }]
+			},
+			{ path: 'type.primitive', within: [], test: [] }
+		],
 		[TSKindId.ObjectPattern]: [{ path: 'pattern.object', within: [], test: [] }],
 		[TSKindId.ObjectType]: [{ path: 'type.object', within: [], test: [] }],
 		[TSKindId.OptionalParameter]: [
@@ -3897,14 +4031,38 @@ const table: PortableTable = {
 		[TSKindId.String]: [{ path: 'literal.string', within: [], test: [] }],
 		[TSKindId.StringDouble]: [{ path: 'literal.string', within: [], test: [] }],
 		[TSKindId.UnescapedDoubleStringFragment]: [{ path: 'literal.string.text', within: [], test: [] }],
-		[TSKindId.StringKeyword]: [{ path: 'type.primitive', within: [], test: [] }],
+		[TSKindId.StringKeyword]: [
+			{
+				path: 'type.primitive.string',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'string', self: true } }]
+			},
+			{
+				path: 'type.primitive.symbol',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^unique', self: true } }]
+			},
+			{ path: 'type.primitive', within: [], test: [] }
+		],
 		[TSKindId.StringSingle]: [{ path: 'literal.string', within: [], test: [] }],
 		[TSKindId.SubscriptExpression]: [{ path: 'expression.subscript', within: [], test: [] }],
 		[TSKindId.Super]: [{ path: 'identifier.super', within: [], test: [] }],
 		[TSKindId.SwitchCase]: [{ path: 'clause.case.switch', within: [], test: [] }],
 		[TSKindId.SwitchDefault]: [{ path: 'clause.case.default', within: [], test: [] }],
 		[TSKindId.SwitchStatement]: [{ path: 'statement.switch', within: [], test: [] }],
-		[TSKindId.SymbolKeyword]: [{ path: 'type.primitive', within: [], test: [] }],
+		[TSKindId.SymbolKeyword]: [
+			{
+				path: 'type.primitive.symbol',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'symbol', self: true } }]
+			},
+			{
+				path: 'type.primitive.symbol',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^unique', self: true } }]
+			},
+			{ path: 'type.primitive', within: [], test: [] }
+		],
 		[TSKindId.TemplateLiteralType]: [{ path: 'type.template', within: [], test: [] }],
 		[TSKindId.TemplateString]: [{ path: 'literal.template', within: [], test: [] }],
 		[TSKindId.TemplateSubstitution]: [{ path: 'expression.interpolation', within: [], test: [] }],
@@ -3963,8 +4121,27 @@ const table: PortableTable = {
 		[TSKindId.Undefined]: [{ path: 'literal.null.undefined', within: [], test: [] }],
 		[TSKindId.UnescapedSingleStringFragment]: [{ path: 'literal.string.text', within: [], test: [] }],
 		[TSKindId.UnionType]: [{ path: 'type.union', within: [], test: [] }],
-		[TSKindId.Unique]: [{ path: 'type.primitive', within: [], test: [] }],
-		[TSKindId.UnknownKeyword]: [{ path: 'type.primitive', within: [], test: [] }],
+		[TSKindId.Unique]: [
+			{
+				path: 'type.primitive.symbol',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^unique', self: true } }]
+			},
+			{ path: 'type.primitive', within: [], test: [] }
+		],
+		[TSKindId.UnknownKeyword]: [
+			{
+				path: 'type.primitive.symbol',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^unique', self: true } }]
+			},
+			{
+				path: 'type.primitive.unknown',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'unknown', self: true } }]
+			},
+			{ path: 'type.primitive', within: [], test: [] }
+		],
 		[TSKindId.UpdateExpressionPostfix]: [
 			{
 				path: 'expression.update.increment',
@@ -4003,7 +4180,19 @@ const table: PortableTable = {
 			},
 			{ path: 'declaration.variable', within: [], test: [] }
 		],
-		[TSKindId.VoidKeyword]: [{ path: 'type.primitive', within: [], test: [] }],
+		[TSKindId.VoidKeyword]: [
+			{
+				path: 'type.primitive.symbol',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^unique', self: true } }]
+			},
+			{
+				path: 'type.primitive.void',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'void', self: true } }]
+			},
+			{ path: 'type.primitive', within: [], test: [] }
+		],
 		[TSKindId.WhileStatement]: [{ path: 'statement.loop.while', within: [], test: [] }],
 		[TSKindId.WithStatement]: [{ path: 'statement.scope', within: [], test: [] }],
 		[TSKindId.YieldExpression]: [{ path: 'expression.yield', within: [], test: [] }],

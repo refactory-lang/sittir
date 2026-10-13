@@ -1,5 +1,5 @@
 import type { GrammarContext } from '../../context.ts';
-import type { SubKindOf } from '../../utils.ts';
+import type { Flag, SubKindOf } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Type {
 	export interface Abstract<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
@@ -189,9 +189,81 @@ export namespace Type {
 		readonly $kind: 'type.primitive';
 	}
 	export namespace Primitive {
+		export interface Boolean<G extends GrammarContext<G>> extends SubKindOf<V.Type.Primitive<G>> {
+			// claimed by rt
+			readonly $kind: 'type.primitive.boolean';
+		}
+		export interface Floating<G extends GrammarContext<G>> extends SubKindOf<V.Type.Primitive<G>> {
+			readonly $kind: 'type.primitive.floating';
+		}
+		export namespace Floating {
+			export interface Float32<G extends GrammarContext<G>> extends SubKindOf<V.Type.Primitive.Floating<G>> {
+				// claimed by r
+				readonly $kind: 'type.primitive.floating.float32';
+			}
+			export interface Float64<G extends GrammarContext<G>> extends SubKindOf<V.Type.Primitive.Floating<G>> {
+				// claimed by rt
+				readonly $kind: 'type.primitive.floating.float64';
+			}
+		}
+		export interface Integral<G extends GrammarContext<G>> extends SubKindOf<V.Type.Primitive<G>> {
+			readonly $kind: 'type.primitive.integral';
+			readonly unsigned?: Flag;
+		}
+		export namespace Integral {
+			export interface Int8<G extends GrammarContext<G>> extends SubKindOf<V.Type.Primitive.Integral<G>> {
+				// claimed by r
+				readonly $kind: 'type.primitive.integral.int8';
+			}
+			export interface Int16<G extends GrammarContext<G>> extends SubKindOf<V.Type.Primitive.Integral<G>> {
+				// claimed by r
+				readonly $kind: 'type.primitive.integral.int16';
+			}
+			export interface Int32<G extends GrammarContext<G>> extends SubKindOf<V.Type.Primitive.Integral<G>> {
+				// claimed by r
+				readonly $kind: 'type.primitive.integral.int32';
+			}
+			export interface Int64<G extends GrammarContext<G>> extends SubKindOf<V.Type.Primitive.Integral<G>> {
+				// claimed by r
+				readonly $kind: 'type.primitive.integral.int64';
+			}
+			export interface Int128<G extends GrammarContext<G>> extends SubKindOf<V.Type.Primitive.Integral<G>> {
+				// claimed by r
+				readonly $kind: 'type.primitive.integral.int128';
+			}
+			export interface Size<G extends GrammarContext<G>> extends SubKindOf<V.Type.Primitive.Integral<G>> {
+				// claimed by r
+				readonly $kind: 'type.primitive.integral.size';
+			}
+		}
 		export interface Never<G extends GrammarContext<G>> extends SubKindOf<V.Type.Primitive<G>> {
 			// claimed by rt
 			readonly $kind: 'type.primitive.never';
+		}
+		export interface Object<G extends GrammarContext<G>> extends SubKindOf<V.Type.Primitive<G>> {
+			// claimed by t
+			readonly $kind: 'type.primitive.object';
+		}
+		export interface String<G extends GrammarContext<G>> extends SubKindOf<V.Type.Primitive<G>> {
+			// claimed by rt
+			readonly $kind: 'type.primitive.string';
+		}
+		export interface Symbol<G extends GrammarContext<G>> extends SubKindOf<V.Type.Primitive<G>> {
+			// claimed by t
+			readonly $kind: 'type.primitive.symbol';
+			readonly unique?: Flag;
+		}
+		export interface Unchecked<G extends GrammarContext<G>> extends SubKindOf<V.Type.Primitive<G>> {
+			// claimed by t
+			readonly $kind: 'type.primitive.unchecked';
+		}
+		export interface Unknown<G extends GrammarContext<G>> extends SubKindOf<V.Type.Primitive<G>> {
+			// claimed by t
+			readonly $kind: 'type.primitive.unknown';
+		}
+		export interface Void<G extends GrammarContext<G>> extends SubKindOf<V.Type.Primitive<G>> {
+			// claimed by t
+			readonly $kind: 'type.primitive.void';
 		}
 	}
 	export interface Qualified<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {

@@ -25,6 +25,8 @@ export enum Flags {
 	Readonly = 1 << 22,
 	Static = 1 << 23,
 	TypeOnly = 1 << 24,
-	Unsafe = 1 << 25,
-	Writable = 1 << 26
+	Unique = 1 << 25,
+	Unsafe = 1 << 26,
+	Unsigned = 1 << 27,
+	Writable = 1 << 28
 }

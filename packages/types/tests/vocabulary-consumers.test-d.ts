@@ -20,7 +20,8 @@ import type {
 	GrammarContext,
 	Identifier,
 	ScopedVisibility,
-	Statement
+	Statement,
+	Type
 } from '../src/vocabulary/index.ts';
 import { Flags } from '../src/vocabulary/index.ts';
 import type { Flag } from '../src/vocabulary/utils.ts';
@@ -202,3 +203,8 @@ export const narrowedName: string = nameKind<Narrowed>(narrowed);
 export const crate = fn<Narrowed>({ $kind: 'identifier.crate' });
 // @ts-expect-error the narrowed parameters slot refuses an arm the grammar leaves out
 export const textParameter: Declaration.Function<Narrowed> = { ...narrowed, parameters: ['self'] };
+
+// Typescript's `any` is the unchecked primitive, since `Any` names each namespace's union of its kinds, and the union holds it.
+export function unchecked<G extends GrammarContext<G>>(): Type.Primitive.Any<G> {
+	return { $kind: 'type.primitive.unchecked' };
+}
