@@ -53,16 +53,14 @@ Each gets its own red test before its fix:
 
 - `grammar.sittir.ts` passes the generated grammar bindings to `sittirGrammar` for each bound grammar; `bindGrammar` applies everything but `renames`.
 - `bindFacts` maps field names through the grammar bindings' field renames, so claims and member routes resolve against the bound fields.
-- **The receiver split** (bindings spec §9, "A receiver is no parameter"). A claim that anchors a parameter list's first element as `@receiver` and the rest as `@parameters` derives a grammar edit: the list gets a leading optional `receiver` field, and `parameters` holds the rest. Both are plain slots in the tree, the `ir`, the build and the portable surface; no route addresses a list position.
-  - The two sides are narrowed variants of the list's item, minted as hidden rules in enrich and named by the variant convention. The receiver side admits only the receiver, and the rest admits everything but it, so `fn f(a: u8)` keeps `a` in `parameters`.
-  - Rust's receiver is its `self_parameter`. Typescript's is a `required_parameter` whose pattern is `this`, parsed at the receiver site as `this_parameter`, typescript's own name. Both are `declaration.parameter.receiver`.
-  - The claims replace stage 1's interim, in which rust's impl claim captures `@_receiver`: it classifies a method and routes nothing. Rust gets three claims: methods in a trait and in an impl, and method signatures in a trait. Typescript gets one on each of its ten function-like owners: function and generator declarations, methods, method signatures, abstract method signatures, function signatures, call signatures, function and generator expressions, and function types. Typescript also gets the claim of `this_parameter` as `declaration.parameter.receiver`.
-  - **Before code, a proposal to brainstorm:** one general edit form, a leading-element split of a list rule with a kind restriction per side. It covers both grammars and gives:
-    - its name;
-    - its shape in `grammar.bindings.ts`;
-    - the `bindGrammar` verb that applies it;
-    - how the module stays erasable.
-  - **Census:** per grammar, the lists split, the variants minted, the STATE and `parser.c` deltas, the conflicts, and every validation row that moves.
+- **The receiver split** (bindings spec §9, "A receiver is no parameter"). The edit, its shape and every ruling on it are in the receiver-split probe, `docs/superpowers/probes/2026-10-12-receiver-split/README.md` ("The edit", "Proposal", "Questions"). In short:
+  - A claim that anchors a parameter list's first element as `@receiver` derives a `lead` (the derivation is on `feat/bindings`); every owner captures the rest as `@parameters` against the grammar's own list.
+  - `bindGrammar` applies the lead after the patches (`leadGrammar`). The lead mints its variants and the receiver form there, never in enrich.
+  - The shape is the plain one: the plain list narrowed to the rest, and a receiver form holding the receiver and then the plain list, whose `,` and list enrich's group synthesis lifts into `<list>_<field>_group`.
+  - Rust's typed `self` is a second claim beside `self_parameter`'s; the derivation unions the two claims' admits. A variant takes its name from the claim that classifies it, otherwise the variant convention's.
+  - Rust's receiver and typescript's `this_parameter` are `declaration.parameter.receiver`. The claims replace stage 1's interim `@_receiver`; every owner of a split list without a receiver claim needs one, or a `@dropped` line with its reason.
+  - The lead is applied only once enrich is a fixpoint: enrich then runs again over every rule a bindings edit creates, as their stamps name them.
+  - The conflict driver derives the bound grammar's sets.
 - **Gate:** validation rows equal to the unbound baseline, or each moved row named in the census and ruled.
 
 ### 2c. Contextual aliases
