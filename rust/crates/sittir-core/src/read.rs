@@ -66,6 +66,10 @@ pub struct ReadCtx<'s> {
     pub source: &'s str,
     pub tree_id: u32,
     pub shows: fn(KindId) -> bool,
+    /// Whether a node with these grammar and display ids is a relaxed keyword:
+    /// the grammar aliases the keyword token to its word rule, so the node
+    /// reads as the word rule (`EngineGrammar::relaxes`).
+    pub relaxes: fn(KindId, KindId) -> bool,
     /// Set on a snapshot read (`ReadCtx::snapshot`): each node it reads gets a
     /// span in place of a coordinate, and each trivia entry its text.
     pub snapshot: Option<&'s SnapshotCtx<'s>>,
@@ -160,7 +164,12 @@ pub enum Origin {
 
 impl<'s> ReadCtx<'s> {
     pub fn new(source: &'s str, tree_id: u32, shows: fn(KindId) -> bool) -> Self {
-        Self { source, tree_id, shows, snapshot: None, sides: None, changed: None, inline_units: false }
+        Self { source, tree_id, shows, relaxes: |_, _| false, snapshot: None, sides: None, changed: None, inline_units: false }
+    }
+
+    /// This context, reading a relaxed keyword as the word rule it displays.
+    pub fn with_relaxes(self, relaxes: fn(KindId, KindId) -> bool) -> Self {
+        Self { relaxes, ..self }
     }
 
     /// This context, reading a snapshot measured as `snapshot` measures.
@@ -310,9 +319,10 @@ impl<'s> ReadCtx<'s> {
 
     /// The kind every coordinate of a node stamps as its `$type`, on every
     /// route: the display id where the grammar claims the node by it (an alias
-    /// envelope), the grammar id everywhere else.
+    /// envelope) or where the node is a relaxed keyword read as its word rule,
+    /// the grammar id everywhere else.
     pub fn stamped_kind(&self, grammar: KindId, display: KindId) -> KindId {
-        if display != grammar && (self.shows)(display) { display } else { grammar }
+        if display != grammar && ((self.shows)(display) || (self.relaxes)(grammar, display)) { display } else { grammar }
     }
 
     /// Where the node the cursor is on came from: each transport's own
@@ -1071,6 +1081,16 @@ pub fn read_at<T: ReadTransport>(cursor: &mut TreeCursor<'_>, ctx: &ReadCtx<'_>,
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_relaxed_keyword_stamps_its_display_and_a_plain_token_stamps_its_grammar_id() {
+        const WORD: u16 = 1;
+        const RELAXED: u16 = 40;
+        let ctx = ReadCtx::new("", 1, |_| false).with_relaxes(|grammar, display| display.0 == WORD && grammar.0 == RELAXED);
+        assert_eq!(ctx.stamped_kind(KindId(RELAXED), KindId(WORD)), KindId(WORD), "the relaxed keyword reads as the word rule");
+        assert_eq!(ctx.stamped_kind(KindId(RELAXED), KindId(RELAXED)), KindId(RELAXED), "the same token undisplayed reads as itself");
+        assert_eq!(ctx.stamped_kind(KindId(41), KindId(WORD)), KindId(41), "another token displayed as the word rule is not relaxed");
+    }
 
     #[test]
     fn a_snapshot_measures_each_child_from_its_holders_start() {

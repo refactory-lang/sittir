@@ -875,7 +875,6 @@ export interface IsGuards {
 		v: T
 	): v is NarrowTo<
 		T,
-		| TSKindId.Identifier
 		| TSKindId.UnaryExpression
 		| TSKindId.ReferenceExpressionRawConst
 		| TSKindId.ReferenceExpressionRawMut
@@ -903,26 +902,7 @@ export interface IsGuards {
 		| TSKindId.IntegerLiteralBinary
 		| TSKindId.IntegerLiteralOctal
 		| TSKindId.FloatLiteral
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword
+		| TSKindId.Identifier
 		| TSKindId.Self
 		| TSKindId.ScopedIdentifier
 		| TSKindId.GenericFunction
@@ -1054,7 +1034,6 @@ export interface IsGuards {
 		v: T
 	): v is NarrowTo<
 		T,
-		| TSKindId.Identifier
 		| TSKindId.StringLiteral
 		| TSKindId.RawStringLiteral
 		| TSKindId.CharLiteralEscapedSimple
@@ -1070,31 +1049,12 @@ export interface IsGuards {
 		| TSKindId.IntegerLiteralOctal
 		| TSKindId.FloatLiteral
 		| TSKindId.NegativeLiteral
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
+		| TSKindId.Identifier
 		| TSKindId.ScopedIdentifier
 		| TSKindId.GenericPattern
 		| TSKindId.TuplePattern
 		| TSKindId.TupleStructPattern
 		| TSKindId.StructPattern
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword
 		| TSKindId.RefPattern
 		| TSKindId.SlicePattern
 		| TSKindId.CapturedPattern
@@ -1330,10 +1290,9 @@ const _supertype_type_ids = new Set<number>([
 ]);
 const _supertype_pointerType_ids = new Set<number>([388, 389]);
 const _supertype_expression_ids = new Set<number>([
-	1, 267, 371, 372, 373, 374, 268, 270, 271, 272, 273, 276, 274, 275, 332, 333, 147, 148, 149, 150, 145, 146, 336, 141,
-	142, 143, 144, 162, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 51, 32, 52, 125, 263, 245,
-	307, 308, 366, 367, 280, 259, 281, 304, 305, 306, 128, 369, 370, 279, 282, 309, 310, 311, 312, 313, 287, 292, 297,
-	298, 299, 300, 390, 391, 392, 393
+	267, 371, 372, 373, 374, 268, 270, 271, 272, 273, 276, 274, 275, 332, 333, 147, 148, 149, 150, 145, 146, 336, 141,
+	142, 143, 144, 162, 1, 125, 263, 245, 307, 308, 366, 367, 280, 259, 281, 304, 305, 306, 128, 369, 370, 279, 282, 309,
+	310, 311, 312, 313, 287, 292, 297, 298, 299, 300, 390, 391, 392, 393
 ]);
 const _supertype_delimTokenTree_ids = new Set<number>([411, 412, 413]);
 const _supertype_rangeExpression_ids = new Set<number>([390, 391, 392, 393]);
@@ -1342,9 +1301,8 @@ const _supertype_arrayExpression_ids = new Set<number>([366, 367]);
 const _supertype_matchArm_ids = new Set<number>([397, 398]);
 const _supertype_closureExpression_ids = new Set<number>([369, 370]);
 const _supertype_pattern_ids = new Set<number>([
-	1, 332, 333, 147, 148, 149, 150, 145, 146, 336, 141, 142, 143, 144, 162, 330, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67,
-	68, 69, 70, 71, 72, 73, 74, 263, 315, 316, 318, 319, 51, 32, 52, 324, 317, 325, 326, 321, 322, 422, 419, 386, 387,
-	300, 259, 426
+	332, 333, 147, 148, 149, 150, 145, 146, 336, 141, 142, 143, 144, 162, 330, 1, 263, 315, 316, 318, 319, 324, 317, 325,
+	326, 321, 322, 422, 419, 386, 387, 300, 259, 426
 ]);
 const _supertype_fieldPattern_ids = new Set<number>([414, 415]);
 const _supertype_rangePattern_ids = new Set<number>([422, 419]);

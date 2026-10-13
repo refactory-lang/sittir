@@ -33,6 +33,12 @@ pub trait EngineGrammar: Copy {
     /// The display ids this grammar claims a node by (`ReadTransport::shows`
     /// of its transports), which a coordinate stamps in place of the grammar id.
     fn shows(self) -> fn(KindId) -> bool;
+    /// Whether a node with a grammar id and a display id is a keyword the
+    /// grammar relaxes into its word rule (`ReadCtx::relaxes`). A grammar that
+    /// relaxes no keyword claims none.
+    fn relaxes(self) -> fn(KindId, KindId) -> bool {
+        |_, _| false
+    }
     /// The grammar's trivia type: what a side of a parsed node holds.
     type Trivia: crate::trivia::FromTriviaText + crate::trivia::TriviaItem;
     /// The grammar's whitespace table, and its layout kinds (the table's domain).
@@ -468,7 +474,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     }
 
     fn read_ctx(&self) -> crate::read::ReadCtx<'_> {
-        crate::read::ReadCtx::new(&self.source, self.tree_id, self.grammar.shows())
+        crate::read::ReadCtx::new(&self.source, self.tree_id, self.grammar.shows()).with_relaxes(self.grammar.relaxes())
     }
 
     /// The context of a read that seats each node's sides from this tree's
@@ -585,7 +591,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
         let mut indexes: Vec<u32> = vec![index];
         let mut path: Vec<u32> = Vec::new();
         let mut coordinates = Vec::new();
-        let ctx = crate::read::ReadCtx::new(&self.source, self.tree_id, self.grammar.shows());
+        let ctx = crate::read::ReadCtx::new(&self.source, self.tree_id, self.grammar.shows()).with_relaxes(self.grammar.relaxes());
         let surface = self.grammar.surface_kinds();
         let depth_member = |node: &tree_sitter::Node<'_>| node.grammar_id() != 0 && [surface.indent, surface.dedent].contains(&node.grammar_id());
         if let Some(resume) = resume {

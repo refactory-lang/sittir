@@ -8011,7 +8011,10 @@
                     "$type": 1,
                     "$text": "printer"
                   },
-                  "_value": 67
+                  "_value": {
+                    "$type": 1,
+                    "$text": "print"
+                  }
                 }
               ],
               "_delimiter": 0,
@@ -8092,7 +8095,10 @@
               "_item": [
                 {
                   "$type": 200,
-                  "_target": 67
+                  "_target": {
+                    "$type": 1,
+                    "$text": "print"
+                  }
                 }
               ],
               "_delimiter": 0,
@@ -8173,7 +8179,10 @@
               "_item": [
                 {
                   "$type": 201,
-                  "_target": 67
+                  "_target": {
+                    "$type": 1,
+                    "$text": "print"
+                  }
                 }
               ],
               "_delimiter": 0,
@@ -8448,7 +8457,10 @@
                 "$type": 1,
                 "$text": "printer"
               },
-              "_value": 67
+              "_value": {
+                "$type": 1,
+                "$text": "print"
+              }
             }
           ],
           "_delimiter": 0,
@@ -8547,7 +8559,10 @@
           "_item": [
             {
               "$type": 200,
-              "_target": 67
+              "_target": {
+                "$type": 1,
+                "$text": "print"
+              }
             }
           ],
           "_delimiter": 0,
@@ -8646,7 +8661,10 @@
           "_item": [
             {
               "$type": 201,
-              "_target": 67
+              "_target": {
+                "$type": 1,
+                "$text": "print"
+              }
             }
           ],
           "_delimiter": 0,
@@ -8869,7 +8887,10 @@
               "$type": 1,
               "$text": "printer"
             },
-            "_value": 67
+            "_value": {
+              "$type": 1,
+              "$text": "print"
+            }
           }
         ],
         "_delimiter": 0,
@@ -8918,7 +8939,10 @@
         "_item": [
           {
             "$type": 200,
-            "_target": 67
+            "_target": {
+              "$type": 1,
+              "$text": "print"
+            }
           }
         ],
         "_delimiter": 0,
@@ -8967,7 +8991,10 @@
         "_item": [
           {
             "$type": 201,
-            "_target": 67
+            "_target": {
+              "$type": 1,
+              "$text": "print"
+            }
           }
         ],
         "_delimiter": 0,
@@ -9092,7 +9119,10 @@
             "$type": 1,
             "$text": "printer"
           },
-          "_value": 67
+          "_value": {
+            "$type": 1,
+            "$text": "print"
+          }
         }
       ],
       "_delimiter": 0,
@@ -9138,7 +9168,10 @@
       "_item": [
         {
           "$type": 200,
-          "_target": 67
+          "_target": {
+            "$type": 1,
+            "$text": "print"
+          }
         }
       ],
       "_delimiter": 0,
@@ -9184,7 +9217,10 @@
       "_item": [
         {
           "$type": 201,
-          "_target": 67
+          "_target": {
+            "$type": 1,
+            "$text": "print"
+          }
         }
       ],
       "_delimiter": 0,
@@ -10516,7 +10552,10 @@
         "$type": 1,
         "$text": "printer"
       },
-      "_value": 67
+      "_value": {
+        "$type": 1,
+        "$text": "print"
+      }
     },
     "expectedOutput": "printer=print",
     "options": {
@@ -10545,7 +10584,10 @@
     "pattern": "list_splat_pattern",
     "input": {
       "$type": 200,
-      "_target": 67
+      "_target": {
+        "$type": 1,
+        "$text": "print"
+      }
     },
     "expectedOutput": "*print",
     "options": {
@@ -10574,7 +10616,10 @@
     "pattern": "dictionary_splat_pattern",
     "input": {
       "$type": 201,
-      "_target": 67
+      "_target": {
+        "$type": 1,
+        "$text": "print"
+      }
     },
     "expectedOutput": "**print",
     "options": {
@@ -10613,7 +10658,10 @@
                 "$type": 141,
                 "_content": {
                   "$type": 223,
-                  "_function": 38,
+                  "_function": {
+                    "$type": 1,
+                    "$text": "exec"
+                  },
                   "_arguments": {
                     "$type": 176,
                     "_arguments": {
@@ -10785,7 +10833,10 @@
                 "$type": 141,
                 "_content": {
                   "$type": 223,
-                  "_function": 38,
+                  "_function": {
+                    "$type": 1,
+                    "$text": "exec"
+                  },
                   "_arguments": {
                     "$type": 176,
                     "_arguments": {
@@ -10889,7 +10940,10 @@
             "$type": 141,
             "_content": {
               "$type": 223,
-              "_function": 38,
+              "_function": {
+                "$type": 1,
+                "$text": "exec"
+              },
               "_arguments": {
                 "$type": 176,
                 "_arguments": {
@@ -11076,7 +11130,10 @@
             "$type": 141,
             "_content": {
               "$type": 223,
-              "_function": 38,
+              "_function": {
+                "$type": 1,
+                "$text": "exec"
+              },
               "_arguments": {
                 "$type": 176,
                 "_arguments": {
@@ -11165,7 +11222,10 @@
           "$type": 141,
           "_content": {
             "$type": 223,
-            "_function": 38,
+            "_function": {
+              "$type": 1,
+              "$text": "exec"
+            },
             "_arguments": {
               "$type": 176,
               "_arguments": {
@@ -11349,7 +11409,10 @@
           "$type": 141,
           "_content": {
             "$type": 223,
-            "_function": 38,
+            "_function": {
+              "$type": 1,
+              "$text": "exec"
+            },
             "_arguments": {
               "$type": 176,
               "_arguments": {
@@ -11434,7 +11497,10 @@
       "$type": 141,
       "_content": {
         "$type": 223,
-        "_function": 38,
+        "_function": {
+          "$type": 1,
+          "$text": "exec"
+        },
         "_arguments": {
           "$type": 176,
           "_arguments": {
@@ -11601,7 +11667,10 @@
       "$type": 141,
       "_content": {
         "$type": 223,
-        "_function": 38,
+        "_function": {
+          "$type": 1,
+          "$text": "exec"
+        },
         "_arguments": {
           "$type": 176,
           "_arguments": {
@@ -11670,7 +11739,10 @@
     "pattern": "call",
     "input": {
       "$type": 223,
-      "_function": 38,
+      "_function": {
+        "$type": 1,
+        "$text": "exec"
+      },
       "_arguments": {
         "$type": 176,
         "_arguments": {
@@ -11834,7 +11906,10 @@
     "pattern": "call",
     "input": {
       "$type": 223,
-      "_function": 38,
+      "_function": {
+        "$type": 1,
+        "$text": "exec"
+      },
       "_arguments": {
         "$type": 176,
         "_arguments": {
@@ -12703,7 +12778,10 @@
                 "$type": 141,
                 "_content": {
                   "$type": 286,
-                  "_left": 68,
+                  "_left": {
+                    "$type": 1,
+                    "$text": "async"
+                  },
                   "_right": {
                     "$type": 95,
                     "$text": "4"
@@ -12741,7 +12819,10 @@
                 "$type": 141,
                 "_content": {
                   "$type": 286,
-                  "_left": 69,
+                  "_left": {
+                    "$type": 1,
+                    "$text": "await"
+                  },
                   "_right": {
                     "$type": 95,
                     "$text": "5"
@@ -12782,10 +12863,32 @@
                   "_print_arguments": {
                     "$type": 275,
                     "_item": [
-                      68,
-                      69
+                      {
+                        "$type": 1,
+                        "$text": "async"
+                      },
+                      {
+                        "$type": 1,
+                        "$text": "await",
+                        "$_layout": {
+                          "gap": {
+                            "$text": ", "
+                          }
+                        }
+                      }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_layout": {
+                      "flank": {
+                        "$text": "print async, await\n",
+                        "$span": {
+                          "start": 6,
+                          "end": 18
+                        },
+                        "$before": true,
+                        "$after": true
+                      }
+                    }
                   }
                 }
               }
@@ -12848,7 +12951,10 @@
             "$type": 141,
             "_content": {
               "$type": 286,
-              "_left": 68,
+              "_left": {
+                "$type": 1,
+                "$text": "async"
+              },
               "_right": {
                 "$type": 95,
                 "$text": "4"
@@ -12901,7 +13007,10 @@
             "$type": 141,
             "_content": {
               "$type": 286,
-              "_left": 69,
+              "_left": {
+                "$type": 1,
+                "$text": "await"
+              },
               "_right": {
                 "$type": 95,
                 "$text": "5"
@@ -12957,10 +13066,32 @@
               "_print_arguments": {
                 "$type": 275,
                 "_item": [
-                  68,
-                  69
+                  {
+                    "$type": 1,
+                    "$text": "async"
+                  },
+                  {
+                    "$type": 1,
+                    "$text": "await",
+                    "$_layout": {
+                      "gap": {
+                        "$text": ", "
+                      }
+                    }
+                  }
                 ],
-                "_delimiter": 0
+                "_delimiter": 0,
+                "$_layout": {
+                  "flank": {
+                    "$text": "print async, await\n",
+                    "$span": {
+                      "start": 6,
+                      "end": 18
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
+                }
               }
             }
           }
@@ -13008,7 +13139,10 @@
           "$type": 141,
           "_content": {
             "$type": 286,
-            "_left": 68,
+            "_left": {
+              "$type": 1,
+              "$text": "async"
+            },
             "_right": {
               "$type": 95,
               "$text": "4"
@@ -13058,7 +13192,10 @@
           "$type": 141,
           "_content": {
             "$type": 286,
-            "_left": 69,
+            "_left": {
+              "$type": 1,
+              "$text": "await"
+            },
             "_right": {
               "$type": 95,
               "$text": "5"
@@ -13111,10 +13248,32 @@
             "_print_arguments": {
               "$type": 275,
               "_item": [
-                68,
-                69
+                {
+                  "$type": 1,
+                  "$text": "async"
+                },
+                {
+                  "$type": 1,
+                  "$text": "await",
+                  "$_layout": {
+                    "gap": {
+                      "$text": ", "
+                    }
+                  }
+                }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_layout": {
+                "flank": {
+                  "$text": "print async, await\n",
+                  "$span": {
+                    "start": 6,
+                    "end": 18
+                  },
+                  "$before": true,
+                  "$after": true
+                }
+              }
             }
           }
         }
@@ -13158,7 +13317,10 @@
       "$type": 141,
       "_content": {
         "$type": 286,
-        "_left": 68,
+        "_left": {
+          "$type": 1,
+          "$text": "async"
+        },
         "_right": {
           "$type": 95,
           "$text": "4"
@@ -13191,7 +13353,10 @@
       "$type": 141,
       "_content": {
         "$type": 286,
-        "_left": 69,
+        "_left": {
+          "$type": 1,
+          "$text": "await"
+        },
         "_right": {
           "$type": 95,
           "$text": "5"
@@ -13222,7 +13387,10 @@
     "pattern": "assignment_eq",
     "input": {
       "$type": 286,
-      "_left": 68,
+      "_left": {
+        "$type": 1,
+        "$text": "async"
+      },
       "_right": {
         "$type": 95,
         "$text": "4"
@@ -13252,7 +13420,10 @@
     "pattern": "assignment_eq",
     "input": {
       "$type": 286,
-      "_left": 69,
+      "_left": {
+        "$type": 1,
+        "$text": "await"
+      },
       "_right": {
         "$type": 95,
         "$text": "5"
@@ -13287,10 +13458,32 @@
         "_print_arguments": {
           "$type": 275,
           "_item": [
-            68,
-            69
+            {
+              "$type": 1,
+              "$text": "async"
+            },
+            {
+              "$type": 1,
+              "$text": "await",
+              "$_layout": {
+                "gap": {
+                  "$text": ", "
+                }
+              }
+            }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_layout": {
+            "flank": {
+              "$text": "print async, await\n",
+              "$span": {
+                "start": 6,
+                "end": 18
+              },
+              "$before": true,
+              "$after": true
+            }
+          }
         }
       }
     },
@@ -13321,10 +13514,32 @@
       "_print_arguments": {
         "$type": 275,
         "_item": [
-          68,
-          69
+          {
+            "$type": 1,
+            "$text": "async"
+          },
+          {
+            "$type": 1,
+            "$text": "await",
+            "$_layout": {
+              "gap": {
+                "$text": ", "
+              }
+            }
+          }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_layout": {
+          "flank": {
+            "$text": "print async, await\n",
+            "$span": {
+              "start": 6,
+              "end": 18
+            },
+            "$before": true,
+            "$after": true
+          }
+        }
       }
     },
     "expectedOutput": "print async, await",
@@ -13352,10 +13567,32 @@
     "input": {
       "$type": 275,
       "_item": [
-        68,
-        69
+        {
+          "$type": 1,
+          "$text": "async"
+        },
+        {
+          "$type": 1,
+          "$text": "await",
+          "$_layout": {
+            "gap": {
+              "$text": ", "
+            }
+          }
+        }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_layout": {
+        "flank": {
+          "$text": "print async, await\n",
+          "$span": {
+            "start": 6,
+            "end": 18
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
     },
     "expectedOutput": "async, await",
     "options": {
@@ -51533,7 +51770,10 @@
                 "$type": 141,
                 "_content": {
                   "$type": 223,
-                  "_function": 22,
+                  "_function": {
+                    "$type": 1,
+                    "$text": "match"
+                  },
                   "_arguments": {
                     "$type": 176,
                     "_arguments": {
@@ -51637,7 +51877,10 @@
             "$type": 141,
             "_content": {
               "$type": 223,
-              "_function": 22,
+              "_function": {
+                "$type": 1,
+                "$text": "match"
+              },
               "_arguments": {
                 "$type": 176,
                 "_arguments": {
@@ -51726,7 +51969,10 @@
           "$type": 141,
           "_content": {
             "$type": 223,
-            "_function": 22,
+            "_function": {
+              "$type": 1,
+              "$text": "match"
+            },
             "_arguments": {
               "$type": 176,
               "_arguments": {
@@ -51811,7 +52057,10 @@
       "$type": 141,
       "_content": {
         "$type": 223,
-        "_function": 22,
+        "_function": {
+          "$type": 1,
+          "$text": "match"
+        },
         "_arguments": {
           "$type": 176,
           "_arguments": {
@@ -51880,7 +52129,10 @@
     "pattern": "call",
     "input": {
       "$type": 223,
-      "_function": 22,
+      "_function": {
+        "$type": 1,
+        "$text": "match"
+      },
       "_arguments": {
         "$type": 176,
         "_arguments": {
@@ -52178,7 +52430,10 @@
                     "$type": 225,
                     "_content": {
                       "$type": 227,
-                      "_name": 39,
+                      "_name": {
+                        "$type": 1,
+                        "$text": "type"
+                      },
                       "_type_parameter": {
                         "$type": 174,
                         "_types": {
@@ -52383,7 +52638,10 @@
                 "$type": 225,
                 "_content": {
                   "$type": 227,
-                  "_name": 39,
+                  "_name": {
+                    "$type": 1,
+                    "$text": "type"
+                  },
                   "_type_parameter": {
                     "$type": 174,
                     "_types": {
@@ -52570,7 +52828,10 @@
               "$type": 225,
               "_content": {
                 "$type": 227,
-                "_name": 39,
+                "_name": {
+                  "$type": 1,
+                  "$text": "type"
+                },
                 "_type_parameter": {
                   "$type": 174,
                   "_types": {
@@ -52736,7 +52997,10 @@
           "$type": 225,
           "_content": {
             "$type": 227,
-            "_name": 39,
+            "_name": {
+              "$type": 1,
+              "$text": "type"
+            },
             "_type_parameter": {
               "$type": 174,
               "_types": {
@@ -53066,7 +53330,10 @@
       "$type": 225,
       "_content": {
         "$type": 227,
-        "_name": 39,
+        "_name": {
+          "$type": 1,
+          "$text": "type"
+        },
         "_type_parameter": {
           "$type": 174,
           "_types": {
@@ -53274,7 +53541,10 @@
     "pattern": "generic_type",
     "input": {
       "$type": 227,
-      "_name": 39,
+      "_name": {
+        "$type": 1,
+        "$text": "type"
+      },
       "_type_parameter": {
         "$type": 174,
         "_types": {
@@ -53525,7 +53795,10 @@
         "$type": 225,
         "_content": {
           "$type": 227,
-          "_name": 39,
+          "_name": {
+            "$type": 1,
+            "$text": "type"
+          },
           "_type_parameter": {
             "$type": 174,
             "_types": {
@@ -101090,10 +101363,32 @@
                   "_elements": {
                     "$type": 271,
                     "_item": [
-                      67,
-                      38
+                      {
+                        "$type": 1,
+                        "$text": "print"
+                      },
+                      {
+                        "$type": 1,
+                        "$text": "exec",
+                        "$_layout": {
+                          "gap": {
+                            "$text": ", "
+                          }
+                        }
+                      }
                     ],
-                    "_delimiter": 0
+                    "_delimiter": 0,
+                    "$_layout": {
+                      "flank": {
+                        "$text": "(print, exec)",
+                        "$span": {
+                          "start": 1,
+                          "end": 12
+                        },
+                        "$before": true,
+                        "$after": true
+                      }
+                    }
                   }
                 }
               }
@@ -101372,10 +101667,32 @@
               "_elements": {
                 "$type": 271,
                 "_item": [
-                  67,
-                  38
+                  {
+                    "$type": 1,
+                    "$text": "print"
+                  },
+                  {
+                    "$type": 1,
+                    "$text": "exec",
+                    "$_layout": {
+                      "gap": {
+                        "$text": ", "
+                      }
+                    }
+                  }
                 ],
-                "_delimiter": 0
+                "_delimiter": 0,
+                "$_layout": {
+                  "flank": {
+                    "$text": "(print, exec)",
+                    "$span": {
+                      "start": 1,
+                      "end": 12
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
+                }
               }
             }
           }
@@ -101630,10 +101947,32 @@
             "_elements": {
               "$type": 271,
               "_item": [
-                67,
-                38
+                {
+                  "$type": 1,
+                  "$text": "print"
+                },
+                {
+                  "$type": 1,
+                  "$text": "exec",
+                  "$_layout": {
+                    "gap": {
+                      "$text": ", "
+                    }
+                  }
+                }
               ],
-              "_delimiter": 0
+              "_delimiter": 0,
+              "$_layout": {
+                "flank": {
+                  "$text": "(print, exec)",
+                  "$span": {
+                    "start": 1,
+                    "end": 12
+                  },
+                  "$before": true,
+                  "$after": true
+                }
+              }
             }
           }
         }
@@ -101833,10 +102172,32 @@
         "_elements": {
           "$type": 271,
           "_item": [
-            67,
-            38
+            {
+              "$type": 1,
+              "$text": "print"
+            },
+            {
+              "$type": 1,
+              "$text": "exec",
+              "$_layout": {
+                "gap": {
+                  "$text": ", "
+                }
+              }
+            }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_layout": {
+            "flank": {
+              "$text": "(print, exec)",
+              "$span": {
+                "start": 1,
+                "end": 12
+              },
+              "$before": true,
+              "$after": true
+            }
+          }
         }
       }
     },
@@ -102011,10 +102372,32 @@
       "_elements": {
         "$type": 271,
         "_item": [
-          67,
-          38
+          {
+            "$type": 1,
+            "$text": "print"
+          },
+          {
+            "$type": 1,
+            "$text": "exec",
+            "$_layout": {
+              "gap": {
+                "$text": ", "
+              }
+            }
+          }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_layout": {
+          "flank": {
+            "$text": "(print, exec)",
+            "$span": {
+              "start": 1,
+              "end": 12
+            },
+            "$before": true,
+            "$after": true
+          }
+        }
       }
     },
     "expectedOutput": "(print, exec)",
@@ -102155,10 +102538,32 @@
     "input": {
       "$type": 271,
       "_item": [
-        67,
-        38
+        {
+          "$type": 1,
+          "$text": "print"
+        },
+        {
+          "$type": 1,
+          "$text": "exec",
+          "$_layout": {
+            "gap": {
+              "$text": ", "
+            }
+          }
+        }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_layout": {
+        "flank": {
+          "$text": "(print, exec)",
+          "$span": {
+            "start": 1,
+            "end": 12
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
     },
     "expectedOutput": "print, exec",
     "options": {
@@ -138449,7 +138854,10 @@
                 "$type": 141,
                 "_content": {
                   "$type": 286,
-                  "_left": 22,
+                  "_left": {
+                    "$type": 1,
+                    "$text": "match"
+                  },
                   "_right": {
                     "$type": 95,
                     "$text": "2"
@@ -138490,7 +138898,10 @@
                   "_left": {
                     "$type": 217,
                     "_item": [
-                      22,
+                      {
+                        "$type": 1,
+                        "$text": "match"
+                      },
                       {
                         "$type": 1,
                         "$text": "a",
@@ -138509,7 +138920,7 @@
                           "start": 10,
                           "end": 18
                         },
-                        "$before": false,
+                        "$before": true,
                         "$after": true
                       }
                     }
@@ -138577,7 +138988,10 @@
                 "$type": 141,
                 "_content": {
                   "$type": 288,
-                  "_left": 22,
+                  "_left": {
+                    "$type": 1,
+                    "$text": "match"
+                  },
                   "_type": {
                     "$type": 225,
                     "_content": {
@@ -138629,7 +139043,15 @@
                         "$type": 1,
                         "$text": "x"
                       },
-                      22
+                      {
+                        "$type": 1,
+                        "$text": "match",
+                        "$_layout": {
+                          "gap": {
+                            "$text": ", "
+                          }
+                        }
+                      }
                     ],
                     "_delimiter": 0,
                     "$_layout": {
@@ -138640,7 +139062,7 @@
                           "end": 28
                         },
                         "$before": true,
-                        "$after": false
+                        "$after": true
                       }
                     }
                   },
@@ -138730,7 +139152,10 @@
                     "_item": [
                       {
                         "$type": 200,
-                        "_target": 22
+                        "_target": {
+                          "$type": 1,
+                          "$text": "match"
+                        }
                       },
                       {
                         "$type": 1,
@@ -138835,7 +139260,10 @@
               "_item": [
                 {
                   "$type": 201,
-                  "_target": 22
+                  "_target": {
+                    "$type": 1,
+                    "$text": "match"
+                  }
                 }
               ],
               "_delimiter": 0,
@@ -138907,7 +139335,10 @@
             "$type": 141,
             "_content": {
               "$type": 286,
-              "_left": 22,
+              "_left": {
+                "$type": 1,
+                "$text": "match"
+              },
               "_right": {
                 "$type": 95,
                 "$text": "2"
@@ -138963,7 +139394,10 @@
               "_left": {
                 "$type": 217,
                 "_item": [
-                  22,
+                  {
+                    "$type": 1,
+                    "$text": "match"
+                  },
                   {
                     "$type": 1,
                     "$text": "a",
@@ -138982,7 +139416,7 @@
                       "start": 10,
                       "end": 18
                     },
-                    "$before": false,
+                    "$before": true,
                     "$after": true
                   }
                 }
@@ -139065,7 +139499,10 @@
             "$type": 141,
             "_content": {
               "$type": 288,
-              "_left": 22,
+              "_left": {
+                "$type": 1,
+                "$text": "match"
+              },
               "_type": {
                 "$type": 225,
                 "_content": {
@@ -139132,7 +139569,15 @@
                     "$type": 1,
                     "$text": "x"
                   },
-                  22
+                  {
+                    "$type": 1,
+                    "$text": "match",
+                    "$_layout": {
+                      "gap": {
+                        "$text": ", "
+                      }
+                    }
+                  }
                 ],
                 "_delimiter": 0,
                 "$_layout": {
@@ -139143,7 +139588,7 @@
                       "end": 28
                     },
                     "$before": true,
-                    "$after": false
+                    "$after": true
                   }
                 }
               },
@@ -139248,7 +139693,10 @@
                 "_item": [
                   {
                     "$type": 200,
-                    "_target": 22
+                    "_target": {
+                      "$type": 1,
+                      "$text": "match"
+                    }
                   },
                   {
                     "$type": 1,
@@ -139361,7 +139809,10 @@
           "$type": 141,
           "_content": {
             "$type": 286,
-            "_left": 22,
+            "_left": {
+              "$type": 1,
+              "$text": "match"
+            },
             "_right": {
               "$type": 95,
               "$text": "2"
@@ -139414,7 +139865,10 @@
             "_left": {
               "$type": 217,
               "_item": [
-                22,
+                {
+                  "$type": 1,
+                  "$text": "match"
+                },
                 {
                   "$type": 1,
                   "$text": "a",
@@ -139433,7 +139887,7 @@
                     "start": 10,
                     "end": 18
                   },
-                  "$before": false,
+                  "$before": true,
                   "$after": true
                 }
               }
@@ -139513,7 +139967,10 @@
           "$type": 141,
           "_content": {
             "$type": 288,
-            "_left": 22,
+            "_left": {
+              "$type": 1,
+              "$text": "match"
+            },
             "_type": {
               "$type": 225,
               "_content": {
@@ -139577,7 +140034,15 @@
                   "$type": 1,
                   "$text": "x"
                 },
-                22
+                {
+                  "$type": 1,
+                  "$text": "match",
+                  "$_layout": {
+                    "gap": {
+                      "$text": ", "
+                    }
+                  }
+                }
               ],
               "_delimiter": 0,
               "$_layout": {
@@ -139588,7 +140053,7 @@
                     "end": 28
                   },
                   "$before": true,
-                  "$after": false
+                  "$after": true
                 }
               }
             },
@@ -139690,7 +140155,10 @@
               "_item": [
                 {
                   "$type": 200,
-                  "_target": 22
+                  "_target": {
+                    "$type": 1,
+                    "$text": "match"
+                  }
                 },
                 {
                   "$type": 1,
@@ -139828,7 +140296,10 @@
       "$type": 141,
       "_content": {
         "$type": 286,
-        "_left": 22,
+        "_left": {
+          "$type": 1,
+          "$text": "match"
+        },
         "_right": {
           "$type": 95,
           "$text": "2"
@@ -139864,7 +140335,10 @@
         "_left": {
           "$type": 217,
           "_item": [
-            22,
+            {
+              "$type": 1,
+              "$text": "match"
+            },
             {
               "$type": 1,
               "$text": "a",
@@ -139883,7 +140357,7 @@
                 "start": 10,
                 "end": 18
               },
-              "$before": false,
+              "$before": true,
               "$after": true
             }
           }
@@ -139946,7 +140420,10 @@
       "$type": 141,
       "_content": {
         "$type": 288,
-        "_left": 22,
+        "_left": {
+          "$type": 1,
+          "$text": "match"
+        },
         "_type": {
           "$type": 225,
           "_content": {
@@ -139993,7 +140470,15 @@
               "$type": 1,
               "$text": "x"
             },
-            22
+            {
+              "$type": 1,
+              "$text": "match",
+              "$_layout": {
+                "gap": {
+                  "$text": ", "
+                }
+              }
+            }
           ],
           "_delimiter": 0,
           "$_layout": {
@@ -140004,7 +140489,7 @@
                 "end": 28
               },
               "$before": true,
-              "$after": false
+              "$after": true
             }
           }
         },
@@ -140089,7 +140574,10 @@
           "_item": [
             {
               "$type": 200,
-              "_target": 22
+              "_target": {
+                "$type": 1,
+                "$text": "match"
+              }
             },
             {
               "$type": 1,
@@ -140182,7 +140670,10 @@
     "pattern": "assignment_eq",
     "input": {
       "$type": 286,
-      "_left": 22,
+      "_left": {
+        "$type": 1,
+        "$text": "match"
+      },
       "_right": {
         "$type": 95,
         "$text": "2"
@@ -140215,7 +140706,10 @@
       "_left": {
         "$type": 217,
         "_item": [
-          22,
+          {
+            "$type": 1,
+            "$text": "match"
+          },
           {
             "$type": 1,
             "$text": "a",
@@ -140234,7 +140728,7 @@
               "start": 10,
               "end": 18
             },
-            "$before": false,
+            "$before": true,
             "$after": true
           }
         }
@@ -140301,7 +140795,15 @@
             "$type": 1,
             "$text": "x"
           },
-          22
+          {
+            "$type": 1,
+            "$text": "match",
+            "$_layout": {
+              "gap": {
+                "$text": ", "
+              }
+            }
+          }
         ],
         "_delimiter": 0,
         "$_layout": {
@@ -140312,7 +140814,7 @@
               "end": 28
             },
             "$before": true,
-            "$after": false
+            "$after": true
           }
         }
       },
@@ -140394,7 +140896,10 @@
         "_item": [
           {
             "$type": 200,
-            "_target": 22
+            "_target": {
+              "$type": 1,
+              "$text": "match"
+            }
           },
           {
             "$type": 1,
@@ -140487,7 +140992,10 @@
     "input": {
       "$type": 217,
       "_item": [
-        22,
+        {
+          "$type": 1,
+          "$text": "match"
+        },
         {
           "$type": 1,
           "$text": "a",
@@ -140506,7 +141014,7 @@
             "start": 10,
             "end": 18
           },
-          "$before": false,
+          "$before": true,
           "$after": true
         }
       }
@@ -140540,7 +141048,15 @@
           "$type": 1,
           "$text": "x"
         },
-        22
+        {
+          "$type": 1,
+          "$text": "match",
+          "$_layout": {
+            "gap": {
+              "$text": ", "
+            }
+          }
+        }
       ],
       "_delimiter": 0,
       "$_layout": {
@@ -140551,7 +141067,7 @@
             "end": 28
           },
           "$before": true,
-          "$after": false
+          "$after": true
         }
       }
     },
@@ -140582,7 +141098,10 @@
       "_item": [
         {
           "$type": 200,
-          "_target": 22
+          "_target": {
+            "$type": 1,
+            "$text": "match"
+          }
         },
         {
           "$type": 1,
@@ -140753,7 +141272,10 @@
     "pattern": "assignment_typed",
     "input": {
       "$type": 288,
-      "_left": 22,
+      "_left": {
+        "$type": 1,
+        "$text": "match"
+      },
       "_type": {
         "$type": 225,
         "_content": {
@@ -140863,7 +141385,10 @@
     "pattern": "list_splat_pattern",
     "input": {
       "$type": 200,
-      "_target": 22
+      "_target": {
+        "$type": 1,
+        "$text": "match"
+      }
     },
     "expectedOutput": "*match",
     "options": {
@@ -141026,7 +141551,10 @@
           "_item": [
             {
               "$type": 201,
-              "_target": 22
+              "_target": {
+                "$type": 1,
+                "$text": "match"
+              }
             }
           ],
           "_delimiter": 0,
@@ -141083,7 +141611,10 @@
         "_item": [
           {
             "$type": 201,
-            "_target": 22
+            "_target": {
+              "$type": 1,
+              "$text": "match"
+            }
           }
         ],
         "_delimiter": 0,
@@ -141127,7 +141658,10 @@
       "_item": [
         {
           "$type": 201,
-          "_target": 22
+          "_target": {
+            "$type": 1,
+            "$text": "match"
+          }
         }
       ],
       "_delimiter": 0,
@@ -141167,7 +141701,10 @@
     "pattern": "dictionary_splat_pattern",
     "input": {
       "$type": 201,
-      "_target": 22
+      "_target": {
+        "$type": 1,
+        "$text": "match"
+      }
     },
     "expectedOutput": "**match",
     "options": {
@@ -141244,9 +141781,23 @@
                     "_collection_elements": {
                       "$type": 242,
                       "_item": [
-                        22
+                        {
+                          "$type": 1,
+                          "$text": "match"
+                        }
                       ],
-                      "_delimiter": 0
+                      "_delimiter": 0,
+                      "$_layout": {
+                        "flank": {
+                          "$text": "a = [match]",
+                          "$span": {
+                            "start": 5,
+                            "end": 10
+                          },
+                          "$before": true,
+                          "$after": true
+                        }
+                      }
                     }
                   }
                 }
@@ -141282,15 +141833,32 @@
                 "$type": 141,
                 "_content": {
                   "$type": 286,
-                  "_left": 22,
+                  "_left": {
+                    "$type": 1,
+                    "$text": "match"
+                  },
                   "_right": {
                     "$type": 232,
                     "_collection_elements": {
                       "$type": 242,
                       "_item": [
-                        22
+                        {
+                          "$type": 1,
+                          "$text": "match"
+                        }
                       ],
-                      "_delimiter": 0
+                      "_delimiter": 0,
+                      "$_layout": {
+                        "flank": {
+                          "$text": "match = [match]",
+                          "$span": {
+                            "start": 9,
+                            "end": 14
+                          },
+                          "$before": true,
+                          "$after": true
+                        }
+                      }
                     }
                   }
                 }
@@ -141363,9 +141931,23 @@
                 "_collection_elements": {
                   "$type": 242,
                   "_item": [
-                    22
+                    {
+                      "$type": 1,
+                      "$text": "match"
+                    }
                   ],
-                  "_delimiter": 0
+                  "_delimiter": 0,
+                  "$_layout": {
+                    "flank": {
+                      "$text": "a = [match]",
+                      "$span": {
+                        "start": 5,
+                        "end": 10
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
+                  }
                 }
               }
             }
@@ -141416,15 +141998,32 @@
             "$type": 141,
             "_content": {
               "$type": 286,
-              "_left": 22,
+              "_left": {
+                "$type": 1,
+                "$text": "match"
+              },
               "_right": {
                 "$type": 232,
                 "_collection_elements": {
                   "$type": 242,
                   "_item": [
-                    22
+                    {
+                      "$type": 1,
+                      "$text": "match"
+                    }
                   ],
-                  "_delimiter": 0
+                  "_delimiter": 0,
+                  "$_layout": {
+                    "flank": {
+                      "$text": "match = [match]",
+                      "$span": {
+                        "start": 9,
+                        "end": 14
+                      },
+                      "$before": true,
+                      "$after": true
+                    }
+                  }
                 }
               }
             }
@@ -141482,9 +142081,23 @@
               "_collection_elements": {
                 "$type": 242,
                 "_item": [
-                  22
+                  {
+                    "$type": 1,
+                    "$text": "match"
+                  }
                 ],
-                "_delimiter": 0
+                "_delimiter": 0,
+                "$_layout": {
+                  "flank": {
+                    "$text": "a = [match]",
+                    "$span": {
+                      "start": 5,
+                      "end": 10
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
+                }
               }
             }
           }
@@ -141532,15 +142145,32 @@
           "$type": 141,
           "_content": {
             "$type": 286,
-            "_left": 22,
+            "_left": {
+              "$type": 1,
+              "$text": "match"
+            },
             "_right": {
               "$type": 232,
               "_collection_elements": {
                 "$type": 242,
                 "_item": [
-                  22
+                  {
+                    "$type": 1,
+                    "$text": "match"
+                  }
                 ],
-                "_delimiter": 0
+                "_delimiter": 0,
+                "$_layout": {
+                  "flank": {
+                    "$text": "match = [match]",
+                    "$span": {
+                      "start": 9,
+                      "end": 14
+                    },
+                    "$before": true,
+                    "$after": true
+                  }
+                }
               }
             }
           }
@@ -141594,9 +142224,23 @@
           "_collection_elements": {
             "$type": 242,
             "_item": [
-              22
+              {
+                "$type": 1,
+                "$text": "match"
+              }
             ],
-            "_delimiter": 0
+            "_delimiter": 0,
+            "$_layout": {
+              "flank": {
+                "$text": "a = [match]",
+                "$span": {
+                  "start": 5,
+                  "end": 10
+                },
+                "$before": true,
+                "$after": true
+              }
+            }
           }
         }
       }
@@ -141627,15 +142271,32 @@
       "$type": 141,
       "_content": {
         "$type": 286,
-        "_left": 22,
+        "_left": {
+          "$type": 1,
+          "$text": "match"
+        },
         "_right": {
           "$type": 232,
           "_collection_elements": {
             "$type": 242,
             "_item": [
-              22
+              {
+                "$type": 1,
+                "$text": "match"
+              }
             ],
-            "_delimiter": 0
+            "_delimiter": 0,
+            "$_layout": {
+              "flank": {
+                "$text": "match = [match]",
+                "$span": {
+                  "start": 9,
+                  "end": 14
+                },
+                "$before": true,
+                "$after": true
+              }
+            }
           }
         }
       }
@@ -141673,9 +142334,23 @@
         "_collection_elements": {
           "$type": 242,
           "_item": [
-            22
+            {
+              "$type": 1,
+              "$text": "match"
+            }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_layout": {
+            "flank": {
+              "$text": "a = [match]",
+              "$span": {
+                "start": 5,
+                "end": 10
+              },
+              "$before": true,
+              "$after": true
+            }
+          }
         }
       }
     },
@@ -141703,15 +142378,32 @@
     "pattern": "assignment_eq",
     "input": {
       "$type": 286,
-      "_left": 22,
+      "_left": {
+        "$type": 1,
+        "$text": "match"
+      },
       "_right": {
         "$type": 232,
         "_collection_elements": {
           "$type": 242,
           "_item": [
-            22
+            {
+              "$type": 1,
+              "$text": "match"
+            }
           ],
-          "_delimiter": 0
+          "_delimiter": 0,
+          "$_layout": {
+            "flank": {
+              "$text": "match = [match]",
+              "$span": {
+                "start": 9,
+                "end": 14
+              },
+              "$before": true,
+              "$after": true
+            }
+          }
         }
       }
     },
@@ -141742,9 +142434,23 @@
       "_collection_elements": {
         "$type": 242,
         "_item": [
-          22
+          {
+            "$type": 1,
+            "$text": "match"
+          }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_layout": {
+          "flank": {
+            "$text": "a = [match]",
+            "$span": {
+              "start": 5,
+              "end": 10
+            },
+            "$before": true,
+            "$after": true
+          }
+        }
       }
     },
     "expectedOutput": "[match]",
@@ -141774,9 +142480,23 @@
       "_collection_elements": {
         "$type": 242,
         "_item": [
-          22
+          {
+            "$type": 1,
+            "$text": "match"
+          }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_layout": {
+          "flank": {
+            "$text": "match = [match]",
+            "$span": {
+              "start": 9,
+              "end": 14
+            },
+            "$before": true,
+            "$after": true
+          }
+        }
       }
     },
     "expectedOutput": "[match]",
@@ -141804,9 +142524,23 @@
     "input": {
       "$type": 242,
       "_item": [
-        22
+        {
+          "$type": 1,
+          "$text": "match"
+        }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_layout": {
+        "flank": {
+          "$text": "a = [match]",
+          "$span": {
+            "start": 5,
+            "end": 10
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
     },
     "expectedOutput": "match",
     "options": {
@@ -141833,9 +142567,23 @@
     "input": {
       "$type": 242,
       "_item": [
-        22
+        {
+          "$type": 1,
+          "$text": "match"
+        }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_layout": {
+        "flank": {
+          "$text": "match = [match]",
+          "$span": {
+            "start": 9,
+            "end": 14
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
     },
     "expectedOutput": "match",
     "options": {
@@ -141888,7 +142636,10 @@
                         "_item": [
                           {
                             "$type": 231,
-                            "_name": 22,
+                            "_name": {
+                              "$type": 1,
+                              "$text": "match"
+                            },
                             "_value": {
                               "$type": 247,
                               "_string_start": {
@@ -142006,7 +142757,10 @@
                     "_item": [
                       {
                         "$type": 231,
-                        "_name": 22,
+                        "_name": {
+                          "$type": 1,
+                          "$text": "match"
+                        },
                         "_value": {
                           "$type": 247,
                           "_string_start": {
@@ -142109,7 +142863,10 @@
                   "_item": [
                     {
                       "$type": 231,
-                      "_name": 22,
+                      "_name": {
+                        "$type": 1,
+                        "$text": "match"
+                      },
                       "_value": {
                         "$type": 247,
                         "_string_start": {
@@ -142208,7 +142965,10 @@
               "_item": [
                 {
                   "$type": 231,
-                  "_name": 22,
+                  "_name": {
+                    "$type": 1,
+                    "$text": "match"
+                  },
                   "_value": {
                     "$type": 247,
                     "_string_start": {
@@ -142291,7 +143051,10 @@
             "_item": [
               {
                 "$type": 231,
-                "_name": 22,
+                "_name": {
+                  "$type": 1,
+                  "$text": "match"
+                },
                 "_value": {
                   "$type": 247,
                   "_string_start": {
@@ -142367,7 +143130,10 @@
           "_item": [
             {
               "$type": 231,
-              "_name": 22,
+              "_name": {
+                "$type": 1,
+                "$text": "match"
+              },
               "_value": {
                 "$type": 247,
                 "_string_start": {
@@ -142436,7 +143202,10 @@
         "_item": [
           {
             "$type": 231,
-            "_name": 22,
+            "_name": {
+              "$type": 1,
+              "$text": "match"
+            },
             "_value": {
               "$type": 247,
               "_string_start": {
@@ -142502,7 +143271,10 @@
       "_item": [
         {
           "$type": 231,
-          "_name": 22,
+          "_name": {
+            "$type": 1,
+            "$text": "match"
+          },
           "_value": {
             "$type": 247,
             "_string_start": {
@@ -142564,7 +143336,10 @@
     "pattern": "keyword_argument",
     "input": {
       "$type": 231,
-      "_name": 22,
+      "_name": {
+        "$type": 1,
+        "$text": "match"
+      },
       "_value": {
         "$type": 247,
         "_string_start": {
@@ -142672,7 +143447,10 @@
                   },
                   "_right": {
                     "$type": 223,
-                    "_function": 22,
+                    "_function": {
+                      "$type": 1,
+                      "$text": "match"
+                    },
                     "_arguments": {
                       "$type": 176,
                       "_arguments": {
@@ -142680,10 +143458,24 @@
                         "_item": [
                           {
                             "$type": 231,
-                            "_name": 22,
-                            "_value": 22
+                            "_name": {
+                              "$type": 1,
+                              "$text": "match"
+                            },
+                            "_value": {
+                              "$type": 1,
+                              "$text": "match"
+                            }
                           },
-                          22
+                          {
+                            "$type": 1,
+                            "$text": "match",
+                            "$_layout": {
+                              "gap": {
+                                "$text": ", "
+                              }
+                            }
+                          }
                         ],
                         "_delimiter": 0,
                         "$_layout": {
@@ -142694,7 +143486,7 @@
                               "end": 32
                             },
                             "$before": true,
-                            "$after": false
+                            "$after": true
                           }
                         }
                       }
@@ -142767,7 +143559,10 @@
               },
               "_right": {
                 "$type": 223,
-                "_function": 22,
+                "_function": {
+                  "$type": 1,
+                  "$text": "match"
+                },
                 "_arguments": {
                   "$type": 176,
                   "_arguments": {
@@ -142775,10 +143570,24 @@
                     "_item": [
                       {
                         "$type": 231,
-                        "_name": 22,
-                        "_value": 22
+                        "_name": {
+                          "$type": 1,
+                          "$text": "match"
+                        },
+                        "_value": {
+                          "$type": 1,
+                          "$text": "match"
+                        }
                       },
-                      22
+                      {
+                        "$type": 1,
+                        "$text": "match",
+                        "$_layout": {
+                          "gap": {
+                            "$text": ", "
+                          }
+                        }
+                      }
                     ],
                     "_delimiter": 0,
                     "$_layout": {
@@ -142789,7 +143598,7 @@
                           "end": 32
                         },
                         "$before": true,
-                        "$after": false
+                        "$after": true
                       }
                     }
                   }
@@ -142847,7 +143656,10 @@
             },
             "_right": {
               "$type": 223,
-              "_function": 22,
+              "_function": {
+                "$type": 1,
+                "$text": "match"
+              },
               "_arguments": {
                 "$type": 176,
                 "_arguments": {
@@ -142855,10 +143667,24 @@
                   "_item": [
                     {
                       "$type": 231,
-                      "_name": 22,
-                      "_value": 22
+                      "_name": {
+                        "$type": 1,
+                        "$text": "match"
+                      },
+                      "_value": {
+                        "$type": 1,
+                        "$text": "match"
+                      }
                     },
-                    22
+                    {
+                      "$type": 1,
+                      "$text": "match",
+                      "$_layout": {
+                        "gap": {
+                          "$text": ", "
+                        }
+                      }
+                    }
                   ],
                   "_delimiter": 0,
                   "$_layout": {
@@ -142869,7 +143695,7 @@
                         "end": 32
                       },
                       "$before": true,
-                      "$after": false
+                      "$after": true
                     }
                   }
                 }
@@ -142923,7 +143749,10 @@
         },
         "_right": {
           "$type": 223,
-          "_function": 22,
+          "_function": {
+            "$type": 1,
+            "$text": "match"
+          },
           "_arguments": {
             "$type": 176,
             "_arguments": {
@@ -142931,10 +143760,24 @@
               "_item": [
                 {
                   "$type": 231,
-                  "_name": 22,
-                  "_value": 22
+                  "_name": {
+                    "$type": 1,
+                    "$text": "match"
+                  },
+                  "_value": {
+                    "$type": 1,
+                    "$text": "match"
+                  }
                 },
-                22
+                {
+                  "$type": 1,
+                  "$text": "match",
+                  "$_layout": {
+                    "gap": {
+                      "$text": ", "
+                    }
+                  }
+                }
               ],
               "_delimiter": 0,
               "$_layout": {
@@ -142945,7 +143788,7 @@
                     "end": 32
                   },
                   "$before": true,
-                  "$after": false
+                  "$after": true
                 }
               }
             }
@@ -142983,7 +143826,10 @@
       },
       "_right": {
         "$type": 223,
-        "_function": 22,
+        "_function": {
+          "$type": 1,
+          "$text": "match"
+        },
         "_arguments": {
           "$type": 176,
           "_arguments": {
@@ -142991,10 +143837,24 @@
             "_item": [
               {
                 "$type": 231,
-                "_name": 22,
-                "_value": 22
+                "_name": {
+                  "$type": 1,
+                  "$text": "match"
+                },
+                "_value": {
+                  "$type": 1,
+                  "$text": "match"
+                }
               },
-              22
+              {
+                "$type": 1,
+                "$text": "match",
+                "$_layout": {
+                  "gap": {
+                    "$text": ", "
+                  }
+                }
+              }
             ],
             "_delimiter": 0,
             "$_layout": {
@@ -143005,7 +143865,7 @@
                   "end": 32
                 },
                 "$before": true,
-                "$after": false
+                "$after": true
               }
             }
           }
@@ -143036,7 +143896,10 @@
     "pattern": "call",
     "input": {
       "$type": 223,
-      "_function": 22,
+      "_function": {
+        "$type": 1,
+        "$text": "match"
+      },
       "_arguments": {
         "$type": 176,
         "_arguments": {
@@ -143044,10 +143907,24 @@
           "_item": [
             {
               "$type": 231,
-              "_name": 22,
-              "_value": 22
+              "_name": {
+                "$type": 1,
+                "$text": "match"
+              },
+              "_value": {
+                "$type": 1,
+                "$text": "match"
+              }
             },
-            22
+            {
+              "$type": 1,
+              "$text": "match",
+              "$_layout": {
+                "gap": {
+                  "$text": ", "
+                }
+              }
+            }
           ],
           "_delimiter": 0,
           "$_layout": {
@@ -143058,7 +143935,7 @@
                 "end": 32
               },
               "$before": true,
-              "$after": false
+              "$after": true
             }
           }
         }
@@ -143093,10 +143970,24 @@
         "_item": [
           {
             "$type": 231,
-            "_name": 22,
-            "_value": 22
+            "_name": {
+              "$type": 1,
+              "$text": "match"
+            },
+            "_value": {
+              "$type": 1,
+              "$text": "match"
+            }
           },
-          22
+          {
+            "$type": 1,
+            "$text": "match",
+            "$_layout": {
+              "gap": {
+                "$text": ", "
+              }
+            }
+          }
         ],
         "_delimiter": 0,
         "$_layout": {
@@ -143107,7 +143998,7 @@
               "end": 32
             },
             "$before": true,
-            "$after": false
+            "$after": true
           }
         }
       }
@@ -143139,10 +144030,24 @@
       "_item": [
         {
           "$type": 231,
-          "_name": 22,
-          "_value": 22
+          "_name": {
+            "$type": 1,
+            "$text": "match"
+          },
+          "_value": {
+            "$type": 1,
+            "$text": "match"
+          }
         },
-        22
+        {
+          "$type": 1,
+          "$text": "match",
+          "$_layout": {
+            "gap": {
+              "$text": ", "
+            }
+          }
+        }
       ],
       "_delimiter": 0,
       "$_layout": {
@@ -143153,7 +144058,7 @@
             "end": 32
           },
           "$before": true,
-          "$after": false
+          "$after": true
         }
       }
     },
@@ -143181,8 +144086,14 @@
     "pattern": "keyword_argument",
     "input": {
       "$type": 231,
-      "_name": 22,
-      "_value": 22
+      "_name": {
+        "$type": 1,
+        "$text": "match"
+      },
+      "_value": {
+        "$type": 1,
+        "$text": "match"
+      }
     },
     "expectedOutput": "match=match",
     "options": {
@@ -157303,7 +158214,10 @@
                 "$type": 141,
                 "_content": {
                   "$type": 286,
-                  "_left": 22,
+                  "_left": {
+                    "$type": 1,
+                    "$text": "match"
+                  },
                   "_right": {
                     "$type": 286,
                     "_left": {
@@ -157344,9 +158258,23 @@
           "_subjects": {
             "$type": 260,
             "_subject": [
-              22
+              {
+                "$type": 1,
+                "$text": "match"
+              }
             ],
-            "_delimiter": 0
+            "_delimiter": 0,
+            "$_layout": {
+              "flank": {
+                "$text": "match match:",
+                "$span": {
+                  "start": 6,
+                  "end": 11
+                },
+                "$before": true,
+                "$after": true
+              }
+            }
           },
           "_body": {
             "$type": 154,
@@ -157490,7 +158418,10 @@
             "$type": 141,
             "_content": {
               "$type": 286,
-              "_left": 22,
+              "_left": {
+                "$type": 1,
+                "$text": "match"
+              },
               "_right": {
                 "$type": 286,
                 "_left": {
@@ -157606,7 +158537,10 @@
           "$type": 141,
           "_content": {
             "$type": 286,
-            "_left": 22,
+            "_left": {
+              "$type": 1,
+              "$text": "match"
+            },
             "_right": {
               "$type": 286,
               "_left": {
@@ -157715,7 +158649,10 @@
       "$type": 141,
       "_content": {
         "$type": 286,
-        "_left": 22,
+        "_left": {
+          "$type": 1,
+          "$text": "match"
+        },
         "_right": {
           "$type": 286,
           "_left": {
@@ -157791,7 +158728,10 @@
     "pattern": "assignment_eq",
     "input": {
       "$type": 286,
-      "_left": 22,
+      "_left": {
+        "$type": 1,
+        "$text": "match"
+      },
       "_right": {
         "$type": 286,
         "_left": {
@@ -157900,9 +158840,23 @@
       "_subjects": {
         "$type": 260,
         "_subject": [
-          22
+          {
+            "$type": 1,
+            "$text": "match"
+          }
         ],
-        "_delimiter": 0
+        "_delimiter": 0,
+        "$_layout": {
+          "flank": {
+            "$text": "match match:",
+            "$span": {
+              "start": 6,
+              "end": 11
+            },
+            "$before": true,
+            "$after": true
+          }
+        }
       },
       "_body": {
         "$type": 154,
@@ -158030,9 +158984,23 @@
     "input": {
       "$type": 260,
       "_subject": [
-        22
+        {
+          "$type": 1,
+          "$text": "match"
+        }
       ],
-      "_delimiter": 0
+      "_delimiter": 0,
+      "$_layout": {
+        "flank": {
+          "$text": "match match:",
+          "$span": {
+            "start": 6,
+            "end": 11
+          },
+          "$before": true,
+          "$after": true
+        }
+      }
     },
     "expectedOutput": "match",
     "options": {
@@ -158706,7 +159674,10 @@
           "$type": 150,
           "_condition": {
             "$type": 142,
-            "_name": 22,
+            "_name": {
+              "$type": 1,
+              "$text": "match"
+            },
             "_value": {
               "$type": 223,
               "_function": {
@@ -158879,7 +159850,10 @@
       "$type": 150,
       "_condition": {
         "$type": 142,
-        "_name": 22,
+        "_name": {
+          "$type": 1,
+          "$text": "match"
+        },
         "_value": {
           "$type": 223,
           "_function": {
@@ -159037,7 +160011,10 @@
     "pattern": "named_expression",
     "input": {
       "$type": 142,
-      "_name": 22,
+      "_name": {
+        "$type": 1,
+        "$text": "match"
+      },
       "_value": {
         "$type": 223,
         "_function": {

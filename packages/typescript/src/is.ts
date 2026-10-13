@@ -868,34 +868,12 @@ export interface IsGuards {
 		| TSKindId.InstantiationExpression
 		| TSKindId.InternalModule
 		| TSKindId.TypeAssertion
-		| TSKindId.Identifier
 		| TSKindId.SubscriptExpression
 		| TSKindId.MemberExpression
 		| TSKindId.ParenthesizedExpressionTyped
 		| TSKindId.ParenthesizedExpressionSequence
 		| TSKindId.Undefined
-		| TSKindId.DeclareKeyword
-		| TSKindId.NamespaceKeyword
-		| TSKindId.TypeKeyword
-		| TSKindId.PublicKeyword
-		| TSKindId.PrivateKeyword
-		| TSKindId.ProtectedKeyword
-		| TSKindId.OverrideKeyword
-		| TSKindId.ReadonlyKeyword
-		| TSKindId.ModuleKeyword
-		| TSKindId.AnyKeyword
-		| TSKindId.NumberKeyword
-		| TSKindId.BooleanKeyword
-		| TSKindId.StringKeyword
-		| TSKindId.SymbolKeyword
-		| TSKindId.ExportKeyword
-		| TSKindId.ObjectKeyword
-		| TSKindId.NewKeyword
-		| TSKindId.GetKeyword
-		| TSKindId.SetKeyword
-		| TSKindId.AsyncKeyword
-		| TSKindId.StaticKeyword
-		| TSKindId.LetKeyword
+		| TSKindId.Identifier
 		| TSKindId.This
 		| TSKindId.Super
 		| TSKindId.NumberHex
@@ -943,34 +921,12 @@ export interface IsGuards {
 		v: T
 	): v is NarrowTo<
 		T,
-		| TSKindId.Identifier
 		| TSKindId.SubscriptExpression
 		| TSKindId.MemberExpression
 		| TSKindId.ParenthesizedExpressionTyped
 		| TSKindId.ParenthesizedExpressionSequence
 		| TSKindId.Undefined
-		| TSKindId.DeclareKeyword
-		| TSKindId.NamespaceKeyword
-		| TSKindId.TypeKeyword
-		| TSKindId.PublicKeyword
-		| TSKindId.PrivateKeyword
-		| TSKindId.ProtectedKeyword
-		| TSKindId.OverrideKeyword
-		| TSKindId.ReadonlyKeyword
-		| TSKindId.ModuleKeyword
-		| TSKindId.AnyKeyword
-		| TSKindId.NumberKeyword
-		| TSKindId.BooleanKeyword
-		| TSKindId.StringKeyword
-		| TSKindId.SymbolKeyword
-		| TSKindId.ExportKeyword
-		| TSKindId.ObjectKeyword
-		| TSKindId.NewKeyword
-		| TSKindId.GetKeyword
-		| TSKindId.SetKeyword
-		| TSKindId.AsyncKeyword
-		| TSKindId.StaticKeyword
-		| TSKindId.LetKeyword
+		| TSKindId.Identifier
 		| TSKindId.This
 		| TSKindId.Super
 		| TSKindId.NumberHex
@@ -1294,14 +1250,13 @@ const _supertype_variableDeclarator_ids = new Set<number>([427, 428]);
 const _supertype_forHeader_ids = new Set<number>([431, 432, 433]);
 const _supertype_parenthesizedExpression_ids = new Set<number>([408, 409]);
 const _supertype_expression_ids = new Set<number>([
-	298, 299, 300, 308, 297, 1, 257, 256, 408, 409, 124, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44,
-	45, 46, 47, 48, 49, 50, 119, 120, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 413, 414, 271, 273, 121, 122,
-	123, 235, 239, 245, 249, 247, 242, 429, 430, 410, 411, 412, 292, 259, 261, 255, 267, 266, 265, 415, 416, 254, 234
+	298, 299, 300, 308, 297, 257, 256, 408, 409, 124, 1, 119, 120, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164,
+	413, 414, 271, 273, 121, 122, 123, 235, 239, 245, 249, 247, 242, 429, 430, 410, 411, 412, 292, 259, 261, 255, 267,
+	266, 265, 415, 416, 254, 234
 ]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	1, 257, 256, 408, 409, 124, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-	119, 120, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 413, 414, 271, 273, 121, 122, 123, 235, 239, 245,
-	249, 247, 242, 429, 430, 410, 411, 412, 292
+	257, 256, 408, 409, 124, 1, 119, 120, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 413, 414, 271, 273, 121,
+	122, 123, 235, 239, 245, 249, 247, 242, 429, 430, 410, 411, 412, 292
 ]);
 const _supertype_callExpression_ids = new Set<number>([410, 411, 412]);
 const _supertype_updateExpression_ids = new Set<number>([415, 416]);

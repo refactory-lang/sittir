@@ -34,8 +34,12 @@ function readName(text: string): { $type: number; $text?: string } {
 }
 
 describe('the grammar reserved wordset', () => {
-	it.each(['class', 'async', 'await'])('the identifier builder rejects %j', (word) => {
+	it.each(['class', 'import', 'yield'])('the identifier builder rejects %j', (word) => {
 		expect(() => py.build.identifier(word)).toThrow(`identifier: '${word}' is a reserved word`);
+	});
+
+	it.each(['async', 'await'])('the identifier builder admits %j, which the grammar reserves and also relaxes into identifier', (word) => {
+		expect(py.build.identifier(word).$text).toBe(word);
 	});
 
 	it('the identifier builder admits a contextual keyword the grammar does not reserve', () => {
@@ -45,28 +49,29 @@ describe('the grammar reserved wordset', () => {
 	it('refuses a reserved literal at compile time, and a wide string at run time', () => {
 		// @ts-expect-error 'class' is in the grammar's reserved wordset
 		expect(() => py.build.identifier('class')).toThrow("identifier: 'class' is a reserved word");
-		// @ts-expect-error so is 'await'
-		expect(() => py.build.identifier('await')).toThrow("identifier: 'await' is a reserved word");
-		const wide: string = 'async';
-		expect(() => py.build.identifier(wide)).toThrow("identifier: 'async' is a reserved word");
+		// @ts-expect-error so is 'import'
+		expect(() => py.build.identifier('import')).toThrow("identifier: 'import' is a reserved word");
+		const wide: string = 'yield';
+		expect(() => py.build.identifier(wide)).toThrow("identifier: 'yield' is a reserved word");
 	});
 });
 
-describe('keyword extraction at a slot that declares keyword arms', () => {
-	it.each([
-		['print', py.kinds.PrintKeyword],
-		['async', py.kinds.AsyncKeyword]
-	])('loose %j builds the keyword arm the parser reads', (word, kindId) => {
+describe('a relaxed keyword at a slot the grammar relaxes it in', () => {
+	it.each(['print', 'exec', 'match', 'type'])('loose %j builds the identifier the parser reads', (word) => {
 		const built = py.build.namedExpression({ name: word, value: py.build.integer('1') });
 		const text = `(${built.$render().toString()})`;
 		expect(text).toBe(`(${word} := 1)`);
-		expect(built._name).toBe(kindId);
-		expect(readName(text).$type).toBe(kindId);
+		expect((built._name as unknown as { $type: number; $text: string }).$type).toBe(py.kinds.Identifier);
+		expect((built._name as unknown as { $text: string }).$text).toBe(word);
+		expect(readName(text).$type).toBe(py.kinds.Identifier);
 	});
 
-	it('rejects an identifier spelled as the keyword arm', () => {
-		expect(() => py.build.namedExpression({ name: py.build.identifier('print'), value: py.build.integer('1') })).toThrow(
-			"NamedExpression.name: 'print' is this slot's keyword"
-		);
+	it('accepts an identifier spelled as the relaxed keyword', () => {
+		const built = py.build.namedExpression({ name: py.build.identifier('print'), value: py.build.integer('1') });
+		expect(built.$render().toString()).toBe('print := 1');
+	});
+
+	it('still refuses a word the grammar reserves and does not relax', () => {
+		expect(() => py.build.identifier('class' as never)).toThrow("identifier: 'class' is a reserved word");
 	});
 });

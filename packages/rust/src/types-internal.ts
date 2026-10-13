@@ -48,26 +48,6 @@ import type {
 	Self,
 	Super,
 	Crate,
-	U8Keyword,
-	I8Keyword,
-	U16Keyword,
-	I16Keyword,
-	U32Keyword,
-	I32Keyword,
-	U64Keyword,
-	I64Keyword,
-	U128Keyword,
-	I128Keyword,
-	IsizeKeyword,
-	UsizeKeyword,
-	F32Keyword,
-	F64Keyword,
-	BoolKeyword,
-	StrKeyword,
-	CharKeyword,
-	DefaultKeyword,
-	UnionKeyword,
-	GenKeyword,
 	TokenTreePattern,
 	TokenTree,
 	Expression,
@@ -92,31 +72,11 @@ export type Tokens = TokenTree | TokenRepetition | Metavariable | NonSpecialToke
 
 export type UseClause =
 	| Self
-	| U8Keyword
-	| I8Keyword
-	| U16Keyword
-	| I16Keyword
-	| U32Keyword
-	| I32Keyword
-	| U64Keyword
-	| I64Keyword
-	| U128Keyword
-	| I128Keyword
-	| IsizeKeyword
-	| UsizeKeyword
-	| F32Keyword
-	| F64Keyword
-	| BoolKeyword
-	| StrKeyword
-	| CharKeyword
 	| Metavariable
 	| Super
 	| Crate
 	| Identifier
 	| ScopedIdentifier
-	| DefaultKeyword
-	| UnionKeyword
-	| GenKeyword
 	| UseAsClause
 	| UseList
 	| ScopedUseList
@@ -135,26 +95,6 @@ export type ExpressionExceptRange =
 	| YieldExpression
 	| Literal
 	| Identifier
-	| U8Keyword
-	| I8Keyword
-	| U16Keyword
-	| I16Keyword
-	| U32Keyword
-	| I32Keyword
-	| U64Keyword
-	| I64Keyword
-	| U128Keyword
-	| I128Keyword
-	| IsizeKeyword
-	| UsizeKeyword
-	| F32Keyword
-	| F64Keyword
-	| BoolKeyword
-	| StrKeyword
-	| CharKeyword
-	| DefaultKeyword
-	| UnionKeyword
-	| GenKeyword
 	| Self
 	| ScopedIdentifier
 	| GenericFunction
@@ -202,33 +142,7 @@ export type NonDelimToken = NonSpecialToken | Dollar;
 
 export type Condition = Expression | LetCondition | LetChain;
 
-export type Path =
-	| Self
-	| U8Keyword
-	| I8Keyword
-	| U16Keyword
-	| I16Keyword
-	| U32Keyword
-	| I32Keyword
-	| U64Keyword
-	| I64Keyword
-	| U128Keyword
-	| I128Keyword
-	| IsizeKeyword
-	| UsizeKeyword
-	| F32Keyword
-	| F64Keyword
-	| BoolKeyword
-	| StrKeyword
-	| CharKeyword
-	| Metavariable
-	| Super
-	| Crate
-	| Identifier
-	| ScopedIdentifier
-	| DefaultKeyword
-	| UnionKeyword
-	| GenKeyword;
+export type Path = Self | Metavariable | Super | Crate | Identifier | ScopedIdentifier;
 
 export namespace TokenPattern {
 	export type Kind = '_token_pattern';

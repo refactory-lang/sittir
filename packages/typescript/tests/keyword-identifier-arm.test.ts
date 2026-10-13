@@ -33,24 +33,24 @@ function readLeftContent(text: string): { $type: number; $text?: string } | unde
 	return typeof content === 'number' ? { $type: content } : (content as { $type: number; $text?: string } | undefined);
 }
 
-describe('a contextual keyword at a slot that declares it as a keyword arm', () => {
-	it('loose text resolves to the keyword arm the parser reads', () => {
+describe('a contextual keyword at a slot the grammar relaxes it in', () => {
+	it('loose text builds the identifier the parser reads', () => {
 		const built = ts.build.assignmentExpression({ left: 'async', right: ts.build.identifier('b') });
 		const text = built.$render().toString();
 		expect(text).toBe('async = b');
-		expect((built._left as unknown as { _content: unknown })._content).toBe(ts.kinds.AsyncKeyword);
-		expect(readLeftContent(text)?.$type).toBe(ts.kinds.AsyncKeyword);
+		const content = (built._left as unknown as { _content: { $type: number; $text: string } })._content;
+		expect(content).toMatchObject({ $type: ts.kinds.Identifier, $text: 'async' });
+		expect(readLeftContent(text)).toMatchObject({ $type: ts.kinds.Identifier, $text: 'async' });
 	});
 
-	it('loose text that is not a keyword arm stays an identifier', () => {
+	it('loose text that is not a keyword stays an identifier', () => {
 		const built = ts.build.assignmentExpression({ left: 's', right: ts.build.identifier('b') });
 		const text = built.$render().toString();
 		expect(readLeftContent(text)).toMatchObject({ $type: ts.kinds.Identifier, $text: 's' });
 	});
 
-	it('rejects an identifier spelled as the keyword arm', () => {
-		expect(() => ts.build.assignmentExpression({ left: ts.build.identifier('async'), right: ts.build.identifier('b') })).toThrow(
-			"LhsExpression.content: 'async' is this slot's keyword"
-		);
+	it('accepts an identifier spelled as the relaxed keyword', () => {
+		const built = ts.build.assignmentExpression({ left: ts.build.identifier('async'), right: ts.build.identifier('b') });
+		expect(built.$render().toString()).toBe('async = b');
 	});
 });

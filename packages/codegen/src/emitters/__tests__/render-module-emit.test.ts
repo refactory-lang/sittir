@@ -422,16 +422,16 @@ describe('render options on transports', () => {
 });
 
 describe('the typed sink replaces the mark-based Display path', () => {
-	it('decodes a keyword the parser shows as an identifier under the keyword id', async () => {
-		// rust aliases the `default` keyword to `identifier` through the inlined
-		// `_reserved_identifier`; the node's storage is the keyword itself, so an
-		// expression slot decodes the keyword's id straight to its own transport.
+	it('reads a keyword the grammar aliases to its word rule as the word rule', async () => {
+		// rust aliases the `default` keyword to `identifier`: the expression slot
+		// holds no keyword arm for it, and the identifier arm folds its token in.
 		const transportRs = await getRustTemplatesRs();
 		const from = transportRs.indexOf('pub enum ExpressionTransport {');
 		expect(from).toBeGreaterThan(-1);
 		const body = transportRs.slice(from, transportRs.indexOf('\n}\n', from));
 		expect(_rustKindEntries?.some((entry) => entry.kind === '_reserved_identifier')).toBe(false);
-		expect(body).toContain('\n    #[kind(kind::DEFAULT_KEYWORD)]\n    DefaultKeyword,');
+		expect(body).not.toContain('\n    DefaultKeyword,');
+		expect(body).toContain('folded(kind::DEFAULT_KEYWORD)');
 		expect(body).toContain('\n    #[transport(verbatim)]\n    Verbatim(VerbatimTransport),');
 	});
 

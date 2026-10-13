@@ -284,7 +284,8 @@ function buildLeafReConsts(
 ): Map<string, string> {
 	const leafReConsts = new Map<string, string>();
 	const word = nodeMap.word ? nodeMap.nodes.get(nodeMap.word) : undefined;
-	const reserved = reservedWordset(nodeMap.reserved, 'global', kindEntries ?? []).words;
+	const relaxed = new Set(nodeMap.relaxedLiterals ?? []);
+	const reserved = reservedWordset(nodeMap.reserved, 'global', kindEntries ?? []).words.filter((text) => !relaxed.has(text));
 	if (word?.rawFactoryName && reserved.length > 0) {
 		const listName = `_reservedWordList_${word.rawFactoryName}`;
 		const constName = `_reservedWords_${word.rawFactoryName}`;
