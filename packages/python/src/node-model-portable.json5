@@ -611,7 +611,7 @@
           ]
         },
         {
-          "vocab": "expression.assignment.compound.matmul",
+          "vocab": "expression.assignment.compound.matrix_multiply",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -1017,7 +1017,7 @@
           ]
         },
         {
-          "vocab": "expression.binary.matmul",
+          "vocab": "expression.binary.matrix_multiply",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -1492,13 +1492,13 @@
       ],
       "members": [
         {
-          "name": "listPatternCasePatterns",
+          "name": "elements",
           "route": "slot",
-          "slot": "list_pattern_case_patterns",
+          "slot": "elements",
           "path": [
             {
               "owner": "case_list_pattern",
-              "slot": "list_pattern_case_patterns"
+              "slot": "elements"
             }
           ]
         }
@@ -1567,13 +1567,13 @@
       ],
       "members": [
         {
-          "name": "listPatternCasePatterns",
+          "name": "elements",
           "route": "slot",
-          "slot": "list_pattern_case_patterns",
+          "slot": "elements",
           "path": [
             {
               "owner": "case_tuple_pattern",
-              "slot": "list_pattern_case_patterns"
+              "slot": "elements"
             }
           ]
         }
@@ -2881,10 +2881,10 @@
       }
     },
     "dictionary": {
-      "vocab": "expression.collection.dictionary",
+      "vocab": "expression.collection.map",
       "read": [
         {
-          "vocab": "expression.collection.dictionary",
+          "vocab": "expression.collection.map",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2913,10 +2913,10 @@
       }
     },
     "dictionary_comprehension": {
-      "vocab": "expression.comprehension.dictionary",
+      "vocab": "expression.comprehension.map",
       "read": [
         {
-          "vocab": "expression.comprehension.dictionary",
+          "vocab": "expression.comprehension.map",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2936,13 +2936,13 @@
           ]
         },
         {
-          "name": "comprehensionClauses",
+          "name": "clauses",
           "route": "slot",
-          "slot": "comprehension_clauses",
+          "slot": "clauses",
           "path": [
             {
               "owner": "dictionary_comprehension",
-              "slot": "comprehension_clauses"
+              "slot": "clauses"
             }
           ]
         }
@@ -2959,10 +2959,10 @@
       }
     },
     "dictionary_splat": {
-      "vocab": "element.splat.dictionary",
+      "vocab": "element.spread.map",
       "read": [
         {
-          "vocab": "element.splat.dictionary",
+          "vocab": "element.spread.map",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3048,10 +3048,10 @@
       }
     },
     "elif_clause": {
-      "vocab": "clause.elif",
+      "vocab": "clause.else_if",
       "read": [
         {
-          "vocab": "clause.elif",
+          "vocab": "clause.else_if",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3880,10 +3880,10 @@
       ]
     },
     "for_statement": {
-      "vocab": "statement.loop.for",
+      "vocab": "statement.loop.for_each",
       "read": [
         {
-          "vocab": "statement.loop.for",
+          "vocab": "statement.loop.for_each",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4043,7 +4043,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.dunder",
+          "vocab": "declaration.method.special",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4266,13 +4266,13 @@
           ]
         },
         {
-          "name": "comprehensionClauses",
+          "name": "clauses",
           "route": "slot",
-          "slot": "comprehension_clauses",
+          "slot": "clauses",
           "path": [
             {
               "owner": "generator_expression",
-              "slot": "comprehension_clauses"
+              "slot": "clauses"
             }
           ]
         }
@@ -4764,10 +4764,10 @@
       ]
     },
     "keyword_argument": {
-      "vocab": "argument.keyword",
+      "vocab": "argument.named",
       "read": [
         {
-          "vocab": "argument.keyword",
+          "vocab": "argument.named",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4972,13 +4972,13 @@
           ]
         },
         {
-          "name": "comprehensionClauses",
+          "name": "clauses",
           "route": "slot",
-          "slot": "comprehension_clauses",
+          "slot": "clauses",
           "path": [
             {
               "owner": "list_comprehension",
-              "slot": "comprehension_clauses"
+              "slot": "clauses"
             }
           ]
         }
@@ -5026,10 +5026,10 @@
       }
     },
     "list_splat": {
-      "vocab": "element.splat",
+      "vocab": "element.spread",
       "read": [
         {
-          "vocab": "element.splat",
+          "vocab": "element.spread",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5197,10 +5197,10 @@
       ]
     },
     "module": {
-      "vocab": "module",
+      "vocab": "file",
       "read": [
         {
-          "vocab": "module",
+          "vocab": "file",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5439,10 +5439,10 @@
       }
     },
     "parenthesized_list_splat": {
-      "vocab": "element.splat.parenthesized",
+      "vocab": "element.spread.parenthesized",
       "read": [
         {
-          "vocab": "element.splat.parenthesized",
+          "vocab": "element.spread.parenthesized",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5785,13 +5785,13 @@
           ]
         },
         {
-          "name": "comprehensionClauses",
+          "name": "clauses",
           "route": "slot",
-          "slot": "comprehension_clauses",
+          "slot": "clauses",
           "path": [
             {
               "owner": "set_comprehension",
-              "slot": "comprehension_clauses"
+              "slot": "clauses"
             }
           ]
         }
@@ -5998,7 +5998,7 @@
           ]
         },
         {
-          "vocab": "literal.string.triple",
+          "vocab": "literal.string.multiline",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -6772,10 +6772,10 @@
       "members": []
     },
     "with_clause": {
-      "vocab": "clause.with",
+      "vocab": "clause.resource",
       "read": [
         {
-          "vocab": "clause.with",
+          "vocab": "clause.resource",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -6785,10 +6785,10 @@
       "members": []
     },
     "with_clause_bare": {
-      "vocab": "clause.with",
+      "vocab": "clause.resource",
       "read": [
         {
-          "vocab": "clause.with",
+          "vocab": "clause.resource",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -6817,10 +6817,10 @@
       }
     },
     "with_clause_paren": {
-      "vocab": "clause.with",
+      "vocab": "clause.resource",
       "read": [
         {
-          "vocab": "clause.with",
+          "vocab": "clause.resource",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -6858,10 +6858,10 @@
       }
     },
     "with_item": {
-      "vocab": "clause.with.item",
+      "vocab": "clause.resource.item",
       "read": [
         {
-          "vocab": "clause.with.item",
+          "vocab": "clause.resource.item",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -6890,10 +6890,10 @@
       }
     },
     "with_statement": {
-      "vocab": "statement.with",
+      "vocab": "statement.resource",
       "read": [
         {
-          "vocab": "statement.with",
+          "vocab": "statement.resource",
           "toplevel": true,
           "within": [],
           "pins": [],

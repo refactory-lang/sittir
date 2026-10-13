@@ -28,6 +28,6 @@ describe('a delegating yield keeps its star when it is rendered without its sour
 		const yielded = fn.body().statements()[0]!.expression();
 		expect(yielded.$type).toBe(engine.kinds.YieldExpression);
 		const rebuilt = engine.build.yieldExpression({ expression: yielded.expression() as never });
-		expect(rebuilt.$render()).toBe('yield * g()');
+		expect(rebuilt.$render()).toBe('yield* g()');
 	});
 });

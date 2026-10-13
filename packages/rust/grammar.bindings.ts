@@ -3,7 +3,7 @@
 import { alias, bindings, field, rename, split } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "f3261b08ed357575a41640cda9cb0345f2c3ca39f7c439fcefc8fad36267f6d7",
+	hash: "2d66e8195b65d22c1c3631c6d8622ba26a9d69eda5b685c871f75024fe11abfe",
 	patches: {
 		attribute_item: { "2": field("content") },
 		block_comment: { "1/0/2": alias(sym("block_comment_regular"), sym("text_comment")) },
@@ -41,7 +41,7 @@ export default bindings({
 		where_clause: { "1/0": field("where_predicates") }
 	},
 	renames: [
-		rename("source_file", "module"),
+		rename("source_file", "file"),
 		rename("function_item", "function_declaration"),
 		rename("function_signature_item", "signature_function_declaration"),
 		rename("impl_item_body", "extension_declaration"),
@@ -56,9 +56,8 @@ export default bindings({
 		rename("associated_type", "associated_type_alias_declaration"),
 		rename("mod_item", "module_declaration"),
 		rename("foreign_mod_item", "foreign_module_declaration"),
-		rename("extern_crate_declaration", "crate_import_statement"),
+		rename("extern_crate_declaration", "package_import_statement"),
 		rename("const_item", "constant_declaration"),
-		rename("static_item", "static_variable_declaration"),
 		rename("let_declaration", "variable_declaration"),
 		rename("macro_definition", "macro_declaration"),
 		rename("parameter", "parameter_declaration"),
@@ -71,7 +70,7 @@ export default bindings({
 		rename("if_expression", "if_statement"),
 		rename("loop_expression", "loop_statement"),
 		rename("while_expression", "while_loop_statement"),
-		rename("for_expression", "for_loop_statement"),
+		rename("for_expression", "for_each_loop_statement"),
 		rename("return_expression", "return_statement"),
 		rename("match_expression", "match_statement"),
 		rename("use_declaration", "import_statement"),
@@ -102,6 +101,7 @@ export default bindings({
 		rename("token_repetition_pattern", "pattern_token_repetition_macro_element"),
 		rename("fragment_specifier", "fragment_macro_element"),
 		rename("macro_invocation", "macro_call_expression"),
+		rename("try_expression", "propagate_expression"),
 		rename("compound_assignment_expr", "compound_assignment_expression"),
 		rename("field_expression", "member_expression"),
 		rename("index_expression", "subscript_expression"),
@@ -116,7 +116,7 @@ export default bindings({
 		rename("async_block", "async_block_expression"),
 		rename("const_block", "const_block_expression"),
 		rename("try_block", "try_block_expression"),
-		rename("gen_block", "gen_block_expression"),
+		rename("gen_block", "generator_block_expression"),
 		rename("generic_function", "instantiation_expression"),
 		rename("tuple_struct_pattern", "struct_tuple_pattern"),
 		rename("field_pattern", "field_struct_pattern"),
@@ -128,6 +128,7 @@ export default bindings({
 		rename("never_type", "never_primitive_type"),
 		rename("scoped_type_identifier", "path_type"),
 		rename("scoped_type_identifier_in_expression_position", "expression_path_type"),
+		rename("char_literal", "character_literal"),
 		rename("escape_sequence", "escape_string_literal"),
 		rename("string_content", "text_string_literal"),
 		rename("integer_literal_decimal", "integer_number_literal"),

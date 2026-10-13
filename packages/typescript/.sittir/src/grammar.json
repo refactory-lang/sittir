@@ -9775,13 +9775,20 @@
           "type": "SEQ",
           "members": [
             {
-              "type": "ALIAS",
+              "type": "FIELD",
+              "name": "types",
               "content": {
-                "type": "SYMBOL",
-                "name": "_extends_clause_single"
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_extends_clause_single"
+                },
+                "named": true,
+                "value": "extends_clause_single"
               },
-              "named": true,
-              "value": "extends_clause_single"
+              "metadata": {
+                "fieldSource": "override"
+              }
             },
             {
               "type": "REPEAT",
@@ -9793,13 +9800,20 @@
                     "value": ","
                   },
                   {
-                    "type": "ALIAS",
+                    "type": "FIELD",
+                    "name": "types",
                     "content": {
-                      "type": "SYMBOL",
-                      "name": "_extends_clause_single"
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "_extends_clause_single"
+                      },
+                      "named": true,
+                      "value": "extends_clause_single"
                     },
-                    "named": true,
-                    "value": "extends_clause_single"
+                    "metadata": {
+                      "fieldSource": "override"
+                    }
                   }
                 ]
               }
@@ -13890,102 +13904,97 @@
           ]
         },
         {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "FIELD",
-              "name": "item",
-              "content": {
+          "type": "FIELD",
+          "name": "item",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "export_statement"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "property_signature"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "call_signature"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "construct_signature"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "index_signature"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "method_signature"
+              }
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
                 "type": "CHOICE",
                 "members": [
                   {
-                    "type": "SYMBOL",
-                    "name": "export_statement"
+                    "type": "STRING",
+                    "value": ","
                   },
                   {
-                    "type": "SYMBOL",
-                    "name": "property_signature"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "call_signature"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "construct_signature"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "index_signature"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "method_signature"
+                    "type": "STRING",
+                    "value": ";"
                   }
                 ]
               },
-              "metadata": {
-                "fieldSource": "override"
-              }
-            },
-            {
-              "type": "REPEAT",
-              "content": {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "STRING",
-                        "value": ","
-                      },
-                      {
-                        "type": "STRING",
-                        "value": ";"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "FIELD",
-                    "name": "item",
-                    "content": {
-                      "type": "CHOICE",
-                      "members": [
-                        {
-                          "type": "SYMBOL",
-                          "name": "export_statement"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "property_signature"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "call_signature"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "construct_signature"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "index_signature"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "method_signature"
-                        }
-                      ]
+              {
+                "type": "FIELD",
+                "name": "item",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "export_statement"
                     },
-                    "metadata": {
-                      "fieldSource": "override"
+                    {
+                      "type": "SYMBOL",
+                      "name": "property_signature"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "call_signature"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "construct_signature"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "index_signature"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "method_signature"
                     }
-                  }
-                ]
+                  ]
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
               }
-            }
-          ]
+            ]
+          }
         },
         {
           "type": "CHOICE",

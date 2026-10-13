@@ -527,7 +527,7 @@ function emitSubFactoryTests(
 			return required.map((f) => `.$with.${f.configKey}(${strictOptionDummy(f, nodeMap, kindEntries)})`).join('');
 		})();
 		if (child.modelType === 'keyword' || child.modelType === 'punctuation') {
-			cases.push(`    expect(${callTarget}(${args})).toBe(${testTypeDiscriminant(child.kind, kindEntries, nodeMap)});`);
+			cases.push(`    expect(${callTarget}).toBe(${testTypeDiscriminant(child.kind, kindEntries, nodeMap)});`);
 		} else {
 			cases.push(`    const node = ${callTarget}(${args})${aliasRegisteredChain};`);
 			cases.push(`    expect(node.$type).toBe(${testTypeDiscriminant(child.kind, kindEntries, nodeMap)});`);

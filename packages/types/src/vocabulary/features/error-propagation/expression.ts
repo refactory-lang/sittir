@@ -9,9 +9,9 @@ export namespace Expression {
 			readonly body: V.Statement.Block<G>;
 		}
 	}
-	export interface Try<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
+	export interface Propagate<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		// claimed by r
-		readonly $kind: 'expression.try';
-		readonly argument: G['slots']['expression.try']['argument'];
+		readonly $kind: 'expression.propagate';
+		readonly argument: G['slots']['expression.propagate']['argument'];
 	}
 }

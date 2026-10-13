@@ -106,7 +106,7 @@ import type { RefineKindInfo } from './refine-emit.ts';
 import { layoutKindAliasesOf, hintEmitterOf, type AddressTables, type HintEmitter, type HintRoot } from './options.ts';
 import type { SitePreference } from '../compiler/model/site-preferences.ts';
 import { displayNameOf, displayedKinds, ownsItsDisplay } from '../compiler/model/display-name.ts';
-import { emptyForms } from '../compiler/model/trivia.ts';
+import { continuationTriviaKinds, emptyForms } from '../compiler/model/trivia.ts';
 
 type StructuralNode = SlotBearingCompound;
 
@@ -462,6 +462,7 @@ const VOCABULARY_IMPORTS = [
 	'KeywordNs',
 	'LeafNs',
 	'Terminal',
+	'TriviaFlanks',
 	'NonEmptyArray',
 	'BooleanKeyword as BaseBooleanKeyword',
 	'Bitflag',
@@ -667,6 +668,7 @@ function emitLeafTerminalAliases(
 	kindEntries?: readonly KindEnumEntry[]
 ): void {
 	const referenced = referencedKinds(nodeMap);
+	const continuations = new Set(continuationTriviaKinds(nodeMap));
 	lines.push('// Leaf node types');
 	for (const kind of leafKinds) {
 		const node = nodeMap.nodes.get(kind)!;
@@ -684,7 +686,7 @@ function emitLeafTerminalAliases(
 		}
 
 		const terminal = `Terminal<${kindDiscriminantOrLiteral(kind, nodeMap, kindEntries)}, ${leafTextType(node)}>`;
-		lines.push(`export type ${node.typeName} = ${terminal};`);
+		lines.push(`export type ${node.typeName} = ${continuations.has(kind) ? `${terminal} & TriviaFlanks` : terminal};`);
 	}
 	lines.push('');
 }

@@ -218,6 +218,12 @@ describe('trivia row', () => {
 			expect(classifySClass({ code, message: 'native-read-dropped-extra' })).toBe('trivia');
 	});
 
+	it('classifies an unreached layout run and a refused region as layout, whose ceiling is zero by omission', () => {
+		for (const code of ['layout-unreached', 'layout-refused']) expect(classifySClass({ code, message: 'side of 3 at 4..4' })).toBe('layout');
+		const entries = buildValidationReportEntries({}, { rust: [{ code: 'layout-unreached', severity: 'error', message: 'leading of 3 at 4..4', stage: 'layout-runs', label: 'entry' }] });
+		expect(checkSClassCeilings(entries, { rust: { trivia: 1 } }, ['rust']).violations).toEqual([{ grammar: 'rust', sClass: 'layout', count: 1, ceiling: 0 }]);
+	});
+
 	it('counts trivia entries against their own ceiling', () => {
 		const entries = [trivia('rust', 'from-trivia'), trivia('rust', 'read-render-parse-trivia')];
 		expect(countSClassEntries(entries)).toEqual({ rust: { trivia: 2 } });

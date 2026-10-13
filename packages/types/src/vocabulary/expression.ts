@@ -35,6 +35,9 @@ export namespace Expression {
 			export interface BitwiseXor<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
 				readonly $kind: 'expression.assignment.compound.bitwise_xor';
 			}
+			export interface Coalesce<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
+				readonly $kind: 'expression.assignment.compound.coalesce';
+			}
 			export interface Divide<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
 				readonly $kind: 'expression.assignment.compound.divide';
 			}
@@ -44,17 +47,14 @@ export namespace Expression {
 			export interface FloorDivide<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
 				readonly $kind: 'expression.assignment.compound.floor_divide';
 			}
-			export interface Matmul<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
-				readonly $kind: 'expression.assignment.compound.matmul';
+			export interface MatrixMultiply<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
+				readonly $kind: 'expression.assignment.compound.matrix_multiply';
 			}
 			export interface Modulo<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
 				readonly $kind: 'expression.assignment.compound.modulo';
 			}
 			export interface Multiply<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
 				readonly $kind: 'expression.assignment.compound.multiply';
-			}
-			export interface Nullish<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
-				readonly $kind: 'expression.assignment.compound.nullish';
 			}
 			export interface Or<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Assignment.Compound<G>> {
 				readonly $kind: 'expression.assignment.compound.or';
@@ -133,6 +133,10 @@ export namespace Expression {
 				readonly operator: '^';
 			}
 		}
+		export interface Coalesce<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
+			readonly $kind: 'expression.binary.coalesce';
+			readonly operator: '??';
+		}
 		export interface Comparison<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
 			readonly $kind: 'expression.binary.comparison';
 		}
@@ -209,8 +213,8 @@ export namespace Expression {
 				readonly operator: 'or' | '||';
 			}
 		}
-		export interface Matmul<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-			readonly $kind: 'expression.binary.matmul';
+		export interface MatrixMultiply<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
+			readonly $kind: 'expression.binary.matrix_multiply';
 			readonly operator: '@';
 		}
 		// @ts-expect-error expression.binary.membership: its operator fill is unknown, outside expression.binary's string.
@@ -236,10 +240,6 @@ export namespace Expression {
 				readonly left: G['slots']['expression.binary.membership.not_in']['left'];
 				readonly operator?: G['slots']['expression.binary.membership.not_in']['operator'];
 			}
-		}
-		export interface Nullish<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
-			readonly $kind: 'expression.binary.nullish';
-			readonly operator: '??';
 		}
 		export interface Shift<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Binary<G>> {
 			readonly $kind: 'expression.binary.shift';
@@ -279,22 +279,17 @@ export namespace Expression {
 				| G['slots']['expression.call.member']['arguments'][];
 			readonly function: G['slots']['expression.call.member']['function'];
 		}
-		export interface Path<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Call<G>> {
+		export interface Qualified<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Call<G>> {
 			// claimed by r
-			readonly $kind: 'expression.call.path';
-			readonly arguments: G['slots']['expression.call.path']['arguments'][];
-			readonly function: G['slots']['expression.call.path']['function'];
+			readonly $kind: 'expression.call.qualified';
+			readonly arguments: G['slots']['expression.call.qualified']['arguments'][];
+			readonly function: G['slots']['expression.call.qualified']['function'];
 		}
 	}
 	export interface Collection<G extends GrammarContext<G>> extends SubKindOf<V.Expression<G>> {
 		readonly $kind: 'expression.collection';
 	}
 	export namespace Collection {
-		export interface Dictionary<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Collection<G>> {
-			// claimed by p
-			readonly $kind: 'expression.collection.dictionary';
-			readonly elements?: G['element'][];
-		}
 		export interface List<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Collection<G>> {
 			// claimed by prt
 			readonly $kind: 'expression.collection.list';
@@ -309,6 +304,11 @@ export namespace Expression {
 				readonly element: G['slots']['expression.collection.list.repeat']['element'];
 				readonly length: G['slots']['expression.collection.list.repeat']['length'];
 			}
+		}
+		export interface Map<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Collection<G>> {
+			// claimed by p
+			readonly $kind: 'expression.collection.map';
+			readonly elements?: G['element'][];
 		}
 		export interface Object<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Collection<G>> {
 			// claimed by t

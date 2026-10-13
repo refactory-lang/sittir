@@ -14,8 +14,11 @@ export interface KindMembership {
 	membersOf(kind: number): readonly number[];
 }
 
-/** Each kind's slots, by kind id: the accessor a node reads a slot through and the slot's parser routes. */
-export type QuerySlots = Readonly<Record<number, readonly (readonly [accessor: string, routes: SlotRoutes])[]>>;
+/** One slot of a kind: the accessor a node reads it through, its parser routes, and the keyword when the slot holds that keyword's presence. */
+export type QuerySlotEntry = readonly [accessor: string, routes: SlotRoutes, keyword?: string];
+
+/** Each kind's slots, by kind id. */
+export type QuerySlots = Readonly<Record<number, readonly QuerySlotEntry[]>>;
 
 /** The node's own text as a condition's subject, in place of a slot's. */
 export interface SelfText {
@@ -33,6 +36,7 @@ export type QuerySubject = SlotRoutes | SelfText;
 export type QueryPlan<S extends QuerySubject = SlotRoutes> =
 	| ({ readonly op: 'eq'; readonly text: string } & S)
 	| ({ readonly op: 'match'; readonly pattern: string } & S)
+	| ({ readonly op: 'present' } & SlotRoutes)
 	| ([SelfText] extends [S] ? { readonly op: 'is'; readonly types: readonly number[] } & S : never)
 	| { readonly op: 'not'; readonly of: QueryPlan<S> }
 	| { readonly op: 'and' | 'or'; readonly of: readonly QueryPlan<S>[] };

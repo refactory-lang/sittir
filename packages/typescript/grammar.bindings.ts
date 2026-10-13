@@ -3,7 +3,7 @@
 import { bindings, field, rename } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "1affe210c6bd02a0019cbb1690e9e37b989a990832af3617da71a90d067844f3",
+	hash: "8951713f84806d6dd67b05ddec05ecd4017a827b781d98c027fb6ec6242af463",
 	patches: {
 		_number: { "1": field("value") },
 		_parameter_name: { "4": field("name") },
@@ -15,6 +15,7 @@ export default bindings({
 		export_clause: { "1/0": field("export_specifiers") },
 		export_specifier: { "0/0": field("type_only") },
 		export_statement_default_declaration: { "2/0": field("declaration") },
+		export_statement_default_from: { "1": field("type_only") },
 		export_statement_equals_export: { "2": field("value") },
 		for_in_statement: { "1/0": field("async") },
 		generator_function: { "2": field("generator") },
@@ -35,7 +36,7 @@ export default bindings({
 		variable_declarator_definite: { "1": field("definite") }
 	},
 	renames: [
-		rename("program", "module"),
+		rename("program", "file"),
 		rename("enum_assignment", "enum_member_declaration"),
 		rename("method_definition", "method_declaration"),
 		rename("method_signature", "signature_method_declaration"),
@@ -57,7 +58,7 @@ export default bindings({
 		rename("index_signature_mapped_type_clause", "mapped_index_signature_declaration"),
 		rename("statement_block", "block_statement"),
 		rename("for_statement", "counted_loop_statement"),
-		rename("for_in_statement", "for_loop_statement"),
+		rename("for_in_statement", "for_each_loop_statement"),
 		rename("while_statement", "while_loop_statement"),
 		rename("do_statement", "do_while_loop_statement"),
 		rename("with_statement", "scope_statement"),
@@ -74,13 +75,12 @@ export default bindings({
 		rename("export_specifier", "specifier_export_clause"),
 		rename("constraint", "constraint_clause"),
 		rename("default_type", "default_clause"),
-		rename("spread_element", "splat_element"),
 		rename("pair", "pair_element"),
 		rename("tuple_parameter", "member_tuple_element"),
 		rename("optional_tuple_parameter", "optional_member_tuple_element"),
 		rename("template_type", "substitution_template_element"),
 		rename("call_expression_template_call", "template_call_expression"),
-		rename("new_expression", "new_call_expression"),
+		rename("new_expression", "construct_call_expression"),
 		rename("augmented_assignment_expression", "compound_assignment_expression"),
 		rename("ternary_expression", "conditional_expression"),
 		rename("arrow_function", "lambda_expression"),

@@ -6916,11 +6916,11 @@ export interface ImportRequireClause {
 
 export interface ExtendsClause {
 	readonly $type: TSKindId.ExtendsClause;
-	readonly _extends_clause_single: NonEmptyArray<ExtendsClauseSingle>;
+	readonly _types: NonEmptyArray<ExtendsClauseSingle>;
 	readonly __slotHints__?: {
-		readonly extendsClauseSingles: SlotHint<NonEmptyArray<T.ExtendsClauseSingle>, false, true>;
+		readonly types: SlotHint<NonEmptyArray<T.ExtendsClauseSingle>, false, true>;
 	};
-	extendsClauseSingles(): NonEmptyArray<ExtendsClauseSingle>;
+	types(): NonEmptyArray<ExtendsClauseSingle>;
 }
 
 export interface ExtendsClauseSingle {
@@ -13326,7 +13326,8 @@ export namespace ExtendsClause {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
-			readonly extendsClauseSingle?: {
+			readonly extendsKeyword?: { readonly after?: LayoutKindId };
+			readonly types?: {
 				readonly end?: LayoutKindId;
 				readonly extendsClauseSingle?: { readonly after?: LayoutKindId };
 				readonly separator?: {
@@ -13334,7 +13335,6 @@ export namespace ExtendsClause {
 				};
 				readonly start?: LayoutKindId;
 			};
-			readonly extendsKeyword?: { readonly after?: LayoutKindId };
 		};
 	}
 }
@@ -25483,18 +25483,7 @@ export interface TypescriptTypeMap extends GrammarTypeMap {
 		| { readonly node: TupleType; readonly empty: EmptyTupleType }
 		| { readonly node: TupleType.Bound; readonly empty: EmptyTupleType }
 		| { readonly node: TupleType.Parsed; readonly empty: EmptyTupleType.Parsed };
-	readonly trivia:
-		| Blankline
-		| Comment
-		| CommentBlock
-		| CommentLine
-		| Dedent
-		| DoubleBlankline
-		| HtmlComment
-		| Indent
-		| Newline
-		| Space
-		| Tab;
+	readonly trivia: Comment | HtmlComment | Layout;
 }
 
 export type NodeMethodsOf = NodeMethods<TypescriptTypeMap['trivia']>;

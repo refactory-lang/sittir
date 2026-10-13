@@ -29,7 +29,7 @@ const CEILING = JSON.parse(
 describe('bindingIssues', () => {
 	const text = [
 		'; comment (nope)',
-		'(module) @module',
+		'(module) @file',
 		'(no_such_kind) @a',
 		'(function_definition no_such_field: (identifier))',
 		'(identifier) @identifier'
@@ -69,7 +69,7 @@ describe('deriveVocabulary', () => {
 	it('claims every namespace the spec names and derives no inclusion cycle', () => {
 		const tops = new Set([...d.allvocab].map((v) => v.split('.')[0]));
 		for (const ns of [
-			'module',
+			'file',
 			'declaration',
 			'statement',
 			'clause',
@@ -154,8 +154,8 @@ describe('deriveVocabulary', () => {
 	});
 	it('renames the slot a positional wildcard capture stands at', () => {
 		expect([...(d.members.get('expression.unary')?.keys() ?? [])].sort()).toEqual(['argument']);
-		expect(d.members.get('expression.try')?.has('argument')).toBe(true);
-		expect(d.members.get('expression.try')?.has('value')).toBe(false);
+		expect(d.members.get('expression.propagate')?.has('argument')).toBe(true);
+		expect(d.members.get('expression.propagate')?.has('value')).toBe(false);
 	});
 	it('resolves a declared container, a list and an envelope to the kinds their element admits', () => {
 		const parameters = d.members.get('declaration.function')?.get('parameters')?.kinds ?? new Set();

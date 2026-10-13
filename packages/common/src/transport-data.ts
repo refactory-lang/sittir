@@ -210,6 +210,38 @@ export function unitSidesOf(node: object): readonly unknown[] | undefined {
 	return source === undefined || from === undefined ? undefined : carriedUnitSides(node as Record<string, unknown>, decodeIndex(source.treeHandle), from);
 }
 
+/**
+ * The stored layout of a node's list slots (`TransportLayout.slots`): the ones it holds, else its
+ * tree's for a parsed node, else those of the node it was rebuilt from (`sourceOf`), which apply to
+ * every gap of the slot, kept or inserted; `undefined` when none answers.
+ */
+export function slotsOf(node: object): readonly unknown[] | undefined {
+	const held = (node as { readonly $_layout?: TransportLayout }).$_layout?.slots;
+	if (held !== undefined) return held;
+	const tree = treeOf(node);
+	const index = indexOf(node);
+	if (tree?.slotLayouts !== undefined && index !== undefined) return tree.slotLayouts(index);
+	const source = sourceOf(node);
+	const from = source === undefined ? undefined : sourceTree(source);
+	return source === undefined ? undefined : from?.slotLayouts?.(decodeIndex(source.treeHandle));
+}
+
+/**
+ * The separator a node's source spells before it as a list item where it is not its slot's
+ * (`TransportLayout.separator`): the one it holds, else its tree's for a parsed node, else that of
+ * the node it was rebuilt from (`sourceOf`); `undefined` when none answers.
+ */
+export function separatorOf(node: object): number | undefined {
+	const held = (node as { readonly $_layout?: TransportLayout }).$_layout?.separator;
+	if (held !== undefined) return held;
+	const tree = treeOf(node);
+	const index = indexOf(node);
+	if (tree?.separatorBefore !== undefined && index !== undefined) return tree.separatorBefore(index);
+	const source = sourceOf(node);
+	const from = source === undefined ? undefined : sourceTree(source);
+	return source === undefined ? undefined : from?.separatorBefore?.(decodeIndex(source.treeHandle));
+}
+
 /** One unit child's sides as a tree gives them (`TransportLayout.units`): its slot's wire key and its item there. */
 interface UnitSidesData {
 	readonly slot: string;
@@ -358,7 +390,7 @@ export function sidesOf(node: object): NodeTrivia | undefined {
  * for the sides it does not hold.
  */
 export function toTransportData(node: AnyUntypedNode, view: KindView): AnyUntypedNode {
-	return toTransportValue(node, view, rootEdges(node), true, undefined, rootBearer(node, view)) as AnyUntypedNode;
+	return toTransportValue(node, view, rootEdges(node), true, rootBearer(node, view)) as AnyUntypedNode;
 }
 
 /**
@@ -370,17 +402,16 @@ export function toTransportData(node: AnyUntypedNode, view: KindView): AnyUntype
  * the text it names.
  */
 export function toDetachedTransportData(node: AnyUntypedNode, view: KindView): AnyUntypedNode {
-	return toTransportValue(node, view, rootEdges(node), false, undefined, rootBearer(node, view)) as AnyUntypedNode;
+	return toTransportValue(node, view, rootEdges(node), false, rootBearer(node, view)) as AnyUntypedNode;
 }
 
-/** How the crossing tells kinds apart: a kind a rebuild constructs around an existing node, and a list kind. */
+/** How the crossing tells kinds apart: a kind a rebuild constructs around an existing node. */
 export interface KindView {
 	readonly isWrapper: (kindId: number) => boolean;
-	readonly isList: (kindId: number) => boolean;
 }
 
-/** The view of data with no wrapper or list kinds. */
-export const PLAIN_KINDS: KindView = { isWrapper: () => false, isList: () => false };
+/** The view of data with no wrapper kinds. */
+export const PLAIN_KINDS: KindView = { isWrapper: () => false };
 
 /** The edges of a node whose neighbour is not the one its source had there. */
 export interface ChangedEdges {
@@ -458,39 +489,6 @@ function evidenceOf(entry: Record<string, unknown>, view: KindView): Record<stri
 	return held.length === 1 && isRecord(only) ? evidenceOf(only, view) : entry;
 }
 
-/**
- * The source bytes between a list item and the item before it, when the two
- * are still adjacent there and no layout run on the item's leading side
- * already spells that gap: the range from the predecessor's end to the item's
- * start in the tree both were read from. Sent only while `owner`, the node
- * holding the items, carries source identity, as the list's flanks are
- * (`sourceFlankOf`): a list with no source keeps none of its source layout.
- */
-export function sourceGapOf(owner: Record<string, unknown>, list: readonly unknown[], index: number, view: KindView): SourceGapEvidence | undefined {
-	const entry = list[index];
-	if (index === 0 || !isRecord(entry) || sourceOf(owner) === undefined) return undefined;
-	const evidence = evidenceOf(entry, view);
-	const source = sourceOf(evidence);
-	const previous = source === undefined ? undefined : siblingsOf(source)?.previous;
-	if (source === undefined || previous == null || !keepsNeighbour(previous, list[index - 1], source.token, view)) return undefined;
-	if (typeof sideOf(evidence, 'leading')[0] === 'number') return undefined;
-	return { $treeHandle: source.treeHandle, $span: { start: previous.end, end: source.span.start } };
-}
-
-/** A list item's gap toward the item before it as the transport sends it: the gap's range in its tree. */
-export interface SourceGapEvidence {
-	readonly $treeHandle: number;
-	readonly $span: { readonly start: number; readonly end: number };
-}
-
-/** A list node's flanks as the transport sends them: its source span in its tree, and which flanks it keeps. */
-export interface SourceFlankEvidence {
-	readonly $treeHandle: number;
-	readonly $span: { readonly start: number; readonly end: number };
-	readonly $before: boolean;
-	readonly $after: boolean;
-}
-
 /** A row and a byte column, as tree-sitter counts them. */
 export interface PointData {
 	readonly row: number;
@@ -505,17 +503,18 @@ export interface PointSpanData {
 
 /**
  * A node's layout as the transport sends it (`$_layout`): the trivia that
- * crosses with it, the source evidence a rebuilt node keeps (its gap toward
- * the list item before it and, for a list, its flanks), a snapshot node's
- * span, the node a built node takes its missing sides from (`sides`, a
- * coordinate), and the edges whose neighbour changed (`changed`), where its
- * sides drop their layout runs. Absent when the node has none of these.
+ * crosses with it, its list slots' stored layout (`slots`, as a read gives
+ * it), the separator its source spells before it as a list item where it is
+ * not its slot's (`separator`), a snapshot node's span, the node a built node takes its missing sides
+ * and slots from (`sides`, a coordinate), and the edges whose neighbour
+ * changed (`changed`), where its sides drop their layout runs. Absent when
+ * the node has none of these.
  */
 export interface TransportLayout {
 	trivia?: unknown;
 	units?: readonly unknown[];
-	gap?: SourceGapEvidence;
-	flank?: SourceFlankEvidence;
+	slots?: readonly unknown[];
+	separator?: number;
 	span?: PointSpanData;
 	sides?: Record<string, unknown>;
 	changed?: ChangedEdges;
@@ -533,69 +532,20 @@ function coordinateCrossing(coordinate: Parameters<typeof plainCoordinate>[0], c
 	return out;
 }
 
-/**
- * The items of a list node: the one array a list kind (`KindView.isList`)
- * holds in its slots.
- */
-function listItemsOf(record: Record<string, unknown>, view: KindView): readonly Record<string, unknown>[] | undefined {
-	if (typeof record.$type !== 'number' || !view.isList(record.$type)) return undefined;
-	const held = Object.keys(record).flatMap((key) => {
-		const value = record[key];
-		return isSlotKey(key) && isPresent(value) && (isRecord(value) || Array.isArray(value)) ? [value] : [];
-	});
-	const [only] = held;
-	return held.length === 1 && Array.isArray(only) ? only.filter(isRecord) : undefined;
-}
-
-/**
- * A list node's flanks in the source it was read from, when it carries source
- * identity: the flank before is kept while its first item is still the
- * source's first item of this list, the flank after while its last item is
- * still the source's last. `undefined` for anything that is not a list node
- * with source identity.
- */
-export function sourceFlankOf(record: Record<string, unknown>, view: KindView): SourceFlankEvidence | undefined {
-	const items = listItemsOf(record, view);
-	const source = sourceOf(record);
-	if (items === undefined || items.length === 0 || source === undefined) return undefined;
-	const inList = (item: Record<string, unknown>): Siblings | undefined => {
-		const own = sourceOf(item);
-		return own !== undefined && own.token === source.token && own.span.start >= source.span.start && own.span.end <= source.span.end ? siblingsOf(own) : undefined;
-	};
-	return {
-		$treeHandle: source.treeHandle,
-		$span: source.span,
-		$before: inList(evidenceOf(items[0]!, view))?.previous === null,
-		$after: inList(evidenceOf(items[items.length - 1]!, view))?.next === null
-	};
-}
-
-/**
- * The sides a list node crosses with: without the layout runs at its flanks,
- * which its source flanks spell instead (`sourceFlankOf`), so each flank has
- * one source.
- */
-function edgesOf(record: Record<string, unknown>, view: KindView, changed: ChangedEdges): ChangedEdges {
-	return listItemsOf(record, view) === undefined ? changed : BOTH_EDGES;
-}
-
 function assertTriviaHoldsTree(entries: readonly unknown[]): void {
 	for (const entry of entries) if (isRecord(entry) && treeHandleOf(entry) !== undefined) assertHoldsTree(entry);
 }
 
-function toTransportValue(value: unknown, view: KindView, changed: ChangedEdges, fold: boolean, owner?: Record<string, unknown>, bearer?: Record<string, unknown>, sided = true): unknown {
+function toTransportValue(value: unknown, view: KindView, changed: ChangedEdges, fold: boolean, bearer?: Record<string, unknown>, sided = true): unknown {
 	if (Array.isArray(value)) {
 		return value.map((entry, index) => {
 			if (!isRecord(entry)) return toTransportValue(entry, view, NO_EDGES, fold);
-			const out = toTransportValue(entry, view, changedEdges(value, index, view), fold, undefined, evidenceOf(entry, view));
-			const gap = owner !== undefined ? sourceGapOf(owner, value, index, view) : undefined;
-			if (gap !== undefined && isRecord(out)) setLayout(out, 'gap', gap);
-			return out;
+			return toTransportValue(entry, view, changedEdges(value, index, view), fold, evidenceOf(entry, view));
 		});
 	}
 	if (!isRecord(value)) return value;
 	const bears = bearer === undefined || bearer === value;
-	const edges = edgesOf(value, view, bears ? changed : NO_EDGES);
+	const edges = bears ? changed : NO_EDGES;
 	const at = coordinateOf(value);
 	if (at !== undefined && (isCoordinate(value) || (fold && treeOf(value) !== undefined))) {
 		if (fold) assertHoldsTree(value);
@@ -607,11 +557,13 @@ function toTransportValue(value: unknown, view: KindView, changed: ChangedEdges,
 		if (!isDataKey(key) || key === '$_layout') continue;
 		const raw = value[key];
 		if (typeof raw === 'function') continue;
-		out[key] = isStorageKey(key) ? toTransportValue(raw, view, bears ? NO_EDGES : changed, fold, value, bears ? undefined : bearer, fold || !isAliasContent(value, raw)) : raw;
+		out[key] = isStorageKey(key) ? toTransportValue(raw, view, bears ? NO_EDGES : changed, fold, bears ? undefined : bearer, fold || !isAliasContent(value, raw)) : raw;
 	}
 	const given = (value as { readonly $_layout?: TransportLayout }).$_layout;
-	if (given?.gap !== undefined) setLayout(out, 'gap', given.gap);
-	if (given?.flank !== undefined) setLayout(out, 'flank', given.flank);
+	const slots = fold ? given?.slots : slotsOf(value);
+	if (slots !== undefined && slots.length > 0) setLayout(out, 'slots', slots);
+	const separator = edges.leading ? undefined : fold ? given?.separator : separatorOf(value);
+	if (separator !== undefined) setLayout(out, 'separator', separator);
 	if (given?.span !== undefined) setLayout(out, 'span', given.span);
 	const content = fold ? undefined : Object.keys(value).flatMap((key) => (isStorageKey(key) && isAliasContent(value, value[key]) ? [value[key] as object] : []))[0];
 	const trivia = fold ? triviaOf(value) : sided ? (sidesOf(value) ?? (content === undefined ? undefined : sidesOf(content))) : undefined;
@@ -627,8 +579,6 @@ function toTransportValue(value: unknown, view: KindView, changed: ChangedEdges,
 	}
 	const layout = out.$_layout as TransportLayout | undefined;
 	if ((edges.leading || edges.trailing) && (layout?.trivia !== undefined || layout?.sides !== undefined)) setLayout(out, 'changed', edges);
-	const flank = sourceFlankOf(value, view);
-	if (flank !== undefined) setLayout(out, 'flank', flank);
 	// A storage-bearing node rebuilds from its slots.
 	if (holdsSlots(out)) delete out.$text;
 	return out;

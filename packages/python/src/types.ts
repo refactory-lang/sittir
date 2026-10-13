@@ -8,6 +8,7 @@ import type {
 	KeywordNs,
 	LeafNs,
 	Terminal,
+	TriviaFlanks,
 	NonEmptyArray,
 	BooleanKeyword as BaseBooleanKeyword,
 	KindEnum,
@@ -4213,76 +4214,76 @@ export interface Pair {
 export interface ListComprehension {
 	readonly $type: TSKindId.ListComprehension;
 	readonly _body: Expression;
-	readonly _comprehension_clauses: ComprehensionClauses;
+	readonly _clauses: ComprehensionClauses;
 	readonly __inputHints__?: {
 		readonly body:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression;
 	};
 	readonly __looseHints__?: {
-		readonly comprehension_clauses: readonly (ForInClause | IfClause)[];
+		readonly clauses: readonly (ForInClause | IfClause)[];
 	};
 	readonly __slotHints__?: {
 		readonly body: SlotHint<NonNullable<T.ListComprehension.Config>['body']>;
-		readonly comprehensionClauses: SlotHint<T.ComprehensionClauses>;
+		readonly clauses: SlotHint<T.ComprehensionClauses>;
 	};
 	body(): Expression;
-	comprehensionClauses(): ComprehensionClauses;
+	clauses(): ComprehensionClauses;
 }
 
 export interface DictionaryComprehension {
 	readonly $type: TSKindId.DictionaryComprehension;
 	readonly _body: Pair;
-	readonly _comprehension_clauses: ComprehensionClauses;
+	readonly _clauses: ComprehensionClauses;
 	readonly __looseHints__?: {
-		readonly comprehension_clauses: readonly (ForInClause | IfClause)[];
+		readonly clauses: readonly (ForInClause | IfClause)[];
 	};
 	readonly __slotHints__?: {
 		readonly body: SlotHint<T.Pair>;
-		readonly comprehensionClauses: SlotHint<T.ComprehensionClauses>;
+		readonly clauses: SlotHint<T.ComprehensionClauses>;
 	};
 	body(): Pair;
-	comprehensionClauses(): ComprehensionClauses;
+	clauses(): ComprehensionClauses;
 }
 
 export interface SetComprehension {
 	readonly $type: TSKindId.SetComprehension;
 	readonly _body: Expression;
-	readonly _comprehension_clauses: ComprehensionClauses;
+	readonly _clauses: ComprehensionClauses;
 	readonly __inputHints__?: {
 		readonly body:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression;
 	};
 	readonly __looseHints__?: {
-		readonly comprehension_clauses: readonly (ForInClause | IfClause)[];
+		readonly clauses: readonly (ForInClause | IfClause)[];
 	};
 	readonly __slotHints__?: {
 		readonly body: SlotHint<NonNullable<T.SetComprehension.Config>['body']>;
-		readonly comprehensionClauses: SlotHint<T.ComprehensionClauses>;
+		readonly clauses: SlotHint<T.ComprehensionClauses>;
 	};
 	body(): Expression;
-	comprehensionClauses(): ComprehensionClauses;
+	clauses(): ComprehensionClauses;
 }
 
 export interface GeneratorExpression {
 	readonly $type: TSKindId.GeneratorExpression;
 	readonly _body: Expression;
-	readonly _comprehension_clauses: ComprehensionClauses;
+	readonly _clauses: ComprehensionClauses;
 	readonly __inputHints__?: {
 		readonly body:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression;
 	};
 	readonly __looseHints__?: {
-		readonly comprehension_clauses: readonly (ForInClause | IfClause)[];
+		readonly clauses: readonly (ForInClause | IfClause)[];
 	};
 	readonly __slotHints__?: {
 		readonly body: SlotHint<NonNullable<T.GeneratorExpression.Config>['body']>;
-		readonly comprehensionClauses: SlotHint<T.ComprehensionClauses>;
+		readonly clauses: SlotHint<T.ComprehensionClauses>;
 	};
 	body(): Expression;
-	comprehensionClauses(): ComprehensionClauses;
+	clauses(): ComprehensionClauses;
 }
 
 export interface ParenthesizedExpression {
@@ -4415,9 +4416,9 @@ export interface String {
 
 export interface StringContent {
 	readonly $type: TSKindId.StringContent;
-	readonly _content: NonEmptyArray<EscapeInterpolation | EscapeSequence | TSKindId.NotEscapeSequence | StringFragment>;
+	readonly _elements: NonEmptyArray<EscapeInterpolation | EscapeSequence | TSKindId.NotEscapeSequence | StringFragment>;
 	readonly __inputHints__?: {
-		readonly content: NonEmptyArray<
+		readonly elements: NonEmptyArray<
 			| KindEnum<'\\', TSKindId.NotEscapeSequence | TSKindId.Bslash>
 			| EscapeInterpolation
 			| EscapeSequence
@@ -4425,13 +4426,13 @@ export interface StringContent {
 		>;
 	};
 	readonly __slotHints__?: {
-		readonly contents: SlotHint<
+		readonly elements: SlotHint<
 			NonEmptyArray<T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment>,
 			false,
 			true
 		>;
 	};
-	contents(): NonEmptyArray<EscapeInterpolation | EscapeSequence | TSKindId.NotEscapeSequence | StringFragment>;
+	elements(): NonEmptyArray<EscapeInterpolation | EscapeSequence | TSKindId.NotEscapeSequence | StringFragment>;
 }
 
 export interface Interpolation {
@@ -4685,40 +4686,34 @@ export interface ExceptClauseExceptionAs {
 
 export interface CaseTuplePattern {
 	readonly $type: TSKindId.CaseTuplePattern;
-	readonly _list_pattern_case_patterns?: ListPatternCasePatterns;
+	readonly _elements?: ListPatternCasePatterns;
 	readonly __looseHints__?: {
-		readonly list_pattern_case_patterns?: readonly CasePattern[];
+		readonly elements?: readonly CasePattern[];
 	};
 	readonly __slotHints__?: {
-		readonly listPatternCasePatterns: SlotHint<T.ListPatternCasePatterns, true>;
+		readonly elements: SlotHint<T.ListPatternCasePatterns, true>;
 		readonly $listView: ListViewHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		readonly $listSlots: {
-			readonly listPatternCasePatterns: ListSlotHint<
-				T.CasePattern,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
-			>;
+			readonly elements: ListSlotHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	listPatternCasePatterns(): ListPatternCasePatterns | undefined;
+	elements(): ListPatternCasePatterns | undefined;
 }
 
 export interface CaseListPattern {
 	readonly $type: TSKindId.CaseListPattern;
-	readonly _list_pattern_case_patterns?: ListPatternCasePatterns;
+	readonly _elements?: ListPatternCasePatterns;
 	readonly __looseHints__?: {
-		readonly list_pattern_case_patterns?: readonly CasePattern[];
+		readonly elements?: readonly CasePattern[];
 	};
 	readonly __slotHints__?: {
-		readonly listPatternCasePatterns: SlotHint<T.ListPatternCasePatterns, true>;
+		readonly elements: SlotHint<T.ListPatternCasePatterns, true>;
 		readonly $listView: ListViewHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		readonly $listSlots: {
-			readonly listPatternCasePatterns: ListSlotHint<
-				T.CasePattern,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
-			>;
+			readonly elements: ListSlotHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	listPatternCasePatterns(): ListPatternCasePatterns | undefined;
+	elements(): ListPatternCasePatterns | undefined;
 }
 
 export interface PrintArguments {
@@ -5286,7 +5281,7 @@ export type WildcardPattern = TSKindId.WildcardPattern;
 export type IntegerDecimalLong = Terminal<TSKindId.IntegerDecimalLong, string>;
 export type IntegerDecimalImaginary = Terminal<TSKindId.IntegerDecimalImaginary, string>;
 export type IntegerDecimalPlain = Terminal<TSKindId.IntegerDecimalPlain, string>;
-export type LineContinuationNewline = Terminal<TSKindId.LineContinuationNewline, string>;
+export type LineContinuationNewline = Terminal<TSKindId.LineContinuationNewline, string> & TriviaFlanks;
 export type LineContinuationNul = TSKindId.LineContinuationNul;
 export type StringStart = Terminal<TSKindId.StringStart, string>;
 export type StringFragment = Terminal<TSKindId.StringFragment, string>;
@@ -9462,7 +9457,7 @@ export interface CaseTuplePatternNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	CaseTuplePattern.Bound,
-	'list_pattern_case_patterns',
+	'elements',
 	TSKindId.CaseTuplePattern,
 	CaseTuplePattern.Parsed,
 	EmptyCaseTuplePattern
@@ -9476,7 +9471,7 @@ export interface CaseListPatternNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	CaseListPattern.Bound,
-	'list_pattern_case_patterns',
+	'elements',
 	TSKindId.CaseListPattern,
 	CaseListPattern.Parsed,
 	EmptyCaseListPattern
@@ -15545,18 +15540,7 @@ export interface PythonTypeMap extends GrammarTypeMap {
 		| { readonly node: MatchBlockBlock; readonly empty: EmptyMatchBlockBlock }
 		| { readonly node: MatchBlockBlock.Bound; readonly empty: EmptyMatchBlockBlock }
 		| { readonly node: MatchBlockBlock.Parsed; readonly empty: EmptyMatchBlockBlock.Parsed };
-	readonly trivia:
-		| Blankline
-		| Comment
-		| Dedent
-		| DoubleBlankline
-		| Indent
-		| LineContinuation
-		| LineContinuationNewline
-		| LineContinuationNul
-		| Newline
-		| Space
-		| Tab;
+	readonly trivia: Comment | Dedent | Indent | Layout | LineContinuation;
 }
 
 export type NodeMethodsOf = NodeMethods<PythonTypeMap['trivia']>;

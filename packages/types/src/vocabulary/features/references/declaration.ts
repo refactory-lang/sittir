@@ -7,9 +7,8 @@ export namespace Declaration {
 			// r only
 		}
 	}
-	export namespace Variable {
-		export interface Static<G extends GrammarContext<G>> {
-			readonly byReference?: Flag;
-		}
+	export interface Variable<G extends GrammarContext<G>> {
+		readonly byReference?: Flag;
+		// r only
 	}
 }

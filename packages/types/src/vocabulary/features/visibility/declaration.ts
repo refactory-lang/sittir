@@ -517,24 +517,22 @@ export namespace Declaration {
 		}
 	}
 	export namespace Variable {
-		export namespace Static {
-			export interface Private<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Variable.Static<G>, V.Modifier.Visibility.Private<G>> {
+		export interface Private<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Variable<G>, V.Modifier.Visibility.Private<G>> {
+			// claimed by r
+			readonly $kind: 'declaration.variable.private';
+		}
+		export interface Public<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Variable<G>, V.Modifier.Visibility.Public<G>> {
+			// claimed by r
+			readonly $kind: 'declaration.variable.public';
+		}
+		export namespace Public {
+			export interface Internal<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Variable.Public<G>, V.Modifier.Visibility.Public.Internal<G>> {
 				// claimed by r
-				readonly $kind: 'declaration.variable.static.private';
+				readonly $kind: 'declaration.variable.public.internal';
 			}
-			export interface Public<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Variable.Static<G>, V.Modifier.Visibility.Public<G>> {
+			export interface Restricted<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Variable.Public<G>, V.Modifier.Visibility.Public.Restricted<G>> {
 				// claimed by r
-				readonly $kind: 'declaration.variable.static.public';
-			}
-			export namespace Public {
-				export interface Internal<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Variable.Static.Public<G>, V.Modifier.Visibility.Public.Internal<G>> {
-					// claimed by r
-					readonly $kind: 'declaration.variable.static.public.internal';
-				}
-				export interface Restricted<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Variable.Static.Public<G>, V.Modifier.Visibility.Public.Restricted<G>> {
-					// claimed by r
-					readonly $kind: 'declaration.variable.static.public.restricted';
-				}
+				readonly $kind: 'declaration.variable.public.restricted';
 			}
 		}
 	}

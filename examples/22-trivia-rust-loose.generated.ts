@@ -8,12 +8,12 @@ export function rebuildTriviaRustLoose() {
 		statements: [rs.build.functionItem({
 			name: "f",
 			parameters: rs.build.parameters(),
-			body: rs.build.block().$trivia.inner(rs.build.lineComment(" TODO"), rs.kinds.Newline),
-		}).$trivia.leading(rs.build.blockComment(" a "), rs.kinds.Newline), rs.build.functionItem({
+			body: rs.build.block().$trivia.inner(rs.build.lineComment(" TODO")),
+		}).$trivia.leading(rs.build.blockComment(" a ")), rs.build.functionItem({
 			name: "g",
 			parameters: rs.build.parameters(),
 			body: rs.build.block(),
-		}).$trivia.leading(rs.kinds.Blankline).$trivia.trailing(rs.build.blockComment(" t ")), rs.build.functionItem({
+		}).$trivia.trailing(rs.build.blockComment(" t ")), rs.build.functionItem({
 			name: "h",
 			parameters: rs.build.parameters(),
 			body: rs.build.block({
@@ -22,6 +22,6 @@ export function rebuildTriviaRustLoose() {
 					arguments: rs.build.arguments().$trivia.inner(rs.build.blockComment(" a ")),
 				}))],
 			}),
-		}).$trivia.leading(rs.kinds.Blankline)],
+		})],
 	});
 }
