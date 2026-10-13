@@ -13,6 +13,7 @@ import { appendFileSync, existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { historyRecording } from './history-recording.ts';
 import type { Backend } from './run.ts';
 import type { GrammarName } from '@sittir/codegen/grammars';
 
@@ -77,27 +78,21 @@ function isValidationRun(entry: unknown): entry is ValidationRun {
 	return !('schema' in entry) && typeof (entry as { ts?: unknown })['ts'] === 'string';
 }
 
-/** Append a single validation run entry to the history file. */
+/** Append a single validation run entry to the history file, unless this branch records nothing (`historyRecording`). */
 export function appendHistory(entry: ValidationRun): void {
-	appendFileSync(getHistoryPath(), JSON.stringify(entry) + '\n', 'utf8');
+	const path = getHistoryPath();
+	if (!process.env['SITTIR_HISTORY_PATH'] && historyRecording(path) === 'none') return;
+	appendFileSync(path, JSON.stringify(entry) + '\n', 'utf8');
 }
 
 /**
  * Best-effort commit of the history file, scoped to just that path, called at
  * the END of a validation run (not per-append). Feature commits stage named
- * paths, so without this the appended rows are stranded as unstaged changes
- * and only land in git when some later commit happens to sweep them in — which
- * is how validation history silently went uncaptured.
+ * paths, so without this the appended rows are stranded as unstaged changes.
  *
- * This must never disrupt a validation run, so it no-ops in every situation
- * where committing would be wrong or impossible:
- *   - SITTIR_HISTORY_PATH set — tests / custom locations; the target may be a
- *     scratch file outside any repo,
- *   - SITTIR_HISTORY_NO_COMMIT=1 — explicit opt-out (CI, bisects, demos),
- *   - SITTIR_INTERNAL_CODEGEN_RUN=1 — codegen-internal validation; codegen
- *     owns its own commit boundaries,
- *   - any git failure (no repo, mid-rebase, nothing to commit, git absent) is
- *     swallowed.
+ * It commits only when `historyRecording` says so (a recording branch with no
+ * opt-out), never for a custom `SITTIR_HISTORY_PATH` (tests, scratch files),
+ * and swallows any git failure: capturing history must never fail the run.
  *
  * `git commit -- <path>` is a partial commit: it records only the working-tree
  * state of that one path, so it never sweeps in unrelated in-progress work.
@@ -108,9 +103,8 @@ export function appendHistory(entry: ValidationRun): void {
  */
 export function commitHistory(message: string): void {
 	if (process.env['SITTIR_HISTORY_PATH']) return;
-	if (process.env['SITTIR_HISTORY_NO_COMMIT'] === '1') return;
-	if (process.env['SITTIR_INTERNAL_CODEGEN_RUN'] === '1') return;
 	const path = getHistoryPath();
+	if (historyRecording(path) !== 'commit') return;
 	try {
 		execFileSync('git', ['commit', '--no-verify', '-m', message, '--', path], {
 			cwd: dirname(path),
