@@ -20,7 +20,7 @@ Which side of a lead a narrowing builds: the lead (`lead: true`), which keeps on
 
 ### `packages/codegen/src/dsl/bind.ts::LeadEdit`
 
-The state one lead's narrowing works on: the grammar's rules, which the rest side edits in place, the supertypes the walk does not descend into, each rule's referencers, and `mint`.
+The state one side of a lead's narrowing works on: the grammar's rules, which the rest side edits in place, the supertypes the walk does not descend into, each rule's reference sites (`referenceSites`; the rest side's only), and `mint`.
 
 ### `packages/codegen/src/dsl/bind.ts::rewrap`
 
@@ -40,7 +40,7 @@ A named alias of the symbol `name` to `value`.
 
 ### `packages/codegen/src/dsl/bind.ts::exclusiveTo`
 
-Whether the rest side may narrow `name` in place: only when every rule above it on the path is edited in place (`exclusive`) and `name` has at most one referencer. Otherwise the original still holds it, and the rest side clones it.
+Whether the rest side may narrow `name` in place: only when every rule above it on the path is edited in place (`exclusive`) and `name` has at most one reference site (`referenceSites`). Otherwise another site still holds the original (another kind, another position of the same kind, or a variant the lead side minted), and the rest side clones it.
 
 ### `packages/codegen/src/dsl/bind.ts::isDescended`
 
@@ -79,6 +79,10 @@ The rule with every field that holds the list holding a choice of the list and t
 ### `packages/codegen/src/dsl/bind.ts::leadSymbols`
 
 The symbol source the list detector reads the grammar with (`predictedSymbolSourceOf`), over the rules as the earlier leads left them, with the grammar's lists read by name.
+
+### `packages/codegen/src/dsl/bind.ts::referenceSites`
+
+How many places reference each rule, counted after the lead side has minted its variants, so a variant that still holds a hidden rule keeps it from narrowing in place. Every symbol in every rule counts once, except that the list counts once for each rule it references: the rest narrows every item of the list alike.
 
 ### `packages/codegen/src/dsl/bind.ts::leadGrammar`
 

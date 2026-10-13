@@ -58,6 +58,26 @@ const typescript = (): GrammarRecord => ({
 	inline: []
 });
 
+const named = (parameter: unknown): GrammarRecord => ({
+	name: 'named',
+	rules: {
+		source_file: repeat(sym('function_item')),
+		function_item: seq(str('fn'), field('parameters', sym('params'))),
+		params: separatedList(sym('parameter')),
+		parameter,
+		_name: choice(sym('self'), sym('identifier'), sym('other')),
+		self: str('self'),
+		other: str('other'),
+		identifier: { type: 'PATTERN', value: '[a-z]+' }
+	},
+	extras: [],
+	externals: [],
+	supertypes: [],
+	inline: []
+});
+
+const NAMED_LEAD = lead('params', 'item', 'receiver', match('parameter', { name: [match('self')] }));
+
 const RUST_LEAD = lead(
 	'parameters_elements',
 	'item',
@@ -152,6 +172,21 @@ describe('leadGrammar', () => {
 	it('carries a minted rule into the supertypes and inline lists its origin sits in', () => {
 		const out = leadGrammar({ ...typescript(), inline: ['_parameter_name'] }, [TS_LEAD]);
 		expect(out.inline).toEqual(['_parameter_name', '_parameter_name_receiver', '_parameter_name_item']);
+	});
+
+	it('clones a hidden rule the lead\'s variant still holds at another position, rather than narrowing it in place under the variant', () => {
+		const rules = rulesOf(leadGrammar(named(seq(field('qualifier', sym('_name')), str(':'), field('name', sym('_name')))), [NAMED_LEAD]));
+		expect(rules._parameter_receiver).toEqual(seq(field('qualifier', sym('_name')), str(':'), field('name', sym('self'))));
+		expect(rules.parameter).toEqual(seq(field('qualifier', sym('_name')), str(':'), field('name', sym('_name_item'))));
+		expect(rules._name).toEqual(choice(sym('self'), sym('identifier'), sym('other')));
+		expect(rules._name_item).toEqual(choice(sym('identifier'), sym('other')));
+	});
+
+	it('keeps the field around a position whose hidden rule narrows in place', () => {
+		const rules = rulesOf(leadGrammar(named(seq(str('x:'), field('name', sym('_name')))), [NAMED_LEAD]));
+		expect(rules.parameter).toEqual(seq(str('x:'), field('name', sym('_name'))));
+		expect(rules._name).toEqual(choice(sym('identifier'), sym('other')));
+		expect(rules._parameter_receiver).toEqual(seq(str('x:'), field('name', sym('self'))));
 	});
 
 	it('leaves a grammar with no leads as it is', () => {

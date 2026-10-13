@@ -571,7 +571,7 @@ interface LeadSide {
 interface LeadEdit {
 	readonly rules: GrammarRecord;
 	readonly supertypes: ReadonlySet<string>;
-	readonly referencers: ReadonlyMap<string, ReadonlySet<string>>;
+	readonly sites: ReadonlyMap<string, number>;
 	readonly mint: (base: string, side: LeadSide, body: unknown) => string;
 }
 
@@ -595,7 +595,7 @@ function refKind(ref: unknown): string | undefined {
 
 const aliasOf = (name: string, value: string): GrammarRecord => ({ type: 'ALIAS', content: { type: 'SYMBOL', name }, named: true, value });
 
-const exclusiveTo = (edit: LeadEdit, name: string, exclusive: boolean): boolean => exclusive && (edit.referencers.get(name)?.size ?? 0) <= 1;
+const exclusiveTo = (edit: LeadEdit, name: string, exclusive: boolean): boolean => exclusive && (edit.sites.get(name) ?? 0) <= 1;
 
 const isDescended = (edit: LeadEdit, name: string): boolean => isParserHiddenName(name) && !edit.supertypes.has(name) && name in edit.rules;
 
@@ -671,7 +671,8 @@ function narrowWithin(edit: LeadEdit, kind: string, body: unknown, within: LeadW
 		if (isTarget(node)) {
 			const narrowed = narrowRef(edit, node.type === 'FIELD' ? node.content : node, within.admits, side, exclusive);
 			if (narrowed === undefined) throw new LeadRefusal(`it leaves ${position} of '${kind}' empty`);
-			return node.type !== 'FIELD' || narrowed === node.content ? narrowed : { ...node, content: narrowed };
+			if (node.type !== 'FIELD') return narrowed;
+			return narrowed === node.content ? node : { ...node, content: narrowed };
 		}
 		if (OPAQUE_RULES.has(node.type) || node.type === 'ALIAS') return node;
 		if (node.type === 'SYMBOL') {
@@ -747,6 +748,20 @@ function leadSymbols(grammar: GrammarRecord, rules: GrammarRecord, supertypes: R
 	});
 }
 
+function referenceSites(rules: GrammarRecord, list: string): Map<string, number> {
+	const sites = new Map<string, number>();
+	const count = (rule: unknown): void => {
+		if (Array.isArray(rule)) for (const r of rule) count(r);
+		else if (isRecord(rule)) {
+			if (rule.type === 'SYMBOL' && typeof rule.name === 'string') sites.set(rule.name, (sites.get(rule.name) ?? 0) + 1);
+			for (const value of Object.values(rule)) count(value);
+		}
+	};
+	for (const [name, body] of Object.entries(rules)) if (name !== list) count(body);
+	for (const ref of symbolNames(rules[list])) sites.set(ref, (sites.get(ref) ?? 0) + 1);
+	return sites;
+}
+
 export function leadGrammar(grammar: GrammarRecord, leads: readonly Lead[]): GrammarRecord {
 	if (leads.length === 0) return grammar;
 	const rules: GrammarRecord = { ...(isRecord(grammar.rules) ? grammar.rules : {}) };
@@ -770,12 +785,9 @@ export function leadGrammar(grammar: GrammarRecord, leads: readonly Lead[]): Gra
 		const shape = fieldedHeadListOf(rules[list] as Rule<'normalize'>, leadSymbols(grammar, rules, stop));
 		if (shape === null || shape.elementName !== item) throw new LeadRefusal(`the list is no separated list of field '${item}'`);
 		const element = shape.element as unknown as GrammarRecord;
-		const referencers = new Map<string, Set<string>>();
-		for (const [name, body] of Object.entries(rules)) for (const ref of symbolNames(body)) (referencers.get(ref) ?? referencers.set(ref, new Set()).get(ref)!).add(name);
-		const state: LeadEdit = { rules, supertypes: stop, referencers, mint };
-		const head = narrowRef(state, element.content, admits, { lead: true, suffix: field }, false);
+		const head = narrowRef({ rules, supertypes: stop, sites: new Map(), mint }, element.content, admits, { lead: true, suffix: field }, false);
 		if (head === undefined) throw new LeadRefusal('it admits no item of the list');
-		const rest = narrowRef(state, element.content, admits, { lead: false, suffix: item }, true);
+		const rest = narrowRef({ rules, supertypes: stop, sites: referenceSites(rules, list), mint }, element.content, admits, { lead: false, suffix: item }, true);
 		if (rest === undefined) throw new LeadRefusal('it leaves the list no item');
 		if (rest !== element.content) rules[list] = replaceItems(rules[list], item, element.content, rest);
 		const owners = Object.keys(rules).filter((name) => name !== list && leadFrom[name] === undefined);
