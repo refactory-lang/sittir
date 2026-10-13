@@ -81,6 +81,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['identifier']
 				| V.Clause.Bounds.Any<G>
 				| G['type'];
+			readonly content: string;
 		};
 		readonly 'clause.bounds.higher_ranked': {
 			readonly type:
@@ -139,10 +140,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['identifier']
 				| G['literal']
 				| G['pattern'];
-		};
-		readonly 'clause.constraint': {
-			readonly content: string;
-			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'clause.default': {
 			readonly type: G['identifier'] | G['type'];

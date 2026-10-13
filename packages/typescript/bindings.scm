@@ -106,6 +106,7 @@
 (optional_parameter (accessibility_modifier "protected")) @declaration.parameter.protected
 (optional_parameter (accessibility_modifier "public")) @declaration.parameter.public
 (type_parameter value: (_)? @default) @declaration.type_parameter
+(type_parameter constraint: (constraint type: (_) @bounds))
 (ambient_declaration) @declaration.ambient
 (ambient_declaration_module) @declaration.module_property
 (internal_module) @declaration.module
@@ -189,7 +190,8 @@
 (export_specifier export_kind: "typeof") @clause.export.specifier.typeof
 (mapped_type_clause) @clause.mapped_type
 ; type annotations are transparent wrappers: the annotated member takes the type
-(constraint) @clause.constraint
+(constraint) @clause.bounds
+(constraint type: (_) @bounds)
 (default_type) @clause.default
 
 ; ── argument (pieces of a call that are not expressions) ───────────────────────

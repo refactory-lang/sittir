@@ -3,9 +3,11 @@ import type { SubKindOf } from '../../../utils.ts';
 import type * as V from '../../../index.ts';
 export namespace Clause {
 	export interface Bounds<G extends GrammarContext<G>> extends SubKindOf<V.Clause<G>> {
-		// claimed by r
+		// claimed by rt
 		readonly $kind: 'clause.bounds';
 		readonly bounds?: G['slots']['clause.bounds']['bounds'][];
+		readonly content?: G['slots']['clause.bounds']['content'];
+		// t only
 	}
 	export namespace Bounds {
 		export interface Removed<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Bounds<G>> {
@@ -19,12 +21,6 @@ export namespace Clause {
 			readonly bounds?: G['identifier'][];
 		}
 	}
-	export interface Constraint<G extends GrammarContext<G>> extends SubKindOf<V.Clause<G>> {
-		// claimed by t
-		readonly $kind: 'clause.constraint';
-		readonly content: G['slots']['clause.constraint']['content'];
-		readonly type: G['slots']['clause.constraint']['type'];
-	}
 	export interface Where<G extends GrammarContext<G>> extends SubKindOf<V.Clause<G>> {
 		// claimed by r
 		readonly $kind: 'clause.where';
@@ -34,7 +30,7 @@ export namespace Clause {
 		export interface Predicate<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Where<G>> {
 			// claimed by r
 			readonly $kind: 'clause.where.predicate';
-			readonly bounds: V.Clause.Bounds<G>;
+			readonly bounds: G['slots']['clause.bounds']['bounds'][];
 			readonly left: G['slots']['clause.where.predicate']['left'];
 		}
 	}

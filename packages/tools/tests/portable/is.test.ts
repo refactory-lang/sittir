@@ -223,6 +223,11 @@ describe('portable is: rust', async () => {
 		expect(at('expression.cast.conversion')(cast, castContext)).toBe(true);
 	});
 
+	it('reads trait bounds as the bounds clause', () => {
+		const [bounds, context] = find('fn f<T: A + B>() {}\n', 'trait_bounds');
+		expect(at('clause.bounds')(bounds, context)).toBe(true);
+	});
+
 	it('reads a kind-id leaf in the asking engine\'s language, on the low-level surface too', () => {
 		const [wildcard] = find('fn f(x: u8) { match x { _ => 1 } }\n', 'wildcard_pattern');
 		expect(typeof wildcard).toBe('number');
@@ -400,6 +405,11 @@ describe('portable is: typescript', async () => {
 		expect(at('expression.cast.assertion.angle_bracket')(angle, angleContext)).toBe(true);
 		expect(at('expression.cast.satisfies')(satisfies, satisfiesContext)).toBe(true);
 		expect(at('statement.import.alias')(alias, aliasContext)).toBe(true);
+	});
+
+	it('reads a type parameter\'s constraint as the bounds clause', () => {
+		const [bounds, context] = find('function f<T extends U>() {}\n', 'constraint');
+		expect(at('clause.bounds')(bounds, context)).toBe(true);
 	});
 
 	it('reads this as the receiver', () => {

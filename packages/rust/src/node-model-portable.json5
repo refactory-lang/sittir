@@ -307,17 +307,6 @@
           ]
         },
         {
-          "name": "bounds",
-          "route": "slot",
-          "slot": "bounds",
-          "path": [
-            {
-              "owner": "associated_type",
-              "slot": "bounds"
-            }
-          ]
-        },
-        {
           "name": "whereClause",
           "route": "slot",
           "slot": "where_clause",
@@ -325,6 +314,31 @@
             {
               "owner": "associated_type",
               "slot": "where_clause"
+            }
+          ]
+        },
+        {
+          "name": "bounds",
+          "route": "nested",
+          "via": [
+            {
+              "field": "bounds",
+              "kind": "trait_bounds",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "trait_bounds",
+          "slot": "bounds",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "associated_type",
+              "slot": "bounds"
+            },
+            {
+              "owner": "trait_bounds",
+              "slot": "bounds"
             }
           ]
         }
@@ -12065,11 +12079,25 @@
         },
         {
           "name": "bounds",
-          "route": "slot",
+          "route": "nested",
+          "via": [
+            {
+              "field": "bounds",
+              "kind": "trait_bounds",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "trait_bounds",
           "slot": "bounds",
+          "multiple": false,
           "path": [
             {
               "owner": "lifetime_parameter",
+              "slot": "bounds"
+            },
+            {
+              "owner": "trait_bounds",
               "slot": "bounds"
             }
           ]
@@ -18709,13 +18737,27 @@
           ]
         },
         {
-          "name": "constraint",
-          "route": "slot",
-          "slot": "trait_bounds",
+          "name": "bounds",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "trait_bounds",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "trait_bounds",
+          "slot": "bounds",
+          "multiple": false,
           "path": [
             {
               "owner": "type_argument",
               "slot": "trait_bounds"
+            },
+            {
+              "owner": "trait_bounds",
+              "slot": "bounds"
             }
           ]
         }
@@ -19382,17 +19424,6 @@
           ]
         },
         {
-          "name": "constraint",
-          "route": "slot",
-          "slot": "bounds",
-          "path": [
-            {
-              "owner": "type_parameter",
-              "slot": "bounds"
-            }
-          ]
-        },
-        {
           "name": "default",
           "route": "slot",
           "slot": "default_type",
@@ -19400,6 +19431,31 @@
             {
               "owner": "type_parameter",
               "slot": "default_type"
+            }
+          ]
+        },
+        {
+          "name": "bounds",
+          "route": "nested",
+          "via": [
+            {
+              "field": "bounds",
+              "kind": "trait_bounds",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "trait_bounds",
+          "slot": "bounds",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "type_parameter",
+              "slot": "bounds"
+            },
+            {
+              "owner": "trait_bounds",
+              "slot": "bounds"
             }
           ]
         }
@@ -21256,11 +21312,25 @@
         },
         {
           "name": "bounds",
-          "route": "slot",
+          "route": "nested",
+          "via": [
+            {
+              "field": "bounds",
+              "kind": "trait_bounds",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "trait_bounds",
           "slot": "bounds",
+          "multiple": false,
           "path": [
             {
               "owner": "where_predicate",
+              "slot": "bounds"
+            },
+            {
+              "owner": "trait_bounds",
               "slot": "bounds"
             }
           ]

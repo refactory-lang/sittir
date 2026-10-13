@@ -3251,10 +3251,10 @@
       ]
     },
     "constraint": {
-      "vocab": "clause.constraint",
+      "vocab": "clause.bounds",
       "read": [
         {
-          "vocab": "clause.constraint",
+          "vocab": "clause.bounds",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3274,7 +3274,7 @@
           ]
         },
         {
-          "name": "type",
+          "name": "bounds",
           "route": "slot",
           "slot": "type",
           "path": [
@@ -11654,17 +11654,6 @@
           ]
         },
         {
-          "name": "constraint",
-          "route": "slot",
-          "slot": "constraint",
-          "path": [
-            {
-              "owner": "type_parameter",
-              "slot": "constraint"
-            }
-          ]
-        },
-        {
           "name": "default",
           "route": "slot",
           "slot": "value",
@@ -11672,6 +11661,31 @@
             {
               "owner": "type_parameter",
               "slot": "value"
+            }
+          ]
+        },
+        {
+          "name": "bounds",
+          "route": "nested",
+          "via": [
+            {
+              "field": "constraint",
+              "kind": "constraint",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "constraint",
+          "slot": "type",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "type_parameter",
+              "slot": "constraint"
+            },
+            {
+              "owner": "constraint",
+              "slot": "type"
             }
           ]
         }

@@ -41,11 +41,11 @@ export interface PortableIds {
 		| TSKindId.NamespaceImport
 		| TSKindId.SwitchCase
 		| TSKindId.SwitchDefault;
+	'clause.bounds': TSKindId.Constraint;
 	'clause.case': TSKindId.SwitchCase | TSKindId.SwitchDefault;
 	'clause.case.default': TSKindId.SwitchDefault;
 	'clause.case.switch': TSKindId.SwitchCase;
 	'clause.catch': TSKindId.CatchClause;
-	'clause.constraint': TSKindId.Constraint;
 	'clause.default': TSKindId.DefaultType;
 	'clause.else': TSKindId.ElseClause;
 	'clause.export': TSKindId.ExportClause | TSKindId.ExportSpecifier | TSKindId.NamespaceExport;
@@ -627,9 +627,9 @@ export interface PortableKindsAt {
 	'attribute.decorator': { readonly $ids: readonly PortableIds['attribute.decorator'][] };
 	clause: {
 		readonly $ids: readonly PortableIds['clause'][];
+		readonly bounds: PortableKindsAt['clause.bounds'];
 		readonly case: PortableKindsAt['clause.case'];
 		readonly catch: PortableKindsAt['clause.catch'];
-		readonly constraint: PortableKindsAt['clause.constraint'];
 		readonly default: PortableKindsAt['clause.default'];
 		readonly else: PortableKindsAt['clause.else'];
 		readonly export: PortableKindsAt['clause.export'];
@@ -639,6 +639,7 @@ export interface PortableKindsAt {
 		readonly import: PortableKindsAt['clause.import'];
 		readonly mapped_type: PortableKindsAt['clause.mapped_type'];
 	};
+	'clause.bounds': { readonly $ids: readonly PortableIds['clause.bounds'][] };
 	'clause.case': {
 		readonly $ids: readonly PortableIds['clause.case'][];
 		readonly default: PortableKindsAt['clause.case.default'];
@@ -647,7 +648,6 @@ export interface PortableKindsAt {
 	'clause.case.default': { readonly $ids: readonly PortableIds['clause.case.default'][] };
 	'clause.case.switch': { readonly $ids: readonly PortableIds['clause.case.switch'][] };
 	'clause.catch': { readonly $ids: readonly PortableIds['clause.catch'][] };
-	'clause.constraint': { readonly $ids: readonly PortableIds['clause.constraint'][] };
 	'clause.default': { readonly $ids: readonly PortableIds['clause.default'][] };
 	'clause.else': { readonly $ids: readonly PortableIds['clause.else'][] };
 	'clause.export': {
@@ -1474,9 +1474,9 @@ export interface PortableIsAt {
 	'attribute.content.parenthesized': PortableGuard<PortableIds['attribute.content.parenthesized']> & {};
 	'attribute.decorator': PortableGuard<PortableIds['attribute.decorator']> & {};
 	clause: PortableGuard<PortableIds['clause']> & {
+		readonly bounds: PortableIsAt['clause.bounds'];
 		readonly case: PortableIsAt['clause.case'];
 		readonly catch: PortableIsAt['clause.catch'];
-		readonly constraint: PortableIsAt['clause.constraint'];
 		readonly default: PortableIsAt['clause.default'];
 		readonly else: PortableIsAt['clause.else'];
 		readonly export: PortableIsAt['clause.export'];
@@ -1486,6 +1486,7 @@ export interface PortableIsAt {
 		readonly import: PortableIsAt['clause.import'];
 		readonly mapped_type: PortableIsAt['clause.mapped_type'];
 	};
+	'clause.bounds': PortableGuard<PortableIds['clause.bounds']> & {};
 	'clause.case': PortableGuard<PortableIds['clause.case']> & {
 		readonly default: PortableIsAt['clause.case.default'];
 		readonly switch: PortableIsAt['clause.case.switch'];
@@ -1493,7 +1494,6 @@ export interface PortableIsAt {
 	'clause.case.default': PortableGuard<PortableIds['clause.case.default']> & {};
 	'clause.case.switch': PortableGuard<PortableIds['clause.case.switch']> & {};
 	'clause.catch': PortableGuard<PortableIds['clause.catch']> & {};
-	'clause.constraint': PortableGuard<PortableIds['clause.constraint']> & {};
 	'clause.default': PortableGuard<PortableIds['clause.default']> & {};
 	'clause.else': PortableGuard<PortableIds['clause.else']> & {};
 	'clause.export': PortableGuard<PortableIds['clause.export']> & {
@@ -2266,11 +2266,11 @@ const table: PortableTable = {
 			],
 			exact: true
 		},
+		'clause.bounds': { ids: [TSKindId.Constraint], exact: true },
 		'clause.case': { ids: [TSKindId.SwitchCase, TSKindId.SwitchDefault], exact: true },
 		'clause.case.default': { ids: [TSKindId.SwitchDefault], exact: true },
 		'clause.case.switch': { ids: [TSKindId.SwitchCase], exact: true },
 		'clause.catch': { ids: [TSKindId.CatchClause], exact: true },
-		'clause.constraint': { ids: [TSKindId.Constraint], exact: true },
 		'clause.default': { ids: [TSKindId.DefaultType], exact: true },
 		'clause.else': { ids: [TSKindId.ElseClause], exact: true },
 		'clause.export': { ids: [TSKindId.ExportClause, TSKindId.ExportSpecifier, TSKindId.NamespaceExport], exact: true },
@@ -3338,7 +3338,7 @@ const table: PortableTable = {
 			{ path: 'comment', within: [], test: [] }
 		],
 		[TSKindId.ConditionalType]: [{ path: 'type.conditional', within: [], test: [] }],
-		[TSKindId.Constraint]: [{ path: 'clause.constraint', within: [], test: [] }],
+		[TSKindId.Constraint]: [{ path: 'clause.bounds', within: [], test: [] }],
 		[TSKindId.ConstructSignature]: [{ path: 'declaration.signature.construct', within: [], test: [] }],
 		[TSKindId.ConstructorType]: [{ path: 'type.function.constructor', within: [], test: [] }],
 		[TSKindId.ContinueStatement]: [{ path: 'statement.continue', within: [], test: [] }],

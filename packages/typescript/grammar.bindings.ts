@@ -3,7 +3,7 @@
 import { bindings, field, rename } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "f9bc64351888f926679489f4ab69c2004fef3dd87a883e32f4cc146a766b88cd",
+	hash: "10adb9ab12cb0ef8436308838b4cbb22ee97e5fe34571b3bcb994f9964cc9127",
 	patches: {
 		_number: { "1": field("value") },
 		_parameter_name: { "4": field("name") },
@@ -12,6 +12,7 @@ export default bindings({
 		as_expression: { "2": field("type") },
 		assignment_expression: { "0/0": field("disposable") },
 		call_expression_member: { "1": field("optional_chain") },
+		constraint: { "1": field("bounds") },
 		decorator: { "1": field("content") },
 		export_clause: { "1/0": field("export_specifiers") },
 		export_specifier: { "0/0": field("type_only") },
@@ -75,7 +76,7 @@ export default bindings({
 		rename("import_alias", "alias_import_statement"),
 		rename("namespace_export", "namespace_export_clause"),
 		rename("export_specifier", "specifier_export_clause"),
-		rename("constraint", "constraint_clause"),
+		rename("constraint", "bounds_clause"),
 		rename("default_type", "default_clause"),
 		rename("pair", "pair_element"),
 		rename("tuple_parameter", "member_tuple_element"),

@@ -107,6 +107,7 @@
 (type_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.type_alias.public.internal
 (type_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.type_alias.public.restricted
 (associated_type) @declaration.type_alias.associated
+(associated_type bounds: (trait_bounds bounds: (_) @bounds))
 (mod_item) @declaration.module
 (mod_item_external) @declaration.module
 (mod_item_external (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.module.private
@@ -174,9 +175,11 @@
 (variadic_parameter) @declaration.parameter.variadic
 (closure_parameters (_) @declaration.parameter)
 ((attributed_parameter (attribute_item)? @dropped (_) @element) (#set! reason "the element admits the _type supertype, so an attributes capture would reach only some of the kinds it holds"))
-(type_parameter bounds: (_)? @constraint default_type: (_)? @default) @declaration.type_parameter
+(type_parameter default_type: (_)? @default) @declaration.type_parameter
+(type_parameter bounds: (trait_bounds bounds: (_) @bounds))
 (const_parameter value: (_)? @default) @declaration.type_parameter.value
 (lifetime_parameter) @declaration.type_parameter.lifetime
+(lifetime_parameter bounds: (trait_bounds bounds: (_) @bounds))
 (attributed_type_parameter (attribute_item)* @attributes (_) @element)
 
 ; ── statement ──────────────────────────────────────────────────────────────────
@@ -201,6 +204,7 @@
 ; ── clause ─────────────────────────────────────────────────────────────────────
 (where_clause) @clause.where
 (where_predicate) @clause.where.predicate
+(where_predicate bounds: (trait_bounds bounds: (_) @bounds))
 (else_clause) @clause.else
 (let_condition) @clause.let
 (let_chain) @clause.let.chain
@@ -343,7 +347,8 @@
 (primitive_type) @type.primitive
 (generic_type) @type.generic
 (generic_type_with_turbofish) @type.generic.turbofish
-(type_argument (trait_bounds)? @constraint) @element.type_argument
+(type_argument) @element.type_argument
+(type_argument (trait_bounds bounds: (_) @bounds))
 (reference_type) @type.reference
 (reference_type (mutable_specifier) @exclusive)
 (pointer_type) @type.pointer

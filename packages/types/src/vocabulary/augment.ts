@@ -151,7 +151,6 @@ declare module './clause.ts' {
 				| V.Clause.Comprehension.For<G>
 				| V.Clause.Comprehension.If<G>;
 		}
-		interface Constraint<G extends GrammarContext<G>> extends boundedQuantification.Clause.Constraint<G> {}
 		interface Default<G extends GrammarContext<G>> extends parametricPolymorphism.Clause.Default<G> {}
 		interface Export<G extends GrammarContext<G>> extends modules.Clause.Export<G> {}
 		namespace Export {
@@ -278,7 +277,6 @@ declare module './clause.ts' {
 			| V.Clause.Comprehension<G>
 			| V.Clause.Comprehension.For<G>
 			| V.Clause.Comprehension.If<G>
-			| V.Clause.Constraint<G>
 			| V.Clause.Default<G>
 			| V.Clause.Else<G>
 			| V.Clause.ElseIf<G>
@@ -1296,10 +1294,10 @@ declare module './declaration.ts' {
 		}
 		interface TypeParameter<G extends GrammarContext<G>> extends parametricPolymorphism.Declaration.TypeParameter<G> {
 			readonly attributes?: gate.In<G, features.Attributes, attributes.Declaration.TypeParameter<G>['attributes']>;
-			readonly constraint?: gate.In<
+			readonly bounds?: gate.In<
 				G,
 				features.BoundedQuantification,
-				boundedQuantification.Declaration.TypeParameter<G>['constraint']
+				boundedQuantification.Declaration.TypeParameter<G>['bounds']
 			>;
 		}
 		namespace TypeParameter {
@@ -1672,10 +1670,10 @@ declare module './element.ts' {
 				| V.Element.Tuple.Member.Optional<G>;
 		}
 		interface TypeArgument<G extends GrammarContext<G>> extends parametricPolymorphism.Element.TypeArgument<G> {
-			readonly constraint?: gate.In<
+			readonly bounds?: gate.In<
 				G,
 				features.BoundedQuantification,
-				boundedQuantification.Element.TypeArgument<G>['constraint']
+				boundedQuantification.Element.TypeArgument<G>['bounds']
 			>;
 		}
 		interface TypeBinding<G extends GrammarContext<G>> extends associatedTypes.Element.TypeBinding<G> {}
