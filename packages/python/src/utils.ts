@@ -350,7 +350,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['consequence', { fields: ['consequence'], kinds: [] }]
 	],
 	156: [
-		['async', { fields: ['async'], kinds: [] }],
+		['async', { fields: ['async'], kinds: [] }, 'async'],
 		['left', { fields: ['left'], kinds: [] }],
 		['right', { fields: ['right'], kinds: [] }],
 		['body', { fields: ['body'], kinds: [] }],
@@ -368,19 +368,19 @@ export const querySlots: QuerySlots = Object.freeze({
 		['finallyClause', { fields: ['finally_clause'], kinds: [] }]
 	],
 	159: [
-		['group', { fields: ['group'], kinds: [] }],
+		['group', { fields: ['group'], kinds: [] }, '*'],
 		['exception', { fields: ['exception'], kinds: [] }],
 		['suite', { fields: [], kinds: ['suite_inline', 'suite_block', 'suite_empty'] }]
 	],
 	160: [['block', { fields: ['block'], kinds: [] }]],
 	161: [
-		['async', { fields: ['async'], kinds: [] }],
+		['async', { fields: ['async'], kinds: [] }, 'async'],
 		['withClause', { fields: ['with_clause'], kinds: [] }],
 		['body', { fields: ['body'], kinds: [] }]
 	],
 	163: [['value', { fields: ['value'], kinds: [] }]],
 	164: [
-		['async', { fields: ['async'], kinds: [] }],
+		['async', { fields: ['async'], kinds: [] }, 'async'],
 		['name', { fields: ['name'], kinds: [] }],
 		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
 		['parameters', { fields: ['parameters'], kinds: [] }],
@@ -467,7 +467,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['arguments', { fields: ['arguments'], kinds: [] }]
 	],
 	191: [
-		['sign', { fields: ['sign'], kinds: [] }],
+		['sign', { fields: ['sign'], kinds: [] }, '-'],
 		['real', { fields: ['real'], kinds: [] }],
 		['operator', { fields: ['operator'], kinds: [] }],
 		['imaginary', { fields: ['imaginary'], kinds: [] }]
@@ -713,10 +713,10 @@ export const querySlots: QuerySlots = Object.freeze({
 	241: [['expression', { fields: ['expression'], kinds: [] }]],
 	242: [['items', { fields: ['item'], kinds: [] }]],
 	243: [
-		['async', { fields: ['async'], kinds: [] }],
+		['async', { fields: ['async'], kinds: [] }, 'async'],
 		['left', { fields: ['left'], kinds: [] }],
 		['rights', { fields: ['right'], kinds: [] }],
-		['comma', { fields: ['comma'], kinds: [] }]
+		['comma', { fields: ['comma'], kinds: [] }, ',']
 	],
 	244: [['condition', { fields: ['condition'], kinds: [] }]],
 	245: [
@@ -752,7 +752,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	249: [
 		['expression', { fields: ['expression'], kinds: [] }],
-		['debug', { fields: ['debug'], kinds: [] }],
+		['debug', { fields: ['debug'], kinds: [] }, '='],
 		['typeConversion', { fields: ['type_conversion'], kinds: [] }],
 		['formatSpecifier', { fields: ['format_specifier'], kinds: [] }]
 	],
@@ -841,7 +841,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	280: [['importList', { fields: [], kinds: ['import_list'] }]],
 	281: [['contents', { fields: ['content'], kinds: [] }]],
 	283: [
-		['sign', { fields: ['sign'], kinds: [] }],
+		['sign', { fields: ['sign'], kinds: [] }, '-'],
 		['value', { fields: ['value'], kinds: [] }]
 	],
 	284: [['values', { fields: ['value'], kinds: [] }]],
