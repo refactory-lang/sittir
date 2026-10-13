@@ -30,12 +30,12 @@ export interface PortableIds {
 		| TSKindId.WithItem;
 	'clause.case': TSKindId.CaseClause;
 	'clause.case.match': TSKindId.CaseClause;
+	'clause.catch': TSKindId.ExceptClause;
 	'clause.comprehension': TSKindId.ComprehensionClauses | TSKindId.ForInClause | TSKindId.IfClause;
 	'clause.comprehension.for': TSKindId.ForInClause;
 	'clause.comprehension.if': TSKindId.IfClause;
 	'clause.else': TSKindId.ElseClause;
 	'clause.else_if': TSKindId.ElifClause;
-	'clause.except': TSKindId.ExceptClause;
 	'clause.finally': TSKindId.FinallyClause;
 	'clause.import': TSKindId.AliasedImport | TSKindId.ImportPrefix | TSKindId.RelativeImport | TSKindId.WildcardImport;
 	'clause.import.alias': TSKindId.AliasedImport;
@@ -426,10 +426,10 @@ export interface PortableKindsAt {
 	clause: {
 		readonly $ids: readonly PortableIds['clause'][];
 		readonly case: PortableKindsAt['clause.case'];
+		readonly catch: PortableKindsAt['clause.catch'];
 		readonly comprehension: PortableKindsAt['clause.comprehension'];
 		readonly else: PortableKindsAt['clause.else'];
 		readonly else_if: PortableKindsAt['clause.else_if'];
-		readonly except: PortableKindsAt['clause.except'];
 		readonly finally: PortableKindsAt['clause.finally'];
 		readonly import: PortableKindsAt['clause.import'];
 		readonly print: PortableKindsAt['clause.print'];
@@ -440,6 +440,7 @@ export interface PortableKindsAt {
 		readonly match: PortableKindsAt['clause.case.match'];
 	};
 	'clause.case.match': { readonly $ids: readonly PortableIds['clause.case.match'][] };
+	'clause.catch': { readonly $ids: readonly PortableIds['clause.catch'][] };
 	'clause.comprehension': {
 		readonly $ids: readonly PortableIds['clause.comprehension'][];
 		readonly for: PortableKindsAt['clause.comprehension.for'];
@@ -449,7 +450,6 @@ export interface PortableKindsAt {
 	'clause.comprehension.if': { readonly $ids: readonly PortableIds['clause.comprehension.if'][] };
 	'clause.else': { readonly $ids: readonly PortableIds['clause.else'][] };
 	'clause.else_if': { readonly $ids: readonly PortableIds['clause.else_if'][] };
-	'clause.except': { readonly $ids: readonly PortableIds['clause.except'][] };
 	'clause.finally': { readonly $ids: readonly PortableIds['clause.finally'][] };
 	'clause.import': {
 		readonly $ids: readonly PortableIds['clause.import'][];
@@ -1002,10 +1002,10 @@ export interface PortableIsAt {
 	'attribute.decorator': PortableGuard<PortableIds['attribute.decorator']> & {};
 	clause: PortableGuard<PortableIds['clause']> & {
 		readonly case: PortableIsAt['clause.case'];
+		readonly catch: PortableIsAt['clause.catch'];
 		readonly comprehension: PortableIsAt['clause.comprehension'];
 		readonly else: PortableIsAt['clause.else'];
 		readonly else_if: PortableIsAt['clause.else_if'];
-		readonly except: PortableIsAt['clause.except'];
 		readonly finally: PortableIsAt['clause.finally'];
 		readonly import: PortableIsAt['clause.import'];
 		readonly print: PortableIsAt['clause.print'];
@@ -1013,6 +1013,7 @@ export interface PortableIsAt {
 	};
 	'clause.case': PortableGuard<PortableIds['clause.case']> & { readonly match: PortableIsAt['clause.case.match'] };
 	'clause.case.match': PortableGuard<PortableIds['clause.case.match']> & {};
+	'clause.catch': PortableGuard<PortableIds['clause.catch']> & {};
 	'clause.comprehension': PortableGuard<PortableIds['clause.comprehension']> & {
 		readonly for: PortableIsAt['clause.comprehension.for'];
 		readonly if: PortableIsAt['clause.comprehension.if'];
@@ -1021,7 +1022,6 @@ export interface PortableIsAt {
 	'clause.comprehension.if': PortableGuard<PortableIds['clause.comprehension.if']> & {};
 	'clause.else': PortableGuard<PortableIds['clause.else']> & {};
 	'clause.else_if': PortableGuard<PortableIds['clause.else_if']> & {};
-	'clause.except': PortableGuard<PortableIds['clause.except']> & {};
 	'clause.finally': PortableGuard<PortableIds['clause.finally']> & {};
 	'clause.import': PortableGuard<PortableIds['clause.import']> & {
 		readonly alias: PortableIsAt['clause.import.alias'];
@@ -1540,6 +1540,7 @@ const table: PortableTable = {
 		},
 		'clause.case': { ids: [TSKindId.CaseClause], exact: true },
 		'clause.case.match': { ids: [TSKindId.CaseClause], exact: true },
+		'clause.catch': { ids: [TSKindId.ExceptClause], exact: true },
 		'clause.comprehension': {
 			ids: [TSKindId.ComprehensionClauses, TSKindId.ForInClause, TSKindId.IfClause],
 			exact: true
@@ -1548,7 +1549,6 @@ const table: PortableTable = {
 		'clause.comprehension.if': { ids: [TSKindId.IfClause], exact: true },
 		'clause.else': { ids: [TSKindId.ElseClause], exact: true },
 		'clause.else_if': { ids: [TSKindId.ElifClause], exact: true },
-		'clause.except': { ids: [TSKindId.ExceptClause], exact: true },
 		'clause.finally': { ids: [TSKindId.FinallyClause], exact: true },
 		'clause.import': {
 			ids: [TSKindId.AliasedImport, TSKindId.ImportPrefix, TSKindId.RelativeImport, TSKindId.WildcardImport],
@@ -2433,7 +2433,7 @@ const table: PortableTable = {
 		[TSKindId.EscapeSequenceSimple]: [{ path: 'literal.string.escape', within: [], test: [] }],
 		[TSKindId.EscapeSequenceUnicodeFixed]: [{ path: 'literal.string.escape', within: [], test: [] }],
 		[TSKindId.EscapeSequenceUnicodeWide]: [{ path: 'literal.string.escape', within: [], test: [] }],
-		[TSKindId.ExceptClause]: [{ path: 'clause.except', within: [], test: [] }],
+		[TSKindId.ExceptClause]: [{ path: 'clause.catch', within: [], test: [] }],
 		[TSKindId.ExecStatement]: [{ path: 'statement.exec', within: [], test: [] }],
 		[TSKindId.ExpressionList]: [{ path: 'expression.collection.tuple.bare', within: [], test: [] }],
 		[TSKindId.ExpressionStatement]: [{ path: 'statement.expression', within: [], test: [] }],

@@ -152,7 +152,6 @@ declare module './clause.ts' {
 		}
 		interface Constraint<G extends GrammarContext<G>> extends boundedQuantification.Clause.Constraint<G> {}
 		interface Default<G extends GrammarContext<G>> extends parametricPolymorphism.Clause.Default<G> {}
-		interface Except<G extends GrammarContext<G>> extends exceptions.Clause.Except<G> {}
 		interface Export<G extends GrammarContext<G>> extends modules.Clause.Export<G> {}
 		namespace Export {
 			interface Namespace<G extends GrammarContext<G>> extends modules.Clause.Export.Namespace<G> {}
@@ -284,7 +283,6 @@ declare module './clause.ts' {
 			| V.Clause.Default<G>
 			| V.Clause.Else<G>
 			| V.Clause.ElseIf<G>
-			| V.Clause.Except<G>
 			| V.Clause.Export<G>
 			| V.Clause.Export.Namespace<G>
 			| V.Clause.Export.Specifier<G>
