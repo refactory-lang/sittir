@@ -3,7 +3,7 @@
 import { alias, bindings, field, rename, split } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "c60ba264b3f5c656b605e1766f87b4aa0f3d2b7c176ec2bf9a254f6fc10cc284",
+	hash: "f6d3c586e018360efc6d02e1e06d16de5eac9a05056a70f1feb0704392334679",
 	patches: {
 		attribute_item: { "2": field("content") },
 		block_comment: { "1/0/2": alias(sym("block_comment_regular"), sym("text_comment")) },
