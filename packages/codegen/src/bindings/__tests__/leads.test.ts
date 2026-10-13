@@ -10,6 +10,7 @@ import { deriveLeads, readBindings } from '../index.ts';
 
 let dir: string;
 let base: RawGrammar;
+let edits: RawGrammar;
 
 beforeAll(async () => {
 	dir = mkdtempSync(join(tmpdir(), 'bindings-leads-'));
@@ -38,6 +39,40 @@ beforeAll(async () => {
 `
 	);
 	base = await evaluateSittirGrammar(baseModule, 'leadtest');
+	const editsModule = join(dir, 'edits.mjs');
+	writeFileSync(
+		editsModule,
+		`export default grammar({
+	name: 'leadedits',
+	rules: {
+		source_file: $ => repeat(choice($.function_item, $.method_item, $.closure, $.lambda, $.macro_item, $.macro_elements, $.table, $._table_rows_receiver)),
+		function_item: $ => seq('fn', $.parameters),
+		parameters: $ => seq('(', optional(field('elements', $.parameters_elements)), ')'),
+		parameters_elements: $ => seq(field('item', $.attributed_parameter), repeat(seq(',', field('item', $.attributed_parameter))), optional(',')),
+		method_item: $ => seq('method', '(', optional(field('elements', $.method_elements)), ')'),
+		method_elements: $ => seq(field('item', $.attributed_parameter), repeat(seq(',', field('item', $.attributed_parameter)))),
+		closure: $ => seq('|', optional(field('params', $.closure_elements)), '|'),
+		lambda: $ => seq('\\\\', optional(field('args', $.closure_elements)), '->'),
+		closure_elements: $ => seq(field('item', $.attributed_parameter), repeat(seq(',', field('item', $.attributed_parameter)))),
+		macro_item: $ => seq('macro', '(', optional($.macro_elements), ')'),
+		macro_elements: $ => seq(field('item', $.attributed_parameter), repeat(seq(',', field('item', $.attributed_parameter)))),
+		table: $ => seq('table', '{', optional(field('rows', $.table_rows)), '}'),
+		table_rows: $ => seq(field('item', $.row), repeat(seq(';', field('item', $.row)))),
+		row: $ => seq(choice($.attribute, $.identifier), ':', $.identifier),
+		_table_rows_receiver: _ => 'recv',
+		attributed_parameter: $ => seq(optional($.attribute), choice($.self_parameter, $.parameter, $.variadic_parameter)),
+		parameter: $ => seq($._param_name, ':', $.identifier),
+		variadic_parameter: $ => seq('...', $._param_name),
+		_param_name: $ => field('name', choice($.self, $.identifier)),
+		attribute: _ => '#',
+		self_parameter: _ => '&self',
+		self: _ => 'self',
+		identifier: _ => /[a-z]+/
+	}
+});
+`
+	);
+	edits = await evaluateSittirGrammar(editsModule, 'leadedits');
 }, 120_000);
 
 afterAll(() => rmSync(dir, { recursive: true, force: true }));
@@ -151,3 +186,58 @@ describe('deriveLeads', () => {
 	});
 });
 
+describe('deriveLeads refuses a lead its edit cannot make', () => {
+	const refusal = async (text: string) => {
+		const result = deriveLeads({ file: FILE, base: edits, facts: await readBindings(text) });
+		expect(result.leads).toEqual([]);
+		return result.diagnostics;
+	};
+
+	it('derives a lead its edit can make', async () => {
+		const result = deriveLeads({
+			file: FILE,
+			base: edits,
+			facts: await readBindings('(function_item (parameters (parameters_elements . (attributed_parameter (self_parameter)) @receiver))) @declaration.method')
+		});
+		expect(result).toEqual({ leads: [lead('parameters_elements', 'item', 'receiver', match('attributed_parameter', [match('self_parameter')]))], diagnostics: [] });
+	});
+
+	it('refuses one hidden rule narrowed two ways, naming both claim lines', async () => {
+		const diagnostics = await refusal(
+			'(function_item (parameters (parameters_elements . (attributed_parameter (parameter name: (self))) @receiver))) @declaration.method\n(function_item (parameters (parameters_elements . (attributed_parameter (variadic_parameter name: (identifier))) @receiver))) @declaration.method'
+		);
+		expect(diagnostics).toMatchObject([
+			{ code: 'lead-refused', canProceed: false, details: { file: FILE, lines: [1, 2], list: 'parameters_elements', reason: "'_param_name' narrows two ways to '_param_name_receiver'" } }
+		]);
+	});
+
+	it('refuses a list its owners hold under different fields', async () => {
+		const diagnostics = await refusal('(closure (closure_elements . (attributed_parameter (self_parameter)) @receiver)) @declaration.function');
+		expect(diagnostics).toMatchObject([{ code: 'lead-refused', details: { lines: [1], list: 'closure_elements', reason: 'the list sits in fields args, params' } }]);
+	});
+
+	it('refuses a list an owner holds other than as a field\'s content', async () => {
+		const diagnostics = await refusal('(macro_item (macro_elements . (attributed_parameter (self_parameter)) @receiver)) @declaration.function');
+		expect(diagnostics).toMatchObject([{ code: 'lead-refused', details: { lines: [1], list: 'macro_elements', reason: "'source_file' holds the list other than as a field's content" } }]);
+	});
+
+	it('refuses a lead that mints a name the grammar already holds', async () => {
+		const diagnostics = await refusal('(table (table_rows . (row (attribute)) @receiver)) @declaration.function');
+		expect(diagnostics).toMatchObject([
+			{ code: 'lead-refused', details: { lines: [1], list: 'table_rows', reason: "'table_rows' mints '_table_rows_receiver', which the grammar already names" } }
+		]);
+	});
+	it('refuses a lead whose edit conflicts with a lead on another list, checked in the order the edit applies them', async () => {
+		const result = deriveLeads({
+			file: FILE,
+			base: edits,
+			facts: await readBindings(
+				'(function_item (parameters (parameters_elements . (attributed_parameter (parameter name: (self))) @receiver))) @declaration.method\n(method_item (method_elements . (attributed_parameter (parameter name: (identifier))) @receiver)) @declaration.method'
+			)
+		});
+		expect(result.leads.map((l) => l.list)).toEqual(['method_elements']);
+		expect(result.diagnostics).toMatchObject([
+			{ code: 'lead-refused', details: { lines: [1], list: 'parameters_elements', reason: "'parameter' narrows two ways to '_parameter_receiver'" } }
+		]);
+	});
+});
