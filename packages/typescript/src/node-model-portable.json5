@@ -2663,17 +2663,6 @@
       ],
       "members": [
         {
-          "name": "catchClauseGroup",
-          "route": "slot",
-          "slot": "catch_clause_group",
-          "path": [
-            {
-              "owner": "catch_clause",
-              "slot": "catch_clause_group"
-            }
-          ]
-        },
-        {
           "name": "body",
           "route": "slot",
           "slot": "body",
@@ -2681,6 +2670,56 @@
             {
               "owner": "catch_clause",
               "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "catch_clause_group",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "catch_clause_group",
+          "slot": "parameter",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "catch_clause",
+              "slot": "catch_clause_group"
+            },
+            {
+              "owner": "catch_clause_group",
+              "slot": "parameter"
+            }
+          ]
+        },
+        {
+          "name": "type",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "catch_clause_group",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "catch_clause_group",
+          "slot": "type",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "catch_clause",
+              "slot": "catch_clause_group"
+            },
+            {
+              "owner": "catch_clause_group",
+              "slot": "type"
             }
           ]
         }

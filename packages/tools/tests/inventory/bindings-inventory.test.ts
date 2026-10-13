@@ -173,9 +173,9 @@ describe('deriveVocabulary', () => {
 		expect(body?.multiple).toBe(true);
 	});
 	it('reads a polymorph through its forms, keeping a list form apart from a scalar form', () => {
-		const exception = d.members.get('clause.except')?.get('exception');
-		expect(exception?.multiple).toBe(true);
-		expect(exception?.scalar).toBe(true);
+		const type = d.members.get('clause.catch')?.get('type');
+		expect(type?.multiple).toBe(true);
+		expect(type?.scalar).toBe(true);
 	});
 	it('never makes a layout slot a member: an options-block address or a slot of unclaimed kinds', () => {
 		for (const [v, members] of d.members) {

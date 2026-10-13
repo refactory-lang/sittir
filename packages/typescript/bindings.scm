@@ -160,6 +160,8 @@
 ; ── clause ─────────────────────────────────────────────────────────────────────
 (else_clause) @clause.else
 (catch_clause) @clause.catch
+(catch_clause (catch_clause_group parameter: (_) @name))
+(catch_clause (catch_clause_group type: (_) @type))
 (finally_clause) @clause.finally
 (switch_case) @clause.case.switch
 (switch_default) @clause.case.default

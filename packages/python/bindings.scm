@@ -59,11 +59,13 @@
 ; ── clause ─────────────────────────────────────────────────────────────────────
 (elif_clause) @clause.elif
 (else_clause) @clause.else
-(except_clause) @clause.except
-(except_clause (except_clause_exception (except_clause_exception_as value: (_) @exception)))
-(except_clause (except_clause_exception (except_clause_exception_as alias: (_) @alias)))
-(except_clause (except_clause_exception (except_clause_exception_list) @exception))
+(except_clause) @clause.catch
+(except_clause (except_clause_exception (except_clause_exception_as value: (_) @type)))
+(except_clause (except_clause_exception (except_clause_exception_as alias: (_) @name)))
+(except_clause (except_clause_exception (except_clause_exception_list) @type))
+(except_clause [(suite_block) (suite_empty) (suite_inline)] @body)
 (finally_clause) @clause.finally
+(finally_clause block: (_) @body)
 (case_clause) @clause.case.match
 (with_clause with_items: (_)? @items) @clause.with
 (with_item) @clause.with.item

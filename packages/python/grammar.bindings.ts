@@ -3,7 +3,7 @@
 import { alias, bindings, field, rename } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "35d8d522d0f526ca8d4f26f1785394d2f7c6348d05c9dce0ef084cf7095c3628",
+	hash: "419bfcb71a0ed0f5ff070b07fc67631ff6066f38c760df92399baec41687506c",
 	patches: {
 		_expression_within_for_in_clause: { "-1": alias(sym("lambda_within_for_in_clause"), sym("lambda_expression")) },
 		assignment_eq: { "0": field("name"), "1/1": field("value") },
@@ -18,6 +18,7 @@ export default bindings({
 		default_parameter: { "2": field("default") },
 		dictionary_comprehension: { "2": field("comprehension_clauses") },
 		expression: { "-5": alias(sym("lambda"), sym("lambda_expression")) },
+		finally_clause: { "2": field("body") },
 		generator_expression: { "2": field("comprehension_clauses") },
 		list: { "1/0": field("elements") },
 		list_comprehension: { "2": field("comprehension_clauses") },
@@ -48,6 +49,7 @@ export default bindings({
 		rename("import_from_statement", "from_import_statement"),
 		rename("pass_statement", "empty_statement"),
 		rename("print_statement_chevron", "chevron_print_statement"),
+		rename("except_clause", "catch_clause"),
 		rename("case_clause", "match_case_clause"),
 		rename("with_item", "item_with_clause"),
 		rename("for_in_clause", "for_comprehension_clause"),

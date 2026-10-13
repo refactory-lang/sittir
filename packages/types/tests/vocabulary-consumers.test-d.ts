@@ -177,6 +177,15 @@ export function matchInSwitch<G extends GrammarContext<G>>(c: Clause.Case.Match<
 	return [c];
 }
 
+// A handler is one kind in every language: it names what it binds and the type it catches, and holds its body.
+export function handler<G extends GrammarContext<G>>(name: G['identifier'], type: G['type'], body: Clause.Catch<G>['body']): Clause.Catch<G> {
+	return { $kind: 'clause.catch', name, type, body };
+}
+export function handlerException<G extends GrammarContext<G>>(c: Clause.Catch<G>): unknown {
+	// @ts-expect-error what a handler catches is its `type`, in every language
+	return c.exception;
+}
+
 // Roles read through the namespace map, which types each by its permissive fill.
 export function nameKind<G extends GrammarContext<G>>(f: Declaration.Function<G>): string {
 	return f.name.$kind;
