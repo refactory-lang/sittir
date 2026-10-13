@@ -89,7 +89,7 @@ export const querySlots: QuerySlots = Object.freeze({
 				]
 			}
 		],
-		['anchor', { fields: [], kinds: ['anchor'] }]
+		['anchor', { fields: [], kinds: ['anchor'] }, '.']
 	],
 	61: [
 		['name', { fields: ['name'], kinds: [] }],
@@ -103,11 +103,11 @@ export const querySlots: QuerySlots = Object.freeze({
 		['elements', { fields: ['elements'], kinds: [] }]
 	],
 	63: [
-		['anchor', { fields: [], kinds: ['anchor'] }],
+		['anchor', { fields: [], kinds: ['anchor'] }, '.'],
 		['namedNodeExpressions', { fields: ['named_node_expressions'], kinds: [] }]
 	],
 	64: [
-		['anchor', { fields: [], kinds: ['anchor'] }],
+		['anchor', { fields: [], kinds: ['anchor'] }, '.'],
 		['namedNodeExpressions', { fields: ['named_node_expressions'], kinds: [] }],
 		['last', { fields: ['last'], kinds: [] }]
 	]
