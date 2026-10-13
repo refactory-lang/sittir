@@ -5085,7 +5085,7 @@ export function buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.B
 		_match_block_arms,
 		$with: {
 			matchBlockArms: (value?: Admit<T.MatchBlockArms>) => rebuilt(node, handle, () => buildMatchBlock(value)),
-			matchArms: (...args: unknown[]) =>
+			arms: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(
 						{
@@ -5094,11 +5094,11 @@ export function buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.B
 							kind: TSKindId.MatchBlockArms as const,
 							make: buildMatchBlockArms,
 							keys: [
-								{ name: 'matchArms', rest: true },
+								{ name: 'arms', rest: true },
 								{ name: 'lastArm', rest: false, required: true }
 							]
 						},
-						'matchArms',
+						'arms',
 						args,
 						(value?: Admit<T.MatchBlockArms>) => buildMatchBlock(value),
 						() => readGroup_matchBlockArms.call(node)
@@ -5113,7 +5113,7 @@ export function buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.B
 							kind: TSKindId.MatchBlockArms as const,
 							make: buildMatchBlockArms,
 							keys: [
-								{ name: 'matchArms', rest: true },
+								{ name: 'arms', rest: true },
 								{ name: 'lastArm', rest: false, required: true }
 							]
 						},
@@ -5125,8 +5125,7 @@ export function buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.B
 				)
 		},
 		matchBlockArms: () => hydrateStoredSlot(node, '_match_block_arms'),
-		matchArms:
-			_match_block_arms === undefined ? undefined : () => groupField(readGroup_matchBlockArms.call(node), 'matchArms'),
+		arms: _match_block_arms === undefined ? undefined : () => groupField(readGroup_matchBlockArms.call(node), 'arms'),
 		lastArm:
 			_match_block_arms === undefined ? undefined : () => groupField(readGroup_matchBlockArms.call(node), 'lastArm'),
 		[STORED_SLOT_READERS]: { matchBlockArms: readGroup_matchBlockArms },
@@ -11493,22 +11492,22 @@ export function buildTypeArgument(config: T.TypeArgument.Config): T.TypeArgument
 }
 
 export function buildMatchBlockArms(config: T.MatchBlockArms.Config): T.MatchBlockArms.Bound {
-	const _match_arm = rejectBareText(config.matchArm ?? [], 'MatchBlockArms.matchArm', 'a built MatchArm');
+	const _arms = rejectBareText(config.arms ?? [], 'MatchBlockArms.arms', 'a built MatchArm');
 	const _last_arm = rejectBareText(config.lastArm, 'MatchBlockArms.lastArm', 'a built LastMatchArm');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.MatchBlockArms as const,
 		$source: 2 as const,
 		$named: true as const,
-		_match_arm,
+		_arms,
 		_last_arm,
 		$with: {
-			matchArms: (...values: Admit<T.MatchArm[]>) =>
-				rebuilt(node, handle, () => buildMatchBlockArms({ ...config, matchArm: restItems('matchArms', values) })),
+			arms: (...values: Admit<T.MatchArm[]>) =>
+				rebuilt(node, handle, () => buildMatchBlockArms({ ...config, arms: restItems('arms', values) })),
 			lastArm: (value: Admit<T.LastMatchArm>) =>
 				rebuilt(node, handle, () => buildMatchBlockArms({ ...config, lastArm: value }))
 		},
-		matchArms: () => hydrateStoredSlots(node, '_match_arm'),
+		arms: () => hydrateStoredSlots(node, '_arms'),
 		lastArm: () => hydrateStoredSlot(node, '_last_arm'),
 		$render: () => renderText(handle, node),
 		$trivia: {

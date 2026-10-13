@@ -1878,7 +1878,7 @@
           ]
         },
         {
-          "vocab": "expression.call.path",
+          "vocab": "expression.call.qualified",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2000,10 +2000,10 @@
       "members": []
     },
     "char_literal": {
-      "vocab": "literal.char",
+      "vocab": "literal.character",
       "read": [
         {
-          "vocab": "literal.char",
+          "vocab": "literal.character",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2013,7 +2013,7 @@
       "members": []
     },
     "char_literal_empty": {
-      "vocab": "literal.char",
+      "vocab": "literal.character",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -2025,7 +2025,7 @@
           "test": []
         },
         {
-          "vocab": "literal.char",
+          "vocab": "literal.character",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2035,10 +2035,10 @@
       "members": []
     },
     "char_literal_escaped": {
-      "vocab": "literal.char",
+      "vocab": "literal.character",
       "read": [
         {
-          "vocab": "literal.char",
+          "vocab": "literal.character",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2048,7 +2048,7 @@
       "members": []
     },
     "char_literal_escaped_hex": {
-      "vocab": "literal.char",
+      "vocab": "literal.character",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -2060,7 +2060,7 @@
           "test": []
         },
         {
-          "vocab": "literal.char",
+          "vocab": "literal.character",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2093,7 +2093,7 @@
       ]
     },
     "char_literal_escaped_simple": {
-      "vocab": "literal.char",
+      "vocab": "literal.character",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -2105,7 +2105,7 @@
           "test": []
         },
         {
-          "vocab": "literal.char",
+          "vocab": "literal.character",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2138,7 +2138,7 @@
       ]
     },
     "char_literal_escaped_unicode_braced": {
-      "vocab": "literal.char",
+      "vocab": "literal.character",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -2150,7 +2150,7 @@
           "test": []
         },
         {
-          "vocab": "literal.char",
+          "vocab": "literal.character",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2183,7 +2183,7 @@
       ]
     },
     "char_literal_escaped_unicode_fixed": {
-      "vocab": "literal.char",
+      "vocab": "literal.character",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -2195,7 +2195,7 @@
           "test": []
         },
         {
-          "vocab": "literal.char",
+          "vocab": "literal.character",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2228,7 +2228,7 @@
       ]
     },
     "char_literal_plain": {
-      "vocab": "literal.char",
+      "vocab": "literal.character",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -2240,7 +2240,7 @@
           "test": []
         },
         {
-          "vocab": "literal.char",
+          "vocab": "literal.character",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5769,10 +5769,10 @@
       }
     },
     "extern_crate_declaration": {
-      "vocab": "statement.import.crate",
+      "vocab": "statement.import.package",
       "read": [
         {
-          "vocab": "statement.import.crate.private",
+          "vocab": "statement.import.package.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5881,7 +5881,7 @@
           ]
         },
         {
-          "vocab": "statement.import.crate.public.internal",
+          "vocab": "statement.import.package.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5990,7 +5990,7 @@
           ]
         },
         {
-          "vocab": "statement.import.crate.public.restricted",
+          "vocab": "statement.import.package.public.restricted",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -6072,7 +6072,7 @@
           ]
         },
         {
-          "vocab": "statement.import.crate.public",
+          "vocab": "statement.import.package.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -6116,7 +6116,7 @@
           ]
         },
         {
-          "vocab": "statement.import.crate.public.internal",
+          "vocab": "statement.import.package.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -6160,7 +6160,7 @@
           ]
         },
         {
-          "vocab": "statement.import.crate",
+          "vocab": "statement.import.package",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -7085,10 +7085,10 @@
       "members": []
     },
     "for_expression": {
-      "vocab": "statement.loop.for",
+      "vocab": "statement.loop.for_each",
       "read": [
         {
-          "vocab": "statement.loop.for",
+          "vocab": "statement.loop.for_each",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -10870,10 +10870,10 @@
       }
     },
     "gen_block": {
-      "vocab": "expression.block.gen",
+      "vocab": "expression.block.generator",
       "read": [
         {
-          "vocab": "expression.block.gen",
+          "vocab": "expression.block.generator",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -15377,10 +15377,10 @@
       }
     },
     "source_file": {
-      "vocab": "module",
+      "vocab": "file",
       "read": [
         {
-          "vocab": "module",
+          "vocab": "file",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -15402,10 +15402,10 @@
       ]
     },
     "static_item": {
-      "vocab": "declaration.variable.static",
+      "vocab": "declaration.variable",
       "read": [
         {
-          "vocab": "declaration.variable.static.private",
+          "vocab": "declaration.variable.private",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -15514,7 +15514,7 @@
           ]
         },
         {
-          "vocab": "declaration.variable.static.public.internal",
+          "vocab": "declaration.variable.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -15623,7 +15623,7 @@
           ]
         },
         {
-          "vocab": "declaration.variable.static.public.restricted",
+          "vocab": "declaration.variable.public.restricted",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -15705,7 +15705,7 @@
           ]
         },
         {
-          "vocab": "declaration.variable.static.public",
+          "vocab": "declaration.variable.public",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -15749,7 +15749,7 @@
           ]
         },
         {
-          "vocab": "declaration.variable.static.public.internal",
+          "vocab": "declaration.variable.public.internal",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -15793,7 +15793,7 @@
           ]
         },
         {
-          "vocab": "declaration.variable.static",
+          "vocab": "declaration.variable",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -18523,10 +18523,10 @@
       }
     },
     "try_expression": {
-      "vocab": "expression.try",
+      "vocab": "expression.propagate",
       "read": [
         {
-          "vocab": "expression.try",
+          "vocab": "expression.propagate",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -21448,14 +21448,14 @@
       {
         "depth": 2,
         "paths": 103,
-        "kinds": 159,
+        "kinds": 160,
         "refinements": 12
       },
       {
         "depth": 3,
-        "paths": 103,
+        "paths": 104,
         "kinds": 115,
-        "refinements": 75
+        "refinements": 76
       },
       {
         "depth": 4,
@@ -21465,9 +21465,9 @@
       },
       {
         "depth": 5,
-        "paths": 20,
-        "kinds": 9,
-        "refinements": 20
+        "paths": 18,
+        "kinds": 8,
+        "refinements": 18
       }
     ]
   }

@@ -342,11 +342,10 @@ export interface PortableIds {
 	'declaration.union.public.internal': TSKindId.UnionItem;
 	'declaration.union.public.restricted': TSKindId.UnionItem;
 	'declaration.variable': TSKindId.LetDeclaration | TSKindId.StaticItem;
-	'declaration.variable.static': TSKindId.StaticItem;
-	'declaration.variable.static.private': TSKindId.StaticItem;
-	'declaration.variable.static.public': TSKindId.StaticItem;
-	'declaration.variable.static.public.internal': TSKindId.StaticItem;
-	'declaration.variable.static.public.restricted': TSKindId.StaticItem;
+	'declaration.variable.private': TSKindId.StaticItem;
+	'declaration.variable.public': TSKindId.StaticItem;
+	'declaration.variable.public.internal': TSKindId.StaticItem;
+	'declaration.variable.public.restricted': TSKindId.StaticItem;
 	element:
 		| TSKindId.BaseFieldInitializer
 		| TSKindId.BlockKeyword
@@ -545,13 +544,13 @@ export interface PortableIds {
 		| TSKindId.UnsafeBlock;
 	'expression.block.async': TSKindId.AsyncBlock;
 	'expression.block.const': TSKindId.ConstBlock;
-	'expression.block.gen': TSKindId.GenBlock;
+	'expression.block.generator': TSKindId.GenBlock;
 	'expression.block.try': TSKindId.TryBlock;
 	'expression.block.unsafe': TSKindId.UnsafeBlock;
 	'expression.call': TSKindId.CallExpression | TSKindId.MacroInvocation;
 	'expression.call.macro': TSKindId.MacroInvocation;
 	'expression.call.member': TSKindId.CallExpression;
-	'expression.call.path': TSKindId.CallExpression;
+	'expression.call.qualified': TSKindId.CallExpression;
 	'expression.cast': TSKindId.TypeCastExpression;
 	'expression.cast.as': TSKindId.TypeCastExpression;
 	'expression.collection':
@@ -568,6 +567,7 @@ export interface PortableIds {
 	'expression.lambda': TSKindId.ClosureExpression | TSKindId.ClosureExpressionBlock | TSKindId.ClosureExpressionExpr;
 	'expression.member': TSKindId.FieldExpression;
 	'expression.parenthesized': TSKindId.ParenthesizedExpression;
+	'expression.propagate': TSKindId.TryExpression;
 	'expression.range':
 		| TSKindId.RangeExpression
 		| TSKindId.RangeExpressionBare
@@ -587,13 +587,13 @@ export interface PortableIds {
 		| TSKindId.ReferenceExpressionRawConst
 		| TSKindId.ReferenceExpressionRawMut;
 	'expression.subscript': TSKindId.IndexExpression;
-	'expression.try': TSKindId.TryExpression;
 	'expression.unary': TSKindId.UnaryExpression;
 	'expression.unary.deref': TSKindId.UnaryExpression;
 	'expression.unary.negation': TSKindId.UnaryExpression;
 	'expression.unary.not': TSKindId.UnaryExpression;
 	'expression.unit': TSKindId.UnitExpression;
 	'expression.yield': TSKindId.YieldExpression;
+	file: TSKindId.SourceFile;
 	identifier:
 		| TSKindId.Crate
 		| TSKindId.FieldIdentifier
@@ -646,7 +646,7 @@ export interface PortableIds {
 	'literal.boolean': TSKindId.FalseKeyword | TSKindId.TrueKeyword;
 	'literal.boolean.false': TSKindId.FalseKeyword;
 	'literal.boolean.true': TSKindId.TrueKeyword;
-	'literal.char':
+	'literal.character':
 		| TSKindId.CharLiteral
 		| TSKindId.CharLiteralEmpty
 		| TSKindId.CharLiteralEscaped
@@ -698,7 +698,6 @@ export interface PortableIds {
 	'modifier.visibility.public': TSKindId.Crate | TSKindId.VisibilityModifierPub;
 	'modifier.visibility.public.internal': TSKindId.Crate | TSKindId.VisibilityModifierPub;
 	'modifier.visibility.public.restricted': TSKindId.VisibilityModifierPub;
-	module: TSKindId.SourceFile;
 	pattern:
 		| TSKindId.CapturedPattern
 		| TSKindId.FieldPattern
@@ -764,17 +763,17 @@ export interface PortableIds {
 	'statement.expression': TSKindId.ExpressionStatement;
 	'statement.if': TSKindId.IfExpression;
 	'statement.import': TSKindId.ExternCrateDeclaration | TSKindId.UseDeclaration;
-	'statement.import.crate': TSKindId.ExternCrateDeclaration;
-	'statement.import.crate.private': TSKindId.ExternCrateDeclaration;
-	'statement.import.crate.public': TSKindId.ExternCrateDeclaration;
-	'statement.import.crate.public.internal': TSKindId.ExternCrateDeclaration;
-	'statement.import.crate.public.restricted': TSKindId.ExternCrateDeclaration;
+	'statement.import.package': TSKindId.ExternCrateDeclaration;
+	'statement.import.package.private': TSKindId.ExternCrateDeclaration;
+	'statement.import.package.public': TSKindId.ExternCrateDeclaration;
+	'statement.import.package.public.internal': TSKindId.ExternCrateDeclaration;
+	'statement.import.package.public.restricted': TSKindId.ExternCrateDeclaration;
 	'statement.import.private': TSKindId.UseDeclaration;
 	'statement.import.public': TSKindId.UseDeclaration;
 	'statement.import.public.internal': TSKindId.UseDeclaration;
 	'statement.import.public.restricted': TSKindId.UseDeclaration;
 	'statement.loop': TSKindId.ForExpression | TSKindId.LoopExpression | TSKindId.WhileExpression;
-	'statement.loop.for': TSKindId.ForExpression;
+	'statement.loop.for_each': TSKindId.ForExpression;
 	'statement.loop.while': TSKindId.WhileExpression;
 	'statement.match': TSKindId.MatchExpression;
 	'statement.return': TSKindId.ReturnExpression;
@@ -1304,26 +1303,20 @@ export interface PortableKindsAt {
 	};
 	'declaration.variable': {
 		readonly $ids: readonly PortableIds['declaration.variable'][];
-		readonly static: PortableKindsAt['declaration.variable.static'];
+		readonly private: PortableKindsAt['declaration.variable.private'];
+		readonly public: PortableKindsAt['declaration.variable.public'];
 	};
-	'declaration.variable.static': {
-		readonly $ids: readonly PortableIds['declaration.variable.static'][];
-		readonly private: PortableKindsAt['declaration.variable.static.private'];
-		readonly public: PortableKindsAt['declaration.variable.static.public'];
+	'declaration.variable.private': { readonly $ids: readonly PortableIds['declaration.variable.private'][] };
+	'declaration.variable.public': {
+		readonly $ids: readonly PortableIds['declaration.variable.public'][];
+		readonly internal: PortableKindsAt['declaration.variable.public.internal'];
+		readonly restricted: PortableKindsAt['declaration.variable.public.restricted'];
 	};
-	'declaration.variable.static.private': {
-		readonly $ids: readonly PortableIds['declaration.variable.static.private'][];
+	'declaration.variable.public.internal': {
+		readonly $ids: readonly PortableIds['declaration.variable.public.internal'][];
 	};
-	'declaration.variable.static.public': {
-		readonly $ids: readonly PortableIds['declaration.variable.static.public'][];
-		readonly internal: PortableKindsAt['declaration.variable.static.public.internal'];
-		readonly restricted: PortableKindsAt['declaration.variable.static.public.restricted'];
-	};
-	'declaration.variable.static.public.internal': {
-		readonly $ids: readonly PortableIds['declaration.variable.static.public.internal'][];
-	};
-	'declaration.variable.static.public.restricted': {
-		readonly $ids: readonly PortableIds['declaration.variable.static.public.restricted'][];
+	'declaration.variable.public.restricted': {
+		readonly $ids: readonly PortableIds['declaration.variable.public.restricted'][];
 	};
 	element: {
 		readonly $ids: readonly PortableIds['element'][];
@@ -1377,10 +1370,10 @@ export interface PortableKindsAt {
 		readonly lambda: PortableKindsAt['expression.lambda'];
 		readonly member: PortableKindsAt['expression.member'];
 		readonly parenthesized: PortableKindsAt['expression.parenthesized'];
+		readonly propagate: PortableKindsAt['expression.propagate'];
 		readonly range: PortableKindsAt['expression.range'];
 		readonly reference: PortableKindsAt['expression.reference'];
 		readonly subscript: PortableKindsAt['expression.subscript'];
-		readonly try: PortableKindsAt['expression.try'];
 		readonly unary: PortableKindsAt['expression.unary'];
 		readonly unit: PortableKindsAt['expression.unit'];
 		readonly yield: PortableKindsAt['expression.yield'];
@@ -1510,24 +1503,24 @@ export interface PortableKindsAt {
 		readonly $ids: readonly PortableIds['expression.block'][];
 		readonly async: PortableKindsAt['expression.block.async'];
 		readonly const: PortableKindsAt['expression.block.const'];
-		readonly gen: PortableKindsAt['expression.block.gen'];
+		readonly generator: PortableKindsAt['expression.block.generator'];
 		readonly try: PortableKindsAt['expression.block.try'];
 		readonly unsafe: PortableKindsAt['expression.block.unsafe'];
 	};
 	'expression.block.async': { readonly $ids: readonly PortableIds['expression.block.async'][] };
 	'expression.block.const': { readonly $ids: readonly PortableIds['expression.block.const'][] };
-	'expression.block.gen': { readonly $ids: readonly PortableIds['expression.block.gen'][] };
+	'expression.block.generator': { readonly $ids: readonly PortableIds['expression.block.generator'][] };
 	'expression.block.try': { readonly $ids: readonly PortableIds['expression.block.try'][] };
 	'expression.block.unsafe': { readonly $ids: readonly PortableIds['expression.block.unsafe'][] };
 	'expression.call': {
 		readonly $ids: readonly PortableIds['expression.call'][];
 		readonly macro: PortableKindsAt['expression.call.macro'];
 		readonly member: PortableKindsAt['expression.call.member'];
-		readonly path: PortableKindsAt['expression.call.path'];
+		readonly qualified: PortableKindsAt['expression.call.qualified'];
 	};
 	'expression.call.macro': { readonly $ids: readonly PortableIds['expression.call.macro'][] };
 	'expression.call.member': { readonly $ids: readonly PortableIds['expression.call.member'][] };
-	'expression.call.path': { readonly $ids: readonly PortableIds['expression.call.path'][] };
+	'expression.call.qualified': { readonly $ids: readonly PortableIds['expression.call.qualified'][] };
 	'expression.cast': {
 		readonly $ids: readonly PortableIds['expression.cast'][];
 		readonly as: PortableKindsAt['expression.cast.as'];
@@ -1550,6 +1543,7 @@ export interface PortableKindsAt {
 	'expression.lambda': { readonly $ids: readonly PortableIds['expression.lambda'][] };
 	'expression.member': { readonly $ids: readonly PortableIds['expression.member'][] };
 	'expression.parenthesized': { readonly $ids: readonly PortableIds['expression.parenthesized'][] };
+	'expression.propagate': { readonly $ids: readonly PortableIds['expression.propagate'][] };
 	'expression.range': {
 		readonly $ids: readonly PortableIds['expression.range'][];
 		readonly exclusive: PortableKindsAt['expression.range.exclusive'];
@@ -1559,7 +1553,6 @@ export interface PortableKindsAt {
 	'expression.range.inclusive': { readonly $ids: readonly PortableIds['expression.range.inclusive'][] };
 	'expression.reference': { readonly $ids: readonly PortableIds['expression.reference'][] };
 	'expression.subscript': { readonly $ids: readonly PortableIds['expression.subscript'][] };
-	'expression.try': { readonly $ids: readonly PortableIds['expression.try'][] };
 	'expression.unary': {
 		readonly $ids: readonly PortableIds['expression.unary'][];
 		readonly deref: PortableKindsAt['expression.unary.deref'];
@@ -1571,6 +1564,7 @@ export interface PortableKindsAt {
 	'expression.unary.not': { readonly $ids: readonly PortableIds['expression.unary.not'][] };
 	'expression.unit': { readonly $ids: readonly PortableIds['expression.unit'][] };
 	'expression.yield': { readonly $ids: readonly PortableIds['expression.yield'][] };
+	file: { readonly $ids: readonly PortableIds['file'][] };
 	identifier: {
 		readonly $ids: readonly PortableIds['identifier'][];
 		readonly crate: PortableKindsAt['identifier.crate'];
@@ -1601,7 +1595,7 @@ export interface PortableKindsAt {
 	literal: {
 		readonly $ids: readonly PortableIds['literal'][];
 		readonly boolean: PortableKindsAt['literal.boolean'];
-		readonly char: PortableKindsAt['literal.char'];
+		readonly character: PortableKindsAt['literal.character'];
 		readonly number: PortableKindsAt['literal.number'];
 		readonly string: PortableKindsAt['literal.string'];
 	};
@@ -1612,7 +1606,7 @@ export interface PortableKindsAt {
 	};
 	'literal.boolean.false': { readonly $ids: readonly PortableIds['literal.boolean.false'][] };
 	'literal.boolean.true': { readonly $ids: readonly PortableIds['literal.boolean.true'][] };
-	'literal.char': { readonly $ids: readonly PortableIds['literal.char'][] };
+	'literal.character': { readonly $ids: readonly PortableIds['literal.character'][] };
 	'literal.number': {
 		readonly $ids: readonly PortableIds['literal.number'][];
 		readonly float: PortableKindsAt['literal.number.float'];
@@ -1664,7 +1658,6 @@ export interface PortableKindsAt {
 	'modifier.visibility.public.restricted': {
 		readonly $ids: readonly PortableIds['modifier.visibility.public.restricted'][];
 	};
-	module: { readonly $ids: readonly PortableIds['module'][] };
 	pattern: {
 		readonly $ids: readonly PortableIds['pattern'][];
 		readonly captured: PortableKindsAt['pattern.captured'];
@@ -1731,26 +1724,26 @@ export interface PortableKindsAt {
 	'statement.if': { readonly $ids: readonly PortableIds['statement.if'][] };
 	'statement.import': {
 		readonly $ids: readonly PortableIds['statement.import'][];
-		readonly crate: PortableKindsAt['statement.import.crate'];
+		readonly package: PortableKindsAt['statement.import.package'];
 		readonly private: PortableKindsAt['statement.import.private'];
 		readonly public: PortableKindsAt['statement.import.public'];
 	};
-	'statement.import.crate': {
-		readonly $ids: readonly PortableIds['statement.import.crate'][];
-		readonly private: PortableKindsAt['statement.import.crate.private'];
-		readonly public: PortableKindsAt['statement.import.crate.public'];
+	'statement.import.package': {
+		readonly $ids: readonly PortableIds['statement.import.package'][];
+		readonly private: PortableKindsAt['statement.import.package.private'];
+		readonly public: PortableKindsAt['statement.import.package.public'];
 	};
-	'statement.import.crate.private': { readonly $ids: readonly PortableIds['statement.import.crate.private'][] };
-	'statement.import.crate.public': {
-		readonly $ids: readonly PortableIds['statement.import.crate.public'][];
-		readonly internal: PortableKindsAt['statement.import.crate.public.internal'];
-		readonly restricted: PortableKindsAt['statement.import.crate.public.restricted'];
+	'statement.import.package.private': { readonly $ids: readonly PortableIds['statement.import.package.private'][] };
+	'statement.import.package.public': {
+		readonly $ids: readonly PortableIds['statement.import.package.public'][];
+		readonly internal: PortableKindsAt['statement.import.package.public.internal'];
+		readonly restricted: PortableKindsAt['statement.import.package.public.restricted'];
 	};
-	'statement.import.crate.public.internal': {
-		readonly $ids: readonly PortableIds['statement.import.crate.public.internal'][];
+	'statement.import.package.public.internal': {
+		readonly $ids: readonly PortableIds['statement.import.package.public.internal'][];
 	};
-	'statement.import.crate.public.restricted': {
-		readonly $ids: readonly PortableIds['statement.import.crate.public.restricted'][];
+	'statement.import.package.public.restricted': {
+		readonly $ids: readonly PortableIds['statement.import.package.public.restricted'][];
 	};
 	'statement.import.private': { readonly $ids: readonly PortableIds['statement.import.private'][] };
 	'statement.import.public': {
@@ -1762,10 +1755,10 @@ export interface PortableKindsAt {
 	'statement.import.public.restricted': { readonly $ids: readonly PortableIds['statement.import.public.restricted'][] };
 	'statement.loop': {
 		readonly $ids: readonly PortableIds['statement.loop'][];
-		readonly for: PortableKindsAt['statement.loop.for'];
+		readonly for_each: PortableKindsAt['statement.loop.for_each'];
 		readonly while: PortableKindsAt['statement.loop.while'];
 	};
-	'statement.loop.for': { readonly $ids: readonly PortableIds['statement.loop.for'][] };
+	'statement.loop.for_each': { readonly $ids: readonly PortableIds['statement.loop.for_each'][] };
 	'statement.loop.while': { readonly $ids: readonly PortableIds['statement.loop.while'][] };
 	'statement.match': { readonly $ids: readonly PortableIds['statement.match'][] };
 	'statement.return': { readonly $ids: readonly PortableIds['statement.return'][] };
@@ -2167,23 +2160,16 @@ export interface PortableIsAt {
 	'declaration.union.public.internal': PortableGuard<PortableIds['declaration.union.public.internal']> & {};
 	'declaration.union.public.restricted': PortableGuard<PortableIds['declaration.union.public.restricted']> & {};
 	'declaration.variable': PortableGuard<PortableIds['declaration.variable']> & {
-		readonly static: PortableIsAt['declaration.variable.static'];
+		readonly private: PortableIsAt['declaration.variable.private'];
+		readonly public: PortableIsAt['declaration.variable.public'];
 	};
-	'declaration.variable.static': PortableGuard<PortableIds['declaration.variable.static']> & {
-		readonly private: PortableIsAt['declaration.variable.static.private'];
-		readonly public: PortableIsAt['declaration.variable.static.public'];
+	'declaration.variable.private': PortableGuard<PortableIds['declaration.variable.private']> & {};
+	'declaration.variable.public': PortableGuard<PortableIds['declaration.variable.public']> & {
+		readonly internal: PortableIsAt['declaration.variable.public.internal'];
+		readonly restricted: PortableIsAt['declaration.variable.public.restricted'];
 	};
-	'declaration.variable.static.private': PortableGuard<PortableIds['declaration.variable.static.private']> & {};
-	'declaration.variable.static.public': PortableGuard<PortableIds['declaration.variable.static.public']> & {
-		readonly internal: PortableIsAt['declaration.variable.static.public.internal'];
-		readonly restricted: PortableIsAt['declaration.variable.static.public.restricted'];
-	};
-	'declaration.variable.static.public.internal': PortableGuard<
-		PortableIds['declaration.variable.static.public.internal']
-	> & {};
-	'declaration.variable.static.public.restricted': PortableGuard<
-		PortableIds['declaration.variable.static.public.restricted']
-	> & {};
+	'declaration.variable.public.internal': PortableGuard<PortableIds['declaration.variable.public.internal']> & {};
+	'declaration.variable.public.restricted': PortableGuard<PortableIds['declaration.variable.public.restricted']> & {};
 	element: PortableGuard<PortableIds['element']> & {
 		readonly macro: PortableIsAt['element.macro'];
 		readonly struct: PortableIsAt['element.struct'];
@@ -2228,10 +2214,10 @@ export interface PortableIsAt {
 		readonly lambda: PortableIsAt['expression.lambda'];
 		readonly member: PortableIsAt['expression.member'];
 		readonly parenthesized: PortableIsAt['expression.parenthesized'];
+		readonly propagate: PortableIsAt['expression.propagate'];
 		readonly range: PortableIsAt['expression.range'];
 		readonly reference: PortableIsAt['expression.reference'];
 		readonly subscript: PortableIsAt['expression.subscript'];
-		readonly try: PortableIsAt['expression.try'];
 		readonly unary: PortableIsAt['expression.unary'];
 		readonly unit: PortableIsAt['expression.unit'];
 		readonly yield: PortableIsAt['expression.yield'];
@@ -2330,23 +2316,23 @@ export interface PortableIsAt {
 	'expression.block': PortableGuard<PortableIds['expression.block']> & {
 		readonly async: PortableIsAt['expression.block.async'];
 		readonly const: PortableIsAt['expression.block.const'];
-		readonly gen: PortableIsAt['expression.block.gen'];
+		readonly generator: PortableIsAt['expression.block.generator'];
 		readonly try: PortableIsAt['expression.block.try'];
 		readonly unsafe: PortableIsAt['expression.block.unsafe'];
 	};
 	'expression.block.async': PortableGuard<PortableIds['expression.block.async']> & {};
 	'expression.block.const': PortableGuard<PortableIds['expression.block.const']> & {};
-	'expression.block.gen': PortableGuard<PortableIds['expression.block.gen']> & {};
+	'expression.block.generator': PortableGuard<PortableIds['expression.block.generator']> & {};
 	'expression.block.try': PortableGuard<PortableIds['expression.block.try']> & {};
 	'expression.block.unsafe': PortableGuard<PortableIds['expression.block.unsafe']> & {};
 	'expression.call': PortableGuard<PortableIds['expression.call']> & {
 		readonly macro: PortableIsAt['expression.call.macro'];
 		readonly member: PortableIsAt['expression.call.member'];
-		readonly path: PortableIsAt['expression.call.path'];
+		readonly qualified: PortableIsAt['expression.call.qualified'];
 	};
 	'expression.call.macro': PortableGuard<PortableIds['expression.call.macro']> & {};
 	'expression.call.member': PortableGuard<PortableIds['expression.call.member']> & {};
-	'expression.call.path': PortableGuard<PortableIds['expression.call.path']> & {};
+	'expression.call.qualified': PortableGuard<PortableIds['expression.call.qualified']> & {};
 	'expression.cast': PortableGuard<PortableIds['expression.cast']> & {
 		readonly as: PortableIsAt['expression.cast.as'];
 	};
@@ -2366,6 +2352,7 @@ export interface PortableIsAt {
 	'expression.lambda': PortableGuard<PortableIds['expression.lambda']> & {};
 	'expression.member': PortableGuard<PortableIds['expression.member']> & {};
 	'expression.parenthesized': PortableGuard<PortableIds['expression.parenthesized']> & {};
+	'expression.propagate': PortableGuard<PortableIds['expression.propagate']> & {};
 	'expression.range': PortableGuard<PortableIds['expression.range']> & {
 		readonly exclusive: PortableIsAt['expression.range.exclusive'];
 		readonly inclusive: PortableIsAt['expression.range.inclusive'];
@@ -2374,7 +2361,6 @@ export interface PortableIsAt {
 	'expression.range.inclusive': PortableGuard<PortableIds['expression.range.inclusive']> & {};
 	'expression.reference': PortableGuard<PortableIds['expression.reference']> & {};
 	'expression.subscript': PortableGuard<PortableIds['expression.subscript']> & {};
-	'expression.try': PortableGuard<PortableIds['expression.try']> & {};
 	'expression.unary': PortableGuard<PortableIds['expression.unary']> & {
 		readonly deref: PortableIsAt['expression.unary.deref'];
 		readonly negation: PortableIsAt['expression.unary.negation'];
@@ -2385,6 +2371,7 @@ export interface PortableIsAt {
 	'expression.unary.not': PortableGuard<PortableIds['expression.unary.not']> & {};
 	'expression.unit': PortableGuard<PortableIds['expression.unit']> & {};
 	'expression.yield': PortableGuard<PortableIds['expression.yield']> & {};
+	file: PortableGuard<PortableIds['file']> & {};
 	identifier: PortableGuard<PortableIds['identifier']> & {
 		readonly crate: PortableIsAt['identifier.crate'];
 		readonly field: PortableIsAt['identifier.field'];
@@ -2412,7 +2399,7 @@ export interface PortableIsAt {
 	'identifier.type': PortableGuard<PortableIds['identifier.type']> & {};
 	literal: PortableGuard<PortableIds['literal']> & {
 		readonly boolean: PortableIsAt['literal.boolean'];
-		readonly char: PortableIsAt['literal.char'];
+		readonly character: PortableIsAt['literal.character'];
 		readonly number: PortableIsAt['literal.number'];
 		readonly string: PortableIsAt['literal.string'];
 	};
@@ -2422,7 +2409,7 @@ export interface PortableIsAt {
 	};
 	'literal.boolean.false': PortableGuard<PortableIds['literal.boolean.false']> & {};
 	'literal.boolean.true': PortableGuard<PortableIds['literal.boolean.true']> & {};
-	'literal.char': PortableGuard<PortableIds['literal.char']> & {};
+	'literal.character': PortableGuard<PortableIds['literal.character']> & {};
 	'literal.number': PortableGuard<PortableIds['literal.number']> & {
 		readonly float: PortableIsAt['literal.number.float'];
 		readonly integer: PortableIsAt['literal.number.integer'];
@@ -2464,7 +2451,6 @@ export interface PortableIsAt {
 	};
 	'modifier.visibility.public.internal': PortableGuard<PortableIds['modifier.visibility.public.internal']> & {};
 	'modifier.visibility.public.restricted': PortableGuard<PortableIds['modifier.visibility.public.restricted']> & {};
-	module: PortableGuard<PortableIds['module']> & {};
 	pattern: PortableGuard<PortableIds['pattern']> & {
 		readonly captured: PortableIsAt['pattern.captured'];
 		readonly generic: PortableIsAt['pattern.generic'];
@@ -2524,22 +2510,24 @@ export interface PortableIsAt {
 	'statement.expression': PortableGuard<PortableIds['statement.expression']> & {};
 	'statement.if': PortableGuard<PortableIds['statement.if']> & {};
 	'statement.import': PortableGuard<PortableIds['statement.import']> & {
-		readonly crate: PortableIsAt['statement.import.crate'];
+		readonly package: PortableIsAt['statement.import.package'];
 		readonly private: PortableIsAt['statement.import.private'];
 		readonly public: PortableIsAt['statement.import.public'];
 	};
-	'statement.import.crate': PortableGuard<PortableIds['statement.import.crate']> & {
-		readonly private: PortableIsAt['statement.import.crate.private'];
-		readonly public: PortableIsAt['statement.import.crate.public'];
+	'statement.import.package': PortableGuard<PortableIds['statement.import.package']> & {
+		readonly private: PortableIsAt['statement.import.package.private'];
+		readonly public: PortableIsAt['statement.import.package.public'];
 	};
-	'statement.import.crate.private': PortableGuard<PortableIds['statement.import.crate.private']> & {};
-	'statement.import.crate.public': PortableGuard<PortableIds['statement.import.crate.public']> & {
-		readonly internal: PortableIsAt['statement.import.crate.public.internal'];
-		readonly restricted: PortableIsAt['statement.import.crate.public.restricted'];
+	'statement.import.package.private': PortableGuard<PortableIds['statement.import.package.private']> & {};
+	'statement.import.package.public': PortableGuard<PortableIds['statement.import.package.public']> & {
+		readonly internal: PortableIsAt['statement.import.package.public.internal'];
+		readonly restricted: PortableIsAt['statement.import.package.public.restricted'];
 	};
-	'statement.import.crate.public.internal': PortableGuard<PortableIds['statement.import.crate.public.internal']> & {};
-	'statement.import.crate.public.restricted': PortableGuard<
-		PortableIds['statement.import.crate.public.restricted']
+	'statement.import.package.public.internal': PortableGuard<
+		PortableIds['statement.import.package.public.internal']
+	> & {};
+	'statement.import.package.public.restricted': PortableGuard<
+		PortableIds['statement.import.package.public.restricted']
 	> & {};
 	'statement.import.private': PortableGuard<PortableIds['statement.import.private']> & {};
 	'statement.import.public': PortableGuard<PortableIds['statement.import.public']> & {
@@ -2549,10 +2537,10 @@ export interface PortableIsAt {
 	'statement.import.public.internal': PortableGuard<PortableIds['statement.import.public.internal']> & {};
 	'statement.import.public.restricted': PortableGuard<PortableIds['statement.import.public.restricted']> & {};
 	'statement.loop': PortableGuard<PortableIds['statement.loop']> & {
-		readonly for: PortableIsAt['statement.loop.for'];
+		readonly for_each: PortableIsAt['statement.loop.for_each'];
 		readonly while: PortableIsAt['statement.loop.while'];
 	};
-	'statement.loop.for': PortableGuard<PortableIds['statement.loop.for']> & {};
+	'statement.loop.for_each': PortableGuard<PortableIds['statement.loop.for_each']> & {};
 	'statement.loop.while': PortableGuard<PortableIds['statement.loop.while']> & {};
 	'statement.match': PortableGuard<PortableIds['statement.match']> & {};
 	'statement.return': PortableGuard<PortableIds['statement.return']> & {};
@@ -2605,10 +2593,10 @@ export interface PortableKinds {
 	readonly declaration: PortableKindsAt['declaration'];
 	readonly element: PortableKindsAt['element'];
 	readonly expression: PortableKindsAt['expression'];
+	readonly file: PortableKindsAt['file'];
 	readonly identifier: PortableKindsAt['identifier'];
 	readonly literal: PortableKindsAt['literal'];
 	readonly modifier: PortableKindsAt['modifier'];
-	readonly module: PortableKindsAt['module'];
 	readonly pattern: PortableKindsAt['pattern'];
 	readonly statement: PortableKindsAt['statement'];
 	readonly type: PortableKindsAt['type'];
@@ -2621,10 +2609,10 @@ export interface PortableIs {
 	readonly declaration: PortableIsAt['declaration'];
 	readonly element: PortableIsAt['element'];
 	readonly expression: PortableIsAt['expression'];
+	readonly file: PortableIsAt['file'];
 	readonly identifier: PortableIsAt['identifier'];
 	readonly literal: PortableIsAt['literal'];
 	readonly modifier: PortableIsAt['modifier'];
-	readonly module: PortableIsAt['module'];
 	readonly pattern: PortableIsAt['pattern'];
 	readonly statement: PortableIsAt['statement'];
 	readonly type: PortableIsAt['type'];
@@ -3023,11 +3011,10 @@ const table: PortableTable = {
 		'declaration.union.public.internal': { ids: [TSKindId.UnionItem], exact: false },
 		'declaration.union.public.restricted': { ids: [TSKindId.UnionItem], exact: false },
 		'declaration.variable': { ids: [TSKindId.LetDeclaration, TSKindId.StaticItem], exact: true },
-		'declaration.variable.static': { ids: [TSKindId.StaticItem], exact: true },
-		'declaration.variable.static.private': { ids: [TSKindId.StaticItem], exact: false },
-		'declaration.variable.static.public': { ids: [TSKindId.StaticItem], exact: false },
-		'declaration.variable.static.public.internal': { ids: [TSKindId.StaticItem], exact: false },
-		'declaration.variable.static.public.restricted': { ids: [TSKindId.StaticItem], exact: false },
+		'declaration.variable.private': { ids: [TSKindId.StaticItem], exact: false },
+		'declaration.variable.public': { ids: [TSKindId.StaticItem], exact: false },
+		'declaration.variable.public.internal': { ids: [TSKindId.StaticItem], exact: false },
+		'declaration.variable.public.restricted': { ids: [TSKindId.StaticItem], exact: false },
 		element: {
 			ids: [
 				TSKindId.BaseFieldInitializer,
@@ -3255,13 +3242,13 @@ const table: PortableTable = {
 		},
 		'expression.block.async': { ids: [TSKindId.AsyncBlock], exact: true },
 		'expression.block.const': { ids: [TSKindId.ConstBlock], exact: false },
-		'expression.block.gen': { ids: [TSKindId.GenBlock], exact: true },
+		'expression.block.generator': { ids: [TSKindId.GenBlock], exact: true },
 		'expression.block.try': { ids: [TSKindId.TryBlock], exact: true },
 		'expression.block.unsafe': { ids: [TSKindId.UnsafeBlock], exact: true },
 		'expression.call': { ids: [TSKindId.CallExpression, TSKindId.MacroInvocation], exact: false },
 		'expression.call.macro': { ids: [TSKindId.MacroInvocation], exact: false },
 		'expression.call.member': { ids: [TSKindId.CallExpression], exact: false },
-		'expression.call.path': { ids: [TSKindId.CallExpression], exact: false },
+		'expression.call.qualified': { ids: [TSKindId.CallExpression], exact: false },
 		'expression.cast': { ids: [TSKindId.TypeCastExpression], exact: true },
 		'expression.cast.as': { ids: [TSKindId.TypeCastExpression], exact: true },
 		'expression.collection': {
@@ -3288,6 +3275,7 @@ const table: PortableTable = {
 		},
 		'expression.member': { ids: [TSKindId.FieldExpression], exact: true },
 		'expression.parenthesized': { ids: [TSKindId.ParenthesizedExpression], exact: true },
+		'expression.propagate': { ids: [TSKindId.TryExpression], exact: true },
 		'expression.range': {
 			ids: [
 				TSKindId.RangeExpression,
@@ -3319,13 +3307,13 @@ const table: PortableTable = {
 			exact: true
 		},
 		'expression.subscript': { ids: [TSKindId.IndexExpression], exact: true },
-		'expression.try': { ids: [TSKindId.TryExpression], exact: true },
 		'expression.unary': { ids: [TSKindId.UnaryExpression], exact: true },
 		'expression.unary.deref': { ids: [TSKindId.UnaryExpression], exact: false },
 		'expression.unary.negation': { ids: [TSKindId.UnaryExpression], exact: false },
 		'expression.unary.not': { ids: [TSKindId.UnaryExpression], exact: false },
 		'expression.unit': { ids: [TSKindId.UnitExpression], exact: true },
 		'expression.yield': { ids: [TSKindId.YieldExpression], exact: true },
+		file: { ids: [TSKindId.SourceFile], exact: true },
 		identifier: {
 			ids: [
 				TSKindId.Crate,
@@ -3386,7 +3374,7 @@ const table: PortableTable = {
 		'literal.boolean': { ids: [TSKindId.FalseKeyword, TSKindId.TrueKeyword], exact: false },
 		'literal.boolean.false': { ids: [TSKindId.FalseKeyword], exact: false },
 		'literal.boolean.true': { ids: [TSKindId.TrueKeyword], exact: false },
-		'literal.char': {
+		'literal.character': {
 			ids: [
 				TSKindId.CharLiteral,
 				TSKindId.CharLiteralEmpty,
@@ -3458,7 +3446,6 @@ const table: PortableTable = {
 		'modifier.visibility.public': { ids: [TSKindId.Crate, TSKindId.VisibilityModifierPub], exact: false },
 		'modifier.visibility.public.internal': { ids: [TSKindId.Crate, TSKindId.VisibilityModifierPub], exact: false },
 		'modifier.visibility.public.restricted': { ids: [TSKindId.VisibilityModifierPub], exact: false },
-		module: { ids: [TSKindId.SourceFile], exact: true },
 		pattern: {
 			ids: [
 				TSKindId.CapturedPattern,
@@ -3542,17 +3529,17 @@ const table: PortableTable = {
 		'statement.expression': { ids: [TSKindId.ExpressionStatement], exact: true },
 		'statement.if': { ids: [TSKindId.IfExpression], exact: true },
 		'statement.import': { ids: [TSKindId.ExternCrateDeclaration, TSKindId.UseDeclaration], exact: true },
-		'statement.import.crate': { ids: [TSKindId.ExternCrateDeclaration], exact: true },
-		'statement.import.crate.private': { ids: [TSKindId.ExternCrateDeclaration], exact: false },
-		'statement.import.crate.public': { ids: [TSKindId.ExternCrateDeclaration], exact: false },
-		'statement.import.crate.public.internal': { ids: [TSKindId.ExternCrateDeclaration], exact: false },
-		'statement.import.crate.public.restricted': { ids: [TSKindId.ExternCrateDeclaration], exact: false },
+		'statement.import.package': { ids: [TSKindId.ExternCrateDeclaration], exact: true },
+		'statement.import.package.private': { ids: [TSKindId.ExternCrateDeclaration], exact: false },
+		'statement.import.package.public': { ids: [TSKindId.ExternCrateDeclaration], exact: false },
+		'statement.import.package.public.internal': { ids: [TSKindId.ExternCrateDeclaration], exact: false },
+		'statement.import.package.public.restricted': { ids: [TSKindId.ExternCrateDeclaration], exact: false },
 		'statement.import.private': { ids: [TSKindId.UseDeclaration], exact: false },
 		'statement.import.public': { ids: [TSKindId.UseDeclaration], exact: false },
 		'statement.import.public.internal': { ids: [TSKindId.UseDeclaration], exact: false },
 		'statement.import.public.restricted': { ids: [TSKindId.UseDeclaration], exact: false },
 		'statement.loop': { ids: [TSKindId.ForExpression, TSKindId.LoopExpression, TSKindId.WhileExpression], exact: true },
-		'statement.loop.for': { ids: [TSKindId.ForExpression], exact: true },
+		'statement.loop.for_each': { ids: [TSKindId.ForExpression], exact: true },
 		'statement.loop.while': { ids: [TSKindId.WhileExpression], exact: true },
 		'statement.match': { ids: [TSKindId.MatchExpression], exact: true },
 		'statement.return': { ids: [TSKindId.ReturnExpression], exact: true },
@@ -3926,7 +3913,7 @@ const table: PortableTable = {
 				test: [{ up: 0, via: [], plan: { op: 'is', types: [308], fields: ['function'], kinds: [] } }]
 			},
 			{
-				path: 'expression.call.path',
+				path: 'expression.call.qualified',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'is', types: [263], fields: ['function'], kinds: [] } }]
 			},
@@ -3940,31 +3927,31 @@ const table: PortableTable = {
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
-		[TSKindId.CharLiteral]: [{ path: 'literal.char', within: [], test: [] }],
+		[TSKindId.CharLiteral]: [{ path: 'literal.character', within: [], test: [] }],
 		[TSKindId.CharLiteralEmpty]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
-			{ path: 'literal.char', within: [], test: [] }
+			{ path: 'literal.character', within: [], test: [] }
 		],
-		[TSKindId.CharLiteralEscaped]: [{ path: 'literal.char', within: [], test: [] }],
+		[TSKindId.CharLiteralEscaped]: [{ path: 'literal.character', within: [], test: [] }],
 		[TSKindId.CharLiteralEscapedHex]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
-			{ path: 'literal.char', within: [], test: [] }
+			{ path: 'literal.character', within: [], test: [] }
 		],
 		[TSKindId.CharLiteralEscapedSimple]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
-			{ path: 'literal.char', within: [], test: [] }
+			{ path: 'literal.character', within: [], test: [] }
 		],
 		[TSKindId.CharLiteralEscapedUnicodeBraced]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
-			{ path: 'literal.char', within: [], test: [] }
+			{ path: 'literal.character', within: [], test: [] }
 		],
 		[TSKindId.CharLiteralEscapedUnicodeFixed]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
-			{ path: 'literal.char', within: [], test: [] }
+			{ path: 'literal.character', within: [], test: [] }
 		],
 		[TSKindId.CharLiteralPlain]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
-			{ path: 'literal.char', within: [], test: [] }
+			{ path: 'literal.character', within: [], test: [] }
 		],
 		[TSKindId.ClosureExpression]: [{ path: 'expression.lambda', within: [], test: [] }],
 		[TSKindId.ClosureExpressionBlock]: [{ path: 'expression.lambda', within: [], test: [] }],
@@ -4670,7 +4657,7 @@ const table: PortableTable = {
 		[TSKindId.ExpressionStatement]: [{ path: 'statement.expression', within: [], test: [] }],
 		[TSKindId.ExternCrateDeclaration]: [
 			{
-				path: 'statement.import.crate.private',
+				path: 'statement.import.package.private',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
@@ -4704,7 +4691,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'statement.import.crate.public.internal',
+				path: 'statement.import.package.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
@@ -4738,7 +4725,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'statement.import.crate.public.restricted',
+				path: 'statement.import.package.public.restricted',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
@@ -4764,7 +4751,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'statement.import.crate.public',
+				path: 'statement.import.package.public',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
@@ -4776,7 +4763,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'statement.import.crate.public.internal',
+				path: 'statement.import.package.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
@@ -4787,7 +4774,7 @@ const table: PortableTable = {
 					}
 				]
 			},
-			{ path: 'statement.import.crate', within: [], test: [] }
+			{ path: 'statement.import.package', within: [], test: [] }
 		],
 		[TSKindId.ExternModifier]: [{ path: 'modifier.extern', within: [], test: [] }],
 		[TSKindId.F32Keyword]: [
@@ -4938,7 +4925,7 @@ const table: PortableTable = {
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'literal.number.float', within: [], test: [] }
 		],
-		[TSKindId.ForExpression]: [{ path: 'statement.loop.for', within: [], test: [] }],
+		[TSKindId.ForExpression]: [{ path: 'statement.loop.for_each', within: [], test: [] }],
 		[TSKindId.ForLifetimes]: [{ path: 'clause.lifetimes', within: [], test: [] }],
 		[TSKindId.ForeignModItem]: [{ path: 'declaration.module.foreign', within: [], test: [] }],
 		[TSKindId.ForeignModItemBody]: [
@@ -5876,7 +5863,7 @@ const table: PortableTable = {
 			{ path: 'declaration.function.signature', within: [], test: [] }
 		],
 		[TSKindId.FunctionType]: [{ path: 'type.function', within: [], test: [] }],
-		[TSKindId.GenBlock]: [{ path: 'expression.block.gen', within: [], test: [] }],
+		[TSKindId.GenBlock]: [{ path: 'expression.block.generator', within: [], test: [] }],
 		[TSKindId.GenKeyword]: [{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] }],
 		[TSKindId.GenericFunction]: [{ path: 'expression.instantiation', within: [], test: [] }],
 		[TSKindId.GenericPattern]: [
@@ -6455,10 +6442,10 @@ const table: PortableTable = {
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'pattern.slice', within: [], test: [] }
 		],
-		[TSKindId.SourceFile]: [{ path: 'module', within: [], test: [] }],
+		[TSKindId.SourceFile]: [{ path: 'file', within: [], test: [] }],
 		[TSKindId.StaticItem]: [
 			{
-				path: 'declaration.variable.static.private',
+				path: 'declaration.variable.private',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
@@ -6492,7 +6479,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.variable.static.public.internal',
+				path: 'declaration.variable.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
@@ -6526,7 +6513,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.variable.static.public.restricted',
+				path: 'declaration.variable.public.restricted',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
@@ -6552,7 +6539,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.variable.static.public',
+				path: 'declaration.variable.public',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
@@ -6564,7 +6551,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.variable.static.public.internal',
+				path: 'declaration.variable.public.internal',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
@@ -6575,7 +6562,7 @@ const table: PortableTable = {
 					}
 				]
 			},
-			{ path: 'declaration.variable.static', within: [], test: [] }
+			{ path: 'declaration.variable', within: [], test: [] }
 		],
 		[TSKindId.StmtKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.StrKeyword]: [
@@ -7107,7 +7094,7 @@ const table: PortableTable = {
 			{ path: 'literal.boolean', within: [], test: [] }
 		],
 		[TSKindId.TryBlock]: [{ path: 'expression.block.try', within: [], test: [] }],
-		[TSKindId.TryExpression]: [{ path: 'expression.try', within: [], test: [] }],
+		[TSKindId.TryExpression]: [{ path: 'expression.propagate', within: [], test: [] }],
 		[TSKindId.TtKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.TupleExpression]: [{ path: 'expression.collection.tuple', within: [], test: [] }],
 		[TSKindId.TuplePattern]: [

@@ -3939,7 +3939,7 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlo
 		$with: {
 			matchBlockArms: (v: NonNullable<T.MatchBlock['_match_block_arms']>) =>
 				rebuilt(node, handle, () => wrapMatchBlock({ ...$edited(data), _match_block_arms: v }, tree)),
-			matchArms: (...args: unknown[]) =>
+			arms: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(
 						{
@@ -3948,11 +3948,11 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlo
 							kind: TSKindId.MatchBlockArms as const,
 							make: RAW.buildMatchBlockArms,
 							keys: [
-								{ name: 'matchArms', rest: true },
+								{ name: 'arms', rest: true },
 								{ name: 'lastArm', rest: false, required: true }
 							]
 						},
-						'matchArms',
+						'arms',
 						args,
 						(v: NonNullable<T.MatchBlock['_match_block_arms']>) =>
 							wrapMatchBlock({ ...$edited(data), _match_block_arms: v }, tree),
@@ -3968,7 +3968,7 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlo
 							kind: TSKindId.MatchBlockArms as const,
 							make: RAW.buildMatchBlockArms,
 							keys: [
-								{ name: 'matchArms', rest: true },
+								{ name: 'arms', rest: true },
 								{ name: 'lastArm', rest: false, required: true }
 							]
 						},
@@ -3980,10 +3980,8 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlo
 					)
 				)
 		},
-		matchArms:
-			data._match_block_arms === undefined
-				? undefined
-				: () => groupField(readGroup_matchBlockArms.call(node), 'matchArms'),
+		arms:
+			data._match_block_arms === undefined ? undefined : () => groupField(readGroup_matchBlockArms.call(node), 'arms'),
 		lastArm:
 			data._match_block_arms === undefined
 				? undefined
@@ -8576,17 +8574,15 @@ export function wrapMatchBlockArms(data: T.MatchBlockArms, tree: TreeHandle): T.
 	const node = {
 		...data,
 		$type: TSKindId.MatchBlockArms as const,
-		matchArms() {
-			return hydrateSlots<T.MatchArm>(this, '_match_arm', tree);
+		arms() {
+			return hydrateSlots<T.MatchArm>(this, '_arms', tree);
 		},
 		lastArm() {
 			return hydrateSlot<T.LastMatchArm>(this, '_last_arm', tree);
 		},
 		$with: {
-			matchArms: (...v: NonNullable<T.MatchBlockArms['_match_arm']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapMatchBlockArms({ ...$edited(data), _match_arm: restItems('matchArms', v) }, tree)
-				),
+			arms: (...v: NonNullable<T.MatchBlockArms['_arms']>[number][]) =>
+				rebuilt(node, handle, () => wrapMatchBlockArms({ ...$edited(data), _arms: restItems('arms', v) }, tree)),
 			lastArm: (v: NonNullable<T.MatchBlockArms['_last_arm']>) =>
 				rebuilt(node, handle, () => wrapMatchBlockArms({ ...$edited(data), _last_arm: v }, tree))
 		},

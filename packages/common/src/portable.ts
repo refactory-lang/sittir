@@ -33,8 +33,11 @@ function placed(entry: PortableReadEntry, context: Context): boolean {
 
 export function portableSurface<Kinds, Is>(table: PortableTable, querySlots: QuerySlots): { readonly kinds: Kinds; readonly is: Is } {
 	const itemsIn = (node: Node, routes: SlotRoutes): readonly unknown[] => {
-		const accessor = querySlots[node.$type]?.find(([, r]) => sameRoutes(r, routes))?.[0];
-		return accessor === undefined ? [] : slotItems(node, accessor);
+		const slot = querySlots[node.$type]?.find(([, r]) => sameRoutes(r, routes));
+		if (slot === undefined) return [];
+		const [accessor, , keyword] = slot;
+		const items = slotItems(node, accessor);
+		return keyword === undefined ? items : items.flatMap((item) => (item === true ? [keyword] : []));
 	};
 	const slicers = new WeakMap<object, (span: ByteSpan) => string>();
 	const sliceOf = (node: Node): string | undefined => {
@@ -46,7 +49,7 @@ export function portableSurface<Kinds, Is>(table: PortableTable, querySlots: Que
 		return slice(span);
 	};
 	const textOf = (item: unknown): string | undefined =>
-		typeof item === 'number' ? table.fixedText[item] : isNode(item) ? (item.$text ?? sliceOf(item)) : undefined;
+		typeof item === 'string' ? item : typeof item === 'number' ? table.fixedText[item] : isNode(item) ? (item.$text ?? sliceOf(item)) : undefined;
 	const conditionHolds = (condition: PortableCondition, node: Item, context: Context): boolean => {
 		const holder: Item | undefined = condition.up === 0 ? node : context?.[context.length - condition.up];
 		if (holder === undefined) return false;

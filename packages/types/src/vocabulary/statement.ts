@@ -57,17 +57,17 @@ export namespace Statement {
 		// prt only
 	}
 	export namespace Loop {
-		export interface For<G extends GrammarContext<G>> extends SubKindOf<V.Statement.Loop<G>> {
+		export interface ForEach<G extends GrammarContext<G>> extends SubKindOf<V.Statement.Loop<G>> {
 			// claimed by prt
-			readonly $kind: 'statement.loop.for';
+			readonly $kind: 'statement.loop.for_each';
 			readonly alternative?: V.Clause.Else<G>;
 			// p only
-			readonly body: G['slots']['statement.loop.for']['body'];
-			readonly forHeader?: G['slots']['statement.loop.for']['forHeader'];
+			readonly body: G['slots']['statement.loop.for_each']['body'];
+			readonly forHeader?: G['slots']['statement.loop.for_each']['forHeader'];
 			// t only
-			readonly left?: G['slots']['statement.loop.for']['left'];
+			readonly left?: G['slots']['statement.loop.for_each']['left'];
 			// pr only
-			readonly right?: G['slots']['statement.loop.for']['right'];
+			readonly right?: G['slots']['statement.loop.for_each']['right'];
 			// pr only
 		}
 		export interface While<G extends GrammarContext<G>> extends SubKindOf<V.Statement.Loop<G>> {

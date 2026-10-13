@@ -5093,8 +5093,15 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "comprehension_clauses"
+          "type": "FIELD",
+          "name": "clauses",
+          "content": {
+            "type": "SYMBOL",
+            "name": "comprehension_clauses"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "STRING",
@@ -5118,8 +5125,15 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "comprehension_clauses"
+          "type": "FIELD",
+          "name": "clauses",
+          "content": {
+            "type": "SYMBOL",
+            "name": "comprehension_clauses"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "STRING",
@@ -5143,8 +5157,15 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "comprehension_clauses"
+          "type": "FIELD",
+          "name": "clauses",
+          "content": {
+            "type": "SYMBOL",
+            "name": "comprehension_clauses"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "STRING",
@@ -5168,8 +5189,15 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "comprehension_clauses"
+          "type": "FIELD",
+          "name": "clauses",
+          "content": {
+            "type": "SYMBOL",
+            "name": "comprehension_clauses"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "STRING",
@@ -5531,37 +5559,44 @@
       "type": "PREC_RIGHT",
       "value": 0,
       "content": {
-        "type": "REPEAT1",
+        "type": "FIELD",
+        "name": "elements",
         "content": {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "escape_interpolation"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "escape_sequence"
-            },
-            {
-              "type": "ALIAS",
-              "content": {
+          "type": "REPEAT1",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
                 "type": "SYMBOL",
-                "name": "_not_escape_sequence"
+                "name": "escape_interpolation"
               },
-              "named": true,
-              "value": "not_escape_sequence"
-            },
-            {
-              "type": "ALIAS",
-              "content": {
+              {
                 "type": "SYMBOL",
-                "name": "_string_content"
+                "name": "escape_sequence"
               },
-              "named": true,
-              "value": "string_fragment"
-            }
-          ]
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_not_escape_sequence"
+                },
+                "named": true,
+                "value": "not_escape_sequence"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_string_content"
+                },
+                "named": true,
+                "value": "string_fragment"
+              }
+            ]
+          }
+        },
+        "metadata": {
+          "fieldSource": "override"
         }
       }
     },
@@ -7230,8 +7265,15 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "list_pattern_case_patterns"
+              "type": "FIELD",
+              "name": "elements",
+              "content": {
+                "type": "SYMBOL",
+                "name": "list_pattern_case_patterns"
+              },
+              "metadata": {
+                "fieldSource": "override"
+              }
             },
             {
               "type": "BLANK"
@@ -7255,8 +7297,15 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "list_pattern_case_patterns"
+              "type": "FIELD",
+              "name": "elements",
+              "content": {
+                "type": "SYMBOL",
+                "name": "list_pattern_case_patterns"
+              },
+              "metadata": {
+                "fieldSource": "override"
+              }
             },
             {
               "type": "BLANK"
@@ -7368,8 +7417,15 @@
           "value": "print"
         },
         {
-          "type": "SYMBOL",
-          "name": "chevron"
+          "type": "FIELD",
+          "name": "chevron",
+          "content": {
+            "type": "SYMBOL",
+            "name": "chevron"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "CHOICE",
@@ -8495,43 +8551,38 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "FIELD",
-              "name": "item",
-              "content": {
-                "type": "SYMBOL",
-                "name": "expression"
+          "type": "FIELD",
+          "name": "item",
+          "content": {
+            "type": "SYMBOL",
+            "name": "expression"
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ","
               },
-              "metadata": {
-                "fieldSource": "enriched"
+              {
+                "type": "FIELD",
+                "name": "item",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                },
+                "metadata": {
+                  "fieldSource": "enriched"
+                }
               }
-            },
-            {
-              "type": "REPEAT",
-              "content": {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "STRING",
-                    "value": ","
-                  },
-                  {
-                    "type": "FIELD",
-                    "name": "item",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "expression"
-                    },
-                    "metadata": {
-                      "fieldSource": "enriched"
-                    }
-                  }
-                ]
-              }
-            }
-          ]
+            ]
+          }
         },
         {
           "type": "CHOICE",

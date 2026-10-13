@@ -48,6 +48,18 @@ fn whitespace_classifies_by_seam_rank_and_never_to_a_depth_arm() {
 }
 
 #[test]
+fn a_run_spelled_as_an_arm_is_that_arm_before_any_other_of_its_rank() {
+    const TAB: u16 = 173;
+    fn with_tab(kind: u16) -> &'static str {
+        if kind == TAB { "\t" } else { text_of(kind) }
+    }
+    let table = WhitespaceTable { text_of: with_tab, ..TABLE };
+    assert_eq!(classify_whitespace("\t", &[TIGHT, SPACE, TAB], &table), Some(TAB));
+    assert_eq!(classify_whitespace(" ", &[TIGHT, SPACE, TAB], &table), Some(SPACE));
+    assert_eq!(classify_whitespace("  \t", &[TIGHT, SPACE, TAB], &table), Some(SPACE));
+}
+
+#[test]
 fn text_that_is_not_whitespace_has_no_class() {
     assert_eq!(classify_whitespace("b", ALL, &TABLE), None);
     assert_eq!(classify_whitespace(" x ", ALL, &TABLE), None);
@@ -62,7 +74,7 @@ fn a_carriage_return_is_a_line_break_whatever_its_spelling() {
     assert_eq!(classify_whitespace("\r\n    ", ALL, &TABLE), Some(NEWLINE));
 }
 
-use sittir_core::classify::{geometry_gap_sides, geometry_gap_text};
+use sittir_core::classify::geometry_gap_text;
 use sittir_core::points::{Point, PointSpan};
 
 const fn s(r0: u32, c0: u32, r1: u32, c1: u32) -> PointSpan {
@@ -95,14 +107,4 @@ fn a_span_ending_with_its_line_break_ends_on_the_row_it_closes() {
 fn a_gap_after_a_multi_byte_char_counts_bytes() {
     // "é = 1": `é` is two bytes, and `=` starts at byte column 3.
     assert_eq!(geometry_gap_text(&s(0, 0, 0, 2), &s(0, 3, 0, 4)), " ");
-}
-
-#[test]
-fn a_separator_sits_against_the_earlier_item() {
-    // "a, b": the separator's column is the gap's first.
-    assert_eq!(geometry_gap_sides(&s(0, 0, 0, 1), &s(0, 3, 0, 4), ","), (String::new(), " ".to_owned()));
-    // "a,\n  b": across rows, the whole gap follows the separator.
-    assert_eq!(geometry_gap_sides(&s(0, 0, 0, 1), &s(1, 2, 1, 3), ","), (String::new(), "\n  ".to_owned()));
-    // With no separator the whole gap is the side before.
-    assert_eq!(geometry_gap_sides(&s(0, 0, 0, 1), &s(0, 3, 0, 4), ""), ("  ".to_owned(), String::new()));
 }

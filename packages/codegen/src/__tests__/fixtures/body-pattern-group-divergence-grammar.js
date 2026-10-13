@@ -24,6 +24,8 @@ module.exports = grammar({
 		authoredRuleNames: new Set(['host']),
 		ruleCauses: new Map(),
 		undeclaredRules: new Set(['host']),
-		patchSites: new Map()
+		patchSites: new Map(),
+		automaticVariants: { keys: new Set(), supertypeOwners: new Set() },
+		elementSupertypes: new Map()
 	}
 });

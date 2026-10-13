@@ -188,7 +188,7 @@ function firstWhere<T>(root: unknown, accepts: (value: unknown) => value is T): 
 	throw new Error('no node the guard accepts');
 }
 
-describe('a rebuilt list keeps the flanks its source edge items still stand beside', () => {
+describe('a rebuilt list keeps the layout of the list it replaces', () => {
 	const broken = 'add(\n    1i32,\n    2i32,\n);\n';
 
 	it('rebuilds a call\'s arguments with their source items in their source layout and trailing delimiter', () => {
@@ -198,7 +198,7 @@ describe('a rebuilt list keeps the flanks its source edge items still stand besi
 		expect(args.$with.elements(...items).$render()).toBe('(\n    1i32,\n    2i32,\n)');
 	});
 
-	it('keeps the leading flank and the source gaps when an item is appended; the new gap and the closing flank are canonical', () => {
+	it('keeps its flanks and trailing delimiter when an item is appended, and the new gap takes its separator gaps\' class', () => {
 		const args = firstWhere(rust.parse(broken), (value): value is ReturnType<typeof rust.build.arguments> => rust.is.arguments(value as never));
 		const items = args.elements()?.items().map((item) => item.expression());
 		if (items === undefined) throw new Error('expected arguments');
@@ -207,10 +207,10 @@ describe('a rebuilt list keeps the flanks its source edge items still stand besi
 			?.items()[0]
 			?.expression();
 		if (appended === undefined) throw new Error('expected an argument');
-		expect(args.$with.elements(...items, appended).$render()).toBe('(\n    1i32,\n    2i32, 3i32\n)');
+		expect(args.$with.elements(...items, appended).$render()).toBe('(\n    1i32,\n    2i32,\n    3i32,\n)');
 	});
 
-	it('drops the source blank line before a wrapped item once another item is inserted before it', () => {
+	it('gives an item inserted before a wrapped item the class its separator gaps take', () => {
 		const item = rust.parse('fn f(\n    a: u8,\n\n    b: i8,\n) {}\n').statements()[0];
 		if (item === undefined || typeof item === 'number' || !rust.is.functionItem(item)) throw new Error('expected a function item');
 		const parameters = item.parameters();
@@ -223,7 +223,7 @@ describe('a rebuilt list keeps the flanks its source edge items still stand besi
 		if (other === undefined || typeof other === 'number' || !rust.is.functionItem(other)) throw new Error('expected a function item');
 		const c = other.parameters().elements()?.items()[0]?.content();
 		if (c === undefined || typeof c === 'number' || !rust.is.parameter(c)) throw new Error('expected a parameter');
-		expect(parameters.$with.elements(a, c, b).$render()).toBe('(\n    a: u8, c: u16, b: i8,\n)');
+		expect(parameters.$with.elements(a, c, b).$render()).toBe('(\n    a: u8,\n\n    c: u16,\n\n    b: i8,\n)');
 	});
 
 	it('keeps both flanks beside an edited last parameter', () => {

@@ -187,7 +187,7 @@ describe('resolveRoutes', () => {
 					'(function_definition) @declaration.function',
 					'(class_definition body: (block (function_definition) @declaration.method))',
 					'((function_definition name: (identifier) @name) @declaration.constructor (#eq? @name "__init__"))',
-					'((function_definition name: (identifier) @name) @declaration.method.dunder (#match? @name "^__(?<stem>.*)__$"))',
+					'((function_definition name: (identifier) @name) @declaration.method.special (#match? @name "^__(?<stem>.*)__$"))',
 					'(decorated (function_definition name: (identifier) @name) @declaration.method.static (#eq? @name "staticmethod"))',
 					'(binary operator: "+" @operator) @expression.binary.add',
 					'(binary) @expression.binary'
@@ -197,7 +197,7 @@ describe('resolveRoutes', () => {
 		expect(routes.readEntries.get('function_definition')?.map((e) => e.vocab)).toEqual([
 			'declaration.method.static',
 			'declaration.constructor',
-			'declaration.method.dunder',
+			'declaration.method.special',
 			'declaration.method',
 			'declaration.function'
 		]);
@@ -471,7 +471,7 @@ describe('resolveRoutes', () => {
 	});
 
 	it('routes a list form\'s items as the member its sibling forms hold the same elements under', async () => {
-		const routes = resolveRoutes(await grammar('(_clause wrapped: (_) @entries) @clause.with'));
+		const routes = resolveRoutes(await grammar('(_clause wrapped: (_) @entries) @clause.resource'));
 		expect(routes.members.get('clause_paren')?.map((r) => r.name)).toEqual(['entries']);
 		expect(routes.members.get('clause_bare')).toEqual([
 			{ route: 'slot', name: 'entries', slot: slot('item', ['identifier'], { propertyName: 'items', multiple: true }), path: [{ owner: 'clause_bare', slot: 'item' }] }
@@ -512,7 +512,7 @@ describe('resolveRoutes', () => {
 	});
 
 	it('routes no member through a slot that holds only text on a kind read as an identifier, and keeps its node slots', async () => {
-		const routes = resolveRoutes(await grammar(['(private_name) @identifier.property', '(scoped_name) @identifier.scoped', '(char_text) @literal.char'].join('\n')));
+		const routes = resolveRoutes(await grammar(['(private_name) @identifier.property', '(scoped_name) @identifier.scoped', '(char_text) @literal.character'].join('\n')));
 		expect(routes.members.get('private_name')).toEqual([]);
 		expect(routes.members.get('scoped_name')?.map((r) => r.name)).toEqual(['path', 'name']);
 		expect(routes.members.get('char_text')?.map((r) => r.name)).toEqual(['content']);
@@ -755,7 +755,7 @@ describe('resolveRoutes', () => {
 
 	it('keeps the template a templated claim builds from', async () => {
 		const routes = resolveRoutes(
-			await grammar('((function_definition name: (identifier) @name) @declaration.method.dunder (#match? @name "^__(?<stem>.*)__$"))')
+			await grammar('((function_definition name: (identifier) @name) @declaration.method.special (#match? @name "^__(?<stem>.*)__$"))')
 		);
 		expect(routes.readEntries.get('function_definition')?.[0]?.template).toMatchObject({ holes: ['stem'] });
 	});
@@ -779,7 +779,7 @@ describe('flag captures', () => {
 		'declaration.method': { generator: true },
 		'declaration.method.getter': {},
 		'declaration.parameter': { mutable: true },
-		'statement.loop.for': { async: true },
+		'statement.loop.for_each': { async: true },
 		'declaration.variable': { byReference: true }
 	});
 	const flagged = async (bindings: string): Promise<GrammarInput> => ({
@@ -806,7 +806,7 @@ describe('flag captures', () => {
 	});
 
 	it('routes a flag captured on a keyword slot to the presence of the one token the slot holds', async () => {
-		expect((await membersOf(['(for_in) @statement.loop.for', '(for_in await: _ @async)'].join('\n'), 'for_in'))?.filter((r) => r.name === 'async')).toEqual([
+		expect((await membersOf(['(for_in) @statement.loop.for_each', '(for_in await: _ @async)'].join('\n'), 'for_in'))?.filter((r) => r.name === 'async')).toEqual([
 			{ route: 'presence', name: 'async', via: [], token: 'await', path: [{ owner: 'for_in', slot: 'await' }] }
 		]);
 	});
@@ -831,7 +831,7 @@ describe('flag captures', () => {
 	});
 
 	it('refuses a name that is a flag on one claimed path and data on another', async () => {
-		const input = async () => resolveFlags(await readBindings(['(param) @declaration.parameter', '(param) @statement.loop.for', '(param (mutable_specifier) @async)'].join('\n')), vocabulary({ 'declaration.parameter': { async: false }, 'statement.loop.for': { async: true } }));
+		const input = async () => resolveFlags(await readBindings(['(param) @declaration.parameter', '(param) @statement.loop.for_each', '(param (mutable_specifier) @async)'].join('\n')), vocabulary({ 'declaration.parameter': { async: false }, 'statement.loop.for_each': { async: true } }));
 		await expect(input()).rejects.toThrow(/async.*flag.*data|one name/);
 	});
 });

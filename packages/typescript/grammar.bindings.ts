@@ -3,7 +3,7 @@
 import { bindings, field, rename } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "2b7a9be117edb8aecf3375f3d71bdc675b070650c4932d861e8d6feb684f87ef",
+	hash: "a2e31f30e8da2b2c926b1c3e83e50ba8400a2d241f13f42506832f91c37e5f77",
 	patches: {
 		_number: { "1": field("value") },
 		_parameter_name: { "4": field("name") },
@@ -11,11 +11,11 @@ export default bindings({
 		abstract_method_signature: { "3/0": field("generator") },
 		assignment_expression: { "0/0": field("disposable") },
 		call_expression_member: { "1": field("optional_chain") },
-		catch_clause: { "1/0": field("catch_clause_group") },
 		decorator: { "1": field("content") },
 		export_clause: { "1/0": field("export_specifiers") },
 		export_specifier: { "0/0": field("type_only") },
 		export_statement_default_declaration: { "2/0": field("declaration") },
+		export_statement_default_from: { "1": field("type_only") },
 		export_statement_equals_export: { "2": field("value") },
 		for_in_statement: { "1/0": field("async") },
 		generator_function: { "2": field("generator") },
@@ -37,7 +37,7 @@ export default bindings({
 		variable_declarator_definite: { "1": field("definite") }
 	},
 	renames: [
-		rename("program", "module"),
+		rename("program", "file"),
 		rename("enum_assignment", "enum_member_declaration"),
 		rename("method_definition", "method_declaration"),
 		rename("method_signature", "signature_method_declaration"),
@@ -59,7 +59,7 @@ export default bindings({
 		rename("index_signature_mapped_type_clause", "mapped_index_signature_declaration"),
 		rename("statement_block", "block_statement"),
 		rename("for_statement", "counted_loop_statement"),
-		rename("for_in_statement", "for_loop_statement"),
+		rename("for_in_statement", "for_each_loop_statement"),
 		rename("while_statement", "while_loop_statement"),
 		rename("do_statement", "do_while_loop_statement"),
 		rename("with_statement", "scope_statement"),
@@ -76,13 +76,12 @@ export default bindings({
 		rename("export_specifier", "specifier_export_clause"),
 		rename("constraint", "constraint_clause"),
 		rename("default_type", "default_clause"),
-		rename("spread_element", "splat_element"),
 		rename("pair", "pair_element"),
 		rename("tuple_parameter", "member_tuple_element"),
 		rename("optional_tuple_parameter", "optional_member_tuple_element"),
 		rename("template_type", "substitution_template_element"),
 		rename("call_expression_template_call", "template_call_expression"),
-		rename("new_expression", "new_call_expression"),
+		rename("new_expression", "construct_call_expression"),
 		rename("augmented_assignment_expression", "compound_assignment_expression"),
 		rename("ternary_expression", "conditional_expression"),
 		rename("arrow_function", "lambda_expression"),

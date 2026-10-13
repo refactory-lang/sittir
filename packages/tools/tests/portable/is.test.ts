@@ -82,6 +82,14 @@ describe('portable is: python', async () => {
 		expect(at('literal.string.bytes')(b, bc)).toBe(true);
 	});
 
+	it('reads an except clause as the one catch kind, and its finally as finally', () => {
+		const SOURCE = 'try:\n    pass\nexcept E as e:\n    pass\nfinally:\n    pass\n';
+		const [handler, hc] = find(SOURCE, 'except_clause');
+		const [finalizer, fc] = find(SOURCE, 'finally_clause');
+		expect(at('clause.catch')(handler, hc)).toBe(true);
+		expect(at('clause.finally')(finalizer, fc)).toBe(true);
+	});
+
 	it('reads each text piece of a string as its text, an f-string\'s included', () => {
 		const SOURCE = 'x = "a\\nb"\ny = f"c{x}"\n';
 		for (const text of ['a', 'b', 'c']) {
@@ -175,6 +183,24 @@ describe('portable is: rust', async () => {
 		const [a, m, z, n] = [0, 1, 2, 3].map((nth) => find(SOURCE, 'function_item', undefined, nth));
 		for (const [fn, context] of [m!, n!]) expect(at('declaration.method.static')(fn, context)).toBe(false);
 		for (const [fn, context] of [a!, z!]) expect(at('declaration.method.static')(fn, context)).toBe(true);
+	});
+
+	it('reads a static item as a variable, and a visible one by its crossing', () => {
+		const SOURCE = 'static A: u8 = 1;\npub static B: u8 = 2;\npub(crate) static C: u8 = 3;\nfn f() { let d = 4; }\n';
+		const statics = [0, 1, 2].map((nth) => find(SOURCE, 'static_item', undefined, nth));
+		const [local, lc] = find(SOURCE, 'let_declaration');
+		expect(statics.map(([n, c]) => at('declaration.variable')(n, c))).toEqual([true, true, true]);
+		expect(statics.map(([n, c]) => at('declaration.variable.public')(n, c))).toEqual([false, true, true]);
+		expect(statics.map(([n, c]) => at('declaration.variable.public.internal')(n, c))).toEqual([false, false, true]);
+		expect(at('declaration.variable')(local, lc)).toBe(true);
+		expect(at('declaration.variable.public')(local, lc)).toBe(false);
+	});
+
+	it.skip('reads a static item\'s `mut` and `ref` as its flags (pending: `mutable` and `byReference` are flags of declaration.variable, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
+		const SOURCE = 'static A: u8 = 1;\nstatic mut B: u8 = 2;\nstatic ref C: u8 = 3;\n';
+		const statics = [0, 1, 2].map((nth) => find(SOURCE, 'static_item', undefined, nth));
+		expect(statics.map(([n, c]) => at('declaration.variable.mutable')(n, c))).toEqual([false, true, false]);
+		expect(statics.map(([n, c]) => at('declaration.variable.byReference')(n, c))).toEqual([false, false, true]);
 	});
 
 	it('reads every kind a closure\'s parameters admit as a parameter, through the wildcard claim', () => {
@@ -276,6 +302,14 @@ describe('portable is: typescript', async () => {
 		}
 	});
 
+	it('reads a catch clause as the one catch kind, with or without its binding', () => {
+		const SOURCE = 'try { a(); } catch (e: unknown) { b(); }\ntry { c(); } catch { d(); }\n';
+		const [bound, bc] = find(SOURCE, 'catch_clause');
+		const [bare, nc] = find(SOURCE, 'catch_clause', undefined, 1);
+		expect(at('clause.catch')(bound, bc)).toBe(true);
+		expect(at('clause.catch')(bare, nc)).toBe(true);
+	});
+
 	it('reads an enum member through the wildcard claim under the enum body\'s elements', () => {
 		const [member, context] = find('enum E { A, B = 1 }\n', 'enum_assignment');
 		expect(at('declaration.enum_member')(member, context)).toBe(true);
@@ -285,6 +319,15 @@ describe('portable is: typescript', async () => {
 		const [hex, context] = find('let x = 0x1F;\n', 'number_hex');
 		expect(at('literal.number.integer.hex')(hex, context)).toBe(true);
 		expect(at('literal.number')(hex, context)).toBe(true);
+	});
+
+	it('reads a method by its visibility keyword, which the reader holds as the modifier\'s member kind', () => {
+		const SOURCE = 'class C { private a() {} protected b() {} public c() {} d() {} }\n';
+		const methods = [0, 1, 2, 3].map((n) => find(SOURCE, 'method_definition', undefined, n));
+		expect(methods.map(([n, c]) => at('declaration.method.private')(n, c))).toEqual([true, false, false, false]);
+		expect(methods.map(([n, c]) => at('declaration.method.protected')(n, c))).toEqual([false, true, false, false]);
+		expect(methods.map(([n, c]) => at('declaration.method.public')(n, c))).toEqual([false, false, true, false]);
+		expect(methods.map(([n, c]) => at('declaration.method')(n, c))).toEqual([true, true, true, true]);
 	});
 
 	it('reads a mapped index signature by its form', () => {
@@ -312,6 +355,19 @@ describe('portable is: typescript', async () => {
 		const [plain, pc] = find(SOURCE, 'import_statement', undefined, 1);
 		expect(at('statement.import.typeOnly')(type, tc)).toBe(true);
 		expect(at('statement.import.typeOnly')(plain, pc)).toBe(false);
+	});
+
+	it('reads a type-only export as an export, an export of all one included', () => {
+		const SOURCE = 'export type { A } from "a";\nexport type * from "b";\nexport { C } from "c";\n';
+		const froms = [0, 1, 2].map((nth) => find(SOURCE, 'export_statement_default_from', undefined, nth));
+		expect(froms.map(([n, c]) => at('statement.export')(n, c))).toEqual([true, true, true]);
+		expect(froms.map(([n, c]) => at('statement.export.all')(n, c))).toEqual([false, true, false]);
+	});
+
+	it.skip('reads a type-only export by its keyword (pending: `typeOnly` is a flag of statement.export, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
+		const SOURCE = 'export type { A } from "a";\nexport type * from "b";\nexport { C } from "c";\n';
+		const froms = [0, 1, 2].map((nth) => find(SOURCE, 'export_statement_default_from', undefined, nth));
+		expect(froms.map(([n, c]) => at('statement.export.typeOnly')(n, c))).toEqual([true, true, false]);
 	});
 
 	it('pins a typeof specifier by its keyword, and reads a type-only specifier as a specifier', () => {
@@ -372,10 +428,37 @@ describe('portable is: typescript', async () => {
 	});
 });
 
+describe('portable is: the root of a file', () => {
+	for (const [name, source, root] of [
+		['python', 'import os\n', 'module'],
+		['rust', 'mod m {}\n', 'source_file'],
+		['typescript', 'module M {}\n', 'program']
+	] as const) {
+		it(`${name}: reads the root as a file`, async () => {
+			const { at, find } = await surfaces(name);
+			const [file] = find(source, root);
+			expect(at('file')(file)).toBe(true);
+		});
+	}
+	for (const [name, source, declared, root] of [
+		['rust', 'mod m {}\n', 'mod_item_inline', 'source_file'],
+		['typescript', 'module M {}\n', 'module', 'program']
+	] as const) {
+		it(`${name}: tells a module declared in a file from the file`, async () => {
+			const { at, find } = await surfaces(name);
+			const [module, context] = find(source, declared);
+			const [file] = find(source, root);
+			expect(at('declaration.module')(module, context)).toBe(true);
+			expect(at('file')(module, context)).toBe(false);
+			expect(at('declaration.module')(file)).toBe(false);
+		});
+	}
+});
+
 describe('portable is agrees with one classification', () => {
 	const SOURCES = {
 		python: 'import os\nclass A(B):\n    @staticmethod\n    def s(x: int = 1) -> str:\n        return f"{x}" + b"y".decode()\nwhile x > 0:\n    x -= 1\n',
-		rust: 'use std::io;\nstruct S { a: u8 }\nfn f(x: &mut S) -> Option<u8> { let y = x.a + 1; if y > 2 { return Some(y); } let g = |a, mut b| a; None }\n',
+		rust: 'use std::io;\npub static Z: u8 = 0;\nstruct S { a: u8 }\nfn f(x: &mut S) -> Option<u8> { let y = x.a + 1; if y > 2 { return Some(y); } let g = |a, mut b| a; None }\n',
 		typescript: 'import { a } from "b";\nenum E { A, B = 1 }\nclass C extends D implements I { constructor() { super(); } m(): void { const x = a?.b ?? 1; } }\n// c\n'
 	} as const;
 	for (const name of Object.keys(SOURCES) as (keyof typeof SOURCES)[]) {
@@ -393,6 +476,51 @@ describe('portable is agrees with one classification', () => {
 					expect(deepest === path || deepest.startsWith(`${path}.`), `${path} beside ${deepest}`).toBe(true);
 					expect(kindsAt(path).$ids).toContain(kindOf(node));
 				}
+			}
+		});
+	}
+});
+
+describe('portable is: each kind under its neutral name', () => {
+	const NEUTRAL = {
+		python: [
+			['f(*a)\n', 'list_splat', 'element.spread'],
+			['f(**a)\n', 'dictionary_splat', 'element.spread.map'],
+			['with a as b:\n    pass\n', 'with_statement', 'statement.resource'],
+			['with a as b:\n    pass\n', 'with_clause_bare', 'clause.resource'],
+			['with a as b:\n    pass\n', 'with_item', 'clause.resource.item'],
+			['if a:\n    pass\nelif b:\n    pass\n', 'elif_clause', 'clause.else_if'],
+			['f(k=1)\n', 'keyword_argument', 'argument.named'],
+			['a @ b\n', 'binary_operator', 'expression.binary.matrix_multiply'],
+			['a @= b\n', 'augmented_assignment', 'expression.assignment.compound.matrix_multiply'],
+			['{k: v for k in x}\n', 'dictionary_comprehension', 'expression.comprehension.map'],
+			['{1: 2}\n', 'dictionary', 'expression.collection.map'],
+			['"""x"""\n', 'string', 'literal.string.multiline'],
+			['for x in y:\n    pass\n', 'for_statement', 'statement.loop.for_each'],
+			['class A:\n    def __add__(self, o): pass\n', 'function_definition', 'declaration.method.special']
+		],
+		rust: [
+			['extern crate foo;\n', 'extern_crate_declaration', 'statement.import.package'],
+			['fn f() { for x in y {} }\n', 'for_expression', 'statement.loop.for_each'],
+			['fn f() { a::b(); }\n', 'call_expression', 'expression.call.qualified'],
+			['fn f() -> Option<u8> { x?; None }\n', 'try_expression', 'expression.propagate'],
+			["fn f() { let c = 'a'; }\n", 'char_literal_plain', 'literal.character'],
+			['fn f() { let g = gen { yield 1; }; }\n', 'gen_block', 'expression.block.generator']
+		],
+		typescript: [
+			['for (const x of y) {}\n', 'for_in_statement', 'statement.loop.for_each'],
+			['f(...a);\n', 'spread_element', 'element.spread'],
+			['new A();\n', 'new_expression', 'expression.call.construct'],
+			['a ?? b;\n', 'binary_expression', 'expression.binary.coalesce'],
+			['a ??= b;\n', 'augmented_assignment_expression', 'expression.assignment.compound.coalesce']
+		]
+	} as const;
+	for (const name of Object.keys(NEUTRAL) as (keyof typeof NEUTRAL)[]) {
+		it(`${name}: reads each renamed kind by its neutral path`, async () => {
+			const { at, find } = await surfaces(name);
+			for (const [source, kind, path] of NEUTRAL[name]) {
+				const [node, context] = find(source, kind);
+				expect(at(path)(node, context), `${kind} as ${path}`).toBe(true);
 			}
 		});
 	}

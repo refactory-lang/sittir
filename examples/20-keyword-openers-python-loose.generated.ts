@@ -59,7 +59,7 @@ export function rebuildKeywordOpenersPythonLoose() {
 			left: "w",
 			right: py.build.listComprehension({
 				body: "i",
-				comprehensionClauses: [py.build.forInClause({
+				clauses: [py.build.forInClause({
 					left: "i",
 					right: [py.build.parenthesizedExpression("a")],
 				}), py.build.parenthesizedExpression("i")],

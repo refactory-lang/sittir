@@ -13,6 +13,7 @@ const BINARY = 8;
 const PLUS = 9;
 const TRUE = 10;
 const FALSE = 11;
+const FIELD = 12;
 
 const SLOTS: QuerySlots = {
 	[FUNCTION]: [['name', { fields: ['name'], kinds: [] }]],
@@ -21,7 +22,8 @@ const SLOTS: QuerySlots = {
 		['definition', { fields: ['definition'], kinds: [] }]
 	],
 	[DECORATOR]: [['expression', { fields: [], kinds: ['identifier'] }]],
-	[BINARY]: [['operator', { fields: ['operator'], kinds: [] }]]
+	[BINARY]: [['operator', { fields: ['operator'], kinds: [] }]],
+	[FIELD]: [['accessor', { fields: ['accessor'], kinds: [] }, 'accessor']]
 };
 
 const TABLE: PortableTable = {
@@ -38,7 +40,8 @@ const TABLE: PortableTable = {
 		'literal.keyword.true': { ids: [TRUE], exact: true },
 		expression: { ids: [IDENTIFIER, BINARY], exact: false },
 		'expression.call': { ids: [IDENTIFIER], exact: true },
-		'expression.add': { ids: [BINARY], exact: false }
+		'expression.add': { ids: [BINARY], exact: false },
+		'declaration.property': { ids: [FIELD], exact: false }
 	},
 	fixedText: { [PLUS]: '+', [TRUE]: 'true', [FALSE]: 'false' },
 	entries: {
@@ -59,7 +62,8 @@ const TABLE: PortableTable = {
 		[IDENTIFIER]: [{ path: 'expression.call', within: [], test: [] }],
 		[TRUE]: [{ path: 'literal.keyword.true', within: [], test: [] }],
 		[FALSE]: [{ path: 'literal.keyword', within: [], test: [{ up: 0, via: [], plan: { op: 'eq', text: 'false', self: true } }] }],
-		[BINARY]: [{ path: 'expression.add', within: [], test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', ...SLOTS[BINARY]![0]![1] } }] }]
+		[BINARY]: [{ path: 'expression.add', within: [], test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', ...SLOTS[BINARY]![0]![1] } }] }],
+		[FIELD]: [{ path: 'declaration.property', within: [], test: [{ up: 0, via: [], plan: { op: 'present', ...SLOTS[FIELD]![0]![1] } }] }]
 	}
 };
 
@@ -129,6 +133,11 @@ describe('portableSurface is', () => {
 	it('reads a slot holding a fixed literal\'s kind id as the literal\'s text', () => {
 		expect(is.expression.add({ $type: BINARY, operator: () => PLUS })).toBe(true);
 		expect(is.expression.add({ $type: BINARY, operator: () => 99 })).toBe(false);
+	});
+
+	it('reads a boolean slot holding true as its keyword present, and false as absent', () => {
+		expect(is.declaration.property({ $type: FIELD, accessor: () => true })).toBe(true);
+		expect(is.declaration.property({ $type: FIELD, accessor: () => false })).toBe(false);
 	});
 
 	it('decides an exact path by its kind ids alone', () => {

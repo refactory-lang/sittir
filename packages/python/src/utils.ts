@@ -12,9 +12,11 @@ export const triviaFacts = Object.freeze({
 		'_dedent',
 		'_double_blankline',
 		'_indent',
+		'_layout',
 		'_newline',
 		'_space',
 		'_tab',
+		'_tight',
 		'comment',
 		'line_continuation',
 		'line_continuation_newline',
@@ -28,9 +30,10 @@ export const triviaFacts = Object.freeze({
 	listKinds: new Set<number>([
 		135, 180, 192, 193, 217, 242, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 270, 271, 275, 276, 289, 290
 	]),
+	layout: new Set<number>([106, 107, 115, 116, 117, 122, 123, 124, 125, 126]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:[\s\f\uFEFF\u2060\u200B]|\r?\n))+)$/u,
-		kindIdByText: Object.freeze({ ' ': 123, '\t': 124, '\n': 115, '\n\n': 125, '\n\n\n': 126 })
+		kindIdByText: Object.freeze({ '': 122, ' ': 123, '\t': 124, '\n': 115, '\n\n': 125, '\n\n\n': 126 })
 	})
 } satisfies TriviaFacts);
 
@@ -350,7 +353,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['consequence', { fields: ['consequence'], kinds: [] }]
 	],
 	156: [
-		['async', { fields: ['async'], kinds: [] }],
+		['async', { fields: ['async'], kinds: [] }, 'async'],
 		['left', { fields: ['left'], kinds: [] }],
 		['right', { fields: ['right'], kinds: [] }],
 		['body', { fields: ['body'], kinds: [] }],
@@ -368,19 +371,19 @@ export const querySlots: QuerySlots = Object.freeze({
 		['finallyClause', { fields: ['finally_clause'], kinds: [] }]
 	],
 	159: [
-		['group', { fields: ['group'], kinds: [] }],
+		['group', { fields: ['group'], kinds: [] }, '*'],
 		['exception', { fields: ['exception'], kinds: [] }],
 		['suite', { fields: [], kinds: ['suite_inline', 'suite_block', 'suite_empty'] }]
 	],
 	160: [['block', { fields: ['block'], kinds: [] }]],
 	161: [
-		['async', { fields: ['async'], kinds: [] }],
+		['async', { fields: ['async'], kinds: [] }, 'async'],
 		['withClause', { fields: ['with_clause'], kinds: [] }],
 		['body', { fields: ['body'], kinds: [] }]
 	],
 	163: [['value', { fields: ['value'], kinds: [] }]],
 	164: [
-		['async', { fields: ['async'], kinds: [] }],
+		['async', { fields: ['async'], kinds: [] }, 'async'],
 		['name', { fields: ['name'], kinds: [] }],
 		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
 		['parameters', { fields: ['parameters'], kinds: [] }],
@@ -467,7 +470,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['arguments', { fields: ['arguments'], kinds: [] }]
 	],
 	191: [
-		['sign', { fields: ['sign'], kinds: [] }],
+		['sign', { fields: ['sign'], kinds: [] }, '-'],
 		['real', { fields: ['real'], kinds: [] }],
 		['operator', { fields: ['operator'], kinds: [] }],
 		['imaginary', { fields: ['imaginary'], kinds: [] }]
@@ -696,27 +699,27 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	237: [
 		['body', { fields: ['body'], kinds: [] }],
-		['comprehensionClauses', { fields: [], kinds: ['comprehension_clauses'] }]
+		['clauses', { fields: ['clauses'], kinds: [] }]
 	],
 	238: [
 		['body', { fields: ['body'], kinds: [] }],
-		['comprehensionClauses', { fields: [], kinds: ['comprehension_clauses'] }]
+		['clauses', { fields: ['clauses'], kinds: [] }]
 	],
 	239: [
 		['body', { fields: ['body'], kinds: [] }],
-		['comprehensionClauses', { fields: [], kinds: ['comprehension_clauses'] }]
+		['clauses', { fields: ['clauses'], kinds: [] }]
 	],
 	240: [
 		['body', { fields: ['body'], kinds: [] }],
-		['comprehensionClauses', { fields: [], kinds: ['comprehension_clauses'] }]
+		['clauses', { fields: ['clauses'], kinds: [] }]
 	],
 	241: [['expression', { fields: ['expression'], kinds: [] }]],
 	242: [['items', { fields: ['item'], kinds: [] }]],
 	243: [
-		['async', { fields: ['async'], kinds: [] }],
+		['async', { fields: ['async'], kinds: [] }, 'async'],
 		['left', { fields: ['left'], kinds: [] }],
 		['rights', { fields: ['right'], kinds: [] }],
-		['comma', { fields: ['comma'], kinds: [] }]
+		['comma', { fields: ['comma'], kinds: [] }, ',']
 	],
 	244: [['condition', { fields: ['condition'], kinds: [] }]],
 	245: [
@@ -730,29 +733,10 @@ export const querySlots: QuerySlots = Object.freeze({
 		['contents', { fields: ['content'], kinds: [] }],
 		['stringEnd', { fields: ['string_end'], kinds: [] }]
 	],
-	248: [
-		[
-			'contents',
-			{
-				fields: [],
-				kinds: [
-					'escape_interpolation',
-					'escape_sequence_unicode_fixed',
-					'escape_sequence_unicode_wide',
-					'escape_sequence_hex',
-					'escape_sequence_octal',
-					'escape_sequence_line_break',
-					'escape_sequence_simple',
-					'escape_sequence_named',
-					'not_escape_sequence',
-					'string_fragment'
-				]
-			}
-		]
-	],
+	248: [['elements', { fields: ['elements'], kinds: [] }]],
 	249: [
 		['expression', { fields: ['expression'], kinds: [] }],
-		['debug', { fields: ['debug'], kinds: [] }],
+		['debug', { fields: ['debug'], kinds: [] }, '='],
 		['typeConversion', { fields: ['type_conversion'], kinds: [] }],
 		['formatSpecifier', { fields: ['format_specifier'], kinds: [] }]
 	],
@@ -829,19 +813,19 @@ export const querySlots: QuerySlots = Object.freeze({
 		['value', { fields: ['value'], kinds: [] }],
 		['alias', { fields: ['alias'], kinds: [] }]
 	],
-	273: [['listPatternCasePatterns', { fields: [], kinds: ['list_pattern_case_patterns'] }]],
-	274: [['listPatternCasePatterns', { fields: [], kinds: ['list_pattern_case_patterns'] }]],
+	273: [['elements', { fields: ['elements'], kinds: [] }]],
+	274: [['elements', { fields: ['elements'], kinds: [] }]],
 	275: [['items', { fields: ['item'], kinds: [] }]],
 	276: [['items', { fields: ['item'], kinds: [] }]],
 	277: [
-		['chevron', { fields: [], kinds: ['chevron'] }],
+		['chevron', { fields: ['chevron'], kinds: [] }],
 		['printChevronArguments', { fields: [], kinds: ['print_chevron_arguments', 'comma'] }]
 	],
 	278: [['printArguments', { fields: [], kinds: ['print_arguments'] }]],
 	280: [['importList', { fields: [], kinds: ['import_list'] }]],
 	281: [['contents', { fields: ['content'], kinds: [] }]],
 	283: [
-		['sign', { fields: ['sign'], kinds: [] }],
+		['sign', { fields: ['sign'], kinds: [] }, '-'],
 		['value', { fields: ['value'], kinds: [] }]
 	],
 	284: [['values', { fields: ['value'], kinds: [] }]],

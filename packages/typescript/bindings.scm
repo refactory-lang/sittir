@@ -2,8 +2,8 @@
 ; How `sittir tool bindings-inventory` reads a pattern: docs/glossary/packages-tools-src-inventory.md
 ; (`readBindings` for the captures, `derive` for the members a claim takes from its slots).
 
-; ── module ─────────────────────────────────────────────────────────────────────
-(program) @module
+; ── file ───────────────────────────────────────────────────────────────────────
+(program) @file
 
 ; ── declaration ────────────────────────────────────────────────────────────────
 (function_declaration) @declaration.function
@@ -121,7 +121,7 @@
 (statement_block) @statement.block
 (if_statement) @statement.if
 (for_statement) @statement.loop.counted
-(for_in_statement) @statement.loop.for
+(for_in_statement) @statement.loop.for_each
 (for_in_statement await: _ @async)
 (while_statement) @statement.loop.while
 (do_statement) @statement.loop.do_while
@@ -141,7 +141,7 @@
 (export_statement_default_declaration (export_statement_default_declaration_default_kw (declaration) @declaration))
 (export_statement_default_declaration (export_statement_default_declaration_default_kw (export_statement_default_declaration_default_kw_value value: (_) @value)))
 (export_statement_equals_export expression: (_) @value)
-((export_statement_default_from type: _ @dropped) (#set! reason "a type-only export reads as statement.export; the vocabulary declares no fact for it"))
+(export_statement_default_from type: _ @typeOnly)
 (export_statement_default_from (export_statement_default_from_clause_from (export_clause) @exportClause))
 (export_statement_default_from (export_statement_default_from_ns_from (namespace_export) @exportClause))
 (export_statement_default_from (export_statement_default_from_clause_from source: (_) @source))
@@ -158,6 +158,8 @@
 ; ── clause ─────────────────────────────────────────────────────────────────────
 (else_clause) @clause.else
 (catch_clause) @clause.catch
+(catch_clause (catch_clause_group parameter: (_) @name))
+(catch_clause (catch_clause_group type: (_) @type))
 (finally_clause) @clause.finally
 (switch_case) @clause.case.switch
 (switch_default) @clause.case.default
@@ -190,7 +192,7 @@
 ; none: every TypeScript argument is an expression or a spread element
 
 ; ── element (pieces of a composite expression that are not expressions) ────────
-(spread_element) @element.splat
+(spread_element) @element.spread
 (pair) @element.pair
 (pair key: (computed_property_name) @key @computed)
 (tuple_parameter) @element.tuple.member
@@ -202,7 +204,7 @@
 (call_expression_member "?." @optionalChain) @expression.call
 (call_expression_call function: (member_expression) @function) @expression.call.member
 (call_expression_template_call) @expression.call.template
-(new_expression constructor: (_)? @function) @expression.call.new
+(new_expression constructor: (_)? @function) @expression.call.construct
 (binary_expression) @expression.binary
 (binary_expression operator: "+") @expression.binary.arithmetic.add
 (binary_expression operator: "-") @expression.binary.arithmetic.subtract
@@ -226,7 +228,7 @@
 (binary_expression operator: ">>>") @expression.binary.shift.right_unsigned
 (binary_expression operator: "&&") @expression.binary.logical.and
 (binary_expression operator: "||") @expression.binary.logical.or
-(binary_expression operator: "??") @expression.binary.nullish
+(binary_expression operator: "??") @expression.binary.coalesce
 (binary_expression (binary_expression_in left: (_) @left right: (_) @right)) @expression.binary.membership.in
 (binary_expression operator: "instanceof") @expression.binary.membership.instanceof
 (unary_expression) @expression.unary
@@ -258,7 +260,7 @@
 (augmented_assignment_expression operator: ">>>=") @expression.assignment.compound.shift_right_unsigned
 (augmented_assignment_expression operator: "&&=") @expression.assignment.compound.and
 (augmented_assignment_expression operator: "||=") @expression.assignment.compound.or
-(augmented_assignment_expression operator: "??=") @expression.assignment.compound.nullish
+(augmented_assignment_expression operator: "??=") @expression.assignment.compound.coalesce
 (assignment_expression) @expression.assignment
 (assignment_expression using: _ @disposable)
 (ternary_expression) @expression.conditional

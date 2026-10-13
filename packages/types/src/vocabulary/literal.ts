@@ -135,13 +135,13 @@ export namespace Literal {
 			readonly content?: G['slots']['literal.string.escape']['content'];
 			// t only
 		}
+		export interface Multiline<G extends GrammarContext<G>> extends SubKindOf<V.Literal.String<G>> {
+			// claimed by p
+			readonly $kind: 'literal.string.multiline';
+		}
 		export interface Text<G extends GrammarContext<G>> extends SubKindOf<V.Literal.String<G>> {
 			// claimed by prt
 			readonly $kind: 'literal.string.text';
-		}
-		export interface Triple<G extends GrammarContext<G>> extends SubKindOf<V.Literal.String<G>> {
-			// claimed by p
-			readonly $kind: 'literal.string.triple';
 		}
 	}
 }

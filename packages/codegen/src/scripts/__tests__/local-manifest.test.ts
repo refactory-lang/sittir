@@ -137,7 +137,7 @@ describe('a hand edit to a generated file', () => {
 
 describe('bindings.scm as a source', () => {
 	it('changes the source of a grammar when its bindings.scm is deleted', async () => {
-		write('packages/python/bindings.scm', '(module) @module');
+		write('packages/python/bindings.scm', '(module) @file');
 		write(GRAMMAR_SOURCE, 'grammar two');
 		regenerate();
 		commitAll('bound');
@@ -152,7 +152,7 @@ describe('the vocabulary as a source', () => {
 	const VOCABULARY = 'packages/types/src/vocabulary/declaration.ts';
 
 	it('changes the source of a grammar with bindings when a vocabulary file is edited', () => {
-		write('packages/python/bindings.scm', '(module) @module');
+		write('packages/python/bindings.scm', '(module) @file');
 		write(VOCABULARY, 'vocabulary one');
 		regenerate();
 		commitAll('bound');
@@ -166,7 +166,7 @@ describe('the vocabulary as a source', () => {
 	});
 
 	it('changes the source of a grammar with bindings when a vocabulary file is deleted', async () => {
-		write('packages/python/bindings.scm', '(module) @module');
+		write('packages/python/bindings.scm', '(module) @file');
 		write(VOCABULARY, 'vocabulary one');
 		write('packages/types/src/vocabulary/statement.ts', 'statement one');
 		regenerate();
