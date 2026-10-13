@@ -158,7 +158,11 @@ Whether a predicate compares one capture's text (`eq`, `match`) rather than its 
 
 ### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::comparisonOf`
 
-The plan a predicate compares with, given the subject it reads, or the reason it cannot compile: `eq` and `match` of one capture against one text, and `kind-eq` and `not-kind-eq` of one capture against kind names, which become an `is` of the kinds' ids (`TypeOf`), negated for `not-kind-eq`. A kind name with no id is refused.
+The plan a predicate compares with, given the subject it reads, or the reason it cannot compile: `eq` and `match` of one capture against one text, and `kind-eq` and `not-kind-eq` of one capture against kind names, which become an `is` of the ids of every kind a node of those kinds reads as (`readAs`), negated for `not-kind-eq`. A kind with no id is refused.
+
+### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::readAs`
+
+The kinds a node of a kind can carry as its type: the kind itself and, for an enum kind, each member's kind, from the model's stamped enum members. The typed reader holds an enum node as its member's kind (a `private` modifier reads as `private_keyword`, not `accessibility_modifier`), so a type test on the enum kind admits every member. A branch's `variantOf` parts are not members: a variant of a branch is a part of its owner.
 
 ### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::PlanOn`
 

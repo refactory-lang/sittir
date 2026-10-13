@@ -45,7 +45,9 @@ const MODEL = new Map(
 		node('annotated', [slot('type', ['type_identifier', 'identifier'])]),
 		node('cmp', [slot('left', ['identifier']), slot('ops', ['cmp_op'], { multiple: true })]),
 		node('cmp_op', [slot('operators', [], { terminals: ['==', '<'] }), slot('right', ['identifier'])]),
-		node('field_def', [slot('accessor', [], { required: false, storage: 'boolean', terminals: ['accessor'] }), slot('name', ['identifier'])])
+		node('field_def', [slot('accessor', [], { required: false, storage: 'boolean', terminals: ['accessor'] }), slot('name', ['identifier'])]),
+		node('member', [slot('modifier', ['modifier'], { required: false })]),
+		{ ...node('modifier'), modelType: 'enum', enumMembers: [{ kind: 'private_keyword', text: 'private' }, { kind: 'public_keyword', text: 'public' }] }
 	].map((n) => [n.kind, n])
 );
 
@@ -62,14 +64,15 @@ const ROUTES: Readonly<Record<string, SlotRoutes>> = {
 	'annotated.type': { fields: ['type'], kinds: [] },
 	'cmp.ops': { fields: [], kinds: ['cmp_op'] },
 	'cmp_op.operators': { fields: ['operators'], kinds: [] },
-	'field_def.accessor': { fields: ['accessor'], kinds: [] }
+	'field_def.accessor': { fields: ['accessor'], kinds: [] },
+	'member.modifier': { fields: ['modifier'], kinds: [] }
 };
 
 const PRESENCE: Readonly<Record<string, string>> = { 'field_def.accessor': 'accessor' };
 
 const presenceKeywordOf = (owner: string, name: string): string | undefined => PRESENCE[`${owner}.${name}`];
 
-const TYPES: Readonly<Record<string, number>> = { param: 30, self: 31, plain: 32, type_identifier: 33, cmp_op: 34 };
+const TYPES: Readonly<Record<string, number>> = { param: 30, self: 31, plain: 32, type_identifier: 33, cmp_op: 34, modifier: 35, private_keyword: 36, public_keyword: 37 };
 
 const testsOf = async (bindings: string, kind: string) => {
 	const input: GrammarInput = { grammar: 'g', bindings: await readBindings(bindings), model: MODEL, textTokens: new Set(), layoutSlots: [] };
@@ -194,6 +197,18 @@ describe('readTestOf', () => {
 		const [entry] = resolveRoutes(input).readEntries.get('opt') ?? [];
 		expect(readTestOf(entry!, model, (owner, name) => (owner === 'opt' ? ROUTES['param.element'] : ROUTES[`${owner}.${name}`]), presenceKeywordOf, (kind) => TYPES[kind])).toEqual([
 			{ up: 0, via: [], plan: { op: 'not', of: { op: 'is', types: [32], ...ROUTES['param.element'] } } }
+		]);
+	});
+
+	it('tests an enum kind\'s child by the kind and every member kind, since the reader holds the node as its member', async () => {
+		expect(await testsOf('(member (modifier "private")) @declaration.member.private', 'member')).toEqual([
+			[
+				'declaration.member.private',
+				[
+					{ up: 0, via: [], plan: { op: 'is', types: [35, 36, 37], ...ROUTES['member.modifier'] } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', ...ROUTES['member.modifier'] } }
+				]
+			]
 		]);
 	});
 
