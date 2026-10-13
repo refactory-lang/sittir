@@ -1,6 +1,10 @@
 import { isPreference } from './primitives/preference.ts';
 import { isPrecWrapper } from '../types/runtime-shapes.ts';
-import { isParserHiddenName } from './rule-patterns.ts';
+import type { AnyRule, Rule } from '../types/rule.ts';
+import type { RuntimeRule } from '../types/runtime-shapes.ts';
+import { undisplayedKindAddress } from './arm-names.ts';
+import { fieldedHeadListOf, isParserHiddenName, optionalContentOf, rulesEqual, type RuleListEntry, type SymbolSource } from './rule-patterns.ts';
+import { predictedSymbolSourceOf } from './symbol-table.ts';
 import { LABELS_KEY } from './wire/options-block.ts';
 import { REPARSE_HOST_PRIORITY } from './wire/reparse-hosts.ts';
 import type { PatchesConfig } from './wire/wire.ts';
@@ -470,12 +474,27 @@ function fieldReferences(rule: unknown, symbol: string, field: string, inField =
 	return out;
 }
 
-export function splitGrammar(grammar: GrammarRecord, splits: readonly Split[]): GrammarRecord {
-	const rules: GrammarRecord = { ...(isRecord(grammar.rules) ? grammar.rules : {}) };
+const listEntryName = (entry: unknown): string | undefined => (typeof entry === 'string' ? entry : isRecord(entry) && typeof entry.name === 'string' ? entry.name : undefined);
+
+interface MintLists {
+	readonly supertypes: unknown[];
+	readonly inline: unknown[];
+	readonly enlist: (base: string, name: string) => void;
+}
+
+function mintLists(grammar: GrammarRecord): MintLists {
 	const supertypes = (Array.isArray(grammar.supertypes) ? grammar.supertypes : []).slice();
 	const inline = (Array.isArray(grammar.inline) ? grammar.inline : []).slice();
-	const nameOf = (entry: unknown): string | undefined => (typeof entry === 'string' ? entry : isRecord(entry) && typeof entry.name === 'string' ? entry.name : undefined);
-	const listed = (list: unknown[], name: string): boolean => list.some((entry) => nameOf(entry) === name);
+	const listed = (list: unknown[], name: string): boolean => list.some((entry) => listEntryName(entry) === name);
+	const enlist = (base: string, name: string): void => {
+		for (const list of [supertypes, inline]) if (listed(list, base) && !listed(list, name)) list.push(typeof list[0] === 'string' ? name : { type: 'SYMBOL', name });
+	};
+	return { supertypes, inline, enlist };
+}
+
+export function splitGrammar(grammar: GrammarRecord, splits: readonly Split[]): GrammarRecord {
+	const rules: GrammarRecord = { ...(isRecord(grammar.rules) ? grammar.rules : {}) };
+	const { supertypes, inline, enlist } = mintLists(grammar);
 	const splitFrom: Record<string, string> = {};
 	const reaches = (from: string, target: string, seen: Set<string> = new Set()): boolean => {
 		if (from === target) return true;
@@ -487,8 +506,7 @@ export function splitGrammar(grammar: GrammarRecord, splits: readonly Split[]): 
 		if (name in rules && splitFrom[name] !== base) throw new Error(`bind: split '${base}' → '${name}', which the grammar already names`);
 		rules[name] = body;
 		splitFrom[name] = base;
-		if (listed(supertypes, base) && !listed(supertypes, name)) supertypes.push(typeof supertypes[0] === 'string' ? name : { type: 'SYMBOL', name });
-		if (listed(inline, base) && !listed(inline, name)) inline.push(typeof inline[0] === 'string' ? name : { type: 'SYMBOL', name });
+		enlist(base, name);
 		return name;
 	};
 	const visiting = new Set<string>();
@@ -535,6 +553,261 @@ export function splitGrammar(grammar: GrammarRecord, splits: readonly Split[]): 
 	carryHiddenFacts(grammar, out, (name) => name);
 	out.splitFrom = { ...(isRecord(grammar.splitFrom) ? grammar.splitFrom : {}), ...splitFrom };
 	return out;
+}
+
+export class LeadRefusal extends Error {
+	readonly reason: string;
+	constructor(reason: string, lead?: Lead) {
+		super(lead === undefined ? reason : `bind: lead '${lead.list}.${lead.field}': ${reason}`);
+		this.reason = reason;
+	}
+}
+
+interface LeadSide {
+	readonly lead: boolean;
+	readonly suffix: string;
+}
+
+interface LeadEdit {
+	readonly rules: GrammarRecord;
+	readonly supertypes: ReadonlySet<string>;
+	readonly referencers: ReadonlyMap<string, ReadonlySet<string>>;
+	readonly mint: (base: string, side: LeadSide, body: unknown) => string;
+}
+
+function rewrap(original: unknown, inner: unknown): unknown {
+	return isRecord(original) && isPrecWrapper(original as { type: string }) ? { ...original, content: rewrap(original.content, inner) } : inner;
+}
+
+function refRule(ref: unknown): string | undefined {
+	const node = unprecedenced(ref);
+	if (!isRecord(node)) return undefined;
+	if (node.type === 'SYMBOL' && typeof node.name === 'string') return node.name;
+	return node.type === 'ALIAS' ? refRule(node.content) : undefined;
+}
+
+function refKind(ref: unknown): string | undefined {
+	const node = unprecedenced(ref);
+	if (!isRecord(node)) return undefined;
+	if (node.type === 'ALIAS' && node.named === true && typeof node.value === 'string') return node.value;
+	return node.type === 'SYMBOL' && typeof node.name === 'string' && !isParserHiddenName(node.name) ? node.name : undefined;
+}
+
+const aliasOf = (name: string, value: string): GrammarRecord => ({ type: 'ALIAS', content: { type: 'SYMBOL', name }, named: true, value });
+
+const exclusiveTo = (edit: LeadEdit, name: string, exclusive: boolean): boolean => exclusive && (edit.referencers.get(name)?.size ?? 0) <= 1;
+
+const isDescended = (edit: LeadEdit, name: string): boolean => isParserHiddenName(name) && !edit.supertypes.has(name) && name in edit.rules;
+
+function narrowRef(edit: LeadEdit, ref: unknown, admits: readonly LeadMatch[], side: LeadSide, exclusive: boolean): unknown {
+	const kind = refKind(ref);
+	if (kind !== undefined) {
+		const matches = admits.filter((m) => m.kind === kind);
+		if (matches.length > 1) throw new LeadRefusal(`it admits '${kind}' twice`);
+		const [admitted] = matches;
+		if (admitted === undefined) return side.lead ? undefined : ref;
+		const name = refRule(ref)!;
+		if (admitted.within === undefined) return side.lead ? (admitted.as === undefined ? ref : aliasOf(name, admitted.as)) : undefined;
+		const inPlace = !side.lead && (!isParserHiddenName(name) || exclusiveTo(edit, name, exclusive));
+		const body = narrowWithin(edit, kind, edit.rules[name], admitted.within, side, inPlace);
+		if (side.lead) return aliasOf(edit.mint(name, side, body), admitted.as ?? `${kind}_${side.suffix}`);
+		if (inPlace) {
+			edit.rules[name] = body;
+			return ref;
+		}
+		const clone = edit.mint(name, side, body);
+		return replaceSymbols(ref, (ref) => (ref === name ? clone : ref));
+	}
+	const node = unprecedenced(ref);
+	if (isRecord(node) && node.type === 'CHOICE' && Array.isArray(node.members)) {
+		const members: readonly unknown[] = node.members;
+		const arms = members.map((arm) => narrowRef(edit, arm, admits, side, exclusive)).filter((arm) => arm !== undefined);
+		if (arms.length === 0) return undefined;
+		if (arms.length === members.length && arms.every((arm, i) => arm === members[i])) return ref;
+		return arms.length === 1 ? arms[0] : rewrap(ref, { ...node, members: arms });
+	}
+	const name = refRule(ref);
+	if (isRecord(node) && node.type === 'SYMBOL' && name !== undefined && isDescended(edit, name)) {
+		const inPlace = !side.lead && exclusiveTo(edit, name, exclusive);
+		const narrowed = narrowRef(edit, edit.rules[name], admits, side, inPlace);
+		if (narrowed === undefined || narrowed === edit.rules[name]) return narrowed === undefined ? undefined : ref;
+		if (refRule(narrowed) !== undefined) return narrowed;
+		if (inPlace) {
+			edit.rules[name] = narrowed;
+			return ref;
+		}
+		return rewrap(ref, { ...node, name: edit.mint(name, side, narrowed) });
+	}
+	return side.lead ? undefined : ref;
+}
+
+function narrowWithin(edit: LeadEdit, kind: string, body: unknown, within: LeadWithin, side: LeadSide, exclusive: boolean): unknown {
+	const admitted = new Set(within.admits.map((m) => m.kind));
+	const position = within.field === null ? 'an unfielded child' : `field '${within.field}'`;
+	const isTarget = (node: GrammarRecord): boolean =>
+		within.field === null
+			? node.type === 'CHOICE' && Array.isArray(node.members) && node.members.some((arm) => admitted.has(refKind(arm) ?? ''))
+			: node.type === 'FIELD' && node.name === within.field;
+	const holds = (node: unknown, seen: Set<string> = new Set()): boolean => {
+		if (Array.isArray(node)) return node.some((n) => holds(n, seen));
+		if (!isRecord(node)) return false;
+		if (isTarget(node)) return true;
+		if (OPAQUE_RULES.has(node.type) || node.type === 'ALIAS') return false;
+		if (node.type === 'SYMBOL') {
+			const name = node.name as string;
+			if (!isDescended(edit, name) || seen.has(name)) return false;
+			seen.add(name);
+			return holds(edit.rules[name], seen);
+		}
+		return holds(node.members, seen) || holds(node.content, seen);
+	};
+	if (!holds(body)) throw new LeadRefusal(`the restriction of ${position} names no position in '${kind}'`);
+	const visit = (node: unknown): unknown => {
+		if (Array.isArray(node)) {
+			const out = node.map(visit);
+			return out.every((n, i) => n === node[i]) ? node : out;
+		}
+		if (!isRecord(node)) return node;
+		if (isTarget(node)) {
+			const narrowed = narrowRef(edit, node.type === 'FIELD' ? node.content : node, within.admits, side, exclusive);
+			if (narrowed === undefined) throw new LeadRefusal(`it leaves ${position} of '${kind}' empty`);
+			return node.type !== 'FIELD' || narrowed === node.content ? narrowed : { ...node, content: narrowed };
+		}
+		if (OPAQUE_RULES.has(node.type) || node.type === 'ALIAS') return node;
+		if (node.type === 'SYMBOL') {
+			const name = node.name as string;
+			if (!holds(node)) return node;
+			const inPlace = !side.lead && exclusiveTo(edit, name, exclusive);
+			const inner = narrowWithin(edit, kind, edit.rules[name], within, side, inPlace);
+			if (inner === edit.rules[name]) return node;
+			if (inPlace) {
+				edit.rules[name] = inner;
+				return node;
+			}
+			return { ...node, name: edit.mint(name, side, inner) };
+		}
+		const members = node.members === undefined ? undefined : visit(node.members);
+		const content = node.content === undefined ? undefined : visit(node.content);
+		if (members === node.members && content === node.content) return node;
+		return { ...node, ...(members === undefined ? {} : { members }), ...(content === undefined ? {} : { content }) };
+	};
+	return visit(body);
+}
+
+function optionalSpelling(rule: unknown): (content: unknown) => GrammarRecord {
+	const find = (node: unknown): GrammarRecord | undefined => {
+		if (Array.isArray(node)) return node.map(find).find((found) => found !== undefined);
+		if (!isRecord(node)) return undefined;
+		if (optionalContentOf(node as { readonly type: string }) !== undefined) return node;
+		return find(node.members) ?? find(node.content);
+	};
+	return find(rule)?.type === 'OPTIONAL' ? (content) => ({ type: 'OPTIONAL', content }) : (content) => ({ type: 'CHOICE', members: [content, { type: 'BLANK' }] });
+}
+
+function replaceItems(rule: unknown, item: string, from: unknown, to: unknown): unknown {
+	if (Array.isArray(rule)) return rule.map((r) => replaceItems(r, item, from, to));
+	if (!isRecord(rule)) return rule;
+	if (rule.type === 'FIELD' && rule.name === item && rulesEqual(rule.content as RuntimeRule, from as RuntimeRule)) return { ...rule, content: to };
+	const out: GrammarRecord = {};
+	for (const [key, value] of Object.entries(rule)) out[key] = key === 'members' || key === 'content' ? replaceItems(value, item, from, to) : value;
+	return out;
+}
+
+function listSites(rule: unknown, list: string, owner: string, out: GrammarRecord[] = []): GrammarRecord[] {
+	if (Array.isArray(rule)) for (const r of rule) listSites(r, list, owner, out);
+	else if (isRecord(rule)) {
+		if (rule.type === 'FIELD' && refRule(rule.content) === list) out.push(rule);
+		else if (rule.type === 'SYMBOL' && rule.name === list) throw new LeadRefusal(`'${owner}' holds the list other than as a field's content`);
+		else {
+			listSites(rule.members, list, owner, out);
+			listSites(rule.content, list, owner, out);
+		}
+	}
+	return out;
+}
+
+function withReceiverForm(rule: unknown, list: string, receiverForm: GrammarRecord): unknown {
+	if (Array.isArray(rule)) return rule.map((r) => withReceiverForm(r, list, receiverForm));
+	if (!isRecord(rule)) return rule;
+	if (rule.type === 'FIELD' && refRule(rule.content) === list) return { ...rule, content: { type: 'CHOICE', members: [rule.content, receiverForm] } };
+	const out: GrammarRecord = {};
+	for (const [key, value] of Object.entries(rule)) out[key] = key === 'members' || key === 'content' ? withReceiverForm(value, list, receiverForm) : value;
+	return out;
+}
+
+function leadSymbols(grammar: GrammarRecord, rules: GrammarRecord, supertypes: ReadonlySet<string>): SymbolSource {
+	const entries = (key: string): RuleListEntry[] => (Array.isArray(grammar[key]) ? (grammar[key] as RuleListEntry[]) : []);
+	return predictedSymbolSourceOf({
+		rules: rules as Record<string, AnyRule>,
+		extras: entries('extras'),
+		externals: entries('externals'),
+		supertypes: [...supertypes],
+		inline: entries('inline').flatMap((entry) => listEntryName(entry) ?? []),
+		word: typeof grammar.word === 'string' ? grammar.word : null
+	});
+}
+
+export function leadGrammar(grammar: GrammarRecord, leads: readonly Lead[]): GrammarRecord {
+	if (leads.length === 0) return grammar;
+	const rules: GrammarRecord = { ...(isRecord(grammar.rules) ? grammar.rules : {}) };
+	const { supertypes, inline, enlist } = mintLists(grammar);
+	const leadFrom: Record<string, string> = {};
+	const mint = (base: string, side: LeadSide, body: unknown): string => {
+		const name = `_${undisplayedKindAddress(base)}_${side.suffix}`;
+		if (name in rules) {
+			if (leadFrom[name] !== base) throw new LeadRefusal(`'${base}' mints '${name}', which the grammar already names`);
+			if (!rulesEqual(rules[name] as RuntimeRule, body as RuntimeRule)) throw new LeadRefusal(`'${base}' narrows two ways to '${name}'`);
+			return name;
+		}
+		rules[name] = body;
+		leadFrom[name] = base;
+		enlist(base, name);
+		return name;
+	};
+	const stop = supertypesOf(grammar);
+	const edit = ({ list, item, field, admits }: Lead): void => {
+		if (!(list in rules)) throw new LeadRefusal('the list is no rule of the grammar');
+		const shape = fieldedHeadListOf(rules[list] as Rule<'normalize'>, leadSymbols(grammar, rules, stop));
+		if (shape === null || shape.elementName !== item) throw new LeadRefusal(`the list is no separated list of field '${item}'`);
+		const element = shape.element as unknown as GrammarRecord;
+		const referencers = new Map<string, Set<string>>();
+		for (const [name, body] of Object.entries(rules)) for (const ref of symbolNames(body)) (referencers.get(ref) ?? referencers.set(ref, new Set()).get(ref)!).add(name);
+		const state: LeadEdit = { rules, supertypes: stop, referencers, mint };
+		const head = narrowRef(state, element.content, admits, { lead: true, suffix: field }, false);
+		if (head === undefined) throw new LeadRefusal('it admits no item of the list');
+		const rest = narrowRef(state, element.content, admits, { lead: false, suffix: item }, true);
+		if (rest === undefined) throw new LeadRefusal('it leaves the list no item');
+		if (rest !== element.content) rules[list] = replaceItems(rules[list], item, element.content, rest);
+		const owners = Object.keys(rules).filter((name) => name !== list && leadFrom[name] === undefined);
+		const sites = owners.flatMap((owner) => listSites(rules[owner], list, owner));
+		const fields = [...new Set(sites.map((site) => site.name as string))].sort();
+		if (fields.length !== 1) throw new LeadRefusal(fields.length === 0 ? 'the list sits in no field of another rule' : `the list sits in fields ${fields.join(', ')}`);
+		const optional = optionalSpelling(rules[list]);
+		const body = { type: 'SEQ', members: [{ ...element, name: field, content: head }, optional({ type: 'SEQ', members: [shape.separatorRule, optional(sites[0])] })] };
+		const receiverForm = aliasOf(mint(list, { lead: true, suffix: field }, body), `${list}_${field}`);
+		for (const owner of owners) rules[owner] = withReceiverForm(rules[owner], list, receiverForm);
+	};
+	for (const l of leads) {
+		try {
+			edit(l);
+		} catch (error) {
+			throw error instanceof LeadRefusal ? new LeadRefusal(error.reason, l) : error;
+		}
+	}
+	const out: GrammarRecord = { ...grammar, rules, supertypes, inline };
+	carryHiddenFacts(grammar, out, (name) => name);
+	out.leadFrom = { ...(isRecord(grammar.leadFrom) ? grammar.leadFrom : {}), ...leadFrom };
+	return out;
+}
+
+export function leadIssue(grammar: GrammarRecord, lead: Lead): string | undefined {
+	try {
+		leadGrammar(grammar, [lead]);
+		return undefined;
+	} catch (error) {
+		if (error instanceof LeadRefusal) return error.reason;
+		throw error;
+	}
 }
 
 export function aliasTargetIssue(grammar: GrammarRecord, from: string, to: string): string | undefined {

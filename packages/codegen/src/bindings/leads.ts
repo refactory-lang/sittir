@@ -1,9 +1,8 @@
 import type { RawGrammar } from '../compiler/types.ts';
-import { lead, type Lead, type LeadMatch } from '../dsl/bind.ts';
-import { isParserHiddenName, separatedListBodyInfo, symbolFactsOf, unwrapPrec } from '../dsl/rule-patterns.ts';
+import { lead, leadIssue, type GrammarRecord, type Lead, type LeadMatch } from '../dsl/bind.ts';
+import { fieldedHeadListOf, isParserHiddenName, symbolFactsOf } from '../dsl/rule-patterns.ts';
 import { predictedEntriesOf, renameAwareSymbolSource } from '../dsl/symbol-table.ts';
 import type { Rule } from '../types/rule.ts';
-import { isFieldType } from '../types/runtime-shapes.ts';
 import type { GrammarDiagnostic } from '../types/diagnostics.ts';
 import type { BindingFacts, ClaimFact } from './facts.ts';
 import { boundKindName } from './names.ts';
@@ -76,8 +75,7 @@ export function deriveLeads(input: { readonly file: string; readonly base: RawGr
 	};
 	const itemOf = (list: string): string | undefined => {
 		const rule = base.rules[list];
-		const info = rule === undefined ? null : separatedListBodyInfo(unwrapPrec(rule) as Rule<'normalize'>, symbols);
-		return info?.form === 'head' && isFieldType(info.element.type) && info.elementName !== null ? info.elementName : undefined;
+		return rule === undefined ? undefined : fieldedHeadListOf(rule as Rule<'normalize'>, symbols)?.elementName;
 	};
 	const byList = new Map<string, LeadClaim[]>();
 	for (const member of facts.members) {
@@ -108,7 +106,10 @@ export function deriveLeads(input: { readonly file: string; readonly base: RawGr
 			refuse(list, lines, named.refused);
 			continue;
 		}
-		leads.push(lead(list, first.item, first.field, named.match));
+		const derived = lead(list, first.item, first.field, named.match);
+		const issue = leadIssue(base as unknown as GrammarRecord, derived);
+		if (issue === undefined) leads.push(derived);
+		else refuse(list, lines, issue);
 	}
 	return { leads, diagnostics };
 }
