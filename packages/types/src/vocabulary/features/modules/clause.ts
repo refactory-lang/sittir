@@ -17,8 +17,13 @@ export namespace Clause {
 			// claimed by t
 			readonly $kind: 'clause.export.specifier';
 			readonly alias?: G['slots']['clause.export.specifier']['alias'];
-			readonly exportKind?: G['slots']['clause.export.specifier']['exportKind'];
 			readonly name: G['slots']['clause.export.specifier']['name'];
+		}
+		export namespace Specifier {
+			export interface Typeof<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Export.Specifier<G>> {
+				// claimed by t
+				readonly $kind: 'clause.export.specifier.typeof';
+			}
 		}
 	}
 	export interface Import<G extends GrammarContext<G>> extends SubKindOf<V.Clause<G>> {
@@ -92,8 +97,13 @@ export namespace Clause {
 			// claimed by t
 			readonly $kind: 'clause.import.specifier';
 			readonly alias?: G['slots']['clause.import.specifier']['alias'];
-			readonly importKind?: G['slots']['clause.import.specifier']['importKind'];
 			readonly name: G['slots']['clause.import.specifier']['name'];
+		}
+		export namespace Specifier {
+			export interface Typeof<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Import.Specifier<G>> {
+				// claimed by t
+				readonly $kind: 'clause.import.specifier.typeof';
+			}
 		}
 		export interface Wildcard<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Import<G>> {
 			// claimed by pr

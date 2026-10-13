@@ -156,11 +156,22 @@ declare module './clause.ts' {
 		interface Export<G extends GrammarContext<G>> extends modules.Clause.Export<G> {}
 		namespace Export {
 			interface Namespace<G extends GrammarContext<G>> extends modules.Clause.Export.Namespace<G> {}
-			interface Specifier<G extends GrammarContext<G>> extends modules.Clause.Export.Specifier<G> {}
+			interface Specifier<G extends GrammarContext<G>> extends modules.Clause.Export.Specifier<G> {
+				readonly typeOnly?: gate.In<
+					G,
+					features.TypeOnlyImports,
+					typeOnlyImports.Clause.Export.Specifier<G>['typeOnly']
+				>;
+			}
+			namespace Specifier {
+				interface Typeof<G extends GrammarContext<G>> extends modules.Clause.Export.Specifier.Typeof<G> {}
+				type Any<G extends GrammarContext<G>> = V.Clause.Export.Specifier<G> | V.Clause.Export.Specifier.Typeof<G>;
+			}
 			type Any<G extends GrammarContext<G>> =
 				| V.Clause.Export<G>
 				| V.Clause.Export.Namespace<G>
-				| V.Clause.Export.Specifier<G>;
+				| V.Clause.Export.Specifier<G>
+				| V.Clause.Export.Specifier.Typeof<G>;
 		}
 		interface Extends<G extends GrammarContext<G>> extends singleInheritance.Clause.Extends<G> {}
 		namespace Extends {
@@ -187,7 +198,17 @@ declare module './clause.ts' {
 				type Any<G extends GrammarContext<G>> = V.Clause.Import.Relative<G> | V.Clause.Import.Relative.Prefix<G>;
 			}
 			interface Require<G extends GrammarContext<G>> extends modules.Clause.Import.Require<G> {}
-			interface Specifier<G extends GrammarContext<G>> extends modules.Clause.Import.Specifier<G> {}
+			interface Specifier<G extends GrammarContext<G>> extends modules.Clause.Import.Specifier<G> {
+				readonly typeOnly?: gate.In<
+					G,
+					features.TypeOnlyImports,
+					typeOnlyImports.Clause.Import.Specifier<G>['typeOnly']
+				>;
+			}
+			namespace Specifier {
+				interface Typeof<G extends GrammarContext<G>> extends modules.Clause.Import.Specifier.Typeof<G> {}
+				type Any<G extends GrammarContext<G>> = V.Clause.Import.Specifier<G> | V.Clause.Import.Specifier.Typeof<G>;
+			}
 			interface Wildcard<G extends GrammarContext<G>> extends modules.Clause.Import.Wildcard<G> {}
 			type Any<G extends GrammarContext<G>> =
 				| V.Clause.Import<G>
@@ -202,6 +223,7 @@ declare module './clause.ts' {
 				| V.Clause.Import.Relative.Prefix<G>
 				| V.Clause.Import.Require<G>
 				| V.Clause.Import.Specifier<G>
+				| V.Clause.Import.Specifier.Typeof<G>
 				| V.Clause.Import.Wildcard<G>;
 		}
 		interface Let<G extends GrammarContext<G>> extends matchExpressions.Clause.Let<G> {}
@@ -266,6 +288,7 @@ declare module './clause.ts' {
 			| V.Clause.Export<G>
 			| V.Clause.Export.Namespace<G>
 			| V.Clause.Export.Specifier<G>
+			| V.Clause.Export.Specifier.Typeof<G>
 			| V.Clause.Extends<G>
 			| V.Clause.Extends.Type<G>
 			| V.Clause.Finally<G>
@@ -282,6 +305,7 @@ declare module './clause.ts' {
 			| V.Clause.Import.Relative.Prefix<G>
 			| V.Clause.Import.Require<G>
 			| V.Clause.Import.Specifier<G>
+			| V.Clause.Import.Specifier.Typeof<G>
 			| V.Clause.Import.Wildcard<G>
 			| V.Clause.Let<G>
 			| V.Clause.Let.Chain<G>

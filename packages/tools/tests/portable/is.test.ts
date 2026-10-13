@@ -307,6 +307,40 @@ describe('portable is: typescript', async () => {
 		expect(at('statement.import.typeOnly')(plain, pc)).toBe(false);
 	});
 
+	it('pins a typeof specifier by its keyword, and reads a type-only specifier as a specifier', () => {
+		const SOURCE = 'import { type A, typeof B, C, type D as E, typeof F as G, H as I } from "a";\nexport { type J, typeof K, L } from "b";\n';
+		for (const form of ['import_specifier_name', 'import_specifier_as']) {
+			const [type, tc] = find(SOURCE, form);
+			const [typeOf, oc] = find(SOURCE, form, undefined, 1);
+			const [plain, pc] = find(SOURCE, form, undefined, 2);
+			expect(at('clause.import.specifier.typeof')(type, tc), form).toBe(false);
+			expect(at('clause.import.specifier.typeof')(typeOf, oc), form).toBe(true);
+			expect(at('clause.import.specifier')(type, tc), form).toBe(true);
+			expect(at('clause.import.specifier')(plain, pc), form).toBe(true);
+		}
+		const [typeExport, te] = find(SOURCE, 'export_specifier');
+		const [typeofExport, oe] = find(SOURCE, 'export_specifier', undefined, 1);
+		const [plainExport, pe] = find(SOURCE, 'export_specifier', undefined, 2);
+		expect(at('clause.export.specifier.typeof')(typeExport, te)).toBe(false);
+		expect(at('clause.export.specifier.typeof')(typeofExport, oe)).toBe(true);
+		expect(at('clause.export.specifier')(typeExport, te)).toBe(true);
+		expect(at('clause.export.specifier')(plainExport, pe)).toBe(true);
+	});
+
+	it.skip('reads a type-only specifier by its keyword (pending: `typeOnly` is a flag of the specifiers, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
+		const SOURCE = 'import { type A, C, type D as E, H as I } from "a";\nexport { type J, L } from "b";\n';
+		for (const form of ['import_specifier_name', 'import_specifier_as']) {
+			const [type, tc] = find(SOURCE, form);
+			const [plain, pc] = find(SOURCE, form, undefined, 1);
+			expect(at('clause.import.specifier.typeOnly')(type, tc), form).toBe(true);
+			expect(at('clause.import.specifier.typeOnly')(plain, pc), form).toBe(false);
+		}
+		const [typeExport, te] = find(SOURCE, 'export_specifier');
+		const [plainExport, pe] = find(SOURCE, 'export_specifier', undefined, 1);
+		expect(at('clause.export.specifier.typeOnly')(typeExport, te)).toBe(true);
+		expect(at('clause.export.specifier.typeOnly')(plainExport, pe)).toBe(false);
+	});
+
 	it('reads a default export and an export of all by their forms, as tree-sitter matches the claims', () => {
 		const SOURCE = "export default x;\nexport * from 's';\nexport { a } from 's';\nexport * as n from 's';\nexport default function f() {}\nexport const c = 1;\n";
 		const declarations = [0, 1, 2].map((nth) => find(SOURCE, 'export_statement_default_declaration', undefined, nth));
