@@ -5001,9 +5001,9 @@ export function resolveListComprehension_body(
 	);
 }
 
-export function resolveListComprehension_comprehensionClauses(
-	value: T.ListComprehension.LooseConfig['comprehensionClauses']
-): Admit<T.ListComprehension['_comprehension_clauses']> {
+export function resolveListComprehension_clauses(
+	value: T.ListComprehension.LooseConfig['clauses']
+): Admit<T.ListComprehension['_clauses']> {
 	return _resolveOneBranch<T.ComprehensionClauses>(value, 'comprehension_clauses');
 }
 
@@ -5014,11 +5014,7 @@ export function coerceToListComprehension(
 		return input as unknown as ReturnType<typeof F.buildListComprehension>;
 	return F.buildListComprehension({
 		body: _requireField('list_comprehension', 'body', resolveListComprehension_body(input.body)),
-		comprehensionClauses: _requireField(
-			'list_comprehension',
-			'comprehensionClauses',
-			resolveListComprehension_comprehensionClauses(input.comprehensionClauses)
-		)
+		clauses: _requireField('list_comprehension', 'clauses', resolveListComprehension_clauses(input.clauses))
 	});
 }
 
@@ -5028,9 +5024,9 @@ export function resolveDictionaryComprehension_body(
 	return _resolveOneBranch<T.Pair>(value, 'pair');
 }
 
-export function resolveDictionaryComprehension_comprehensionClauses(
-	value: T.DictionaryComprehension.LooseConfig['comprehensionClauses']
-): Admit<T.DictionaryComprehension['_comprehension_clauses']> {
+export function resolveDictionaryComprehension_clauses(
+	value: T.DictionaryComprehension.LooseConfig['clauses']
+): Admit<T.DictionaryComprehension['_clauses']> {
 	return _resolveOneBranch<T.ComprehensionClauses>(value, 'comprehension_clauses');
 }
 
@@ -5041,11 +5037,7 @@ export function coerceToDictionaryComprehension(
 		return input as unknown as ReturnType<typeof F.buildDictionaryComprehension>;
 	return F.buildDictionaryComprehension({
 		body: _requireField('dictionary_comprehension', 'body', resolveDictionaryComprehension_body(input.body)),
-		comprehensionClauses: _requireField(
-			'dictionary_comprehension',
-			'comprehensionClauses',
-			resolveDictionaryComprehension_comprehensionClauses(input.comprehensionClauses)
-		)
+		clauses: _requireField('dictionary_comprehension', 'clauses', resolveDictionaryComprehension_clauses(input.clauses))
 	});
 }
 
@@ -5058,9 +5050,9 @@ export function resolveSetComprehension_body(
 	);
 }
 
-export function resolveSetComprehension_comprehensionClauses(
-	value: T.SetComprehension.LooseConfig['comprehensionClauses']
-): Admit<T.SetComprehension['_comprehension_clauses']> {
+export function resolveSetComprehension_clauses(
+	value: T.SetComprehension.LooseConfig['clauses']
+): Admit<T.SetComprehension['_clauses']> {
 	return _resolveOneBranch<T.ComprehensionClauses>(value, 'comprehension_clauses');
 }
 
@@ -5069,11 +5061,7 @@ export function coerceToSetComprehension(input: T.SetComprehension.Loose): Retur
 		return input as unknown as ReturnType<typeof F.buildSetComprehension>;
 	return F.buildSetComprehension({
 		body: _requireField('set_comprehension', 'body', resolveSetComprehension_body(input.body)),
-		comprehensionClauses: _requireField(
-			'set_comprehension',
-			'comprehensionClauses',
-			resolveSetComprehension_comprehensionClauses(input.comprehensionClauses)
-		)
+		clauses: _requireField('set_comprehension', 'clauses', resolveSetComprehension_clauses(input.clauses))
 	});
 }
 
@@ -5086,9 +5074,9 @@ export function resolveGeneratorExpression_body(
 	);
 }
 
-export function resolveGeneratorExpression_comprehensionClauses(
-	value: T.GeneratorExpression.LooseConfig['comprehensionClauses']
-): Admit<T.GeneratorExpression['_comprehension_clauses']> {
+export function resolveGeneratorExpression_clauses(
+	value: T.GeneratorExpression.LooseConfig['clauses']
+): Admit<T.GeneratorExpression['_clauses']> {
 	return _resolveOneBranch<T.ComprehensionClauses>(value, 'comprehension_clauses');
 }
 
@@ -5099,11 +5087,7 @@ export function coerceToGeneratorExpression(
 		return input as unknown as ReturnType<typeof F.buildGeneratorExpression>;
 	return F.buildGeneratorExpression({
 		body: _requireField('generator_expression', 'body', resolveGeneratorExpression_body(input.body)),
-		comprehensionClauses: _requireField(
-			'generator_expression',
-			'comprehensionClauses',
-			resolveGeneratorExpression_comprehensionClauses(input.comprehensionClauses)
-		)
+		clauses: _requireField('generator_expression', 'clauses', resolveGeneratorExpression_clauses(input.clauses))
 	});
 }
 

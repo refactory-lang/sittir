@@ -176,10 +176,10 @@ export default sittirGrammar(base, {
 		// See docs/python-grammar-sittir-glossary.md::case_pattern
 		case_pattern: { 0: alias('case_as_pattern') },
 		// See docs/python-grammar-sittir-glossary.md::comprehension_clauses
-		list_comprehension: { 2: comprehensionClauses },
-		dictionary_comprehension: { 2: comprehensionClauses },
-		set_comprehension: { 2: comprehensionClauses },
-		generator_expression: { 2: comprehensionClauses },
+		list_comprehension: [{ 2: comprehensionClauses }, { 2: field('clauses') }],
+		dictionary_comprehension: [{ 2: comprehensionClauses }, { 2: field('clauses') }],
+		set_comprehension: [{ 2: comprehensionClauses }, { 2: field('clauses') }],
+		generator_expression: [{ 2: comprehensionClauses }, { 2: field('clauses') }],
 		integer: {
 			0: variant('hex'),
 			1: variant('octal'),

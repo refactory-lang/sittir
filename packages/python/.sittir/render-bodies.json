@@ -1176,7 +1176,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "comprehension_clauses"
+			"name": "clauses"
 		},
 		{
 			"kind": "seam",
@@ -2236,7 +2236,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "comprehension_clauses"
+			"name": "clauses"
 		},
 		{
 			"kind": "seam",
@@ -2791,7 +2791,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "comprehension_clauses"
+			"name": "clauses"
 		},
 		{
 			"kind": "seam",
@@ -3527,7 +3527,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "comprehension_clauses"
+			"name": "clauses"
 		},
 		{
 			"kind": "seam",

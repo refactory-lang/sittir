@@ -696,19 +696,19 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	237: [
 		['body', { fields: ['body'], kinds: [] }],
-		['comprehensionClauses', { fields: [], kinds: ['comprehension_clauses'] }]
+		['clauses', { fields: ['clauses'], kinds: [] }]
 	],
 	238: [
 		['body', { fields: ['body'], kinds: [] }],
-		['comprehensionClauses', { fields: [], kinds: ['comprehension_clauses'] }]
+		['clauses', { fields: ['clauses'], kinds: [] }]
 	],
 	239: [
 		['body', { fields: ['body'], kinds: [] }],
-		['comprehensionClauses', { fields: [], kinds: ['comprehension_clauses'] }]
+		['clauses', { fields: ['clauses'], kinds: [] }]
 	],
 	240: [
 		['body', { fields: ['body'], kinds: [] }],
-		['comprehensionClauses', { fields: [], kinds: ['comprehension_clauses'] }]
+		['clauses', { fields: ['clauses'], kinds: [] }]
 	],
 	241: [['expression', { fields: ['expression'], kinds: [] }]],
 	242: [['items', { fields: ['item'], kinds: [] }]],

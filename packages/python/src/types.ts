@@ -4213,76 +4213,76 @@ export interface Pair {
 export interface ListComprehension {
 	readonly $type: TSKindId.ListComprehension;
 	readonly _body: Expression;
-	readonly _comprehension_clauses: ComprehensionClauses;
+	readonly _clauses: ComprehensionClauses;
 	readonly __inputHints__?: {
 		readonly body:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression;
 	};
 	readonly __looseHints__?: {
-		readonly comprehension_clauses: readonly (ForInClause | IfClause)[];
+		readonly clauses: readonly (ForInClause | IfClause)[];
 	};
 	readonly __slotHints__?: {
 		readonly body: SlotHint<NonNullable<T.ListComprehension.Config>['body']>;
-		readonly comprehensionClauses: SlotHint<T.ComprehensionClauses>;
+		readonly clauses: SlotHint<T.ComprehensionClauses>;
 	};
 	body(): Expression;
-	comprehensionClauses(): ComprehensionClauses;
+	clauses(): ComprehensionClauses;
 }
 
 export interface DictionaryComprehension {
 	readonly $type: TSKindId.DictionaryComprehension;
 	readonly _body: Pair;
-	readonly _comprehension_clauses: ComprehensionClauses;
+	readonly _clauses: ComprehensionClauses;
 	readonly __looseHints__?: {
-		readonly comprehension_clauses: readonly (ForInClause | IfClause)[];
+		readonly clauses: readonly (ForInClause | IfClause)[];
 	};
 	readonly __slotHints__?: {
 		readonly body: SlotHint<T.Pair>;
-		readonly comprehensionClauses: SlotHint<T.ComprehensionClauses>;
+		readonly clauses: SlotHint<T.ComprehensionClauses>;
 	};
 	body(): Pair;
-	comprehensionClauses(): ComprehensionClauses;
+	clauses(): ComprehensionClauses;
 }
 
 export interface SetComprehension {
 	readonly $type: TSKindId.SetComprehension;
 	readonly _body: Expression;
-	readonly _comprehension_clauses: ComprehensionClauses;
+	readonly _clauses: ComprehensionClauses;
 	readonly __inputHints__?: {
 		readonly body:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression;
 	};
 	readonly __looseHints__?: {
-		readonly comprehension_clauses: readonly (ForInClause | IfClause)[];
+		readonly clauses: readonly (ForInClause | IfClause)[];
 	};
 	readonly __slotHints__?: {
 		readonly body: SlotHint<NonNullable<T.SetComprehension.Config>['body']>;
-		readonly comprehensionClauses: SlotHint<T.ComprehensionClauses>;
+		readonly clauses: SlotHint<T.ComprehensionClauses>;
 	};
 	body(): Expression;
-	comprehensionClauses(): ComprehensionClauses;
+	clauses(): ComprehensionClauses;
 }
 
 export interface GeneratorExpression {
 	readonly $type: TSKindId.GeneratorExpression;
 	readonly _body: Expression;
-	readonly _comprehension_clauses: ComprehensionClauses;
+	readonly _clauses: ComprehensionClauses;
 	readonly __inputHints__?: {
 		readonly body:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression;
 	};
 	readonly __looseHints__?: {
-		readonly comprehension_clauses: readonly (ForInClause | IfClause)[];
+		readonly clauses: readonly (ForInClause | IfClause)[];
 	};
 	readonly __slotHints__?: {
 		readonly body: SlotHint<NonNullable<T.GeneratorExpression.Config>['body']>;
-		readonly comprehensionClauses: SlotHint<T.ComprehensionClauses>;
+		readonly clauses: SlotHint<T.ComprehensionClauses>;
 	};
 	body(): Expression;
-	comprehensionClauses(): ComprehensionClauses;
+	clauses(): ComprehensionClauses;
 }
 
 export interface ParenthesizedExpression {

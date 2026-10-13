@@ -3823,7 +3823,7 @@ describe('call', () => {
 				$source: 2,
 				$named: true,
 				_body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-				_comprehension_clauses: {
+				_clauses: {
 					$type: TSKindId.ComprehensionClauses,
 					$text: 'test',
 					$source: 2,
@@ -3853,7 +3853,7 @@ describe('call', () => {
 				$source: 2,
 				$named: true,
 				_body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-				_comprehension_clauses: {
+				_clauses: {
 					$type: TSKindId.ComprehensionClauses,
 					$text: 'test',
 					$source: 2,
@@ -4394,7 +4394,7 @@ describe('list_comprehension', () => {
 	it('factory produces correct type', () => {
 		const node = ir.listComprehension({
 			body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			comprehensionClauses: {
+			clauses: {
 				$type: TSKindId.ComprehensionClauses,
 				$text: 'test',
 				$source: 2,
@@ -4417,7 +4417,7 @@ describe('list_comprehension', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.listComprehension({
 			body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			comprehensionClauses: {
+			clauses: {
 				$type: TSKindId.ComprehensionClauses,
 				$text: 'test',
 				$source: 2,
@@ -4450,7 +4450,7 @@ describe('dictionary_comprehension', () => {
 				_key: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 				_value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 			} as any,
-			comprehensionClauses: {
+			clauses: {
 				$type: TSKindId.ComprehensionClauses,
 				$text: 'test',
 				$source: 2,
@@ -4480,7 +4480,7 @@ describe('dictionary_comprehension', () => {
 				_key: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 				_value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 			} as any,
-			comprehensionClauses: {
+			clauses: {
 				$type: TSKindId.ComprehensionClauses,
 				$text: 'test',
 				$source: 2,
@@ -4506,7 +4506,7 @@ describe('set_comprehension', () => {
 	it('factory produces correct type', () => {
 		const node = ir.setComprehension({
 			body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			comprehensionClauses: {
+			clauses: {
 				$type: TSKindId.ComprehensionClauses,
 				$text: 'test',
 				$source: 2,
@@ -4529,7 +4529,7 @@ describe('set_comprehension', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.setComprehension({
 			body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			comprehensionClauses: {
+			clauses: {
 				$type: TSKindId.ComprehensionClauses,
 				$text: 'test',
 				$source: 2,
@@ -4555,7 +4555,7 @@ describe('generator_expression', () => {
 	it('factory produces correct type', () => {
 		const node = ir.generatorExpression({
 			body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			comprehensionClauses: {
+			clauses: {
 				$type: TSKindId.ComprehensionClauses,
 				$text: 'test',
 				$source: 2,
@@ -4578,7 +4578,7 @@ describe('generator_expression', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.generatorExpression({
 			body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			comprehensionClauses: {
+			clauses: {
 				$type: TSKindId.ComprehensionClauses,
 				$text: 'test',
 				$source: 2,

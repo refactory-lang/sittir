@@ -3910,26 +3910,22 @@ export function buildListComprehension(config: T.ListComprehension.Config): T.Li
 		'ListComprehension.body',
 		'a built Expression'
 	);
-	const _comprehension_clauses = rejectBareText(
-		config.comprehensionClauses,
-		'ListComprehension.comprehensionClauses',
-		'a built ComprehensionClauses'
-	);
+	const _clauses = rejectBareText(config.clauses, 'ListComprehension.clauses', 'a built ComprehensionClauses');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ListComprehension as const,
 		$source: 2 as const,
 		$named: true as const,
 		_body,
-		_comprehension_clauses,
+		_clauses,
 		$with: {
 			body: (value: Admit<NonNullable<T.ListComprehension.Config>['body']>) =>
 				rebuilt(node, handle, () => buildListComprehension({ ...config, body: value })),
-			comprehensionClauses: (value: Admit<T.ComprehensionClauses>) =>
-				rebuilt(node, handle, () => buildListComprehension({ ...config, comprehensionClauses: value }))
+			clauses: (value: Admit<T.ComprehensionClauses>) =>
+				rebuilt(node, handle, () => buildListComprehension({ ...config, clauses: value }))
 		},
 		body: () => hydrateStoredSlot(node, '_body'),
-		comprehensionClauses: () => hydrateStoredSlot(node, '_comprehension_clauses'),
+		clauses: () => hydrateStoredSlot(node, '_clauses'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3944,26 +3940,22 @@ export function buildDictionaryComprehension(
 	config: T.DictionaryComprehension.Config
 ): T.DictionaryComprehension.Bound {
 	const _body = rejectBareText(config.body, 'DictionaryComprehension.body', 'a built Pair');
-	const _comprehension_clauses = rejectBareText(
-		config.comprehensionClauses,
-		'DictionaryComprehension.comprehensionClauses',
-		'a built ComprehensionClauses'
-	);
+	const _clauses = rejectBareText(config.clauses, 'DictionaryComprehension.clauses', 'a built ComprehensionClauses');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DictionaryComprehension as const,
 		$source: 2 as const,
 		$named: true as const,
 		_body,
-		_comprehension_clauses,
+		_clauses,
 		$with: {
 			body: (value: Admit<T.Pair>) =>
 				rebuilt(node, handle, () => buildDictionaryComprehension({ ...config, body: value })),
-			comprehensionClauses: (value: Admit<T.ComprehensionClauses>) =>
-				rebuilt(node, handle, () => buildDictionaryComprehension({ ...config, comprehensionClauses: value }))
+			clauses: (value: Admit<T.ComprehensionClauses>) =>
+				rebuilt(node, handle, () => buildDictionaryComprehension({ ...config, clauses: value }))
 		},
 		body: () => hydrateStoredSlot(node, '_body'),
-		comprehensionClauses: () => hydrateStoredSlot(node, '_comprehension_clauses'),
+		clauses: () => hydrateStoredSlot(node, '_clauses'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3980,26 +3972,22 @@ export function buildSetComprehension(config: T.SetComprehension.Config): T.SetC
 		'SetComprehension.body',
 		'a built Expression'
 	);
-	const _comprehension_clauses = rejectBareText(
-		config.comprehensionClauses,
-		'SetComprehension.comprehensionClauses',
-		'a built ComprehensionClauses'
-	);
+	const _clauses = rejectBareText(config.clauses, 'SetComprehension.clauses', 'a built ComprehensionClauses');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SetComprehension as const,
 		$source: 2 as const,
 		$named: true as const,
 		_body,
-		_comprehension_clauses,
+		_clauses,
 		$with: {
 			body: (value: Admit<NonNullable<T.SetComprehension.Config>['body']>) =>
 				rebuilt(node, handle, () => buildSetComprehension({ ...config, body: value })),
-			comprehensionClauses: (value: Admit<T.ComprehensionClauses>) =>
-				rebuilt(node, handle, () => buildSetComprehension({ ...config, comprehensionClauses: value }))
+			clauses: (value: Admit<T.ComprehensionClauses>) =>
+				rebuilt(node, handle, () => buildSetComprehension({ ...config, clauses: value }))
 		},
 		body: () => hydrateStoredSlot(node, '_body'),
-		comprehensionClauses: () => hydrateStoredSlot(node, '_comprehension_clauses'),
+		clauses: () => hydrateStoredSlot(node, '_clauses'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -4016,26 +4004,22 @@ export function buildGeneratorExpression(config: T.GeneratorExpression.Config): 
 		'GeneratorExpression.body',
 		'a built Expression'
 	);
-	const _comprehension_clauses = rejectBareText(
-		config.comprehensionClauses,
-		'GeneratorExpression.comprehensionClauses',
-		'a built ComprehensionClauses'
-	);
+	const _clauses = rejectBareText(config.clauses, 'GeneratorExpression.clauses', 'a built ComprehensionClauses');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.GeneratorExpression as const,
 		$source: 2 as const,
 		$named: true as const,
 		_body,
-		_comprehension_clauses,
+		_clauses,
 		$with: {
 			body: (value: Admit<NonNullable<T.GeneratorExpression.Config>['body']>) =>
 				rebuilt(node, handle, () => buildGeneratorExpression({ ...config, body: value })),
-			comprehensionClauses: (value: Admit<T.ComprehensionClauses>) =>
-				rebuilt(node, handle, () => buildGeneratorExpression({ ...config, comprehensionClauses: value }))
+			clauses: (value: Admit<T.ComprehensionClauses>) =>
+				rebuilt(node, handle, () => buildGeneratorExpression({ ...config, clauses: value }))
 		},
 		body: () => hydrateStoredSlot(node, '_body'),
-		comprehensionClauses: () => hydrateStoredSlot(node, '_comprehension_clauses'),
+		clauses: () => hydrateStoredSlot(node, '_clauses'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),

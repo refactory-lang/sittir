@@ -36733,7 +36733,7 @@
                                       "$type": 1,
                                       "$text": "x"
                                     },
-                                    "_comprehension_clauses": {
+                                    "_clauses": {
                                       "$type": 281,
                                       "_content": [
                                         {
@@ -36859,7 +36859,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "\ndef example():\n  yield\n  yield 1\n  x = yield 2\n  yield from a\n  yield from (yield from (x for x in range(1, 10)))\n",
-    "expectedReparseTree": "(module statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield (integer_decimal_plain)))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (assignment_eq left: (identifier) right: (yield (integer_decimal_plain))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield (yield_from_clause (identifier))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield (yield_from_clause (parenthesized_expression expression: (yield (yield_from_clause (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain)))))))))))))) (newline)) (dedent)))))",
+    "expectedReparseTree": "(module statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield (integer_decimal_plain)))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (assignment_eq left: (identifier) right: (yield (integer_decimal_plain))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield (yield_from_clause (identifier))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield (yield_from_clause (parenthesized_expression expression: (yield (yield_from_clause (generator_expression body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain)))))))))))))) (newline)) (dedent)))))",
     "wrappedText": "\ndef example():\n  yield\n  yield 1\n  x = yield 2\n  yield from a\n  yield from (yield from (x for x in range(1, 10)))\n",
     "wrappedOffset": 0
   },
@@ -37052,7 +37052,7 @@
                                   "$type": 1,
                                   "$text": "x"
                                 },
-                                "_comprehension_clauses": {
+                                "_clauses": {
                                   "$type": 281,
                                   "_content": [
                                     {
@@ -37165,7 +37165,7 @@
     "pattern": "function_definition",
     "edits": [],
     "expectedSourceOut": "def example():\n  yield\n  yield 1\n  x = yield 2\n  yield from a\n  yield from (yield from (x for x in range(1, 10)))\n",
-    "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield (integer_decimal_plain)))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (assignment_eq left: (identifier) right: (yield (integer_decimal_plain))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield (yield_from_clause (identifier))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield (yield_from_clause (parenthesized_expression expression: (yield (yield_from_clause (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain)))))))))))))) (newline)) (dedent))))",
+    "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield (integer_decimal_plain)))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (assignment_eq left: (identifier) right: (yield (integer_decimal_plain))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield (yield_from_clause (identifier))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield (yield_from_clause (parenthesized_expression expression: (yield (yield_from_clause (generator_expression body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain)))))))))))))) (newline)) (dedent))))",
     "wrappedText": "def example():\n  yield\n  yield 1\n  x = yield 2\n  yield from a\n  yield from (yield from (x for x in range(1, 10)))\n",
     "wrappedOffset": 0
   },
@@ -37376,7 +37376,7 @@
                                 "$type": 1,
                                 "$text": "x"
                               },
-                              "_comprehension_clauses": {
+                              "_clauses": {
                                 "$type": 281,
                                 "_content": [
                                   {
@@ -37488,7 +37488,7 @@
     "pattern": "suite_block",
     "edits": [],
     "expectedSourceOut": "\n  yield\n  yield 1\n  x = yield 2\n  yield from a\n  yield from (yield from (x for x in range(1, 10)))\n",
-    "expectedReparseTree": "(suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield (integer_decimal_plain)))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (assignment_eq left: (identifier) right: (yield (integer_decimal_plain))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield (yield_from_clause (identifier))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield (yield_from_clause (parenthesized_expression expression: (yield (yield_from_clause (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain)))))))))))))) (newline)) (dedent)))",
+    "expectedReparseTree": "(suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield (integer_decimal_plain)))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (assignment_eq left: (identifier) right: (yield (integer_decimal_plain))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield (yield_from_clause (identifier))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield (yield_from_clause (parenthesized_expression expression: (yield (yield_from_clause (generator_expression body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain)))))))))))))) (newline)) (dedent)))",
     "wrappedText": "if a:\n  \n    yield\n    yield 1\n    x = yield 2\n    yield from a\n    yield from (yield from (x for x in range(1, 10)))\n  ",
     "wrappedOffset": 8
   },
@@ -37669,7 +37669,7 @@
                               "$type": 1,
                               "$text": "x"
                             },
-                            "_comprehension_clauses": {
+                            "_clauses": {
                               "$type": 281,
                               "_content": [
                                 {
@@ -37773,7 +37773,7 @@
     "pattern": "block",
     "edits": [],
     "expectedSourceOut": "yield\nyield 1\nx = yield 2\nyield from a\nyield from (yield from (x for x in range(1, 10)))\n",
-    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield (integer_decimal_plain)))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (assignment_eq left: (identifier) right: (yield (integer_decimal_plain))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield (yield_from_clause (identifier))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield (yield_from_clause (parenthesized_expression expression: (yield (yield_from_clause (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain)))))))))))))) (newline)) (dedent))",
+    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield (integer_decimal_plain)))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (assignment_eq left: (identifier) right: (yield (integer_decimal_plain))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield (yield_from_clause (identifier))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (yield (yield_from_clause (parenthesized_expression expression: (yield (yield_from_clause (generator_expression body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain)))))))))))))) (newline)) (dedent))",
     "wrappedText": "if a:\n  \n  yield\n  yield 1\n  x = yield 2\n  yield from a\n  yield from (yield from (x for x in range(1, 10)))\n  ",
     "wrappedOffset": 11
   },
@@ -38030,7 +38030,7 @@
                           "$type": 1,
                           "$text": "x"
                         },
-                        "_comprehension_clauses": {
+                        "_clauses": {
                           "$type": 281,
                           "_content": [
                             {
@@ -38125,7 +38125,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "yield from (yield from (x for x in range(1, 10)))\n",
-    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (yield (yield_from_clause (parenthesized_expression expression: (yield (yield_from_clause (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain)))))))))))))) (newline))",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (yield (yield_from_clause (parenthesized_expression expression: (yield (yield_from_clause (generator_expression body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain)))))))))))))) (newline))",
     "wrappedText": "yield from (yield from (x for x in range(1, 10)))\n\n",
     "wrappedOffset": 0
   },
@@ -38368,7 +38368,7 @@
                         "$type": 1,
                         "$text": "x"
                       },
-                      "_comprehension_clauses": {
+                      "_clauses": {
                         "$type": 281,
                         "_content": [
                           {
@@ -38462,7 +38462,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "yield from (yield from (x for x in range(1, 10)))",
-    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (yield (yield_from_clause (parenthesized_expression expression: (yield (yield_from_clause (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain))))))))))))))",
+    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (yield (yield_from_clause (parenthesized_expression expression: (yield (yield_from_clause (generator_expression body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain))))))))))))))",
     "wrappedText": "yield from (yield from (x for x in range(1, 10)))\n",
     "wrappedOffset": 0
   },
@@ -38634,7 +38634,7 @@
                     "$type": 1,
                     "$text": "x"
                   },
-                  "_comprehension_clauses": {
+                  "_clauses": {
                     "$type": 281,
                     "_content": [
                       {
@@ -38714,7 +38714,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "yield from (yield from (x for x in range(1, 10)))",
-    "expectedReparseTree": "(expression_statement (yield (yield_from_clause (parenthesized_expression expression: (yield (yield_from_clause (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain)))))))))))))",
+    "expectedReparseTree": "(expression_statement (yield (yield_from_clause (parenthesized_expression expression: (yield (yield_from_clause (generator_expression body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain)))))))))))))",
     "wrappedText": "yield from (yield from (x for x in range(1, 10)))",
     "wrappedOffset": 0
   },
@@ -38865,7 +38865,7 @@
                   "$type": 1,
                   "$text": "x"
                 },
-                "_comprehension_clauses": {
+                "_clauses": {
                   "$type": 281,
                   "_content": [
                     {
@@ -38944,7 +38944,7 @@
     "pattern": "yield",
     "edits": [],
     "expectedSourceOut": "yield from (yield from (x for x in range(1, 10)))",
-    "expectedReparseTree": "(yield (yield_from_clause (parenthesized_expression expression: (yield (yield_from_clause (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain))))))))))))",
+    "expectedReparseTree": "(yield (yield_from_clause (parenthesized_expression expression: (yield (yield_from_clause (generator_expression body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain))))))))))))",
     "wrappedText": "yield from (yield from (x for x in range(1, 10)))",
     "wrappedOffset": 0
   },
@@ -38962,7 +38962,7 @@
             "$type": 1,
             "$text": "x"
           },
-          "_comprehension_clauses": {
+          "_clauses": {
             "$type": 281,
             "_content": [
               {
@@ -39038,7 +39038,7 @@
     "pattern": "yield",
     "edits": [],
     "expectedSourceOut": "yield from (x for x in range(1, 10))",
-    "expectedReparseTree": "(yield (yield_from_clause (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain)))))))))",
+    "expectedReparseTree": "(yield (yield_from_clause (generator_expression body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain)))))))))",
     "wrappedText": "yield from (x for x in range(1, 10))",
     "wrappedOffset": 0
   },
@@ -39131,7 +39131,7 @@
                 "$type": 1,
                 "$text": "x"
               },
-              "_comprehension_clauses": {
+              "_clauses": {
                 "$type": 281,
                 "_content": [
                   {
@@ -39209,7 +39209,7 @@
     "pattern": "yield_from_clause",
     "edits": [],
     "expectedSourceOut": "from (yield from (x for x in range(1, 10)))",
-    "expectedReparseTree": "(yield_from_clause (parenthesized_expression expression: (yield (yield_from_clause (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain)))))))))))",
+    "expectedReparseTree": "(yield_from_clause (parenthesized_expression expression: (yield (yield_from_clause (generator_expression body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain)))))))))))",
     "wrappedText": "yield from (yield from (x for x in range(1, 10)))",
     "wrappedOffset": 6
   },
@@ -39225,7 +39225,7 @@
           "$type": 1,
           "$text": "x"
         },
-        "_comprehension_clauses": {
+        "_clauses": {
           "$type": 281,
           "_content": [
             {
@@ -39300,7 +39300,7 @@
     "pattern": "yield_from_clause",
     "edits": [],
     "expectedSourceOut": "from (x for x in range(1, 10))",
-    "expectedReparseTree": "(yield_from_clause (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain))))))))",
+    "expectedReparseTree": "(yield_from_clause (generator_expression body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain))))))))",
     "wrappedText": "yield from (x for x in range(1, 10))",
     "wrappedOffset": 6
   },
@@ -39320,7 +39320,7 @@
               "$type": 1,
               "$text": "x"
             },
-            "_comprehension_clauses": {
+            "_clauses": {
               "$type": 281,
               "_content": [
                 {
@@ -39397,7 +39397,7 @@
     "pattern": "parenthesized_expression",
     "edits": [],
     "expectedSourceOut": "(yield from (x for x in range(1, 10)))",
-    "expectedReparseTree": "(parenthesized_expression expression: (yield (yield_from_clause (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain))))))))))",
+    "expectedReparseTree": "(parenthesized_expression expression: (yield (yield_from_clause (generator_expression body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain))))))))))",
     "wrappedText": "f((yield from (x for x in range(1, 10))))",
     "wrappedOffset": 2
   },
@@ -39411,7 +39411,7 @@
         "$type": 1,
         "$text": "x"
       },
-      "_comprehension_clauses": {
+      "_clauses": {
         "$type": 281,
         "_content": [
           {
@@ -39485,7 +39485,7 @@
     "pattern": "generator_expression",
     "edits": [],
     "expectedSourceOut": "(x for x in range(1, 10))",
-    "expectedReparseTree": "(generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain)))))))",
+    "expectedReparseTree": "(generator_expression body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain)))))))",
     "wrappedText": "_ = ((x for x in range(1, 10)))",
     "wrappedOffset": 5
   },
@@ -46909,7 +46909,7 @@
                                     "$type": 1,
                                     "$text": "e"
                                   },
-                                  "_comprehension_clauses": {
+                                  "_clauses": {
                                     "$type": 281,
                                     "_content": [
                                       {
@@ -46995,7 +46995,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "\nasync with a as b:\n    async for c in d:\n        [e async for f in g]\n",
-    "expectedReparseTree": "(module statements: (with_statement with_clause: (with_clause_bare item: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier))))) body: (suite_block (indent) (block statements: (for_statement left: (identifier) right: (identifier) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)) (dedent)))) (dedent)))))",
+    "expectedReparseTree": "(module statements: (with_statement with_clause: (with_clause_bare item: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier))))) body: (suite_block (indent) (block statements: (for_statement left: (identifier) right: (identifier) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)) (dedent)))) (dedent)))))",
     "wrappedText": "\nasync with a as b:\n    async for c in d:\n        [e async for f in g]\n",
     "wrappedOffset": 0
   },
@@ -47074,7 +47074,7 @@
                                 "$type": 1,
                                 "$text": "e"
                               },
-                              "_comprehension_clauses": {
+                              "_clauses": {
                                 "$type": 281,
                                 "_content": [
                                   {
@@ -47147,7 +47147,7 @@
     "pattern": "with_statement",
     "edits": [],
     "expectedSourceOut": "async with a as b:\n    async for c in d:\n        [e async for f in g]\n",
-    "expectedReparseTree": "(with_statement with_clause: (with_clause_bare item: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier))))) body: (suite_block (indent) (block statements: (for_statement left: (identifier) right: (identifier) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)) (dedent)))) (dedent))))",
+    "expectedReparseTree": "(with_statement with_clause: (with_clause_bare item: (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier))))) body: (suite_block (indent) (block statements: (for_statement left: (identifier) right: (identifier) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)) (dedent)))) (dedent))))",
     "wrappedText": "async with a as b:\n    async for c in d:\n        [e async for f in g]\n",
     "wrappedOffset": 0
   },
@@ -47349,7 +47349,7 @@
                               "$type": 1,
                               "$text": "e"
                             },
-                            "_comprehension_clauses": {
+                            "_clauses": {
                               "$type": 281,
                               "_content": [
                                 {
@@ -47421,7 +47421,7 @@
     "pattern": "suite_block",
     "edits": [],
     "expectedSourceOut": "\n    async for c in d:\n        [e async for f in g]\n",
-    "expectedReparseTree": "(suite_block (indent) (block statements: (for_statement left: (identifier) right: (identifier) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)) (dedent)))) (dedent)))",
+    "expectedReparseTree": "(suite_block (indent) (block statements: (for_statement left: (identifier) right: (identifier) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)) (dedent)))) (dedent)))",
     "wrappedText": "if a:\n  \n      async for c in d:\n          [e async for f in g]\n  ",
     "wrappedOffset": 8
   },
@@ -47447,7 +47447,7 @@
                       "$type": 1,
                       "$text": "e"
                     },
-                    "_comprehension_clauses": {
+                    "_clauses": {
                       "$type": 281,
                       "_content": [
                         {
@@ -47508,7 +47508,7 @@
     "pattern": "suite_block",
     "edits": [],
     "expectedSourceOut": "\n    [e async for f in g]\n",
-    "expectedReparseTree": "(suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)) (dedent)))",
+    "expectedReparseTree": "(suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)) (dedent)))",
     "wrappedText": "if a:\n  \n      [e async for f in g]\n  ",
     "wrappedOffset": 8
   },
@@ -47548,7 +47548,7 @@
                             "$type": 1,
                             "$text": "e"
                           },
-                          "_comprehension_clauses": {
+                          "_clauses": {
                             "$type": 281,
                             "_content": [
                               {
@@ -47612,7 +47612,7 @@
     "pattern": "block",
     "edits": [],
     "expectedSourceOut": "async for c in d:\n    [e async for f in g]\n",
-    "expectedReparseTree": "(block statements: (for_statement left: (identifier) right: (identifier) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)) (dedent)))) (dedent))",
+    "expectedReparseTree": "(block statements: (for_statement left: (identifier) right: (identifier) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)) (dedent)))) (dedent))",
     "wrappedText": "if a:\n  \n  async for c in d:\n      [e async for f in g]\n  ",
     "wrappedOffset": 11
   },
@@ -47636,7 +47636,7 @@
                     "$type": 1,
                     "$text": "e"
                   },
-                  "_comprehension_clauses": {
+                  "_clauses": {
                     "$type": 281,
                     "_content": [
                       {
@@ -47689,7 +47689,7 @@
     "pattern": "block",
     "edits": [],
     "expectedSourceOut": "[e async for f in g]\n",
-    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)) (dedent))",
+    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)) (dedent))",
     "wrappedText": "if a:\n  \n  [e async for f in g]\n  ",
     "wrappedOffset": 11
   },
@@ -47726,7 +47726,7 @@
                         "$type": 1,
                         "$text": "e"
                       },
-                      "_comprehension_clauses": {
+                      "_clauses": {
                         "$type": 281,
                         "_content": [
                           {
@@ -47788,7 +47788,7 @@
     "pattern": "for_statement",
     "edits": [],
     "expectedSourceOut": "async for c in d:\n    [e async for f in g]\n",
-    "expectedReparseTree": "(for_statement left: (identifier) right: (identifier) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)) (dedent))))",
+    "expectedReparseTree": "(for_statement left: (identifier) right: (identifier) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)) (dedent))))",
     "wrappedText": "async for c in d:\n    [e async for f in g]\n",
     "wrappedOffset": 0
   },
@@ -47809,7 +47809,7 @@
                 "$type": 1,
                 "$text": "e"
               },
-              "_comprehension_clauses": {
+              "_clauses": {
                 "$type": 281,
                 "_content": [
                   {
@@ -47860,7 +47860,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "[e async for f in g]\n",
-    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)) (dedent))",
+    "expectedReparseTree": "(block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)) (dedent))",
     "wrappedText": "if a:\n  \n  [e async for f in g]\n  ",
     "wrappedOffset": 11
   },
@@ -47879,7 +47879,7 @@
               "$type": 1,
               "$text": "e"
             },
-            "_comprehension_clauses": {
+            "_clauses": {
               "$type": 281,
               "_content": [
                 {
@@ -47929,7 +47929,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "[e async for f in g]",
-    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier))))))",
+    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier))))))",
     "wrappedText": "[e async for f in g]\n",
     "wrappedOffset": 0
   },
@@ -47945,7 +47945,7 @@
           "$type": 1,
           "$text": "e"
         },
-        "_comprehension_clauses": {
+        "_clauses": {
           "$type": 281,
           "_content": [
             {
@@ -47981,7 +47981,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "[e async for f in g]",
-    "expectedReparseTree": "(expression_statement (list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)))))",
+    "expectedReparseTree": "(expression_statement (list_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)))))",
     "wrappedText": "[e async for f in g]",
     "wrappedOffset": 0
   },
@@ -47995,7 +47995,7 @@
         "$type": 1,
         "$text": "e"
       },
-      "_comprehension_clauses": {
+      "_clauses": {
         "$type": 281,
         "_content": [
           {
@@ -48030,7 +48030,7 @@
     "pattern": "list_comprehension",
     "edits": [],
     "expectedSourceOut": "[e async for f in g]",
-    "expectedReparseTree": "(list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier))))",
+    "expectedReparseTree": "(list_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier))))",
     "wrappedText": "_ = ([e async for f in g])",
     "wrappedOffset": 5
   },
@@ -90212,7 +90212,7 @@
                       "$text": "b"
                     }
                   },
-                  "_comprehension_clauses": {
+                  "_clauses": {
                     "$type": 281,
                     "_content": [
                       {
@@ -90298,7 +90298,7 @@
                     "$type": 1,
                     "$text": "a"
                   },
-                  "_comprehension_clauses": {
+                  "_clauses": {
                     "$type": 281,
                     "_content": [
                       {
@@ -90404,7 +90404,7 @@
                       }
                     }
                   },
-                  "_comprehension_clauses": {
+                  "_clauses": {
                     "$type": 281,
                     "_content": [
                       {
@@ -90566,7 +90566,7 @@
                     "$type": 1,
                     "$text": "a"
                   },
-                  "_comprehension_clauses": {
+                  "_clauses": {
                     "$type": 281,
                     "_content": [
                       {
@@ -90657,7 +90657,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "\n[a + b for (a, b) in items]\n[a for b in c for a in b]\n[(x,y) for x in [1,2,3] for y in [1,2,3] if True]\n[a for a in lambda: True, lambda: False if a()]\n",
-    "expectedReparseTree": "(module statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (binary_operator left: (identifier) right: (identifier)) (comprehension_clauses content: (for_in_clause left: (tuple_pattern elements: (tuple_pattern_elements item: (identifier) item: (identifier))) right: (identifier)))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (tuple elements: (tuple_elements item: (identifier) item: (identifier))) (comprehension_clauses content: (for_in_clause left: (identifier) right: (list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))) content: (for_in_clause left: (identifier) right: (list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))) content: (if_clause condition: (true)))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (lambda_within_for_in_clause body: (true)) right: (lambda_within_for_in_clause body: (false))) content: (if_clause condition: (call function: (identifier) arguments: (argument_list))))))) (newline)))",
+    "expectedReparseTree": "(module statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (binary_operator left: (identifier) right: (identifier)) clauses: (comprehension_clauses content: (for_in_clause left: (tuple_pattern elements: (tuple_pattern_elements item: (identifier) item: (identifier))) right: (identifier)))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (tuple elements: (tuple_elements item: (identifier) item: (identifier))) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))) content: (for_in_clause left: (identifier) right: (list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))) content: (if_clause condition: (true)))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (lambda_within_for_in_clause body: (true)) right: (lambda_within_for_in_clause body: (false))) content: (if_clause condition: (call function: (identifier) arguments: (argument_list))))))) (newline)))",
     "wrappedText": "\n[a + b for (a, b) in items]\n[a for b in c for a in b]\n[(x,y) for x in [1,2,3] for y in [1,2,3] if True]\n[a for a in lambda: True, lambda: False if a()]\n",
     "wrappedOffset": 0
   },
@@ -90686,7 +90686,7 @@
                   "$text": "b"
                 }
               },
-              "_comprehension_clauses": {
+              "_clauses": {
                 "$type": 281,
                 "_content": [
                   {
@@ -90766,7 +90766,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "[a + b for (a, b) in items]\n",
-    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (binary_operator left: (identifier) right: (identifier)) (comprehension_clauses content: (for_in_clause left: (tuple_pattern elements: (tuple_pattern_elements item: (identifier) item: (identifier))) right: (identifier)))))) (newline))",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (binary_operator left: (identifier) right: (identifier)) clauses: (comprehension_clauses content: (for_in_clause left: (tuple_pattern elements: (tuple_pattern_elements item: (identifier) item: (identifier))) right: (identifier)))))) (newline))",
     "wrappedText": "[a + b for (a, b) in items]\n\n",
     "wrappedOffset": 0
   },
@@ -90787,7 +90787,7 @@
                 "$type": 1,
                 "$text": "a"
               },
-              "_comprehension_clauses": {
+              "_clauses": {
                 "$type": 281,
                 "_content": [
                   {
@@ -90858,7 +90858,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "[a for b in c for a in b]\n",
-    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))) (newline))",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))) (newline))",
     "wrappedText": "[a for b in c for a in b]\n\n",
     "wrappedOffset": 0
   },
@@ -90908,7 +90908,7 @@
                   }
                 }
               },
-              "_comprehension_clauses": {
+              "_clauses": {
                 "$type": 281,
                 "_content": [
                   {
@@ -91064,7 +91064,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "[(x,y) for x in [1,2,3] for y in [1,2,3] if True]\n",
-    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (tuple elements: (tuple_elements item: (identifier) item: (identifier))) (comprehension_clauses content: (for_in_clause left: (identifier) right: (list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))) content: (for_in_clause left: (identifier) right: (list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))) content: (if_clause condition: (true)))))) (newline))",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (tuple elements: (tuple_elements item: (identifier) item: (identifier))) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))) content: (for_in_clause left: (identifier) right: (list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))) content: (if_clause condition: (true)))))) (newline))",
     "wrappedText": "[(x,y) for x in [1,2,3] for y in [1,2,3] if True]\n\n",
     "wrappedOffset": 0
   },
@@ -91085,7 +91085,7 @@
                 "$type": 1,
                 "$text": "a"
               },
-              "_comprehension_clauses": {
+              "_clauses": {
                 "$type": 281,
                 "_content": [
                   {
@@ -91163,7 +91163,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "[a for a in lambda: True, lambda: False if a()]\n",
-    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (lambda_within_for_in_clause body: (true)) right: (lambda_within_for_in_clause body: (false))) content: (if_clause condition: (call function: (identifier) arguments: (argument_list))))))) (newline))",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (lambda_within_for_in_clause body: (true)) right: (lambda_within_for_in_clause body: (false))) content: (if_clause condition: (call function: (identifier) arguments: (argument_list))))))) (newline))",
     "wrappedText": "[a for a in lambda: True, lambda: False if a()]\n\n",
     "wrappedOffset": 0
   },
@@ -91190,7 +91190,7 @@
                 "$text": "b"
               }
             },
-            "_comprehension_clauses": {
+            "_clauses": {
               "$type": 281,
               "_content": [
                 {
@@ -91269,7 +91269,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "[a + b for (a, b) in items]",
-    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (list_comprehension body: (binary_operator left: (identifier) right: (identifier)) (comprehension_clauses content: (for_in_clause left: (tuple_pattern elements: (tuple_pattern_elements item: (identifier) item: (identifier))) right: (identifier))))))",
+    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (list_comprehension body: (binary_operator left: (identifier) right: (identifier)) clauses: (comprehension_clauses content: (for_in_clause left: (tuple_pattern elements: (tuple_pattern_elements item: (identifier) item: (identifier))) right: (identifier))))))",
     "wrappedText": "[a + b for (a, b) in items]\n",
     "wrappedOffset": 0
   },
@@ -91288,7 +91288,7 @@
               "$type": 1,
               "$text": "a"
             },
-            "_comprehension_clauses": {
+            "_clauses": {
               "$type": 281,
               "_content": [
                 {
@@ -91358,7 +91358,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "[a for b in c for a in b]",
-    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier))))))",
+    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier))))))",
     "wrappedText": "[a for b in c for a in b]\n",
     "wrappedOffset": 0
   },
@@ -91406,7 +91406,7 @@
                 }
               }
             },
-            "_comprehension_clauses": {
+            "_clauses": {
               "$type": 281,
               "_content": [
                 {
@@ -91561,7 +91561,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "[(x,y) for x in [1,2,3] for y in [1,2,3] if True]",
-    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (list_comprehension body: (tuple elements: (tuple_elements item: (identifier) item: (identifier))) (comprehension_clauses content: (for_in_clause left: (identifier) right: (list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))) content: (for_in_clause left: (identifier) right: (list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))) content: (if_clause condition: (true))))))",
+    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (list_comprehension body: (tuple elements: (tuple_elements item: (identifier) item: (identifier))) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))) content: (for_in_clause left: (identifier) right: (list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))) content: (if_clause condition: (true))))))",
     "wrappedText": "[(x,y) for x in [1,2,3] for y in [1,2,3] if True]\n",
     "wrappedOffset": 0
   },
@@ -91580,7 +91580,7 @@
               "$type": 1,
               "$text": "a"
             },
-            "_comprehension_clauses": {
+            "_clauses": {
               "$type": 281,
               "_content": [
                 {
@@ -91657,7 +91657,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "[a for a in lambda: True, lambda: False if a()]",
-    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (lambda_within_for_in_clause body: (true)) right: (lambda_within_for_in_clause body: (false))) content: (if_clause condition: (call function: (identifier) arguments: (argument_list)))))))",
+    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (list_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (lambda_within_for_in_clause body: (true)) right: (lambda_within_for_in_clause body: (false))) content: (if_clause condition: (call function: (identifier) arguments: (argument_list)))))))",
     "wrappedText": "[a for a in lambda: True, lambda: False if a()]\n",
     "wrappedOffset": 0
   },
@@ -91681,7 +91681,7 @@
             "$text": "b"
           }
         },
-        "_comprehension_clauses": {
+        "_clauses": {
           "$type": 281,
           "_content": [
             {
@@ -91746,7 +91746,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "[a + b for (a, b) in items]",
-    "expectedReparseTree": "(expression_statement (list_comprehension body: (binary_operator left: (identifier) right: (identifier)) (comprehension_clauses content: (for_in_clause left: (tuple_pattern elements: (tuple_pattern_elements item: (identifier) item: (identifier))) right: (identifier)))))",
+    "expectedReparseTree": "(expression_statement (list_comprehension body: (binary_operator left: (identifier) right: (identifier)) clauses: (comprehension_clauses content: (for_in_clause left: (tuple_pattern elements: (tuple_pattern_elements item: (identifier) item: (identifier))) right: (identifier)))))",
     "wrappedText": "[a + b for (a, b) in items]",
     "wrappedOffset": 0
   },
@@ -91762,7 +91762,7 @@
           "$type": 1,
           "$text": "a"
         },
-        "_comprehension_clauses": {
+        "_clauses": {
           "$type": 281,
           "_content": [
             {
@@ -91818,7 +91818,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "[a for b in c for a in b]",
-    "expectedReparseTree": "(expression_statement (list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))",
+    "expectedReparseTree": "(expression_statement (list_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))",
     "wrappedText": "[a for b in c for a in b]",
     "wrappedOffset": 0
   },
@@ -91863,7 +91863,7 @@
             }
           }
         },
-        "_comprehension_clauses": {
+        "_clauses": {
           "$type": 281,
           "_content": [
             {
@@ -92004,7 +92004,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "[(x,y) for x in [1,2,3] for y in [1,2,3] if True]",
-    "expectedReparseTree": "(expression_statement (list_comprehension body: (tuple elements: (tuple_elements item: (identifier) item: (identifier))) (comprehension_clauses content: (for_in_clause left: (identifier) right: (list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))) content: (for_in_clause left: (identifier) right: (list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))) content: (if_clause condition: (true)))))",
+    "expectedReparseTree": "(expression_statement (list_comprehension body: (tuple elements: (tuple_elements item: (identifier) item: (identifier))) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))) content: (for_in_clause left: (identifier) right: (list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))) content: (if_clause condition: (true)))))",
     "wrappedText": "[(x,y) for x in [1,2,3] for y in [1,2,3] if True]",
     "wrappedOffset": 0
   },
@@ -92020,7 +92020,7 @@
           "$type": 1,
           "$text": "a"
         },
-        "_comprehension_clauses": {
+        "_clauses": {
           "$type": 281,
           "_content": [
             {
@@ -92083,7 +92083,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "[a for a in lambda: True, lambda: False if a()]",
-    "expectedReparseTree": "(expression_statement (list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (lambda_within_for_in_clause body: (true)) right: (lambda_within_for_in_clause body: (false))) content: (if_clause condition: (call function: (identifier) arguments: (argument_list))))))",
+    "expectedReparseTree": "(expression_statement (list_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (lambda_within_for_in_clause body: (true)) right: (lambda_within_for_in_clause body: (false))) content: (if_clause condition: (call function: (identifier) arguments: (argument_list))))))",
     "wrappedText": "[a for a in lambda: True, lambda: False if a()]",
     "wrappedOffset": 0
   },
@@ -92105,7 +92105,7 @@
           "$text": "b"
         }
       },
-      "_comprehension_clauses": {
+      "_clauses": {
         "$type": 281,
         "_content": [
           {
@@ -92169,7 +92169,7 @@
     "pattern": "list_comprehension",
     "edits": [],
     "expectedSourceOut": "[a + b for (a, b) in items]",
-    "expectedReparseTree": "(list_comprehension body: (binary_operator left: (identifier) right: (identifier)) (comprehension_clauses content: (for_in_clause left: (tuple_pattern elements: (tuple_pattern_elements item: (identifier) item: (identifier))) right: (identifier))))",
+    "expectedReparseTree": "(list_comprehension body: (binary_operator left: (identifier) right: (identifier)) clauses: (comprehension_clauses content: (for_in_clause left: (tuple_pattern elements: (tuple_pattern_elements item: (identifier) item: (identifier))) right: (identifier))))",
     "wrappedText": "_ = ([a + b for (a, b) in items])",
     "wrappedOffset": 5
   },
@@ -92183,7 +92183,7 @@
         "$type": 1,
         "$text": "a"
       },
-      "_comprehension_clauses": {
+      "_clauses": {
         "$type": 281,
         "_content": [
           {
@@ -92238,7 +92238,7 @@
     "pattern": "list_comprehension",
     "edits": [],
     "expectedSourceOut": "[a for b in c for a in b]",
-    "expectedReparseTree": "(list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier))))",
+    "expectedReparseTree": "(list_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier))))",
     "wrappedText": "_ = ([a for b in c for a in b])",
     "wrappedOffset": 5
   },
@@ -92281,7 +92281,7 @@
           }
         }
       },
-      "_comprehension_clauses": {
+      "_clauses": {
         "$type": 281,
         "_content": [
           {
@@ -92421,7 +92421,7 @@
     "pattern": "list_comprehension",
     "edits": [],
     "expectedSourceOut": "[(x,y) for x in [1,2,3] for y in [1,2,3] if True]",
-    "expectedReparseTree": "(list_comprehension body: (tuple elements: (tuple_elements item: (identifier) item: (identifier))) (comprehension_clauses content: (for_in_clause left: (identifier) right: (list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))) content: (for_in_clause left: (identifier) right: (list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))) content: (if_clause condition: (true))))",
+    "expectedReparseTree": "(list_comprehension body: (tuple elements: (tuple_elements item: (identifier) item: (identifier))) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))) content: (for_in_clause left: (identifier) right: (list (collection_elements item: (integer_decimal_plain) item: (integer_decimal_plain) item: (integer_decimal_plain)))) content: (if_clause condition: (true))))",
     "wrappedText": "_ = ([(x,y) for x in [1,2,3] for y in [1,2,3] if True])",
     "wrappedOffset": 5
   },
@@ -92435,7 +92435,7 @@
         "$type": 1,
         "$text": "a"
       },
-      "_comprehension_clauses": {
+      "_clauses": {
         "$type": 281,
         "_content": [
           {
@@ -92497,7 +92497,7 @@
     "pattern": "list_comprehension",
     "edits": [],
     "expectedSourceOut": "[a for a in lambda: True, lambda: False if a()]",
-    "expectedReparseTree": "(list_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (lambda_within_for_in_clause body: (true)) right: (lambda_within_for_in_clause body: (false))) content: (if_clause condition: (call function: (identifier) arguments: (argument_list)))))",
+    "expectedReparseTree": "(list_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (lambda_within_for_in_clause body: (true)) right: (lambda_within_for_in_clause body: (false))) content: (if_clause condition: (call function: (identifier) arguments: (argument_list)))))",
     "wrappedText": "_ = ([a for a in lambda: True, lambda: False if a()])",
     "wrappedOffset": 5
   },
@@ -97058,7 +97058,7 @@
                       "$text": "b"
                     }
                   },
-                  "_comprehension_clauses": {
+                  "_clauses": {
                     "$type": 281,
                     "_content": [
                       {
@@ -97148,7 +97148,7 @@
                       "$text": "b"
                     }
                   },
-                  "_comprehension_clauses": {
+                  "_clauses": {
                     "$type": 281,
                     "_content": [
                       {
@@ -97232,7 +97232,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "\n{a: b for a, b in items}\n{a: b for c in d for e in items}\n",
-    "expectedReparseTree": "(module statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (dictionary_comprehension body: (pair key: (identifier) value: (identifier)) (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier)) right: (identifier)))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (dictionary_comprehension body: (pair key: (identifier) value: (identifier)) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)))",
+    "expectedReparseTree": "(module statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (dictionary_comprehension body: (pair key: (identifier) value: (identifier)) clauses: (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier)) right: (identifier)))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (dictionary_comprehension body: (pair key: (identifier) value: (identifier)) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)))",
     "wrappedText": "\n{a: b for a, b in items}\n{a: b for c in d for e in items}\n",
     "wrappedOffset": 0
   },
@@ -97260,7 +97260,7 @@
                   "$text": "b"
                 }
               },
-              "_comprehension_clauses": {
+              "_clauses": {
                 "$type": 281,
                 "_content": [
                   {
@@ -97337,7 +97337,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "{a: b for a, b in items}\n",
-    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (dictionary_comprehension body: (pair key: (identifier) value: (identifier)) (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier)) right: (identifier)))))) (newline))",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (dictionary_comprehension body: (pair key: (identifier) value: (identifier)) clauses: (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier)) right: (identifier)))))) (newline))",
     "wrappedText": "{a: b for a, b in items}\n\n",
     "wrappedOffset": 0
   },
@@ -97365,7 +97365,7 @@
                   "$text": "b"
                 }
               },
-              "_comprehension_clauses": {
+              "_clauses": {
                 "$type": 281,
                 "_content": [
                   {
@@ -97436,7 +97436,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "{a: b for c in d for e in items}\n",
-    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (dictionary_comprehension body: (pair key: (identifier) value: (identifier)) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))) (newline))",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (dictionary_comprehension body: (pair key: (identifier) value: (identifier)) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))) (newline))",
     "wrappedText": "{a: b for c in d for e in items}\n\n",
     "wrappedOffset": 0
   },
@@ -97462,7 +97462,7 @@
                 "$text": "b"
               }
             },
-            "_comprehension_clauses": {
+            "_clauses": {
               "$type": 281,
               "_content": [
                 {
@@ -97538,7 +97538,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "{a: b for a, b in items}",
-    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (dictionary_comprehension body: (pair key: (identifier) value: (identifier)) (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier)) right: (identifier))))))",
+    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (dictionary_comprehension body: (pair key: (identifier) value: (identifier)) clauses: (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier)) right: (identifier))))))",
     "wrappedText": "{a: b for a, b in items}\n",
     "wrappedOffset": 0
   },
@@ -97564,7 +97564,7 @@
                 "$text": "b"
               }
             },
-            "_comprehension_clauses": {
+            "_clauses": {
               "$type": 281,
               "_content": [
                 {
@@ -97634,7 +97634,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "{a: b for c in d for e in items}",
-    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (dictionary_comprehension body: (pair key: (identifier) value: (identifier)) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier))))))",
+    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (dictionary_comprehension body: (pair key: (identifier) value: (identifier)) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier))))))",
     "wrappedText": "{a: b for c in d for e in items}\n",
     "wrappedOffset": 0
   },
@@ -97657,7 +97657,7 @@
             "$text": "b"
           }
         },
-        "_comprehension_clauses": {
+        "_clauses": {
           "$type": 281,
           "_content": [
             {
@@ -97719,7 +97719,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "{a: b for a, b in items}",
-    "expectedReparseTree": "(expression_statement (dictionary_comprehension body: (pair key: (identifier) value: (identifier)) (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier)) right: (identifier)))))",
+    "expectedReparseTree": "(expression_statement (dictionary_comprehension body: (pair key: (identifier) value: (identifier)) clauses: (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier)) right: (identifier)))))",
     "wrappedText": "{a: b for a, b in items}",
     "wrappedOffset": 0
   },
@@ -97742,7 +97742,7 @@
             "$text": "b"
           }
         },
-        "_comprehension_clauses": {
+        "_clauses": {
           "$type": 281,
           "_content": [
             {
@@ -97798,7 +97798,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "{a: b for c in d for e in items}",
-    "expectedReparseTree": "(expression_statement (dictionary_comprehension body: (pair key: (identifier) value: (identifier)) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))",
+    "expectedReparseTree": "(expression_statement (dictionary_comprehension body: (pair key: (identifier) value: (identifier)) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))",
     "wrappedText": "{a: b for c in d for e in items}",
     "wrappedOffset": 0
   },
@@ -97819,7 +97819,7 @@
           "$text": "b"
         }
       },
-      "_comprehension_clauses": {
+      "_clauses": {
         "$type": 281,
         "_content": [
           {
@@ -97880,7 +97880,7 @@
     "pattern": "dictionary_comprehension",
     "edits": [],
     "expectedSourceOut": "{a: b for a, b in items}",
-    "expectedReparseTree": "(dictionary_comprehension body: (pair key: (identifier) value: (identifier)) (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier)) right: (identifier))))",
+    "expectedReparseTree": "(dictionary_comprehension body: (pair key: (identifier) value: (identifier)) clauses: (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier)) right: (identifier))))",
     "wrappedText": "_ = ({a: b for a, b in items})",
     "wrappedOffset": 5
   },
@@ -97901,7 +97901,7 @@
           "$text": "b"
         }
       },
-      "_comprehension_clauses": {
+      "_clauses": {
         "$type": 281,
         "_content": [
           {
@@ -97956,7 +97956,7 @@
     "pattern": "dictionary_comprehension",
     "edits": [],
     "expectedSourceOut": "{a: b for c in d for e in items}",
-    "expectedReparseTree": "(dictionary_comprehension body: (pair key: (identifier) value: (identifier)) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier))))",
+    "expectedReparseTree": "(dictionary_comprehension body: (pair key: (identifier) value: (identifier)) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier))))",
     "wrappedText": "_ = ({a: b for c in d for e in items})",
     "wrappedOffset": 5
   },
@@ -99271,7 +99271,7 @@
                       }
                     }
                   },
-                  "_comprehension_clauses": {
+                  "_clauses": {
                     "$type": 281,
                     "_content": [
                       {
@@ -99363,7 +99363,7 @@
                     "$type": 1,
                     "$text": "r"
                   },
-                  "_comprehension_clauses": {
+                  "_clauses": {
                     "$type": 281,
                     "_content": [
                       {
@@ -99447,7 +99447,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "\n{a[b][c] for a, b, c in items}\n{r for s in qs for n in ms}\n",
-    "expectedReparseTree": "(module statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (set_comprehension body: (subscript value: (subscript value: (identifier) (subscripts subscript: (identifier))) (subscripts subscript: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier) item: (identifier)) right: (identifier)))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (set_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)))",
+    "expectedReparseTree": "(module statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (set_comprehension body: (subscript value: (subscript value: (identifier) (subscripts subscript: (identifier))) (subscripts subscript: (identifier))) clauses: (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier) item: (identifier)) right: (identifier)))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (set_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)))",
     "wrappedText": "\n{a[b][c] for a, b, c in items}\n{r for s in qs for n in ms}\n",
     "wrappedOffset": 0
   },
@@ -99516,7 +99516,7 @@
                   }
                 }
               },
-              "_comprehension_clauses": {
+              "_clauses": {
                 "$type": 281,
                 "_content": [
                   {
@@ -99602,7 +99602,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "{a[b][c] for a, b, c in items}\n",
-    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (set_comprehension body: (subscript value: (subscript value: (identifier) (subscripts subscript: (identifier))) (subscripts subscript: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier) item: (identifier)) right: (identifier)))))) (newline))",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (set_comprehension body: (subscript value: (subscript value: (identifier) (subscripts subscript: (identifier))) (subscripts subscript: (identifier))) clauses: (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier) item: (identifier)) right: (identifier)))))) (newline))",
     "wrappedText": "{a[b][c] for a, b, c in items}\n\n",
     "wrappedOffset": 0
   },
@@ -99623,7 +99623,7 @@
                 "$type": 1,
                 "$text": "r"
               },
-              "_comprehension_clauses": {
+              "_clauses": {
                 "$type": 281,
                 "_content": [
                   {
@@ -99694,7 +99694,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "{r for s in qs for n in ms}\n",
-    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (set_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))) (newline))",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (set_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))) (newline))",
     "wrappedText": "{r for s in qs for n in ms}\n\n",
     "wrappedOffset": 0
   },
@@ -99761,7 +99761,7 @@
                 }
               }
             },
-            "_comprehension_clauses": {
+            "_clauses": {
               "$type": 281,
               "_content": [
                 {
@@ -99846,7 +99846,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "{a[b][c] for a, b, c in items}",
-    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (set_comprehension body: (subscript value: (subscript value: (identifier) (subscripts subscript: (identifier))) (subscripts subscript: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier) item: (identifier)) right: (identifier))))))",
+    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (set_comprehension body: (subscript value: (subscript value: (identifier) (subscripts subscript: (identifier))) (subscripts subscript: (identifier))) clauses: (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier) item: (identifier)) right: (identifier))))))",
     "wrappedText": "{a[b][c] for a, b, c in items}\n",
     "wrappedOffset": 0
   },
@@ -99865,7 +99865,7 @@
               "$type": 1,
               "$text": "r"
             },
-            "_comprehension_clauses": {
+            "_clauses": {
               "$type": 281,
               "_content": [
                 {
@@ -99935,7 +99935,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "{r for s in qs for n in ms}",
-    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (set_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier))))))",
+    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (set_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier))))))",
     "wrappedText": "{r for s in qs for n in ms}\n",
     "wrappedOffset": 0
   },
@@ -99999,7 +99999,7 @@
             }
           }
         },
-        "_comprehension_clauses": {
+        "_clauses": {
           "$type": 281,
           "_content": [
             {
@@ -100070,7 +100070,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "{a[b][c] for a, b, c in items}",
-    "expectedReparseTree": "(expression_statement (set_comprehension body: (subscript value: (subscript value: (identifier) (subscripts subscript: (identifier))) (subscripts subscript: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier) item: (identifier)) right: (identifier)))))",
+    "expectedReparseTree": "(expression_statement (set_comprehension body: (subscript value: (subscript value: (identifier) (subscripts subscript: (identifier))) (subscripts subscript: (identifier))) clauses: (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier) item: (identifier)) right: (identifier)))))",
     "wrappedText": "{a[b][c] for a, b, c in items}",
     "wrappedOffset": 0
   },
@@ -100086,7 +100086,7 @@
           "$type": 1,
           "$text": "r"
         },
-        "_comprehension_clauses": {
+        "_clauses": {
           "$type": 281,
           "_content": [
             {
@@ -100142,7 +100142,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "{r for s in qs for n in ms}",
-    "expectedReparseTree": "(expression_statement (set_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))",
+    "expectedReparseTree": "(expression_statement (set_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))",
     "wrappedText": "{r for s in qs for n in ms}",
     "wrappedOffset": 0
   },
@@ -100204,7 +100204,7 @@
           }
         }
       },
-      "_comprehension_clauses": {
+      "_clauses": {
         "$type": 281,
         "_content": [
           {
@@ -100274,7 +100274,7 @@
     "pattern": "set_comprehension",
     "edits": [],
     "expectedSourceOut": "{a[b][c] for a, b, c in items}",
-    "expectedReparseTree": "(set_comprehension body: (subscript value: (subscript value: (identifier) (subscripts subscript: (identifier))) (subscripts subscript: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier) item: (identifier)) right: (identifier))))",
+    "expectedReparseTree": "(set_comprehension body: (subscript value: (subscript value: (identifier) (subscripts subscript: (identifier))) (subscripts subscript: (identifier))) clauses: (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier) item: (identifier)) right: (identifier))))",
     "wrappedText": "_ = ({a[b][c] for a, b, c in items})",
     "wrappedOffset": 5
   },
@@ -100288,7 +100288,7 @@
         "$type": 1,
         "$text": "r"
       },
-      "_comprehension_clauses": {
+      "_clauses": {
         "$type": 281,
         "_content": [
           {
@@ -100343,7 +100343,7 @@
     "pattern": "set_comprehension",
     "edits": [],
     "expectedSourceOut": "{r for s in qs for n in ms}",
-    "expectedReparseTree": "(set_comprehension body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier))))",
+    "expectedReparseTree": "(set_comprehension body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier))))",
     "wrappedText": "_ = ({r for s in qs for n in ms})",
     "wrappedOffset": 5
   },
@@ -102246,7 +102246,7 @@
                       }
                     }
                   },
-                  "_comprehension_clauses": {
+                  "_clauses": {
                     "$type": 281,
                     "_content": [
                       {
@@ -102373,7 +102373,7 @@
                         }
                       }
                     },
-                    "_comprehension_clauses": {
+                    "_clauses": {
                       "$type": 281,
                       "_content": [
                         {
@@ -102457,7 +102457,7 @@
                     "$type": 1,
                     "$text": "a"
                   },
-                  "_comprehension_clauses": {
+                  "_clauses": {
                     "$type": 281,
                     "_content": [
                       {
@@ -102534,7 +102534,7 @@
                     "$type": 1,
                     "$text": "x"
                   },
-                  "_comprehension_clauses": {
+                  "_clauses": {
                     "$type": 281,
                     "_content": [
                       {
@@ -102634,7 +102634,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "\n(a[b][c] for a, b, c in items)\ndict((a, b) for a, b in d)\n(a for b in c for d in e,)\n(x for x in range(1, 10))\n",
-    "expectedReparseTree": "(module statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (generator_expression body: (subscript value: (subscript value: (identifier) (subscripts subscript: (identifier))) (subscripts subscript: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier) item: (identifier)) right: (identifier)))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (generator_expression body: (tuple elements: (tuple_elements item: (identifier) item: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier)) right: (identifier))))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain))))))))) (newline)))",
+    "expectedReparseTree": "(module statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (generator_expression body: (subscript value: (subscript value: (identifier) (subscripts subscript: (identifier))) (subscripts subscript: (identifier))) clauses: (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier) item: (identifier)) right: (identifier)))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (generator_expression body: (tuple elements: (tuple_elements item: (identifier) item: (identifier))) clauses: (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier)) right: (identifier))))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (generator_expression body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (generator_expression body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain))))))))) (newline)))",
     "wrappedText": "\n(a[b][c] for a, b, c in items)\ndict((a, b) for a, b in d)\n(a for b in c for d in e,)\n(x for x in range(1, 10))\n",
     "wrappedOffset": 0
   },
@@ -102703,7 +102703,7 @@
                   }
                 }
               },
-              "_comprehension_clauses": {
+              "_clauses": {
                 "$type": 281,
                 "_content": [
                   {
@@ -102789,7 +102789,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "(a[b][c] for a, b, c in items)\n",
-    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (generator_expression body: (subscript value: (subscript value: (identifier) (subscripts subscript: (identifier))) (subscripts subscript: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier) item: (identifier)) right: (identifier)))))) (newline))",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (generator_expression body: (subscript value: (subscript value: (identifier) (subscripts subscript: (identifier))) (subscripts subscript: (identifier))) clauses: (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier) item: (identifier)) right: (identifier)))))) (newline))",
     "wrappedText": "(a[b][c] for a, b, c in items)\n\n",
     "wrappedOffset": 0
   },
@@ -102845,7 +102845,7 @@
                     }
                   }
                 },
-                "_comprehension_clauses": {
+                "_clauses": {
                   "$type": 281,
                   "_content": [
                     {
@@ -102923,7 +102923,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "dict((a, b) for a, b in d)\n",
-    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (generator_expression body: (tuple elements: (tuple_elements item: (identifier) item: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier)) right: (identifier))))))) (newline))",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (generator_expression body: (tuple elements: (tuple_elements item: (identifier) item: (identifier))) clauses: (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier)) right: (identifier))))))) (newline))",
     "wrappedText": "dict((a, b) for a, b in d)\n\n",
     "wrappedOffset": 0
   },
@@ -102944,7 +102944,7 @@
                 "$type": 1,
                 "$text": "a"
               },
-              "_comprehension_clauses": {
+              "_clauses": {
                 "$type": 281,
                 "_content": [
                   {
@@ -103015,7 +103015,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "(a for b in c for d in e,)\n",
-    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))) (newline))",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (generator_expression body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))) (newline))",
     "wrappedText": "(a for b in c for d in e,)\n\n",
     "wrappedOffset": 0
   },
@@ -103036,7 +103036,7 @@
                 "$type": 1,
                 "$text": "x"
               },
-              "_comprehension_clauses": {
+              "_clauses": {
                 "$type": 281,
                 "_content": [
                   {
@@ -103123,7 +103123,7 @@
     "pattern": "_simple_statements",
     "edits": [],
     "expectedSourceOut": "(x for x in range(1, 10))\n",
-    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain))))))))) (newline))",
+    "expectedReparseTree": "(simple_statements elements: (simple_statements_elements item: (expression_statement (generator_expression body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain))))))))) (newline))",
     "wrappedText": "(x for x in range(1, 10))\n\n",
     "wrappedOffset": 0
   },
@@ -103190,7 +103190,7 @@
                 }
               }
             },
-            "_comprehension_clauses": {
+            "_clauses": {
               "$type": 281,
               "_content": [
                 {
@@ -103275,7 +103275,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "(a[b][c] for a, b, c in items)",
-    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (generator_expression body: (subscript value: (subscript value: (identifier) (subscripts subscript: (identifier))) (subscripts subscript: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier) item: (identifier)) right: (identifier))))))",
+    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (generator_expression body: (subscript value: (subscript value: (identifier) (subscripts subscript: (identifier))) (subscripts subscript: (identifier))) clauses: (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier) item: (identifier)) right: (identifier))))))",
     "wrappedText": "(a[b][c] for a, b, c in items)\n",
     "wrappedOffset": 0
   },
@@ -103329,7 +103329,7 @@
                   }
                 }
               },
-              "_comprehension_clauses": {
+              "_clauses": {
                 "$type": 281,
                 "_content": [
                   {
@@ -103406,7 +103406,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "dict((a, b) for a, b in d)",
-    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (generator_expression body: (tuple elements: (tuple_elements item: (identifier) item: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier)) right: (identifier)))))))",
+    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (call function: (identifier) arguments: (generator_expression body: (tuple elements: (tuple_elements item: (identifier) item: (identifier))) clauses: (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier)) right: (identifier)))))))",
     "wrappedText": "dict((a, b) for a, b in d)\n",
     "wrappedOffset": 0
   },
@@ -103425,7 +103425,7 @@
               "$type": 1,
               "$text": "a"
             },
-            "_comprehension_clauses": {
+            "_clauses": {
               "$type": 281,
               "_content": [
                 {
@@ -103495,7 +103495,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "(a for b in c for d in e,)",
-    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier))))))",
+    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (generator_expression body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier))))))",
     "wrappedText": "(a for b in c for d in e,)\n",
     "wrappedOffset": 0
   },
@@ -103514,7 +103514,7 @@
               "$type": 1,
               "$text": "x"
             },
-            "_comprehension_clauses": {
+            "_clauses": {
               "$type": 281,
               "_content": [
                 {
@@ -103600,7 +103600,7 @@
     "pattern": "simple_statements_elements",
     "edits": [],
     "expectedSourceOut": "(x for x in range(1, 10))",
-    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain)))))))))",
+    "expectedReparseTree": "(simple_statements_elements item: (expression_statement (generator_expression body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain)))))))))",
     "wrappedText": "(x for x in range(1, 10))\n",
     "wrappedOffset": 0
   },
@@ -103664,7 +103664,7 @@
             }
           }
         },
-        "_comprehension_clauses": {
+        "_clauses": {
           "$type": 281,
           "_content": [
             {
@@ -103735,7 +103735,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "(a[b][c] for a, b, c in items)",
-    "expectedReparseTree": "(expression_statement (generator_expression body: (subscript value: (subscript value: (identifier) (subscripts subscript: (identifier))) (subscripts subscript: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier) item: (identifier)) right: (identifier)))))",
+    "expectedReparseTree": "(expression_statement (generator_expression body: (subscript value: (subscript value: (identifier) (subscripts subscript: (identifier))) (subscripts subscript: (identifier))) clauses: (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier) item: (identifier)) right: (identifier)))))",
     "wrappedText": "(a[b][c] for a, b, c in items)",
     "wrappedOffset": 0
   },
@@ -103786,7 +103786,7 @@
               }
             }
           },
-          "_comprehension_clauses": {
+          "_clauses": {
             "$type": 281,
             "_content": [
               {
@@ -103849,7 +103849,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "dict((a, b) for a, b in d)",
-    "expectedReparseTree": "(expression_statement (call function: (identifier) arguments: (generator_expression body: (tuple elements: (tuple_elements item: (identifier) item: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier)) right: (identifier))))))",
+    "expectedReparseTree": "(expression_statement (call function: (identifier) arguments: (generator_expression body: (tuple elements: (tuple_elements item: (identifier) item: (identifier))) clauses: (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier)) right: (identifier))))))",
     "wrappedText": "dict((a, b) for a, b in d)",
     "wrappedOffset": 0
   },
@@ -103865,7 +103865,7 @@
           "$type": 1,
           "$text": "a"
         },
-        "_comprehension_clauses": {
+        "_clauses": {
           "$type": 281,
           "_content": [
             {
@@ -103921,7 +103921,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "(a for b in c for d in e,)",
-    "expectedReparseTree": "(expression_statement (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))",
+    "expectedReparseTree": "(expression_statement (generator_expression body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier)))))",
     "wrappedText": "(a for b in c for d in e,)",
     "wrappedOffset": 0
   },
@@ -103937,7 +103937,7 @@
           "$type": 1,
           "$text": "x"
         },
-        "_comprehension_clauses": {
+        "_clauses": {
           "$type": 281,
           "_content": [
             {
@@ -104009,7 +104009,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "(x for x in range(1, 10))",
-    "expectedReparseTree": "(expression_statement (generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain))))))))",
+    "expectedReparseTree": "(expression_statement (generator_expression body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain))))))))",
     "wrappedText": "(x for x in range(1, 10))",
     "wrappedOffset": 0
   },
@@ -104071,7 +104071,7 @@
           }
         }
       },
-      "_comprehension_clauses": {
+      "_clauses": {
         "$type": 281,
         "_content": [
           {
@@ -104141,7 +104141,7 @@
     "pattern": "generator_expression",
     "edits": [],
     "expectedSourceOut": "(a[b][c] for a, b, c in items)",
-    "expectedReparseTree": "(generator_expression body: (subscript value: (subscript value: (identifier) (subscripts subscript: (identifier))) (subscripts subscript: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier) item: (identifier)) right: (identifier))))",
+    "expectedReparseTree": "(generator_expression body: (subscript value: (subscript value: (identifier) (subscripts subscript: (identifier))) (subscripts subscript: (identifier))) clauses: (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier) item: (identifier)) right: (identifier))))",
     "wrappedText": "_ = ((a[b][c] for a, b, c in items))",
     "wrappedOffset": 5
   },
@@ -104184,7 +104184,7 @@
           }
         }
       },
-      "_comprehension_clauses": {
+      "_clauses": {
         "$type": 281,
         "_content": [
           {
@@ -104245,7 +104245,7 @@
     "pattern": "generator_expression",
     "edits": [],
     "expectedSourceOut": "((a, b) for a, b in d)",
-    "expectedReparseTree": "(generator_expression body: (tuple elements: (tuple_elements item: (identifier) item: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier)) right: (identifier))))",
+    "expectedReparseTree": "(generator_expression body: (tuple elements: (tuple_elements item: (identifier) item: (identifier))) clauses: (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier)) right: (identifier))))",
     "wrappedText": "_ = (((a, b) for a, b in d))",
     "wrappedOffset": 5
   },
@@ -104259,7 +104259,7 @@
         "$type": 1,
         "$text": "a"
       },
-      "_comprehension_clauses": {
+      "_clauses": {
         "$type": 281,
         "_content": [
           {
@@ -104314,7 +104314,7 @@
     "pattern": "generator_expression",
     "edits": [],
     "expectedSourceOut": "(a for b in c for d in e,)",
-    "expectedReparseTree": "(generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier))))",
+    "expectedReparseTree": "(generator_expression body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (identifier)) content: (for_in_clause left: (identifier) right: (identifier))))",
     "wrappedText": "_ = ((a for b in c for d in e,))",
     "wrappedOffset": 5
   },
@@ -104328,7 +104328,7 @@
         "$type": 1,
         "$text": "x"
       },
-      "_comprehension_clauses": {
+      "_clauses": {
         "$type": 281,
         "_content": [
           {
@@ -104399,7 +104399,7 @@
     "pattern": "generator_expression",
     "edits": [],
     "expectedSourceOut": "(x for x in range(1, 10))",
-    "expectedReparseTree": "(generator_expression body: (identifier) (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain)))))))",
+    "expectedReparseTree": "(generator_expression body: (identifier) clauses: (comprehension_clauses content: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (integer_decimal_plain) item: (integer_decimal_plain)))))))",
     "wrappedText": "_ = ((x for x in range(1, 10)))",
     "wrappedOffset": 5
   },
@@ -105338,7 +105338,7 @@
             }
           }
         },
-        "_comprehension_clauses": {
+        "_clauses": {
           "$type": 281,
           "_content": [
             {
@@ -105400,7 +105400,7 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "dict((a, b) for a, b in d)",
-    "expectedReparseTree": "(call function: (identifier) arguments: (generator_expression body: (tuple elements: (tuple_elements item: (identifier) item: (identifier))) (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier)) right: (identifier)))))",
+    "expectedReparseTree": "(call function: (identifier) arguments: (generator_expression body: (tuple elements: (tuple_elements item: (identifier) item: (identifier))) clauses: (comprehension_clauses content: (for_in_clause left: (pattern_list item: (identifier) item: (identifier)) right: (identifier)))))",
     "wrappedText": "_ = (dict((a, b) for a, b in d))",
     "wrappedOffset": 5
   },

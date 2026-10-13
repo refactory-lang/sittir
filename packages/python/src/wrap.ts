@@ -3139,14 +3139,14 @@ export function wrapListComprehension(data: T.ListComprehension, tree: TreeHandl
 		body() {
 			return hydrateSlot<T.Expression>(this, '_body', tree);
 		},
-		comprehensionClauses() {
-			return hydrateSlot<T.ComprehensionClauses>(this, '_comprehension_clauses', tree);
+		clauses() {
+			return hydrateSlot<T.ComprehensionClauses>(this, '_clauses', tree);
 		},
 		$with: {
 			body: (v: NonNullable<T.ListComprehension['_body']>) =>
 				rebuilt(node, handle, () => wrapListComprehension({ ...$edited(data), _body: v }, tree)),
-			comprehensionClauses: (v: NonNullable<T.ListComprehension['_comprehension_clauses']>) =>
-				rebuilt(node, handle, () => wrapListComprehension({ ...$edited(data), _comprehension_clauses: v }, tree))
+			clauses: (v: NonNullable<T.ListComprehension['_clauses']>) =>
+				rebuilt(node, handle, () => wrapListComprehension({ ...$edited(data), _clauses: v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -3171,14 +3171,14 @@ export function wrapDictionaryComprehension(
 		body() {
 			return hydrateSlot<T.Pair>(this, '_body', tree);
 		},
-		comprehensionClauses() {
-			return hydrateSlot<T.ComprehensionClauses>(this, '_comprehension_clauses', tree);
+		clauses() {
+			return hydrateSlot<T.ComprehensionClauses>(this, '_clauses', tree);
 		},
 		$with: {
 			body: (v: NonNullable<T.DictionaryComprehension['_body']>) =>
 				rebuilt(node, handle, () => wrapDictionaryComprehension({ ...$edited(data), _body: v }, tree)),
-			comprehensionClauses: (v: NonNullable<T.DictionaryComprehension['_comprehension_clauses']>) =>
-				rebuilt(node, handle, () => wrapDictionaryComprehension({ ...$edited(data), _comprehension_clauses: v }, tree))
+			clauses: (v: NonNullable<T.DictionaryComprehension['_clauses']>) =>
+				rebuilt(node, handle, () => wrapDictionaryComprehension({ ...$edited(data), _clauses: v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -3200,14 +3200,14 @@ export function wrapSetComprehension(data: T.SetComprehension, tree: TreeHandle)
 		body() {
 			return hydrateSlot<T.Expression>(this, '_body', tree);
 		},
-		comprehensionClauses() {
-			return hydrateSlot<T.ComprehensionClauses>(this, '_comprehension_clauses', tree);
+		clauses() {
+			return hydrateSlot<T.ComprehensionClauses>(this, '_clauses', tree);
 		},
 		$with: {
 			body: (v: NonNullable<T.SetComprehension['_body']>) =>
 				rebuilt(node, handle, () => wrapSetComprehension({ ...$edited(data), _body: v }, tree)),
-			comprehensionClauses: (v: NonNullable<T.SetComprehension['_comprehension_clauses']>) =>
-				rebuilt(node, handle, () => wrapSetComprehension({ ...$edited(data), _comprehension_clauses: v }, tree))
+			clauses: (v: NonNullable<T.SetComprehension['_clauses']>) =>
+				rebuilt(node, handle, () => wrapSetComprehension({ ...$edited(data), _clauses: v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -3229,14 +3229,14 @@ export function wrapGeneratorExpression(data: T.GeneratorExpression, tree: TreeH
 		body() {
 			return hydrateSlot<T.Expression>(this, '_body', tree);
 		},
-		comprehensionClauses() {
-			return hydrateSlot<T.ComprehensionClauses>(this, '_comprehension_clauses', tree);
+		clauses() {
+			return hydrateSlot<T.ComprehensionClauses>(this, '_clauses', tree);
 		},
 		$with: {
 			body: (v: NonNullable<T.GeneratorExpression['_body']>) =>
 				rebuilt(node, handle, () => wrapGeneratorExpression({ ...$edited(data), _body: v }, tree)),
-			comprehensionClauses: (v: NonNullable<T.GeneratorExpression['_comprehension_clauses']>) =>
-				rebuilt(node, handle, () => wrapGeneratorExpression({ ...$edited(data), _comprehension_clauses: v }, tree))
+			clauses: (v: NonNullable<T.GeneratorExpression['_clauses']>) =>
+				rebuilt(node, handle, () => wrapGeneratorExpression({ ...$edited(data), _clauses: v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		$trivia: {

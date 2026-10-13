@@ -1568,7 +1568,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "comprehension_clauses": {
+      "clauses": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1584,7 +1584,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "comprehension_clauses": {
+      "clauses": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1600,7 +1600,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "comprehension_clauses": {
+      "clauses": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1616,7 +1616,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "comprehension_clauses": {
+      "clauses": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -6762,9 +6762,9 @@
           ]
         },
         {
-          "name": "comprehension_clauses",
-          "propertyName": "comprehensionClauses",
-          "paramName": "comprehensionClauses",
+          "name": "clauses",
+          "propertyName": "clauses",
+          "paramName": "clauses",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -6785,7 +6785,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "body",
-        "comprehension_clauses"
+        "clauses"
       ]
     },
     {
@@ -9878,9 +9878,9 @@
           ]
         },
         {
-          "name": "comprehension_clauses",
-          "propertyName": "comprehensionClauses",
-          "paramName": "comprehensionClauses",
+          "name": "clauses",
+          "propertyName": "clauses",
+          "paramName": "clauses",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -9901,7 +9901,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "body",
-        "comprehension_clauses"
+        "clauses"
       ]
     },
     {
@@ -11973,9 +11973,9 @@
           ]
         },
         {
-          "name": "comprehension_clauses",
-          "propertyName": "comprehensionClauses",
-          "paramName": "comprehensionClauses",
+          "name": "clauses",
+          "propertyName": "clauses",
+          "paramName": "clauses",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -11996,7 +11996,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "body",
-        "comprehension_clauses"
+        "clauses"
       ]
     },
     {
@@ -14627,9 +14627,9 @@
           ]
         },
         {
-          "name": "comprehension_clauses",
-          "propertyName": "comprehensionClauses",
-          "paramName": "comprehensionClauses",
+          "name": "clauses",
+          "propertyName": "clauses",
+          "paramName": "clauses",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -14650,7 +14650,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "body",
-        "comprehension_clauses"
+        "clauses"
       ]
     },
     {

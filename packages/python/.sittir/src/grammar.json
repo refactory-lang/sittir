@@ -5093,8 +5093,15 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "comprehension_clauses"
+          "type": "FIELD",
+          "name": "clauses",
+          "content": {
+            "type": "SYMBOL",
+            "name": "comprehension_clauses"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "STRING",
@@ -5118,8 +5125,15 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "comprehension_clauses"
+          "type": "FIELD",
+          "name": "clauses",
+          "content": {
+            "type": "SYMBOL",
+            "name": "comprehension_clauses"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "STRING",
@@ -5143,8 +5157,15 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "comprehension_clauses"
+          "type": "FIELD",
+          "name": "clauses",
+          "content": {
+            "type": "SYMBOL",
+            "name": "comprehension_clauses"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "STRING",
@@ -5168,8 +5189,15 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "comprehension_clauses"
+          "type": "FIELD",
+          "name": "clauses",
+          "content": {
+            "type": "SYMBOL",
+            "name": "comprehension_clauses"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "STRING",

@@ -16293,9 +16293,9 @@ pub struct ListComprehensionTransport {
     #[wire(key = "_body")]
     #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[wire(key = "_comprehension_clauses")]
-    #[slot]
-    pub comprehension_clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
+    #[wire(key = "_clauses")]
+    #[slot(field = field::CLAUSES)]
+    pub clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
 }
 
 impl ::sittir_core::view::KindOf for ListComprehensionTransport {
@@ -16323,7 +16323,7 @@ impl ::sittir_core::prepare::Prepare for ListComprehensionTransport {
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
-        self.comprehension_clauses.prepare(ctx)?;
+        self.clauses.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -16348,9 +16348,9 @@ pub struct DictionaryComprehensionTransport {
     #[wire(key = "_body")]
     #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<Box<PairTransport>>,
-    #[wire(key = "_comprehension_clauses")]
-    #[slot]
-    pub comprehension_clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
+    #[wire(key = "_clauses")]
+    #[slot(field = field::CLAUSES)]
+    pub clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
 }
 
 impl ::sittir_core::view::KindOf for DictionaryComprehensionTransport {
@@ -16378,7 +16378,7 @@ impl ::sittir_core::prepare::Prepare for DictionaryComprehensionTransport {
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
-        self.comprehension_clauses.prepare(ctx)?;
+        self.clauses.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -16403,9 +16403,9 @@ pub struct SetComprehensionTransport {
     #[wire(key = "_body")]
     #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[wire(key = "_comprehension_clauses")]
-    #[slot]
-    pub comprehension_clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
+    #[wire(key = "_clauses")]
+    #[slot(field = field::CLAUSES)]
+    pub clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
 }
 
 impl ::sittir_core::view::KindOf for SetComprehensionTransport {
@@ -16433,7 +16433,7 @@ impl ::sittir_core::prepare::Prepare for SetComprehensionTransport {
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
-        self.comprehension_clauses.prepare(ctx)?;
+        self.clauses.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -16458,9 +16458,9 @@ pub struct GeneratorExpressionTransport {
     #[wire(key = "_body")]
     #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[wire(key = "_comprehension_clauses")]
-    #[slot]
-    pub comprehension_clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
+    #[wire(key = "_clauses")]
+    #[slot(field = field::CLAUSES)]
+    pub clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
 }
 
 impl ::sittir_core::view::KindOf for GeneratorExpressionTransport {
@@ -16488,7 +16488,7 @@ impl ::sittir_core::prepare::Prepare for GeneratorExpressionTransport {
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
-        self.comprehension_clauses.prepare(ctx)?;
+        self.clauses.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -26830,12 +26830,12 @@ fn render_pair(node: &PairTransport, w: &mut dyn ::sittir_core::render::RenderSi
 
 fn render_list_comprehension(node: &ListComprehensionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
-    let comprehension_clauses = &node.comprehension_clauses;
+    let clauses = &node.clauses;
     w.edge(::sittir_core::types::KindId(237), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("[")?;
     w.site_at(options::SITE_LIST_COMPREHENSION_LBRACK_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", 0, w, |w| body.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_comprehension_clauses", 0, w, |w| comprehension_clauses.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_clauses", 0, w, |w| clauses.render(w))?;
     w.site_at(options::SITE_LIST_COMPREHENSION_RBRACK_BEFORE);
     w.text("]")?;
     w.edge(::sittir_core::types::KindId(237), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -26844,12 +26844,12 @@ fn render_list_comprehension(node: &ListComprehensionTransport, w: &mut dyn ::si
 
 fn render_dictionary_comprehension(node: &DictionaryComprehensionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
-    let comprehension_clauses = &node.comprehension_clauses;
+    let clauses = &node.clauses;
     w.edge(::sittir_core::types::KindId(238), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("{")?;
     w.site_at(options::SITE_DICTIONARY_COMPREHENSION_LBRACE_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", 0, w, |w| body.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_comprehension_clauses", 0, w, |w| comprehension_clauses.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_clauses", 0, w, |w| clauses.render(w))?;
     w.site_at(options::SITE_DICTIONARY_COMPREHENSION_RBRACE_BEFORE);
     w.text("}")?;
     w.edge(::sittir_core::types::KindId(238), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -26858,12 +26858,12 @@ fn render_dictionary_comprehension(node: &DictionaryComprehensionTransport, w: &
 
 fn render_set_comprehension(node: &SetComprehensionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
-    let comprehension_clauses = &node.comprehension_clauses;
+    let clauses = &node.clauses;
     w.edge(::sittir_core::types::KindId(239), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("{")?;
     w.site_at(options::SITE_SET_COMPREHENSION_LBRACE_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", 0, w, |w| body.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_comprehension_clauses", 0, w, |w| comprehension_clauses.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_clauses", 0, w, |w| clauses.render(w))?;
     w.site_at(options::SITE_SET_COMPREHENSION_RBRACE_BEFORE);
     w.text("}")?;
     w.edge(::sittir_core::types::KindId(239), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -26872,12 +26872,12 @@ fn render_set_comprehension(node: &SetComprehensionTransport, w: &mut dyn ::sitt
 
 fn render_generator_expression(node: &GeneratorExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
-    let comprehension_clauses = &node.comprehension_clauses;
+    let clauses = &node.clauses;
     w.edge(::sittir_core::types::KindId(240), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_GENERATOR_EXPRESSION_LPAREN_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", 0, w, |w| body.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_comprehension_clauses", 0, w, |w| comprehension_clauses.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_clauses", 0, w, |w| clauses.render(w))?;
     w.site_at(options::SITE_GENERATOR_EXPRESSION_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(240), ::sittir_core::options::Side::After, node.layout.edges().after);
