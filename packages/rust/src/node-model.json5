@@ -3834,7 +3834,7 @@
       }
     },
     "match_block_arms": {
-      "match_arm": {
+      "arms": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -17180,9 +17180,9 @@
       "seated": true,
       "slots": [
         {
-          "name": "match_arm",
-          "propertyName": "matchArms",
-          "paramName": "matchArms",
+          "name": "arms",
+          "propertyName": "arms",
+          "paramName": "arms",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -17223,7 +17223,7 @@
       "name": "match_block_arms",
       "factoryShape": "config",
       "factoryFields": [
-        "match_arm",
+        "arms",
         "last_arm"
       ]
     },

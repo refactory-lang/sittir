@@ -11868,9 +11868,9 @@ export function coerceToTypeArgument(input: T.TypeArgument.Loose): ReturnType<ty
 	});
 }
 
-export function resolveMatchBlockArms_matchArms(
-	value: T.MatchBlockArms.LooseConfig['matchArm']
-): Admit<T.MatchBlockArms['_match_arm']> {
+export function resolveMatchBlockArms_arms(
+	value: T.MatchBlockArms.LooseConfig['arms']
+): Admit<T.MatchBlockArms['_arms']> {
 	return _resolveMany<T.MatchArm>(value, _K2, _super_match_arm);
 }
 
@@ -11884,7 +11884,7 @@ export function coerceToMatchBlockArms(input: T.MatchBlockArms.Loose): ReturnTyp
 	if (!_isLooseConfig<T.MatchBlockArms.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildMatchBlockArms>;
 	return F.buildMatchBlockArms({
-		matchArm: resolveMatchBlockArms_matchArms(input.matchArm),
+		arms: resolveMatchBlockArms_arms(input.arms),
 		lastArm: _requireField('match_block_arms', 'lastArm', resolveMatchBlockArms_lastArm(input.lastArm))
 	});
 }
