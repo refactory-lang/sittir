@@ -667,16 +667,17 @@ function narrowRef(edit: LeadEdit, ref: unknown, admits: readonly LeadMatch[], s
 
 function admittedInside(edit: LeadEdit, rule: unknown, admitted: ReadonlySet<string>, path: readonly string[] = []): string | undefined {
 	if (Array.isArray(rule)) return rule.map((r) => admittedInside(edit, r, admitted, path)).find((kind) => kind !== undefined);
-	if (!isRecord(rule)) return undefined;
-	const kind = refKind(rule);
+	const node = unprecedenced(rule);
+	if (!isRecord(node)) return undefined;
+	const kind = refKind(node);
 	if (kind !== undefined && admitted.has(kind)) return kind;
-	if (rule.type === 'TOKEN' || rule.type === 'IMMEDIATE_TOKEN') return undefined;
-	if (rule.type === 'SYMBOL') {
-		const name = rule.name as string;
+	if (node.type === 'TOKEN' || node.type === 'IMMEDIATE_TOKEN') return undefined;
+	if (node.type === 'SYMBOL') {
+		const name = node.name as string;
 		return name in edit.rules && edit.transparent(name) && !path.includes(name) ? admittedInside(edit, edit.rules[name], admitted, [...path, name]) : undefined;
 	}
 	if (kind !== undefined) return undefined;
-	return admittedInside(edit, rule.members, admitted, path) ?? admittedInside(edit, rule.content, admitted, path);
+	return admittedInside(edit, node.members, admitted, path) ?? admittedInside(edit, node.content, admitted, path);
 }
 
 function narrowWithin(edit: LeadEdit, kind: string, body: unknown, within: LeadWithin, side: LeadSide, exclusive: boolean): unknown {

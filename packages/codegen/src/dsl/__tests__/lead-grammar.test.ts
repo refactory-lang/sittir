@@ -413,6 +413,20 @@ describe('leadGrammar', () => {
 		expect(leadIssue(wrapped({ inline: ['wrapper'] }), [NAMED_LEAD])).toBe("'self' sits where the split cannot divide it");
 	});
 
+	it.each(['PREC', 'PREC_LEFT', 'PREC_RIGHT', 'PREC_DYNAMIC'])('refuses an admitted kind inside a transparent rule under %s', (type) => {
+		const grammar = {
+			...named(seq(field('name', sym('_name')), str(':'))),
+			rules: {
+				...rulesOf(named(seq(field('name', sym('_name')), str(':')))),
+				_name: choice(sym('self'), sym('_prefixed'), sym('other')),
+				_prefixed: seq(blankChoice(str('&')), { type, value: 1, content: sym('wrapper') }),
+				wrapper: choice(sym('self'), sym('identifier'))
+			},
+			inline: ['wrapper']
+		};
+		expect(leadIssue(grammar, [NAMED_LEAD])).toBe("'self' sits where the split cannot divide it");
+	});
+
 	it('leaves a grammar with no leads as it is', () => {
 		const grammar = rust();
 		expect(leadGrammar(grammar, [])).toBe(grammar);
