@@ -1,4 +1,4 @@
-import type { AnyUntypedNode, Cond, KindMembership, QueryPlan, QuerySlots, Recorder, SlotRef, SlotRoutes, TransportCoordinate } from '@sittir/types';
+import type { AnyUntypedNode, Cond, KindMembership, PresenceRef, QueryPlan, QuerySlots, Recorder, SlotRef, SlotRoutes, TransportCoordinate } from '@sittir/types';
 import { inTreeEngine } from './engine-scope.ts';
 import type { TreeHandle } from './read.ts';
 import { treeOf, treeTokenOf } from './tree-token.ts';
@@ -98,19 +98,30 @@ function kindLabel(context: Context, kind: number): string {
 	return context.hooks.kindName(kind) ?? `kind ${kind}`;
 }
 
-const slotTables = new WeakMap<QuerySlots, Map<number, ReadonlyMap<string, SlotRoutes>>>();
-const NO_SLOTS: ReadonlyMap<string, SlotRoutes> = new Map();
+interface QuerySlot {
+	readonly routes: SlotRoutes;
+	readonly keyword: string | undefined;
+}
 
-function slotsOf(table: QuerySlots, kind: number): ReadonlyMap<string, SlotRoutes> {
+const slotTables = new WeakMap<QuerySlots, Map<number, ReadonlyMap<string, QuerySlot>>>();
+const NO_SLOTS: ReadonlyMap<string, QuerySlot> = new Map();
+const NO_ROUTES: SlotRoutes = Object.freeze({ fields: [], kinds: [] });
+
+function slotsOf(table: QuerySlots, kind: number): ReadonlyMap<string, QuerySlot> {
 	let byKind = slotTables.get(table);
 	if (byKind === undefined) slotTables.set(table, (byKind = new Map()));
 	let slots = byKind.get(kind);
-	if (slots === undefined) byKind.set(kind, (slots = table[kind] === undefined ? NO_SLOTS : new Map(table[kind].map(([accessor, routes]) => [accessor, routes]))));
+	if (slots === undefined)
+		byKind.set(kind, (slots = table[kind] === undefined ? NO_SLOTS : new Map(table[kind].map(([accessor, routes, keyword]) => [accessor, { routes, keyword }]))));
 	return slots;
 }
 
-function everyAccessor(table: QuerySlots): ReadonlySet<string> {
-	return new Set(Object.values(table).flatMap((row) => row.map(([accessor]) => accessor)));
+function everyAccessor(table: QuerySlots): ReadonlyMap<string, QuerySlot> {
+	const keywords = new Map<string, string | undefined>();
+	for (const row of Object.values(table))
+		for (const [accessor, , keyword] of row)
+			keywords.set(accessor, keywords.has(accessor) && keywords.get(accessor) !== keyword ? undefined : keyword);
+	return new Map([...keywords].map(([accessor, keyword]) => [accessor, { routes: NO_ROUTES, keyword }]));
 }
 
 type Source =
@@ -535,22 +546,32 @@ function slotRef(slot: string, routes: SlotRoutes): SlotRef {
 	});
 }
 
-const NO_ROUTES: SlotRoutes = Object.freeze({ fields: [], kinds: [] });
+function presenceRef(slot: string, routes: SlotRoutes, keyword: string): PresenceRef {
+	const refuseText = (): never => refuse(`query: ${slot} holds the presence of ${JSON.stringify(keyword)}; compare it with eq(true) or eq(false)`);
+	return Object.freeze({
+		eq(present: boolean) {
+			if (typeof present !== 'boolean') refuseText();
+			const leaf: QueryPlan = { op: 'present', fields: routes.fields, kinds: routes.kinds };
+			return cond(present ? leaf : { op: 'not', of: leaf });
+		},
+		match: refuseText
+	});
+}
+
+const refOf = (key: string, slot: QuerySlot): SlotRef | PresenceRef =>
+	slot.keyword === undefined ? slotRef(key, slot.routes) : presenceRef(key, slot.routes, slot.keyword);
 
 function recorder(context: Context, kind: number | undefined): Recorder<unknown> {
 	const table = context.hooks.querySlots;
-	const slots: ReadonlyMap<string, SlotRoutes> =
-		kind === undefined
-			? new Map([...everyAccessor(table)].map((accessor) => [accessor, NO_ROUTES]))
-			: slotsOf(table, kind);
+	const slots: ReadonlyMap<string, QuerySlot> = kind === undefined ? everyAccessor(table) : slotsOf(table, kind);
 	const owner = kind === undefined ? 'this grammar' : kindLabel(context, kind);
 	const refuseRecorder = (what: string): never =>
 		refuse(`query: ${what}; a condition reads slots and compares them (c.slot.eq / .match)`);
 	return new Proxy(Object.create(null) as Recorder<unknown>, {
 		get(_, key) {
 			if (typeof key === 'string') {
-				const routes = slots.get(key);
-				if (routes !== undefined) return slotRef(key, routes);
+				const slot = slots.get(key);
+				if (slot !== undefined) return refOf(key, slot);
 			}
 			return refuseRecorder(`${String(key)} is not a slot of ${owner}`);
 		},
@@ -559,7 +580,7 @@ function recorder(context: Context, kind: number | undefined): Recorder<unknown>
 		ownKeys: () => [...slots.keys()],
 		getOwnPropertyDescriptor: (_, key) =>
 			typeof key === 'string' && slots.has(key)
-				? { configurable: true, enumerable: true, value: slotRef(key, slots.get(key)!) }
+				? { configurable: true, enumerable: true, value: refOf(key, slots.get(key)!) }
 				: undefined
 	});
 }

@@ -337,3 +337,11 @@ A strict builder with no coercer beside it, as one pair (a refine form); `bundle
 ### `packages/types/src/index.ts::UndefinedIfOptional`
 
 `undefined` for a key the node declares optional, `never` for a required one. `ConfigOf` appends it to the three keyword-presence arms (boolean keyword, bitflag, kind enum), so an explicit `undefined` is accepted exactly where the key itself may be omitted. The optional key keeps it spelled out because the types are published, and a consumer compiling with `exactOptionalPropertyTypes` must still be able to pass `{ key: undefined }` for an optional slot.
+
+### `packages/types/src/keyword-presence.ts::BooleanKeyword`
+
+The brand on a keyword-presence slot's boolean storage, carrying the keyword's text. It lives in its own module so the query types read it (`IsBooleanKeyword`) without importing the package index.
+
+### `packages/types/src/query.ts::SlotRefOf`
+
+The recorder member of one slot of a node type: a `PresenceRef` when the slot's hint takes a `BooleanKeyword`, else a `SlotRef`. Over a union it is the union of each member's, so a slot that is boolean in one kind and text in another has an `eq` taking `string & boolean`, which no argument satisfies: the union rule the recorder applies to slots, applied to their members.

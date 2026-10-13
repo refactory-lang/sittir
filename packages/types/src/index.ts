@@ -5,8 +5,10 @@
 
 import type { CamelCase } from 'type-fest';
 import type { NodeMethods } from './engine-api.ts';
-export type { Cond, KindMembership, QueryFacet, QueryPlan, QuerySlotEntry, QuerySlots, Recorder, SlotNameOf, SlotRef, SlotRoutes, View } from './query.ts';
+export type { Cond, KindMembership, PresenceRef, QueryFacet, QueryPlan, QuerySlotEntry, QuerySlots, Recorder, SlotNameOf, SlotRef, SlotRoutes, View } from './query.ts';
 import type { Admit } from './node-surface.ts';
+import type { BooleanKeywordText, IsBooleanKeyword } from './keyword-presence.ts';
+export type { BooleanKeyword } from './keyword-presence.ts';
 
 // ---------------------------------------------------------------------------
 // Runtime types — re-exported from core-types (zero runtime in this package)
@@ -60,21 +62,6 @@ export type Simplify<T> = { [K in keyof T]: T[K] } & {};
  */
 export type NonEmptyArray<T> = readonly [T, ...(readonly T[])];
 
-/**
- * BooleanKeyword<TText> — brands boolean storage for a keyword-presence
- * position. UntypedNode stores `boolean`; the brand preserves the keyword's
- * literal text so ConfigOf / LooseConfigOf can continue to widen to the
- * ergonomic string form when desired.
- */
-export type BooleanKeyword<TText extends string = never> = boolean & {
-	readonly __booleanKeyword__?: TText;
-};
-
-/** @internal — true when T carries the BooleanKeyword brand key. */
-type IsBooleanKeyword<T> = T extends { readonly __booleanKeyword__?: unknown } ? true : false;
-
-/** @internal — extract the keyword text out of a BooleanKeyword brand. */
-type BooleanKeywordText<T> = T extends { readonly __booleanKeyword__?: infer V } ? V : never;
 
 /**
  * Bitflag<E, TStorage> — brands numeric bitflag storage.

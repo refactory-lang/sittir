@@ -360,3 +360,59 @@ describe('refusals', () => {
 		expect(() => parsed.$query()).toThrow(/engine disposed/);
 	});
 });
+
+describe('where on a boolean slot', () => {
+	const ASYNC = 'async def a():\n    pass\ndef b():\n    pass\n';
+	const tree = py.parse(ASYNC);
+	const defs = () => tree.$query().$descendants.ofType(K.FunctionDefinition);
+	const names = (view: Iterable<{ name(): unknown }>) => [...view].map((fn) => textOf(ASYNC, fn.name()));
+	const present: QueryPlan = { op: 'present', fields: ['async'], kinds: [] };
+
+	it('eq(true) selects the nodes whose keyword is present and eq(false) the others', () => {
+		expect(names(defs().where((c) => c.async.eq(true)))).toEqual(['a']);
+		expect(names(defs().where((c) => c.async.eq(false)))).toEqual(['b']);
+	});
+
+	it('selects natively what the JavaScript reference selects', () => {
+		for (const [value, plan] of [
+			[true, present],
+			[false, { op: 'not', of: present }]
+		] as const) {
+			const native = names(defs().where((c) => c.async.eq(value)));
+			const reference = names(defs().filter((fn) => holds(plan, () => (fn.async() ? ['async'] : []))));
+			expect(native).toEqual(reference);
+		}
+	});
+
+	it('runs the presence leaf natively, pushed down with the kind', () => {
+		const { root: data, tree: native } = py.diagnostics.parseAndRead(ASYNC);
+		const steps: { kinds?: readonly number[]; plan?: unknown }[] = [];
+		const query = (native as { query?: { descendants(step: { kinds?: readonly number[]; plan?: unknown }): unknown } }).query!;
+		const walk = query.descendants;
+		query.descendants = (step) => {
+			steps.push(step);
+			return walk(step);
+		};
+		const found = [
+			...hooks
+				.wrap(data, native)
+				.$query()
+				.$descendants.ofType(K.FunctionDefinition)
+				.where((c) => c.async.eq(true))
+		];
+		expect(found).toHaveLength(1);
+		expect(steps.every((step) => step.kinds?.[0] === K.FunctionDefinition && step.plan !== undefined)).toBe(true);
+	});
+
+	it('checks a condition before ofType against the slot every kind with it holds: a presence where each holds the keyword', () => {
+		const all = tree.$query().$descendants as unknown as { where(c: (r: Record<string, { eq(v: unknown): unknown }>) => unknown): unknown };
+		expect(() => all.where((c) => c.async!.eq(true))).not.toThrow();
+		expect(() => all.where((c) => c.async!.eq('async'))).toThrow(/eq\(true\)/);
+	});
+
+	it('refuses text and patterns on a boolean slot', () => {
+		const loose = (c: unknown) => (c as Record<string, { eq(t: string): never; match(p: RegExp): never }>).async!;
+		expect(() => defs().where((c) => loose(c).eq('async'))).toThrow(/eq\(true\)/);
+		expect(() => defs().where((c) => loose(c).match(/a/))).toThrow(/eq\(true\)/);
+	});
+});

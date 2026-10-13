@@ -1,4 +1,5 @@
-import type { SlotHintsOf } from './node-surface.ts';
+import type { IsBooleanKeyword } from './keyword-presence.ts';
+import type { SlotHint, SlotHintsOf } from './node-surface.ts';
 
 /** A slot as the parser spells it: the fields its children arrive under, and the kinds of its children that arrive under no field. */
 export interface SlotRoutes {
@@ -53,13 +54,33 @@ export interface SlotRef {
 	match(pattern: RegExp): Cond;
 }
 
+/** One boolean slot of a `where` recorder: the slot holds a keyword's presence. */
+export interface PresenceRef {
+	/**
+	 * Holds when the keyword is present (`true`) or absent (`false`).
+	 *
+	 * @throws When `present` is not a boolean.
+	 */
+	eq(present: boolean): Cond;
+}
+
 type HintsOrNone<N> = N extends unknown ? ([SlotHintsOf<N>] extends [never] ? {} : SlotHintsOf<N>) : never;
 
 /** The slots of a parsed node type, by accessor name. Over a union, only the slots every member has. */
 export type SlotNameOf<N> = keyof HintsOrNone<N> & string;
 
-/** What a `where` callback receives: one `SlotRef` per slot of the view's element type. */
-export type Recorder<N> = { readonly [S in SlotNameOf<N>]: SlotRef };
+type SlotRefOf<N, S> = N extends unknown
+	? S extends keyof SlotHintsOf<N>
+		? SlotHintsOf<N>[S] extends SlotHint<infer I, boolean, boolean, unknown>
+			? IsBooleanKeyword<NonNullable<I>> extends true
+				? PresenceRef
+				: SlotRef
+			: SlotRef
+		: never
+	: never;
+
+/** What a `where` callback receives: one member per slot of the view's element type, a `PresenceRef` for a slot that holds a keyword's presence and a `SlotRef` for any other. */
+export type Recorder<N> = { readonly [S in SlotNameOf<N>]: SlotRefOf<N, S> };
 
 type KindOf<T> = T extends { readonly $type: infer K extends number } ? K : never;
 
