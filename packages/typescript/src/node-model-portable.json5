@@ -4551,7 +4551,7 @@
       ],
       "members": [
         {
-          "name": "forHeader",
+          "name": "header",
           "route": "slot",
           "slot": "for_header",
           "path": [

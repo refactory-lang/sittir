@@ -1535,7 +1535,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'statement.loop.for_each': {
 			readonly body: G['declaration'] | G['statement'];
-			readonly forHeader: unknown;
+			readonly header: unknown;
 			readonly left: unknown | G['expression'] | G['identifier'] | G['pattern'];
 			readonly right:
 				| G['expression']

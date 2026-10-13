@@ -63,7 +63,7 @@ export namespace Statement {
 			readonly alternative?: V.Clause.Else<G>;
 			// p only
 			readonly body: G['slots']['statement.loop.for_each']['body'];
-			readonly forHeader?: G['slots']['statement.loop.for_each']['forHeader'];
+			readonly header?: G['slots']['statement.loop.for_each']['header'];
 			// t only
 			readonly left?: G['slots']['statement.loop.for_each']['left'];
 			// pr only

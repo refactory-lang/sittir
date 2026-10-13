@@ -124,6 +124,7 @@
 (for_statement) @statement.loop.counted
 (for_in_statement) @statement.loop.for_each
 (for_in_statement await: _ @async)
+(for_in_statement (_for_header) @header)
 (while_statement) @statement.loop.while
 (do_statement) @statement.loop.do_while
 (return_statement) @statement.return
