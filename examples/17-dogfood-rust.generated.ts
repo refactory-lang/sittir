@@ -88,7 +88,7 @@ export function rebuildSpliceGenerated() {
 					statements: [rs.build.expressionStatement.strict(rs.build.matchExpression.strict({
 						value: rs.kinds.Self,
 						body: rs.build.matchBlock.strict({
-							matchArm: [rs.build.matchArmBlockEnding.strict({
+							arms: [rs.build.matchArmBlockEnding.strict({
 								pattern: rs.build.structPattern.strict({
 									type: rs.build.scopedTypeIdentifier.strict({
 										path: rs.build.identifier("SpliceError"),

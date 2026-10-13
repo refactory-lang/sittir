@@ -696,19 +696,19 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	237: [
 		['body', { fields: ['body'], kinds: [] }],
-		['comprehensionClauses', { fields: [], kinds: ['comprehension_clauses'] }]
+		['clauses', { fields: ['clauses'], kinds: [] }]
 	],
 	238: [
 		['body', { fields: ['body'], kinds: [] }],
-		['comprehensionClauses', { fields: [], kinds: ['comprehension_clauses'] }]
+		['clauses', { fields: ['clauses'], kinds: [] }]
 	],
 	239: [
 		['body', { fields: ['body'], kinds: [] }],
-		['comprehensionClauses', { fields: [], kinds: ['comprehension_clauses'] }]
+		['clauses', { fields: ['clauses'], kinds: [] }]
 	],
 	240: [
 		['body', { fields: ['body'], kinds: [] }],
-		['comprehensionClauses', { fields: [], kinds: ['comprehension_clauses'] }]
+		['clauses', { fields: ['clauses'], kinds: [] }]
 	],
 	241: [['expression', { fields: ['expression'], kinds: [] }]],
 	242: [['items', { fields: ['item'], kinds: [] }]],
@@ -730,26 +730,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['contents', { fields: ['content'], kinds: [] }],
 		['stringEnd', { fields: ['string_end'], kinds: [] }]
 	],
-	248: [
-		[
-			'contents',
-			{
-				fields: [],
-				kinds: [
-					'escape_interpolation',
-					'escape_sequence_unicode_fixed',
-					'escape_sequence_unicode_wide',
-					'escape_sequence_hex',
-					'escape_sequence_octal',
-					'escape_sequence_line_break',
-					'escape_sequence_simple',
-					'escape_sequence_named',
-					'not_escape_sequence',
-					'string_fragment'
-				]
-			}
-		]
-	],
+	248: [['elements', { fields: ['elements'], kinds: [] }]],
 	249: [
 		['expression', { fields: ['expression'], kinds: [] }],
 		['debug', { fields: ['debug'], kinds: [] }],
@@ -829,12 +810,12 @@ export const querySlots: QuerySlots = Object.freeze({
 		['value', { fields: ['value'], kinds: [] }],
 		['alias', { fields: ['alias'], kinds: [] }]
 	],
-	273: [['listPatternCasePatterns', { fields: [], kinds: ['list_pattern_case_patterns'] }]],
-	274: [['listPatternCasePatterns', { fields: [], kinds: ['list_pattern_case_patterns'] }]],
+	273: [['elements', { fields: ['elements'], kinds: [] }]],
+	274: [['elements', { fields: ['elements'], kinds: [] }]],
 	275: [['items', { fields: ['item'], kinds: [] }]],
 	276: [['items', { fields: ['item'], kinds: [] }]],
 	277: [
-		['chevron', { fields: [], kinds: ['chevron'] }],
+		['chevron', { fields: ['chevron'], kinds: [] }],
 		['printChevronArguments', { fields: [], kinds: ['print_chevron_arguments', 'comma'] }]
 	],
 	278: [['printArguments', { fields: [], kinds: ['print_arguments'] }]],

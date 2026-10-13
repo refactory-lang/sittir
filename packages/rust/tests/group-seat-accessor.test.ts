@@ -13,14 +13,14 @@ const matchBlockOf = (source: string) => {
 	const expression = statement.content();
 	if (!rs.is.matchExpression(expression)) throw new Error('not a match');
 	const block = expression.body();
-	if (block.matchArms === undefined) throw new Error('no arms');
+	if (block.arms === undefined) throw new Error('no arms');
 	return block;
 };
 
 describe('a group seat flattens its group fields onto the parent', () => {
 	it('reads the arms of a match block through the flattened list accessor', () => {
 		const block = matchBlockOf('fn f() { match x { 1 => 1, _ => 2 } }\n');
-		expect(block.matchArms()).toHaveLength(1);
+		expect(block.arms()).toHaveLength(1);
 		expect(block.lastArm()?.$render()).toBe('_ => 2');
 	});
 

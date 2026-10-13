@@ -3139,14 +3139,14 @@ export function wrapListComprehension(data: T.ListComprehension, tree: TreeHandl
 		body() {
 			return hydrateSlot<T.Expression>(this, '_body', tree);
 		},
-		comprehensionClauses() {
-			return hydrateSlot<T.ComprehensionClauses>(this, '_comprehension_clauses', tree);
+		clauses() {
+			return hydrateSlot<T.ComprehensionClauses>(this, '_clauses', tree);
 		},
 		$with: {
 			body: (v: NonNullable<T.ListComprehension['_body']>) =>
 				rebuilt(node, handle, () => wrapListComprehension({ ...$edited(data), _body: v }, tree)),
-			comprehensionClauses: (v: NonNullable<T.ListComprehension['_comprehension_clauses']>) =>
-				rebuilt(node, handle, () => wrapListComprehension({ ...$edited(data), _comprehension_clauses: v }, tree))
+			clauses: (v: NonNullable<T.ListComprehension['_clauses']>) =>
+				rebuilt(node, handle, () => wrapListComprehension({ ...$edited(data), _clauses: v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -3171,14 +3171,14 @@ export function wrapDictionaryComprehension(
 		body() {
 			return hydrateSlot<T.Pair>(this, '_body', tree);
 		},
-		comprehensionClauses() {
-			return hydrateSlot<T.ComprehensionClauses>(this, '_comprehension_clauses', tree);
+		clauses() {
+			return hydrateSlot<T.ComprehensionClauses>(this, '_clauses', tree);
 		},
 		$with: {
 			body: (v: NonNullable<T.DictionaryComprehension['_body']>) =>
 				rebuilt(node, handle, () => wrapDictionaryComprehension({ ...$edited(data), _body: v }, tree)),
-			comprehensionClauses: (v: NonNullable<T.DictionaryComprehension['_comprehension_clauses']>) =>
-				rebuilt(node, handle, () => wrapDictionaryComprehension({ ...$edited(data), _comprehension_clauses: v }, tree))
+			clauses: (v: NonNullable<T.DictionaryComprehension['_clauses']>) =>
+				rebuilt(node, handle, () => wrapDictionaryComprehension({ ...$edited(data), _clauses: v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -3200,14 +3200,14 @@ export function wrapSetComprehension(data: T.SetComprehension, tree: TreeHandle)
 		body() {
 			return hydrateSlot<T.Expression>(this, '_body', tree);
 		},
-		comprehensionClauses() {
-			return hydrateSlot<T.ComprehensionClauses>(this, '_comprehension_clauses', tree);
+		clauses() {
+			return hydrateSlot<T.ComprehensionClauses>(this, '_clauses', tree);
 		},
 		$with: {
 			body: (v: NonNullable<T.SetComprehension['_body']>) =>
 				rebuilt(node, handle, () => wrapSetComprehension({ ...$edited(data), _body: v }, tree)),
-			comprehensionClauses: (v: NonNullable<T.SetComprehension['_comprehension_clauses']>) =>
-				rebuilt(node, handle, () => wrapSetComprehension({ ...$edited(data), _comprehension_clauses: v }, tree))
+			clauses: (v: NonNullable<T.SetComprehension['_clauses']>) =>
+				rebuilt(node, handle, () => wrapSetComprehension({ ...$edited(data), _clauses: v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -3229,14 +3229,14 @@ export function wrapGeneratorExpression(data: T.GeneratorExpression, tree: TreeH
 		body() {
 			return hydrateSlot<T.Expression>(this, '_body', tree);
 		},
-		comprehensionClauses() {
-			return hydrateSlot<T.ComprehensionClauses>(this, '_comprehension_clauses', tree);
+		clauses() {
+			return hydrateSlot<T.ComprehensionClauses>(this, '_clauses', tree);
 		},
 		$with: {
 			body: (v: NonNullable<T.GeneratorExpression['_body']>) =>
 				rebuilt(node, handle, () => wrapGeneratorExpression({ ...$edited(data), _body: v }, tree)),
-			comprehensionClauses: (v: NonNullable<T.GeneratorExpression['_comprehension_clauses']>) =>
-				rebuilt(node, handle, () => wrapGeneratorExpression({ ...$edited(data), _comprehension_clauses: v }, tree))
+			clauses: (v: NonNullable<T.GeneratorExpression['_clauses']>) =>
+				rebuilt(node, handle, () => wrapGeneratorExpression({ ...$edited(data), _clauses: v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -3473,16 +3473,16 @@ export function wrapStringContent(data: T.StringContent, tree: TreeHandle): T.St
 	const node = {
 		...data,
 		$type: TSKindId.StringContent as const,
-		contents() {
+		elements() {
 			return hydrateSlots<T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment>(
 				this,
-				'_content',
+				'_elements',
 				tree
 			);
 		},
 		$with: {
-			contents: (...v: NonEmptyArray<NonNullable<T.StringContent['_content']>[number]>) =>
-				rebuilt(node, handle, () => wrapStringContent({ ...$edited(data), _content: restItems('contents', v) }, tree))
+			elements: (...v: NonEmptyArray<NonNullable<T.StringContent['_elements']>[number]>) =>
+				rebuilt(node, handle, () => wrapStringContent({ ...$edited(data), _elements: restItems('elements', v) }, tree))
 		},
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -4053,27 +4053,27 @@ export function wrapExceptClauseExceptionAs(
 
 export function wrapCaseTuplePattern(data: T.CaseTuplePattern, tree: TreeHandle): T.CaseTuplePattern.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._list_pattern_case_patterns, '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(data._elements, '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.CaseTuplePattern as const,
-		listPatternCasePatterns() {
-			return hydrateSlot<T.ListPatternCasePatterns | undefined>(this, '_list_pattern_case_patterns', tree);
+		elements() {
+			return hydrateSlot<T.ListPatternCasePatterns | undefined>(this, '_elements', tree);
 		},
 		$with: {
-			listPatternCasePatterns: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.ListPatternCasePatterns as const, optional: true, make: RAW.buildListPatternCasePatterns },
-						(v: NonNullable<T.CaseTuplePattern['_list_pattern_case_patterns']>) =>
-							wrapCaseTuplePattern({ ...$edited(data), _list_pattern_case_patterns: v }, tree)
+						(v: NonNullable<T.CaseTuplePattern['_elements']>) =>
+							wrapCaseTuplePattern({ ...$edited(data), _elements: v }, tree)
 					)
 				)
 		},
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.listPatternCasePatterns(), 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -4095,27 +4095,27 @@ export function wrapCaseTuplePattern(data: T.CaseTuplePattern, tree: TreeHandle)
 
 export function wrapCaseListPattern(data: T.CaseListPattern, tree: TreeHandle): T.CaseListPattern.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._list_pattern_case_patterns, '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(data._elements, '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.CaseListPattern as const,
-		listPatternCasePatterns() {
-			return hydrateSlot<T.ListPatternCasePatterns | undefined>(this, '_list_pattern_case_patterns', tree);
+		elements() {
+			return hydrateSlot<T.ListPatternCasePatterns | undefined>(this, '_elements', tree);
 		},
 		$with: {
-			listPatternCasePatterns: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.ListPatternCasePatterns as const, optional: true, make: RAW.buildListPatternCasePatterns },
-						(v: NonNullable<T.CaseListPattern['_list_pattern_case_patterns']>) =>
-							wrapCaseListPattern({ ...$edited(data), _list_pattern_case_patterns: v }, tree)
+						(v: NonNullable<T.CaseListPattern['_elements']>) =>
+							wrapCaseListPattern({ ...$edited(data), _elements: v }, tree)
 					)
 				)
 		},
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.listPatternCasePatterns(), 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
