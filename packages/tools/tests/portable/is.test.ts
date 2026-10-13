@@ -109,6 +109,30 @@ describe('portable is: python', async () => {
 		expect(at('literal.string.raw')(r, rContext)).toBe(true);
 	});
 
+	it('reads a string whose prefix and quotes state several facts by their crossing', () => {
+		const STRINGS = 'a = rf"{x}"\nb = Rb"x"\nc = f"""x"""\nd = br"""x"""\ne = r"""x"""\nf = tR"""{x}"""\ng = b"""x"""\n';
+		const crossings = [
+			'literal.string.interpolated.raw',
+			'literal.string.bytes.raw',
+			'literal.string.interpolated.multiline',
+			'literal.string.bytes.raw.multiline',
+			'literal.string.raw.multiline',
+			'literal.string.interpolated.raw.multiline',
+			'literal.string.bytes.multiline'
+		];
+		crossings.forEach((path, nth) => {
+			const [node, context] = find(STRINGS, 'string', undefined, nth);
+			expect(at(path)(node, context), path).toBe(true);
+		});
+		const [rf, rfContext] = find(STRINGS, 'string');
+		expect(at('literal.string.interpolated')(rf, rfContext)).toBe(true);
+	});
+
+	it.skip('reads each fact of a crossing by its own guard (pending: a guard tests each fact its path names, not the path as a prefix)', () => {
+		const [rf, context] = find('a = rf"{x}"\n', 'string');
+		expect(at('literal.string.raw')(rf, context)).toBe(true);
+	});
+
 	it('reads a comparison of one comparator by its operator, and of two or more as a chain, as tree-sitter matches the claims', () => {
 		const COMPARISONS = 'a < b\na < b == c\na in b\n';
 		const [less] = find(COMPARISONS, 'comparison_operator', 'a < b');

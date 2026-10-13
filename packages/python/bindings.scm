@@ -208,6 +208,13 @@
 (escape_interpolation) @literal.string.escape
 (string_fragment) @literal.string.text
 (concatenated_string) @literal.string.concatenated
+((string (string_start) @_p) @literal.string.interpolated.raw.multiline (#match? @_p "^[a-zA-Z]*[fFtT]") (#match? @_p "^[a-zA-Z]*[rR]") (#match? @_p "\"\"\"|'''"))
+((string (string_start) @_p) @literal.string.bytes.raw.multiline (#match? @_p "^[a-zA-Z]*[bB]") (#match? @_p "^[a-zA-Z]*[rR]") (#match? @_p "\"\"\"|'''"))
+((string (string_start) @_p) @literal.string.interpolated.raw (#match? @_p "^[a-zA-Z]*[fFtT]") (#match? @_p "^[a-zA-Z]*[rR]"))
+((string (string_start) @_p) @literal.string.interpolated.multiline (#match? @_p "^[a-zA-Z]*[fFtT]") (#match? @_p "\"\"\"|'''"))
+((string (string_start) @_p) @literal.string.bytes.raw (#match? @_p "^[a-zA-Z]*[bB]") (#match? @_p "^[a-zA-Z]*[rR]"))
+((string (string_start) @_p) @literal.string.bytes.multiline (#match? @_p "^[a-zA-Z]*[bB]") (#match? @_p "\"\"\"|'''"))
+((string (string_start) @_p) @literal.string.raw.multiline (#match? @_p "^[a-zA-Z]*[rR]") (#match? @_p "\"\"\"|'''"))
 ((string (string_start) @_p) @literal.string.interpolated (#match? @_p "^[a-zA-Z]*[fFtT]"))
 ((string (string_start) @_p) @literal.string.bytes (#match? @_p "^[a-zA-Z]*[bB]"))
 ((string (string_start) @_p) @literal.string.raw (#match? @_p "^[a-zA-Z]*[rR]"))

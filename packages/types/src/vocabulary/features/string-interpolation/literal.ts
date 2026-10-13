@@ -7,5 +7,11 @@ export namespace Literal {
 			// claimed by pt
 			readonly $kind: 'literal.string.interpolated';
 		}
+		export namespace Interpolated {
+			export interface Multiline<G extends GrammarContext<G>> extends SubKindOf<V.Literal.String.Interpolated<G>> {
+				// claimed by p
+				readonly $kind: 'literal.string.interpolated.multiline';
+			}
+		}
 	}
 }

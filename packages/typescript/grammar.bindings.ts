@@ -3,7 +3,7 @@
 import { bindings, field, rename } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "43bf8a6d9624a58caa270c199b2cae5858f1bf50e352eee80714956ac712e615",
+	hash: "fb27073cfeba36dc4bf4a74401cc629edc16563699456bb874f49dcf0002f042",
 	patches: {
 		_number: { "1": field("value") },
 		_parameter_name: { "4": field("name") },

@@ -5938,6 +5938,254 @@
       "vocab": "literal.string",
       "read": [
         {
+          "vocab": "literal.string.interpolated.raw.multiline",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[fFtT]",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[rR]",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "\"\"\"|'''",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "literal.string.bytes.raw.multiline",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[bB]",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[rR]",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "\"\"\"|'''",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "literal.string.interpolated.raw",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[fFtT]",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[rR]",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "literal.string.interpolated.multiline",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[fFtT]",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "\"\"\"|'''",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "literal.string.bytes.raw",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[bB]",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[rR]",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "literal.string.bytes.multiline",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[bB]",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "\"\"\"|'''",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "literal.string.raw.multiline",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[rR]",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "\"\"\"|'''",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
           "vocab": "literal.string.interpolated",
           "toplevel": true,
           "within": [],
@@ -7025,9 +7273,15 @@
       },
       {
         "depth": 4,
-        "paths": 57,
-        "kinds": 14,
-        "refinements": 24
+        "paths": 62,
+        "kinds": 15,
+        "refinements": 29
+      },
+      {
+        "depth": 5,
+        "paths": 2,
+        "kinds": 1,
+        "refinements": 2
       }
     ]
   }

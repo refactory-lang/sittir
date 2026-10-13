@@ -2336,16 +2336,59 @@ declare module './literal.ts' {
 		}
 		namespace String {
 			interface Bytes<G extends GrammarContext<G>> extends byteStrings.Literal.String.Bytes<G> {}
+			namespace Bytes {
+				interface Multiline<G extends GrammarContext<G>> extends byteStrings.Literal.String.Bytes.Multiline<G> {}
+				interface Raw<G extends GrammarContext<G>> extends rawStrings.Literal.String.Bytes.Raw<G> {}
+				namespace Raw {
+					interface Multiline<G extends GrammarContext<G>> extends rawStrings.Literal.String.Bytes.Raw.Multiline<G> {}
+					type Any<G extends GrammarContext<G>> =
+						| V.Literal.String.Bytes.Raw<G>
+						| V.Literal.String.Bytes.Raw.Multiline<G>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Literal.String.Bytes<G>
+					| V.Literal.String.Bytes.Multiline<G>
+					| V.Literal.String.Bytes.Raw<G>
+					| V.Literal.String.Bytes.Raw.Multiline<G>;
+			}
 			interface Interpolated<G extends GrammarContext<G>> extends stringInterpolation.Literal.String.Interpolated<G> {}
+			namespace Interpolated {
+				interface Multiline<G extends GrammarContext<G>> extends stringInterpolation.Literal.String.Interpolated
+					.Multiline<G> {}
+				interface Raw<G extends GrammarContext<G>> extends rawStrings.Literal.String.Interpolated.Raw<G> {}
+				namespace Raw {
+					interface Multiline<G extends GrammarContext<G>> extends rawStrings.Literal.String.Interpolated.Raw
+						.Multiline<G> {}
+					type Any<G extends GrammarContext<G>> =
+						| V.Literal.String.Interpolated.Raw<G>
+						| V.Literal.String.Interpolated.Raw.Multiline<G>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Literal.String.Interpolated<G>
+					| V.Literal.String.Interpolated.Multiline<G>
+					| V.Literal.String.Interpolated.Raw<G>
+					| V.Literal.String.Interpolated.Raw.Multiline<G>;
+			}
 			interface Raw<G extends GrammarContext<G>> extends rawStrings.Literal.String.Raw<G> {}
+			namespace Raw {
+				interface Multiline<G extends GrammarContext<G>> extends rawStrings.Literal.String.Raw.Multiline<G> {}
+				type Any<G extends GrammarContext<G>> = V.Literal.String.Raw<G> | V.Literal.String.Raw.Multiline<G>;
+			}
 			type Any<G extends GrammarContext<G>> =
 				| V.Literal.String<G>
 				| V.Literal.String.Bytes<G>
+				| V.Literal.String.Bytes.Multiline<G>
+				| V.Literal.String.Bytes.Raw<G>
+				| V.Literal.String.Bytes.Raw.Multiline<G>
 				| V.Literal.String.Concatenated<G>
 				| V.Literal.String.Escape<G>
 				| V.Literal.String.Interpolated<G>
+				| V.Literal.String.Interpolated.Multiline<G>
+				| V.Literal.String.Interpolated.Raw<G>
+				| V.Literal.String.Interpolated.Raw.Multiline<G>
 				| V.Literal.String.Multiline<G>
 				| V.Literal.String.Raw<G>
+				| V.Literal.String.Raw.Multiline<G>
 				| V.Literal.String.Text<G>;
 		}
 		type Any<G extends GrammarContext<G>> =
@@ -2376,11 +2419,18 @@ declare module './literal.ts' {
 			| V.Literal.Regex.Pattern<G>
 			| V.Literal.String<G>
 			| V.Literal.String.Bytes<G>
+			| V.Literal.String.Bytes.Multiline<G>
+			| V.Literal.String.Bytes.Raw<G>
+			| V.Literal.String.Bytes.Raw.Multiline<G>
 			| V.Literal.String.Concatenated<G>
 			| V.Literal.String.Escape<G>
 			| V.Literal.String.Interpolated<G>
+			| V.Literal.String.Interpolated.Multiline<G>
+			| V.Literal.String.Interpolated.Raw<G>
+			| V.Literal.String.Interpolated.Raw.Multiline<G>
 			| V.Literal.String.Multiline<G>
 			| V.Literal.String.Raw<G>
+			| V.Literal.String.Raw.Multiline<G>
 			| V.Literal.String.Text<G>;
 	}
 }

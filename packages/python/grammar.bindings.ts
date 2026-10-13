@@ -3,7 +3,7 @@
 import { alias, bindings, field, rename } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "75d248989dea61541a3369f34f128d722cb15eb95ea9f13ba113a850e03bd15f",
+	hash: "ffad73bcef6151b79d496ce6bccf537bce9edea66440ed85423ade363e7e6672",
 	patches: {
 		_expression_within_for_in_clause: { "-1": alias(sym("lambda_within_for_in_clause"), sym("lambda_expression")) },
 		assignment_eq: { "0": field("name"), "1/1": field("value") },
