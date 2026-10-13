@@ -68,7 +68,10 @@ claim in their pattern; fold each read entry's own member routes, claim by claim
 in file order, into member types (a slot route's slot resolved, a presence or
 a flag an optional `boolean`, a nested member its named kind or the kinds of the slot its
 selector finds in its parent; a member is optional when some kind the path is read from in that
-grammar does not carry it, a supertype counting as none since its forms stand in for it); fold pinned claims into refinements, each pin
+grammar does not carry it, a supertype counting as none since its forms stand in for it). An
+entry a form inherits from its supertype's claim folds in only when that path is the form's own
+vocabulary kind (`GrammarRoutes.vocabOf`): a form its own claim names by another path brings its
+members there, so the supertype's path gets none of them. Fold pinned claims into refinements, each pin
 named by the kind's converged member (a capture on the field renames it)
 rather than by the grammar's field; assign container captures to
 the kinds the element slot names directly; collapse a namespace's leaves when

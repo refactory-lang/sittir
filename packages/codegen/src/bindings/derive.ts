@@ -337,6 +337,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 				const { vocab } = entry;
 				(claimers.get(vocab) ?? claimers.set(vocab, new Set<string>()).get(vocab))?.add(input.grammar);
 				if (entry.claim.kind === WILDCARD || entry.claim.predicates.length > 0) continue;
+				if (entry.claimed !== gk && vocabOf(input.grammar).get(gk) !== vocab) continue;
 				if (entry.pins.length > 0) {
 					const parent = vocabOf(input.grammar).get(gk);
 					if (parent !== undefined && parent !== vocab) {

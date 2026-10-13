@@ -851,6 +851,13 @@ describe('derive', () => {
 		expect(flag?.optional).toBe(true);
 	});
 
+	it('gives a supertype\'s path no member of a form that its own claim names by another path', async () => {
+		const d = derive([await grammar(['(_struct) @declaration.struct', '(struct_tuple) @declaration.struct.tuple'].join('\n'))]);
+		expect([...(d.members.get('declaration.struct')?.keys() ?? [])]).toEqual(['name']);
+		expect(d.members.get('declaration.struct')?.get('name')?.optional).toBe(false);
+		expect([...(d.members.get('declaration.struct.tuple')?.keys() ?? [])].sort()).toEqual(['fields', 'name']);
+	});
+
 	it('types a member optional unless every kind the path is read from carries it', async () => {
 		const d = derive([await grammar('(_struct) @declaration.struct')]);
 		expect(d.members.get('declaration.struct')?.get('fields')?.optional).toBe(true);
