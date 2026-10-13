@@ -572,6 +572,8 @@ interface LeadEdit {
 	readonly rules: GrammarRecord;
 	readonly supertypes: ReadonlySet<string>;
 	readonly sites: ReadonlyMap<string, number>;
+	readonly item: unknown;
+	readonly reach: Set<string>;
 	readonly mint: (base: string, side: LeadSide, body: unknown) => string;
 }
 
@@ -615,8 +617,13 @@ function narrowRef(edit: LeadEdit, ref: unknown, admits: readonly LeadMatch[], s
 		const name = refRule(ref);
 		if (name === undefined) throw new LeadRefusal(`'${kind}' has no rule to narrow`);
 		const inPlace = !side.lead && (!isParserHiddenName(name) || exclusiveTo(edit, name, exclusive));
+		edit.reach.add(name);
 		const body = narrowWithin(edit, kind, edit.rules[name], admitted.within, side, inPlace);
 		if (side.lead) return aliasOf(edit.mint(name, side, body), admitted.as ?? `${kind}_${side.suffix}`);
+		if (inPlace && !isParserHiddenName(name)) {
+			const holders = reachHolders(edit, name);
+			if (holders.count > 1) throw new LeadRefusal(`'${kind}' narrows in place, but the item holds it at another position too (in ${holders.rules.join(', ')})`);
+		}
 		if (inPlace) {
 			edit.rules[name] = body;
 			return ref;
@@ -635,6 +642,7 @@ function narrowRef(edit: LeadEdit, ref: unknown, admits: readonly LeadMatch[], s
 	const name = refRule(ref);
 	if (isRecord(node) && node.type === 'SYMBOL' && name !== undefined && isDescended(edit, name)) {
 		const inPlace = !side.lead && exclusiveTo(edit, name, exclusive);
+		edit.reach.add(name);
 		const narrowed = narrowRef(edit, edit.rules[name], admits, side, inPlace);
 		if (narrowed === undefined || narrowed === edit.rules[name]) return narrowed === undefined ? undefined : ref;
 		if (refRule(narrowed) !== undefined) return narrowed;
@@ -695,6 +703,7 @@ function narrowWithin(edit: LeadEdit, kind: string, body: unknown, within: LeadW
 			const name = node.name as string;
 			if (!holds(node)) return node;
 			const inPlace = !side.lead && exclusiveTo(edit, name, exclusive);
+			edit.reach.add(name);
 			const inner = narrowWithin(edit, kind, edit.rules[name], within, side, inPlace);
 			if (inner === edit.rules[name]) return node;
 			if (inPlace) {
@@ -764,18 +773,28 @@ function leadSymbols(grammar: GrammarRecord, rules: GrammarRecord, supertypes: R
 	});
 }
 
-function referenceSites(rules: GrammarRecord, list: string): Map<string, number> {
-	const sites = new Map<string, number>();
-	const count = (rule: unknown): void => {
-		if (Array.isArray(rule)) for (const r of rule) count(r);
-		else if (isRecord(rule)) {
-			if (rule.type === 'SYMBOL' && typeof rule.name === 'string') sites.set(rule.name, (sites.get(rule.name) ?? 0) + 1);
-			for (const value of Object.values(rule)) count(value);
-		}
-	};
-	for (const [name, body] of Object.entries(rules)) if (name !== list) count(body);
-	for (const ref of symbolNames(rules[list])) sites.set(ref, (sites.get(ref) ?? 0) + 1);
+function countSymbols(rule: unknown, sites: Map<string, number> = new Map()): Map<string, number> {
+	if (Array.isArray(rule)) for (const r of rule) countSymbols(r, sites);
+	else if (isRecord(rule)) {
+		if (rule.type === 'SYMBOL' && typeof rule.name === 'string') sites.set(rule.name, (sites.get(rule.name) ?? 0) + 1);
+		for (const value of Object.values(rule)) countSymbols(value, sites);
+	}
 	return sites;
+}
+
+function referenceSites(rules: GrammarRecord, list: string, listParts: readonly unknown[]): Map<string, number> {
+	const sites = new Map<string, number>();
+	for (const [name, body] of Object.entries(rules)) if (name !== list) countSymbols(body, sites);
+	countSymbols(listParts, sites);
+	return sites;
+}
+
+function reachHolders(edit: LeadEdit, name: string): { readonly count: number; readonly rules: readonly string[] } {
+	const held = [['the list item', edit.item] as const, ...[...edit.reach].map((rule) => [rule, edit.rules[rule]] as const)].flatMap(([holder, body]) => {
+		const count = countSymbols(body).get(name) ?? 0;
+		return count === 0 ? [] : [{ holder, count }];
+	});
+	return { count: held.reduce((sum, h) => sum + h.count, 0), rules: held.map((h) => h.holder).sort() };
 }
 
 export function leadGrammar(grammar: GrammarRecord, leads: readonly Lead[]): GrammarRecord {
@@ -800,10 +819,18 @@ export function leadGrammar(grammar: GrammarRecord, leads: readonly Lead[]): Gra
 		if (!(list in rules)) throw new LeadRefusal('the list is no rule of the grammar');
 		const shape = fieldedHeadListOf(rules[list] as Rule<'normalize'>, leadSymbols(grammar, rules, stop));
 		if (shape === null || shape.elementName !== item) throw new LeadRefusal(`the list is no separated list of field '${item}'`);
+		if (shape.leading !== undefined) throw new LeadRefusal('the list takes a leading separator');
+		if (shape.trailing === 'mandatory') throw new LeadRefusal('the list takes a mandatory trailing separator');
 		const element = shape.element as unknown as GrammarRecord;
-		const head = narrowRef({ rules, supertypes: stop, sites: new Map(), mint }, element.content, admits, { lead: true, suffix: field }, false);
+		const reach = new Set<string>();
+		const variant = (base: string, side: LeadSide, body: unknown): string => {
+			const name = mint(base, side, body);
+			reach.add(name);
+			return name;
+		};
+		const head = narrowRef({ rules, supertypes: stop, sites: new Map(), item: element.content, reach, mint: variant }, element.content, admits, { lead: true, suffix: field }, false);
 		if (head === undefined) throw new LeadRefusal('it admits no item of the list');
-		const rest = narrowRef({ rules, supertypes: stop, sites: referenceSites(rules, list), mint }, element.content, admits, { lead: false, suffix: item }, true);
+		const rest = narrowRef({ rules, supertypes: stop, sites: referenceSites(rules, list, [element.content, shape.separatorRule]), item: element.content, reach, mint }, element.content, admits, { lead: false, suffix: item }, true);
 		if (rest === undefined) throw new LeadRefusal('it leaves the list no item');
 		if (rest !== element.content) rules[list] = replaceItems(rules[list], item, element.content, rest);
 		const owners = Object.keys(rules).filter((name) => name !== list && leadFrom[name] === undefined);
@@ -811,7 +838,7 @@ export function leadGrammar(grammar: GrammarRecord, leads: readonly Lead[]): Gra
 		const fields = [...new Set(sites.map((site) => site.name as string))].sort();
 		if (fields.length !== 1) throw new LeadRefusal(fields.length === 0 ? 'the list sits in no field of another rule' : `the list sits in fields ${fields.join(', ')}`);
 		const optional = optionalSpelling(rules[list]);
-		const body = { type: 'SEQ', members: [{ ...element, name: field, content: head }, optional({ type: 'SEQ', members: [shape.separatorRule, optional(sites[0])] })] };
+		const body = { type: 'SEQ', members: [{ ...element, name: field, content: head }, optional({ type: 'SEQ', members: [shape.separatorRule, shape.trailing === undefined ? sites[0] : optional(sites[0])] })] };
 		const receiverForm = aliasOf(mint(list, { lead: true, suffix: field }, body), `${list}_${field}`);
 		for (const owner of owners) rules[owner] = withReceiverForm(rules[owner], list, receiverForm);
 	};

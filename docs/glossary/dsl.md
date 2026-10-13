@@ -20,7 +20,7 @@ Which side of a lead a narrowing builds: the lead (`lead: true`), which keeps on
 
 ### `packages/codegen/src/dsl/bind.ts::LeadEdit`
 
-The state one side of a lead's narrowing works on: the grammar's rules, which the rest side edits in place, the supertypes the walk does not descend into, each rule's reference sites (`referenceSites`; the rest side's only), and `mint`.
+The state one side of a lead's narrowing works on: the grammar's rules, which the rest side edits in place, the supertypes the walk does not descend into, each rule's reference sites (`referenceSites`; the rest side's only), the list's item expression and the lead's reach (the rules either side's narrowing walks, and the variants the lead side mints), and `mint`.
 
 ### `packages/codegen/src/dsl/bind.ts::rewrap`
 
@@ -56,7 +56,7 @@ Narrows one reference to one side of a lead, or returns `undefined` when nothing
 - A visible kind the lead does not admit stays on the rest side and leaves the lead side. A kind it admits twice is refused.
 - A kind admitted with no restriction moves to the lead side whole, renamed to `as` when the match gives one (`renamedKind`), and leaves the rest side.
 - A kind admitted with a restriction must have a rule to narrow; an alias of a literal is refused.
-- A kind admitted with a restriction is narrowed by `narrowWithin` on both sides. The lead side always mints its narrowing, `_<rule>_<field>`, aliased to `as`, or else to `<kind>_<field>`, so a visible variant never takes its kind's own name. The rest side narrows a visible kind in place, wherever else it is used, and a hidden rule in place only when `exclusiveTo` allows; otherwise it mints `_<rule>_<item>` and keeps the alias to the kind.
+- A kind admitted with a restriction is narrowed by `narrowWithin` on both sides. The lead side always mints its narrowing, `_<rule>_<field>`, aliased to `as`, or else to `<kind>_<field>`, so a visible variant never takes its kind's own name. The rest side narrows a visible kind in place, losing its admitted forms wherever else the grammar uses it, but only when the lead's reach holds it at no other position (`reachHolders`): a second position in the item, or in a variant of it, would lose forms on both sides of the split, so that is refused. It narrows a hidden rule in place only when `exclusiveTo` allows; otherwise it mints `_<rule>_<item>` and keeps the alias to the kind.
 - A choice narrows each arm and keeps the arms left in their order; one arm left stands alone.
 - A hidden rule (`isDescended`) narrows its body. A body that narrows to one reference is that reference; any other narrowed body is narrowed in place or minted, as above.
 - Anything else stays on the rest side and leaves the lead side.
@@ -85,16 +85,24 @@ The rule with every field that holds the list holding a choice of the list and t
 
 The symbol source the list detector reads the grammar with (`predictedSymbolSourceOf`), over the rules as the earlier leads left them, with the grammar's lists read by name.
 
+### `packages/codegen/src/dsl/bind.ts::countSymbols`
+
+How many times each rule name occurs as a symbol in a rule, each occurrence apart.
+
+### `packages/codegen/src/dsl/bind.ts::reachHolders`
+
+Where the lead's reach holds a visible kind about to narrow in place: the list's item expression and each rule of the reach that references it, with the total count of positions. More than one position means the item holds the kind beside the one the restriction narrows. That reach is the rules the narrowing walks and the lead's variants, not everything the item reaches: rust's item also reaches `parameter` through the expressions nested inside it, at a closure's parameters, a use outside the item's own structure, which the in-place narrowing may lose.
+
 ### `packages/codegen/src/dsl/bind.ts::referenceSites`
 
-How many places reference each rule, counted after the lead side has minted its variants, so a variant that still holds a hidden rule keeps it from narrowing in place. Every symbol in every rule counts once, except that the list counts once for each rule it references: the rest narrows every item of the list alike.
+How many places reference each rule, counted after the lead side has minted its variants, so a variant that still holds a hidden rule keeps it from narrowing in place. Every symbol in every rule counts, each occurrence apart, except the list's own: the rest narrows every item of the list alike, so the list counts its item expression once (each occurrence in it apart) and its separator once.
 
 ### `packages/codegen/src/dsl/bind.ts::leadGrammar`
 
 Applies each lead to the grammar, as a pure edit of the grammar record. For each lead:
 - The list must be a separated list whose element is the lead's item field, as the derivation reads it (`rule-patterns.ts::fieldedHeadListOf`).
 - The item narrows twice (`narrowRef`): to what the lead admits, the lead, and to everything else, the rest. Every item of the plain list holds the rest; a lead that admits no item, or leaves the list none, is refused.
-- The receiver form is minted, `_<list>_<field>`, aliased `<list>_<field>`: `seq(field(<field>, LEAD), optional(seq(SEP, optional(field(F, <list>)))))`, where `SEP` is the list's separator and `F` the field the owners hold the list in. The owners must hold the list only as a field's whole content (`listSites`), all under one field name.
+- The receiver form is minted, `_<list>_<field>`, aliased `<list>_<field>`: `seq(field(<field>, LEAD), optional(seq(SEP, optional(field(F, <list>)))))`, where `SEP` is the list's separator and `F` the field the owners hold the list in. A list that takes no trailing separator holds no lone one after the receiver either: `seq(field(<field>, LEAD), optional(seq(SEP, field(F, <list>))))`. A list that takes a leading separator, or a mandatory trailing one, is refused. The owners must hold the list only as a field's whole content (`listSites`), all under one field name.
 - Every field that held the list then holds a choice of the plain list and the receiver form (`withReceiverForm`), so the parser takes the receiver only first.
 
 Each rule a lead mints is stamped with its origin in `leadFrom`, as `splitFrom` and `renamedFrom` do, and joins the supertype and inline lists its origin is in (`mintLists`). A rule narrowed in place is not new and carries no stamp. A minted name the grammar already holds, and one hidden rule narrowed two ways on one side (the convention would name both alike), are refused. Each refusal is a `LeadRefusal`. The derivation (`bindings/leads.ts::deriveLeads`) reports the same refusals through `leadIssue` before a lead reaches the edit, so here they are assertions. `bindGrammar` does not apply leads yet.

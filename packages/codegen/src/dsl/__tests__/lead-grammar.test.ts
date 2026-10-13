@@ -226,6 +226,57 @@ describe('leadGrammar', () => {
 		expect(leadIssue(literal, [lead('params', 'item', 'receiver', match('self_parameter', { name: [match('self')] }))])).toBe("'self_parameter' has no rule to narrow");
 	});
 
+	it('counts each site of a hidden rule in the item, so two aliases of one rule keep the one the lead does not restrict', () => {
+		const grammar = {
+			...named(str('p')),
+			rules: {
+				...rulesOf(named(str('p'))),
+				params: separatedList(choice(alias(sym('_atom'), 'a'), alias(sym('_atom'), 'b'))),
+				_atom: field('value', choice(sym('self'), sym('other')))
+			}
+		};
+		const rules = rulesOf(leadGrammar(grammar, [lead('params', 'item', 'receiver', match('a', { value: [match('self')] }))]));
+		expect(rules._atom).toEqual(field('value', choice(sym('self'), sym('other'))));
+		expect(rules._atom_item).toEqual(field('value', sym('other')));
+		expect(rules.params).toEqual(separatedList(choice(alias(sym('_atom_item'), 'a'), alias(sym('_atom'), 'b'))));
+	});
+
+	it('keeps the list\'s separator flanks: no trailing separator after a lone receiver when the list takes none', () => {
+		const untrailed = { ...named(seq(field('name', sym('_name')), str(':'))), rules: { ...rulesOf(named(seq(field('name', sym('_name')), str(':')))), params: seq(field('item', sym('parameter')), repeat(seq(str(','), field('item', sym('parameter'))))) } };
+		expect(rulesOf(leadGrammar(untrailed, [NAMED_LEAD]))._params_receiver).toEqual(
+			seq(field('receiver', alias(sym('_parameter_receiver'), 'parameter_receiver')), blankChoice(seq(str(','), field('parameters', sym('params')))))
+		);
+	});
+
+	it('refuses a list with a leading separator or a mandatory trailing one', () => {
+		const withList = (params: unknown) => ({ ...named(seq(field('name', sym('_name')), str(':'))), rules: { ...rulesOf(named(seq(field('name', sym('_name')), str(':')))), params } });
+		const item = field('item', sym('parameter'));
+		expect(leadIssue(withList(seq(blankChoice(str(',')), item, repeat(seq(str(','), item)))), [NAMED_LEAD])).toBe('the list takes a leading separator');
+		expect(leadIssue(withList(seq(item, repeat(seq(str(','), item)), str(','))), [NAMED_LEAD])).toBe('the list takes a mandatory trailing separator');
+	});
+
+	it('refuses narrowing a visible kind in place when the item holds it at another position too, since the item would lose forms on both sides', () => {
+		const rows: GrammarRecord = {
+			name: 'rows',
+			rules: {
+				source_file: repeat(sym('table')),
+				table: seq(str('{'), field('rows', sym('rows')), str('}')),
+				rows: separatedList(sym('row')),
+				row: seq(field('left', sym('atom')), str(':'), field('right', sym('atom'))),
+				atom: field('value', choice(sym('self'), sym('other'))),
+				self: str('self'),
+				other: str('other')
+			},
+			extras: [],
+			externals: [],
+			supertypes: [],
+			inline: []
+		};
+		expect(leadIssue(rows, [lead('rows', 'item', 'receiver', match('row', { right: [match('atom', { value: [match('self')] })] }))])).toBe(
+			"'atom' narrows in place, but the item holds it at another position too (in _row_receiver, row)"
+		);
+	});
+
 	it('leaves a grammar with no leads as it is', () => {
 		const grammar = rust();
 		expect(leadGrammar(grammar, [])).toBe(grammar);
