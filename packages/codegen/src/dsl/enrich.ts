@@ -63,6 +63,7 @@ import {
 	listSeparatorOfOptionalSeq,
 	optionalStringLiteral,
 	mapTerminatedListElements,
+	flattenedListBody,
 	separatedListBodyInfo,
 	separatedListElementName,
 	armLeadingSymbolName,
@@ -153,12 +154,7 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 	for (const name of Object.keys(enrichedRules)) {
 		const rule = enrichedRules[name];
 		if (!rule) continue;
-		if (!isSeqType((rule as { type?: string }).type)) continue;
-		const info = separatedListBodyInfo(rule, ctx.sourceSymbols);
-		if (!info?.flankCarrying || info.form !== 'head') continue;
-		const members = (rule as unknown as { members: Rule[] }).members;
-		if (info.flatMembers === members) continue;
-		enrichedRules[name] = { ...rule, members: info.flatMembers } as Rule;
+		enrichedRules[name] = flattenedListBody(rule, ctx.sourceSymbols);
 	}
 	const literalAliasStorage = mintInlineLiteralAliasStorage(enrichedRules);
 	Object.assign(enrichedRules, literalAliasStorage.rules);

@@ -1163,6 +1163,14 @@ export function separatedListBodyInfo<P extends PhaseName>(body: Rule<P>, symbol
 	};
 }
 
+export function flattenedListBody<R>(body: R, symbols: SymbolSource): R {
+	if (!isSeqType((body as { type?: string }).type)) return body;
+	const info = separatedListBodyInfo(body as unknown as Rule<'normalize'>, symbols);
+	if (info === null || !info.flankCarrying || info.form !== 'head') return body;
+	const members = (body as unknown as { members: unknown[] }).members;
+	return info.flatMembers === members ? body : ({ ...(body as object), members: info.flatMembers } as R);
+}
+
 export function armLeadingSymbolName<P extends PhaseName>(
 	rule: Rule<P>,
 	rulesBag: Record<string, Rule<P>>,

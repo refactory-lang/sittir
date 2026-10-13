@@ -65,7 +65,7 @@ import {
 } from '../../types/runtime-shapes.ts';
 import type { RuntimeRule, FieldLike } from '../../types/runtime-shapes.ts';
 import { makeRuleMetadata } from '../rule-metadata.ts';
-import { isArmChoice, isBlank, isHiddenKind, lexesAsOneToken, matchesEmpty, optionalContentOf, withOptionalContent } from '../rule-patterns.ts';
+import { flattenedListBody, isArmChoice, isBlank, isHiddenKind, lexesAsOneToken, matchesEmpty, optionalContentOf, withOptionalContent } from '../rule-patterns.ts';
 import { nativeRuleFn } from '../enrich.ts';
 import { relabelledArm, withAuthoredLabel, withoutAutomaticVariants } from '../automatic-variants.ts';
 
@@ -913,7 +913,9 @@ export function registerAliasedVariant(
 				`Tree-sitter rejects syntactic rules that match empty. Restructure the parent rule (e.g. lift the empty case outside the choice) before splitting.`
 		);
 	}
-	const body = factored ? factored.nonEmpty : originalMember;
+	const carved = factored ? factored.nonEmpty : originalMember;
+	const symbols = wireSymbols();
+	const body = symbols === undefined ? carved : flattenedListBody(carved, symbols);
 	if (!wireRegisterSyntheticRule(ruleName, bodyWrapper(hoistedUnlessToken(body as RuntimeRule)))) {
 		throw new Error(`registerSyntheticRule('${ruleName}'): no active wire() context`);
 	}

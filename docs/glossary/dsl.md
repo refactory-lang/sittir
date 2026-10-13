@@ -4048,6 +4048,10 @@ Terminal-ness is the `SymbolSource`'s `isTerminal`, a predicted kind catalog's `
  *  of alternatives, so a repeated name declines. */
 ```
 
+### `packages/codegen/src/dsl/rule-patterns.ts::flattenedListBody`
+
+A separated-list body in the form enrich's list-body stage gives it: the nested head element and its repeat spliced into one seq (`info.flatMembers`), or the body itself when it is not a head-form list that carries its flanks. Enrich runs it over every rule, and wire runs it over an arm `variant()` or an alias carves into a rule of its own, so a carved kind is already flat when a later enrich pass meets it.
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::separatedListElementName`
 
 ```text
