@@ -832,16 +832,16 @@ export function wrapExceptClause(data: T.ExceptClause, tree: TreeHandle): T.Exce
 		exception() {
 			return hydrateSlot<T.ExceptClauseException | undefined>(this, '_exception', tree);
 		},
-		suite() {
-			return hydrateSlot<T.Suite>(this, '_suite', tree);
+		body() {
+			return hydrateSlot<T.Suite>(this, '_body', tree);
 		},
 		$with: {
 			group: (v: NonNullable<T.ExceptClause['_group']>) =>
 				rebuilt(node, handle, () => wrapExceptClause({ ...$edited(data), _group: v }, tree)),
 			exception: (v: NonNullable<T.ExceptClause['_exception']>) =>
 				rebuilt(node, handle, () => wrapExceptClause({ ...$edited(data), _exception: v }, tree)),
-			suite: (v: NonNullable<T.ExceptClause['_suite']>) =>
-				rebuilt(node, handle, () => wrapExceptClause({ ...$edited(data), _suite: v }, tree))
+			body: (v: NonNullable<T.ExceptClause['_body']>) =>
+				rebuilt(node, handle, () => wrapExceptClause({ ...$edited(data), _body: v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		$trivia: {

@@ -1325,8 +1325,15 @@
           "value": ":"
         },
         {
-          "type": "SYMBOL",
-          "name": "_suite"
+          "type": "FIELD",
+          "name": "body",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_suite"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ]
     },

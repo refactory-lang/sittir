@@ -2697,35 +2697,35 @@ static const TSMapSlice ts_field_map_slices[PRODUCTION_ID_COUNT] = {
   [141] = {.index = 253, .length = 2},
   [142] = {.index = 255, .length = 2},
   [143] = {.index = 257, .length = 4},
-  [144] = {.index = 261, .length = 1},
-  [145] = {.index = 262, .length = 1},
-  [146] = {.index = 263, .length = 2},
-  [147] = {.index = 265, .length = 2},
-  [148] = {.index = 267, .length = 1},
-  [149] = {.index = 268, .length = 4},
-  [150] = {.index = 272, .length = 3},
-  [151] = {.index = 275, .length = 3},
-  [152] = {.index = 278, .length = 3},
-  [153] = {.index = 281, .length = 4},
-  [154] = {.index = 285, .length = 5},
-  [155] = {.index = 290, .length = 4},
-  [156] = {.index = 294, .length = 1},
-  [157] = {.index = 295, .length = 2},
-  [158] = {.index = 297, .length = 3},
-  [159] = {.index = 300, .length = 1},
-  [160] = {.index = 301, .length = 2},
-  [161] = {.index = 303, .length = 5},
-  [162] = {.index = 308, .length = 4},
-  [163] = {.index = 312, .length = 4},
-  [164] = {.index = 316, .length = 4},
-  [165] = {.index = 320, .length = 5},
-  [166] = {.index = 325, .length = 5},
-  [167] = {.index = 330, .length = 3},
-  [168] = {.index = 333, .length = 4},
-  [169] = {.index = 337, .length = 2},
-  [170] = {.index = 339, .length = 2},
-  [171] = {.index = 341, .length = 5},
-  [172] = {.index = 346, .length = 6},
+  [144] = {.index = 261, .length = 2},
+  [145] = {.index = 263, .length = 1},
+  [146] = {.index = 264, .length = 2},
+  [147] = {.index = 266, .length = 2},
+  [148] = {.index = 268, .length = 2},
+  [149] = {.index = 270, .length = 4},
+  [150] = {.index = 274, .length = 3},
+  [151] = {.index = 277, .length = 3},
+  [152] = {.index = 280, .length = 3},
+  [153] = {.index = 283, .length = 4},
+  [154] = {.index = 287, .length = 5},
+  [155] = {.index = 292, .length = 4},
+  [156] = {.index = 296, .length = 1},
+  [157] = {.index = 297, .length = 2},
+  [158] = {.index = 299, .length = 3},
+  [159] = {.index = 302, .length = 1},
+  [160] = {.index = 303, .length = 3},
+  [161] = {.index = 306, .length = 5},
+  [162] = {.index = 311, .length = 4},
+  [163] = {.index = 315, .length = 4},
+  [164] = {.index = 319, .length = 4},
+  [165] = {.index = 323, .length = 5},
+  [166] = {.index = 328, .length = 5},
+  [167] = {.index = 333, .length = 3},
+  [168] = {.index = 336, .length = 4},
+  [169] = {.index = 340, .length = 2},
+  [170] = {.index = 342, .length = 2},
+  [171] = {.index = 344, .length = 5},
+  [172] = {.index = 349, .length = 6},
 };
 
 static const TSFieldMapEntry ts_field_map_entries[] = {
@@ -3126,119 +3126,122 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_left, 1},
     {field_right, 3},
   [261] =
+    {field_body, 3},
     {field_group, 1},
-  [262] =
-    {field_value, 1},
   [263] =
+    {field_value, 1},
+  [264] =
     {field_alias, 2},
     {field_value, 0},
-  [265] =
+  [266] =
     {field_value, 0, .inherited = true},
     {field_value, 1, .inherited = true},
-  [267] =
-    {field_exception, 1},
   [268] =
+    {field_body, 3},
+    {field_exception, 1},
+  [270] =
     {field_body, 6},
     {field_name, 1},
     {field_parameters, 2},
     {field_return_type, 4},
-  [272] =
+  [274] =
     {field_comma, 4},
     {field_left, 1},
     {field_right, 3},
-  [275] =
+  [277] =
     {field_left, 1},
     {field_right, 3},
     {field_right, 4},
-  [278] =
+  [280] =
     {field_async, 0},
     {field_left, 2},
     {field_right, 4},
-  [281] =
+  [283] =
     {field_async, 0},
     {field_body, 6},
     {field_left, 2},
     {field_right, 4},
-  [285] =
+  [287] =
     {field_async, 0},
     {field_body, 6},
     {field_name, 2},
     {field_parameters, 4},
     {field_type_parameters, 3},
-  [290] =
+  [292] =
     {field_item, 0},
     {field_item, 1, .inherited = true},
     {field_key, 0, .inherited = true},
     {field_value, 0, .inherited = true},
-  [294] =
+  [296] =
     {field_patterns, 1},
-  [295] =
+  [297] =
     {field_patterns, 0, .inherited = true},
     {field_patterns, 1, .inherited = true},
-  [297] =
+  [299] =
     {field_imaginary, 2},
     {field_operator, 1},
     {field_real, 0},
-  [300] =
+  [302] =
     {field_consequence, 3},
-  [301] =
+  [303] =
+    {field_body, 4},
     {field_exception, 2},
     {field_group, 1},
-  [303] =
+  [306] =
     {field_body, 7},
     {field_name, 1},
     {field_parameters, 3},
     {field_return_type, 5},
     {field_type_parameters, 2},
-  [308] =
+  [311] =
     {field_comma, 5},
     {field_left, 1},
     {field_right, 3},
     {field_right, 4},
-  [312] =
+  [315] =
     {field_async, 0},
     {field_comma, 5},
     {field_left, 2},
     {field_right, 4},
-  [316] =
+  [319] =
     {field_async, 0},
     {field_left, 2},
     {field_right, 4},
     {field_right, 5},
-  [320] =
+  [323] =
     {field_alternative, 7},
     {field_async, 0},
     {field_body, 6},
     {field_left, 2},
     {field_right, 4},
-  [325] =
+  [328] =
     {field_async, 0},
     {field_body, 7},
     {field_name, 2},
     {field_parameters, 3},
     {field_return_type, 5},
-  [330] =
+  [333] =
     {field_item, 1},
     {field_key, 1, .inherited = true},
     {field_value, 1, .inherited = true},
-  [333] =
+  [336] =
     {field_imaginary, 3},
     {field_operator, 2},
     {field_real, 1},
     {field_sign, 0},
-  [337] =
+  [340] =
     {field_arguments, 2},
     {field_name, 0},
-  [339] =
+  [342] =
     {field_consequence, 4},
     {field_guard, 2},
-  [341] =
+  [344] =
     {field_async, 0},
     {field_comma, 6},
     {field_left, 2},
     {field_right, 4},
     {field_right, 5},
-  [346] =
+  [349] =
     {field_async, 0},
     {field_body, 8},
     {field_name, 2},
@@ -109612,8 +109615,8 @@ static const TSParseActionEntry ts_parse_actions[] = {
   [1430] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym__patterns, 3, 0, 23),
   [1432] = {.entry = {.count = 1, .reusable = false}}, SHIFT(312),
   [1434] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym__patterns, 2, 0, 3),
-  [1436] = {.entry = {.count = 1, .reusable = false}}, REDUCE(sym_except_clause, 3, 0, 0),
-  [1438] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_except_clause, 3, 0, 0),
+  [1436] = {.entry = {.count = 1, .reusable = false}}, REDUCE(sym_except_clause, 3, 0, 36),
+  [1438] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_except_clause, 3, 0, 36),
   [1440] = {.entry = {.count = 1, .reusable = false}}, REDUCE(sym_except_clause, 4, 0, 144),
   [1442] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_except_clause, 4, 0, 144),
   [1444] = {.entry = {.count = 1, .reusable = false}}, REDUCE(sym_except_clause, 4, 0, 148),

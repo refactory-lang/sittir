@@ -373,7 +373,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	159: [
 		['group', { fields: ['group'], kinds: [] }, '*'],
 		['exception', { fields: ['exception'], kinds: [] }],
-		['suite', { fields: [], kinds: ['suite_inline', 'suite_block', 'suite_empty'] }]
+		['body', { fields: ['body'], kinds: [] }]
 	],
 	160: [['block', { fields: ['block'], kinds: [] }]],
 	161: [

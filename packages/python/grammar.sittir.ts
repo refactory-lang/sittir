@@ -277,7 +277,7 @@ export default sittirGrammar(base, {
 			{ '1/0': field('group') },
 			{ '2/0/0': variant('as'), '2/0/1': variant('list') },
 			{ '2/0': variant('exception') },
-			{ 2: field('exception') }
+			{ 2: field('exception'), 4: field('body') }
 		],
 
 		exec_statement: {

@@ -1887,6 +1887,16 @@
     "type": "except_clause",
     "named": true,
     "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_suite",
+            "named": true
+          }
+        ]
+      },
       "exception": {
         "multiple": false,
         "required": false,
@@ -1907,16 +1917,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "_suite",
-          "named": true
-        }
-      ]
     }
   },
   {

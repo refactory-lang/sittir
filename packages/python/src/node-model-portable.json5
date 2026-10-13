@@ -3355,11 +3355,11 @@
         {
           "name": "body",
           "route": "slot",
-          "slot": "suite",
+          "slot": "body",
           "path": [
             {
               "owner": "except_clause",
-              "slot": "suite"
+              "slot": "body"
             }
           ]
         },

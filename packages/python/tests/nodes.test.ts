@@ -1280,7 +1280,7 @@ describe('try_statement', () => {
 describe('except_clause', () => {
 	it('factory produces correct type', () => {
 		const node = ir.exceptClause({
-			suite: {
+			body: {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$source: 2,
@@ -1299,7 +1299,7 @@ describe('except_clause', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.exceptClause({
-			suite: {
+			body: {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$source: 2,
@@ -1321,7 +1321,7 @@ describe('except_clause', () => {
 describe('except_clause sub-factories', () => {
 	it('exception builds the parent', () => {
 		const node = ir.exceptClause.exception({
-			suite: {
+			body: {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$source: 2,
@@ -1346,37 +1346,9 @@ describe('except_clause sub-factories', () => {
 		expect((node as any).exception()?.$type).toBe(TSKindId.ExceptClauseException);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('inline builds the parent', () => {
-		const node = ir.exceptClause.inline({
-			suite: {
-				$type: TSKindId.SimpleStatementsElements,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_item: [{ $type: TSKindId.PassStatement, $text: 'pass', $source: 2, $named: true } as any]
-			} as any
-		});
-		expect(node.$type).toBe(TSKindId.ExceptClause);
-		expect((node as any).suite()?.$type).toBe(TSKindId.SuiteInline);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('block builds the parent', () => {
-		const node = ir.exceptClause.block({
-			suite: [{ $type: TSKindId.Block, $text: 'test', $source: 2, $named: true, _statements: [] } as any]
-		});
-		expect(node.$type).toBe(TSKindId.ExceptClause);
-		expect((node as any).suite()?.$type).toBe(TSKindId.SuiteBlock);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('empty builds the parent', () => {
-		const node = ir.exceptClause.empty({});
-		expect(node.$type).toBe(TSKindId.ExceptClause);
-		expect((node as any).suite()?.$type).toBe(TSKindId.SuiteEmpty);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
 	it('exception.as builds the parent', () => {
 		const node = ir.exceptClause.exception.as({
-			suite: {
+			body: {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$source: 2,
@@ -1397,7 +1369,7 @@ describe('except_clause sub-factories', () => {
 	});
 	it('exception.list builds the parent', () => {
 		const node = ir.exceptClause.exception.list({
-			suite: {
+			body: {
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$source: 2,
