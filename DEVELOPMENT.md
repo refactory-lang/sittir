@@ -109,6 +109,16 @@ read-render-parse and its shallow run, factory-storage, ir-storage,
 built-render-parse; `pnpm run validate:history` prints them), compared
 against a recorded baseline — not eyeballed.
 
+Runs are recorded only on the recording branches (`master` and
+`feat/bindings`, `RECORDING_BRANCHES` in `packages/tools/src/history-recording.ts`):
+there a validation run appends its rows to
+`packages/tools/validation-history.jsonl`, and a recorded test run its row to
+`test-history.jsonl`, and commits them. On any other branch a run writes
+nothing, so a pull request's tree stays clean for merges from the
+integration branch; the pull request reports its rows in its body instead.
+`SITTIR_HISTORY_COMMIT=1` records and commits on any branch;
+`SITTIR_HISTORY_NO_COMMIT=1` appends without committing on a recording branch.
+
 Two committed ratchets back the run (both only ever tighten):
 
 - `packages/tools/baselines/native.json` — exact per-grammar validator

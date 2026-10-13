@@ -58,6 +58,13 @@ describe('@sittir/tools test-history round-trip (scratch file)', () => {
 		if (existsSync(SCRATCH)) unlinkSync(SCRATCH);
 	});
 
+	it('readTestHistory orders runs by ts, whatever their order in the file', () => {
+		appendTestHistory(makeEntry({ branch: 'second', ts: '2026-01-02T00:00:00.000Z' }));
+		appendTestHistory(makeEntry({ branch: 'first', ts: '2026-01-01T00:00:00.000Z' }));
+		appendTestHistory(makeEntry({ branch: 'third', ts: '2026-01-03T00:00:00.000Z' }));
+		expect(readTestHistory().map((r) => r.branch)).toEqual(['first', 'second', 'third']);
+	});
+
 	it('appendTestHistory + readTestHistory round-trips a single entry', () => {
 		const entry = makeEntry({ branch: 'feature-x', numFailedTests: 5 });
 		appendTestHistory(entry);

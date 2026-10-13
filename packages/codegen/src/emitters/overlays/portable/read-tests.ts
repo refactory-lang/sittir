@@ -3,8 +3,11 @@ import { WILDCARD, type CaptureSite, type PredicateFact, type SlotModel } from '
 import { slotAnchor, slotFor, type ChildTest, type ReadEntry } from '../../../bindings/routes.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { queryRoutesOf } from '../../client-utils.ts';
+import { keywordPresenceValue } from '../../shared.ts';
 
 export type SlotRoutesOf = (kind: string, slot: string) => SlotRoutes | undefined;
+
+export type PresenceKeywordOf = (kind: string, slot: string) => string | undefined;
 
 export type TypeOf = (kind: string) => number | undefined;
 
@@ -13,6 +16,13 @@ export const slotRoutesOf =
 	(kind, name) => {
 		const slot = nodeMap.nodes.get(kind)?.slots.find((s) => s.name === name);
 		return slot === undefined ? undefined : queryRoutesOf(slot, nodeMap);
+	};
+
+export const presenceKeywordOf =
+	(nodeMap: NodeMap): PresenceKeywordOf =>
+	(kind, name) => {
+		const slot = nodeMap.nodes.get(kind)?.slots.find((s) => s.name === name);
+		return slot === undefined ? undefined : keywordPresenceValue(slot, nodeMap);
 	};
 
 interface Steps {
@@ -47,7 +57,9 @@ type PlanOn = (subject: QuerySubject) => QueryPlan<QuerySubject>;
 
 const comparesText = (predicate: PredicateFact): boolean => predicate.operator === 'eq' || predicate.operator === 'match';
 
-function comparisonOf(predicate: PredicateFact, typeOf: TypeOf): PlanOn | string {
+const readAs = (model: SlotModel, kind: string): readonly string[] => [kind, ...(model.get(kind)?.enumMembers ?? []).map((member) => member.kind)];
+
+function comparisonOf(predicate: PredicateFact, model: SlotModel, typeOf: TypeOf): PlanOn | string {
 	const { operator } = predicate;
 	if (operator !== 'eq' && operator !== 'match' && operator !== 'kind-eq' && operator !== 'not-kind-eq') return `operator ${operator}`;
 	const texts = predicate.arguments.flatMap((a) => ('text' in a ? [a.text] : []));
@@ -57,14 +69,16 @@ function comparisonOf(predicate: PredicateFact, typeOf: TypeOf): PlanOn | string
 	const [text] = texts as [string];
 	if (operator === 'eq') return (subject) => ({ op: 'eq', text, ...subject });
 	if (operator === 'match') return (subject) => ({ op: 'match', pattern: text, ...subject });
-	const types = texts.flatMap((kind) => typeOf(kind) ?? []);
-	if (types.length < texts.length) return `${operator} names ${texts.filter((kind) => typeOf(kind) === undefined).join(', ')}, which has no type`;
+	const kinds = [...new Set(texts.flatMap((kind) => readAs(model, kind)))];
+	const untyped = kinds.filter((kind) => typeOf(kind) === undefined);
+	if (untyped.length > 0) return `${operator} names ${untyped.join(', ')}, which has no type`;
+	const types = kinds.flatMap((kind) => typeOf(kind) ?? []);
 	const is: PlanOn = (subject) => ({ op: 'is', types, ...subject });
 	return operator === 'kind-eq' ? is : (subject) => ({ op: 'not', of: is(subject) });
 }
 
 function conditionOf(entry: ReadEntry, predicate: PredicateFact, model: SlotModel, routesOf: SlotRoutesOf, typeOf: TypeOf): PortableCondition | string {
-	const planOn = comparisonOf(predicate, typeOf);
+	const planOn = comparisonOf(predicate, model, typeOf);
 	if (typeof planOn === 'string' || predicate.subject === null) return planOn as string;
 	const reached = stepsOf(entry, predicate.subject, model, routesOf);
 	if (typeof reached === 'string') return reached;
@@ -88,10 +102,14 @@ function childPredicate(child: ChildTest): PredicateFact | string {
 	return { operator: 'kind-eq', capture: null, arguments: child.kinds.map((text) => ({ text })), subject: child.subject };
 }
 
-export function readTestOf(entry: ReadEntry, model: SlotModel, routesOf: SlotRoutesOf, typeOf: TypeOf): PortableCondition[] {
+export function readTestOf(entry: ReadEntry, model: SlotModel, routesOf: SlotRoutesOf, presenceOf: PresenceKeywordOf, typeOf: TypeOf): PortableCondition[] {
 	const pins = entry.pins.map((pin): PortableCondition | string => {
 		const routes = routesOf(entry.kind, pin.slot);
-		return routes === undefined ? `no routes for pinned slot ${pin.slot}` : { up: 0, via: [], plan: { op: 'eq', text: pin.text, ...routes } };
+		if (routes === undefined) return `no routes for pinned slot ${pin.slot}`;
+		const keyword = presenceOf(entry.kind, pin.slot);
+		if (keyword === undefined) return { up: 0, via: [], plan: { op: 'eq', text: pin.text, ...routes } };
+		if (pin.text !== keyword) return `pin ${JSON.stringify(pin.text)} on ${pin.slot}, a boolean slot that holds only the keyword '${keyword}'`;
+		return { up: 0, via: [], plan: { op: 'present', ...routes } };
 	});
 	const predicates = [...entry.claim.predicates, ...entry.children.map(childPredicate)];
 	const conditions = [...pins, ...predicates.map((p) => (typeof p === 'string' ? p : conditionOf(entry, p, model, routesOf, typeOf)))];

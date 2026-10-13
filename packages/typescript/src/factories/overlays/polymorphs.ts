@@ -570,10 +570,30 @@ const arrowFunction$parameter$coerce = arrowFunction$parameter(
 	C.coerceToArrowFunction,
 	C.coerceToArrowFunctionParameter
 );
+const arrowFunction$callSignature =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'typeParameters' || key === 'parameters' || key === 'returnType') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
+	};
+const arrowFunction$callSignature$strict = arrowFunction$callSignature(F.buildArrowFunction, F.buildCallSignature);
+const arrowFunction$callSignature$coerce = arrowFunction$callSignature(
+	C.coerceToArrowFunction,
+	C.coerceToCallSignature
+);
 export const arrowFunction = Object.freeze({
 	...B.arrowFunction,
 	parameter: bundle(arrowFunction$parameter$strict, arrowFunction$parameter$coerce, {
 		key: 'arrowFunction.parameter',
+		max: 2
+	}),
+	callSignature: bundle(arrowFunction$callSignature$strict, arrowFunction$callSignature$coerce, {
+		key: 'arrowFunction.callSignature',
 		max: 2
 	})
 }) as unknown as typeof B.arrowFunction & {
@@ -588,6 +608,17 @@ export const arrowFunction = Object.freeze({
 			config: OmitEach<ArgsOf<typeof C.coerceToArrowFunction>[0], 'content'> & {
 				content: ArgsOf<typeof C.coerceToArrowFunctionParameter>[0];
 			},
+			options?: OptionsArg<typeof C.coerceToArrowFunction>
+		) => ReturnType<typeof C.coerceToArrowFunction>;
+	};
+	callSignature: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildArrowFunction>[0], 'content'> & ArgsOf<typeof F.buildCallSignature>[0],
+			options?: OptionsArg<typeof F.buildArrowFunction>
+		) => ReturnType<typeof F.buildArrowFunction>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToArrowFunction>[0], 'content'> &
+				ArgsOf<typeof C.coerceToCallSignature>[0],
 			options?: OptionsArg<typeof C.coerceToArrowFunction>
 		) => ReturnType<typeof C.coerceToArrowFunction>;
 	};

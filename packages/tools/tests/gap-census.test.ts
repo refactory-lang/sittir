@@ -24,8 +24,7 @@ describe('gap census on a real grammar', () => {
 		expect(measure.status).toBe('measured');
 		expect(measure.gaps).toBe(2);
 		expect(measure.lossy.map((row) => [row.shape, row.source, row.rendered])).toEqual([
-			['multi-space', { lead: ' ', trail: '  ' }, { lead: ' ', trail: ' ' }],
-			['tabs', { lead: '', trail: '\t' }, { lead: '', trail: ' ' }]
+			['multi-space', { lead: ' ', trail: '  ' }, { lead: ' ', trail: ' ' }]
 		]);
 	}, 120_000);
 

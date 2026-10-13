@@ -16,6 +16,8 @@ import { declaresWhitespace, depthMembersOf, layoutSymbolsOf } from './layout-ki
 import { escapeRegexLiteral } from '../../util/word-matcher.ts';
 import { SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { extrasClosure } from '../../dsl/extras.ts';
+import { isDepthText } from '../../dsl/primitives/spacing.ts';
+import { admitsWhitespaceMember } from '../../dsl/whitespace.ts';
 import { ruleListParts } from '../../dsl/rule-patterns.ts';
 import { RuleWalker } from '../../dsl/rule-walker.ts';
 import type { RenderRule } from '../../types/rule.ts';
@@ -171,7 +173,7 @@ export function whitespaceTriviaKinds(nodeMap: NodeMap): string[] {
 	if (nodelessExtrasRun === undefined || !declaresWhitespace(nodeMap)) return [];
 	return [...layoutSymbolsOf(nodeMap).values()].filter((kind) => {
 		const node = nodeMap.nodes.get(kind);
-		return node instanceof AssembledPunctuation && nodelessExtrasRun.test(node.text);
+		return node instanceof AssembledPunctuation && !isDepthText(node.text) && admitsWhitespaceMember(nodelessExtrasRun, kind, node.text);
 	});
 }
 
@@ -180,6 +182,10 @@ function continuesLine(nodeMap: NodeMap, kind: string): boolean {
 	if (!(node instanceof AssembledPattern) || node.textPattern === undefined) return false;
 	const dfa = patternDfa(node.textPattern);
 	return dfa !== undefined && requiresNonSpace(dfa) && endsWithLineBreak(dfa);
+}
+
+export function layoutTriviaKinds(nodeMap: NodeMap): string[] {
+	return [...new Set([...whitespaceTriviaKinds(nodeMap), ...depthTriviaKinds(nodeMap), ...continuationTriviaKinds(nodeMap)])];
 }
 
 export function continuationTriviaKinds(nodeMap: NodeMap): string[] {

@@ -1333,7 +1333,7 @@ describe('class_heritage', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_extends_clause_single: [
+				_types: [
 					{
 						$type: TSKindId.ExtendsClauseSingle,
 						$text: 'test',
@@ -1365,7 +1365,7 @@ describe('class_heritage', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_extends_clause_single: [
+				_types: [
 					{
 						$type: TSKindId.ExtendsClauseSingle,
 						$text: 'test',
@@ -1398,7 +1398,7 @@ describe('class_heritage sub-factories', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_extends_clause_single: [
+				_types: [
 					{
 						$type: TSKindId.ExtendsClauseSingle,
 						$text: 'test',
@@ -1545,6 +1545,15 @@ describe('arrow_function sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.ArrowFunction);
 		expect((node as any).content()?.$type).toBe(TSKindId.ArrowFunctionParameter);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('callSignature builds the parent', () => {
+		const node = ir.arrowFunction.callSignature({
+			body: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ArrowFunction);
+		expect((node as any).content()?.$type).toBe(TSKindId.CallSignature);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });

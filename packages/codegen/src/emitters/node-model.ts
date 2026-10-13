@@ -126,6 +126,7 @@ interface SerializedList extends SerializedNodeBase {
 	leadingDelimiter: 'mandatory' | 'optional' | 'none';
 	trailingDelimiter: 'mandatory' | 'optional' | 'none';
 	defaultDelimiter: string;
+	separatorCandidates?: string[];
 	elementKinds: string[];
 	elementSeats?: Seat[];
 	slots: SerializedSlot[];
@@ -272,6 +273,7 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 				leadingDelimiter: node.leadingDelimiter,
 				trailingDelimiter: node.trailingDelimiter,
 				defaultDelimiter: declaredDelimiterDefault(node),
+				...(node.separatorRule === undefined ? {} : { separatorCandidates: [...node.separatorCandidateKindNames] }),
 				elementKinds: [...valueParseKindsOf({ values: node.elements })],
 				...seatsOfList(node, nodeMap, wires),
 				slots: node.slots.map((slot) => serializeSlot(node, slot, nodeMap, wires))

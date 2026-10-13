@@ -39,7 +39,7 @@ fn arms(ids: &[u16]) -> Vec<SeamArm> {
 }
 
 fn ctx<'a>(options: &'a ResolvedOptions, sources: &'a Sources) -> RenderContext<'a> {
-    RenderContext { options, sources }
+    RenderContext { options, sources, recording: None }
 }
 
 #[test]
@@ -297,7 +297,7 @@ struct Seatable {
     edges: Edges,
 }
 impl SeatTarget for Seatable {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &RenderContext<'_>) -> Option<(&mut Edges, usize)> {
         seat_site(table, KindId(self.kind)).map(|site| (&mut self.edges, site))
     }
 }
@@ -307,11 +307,11 @@ struct Wrapper {
     content: Seatable,
 }
 impl SeatTarget for Wrapper {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &RenderContext<'_>) -> Option<(&mut Edges, usize)> {
         if let Some(site) = seat_site(table, KindId(9)) {
             return Some((&mut self.edges, site));
         }
-        self.content.seat_target(table)
+        self.content.seat_target(table, ctx)
     }
 }
 
@@ -439,13 +439,13 @@ fn a_coordinate_followed_by_one_out_of_source_order_takes_its_seat() {
 }
 
 #[test]
-fn a_coordinate_whose_gap_the_source_already_filled_keeps_it() {
+fn a_coordinate_whose_gap_its_slot_already_filled_keeps_it() {
     let table: &[u16] = &[NO_SITE, NO_SITE, NO_SITE, 0];
     let opts = ResolvedOptions { spacing: arms(&[70]), ..ResolvedOptions::default() };
     let sources = source_tree();
     let mut first = NodeCoordinate::new(7, 0, 1, Span { start: 0, end: 6 });
     first.kind = Some(KindId(3));
-    first.edges = Some(sittir_core::slot::CoordinateEdges { before: None, after: Some(SeamArm { arm: 9, strength: 3, dedent: false }) });
+    first.edges = Some(sittir_core::slot::CoordinateEdges { before: None, after: Some(SeamArm { arm: 9, strength: sittir_core::spacing::SEAM_SLOT, dedent: false }) });
     let mut items = [Some(SlotValue::Coord(first)), parsed(3, 8, 17)];
     fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
     assert_eq!(coord_after_of(&items[0]), Some(9));
@@ -579,7 +579,7 @@ fn a_root_edge_decides_its_gap_and_only_a_terminated_break_floors_it() {
 }
 
 use sittir_core::points::{Point, PointSpan};
-use sittir_core::prepare::{fill_list_gaps, outermost, EdgeItem, SnapshotEdge, TriviaReach};
+use sittir_core::prepare::{fill_slot_gaps, outermost, EdgeItem, SnapshotEdge, TriviaReach};
 
 /// A snapshot item: where it lies, how far trivia leads or trails it, and the
 /// edges a list gap beside it is written on.
@@ -666,34 +666,39 @@ fn the_outermost_end_of_a_root_is_its_inner_trivia_when_that_lies_beyond_its_end
     assert_eq!(edge(outermost(item.last_item(), None, Side::After)), at(2, 0, 2, 6));
 }
 
-fn gap_text(kind: u16) -> &'static str {
-    match kind {
-        1 => "",
-        2 => " ",
-        3 => "\n",
-        _ => "",
+fn slot(before: Option<u16>, after: Option<u16>) -> sittir_core::layout::SlotLayout {
+    sittir_core::layout::SlotLayout { slot: "_item".to_string(), before, after, separator: None, tokens: Vec::new() }
+}
+
+/// An edge's arm and strength, where one is set.
+type ArmAt = Option<(u16, Option<u8>)>;
+
+fn edge_arms(item: &Option<SlotValue<Spanned>>) -> (ArmAt, ArmAt) {
+    match item {
+        Some(SlotValue::Transport(item)) => (item.edges.before.map(|e| (e.arm, e.strength)), item.edges.after.map(|e| (e.arm, e.strength))),
+        _ => (None, None),
     }
 }
 
-const GAPS: WhitespaceTable = WhitespaceTable { text_of: gap_text, indent: 0, dedent: 0, leaf_edges: &[], gaps: &[] };
-
 #[test]
-fn a_list_gap_between_spanned_items_classifies_from_geometry_with_the_separator_against_the_earlier_item() {
-    let opts = ResolvedOptions::default();
-    let sources = Sources(HashMap::new());
-    // "a, b": the separator's column is the gap's first.
-    let mut items = [spanned(at(0, 0, 0, 1), Bare, Bare), spanned(at(0, 3, 0, 4), Bare, Bare)];
-    fill_list_gaps(items.iter_mut().map(Some), ",", &[1, 2, 3], &[1, 2, 3], &GAPS, &ctx(&opts, &sources));
-    let [SlotValue::Transport(a), SlotValue::Transport(b)] = &items[..] else { panic!("two spanned items") };
-    assert_eq!((a.edges.after.map(|e| e.arm), b.edges.before.map(|e| e.arm)), (Some(1), Some(2)));
+fn a_slot_layout_gives_every_gap_between_present_items_its_classes_at_slot_strength() {
+    let strength = Some(sittir_core::spacing::SEAM_SLOT);
+    let mut items = [Some(spanned(at(0, 0, 0, 1), Bare, Bare)), None, Some(spanned(at(0, 3, 0, 4), Bare, Bare)), Some(spanned(at(0, 6, 0, 7), Bare, Bare))];
+    fill_slot_gaps(items.iter_mut().map(Option::as_mut), Some(&slot(Some(1), Some(3))));
+    assert_eq!(edge_arms(&items[0]), (None, Some((1, strength))));
+    assert_eq!(edge_arms(&items[1]), (None, None));
+    assert_eq!(edge_arms(&items[2]), (Some((3, strength)), Some((1, strength))));
+    assert_eq!(edge_arms(&items[3]), (Some((3, strength)), None));
 }
 
 #[test]
-fn a_list_gap_with_trivia_between_is_left_to_the_seat() {
-    let opts = ResolvedOptions::default();
-    let sources = Sources(HashMap::new());
-    let mut items = [spanned(at(0, 0, 0, 1), Bare, To(pt(0, 7))), spanned(at(0, 9, 0, 10), Bare, Bare)];
-    fill_list_gaps(items.iter_mut().map(Some), ",", &[1, 2, 3], &[1, 2, 3], &GAPS, &ctx(&opts, &sources));
-    let [SlotValue::Transport(a), SlotValue::Transport(b)] = &items[..] else { panic!("two spanned items") };
-    assert_eq!((a.edges.after, b.edges.before), (None, None));
+fn a_slot_layout_leaves_an_edge_already_set_and_a_side_it_stores_nothing_for() {
+    let mut first = spanned(at(0, 0, 0, 1), Bare, Bare);
+    if let SlotValue::Transport(item) = &mut first {
+        item.edges.after = Some(wire(2));
+    }
+    let mut items = [Some(first), Some(spanned(at(0, 3, 0, 4), Bare, Bare))];
+    fill_slot_gaps(items.iter_mut().map(Option::as_mut), Some(&slot(Some(1), None)));
+    assert_eq!(edge_arms(&items[0]).1.map(|(arm, _)| arm), Some(2));
+    assert_eq!(edge_arms(&items[1]), (None, None));
 }

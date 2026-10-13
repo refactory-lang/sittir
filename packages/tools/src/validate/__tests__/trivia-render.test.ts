@@ -1,7 +1,7 @@
 import { afterAll, describe, expect, it } from 'vitest';
 import type { AnyUntypedNode } from '@sittir/types';
 import { carryTree, isCoordinate, sidesOf } from '@sittir/common/utils';
-import { loadNativeEngine, readNodeOf, materializeDetached, readNativeTree } from '../common.ts';
+import { loadNativeEngine, readNodeOf, materializeDetached, readNativeTree, nativeLanguageEngineOf } from '../common.ts';
 import { detachedRenderer } from './helpers/detached-renderer.ts';
 import { createEngine } from '@sittir/common';
 import { languageByName } from '../../languages.ts';
@@ -17,7 +17,7 @@ afterAll(() => {
 describe('read trivia layout, rendered detached', () => {
 	it('keeps a same-line line comment on its line and breaks once after it', async () => {
 		const render = await detachedRenderer('rust');
-		expect(render('fn g() { a; // note\n b; }')).toBe('fn g() {\n a; // note\n b;\n}');
+		expect(render('fn g() { a; // note\n b; }')).toBe('fn g() { a; // note\n b; }');
 		expect(render('fn f() {\n    a; // c\n    // d\n}\n')).toBe('fn f() {\n    a; // c\n    // d\n}\n');
 	});
 
@@ -26,20 +26,20 @@ describe('read trivia layout, rendered detached', () => {
 	});
 
 	it('joins a same-line leading block comment with a space', async () => {
-		expect((await detachedRenderer('rust'))('fn f() { /* c */ a; }')).toBe('fn f() {\n    /* c */ a;\n}');
+		expect((await detachedRenderer('rust'))('fn f() { /* c */ a; }')).toBe('fn f() { /* c */ a; }');
 	});
 
 	it('lays out inner comments by the gap they sit in', async () => {
 		const render = await detachedRenderer('rust');
-		expect(render('fn f() { // TODO\n}\n')).toBe('fn f() {\n    // TODO\n}\n');
+		expect(render('fn f() { // TODO\n}\n')).toBe('fn f() { // TODO\n}\n');
 		expect(render('f(/* a */);')).toBe('f(/* a */);');
 		expect(render('f(// a\n);')).toBe('f(// a\n);');
-		expect(render('ok! {\n  // one\n  /* two */\n}\n')).toBe('ok!{\n  // one\n  /* two */\n}\n');
+		expect(render('ok! {\n  // one\n  /* two */\n}\n')).toBe('ok! {\n  // one\n  /* two */\n}\n');
 	});
 
 	it('seats a same-line trailing entry after the anonymous tokens between it and its owner', async () => {
 		const render = await detachedRenderer('rust');
-		expect(render('fn f() { x = a + /* x */ b; }')).toBe('fn f() {\n    x = a + /* x */ b;\n}');
+		expect(render('fn f() { x = a + /* x */ b; }')).toBe('fn f() { x = a + /* x */ b; }');
 	});
 
 	it('seats a leading entry after an anonymous token kept as a source coordinate', async () => {
@@ -54,7 +54,7 @@ describe('read trivia layout, rendered detached', () => {
 		const comment = sidesOf(binary._right)?.leading?.find(isCoordinate);
 		if (comment === undefined) throw new Error('expected the comment as a coordinate');
 		binary._operator = carryTree(comment, { $type: binary._operator, $treeHandle: comment.$treeHandle, $end: comment.$end, $span: { start: at, end: at + 1 } });
-		expect(engine.render(data as never as AnyUntypedNode).toString()).toBe('fn f() {\n    x = a + /* x */ b;\n}');
+		expect(engine.render(data as never as AnyUntypedNode).toString()).toBe(source);
 	});
 
 	it('keeps a same-line trailing entry on its owner\'s row, before the separator', async () => {
@@ -74,6 +74,44 @@ describe('read trivia layout, rendered detached', () => {
 		const render = await detachedRenderer('rust');
 		expect(render('/* a */\n/* Comment */\n')).toBe('/* a */\n/* Comment */\n');
 		expect(render('/* a */\n// ---\n')).toBe('/* a */\n// ---\n');
+	});
+});
+
+describe('in-line spacing the options do not write is a deviation, rendered detached', () => {
+	it('keeps the spaces inside a rust use list the options write tight', async () => {
+		const source = 'use three::{ dot::{one, four} };\n';
+		expect((await detachedRenderer('rust'))(source)).toBe(source);
+	});
+
+	it('keeps the spaces inside typescript type parameters and formal parameters', async () => {
+		const source = 'let x: new < T1, T2 > ( p1, p2 ) => R;\n';
+		expect((await detachedRenderer('typescript'))(source)).toBe(source);
+	});
+
+	it('keeps a python line continuation with the source runs on either side of it', async () => {
+		const render = await detachedRenderer('python');
+		const source = 'x = 1 + \\\n    2\n';
+		expect(render(source)).toBe(source);
+	});
+
+	it('keeps a python line continuation inside brackets, where it is redundant', async () => {
+		const render = await detachedRenderer('python');
+		const source = 'x = (1 + \\\n     2)\n';
+		expect(render(source)).toBe(source);
+	});
+
+	it('keeps the layout of a token tree item whose neighbour is a bare token, read live', async () => {
+		const engine = await loadNativeEngine('rust');
+		const readNode = (await readNodeOf('rust'))!;
+		const native = await nativeLanguageEngineOf('rust');
+		const source = "foo!($/';()*()+.);\n";
+		const { tree } = readNativeTree(engine, source);
+		expect(native.render(materializeDetached(readNode(tree)) as AnyUntypedNode, tree.options).toString()).toBe(source);
+	});
+
+	it('keeps a rust token tree tight where its source is', async () => {
+		const source = "foo(#[bar(some tokens are special in other contexts: $/';()*()+.)] x);\n";
+		expect((await detachedRenderer('rust'))(source)).toBe(source);
 	});
 });
 

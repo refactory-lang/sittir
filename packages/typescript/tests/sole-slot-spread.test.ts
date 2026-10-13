@@ -89,8 +89,8 @@ describe('a class method defaults to no terminator', () => {
 			const body = (ts.parse(source) as never as { statements(): { body(): T.ClassBody.Parsed }[] }).statements()[0]!.body();
 			return ts.render(body.$with.members(...body.members())).toString();
 		};
-		expect(rebuilt('class A { foo() {} }\n')).toBe('{\n  foo() {}\n}');
-		expect(rebuilt('class A { foo() {}; }\n')).toBe('{\n  foo() {};\n}');
+		expect(rebuilt('class A { foo() {} }\n')).toBe('{ foo() {} }');
+		expect(rebuilt('class A { foo() {}; }\n')).toBe('{ foo() {}; }');
 	});
 });
 

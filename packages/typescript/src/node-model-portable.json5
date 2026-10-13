@@ -220,7 +220,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -272,7 +275,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -324,7 +330,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -376,7 +385,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -428,7 +440,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -480,7 +495,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -514,7 +532,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -548,7 +569,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -582,7 +606,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -1584,7 +1611,7 @@
           ]
         },
         {
-          "vocab": "expression.assignment.compound.nullish",
+          "vocab": "expression.assignment.compound.coalesce",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -2272,7 +2299,7 @@
           ]
         },
         {
-          "vocab": "expression.binary.nullish",
+          "vocab": "expression.binary.coalesce",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -4107,6 +4134,18 @@
       ],
       "members": [
         {
+          "name": "typeOnly",
+          "route": "presence",
+          "via": [],
+          "token": "type",
+          "path": [
+            {
+              "owner": "export_statement_default_from",
+              "slot": "type"
+            }
+          ]
+        },
+        {
           "name": "exportClause",
           "route": "nested",
           "via": [
@@ -4330,13 +4369,13 @@
       ],
       "members": [
         {
-          "name": "extendsClauseSingles",
+          "name": "types",
           "route": "slot",
-          "slot": "extends_clause_single",
+          "slot": "types",
           "path": [
             {
               "owner": "extends_clause",
-              "slot": "extends_clause_single"
+              "slot": "types"
             }
           ]
         }
@@ -4461,10 +4500,10 @@
       }
     },
     "for_in_statement": {
-      "vocab": "statement.loop.for",
+      "vocab": "statement.loop.for_each",
       "read": [
         {
-          "vocab": "statement.loop.for",
+          "vocab": "statement.loop.for_each",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -6473,7 +6512,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -6543,7 +6585,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -6613,7 +6658,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -6723,7 +6771,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -6775,7 +6826,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -6827,7 +6881,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -6879,7 +6936,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -6931,7 +6991,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -6983,7 +7046,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -7017,7 +7083,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -7051,7 +7120,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -7085,7 +7157,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -7359,7 +7434,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -7411,7 +7489,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -7463,7 +7544,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -7515,7 +7599,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -7567,7 +7654,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -7619,7 +7709,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -7653,7 +7746,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -7687,7 +7783,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -7721,7 +7820,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -8152,10 +8254,10 @@
       "members": []
     },
     "new_expression": {
-      "vocab": "expression.call.new",
+      "vocab": "expression.call.construct",
       "read": [
         {
-          "vocab": "expression.call.new",
+          "vocab": "expression.call.construct",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -8947,7 +9049,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [],
                 "kinds": [
@@ -8981,7 +9086,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [],
                 "kinds": [
@@ -9015,7 +9123,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [],
                 "kinds": [
@@ -9430,10 +9541,10 @@
       "members": []
     },
     "program": {
-      "vocab": "module",
+      "vocab": "file",
       "read": [
         {
-          "vocab": "module",
+          "vocab": "file",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -9512,7 +9623,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -9546,7 +9660,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -9580,7 +9697,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -9736,7 +9856,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -9770,7 +9893,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -9804,7 +9930,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -10133,7 +10262,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [],
                 "kinds": [
@@ -10167,7 +10299,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [],
                 "kinds": [
@@ -10201,7 +10336,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [],
                 "kinds": [
@@ -10573,10 +10711,10 @@
       }
     },
     "spread_element": {
-      "vocab": "element.splat",
+      "vocab": "element.spread",
       "read": [
         {
-          "vocab": "element.splat",
+          "vocab": "element.spread",
           "toplevel": true,
           "within": [],
           "pins": [],

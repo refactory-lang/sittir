@@ -206,7 +206,7 @@ export interface PortableIds {
 		| TSKindId.TemplateType
 		| TSKindId.TupleParameter;
 	'element.pair': TSKindId.Pair;
-	'element.splat': TSKindId.SpreadElement;
+	'element.spread': TSKindId.SpreadElement;
 	'element.template': TSKindId.TemplateType;
 	'element.template.substitution': TSKindId.TemplateType;
 	'element.tuple': TSKindId.OptionalTupleParameter | TSKindId.TupleParameter;
@@ -256,11 +256,11 @@ export interface PortableIds {
 	'expression.assignment.compound.bitwise_and': TSKindId.AugmentedAssignmentExpression;
 	'expression.assignment.compound.bitwise_or': TSKindId.AugmentedAssignmentExpression;
 	'expression.assignment.compound.bitwise_xor': TSKindId.AugmentedAssignmentExpression;
+	'expression.assignment.compound.coalesce': TSKindId.AugmentedAssignmentExpression;
 	'expression.assignment.compound.divide': TSKindId.AugmentedAssignmentExpression;
 	'expression.assignment.compound.exponent': TSKindId.AugmentedAssignmentExpression;
 	'expression.assignment.compound.modulo': TSKindId.AugmentedAssignmentExpression;
 	'expression.assignment.compound.multiply': TSKindId.AugmentedAssignmentExpression;
-	'expression.assignment.compound.nullish': TSKindId.AugmentedAssignmentExpression;
 	'expression.assignment.compound.or': TSKindId.AugmentedAssignmentExpression;
 	'expression.assignment.compound.shift_left': TSKindId.AugmentedAssignmentExpression;
 	'expression.assignment.compound.shift_right': TSKindId.AugmentedAssignmentExpression;
@@ -279,6 +279,7 @@ export interface PortableIds {
 	'expression.binary.bitwise.and': TSKindId.BinaryExpression;
 	'expression.binary.bitwise.or': TSKindId.BinaryExpression;
 	'expression.binary.bitwise.xor': TSKindId.BinaryExpression;
+	'expression.binary.coalesce': TSKindId.BinaryExpression;
 	'expression.binary.comparison': TSKindId.BinaryExpression;
 	'expression.binary.comparison.equal': TSKindId.BinaryExpression;
 	'expression.binary.comparison.greater': TSKindId.BinaryExpression;
@@ -294,7 +295,6 @@ export interface PortableIds {
 	'expression.binary.membership': TSKindId.BinaryExpression;
 	'expression.binary.membership.in': TSKindId.BinaryExpression;
 	'expression.binary.membership.instanceof': TSKindId.BinaryExpression;
-	'expression.binary.nullish': TSKindId.BinaryExpression;
 	'expression.binary.shift': TSKindId.BinaryExpression;
 	'expression.binary.shift.left': TSKindId.BinaryExpression;
 	'expression.binary.shift.right': TSKindId.BinaryExpression;
@@ -305,9 +305,9 @@ export interface PortableIds {
 		| TSKindId.CallExpressionTemplateCall
 		| TSKindId.Import
 		| TSKindId.NewExpression;
+	'expression.call.construct': TSKindId.NewExpression;
 	'expression.call.import': TSKindId.Import;
 	'expression.call.member': TSKindId.CallExpressionCall;
-	'expression.call.new': TSKindId.NewExpression;
 	'expression.call.template': TSKindId.CallExpressionTemplateCall;
 	'expression.cast':
 		| TSKindId.AsExpression
@@ -348,6 +348,7 @@ export interface PortableIds {
 	'expression.update.increment': TSKindId.UpdateExpressionPostfix | TSKindId.UpdateExpressionPrefix;
 	'expression.yield': TSKindId.YieldExpression | TSKindId.YieldExpressionDelegate;
 	'expression.yield.delegate': TSKindId.YieldExpressionDelegate;
+	file: TSKindId.Program;
 	identifier:
 		| TSKindId.Identifier
 		| TSKindId.NestedIdentifier
@@ -467,7 +468,6 @@ export interface PortableIds {
 	'modifier.visibility.private': TSKindId.PrivateKeyword;
 	'modifier.visibility.protected': TSKindId.ProtectedKeyword;
 	'modifier.visibility.public': TSKindId.PublicKeyword;
-	module: TSKindId.Program;
 	pattern:
 		| TSKindId.ArrayPattern
 		| TSKindId.AssignmentPattern
@@ -530,7 +530,7 @@ export interface PortableIds {
 	'statement.loop': TSKindId.DoStatement | TSKindId.ForInStatement | TSKindId.ForStatement | TSKindId.WhileStatement;
 	'statement.loop.counted': TSKindId.ForStatement;
 	'statement.loop.do_while': TSKindId.DoStatement;
-	'statement.loop.for': TSKindId.ForInStatement;
+	'statement.loop.for_each': TSKindId.ForInStatement;
 	'statement.loop.while': TSKindId.WhileStatement;
 	'statement.return': TSKindId.ReturnStatement;
 	'statement.scope': TSKindId.WithStatement;
@@ -938,12 +938,12 @@ export interface PortableKindsAt {
 	element: {
 		readonly $ids: readonly PortableIds['element'][];
 		readonly pair: PortableKindsAt['element.pair'];
-		readonly splat: PortableKindsAt['element.splat'];
+		readonly spread: PortableKindsAt['element.spread'];
 		readonly template: PortableKindsAt['element.template'];
 		readonly tuple: PortableKindsAt['element.tuple'];
 	};
 	'element.pair': { readonly $ids: readonly PortableIds['element.pair'][] };
-	'element.splat': { readonly $ids: readonly PortableIds['element.splat'][] };
+	'element.spread': { readonly $ids: readonly PortableIds['element.spread'][] };
 	'element.template': {
 		readonly $ids: readonly PortableIds['element.template'][];
 		readonly substitution: PortableKindsAt['element.template.substitution'];
@@ -992,11 +992,11 @@ export interface PortableKindsAt {
 		readonly bitwise_and: PortableKindsAt['expression.assignment.compound.bitwise_and'];
 		readonly bitwise_or: PortableKindsAt['expression.assignment.compound.bitwise_or'];
 		readonly bitwise_xor: PortableKindsAt['expression.assignment.compound.bitwise_xor'];
+		readonly coalesce: PortableKindsAt['expression.assignment.compound.coalesce'];
 		readonly divide: PortableKindsAt['expression.assignment.compound.divide'];
 		readonly exponent: PortableKindsAt['expression.assignment.compound.exponent'];
 		readonly modulo: PortableKindsAt['expression.assignment.compound.modulo'];
 		readonly multiply: PortableKindsAt['expression.assignment.compound.multiply'];
-		readonly nullish: PortableKindsAt['expression.assignment.compound.nullish'];
 		readonly or: PortableKindsAt['expression.assignment.compound.or'];
 		readonly shift_left: PortableKindsAt['expression.assignment.compound.shift_left'];
 		readonly shift_right: PortableKindsAt['expression.assignment.compound.shift_right'];
@@ -1014,6 +1014,9 @@ export interface PortableKindsAt {
 	'expression.assignment.compound.bitwise_xor': {
 		readonly $ids: readonly PortableIds['expression.assignment.compound.bitwise_xor'][];
 	};
+	'expression.assignment.compound.coalesce': {
+		readonly $ids: readonly PortableIds['expression.assignment.compound.coalesce'][];
+	};
 	'expression.assignment.compound.divide': {
 		readonly $ids: readonly PortableIds['expression.assignment.compound.divide'][];
 	};
@@ -1025,9 +1028,6 @@ export interface PortableKindsAt {
 	};
 	'expression.assignment.compound.multiply': {
 		readonly $ids: readonly PortableIds['expression.assignment.compound.multiply'][];
-	};
-	'expression.assignment.compound.nullish': {
-		readonly $ids: readonly PortableIds['expression.assignment.compound.nullish'][];
 	};
 	'expression.assignment.compound.or': { readonly $ids: readonly PortableIds['expression.assignment.compound.or'][] };
 	'expression.assignment.compound.shift_left': {
@@ -1047,10 +1047,10 @@ export interface PortableKindsAt {
 		readonly $ids: readonly PortableIds['expression.binary'][];
 		readonly arithmetic: PortableKindsAt['expression.binary.arithmetic'];
 		readonly bitwise: PortableKindsAt['expression.binary.bitwise'];
+		readonly coalesce: PortableKindsAt['expression.binary.coalesce'];
 		readonly comparison: PortableKindsAt['expression.binary.comparison'];
 		readonly logical: PortableKindsAt['expression.binary.logical'];
 		readonly membership: PortableKindsAt['expression.binary.membership'];
-		readonly nullish: PortableKindsAt['expression.binary.nullish'];
 		readonly shift: PortableKindsAt['expression.binary.shift'];
 	};
 	'expression.binary.arithmetic': {
@@ -1087,6 +1087,7 @@ export interface PortableKindsAt {
 	'expression.binary.bitwise.and': { readonly $ids: readonly PortableIds['expression.binary.bitwise.and'][] };
 	'expression.binary.bitwise.or': { readonly $ids: readonly PortableIds['expression.binary.bitwise.or'][] };
 	'expression.binary.bitwise.xor': { readonly $ids: readonly PortableIds['expression.binary.bitwise.xor'][] };
+	'expression.binary.coalesce': { readonly $ids: readonly PortableIds['expression.binary.coalesce'][] };
 	'expression.binary.comparison': {
 		readonly $ids: readonly PortableIds['expression.binary.comparison'][];
 		readonly equal: PortableKindsAt['expression.binary.comparison.equal'];
@@ -1134,7 +1135,6 @@ export interface PortableKindsAt {
 	'expression.binary.membership.instanceof': {
 		readonly $ids: readonly PortableIds['expression.binary.membership.instanceof'][];
 	};
-	'expression.binary.nullish': { readonly $ids: readonly PortableIds['expression.binary.nullish'][] };
 	'expression.binary.shift': {
 		readonly $ids: readonly PortableIds['expression.binary.shift'][];
 		readonly left: PortableKindsAt['expression.binary.shift.left'];
@@ -1148,14 +1148,14 @@ export interface PortableKindsAt {
 	};
 	'expression.call': {
 		readonly $ids: readonly PortableIds['expression.call'][];
+		readonly construct: PortableKindsAt['expression.call.construct'];
 		readonly import: PortableKindsAt['expression.call.import'];
 		readonly member: PortableKindsAt['expression.call.member'];
-		readonly new: PortableKindsAt['expression.call.new'];
 		readonly template: PortableKindsAt['expression.call.template'];
 	};
+	'expression.call.construct': { readonly $ids: readonly PortableIds['expression.call.construct'][] };
 	'expression.call.import': { readonly $ids: readonly PortableIds['expression.call.import'][] };
 	'expression.call.member': { readonly $ids: readonly PortableIds['expression.call.member'][] };
-	'expression.call.new': { readonly $ids: readonly PortableIds['expression.call.new'][] };
 	'expression.call.template': { readonly $ids: readonly PortableIds['expression.call.template'][] };
 	'expression.cast': {
 		readonly $ids: readonly PortableIds['expression.cast'][];
@@ -1215,6 +1215,7 @@ export interface PortableKindsAt {
 		readonly delegate: PortableKindsAt['expression.yield.delegate'];
 	};
 	'expression.yield.delegate': { readonly $ids: readonly PortableIds['expression.yield.delegate'][] };
+	file: { readonly $ids: readonly PortableIds['file'][] };
 	identifier: {
 		readonly $ids: readonly PortableIds['identifier'][];
 		readonly label: PortableKindsAt['identifier.label'];
@@ -1316,7 +1317,6 @@ export interface PortableKindsAt {
 	'modifier.visibility.private': { readonly $ids: readonly PortableIds['modifier.visibility.private'][] };
 	'modifier.visibility.protected': { readonly $ids: readonly PortableIds['modifier.visibility.protected'][] };
 	'modifier.visibility.public': { readonly $ids: readonly PortableIds['modifier.visibility.public'][] };
-	module: { readonly $ids: readonly PortableIds['module'][] };
 	pattern: {
 		readonly $ids: readonly PortableIds['pattern'][];
 		readonly array: PortableKindsAt['pattern.array'];
@@ -1381,12 +1381,12 @@ export interface PortableKindsAt {
 		readonly $ids: readonly PortableIds['statement.loop'][];
 		readonly counted: PortableKindsAt['statement.loop.counted'];
 		readonly do_while: PortableKindsAt['statement.loop.do_while'];
-		readonly for: PortableKindsAt['statement.loop.for'];
+		readonly for_each: PortableKindsAt['statement.loop.for_each'];
 		readonly while: PortableKindsAt['statement.loop.while'];
 	};
 	'statement.loop.counted': { readonly $ids: readonly PortableIds['statement.loop.counted'][] };
 	'statement.loop.do_while': { readonly $ids: readonly PortableIds['statement.loop.do_while'][] };
-	'statement.loop.for': { readonly $ids: readonly PortableIds['statement.loop.for'][] };
+	'statement.loop.for_each': { readonly $ids: readonly PortableIds['statement.loop.for_each'][] };
 	'statement.loop.while': { readonly $ids: readonly PortableIds['statement.loop.while'][] };
 	'statement.return': { readonly $ids: readonly PortableIds['statement.return'][] };
 	'statement.scope': { readonly $ids: readonly PortableIds['statement.scope'][] };
@@ -1740,12 +1740,12 @@ export interface PortableIsAt {
 	> & {};
 	element: PortableGuard<PortableIds['element']> & {
 		readonly pair: PortableIsAt['element.pair'];
-		readonly splat: PortableIsAt['element.splat'];
+		readonly spread: PortableIsAt['element.spread'];
 		readonly template: PortableIsAt['element.template'];
 		readonly tuple: PortableIsAt['element.tuple'];
 	};
 	'element.pair': PortableGuard<PortableIds['element.pair']> & {};
-	'element.splat': PortableGuard<PortableIds['element.splat']> & {};
+	'element.spread': PortableGuard<PortableIds['element.spread']> & {};
 	'element.template': PortableGuard<PortableIds['element.template']> & {
 		readonly substitution: PortableIsAt['element.template.substitution'];
 	};
@@ -1788,11 +1788,11 @@ export interface PortableIsAt {
 		readonly bitwise_and: PortableIsAt['expression.assignment.compound.bitwise_and'];
 		readonly bitwise_or: PortableIsAt['expression.assignment.compound.bitwise_or'];
 		readonly bitwise_xor: PortableIsAt['expression.assignment.compound.bitwise_xor'];
+		readonly coalesce: PortableIsAt['expression.assignment.compound.coalesce'];
 		readonly divide: PortableIsAt['expression.assignment.compound.divide'];
 		readonly exponent: PortableIsAt['expression.assignment.compound.exponent'];
 		readonly modulo: PortableIsAt['expression.assignment.compound.modulo'];
 		readonly multiply: PortableIsAt['expression.assignment.compound.multiply'];
-		readonly nullish: PortableIsAt['expression.assignment.compound.nullish'];
 		readonly or: PortableIsAt['expression.assignment.compound.or'];
 		readonly shift_left: PortableIsAt['expression.assignment.compound.shift_left'];
 		readonly shift_right: PortableIsAt['expression.assignment.compound.shift_right'];
@@ -1810,11 +1810,11 @@ export interface PortableIsAt {
 	'expression.assignment.compound.bitwise_xor': PortableGuard<
 		PortableIds['expression.assignment.compound.bitwise_xor']
 	> & {};
+	'expression.assignment.compound.coalesce': PortableGuard<PortableIds['expression.assignment.compound.coalesce']> & {};
 	'expression.assignment.compound.divide': PortableGuard<PortableIds['expression.assignment.compound.divide']> & {};
 	'expression.assignment.compound.exponent': PortableGuard<PortableIds['expression.assignment.compound.exponent']> & {};
 	'expression.assignment.compound.modulo': PortableGuard<PortableIds['expression.assignment.compound.modulo']> & {};
 	'expression.assignment.compound.multiply': PortableGuard<PortableIds['expression.assignment.compound.multiply']> & {};
-	'expression.assignment.compound.nullish': PortableGuard<PortableIds['expression.assignment.compound.nullish']> & {};
 	'expression.assignment.compound.or': PortableGuard<PortableIds['expression.assignment.compound.or']> & {};
 	'expression.assignment.compound.shift_left': PortableGuard<
 		PortableIds['expression.assignment.compound.shift_left']
@@ -1830,10 +1830,10 @@ export interface PortableIsAt {
 	'expression.binary': PortableGuard<PortableIds['expression.binary']> & {
 		readonly arithmetic: PortableIsAt['expression.binary.arithmetic'];
 		readonly bitwise: PortableIsAt['expression.binary.bitwise'];
+		readonly coalesce: PortableIsAt['expression.binary.coalesce'];
 		readonly comparison: PortableIsAt['expression.binary.comparison'];
 		readonly logical: PortableIsAt['expression.binary.logical'];
 		readonly membership: PortableIsAt['expression.binary.membership'];
-		readonly nullish: PortableIsAt['expression.binary.nullish'];
 		readonly shift: PortableIsAt['expression.binary.shift'];
 	};
 	'expression.binary.arithmetic': PortableGuard<PortableIds['expression.binary.arithmetic']> & {
@@ -1858,6 +1858,7 @@ export interface PortableIsAt {
 	'expression.binary.bitwise.and': PortableGuard<PortableIds['expression.binary.bitwise.and']> & {};
 	'expression.binary.bitwise.or': PortableGuard<PortableIds['expression.binary.bitwise.or']> & {};
 	'expression.binary.bitwise.xor': PortableGuard<PortableIds['expression.binary.bitwise.xor']> & {};
+	'expression.binary.coalesce': PortableGuard<PortableIds['expression.binary.coalesce']> & {};
 	'expression.binary.comparison': PortableGuard<PortableIds['expression.binary.comparison']> & {
 		readonly equal: PortableIsAt['expression.binary.comparison.equal'];
 		readonly greater: PortableIsAt['expression.binary.comparison.greater'];
@@ -1894,7 +1895,6 @@ export interface PortableIsAt {
 	};
 	'expression.binary.membership.in': PortableGuard<PortableIds['expression.binary.membership.in']> & {};
 	'expression.binary.membership.instanceof': PortableGuard<PortableIds['expression.binary.membership.instanceof']> & {};
-	'expression.binary.nullish': PortableGuard<PortableIds['expression.binary.nullish']> & {};
 	'expression.binary.shift': PortableGuard<PortableIds['expression.binary.shift']> & {
 		readonly left: PortableIsAt['expression.binary.shift.left'];
 		readonly right: PortableIsAt['expression.binary.shift.right'];
@@ -1904,14 +1904,14 @@ export interface PortableIsAt {
 	'expression.binary.shift.right': PortableGuard<PortableIds['expression.binary.shift.right']> & {};
 	'expression.binary.shift.right_unsigned': PortableGuard<PortableIds['expression.binary.shift.right_unsigned']> & {};
 	'expression.call': PortableGuard<PortableIds['expression.call']> & {
+		readonly construct: PortableIsAt['expression.call.construct'];
 		readonly import: PortableIsAt['expression.call.import'];
 		readonly member: PortableIsAt['expression.call.member'];
-		readonly new: PortableIsAt['expression.call.new'];
 		readonly template: PortableIsAt['expression.call.template'];
 	};
+	'expression.call.construct': PortableGuard<PortableIds['expression.call.construct']> & {};
 	'expression.call.import': PortableGuard<PortableIds['expression.call.import']> & {};
 	'expression.call.member': PortableGuard<PortableIds['expression.call.member']> & {};
-	'expression.call.new': PortableGuard<PortableIds['expression.call.new']> & {};
 	'expression.call.template': PortableGuard<PortableIds['expression.call.template']> & {};
 	'expression.cast': PortableGuard<PortableIds['expression.cast']> & {
 		readonly as: PortableIsAt['expression.cast.as'];
@@ -1966,6 +1966,7 @@ export interface PortableIsAt {
 		readonly delegate: PortableIsAt['expression.yield.delegate'];
 	};
 	'expression.yield.delegate': PortableGuard<PortableIds['expression.yield.delegate']> & {};
+	file: PortableGuard<PortableIds['file']> & {};
 	identifier: PortableGuard<PortableIds['identifier']> & {
 		readonly label: PortableIsAt['identifier.label'];
 		readonly nested: PortableIsAt['identifier.nested'];
@@ -2052,7 +2053,6 @@ export interface PortableIsAt {
 	'modifier.visibility.private': PortableGuard<PortableIds['modifier.visibility.private']> & {};
 	'modifier.visibility.protected': PortableGuard<PortableIds['modifier.visibility.protected']> & {};
 	'modifier.visibility.public': PortableGuard<PortableIds['modifier.visibility.public']> & {};
-	module: PortableGuard<PortableIds['module']> & {};
 	pattern: PortableGuard<PortableIds['pattern']> & {
 		readonly array: PortableIsAt['pattern.array'];
 		readonly assignment: PortableIsAt['pattern.assignment'];
@@ -2110,12 +2110,12 @@ export interface PortableIsAt {
 	'statement.loop': PortableGuard<PortableIds['statement.loop']> & {
 		readonly counted: PortableIsAt['statement.loop.counted'];
 		readonly do_while: PortableIsAt['statement.loop.do_while'];
-		readonly for: PortableIsAt['statement.loop.for'];
+		readonly for_each: PortableIsAt['statement.loop.for_each'];
 		readonly while: PortableIsAt['statement.loop.while'];
 	};
 	'statement.loop.counted': PortableGuard<PortableIds['statement.loop.counted']> & {};
 	'statement.loop.do_while': PortableGuard<PortableIds['statement.loop.do_while']> & {};
-	'statement.loop.for': PortableGuard<PortableIds['statement.loop.for']> & {};
+	'statement.loop.for_each': PortableGuard<PortableIds['statement.loop.for_each']> & {};
 	'statement.loop.while': PortableGuard<PortableIds['statement.loop.while']> & {};
 	'statement.return': PortableGuard<PortableIds['statement.return']> & {};
 	'statement.scope': PortableGuard<PortableIds['statement.scope']> & {};
@@ -2188,10 +2188,10 @@ export interface PortableKinds {
 	readonly declaration: PortableKindsAt['declaration'];
 	readonly element: PortableKindsAt['element'];
 	readonly expression: PortableKindsAt['expression'];
+	readonly file: PortableKindsAt['file'];
 	readonly identifier: PortableKindsAt['identifier'];
 	readonly literal: PortableKindsAt['literal'];
 	readonly modifier: PortableKindsAt['modifier'];
-	readonly module: PortableKindsAt['module'];
 	readonly pattern: PortableKindsAt['pattern'];
 	readonly statement: PortableKindsAt['statement'];
 	readonly type: PortableKindsAt['type'];
@@ -2204,10 +2204,10 @@ export interface PortableIs {
 	readonly declaration: PortableIsAt['declaration'];
 	readonly element: PortableIsAt['element'];
 	readonly expression: PortableIsAt['expression'];
+	readonly file: PortableIsAt['file'];
 	readonly identifier: PortableIsAt['identifier'];
 	readonly literal: PortableIsAt['literal'];
 	readonly modifier: PortableIsAt['modifier'];
-	readonly module: PortableIsAt['module'];
 	readonly pattern: PortableIsAt['pattern'];
 	readonly statement: PortableIsAt['statement'];
 	readonly type: PortableIsAt['type'];
@@ -2456,7 +2456,7 @@ const table: PortableTable = {
 			exact: true
 		},
 		'element.pair': { ids: [TSKindId.Pair], exact: true },
-		'element.splat': { ids: [TSKindId.SpreadElement], exact: true },
+		'element.spread': { ids: [TSKindId.SpreadElement], exact: true },
 		'element.template': { ids: [TSKindId.TemplateType], exact: true },
 		'element.template.substitution': { ids: [TSKindId.TemplateType], exact: true },
 		'element.tuple': { ids: [TSKindId.OptionalTupleParameter, TSKindId.TupleParameter], exact: true },
@@ -2513,11 +2513,11 @@ const table: PortableTable = {
 		'expression.assignment.compound.bitwise_and': { ids: [TSKindId.AugmentedAssignmentExpression], exact: false },
 		'expression.assignment.compound.bitwise_or': { ids: [TSKindId.AugmentedAssignmentExpression], exact: false },
 		'expression.assignment.compound.bitwise_xor': { ids: [TSKindId.AugmentedAssignmentExpression], exact: false },
+		'expression.assignment.compound.coalesce': { ids: [TSKindId.AugmentedAssignmentExpression], exact: false },
 		'expression.assignment.compound.divide': { ids: [TSKindId.AugmentedAssignmentExpression], exact: false },
 		'expression.assignment.compound.exponent': { ids: [TSKindId.AugmentedAssignmentExpression], exact: false },
 		'expression.assignment.compound.modulo': { ids: [TSKindId.AugmentedAssignmentExpression], exact: false },
 		'expression.assignment.compound.multiply': { ids: [TSKindId.AugmentedAssignmentExpression], exact: false },
-		'expression.assignment.compound.nullish': { ids: [TSKindId.AugmentedAssignmentExpression], exact: false },
 		'expression.assignment.compound.or': { ids: [TSKindId.AugmentedAssignmentExpression], exact: false },
 		'expression.assignment.compound.shift_left': { ids: [TSKindId.AugmentedAssignmentExpression], exact: false },
 		'expression.assignment.compound.shift_right': { ids: [TSKindId.AugmentedAssignmentExpression], exact: false },
@@ -2539,6 +2539,7 @@ const table: PortableTable = {
 		'expression.binary.bitwise.and': { ids: [TSKindId.BinaryExpression], exact: false },
 		'expression.binary.bitwise.or': { ids: [TSKindId.BinaryExpression], exact: false },
 		'expression.binary.bitwise.xor': { ids: [TSKindId.BinaryExpression], exact: false },
+		'expression.binary.coalesce': { ids: [TSKindId.BinaryExpression], exact: false },
 		'expression.binary.comparison': { ids: [TSKindId.BinaryExpression], exact: false },
 		'expression.binary.comparison.equal': { ids: [TSKindId.BinaryExpression], exact: false },
 		'expression.binary.comparison.greater': { ids: [TSKindId.BinaryExpression], exact: false },
@@ -2554,7 +2555,6 @@ const table: PortableTable = {
 		'expression.binary.membership': { ids: [TSKindId.BinaryExpression], exact: false },
 		'expression.binary.membership.in': { ids: [TSKindId.BinaryExpression], exact: false },
 		'expression.binary.membership.instanceof': { ids: [TSKindId.BinaryExpression], exact: false },
-		'expression.binary.nullish': { ids: [TSKindId.BinaryExpression], exact: false },
 		'expression.binary.shift': { ids: [TSKindId.BinaryExpression], exact: false },
 		'expression.binary.shift.left': { ids: [TSKindId.BinaryExpression], exact: false },
 		'expression.binary.shift.right': { ids: [TSKindId.BinaryExpression], exact: false },
@@ -2569,9 +2569,9 @@ const table: PortableTable = {
 			],
 			exact: true
 		},
+		'expression.call.construct': { ids: [TSKindId.NewExpression], exact: true },
 		'expression.call.import': { ids: [TSKindId.Import], exact: true },
 		'expression.call.member': { ids: [TSKindId.CallExpressionCall], exact: false },
-		'expression.call.new': { ids: [TSKindId.NewExpression], exact: true },
 		'expression.call.template': { ids: [TSKindId.CallExpressionTemplateCall], exact: true },
 		'expression.cast': {
 			ids: [TSKindId.AsExpression, TSKindId.NonNullExpression, TSKindId.SatisfiesExpression, TSKindId.TypeAssertion],
@@ -2624,6 +2624,7 @@ const table: PortableTable = {
 		},
 		'expression.yield': { ids: [TSKindId.YieldExpression, TSKindId.YieldExpressionDelegate], exact: true },
 		'expression.yield.delegate': { ids: [TSKindId.YieldExpressionDelegate], exact: true },
+		file: { ids: [TSKindId.Program], exact: true },
 		identifier: {
 			ids: [
 				TSKindId.Identifier,
@@ -2780,7 +2781,6 @@ const table: PortableTable = {
 		'modifier.visibility.private': { ids: [TSKindId.PrivateKeyword], exact: false },
 		'modifier.visibility.protected': { ids: [TSKindId.ProtectedKeyword], exact: false },
 		'modifier.visibility.public': { ids: [TSKindId.PublicKeyword], exact: false },
-		module: { ids: [TSKindId.Program], exact: true },
 		pattern: {
 			ids: [
 				TSKindId.ArrayPattern,
@@ -2861,7 +2861,7 @@ const table: PortableTable = {
 		},
 		'statement.loop.counted': { ids: [TSKindId.ForStatement], exact: true },
 		'statement.loop.do_while': { ids: [TSKindId.DoStatement], exact: true },
-		'statement.loop.for': { ids: [TSKindId.ForInStatement], exact: true },
+		'statement.loop.for_each': { ids: [TSKindId.ForInStatement], exact: true },
 		'statement.loop.while': { ids: [TSKindId.WhileStatement], exact: true },
 		'statement.return': { ids: [TSKindId.ReturnStatement], exact: true },
 		'statement.scope': { ids: [TSKindId.WithStatement], exact: true },
@@ -2957,7 +2957,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -2966,7 +2970,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -2975,7 +2983,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -2984,7 +2996,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -2993,7 +3009,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3002,7 +3022,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3010,7 +3034,11 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.abstract.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3018,7 +3046,11 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.abstract.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3026,7 +3058,11 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.abstract.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3125,7 +3161,7 @@ const table: PortableTable = {
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '||=', fields: ['operator'], kinds: [] } }]
 			},
 			{
-				path: 'expression.assignment.compound.nullish',
+				path: 'expression.assignment.compound.coalesce',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '??=', fields: ['operator'], kinds: [] } }]
 			},
@@ -3249,7 +3285,7 @@ const table: PortableTable = {
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '||', fields: ['operator'], kinds: [] } }]
 			},
 			{
-				path: 'expression.binary.nullish',
+				path: 'expression.binary.coalesce',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '??', fields: ['operator'], kinds: [] } }]
 			},
@@ -3394,7 +3430,7 @@ const table: PortableTable = {
 		[TSKindId.False]: [{ path: 'literal.boolean.false', within: [], test: [] }],
 		[TSKindId.FinallyClause]: [{ path: 'clause.finally', within: [], test: [] }],
 		[TSKindId.FlowMaybeType]: [{ path: 'type.nullable', within: [], test: [] }],
-		[TSKindId.ForInStatement]: [{ path: 'statement.loop.for', within: [], test: [] }],
+		[TSKindId.ForInStatement]: [{ path: 'statement.loop.for_each', within: [], test: [] }],
 		[TSKindId.ForStatement]: [{ path: 'statement.loop.counted', within: [], test: [] }],
 		[TSKindId.FunctionDeclaration]: [{ path: 'declaration.function', within: [], test: [] }],
 		[TSKindId.FunctionExpression]: [{ path: 'expression.function', within: [], test: [] }],
@@ -3481,7 +3517,11 @@ const table: PortableTable = {
 						],
 						plan: { op: 'eq', text: 'constructor', self: true }
 					},
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } },
 					{ up: 0, via: [], plan: { op: 'is', types: [461], fields: ['name'], kinds: [] } }
 				]
@@ -3498,7 +3538,11 @@ const table: PortableTable = {
 						],
 						plan: { op: 'eq', text: 'constructor', self: true }
 					},
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } },
 					{ up: 0, via: [], plan: { op: 'is', types: [461], fields: ['name'], kinds: [] } }
 				]
@@ -3515,7 +3559,11 @@ const table: PortableTable = {
 						],
 						plan: { op: 'eq', text: 'constructor', self: true }
 					},
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } },
 					{ up: 0, via: [], plan: { op: 'is', types: [461], fields: ['name'], kinds: [] } }
 				]
@@ -3540,7 +3588,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3549,7 +3601,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3558,7 +3614,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3567,7 +3627,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3576,7 +3640,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3585,7 +3653,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3593,7 +3665,11 @@ const table: PortableTable = {
 				path: 'declaration.method.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3601,7 +3677,11 @@ const table: PortableTable = {
 				path: 'declaration.method.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3609,7 +3689,11 @@ const table: PortableTable = {
 				path: 'declaration.method.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3631,7 +3715,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3640,7 +3728,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3649,7 +3741,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3658,7 +3754,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3667,7 +3767,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3676,7 +3780,11 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3684,7 +3792,11 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3692,7 +3804,11 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3700,7 +3816,11 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3729,7 +3849,7 @@ const table: PortableTable = {
 			},
 			{ path: 'type.primitive', within: [], test: [] }
 		],
-		[TSKindId.NewExpression]: [{ path: 'expression.call.new', within: [], test: [] }],
+		[TSKindId.NewExpression]: [{ path: 'expression.call.construct', within: [], test: [] }],
 		[TSKindId.NonNullExpression]: [{ path: 'expression.cast.non_null', within: [], test: [] }],
 		[TSKindId.Null]: [{ path: 'literal.null', within: [], test: [] }],
 		[TSKindId.Number]: [{ path: 'literal.number', within: [], test: [] }],
@@ -3756,7 +3876,11 @@ const table: PortableTable = {
 				path: 'declaration.parameter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: [], kinds: ['accessibility_modifier'] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: [], kinds: ['accessibility_modifier'] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: [], kinds: ['accessibility_modifier'] } }
 				]
 			},
@@ -3764,7 +3888,11 @@ const table: PortableTable = {
 				path: 'declaration.parameter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: [], kinds: ['accessibility_modifier'] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: [], kinds: ['accessibility_modifier'] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: [], kinds: ['accessibility_modifier'] } }
 				]
 			},
@@ -3772,7 +3900,11 @@ const table: PortableTable = {
 				path: 'declaration.parameter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: [], kinds: ['accessibility_modifier'] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: [], kinds: ['accessibility_modifier'] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: [], kinds: ['accessibility_modifier'] } }
 				]
 			},
@@ -3791,14 +3923,18 @@ const table: PortableTable = {
 			{ path: 'modifier.visibility', within: [], test: [] }
 		],
 		[TSKindId.PrivatePropertyIdentifier]: [{ path: 'identifier.property', within: [], test: [] }],
-		[TSKindId.Program]: [{ path: 'module', within: [], test: [] }],
+		[TSKindId.Program]: [{ path: 'file', within: [], test: [] }],
 		[TSKindId.PropertyIdentifier]: [{ path: 'identifier.property', within: [], test: [] }],
 		[TSKindId.PropertySignature]: [
 			{
 				path: 'declaration.field.signature.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3806,7 +3942,11 @@ const table: PortableTable = {
 				path: 'declaration.field.signature.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3814,7 +3954,11 @@ const table: PortableTable = {
 				path: 'declaration.field.signature.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3829,7 +3973,11 @@ const table: PortableTable = {
 				path: 'declaration.field.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3837,7 +3985,11 @@ const table: PortableTable = {
 				path: 'declaration.field.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3845,7 +3997,11 @@ const table: PortableTable = {
 				path: 'declaration.field.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: ['accessibility_modifier'], kinds: [] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
 				]
 			},
@@ -3864,7 +4020,11 @@ const table: PortableTable = {
 				path: 'declaration.parameter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: [], kinds: ['accessibility_modifier'] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: [], kinds: ['accessibility_modifier'] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: [], kinds: ['accessibility_modifier'] } }
 				]
 			},
@@ -3872,7 +4032,11 @@ const table: PortableTable = {
 				path: 'declaration.parameter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: [], kinds: ['accessibility_modifier'] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: [], kinds: ['accessibility_modifier'] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: [], kinds: ['accessibility_modifier'] } }
 				]
 			},
@@ -3880,7 +4044,11 @@ const table: PortableTable = {
 				path: 'declaration.parameter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [318], fields: [], kinds: ['accessibility_modifier'] } },
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: [], kinds: ['accessibility_modifier'] }
+					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: [], kinds: ['accessibility_modifier'] } }
 				]
 			},
@@ -3893,7 +4061,7 @@ const table: PortableTable = {
 		[TSKindId.SequenceExpression]: [{ path: 'expression.sequence', within: [], test: [] }],
 		[TSKindId.ShorthandPropertyIdentifier]: [{ path: 'identifier.property.shorthand', within: [], test: [] }],
 		[TSKindId.ShorthandPropertyIdentifierPattern]: [{ path: 'identifier.property.shorthand', within: [], test: [] }],
-		[TSKindId.SpreadElement]: [{ path: 'element.splat', within: [], test: [] }],
+		[TSKindId.SpreadElement]: [{ path: 'element.spread', within: [], test: [] }],
 		[TSKindId.StatementBlock]: [{ path: 'statement.block', within: [], test: [] }],
 		[TSKindId.StatementIdentifier]: [{ path: 'identifier.label', within: [], test: [] }],
 		[TSKindId.String]: [{ path: 'literal.string', within: [], test: [] }],

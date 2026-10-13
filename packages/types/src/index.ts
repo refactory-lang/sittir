@@ -5,7 +5,7 @@
 
 import type { CamelCase } from 'type-fest';
 import type { NodeMethods } from './engine-api.ts';
-export type { Cond, KindMembership, QueryFacet, QueryPlan, QuerySlots, QuerySubject, Recorder, SelfText, SlotNameOf, SlotRef, SlotRoutes, View } from './query.ts';
+export type { Cond, KindMembership, QueryFacet, QueryPlan, QuerySlotEntry, QuerySlots, QuerySubject, Recorder, SelfText, SlotNameOf, SlotRef, SlotRoutes, View } from './query.ts';
 export type { PortableCondition, PortableGuard, PortablePath, PortableReadEntry, PortableStep, PortableSurface, PortableTable } from './portable.ts';
 import type { Admit } from './node-surface.ts';
 
@@ -34,6 +34,7 @@ export type {
 	TriviaItem,
 	ErrorKindId,
 	ErrorNode,
+	TriviaFlanks,
 	ErrorRegion
 } from './core-types.ts';
 

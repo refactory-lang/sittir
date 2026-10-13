@@ -7,12 +7,12 @@ export namespace Expression {
 		// t only
 	}
 	export namespace Call {
+		export interface Construct<G extends GrammarContext<G>> {
+			readonly typeArguments?: G['slots']['expression.call.construct']['typeArguments'][];
+		}
 		export interface Member<G extends GrammarContext<G>> {
 			readonly typeArguments?: G['slots']['expression.call.member']['typeArguments'][];
 			// t only
-		}
-		export interface New<G extends GrammarContext<G>> {
-			readonly typeArguments?: G['slots']['expression.call.new']['typeArguments'][];
 		}
 	}
 	export interface Class<G extends GrammarContext<G>> {

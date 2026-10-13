@@ -26,8 +26,8 @@ describe('readBindings', () => {
 		expect(facts.members.filter(isNamedMember).map((m) => [m.route, m.owner, m.name])).toEqual([['nested', 'function_definition', 'doc']]);
 	});
 	it('still reads a lone single-segment capture on the top node as a claim', async () => {
-		const facts = await readBindings('(source_file) @module');
-		expect(facts.claims.map((c) => [c.vocab, c.kind])).toEqual([['module', 'source_file']]);
+		const facts = await readBindings('(source_file) @file');
+		expect(facts.claims.map((c) => [c.vocab, c.kind])).toEqual([['file', 'source_file']]);
 		expect(facts.members).toEqual([]);
 	});
 	it('keeps a presence capture\'s token text beside its name', async () => {
@@ -255,10 +255,10 @@ describe('readBindings', () => {
 
 	it('reads a template regex as its literal runs and named holes', async () => {
 		const { templates } = await readBindings(
-			'((function_definition name: (identifier) @name) @declaration.method.dunder (#match? @name "^__(?<stem>.*)__$"))'
+			'((function_definition name: (identifier) @name) @declaration.method.special (#match? @name "^__(?<stem>.*)__$"))'
 		);
 		expect(templates).toEqual([
-			{ vocabs: ['declaration.method.dunder'], target: 'name', template: '__${string}__', holes: ['stem'] }
+			{ vocabs: ['declaration.method.special'], target: 'name', template: '__${string}__', holes: ['stem'] }
 		]);
 	});
 
@@ -382,7 +382,7 @@ describe('readBindings', () => {
 		['the claimed node', '(parameters (parameters_elements . (identifier) @declaration.parameter.self))'],
 		['a node enclosing the claim', '(block . (expression_statement (identifier) @identifier.statement))']
 	])('refuses an anchor on %s: an anchor constrains only a step below the claim', async (_where, pattern) => {
-		await expect(readBindings(`(module) @module\n${pattern}`)).rejects.toThrow(/line 2: .*anchor.*@(declaration\.parameter\.self|identifier\.statement)/);
+		await expect(readBindings(`(module) @file\n${pattern}`)).rejects.toThrow(/line 2: .*anchor.*@(declaration\.parameter\.self|identifier\.statement)/);
 	});
 
 	it('pins a child anchored on both sides to its parent\'s only named child', async () => {
@@ -479,9 +479,9 @@ describe('readBindings: the match tree of an anchored capture', () => {
 
 describe('bindingPatterns', () => {
 	it('slices each top-level pattern by its byte span, after multibyte comments', async () => {
-		const patterns = await bindingPatterns('; ── module ──\n(module) @module\n; ── é\n(identifier) @identifier\n');
+		const patterns = await bindingPatterns('; ── file ──\n(module) @file\n; ── é\n(identifier) @identifier\n');
 		expect(patterns.map((p) => [p.line, p.source])).toEqual([
-			[2, '(module) @module'],
+			[2, '(module) @file'],
 			[4, '(identifier) @identifier']
 		]);
 	});

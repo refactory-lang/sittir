@@ -4464,6 +4464,16 @@
     "type": "match_block_arms",
     "named": true,
     "fields": {
+      "arms": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "match_arm",
+            "named": true
+          }
+        ]
+      },
       "last_arm": {
         "multiple": false,
         "required": true,
@@ -4474,16 +4484,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "match_arm",
-          "named": true
-        }
-      ]
     }
   },
   {

@@ -14,6 +14,8 @@ import { appendFileSync, existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { historyRecording } from './history-recording.ts';
+
 /** One row in `test-history.jsonl`. */
 export interface TestRun {
 	/** ISO-8601 timestamp of the run. */
@@ -51,26 +53,24 @@ function isTestRun(entry: unknown): entry is TestRun {
 	return !('schema' in entry) && typeof (entry as { ts?: unknown })['ts'] === 'string';
 }
 
-/** Append a single test run entry to the history file. */
+/** Append a single test run entry to the history file, unless this branch records nothing (`historyRecording`). */
 export function appendTestHistory(entry: TestRun): void {
-	appendFileSync(getTestHistoryPath(), JSON.stringify(entry) + '\n', 'utf8');
+	const path = getTestHistoryPath();
+	if (!process.env['SITTIR_TEST_HISTORY_PATH'] && historyRecording(path) === 'none') return;
+	appendFileSync(path, JSON.stringify(entry) + '\n', 'utf8');
 }
 
 /**
  * Best-effort commit of the history file, scoped to just that path — same
  * contract as `history.ts`'s `commitHistory` (see its doc comment for the
- * full rationale). Never disrupts the calling test run: no-ops when
- * `SITTIR_TEST_HISTORY_PATH` is set (tests/scratch locations),
- * `SITTIR_HISTORY_NO_COMMIT=1` is set (CI, bisects, demos),
- * `SITTIR_INTERNAL_CODEGEN_RUN=1` is set (codegen-internal runs own their
- * own commit boundaries), or any git operation fails (no repo, mid-rebase,
- * nothing to commit, git absent).
+ * full rationale). Commits only when `historyRecording` says so, never for a
+ * custom `SITTIR_TEST_HISTORY_PATH` (tests/scratch locations), and swallows
+ * any git failure so the calling test run is never disrupted.
  */
 export function commitTestHistory(message: string): void {
 	if (process.env['SITTIR_TEST_HISTORY_PATH']) return;
-	if (process.env['SITTIR_HISTORY_NO_COMMIT'] === '1') return;
-	if (process.env['SITTIR_INTERNAL_CODEGEN_RUN'] === '1') return;
 	const path = getTestHistoryPath();
+	if (historyRecording(path) !== 'commit') return;
 	try {
 		execFileSync('git', ['commit', '--no-verify', '-m', message, '--', path], {
 			cwd: dirname(path),
@@ -81,7 +81,11 @@ export function commitTestHistory(message: string): void {
 	}
 }
 
-/** Read all past test runs from the history file, skipping non-run lines (e.g. schema headers). */
+/**
+ * Read all past test runs from the history file, oldest first, skipping
+ * non-run lines (e.g. schema headers). Runs are ordered by `ts`, not file
+ * position: a union merge of two branches' appends interleaves their rows.
+ */
 export function readTestHistory(): TestRun[] {
 	const path = getTestHistoryPath();
 	if (!existsSync(path)) return [];
@@ -89,7 +93,8 @@ export function readTestHistory(): TestRun[] {
 		.split('\n')
 		.filter((line) => line.trim() && !line.startsWith('//'))
 		.map((line) => JSON.parse(line) as unknown)
-		.filter(isTestRun);
+		.filter(isTestRun)
+		.sort((a, b) => (a.ts < b.ts ? -1 : a.ts > b.ts ? 1 : 0));
 }
 
 /** Resolve the absolute path to the history file (useful for tooling). */

@@ -24,7 +24,7 @@ export namespace Statement {
 		readonly label?: V.Identifier.Label<G>;
 	}
 	export namespace Loop {
-		export interface For<G extends GrammarContext<G>> {
+		export interface ForEach<G extends GrammarContext<G>> {
 			readonly label?: V.Identifier.Label<G>;
 			// r only
 		}

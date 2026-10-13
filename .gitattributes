@@ -12,10 +12,13 @@
 # never the only thing standing between these and EOL corruption.
 *.wasm binary
 
-# Validation runs only ever append rows, so two branches that each ran
-# validation both add lines at the end. `union` keeps both sides' rows
-# instead of conflicting; `readHistory` orders runs by their `ts`.
+# Validation and test runs only ever append rows, so two branches that each
+# recorded runs both add lines at the end. `union` keeps both sides' rows
+# instead of conflicting; `readHistory` and `readTestHistory` order runs by
+# their `ts`. GitHub's merge check ignores `union`, so only the recording
+# branches write these files (`history-recording.ts`).
 packages/tools/validation-history.jsonl merge=union
+packages/tools/test-history.jsonl merge=union
 
 # Regenerated outputs: a merge keeps this branch's copy instead of
 # conflicting, because the only correct resolution is to regenerate after

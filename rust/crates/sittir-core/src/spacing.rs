@@ -118,14 +118,16 @@ pub type SeamRank = usize;
 
 /// How firmly a mark holds its gap against the mark meeting it there. A
 /// whitespace trivia entry beats everything: it replaces the gap's default.
-/// A declared arm (a grammar row, or a value set on the node) beats one the
-/// kind edge took from its edge token's face (cascade), which beats the bare
-/// fallback; rank decides only between marks of one strength. Depth marks
-/// stay above the whole scale.
+/// A list slot's stored layout (`layout::SlotLayout`) beats every option
+/// and yields only to a gap's own entry. A declared arm (a grammar row, or a
+/// value set on the node) beats one the kind edge took from its edge token's
+/// face (cascade), which beats the bare fallback; rank decides only between
+/// marks of one strength. Depth marks stay above the whole scale.
 pub const SEAM_FALLBACK: u8 = 0;
 pub const SEAM_CASCADE: u8 = 1;
 pub const SEAM_DECLARED: u8 = 2;
-pub const SEAM_TRIVIA: u8 = 3;
+pub const SEAM_SLOT: u8 = 3;
+pub const SEAM_TRIVIA: u8 = 4;
 
 /// The rank of a seam's text: empty 2, no break 1, otherwise 2 plus the number
 /// of logical breaks (`\r\n` counts once).
@@ -212,6 +214,9 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     /// While a trailing run defers, the length of the in-line run its
     /// opening verbatim text carries before it.
     open_before: usize,
+    /// Set on a recording render (`with_recording`): the line breaks written
+    /// at each gap, by the source bytes around them.
+    recorder: Option<crate::baseline::Recorder<'a>>,
 }
 
 /// A trailing run rendered ahead of where it is written: its text, and the
@@ -301,7 +306,15 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             tight: false,
             tail: None,
             open_before: 0,
+            recorder: None,
         }
+    }
+
+    /// Records the line breaks the render writes at each gap into
+    /// `baseline`, when one is given (`baseline::Recorder`).
+    pub fn with_recording(mut self, baseline: Option<&'a std::cell::RefCell<crate::baseline::Baseline>>) -> Self {
+        self.recorder = baseline.map(crate::baseline::Recorder::new);
+        self
     }
 
     /// Marks the render as a document, whose end no held line break
@@ -415,6 +428,9 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
 
     /// Where written text goes: the output, or the buffer of a deferred run.
     fn emit(&mut self, s: &str) -> std::fmt::Result {
+        if let Some(recorder) = self.recorder.as_mut() {
+            recorder.emitted(s);
+        }
         match self.deferring.as_mut() {
             Some(buffer) => {
                 buffer.push_str(s);
@@ -490,6 +506,9 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
                 self.write_text(" ")?;
             }
             self.write_text(text)?;
+            if let Some(recorder) = self.recorder.as_mut() {
+                recorder.wrote_run();
+            }
             self.tail.clone_from(&run.tail);
             last = Some(run);
         }
@@ -579,6 +598,8 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     }
 
     /// Writes a held seam's text as ordinary text and clears the held rank.
+    /// A line break the text before it already ended with counts toward a
+    /// breaking seam: the seam writes one fewer.
     fn flush_seam(&mut self) -> std::fmt::Result {
         let line_end = self.line_end_held.take();
         self.flushed_template = None;
@@ -609,6 +630,13 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
                 payload.pick = kept.narrowest();
             }
             payload.set = kept;
+        }
+        if self.last == Some('\n') && payload.pick.breaks() && payload.pick != LayoutKinds::LINE_CONTINUATION {
+            payload.pick = payload.pick.without_first_break();
+            payload.set = payload.pick;
+            if payload.pick.is_empty() {
+                return Ok(());
+            }
         }
         if template {
             self.flushed_template = Some(payload.set);
@@ -808,7 +836,13 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             self.indent_pending = true;
         }
         let armed_before = self.indent_pending;
+        if let Some(recorder) = self.recorder.as_mut() {
+            recorder.before_text(s);
+        }
         let result = self.write_text(s);
+        if let Some(recorder) = self.recorder.as_mut() {
+            recorder.after_text(s);
+        }
         if self.leaf_lexed {
             self.indent_lazy = self.indent_pending && s.ends_with('\n');
             self.indent_pending = armed_before && s.starts_with('\n');
@@ -873,7 +907,11 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
                 self.open_before = before.len();
             }
         }
+        let counting = self.recorder.as_mut().map(|recorder| recorder.count_texts(false));
         crate::render::RenderSink::text(self, &s)?;
+        if let (Some(recorder), Some(counting)) = (self.recorder.as_mut(), counting) {
+            recorder.count_texts(counting);
+        }
         self.glued = !s.is_empty();
         self.tail = Some(after).filter(|run| !run.is_empty()).map(str::to_owned);
         Ok(())
@@ -986,7 +1024,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         let Some(sources) = self.sources else { return Ok(None) };
         let Some(mut frame) = sources.sides(coord) else { return Ok(None) };
         if let Some(options) = self.options {
-            frame.prepare(&crate::prepare::RenderContext { options, sources })?;
+            frame.prepare(&crate::prepare::RenderContext { options, sources, recording: None })?;
         }
         Ok(Some(frame))
     }
@@ -1034,16 +1072,31 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         if let Some(kind) = crate::render::RenderSink::kind_of(self, coord) {
             crate::render::RenderSink::leaf_kind(self, kind);
         }
+        let counting = self.recorder.as_mut().map(|recorder| {
+            recorder.open(coord.span.start);
+            recorder.count_texts(false)
+        });
         self.write_chunk(text)?;
+        if let (Some(recorder), Some(counting)) = (self.recorder.as_mut(), counting) {
+            recorder.count_texts(counting);
+            recorder.close(coord.span.end);
+            recorder.wrote_slice(coord.index);
+        }
         self.end_leaf();
         Ok(())
     }
 
     fn open_frame(&mut self, origin: Option<&crate::slot::NodeCoordinate>) {
+        if let Some(recorder) = self.recorder.as_mut() {
+            recorder.open_frame(origin.map(|origin| (origin.index, origin.span.start, origin.span.end)));
+        }
         self.frames.push(Frame { origin: origin.map(|origin| (origin.tree, origin.index)), excess: self.excess });
     }
 
     fn close_frame(&mut self) {
+        if let Some(recorder) = self.recorder.as_mut() {
+            recorder.close_frame();
+        }
         if let Some(frame) = self.frames.pop() {
             self.excess = frame.excess;
         }
@@ -1176,10 +1229,16 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         }
         let held = self.hold_context();
         self.deferring = Some(String::new());
+        if let Some(recorder) = self.recorder.as_mut() {
+            recorder.start_run();
+        }
         self.glued_open = None;
         self.open_before = 0;
         let result = render(self);
         let run = self.deferring.take().unwrap_or_default();
+        if let Some(recorder) = self.recorder.as_mut() {
+            recorder.end_run(!run.is_empty());
+        }
         let end = self.seam.map(|_| (self.seam_strength, self.held_payload()));
         let line_end = self.line_end_held.filter(|_| end.is_some());
         let glued = (self.glued_open.take() == Some(true), std::mem::take(&mut self.glued));
@@ -1864,6 +1923,22 @@ mod strength_tests {
             w.text("b").unwrap();
         });
         assert_eq!(out, "a\nb");
+    }
+
+    #[test]
+    fn a_line_break_the_text_before_a_seam_ends_with_counts_toward_it() {
+        let out = render(|w| {
+            w.text("#!\n").unwrap();
+            w.site_with(4, SEAM_TRIVIA);
+            w.text("fn").unwrap();
+        });
+        assert_eq!(out, "#!\n\nfn");
+        let out = render(|w| {
+            w.text("#!\n").unwrap();
+            w.site_with(3, SEAM_DECLARED);
+            w.text("fn").unwrap();
+        });
+        assert_eq!(out, "#!\nfn");
     }
 
     #[test]
