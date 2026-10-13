@@ -308,14 +308,16 @@ describe('portable is: typescript', async () => {
 	});
 
 	it('pins a typeof specifier by its keyword, and reads a type-only specifier as a specifier', () => {
-		const SOURCE = 'import { type A, typeof B, C } from "a";\nexport { type D, typeof E, F } from "b";\n';
-		const [typeImport, ti] = find(SOURCE, 'import_specifier_name');
-		const [typeofImport, oi] = find(SOURCE, 'import_specifier_name', undefined, 1);
-		const [plainImport, pi] = find(SOURCE, 'import_specifier_name', undefined, 2);
-		expect(at('clause.import.specifier.typeof')(typeImport, ti)).toBe(false);
-		expect(at('clause.import.specifier.typeof')(typeofImport, oi)).toBe(true);
-		expect(at('clause.import.specifier')(typeImport, ti)).toBe(true);
-		expect(at('clause.import.specifier')(plainImport, pi)).toBe(true);
+		const SOURCE = 'import { type A, typeof B, C, type D as E, typeof F as G, H as I } from "a";\nexport { type J, typeof K, L } from "b";\n';
+		for (const form of ['import_specifier_name', 'import_specifier_as']) {
+			const [type, tc] = find(SOURCE, form);
+			const [typeOf, oc] = find(SOURCE, form, undefined, 1);
+			const [plain, pc] = find(SOURCE, form, undefined, 2);
+			expect(at('clause.import.specifier.typeof')(type, tc), form).toBe(false);
+			expect(at('clause.import.specifier.typeof')(typeOf, oc), form).toBe(true);
+			expect(at('clause.import.specifier')(type, tc), form).toBe(true);
+			expect(at('clause.import.specifier')(plain, pc), form).toBe(true);
+		}
 		const [typeExport, te] = find(SOURCE, 'export_specifier');
 		const [typeofExport, oe] = find(SOURCE, 'export_specifier', undefined, 1);
 		const [plainExport, pe] = find(SOURCE, 'export_specifier', undefined, 2);
@@ -326,11 +328,13 @@ describe('portable is: typescript', async () => {
 	});
 
 	it.skip('reads a type-only specifier by its keyword (pending: `typeOnly` is a flag of the specifiers, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
-		const SOURCE = 'import { type A, C } from "a";\nexport { type D, F } from "b";\n';
-		const [typeImport, ti] = find(SOURCE, 'import_specifier_name');
-		const [plainImport, pi] = find(SOURCE, 'import_specifier_name', undefined, 1);
-		expect(at('clause.import.specifier.typeOnly')(typeImport, ti)).toBe(true);
-		expect(at('clause.import.specifier.typeOnly')(plainImport, pi)).toBe(false);
+		const SOURCE = 'import { type A, C, type D as E, H as I } from "a";\nexport { type J, L } from "b";\n';
+		for (const form of ['import_specifier_name', 'import_specifier_as']) {
+			const [type, tc] = find(SOURCE, form);
+			const [plain, pc] = find(SOURCE, form, undefined, 1);
+			expect(at('clause.import.specifier.typeOnly')(type, tc), form).toBe(true);
+			expect(at('clause.import.specifier.typeOnly')(plain, pc), form).toBe(false);
+		}
 		const [typeExport, te] = find(SOURCE, 'export_specifier');
 		const [plainExport, pe] = find(SOURCE, 'export_specifier', undefined, 1);
 		expect(at('clause.export.specifier.typeOnly')(typeExport, te)).toBe(true);
