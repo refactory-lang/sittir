@@ -20,7 +20,7 @@ Which side of a lead a narrowing builds: the lead (`lead: true`), which keeps on
 
 ### `packages/codegen/src/dsl/bind.ts::LeadEdit`
 
-The state one side of a lead's narrowing works on: the grammar's rules, which the rest side edits in place, the supertypes the walk does not descend into, each rule's reference sites (`referenceSites`) and the item's positions (`itemPositions`), both the rest side's only, the rules earlier leads' items hold (`heldBy`), the lead's reach (the rules the narrowing walks), and `mint`.
+The state one side of a lead's narrowing works on: the grammar's rules, which the rest side edits in place, the supertypes the walk does not descend into, each rule's reference sites (`referenceSites`) and the item's positions (`itemPositions`), both the rest side's only, the rules earlier leads' items hold (`heldBy`), the lead's reach (the rules the narrowing walks), whether the parse tree shows a rule (`transparent`: a hidden name, a supertype or an inline rule), and `mint`.
 
 ### `packages/codegen/src/dsl/bind.ts::rewrap`
 
@@ -53,7 +53,7 @@ Whether the narrowing walks into a referenced rule: a hidden rule the grammar de
 ### `packages/codegen/src/dsl/bind.ts::narrowRef`
 
 Narrows one reference to one side of a lead, or returns `undefined` when nothing of it is left on that side.
-- A visible kind the lead does not admit stays on the rest side and leaves the lead side. A kind it admits twice is refused.
+- A visible kind the lead does not admit stays on the rest side and leaves the lead side. A kind it admits twice is refused. A supertype or inline rule whose name reads visible is still a kind here, so one that holds an admitted kind (`admittedInside`) is refused rather than split.
 - A kind admitted with no restriction moves to the lead side whole, renamed to `as` when the match gives one (`renamedKind`), and leaves the rest side.
 - A kind admitted with a restriction must have a rule to narrow; an alias of a literal is refused.
 - A kind admitted with a restriction is narrowed by `narrowWithin` on both sides. The lead side always mints its narrowing, `_<rule>_<field>`, aliased to `as`, or else to `<kind>_<field>`, so a visible variant never takes its kind's own name. The rest side narrows a visible kind in place, losing its admitted forms wherever else the grammar uses it, but only when the item holds it at no other position (`itemPositions`): a second position would lose forms on both sides of the split, so that is refused. Every in-place narrowing goes through `narrowInPlace`. It narrows a hidden rule in place only when `exclusiveTo` allows; otherwise it mints `_<rule>_<item>` and keeps the alias to the kind.
@@ -63,7 +63,7 @@ Narrows one reference to one side of a lead, or returns `undefined` when nothing
 
 ### `packages/codegen/src/dsl/bind.ts::admittedInside`
 
-The first admitted kind a rule holds as a child of the node it sits in: through hidden rules, supertypes included, but not into a visible kind, which is a node of its own, nor into a token.
+The first admitted kind a rule holds as a child of the node it sits in: through every rule the parse tree does not show (a hidden name, or a supertype or inline rule of any name), but not into a visible kind, which is a node of its own, nor into a token.
 
 ### `packages/codegen/src/dsl/bind.ts::narrowWithin`
 
@@ -103,7 +103,7 @@ The empty `ItemPositions`, for the lead side, which never narrows in place.
 
 ### `packages/codegen/src/dsl/bind.ts::itemPositions`
 
-The positions each rule name occupies in the item's own structure, read on the grammar as the lead side left it, before the rest narrows anything. The walk starts at the item expression and expands the rules the narrowing walked (the lead's reach) and every hidden rule, supertypes included, since those are the item's structure; a visible kind outside the reach is a node of its own, and what it holds is not counted. Each symbol occurrence is a position, a rule already on the walk's path not expanded again. So a kind the item holds at two fields, through a hidden rule it holds twice, or inside itself has more than one position; the narrowed position is one, so any other refuses. A position under a repeat or a recursion in the restriction's own path never gets here: `narrowWithin` refuses the first, and `narrowRef` the second, as a sequence it cannot divide. Rust's item also reaches `parameter` through the expressions nested in it, at a closure's parameters, which this walk leaves outside: the in-place narrowing may lose forms there.
+The positions each rule name occupies in the item's own structure, read on the grammar as the lead side left it, before the rest narrows anything. The walk starts at the item expression and expands the rules the narrowing walked (the lead's reach) and every rule the parse tree does not show (a hidden name, or a supertype or inline rule of any name), since those are the item's structure; a visible kind outside the reach is a node of its own, and what it holds is not counted. Each symbol occurrence is a position, a rule already on the walk's path not expanded again. So a kind the item holds at two fields, through a hidden rule it holds twice, or inside itself has more than one position; the narrowed position is one, so any other refuses. A position under a repeat or a recursion in the restriction's own path never gets here: `narrowWithin` refuses the first, and `narrowRef` the second, as a sequence it cannot divide. Rust's item also reaches `parameter` through the expressions nested in it, at a closure's parameters, which this walk leaves outside: the in-place narrowing may lose forms there.
 
 ### `packages/codegen/src/dsl/bind.ts::narrowInPlace`
 

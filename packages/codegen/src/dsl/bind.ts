@@ -575,6 +575,7 @@ interface LeadEdit {
 	readonly positions: ItemPositions;
 	readonly heldBy: ReadonlyMap<string, string>;
 	readonly reach: Set<string>;
+	readonly transparent: (name: string) => boolean;
 	readonly mint: (base: string, side: LeadSide, body: unknown) => string;
 }
 
@@ -613,7 +614,12 @@ function narrowRef(edit: LeadEdit, ref: unknown, admits: readonly LeadMatch[], s
 		const matches = admits.filter((m) => m.kind === kind);
 		if (matches.length > 1) throw new LeadRefusal(`it admits '${kind}' twice`);
 		const [admitted] = matches;
-		if (admitted === undefined) return side.lead ? undefined : ref;
+		if (admitted === undefined) {
+			const rule = refRule(ref);
+			const inside = rule !== undefined && edit.transparent(rule) ? admittedInside(edit, edit.rules[rule], new Set(admits.map((m) => m.kind)), [rule]) : undefined;
+			if (inside !== undefined) throw new LeadRefusal(`'${inside}' sits where the split cannot divide it`);
+			return side.lead ? undefined : ref;
+		}
 		if (admitted.within === undefined) return side.lead ? (admitted.as === undefined ? ref : renamedKind(ref, admitted.as)) : undefined;
 		const name = refRule(ref);
 		if (name === undefined) throw new LeadRefusal(`'${kind}' has no rule to narrow`);
@@ -663,12 +669,13 @@ function admittedInside(edit: LeadEdit, rule: unknown, admitted: ReadonlySet<str
 	if (Array.isArray(rule)) return rule.map((r) => admittedInside(edit, r, admitted, path)).find((kind) => kind !== undefined);
 	if (!isRecord(rule)) return undefined;
 	const kind = refKind(rule);
-	if (kind !== undefined) return admitted.has(kind) ? kind : undefined;
+	if (kind !== undefined && admitted.has(kind)) return kind;
 	if (rule.type === 'TOKEN' || rule.type === 'IMMEDIATE_TOKEN') return undefined;
 	if (rule.type === 'SYMBOL') {
 		const name = rule.name as string;
-		return name in edit.rules && !path.includes(name) ? admittedInside(edit, edit.rules[name], admitted, [...path, name]) : undefined;
+		return name in edit.rules && edit.transparent(name) && !path.includes(name) ? admittedInside(edit, edit.rules[name], admitted, [...path, name]) : undefined;
 	}
+	if (kind !== undefined) return undefined;
 	return admittedInside(edit, rule.members, admitted, path) ?? admittedInside(edit, rule.content, admitted, path);
 }
 
@@ -813,10 +820,10 @@ interface ItemPositions {
 
 const NO_POSITIONS: ItemPositions = { counts: new Map(), holders: new Map() };
 
-function itemPositions(item: unknown, rules: GrammarRecord, reach: ReadonlySet<string>): ItemPositions {
+function itemPositions(item: unknown, rules: GrammarRecord, reach: ReadonlySet<string>, transparent: (name: string) => boolean): ItemPositions {
 	const counts = new Map<string, number>();
 	const holders = new Map<string, Set<string>>();
-	const expands = (name: string): boolean => name in rules && (reach.has(name) || isParserHiddenName(name));
+	const expands = (name: string): boolean => name in rules && (reach.has(name) || transparent(name));
 	const walk = (node: unknown, path: readonly string[], holder: string): void => {
 		if (Array.isArray(node)) for (const n of node) walk(n, path, holder);
 		else if (isRecord(node)) {
@@ -859,6 +866,8 @@ export function leadGrammar(grammar: GrammarRecord, leads: readonly Lead[]): Gra
 		return name;
 	};
 	const stop = supertypesOf(grammar);
+	const inlined = new Set((Array.isArray(grammar.inline) ? grammar.inline : []).flatMap((entry) => listEntryName(entry) ?? []));
+	const transparent = (name: string): boolean => isParserHiddenName(name) || stop.has(name) || inlined.has(name);
 	const heldBy = new Map<string, string>();
 	const edit = ({ list, item, field, admits }: Lead): void => {
 		if (!(list in rules)) throw new LeadRefusal('the list is no rule of the grammar');
@@ -868,10 +877,10 @@ export function leadGrammar(grammar: GrammarRecord, leads: readonly Lead[]): Gra
 		if (shape.trailing === 'mandatory') throw new LeadRefusal('the list takes a mandatory trailing separator');
 		const element = shape.element as unknown as GrammarRecord;
 		const reach = new Set<string>();
-		const head = narrowRef({ rules, supertypes: stop, sites: new Map(), positions: NO_POSITIONS, heldBy, reach, mint }, element.content, admits, { lead: true, suffix: field }, false);
+		const head = narrowRef({ rules, supertypes: stop, sites: new Map(), positions: NO_POSITIONS, heldBy, reach, transparent, mint }, element.content, admits, { lead: true, suffix: field }, false);
 		if (head === undefined) throw new LeadRefusal('it admits no item of the list');
-		const positions = itemPositions(element.content, rules, reach);
-		const rest = narrowRef({ rules, supertypes: stop, sites: referenceSites(rules, list, [element.content, shape.separatorRule]), positions, heldBy, reach, mint }, element.content, admits, { lead: false, suffix: item }, true);
+		const positions = itemPositions(element.content, rules, reach, transparent);
+		const rest = narrowRef({ rules, supertypes: stop, sites: referenceSites(rules, list, [element.content, shape.separatorRule]), positions, heldBy, reach, transparent, mint }, element.content, admits, { lead: false, suffix: item }, true);
 		if (rest === undefined) throw new LeadRefusal('it leaves the list no item');
 		if (rest !== element.content) rules[list] = replaceItems(rules[list], item, element.content, rest);
 		const owners = Object.keys(rules).filter((name) => name !== list && leadFrom[name] === undefined);

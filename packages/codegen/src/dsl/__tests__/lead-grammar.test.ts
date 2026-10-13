@@ -339,6 +339,14 @@ describe('leadGrammar', () => {
 			expect(leadIssue(grammar, [ROW_LEAD])).toBe("'atom' narrows in place, but the item holds it at 2 positions (in _other, row)");
 		});
 
+		it.each([
+			['a supertype', { supertypes: ['wrapper'] }],
+			['an inline rule', { inline: [{ type: 'SYMBOL', name: 'wrapper' }] }]
+		])('through %s of any name, which the parse tree does not show', (_, lists) => {
+			const grammar = { ...rows(seq(field('left', sym('wrapper')), str(':'), field('right', sym('atom'))), { wrapper: choice(sym('atom'), sym('filler')) }), ...lists };
+			expect(leadIssue(grammar, [ROW_LEAD])).toBe("'atom' narrows in place, but the item holds it at 2 positions (in row, wrapper)");
+		});
+
 		it('under a recursive hidden rule, which is a sequence the split cannot divide', () => {
 			const nested = rows(seq(field('right', sym('_nest'))), { _nest: choice(sym('atom'), seq(str('('), sym('_nest'), str(')'))) });
 			expect(leadIssue(nested, [ROW_LEAD])).toBe("'atom' sits where the split cannot divide it");
@@ -393,6 +401,16 @@ describe('leadGrammar', () => {
 			}
 		};
 		expect(leadIssue(prefixed, [NAMED_LEAD])).toBe("'self' sits where the split cannot divide it");
+	});
+
+	it('refuses an admitted kind inside a supertype or inline rule of any name, which the narrowing does not walk', () => {
+		const wrapped = (lists: Record<string, unknown>) => ({
+			...named(field('name', sym('_name'))),
+			rules: { ...rulesOf(named(field('name', sym('_name')))), _name: choice(sym('wrapper'), sym('other')), wrapper: choice(sym('self'), sym('identifier')) },
+			...lists
+		});
+		expect(leadIssue(wrapped({ supertypes: ['wrapper'] }), [NAMED_LEAD])).toBe("'self' sits where the split cannot divide it");
+		expect(leadIssue(wrapped({ inline: ['wrapper'] }), [NAMED_LEAD])).toBe("'self' sits where the split cannot divide it");
 	});
 
 	it('leaves a grammar with no leads as it is', () => {
