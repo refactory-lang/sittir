@@ -141,8 +141,9 @@ grammar through Node, and sittir's codegen evaluated it.
 **The claims.** The derivation (`bindings-inventory`) reads each receiver claim into a `lead`:
 
 ```scheme
-; the receiver, in each of rust's three method claims
+; the receiver, in each of rust's three method claims: one claim for each shape it admits
 (parameters (parameters_elements . (attributed_parameter (self_parameter)) @receiver))
+(parameters (parameters_elements . (attributed_parameter (parameter name: (self))) @receiver))
 ; the receiver, in each of typescript's ten function-like owners' claims
 (formal_parameters (formal_parameters_elements . (required_parameter pattern: (this)) @receiver))
 ; the rest, in every owner's claim, function and method alike (question 19)
@@ -154,18 +155,21 @@ grammar through Node, and sittir's codegen evaluated it.
   the item stays a position: python's `@doc` claims are anchored first, but capture the string
   inside the item, so they derive no lead.
 - The claim's child tests under the capture give the match tree, a kind and a field per step.
-  An alternation inside the anchored kind gives several matches, each named through its own
-  classifying claim (question 18); an arm with none keeps its kind's name. The derivation
-  refuses what `match` cannot say: a negated kind (`#not-kind-eq?`), a text test, a wildcard, a
-  quantifier, or a second restricted field on one kind. The interim claim's `#kind-eq?` goes.
+  A route's tests are a conjunction, so a route cannot say an alternation: one claim testing
+  `[(self_parameter) (parameter name: (self))]` would read weaker than it says. So each shape
+  the receiver admits is a claim of its own, with an exact route, and rust's typed `self` is a
+  second claim beside `self_parameter`'s (questions 15 and 18). The reader keeps refusing a
+  tested alternation. The derivation also refuses what `match` cannot say: a negated kind
+  (`#not-kind-eq?`), a text test, a wildcard, a quantifier, or a second restricted field on one
+  kind. The interim claim's `#kind-eq?` goes.
 - The reader refuses an alternation as the anchored node itself (`. [(a) (b)] @receiver`: an
   anchor next to an alternation ties no one node). So a lead's several top-level admits, which
   `lead` takes, are out of reach of `bindings.scm` today; reaching them is a change to the
   reader, not to the derivation.
-- The claims on one list derive one `lead`, keyed by the list. Their match trees must be
-  structurally equal, and their one capture name is the lead's field. A disagreement is
-  refused, naming both lines. The entries print with the renames and splits, `leads` sorted by
-  list.
+- The claims on one list derive one `lead`, keyed by the list. Their match trees must agree on
+  the root kind and on the capture's field, which is the lead's field, and the lead admits the
+  union of their admits. A disagreeing root kind or field is refused, naming both lines. The
+  entries print with the renames and splits, `leads` sorted by list.
 - The derived fact carries the lead's field, and routes resolve `receiver` to it directly, never
   by kind. In the container form's bound list, `receiver` and `item` both admit
   `attributed_parameter`, so a kind selector anchored first would fall back to the optional-slot
@@ -699,7 +703,8 @@ Typescript (`typescript-samples-*.txt`):
    narrows a shared visible kind in place, and clones a shared hidden rule.
 3. Each receiver claim anchors the list's first element and captures the item as `@receiver`,
    and every owner captures the rest as `@parameters` (question 19). The derivation emits one
-   `lead` per list from the anchored pattern, and the fact it records carries the lead's field.
+   `lead` per list, admitting the union of its claims' anchored patterns, and the fact it
+   records carries the lead's field.
 4. No model work: the model accepts the plain shape and its group as is, and the group keeps a
    lone comma (finding 12).
 5. The conflict driver derives the bound grammar's sets (question 14).
@@ -712,14 +717,17 @@ Typescript (`typescript-samples-*.txt`):
 14. **The split's conflicts.** Ruled: the driver also derives on the bound grammar, keyed by the
     bound grammar's own hash (finding 4).
 15. **Rust's typed `self`.** Ruled: the receiver also admits `self: Box<Self>`, as a variant of
-    its own.
+    its own. It is written as a claim of its own, `parameter name: (self)`, beside
+    `self_parameter`'s, and each has an exact route.
 16. **The shape of the two rules.** Ruled: the plain shape, through enrich's group synthesis.
     The receiver form holds the receiver, then an optional group holding the `,` and the plain
     list.
 17. **The edit's names.** Ruled: `lead` for the edit and `leads` for its entries, and `match` for
     the restriction.
 18. **Where `bindings.scm` names a variant.** Ruled: once, on the claim that classifies the
-    narrowed pattern, joined to the lead's match tree by structural equality.
+    narrowed pattern. A list's claims need not be structurally equal: the derivation unions
+    their admits when their root kind and field agree, and refuses a disagreeing root kind or
+    field.
 19. **How an owner keeps the rest of its list as `parameters`.** Ruled: every owner captures the
     rest as now, against the grammar's own list,
     `(parameters (parameters_elements item: (_) @parameters))`, and the derivation maps that
