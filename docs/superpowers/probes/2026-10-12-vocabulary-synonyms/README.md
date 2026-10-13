@@ -12,7 +12,7 @@ Some rulings are not on that commit yet. Where one touches a row, the row says s
 - the `static` flag, which drops `declaration.method.static`;
 - python's typed and default parameters become `declaration.parameter`;
 - the binding flags, which drop `declaration.variable.constant` and `.reassignable`;
-- rust's static items become `declaration.constant`;
+- rust's static items become `declaration.variable`;
 - rust's `ref` and `mut` patterns become envelopes.
 
 ## Run
@@ -104,7 +104,7 @@ A segment takes the term no language owns when such a term exists. Each language
 | `is` | python's identity test; the type test of C#, Kotlin and Swift |
 | `mut` | rust's binding mutability (`mutable`); a reference's exclusivity (`exclusive`) |
 | `for` | typescript's three-part loop (`statement.loop.counted`); every language's for-each (`statement.loop.for_each`, NT13) |
-| `static` | a member with no receiver (the `static` flag); rust's static item, a `declaration.constant` |
+| `static` | a member with no receiver (the `static` flag); rust's static item, a `declaration.variable` |
 | `int` | 32 bits in C, Java and C#; pointer-sized in Go and Swift |
 | `long` | 64 bits in Java and C#; platform-sized in C |
 | `float` | 32 bits in C, Java, C# and Swift; a double in python |
