@@ -6,6 +6,7 @@ import { type BindingFacts, type MemberFact, type RefinedClaim, WILDCARD, isName
 import type { MemberRoute } from './routes.ts';
 import { boundKindName } from './names.ts';
 import { deriveLeads } from './leads.ts';
+import { isParserHiddenName } from '../dsl/rule-patterns.ts';
 
 export type GrammarBindingsEdit = { readonly field: string } | { readonly alias: { readonly from: string; readonly to: string } };
 
@@ -127,7 +128,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 			left('not a base rule', row);
 			continue;
 		}
-		const to = boundKindName(c.vocab, c.kind.startsWith('_'));
+		const to = boundKindName(c.vocab, isParserHiddenName(c.kind));
 		if (placed(c)) {
 			if (!c.within.every((w) => ruleNames.has(w))) {
 				left('placed claim', row);

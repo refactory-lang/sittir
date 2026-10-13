@@ -1,5 +1,6 @@
 import { isPreference } from './primitives/preference.ts';
 import { isPrecWrapper } from '../types/runtime-shapes.ts';
+import { isParserHiddenName } from './rule-patterns.ts';
 import { LABELS_KEY } from './wire/options-block.ts';
 import { REPARSE_HOST_PRIORITY } from './wire/reparse-hosts.ts';
 import type { PatchesConfig } from './wire/wire.ts';
@@ -195,7 +196,7 @@ export function renameGrammar(grammar: GrammarRecord, renames: Readonly<Record<s
 	);
 	for (const [from, to] of Object.entries(renames)) {
 		if (!(from in rules) && !externals.has(from)) throw new Error(`bind: '${from}' is no rule or external of the grammar`);
-		if (from.startsWith('_') !== to.startsWith('_')) throw new Error(`bind: '${from}' → '${to}' flips hiddenness`);
+		if (isParserHiddenName(from) !== isParserHiddenName(to)) throw new Error(`bind: '${from}' → '${to}' flips hiddenness`);
 		if (to in rules && !(to in renames)) throw new Error(`bind: '${from}' → '${to}', which the grammar already names`);
 	}
 	const out: GrammarRecord = { ...grammar };
@@ -231,7 +232,6 @@ function replaceSymbols(rule: unknown, replace: (name: string) => string): unkno
 	return out;
 }
 
-const isTransparent = (name: string): boolean => name.startsWith('_');
 
 function fieldNames(rule: unknown, out: Set<string> = new Set()): Set<string> {
 	if (Array.isArray(rule)) for (const r of rule) fieldNames(r, out);
@@ -251,7 +251,7 @@ function transparentReach(rules: GrammarRecord, from: string, stop: ReadonlySet<
 	const queue = [from];
 	while (queue.length > 0) {
 		for (const ref of symbolNames(rules[queue.pop()!])) {
-			if (isTransparent(ref) && ref in rules && !stop.has(ref) && !out.has(ref)) {
+			if (isParserHiddenName(ref) && ref in rules && !stop.has(ref) && !out.has(ref)) {
 				out.add(ref);
 				queue.push(ref);
 			}
@@ -387,7 +387,7 @@ function unprecedenced(rule: unknown): unknown {
 export function childFields(grammar: GrammarRecord, owner: string, target: FieldWrapTarget | null): ChildFields {
 	const rules = isRecord(grammar.rules) ? grammar.rules : {};
 	const supertypes = supertypesOf(grammar);
-	const descended = (name: string): boolean => isTransparent(name) && name in rules && !supertypes.has(name);
+	const descended = (name: string): boolean => isParserHiddenName(name) && name in rules && !supertypes.has(name);
 	const isNamedChild = (rule: GrammarRecord): boolean =>
 		(rule.type === 'SYMBOL' && typeof rule.name === 'string' && !descended(rule.name)) || (rule.type === 'ALIAS' && rule.named === true);
 	const matches = (rule: GrammarRecord): boolean => (target === null ? isNamedChild(rule) : isWrapTarget(rule, target));
@@ -435,7 +435,7 @@ function sharersAgree(
 	request: FieldRename | FieldWrap,
 	batch: readonly (FieldRename | FieldWrap)[]
 ): boolean {
-	const sharers = Object.keys(rules).filter((name) => !isTransparent(name) && transparentReach(rules, name, stop).has(host));
+	const sharers = Object.keys(rules).filter((name) => !isParserHiddenName(name) && transparentReach(rules, name, stop).has(host));
 	return sharers.every((owner) => batch.some((edit) => edit.owner === owner && sameEdit(edit, request)));
 }
 
@@ -481,7 +481,7 @@ export function splitGrammar(grammar: GrammarRecord, splits: readonly Split[]): 
 		if (from === target) return true;
 		if (seen.has(from) || !(from in rules)) return false;
 		seen.add(from);
-		return [...symbolNames(rules[from])].some((name) => name === target || (name.startsWith('_') && reaches(name, target, seen)));
+		return [...symbolNames(rules[from])].some((name) => name === target || (isParserHiddenName(name) && reaches(name, target, seen)));
 	};
 	const mint = (base: string, name: string, body: unknown): string => {
 		if (name in rules && splitFrom[name] !== base) throw new Error(`bind: split '${base}' → '${name}', which the grammar already names`);
@@ -497,22 +497,22 @@ export function splitGrammar(grammar: GrammarRecord, splits: readonly Split[]): 
 	const cloneToward = (name: string, target: string, replacement: string, outer: string, container?: Split['containers'][number]): string => {
 		const base = mappedName(splitFrom, name);
 		const key = `${base}\u0000${outer}`;
-		const clone = clones.get(key) ?? (isTransparent(base) || container === undefined ? `${base}_${outer}` : container.name);
+		const clone = clones.get(key) ?? (isParserHiddenName(base) || container === undefined ? `${base}_${outer}` : container.name);
 		clones.set(key, clone);
-		if (!isTransparent(base) && container !== undefined) containerFields.set(clone, container.field);
+		if (!isParserHiddenName(base) && container !== undefined) containerFields.set(clone, container.field);
 		if (visiting.has(clone)) return clone;
 		visiting.add(clone);
 		const from = splitFrom[clone] === base ? rules[clone] : rules[base];
 		splitFrom[clone] = base;
 		const body = replaceSymbols(from, (ref) =>
-			ref === target ? replacement : isTransparent(ref) && reaches(ref, target) ? cloneToward(ref, target, replacement, outer) : ref
+			ref === target ? replacement : isParserHiddenName(ref) && reaches(ref, target) ? cloneToward(ref, target, replacement, outer) : ref
 		);
 		visiting.delete(clone);
 		return mint(base, clone, body);
 	};
 	for (const split of splits) {
 		if (!(split.kind in rules)) throw new Error(`bind: split source '${split.kind}' is no rule of the grammar`);
-		if (split.kind.startsWith('_') !== split.as.startsWith('_')) throw new Error(`bind: split '${split.kind}' → '${split.as}' flips hiddenness`);
+		if (isParserHiddenName(split.kind) !== isParserHiddenName(split.as)) throw new Error(`bind: split '${split.kind}' → '${split.as}' flips hiddenness`);
 		const outer = split.within[split.within.length - 1];
 		if (outer === undefined) throw new Error(`bind: split '${split.kind}' → '${split.as}' names no placement`);
 		mint(split.kind, split.as, rules[split.kind]);
@@ -525,7 +525,7 @@ export function splitGrammar(grammar: GrammarRecord, splits: readonly Split[]): 
 		const outerTarget = target;
 		const outerReplacement = replacement;
 		rules[outer] = replaceSymbols(rules[outer], (ref) =>
-			ref === outerTarget ? outerReplacement : ref.startsWith('_') && reaches(ref, outerTarget) ? cloneToward(ref, outerTarget, outerReplacement, outer) : ref
+			ref === outerTarget ? outerReplacement : isParserHiddenName(ref) && reaches(ref, outerTarget) ? cloneToward(ref, outerTarget, outerReplacement, outer) : ref
 		);
 	}
 	const placements = new Set([...splits.map((split) => split.within[split.within.length - 1]!), ...Object.keys(splitFrom)]);
@@ -539,7 +539,7 @@ export function splitGrammar(grammar: GrammarRecord, splits: readonly Split[]): 
 
 export function aliasTargetIssue(grammar: GrammarRecord, from: string, to: string): string | undefined {
 	const rules = isRecord(grammar.rules) ? grammar.rules : {};
-	if (from.startsWith('_') !== to.startsWith('_')) return 'flips hiddenness';
+	if (isParserHiddenName(from) !== isParserHiddenName(to)) return 'flips hiddenness';
 	if (to in rules) return 'the grammar already names the target';
 	return undefined;
 }

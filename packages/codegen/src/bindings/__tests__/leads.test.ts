@@ -137,4 +137,17 @@ describe('deriveLeads', () => {
 		expect(() => assertGatePasses(diagnostics, undefined)).toThrow(/lead-refused/);
 		expect(unexpectableExpectEntries('leadtest', { 'lead-refused': ['leadtest'] }).map((record) => record.details?.code)).toEqual(['lead-refused']);
 	});
+
+	it('keeps a variant name visible when its kind\'s rule name is, though the catalog stamps the kind hidden in the parse tree', async () => {
+		const predictedKinds = base.predictedKinds;
+		if (predictedKinds === undefined || !('entries' in predictedKinds)) throw new Error('fixture grammar carries a predicted catalog');
+		const stamped = { ...base, predictedKinds: { ...predictedKinds, entries: predictedKinds.entries.map((e) => (e.kind === 'required_parameter' ? { ...e, hidden: true } : e)) } };
+		const facts = await readBindings(
+			'(function_item (parameters (parameters_elements . (required_parameter pattern: (this)) @receiver))) @declaration.method\n(required_parameter pattern: (this)) @parameter.this'
+		);
+		expect(deriveLeads({ file: FILE, base: stamped, facts }).leads).toEqual([
+			lead('parameters_elements', 'item', 'receiver', match('required_parameter', { pattern: [match('this')] }, 'this_parameter'))
+		]);
+	});
 });
+

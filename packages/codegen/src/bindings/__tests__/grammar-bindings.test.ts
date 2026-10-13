@@ -158,6 +158,14 @@ describe('deriveGrammarBindings', () => {
 	});
 
 
+	it('keeps a renamed kind visible when its rule name is, though the catalog stamps it hidden in the parse tree', () => {
+		const predictedKinds = base.predictedKinds;
+		if (predictedKinds === undefined || !('entries' in predictedKinds)) throw new Error('fixture grammar carries a predicted catalog');
+		const stamped = { ...base, predictedKinds: { ...predictedKinds, entries: predictedKinds.entries.map((e) => (e.kind === 'let_item' ? { ...e, hidden: true } : e)) } };
+		const { bindings } = deriveGrammarBindings({ file: FILE, facts: FACTS, base: stamped, vocabMembers: VOCABULARY, routedMembers: NO_MEMBERS });
+		expect(bindings.renames).toMatchObject({ let_item: 'variable_declaration' });
+	});
+
 	it('derives the leads and their refusals beside the other bindings', () => {
 		const { bindings, diagnostics } = deriveGrammarBindings({ file: FILE, facts: FACTS, base, vocabMembers: VOCABULARY, routedMembers: NO_MEMBERS });
 		expect(bindings.leads).toEqual([]);

@@ -7278,7 +7278,7 @@ Carries the authored options block through the binding patches. The block is aut
 
 ### `packages/codegen/src/dsl/bind.ts::bindGrammar`
 
-The kind-level half of grammar bindings, applied to the grammar `grammar()` returned: the options block first takes the binding patches' effects (`rewriteBindingOptions`), then `renameGrammar` renames the kinds and `splitGrammar` splits them, the splits named in base names and mapped through the renames. It leaves `leads` unapplied.
+The kind-level half of grammar bindings, applied to the grammar `grammar()` returned: the options block first takes the binding patches' effects (`rewriteBindingOptions`), then `renameGrammar` renames the kinds and `splitGrammar` splits them, the splits named in base names and mapped through the renames. It leaves `leads` unapplied. Throughout bind.ts a rule is hidden, and so transparent to its owner (its fields and references sit on the referrer's behalf), by tree-sitter's name convention (`rule-patterns.ts::isParserHiddenName`): the bind functions run on the raw grammar, before any model stamps a fact, and a rename or split that flips that hiddenness is refused.
 
 ### `packages/codegen/src/dsl/bind.ts::renameReparseHosts`
 
@@ -7363,10 +7363,6 @@ The grammar with each rename's base rule or external taking its new name everywh
 ### `packages/codegen/src/dsl/bind.ts::replaceSymbols`
 
 A rule with every `SYMBOL` name passed through `replace`.
-
-### `packages/codegen/src/dsl/bind.ts::isTransparent`
-
-Whether a rule name is hidden (`_`-prefixed), the bind layer's test for which rules a field or reference may sit in on its owner's behalf. It reads the name because the bind functions run on the raw grammar, before any model stamps hiddenness.
 
 ### `packages/codegen/src/dsl/bind.ts::fieldNames`
 
@@ -7519,4 +7515,3 @@ A `match` restriction from its authored form: an array is an unfielded child; a 
 ### `packages/codegen/src/dsl/bind.ts::match`
 
 Builds a `LeadMatch`: a kind, an optional restriction (`leadWithin`) and an optional variant name. `(required_parameter pattern: (this))` is `match('required_parameter', { pattern: [match('this')] })`.
-

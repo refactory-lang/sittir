@@ -1,6 +1,6 @@
 import type { RawGrammar } from '../compiler/types.ts';
 import { lead, type Lead, type LeadMatch } from '../dsl/bind.ts';
-import { separatedListBodyInfo, symbolFactsOf, unwrapPrec } from '../dsl/rule-patterns.ts';
+import { isParserHiddenName, separatedListBodyInfo, symbolFactsOf, unwrapPrec } from '../dsl/rule-patterns.ts';
 import { predictedEntriesOf, renameAwareSymbolSource } from '../dsl/symbol-table.ts';
 import type { Rule } from '../types/rule.ts';
 import { isFieldType } from '../types/runtime-shapes.ts';
@@ -56,7 +56,7 @@ function nameVariants(match: LeadMatch, claims: readonly ClaimFact[]): Named {
 		admits.push(named.match);
 	}
 	const [vocab] = vocabs;
-	return { match: { kind: match.kind, within: { field: match.within.field, admits }, ...(vocab === undefined ? {} : { as: boundKindName(vocab, match.kind.startsWith('_')) }) } };
+	return { match: { kind: match.kind, within: { field: match.within.field, admits }, ...(vocab === undefined ? {} : { as: boundKindName(vocab, isParserHiddenName(match.kind)) }) } };
 }
 
 export function deriveLeads(input: { readonly file: string; readonly base: RawGrammar; readonly facts: BindingFacts }): LeadDerivation {

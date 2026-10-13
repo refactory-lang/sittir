@@ -452,7 +452,7 @@ The derivation's inputs: the `bindings.scm` path its diagnostics name (`file`), 
 
 ### `packages/codegen/src/bindings/names.ts::boundKindName`
 
-The bound name of a vocabulary path: its segments reversed, subkind first, keeping hiddenness (`declaration.function` is `function_declaration`; a hidden kind's is `_function_declaration`). The one place the naming lives.
+The bound name of a vocabulary path: its segments reversed, subkind first, keeping hiddenness (`declaration.function` is `function_declaration`; a hidden kind's is `_function_declaration`). The one place the naming lives. Callers pass the base rule name's hiddenness by tree-sitter's own convention (`rule-patterns.ts::isParserHiddenName`): a bound name keeps the rule's hiddenness, so the rename never flips it. Parse-tree visibility is a different fact: the catalog stamps every supertype hidden, visible rule name or not.
 
 ### `packages/codegen/src/bindings/grammar-bindings.ts::memberFieldName`
 
@@ -1498,7 +1498,7 @@ The union of two claims' match trees: one kind, restricted on one field (or neit
 
 ### `packages/codegen/src/bindings/leads.ts::nameVariants`
 
-Names each node of a match tree that narrows its kind (one with a restriction) by the claim that classifies the same pattern: a top-level, unplaced claim whose own `match` has the node's key. The name is that claim's path's bound kind name (`names.ts::boundKindName`), so `(required_parameter pattern: (this)) @parameter.this` names the variant `this_parameter`. Each admit of a restriction joins its own claim. A node no claim classifies keeps no `as`, and the edit gives it the variant convention's name. Two claims that classify one node with different paths are refused. A node that narrows nothing is no variant and needs no name.
+Names each node of a match tree that narrows its kind (one with a restriction) by the claim that classifies the same pattern: a top-level, unplaced claim whose own `match` has the node's key. The name is that claim's path's bound kind name (`names.ts::boundKindName`), hidden when the narrowed kind's rule name is (`isParserHiddenName`), so `(required_parameter pattern: (this)) @parameter.this` names the variant `this_parameter`. Each admit of a restriction joins its own claim. A node no claim classifies keeps no `as`, and the edit gives it the variant convention's name. Two claims that classify one node with different paths are refused. A node that narrows nothing is no variant and needs no name.
 
 ### `packages/codegen/src/bindings/leads.ts::deriveLeads`
 
