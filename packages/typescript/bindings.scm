@@ -143,7 +143,7 @@
 (export_statement_default_declaration (export_statement_default_declaration_default_kw (declaration) @declaration))
 (export_statement_default_declaration (export_statement_default_declaration_default_kw (export_statement_default_declaration_default_kw_value value: (_) @value)))
 (export_statement_equals_export expression: (_) @value)
-((export_statement_default_from type: _ @dropped) (#set! reason "a type-only export reads as statement.export; the vocabulary declares no fact for it"))
+(export_statement_default_from type: _ @typeOnly)
 (export_statement_default_from (export_statement_default_from_clause_from (export_clause) @exportClause))
 (export_statement_default_from (export_statement_default_from_ns_from (namespace_export) @exportClause))
 (export_statement_default_from (export_statement_default_from_clause_from source: (_) @source))
