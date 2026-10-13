@@ -957,6 +957,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// of the run, whose edges set what the options write in it. A slice of
     /// such a node would write the run's source as part of its own text, or
     /// leave the run's edges unknown.
+    /// The walk enters only the children that touch the run, found by byte,
+    /// so a run in a long list costs the region's depth, not its width.
     fn region_depth(region: tree_sitter::Node<'_>, run: crate::trivia_table::LayoutRun) -> crate::read::Depth {
         let inside = |node: &tree_sitter::Node<'_>| {
             let (start, end) = (node.start_byte() as u32, node.end_byte() as u32);
@@ -964,25 +966,24 @@ impl<G: EngineGrammar> ParsedTree<G> {
         };
         let touches = |node: &tree_sitter::Node<'_>| node.start_byte() as u32 <= run.end && node.end_byte() as u32 >= run.start;
         let mut deepest = 0;
-        let mut cursor = region.walk();
-        let mut depth = 0;
-        'walk: loop {
-            if depth > 0 && inside(&cursor.node()) {
+        let mut stack = vec![(region, 0usize)];
+        while let Some((node, depth)) = stack.pop() {
+            if depth > 0 && inside(&node) {
                 deepest = deepest.max(depth);
             }
-            if touches(&cursor.node()) && cursor.goto_first_child() {
-                depth += 1;
+            if !touches(&node) {
                 continue;
             }
-            loop {
-                if depth == 0 {
-                    break 'walk;
-                }
-                if cursor.goto_next_sibling() {
+            let mut cursor = node.walk();
+            let entered = match run.start.checked_sub(1) {
+                Some(before) => cursor.goto_first_child_for_byte(before as usize).is_some(),
+                None => cursor.goto_first_child(),
+            };
+            while entered && cursor.node().start_byte() as u32 <= run.end {
+                stack.push((cursor.node(), depth + 1));
+                if !cursor.goto_next_sibling() {
                     break;
                 }
-                cursor.goto_parent();
-                depth -= 1;
             }
         }
         match REGION_DEPTH {

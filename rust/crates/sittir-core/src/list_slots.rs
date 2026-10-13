@@ -87,10 +87,17 @@ pub fn slot_gaps(routed: &Routed, run_at: impl Fn(u32, u32) -> Option<usize>) ->
 /// The value most of `values` take. On a tie, `preferred` when it is among
 /// the tied values, else the first of them in order. `None` for no values.
 pub fn majority<T: Copy + PartialEq>(values: &[T], preferred: Option<T>) -> Option<T> {
-    let count = |value: T| values.iter().filter(|&&other| other == value).count();
-    let most = values.iter().map(|&value| count(value)).max()?;
-    let tied: Vec<T> = values.iter().copied().filter(|&value| count(value) == most).collect();
-    preferred.filter(|preferred| tied.contains(preferred)).or(tied.first().copied())
+    let mut counts: Vec<(T, usize)> = Vec::new();
+    for &value in values {
+        match counts.iter_mut().find(|(other, _)| *other == value) {
+            Some((_, count)) => *count += 1,
+            None => counts.push((value, 1)),
+        }
+    }
+    let most = counts.iter().map(|&(_, count)| count).max()?;
+    let mut tied = counts.iter().filter(|&&(_, count)| count == most).map(|&(value, _)| value);
+    let first = tied.clone().next();
+    preferred.filter(|preferred| tied.any(|value| value == *preferred)).or(first)
 }
 
 #[cfg(test)]
